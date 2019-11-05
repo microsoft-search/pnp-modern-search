@@ -3,7 +3,7 @@ nav:
     - Home: index.md
     - Versions: version.md
     - Contributors: contributors.md
-    - Building Docs: build-the-doc.md
+    - Building documentation: build-the-doc.md
     - Web Parts: 
       - Getting started: search-parts/getting-started.md
       - Search Box: search-parts/search-box.md

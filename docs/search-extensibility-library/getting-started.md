@@ -1,3 +1,12 @@
+
+## Summary
+
+This solution allows you to create and register your own React component (wrapped as HTML web components) to be used in the search results Web Part Handlebars templates.
+
+## Used SharePoint Framework Version ##
+
+![SPFx](https://img.shields.io/badge/drop-1.9.1-green.svg)
+
 ## Prerequisites
 
 The custom web components are defined in a SharePoint Framework project of type ['Library Component'](https://docs.microsoft.com/en-us/sharepoint/dev/spfx/library-component-overview). You have the choice to update the demo one or start from scratch with a new project. In this case, in the `<your_library_name>.manifest.json` file, make sure the `id` property id is `2501f2fd-d601-4da4-a04d-9f0bd85b1f54`. This identifier is used to load dynamically the library from the Search Results Web Part. Therefore, this value is **mandatory** to make the link. That is the only hook we need on our side.
@@ -10,7 +19,6 @@ The custom web components are defined in a SharePoint Framework project of type 
 
                 ...
             }
-
 
 ## Create a custom web component
 

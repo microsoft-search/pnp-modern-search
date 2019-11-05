@@ -19,6 +19,6 @@
         }]
     },
     "paths": {
-        "zippedPackage": "solution/react-search-refiners-renderer.sppkg"
+        "zippedPackage": "solution/pnp-modern-search-custom-renderer.sppkg"
     }
 }

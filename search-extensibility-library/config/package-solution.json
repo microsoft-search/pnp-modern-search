@@ -9,6 +9,6 @@
     "isDomainIsolated": false
   },
   "paths": {
-    "zippedPackage": "solution/pnp-modern-search-extensibility-demo.sppkg"
+    "zippedPackage": "solution/pnp-modern-search-extensibility-library.sppkg"
   }
 }

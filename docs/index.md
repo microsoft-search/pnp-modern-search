@@ -1,10 +1,12 @@
 # PnP Modern Search solution #
 
-![Current version](https://img.shields.io/badge/version-3.8.0-green.svg)
+## Solution overview
 
 ![Solution demo](./images/react-search-refiners.gif)
 
-## Download 
+## Current version
+
+![Current version](https://img.shields.io/badge/version-3.8.0-green.svg)
 
 **Get the latest release at our [releases page](https://github.com/microsoft-search/pnp-modern-search/releases/latest).**
 

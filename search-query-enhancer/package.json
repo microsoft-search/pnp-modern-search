@@ -1,5 +1,5 @@
 {
-  "name": "pnp-search-query-enhancement",
+  "name": "pnp-search-query-enhancer",
   "version": "1.0.0",
   "description": "Azure Function to enhance SharePoint search queries",
   "repository": {
