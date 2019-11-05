@@ -50,9 +50,9 @@ See [documentation](./search-custom-renderer/getting-started.md).
 
 ### Search query enhancer
 
-A sample Azure function project `search-query-enchancer`to demonstrate the use of Microsoft LUIS and other cognitive services to interpret user intents and enhance the search box query accordingly.
+A sample Azure function project `search-query-enhancer`to demonstrate the use of Microsoft LUIS and other cognitive services to interpret user intents and enhance the search box query accordingly.
 
-See [documentation](./search-query-enchancer/getting-started.md).
+See [documentation](./search-query-enhancer/getting-started.md).
 
 ## Applies to
 

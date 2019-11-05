@@ -1,4 +1,4 @@
-![Search Pagination](./images/search-pagination-property-pane.png)
+![Search Pagination](../images/search-pagination-property-pane.png)
 
 #### Pagination Options
 

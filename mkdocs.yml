@@ -3,6 +3,7 @@ nav:
     - Home: index.md
     - Versions: version.md
     - Contributors: contributors.md
+    - Building Docs: build-the-doc.md
     - Web Parts: 
       - Getting started: search-parts/getting-started.md
       - Search Box: search-parts/search-box.md
@@ -17,8 +18,8 @@ nav:
     - Custom Renderer: 
       - Getting Started: search-custom-renderer/getting-started.md
     - Search Query Enhancer:
-      - Getting started: search-query-enchancer/getting-started.md
-      - Debug locally: search-query-enchancer/debug-locally.md
+      - Getting started: search-query-enhancer/getting-started.md
+      - Debug locally: search-query-enhancer/debug-locally.md
 theme:
   name: 'material'
   palette:
@@ -42,4 +43,4 @@ extra:
     - type: 'link'
       link: 'https://aka.ms/sppnp'
 repo_url: https://github.com/microsoft-search/pnp-modern-search
-edit_uri: blob/master/docs/
+edit_uri: blob/master/docs

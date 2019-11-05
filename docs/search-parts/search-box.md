@@ -18,6 +18,6 @@ Placeholder text | The placeholder text to display in the search box.
 
 Setting | Description
 -------|----
-Use Natural Language Processing service | Turn this option '**on**' if you want to enhance the query text with NLP services like LUIS. In the _'Service Url'_ field, enter the URL of the Azure Function endpoint. Refer the instructions in the [search query enhancer getting started page](../search-query-enchancer/getting-started.md) file to set up the service. In this sample, only relevant detected keywords are returned as q new query using LUIS. Enabling debug mode will show you relevant information about the entered query.
+Use Natural Language Processing service | Turn this option '**on**' if you want to enhance the query text with NLP services like LUIS. In the _'Service Url'_ field, enter the URL of the Azure Function endpoint. Refer the instructions in the [search query enhancer getting started page](../search-query-enhancer/getting-started.md) file to set up the service. In this sample, only relevant detected keywords are returned as q new query using LUIS. Enabling debug mode will show you relevant information about the entered query.
 
 ---

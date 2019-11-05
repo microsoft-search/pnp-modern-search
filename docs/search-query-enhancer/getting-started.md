@@ -17,7 +17,7 @@ This sample demonstrates the following principles:
 
 ## Set up the solution
 
-- In the [www.luis.ai](www.luis.ai) portal, imports new applications from the JSON files in the [/luis](../../search-query-enhancer/luis) folder.
+- In the [www.luis.ai](https://www.luis.ai) portal, imports new applications from the JSON files in the [/luis](../../search-query-enhancer/luis) folder.
 
 ![LUIS Apps](../images/luis_apps.png)
 
