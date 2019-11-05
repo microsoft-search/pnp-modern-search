@@ -43,4 +43,4 @@ extra:
     - type: 'link'
       link: 'https://aka.ms/sppnp'
 repo_url: https://github.com/microsoft-search/pnp-modern-search
-edit_uri: blob/master/docs
+edit_uri: blob/master/docs/
