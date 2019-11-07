@@ -6,6 +6,8 @@ This is a open source solution that helps you to build engaging search based sol
 
 ## Get Started
 
+Download the [latest release](https://github.com/microsoft-search/pnp-modern-search/releases/latest).
+
 More information to get started can be found documentation of this repository: [documentation](https://microsoft-search.github.io/pnp-modern-search).
 
 ## Contributing
