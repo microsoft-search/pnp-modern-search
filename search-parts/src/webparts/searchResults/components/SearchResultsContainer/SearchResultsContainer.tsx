@@ -36,7 +36,8 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             results: {
                 QueryKeywords: '',
                 RefinementResults: [],
-                RelevantResults: []
+                RelevantResults: [],
+                SecondaryResults: []
             },
             areResultsLoading: false,
             errorMessage: '',
@@ -117,7 +118,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
         }
 
         // WebPart content
-        if (items.RelevantResults.length === 0) {
+        if (areResultsLoading || !this.state.results.QueryKeywords || (items.RelevantResults.length === 0 && items.SecondaryResults.length === 0 && !this.props.isUsingCustomResultTemplate)) {
             const selectedProperties = (this.props.searchService.selectedProperties) ? this.props.searchService.selectedProperties.join(',') : undefined;
             const lastQuery = this.state.results.QueryKeywords + this.props.searchService.queryTemplate + selectedProperties + this.props.searchService.resultSourceId;
 
@@ -144,16 +145,22 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             }
         } else {
 
+            let totalPrimaryAndSecondaryResults = this.state.results.RelevantResults.length;
+            if (this.state.results.SecondaryResults.length > 0) {
+              totalPrimaryAndSecondaryResults += this.state.results.SecondaryResults.reduce((sum, current) => sum += current.Results.length, 0);
+            }
             let templateContext = {
                 items: this.state.results.RelevantResults,
+                secondaryResults: this.state.results.SecondaryResults,
                 promotedResults: this.state.results.PromotedResults,
-                totalRows: this.state.results.PaginationInformation.TotalRows,
+                totalRows: this.state.results.PaginationInformation ? this.state.results.PaginationInformation.TotalRows : 0,
                 keywords: this.props.queryKeywords,
                 showResultsCount: this.props.showResultsCount,
                 siteUrl: this.props.siteServerRelativeUrl,
                 webUrl: this.props.webServerRelativeUrl,
                 maxResultsCount: this.props.searchService.resultsCount,
                 actualResultsCount: items.RelevantResults.length,
+                hasPrimaryOrSecondaryResults: totalPrimaryAndSecondaryResults > 0,
                 strings: strings,
                 themeVariant: this.props.themeVariant,
                 spellingSuggestion: items.SpellingSuggestion
@@ -213,7 +220,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
 
                 Logger.write('[SearchContainer._componentDidMount()]: Error: ' + error, LogLevel.Error);
 
-                let results: ISearchResults = { QueryKeywords: this.state.results.QueryKeywords, RefinementResults: [], RelevantResults: [] };
+                let results: ISearchResults = { QueryKeywords: this.state.results.QueryKeywords, RefinementResults: [], RelevantResults: [], SecondaryResults: [] };
 
                 this.setState({
                     areResultsLoading: false,
@@ -290,7 +297,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
 
                     Logger.write('[SearchContainer._componentWillReceiveProps()]: Error: ' + error, LogLevel.Error);
 
-                    let results: ISearchResults = { QueryKeywords: this.state.results.QueryKeywords, RefinementResults: [], RelevantResults: [] };
+                    let results: ISearchResults = { QueryKeywords: this.state.results.QueryKeywords, RefinementResults: [], RelevantResults: [], SecondaryResults: [] };
 
                     this.setState({
                         areResultsLoading: false,
@@ -301,7 +308,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                     this.handleResultUpdateBroadCast(results);
                 }
             } else {
-                let results: ISearchResults = { QueryKeywords: '', RefinementResults: [], RelevantResults: [] };
+                let results: ISearchResults = { QueryKeywords: '', RefinementResults: [], RelevantResults: [], SecondaryResults: [] };
                 this.setState({
                     areResultsLoading: false,
                     results: results,
@@ -361,7 +368,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 Logger.write('[SearchContainer._onUpdateSort()]: Error: ' + error, LogLevel.Error);
                 const errorMessage = /\"value\":\"[^:]+: SortList\.\"/.test(error.message) ? strings.Sort.SortErrorMessage : error.message;
 
-                let results: ISearchResults = { QueryKeywords: this.state.results.QueryKeywords, RefinementResults: [], RelevantResults: [] };
+                let results: ISearchResults = { QueryKeywords: this.state.results.QueryKeywords, RefinementResults: [], RelevantResults: [], SecondaryResults: [] };
 
                 this.setState({
                     areResultsLoading: false,
