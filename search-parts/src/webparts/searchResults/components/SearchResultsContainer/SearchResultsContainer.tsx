@@ -147,7 +147,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
 
             let totalPrimaryAndSecondaryResults = this.state.results.RelevantResults.length;
             if (this.state.results.SecondaryResults.length > 0) {
-              totalPrimaryAndSecondaryResults += this.state.results.SecondaryResults.reduce((sum, current) => sum += current.Results.length, 0);
+                totalPrimaryAndSecondaryResults += this.state.results.SecondaryResults.reduce((sum, block) => sum += block.Results.length, 0);
             }
             let templateContext = {
                 items: this.state.results.RelevantResults,
@@ -161,6 +161,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 maxResultsCount: this.props.searchService.resultsCount,
                 actualResultsCount: items.RelevantResults.length,
                 hasPrimaryOrSecondaryResults: totalPrimaryAndSecondaryResults > 0,
+                totalPrimaryAndSecondaryResults: totalPrimaryAndSecondaryResults,
                 strings: strings,
                 themeVariant: this.props.themeVariant,
                 spellingSuggestion: items.SpellingSuggestion
