@@ -189,6 +189,7 @@ class SearchService implements ISearchService {
         let results: ISearchResults = {
             QueryKeywords: query,
             RelevantResults: [],
+            SecondaryResults: [],
             RefinementResults: [],
             PaginationInformation: {
                 CurrentPage: pageNumber,

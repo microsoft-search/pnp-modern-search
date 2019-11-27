@@ -1,9 +1,15 @@
 <content id="template">
     <style>
         /* Insert your CSS overrides here */
+
+        .noResults {
+            padding: 10px;
+            text-align: center;
+        }
     </style>
 
     <div class="template_root">
+        {{#if items}}
         <ul class="template_defaultList">
             {{#each items as |item|}}
             <li class="template_listItem" tabindex="0">
@@ -30,6 +36,9 @@
             </li>
             {{/each}}
         </ul>
+        {{else}}
+        <div class="noResults">No results to display.</div>
+        {{/if}}
     </div>
 </content>
 
