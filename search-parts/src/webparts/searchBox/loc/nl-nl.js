@@ -26,6 +26,10 @@ define([], function() {
     "SearchBoxUseStagingEndpoint": "Gebruik LUIS staging endpoint",
     "UrlNotResolvedErrorMessage": "URL '{0}' kan niet worden gebruikt. Error: '{1}'.",
     "SearchBoxPlaceholderTextLabel": "Tijdelijke aanduiding in zoekvak",
+    "CancelButtonText": "Annuleren",
+    "DialogButtonLabel": "Styling",
+    "DialogButtonText": "Bewerk template",
+    "SaveButtonText": "Opslaan",
     "DynamicData": {
       "UseDynamicDataSourceLabel": "Gebruik een dynamische data bron",
       "SearchQueryPropertyLabel": "Zoek opdracht",
@@ -40,6 +44,16 @@ define([], function() {
       "TopScoringIntentScoreLabel": "Hoogst scorende indenteit (vertrouwen)",
       "EnhancedQueryLabel": "Verrijkte zoekopdracht",
       "AlteredQueryLabel": "Aangepaste zoekopdracht"
+    },
+    "SuggestionProviders": {
+      "EditSuggestionProvidersLabel": "Configurar sugerencias",
+      "SuggestionProvidersLabel": "Forslag Providers",
+      "SuggestionProvidersDescription": "Aktivere eller deaktivere individuelle forslags leverandører. Angi gjengivelses mal for forslag som returneres av hver leverandør.",
+      "EnabledPropertyLabel": "Aktive",
+      "ProviderNamePropertyLabel": "navn",
+      "InlineTemplateContentLabel": "Innebygd mal",
+      "ExternalUrlLabel": "URL for ekstern mal",
+      "InlineTemplateEditPanelTitle": "Rediger forslags mal"
     }
   }
 });

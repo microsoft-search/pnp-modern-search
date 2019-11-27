@@ -1,5 +1,6 @@
 import { PageOpenBehavior, QueryPathBehavior } from '../../helpers/UrlHelper';
 import { DynamicProperty } from '@microsoft/sp-component-base';
+import { ISuggestionProvider } from '../../models/ISuggestionProvider';
 
 interface ISearchBoxWebPartProps {
     searchInNewPage: boolean;
@@ -15,6 +16,7 @@ interface ISearchBoxWebPartProps {
     isStaging: boolean;
     defaultQueryKeywords: DynamicProperty<string>;
     placeholderText: string;
+    suggestionProviders: ISuggestionProvider[];
 }
 
 export default ISearchBoxWebPartProps;

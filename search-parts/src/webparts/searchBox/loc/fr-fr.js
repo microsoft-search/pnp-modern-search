@@ -26,6 +26,10 @@ define([], function() {
     "SearchBoxUseStagingEndpoint": "Utiliser le point de terminaison d'évaluation LUIS",
     "UrlNotResolvedErrorMessage": "L'URL '{0}' n'a pas pu être resolue. Erreur: '{1}'.",
     "SearchBoxPlaceholderTextLabel": "Placeholder texte dans la zone de recherche",
+    "CancelButtonText": "Annuler",
+    "DialogButtonLabel": "Éditer le modèle",
+    "DialogButtonText": "Éditer le modèle",
+    "SaveButtonText": "Enregistrer",
     "DynamicData": {
       "UseDynamicDataSourceLabel": "Utiliser une source de données dynamique",
       "SearchQueryPropertyLabel": "Requête de recherche",
@@ -40,6 +44,16 @@ define([], function() {
       "TopScoringIntentScoreLabel": "Confiance sur l'intention",
       "EnhancedQueryLabel": "Requête de recherche améliorée",
       "AlteredQueryLabel": "Requête corrigée"
+    },
+    "SuggestionProviders": {
+      "EditSuggestionProvidersLabel": "Configurar sugerencias",
+      "SuggestionProvidersLabel": "Fournisseurs de suggestions",
+      "SuggestionProvidersDescription": "Activer ou désactiver les fournisseurs de suggestions individuelles. Spécifiez le modèle de rendu pour les suggestions retournées par chaque fournisseur.",
+      "EnabledPropertyLabel": "Active",
+      "ProviderNamePropertyLabel": "Nom",
+      "InlineTemplateContentLabel": "Modèle inline",
+      "ExternalUrlLabel": "Url de modèle externe",
+      "InlineTemplateEditPanelTitle": "Modifier le modèle de suggestion"
     }
   }
 });

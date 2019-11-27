@@ -5,18 +5,18 @@ import {
   BaseClientSideWebPart,
   IWebPartPropertiesMetadata,
 } from '@microsoft/sp-webpart-base';
-import { 
-  IPropertyPaneConfiguration, 
-  IPropertyPaneField, 
-  PropertyPaneCheckbox, 
-  PropertyPaneDropdown, 
-  PropertyPaneDynamicField, 
-  PropertyPaneDynamicFieldSet, 
+import {
+  IPropertyPaneConfiguration,
+  IPropertyPaneField,
+  PropertyPaneCheckbox,
+  PropertyPaneDropdown,
+  PropertyPaneDynamicField,
+  PropertyPaneDynamicFieldSet,
   PropertyPaneHorizontalRule,
-  PropertyPaneLabel, 
-  PropertyPaneTextField, 
-  PropertyPaneToggle, 
-  DynamicDataSharedDepth 
+  PropertyPaneLabel,
+  PropertyPaneTextField,
+  PropertyPaneToggle,
+  DynamicDataSharedDepth
 } from "@microsoft/sp-property-pane";
 import * as strings from 'SearchBoxWebPartStrings';
 import ISearchBoxWebPartProps from './ISearchBoxWebPartProps';
@@ -34,6 +34,10 @@ import { PageOpenBehavior, QueryPathBehavior } from '../../helpers/UrlHelper';
 import SearchBoxContainer from './components/SearchBoxContainer/SearchBoxContainer';
 import { SearchComponentType } from '../../models/SearchComponentType';
 import { ThemeProvider, ThemeChangedEventArgs } from '@microsoft/sp-component-base';
+import IExtensibilityService from '../../services/ExtensibilityService/IExtensibilityService';
+import { ExtensibilityService } from '../../services/ExtensibilityService/ExtensibilityService';
+import { ISuggestionProvider } from '../../models/ISuggestionProvider';
+import { ISuggestion } from '../../models/ISuggestion';
 
 export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWebPartProps> implements IDynamicDataCallables {
 
@@ -42,6 +46,13 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
   private _serviceHelper: ServiceHelper;
   private _nlpService: INlpService;
   private _themeProvider: ThemeProvider;
+  private _extensibilityService: IExtensibilityService;
+  private _suggestionProviders: ISuggestionProvider[];
+
+  private _propertyFieldCodeEditorLanguages = null;
+  private _propertyFieldCollectionData = null;
+  private _customCollectionFieldType = null;
+  private _textDialogComponent = null;
 
   constructor() {
     super();
@@ -60,14 +71,14 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
     let inputValue = this.properties.defaultQueryKeywords.tryGetValue();
 
     if (inputValue && typeof(inputValue) === 'string') {
-      
+
       // Notify subscriber a new value if available
       this._searchQuery.rawInputValue = decodeURIComponent(inputValue);
       this.context.dynamicDataSourceManager.notifyPropertyChanged('searchQuery');
     }
-    
+
     const element: React.ReactElement<ISearchBoxContainerProps> = React.createElement(
-      SearchBoxContainer, { 
+      SearchBoxContainer, {
         onSearch: this._onSearch,
         searchInNewPage: this.properties.searchInNewPage,
         pageUrl: this.properties.pageUrl,
@@ -110,7 +121,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
       switch (propertyId) {
 
           case 'searchQuery':
-          
+
               const annotatedPropertyValue = {
                   sampleValue: {
                       'rawInputValue': "*",
@@ -134,7 +145,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
    * @param propertyId ID of the dynamic data set to retrieve the value for
    */
   public getPropertyValue(propertyId: string) {
-        
+
     switch (propertyId) {
 
         case 'searchQuery':
@@ -145,19 +156,23 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
     }
   }
 
-  protected onInit(): Promise<void> {
+  protected async onInit(): Promise<void> {
 
     this._serviceHelper = new ServiceHelper(this.context.httpClient);
     this.context.dynamicDataSourceManager.initializeSource(this);
-    
+
     this.initSearchService();
     this.initNlpService();
 
     this.initThemeVariant();
 
+    this._extensibilityService = new ExtensibilityService();
+
+    await this.initSuggestionProviders();
+
     this._bindHashChange();
 
-    return Promise.resolve();
+    return super.onInit();
   }
 
   protected onDispose(): void {
@@ -199,7 +214,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
     if (!this.properties.useDynamicDataSource) {
       this.properties.defaultQueryKeywords.setValue("");
     }
-    
+
     this._bindHashChange();
   }
 
@@ -216,17 +231,17 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
    * Verifies if the string is a correct URL
    * @param value the URL to verify
    */
-  private _validatePageUrl(value: string) {    
-    
+  private _validatePageUrl(value: string) {
+
     if ((!/^(https?):\/\/[^\s/$.?#].[^\s]*/.test(value) || !value) && this.properties.searchInNewPage) {
       return strings.SearchBoxUrlErrorMessage;
     }
-    
+
     return '';
   }
 
   /**
-   * Ensures the service URL is valid 
+   * Ensures the service URL is valid
    * @param value the service URL
    */
   private async _validateServiceUrl(value: string) {
@@ -251,12 +266,12 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
    * Initializes the query suggestions data provider instance according to the current environnement
    */
   private initSearchService() {
-      
+
       if (this.properties.enableQuerySuggestions) {
         if (Environment.type === EnvironmentType.Local ) {
           this._searchService = new MockSearchService();
         } else {
-          this._searchService = new SearchService(this.context.pageContext, this.context.spHttpClient);        
+          this._searchService = new SearchService(this.context.pageContext, this.context.spHttpClient);
         return "";
       }
     }
@@ -277,6 +292,57 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
     }
   }
 
+  private async initSuggestionProviders(): Promise<void> {
+
+    const [ defaultProviders, customProviders ] = await Promise.all([
+        this.getDefaultSuggestionProviders(),
+        this.getCustomSuggestionProviders()
+    ]);
+
+    this._suggestionProviders = [ ...defaultProviders, ...customProviders ];
+
+    if (!this.properties.suggestionProviders || this.properties.suggestionProviders.length === 0) {
+        //Add suggestion provider settings with default settings
+        this.properties.suggestionProviders = this._suggestionProviders.map<ISuggestionProvider>(dp => {
+            return {
+                ...dp,
+                enabled: undefined !== dp.enabled ? dp.enabled : true,
+                inlineTemplateContent: dp.inlineTemplateContent || dp.defaultTemplateContent,
+                externalTemplateUrl: dp.externalTemplateUrl || '',
+            }
+        });
+    }
+  }
+
+  private async getDefaultSuggestionProviders(): Promise<ISuggestionProvider[]> {
+    return [{
+        id: "default",
+        description: "Default SharePoint query suggestions.",
+        displayName: "SharePoint",
+        defaultTemplateContent: `<div>{{text}}</div>`,
+        getSuggestions: async (queryText: string): Promise<ISuggestion[]> => {
+          const suggestions = await this._searchService.suggest(queryText);
+          return suggestions.map<ISuggestion>(textSuggestion => ({ text: textSuggestion }));
+        },
+    }]
+  }
+
+  private async getCustomSuggestionProviders(): Promise<ISuggestionProvider[]> {
+    let customSuggestionProviders: ISuggestionProvider[] = [];
+
+    // Load extensibility library if present
+    const extensibilityLibrary = await this._extensibilityService.loadExtensibilityLibrary();
+
+    // Load extensibility additions
+    if (extensibilityLibrary && extensibilityLibrary.getCustomSuggestionProviders) {
+
+        // Add custom suggestion providers if any
+        customSuggestionProviders = extensibilityLibrary.getCustomSuggestionProviders();
+    }
+
+    return customSuggestionProviders;
+  }
+
   protected get propertiesMetadata(): IWebPartPropertiesMetadata {
     return {
       'defaultQueryKeywords': {
@@ -285,11 +351,34 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
     };
   }
 
+  protected async loadPropertyPaneResources(): Promise<void> {
+
+    // tslint:disable-next-line:no-shadowed-variable
+    const { PropertyFieldCodeEditorLanguages } = await import(
+        /* webpackChunkName: 'search-property-pane' */
+        '@pnp/spfx-property-controls/lib/PropertyFieldCodeEditor'
+    );
+    this._propertyFieldCodeEditorLanguages = PropertyFieldCodeEditorLanguages;
+
+    // Code editor component for property pane controls
+    this._textDialogComponent = await import(
+        /* webpackChunkName: 'search-property-pane' */
+        '../../controls/TextDialog'
+    );
+
+    const { PropertyFieldCollectionData, CustomCollectionFieldType } = await import(
+        /* webpackChunkName: 'search-property-pane' */
+        '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData'
+    );
+    this._propertyFieldCollectionData = PropertyFieldCollectionData;
+    this._customCollectionFieldType = CustomCollectionFieldType;
+  }
+
   /**
    * Determines the group fields for the search query options inside the property pane
    */
   private _getSearchQueryFields(): IPropertyPaneField<any>[] {
-      
+
     // Sets up search query fields
     let searchQueryConfigFields: IPropertyPaneField<any>[] = [
         PropertyPaneCheckbox('useDynamicDataSource', {
@@ -306,7 +395,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
             PropertyPaneDynamicField('defaultQueryKeywords', {
               label: strings.DynamicData.DefaultQueryKeywordsPropertyLabel,
             })
-          ],          
+          ],
           sharedConfiguration: {
             depth: DynamicDataSharedDepth.Source,
           }
@@ -326,6 +415,57 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
       PropertyPaneToggle("enableQuerySuggestions", {
         checked: false,
         label: strings.SearchBoxEnableQuerySuggestions
+      }),
+      this._propertyFieldCollectionData('suggestionProviders', {
+        manageBtnLabel: strings.SuggestionProviders.EditSuggestionProvidersLabel,
+        key: 'suggestionProviders',
+        panelHeader: strings.SuggestionProviders.EditSuggestionProvidersLabel,
+        panelDescription: strings.SuggestionProviders.SuggestionProvidersDescription,
+        disableItemCreation: true,
+        disableItemDeletion: true,
+        label: strings.SuggestionProviders.SuggestionProvidersLabel,
+        value: this.properties.suggestionProviders,
+        fields: [
+            {
+                id: 'enabled',
+                title: strings.SuggestionProviders.EnabledPropertyLabel,
+                type: this._customCollectionFieldType.boolean,
+            },
+            {
+                id: 'displayName',
+                title: strings.SuggestionProviders.ProviderNamePropertyLabel,
+                type: this._customCollectionFieldType.string,
+                disableEdit: true,
+            },
+            {
+                id: "inlineTemplateContent",
+                title: strings.SuggestionProviders.InlineTemplateContentLabel,
+                type: this._customCollectionFieldType.custom,
+                onCustomRender: (field, value, onUpdate) => {
+                    return (
+                        React.createElement("div", null,
+                            React.createElement(this._textDialogComponent.TextDialog, {
+                                language: this._propertyFieldCodeEditorLanguages.Handlebars,
+                                dialogTextFieldValue: value ? value : ``, //inline template default value
+                                onChanged: (fieldValue) => onUpdate(field.id, fieldValue),
+                                strings: {
+                                    cancelButtonText: strings.CancelButtonText,
+                                    dialogButtonText: strings.DialogButtonText,
+                                    dialogTitle: strings.SuggestionProviders.InlineTemplateEditPanelTitle,
+                                    saveButtonText: strings.SaveButtonText
+                                }
+                            })
+                        )
+                    );
+                }
+            },
+            {
+                id: 'externalTemplateUrl',
+                title: strings.SuggestionProviders.ExternalUrlLabel,
+                type: this._customCollectionFieldType.url,
+                placeholder: 'https://mysite/Documents/external.html'
+            },
+        ]
       }),
       PropertyPaneHorizontalRule(),
       PropertyPaneTextField('placeholderText', {
@@ -376,7 +516,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
               if (value === null ||
                 value.trim().length === 0) {
                 return strings.SearchBoxQueryParameterNotEmpty;
-              }              
+              }
             }
             return '';
           }
@@ -433,7 +573,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
         // Manually subscribe to hash change since the default property doesn't
         window.addEventListener('hashchange', this.render);
     } else {
-        window.removeEventListener('hashchange', this.render); 
+        window.removeEventListener('hashchange', this.render);
     }
   }
 

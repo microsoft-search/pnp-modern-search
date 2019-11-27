@@ -26,6 +26,10 @@ define([], function() {
     "SearchBoxUseStagingEndpoint": "Use LUIS staging endpoint",
     "UrlNotResolvedErrorMessage": "URL '{0}' can't be resolved. Error: '{1}'.",
     "SearchBoxPlaceholderTextLabel": "Placeholder text in search box",
+    "CancelButtonText": "Cancel",
+    "DialogButtonLabel": "Edit template",
+    "DialogButtonText": "Edit template",
+    "SaveButtonText": "Save",
     "DynamicData": {
       "UseDynamicDataSourceLabel": "Use a dynamic data  source",
       "SearchQueryPropertyLabel": "Search query",
@@ -40,6 +44,16 @@ define([], function() {
       "TopScoringIntentScoreLabel": "Top scoring entity confidence",
       "EnhancedQueryLabel": "Enhanced search query",
       "AlteredQueryLabel": "Corrected query"
+    },
+    "SuggestionProviders": {
+      "EditSuggestionProvidersLabel": "Configure Suggestions",
+      "SuggestionProvidersLabel": "Suggestion Providers",
+      "SuggestionProvidersDescription": "Enable or disable individual suggestion providers. Specify rendering template for suggestions returned by each provider.",
+      "EnabledPropertyLabel": "Active",
+      "ProviderNamePropertyLabel": "Name",
+      "InlineTemplateContentLabel": "Inline Template",
+      "ExternalUrlLabel": "External Template Url",
+      "InlineTemplateEditPanelTitle": "Edit suggestion template"
     }
   }
 });

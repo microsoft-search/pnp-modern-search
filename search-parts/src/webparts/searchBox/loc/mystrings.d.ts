@@ -26,6 +26,10 @@ declare interface ISearchBoxWebPartStrings {
   SearchBoxUseStagingEndpoint: string;
   SearchBoxPlaceholderTextLabel: string;
   UrlNotResolvedErrorMessage: string;
+  SaveButtonText: string;
+  CancelButtonText: string;
+  DialogButtonLabel: string;
+  DialogButtonText: string;
   DynamicData: {
     UseDynamicDataSourceLabel: string;
     SearchQueryPropertyLabel: string,
@@ -41,6 +45,16 @@ declare interface ISearchBoxWebPartStrings {
     TopScoringIntentScoreLabel: string;
     EnhancedQueryLabel: string;
     AlteredQueryLabel: string;
+  },
+  SuggestionProviders: {
+    EditSuggestionProvidersLabel: string;
+    SuggestionProvidersLabel: string;
+    SuggestionProvidersDescription: string;
+    EnabledPropertyLabel: string;
+    ProviderNamePropertyLabel: string;
+    InlineTemplateContentLabel: string;
+    ExternalUrlLabel: string;
+    InlineTemplateEditPanelTitle: string;
   }
 }
 
