@@ -12,24 +12,30 @@
     </style>
 
     <div class="template_root">
-        {{#>slider items=(JSONstringify @root.items 2) options=(JSONstringify @root.sliderOptions)}}
-            <div class="slide">
-                \{{#with (split AuthorOWSUSER '|')}}
-                    <pnp-document-card 	title="\{{../Title}}" 
-                                    location="\{{../SiteTitle}}"
-                                    preview-image="\{{getPreviewSrc item}}" 
-                                    preview-url="\{{../ServerRedirectedEmbedURL}}" 
-                                    date="\{{getDate ../Created 'LL'}}" 
-                                    href="\{{getUrl item}}" 
-                                    author="\{{../Author}}" 
-                                    profile-image="/_layouts/15/userphoto.aspx?size=L&username=\{{[0]}}" 
-                                    file-extension="\{{../IconExt}}"
-                                    enable-preview="false" 
-                                    show-file-icon="true">
-                    </pnp-document-card>
-                \{{/with}}
-            </div>                
-        {{/slider}}
+        {{#if @root.hasPrimaryOrSecondaryResults}} 
+            {{#>slider items=(JSONstringify @root.items 2) options=(JSONstringify @root.sliderOptions)}}
+                <div class="slide">
+                    \{{#with (split AuthorOWSUSER '|')}}
+                        <pnp-document-card 	title="\{{../Title}}" 
+                                        location="\{{../SiteTitle}}"
+                                        preview-image="\{{getPreviewSrc item}}" 
+                                        preview-url="\{{../ServerRedirectedEmbedURL}}" 
+                                        date="\{{getDate ../Created 'LL'}}" 
+                                        href="\{{getUrl item}}" 
+                                        author="\{{../Author}}" 
+                                        profile-image="/_layouts/15/userphoto.aspx?size=L&username=\{{[0]}}" 
+                                        file-extension="\{{../IconExt}}"
+                                        enable-preview="false" 
+                                        show-file-icon="true">
+                        </pnp-document-card>
+                    \{{/with}}
+                </div>                
+            {{/slider}}
+        {{else}}
+            {{#unless showBlank}}
+                <div class="template_noResults">{{@root.strings.NoResultMessage}}</div>
+            {{/unless}}
+        {{/if}}
     </div>
 </content>
 

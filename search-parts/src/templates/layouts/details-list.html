@@ -4,13 +4,19 @@
         /* Insert your CSS overrides here */
     </style>
 
-    <div class="template_root">        
-        {{#if showResultsCount}}
-            <div class="template_resultCount">
-                <label class="ms-fontWeight-semibold">{{getCountMessage totalRows keywords}}</label>
-            </div>
+    <div class="template_root">
+        {{#if @root.hasPrimaryOrSecondaryResults}}   
+            {{#if showResultsCount}}
+                <div class="template_resultCount">
+                    <label class="ms-fontWeight-semibold">{{getCountMessage totalRows keywords}}</label>
+                </div>
+            {{/if}}
+            <pnp-details-list items="{{JSONstringify items}}" columns-configuration="{{JSONstringify detailsListColumns}}" show-file-icon="{{@root.showFileIcon}}" is-compact="{{@root.isCompact}}"></pnp-details-list>
+        {{else}}
+            {{#unless showBlank}}
+                <div class="template_noResults">{{@root.strings.NoResultMessage}}</div>
+            {{/unless }}
         {{/if}}
-        <pnp-details-list items="{{JSONstringify items}}" columns-configuration="{{JSONstringify detailsListColumns}}" show-file-icon="{{@root.showFileIcon}}" is-compact="{{@root.isCompact}}"></pnp-details-list>
     </div>
 </content>
 
