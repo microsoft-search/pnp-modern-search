@@ -50,7 +50,7 @@ interface ISearchResultsContainerProps {
      */
     showBlank: boolean;
 
-    /** 
+    /**
      * The current display mode of Web Part
      */
     displayMode: DisplayMode;
@@ -60,7 +60,7 @@ interface ISearchResultsContainerProps {
      */
     templateService: TemplateService;
 
-    /** 
+    /**
      * The template raw content to display
      */
     templateContent: string;
@@ -85,13 +85,13 @@ interface ISearchResultsContainerProps {
      */
     currentUICultureName: string;
 
-    /** 
-     * The configured result types 
+    /**
+     * The configured result types
      */
     resultTypes: ISearchResultType[];
 
     /**
-     * The name of the CustomAction that should render this data. 
+     * The name of the CustomAction that should render this data.
      */
     rendererId: string;
 
@@ -116,7 +116,7 @@ interface ISearchResultsContainerProps {
      */
     onSearchResultsUpdate: SearchResultsOperationCallback;
 
-    /* 
+    /*
      * The selected page to show for the search results
      */
     selectedPage: number;

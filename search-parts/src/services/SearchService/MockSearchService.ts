@@ -51,7 +51,7 @@ class MockSearchService implements ISearchService {
     private _searchResults: ISearchResults;
 
     public constructor() {
-     
+
         this._searchResults = {
             QueryKeywords: "",
             RelevantResults: [
@@ -89,7 +89,7 @@ class MockSearchService implements ISearchService {
                     Author: 'John Doe',
                     SPSiteUrl: 'https://www.microsoft.com',
                     SiteTitle: 'Site 2',
-                    owstaxidmetadataalltagsinfo: "L0|#03f88cf2c-a641-4bca-8861-7e363f5d9a0f|Tag 1"              
+                    owstaxidmetadataalltagsinfo: "L0|#03f88cf2c-a641-4bca-8861-7e363f5d9a0f|Tag 1"
                 },
                 {
                     Title: 'Video 1 - Category 1',
@@ -100,7 +100,7 @@ class MockSearchService implements ISearchService {
                     PreviewUrl: 'https://via.placeholder.com/400',
                     Author: 'Aaron Painter',
                     SiteTitle: 'Site 2',
-                    owstaxidmetadataalltagsinfo: "L0|#0ce7eb131-c322-4a46-a398-383b0ec0f3c3|Tag 2"                                        
+                    owstaxidmetadataalltagsinfo: "L0|#0ce7eb131-c322-4a46-a398-383b0ec0f3c3|Tag 2"
                 },
                 {
                     Title: 'Video 2 - Category 2',
@@ -112,8 +112,8 @@ class MockSearchService implements ISearchService {
                     Author: 'Aaron Painter',
                     SPSiteUrl: 'https://www.microsoft.com',
                     SiteTitle: 'Site 3',
-                    owstaxidmetadataalltagsinfo: "L0|#01257a103-d2a1-43c4-8c07-6138527a88b7|Tag 3"               
-                },                                   
+                    owstaxidmetadataalltagsinfo: "L0|#01257a103-d2a1-43c4-8c07-6138527a88b7|Tag 3"
+                },
             ],
             RefinementResults: [
                 {
@@ -204,6 +204,7 @@ class MockSearchService implements ISearchService {
                     ]
                 }
             ],
+            SecondaryResults: [],
             PaginationInformation: {
                 TotalRows: 5,
                 CurrentPage: 1,
@@ -225,19 +226,19 @@ class MockSearchService implements ISearchService {
     }
 
     public search(query: string, pageNumber?: number): Promise<ISearchResults> {
-         
+
         const p1 = new Promise<ISearchResults>((resolve) => {
 
             const filters: string[] = [];
             let searchResults = clone(this._searchResults);
             searchResults.QueryKeywords = query;
             const filteredResults: ISearchResult[] = [];
-            
+
             if (this.refinementFilters.length > 0) {
                 this.refinementFilters.map((filter) => {
-                    filters.push(filter.Values[0].RefinementToken);                                                     
+                    filters.push(filter.Values[0].RefinementToken);
                 });
-                
+
                 searchResults.RelevantResults.map((searchResult) => {
                     const filtered = intersection(filters, searchResult.RefinementTokenValues.split(','));
                     if (filtered.length > 0) {
@@ -252,7 +253,7 @@ class MockSearchService implements ISearchService {
             searchResults.PaginationInformation.CurrentPage = pageNumber;
             searchResults.PaginationInformation.TotalRows = searchResults.RelevantResults.length;
             searchResults.PaginationInformation.MaxResultsPerPage = this.resultsCount;
-            
+
             // Return only the specified count
             searchResults.RelevantResults = this._paginate(searchResults.RelevantResults, this.resultsCount, pageNumber);
 
@@ -268,13 +269,13 @@ class MockSearchService implements ISearchService {
     private _paginate (array, pageSize: number, pageNumber: number) {
         let basePage = --pageNumber * pageSize;
 
-        return pageNumber < 0 || pageSize < 1 || basePage >= array.length 
-            ? [] 
+        return pageNumber < 0 || pageSize < 1 || basePage >= array.length
+            ? []
             : array.slice(basePage, basePage + pageSize );
     }
 
     public async suggest(keywords: string): Promise<string[]> {
-       
+
         let proposedSuggestions: string[] = [];
 
         const p1 = new Promise<string[]>((resolve) => {
@@ -290,14 +291,14 @@ class MockSearchService implements ISearchService {
                     proposedSuggestions.push(`${preMatchedText}<B>${matchedText}</B>${postMatchedText}`);
                 }
             });
-            
+
             // Simulate an async call
             setTimeout(() => {
                 resolve(proposedSuggestions);
             }, 100);
 
         });
-        
+
         return p1;
     }
 
@@ -364,14 +365,14 @@ class MockSearchService implements ISearchService {
                 LanguageTag:"en-US",
                 Lcid:1033
             },
-            { 
-                DisplayName: "German", 
-                LanguageTag: "de-DE", 
+            {
+                DisplayName: "German",
+                LanguageTag: "de-DE",
                 Lcid: 1031
             },
             {
-                DisplayName: "French", 
-                LanguageTag: "fr-FR", 
+                DisplayName: "French",
+                LanguageTag: "fr-FR",
                 Lcid: 1036
             },
             {   DisplayName: "Irish",

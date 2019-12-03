@@ -241,6 +241,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                 webServerRelativeUrl: this.context.pageContext.web.serverRelativeUrl,
                 resultTypes: this.properties.resultTypes,
                 useCodeRenderer: this.codeRendererIsSelected(),
+                isUsingCustomResultTemplate: this.properties.selectedLayout === ResultsLayoutOption.Custom,
                 customTemplateFieldValues: this.properties.customTemplateFieldValues,
                 rendererId: this.properties.selectedLayout as any,
                 enableLocalization: this.properties.enableLocalization,
@@ -359,15 +360,15 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
         // Load extensibility additions
         if (extensibilityLibrary) {
-            
+
             // Add custom web components if any
-            this.availableWebComponentDefinitions = this.availableWebComponentDefinitions.concat(extensibilityLibrary.getCustomWebComponents());          
+            this.availableWebComponentDefinitions = this.availableWebComponentDefinitions.concat(extensibilityLibrary.getCustomWebComponents());
         }
-        
+
         // Set the default search results layout
         this.properties.selectedLayout = (this.properties.selectedLayout !== undefined && this.properties.selectedLayout !== null) ? this.properties.selectedLayout : ResultsLayoutOption.DetailsList;
 
-        // Registers web components 
+        // Registers web components
         this._templateService.registerWebComponents(this.availableWebComponentDefinitions);
 
         this.context.dynamicDataSourceManager.initializeSource(this);
@@ -1546,7 +1547,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
      * @param args The new theme
      */
     private _handleThemeChangedEvent(args: ThemeChangedEventArgs): void {
-        
+
         if (!isEqual(this._themeVariant, args.theme)) {
             this._themeVariant = args.theme;
             this.render();

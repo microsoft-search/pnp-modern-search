@@ -107,15 +107,20 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
             iconProps = getFileTypeIconProps({ extension: trimStart(processedProps.fileExtension.trim(), '.'), size: 16, imageFileType: 'png' });
         }
 
+        let iconSrc = null;
+        if (globalSettings.icons[iconProps.iconName] && this.props.showFileIcon) {
+            iconSrc = globalSettings.icons[iconProps.iconName].code.props.src;
+        }
+
         let previewProps: IDocumentCardPreviewProps = {
             previewImages: [
                 {
                     name: processedProps.title,
                     previewImageSrc: processedProps.previewImage,
                     imageFit: ImageFit.centerCover,
-                    iconSrc: globalSettings.icons[iconProps.iconName].code.props.src,
-                    width: 318,
-                    height: 196,
+                    iconSrc: iconSrc,
+                    width: this.props.isCompact ? 144 : 318,
+                    height:  this.props.isCompact ? 88 : 196
                 }
             ],
         };
