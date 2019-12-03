@@ -241,7 +241,6 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                 webServerRelativeUrl: this.context.pageContext.web.serverRelativeUrl,
                 resultTypes: this.properties.resultTypes,
                 useCodeRenderer: this.codeRendererIsSelected(),
-                isUsingCustomResultTemplate: this.properties.selectedLayout === ResultsLayoutOption.Custom,
                 customTemplateFieldValues: this.properties.customTemplateFieldValues,
                 rendererId: this.properties.selectedLayout as any,
                 enableLocalization: this.properties.enableLocalization,
