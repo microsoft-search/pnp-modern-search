@@ -102,11 +102,6 @@ interface ISearchResultsContainerProps {
     customTemplateFieldValues:  ICustomTemplateFieldValue[];
 
     /**
-     * Indicate usage of custom result template (inline or external)
-     */
-    isUsingCustomResultTemplate: boolean;
-
-    /**
      * Web Parts localized strings
      */
     strings: ISearchResultsWebPartStrings;

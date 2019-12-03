@@ -20,6 +20,7 @@
     "@microsoft/sp-core-library": "1.9.1",
     "@microsoft/sp-component-base": "1.9.1",
     "@microsoft/sp-page-context": "1.9.1",
+    "office-ui-fabric-react": "6.194.0",
     "@microsoft/sp-http": "1.9.1",
     "typescript": "~3.3.0",
     "react-dom": "16.8.5",
