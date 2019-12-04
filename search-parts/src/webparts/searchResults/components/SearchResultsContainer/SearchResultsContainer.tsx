@@ -58,6 +58,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
         let renderWpContent: JSX.Element = null;
         let renderOverlay: JSX.Element = null;
         let renderWebPartTitle: JSX.Element = null;
+        let renderShimmerElements: JSX.Element = null;
 
         const sortPanel = <SortPanel
             onUpdateSort={this._onUpdateSort}
@@ -68,15 +69,13 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
         // Loading behavior
         if (areResultsLoading) {
 
-            if (items.RelevantResults.length > 0) {
+            if (items.RelevantResults.length > 0 || items.SecondaryResults.length > 0) {
                 renderOverlay = <div>
                     <Overlay isDarkThemed={false} className={styles.overlay}>
                         <Spinner size={SpinnerSize.medium} />
                     </Overlay>
                 </div>;
             } else {
-
-                let renderShimmerElements: JSX.Element = null;
 
                 const placeHolderContent = TemplateService.getPlaceholderMarkup(this.props.templateContent);
 
@@ -102,53 +101,19 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                     // Use default shimmers
                     renderShimmerElements = this._getShimmerElements();
                 }
-
-                renderWpContent = renderShimmerElements;
             }
         }
 
-        // WebPart Title
-        if (this.props.webPartTitle && this.props.webPartTitle.length > 0) {
-            renderWebPartTitle = <WebPartTitle title={this.props.webPartTitle} updateProperty={null} displayMode={DisplayMode.Read} />;
+        let totalPrimaryAndSecondaryResults = this.state.results.RelevantResults.length;
+        if (this.state.results.SecondaryResults.length > 0) {
+            totalPrimaryAndSecondaryResults += this.state.results.SecondaryResults.reduce((sum, block) => sum += block.Results.length, 0);
         }
-
-        // Error Message
-        if (hasError) {
-            renderWpContent = <MessageBar messageBarType={MessageBarType.error}>{errorMessage}</MessageBar>;
-        }
-
+        
         // WebPart content
-        if (areResultsLoading || !this.state.results.QueryKeywords || (items.RelevantResults.length === 0 && items.SecondaryResults.length === 0 && !this.props.isUsingCustomResultTemplate)) {
-            const selectedProperties = (this.props.searchService.selectedProperties) ? this.props.searchService.selectedProperties.join(',') : undefined;
-            const lastQuery = this.state.results.QueryKeywords + this.props.searchService.queryTemplate + selectedProperties + this.props.searchService.resultSourceId;
-
-            // Check if a search request has already been entered (to distinguish the first use scenario)
-            if (!this.props.showBlank && lastQuery && !areResultsLoading) {
-                renderWpContent =
-                    <div>
-                        {renderWebPartTitle}
-                        <div className={styles.searchWp__buttonBar}>{sortPanel}</div>
-                        <div id={this.state.mountingNodeId + "nores"}>
-                            <div className={styles.searchWp__noresult}>{strings.NoResultMessage}</div>
-                        </div>
-                    </div>;
-            } else {
-                if (this.props.displayMode === DisplayMode.Edit && !areResultsLoading && this.props.showBlank) {
-                    renderWpContent = <MessageBar messageBarType={MessageBarType.info}>{strings.ShowBlankEditInfoMessage}</MessageBar>;
-                }
-                else {
-                    renderWpContent =
-                        <div>
-                            <div id={this.state.mountingNodeId}></div>
-                        </div>;
-                }
-            }
+        if (totalPrimaryAndSecondaryResults === 0 && this.props.displayMode === DisplayMode.Edit && this.props.showBlank) {
+            renderWpContent = <MessageBar messageBarType={MessageBarType.info}>{strings.ShowBlankEditInfoMessage}</MessageBar>;
         } else {
 
-            let totalPrimaryAndSecondaryResults = this.state.results.RelevantResults.length;
-            if (this.state.results.SecondaryResults.length > 0) {
-                totalPrimaryAndSecondaryResults += this.state.results.SecondaryResults.reduce((sum, block) => sum += block.Results.length, 0);
-            }
             let templateContext = {
                 items: this.state.results.RelevantResults,
                 secondaryResults: this.state.results.SecondaryResults,
@@ -163,6 +128,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 hasPrimaryOrSecondaryResults: totalPrimaryAndSecondaryResults > 0,
                 totalPrimaryAndSecondaryResults: totalPrimaryAndSecondaryResults,
                 strings: strings,
+                showBlank: this.props.showBlank,
                 themeVariant: this.props.themeVariant,
                 spellingSuggestion: items.SpellingSuggestion
             };
@@ -181,19 +147,29 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             }
 
             renderWpContent =
-                <div>
-                    {renderWebPartTitle}
-                    <div className={styles.searchWp__buttonBar}>{sortPanel}</div>
-                    {renderOverlay}
+                <div>                    
+                    <div className={styles.searchWp__buttonBar}>{sortPanel}</div>                       
                     <div id={this.state.mountingNodeId} />
+                    {renderOverlay}
                     {renderSearchResultTemplate}
                 </div>;
+        }
+    
+        // WebPart Title
+        if (this.props.webPartTitle && this.props.webPartTitle.length > 0) {
+            renderWebPartTitle = <WebPartTitle title={this.props.webPartTitle} updateProperty={null} displayMode={DisplayMode.Read} />;
+        }
+
+        // Error Message
+        if (hasError) {
+            renderWpContent = <MessageBar messageBarType={MessageBarType.error}>{errorMessage}</MessageBar>;
         }
 
         return (
             <div className={styles.searchWp}>
                 <div tabIndex={-1} ref={(ref) => { this._searchWpRef = ref; }}></div>
-                {renderWpContent}
+                {renderWebPartTitle}                
+                {renderShimmerElements ? renderShimmerElements : renderWpContent}
             </div>
         );
     }

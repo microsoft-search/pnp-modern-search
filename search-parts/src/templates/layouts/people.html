@@ -7,28 +7,34 @@
     </style>
 
     <div class="template_root">
-        <div class="template_defaultCard">
-            {{#if showResultsCount}}
-            <div class="template_resultCount">
-                <label class="ms-fontWeight-semibold">{{getCountMessage totalRows keywords}}</label>
-            </div>
-            {{/if}}
-            <div class="ms-Grid">
-                <div class="ms-Grid-row">
-                    {{#each items as |item|}}
-                    <div class="ms-Grid-col ms-sm12 ms-md12 ms-lg12">
-                        {{#> resultTypes item=item}}
-                            <div class="personaCard">
-                                {{#with (split AccountName '|')}}
-                                    <pnp-persona-card fields-configuration="{{JSONstringify ../../../peopleFields}}" item="{{JSONstringify item}}" persona-size="{{../../../personaSize}}" />
-                                {{/with}}
-                            </div>
-                        {{/resultTypes}}
+        {{#if @root.hasPrimaryOrSecondaryResults}} 
+            <div class="template_defaultCard">
+                {{#if showResultsCount}}
+                <div class="template_resultCount">
+                    <label class="ms-fontWeight-semibold">{{getCountMessage totalRows keywords}}</label>
+                </div>
+                {{/if}}
+                <div class="ms-Grid">
+                    <div class="ms-Grid-row">
+                        {{#each items as |item|}}
+                        <div class="ms-Grid-col ms-sm12 ms-md12 ms-lg12">
+                            {{#> resultTypes item=item}}
+                                <div class="personaCard">
+                                    {{#with (split AccountName '|')}}
+                                        <pnp-persona-card fields-configuration="{{JSONstringify ../../../peopleFields}}" item="{{JSONstringify item}}" persona-size="{{../../../personaSize}}" />
+                                    {{/with}}
+                                </div>
+                            {{/resultTypes}}
+                        </div>
+                        {{/each}}
                     </div>
-                    {{/each}}
                 </div>
             </div>
-        </div>
+        {{else}}
+            {{#unless showBlank}}
+                <div class="template_noResults">{{@root.strings.NoResultMessage}}</div>
+            {{/unless }}
+        {{/if}}
     </div>
 </content>
     

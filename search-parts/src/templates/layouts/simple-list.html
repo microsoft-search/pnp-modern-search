@@ -9,82 +9,88 @@
     </style>
 
     <div class="template_root">
-        {{#if showResultsCount}}
-            <div class="template_resultCount">
-                <label class="ms-fontWeight-semibold">{{getCountMessage totalRows keywords}}</label>
-            </div>
-        {{/if}}
-        {{#if promotedResults}}
-            <ul class="template_defaultList template_promotedResults">
-            <li class="ms-fontWeight-semibold title">{{strings.PromotedResultsLabel}}</li>
-            {{#each promotedResults as |promotedResult|}}
-                <li>
-                    <div>
-                        <i class="ms-Icon ms-Icon--MiniLink" aria-hidden="true"></i>
-                    </div>
-                    <div>
-                        <a class="ms-font-l" href="{{Url}}">{{Title}}</a>
-                        <div class="ms-font-s">{{Description}}</div>
-                    </div>
-                </li>
-            {{/each}}
-        </ul>
-        {{/if}}
-        <ul class="template_defaultList">
-            {{#each items as |item|}}
-                <li class="template_listItem" tabindex="0">
-                    {{#> resultTypes item=item}}
-                        {{!-- The block below will be used as default item template if no result types matched --}}
-                        <div class="template_result">
-                                <pnp-fabric-icon file-extension='{{IconExt}}' image-url='{{SiteLogo}}'></pnp-fabric-icon>
-                                <div class="template_contentContainer">
-                                    <span class="template_title example-themePrimary"><a href="{{getUrl item}}">{{Title}}</a></span>
-                                    <span>
-                                        {{getSummary HitHighlightedSummary}}
-                                        <span class="template_author">
-                                            {{#with (split AuthorOWSUSER '|')}}
-                                                    {{[1]}}
-                                            {{/with}}
+        {{#if @root.hasPrimaryOrSecondaryResults}} 
+            {{#if showResultsCount}}
+                <div class="template_resultCount">
+                    <label class="ms-fontWeight-semibold">{{getCountMessage totalRows keywords}}</label>
+                </div>
+            {{/if}}
+            {{#if promotedResults}}
+                <ul class="template_defaultList template_promotedResults">
+                <li class="ms-fontWeight-semibold title">{{strings.PromotedResultsLabel}}</li>
+                {{#each promotedResults as |promotedResult|}}
+                    <li>
+                        <div>
+                            <i class="ms-Icon ms-Icon--MiniLink" aria-hidden="true"></i>
+                        </div>
+                        <div>
+                            <a class="ms-font-l" href="{{Url}}">{{Title}}</a>
+                            <div class="ms-font-s">{{Description}}</div>
+                        </div>
+                    </li>
+                {{/each}}
+            </ul>
+            {{/if}}
+            <ul class="template_defaultList">
+                {{#each items as |item|}}
+                    <li class="template_listItem" tabindex="0">
+                        {{#> resultTypes item=item}}
+                            {{!-- The block below will be used as default item template if no result types matched --}}
+                            <div class="template_result">
+                                    <pnp-fabric-icon file-extension='{{IconExt}}' image-url='{{SiteLogo}}'></pnp-fabric-icon>
+                                    <div class="template_contentContainer">
+                                        <span class="template_title example-themePrimary"><a href="{{getUrl item}}">{{Title}}</a></span>
+                                        <span>
+                                            {{getSummary HitHighlightedSummary}}
+                                            <span class="template_author">
+                                                {{#with (split AuthorOWSUSER '|')}}
+                                                        {{[1]}}
+                                                {{/with}}
+                                            </span>
                                         </span>
-                                    </span>
-                                    <span>{{getDate Created "LL"}}</span> 
-                                    <div class="template_tags example-themePrimary">
-                                        {{#if owstaxidmetadataalltagsinfo}}
-                                            <i class="ms-Icon ms-Icon--Tag" aria-hidden="true"></i>
-                                            {{#each (split owstaxidmetadataalltagsinfo ",") as |tag| }}                                                    
-                                                <a href="#owstaxidmetadataalltagsinfo:'{{trim tag}}'">{{tag}}</a>
-                                            {{/each}}
-                                        {{/if}}
+                                        <span>{{getDate Created "LL"}}</span> 
+                                        <div class="template_tags example-themePrimary">
+                                            {{#if owstaxidmetadataalltagsinfo}}
+                                                <i class="ms-Icon ms-Icon--Tag" aria-hidden="true"></i>
+                                                {{#each (split owstaxidmetadataalltagsinfo ",") as |tag| }}                                                    
+                                                    <a href="#owstaxidmetadataalltagsinfo:'{{trim tag}}'">{{tag}}</a>
+                                                {{/each}}
+                                            {{/if}}
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="template_previewContainer ms-hiddenSm">
-                                {{#eq item.contentclass 'STS_ListItem_DocumentLibrary'}} 
-                                    {{#if ServerRedirectedPreviewURL}}
-                                        <div class="doc-container">
-                                            <div class="img-container">
-                                                {{#eq FileType 'pdf'}}
-                                                    <!-- Documents from OneDrive sites can't be viewed directly due to SAMEORIGIN iframe restrictions-->
-                                                    {{#contains Path '-my.sharepoint'}}
-                                                        <img class="document-preview-item img-preview" width="120" src="{{ServerRedirectedPreviewURL}}" data-src="{{ServerRedirectedPreviewURL}}" data-url="{{ServerRedirectedEmbedURL}}" /> 
+                                    <div class="template_previewContainer ms-hiddenSm">
+                                    {{#eq item.contentclass 'STS_ListItem_DocumentLibrary'}} 
+                                        {{#if ServerRedirectedPreviewURL}}
+                                            <div class="doc-container">
+                                                <div class="img-container">
+                                                    {{#eq FileType 'pdf'}}
+                                                        <!-- Documents from OneDrive sites can't be viewed directly due to SAMEORIGIN iframe restrictions-->
+                                                        {{#contains Path '-my.sharepoint'}}
+                                                            <img class="document-preview-item img-preview" width="120" src="{{ServerRedirectedPreviewURL}}" data-src="{{ServerRedirectedPreviewURL}}" data-url="{{ServerRedirectedEmbedURL}}" /> 
+                                                        {{else}}
+                                                            <img class="document-preview-item img-preview" width="120" src="{{ServerRedirectedPreviewURL}}" data-src="{{ServerRedirectedPreviewURL}}" data-url="{{Path}}" /> 
+                                                        {{/contains}} 
                                                     {{else}}
-                                                        <img class="document-preview-item img-preview" width="120" src="{{ServerRedirectedPreviewURL}}" data-src="{{ServerRedirectedPreviewURL}}" data-url="{{Path}}" /> 
-                                                    {{/contains}} 
-                                                {{else}}
-                                                    <img class="document-preview-item img-preview" width="120" src="{{ServerRedirectedPreviewURL}}" data-src="{{ServerRedirectedPreviewURL}}" data-url="{{ServerRedirectedEmbedURL}}" /> 
-                                                {{/eq}}
-                                                <div class="hover">
-                                                    <div><i class="ms-Icon ms-Icon--Preview" aria-hidden="true"></i></div>
+                                                        <img class="document-preview-item img-preview" width="120" src="{{ServerRedirectedPreviewURL}}" data-src="{{ServerRedirectedPreviewURL}}" data-url="{{ServerRedirectedEmbedURL}}" /> 
+                                                    {{/eq}}
+                                                    <div class="hover">
+                                                        <div><i class="ms-Icon ms-Icon--Preview" aria-hidden="true"></i></div>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    {{/if}} 
-                                {{/eq}}
-                                </div>
-                        </div>
-                    {{/resultTypes}}
-                </li>
-            {{/each}}
-        </ul>
+                                        {{/if}} 
+                                    {{/eq}}
+                                    </div>
+                            </div>
+                        {{/resultTypes}}
+                    </li>
+                {{/each}}
+            </ul>
+        {{else}}
+            {{#unless showBlank}}
+                <div class="template_noResults">{{@root.strings.NoResultMessage}}</div>
+            {{/unless }}
+        {{/if}}
     </div>
 </content>
 
