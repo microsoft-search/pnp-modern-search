@@ -423,6 +423,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
         panelDescription: strings.SuggestionProviders.SuggestionProvidersDescription,
         disableItemCreation: true,
         disableItemDeletion: true,
+        disabled: !this.properties.enableQuerySuggestions,
         label: strings.SuggestionProviders.SuggestionProvidersLabel,
         value: this.properties.suggestionProviders,
         fields: [
