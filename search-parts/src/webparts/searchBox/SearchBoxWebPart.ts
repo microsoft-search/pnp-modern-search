@@ -36,8 +36,9 @@ import { SearchComponentType } from '../../models/SearchComponentType';
 import { ThemeProvider, ThemeChangedEventArgs } from '@microsoft/sp-component-base';
 import IExtensibilityService from '../../services/ExtensibilityService/IExtensibilityService';
 import { ExtensibilityService } from '../../services/ExtensibilityService/ExtensibilityService';
-import { ISuggestionProvider } from '../../models/ISuggestionProvider';
-import { ISuggestion } from '../../models/ISuggestion';
+import { ISuggestionProviderDefinition } from '../../services/ExtensibilityService/ISuggestionProviderDefinition';
+import { SharePointDefaultSuggestionProvider } from '../../providers/SharePointDefaultSuggestionProvider';
+import { ISuggestionProviderInstance } from '../../services/ExtensibilityService/ISuggestionProviderInstance';
 
 export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWebPartProps> implements IDynamicDataCallables {
 
@@ -47,7 +48,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
   private _nlpService: INlpService;
   private _themeProvider: ThemeProvider;
   private _extensibilityService: IExtensibilityService;
-  private _suggestionProviders: ISuggestionProvider[];
+  private _suggestionProviderInstances: ISuggestionProviderInstance<any>[];
 
   private _propertyFieldCodeEditorLanguages = null;
   private _propertyFieldCollectionData = null;
@@ -87,7 +88,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
         queryStringParameter: this.properties.queryStringParameter,
         inputValue: this._searchQuery.rawInputValue,
         enableQuerySuggestions: this.properties.enableQuerySuggestions,
-        suggestionProviders: this._suggestionProviders,
+        suggestionProviders: this._suggestionProviderInstances,
         searchService: this._searchService,
         enableDebugMode: this.properties.enableDebugMode,
         enableNlpService: this.properties.enableNlpService,
@@ -300,23 +301,25 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
         this.getCustomSuggestionProviders()
     ]);
 
-    this._suggestionProviders = [ ...defaultProviders, ...customProviders ];
+    const providerDefinitions = [ ...defaultProviders, ...customProviders ];
 
     // Ensure all suggestion providers have defaults properties set
-    this._suggestionProviders = this._suggestionProviders.map<ISuggestionProvider>(dp => {
-        return {
-            ...dp,
-            enabled: undefined !== dp.enabled ? dp.enabled : true,
-            inlineTemplateContent: dp.inlineTemplateContent || dp.defaultTemplateContent,
-            externalTemplateUrl: dp.externalTemplateUrl || '',
-        }
+    this._suggestionProviderInstances = providerDefinitions.map<ISuggestionProviderInstance<any>>(providerDefinition => {
+
+      providerDefinition.providerClass.prototype._ctx = this.context;
+
+      return {
+        ...providerDefinition,
+        providerEnabled: undefined !== providerDefinition.providerEnabled ? providerDefinition.providerEnabled : true,
+        instance: Object.create(providerDefinition.providerClass),
+      }
     });
 
     // If there are suggestion provider settings saved in wp props, merge those with hydrated providers from above
     // We need to do this because the functions (getSuggestions) needs to be re-added to serialized provider object from wp props
     if (this.properties.suggestionProviders && this.properties.suggestionProviders.length > 0) {
-      this._suggestionProviders = this._suggestionProviders.map<ISuggestionProvider>(sgp => {
-        const providerFromProps = this.properties.suggestionProviders.find(sp => sp.id === sgp.id) || {};
+      this._suggestionProviderInstances = this._suggestionProviderInstances.map<ISuggestionProviderInstance<any>>(sgp => {
+        const providerFromProps = this.properties.suggestionProviders.find(sp => sp.providerName === sgp.providerName) || {};
         return {
           ...sgp,
           ...providerFromProps
@@ -324,26 +327,23 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
       })
     }
     else {
-      this.properties.suggestionProviders = this._suggestionProviders;
+      this.properties.suggestionProviders = this._suggestionProviderInstances;
     }
 
   }
 
-  private async getDefaultSuggestionProviders(): Promise<ISuggestionProvider[]> {
+  private async getDefaultSuggestionProviders(): Promise<ISuggestionProviderDefinition<any>[]> {
     return [{
-        id: "default",
-        description: "Default SharePoint query suggestions.",
-        displayName: "SharePoint",
-        defaultTemplateContent: `<div>{{text}}</div>`,
-        getSuggestions: async (queryText: string): Promise<ISuggestion[]> => {
-          const suggestions = await this._searchService.suggest(queryText);
-          return suggestions.map<ISuggestion>(textSuggestion => ({ text: textSuggestion }));
-        },
-    }]
+        providerName: "default",
+        providerDescription: "Default SharePoint query suggestions.",
+        providerDisplayName: "SharePoint",
+        providerDefaultTemplateContent: `<div>{{text}}</div>`,
+        providerClass: SharePointDefaultSuggestionProvider
+    }];
   }
 
-  private async getCustomSuggestionProviders(): Promise<ISuggestionProvider[]> {
-    let customSuggestionProviders: ISuggestionProvider[] = [];
+  private async getCustomSuggestionProviders(): Promise<ISuggestionProviderDefinition<any>[]> {
+    let customSuggestionProviders: ISuggestionProviderDefinition<any>[] = [];
 
     // Load extensibility library if present
     const extensibilityLibrary = await this._extensibilityService.loadExtensibilityLibrary();
@@ -443,18 +443,18 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
         value: this.properties.suggestionProviders,
         fields: [
             {
-                id: 'enabled',
+                id: 'providerEnabled',
                 title: strings.SuggestionProviders.EnabledPropertyLabel,
                 type: this._customCollectionFieldType.boolean,
             },
             {
-                id: 'displayName',
+                id: 'providerDisplayName',
                 title: strings.SuggestionProviders.ProviderNamePropertyLabel,
                 type: this._customCollectionFieldType.string,
                 disableEdit: true,
             },
             {
-                id: "inlineTemplateContent",
+                id: "providerInlineTemplateContent",
                 title: strings.SuggestionProviders.InlineTemplateContentLabel,
                 type: this._customCollectionFieldType.custom,
                 onCustomRender: (field, value, onUpdate) => {
@@ -476,7 +476,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
                 }
             },
             {
-                id: 'externalTemplateUrl',
+                id: 'providerExternalTemplateUrl',
                 title: strings.SuggestionProviders.ExternalUrlLabel,
                 type: this._customCollectionFieldType.url,
                 placeholder: 'https://mysite/Documents/external.html'

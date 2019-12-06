@@ -249,8 +249,8 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
           this.props.suggestionProviders.map(async (provider) => {
 
             // Verify we have a valid suggestion provider and it is enabled
-            if (provider && provider.enabled && provider.getSuggestions) {
-              const suggestions = await provider.getSuggestions(inputValue);
+            if (provider && provider.providerEnabled && provider.instance.getSuggestions) {
+              const suggestions = await provider.instance.getSuggestions(inputValue);
 
               // Verify the input value hasn't changed before we add the returned suggestion
               if (!this.state.termToSuggestFrom || inputValue === this.state.searchInputValue) {
@@ -288,7 +288,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
           else {
 
             //Verify we have at least one suggestion provider that has getZeroTermSuggestions defined
-            if (this.props.suggestionProviders && this.props.suggestionProviders.some(sgp => undefined !== sgp.getZeroTermSuggestions)) {
+            if (this.props.suggestionProviders && this.props.suggestionProviders.some(sgp => sgp.instance && undefined !== sgp.instance.getZeroTermSuggestions)) {
               this.setState({
                 errorMessage: null,
                 proposedQuerySuggestions: [],
@@ -298,8 +298,8 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
               this.props.suggestionProviders.map(async (provider) => {
 
                 // Verify we have a valid suggestion provider and it is enabled
-                if (provider && provider.enabled && provider.getZeroTermSuggestions) {
-                  const suggestions = await provider.getZeroTermSuggestions();
+                if (provider && provider.providerEnabled && provider.instance.getZeroTermSuggestions) {
+                  const suggestions = await provider.instance.getZeroTermSuggestions();
 
                   // Verify the input value hasn't changed before we add the returned suggestion
                   if (inputValue === this.state.searchInputValue) {
@@ -321,11 +321,6 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
             isRetrievingSuggestions: false
           });
         }
-
-        // // Clear suggestions history
-        // this.setState({
-        //   proposedQuerySuggestions: [],
-        // });
       }
 
     } else {
@@ -352,11 +347,28 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
     // Remove inenr HTML markup if there is
     replacedSearchInputvalue = replacedSearchInputvalue.replace(/(<B>|<\/B>)/g,"");
 
-    this.setState({
+    // Check if our custom suggestion has a onSuggestionSelected handler
+    let shouldUpdateSelectedSuggestion: boolean = true;
+    if (suggestion.onSuggestionSelected) {
+      try {
+        shouldUpdateSelectedSuggestion = suggestion.onSuggestionSelected(suggestion);
+      }
+      catch (error) {
+        console.log(`Error occurred while executing custom onSuggestionSeleted() handler. ${error}`);
+      }
+    }
+
+    let newState = {
       searchInputValue: replacedSearchInputvalue,
-      selectedQuerySuggestions: update(this.state.selectedQuerySuggestions, { $push: [suggestion]}),
       proposedQuerySuggestions:[],
-    });
+    };
+
+    // If custom handler returned false, then don't update selectedQuerySuggestions in state
+    if (shouldUpdateSelectedSuggestion) {
+      newState["selectedQuerySuggestions"] = update(this.state.selectedQuerySuggestions, { $push: [suggestion]});
+    }
+
+    this.setState(newState);
   }
 
   private _replaceAt(string: string, index: number, replace: string) {

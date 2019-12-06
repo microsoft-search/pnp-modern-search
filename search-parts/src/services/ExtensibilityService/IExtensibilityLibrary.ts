@@ -1,5 +1,5 @@
 import { IComponentDefinition } from './IComponentDefinition';
-import { ISuggestionProvider } from '../../models/ISuggestionProvider';
+import { ISuggestionProviderDefinition } from './ISuggestionProviderDefinition';
 
 export interface IExtensibilityLibrary {
 
@@ -11,5 +11,5 @@ export interface IExtensibilityLibrary {
     /**
      * Returns custom suggestion providers
      */
-    getCustomSuggestionProviders(): ISuggestionProvider[];
+    getCustomSuggestionProviders(): ISuggestionProviderDefinition<any>[];
 }
