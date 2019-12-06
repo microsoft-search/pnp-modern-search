@@ -2,11 +2,13 @@ import { PageOpenBehavior, QueryPathBehavior } from '../../../../helpers/UrlHelp
 import ISearchService from       '../../../../services/SearchService/ISearchService';
 import INlpService from '../../../../services/NlpService/INlpService';
 import ISearchQuery from '../../../../models/ISearchQuery';
+import { ISuggestionProvider } from '../../../../models/ISuggestionProvider';
 
 export interface ISearchBoxContainerProps {
     onSearch: (searchQuery: ISearchQuery) => void;
     searchInNewPage: boolean;
     enableQuerySuggestions: boolean;
+    suggestionProviders: ISuggestionProvider[];
     enableNlpService: boolean;
     searchService: ISearchService;
     pageUrl: string;

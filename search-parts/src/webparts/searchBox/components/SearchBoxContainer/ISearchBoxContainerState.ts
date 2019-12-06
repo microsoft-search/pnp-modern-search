@@ -1,7 +1,8 @@
 import { INlpResponse } from "../../../../models/INlpResponse";
+import { ISuggestion } from "../../../../models/ISuggestion";
 
 interface ISearchBoxContainerState {
-    
+
     /**
      * The enhanced query response
      */
@@ -10,18 +11,23 @@ interface ISearchBoxContainerState {
     /**
      * List of proposed suggestions in the dropdown list
      */
-    proposedQuerySuggestions: string[];
+    proposedQuerySuggestions: ISuggestion[];
 
     /**
      * The list of suggestions explicitly selected by the user
      */
-    selectedQuerySuggestions: string[];
+    selectedQuerySuggestions: ISuggestion[];
+
+    /**
+     * List of query suggestions shown with an empty search box "zero term"
+     */
+    zeroTermQuerySuggestions: ISuggestion[];
 
     /**
      * The current value of the input string
      */
     searchInputValue: string;
-    
+
     /**
      * Term used as basis to get suggestion
      */

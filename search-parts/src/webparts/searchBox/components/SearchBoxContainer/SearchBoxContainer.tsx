@@ -14,8 +14,9 @@ import styles from '../SearchBoxWebPart.module.scss';
 import ISearchQuery from '../../../../models/ISearchQuery';
 import NlpDebugPanel from '../NlpDebugPanel/NlpDebugPanel';
 import { IconButton } from 'office-ui-fabric-react/lib/Button';
+import { ISuggestion } from '../../../../models/ISuggestion';
 
-const SUGGESTION_CHAR_COUNT_TRIGGER = 3;
+const SUGGESTION_CHAR_COUNT_TRIGGER = 2;
 
 export default class SearchBoxContainer extends React.Component<ISearchBoxContainerProps, ISearchBoxContainerState> {
 
@@ -27,6 +28,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
       enhancedQuery: null,
       proposedQuerySuggestions: [],
       selectedQuerySuggestions: [],
+      zeroTermQuerySuggestions: null,
       isRetrievingSuggestions: false,
       searchInputValue: (props.inputValue) ? decodeURIComponent(props.inputValue) : '',
       termToSuggestFrom: null,
@@ -41,6 +43,8 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
 
   private renderSearchBoxWithAutoComplete(): JSX.Element {
     var clearButton = null;
+    let inputHasFocus = false;
+
     if (this.state.showClearButton) {
       clearButton = <IconButton iconProps={{
                         iconName: 'Clear',
@@ -69,11 +73,11 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
 
                     if (!isOpen || (isOpen && highlightedIndex === null)) {
                       if (event.keyCode === 13) {
-                        // Submit search on "Enter" 
+                        // Submit search on "Enter"
                         this._onSearch(this.state.searchInputValue);
                       }
                       else if (event.keyCode === 27) {
-                        // Clear search on "Escape" 
+                        // Clear search on "Escape"
                         this._onSearch('', true);
                       }
                     }
@@ -103,7 +107,15 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                       });
                     }
                   }
-              }}/>
+              }}
+              onFocus={ () => {
+                inputHasFocus = true;
+                openMenu();
+              }}
+              onBlur = { () => {
+                inputHasFocus = false;
+              }}
+              />
               {clearButton}
               <IconButton iconProps={{
                   iconName: 'Search',
@@ -111,7 +123,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                 }} onClick= {() => { this._onSearch(this.state.searchInputValue);} } className={ styles.searchBtn }>
               </IconButton>
             </div>
-            {isOpen ?
+            {isOpen || inputHasFocus ?
               this.renderSuggestions(getItemProps, selectedItem, highlightedIndex)
             : null}
           </div>
@@ -130,7 +142,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
     }
 
     return  <div className={ styles.searchFieldGroup }>
-              <TextField 
+              <TextField
                 className={ styles.searchTextField }
                 placeholder={ this.props.placeholderText ? this.props.placeholderText : strings.SearchInputPlaceholder }
                 value={ this.state.searchInputValue }
@@ -143,11 +155,11 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                 onKeyDown={ (event) => {
 
                     if (event.keyCode === 13) {
-                      // Submit search on "Enter" 
+                      // Submit search on "Enter"
                       this._onSearch(this.state.searchInputValue);
                     }
                     else if (event.keyCode === 27) {
-                      // Clear search on "Escape" 
+                      // Clear search on "Escape"
                       this._onSearch('', true);
                     }
 
@@ -169,7 +181,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
    * @param highlightedIndex downshift highlightedIndex callback
    */
   private renderSuggestions(getItemProps, selectedItem, highlightedIndex): JSX.Element {
-    
+
     let renderSuggestions: JSX.Element = null;
     let suggestions: JSX.Element[] = null;
 
@@ -202,11 +214,11 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                                     fontWeight: selectedItem === suggestion ? 'bold' : 'normal'
                                   }}>
                                       <Label className={ highlightedIndex === index ? `${styles.suggestionItem} ${styles.selected}` : `${styles.suggestionItem}`}>
-                                          <div dangerouslySetInnerHTML={{ __html: suggestion }}></div>
+                                          <div dangerouslySetInnerHTML={{ __html: suggestion.text }}></div>
                                       </Label>
                                   </div>;
                                 });
-      
+
       renderSuggestions = <div className={styles.suggestionPanel}>
                             { suggestions }
                           </div>;
@@ -217,44 +229,103 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
 
   /**
    * Handler when a user enters new keywords in the search box input
-   * @param inputValue 
+   * @param inputValue
    */
   private async _onChange(inputValue: string) {
 
-    if (inputValue && this.props.enableQuerySuggestions) {
+    if (this.props.enableQuerySuggestions) {
 
-      if (inputValue.length >= SUGGESTION_CHAR_COUNT_TRIGGER) {
+      if (inputValue && inputValue.length >= SUGGESTION_CHAR_COUNT_TRIGGER) {
 
         try {
 
           this.setState({
             isRetrievingSuggestions: true,
-            errorMessage: null
+            errorMessage: null,
+            proposedQuerySuggestions: [],
           });
 
-          const suggestions = await this.props.searchService.suggest(inputValue);
+          // const suggestions = await this.props.searchService.suggest(inputValue);
+          this.props.suggestionProviders.map(async (provider) => {
 
-          this.setState({
-            proposedQuerySuggestions: suggestions,
-            termToSuggestFrom: inputValue, // The term that was used as basis to get the suggestions from
-            isRetrievingSuggestions: false
+            // Verify we have a valid suggestion provider and it is enabled
+            if (provider && provider.enabled && provider.getSuggestions) {
+              const suggestions = await provider.getSuggestions(inputValue);
+
+              // Verify the input value hasn't changed before we add the returned suggestion
+              if (!this.state.termToSuggestFrom || inputValue === this.state.searchInputValue) {
+                this.setState({
+                  proposedQuerySuggestions: [...this.state.proposedQuerySuggestions, ...suggestions ], // Merge suggestions
+                  termToSuggestFrom: inputValue, // The term that was used as basis to get the suggestions from
+                  isRetrievingSuggestions: false
+                });
+              }
+            }
+
           });
 
         } catch(error) {
-          
+
           this.setState({
             errorMessage: error.message,
             proposedQuerySuggestions: [],
             isRetrievingSuggestions: false
           });
         }
-        
-      } else {
 
-        // Clear suggestions history
-        this.setState({
-          proposedQuerySuggestions: [],
-        });
+      }
+      else {
+
+        try {
+
+          if (this.state.zeroTermQuerySuggestions) {
+            if (this.state.zeroTermQuerySuggestions.length > 0) {
+              this.setState({
+                proposedQuerySuggestions: this.state.zeroTermQuerySuggestions
+              });
+            }
+          }
+          else {
+
+            //Verify we have at least one suggestion provider that has getZeroTermSuggestions defined
+            if (this.props.suggestionProviders && this.props.suggestionProviders.some(sgp => undefined !== sgp.getZeroTermSuggestions)) {
+              this.setState({
+                errorMessage: null,
+                proposedQuerySuggestions: [],
+                zeroTermQuerySuggestions: [],
+              });
+
+              this.props.suggestionProviders.map(async (provider) => {
+
+                // Verify we have a valid suggestion provider and it is enabled
+                if (provider && provider.enabled && provider.getZeroTermSuggestions) {
+                  const suggestions = await provider.getZeroTermSuggestions();
+
+                  // Verify the input value hasn't changed before we add the returned suggestion
+                  if (inputValue === this.state.searchInputValue) {
+                    const mergedZeroTermSuggestions = [...this.state.proposedQuerySuggestions, ...suggestions ];
+                    this.setState({
+                      proposedQuerySuggestions: mergedZeroTermSuggestions,
+                      zeroTermQuerySuggestions: mergedZeroTermSuggestions,
+                      isRetrievingSuggestions: false
+                    });
+                  }
+                }
+              });
+            }
+          }
+        } catch(error) {
+          this.setState({
+            errorMessage: error.message,
+            proposedQuerySuggestions: [],
+            isRetrievingSuggestions: false
+          });
+        }
+
+        // // Clear suggestions history
+        // this.setState({
+        //   proposedQuerySuggestions: [],
+        // });
       }
 
     } else {
@@ -273,19 +344,19 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
    * Handler when a suggestion is selected in the dropdown
    * @param suggestion the suggestion value
    */
-  private _onQuerySuggestionSelected(suggestion: string) {
+  private _onQuerySuggestionSelected(suggestion: ISuggestion) {
 
     const termToSuggestFromIndex = this.state.searchInputValue.indexOf(this.state.termToSuggestFrom);
-    let replacedSearchInputvalue =  this._replaceAt(this.state.searchInputValue, termToSuggestFromIndex, suggestion);
+    let replacedSearchInputvalue =  this._replaceAt(this.state.searchInputValue, termToSuggestFromIndex, suggestion.text);
 
-    // Remove inenr HTML markup if there is 
+    // Remove inenr HTML markup if there is
     replacedSearchInputvalue = replacedSearchInputvalue.replace(/(<B>|<\/B>)/g,"");
 
     this.setState({
       searchInputValue: replacedSearchInputvalue,
       selectedQuerySuggestions: update(this.state.selectedQuerySuggestions, { $push: [suggestion]}),
       proposedQuerySuggestions:[],
-    });     
+    });
   }
 
   private _replaceAt(string: string, index: number, replace: string) {
@@ -296,7 +367,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
    * Handler when a user enters new keywords
    * @param queryText The query text entered by the user
    */
-  public async _onSearch(queryText: string, isReset: boolean = false) {    
+  public async _onSearch(queryText: string, isReset: boolean = false) {
 
     // Don't send empty value
     if (queryText || isReset) {
@@ -318,7 +389,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
           let enhancedQuery = await this.props.NlpService.enhanceSearchQuery(queryText, this.props.isStaging);
           query.enhancedQuery = enhancedQuery.enhancedQuery;
 
-          enhancedQuery.entities.map((entity) => {          
+          enhancedQuery.entities.map((entity) => {
           });
 
           this.setState({
@@ -326,9 +397,9 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
           });
 
         } catch (error) {
-          
+
           // In case of failure, use the non-optimized query instead
-          query.enhancedQuery = queryText;  
+          query.enhancedQuery = queryText;
         }
       }
 
@@ -346,7 +417,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
         // Send the query to the new page
         const behavior = this.props.openBehavior === PageOpenBehavior.NewTab ? '_blank' : '_self';
         window.open(searchUrl.href, behavior);
-        
+
       } else {
 
         // Notify the dynamic data controller
@@ -361,6 +432,13 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
     });
   }
 
+  public componentDidUpdate(prevProps: ISearchBoxContainerProps) {
+    if (prevProps.suggestionProviders !== this.props.suggestionProviders) {
+      //Trigger onChange intially on load to fetch zero term suggestions
+      this._onChange(this.props.inputValue);
+    }
+  }
+
   public render(): React.ReactElement<ISearchBoxContainerProps> {
     let renderErrorMessage: JSX.Element = null;
 
@@ -369,7 +447,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                               null;
 
     if (this.state.errorMessage) {
-      renderErrorMessage = <MessageBar messageBarType={ MessageBarType.error } 
+      renderErrorMessage = <MessageBar messageBarType={ MessageBarType.error }
                                         dismissButtonAriaLabel='Close'
                                         isMultiline={ false }
                                         onDismiss={ () => {
@@ -380,10 +458,10 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                                         className={styles.errorMessage}>
                                         { this.state.errorMessage }</MessageBar>;
     }
-    
-    const renderSearchBox = this.props.enableQuerySuggestions ? 
-                          this.renderSearchBoxWithAutoComplete() : 
-                          this.renderBasicSearchBox();    
+
+    const renderSearchBox = this.props.enableQuerySuggestions ?
+                          this.renderSearchBoxWithAutoComplete() :
+                          this.renderBasicSearchBox();
     return (
       <div className={styles.searchBox}>
         { renderErrorMessage }

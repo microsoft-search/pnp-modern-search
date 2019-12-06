@@ -87,6 +87,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
         queryStringParameter: this.properties.queryStringParameter,
         inputValue: this._searchQuery.rawInputValue,
         enableQuerySuggestions: this.properties.enableQuerySuggestions,
+        suggestionProviders: this._suggestionProviders,
         searchService: this._searchService,
         enableDebugMode: this.properties.enableDebugMode,
         enableNlpService: this.properties.enableNlpService,
@@ -301,17 +302,31 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
 
     this._suggestionProviders = [ ...defaultProviders, ...customProviders ];
 
-    if (!this.properties.suggestionProviders || this.properties.suggestionProviders.length === 0) {
-        //Add suggestion provider settings with default settings
-        this.properties.suggestionProviders = this._suggestionProviders.map<ISuggestionProvider>(dp => {
-            return {
-                ...dp,
-                enabled: undefined !== dp.enabled ? dp.enabled : true,
-                inlineTemplateContent: dp.inlineTemplateContent || dp.defaultTemplateContent,
-                externalTemplateUrl: dp.externalTemplateUrl || '',
-            }
-        });
+    // Ensure all suggestion providers have defaults properties set
+    this._suggestionProviders = this._suggestionProviders.map<ISuggestionProvider>(dp => {
+        return {
+            ...dp,
+            enabled: undefined !== dp.enabled ? dp.enabled : true,
+            inlineTemplateContent: dp.inlineTemplateContent || dp.defaultTemplateContent,
+            externalTemplateUrl: dp.externalTemplateUrl || '',
+        }
+    });
+
+    // If there are suggestion provider settings saved in wp props, merge those with hydrated providers from above
+    // We need to do this because the functions (getSuggestions) needs to be re-added to serialized provider object from wp props
+    if (this.properties.suggestionProviders && this.properties.suggestionProviders.length > 0) {
+      this._suggestionProviders = this._suggestionProviders.map<ISuggestionProvider>(sgp => {
+        const providerFromProps = this.properties.suggestionProviders.find(sp => sp.id === sgp.id) || {};
+        return {
+          ...sgp,
+          ...providerFromProps
+        }
+      })
     }
+    else {
+      this.properties.suggestionProviders = this._suggestionProviders;
+    }
+
   }
 
   private async getDefaultSuggestionProviders(): Promise<ISuggestionProvider[]> {
