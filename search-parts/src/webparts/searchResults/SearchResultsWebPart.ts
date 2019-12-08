@@ -319,7 +319,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
         if (Environment.type === EnvironmentType.Local) {
             this._taxonomyService = new MockTaxonomyService();
-            this._templateService = new MockTemplateService(this.context.pageContext.cultureInfo.currentUICultureName);
+            this._templateService = new MockTemplateService(this.context.pageContext.cultureInfo.currentUICultureName, this.context);
             this._searchService = new MockSearchService();
 
         } else {

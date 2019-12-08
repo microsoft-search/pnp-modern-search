@@ -83,7 +83,7 @@ export class MyCustomComponentWebComponent extends BaseWebComponent {
     public async connectedCallback() {
  
        let props = this.resolveAttributes();
-       const debugView = <CustomComponent {...props}/>;
-       ReactDOM.render(debugView, this);
+       const customComponent = <CustomComponent {...props}/>;
+       ReactDOM.render(customComponent, this);
     }    
 }
