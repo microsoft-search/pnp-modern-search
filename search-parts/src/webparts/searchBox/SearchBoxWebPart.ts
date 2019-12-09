@@ -39,6 +39,7 @@ import { ExtensibilityService } from '../../services/ExtensibilityService/Extens
 import { ISuggestionProviderDefinition } from '../../services/ExtensibilityService/ISuggestionProviderDefinition';
 import { SharePointDefaultSuggestionProvider } from '../../providers/SharePointDefaultSuggestionProvider';
 import { ISuggestionProviderInstance } from '../../services/ExtensibilityService/ISuggestionProviderInstance';
+import { ObjectCreator } from '../../services/ExtensibilityService/ObjectCreator';
 
 export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWebPartProps> implements IDynamicDataCallables {
 
@@ -67,7 +68,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
     this._bindHashChange = this._bindHashChange.bind(this);
   }
 
-  public render(): void {
+  public async render(): Promise<void> {
 
     let inputValue = this.properties.defaultQueryKeywords.tryGetValue();
 
@@ -99,6 +100,10 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
       } as ISearchBoxContainerProps);
 
     ReactDom.render(element, this.domElement);
+  }
+
+  protected get isRenderAsync(): boolean {
+    return true;
   }
 
   /**
@@ -302,16 +307,17 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
     ]);
 
     const providerDefinitions = [ ...defaultProviders, ...customProviders ];
+    const webpartContext = this.context;
 
     // Ensure all suggestion providers have defaults properties set
     this._suggestionProviderInstances = providerDefinitions.map<ISuggestionProviderInstance<any>>(providerDefinition => {
 
-      providerDefinition.providerClass.prototype._ctx = this.context;
+      // providerDefinition.providerClass.prototype._ctx = webpartContext;
 
       return {
         ...providerDefinition,
         providerEnabled: undefined !== providerDefinition.providerEnabled ? providerDefinition.providerEnabled : true,
-        instance: Object.create(providerDefinition.providerClass),
+        instance: ObjectCreator.createEntity(providerDefinition.providerClass, webpartContext),
       }
     });
 
@@ -319,17 +325,29 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
     // We need to do this because the functions (getSuggestions) needs to be re-added to serialized provider object from wp props
     if (this.properties.suggestionProviders && this.properties.suggestionProviders.length > 0) {
       this._suggestionProviderInstances = this._suggestionProviderInstances.map<ISuggestionProviderInstance<any>>(sgp => {
-        const providerFromProps = this.properties.suggestionProviders.find(sp => sp.providerName === sgp.providerName) || {};
-        return {
-          ...sgp,
-          ...providerFromProps
+        const providerFromProps = this.properties.suggestionProviders.find(sp => sp.providerName === sgp.providerName);
+        if (providerFromProps) {
+          sgp.providerEnabled = providerFromProps.providerEnabled;
+          sgp.providerExternalTemplateUrl = providerFromProps.providerExternalTemplateUrl;
         }
+        return sgp;
       })
     }
     else {
       this.properties.suggestionProviders = this._suggestionProviderInstances;
     }
 
+    await Promise.all(this._suggestionProviderInstances.map(async (providerInstance) => {
+      try {
+        await providerInstance.instance.onInit();
+      }
+      catch (error) {
+        console.log(`Unable to initialize '${providerInstance.providerName}'. ${error}`);
+      }
+      finally {
+        return Promise.resolve();
+      }
+    }));
   }
 
   private async getDefaultSuggestionProviders(): Promise<ISuggestionProviderDefinition<any>[]> {

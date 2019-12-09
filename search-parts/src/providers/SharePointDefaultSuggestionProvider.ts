@@ -6,12 +6,12 @@ export class SharePointDefaultSuggestionProvider extends BaseSuggestionProvider 
 
   private _searchService: SearchService;
 
-  constructor() {
-    super();
-  }
-
   public async onInit(): Promise<void> {
     this._searchService = new SearchService(this._ctx.pageContext, this._ctx.spHttpClient);
+  }
+
+  public get isSuggestionsEnabled(): boolean {
+    return true;
   }
 
   public async getSuggestions(queryText: string): Promise<ISuggestion[]> {

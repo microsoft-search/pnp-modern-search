@@ -4,10 +4,22 @@ import { ISuggestion } from '../models/ISuggestion';
 export abstract class BaseSuggestionProvider {
 
     // Property set by the Suggestion via prototype
-    public _ctx: WebPartContext;
+    protected _ctx: WebPartContext;
+
+    constructor(context: WebPartContext) {
+      this._ctx = context;
+    }
 
     public async onInit(): Promise<void> {
 
+    }
+
+    public get isSuggestionsEnabled(): boolean {
+      return false;
+    }
+
+    public get isZeroTermSuggestionsEnabled(): boolean {
+      return false;
     }
 
     public async getSuggestions(queryText: string): Promise<ISuggestion[]> {

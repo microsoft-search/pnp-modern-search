@@ -249,7 +249,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
           this.props.suggestionProviders.map(async (provider) => {
 
             // Verify we have a valid suggestion provider and it is enabled
-            if (provider && provider.providerEnabled && provider.instance.getSuggestions) {
+            if (provider && provider.providerEnabled && provider.instance.isSuggestionsEnabled) {
               const suggestions = await provider.instance.getSuggestions(inputValue);
 
               // Verify the input value hasn't changed before we add the returned suggestion
@@ -288,7 +288,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
           else {
 
             //Verify we have at least one suggestion provider that has getZeroTermSuggestions defined
-            if (this.props.suggestionProviders && this.props.suggestionProviders.some(sgp => sgp.instance && undefined !== sgp.instance.getZeroTermSuggestions)) {
+            if (this.props.suggestionProviders && this.props.suggestionProviders.some(sgp => sgp.instance && sgp.instance.isZeroTermSuggestionsEnabled)) {
               this.setState({
                 errorMessage: null,
                 proposedQuerySuggestions: [],
@@ -298,7 +298,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
               this.props.suggestionProviders.map(async (provider) => {
 
                 // Verify we have a valid suggestion provider and it is enabled
-                if (provider && provider.providerEnabled && provider.instance.getZeroTermSuggestions) {
+                if (provider && provider.providerEnabled && provider.instance.isZeroTermSuggestionsEnabled) {
                   const suggestions = await provider.instance.getZeroTermSuggestions();
 
                   // Verify the input value hasn't changed before we add the returned suggestion
