@@ -165,7 +165,7 @@ class SearchService implements ISearchService {
             sortedRefiners = this.refiners.map(e => e.refinerName);
             searchQuery.Refiners = sortedRefiners.join(',');
 
-            const refinableDate = /(RefinableDate\d+)(?=,|$)|(LastModifiedTime)(?=,|$)|(LastModifiedTimeForRetention)(?=,|$)|(Created)(?=,|$)/g;
+            const refinableDate = /(RefinableDate\d+)(?=,|$)|(RefinableDateSingle\d+)(?=,|$)|(LastModifiedTime)(?=,|$)|(LastModifiedTimeForRetention)(?=,|$)|(Created)(?=,|$)/g;
             if (refinableDate.test(searchQuery.Refiners)) {
                 // set refiner spec intervals to be used for fixed interval template - and which makes more sense overall
                 await Loader.LoadHandlebarsHelpers();
