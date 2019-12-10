@@ -156,12 +156,6 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
             this._searchService = new SearchService(this.context.pageContext, this.context.spHttpClient);
         }
 
-        if (this.properties.searchResultsDataSourceReference) {
-            // Needed to retrieve manually the value for the dynamic property at render time. See the associated SPFx bug
-            // https://github.com/SharePoint/sp-dev-docs/issues/2985
-            this.context.dynamicDataProvider.registerAvailableSourcesChanged(this.render);
-        }
-
         this.context.dynamicDataSourceManager.initializeSource(this);
 
         return Promise.resolve();
