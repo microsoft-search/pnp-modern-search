@@ -2,8 +2,13 @@ import { IRefinementResult, IRefinementFilter } from "../../../../models/ISearch
 import IRefinerConfiguration from "../../../../models/IRefinerConfiguration";
 import { DisplayMode } from "@microsoft/sp-core-library";
 import RefinersLayoutOption from "../../../../models/RefinersLayoutOptions";
+import { WebPartContext } from '@microsoft/sp-webpart-base';
 
 export interface ISearchRefinersContainerProps {
+  /**
+   * Sharepoint context
+   */
+  context: WebPartContext;
 
   /**
    * The Web Part title

@@ -35,6 +35,7 @@ declare interface ISearchRefinersWebPartStrings {
             MutliValueRefinementItemTemplateLabel: string;
             DateRangeRefinementItemLabel: string;
             FixedDateRangeRefinementItemLabel: string;
+            PersonaRefinementItemLabel: string;
             DateFromLabel: string;
             DateTolabel: string;
             DatePickerStrings: {

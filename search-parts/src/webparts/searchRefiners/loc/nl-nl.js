@@ -33,6 +33,7 @@ define([], function() {
             "Templates": {
                 "RefinementItemTemplateLabel": "Standaard verfijningsitem",
                 "MutliValueRefinementItemTemplateLabel": "Multi-value verfijningsitem",
+                "PersonaRefinementItemLabel": "Persona",
                 "DateRangeRefinementItemLabel": "Datumbereik",
                 "FixedDateRangeRefinementItemLabel": "Datumbereik (vaste intervallen)",
                 "DateFromLabel": "Van",

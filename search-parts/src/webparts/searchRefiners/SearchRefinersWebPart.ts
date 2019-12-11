@@ -77,6 +77,7 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
             renderElement = React.createElement(
                 SearchRefinersContainer,
                 {
+                    context:this.context,
                     webPartTitle: this.properties.webPartTitle,
                     availableRefiners: availableRefiners,
                     refinersConfiguration: this.properties.refinersConfiguration,
@@ -229,7 +230,11 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
                             {
                                 key: RefinerTemplateOption.FixedDateRange,
                                 text: strings.Refiners.Templates.FixedDateRangeRefinementItemLabel,
-                            }
+                            },
+                            {
+                              key: RefinerTemplateOption.Persona,
+                              text: strings.Refiners.Templates.PersonaRefinementItemLabel,
+                          }
                         ]
                     },
                     {
@@ -292,7 +297,7 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
      */
     private _getStylingFields(): IPropertyPaneField<any>[] {
 
-        // Options for the search results layout 
+        // Options for the search results layout
         const layoutOptions = [
             {
                 iconProps: {
@@ -349,7 +354,7 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
     }
 
     /**
-     * Make sure the dynamic property is correctly connected to the source if a search results component has been selected in options 
+     * Make sure the dynamic property is correctly connected to the source if a search results component has been selected in options
      */
     private ensureDataSourceConnection() {
 
@@ -449,7 +454,7 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
         // Save the value in the root Web Part class to avoid fetching it again if the property list is requested again by any other property pane control
         this._availableManagedProperties = cloneDeep(properties);
 
-        // Refresh all fields so other property controls can use the new list 
+        // Refresh all fields so other property controls can use the new list
         this.context.propertyPane.refresh();
         this.render();
     }

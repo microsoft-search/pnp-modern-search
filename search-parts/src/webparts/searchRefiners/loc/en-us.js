@@ -33,6 +33,7 @@ define([], function() {
             "Templates": {
                 "RefinementItemTemplateLabel": "Default refinement item",
                 "MutliValueRefinementItemTemplateLabel": "Multi-value refinement item",
+                "PersonaRefinementItemLabel": "Persona",
                 "DateRangeRefinementItemLabel": "Date range",
                 "FixedDateRangeRefinementItemLabel": "Date range (fixed intervals)",
                 "DateFromLabel": "From",
