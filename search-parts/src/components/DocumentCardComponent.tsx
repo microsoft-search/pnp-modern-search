@@ -120,7 +120,7 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
                     imageFit: ImageFit.centerCover,
                     iconSrc: iconSrc,
                     width: this.props.isCompact ? 144 : 318,
-                    height:  this.props.isCompact ? 88 : 196
+                    height:  this.props.isCompact ? 106 : 196
                 }
             ],
         };
