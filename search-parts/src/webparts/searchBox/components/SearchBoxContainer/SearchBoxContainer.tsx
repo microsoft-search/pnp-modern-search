@@ -207,6 +207,25 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
 
     if (this.state.proposedQuerySuggestions.length > 0) {
 
+      // return suggestions.reduce((groups, current) => {
+      //   let group: ISuggestionGroup = groups.find(g => g.displayName == current.Group);
+      //   if(!group){
+      //     group = {
+      //       suggestions: [],
+      //       displayName: current.Group
+      //     } as ISuggestionGroup;
+      //   }
+      //   group.suggestions.push({
+      //     type: SuggestionType.Content,
+      //     displayText: current.Description,
+      //     targetUrl: current.URL,
+      //     icon: current.Icon,
+      //     onSuggestionSelected: this._onSuggestionSelected,
+      //   } as ISuggestion);
+      //   groups.push(group);
+      //   return groups;
+      // }, [] as ISuggestionGroup[]);
+
       suggestions = this.state.proposedQuerySuggestions.map((suggestion, index) => {
                               return <div {...getItemProps({item: suggestion})}
                                   key={index}
@@ -214,7 +233,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                                     fontWeight: selectedItem === suggestion ? 'bold' : 'normal'
                                   }}>
                                       <Label className={ highlightedIndex === index ? `${styles.suggestionItem} ${styles.selected}` : `${styles.suggestionItem}`}>
-                                          <div dangerouslySetInnerHTML={{ __html: suggestion.text }}></div>
+                                          <div dangerouslySetInnerHTML={{ __html: suggestion.displayText }}></div>
                                       </Label>
                                   </div>;
                                 });
@@ -342,7 +361,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
   private _onQuerySuggestionSelected(suggestion: ISuggestion) {
 
     const termToSuggestFromIndex = this.state.searchInputValue.indexOf(this.state.termToSuggestFrom);
-    let replacedSearchInputvalue =  this._replaceAt(this.state.searchInputValue, termToSuggestFromIndex, suggestion.text);
+    let replacedSearchInputvalue =  this._replaceAt(this.state.searchInputValue, termToSuggestFromIndex, suggestion.displayText);
 
     // Remove inenr HTML markup if there is
     replacedSearchInputvalue = replacedSearchInputvalue.replace(/(<B>|<\/B>)/g,"");

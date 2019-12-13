@@ -53,7 +53,8 @@ define([], function() {
       "ProviderNamePropertyLabel": "navn",
       "InlineTemplateContentLabel": "Innebygd mal",
       "ExternalUrlLabel": "URL for ekstern mal",
-      "InlineTemplateEditPanelTitle": "Rediger forslags mal"
+      "InlineTemplateEditPanelTitle": "Rediger forslags mal",
+      "DefaultSuggestionGroupName": "Anbefalt",
     }
   }
 });

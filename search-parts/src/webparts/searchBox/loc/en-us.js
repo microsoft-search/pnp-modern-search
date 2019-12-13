@@ -53,7 +53,8 @@ define([], function() {
       "ProviderNamePropertyLabel": "Name",
       "InlineTemplateContentLabel": "Inline Template",
       "ExternalUrlLabel": "External Template Url",
-      "InlineTemplateEditPanelTitle": "Edit suggestion template"
+      "InlineTemplateEditPanelTitle": "Edit suggestion template",
+      "DefaultSuggestionGroupName": "Recommended",
     }
   }
 });

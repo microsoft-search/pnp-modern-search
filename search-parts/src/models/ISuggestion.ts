@@ -1,4 +1,10 @@
+import { SuggestionType } from "./SuggestionType";
+
 export interface ISuggestion {
-    text: string;
-    onSuggestionSelected?: (suggestion: ISuggestion) => boolean;
+  type: SuggestionType;
+  displayText: string;
+  targetUrl?: string;
+  icon?: string;
+  groupName?: string;
+  onSuggestionSelected?: (suggestion: ISuggestion) => boolean;
 }

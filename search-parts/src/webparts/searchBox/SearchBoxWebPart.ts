@@ -40,6 +40,7 @@ import { ISuggestionProviderDefinition } from '../../services/ExtensibilityServi
 import { SharePointDefaultSuggestionProvider } from '../../providers/SharePointDefaultSuggestionProvider';
 import { ISuggestionProviderInstance } from '../../services/ExtensibilityService/ISuggestionProviderInstance';
 import { ObjectCreator } from '../../services/ExtensibilityService/ObjectCreator';
+import { BaseSuggestionProvider } from '../../providers/BaseSuggestionProvider';
 
 export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWebPartProps> implements IDynamicDataCallables {
 
@@ -51,10 +52,8 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
   private _extensibilityService: IExtensibilityService;
   private _suggestionProviderInstances: ISuggestionProviderInstance<any>[];
 
-  private _propertyFieldCodeEditorLanguages = null;
   private _propertyFieldCollectionData = null;
   private _customCollectionFieldType = null;
-  private _textDialogComponent = null;
 
   constructor() {
     super();
@@ -179,7 +178,10 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
 
     this._bindHashChange();
 
-    return super.onInit();
+    await super.onInit();
+
+    await this.render();
+    this.renderCompleted();
   }
 
   protected onDispose(): void {
@@ -301,53 +303,32 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
 
   private async initSuggestionProviders(): Promise<void> {
 
+    this.properties.suggestionProviders = await this.getAllSuggestionProviders();
+
+    this._suggestionProviderInstances = await this.initSuggestionProviderInstances(this.properties.suggestionProviders);
+
+  }
+
+  private async getAllSuggestionProviders(): Promise<ISuggestionProviderDefinition<any>[]> {
     const [ defaultProviders, customProviders ] = await Promise.all([
         this.getDefaultSuggestionProviders(),
         this.getCustomSuggestionProviders()
     ]);
 
-    const providerDefinitions = [ ...defaultProviders, ...customProviders ];
-    const webpartContext = this.context;
+    //Merge all providers together and set defaults
+    const savedProviders = this.properties.suggestionProviders && this.properties.suggestionProviders.length > 0 ? this.properties.suggestionProviders : [];
+    const providerDefinitions = [ ...defaultProviders, ...customProviders ].map(provider => {
+        const existingSavedProvider = savedProviders.find(sp => sp.providerName === provider.providerName);
 
-    // Ensure all suggestion providers have defaults properties set
-    this._suggestionProviderInstances = providerDefinitions.map<ISuggestionProviderInstance<any>>(providerDefinition => {
+        provider.providerEnabled = existingSavedProvider && undefined !== existingSavedProvider.providerEnabled
+                                    ? existingSavedProvider.providerEnabled
+                                    : undefined !== provider.providerEnabled
+                                      ? provider.providerEnabled
+                                      : true;
 
-      // providerDefinition.providerClass.prototype._ctx = webpartContext;
-
-      return {
-        ...providerDefinition,
-        providerEnabled: undefined !== providerDefinition.providerEnabled ? providerDefinition.providerEnabled : true,
-        instance: ObjectCreator.createEntity(providerDefinition.providerClass, webpartContext),
-      }
+        return provider;
     });
-
-    // If there are suggestion provider settings saved in wp props, merge those with hydrated providers from above
-    // We need to do this because the functions (getSuggestions) needs to be re-added to serialized provider object from wp props
-    if (this.properties.suggestionProviders && this.properties.suggestionProviders.length > 0) {
-      this._suggestionProviderInstances = this._suggestionProviderInstances.map<ISuggestionProviderInstance<any>>(sgp => {
-        const providerFromProps = this.properties.suggestionProviders.find(sp => sp.providerName === sgp.providerName);
-        if (providerFromProps) {
-          sgp.providerEnabled = providerFromProps.providerEnabled;
-          sgp.providerExternalTemplateUrl = providerFromProps.providerExternalTemplateUrl;
-        }
-        return sgp;
-      })
-    }
-    else {
-      this.properties.suggestionProviders = this._suggestionProviderInstances;
-    }
-
-    await Promise.all(this._suggestionProviderInstances.map(async (providerInstance) => {
-      try {
-        await providerInstance.instance.onInit();
-      }
-      catch (error) {
-        console.log(`Unable to initialize '${providerInstance.providerName}'. ${error}`);
-      }
-      finally {
-        return Promise.resolve();
-      }
-    }));
+    return providerDefinitions;
   }
 
   private async getDefaultSuggestionProviders(): Promise<ISuggestionProviderDefinition<any>[]> {
@@ -355,7 +336,6 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
         providerName: "default",
         providerDescription: "Default SharePoint query suggestions.",
         providerDisplayName: "SharePoint",
-        providerDefaultTemplateContent: `<div>{{text}}</div>`,
         providerClass: SharePointDefaultSuggestionProvider
     }];
   }
@@ -376,6 +356,37 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
     return customSuggestionProviders;
   }
 
+  private async initSuggestionProviderInstances(providerDefinitions: ISuggestionProviderDefinition<any>[]): Promise<ISuggestionProviderInstance<any>[]> {
+
+    const webpartContext = this.context;
+
+    let providerInstances = await Promise.all(providerDefinitions.map<Promise<ISuggestionProviderInstance<any>>>(async (provider) => {
+      let isInitialized = false;
+      let instance: BaseSuggestionProvider = null;
+
+      try {
+        instance = ObjectCreator.createEntity(provider.providerClass, webpartContext);
+        await instance.onInit();
+        isInitialized = true;
+      }
+      catch (error) {
+        console.log(`Unable to initialize '${provider.providerName}'. ${error}`);
+      }
+      finally {
+        return {
+          ...provider,
+          instance,
+          isInitialized
+        };
+      }
+    }));
+
+    // Keep only the onces that initialized successfully
+    providerInstances = providerInstances.filter(pi => pi.isInitialized);
+
+    return providerInstances;
+  }
+
   protected get propertiesMetadata(): IWebPartPropertiesMetadata {
     return {
       'defaultQueryKeywords': {
@@ -386,18 +397,18 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
 
   protected async loadPropertyPaneResources(): Promise<void> {
 
-    // tslint:disable-next-line:no-shadowed-variable
-    const { PropertyFieldCodeEditorLanguages } = await import(
-        /* webpackChunkName: 'search-property-pane' */
-        '@pnp/spfx-property-controls/lib/PropertyFieldCodeEditor'
-    );
-    this._propertyFieldCodeEditorLanguages = PropertyFieldCodeEditorLanguages;
+    // // tslint:disable-next-line:no-shadowed-variable
+    // const { PropertyFieldCodeEditorLanguages } = await import(
+    //     /* webpackChunkName: 'search-property-pane' */
+    //     '@pnp/spfx-property-controls/lib/PropertyFieldCodeEditor'
+    // );
+    // this._propertyFieldCodeEditorLanguages = PropertyFieldCodeEditorLanguages;
 
-    // Code editor component for property pane controls
-    this._textDialogComponent = await import(
-        /* webpackChunkName: 'search-property-pane' */
-        '../../controls/TextDialog'
-    );
+    // // Code editor component for property pane controls
+    // this._textDialogComponent = await import(
+    //     /* webpackChunkName: 'search-property-pane' */
+    //     '../../controls/TextDialog'
+    // );
 
     const { PropertyFieldCollectionData, CustomCollectionFieldType } = await import(
         /* webpackChunkName: 'search-property-pane' */
@@ -470,35 +481,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
                 title: strings.SuggestionProviders.ProviderNamePropertyLabel,
                 type: this._customCollectionFieldType.string,
                 disableEdit: true,
-            },
-            {
-                id: "providerInlineTemplateContent",
-                title: strings.SuggestionProviders.InlineTemplateContentLabel,
-                type: this._customCollectionFieldType.custom,
-                onCustomRender: (field, value, onUpdate) => {
-                    return (
-                        React.createElement("div", null,
-                            React.createElement(this._textDialogComponent.TextDialog, {
-                                language: this._propertyFieldCodeEditorLanguages.Handlebars,
-                                dialogTextFieldValue: value ? value : ``, //inline template default value
-                                onChanged: (fieldValue) => onUpdate(field.id, fieldValue),
-                                strings: {
-                                    cancelButtonText: strings.CancelButtonText,
-                                    dialogButtonText: strings.DialogButtonText,
-                                    dialogTitle: strings.SuggestionProviders.InlineTemplateEditPanelTitle,
-                                    saveButtonText: strings.SaveButtonText
-                                }
-                            })
-                        )
-                    );
-                }
-            },
-            {
-                id: 'providerExternalTemplateUrl',
-                title: strings.SuggestionProviders.ExternalUrlLabel,
-                type: this._customCollectionFieldType.url,
-                placeholder: 'https://mysite/Documents/external.html'
-            },
+            }
         ]
       }),
       PropertyPaneHorizontalRule(),

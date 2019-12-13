@@ -55,6 +55,7 @@ declare interface ISearchBoxWebPartStrings {
     InlineTemplateContentLabel: string;
     ExternalUrlLabel: string;
     InlineTemplateEditPanelTitle: string;
+    DefaultSuggestionGroupName: string;
   }
 }
 
