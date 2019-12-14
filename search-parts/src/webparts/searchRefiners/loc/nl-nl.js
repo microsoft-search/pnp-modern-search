@@ -36,6 +36,8 @@ define([], function() {
                 "PersonaRefinementItemLabel": "Persona",
                 "DateRangeRefinementItemLabel": "Datumbereik",
                 "FixedDateRangeRefinementItemLabel": "Datumbereik (vaste intervallen)",
+                "FileTypeRefinementItemTemplateLabel": "Bestandstypen",
+                "FileTypeMutliValueRefinementItemTemplateLabel": "Meerdere bestandstypen",
                 "DateFromLabel": "Van",
                 "DateTolabel": "Tot",
                 "DatePickerStrings": {
