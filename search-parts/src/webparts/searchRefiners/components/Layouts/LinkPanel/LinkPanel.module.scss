@@ -1,3 +1,5 @@
+@import '~office-ui-fabric-react/dist/sass/Fabric.scss';
+
 .linkPanelLayout {
 
     &__buttonBar {
@@ -9,7 +11,7 @@
         &__button {
             display: flex;
             align-items: baseline;
-            
+
             button {
                 height: 100%;
             }
@@ -24,9 +26,9 @@
 
         padding: 10px;
 
-        label.filter {        
-            display: inline-block;         
-            margin-bottom: 5px;  
+        label.filter {
+            display: inline-block;
+            margin-bottom: 5px;
         }
 
         label.filter~label.filter:before {
@@ -44,41 +46,42 @@
             cursor: pointer;
         }
     }
-    
+
     &__filterPanel {
         &__body {
             overflow: auto;
             margin-left: 15px;
-    
+
             &__headerIcon {
                 text-align: right;
                 margin-top: 5px;
                 padding-left: 15px;
                 padding-right: 10px;
+                cursor: pointer;
             }
-    
+
             &__removeAllFilters {
                 padding: 15px;
             }
-    
+
             &__group {
-    
+
                 &__header {
                     display: flex;
                     align-items: center;
                 }
-    
+
                 button {
                     padding: 10px;
                 }
 
                 &__item {
-                    padding-left: 15px;
+                    padding-left: 27px;
                     padding-top: 10px;
                     padding-right: 15px;
                 }
             }
-    
+
             :global .ms-Grid-row {
                 margin: 0;
             }

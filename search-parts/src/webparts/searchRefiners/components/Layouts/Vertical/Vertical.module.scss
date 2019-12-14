@@ -7,12 +7,13 @@
     &__filterPanel {
         &__body {
             overflow: auto;
-            
+
             &__headerIcon {
                 text-align: right;
                 margin-top: 5px;
                 padding-left: 5px;
                 padding-right: 10px;
+                cursor: pointer;
             }
 
             &__removeAllFilters {
@@ -22,9 +23,9 @@
 
             &__group {
 
-                &__header {                    
+                &__header {
                     display: flex;
-                    align-items: center;                    
+                    align-items: center;
                 }
 
                 button {

@@ -13,6 +13,8 @@ import styles from './Vertical.module.scss';
 import * as strings from 'SearchRefinersWebPartStrings';
 import TemplateRenderer from '../../Templates/TemplateRenderer';
 import { isEqual } from '@microsoft/sp-lodash-subset';
+import { Icon } from 'office-ui-fabric-react/lib/Icon';
+import { Text as TextUI } from 'office-ui-fabric-react/lib/Text';
 
 export default class Vertical extends React.Component<IFilterLayoutProps, IVerticalState> {
 
@@ -49,7 +51,7 @@ export default class Vertical extends React.Component<IFilterLayoutProps, IVerti
       groups={this.state.groups} /> : noResultsElement;
 
     const renderLinkRemoveAll = this.props.hasSelectedValues ?
-      (<div className={`${styles.verticalLayout__filterPanel__body__removeAllFilters} ${this.props.hasSelectedValues && "hiddenLink"}`}>
+      (<div className={`${styles.verticalLayout__filterPanel__body__removeAllFilters} ${this.props.hasSelectedValues && 'hiddenLink'}`}>
         <Link onClick={this._removeAllFilters}>
           {strings.RemoveAllFiltersLabel}
         </Link>
@@ -100,9 +102,13 @@ export default class Vertical extends React.Component<IFilterLayoutProps, IVerti
           props.onToggleCollapse(props.group);
         }}>
         <div className={styles.verticalLayout__filterPanel__body__headerIcon}>
-          <i className={props.group.isCollapsed ? 'ms-Icon ms-Icon--ChevronDown' : 'ms-Icon ms-Icon--ChevronUp'}></i>
+          {props.group.isCollapsed ?
+            <Icon iconName='ChevronDown' />
+            :
+            <Icon iconName='ChevronUp' />
+          }
         </div>
-        <div className='ms-font-l'>{props.group.name}</div>
+        <TextUI variant={'large'}>{props.group.name}</TextUI>
       </div>
     );
   }
@@ -179,7 +185,7 @@ export default class Vertical extends React.Component<IFilterLayoutProps, IVerti
           onFilterValuesUpdated={props.onFilterValuesUpdated}
           language={props.language}
           selectedValues={selectedFilterValues}
-          userService= {this.props.userService}
+          userService={this.props.userService}
         />
       );
     });

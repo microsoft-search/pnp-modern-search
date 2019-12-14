@@ -12,7 +12,7 @@ import { Checkbox } from 'office-ui-fabric-react/lib/Checkbox';
 import { Text } from '@microsoft/sp-core-library';
 import { Link } from 'office-ui-fabric-react/lib/Link';
 import { Icon } from 'office-ui-fabric-react/lib/Icon';
-import { Text as OuifText } from 'office-ui-fabric-react/lib/Text';
+import { Text as TextUI } from 'office-ui-fabric-react/lib/Text';
 import { getFileTypeIconProps } from '@uifabric/file-type-icons';
 
 // Third party lib
@@ -67,7 +67,7 @@ export default class FileTypeTemplate extends React.Component<IBaseRefinerTempla
                   return (
                     <>
                       <Icon {...getFileTypeIconProps({ extension: extension, size: 20, imageFileType: 'svg' })} />
-                      <OuifText className='pnp-lbl' block={true} nowrap={true}>{Text.format(`${FileHelper.extensionToLabel(extension)} ({0})`, refinementValue.RefinementCount)}</OuifText>
+                      <TextUI className='pnp-lbl' block={true} nowrap={true}>{Text.format(`${FileHelper.extensionToLabel(extension)} ({0})`, refinementValue.RefinementCount)}</TextUI>
                     </>
                   );
                 }}
