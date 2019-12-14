@@ -35,7 +35,9 @@ import SearchService from '../../services/SearchService/SearchService';
 import ISearchService from '../../services/SearchService/ISearchService';
 import { IComboBoxOption } from 'office-ui-fabric-react/lib/ComboBox';
 import { cloneDeep } from '@microsoft/sp-lodash-subset';
-
+import IUserService from './../../services/SpService/IUserService';
+import { UserService } from './../../services/SpService/UserService';
+import { MockUserService } from './../../services/SpService/MockUserService';
 export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearchRefinersWebPartProps> implements IDynamicDataCallables {
 
     private _dynamicDataService: IDynamicDataService;
@@ -43,6 +45,7 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
     private _searchResultSourceData: DynamicProperty<ISearchResultSourceData>;
     private _searchService: ISearchService;
     private _themeProvider: ThemeProvider;
+    private _userService: IUserService;
 
     /**
      * The list of available managed managed properties (managed globally for all proeprty pane fiels if needed)
@@ -77,7 +80,6 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
             renderElement = React.createElement(
                 SearchRefinersContainer,
                 {
-                    context:this.context,
                     webPartTitle: this.properties.webPartTitle,
                     availableRefiners: availableRefiners,
                     refinersConfiguration: this.properties.refinersConfiguration,
@@ -89,7 +91,8 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
                     },
                     selectedLayout: this.properties.selectedLayout,
                     language: this.context.pageContext.cultureInfo.currentUICultureName,
-                    query: queryKeywords + queryTemplate + selectedProperties + resultSourceId
+                    query: queryKeywords + queryTemplate + selectedProperties + resultSourceId,
+                    userService: this._userService
                 } as ISearchRefinersContainerProps
             );
         } else {
@@ -153,8 +156,10 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
 
         if (Environment.type === EnvironmentType.Local) {
             this._searchService = new MockSearchService();
+            this._userService = new MockUserService();
         } else {
             this._searchService = new SearchService(this.context.pageContext, this.context.spHttpClient);
+            this._userService = new UserService(this.context.pageContext);
         }
 
         this.context.dynamicDataSourceManager.initializeSource(this);

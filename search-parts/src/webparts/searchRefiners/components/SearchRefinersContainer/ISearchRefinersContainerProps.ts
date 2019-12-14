@@ -2,14 +2,9 @@ import { IRefinementResult, IRefinementFilter } from "../../../../models/ISearch
 import IRefinerConfiguration from "../../../../models/IRefinerConfiguration";
 import { DisplayMode } from "@microsoft/sp-core-library";
 import RefinersLayoutOption from "../../../../models/RefinersLayoutOptions";
-import { WebPartContext } from '@microsoft/sp-webpart-base';
+import IUserService from './../../../../services/SpService/IUserService';
 
 export interface ISearchRefinersContainerProps {
-  /**
-   * Sharepoint context
-   */
-  context: WebPartContext;
-
   /**
    * The Web Part title
    */
@@ -54,4 +49,10 @@ export interface ISearchRefinersContainerProps {
    * The current search query
    */
   query: string;
+
+  /**
+   * UserService
+   */
+  userService : IUserService;
+
 }

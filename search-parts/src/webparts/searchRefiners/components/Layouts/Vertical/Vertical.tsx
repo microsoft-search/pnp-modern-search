@@ -172,7 +172,6 @@ export default class Vertical extends React.Component<IFilterLayoutProps, IVerti
 
       items.push(
         <TemplateRenderer
-          context={this.props.context}
           key={i}
           refinementResult={refinementResult}
           shouldResetFilters={props.shouldResetFilters}
@@ -180,6 +179,7 @@ export default class Vertical extends React.Component<IFilterLayoutProps, IVerti
           onFilterValuesUpdated={props.onFilterValuesUpdated}
           language={props.language}
           selectedValues={selectedFilterValues}
+          userService= {this.props.userService}
         />
       );
     });

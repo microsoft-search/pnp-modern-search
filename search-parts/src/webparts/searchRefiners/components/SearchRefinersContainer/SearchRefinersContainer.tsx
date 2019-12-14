@@ -55,7 +55,6 @@ export default class SearchRefinersContainer extends React.Component<ISearchRefi
       switch (this.props.selectedLayout) {
         case RefinersLayoutOption.Vertical:
           renderWpContent = <Vertical
-            context={this.props.context}
             onFilterValuesUpdated={this.onFilterValuesUpdated}
             refinementResults={this.state.availableRefiners}
             refinersConfiguration={this.props.refinersConfiguration}
@@ -64,6 +63,7 @@ export default class SearchRefinersContainer extends React.Component<ISearchRefi
             hasSelectedValues={this.state.selectedRefinementFilters.length > 0 ? true : false}
             language={this.props.language}
             selectedFilters={this.state.selectedRefinementFilters}
+            userService= {this.props.userService}
           />;
           break;
 
@@ -76,7 +76,6 @@ export default class SearchRefinersContainer extends React.Component<ISearchRefi
           });
 
           renderWpContent = <LinkPanel
-            context={this.props.context}
             onFilterValuesUpdated={this.onFilterValuesUpdated}
             refinementResults={this.state.availableRefiners}
             refinersConfiguration={this.props.refinersConfiguration}
@@ -86,6 +85,7 @@ export default class SearchRefinersContainer extends React.Component<ISearchRefi
             selectedFilterValues={selectedValues}
             language={this.props.language}
             selectedFilters={this.state.selectedRefinementFilters}
+            userService= {this.props.userService}
           />;
           break;
       }

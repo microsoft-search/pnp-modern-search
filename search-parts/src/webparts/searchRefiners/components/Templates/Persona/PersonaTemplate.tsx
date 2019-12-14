@@ -1,20 +1,30 @@
+// React
 import * as React from "react";
-import { WebPartContext } from '@microsoft/sp-webpart-base';
+
+// Loacalization
+import * as strings from 'SearchRefinersWebPartStrings';
+
+// CSS
+import styles from './PersonaTemplate.module.scss';
+
+// UI Fabric
+import { Link } from 'office-ui-fabric-react/lib/Link';
+
+// Thirs party Lib
+import * as update from 'immutability-helper';
+
+// Custom component
+import { PersonaCustom } from './PersonaCustom';
+
+// Interface
+import { IRefinementValue, RefinementOperator } from "../../../../../models/ISearchResult";
 import IBaseRefinerTemplateProps from '../IBaseRefinerTemplateProps';
 import IBaseRefinerTemplateState from '../IBaseRefinerTemplateState';
-import { IRefinementValue, RefinementOperator } from "../../../../../models/ISearchResult";
-import { Checkbox } from 'office-ui-fabric-react/lib/Checkbox';
-import { Text } from '@microsoft/sp-core-library';
-import { Link } from 'office-ui-fabric-react/lib/Link';
-import * as strings from 'SearchRefinersWebPartStrings';
-import * as update from 'immutability-helper';
-import { PersonaCustom } from './PersonaCustom';
-import { PersonaSize } from 'office-ui-fabric-react/lib/Persona';
 
 interface IPersonaTemplateProps extends IBaseRefinerTemplateProps {
-  context: WebPartContext;
 }
 
+// Class
 export default class PersonaTemplate extends React.Component<IPersonaTemplateProps, IBaseRefinerTemplateState> {
 
   private _operator: RefinementOperator;
@@ -29,42 +39,36 @@ export default class PersonaTemplate extends React.Component<IPersonaTemplatePro
   }
 
   public render() {
-    return <div>
-      {
-        this.props.refinementResult.Values.map((refinementValue: IRefinementValue, j) => {
+    return (
+      <div className={styles.pnpRefinersTemplatePersona}>
+        {
+          this.props.refinementResult.Values.map((refinementValue: IRefinementValue, j) => {
 
-          if (refinementValue.RefinementCount === 0) {
-            return null;
-          }
+            let accountName: string = refinementValue.RefinementValue ? refinementValue.RefinementValue.split('i:0#.f|').pop() : null;
 
-          return (
-            <PersonaCustom
-              key={j}
-              context={this.props.context}
-              accountName={refinementValue.RefinementValue}
-              resultCount={refinementValue.RefinementCount}
-              styles={{
-                root: {
-                  padding: 10
-                }
-              }}
-              checked={this._isValueInFilterSelection(refinementValue)}
-              onChange={(ev, checked: boolean) => {
-                checked ? this._onFilterAdded(refinementValue) : this._onFilterRemoved(refinementValue);
-              }} />
-          );
-        })
-      }
-      {
-        this.props.isMultiValue ?
+            if (refinementValue.RefinementCount === 0) {
+              return null;
+            }
+            return (
+              <PersonaCustom
+                key={`${accountName}Key`}
+                userService={this.props.userService}
+                accountName={`i:0#.f|${accountName}`}
+                resultCount={refinementValue.RefinementCount}
+                onClick={(ev) => {
+                  this._onFilterAdded(refinementValue);
+                }}
+              />
+            );
+          })
+        }
+        {
+          this.state.refinerSelectedFilterValues.length > 0 &&
+          <Link onClick={this._clearFilters}>{strings.Refiners.ClearFiltersLabel}</Link>
+        }
 
-          <div>
-            <Link onClick={() => { this._applyFilters(this.state.refinerSelectedFilterValues); }} disabled={this.state.refinerSelectedFilterValues.length === 0}>{strings.Refiners.ApplyFiltersLabel}</Link>|<Link onClick={this._clearFilters} disabled={this.state.refinerSelectedFilterValues.length === 0}>{strings.Refiners.ClearFiltersLabel}</Link>
-          </div>
-
-          : null
-      }
-    </div>;
+      </div>
+    );
   }
 
   public componentDidMount() {

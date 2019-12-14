@@ -259,7 +259,6 @@ export default class LinkPanel extends React.Component<ILinkPanelProps, ILinkPan
 
       items.push(
         <TemplateRenderer
-          context={this.props.context}
           key={i}
           refinementResult={refinementResult}
           shouldResetFilters={props.shouldResetFilters}
@@ -268,6 +267,7 @@ export default class LinkPanel extends React.Component<ILinkPanelProps, ILinkPan
           onFilterValuesUpdated={props.onFilterValuesUpdated}
           language={props.language}
           selectedValues={selectedFilterValues}
+          userService= {this.props.userService}
         />
       );
     });

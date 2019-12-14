@@ -7,13 +7,9 @@ import FixedDateRangeTemplate from "./FixedDateRange/FixedDateRangeTemplate";
 import PersonaTemplate from "./Persona/PersonaTemplate";
 import { IRefinementResult, IRefinementValue } from "../../../../models/ISearchResult";
 import RefinementFilterOperationCallback from '../../../../models/RefinementValueOperationCallback';
+import IUserService from './../../../../services/SpService/IUserService';
 
 export interface ITemplateRendererProps {
-  /**
-   *  Sharepoint context
-   */
-  context: WebPartContext;
-
   /**
    * The template type to render
    */
@@ -49,6 +45,11 @@ export interface ITemplateRendererProps {
    * Used to build local state for sub components
    */
   selectedValues: IRefinementValue[];
+
+  /**
+   * UserService
+   */
+  userService : IUserService;
 }
 
 export default class TemplateRenderer extends React.Component<ITemplateRendererProps> {
@@ -106,13 +107,13 @@ export default class TemplateRenderer extends React.Component<ITemplateRendererP
 
       case RefinerTemplateOption.Persona:
         renderTemplate = <PersonaTemplate
-          context={this.props.context}
           refinementResult={this.props.refinementResult}
           onFilterValuesUpdated={this.props.onFilterValuesUpdated}
           shouldResetFilters={this.props.shouldResetFilters}
           isMultiValue={false}
           removeFilterValue={this.props.valueToRemove}
           selectedValues={this.props.selectedValues}
+          userService= {this.props.userService}
         />;
         break;
 

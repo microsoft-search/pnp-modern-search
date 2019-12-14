@@ -1,14 +1,9 @@
 import { IRefinementResult, IRefinementValue, IRefinementFilter } from "../../../../models/ISearchResult";
 import IRefinerConfiguration from "../../../../models/IRefinerConfiguration";
 import RefinementFilterOperationCallback from "../../../../models/RefinementValueOperationCallback";
-import { WebPartContext } from '@microsoft/sp-webpart-base';
+import IUserService from './../../../../services/SpService/IUserService';
 
 interface IFilterLayoutProps {
-  /**
-   * Sharepoint context
-   */
-  context: WebPartContext;
-
   /**
    * The refinement results
    */
@@ -48,6 +43,12 @@ interface IFilterLayoutProps {
    * The current UI language
    */
   language: string;
+
+  /**
+   * UserService
+   */
+  userService : IUserService;
+
 }
 
 export default IFilterLayoutProps;
