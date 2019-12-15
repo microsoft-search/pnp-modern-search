@@ -20,7 +20,7 @@ export default class SearchResultsTemplate extends React.Component<ISearchResult
             objectNode.style.display = "none";
         }
 
-        return <div dangerouslySetInnerHTML={{ __html: this.state.processedTemplate }}></div>;
+        return <div key={JSON.stringify(this.props.templateContext)} dangerouslySetInnerHTML={{ __html: this.state.processedTemplate }}></div>;
     }
 
     public componentDidMount() {

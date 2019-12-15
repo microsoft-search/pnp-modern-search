@@ -6,7 +6,7 @@ import { PreviewType } from '../controls/PreviewContainer/IPreviewContainerProps
 import { Link } from 'office-ui-fabric-react/lib/Link';
 import { TemplateService } from "../services/TemplateService/TemplateService";
 import * as documentCardLocationGetStyles from 'office-ui-fabric-react/lib/components/DocumentCard/DocumentCardLocation.styles';
-import { getTheme, mergeStyleSets } from "office-ui-fabric-react/lib/Styling";
+import { getTheme, mergeStyleSets, ITheme } from "office-ui-fabric-react/lib/Styling";
 import { classNamesFunction } from "office-ui-fabric-react/lib/Utilities";
 import { IReadonlyTheme } from "@microsoft/sp-component-base";
 import { merge, trimStart, isEmpty } from '@microsoft/sp-lodash-subset';
@@ -113,6 +113,7 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
         }
 
         let previewProps: IDocumentCardPreviewProps = {
+            theme: this.props.themeVariant as ITheme,
             previewImages: [
                 {
                     name: processedProps.title,
@@ -166,6 +167,7 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
 
         return <div>
             <DocumentCard
+                theme={this.props.themeVariant as ITheme}
                 onClick={() => {
                     this.setState({
                         showCallout: true
@@ -186,7 +188,9 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
                     {processedProps.location && !this.props.isCompact ?
                         <div className={documentCardLocationClassNames.root} dangerouslySetInnerHTML={{ __html: processedProps.location }}></div> : null
                     }
-                    <Link href={processedProps.href} target='_blank' styles={{
+                    <Link 
+                        theme={this.props.themeVariant as ITheme}
+                        href={processedProps.href} target='_blank' styles={{
                         root: {
                             selectors: {
                                 ':hover': {
@@ -196,6 +200,7 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
                         }
                     }}>
                         <DocumentCardTitle
+                            theme={this.props.themeVariant as ITheme}
                             title={processedProps.title}
                             shouldTruncate={false}
                         />
@@ -205,6 +210,7 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
                     }
                     {processedProps.author ?
                         <DocumentCardActivity
+                        theme={this.props.themeVariant as ITheme}
                             activity={processedProps.date}
                             people={[{ name: processedProps.author, profileImageSrc: processedProps.profileImage }]}
                         /> : null
@@ -225,7 +231,7 @@ export class DocumentCardWebComponent extends BaseWebComponent {
     public connectedCallback() {
  
        let props = this.resolveAttributes();
-       const documentCarditem = <DocumentCardComponent {...props} themeVariant={this._themeVariant}/>;
+       const documentCarditem = <DocumentCardComponent {...props}/>;
        ReactDOM.render(documentCarditem, this);
     }    
 }

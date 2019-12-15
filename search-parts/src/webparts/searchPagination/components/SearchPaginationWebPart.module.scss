@@ -21,20 +21,23 @@
 
                     a {
                         float: left;
-                        color: "[theme: themePrimary, default: #005a9e]";
                         padding: 5px 10px;
                         text-decoration: none;
                         border-radius: 15px;
         
                         i {
                             font-size: 10px;
-                            color: "[theme: themePrimary, default: #005a9e]";
-                        }  
+                        }
                     }
 
                     .active {
                         background-color: "[theme: themePrimary, default: #005a9e]";
-                        color: white;
+                        color: "[theme: themeLight, default: #ffffff]";
+                    }
+
+                    .active__inverted {
+                        background-color: "[theme: themeLight, default: #ffffff]";
+                        color: "[theme: themePrimary, default: #005a9e]";
                     }
         
                     a:visited {
@@ -42,6 +45,13 @@
                     }
                 }
             }
+        }
+        
+        &__pagination.inverted {
+            li a, li i {
+                color: "[theme: themeNeutral, default: #005a9e]";
+            }
+
         }
     }
 }

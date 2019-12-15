@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { TextField } from 'office-ui-fabric-react/lib/TextField';
 import { Fabric } from 'office-ui-fabric-react/lib/Fabric';
-import { DetailsListLayoutMode, SelectionMode, IColumn } from 'office-ui-fabric-react/lib/DetailsList';
-import { mergeStyleSets } from 'office-ui-fabric-react/lib/Styling';
+import { DetailsListLayoutMode, SelectionMode, IColumn, IDetailsRowProps, IDetailsRowStyles, DetailsRow, IDetailsHeaderBaseProps, IDetailsHeaderProps, DetailsHeader, IDetailsHeaderStyles } from 'office-ui-fabric-react/lib/DetailsList';
+import { mergeStyleSets, createTheme, ITheme } from 'office-ui-fabric-react/lib/Styling';
 import { ISearchResult } from '../models/ISearchResult';
 import * as Handlebars from 'handlebars';
 import { ShimmeredDetailsList } from 'office-ui-fabric-react/lib/ShimmeredDetailsList';
@@ -10,6 +10,7 @@ import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import { IconComponent } from './IconComponent';
 import { BaseWebComponent } from './BaseWebComponent';
 import * as ReactDOM from 'react-dom';
+import { ITooltipHostProps, TooltipHost, ITooltipStyles, Shimmer, ShimmerElementsGroup, ShimmerElementType } from 'office-ui-fabric-react';
 
 const classNames = mergeStyleSets({
     fileIconHeaderIcon: {
@@ -244,20 +245,56 @@ export class DetailsListComponent extends React.Component<DetailsListComponentPr
         let renderFilter: JSX.Element = null;
 
         if (this.props.enableFiltering) {
-            renderFilter = <div className={classNames.controlWrapper}>
-                <TextField label="Filter by name:" onChange={this._onChangeText.bind(this)} styles={controlStyles} />;
-      </div>;
+            renderFilter =  <div className={classNames.controlWrapper}>
+                                <TextField label="Filter by name:" onChange={this._onChangeText.bind(this)} styles={controlStyles} />;
+                            </div>;
         }
-
+        
         return (
             <Fabric>
                 {renderFilter}
                 <ShimmeredDetailsList
+                    theme={this.props.themeVariant as ITheme}
                     items={items}
                     compact={this.props.isCompact}
-                    columns={columns}
+                    columns={columns}                
                     selectionMode={SelectionMode.none}
                     setKey="set"
+                    detailsListStyles={{
+                        focusZone: {
+                            selectors: {
+                                '::::after': {
+                                    backgroundColor: this.props.themeVariant.semanticColors.bodyBackground
+                                }
+                            }                            
+                        }
+                    }}
+                    onRenderRow={(props: IDetailsRowProps): JSX.Element => {
+                        return <DetailsRow {...props} theme={this.props.themeVariant as ITheme}/>;}
+                    }
+                    onRenderDetailsHeader={(props: IDetailsHeaderProps): JSX.Element => {
+
+                        props.onRenderColumnHeaderTooltip = (tooltipHostProps: ITooltipHostProps) => {
+
+                            const customStyles: Partial<ITooltipStyles> = {};
+                            customStyles.root = { 
+                                backgroundColor: this.props.themeVariant.semanticColors.listBackground,
+                                color: this.props.themeVariant.semanticColors.listText,
+                                selectors: {
+                                    ':hover': {
+                                        backgroundColor: this.props.themeVariant.semanticColors.listHeaderBackgroundHovered
+                                    },
+                                    i: {
+                                        color: this.props.themeVariant.semanticColors.listText,
+                                    }
+                                }
+                            };
+    
+                            return <TooltipHost {...tooltipHostProps} theme={this.props.themeVariant as ITheme} styles={customStyles}/>;
+                        };
+
+                        return <DetailsHeader {...props} theme={this.props.themeVariant as ITheme}/>;}
+                    }
                     layoutMode={DetailsListLayoutMode.justified}
                     isHeaderVisible={true}
                     enableShimmer={this.props.showShimmers}
@@ -309,7 +346,7 @@ export class DetailsListWebComponent extends BaseWebComponent {
   public connectedCallback() {
 
      let props = this.resolveAttributes();
-     const detailsListComponent = <DetailsListComponent {...props} themeVariant={this._themeVariant}/>;
+     const detailsListComponent = <DetailsListComponent {...props}/>;
      ReactDOM.render(detailsListComponent, this);
   }
 }

@@ -1,5 +1,6 @@
 import { IRefinementResult, IRefinementFilter, IRefinementValue } from "../../../../models/ISearchResult";
 import RefinementFilterOperationCallback from "../../../../models/RefinementValueOperationCallback";
+import { IReadonlyTheme } from "@microsoft/sp-component-base";
 
 interface IBaseRefinerTemplateProps {
 
@@ -33,6 +34,11 @@ interface IBaseRefinerTemplateProps {
      * A single filter value to reset
      */
     removeFilterValue?: IRefinementValue;
+
+    /**
+     * The current theme variant
+     */
+    themeVariant: IReadonlyTheme | undefined;
 } 
 
 export default IBaseRefinerTemplateProps;

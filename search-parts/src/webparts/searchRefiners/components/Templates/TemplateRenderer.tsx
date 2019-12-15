@@ -5,6 +5,7 @@ import DateRangeTemplate from "./DateRange/DateRangeTemplate";
 import FixedDateRangeTemplate from "./FixedDateRange/FixedDateRangeTemplate";
 import { IRefinementResult, IRefinementValue } from "../../../../models/ISearchResult";
 import RefinementFilterOperationCallback from '../../../../models/RefinementValueOperationCallback';
+import { IReadonlyTheme } from '@microsoft/sp-component-base';
 
 export interface ITemplateRendererProps {
 
@@ -43,6 +44,11 @@ export interface ITemplateRendererProps {
      * Used to build local state for sub components
      */
     selectedValues: IRefinementValue[];
+
+    /**
+     * The current theme variant
+     */
+    themeVariant: IReadonlyTheme | undefined;
 }
 
 export default class TemplateRenderer extends React.Component<ITemplateRendererProps> {
@@ -59,6 +65,7 @@ export default class TemplateRenderer extends React.Component<ITemplateRendererP
                     onFilterValuesUpdated={this.props.onFilterValuesUpdated}
                     shouldResetFilters={this.props.shouldResetFilters}
                     isMultiValue={false}
+                    themeVariant={this.props.themeVariant}
                     removeFilterValue={this.props.valueToRemove}
                     selectedValues={this.props.selectedValues}
                 />;
@@ -68,6 +75,7 @@ export default class TemplateRenderer extends React.Component<ITemplateRendererP
                 renderTemplate = <CheckboxTemplate
                     refinementResult={this.props.refinementResult}
                     onFilterValuesUpdated={this.props.onFilterValuesUpdated}
+                    themeVariant={this.props.themeVariant}
                     shouldResetFilters={this.props.shouldResetFilters}
                     isMultiValue={true}
                     removeFilterValue={this.props.valueToRemove}
@@ -81,6 +89,7 @@ export default class TemplateRenderer extends React.Component<ITemplateRendererP
                     onFilterValuesUpdated={this.props.onFilterValuesUpdated}
                     shouldResetFilters={this.props.shouldResetFilters}
                     isMultiValue={true}
+                    themeVariant={this.props.themeVariant}
                     removeFilterValue={this.props.valueToRemove}
                     language={this.props.language}
                     selectedValues={this.props.selectedValues}
@@ -93,6 +102,7 @@ export default class TemplateRenderer extends React.Component<ITemplateRendererP
                     onFilterValuesUpdated={this.props.onFilterValuesUpdated}
                     shouldResetFilters={this.props.shouldResetFilters}
                     isMultiValue={false}
+                    themeVariant={this.props.themeVariant}
                     removeFilterValue={this.props.valueToRemove}
                     language={this.props.language}
                     selectedValues={this.props.selectedValues} />;
