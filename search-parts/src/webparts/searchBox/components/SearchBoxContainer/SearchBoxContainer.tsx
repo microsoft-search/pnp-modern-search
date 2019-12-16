@@ -15,6 +15,7 @@ import ISearchQuery from '../../../../models/ISearchQuery';
 import NlpDebugPanel from '../NlpDebugPanel/NlpDebugPanel';
 import { IconButton } from 'office-ui-fabric-react/lib/Button';
 import { ISuggestion } from '../../../../models/ISuggestion';
+import { isEqual } from '@microsoft/sp-lodash-subset';
 
 const SUGGESTION_CHAR_COUNT_TRIGGER = 2;
 
@@ -29,6 +30,8 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
       proposedQuerySuggestions: [],
       selectedQuerySuggestions: [],
       zeroTermQuerySuggestions: null,
+      hasRetrievedZeroTermSuggestions: false,
+      isRetrievingZeroTermSuggestions: false,
       isRetrievingSuggestions: false,
       searchInputValue: (props.inputValue) ? decodeURIComponent(props.inputValue) : '',
       termToSuggestFrom: null,
@@ -49,12 +52,13 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
       clearButton = <IconButton iconProps={{
                         iconName: 'Clear',
                         iconType: IconType.default,
-                      }} onClick= {() => { this._onSearch('', true); } } className={ styles.clearBtn }>
+                      }} onClick= {() => { this._onChange(''); this._onSearch('', true); } } className={ styles.clearBtn }>
                     </IconButton>;
     }
 
     return <Downshift
         onSelect={ this._onQuerySuggestionSelected }
+        itemToString={(item: ISuggestion) => item ? item.displayText : ''}
         >
         {({
           getInputProps,
@@ -63,7 +67,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
           selectedItem,
           highlightedIndex,
           openMenu,
-          clearItems,
+          clearItems
         }) => (
           <div>
             <div className={ styles.searchFieldGroup }>
@@ -195,7 +199,9 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
       }
     } catch (error) {}
 
-    if (this.state.isRetrievingSuggestions && this.state.proposedQuerySuggestions.length === 0) {
+    if ((this.state.isRetrievingSuggestions && this.state.proposedQuerySuggestions.length === 0)
+     || (this.state.isRetrievingZeroTermSuggestions && !this.state.searchInputValue))
+    {
       renderSuggestions = <div className={styles.suggestionPanel}>
                             <div {...getItemProps({item: null, disabled: true})}>
                               <div className={styles.suggestionItem}>
@@ -297,7 +303,8 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
 
         try {
 
-          if (this.state.zeroTermQuerySuggestions) {
+          //render zero term query suggestions
+          if (this.state.hasRetrievedZeroTermSuggestions) {
             if (this.state.zeroTermQuerySuggestions.length > 0) {
               this.setState({
                 proposedQuerySuggestions: this.state.zeroTermQuerySuggestions
@@ -305,33 +312,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
             }
           }
           else {
-
-            //Verify we have at least one suggestion provider that has getZeroTermSuggestions defined
-            if (this.props.suggestionProviders && this.props.suggestionProviders.some(sgp => sgp.instance && sgp.instance.isZeroTermSuggestionsEnabled)) {
-              this.setState({
-                errorMessage: null,
-                proposedQuerySuggestions: [],
-                zeroTermQuerySuggestions: [],
-              });
-
-              this.props.suggestionProviders.map(async (provider) => {
-
-                // Verify we have a valid suggestion provider and it is enabled
-                if (provider && provider.providerEnabled && provider.instance.isZeroTermSuggestionsEnabled) {
-                  const suggestions = await provider.instance.getZeroTermSuggestions();
-
-                  // Verify the input value hasn't changed before we add the returned suggestion
-                  if (inputValue === this.state.searchInputValue) {
-                    const mergedZeroTermSuggestions = [...this.state.proposedQuerySuggestions, ...suggestions ];
-                    this.setState({
-                      proposedQuerySuggestions: mergedZeroTermSuggestions,
-                      zeroTermQuerySuggestions: mergedZeroTermSuggestions,
-                      isRetrievingSuggestions: false
-                    });
-                  }
-                }
-              });
-            }
+            await this.ensureZeroTermQuerySuggestions();
           }
         } catch(error) {
           this.setState({
@@ -351,6 +332,46 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
           proposedQuerySuggestions: [],
         });
       }
+    }
+  }
+
+  private async ensureZeroTermQuerySuggestions(forceUpdate: boolean = false): Promise<void> {
+    if ((!this.state.hasRetrievedZeroTermSuggestions && !this.state.isRetrievingZeroTermSuggestions) || forceUpdate) {
+
+      // Verify we have at least one suggestion provider that has isZeroTermSuggestionsEnabled
+      if (this.props.suggestionProviders && this.props.suggestionProviders.some(sgp => sgp.instance && sgp.instance.isZeroTermSuggestionsEnabled)) {
+        this.setState({
+          zeroTermQuerySuggestions: [],
+          isRetrievingZeroTermSuggestions: true,
+        });
+
+        const allZeroTermSuggestions = await Promise.all(this.props.suggestionProviders.map(async (provider): Promise<ISuggestion[]> => {
+          let zeroTermSuggestions = [];
+
+          // Verify we have a valid suggestion provider and it is enabled
+          if (provider && provider.providerEnabled && provider.instance.isZeroTermSuggestionsEnabled) {
+            zeroTermSuggestions = await provider.instance.getZeroTermSuggestions();
+          }
+
+          return zeroTermSuggestions;
+        }));
+
+        // Flatten two-dimensional array of zero term suggestions
+        const mergedSuggestions = allZeroTermSuggestions.reduce((allSuggestions, suggestions) => allSuggestions.concat(suggestions), []);
+
+        this.setState({
+          hasRetrievedZeroTermSuggestions: true,
+          isRetrievingZeroTermSuggestions: false,
+          zeroTermQuerySuggestions: mergedSuggestions,
+          proposedQuerySuggestions: !this.state.searchInputValue ? mergedSuggestions : this.state.proposedQuerySuggestions,
+        });
+      }
+      else {
+        this.setState({
+          hasRetrievedZeroTermSuggestions: true,
+        });
+      }
+
     }
   }
 
@@ -463,10 +484,15 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
     });
   }
 
+  public componentDidMount() {
+    this.ensureZeroTermQuerySuggestions();
+  }
+
   public componentDidUpdate(prevProps: ISearchBoxContainerProps) {
-    if (prevProps.suggestionProviders !== this.props.suggestionProviders) {
-      //Trigger onChange intially on load to fetch zero term suggestions
-      this._onChange(this.props.inputValue);
+    // Detect if any of our suggestion providers have changed
+    if (prevProps.suggestionProviders.length !== this.props.suggestionProviders.length
+     || !isEqual(prevProps.suggestionProviders, this.props.suggestionProviders)) {
+      this.ensureZeroTermQuerySuggestions(true);
     }
   }
 

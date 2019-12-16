@@ -51,6 +51,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
   private _themeProvider: ThemeProvider;
   private _extensibilityService: IExtensibilityService;
   private _suggestionProviderInstances: ISuggestionProviderInstance<any>[];
+  private _initComplete: boolean = false;
 
   private _propertyFieldCollectionData = null;
   private _customCollectionFieldType = null;
@@ -67,7 +68,11 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
     this._bindHashChange = this._bindHashChange.bind(this);
   }
 
-  public async render(): Promise<void> {
+  public render(): void {
+
+    if (!this._initComplete) {
+      return;
+    }
 
     let inputValue = this.properties.defaultQueryKeywords.tryGetValue();
 
@@ -99,10 +104,6 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
       } as ISearchBoxContainerProps);
 
     ReactDom.render(element, this.domElement);
-  }
-
-  protected get isRenderAsync(): boolean {
-    return true;
   }
 
   /**
@@ -169,19 +170,15 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
 
     this.initSearchService();
     this.initNlpService();
-
     this.initThemeVariant();
-
-    this._extensibilityService = new ExtensibilityService();
-
-    await this.initSuggestionProviders();
 
     this._bindHashChange();
 
-    await super.onInit();
+    this._extensibilityService = new ExtensibilityService();
+    await this.initSuggestionProviders();
 
-    await this.render();
-    this.renderCompleted();
+    this._initComplete = true;
+    return super.onInit();
   }
 
   protected onDispose(): void {
@@ -216,12 +213,16 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
     };
   }
 
-  protected onPropertyPaneFieldChanged(propertyPath: string) {
+  protected async onPropertyPaneFieldChanged(propertyPath: string): Promise<void> {
     this.initSearchService();
     this.initNlpService();
 
     if (!this.properties.useDynamicDataSource) {
       this.properties.defaultQueryKeywords.setValue("");
+    }
+
+    if (propertyPath.localeCompare('suggestionProviders') === 0) {
+      await this.initSuggestionProviders();
     }
 
     this._bindHashChange();

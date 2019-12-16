@@ -39,6 +39,16 @@ interface ISearchBoxContainerState {
     isRetrievingSuggestions: boolean;
 
     /**
+     * Indicates the component is retrieving zero term suggestions
+     */
+    isRetrievingZeroTermSuggestions: boolean;
+
+    /**
+     * Indicates the component has checked for zero term suggestions
+     */
+    hasRetrievedZeroTermSuggestions: boolean;
+
+    /**
      * Error message
      */
     errorMessage: string;
