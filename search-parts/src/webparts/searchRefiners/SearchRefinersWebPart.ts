@@ -50,6 +50,11 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
      */
     private _availableManagedProperties: IComboBoxOption[];
 
+    constructor() {
+        super();
+        this._onUpdateAvailableProperties = this._onUpdateAvailableProperties.bind(this);
+    }
+
     public render(): void {
 
         let renderElement = null;

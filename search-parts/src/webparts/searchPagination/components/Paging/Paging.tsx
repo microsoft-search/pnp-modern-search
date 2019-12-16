@@ -31,17 +31,17 @@ export default class Paging extends React.Component<IPagingProps, IPagingState> 
           isThemeInverted = true;
         }
 
-        const { palette }: IReadonlyTheme = this.props.themeVariant;
+        const { semanticColors }: IReadonlyTheme = this.props.themeVariant;
         
         return(
             <div className={styles.searchPagination__paginationContainer}>
-                <div className={`${styles.searchPagination__paginationContainer__pagination} ${isThemeInverted ? 'inverted': ''}`}>
+                <div className={`${styles.searchPagination__paginationContainer__pagination} ${isThemeInverted ? 'inverted': 'standard'}`}>
                 <Pagination
                     activePage={this.state.currentPage}
-                    firstPageText={<i style={{backgroundColor: palette.themeLight}} className='ms-Icon ms-Icon--DoubleChevronLeft' aria-hidden='true'></i>}
-                    lastPageText={<i style={{backgroundColor: palette.themeLight}} className='ms-Icon ms-Icon--DoubleChevronRight' aria-hidden='true'></i>}
-                    prevPageText={<i style={{backgroundColor: palette.themeLight}} className='ms-Icon ms-Icon--ChevronLeft' aria-hidden='true'></i>}
-                    nextPageText={<i style={{backgroundColor: palette.themeLight}} className='ms-Icon ms-Icon--ChevronRight' aria-hidden='true'></i>}
+                    firstPageText={<i style={{color: semanticColors.bodyText}} className='ms-Icon ms-Icon--DoubleChevronLeft' aria-hidden='true'></i>}
+                    lastPageText={<i style={{color: semanticColors.bodyText}} className='ms-Icon ms-Icon--DoubleChevronRight' aria-hidden='true'></i>}
+                    prevPageText={<i style={{color: semanticColors.bodyText}} className='ms-Icon ms-Icon--ChevronLeft' aria-hidden='true'></i>}
+                    nextPageText={<i style={{color: semanticColors.bodyText}} className='ms-Icon ms-Icon--ChevronRight' aria-hidden='true'></i>}
                     activeLinkClass={ `${styles.active} ${isThemeInverted ? styles.active__inverted: ''}`}
                     itemsCountPerPage={ this.props.itemsCountPerPage }
                     totalItemsCount={ this.props.totalItems }

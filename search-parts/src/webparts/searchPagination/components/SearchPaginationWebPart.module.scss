@@ -24,7 +24,6 @@
                         padding: 5px 10px;
                         text-decoration: none;
                         border-radius: 15px;
-        
                         i {
                             font-size: 10px;
                         }
@@ -32,11 +31,11 @@
 
                     .active {
                         background-color: "[theme: themePrimary, default: #005a9e]";
-                        color: "[theme: themeLight, default: #ffffff]";
+                        color:  #ffffff;
                     }
 
                     .active__inverted {
-                        background-color: "[theme: themeLight, default: #ffffff]";
+                        background-color: #ffffff;
                         color: "[theme: themePrimary, default: #005a9e]";
                     }
         
@@ -48,10 +47,23 @@
         }
         
         &__pagination.inverted {
-            li a, li i {
-                color: "[theme: themeNeutral, default: #005a9e]";
+            ul {
+                li {
+                    a {
+                       color:  #ffffff;
+                    }
+                }
             }
+        }
 
+        &__pagination.standard {
+            ul {
+                li {
+                    a {
+                       color: "[theme: themePrimary, default: #005a9e]";
+                    }
+                }
+            }
         }
     }
 }

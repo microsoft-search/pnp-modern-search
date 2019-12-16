@@ -7,6 +7,7 @@ import { Guid } from '@microsoft/sp-core-library';
 import * as update from 'immutability-helper';
 import { Loader } from "../../../../../services/TemplateService/LoadHelper";
 import * as strings from 'SearchRefinersWebPartStrings';
+import { ITheme } from "@uifabric/styling";
 
 
 export interface IFixedDateRangeTemplateState extends IBaseRefinerTemplateState {
@@ -104,13 +105,22 @@ export default class FixedDateRangeTemplate extends React.Component<IFixedDateRa
 
         return <div>
             <ChoiceGroup
+                theme={this.props.themeVariant as ITheme}
                 selectedKey={this._getIntervalKeyForValue()}
                 options={options}
                 onChange={this._onChange}
                 ariaLabelledBy={labelId}
                 styles={{
                     root: {
-                        paddingLeft: 10
+                        paddingLeft: 10,
+                        backgroundColor: 'inherit'
+                    },
+                    flexContainer:{
+                        selectors: {
+                            label: {
+                                color: this.props.themeVariant.semanticColors.bodyText
+                            }
+                        }
                     }
                 }}
             />
