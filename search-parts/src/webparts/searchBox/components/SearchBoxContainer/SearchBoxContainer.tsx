@@ -16,6 +16,8 @@ import NlpDebugPanel from '../NlpDebugPanel/NlpDebugPanel';
 import { IconButton } from 'office-ui-fabric-react/lib/Button';
 import { ISuggestion } from '../../../../models/ISuggestion';
 import { isEqual } from '@microsoft/sp-lodash-subset';
+import { SuggestionType } from '../../../../models/SuggestionType';
+import { ISuggestionPerson } from '../../../../models/ISuggestionPerson';
 
 const SUGGESTION_CHAR_COUNT_TRIGGER = 2;
 
@@ -187,7 +189,6 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
   private renderSuggestions(getItemProps, selectedItem, highlightedIndex): JSX.Element {
 
     let renderSuggestions: JSX.Element = null;
-    let suggestions: JSX.Element[] = null;
 
     // Edge case with SPFx
     // Only in Chrome/Firefox the parent element class ".Canvas-slideUpIn" create a new stacking context due to a 'transform' operation preventing the inner content to overlap other WP
@@ -213,43 +214,102 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
 
     if (this.state.proposedQuerySuggestions.length > 0) {
 
-      // return suggestions.reduce((groups, current) => {
-      //   let group: ISuggestionGroup = groups.find(g => g.displayName == current.Group);
-      //   if(!group){
-      //     group = {
-      //       suggestions: [],
-      //       displayName: current.Group
-      //     } as ISuggestionGroup;
-      //   }
-      //   group.suggestions.push({
-      //     type: SuggestionType.Content,
-      //     displayText: current.Description,
-      //     targetUrl: current.URL,
-      //     icon: current.Icon,
-      //     onSuggestionSelected: this._onSuggestionSelected,
-      //   } as ISuggestion);
-      //   groups.push(group);
-      //   return groups;
-      // }, [] as ISuggestionGroup[]);
+      const suggestionGroups = this.state.proposedQuerySuggestions.reduce<{[key: string]: { groupName: string, suggestions: { suggestion: ISuggestion, index: number }[] }}>((groups, suggestion, index) => {
+          const groupName = suggestion && suggestion.groupName ? suggestion.groupName.trim() : strings.SuggestionProviders.DefaultSuggestionGroupName;
+          if (!groups[groupName]) {
+            groups[groupName] = {
+              groupName,
+              suggestions: []
+            };
+          }
+          groups[groupName].suggestions.push({ suggestion, index });
+          return groups;
+      }, {});
 
-      suggestions = this.state.proposedQuerySuggestions.map((suggestion, index) => {
-                              return <div {...getItemProps({item: suggestion})}
-                                  key={index}
-                                  style={{
-                                    fontWeight: selectedItem === suggestion ? 'bold' : 'normal'
-                                  }}>
-                                      <Label className={ highlightedIndex === index ? `${styles.suggestionItem} ${styles.selected}` : `${styles.suggestionItem}`}>
-                                          <div dangerouslySetInnerHTML={{ __html: suggestion.displayText }}></div>
-                                      </Label>
-                                  </div>;
-                                });
+      let indexIncrementer = -1;
+      const renderedSuggestionGroups = Object.keys(suggestionGroups).map(groupName => {
+        const currentGroup = suggestionGroups[groupName];
+        const renderedSuggestions = currentGroup.suggestions.map(item => {
+          indexIncrementer++;
+          return this.renderSuggestion(item.suggestion, indexIncrementer, getItemProps, selectedItem, highlightedIndex);
+        });
+
+        return (
+          <>
+              <Label className={styles.suggestionGroupName}>{groupName}</Label>
+              <div>
+                {renderedSuggestions}
+              </div>
+          </>
+        )
+      })
 
       renderSuggestions = <div className={styles.suggestionPanel}>
-                            { suggestions }
+                            { renderedSuggestionGroups }
                           </div>;
     }
 
     return renderSuggestions;
+  }
+
+  private renderSuggestion(suggestion: ISuggestion, suggestionIndex: number, getItemProps, selectedItem, highlightedIndex): JSX.Element {
+
+    let suggestionInner: JSX.Element = null;
+    const onClickSearchSuggestion = (evt: any) => {
+      evt.preventDefault();
+      this._onQuerySuggestionSelected(suggestion);
+      this._onSearch(suggestion.displayText);
+    }
+
+    switch (suggestion.type)
+    {
+      case SuggestionType.Person: {
+        const personSuggestion = suggestion as ISuggestionPerson;
+        suggestionInner = (<>
+          <div className={styles.suggestionIcon}>
+            {personSuggestion.icon && <img src={personSuggestion.icon} />}
+          </div>
+          <div className={styles.suggestionContent}>
+            <span dangerouslySetInnerHTML={{ __html: personSuggestion.displayText }}></span>
+            {personSuggestion.jobTitle && <div>{personSuggestion.jobTitle}</div>}
+            {personSuggestion.emailAddress && <div>✉ {personSuggestion.emailAddress}</div>}
+          </div>
+          <div className={styles.suggestionAction}>
+            {suggestion.targetUrl && <IconButton iconProps={{iconName: 'search'}} onClick={onClickSearchSuggestion}></IconButton>}
+          </div>
+        </>);
+        break;
+      }
+
+      case SuggestionType.Content:
+      default: {
+        suggestionInner = (<>
+          <div className={styles.suggestionIcon}>
+            {suggestion.icon && <img src={suggestion.icon} />}
+          </div>
+          <div className={styles.suggestionContent}>
+            <span dangerouslySetInnerHTML={{ __html: suggestion.displayText }}></span>
+          </div>
+          <div className={styles.suggestionAction}>
+            {suggestion.targetUrl && <IconButton iconProps={{iconName: 'search'}} onClick={onClickSearchSuggestion}></IconButton>}
+          </div>
+        </>);
+        break;
+      }
+    }
+    const innerClassName = suggestionIndex === highlightedIndex ? `${styles.suggestionItem} ${styles.selected}` : `${styles.suggestionItem}`;
+    return (
+      <div {...getItemProps({ item: suggestion })}
+        key={suggestionIndex}
+        style={{
+          fontWeight: selectedItem === suggestion ? 'bold' : 'normal'
+        }}>
+          {suggestion.targetUrl
+            ? <a href={suggestion.targetUrl} target="_blank" className={innerClassName}>{suggestionInner}</a>
+            : <div className={innerClassName}>{suggestionInner}</div>
+          }
+      </div>
+    );
   }
 
   /**
@@ -401,14 +461,19 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
     let newState = {
       searchInputValue: replacedSearchInputvalue,
       proposedQuerySuggestions:[],
+      showClearButton: true,
     };
 
     // If custom handler returned false, then don't update selectedQuerySuggestions in state
-    if (shouldUpdateSelectedSuggestion) {
+    if (!suggestion.targetUrl || shouldUpdateSelectedSuggestion) {
       newState["selectedQuerySuggestions"] = update(this.state.selectedQuerySuggestions, { $push: [suggestion]});
     }
 
-    this.setState(newState);
+    this.setState(newState, () => {
+      if (!suggestion.targetUrl) {
+        this._onSearch(this.state.searchInputValue);
+      }
+    });
   }
 
   private _replaceAt(string: string, index: number, replace: string) {
