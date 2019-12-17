@@ -1,15 +1,21 @@
 import * as React from 'react';
-import { Icon, IconType, mergeStyles, ImageFit } from 'office-ui-fabric-react';
+import { Icon, IconType, mergeStyles, ImageFit, ITheme } from 'office-ui-fabric-react';
 import { getFileTypeIconProps, FileTypeIconSize, FileIconType } from '@uifabric/file-type-icons';
 import { isEmpty, trimStart } from '@microsoft/sp-lodash-subset';
 import { BaseWebComponent } from './BaseWebComponent';
 import * as ReactDOM from 'react-dom';
+import { IReadonlyTheme } from '@microsoft/sp-component-base';
 
 export interface IIconProps {
     fileExtension?: string;
     iconName?: string;
     size?: FileTypeIconSize;
     imageUrl?: string;
+
+    /**
+     * The current theme settings
+     */
+    themeVariant?: IReadonlyTheme;
 }
 
 export interface IIconState {
@@ -49,7 +55,7 @@ export class IconComponent extends React.Component<IIconProps, IIconState> {
         } else {
             iconProps = getFileTypeIconProps({ type: FileIconType.genericFile, size: iconSize, imageFileType: 'svg' });
         }
-        return <Icon {...iconProps} className={iconClass} />;
+        return <Icon {...iconProps} theme={this.props.themeVariant as ITheme} className={iconClass} />;
     }
 }
 

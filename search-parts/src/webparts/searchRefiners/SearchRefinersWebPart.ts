@@ -19,7 +19,7 @@ import { IDynamicDataCallables, IDynamicDataPropertyDefinition, IDynamicDataSour
 import { ISearchRefinersWebPartProps } from './ISearchRefinersWebPartProps';
 import { Placeholder } from '@pnp/spfx-controls-react/lib/Placeholder';
 import IRefinerSourceData from '../../models/IRefinerSourceData';
-import { DynamicProperty, ThemeChangedEventArgs, ThemeProvider } from '@microsoft/sp-component-base';
+import { DynamicProperty, ThemeChangedEventArgs, ThemeProvider, IReadonlyTheme } from '@microsoft/sp-component-base';
 import { SearchComponentType } from '../../models/SearchComponentType';
 import RefinersLayoutOption from '../../models/RefinersLayoutOptions';
 import { ISearchRefinersContainerProps } from './components/SearchRefinersContainer/ISearchRefinersContainerProps';
@@ -34,7 +34,7 @@ import MockSearchService from '../../services/SearchService/MockSearchService';
 import SearchService from '../../services/SearchService/SearchService';
 import ISearchService from '../../services/SearchService/ISearchService';
 import { IComboBoxOption } from 'office-ui-fabric-react/lib/ComboBox';
-import { cloneDeep } from '@microsoft/sp-lodash-subset';
+import { cloneDeep, isEqual } from '@microsoft/sp-lodash-subset';
 
 export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearchRefinersWebPartProps> implements IDynamicDataCallables {
 
@@ -43,11 +43,17 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
     private _searchResultSourceData: DynamicProperty<ISearchResultSourceData>;
     private _searchService: ISearchService;
     private _themeProvider: ThemeProvider;
+    private _themeVariant: IReadonlyTheme;
 
     /**
      * The list of available managed managed properties (managed globally for all proeprty pane fiels if needed)
      */
     private _availableManagedProperties: IComboBoxOption[];
+
+    constructor() {
+        super();
+        this._onUpdateAvailableProperties = this._onUpdateAvailableProperties.bind(this);
+    }
 
     public render(): void {
 
@@ -88,7 +94,8 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
                     },
                     selectedLayout: this.properties.selectedLayout,
                     language: this.context.pageContext.cultureInfo.currentUICultureName,
-                    query: queryKeywords + queryTemplate + selectedProperties + resultSourceId
+                    query: queryKeywords + queryTemplate + selectedProperties + resultSourceId,
+                    themeVariant: this._themeVariant
                 } as ISearchRefinersContainerProps
             );
         } else {
@@ -462,6 +469,9 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
         // Consume the new ThemeProvider service
         this._themeProvider = this.context.serviceScope.consume(ThemeProvider.serviceKey);
 
+        // If it exists, get the theme variant
+        this._themeVariant = this._themeProvider.tryGetTheme();
+
         // Register a handler to be notified if the theme variant changes
         this._themeProvider.themeChangedEvent.add(this, this._handleThemeChangedEvent.bind(this));
     }
@@ -471,6 +481,9 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
      * @param args The new theme
      */
     private _handleThemeChangedEvent(args: ThemeChangedEventArgs): void {
-        this.render();
+        if (!isEqual(this._themeVariant, args.theme)) {
+            this._themeVariant = args.theme;
+            this.render();
+        }
     }
 }

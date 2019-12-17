@@ -265,6 +265,7 @@ export default class LinkPanel extends React.Component<ILinkPanelProps, ILinkPan
                    valueToRemove={valueToRemove}
                    onFilterValuesUpdated={props.onFilterValuesUpdated}
                    language={props.language}
+                   themeVariant={props.themeVariant}
                    selectedValues={selectedFilterValues}
                />
            );

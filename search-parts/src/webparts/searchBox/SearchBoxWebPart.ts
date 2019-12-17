@@ -33,7 +33,8 @@ import NlpService from '../../services/NlpService/NlpService';
 import { PageOpenBehavior, QueryPathBehavior } from '../../helpers/UrlHelper';
 import SearchBoxContainer from './components/SearchBoxContainer/SearchBoxContainer';
 import { SearchComponentType } from '../../models/SearchComponentType';
-import { ThemeProvider, ThemeChangedEventArgs } from '@microsoft/sp-component-base';
+import { ThemeProvider, ThemeChangedEventArgs, IReadonlyTheme } from '@microsoft/sp-component-base';
+import { isEqual } from '@microsoft/sp-lodash-subset';
 
 export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWebPartProps> implements IDynamicDataCallables {
 
@@ -42,6 +43,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
   private _serviceHelper: ServiceHelper;
   private _nlpService: INlpService;
   private _themeProvider: ThemeProvider;
+  private _themeVariant: IReadonlyTheme;
 
   constructor() {
     super();
@@ -82,7 +84,8 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
         isStaging: this.properties.isStaging,
         NlpService: this._nlpService,
         placeholderText: this.properties.placeholderText,
-        domElement: this.domElement
+        domElement: this.domElement,
+        themeVariant: this._themeVariant
       } as ISearchBoxContainerProps);
 
     ReactDom.render(element, this.domElement);
@@ -445,6 +448,9 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
     // Consume the new ThemeProvider service
     this._themeProvider = this.context.serviceScope.consume(ThemeProvider.serviceKey);
 
+    // If it exists, get the theme variant
+    this._themeVariant = this._themeProvider.tryGetTheme();
+
     // Register a handler to be notified if the theme variant changes
     this._themeProvider.themeChangedEvent.add(this, this._handleThemeChangedEvent.bind(this));
   }
@@ -454,6 +460,9 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
    * @param args The new theme
    */
   private _handleThemeChangedEvent(args: ThemeChangedEventArgs): void {
-      this.render();
+    if (!isEqual(this._themeVariant, args.theme)) {
+        this._themeVariant = args.theme;
+        this.render();
+    }
   }
 }

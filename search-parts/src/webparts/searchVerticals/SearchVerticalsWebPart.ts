@@ -1,4 +1,4 @@
-import * as React from 'react';
+﻿import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import { Version, Guid, DisplayMode } from '@microsoft/sp-core-library';
 import { BaseClientSideWebPart } from "@microsoft/sp-webpart-base";
@@ -14,8 +14,8 @@ import { ISearchVertical } from '../../models/ISearchVertical';
 import IDynamicDataService from '../../services/DynamicDataService/IDynamicDataService';
 import { DynamicDataService } from '../../services/DynamicDataService/DynamicDataService';
 import ISearchResultSourceData from '../../models/ISearchResultSourceData';
-import { DynamicProperty, ThemeProvider, ThemeChangedEventArgs } from '@microsoft/sp-component-base';
-import { cloneDeep } from '@microsoft/sp-lodash-subset';
+import { DynamicProperty, ThemeProvider, ThemeChangedEventArgs, IReadonlyTheme } from '@microsoft/sp-component-base';
+import { cloneDeep, isEqual } from '@microsoft/sp-lodash-subset';
 import { Placeholder } from '@pnp/spfx-controls-react/lib/Placeholder';
 
 export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearchVerticalsWebPartProps> implements IDynamicDataCallables {
@@ -26,6 +26,7 @@ export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearc
   private _searchResultSourceData: DynamicProperty<ISearchResultSourceData>;
   private _selectedVertical: ISearchVertical;
   private _themeProvider: ThemeProvider;
+  private _themeVariant: IReadonlyTheme;
 
   public constructor() {
     super();
@@ -65,7 +66,8 @@ export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearc
         {
           verticals: searchVerticals,
           onVerticalSelected: this.onVerticalSelected,
-          showCounts: this.properties.showCounts
+          showCounts: this.properties.showCounts,
+          themeVariant: this._themeVariant
         } as ISearchVerticalsContainerProps
       );
 
@@ -301,6 +303,9 @@ export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearc
     // Consume the new ThemeProvider service
     this._themeProvider = this.context.serviceScope.consume(ThemeProvider.serviceKey);
 
+    // If it exists, get the theme variant
+    this._themeVariant = this._themeProvider.tryGetTheme();
+
     // Register a handler to be notified if the theme variant changes
     this._themeProvider.themeChangedEvent.add(this, this._handleThemeChangedEvent.bind(this));
   }
@@ -310,6 +315,9 @@ export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearc
    * @param args The new theme
    */
   private _handleThemeChangedEvent(args: ThemeChangedEventArgs): void {
-      this.render();
+    if (!isEqual(this._themeVariant, args.theme)) {
+        this._themeVariant = args.theme;
+        this.render();
+    }
   }
 }

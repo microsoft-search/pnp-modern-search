@@ -2,6 +2,7 @@ import { PageOpenBehavior, QueryPathBehavior } from '../../../../helpers/UrlHelp
 import ISearchService from       '../../../../services/SearchService/ISearchService';
 import INlpService from '../../../../services/NlpService/INlpService';
 import ISearchQuery from '../../../../models/ISearchQuery';
+import { IReadonlyTheme } from '@microsoft/sp-component-base';
 
 export interface ISearchBoxContainerProps {
     onSearch: (searchQuery: ISearchQuery) => void;
@@ -19,4 +20,9 @@ export interface ISearchBoxContainerProps {
     isStaging: boolean;
     placeholderText: string;
     domElement: HTMLElement;
+
+    /**
+     * The current theme variant
+     */
+    themeVariant: IReadonlyTheme | undefined;
 }

@@ -12,9 +12,10 @@ import { ISearchRefinersContainerState } from './ISearchRefinersContainerState';
 import { IRefinementFilter, IRefinementValue, RefinementOperator } from '../../../../models/ISearchResult';
 import * as update from 'immutability-helper';
 import RefinerTemplateOption from '../../../../models/RefinerTemplateOption';
-import { find } from '@microsoft/sp-lodash-subset';
+import { find, isEqual } from '@microsoft/sp-lodash-subset';
 import RefinersSortOption from '../../../../models/RefinersSortOptions';
 import RefinerSortDirection from '../../../../models/RefinersSortDirection';
+import { IReadonlyTheme } from '@microsoft/sp-component-base';
 
 export default class SearchRefinersContainer extends React.Component<ISearchRefinersContainerProps, ISearchRefinersContainerState> {
 
@@ -34,6 +35,8 @@ export default class SearchRefinersContainer extends React.Component<ISearchRefi
     public render(): React.ReactElement<ISearchRefinersContainerProps> {
         let renderWpContent: JSX.Element = null;
         let renderWebPartTitle: JSX.Element = null;
+
+        const { semanticColors }: IReadonlyTheme = this.props.themeVariant;
 
         if (this.props.webPartTitle && this.props.webPartTitle.length > 0) {
             renderWebPartTitle = <WebPartTitle title={this.props.webPartTitle} updateProperty={null} displayMode={DisplayMode.Read} />;
@@ -62,6 +65,7 @@ export default class SearchRefinersContainer extends React.Component<ISearchRefi
                         onRemoveAllFilters={this.onRemoveAllFilters}
                         hasSelectedValues={this.state.selectedRefinementFilters.length > 0 ? true : false}
                         language={this.props.language}
+                        themeVariant={this.props.themeVariant}
                         selectedFilters={this.state.selectedRefinementFilters}
                     />;
                     break;
@@ -83,6 +87,7 @@ export default class SearchRefinersContainer extends React.Component<ISearchRefi
                         hasSelectedValues={this.state.selectedRefinementFilters.length > 0 ? true : false}
                         selectedFilterValues={selectedValues}
                         language={this.props.language}
+                        themeVariant={this.props.themeVariant}
                         selectedFilters={this.state.selectedRefinementFilters}
                     />;
                     break;
@@ -90,36 +95,18 @@ export default class SearchRefinersContainer extends React.Component<ISearchRefi
         }
 
         return (
-            <div className={styles.searchRefiners}>
-                {renderWebPartTitle}
-                {renderWpContent}
+            <div style={{backgroundColor: semanticColors.bodyBackground}}>
+                <div className={styles.searchRefiners}>
+                    {renderWebPartTitle}
+                    {renderWpContent}
+                </div>
             </div>
         );
     }
 
     public UNSAFE_componentWillReceiveProps(nextProps: ISearchRefinersContainerProps) {
 
-        // let sameQuery = nextProps.query === this.props.query;
-
-        // if (sameQuery && nextProps.availableRefiners.length === 0) {
-        //     // Same query - zero filters - early exit. Patch for sync issue where filters sometimes are cleared and should stay
-        //     return;
-        // }
-        // // If a new query has been entered, we reset all filters
-        // if (!sameQuery) {
-        //     this.setState({
-        //         shouldResetFilters: true,
-        //         selectedRefinementFilters: []
-        //     });
-
-        // } else {
-        //     // Reset the flag every time we receive new refinement results
-        //     this.setState({
-        //         shouldResetFilters: false
-        //     });
-        // }
-        // If a new query has been entered, we reset all filters
-        if (nextProps.query !== this.props.query) {
+        if (nextProps.query !== this.props.query || !isEqual(this.props.themeVariant, nextProps.themeVariant)) {
 
             this.setState({
                 shouldResetFilters: true,
