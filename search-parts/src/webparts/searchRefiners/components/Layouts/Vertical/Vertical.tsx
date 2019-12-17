@@ -13,6 +13,7 @@ import styles from './Vertical.module.scss';
 import * as strings from 'SearchRefinersWebPartStrings';
 import TemplateRenderer from '../../Templates/TemplateRenderer';
 import { isEqual } from '@microsoft/sp-lodash-subset';
+import { ITheme } from '@uifabric/styling';
 
 export default class Vertical extends React.Component<IFilterLayoutProps, IVerticalState> {
 
@@ -50,7 +51,9 @@ export default class Vertical extends React.Component<IFilterLayoutProps, IVerti
 
         const renderLinkRemoveAll = this.props.hasSelectedValues ?
             (<div className={`${styles.verticalLayout__filterPanel__body__removeAllFilters} ${this.props.hasSelectedValues && "hiddenLink"}`}>
-                <Link onClick={this._removeAllFilters}>
+                <Link 
+                    theme={this.props.themeVariant as ITheme}
+                    onClick={this._removeAllFilters}>
                     {strings.RemoveAllFiltersLabel}
                 </Link>
             </div>) : null;

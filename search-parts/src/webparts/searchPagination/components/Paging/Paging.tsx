@@ -35,24 +35,26 @@ export default class Paging extends React.Component<IPagingProps, IPagingState> 
         
         return(
             <div className={styles.searchPagination__paginationContainer}>
-                <div className={`${styles.searchPagination__paginationContainer__pagination} ${isThemeInverted ? 'inverted': 'standard'}`}>
-                <Pagination
-                    activePage={this.state.currentPage}
-                    firstPageText={<i style={{color: semanticColors.bodyText}} className='ms-Icon ms-Icon--DoubleChevronLeft' aria-hidden='true'></i>}
-                    lastPageText={<i style={{color: semanticColors.bodyText}} className='ms-Icon ms-Icon--DoubleChevronRight' aria-hidden='true'></i>}
-                    prevPageText={<i style={{color: semanticColors.bodyText}} className='ms-Icon ms-Icon--ChevronLeft' aria-hidden='true'></i>}
-                    nextPageText={<i style={{color: semanticColors.bodyText}} className='ms-Icon ms-Icon--ChevronRight' aria-hidden='true'></i>}
-                    activeLinkClass={ `${styles.active} ${isThemeInverted ? styles.active__inverted: ''}`}
-                    itemsCountPerPage={ this.props.itemsCountPerPage }
-                    totalItemsCount={ this.props.totalItems }
-                    pageRangeDisplayed={5}
-                    onChange={(pageNumber: number) => {
-                        this.setState({
-                            currentPage: pageNumber
-                        });
-                        this.props.onPageUpdate(pageNumber);
-                    }}
-                />                      
+                <div className={`${styles.searchPagination__paginationContainer__pagination}`}>
+                    <div className={`${isThemeInverted ? styles.inverted: styles.standard}`}>
+                        <Pagination
+                            activePage={this.state.currentPage}
+                            firstPageText={<i style={{color: semanticColors.bodyText}} className='ms-Icon ms-Icon--DoubleChevronLeft' aria-hidden='true'></i>}
+                            lastPageText={<i style={{color: semanticColors.bodyText}} className='ms-Icon ms-Icon--DoubleChevronRight' aria-hidden='true'></i>}
+                            prevPageText={<i style={{color: semanticColors.bodyText}} className='ms-Icon ms-Icon--ChevronLeft' aria-hidden='true'></i>}
+                            nextPageText={<i style={{color: semanticColors.bodyText}} className='ms-Icon ms-Icon--ChevronRight' aria-hidden='true'></i>}
+                            activeLinkClass={ `${styles.active} ${isThemeInverted ? styles.active__inverted: ''}`}
+                            itemsCountPerPage={ this.props.itemsCountPerPage }
+                            totalItemsCount={ this.props.totalItems }
+                            pageRangeDisplayed={5}
+                            onChange={(pageNumber: number) => {
+                                this.setState({
+                                    currentPage: pageNumber
+                                });
+                                this.props.onPageUpdate(pageNumber);
+                            }}
+                        /> 
+                    </div>                     
                 </div>
             </div>
         );

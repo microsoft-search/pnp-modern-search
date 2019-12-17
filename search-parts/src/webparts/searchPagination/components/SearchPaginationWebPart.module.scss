@@ -10,6 +10,14 @@
             display: inline-block;
             text-align: center;
 
+            .inverted a {
+                color:  #ffffff;
+            }
+    
+            .standard a {
+                color: "[theme: themePrimary, default: #005a9e]";
+            }
+
             ul {
                 display: inline-block;
                 padding-left: 0;
@@ -41,26 +49,6 @@
         
                     a:visited {
                         color: inherit;
-                    }
-                }
-            }
-        }
-        
-        &__pagination.inverted {
-            ul {
-                li {
-                    a {
-                       color:  #ffffff;
-                    }
-                }
-            }
-        }
-
-        &__pagination.standard {
-            ul {
-                li {
-                    a {
-                       color: "[theme: themePrimary, default: #005a9e]";
                     }
                 }
             }
