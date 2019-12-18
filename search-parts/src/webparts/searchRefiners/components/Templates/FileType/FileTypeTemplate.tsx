@@ -7,13 +7,14 @@ import * as strings from 'SearchRefinersWebPartStrings';
 // CSS
 import styles from './FileTypeTemplate.module.scss';
 
-// UI Fabbric
+// UI Fabric
 import { Checkbox } from 'office-ui-fabric-react/lib/Checkbox';
 import { Text } from '@microsoft/sp-core-library';
 import { Link } from 'office-ui-fabric-react/lib/Link';
 import { Icon } from 'office-ui-fabric-react/lib/Icon';
 import { Text as TextUI } from 'office-ui-fabric-react/lib/Text';
 import { getFileTypeIconProps } from '@uifabric/file-type-icons';
+import { ITheme } from '@uifabric/styling';
 
 // Third party lib
 import * as update from 'immutability-helper';
@@ -63,6 +64,7 @@ export default class FileTypeTemplate extends React.Component<IBaseRefinerTempla
                 onChange={(ev, checked: boolean) => {
                   checked ? this._onFilterAdded(refinementValue) : this._onFilterRemoved(refinementValue);
                 }}
+                theme={this.props.themeVariant as ITheme}
                 onRenderLabel={() => {
                   return (
                     <>

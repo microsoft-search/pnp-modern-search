@@ -9,6 +9,7 @@ import styles from './PersonaTemplate.module.scss';
 
 // UI Fabric
 import { Link } from 'office-ui-fabric-react/lib/Link';
+import { ITheme } from '@uifabric/styling';
 
 // Thirs party Lib
 import * as update from 'immutability-helper';
@@ -55,6 +56,7 @@ export default class PersonaTemplate extends React.Component<IPersonaTemplatePro
                 userService={this.props.userService}
                 accountName={`i:0#.f|${accountName}`}
                 resultCount={refinementValue.RefinementCount}
+                theme={this.props.themeVariant as ITheme}
                 onClick={(ev) => {
                   this._onFilterAdded(refinementValue);
                 }}
@@ -108,44 +110,12 @@ export default class PersonaTemplate extends React.Component<IPersonaTemplatePro
   }
 
   /**
-   * Checks if the current filter value is present in the list of the selected values for the current refiner
-   * @param valueToCheck The filter value to check
-   */
-  private _isValueInFilterSelection(valueToCheck: IRefinementValue): boolean {
-
-    let newFilters = this.state.refinerSelectedFilterValues.filter((filter) => {
-      return filter.RefinementToken === valueToCheck.RefinementToken && filter.RefinementName === valueToCheck.RefinementName;
-    });
-
-    return newFilters.length === 0 ? false : true;
-  }
-
-  /**
    * Handler when a new filter value is selected
    * @param addedValue the filter value added
    */
   private _onFilterAdded = (addedValue: IRefinementValue) => {
 
     let newFilterValues = update(this.state.refinerSelectedFilterValues, { $push: [addedValue] });
-
-    this.setState({
-      refinerSelectedFilterValues: newFilterValues
-    });
-
-    if (!this.props.isMultiValue) {
-      this._applyFilters(newFilterValues);
-    }
-  }
-
-  /**
-   * Handler when a filter value is unselected
-   * @param removedValue the filter value removed
-   */
-  private _onFilterRemoved = (removedValue: IRefinementValue) => {
-
-    const newFilterValues = this.state.refinerSelectedFilterValues.filter((elt) => {
-      return elt.RefinementName !== removedValue.RefinementName;
-    });
 
     this.setState({
       refinerSelectedFilterValues: newFilterValues
