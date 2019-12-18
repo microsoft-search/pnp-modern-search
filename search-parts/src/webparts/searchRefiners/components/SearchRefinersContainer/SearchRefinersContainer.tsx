@@ -39,7 +39,7 @@ export default class SearchRefinersContainer extends React.Component<ISearchRefi
     const { semanticColors }: IReadonlyTheme = this.props.themeVariant;
 
     if (this.props.webPartTitle && this.props.webPartTitle.length > 0) {
-      renderWebPartTitle = <WebPartTitle title={this.props.webPartTitle} updateProperty={null} displayMode={DisplayMode.Read} />;
+      renderWebPartTitle = <WebPartTitle title={this.props.webPartTitle} updateProperty={null} displayMode={DisplayMode.Read} themeVariant={this.props.themeVariant} />;
     }
 
     if (this.state.availableRefiners.length === 0) {
