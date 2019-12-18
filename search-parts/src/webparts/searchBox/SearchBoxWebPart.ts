@@ -53,6 +53,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
   private _extensibilityService: IExtensibilityService;
   private _suggestionProviderInstances: ISuggestionProviderInstance<any>[];
   private _initComplete: boolean = false;
+  private _foundCustomSuggestionProviders: boolean = false;
 
   private _propertyFieldCollectionData = null;
   private _customCollectionFieldType = null;
@@ -319,6 +320,11 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
         this.getCustomSuggestionProviders()
     ]);
 
+    //Track if we have any custom suggestion providers
+    if (customProviders && customProviders.length > 0) {
+      this._foundCustomSuggestionProviders = true;
+    }
+
     //Merge all providers together and set defaults
     const savedProviders = this.properties.suggestionProviders && this.properties.suggestionProviders.length > 0 ? this.properties.suggestionProviders : [];
     const providerDefinitions = [ ...defaultProviders, ...customProviders ].map(provider => {
@@ -451,53 +457,61 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
         checked: false,
         label: strings.SearchBoxEnableQuerySuggestions
       }),
-      this._propertyFieldCollectionData('suggestionProviders', {
-        manageBtnLabel: strings.SuggestionProviders.EditSuggestionProvidersLabel,
-        key: 'suggestionProviders',
-        panelHeader: strings.SuggestionProviders.EditSuggestionProvidersLabel,
-        panelDescription: strings.SuggestionProviders.SuggestionProvidersDescription,
-        disableItemCreation: true,
-        disableItemDeletion: true,
-        disabled: !this.properties.enableQuerySuggestions,
-        label: strings.SuggestionProviders.SuggestionProvidersLabel,
-        value: this.properties.suggestionProviders,
-        fields: [
-            {
-                id: 'providerEnabled',
-                title: strings.SuggestionProviders.EnabledPropertyLabel,
-                type: this._customCollectionFieldType.custom,
-                onCustomRender: (field, value, onUpdate, item, itemId) => {
-                  return (
-                    React.createElement("div", null,
-                      React.createElement(Toggle, { key: itemId, checked: value, onChange: (evt, checked) => {
-                        onUpdate(field.id, checked);
-                      }})
-                    )
-                  );
-                }
-            },
-            {
-                id: 'providerDisplayName',
-                title: strings.SuggestionProviders.ProviderNamePropertyLabel,
-                type: this._customCollectionFieldType.custom,
-                onCustomRender: (field, value, onUpdate, item, itemId) => {
-                  return (
-                    React.createElement("div", { style: { 'fontWeight': 600 } }, value)
-                  );
-                }
-            },
-            {
-                id: 'providerDescription',
-                title: strings.SuggestionProviders.ProviderDescriptionPropertyLabel,
-                type: this._customCollectionFieldType.custom,
-                onCustomRender: (field, value, onUpdate, item, itemId) => {
-                  return (
-                    React.createElement("div", null, value)
-                  );
-                }
-            }
-        ]
-      }),
+    ];
+
+    if (this._foundCustomSuggestionProviders) {
+      searchBehaviorOptionsFields = searchBehaviorOptionsFields.concat([
+        this._propertyFieldCollectionData('suggestionProviders', {
+          manageBtnLabel: strings.SuggestionProviders.EditSuggestionProvidersLabel,
+          key: 'suggestionProviders',
+          panelHeader: strings.SuggestionProviders.EditSuggestionProvidersLabel,
+          panelDescription: strings.SuggestionProviders.SuggestionProvidersDescription,
+          disableItemCreation: true,
+          disableItemDeletion: true,
+          disabled: !this.properties.enableQuerySuggestions,
+          label: strings.SuggestionProviders.SuggestionProvidersLabel,
+          value: this.properties.suggestionProviders,
+          fields: [
+              {
+                  id: 'providerEnabled',
+                  title: strings.SuggestionProviders.EnabledPropertyLabel,
+                  type: this._customCollectionFieldType.custom,
+                  onCustomRender: (field, value, onUpdate, item, itemId) => {
+                    return (
+                      React.createElement("div", null,
+                        React.createElement(Toggle, { key: itemId, checked: value, onChange: (evt, checked) => {
+                          onUpdate(field.id, checked);
+                        }})
+                      )
+                    );
+                  }
+              },
+              {
+                  id: 'providerDisplayName',
+                  title: strings.SuggestionProviders.ProviderNamePropertyLabel,
+                  type: this._customCollectionFieldType.custom,
+                  onCustomRender: (field, value, onUpdate, item, itemId) => {
+                    return (
+                      React.createElement("div", { style: { 'fontWeight': 600 } }, value)
+                    );
+                  }
+              },
+              {
+                  id: 'providerDescription',
+                  title: strings.SuggestionProviders.ProviderDescriptionPropertyLabel,
+                  type: this._customCollectionFieldType.custom,
+                  onCustomRender: (field, value, onUpdate, item, itemId) => {
+                    return (
+                      React.createElement("div", null, value)
+                    );
+                  }
+              }
+          ]
+        })
+      ]);
+    }
+
+    searchBehaviorOptionsFields = searchBehaviorOptionsFields.concat([
       PropertyPaneHorizontalRule(),
       PropertyPaneTextField('placeholderText', {
         label: strings.SearchBoxPlaceholderTextLabel
@@ -507,7 +521,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
         checked: false,
         label: strings.SearchBoxSearchInNewPageLabel
       })
-    ];
+    ]);
 
     if (this.properties.searchInNewPage) {
       searchBehaviorOptionsFields = searchBehaviorOptionsFields.concat([
