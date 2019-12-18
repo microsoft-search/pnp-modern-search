@@ -8,8 +8,10 @@ import FileTypeTemplate from "./FileType/FileTypeTemplate";
 import { IRefinementResult, IRefinementValue } from "../../../../models/ISearchResult";
 import RefinementFilterOperationCallback from '../../../../models/RefinementValueOperationCallback';
 import IUserService from './../../../../services/SpService/IUserService';
+import { IReadonlyTheme } from '@microsoft/sp-component-base';
 
 export interface ITemplateRendererProps {
+
   /**
    * The template type to render
    */
@@ -47,9 +49,14 @@ export interface ITemplateRendererProps {
   selectedValues: IRefinementValue[];
 
   /**
-   * UserService
+  * UserService
+  */
+  userService: IUserService;
+
+  /**
+   * The current theme variant
    */
-  userService : IUserService;
+  themeVariant: IReadonlyTheme | undefined;
 }
 
 export default class TemplateRenderer extends React.Component<ITemplateRendererProps> {
@@ -66,6 +73,7 @@ export default class TemplateRenderer extends React.Component<ITemplateRendererP
           onFilterValuesUpdated={this.props.onFilterValuesUpdated}
           shouldResetFilters={this.props.shouldResetFilters}
           isMultiValue={false}
+          themeVariant={this.props.themeVariant}
           removeFilterValue={this.props.valueToRemove}
           selectedValues={this.props.selectedValues}
         />;
@@ -75,6 +83,7 @@ export default class TemplateRenderer extends React.Component<ITemplateRendererP
         renderTemplate = <CheckboxTemplate
           refinementResult={this.props.refinementResult}
           onFilterValuesUpdated={this.props.onFilterValuesUpdated}
+          themeVariant={this.props.themeVariant}
           shouldResetFilters={this.props.shouldResetFilters}
           isMultiValue={true}
           removeFilterValue={this.props.valueToRemove}
@@ -88,6 +97,7 @@ export default class TemplateRenderer extends React.Component<ITemplateRendererP
           onFilterValuesUpdated={this.props.onFilterValuesUpdated}
           shouldResetFilters={this.props.shouldResetFilters}
           isMultiValue={true}
+          themeVariant={this.props.themeVariant}
           removeFilterValue={this.props.valueToRemove}
           language={this.props.language}
           selectedValues={this.props.selectedValues}
@@ -100,6 +110,7 @@ export default class TemplateRenderer extends React.Component<ITemplateRendererP
           onFilterValuesUpdated={this.props.onFilterValuesUpdated}
           shouldResetFilters={this.props.shouldResetFilters}
           isMultiValue={false}
+          themeVariant={this.props.themeVariant}
           removeFilterValue={this.props.valueToRemove}
           language={this.props.language}
           selectedValues={this.props.selectedValues} />;
@@ -111,33 +122,36 @@ export default class TemplateRenderer extends React.Component<ITemplateRendererP
           onFilterValuesUpdated={this.props.onFilterValuesUpdated}
           shouldResetFilters={this.props.shouldResetFilters}
           isMultiValue={false}
+          themeVariant={this.props.themeVariant}
           removeFilterValue={this.props.valueToRemove}
           selectedValues={this.props.selectedValues}
-          userService= {this.props.userService}
+          userService={this.props.userService}
         />;
         break;
 
-        case RefinerTemplateOption.FileType:
-          renderTemplate = <FileTypeTemplate
-            refinementResult={this.props.refinementResult}
-            onFilterValuesUpdated={this.props.onFilterValuesUpdated}
-            shouldResetFilters={this.props.shouldResetFilters}
-            isMultiValue={false}
-            removeFilterValue={this.props.valueToRemove}
-            selectedValues={this.props.selectedValues}
-          />;
-          break;
+      case RefinerTemplateOption.FileType:
+        renderTemplate = <FileTypeTemplate
+          refinementResult={this.props.refinementResult}
+          onFilterValuesUpdated={this.props.onFilterValuesUpdated}
+          shouldResetFilters={this.props.shouldResetFilters}
+          isMultiValue={false}
+          themeVariant={this.props.themeVariant}
+          removeFilterValue={this.props.valueToRemove}
+          selectedValues={this.props.selectedValues}
+        />;
+        break;
 
-        case RefinerTemplateOption.FileTypeMulti:
-          renderTemplate = <FileTypeTemplate
-            refinementResult={this.props.refinementResult}
-            onFilterValuesUpdated={this.props.onFilterValuesUpdated}
-            shouldResetFilters={this.props.shouldResetFilters}
-            isMultiValue={true}
-            removeFilterValue={this.props.valueToRemove}
-            selectedValues={this.props.selectedValues}
-          />;
-          break;
+      case RefinerTemplateOption.FileTypeMulti:
+        renderTemplate = <FileTypeTemplate
+          refinementResult={this.props.refinementResult}
+          onFilterValuesUpdated={this.props.onFilterValuesUpdated}
+          shouldResetFilters={this.props.shouldResetFilters}
+          isMultiValue={true}
+          themeVariant={this.props.themeVariant}
+          removeFilterValue={this.props.valueToRemove}
+          selectedValues={this.props.selectedValues}
+        />;
+        break;
 
       default:
 

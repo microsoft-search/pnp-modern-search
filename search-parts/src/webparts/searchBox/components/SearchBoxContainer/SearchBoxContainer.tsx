@@ -5,7 +5,7 @@ import ISearchBoxContainerState from                 './ISearchBoxContainerState
 import { PageOpenBehavior, QueryPathBehavior } from  '../../../../helpers/UrlHelper';
 import { MessageBar, MessageBarType } from           'office-ui-fabric-react/lib/MessageBar';
 import Downshift from                                'downshift';
-import { TextField } from                            'office-ui-fabric-react/lib/TextField';
+import { TextField, ITextFieldProps } from                            'office-ui-fabric-react/lib/TextField';
 import { IconType } from                             'office-ui-fabric-react/lib/Icon';
 import { Spinner, SpinnerSize } from                 'office-ui-fabric-react/lib/Spinner';
 import { Label } from                                'office-ui-fabric-react/lib/Label';
@@ -14,6 +14,7 @@ import styles from '../SearchBoxWebPart.module.scss';
 import ISearchQuery from '../../../../models/ISearchQuery';
 import NlpDebugPanel from '../NlpDebugPanel/NlpDebugPanel';
 import { IconButton } from 'office-ui-fabric-react/lib/Button';
+import { ITheme } from '@uifabric/styling';
 
 const SUGGESTION_CHAR_COUNT_TRIGGER = 3;
 
@@ -43,6 +44,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
     var clearButton = null;
     if (this.state.showClearButton) {
       clearButton = <IconButton iconProps={{
+                        theme: this.props.themeVariant as ITheme,
                         iconName: 'Clear',
                         iconType: IconType.default,
                       }} onClick= {() => { this._onSearch('', true); } } className={ styles.clearBtn }>
@@ -65,6 +67,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
             <div className={ styles.searchFieldGroup }>
               <TextField {...getInputProps({
                   placeholder: this.props.placeholderText ? this.props.placeholderText : strings.SearchInputPlaceholder,
+                  theme: this.props.themeVariant as ITheme,
                   onKeyDown: event => {
 
                     if (!isOpen || (isOpen && highlightedIndex === null)) {
@@ -79,7 +82,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                     }
 
                   }
-              })}
+              } as ITextFieldProps)}
               className={ styles.searchTextField }
               value={ this.state.searchInputValue }
               autoComplete= "off"
@@ -106,6 +109,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
               }}/>
               {clearButton}
               <IconButton iconProps={{
+                  theme: this.props.themeVariant as ITheme,
                   iconName: 'Search',
                   iconType: IconType.default,
                 }} onClick= {() => { this._onSearch(this.state.searchInputValue);} } className={ styles.searchBtn }>
@@ -124,6 +128,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
     if (this.state.showClearButton) {
       clearButton = <IconButton iconProps={{
                         iconName: 'Clear',
+                        theme: this.props.themeVariant as ITheme,
                         iconType: IconType.default,
                       }} onClick= {() => { this._onSearch('', true); } } className={ styles.clearBtn }>
                     </IconButton>;
@@ -132,6 +137,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
     return  <div className={ styles.searchFieldGroup }>
               <TextField 
                 className={ styles.searchTextField }
+                theme={this.props.themeVariant as ITheme}
                 placeholder={ this.props.placeholderText ? this.props.placeholderText : strings.SearchInputPlaceholder }
                 value={ this.state.searchInputValue }
                 onChange={ (ev, value) => {
@@ -156,6 +162,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
               {clearButton}
               <IconButton iconProps={{
                   iconName: 'Search',
+                  theme: this.props.themeVariant as ITheme,
                   iconType: IconType.default,
                 }} onClick= {() => { this._onSearch(this.state.searchInputValue);} } className={ styles.searchBtn }>
               </IconButton>
@@ -340,7 +347,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
           searchUrl.hash = urlEncodedQueryText;
         }
         else {
-          searchUrl.searchParams.append(this.props.queryStringParameter, urlEncodedQueryText);
+          searchUrl.searchParams.append(this.props.queryStringParameter, queryText);
         }
 
         // Send the query to the new page

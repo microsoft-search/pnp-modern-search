@@ -3,6 +3,7 @@ import IRefinerConfiguration from "../../../../models/IRefinerConfiguration";
 import { DisplayMode } from "@microsoft/sp-core-library";
 import RefinersLayoutOption from "../../../../models/RefinersLayoutOptions";
 import IUserService from './../../../../services/SpService/IUserService';
+import { IReadonlyTheme } from "@microsoft/sp-component-base";
 
 export interface ISearchRefinersContainerProps {
   /**
@@ -53,6 +54,10 @@ export interface ISearchRefinersContainerProps {
   /**
    * UserService
    */
-  userService : IUserService;
+  userService: IUserService;
 
+  /**
+   * The current theme variant
+   */
+  themeVariant: IReadonlyTheme | undefined;
 }

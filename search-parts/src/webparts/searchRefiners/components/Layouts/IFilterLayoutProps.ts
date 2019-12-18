@@ -2,8 +2,10 @@ import { IRefinementResult, IRefinementValue, IRefinementFilter } from "../../..
 import IRefinerConfiguration from "../../../../models/IRefinerConfiguration";
 import RefinementFilterOperationCallback from "../../../../models/RefinementValueOperationCallback";
 import IUserService from './../../../../services/SpService/IUserService';
+import { IReadonlyTheme } from "@microsoft/sp-component-base";
 
 interface IFilterLayoutProps {
+
   /**
    * The refinement results
    */
@@ -47,8 +49,12 @@ interface IFilterLayoutProps {
   /**
    * UserService
    */
-  userService : IUserService;
+  userService: IUserService;
 
+  /**
+   * The current theme variant
+   */
+  themeVariant: IReadonlyTheme | undefined;
 }
 
 export default IFilterLayoutProps;

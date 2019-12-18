@@ -2,6 +2,8 @@ import * as React from "react";
 import { Shimmer, ShimmerElementType as ElemType, ShimmerElementsGroup } from 'office-ui-fabric-react/lib/Shimmer';
 import { BaseWebComponent } from "./BaseWebComponent";
 import * as ReactDOM from 'react-dom';
+import { IReadonlyTheme } from "@microsoft/sp-component-base";
+import { ITheme } from "@uifabric/styling";
 
 export interface IPersonaCardShimmersComponentProps {
 
@@ -9,6 +11,11 @@ export interface IPersonaCardShimmersComponentProps {
      * The persona image size
      */
     personaSize?: string;
+
+    /**
+     * The current theme settings
+     */
+    themeVariant?: IReadonlyTheme;
 }
 
 export class PersonaCardShimmersComponent extends React.Component<IPersonaCardShimmersComponentProps, {}> {
@@ -57,13 +64,18 @@ export class PersonaCardShimmersComponent extends React.Component<IPersonaCardSh
                                     }}>   
                                         
                                         <Shimmer
+                                            theme={this.props.themeVariant as ITheme}
                                             customElementsGroup={
                                             <div style={{ display: 'flex', marginTop: 10 }}>
                                                 <ShimmerElementsGroup
+                                                    theme={this.props.themeVariant as ITheme}
+                                                    backgroundColor={this.props.themeVariant.semanticColors.bodyBackground}
                                                     shimmerElements={[{ type: ElemType.circle, height: personaSize}, { type: ElemType.gap, width: 10, height: personaSize }]}
                                                 />
                                                 <ShimmerElementsGroup
+                                                theme={this.props.themeVariant as ITheme}
                                                 flexWrap={true}
+                                                backgroundColor={this.props.themeVariant.semanticColors.bodyBackground}
                                                 width="100%"
                                                 shimmerElements={[
                                                     { type: ElemType.line, width: '30%', height: 10, verticalAlign: 'center' },

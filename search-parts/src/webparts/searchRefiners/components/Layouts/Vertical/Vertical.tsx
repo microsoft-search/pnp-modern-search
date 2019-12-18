@@ -13,6 +13,7 @@ import styles from './Vertical.module.scss';
 import * as strings from 'SearchRefinersWebPartStrings';
 import TemplateRenderer from '../../Templates/TemplateRenderer';
 import { isEqual } from '@microsoft/sp-lodash-subset';
+import { ITheme } from '@uifabric/styling';
 import { Icon } from 'office-ui-fabric-react/lib/Icon';
 import { Text as TextUI } from 'office-ui-fabric-react/lib/Text';
 
@@ -51,8 +52,10 @@ export default class Vertical extends React.Component<IFilterLayoutProps, IVerti
       groups={this.state.groups} /> : noResultsElement;
 
     const renderLinkRemoveAll = this.props.hasSelectedValues ?
-      (<div className={`${styles.verticalLayout__filterPanel__body__removeAllFilters} ${this.props.hasSelectedValues && 'hiddenLink'}`}>
-        <Link onClick={this._removeAllFilters}>
+      (<div className={`${styles.verticalLayout__filterPanel__body__removeAllFilters} ${this.props.hasSelectedValues && "hiddenLink"}`}>
+        <Link
+          theme={this.props.themeVariant as ITheme}
+          onClick={this._removeAllFilters}>
           {strings.RemoveAllFiltersLabel}
         </Link>
       </div>) : null;
@@ -184,6 +187,7 @@ export default class Vertical extends React.Component<IFilterLayoutProps, IVerti
           templateType={configuredFilter[0].template}
           onFilterValuesUpdated={props.onFilterValuesUpdated}
           language={props.language}
+          themeVariant={props.themeVariant}
           selectedValues={selectedFilterValues}
           userService={this.props.userService}
         />

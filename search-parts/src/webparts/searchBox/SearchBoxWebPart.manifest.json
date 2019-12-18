@@ -6,6 +6,7 @@
   "version": "*",
   "manifestVersion": 2,
   "supportsFullBleed": true,
+  "supportsThemeVariants": true,
   "requiresCustomScript": false,
   "supportedHosts": ["SharePointWebPart"],
   "loadLegacyFabricCss": true,
