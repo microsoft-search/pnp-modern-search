@@ -25,6 +25,7 @@
         text-decoration: none;
         min-height: 28px;
         cursor: pointer;
+        color: #333;
 
         .suggestionIcon {
             min-width: 40px;
@@ -45,7 +46,6 @@
             align-items: center;
             padding: 0 10px;
             flex: 1 1 auto;
-            color: #333;
         }
 
         .suggestionDescription {
@@ -57,16 +57,7 @@
             display: flex;
             flex-direction: row;
             justify-content: center;
-        }
-
-        .suggestionActionButton {
-            height: 26px;
-            width: 26px;
-            border-radius: 50px;
-
-            &:hover {
-                background: #fff;
-            }
+            font-size: 16px;
         }
     }
 

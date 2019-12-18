@@ -6,7 +6,7 @@ import { PageOpenBehavior, QueryPathBehavior } from  '../../../../helpers/UrlHel
 import { MessageBar, MessageBarType } from           'office-ui-fabric-react/lib/MessageBar';
 import Downshift from                                'downshift';
 import { TextField } from                            'office-ui-fabric-react/lib/TextField';
-import { IconType } from                             'office-ui-fabric-react/lib/Icon';
+import { IconType, Icon } from                             'office-ui-fabric-react/lib/Icon';
 import { Spinner, SpinnerSize } from                 'office-ui-fabric-react/lib/Spinner';
 import { Label } from                                'office-ui-fabric-react/lib/Label';
 import * as update from                              'immutability-helper';
@@ -23,6 +23,8 @@ const SUGGESTION_CHAR_COUNT_TRIGGER = 2;
 
 export default class SearchBoxContainer extends React.Component<ISearchBoxContainerProps, ISearchBoxContainerState> {
 
+  private _onChangeDebounced = null;
+
   public constructor(props: ISearchBoxContainerProps) {
 
     super(props);
@@ -38,7 +40,8 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
       searchInputValue: (props.inputValue) ? decodeURIComponent(props.inputValue) : '',
       termToSuggestFrom: null,
       errorMessage: null,
-      showClearButton: !!props.inputValue
+      showClearButton: !!props.inputValue,
+      lastSuggestionClicked: null,
     };
 
     this._onSearch = this._onSearch.bind(this);
@@ -48,8 +51,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
 
   private renderSearchBoxWithAutoComplete(): JSX.Element {
     let clearButton = null;
-    let inputHasFocus = false;
-    let onChangeDebounced = null;
+    let thisComponent = this;
 
     if (this.state.showClearButton) {
       clearButton = <IconButton iconProps={{
@@ -70,7 +72,8 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
           selectedItem,
           highlightedIndex,
           openMenu,
-          clearItems
+          closeMenu,
+          clearItems,
         }) => (
           <div>
             <div className={ styles.searchFieldGroup }>
@@ -89,31 +92,30 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                       }
                     }
 
-                  }
+                  },
               })}
               className={ styles.searchTextField }
               value={ this.state.searchInputValue }
               autoComplete= "off"
               onChange={ (evt, value) => {
-                if (!onChangeDebounced) {
-                  onChangeDebounced = debounce((newValue) => {
-                    this.setState({
-                      searchInputValue: newValue,
-                      showClearButton: true,
-                    });
+                if (!this._onChangeDebounced) {
+                  this._onChangeDebounced = debounce((newValue) => {
                     clearItems();
                     this._onChange(newValue);
-                    openMenu();
                   }, 200);
                 }
-                onChangeDebounced(value);
+                this._onChangeDebounced(value);
+                this.setState({
+                  searchInputValue: value,
+                  showClearButton: true,
+                  isRetrievingSuggestions: this.props.enableQuerySuggestions,
+                });
               }}
               onFocus={ () => {
-                inputHasFocus = true;
                 openMenu();
               }}
               onBlur = { () => {
-                inputHasFocus = false;
+                closeMenu();
               }}
               />
               {clearButton}
@@ -123,7 +125,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                 }} onClick= {() => { this._onSearch(this.state.searchInputValue);} } className={ styles.searchBtn }>
               </IconButton>
             </div>
-            {isOpen || inputHasFocus ?
+            {isOpen ?
               this.renderSuggestions(getItemProps, selectedItem, highlightedIndex)
             : null}
           </div>
@@ -250,13 +252,6 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
 
     let suggestionInner: JSX.Element = null;
     let suggestionContent: JSX.Element = null;
-    let suggestionSearchClicked = false;
-
-    const onClickSearchSuggestion = (evt: any) => {
-      suggestionSearchClicked = true;
-      this._onQuerySuggestionSelected(suggestion);
-      this._onSearch(suggestion.displayText);
-    }
 
     if (suggestion.type === SuggestionType.Person) {
       const personSuggestion = suggestion as ISuggestionPerson;
@@ -284,14 +279,10 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
       </div>
       <div className={styles.suggestionAction}>
         {suggestion.targetUrl && (
-          <IconButton
-            iconProps={{
-              iconName: 'Search',
-              iconType: IconType.default
-            }}
-            onClick={onClickSearchSuggestion}
-            className={styles.suggestionActionButton}>
-          </IconButton>
+          <Icon
+            iconName='OpenInNewWindow'
+            iconType={IconType.default}
+          />
         )}
       </div>
     </>;
@@ -306,9 +297,10 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
         }}>
           {suggestion.targetUrl
             ? <a className={innerClassName}
-                //  href={decodeURI(suggestion.targetUrl)}
-                //  target="_blank"
-                 onClick={() => !suggestionSearchClicked && window.open(suggestion.targetUrl, '_blank')}
+                 href={suggestion.targetUrl}
+                 target="_blank"
+                 data-interception="off" // Bypass SPFx page router (https://docs.microsoft.com/en-us/sharepoint/dev/spfx/hyperlinking)
+                 onClick={() => this.setState({ lastSuggestionClicked: suggestion })}
           >{suggestionInner}</a>
             : <div className={innerClassName}>{suggestionInner}</div>
           }
@@ -393,9 +385,11 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
     }
     else {
       // Clear suggestions history
-      this.setState({
-        proposedQuerySuggestions: [],
-      });
+      if (this.state.proposedQuerySuggestions.length > 0) {
+        this.setState({
+          proposedQuerySuggestions: [],
+        });
+      }
     }
   }
 
@@ -460,16 +454,26 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
         console.log(`Error occurred while executing custom onSuggestionSeleted() handler. ${error}`);
       }
     }
-    this.setState({
-      searchInputValue: replacedSearchInputvalue,
-      proposedQuerySuggestions:[],
-      showClearButton: true,
-      selectedQuerySuggestions: update(this.state.selectedQuerySuggestions, { $push: [suggestion]})
-    }, () => {
-      if (!suggestion.targetUrl) {
-        this._onSearch(this.state.searchInputValue);
+
+    if (!suggestion.targetUrl) {
+      this.setState({
+        searchInputValue: replacedSearchInputvalue,
+        proposedQuerySuggestions:[],
+        showClearButton: true,
+        selectedQuerySuggestions: update(this.state.selectedQuerySuggestions, { $push: [suggestion]})
+      }, () => {
+        if (!suggestion.targetUrl) {
+          this._onSearch(this.state.searchInputValue);
+        }
+      });
+    }
+    else {
+      const lastSuggestionClicked = this.state.lastSuggestionClicked;
+      if (!lastSuggestionClicked || (lastSuggestionClicked.targetUrl !== suggestion.targetUrl && lastSuggestionClicked.displayText !== suggestion.displayText)) {
+        window.open(suggestion.targetUrl, '_blank');
       }
-    });
+      this._onSearch('', true);
+    }
   }
 
   private _replaceAt(string: string, index: number, replace: string) {
@@ -538,6 +542,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
       }
     }
   }
+
 
   public UNSAFE_componentWillReceiveProps(nextProps: ISearchBoxContainerProps) {
     this.setState({

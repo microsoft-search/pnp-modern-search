@@ -57,6 +57,11 @@ interface ISearchBoxContainerState {
      * Show Clear button in the Search Box
      */
     showClearButton: boolean;
+
+    /**
+     * Last suggestion that was clicked in suggestions list
+     */
+    lastSuggestionClicked: ISuggestion;
 }
 
 export default ISearchBoxContainerState;
