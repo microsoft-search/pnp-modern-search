@@ -6,5 +6,5 @@ export interface ISuggestion {
   targetUrl?: string;
   icon?: string;
   groupName?: string;
-  onSuggestionSelected?: (suggestion: ISuggestion) => boolean;
+  onSuggestionSelected?: (suggestion: ISuggestion) => void;
 }

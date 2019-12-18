@@ -334,9 +334,9 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
 
   private async getDefaultSuggestionProviders(): Promise<ISuggestionProviderDefinition<any>[]> {
     return [{
-        providerName: "default",
-        providerDescription: "Default SharePoint query suggestions.",
-        providerDisplayName: "SharePoint",
+        providerName: SharePointDefaultSuggestionProvider.ProviderName,
+        providerDisplayName: SharePointDefaultSuggestionProvider.ProviderDisplayName,
+        providerDescription: SharePointDefaultSuggestionProvider.ProviderDescription,
         providerClass: SharePointDefaultSuggestionProvider
     }];
   }

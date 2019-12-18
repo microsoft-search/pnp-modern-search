@@ -18,41 +18,55 @@
     }
 
     .suggestionItem {
-        padding: 10px;
+        padding: 2px 10px;
         display: flex;
         flex-direction: row;
+        align-items: center;
         text-decoration: none;
+        min-height: 28px;
         cursor: pointer;
 
         .suggestionIcon {
             min-width: 40px;
             display: flex;
             justify-content: center;
+            height: 100%;
 
             & > img {
-                max-width: 30px;
-                max-height: 30px;
+                max-width: 24px;
+                max-height: 24px;
             }
         }
 
         .suggestionContent {
             display: flex;
-            flex-direction: column;
-            justify-content: center;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
             padding: 0 10px;
             flex: 1 1 auto;
             color: #333;
         }
 
-        .suggestionAction {
-          display: flex;
-          flex-direction: row;
-          justify-content: center;
-          border-radius: 50px;
+        .suggestionDescription {
+            font-size: 0.9em;
+            color: #777;
+        }
 
-          &:hover {
-            background: #fff;
-          }
+        .suggestionAction {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+        }
+
+        .suggestionActionButton {
+            height: 26px;
+            width: 26px;
+            border-radius: 50px;
+
+            &:hover {
+                background: #fff;
+            }
         }
     }
 

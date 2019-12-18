@@ -15,7 +15,7 @@ import ISearchQuery from '../../../../models/ISearchQuery';
 import NlpDebugPanel from '../NlpDebugPanel/NlpDebugPanel';
 import { IconButton } from 'office-ui-fabric-react/lib/Button';
 import { ISuggestion } from '../../../../models/ISuggestion';
-import { isEqual } from '@microsoft/sp-lodash-subset';
+import { isEqual, debounce } from '@microsoft/sp-lodash-subset';
 import { SuggestionType } from '../../../../models/SuggestionType';
 import { ISuggestionPerson } from '../../../../models/ISuggestionPerson';
 
@@ -31,7 +31,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
       enhancedQuery: null,
       proposedQuerySuggestions: [],
       selectedQuerySuggestions: [],
-      zeroTermQuerySuggestions: null,
+      zeroTermQuerySuggestions: [],
       hasRetrievedZeroTermSuggestions: false,
       isRetrievingZeroTermSuggestions: false,
       isRetrievingSuggestions: false,
@@ -47,8 +47,9 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
   }
 
   private renderSearchBoxWithAutoComplete(): JSX.Element {
-    var clearButton = null;
+    let clearButton = null;
     let inputHasFocus = false;
+    let onChangeDebounced = null;
 
     if (this.state.showClearButton) {
       clearButton = <IconButton iconProps={{
@@ -93,26 +94,19 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
               className={ styles.searchTextField }
               value={ this.state.searchInputValue }
               autoComplete= "off"
-              onChanged={ (value) => {
-
-                  this.setState({
-                    searchInputValue: value,
-                    showClearButton: true
-                  });
-
-                  if (this.state.selectedQuerySuggestions.length === 0) {
+              onChange={ (evt, value) => {
+                if (!onChangeDebounced) {
+                  onChangeDebounced = debounce((newValue) => {
+                    this.setState({
+                      searchInputValue: newValue,
+                      showClearButton: true,
+                    });
                     clearItems();
-                    this._onChange(value);
+                    this._onChange(newValue);
                     openMenu();
-                  } else {
-                    if (!value) {
-
-                      // Reset the selected suggestions if input is empty
-                      this.setState({
-                        selectedQuerySuggestions: [],
-                      });
-                    }
-                  }
+                  }, 200);
+                }
+                onChangeDebounced(value);
               }}
               onFocus={ () => {
                 inputHasFocus = true;
@@ -255,49 +249,55 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
   private renderSuggestion(suggestion: ISuggestion, suggestionIndex: number, getItemProps, selectedItem, highlightedIndex): JSX.Element {
 
     let suggestionInner: JSX.Element = null;
+    let suggestionContent: JSX.Element = null;
+    let suggestionSearchClicked = false;
+
     const onClickSearchSuggestion = (evt: any) => {
-      evt.preventDefault();
+      suggestionSearchClicked = true;
       this._onQuerySuggestionSelected(suggestion);
       this._onSearch(suggestion.displayText);
     }
 
-    switch (suggestion.type)
-    {
-      case SuggestionType.Person: {
-        const personSuggestion = suggestion as ISuggestionPerson;
-        suggestionInner = (<>
-          <div className={styles.suggestionIcon}>
-            {personSuggestion.icon && <img src={personSuggestion.icon} />}
-          </div>
-          <div className={styles.suggestionContent}>
-            <span dangerouslySetInnerHTML={{ __html: personSuggestion.displayText }}></span>
-            {personSuggestion.jobTitle && <div>{personSuggestion.jobTitle}</div>}
-            {personSuggestion.emailAddress && <div>✉ {personSuggestion.emailAddress}</div>}
-          </div>
-          <div className={styles.suggestionAction}>
-            {suggestion.targetUrl && <IconButton iconProps={{iconName: 'search'}} onClick={onClickSearchSuggestion}></IconButton>}
-          </div>
-        </>);
-        break;
-      }
+    if (suggestion.type === SuggestionType.Person) {
+      const personSuggestion = suggestion as ISuggestionPerson;
+      const personFields = [];
+      if (personSuggestion.jobTitle) personFields.push(personSuggestion.jobTitle);
+      if (personSuggestion.emailAddress) personFields.push(personSuggestion.emailAddress);
 
-      case SuggestionType.Content:
-      default: {
-        suggestionInner = (<>
-          <div className={styles.suggestionIcon}>
-            {suggestion.icon && <img src={suggestion.icon} />}
-          </div>
-          <div className={styles.suggestionContent}>
-            <span dangerouslySetInnerHTML={{ __html: suggestion.displayText }}></span>
-          </div>
-          <div className={styles.suggestionAction}>
-            {suggestion.targetUrl && <IconButton iconProps={{iconName: 'search'}} onClick={onClickSearchSuggestion}></IconButton>}
-          </div>
-        </>);
-        break;
-      }
+      suggestionContent = <>
+        <span dangerouslySetInnerHTML={{ __html: personSuggestion.displayText }}></span>
+        <span className={styles.suggestionDescription}>{personFields.join(' | ')}</span>
+      </>;
     }
+    else {
+      suggestionContent = <>
+        <span dangerouslySetInnerHTML={{ __html: suggestion.displayText }}></span>
+      </>;
+    }
+
+    suggestionInner = <>
+      <div className={styles.suggestionIcon}>
+        {suggestion.icon && <img src={suggestion.icon} />}
+      </div>
+      <div className={styles.suggestionContent}>
+        {suggestionContent}
+      </div>
+      <div className={styles.suggestionAction}>
+        {suggestion.targetUrl && (
+          <IconButton
+            iconProps={{
+              iconName: 'Search',
+              iconType: IconType.default
+            }}
+            onClick={onClickSearchSuggestion}
+            className={styles.suggestionActionButton}>
+          </IconButton>
+        )}
+      </div>
+    </>;
+
     const innerClassName = suggestionIndex === highlightedIndex ? `${styles.suggestionItem} ${styles.selected}` : `${styles.suggestionItem}`;
+
     return (
       <div {...getItemProps({ item: suggestion })}
         key={suggestionIndex}
@@ -305,7 +305,11 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
           fontWeight: selectedItem === suggestion ? 'bold' : 'normal'
         }}>
           {suggestion.targetUrl
-            ? <a href={suggestion.targetUrl} target="_blank" className={innerClassName}>{suggestionInner}</a>
+            ? <a className={innerClassName}
+                //  href={decodeURI(suggestion.targetUrl)}
+                //  target="_blank"
+                 onClick={() => !suggestionSearchClicked && window.open(suggestion.targetUrl, '_blank')}
+          >{suggestionInner}</a>
             : <div className={innerClassName}>{suggestionInner}</div>
           }
       </div>
@@ -330,8 +334,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
             proposedQuerySuggestions: [],
           });
 
-          // const suggestions = await this.props.searchService.suggest(inputValue);
-          this.props.suggestionProviders.map(async (provider) => {
+          const allProviderPromises = this.props.suggestionProviders.map(async (provider) => {
 
             // Verify we have a valid suggestion provider and it is enabled
             if (provider && provider.providerEnabled && provider.instance.isSuggestionsEnabled) {
@@ -340,13 +343,19 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
               // Verify the input value hasn't changed before we add the returned suggestion
               if (!this.state.termToSuggestFrom || inputValue === this.state.searchInputValue) {
                 this.setState({
-                  proposedQuerySuggestions: [...this.state.proposedQuerySuggestions, ...suggestions ], // Merge suggestions
+                  proposedQuerySuggestions: this.state.proposedQuerySuggestions.concat(suggestions), // Merge suggestions
                   termToSuggestFrom: inputValue, // The term that was used as basis to get the suggestions from
                   isRetrievingSuggestions: false
                 });
               }
             }
 
+          });
+
+          Promise.all(allProviderPromises).then(() => {
+            this.setState({
+              isRetrievingSuggestions: false
+            })
           });
 
         } catch(error) {
@@ -365,11 +374,9 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
 
           //render zero term query suggestions
           if (this.state.hasRetrievedZeroTermSuggestions) {
-            if (this.state.zeroTermQuerySuggestions.length > 0) {
-              this.setState({
-                proposedQuerySuggestions: this.state.zeroTermQuerySuggestions
-              });
-            }
+            this.setState({
+              proposedQuerySuggestions: this.state.zeroTermQuerySuggestions
+            });
           }
           else {
             await this.ensureZeroTermQuerySuggestions();
@@ -383,15 +390,12 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
         }
       }
 
-    } else {
-
-      if (!inputValue) {
-
-        // Clear suggestions history
-        this.setState({
-          proposedQuerySuggestions: [],
-        });
-      }
+    }
+    else {
+      // Clear suggestions history
+      this.setState({
+        proposedQuerySuggestions: [],
+      });
     }
   }
 
@@ -448,28 +452,20 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
     replacedSearchInputvalue = replacedSearchInputvalue.replace(/(<B>|<\/B>)/g,"");
 
     // Check if our custom suggestion has a onSuggestionSelected handler
-    let shouldUpdateSelectedSuggestion: boolean = true;
     if (suggestion.onSuggestionSelected) {
       try {
-        shouldUpdateSelectedSuggestion = suggestion.onSuggestionSelected(suggestion);
+        suggestion.onSuggestionSelected(suggestion);
       }
       catch (error) {
         console.log(`Error occurred while executing custom onSuggestionSeleted() handler. ${error}`);
       }
     }
-
-    let newState = {
+    this.setState({
       searchInputValue: replacedSearchInputvalue,
       proposedQuerySuggestions:[],
       showClearButton: true,
-    };
-
-    // If custom handler returned false, then don't update selectedQuerySuggestions in state
-    if (!suggestion.targetUrl || shouldUpdateSelectedSuggestion) {
-      newState["selectedQuerySuggestions"] = update(this.state.selectedQuerySuggestions, { $push: [suggestion]});
-    }
-
-    this.setState(newState, () => {
+      selectedQuerySuggestions: update(this.state.selectedQuerySuggestions, { $push: [suggestion]})
+    }, () => {
       if (!suggestion.targetUrl) {
         this._onSearch(this.state.searchInputValue);
       }

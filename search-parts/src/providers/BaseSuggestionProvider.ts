@@ -3,31 +3,31 @@ import { ISuggestion } from '../models/ISuggestion';
 
 export abstract class BaseSuggestionProvider {
 
-    // Property set by the Suggestion via prototype
-    protected _ctx: WebPartContext;
+  protected _ctx: WebPartContext;
 
-    constructor(context: WebPartContext) {
-      this._ctx = context;
-    }
+  protected constructor(context: WebPartContext) {
+    this._ctx = context;
+  }
 
-    public async onInit(): Promise<void> {
+  // Override these in derived classes (abstract static types not supported in TypeScript)
+  public static readonly ProviderName: string = 'basesuggestionprovider';
+  public static readonly ProviderDisplayName: string = 'Base Suggestion Provider';
+  public static readonly ProviderDescription: string = '';
 
-    }
+  public abstract get isSuggestionsEnabled(): boolean;
 
-    public get isSuggestionsEnabled(): boolean {
-      return false;
-    }
+  public abstract get isZeroTermSuggestionsEnabled(): boolean;
 
-    public get isZeroTermSuggestionsEnabled(): boolean {
-      return false;
-    }
-
-    public async getSuggestions(queryText: string): Promise<ISuggestion[]> {
-      throw 'Not implemented';
-    }
-
-    public async getZeroTermSuggestions(): Promise<ISuggestion[]> {
-      throw 'Not implemented';
-    }
+  public async onInit(): Promise<void> {
 
   }
+
+  public async getSuggestions(queryText: string): Promise<ISuggestion[]> {
+    throw 'Not implemented';
+  }
+
+  public async getZeroTermSuggestions(): Promise<ISuggestion[]> {
+    throw 'Not implemented';
+  }
+
+}
