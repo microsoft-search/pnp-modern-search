@@ -2,6 +2,7 @@ import * as React from 'react';
 import ISearchVerticalsContainerProps from './ISearchVerticalsContainerProps';
 import { Pivot, PivotItem, IPivotItemProps } from 'office-ui-fabric-react/lib/components/Pivot';
 import ISearchVerticalsContainerState from './ISearchVerticalsContainerState';
+import { ITheme } from '@uifabric/styling';
 
 export default class SearchVerticalsContainer extends React.Component<ISearchVerticalsContainerProps, ISearchVerticalsContainerState> {
 
@@ -23,10 +24,20 @@ export default class SearchVerticalsContainer extends React.Component<ISearchVer
         pivotItemProps.itemCount = vertical.count;
       }
 
-      return <PivotItem headerText={vertical.tabName} itemIcon={vertical.iconName} itemKey={vertical.key} {...pivotItemProps}></PivotItem>;
+      return <PivotItem 
+                headerText={vertical.tabName} 
+                itemIcon={vertical.iconName} 
+                itemKey={vertical.key} 
+                {...pivotItemProps}>
+              </PivotItem>;
     });
 
-    return <Pivot componentRef={(e) => {this._pivotRef = e; }} onLinkClick={this.onVerticalSelected}>{renderPivotItems}</Pivot>;
+    return <Pivot 
+              componentRef={(e) => {this._pivotRef = e; }} 
+              onLinkClick={this.onVerticalSelected}
+              theme={this.props.themeVariant as ITheme}>
+              {renderPivotItems}
+            </Pivot>;
   }
 
   public onVerticalSelected(item: PivotItem): void {

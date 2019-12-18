@@ -168,16 +168,11 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         let sourceId: string = this.properties.resultSourceId;
         let getVerticalsCounts: boolean = false;
 
-        let queryDataSourceValue = this._dynamicDataService.getDataSourceValue(this.properties.queryKeywords, this.properties.sourceId, this.properties.propertyId, this.properties.propertyPath);
-        if (typeof (queryDataSourceValue) !== 'string') {
-            queryDataSourceValue = '';
-            this.context.propertyPane.refresh();
-        }
-
-        let queryKeywords = (!queryDataSourceValue) ? this.properties.defaultSearchQuery : queryDataSourceValue;
+        let queryDataSourceValue = this.properties.queryKeywords.tryGetValue();
+        let queryKeywords = queryDataSourceValue ? queryDataSourceValue : this.properties.defaultSearchQuery;
 
         // Get data from connected sources
-        if (this._refinerSourceData) {
+        if (this._refinerSourceData && !this._refinerSourceData.isDisposed) {
             const refinerSourceData: IRefinerSourceData = this._refinerSourceData.tryGetValue();
             if (refinerSourceData) {
                 refinerConfiguration = sortBy(refinerSourceData.refinerConfiguration, 'sortIdx');
@@ -185,7 +180,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             }
         }
 
-        if (this._searchVerticalSourceData) {
+        if (this._searchVerticalSourceData && !this._searchVerticalSourceData.isDisposed) {
             const searchVerticalSourceData: ISearchVerticalSourceData = this._searchVerticalSourceData.tryGetValue();
             if (searchVerticalSourceData) {
                 if (searchVerticalSourceData.selectedVertical) {
@@ -196,7 +191,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             }
         }
 
-        if (this._paginationSourceData) {
+        if (this._paginationSourceData && !this._paginationSourceData.isDisposed) {
             const paginationSourceData: IPaginationSourceData = this._paginationSourceData.tryGetValue();
             if (paginationSourceData) {
                 selectedPage = paginationSourceData.selectedPage;
@@ -319,7 +314,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
         if (Environment.type === EnvironmentType.Local) {
             this._taxonomyService = new MockTaxonomyService();
-            this._templateService = new MockTemplateService(this.context.pageContext.cultureInfo.currentUICultureName);
+            this._templateService = new MockTemplateService(this.context.pageContext.cultureInfo.currentUICultureName, this.context);
             this._searchService = new MockSearchService();
 
         } else {
@@ -348,12 +343,6 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
         this.ensureDataSourceConnection();
 
-        if (this.properties.sourceId) {
-            // Needed to retrieve manually the value for the dynamic property at render time. See the associated SPFx bug
-            // https://github.com/SharePoint/sp-dev-docs/issues/2985
-            this.context.dynamicDataProvider.registerAvailableSourcesChanged(this.render);
-        }
-
         // Load extensibility library if present
         const extensibilityLibrary = await this._extensibilityService.loadExtensibilityLibrary();
 
@@ -371,6 +360,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         this._templateService.registerWebComponents(this.availableWebComponentDefinitions);
 
         this.context.dynamicDataSourceManager.initializeSource(this);
+
         this._synonymTable = this._convertToSynonymTable(this.properties.synonymList);
 
         this._initComplete = true;
@@ -578,12 +568,6 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
     protected async onPropertyPaneFieldChanged(propertyPath: string) {
 
-        if (propertyPath.localeCompare('queryKeywords') === 0) {
-
-            // Update data source information
-            this._saveDataSourceInfo();
-        }
-
         if (!this.properties.useDefaultSearchQuery) {
             this.properties.defaultSearchQuery = '';
         }
@@ -669,23 +653,6 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
     protected async onPropertyPaneConfigurationStart() {
         await this.loadPropertyPaneResources();
-    }
-
-    /**
-    * Save the useful information for the connected data source.
-    * They will be used to get the value of the dynamic property if this one fails.
-    */
-    private _saveDataSourceInfo() {
-
-        if (this.properties.queryKeywords.tryGetSource()) {
-            this.properties.sourceId = this.properties.queryKeywords["_reference"]._sourceId;
-            this.properties.propertyId = this.properties.queryKeywords["_reference"]._property;
-            this.properties.propertyPath = this.properties.queryKeywords["_reference"]._propertyPath;
-        } else {
-            this.properties.sourceId = null;
-            this.properties.propertyId = null;
-            this.properties.propertyPath = null;
-        }
     }
 
     /**
@@ -1494,8 +1461,8 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
     public getPropertyValue(propertyId: string): ISearchResultSourceData {
 
         const searchResultSourceData: ISearchResultSourceData = {
-            queryKeywords: this._dynamicDataService.getDataSourceValue(this.properties.queryKeywords, this.properties.sourceId, this.properties.propertyId, this.properties.propertyPath),
-            refinementResults: (this._resultService && this._resultService.results) ? this._resultService.results.RefinementResults : [],
+           queryKeywords: this.properties.queryKeywords.tryGetValue(),
+           refinementResults: (this._resultService && this._resultService.results) ? this._resultService.results.RefinementResults : [],
             paginationInformation: (this._resultService && this._resultService.results) ? this._resultService.results.PaginationInformation : {
                 CurrentPage: 1,
                 MaxResultsPerPage: this.properties.maxResultsCount,

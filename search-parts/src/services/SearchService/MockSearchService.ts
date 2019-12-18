@@ -65,7 +65,8 @@ class MockSearchService implements ISearchService {
                     Author: 'Michele Clark',
                     SPSiteUrl: 'https://www.microsoft.com',
                     SiteTitle: 'Site 1',
-                    owstaxidmetadataalltagsinfo: "L0|#03f88cf2c-a641-4bca-8861-7e363f5d9a0f|Tag 1"
+                    owstaxidmetadataalltagsinfo: "L0|#03f88cf2c-a641-4bca-8861-7e363f5d9a0f|Tag 1",
+                    FileType: 'aspx'
                 },
                 {
                     Title: 'Document 2 - Category 2',
@@ -77,7 +78,8 @@ class MockSearchService implements ISearchService {
                     Author: 'John Doe',
                     SPSiteUrl: 'https://www.microsoft.com',
                     SiteTitle: 'Site 1',
-                    owstaxidmetadataalltagsinfo: "L0|#0ce7eb131-c322-4a46-a398-383b0ec0f3c3|Tag 2,L0|#03f88cf2c-a641-4bca-8861-7e363f5d9a0f|Tag 1"
+                    owstaxidmetadataalltagsinfo: "L0|#0ce7eb131-c322-4a46-a398-383b0ec0f3c3|Tag 2,L0|#03f88cf2c-a641-4bca-8861-7e363f5d9a0f|Tag 1",
+                    FileType: 'pdf'
                 },
                 {
                     Title: 'Form 1',
@@ -87,9 +89,11 @@ class MockSearchService implements ISearchService {
                     ContentCategory: 'Form',
                     PreviewUrl: 'https://via.placeholder.com/400',
                     Author: 'John Doe',
+                    AuthorOWSUSER: '',
                     SPSiteUrl: 'https://www.microsoft.com',
                     SiteTitle: 'Site 2',
-                    owstaxidmetadataalltagsinfo: "L0|#03f88cf2c-a641-4bca-8861-7e363f5d9a0f|Tag 1"
+                    owstaxidmetadataalltagsinfo: "L0|#03f88cf2c-a641-4bca-8861-7e363f5d9a0f|Tag 1",
+                    FileType: 'doc'
                 },
                 {
                     Title: 'Video 1 - Category 1',
@@ -100,7 +104,8 @@ class MockSearchService implements ISearchService {
                     PreviewUrl: 'https://via.placeholder.com/400',
                     Author: 'Aaron Painter',
                     SiteTitle: 'Site 2',
-                    owstaxidmetadataalltagsinfo: "L0|#0ce7eb131-c322-4a46-a398-383b0ec0f3c3|Tag 2"
+                    owstaxidmetadataalltagsinfo: "L0|#0ce7eb131-c322-4a46-a398-383b0ec0f3c3|Tag 2",
+                    FileType: 'pptx'
                 },
                 {
                     Title: 'Video 2 - Category 2',
@@ -112,7 +117,8 @@ class MockSearchService implements ISearchService {
                     Author: 'Aaron Painter',
                     SPSiteUrl: 'https://www.microsoft.com',
                     SiteTitle: 'Site 3',
-                    owstaxidmetadataalltagsinfo: "L0|#01257a103-d2a1-43c4-8c07-6138527a88b7|Tag 3"
+                    owstaxidmetadataalltagsinfo: "L0|#01257a103-d2a1-43c4-8c07-6138527a88b7|Tag 3",
+                    FileType: 'doc'
                 },
             ],
             RefinementResults: [

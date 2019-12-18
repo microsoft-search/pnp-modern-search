@@ -1,6 +1,7 @@
 import { IRefinementResult, IRefinementValue, IRefinementFilter } from "../../../../models/ISearchResult";
 import IRefinerConfiguration from "../../../../models/IRefinerConfiguration";
 import RefinementFilterOperationCallback from "../../../../models/RefinementValueOperationCallback";
+import { IReadonlyTheme } from "@microsoft/sp-component-base";
 
 interface IFilterLayoutProps {
     
@@ -43,6 +44,11 @@ interface IFilterLayoutProps {
      * The current UI language
      */
     language: string;
+
+    /**
+     * The current theme variant
+     */
+    themeVariant: IReadonlyTheme | undefined;
 }
   
 export default IFilterLayoutProps;

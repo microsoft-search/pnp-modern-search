@@ -26,9 +26,6 @@ export interface ISearchResultsWebPartProps {
     inlineTemplateText: string;
     webPartTitle: string;
     resultTypes: ISearchResultType[];
-    sourceId: string;
-    propertyId: string;
-    propertyPath: string;
     rendererId: string;
     customTemplateFieldValues: ICustomTemplateFieldValue[];
     enableLocalization: boolean;

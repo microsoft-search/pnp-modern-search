@@ -6,6 +6,7 @@
     "version": "*",
     "manifestVersion": 2,
     "supportsFullBleed": true,
+    "supportsThemeVariants": true,
     "requiresCustomScript": false,
     "supportedHosts": ["SharePointWebPart"],
     "loadLegacyFabricCss": true,
@@ -20,7 +21,7 @@
         },
         "description": {
             "default": "Displays search results",
-            "fr-fr": "Affiche des rÃ©sulats de recherche"
+            "fr-fr": "Affiche des résulats de recherche"
         },
         "officeFabricIconFontName": "SearchAndApps",
         "properties": {

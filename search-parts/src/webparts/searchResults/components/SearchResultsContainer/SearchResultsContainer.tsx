@@ -21,6 +21,8 @@ import { ILocalizableSearchResultProperty, ILocalizableSearchResult } from '../.
 import * as _ from '@microsoft/sp-lodash-subset';
 import { TemplateService } from '../../../../services/TemplateService/TemplateService';
 import { isEqual } from '@microsoft/sp-lodash-subset';
+import { IReadonlyTheme } from '@microsoft/sp-component-base';
+import { ITheme } from '@uifabric/styling';
 
 declare var System: any;
 
@@ -66,12 +68,14 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             sortDirection={this.state.sortDirection}
             sortField={this.state.sortField} />;
 
+        const { semanticColors }: IReadonlyTheme = this.props.themeVariant;
+
         // Loading behavior
         if (areResultsLoading) {
 
             if (items.RelevantResults.length > 0 || items.SecondaryResults.length > 0) {
                 renderOverlay = <div>
-                    <Overlay isDarkThemed={false} className={styles.overlay}>
+                    <Overlay isDarkThemed={false} theme={this.props.themeVariant as ITheme} className={styles.overlay}>
                         <Spinner size={SpinnerSize.medium} />
                     </Overlay>
                 </div>;
@@ -147,7 +151,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             }
 
             renderWpContent =
-                <div>                    
+                <div>          
                     <div className={styles.searchWp__buttonBar}>{sortPanel}</div>                       
                     <div id={this.state.mountingNodeId} />
                     {renderOverlay}
@@ -166,10 +170,12 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
         }
 
         return (
-            <div className={styles.searchWp}>
-                <div tabIndex={-1} ref={(ref) => { this._searchWpRef = ref; }}></div>
-                {renderWebPartTitle}                
-                {renderShimmerElements ? renderShimmerElements : renderWpContent}
+            <div style={{backgroundColor: semanticColors.bodyBackground}}>
+                <div className={styles.searchWp}>
+                    <div tabIndex={-1} ref={(ref) => { this._searchWpRef = ref; }}></div>
+                    {renderWebPartTitle}                
+                    {renderShimmerElements ? renderShimmerElements : renderWpContent}
+                </div>
             </div>
         );
     }
@@ -295,8 +301,9 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             }
         } else {
             // Refresh the template without making a new search query because we don't need to
-            if (this.props.templateContent !== this.props.templateContent ||
-                this.props.showResultsCount !== this.props.showResultsCount) {
+            if (this.props.templateContent !== prevProps.templateContent ||
+                this.props.showResultsCount !== prevProps.showResultsCount ||
+                this.props.themeVariant !== prevProps.themeVariant) {
 
                 // Reset template errors if it has
                 if (this.state.hasError) {

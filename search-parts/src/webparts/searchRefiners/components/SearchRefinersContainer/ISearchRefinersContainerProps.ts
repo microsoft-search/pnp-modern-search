@@ -2,6 +2,7 @@ import { IRefinementResult, IRefinementFilter } from "../../../../models/ISearch
 import IRefinerConfiguration from "../../../../models/IRefinerConfiguration";
 import { DisplayMode } from "@microsoft/sp-core-library";
 import RefinersLayoutOption from "../../../../models/RefinersLayoutOptions";
+import { IReadonlyTheme } from "@microsoft/sp-component-base";
 
 export interface ISearchRefinersContainerProps {
 
@@ -49,4 +50,9 @@ export interface ISearchRefinersContainerProps {
    * The current search query
    */
   query: string;
+
+  /**
+   * The current theme variant
+   */
+  themeVariant: IReadonlyTheme | undefined;
 }

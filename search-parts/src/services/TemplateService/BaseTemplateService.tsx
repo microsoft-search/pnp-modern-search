@@ -319,18 +319,15 @@ abstract class BaseTemplateService {
      */
     public registerWebComponents(webComponents: IComponentDefinition<any>[]) {
 
-        // Added theme variant to be available in components
-        const themeProvider = this._ctx.serviceScope.consume(ThemeProvider.serviceKey);
-        const themeVariant = themeProvider.tryGetTheme();
-
         // Registers custom HTML elements
         webComponents.map(wc => {
-            if (!customElements.get(wc.componentName)) {
-                // Set the arbitrary property to all instances to get the WebPart context available in components (ex: PersonaCard)
-                wc.componentClass.prototype._ctx = this._ctx;
-                wc.componentClass.prototype._themeVariant = themeVariant;
+            const component = customElements.get(wc.componentName);
+            if (!component) {
                 customElements.define(wc.componentName, wc.componentClass);
-            }
+            } 
+            
+            // Set the arbitrary property to all instances to get the WebPart context available in components (ex: PersonaCard)
+            wc.componentClass.prototype._ctx = this._ctx;
         });
 
         // Register slider component as partial 

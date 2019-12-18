@@ -6,6 +6,7 @@
   "version": "*",
   "manifestVersion": 2,
   "requiresCustomScript": false,
+  "supportsThemeVariants": true,
   "supportedHosts": ["SharePointWebPart"],
   "loadLegacyFabricCss": true,
   "preconfiguredEntries": [{
@@ -19,7 +20,7 @@
   },
   "description": {
       "default": "Allows you to search by search verticals",
-      "fr-fr": "Permets de rechercher Ã  travers des verticaux de recherche"
+      "fr-fr": "Permets de rechercher à travers des verticaux de recherche"
   },
     "officeFabricIconFontName": "Sections",
     "properties": {

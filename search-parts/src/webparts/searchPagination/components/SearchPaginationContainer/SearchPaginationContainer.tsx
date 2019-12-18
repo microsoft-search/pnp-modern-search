@@ -10,10 +10,10 @@ export default class SearchPaginationContainer extends React.Component<ISearchPa
   public render(): React.ReactElement<ISearchPaginationContainerProps> {
     let renderWpContent: JSX.Element = null;
 
-    if (this.props.paginationInformation && this.props.paginationInformation.TotalRows > 0)
-    {
-      renderWpContent = <div className={ styles.searchPagination }>
+    if (this.props.paginationInformation && this.props.paginationInformation.TotalRows > 0) {
+      renderWpContent = <div className={styles.searchPagination}>
       <Paging
+        themeVariant={this.props.themeVariant}
         totalItems={this.props.paginationInformation.TotalRows}
         itemsCountPerPage={this.props.paginationInformation.MaxResultsPerPage}
         onPageUpdate={this.props.onPageUpdate}

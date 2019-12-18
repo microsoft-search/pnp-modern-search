@@ -3,6 +3,7 @@ import ISearchService from       '../../../../services/SearchService/ISearchServ
 import INlpService from '../../../../services/NlpService/INlpService';
 import ISearchQuery from '../../../../models/ISearchQuery';
 import { ISuggestionProviderInstance } from '../../../../services/ExtensibilityService/ISuggestionProviderInstance';
+import { IReadonlyTheme } from '@microsoft/sp-component-base';
 
 export interface ISearchBoxContainerProps {
     onSearch: (searchQuery: ISearchQuery) => void;
@@ -21,4 +22,9 @@ export interface ISearchBoxContainerProps {
     isStaging: boolean;
     placeholderText: string;
     domElement: HTMLElement;
+
+    /**
+     * The current theme variant
+     */
+    themeVariant: IReadonlyTheme | undefined;
 }
