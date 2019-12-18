@@ -48,9 +48,10 @@ define([], function () {
     "SuggestionProviders": {
       "EditSuggestionProvidersLabel": "Configurar sugerencias",
       "SuggestionProvidersLabel": "Proveedores de sugerencias",
-      "SuggestionProvidersDescription": "Habilite o deshabilite proveedores de sugerencias individuales. Especifique la plantilla de representación para las sugerencias devueltas por cada proveedor.",
+      "SuggestionProvidersDescription": "Habilite o deshabilite proveedores de sugerencias individuales.",
       "EnabledPropertyLabel": "Activo",
       "ProviderNamePropertyLabel": "Nombre",
+      "ProviderDescriptionPropertyLabel": "Descripción",
       "InlineTemplateContentLabel": "Plantilla en línea",
       "ExternalUrlLabel": "Url de plantilla externa",
       "InlineTemplateEditPanelTitle": "Editar plantilla de sugerencia",

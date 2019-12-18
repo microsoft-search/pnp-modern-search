@@ -52,6 +52,7 @@ declare interface ISearchBoxWebPartStrings {
     SuggestionProvidersDescription: string;
     EnabledPropertyLabel: string;
     ProviderNamePropertyLabel: string;
+    ProviderDescriptionPropertyLabel: string;
     InlineTemplateContentLabel: string;
     ExternalUrlLabel: string;
     InlineTemplateEditPanelTitle: string;

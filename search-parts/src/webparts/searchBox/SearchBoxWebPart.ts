@@ -41,6 +41,7 @@ import { SharePointDefaultSuggestionProvider } from '../../providers/SharePointD
 import { ISuggestionProviderInstance } from '../../services/ExtensibilityService/ISuggestionProviderInstance';
 import { ObjectCreator } from '../../services/ExtensibilityService/ObjectCreator';
 import { BaseSuggestionProvider } from '../../providers/BaseSuggestionProvider';
+import { Toggle } from 'office-ui-fabric-react/lib/Toggle';
 
 export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWebPartProps> implements IDynamicDataCallables {
 
@@ -83,6 +84,8 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
       this.context.dynamicDataSourceManager.notifyPropertyChanged('searchQuery');
     }
 
+    const enableSuggestions = this.properties.enableQuerySuggestions && this.properties.suggestionProviders.some(sp => sp.providerEnabled);
+
     const element: React.ReactElement<ISearchBoxContainerProps> = React.createElement(
       SearchBoxContainer, {
         onSearch: this._onSearch,
@@ -92,7 +95,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
         queryPathBehavior: this.properties.queryPathBehavior,
         queryStringParameter: this.properties.queryStringParameter,
         inputValue: this._searchQuery.rawInputValue,
-        enableQuerySuggestions: this.properties.enableQuerySuggestions,
+        enableQuerySuggestions: enableSuggestions,
         suggestionProviders: this._suggestionProviderInstances,
         searchService: this._searchService,
         enableDebugMode: this.properties.enableDebugMode,
@@ -398,19 +401,6 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
 
   protected async loadPropertyPaneResources(): Promise<void> {
 
-    // // tslint:disable-next-line:no-shadowed-variable
-    // const { PropertyFieldCodeEditorLanguages } = await import(
-    //     /* webpackChunkName: 'search-property-pane' */
-    //     '@pnp/spfx-property-controls/lib/PropertyFieldCodeEditor'
-    // );
-    // this._propertyFieldCodeEditorLanguages = PropertyFieldCodeEditorLanguages;
-
-    // // Code editor component for property pane controls
-    // this._textDialogComponent = await import(
-    //     /* webpackChunkName: 'search-property-pane' */
-    //     '../../controls/TextDialog'
-    // );
-
     const { PropertyFieldCollectionData, CustomCollectionFieldType } = await import(
         /* webpackChunkName: 'search-property-pane' */
         '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData'
@@ -475,13 +465,36 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
             {
                 id: 'providerEnabled',
                 title: strings.SuggestionProviders.EnabledPropertyLabel,
-                type: this._customCollectionFieldType.boolean,
+                type: this._customCollectionFieldType.custom,
+                onCustomRender: (field, value, onUpdate, item, itemId) => {
+                  return (
+                    React.createElement("div", null,
+                      React.createElement(Toggle, { key: itemId, checked: value, onChange: (evt, checked) => {
+                        onUpdate(field.id, checked);
+                      }})
+                    )
+                  );
+                }
             },
             {
                 id: 'providerDisplayName',
                 title: strings.SuggestionProviders.ProviderNamePropertyLabel,
-                type: this._customCollectionFieldType.string,
-                disableEdit: true,
+                type: this._customCollectionFieldType.custom,
+                onCustomRender: (field, value, onUpdate, item, itemId) => {
+                  return (
+                    React.createElement("div", { style: { 'fontWeight': 600 } }, value)
+                  );
+                }
+            },
+            {
+                id: 'providerDescription',
+                title: strings.SuggestionProviders.ProviderDescriptionPropertyLabel,
+                type: this._customCollectionFieldType.custom,
+                onCustomRender: (field, value, onUpdate, item, itemId) => {
+                  return (
+                    React.createElement("div", null, value)
+                  );
+                }
             }
         ]
       }),

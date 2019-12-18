@@ -48,9 +48,10 @@ define([], function() {
     "SuggestionProviders": {
       "EditSuggestionProvidersLabel": "Configure Suggestions",
       "SuggestionProvidersLabel": "Suggestion Providers",
-      "SuggestionProvidersDescription": "Enable or disable individual suggestion providers. Specify rendering template for suggestions returned by each provider.",
+      "SuggestionProvidersDescription": "Enable or disable individual suggestion providers.",
       "EnabledPropertyLabel": "Active",
       "ProviderNamePropertyLabel": "Name",
+      "ProviderDescriptionPropertyLabel": "Description",
       "InlineTemplateContentLabel": "Inline Template",
       "ExternalUrlLabel": "External Template Url",
       "InlineTemplateEditPanelTitle": "Edit suggestion template",

@@ -367,7 +367,8 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
           //render zero term query suggestions
           if (this.state.hasRetrievedZeroTermSuggestions) {
             this.setState({
-              proposedQuerySuggestions: this.state.zeroTermQuerySuggestions
+              proposedQuerySuggestions: this.state.zeroTermQuerySuggestions,
+              isRetrievingSuggestions: false
             });
           }
           else {

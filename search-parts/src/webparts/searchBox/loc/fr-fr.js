@@ -48,9 +48,10 @@ define([], function() {
     "SuggestionProviders": {
       "EditSuggestionProvidersLabel": "Configurar sugerencias",
       "SuggestionProvidersLabel": "Fournisseurs de suggestions",
-      "SuggestionProvidersDescription": "Activer ou désactiver les fournisseurs de suggestions individuelles. Spécifiez le modèle de rendu pour les suggestions retournées par chaque fournisseur.",
+      "SuggestionProvidersDescription": "Activer ou désactiver les fournisseurs de suggestions individuelles.",
       "EnabledPropertyLabel": "Active",
       "ProviderNamePropertyLabel": "Nom",
+      "ProviderDescriptionPropertyLabel": "Description",
       "InlineTemplateContentLabel": "Modèle inline",
       "ExternalUrlLabel": "Url de modèle externe",
       "InlineTemplateEditPanelTitle": "Modifier le modèle de suggestion",

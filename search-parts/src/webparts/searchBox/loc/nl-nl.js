@@ -48,9 +48,10 @@ define([], function() {
     "SuggestionProviders": {
       "EditSuggestionProvidersLabel": "Configurar sugerencias",
       "SuggestionProvidersLabel": "Forslag Providers",
-      "SuggestionProvidersDescription": "Aktivere eller deaktivere individuelle forslags leverandører. Angi gjengivelses mal for forslag som returneres av hver leverandør.",
+      "SuggestionProvidersDescription": "Aktivere eller deaktivere individuelle forslags leverandører.",
       "EnabledPropertyLabel": "Aktive",
-      "ProviderNamePropertyLabel": "navn",
+      "ProviderNamePropertyLabel": "Navn",
+      "ProviderDescriptionPropertyLabel": "Beskrivelse",
       "InlineTemplateContentLabel": "Innebygd mal",
       "ExternalUrlLabel": "URL for ekstern mal",
       "InlineTemplateEditPanelTitle": "Rediger forslags mal",
