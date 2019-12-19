@@ -27,6 +27,10 @@
         cursor: pointer;
         color: #333;
 
+        &:hover {
+            background-color: #f4f4f4;
+        }
+
         .suggestionIcon {
             min-width: 40px;
             display: flex;
@@ -91,10 +95,6 @@
         border-left: 1px solid #ccc;
         border-right: 1px solid #ccc;
         box-sizing: border-box;
-    }
-
-    .selected {
-        background-color: #f4f4f4;
     }
 }
 
