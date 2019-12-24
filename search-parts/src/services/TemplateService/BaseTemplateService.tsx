@@ -321,11 +321,13 @@ abstract class BaseTemplateService {
 
         // Registers custom HTML elements
         webComponents.map(wc => {
-            if (!customElements.get(wc.componentName)) {
-                // Set the arbitrary property to all instances to get the WebPart context available in components (ex: PersonaCard)
-                wc.componentClass.prototype._ctx = this._ctx;
+            const component = customElements.get(wc.componentName);
+            if (!component) {
                 customElements.define(wc.componentName, wc.componentClass);
-            }
+            } 
+            
+            // Set the arbitrary property to all instances to get the WebPart context available in components (ex: PersonaCard)
+            wc.componentClass.prototype._ctx = this._ctx;
         });
 
         // Register slider component as partial 
