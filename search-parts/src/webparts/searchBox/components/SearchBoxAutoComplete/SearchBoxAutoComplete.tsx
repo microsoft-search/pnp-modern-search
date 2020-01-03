@@ -15,12 +15,12 @@ import { Label } from 'office-ui-fabric-react/lib/Label';
 import { ISuggestion } from '../../../../models/ISuggestion';
 
 const SUGGESTION_CHAR_COUNT_TRIGGER = 2;
+const SUGGESTION_UPDATE_DEBOUNCE_DELAY = 200;
 
 export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAutoCompleteProps, ISearchBoxAutoCompleteState> {
 
   private _onChangeDebounced = null;
   private _containerElemRef: React.RefObject<any> = null;
-  private _lastActiveElemWasSearchInput = false;
 
   public constructor(props: ISearchBoxAutoCompleteProps) {
 
@@ -35,25 +35,15 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
       searchInputValue: (props.inputValue) ? decodeURIComponent(props.inputValue) : '',
       termToSuggestFrom: null,
       errorMessage: null,
-      focusedSuggestionId: '',
-      isSearchBoxOpen: false,
+      isSearchExecuted: false
     };
 
-    this._onChange = this._onChange.bind(this);
-    this._onQuerySuggestionSelected = this._onQuerySuggestionSelected.bind(this);
-    this._onActiveElementChanged = this._onActiveElementChanged.bind(this);
-    this._onKeyDown = this._onKeyDown.bind(this);
+    this._updateQuerySuggestions = this._updateQuerySuggestions.bind(this);
+    this._selectQuerySuggestion = this._selectQuerySuggestion.bind(this);
     this._containerElemRef = React.createRef();
   }
 
-
-    /**
-   * Renders the suggestions panel below the input control
-   * @param getItemProps downshift getItemProps callback
-   * @param selectedItem downshift selectedItem callback
-   * @param highlightedIndex downshift highlightedIndex callback
-   */
-  private renderSuggestions(): JSX.Element {
+  private _renderSuggestionGroups(): JSX.Element {
 
     let renderSuggestions: JSX.Element = null;
 
@@ -76,7 +66,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
         const currentGroup = suggestionGroups[groupName];
         const renderedSuggestions = currentGroup.suggestions.map(item => {
           indexIncrementer++;
-          return this.renderSuggestion(item.suggestion, indexIncrementer);
+          return this._renderSuggestion(item.suggestion, indexIncrementer);
         });
 
         return (
@@ -97,10 +87,9 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
     return renderSuggestions;
   }
 
-  private renderSuggestion(suggestion: ISuggestion, suggestionIndex: number): JSX.Element {
+  private _renderSuggestion(suggestion: ISuggestion, suggestionIndex: number): JSX.Element {
     const thisComponent = this;
 
-    let suggestionInner: JSX.Element = null;
     let suggestionContent: JSX.Element = null;
 
     if (suggestion.type === SuggestionType.Person) {
@@ -120,7 +109,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
       </>;
     }
 
-    suggestionInner = <>
+    const suggestionInner = <>
       <div className={styles.suggestionIcon}>
         {suggestion.icon && <img src={suggestion.icon} />}
       </div>
@@ -137,36 +126,31 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
       </div>
     </>;
 
-    const innerClassName = /*suggestionIndex === highlightedIndex ? `${styles.suggestionItem} ${styles.selected}` : */ `${styles.suggestionItem}`;
-
     const baseProps = {
       key: suggestionIndex,
-      className: innerClassName,
-      'data-is-focusable': true,
-      'data-suggestion-id': suggestion.id,
+      className: styles.suggestionItem,
+      'data-is-focusable': true, // Used by FocusZone component
+      onClick: () => thisComponent._selectQuerySuggestion(suggestion, !!suggestion.targetUrl)
     }
-    return (<>
-      {suggestion.targetUrl
-          ? <a  {...baseProps}
-                href={suggestion.targetUrl}
-                target="_blank"
-                data-interception="off" // Bypass SPFx page router (https://docs.microsoft.com/en-us/sharepoint/dev/spfx/hyperlinking)
-                onClick={() => thisComponent._onQuerySuggestionSelected(suggestion, true)}>
-              {suggestionInner}
-            </a>
-          : <div {...baseProps}
-                onClick={() => thisComponent._onQuerySuggestionSelected(suggestion)}>
-              {suggestionInner}
-            </div>
-        }
-      </>
+
+    return (!!suggestion.targetUrl
+      ? <a {...baseProps}
+          href={suggestion.targetUrl}
+          target="_blank"
+          data-interception="off" // Bypass SPFx page router (https://docs.microsoft.com/en-us/sharepoint/dev/spfx/hyperlinking)
+        >
+          {suggestionInner}
+      </a>
+      : <div {...baseProps}>
+          {suggestionInner}
+      </div>
     );
   }
 
-  private renderLoadingIndicator(): JSX.Element {
+  private _renderLoadingIndicator(): JSX.Element {
     return (
       <div className={styles.suggestionPanel}>
-        <div className={styles.suggestionItem}>
+        <div className={styles.loadingIndicator}>
           <Spinner size={ SpinnerSize.small }/>
         </div>
       </div>
@@ -177,8 +161,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
    * Handler when a user enters new keywords in the search box input
    * @param inputValue
    */
-  private async _onChange(inputValue: string) {
-
+  private async _updateQuerySuggestions(inputValue: string) {
 
       if (inputValue && inputValue.length >= SUGGESTION_CHAR_COUNT_TRIGGER) {
 
@@ -196,13 +179,11 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
             if (provider && provider.providerEnabled && provider.instance.isSuggestionsEnabled) {
               let suggestions = await provider.instance.getSuggestions(inputValue);
 
-              suggestions = suggestions.map((suggestion, index) => {
-                suggestion.id = `suggestion-${provider.providerName}${suggestion.groupName}${index}`;
-                return suggestion;
-              });
-
-              // Verify the input value hasn't changed before we add the returned suggestion
-              if (!this.state.termToSuggestFrom || inputValue === this.state.searchInputValue) {
+              // Verify before updating proposed suggestions
+              //  1) the input value hasn't been searched
+              //  2) we have suggestions from this provider
+              //  3) the input value hasn't changed while the provider was retrieving suggestions
+              if (!this.state.isSearchExecuted && suggestions.length > 0 && (!this.state.termToSuggestFrom || inputValue === this.state.searchInputValue)) {
                 this.setState({
                   proposedQuerySuggestions: this.state.proposedQuerySuggestions.concat(suggestions), // Merge suggestions
                   termToSuggestFrom: inputValue, // The term that was used as basis to get the suggestions from
@@ -213,10 +194,13 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
 
           });
 
+          // After all suggestion providers have finished, hide the loading indicator if it hasn't already been hid
           Promise.all(allProviderPromises).then(() => {
-            this.setState({
-              isRetrievingSuggestions: false
-            })
+            if (this.state.isRetrievingSuggestions) {
+              this.setState({
+                isRetrievingSuggestions: false
+              });
+            }
           });
 
         } catch(error) {
@@ -241,7 +225,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
             });
           }
           else {
-            await this.ensureZeroTermQuerySuggestions();
+            await this._ensureZeroTermQuerySuggestions();
           }
         } catch(error) {
           this.setState({
@@ -254,7 +238,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
 
   }
 
-  private async ensureZeroTermQuerySuggestions(forceUpdate: boolean = false): Promise<void> {
+  private async _ensureZeroTermQuerySuggestions(forceUpdate: boolean = false): Promise<void> {
     if ((!this.state.hasRetrievedZeroTermSuggestions && !this.state.isRetrievingZeroTermSuggestions) || forceUpdate) {
 
       // Verify we have at least one suggestion provider that has isZeroTermSuggestionsEnabled
@@ -270,11 +254,6 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
           // Verify we have a valid suggestion provider and it is enabled
           if (provider && provider.providerEnabled && provider.instance.isZeroTermSuggestionsEnabled) {
             zeroTermSuggestions = await provider.instance.getZeroTermSuggestions();
-
-            zeroTermSuggestions = zeroTermSuggestions.map((suggestion, index) => {
-              suggestion.id = `zeroterm-${provider.providerName}${suggestion.groupName}${index}`;
-              return suggestion;
-            });
           }
 
           return zeroTermSuggestions;
@@ -287,7 +266,6 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
           hasRetrievedZeroTermSuggestions: true,
           isRetrievingZeroTermSuggestions: false,
           zeroTermQuerySuggestions: mergedSuggestions,
-          proposedQuerySuggestions: !this.state.searchInputValue ? mergedSuggestions : this.state.proposedQuerySuggestions,
         });
       }
       else {
@@ -295,7 +273,6 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
           hasRetrievedZeroTermSuggestions: true,
         });
       }
-
     }
   }
 
@@ -303,13 +280,12 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
    * Handler when a suggestion is selected in the dropdown
    * @param suggestion the suggestion value
    */
-  private _onQuerySuggestionSelected(suggestion: ISuggestion, isClicked: boolean = false) {
-    console.log('Suggestion ONQUERYSUGGESTIONSELECTED', suggestion, isClicked);
+  private _selectQuerySuggestion(suggestion: ISuggestion, isClicked: boolean = false) {
 
     const termToSuggestFromIndex = this.state.searchInputValue.indexOf(this.state.termToSuggestFrom);
     let replacedSearchInputvalue =  this._replaceAt(this.state.searchInputValue, termToSuggestFromIndex, suggestion.displayText);
 
-    // Remove inenr HTML markup if there is
+    // Remove inner HTML markup if there is
     replacedSearchInputvalue = replacedSearchInputvalue.replace(/(<B>|<\/B>)/g,"");
 
     // Check if our custom suggestion has a onSuggestionSelected handler
@@ -323,107 +299,78 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
     }
 
     if (!suggestion.targetUrl) {
-      this.props.onSearch(this.state.searchInputValue);
       this.setState({
         searchInputValue: replacedSearchInputvalue,
-        // proposedQuerySuggestions:[],
-      });
+        proposedQuerySuggestions: []
+      }, () => this.props.onSearch(this.state.searchInputValue));
     }
     else {
       if (suggestion.targetUrl && !isClicked) {
         window.open(suggestion.targetUrl, '_blank');
       }
       this.props.onSearch('', true);
-      // this.setState({
-      //   proposedQuerySuggestions:[],
-      // });
     }
 
-    this._closeSearchBox();
+    this._clearSuggestions();
   }
 
   private _replaceAt(string: string, index: number, replace: string) {
     return string.substring(0, index) + replace;
   }
 
-  private _hideSearchSuggestionsOnClickOutside = (element) => {
-    const thisComponent = this;
+  private _clearSuggestions = () => {
+    if (this.state.proposedQuerySuggestions.length > 0) {
+      this.setState({proposedQuerySuggestions: []});
+    }
+  }
 
-    // const removeClickListener = () => {
-    //     document.removeEventListener('click', outsideClickListener);
-    // };
+  private _showZeroTermSuggestions = () => {
+    if (this.state.hasRetrievedZeroTermSuggestions && this.state.zeroTermQuerySuggestions.length > 0) {
+      if (!isEqual(this.state.proposedQuerySuggestions, this.state.zeroTermQuerySuggestions)) {
+        this.setState({proposedQuerySuggestions: this.state.zeroTermQuerySuggestions});
+      }
+    }
+  }
 
-    const outsideClickListener = event => {
-        if (!element.contains(event.target)) {
-          if (thisComponent.state.isSearchBoxOpen) {
-            thisComponent.setState({ isSearchBoxOpen: false });
-          }
-          // removeClickListener();
-        }
-    };
+  private _handleOnFocus = (evt) => {
+    if (!this.state.searchInputValue) {
+      this._showZeroTermSuggestions();
+    }
+  }
 
-    document.addEventListener('click', outsideClickListener);
-}
+  private _handleOnSearch = () => {
+    this.props.onSearch(this.state.searchInputValue);
+    this.setState({
+      isSearchExecuted: true,
+      proposedQuerySuggestions: []
+    })
+  }
+
+  private _handleOnClear = () => {
+    this._updateQuerySuggestions('');
+    this.props.onSearch('', true);
+  }
+
+  private _handleClickOutsideContainer = (event) => {
+    if (!this._containerElemRef.current.contains(event.target)) {
+      this._clearSuggestions();
+    }
+  }
 
   public componentDidMount() {
-    this.ensureZeroTermQuerySuggestions();
-    this._hideSearchSuggestionsOnClickOutside(this._containerElemRef.current);
+    this._ensureZeroTermQuerySuggestions();
+    document.addEventListener('click', this._handleClickOutsideContainer);
+  }
+
+  public componentWillUnmount() {
+    document.removeEventListener('click', this._handleClickOutsideContainer);
   }
 
   public componentDidUpdate(prevProps: ISearchBoxAutoCompleteProps) {
     // Detect if any of our suggestion providers have changed
     if (prevProps.suggestionProviders.length !== this.props.suggestionProviders.length
      || !isEqual(prevProps.suggestionProviders, this.props.suggestionProviders)) {
-      this.ensureZeroTermQuerySuggestions(true);
-    }
-  }
-
-  private _onClearClick = () => {
-    this._onChange('');
-    this.props.onSearch('', true);
-  }
-
-  private _onActiveElementChanged = (element?: HTMLElement, evt?: any): void => {
-    console.log('FocusZone ACTIVEELEMENTCHANGED', element, evt, this.state);
-
-    const focusedSuggestionId = undefined !== element.dataset.suggestionId ? element.dataset.suggestionId : '';
-    const isSearchBox = undefined !== element.dataset.isSearchBox ? true : false;
-
-    if (isSearchBox && !this.state.isSearchBoxOpen) {
-      if (!this._lastActiveElemWasSearchInput) {
-        console.log('FocusZone !_lastActiveElemWasSearchInput');
-        this._lastActiveElemWasSearchInput = true;
-        this.setState({isSearchBoxOpen: true});
-      } else {
-        console.log('FocusZone _lastActiveElemWasSearchInput CLOSE');
-        this._lastActiveElemWasSearchInput = false;
-        this.setState({isSearchBoxOpen: false});
-      }
-    }
-    else {
-      this._lastActiveElemWasSearchInput = false;
-      this.setState({ focusedSuggestionId: focusedSuggestionId });
-    }
-  }
-
-  private _closeSearchBox = () => {
-    this.setState({isSearchBoxOpen: false});
-  }
-
-  private _onKeyDown = (evt: React.KeyboardEvent<FocusZone | HTMLElement>) => {
-    console.log('FocusZone KEYDOWN', this.state);
-    // if (evt.keyCode === 38 || evt.keyCode === 40) { // ArrowUp or ArrowDown
-    //   if (this._focusZoneComponentRef) {
-
-    //   }
-    // }
-    if (evt.keyCode === 13) {
-      // Submit search on "Enter"
-      console.log('FocusZone, enter press', evt);
-      const selectedSuggestion = this.state.proposedQuerySuggestions.find(psg => psg.id === this.state.focusedSuggestionId);
-      if (selectedSuggestion) {
-        this._onQuerySuggestionSelected(selectedSuggestion);
-      }
+      this._ensureZeroTermQuerySuggestions(true);
     }
   }
 
@@ -431,7 +378,6 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
 
     const showLoadingIndicator = (this.state.isRetrievingSuggestions && this.state.proposedQuerySuggestions.length === 0)
                               || (this.state.isRetrievingZeroTermSuggestions && !this.state.searchInputValue);
-
 
     // Edge case with SPFx
     // Only in Chrome/Firefox the parent element class ".Canvas-slideUpIn" create a new stacking context due to a 'transform' operation preventing the inner content to overlap other WP
@@ -448,9 +394,6 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
         <FocusZone
           direction={FocusZoneDirection.vertical}
           isCircularNavigation={true}
-          onActiveElementChanged={this._onActiveElementChanged}
-          shouldInputLoseFocusOnArrowKey={() => true}
-          onKeyDown={this._onKeyDown}
         >
           <SearchBox
             placeholder={this.props.placeholderText ? this.props.placeholderText : strings.SearchInputPlaceholder}
@@ -458,43 +401,29 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
             className={ styles.searchTextField }
             value={ this.state.searchInputValue }
             autoComplete= "off"
-            data-is-focusable={true}
-            data-is-search-box={true}
+            data-is-focusable={this.state.proposedQuerySuggestions.length > 0}
             onChange={ (value) => {
               if (!this._onChangeDebounced) {
                 this._onChangeDebounced = debounce((newValue) => {
-                  this._onChange(newValue);
-                }, 200);
+                  this._updateQuerySuggestions(newValue);
+                }, SUGGESTION_UPDATE_DEBOUNCE_DELAY);
               }
               this._onChangeDebounced(value);
               this.setState({
                 searchInputValue: value,
                 isRetrievingSuggestions: true,
+                isSearchExecuted: false,
               });
             }}
-            // onFocus={() => {
-            //   console.log('SearchBox FOCUS', this.state);
-            //   if (!this.state.isSearchBoxOpen) {
-            //     this.setState({ isSearchBoxOpen: true });
-            //   }
-            // }}
-            // onBlur={() => {
-            //   console.log('SearchBox BLUR', this.state);
-            //   if (!this.state.isSearchBoxOpen) {
-            //     this.setState({ isSearchBoxOpen: false });
-            //   }
-            //   if (!this.state.searchInputValue && this.state.zeroTermQuerySuggestions.length > 0 && this.state.proposedQuerySuggestions.length === 0) {
-            //     this.setState({ proposedQuerySuggestions: this.state.zeroTermQuerySuggestions });
-            //   }
-            // }}
-            onSearch={() => { this.props.onSearch(this.state.searchInputValue) }}
-            onClear={this._onClearClick}
+            onFocus={this._handleOnFocus}
+            onSearch={this._handleOnSearch}
+            onClear={this._handleOnClear}
           />
-          {this.state.isSearchBoxOpen ?
-            showLoadingIndicator
-              ? this.renderLoadingIndicator()
-              : this.renderSuggestions()
-              : null}
+          {!this.state.isSearchExecuted && (!!this.state.searchInputValue || this.state.proposedQuerySuggestions.length > 0)
+            ? showLoadingIndicator
+              ? this._renderLoadingIndicator()
+              : this._renderSuggestionGroups()
+            : null}
         </FocusZone>
       </div>
     );

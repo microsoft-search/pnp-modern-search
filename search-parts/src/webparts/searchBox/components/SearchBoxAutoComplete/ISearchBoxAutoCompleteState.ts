@@ -42,12 +42,7 @@ export interface ISearchBoxAutoCompleteState {
     errorMessage: string;
 
     /**
-     * Last suggestion that was clicked in suggestions list
+     * Has the current input value been searched
      */
-    focusedSuggestionId: string;
-
-    /**
-     * Indicate the search suggestions are showing
-     */
-    isSearchBoxOpen: boolean;
+    isSearchExecuted: boolean;
 };

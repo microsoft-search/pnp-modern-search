@@ -7,5 +7,4 @@ export interface ISuggestion {
   icon?: string;
   groupName?: string;
   onSuggestionSelected?: (suggestion: ISuggestion) => void;
-  id?: string;
 }
