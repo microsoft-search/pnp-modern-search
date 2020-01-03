@@ -4,14 +4,12 @@ import * as strings from                             'SearchBoxWebPartStrings';
 import ISearchBoxContainerState from                 './ISearchBoxContainerState';
 import { PageOpenBehavior, QueryPathBehavior } from  '../../../../helpers/UrlHelper';
 import { MessageBar, MessageBarType } from           'office-ui-fabric-react/lib/MessageBar';
-import { IconType } from                       'office-ui-fabric-react/lib/Icon';
-import { TextField } from           'office-ui-fabric-react/lib/TextField';
 import styles from '../SearchBoxWebPart.module.scss';
 import ISearchQuery from '../../../../models/ISearchQuery';
 import NlpDebugPanel from '../NlpDebugPanel/NlpDebugPanel';
-import { IconButton } from 'office-ui-fabric-react/lib/Button';
 import { ITheme } from '@uifabric/styling';
 import SearchBoxAutoComplete from '../SearchBoxAutoComplete/SearchBoxAutoComplete';
+import { SearchBox } from 'office-ui-fabric-react/lib/SearchBox';
 
 export default class SearchBoxContainer extends React.Component<ISearchBoxContainerProps, ISearchBoxContainerState> {
 
@@ -30,60 +28,31 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
   }
 
   private renderSearchBoxWithAutoComplete(): JSX.Element {
-    return <SearchBoxAutoComplete
-              inputValue={this.props.inputValue}
-              onSearch={this._onSearch}
-              placeholderText={this.props.placeholderText}
-              suggestionProviders={this.props.suggestionProviders}
-              themeVariant={this.props.themeVariant}
-              domElement={this.props.domElement}
-            />
+    return (
+      <SearchBoxAutoComplete
+        inputValue={this.props.inputValue}
+        onSearch={this._onSearch}
+        placeholderText={this.props.placeholderText}
+        suggestionProviders={this.props.suggestionProviders}
+        themeVariant={this.props.themeVariant}
+        domElement={this.props.domElement}
+      />
+    );
   }
 
   private renderBasicSearchBox(): JSX.Element {
-    var clearButton = null;
-    if (this.state.showClearButton) {
-      clearButton = <IconButton iconProps={{
-                        iconName: 'Clear',
-                        theme: this.props.themeVariant as ITheme,
-                        iconType: IconType.default,
-                      }} onClick= {() => { this._onSearch('', true); } } className={ styles.clearBtn }>
-                    </IconButton>;
-    }
-
-    return  <div className={ styles.searchFieldGroup }>
-              <TextField
-                className={ styles.searchTextField }
-                theme={this.props.themeVariant as ITheme}
-                placeholder={ this.props.placeholderText ? this.props.placeholderText : strings.SearchInputPlaceholder }
-                value={ this.state.searchInputValue }
-                onChange={ (ev, value) => {
-                  this.setState({
-                    searchInputValue: value,
-                    showClearButton: true
-                  });
-                }}
-                onKeyDown={ (event) => {
-
-                    if (event.keyCode === 13) {
-                      // Submit search on "Enter"
-                      this._onSearch(this.state.searchInputValue);
-                    }
-                    else if (event.keyCode === 27) {
-                      // Clear search on "Escape"
-                      this._onSearch('', true);
-                    }
-
-                }}
-              />
-              {clearButton}
-              <IconButton iconProps={{
-                  iconName: 'Search',
-                  theme: this.props.themeVariant as ITheme,
-                  iconType: IconType.default,
-                }} onClick= {() => { this._onSearch(this.state.searchInputValue);} } className={ styles.searchBtn }>
-              </IconButton>
-            </div>;
+    return (
+      <SearchBox
+        placeholder={this.props.placeholderText ? this.props.placeholderText : strings.SearchInputPlaceholder}
+        theme={this.props.themeVariant as ITheme}
+        className={ styles.searchTextField }
+        value={ this.state.searchInputValue }
+        autoComplete= "off"
+        onChange={(value) => this.setState({ searchInputValue: value })}
+        onSearch={() => this._onSearch(this.state.searchInputValue)}
+        onClear={() => this._onSearch('', true)}
+      />
+    );
   }
 
   /**
