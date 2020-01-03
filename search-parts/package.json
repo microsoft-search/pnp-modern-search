@@ -31,6 +31,7 @@
         "@pnp/spfx-property-controls": "1.16.0",
         "@uifabric/file-type-icons": "^7.1.2",
         "@uifabric/icons": "^7.3.0",
+        "@uifabric/styling": "^6.50.7",
         "core-js": "3.3.2",
         "custom-event-polyfill": "^1.0.7",
         "downshift": "3.1.5",
