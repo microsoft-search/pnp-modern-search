@@ -163,7 +163,9 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
    */
   private async _updateQuerySuggestions(inputValue: string) {
 
-      if (inputValue && inputValue.length >= SUGGESTION_CHAR_COUNT_TRIGGER) {
+      const trimmedInputValue = inputValue ? inputValue.trim() : "";
+
+      if (trimmedInputValue && trimmedInputValue.length >= SUGGESTION_CHAR_COUNT_TRIGGER) {
 
         try {
 
@@ -177,7 +179,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
 
             // Verify we have a valid suggestion provider and it is enabled
             if (provider && provider.providerEnabled && provider.instance.isSuggestionsEnabled) {
-              let suggestions = await provider.instance.getSuggestions(inputValue);
+              let suggestions = await provider.instance.getSuggestions(trimmedInputValue);
 
               // Verify before updating proposed suggestions
               //  1) the input value hasn't been searched
