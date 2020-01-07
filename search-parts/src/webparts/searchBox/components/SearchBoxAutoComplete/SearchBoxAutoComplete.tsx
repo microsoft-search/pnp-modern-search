@@ -223,7 +223,8 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
           //render zero term query suggestions
           if (this.state.hasRetrievedZeroTermSuggestions) {
             this.setState({
-              proposedQuerySuggestions: this.state.zeroTermQuerySuggestions,
+              errorMessage: null,
+              proposedQuerySuggestions: trimmedInputValue.length === 0 ? this.state.zeroTermQuerySuggestions : [],
               isRetrievingSuggestions: false
             });
           }
