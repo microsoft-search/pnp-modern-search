@@ -34,7 +34,6 @@
         "@uifabric/styling": "^6.50.7",
         "core-js": "3.3.2",
         "custom-event-polyfill": "^1.0.7",
-        "downshift": "3.1.5",
         "flickity": "^2.2.1",
         "flickity-imagesloaded": "^2.0.0",
         "handlebars": "4.4.3",

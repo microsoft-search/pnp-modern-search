@@ -26,6 +26,10 @@ define([], function () {
     "SearchBoxUseStagingEndpoint": "Use el extremo de ensayo de LUIS",
     "UrlNotResolvedErrorMessage": "La URL '{0}' no se puede resolver. Error: '{1}'.",
     "SearchBoxPlaceholderTextLabel": "Texto de marcador de posición en el cuadro de búsqueda",
+    "CancelButtonText": "Cancelar",
+    "DialogButtonLabel": "Estilos",
+    "DialogButtonText": "Editar plantilla",
+    "SaveButtonText": "Guardar",
     "DynamicData": {
       "UseDynamicDataSourceLabel": "Utilice un origen de datos dinámico",
       "SearchQueryPropertyLabel": "Consulta de búsqueda",
@@ -40,6 +44,18 @@ define([], function () {
       "TopScoringIntentScoreLabel": "Entidad top de confianza",
       "EnhancedQueryLabel": "Consulta de búsqueda mejorada",
       "AlteredQueryLabel": "Consulta corregida"
+    },
+    "SuggestionProviders": {
+      "EditSuggestionProvidersLabel": "Configurar sugerencias",
+      "SuggestionProvidersLabel": "Proveedores de sugerencias",
+      "SuggestionProvidersDescription": "Habilite o deshabilite proveedores de sugerencias individuales.",
+      "EnabledPropertyLabel": "Activo",
+      "ProviderNamePropertyLabel": "Nombre",
+      "ProviderDescriptionPropertyLabel": "Descripción",
+      "InlineTemplateContentLabel": "Plantilla en línea",
+      "ExternalUrlLabel": "Url de plantilla externa",
+      "InlineTemplateEditPanelTitle": "Editar plantilla de sugerencia",
+      "DefaultSuggestionGroupName": "Recomienda",
     }
   }
 });
