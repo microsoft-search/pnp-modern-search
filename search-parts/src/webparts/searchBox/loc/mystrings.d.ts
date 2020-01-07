@@ -57,6 +57,7 @@ declare interface ISearchBoxWebPartStrings {
     ExternalUrlLabel: string;
     InlineTemplateEditPanelTitle: string;
     DefaultSuggestionGroupName: string;
+    SharePointSuggestionGroupName: string;
   }
 }
 

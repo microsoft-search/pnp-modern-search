@@ -40,14 +40,13 @@
         }
 
         .suggestionIcon {
-            min-width: 40px;
-            display: flex;
-            justify-content: center;
+            display: block;
             height: 100%;
 
             & > img {
-                max-width: 24px;
-                max-height: 24px;
+                width: 24px;
+                height: 24px;
+                padding-left: 10px
             }
         }
 
