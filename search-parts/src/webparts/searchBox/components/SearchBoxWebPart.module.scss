@@ -2,6 +2,35 @@
 
     position: relative;
 
+    .searchBoxWrapper {
+        display: flex;
+        border: 1px solid #c2c2c2;
+
+        &:hover {
+          border-color: #272727;
+        }
+    }
+
+    .searchTextField {
+        width: 100%;
+        flex: 1 1 auto;
+        border: none;
+    }
+
+    .searchButton {
+        background: '[theme:primaryButtonBackground, default:#0078d7]';
+        &:hover {
+          background: '[theme:primaryButtonBackgroundHovered, default:#0078d7]';
+        }
+
+        & i {
+          color: '[theme:primaryButtonText, default:#ffffff]';
+          &:hover {
+            color: '[theme:primaryButtonTextHovered, default:#ffffff]';
+          }
+        }
+    }
+
     .errorMessage {
         margin-bottom: 10px;
     }
@@ -69,26 +98,6 @@
             flex-direction: row;
             justify-content: center;
             font-size: 16px;
-        }
-    }
-
-    .searchFieldGroup {
-
-        display: flex;
-        position: relative;
-
-        .searchTextField {
-            width: 100%;
-        }
-
-        .searchBtn {
-            position: absolute;
-            right: 0;
-        }
-
-        .clearBtn {
-            position: absolute;
-            right: 32px;
         }
     }
 

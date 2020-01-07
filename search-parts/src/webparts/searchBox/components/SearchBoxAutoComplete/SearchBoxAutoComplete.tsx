@@ -4,14 +4,15 @@ import styles from '../SearchBoxWebPart.module.scss';
 import { ISearchBoxAutoCompleteState } from './ISearchBoxAutoCompleteState';
 import { ISearchBoxAutoCompleteProps } from './ISearchBoxAutoCompleteProps';
 import { SearchBox } from 'office-ui-fabric-react/lib/SearchBox';
-import { FocusZone, FocusZoneDirection, IFocusZone } from 'office-ui-fabric-react/lib/FocusZone';
+import { FocusZone, FocusZoneDirection } from 'office-ui-fabric-react/lib/FocusZone';
+import { IconType, Icon } from 'office-ui-fabric-react/lib/Icon';
+import { Label } from 'office-ui-fabric-react/lib/Label';
+import { IconButton } from 'office-ui-fabric-react/lib/Button';
+import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
 import { ITheme } from 'office-ui-fabric-react/lib/Styling';
 import { isEqual, debounce } from '@microsoft/sp-lodash-subset';
-import { IconType, Icon } from 'office-ui-fabric-react/lib/Icon';
 import { SuggestionType } from '../../../../models/SuggestionType';
 import { ISuggestionPerson } from '../../../../models/ISuggestionPerson';
-import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
-import { Label } from 'office-ui-fabric-react/lib/Label';
 import { ISuggestion } from '../../../../models/ISuggestion';
 
 const SUGGESTION_CHAR_COUNT_TRIGGER = 2;
@@ -397,30 +398,40 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
           direction={FocusZoneDirection.vertical}
           isCircularNavigation={true}
         >
-          <SearchBox
-            placeholder={this.props.placeholderText ? this.props.placeholderText : strings.SearchInputPlaceholder}
-            theme={this.props.themeVariant as ITheme}
-            className={ styles.searchTextField }
-            value={ this.state.searchInputValue }
-            autoComplete= "off"
-            data-is-focusable={this.state.proposedQuerySuggestions.length > 0}
-            onChange={ (value) => {
-              if (!this._onChangeDebounced) {
-                this._onChangeDebounced = debounce((newValue) => {
-                  this._updateQuerySuggestions(newValue);
-                }, SUGGESTION_UPDATE_DEBOUNCE_DELAY);
+          <div className={styles.searchBoxWrapper}>
+            <SearchBox
+              placeholder={this.props.placeholderText ? this.props.placeholderText : strings.SearchInputPlaceholder}
+              theme={this.props.themeVariant as ITheme}
+              className={ styles.searchTextField }
+              value={ this.state.searchInputValue }
+              autoComplete= "off"
+              data-is-focusable={this.state.proposedQuerySuggestions.length > 0}
+              onChange={ (value) => {
+                if (!this._onChangeDebounced) {
+                  this._onChangeDebounced = debounce((newValue) => {
+                    this._updateQuerySuggestions(newValue);
+                  }, SUGGESTION_UPDATE_DEBOUNCE_DELAY);
+                }
+                this._onChangeDebounced(value);
+                this.setState({
+                  searchInputValue: value,
+                  isRetrievingSuggestions: true,
+                  isSearchExecuted: false,
+                });
+              }}
+              onFocus={this._handleOnFocus}
+              onSearch={this._handleOnSearch}
+              onClear={this._handleOnClear}
+            />
+            <div className={styles.searchButton}>
+              {this.state.searchInputValue &&
+                <IconButton
+                  onClick={this._handleOnSearch}
+                  iconProps={{iconName: 'Forward' }}
+                />
               }
-              this._onChangeDebounced(value);
-              this.setState({
-                searchInputValue: value,
-                isRetrievingSuggestions: true,
-                isSearchExecuted: false,
-              });
-            }}
-            onFocus={this._handleOnFocus}
-            onSearch={this._handleOnSearch}
-            onClear={this._handleOnClear}
-          />
+            </div>
+          </div>
           {!this.state.isSearchExecuted && (!!this.state.searchInputValue || this.state.proposedQuerySuggestions.length > 0)
             ? showLoadingIndicator
               ? this._renderLoadingIndicator()
