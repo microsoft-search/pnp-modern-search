@@ -10,6 +10,7 @@ import NlpDebugPanel from '../NlpDebugPanel/NlpDebugPanel';
 import { ITheme } from '@uifabric/styling';
 import SearchBoxAutoComplete from '../SearchBoxAutoComplete/SearchBoxAutoComplete';
 import { SearchBox } from 'office-ui-fabric-react/lib/SearchBox';
+import { IconButton } from 'office-ui-fabric-react/lib/Button';
 
 export default class SearchBoxContainer extends React.Component<ISearchBoxContainerProps, ISearchBoxContainerState> {
 
@@ -42,16 +43,26 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
 
   private renderBasicSearchBox(): JSX.Element {
     return (
-      <SearchBox
-        placeholder={this.props.placeholderText ? this.props.placeholderText : strings.SearchInputPlaceholder}
-        theme={this.props.themeVariant as ITheme}
-        className={ styles.searchTextField }
-        value={ this.state.searchInputValue }
-        autoComplete= "off"
-        onChange={(value) => this.setState({ searchInputValue: value })}
-        onSearch={() => this._onSearch(this.state.searchInputValue)}
-        onClear={() => this._onSearch('', true)}
-      />
+      <div className={styles.searchBoxWrapper}>
+        <SearchBox
+          placeholder={this.props.placeholderText ? this.props.placeholderText : strings.SearchInputPlaceholder}
+          theme={this.props.themeVariant as ITheme}
+          className={ styles.searchTextField }
+          value={ this.state.searchInputValue }
+          autoComplete= "off"
+          onChange={(value) => this.setState({ searchInputValue: value })}
+          onSearch={() => this._onSearch(this.state.searchInputValue)}
+          onClear={() => this._onSearch('', true)}
+        />
+        <div className={styles.searchButton}>
+          {this.state.searchInputValue &&
+            <IconButton
+              onClick={() => this._onSearch(this.state.searchInputValue)}
+              iconProps={{iconName: 'Forward' }}
+            />
+          }
+        </div>
+      </div>
     );
   }
 
