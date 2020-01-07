@@ -93,6 +93,11 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
 
     let suggestionContent: JSX.Element = null;
 
+    let suggestionProps: any = {};
+    if (suggestion.hoverText) {
+      suggestionProps.title = suggestion.hoverText;
+    }
+
     if (suggestion.type === SuggestionType.Person) {
       const personSuggestion = suggestion as ISuggestionPerson;
       const personFields = [];
@@ -100,13 +105,13 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
       if (personSuggestion.emailAddress) personFields.push(personSuggestion.emailAddress);
 
       suggestionContent = <>
-        <span dangerouslySetInnerHTML={{ __html: personSuggestion.displayText }}></span>
+        <span dangerouslySetInnerHTML={{ __html: personSuggestion.displayText }} {...suggestionProps}></span>
         <span className={styles.suggestionDescription}>{personFields.join(' | ')}</span>
       </>;
     }
     else {
       suggestionContent = <>
-        <span dangerouslySetInnerHTML={{ __html: suggestion.displayText }}></span>
+        <span dangerouslySetInnerHTML={{ __html: suggestion.displayText }} {...suggestionProps}></span>
       </>;
     }
 
