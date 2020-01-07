@@ -395,8 +395,9 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
     return (
       <div ref={this._containerElemRef}>
         <FocusZone
-          direction={FocusZoneDirection.vertical}
+          direction={FocusZoneDirection.bidirectional}
           isCircularNavigation={true}
+          defaultActiveElement={`.ms-SearchBox.${styles.searchTextField}`}
         >
           <div className={styles.searchBoxWrapper}>
             <SearchBox
