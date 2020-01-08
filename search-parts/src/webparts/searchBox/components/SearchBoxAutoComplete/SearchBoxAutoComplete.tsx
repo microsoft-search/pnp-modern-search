@@ -11,8 +11,6 @@ import { IconButton } from 'office-ui-fabric-react/lib/Button';
 import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
 import { ITheme } from 'office-ui-fabric-react/lib/Styling';
 import { isEqual, debounce } from '@microsoft/sp-lodash-subset';
-import { SuggestionType } from '../../../../models/SuggestionType';
-import { ISuggestionPerson } from '../../../../models/ISuggestionPerson';
 import { ISuggestion } from '../../../../models/ISuggestion';
 
 const SUGGESTION_CHAR_COUNT_TRIGGER = 2;
@@ -91,36 +89,13 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
   private _renderSuggestion(suggestion: ISuggestion, suggestionIndex: number): JSX.Element {
     const thisComponent = this;
 
-    let suggestionContent: JSX.Element = null;
-
-    let suggestionProps: any = {};
-    if (suggestion.hoverText) {
-      suggestionProps.title = suggestion.hoverText;
-    }
-
-    if (suggestion.type === SuggestionType.Person) {
-      const personSuggestion = suggestion as ISuggestionPerson;
-      const personFields = [];
-      if (personSuggestion.jobTitle) personFields.push(personSuggestion.jobTitle);
-      if (personSuggestion.emailAddress) personFields.push(personSuggestion.emailAddress);
-
-      suggestionContent = <>
-        <span dangerouslySetInnerHTML={{ __html: personSuggestion.displayText }} {...suggestionProps}></span>
-        <span className={styles.suggestionDescription}>{personFields.join(' | ')}</span>
-      </>;
-    }
-    else {
-      suggestionContent = <>
-        <span dangerouslySetInnerHTML={{ __html: suggestion.displayText }} {...suggestionProps}></span>
-      </>;
-    }
-
     const suggestionInner = <>
       <div className={styles.suggestionIcon}>
         {suggestion.icon && <img src={suggestion.icon} />}
       </div>
       <div className={styles.suggestionContent}>
-        {suggestionContent}
+        <span className={styles.suggestionDisplayText} dangerouslySetInnerHTML={{ __html: suggestion.displayText }}></span>
+        <span className={styles.suggestionDescription}>{suggestion.description ? suggestion.description : ""}</span>
       </div>
       <div className={styles.suggestionAction}>
         {suggestion.targetUrl && (
@@ -134,6 +109,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
 
     const baseProps = {
       key: suggestionIndex,
+      title: suggestion.hoverText ? suggestion.hoverText : "",
       className: styles.suggestionItem,
       'data-is-focusable': true, // Used by FocusZone component
       onClick: () => thisComponent._selectQuerySuggestion(suggestion, !!suggestion.targetUrl)

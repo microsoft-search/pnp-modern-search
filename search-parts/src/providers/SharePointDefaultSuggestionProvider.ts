@@ -1,7 +1,6 @@
 import { BaseSuggestionProvider } from './BaseSuggestionProvider';
 import { ISuggestion } from '../models/ISuggestion';
 import SearchService from '../services/SearchService/SearchService';
-import { SuggestionType } from '../models/SuggestionType';
 import * as strings from 'SearchBoxWebPartStrings';
 
 export class SharePointDefaultSuggestionProvider extends BaseSuggestionProvider  {
@@ -27,7 +26,6 @@ export class SharePointDefaultSuggestionProvider extends BaseSuggestionProvider 
   public async getSuggestions(queryText: string): Promise<ISuggestion[]> {
     const suggestions = await this._searchService.suggest(queryText);
     return suggestions.map<ISuggestion>(textSuggestion => ({
-      type: SuggestionType.Content,
       displayText: textSuggestion,
       groupName: strings.SuggestionProviders.SharePointSuggestionGroupName
     }))

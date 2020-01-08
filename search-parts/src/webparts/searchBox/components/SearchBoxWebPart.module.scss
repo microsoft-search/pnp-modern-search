@@ -89,6 +89,11 @@
             flex: 1 1 auto;
         }
 
+        .suggestionDisplayText {
+            white-space: nowrap;
+            padding-right: 4px;
+        }
+
         .suggestionDescription {
             font-size: 0.9em;
             color: #777;
