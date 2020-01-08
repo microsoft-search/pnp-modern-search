@@ -15,3 +15,15 @@ Setting | Description
 Web Part Title | Shows a title for this Web Part. Set blank if you don't want a title.
 Show blank if no result | Shows nothing if there is no filter
 Filters layout | Choose the template to use to display filters results.
+
+#### Template
+
+##### Persona
+
+The persona template work with technical account name (ex : i:0#.f|membership|pierre.dupond@tenantsharepoint.onmicrosoft.com).
+
+By default, the "Auhtor" managed properties return only real name (ex : Pierre Dupont). 
+
+For the template works with "Author", map crawled properties "ows_q_USER_Author" to a managed properties "RefinableStringXX".
+
+All crawled properties "ows_q_USER_\<name>" and lot of managed properties (People:Manager,People:AccountName ...) return technical account name.
