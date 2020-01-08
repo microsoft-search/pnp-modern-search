@@ -27,3 +27,7 @@ By default, the "Auhtor" managed properties return only real name (ex : Pierre D
 For the template works with "Author", map crawled properties "ows_q_USER_Author" to a managed properties "RefinableStringXX".
 
 All crawled properties "ows_q_USER_\<name>" and lot of managed properties (People:Manager,People:AccountName ...) return technical account name.
+
+##### File Type
+
+The file Type template work with "FileExtension" managed properties.
