@@ -463,6 +463,14 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
           refinerSortType: RefinersSortOption.Alphabetical,
           refinerSortDirection: RefinersSortDirection.Ascending,
           showExpanded: false
+        },
+        {
+          refinerName: "RefinableString06",
+          displayValue: "Person",
+          template: RefinerTemplateOption.Persona,
+          refinerSortType: RefinersSortOption.Alphabetical,
+          refinerSortDirection: RefinersSortDirection.Ascending,
+          showExpanded: false
         }
       ];
     }
