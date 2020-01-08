@@ -36,8 +36,8 @@ define([], function () {
         "PersonaRefinementItemLabel": "Persona",
         "DateRangeRefinementItemLabel": "Date range",
         "FixedDateRangeRefinementItemLabel": "Date range (fixed intervals)",
-        "FileTypeRefinementItemTemplateLabel": "File types",
-        "FileTypeMutliValueRefinementItemTemplateLabel": "Multi-value file types",
+        "FileTypeRefinementItemTemplateLabel": "File type",
+        "FileTypeMutliValueRefinementItemTemplateLabel": "Multiple file type",
         "DateFromLabel": "From",
         "DateTolabel": "To",
         "DatePickerStrings": {
