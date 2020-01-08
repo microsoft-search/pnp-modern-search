@@ -36,9 +36,9 @@ import ISearchService from '../../services/SearchService/ISearchService';
 import { IComboBoxOption } from 'office-ui-fabric-react/lib/ComboBox';
 
 import { cloneDeep, isEqual } from '@microsoft/sp-lodash-subset';
-import IUserService from './../../services/SpService/IUserService';
-import { UserService } from './../../services/SpService/UserService';
-import { MockUserService } from './../../services/SpService/MockUserService';
+import IUserService from '../../services/UserService/IUserService';
+import { UserService } from '../../services/UserService/UserService';
+import { MockUserService } from '../../services/UserService/MockUserService';
 import { initializeFileTypeIcons } from '@uifabric/file-type-icons';
 
 export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearchRefinersWebPartProps> implements IDynamicDataCallables {

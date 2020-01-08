@@ -6,7 +6,7 @@ import { Shimmer, ShimmerElementsGroup, ShimmerElementType } from 'office-ui-fab
 import { Persona, PersonaSize, IPersonaSharedProps } from 'office-ui-fabric-react/lib/components/Persona';
 
 // Interface
-import IUserService from './../../../../../services/SpService/IUserService';
+import IUserService from '../../../../../services/UserService/IUserService';
 import { IUser } from '../../../../../models/IUser';
 export interface IPersonaCustomProps extends IPersonaSharedProps {
   accountName: string;

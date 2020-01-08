@@ -7,7 +7,7 @@ import PersonaTemplate from "./Persona/PersonaTemplate";
 import FileTypeTemplate from "./FileType/FileTypeTemplate";
 import { IRefinementResult, IRefinementValue } from "../../../../models/ISearchResult";
 import RefinementFilterOperationCallback from '../../../../models/RefinementValueOperationCallback';
-import IUserService from './../../../../services/SpService/IUserService';
+import IUserService from '../../../../services/UserService/IUserService';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 
 export interface ITemplateRendererProps {
