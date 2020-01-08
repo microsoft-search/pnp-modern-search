@@ -46,6 +46,7 @@ export default class PersonaTemplate extends React.Component<IPersonaTemplatePro
           this.props.refinementResult.Values.map((refinementValue: IRefinementValue, j) => {
 
             let accountName: string = refinementValue.RefinementValue ? refinementValue.RefinementValue.split('i:0#.f|').pop() : null;
+            let displayName: string = refinementValue.RefinementValue.split('|').length > 1 ? refinementValue.RefinementValue.split('|')[1].trim() : null;
 
             if (refinementValue.RefinementCount === 0) {
               return null;
@@ -58,6 +59,7 @@ export default class PersonaTemplate extends React.Component<IPersonaTemplatePro
                 resultCount={refinementValue.RefinementCount}
                 theme={this.props.themeVariant as ITheme}
                 onClick={(ev) => {
+                  refinementValue.RefinementName = displayName ? displayName : refinementValue.RefinementName;
                   this._onFilterAdded(refinementValue);
                 }}
               />
