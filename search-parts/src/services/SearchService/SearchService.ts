@@ -288,8 +288,8 @@ class SearchService implements ISearchService {
 
                         // Best bets are mapped through the "SpecialTermResults" https://msdn.microsoft.com/en-us/library/dd907265(v=office.12).aspx
                         if (e.SpecialTermResults) {
-
-                            e.SpecialTermResults.Results.map((result) => {
+                            // casting as pnpjs has an incorrect mapping of SpecialTermResults
+                            (e.SpecialTermResults as any).Results.map((result) => {
                                 promotedResults.push({
                                     Title: result.Title,
                                     Url: result.Url,
