@@ -28,6 +28,6 @@ export class SharePointDefaultSuggestionProvider extends BaseSuggestionProvider 
     return suggestions.map<ISuggestion>(textSuggestion => ({
       displayText: textSuggestion,
       groupName: strings.SuggestionProviders.SharePointSuggestionGroupName
-    }))
+    }));
   }
 }

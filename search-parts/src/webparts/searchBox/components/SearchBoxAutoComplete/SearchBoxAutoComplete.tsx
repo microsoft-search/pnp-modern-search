@@ -75,8 +75,8 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
                 {renderedSuggestions}
               </div>
           </>
-        )
-      })
+        );
+      });
 
       renderSuggestions = <div className={styles.suggestionPanel}>
                             { renderedSuggestionGroups }
@@ -113,7 +113,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
       className: styles.suggestionItem,
       'data-is-focusable': true, // Used by FocusZone component
       onClick: () => thisComponent._selectQuerySuggestion(suggestion, !!suggestion.targetUrl)
-    }
+    };
 
     return (!!suggestion.targetUrl
       ? <a {...baseProps}
@@ -328,7 +328,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
     this.setState({
       isSearchExecuted: true,
       proposedQuerySuggestions: []
-    })
+    });
   }
 
   private _handleOnClear = () => {
