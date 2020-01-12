@@ -22,20 +22,21 @@ import { IRefinementValue, RefinementOperator } from "../../../../../models/ISea
 import IBaseRefinerTemplateProps from '../IBaseRefinerTemplateProps';
 import IBaseRefinerTemplateState from '../IBaseRefinerTemplateState';
 
-interface IPersonaTemplateProps extends IBaseRefinerTemplateProps {
+export interface IPersonaTemplateProps extends IBaseRefinerTemplateProps {
 }
 
+export interface IPersonaTemplateState extends IBaseRefinerTemplateState {
+}
 // Class
-export default class PersonaTemplate extends React.Component<IPersonaTemplateProps, IBaseRefinerTemplateState> {
+export default class PersonaTemplate extends React.Component<IPersonaTemplateProps, IPersonaTemplateState> {
 
   private _operator: RefinementOperator;
-
 
   public constructor(props: IPersonaTemplateProps) {
     super(props);
 
     this.state = {
-      refinerSelectedFilterValues: [],
+      refinerSelectedFilterValues: []
     };
   }
 
@@ -53,22 +54,24 @@ export default class PersonaTemplate extends React.Component<IPersonaTemplatePro
             }
             return (
               <PersonaCustom
-                key={`${accountName}Key`}
+                key={j}
                 userService={this.props.userService}
+                selected={this._isValueInFilterSelection(refinementValue)}
                 accountName={`i:0#.f|${accountName}`}
                 resultCount={refinementValue.RefinementCount}
                 theme={this.props.themeVariant as ITheme}
                 onClick={(ev) => {
-                  refinementValue.RefinementName = displayName ? displayName : refinementValue.RefinementName;
-                  this._onFilterAdded(refinementValue);
+
+                  if (!this._isValueInFilterSelection(refinementValue)) { 
+                    refinementValue.RefinementName = displayName ? displayName : refinementValue.RefinementName;
+                    this._onFilterAdded(refinementValue);
+                  } else {
+                    this._onFilterRemoved(refinementValue);
+                  }
                 }}
               />
             );
           })
-        }
-        {
-          this.state.refinerSelectedFilterValues.length > 0 &&
-          <Link onClick={this._clearFilters}>{strings.Refiners.ClearFiltersLabel}</Link>
         }
 
       </div>
@@ -129,6 +132,25 @@ export default class PersonaTemplate extends React.Component<IPersonaTemplatePro
   }
 
   /**
+   * Handler when a filter value is unselected
+   * @param removedValue the filter value removed
+   */
+  private _onFilterRemoved(removedValue: IRefinementValue) {
+
+    const newFilterValues = this.state.refinerSelectedFilterValues.filter((elt) => {
+        return elt.RefinementValue !== removedValue.RefinementValue;
+    });
+
+    this.setState({
+        refinerSelectedFilterValues: newFilterValues
+    });
+
+    if (!this.props.isMultiValue) {
+        this._applyFilters(newFilterValues);
+    }
+  }
+  
+  /**
    * Applies all selected filters for the current refiner
    */
   private _applyFilters = (updatedValues: IRefinementValue[]) => {
@@ -136,14 +158,17 @@ export default class PersonaTemplate extends React.Component<IPersonaTemplatePro
   }
 
   /**
-   * Clears all selected filters for the current refiner
+   * Checks if the current filter value is present in the list of the selected values for the current refiner
+   * @param valueToCheck The filter value to check
    */
-  private _clearFilters = () => {
+  private _isValueInFilterSelection(valueToCheck: IRefinementValue): boolean {
 
-    this.setState({
-      refinerSelectedFilterValues: []
-    });
+      let displayName: string = valueToCheck.RefinementValue.split('|').length > 1 ? valueToCheck.RefinementValue.split('|')[1].trim() : null;
 
-    this._applyFilters([]);
+      let newFilters = this.state.refinerSelectedFilterValues.filter((filter) => {
+          return filter.RefinementToken === valueToCheck.RefinementToken && (filter.RefinementValue === valueToCheck.RefinementValue || filter.RefinementName === displayName);
+      });
+
+      return newFilters.length === 0 ? false : true;
   }
 }

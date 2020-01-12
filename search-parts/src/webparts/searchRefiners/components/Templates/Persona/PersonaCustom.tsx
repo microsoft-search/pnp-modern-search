@@ -12,6 +12,7 @@ export interface IPersonaCustomProps extends IPersonaSharedProps {
   accountName: string;
   resultCount: number;
   userService: IUserService;
+  selected: boolean;
 }
 
 export interface IPersonaCustomState {
@@ -19,6 +20,7 @@ export interface IPersonaCustomState {
   pictureUrl: string;
   jobTitle: string;
   isLoading: boolean;
+  isSelected: boolean;
 }
 
 // Component
@@ -33,7 +35,8 @@ export class PersonaCustom extends React.Component<IPersonaCustomProps, IPersona
       displayName: '',
       pictureUrl: '',
       jobTitle: '',
-      isLoading: false
+      isLoading: false,
+      isSelected: false
     };
   }
 
@@ -82,9 +85,14 @@ export class PersonaCustom extends React.Component<IPersonaCustomProps, IPersona
             customElementsGroup={this._getPersonaShimmer()}
             isDataLoaded={!isLoading}
           >
-            <Persona
+            <Persona              
               {...this.props}
               className='pnp-persona'
+              styles={{
+                primaryText: {
+                  fontWeight: this.props.selected ? 'bold' : 'normal'
+                }
+              }}
               imageUrl={pictureUrl}
               size={PersonaSize.size40}
               primaryText={`${displayName} (${this.props.resultCount})`}
