@@ -1,6 +1,6 @@
 import { IRefinementResult, IRefinementFilter, IRefinementValue } from "../../../../models/ISearchResult";
 import RefinementFilterOperationCallback from "../../../../models/RefinementValueOperationCallback";
-import IUserService from './../../../../services/SpService/IUserService';
+import IUserService from '../../../../services/UserService/IUserService';
 import { IReadonlyTheme } from "@microsoft/sp-component-base";
 
 interface IBaseRefinerTemplateProps {

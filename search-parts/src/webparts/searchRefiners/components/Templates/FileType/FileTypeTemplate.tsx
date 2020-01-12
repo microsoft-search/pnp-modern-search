@@ -62,6 +62,7 @@ export default class FileTypeTemplate extends React.Component<IBaseRefinerTempla
                 key={j}
                 checked={this._isValueInFilterSelection(refinementValue)}
                 onChange={(ev, checked: boolean) => {
+                  refinementValue.RefinementName = FileHelper.extensionToLabel(extension);
                   checked ? this._onFilterAdded(refinementValue) : this._onFilterRemoved(refinementValue);
                 }}
                 theme={this.props.themeVariant as ITheme}
