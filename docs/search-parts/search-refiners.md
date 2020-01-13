@@ -15,3 +15,17 @@ Setting | Description
 Web Part Title | Shows a title for this Web Part. Set blank if you don't want a title.
 Show blank if no result | Shows nothing if there is no filter
 Filters layout | Choose the template to use to display filters results.
+
+#### Template
+
+##### Persona
+
+The persona template work with technical account name (ex : i:0#.f|membership|pierre.dupond@tenantsharepoint.onmicrosoft.com).
+By default, the _"Author"_ managed property returns only the display name (ex : "Pierre Dupont"). 
+To get the 'Persona' template work with "Author", you need to map crawled properties `ows_q_USER_Author` to a managed properties `RefinableStringXX`.
+
+All crawled properties `ows_q_USER_\<name>` and managed properties like `People:Manager`,`People:AccountName`,etc. return technical account name.
+
+##### File Type
+
+The _"File Type"_ template is intended to work with the `FileExtension` managed property.

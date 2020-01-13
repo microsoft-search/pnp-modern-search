@@ -3,192 +3,199 @@ import IFilterLayoutProps from '../IFilterLayoutProps';
 import IVerticalState from './IVerticalState';
 import * as update from 'immutability-helper';
 import {
-    GroupedList,
-    IGroup,
-    IGroupDividerProps,
-    IGroupedList
+  GroupedList,
+  IGroup,
+  IGroupDividerProps,
+  IGroupedList
 } from 'office-ui-fabric-react/lib/components/GroupedList/index';
-import {Link} from 'office-ui-fabric-react/lib/Link';
+import { Link } from 'office-ui-fabric-react/lib/Link';
 import styles from './Vertical.module.scss';
 import * as strings from 'SearchRefinersWebPartStrings';
 import TemplateRenderer from '../../Templates/TemplateRenderer';
 import { isEqual } from '@microsoft/sp-lodash-subset';
 import { ITheme } from '@uifabric/styling';
+import { Icon } from 'office-ui-fabric-react/lib/Icon';
+import { Text as TextUI } from 'office-ui-fabric-react/lib/Text';
 
 export default class Vertical extends React.Component<IFilterLayoutProps, IVerticalState> {
 
-    private _groupedList: IGroupedList;
+  private _groupedList: IGroupedList;
 
-    public constructor(props: IFilterLayoutProps) {
-        super(props);
+  public constructor(props: IFilterLayoutProps) {
+    super(props);
 
-        this.state = {
-            items: [],
-            groups: []
-        };
+    this.state = {
+      items: [],
+      groups: []
+    };
 
-        this._removeAllFilters = this._removeAllFilters.bind(this);
-        this._onRenderHeader = this._onRenderHeader.bind(this);
-        this._onRenderCell = this._onRenderCell.bind(this);
-    }
+    this._removeAllFilters = this._removeAllFilters.bind(this);
+    this._onRenderHeader = this._onRenderHeader.bind(this);
+    this._onRenderCell = this._onRenderCell.bind(this);
+  }
 
-    public render(): React.ReactElement<IFilterLayoutProps> {
+  public render(): React.ReactElement<IFilterLayoutProps> {
 
-        let noResultsElement: JSX.Element;
+    let noResultsElement: JSX.Element;
 
-        const renderAvailableFilters = (this.props.refinementResults.length > 0) ? <GroupedList
-            ref='groupedList'
-            items={this.state.items}
-            componentRef={ (g) => { this._groupedList = g; }}
-            onRenderCell={this._onRenderCell}
-            className={styles.verticalLayout__filterPanel__body__group}
-            groupProps={
-                {
-                    onRenderHeader: this._onRenderHeader,
-                }
-            }
-            groups={this.state.groups} /> : noResultsElement;
-
-        const renderLinkRemoveAll = this.props.hasSelectedValues ?
-            (<div className={`${styles.verticalLayout__filterPanel__body__removeAllFilters} ${this.props.hasSelectedValues && "hiddenLink"}`}>
-                <Link 
-                    theme={this.props.themeVariant as ITheme}
-                    onClick={this._removeAllFilters}>
-                    {strings.RemoveAllFiltersLabel}
-                </Link>
-            </div>) : null;
-
-        return (
-            <div className={styles.verticalLayout__filterPanel__body}>
-                {renderAvailableFilters}
-                {renderLinkRemoveAll}
-            </div>
-        );
-    }
-
-    public componentDidMount() {
-        this._initGroups(this.props);
-        this._initItems(this.props);
-    }
-
-    public UNSAFE_componentWillReceiveProps(nextProps: IFilterLayoutProps) {      
-        
-        let shouldReset = false;
-
-        if (!isEqual(this.props.refinersConfiguration, nextProps.refinersConfiguration)) {
-            shouldReset = true;
+    const renderAvailableFilters = (this.props.refinementResults.length > 0) ? <GroupedList
+      ref='groupedList'
+      items={this.state.items}
+      componentRef={(g) => { this._groupedList = g; }}
+      onRenderCell={this._onRenderCell}
+      className={styles.verticalLayout__filterPanel__body__group}
+      groupProps={
+        {
+          onRenderHeader: this._onRenderHeader,
         }
+      }
+      groups={this.state.groups} /> : noResultsElement;
 
-        this._initGroups(nextProps, shouldReset);
-        this._initItems(nextProps);
+    const renderLinkRemoveAll = this.props.hasSelectedValues ?
+      (<div className={`${styles.verticalLayout__filterPanel__body__removeAllFilters} ${this.props.hasSelectedValues && "hiddenLink"}`}>
+        <Link
+          theme={this.props.themeVariant as ITheme}
+          onClick={this._removeAllFilters}>
+          {strings.RemoveAllFiltersLabel}
+        </Link>
+      </div>) : null;
 
-        // Need to force an update manually because nor items or groups update will be considered as an update by the GroupedList component.
-        this._groupedList.forceUpdate();        
+    return (
+      <div className={styles.verticalLayout__filterPanel__body}>
+        {renderAvailableFilters}
+        {renderLinkRemoveAll}
+      </div>
+    );
+  }
+
+  public componentDidMount() {
+    this._initGroups(this.props);
+    this._initItems(this.props);
+  }
+
+  public UNSAFE_componentWillReceiveProps(nextProps: IFilterLayoutProps) {
+
+    let shouldReset = false;
+
+    if (!isEqual(this.props.refinersConfiguration, nextProps.refinersConfiguration)) {
+      shouldReset = true;
     }
 
-    private _onRenderCell(nestingDepth: number, item: any, itemIndex: number) {
-        return (
-            <div className={styles.verticalLayout__filterPanel__body__group__item} data-selection-index={itemIndex}>
-                {item}
-            </div>
-        );
-    }
+    this._initGroups(nextProps, shouldReset);
+    this._initItems(nextProps);
 
-    private _onRenderHeader(props: IGroupDividerProps): JSX.Element {
+    // Need to force an update manually because nor items or groups update will be considered as an update by the GroupedList component.
+    this._groupedList.forceUpdate();
+  }
 
-        return (
-            <div className={styles.verticalLayout__filterPanel__body__group__header}
-                style={props.groupIndex > 0 ? { marginTop: '10px' } : undefined}
-                onClick={() => {
-                    props.onToggleCollapse(props.group);
-                }}>
-                <div className={styles.verticalLayout__filterPanel__body__headerIcon}>
-                    <i className={props.group.isCollapsed ? 'ms-Icon ms-Icon--ChevronDown' : 'ms-Icon ms-Icon--ChevronUp'}></i>
-                </div>
-                <div className='ms-font-l'>{props.group.name}</div>
-            </div>
-        );
-    }
+  private _onRenderCell(nestingDepth: number, item: any, itemIndex: number) {
+    return (
+      <div className={styles.verticalLayout__filterPanel__body__group__item} data-selection-index={itemIndex}>
+        {item}
+      </div>
+    );
+  }
 
-    private _removeAllFilters() {
-        this.props.onRemoveAllFilters();
-    }
+  private _onRenderHeader(props: IGroupDividerProps): JSX.Element {
 
-    /***
-     * Initializes expanded groups
-     * @param refinementResults the refinements results
-     * @param refinersConfiguration the current refiners configuration
-     */
-    private _initGroups(props: IFilterLayoutProps, shouldResetCollapse?: boolean) {
+    return (
+      <div className={styles.verticalLayout__filterPanel__body__group__header}
+        style={props.groupIndex > 0 ? { marginTop: '10px' } : undefined}
+        onClick={() => {
+          props.onToggleCollapse(props.group);
+        }}>
+        <div className={styles.verticalLayout__filterPanel__body__headerIcon}>
+          {props.group.isCollapsed ?
+            <Icon iconName='ChevronDown' />
+            :
+            <Icon iconName='ChevronUp' />
+          }
+        </div>
+        <TextUI variant={'large'}>{props.group.name}</TextUI>
+      </div>
+    );
+  }
 
-        let groups: IGroup[] = [];
-        props.refinementResults.map((refinementResult, i) => {
+  private _removeAllFilters() {
+    this.props.onRemoveAllFilters();
+  }
 
-            // Get group name
-            let groupName = refinementResult.FilterName;
-            const configuredFilters = props.refinersConfiguration.filter(e => { return e.refinerName === refinementResult.FilterName;});
-            groupName = configuredFilters.length > 0 && configuredFilters[0].displayValue ? configuredFilters[0].displayValue : groupName;
-            let isCollapsed = true;
+  /***
+   * Initializes expanded groups
+   * @param refinementResults the refinements results
+   * @param refinersConfiguration the current refiners configuration
+   */
+  private _initGroups(props: IFilterLayoutProps, shouldResetCollapse?: boolean) {
 
-            const existingGroups = this.state.groups.filter(g => { return g.name === groupName;});
+    let groups: IGroup[] = [];
+    props.refinementResults.map((refinementResult, i) => {
 
-            if (existingGroups.length > 0 && !shouldResetCollapse) {
-                isCollapsed = existingGroups[0].isCollapsed;
-            } else {
-                isCollapsed = configuredFilters.length > 0 && configuredFilters[0].showExpanded ? !configuredFilters[0].showExpanded : true;
-            }
+      // Get group name
+      let groupName = refinementResult.FilterName;
+      const configuredFilters = props.refinersConfiguration.filter(e => { return e.refinerName === refinementResult.FilterName; });
+      groupName = configuredFilters.length > 0 && configuredFilters[0].displayValue ? configuredFilters[0].displayValue : groupName;
+      let isCollapsed = true;
 
-            let group: IGroup = {
-                key: i.toString(),
-                name: groupName,
-                count: 1,
-                startIndex: i,
-                isCollapsed: isCollapsed
-            };
+      const existingGroups = this.state.groups.filter(g => { return g.name === groupName; });
 
-            groups.push(group);
-        });
+      if (existingGroups.length > 0 && !shouldResetCollapse) {
+        isCollapsed = existingGroups[0].isCollapsed;
+      } else {
+        isCollapsed = configuredFilters.length > 0 && configuredFilters[0].showExpanded ? !configuredFilters[0].showExpanded : true;
+      }
 
-        this.setState({
-            groups: update(this.state.groups, { $set: groups })
-        });
-    }
+      let group: IGroup = {
+        key: i.toString(),
+        name: groupName,
+        count: 1,
+        startIndex: i,
+        isCollapsed: isCollapsed
+      };
 
-    /**
-     * Initializes items in for goups in the GroupedList
-     * @param refinementResults the refinements results
-     */
-    private _initItems(props: IFilterLayoutProps): void {
+      groups.push(group);
+    });
 
-        let items: JSX.Element[] = [];
+    this.setState({
+      groups: update(this.state.groups, { $set: groups })
+    });
+  }
 
-        // Initialize the Office UI grouped list
-        props.refinementResults.map((refinementResult, i) => {
+  /**
+   * Initializes items in for goups in the GroupedList
+   * @param refinementResults the refinements results
+   */
+  private _initItems(props: IFilterLayoutProps): void {
 
-            const configuredFilter = props.refinersConfiguration.filter(e => { return e.refinerName === refinementResult.FilterName; });
+    let items: JSX.Element[] = [];
 
-            // Get selected values for this specfic refiner
-            // This scenario happens due to the behavior of the Office UI Fabric GroupedList component who recreates child components when a greoup is collapsed/expanded, causing a state reset for sub components
-            // In this case we use the refiners global state to recreate the 'local' state for this component
-            const selectedFilter = props.selectedFilters.filter(filter => { return filter.FilterName === refinementResult.FilterName; });
-            const selectedFilterValues = selectedFilter.length === 1 ? selectedFilter[0].Values : [];
+    // Initialize the Office UI grouped list
+    props.refinementResults.map((refinementResult, i) => {
 
-            items.push(
-                <TemplateRenderer
-                    key={i}
-                    refinementResult={refinementResult}
-                    shouldResetFilters={props.shouldResetFilters}
-                    templateType={configuredFilter[0].template}
-                    onFilterValuesUpdated={props.onFilterValuesUpdated}
-                    language={props.language}
-                    themeVariant={props.themeVariant}
-                    selectedValues={selectedFilterValues}
-                />
-            );
-        });
+      const configuredFilter = props.refinersConfiguration.filter(e => { return e.refinerName === refinementResult.FilterName; });
 
-        this.setState({
-            items: update(this.state.items, { $set: items })
-        });
-    }
+      // Get selected values for this specfic refiner
+      // This scenario happens due to the behavior of the Office UI Fabric GroupedList component who recreates child components when a greoup is collapsed/expanded, causing a state reset for sub components
+      // In this case we use the refiners global state to recreate the 'local' state for this component
+      const selectedFilter = props.selectedFilters.filter(filter => { return filter.FilterName === refinementResult.FilterName; });
+      const selectedFilterValues = selectedFilter.length === 1 ? selectedFilter[0].Values : [];
+
+      items.push(
+        <TemplateRenderer
+          key={i}
+          refinementResult={refinementResult}
+          shouldResetFilters={props.shouldResetFilters}
+          templateType={!!configuredFilter[0] ? configuredFilter[0].template : null}
+          onFilterValuesUpdated={props.onFilterValuesUpdated}
+          language={props.language}
+          themeVariant={props.themeVariant}
+          selectedValues={selectedFilterValues}
+          userService={this.props.userService}
+        />
+      );
+    });
+
+    this.setState({
+      items: update(this.state.items, { $set: items })
+    });
+  }
 }

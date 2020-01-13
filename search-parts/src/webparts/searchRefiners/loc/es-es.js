@@ -33,8 +33,11 @@ define([], function() {
             "Templates": {
                 "RefinementItemTemplateLabel": "Elemento de refinamiento predeterminado",
                 "MutliValueRefinementItemTemplateLabel": "Elemento de refinamiento multivalor",
+                "PersonaRefinementItemLabel": "Persona",
                 "DateRangeRefinementItemLabel": "Rango Fecha",
                 "FixedDateRangeRefinementItemLabel": "Rango Fecha (intervalos fijos)",
+                "FileTypeRefinementItemTemplateLabel": "Tipos de archivos",
+                "FileTypeMutliValueRefinementItemTemplateLabel": "Múltiples tipos de archivos",
                 "DateFromLabel": "De",
                 "DateTolabel": "Hasta",
                 "DatePickerStrings": {
