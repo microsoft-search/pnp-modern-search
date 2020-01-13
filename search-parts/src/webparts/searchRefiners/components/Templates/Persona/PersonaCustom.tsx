@@ -53,6 +53,8 @@ export class PersonaCustom extends React.Component<IPersonaCustomProps, IPersona
         pictureUrl: this._userProperties.PictureUrl,
         jobTitle: !!this._userProperties.UserProfileProperties ? this._userProperties.UserProfileProperties['SPS-JobTitle'] : ''
       }, () => this.setState({ isLoading: false }));
+    } else {
+      this.setState({ isLoading: false });
     }
   }
 

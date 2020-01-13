@@ -1,7 +1,7 @@
 
 ## Summary
 
-This solution allows you to create and register your own React component (wrapped as HTML web components) to be used in the search results Web Part Handlebars templates.
+This solution allows you to create and register your own React component (wrapped as HTML web components) to be used in the search results Web Part Handlebars templates. View the sample project [here](https://github.com/microsoft-search/pnp-modern-search/tree/master/search-extensibility-library).
 
 ## Used SharePoint Framework Version ##
 
@@ -120,3 +120,71 @@ For instance: a `preview-image` HTML attribute becomes `previewImage` prop.
 
 
 6. Bundle `gulp bundle --ship` and package your library `gulp package-solution --ship` and upload it either in the global or a site app catalog.
+
+## Create a custom query suggestion provider
+A query suggestion provider allows you to fetch and display custom content or person suggestions. There is a default provider built-in which retrieves suggestions from SharePoint, however you may add additional providers using the approach outlined. In additional to dynamic suggestions as the user is typing, your provider may also surface "zero query" suggestions. These are displayed  when the search box has focus without any search text or if the search text is less than 2 characters.
+
+To create a custom suggestion provider, follow this procedure:
+
+1. Create a new TypeScript class that implements the `BaseSuggestionProvider` abstract class. You can create it anywhere in your project.
+2. Implement the required methods and properties like the example below.
+    
+        import { BaseSuggestionProvider } from '../models/BaseSuggestionProvider';
+        import { ISuggestion } from '../models/ISuggestion';
+
+        export class CustomSuggestionProvider extends BaseSuggestionProvider  {
+            public static readonly ProviderName: string = 'custom-suggestion-provider';
+            public static readonly ProviderDisplayName: string = 'Custom Suggestion Provider';
+            public static readonly ProviderDescription: string = 'An example custom suggestion provider.';
+
+            public async onInit(): Promise<void> {
+                // initialization logic
+                // this._ctx // <-- SPFx Webpart Context
+            }
+
+            public get isSuggestionsEnabled(): boolean {
+                return true;
+            }
+
+            public get isZeroTermSuggestionsEnabled(): boolean {
+                return true;
+            }
+
+            public async getSuggestions(queryText: string): Promise<ISuggestion[]> {
+                // fetch suggestions
+            }
+
+            public async getZeroTermSuggestions(): Promise<ISuggestion[]> {
+                // fetch zero term suggestions
+            }
+        }
+
+3. In the main entry point class (ex: MyCompanyLibraryLibrary.ts), register your custom query suggestion provider like the example below.
+
+        import { IExtensibilityLibrary } from "../../models/IExtensibilityLibrary";
+        import { ISuggestionProviderDefinition } from "../../models/ISuggestionProviderDefinition";
+        import { CustomSuggestionProvider } from "../CustomSuggestionProvider";
+
+        ...
+        
+        export class MyCompanyLibraryLibrary implements IExtensibilityLibrary {
+
+            public getCustomSuggestionProviders(): ISuggestionProviderDefinition<any>[] {
+                return [
+                    {
+                        providerName: CustomSuggestionProvider.ProviderName,
+                        providerDisplayName: CustomSuggestionProvider.ProviderDisplayName,
+                        providerDescription: CustomSuggestionProvider.ProviderDescription,
+                        providerClass: CustomSuggestionProvider
+                    },
+                ];
+            }
+        }
+
+### Configure Suggestion Providers
+When one or more custom query suggestion providers are made available via the extensibility library, an additional configuration pane becomes availabe in the Search Box web part settings. From the panel you can enable or disable individual suggestion providers.
+
+![Search Box](../images/sb_configure_suggestions.png)
+![Search Box](../images/sb_custom_suggestion_providers.png)
+
+

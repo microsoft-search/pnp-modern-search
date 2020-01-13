@@ -2,12 +2,14 @@ import { PageOpenBehavior, QueryPathBehavior } from '../../../../helpers/UrlHelp
 import ISearchService from       '../../../../services/SearchService/ISearchService';
 import INlpService from '../../../../services/NlpService/INlpService';
 import ISearchQuery from '../../../../models/ISearchQuery';
+import { ISuggestionProviderInstance } from '../../../../services/ExtensibilityService/ISuggestionProviderInstance';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 
 export interface ISearchBoxContainerProps {
     onSearch: (searchQuery: ISearchQuery) => void;
     searchInNewPage: boolean;
     enableQuerySuggestions: boolean;
+    suggestionProviders: ISuggestionProviderInstance<any>[];
     enableNlpService: boolean;
     searchService: ISearchService;
     pageUrl: string;
