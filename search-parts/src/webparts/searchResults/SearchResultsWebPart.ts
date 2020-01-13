@@ -62,6 +62,7 @@ import { ExtensibilityService } from '../../services/ExtensibilityService/Extens
 import IExtensibilityService from '../../services/ExtensibilityService/IExtensibilityService';
 import { IComponentDefinition } from '../../services/ExtensibilityService/IComponentDefinition';
 import { AvailableComponents } from '../../components/AvailableComponents';
+import { IQueryModifierDefinition } from '../../services/ExtensibilityService/IQueryModifierDefinition';
 
 export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchResultsWebPartProps> implements IDynamicDataCallables {
 
@@ -74,6 +75,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
     private _placeholder = null;
     private _propertyFieldCollectionData = null;
     private _customCollectionFieldType = null;
+    private _queryModifier: IQueryModifierDefinition = null;
 
     private _propertyFieldCodeEditorLanguages = null;
     private _resultService: IResultService;
@@ -212,7 +214,8 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             synonymTable: { $set: this._synonymTable },
             queryCulture: { $set: this.properties.searchQueryLanguage !== -1 ? this.properties.searchQueryLanguage : currentLocaleId },
             refinementFilters: { $set: selectedFilters },
-            refiners: { $set: refinerConfiguration }
+            refiners: { $set: refinerConfiguration },
+            queryModifier: { $set: this._queryModifier },
         });
 
         const isValueConnected = !!this.properties.queryKeywords.tryGetSource();
@@ -351,6 +354,10 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
             // Add custom web components if any
             this.availableWebComponentDefinitions = this.availableWebComponentDefinitions.concat(extensibilityLibrary.getCustomWebComponents());
+
+            if (extensibilityLibrary.getQueryModifier) {
+              this._queryModifier = extensibilityLibrary.getQueryModifier() || null;
+            }
         }
 
         // Set the default search results layout
