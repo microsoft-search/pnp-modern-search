@@ -45,4 +45,4 @@ export interface ISearchBoxAutoCompleteState {
      * Has the current input value been searched
      */
     isSearchExecuted: boolean;
-};
+}

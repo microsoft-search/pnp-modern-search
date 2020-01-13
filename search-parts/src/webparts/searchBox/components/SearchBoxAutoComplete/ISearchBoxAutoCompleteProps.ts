@@ -12,4 +12,4 @@ export interface ISearchBoxAutoCompleteProps {
    * The current theme variant
    */
   themeVariant: IReadonlyTheme | undefined;
-};
+}

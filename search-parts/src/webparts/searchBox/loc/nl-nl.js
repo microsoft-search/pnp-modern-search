@@ -56,6 +56,7 @@ define([], function() {
       "ExternalUrlLabel": "URL for ekstern mal",
       "InlineTemplateEditPanelTitle": "Rediger forslags mal",
       "DefaultSuggestionGroupName": "Anbefalt",
+      "SharePointSuggestionGroupName": "Andre har søke etter",
     }
   }
 });

@@ -56,6 +56,7 @@ define([], function () {
       "ExternalUrlLabel": "Url de plantilla externa",
       "InlineTemplateEditPanelTitle": "Editar plantilla de sugerencia",
       "DefaultSuggestionGroupName": "Recomienda",
+      "SharePointSuggestionGroupName": "Otros tienen la búsqueda de",
     }
   }
 });

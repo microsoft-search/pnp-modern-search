@@ -56,6 +56,7 @@ define([], function() {
       "ExternalUrlLabel": "External Template Url",
       "InlineTemplateEditPanelTitle": "Edit suggestion template",
       "DefaultSuggestionGroupName": "Recommended",
+      "SharePointSuggestionGroupName": "Others have search for",
     }
   }
 });

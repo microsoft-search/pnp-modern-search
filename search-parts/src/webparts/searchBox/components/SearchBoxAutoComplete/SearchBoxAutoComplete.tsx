@@ -4,14 +4,13 @@ import styles from '../SearchBoxWebPart.module.scss';
 import { ISearchBoxAutoCompleteState } from './ISearchBoxAutoCompleteState';
 import { ISearchBoxAutoCompleteProps } from './ISearchBoxAutoCompleteProps';
 import { SearchBox } from 'office-ui-fabric-react/lib/SearchBox';
-import { FocusZone, FocusZoneDirection, IFocusZone } from 'office-ui-fabric-react/lib/FocusZone';
+import { FocusZone, FocusZoneDirection } from 'office-ui-fabric-react/lib/FocusZone';
+import { IconType, Icon } from 'office-ui-fabric-react/lib/Icon';
+import { Label } from 'office-ui-fabric-react/lib/Label';
+import { IconButton } from 'office-ui-fabric-react/lib/Button';
+import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
 import { ITheme } from 'office-ui-fabric-react/lib/Styling';
 import { isEqual, debounce } from '@microsoft/sp-lodash-subset';
-import { IconType, Icon } from 'office-ui-fabric-react/lib/Icon';
-import { SuggestionType } from '../../../../models/SuggestionType';
-import { ISuggestionPerson } from '../../../../models/ISuggestionPerson';
-import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
-import { Label } from 'office-ui-fabric-react/lib/Label';
 import { ISuggestion } from '../../../../models/ISuggestion';
 
 const SUGGESTION_CHAR_COUNT_TRIGGER = 2;
@@ -76,8 +75,8 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
                 {renderedSuggestions}
               </div>
           </>
-        )
-      })
+        );
+      });
 
       renderSuggestions = <div className={styles.suggestionPanel}>
                             { renderedSuggestionGroups }
@@ -90,31 +89,13 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
   private _renderSuggestion(suggestion: ISuggestion, suggestionIndex: number): JSX.Element {
     const thisComponent = this;
 
-    let suggestionContent: JSX.Element = null;
-
-    if (suggestion.type === SuggestionType.Person) {
-      const personSuggestion = suggestion as ISuggestionPerson;
-      const personFields = [];
-      if (personSuggestion.jobTitle) personFields.push(personSuggestion.jobTitle);
-      if (personSuggestion.emailAddress) personFields.push(personSuggestion.emailAddress);
-
-      suggestionContent = <>
-        <span dangerouslySetInnerHTML={{ __html: personSuggestion.displayText }}></span>
-        <span className={styles.suggestionDescription}>{personFields.join(' | ')}</span>
-      </>;
-    }
-    else {
-      suggestionContent = <>
-        <span dangerouslySetInnerHTML={{ __html: suggestion.displayText }}></span>
-      </>;
-    }
-
     const suggestionInner = <>
       <div className={styles.suggestionIcon}>
         {suggestion.icon && <img src={suggestion.icon} />}
       </div>
       <div className={styles.suggestionContent}>
-        {suggestionContent}
+        <span className={styles.suggestionDisplayText} dangerouslySetInnerHTML={{ __html: suggestion.displayText }}></span>
+        <span className={styles.suggestionDescription}>{suggestion.description ? suggestion.description : ""}</span>
       </div>
       <div className={styles.suggestionAction}>
         {suggestion.targetUrl && (
@@ -128,10 +109,11 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
 
     const baseProps = {
       key: suggestionIndex,
+      title: suggestion.hoverText ? suggestion.hoverText : "",
       className: styles.suggestionItem,
       'data-is-focusable': true, // Used by FocusZone component
       onClick: () => thisComponent._selectQuerySuggestion(suggestion, !!suggestion.targetUrl)
-    }
+    };
 
     return (!!suggestion.targetUrl
       ? <a {...baseProps}
@@ -163,7 +145,9 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
    */
   private async _updateQuerySuggestions(inputValue: string) {
 
-      if (inputValue && inputValue.length >= SUGGESTION_CHAR_COUNT_TRIGGER) {
+      const trimmedInputValue = inputValue ? inputValue.trim() : "";
+
+      if (trimmedInputValue && trimmedInputValue.length >= SUGGESTION_CHAR_COUNT_TRIGGER) {
 
         try {
 
@@ -177,7 +161,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
 
             // Verify we have a valid suggestion provider and it is enabled
             if (provider && provider.providerEnabled && provider.instance.isSuggestionsEnabled) {
-              let suggestions = await provider.instance.getSuggestions(inputValue);
+              let suggestions = await provider.instance.getSuggestions(trimmedInputValue);
 
               // Verify before updating proposed suggestions
               //  1) the input value hasn't been searched
@@ -220,7 +204,8 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
           //render zero term query suggestions
           if (this.state.hasRetrievedZeroTermSuggestions) {
             this.setState({
-              proposedQuerySuggestions: this.state.zeroTermQuerySuggestions,
+              errorMessage: null,
+              proposedQuerySuggestions: trimmedInputValue.length === 0 ? this.state.zeroTermQuerySuggestions : [],
               isRetrievingSuggestions: false
             });
           }
@@ -343,7 +328,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
     this.setState({
       isSearchExecuted: true,
       proposedQuerySuggestions: []
-    })
+    });
   }
 
   private _handleOnClear = () => {
@@ -392,33 +377,44 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
     return (
       <div ref={this._containerElemRef}>
         <FocusZone
-          direction={FocusZoneDirection.vertical}
+          direction={FocusZoneDirection.bidirectional}
           isCircularNavigation={true}
+          defaultActiveElement={`.ms-SearchBox.${styles.searchTextField}`}
         >
-          <SearchBox
-            placeholder={this.props.placeholderText ? this.props.placeholderText : strings.SearchInputPlaceholder}
-            theme={this.props.themeVariant as ITheme}
-            className={ styles.searchTextField }
-            value={ this.state.searchInputValue }
-            autoComplete= "off"
-            data-is-focusable={this.state.proposedQuerySuggestions.length > 0}
-            onChange={ (value) => {
-              if (!this._onChangeDebounced) {
-                this._onChangeDebounced = debounce((newValue) => {
-                  this._updateQuerySuggestions(newValue);
-                }, SUGGESTION_UPDATE_DEBOUNCE_DELAY);
+          <div className={styles.searchBoxWrapper}>
+            <SearchBox
+              placeholder={this.props.placeholderText ? this.props.placeholderText : strings.SearchInputPlaceholder}
+              theme={this.props.themeVariant as ITheme}
+              className={ styles.searchTextField }
+              value={ this.state.searchInputValue }
+              autoComplete= "off"
+              data-is-focusable={this.state.proposedQuerySuggestions.length > 0}
+              onChange={ (value) => {
+                if (!this._onChangeDebounced) {
+                  this._onChangeDebounced = debounce((newValue) => {
+                    this._updateQuerySuggestions(newValue);
+                  }, SUGGESTION_UPDATE_DEBOUNCE_DELAY);
+                }
+                this._onChangeDebounced(value);
+                this.setState({
+                  searchInputValue: value,
+                  isRetrievingSuggestions: true,
+                  isSearchExecuted: false,
+                });
+              }}
+              onFocus={this._handleOnFocus}
+              onSearch={this._handleOnSearch}
+              onClear={this._handleOnClear}
+            />
+            <div className={styles.searchButton}>
+              {this.state.searchInputValue &&
+                <IconButton
+                  onClick={this._handleOnSearch}
+                  iconProps={{iconName: 'Forward' }}
+                />
               }
-              this._onChangeDebounced(value);
-              this.setState({
-                searchInputValue: value,
-                isRetrievingSuggestions: true,
-                isSearchExecuted: false,
-              });
-            }}
-            onFocus={this._handleOnFocus}
-            onSearch={this._handleOnSearch}
-            onClear={this._handleOnClear}
-          />
+            </div>
+          </div>
           {!this.state.isSearchExecuted && (!!this.state.searchInputValue || this.state.proposedQuerySuggestions.length > 0)
             ? showLoadingIndicator
               ? this._renderLoadingIndicator()
