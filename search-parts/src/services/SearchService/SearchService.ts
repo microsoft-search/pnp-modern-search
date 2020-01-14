@@ -18,7 +18,7 @@ import { UrlHelper } from '../../helpers/UrlHelper';
 import { ISearchVertical } from '../../models/ISearchVertical';
 import IManagedPropertyInfo from '../../models/IManagedPropertyInfo';
 import { Loader } from '../TemplateService/LoadHelper';
-import { IQueryModifierDefinition } from '../ExtensibilityService/IQueryModifierDefinition';
+import { BaseQueryModifier } from '../ExtensibilityService/BaseQueryModifier';
 
 class SearchService implements ISearchService {
     private _initialSearchResult: SearchResults = null;
@@ -35,7 +35,7 @@ class SearchService implements ISearchService {
     private _refinementFilters: IRefinementFilter[];
     private _synonymTable: ISynonymTable;
     private _queryCulture: number;
-    private _queryModifier: IQueryModifierDefinition;
+    private _queryModifier: BaseQueryModifier;
 
     public get resultsCount(): number { return this._resultsCount; }
     public set resultsCount(value: number) { this._resultsCount = value; }
@@ -70,8 +70,8 @@ class SearchService implements ISearchService {
     public get queryCulture(): number { return this._queryCulture; }
     public set queryCulture(value: number) { this._queryCulture = value; }
 
-    public get queryModifier(): IQueryModifierDefinition { return this._queryModifier; }
-    public set queryModifier(value: IQueryModifierDefinition) { this._queryModifier = value; }
+    public get queryModifier(): BaseQueryModifier { return this._queryModifier; }
+    public set queryModifier(value: BaseQueryModifier) { this._queryModifier = value; }
 
     private _localPnPSetup: SPRest;
 
@@ -220,11 +220,11 @@ class SearchService implements ISearchService {
                             searchQuery.QueryTemplate = queryModification.queryTemplate;
                         }
                         else {
-                            Logger.write('[SearchService.search()]: Query modifier return an invalid response. Using original query.', LogLevel.Warning);
+                            Logger.write('[SearchService.search()]: Query modifier return an invalid response. Using original query.', LogLevel.Error);
                         }
                     }
                     catch (error) {
-                        Logger.write('[SearchService.search()]: Query modification failed. Using original query. Error: ' + error, LogLevel.Warning);
+                        Logger.write('[SearchService.search()]: Query modification failed. Using original query. ' + error, LogLevel.Error);
                     }
                 }
 

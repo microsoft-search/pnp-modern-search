@@ -17,5 +17,5 @@ export interface IExtensibilityLibrary {
     /**
      * Returns query modifier
      */
-    getQueryModifier?(): IQueryModifierDefinition;
+    getQueryModifier(): IQueryModifierDefinition<any>;
 }
