@@ -528,6 +528,14 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
         const templateParametersGroup = this._getTemplateFieldsGroup();
 
+        let searchQueryGroups = [];
+        searchQueryGroups.push(this._getSearchQueryFields());
+
+        // If we have a query modifier instance, then render query modifier settings group
+        if (this._queryModifierInstance) {
+          searchQueryGroups.push(this._getQueryModificationGroup());
+        }
+
         let stylingPageGroups: IPropertyPaneGroup[] = [
             {
                 groupName: strings.StylingSettingsGroupName,
@@ -546,10 +554,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                     header: {
                         description: strings.SearchQuerySettingsGroupName
                     },
-                    groups: [
-                        this._getSearchQueryFields(),
-                        this._getQueryModificationGroup()
-                    ]
+                    groups: searchQueryGroups,
                 },
                 {
                     groups: [
@@ -1182,33 +1187,31 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
     private _getQueryModificationGroup(): IPropertyPaneGroup {
         let queryModificationFields: IPropertyPaneField<any>[] = [];
 
-        if (this._queryModifierInstance) {
+        queryModificationFields.push(
+            PropertyPaneLabel('QueryModifierOverview', {
+                text: strings.QueryModifier.OverviewLabel
+            })
+        );
+
+        if (this._queryModifierInstance.description) {
             queryModificationFields.push(
-                PropertyPaneLabel('QueryModifierOverview', {
-                    text: `A query modifier is available from the extensibility library.`
+                PropertyPaneLabel('QueryModifierDescription', {
+                    text: this._queryModifierInstance.description
                 })
             );
-
-            if (this._queryModifierInstance.description) {
-                queryModificationFields.push(
-                    PropertyPaneLabel('QueryModifierDescription', {
-                        text: this._queryModifierInstance.description
-                    })
-                );
-            }
-
-            queryModificationFields.push(
-                PropertyPaneToggle('enableQueryModifier', {
-                    label: `Enable ${this._queryModifierInstance.displayName || 'Query Modifier'}`,
-                    checked: this.properties.enableQueryModifier
-                })
-            );
-
-            return {
-                groupName: 'Query Modifier',
-                groupFields: queryModificationFields
-            };
         }
+
+        queryModificationFields.push(
+            PropertyPaneToggle('enableQueryModifier', {
+                label: `${strings.QueryModifier.EnableLabelPrefix} ${this._queryModifierInstance.displayName || strings.QueryModifier.NameLabel}`,
+                checked: this.properties.enableQueryModifier
+            })
+        );
+
+        return {
+            groupName: strings.QueryModifier.NameLabel,
+            groupFields: queryModificationFields
+        };
     }
 
     /**
