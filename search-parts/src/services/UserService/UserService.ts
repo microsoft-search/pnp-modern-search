@@ -6,8 +6,10 @@ import { sp, SPRest } from '@pnp/sp';
 import { PageContext } from '@microsoft/sp-page-context';
 
 // Interface
-import { IUser, IUserProfileProperty } from '../../models/IUser';
+import { IUserInfo } from '../../models/IUser';
 import IUserService from './IUserService';
+import { JSONParser } from '@pnp/odata';
+import { Guid } from '@microsoft/sp-core-library';
 
 // Class
 export class UserService implements IUserService {
@@ -31,23 +33,38 @@ export class UserService implements IUserService {
   /**
    * Get user information
    */
-  public async getUserProperties(accountName: string): Promise<IUser> {
-    let response : any;
-    try {
-      response = await this._localPnPSetup.profiles.getPropertiesFor(accountName);
-      if (!!response && !response['odata.null']) {
-        let properties = {};
-        if (!!response.UserProfileProperties) {
-          response.UserProfileProperties.forEach((prop : IUserProfileProperty) => {
-            properties[prop.Key] = prop.Value;
-          });
-          response.userProperties = properties;
+
+  public async getUserInfos(accountNames: string[]): Promise<IUserInfo[]> {
+    
+    const batch = this._localPnPSetup.createBatch();
+    const parser = new JSONParser();
+    const batchId = Guid.newGuid().toString();
+
+    let userInfos: IUserInfo[] = [];
+
+    const promises = accountNames.map(async accountName => {
+
+        let url = `${this._pageContext.web.absoluteUrl}/_api/SP.UserProfiles.PeopleManager/GetPropertiesFor(accountName=@v)?@v='${encodeURIComponent(`i:0#.f|membership|${accountName}`)}'&$select=DisplayName,AccountName`;
+        return batch.add(url, 'GET', {
+            headers: {
+                Accept: 'application/json; odata=nometadata'
+            }
+        }, parser, batchId);
+    });
+
+    // Execute the batch
+    await batch.execute();
+
+    const response = await Promise.all(promises);
+    response.map((result: any) => {
+      userInfos.push({
+        AccountName: result.AccountName,
+        Properties: {
+          DisplayName: result.DisplayName
         }
-        return response;
-      }
-    } catch (error) {
-      Logger.write(`[UserService.getUserProperties()]: Error: ${error}`, LogLevel.Error);
-      throw error;
-    }
+      } as IUserInfo);
+    });
+
+    return userInfos;
   }
 }
