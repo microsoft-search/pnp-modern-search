@@ -112,7 +112,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
         if (this.state.results.SecondaryResults.length > 0) {
             totalPrimaryAndSecondaryResults += this.state.results.SecondaryResults.reduce((sum, block) => sum += block.Results.length, 0);
         }
-        
+
         // WebPart content
         if (totalPrimaryAndSecondaryResults === 0 && this.props.displayMode === DisplayMode.Edit && this.props.showBlank) {
             renderWpContent = <MessageBar messageBarType={MessageBarType.info}>{strings.ShowBlankEditInfoMessage}</MessageBar>;
@@ -122,6 +122,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 items: this.state.results.RelevantResults,
                 secondaryResults: this.state.results.SecondaryResults,
                 promotedResults: this.state.results.PromotedResults,
+                currentPage: this.state.results.PaginationInformation ? this.state.results.PaginationInformation.CurrentPage : 1,
                 totalRows: this.state.results.PaginationInformation ? this.state.results.PaginationInformation.TotalRows : 0,
                 keywords: this.props.queryKeywords,
                 showResultsCount: this.props.showResultsCount,
@@ -151,14 +152,14 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             }
 
             renderWpContent =
-                <div>          
-                    <div className={styles.searchWp__buttonBar}>{sortPanel}</div>                       
+                <div>
+                    <div className={styles.searchWp__buttonBar}>{sortPanel}</div>
                     <div id={this.state.mountingNodeId} />
                     {renderOverlay}
                     {renderSearchResultTemplate}
                 </div>;
         }
-    
+
         // WebPart Title
         if (this.props.webPartTitle && this.props.webPartTitle.length > 0) {
             renderWebPartTitle = <WebPartTitle title={this.props.webPartTitle} updateProperty={null} displayMode={DisplayMode.Read} />;
@@ -173,7 +174,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             <div style={{backgroundColor: semanticColors.bodyBackground}}>
                 <div className={styles.searchWp}>
                     <div tabIndex={-1} ref={(ref) => { this._searchWpRef = ref; }}></div>
-                    {renderWebPartTitle}                
+                    {renderWebPartTitle}
                     {renderShimmerElements ? renderShimmerElements : renderWpContent}
                 </div>
             </div>
