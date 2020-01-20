@@ -20,9 +20,10 @@ import { Text } from '@microsoft/sp-core-library';
 import { ILocalizableSearchResultProperty, ILocalizableSearchResult } from '../../../../models/ILocalizableSearchResults';
 import * as _ from '@microsoft/sp-lodash-subset';
 import { TemplateService } from '../../../../services/TemplateService/TemplateService';
-import { isEqual } from '@microsoft/sp-lodash-subset';
+import { isEqual, isEmpty } from '@microsoft/sp-lodash-subset';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import { ITheme } from '@uifabric/styling';
+import ResultsLayoutOption from '../../../../models/ResultsLayoutOption';
 
 declare var System: any;
 
@@ -114,11 +115,15 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
         }
         
         // WebPart content
-        if (totalPrimaryAndSecondaryResults === 0 && this.props.displayMode === DisplayMode.Edit && this.props.showBlank) {
+        if (totalPrimaryAndSecondaryResults === 0 
+            && this.props.displayMode === DisplayMode.Edit 
+            && this.props.showBlank 
+            && this.props.selectedLayout !== ResultsLayoutOption.Debug) {
             renderWpContent = <MessageBar messageBarType={MessageBarType.info}>{strings.ShowBlankEditInfoMessage}</MessageBar>;
         } else {
 
             let templateContext = {
+                queryModification: this.state.results.QueryModification,
                 items: this.state.results.RelevantResults,
                 secondaryResults: this.state.results.SecondaryResults,
                 promotedResults: this.state.results.PromotedResults,

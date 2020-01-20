@@ -1,7 +1,6 @@
 ﻿import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import { Version, Text, Environment, EnvironmentType, DisplayMode } from '@microsoft/sp-core-library';
-import { BaseClientSideWebPart, IWebPartPropertiesMetadata, IPropertyPaneGroup } from '@microsoft/sp-webpart-base';
 import {
     IPropertyPaneConfiguration,
     PropertyPaneTextField,
@@ -62,6 +61,8 @@ import { ExtensibilityService } from '../../services/ExtensibilityService/Extens
 import IExtensibilityService from '../../services/ExtensibilityService/IExtensibilityService';
 import { IComponentDefinition } from '../../services/ExtensibilityService/IComponentDefinition';
 import { AvailableComponents } from '../../components/AvailableComponents';
+import { BaseClientSideWebPart, IWebPartPropertiesMetadata } from "@microsoft/sp-webpart-base";
+import { IPropertyPaneGroup } from "@microsoft/sp-property-pane";
 
 export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchResultsWebPartProps> implements IDynamicDataCallables {
 
@@ -110,6 +111,11 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
     private _themeProvider: ThemeProvider;
     private _themeVariant: IReadonlyTheme;
     private _initComplete = false;
+    
+    /**
+     * Information about time zone bias (current user or web)
+     */
+    private _timeZoneBias: any;
 
     /**
      * The available web component definitions (not registered yet)
@@ -202,6 +208,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
         // Configure the provider before the query according to our needs
         this._searchService = update(this._searchService, {
+            timeZoneId: { $set: this._timeZoneBias && this._timeZoneBias.Id ? this._timeZoneBias.Id : null},
             resultsCount: { $set: this.properties.maxResultsCount },
             queryTemplate: { $set: queryTemplate },
             resultSourceId: { $set: sourceId },
@@ -240,6 +247,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                 rendererId: this.properties.selectedLayout as any,
                 enableLocalization: this.properties.enableLocalization,
                 selectedPage: selectedPage,
+                selectedLayout: this.properties.selectedLayout,
                 onSearchResultsUpdate: async (results, mountingNodeId, searchService) => {
                     if (this.properties.selectedLayout in ResultsLayoutOption) {
                         let node = document.getElementById(mountingNodeId);
@@ -320,19 +328,21 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         } else {
             this._taxonomyService = new TaxonomyService(this.context.pageContext.site.absoluteUrl);
 
-            let timeZoneBias = {
+            this._timeZoneBias = {
                 WebBias: this.context.pageContext.legacyPageContext.webTimeZoneData.Bias,
                 WebDST: this.context.pageContext.legacyPageContext.webTimeZoneData.DaylightBias,
                 UserBias: null,
-                UserDST: null
+                UserDST: null,
+                Id: this.context.pageContext.legacyPageContext.webTimeZoneData.Id
             };
             if (this.context.pageContext.legacyPageContext.userTimeZoneData) {
-                timeZoneBias.UserBias = this.context.pageContext.legacyPageContext.userTimeZoneData.Bias;
-                timeZoneBias.UserDST = this.context.pageContext.legacyPageContext.userTimeZoneData.DaylightBias;
+                this._timeZoneBias.UserBias = this.context.pageContext.legacyPageContext.userTimeZoneData.Bias;
+                this._timeZoneBias.UserDST = this.context.pageContext.legacyPageContext.userTimeZoneData.DaylightBias;
+                this._timeZoneBias.Id = this.context.pageContext.legacyPageContext.webTimeZoneData.Id
             }
 
             this._searchService = new SearchService(this.context.pageContext, this.context.spHttpClient);
-            this._templateService = new TemplateService(this.context.spHttpClient, this.context.pageContext.cultureInfo.currentUICultureName, this._searchService, timeZoneBias, this.context);
+            this._templateService = new TemplateService(this.context.spHttpClient, this.context.pageContext.cultureInfo.currentUICultureName, this._searchService, this._timeZoneBias, this.context);
         }
 
         this._resultService = new ResultService();

@@ -41,7 +41,7 @@ export default class SearchPaginationWebPart extends BaseClientSideWebPart<ISear
             this._currentPage = searchPagination.CurrentPage;
           }
         }
-      }      
+      }
 
       renderElement = React.createElement(
         SearchPagination,
@@ -55,6 +55,7 @@ export default class SearchPaginationWebPart extends BaseClientSideWebPart<ISear
           displayMode: this.displayMode
         }
       );
+      
     }
     else {
       if (this.displayMode === DisplayMode.Edit) {

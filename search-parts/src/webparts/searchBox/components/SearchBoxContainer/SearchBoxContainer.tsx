@@ -2,7 +2,7 @@ import * as React from                               'react';
 import { ISearchBoxContainerProps } from             './ISearchBoxContainerProps';
 import * as strings from                             'SearchBoxWebPartStrings';
 import ISearchBoxContainerState from                 './ISearchBoxContainerState';
-import { PageOpenBehavior, QueryPathBehavior } from  '../../../../helpers/UrlHelper';
+import { PageOpenBehavior, QueryPathBehavior, UrlHelper } from  '../../../../helpers/UrlHelper';
 import { MessageBar, MessageBarType } from           'office-ui-fabric-react/lib/MessageBar';
 import styles from '../SearchBoxWebPart.module.scss';
 import ISearchQuery from '../../../../models/ISearchQuery';
@@ -110,16 +110,19 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
         const urlEncodedQueryText = encodeURIComponent(queryText);
 
         const searchUrl = new URL(this.props.pageUrl);
+        let newUrl;
+
         if (this.props.queryPathBehavior === QueryPathBehavior.URLFragment) {
           searchUrl.hash = urlEncodedQueryText;
+          newUrl = searchUrl.href;
         }
         else {
-          searchUrl.searchParams.append(this.props.queryStringParameter, queryText);
+          newUrl = UrlHelper.addOrReplaceQueryStringParam(searchUrl.href, this.props.queryStringParameter, urlEncodedQueryText);
         }
 
         // Send the query to the new page
         const behavior = this.props.openBehavior === PageOpenBehavior.NewTab ? '_blank' : '_self';
-        window.open(searchUrl.href, behavior);
+        window.open(newUrl, behavior);
 
       } else {
 

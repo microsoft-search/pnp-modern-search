@@ -27,6 +27,12 @@ export default class CheckboxTemplate extends React.Component<IBaseRefinerTempla
     }
 
     public render() {
+
+        let disableButtons = false;
+            if (this.props.selectedValues.length === 0 && this.state.refinerSelectedFilterValues.length === 0) {
+            disableButtons = true;
+        }
+
         return <div>
             {
                 this.props.refinementResult.Values.map((refinementValue: IRefinementValue, j) => {
@@ -54,12 +60,12 @@ export default class CheckboxTemplate extends React.Component<IBaseRefinerTempla
             }
             {
                 this.props.isMultiValue ?
-
+            
                     <div>
                         <Link 
                             theme={this.props.themeVariant as ITheme} 
                             onClick={() => { this._applyFilters(this.state.refinerSelectedFilterValues); }} 
-                            disabled={this.state.refinerSelectedFilterValues.length === 0}>{strings.Refiners.ApplyFiltersLabel}
+                            disabled={disableButtons}>{strings.Refiners.ApplyFiltersLabel}
                         </Link>|<Link theme={this.props.themeVariant as ITheme}  onClick={this._clearFilters} disabled={this.state.refinerSelectedFilterValues.length === 0}>{strings.Refiners.ClearFiltersLabel}</Link>
                     </div>
 

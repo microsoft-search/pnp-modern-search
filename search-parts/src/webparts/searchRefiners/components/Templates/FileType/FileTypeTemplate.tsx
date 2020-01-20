@@ -41,6 +41,12 @@ export default class FileTypeTemplate extends React.Component<IBaseRefinerTempla
   }
 
   public render() {
+
+    let disableButtons = false;
+    if (this.props.selectedValues.length === 0 && this.state.refinerSelectedFilterValues.length === 0) {
+        disableButtons = true;
+    }
+
     return (
       <div className={styles.pnpRefinersTemplateFileType}>
         {
@@ -83,7 +89,9 @@ export default class FileTypeTemplate extends React.Component<IBaseRefinerTempla
           this.props.isMultiValue ?
 
             <div>
-              <Link onClick={() => { this._applyFilters(this.state.refinerSelectedFilterValues); }} disabled={this.state.refinerSelectedFilterValues.length === 0}>{strings.Refiners.ApplyFiltersLabel}</Link>|<Link onClick={this._clearFilters} disabled={this.state.refinerSelectedFilterValues.length === 0}>{strings.Refiners.ClearFiltersLabel}</Link>
+              <Link 
+                onClick={() => { this._applyFilters(this.state.refinerSelectedFilterValues); }} 
+                disabled={disableButtons}>{strings.Refiners.ApplyFiltersLabel}</Link>|<Link onClick={this._clearFilters} disabled={this.state.refinerSelectedFilterValues.length === 0}>{strings.Refiners.ClearFiltersLabel}</Link>
             </div>
 
             : null
@@ -135,7 +143,7 @@ export default class FileTypeTemplate extends React.Component<IBaseRefinerTempla
   private _isValueInFilterSelection(valueToCheck: IRefinementValue): boolean {
 
     let newFilters = this.state.refinerSelectedFilterValues.filter((filter) => {
-      return filter.RefinementToken === valueToCheck.RefinementToken && filter.RefinementName === valueToCheck.RefinementName;
+      return filter.RefinementToken === valueToCheck.RefinementToken || filter.RefinementName === valueToCheck.RefinementName;
     });
 
     return newFilters.length === 0 ? false : true;
