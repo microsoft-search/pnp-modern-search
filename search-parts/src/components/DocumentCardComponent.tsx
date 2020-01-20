@@ -104,7 +104,8 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
                 iconProps = getFileTypeIconProps({ extension: processedProps.iconExt, size: 16, imageFileType: 'png' });
             }
         } else {
-            iconProps = getFileTypeIconProps({ extension: trimStart(processedProps.fileExtension.trim(), '.'), size: 16, imageFileType: 'png' });
+            const fileExtension = processedProps.fileExtension ? trimStart(processedProps.fileExtension.trim(), '.') : null;
+            iconProps = getFileTypeIconProps({ extension: fileExtension, size: 16, imageFileType: 'png' });
         }
 
         let iconSrc = null;
