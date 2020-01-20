@@ -97,6 +97,7 @@ class SearchService implements ISearchService {
 
         let searchQuery: SearchQuery = {};
         let sortedRefiners: string[] = [];
+        let queryModification: string = null;
 
         // Search paging option is one based
         let page = pageNumber ? pageNumber : 1;
@@ -216,6 +217,16 @@ class SearchService implements ISearchService {
                     r2 = await this._initialSearchResult.getPage(page, this._resultsCount);
                 }
 
+                // Get the transformed query submitted to SharePoint
+                const properties = r2.RawSearchResults.PrimaryQueryResult.RelevantResults.Properties.filter((property) => {
+                    return property.Key === 'QueryModification';
+                });
+
+                if (properties.length === 1) {
+                    queryModification =  properties[0].Value;
+                    results.QueryModification = queryModification;
+                }
+                
                 const resultRows = r2.RawSearchResults.PrimaryQueryResult.RelevantResults.Table.Rows;
                 let refinementResultsRows = r2.RawSearchResults.PrimaryQueryResult.RefinementResults;
 
