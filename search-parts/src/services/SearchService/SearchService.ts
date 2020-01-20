@@ -34,6 +34,7 @@ class SearchService implements ISearchService {
     private _refinementFilters: IRefinementFilter[];
     private _synonymTable: ISynonymTable;
     private _queryCulture: number;
+    private _timeZoneId: number;
 
     public get resultsCount(): number { return this._resultsCount; }
     public set resultsCount(value: number) { this._resultsCount = value; }
@@ -67,6 +68,9 @@ class SearchService implements ISearchService {
 
     public get queryCulture(): number { return this._queryCulture; }
     public set queryCulture(value: number) { this._queryCulture = value; }
+
+    public get timeZoneId(): number { return this._timeZoneId; }
+    public set timeZoneId(value: number) { this._timeZoneId = value; }
 
     private _localPnPSetup: SPRest;
 
@@ -130,6 +134,10 @@ class SearchService implements ISearchService {
         }
 
         searchQuery.Querytext = this._injectSynonyms(query);
+
+        if (this._timeZoneId) {
+            searchQuery['TimeZoneId'] = this._timeZoneId;
+        }
 
         // Disable query rules by default if not specified
         searchQuery.EnableQueryRules = this._enableQueryRules ? this._enableQueryRules : false;
