@@ -13,7 +13,8 @@ import { IComboBoxOption } from 'office-ui-fabric-react/lib/ComboBox';
 import { Icon, IIconProps } from 'office-ui-fabric-react/lib/Icon';
 import { ISliderOptions } from '../../components/SliderComponent';
 import { cloneDeep } from '@microsoft/sp-lodash-subset';
-import { WebPartContext, PropertyPaneChoiceGroup } from '@microsoft/sp-webpart-base';
+import { WebPartContext } from "@microsoft/sp-webpart-base";
+import { PropertyPaneChoiceGroup } from "@microsoft/sp-property-pane";
 
 const PEOPLE_RESULT_SOURCEID = 'b09a7990-05ea-4af9-81ef-edfab16c4e31';
 
