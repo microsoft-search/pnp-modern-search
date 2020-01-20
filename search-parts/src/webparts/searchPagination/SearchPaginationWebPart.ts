@@ -41,20 +41,23 @@ export default class SearchPaginationWebPart extends BaseClientSideWebPart<ISear
             this._currentPage = searchPagination.CurrentPage;
           }
         }
-      }      
+      }
 
-      renderElement = React.createElement(
-        SearchPagination,
-        {
-          paginationInformation: searchPagination,
-          onPageUpdate: (page: number) => {
-            this._currentPage = page;
-            this.context.dynamicDataSourceManager.notifyPropertyChanged(SearchComponentType.PaginationWebPart);
-          },
-          themeVariant: this._themeVariant,
-          displayMode: this.displayMode
-        }
-      );
+      if (searchPagination && searchPagination.TotalRows > 1) {
+
+        renderElement = React.createElement(
+          SearchPagination,
+          {
+            paginationInformation: searchPagination,
+            onPageUpdate: (page: number) => {
+              this._currentPage = page;
+              this.context.dynamicDataSourceManager.notifyPropertyChanged(SearchComponentType.PaginationWebPart);
+            },
+            themeVariant: this._themeVariant,
+            displayMode: this.displayMode
+          }
+        );
+      }
     }
     else {
       if (this.displayMode === DisplayMode.Edit) {
