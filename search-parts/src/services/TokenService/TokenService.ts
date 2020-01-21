@@ -20,8 +20,46 @@ export class TokenService implements ITokenService {
         queryTemplate = this.replaceDateTokens(queryTemplate);
         queryTemplate = this.replaceQueryStringTokens(queryTemplate);
         queryTemplate = this.replaceHubSiteTokens(queryTemplate);
+        queryTemplate = this.replaceOrOperator(queryTemplate);
 
         queryTemplate = queryTemplate.replace("{TenantUrl}", `https://` + window.location.host);
+
+        return queryTemplate;
+    }
+
+    private replaceOrOperator(queryTemplate: string) {
+
+        // Example match: {|owstaxidmetadataalltagsinfo:{Page.<TaxnomyProperty>.TermID}}
+        const orConditionTokens = /\{(?:\|(.+?)(>=|=|<=|:|<>|<|>))(\{?.*?\}?\s*)\}/gi;
+        let reQueryTemplate = queryTemplate;
+        let match = orConditionTokens.exec(queryTemplate);        
+
+        if (match != null) {
+            while (match !== null) {
+
+                let conditions = [];
+                const property = match[1];
+                const operator = match[2];                
+                const value = match[3];
+
+                // {User} tokens are resolved server-side by SharePoint so we exclude them
+                if (!/\{(?:User)\.(.*?)\}/gi.test(value)) {
+                    const allValues = value.split(','); // Works with taxonomy multi values (TermID, Label) + multi choices fields
+                    if (allValues.length > 0) {
+                        allValues.map(value => {
+
+                            conditions.push(`(${property}${operator}${/\s/g.test(value) ? `"${value}"` : value})`);
+                        });
+                    } else {
+                        conditions.push(`${property}${operator}${/\s/g.test(value) ? `"${value}"` : value})`);
+                    }
+
+                    queryTemplate = queryTemplate.replace(match[0], `(${conditions.join(' OR ')})`);
+                }
+
+                match = orConditionTokens.exec(reQueryTemplate);
+            }
+        }
 
         return queryTemplate;
     }
@@ -57,7 +95,12 @@ export class TokenService implements ITokenService {
                     let columnName = term[0].toLowerCase();
                     // Handle multi or single values
                     if (Array.isArray(item[columnName]) && item[columnName].length > 0) {
-                        itemProp = item[columnName].map(e => { return e[term[1]]; }).join(',');
+                        itemProp = item[columnName].map(e => { 
+
+                            // #0 is to be able to search for this ID in taxonomy typed managed properties ('i.e ows_taxId_<xxx>')
+                            return term[1] === "TermID" ? `#0${e[term[1]]}` : e[term[1]]; 
+                        
+                        }).join(',');
                     }
                     else if (!Array.isArray(item[columnName]) && item[columnName] !== undefined && item[columnName] !== "") {
                         itemProp = item[columnName][term[1]];
