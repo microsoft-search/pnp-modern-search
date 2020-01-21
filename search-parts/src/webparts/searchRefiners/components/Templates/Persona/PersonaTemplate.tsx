@@ -50,10 +50,10 @@ export default class PersonaTemplate extends React.Component<IPersonaTemplatePro
                           {
                             this.props.refinementResult.Values.map((refinementValue: IRefinementValue, j) => {
 
-                              let imageProps: IPersonaProps = null
+                              let imageProps: IPersonaProps = null;
 
                               // Try to see if the value looks like a login mail                              
-                              let displayName = refinementValue.RefinementValue.split('|').length > 1 ? refinementValue.RefinementValue.split('|')[1].trim() : refinementValue.RefinementValue;;
+                              let displayName = refinementValue.RefinementValue.split('|').length > 1 ? refinementValue.RefinementValue.split('|')[1].trim() : refinementValue.RefinementValue;
                               let accountName = refinementValue.RefinementValue.match(/([\w\.\-]+)@([\w\-]+)((\.(\w){2,63}){1,3})/);
 
                               if (accountName) {
@@ -126,7 +126,7 @@ export default class PersonaTemplate extends React.Component<IPersonaTemplatePro
     await this.getUserInfos(this.props);
   }
 
-  private async getUserInfos(props: IPersonaTemplateProps) {0
+  private async getUserInfos(props: IPersonaTemplateProps) {
 
     const accountNames = [];
       

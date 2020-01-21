@@ -6,3 +6,4 @@ This solution won't be here without the volunteer work of these people. Feel fre
 - Albert-Jan Schot - [@appieschot](https://twitter.com/appieschot)
 - Tarald Gåsbakk (PuzzlePart) - [@taraldgasbakk](https://twitter.com/Taraldgasbakk)
 - Brad Schlintz - [@bschlintz](https://twitter.com/bschlintz)
+- Richard Gigan - [@PooLP](https://twitter.com/PooLP)

@@ -10,9 +10,11 @@ import { mockUserData } from './MockUserData';
 
 // Class
 export class MockUserService implements IUserService {
-  getUserInfos(accountNames: string[]): Promise<any> {
+  
+  public getUserInfos(accountNames: string[]): Promise<any> {
     throw new Error("Method not implemented.");
   }
+
   constructor() {
     const consoleListener = new ConsoleListener();
     Logger.subscribe(consoleListener);

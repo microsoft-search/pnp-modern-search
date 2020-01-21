@@ -7,6 +7,7 @@ import { ISearchResultType } from '../../../../models/ISearchResultType';
 import {ICustomTemplateFieldValue} from '../../../../services/ResultService/ResultService';
 import SearchResultsOperationCallback from '../../../../models/SearchResultsOperationCallback';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
+import ResultsLayoutOption from '../../../../models/ResultsLayoutOption';
 
 interface ISearchResultsContainerProps {
 
@@ -125,6 +126,11 @@ interface ISearchResultsContainerProps {
      * The current theme variant
      */
     themeVariant: IReadonlyTheme | undefined;
+
+    /**
+     * The current selected layout
+     */
+    selectedLayout: ResultsLayoutOption;
 }
 
 export default ISearchResultsContainerProps;
