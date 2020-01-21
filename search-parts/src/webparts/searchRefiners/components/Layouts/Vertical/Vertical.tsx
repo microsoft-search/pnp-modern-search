@@ -16,6 +16,7 @@ import { isEqual } from '@microsoft/sp-lodash-subset';
 import { ITheme } from '@uifabric/styling';
 import { Icon } from 'office-ui-fabric-react/lib/Icon';
 import { Text as TextUI } from 'office-ui-fabric-react/lib/Text';
+import { ScrollablePane, Sticky, StickyPositionType } from 'office-ui-fabric-react';
 
 export default class Vertical extends React.Component<IFilterLayoutProps, IVerticalState> {
 
@@ -61,9 +62,24 @@ export default class Vertical extends React.Component<IFilterLayoutProps, IVerti
       </div>) : null;
 
     return (
-      <div className={styles.verticalLayout__filterPanel__body}>
-        {renderAvailableFilters}
-        {renderLinkRemoveAll}
+      <div style={{
+        height: '100%',
+        position: 'relative',
+        maxHeight: 'inherit'
+      }}>
+        <ScrollablePane styles={{
+          root: {
+            width: '100%',
+            height: '100%',
+          }
+        }}>
+        <div className={styles.verticalLayout__filterPanel__body}>
+          <Sticky stickyPosition={StickyPositionType.Header}>
+                    {renderLinkRemoveAll}
+          </Sticky>                    
+          {renderAvailableFilters}
+        </div>
+        </ScrollablePane>
       </div>
     );
   }
