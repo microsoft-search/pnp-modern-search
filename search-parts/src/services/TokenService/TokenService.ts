@@ -29,8 +29,8 @@ export class TokenService implements ITokenService {
 
     private replaceOrOperator(queryTemplate: string) {
 
-        // Example match: {|owstaxidmetadataalltagsinfo:{User.<TaxnomyProperty>}}
-        const orConditionTokens = /\{(?:\|(.+?)([:|=|<>|<|>]))(\}?.*?\}?)\}/gi;
+        // Example match: {|owstaxidmetadataalltagsinfo:{Page.<TaxnomyProperty>.TermID}}
+        const orConditionTokens = /\{(?:\|(.+?)(>=|=|<=|:|<>|<|>))(\{?.*?\}?\s*)\}/gi;
         let reQueryTemplate = queryTemplate;
         let match = orConditionTokens.exec(queryTemplate);        
 
@@ -38,22 +38,20 @@ export class TokenService implements ITokenService {
             while (match !== null) {
 
                 let conditions = [];
-
-                // Get property
                 const property = match[1];
-                const operator = match[2];
-
+                const operator = match[2];                
                 const value = match[3];
 
-                // {User} tokens are resolved server-side by SharePoint
+                // {User} tokens are resolved server-side by SharePoint so we exclude them
                 if (!/\{(?:User)\.(.*?)\}/gi.test(value)) {
-                    const allValues = value.split(','); // Works only with page taxonomy values. Need to test Choice + user managed metadata
+                    const allValues = value.split(','); // Works with taxonomy multi values (TermID, Label) + multi choices fields
                     if (allValues.length > 0) {
                         allValues.map(value => {
-                            conditions.push(`(${property}${operator}${value})`);
+
+                            conditions.push(`(${property}${operator}${/\s/g.test(value) ? `"${value}"` : value})`);
                         });
                     } else {
-                        conditions.push(`${property}${operator}${value}`);
+                        conditions.push(`${property}${operator}${/\s/g.test(value) ? `"${value}"` : value})`);
                     }
 
                     queryTemplate = queryTemplate.replace(match[0], `(${conditions.join(' OR ')})`);

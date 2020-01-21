@@ -101,6 +101,20 @@ The following custom query variables are supported:
 |{PageContext.&lt;ParameterName&gt;} <br/> | A value from the legacyPageContext object on the page. For example, if the legacyPageContext object of the current page contains a property "hubSiteId": "166aa115-7ae7-4c21-9e02-9e0c8872be28", you could obtain the value 166aa115-7ae7-4c21-9e02-9e0c8872be28 by specifying {PageContext.hubSiteId}. The property name is case sensitive!<br/> |
 |{TenantUrl}  <br/> |URL of the tenant (root site)<br/> |
 
+#### Use the 'OR' operator
+
+To deal with mutli valued properties (like taxonomy multi or choices), you can use the 'OR' operator syntax `{|<property><operator><multi_valuesporperty>}`. The search query will be expanded like this:
+
+    ((<property><operator><value_1>) OR (<property><operator><value_2>) OR (<property><operator><value_3>) ...)
+
+**Examples:**
+
+- Using an user profile multi values taxonomy property: `{|owstaxidmetadataalltagsinfo:{User.SPS-Hashtags}}`
+- Using a page multi values taxonomy property: `{|owstaxidmetadataalltagsinfo:{Page.myTaxonomyMultiColumn.TermID}}`
+- Using a page multi values choice property: `{|RefinableStringXX:{Page.myChoiceMultiColumn}}`
+
+At any time, you can see the resolved query using the 'Debug' layout an inspecting the `queryModification` property.
+
 #### Best bets
 
 This WP supports SharePoint best bets via SharePoint query rules:
