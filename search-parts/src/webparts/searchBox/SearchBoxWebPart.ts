@@ -30,7 +30,7 @@ import MockSearchService from '../../services/SearchService/MockSearchService';
 import SearchService from '../../services/SearchService/SearchService';
 import MockNlpService from '../../services/NlpService/MockNlpService';
 import NlpService from '../../services/NlpService/NlpService';
-import { PageOpenBehavior, QueryPathBehavior } from '../../helpers/UrlHelper';
+import { PageOpenBehavior, QueryPathBehavior, UrlHelper } from '../../helpers/UrlHelper';
 import SearchBoxContainer from './components/SearchBoxContainer/SearchBoxContainer';
 import { SearchComponentType } from '../../models/SearchComponentType';
 import IExtensibilityService from '../../services/ExtensibilityService/IExtensibilityService';
@@ -242,7 +242,33 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
 
     this._searchQuery = searchQuery;
     this.context.dynamicDataSourceManager.notifyPropertyChanged('searchQuery');
-  }
+
+    // Update URL with raw search query
+    if (this.properties.useDynamicDataSource && this.properties.defaultQueryKeywords && this.properties.defaultQueryKeywords.reference) {
+
+      // this.properties.defaultQueryKeywords.reference
+      // "PageContext:UrlData:queryParameters.query"
+      const refChunks = this.properties.defaultQueryKeywords.reference.split(':');
+
+      if (refChunks.length >= 3) {
+        const paramType = refChunks[2];
+
+        if (paramType === 'fragment') {
+          window.history.pushState(undefined, undefined, `#${searchQuery.rawInputValue}`);
+        }
+        else if(paramType.startsWith('queryParameters')) {
+          const paramChunks = paramType.split('.');
+          const queryTextParam = paramChunks.length === 2 ? paramChunks[1] : 'q';
+          const newUrl = UrlHelper.addOrReplaceQueryStringParam(window.location.href, queryTextParam, searchQuery.rawInputValue);
+
+          if (window.location.href !== newUrl) {
+            window.history.pushState({ path: newUrl }, undefined, newUrl);
+          }
+        }
+      }
+
+    }
+}
 
   /**
    * Verifies if the string is a correct URL
