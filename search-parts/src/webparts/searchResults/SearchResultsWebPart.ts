@@ -1471,8 +1471,9 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
     public getPropertyValue(propertyId: string): ISearchResultSourceData {
 
         const searchResultSourceData: ISearchResultSourceData = {
-           queryKeywords: this.properties.queryKeywords.tryGetValue(),
-           refinementResults: (this._resultService && this._resultService.results) ? this._resultService.results.RefinementResults : [],
+            queryKeywords: this.properties.queryKeywords.tryGetValue(),
+            queryModification: this._resultService.results.QueryModification,
+            refinementResults: (this._resultService && this._resultService.results) ? this._resultService.results.RefinementResults : [],
             paginationInformation: (this._resultService && this._resultService.results) ? this._resultService.results.PaginationInformation : {
                 CurrentPage: 1,
                 MaxResultsPerPage: this.properties.maxResultsCount,

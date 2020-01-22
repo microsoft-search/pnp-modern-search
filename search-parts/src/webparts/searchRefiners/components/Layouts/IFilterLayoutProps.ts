@@ -55,6 +55,11 @@ interface IFilterLayoutProps {
    * The current theme variant
    */
   themeVariant: IReadonlyTheme | undefined;
+
+  /**
+   * The current query modification
+   */
+  queryModification: string;
 }
 
 export default IFilterLayoutProps;

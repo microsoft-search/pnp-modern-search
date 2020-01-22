@@ -6,7 +6,8 @@ enum RefinerTemplateOption {
     FixedDateRange = 5,
     Persona = 6,
     FileType = 7,
-    FileTypeMulti = 8
+    FileTypeMulti = 8,
+    Folders = 9
 }
 
 export default RefinerTemplateOption;

@@ -66,6 +66,7 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
     let renderElement = null;
     let availableRefiners = [];
     let queryKeywords = '';
+    let queryModification = '';
     let selectedProperties: string[] = [];
     let queryTemplate: string = '';
     let resultSourceId: string = '';
@@ -83,6 +84,7 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
           selectedProperties = (searchServiceConfig.selectedProperties) ? searchServiceConfig.selectedProperties : [];
           queryTemplate = (searchServiceConfig.queryTemplate) ? searchServiceConfig.queryTemplate : '';
           resultSourceId = searchServiceConfig.resultSourceId;
+          queryModification = searchResultSourceData.queryModification;
         }
       }
 
@@ -102,7 +104,8 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
           language: this.context.pageContext.cultureInfo.currentUICultureName,
           query: queryKeywords + queryTemplate + selectedProperties + resultSourceId,
           themeVariant: this._themeVariant,
-          userService: this._userService
+          userService: this._userService,
+          queryModification: queryModification
         } as ISearchRefinersContainerProps
       );
     } else {
@@ -260,6 +263,10 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
               {
                 key: RefinerTemplateOption.FileTypeMulti,
                 text: strings.Refiners.Templates.FileTypeMutliValueRefinementItemTemplateLabel
+              },
+              {
+                key: RefinerTemplateOption.Folders,
+                text: "Folders"
               }
             ]
           },

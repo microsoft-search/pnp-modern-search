@@ -5,6 +5,7 @@ import DateRangeTemplate from "./DateRange/DateRangeTemplate";
 import FixedDateRangeTemplate from "./FixedDateRange/FixedDateRangeTemplate";
 import PersonaTemplate from "./Persona/PersonaTemplate";
 import FileTypeTemplate from "./FileType/FileTypeTemplate";
+import FoldersTemplate from "./Folders/FoldersTemplate";
 import { IRefinementResult, IRefinementValue } from "../../../../models/ISearchResult";
 import RefinementFilterOperationCallback from '../../../../models/RefinementValueOperationCallback';
 import IUserService from '../../../../services/UserService/IUserService';
@@ -57,6 +58,11 @@ export interface ITemplateRendererProps {
    * The current theme variant
    */
   themeVariant: IReadonlyTheme | undefined;
+
+  /**
+   * The current query modification
+   */
+  queryModification: string;
 }
 
 export default class TemplateRenderer extends React.Component<ITemplateRendererProps> {
@@ -152,6 +158,19 @@ export default class TemplateRenderer extends React.Component<ITemplateRendererP
           selectedValues={this.props.selectedValues}
         />;
         break;
+
+      case RefinerTemplateOption.Folders:
+          renderTemplate = <FoldersTemplate
+            queryModification={this.props.queryModification}
+            refinementResult={this.props.refinementResult}
+            onFilterValuesUpdated={this.props.onFilterValuesUpdated}
+            shouldResetFilters={this.props.shouldResetFilters}
+            isMultiValue={false}
+            themeVariant={this.props.themeVariant}
+            removeFilterValue={this.props.valueToRemove}
+            selectedValues={this.props.selectedValues}
+          />;
+          break;
 
       default:
 
