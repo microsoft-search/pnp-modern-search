@@ -5,6 +5,7 @@ import { IRefinementValue, RefinementOperator } from "../../../../../models/ISea
 import * as update from 'immutability-helper';
 import { INavLink, Nav, Link } from 'office-ui-fabric-react';
 import { StringHelper } from '../../../../../helpers/StringHelper';
+import { cloneDeep } from "@microsoft/sp-lodash-subset";
 
 export interface IFoldersTemplateProps extends IBaseRefinerTemplateProps {
     /**
@@ -32,12 +33,29 @@ export default class FoldersTemplate extends React.Component<IFoldersTemplatePro
 
         return  <Nav
                     ariaLabel="Nav example with nested links"
-                    
+                    styles={{
+                        chevronIcon: {
+                            display: 'none',
+                        }
+                    }}
                     onRenderLink={(props, defautRender) => {
+
+                        const isSelected = props.refinementValue && this._isValueInFilterSelection(props.refinementValue);
+                        
+                        if (props.isExpanded) {
+                            props.iconProps = {
+                                iconName: 'FabricFolder'
+                            };
+                        } else {
+                            props.iconProps = {
+                                iconName: 'FabricOpenFolderHorizontal'
+                            };
+                        }
+
                         return  <div style={{
-                                        fontWeight: props.refinementValue && this._isValueInFilterSelection(props.refinementValue) ? 'bold' : 'inherit'
+                                        fontWeight: isSelected ? 'bold' : 'inherit'
                                     }}>
-                                    {defautRender(props)}
+                                    {defautRender(cloneDeep(props))}
                                 </div>
                     }}
                     groups={[{
@@ -58,13 +76,48 @@ export default class FoldersTemplate extends React.Component<IFoldersTemplatePro
     private longest_common_starting_substring(arr1){
 
         // From https://www.w3resource.com/javascript-exercises/javascript-array-exercise-28.php
-        const arr= arr1.concat().sort();
+       /* const arr= arr1.concat().sort();
         const a1= arr[0];
         const a2= arr[arr.length-1];
         const L= a1.length;
         let i= 0;
-        while(i< L && a1.charAt(i)=== a2.charAt(i)) i++;
-        return a1.substring(0, i);
+        while(i< L && a1.charAt(i)=== a2.charAt(i)) {
+            i++;
+        }
+        return a1.substring(0, i);*/
+
+    const splitStrings = (a, sep = '/') => a.map(i => i.split(sep));
+ 
+    /**
+     * Given an index number, return a function that takes an array and returns the
+     * element at the given index
+     * @param {number} i
+     * @return {function(!Array<*>): *}
+     */
+    const elAt = i => a => a[i];
+    
+    /**
+     * Transpose an array of arrays:
+     * Example:
+     * [['a', 'b', 'c'], ['A', 'B', 'C'], [1, 2, 3]] ->
+     * [['a', 'A', 1], ['b', 'B', 2], ['c', 'C', 3]]
+     * @param {!Array<!Array<*>>} a
+     * @return {!Array<!Array<*>>}
+     */
+    const rotate = a => a[0].map((e, i) => a.map(elAt(i)));
+    
+    /**
+     * Checks of all the elements in the array are the same.
+     * @param {!Array<*>} arr
+     * @return {boolean}
+     */
+    const allElementsEqual = arr => arr.every(e => e === arr[0]);
+    
+    
+    const commonPath = (input, sep = '/') => rotate(splitStrings(input, sep))
+        .filter(allElementsEqual).map(elAt(0)).join(sep);
+    
+        return commonPath(arr1);
     }
       
 
@@ -85,7 +138,7 @@ export default class FoldersTemplate extends React.Component<IFoldersTemplatePro
             let url = value.RefinementValue;
 
             if (commonString) {
-                url =  url.replace(commonString, '');
+                url =  url.replace(commonString.trim(), '');
                 if (url === '') {
                     // Means 'root'
                     root = `/${value.RefinementValue.substring(value.RefinementValue.lastIndexOf('/') + 1)}`;
@@ -110,6 +163,9 @@ export default class FoldersTemplate extends React.Component<IFoldersTemplatePro
                     url: '#',
                     path: currPath,
                     isExpanded: true,
+                    iconProps: {
+                        iconName: 'FabricOpenFolderHorizontal'
+                    },
                     refinementValue: url === currPath ? value : null,
                     onClick: (ev, item: INavLink) => {
     
