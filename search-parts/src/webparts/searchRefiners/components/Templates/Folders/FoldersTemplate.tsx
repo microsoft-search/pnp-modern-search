@@ -3,7 +3,7 @@ import IBaseRefinerTemplateProps from '../IBaseRefinerTemplateProps';
 import IBaseRefinerTemplateState from '../IBaseRefinerTemplateState';
 import { IRefinementValue, RefinementOperator } from "../../../../../models/ISearchResult";
 import * as update from 'immutability-helper';
-import { INavLink, Nav, Link } from 'office-ui-fabric-react';
+import { INavLink, Nav, Link, Icon } from 'office-ui-fabric-react';
 import { StringHelper } from '../../../../../helpers/StringHelper';
 import { cloneDeep } from "@microsoft/sp-lodash-subset";
 
@@ -33,29 +33,21 @@ export default class FoldersTemplate extends React.Component<IFoldersTemplatePro
 
         return  <Nav
                     ariaLabel="Nav example with nested links"
-                    styles={{
-                        chevronIcon: {
-                            display: 'none',
-                        }
-                    }}
                     onRenderLink={(props, defautRender) => {
 
                         const isSelected = props.refinementValue && this._isValueInFilterSelection(props.refinementValue);
-                        
-                        if (props.isExpanded) {
-                            props.iconProps = {
-                                iconName: 'FabricFolder'
-                            };
-                        } else {
-                            props.iconProps = {
-                                iconName: 'FabricOpenFolderHorizontal'
-                            };
-                        }
 
                         return  <div style={{
                                         fontWeight: isSelected ? 'bold' : 'inherit'
                                     }}>
-                                    {defautRender(cloneDeep(props))}
+                                    {
+                                        <div style={{
+                                            display: 'flex'
+                                        }}>
+                                            <Icon iconName={props.isExpanded ? 'FabricOpenFolderHorizontal' : 'FabricFolder'}></Icon>
+                                            {defautRender(cloneDeep(props))}
+                                        </div>
+                                    }
                                 </div>
                     }}
                     groups={[{
@@ -163,9 +155,6 @@ export default class FoldersTemplate extends React.Component<IFoldersTemplatePro
                     url: '#',
                     path: currPath,
                     isExpanded: true,
-                    iconProps: {
-                        iconName: 'FabricOpenFolderHorizontal'
-                    },
                     refinementValue: url === currPath ? value : null,
                     onClick: (ev, item: INavLink) => {
     
