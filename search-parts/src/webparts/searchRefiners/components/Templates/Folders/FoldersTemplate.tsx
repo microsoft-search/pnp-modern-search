@@ -3,7 +3,7 @@ import IBaseRefinerTemplateProps from '../IBaseRefinerTemplateProps';
 import IBaseRefinerTemplateState from '../IBaseRefinerTemplateState';
 import { IRefinementValue, RefinementOperator } from "../../../../../models/ISearchResult";
 import * as update from 'immutability-helper';
-import { INavLink, Nav, Link, Icon } from 'office-ui-fabric-react';
+import { INavLink, Nav, Link, Icon, ITheme } from 'office-ui-fabric-react';
 import { StringHelper } from '../../../../../helpers/StringHelper';
 import { cloneDeep } from "@microsoft/sp-lodash-subset";
 
@@ -33,6 +33,7 @@ export default class FoldersTemplate extends React.Component<IFoldersTemplatePro
 
         return  <Nav
                     ariaLabel="Nav example with nested links"
+                    theme={this.props.themeVariant as ITheme}
                     onRenderLink={(props, defautRender) => {
 
                         const isSelected = props.refinementValue && this._isValueInFilterSelection(props.refinementValue);
@@ -119,7 +120,17 @@ export default class FoldersTemplate extends React.Component<IFoldersTemplatePro
             links: []
         };
 
-        const allUrls = refinementValues.map(value => { return value.RefinementValue; })
+        const allUrls = refinementValues.map(value => { 
+
+            let url = value.RefinementValue;
+            if (/.*\/.*\.aspx/g.test(url)) {
+
+                const segments = url.split('/');
+                segments.splice(segments.length -2, 2);
+                url = segments.join('/');
+            }
+            return url;
+        });
         
         const commonString = this.longest_common_starting_substring(allUrls);
 
@@ -128,16 +139,25 @@ export default class FoldersTemplate extends React.Component<IFoldersTemplatePro
         for (const value of refinementValues) {
 
             let url = value.RefinementValue;
+            if (/.*\/.*\.aspx/g.test(url)) {
+
+                const segments = url.split('/');
+                segments.splice(segments.length -2, 2);
+                url = segments.join('/');
+            }
+
 
             if (commonString) {
+
                 url =  url.replace(commonString.trim(), '');
+
                 if (url === '') {
                     // Means 'root'
                     root = `/${value.RefinementValue.substring(value.RefinementValue.lastIndexOf('/') + 1)}`;
                 }
             }
 
-            url = root ? `${root}${url ? `/${url}` : ''}` : `/${url}`;
+            url = root ? `${root}${url ? `${url}` : ''}` : `${url}`;
 
           const path = url.match(/\/[^\/]+/g);
           let curr = base;
@@ -180,8 +200,8 @@ export default class FoldersTemplate extends React.Component<IFoldersTemplatePro
     private cleanUrl(urlString): string {
         let url = decodeURIComponent(new URL(urlString).pathname);
         // Match file name
-        if (/Forms\/\.aspx/g.test(url)) {
-            url = url.substring(0, url.lastIndexOf("/"));
+        if (/.*\/\.aspx/g.test(url)) {
+            url = url.split('/').splice(url.split('/').length -2, 2).join('/');
         }
 
         return decodeURIComponent(url);
