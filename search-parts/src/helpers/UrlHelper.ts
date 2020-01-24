@@ -1,4 +1,12 @@
 export class UrlHelper {
+
+    /**
+     * Test if the provided string is a valid URL
+     * @param url the URL to check
+     */
+    public static isValidUrl(url: string): boolean {
+        return /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/.test(url);
+    }
     
     /**
      * Get the value of a querystring

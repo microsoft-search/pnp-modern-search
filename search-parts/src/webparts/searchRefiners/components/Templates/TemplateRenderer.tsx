@@ -5,6 +5,7 @@ import DateRangeTemplate from "./DateRange/DateRangeTemplate";
 import FixedDateRangeTemplate from "./FixedDateRange/FixedDateRangeTemplate";
 import PersonaTemplate from "./Persona/PersonaTemplate";
 import FileTypeTemplate from "./FileType/FileTypeTemplate";
+import ContainerTreeTemplate from "./ContainerTree/ContainerTreeTemplate";
 import { IRefinementResult, IRefinementValue } from "../../../../models/ISearchResult";
 import RefinementFilterOperationCallback from '../../../../models/RefinementValueOperationCallback';
 import IUserService from '../../../../services/UserService/IUserService';
@@ -152,6 +153,18 @@ export default class TemplateRenderer extends React.Component<ITemplateRendererP
           selectedValues={this.props.selectedValues}
         />;
         break;
+
+      case RefinerTemplateOption.ContainerTree:
+          renderTemplate = <ContainerTreeTemplate
+            refinementResult={this.props.refinementResult}
+            onFilterValuesUpdated={this.props.onFilterValuesUpdated}
+            shouldResetFilters={this.props.shouldResetFilters}
+            isMultiValue={false}
+            themeVariant={this.props.themeVariant}
+            removeFilterValue={this.props.valueToRemove}
+            selectedValues={this.props.selectedValues}
+          />;
+          break;
 
       default:
 

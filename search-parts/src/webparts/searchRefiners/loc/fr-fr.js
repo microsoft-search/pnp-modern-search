@@ -38,6 +38,7 @@ define([], function () {
         "FixedDateRangeRefinementItemLabel": "Sélecteur de dates (intervalles fixes)",
         "FileTypeRefinementItemTemplateLabel": "Types de fichier",
         "FileTypeMutliValueRefinementItemTemplateLabel": "Types de fichier multiple",
+        "ContainerTreeRefinementItemTemplateLabel": "Hiérarchie de conteneurs",
         "DateFromLabel": "Du",
         "DateTolabel": "Jusqu'au",
         "DatePickerStrings": {

@@ -38,6 +38,7 @@ define([], function() {
                 "FixedDateRangeRefinementItemLabel": "Rango Fecha (intervalos fijos)",
                 "FileTypeRefinementItemTemplateLabel": "Tipos de archivos",
                 "FileTypeMutliValueRefinementItemTemplateLabel": "Múltiples tipos de archivos",
+                "ContainerTreeRefinementItemTemplateLabel": "Árbol de contenedores",
                 "DateFromLabel": "De",
                 "DateTolabel": "Hasta",
                 "DatePickerStrings": {
