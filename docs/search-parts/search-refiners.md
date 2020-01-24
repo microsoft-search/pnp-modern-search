@@ -16,7 +16,7 @@ Web Part Title | Shows a title for this Web Part. Set blank if you don't want a 
 Show blank if no result | Shows nothing if there is no filter
 Filters layout | Choose the template to use to display filters results.
 
-#### Template
+#### Templates
 
 ##### Persona
 
@@ -29,3 +29,10 @@ All crawled properties `ows_q_USER_\<name>` and managed properties like `People:
 ##### File Type
 
 The _"File Type"_ template is intended to work with the `FileExtension` managed property.
+
+##### Container Tree
+
+The _"Container Tree" template is intended to work with the `ParentLink` managed property. Since this one is not refinable by default, you must map the `ows_ParentUrl` crawled property to a `RefinableStringXX` managed property.
+The purpose of this template is to give the ability to navigate trough a folder hierarchy as metadata by parsing the parent link URL segments.
+
+![Container Tree](../images/container_tree_template.png)

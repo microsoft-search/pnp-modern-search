@@ -52,11 +52,6 @@ export interface ISearchRefinersContainerProps {
   query: string;
 
   /**
-   * The current query modification
-   */
-  queryModification: string;
-
-  /**
    * UserService
    */
   userService: IUserService;

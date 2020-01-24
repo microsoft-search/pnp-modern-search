@@ -68,7 +68,6 @@ export default class SearchRefinersContainer extends React.Component<ISearchRefi
             themeVariant={this.props.themeVariant}
             selectedFilters={this.state.selectedRefinementFilters}
             userService={this.props.userService}
-            queryModification={this.props.queryModification}
           />;
           break;
 
@@ -92,7 +91,6 @@ export default class SearchRefinersContainer extends React.Component<ISearchRefi
             themeVariant={this.props.themeVariant}
             selectedFilters={this.state.selectedRefinementFilters}
             userService={this.props.userService}
-            queryModification={this.props.queryModification}
           />;
           break;
       }

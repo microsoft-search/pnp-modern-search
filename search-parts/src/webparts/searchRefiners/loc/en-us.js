@@ -38,6 +38,7 @@ define([], function () {
         "FixedDateRangeRefinementItemLabel": "Date range (fixed intervals)",
         "FileTypeRefinementItemTemplateLabel": "File type",
         "FileTypeMutliValueRefinementItemTemplateLabel": "Multiple file type",
+        "ContainerTreeRefinementItemTemplateLabel": "Container Tree",
         "DateFromLabel": "From",
         "DateTolabel": "To",
         "DatePickerStrings": {

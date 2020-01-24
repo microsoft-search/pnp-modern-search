@@ -38,6 +38,7 @@ define([], function() {
                 "FixedDateRangeRefinementItemLabel": "Datumbereik (vaste intervallen)",
                 "FileTypeRefinementItemTemplateLabel": "Bestandstypen",
                 "FileTypeMutliValueRefinementItemTemplateLabel": "Meerdere bestandstypen",
+                "ContainerTreeRefinementItemTemplateLabel": "Containerhiërarchie",
                 "DateFromLabel": "Van",
                 "DateTolabel": "Tot",
                 "DatePickerStrings": {

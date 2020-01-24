@@ -273,7 +273,6 @@ export default class LinkPanel extends React.Component<ILinkPanelProps, ILinkPan
           language={props.language}
           themeVariant={props.themeVariant}
           selectedValues={selectedFilterValues}
-          queryModification={this.props.queryModification}
           userService={this.props.userService}
         />
       );

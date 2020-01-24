@@ -11,11 +11,6 @@ interface ISearchResultSourceData {
     queryKeywords: string;
 
     /**
-     * The final quer query submitted to the search engine
-     */
-    queryModification: string;
-
-    /**
      * The refinement results
      */
     refinementResults: IRefinementResult[];
