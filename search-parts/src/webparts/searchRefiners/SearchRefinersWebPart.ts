@@ -260,6 +260,10 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
               {
                 key: RefinerTemplateOption.FileTypeMulti,
                 text: strings.Refiners.Templates.FileTypeMutliValueRefinementItemTemplateLabel
+              },
+              {
+                key: RefinerTemplateOption.ContainerTree,
+                text: strings.Refiners.Templates.ContainerTreeRefinementItemTemplateLabel
               }
             ]
           },

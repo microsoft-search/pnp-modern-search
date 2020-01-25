@@ -338,7 +338,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             if (this.context.pageContext.legacyPageContext.userTimeZoneData) {
                 this._timeZoneBias.UserBias = this.context.pageContext.legacyPageContext.userTimeZoneData.Bias;
                 this._timeZoneBias.UserDST = this.context.pageContext.legacyPageContext.userTimeZoneData.DaylightBias;
-                this._timeZoneBias.Id = this.context.pageContext.legacyPageContext.webTimeZoneData.Id
+                this._timeZoneBias.Id = this.context.pageContext.legacyPageContext.webTimeZoneData.Id;
             }
 
             this._searchService = new SearchService(this.context.pageContext, this.context.spHttpClient);
@@ -1471,8 +1471,8 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
     public getPropertyValue(propertyId: string): ISearchResultSourceData {
 
         const searchResultSourceData: ISearchResultSourceData = {
-           queryKeywords: this.properties.queryKeywords.tryGetValue(),
-           refinementResults: (this._resultService && this._resultService.results) ? this._resultService.results.RefinementResults : [],
+            queryKeywords: this.properties.queryKeywords.tryGetValue(),
+            refinementResults: (this._resultService && this._resultService.results) ? this._resultService.results.RefinementResults : [],
             paginationInformation: (this._resultService && this._resultService.results) ? this._resultService.results.PaginationInformation : {
                 CurrentPage: 1,
                 MaxResultsPerPage: this.properties.maxResultsCount,

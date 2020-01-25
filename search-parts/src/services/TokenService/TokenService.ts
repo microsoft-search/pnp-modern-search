@@ -40,18 +40,17 @@ export class TokenService implements ITokenService {
                 let conditions = [];
                 const property = match[1];
                 const operator = match[2];                
-                const value = match[3];
+                const tokenValue = match[3];
 
                 // {User} tokens are resolved server-side by SharePoint so we exclude them
-                if (!/\{(?:User)\.(.*?)\}/gi.test(value)) {
-                    const allValues = value.split(','); // Works with taxonomy multi values (TermID, Label) + multi choices fields
+                if (!/\{(?:User)\.(.*?)\}/gi.test(tokenValue)) {
+                    const allValues = tokenValue.split(','); // Works with taxonomy multi values (TermID, Label) + multi choices fields
                     if (allValues.length > 0) {
                         allValues.map(value => {
-
                             conditions.push(`(${property}${operator}${/\s/g.test(value) ? `"${value}"` : value})`);
                         });
                     } else {
-                        conditions.push(`${property}${operator}${/\s/g.test(value) ? `"${value}"` : value})`);
+                        conditions.push(`${property}${operator}${/\s/g.test(tokenValue) ? `"${tokenValue}"` : tokenValue})`);
                     }
 
                     queryTemplate = queryTemplate.replace(match[0], `(${conditions.join(' OR ')})`);
