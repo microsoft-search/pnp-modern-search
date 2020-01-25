@@ -60,7 +60,7 @@
                                     </div>
                                     <div class="template_previewContainer ms-hiddenSm">
                                     {{#eq item.contentclass 'STS_ListItem_DocumentLibrary'}} 
-                                        {{#if ServerRedirectedPreviewURL}}
+                                        {{#if (getPreviewSrc item)}}
                                             <div class="doc-container">
                                                 <div class="img-container">
                                                     {{#eq FileType 'pdf'}}
@@ -71,7 +71,7 @@
                                                             <img class="document-preview-item img-preview" width="120" src="{{ServerRedirectedPreviewURL}}" data-src="{{ServerRedirectedPreviewURL}}" data-url="{{Path}}" /> 
                                                         {{/contains}} 
                                                     {{else}}
-                                                        <img class="document-preview-item img-preview" width="120" src="{{ServerRedirectedPreviewURL}}" data-src="{{ServerRedirectedPreviewURL}}" data-url="{{ServerRedirectedEmbedURL}}" /> 
+                                                        <img class="document-preview-item img-preview" width="120" src="{{getPreviewSrc item}}" data-src="{{getPreviewSrc item}}" data-url="{{#if ServerRedirectedEmbedURL}}{{ServerRedirectedEmbedURL}}{{else}}{{getPreviewSrc item}}{{/if}}" /> 
                                                     {{/eq}}
                                                     <div class="hover">
                                                         <div><i class="ms-Icon ms-Icon--Preview" aria-hidden="true"></i></div>

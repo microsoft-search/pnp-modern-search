@@ -79,11 +79,11 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
             processedProps = TemplateService.processFieldsConfiguration<IDocumentCardComponentProps>(this.props.fieldsConfiguration, this.props.item, this.props.themeVariant);
         }
 
-        if (this.state.showCallout && processedProps.previewUrl && this.props.enablePreview) {
+        if (this.state.showCallout && (processedProps.previewUrl || processedProps.previewImage) && this.props.enablePreview) {
 
             renderPreviewCallout = <PreviewContainer
-                elementUrl={processedProps.previewUrl}
-                previewImageUrl={processedProps.previewImage}
+                elementUrl={processedProps.previewUrl ? processedProps.previewUrl : processedProps.previewImage}
+                previewImageUrl={processedProps.previewImage ? processedProps.previewImage : processedProps.previewUrl}
                 previewType={processedProps.isVideo ? PreviewType.Video : PreviewType.Document}
                 targetElement={this.documentCardPreviewRef.current}
                 showPreview={this.state.showCallout}
