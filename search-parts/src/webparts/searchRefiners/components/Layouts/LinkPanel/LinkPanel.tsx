@@ -10,8 +10,7 @@ import {
   IGroupDividerProps,
   IGroupedList
 } from 'office-ui-fabric-react/lib/components/GroupedList/index';
-import { Scrollbars } from 'react-custom-scrollbars';
-import { Link } from 'office-ui-fabric-react/lib/Link';
+import { Link, ScrollablePane, Sticky, StickyPositionType } from 'office-ui-fabric-react';
 import { ActionButton } from 'office-ui-fabric-react/lib/Button';
 import styles from './LinkPanel.module.scss';
 import * as strings from 'SearchRefinersWebPartStrings';
@@ -72,6 +71,8 @@ export default class LinkPanel extends React.Component<ILinkPanelProps, ILinkPan
       items={this.state.items}
       onRenderCell={this._onRenderCell}
       className={styles.linkPanelLayout__filterPanel__body__group}
+      onShouldVirtualize={() => false}
+      listProps={ { onShouldVirtualize: () => false } }
       groupProps={
         {
           onRenderHeader: this._onRenderHeader
@@ -113,12 +114,23 @@ export default class LinkPanel extends React.Component<ILinkPanelProps, ILinkPan
           onRenderBody={() => {
             if (this.props.refinementResults.length > 0) {
               return (
-                <Scrollbars style={{ height: '100%' }}>
-                  <div className={styles.linkPanelLayout__filterPanel__body}>
+                <div style={{
+                  height: '100%',
+                  position: 'relative',
+                  maxHeight: 'inherit'
+                }}>
+                  <ScrollablePane styles={{
+                    root: {
+                      width: '100%',
+                      height: '100%',
+                    }
+                  }}>
+                  <div className={styles.linkPanelLayout__filterPanel__body} data-is-scrollable={true}>
                     {renderLinkRemoveAll}
                     {renderAvailableFilters}
                   </div>
-                </Scrollbars>
+                  </ScrollablePane>
+                </div>
               );
             } else {
               return (

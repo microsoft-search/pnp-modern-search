@@ -16,6 +16,7 @@ import { isEqual } from '@microsoft/sp-lodash-subset';
 import { ITheme } from '@uifabric/styling';
 import { Icon } from 'office-ui-fabric-react/lib/Icon';
 import { Text as TextUI } from 'office-ui-fabric-react/lib/Text';
+import { ScrollablePane, Sticky, StickyPositionType } from 'office-ui-fabric-react';
 
 export default class Vertical extends React.Component<IFilterLayoutProps, IVerticalState> {
 
@@ -44,9 +45,12 @@ export default class Vertical extends React.Component<IFilterLayoutProps, IVerti
       componentRef={(g) => { this._groupedList = g; }}
       onRenderCell={this._onRenderCell}
       className={styles.verticalLayout__filterPanel__body__group}
+      onShouldVirtualize={() => false}
+      listProps={ { onShouldVirtualize: () => false } }
       groupProps={
         {
           onRenderHeader: this._onRenderHeader,
+          
         }
       }
       groups={this.state.groups} /> : noResultsElement;
@@ -61,9 +65,15 @@ export default class Vertical extends React.Component<IFilterLayoutProps, IVerti
       </div>) : null;
 
     return (
-      <div className={styles.verticalLayout__filterPanel__body}>
-        {renderAvailableFilters}
-        {renderLinkRemoveAll}
+      <div style={{
+        height: '100%',
+        position: 'relative',
+        maxHeight: 'inherit'
+      }}>
+        <div className={styles.verticalLayout__filterPanel__body} data-is-scrollable={true}>       
+          {renderAvailableFilters}
+          {renderLinkRemoveAll} 
+        </div>
       </div>
     );
   }
