@@ -71,6 +71,8 @@ export default class LinkPanel extends React.Component<ILinkPanelProps, ILinkPan
       items={this.state.items}
       onRenderCell={this._onRenderCell}
       className={styles.linkPanelLayout__filterPanel__body__group}
+      onShouldVirtualize={() => false}
+      listProps={ { onShouldVirtualize: () => false } }
       groupProps={
         {
           onRenderHeader: this._onRenderHeader
@@ -123,10 +125,8 @@ export default class LinkPanel extends React.Component<ILinkPanelProps, ILinkPan
                       height: '100%',
                     }
                   }}>
-                  <div className={styles.linkPanelLayout__filterPanel__body}>
-                    <Sticky stickyPosition={StickyPositionType.Header}>
-                              {renderLinkRemoveAll}
-                    </Sticky>                    
+                  <div className={styles.linkPanelLayout__filterPanel__body} data-is-scrollable={true}>
+                    {renderLinkRemoveAll}
                     {renderAvailableFilters}
                   </div>
                   </ScrollablePane>

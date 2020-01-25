@@ -45,9 +45,12 @@ export default class Vertical extends React.Component<IFilterLayoutProps, IVerti
       componentRef={(g) => { this._groupedList = g; }}
       onRenderCell={this._onRenderCell}
       className={styles.verticalLayout__filterPanel__body__group}
+      onShouldVirtualize={() => false}
+      listProps={ { onShouldVirtualize: () => false } }
       groupProps={
         {
           onRenderHeader: this._onRenderHeader,
+          
         }
       }
       groups={this.state.groups} /> : noResultsElement;
@@ -67,19 +70,10 @@ export default class Vertical extends React.Component<IFilterLayoutProps, IVerti
         position: 'relative',
         maxHeight: 'inherit'
       }}>
-        <ScrollablePane styles={{
-          root: {
-            width: '100%',
-            height: '100%',
-          }
-        }}>
-        <div className={styles.verticalLayout__filterPanel__body}>
-          <Sticky stickyPosition={StickyPositionType.Header}>
-                    {renderLinkRemoveAll}
-          </Sticky>                    
+        <div className={styles.verticalLayout__filterPanel__body} data-is-scrollable={true}>       
           {renderAvailableFilters}
+          {renderLinkRemoveAll} 
         </div>
-        </ScrollablePane>
       </div>
     );
   }
