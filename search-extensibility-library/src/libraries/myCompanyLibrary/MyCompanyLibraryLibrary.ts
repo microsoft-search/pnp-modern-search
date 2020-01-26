@@ -4,6 +4,8 @@ import { IComponentDefinition } from "../../models/IComponentDefinition";
 import { IExtensibilityLibrary } from "../../models/IExtensibilityLibrary";
 import { ISuggestionProviderDefinition } from "../../models/ISuggestionProviderDefinition";
 import { CustomSuggestionProvider } from "../CustomSuggestionProvider";
+import { IQueryModifierDefinition } from "../../models/IQueryModifierDefinition";
+import { CustomQueryModifier } from "../CustomQueryModifier";
 
 export class MyCompanyLibraryLibrary implements IExtensibilityLibrary {
 
@@ -25,5 +27,13 @@ export class MyCompanyLibraryLibrary implements IExtensibilityLibrary {
         providerClass: CustomSuggestionProvider
       },
     ];
+  }
+
+  public getQueryModifier(): IQueryModifierDefinition<any> {
+    return {
+      displayName: CustomQueryModifier.DisplayName,
+      description: CustomQueryModifier.Description,
+      class: CustomQueryModifier
+    };
   }
 }

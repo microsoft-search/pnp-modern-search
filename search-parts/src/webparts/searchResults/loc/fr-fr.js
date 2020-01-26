@@ -155,6 +155,11 @@ define([], function() {
       "PersonaSizeExtraLarge": "Très grand",
       "LivePersonaDisableHover": "Désactiver l'affichage des informations au survolement"
     },
-    "ManagedPropertiesListPlaceHolder": "Sélectionnez ou ajoutez une propriété gérée"
+    "ManagedPropertiesListPlaceHolder": "Sélectionnez ou ajoutez une propriété gérée",
+    "QueryModifier": {
+      "NameLabel": "Modificateur de requêtes",
+      "OverviewLabel": "Un modificateur de requête est disponible à la bibliothèque d'extensibilité.",
+      "EnableLabelPrefix": "Activer"
+    }
   }
 });

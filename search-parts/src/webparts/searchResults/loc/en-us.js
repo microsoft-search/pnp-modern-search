@@ -155,6 +155,11 @@ define([], function () {
       "PersonaSizeExtraLarge": "Extra large",
       "LivePersonaDisableHover": "Disable info on hover"
     },
-    "ManagedPropertiesListPlaceHolder": "Select or add a managed property"
+    "ManagedPropertiesListPlaceHolder": "Select or add a managed property",
+    "QueryModifier": {
+      "NameLabel": "Query Modifier",
+      "OverviewLabel": "A query modifier is available from the extensibility library.",
+      "EnableLabelPrefix": "Enable"
+    }
   }
 });

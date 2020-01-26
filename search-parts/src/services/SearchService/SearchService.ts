@@ -18,6 +18,7 @@ import { UrlHelper } from '../../helpers/UrlHelper';
 import { ISearchVertical } from '../../models/ISearchVertical';
 import IManagedPropertyInfo from '../../models/IManagedPropertyInfo';
 import { Loader } from '../TemplateService/LoadHelper';
+import { BaseQueryModifier } from '../ExtensibilityService/BaseQueryModifier';
 
 class SearchService implements ISearchService {
     private _initialSearchResult: SearchResults = null;
@@ -35,6 +36,7 @@ class SearchService implements ISearchService {
     private _synonymTable: ISynonymTable;
     private _queryCulture: number;
     private _timeZoneId: number;
+    private _queryModifier: BaseQueryModifier;
 
     public get resultsCount(): number { return this._resultsCount; }
     public set resultsCount(value: number) { this._resultsCount = value; }
@@ -71,6 +73,9 @@ class SearchService implements ISearchService {
 
     public get timeZoneId(): number { return this._timeZoneId; }
     public set timeZoneId(value: number) { this._timeZoneId = value; }
+
+    public get queryModifier(): BaseQueryModifier { return this._queryModifier; }
+    public set queryModifier(value: BaseQueryModifier) { this._queryModifier = value; }
 
     private _localPnPSetup: SPRest;
 
@@ -209,6 +214,29 @@ class SearchService implements ISearchService {
 
         try {
             if (!this._initialSearchResult || page == 1) {
+
+                // If we have a query modifier, then send query to it before sending to SharePoint
+                if (this._queryModifier) {
+                    try {
+                        const queryModification = await this._queryModifier.modifyQuery({
+                            queryText: searchQuery.Querytext,
+                            queryTemplate: searchQuery.QueryTemplate,
+                            resultSourceId: searchQuery.SourceId,
+                        });
+
+                        if (queryModification) {
+                            searchQuery.Querytext = queryModification.queryText;
+                            searchQuery.QueryTemplate = queryModification.queryTemplate;
+                        }
+                        else {
+                            Logger.write('[SearchService.search()]: Query modifier return an invalid response. Using original query.', LogLevel.Error);
+                        }
+                    }
+                    catch (error) {
+                        Logger.write('[SearchService.search()]: Query modification failed. Using original query. ' + error, LogLevel.Error);
+                    }
+                }
+
                 this._initialSearchResult = await this._localPnPSetup.search(searchQuery);
             }
 
@@ -234,7 +262,7 @@ class SearchService implements ISearchService {
                     queryModification =  properties[0].Value;
                     results.QueryModification = queryModification;
                 }
-                
+
                 const resultRows = r2.RawSearchResults.PrimaryQueryResult.RelevantResults.Table.Rows;
                 let refinementResultsRows = r2.RawSearchResults.PrimaryQueryResult.RefinementResults;
 

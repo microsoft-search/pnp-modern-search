@@ -187,4 +187,61 @@ When one or more custom query suggestion providers are made available via the ex
 ![Search Box](../images/sb_configure_suggestions.png)
 ![Search Box](../images/sb_custom_suggestion_providers.png)
 
+## Create a custom query modifier
+A query modifier allows you to manipulate the user's search query before it is sent to SharePoint. Only one query modifier may be registered via the extensibility library. The modifier receives the query text (from search box), query template and result source ID (from search results or search verticals if configured) as parameters. The modifier returns an object with the updated query text and query template. This capability allows you to inject additional terms or criteria to the user's search query such as spelling corrections or translations.
+
+To create a custom query modifier, follow this procedure:
+
+1. Create a new TypeScript class that implements the `BaseQueryModifier` abstract class. You can create it anywhere in your project.
+2. Implement the required methods and properties like the example below.
+    
+        import { BaseQueryModifier } from '../models/BaseQueryModifier';
+        import { IQueryModifierInput, IQueryModification } from '../models/IQueryModification';
+
+        export class CustomQueryModifier extends BaseQueryModifier  {
+
+            public static readonly DisplayName: string = 'Sample Query Modifier';
+            public static readonly Description: string = 'Adds a filter to the query so that only word documents are returned.';
+
+            public async onInit(): Promise<void> {
+                // this._ctx // SPFx Webpart Context
+            }
+
+            public async modifyQuery(query: IQueryModifierInput): Promise<IQueryModification> {
+                // e.g. Always return docx files
+                const newQueryText = `${query.queryText} fileextension:docx`;
+
+                // Leave query template unchanged
+                const newQueryTemplate = query.queryTemplate;
+
+                return {
+                    queryText: newQueryText,
+                    queryTemplate: newQueryTemplate
+                } as IQueryModification);
+            }
+        }
+
+3. In the main entry point class (ex: MyCompanyLibraryLibrary.ts), register your custom query modifier like the example below.
+
+        import { IExtensibilityLibrary } from "../../models/IExtensibilityLibrary";
+        import { IQueryModifierDefinition } from "../../models/IQueryModifierDefinition";
+        import { CustomQueryModifier } from "../CustomQueryModifier";
+
+        ...
+        
+        export class MyCompanyLibraryLibrary implements IExtensibilityLibrary {
+
+            public getQueryModifier(): IQueryModifierDefinition<any> {
+                return {
+                    displayName: CustomQueryModifier.DisplayName,
+                    description: CustomQueryModifier.Description,
+                    class: CustomQueryModifier
+                };
+            }
+        }
+
+### Configure Query Modifier
+When a query modifier is made available via the extensibility library, an additional configuration sections becomes visible in the Search Results web part settings. Here you can see the query modifier name and description along with a toggle to disable it if needed.
+
+![Search Results - Query Modifier](../images/search_query_modifier.png)
 

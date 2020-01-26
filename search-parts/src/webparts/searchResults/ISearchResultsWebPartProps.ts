@@ -37,4 +37,5 @@ export interface ISearchResultsWebPartProps {
     synonymList: ISynonymFieldConfiguration[];
     searchQueryLanguage: number;
     templateParameters: { [key:string]: any };
+    enableQueryModifier: boolean;
 }

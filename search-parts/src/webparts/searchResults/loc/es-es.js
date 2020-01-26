@@ -155,6 +155,11 @@ define([], function () {
       "PersonaSizeExtraLarge": "Extra large",
       "LivePersonaDisableHover": "Disable info on hover"
     },
-    "ManagedPropertiesListPlaceHolder": "Select or add a managed property"
+    "ManagedPropertiesListPlaceHolder": "Select or add a managed property",
+    "QueryModifier": {
+      "NameLabel": "Modificador de consulta",
+      "OverviewLabel": "Un modificador de consulta está disponible en la biblioteca de extensibilidad.",
+      "EnableLabelPrefix": "Habilitar"
+    }
   }
 });

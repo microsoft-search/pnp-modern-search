@@ -16,7 +16,8 @@ import {
     PropertyPaneCheckbox,
     PropertyPaneHorizontalRule,
     PropertyPaneDropdown,
-    IPropertyPaneDropdownOption
+    IPropertyPaneDropdownOption,
+    PropertyPaneLabel
 } from "@microsoft/sp-property-pane";
 import * as strings from 'SearchResultsWebPartStrings';
 import SearchResultsContainer from './components/SearchResultsContainer/SearchResultsContainer';
@@ -63,6 +64,10 @@ import { IComponentDefinition } from '../../services/ExtensibilityService/ICompo
 import { AvailableComponents } from '../../components/AvailableComponents';
 import { BaseClientSideWebPart, IWebPartPropertiesMetadata } from "@microsoft/sp-webpart-base";
 import { IPropertyPaneGroup } from "@microsoft/sp-property-pane";
+import { IQueryModifierDefinition } from '../../services/ExtensibilityService/IQueryModifierDefinition';
+import { IQueryModifierInstance } from '../../services/ExtensibilityService/IQueryModifierInstance';
+import { ObjectCreator } from '../../services/ExtensibilityService/ObjectCreator';
+import { BaseQueryModifier } from '../../services/ExtensibilityService/BaseQueryModifier';
 
 export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchResultsWebPartProps> implements IDynamicDataCallables {
 
@@ -75,6 +80,8 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
     private _placeholder = null;
     private _propertyFieldCollectionData = null;
     private _customCollectionFieldType = null;
+    private _queryModifierInstance: IQueryModifierInstance<any> = null;
+    private _foundQueryModifier: boolean = false;
 
     private _propertyFieldCodeEditorLanguages = null;
     private _resultService: IResultService;
@@ -111,7 +118,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
     private _themeProvider: ThemeProvider;
     private _themeVariant: IReadonlyTheme;
     private _initComplete = false;
-    
+
     /**
      * Information about time zone bias (current user or web)
      */
@@ -205,6 +212,8 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         }
 
         const currentLocaleId = LocalizationHelper.getLocaleId(this.context.pageContext.cultureInfo.currentCultureName);
+        const queryModifier = this.properties.enableQueryModifier && this._queryModifierInstance && this._queryModifierInstance.isInitialized
+                                ? this._queryModifierInstance.instance : null;
 
         // Configure the provider before the query according to our needs
         this._searchService = update(this._searchService, {
@@ -219,7 +228,8 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             synonymTable: { $set: this._synonymTable },
             queryCulture: { $set: this.properties.searchQueryLanguage !== -1 ? this.properties.searchQueryLanguage : currentLocaleId },
             refinementFilters: { $set: selectedFilters },
-            refiners: { $set: refinerConfiguration }
+            refiners: { $set: refinerConfiguration },
+            queryModifier: { $set: queryModifier },
         });
 
         const isValueConnected = !!this.properties.queryKeywords.tryGetSource();
@@ -361,6 +371,12 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
             // Add custom web components if any
             this.availableWebComponentDefinitions = this.availableWebComponentDefinitions.concat(extensibilityLibrary.getCustomWebComponents());
+
+            // Initialize query modifier if present
+            const queryModifierDefinition = extensibilityLibrary.getQueryModifier();
+            if (queryModifierDefinition) {
+              this._queryModifierInstance = await this._initQueryModifierInstance(queryModifierDefinition);
+            }
         }
 
         // Set the default search results layout
@@ -375,6 +391,34 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
         this._initComplete = true;
         return super.onInit();
+    }
+
+    private async _initQueryModifierInstance(queryModifierDefinition: IQueryModifierDefinition<any>): Promise<IQueryModifierInstance<any>> {
+
+        if (!queryModifierDefinition) {
+            return null;
+        }
+
+        let isInitialized = false;
+        let instance: BaseQueryModifier = null;
+
+        try {
+            if (this.properties.enableQueryModifier) {
+                instance = ObjectCreator.createEntity(queryModifierDefinition.class, this.context);
+                await instance.onInit();
+                isInitialized = true;
+            }
+        }
+        catch (error) {
+            console.log(`Unable to initialize query modifier '${queryModifierDefinition.displayName}'. ${error}`);
+        }
+        finally {
+            return {
+                ...queryModifierDefinition,
+                instance,
+                isInitialized
+            };
+        }
     }
 
     private _convertToSortConfig(sortList: string): ISortFieldConfiguration[] {
@@ -487,11 +531,20 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         this.properties.synonymList = Array.isArray(this.properties.synonymList) ? this.properties.synonymList : [];
         this.properties.searchQueryLanguage = this.properties.searchQueryLanguage ? this.properties.searchQueryLanguage : -1;
         this.properties.templateParameters = this.properties.templateParameters ? this.properties.templateParameters : {};
+        this.properties.enableQueryModifier = this.properties.enableQueryModifier !== undefined ? this.properties.enableQueryModifier : true;
     }
 
     protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
 
         const templateParametersGroup = this._getTemplateFieldsGroup();
+
+        let searchQueryGroups = [];
+        searchQueryGroups.push(this._getSearchQueryFields());
+
+        // If we have a query modifier instance, then render query modifier settings group
+        if (this._queryModifierInstance) {
+          searchQueryGroups.push(this._getQueryModificationGroup());
+        }
 
         let stylingPageGroups: IPropertyPaneGroup[] = [
             {
@@ -511,9 +564,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                     header: {
                         description: strings.SearchQuerySettingsGroupName
                     },
-                    groups: [
-                        this._getSearchQueryFields()
-                    ]
+                    groups: searchQueryGroups,
                 },
                 {
                     groups: [
@@ -659,6 +710,23 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         }
 
         this._synonymTable = this._convertToSynonymTable(this.properties.synonymList);
+
+        if (propertyPath.localeCompare('enableQueryModifier') === 0) {
+
+            // Load extensibility library if present
+            const extensibilityLibrary = await this._extensibilityService.loadExtensibilityLibrary();
+
+            // Load extensibility additions
+            if (extensibilityLibrary) {
+
+                // Initialize query modifier if present
+                const queryModifierDefinition = extensibilityLibrary.getQueryModifier();
+                if (queryModifierDefinition) {
+                    this._queryModifierInstance = await this._initQueryModifierInstance(queryModifierDefinition);
+                    this.context.dynamicDataSourceManager.notifyPropertyChanged(SearchComponentType.SearchResultsWebPart);
+                }
+            }
+        }
     }
 
     protected async onPropertyPaneConfigurationStart() {
@@ -1124,6 +1192,36 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                 this.render();
             }
         } as IPropertyPaneConditionalGroup;
+    }
+
+    private _getQueryModificationGroup(): IPropertyPaneGroup {
+        let queryModificationFields: IPropertyPaneField<any>[] = [];
+
+        queryModificationFields.push(
+            PropertyPaneLabel('QueryModifierOverview', {
+                text: strings.QueryModifier.OverviewLabel
+            })
+        );
+
+        if (this._queryModifierInstance.description) {
+            queryModificationFields.push(
+                PropertyPaneLabel('QueryModifierDescription', {
+                    text: this._queryModifierInstance.description
+                })
+            );
+        }
+
+        queryModificationFields.push(
+            PropertyPaneToggle('enableQueryModifier', {
+                label: `${strings.QueryModifier.EnableLabelPrefix} ${this._queryModifierInstance.displayName || strings.QueryModifier.NameLabel}`,
+                checked: this.properties.enableQueryModifier
+            })
+        );
+
+        return {
+            groupName: strings.QueryModifier.NameLabel,
+            groupFields: queryModificationFields
+        };
     }
 
     /**
