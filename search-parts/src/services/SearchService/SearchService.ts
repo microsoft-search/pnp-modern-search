@@ -218,15 +218,15 @@ class SearchService implements ISearchService {
                 // If we have a query modifier, then send query to it before sending to SharePoint
                 if (this._queryModifier) {
                     try {
-                        const queryModification = await this._queryModifier.modifyQuery({
+                        const queryModificationValue = await this._queryModifier.modifyQuery({
                             queryText: searchQuery.Querytext,
                             queryTemplate: searchQuery.QueryTemplate,
                             resultSourceId: searchQuery.SourceId,
                         });
 
-                        if (queryModification) {
-                            searchQuery.Querytext = queryModification.queryText;
-                            searchQuery.QueryTemplate = queryModification.queryTemplate;
+                        if (queryModificationValue) {
+                            searchQuery.Querytext = queryModificationValue.queryText;
+                            searchQuery.QueryTemplate = queryModificationValue.queryTemplate;
                         }
                         else {
                             Logger.write('[SearchService.search()]: Query modifier return an invalid response. Using original query.', LogLevel.Error);

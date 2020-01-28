@@ -5,5 +5,5 @@ This solution won't be here without the volunteer work of these people. Feel fre
 - Yannick Reekmans - [@yannickreekmans](https://twitter.com/yannickreekmans)
 - Albert-Jan Schot - [@appieschot](https://twitter.com/appieschot)
 - Tarald Gåsbakk (PuzzlePart) - [@taraldgasbakk](https://twitter.com/Taraldgasbakk)
-- Brad Schlintz - [@bschlintz](https://twitter.com/bschlintz)
+- Brad Schlintz (Microsoft) - [@bschlintz](https://twitter.com/bschlintz)
 - Richard Gigan - [@PooLP](https://twitter.com/PooLP)
