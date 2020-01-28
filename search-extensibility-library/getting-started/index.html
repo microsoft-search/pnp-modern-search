@@ -543,6 +543,46 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#create-a-custom-query-suggestion-provider" class="md-nav__link">
+    Create a custom query suggestion provider
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configure-suggestion-providers" class="md-nav__link">
+    Configure Suggestion Providers
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#create-a-custom-query-modifier" class="md-nav__link">
+    Create a custom query modifier
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configure-query-modifier" class="md-nav__link">
+    Configure Query Modifier
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
       
       
       
@@ -689,6 +729,46 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#create-a-custom-query-suggestion-provider" class="md-nav__link">
+    Create a custom query suggestion provider
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configure-suggestion-providers" class="md-nav__link">
+    Configure Suggestion Providers
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#create-a-custom-query-modifier" class="md-nav__link">
+    Create a custom query modifier
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configure-query-modifier" class="md-nav__link">
+    Configure Query Modifier
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
       
       
       
@@ -711,7 +791,7 @@
                   <h1>Getting started</h1>
                 
                 <h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
-<p>This solution allows you to create and register your own React component (wrapped as HTML web components) to be used in the search results Web Part Handlebars templates.</p>
+<p>This solution allows you to create and register your own React component (wrapped as HTML web components) to be used in the search results Web Part Handlebars templates. View the sample project <a href="https://github.com/microsoft-search/pnp-modern-search/tree/master/search-extensibility-library">here</a>.</p>
 <h2 id="used-sharepoint-framework-version">Used SharePoint Framework Version<a class="headerlink" href="#used-sharepoint-framework-version" title="Permanent link">&para;</a></h2>
 <p><img alt="SPFx" src="https://img.shields.io/badge/drop-1.9.1-green.svg" /></p>
 <h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h2>
@@ -838,6 +918,138 @@ export class MyCompanyLibraryLibrary implements IExtensibilityLibrary {
 <p>Bundle <code>gulp bundle --ship</code> and package your library <code>gulp package-solution --ship</code> and upload it either in the global or a site app catalog.</p>
 </li>
 </ol>
+<h2 id="create-a-custom-query-suggestion-provider">Create a custom query suggestion provider<a class="headerlink" href="#create-a-custom-query-suggestion-provider" title="Permanent link">&para;</a></h2>
+<p>A query suggestion provider allows you to fetch and display custom content or person suggestions. There is a default provider built-in which retrieves suggestions from SharePoint, however you may add additional providers using the approach outlined. In additional to dynamic suggestions as the user is typing, your provider may also surface "zero query" suggestions. These are displayed  when the search box has focus without any search text or if the search text is less than 2 characters.</p>
+<p>To create a custom suggestion provider, follow this procedure:</p>
+<ol>
+<li>Create a new TypeScript class that implements the <code>BaseSuggestionProvider</code> abstract class. You can create it anywhere in your project.</li>
+<li>
+<p>Implement the required methods and properties like the example below.</p>
+<div class="codehilite"><pre><span></span>import { BaseSuggestionProvider } from &#39;../models/BaseSuggestionProvider&#39;;
+import { ISuggestion } from &#39;../models/ISuggestion&#39;;
+
+export class CustomSuggestionProvider extends BaseSuggestionProvider  {
+    public static readonly ProviderName: string = &#39;custom-suggestion-provider&#39;;
+    public static readonly ProviderDisplayName: string = &#39;Custom Suggestion Provider&#39;;
+    public static readonly ProviderDescription: string = &#39;An example custom suggestion provider.&#39;;
+
+    public async onInit(): Promise&lt;void&gt; {
+        // initialization logic
+        // this._ctx // &lt;-- SPFx Webpart Context
+    }
+
+    public get isSuggestionsEnabled(): boolean {
+        return true;
+    }
+
+    public get isZeroTermSuggestionsEnabled(): boolean {
+        return true;
+    }
+
+    public async getSuggestions(queryText: string): Promise&lt;ISuggestion[]&gt; {
+        // fetch suggestions
+    }
+
+    public async getZeroTermSuggestions(): Promise&lt;ISuggestion[]&gt; {
+        // fetch zero term suggestions
+    }
+}
+</pre></div>
+
+
+</li>
+<li>
+<p>In the main entry point class (ex: MyCompanyLibraryLibrary.ts), register your custom query suggestion provider like the example below.</p>
+<div class="codehilite"><pre><span></span>import { IExtensibilityLibrary } from &quot;../../models/IExtensibilityLibrary&quot;;
+import { ISuggestionProviderDefinition } from &quot;../../models/ISuggestionProviderDefinition&quot;;
+import { CustomSuggestionProvider } from &quot;../CustomSuggestionProvider&quot;;
+
+...
+
+export class MyCompanyLibraryLibrary implements IExtensibilityLibrary {
+
+    public getCustomSuggestionProviders(): ISuggestionProviderDefinition&lt;any&gt;[] {
+        return [
+            {
+                providerName: CustomSuggestionProvider.ProviderName,
+                providerDisplayName: CustomSuggestionProvider.ProviderDisplayName,
+                providerDescription: CustomSuggestionProvider.ProviderDescription,
+                providerClass: CustomSuggestionProvider
+            },
+        ];
+    }
+}
+</pre></div>
+
+
+</li>
+</ol>
+<h3 id="configure-suggestion-providers">Configure Suggestion Providers<a class="headerlink" href="#configure-suggestion-providers" title="Permanent link">&para;</a></h3>
+<p>When one or more custom query suggestion providers are made available via the extensibility library, an additional configuration pane becomes availabe in the Search Box web part settings. From the panel you can enable or disable individual suggestion providers.</p>
+<p><img alt="Search Box" src="../../images/sb_configure_suggestions.png" />
+<img alt="Search Box" src="../../images/sb_custom_suggestion_providers.png" /></p>
+<h2 id="create-a-custom-query-modifier">Create a custom query modifier<a class="headerlink" href="#create-a-custom-query-modifier" title="Permanent link">&para;</a></h2>
+<p>A query modifier allows you to manipulate the user's search query before it is sent to SharePoint. Only one query modifier may be registered via the extensibility library. The modifier receives the query text (from search box), query template and result source ID (from search results or search verticals if configured) as parameters. The modifier returns an object with the updated query text and query template. This capability allows you to inject additional terms or criteria to the user's search query such as spelling corrections or translations.</p>
+<p>To create a custom query modifier, follow this procedure:</p>
+<ol>
+<li>Create a new TypeScript class that implements the <code>BaseQueryModifier</code> abstract class. You can create it anywhere in your project.</li>
+<li>
+<p>Implement the required methods and properties like the example below.</p>
+<div class="codehilite"><pre><span></span>import { BaseQueryModifier } from &#39;../models/BaseQueryModifier&#39;;
+import { IQueryModifierInput, IQueryModification } from &#39;../models/IQueryModification&#39;;
+
+export class CustomQueryModifier extends BaseQueryModifier  {
+
+    public static readonly DisplayName: string = &#39;Sample Query Modifier&#39;;
+    public static readonly Description: string = &#39;Adds a filter to the query so that only word documents are returned.&#39;;
+
+    public async onInit(): Promise&lt;void&gt; {
+        // this._ctx // SPFx Webpart Context
+    }
+
+    public async modifyQuery(query: IQueryModifierInput): Promise&lt;IQueryModification&gt; {
+        // e.g. Always return docx files
+        const newQueryText = `${query.queryText} fileextension:docx`;
+
+        // Leave query template unchanged
+        const newQueryTemplate = query.queryTemplate;
+
+        return {
+            queryText: newQueryText,
+            queryTemplate: newQueryTemplate
+        } as IQueryModification);
+    }
+}
+</pre></div>
+
+
+</li>
+<li>
+<p>In the main entry point class (ex: MyCompanyLibraryLibrary.ts), register your custom query modifier like the example below.</p>
+<div class="codehilite"><pre><span></span>import { IExtensibilityLibrary } from &quot;../../models/IExtensibilityLibrary&quot;;
+import { IQueryModifierDefinition } from &quot;../../models/IQueryModifierDefinition&quot;;
+import { CustomQueryModifier } from &quot;../CustomQueryModifier&quot;;
+
+...
+
+export class MyCompanyLibraryLibrary implements IExtensibilityLibrary {
+
+    public getQueryModifier(): IQueryModifierDefinition&lt;any&gt; {
+        return {
+            displayName: CustomQueryModifier.DisplayName,
+            description: CustomQueryModifier.Description,
+            class: CustomQueryModifier
+        };
+    }
+}
+</pre></div>
+
+
+</li>
+</ol>
+<h3 id="configure-query-modifier">Configure Query Modifier<a class="headerlink" href="#configure-query-modifier" title="Permanent link">&para;</a></h3>
+<p>When a query modifier is made available via the extensibility library, an additional configuration sections becomes visible in the Search Results web part settings. Here you can see the query modifier name and description along with a toggle to disable it if needed.</p>
+<p><img alt="Search Results - Query Modifier" src="../../images/search_query_modifier.png" /></p>
                 
                   
                 

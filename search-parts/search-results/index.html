@@ -502,6 +502,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#use-the-or-operator" class="md-nav__link">
+    Use the 'OR' operator
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#best-bets" class="md-nav__link">
     Best bets
   </a>
@@ -800,6 +807,13 @@
         <li class="md-nav__item">
   <a href="#custom-query-variables" class="md-nav__link">
     Custom query variables
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#use-the-or-operator" class="md-nav__link">
+    Use the 'OR' operator
   </a>
   
 </li>
@@ -1125,6 +1139,19 @@
 </tr>
 </tbody>
 </table>
+<h4 id="use-the-or-operator">Use the 'OR' operator<a class="headerlink" href="#use-the-or-operator" title="Permanent link">&para;</a></h4>
+<p>To deal with mutli valued properties (like taxonomy multi or choices), you can use the 'OR' operator syntax <code>{|&lt;property&gt;&lt;operator&gt;&lt;multi_valuesporperty&gt;}</code>. The search query will be expanded like this:</p>
+<div class="codehilite"><pre><span></span>((&lt;property&gt;&lt;operator&gt;&lt;value_1&gt;) OR (&lt;property&gt;&lt;operator&gt;&lt;value_2&gt;) OR (&lt;property&gt;&lt;operator&gt;&lt;value_3&gt;) ...)
+</pre></div>
+
+
+<p><strong>Examples:</strong></p>
+<ul>
+<li>Using an user profile multi values taxonomy property: <code>{|owstaxidmetadataalltagsinfo:{User.SPS-Hashtags}}</code></li>
+<li>Using a page multi values taxonomy property: <code>{|owstaxidmetadataalltagsinfo:{Page.myTaxonomyMultiColumn.TermID}}</code></li>
+<li>Using a page multi values choice property: <code>{|RefinableStringXX:{Page.myChoiceMultiColumn}}</code></li>
+</ul>
+<p>At any time, you can see the resolved query using the 'Debug' layout an inspecting the <code>queryModification</code> property.</p>
 <h4 id="best-bets">Best bets<a class="headerlink" href="#best-bets" title="Permanent link">&para;</a></h4>
 <p>This WP supports SharePoint best bets via SharePoint query rules:</p>
 <p><img alt="Query Rules" src="../../images/query_rules.png" /></p>

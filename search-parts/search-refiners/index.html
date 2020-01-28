@@ -445,6 +445,40 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#templates" class="md-nav__link">
+    Templates
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#persona" class="md-nav__link">
+    Persona
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#file-type" class="md-nav__link">
+    File Type
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#container-tree" class="md-nav__link">
+    Container Tree
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
       
       
       
@@ -661,6 +695,40 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#templates" class="md-nav__link">
+    Templates
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#persona" class="md-nav__link">
+    Persona
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#file-type" class="md-nav__link">
+    File Type
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#container-tree" class="md-nav__link">
+    Container Tree
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
       
       
       
@@ -725,6 +793,18 @@
 </tr>
 </tbody>
 </table>
+<h4 id="templates">Templates<a class="headerlink" href="#templates" title="Permanent link">&para;</a></h4>
+<h5 id="persona">Persona<a class="headerlink" href="#persona" title="Permanent link">&para;</a></h5>
+<p>The persona template work with technical account name (ex : i:0#.f|membership|pierre.dupond@tenantsharepoint.onmicrosoft.com).
+By default, the <em>"Author"</em> managed property returns only the display name (ex : "Pierre Dupont"). 
+To get the 'Persona' template work with "Author", you need to map crawled properties <code>ows_q_USER_Author</code> to a managed properties <code>RefinableStringXX</code>.</p>
+<p>All crawled properties <code>ows_q_USER_\&lt;name&gt;</code> and managed properties like <code>People:Manager</code>,<code>People:AccountName</code>,etc. return technical account name.</p>
+<h5 id="file-type">File Type<a class="headerlink" href="#file-type" title="Permanent link">&para;</a></h5>
+<p>The <em>"File Type"</em> template is intended to work with the <code>FileExtension</code> managed property.</p>
+<h5 id="container-tree">Container Tree<a class="headerlink" href="#container-tree" title="Permanent link">&para;</a></h5>
+<p>The _"Container Tree" template is intended to work with the <code>ParentLink</code> managed property. Since this one is not refinable by default, you must map the <code>ows_ParentUrl</code> crawled property to a <code>RefinableStringXX</code> managed property.
+The purpose of this template is to give the ability to navigate trough a folder hierarchy as metadata by parsing the parent link URL segments.</p>
+<p><img alt="Container Tree" src="../../images/container_tree_template.png" /></p>
                 
                   
                 
