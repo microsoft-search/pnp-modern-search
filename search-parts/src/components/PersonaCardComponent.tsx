@@ -3,6 +3,8 @@ import { IPersonaSharedProps, Persona } from 'office-ui-fabric-react/lib/Persona
 import { TemplateService } from "../services/TemplateService/TemplateService";
 import { BaseWebComponent } from './BaseWebComponent';
 import * as ReactDOM from 'react-dom';
+import { IReadonlyTheme } from '@microsoft/sp-component-base';
+import { ITheme } from '@uifabric/styling';
 
 export interface IPersonaCardComponentProps {
 
@@ -23,6 +25,11 @@ export interface IPersonaCardComponentProps {
      * The persona image size
      */
     personaSize?: string;
+
+    /**
+     * The current theme settings
+     */
+    themeVariant?: IReadonlyTheme;
 }
 
 export interface IPersonaCardComponentState {
@@ -39,6 +46,7 @@ export class PersonaCardComponent extends React.Component<IPersonaCardComponentP
         }
         
         const persona: IPersonaSharedProps = {
+            theme:this.props.themeVariant as ITheme,
             imageUrl: processedProps.imageUrl,
             text: processedProps.text,
             secondaryText: processedProps.secondaryText,

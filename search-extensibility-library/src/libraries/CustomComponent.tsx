@@ -81,9 +81,11 @@ export class MyCustomComponentWebComponent extends BaseWebComponent {
     }
  
     public async connectedCallback() {
- 
+        
        let props = this.resolveAttributes();
-       const debugView = <CustomComponent {...props}/>;
-       ReactDOM.render(debugView, this);
+
+       // You can use this._ctx here to access current Web Part context
+       const customComponent = <CustomComponent {...props}/>;
+       ReactDOM.render(customComponent, this);
     }    
 }

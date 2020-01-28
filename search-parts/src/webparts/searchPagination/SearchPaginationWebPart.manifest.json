@@ -5,6 +5,7 @@
   "componentType": "WebPart",
   "version": "*",
   "manifestVersion": 2,
+  "supportsThemeVariants": true,
   "requiresCustomScript": false,
   "supportedHosts": ["SharePointWebPart"],
   "loadLegacyFabricCss": true,
@@ -19,7 +20,7 @@
     },
     "description": { 
       "default": "Displays the pagination for the search results",
-      "fr-fr": "Affiche la pagination pour les rÃ©sultats de la recherche" 
+      "fr-fr": "Affiche la pagination pour les résultats de la recherche" 
     },
     "officeFabricIconFontName": "More",
     "properties": {

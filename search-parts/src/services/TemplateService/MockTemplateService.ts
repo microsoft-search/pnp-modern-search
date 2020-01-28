@@ -5,10 +5,17 @@ import { IComboBoxOption } from 'office-ui-fabric-react/lib/ComboBox';
 import { TemplateService } from './TemplateService';
 import MockSearchService from '../SearchService/MockSearchService';
 import { IPropertyPaneField } from '@microsoft/sp-property-pane';
+import { WebPartContext } from '@microsoft/sp-webpart-base';
 
 class MockTemplateService extends BaseTemplateService {
-    constructor(locale: string) {
-        super();    
+
+    private ctx: WebPartContext;
+
+    constructor(locale: string, ctx : WebPartContext) {
+        super(ctx);    
+
+        this.ctx = ctx;
+
         this.CurrentLocale = locale;
     }
 
@@ -31,7 +38,7 @@ class MockTemplateService extends BaseTemplateService {
 
     public getTemplateParameters(layout: ResultsLayoutOption, properties: ISearchResultsWebPartProps, onUpdateAvailableProperties?: (properties: IComboBoxOption[]) => void, availableProperties?: IComboBoxOption[]): IPropertyPaneField<any>[] {
         
-        const templateService = new TemplateService(null, this.CurrentLocale, new MockSearchService());
+        const templateService = new TemplateService(null, this.CurrentLocale, new MockSearchService(), null, this.ctx);
         return templateService.getTemplateParameters(layout, properties, onUpdateAvailableProperties);
     }
 }

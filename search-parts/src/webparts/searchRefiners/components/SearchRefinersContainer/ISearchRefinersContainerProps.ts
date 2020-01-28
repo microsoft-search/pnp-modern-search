@@ -2,9 +2,10 @@ import { IRefinementResult, IRefinementFilter } from "../../../../models/ISearch
 import IRefinerConfiguration from "../../../../models/IRefinerConfiguration";
 import { DisplayMode } from "@microsoft/sp-core-library";
 import RefinersLayoutOption from "../../../../models/RefinersLayoutOptions";
+import IUserService from '../../../../services/UserService/IUserService';
+import { IReadonlyTheme } from "@microsoft/sp-component-base";
 
 export interface ISearchRefinersContainerProps {
-
   /**
    * The Web Part title
    */
@@ -49,4 +50,14 @@ export interface ISearchRefinersContainerProps {
    * The current search query
    */
   query: string;
+
+  /**
+   * UserService
+   */
+  userService: IUserService;
+
+  /**
+   * The current theme variant
+   */
+  themeVariant: IReadonlyTheme | undefined;
 }

@@ -4,7 +4,7 @@ Thissolution contains all search Web Parts you can use on your SharePoint modern
 
 ## Used SharePoint Framework Version ##
 
-![SPFx](https://img.shields.io/badge/drop-1.9.1-green.svg)
+![SPFx](https://img.shields.io/badge/drop-1.10.0-green.svg)
 
 This solution includes the following Web Parts:
 

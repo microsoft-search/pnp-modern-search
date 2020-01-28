@@ -7,6 +7,7 @@ import { Text } from '@microsoft/sp-core-library';
 import { Link } from 'office-ui-fabric-react/lib/Link';
 import * as strings from 'SearchRefinersWebPartStrings';
 import * as update from 'immutability-helper';
+import { ITheme } from "@uifabric/styling";
 
 export default class CheckboxTemplate extends React.Component<IBaseRefinerTemplateProps, IBaseRefinerTemplateState> {
 
@@ -26,6 +27,12 @@ export default class CheckboxTemplate extends React.Component<IBaseRefinerTempla
     }
 
     public render() {
+
+        let disableButtons = false;
+            if (this.props.selectedValues.length === 0 && this.state.refinerSelectedFilterValues.length === 0) {
+            disableButtons = true;
+        }
+
         return <div>
             {
                 this.props.refinementResult.Values.map((refinementValue: IRefinementValue, j) => {
@@ -41,6 +48,7 @@ export default class CheckboxTemplate extends React.Component<IBaseRefinerTempla
                                     padding: 10
                                 }
                             }}
+                            theme={this.props.themeVariant as ITheme}
                             key={j}
                             checked={this._isValueInFilterSelection(refinementValue)}
                             label={Text.format(refinementValue.RefinementValue + ' ({0})', refinementValue.RefinementCount)}
@@ -52,9 +60,13 @@ export default class CheckboxTemplate extends React.Component<IBaseRefinerTempla
             }
             {
                 this.props.isMultiValue ?
-
+            
                     <div>
-                        <Link onClick={() => { this._applyFilters(this.state.refinerSelectedFilterValues); }} disabled={this.state.refinerSelectedFilterValues.length === 0}>{strings.Refiners.ApplyFiltersLabel}</Link>|<Link onClick={this._clearFilters} disabled={this.state.refinerSelectedFilterValues.length === 0}>{strings.Refiners.ClearFiltersLabel}</Link>
+                        <Link 
+                            theme={this.props.themeVariant as ITheme} 
+                            onClick={() => { this._applyFilters(this.state.refinerSelectedFilterValues); }} 
+                            disabled={disableButtons}>{strings.Refiners.ApplyFiltersLabel}
+                        </Link>|<Link theme={this.props.themeVariant as ITheme}  onClick={this._clearFilters} disabled={this.state.refinerSelectedFilterValues.length === 0}>{strings.Refiners.ClearFiltersLabel}</Link>
                     </div>
 
                     : null

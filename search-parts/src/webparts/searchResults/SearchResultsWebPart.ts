@@ -1,7 +1,6 @@
 ﻿import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import { Version, Text, Environment, EnvironmentType, DisplayMode } from '@microsoft/sp-core-library';
-import { BaseClientSideWebPart, IWebPartPropertiesMetadata, IPropertyPaneGroup } from '@microsoft/sp-webpart-base';
 import {
     IPropertyPaneConfiguration,
     PropertyPaneTextField,
@@ -17,7 +16,8 @@ import {
     PropertyPaneCheckbox,
     PropertyPaneHorizontalRule,
     PropertyPaneDropdown,
-    IPropertyPaneDropdownOption
+    IPropertyPaneDropdownOption,
+    PropertyPaneLabel
 } from "@microsoft/sp-property-pane";
 import * as strings from 'SearchResultsWebPartStrings';
 import SearchResultsContainer from './components/SearchResultsContainer/SearchResultsContainer';
@@ -62,6 +62,12 @@ import { ExtensibilityService } from '../../services/ExtensibilityService/Extens
 import IExtensibilityService from '../../services/ExtensibilityService/IExtensibilityService';
 import { IComponentDefinition } from '../../services/ExtensibilityService/IComponentDefinition';
 import { AvailableComponents } from '../../components/AvailableComponents';
+import { BaseClientSideWebPart, IWebPartPropertiesMetadata } from "@microsoft/sp-webpart-base";
+import { IPropertyPaneGroup } from "@microsoft/sp-property-pane";
+import { IQueryModifierDefinition } from '../../services/ExtensibilityService/IQueryModifierDefinition';
+import { IQueryModifierInstance } from '../../services/ExtensibilityService/IQueryModifierInstance';
+import { ObjectCreator } from '../../services/ExtensibilityService/ObjectCreator';
+import { BaseQueryModifier } from '../../services/ExtensibilityService/BaseQueryModifier';
 
 export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchResultsWebPartProps> implements IDynamicDataCallables {
 
@@ -74,6 +80,8 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
     private _placeholder = null;
     private _propertyFieldCollectionData = null;
     private _customCollectionFieldType = null;
+    private _queryModifierInstance: IQueryModifierInstance<any> = null;
+    private _foundQueryModifier: boolean = false;
 
     private _propertyFieldCodeEditorLanguages = null;
     private _resultService: IResultService;
@@ -110,6 +118,11 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
     private _themeProvider: ThemeProvider;
     private _themeVariant: IReadonlyTheme;
     private _initComplete = false;
+
+    /**
+     * Information about time zone bias (current user or web)
+     */
+    private _timeZoneBias: any;
 
     /**
      * The available web component definitions (not registered yet)
@@ -168,16 +181,11 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         let sourceId: string = this.properties.resultSourceId;
         let getVerticalsCounts: boolean = false;
 
-        let queryDataSourceValue = this._dynamicDataService.getDataSourceValue(this.properties.queryKeywords, this.properties.sourceId, this.properties.propertyId, this.properties.propertyPath);
-        if (typeof (queryDataSourceValue) !== 'string') {
-            queryDataSourceValue = '';
-            this.context.propertyPane.refresh();
-        }
-
-        let queryKeywords = (!queryDataSourceValue) ? this.properties.defaultSearchQuery : queryDataSourceValue;
+        let queryDataSourceValue = this.properties.queryKeywords.tryGetValue();
+        let queryKeywords = queryDataSourceValue ? queryDataSourceValue : this.properties.defaultSearchQuery;
 
         // Get data from connected sources
-        if (this._refinerSourceData) {
+        if (this._refinerSourceData && !this._refinerSourceData.isDisposed) {
             const refinerSourceData: IRefinerSourceData = this._refinerSourceData.tryGetValue();
             if (refinerSourceData) {
                 refinerConfiguration = sortBy(refinerSourceData.refinerConfiguration, 'sortIdx');
@@ -185,7 +193,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             }
         }
 
-        if (this._searchVerticalSourceData) {
+        if (this._searchVerticalSourceData && !this._searchVerticalSourceData.isDisposed) {
             const searchVerticalSourceData: ISearchVerticalSourceData = this._searchVerticalSourceData.tryGetValue();
             if (searchVerticalSourceData) {
                 if (searchVerticalSourceData.selectedVertical) {
@@ -196,7 +204,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             }
         }
 
-        if (this._paginationSourceData) {
+        if (this._paginationSourceData && !this._paginationSourceData.isDisposed) {
             const paginationSourceData: IPaginationSourceData = this._paginationSourceData.tryGetValue();
             if (paginationSourceData) {
                 selectedPage = paginationSourceData.selectedPage;
@@ -204,9 +212,12 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         }
 
         const currentLocaleId = LocalizationHelper.getLocaleId(this.context.pageContext.cultureInfo.currentCultureName);
+        const queryModifier = this.properties.enableQueryModifier && this._queryModifierInstance && this._queryModifierInstance.isInitialized
+                                ? this._queryModifierInstance.instance : null;
 
         // Configure the provider before the query according to our needs
         this._searchService = update(this._searchService, {
+            timeZoneId: { $set: this._timeZoneBias && this._timeZoneBias.Id ? this._timeZoneBias.Id : null},
             resultsCount: { $set: this.properties.maxResultsCount },
             queryTemplate: { $set: queryTemplate },
             resultSourceId: { $set: sourceId },
@@ -217,7 +228,8 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             synonymTable: { $set: this._synonymTable },
             queryCulture: { $set: this.properties.searchQueryLanguage !== -1 ? this.properties.searchQueryLanguage : currentLocaleId },
             refinementFilters: { $set: selectedFilters },
-            refiners: { $set: refinerConfiguration }
+            refiners: { $set: refinerConfiguration },
+            queryModifier: { $set: queryModifier },
         });
 
         const isValueConnected = !!this.properties.queryKeywords.tryGetSource();
@@ -245,6 +257,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                 rendererId: this.properties.selectedLayout as any,
                 enableLocalization: this.properties.enableLocalization,
                 selectedPage: selectedPage,
+                selectedLayout: this.properties.selectedLayout,
                 onSearchResultsUpdate: async (results, mountingNodeId, searchService) => {
                     if (this.properties.selectedLayout in ResultsLayoutOption) {
                         let node = document.getElementById(mountingNodeId);
@@ -319,25 +332,27 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
         if (Environment.type === EnvironmentType.Local) {
             this._taxonomyService = new MockTaxonomyService();
-            this._templateService = new MockTemplateService(this.context.pageContext.cultureInfo.currentUICultureName);
+            this._templateService = new MockTemplateService(this.context.pageContext.cultureInfo.currentUICultureName, this.context);
             this._searchService = new MockSearchService();
 
         } else {
             this._taxonomyService = new TaxonomyService(this.context.pageContext.site.absoluteUrl);
 
-            let timeZoneBias = {
+            this._timeZoneBias = {
                 WebBias: this.context.pageContext.legacyPageContext.webTimeZoneData.Bias,
                 WebDST: this.context.pageContext.legacyPageContext.webTimeZoneData.DaylightBias,
                 UserBias: null,
-                UserDST: null
+                UserDST: null,
+                Id: this.context.pageContext.legacyPageContext.webTimeZoneData.Id
             };
             if (this.context.pageContext.legacyPageContext.userTimeZoneData) {
-                timeZoneBias.UserBias = this.context.pageContext.legacyPageContext.userTimeZoneData.Bias;
-                timeZoneBias.UserDST = this.context.pageContext.legacyPageContext.userTimeZoneData.DaylightBias;
+                this._timeZoneBias.UserBias = this.context.pageContext.legacyPageContext.userTimeZoneData.Bias;
+                this._timeZoneBias.UserDST = this.context.pageContext.legacyPageContext.userTimeZoneData.DaylightBias;
+                this._timeZoneBias.Id = this.context.pageContext.legacyPageContext.webTimeZoneData.Id;
             }
 
             this._searchService = new SearchService(this.context.pageContext, this.context.spHttpClient);
-            this._templateService = new TemplateService(this.context.spHttpClient, this.context.pageContext.cultureInfo.currentUICultureName, this._searchService, timeZoneBias, this.context);
+            this._templateService = new TemplateService(this.context.spHttpClient, this.context.pageContext.cultureInfo.currentUICultureName, this._searchService, this._timeZoneBias, this.context);
         }
 
         this._resultService = new ResultService();
@@ -348,12 +363,6 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
         this.ensureDataSourceConnection();
 
-        if (this.properties.sourceId) {
-            // Needed to retrieve manually the value for the dynamic property at render time. See the associated SPFx bug
-            // https://github.com/SharePoint/sp-dev-docs/issues/2985
-            this.context.dynamicDataProvider.registerAvailableSourcesChanged(this.render);
-        }
-
         // Load extensibility library if present
         const extensibilityLibrary = await this._extensibilityService.loadExtensibilityLibrary();
 
@@ -362,6 +371,12 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
             // Add custom web components if any
             this.availableWebComponentDefinitions = this.availableWebComponentDefinitions.concat(extensibilityLibrary.getCustomWebComponents());
+
+            // Initialize query modifier if present
+            const queryModifierDefinition = extensibilityLibrary.getQueryModifier();
+            if (queryModifierDefinition) {
+              this._queryModifierInstance = await this._initQueryModifierInstance(queryModifierDefinition);
+            }
         }
 
         // Set the default search results layout
@@ -371,10 +386,39 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         this._templateService.registerWebComponents(this.availableWebComponentDefinitions);
 
         this.context.dynamicDataSourceManager.initializeSource(this);
+
         this._synonymTable = this._convertToSynonymTable(this.properties.synonymList);
 
         this._initComplete = true;
         return super.onInit();
+    }
+
+    private async _initQueryModifierInstance(queryModifierDefinition: IQueryModifierDefinition<any>): Promise<IQueryModifierInstance<any>> {
+
+        if (!queryModifierDefinition) {
+            return null;
+        }
+
+        let isInitialized = false;
+        let instance: BaseQueryModifier = null;
+
+        try {
+            if (this.properties.enableQueryModifier) {
+                instance = ObjectCreator.createEntity(queryModifierDefinition.class, this.context);
+                await instance.onInit();
+                isInitialized = true;
+            }
+        }
+        catch (error) {
+            console.log(`Unable to initialize query modifier '${queryModifierDefinition.displayName}'. ${error}`);
+        }
+        finally {
+            return {
+                ...queryModifierDefinition,
+                instance,
+                isInitialized
+            };
+        }
     }
 
     private _convertToSortConfig(sortList: string): ISortFieldConfiguration[] {
@@ -481,17 +525,26 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         ];
 
         this.properties.sortableFields = Array.isArray(this.properties.sortableFields) ? this.properties.sortableFields : [];
-        this.properties.selectedProperties = this.properties.selectedProperties ? this.properties.selectedProperties : "Title,Path,Created,Filename,SiteLogo,PreviewUrl,PictureThumbnailURL,ServerRedirectedPreviewURL,ServerRedirectedURL,HitHighlightedSummary,FileType,contentclass,ServerRedirectedEmbedURL,DefaultEncodingURL,owstaxidmetadataalltagsinfo";
+        this.properties.selectedProperties = this.properties.selectedProperties ? this.properties.selectedProperties : "Title,Path,Created,Filename,SiteLogo,PreviewUrl,PictureThumbnailURL,ServerRedirectedPreviewURL,ServerRedirectedURL,HitHighlightedSummary,FileType,contentclass,ServerRedirectedEmbedURL,DefaultEncodingURL,owstaxidmetadataalltagsinfo,SiteId,WebId,UniqueID";
         this.properties.maxResultsCount = this.properties.maxResultsCount ? this.properties.maxResultsCount : 10;
         this.properties.resultTypes = Array.isArray(this.properties.resultTypes) ? this.properties.resultTypes : [];
         this.properties.synonymList = Array.isArray(this.properties.synonymList) ? this.properties.synonymList : [];
         this.properties.searchQueryLanguage = this.properties.searchQueryLanguage ? this.properties.searchQueryLanguage : -1;
         this.properties.templateParameters = this.properties.templateParameters ? this.properties.templateParameters : {};
+        this.properties.enableQueryModifier = this.properties.enableQueryModifier !== undefined ? this.properties.enableQueryModifier : true;
     }
 
     protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
 
         const templateParametersGroup = this._getTemplateFieldsGroup();
+
+        let searchQueryGroups = [];
+        searchQueryGroups.push(this._getSearchQueryFields());
+
+        // If we have a query modifier instance, then render query modifier settings group
+        if (this._queryModifierInstance) {
+          searchQueryGroups.push(this._getQueryModificationGroup());
+        }
 
         let stylingPageGroups: IPropertyPaneGroup[] = [
             {
@@ -511,9 +564,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                     header: {
                         description: strings.SearchQuerySettingsGroupName
                     },
-                    groups: [
-                        this._getSearchQueryFields()
-                    ]
+                    groups: searchQueryGroups,
                 },
                 {
                     groups: [
@@ -577,12 +628,6 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
     }
 
     protected async onPropertyPaneFieldChanged(propertyPath: string) {
-
-        if (propertyPath.localeCompare('queryKeywords') === 0) {
-
-            // Update data source information
-            this._saveDataSourceInfo();
-        }
 
         if (!this.properties.useDefaultSearchQuery) {
             this.properties.defaultSearchQuery = '';
@@ -665,27 +710,27 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         }
 
         this._synonymTable = this._convertToSynonymTable(this.properties.synonymList);
+
+        if (propertyPath.localeCompare('enableQueryModifier') === 0) {
+
+            // Load extensibility library if present
+            const extensibilityLibrary = await this._extensibilityService.loadExtensibilityLibrary();
+
+            // Load extensibility additions
+            if (extensibilityLibrary) {
+
+                // Initialize query modifier if present
+                const queryModifierDefinition = extensibilityLibrary.getQueryModifier();
+                if (queryModifierDefinition) {
+                    this._queryModifierInstance = await this._initQueryModifierInstance(queryModifierDefinition);
+                    this.context.dynamicDataSourceManager.notifyPropertyChanged(SearchComponentType.SearchResultsWebPart);
+                }
+            }
+        }
     }
 
     protected async onPropertyPaneConfigurationStart() {
         await this.loadPropertyPaneResources();
-    }
-
-    /**
-    * Save the useful information for the connected data source.
-    * They will be used to get the value of the dynamic property if this one fails.
-    */
-    private _saveDataSourceInfo() {
-
-        if (this.properties.queryKeywords.tryGetSource()) {
-            this.properties.sourceId = this.properties.queryKeywords["_reference"]._sourceId;
-            this.properties.propertyId = this.properties.queryKeywords["_reference"]._property;
-            this.properties.propertyPath = this.properties.queryKeywords["_reference"]._propertyPath;
-        } else {
-            this.properties.sourceId = null;
-            this.properties.propertyId = null;
-            this.properties.propertyPath = null;
-        }
     }
 
     /**
@@ -1149,6 +1194,36 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         } as IPropertyPaneConditionalGroup;
     }
 
+    private _getQueryModificationGroup(): IPropertyPaneGroup {
+        let queryModificationFields: IPropertyPaneField<any>[] = [];
+
+        queryModificationFields.push(
+            PropertyPaneLabel('QueryModifierOverview', {
+                text: strings.QueryModifier.OverviewLabel
+            })
+        );
+
+        if (this._queryModifierInstance.description) {
+            queryModificationFields.push(
+                PropertyPaneLabel('QueryModifierDescription', {
+                    text: this._queryModifierInstance.description
+                })
+            );
+        }
+
+        queryModificationFields.push(
+            PropertyPaneToggle('enableQueryModifier', {
+                label: `${strings.QueryModifier.EnableLabelPrefix} ${this._queryModifierInstance.displayName || strings.QueryModifier.NameLabel}`,
+                checked: this.properties.enableQueryModifier
+            })
+        );
+
+        return {
+            groupName: strings.QueryModifier.NameLabel,
+            groupFields: queryModificationFields
+        };
+    }
+
     /**
      * Determines the group fields for styling options inside the property pane
      */
@@ -1494,7 +1569,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
     public getPropertyValue(propertyId: string): ISearchResultSourceData {
 
         const searchResultSourceData: ISearchResultSourceData = {
-            queryKeywords: this._dynamicDataService.getDataSourceValue(this.properties.queryKeywords, this.properties.sourceId, this.properties.propertyId, this.properties.propertyPath),
+            queryKeywords: this.properties.queryKeywords.tryGetValue(),
             refinementResults: (this._resultService && this._resultService.results) ? this._resultService.results.RefinementResults : [],
             paginationInformation: (this._resultService && this._resultService.results) ? this._resultService.results.PaginationInformation : {
                 CurrentPage: 1,

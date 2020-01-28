@@ -74,12 +74,6 @@ const envCheck = build.subTask('environmentCheck', (gulp, config, done) => {
                 }
             }
 
-            if (generatedConfiguration.optimization) {
-                log(`[${colors.cyan('configure-webpack')}] Setting ${colors.cyan('minimizer')} to run ${colors.cyan(buildConfig.parallel)} processes in parallel and enabling cache...`);
-                generatedConfiguration.optimization.minimizer[0].options.parallel = buildConfig.parallel;
-                generatedConfiguration.optimization.minimizer[0].options.cache = true;
-            }
-
             return generatedConfiguration;
         }
     });

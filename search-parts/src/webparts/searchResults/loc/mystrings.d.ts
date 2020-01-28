@@ -157,6 +157,11 @@ declare interface ISearchResultsWebPartStrings {
         LivePersonaDisableHover: string;
     }
     ManagedPropertiesListPlaceHolder: string;
+    QueryModifier: {
+        NameLabel: string;
+        OverviewLabel: string;
+        EnableLabelPrefix: string;
+    }
 }
 
 declare module 'SearchResultsWebPartStrings' {

@@ -2,11 +2,12 @@ import * as React from "react";
 import IBaseRefinerTemplateProps from '../IBaseRefinerTemplateProps';
 import IBaseRefinerTemplateState from '../IBaseRefinerTemplateState';
 import { IRefinementValue, RefinementOperator } from "../../../../../models/ISearchResult";
-import { DatePicker, IDatePickerProps } from "office-ui-fabric-react/lib/DatePicker";
+import { DatePicker, IDatePickerProps, IDatePickerStyleProps, IDatePickerStyles } from "office-ui-fabric-react/lib/DatePicker";
 import { Link } from "office-ui-fabric-react/lib/Link";
 import * as update from 'immutability-helper';
 import * as strings from 'SearchRefinersWebPartStrings';
 import { Loader } from "../../../../../services/TemplateService/LoadHelper";
+import { ITheme } from "@uifabric/styling";
 
 export interface IDateRangeTemplateState extends IBaseRefinerTemplateState {
     selectedFromDate: Date;
@@ -40,12 +41,32 @@ export default class DateRangeTemplate extends React.Component<IDateRangeTemplat
     public render() {
         if (!this.state.haveMoment) return null;
 
+        const datePcikerStyles = (props: IDatePickerStyleProps) => {
+            const customStyles: Partial<IDatePickerStyles> = {
+                textField: {
+                    selectors: {
+                        input: {
+                            backgroundColor: this.props.themeVariant.semanticColors.bodyBackground,
+                            color: this.props.themeVariant.semanticColors.bodyText
+                        },
+                        'input::placeholder': {
+                            color: this.props.themeVariant.semanticColors.bodyText
+                        }
+                    }
+                }
+            };
+          
+            return customStyles;
+        };
+
         const fromProps: IDatePickerProps = {
             placeholder: strings.Refiners.Templates.DateFromLabel,
             onSelectDate: this._updateFromDate,
             value: this.state.selectedFromDate,
             showGoToToday: true,
             borderless: true,
+            styles: datePcikerStyles,
+            theme: this.props.themeVariant as ITheme,
             strings: strings.Refiners.Templates.DatePickerStrings
         };
 
@@ -54,6 +75,8 @@ export default class DateRangeTemplate extends React.Component<IDateRangeTemplat
             onSelectDate: this._updateToDate,
             value: this.state.selectedToDate,
             showGoToToday: true,
+            styles: datePcikerStyles,
+            theme: this.props.themeVariant as ITheme,
             borderless: true,
             strings: strings.Refiners.Templates.DatePickerStrings
         };
@@ -79,7 +102,7 @@ export default class DateRangeTemplate extends React.Component<IDateRangeTemplat
         return <div>
             <DatePicker {...fromProps} />
             <DatePicker {...toProps} />
-            <Link onClick={this._clearFilters} disabled={!this.state.selectedToDate && !this.state.selectedFromDate}>{strings.Refiners.ClearFiltersLabel}</Link>
+            <Link theme={this.props.themeVariant as ITheme} onClick={this._clearFilters} disabled={!this.state.selectedToDate && !this.state.selectedFromDate}>{strings.Refiners.ClearFiltersLabel}</Link>
         </div>;
     }
 

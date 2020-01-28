@@ -204,6 +204,7 @@ abstract class BaseTemplateService {
                 else if (!isEmpty(item.PreviewUrl)) previewSrc = item.PreviewUrl;
                 else if (!isEmpty(item.PictureThumbnailURL)) previewSrc = item.PictureThumbnailURL;
                 else if (!isEmpty(item.ServerRedirectedPreviewURL)) previewSrc = item.ServerRedirectedPreviewURL;
+                else if (!isEmpty(item.SiteId) && !isEmpty(item.WebId) && !isEmpty(item.UniqueID)) previewSrc = `${this._ctx.pageContext.site.absoluteUrl}/_layouts/15/getpreview.ashx?guidSite=${item.SiteId}&guidWeb=${item.WebId}&guidFile=${item.UniqueID.replace(/\{|\}/g,'')}&resolution=3`;
             }
 
             return new Handlebars.SafeString(previewSrc);
@@ -319,18 +320,15 @@ abstract class BaseTemplateService {
      */
     public registerWebComponents(webComponents: IComponentDefinition<any>[]) {
 
-        // Added theme variant to be available in components
-        const themeProvider = this._ctx.serviceScope.consume(ThemeProvider.serviceKey);
-        const themeVariant = themeProvider.tryGetTheme();
-
         // Registers custom HTML elements
         webComponents.map(wc => {
-            if (!customElements.get(wc.componentName)) {
-                // Set the arbitrary property to all instances to get the WebPart context available in components (ex: PersonaCard)
-                wc.componentClass.prototype._ctx = this._ctx;
-                wc.componentClass.prototype._themeVariant = themeVariant;
+            const component = customElements.get(wc.componentName);
+            if (!component) {
                 customElements.define(wc.componentName, wc.componentClass);
-            }
+            } 
+            
+            // Set the arbitrary property to all instances to get the WebPart context available in components (ex: PersonaCard)
+            wc.componentClass.prototype._ctx = this._ctx;
         });
 
         // Register slider component as partial 
@@ -555,12 +553,12 @@ abstract class BaseTemplateService {
                 try {
                     // Create a temp context with the current so we can use global registered helpers on the current item
                     const tempTemplateContent = `{{#with item as |item|}}${configuration.value}{{/with}}`;
-                    let template = Handlebars.compile(tempTemplateContent);
+                    let template = Handlebars.compile(tempTemplateContent, { noEscape: true });
 
                     // Pass the current item as context
-                    processedValue = template({ item: item }, { data: { themeVariant: themeVariant } });
+                    processedValue = template({ item: item }, { data: { themeVariant: themeVariant }});
 
-                    processedValue = processedValue ? processedValue.trim() : null;
+                    processedValue = !isEmpty(processedValue) ? processedValue.trim() : null;
 
                 } catch (error) {
                     processedValue = `###Error: ${error.message}###`;

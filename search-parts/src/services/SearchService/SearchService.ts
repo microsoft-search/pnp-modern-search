@@ -18,6 +18,7 @@ import { UrlHelper } from '../../helpers/UrlHelper';
 import { ISearchVertical } from '../../models/ISearchVertical';
 import IManagedPropertyInfo from '../../models/IManagedPropertyInfo';
 import { Loader } from '../TemplateService/LoadHelper';
+import { BaseQueryModifier } from '../ExtensibilityService/BaseQueryModifier';
 
 class SearchService implements ISearchService {
     private _initialSearchResult: SearchResults = null;
@@ -34,6 +35,8 @@ class SearchService implements ISearchService {
     private _refinementFilters: IRefinementFilter[];
     private _synonymTable: ISynonymTable;
     private _queryCulture: number;
+    private _timeZoneId: number;
+    private _queryModifier: BaseQueryModifier;
 
     public get resultsCount(): number { return this._resultsCount; }
     public set resultsCount(value: number) { this._resultsCount = value; }
@@ -68,6 +71,12 @@ class SearchService implements ISearchService {
     public get queryCulture(): number { return this._queryCulture; }
     public set queryCulture(value: number) { this._queryCulture = value; }
 
+    public get timeZoneId(): number { return this._timeZoneId; }
+    public set timeZoneId(value: number) { this._timeZoneId = value; }
+
+    public get queryModifier(): BaseQueryModifier { return this._queryModifier; }
+    public set queryModifier(value: BaseQueryModifier) { this._queryModifier = value; }
+
     private _localPnPSetup: SPRest;
 
     public constructor(pageContext: PageContext, spHttpClient: SPHttpClient) {
@@ -97,6 +106,7 @@ class SearchService implements ISearchService {
 
         let searchQuery: SearchQuery = {};
         let sortedRefiners: string[] = [];
+        let queryModification: string = null;
 
         // Search paging option is one based
         let page = pageNumber ? pageNumber : 1;
@@ -129,6 +139,10 @@ class SearchService implements ISearchService {
         }
 
         searchQuery.Querytext = this._injectSynonyms(query);
+
+        if (this._timeZoneId) {
+            searchQuery['TimeZoneId'] = this._timeZoneId;
+        }
 
         // Disable query rules by default if not specified
         searchQuery.EnableQueryRules = this._enableQueryRules ? this._enableQueryRules : false;
@@ -165,7 +179,7 @@ class SearchService implements ISearchService {
             sortedRefiners = this.refiners.map(e => e.refinerName);
             searchQuery.Refiners = sortedRefiners.join(',');
 
-            const refinableDate = /(RefinableDate\d+)(?=,|$)|(LastModifiedTime)(?=,|$)|(LastModifiedTimeForRetention)(?=,|$)|(Created)(?=,|$)/g;
+            const refinableDate = /(RefinableDate\d+)(?=,|$)|(RefinableDateSingle\d+)(?=,|$)|(LastModifiedTime)(?=,|$)|(LastModifiedTimeForRetention)(?=,|$)|(Created)(?=,|$)/g;
             if (refinableDate.test(searchQuery.Refiners)) {
                 // set refiner spec intervals to be used for fixed interval template - and which makes more sense overall
                 await Loader.LoadHandlebarsHelpers();
@@ -200,6 +214,29 @@ class SearchService implements ISearchService {
 
         try {
             if (!this._initialSearchResult || page == 1) {
+
+                // If we have a query modifier, then send query to it before sending to SharePoint
+                if (this._queryModifier) {
+                    try {
+                        const queryModificationValue = await this._queryModifier.modifyQuery({
+                            queryText: searchQuery.Querytext,
+                            queryTemplate: searchQuery.QueryTemplate,
+                            resultSourceId: searchQuery.SourceId,
+                        });
+
+                        if (queryModificationValue) {
+                            searchQuery.Querytext = queryModificationValue.queryText;
+                            searchQuery.QueryTemplate = queryModificationValue.queryTemplate;
+                        }
+                        else {
+                            Logger.write('[SearchService.search()]: Query modifier return an invalid response. Using original query.', LogLevel.Error);
+                        }
+                    }
+                    catch (error) {
+                        Logger.write('[SearchService.search()]: Query modification failed. Using original query. ' + error, LogLevel.Error);
+                    }
+                }
+
                 this._initialSearchResult = await this._localPnPSetup.search(searchQuery);
             }
 
@@ -214,6 +251,16 @@ class SearchService implements ISearchService {
                 let r2 = this._initialSearchResult;
                 if (page > 1) {
                     r2 = await this._initialSearchResult.getPage(page, this._resultsCount);
+                }
+
+                // Get the transformed query submitted to SharePoint
+                const properties = r2.RawSearchResults.PrimaryQueryResult.RelevantResults.Properties.filter((property) => {
+                    return property.Key === 'QueryModification';
+                });
+
+                if (properties.length === 1) {
+                    queryModification =  properties[0].Value;
+                    results.QueryModification = queryModification;
                 }
 
                 const resultRows = r2.RawSearchResults.PrimaryQueryResult.RelevantResults.Table.Rows;
@@ -288,8 +335,8 @@ class SearchService implements ISearchService {
 
                         // Best bets are mapped through the "SpecialTermResults" https://msdn.microsoft.com/en-us/library/dd907265(v=office.12).aspx
                         if (e.SpecialTermResults) {
-
-                            e.SpecialTermResults.Results.map((result) => {
+                            // casting as pnpjs has an incorrect mapping of SpecialTermResults
+                            (e.SpecialTermResults as any).Results.map((result) => {
                                 promotedResults.push({
                                     Title: result.Title,
                                     Url: result.Url,

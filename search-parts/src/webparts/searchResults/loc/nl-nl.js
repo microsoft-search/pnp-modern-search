@@ -155,6 +155,11 @@ define([], function () {
       "PersonaSizeExtraLarge": "Extra groot",
       "LivePersonaDisableHover": "Geen weergave bij mouse-over"
     },
-    "ManagedPropertiesListPlaceHolder": "Selecteer of voeg een beheerde eigenschap toe"
+    "ManagedPropertiesListPlaceHolder": "Selecteer of voeg een beheerde eigenschap toe",
+    "QueryModifier": {
+      "NameLabel": "Endrings spørring",
+      "OverviewLabel": "En spørrings endrings spørring er tilgjengelig fra Utvidelses biblioteket.",
+      "EnableLabelPrefix": "Aktiverer"
+    }
   }
 });

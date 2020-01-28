@@ -1,7 +1,7 @@
 import * as ReactDOM from 'react-dom';
 import { camelCase } from '@microsoft/sp-lodash-subset';
 import { WebPartContext } from '@microsoft/sp-webpart-base';
-import { IReadonlyTheme } from '@microsoft/sp-component-base';
+import { IReadonlyTheme, ThemeProvider } from '@microsoft/sp-component-base';
 import '@webcomponents/custom-elements/src/native-shim';
 import '@webcomponents/custom-elements/custom-elements.min';
 
@@ -25,7 +25,7 @@ export abstract class BaseWebComponent extends HTMLElement {
      */
     protected resolveAttributes(): { [key:string] : any } {
         
-        let props = {};
+        let props: {[key:string] : any}= {};
 
         for (let i =0;i < this.attributes.length;i++) {
 
@@ -42,7 +42,12 @@ export abstract class BaseWebComponent extends HTMLElement {
                 }
             }         
         }
-         
+
+        // Added theme variant to be available in components
+        const themeProvider = this._ctx.serviceScope.consume(ThemeProvider.serviceKey);
+        const themeVariant = themeProvider.tryGetTheme();
+        props.themeVariant = themeVariant;
+
         return props;
     }
 }

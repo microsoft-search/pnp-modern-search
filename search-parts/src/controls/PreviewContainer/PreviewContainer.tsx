@@ -80,7 +80,7 @@ export default class PreviewContainer extends React.Component<IPreviewContainerP
                                         allowTransparency
                                         onLoad={() => { this.setState({ isLoading: false}); }}
                                     >
-                                    </iframe>;
+                                    </iframe>
                                 </div>;
             break;
 

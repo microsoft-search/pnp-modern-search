@@ -6,7 +6,7 @@ import { PreviewType } from '../controls/PreviewContainer/IPreviewContainerProps
 import { Link } from 'office-ui-fabric-react/lib/Link';
 import { TemplateService } from "../services/TemplateService/TemplateService";
 import * as documentCardLocationGetStyles from 'office-ui-fabric-react/lib/components/DocumentCard/DocumentCardLocation.styles';
-import { getTheme, mergeStyleSets } from "office-ui-fabric-react/lib/Styling";
+import { getTheme, mergeStyleSets, ITheme } from "office-ui-fabric-react/lib/Styling";
 import { classNamesFunction } from "office-ui-fabric-react/lib/Utilities";
 import { IReadonlyTheme } from "@microsoft/sp-component-base";
 import { merge, trimStart, isEmpty } from '@microsoft/sp-lodash-subset';
@@ -79,11 +79,11 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
             processedProps = TemplateService.processFieldsConfiguration<IDocumentCardComponentProps>(this.props.fieldsConfiguration, this.props.item, this.props.themeVariant);
         }
 
-        if (this.state.showCallout && processedProps.previewUrl && this.props.enablePreview) {
+        if (this.state.showCallout && (processedProps.previewUrl || processedProps.previewImage) && this.props.enablePreview) {
 
             renderPreviewCallout = <PreviewContainer
-                elementUrl={processedProps.previewUrl}
-                previewImageUrl={processedProps.previewImage}
+                elementUrl={processedProps.previewUrl ? processedProps.previewUrl : processedProps.previewImage}
+                previewImageUrl={processedProps.previewImage ? processedProps.previewImage : processedProps.previewUrl}
                 previewType={processedProps.isVideo ? PreviewType.Video : PreviewType.Document}
                 targetElement={this.documentCardPreviewRef.current}
                 showPreview={this.state.showCallout}
@@ -104,7 +104,8 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
                 iconProps = getFileTypeIconProps({ extension: processedProps.iconExt, size: 16, imageFileType: 'png' });
             }
         } else {
-            iconProps = getFileTypeIconProps({ extension: trimStart(processedProps.fileExtension.trim(), '.'), size: 16, imageFileType: 'png' });
+            const fileExtension = processedProps.fileExtension ? trimStart(processedProps.fileExtension.trim(), '.') : null;
+            iconProps = getFileTypeIconProps({ extension: fileExtension, size: 16, imageFileType: 'png' });
         }
 
         let iconSrc = null;
@@ -113,6 +114,7 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
         }
 
         let previewProps: IDocumentCardPreviewProps = {
+            theme: this.props.themeVariant as ITheme,
             previewImages: [
                 {
                     name: processedProps.title,
@@ -120,7 +122,7 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
                     imageFit: ImageFit.centerCover,
                     iconSrc: iconSrc,
                     width: this.props.isCompact ? 144 : 318,
-                    height:  this.props.isCompact ? 88 : 196
+                    height:  this.props.isCompact ? 106 : 196
                 }
             ],
         };
@@ -166,6 +168,7 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
 
         return <div>
             <DocumentCard
+                theme={this.props.themeVariant as ITheme}
                 onClick={() => {
                     this.setState({
                         showCallout: true
@@ -186,7 +189,9 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
                     {processedProps.location && !this.props.isCompact ?
                         <div className={documentCardLocationClassNames.root} dangerouslySetInnerHTML={{ __html: processedProps.location }}></div> : null
                     }
-                    <Link href={processedProps.href} target='_blank' styles={{
+                    <Link 
+                        theme={this.props.themeVariant as ITheme}
+                        href={processedProps.href} target='_blank' styles={{
                         root: {
                             selectors: {
                                 ':hover': {
@@ -196,6 +201,7 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
                         }
                     }}>
                         <DocumentCardTitle
+                            theme={this.props.themeVariant as ITheme}
                             title={processedProps.title}
                             shouldTruncate={false}
                         />
@@ -205,6 +211,7 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
                     }
                     {processedProps.author ?
                         <DocumentCardActivity
+                        theme={this.props.themeVariant as ITheme}
                             activity={processedProps.date}
                             people={[{ name: processedProps.author, profileImageSrc: processedProps.profileImage }]}
                         /> : null
@@ -225,7 +232,7 @@ export class DocumentCardWebComponent extends BaseWebComponent {
     public connectedCallback() {
  
        let props = this.resolveAttributes();
-       const documentCarditem = <DocumentCardComponent {...props} themeVariant={this._themeVariant}/>;
+       const documentCarditem = <DocumentCardComponent {...props}/>;
        ReactDOM.render(documentCarditem, this);
     }    
 }
