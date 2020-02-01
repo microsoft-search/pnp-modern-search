@@ -44,7 +44,7 @@ export class UserService implements IUserService {
 
     const promises = accountNames.map(async accountName => {
 
-        let url = `${this._pageContext.web.absoluteUrl}/_api/SP.UserProfiles.PeopleManager/GetPropertiesFor(accountName=@v)?@v='${encodeURIComponent(`i:0#.f|membership|${accountName}`)}'&$select=DisplayName,AccountName`;
+        let url = `${this._pageContext.web.absoluteUrl}/_api/SP.UserProfiles.PeopleManager/GetPropertiesFor(accountName=@v)?@v='${encodeURIComponent(accountName)}'&$select=DisplayName,AccountName`;
         return batch.add(url, 'GET', {
             headers: {
                 Accept: 'application/json; odata=nometadata'
