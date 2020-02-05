@@ -168,6 +168,7 @@ Setting | Description
 `{{regex <exp> <string> }}` | Match a regular expression against a string.
 `{{#times 10}}<span>{{this}}</span>{{/times}}` | Iterate X times over a block
 `{{#group items by="owstaxidmetadataalltagsinfo"}}` | Group items by a specific results property. See [https://github.com/shannonmoeller/handlebars-group-by](https://github.com/shannonmoeller/handlebars-group-by) for usage.
+`{{#getAttachments <string>}} {{url}} {{fileName}} {{/getAttachments}}`| Get Attachments from a string, The string must have valid Urls separated by "\n", return an object with properties, "url" and "fileName"
 
 You can also define your own in the *BaseTemplateService.ts* file. See [helper-moment](https://github.com/helpers/helper-moment) for date samples using moment.
 
