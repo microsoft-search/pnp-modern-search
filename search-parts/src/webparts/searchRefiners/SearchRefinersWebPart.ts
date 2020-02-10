@@ -13,9 +13,10 @@ import {
 } from "@microsoft/sp-property-pane";
 import { PropertyFieldCollectionData, CustomCollectionFieldType } from '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData';
 import * as strings from 'SearchRefinersWebPartStrings';
-import { IRefinementFilter, IRefinementResult } from '../../models/ISearchResult';
+import { IRefinementFilter } from '../../models/ISearchResult';
+import { IRefinementValue, RefinementOperator } from '../../models/ISearchResult';
 import SearchRefinersContainer from './components/SearchRefinersContainer/SearchRefinersContainer';
-import { IDynamicDataCallables, IDynamicDataPropertyDefinition, IDynamicDataSource } from '@microsoft/sp-dynamic-data';
+import { IDynamicDataCallables, IDynamicDataPropertyDefinition } from '@microsoft/sp-dynamic-data';
 import { ISearchRefinersWebPartProps } from './ISearchRefinersWebPartProps';
 import { Placeholder } from '@pnp/spfx-controls-react/lib/Placeholder';
 import IRefinerSourceData from '../../models/IRefinerSourceData';
@@ -34,6 +35,10 @@ import MockSearchService from '../../services/SearchService/MockSearchService';
 import SearchService from '../../services/SearchService/SearchService';
 import ISearchService from '../../services/SearchService/ISearchService';
 import { IComboBoxOption } from 'office-ui-fabric-react/lib/ComboBox';
+import { UrlHelper } from '../../helpers/UrlHelper';
+import { IUrlFilter } from '../../models/IUrlFilter';
+import IRefinerConfiguration from '../../models/IRefinerConfiguration';
+import { Loader } from '../../services/TemplateService/LoadHelper';
 
 import { cloneDeep, isEqual } from '@microsoft/sp-lodash-subset';
 import IUserService from '../../services/UserService/IUserService';
@@ -92,6 +97,7 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
           webPartTitle: this.properties.webPartTitle,
           availableRefiners: availableRefiners,
           refinersConfiguration: this.properties.refinersConfiguration,
+          defaultSelectedRefinementFilters: this._selectedFilters,
           showBlank: this.properties.showBlank,
           displayMode: this.displayMode,
           onUpdateFilters: (appliedRefiners: IRefinementFilter[]) => {
@@ -156,10 +162,13 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
     }
   }
 
-  protected onInit(): Promise<void> {
+  protected async onInit(): Promise<void> {
 
     this._initializeRequiredProperties();
     this.initThemeVariant();
+
+    // Set default filters
+    this._selectedFilters = await this._getDefaultRefinementFilters();
 
     // Initialize File Type UI Fabric icon
     initializeFileTypeIcons();
@@ -520,4 +529,203 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
       this.render();
     }
   }
+
+  /**
+     * Get the default pre-selected filters based on the url parameters
+     */
+    private async _getDefaultRefinementFilters(): Promise<IRefinementFilter[]> {
+        const refinementFilters: IRefinementFilter[] = [];
+
+        // Get and parse filters param for url
+        const urlParamValue = UrlHelper.getQueryStringParam("filters", window.location.href);
+        const urlFilters: IUrlFilter[] = JSON.parse(decodeURIComponent(urlParamValue));
+
+        // Return if url param is not found
+        if (!urlFilters) return refinementFilters;
+
+        urlFilters.forEach(async (filter: IUrlFilter) => {
+
+            // Map to refinementFilters if:
+            //  -filterName is provided
+            //  -filterValues are provided
+            //  -filter configuration is found
+            if (
+                filter.filterName &&
+                filter.filterValues &&
+                this.properties.refinersConfiguration.some(
+                    (refiner: IRefinerConfiguration) => refiner.refinerName === filter.filterName
+                )
+            ) {
+                // Get configuration
+                const refinerConfiguration: IRefinerConfiguration = this.properties.refinersConfiguration.filter(
+                    (refiner: IRefinerConfiguration) => refiner.refinerName === filter.filterName
+                )[0];
+
+                // Map filter values
+                let filterValues: IRefinementValue[] = [];
+                switch (refinerConfiguration.template) {
+                    case RefinerTemplateOption.CheckBox:
+                    case RefinerTemplateOption.CheckBoxMulti:
+                        filterValues = this._getStringFilterValues(filter.filterValues);
+                        break;
+                    case RefinerTemplateOption.DateRange:
+                        filterValues = this._getDateRangeFilterValues(filter.filterName, filter.filterValues);
+                        break;
+                    case RefinerTemplateOption.FixedDateRange:
+                        filterValues = await this._getDateIntervalFilterValues(filter.filterName, filter.filterValues);
+                        break;
+                    default:
+                        break;
+                }
+
+                // Get operator
+                //  -if provided in Url, use that one
+                //  -otherwise, get based on configured template
+                const filterOperator: RefinementOperator = filter.filterOperator
+                    ? filter.filterOperator
+                    : this._getFilterOperatorFromConfig(refinerConfiguration);
+
+                refinementFilters.push({
+                    FilterName: filter.filterName,
+                    Operator: filterOperator,
+                    Values: filterValues
+                });
+            }
+        });
+
+        console.dir(refinementFilters);
+
+        return refinementFilters;
+    }
+
+    /**
+     * Converst the filter value from the url to a date range refinement value
+     * @param filterName the filter name provided in the url
+     * @param filterValue the filter value provided in the url (has a set of possible values)
+     */
+    private async _getDateIntervalFilterValues(filterName: string, filterValue: string | string[]): Promise<IRefinementValue[]> {
+        const filterValues: IRefinementValue[] = [];
+        // The following values are accepted
+        //  -yesterday
+        //  -weekAgo
+        //  -monthAgo
+        //  -threeMonthsAgo
+        //  -yearAgo
+        //  -olderThanYear
+        if (typeof filterValue === "string") {
+            const value: IRefinementValue = {
+                RefinementCount: 0,
+                RefinementName: filterName,
+                RefinementToken: "",
+                RefinementValue: filterValue
+            };
+
+            switch (filterValue) {
+                case "yesterday":
+                    value.RefinementToken = `range(${this._getISOPastDate(1)},max)`;
+                    break;
+                case "weekAgo":
+                    value.RefinementToken = `range(${this._getISOPastDate(7)},max)`;
+                    break;
+                case "monthAgo":
+                    value.RefinementToken = `range(${this._getISOPastDate(30)},max)`;
+                    break;
+                case "threeMonthsAgo":
+                    value.RefinementToken = `range(${this._getISOPastDate(90)},max)`;
+                    break;
+                case "yearAgo":
+                    value.RefinementToken = `range(${this._getISOPastDate(365)},max)`;
+                    break;
+                case "olderThanYear":
+                    value.RefinementToken = `range(min,${this._getISOPastDate(365)})`;
+                    break;
+                default:
+                    return filterValues;
+            }
+
+            filterValues.push(value);
+        }
+
+        return filterValues;
+    }
+
+    /**
+     * Converst the filter value from the url to a date range refinement value
+     * @param filterName the filter name provided in the url
+     * @param filterValue the filter value provided in the url
+     */
+    private _getDateRangeFilterValues(filterName: string, filterValue: string | string[]): IRefinementValue[] {
+        const filterValues: IRefinementValue[] = [];
+
+        // For dates we expect a 'range(date 1,date 2)' format
+        //  -Date 1: Should be an ISO formatted UTC date OR min
+        //  -Date 2: Should be an ISO formatted UTC date OR max
+        if (typeof filterValue === "string") {
+            const matches = filterValue.match(/(?<=range\().+?(?=\))/g);
+            if (matches) {
+                matches.forEach((match: string) => {
+                    console.log(match);
+                    filterValues.push({
+                        RefinementCount: 0,
+                        RefinementName: filterName,
+                        RefinementToken: filterValue,
+                        RefinementValue: filterValue
+                    });
+                });
+            }
+        }
+
+        return filterValues;
+    }
+
+    /**
+     * Converts the string or array of strings to a valide refinement value
+     * @param filterValue as string of array of strings of the refiner value provided in the url
+     */
+    private _getStringFilterValues(filterValue: string | string[]): IRefinementValue[] {
+        const filterValues: IRefinementValue[] = [];
+        if (typeof filterValue === "string") {
+            filterValues.push({
+                RefinementCount: 0,
+                RefinementName: filterValue,
+                RefinementToken: `"ǂǂ${this._getRefinerTokenValue(filterValue)}"`,
+                RefinementValue: filterValue
+            });
+        } else {
+            filterValue.forEach((value: string) => {
+                filterValues.push({
+                    RefinementCount: 0,
+                    RefinementName: value,
+                    RefinementToken: `"ǂǂ${this._getRefinerTokenValue(value)}"`,
+                    RefinementValue: value
+                });
+            });
+        }
+
+        return filterValues;
+    }
+    private _getRefinerTokenValue(value: string): string {
+        let tokenValue = "";
+        for (let i = 0; i < value.length; i++) {
+            const charCode = value.charCodeAt(i);
+            tokenValue += charCode.toString(16);
+        }
+        return tokenValue;
+    }
+    private _getFilterOperatorFromConfig(refinerConfiguration: IRefinerConfiguration): RefinementOperator {
+        switch (refinerConfiguration.template) {
+            case RefinerTemplateOption.CheckBox:
+            case RefinerTemplateOption.FixedDateRange:
+                return RefinementOperator.AND;
+            case RefinerTemplateOption.CheckBoxMulti:
+            case RefinerTemplateOption.DateRange:
+                return RefinementOperator.OR;
+            default:
+                return RefinementOperator.AND;
+        }
+    }
+    private _getISOPastDate(daysToSubstract: number): string {
+        return new Date((new Date() as any) - 1000 * 60 * 60 * 24 * daysToSubstract).toISOString();
+    }
+
 }

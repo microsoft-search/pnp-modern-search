@@ -24,7 +24,7 @@ export default class SearchRefinersContainer extends React.Component<ISearchRefi
 
     this.state = {
       shouldResetFilters: false,
-      selectedRefinementFilters: [],
+      selectedRefinementFilters: props.defaultSelectedRefinementFilters,
       availableRefiners: []
     };
 
@@ -111,8 +111,7 @@ export default class SearchRefinersContainer extends React.Component<ISearchRefi
     if (nextProps.query !== this.props.query || !isEqual(this.props.themeVariant, nextProps.themeVariant)) {
 
       this.setState({
-        shouldResetFilters: true,
-        selectedRefinementFilters: []
+        shouldResetFilters: true
       });
 
     } else {

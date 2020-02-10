@@ -22,6 +22,11 @@ export interface ISearchRefinersContainerProps {
   refinersConfiguration: IRefinerConfiguration[];
 
   /**
+   * List of the deafault selected filters (based on the url config parameters)
+   */
+  defaultSelectedRefinementFilters: IRefinementFilter[];
+
+  /**
    * The selected layout
    */
   selectedLayout: RefinersLayoutOption;
