@@ -173,7 +173,7 @@ You can also define your own in the *BaseTemplateService.ts* file. See [helper-m
 
 ### Web-components
 
-The web part has a couple of helper web-components to ease rendering, used by the default templates. You may also use these in your custom templates. Pick one of the default templates, then click on customize to see how they are used.
+The web part has a couple of helper web-components to ease rendering, used by the default templates. You may also use these in your custom templates. Pick one of the default templates, then click on customize to see how they are used. It's important to prefix these web-components with **pnp-**.
 
 - document-card
 - document-card-shimmers
@@ -185,13 +185,13 @@ The web part has a couple of helper web-components to ease rendering, used by th
 - persona-card-shimmers
 - fabric-icon - You only need to set one property, which are evaluated in order if multiple ones are set.
    ```handlebars
-   <fabric-icon
+   <pnp-fabric-icon
     image-url='[url to icon - pri 1]'
     file-extension='[file extension - pri 2]'
     icon-name='[office ui fabric icon name - pri 3]'
     size='16 | 20 | 32 (default) | 40 | 48 | 64 | 96'
     >
-    </fabric-icon>
+    </pnp-fabric-icon>
     ```
 
 fileExtension?: string;
