@@ -278,6 +278,7 @@ export default class LinkPanel extends React.Component<ILinkPanelProps, ILinkPan
         <TemplateRenderer
           key={i}
           refinementResult={refinementResult}
+          refinerConfiguration={!!configuredFilter[0] ? configuredFilter[0] : null}
           shouldResetFilters={props.shouldResetFilters}
           templateType={configuredFilter[0].template}
           valueToRemove={valueToRemove}
