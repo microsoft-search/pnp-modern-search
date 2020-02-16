@@ -168,8 +168,7 @@ Setting | Description
 `{{regex <exp> <string> }}` | Match a regular expression against a string.
 `{{#times 10}}<span>{{this}}</span>{{/times}}` | Iterate X times over a block
 `{{#group items by="owstaxidmetadataalltagsinfo"}}` | Group items by a specific results property. See [https://github.com/shannonmoeller/handlebars-group-by](https://github.com/shannonmoeller/handlebars-group-by) for usage.
-`{{#getAttachments LinkOfficeChild}} <a href="{{url}}">{{fileName}}</href> {{/getAttachments}}`| Get Attachments is Handlebars block helper intended to be used with the context variables it provides like this (url and filename) in the example.
-The helper is intended to be used only with the LinkOfficeChild managed property wich is the default managed property for list attachments.
+`{{#getAttachments LinkOfficeChild}} <a href="{{url}}">{{fileName}}</href> {{/getAttachments}}`| Get Attachments is Handlebars block helper intended to be used with the context variables it provides like this (url and filename) in the example.The helper is intended to be used only with the LinkOfficeChild managed property wich is the default managed property for list attachments.
  
 
 You can also define your own in the *BaseTemplateService.ts* file. See [helper-moment](https://github.com/helpers/helper-moment) for date samples using moment.
