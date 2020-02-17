@@ -196,6 +196,30 @@ abstract class BaseTemplateService {
             return new Handlebars.SafeString(url);
         });
 
+        // Get Attachments from LinkOfficeChild managed properties
+        // Usage:
+        //   {{#getAttachments LinkOfficeChild}}
+        //      <a href="{{url}}">{{fileName}}</href>
+        //   {{/getAttachments}}
+        Handlebars.registerHelper("getAttachments", (value: string, options) => {
+            let out:string = "";
+            if (!isEmpty(value)){
+                let splitArr:string[] = value.split(/\n+/);
+            
+                if (splitArr && splitArr.length > 0) {
+                    for (let i of splitArr) {
+                    let pos:number = i.lastIndexOf("/");
+                    if (pos !== -1) {
+                        let fileName:string = i.substring(pos + 1);
+                        let objLine = { url: i, fileName: fileName };
+                        out += options.fn(objLine);
+                    }
+                    }
+                }
+            }
+            return out;
+        });
+
         // Return the search result count message
         // Usage: {{getCountMessage totalRows keywords}} or {{getCountMessage totalRows null}}
         Handlebars.registerHelper("getCountMessage", (totalRows: string, inputQuery?: string) => {
