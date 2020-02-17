@@ -3,6 +3,7 @@ import { Text, Log } from "@microsoft/sp-core-library";
 import { ITokenService } from ".";
 import { UrlQueryParameterCollection } from '@microsoft/sp-core-library';
 import { PageContext } from "@microsoft/sp-page-context";
+import { isEmpty } from '@microsoft/sp-lodash-subset';
 
 const LOG_SOURCE: string = '[SearchResultsWebPart_{0}]';
 
@@ -21,44 +22,9 @@ export class TokenService implements ITokenService {
         queryTemplate = this.replaceQueryStringTokens(queryTemplate);
         queryTemplate = this.replaceHubSiteTokens(queryTemplate);
         queryTemplate = this.replaceOrOperator(queryTemplate);
+        queryTemplate = this.replaceUrlTokens(queryTemplate);
 
         queryTemplate = queryTemplate.replace("{TenantUrl}", `https://` + window.location.host);
-
-        return queryTemplate;
-    }
-
-    private replaceOrOperator(queryTemplate: string) {
-
-        // Example match: {|owstaxidmetadataalltagsinfo:{Page.<TaxnomyProperty>.TermID}}
-        const orConditionTokens = /\{(?:\|(.+?)(>=|=|<=|:|<>|<|>))(\{?.*?\}?\s*)\}/gi;
-        let reQueryTemplate = queryTemplate;
-        let match = orConditionTokens.exec(queryTemplate);        
-
-        if (match != null) {
-            while (match !== null) {
-
-                let conditions = [];
-                const property = match[1];
-                const operator = match[2];                
-                const tokenValue = match[3];
-
-                // {User} tokens are resolved server-side by SharePoint so we exclude them
-                if (!/\{(?:User)\.(.*?)\}/gi.test(tokenValue)) {
-                    const allValues = tokenValue.split(','); // Works with taxonomy multi values (TermID, Label) + multi choices fields
-                    if (allValues.length > 0) {
-                        allValues.map(value => {
-                            conditions.push(`(${property}${operator}${/\s/g.test(value) ? `"${value}"` : value})`);
-                        });
-                    } else {
-                        conditions.push(`${property}${operator}${/\s/g.test(tokenValue) ? `"${tokenValue}"` : tokenValue})`);
-                    }
-
-                    queryTemplate = queryTemplate.replace(match[0], `(${conditions.join(' OR ')})`);
-                }
-
-                match = orConditionTokens.exec(reQueryTemplate);
-            }
-        }
 
         return queryTemplate;
     }
@@ -130,6 +96,30 @@ export class TokenService implements ITokenService {
         return queryTemplate;
     }
 
+    private replaceUrlTokens(queryTemplate: string) {
+        const url = new URL(window.location.href);
+        const urlParts = url.pathname.split('/').reverse();
+
+        const queryStringVariables = /\{(?:URLToken)\.(\d+)\}/gi;
+        let reQueryTemplate = queryTemplate;
+        let match = queryStringVariables.exec(reQueryTemplate);
+
+        if (match != null) {
+            while (match !== null) {
+                let urlTokenPos = parseInt(match[1]);
+                let tokenValue = '';
+                let index = (urlTokenPos-1) < 0 ? 0 : (urlTokenPos-1);
+                if (!isEmpty(urlParts[index])) {
+                    tokenValue = urlParts[index];
+                    queryTemplate = queryTemplate.replace(match[0], tokenValue);
+                }
+                match = queryStringVariables.exec(queryTemplate);
+            }
+        }
+
+        return queryTemplate;
+    }
+
     private replaceQueryStringTokens(queryTemplate: string) {
         const queryStringVariables = /\{(?:QueryString)\.(.*?)\}/gi;
         let reQueryTemplate = queryTemplate;
@@ -157,6 +147,42 @@ export class TokenService implements ITokenService {
                 match = queryStringVariables.exec(reQueryTemplate);
             }
         }
+        return queryTemplate;
+    }
+
+    private replaceOrOperator(queryTemplate: string) {
+
+        // Example match: {|owstaxidmetadataalltagsinfo:{Page.<TaxnomyProperty>.TermID}}
+        const orConditionTokens = /\{(?:\|(.+?)(>=|=|<=|:|<>|<|>))(\{?.*?\}?\s*)\}/gi;
+        let reQueryTemplate = queryTemplate;
+        let match = orConditionTokens.exec(queryTemplate);        
+
+        if (match != null) {
+            while (match !== null) {
+
+                let conditions = [];
+                const property = match[1];
+                const operator = match[2];                
+                const tokenValue = match[3];
+
+                // {User} tokens are resolved server-side by SharePoint so we exclude them
+                if (!/\{(?:User)\.(.*?)\}/gi.test(tokenValue)) {
+                    const allValues = tokenValue.split(','); // Works with taxonomy multi values (TermID, Label) + multi choices fields
+                    if (allValues.length > 0) {
+                        allValues.map(value => {
+                            conditions.push(`(${property}${operator}${/\s/g.test(value) ? `"${value}"` : value})`);
+                        });
+                    } else {
+                        conditions.push(`${property}${operator}${/\s/g.test(tokenValue) ? `"${tokenValue}"` : tokenValue})`);
+                    }
+
+                    queryTemplate = queryTemplate.replace(match[0], `(${conditions.join(' OR ')})`);
+                }
+
+                match = orConditionTokens.exec(reQueryTemplate);
+            }
+        }
+
         return queryTemplate;
     }
 }

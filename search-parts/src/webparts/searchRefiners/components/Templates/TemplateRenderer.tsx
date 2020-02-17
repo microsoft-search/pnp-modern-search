@@ -10,8 +10,14 @@ import { IRefinementResult, IRefinementValue } from "../../../../models/ISearchR
 import RefinementFilterOperationCallback from '../../../../models/RefinementValueOperationCallback';
 import IUserService from '../../../../services/UserService/IUserService';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
+import IRefinerConfiguration from '../../../../models/IRefinerConfiguration';
 
 export interface ITemplateRendererProps {
+
+  /**
+   * The current configuration for this filter
+   */
+  refinerConfiguration: IRefinerConfiguration;
 
   /**
    * The template type to render
@@ -156,6 +162,7 @@ export default class TemplateRenderer extends React.Component<ITemplateRendererP
 
       case RefinerTemplateOption.ContainerTree:
           renderTemplate = <ContainerTreeTemplate
+            showExpanded={this.props.refinerConfiguration ? this.props.refinerConfiguration.showExpanded : false}
             refinementResult={this.props.refinementResult}
             onFilterValuesUpdated={this.props.onFilterValuesUpdated}
             shouldResetFilters={this.props.shouldResetFilters}

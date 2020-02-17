@@ -8,6 +8,11 @@ import { cloneDeep } from "@microsoft/sp-lodash-subset";
 import { UrlHelper } from '../../../../../helpers/UrlHelper';
 
 export interface IFoldersTemplateProps extends IBaseRefinerTemplateProps {
+
+    /**
+     * Flag indicating if the associated refiner should be displayed as expanded
+     */
+    showExpanded: boolean;
 }
 
 export interface IFoldersTemplateState extends IBaseRefinerTemplateState {
@@ -109,7 +114,7 @@ export default class ContainerTreeTemplate extends React.Component<IFoldersTempl
                             name: `${currPath.substring(currPath.lastIndexOf('/') + 1)} (${value.RefinementCount})`,
                             url: '#',
                             path: currPath,
-                            isExpanded: true,
+                            isExpanded: this.props.showExpanded,
                             refinementValue: url === currPath ? value : null,
                             onClick: (ev, item: INavLink) => {
             

@@ -52,21 +52,24 @@ export default class PersonaTemplate extends React.Component<IPersonaTemplatePro
 
                               let imageProps: IPersonaProps = null;
 
-                              // Try to see if the value looks like a login mail                              
+                              // Try to see if the value looks like a login claim                              
                               let displayName = refinementValue.RefinementValue.split('|').length > 1 ? refinementValue.RefinementValue.split('|')[1].trim() : refinementValue.RefinementValue;
-                              let accountName = refinementValue.RefinementValue.match(/([\w\.\-]+)@([\w\-]+)((\.(\w){2,63}){1,3})/);
-
-                              if (accountName) {
-                                
+                              const claimMatch = refinementValue.RefinementValue.match(/([ic]:0[#.5!+\-%?\\e][.+][wstmrfc]\|.+?(?=\|)\|.*)/);
+                              
+                              if (claimMatch) {
+                                const accountName = claimMatch[0];
+                                const claimParts = accountName.split('|');
+                                const accountNameWithoutClaim = claimParts[claimParts.length-1];
+  
                                 // Get the user info from the already fetched list
                                 const userInfos = this.state.userInfos.filter(user => {
-                                    return user.AccountName.toLowerCase() === `i:0#.f|membership|${accountName[0]}`.toLowerCase();
+                                    return user.AccountName.toLowerCase() === accountName.toLowerCase();
                                 });
                                 
                                 if (userInfos.length > 0) {
                                   displayName = userInfos[0].Properties.DisplayName;
                                   imageProps = {
-                                    imageUrl: accountName ? `/_layouts/15/userphoto.aspx?size=L&username=${accountName[0].toLowerCase()}`: null
+                                    imageUrl: accountNameWithoutClaim ? `/_layouts/15/userphoto.aspx?size=L&accountname=${accountNameWithoutClaim.toLowerCase()}`: null
                                   };
                                 }                                
                               }
@@ -133,7 +136,7 @@ export default class PersonaTemplate extends React.Component<IPersonaTemplatePro
     props.refinementResult.Values.map((refinementValue: IRefinementValue) => {
 
       // Identify the login adress using Regex
-      let accountName = refinementValue.RefinementValue.match(/([\w\.\-]+)@([\w\-]+)((\.(\w){2,63}){1,3})/);
+      let accountName = refinementValue.RefinementValue.match(/([ic]:0[#.5!+\-%?\\e][.+][wstmrfc]\|.+?(?=\|)\|.*)/);
       if (accountName) {
         accountNames.push(accountName[0]);
       }

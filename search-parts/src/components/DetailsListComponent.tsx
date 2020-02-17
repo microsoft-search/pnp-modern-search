@@ -228,7 +228,7 @@ export class DetailsListComponent extends React.Component<DetailsListComponentPr
 
                             // Make the value clickable to the corresponding result item 
                             if (column.isResultItemLink) {
-                                renderColumnValue = <a style={{ color: this.props.themeVariant.semanticColors.link }} href={item.ServerRedirectedURL ? item.ServerRedirectedURL : item.Path}>{renderColumnValue}</a>;
+                                renderColumnValue = <a style={{ color: this.props.themeVariant.semanticColors.link }} href={item.ServerRedirectedURL ? item.ServerRedirectedURL : item.Path} target='blank'>{renderColumnValue}</a>;
                             }
 
                             return renderColumnValue;
