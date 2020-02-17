@@ -181,8 +181,19 @@ abstract class BaseTemplateService {
         // Return the URL of the search result item
         // Usage: <a href="{{url item}}">
         Handlebars.registerHelper("getUrl", (item: ISearchResult) => {
-            if (!isEmpty(item))
-                return new Handlebars.SafeString(item.ServerRedirectedURL ? item.ServerRedirectedURL : item.Path);
+
+            let url = '';
+            if (!isEmpty(item)) {
+                if (!isEmpty(item.ServerRedirectedURL)) url = item.ServerRedirectedURL;
+                else if (item.FileType && ['png','jpeg','jpg','bmp','tif','tiff','gif','psd','ind','indd','indt','svg','svgz','eps'].indexOf(item.FileType) !== -1) {
+                    // Try to redirect to the preview image instead of the list item form
+                    if (!isEmpty(item.SiteId) && !isEmpty(item.WebId) && !isEmpty(item.UniqueID)) {
+                        url = `${this._ctx.pageContext.site.absoluteUrl}/_layouts/15/getpreview.ashx?guidSite=${item.SiteId}&guidWeb=${item.WebId}&guidFile=${item.UniqueID.replace(/\{|\}/g,'')}&resolution=3`;
+                    }
+                } else url = item.Path; 
+            }
+
+            return new Handlebars.SafeString(url);
         });
 
         // Return the search result count message
