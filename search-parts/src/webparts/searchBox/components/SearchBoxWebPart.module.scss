@@ -46,6 +46,11 @@
         padding: 8px;
     }
 
+    .suggestionContainer {
+        display: flex;
+        align-items: flex-start;
+    }
+
     .suggestionGroupName {
         padding: 6px;
         font-size: 14px;
@@ -56,9 +61,9 @@
     .suggestionItem {
         padding: 2px 10px;
         display: flex;
-        flex-direction: row;
+        justify-content: flex-start;
         align-items: center;
-        justify-content: center;
+        flex-direction: row;
         text-decoration: none;
         min-height: 28px;
         cursor: pointer;
@@ -87,10 +92,10 @@
             align-items: center;
             padding: 0 10px;
             flex: 1 1 auto;
+            margin-top: 1px;
         }
 
         .suggestionDisplayText {
-            white-space: nowrap;
             padding-right: 4px;
         }
 

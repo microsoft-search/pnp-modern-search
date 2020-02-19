@@ -18,11 +18,11 @@
       "default": "PnP"
     },
     "title": {
-      "default": "Search Refiners",
+      "default": "Search Filters",
       "fr-fr": "Filtres de recherche"
     },
     "description": {
-      "default": "Displays the customizable dynamic refiners",
+      "default": "Displays the customizable dynamic filters",
       "fr-fr": "Affiche les filtres dynamiques personnalisables"
     },
     "officeFabricIconFontName": "Filter",

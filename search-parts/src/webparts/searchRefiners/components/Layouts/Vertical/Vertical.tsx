@@ -192,6 +192,7 @@ export default class Vertical extends React.Component<IFilterLayoutProps, IVerti
       items.push(
         <TemplateRenderer
           key={i}
+          refinerConfiguration={!!configuredFilter[0] ? configuredFilter[0] : null}
           refinementResult={refinementResult}
           shouldResetFilters={props.shouldResetFilters}
           templateType={!!configuredFilter[0] ? configuredFilter[0].template : null}
