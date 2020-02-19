@@ -8,6 +8,7 @@ import {ICustomTemplateFieldValue} from '../../../../services/ResultService/Resu
 import SearchResultsOperationCallback from '../../../../models/SearchResultsOperationCallback';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import ResultsLayoutOption from '../../../../models/ResultsLayoutOption';
+import { ISortFieldConfiguration } from '../../../../models/ISortFieldConfiguration';
 
 interface ISearchResultsContainerProps {
 
@@ -30,6 +31,11 @@ interface ISearchResultsContainerProps {
      * The search query keywords
      */
     queryKeywords: string;
+
+    /**
+     * The managed properties used as default sort fields for the query
+     */
+    sortList: ISortFieldConfiguration[];
 
     /**
      * The managed properties used as sortable fields for the query

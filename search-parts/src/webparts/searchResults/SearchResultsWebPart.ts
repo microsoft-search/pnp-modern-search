@@ -239,6 +239,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                 searchService: this._searchService,
                 taxonomyService: this._taxonomyService,
                 queryKeywords: queryKeywords,
+                sortList: this.properties.sortList,
                 sortableFields: this.properties.sortableFields,
                 showPaging: this.properties.showPaging,
                 showResultsCount: this.properties.showResultsCount,
@@ -951,7 +952,23 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                         id: 'displayValue',
                         title: strings.Sort.SortableFieldDisplayValueField,
                         type: this._customCollectionFieldType.string
-                    }
+                    },
+                    {
+                      id: 'sortDirection',
+                      title: "Direction",
+                      type: this._customCollectionFieldType.dropdown,
+                      required: true,
+                      options: [
+                          {
+                              key: ISortFieldDirection.Ascending,
+                              text: strings.Sort.SortDirectionAscendingLabel
+                          },
+                          {
+                              key: ISortFieldDirection.Descending,
+                              text: strings.Sort.SortDirectionDescendingLabel
+                          }
+                      ]
+                  }
                 ]
             }),
             PropertyPaneToggle('useRefiners', {
