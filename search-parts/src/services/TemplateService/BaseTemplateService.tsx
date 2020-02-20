@@ -239,6 +239,7 @@ abstract class BaseTemplateService {
                 else if (!isEmpty(item.PreviewUrl)) previewSrc = item.PreviewUrl;
                 else if (!isEmpty(item.PictureThumbnailURL)) previewSrc = item.PictureThumbnailURL;
                 else if (!isEmpty(item.ServerRedirectedPreviewURL)) previewSrc = item.ServerRedirectedPreviewURL;
+                else if (!isEmpty(item.NormSiteID) && !isEmpty(item.NormListID) && !isEmpty(item.NormUniqueID)) previewSrc = `${this._ctx.pageContext.site.absoluteUrl}/_api/v2.0/sites/${item.NormSiteID}/lists/${item.NormListID}/items/${item.NormUniqueID}/driveItem/thumbnails/0/large/content?preferNoRedirect=true`;
                 else if (!isEmpty(item.SiteId) && !isEmpty(item.WebId) && !isEmpty(item.UniqueID)) previewSrc = `${this._ctx.pageContext.site.absoluteUrl}/_layouts/15/getpreview.ashx?guidSite=${item.SiteId}&guidWeb=${item.WebId}&guidFile=${item.UniqueID.replace(/\{|\}/g,'')}&resolution=3`;
             }
 

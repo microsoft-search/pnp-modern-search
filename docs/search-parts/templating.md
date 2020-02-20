@@ -154,7 +154,7 @@ Setting | Description
 `{{keywords}}` | The search query.
 `{{getSummary HitHighlightedSummary}}` | Format the *HitHighlightedSummary* property with recognized words in bold.
 `{{getDate <date_managed_property> "<format>" <time handling>}}` | Format the date with [Moment.js](https://momentjs.com/docs/#/parsing/string-format/) according to the current language. Date in the managed property should be on the form `2018-09-10T06:29:25.0000000Z` for the function to work.<p>&lt;time handling&gt; is optional and takes <ul><li>0 = format to browsers time zone (default)</li><li>1 = ignore Z time and handle as browsers local time zone</li><li>2 = strip time and set to 00:00:00 in browsers local time zone</li><li>3 = display in the time zone for the current web</li><li>4 = display in the time zone from the uers profile</li>
-`{{getPreviewSrc item}}` | Determine the image thumbnail URL if applicable.
+`{{getPreviewSrc item}}` | Determine the image thumbnail URL if applicable. Include NormSiteID, NormListID and NormUniqueID as managed properties to esnure previews for Pages and Files.
 `{{getUrl item}}` | Get the item URL. For a document, it means the URL to the Office Online instance or the direct URL (to download it).
 `{{getUrlField managed_propertyOWSURLH "URL/Title"}}` | Return the URL or Title part of a URL field managed property.
 `{{getCountMessage totalRows <?keywords>}}` | Display a friendly message displaying the result and the entered keywords.
