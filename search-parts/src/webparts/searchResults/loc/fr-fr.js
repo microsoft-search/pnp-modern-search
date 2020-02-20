@@ -157,9 +157,14 @@ define([], function() {
     },
     "ManagedPropertiesListPlaceHolder": "Sélectionnez ou ajoutez une propriété gérée",
     "QueryModifier": {
-      "NameLabel": "Modificateur de requêtes",
-      "OverviewLabel": "Un modificateur de requête est disponible à la bibliothèque d'extensibilité.",
-      "EnableLabelPrefix": "Activer"
+      "FieldLbl": "Modificateurs de requête",
+      "ConfigureBtn": "Configurer",
+      "PanelHeader": "Configurer les modificateurs de requête",
+      "PanelDescription": "Vous pouvez n'associer qu'un seul modificateur de requête par Web Part de résultats de recherche",
+      "EnableColumnLbl": "Activé",
+      "DisplayNameColumnLbl": "Nom",
+      "DescriptionColumnLbl": "Description",
+      "SelectedQueryModifierLbl": "Modificateur sélectionné: '{0}'"
     }
   }
 });

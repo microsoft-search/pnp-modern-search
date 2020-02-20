@@ -157,9 +157,14 @@ define([], function () {
     },
     "ManagedPropertiesListPlaceHolder": "Select or add a managed property",
     "QueryModifier": {
-      "NameLabel": "Query Modifier",
-      "OverviewLabel": "A query modifier is available from the extensibility library.",
-      "EnableLabelPrefix": "Enable"
+      "FieldLbl": "Search query modifiers",
+      "ConfigureBtn": "Configure",
+      "PanelHeader": "Configure search query modifiers",
+      "PanelDescription": "You can associate only one query modifier to a search result Web Part",
+      "EnableColumnLbl": "Enabled",
+      "DisplayNameColumnLbl": "Name",
+      "DescriptionColumnLbl": "Description",
+      "SelectedQueryModifierLbl": "Selected query modifier: '{0}'"
     }
   }
 });

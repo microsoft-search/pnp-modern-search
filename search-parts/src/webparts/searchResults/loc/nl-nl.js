@@ -157,9 +157,14 @@ define([], function () {
     },
     "ManagedPropertiesListPlaceHolder": "Selecteer of voeg een beheerde eigenschap toe",
     "QueryModifier": {
-      "NameLabel": "Endrings spørring",
-      "OverviewLabel": "En spørrings endrings spørring er tilgjengelig fra Utvidelses biblioteket.",
-      "EnableLabelPrefix": "Aktiverer"
+      "FieldLbl": "Modificaties voor zoekopdrachten",
+      "ConfigureBtn": "Configure",
+      "PanelHeader": "Configureer zoekmodificaties",
+      "PanelDescription": "U kunt slechts één zoekopdracht aanpassen aan een webonderdeel met zoekresultaten",
+      "EnableColumnLbl": "Ingeschakeld",
+      "DisplayNameColumnLbl": "Naam",
+      "DescriptionColumnLbl": "Beschrijving",
+      "SelectedQueryModifierLbl": "Geselecteerde query-modifier: '{0}'"
     }
   }
 });

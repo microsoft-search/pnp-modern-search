@@ -5,6 +5,8 @@ import ISortableFieldConfiguration from '../../models/ISortableFieldConfiguratio
 import { ISearchResultType } from '../../models/ISearchResultType';
 import { ICustomTemplateFieldValue } from '../../services/ResultService/ResultService';
 import { ISynonymFieldConfiguration} from '../../models/ISynonymFieldConfiguration';
+import IQueryModifierConfiguration from '../../models/IQueryModifierConfiguration';
+import { IQueryModifierDefinition } from '../../services/ExtensibilityService/IQueryModifierDefinition';
 
 export interface ISearchResultsWebPartProps {
     queryKeywords: DynamicProperty<string>;
@@ -37,5 +39,6 @@ export interface ISearchResultsWebPartProps {
     synonymList: ISynonymFieldConfiguration[];
     searchQueryLanguage: number;
     templateParameters: { [key:string]: any };
-    enableQueryModifier: boolean;
+    queryModifiers: IQueryModifierConfiguration[];
+    selectedQueryModifierDisplayName: string;
 }

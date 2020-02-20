@@ -157,9 +157,14 @@ define([], function () {
     },
     "ManagedPropertiesListPlaceHolder": "Select or add a managed property",
     "QueryModifier": {
-      "NameLabel": "Modificador de consulta",
-      "OverviewLabel": "Un modificador de consulta está disponible en la biblioteca de extensibilidad.",
-      "EnableLabelPrefix": "Habilitar"
+      "FieldLbl": "Modificador de consulta",
+      "ConfigureBtn": "Configurador",
+      "PanelHeader": "Configurar los modificadores de requisitos",
+      "PanelDescription": "Solo puede asociar un modificador de consulta por elemento web de resultados de búsqueda",
+      "EnableColumnLbl": "Activado",
+      "DisplayNameColumnLbl": "Apellido",
+      "DescriptionColumnLbl": "Descripción",
+      "SelectedQueryModifierLbl": "Selected query modifier: '{0}'"
     }
   }
 });

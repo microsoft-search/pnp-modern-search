@@ -15,7 +15,7 @@ export interface IExtensibilityLibrary {
     getCustomSuggestionProviders(): ISuggestionProviderDefinition<any>[];
 
     /**
-     * Returns query modifier
+     * Returns custom query modifiers
      */
-    getQueryModifier(): IQueryModifierDefinition<any>;
+    getCustomQueryModifiers(): IQueryModifierDefinition<any>[];
 }
