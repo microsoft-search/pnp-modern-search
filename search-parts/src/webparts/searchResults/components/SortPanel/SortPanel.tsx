@@ -96,7 +96,9 @@ export default class SortPanel extends React.Component<ISortPanelProps, ISortPan
             dropdownOptions.push({
                 key: e.sortField,
                 text: e.displayValue,
-                data: {sortDirection: e.sortDirection}
+                data: {
+                  sortDirection: e.sortField === this.state.sortField ? this.state.sortDirection : e.sortDirection
+                }
             });
         });
 
