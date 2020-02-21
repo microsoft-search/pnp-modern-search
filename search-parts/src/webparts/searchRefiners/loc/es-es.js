@@ -30,6 +30,7 @@ define([], function() {
             "ApplyFiltersLabel": "Aplicar",
             "ClearFiltersLabel": "Limpiar",
             "ShowExpanded": "Expandir filtro predeterminado",
+            "RefinerDefaultFilters": "Filtros inicialmente seleccionados",
             "Templates": {
                 "RefinementItemTemplateLabel": "Elemento de refinamiento predeterminado",
                 "MutliValueRefinementItemTemplateLabel": "Elemento de refinamiento multivalor",

@@ -34,6 +34,11 @@ interface IRefinerConfiguration {
      * Allow refiners to be expanded by default
      */
     showExpanded: boolean;
+
+    /** 
+     * Allow refiners to select filters by default
+     */
+    refinerDefaultFilters: string;
 }
 
 export default IRefinerConfiguration;

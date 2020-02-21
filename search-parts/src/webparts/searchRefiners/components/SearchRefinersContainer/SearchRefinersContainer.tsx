@@ -9,15 +9,18 @@ import RefinersLayoutOption from '../../../../models/RefinersLayoutOptions';
 import { MessageBarType, MessageBar } from 'office-ui-fabric-react/lib/MessageBar';
 import * as strings from 'SearchRefinersWebPartStrings';
 import { ISearchRefinersContainerState } from './ISearchRefinersContainerState';
-import { IRefinementFilter, IRefinementValue, RefinementOperator } from '../../../../models/ISearchResult';
+import { IRefinementFilter, IRefinementValue, RefinementOperator, IRefinementResult } from '../../../../models/ISearchResult';
 import * as update from 'immutability-helper';
 import RefinerTemplateOption from '../../../../models/RefinerTemplateOption';
 import { find, isEqual } from '@microsoft/sp-lodash-subset';
 import RefinersSortOption from '../../../../models/RefinersSortOptions';
 import RefinerSortDirection from '../../../../models/RefinersSortDirection';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
+import IRefinerConfiguration from "../../../../models/IRefinerConfiguration";
 
 export default class SearchRefinersContainer extends React.Component<ISearchRefinersContainerProps, ISearchRefinersContainerState> {
+
+  private _defaultFiltersLoaded: boolean = false;
 
   public constructor(props: ISearchRefinersContainerProps) {
     super(props);
@@ -186,6 +189,8 @@ export default class SearchRefinersContainer extends React.Component<ISearchRefi
       }
     });
 
+    this._applyDefaultRefinementFilters(availableFilters);
+
     this.setState({
       availableRefiners: availableFilters
     });
@@ -254,5 +259,100 @@ export default class SearchRefinersContainer extends React.Component<ISearchRefi
     });
 
     this.props.onUpdateFilters([]);
+  }
+
+  private _applyDefaultRefinementFilters(availableFilters: IRefinementResult[]): void {
+    const defaultFilters: IRefinementFilter[] = [];
+
+    if (this._defaultFiltersLoaded || !this.props || !this.props.refinersConfiguration || !this.props.refinersConfiguration.length || 
+        !availableFilters || !availableFilters.length) {
+      return;
+    }
+
+    // This ensures loading the values only once.
+    this._defaultFiltersLoaded = true;
+
+    // Check all Refiner Configuration and load the default filters
+    this.props.refinersConfiguration.forEach((refinerConfiguration: IRefinerConfiguration) => {
+
+      if (refinerConfiguration.refinerDefaultFilters) {
+
+        const filterName = refinerConfiguration.refinerName;
+        const defaultFiltersConfig = refinerConfiguration.refinerDefaultFilters;
+        const refinementValues = this._getDefaultFilterValues(filterName, defaultFiltersConfig, availableFilters);
+
+        if (refinementValues.length){
+          const refinementFilter: IRefinementFilter = {
+            FilterName: filterName,
+            Values: refinementValues,
+            Operator: this._getFilterOperatorFromConfig(refinerConfiguration)
+          };
+
+          defaultFilters.push(refinementFilter);
+        }
+      }
+
+    });
+
+    if (!defaultFilters.length) {
+      return;
+    }
+
+    this.setState({
+      selectedRefinementFilters: defaultFilters,
+      shouldResetFilters: false
+    });
+
+    this.props.onUpdateFilters(defaultFilters);
+  }
+
+  private _getDefaultFilterValues(filterName: string, defaultFiltersConfig: string | string[], availableResults: IRefinementResult[]): IRefinementValue[] {
+    const refinementValues: IRefinementValue[] = [];
+
+    if (!defaultFiltersConfig || typeof defaultFiltersConfig !== "string") {
+      return refinementValues;
+    }
+
+    if ( defaultFiltersConfig.indexOf(",") >= 0) {
+      // Split multiples comma separated values
+      defaultFiltersConfig.split(",").forEach((filter: string) => {
+        this._addDefaultRefinementValue(filterName, filter, availableResults, refinementValues);
+      });
+
+    } else {
+      this._addDefaultRefinementValue(filterName, defaultFiltersConfig, availableResults, refinementValues);
+    }
+
+    return refinementValues;
+  }
+
+  private _addDefaultRefinementValue(filterName: string, filterValue: string, availableResults: IRefinementResult[], refinementValues: IRefinementValue[]): IRefinementValue {
+    if (!filterName || !filterValue || !availableResults.length || !refinementValues) return;
+
+    const availableResult = availableResults.find(result => result.FilterName === filterName);
+    if (availableResult && availableResult.Values.length > 0){
+      const value = availableResult.Values.find(val => {
+        return val.RefinementName === filterValue;
+      });
+
+      if (value) {
+        refinementValues.push(value);
+      }
+    }
+  }
+
+  private _getFilterOperatorFromConfig(refinerConfiguration: IRefinerConfiguration): RefinementOperator {
+    switch (refinerConfiguration.template) {
+      case RefinerTemplateOption.CheckBox:
+      case RefinerTemplateOption.FixedDateRange:
+        return RefinementOperator.AND;
+
+      case RefinerTemplateOption.CheckBoxMulti:
+      case RefinerTemplateOption.DateRange:
+        return RefinementOperator.OR;
+
+      default:
+        return RefinementOperator.AND;
+    }
   }
 }

@@ -309,6 +309,11 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
             id: 'showExpanded',
             title: strings.Refiners.ShowExpanded,
             type: CustomCollectionFieldType.boolean
+          },
+          {
+            id: 'refinerDefaultFilters',
+            title: strings.Refiners.RefinerDefaultFilters,
+            type: CustomCollectionFieldType.string
           }
         ]
       }),
@@ -450,7 +455,8 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
           template: RefinerTemplateOption.CheckBox,
           refinerSortType: RefinersSortOption.Default,
           refinerSortDirection: RefinersSortDirection.Ascending,
-          showExpanded: false
+          showExpanded: false,
+          refinerDefaultFilters: ""
         },
         {
           refinerName: "Size",
@@ -458,7 +464,8 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
           template: RefinerTemplateOption.CheckBox,
           refinerSortType: RefinersSortOption.ByNumberOfResults,
           refinerSortDirection: RefinersSortDirection.Descending,
-          showExpanded: false
+          showExpanded: false,
+          refinerDefaultFilters: ""
         },
         {
           refinerName: "owstaxidmetadataalltagsinfo",
@@ -466,7 +473,8 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
           template: RefinerTemplateOption.CheckBox,
           refinerSortType: RefinersSortOption.Alphabetical,
           refinerSortDirection: RefinersSortDirection.Ascending,
-          showExpanded: false
+          showExpanded: false,
+          refinerDefaultFilters: ""
         },
         {
           refinerName: "RefinableString06",
@@ -474,7 +482,8 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
           template: RefinerTemplateOption.Persona,
           refinerSortType: RefinersSortOption.Alphabetical,
           refinerSortDirection: RefinersSortDirection.Ascending,
-          showExpanded: false
+          showExpanded: false,
+          refinerDefaultFilters: ""
         }
       ];
     }
