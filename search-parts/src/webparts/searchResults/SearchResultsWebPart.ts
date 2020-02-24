@@ -379,7 +379,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             this.availableWebComponentDefinitions = this.availableWebComponentDefinitions.concat(extensibilityLibrary.getCustomWebComponents());
 
             // Get custom query modifiers if present
-            this.availableQueryModifierDefinitions = extensibilityLibrary.getCustomQueryModifiers();
+            this.availableQueryModifierDefinitions = extensibilityLibrary.getCustomQueryModifiers ? extensibilityLibrary.getCustomQueryModifiers() : [];
 
             // Initializes query modifiers property for selection
             this.properties.queryModifiers = this.availableQueryModifierDefinitions.map(definition => {
