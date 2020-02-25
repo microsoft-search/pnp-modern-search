@@ -70,6 +70,7 @@ import { ObjectCreator } from '../../services/ExtensibilityService/ObjectCreator
 import { BaseQueryModifier } from '../../services/ExtensibilityService/BaseQueryModifier';
 import { Toggle } from 'office-ui-fabric-react';
 import IQueryModifierConfiguration from '../../models/IQueryModifierConfiguration';
+import { SearchHelper } from '../../helpers/SearchHelper';
 
 export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchResultsWebPartProps> implements IDynamicDataCallables {
 
@@ -182,7 +183,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         super.renderCompleted();
         let renderElement = null;
         let refinerConfiguration: IRefinerConfiguration[] = [];
-        let selectedFilters: IRefinementFilter[] = [];
+        let selectedFilters: IRefinementFilter[] = SearchHelper.getRefinementFiltersFromUrl();
         let selectedPage: number = 1;
         let queryTemplate: string = this.properties.queryTemplate;
         let sourceId: string = this.properties.resultSourceId;
@@ -233,7 +234,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             selectedProperties: { $set: this.properties.selectedProperties ? this.properties.selectedProperties.replace(/\s|,+$/g, '').split(',') : [] },
             synonymTable: { $set: this._synonymTable },
             queryCulture: { $set: this.properties.searchQueryLanguage !== -1 ? this.properties.searchQueryLanguage : currentLocaleId },
-            refinementFilters: { $set: selectedFilters },
+            refinementFilters: { $set: selectedFilters.length > 0 ? SearchHelper.buildRefinementQueryString(selectedFilters) : [this.properties.refinementFilters] },
             refiners: { $set: refinerConfiguration },
             queryModifier: { $set: queryModifier },
         });
@@ -1023,6 +1024,11 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                 },
                 onUpdateAvailableProperties: this._onUpdateAvailableProperties,
                 searchService: this._searchService,
+            }),
+            PropertyPaneTextField('refinementFilters', {
+                label: 'Refinement filters',
+                 multiline: true,
+                 deferredValidationTime: 300
             }),
             PropertyPaneSlider('maxResultsCount', {
                 label: strings.MaxResultsCount,

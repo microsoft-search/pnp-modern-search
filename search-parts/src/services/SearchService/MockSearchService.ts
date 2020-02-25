@@ -18,7 +18,7 @@ class MockSearchService implements ISearchService {
   private _sortList: Sort[];
   private _enableQueryRules: boolean;
   private _refiners: IRefinerConfiguration[];
-  private _refinementFilters: IRefinementFilter[];
+  private _refinementFilters: string[];
   private _queryCulture: number;
 
   public get resultsCount(): number { return this._resultsCount; }
@@ -42,8 +42,8 @@ class MockSearchService implements ISearchService {
   public set refiners(value: IRefinerConfiguration[]) { this._refiners = value; }
   public get refiners(): IRefinerConfiguration[] { return this._refiners; }
 
-  public set refinementFilters(value: IRefinementFilter[]) { this._refinementFilters = value; }
-  public get refinementFilters(): IRefinementFilter[] { return this._refinementFilters; }
+  public set refinementFilters(value: string[]) { this._refinementFilters = value; }
+  public get refinementFilters(): string[] { return this._refinementFilters; }
 
   public get queryCulture(): number { return this._queryCulture; }
   public set queryCulture(value: number) { this._queryCulture = value; }
@@ -246,16 +246,13 @@ class MockSearchService implements ISearchService {
 
     const p1 = new Promise<ISearchResults>((resolve) => {
 
-      const filters: string[] = [];
+      const filters: string[] = this.refinementFilters;
       let searchResults = clone(this._searchResults);
       searchResults.QueryKeywords = query;
       const filteredResults: ISearchResult[] = [];
 
       if (this.refinementFilters.length > 0) {
-        this.refinementFilters.map((filter) => {
-          filters.push(filter.Values[0].RefinementToken);
-        });
-
+      
         searchResults.RelevantResults.map((searchResult) => {
           const filtered = intersection(filters, searchResult.RefinementTokenValues.split(','));
           if (filtered.length > 0) {
