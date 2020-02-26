@@ -60,6 +60,7 @@ define([], function () {
     "UseRefinersWebPartLabel": "Conectar con Web Part Refinadores de Búsqueda",
     "UseRefinersFromComponentLabel": "Utilice refinadores de este componente",
     "UsePaginationFromComponentLabel": "Utilice la paginación de este componente",
+    "RefinementFilters": "Filtros de refinamiento",
     "customTemplateFieldsLabel": "Valores de campo de plantilla personalizada",
     "customTemplateFieldsPanelHeader": "Valores de campo de plantilla personalizada",
     "customTemplateFieldsConfigureButtonLabel": "Configurar",

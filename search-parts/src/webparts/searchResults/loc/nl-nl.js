@@ -60,6 +60,7 @@ define([], function () {
     "UseRefinersWebPartLabel": "Verbind met een zoekverfijningen webonderdeel",
     "UseRefinersFromComponentLabel": "Gebruik verfijningen van dit webonderdeel",
     "UsePaginationFromComponentLabel": "Gebruik paginering van dit webonderdeel",
+    "RefinementFilters": "Verfijningsfilters",
     "customTemplateFieldsLabel": "Aangepaste sjabloonveldwaarden",
     "customTemplateFieldsPanelHeader": "Aangepaste sjabloonveldwaarde",
     "customTemplateFieldsConfigureButtonLabel": "Configureren",

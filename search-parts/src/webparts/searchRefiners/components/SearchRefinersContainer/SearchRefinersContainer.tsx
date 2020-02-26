@@ -123,6 +123,12 @@ export default class SearchRefinersContainer extends React.Component<ISearchRefi
       });
     }
 
+    if (!isEqual(this.props.defaultSelectedRefinementFilters, nextProps.defaultSelectedRefinementFilters) && nextProps.defaultSelectedRefinementFilters.length > 0) {
+      this.setState({
+        selectedRefinementFilters: nextProps.defaultSelectedRefinementFilters
+      });
+    }
+
     let availableFilters = nextProps.availableRefiners;
 
     nextProps.availableRefiners.forEach((refinementResult, index) => {

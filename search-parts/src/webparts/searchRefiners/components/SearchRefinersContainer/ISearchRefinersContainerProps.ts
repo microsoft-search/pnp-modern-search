@@ -1,4 +1,4 @@
-import { IRefinementResult, IRefinementFilter } from "../../../../models/ISearchResult";
+import { IRefinementResult, IRefinementFilter, IRefinementValue } from "../../../../models/ISearchResult";
 import IRefinerConfiguration from "../../../../models/IRefinerConfiguration";
 import { DisplayMode } from "@microsoft/sp-core-library";
 import RefinersLayoutOption from "../../../../models/RefinersLayoutOptions";
@@ -10,6 +10,11 @@ export interface ISearchRefinersContainerProps {
    * The Web Part title
    */
   webPartTitle: string;
+
+  /**
+   * Default selected refinement filters
+   */
+  defaultSelectedRefinementFilters: IRefinementFilter[];
 
   /**
    * List of available refiners from the connected search results Web Part

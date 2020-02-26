@@ -61,6 +61,7 @@ declare interface ISearchResultsWebPartStrings {
     UseRefinersWebPartLabel: string;
     UseRefinersFromComponentLabel: string;
     UsePaginationFromComponentLabel: string;
+    RefinementFilters: string;
     customTemplateFieldsLabel: string;
     customTemplateFieldsPanelHeader: string;
     customTemplateFieldsConfigureButtonLabel: string;
