@@ -45,6 +45,7 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
 
   private _dynamicDataService: IDynamicDataService;
   private _selectedFilters: IRefinementFilter[] = [];
+  private _isDirty: boolean = false;
   private _searchResultSourceData: DynamicProperty<ISearchResultSourceData>;
   private _searchService: ISearchService;
   private _themeProvider: ThemeProvider;
@@ -69,6 +70,7 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
     let selectedProperties: string[] = [];
     let queryTemplate: string = '';
     let resultSourceId: string = '';
+    let defaultSelectedFilters: IRefinementFilter[] = [];
 
     if (this.properties.searchResultsDataSourceReference) {
 
@@ -83,6 +85,7 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
           selectedProperties = (searchServiceConfig.selectedProperties) ? searchServiceConfig.selectedProperties : [];
           queryTemplate = (searchServiceConfig.queryTemplate) ? searchServiceConfig.queryTemplate : '';
           resultSourceId = searchServiceConfig.resultSourceId;
+          defaultSelectedFilters = searchResultSourceData.defaultSelectedRefinementFilters;
         }
       }
 
@@ -95,6 +98,7 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
           showBlank: this.properties.showBlank,
           displayMode: this.displayMode,
           onUpdateFilters: (appliedRefiners: IRefinementFilter[]) => {
+            this._isDirty = true;
             this._selectedFilters = appliedRefiners;
             this.context.dynamicDataSourceManager.notifyPropertyChanged(SearchComponentType.RefinersWebPart);
           },
@@ -102,7 +106,8 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
           language: this.context.pageContext.cultureInfo.currentUICultureName,
           query: queryKeywords + queryTemplate + selectedProperties + resultSourceId,
           themeVariant: this._themeVariant,
-          userService: this._userService
+          userService: this._userService,
+          defaultSelectedRefinementFilters: defaultSelectedFilters
         } as ISearchRefinersContainerProps
       );
     } else {
@@ -148,7 +153,8 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
       case SearchComponentType.RefinersWebPart:
         return {
           selectedFilters: this._selectedFilters,
-          refinerConfiguration: this.properties.refinersConfiguration
+          refinerConfiguration: this.properties.refinersConfiguration,
+          isDirty: this._isDirty
         } as IRefinerSourceData;
 
       default:

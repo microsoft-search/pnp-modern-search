@@ -82,7 +82,7 @@ export default class TemplateRenderer extends React.Component<ITemplateRendererP
           isMultiValue={false}
           themeVariant={this.props.themeVariant}
           removeFilterValue={this.props.valueToRemove}
-          selectedValues={this.props.selectedValues}
+          selectedValues={this.props.selectedValues.length > 0 ? [this.props.selectedValues[0]] : []} // Allow only 1 value event if multiple were selected as default
         />;
         break;
 

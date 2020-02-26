@@ -137,6 +137,8 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
     private availableQueryModifierDefinitions: IQueryModifierDefinition<any>[] = [];
     private queryModifierSelected: boolean = false;
 
+    private defaultSelectedFilters: IRefinementFilter[] = [];
+
     public constructor() {
         super();
         this._templateContentToDisplay = '';
@@ -183,21 +185,31 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         super.renderCompleted();
         let renderElement = null;
         let refinerConfiguration: IRefinerConfiguration[] = [];
-        let selectedFilters: IRefinementFilter[] = SearchHelper.getRefinementFiltersFromUrl();
+        let selectedFilters: IRefinementFilter[] = [];
         let selectedPage: number = 1;
         let queryTemplate: string = this.properties.queryTemplate;
         let sourceId: string = this.properties.resultSourceId;
         let getVerticalsCounts: boolean = false;
 
+        // Get default selected refiners from the URL
+        this.defaultSelectedFilters = SearchHelper.getRefinementFiltersFromUrl();
+        selectedFilters = this.defaultSelectedFilters;
+
         let queryDataSourceValue = this.properties.queryKeywords.tryGetValue();
         let queryKeywords = queryDataSourceValue ? queryDataSourceValue : this.properties.defaultSearchQuery;
-
+        
         // Get data from connected sources
         if (this._refinerSourceData && !this._refinerSourceData.isDisposed) {
             const refinerSourceData: IRefinerSourceData = this._refinerSourceData.tryGetValue();
             if (refinerSourceData) {
                 refinerConfiguration = sortBy(refinerSourceData.refinerConfiguration, 'sortIdx');
-                selectedFilters = refinerSourceData.selectedFilters;
+
+                if (refinerSourceData.isDirty) {
+                    selectedFilters = refinerSourceData.selectedFilters;
+
+                    // Reset the default filters provided in URL when user starts to select/unselected values manually
+                    this.defaultSelectedFilters = [];
+                }          
             }
         }
 
@@ -553,6 +565,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         this.properties.searchQueryLanguage = this.properties.searchQueryLanguage ? this.properties.searchQueryLanguage : -1;
         this.properties.templateParameters = this.properties.templateParameters ? this.properties.templateParameters : {};
         this.properties.queryModifiers = !isEmpty(this.properties.queryModifiers) ? this.properties.queryModifiers : [];
+        this.properties.refinementFilters = this.properties.refinementFilters ? this.properties.refinementFilters : "";
     }
 
     protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
@@ -1665,16 +1678,43 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
     public getPropertyValue(propertyId: string): ISearchResultSourceData {
 
+        // Update values in default selected filters
+        let updatedDefaultSelectedFilters: IRefinementFilter[] =  [];
+        const refinementResults = (this._resultService && this._resultService.results) ? this._resultService.results.RefinementResults : [];
+       
+        // Default values can contains FQL conditions as well as KQL conditions. It results we cannot use the RefinementToken or RefinementValue property value as a comparison basis with the retrieved refinement results.
+        // Therefore, we consider that when the filter name specified in the URL matches one in the refinement results, the filter conditions are valid and we replace original values with correct ones (encoded in HEX) like as they would be selected manually in the UI
+        if (refinementResults.length > 0 && this.defaultSelectedFilters.length > 0) {
+            updatedDefaultSelectedFilters = this.defaultSelectedFilters.map(defaultSelectedFilter => {
+
+                const matchingRefinementResults = refinementResults.filter(refinementResult => refinementResult.FilterName === defaultSelectedFilter.FilterName);
+
+                if (matchingRefinementResults.length === 1) {
+
+                    matchingRefinementResults[0].Values.map(refinementValue => {
+
+                        const matchingValues = defaultSelectedFilter.Values.filter(value => { return value.RefinementValue.indexOf(refinementValue.RefinementValue) !== -1; });
+                        if (matchingValues.length === 1) {
+                            defaultSelectedFilter
+                        }
+                    });
+                }
+
+                return defaultSelectedFilter;
+            });
+        }
+        
         const searchResultSourceData: ISearchResultSourceData = {
             queryKeywords: this.properties.queryKeywords.tryGetValue(),
-            refinementResults: (this._resultService && this._resultService.results) ? this._resultService.results.RefinementResults : [],
+            refinementResults: refinementResults,
             paginationInformation: (this._resultService && this._resultService.results) ? this._resultService.results.PaginationInformation : {
                 CurrentPage: 1,
                 MaxResultsPerPage: this.properties.maxResultsCount,
                 TotalRows: 0
             },
             searchServiceConfiguration: this._searchService.getConfiguration(),
-            verticalsInformation: this._verticalsInformation
+            verticalsInformation: this._verticalsInformation,
+            defaultSelectedRefinementFilters: updatedDefaultSelectedFilters
         };
 
         switch (propertyId) {

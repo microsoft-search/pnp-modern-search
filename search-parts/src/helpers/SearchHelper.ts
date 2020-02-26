@@ -1,12 +1,11 @@
 import { IRefinementFilter, IRefinementValue, RefinementOperator } from "../models/ISearchResult";
 import { UrlHelper } from "./UrlHelper";
-import IRefinerConfiguration from "../models/IRefinerConfiguration";
-import RefinerTemplateOption from "../models/RefinerTemplateOption";
+import { ConsoleListener, LogLevel, Logger } from '@pnp/logging';
 
-export interface IUrlFilter {
+export interface IUrlFilterParam {
     n: string;
     o: RefinementOperator;
-    t: string | string[];
+    t: string[];
 }
 
 export class SearchHelper {
@@ -47,191 +46,88 @@ export class SearchHelper {
      * Get the default pre-selected filters based on the url parameters
      */
     public static getRefinementFiltersFromUrl(): IRefinementFilter[] {
-        const refinementFilters: IRefinementFilter[] = [];
+        let refinementFilters: IRefinementFilter[] = [];
 
         // Get and parse filters param for url
         const urlParamValue = UrlHelper.getQueryStringParam("filters", window.location.href);
-        const urlFilters: IUrlFilter[] = JSON.parse(decodeURIComponent(urlParamValue));
 
-        // Return if url param is not found
-        if (!urlFilters) return refinementFilters;
+        try {
+            const urlFilters: IUrlFilterParam[] = JSON.parse(decodeURIComponent(urlParamValue));
+        
+            // Return if url param is not found
+            if (!urlFilters) return refinementFilters;
 
-        urlFilters.map((filter: IUrlFilter) => {
+            urlFilters.map((filter: IUrlFilterParam) => {
 
-            // Map to refinementFilters if:
-            //  -filterName is provided
-            //  -filterValues are provided
-            //  -filter configuration is found
-            if (
-                filter.n &&
-                filter.t
-            ) {
-                // Get configuration
-                const refinerConfiguration: IRefinerConfiguration = refinersConfiguration.filter(
-                    (refiner: IRefinerConfiguration) => refiner.refinerName === filter.n
-                )[0];
+                if (filter.n && filter.t) {
 
-                // Map filter values
-                let filterValues: IRefinementValue[] = [];
-                switch (refinerConfiguration.template) {
-                    case RefinerTemplateOption.CheckBox:
-                    case RefinerTemplateOption.CheckBoxMulti:
-                        filterValues = this._getStringFilterValues(filter.t);
-                        break;
-                    case RefinerTemplateOption.DateRange:
-                        filterValues = this._getDateRangeFilterValues(filter.n, filter.t);
-                        break;
-                    case RefinerTemplateOption.FixedDateRange:
-                        filterValues = this._getDateIntervalFilterValues(filter.n, filter.t);
-                        break;
-                    default:
-                        break;
+                    // Map filter values
+                    let filterValues: IRefinementValue[] = [];
+
+                    filter.t.map((value: string) => {
+
+                        // Check if the condition seems to be an FQL filter
+                        /[equals|ends-width]()/ // TODO
+                        
+                        let refinementValue: IRefinementValue = {
+                            RefinementCount: 0,
+                            RefinementName: value,
+                            RefinementToken: value.replace(/\'/g,'"'), // FQL expressions use double quotes to get it work
+                            RefinementValue: value
+                        };
+
+                        switch (value) {
+                            case "yesterday":
+                                refinementValue.RefinementToken = `range(${this._getISOPastDate(1)},max)`;
+                                break;
+                            case "weekAgo":
+                                refinementValue.RefinementToken = `range(${this._getISOPastDate(7)},max)`;
+                                break;
+                            case "monthAgo":
+                                refinementValue.RefinementToken = `range(${this._getISOPastDate(30)},max)`;
+                                break;
+                            case "threeMonthsAgo":
+                                refinementValue.RefinementToken = `range(${this._getISOPastDate(90)},max)`;
+                                break;
+                            case "yearAgo":
+                                refinementValue.RefinementToken = `range(${this._getISOPastDate(365)},max)`;
+                                break;
+                            case "olderThanYear":
+                                refinementValue.RefinementToken = `range(min,${this._getISOPastDate(365)})`;
+                                break;
+                            default:
+                                break;
+                        }
+            
+                        filterValues.push(refinementValue);
+                    });
+
+                    const filterOperator: RefinementOperator = filter.o
+                        ? filter.o
+                        : RefinementOperator.AND
+
+                    refinementFilters.push({
+                        FilterName: filter.n,
+                        Operator: filterOperator,
+                        Values: filterValues
+                    });
                 }
+            });
+        } catch (error) {
 
-                // Get operator
-                //  -if provided in Url, use that one
-                //  -otherwise, get based on configured template
-                const filterOperator: RefinementOperator = filter.o
-                    ? filter.o
-                    : this._getFilterOperatorFromConfig(refinerConfiguration);
+            const consoleListener = new ConsoleListener();
+            Logger.subscribe(consoleListener);
 
-                refinementFilters.push({
-                    FilterName: filter.n,
-                    Operator: filterOperator,
-                    Values: filterValues
-                });
-            }
-        });
+            Logger.log({
+                level: LogLevel.Error,
+                message: `[SearchHelper::getRefinementFiltersFromUrl()] Error when parsing URL filter params (Details: '${error}')`
+            });
+            refinementFilters = [];
+        }
 
         return refinementFilters;
     }
 
-    /**
-     * Converst the filter value from the url to a date range refinement value
-     * @param filterName the filter name provided in the url
-     * @param filterValue the filter value provided in the url (has a set of possible values)
-     */
-    private static _getDateIntervalFilterValues(filterName: string, filterValue: string | string[]): IRefinementValue[] {
-        const filterValues: IRefinementValue[] = [];
-        // The following values are accepted
-        //  -yesterday
-        //  -weekAgo
-        //  -monthAgo
-        //  -threeMonthsAgo
-        //  -yearAgo
-        //  -olderThanYear
-        if (typeof filterValue === "string") {
-            const value: IRefinementValue = {
-                RefinementCount: 0,
-                RefinementName: filterName,
-                RefinementToken: "",
-                RefinementValue: filterValue
-            };
-
-            switch (filterValue) {
-                case "yesterday":
-                    value.RefinementToken = `range(${this._getISOPastDate(1)},max)`;
-                    break;
-                case "weekAgo":
-                    value.RefinementToken = `range(${this._getISOPastDate(7)},max)`;
-                    break;
-                case "monthAgo":
-                    value.RefinementToken = `range(${this._getISOPastDate(30)},max)`;
-                    break;
-                case "threeMonthsAgo":
-                    value.RefinementToken = `range(${this._getISOPastDate(90)},max)`;
-                    break;
-                case "yearAgo":
-                    value.RefinementToken = `range(${this._getISOPastDate(365)},max)`;
-                    break;
-                case "olderThanYear":
-                    value.RefinementToken = `range(min,${this._getISOPastDate(365)})`;
-                    break;
-                default:
-                    return filterValues;
-            }
-
-            filterValues.push(value);
-        }
-
-        return filterValues;
-    }
-
-    /**
-     * Converst the filter value from the url to a date range refinement value
-     * @param filterName the filter name provided in the url
-     * @param filterValue the filter value provided in the url
-     */
-    private static _getDateRangeFilterValues(filterName: string, filterValue: string | string[]): IRefinementValue[] {
-        const filterValues: IRefinementValue[] = [];
-
-        // For dates we expect a 'range(date 1,date 2)' format
-        //  -Date 1: Should be an ISO formatted UTC date OR min
-        //  -Date 2: Should be an ISO formatted UTC date OR max
-        if (typeof filterValue === "string") {
-            const matches = filterValue.match(/(?<=range\().+?(?=\))/g);
-            if (matches) {
-                matches.forEach((match: string) => {
-                    console.log(match);
-                    filterValues.push({
-                        RefinementCount: 0,
-                        RefinementName: filterName,
-                        RefinementToken: filterValue,
-                        RefinementValue: filterValue
-                    });
-                });
-            }
-        }
-
-        return filterValues;
-    }
-
-    /**
-     * Converts the string or array of strings to a valide refinement value
-     * @param filterValue as string of array of strings of the refiner value provided in the url
-     */
-    private static _getStringFilterValues(filterValue: string | string[]): IRefinementValue[] {
-        const filterValues: IRefinementValue[] = [];
-        if (typeof filterValue === "string") {
-            filterValues.push({
-                RefinementCount: 0,
-                RefinementName: filterValue,
-                RefinementToken: `"ǂǂ${this._getRefinerTokenValue(filterValue)}"`,
-                RefinementValue: filterValue
-            });
-        } else {
-            filterValue.forEach((value: string) => {
-                filterValues.push({
-                    RefinementCount: 0,
-                    RefinementName: value,
-                    RefinementToken: `"ǂǂ${this._getRefinerTokenValue(value)}"`,
-                    RefinementValue: value
-                });
-            });
-        }
-
-        return filterValues;
-    }
-    private static _getRefinerTokenValue(value: string): string {
-        let tokenValue = "";
-        for (let i = 0; i < value.length; i++) {
-            const charCode = value.charCodeAt(i);
-            tokenValue += charCode.toString(16);
-        }
-        return tokenValue;
-    }
-    private static _getFilterOperatorFromConfig(refinerConfiguration: IRefinerConfiguration): RefinementOperator {
-        switch (refinerConfiguration.template) {
-            case RefinerTemplateOption.CheckBox:
-            case RefinerTemplateOption.FixedDateRange:
-                return RefinementOperator.AND;
-            case RefinerTemplateOption.CheckBoxMulti:
-            case RefinerTemplateOption.DateRange:
-                return RefinementOperator.OR;
-            default:
-                return RefinementOperator.AND;
-        }
-    }
     private static _getISOPastDate(daysToSubstract: number): string {
         return new Date((new Date() as any) - 1000 * 60 * 60 * 24 * daysToSubstract).toISOString();
     }
