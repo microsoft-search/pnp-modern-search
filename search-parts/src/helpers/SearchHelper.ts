@@ -3,8 +3,20 @@ import { UrlHelper } from "./UrlHelper";
 import { ConsoleListener, LogLevel, Logger } from '@pnp/logging';
 
 export interface IUrlFilterParam {
+
+    /**
+     * The refiner name
+     */
     n: string;
+
+    /**
+     * The refinement operator to use between conditions
+     */
     o: RefinementOperator;
+    
+    /**
+     * List of conditions for this refiners. These can be raw text (including wildcards) or FQL expressions
+     */
     t: string[];
 }
 
@@ -66,16 +78,25 @@ export class SearchHelper {
 
                     filter.t.map((value: string) => {
 
-                        // Check if the condition seems to be an FQL filter
-                        /[equals|ends-width]()/ // TODO
+                        let token: string = value;
+
+                        // Check if the condition seems to be an FQL filter or not (i.e. value contains one or more FQL reserved operators NOT in quotes)
+                        // See https://docs.microsoft.com/en-us/sharepoint/dev/general-development/fast-query-language-fql-syntax-reference
+                        if (!(/(and|or|any|andnot|count|decimal|rank|near|onear|int|in32|int64|float|double|datetime|max|min|range|phrase|scope|filter|not|string|starts-with|ends-with|equals|words|xrank)(?=[^"]*("[^"]*"[^"]*)*$)/gm.test(value))) {                            
+                            // Encode the text value in HEX
+                            token = `ǂǂ${this._stringToHex(value)}`;
+                        } else {
+                            token = value.replace(/\'/g,'"'); // FQL expressions use double quotes to get it work
+                        }
                         
                         let refinementValue: IRefinementValue = {
-                            RefinementCount: 0,
+                            RefinementCount: -1,
                             RefinementName: value,
-                            RefinementToken: value.replace(/\'/g,'"'), // FQL expressions use double quotes to get it work
+                            RefinementToken: token,
                             RefinementValue: value
                         };
 
+                        // Date intervals
                         switch (value) {
                             case "yesterday":
                                 refinementValue.RefinementToken = `range(${this._getISOPastDate(1)},max)`;
@@ -102,9 +123,7 @@ export class SearchHelper {
                         filterValues.push(refinementValue);
                     });
 
-                    const filterOperator: RefinementOperator = filter.o
-                        ? filter.o
-                        : RefinementOperator.AND
+                    const filterOperator: RefinementOperator = filter.o ? filter.o : RefinementOperator.AND;
 
                     refinementFilters.push({
                         FilterName: filter.n,
@@ -130,5 +149,14 @@ export class SearchHelper {
 
     private static _getISOPastDate(daysToSubstract: number): string {
         return new Date((new Date() as any) - 1000 * 60 * 60 * 24 * daysToSubstract).toISOString();
+    }
+
+    private static _stringToHex(value: string): string {
+        let tokenValue = "";
+        for (let i = 0; i < value.length; i++) {
+            const charCode = value.charCodeAt(i);
+            tokenValue += charCode.toString(16);
+        }
+        return tokenValue;
     }
 }

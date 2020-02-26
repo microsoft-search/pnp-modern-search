@@ -41,7 +41,7 @@ import { ResultTypeOperator } from '../../models/ISearchResultType';
 import IResultService from '../../services/ResultService/IResultService';
 import { ResultService, IRenderer } from '../../services/ResultService/ResultService';
 import { IDynamicDataCallables, IDynamicDataPropertyDefinition } from '@microsoft/sp-dynamic-data';
-import { IRefinementFilter, ISearchVerticalInformation } from '../../models/ISearchResult';
+import { IRefinementFilter, ISearchVerticalInformation, IRefinementResult, IRefinementValue } from '../../models/ISearchResult';
 import IDynamicDataService from '../../services/DynamicDataService/IDynamicDataService';
 import { DynamicDataService } from '../../services/DynamicDataService/DynamicDataService';
 import { DynamicProperty, ThemeProvider, IReadonlyTheme, ThemeChangedEventArgs } from '@microsoft/sp-component-base';
@@ -71,6 +71,7 @@ import { BaseQueryModifier } from '../../services/ExtensibilityService/BaseQuery
 import { Toggle } from 'office-ui-fabric-react';
 import IQueryModifierConfiguration from '../../models/IQueryModifierConfiguration';
 import { SearchHelper } from '../../helpers/SearchHelper';
+import { StringHelper } from '../../helpers/StringHelper';
 
 export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchResultsWebPartProps> implements IDynamicDataCallables {
 
@@ -246,7 +247,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             selectedProperties: { $set: this.properties.selectedProperties ? this.properties.selectedProperties.replace(/\s|,+$/g, '').split(',') : [] },
             synonymTable: { $set: this._synonymTable },
             queryCulture: { $set: this.properties.searchQueryLanguage !== -1 ? this.properties.searchQueryLanguage : currentLocaleId },
-            refinementFilters: { $set: selectedFilters.length > 0 ? SearchHelper.buildRefinementQueryString(selectedFilters) : [this.properties.refinementFilters] },
+            refinementFilters: { $set: selectedFilters.length > 0 ? SearchHelper.buildRefinementQueryString(selectedFilters) : [this.properties.refinementFilters.replace(/\'/g,'"')] },
             refiners: { $set: refinerConfiguration },
             queryModifier: { $set: queryModifier },
         });
@@ -1039,7 +1040,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                 searchService: this._searchService,
             }),
             PropertyPaneTextField('refinementFilters', {
-                label: 'Refinement filters',
+                label: strings.RefinementFilters,
                  multiline: true,
                  deferredValidationTime: 300
             }),
@@ -1678,32 +1679,8 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
     public getPropertyValue(propertyId: string): ISearchResultSourceData {
 
-        // Update values in default selected filters
-        let updatedDefaultSelectedFilters: IRefinementFilter[] =  [];
         const refinementResults = (this._resultService && this._resultService.results) ? this._resultService.results.RefinementResults : [];
-       
-        // Default values can contains FQL conditions as well as KQL conditions. It results we cannot use the RefinementToken or RefinementValue property value as a comparison basis with the retrieved refinement results.
-        // Therefore, we consider that when the filter name specified in the URL matches one in the refinement results, the filter conditions are valid and we replace original values with correct ones (encoded in HEX) like as they would be selected manually in the UI
-        if (refinementResults.length > 0 && this.defaultSelectedFilters.length > 0) {
-            updatedDefaultSelectedFilters = this.defaultSelectedFilters.map(defaultSelectedFilter => {
-
-                const matchingRefinementResults = refinementResults.filter(refinementResult => refinementResult.FilterName === defaultSelectedFilter.FilterName);
-
-                if (matchingRefinementResults.length === 1) {
-
-                    matchingRefinementResults[0].Values.map(refinementValue => {
-
-                        const matchingValues = defaultSelectedFilter.Values.filter(value => { return value.RefinementValue.indexOf(refinementValue.RefinementValue) !== -1; });
-                        if (matchingValues.length === 1) {
-                            defaultSelectedFilter
-                        }
-                    });
-                }
-
-                return defaultSelectedFilter;
-            });
-        }
-        
+               
         const searchResultSourceData: ISearchResultSourceData = {
             queryKeywords: this.properties.queryKeywords.tryGetValue(),
             refinementResults: refinementResults,
@@ -1714,7 +1691,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             },
             searchServiceConfiguration: this._searchService.getConfiguration(),
             verticalsInformation: this._verticalsInformation,
-            defaultSelectedRefinementFilters: updatedDefaultSelectedFilters
+            defaultSelectedRefinementFilters: this._mapDefaultSelectedFiltersToRefinementResults(refinementResults, this.defaultSelectedFilters)
         };
 
         switch (propertyId) {
@@ -1723,6 +1700,57 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         }
 
         throw new Error('Bad property id');
+    }
+
+    /**
+     * Maps the default selected filter values with the actual refinement results values for common filters
+     * - When the condition IS NOT an FQL expression (ex: "t":["docx"]), the value is converted to HEX and matched with the refinement results using this token to determine default selected state.
+     * - When the condition IS an FQL expression (ex: "t":["equals('docx')","equals('pptx')"]), the value is left untouched and matched with the refinement results by determining the common substring values to determine default selected state. It means in this case, mutliple refinement results can match a single provided condition (ex: 'Franck*' will match 'Cornu, Franck' or 'Franck Cornu').
+     * @param refinementResults the current refinement results retrieved from the search
+     * @param defaultSelectedFilters the current default selected filters applied through the URL params
+     */
+    private _mapDefaultSelectedFiltersToRefinementResults(refinementResults: IRefinementResult[], defaultSelectedFilters: IRefinementFilter[]): IRefinementFilter[] {
+        
+        let updatedDefaultSelectedFilters: IRefinementFilter[] =  [];
+
+        if (refinementResults.length > 0 && this.defaultSelectedFilters.length > 0) {
+
+            updatedDefaultSelectedFilters = this.defaultSelectedFilters.map(defaultSelectedFilter => {
+
+                let updatedSelectedFilter = cloneDeep(defaultSelectedFilter);
+
+                const matchingRefinementResults = refinementResults.filter(refinementResult => refinementResult.FilterName === defaultSelectedFilter.FilterName);
+                if (matchingRefinementResults.length === 1) {
+
+                    let updatedSelectedFilterValues: IRefinementValue[] = [];
+                    
+                    updatedSelectedFilter.Values.map(updatedSelectedFilterValue => {
+
+                        matchingRefinementResults[0].Values.map(refinementValue => {
+
+                            if (refinementValue.RefinementToken.indexOf(updatedSelectedFilterValue.RefinementToken) !== -1) {
+                                // Means the provided condition in URL is a text expression
+                                updatedSelectedFilterValues.push(refinementValue);
+                            } else if (StringHelper.longestCommonSubstring(updatedSelectedFilterValue.RefinementToken,refinementValue.RefinementValue) && !(/(?<=range\().+?(?=\))/g.test(updatedSelectedFilterValue.RefinementToken))) {
+                                // Means the provided condition in URL is an FQL expression so we try to guess the corresponding refinement results using the text value contained in the expression itself
+                                updatedSelectedFilterValues.push(refinementValue);
+                            }
+                        });
+
+                        if (updatedSelectedFilterValues.length === 0) {
+                            // Means the value hasn't been matched so we use the original value
+                            updatedSelectedFilterValues.push(updatedSelectedFilterValue);
+                        } 
+                    });
+
+                    updatedSelectedFilter.Values = updatedSelectedFilterValues;
+                }
+
+                return updatedSelectedFilter;
+            });
+        }
+
+        return updatedDefaultSelectedFilters;
     }
 
     /**

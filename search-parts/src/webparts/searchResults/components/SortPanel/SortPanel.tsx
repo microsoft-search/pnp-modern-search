@@ -109,7 +109,7 @@ export default class SortPanel extends React.Component<ISortPanelProps, ISortPan
         const sortField = option.key.toString();
         let sortDirection;
         if (option.data.sortDirection) {
-          sortDirection = option.data.sortDirection === ISortFieldDirection.Ascending ? SortDirection.Ascending : SortDirection.Descending
+          sortDirection = option.data.sortDirection === ISortFieldDirection.Ascending ? SortDirection.Ascending : SortDirection.Descending;
         } else {
           sortDirection = this.state.sortDirection;
         }

@@ -195,7 +195,7 @@ class SearchService implements ISearchService {
         }
 
         if (this.refinementFilters && this.refinementFilters.length > 0) {
-            searchQuery.RefinementFilters = this.refinementFilters
+            searchQuery.RefinementFilters = this.refinementFilters;
         }
 
         let results: ISearchResults = {
