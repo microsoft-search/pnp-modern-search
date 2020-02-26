@@ -515,6 +515,33 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#filters-deep-links" class="md-nav__link">
+    Filters deep links
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-default-selected-values-are-set-in-the-search-filters-wp" class="md-nav__link">
+    How default selected values are set in the search filters WP?
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
       
       
       
@@ -825,6 +852,33 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#filters-deep-links" class="md-nav__link">
+    Filters deep links
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-default-selected-values-are-set-in-the-search-filters-wp" class="md-nav__link">
+    How default selected values are set in the search filters WP?
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
       
       
       
@@ -922,6 +976,10 @@
 <tr>
 <td>Selected properties</td>
 <td>The search managed properties to retrieve. You can select them from a predefined list or add them as free text if not listed. Then, these properties are available in your Handlebars template with the syntax (<code>item.property_name</code> or <code>property_name</code> inside the <code>{{#each}}</code> loop).</td>
+</tr>
+<tr>
+<td>Refinement filters</td>
+<td>The default refinement filters to apply to the query. Unlike URL <code>filters</code> params, these won't select the default values in the Search Filters WP if connected.</td>
 </tr>
 <tr>
 <td>Number of items to retrieve per page</td>
@@ -1156,6 +1214,78 @@
 <p>This WP supports SharePoint best bets via SharePoint query rules:</p>
 <p><img alt="Query Rules" src="../../images/query_rules.png" /></p>
 <p><img alt="Best Bets" src="../../images/best_bets.png" /></p>
+<h4 id="filters-deep-links">Filters deep links<a class="headerlink" href="#filters-deep-links" title="Permanent link">&para;</a></h4>
+<p>You can pre-select refinement filters by using the <code>filters</code> URL query string parameter. They can be used with or without the search filters Web Part but need at least a search results Web Part on the page. The URL parameter format is as follow:</p>
+<p><code>?filters=[{"n":"&lt;property-name&gt;","t":["&lt;condition1&gt;","&lt;condition2&gt;",...],"o":"&lt;operator&gt;"}]</code></p>
+<p>Where:</p>
+<ul>
+<li><code>n</code>: the refiner managed property name (ex: <code>RefinableStringXX</code>)</li>
+<li><code>t</code>: the condition tokens. This must be an array even with a single value. Raw text values and <a href="https://docs.microsoft.com/en-us/sharepoint/dev/general-development/fast-query-language-fql-syntax-reference">FQL expressions</a> are allowed here.</li>
+<li><code>o</code>: the operator to use between condition values (optionnal).</li>
+</ul>
+<blockquote>
+<p><strong>Pre-selected filters are only applied at page load</strong>.</p>
+<p>Provided refinement filter values are independant from the search filters Web Part configuration.</p>
+<p>URL params refinement filters take priority over default refinement filters set in the search results Web Part options. </p>
+</blockquote>
+<h5 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h5>
+<p><strong>Use free text values</strong></p>
+<div class="codehilite"><pre><span></span>?filters=[{&quot;n&quot;:&quot;FileType&quot;,&quot;t&quot;:[&quot;docx&quot;]}]
+</pre></div>
+
+
+<p><strong>FQL expressions with multiple values</strong></p>
+<div class="codehilite"><pre><span></span>?filters=[{&quot;n&quot;:&quot;FileType&quot;,&quot;t&quot;:[&quot;equals(&#39;docx&#39;)&quot;,&quot;equals(&#39;pptx&#39;)&quot;],&quot;o&quot;:&quot;or&quot;}]
+</pre></div>
+
+
+<blockquote>
+<p>If the targeted refiner template doesn't support multi values, only the first matching value will be selected by default.</p>
+</blockquote>
+<p><strong>Date intervals</strong></p>
+<div class="codehilite"><pre><span></span>?filters=[{&quot;n&quot;:&quot;Created&quot;,&quot;t&quot;:[&quot;yearAgo&quot;]}]
+</pre></div>
+
+
+<p>Valid values are <code>yesterday</code>, <code>weekAgo</code>, <code>monthAgo</code>, <code>threeMonthsAgo</code>, <code>yearAgo</code>, <code>olderThanYear</code>.</p>
+<p><strong>Date range</strong></p>
+<div class="codehilite"><pre><span></span>?filters=[{&quot;n&quot;:&quot;Created&quot;,&quot;t&quot;:[&quot;range(2019-09-01T04:00:00.000Z,max)&quot;],&quot;o&quot;:&quot;or&quot;}]
+</pre></div>
+
+
+<p><strong>Taxonomy values</strong></p>
+<div class="codehilite"><pre><span></span>?filters=[{&quot;n&quot;:&quot;owstaxidmetadataalltagsinfo&quot;,&quot;t&quot;:[&quot;IT&quot;,&quot;string(&#39;Governance&#39;)&quot;],&quot;o&quot;:&quot;or&quot;}] // Only the &#39;Governance&#39; results will show up since &#39;IT&#39; is tokenized to HEX
+
+?filters=[{&quot;n&quot;:&quot;owstaxidmetadataalltagsinfo&quot;,&quot;t&quot;:[&quot;string(&#39;IT&#39;)&quot;,&quot;string(&#39;Governance&#39;)&quot;],&quot;o&quot;:&quot;or&quot;}] // &#39;IT&#39; and &#39;Governance&#39; results will show up
+</pre></div>
+
+
+<p><strong>Persona</strong></p>
+<div class="codehilite"><pre><span></span>?filters=[{&quot;n&quot;:&quot;RefinableString05&quot;,&quot;t&quot;:[&quot;string(&#39;Franck&#39;)&quot;],&quot;o&quot;:&quot;or&quot;}]
+</pre></div>
+
+
+<p><strong>Filter containing substring value</strong></p>
+<div class="codehilite"><pre><span></span>?filters=[{&quot;n&quot;:&quot;FileType&quot;,&quot;t&quot;:[&quot;ppt*&quot;]}]
+
+OR 
+
+?filters=[{&quot;n&quot;:&quot;FileType&quot;,&quot;t&quot;:[&quot;string(&#39;ppt*&#39;)&quot;]}]
+</pre></div>
+
+
+<p><strong>Use multiple refiner properties</strong></p>
+<div class="codehilite"><pre><span></span>?filters=[{&quot;n&quot;:&quot;Created&quot;,&quot;t&quot;:[&quot;yearAgo&quot;],&quot;o&quot;:&quot;or&quot;},{&quot;n&quot;:&quot;FileType&quot;,&quot;t&quot;:[&quot;equals(&#39;docx&#39;)&quot;,&quot;equals(&#39;pptx&#39;)&quot;],&quot;o&quot;:&quot;or&quot;}]
+</pre></div>
+
+
+<h5 id="how-default-selected-values-are-set-in-the-search-filters-wp">How default selected values are set in the search filters WP?<a class="headerlink" href="#how-default-selected-values-are-set-in-the-search-filters-wp" title="Permanent link">&para;</a></h5>
+<p>If a search filters Web Part is connected to a search results WP, the refinement values will be automatically selected at page load according to this mechanism:</p>
+<p><img alt="Default Selected Filters" src="../../images/default_selected_filters.png" /></p>
+<ul>
+<li>When the provided condition IS NOT an FQL expression (ex: "t":["docx"]), the value is converted to HEX and matched with the refinement results retrieved from the search engine. This token is then used to determine default selected state.</li>
+<li>When the provided condition IS an FQL expression (ex: <code>"t":["equals('docx')","equals('pptx')"]</code>), the value is left untouched and matched with the refinement results by determining the common substring values and determine default selected state. It means in this case, mutliple refinement results can match a single provided condition (ex: <code>'Franck*'</code> will match <code>'Cornu, Franck'</code> or <code>'Franck Cornu'</code> so they will both selected by default).</li>
+</ul>
                 
                   
                 

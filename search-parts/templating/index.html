@@ -1228,7 +1228,7 @@
 </tr>
 <tr>
 <td><code>{{getPreviewSrc item}}</code></td>
-<td>Determine the image thumbnail URL if applicable.</td>
+<td>Determine the image thumbnail URL if applicable. Include NormSiteID, NormListID and NormUniqueID as managed properties to esnure previews for Pages and Files.</td>
 </tr>
 <tr>
 <td><code>{{getUrl item}}</code></td>
@@ -1282,11 +1282,15 @@
 <td><code>{{#group items by="owstaxidmetadataalltagsinfo"}}</code></td>
 <td>Group items by a specific results property. See <a href="https://github.com/shannonmoeller/handlebars-group-by">https://github.com/shannonmoeller/handlebars-group-by</a> for usage.</td>
 </tr>
+<tr>
+<td><code>{{#getAttachments LinkOfficeChild}} &lt;a href="{{url}}"&gt;{{fileName}}&lt;/href&gt; {{/getAttachments}}</code></td>
+<td>Get Attachments is Handlebars block helper intended to be used with the context variables it provides like this (url and filename) in the example.The helper is intended to be used only with the LinkOfficeChild managed property wich is the default managed property for list attachments.</td>
+</tr>
 </tbody>
 </table>
 <p>You can also define your own in the <em>BaseTemplateService.ts</em> file. See <a href="https://github.com/helpers/helper-moment">helper-moment</a> for date samples using moment.</p>
 <h3 id="web-components">Web-components<a class="headerlink" href="#web-components" title="Permanent link">&para;</a></h3>
-<p>The web part has a couple of helper web-components to ease rendering, used by the default templates. You may also use these in your custom templates. Pick one of the default templates, then click on customize to see how they are used.</p>
+<p>The web part has a couple of helper web-components to ease rendering, used by the default templates. You may also use these in your custom templates. Pick one of the default templates, then click on customize to see how they are used. It's important to prefix these web-components with <strong>pnp-</strong>.</p>
 <ul>
 <li>document-card</li>
 <li>document-card-shimmers</li>
@@ -1298,13 +1302,13 @@
 <li>persona-card-shimmers</li>
 <li>fabric-icon - You only need to set one property, which are evaluated in order if multiple ones are set.
    <code>handlebars
-   &lt;fabric-icon
+   &lt;pnp-fabric-icon
     image-url='[url to icon - pri 1]'
     file-extension='[file extension - pri 2]'
     icon-name='[office ui fabric icon name - pri 3]'
     size='16 | 20 | 32 (default) | 40 | 48 | 64 | 96'
     &gt;
-    &lt;/fabric-icon&gt;</code></li>
+    &lt;/pnp-fabric-icon&gt;</code></li>
 </ul>
 <p>fileExtension?: string;
     iconName?: string;
