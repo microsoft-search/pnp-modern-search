@@ -24,6 +24,7 @@ import { isEqual, isEmpty } from '@microsoft/sp-lodash-subset';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import { ITheme } from '@uifabric/styling';
 import ResultsLayoutOption from '../../../../models/ResultsLayoutOption';
+import { ISortFieldDirection } from '../../../../models/ISortFieldConfiguration';
 
 declare var System: any;
 
@@ -33,6 +34,16 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
 
     public constructor(props: ISearchResultsContainerProps) {
         super(props);
+
+        let sortField = null;
+        let sortDirection = null;
+        if (this.props.sortList.length > 0
+          && this.props.sortableFields.length > 0
+          && this.props.sortList[0].sortField === this.props.sortableFields[0].sortField) {
+            sortField = this.props.sortList[0].sortField;
+            sortDirection = this.props.sortList[0].sortDirection === ISortFieldDirection.Ascending
+              ? SortDirection.Ascending : SortDirection.Descending;
+        }
 
         // Set the initial state
         this.state = {
@@ -45,6 +56,8 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             areResultsLoading: false,
             errorMessage: '',
             hasError: false,
+            sortField: sortField,
+            sortDirection: sortDirection,
             mountingNodeId: `pnp-search-render-node-${this.getGUID()}`,
         };
 
@@ -115,9 +128,9 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
         }
 
         // WebPart content
-        if (totalPrimaryAndSecondaryResults === 0 
-            && this.props.displayMode === DisplayMode.Edit 
-            && this.props.showBlank 
+        if (totalPrimaryAndSecondaryResults === 0
+            && this.props.displayMode === DisplayMode.Edit
+            && this.props.showBlank
             && this.props.selectedLayout !== ResultsLayoutOption.Debug) {
             renderWpContent = <MessageBar messageBarType={MessageBarType.info}>{strings.ShowBlankEditInfoMessage}</MessageBar>;
         } else {

@@ -6,6 +6,7 @@ import * as strings from                                               'SearchRe
 import { ActionButton } from                                           'office-ui-fabric-react/lib/Button';
 import { SortDirection } from '@pnp/sp';
 import styles from '../SearchResultsWebPart.module.scss';
+import { ISortFieldDirection } from '../../../../models/ISortFieldConfiguration';
 
 export default class SortPanel extends React.Component<ISortPanelProps, ISortPanelState> {
 
@@ -94,7 +95,10 @@ export default class SortPanel extends React.Component<ISortPanelProps, ISortPan
         this.props.sortableFieldsConfiguration.map(e => {
             dropdownOptions.push({
                 key: e.sortField,
-                text: e.displayValue
+                text: e.displayValue,
+                data: {
+                  sortDirection: e.sortField === this.state.sortField ? this.state.sortDirection : e.sortDirection
+                }
             });
         });
 
@@ -103,8 +107,15 @@ export default class SortPanel extends React.Component<ISortPanelProps, ISortPan
 
     private _onChangedSelectedField(option: IDropdownOption):void {
         const sortField = option.key.toString();
+        let sortDirection;
+        if (option.data.sortDirection) {
+          sortDirection = option.data.sortDirection === ISortFieldDirection.Ascending ? SortDirection.Ascending : SortDirection.Descending;
+        } else {
+          sortDirection = this.state.sortDirection;
+        }
         this.setState({
             sortField: sortField,
+            sortDirection: sortDirection
         });
         this.props.onUpdateSort(this.state.sortDirection,sortField);
     }

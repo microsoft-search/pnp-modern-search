@@ -67,6 +67,7 @@ export default class FileTypeTemplate extends React.Component<IBaseRefinerTempla
                 }}
                 key={j}
                 checked={this._isValueInFilterSelection(refinementValue)}
+                disabled={this.state.refinerSelectedFilterValues.length > 0 && !this._isValueInFilterSelection(refinementValue) && !this.props.isMultiValue}
                 onChange={(ev, checked: boolean) => {
                   refinementValue.RefinementName = FileHelper.extensionToLabel(extension);
                   checked ? this._onFilterAdded(refinementValue) : this._onFilterRemoved(refinementValue);

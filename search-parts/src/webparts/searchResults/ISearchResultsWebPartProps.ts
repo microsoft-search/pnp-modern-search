@@ -41,4 +41,5 @@ export interface ISearchResultsWebPartProps {
     templateParameters: { [key:string]: any };
     queryModifiers: IQueryModifierConfiguration[];
     selectedQueryModifierDisplayName: string;
+    refinementFilters: string;
 }

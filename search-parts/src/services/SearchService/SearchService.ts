@@ -32,7 +32,7 @@ class SearchService implements ISearchService {
     private _enableQueryRules: boolean;
     private _includeOneDriveResults: boolean;
     private _refiners: IRefinerConfiguration[];
-    private _refinementFilters: IRefinementFilter[];
+    private _refinementFilters: string[];
     private _synonymTable: ISynonymTable;
     private _queryCulture: number;
     private _timeZoneId: number;
@@ -62,8 +62,8 @@ class SearchService implements ISearchService {
     public set refiners(value: IRefinerConfiguration[]) { this._refiners = value; }
     public get refiners(): IRefinerConfiguration[] { return this._refiners; }
 
-    public set refinementFilters(value: IRefinementFilter[]) { this._refinementFilters = value; }
-    public get refinementFilters(): IRefinementFilter[] { return this._refinementFilters; }
+    public set refinementFilters(value: string[]) { this._refinementFilters = value; }
+    public get refinementFilters(): string[] { return this._refinementFilters; }
 
     public set synonymTable(value: ISynonymTable) { this._synonymTable = value; }
     public get synonymTable(): ISynonymTable { return this._synonymTable; }
@@ -194,10 +194,8 @@ class SearchService implements ISearchService {
             }
         }
 
-        if (this.refinementFilters) {
-            if (this.refinementFilters.length > 0) {
-                searchQuery.RefinementFilters = this._buildRefinementQueryString(this.refinementFilters);
-            }
+        if (this.refinementFilters && this.refinementFilters.length > 0) {
+            searchQuery.RefinementFilters = this.refinementFilters;
         }
 
         let results: ISearchResults = {
@@ -731,37 +729,7 @@ class SearchService implements ISearchService {
         return moment(new Date(str)).format(pattern);
     }
 
-    /**
-     * Build the refinement condition in FQL format
-     * @param selectedFilters The selected filter array
-     * @param encodeTokens If true, encodes the taxonomy refinement tokens in UTF-8 to work with GET requests. Javascript encodes natively in UTF-16 by default.
-     */
-    private _buildRefinementQueryString(selectedFilters: IRefinementFilter[], encodeTokens?: boolean): string[] {
 
-        let refinementQueryConditions: string[] = [];
-
-        selectedFilters.map(filter => {
-            if (filter.Values.length > 1) {
-
-                // A refiner can have multiple values selected in a multi or mon multi selection scenario
-                // The correct operator is determined by the refiner display template according to its behavior
-                const conditions = filter.Values.map(value => {
-
-                    return /ǂǂ/.test(value.RefinementToken) && encodeTokens ? encodeURIComponent(value.RefinementToken) : value.RefinementToken;
-                });
-                refinementQueryConditions.push(`${filter.FilterName}:${filter.Operator}(${conditions.join(',')})`);
-            } else {
-                if (filter.Values.length === 1) {
-
-                    // See https://sharepoint.stackexchange.com/questions/258081/how-to-hex-encode-refiners/258161
-                    let refinementToken = /ǂǂ/.test(filter.Values[0].RefinementToken) && encodeTokens ? encodeURIComponent(filter.Values[0].RefinementToken) : filter.Values[0].RefinementToken;
-                    refinementQueryConditions.push(`${filter.FilterName}:${refinementToken}`);
-                }
-            }
-        });
-
-        return refinementQueryConditions;
-    }
 
     // Function to inject synonyms at run-time
     private _injectSynonyms(query: string): string {

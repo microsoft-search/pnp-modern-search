@@ -60,6 +60,7 @@ define([], function () {
     "UseRefinersWebPartLabel": "Connect to a search refiners Web Part",
     "UseRefinersFromComponentLabel": "Use refiners from this component",
     "UsePaginationFromComponentLabel": "Use pagination from this component",
+    "RefinementFilters": "Refinement filters",
     "customTemplateFieldsLabel": "Custom template field values",
     "customTemplateFieldsPanelHeader": "Custom template field values",
     "customTemplateFieldsConfigureButtonLabel": "Configure",
