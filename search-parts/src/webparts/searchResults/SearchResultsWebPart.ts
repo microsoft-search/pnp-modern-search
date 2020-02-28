@@ -796,7 +796,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
      */
     private validateSourceId(value: string): string {
         if (value.length > 0) {
-            if (!/^(\{){0,1}[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}(\}){0,1}$/.test(value)) {
+            if (!(/^(\{){0,1}[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}(\}){0,1}$/).test(value)) {
                 return strings.InvalidResultSourceIdMessage;
             }
         }
@@ -1731,7 +1731,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                             if (refinementValue.RefinementToken.indexOf(updatedSelectedFilterValue.RefinementToken) !== -1) {
                                 // Means the provided condition in URL is a text expression
                                 updatedSelectedFilterValues.push(refinementValue);
-                            } else if (StringHelper.longestCommonSubstring(updatedSelectedFilterValue.RefinementToken,refinementValue.RefinementValue) && !(/(?<=range\().+?(?=\))/g.test(updatedSelectedFilterValue.RefinementToken))) {
+                            } else if (StringHelper.longestCommonSubstring(updatedSelectedFilterValue.RefinementToken,refinementValue.RefinementValue) && updatedSelectedFilterValue.RefinementToken.indexOf("range") === -1 ) {
                                 // Means the provided condition in URL is an FQL expression so we try to guess the corresponding refinement results using the text value contained in the expression itself
                                 updatedSelectedFilterValues.push(refinementValue);
                             }
