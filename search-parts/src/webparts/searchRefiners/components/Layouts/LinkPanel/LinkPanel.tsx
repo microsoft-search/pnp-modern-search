@@ -220,12 +220,15 @@ export default class LinkPanel extends React.Component<ILinkPanelProps, ILinkPan
       groupName = configuredFilters.length > 0 && configuredFilters[0].displayValue ? configuredFilters[0].displayValue : groupName;
       let isCollapsed = true;
 
+      // Check if the current filter is selected. If this case, we expand the group automatically
+      const isFilterSelected = props.selectedFilters.filter(filter => { return filter.FilterName === refinementResult.FilterName; }).length > 0;
+
       const existingGroups = this.state.groups.filter(g => { return g.name === groupName; });
 
       if (existingGroups.length > 0 && !shouldResetCollapse) {
         isCollapsed = existingGroups[0].isCollapsed;
       } else {
-        isCollapsed = configuredFilters.length > 0 && configuredFilters[0].showExpanded ? !configuredFilters[0].showExpanded : true;
+        isCollapsed = (configuredFilters.length > 0 && configuredFilters[0].showExpanded) || isFilterSelected ? false : true;
       }
 
       let group: IGroup = {
@@ -278,6 +281,7 @@ export default class LinkPanel extends React.Component<ILinkPanelProps, ILinkPan
         <TemplateRenderer
           key={i}
           refinementResult={refinementResult}
+          refinerConfiguration={!!configuredFilter[0] ? configuredFilter[0] : null}
           shouldResetFilters={props.shouldResetFilters}
           templateType={configuredFilter[0].template}
           valueToRemove={valueToRemove}

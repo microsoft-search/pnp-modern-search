@@ -3,12 +3,7 @@ import * as strings from 'SearchBoxWebPartStrings';
 import styles from '../SearchBoxWebPart.module.scss';
 import { ISearchBoxAutoCompleteState } from './ISearchBoxAutoCompleteState';
 import { ISearchBoxAutoCompleteProps } from './ISearchBoxAutoCompleteProps';
-import { SearchBox } from 'office-ui-fabric-react/lib/SearchBox';
-import { FocusZone, FocusZoneDirection } from 'office-ui-fabric-react/lib/FocusZone';
-import { IconType, Icon } from 'office-ui-fabric-react/lib/Icon';
-import { Label } from 'office-ui-fabric-react/lib/Label';
-import { IconButton } from 'office-ui-fabric-react/lib/Button';
-import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
+import { Spinner, SpinnerSize, Text, FocusZone, FocusZoneDirection, SearchBox, IconButton, Label, Icon, IconType } from 'office-ui-fabric-react';
 import { ITheme } from 'office-ui-fabric-react/lib/Styling';
 import { isEqual, debounce } from '@microsoft/sp-lodash-subset';
 import { ISuggestion } from '../../../../models/ISuggestion';
@@ -90,12 +85,14 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
     const thisComponent = this;
 
     const suggestionInner = <>
-      <div className={styles.suggestionIcon}>
-        {suggestion.icon && <img src={suggestion.icon} />}
-      </div>
-      <div className={styles.suggestionContent}>
-        <span className={styles.suggestionDisplayText} dangerouslySetInnerHTML={{ __html: suggestion.displayText }}></span>
-        <span className={styles.suggestionDescription}>{suggestion.description ? suggestion.description : ""}</span>
+      <div className={styles.suggestionContainer}>
+        <div className={styles.suggestionIcon}>
+          {suggestion.icon && <img src={suggestion.icon} />}
+        </div>
+        <div className={styles.suggestionContent}>
+          <span className={styles.suggestionDisplayText} dangerouslySetInnerHTML={{ __html: suggestion.displayText }}></span>
+          <span className={styles.suggestionDescription}>{suggestion.description ? suggestion.description : ""}</span>
+        </div>
       </div>
       <div className={styles.suggestionAction}>
         {suggestion.targetUrl && (

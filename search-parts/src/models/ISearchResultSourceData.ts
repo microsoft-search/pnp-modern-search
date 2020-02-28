@@ -1,4 +1,4 @@
-import { IRefinementResult, IPaginationInformation, ISearchVerticalInformation } from "./ISearchResult";
+import { IRefinementResult, IPaginationInformation, ISearchVerticalInformation, IRefinementFilter } from "./ISearchResult";
 import { ISearchServiceConfiguration } from "./ISearchServiceConfiguration";
 
 /**
@@ -9,6 +9,11 @@ interface ISearchResultSourceData {
      * The query keywords
      */
     queryKeywords: string;
+
+    /**
+     * The default selected refinement filters
+     */
+    defaultSelectedRefinementFilters: IRefinementFilter[];
 
     /**
      * The refinement results

@@ -61,6 +61,7 @@ declare interface ISearchResultsWebPartStrings {
     UseRefinersWebPartLabel: string;
     UseRefinersFromComponentLabel: string;
     UsePaginationFromComponentLabel: string;
+    RefinementFilters: string;
     customTemplateFieldsLabel: string;
     customTemplateFieldsPanelHeader: string;
     customTemplateFieldsConfigureButtonLabel: string;
@@ -158,9 +159,14 @@ declare interface ISearchResultsWebPartStrings {
     }
     ManagedPropertiesListPlaceHolder: string;
     QueryModifier: {
-        NameLabel: string;
-        OverviewLabel: string;
-        EnableLabelPrefix: string;
+        FieldLbl: string;
+        ConfigureBtn: string;
+        PanelHeader: string;
+        PanelDescription: string;
+        EnableColumnLbl: string;
+        DisplayNameColumnLbl: string;
+        DescriptionColumnLbl: string;
+        SelectedQueryModifierLbl: string;
     }
 }
 

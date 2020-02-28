@@ -15,6 +15,11 @@ interface IRefinerSourceData {
      * The refiners configuration for the Web Part
      */
     refinerConfiguration: IRefinerConfiguration[];
+
+    /**
+     * Flag indicating values have been manually selected/unselected by the user
+     */
+    isDirty: boolean;
 }
 
 export default IRefinerSourceData;

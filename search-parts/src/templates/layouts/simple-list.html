@@ -39,7 +39,7 @@
                             <div class="template_result">
                                     <pnp-fabric-icon file-extension='{{IconExt}}' image-url='{{SiteLogo}}'></pnp-fabric-icon>
                                     <div class="template_contentContainer">
-                                        <span class="template_title example-themePrimary"><a href="{{getUrl item}}">{{Title}}</a></span>
+                                        <span class="template_title example-themePrimary"><a data-interception="off" href="{{getUrl item}}" target="_blank">{{Title}}</a></span>
                                         <span>
                                             {{getSummary HitHighlightedSummary}}
                                             <span class="template_author">

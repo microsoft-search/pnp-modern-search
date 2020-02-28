@@ -29,11 +29,23 @@ export class MyCompanyLibraryLibrary implements IExtensibilityLibrary {
     ];
   }
 
-  public getQueryModifier(): IQueryModifierDefinition<any> {
-    return {
-      displayName: CustomQueryModifier.DisplayName,
-      description: CustomQueryModifier.Description,
-      class: CustomQueryModifier
-    };
+  public getCustomQueryModifiers(): IQueryModifierDefinition<any>[] {
+    return [
+      {
+        displayName: CustomQueryModifier.DisplayName,
+        description: CustomQueryModifier.Description,
+        class: CustomQueryModifier
+      },
+      {
+        displayName: 'Test 2',
+        description: 'Test 2',
+        class: CustomQueryModifier
+      },
+      {
+        displayName: 'Test 3',
+        description: 'Test 3',
+        class: CustomQueryModifier
+      }
+    ];
   }
 }

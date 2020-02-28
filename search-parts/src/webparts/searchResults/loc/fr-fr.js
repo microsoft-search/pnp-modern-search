@@ -60,6 +60,7 @@ define([], function() {
     "UseRefinersWebPartLabel": "Connectez un Web Part de filtres de recherche",
     "UseRefinersFromComponentLabel": "Utiliser les filtres à partir de ce composant",
     "UsePaginationFromComponentLabel": "Utiliser la pagination à partir de ce composant",
+    "RefinementFilters": "Filtres d'affinements",
     "customTemplateFieldsLabel": "Valeurs de champ de modèle personnalisé",
     "customTemplateFieldsPanelHeader": "Valeurs de champ de modèle personnalisé",
     "customTemplateFieldsConfigureButtonLabel": "Configurer",
@@ -74,8 +75,8 @@ define([], function() {
       "SortDirectionDescendingLabel":"Descendant",
       "SortErrorMessage":"Propriété de recherche non valide (Vérifiez si la propriété managée est triable).",
       "SortPanelSortFieldLabel":"Trier sur le champ",
-      "SortPanelSortFieldAria":"Sélectionner un champ",
-      "SortPanelSortFieldPlaceHolder":"Sélectionner un champ",
+      "SortPanelSortFieldAria":"Trier par",
+      "SortPanelSortFieldPlaceHolder":"Trier par",
       "SortPanelSortDirectionLabel":"Direction de tri",
       "SortableFieldManagedPropertyField": "Propriété gérée de tri",
       "SortableFieldDisplayValueField": "Intitulé du champ à afficher",
@@ -157,9 +158,14 @@ define([], function() {
     },
     "ManagedPropertiesListPlaceHolder": "Sélectionnez ou ajoutez une propriété gérée",
     "QueryModifier": {
-      "NameLabel": "Modificateur de requêtes",
-      "OverviewLabel": "Un modificateur de requête est disponible à la bibliothèque d'extensibilité.",
-      "EnableLabelPrefix": "Activer"
+      "FieldLbl": "Modificateurs de requête",
+      "ConfigureBtn": "Configurer",
+      "PanelHeader": "Configurer les modificateurs de requête",
+      "PanelDescription": "Vous pouvez n'associer qu'un seul modificateur de requête par Web Part de résultats de recherche",
+      "EnableColumnLbl": "Activé",
+      "DisplayNameColumnLbl": "Nom",
+      "DescriptionColumnLbl": "Description",
+      "SelectedQueryModifierLbl": "Modificateur sélectionné: '{0}'"
     }
   }
 });

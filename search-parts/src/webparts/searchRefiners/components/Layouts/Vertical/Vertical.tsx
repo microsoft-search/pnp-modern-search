@@ -16,7 +16,6 @@ import { isEqual } from '@microsoft/sp-lodash-subset';
 import { ITheme } from '@uifabric/styling';
 import { Icon } from 'office-ui-fabric-react/lib/Icon';
 import { Text as TextUI } from 'office-ui-fabric-react/lib/Text';
-import { ScrollablePane, Sticky, StickyPositionType } from 'office-ui-fabric-react';
 
 export default class Vertical extends React.Component<IFilterLayoutProps, IVerticalState> {
 
@@ -146,12 +145,15 @@ export default class Vertical extends React.Component<IFilterLayoutProps, IVerti
       groupName = configuredFilters.length > 0 && configuredFilters[0].displayValue ? configuredFilters[0].displayValue : groupName;
       let isCollapsed = true;
 
+      // Check if the current filter is selected. If this case, we expand the group automatically
+      const isFilterSelected = props.selectedFilters.filter(filter => { return filter.FilterName === refinementResult.FilterName; }).length > 0;
+
       const existingGroups = this.state.groups.filter(g => { return g.name === groupName; });
 
       if (existingGroups.length > 0 && !shouldResetCollapse) {
         isCollapsed = existingGroups[0].isCollapsed;
       } else {
-        isCollapsed = configuredFilters.length > 0 && configuredFilters[0].showExpanded ? !configuredFilters[0].showExpanded : true;
+        isCollapsed = (configuredFilters.length > 0 && configuredFilters[0].showExpanded) || isFilterSelected ? false : true;
       }
 
       let group: IGroup = {
@@ -192,6 +194,7 @@ export default class Vertical extends React.Component<IFilterLayoutProps, IVerti
       items.push(
         <TemplateRenderer
           key={i}
+          refinerConfiguration={!!configuredFilter[0] ? configuredFilter[0] : null}
           refinementResult={refinementResult}
           shouldResetFilters={props.shouldResetFilters}
           templateType={!!configuredFilter[0] ? configuredFilter[0].template : null}

@@ -60,6 +60,7 @@ define([], function () {
     "UseRefinersWebPartLabel": "Connect to a search refiners Web Part",
     "UseRefinersFromComponentLabel": "Use refiners from this component",
     "UsePaginationFromComponentLabel": "Use pagination from this component",
+    "RefinementFilters": "Refinement filters",
     "customTemplateFieldsLabel": "Custom template field values",
     "customTemplateFieldsPanelHeader": "Custom template field values",
     "customTemplateFieldsConfigureButtonLabel": "Configure",
@@ -74,8 +75,8 @@ define([], function () {
       "SortDirectionDescendingLabel": "Descending",
       "SortErrorMessage": "Invalid search property (Check if the managed property is sortable).",
       "SortPanelSortFieldLabel": "Sort on field",
-      "SortPanelSortFieldAria": "Select a field",
-      "SortPanelSortFieldPlaceHolder": "Select a field",
+      "SortPanelSortFieldAria": "Sort by",
+      "SortPanelSortFieldPlaceHolder": "Sort by",
       "SortPanelSortDirectionLabel": "Sort Direction",
       "SortableFieldManagedPropertyField": "Sort managed property",
       "SortableFieldDisplayValueField": "Field name to display",
@@ -157,9 +158,14 @@ define([], function () {
     },
     "ManagedPropertiesListPlaceHolder": "Select or add a managed property",
     "QueryModifier": {
-      "NameLabel": "Query Modifier",
-      "OverviewLabel": "A query modifier is available from the extensibility library.",
-      "EnableLabelPrefix": "Enable"
+      "FieldLbl": "Search query modifiers",
+      "ConfigureBtn": "Configure",
+      "PanelHeader": "Configure search query modifiers",
+      "PanelDescription": "You can associate only one query modifier to a search result Web Part",
+      "EnableColumnLbl": "Enabled",
+      "DisplayNameColumnLbl": "Name",
+      "DescriptionColumnLbl": "Description",
+      "SelectedQueryModifierLbl": "Selected query modifier: '{0}'"
     }
   }
 });

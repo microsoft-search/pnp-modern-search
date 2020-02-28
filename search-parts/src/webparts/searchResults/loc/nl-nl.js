@@ -60,6 +60,7 @@ define([], function () {
     "UseRefinersWebPartLabel": "Verbind met een zoekverfijningen webonderdeel",
     "UseRefinersFromComponentLabel": "Gebruik verfijningen van dit webonderdeel",
     "UsePaginationFromComponentLabel": "Gebruik paginering van dit webonderdeel",
+    "RefinementFilters": "Verfijningsfilters",
     "customTemplateFieldsLabel": "Aangepaste sjabloonveldwaarden",
     "customTemplateFieldsPanelHeader": "Aangepaste sjabloonveldwaarde",
     "customTemplateFieldsConfigureButtonLabel": "Configureren",
@@ -74,8 +75,8 @@ define([], function () {
       "SortDirectionDescendingLabel": "Aflopend",
       "SortErrorMessage": "Ongeldige zoekeigenschap (controleer of de eigenschap sorteerbaar is)",
       "SortPanelSortFieldLabel": "Sorteer op veld",
-      "SortPanelSortFieldAria": "Selecteer een eigenschapp",
-      "SortPanelSortFieldPlaceHolder": "Selecteer een veld",
+      "SortPanelSortFieldAria": "Sorteer op",
+      "SortPanelSortFieldPlaceHolder": "Sorteer op",
       "SortPanelSortDirectionLabel": "Sorteervolgorde",
       "SortableFieldManagedPropertyField": "Sorteer beheerde eigenschap",
       "SortableFieldDisplayValueField": "Veldnaam om te tonen",
@@ -157,9 +158,14 @@ define([], function () {
     },
     "ManagedPropertiesListPlaceHolder": "Selecteer of voeg een beheerde eigenschap toe",
     "QueryModifier": {
-      "NameLabel": "Endrings spørring",
-      "OverviewLabel": "En spørrings endrings spørring er tilgjengelig fra Utvidelses biblioteket.",
-      "EnableLabelPrefix": "Aktiverer"
+      "FieldLbl": "Modificaties voor zoekopdrachten",
+      "ConfigureBtn": "Configure",
+      "PanelHeader": "Configureer zoekmodificaties",
+      "PanelDescription": "U kunt slechts één zoekopdracht aanpassen aan een webonderdeel met zoekresultaten",
+      "EnableColumnLbl": "Ingeschakeld",
+      "DisplayNameColumnLbl": "Naam",
+      "DescriptionColumnLbl": "Beschrijving",
+      "SelectedQueryModifierLbl": "Geselecteerde query-modifier: '{0}'"
     }
   }
 });

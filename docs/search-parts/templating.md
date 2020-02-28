@@ -154,7 +154,7 @@ Setting | Description
 `{{keywords}}` | The search query.
 `{{getSummary HitHighlightedSummary}}` | Format the *HitHighlightedSummary* property with recognized words in bold.
 `{{getDate <date_managed_property> "<format>" <time handling>}}` | Format the date with [Moment.js](https://momentjs.com/docs/#/parsing/string-format/) according to the current language. Date in the managed property should be on the form `2018-09-10T06:29:25.0000000Z` for the function to work.<p>&lt;time handling&gt; is optional and takes <ul><li>0 = format to browsers time zone (default)</li><li>1 = ignore Z time and handle as browsers local time zone</li><li>2 = strip time and set to 00:00:00 in browsers local time zone</li><li>3 = display in the time zone for the current web</li><li>4 = display in the time zone from the uers profile</li>
-`{{getPreviewSrc item}}` | Determine the image thumbnail URL if applicable.
+`{{getPreviewSrc item}}` | Determine the image thumbnail URL if applicable. Include NormSiteID, NormListID and NormUniqueID as managed properties to esnure previews for Pages and Files.
 `{{getUrl item}}` | Get the item URL. For a document, it means the URL to the Office Online instance or the direct URL (to download it).
 `{{getUrlField managed_propertyOWSURLH "URL/Title"}}` | Return the URL or Title part of a URL field managed property.
 `{{getCountMessage totalRows <?keywords>}}` | Display a friendly message displaying the result and the entered keywords.
@@ -168,12 +168,14 @@ Setting | Description
 `{{regex <exp> <string> }}` | Match a regular expression against a string.
 `{{#times 10}}<span>{{this}}</span>{{/times}}` | Iterate X times over a block
 `{{#group items by="owstaxidmetadataalltagsinfo"}}` | Group items by a specific results property. See [https://github.com/shannonmoeller/handlebars-group-by](https://github.com/shannonmoeller/handlebars-group-by) for usage.
+`{{#getAttachments LinkOfficeChild}} <a href="{{url}}">{{fileName}}</href> {{/getAttachments}}`| Get Attachments is Handlebars block helper intended to be used with the context variables it provides like this (url and filename) in the example.The helper is intended to be used only with the LinkOfficeChild managed property wich is the default managed property for list attachments.
+ 
 
 You can also define your own in the *BaseTemplateService.ts* file. See [helper-moment](https://github.com/helpers/helper-moment) for date samples using moment.
 
 ### Web-components
 
-The web part has a couple of helper web-components to ease rendering, used by the default templates. You may also use these in your custom templates. Pick one of the default templates, then click on customize to see how they are used.
+The web part has a couple of helper web-components to ease rendering, used by the default templates. You may also use these in your custom templates. Pick one of the default templates, then click on customize to see how they are used. It's important to prefix these web-components with **pnp-**.
 
 - document-card
 - document-card-shimmers
@@ -185,13 +187,13 @@ The web part has a couple of helper web-components to ease rendering, used by th
 - persona-card-shimmers
 - fabric-icon - You only need to set one property, which are evaluated in order if multiple ones are set.
    ```handlebars
-   <fabric-icon
+   <pnp-fabric-icon
     image-url='[url to icon - pri 1]'
     file-extension='[file extension - pri 2]'
     icon-name='[office ui fabric icon name - pri 3]'
     size='16 | 20 | 32 (default) | 40 | 48 | 64 | 96'
     >
-    </fabric-icon>
+    </pnp-fabric-icon>
     ```
 
 fileExtension?: string;

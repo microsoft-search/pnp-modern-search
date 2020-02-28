@@ -60,6 +60,7 @@ define([], function () {
     "UseRefinersWebPartLabel": "Conectar con Web Part Refinadores de Búsqueda",
     "UseRefinersFromComponentLabel": "Utilice refinadores de este componente",
     "UsePaginationFromComponentLabel": "Utilice la paginación de este componente",
+    "RefinementFilters": "Filtros de refinamiento",
     "customTemplateFieldsLabel": "Valores de campo de plantilla personalizada",
     "customTemplateFieldsPanelHeader": "Valores de campo de plantilla personalizada",
     "customTemplateFieldsConfigureButtonLabel": "Configurar",
@@ -74,8 +75,8 @@ define([], function () {
       "SortDirectionDescendingLabel": "Descendente",
       "SortErrorMessage": "Propiedad de búsqueda no válida (Compruebe si la propiedad administrada es ordenable).",
       "SortPanelSortFieldLabel": "Clasificar en campo",
-      "SortPanelSortFieldAria": "Seleccione un campo",
-      "SortPanelSortFieldPlaceHolder": "Seleccione un campo",
+      "SortPanelSortFieldAria": "Ordenar por",
+      "SortPanelSortFieldPlaceHolder": "Ordenar por",
       "SortPanelSortDirectionLabel": "Ordenar dirección",
       "SortableFieldManagedPropertyField": "Ordenar la propiedad administrada",
       "SortableFieldDisplayValueField": "Nombre de campo para mostrar",
@@ -157,9 +158,14 @@ define([], function () {
     },
     "ManagedPropertiesListPlaceHolder": "Select or add a managed property",
     "QueryModifier": {
-      "NameLabel": "Modificador de consulta",
-      "OverviewLabel": "Un modificador de consulta está disponible en la biblioteca de extensibilidad.",
-      "EnableLabelPrefix": "Habilitar"
+      "FieldLbl": "Modificador de consulta",
+      "ConfigureBtn": "Configurador",
+      "PanelHeader": "Configurar los modificadores de requisitos",
+      "PanelDescription": "Solo puede asociar un modificador de consulta por elemento web de resultados de búsqueda",
+      "EnableColumnLbl": "Activado",
+      "DisplayNameColumnLbl": "Apellido",
+      "DescriptionColumnLbl": "Descripción",
+      "SelectedQueryModifierLbl": "Selected query modifier: '{0}'"
     }
   }
 });

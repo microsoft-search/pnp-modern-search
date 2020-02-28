@@ -23,6 +23,7 @@ Connect to a search verticals Web Part | If enable, select the search verticals 
 Enable Query Rules | Enable the query rules if applies. Turn this options  'on' to display your SharePoint Promoted results (links only) and make result blocks available to custom renderers.
 Include OneDrive results | Include OneDrive results if applicable. Turn this option 'on' to make users' personal OneDrive results available to custom renderers. Read more [here](https://docs.microsoft.com/en-us/sharepoint/support/search/private-onedrive-results-not-included).
 Selected properties | The search managed properties to retrieve. You can select them from a predefined list or add them as free text if not listed. Then, these properties are available in your Handlebars template with the syntax (`item.property_name` or `property_name` inside the `{{#each}}` loop).
+Refinement filters | The default refinement filters to apply to the query. Unlike URL `filters` params, these won't select the default values in the Search Filters WP if connected.
 Number of items to retrieve per page | Quite explicit. The paging behavior is done directly by the search API (See the *SearchDataProvider.ts* file), not by the code on post-render.
 
 #### Styling Options
@@ -122,3 +123,82 @@ This WP supports SharePoint best bets via SharePoint query rules:
 ![Query Rules](../images/query_rules.png)
 
 ![Best Bets](../images/best_bets.png)
+
+#### Filters deep links
+
+You can pre-select refinement filters by using the `filters` URL query string parameter. They can be used with or without the search filters Web Part but need at least a search results Web Part on the page. The URL parameter format is as follow:
+
+`?filters=[{"n":"<property-name>","t":["<condition1>","<condition2>",...],"o":"<operator>"}]`
+
+Where:
+
+- `n`: the refiner managed property name (ex: `RefinableStringXX`)
+- `t`: the condition tokens. This must be an array even with a single value. Raw text values and [FQL expressions](https://docs.microsoft.com/en-us/sharepoint/dev/general-development/fast-query-language-fql-syntax-reference) are allowed here.
+- `o`: the operator to use between condition values (optionnal).
+
+> **Pre-selected filters are only applied at page load**.
+
+> Provided refinement filter values are independant from the search filters Web Part configuration.
+
+> URL params refinement filters take priority over default refinement filters set in the search results Web Part options. 
+
+##### Examples
+
+**Use free text values**
+```
+?filters=[{"n":"FileType","t":["docx"]}]
+```
+
+**FQL expressions with multiple values**
+```
+?filters=[{"n":"FileType","t":["equals('docx')","equals('pptx')"],"o":"or"}]
+```
+
+> If the targeted refiner template doesn't support multi values, only the first matching value will be selected by default.
+
+**Date intervals**
+```
+?filters=[{"n":"Created","t":["yearAgo"]}]
+```
+
+Valid values are `yesterday`, `weekAgo`, `monthAgo`, `threeMonthsAgo`, `yearAgo`, `olderThanYear`.
+
+**Date range**
+```
+?filters=[{"n":"Created","t":["range(2019-09-01T04:00:00.000Z,max)"],"o":"or"}]
+```
+
+**Taxonomy values**
+```
+?filters=[{"n":"owstaxidmetadataalltagsinfo","t":["IT","string('Governance')"],"o":"or"}] // Only the 'Governance' results will show up since 'IT' is tokenized to HEX
+
+?filters=[{"n":"owstaxidmetadataalltagsinfo","t":["string('IT')","string('Governance')"],"o":"or"}] // 'IT' and 'Governance' results will show up
+```
+
+**Persona**
+```
+?filters=[{"n":"RefinableString05","t":["string('Franck')"],"o":"or"}]
+```
+
+**Filter containing substring value**
+```
+?filters=[{"n":"FileType","t":["ppt*"]}]
+
+OR 
+
+?filters=[{"n":"FileType","t":["string('ppt*')"]}]
+```
+
+**Use multiple refiner properties**
+```
+?filters=[{"n":"Created","t":["yearAgo"],"o":"or"},{"n":"FileType","t":["equals('docx')","equals('pptx')"],"o":"or"}]
+```
+
+##### How default selected values are set in the search filters WP?
+
+If a search filters Web Part is connected to a search results WP, the refinement values will be automatically selected at page load according to this mechanism:
+
+![Default Selected Filters](../images/default_selected_filters.png)
+
+- When the provided condition IS NOT an FQL expression (ex: "t":["docx"]), the value is converted to HEX and matched with the refinement results retrieved from the search engine. This token is then used to determine default selected state.
+- When the provided condition IS an FQL expression (ex: `"t":["equals('docx')","equals('pptx')"]`), the value is left untouched and matched with the refinement results by determining the common substring values and determine default selected state. It means in this case, mutliple refinement results can match a single provided condition (ex: `'Franck*'` will match `'Cornu, Franck'` or `'Franck Cornu'` so they will both selected by default).
