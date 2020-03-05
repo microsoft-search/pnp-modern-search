@@ -1,16 +1,20 @@
 import * as React from "react";
 import IBaseRefinerTemplateProps from '../IBaseRefinerTemplateProps';
-import IBaseRefinerTemplateState from '../IBaseRefinerTemplateState';
 import { IRefinementValue, RefinementOperator } from "../../../../../models/ISearchResult";
+import ICheckboxTemplateState from "./ICheckboxTemplateState";
 import { Checkbox } from 'office-ui-fabric-react/lib/Checkbox';
 import { Text } from '@microsoft/sp-core-library';
 import { Link } from 'office-ui-fabric-react/lib/Link';
 import * as strings from 'SearchRefinersWebPartStrings';
 import * as update from 'immutability-helper';
 import { ITheme } from "@uifabric/styling";
+import { TextField } from "office-ui-fabric-react";
+import { cloneDeep } from "@microsoft/sp-lodash-subset";
+// import styles from "../../../../../services/TemplateService/BaseTemplateService.module.scss";
+import styles from "./CheckboxTemplate.module.scss";
 
 
-export default class CheckboxTemplate extends React.Component<IBaseRefinerTemplateProps, IBaseRefinerTemplateState> {
+export default class CheckboxTemplate extends React.Component<IBaseRefinerTemplateProps, ICheckboxTemplateState> {
 
     private _operator: RefinementOperator;
 
@@ -19,6 +23,7 @@ export default class CheckboxTemplate extends React.Component<IBaseRefinerTempla
 
         this.state = {
             refinerSelectedFilterValues: [],
+            refinerFilteredFilterValues: [],
         };
 
         this._onFilterAdded = this._onFilterAdded.bind(this);
@@ -36,8 +41,11 @@ export default class CheckboxTemplate extends React.Component<IBaseRefinerTempla
         }
 
         return <div>
+            {this.props.refinementResult.Values.length > 10 && this.state.refinerSelectedFilterValues.length === 0 &&
+                <TextField className={styles.filterBox} placeholder="Filter list of options by name" onChange={this._onChangeFilterText} />
+            }
             {
-                this.props.refinementResult.Values.map((refinementValue: IRefinementValue, j) => {
+                this.state.refinerFilteredFilterValues.map((refinementValue: IRefinementValue, j) => {
 
                     if (refinementValue.RefinementCount === 0) {
                         return null;
@@ -55,7 +63,7 @@ export default class CheckboxTemplate extends React.Component<IBaseRefinerTempla
                             checked={this._isValueInFilterSelection(refinementValue)}
                             disabled={this.state.refinerSelectedFilterValues.length > 0 && !this._isValueInFilterSelection(refinementValue) && !this.props.isMultiValue && refinementValue.RefinementName !== 'Size'}
                             label={Text.format(refinementValue.RefinementValue + ' ({0})', refinementValue.RefinementCount)}
-                            onChange={(ev, checked: boolean) => {  
+                            onChange={(ev, checked: boolean) => {
                                 checked ? this._onFilterAdded(refinementValue) : this._onFilterRemoved(refinementValue);
                             }} />
                     );
@@ -63,11 +71,11 @@ export default class CheckboxTemplate extends React.Component<IBaseRefinerTempla
             }
             {
                 this.props.isMultiValue ?
-            
+
                     <div>
-                        <Link 
-                            theme={this.props.themeVariant as ITheme} 
-                            onClick={() => { this._applyFilters(this.state.refinerSelectedFilterValues); }} 
+                        <Link
+                            theme={this.props.themeVariant as ITheme}
+                            onClick={() => { this._applyFilters(this.state.refinerSelectedFilterValues); }}
                             disabled={disableButtons}>{strings.Refiners.ApplyFiltersLabel}
                         </Link>|<Link theme={this.props.themeVariant as ITheme}  onClick={this._clearFilters} disabled={this.state.refinerSelectedFilterValues.length === 0}>{strings.Refiners.ClearFiltersLabel}</Link>
                     </div>
@@ -82,10 +90,11 @@ export default class CheckboxTemplate extends React.Component<IBaseRefinerTempla
         // Determine the operator according to multi value setting
         this._operator = this.props.isMultiValue ? RefinementOperator.OR : RefinementOperator.AND;
 
-        // This scenario happens due to the behavior of the Office UI Fabric GroupedList component who recreates child components when a greoup is collapsed/expanded, causing a state reset for sub components
+        // This scenario happens due to the behavior of the Office UI Fabric GroupedList component who recreates child components when a group is collapsed/expanded, causing a state reset for sub components
         // In this case we use the refiners global state to recreate the 'local' state for this component
         this.setState({
-            refinerSelectedFilterValues: this.props.selectedValues
+            refinerSelectedFilterValues: this.props.selectedValues,
+            refinerFilteredFilterValues: this.props.selectedValues.length > 0 ? this.props.selectedValues : cloneDeep(this.props.refinementResult.Values),
         });
     }
 
@@ -94,6 +103,7 @@ export default class CheckboxTemplate extends React.Component<IBaseRefinerTempla
         if (nextProps.shouldResetFilters) {
             this.setState({
                 refinerSelectedFilterValues: [],
+                refinerFilteredFilterValues: [],
             });
         }
 
@@ -106,11 +116,22 @@ export default class CheckboxTemplate extends React.Component<IBaseRefinerTempla
             });
 
             this.setState({
-                refinerSelectedFilterValues: newFilterValues
+                refinerSelectedFilterValues: newFilterValues,
+                refinerFilteredFilterValues: newFilterValues,
             });
 
             this._applyFilters(newFilterValues);
         }
+    }
+
+    /**
+   * Filter list of options based on user input
+   * @param filterText - The text to use when filtering the collection
+   */
+    private _onChangeFilterText = (ev: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, filterText: string): void => {
+      this.setState({
+        refinerFilteredFilterValues: filterText ? this.props.refinementResult.Values.filter(r => r.RefinementName.toString().toLowerCase().indexOf(filterText.toLowerCase()) > -1) : this.props.refinementResult.Values
+      });
     }
 
     /**
@@ -135,7 +156,8 @@ export default class CheckboxTemplate extends React.Component<IBaseRefinerTempla
         let newFilterValues = update(this.state.refinerSelectedFilterValues, { $push: [addedValue] });
 
         this.setState({
-            refinerSelectedFilterValues: newFilterValues
+            refinerSelectedFilterValues: newFilterValues,
+            refinerFilteredFilterValues: newFilterValues,
         });
 
         if (!this.props.isMultiValue) {
@@ -154,7 +176,8 @@ export default class CheckboxTemplate extends React.Component<IBaseRefinerTempla
         });
 
         this.setState({
-            refinerSelectedFilterValues: newFilterValues
+            refinerSelectedFilterValues: newFilterValues,
+            refinerFilteredFilterValues: cloneDeep(this.props.refinementResult.Values),
         });
 
         if (!this.props.isMultiValue) {
@@ -163,7 +186,7 @@ export default class CheckboxTemplate extends React.Component<IBaseRefinerTempla
     }
 
     /**
-     * Applies all selected filters for the current refiner 
+     * Applies all selected filters for the current refiner
      */
     private _applyFilters(updatedValues: IRefinementValue[]) {
         this.props.onFilterValuesUpdated(this.props.refinementResult.FilterName, updatedValues, this._operator);
@@ -175,7 +198,8 @@ export default class CheckboxTemplate extends React.Component<IBaseRefinerTempla
     private _clearFilters() {
 
         this.setState({
-            refinerSelectedFilterValues: []
+            refinerSelectedFilterValues: [],
+            refinerFilteredFilterValues: cloneDeep(this.props.refinementResult.Values),
         });
 
         this._applyFilters([]);
