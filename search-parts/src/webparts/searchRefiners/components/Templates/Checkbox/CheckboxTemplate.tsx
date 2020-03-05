@@ -103,7 +103,7 @@ export default class CheckboxTemplate extends React.Component<IBaseRefinerTempla
         if (nextProps.shouldResetFilters) {
             this.setState({
                 refinerSelectedFilterValues: [],
-                refinerFilteredFilterValues: [],
+                refinerFilteredFilterValues: nextProps.selectedValues.length > 0 ? nextProps.selectedValues : cloneDeep(nextProps.refinementResult.Values),
             });
         }
 
