@@ -30,6 +30,7 @@ declare interface ISearchRefinersWebPartStrings {
         ApplyFiltersLabel: string;
         ClearFiltersLabel: string;
         ShowExpanded: string;
+        FilterBoxPlaceholder: string;
         Templates: {
             RefinementItemTemplateLabel: string;
             MutliValueRefinementItemTemplateLabel: string;

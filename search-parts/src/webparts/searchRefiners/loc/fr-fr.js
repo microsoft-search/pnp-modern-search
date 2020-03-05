@@ -30,6 +30,7 @@ define([], function () {
       "ApplyFiltersLabel": "Appliquer",
       "ClearFiltersLabel": "Effacer",
       "ShowExpanded": "Mode développé par défaut",
+      "FilterBoxPlaceholder": "Filtrer la liste des options par nom",
       "Templates": {
         "RefinementItemTemplateLabel": "Filtre par défaut",
         "MutliValueRefinementItemTemplateLabel": "Filtre à valeurs multiples",
