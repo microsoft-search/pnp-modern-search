@@ -41,7 +41,7 @@ export default class CheckboxTemplate extends React.Component<IBaseRefinerTempla
         }
 
         return <div>
-            {this.props.refinementResult.Values.length > 10 && this.state.refinerSelectedFilterValues.length === 0 &&
+            {this.props.refinementResult.Values.length > 10 && (this.state.refinerSelectedFilterValues.length === 0 || this.props.isMultiValue) &&
                 <TextField className={styles.filterBox} placeholder="Filter list of options by name" onChange={this._onChangeFilterText} />
             }
             {
@@ -94,7 +94,7 @@ export default class CheckboxTemplate extends React.Component<IBaseRefinerTempla
         // In this case we use the refiners global state to recreate the 'local' state for this component
         this.setState({
             refinerSelectedFilterValues: this.props.selectedValues,
-            refinerFilteredFilterValues: this.props.selectedValues.length > 0 ? this.props.selectedValues : cloneDeep(this.props.refinementResult.Values),
+            refinerFilteredFilterValues: (!this.props.isMultiValue && this.props.selectedValues.length > 0) ? this.props.selectedValues : cloneDeep(this.props.refinementResult.Values),
         });
     }
 
@@ -103,7 +103,7 @@ export default class CheckboxTemplate extends React.Component<IBaseRefinerTempla
         if (nextProps.shouldResetFilters) {
             this.setState({
                 refinerSelectedFilterValues: [],
-                refinerFilteredFilterValues: nextProps.selectedValues.length > 0 ? nextProps.selectedValues : cloneDeep(nextProps.refinementResult.Values),
+                refinerFilteredFilterValues: (!this.props.isMultiValue && nextProps.selectedValues.length > 0) ? nextProps.selectedValues : cloneDeep(nextProps.refinementResult.Values),
             });
         }
 
@@ -126,11 +126,17 @@ export default class CheckboxTemplate extends React.Component<IBaseRefinerTempla
 
     /**
    * Filter list of options based on user input
+   * Also take into account selected options
    * @param filterText - The text to use when filtering the collection
    */
     private _onChangeFilterText = (ev: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, filterText: string): void => {
       this.setState({
-        refinerFilteredFilterValues: filterText ? this.props.refinementResult.Values.filter(r => r.RefinementName.toString().toLowerCase().indexOf(filterText.toLowerCase()) > -1) : this.props.refinementResult.Values
+        refinerFilteredFilterValues: filterText
+          ? this.props.refinementResult.Values.filter(
+            r => r.RefinementName.toString().toLowerCase().indexOf(filterText.toLowerCase()) > -1 ||
+            this.state.refinerSelectedFilterValues.some(s => s.RefinementValue === r.RefinementValue)
+          )
+          : this.props.refinementResult.Values
       });
     }
 
@@ -157,7 +163,7 @@ export default class CheckboxTemplate extends React.Component<IBaseRefinerTempla
 
         this.setState({
             refinerSelectedFilterValues: newFilterValues,
-            refinerFilteredFilterValues: newFilterValues,
+            refinerFilteredFilterValues: !this.props.isMultiValue ? newFilterValues : this.state.refinerFilteredFilterValues,
         });
 
         if (!this.props.isMultiValue) {
