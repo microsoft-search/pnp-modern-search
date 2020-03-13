@@ -585,11 +585,7 @@ export class TemplateService extends BaseTemplateService {
                         text: strings.TemplateParameters.PersonaSizeExtraLarge
                     }
                 ]
-            }),   
-            PropertyPaneToggle('templateParameters.disableHover', {
-                label: strings.TemplateParameters.LivePersonaDisableHover,               
-                checked: properties.templateParameters.disableHover !== null || properties.templateParameters.disableHover !== undefined ? properties.templateParameters.disableHover : false
-            })          
+            }),      
         ];
     }
 

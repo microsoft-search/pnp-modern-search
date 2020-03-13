@@ -3,7 +3,7 @@
         <span><strong>Mocked external template</strong></span>
         {{#if showResultsCount}}
             <div class='template_resultCount'>
-                <label class='ms-fontWeight-semibold'>{{getCountMessage totalRows keywords}}</label>
+                <label class='ms-fontWeight-semibold'>{{getCountMessage @root.paging.totalItemsCount keywords}}</label>
             </div>
         {{/if}}
         <ul class='ms-List template_defaultList'>
@@ -29,7 +29,7 @@
             </div>
         {{/if}}
         <ul class='ms-List template_defaultList'>
-            {{#times maxResultsCount}}  
+            {{#times @root.paging.totalItemsCount}}  
                 <li class='ms-ListItem ms-ListItem--image' tabindex='0'>
                     <span class="shimmer line" style="width: 100%"></span>
                 </li>

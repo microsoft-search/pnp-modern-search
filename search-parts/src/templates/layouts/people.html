@@ -11,7 +11,7 @@
             <div class="template_defaultCard">
                 {{#if showResultsCount}}
                 <div class="template_resultCount">
-                    <label class="ms-fontWeight-semibold">{{getCountMessage totalRows keywords}}</label>
+                    <label class="ms-fontWeight-semibold">{{getCountMessage @root.paging.totalItemsCount keywords}}</label>
                 </div>
                 {{/if}}
                 <div class="ms-Grid">
@@ -30,6 +30,18 @@
                     </div>
                 </div>
             </div>
+            {{#if @root.paging.showPaging}}
+                <pnp-pagination 
+                    total-items="{{@root.paging.totalItemsCount}}" 
+                    hide-first-last-pages="{{@root.paging.hideFirstLastPages}}"
+                    hide-disabled="{{@root.paging.hideDisabled}}"
+                    hide-navigation="{{@root.paging.hideNavigation}}"
+                    range="{{@root.paging.pagingRange}}" 
+                    items-count-per-page="{{@root.paging.itemsCountPerPage}}" 
+                    current-page-number="{{@root.paging.currentPageNumber}}"
+                >
+                </pnp-pagination>
+            {{/if}}
         {{else}}
             {{#unless showBlank}}
                 <div class="template_noResults">{{@root.strings.NoResultMessage}}</div>
@@ -48,7 +60,7 @@
             {{/if}}
             <div class="ms-Grid"> 
                 <div class="ms-Grid-row">
-                    {{#times maxResultsCount}}
+                    {{#times @root.paging.totalItemsCount}}
                         <div class="ms-Grid-col ms-sm12 ms-md12 ms-lg12">
                             <pnp-persona-card-shimmers persona-size="{{@root.personaSize}}"></pnp-persona-card-shimmers>
                         </div>

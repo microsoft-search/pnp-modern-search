@@ -46,6 +46,18 @@
                     \{{/if}}                    
                 </div>                
             {{/slider}}
+            {{#if @root.paging.showPaging}}
+                <pnp-pagination 
+                    total-items="{{@root.paging.totalItemsCount}}" 
+                    hide-first-last-pages="{{@root.paging.hideFirstLastPages}}"
+                    hide-disabled="{{@root.paging.hideDisabled}}"
+                    hide-navigation="{{@root.paging.hideNavigation}}"
+                    range="{{@root.paging.pagingRange}}" 
+                    items-count-per-page="{{@root.paging.itemsCountPerPage}}" 
+                    current-page-number="{{@root.paging.currentPageNumber}}"
+                >
+                </pnp-pagination>
+            {{/if}}
         {{else}}
             {{#unless showBlank}}
                 <div class="template_noResults">{{@root.strings.NoResultMessage}}</div>
