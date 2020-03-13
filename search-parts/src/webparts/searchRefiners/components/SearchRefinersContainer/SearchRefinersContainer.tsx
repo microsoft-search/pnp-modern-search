@@ -170,7 +170,7 @@ export default class SearchRefinersContainer extends React.Component<ISearchRefi
     dateFilters.map(dateFilter => {
 
       // Is the filter currently selected?
-      const isSelected = this.state.selectedRefinementFilters.map(filter => { return filter.FilterName === dateFilter.refinerName; }).length > 0 ? true : false;
+      const isSelected = this.state.selectedRefinementFilters.filter(filter => { return filter.FilterName === dateFilter.refinerName; }).length > 0 ? true : false;
 
       // If selected but there is no more result for this refiner, we manually add a dummy entry to available filters
       if (isSelected && nextProps.availableRefiners.filter(availableRefiner => { return availableRefiner.FilterName === dateFilter.refinerName; }).length === 0) {
