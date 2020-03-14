@@ -314,7 +314,8 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                     this.context.dynamicDataSourceManager.notifyPropertyChanged(SearchComponentType.SearchResultsWebPart);
                 },
                 themeVariant: this._themeVariant,
-                pagingSettings: this.properties.paging
+                pagingSettings: this.properties.paging,
+                instanceId: this.instanceId
             } as ISearchResultsContainerProps
         );
 

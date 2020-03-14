@@ -152,6 +152,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                     pagingRange: this.props.pagingSettings.pagingRange,
                     itemsCountPerPage: this.props.pagingSettings.itemsCountPerPage
                 },
+                instanceId: this.props.instanceId,
                 keywords: this.props.queryKeywords,
                 showResultsCount: this.props.showResultsCount,
                 siteUrl: this.props.siteServerRelativeUrl,

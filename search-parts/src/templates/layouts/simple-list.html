@@ -1,14 +1,14 @@
 <content id="template">
 
     <style>
-        /* Insert your CSS overrides here */
-        .example-themePrimary a {
+        
+        #pnp-modern-search_{{@root.instanceId}} .example-themePrimary a {
             color: {{@root.themeVariant.palette.themePrimary}};
         }
-        
+
     </style>
 
-    <div class="template_root">
+    <div id="pnp-modern-search_{{@root.instanceId}}" class="template_root">
         {{#if @root.hasPrimaryOrSecondaryResults}} 
             {{#if showResultsCount}}
                 <div class="template_resultCount">
@@ -111,7 +111,7 @@
         /* Insert your CSS overrides here */
     </style>
 
-    <div class="placeholder_root">
+    <div id="pnp-modern-search_{{@root.instanceId}}" class="placeholder_root">
         {{#if showResultsCount}}
         <div class="template_resultCount">
             <span class="shimmer line" style="width: 20%"></span>

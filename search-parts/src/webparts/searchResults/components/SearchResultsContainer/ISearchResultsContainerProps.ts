@@ -138,6 +138,11 @@ interface ISearchResultsContainerProps {
      * The Web Part paging
      */
     pagingSettings: IPagingSettings;
+
+    /**
+     * The Web Part instance id
+     */
+    instanceId: string;
 }
 
 export default ISearchResultsContainerProps;
