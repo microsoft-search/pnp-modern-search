@@ -26,9 +26,12 @@ export default class SearchVerticalsContainer extends React.Component<ISearchVer
         pivotItemProps.itemCount = vertical.count;
       }
 
+      if (vertical.iconName !== "") {
+        pivotItemProps.itemIcon = vertical.iconName;
+      }
+
       return <PivotItem
                 headerText={vertical.tabName}
-                itemIcon={vertical.iconName}
                 itemKey={vertical.key}
                 {...pivotItemProps}>
               </PivotItem>;
