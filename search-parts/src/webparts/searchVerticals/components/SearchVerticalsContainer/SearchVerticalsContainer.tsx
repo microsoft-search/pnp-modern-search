@@ -20,22 +20,25 @@ export default class SearchVerticalsContainer extends React.Component<ISearchVer
 
     const renderPivotItems = this.props.verticals.map(vertical => {
 
-      let pivotItemProps: IPivotItemProps= {};
+      let pivotItemProps: IPivotItemProps = {};
 
       if (this.props.showCounts && (vertical.count !== undefined || vertical.count !== null)) {
         pivotItemProps.itemCount = vertical.count;
       }
 
+      if (vertical.iconName && vertical.iconName.trim() !== "") {
+        pivotItemProps.itemIcon = vertical.iconName;
+      }
+
       return <PivotItem
-                headerText={vertical.tabName}
-                itemIcon={vertical.iconName}
-                itemKey={vertical.key}
-                {...pivotItemProps}>
-              </PivotItem>;
+        headerText={vertical.tabName}
+        itemKey={vertical.key}
+        {...pivotItemProps}>
+      </PivotItem>;
     });
 
     return <Pivot className={styles.searchVerticals}
-              componentRef={(e) => {this._pivotRef = e; }}
+              componentRef={(e) => { this._pivotRef = e; }}
               onLinkClick={this.onVerticalSelected}
               theme={this.props.themeVariant as ITheme}>
               {renderPivotItems}
