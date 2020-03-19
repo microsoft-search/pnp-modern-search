@@ -16,6 +16,11 @@ interface IFilterLayoutProps {
    */
   refinersConfiguration: IRefinerConfiguration[];
 
+    /**
+   * Display filter box on supported refiner templates (with more than 10 values)
+   */
+  showFilterBoxForRefinerValues: boolean;
+
   /**
    * Indicates if at least a filter value has been selected
    */

@@ -27,6 +27,11 @@ export interface ISearchRefinersContainerProps {
   refinersConfiguration: IRefinerConfiguration[];
 
   /**
+   * Display filter box on supported refiner templates (with more than 10 values)
+   */
+  showFilterBoxForRefinerValues: boolean;
+
+  /**
    * The selected layout
    */
   selectedLayout: RefinersLayoutOption;

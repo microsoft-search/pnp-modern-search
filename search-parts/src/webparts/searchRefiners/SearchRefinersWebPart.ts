@@ -95,6 +95,7 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
           webPartTitle: this.properties.webPartTitle,
           availableRefiners: availableRefiners,
           refinersConfiguration: this.properties.refinersConfiguration,
+          showFilterBoxForRefinerValues: this.properties.showFilterBoxForRefinerValues,
           showBlank: this.properties.showBlank,
           displayMode: this.displayMode,
           onUpdateFilters: (appliedRefiners: IRefinementFilter[]) => {
@@ -317,6 +318,10 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
             type: CustomCollectionFieldType.boolean
           }
         ]
+      }),
+      PropertyPaneToggle('showFilterBoxForRefinerValues', {
+        label: strings.ShowFilterBoxForRefinerValuesLabel,
+        checked: this.properties.showFilterBoxForRefinerValues,
       }),
       PropertyPaneDropdown('searchResultsDataSourceReference', {
         options: this._dynamicDataService.getAvailableDataSourcesByType(SearchComponentType.SearchResultsWebPart),

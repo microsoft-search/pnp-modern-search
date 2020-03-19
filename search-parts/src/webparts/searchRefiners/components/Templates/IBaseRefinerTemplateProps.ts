@@ -37,6 +37,11 @@ interface IBaseRefinerTemplateProps {
   removeFilterValue?: IRefinementValue;
 
   /**
+   * Display filter box on supported refiner templates (with more than 10 values)
+   */
+  showFilterBoxForRefinerValues?: boolean;
+
+  /**
    * UserService
    */
   userService?: IUserService;

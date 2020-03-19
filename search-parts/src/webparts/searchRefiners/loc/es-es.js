@@ -19,6 +19,7 @@ define([], function() {
         "SelectedFiltersLabel": "Filtros seleccionados:",
         "RefinerLayoutLabel": "Diseño de filtros",
         "ConnectToSearchResultsLabel": "Conectar al Web Part de Resultados de Búsqueda",
+        "ShowFilterBoxForRefinerValuesLabel": "Display filter box on supported refiner templates (with more than 10 values)",
         "Refiners": {
             "RefinersFieldLabel": "Refinadores",
             "RefinerManagedPropertyField": "Filtrar la propiedad administrada",

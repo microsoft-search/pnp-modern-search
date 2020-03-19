@@ -5,6 +5,7 @@ export interface ISearchRefinersWebPartProps {
   webPartTitle: string;
   showBlank: boolean;
   refinersConfiguration: IRefinerConfiguration[];
+  showFilterBoxForRefinerValues: boolean;
   searchResultsDataSourceReference: string;
   selectedLayout: RefinersLayoutOption;
 }

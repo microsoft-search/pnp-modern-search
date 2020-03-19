@@ -61,6 +61,7 @@ export default class SearchRefinersContainer extends React.Component<ISearchRefi
             onFilterValuesUpdated={this.onFilterValuesUpdated}
             refinementResults={this.state.availableRefiners}
             refinersConfiguration={this.props.refinersConfiguration}
+            showFilterBoxForRefinerValues={this.props.showFilterBoxForRefinerValues}
             shouldResetFilters={this.state.shouldResetFilters}
             onRemoveAllFilters={this.onRemoveAllFilters}
             hasSelectedValues={this.state.selectedRefinementFilters.length > 0 ? true : false}
@@ -83,6 +84,7 @@ export default class SearchRefinersContainer extends React.Component<ISearchRefi
             onFilterValuesUpdated={this.onFilterValuesUpdated}
             refinementResults={this.state.availableRefiners}
             refinersConfiguration={this.props.refinersConfiguration}
+            showFilterBoxForRefinerValues={this.props.showFilterBoxForRefinerValues}
             shouldResetFilters={this.state.shouldResetFilters}
             onRemoveAllFilters={this.onRemoveAllFilters}
             hasSelectedValues={this.state.selectedRefinementFilters.length > 0 ? true : false}

@@ -49,7 +49,7 @@ export default class Vertical extends React.Component<IFilterLayoutProps, IVerti
       groupProps={
         {
           onRenderHeader: this._onRenderHeader,
-          
+
         }
       }
       groups={this.state.groups} /> : noResultsElement;
@@ -69,9 +69,9 @@ export default class Vertical extends React.Component<IFilterLayoutProps, IVerti
         position: 'relative',
         maxHeight: 'inherit'
       }}>
-        <div className={styles.verticalLayout__filterPanel__body} data-is-scrollable={true}>       
+        <div className={styles.verticalLayout__filterPanel__body} data-is-scrollable={true}>
           {renderAvailableFilters}
-          {renderLinkRemoveAll} 
+          {renderLinkRemoveAll}
         </div>
       </div>
     );
@@ -198,6 +198,7 @@ export default class Vertical extends React.Component<IFilterLayoutProps, IVerti
           refinementResult={refinementResult}
           shouldResetFilters={props.shouldResetFilters}
           templateType={!!configuredFilter[0] ? configuredFilter[0].template : null}
+          showFilterBoxForRefinerValues={this.props.showFilterBoxForRefinerValues}
           onFilterValuesUpdated={props.onFilterValuesUpdated}
           language={props.language}
           themeVariant={props.themeVariant}

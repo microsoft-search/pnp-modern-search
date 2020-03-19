@@ -19,6 +19,7 @@ define([], function () {
     "FilterResultsButtonLabel": "Filtrer",
     "RefinerLayoutLabel": "Disposition des filtres",
     "ConnectToSearchResultsLabel": "Se connecter au composant de recherche",
+    "ShowFilterBoxForRefinerValuesLabel": "Display filter box on supported refiner templates (with more than 10 values)",
     "Refiners": {
       "RefinersFieldLabel": "Filtres",
       "RefinersFieldDescription": "Configurez ici les propriétés gerées à utiliser comme filtres. Si il n'existe pas de valeurs pour le filtre spécifié, il n'apparaîtra pas dans le panneau.",

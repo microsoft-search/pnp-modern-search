@@ -24,6 +24,11 @@ export interface ITemplateRendererProps {
    */
   templateType: RefinerTemplateOption;
 
+    /**
+   * Display filter box on supported refiner templates (with more than 10 values)
+   */
+  showFilterBoxForRefinerValues: boolean;
+
   /**
    * The current refinement result to display
    */
@@ -90,7 +95,8 @@ export default class TemplateRenderer extends React.Component<ITemplateRendererP
           isMultiValue={false}
           themeVariant={this.props.themeVariant}
           removeFilterValue={this.props.valueToRemove}
-          selectedValues={selectedValues} 
+          selectedValues={selectedValues}
+          showFilterBoxForRefinerValues={this.props.showFilterBoxForRefinerValues}
         />;
         break;
 
@@ -103,6 +109,7 @@ export default class TemplateRenderer extends React.Component<ITemplateRendererP
           isMultiValue={true}
           removeFilterValue={this.props.valueToRemove}
           selectedValues={this.props.selectedValues}
+          showFilterBoxForRefinerValues={this.props.showFilterBoxForRefinerValues}
         />;
         break;
 

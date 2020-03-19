@@ -41,7 +41,7 @@ export default class CheckboxTemplate extends React.Component<IBaseRefinerTempla
         }
 
         return <div>
-            {this.props.refinementResult.Values.length > 10 && (this.state.refinerSelectedFilterValues.length === 0 || this.props.isMultiValue) &&
+            { this.props.showFilterBoxForRefinerValues && this.props.refinementResult.Values.length > 10 && (this.state.refinerSelectedFilterValues.length === 0 || this.props.isMultiValue) &&
                 <TextField className={styles.filterBox} placeholder={strings.Refiners.FilterBoxPlaceholder} onChange={this._onChangeFilterText} />
             }
             {
