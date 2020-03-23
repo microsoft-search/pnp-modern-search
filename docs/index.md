@@ -20,7 +20,7 @@ This solution allows you to build user friendly SharePoint search experiences us
 - Search results including previews for Office documents and Office 365 videos.
 - Customizable refiners supporting multilingual values for taxonomy based filters.
 - Sortable results (unique field).
-- Refiners Web Part.
+- Filters Web Part.
 - Pagination Web Part.
 - SharePoint best bets support.
 - Search query enhancement with NLP tools (like Microsoft LUIS).
