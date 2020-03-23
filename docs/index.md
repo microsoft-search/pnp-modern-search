@@ -70,7 +70,7 @@ See [documentation](./search-query-enhancer/getting-started.md).
 
 ## Important notice on upgrading the solution from pre v3.0.0.0
 
-**Because this version introduces a new standalone search refiners Web Part, you will have to reconfigure all previous refiners from the search results Web Part to this new Web Part. You can get the previous layout for filters by selecting the 'Panel' layout in the new Web Part property pane.**
+**Because this version introduces a new standalone search filters Web Part, you will have to reconfigure all previous refiners from the search results Web Part to this new Web Part. You can get the previous layout for filters by selecting the 'Panel' layout in the new Web Part property pane.**
 
 ## Disclaimer
 **THIS CODE IS PROVIDED *AS IS* WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.**
