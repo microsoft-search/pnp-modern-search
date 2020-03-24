@@ -111,7 +111,7 @@ class SearchService implements ISearchService {
         // Search paging option is one based
         let page = pageNumber ? pageNumber : 1;
 
-        searchQuery.ClientType = 'ContentSearchRegular';
+        searchQuery.ClientType = 'PnPModernSearch';
         searchQuery.Properties = [{
             Name: "EnableDynamicGroups",
             Value: {
@@ -450,7 +450,7 @@ class SearchService implements ISearchService {
             url = UrlHelper.addOrReplaceQueryStringParam(url, 'querytemplate', `'${vertical.queryTemplate}'`);
             url = UrlHelper.addOrReplaceQueryStringParam(url, 'trimduplicates', "'false'");
             url = UrlHelper.addOrReplaceQueryStringParam(url, 'properties', "'EnableDynamicGroups:true,EnableMultiGeoSearch:true'");
-            url = UrlHelper.addOrReplaceQueryStringParam(url, 'clienttype', "'ContentSearchRegular'");
+            url = UrlHelper.addOrReplaceQueryStringParam(url, 'clienttype', "'PnPModernSearch'");
             url = UrlHelper.addOrReplaceQueryStringParam(url, 'enablequeryrules', `${enableQueryRules}`);
 
             if (this._queryCulture) {
