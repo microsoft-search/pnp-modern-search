@@ -9,6 +9,9 @@ import { Loader } from "../../../../../services/TemplateService/LoadHelper";
 import * as strings from 'SearchRefinersWebPartStrings';
 import { ITheme } from "@uifabric/styling";
 
+//CSS
+import styles from './FixedDateRangeTemplate.module.scss';
+
 
 export interface IFixedDateRangeTemplateState extends IBaseRefinerTemplateState {
     haveMoment: boolean;
@@ -103,7 +106,12 @@ export default class FixedDateRangeTemplate extends React.Component<IFixedDateRa
             options.pop();
         }
 
-        return <div>
+        return <div className={styles.pnpRefinersTemplateFixedDateRange}>
+            {
+                this.props.showValueFilter ? 
+                    <div className='pnp-font-s'>Value filters are not allowed for dates. Clear 'show filter' to remove this message</div>
+                    : null
+            }
             <ChoiceGroup
                 theme={this.props.themeVariant as ITheme}
                 selectedKey={this._getIntervalKeyForValue()}

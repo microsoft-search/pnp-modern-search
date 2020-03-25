@@ -9,6 +9,9 @@ import * as strings from 'SearchRefinersWebPartStrings';
 import { Loader } from "../../../../../services/TemplateService/LoadHelper";
 import { ITheme } from "@uifabric/styling";
 
+// CSS
+import styles from './DateRangeTemplate.module.scss';
+
 export interface IDateRangeTemplateState extends IBaseRefinerTemplateState {
     selectedFromDate: Date;
     selectedToDate: Date;
@@ -99,7 +102,12 @@ export default class DateRangeTemplate extends React.Component<IDateRangeTemplat
             fromProps.maxDate = maxDate;
         }
 
-        return <div>
+        return <div className={styles.pnpRefinersTemplateDateRange}>
+            {
+                this.props.showValueFilter ? 
+                    <div className='pnp-font-s'>Value filters are not allowed for dates. Clear 'show filter' to remove this message</div>
+                    : null
+            }
             <DatePicker {...fromProps} />
             <DatePicker {...toProps} />
             <Link theme={this.props.themeVariant as ITheme} onClick={this._clearFilters} disabled={!this.state.selectedToDate && !this.state.selectedFromDate}>{strings.Refiners.ClearFiltersLabel}</Link>
