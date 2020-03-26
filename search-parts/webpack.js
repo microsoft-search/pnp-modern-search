@@ -85,13 +85,13 @@ let baseConfig = {
               async: true
             }
           },
-          {
-            loader: 'css-loader'
-          }
+          "css-loader"
         ]
       },
       {
-        test: /\.scss$/,
+        test: function (fileName) {
+          return fileName.endsWith(".module.scss");   // scss modules support
+        },
         use: [
           {
             loader: "@microsoft/loader-load-themed-styles",
@@ -103,9 +103,26 @@ let baseConfig = {
           {
             loader: 'css-loader',
             options: {
-              modules: true
+              modules: {
+                localIdentName: '[local]_[hash:base64:8]'
+              }
             }
           }, // translates CSS into CommonJS
+          "sass-loader" // compiles Sass to CSS, using Node Sass by default
+        ]
+      },
+      {
+        test: function (fileName) {
+          return !fileName.endsWith(".module.scss") && fileName.endsWith(".scss");  // just regular .scss
+        },
+        use: [
+          {
+            loader: "@microsoft/loader-load-themed-styles",
+            options: {
+              async: true
+            }
+          },
+          "css-loader", // translates CSS into CommonJS
           "sass-loader" // compiles Sass to CSS, using Node Sass by default
         ]
       }
