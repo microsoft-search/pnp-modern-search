@@ -122,6 +122,11 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             }
         }
 
+        // WebPart Title
+        if (this.props.webPartTitle && this.props.webPartTitle.length > 0) {
+            renderWebPartTitle = <WebPartTitle title={this.props.webPartTitle} updateProperty={null} displayMode={DisplayMode.Read} />;
+        }
+    
         let totalPrimaryAndSecondaryResults = this.state.results.RelevantResults.length;
         if (this.state.results.SecondaryResults.length > 0) {
             totalPrimaryAndSecondaryResults += this.state.results.SecondaryResults.reduce((sum, block) => sum += block.Results.length, 0);
@@ -129,12 +134,17 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
 
         // WebPart content
         if (totalPrimaryAndSecondaryResults === 0
-            && this.props.displayMode === DisplayMode.Edit
             && this.props.showBlank
             && this.props.selectedLayout !== ResultsLayoutOption.Debug) {
-            renderWpContent = <MessageBar messageBarType={MessageBarType.info}>{strings.ShowBlankEditInfoMessage}</MessageBar>;
-        } else {
 
+            renderWebPartTitle = null;
+
+            if (this.props.displayMode === DisplayMode.Edit) {
+                renderWpContent = <MessageBar messageBarType={MessageBarType.info}>{strings.ShowBlankEditInfoMessage}</MessageBar>;
+            }
+            
+        } else {
+            
             let templateContext = {
                 queryModification: this.state.results.QueryModification,
                 items: this.state.results.RelevantResults,
@@ -176,11 +186,6 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                     {renderOverlay}
                     {renderSearchResultTemplate}
                 </div>;
-        }
-
-        // WebPart Title
-        if (this.props.webPartTitle && this.props.webPartTitle.length > 0) {
-            renderWebPartTitle = <WebPartTitle title={this.props.webPartTitle} updateProperty={null} displayMode={DisplayMode.Read} />;
         }
 
         // Error Message
