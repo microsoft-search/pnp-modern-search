@@ -99,15 +99,15 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
             // same code as in IconComponent.tsx
             if (processedProps.iconExt) {
                 if (processedProps.iconExt == "IsListItem") {
-                    iconProps = getFileTypeIconProps({ type: FileIconType.listItem, size: 16, imageFileType: 'png' });
+                    iconProps = getFileTypeIconProps({ type: FileIconType.listItem, size: 32, imageFileType: 'png' });
                 } else if (processedProps.iconExt == "IsContainer") {
-                    iconProps = getFileTypeIconProps({ type: FileIconType.folder, size: 16, imageFileType: 'png' });
+                    iconProps = getFileTypeIconProps({ type: FileIconType.folder, size: 32, imageFileType: 'png' });
                 } else {
-                    iconProps = getFileTypeIconProps({ extension: processedProps.iconExt, size: 16, imageFileType: 'png' });
+                    iconProps = getFileTypeIconProps({ extension: processedProps.iconExt, size: 32, imageFileType: 'png' });
                 }
             } else {
                 const fileExtension = processedProps.fileExtension ? trimStart(processedProps.fileExtension.trim(), '.') : null;
-                iconProps = getFileTypeIconProps({ extension: fileExtension, size: 16, imageFileType: 'png' });
+                iconProps = getFileTypeIconProps({ extension: fileExtension, size: 32, imageFileType: 'png' });
             }
 
             if (globalSettings.icons[iconProps.iconName] && this.props.showFileIcon) {
