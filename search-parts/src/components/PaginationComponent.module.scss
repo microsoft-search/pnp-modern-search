@@ -34,15 +34,17 @@
                     }
 
                     .active {
-                        font-weight: bold;
-                        color:  "[theme: themePrimary, default: #005a9e]";
+                        font-weight: 700;
+                        color: "[theme: themeDark, default: #005a9e]";
+                        text-decoration: underline;
                     }
 
                     .active__inverted {
-                        font-weight: bold;
+                        font-weight: 700;
                         color: #ffffff;
+                        text-decoration: underline;
                     }
-        
+                    
                     a:visited {
                         color: inherit;
                     }

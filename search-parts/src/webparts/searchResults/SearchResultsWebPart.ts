@@ -193,7 +193,6 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         let renderElement = null;
         let refinerConfiguration: IRefinerConfiguration[] = [];
         let selectedFilters: IRefinementFilter[] = [];
-        let selectedPage: number = 1;
         let queryTemplate: string = this.properties.queryTemplate;
         let sourceId: string = this.properties.resultSourceId;
         let getVerticalsCounts: boolean = false;
