@@ -286,7 +286,7 @@ export default class LinkPanel extends React.Component<ILinkPanelProps, ILinkPan
           refinerConfiguration={!!configuredFilter[0] ? configuredFilter[0] : null}
           shouldResetFilters={props.shouldResetFilters}
           templateType={configuredFilter[0].template}
-          showFilterBoxForRefinerValues={this.props.showFilterBoxForRefinerValues}
+          showFilterBoxForRefinerValues={props.showFilterBoxForRefinerValues}
           valueToRemove={valueToRemove}
           onFilterValuesUpdated={props.onFilterValuesUpdated}
           language={props.language}
