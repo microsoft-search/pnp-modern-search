@@ -490,7 +490,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                         existingFilters.map((existingFilter) => {
                             updatedValues.push({
                                 RefinementCount: value.RefinementCount,
-                                RefinementName: existingFilter.localizedTermLabel,
+                                RefinementName: value.RefinementName,
                                 RefinementToken: value.RefinementToken,
                                 RefinementValue: existingFilter.localizedTermLabel,
                             } as IRefinementValue);

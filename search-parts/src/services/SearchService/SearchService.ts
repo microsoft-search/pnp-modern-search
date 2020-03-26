@@ -291,7 +291,7 @@ class SearchService implements ISearchService {
                         values.push({
                             RefinementCount: parseInt(item.RefinementCount, 10),
                             // replace string;# for calculated columns https://github.com/SharePoint/sp-dev-solutions/issues/304
-                            RefinementName: this._formatDate(item.RefinementName).replace("string;#", ""), // This value will appear in the selected filter bar
+                            RefinementName: refiner.Name, // This value will appear in the selected filter bar
                             RefinementToken: item.RefinementToken,
                             RefinementValue: this._formatDate(item.RefinementValue).replace("string;#", ""), // This value will appear in the filter panel
                         });

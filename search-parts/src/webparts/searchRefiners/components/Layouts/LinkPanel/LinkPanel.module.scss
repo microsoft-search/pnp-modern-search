@@ -23,10 +23,13 @@
     &__selectedFilters {
 
         padding: 10px;
+        display: flex;
+        flex-wrap: wrap;
 
         label.filter {
-            display: inline-block;
-            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            margin-right: 8px;
         }
 
         label.filter~label.filter:before {
