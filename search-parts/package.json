@@ -73,6 +73,7 @@
         "ajv": "~5.2.2",
         "css-loader": "3.4.2",
         "css-modules-typescript-loader": "4.0.0",
+        "del": "5.1.0",
         "fork-ts-checker-webpack-plugin": "4.1.0",
         "gulp": "~3.9.1",
         "node-sass": "4.13.1",
