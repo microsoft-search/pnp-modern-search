@@ -55,7 +55,7 @@ export default class CheckboxTemplate extends React.Component<IBaseRefinerTempla
                             checked={this._isValueInFilterSelection(refinementValue)}
                             disabled={this.state.refinerSelectedFilterValues.length > 0 && !this._isValueInFilterSelection(refinementValue) && !this.props.isMultiValue && refinementValue.RefinementName !== 'Size'}
                             label={Text.format(refinementValue.RefinementValue + ' ({0})', refinementValue.RefinementCount)}
-                            onChange={(ev, checked: boolean) => {  
+                            onChange={(ev, checked: boolean) => {
                                 checked ? this._onFilterAdded(refinementValue) : this._onFilterRemoved(refinementValue);
                             }} />
                     );
@@ -63,11 +63,11 @@ export default class CheckboxTemplate extends React.Component<IBaseRefinerTempla
             }
             {
                 this.props.isMultiValue ?
-            
+
                     <div>
-                        <Link 
-                            theme={this.props.themeVariant as ITheme} 
-                            onClick={() => { this._applyFilters(this.state.refinerSelectedFilterValues); }} 
+                        <Link
+                            theme={this.props.themeVariant as ITheme}
+                            onClick={() => { this._applyFilters(this.state.refinerSelectedFilterValues); }}
                             disabled={disableButtons}>{strings.Refiners.ApplyFiltersLabel}
                         </Link>|<Link theme={this.props.themeVariant as ITheme}  onClick={this._clearFilters} disabled={this.state.refinerSelectedFilterValues.length === 0}>{strings.Refiners.ClearFiltersLabel}</Link>
                     </div>
@@ -102,7 +102,7 @@ export default class CheckboxTemplate extends React.Component<IBaseRefinerTempla
         if (nextProps.removeFilterValue) {
 
             const newFilterValues = this.state.refinerSelectedFilterValues.filter((elt) => {
-                return elt.RefinementName !== nextProps.removeFilterValue.RefinementName;
+                return elt.RefinementValue !== nextProps.removeFilterValue.RefinementValue;
             });
 
             this.setState({
@@ -120,7 +120,7 @@ export default class CheckboxTemplate extends React.Component<IBaseRefinerTempla
     private _isValueInFilterSelection(valueToCheck: IRefinementValue): boolean {
 
         let newFilters = this.state.refinerSelectedFilterValues.filter((filter) => {
-            return filter.RefinementToken === valueToCheck.RefinementToken && filter.RefinementName === valueToCheck.RefinementName;
+            return filter.RefinementToken === valueToCheck.RefinementToken && filter.RefinementValue === valueToCheck.RefinementValue;
         });
 
         return newFilters.length === 0 ? false : true;
@@ -150,7 +150,7 @@ export default class CheckboxTemplate extends React.Component<IBaseRefinerTempla
     private _onFilterRemoved(removedValue: IRefinementValue) {
 
         const newFilterValues = this.state.refinerSelectedFilterValues.filter((elt) => {
-            return elt.RefinementName !== removedValue.RefinementName;
+            return elt.RefinementValue !== removedValue.RefinementValue;
         });
 
         this.setState({
@@ -163,7 +163,7 @@ export default class CheckboxTemplate extends React.Component<IBaseRefinerTempla
     }
 
     /**
-     * Applies all selected filters for the current refiner 
+     * Applies all selected filters for the current refiner
      */
     private _applyFilters(updatedValues: IRefinementValue[]) {
         this.props.onFilterValuesUpdated(this.props.refinementResult.FilterName, updatedValues, this._operator);
