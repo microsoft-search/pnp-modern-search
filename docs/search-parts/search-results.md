@@ -24,16 +24,30 @@ Enable Query Rules | Enable the query rules if applies. Turn this options  'on' 
 Include OneDrive results | Include OneDrive results if applicable. Turn this option 'on' to make users' personal OneDrive results available to custom renderers. Read more [here](https://docs.microsoft.com/en-us/sharepoint/support/search/private-onedrive-results-not-included).
 Selected properties | The search managed properties to retrieve. You can select them from a predefined list or add them as free text if not listed. Then, these properties are available in your Handlebars template with the syntax (`item.property_name` or `property_name` inside the `{{#each}}` loop).
 Refinement filters | The default refinement filters to apply to the query. Unlike URL `filters` params, these won't select the default values in the Search Filters WP if connected.
-Number of items to retrieve per page | Quite explicit. The paging behavior is done directly by the search API (See the *SearchDataProvider.ts* file), not by the code on post-render.
+Enable taxonomy values localization for refiners and results | If set, the Web Part will try to translate the taxonomy term IDs to their corresponding label according to the curent UI language. Refer to the [Taxonomy values dynamic translation](#) section of this page.
+Language of search request | The language to use for the search request. By default the search request will be made using the current UI language.
+Synonyms | Ability to define synonyms for the search querytext. Synonyms can be configured in a two-ways mode.
+
+#### Paging settings
+
+![Paging settings](../images/paging_settings.png)
+
+Setting | Description
+-------|----
+Show paging | Displays or not the paging control at the bottom.
+Number of items per page | Corresponds to the number of search results to retrieve per page.
+Number of pages to display in range | The number of page digits to display in the range. 
+Hide navigation buttons | If set, hide the previous and next page buttons.
+Hide first/last navigation buttons | If set, hide the last and first navigation buttons.
+Hide navigation buttons | If set, hide the previous, next, first and last if disabled (i.e. no page available).
 
 #### Styling Options
 
 Setting | Description
 -------|----
 Web Part Title | Shows a title for this Web Part. Set blank if you don't want a title.
-Show blank if no result | Shows nothing if there is no result
-Show result count | Shows the result count and entered keywords
-Connect to a search pagination Web Part	 | If enable, select the search pagination Web Part to use on the current page to get selected page. It is a 2 ways connection so don't forget to connect the targeted search pagination to the search results Web Part as well.
+Show blank if no result | Shows nothing if there is no result. If a WP title is set, this will be hidden as well.
+Show result count | Shows the result count and entered keywords.
 Result Layouts options | Choose the template to use to display search results. Some layouts are defined by default but you can create your own either by clicking on the **"Custom"** tile, or **"Edit template"** from an existing chosen template. In custom mode, you can set an external template. It has to be in the same SharePoint tenant. Behind the scenes, the Office UI React controls are used. Custom code templates will also automatically be displayed here upon registration. See the [templating documentation](./templating.md) for more information about templating.
 Result types | Allows you to set a custom template at item level according to a specific condition (ex: FileType equals 'pdf').
 

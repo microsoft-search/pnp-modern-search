@@ -21,7 +21,6 @@ This solution allows you to build user friendly SharePoint search experiences us
 - Customizable refiners supporting multilingual values for taxonomy based filters.
 - Sortable results (unique field).
 - Refiners Web Part.
-- Pagination Web Part.
 - SharePoint best bets support.
 - Search query enhancement with NLP tools (like Microsoft LUIS).
 - Extensibility model allowing to write your own components.
