@@ -133,7 +133,7 @@ export default class CheckboxTemplate extends React.Component<IBaseRefinerTempla
       this.setState({
         refinerFilteredFilterValues: filterText
           ? this.props.refinementResult.Values.filter(
-            r => r.RefinementName.toString().toLowerCase().indexOf(filterText.toLowerCase()) > -1 ||
+            r => r.RefinementValue.toString().toLowerCase().indexOf(filterText.toLowerCase()) > -1 ||
             this.state.refinerSelectedFilterValues.some(s => s.RefinementValue === r.RefinementValue)
           )
           : this.props.refinementResult.Values
