@@ -1,10 +1,10 @@
-const path = require('path');
+const path = require("path");
 const webpack = require("webpack");
 const resolve = require("path").resolve;
-const CertStore = require('@microsoft/gulp-core-build-serve/lib/CertificateStore');
+const CertStore = require("@microsoft/gulp-core-build-serve/lib/CertificateStore");
 const CertificateStore = CertStore.CertificateStore || CertStore.default;
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
-const del = require('del');
+const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
+const del = require("del");
 const host = "https://localhost:4321";
 
 ///
@@ -13,17 +13,17 @@ const host = "https://localhost:4321";
 ///
 class DynamicLibraryPlugin {
   constructor(options) {
-    this.opitons = options;
+    this.options = options;
   }
 
   apply(compiler) {
     compiler.hooks.emit.tap("DynamicLibraryPlugin", compilation => {
-      for (const assetId in this.opitons.modulesMap) {
-        const moduleMap = this.opitons.modulesMap[assetId];
+      for (const assetId in this.options.modulesMap) {
+        const moduleMap = this.options.modulesMap[assetId];
 
         if (compilation.assets[assetId]) {
           const rawValue = compilation.assets[assetId].children[0]._value;
-          compilation.assets[assetId].children[0]._value = rawValue.replace(this.opitons.libraryName, moduleMap.id + "_" + moduleMap.version);
+          compilation.assets[assetId].children[0]._value = rawValue.replace(this.options.libraryName, moduleMap.id + "_" + moduleMap.version);
         }
       }
     });
@@ -35,10 +35,10 @@ let baseConfig = {
   mode: "development",
   devtool: "source-map",
   node: {
-    fs: 'empty'
+    fs: "empty"
   },
   resolve: {
-    extensions: ['.ts', '.tsx', '.js'],
+    extensions: [".ts", ".tsx", ".js"],
     modules: ["node_modules"]
   },
   context: path.resolve(__dirname),
@@ -46,14 +46,14 @@ let baseConfig = {
     rules: [
       {
         test: /utils\.js$/,
-        loader: 'unlazy-loader',
+        loader: "unlazy-loader",
         include: [
           /node_modules/,
         ]
       },
       {
         test: /\.tsx?$/,
-        loader: 'ts-loader',
+        loader: "ts-loader",
         options: {
           transpileOnly: true,
           compilerOptions: {
@@ -100,12 +100,12 @@ let baseConfig = {
               async: true
             }
           },
-          'css-modules-typescript-loader',
+          "css-modules-typescript-loader",
           {
-            loader: 'css-loader',
+            loader: "css-loader",
             options: {
               modules: {
-                localIdentName: '[local]_[hash:base64:8]'
+                localIdentName: "[local]_[hash:base64:8]"
               }
             }
           }, // translates CSS into CommonJS
@@ -134,9 +134,9 @@ let baseConfig = {
       tslint: true
     }),
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
-      'process.env.DEBUG': JSON.stringify(true),
-      'DEBUG': JSON.stringify(true)
+      "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
+      "process.env.DEBUG": JSON.stringify(true),
+      "DEBUG": JSON.stringify(true)
     })],
   devServer: {
     hot: false,
@@ -156,12 +156,12 @@ let baseConfig = {
     proxy: { // url re-write for resources to be served directly from src folder
       "/lib/webparts/**/loc/*.js": {
         target: host,
-        pathRewrite: { '^/lib': '/src' },
+        pathRewrite: { "^/lib": "/src" },
         secure: false
       }
     },
     headers: {
-      'Access-Control-Allow-Origin': '*',
+      "Access-Control-Allow-Origin": "*",
     },
     https: {
       cert: CertificateStore.instance.certificateData,
@@ -174,7 +174,7 @@ const createConfig = function () {
   // remove old css module TypeScript definitions and dist folder for source maps to work correctly
   del.sync(["src/**/*.module.scss.ts", "dist/*.*"]);
 
-  // we need only 'externals', 'output' and 'entry' from the original webpack config
+  // we need only "externals", "output" and "entry" from the original webpack config
   let originalWebpackConfig = require("./temp/_webpack_config.json");
   baseConfig.externals = originalWebpackConfig.externals;
   baseConfig.output = originalWebpackConfig.output;
