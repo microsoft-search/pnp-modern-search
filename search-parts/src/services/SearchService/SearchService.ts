@@ -434,6 +434,20 @@ class SearchService implements ISearchService {
         const batchId = Guid.newGuid().toString();
         let verticalInfos: ISearchVerticalInformation[] = [];
 
+        // Update tokens in query template for all verticals
+        let tokenPromises: Promise<string>[] = [];
+        
+        tokenPromises = searchVerticals.map(vertical => {
+            return this._tokenService.replaceQueryVariables(vertical.queryTemplate);
+        });
+
+        const tokens = await Promise.all(tokenPromises);
+
+        // Update verticals with new infos
+        tokens.map((token, i) => {
+            searchVerticals[i].queryTemplate = token;
+        });
+
         const promises = searchVerticals.map(async vertical => {
 
             // Specify the same query parameters as the current vertical one to be sure to get the same total rows
@@ -443,6 +457,8 @@ class SearchService implements ISearchService {
             // When query rules are enabled, we need to set the row limit to minimum 1 to get data in the 'PrimaryQueryResult' property and get the 'TotalRows'
             // More info here https://blog.mastykarz.nl/inconvenient-content-targeting-user-segments-search-rest-api/
             const rowLimit: string = enableQueryRules ? '1' : '0';
+
+            
 
             // See http://www.silver-it.com/node/127 for quotes handling with GET requests
             url = UrlHelper.addOrReplaceQueryStringParam(url, 'querytext', `'${encodeURIComponent(queryText.replace(/'/g, '\'\''))}'`);
