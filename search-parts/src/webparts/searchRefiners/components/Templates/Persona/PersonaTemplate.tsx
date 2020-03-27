@@ -13,7 +13,7 @@ import * as update from 'immutability-helper';
 import { IRefinementValue, RefinementOperator } from "../../../../../models/ISearchResult";
 import IBaseRefinerTemplateProps from '../IBaseRefinerTemplateProps';
 import IBaseRefinerTemplateState from '../IBaseRefinerTemplateState';
-import { PersonaSize, Persona, Spinner, SpinnerSize, IExtendedPersonaProps, IPersonaProps } from "office-ui-fabric-react";
+import { PersonaSize, Persona, Spinner, SpinnerSize, IExtendedPersonaProps, IPersonaProps, TextField, Link } from "office-ui-fabric-react";
 import { IUserInfo } from "../../../../../models/IUser";
 
 export interface IPersonaTemplateProps extends IBaseRefinerTemplateProps {
@@ -37,6 +37,10 @@ export default class PersonaTemplate extends React.Component<IPersonaTemplatePro
       isLoading: false,
       userInfos: []
     };
+
+    this._onValueFilterChanged = this._onValueFilterChanged.bind(this);
+    this._isFilterMatch = this._isFilterMatch.bind(this);
+    this._clearValueFilter = this._clearValueFilter.bind(this);
   }
 
   public render() {
@@ -48,7 +52,7 @@ export default class PersonaTemplate extends React.Component<IPersonaTemplatePro
     } else {
       renderTemplate =  <div>
                           {
-                            this.props.refinementResult.Values.map((refinementValue: IRefinementValue, j) => {
+                            this.props.refinementResult.Values.filter(x => { return !this._isFilterMatch(x);}).map((refinementValue: IRefinementValue, j) => {
 
                               let imageProps: IPersonaProps = null;
 
@@ -110,6 +114,14 @@ export default class PersonaTemplate extends React.Component<IPersonaTemplatePro
 
     return (
       <div className={styles.pnpRefinersTemplatePersona}>
+        {
+            this.props.showValueFilter ? 
+                <div className="pnp-value-filter-container">
+                    <TextField value={this.state.valueFilter} placeholder="Filter" onChange={(event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>,newValue?: string) => { this._onValueFilterChanged(newValue); }} onClick={this._onValueFilterClick} />
+                    <Link onClick={this._clearValueFilter} disabled={!this.state.valueFilter || this.state.valueFilter === ""}>Clear</Link>
+                </div>
+                : null
+        }
         {renderTemplate}
       </div>
     );
@@ -234,5 +246,42 @@ export default class PersonaTemplate extends React.Component<IPersonaTemplatePro
       });
 
       return newFilters.length === 0 ? false : true;
+  }
+
+  /**
+   * Checks if an item-object matches the provided refinement value filter value
+   * @param item The item-object to be checked
+   */
+  private _isFilterMatch(item): boolean {
+      if(!this.state.valueFilter) { return false; }
+      let displayName = item.RefinementValue.split('|').length > 1 ? item.RefinementValue.split('|')[1].trim() : item.RefinementValue;
+      return displayName.toLowerCase().indexOf(this.state.valueFilter.toLowerCase()) === -1 ;
+  }
+
+  /**
+   * Event triggered when a new value is provided in the refinement value filter textfield.
+   * @param newvalue The new value provided through the textfield
+   */
+  private _onValueFilterChanged(newValue: string) {
+      this.setState({
+          valueFilter: newValue
+      });
+  }
+
+  /**
+   * Clears the filter applied to the refinement values
+   */
+  private _clearValueFilter() {
+      this.setState({
+          valueFilter: ""
+      });
+  }
+
+  /**
+   * Prevents the parent group to be colapsed
+   * @param event The event that triggered the click
+   */
+  private _onValueFilterClick(event: React.MouseEvent<HTMLInputElement | HTMLTextAreaElement, MouseEvent>) {
+      event.stopPropagation();
   }
 }

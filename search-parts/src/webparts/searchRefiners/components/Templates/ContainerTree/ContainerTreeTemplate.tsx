@@ -7,6 +7,9 @@ import { INavLink, Nav, Icon, ITheme } from 'office-ui-fabric-react';
 import { cloneDeep } from "@microsoft/sp-lodash-subset";
 import { UrlHelper } from '../../../../../helpers/UrlHelper';
 
+//CSS
+import styles from './ContainerTreeTemplate.module.scss';
+
 export interface IFoldersTemplateProps extends IBaseRefinerTemplateProps {
 
     /**
@@ -36,7 +39,13 @@ export default class ContainerTreeTemplate extends React.Component<IFoldersTempl
 
     public render() {
 
-        return  <Nav
+        return  <div className={styles.pnpRefinersTemplateContainerTree}>
+                {
+                    this.props.showValueFilter ? 
+                        <div className='pnp-font-s'>Value filters are not allowed for container trees. Clear 'show filter' to remove this message</div>
+                        : null
+                }
+                <Nav
                     theme={this.props.themeVariant as ITheme}
                     onRenderLink={(props, defautRender) => {
 
@@ -52,7 +61,8 @@ export default class ContainerTreeTemplate extends React.Component<IFoldersTempl
                     groups={[{
                         links: this.state.navigationLinks,
                     }]}
-                />;
+                />
+            </div>;
 
     }
 

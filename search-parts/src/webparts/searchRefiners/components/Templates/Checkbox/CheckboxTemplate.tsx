@@ -8,7 +8,10 @@ import { Link } from 'office-ui-fabric-react/lib/Link';
 import * as strings from 'SearchRefinersWebPartStrings';
 import * as update from 'immutability-helper';
 import { ITheme } from "@uifabric/styling";
+import { TextField } from "office-ui-fabric-react";
 
+//CSS
+import styles from './CheckboxTemplate.module.scss';
 
 export default class CheckboxTemplate extends React.Component<IBaseRefinerTemplateProps, IBaseRefinerTemplateState> {
 
@@ -25,6 +28,9 @@ export default class CheckboxTemplate extends React.Component<IBaseRefinerTempla
         this._onFilterRemoved = this._onFilterRemoved.bind(this);
         this._applyFilters = this._applyFilters.bind(this);
         this._clearFilters = this._clearFilters.bind(this);
+        this._onValueFilterChanged = this._onValueFilterChanged.bind(this);
+        this._isFilterMatch = this._isFilterMatch.bind(this);
+        this._clearValueFilter = this._clearValueFilter.bind(this);
     }
 
     public render() {
@@ -35,9 +41,17 @@ export default class CheckboxTemplate extends React.Component<IBaseRefinerTempla
             disableButtons = true;
         }
 
-        return <div>
+        return <div className={styles.pnpRefinersTemplateCheckbox}>
             {
-                this.props.refinementResult.Values.map((refinementValue: IRefinementValue, j) => {
+                this.props.showValueFilter ? 
+                    <div className="pnp-value-filter-container">
+                        <TextField className="pnp-value-filter" value={this.state.valueFilter} placeholder="Filter" onChange={(event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>,newValue?: string) => { this._onValueFilterChanged(newValue); }} onClick={this._onValueFilterClick} />
+                        <Link onClick={this._clearValueFilter} disabled={!this.state.valueFilter || this.state.valueFilter === ""}>Clear</Link>
+                    </div>
+                    : null
+            }
+            {
+                this.props.refinementResult.Values.filter(x => { return !this._isFilterMatch(x);}).map((refinementValue: IRefinementValue, j) => {
 
                     if (refinementValue.RefinementCount === 0) {
                         return null;
@@ -179,5 +193,41 @@ export default class CheckboxTemplate extends React.Component<IBaseRefinerTempla
         });
 
         this._applyFilters([]);
+    }
+
+    /**
+     * Checks if an item-object matches the provided refinement value filter value
+     * @param item The item-object to be checked
+     */
+    private _isFilterMatch(item): boolean {
+        if(!this.state.valueFilter) { return false; }
+        return item.RefinementValue.toLowerCase().indexOf(this.state.valueFilter.toLowerCase()) === -1 ;
+    }
+
+    /**
+     * Event triggered when a new value is provided in the refinement value filter textfield.
+     * @param newvalue The new value provided through the textfield
+     */
+    private _onValueFilterChanged(newValue: string) {
+        this.setState({
+            valueFilter: newValue
+        });
+    }
+
+    /**
+     * Clears the filter applied to the refinement values
+     */
+    private _clearValueFilter() {
+        this.setState({
+            valueFilter: ""
+        });
+    }
+
+    /**
+     * Prevents the parent group to be colapsed
+     * @param event The event that triggered the click
+     */
+    private _onValueFilterClick(event: React.MouseEvent<HTMLInputElement | HTMLTextAreaElement, MouseEvent>) {
+        event.stopPropagation();
     }
 }

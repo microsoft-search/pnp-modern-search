@@ -34,6 +34,11 @@ interface IRefinerConfiguration {
      * Allow refiners to be expanded by default
      */
     showExpanded: boolean;
+
+    /** 
+     * Show filter textbox to search inside the refiner values
+     */
+    showValueFilter: boolean;
 }
 
 export default IRefinerConfiguration;

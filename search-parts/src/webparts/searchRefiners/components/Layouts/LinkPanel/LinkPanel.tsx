@@ -292,6 +292,7 @@ export default class LinkPanel extends React.Component<ILinkPanelProps, ILinkPan
           themeVariant={props.themeVariant}
           selectedValues={selectedFilterValues}
           userService={this.props.userService}
+          showValueFilter={configuredFilter[0].showValueFilter}
         />
       );
     });
