@@ -95,7 +95,7 @@ export default class PersonaTemplate extends React.Component<IPersonaTemplatePro
                                   theme={this.props.themeVariant as ITheme}
                                   onClick={() => {
                                     if (!this._isValueInFilterSelection(refinementValue)) { 
-                                      refinementValue.RefinementName = displayName;
+                                      refinementValue.RefinementValue = displayName;
                                       this._onFilterAdded(refinementValue);
                                     } else {
                                       this._onFilterRemoved(refinementValue);
@@ -167,7 +167,7 @@ export default class PersonaTemplate extends React.Component<IPersonaTemplatePro
     if (nextProps.removeFilterValue) {
 
       const newFilterValues = this.state.refinerSelectedFilterValues.filter((elt) => {
-        return elt.RefinementName !== nextProps.removeFilterValue.RefinementName;
+        return elt.RefinementValue !== nextProps.removeFilterValue.RefinementValue;
       });
 
       this.setState({
@@ -230,7 +230,7 @@ export default class PersonaTemplate extends React.Component<IPersonaTemplatePro
       let displayName: string = valueToCheck.RefinementValue.split('|').length > 1 ? valueToCheck.RefinementValue.split('|')[1].trim() : null;
 
       let newFilters = this.state.refinerSelectedFilterValues.filter((filter) => {
-          return filter.RefinementToken === valueToCheck.RefinementToken && (filter.RefinementValue === valueToCheck.RefinementValue || filter.RefinementName === displayName);
+          return filter.RefinementToken === valueToCheck.RefinementToken && (filter.RefinementValue === valueToCheck.RefinementValue || filter.RefinementValue === displayName);
       });
 
       return newFilters.length === 0 ? false : true;
