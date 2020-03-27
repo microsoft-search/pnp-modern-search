@@ -1,6 +1,6 @@
 ## Summary
 
-This sample demonstrates the following principles:
+The search query enhancer function can be used in conjunction with the [Query Modifier feature](../../search-extensibility-library/getting-started#create-a-custom-query-modifier) to alter the query before being sent to the search results Web Part. This sample demonstrates the following principles to help you with the setup:
 
 - Create an Azure function using TypeScript and Webpack. The original setup was reused from this [article](https://medium.com/burak-tasci/backend-development-on-azure-functions-with-typescript-56113b6be4b9) with only few adjustments.
 - Connect Azure Function to an SPFx component
