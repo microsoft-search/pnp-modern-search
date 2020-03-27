@@ -101,10 +101,11 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                     items: [],
                     showResultsCount: this.props.showResultsCount,
                     paging: {
-                        totalItemsCount: this.state.results.PaginationInformation ? this.state.results.PaginationInformation.TotalRows : 0
+                        totalItemsCount: this.props.pagingSettings.itemsCountPerPage ? this.props.pagingSettings.itemsCountPerPage : 0
                     },
                     strings: strings,
-                    themeVariant: this.props.themeVariant
+                    themeVariant: this.props.themeVariant,
+                    instanceId: this.props.instanceId
                 };
 
                 // Merge with property pane template parameters
