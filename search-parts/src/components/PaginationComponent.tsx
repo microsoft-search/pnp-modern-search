@@ -82,45 +82,53 @@ export class PaginationComponent extends React.Component<IPaginationComponentPro
     public render() {
         // Calculate the total items count
         let totalCount: number = parseInt(this.props.totalItems);
+        let itemsCountPerPage: number = parseInt(this.props.itemsCountPerPage);
         
         let isThemeInverted = false;
         if (this.props.themeVariant && this.props.themeVariant.isInverted) {
           isThemeInverted = true;
         }
 
-        return(
-            <div className={styles.paginationContainer}>
-                <div className={styles.paginationContainer__paginationContainer}>
-                    <div className={`${styles.paginationContainer__paginationContainer__pagination}`}>
-                        <div className={`${isThemeInverted ? styles.inverted: styles.standard}`}>
-                            <Pagination
-                                activePage={this.state.currentPageNumber}
-                                firstPageText={<Icon theme={this.props.themeVariant as ITheme} iconName='DoubleChevronLeft'/>}
-                                lastPageText={<Icon theme={this.props.themeVariant as ITheme} iconName='DoubleChevronRight'/>}
-                                prevPageText={<Icon theme={this.props.themeVariant as ITheme} iconName='ChevronLeft' />}
-                                nextPageText={<Icon theme={this.props.themeVariant as ITheme} iconName='ChevronRight'/>}
-                                activeLinkClass={ `${styles.active} ${isThemeInverted ? styles.active__inverted: ''}`}  
-                                itemsCountPerPage={ this.props.itemsCountPerPage }
-                                totalItemsCount={ totalCount }
-                                hideDisabled={ this.props.hideDisabled ? this.props.hideDisabled : false  }
-                                hideNavigation={ this.props.hideNavigation ? this.props.hideNavigation : false }
-                                hideFirstLastPages={ this.props.hideFirstLastPages ? this.props.hideFirstLastPages : false }
-                                pageRangeDisplayed={ this.props.range ? this.props.range : 5 }
-                                onChange={((pageNumber: number) => {
+        // Show nothing if there is only one page
+        if (totalCount > itemsCountPerPage) {
 
-                                    this.setState({
-                                        currentPageNumber: pageNumber
-                                    });
+            return(
+                <div className={styles.paginationContainer}>
+                    <div className={styles.paginationContainer__paginationContainer}>
+                        <div className={`${styles.paginationContainer__paginationContainer__pagination}`}>
+                            <div className={`${isThemeInverted ? styles.inverted: styles.standard}`}>
+                                <Pagination
+                                    activePage={this.state.currentPageNumber}
+                                    firstPageText={<Icon theme={this.props.themeVariant as ITheme} iconName='DoubleChevronLeft'/>}
+                                    lastPageText={<Icon theme={this.props.themeVariant as ITheme} iconName='DoubleChevronRight'/>}
+                                    prevPageText={<Icon theme={this.props.themeVariant as ITheme} iconName='ChevronLeft' />}
+                                    nextPageText={<Icon theme={this.props.themeVariant as ITheme} iconName='ChevronRight'/>}
+                                    activeLinkClass={ `${styles.active} ${isThemeInverted ? styles.active__inverted: ''}`}  
+                                    itemsCountPerPage={ this.props.itemsCountPerPage }
+                                    totalItemsCount={ totalCount }
+                                    hideDisabled={ this.props.hideDisabled ? this.props.hideDisabled : false  }
+                                    hideNavigation={ this.props.hideNavigation ? this.props.hideNavigation : false }
+                                    hideFirstLastPages={ this.props.hideFirstLastPages ? this.props.hideFirstLastPages : false }
+                                    pageRangeDisplayed={ this.props.range ? this.props.range : 5 }
+                                    onChange={((pageNumber: number) => {
 
-                                    this.props.onPageUpdate(pageNumber);
-                                    
-                                }).bind(this)}
-                            />    
+                                        this.setState({
+                                            currentPageNumber: pageNumber
+                                        });
+
+                                        this.props.onPageUpdate(pageNumber);
+                                        
+                                    }).bind(this)}
+                                />    
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        );
+            );
+        
+        } else {
+            return null;
+        }
     }
 }
 
