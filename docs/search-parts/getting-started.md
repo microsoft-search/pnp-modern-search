@@ -14,9 +14,7 @@ Component | Description |
 ----- | ----- |
 Search Box Web Part | Allows users to enter free text/KQL search queries connected to a search results Web Part.
 Search Results Web Part | Performs static or dynamic search query with customizable parameters sorting and templating.
-Search Filters | Allows users to configure refiners for a search results Web Part.
-Search Pagination | Allows users to configure pagination for a search results Web Part.
-Search Navigation | Allows users to configure navigation for a search results Web Part.
+Search Refiners | Allows users to configure refiners for a search results Web Part.
 Search Verticals | Allows users to search in predefined scopes.
 
 ## Minimal Path to Awesome ##

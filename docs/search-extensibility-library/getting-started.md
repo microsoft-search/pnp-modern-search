@@ -188,7 +188,8 @@ When one or more custom query suggestion providers are made available via the ex
 ![Search Box](../images/sb_custom_suggestion_providers.png)
 
 ## Create a custom query modifier
-A query modifier allows you to manipulate the user's search query before it is sent to SharePoint. Only one query modifier may be registered via the extensibility library. The modifier receives the query text (from search box), query template and result source ID (from search results or search verticals if configured) as parameters. The modifier returns an object with the updated query text and query template. This capability allows you to inject additional terms or criteria to the user's search query such as spelling corrections or translations.
+
+A query modifier allows you to manipulate the user's search query before it is sent to SharePoint. You can define multiple query modifiers in the extensibility library. However, **only one at a time can be selected in the search results WP** depending your requirements. The modifier receives the query text (from search box or the static value specified in the search results WP), query template and result source ID (from search results or search verticals if configured) as parameters. The modifier returns an object with the updated query text and query template. This capability allows you to inject additional terms or criteria to the user's search query such as spelling corrections or translations. You can use the sample [Search Query Enhancer function](../search-query-enhancer/getting-started.md) as a starter to use Microsoft Cognitive services to do so.
 
 To create a custom query modifier, follow this procedure:
 
@@ -241,7 +242,10 @@ To create a custom query modifier, follow this procedure:
         }
 
 ### Configure Query Modifier
-When a query modifier is made available via the extensibility library, an additional configuration sections becomes visible in the Search Results web part settings. Here you can see the query modifier name and description along with a toggle to disable it if needed.
 
-![Search Results - Query Modifier](../images/search_query_modifier.png)
+When a query modifier is made available via the extensibility library, an additional configuration sections becomes visible in the Search Results web part settings. Here you can select the query modifier to apply to this search box. **Only one provider a time can be selected in the search results WP**.
+
+![Search Results - Query Modifier](../images/query_modifiers.png)
+
+![Search Results - Query Modifier](../images/query_modifiers_select.png)
 

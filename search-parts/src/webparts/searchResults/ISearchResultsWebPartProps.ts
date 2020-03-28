@@ -7,6 +7,7 @@ import { ICustomTemplateFieldValue } from '../../services/ResultService/ResultSe
 import { ISynonymFieldConfiguration} from '../../models/ISynonymFieldConfiguration';
 import IQueryModifierConfiguration from '../../models/IQueryModifierConfiguration';
 import { IQueryModifierDefinition } from '../../services/ExtensibilityService/IQueryModifierDefinition';
+import { IPagingSettings } from '../../models/IPagingSettings';
 
 export interface ISearchResultsWebPartProps {
     queryKeywords: DynamicProperty<string>;
@@ -17,10 +18,8 @@ export interface ISearchResultsWebPartProps {
     sortList: ISortFieldConfiguration[];
     enableQueryRules: boolean;
     includeOneDriveResults: boolean;
-    maxResultsCount: number;
     selectedProperties: string;
     sortableFields: ISortableFieldConfiguration[];
-    showPaging: boolean;
     showResultsCount: boolean;
     showBlank: boolean;
     selectedLayout: ResultsLayoutOption;
@@ -42,4 +41,9 @@ export interface ISearchResultsWebPartProps {
     queryModifiers: IQueryModifierConfiguration[];
     selectedQueryModifierDisplayName: string;
     refinementFilters: string;
+
+    /**
+     * The Web Part paging settings
+     */
+    paging: IPagingSettings;
 }

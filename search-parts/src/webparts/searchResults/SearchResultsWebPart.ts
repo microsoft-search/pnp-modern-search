@@ -49,7 +49,6 @@ import IRefinerSourceData from '../../models/IRefinerSourceData';
 import IRefinerConfiguration from '../../models/IRefinerConfiguration';
 import { SearchComponentType } from '../../models/SearchComponentType';
 import ISearchResultSourceData from '../../models/ISearchResultSourceData';
-import IPaginationSourceData from '../../models/IPaginationSourceData';
 import ISynonymTable from '../../models/ISynonym';
 import * as update from 'immutability-helper';
 import ISearchVerticalSourceData from '../../models/ISearchVerticalSourceData';
@@ -94,7 +93,6 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
     private _refinerSourceData: DynamicProperty<IRefinerSourceData>;
     private _searchVerticalSourceData: DynamicProperty<ISearchVerticalSourceData>;
-    private _paginationSourceData: DynamicProperty<IPaginationSourceData>;
     private _verticalsInformation: ISearchVerticalInformation[];
 
     private _codeRenderers: IRenderer[];
@@ -138,7 +136,15 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
     private availableQueryModifierDefinitions: IQueryModifierDefinition<any>[] = [];
     private queryModifierSelected: boolean = false;
 
+    /**
+     * The default selected filters
+     */
     private defaultSelectedFilters: IRefinementFilter[] = [];
+
+    /**
+     * The current page number
+     */
+    private currentPageNumber: number = 1;
 
     public constructor() {
         super();
@@ -187,7 +193,6 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         let renderElement = null;
         let refinerConfiguration: IRefinerConfiguration[] = [];
         let selectedFilters: IRefinementFilter[] = [];
-        let selectedPage: number = 1;
         let queryTemplate: string = this.properties.queryTemplate;
         let sourceId: string = this.properties.resultSourceId;
         let getVerticalsCounts: boolean = false;
@@ -225,20 +230,13 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             }
         }
 
-        if (this._paginationSourceData && !this._paginationSourceData.isDisposed) {
-            const paginationSourceData: IPaginationSourceData = this._paginationSourceData.tryGetValue();
-            if (paginationSourceData) {
-                selectedPage = paginationSourceData.selectedPage;
-            }
-        }
-
         const currentLocaleId = LocalizationHelper.getLocaleId(this.context.pageContext.cultureInfo.currentCultureName);
         const queryModifier = this._queryModifierInstance && this._queryModifierInstance.isInitialized ? this._queryModifierInstance.instance : null;
 
         // Configure the provider before the query according to our needs
         this._searchService = update(this._searchService, {
             timeZoneId: { $set: this._timeZoneBias && this._timeZoneBias.Id ? this._timeZoneBias.Id : null},
-            resultsCount: { $set: this.properties.maxResultsCount },
+            resultsCount: { $set: this.properties.paging.itemsCountPerPage },
             queryTemplate: { $set: queryTemplate },
             resultSourceId: { $set: sourceId },
             sortList: { $set: this._convertToSortList(this.properties.sortList) },
@@ -261,7 +259,6 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                 queryKeywords: queryKeywords,
                 sortList: this.properties.sortList,
                 sortableFields: this.properties.sortableFields,
-                showPaging: this.properties.showPaging,
                 showResultsCount: this.properties.showResultsCount,
                 showBlank: this.properties.showBlank,
                 displayMode: this.displayMode,
@@ -277,7 +274,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                 customTemplateFieldValues: this.properties.customTemplateFieldValues,
                 rendererId: this.properties.selectedLayout as any,
                 enableLocalization: this.properties.enableLocalization,
-                selectedPage: selectedPage,
+                selectedPage: this.currentPageNumber,
                 selectedLayout: this.properties.selectedLayout,
                 onSearchResultsUpdate: async (results, mountingNodeId, searchService) => {
                     if (this.properties.selectedLayout in ResultsLayoutOption) {
@@ -315,7 +312,9 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                     // Send notification to the connected components
                     this.context.dynamicDataSourceManager.notifyPropertyChanged(SearchComponentType.SearchResultsWebPart);
                 },
-                themeVariant: this._themeVariant
+                themeVariant: this._themeVariant,
+                pagingSettings: this.properties.paging,
+                instanceId: this.instanceId
             } as ISearchResultsContainerProps
         );
 
@@ -382,8 +381,6 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         this._dynamicDataService = new DynamicDataService(this.context.dynamicDataProvider);
         this._verticalsInformation = [];
 
-        this.ensureDataSourceConnection();
-
         // Load extensibility library if present
         const extensibilityLibrary = await this._extensibilityService.loadExtensibilityLibrary();
 
@@ -426,6 +423,12 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         this._synonymTable = this._convertToSynonymTable(this.properties.synonymList);
 
         this._initComplete = true;
+
+        // Bind web component events
+        this.bindPagingEvents();
+
+        this.ensureDataSourceConnection();
+
         return super.onInit();
     }
 
@@ -560,13 +563,24 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
         this.properties.sortableFields = Array.isArray(this.properties.sortableFields) ? this.properties.sortableFields : [];
         this.properties.selectedProperties = this.properties.selectedProperties ? this.properties.selectedProperties : "Title,Path,Created,Filename,SiteLogo,PreviewUrl,PictureThumbnailURL,ServerRedirectedPreviewURL,ServerRedirectedURL,HitHighlightedSummary,FileType,contentclass,ServerRedirectedEmbedURL,DefaultEncodingURL,owstaxidmetadataalltagsinfo,Author,AuthorOWSUSER,SPSiteUrl,SiteTitle,IsContainer,IsListItem,HtmlFileType,SiteId,WebId,UniqueID,NormSiteID,NormListID,NormUniqueID";
-        this.properties.maxResultsCount = this.properties.maxResultsCount ? this.properties.maxResultsCount : 10;
         this.properties.resultTypes = Array.isArray(this.properties.resultTypes) ? this.properties.resultTypes : [];
         this.properties.synonymList = Array.isArray(this.properties.synonymList) ? this.properties.synonymList : [];
         this.properties.searchQueryLanguage = this.properties.searchQueryLanguage ? this.properties.searchQueryLanguage : -1;
         this.properties.templateParameters = this.properties.templateParameters ? this.properties.templateParameters : {};
         this.properties.queryModifiers = !isEmpty(this.properties.queryModifiers) ? this.properties.queryModifiers : [];
         this.properties.refinementFilters = this.properties.refinementFilters ? this.properties.refinementFilters : "";
+
+        if (!this.properties.paging) {
+
+            this.properties.paging = {
+              itemsCountPerPage: 10,
+              pagingRange: 5,
+              showPaging: true,
+              hideDisabled: true,
+              hideFirstLastPages: false,
+              hideNavigation: false
+            };
+          }
     }
 
     protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
@@ -603,7 +617,11 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                             groupFields: this._getSearchSettingsFields(),
                             isCollapsed: false,
                             groupName: strings.SearchSettingsGroupName
-                        }
+                        },
+                        {
+                            groupName: strings.Paging.PagingOptionsGroupName,
+                            groupFields: this.getPagingGroupFields()
+                          }
                     ],
                     displayGroupsAsAccordion: true
                 },
@@ -665,7 +683,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         }
 
         // Bind connected data sources
-        if (this.properties.refinerDataSourceReference || this.properties.paginationDataSourceReference || this.properties.searchVerticalDataSourceReference) {
+        if (this.properties.refinerDataSourceReference || this.properties.searchVerticalDataSourceReference) {
             this.ensureDataSourceConnection();
         }
 
@@ -689,11 +707,6 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
         if (propertyPath.localeCompare('searchVerticalDataSourceReference') === 0 || propertyPath.localeCompare('refinerDataSourceReference')) {
             this.context.dynamicDataSourceManager.notifyPropertyChanged(SearchComponentType.SearchResultsWebPart);
-        }
-
-        if (!this.properties.showPaging) {
-            this.properties.paginationDataSourceReference = undefined;
-            this._paginationSourceData = undefined;
         }
 
         if (this.properties.enableLocalization) {
@@ -1044,14 +1057,6 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                  multiline: true,
                  deferredValidationTime: 300
             }),
-            PropertyPaneSlider('maxResultsCount', {
-                label: strings.MaxResultsCount,
-                max: 50,
-                min: 1,
-                showValue: true,
-                step: 1,
-                value: 50,
-            }),
             PropertyPaneToggle('enableLocalization', {
                 checked: this.properties.enableLocalization,
                 label: strings.EnableLocalizationLabel,
@@ -1158,24 +1163,6 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
             if (this._searchVerticalSourceData) {
                 this._searchVerticalSourceData.unregister(this.render);
-            }
-        }
-
-        // Pagination Web Part data source
-        if (this.properties.paginationDataSourceReference) {
-
-            if (!this._paginationSourceData) {
-                this._paginationSourceData = new DynamicProperty<IPaginationSourceData>(this.context.dynamicDataProvider);
-            }
-
-            // Register the data source manually since we don't want user select properties manually
-            this._paginationSourceData.setReference(this.properties.paginationDataSourceReference);
-            this._paginationSourceData.register(this.render);
-
-        } else {
-
-            if (this._paginationSourceData) {
-                this._paginationSourceData.unregister(this.render);
             }
         }
     }
@@ -1427,24 +1414,12 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                 label: strings.ShowResultsCountLabel,
                 checked: this.properties.showResultsCount,
             }),
-            PropertyPaneToggle('showPaging', {
-                label: strings.UsePaginationWebPartLabel,
-                checked: this.properties.showPaging,
-            }),
             PropertyPaneHorizontalRule(),
             PropertyPaneChoiceGroup('selectedLayout', {
                 label: strings.ResultsLayoutLabel,
                 options: layoutOptions
             }),
         ];
-
-        if (this.properties.showPaging) {
-            stylingFields.splice(4, 0,
-                PropertyPaneDropdown('paginationDataSourceReference', {
-                    options: this._dynamicDataService.getAvailableDataSourcesByType(SearchComponentType.PaginationWebPart),
-                    label: strings.UsePaginationFromComponentLabel
-                }));
-        }
 
         if (!this.codeRendererIsSelected()) {
             stylingFields.push(
@@ -1686,7 +1661,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             refinementResults: refinementResults,
             paginationInformation: (this._resultService && this._resultService.results) ? this._resultService.results.PaginationInformation : {
                 CurrentPage: 1,
-                MaxResultsPerPage: this.properties.maxResultsCount,
+                MaxResultsPerPage: this.properties.paging.itemsCountPerPage,
                 TotalRows: 0
             },
             searchServiceConfiguration: this._searchService.getConfiguration(),
@@ -1791,5 +1766,70 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             this._themeVariant = args.theme;
             this.render();
         }
+    }
+
+    /**
+     * Binds event fired from pagination web components
+     */
+    private bindPagingEvents() {
+
+        this.domElement.addEventListener('pageNumberUpdated', ((ev: CustomEvent) => {
+
+            // We ensure the event if not propagated outside the component (i.e. other Web Part instances)
+            ev.stopImmediatePropagation();
+
+            // These information comes from the PaginationWebComponent class
+            this.currentPageNumber = ev.detail.pageNumber;
+
+            this.render();
+    
+        }).bind(this));
+    }
+
+    /**
+     * Returns property pane 'Paging' group fields
+     */
+    private getPagingGroupFields(): IPropertyPaneField<any>[] {
+
+        let groupFields: IPropertyPaneField<any>[] = [];
+
+
+            groupFields.push(
+            PropertyPaneToggle('paging.showPaging', {
+                label: strings.Paging.ShowPagingFieldName,
+            }),
+            PropertyPaneSlider('paging.itemsCountPerPage', {
+                label: strings.Paging.ItemsCountPerPageFieldName,
+                max: 50,
+                min: 1,
+                step: 1,
+                showValue: true,
+                value: this.properties.paging.itemsCountPerPage,
+                disabled: !this.properties.paging.showPaging
+            }),
+            PropertyPaneSlider('paging.pagingRange', {
+                label: strings.Paging.PagingRangeFieldName,
+                max: 50,
+                min: 0, // 0 = no page numbers displayed
+                step: 1,
+                showValue: true,
+                value: this.properties.paging.pagingRange,
+                disabled: !this.properties.paging.showPaging
+            }),
+            PropertyPaneHorizontalRule(),
+            PropertyPaneToggle('paging.hideNavigation', {
+                label: strings.Paging.HideNavigationFieldName,
+                disabled: !this.properties.paging.showPaging
+            }),
+            PropertyPaneToggle('paging.hideFirstLastPages', {
+                label: strings.Paging.HideFirstLastPagesFieldName,
+                disabled: !this.properties.paging.showPaging
+            }),
+            PropertyPaneToggle('paging.hideDisabled', {
+                label: strings.Paging.HideDisabledFieldName,
+                disabled: !this.properties.paging.showPaging
+            })
+            );
+        return groupFields;
     }
 }

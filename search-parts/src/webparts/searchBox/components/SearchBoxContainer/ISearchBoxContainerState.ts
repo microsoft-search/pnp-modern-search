@@ -3,11 +3,6 @@ import { INlpResponse } from "../../../../models/INlpResponse";
 interface ISearchBoxContainerState {
 
     /**
-     * The enhanced query response
-     */
-    enhancedQuery: INlpResponse;
-
-    /**
      * The current value of the input string
      */
     searchInputValue: string;

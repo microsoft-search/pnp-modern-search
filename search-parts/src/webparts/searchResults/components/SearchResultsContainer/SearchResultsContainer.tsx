@@ -20,7 +20,7 @@ import { Text } from '@microsoft/sp-core-library';
 import { ILocalizableSearchResultProperty, ILocalizableSearchResult } from '../../../../models/ILocalizableSearchResults';
 import * as _ from '@microsoft/sp-lodash-subset';
 import { TemplateService } from '../../../../services/TemplateService/TemplateService';
-import { isEqual, isEmpty } from '@microsoft/sp-lodash-subset';
+import { isEqual } from '@microsoft/sp-lodash-subset';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import { ITheme } from '@uifabric/styling';
 import ResultsLayoutOption from '../../../../models/ResultsLayoutOption';
@@ -102,9 +102,12 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 let templateContext = {
                     items: [],
                     showResultsCount: this.props.showResultsCount,
-                    maxResultsCount: this.props.searchService.resultsCount,
+                    paging: {
+                        totalItemsCount: this.props.pagingSettings.itemsCountPerPage ? this.props.pagingSettings.itemsCountPerPage : 0
+                    },
                     strings: strings,
-                    themeVariant: this.props.themeVariant
+                    themeVariant: this.props.themeVariant,
+                    instanceId: this.props.instanceId
                 };
 
                 // Merge with property pane template parameters
@@ -152,13 +155,21 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 items: this.state.results.RelevantResults,
                 secondaryResults: this.state.results.SecondaryResults,
                 promotedResults: this.state.results.PromotedResults,
-                currentPage: this.state.results.PaginationInformation ? this.state.results.PaginationInformation.CurrentPage : 1,
-                totalRows: this.state.results.PaginationInformation ? this.state.results.PaginationInformation.TotalRows : 0,
+                paging: {
+                    showPaging: this.props.pagingSettings.showPaging,
+                    currentPageNumber: this.state.results.PaginationInformation ? this.state.results.PaginationInformation.CurrentPage : 1,
+                    totalItemsCount: this.state.results.PaginationInformation ? this.state.results.PaginationInformation.TotalRows : 0,
+                    hideFirstLastPages: this.props.pagingSettings.hideFirstLastPages,
+                    hideDisabled: this.props.pagingSettings.hideDisabled,
+                    hideNavigation: this.props.pagingSettings.hideNavigation,
+                    pagingRange: this.props.pagingSettings.pagingRange,
+                    itemsCountPerPage: this.props.pagingSettings.itemsCountPerPage
+                },
+                instanceId: this.props.instanceId,
                 keywords: this.props.queryKeywords,
                 showResultsCount: this.props.showResultsCount,
                 siteUrl: this.props.siteServerRelativeUrl,
                 webUrl: this.props.webServerRelativeUrl,
-                maxResultsCount: this.props.searchService.resultsCount,
                 actualResultsCount: items.RelevantResults.length,
                 hasPrimaryOrSecondaryResults: totalPrimaryAndSecondaryResults > 0,
                 totalPrimaryAndSecondaryResults: totalPrimaryAndSecondaryResults,
