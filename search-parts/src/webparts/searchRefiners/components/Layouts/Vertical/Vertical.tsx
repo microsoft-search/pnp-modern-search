@@ -203,6 +203,7 @@ export default class Vertical extends React.Component<IFilterLayoutProps, IVerti
           themeVariant={props.themeVariant}
           selectedValues={selectedFilterValues}
           userService={this.props.userService}
+          showValueFilter={configuredFilter[0].showValueFilter}
         />
       );
     });

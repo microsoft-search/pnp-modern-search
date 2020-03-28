@@ -10,7 +10,6 @@ declare interface ISearchResultsWebPartStrings {
     EnableLocalizationLabel: string;
     EnableLocalizationOnLabel: string;
     EnableLocalizationOffLabel: string;
-    MaxResultsCount: string;
     NoResultMessage: string;
     SortableFieldsLabel: string;
     SortableFieldsDescription: string;
@@ -155,7 +154,6 @@ declare interface ISearchResultsWebPartStrings {
         PersonaSizeRegular: string;
         PersonaSizeLarge: string;
         PersonaSizeExtraLarge: string;
-        LivePersonaDisableHover: string;
     }
     ManagedPropertiesListPlaceHolder: string;
     QueryModifier: {
@@ -167,6 +165,16 @@ declare interface ISearchResultsWebPartStrings {
         DisplayNameColumnLbl: string;
         DescriptionColumnLbl: string;
         SelectedQueryModifierLbl: string;
+    },
+    Paging: {
+        PagingOptionsGroupName: string;
+        ItemsCountPerPageFieldName: string;
+        PagingRangeFieldName: string;
+        ShowPagingFieldName: string;
+        HidePageNumbersFieldName: string;
+        HideNavigationFieldName: string;
+        HideFirstLastPagesFieldName: string;
+        HideDisabledFieldName: string;
     }
 }
 

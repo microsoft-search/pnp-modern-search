@@ -39,7 +39,6 @@
             "selectedProperties": "Title,Path,Created,Filename,SiteLogo,PreviewUrl,PictureThumbnailURL,ServerRedirectedPreviewURL,ServerRedirectedURL,HitHighlightedSummary,FileType,contentclass,ServerRedirectedEmbedURL,DefaultEncodingURL,owstaxidmetadataalltagsinfo,Author,AuthorOWSUSER,SPSiteUrl,SiteTitle,IsContainer,IsListItem,HtmlFileType,SiteId,WebId,UniqueID,NormSiteID,NormListID,NormUniqueID",
             "enableQueryRules": false,
             "includeOneDriveResults": false,
-            "maxResultsCount": 10,
             "showBlank": true,
             "showResultsCount": true,
             "webPartTitle": "",
@@ -48,7 +47,6 @@
             "resultTypes": [],
             "useExternalRefinersDisplay": false,
             "useExternalPaginationDisplay": false,
-            "selectedPage": 1,
             "appliedRefiners": [],
             "refinersConfiguration": []
         }

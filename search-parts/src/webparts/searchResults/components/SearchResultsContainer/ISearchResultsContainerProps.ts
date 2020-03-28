@@ -9,6 +9,7 @@ import SearchResultsOperationCallback from '../../../../models/SearchResultsOper
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import ResultsLayoutOption from '../../../../models/ResultsLayoutOption';
 import { ISortFieldConfiguration } from '../../../../models/ISortFieldConfiguration';
+import { IPagingSettings } from '../../../../models/IPagingSettings';
 
 interface ISearchResultsContainerProps {
 
@@ -41,11 +42,6 @@ interface ISearchResultsContainerProps {
      * The managed properties used as sortable fields for the query
      */
     sortableFields: ISortableFieldConfiguration[];
-
-    /**
-     * Show the paging control
-     */
-    showPaging: boolean;
 
     /**
      * Show the result count and entered keywords
@@ -137,6 +133,16 @@ interface ISearchResultsContainerProps {
      * The current selected layout
      */
     selectedLayout: ResultsLayoutOption;
+
+    /**
+     * The Web Part paging
+     */
+    pagingSettings: IPagingSettings;
+
+    /**
+     * The Web Part instance id
+     */
+    instanceId: string;
 }
 
 export default ISearchResultsContainerProps;

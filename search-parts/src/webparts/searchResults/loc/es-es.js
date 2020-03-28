@@ -9,7 +9,6 @@ define([], function () {
     "EnableLocalizationLabel": "Habilitar los valores de localización de taxonomia en los refinadores y resultados",
     "EnableLocalizationOnLabel": "Localización habilitada",
     "EnableLocalizationOffLabel": "Localización deshabilitada",
-    "MaxResultsCount": "Número de eleemntos devueltos por página",
     "NoResultMessage": "No hay resultados para mostrar",
     "FilterPanelTitle": "Filtros disponibles",
     "FilterResultsButtonLabel": "Filtros",
@@ -153,8 +152,7 @@ define([], function () {
       "PersonaSizeSmall": "Small",
       "PersonaSizeRegular": "Regular",
       "PersonaSizeLarge": "Large",
-      "PersonaSizeExtraLarge": "Extra large",
-      "LivePersonaDisableHover": "Disable info on hover"
+      "PersonaSizeExtraLarge": "Extra large"
     },
     "ManagedPropertiesListPlaceHolder": "Select or add a managed property",
     "QueryModifier": {
@@ -166,6 +164,16 @@ define([], function () {
       "DisplayNameColumnLbl": "Apellido",
       "DescriptionColumnLbl": "Descripción",
       "SelectedQueryModifierLbl": "Selected query modifier: '{0}'"
+    },
+    "Paging": {
+      "PagingOptionsGroupName": "Paging settings",
+      "ItemsCountPerPageFieldName": "Number of items per page",
+      "PagingRangeFieldName": "Number of pages to display in range",
+      "ShowPagingFieldName": "Show paging",
+      "HidePageNumbersFieldName": "Hide page numbers",
+      "HideNavigationFieldName": "Hide navigation buttons (prev page, next page)",
+      "HideFirstLastPagesFieldName": "Hide first/last navigation buttons",
+      "HideDisabledFieldName": "Hide navigation buttons (prev, next, first, last) if they are disabled.",
     }
   }
 });

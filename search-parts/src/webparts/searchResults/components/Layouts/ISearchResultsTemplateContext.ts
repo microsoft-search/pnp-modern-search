@@ -7,12 +7,20 @@ interface ISearchResultsTemplateContext {
     items: ISearchResult[];
     promotedResults?: IPromotedResult[];
     strings: ISearchResultsWebPartStrings;
-    totalRows?: number;
     keywords?: string;
     showResultsCount?: boolean;
     siteUrl?: string;
     webUrl?: string;
-    maxResultsCount: number;
+    paging?: {
+        showPaging?: boolean;
+        currentPageNumber?: number;
+        totalItemsCount: number;
+        hideFirstLastPages?: boolean;
+        hideDisabled?: boolean;
+        hideNavigation?: boolean;
+        pagingRange?: number;
+        itemsCountPerPage?: number;
+    };
     actualResultsCount?: number;
     spellingSuggestion?: string;
 }

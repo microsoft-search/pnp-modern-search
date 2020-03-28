@@ -7,6 +7,9 @@ import { INavLink, Nav, Icon, ITheme } from 'office-ui-fabric-react';
 import { cloneDeep } from "@microsoft/sp-lodash-subset";
 import { UrlHelper } from '../../../../../helpers/UrlHelper';
 
+//CSS
+import styles from './ContainerTreeTemplate.module.scss';
+
 export interface IFoldersTemplateProps extends IBaseRefinerTemplateProps {
 
     /**
@@ -36,7 +39,13 @@ export default class ContainerTreeTemplate extends React.Component<IFoldersTempl
 
     public render() {
 
-        return  <Nav
+        return  <div className={styles.pnpRefinersTemplateContainerTree}>
+                {
+                    this.props.showValueFilter ? 
+                        <div className='pnp-font-s'>Value filters are not allowed for container trees. Clear 'show filter' to remove this message</div>
+                        : null
+                }
+                <Nav
                     theme={this.props.themeVariant as ITheme}
                     onRenderLink={(props, defautRender) => {
 
@@ -52,7 +61,8 @@ export default class ContainerTreeTemplate extends React.Component<IFoldersTempl
                     groups={[{
                         links: this.state.navigationLinks,
                     }]}
-                />;
+                />
+            </div>;
 
     }
 
@@ -185,7 +195,7 @@ export default class ContainerTreeTemplate extends React.Component<IFoldersTempl
         if (nextProps.removeFilterValue) {
 
             const newFilterValues = this.state.refinerSelectedFilterValues.filter((elt) => {
-                return elt.RefinementName !== nextProps.removeFilterValue.RefinementName;
+                return elt.RefinementValue !== nextProps.removeFilterValue.RefinementValue;
             });
 
             this.setState({
@@ -205,7 +215,7 @@ export default class ContainerTreeTemplate extends React.Component<IFoldersTempl
     private _isValueInFilterSelection(valueToCheck: IRefinementValue): boolean {
 
         let newFilters = this.state.refinerSelectedFilterValues.filter((filter) => {
-            return filter.RefinementToken === valueToCheck.RefinementToken && filter.RefinementName === valueToCheck.RefinementName;
+            return filter.RefinementToken === valueToCheck.RefinementToken && filter.RefinementValue === valueToCheck.RefinementValue;
         });
 
         return newFilters.length === 0 ? false : true;
@@ -233,7 +243,7 @@ export default class ContainerTreeTemplate extends React.Component<IFoldersTempl
     private _onFilterRemoved(removedValue: IRefinementValue) {
 
         const newFilterValues = this.state.refinerSelectedFilterValues.filter((elt) => {
-            return elt.RefinementName !== removedValue.RefinementName;
+            return elt.RefinementValue !== removedValue.RefinementValue;
         });
 
         this.setState({

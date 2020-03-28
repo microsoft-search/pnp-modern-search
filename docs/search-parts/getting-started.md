@@ -15,8 +15,6 @@ Component | Description |
 Search Box Web Part | Allows users to enter free text/KQL search queries connected to a search results Web Part.
 Search Results Web Part | Performs static or dynamic search query with customizable parameters sorting and templating.
 Search Refiners | Allows users to configure refiners for a search results Web Part.
-Search Pagination | Allows users to configure pagination for a search results Web Part.
-Search Navigation | Allows users to configure navigation for a search results Web Part.
 Search Verticals | Allows users to search in predefined scopes.
 
 ## Minimal Path to Awesome ##
@@ -25,3 +23,5 @@ Search Verticals | Allows users to search in predefined scopes.
 - In the `search-parts` project, run the following commands:
   - `npm install`
   - `gulp serve`
+
+The `search-parts` project also supports faster development via [spfx-fast-serve](https://github.com/s-KaiNet/spfx-fast-serve) tool. To use "fast serve" run `npm run serve` instead of `gulp serve`.

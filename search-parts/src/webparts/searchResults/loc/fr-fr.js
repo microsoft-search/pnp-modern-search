@@ -6,7 +6,6 @@ define([], function() {
     "QueryTemplateFieldLabel": "Modèle de requête",
     "SelectedPropertiesFieldLabel": "Propriétés à récupérer",
     "LoadingMessage": "Les résultats sont en cours de chargement, veuillez patienter...",
-    "MaxResultsCount": "Nombre de résulats à récupérer par page",
     "EnableLocalizationLabel": "Activer la traduction des termes de taxonomie pour les filtres et les résultats",
     "EnableLocalizationOnLabel": "Traduction activée",
     "EnableLocalizationOffLabel": "Traduction  désactivée",
@@ -153,8 +152,7 @@ define([], function() {
       "PersonaSizeSmall": "Petit",
       "PersonaSizeRegular": "Normal",
       "PersonaSizeLarge": "Grand",
-      "PersonaSizeExtraLarge": "Très grand",
-      "LivePersonaDisableHover": "Désactiver l'affichage des informations au survolement"
+      "PersonaSizeExtraLarge": "Très grand"
     },
     "ManagedPropertiesListPlaceHolder": "Sélectionnez ou ajoutez une propriété gérée",
     "QueryModifier": {
@@ -166,6 +164,16 @@ define([], function() {
       "DisplayNameColumnLbl": "Nom",
       "DescriptionColumnLbl": "Description",
       "SelectedQueryModifierLbl": "Modificateur sélectionné: '{0}'"
+    },
+    "Paging": {
+      "PagingOptionsGroupName": "Options de pagination",
+      "ItemsCountPerPageFieldName": "Nombre de résultats par page",
+      "PagingRangeFieldName": "Nombre de page dans l'intervalle",
+      "ShowPagingFieldName": "Afficher la pagination",
+      "HidePageNumbersFieldName": "Cacher/Montrer les numéros de pages",
+      "HideNavigationFieldName": "Cacher/Montrer les boutons de navigation (précédent, suivant, etc.)",
+      "HideFirstLastPagesFieldName": "Cacher/Montrer les boutons de navigation 'dernier'/'premier'.",
+      "HideDisabledFieldName": "Cacher/Montrer les boutons de navigation si désactivés",
     }
   }
 });

@@ -11,7 +11,7 @@ import { classNamesFunction } from "office-ui-fabric-react/lib/Utilities";
 import { IReadonlyTheme } from "@microsoft/sp-component-base";
 import { merge, trimStart, isEmpty } from '@microsoft/sp-lodash-subset';
 import { getFileTypeIconProps, FileIconType } from '@uifabric/file-type-icons';
-import { GlobalSettings } from 'office-ui-fabric-react/lib/Utilities';
+import { GlobalSettings } from 'office-ui-fabric-react/lib/Utilities'; // has to be present
 import { BaseWebComponent } from "./BaseWebComponent";
 import * as ReactDOM from "react-dom";
 let globalSettings = (window as any).__globalSettings__;
@@ -93,24 +93,26 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
             />;
         }
 
-        let iconProps;
-        // same code as in IconComponent.tsx
-        if (!isEmpty(processedProps.iconExt)) {
-            if (processedProps.iconExt == "IsListItem") {
-                iconProps = getFileTypeIconProps({ type: FileIconType.listItem, size: 16, imageFileType: 'png' });
-            } else if (processedProps.iconExt == "IsContainer") {
-                iconProps = getFileTypeIconProps({ type: FileIconType.folder, size: 16, imageFileType: 'png' });
-            } else {                
-                iconProps = getFileTypeIconProps({ extension: processedProps.iconExt, size: 16, imageFileType: 'png' });
+        let iconSrc = processedProps.iconSrc;
+        if (!iconSrc) {
+            let iconProps;
+            // same code as in IconComponent.tsx
+            if (processedProps.iconExt) {
+                if (processedProps.iconExt == "IsListItem") {
+                    iconProps = getFileTypeIconProps({ type: FileIconType.listItem, size: 32, imageFileType: 'png' });
+                } else if (processedProps.iconExt == "IsContainer") {
+                    iconProps = getFileTypeIconProps({ type: FileIconType.folder, size: 32, imageFileType: 'png' });
+                } else {
+                    iconProps = getFileTypeIconProps({ extension: processedProps.iconExt, size: 32, imageFileType: 'png' });
+                }
+            } else {
+                const fileExtension = processedProps.fileExtension ? trimStart(processedProps.fileExtension.trim(), '.') : null;
+                iconProps = getFileTypeIconProps({ extension: fileExtension, size: 32, imageFileType: 'png' });
             }
-        } else {
-            const fileExtension = processedProps.fileExtension ? trimStart(processedProps.fileExtension.trim(), '.') : null;
-            iconProps = getFileTypeIconProps({ extension: fileExtension, size: 16, imageFileType: 'png' });
-        }
 
-        let iconSrc = null;
-        if (globalSettings.icons[iconProps.iconName] && this.props.showFileIcon) {
-            iconSrc = globalSettings.icons[iconProps.iconName].code.props.src;
+            if (globalSettings.icons[iconProps.iconName] && this.props.showFileIcon) {
+                iconSrc = globalSettings.icons[iconProps.iconName].code.props.src;
+            }
         }
 
         let previewProps: IDocumentCardPreviewProps = {
@@ -122,7 +124,7 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
                     imageFit: ImageFit.centerCover,
                     iconSrc: iconSrc,
                     width: this.props.isCompact ? 144 : 318,
-                    height:  this.props.isCompact ? 106 : 196
+                    height: this.props.isCompact ? 106 : 196
                 }
             ],
         };
@@ -189,17 +191,17 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
                     {processedProps.location && !this.props.isCompact ?
                         <div className={documentCardLocationClassNames.root} dangerouslySetInnerHTML={{ __html: processedProps.location }}></div> : null
                     }
-                    <Link 
+                    <Link
                         theme={this.props.themeVariant as ITheme}
                         href={processedProps.href} target='_blank' styles={{
-                        root: {
-                            selectors: {
-                                ':hover': {
-                                    textDecoration: 'underline'
+                            root: {
+                                selectors: {
+                                    ':hover': {
+                                        textDecoration: 'underline'
+                                    }
                                 }
                             }
-                        }
-                    }}>
+                        }}>
                         <DocumentCardTitle
                             theme={this.props.themeVariant as ITheme}
                             title={processedProps.title}
@@ -211,7 +213,7 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
                     }
                     {processedProps.author ?
                         <DocumentCardActivity
-                        theme={this.props.themeVariant as ITheme}
+                            theme={this.props.themeVariant as ITheme}
                             activity={processedProps.date}
                             people={[{ name: processedProps.author, profileImageSrc: processedProps.profileImage }]}
                         /> : null
@@ -224,34 +226,34 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
 }
 
 export class DocumentCardWebComponent extends BaseWebComponent {
-   
+
     public constructor() {
-        super(); 
+        super();
     }
- 
+
     public connectedCallback() {
- 
-       let props = this.resolveAttributes();
-       const documentCarditem = <DocumentCardComponent {...props}/>;
-       ReactDOM.render(documentCarditem, this);
-    }    
+
+        let props = this.resolveAttributes();
+        const documentCarditem = <DocumentCardComponent {...props} />;
+        ReactDOM.render(documentCarditem, this);
+    }
 }
 
 export class VideoCardWebComponent extends BaseWebComponent {
-   
+
     public constructor() {
-       super(); 
+        super();
     }
- 
+
     public connectedCallback() {
- 
-       // Get all custom element attributes
-       let props = this.resolveAttributes();
- 
-       // Add video props
-       props.isVideo = true;
- 
-       const documentCarditem = <DocumentCardComponent {...props}/>;
-       ReactDOM.render(documentCarditem, this);
-     }    
+
+        // Get all custom element attributes
+        let props = this.resolveAttributes();
+
+        // Add video props
+        props.isVideo = true;
+
+        const documentCarditem = <DocumentCardComponent {...props} />;
+        ReactDOM.render(documentCarditem, this);
+    }
 }

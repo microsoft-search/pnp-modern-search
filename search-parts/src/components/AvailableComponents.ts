@@ -8,6 +8,7 @@ import { PersonaCardWebComponent } from './PersonaCardComponent';
 import { LivePersonaWebComponent } from './LivePersonaComponent';
 import { PersonaCardShimmersWebComponent } from './PersonaCardShimmersComponent';
 import { IconWebComponent } from './IconComponent';
+import { PaginationWebComponent } from './PaginationComponent';
 
 export class AvailableComponents {
 
@@ -54,6 +55,10 @@ export class AvailableComponents {
         {
             componentName: 'pnp-fabric-icon',
             componentClass: IconWebComponent
+        },
+        {
+            componentName: 'pnp-pagination',
+            componentClass: PaginationWebComponent
         }
     ];
 }

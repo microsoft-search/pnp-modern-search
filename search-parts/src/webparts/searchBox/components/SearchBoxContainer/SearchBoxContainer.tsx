@@ -5,8 +5,6 @@ import ISearchBoxContainerState from                 './ISearchBoxContainerState
 import { PageOpenBehavior, QueryPathBehavior, UrlHelper } from  '../../../../helpers/UrlHelper';
 import { MessageBar, MessageBarType } from           'office-ui-fabric-react/lib/MessageBar';
 import styles from '../SearchBoxWebPart.module.scss';
-import ISearchQuery from '../../../../models/ISearchQuery';
-import NlpDebugPanel from '../NlpDebugPanel/NlpDebugPanel';
 import { ITheme } from '@uifabric/styling';
 import SearchBoxAutoComplete from '../SearchBoxAutoComplete/SearchBoxAutoComplete';
 import { SearchBox } from 'office-ui-fabric-react/lib/SearchBox';
@@ -19,7 +17,6 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
     super(props);
 
     this.state = {
-      enhancedQuery: null,
       searchInputValue: (props.inputValue) ? decodeURIComponent(props.inputValue) : '',
       errorMessage: null,
       showClearButton: !!props.inputValue,
@@ -75,36 +72,12 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
     // Don't send empty value
     if (queryText || isReset) {
 
-      let query: ISearchQuery = {
-        rawInputValue: queryText,
-        enhancedQuery: ''
-      };
+      let query = queryText;
 
       this.setState({
         searchInputValue: queryText,
         showClearButton: !isReset
       });
-
-      if (this.props.enableNlpService && this.props.NlpService && queryText) {
-
-        try {
-
-          let enhancedQuery = await this.props.NlpService.enhanceSearchQuery(queryText, this.props.isStaging);
-          query.enhancedQuery = enhancedQuery.enhancedQuery;
-
-          enhancedQuery.entities.map((entity) => {
-          });
-
-          this.setState({
-            enhancedQuery: enhancedQuery,
-          });
-
-        } catch (error) {
-
-          // In case of failure, use the non-optimized query instead
-          query.enhancedQuery = queryText;
-        }
-      }
 
       if (this.props.searchInNewPage && !isReset) {
         const urlEncodedQueryText = encodeURIComponent(queryText);
@@ -142,10 +115,6 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
   public render(): React.ReactElement<ISearchBoxContainerProps> {
     let renderErrorMessage: JSX.Element = null;
 
-    const renderDebugInfos = this.props.enableNlpService && this.props.enableDebugMode ?
-                              <NlpDebugPanel rawResponse={ this.state.enhancedQuery }/>:
-                              null;
-
     if (this.state.errorMessage) {
       renderErrorMessage = <MessageBar messageBarType={ MessageBarType.error }
                                         dismissButtonAriaLabel='Close'
@@ -166,7 +135,6 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
       <div className={styles.searchBox}>
         { renderErrorMessage }
         { renderSearchBox }
-        { renderDebugInfos }
       </div>
     );
   }

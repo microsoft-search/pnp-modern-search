@@ -51,8 +51,11 @@ export default class LinkPanel extends React.Component<ILinkPanelProps, ILinkPan
       let filterName = configuredRefiners.length === 1 ? configuredRefiners[0].displayValue : value.RefinementName;
 
       // Date refiner value
-      if (/range\(.+\)/.test(value.RefinementToken) && value.RefinementName !== value.RefinementValue) {
-        filterName = `${filterName} ${value.RefinementValue}`;
+      if (/range\(((-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(.[0-9]+)?(Z)?).+\)/.test(value.RefinementToken)
+          && (/(>=|<)/.test(value.RefinementValue))) {
+        filterName = `[${filterName}${value.RefinementValue}"]`; // Date range template
+      } else {
+        filterName = `[${filterName}: "${value.RefinementValue}"]`;
       }
 
       return (
@@ -290,6 +293,7 @@ export default class LinkPanel extends React.Component<ILinkPanelProps, ILinkPan
           themeVariant={props.themeVariant}
           selectedValues={selectedFilterValues}
           userService={this.props.userService}
+          showValueFilter={configuredFilter[0].showValueFilter}
         />
       );
     });

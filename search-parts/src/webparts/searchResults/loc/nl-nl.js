@@ -9,7 +9,6 @@ define([], function () {
     "EnableLocalizationLabel": "Inschakelen van gelokaliseerde taxonomy waarden voor verfijningen en resultaten",
     "EnableLocalizationOnLabel": "Lokalisatie ingeschakeld",
     "EnableLocalizationOffLabel": "Lokalisatie uitgeschakeld",
-    "MaxResultsCount": "Aantal resultaten per pagina",
     "NoResultMessage": "Geen resultaten gevonden",
     "FilterPanelTitle": "Beschikbare filters",
     "FilterResultsButtonLabel": "Filters",
@@ -153,8 +152,7 @@ define([], function () {
       "PersonaSizeSmall": "Klein",
       "PersonaSizeRegular": "Normaal",
       "PersonaSizeLarge": "Groot",
-      "PersonaSizeExtraLarge": "Extra groot",
-      "LivePersonaDisableHover": "Geen weergave bij mouse-over"
+      "PersonaSizeExtraLarge": "Extra groot"
     },
     "ManagedPropertiesListPlaceHolder": "Selecteer of voeg een beheerde eigenschap toe",
     "QueryModifier": {
@@ -166,6 +164,16 @@ define([], function () {
       "DisplayNameColumnLbl": "Naam",
       "DescriptionColumnLbl": "Beschrijving",
       "SelectedQueryModifierLbl": "Geselecteerde query-modifier: '{0}'"
+    },
+    "Paging": {
+      "PagingOptionsGroupName": "Paging settings",
+      "ItemsCountPerPageFieldName": "Number of items per page",
+      "PagingRangeFieldName": "Number of pages to display in range",
+      "ShowPagingFieldName": "Show paging",
+      "HidePageNumbersFieldName": "Hide page numbers",
+      "HideNavigationFieldName": "Hide navigation buttons (prev page, next page)",
+      "HideFirstLastPagesFieldName": "Hide first/last navigation buttons",
+      "HideDisabledFieldName": "Hide navigation buttons (prev, next, first, last) if they are disabled.",
     }
   }
 });

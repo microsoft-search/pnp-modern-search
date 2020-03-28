@@ -1,20 +1,14 @@
 <content id="template">
-    <style>
-        .template_root .slide {
-            width: 318px;
-            height: 360px;
-            margin: 5px;
-        }
-        
-        .flickity-page-dots { 
+    <style>       
+        #pnp-modern-search_{{@root.instanceId}} .flickity-page-dots { 
             bottom: 5px; 
         }
     </style>
 
-    <div class="template_root">
+    <div id="pnp-modern-search_{{@root.instanceId}}" class="template_root">
         {{#if @root.hasPrimaryOrSecondaryResults}} 
             {{#>slider items=(JSONstringify @root.items 2) options=(JSONstringify @root.sliderOptions)}}
-                <div class="slide">
+                <div class="slide" style="height: 360px;width: 318px;margin: 5px;">
                     \{{#if AuthorOWSUSER}}
                         \{{#with (split AuthorOWSUSER '|')}}
                             <pnp-document-card 	title="\{{../Title}}" 
@@ -46,6 +40,18 @@
                     \{{/if}}                    
                 </div>                
             {{/slider}}
+            {{#if @root.paging.showPaging}}
+                <pnp-pagination 
+                    total-items="{{@root.paging.totalItemsCount}}" 
+                    hide-first-last-pages="{{@root.paging.hideFirstLastPages}}"
+                    hide-disabled="{{@root.paging.hideDisabled}}"
+                    hide-navigation="{{@root.paging.hideNavigation}}"
+                    range="{{@root.paging.pagingRange}}" 
+                    items-count-per-page="{{@root.paging.itemsCountPerPage}}" 
+                    current-page-number="{{@root.paging.currentPageNumber}}"
+                >
+                </pnp-pagination>
+            {{/if}}
         {{else}}
             {{#unless showBlank}}
                 <div class="template_noResults">{{@root.strings.NoResultMessage}}</div>
@@ -56,21 +62,15 @@
 
 <content id="placeholder"> 
 
-    <style>
-        .placeholder_root .slide {
-            width: 318px;
-            height: 360px;
-            margin: 5px;
-        }
-        
-        .flickity-page-dots { 
-            bottom: 10px; 
+    <style>        
+        #pnp-modern-search_{{@root.instanceId}} .flickity-page-dots { 
+            bottom: 5px; 
         }
     </style>
 
-    <div class="placeholder_root">
+    <div id="pnp-modern-search_{{@root.instanceId}}" class="placeholder_root">
         {{#>slider items="[{},{},{},{},{}]" options=(JSONstringify @root.sliderOptions)}}
-            <div class="slide">
+            <div class="slide" style="height: 360px;width: 318px;margin: 5px;">
                 <pnp-document-card-shimmers is-compact="\{{@root.isCompact}}"></pnp-document-card-shimmers>
             </div>                
         {{/slider}}

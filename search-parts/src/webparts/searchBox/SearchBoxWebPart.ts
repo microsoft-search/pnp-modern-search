@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
-import { Version, Environment, Text, EnvironmentType } from '@microsoft/sp-core-library';
+import { Version, Environment, EnvironmentType } from '@microsoft/sp-core-library';
 import {
   BaseClientSideWebPart,
   IWebPartPropertiesMetadata,
@@ -13,7 +13,6 @@ import {
   PropertyPaneDynamicField,
   PropertyPaneDynamicFieldSet,
   PropertyPaneHorizontalRule,
-  PropertyPaneLabel,
   PropertyPaneTextField,
   PropertyPaneToggle,
   DynamicDataSharedDepth
@@ -21,15 +20,10 @@ import {
 import * as strings from 'SearchBoxWebPartStrings';
 import ISearchBoxWebPartProps from './ISearchBoxWebPartProps';
 import { IDynamicDataCallables, IDynamicDataPropertyDefinition } from '@microsoft/sp-dynamic-data';
-import ISearchQuery from '../../models/ISearchQuery';
 import { ISearchBoxContainerProps } from './components/SearchBoxContainer/ISearchBoxContainerProps';
-import ServiceHelper from '../../helpers/ServiceHelper';
 import ISearchService from '../../services/SearchService/ISearchService';
-import INlpService from '../../services/NlpService/INlpService';
 import MockSearchService from '../../services/SearchService/MockSearchService';
 import SearchService from '../../services/SearchService/SearchService';
-import MockNlpService from '../../services/NlpService/MockNlpService';
-import NlpService from '../../services/NlpService/NlpService';
 import { PageOpenBehavior, QueryPathBehavior, UrlHelper } from '../../helpers/UrlHelper';
 import SearchBoxContainer from './components/SearchBoxContainer/SearchBoxContainer';
 import { SearchComponentType } from '../../models/SearchComponentType';
@@ -46,10 +40,8 @@ import { isEqual } from '@microsoft/sp-lodash-subset';
 
 export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWebPartProps> implements IDynamicDataCallables {
 
-  private _searchQuery: ISearchQuery;
+  private _searchQuery: string;
   private _searchService: ISearchService;
-  private _serviceHelper: ServiceHelper;
-  private _nlpService: INlpService;
   private _themeProvider: ThemeProvider;
   private _extensibilityService: IExtensibilityService;
   private _suggestionProviderInstances: ISuggestionProviderInstance<any>[];
@@ -64,10 +56,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
     super();
 
     // Initialize default values for search query
-    this._searchQuery = {
-      rawInputValue: '',
-      enhancedQuery: ''
-    };
+    this._searchQuery = '';
 
     this._bindHashChange = this._bindHashChange.bind(this);
   }
@@ -83,7 +72,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
     if (inputValue && typeof(inputValue) === 'string') {
 
       // Notify subscriber a new value if available
-      this._searchQuery.rawInputValue = decodeURIComponent(inputValue);
+      this._searchQuery = decodeURIComponent(inputValue);
       this.context.dynamicDataSourceManager.notifyPropertyChanged('searchQuery');
     }
 
@@ -97,14 +86,10 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
         openBehavior: this.properties.openBehavior,
         queryPathBehavior: this.properties.queryPathBehavior,
         queryStringParameter: this.properties.queryStringParameter,
-        inputValue: this._searchQuery.rawInputValue,
+        inputValue: this._searchQuery,
         enableQuerySuggestions: enableSuggestions,
         suggestionProviders: this._suggestionProviderInstances,
         searchService: this._searchService,
-        enableDebugMode: this.properties.enableDebugMode,
-        enableNlpService: this.properties.enableNlpService,
-        isStaging: this.properties.isStaging,
-        NlpService: this._nlpService,
         placeholderText: this.properties.placeholderText,
         domElement: this.domElement,
         themeVariant: this._themeVariant
@@ -127,34 +112,6 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
   }
 
   /**
-   * Returns the friendly annoted values for the property. This info will be used by default SPFx dynamic data property pane fields.
-   * @param propertyId the property id
-   */
-  public getAnnotatedPropertyValue(propertyId: string) {
-
-      switch (propertyId) {
-
-          case 'searchQuery':
-
-              const annotatedPropertyValue = {
-                  sampleValue: {
-                      'rawInputValue': "*",
-                      'enhancedQuery': '(rawQuery) XRANK(cb=500) owsTaxIdrawQuery:5eb0b270-f8ce-42e9-866f-73b1466a26ac',
-                  },
-                  metadata: {
-                      'rawInputValue': { title: strings.DynamicData.RawInputValuePropertyLabel},
-                      'enhancedQuery': { title: strings.DynamicData.EnhancedQueryPropertyLabel },
-                  }
-              };
-
-              return annotatedPropertyValue;
-
-          default:
-              throw new Error('Bad property id');
-      }
-  }
-
-  /**
    * Return the current value of the specified dynamic data set
    * @param propertyId ID of the dynamic data set to retrieve the value for
    */
@@ -172,11 +129,9 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
 
   protected async onInit(): Promise<void> {
 
-    this._serviceHelper = new ServiceHelper(this.context.httpClient);
     this.context.dynamicDataSourceManager.initializeSource(this);
 
     this.initSearchService();
-    this.initNlpService();
     this.initThemeVariant();
 
     this._bindHashChange();
@@ -208,11 +163,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
             {
               groupName: strings.SearchBoxNewPage,
               groupFields: this._getSearchBehaviorOptionsFields()
-            },
-            {
-                groupName: strings.SearchBoxQueryNlpSettings,
-                groupFields: this._getSearchQueryOptimizationFields()
-            },
+            }
           ],
           displayGroupsAsAccordion: true
         }
@@ -221,8 +172,8 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
   }
 
   protected async onPropertyPaneFieldChanged(propertyPath: string): Promise<void> {
+
     this.initSearchService();
-    this.initNlpService();
 
     if (!this.properties.useDynamicDataSource) {
       this.properties.defaultQueryKeywords.setValue("");
@@ -238,7 +189,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
   /**
    * Handler used to notify data source subscribers when the input query is updated
    */
-  private _onSearch = (searchQuery: ISearchQuery): void => {
+  private _onSearch = (searchQuery: string): void => {
 
     this._searchQuery = searchQuery;
     this.context.dynamicDataSourceManager.notifyPropertyChanged('searchQuery');
@@ -254,12 +205,12 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
         const paramType = refChunks[2];
 
         if (paramType === 'fragment') {
-          window.history.pushState(undefined, undefined, `#${searchQuery.rawInputValue}`);
+          window.history.pushState(undefined, undefined, `#${searchQuery}`);
         }
         else if(paramType.startsWith('queryParameters')) {
           const paramChunks = paramType.split('.');
           const queryTextParam = paramChunks.length === 2 ? paramChunks[1] : 'q';
-          const newUrl = UrlHelper.addOrReplaceQueryStringParam(window.location.href, queryTextParam, searchQuery.rawInputValue);
+          const newUrl = UrlHelper.addOrReplaceQueryStringParam(window.location.href, queryTextParam, searchQuery);
 
           if (window.location.href !== newUrl) {
             window.history.pushState({ path: newUrl }, undefined, newUrl);
@@ -268,7 +219,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
       }
 
     }
-}
+  }
 
   /**
    * Verifies if the string is a correct URL
@@ -276,33 +227,11 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
    */
   private _validatePageUrl(value: string) {
 
-    if ((!/^(https?):\/\/[^\s/$.?#].[^\s]*/.test(value) || !value) && this.properties.searchInNewPage) {
+    if ((!(/^(https?):\/\/[^\s/$.?#].[^\s]*/).test(value) || !value) && this.properties.searchInNewPage) {
       return strings.SearchBoxUrlErrorMessage;
     }
 
     return '';
-  }
-
-  /**
-   * Ensures the service URL is valid
-   * @param value the service URL
-   */
-  private async _validateServiceUrl(value: string) {
-
-    if ((!/^(https?):\/\/[^\s/$.?#].[^\s]*/.test(value) || !value)) {
-      return strings.SearchBoxUrlErrorMessage;
-    } else {
-      if (Environment.type !== EnvironmentType.Local) {
-        try {
-          await this._serviceHelper.ensureUrlResovles(value);
-          return '';
-        } catch (errorMessage) {
-            return Text.format(strings.UrlNotResolvedErrorMessage, value, errorMessage);
-        }
-      } else {
-        return '';
-      }
-    }
   }
 
   /**
@@ -317,21 +246,6 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
           this._searchService = new SearchService(this.context.pageContext, this.context.spHttpClient);
         return "";
       }
-    }
-  }
-
-  /**
-   * Initializes the query optimization data provider instance according to the current environment
-   */
-  private initNlpService() {
-
-    if (this.properties.enableNlpService && this.properties.NlpServiceUrl) {
-        if (Environment.type === EnvironmentType.Local) {
-            this._nlpService = new MockNlpService();
-            this.properties.NlpServiceUrl = 'https://localhost:7071/api/example';
-        } else {
-            this._nlpService = new NlpService(this.context, this.properties.NlpServiceUrl);
-        }
     }
   }
 
@@ -519,7 +433,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
                   id: 'providerDisplayName',
                   title: strings.SuggestionProviders.ProviderNamePropertyLabel,
                   type: this._customCollectionFieldType.custom,
-                  onCustomRender: (field, value, onUpdate, item, itemId) => {
+                  onCustomRender: (field, value) => {
                     return (
                       React.createElement("div", { style: { 'fontWeight': 600 } }, value)
                     );
@@ -529,7 +443,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
                   id: 'providerDescription',
                   title: strings.SuggestionProviders.ProviderDescriptionPropertyLabel,
                   type: this._customCollectionFieldType.custom,
-                  onCustomRender: (field, value, onUpdate, item, itemId) => {
+                  onCustomRender: (field, value) => {
                     return (
                       React.createElement("div", null, value)
                     );
@@ -599,44 +513,6 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
     }
 
     return searchBehaviorOptionsFields;
-  }
-
-  /**
-   * Determines the group fields for the search query optimization inside the property pane
-   */
-  private _getSearchQueryOptimizationFields(): IPropertyPaneField<any>[] {
-
-      let searchQueryOptimizationFields: IPropertyPaneField<any>[] = [
-          PropertyPaneLabel("", {
-              text: strings.SearchBoxQueryNlpSettingsDescription
-          }),
-          PropertyPaneToggle("enableNlpService", {
-              checked: false,
-              label: strings.SearchBoxUserQueryNlpLabel,
-          })
-      ];
-
-      if (this.properties.enableNlpService) {
-
-          searchQueryOptimizationFields.push(
-              PropertyPaneTextField("NlpServiceUrl", {
-                  label: strings.SearchBoxServiceUrlLabel,
-                  disabled: !this.properties.enableNlpService,
-                  onGetErrorMessage: this._validateServiceUrl.bind(this),
-                  description: Text.format(strings.SearchBoxServiceUrlDescription, window.location.host)
-              }),
-              PropertyPaneToggle("enableDebugMode", {
-                  label: strings.SearchBoxUseDebugModeLabel,
-                  disabled: !this.properties.enableNlpService,
-              }),
-              PropertyPaneToggle("isStaging", {
-                label: strings.SearchBoxUseStagingEndpoint,
-                disabled: !this.properties.enableNlpService,
-            }),
-          );
-      }
-
-      return searchQueryOptimizationFields;
   }
 
   /**

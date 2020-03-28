@@ -7,6 +7,7 @@ const build = require('@microsoft/sp-build-web');
 const log = require('@microsoft/gulp-core-build').log;
 const bundleAnalyzer = require('webpack-bundle-analyzer');
 const colors = require("colors");
+const fs = require("fs");
 let buildConfig = {
     parallel: os.cpus().length - 1
 };
@@ -21,6 +22,8 @@ const envCheck = build.subTask('environmentCheck', (gulp, config, done) => {
     }
     build.configureWebpack.mergeConfig({
         additionalConfiguration: (generatedConfiguration) => {
+
+            fs.writeFileSync("./temp/_webpack_config.json", JSON.stringify(generatedConfiguration, null, 2));
 
             /********************************************************************************************
              * Adds an alias for handlebars in order to avoid errors while gulping the project
@@ -82,6 +85,21 @@ const envCheck = build.subTask('environmentCheck', (gulp, config, done) => {
 });
 build.rig.addPreBuildTask(envCheck);
 
+const argv = build.rig.getYargs().argv;
+const useCustomServe = argv['custom-serve'];
+const workbenchApi = require("@microsoft/sp-webpart-workbench/lib/api");
 
+if (useCustomServe) {
+  const ensureWorkbenchSubtask = build.subTask('ensure-workbench-task', function (gulp, buildOptions, done) {
+    this.log('Creating workbench.html file...');
+    try {
+      workbenchApi.default["/workbench"]();
+    } catch (e) { }
 
-build.initialize(gulp);
+    done();
+  });
+
+  build.rig.addPostBundleTask(build.task('ensure-workbench', ensureWorkbenchSubtask));
+}
+
+build.initialize(require('gulp'));

@@ -45,6 +45,11 @@ interface IBaseRefinerTemplateProps {
    * The current theme variant
    */
   themeVariant: IReadonlyTheme | undefined;
+
+  /**
+   * Indicates if the value filter should be visible
+   */
+  showValueFilter: boolean;
 }
 
 export default IBaseRefinerTemplateProps;
