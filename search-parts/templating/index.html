@@ -32,7 +32,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.4.3">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.6.0">
     
     
       
@@ -40,7 +40,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/application.30686662.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/application.1b62728e.css">
       
         <link rel="stylesheet" href="../../assets/stylesheets/application-palette.a8b3c06d.css">
       
@@ -51,12 +51,12 @@
       
     
     
-      <script src="../../assets/javascripts/modernizr.74668098.js"></script>
+      <script src="../../assets/javascripts/modernizr.268332fc.js"></script>
     
     
       
         <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono&display=fallback">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
         <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
       
     
@@ -409,8 +409,8 @@
 
 
   <li class="md-nav__item">
-    <a href="../search-refiners/" title="Search Refiners" class="md-nav__link">
-      Search Refiners
+    <a href="../search-filters/" title="Search Filters" class="md-nav__link">
+      Search Filters
     </a>
   </li>
 
@@ -421,7 +421,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../search-pagination/" title="Search Pagination" class="md-nav__link">
+    <a href="../search-pagination.md" title="Search Pagination" class="md-nav__link">
       Search Pagination
     </a>
   </li>
@@ -433,7 +433,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../search-navigation/" title="Search Navigation" class="md-nav__link">
+    <a href="../search-navigation.md" title="Search Navigation" class="md-nav__link">
       Search Navigation
     </a>
   </li>
@@ -1063,22 +1063,15 @@
 <tbody>
 <tr>
 <td><strong>Manage card fields</strong></td>
-<td>Allows you to define you own values for card placeholder fields. By default, the document card fields come with predefined mappings but you can set your own.<br><img alt="Manage Fields" src="../../images/documentcards_manage_fields.png" /> As a field value, you can choose either a managed property value (from the list or as free text) and without any transformation or use an Handlebars expression by clicking on the checkbox next to it. In this case, all helpers from the main template are available. Also, if the field doesn't have the <strong>'Allow HTML'</strong> indication flag enabled, it means the value will be always interpreted as text, whatever if you set an HTML value. Otherwise, your value will be interpreted as HTML for those fields (ex: '<em>Location</em>' and '<em>Tags</em>' placeholder fields). For HTML fields you can use the special variable <code>@themeVariant</code> to use theme colors (ex: <code>@themeVariant.palette.themePrimary</code>). If you don't set a value for those fields (i.e an empty value), they won't appear in the UI:<br><img alt="HTML Fields" src="../../images/documentcards_html_fields.png" /></p></td>
-</tr>
-<tr>
-<td><strong>Enable result preview</strong></td>
-<td>If enabled, displays a preview callout when the document card image is clicked.</td>
-</tr>
-<tr>
-<td><strong>Show file icon</strong></td>
-<td>Hide or display the file icon in the card.</td>
-</tr>
-<tr>
-<td><strong>Compact mode</strong></td>
-<td>Display the cards in compact mode.</td>
+<td>Allows you to define you own values for card placeholder fields. By default, the document card fields come with predefined mappings but you can set your own.<br><img alt="Manage Fields" src="../../images/documentcards_manage_fields.png" /> As a field value, you can choose either a managed property value (from the list or as free text) and without any transformation or use an Handlebars expression by clicking on the checkbox next to it. In this case, all helpers from the main template are available. Also, if the field doesn't have the <strong>'Allow HTML'</strong> indication flag enabled, it means the value will be always interpreted as text, whatever if you set an HTML value. Otherwise, your value will be interpreted as HTML for those fields (ex: '<em>Location</em>' and '<em>Tags</em>' placeholder fields).</td>
 </tr>
 </tbody>
 </table>
+<p>In order to use the property <code>IconSrc</code>, ensure you do not specify a property for <code>File Extension</code> to not override the custom IconSrc. A custom icon should be a 16x16 pixel image.</p>
+<p>For HTML fields you can use the special variable <code>@themeVariant</code> to use theme colors (ex: <code>@themeVariant.palette.themePrimary</code>). If you don't set a value for those fields (i.e an empty value), they won't appear in the UI:<br><img alt="HTML Fields" src="../../images/documentcards_html_fields.png" /></p>
+| <strong>Enable result preview</strong> | If enabled, displays a preview callout when the document card image is clicked.
+| <strong>Show file icon</strong> | Hide or display the file icon in the card.
+| <strong>Compact mode</strong> | Display the cards in compact mode. </p>
 <h3 id="slider">Slider<a class="headerlink" href="#slider" title="Permanent link">&para;</a></h3>
 <p>Displays search results as a carousel using the <a href="https://flickity.metafizzy.co/">Flickity library</a> (the same used in the <a href="https://github.com/SharePoint/PnP/blob/master/Solutions/Business.StarterIntranet/app/src/components/Carousel/CarouselViewModel.ts">PnP Starter Intranet solution</a>).</p>
 <p><img alt="Slider" src="../../images/slider_layout.png" /></p>
@@ -1398,6 +1391,7 @@
                 
                   
                 
+                
               
               
                 
@@ -1475,7 +1469,7 @@
       
     </div>
     
-      <script src="../../assets/javascripts/application.ac79c3b0.js"></script>
+      <script src="../../assets/javascripts/application.808e90bb.js"></script>
       
       <script>app.initialize({version:"1.0.4",url:{base:"../.."}})</script>
       

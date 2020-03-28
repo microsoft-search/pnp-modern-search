@@ -32,7 +32,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.4.3">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.6.0">
     
     
       
@@ -40,7 +40,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/application.30686662.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/application.1b62728e.css">
       
         <link rel="stylesheet" href="../../assets/stylesheets/application-palette.a8b3c06d.css">
       
@@ -51,12 +51,12 @@
       
     
     
-      <script src="../../assets/javascripts/modernizr.74668098.js"></script>
+      <script src="../../assets/javascripts/modernizr.268332fc.js"></script>
     
     
       
         <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono&display=fallback">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
         <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
       
     
@@ -434,6 +434,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#paging-settings" class="md-nav__link">
+    Paging settings
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#styling-options" class="md-nav__link">
     Styling Options
   </a>
@@ -559,8 +566,8 @@
 
 
   <li class="md-nav__item">
-    <a href="../search-refiners/" title="Search Refiners" class="md-nav__link">
-      Search Refiners
+    <a href="../search-filters/" title="Search Filters" class="md-nav__link">
+      Search Filters
     </a>
   </li>
 
@@ -571,7 +578,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../search-pagination/" title="Search Pagination" class="md-nav__link">
+    <a href="../search-pagination.md" title="Search Pagination" class="md-nav__link">
       Search Pagination
     </a>
   </li>
@@ -583,7 +590,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../search-navigation/" title="Search Navigation" class="md-nav__link">
+    <a href="../search-navigation.md" title="Search Navigation" class="md-nav__link">
       Search Navigation
     </a>
   </li>
@@ -766,6 +773,13 @@
         <li class="md-nav__item">
   <a href="#search-settings" class="md-nav__link">
     Search Settings
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#paging-settings" class="md-nav__link">
+    Paging settings
   </a>
   
 </li>
@@ -982,8 +996,52 @@
 <td>The default refinement filters to apply to the query. Unlike URL <code>filters</code> params, these won't select the default values in the Search Filters WP if connected.</td>
 </tr>
 <tr>
-<td>Number of items to retrieve per page</td>
-<td>Quite explicit. The paging behavior is done directly by the search API (See the <em>SearchDataProvider.ts</em> file), not by the code on post-render.</td>
+<td>Enable taxonomy values localization for refiners and results</td>
+<td>If set, the Web Part will try to translate the taxonomy term IDs to their corresponding label according to the curent UI language. Refer to the <a href="#">Taxonomy values dynamic translation</a> section of this page.</td>
+</tr>
+<tr>
+<td>Language of search request</td>
+<td>The language to use for the search request. By default the search request will be made using the current UI language.</td>
+</tr>
+<tr>
+<td>Synonyms</td>
+<td>Ability to define synonyms for the search querytext. Synonyms can be configured in a two-ways mode.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="paging-settings">Paging settings<a class="headerlink" href="#paging-settings" title="Permanent link">&para;</a></h4>
+<p><img alt="Paging settings" src="../../images/paging_settings.png" /></p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Show paging</td>
+<td>Displays or not the paging control at the bottom.</td>
+</tr>
+<tr>
+<td>Number of items per page</td>
+<td>Corresponds to the number of search results to retrieve per page.</td>
+</tr>
+<tr>
+<td>Number of pages to display in range</td>
+<td>The number of page digits to display in the range.</td>
+</tr>
+<tr>
+<td>Hide navigation buttons</td>
+<td>If set, hide the previous and next page buttons.</td>
+</tr>
+<tr>
+<td>Hide first/last navigation buttons</td>
+<td>If set, hide the last and first navigation buttons.</td>
+</tr>
+<tr>
+<td>Hide navigation buttons</td>
+<td>If set, hide the previous, next, first and last if disabled (i.e. no page available).</td>
 </tr>
 </tbody>
 </table>
@@ -1002,15 +1060,11 @@
 </tr>
 <tr>
 <td>Show blank if no result</td>
-<td>Shows nothing if there is no result</td>
+<td>Shows nothing if there is no result. If a WP title is set, this will be hidden as well.</td>
 </tr>
 <tr>
 <td>Show result count</td>
-<td>Shows the result count and entered keywords</td>
-</tr>
-<tr>
-<td>Connect to a search pagination Web Part</td>
-<td>If enable, select the search pagination Web Part to use on the current page to get selected page. It is a 2 ways connection so don't forget to connect the targeted search pagination to the search results Web Part as well.</td>
+<td>Shows the result count and entered keywords.</td>
 </tr>
 <tr>
 <td>Result Layouts options</td>
@@ -1289,6 +1343,7 @@ OR
                 
                   
                 
+                
               
               
                 
@@ -1321,13 +1376,13 @@ OR
           </a>
         
         
-          <a href="../search-refiners/" title="Search Refiners" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+          <a href="../search-filters/" title="Search Filters" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
               <span class="md-flex__ellipsis">
                 <span class="md-footer-nav__direction">
                   Next
                 </span>
-                Search Refiners
+                Search Filters
               </span>
             </div>
             <div class="md-flex__cell md-flex__cell--shrink">
@@ -1366,7 +1421,7 @@ OR
       
     </div>
     
-      <script src="../../assets/javascripts/application.ac79c3b0.js"></script>
+      <script src="../../assets/javascripts/application.808e90bb.js"></script>
       
       <script>app.initialize({version:"1.0.4",url:{base:"../.."}})</script>
       

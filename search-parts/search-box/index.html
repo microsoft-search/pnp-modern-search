@@ -32,7 +32,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.4.3">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.6.0">
     
     
       
@@ -40,7 +40,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/application.30686662.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/application.1b62728e.css">
       
         <link rel="stylesheet" href="../../assets/stylesheets/application-palette.a8b3c06d.css">
       
@@ -51,12 +51,12 @@
       
     
     
-      <script src="../../assets/javascripts/modernizr.74668098.js"></script>
+      <script src="../../assets/javascripts/modernizr.268332fc.js"></script>
     
     
       
         <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono&display=fallback">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
         <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
       
     
@@ -457,8 +457,8 @@
 
 
   <li class="md-nav__item">
-    <a href="../search-refiners/" title="Search Refiners" class="md-nav__link">
-      Search Refiners
+    <a href="../search-filters/" title="Search Filters" class="md-nav__link">
+      Search Filters
     </a>
   </li>
 
@@ -469,7 +469,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../search-pagination/" title="Search Pagination" class="md-nav__link">
+    <a href="../search-pagination.md" title="Search Pagination" class="md-nav__link">
       Search Pagination
     </a>
   </li>
@@ -481,7 +481,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../search-navigation/" title="Search Navigation" class="md-nav__link">
+    <a href="../search-navigation.md" title="Search Navigation" class="md-nav__link">
       Search Navigation
     </a>
   </li>
@@ -723,7 +723,7 @@
 <tbody>
 <tr>
 <td>Enable query suggestions</td>
-<td>The search box supports query suggestions from SharePoint. Refer to the following <a href="https://docs.microsoft.com/en-us/sharepoint/search/manage-query-suggestions">article</a> to know how to add query suggestions in your SharePoint tenant (caution: it can take up to 24h for changes to take effect).</td>
+<td>The search box supports by default query suggestions from SharePoint search. Refer to the following <a href="https://docs.microsoft.com/en-us/sharepoint/search/manage-query-suggestions">article</a> to know how to add query suggestions in your SharePoint tenant (caution: it can take up to 24h for changes to take effect). You can also add your own custom suggestions providers using following this <a href="../../search-extensibility-library/getting-started#create-a-custom-query-suggestion-provider">procedure</a>.</td>
 </tr>
 <tr>
 <td>Send the query to a new page</td>
@@ -736,23 +736,11 @@
 </tbody>
 </table>
 <h4 id="search-query-enhancement">Search query enhancement<a class="headerlink" href="#search-query-enhancement" title="Permanent link">&para;</a></h4>
-<table>
-<thead>
-<tr>
-<th>Setting</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Use Natural Language Processing service</td>
-<td>Turn this option '<strong>on</strong>' if you want to enhance the query text with NLP services like LUIS. In the <em>'Service Url'</em> field, enter the URL of the Azure Function endpoint. Refer the instructions in the <a href="../../search-query-enhancer/getting-started/">search query enhancer getting started page</a> file to set up the service. In this sample, only relevant detected keywords are returned as q new query using LUIS. Enabling debug mode will show you relevant information about the entered query.</td>
-</tr>
-</tbody>
-</table>
+<p><strong>The search query enhancement feature was removed since the 3.11.0 release. If you need to use such a feature, you must now use the <a href="../../search-extensibility-library/getting-started#create-a-custom-query-modifier">Query Modifier feature</a> and the  <a href="../../search-query-enhancer/getting-started/">Search Query Enhancer function</a></strong></p>
 <hr />
                 
                   
+                
                 
               
               
@@ -831,7 +819,7 @@
       
     </div>
     
-      <script src="../../assets/javascripts/application.ac79c3b0.js"></script>
+      <script src="../../assets/javascripts/application.808e90bb.js"></script>
       
       <script>app.initialize({version:"1.0.4",url:{base:"../.."}})</script>
       

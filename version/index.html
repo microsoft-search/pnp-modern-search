@@ -32,7 +32,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.4.3">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.6.0">
     
     
       
@@ -40,7 +40,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/application.30686662.css">
+      <link rel="stylesheet" href="../assets/stylesheets/application.1b62728e.css">
       
         <link rel="stylesheet" href="../assets/stylesheets/application-palette.a8b3c06d.css">
       
@@ -51,12 +51,12 @@
       
     
     
-      <script src="../assets/javascripts/modernizr.74668098.js"></script>
+      <script src="../assets/javascripts/modernizr.268332fc.js"></script>
     
     
       
         <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono&display=fallback">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
         <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
       
     
@@ -408,8 +408,8 @@
 
 
   <li class="md-nav__item">
-    <a href="../search-parts/search-refiners/" title="Search Refiners" class="md-nav__link">
-      Search Refiners
+    <a href="../search-parts/search-filters/" title="Search Filters" class="md-nav__link">
+      Search Filters
     </a>
   </li>
 
@@ -420,7 +420,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../search-parts/search-pagination/" title="Search Pagination" class="md-nav__link">
+    <a href="../search-parts/search-pagination.md" title="Search Pagination" class="md-nav__link">
       Search Pagination
     </a>
   </li>
@@ -432,7 +432,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../search-parts/search-navigation/" title="Search Navigation" class="md-nav__link">
+    <a href="../search-parts/search-navigation.md" title="Search Navigation" class="md-nav__link">
       Search Navigation
     </a>
   </li>
@@ -604,7 +604,10 @@
                 
                   <h1>Versions</h1>
                 
-                <table>
+                <blockquote>
+<p>Since version 3.7, this solution follows a monthly release cycle meaning a new version is always available at the end of the month.</p>
+</blockquote>
+<table>
 <thead>
 <tr>
 <th>Version</th>
@@ -769,19 +772,15 @@
 <td><ul><li>Allow selecting between URL Fragment or QueryString parameter.</li><li>Refiner flashing fix.</li><li>Fixed Page token handling.</li><li>Added more handlebar helper methods.</li><li>Removed default path filter on the webpart.</li><li>Added sorting option for refiners.</li><li>Better default icon handling and support for using <a href="https://developer.microsoft.com/en-us/fabric#/styles/web/icons">OUIFR icons</a> in your templates. See <a href="../search-parts/templating/#Web-components">templating documentation</a> for more information.</li><li>Added support for rendering secondary result blocks in custom renderers.</li><li>Added toggle to include OneDrive results as a secondary result block (not currently visible without custom renderer).</li><li>Allow custom renderers to render even if there are zero search results to display.</li><li>Added fixed date refiner template.</li><li>Fix for using custom code renderer.</li><li>Upgraded to SPFx v1.9.1.</li><li>Added preview support for 'spellingSuggestion' token.</li></ul></td>
 </tr>
 <tr>
-<td>3.8.0.0</td>
-<td>Nov 4th, 2019</td>
-<td><ul><li>Moved to a dedicated repository. Added an extensibility library to write custom web components.</li><li>Bug fixes #24, #21, #19</li></ul></td>
-</tr>
-<tr>
-<td>3.9.0.0</td>
-<td>Jan 28th, 2020</td>
-<td><ul><li>Added a 'Persona' and 'File type' refiner templates for the filters Web Part (#16).</li><li>Added a 'Container tree' refiner template giving the ability to navigate trough a folder hierarchy as metadata by parsing the parent link URL segments.</li><li>Added the support of custom suggestions (#44) and query modifier (#67) for the search results Web Part.</li><li>Added the support of section background colors via theming.</li><li>Updagred to SPFx 1.10.0.</li><li>Fixed #62, #69, #31, #30, #43, #18, #28, #53, #55, #46, #47, #20, #41, #22</li></ul></td>
+<td>&gt; 3.7</td>
+<td></td>
+<td><strong>After this release, refer directrly to the <a href="https://github.com/microsoft-search/pnp-modern-search/releases">GitHub repository</a></strong></td>
 </tr>
 </tbody>
 </table>
                 
                   
+                
                 
               
               
@@ -860,7 +859,7 @@
       
     </div>
     
-      <script src="../assets/javascripts/application.ac79c3b0.js"></script>
+      <script src="../assets/javascripts/application.808e90bb.js"></script>
       
       <script>app.initialize({version:"1.0.4",url:{base:".."}})</script>
       

@@ -32,7 +32,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.4.3">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.6.0">
     
     
       
@@ -40,7 +40,7 @@
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/application.30686662.css">
+      <link rel="stylesheet" href="assets/stylesheets/application.1b62728e.css">
       
         <link rel="stylesheet" href="assets/stylesheets/application-palette.a8b3c06d.css">
       
@@ -51,12 +51,12 @@
       
     
     
-      <script src="assets/javascripts/modernizr.74668098.js"></script>
+      <script src="assets/javascripts/modernizr.268332fc.js"></script>
     
     
       
         <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono&display=fallback">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
         <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
       
     
@@ -526,8 +526,8 @@
 
 
   <li class="md-nav__item">
-    <a href="search-parts/search-refiners/" title="Search Refiners" class="md-nav__link">
-      Search Refiners
+    <a href="search-parts/search-filters/" title="Search Filters" class="md-nav__link">
+      Search Filters
     </a>
   </li>
 
@@ -538,7 +538,7 @@
 
 
   <li class="md-nav__item">
-    <a href="search-parts/search-pagination/" title="Search Pagination" class="md-nav__link">
+    <a href="search-parts/search-pagination.md" title="Search Pagination" class="md-nav__link">
       Search Pagination
     </a>
   </li>
@@ -550,7 +550,7 @@
 
 
   <li class="md-nav__item">
-    <a href="search-parts/search-navigation/" title="Search Navigation" class="md-nav__link">
+    <a href="search-parts/search-navigation.md" title="Search Navigation" class="md-nav__link">
       Search Navigation
     </a>
   </li>
@@ -838,7 +838,7 @@
 <h2 id="solution-overview">Solution overview<a class="headerlink" href="#solution-overview" title="Permanent link">&para;</a></h2>
 <p><img alt="Solution demo" src="images/react-search-refiners.gif" /></p>
 <h2 id="current-version">Current version<a class="headerlink" href="#current-version" title="Permanent link">&para;</a></h2>
-<p><img alt="Current version" src="https://img.shields.io/badge/version-3.9.0-green.svg" /></p>
+<p><img alt="Current version" src="https://img.shields.io/badge/version-3.11.0-green.svg" /></p>
 <p><strong>Get the latest release at our <a href="https://github.com/microsoft-search/pnp-modern-search/releases/latest">releases page</a>.</strong></p>
 <h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
 <p>This solution allows you to build user friendly SharePoint search experiences using SPFx in the modern interface. The main features include:</p>
@@ -850,7 +850,6 @@
 <li>Customizable refiners supporting multilingual values for taxonomy based filters.</li>
 <li>Sortable results (unique field).</li>
 <li>Refiners Web Part.</li>
-<li>Pagination Web Part.</li>
 <li>SharePoint best bets support.</li>
 <li>Search query enhancement with NLP tools (like Microsoft LUIS).</li>
 <li>Extensibility model allowing to write your own components.</li>
@@ -880,12 +879,13 @@
 <p><strong>Next you need to loop over all sites which have the web parts installed, and upgrade the App on those sites. Now the web parts should work on new and existing sites. You may use the PnP command <code>Update-PnPApp</code> to update the application.</strong></p>
 <p><strong>If you have deployed the solution as a tenant wide extension, this should not impact you.</strong></p>
 <h2 id="important-notice-on-upgrading-the-solution-from-pre-v3000">Important notice on upgrading the solution from pre v3.0.0.0<a class="headerlink" href="#important-notice-on-upgrading-the-solution-from-pre-v3000" title="Permanent link">&para;</a></h2>
-<p><strong>Because this version introduces a new standalone search refiners Web Part, you will have to reconfigure all previous refiners from the search results Web Part to this new Web Part. You can get the previous layout for filters by selecting the 'Panel' layout in the new Web Part property pane.</strong></p>
+<p><strong>Because this version introduces a new standalone search filters Web Part, you will have to reconfigure all previous refiners from the search results Web Part to this new Web Part. You can get the previous layout for filters by selecting the 'Panel' layout in the new Web Part property pane.</strong></p>
 <h2 id="disclaimer">Disclaimer<a class="headerlink" href="#disclaimer" title="Permanent link">&para;</a></h2>
 <p><strong>THIS CODE IS PROVIDED <em>AS IS</em> WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.</strong></p>
 <p><img src="https://telemetry.sharepointpnp.com/microsoft-search/pnp-modern-search" /></p>
                 
                   
+                
                 
               
               
@@ -950,7 +950,7 @@
       
     </div>
     
-      <script src="assets/javascripts/application.ac79c3b0.js"></script>
+      <script src="assets/javascripts/application.808e90bb.js"></script>
       
       <script>app.initialize({version:"1.0.4",url:{base:"."}})</script>
       
