@@ -20,7 +20,7 @@ interface ISearchResultsTemplateContext {
         hideNavigation?: boolean;
         pagingRange?: number;
         itemsCountPerPage?: number;
-    },
+    };
     actualResultsCount?: number;
     spellingSuggestion?: string;
 }
