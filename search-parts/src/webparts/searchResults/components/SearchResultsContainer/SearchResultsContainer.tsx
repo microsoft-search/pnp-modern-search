@@ -28,6 +28,8 @@ import { ISortFieldDirection } from '../../../../models/ISortFieldConfiguration'
 
 declare var System: any;
 
+const DEFAULT_IMAGE_CONTENT = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOsAAAB5CAMAAADveiavAAAAMFBMVEX///+5ubnw8PDa2tq+vr7U1NT19fXq6ur8/PzBwcG2trbt7e3Hx8fOzs7Kysrg4OBtwFM/AAAChUlEQVR4nO2b67KCIBRGFbmn8v5ve5DyFAZmxExs+9afmmmGablxs7l1HQAAAAAAAAAAAAAAAAAAAAAnhTlRh0HJb7vso53pqzGrb+vsMtQz9ZiWZV1va7pac/m2URY2VlX1CP1tpxyKL65iqMLy3OzYan7SjntVU6k1ubgaVqm12uiQmcZazS2N8VazU11XDddG+GlXrZwv9QrTCylX7cbeergoGjgouWqxFlF2Lil/KLmKew1lx4J+TMiVReViQa1HyHWKS+P3A0vHVfJI1Q7vt0bGVcXzFZvvxDqTuOi4uo3rnHPVU+/SP5BxPRpXPVmblqXjetm8r+nYdTKkMO4ST4KOqz6Uh6W4/moSsnRc4/E104VX1SWyz63Rce2GB9k5Gda7am+fZSm5vqyH9V11YStLyXWZ59ideY4fbCK2kSXl6mGDcCoz2kxP66uxFzXXPMml5CgbU3A9tGbK5tSqeTTOnsWVzQnTzTt7Etd0VPsw9PxH9hyuWdUoskRdJXtMOrkOvJGl6apFtLf4Yjfa3vRIui7TNvsvK/nLfctrZCm6hhmPXf/0kS1aHqpngq7r5O56HoA9V0sJ19AJ6LnKVS5Edj8tEXeV9xVxL7s32JB3ldG0zRyKKlHXWPUwFF23a04ndi1VJeharErPtVyVnKsW5UfYqLm6D07rUXMd4ApXuMK1EWLXcqi5OsPfxnDj4WYkti4h1ftc1MXjP8KqIx3XCq3BtRF+z/VHzvuHexw9kzXQruk7K7f7Ob35kDGwtGSnZl1l+fz8kWtFEb6mDnk1gjJ1L5m1G1aPGm01W9u2aqfZUC20s2ta1aMlq4Rs910FAAAAAAAAAAAAAAAAANrkD0o1KjRxIes1AAAAAElFTkSuQmCC";
+
 export default class SearchResultsContainer extends React.Component<ISearchResultsContainerProps, ISearchResultsContainerState> {
 
     private _searchWpRef: HTMLElement;
@@ -125,6 +127,11 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             }
         }
 
+        // WebPart Title
+        if (this.props.webPartTitle && this.props.webPartTitle.length > 0) {
+            renderWebPartTitle = <WebPartTitle title={this.props.webPartTitle} updateProperty={null} displayMode={DisplayMode.Read} />;
+        }
+    
         let totalPrimaryAndSecondaryResults = this.state.results.RelevantResults.length;
         if (this.state.results.SecondaryResults.length > 0) {
             totalPrimaryAndSecondaryResults += this.state.results.SecondaryResults.reduce((sum, block) => sum += block.Results.length, 0);
@@ -132,12 +139,17 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
 
         // WebPart content
         if (totalPrimaryAndSecondaryResults === 0
-            && this.props.displayMode === DisplayMode.Edit
             && this.props.showBlank
             && this.props.selectedLayout !== ResultsLayoutOption.Debug) {
-            renderWpContent = <MessageBar messageBarType={MessageBarType.info}>{strings.ShowBlankEditInfoMessage}</MessageBar>;
-        } else {
 
+            renderWebPartTitle = null;
+
+            if (this.props.displayMode === DisplayMode.Edit) {
+                renderWpContent = <MessageBar messageBarType={MessageBarType.info}>{strings.ShowBlankEditInfoMessage}</MessageBar>;
+            }
+            
+        } else {
+            
             let templateContext = {
                 queryModification: this.state.results.QueryModification,
                 items: this.state.results.RelevantResults,
@@ -164,7 +176,10 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 strings: strings,
                 showBlank: this.props.showBlank,
                 themeVariant: this.props.themeVariant,
-                spellingSuggestion: items.SpellingSuggestion
+                spellingSuggestion: items.SpellingSuggestion,
+                utils: {
+                    defaultImage: DEFAULT_IMAGE_CONTENT
+                }
             };
 
             // Merge with property pane template parameters
@@ -187,11 +202,6 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                     {renderOverlay}
                     {renderSearchResultTemplate}
                 </div>;
-        }
-
-        // WebPart Title
-        if (this.props.webPartTitle && this.props.webPartTitle.length > 0) {
-            renderWebPartTitle = <WebPartTitle title={this.props.webPartTitle} updateProperty={null} displayMode={DisplayMode.Read} />;
         }
 
         // Error Message
@@ -501,7 +511,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                         existingFilters.map((existingFilter) => {
                             updatedValues.push({
                                 RefinementCount: value.RefinementCount,
-                                RefinementName: existingFilter.localizedTermLabel,
+                                RefinementName: value.RefinementName,
                                 RefinementToken: value.RefinementToken,
                                 RefinementValue: existingFilter.localizedTermLabel,
                             } as IRefinementValue);

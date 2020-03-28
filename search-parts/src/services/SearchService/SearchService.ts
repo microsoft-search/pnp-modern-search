@@ -111,7 +111,7 @@ class SearchService implements ISearchService {
         // Search paging option is one based
         let page = pageNumber ? pageNumber : 1;
 
-        searchQuery.ClientType = 'ContentSearchRegular';
+        searchQuery.ClientType = 'PnPModernSearch';
         searchQuery.Properties = [{
             Name: "EnableDynamicGroups",
             Value: {
@@ -291,7 +291,7 @@ class SearchService implements ISearchService {
                         values.push({
                             RefinementCount: parseInt(item.RefinementCount, 10),
                             // replace string;# for calculated columns https://github.com/SharePoint/sp-dev-solutions/issues/304
-                            RefinementName: this._formatDate(item.RefinementName).replace("string;#", ""), // This value will appear in the selected filter bar
+                            RefinementName: refiner.Name, // This value will appear in the selected filter bar
                             RefinementToken: item.RefinementToken,
                             RefinementValue: this._formatDate(item.RefinementValue).replace("string;#", ""), // This value will appear in the filter panel
                         });
@@ -434,6 +434,20 @@ class SearchService implements ISearchService {
         const batchId = Guid.newGuid().toString();
         let verticalInfos: ISearchVerticalInformation[] = [];
 
+        // Update tokens in query template for all verticals
+        let tokenPromises: Promise<string>[] = [];
+        
+        tokenPromises = searchVerticals.map(vertical => {
+            return this._tokenService.replaceQueryVariables(vertical.queryTemplate);
+        });
+
+        const tokens = await Promise.all(tokenPromises);
+
+        // Update verticals with new infos
+        tokens.map((token, i) => {
+            searchVerticals[i].queryTemplate = token;
+        });
+
         const promises = searchVerticals.map(async vertical => {
 
             // Specify the same query parameters as the current vertical one to be sure to get the same total rows
@@ -444,13 +458,15 @@ class SearchService implements ISearchService {
             // More info here https://blog.mastykarz.nl/inconvenient-content-targeting-user-segments-search-rest-api/
             const rowLimit: string = enableQueryRules ? '1' : '0';
 
+            
+
             // See http://www.silver-it.com/node/127 for quotes handling with GET requests
             url = UrlHelper.addOrReplaceQueryStringParam(url, 'querytext', `'${encodeURIComponent(queryText.replace(/'/g, '\'\''))}'`);
             url = UrlHelper.addOrReplaceQueryStringParam(url, 'rowlimit', rowLimit);
             url = UrlHelper.addOrReplaceQueryStringParam(url, 'querytemplate', `'${vertical.queryTemplate}'`);
             url = UrlHelper.addOrReplaceQueryStringParam(url, 'trimduplicates', "'false'");
             url = UrlHelper.addOrReplaceQueryStringParam(url, 'properties', "'EnableDynamicGroups:true,EnableMultiGeoSearch:true'");
-            url = UrlHelper.addOrReplaceQueryStringParam(url, 'clienttype', "'ContentSearchRegular'");
+            url = UrlHelper.addOrReplaceQueryStringParam(url, 'clienttype', "'PnPModernSearch'");
             url = UrlHelper.addOrReplaceQueryStringParam(url, 'enablequeryrules', `${enableQueryRules}`);
 
             if (this._queryCulture) {

@@ -139,16 +139,16 @@ export default class SearchRefinersContainer extends React.Component<ISearchRefi
       // if the Sort Option is Alphabetical, reorder the values
       if (refinerConfig && refinerConfig.refinerSortType === RefinersSortOption.Alphabetical) {
         let sortedValues = refinementResult.Values.sort((a, b) => {
-          let textA = a.RefinementName.toLocaleUpperCase();
-          let textB = b.RefinementName.toLocaleUpperCase();
+          let textA = a.RefinementValue.toLocaleUpperCase();
+          let textB = b.RefinementValue.toLocaleUpperCase();
           return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
         });
         availableFilters[index].Values = sortedValues;
       }
       else if (refinerConfig && refinerConfig.refinerSortType === RefinersSortOption.ByNumberOfResults) {
         let sortedValues = refinementResult.Values.sort((a, b) => {
-          let textA = a.RefinementName.toLocaleUpperCase();
-          let textB = b.RefinementName.toLocaleUpperCase();
+          let textA = a.RefinementValue.toLocaleUpperCase();
+          let textB = b.RefinementValue.toLocaleUpperCase();
           return (a.RefinementCount < b.RefinementCount) ? -1 : (a.RefinementCount > b.RefinementCount) ? 1 : (
             // on same number, alphabetically
             (textA < textB) ? -1 : (textA > textB) ? 1 : 0

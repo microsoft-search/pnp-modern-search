@@ -9,6 +9,9 @@ import * as strings from 'SearchRefinersWebPartStrings';
 import { Loader } from "../../../../../services/TemplateService/LoadHelper";
 import { ITheme } from "@uifabric/styling";
 
+// CSS
+import styles from './DateRangeTemplate.module.scss';
+
 export interface IDateRangeTemplateState extends IBaseRefinerTemplateState {
     selectedFromDate: Date;
     selectedToDate: Date;
@@ -99,7 +102,12 @@ export default class DateRangeTemplate extends React.Component<IDateRangeTemplat
             fromProps.maxDate = maxDate;
         }
 
-        return <div>
+        return <div className={styles.pnpRefinersTemplateDateRange}>
+            {
+                this.props.showValueFilter ? 
+                    <div className='pnp-font-s'>Value filters are not allowed for dates. Clear 'show filter' to remove this message</div>
+                    : null
+            }
             <DatePicker {...fromProps} />
             <DatePicker {...toProps} />
             <Link theme={this.props.themeVariant as ITheme} onClick={this._clearFilters} disabled={!this.state.selectedToDate && !this.state.selectedFromDate}>{strings.Refiners.ClearFiltersLabel}</Link>
@@ -197,7 +205,7 @@ export default class DateRangeTemplate extends React.Component<IDateRangeTemplat
         if ((window as any).searchHBHelper) {
 
             if (startDate.localeCompare('min') !== 0) {
-                filterDisplayValue.push(`> ${this._onFormatDate(new Date(startDate))}`);
+                filterDisplayValue.push(`>= ${this._onFormatDate(new Date(startDate))}`);
             }
 
             if (endDate.localeCompare('max') !== 0) {
@@ -209,7 +217,7 @@ export default class DateRangeTemplate extends React.Component<IDateRangeTemplat
             RefinementCount: 0,
             RefinementName: this.props.refinementResult.FilterName,
             RefinementToken: rangeConditions,
-            RefinementValue: filterDisplayValue.length > 0 ? `(${filterDisplayValue.join(",")})` : this.props.refinementResult.FilterName
+            RefinementValue: filterDisplayValue.length > 0 ? `${filterDisplayValue.join(",")}` : this.props.refinementResult.FilterName
         };
 
         if (this.state.refinerSelectedFilterValues.length > 0) {

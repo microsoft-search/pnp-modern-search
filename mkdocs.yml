@@ -8,7 +8,7 @@ nav:
       - Getting started: search-parts/getting-started.md
       - Search Box: search-parts/search-box.md
       - Search Results: search-parts/search-results.md
-      - Search Refiners: search-parts/search-refiners.md
+      - Search Filters: search-parts/search-filters.md
       - Search Pagination: search-parts/search-pagination.md
       - Search Navigation: search-parts/search-navigation.md
       - Search Verticals: search-parts/search-verticals.md

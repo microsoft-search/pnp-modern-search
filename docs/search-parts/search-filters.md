@@ -1,5 +1,5 @@
 
-![Search Refiners](../images/search-refiners-property-pane.png)
+![Search Filters](../images/search-filters-property-pane.png)
 
 #### Refiner Options
 
