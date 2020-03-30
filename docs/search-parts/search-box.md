@@ -16,6 +16,6 @@ Placeholder text | The placeholder text to display in the search box.
 
 #### Search query enhancement
 
-**The search query enhancement feature was removed since the 3.11.0 release. If you need to use such a feature, you must now use the [Query Modifier feature](../../search-extensibility-library/getting-started#create-a-custom-query-modifier) and the  [Search Query Enhancer function](../search-query-enhancer/getting-started.md)**
+**The search query enhancement feature was removed since the 3.11.0 release. If you need to use such a feature, you must now use the [Query Modifier feature](../../search-extensibility-library/getting-started#create-a-custom-query-modifier) and the [Search Query Enhancer function](../search-query-enhancer/getting-started.md)**
 
 ---
