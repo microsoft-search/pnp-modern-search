@@ -519,7 +519,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                     } else {
 
                         // Keep only terms (L0). The crawl property ows_taxid_xxx return term sets too.
-                        if (!/(GTSet|GPP|GP0)/i.test(value.RefinementName)) {
+                        if (!/(GTSet|GPP|GP0)/i.test(value.RefinementValue)) {
                             updatedValues.push(value);
                         }
                     }
