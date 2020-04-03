@@ -145,6 +145,14 @@ If provided layouts don't meet your requirements, you can modifiy them or start 
 
 ![Edit Template](../images/edit_template.png)
 
+### Styling
+
+You can write your own CSS styles inside templates. However, all CSS rules (including `@media` rules) will be prefixed automatically by an unique ID according to the follwoing pattern (**pnp-modern-search-template_\<Web Part instance ID\>**) to make sure styles are isolated fronm other Web Parts on the page.
+
+#### Sanitized HTML
+
+The HTML is sanitized automatically preventing XSS attacks using [`DOMPurify`](https://github.com/cure53/DOMPurify). It means for instance, you cannot add your own `<script>` tags or inline JavaScript.
+
 ### Handlebars helpers
 
 The following custom helpers are available in addition to the [handlebars-helpers](https://github.com/helpers/handlebars-helpers):

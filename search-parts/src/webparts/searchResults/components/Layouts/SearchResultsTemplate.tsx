@@ -72,10 +72,14 @@ export default class SearchResultsTemplate extends React.Component<ISearchResult
 
             // Get <style> tags from Handlebars template content and prefix all CSS rules by the Web Part instance ID to isolate styles
             const styles = templateAsHtml.getElementsByTagName("style"); 
-            let prefixedStyles = '';
-            let i,j = 0;
+            let prefixedStyles: string[] = [];
+            let i,j,k = 0;
 
             if (styles.length > 0) {
+
+                // The prefixe for all CSS selectors
+                const elementPrefixId = `${TEMPLATE_ID_PREFIX}${this.props.instanceId}`;
+
                 for (i = 0; i < styles.length; i++) {
                     const style = styles[i];
                     const sheet: any = style.sheet; 
@@ -83,22 +87,29 @@ export default class SearchResultsTemplate extends React.Component<ISearchResult
                         const cssRules = (sheet as CSSStyleSheet).cssRules;
                         
                         for (j = 0; j < cssRules.length; j++) {
-                            const rule = cssRules.item(j);
+                            const cssRule: CSSRule = cssRules.item(j);
+                            
+                            // CSS Media rule
+                            if ((cssRule as CSSMediaRule).media) {
+                                const cssMediaRule = cssRule as CSSMediaRule;
 
-                            const elementPrefixId = `${TEMPLATE_ID_PREFIX}${this.props.instanceId}`;
+                                let cssPrefixedMediaRules = '';
+                                for (k= 0; k < cssMediaRule.cssRules.length; k++) {
+                                    const cssRuleMedia = cssMediaRule.cssRules.item(k);
+                                    cssPrefixedMediaRules += `#${elementPrefixId} ${cssRuleMedia.cssText}`;
+                                }
 
-                            // Check if the cssText already contains an instanceId restriction (for instance using #aequos_template{{@root.instanceId}} in the template). In this case, we dont prefix the CSS rule.
-                            if (rule.cssText.indexOf(elementPrefixId) === -1) {
-                                prefixedStyles += `#${elementPrefixId} ${rule.cssText}`;
+                                prefixedStyles.push(`@media ${cssMediaRule.conditionText} { ${cssPrefixedMediaRules} }`);
+
                             } else {
-                                prefixedStyles += rule.cssText;
+                                prefixedStyles.push(`#${elementPrefixId} ${cssRule.cssText}`);
                             }
                         }
                     }
                 }
             }
 
-            template = `<style>${prefixedStyles.trim()}</style><div id="${TEMPLATE_ID_PREFIX}${this.props.instanceId}">${templateAsHtml.body.innerHTML}</div>`;
+            template = `<style>${prefixedStyles.join(' ')}</style><div id="${TEMPLATE_ID_PREFIX}${this.props.instanceId}">${templateAsHtml.body.innerHTML}</div>`;
         }
 
         this.setState({
