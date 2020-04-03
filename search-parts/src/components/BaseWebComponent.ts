@@ -34,11 +34,17 @@ export abstract class BaseWebComponent extends HTMLElement {
                 let value = this.attributes.item(i).value; 
                 let attr = this.attributes.item(i).name;  
 
-                // Booleans
-                if (/^(true|false)$/.test(value)) {
-                    props[camelCase(attr)] = (value === 'true');
-                } else {
-                    props[camelCase(attr)] = value;
+                // Resolve 'data-*' attribute name
+                const matches = attr.match(/data-(.+)/);
+                if (matches && matches.length === 2) {
+                    attr = matches[1];
+
+                    // Booleans
+                    if (/^(true|false)$/.test(value)) {
+                        props[camelCase(attr)] = (value === 'true');
+                    } else {
+                        props[camelCase(attr)] = value;
+                    }
                 }
             }         
         }
