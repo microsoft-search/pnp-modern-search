@@ -12,8 +12,8 @@ import { BaseWebComponent } from './BaseWebComponent';
 import * as ReactDOM from 'react-dom';
 import { ITooltipHostProps, TooltipHost, ITooltipStyles, Shimmer, ShimmerElementsGroup, ShimmerElementType, IShimmerElement } from 'office-ui-fabric-react';
 import { DEFAULT_CELL_STYLE_PROPS, DEFAULT_ROW_HEIGHTS } from 'office-ui-fabric-react/lib/components/DetailsList/DetailsRow.styles';
+import * as DOMPurify from 'dompurify';
 
-const SHIMMER_INITIAL_ITEMS = 10;
 const DEFAULT_SHIMMER_HEIGHT = 7;
 const SHIMMER_LINE_VS_CELL_WIDTH_RATIO = 0.95;
 
@@ -224,7 +224,7 @@ export class DetailsListComponent extends React.Component<DetailsListComponentPr
                                 }
                             }
 
-                            renderColumnValue = <span title={!hasError ? value : ''} dangerouslySetInnerHTML={{ __html: value }}></span>;
+                            renderColumnValue = <span title={!hasError ? value : ''} dangerouslySetInnerHTML={{ __html: DOMPurify.default.sanitize(value) }}></span>;
 
                             // Make the value clickable to the corresponding result item 
                             if (column.isResultItemLink) {
