@@ -21,6 +21,9 @@ define([], function() {
       ShowCounts: {
         PropertyLabel: "Show result counts"
       },
+      DefaultVerticalQuerystringParam: {
+        PropertyLabel: "Default vertical querystring parameter"
+      },
       SearchResultsDataSource: {
         PropertyLabel: "Connect to a search results Web Part"
       }

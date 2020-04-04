@@ -21,6 +21,9 @@ define([], function() {
       ShowCounts: {
         PropertyLabel: "Toon aantal resultaten"
       },
+      DefaultVerticalQuerystringParam: {
+        PropertyLabel: "Default vertical querystring parameter"
+      },
       SearchResultsDataSource: {
         PropertyLabel: "Verbind met een zoek webonderdeel"
       }

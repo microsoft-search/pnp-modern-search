@@ -20,6 +20,9 @@ declare interface ISearchVerticalsWebPartStrings {
     ShowCounts: {
       PropertyLabel: string;
     },
+    DefaultVerticalQuerystringParam: {
+      PropertyLabel: string;
+    },
     SearchResultsDataSource:{
       PropertyLabel: string;
     } 

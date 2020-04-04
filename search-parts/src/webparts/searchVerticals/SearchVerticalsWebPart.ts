@@ -1,8 +1,8 @@
 ﻿import * as React from 'react';
 import * as ReactDom from 'react-dom';
-import { Version, Guid, DisplayMode } from '@microsoft/sp-core-library';
+import { Version, Guid, DisplayMode, UrlQueryParameterCollection } from '@microsoft/sp-core-library';
 import { BaseClientSideWebPart } from "@microsoft/sp-webpart-base";
-import { IPropertyPaneConfiguration, IPropertyPaneField, PropertyPaneDropdown, PropertyPaneToggle } from "@microsoft/sp-property-pane";
+import { IPropertyPaneConfiguration, IPropertyPaneField, PropertyPaneDropdown, PropertyPaneToggle, PropertyPaneTextField } from "@microsoft/sp-property-pane";
 import * as strings from 'SearchVerticalsWebPartStrings';
 import { ISearchVerticalsWebPartProps } from './ISearchVerticalsWebPartProps';
 import ISearchVerticalsContainerProps from './components/SearchVerticalsContainer/ISearchVerticalsContainerProps';
@@ -37,9 +37,22 @@ export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearc
   public render(): void {
 
     let renderElement = null;
+    let defaultVerticalKey: string = null;
     let searchVerticals: ISearchVertical[] = cloneDeep(this.properties.verticals);
 
     if (this.properties.verticals.length > 0) {
+
+      // Check if we can find a default vertical to set
+      if(this.properties.defaultVerticalQuerystringParam){
+        const queryParms: UrlQueryParameterCollection = new UrlQueryParameterCollection(window.location.href.toLowerCase());
+        const defaultQueryVal: string = queryParms.getValue(this.properties.defaultVerticalQuerystringParam.toLowerCase());
+        if(defaultQueryVal){
+          const defaultSelected: ISearchVertical = this.properties.verticals.find(v => v.tabName.toLowerCase() == defaultQueryVal);
+          if(defaultSelected){
+            defaultVerticalKey = defaultSelected.key;
+          }
+        }       
+      }
 
       // If the dynamic property exists, it means the Web Part ins connected to a search results Web Part
       if (this._searchResultSourceData) {
@@ -67,7 +80,8 @@ export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearc
           verticals: searchVerticals,
           onVerticalSelected: this.onVerticalSelected,
           showCounts: this.properties.showCounts,
-          themeVariant: this._themeVariant
+          themeVariant: this._themeVariant,
+          defaultVerticalKey: defaultVerticalKey
         } as ISearchVerticalsContainerProps
       );
 
@@ -237,6 +251,9 @@ export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearc
       settingFields.push(
         PropertyPaneToggle('showCounts', {
           label: strings.PropertyPane.ShowCounts.PropertyLabel
+        }),
+        PropertyPaneTextField('defaultVerticalQuerystringParam', {
+          label: strings.PropertyPane.DefaultVerticalQuerystringParam.PropertyLabel
         })
       );
     }
