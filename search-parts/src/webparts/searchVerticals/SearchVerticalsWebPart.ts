@@ -153,6 +153,10 @@ export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearc
     return Version.parse('1.0');
   }
 
+  protected get disableReactivePropertyChanges(): boolean {
+    return true;
+  }
+
   protected async loadPropertyPaneResources(): Promise<void> {
 
     // tslint:disable-next-line:no-shadowed-variable
