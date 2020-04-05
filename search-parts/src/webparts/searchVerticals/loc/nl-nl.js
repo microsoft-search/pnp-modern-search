@@ -22,7 +22,7 @@ define([], function() {
         PropertyLabel: "Toon aantal resultaten"
       },
       DefaultVerticalQuerystringParam: {
-        PropertyLabel: "Default vertical querystring parameter"
+        PropertyLabel: "Standaard vertical querystring parameter"
       },
       SearchResultsDataSource: {
         PropertyLabel: "Verbind met een zoek webonderdeel"
