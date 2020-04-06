@@ -1,6 +1,6 @@
 ## Summary
 
-Thissolution contains all search Web Parts you can use on your SharePoint modern pages.
+This solution contains all search Web Parts you can use on your SharePoint modern pages.
 
 ## Used SharePoint Framework Version ##
 
