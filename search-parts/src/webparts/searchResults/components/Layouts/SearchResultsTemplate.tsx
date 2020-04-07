@@ -67,7 +67,7 @@ export default class SearchResultsTemplate extends React.Component<ISearchResult
         if (template) {
 
             // Sanitize the template HTML
-            template = template ? this._domPurify.sanitize(`${template}`) : template;
+            template = this._domPurify.sanitize(`${template}`);
             const templateAsHtml = new DOMParser().parseFromString(template, "text/html");
 
             // Get <style> tags from Handlebars template content and prefix all CSS rules by the Web Part instance ID to isolate styles
