@@ -40,7 +40,7 @@ export abstract class BaseWebComponent extends HTMLElement {
                     attr = matches[1];
 
                     // Booleans
-                    if (/^(true|false)$/.test(value)) {
+                    if (/^(true|false)$/i.test(value)) {
                         props[camelCase(attr)] = (value === 'true');
                     } else {
                         props[camelCase(attr)] = value;
