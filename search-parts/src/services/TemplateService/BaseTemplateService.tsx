@@ -370,11 +370,11 @@ abstract class BaseTemplateService {
         });
 
         // Register slider component as partial 
-        let sliderTemplate = Handlebars.compile(`<pnp-slider-component items="{{items}}" options="{{options}}" template="{{@partial-block}}"></pnp-slider-component>`);
+        let sliderTemplate = Handlebars.compile(`<pnp-slider-component data-items="{{items}}" data-options="{{options}}" data-template="{{@partial-block}}"></pnp-slider-component>`);
         Handlebars.registerPartial('slider', sliderTemplate);
 
         // Register live persona wrapper as partial
-        let livePersonaTemplate = Handlebars.compile(`<pnp-live-persona upn="{{upn}}" disable-hover="{{disableHover}}" template="{{@partial-block}}"></live-persona>`);
+        let livePersonaTemplate = Handlebars.compile(`<pnp-live-persona data-upn="{{upn}}" data-disable-hover="{{disableHover}}" data-template="{{@partial-block}}"></live-persona>`);
         Handlebars.registerPartial('livepersona', livePersonaTemplate);        
     }
 

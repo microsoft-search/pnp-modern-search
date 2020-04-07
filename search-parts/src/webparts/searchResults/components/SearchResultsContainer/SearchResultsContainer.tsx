@@ -119,6 +119,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                         templateService={this.props.templateService}
                         templateContent={placeHolderContent}
                         templateContext={templateContext}
+                        instanceId={this.props.instanceId}
                     />;
                 } else {
                     // Use default shimmers
@@ -192,6 +193,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                         templateService={this.props.templateService}
                         templateContent={TemplateService.getTemplateMarkup(this.props.templateContent)}
                         templateContext={templateContext}
+                        instanceId={this.props.instanceId}
                     />;
             }
 
