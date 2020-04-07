@@ -147,7 +147,7 @@ If provided layouts don't meet your requirements, you can modifiy them or start 
 
 ### Styling
 
-You can write your own CSS styles inside templates. However, all CSS rules (including `@media` rules) will be prefixed automatically by an unique ID according to the follwoing pattern (**pnp-modern-search-template_\<Web Part instance ID\>**) to make sure styles are isolated fronm other Web Parts on the page.
+You can write your own CSS styles inside templates. However, all CSS rules (including `@media` rules) will be prefixed automatically by an unique ID according to the follwoing pattern (**pnp-modern-search-template_\<Web Part instance ID\>**) to make sure styles are isolated from other Web Parts on the page.
 
 #### Sanitized HTML
 
