@@ -200,10 +200,10 @@ The web part has a couple of helper web-components to ease rendering, used by th
 - fabric-icon - You only need to set one property, which are evaluated in order if multiple ones are set.
    ```handlebars
    <pnp-fabric-icon
-    image-url='[url to icon - pri 1]'
-    file-extension='[file extension - pri 2]'
-    icon-name='[office ui fabric icon name - pri 3]'
-    size='16 | 20 | 32 (default) | 40 | 48 | 64 | 96'
+    data-image-url='[url to icon - pri 1]'
+    data-file-extension='[file extension - pri 2]'
+    data-icon-name='[office ui fabric icon name - pri 3]'
+    data-size='16 | 20 | 32 (default) | 40 | 48 | 64 | 96'
     >
     </pnp-fabric-icon>
     ```

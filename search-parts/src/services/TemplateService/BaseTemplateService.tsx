@@ -544,7 +544,7 @@ abstract class BaseTemplateService {
 
         this.UseOldSPIcons = templateContent && templateContent.indexOf("{{IconSrc}}") !== -1;
 
-        if (templateContent && templateContent.indexOf("fabric-icon") !== -1) {
+        if (templateContent && (templateContent.indexOf("fabric-icon") !== -1 || templateContent.indexOf("details-list") !== -1 || templateContent.indexOf("document-card") !== -1) ) {
             // load CDN for icons
             Loader.LoadUIFabricIcons();
         }
