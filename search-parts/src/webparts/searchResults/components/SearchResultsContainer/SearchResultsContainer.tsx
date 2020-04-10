@@ -267,7 +267,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
 
         let executeSearch = false;
         let isPageUpdated = false;
-        let selectedPage = 1;
+        let selectedPage = this.props.selectedPage || 1;
 
         // New props are passed to the component when the search query has been changed
         if (!isEqual(this.props, prevProps)) {
@@ -284,10 +284,11 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 // - A search vertical is selected (i.e. query template is different)
                 // - A new query is performed via the search box of URL trigger (query keywords is different)
                 this.props.searchService.refinementFilters = [];
+                // Reset page selection
+                selectedPage = 1;
             }
 
-            if (this.props.selectedPage !== prevProps.selectedPage) {
-                selectedPage = this.props.selectedPage;
+            if (selectedPage  !== prevProps.selectedPage) {
                 isPageUpdated = true;
             }
         }
