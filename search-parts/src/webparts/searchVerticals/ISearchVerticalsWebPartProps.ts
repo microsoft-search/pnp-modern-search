@@ -13,6 +13,11 @@ export interface ISearchVerticalsWebPartProps {
     showCounts: boolean;
 
     /**
+     * Indicates which querystring parameter we need to try and get
+     */
+    defaultVerticalQuerystringParam: string;
+
+    /**
      * The connected search results Web Part data source refrence
      */
     searchResultsDataSourceReference: string;

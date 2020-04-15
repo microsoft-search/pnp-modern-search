@@ -1,6 +1,7 @@
 import * as Handlebars from 'handlebars';
 import { initializeIcons } from '@uifabric/icons';
 import { initializeFileTypeIcons } from '@uifabric/file-type-icons';
+import { GlobalSettings, warn } from '@uifabric/utilities';
 
 export class Loader {
     public static async LoadHandlebarsHelpers() {
@@ -49,9 +50,15 @@ export class Loader {
     }
 
     public static LoadUIFabricIcons() {
-        //initializeFileTypeIcons('https://spoprod-a.akamaihd.net/files/fabric/assets/item-types-fluent/');
-        initializeFileTypeIcons();
-        initializeIcons();
-
+        const icons = GlobalSettings.getValue("icons");
+        if (icons && !icons["pagelink"]) {
+            //load regular fabric icons if not present
+            initializeIcons();
+        }
+        if (icons && !icons["spo16_svg"]) {
+            // load file type icons if not present
+            initializeFileTypeIcons('https://spoprod-a.akamaihd.net/files/fabric/assets/item-types-fluent/');
+            //initializeFileTypeIcons();
+        }
     }
 }

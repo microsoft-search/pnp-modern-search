@@ -145,6 +145,14 @@ If provided layouts don't meet your requirements, you can modifiy them or start 
 
 ![Edit Template](../images/edit_template.png)
 
+### Styling
+
+You can write your own CSS styles inside templates. However, all CSS rules (including `@media` rules) will be prefixed automatically by an unique ID according to the follwoing pattern (**pnp-modern-search-template_\<Web Part instance ID\>**) to make sure styles are isolated from other Web Parts on the page.
+
+#### Sanitized HTML
+
+The HTML is sanitized automatically preventing XSS attacks using [`DOMPurify`](https://github.com/cure53/DOMPurify). It means for instance, you cannot add your own `<script>` tags or inline JavaScript.
+
 ### Handlebars helpers
 
 The following custom helpers are available in addition to the [handlebars-helpers](https://github.com/helpers/handlebars-helpers):
@@ -192,10 +200,10 @@ The web part has a couple of helper web-components to ease rendering, used by th
 - fabric-icon - You only need to set one property, which are evaluated in order if multiple ones are set.
    ```handlebars
    <pnp-fabric-icon
-    image-url='[url to icon - pri 1]'
-    file-extension='[file extension - pri 2]'
-    icon-name='[office ui fabric icon name - pri 3]'
-    size='16 | 20 | 32 (default) | 40 | 48 | 64 | 96'
+    data-image-url='[url to icon - pri 1]'
+    data-file-extension='[file extension - pri 2]'
+    data-icon-name='[office ui fabric icon name - pri 3]'
+    data-size='16 | 20 | 32 (default) | 40 | 48 | 64 | 96'
     >
     </pnp-fabric-icon>
     ```

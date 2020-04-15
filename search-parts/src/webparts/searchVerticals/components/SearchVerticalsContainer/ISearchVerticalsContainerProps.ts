@@ -19,6 +19,11 @@ interface ISearchVerticalsContainerProps {
   showCounts: boolean;
 
   /**
+  * Indicates which vertical needs to be selected by default
+  */
+  defaultVerticalKey: string;
+
+  /**
    * The current theme variant
    */
   themeVariant: IReadonlyTheme | undefined;
