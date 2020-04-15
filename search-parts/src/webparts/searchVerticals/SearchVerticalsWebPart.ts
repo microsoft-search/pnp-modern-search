@@ -47,7 +47,7 @@ export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearc
         const queryParms: UrlQueryParameterCollection = new UrlQueryParameterCollection(window.location.href.toLowerCase());
         const defaultQueryVal: string = queryParms.getValue(this.properties.defaultVerticalQuerystringParam.toLowerCase());
         if(defaultQueryVal){
-          const defaultSelected: ISearchVertical = this.properties.verticals.find(v => v.tabName.toLowerCase() == defaultQueryVal);
+          const defaultSelected: ISearchVertical = this.properties.verticals.find(v => v.tabName.toLowerCase() == decodeURIComponent(defaultQueryVal));
           if(defaultSelected){
             defaultVerticalKey = defaultSelected.key;
           }
