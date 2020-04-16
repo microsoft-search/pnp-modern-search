@@ -181,6 +181,7 @@ Setting | Description
 `{{#times 10}}<span>{{this}}</span>{{/times}}` | Iterate X times over a block
 `{{#group items by="owstaxidmetadataalltagsinfo"}}` | Group items by a specific results property. See [https://github.com/shannonmoeller/handlebars-group-by](https://github.com/shannonmoeller/handlebars-group-by) for usage.
 `{{#getAttachments LinkOfficeChild}} <a href="{{url}}">{{fileName}}</href> {{/getAttachments}}`| Get Attachments is Handlebars block helper intended to be used with the context variables it provides like this (url and filename) in the example.The helper is intended to be used only with the LinkOfficeChild managed property wich is the default managed property for list attachments.
+`{{getPageContext "property"}}` | Retrieve SPFx page context data to show in the template. See [https://docs.microsoft.com/en-us/javascript/api/sp-page-context/pagecontext](https://docs.microsoft.com/en-us/javascript/api/sp-page-context/pagecontext) for possible values. Example `{{getPageContext "user.displayName"}}` `{{getPageContext "cultureInfo.currentUICultureName"}}`.<br>**Note: Casing matches the object model.**
  
 
 You can also define your own in the *BaseTemplateService.ts* file. See [helper-moment](https://github.com/helpers/helper-moment) for date samples using moment.
