@@ -3,7 +3,7 @@ import 'core-js/modules/es.string.includes';
 import 'core-js/modules/es.number.is-nan';
 import * as Handlebars from 'handlebars';
 import { ISearchResult } from '../../models/ISearchResult';
-import { isEmpty, uniqBy, uniq, trimEnd } from '@microsoft/sp-lodash-subset';
+import { isEmpty, uniqBy, uniq, trimEnd, get } from '@microsoft/sp-lodash-subset';
 import * as strings from 'SearchResultsWebPartStrings';
 import { Text } from '@microsoft/sp-core-library';
 import { DomHelper } from '../../helpers/DomHelper';
@@ -186,15 +186,27 @@ abstract class BaseTemplateService {
             let url = '';
             if (!isEmpty(item)) {
                 if (!isEmpty(item.ServerRedirectedURL)) url = item.ServerRedirectedURL;
-                else if (item.FileType && ['png','jpeg','jpg','bmp','tif','tiff','gif','psd','ind','indd','indt','svg','svgz','eps'].indexOf(item.FileType) !== -1) {
+                else if (item.FileType && ['png', 'jpeg', 'jpg', 'bmp', 'tif', 'tiff', 'gif', 'psd', 'ind', 'indd', 'indt', 'svg', 'svgz', 'eps'].indexOf(item.FileType) !== -1) {
                     // Try to redirect to the preview image instead of the list item form
                     if (!isEmpty(item.SiteId) && !isEmpty(item.WebId) && !isEmpty(item.UniqueID)) {
-                        url = `${this._ctx.pageContext.site.absoluteUrl}/_layouts/15/getpreview.ashx?guidSite=${item.SiteId}&guidWeb=${item.WebId}&guidFile=${item.UniqueID.replace(/\{|\}/g,'')}&resolution=3`;
+                        url = `${this._ctx.pageContext.site.absoluteUrl}/_layouts/15/getpreview.ashx?guidSite=${item.SiteId}&guidWeb=${item.WebId}&guidFile=${item.UniqueID.replace(/\{|\}/g, '')}&resolution=3`;
                     }
-                } else url = item.Path; 
+                } else url = item.Path;
             }
 
             return new Handlebars.SafeString(url);
+        });
+
+        // Return SPFx page context variable
+        // Usage:
+        //   {{getPageContext "user.displayName"}}
+        //   {{getPageContext "cultureInfo.currentUICultureName"}}
+        Handlebars.registerHelper("getPageContext", (name: string) => {
+
+            if (!name) return "";
+            let value = get(this._ctx.pageContext, name);
+            if (value) return value;
+            return "";
         });
 
         // Get Attachments from LinkOfficeChild managed properties
@@ -203,18 +215,18 @@ abstract class BaseTemplateService {
         //      <a href="{{url}}">{{fileName}}</href>
         //   {{/getAttachments}}
         Handlebars.registerHelper("getAttachments", (value: string, options) => {
-            let out:string = "";
-            if (!isEmpty(value)){
-                let splitArr:string[] = value.split(/\n+/);
-            
+            let out: string = "";
+            if (!isEmpty(value)) {
+                let splitArr: string[] = value.split(/\n+/);
+
                 if (splitArr && splitArr.length > 0) {
                     for (let i of splitArr) {
-                    let pos:number = i.lastIndexOf("/");
-                    if (pos !== -1) {
-                        let fileName:string = i.substring(pos + 1);
-                        let objLine = { url: i, fileName: fileName };
-                        out += options.fn(objLine);
-                    }
+                        let pos: number = i.lastIndexOf("/");
+                        if (pos !== -1) {
+                            let fileName: string = i.substring(pos + 1);
+                            let objLine = { url: i, fileName: fileName };
+                            out += options.fn(objLine);
+                        }
                     }
                 }
             }
@@ -242,7 +254,7 @@ abstract class BaseTemplateService {
                 else if (!isEmpty(item.ServerRedirectedPreviewURL)) previewSrc = item.ServerRedirectedPreviewURL;
                 else if (!isEmpty(item.ServerRedirectedURL)) previewSrc = UrlHelper.addOrReplaceQueryStringParam(item.ServerRedirectedURL, 'action', 'interactivepreview');
                 else if (!isEmpty(item.NormSiteID) && !isEmpty(item.NormListID) && !isEmpty(item.NormUniqueID)) previewSrc = `${this._ctx.pageContext.site.absoluteUrl}/_api/v2.0/sites/${item.NormSiteID}/lists/${item.NormListID}/items/${item.NormUniqueID}/driveItem/thumbnails/0/large/content?preferNoRedirect=true`;
-                else if (!isEmpty(item.SiteId) && !isEmpty(item.WebId) && !isEmpty(item.UniqueID)) previewSrc = `${this._ctx.pageContext.site.absoluteUrl}/_layouts/15/getpreview.ashx?guidSite=${item.SiteId}&guidWeb=${item.WebId}&guidFile=${item.UniqueID.replace(/\{|\}/g,'')}&resolution=3`;
+                else if (!isEmpty(item.SiteId) && !isEmpty(item.WebId) && !isEmpty(item.UniqueID)) previewSrc = `${this._ctx.pageContext.site.absoluteUrl}/_layouts/15/getpreview.ashx?guidSite=${item.SiteId}&guidWeb=${item.WebId}&guidFile=${item.UniqueID.replace(/\{|\}/g, '')}&resolution=3`;
             }
 
             return new Handlebars.SafeString(previewSrc);
@@ -363,8 +375,8 @@ abstract class BaseTemplateService {
             const component = customElements.get(wc.componentName);
             if (!component) {
                 customElements.define(wc.componentName, wc.componentClass);
-            } 
-            
+            }
+
             // Set the arbitrary property to all instances to get the WebPart context available in components (ex: PersonaCard)
             wc.componentClass.prototype._ctx = this._ctx;
         });
@@ -375,7 +387,7 @@ abstract class BaseTemplateService {
 
         // Register live persona wrapper as partial
         let livePersonaTemplate = Handlebars.compile(`<pnp-live-persona data-upn="{{upn}}" data-disable-hover="{{disableHover}}" data-template="{{@partial-block}}"></live-persona>`);
-        Handlebars.registerPartial('livepersona', livePersonaTemplate);        
+        Handlebars.registerPartial('livepersona', livePersonaTemplate);
     }
 
     public async optimizeLoadingForTemplate(templateContent: string): Promise<void> {
@@ -544,7 +556,7 @@ abstract class BaseTemplateService {
 
         this.UseOldSPIcons = templateContent && templateContent.indexOf("{{IconSrc}}") !== -1;
 
-        if (templateContent && (templateContent.indexOf("fabric-icon") !== -1 || templateContent.indexOf("details-list") !== -1 || templateContent.indexOf("document-card") !== -1) ) {
+        if (templateContent && (templateContent.indexOf("fabric-icon") !== -1 || templateContent.indexOf("details-list") !== -1 || templateContent.indexOf("document-card") !== -1)) {
             // load CDN for icons
             Loader.LoadUIFabricIcons();
         }
@@ -594,7 +606,7 @@ abstract class BaseTemplateService {
                     let template = Handlebars.compile(tempTemplateContent, { noEscape: true });
 
                     // Pass the current item as context
-                    processedValue = template({ item: item }, { data: { themeVariant: themeVariant }});
+                    processedValue = template({ item: item }, { data: { themeVariant: themeVariant } });
 
                     processedValue = !isEmpty(processedValue) ? processedValue.trim() : null;
 
