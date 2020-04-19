@@ -36,7 +36,7 @@ export default class SortPanel extends React.Component<ISortPanelProps, ISortPan
             this.setState({
                 sortDirection: sortDirection,
                 sortField: sortField
-            })
+            });
         }
     }
 
