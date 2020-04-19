@@ -708,7 +708,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
         return {
             sortField: sortField,
             sortDirection: sortDirection
-        }
+        };
     }
 
     /**
