@@ -239,7 +239,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             resultsCount: { $set: this.properties.paging.itemsCountPerPage },
             queryTemplate: { $set: queryTemplate },
             resultSourceId: { $set: sourceId },
-            sortList: { $set: this._convertToSortList(this.properties.sortList) },
+            sortList: { $set: this._searchService.sortList || this._convertToSortList(this.properties.sortList) },
             enableQueryRules: { $set: this.properties.enableQueryRules },
             includeOneDriveResults: { $set: this.properties.includeOneDriveResults },
             selectedProperties: { $set: this.properties.selectedProperties ? this.properties.selectedProperties.replace(/\s|,+$/g, '').split(',') : [] },

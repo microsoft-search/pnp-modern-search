@@ -43,7 +43,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
 
         //get default sortField & sortDirection from the sortList & sortableFields
         this._defaultSortingValues = this._getDefaultSortingValues();
-      
+
         // Set the initial state
         this.state = {
             results: {
@@ -128,7 +128,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
         if (this.props.webPartTitle && this.props.webPartTitle.length > 0) {
             renderWebPartTitle = <WebPartTitle title={this.props.webPartTitle} updateProperty={null} displayMode={DisplayMode.Read} />;
         }
-    
+
         let totalPrimaryAndSecondaryResults = this.state.results.RelevantResults.length;
         if (this.state.results.SecondaryResults.length > 0) {
             totalPrimaryAndSecondaryResults += this.state.results.SecondaryResults.reduce((sum, block) => sum += block.Results.length, 0);
@@ -144,9 +144,9 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             if (this.props.displayMode === DisplayMode.Edit) {
                 renderWpContent = <MessageBar messageBarType={MessageBarType.info}>{strings.ShowBlankEditInfoMessage}</MessageBar>;
             }
-            
+
         } else {
-            
+
             let templateContext = {
                 queryModification: this.state.results.QueryModification,
                 items: this.state.results.RelevantResults,
@@ -207,7 +207,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
         }
 
         return (
-            <div style={{backgroundColor: semanticColors.bodyBackground}}>
+            <div style={{ backgroundColor: semanticColors.bodyBackground }}>
                 <div className={styles.searchWp}>
                     <div tabIndex={-1} ref={(ref) => { this._searchWpRef = ref; }}></div>
                     {renderWebPartTitle}
@@ -264,7 +264,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
         let isPageUpdated = false;
         let resetSorting = false;
         let selectedPage = this.props.selectedPage || 1;
-        
+
 
         // New props are passed to the component when the search query has been changed
         if (!isEqual(this.props, prevProps)) {
@@ -287,7 +287,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 resetSorting = true;
             }
 
-            if (selectedPage  !== prevProps.selectedPage) {
+            if (selectedPage !== prevProps.selectedPage) {
                 isPageUpdated = true;
             }
         }
@@ -307,6 +307,11 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                         // Set the focus at the top of the component
                         this._searchWpRef.focus();
                     }
+                    
+                    //reset sorting
+                    if (resetSorting) {
+                        this.props.searchService.sortList = [{ Property: this._defaultSortingValues.sortField, Direction: this._defaultSortingValues.sortDirection }];
+                    }
 
                     const searchResults = await this._getSearchResults(this.props, selectedPage);
 
@@ -314,8 +319,8 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                         results: searchResults,
                         areResultsLoading: false,
                         //reset sorting if needed
-                        ...(resetSorting) && {sortDirection: this._defaultSortingValues.sortDirection},
-                        ...(resetSorting) && {sortField: this._defaultSortingValues.sortField}
+                        ...(resetSorting) && { sortDirection: this._defaultSortingValues.sortDirection },
+                        ...(resetSorting) && { sortField: this._defaultSortingValues.sortField }
                     });
 
                     this.handleResultUpdateBroadCast(searchResults);
@@ -695,15 +700,15 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
     /**
      * Retrieves SortField & SortDirection of the first item in the sortList which also is the first item in the sortableFields
      */
-    private _getDefaultSortingValues(){
+    private _getDefaultSortingValues() {
         let sortField = null;
         let sortDirection = null;
         if (this.props.sortList.length > 0
-          && this.props.sortableFields.length > 0
-          && this.props.sortList[0].sortField === this.props.sortableFields[0].sortField) {
+            && this.props.sortableFields.length > 0
+            && this.props.sortList[0].sortField === this.props.sortableFields[0].sortField) {
             sortField = this.props.sortList[0].sortField;
             sortDirection = this.props.sortList[0].sortDirection === ISortFieldDirection.Ascending
-              ? SortDirection.Ascending : SortDirection.Descending;
+                ? SortDirection.Ascending : SortDirection.Descending;
         }
         return {
             sortField: sortField,
