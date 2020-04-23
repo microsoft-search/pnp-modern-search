@@ -203,7 +203,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
         let queryDataSourceValue = this.properties.queryKeywords.tryGetValue();
         let queryKeywords = queryDataSourceValue ? queryDataSourceValue : this.properties.defaultSearchQuery;
-        
+
         // Get data from connected sources
         if (this._refinerSourceData && !this._refinerSourceData.isDisposed) {
             const refinerSourceData: IRefinerSourceData = this._refinerSourceData.tryGetValue();
@@ -215,7 +215,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
                     // Reset the default filters provided in URL when user starts to select/unselected values manually
                     this.defaultSelectedFilters = [];
-                }          
+                }
             }
         }
 
@@ -235,7 +235,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
         // Configure the provider before the query according to our needs
         this._searchService = update(this._searchService, {
-            timeZoneId: { $set: this._timeZoneBias && this._timeZoneBias.Id ? this._timeZoneBias.Id : null},
+            timeZoneId: { $set: this._timeZoneBias && this._timeZoneBias.Id ? this._timeZoneBias.Id : null },
             resultsCount: { $set: this.properties.paging.itemsCountPerPage },
             queryTemplate: { $set: queryTemplate },
             resultSourceId: { $set: sourceId },
@@ -245,7 +245,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             selectedProperties: { $set: this.properties.selectedProperties ? this.properties.selectedProperties.replace(/\s|,+$/g, '').split(',') : [] },
             synonymTable: { $set: this._synonymTable },
             queryCulture: { $set: this.properties.searchQueryLanguage !== -1 ? this.properties.searchQueryLanguage : currentLocaleId },
-            refinementFilters: { $set: selectedFilters.length > 0 ? SearchHelper.buildRefinementQueryString(selectedFilters) : [this.properties.refinementFilters.replace(/\'/g,'"')] },
+            refinementFilters: { $set: selectedFilters.length > 0 ? SearchHelper.buildRefinementQueryString(selectedFilters) : [this.properties.refinementFilters.replace(/\'/g, '"')] },
             refiners: { $set: refinerConfiguration },
             queryModifier: { $set: queryModifier },
         });
@@ -573,14 +573,14 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         if (!this.properties.paging) {
 
             this.properties.paging = {
-              itemsCountPerPage: 10,
-              pagingRange: 5,
-              showPaging: true,
-              hideDisabled: true,
-              hideFirstLastPages: false,
-              hideNavigation: false
+                itemsCountPerPage: 10,
+                pagingRange: 5,
+                showPaging: true,
+                hideDisabled: true,
+                hideFirstLastPages: false,
+                hideNavigation: false
             };
-          }
+        }
     }
 
     protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
@@ -621,7 +621,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                         {
                             groupName: strings.Paging.PagingOptionsGroupName,
                             groupFields: this.getPagingGroupFields()
-                          }
+                        }
                     ],
                     displayGroupsAsAccordion: true
                 },
@@ -772,7 +772,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
             } else {
                 this.properties.selectedQueryModifierDisplayName = null;
-                this._queryModifierInstance = null;     
+                this._queryModifierInstance = null;
             }
 
             this.context.dynamicDataSourceManager.notifyPropertyChanged(SearchComponentType.SearchResultsWebPart);
@@ -800,6 +800,17 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             return strings.EmptyFieldErrorMessage;
         }
 
+        return '';
+    }
+
+    private _validateNumber(value: string): string {
+        let number = parseInt(value);
+        if (isNaN(number)) {
+            return strings.InvalidNumberIntervalMessage;
+        }
+        if (number < 1 || number > 500) {
+            return strings.InvalidNumberIntervalMessage;
+        }
         return '';
     }
 
@@ -1003,21 +1014,21 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                         type: this._customCollectionFieldType.string
                     },
                     {
-                      id: 'sortDirection',
-                      title: "Direction",
-                      type: this._customCollectionFieldType.dropdown,
-                      required: true,
-                      options: [
-                          {
-                              key: ISortFieldDirection.Ascending,
-                              text: strings.Sort.SortDirectionAscendingLabel
-                          },
-                          {
-                              key: ISortFieldDirection.Descending,
-                              text: strings.Sort.SortDirectionDescendingLabel
-                          }
-                      ]
-                  }
+                        id: 'sortDirection',
+                        title: "Direction",
+                        type: this._customCollectionFieldType.dropdown,
+                        required: true,
+                        options: [
+                            {
+                                key: ISortFieldDirection.Ascending,
+                                text: strings.Sort.SortDirectionAscendingLabel
+                            },
+                            {
+                                key: ISortFieldDirection.Descending,
+                                text: strings.Sort.SortDirectionDescendingLabel
+                            }
+                        ]
+                    }
                 ]
             }),
             PropertyPaneToggle('useRefiners', {
@@ -1054,8 +1065,8 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             }),
             PropertyPaneTextField('refinementFilters', {
                 label: strings.RefinementFilters,
-                 multiline: true,
-                 deferredValidationTime: 300
+                multiline: true,
+                deferredValidationTime: 300
             }),
             PropertyPaneToggle('enableLocalization', {
                 checked: this.properties.enableLocalization,
@@ -1265,50 +1276,51 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                 disabled: this.availableQueryModifierDefinitions.length === 0,
                 value: this.properties.queryModifiers,
                 fields: [
-                            {
-                                id: 'queryModifierEnabled',
-                                title: strings.QueryModifier.EnableColumnLbl,
-                                type: this._customCollectionFieldType.custom,
-                                required: true,
-                                onCustomRender: (field, value, onUpdate, item, itemId) => {
-                                return (
-                                        React.createElement("div", null,
-                                            React.createElement(Toggle, { 
-                                                key: itemId, 
-                                                checked: value, 
-                                                disabled: this.queryModifierSelected && this.queryModifierSelected !== item[field.id] ? true : false,
-                                                onChange: ((evt, checked) => {
-                                                    // Reset every time the selected modifier. This will be determined when the field will be saved
-                                                    this.properties.selectedQueryModifierDisplayName = null;
-                                                    this.queryModifierSelected = !value;
-                                                    onUpdate(field.id, checked);
-                                                }).bind(this)})
-                                        )
-                                    );
-                                }
-                            },
-                            {
-                                id: 'queryModifierDisplayName',
-                                title: strings.QueryModifier.DisplayNameColumnLbl,
-                                type: this._customCollectionFieldType.custom,
-                                onCustomRender: (field, value, onUpdate, item, itemId) => {
-                                    return (
-                                        React.createElement("div", { style: { 'fontWeight': 600 } }, value)
-                                    );
-                                }
-                            },
-                            {
-                                id: 'queryModifierDescription',
-                                title: strings.QueryModifier.DescriptionColumnLbl,
-                                type: this._customCollectionFieldType.custom,
-                                onCustomRender: (field, value, onUpdate, item, itemId) => {
-                                    return (
-                                        React.createElement("div", null, value)
-                                    );
-                                }
-                            }
-                        ]
-            })            
+                    {
+                        id: 'queryModifierEnabled',
+                        title: strings.QueryModifier.EnableColumnLbl,
+                        type: this._customCollectionFieldType.custom,
+                        required: true,
+                        onCustomRender: (field, value, onUpdate, item, itemId) => {
+                            return (
+                                React.createElement("div", null,
+                                    React.createElement(Toggle, {
+                                        key: itemId,
+                                        checked: value,
+                                        disabled: this.queryModifierSelected && this.queryModifierSelected !== item[field.id] ? true : false,
+                                        onChange: ((evt, checked) => {
+                                            // Reset every time the selected modifier. This will be determined when the field will be saved
+                                            this.properties.selectedQueryModifierDisplayName = null;
+                                            this.queryModifierSelected = !value;
+                                            onUpdate(field.id, checked);
+                                        }).bind(this)
+                                    })
+                                )
+                            );
+                        }
+                    },
+                    {
+                        id: 'queryModifierDisplayName',
+                        title: strings.QueryModifier.DisplayNameColumnLbl,
+                        type: this._customCollectionFieldType.custom,
+                        onCustomRender: (field, value, onUpdate, item, itemId) => {
+                            return (
+                                React.createElement("div", { style: { 'fontWeight': 600 } }, value)
+                            );
+                        }
+                    },
+                    {
+                        id: 'queryModifierDescription',
+                        title: strings.QueryModifier.DescriptionColumnLbl,
+                        type: this._customCollectionFieldType.custom,
+                        onCustomRender: (field, value, onUpdate, item, itemId) => {
+                            return (
+                                React.createElement("div", null, value)
+                            );
+                        }
+                    }
+                ]
+            })
         ];
 
         if (this.properties.selectedQueryModifierDisplayName) {
@@ -1655,7 +1667,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
     public getPropertyValue(propertyId: string): ISearchResultSourceData {
 
         const refinementResults = (this._resultService && this._resultService.results) ? this._resultService.results.RefinementResults : [];
-               
+
         const searchResultSourceData: ISearchResultSourceData = {
             queryKeywords: this.properties.queryKeywords.tryGetValue(),
             refinementResults: refinementResults,
@@ -1685,8 +1697,8 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
      * @param defaultSelectedFilters the current default selected filters applied through the URL params
      */
     private _mapDefaultSelectedFiltersToRefinementResults(refinementResults: IRefinementResult[], defaultSelectedFilters: IRefinementFilter[]): IRefinementFilter[] {
-        
-        let updatedDefaultSelectedFilters: IRefinementFilter[] =  [];
+
+        let updatedDefaultSelectedFilters: IRefinementFilter[] = [];
 
         if (refinementResults.length > 0 && this.defaultSelectedFilters.length > 0) {
 
@@ -1698,7 +1710,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                 if (matchingRefinementResults.length === 1) {
 
                     let updatedSelectedFilterValues: IRefinementValue[] = [];
-                    
+
                     updatedSelectedFilter.Values.map(updatedSelectedFilterValue => {
 
                         matchingRefinementResults[0].Values.map(refinementValue => {
@@ -1706,7 +1718,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                             if (refinementValue.RefinementToken.indexOf(updatedSelectedFilterValue.RefinementToken) !== -1) {
                                 // Means the provided condition in URL is a text expression
                                 updatedSelectedFilterValues.push(refinementValue);
-                            } else if (StringHelper.longestCommonSubstring(updatedSelectedFilterValue.RefinementToken,refinementValue.RefinementValue) && updatedSelectedFilterValue.RefinementToken.indexOf("range") === -1 ) {
+                            } else if (StringHelper.longestCommonSubstring(updatedSelectedFilterValue.RefinementToken, refinementValue.RefinementValue) && updatedSelectedFilterValue.RefinementToken.indexOf("range") === -1) {
                                 // Means the provided condition in URL is an FQL expression so we try to guess the corresponding refinement results using the text value contained in the expression itself
                                 updatedSelectedFilterValues.push(refinementValue);
                             }
@@ -1715,7 +1727,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                         if (updatedSelectedFilterValues.length === 0) {
                             // Means the value hasn't been matched so we use the original value
                             updatedSelectedFilterValues.push(updatedSelectedFilterValue);
-                        } 
+                        }
                     });
 
                     updatedSelectedFilter.Values = updatedSelectedFilterValues;
@@ -1782,7 +1794,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             this.currentPageNumber = ev.detail.pageNumber;
 
             this.render();
-    
+
         }).bind(this));
     }
 
@@ -1794,18 +1806,16 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         let groupFields: IPropertyPaneField<any>[] = [];
 
 
-            groupFields.push(
+        groupFields.push(
             PropertyPaneToggle('paging.showPaging', {
                 label: strings.Paging.ShowPagingFieldName,
             }),
-            PropertyPaneSlider('paging.itemsCountPerPage', {
+            PropertyPaneTextField('paging.itemsCountPerPage', {
                 label: strings.Paging.ItemsCountPerPageFieldName,
-                max: 50,
-                min: 1,
-                step: 1,
-                showValue: true,
-                value: this.properties.paging.itemsCountPerPage,
-                disabled: !this.properties.paging.showPaging
+                value: this.properties.paging.itemsCountPerPage.toString(),
+                maxLength: 3,
+                deferredValidationTime: 300,
+                onGetErrorMessage: this._validateNumber.bind(this),
             }),
             PropertyPaneSlider('paging.pagingRange', {
                 label: strings.Paging.PagingRangeFieldName,
@@ -1829,7 +1839,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                 label: strings.Paging.HideDisabledFieldName,
                 disabled: !this.properties.paging.showPaging
             })
-            );
+        );
         return groupFields;
     }
 }
