@@ -186,12 +186,20 @@ abstract class BaseTemplateService {
             let url = '';
             if (!isEmpty(item)) {
                 if (!isEmpty(item.ServerRedirectedURL)) url = item.ServerRedirectedURL;
+
+                else if (!isEmpty(item.ParentLink) && !isEmpty(item.DefaultEncodingURL) && item.ParentLink.indexOf(".aspx") !== -1) {
+                    // Load SP previewer
+                    let id = item.DefaultEncodingURL.replace(`${window.location.protocol}//${window.location.host}`, '');
+                    let parent = id.substr(0, id.lastIndexOf("/"));
+                    url = `${item.ParentLink}?id=${encodeURIComponent(id)}&parent=${encodeURIComponent(parent)}`;
+                }
                 else if (item.FileType && ['png', 'jpeg', 'jpg', 'bmp', 'tif', 'tiff', 'gif', 'psd', 'ind', 'indd', 'indt', 'svg', 'svgz', 'eps'].indexOf(item.FileType) !== -1) {
                     // Try to redirect to the preview image instead of the list item form
                     if (!isEmpty(item.SiteId) && !isEmpty(item.WebId) && !isEmpty(item.UniqueID)) {
                         url = `${this._ctx.pageContext.site.absoluteUrl}/_layouts/15/getpreview.ashx?guidSite=${item.SiteId}&guidWeb=${item.WebId}&guidFile=${item.UniqueID.replace(/\{|\}/g, '')}&resolution=3`;
                     }
-                } else url = item.Path;
+                }
+                else url = item.Path;
             }
 
             return new Handlebars.SafeString(url);
@@ -246,14 +254,15 @@ abstract class BaseTemplateService {
         Handlebars.registerHelper("getPreviewSrc", (item: ISearchResult) => {
 
             let previewSrc = "";
+            const nonSupportedGraphThumbnails = ["xls"]; //let's add more as we proceed
 
             if (item) {
                 if (!isEmpty(item.SiteLogo)) previewSrc = item.SiteLogo;
+                else if ((!isEmpty(item.FileType) && nonSupportedGraphThumbnails.indexOf(item.FileType) === -1) && !isEmpty(item.NormSiteID) && !isEmpty(item.NormListID) && !isEmpty(item.NormUniqueID)) previewSrc = `${this._ctx.pageContext.site.absoluteUrl}/_api/v2.0/sites/${item.NormSiteID}/lists/${item.NormListID}/items/${item.NormUniqueID}/driveItem/thumbnails/0/large/content?preferNoRedirect=true`;
                 else if (!isEmpty(item.PreviewUrl)) previewSrc = item.PreviewUrl;
                 else if (!isEmpty(item.PictureThumbnailURL)) previewSrc = item.PictureThumbnailURL;
                 else if (!isEmpty(item.ServerRedirectedPreviewURL)) previewSrc = item.ServerRedirectedPreviewURL;
-                else if (!isEmpty(item.ServerRedirectedURL)) previewSrc = UrlHelper.addOrReplaceQueryStringParam(item.ServerRedirectedURL, 'action', 'interactivepreview');
-                else if (!isEmpty(item.NormSiteID) && !isEmpty(item.NormListID) && !isEmpty(item.NormUniqueID)) previewSrc = `${this._ctx.pageContext.site.absoluteUrl}/_api/v2.0/sites/${item.NormSiteID}/lists/${item.NormListID}/items/${item.NormUniqueID}/driveItem/thumbnails/0/large/content?preferNoRedirect=true`;
+                else if (!isEmpty(item.ServerRedirectedURL)) previewSrc = UrlHelper.addOrReplaceQueryStringParam(item.ServerRedirectedURL, 'action', 'interactivepreview');                
                 else if (!isEmpty(item.SiteId) && !isEmpty(item.WebId) && !isEmpty(item.UniqueID)) previewSrc = `${this._ctx.pageContext.site.absoluteUrl}/_layouts/15/getpreview.ashx?guidSite=${item.SiteId}&guidWeb=${item.WebId}&guidFile=${item.UniqueID.replace(/\{|\}/g, '')}&resolution=3`;
             }
 

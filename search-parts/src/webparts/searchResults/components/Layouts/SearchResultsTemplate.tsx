@@ -1,7 +1,7 @@
-import * as React from                                                 'react';
+import * as React from 'react';
 import ISearchResultsTemplateProps from './ISearchResultsTemplateProps';
 import ISearchResultsTemplateState from './ISearchResultsTemplateState';
-import                                  './SearchResultsTemplate.scss';
+import './SearchResultsTemplate.scss';
 import { TemplateService } from '../../../../services/TemplateService/TemplateService';
 import * as DOMPurify from 'dompurify';
 
@@ -13,7 +13,7 @@ export default class SearchResultsTemplate extends React.Component<ISearchResult
 
     constructor(props: ISearchResultsTemplateProps) {
         super(props);
-    
+
         this.state = {
             processedTemplate: null
         };
@@ -22,13 +22,13 @@ export default class SearchResultsTemplate extends React.Component<ISearchResult
 
         this._domPurify.setConfig({
             ADD_TAGS: ['style'],
-            ADD_ATTR: ['onerror'],
+            ADD_ATTR: ['onerror', 'target', 'loading'],
             WHOLE_DOCUMENT: true
         });
 
         // Allow custom elements (ex: my-component)
-        this._domPurify.addHook('uponSanitizeElement', (node, data) =>{
-            if(node.nodeName && node.nodeName.match(/^\w+((-\w+)+)+$/)
+        this._domPurify.addHook('uponSanitizeElement', (node, data) => {
+            if (node.nodeName && node.nodeName.match(/^\w+((-\w+)+)+$/)
                 && !data.allowedTags[data.tagName]) {
                 data.allowedTags[data.tagName] = true;
             }
@@ -50,7 +50,7 @@ export default class SearchResultsTemplate extends React.Component<ISearchResult
 
     public componentDidUpdate() {
         // Post render operations (previews on elements, etc.)
-        TemplateService.initPreviewElements();  
+        TemplateService.initPreviewElements();
     }
 
     public UNSAFE_componentWillReceiveProps(nextProps: ISearchResultsTemplateProps) {
@@ -71,9 +71,9 @@ export default class SearchResultsTemplate extends React.Component<ISearchResult
             const templateAsHtml = new DOMParser().parseFromString(template, "text/html");
 
             // Get <style> tags from Handlebars template content and prefix all CSS rules by the Web Part instance ID to isolate styles
-            const styles = templateAsHtml.getElementsByTagName("style"); 
+            const styles = templateAsHtml.getElementsByTagName("style");
             let prefixedStyles: string[] = [];
-            let i,j,k = 0;
+            let i, j, k = 0;
 
             if (styles.length > 0) {
 
@@ -82,19 +82,19 @@ export default class SearchResultsTemplate extends React.Component<ISearchResult
 
                 for (i = 0; i < styles.length; i++) {
                     const style = styles[i];
-                    const sheet: any = style.sheet; 
+                    const sheet: any = style.sheet;
                     if ((sheet as CSSStyleSheet).cssRules) {
                         const cssRules = (sheet as CSSStyleSheet).cssRules;
-                        
+
                         for (j = 0; j < cssRules.length; j++) {
                             const cssRule: CSSRule = cssRules.item(j);
-                            
+
                             // CSS Media rule
                             if ((cssRule as CSSMediaRule).media) {
                                 const cssMediaRule = cssRule as CSSMediaRule;
 
                                 let cssPrefixedMediaRules = '';
-                                for (k= 0; k < cssMediaRule.cssRules.length; k++) {
+                                for (k = 0; k < cssMediaRule.cssRules.length; k++) {
                                     const cssRuleMedia = cssMediaRule.cssRules.item(k);
                                     cssPrefixedMediaRules += `#${elementPrefixId} ${cssRuleMedia.cssText}`;
                                 }
