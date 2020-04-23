@@ -305,4 +305,4 @@ To see all available values, you can inspect the `themeVariant` objetc using the
 
 You may also define your own renderers, which most often should be SPFx application customizers. These should use the resultservice to register themselves as renderers, and will upon registration be available as a rendering choice in the "Result Layouts" Section.
 
-More information about custom code renderers may be found in a separate project `search-custom-renderer`, which showcases such a renderer.
+More information about custom code renderers may be found in a separate project [`search-custom-renderer`](https://github.com/microsoft-search/pnp-modern-search/tree/master/search-custom-renderer), which showcases such a renderer.
