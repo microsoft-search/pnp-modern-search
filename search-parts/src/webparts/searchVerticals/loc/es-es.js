@@ -5,6 +5,9 @@ define([], function () {
     PlaceHolderConfigureBtnLabel: "Configurar",
     PlaceHolderIconText: "Buscar elemento Web de verticals",
     PlaceHolderDescription: "Este componente le permite buscar dentro de los ámbitos (verticales)",
+    SameTabOpenBehavior: "Usar la pestaña actual",
+    NewTabOpenBehavior: "Abrir en una nueva pestaña",
+    PageOpenBehaviorLabel: "Comportamiento de apertura",
     PropertyPane: {
       Verticals: {
         PropertyLabel: "Verticales de Búsqueda",
@@ -15,7 +18,10 @@ define([], function () {
           TabName: "Nombre de Etiqueta",
           QueryTemplate: "Plantilla de Consulta",
           ResultSource: "Identificador de origen de resultados",
-          IconName: "Nombre de icono de Office UI Fabric"
+          IconName: "Nombre de icono de Office UI Fabric",
+          IsLink: "Es enlace",
+          LinkUrl: "URL del enlace",
+          OpenBehavior: "Comportamiento de apertura"
         }
       },
       ShowCounts: {

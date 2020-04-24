@@ -17,6 +17,9 @@ import ISearchResultSourceData from '../../models/ISearchResultSourceData';
 import { DynamicProperty, ThemeProvider, ThemeChangedEventArgs, IReadonlyTheme } from '@microsoft/sp-component-base';
 import { cloneDeep, isEqual, find } from '@microsoft/sp-lodash-subset';
 import { Placeholder } from '@pnp/spfx-controls-react/lib/Placeholder';
+import { PageOpenBehavior } from '../../helpers/UrlHelper';
+import { TokenService, ITokenService } from '../../services/TokenService';
+import { TextField, ITextFieldProps, Dropdown, IDropdownProps } from 'office-ui-fabric-react';
 
 export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearchVerticalsWebPartProps> implements IDynamicDataCallables {
 
@@ -27,6 +30,7 @@ export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearc
     private _selectedVertical: ISearchVertical;
     private _themeProvider: ThemeProvider;
     private _themeVariant: IReadonlyTheme;
+    private _tokenService: ITokenService;
 
     public constructor() {
         super();
@@ -81,7 +85,8 @@ export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearc
                     onVerticalSelected: this.onVerticalSelected,
                     showCounts: this.properties.showCounts,
                     themeVariant: this._themeVariant,
-                    defaultVerticalKey: defaultVerticalKey
+                    defaultVerticalKey: defaultVerticalKey,
+                    tokenService: this._tokenService
                 } as ISearchVerticalsContainerProps
             );
 
@@ -137,6 +142,10 @@ export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearc
         this.ensureDataSourceConnection();
 
         this.initThemeVariant();
+
+        this.initializeProperties();
+
+        this._tokenService = new TokenService(this.context.pageContext, this.context.spHttpClient);
 
         this.properties.verticals = this.properties.verticals ? this.properties.verticals : [];
 
@@ -242,7 +251,59 @@ export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearc
                         title: strings.PropertyPane.Verticals.Fields.IconName,
                         type: this._customCollectionFieldType.string,
                         required: false
-                    }
+                    },
+                    {
+                        id: 'isLink',
+                        title: strings.PropertyPane.Verticals.Fields.IsLink,
+                        type: this._customCollectionFieldType.boolean,
+                        required: false
+                      },
+                      {
+                        id: 'linkUrl',
+                        title: strings.PropertyPane.Verticals.Fields.LinkUrl,
+                        type: this._customCollectionFieldType.custom,
+                        onCustomRender: (field, value, onUpdate, item, itemId, onCustomFieldValidation) => {
+                          return (
+                              React.createElement("div", null,
+                                  React.createElement(TextField, {
+                                      defaultValue: value,
+                                      disabled: item.isLink ? false : true,
+                                      placeholder: 'https://...',
+                                      onChange: (ev, newValue) => {
+                                        onUpdate(field.id, newValue);
+                                      } 
+                                  } as ITextFieldProps)
+                              )
+                          );
+                        }
+                      },
+                      {
+                        id: 'openBehavior',
+                        title: strings.PropertyPane.Verticals.Fields.OpenBehavior,
+                        type: this._customCollectionFieldType.custom,
+                        defaultValue: PageOpenBehavior.NewTab,
+                        onCustomRender: (field, value, onUpdate, item, itemId, onCustomFieldValidation) => {
+                          return (
+                              React.createElement("div", null,
+                                  React.createElement(Dropdown, {
+                                    options: [
+                                      {
+                                        key: PageOpenBehavior.NewTab,
+                                        text: strings.NewTabOpenBehavior
+                                      },
+                                      {
+                                        key: PageOpenBehavior.Self,
+                                        text: strings.SameTabOpenBehavior
+                                      },
+                                    ],
+                                    disabled: item.isLink ? false : true,
+                                    defaultSelectedKey: item.openBehavior,
+                                    onChange: (ev, option) => onUpdate(field.id, option.key),
+                                  } as IDropdownProps)
+                              )
+                          );
+                        }
+                      }
                 ]
             })
         ];
@@ -303,6 +364,42 @@ export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearc
                 this._searchResultSourceData.unregister(this.render);
             }
         }
+    }
+
+    private initializeProperties() {
+
+        this.properties.verticals = this.properties.verticals ? this.properties.verticals : [
+                                                                                                {
+                                                                                                    key: "64db0487-0b73-4ffa-b250-d7869d85b7fe",
+                                                                                                    queryTemplate: "{searchTerms}",
+                                                                                                    resultSourceId: "78b793ce-7956-4669-aa3b-451fc5defebf",
+                                                                                                    tabName: "Videos",
+                                                                                                    iconName : "Video",
+                                                                                                    openBehavior: PageOpenBehavior.NewTab,
+                                                                                                    isLink: false,
+                                                                                                    linkUrl: ''
+                                                                                                },
+                                                                                                {
+                                                                                                    key: "afb855dc-7808-4366-a320-4a73be69a979",
+                                                                                                    queryTemplate: "{searchTerms}",
+                                                                                                    resultSourceId: "b09a7990-05ea-4af9-81ef-edfab16c4e31",
+                                                                                                    tabName: "People",
+                                                                                                    iconName : "People",
+                                                                                                    openBehavior: PageOpenBehavior.NewTab,
+                                                                                                    isLink: false,
+                                                                                                    linkUrl: ''
+                                                                                                },
+                                                                                                {
+                                                                                                    key: "9da0e1d9-4765-42ff-b562-cf7796d408f6",
+                                                                                                    queryTemplate: "{searchTerms}",
+                                                                                                    resultSourceId: "ba63bbae-fa9c-42c0-b027-9a878f16557c",
+                                                                                                    tabName: "Recently changed items",
+                                                                                                    iconName: "Documentation",
+                                                                                                    openBehavior: PageOpenBehavior.NewTab,
+                                                                                                    isLink: false,
+                                                                                                    linkUrl: ''
+                                                                                                }
+                                                                                            ];
     }
 
     /**
