@@ -20,7 +20,7 @@
   },
   "description": {
       "default": "Allows you to search by search verticals",
-      "fr-fr": "Permets de rechercher � travers des verticaux de recherche"
+      "fr-fr": "Permets de rechercher à travers des verticaux de recherche"
   },
     "officeFabricIconFontName": "Sections",
     "properties": {

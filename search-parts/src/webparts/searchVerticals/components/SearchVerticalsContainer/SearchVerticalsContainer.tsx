@@ -7,7 +7,7 @@ import templateStyles from '../../../../services/TemplateService/BaseTemplateSer
 import styles from './SearchVerticalsContainer.module.scss';
 import Vertical from '../../../searchRefiners/components/Layouts/Vertical/Vertical';
 import { PageOpenBehavior } from '../../../../helpers/UrlHelper';
-import { Icon } from 'office-ui-fabric-react';
+import { Icon, GlobalSettings } from 'office-ui-fabric-react';
 
 export default class SearchVerticalsContainer extends React.Component<ISearchVerticalsContainerProps, ISearchVerticalsContainerState> {
 
@@ -79,6 +79,8 @@ export default class SearchVerticalsContainer extends React.Component<ISearchVer
             // Send the query to the new page
             const behavior = vertical.openBehavior === PageOpenBehavior.NewTab ? '_blank' : '_self';
             this.props.tokenService.replaceQueryVariables(vertical.linkUrl).then((resolvedUrl: string) => {
+
+              resolvedUrl = resolvedUrl.replace(/\{searchTerms\}|\{SearchBoxQuery\}/gi, GlobalSettings.getValue('searchBoxQuery'));
               window.open(resolvedUrl, behavior);
             });
             

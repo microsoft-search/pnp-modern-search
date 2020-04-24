@@ -58,9 +58,10 @@ export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearc
                 }
             }
 
+            let searchResultSourceData: ISearchResultSourceData = undefined;
             // If the dynamic property exists, it means the Web Part ins connected to a search results Web Part
             if (this._searchResultSourceData) {
-                const searchResultSourceData: ISearchResultSourceData = this._searchResultSourceData.tryGetValue();
+                searchResultSourceData = this._searchResultSourceData.tryGetValue();
 
                 if (searchResultSourceData) {
 
@@ -86,7 +87,7 @@ export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearc
                     showCounts: this.properties.showCounts,
                     themeVariant: this._themeVariant,
                     defaultVerticalKey: defaultVerticalKey,
-                    tokenService: this._tokenService
+                    tokenService: this._tokenService,
                 } as ISearchVerticalsContainerProps
             );
 
