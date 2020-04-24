@@ -3,9 +3,7 @@ import ISearchVerticalsContainerProps from './ISearchVerticalsContainerProps';
 import { Pivot, PivotItem, IPivotItemProps } from 'office-ui-fabric-react/lib/components/Pivot';
 import ISearchVerticalsContainerState from './ISearchVerticalsContainerState';
 import { ITheme } from '@uifabric/styling';
-import templateStyles from '../../../../services/TemplateService/BaseTemplateService.module.scss';
 import styles from './SearchVerticalsContainer.module.scss';
-import Vertical from '../../../searchRefiners/components/Layouts/Vertical/Vertical';
 import { PageOpenBehavior } from '../../../../helpers/UrlHelper';
 import { Icon, GlobalSettings } from 'office-ui-fabric-react';
 
@@ -43,13 +41,13 @@ export default class SearchVerticalsContainer extends React.Component<ISearchVer
                 onRenderItemLink={(props, defaultRender) => {
 
                   if (vertical.isLink) {
-                    return  <>
+                    return  <div className={styles.isLink}>
                               {defaultRender(props)}
                               {vertical.openBehavior === PageOpenBehavior.NewTab ?
                                 <Icon styles={{ root: { fontSize: 10, paddingLeft: 3 }}} iconName='NavigateExternalInline'></Icon>:
                                 <Icon styles={{ root: { fontSize: 10, paddingLeft: 3 }}} iconName='Link'></Icon>
                               }      
-                            </>;
+                            </div>;
                   } else {
                     return defaultRender(props);
                   }              
