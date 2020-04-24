@@ -1,5 +1,6 @@
 import { ISearchVertical } from "../../../../models/ISearchVertical";
 import { IReadonlyTheme } from "@microsoft/sp-component-base";
+import { ITokenService } from "../../../../services/TokenService";
 
 interface ISearchVerticalsContainerProps {
 
@@ -27,6 +28,11 @@ interface ISearchVerticalsContainerProps {
    * The current theme variant
    */
   themeVariant: IReadonlyTheme | undefined;
+
+  /**
+   * An instance of the token service
+   */
+  tokenService: ITokenService;
 }
 
 export default ISearchVerticalsContainerProps;

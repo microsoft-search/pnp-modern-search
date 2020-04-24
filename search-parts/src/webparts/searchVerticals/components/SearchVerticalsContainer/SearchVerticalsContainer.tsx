@@ -5,6 +5,9 @@ import ISearchVerticalsContainerState from './ISearchVerticalsContainerState';
 import { ITheme } from '@uifabric/styling';
 import templateStyles from '../../../../services/TemplateService/BaseTemplateService.module.scss';
 import styles from './SearchVerticalsContainer.module.scss';
+import Vertical from '../../../searchRefiners/components/Layouts/Vertical/Vertical';
+import { PageOpenBehavior } from '../../../../helpers/UrlHelper';
+import { Icon, GlobalSettings } from 'office-ui-fabric-react';
 
 export default class SearchVerticalsContainer extends React.Component<ISearchVerticalsContainerProps, ISearchVerticalsContainerState> {
 
@@ -12,6 +15,10 @@ export default class SearchVerticalsContainer extends React.Component<ISearchVer
 
   public constructor(props) {
     super(props);
+
+    this.state = {
+      selectedKey: undefined
+    };
 
     this.onVerticalSelected = this.onVerticalSelected.bind(this);
   }
@@ -30,16 +37,31 @@ export default class SearchVerticalsContainer extends React.Component<ISearchVer
         pivotItemProps.itemIcon = vertical.iconName;
       }
 
-      return <PivotItem
-        headerText={vertical.tabName}
-        itemKey={vertical.key}
-        {...pivotItemProps}>
-      </PivotItem>;
+      return  <PivotItem
+                headerText={vertical.tabName}
+                itemKey={vertical.key}
+                onRenderItemLink={(props, defaultRender) => {
+
+                  if (vertical.isLink) {
+                    return  <>
+                              {defaultRender(props)}
+                              {vertical.openBehavior === PageOpenBehavior.NewTab ?
+                                <Icon styles={{ root: { fontSize: 10, paddingLeft: 3 }}} iconName='NavigateExternalInline'></Icon>:
+                                <Icon styles={{ root: { fontSize: 10, paddingLeft: 3 }}} iconName='Link'></Icon>
+                              }      
+                            </>;
+                  } else {
+                    return defaultRender(props);
+                  }              
+                }}
+                {...pivotItemProps}>
+              </PivotItem>;
     });
 
     return <Pivot className={styles.searchVerticals}
               componentRef={(e) => { this._pivotRef = e; }}
               onLinkClick={this.onVerticalSelected}
+              selectedKey={this.state.selectedKey}
               defaultSelectedKey={this.props.defaultVerticalKey}
               theme={this.props.themeVariant as ITheme}>
               {renderPivotItems}
@@ -47,7 +69,30 @@ export default class SearchVerticalsContainer extends React.Component<ISearchVer
   }
 
   public onVerticalSelected(item: PivotItem): void {
-    this.props.onVerticalSelected(item.props.itemKey);
+
+      const verticalIdx = this.props.verticals.map(vertical => vertical.key).indexOf(item.props.itemKey);
+      
+      if (verticalIdx !== -1) {
+
+        const vertical = this.props.verticals[verticalIdx];
+        if (vertical.isLink) {
+            // Send the query to the new page
+            const behavior = vertical.openBehavior === PageOpenBehavior.NewTab ? '_blank' : '_self';
+            this.props.tokenService.replaceQueryVariables(vertical.linkUrl).then((resolvedUrl: string) => {
+
+              resolvedUrl = resolvedUrl.replace(/\{searchTerms\}|\{SearchBoxQuery\}/gi, GlobalSettings.getValue('searchBoxQuery'));
+              window.open(resolvedUrl, behavior);
+            });
+            
+        } else {
+
+          this.setState({
+            selectedKey: item.props.itemKey
+          });
+
+          this.props.onVerticalSelected(item.props.itemKey)
+        }
+      }    
   }
 
   public componentDidMount() {

@@ -67,7 +67,7 @@ import { IQueryModifierDefinition } from '../../services/ExtensibilityService/IQ
 import { IQueryModifierInstance } from '../../services/ExtensibilityService/IQueryModifierInstance';
 import { ObjectCreator } from '../../services/ExtensibilityService/ObjectCreator';
 import { BaseQueryModifier } from '../../services/ExtensibilityService/BaseQueryModifier';
-import { Toggle } from 'office-ui-fabric-react';
+import { Toggle, GlobalSettings } from 'office-ui-fabric-react';
 import IQueryModifierConfiguration from '../../models/IQueryModifierConfiguration';
 import { SearchHelper } from '../../helpers/SearchHelper';
 import { StringHelper } from '../../helpers/StringHelper';
@@ -202,6 +202,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         selectedFilters = this.defaultSelectedFilters;
 
         let queryDataSourceValue = this.properties.queryKeywords.tryGetValue();
+
         let queryKeywords = queryDataSourceValue ? queryDataSourceValue : this.properties.defaultSearchQuery;
 
         // Get data from connected sources
