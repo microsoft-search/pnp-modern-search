@@ -13,6 +13,7 @@ import * as ReactDOM from 'react-dom';
 import { ITooltipHostProps, TooltipHost, ITooltipStyles, Shimmer, ShimmerElementsGroup, ShimmerElementType, IShimmerElement } from 'office-ui-fabric-react';
 import { DEFAULT_CELL_STYLE_PROPS, DEFAULT_ROW_HEIGHTS } from 'office-ui-fabric-react/lib/components/DetailsList/DetailsRow.styles';
 import * as DOMPurify from 'dompurify';
+import { TemplateService } from '../services/TemplateService/TemplateService';
 
 const DEFAULT_SHIMMER_HEIGHT = 7;
 const SHIMMER_LINE_VS_CELL_WIDTH_RATIO = 0.95;
@@ -217,6 +218,8 @@ export class DetailsListComponent extends React.Component<DetailsListComponentPr
                                     value = template({ item: item }, { data: { themeVariant: this.props.themeVariant } });
 
                                     value = value ? value.trim() : null;
+
+                                    TemplateService.initPreviewElements();
 
                                 } catch (error) {
                                     hasError = true;
