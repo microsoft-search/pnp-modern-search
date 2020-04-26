@@ -188,7 +188,9 @@ abstract class BaseTemplateService {
                 if (!isEmpty(item.ServerRedirectedURL)) {
                     url = item.ServerRedirectedURL;
                 }
-                else if (!isEmpty(item.ParentLink) && !isEmpty(item.DefaultEncodingURL)) {
+                else if (!isEmpty(item.ParentLink) &&
+                        !isEmpty(item.DefaultEncodingURL) &&
+                        isEmpty(item.IsListItem)) {
                     // Load SP previewer
                     let id = decodeURIComponent(item.DefaultEncodingURL.replace(`${window.location.protocol}//${window.location.host}`, ''));
                     let parent = id.substr(0, id.lastIndexOf("/"));
