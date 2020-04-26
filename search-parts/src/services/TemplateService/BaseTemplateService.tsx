@@ -191,12 +191,12 @@ abstract class BaseTemplateService {
                 else if (!isEmpty(item.ParentLink) && !isEmpty(item.DefaultEncodingURL)) {
                     // Load SP previewer
                     let id = decodeURIComponent(item.DefaultEncodingURL.replace(`${window.location.protocol}//${window.location.host}`, ''));
-                    let parent = id.substr(0, id.lastIndexOf("/"));                    
+                    let parent = id.substr(0, id.lastIndexOf("/"));
                     // handle _ and . for parameteres
                     id = encodeURIComponent(id).replace(/_/g, "%5F").replace(/\./g, "%2E");
                     parent = encodeURIComponent(parent).replace(/_/g, "%5F").replace(/\./g, "%2E");
                     // handle # in original link
-                    let parentLink = item.ParentLink.replace(/#/,"%23");
+                    let parentLink = item.ParentLink.replace(/#/, "%23");
                     url = `${parentLink}?id=${id}&parent=${parent}`;
                 }
                 else if (item.FileType && ['png', 'jpeg', 'jpg', 'bmp', 'tif', 'tiff', 'gif', 'psd', 'ind', 'indd', 'indt', 'svg', 'svgz', 'eps'].indexOf(item.FileType) !== -1) {
@@ -205,7 +205,10 @@ abstract class BaseTemplateService {
                         url = `${this._ctx.pageContext.site.absoluteUrl}/_layouts/15/getpreview.ashx?guidSite=${item.SiteId}&guidWeb=${item.WebId}&guidFile=${item.UniqueID.replace(/\{|\}/g, '')}&resolution=3`;
                     }
                 }
-                else url = decodeURI(item.Path);
+                else if (item.OriginalPath) {
+                    url = item.OriginalPath;
+                }
+                else url = item.Path;
             }
 
             return new Handlebars.SafeString(url);
