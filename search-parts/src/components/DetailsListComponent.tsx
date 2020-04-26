@@ -235,7 +235,7 @@ export class DetailsListComponent extends React.Component<DetailsListComponentPr
                                 if (item.ServerRedirectedURL) url = item.ServerRedirectedURL;
                                 else if (item.DefaultEncodingURL) url = item.DefaultEncodingURL;
 
-                                renderColumnValue = <a style={{ color: this.props.themeVariant.semanticColors.link }} href={url} target='blank'>{renderColumnValue}</a>;
+                                renderColumnValue = <a style={{ color: this.props.themeVariant.semanticColors.link }} href={url} target='_blank'>{renderColumnValue}</a>;
                             }
 
                             return renderColumnValue;
