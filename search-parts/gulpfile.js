@@ -23,6 +23,10 @@ const envCheck = build.subTask('environmentCheck', (gulp, config, done) => {
     build.configureWebpack.mergeConfig({
         additionalConfiguration: (generatedConfiguration) => {
 
+            if (generatedConfiguration.optimization) {
+                generatedConfiguration.optimization.minimizer[0].options.parallel = true;
+            }
+
             fs.writeFileSync("./temp/_webpack_config.json", JSON.stringify(generatedConfiguration, null, 2));
 
             /********************************************************************************************
@@ -90,16 +94,16 @@ const useCustomServe = argv['custom-serve'];
 const workbenchApi = require("@microsoft/sp-webpart-workbench/lib/api");
 
 if (useCustomServe) {
-  const ensureWorkbenchSubtask = build.subTask('ensure-workbench-task', function (gulp, buildOptions, done) {
-    this.log('Creating workbench.html file...');
-    try {
-      workbenchApi.default["/workbench"]();
-    } catch (e) { }
+    const ensureWorkbenchSubtask = build.subTask('ensure-workbench-task', function(gulp, buildOptions, done) {
+        this.log('Creating workbench.html file...');
+        try {
+            workbenchApi.default["/workbench"]();
+        } catch (e) {}
 
-    done();
-  });
+        done();
+    });
 
-  build.rig.addPostBundleTask(build.task('ensure-workbench', ensureWorkbenchSubtask));
+    build.rig.addPostBundleTask(build.task('ensure-workbench', ensureWorkbenchSubtask));
 }
 
 build.initialize(require('gulp'));
