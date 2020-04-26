@@ -185,13 +185,19 @@ abstract class BaseTemplateService {
 
             let url = '';
             if (!isEmpty(item)) {
-                if (!isEmpty(item.ServerRedirectedURL)) url = item.ServerRedirectedURL;
-
-                else if (!isEmpty(item.ParentLink) && !isEmpty(item.DefaultEncodingURL) && item.ParentLink.indexOf(".aspx") !== -1) {
+                if (!isEmpty(item.ServerRedirectedURL)) {
+                    url = item.ServerRedirectedURL;
+                }
+                else if (!isEmpty(item.ParentLink) && !isEmpty(item.DefaultEncodingURL)) {
                     // Load SP previewer
-                    let id = item.DefaultEncodingURL.replace(`${window.location.protocol}//${window.location.host}`, '');
-                    let parent = id.substr(0, id.lastIndexOf("/"));
-                    url = `${item.ParentLink}?id=${encodeURIComponent(id)}&parent=${encodeURIComponent(parent)}`;
+                    let id = decodeURIComponent(item.DefaultEncodingURL.replace(`${window.location.protocol}//${window.location.host}`, ''));
+                    let parent = id.substr(0, id.lastIndexOf("/"));                    
+                    // handle _ and . for parameteres
+                    id = encodeURIComponent(id).replace(/_/g, "%5F").replace(/\./g, "%2E");
+                    parent = encodeURIComponent(parent).replace(/_/g, "%5F").replace(/\./g, "%2E");
+                    // handle # in original link
+                    let parentLink = item.ParentLink.replace(/#/,"%23");
+                    url = `${parentLink}?id=${id}&parent=${parent}`;
                 }
                 else if (item.FileType && ['png', 'jpeg', 'jpg', 'bmp', 'tif', 'tiff', 'gif', 'psd', 'ind', 'indd', 'indt', 'svg', 'svgz', 'eps'].indexOf(item.FileType) !== -1) {
                     // Try to redirect to the preview image instead of the list item form
@@ -199,7 +205,7 @@ abstract class BaseTemplateService {
                         url = `${this._ctx.pageContext.site.absoluteUrl}/_layouts/15/getpreview.ashx?guidSite=${item.SiteId}&guidWeb=${item.WebId}&guidFile=${item.UniqueID.replace(/\{|\}/g, '')}&resolution=3`;
                     }
                 }
-                else url = item.Path;
+                else url = decodeURI(item.Path);
             }
 
             return new Handlebars.SafeString(url);
@@ -262,7 +268,7 @@ abstract class BaseTemplateService {
                 else if (!isEmpty(item.PreviewUrl)) previewSrc = item.PreviewUrl;
                 else if (!isEmpty(item.PictureThumbnailURL)) previewSrc = item.PictureThumbnailURL;
                 else if (!isEmpty(item.ServerRedirectedPreviewURL)) previewSrc = item.ServerRedirectedPreviewURL;
-                else if (!isEmpty(item.ServerRedirectedURL)) previewSrc = UrlHelper.addOrReplaceQueryStringParam(item.ServerRedirectedURL, 'action', 'interactivepreview');                
+                else if (!isEmpty(item.ServerRedirectedURL)) previewSrc = UrlHelper.addOrReplaceQueryStringParam(item.ServerRedirectedURL, 'action', 'interactivepreview');
                 else if (!isEmpty(item.SiteId) && !isEmpty(item.WebId) && !isEmpty(item.UniqueID)) previewSrc = `${this._ctx.pageContext.site.absoluteUrl}/_layouts/15/getpreview.ashx?guidSite=${item.SiteId}&guidWeb=${item.WebId}&guidFile=${item.UniqueID.replace(/\{|\}/g, '')}&resolution=3`;
             }
 
