@@ -730,28 +730,30 @@ abstract class BaseTemplateService {
         const nodes = document.querySelectorAll('.document-preview-item');
 
         DomHelper.forEach(nodes, ((index, el) => {
-            el.addEventListener("click", (event) => {
-                const thumbnailElt = event.srcElement;
+            if (!el.onclick) {
+                el.addEventListener("click", (event) => {
+                    const thumbnailElt = event.srcElement;
 
-                // Get infos about the document to preview
-                const url: string = event.srcElement.getAttribute("data-url");
-                const previewImgUrl: string = event.srcElement.getAttribute("data-src");
+                    // Get infos about the document to preview
+                    const url: string = event.srcElement.getAttribute("data-url");
+                    const previewImgUrl: string = event.srcElement.getAttribute("data-src");
 
-                if (url) {
-                    let renderElement = React.createElement(
-                        PreviewContainer,
-                        {
-                            elementUrl: url.replace('interactivepreview', 'embedview'),
-                            targetElement: thumbnailElt,
-                            previewImageUrl: previewImgUrl,
-                            showPreview: true,
-                            previewType: PreviewType.Document
-                        } as IPreviewContainerProps
-                    );
+                    if (url) {
+                        let renderElement = React.createElement(
+                            PreviewContainer,
+                            {
+                                elementUrl: url.replace('interactivepreview', 'embedview'),
+                                targetElement: thumbnailElt,
+                                previewImageUrl: previewImgUrl,
+                                showPreview: true,
+                                previewType: PreviewType.Document
+                            } as IPreviewContainerProps
+                        );
 
-                    ReactDom.render(renderElement, el);
-                }
-            });
+                        ReactDom.render(renderElement, el);
+                    }
+                });
+            }
         }));
     }
 

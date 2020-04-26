@@ -37,6 +37,7 @@ import { BaseSuggestionProvider } from '../../providers/BaseSuggestionProvider';
 import { Toggle } from 'office-ui-fabric-react/lib/Toggle';
 import { ThemeProvider, ThemeChangedEventArgs, IReadonlyTheme } from '@microsoft/sp-component-base';
 import { isEqual, find } from '@microsoft/sp-lodash-subset';
+import { GlobalSettings } from 'office-ui-fabric-react';
 
 export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWebPartProps> implements IDynamicDataCallables {
 
@@ -193,6 +194,9 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
 
     this._searchQuery = searchQuery;
     this.context.dynamicDataSourceManager.notifyPropertyChanged('searchQuery');
+
+    // Save this value in a global context
+    GlobalSettings.setValue('searchBoxQuery', searchQuery);
 
     // Update URL with raw search query
     if (this.properties.useDynamicDataSource && this.properties.defaultQueryKeywords && this.properties.defaultQueryKeywords.reference) {

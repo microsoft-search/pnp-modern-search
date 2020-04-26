@@ -71,18 +71,18 @@ export default class SearchResultsTemplate extends React.Component<ISearchResult
             const templateAsHtml = new DOMParser().parseFromString(template, "text/html");
 
             // Get <style> tags from Handlebars template content and prefix all CSS rules by the Web Part instance ID to isolate styles
-            const styles = templateAsHtml.getElementsByTagName("style");
+            const styleElements = templateAsHtml.getElementsByTagName("style"); 
             let prefixedStyles: string[] = [];
             let i, j, k = 0;
 
-            if (styles.length > 0) {
+            if (styleElements.length > 0) {
 
-                // The prefixe for all CSS selectors
+                // The prefix for all CSS selectors
                 const elementPrefixId = `${TEMPLATE_ID_PREFIX}${this.props.instanceId}`;
 
-                for (i = 0; i < styles.length; i++) {
-                    const style = styles[i];
-                    const sheet: any = style.sheet;
+                for (i = 0; i < styleElements.length; i++) {
+                    const style = styleElements.item(i);
+                    const sheet: any = style.sheet; 
                     if ((sheet as CSSStyleSheet).cssRules) {
                         const cssRules = (sheet as CSSStyleSheet).cssRules;
 
@@ -106,6 +106,9 @@ export default class SearchResultsTemplate extends React.Component<ISearchResult
                             }
                         }
                     }
+
+                    // Remove the element from DOM
+                    style.remove(); 
                 }
             }
 
