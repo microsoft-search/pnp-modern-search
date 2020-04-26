@@ -1,6 +1,9 @@
 <content id="template">
     <style>
         /* Insert your CSS overrides here */
+        .example-themePrimary a {
+            color: {{@root.themeVariant.palette.themePrimary}};
+        }
     </style>
 
     <div class="template_root">
@@ -13,7 +16,7 @@
                     <div class="template_result">
                         <pnp-fabric-icon data-file-extension='{{IconExt}}' data-image-url='{{SiteLogo}}'></pnp-fabric-icon>
                         <div class="template_contentContainer">
-                            <span class="template_title"><a href="{{getUrl item}}">{{Title}}</a></span>
+                            <span class="template_title example-themePrimary"><a href="{{getUrl item}}" target="_blank" data-interception="off">{{Title}}</a></span>
                             <my-custom-component data-my-string-param="{{Title}}" data-my-object-param="{{JSONstringify item}}"></my-custom-component>
                             <span>{{getSummary HitHighlightedSummary}}</span>
                             <span>{{getDate Created "LL"}}</span>
