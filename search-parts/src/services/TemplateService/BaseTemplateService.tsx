@@ -193,7 +193,7 @@ abstract class BaseTemplateService {
                 else if (!isEmpty(item.ParentLink) &&
                     !isEmpty(item.DefaultEncodingURL) &&
                     validPreviewExt.indexOf(item.FileType.toLocaleUpperCase()) !== -1) {
-                    // Load SP previewer
+                    // Load SP previewer - TODO make it multi-geo complient, not using window.location
                     let id = decodeURIComponent(item.DefaultEncodingURL.replace(`${window.location.protocol}//${window.location.host}`, ''));
                     let parent = id.substr(0, id.lastIndexOf("/"));
                     // handle _ and . for parameteres
