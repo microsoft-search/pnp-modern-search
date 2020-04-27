@@ -563,7 +563,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         ];
 
         this.properties.sortableFields = Array.isArray(this.properties.sortableFields) ? this.properties.sortableFields : [];
-        this.properties.selectedProperties = this.properties.selectedProperties ? this.properties.selectedProperties : "Title,Path,Created,Filename,SiteLogo,PreviewUrl,PictureThumbnailURL,ServerRedirectedPreviewURL,ServerRedirectedURL,HitHighlightedSummary,FileType,contentclass,ServerRedirectedEmbedURL,DefaultEncodingURL,owstaxidmetadataalltagsinfo,Author,AuthorOWSUSER,SPSiteUrl,SiteTitle,IsContainer,IsListItem,HtmlFileType,SiteId,WebId,UniqueID,NormSiteID,NormListID,NormUniqueID";
+        this.properties.selectedProperties = this.properties.selectedProperties ? this.properties.selectedProperties : "Title,Path,Created,Filename,SiteLogo,PreviewUrl,PictureThumbnailURL,ServerRedirectedPreviewURL,ServerRedirectedURL,HitHighlightedSummary,FileType,contentclass,ServerRedirectedEmbedURL,ParentLink,DefaultEncodingURL,owstaxidmetadataalltagsinfo,Author,AuthorOWSUSER,SPSiteUrl,SiteTitle,IsContainer,IsListItem,HtmlFileType,SiteId,WebId,UniqueID";
         this.properties.resultTypes = Array.isArray(this.properties.resultTypes) ? this.properties.resultTypes : [];
         this.properties.synonymList = Array.isArray(this.properties.synonymList) ? this.properties.synonymList : [];
         this.properties.searchQueryLanguage = this.properties.searchQueryLanguage ? this.properties.searchQueryLanguage : -1;
@@ -912,7 +912,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                 multiline: true,
                 resizable: true,
                 placeholder: strings.SearchQueryPlaceHolderText,
-                deferredValidationTime: 300
+                deferredValidationTime: 1000
             }),
             PropertyPaneTextField('resultSourceId', {
                 label: strings.ResultSourceIdLabel,
@@ -1212,7 +1212,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                     resizable: true,
                     placeholder: strings.SearchQueryPlaceHolderText,
                     onGetErrorMessage: this._validateEmptyField.bind(this),
-                    deferredValidationTime: 500
+                    deferredValidationTime: 1000
                 })
             );
         }
@@ -1227,7 +1227,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                         resizable: true,
                         placeholder: strings.SearchQueryPlaceHolderText,
                         onGetErrorMessage: this._validateEmptyField.bind(this),
-                        deferredValidationTime: 500
+                        deferredValidationTime: 1000
                     }),
                     ...queryModifiersFields
                 ]
