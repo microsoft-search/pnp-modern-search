@@ -203,7 +203,9 @@ abstract class BaseTemplateService {
 
             let url = '';
             if (!isEmpty(item)) {
-                if (!isEmpty(item.DefaultEncodingURL) && validPreviewExt.indexOf(item.FileType.toLocaleUpperCase()) !== -1) {
+                if (!isEmpty(item.DefaultEncodingURL)
+                    && item.FileType
+                    && validPreviewExt.indexOf(item.FileType.toLocaleUpperCase()) !== -1) {
                     url = this.createOdspPreviewUrl(item.DefaultEncodingURL);
                 }
                 else if (!isEmpty(item.ServerRedirectedURL)) {
