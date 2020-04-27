@@ -608,7 +608,7 @@ class SearchService implements ISearchService {
         let blankIdx = properties.indexOf('');
         if (blankIdx !== -1) properties.splice(blankIdx, 1);
 
-        const minimalProperties = ["Title", "Path", "OriginalPath", "SiteLogo", "contentclass", "FileExtension", "Filename", "ServerRedirectedURL", "ParentLink", "DefaultEncodingURL", "IsContainer", "IsListItem", "FileType", "HtmlFileType", "NormSiteID", "NormListID", "NormUniqueID"];
+        const minimalProperties = ["Title", "Path", "OriginalPath", "SiteLogo", "contentclass", "FileExtension", "Filename", "ServerRedirectedURL", "DefaultEncodingURL", "IsContainer", "IsListItem", "FileType", "HtmlFileType", "NormSiteID", "NormListID", "NormUniqueID"];
         minimalProperties.forEach(property => {
             let pos = findIndex(properties, item => property.toLowerCase() === item.toLowerCase());
             if (pos !== -1) properties.splice(pos, 1);

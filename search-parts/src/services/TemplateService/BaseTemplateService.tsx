@@ -18,7 +18,7 @@ import { ISearchResultsWebPartProps } from '../../webparts/searchResults/ISearch
 import { IComboBoxOption } from 'office-ui-fabric-react/lib/ComboBox';
 import { IComponentFieldsConfiguration, TemplateService } from './TemplateService';
 import { WebPartContext } from '@microsoft/sp-webpart-base';
-import { ThemeProvider, IReadonlyTheme } from '@microsoft/sp-component-base';
+import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import groupBy from 'handlebars-group-by';
 import { Loader } from './LoadHelper';
 import { IComponentDefinition } from '../ExtensibilityService/IComponentDefinition';
@@ -174,6 +174,21 @@ abstract class BaseTemplateService {
         return moment(new Date(str)).format(pattern);
     }
 
+    private createOdspPreviewUrl(defaultEncodingURL: string): string {
+        let previewUrl: string;
+        if (defaultEncodingURL) {
+            const matches = defaultEncodingURL.match(/^(http[s]?:\/\/[^\/]*)(.+)\/(.+)$/);
+            // First match is the complete URL
+            if (matches) {
+                const [host, path, file] = matches.slice(1);
+                if (host && path && file) {
+                    previewUrl = `${host}${path}/?id=${path}/${file}&parent=${path}`;
+                }
+            }
+        }
+        return previewUrl;
+    }
+
     /**
      * Registers useful helpers for search results templates
      */
@@ -190,18 +205,8 @@ abstract class BaseTemplateService {
                 if (!isEmpty(item.ServerRedirectedURL)) {
                     url = item.ServerRedirectedURL;
                 }
-                else if (!isEmpty(item.ParentLink) &&
-                    !isEmpty(item.DefaultEncodingURL) &&
-                    validPreviewExt.indexOf(item.FileType.toLocaleUpperCase()) !== -1) {
-                    // Load SP previewer - TODO make it multi-geo complient, not using window.location
-                    let id = decodeURIComponent(item.DefaultEncodingURL.replace(`${window.location.protocol}//${window.location.host}`, ''));
-                    let parent = id.substr(0, id.lastIndexOf("/"));
-                    // handle _ and . for parameteres
-                    id = encodeURIComponent(id).replace(/_/g, "%5F").replace(/\./g, "%2E");
-                    parent = encodeURIComponent(parent).replace(/_/g, "%5F").replace(/\./g, "%2E");
-                    // handle # in original link
-                    let parentLink = item.ParentLink.replace(/#/, "%23");
-                    url = `${parentLink}?id=${id}&parent=${parent}`;
+                else if (!isEmpty(item.DefaultEncodingURL) && validPreviewExt.indexOf(item.FileType.toLocaleUpperCase()) !== -1) {
+                    url = this.createOdspPreviewUrl(item.DefaultEncodingURL);
                 }
                 else if (item.FileType && ['ind', 'indd', 'indt', 'svgz', 'eps'].indexOf(item.FileType) !== -1) {
                     // Try to redirect to the preview image instead of the list item form
