@@ -74,6 +74,10 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
 
       // Notify subscriber a new value if available
       this._searchQuery = decodeURIComponent(inputValue);
+
+      // Save this value in a global context
+      GlobalSettings.setValue('searchBoxQuery', this._searchQuery);
+
       this.context.dynamicDataSourceManager.notifyPropertyChanged('searchQuery');
     }
 
