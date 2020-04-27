@@ -202,11 +202,11 @@ abstract class BaseTemplateService {
 
             let url = '';
             if (!isEmpty(item)) {
-                if (!isEmpty(item.ServerRedirectedURL)) {
-                    url = item.ServerRedirectedURL;
-                }
-                else if (!isEmpty(item.DefaultEncodingURL) && validPreviewExt.indexOf(item.FileType.toLocaleUpperCase()) !== -1) {
+                if (!isEmpty(item.DefaultEncodingURL) && validPreviewExt.indexOf(item.FileType.toLocaleUpperCase()) !== -1) {
                     url = this.createOdspPreviewUrl(item.DefaultEncodingURL);
+                }
+                else if (!isEmpty(item.ServerRedirectedURL)) {
+                    url = item.ServerRedirectedURL;
                 }
                 else if (item.FileType && ['ind', 'indd', 'indt', 'svgz', 'eps'].indexOf(item.FileType) !== -1) {
                     // Try to redirect to the preview image instead of the list item form
