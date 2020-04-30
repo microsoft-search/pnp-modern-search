@@ -27,7 +27,7 @@ import ISearchService from '../../services/SearchService/ISearchService';
 import ITaxonomyService from '../../services/TaxonomyService/ITaxonomyService';
 import ResultsLayoutOption from '../../models/ResultsLayoutOption';
 import { TemplateService } from '../../services/TemplateService/TemplateService';
-import { isEmpty, find, sortBy, cloneDeep, isEqual } from '@microsoft/sp-lodash-subset';
+import { isEmpty, find, sortBy, cloneDeep, isEqual, findIndex } from '@microsoft/sp-lodash-subset';
 import MockSearchService from '../../services/SearchService/MockSearchService';
 import MockTemplateService from '../../services/TemplateService/MockTemplateService';
 import SearchService from '../../services/SearchService/SearchService';
@@ -240,7 +240,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             resultsCount: { $set: this.properties.paging.itemsCountPerPage },
             queryTemplate: { $set: queryTemplate },
             resultSourceId: { $set: sourceId },
-            sortList: { $set: this._convertToSortList(this.properties.sortList) },
+            sortList: { $set: this._searchService.sortList || this._convertToSortList(this.properties.sortList) },
             enableQueryRules: { $set: this.properties.enableQueryRules },
             includeOneDriveResults: { $set: this.properties.includeOneDriveResults },
             selectedProperties: { $set: this.properties.selectedProperties ? this.properties.selectedProperties.replace(/\s|,+$/g, '').split(',') : [] },
@@ -563,7 +563,59 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         ];
 
         this.properties.sortableFields = Array.isArray(this.properties.sortableFields) ? this.properties.sortableFields : [];
-        this.properties.selectedProperties = this.properties.selectedProperties ? this.properties.selectedProperties : "Title,Path,Created,Filename,SiteLogo,PreviewUrl,PictureThumbnailURL,ServerRedirectedPreviewURL,ServerRedirectedURL,HitHighlightedSummary,FileType,contentclass,ServerRedirectedEmbedURL,ParentLink,DefaultEncodingURL,owstaxidmetadataalltagsinfo,Author,AuthorOWSUSER,SPSiteUrl,SiteTitle,IsContainer,IsListItem,HtmlFileType,SiteId,WebId,UniqueID";
+
+        // Ensure the minmal managed properties are here        
+        const defaultManagedProperties =    [
+                                                "Title",
+                                                "Path",
+                                                "OriginalPath",
+                                                "SiteLogo",
+                                                "contentclass",
+                                                "FileExtension",
+                                                "Filename",
+                                                "ServerRedirectedURL",
+                                                "DefaultEncodingURL",
+                                                "IsContainer",
+                                                "IsListItem",
+                                                "FileType",
+                                                "HtmlFileType",
+                                                "NormSiteID",
+                                                "NormListID",
+                                                "NormUniqueID",
+                                                "Created",
+                                                "PreviewUrl",
+                                                "PictureThumbnailURL",
+                                                "ServerRedirectedPreviewURL",
+                                                "HitHighlightedSummary",
+                                                "ServerRedirectedEmbedURL",
+                                                "ParentLink",
+                                                "owstaxidmetadataalltagsinfo",
+                                                "Author",
+                                                "AuthorOWSUSER",
+                                                "SPSiteUrl",
+                                                "SiteTitle",
+                                                "SiteId",
+                                                "WebId",
+                                                "UniqueID"
+                                            ];
+
+        if (this.properties.selectedProperties) {
+
+            let properties = this.properties.selectedProperties.split(',');
+
+            defaultManagedProperties.map(property => {
+
+                const idx = findIndex(properties, item => property.toLowerCase() === item.toLowerCase());                
+                if (idx === -1) {
+                    properties.push(property);
+                }
+            });
+
+            this.properties.selectedProperties = properties.join(',');
+        } else {
+            this.properties.selectedProperties = defaultManagedProperties.join(',');
+        }
+        
         this.properties.resultTypes = Array.isArray(this.properties.resultTypes) ? this.properties.resultTypes : [];
         this.properties.synonymList = Array.isArray(this.properties.synonymList) ? this.properties.synonymList : [];
         this.properties.searchQueryLanguage = this.properties.searchQueryLanguage ? this.properties.searchQueryLanguage : -1;

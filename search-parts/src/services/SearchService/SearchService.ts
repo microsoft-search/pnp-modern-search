@@ -165,7 +165,7 @@ class SearchService implements ISearchService {
         searchQuery.QueryTemplate = await this._tokenService.replaceQueryVariables(this._queryTemplate);
 
         searchQuery.RowLimit = this._resultsCount ? this._resultsCount : 50;
-        searchQuery.SelectProperties = this.ensureMinimalManagedProperty(this._selectedProperties);
+        searchQuery.SelectProperties = this._selectedProperties;
         searchQuery.TrimDuplicates = false;
         searchQuery.SortList = this._sortList ? this._sortList : [];
 
@@ -598,23 +598,6 @@ class SearchService implements ISearchService {
         }
 
         return isSortable;
-    }
-
-    /**
-     * Ensure we have needed properties for preview, thumbnail and icon functionality
-     * @param properties List of managed properties
-     */
-    public ensureMinimalManagedProperty(properties: string[]): string[] {
-        let blankIdx = properties.indexOf('');
-        if (blankIdx !== -1) properties.splice(blankIdx, 1);
-
-        const minimalProperties = ["Title", "Path", "OriginalPath", "SiteLogo", "contentclass", "FileExtension", "Filename", "ServerRedirectedURL", "DefaultEncodingURL", "IsContainer", "IsListItem", "FileType", "HtmlFileType", "NormSiteID", "NormListID", "NormUniqueID"];
-        minimalProperties.forEach(property => {
-            let pos = findIndex(properties, item => property.toLowerCase() === item.toLowerCase());
-            if (pos !== -1) properties.splice(pos, 1);
-            properties.push(property);
-        });
-        return properties;
     }
 
     /**
