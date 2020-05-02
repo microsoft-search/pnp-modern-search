@@ -32,7 +32,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.6.0">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.4.3">
     
     
       
@@ -40,7 +40,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/application.1b62728e.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/application.30686662.css">
       
         <link rel="stylesheet" href="../../assets/stylesheets/application-palette.a8b3c06d.css">
       
@@ -51,12 +51,12 @@
       
     
     
-      <script src="../../assets/javascripts/modernizr.268332fc.js"></script>
+      <script src="../../assets/javascripts/modernizr.74668098.js"></script>
     
     
       
         <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono&display=fallback">
         <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
       
     
@@ -602,6 +602,26 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#styling" class="md-nav__link">
+    Styling
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sanitized-html" class="md-nav__link">
+    Sanitized HTML
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#handlebars-helpers" class="md-nav__link">
     Handlebars helpers
   </a>
@@ -932,6 +952,26 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#styling" class="md-nav__link">
+    Styling
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sanitized-html" class="md-nav__link">
+    Sanitized HTML
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#handlebars-helpers" class="md-nav__link">
     Handlebars helpers
   </a>
@@ -1181,6 +1221,10 @@
 <h2 id="customize-templates-with-handlebars">Customize templates with Handlebars<a class="headerlink" href="#customize-templates-with-handlebars" title="Permanent link">&para;</a></h2>
 <p>If provided layouts don't meet your requirements, you can modifiy them or start from scratch using Handlebars and the following helpers/features:</p>
 <p><img alt="Edit Template" src="../../images/edit_template.png" /></p>
+<h3 id="styling">Styling<a class="headerlink" href="#styling" title="Permanent link">&para;</a></h3>
+<p>You can write your own CSS styles inside templates. However, all CSS rules (including <code>@media</code> rules) will be prefixed automatically by an unique ID according to the follwoing pattern (<strong>pnp-modern-search-template_\&lt;Web Part instance ID></strong>) to make sure styles are isolated from other Web Parts on the page.</p>
+<h4 id="sanitized-html">Sanitized HTML<a class="headerlink" href="#sanitized-html" title="Permanent link">&para;</a></h4>
+<p>The HTML is sanitized automatically preventing XSS attacks using <a href="https://github.com/cure53/DOMPurify"><code>DOMPurify</code></a>. It means for instance, you cannot add your own <code>&lt;script&gt;</code> tags or inline JavaScript.</p>
 <h3 id="handlebars-helpers">Handlebars helpers<a class="headerlink" href="#handlebars-helpers" title="Permanent link">&para;</a></h3>
 <p>The following custom helpers are available in addition to the <a href="https://github.com/helpers/handlebars-helpers">handlebars-helpers</a>:</p>
 <table>
@@ -1279,6 +1323,10 @@
 <td><code>{{#getAttachments LinkOfficeChild}} &lt;a href="{{url}}"&gt;{{fileName}}&lt;/href&gt; {{/getAttachments}}</code></td>
 <td>Get Attachments is Handlebars block helper intended to be used with the context variables it provides like this (url and filename) in the example.The helper is intended to be used only with the LinkOfficeChild managed property wich is the default managed property for list attachments.</td>
 </tr>
+<tr>
+<td><code>{{getPageContext "property"}}</code></td>
+<td>Retrieve SPFx page context data to show in the template. See <a href="https://docs.microsoft.com/en-us/javascript/api/sp-page-context/pagecontext">https://docs.microsoft.com/en-us/javascript/api/sp-page-context/pagecontext</a> for possible values. Example <code>{{getPageContext "user.displayName"}}</code> <code>{{getPageContext "cultureInfo.currentUICultureName"}}</code>.<br><strong>Note: Casing matches the object model.</strong></td>
+</tr>
 </tbody>
 </table>
 <p>You can also define your own in the <em>BaseTemplateService.ts</em> file. See <a href="https://github.com/helpers/helper-moment">helper-moment</a> for date samples using moment.</p>
@@ -1296,10 +1344,10 @@
 <li>fabric-icon - You only need to set one property, which are evaluated in order if multiple ones are set.
    <code>handlebars
    &lt;pnp-fabric-icon
-    image-url='[url to icon - pri 1]'
-    file-extension='[file extension - pri 2]'
-    icon-name='[office ui fabric icon name - pri 3]'
-    size='16 | 20 | 32 (default) | 40 | 48 | 64 | 96'
+    data-image-url='[url to icon - pri 1]'
+    data-file-extension='[file extension - pri 2]'
+    data-icon-name='[office ui fabric icon name - pri 3]'
+    data-size='16 | 20 | 32 (default) | 40 | 48 | 64 | 96'
     &gt;
     &lt;/pnp-fabric-icon&gt;</code></li>
 </ul>
@@ -1387,10 +1435,9 @@
 <p>To see all available values, you can inspect the <code>themeVariant</code> objetc using the 'Debug View' layout. Notice the values are udpated dynamically every time you udpate the theme through the UI.</p>
 <h3 id="custom-code-renderers">Custom code renderers<a class="headerlink" href="#custom-code-renderers" title="Permanent link">&para;</a></h3>
 <p>You may also define your own renderers, which most often should be SPFx application customizers. These should use the resultservice to register themselves as renderers, and will upon registration be available as a rendering choice in the "Result Layouts" Section.</p>
-<p>More information about custom code renderers may be found in a separate project <code>search-custom-renderer</code>, which showcases such a renderer.</p>
+<p>More information about custom code renderers may be found in a separate project <a href="https://github.com/microsoft-search/pnp-modern-search/tree/master/search-custom-renderer"><code>search-custom-renderer</code></a>, which showcases such a renderer.</p>
                 
                   
-                
                 
               
               
@@ -1469,7 +1516,7 @@
       
     </div>
     
-      <script src="../../assets/javascripts/application.808e90bb.js"></script>
+      <script src="../../assets/javascripts/application.ac79c3b0.js"></script>
       
       <script>app.initialize({version:"1.0.4",url:{base:"../.."}})</script>
       

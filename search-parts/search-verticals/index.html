@@ -32,7 +32,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.6.0">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.4.3">
     
     
       
@@ -40,7 +40,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/application.1b62728e.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/application.30686662.css">
       
         <link rel="stylesheet" href="../../assets/stylesheets/application-palette.a8b3c06d.css">
       
@@ -51,12 +51,12 @@
       
     
     
-      <script src="../../assets/javascripts/modernizr.268332fc.js"></script>
+      <script src="../../assets/javascripts/modernizr.74668098.js"></script>
     
     
       
         <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono&display=fallback">
         <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
       
     
@@ -669,7 +669,7 @@
                   <h1>Search Verticals</h1>
                 
                 <p><img alt="Search Verticals" src="../../images/search_verticals.png" /></p>
-<p>The search verticals Web Part allow users to search through predefined scopes (i.e videos, people, etc.). The behavior is different from the search navigation Web Part because here, we simply replace the query template and result source dynamically for a chosen vertical. To get it work, you simply need to connect the search verticals Web Part to a search results Web Part using the associated option. Also, if you want to display counts for each verticals <strong>when a new query is performed</strong> (for instance a search box query or an URL fragment update), connect the search results Web Part to the search verticals one (two ways connection in this case).</p>
+<p>The search verticals Web Part allow users to search through predefined scopes (i.e videos, people, etc.) or redirect to an arbitrary URL. We simply replace the query template and result source dynamically for a chosen vertical. To get it work, you simply need to connect the search verticals Web Part to a search results Web Part using the associated option. Also, if you want to display counts for each verticals <strong>when a new query is performed</strong> (for instance a search box query or an URL fragment update), connect the search results Web Part to the search verticals one (two ways connection in this case).</p>
 <h4 id="verticals-options">Verticals Options<a class="headerlink" href="#verticals-options" title="Permanent link">&para;</a></h4>
 <table>
 <thead>
@@ -697,7 +697,7 @@
 <tbody>
 <tr>
 <td>Search verticals</td>
-<td>Configure the search verticals to display. When you set a query template or a result source id for a vertical, these override the ones in the connected search results. You can also set an icon for a vertical using <a href="https://developer.microsoft.com/en-us/fabric#/styles/icons">Office UI Fabric icons names</a>. The query keywords are shared across all verticals. For instance, if you need default results for tabs, just specify a default query in the connected search results Web Part (like <code>*</code>) and the <code>{searchTerms}</code> expression in your vertical query template. Also, selected refinement filters are reset, if present, when a new vertical is selected.</td>
+<td>Configure the search verticals to display. When you set a query template or a result source id for a vertical, these override the ones in the connected search results. You can also set an icon for a vertical using <a href="https://developer.microsoft.com/en-us/fabric#/styles/icons">Office UI Fabric icons names</a>. The query keywords are shared across all verticals. For instance, if you need default results for tabs, just specify a default query in the connected search results Web Part (like <code>*</code>) and the <code>{searchTerms}</code> expression in your vertical query template. Also, selected refinement filters are reset, if present, when a new vertical is selected. You can also specify an arbitrary link for a vertical. In this case, the selected vertical won't be sent to the connected search results WP. You can use tokens inside the <strong>Link URL</strong> field. The supported tokens are <code>{Page.xxx}</code>, <code>{CurrentDate}</code>, <code>{CurrentYear}</code>, <code>{CurrentMonth}</code>, <code>{URLToken.xxx}</code>, <code>{QueryString.xxx}</code>, <code>{PageContext.xxx}</code>, <code>{TenantUrl}</code>, <code>{searchTerms}</code> and <code>{SearchBoxQuery}</code>.</td>
 </tr>
 <tr>
 <td>Show results count</td>
@@ -707,7 +707,6 @@
 </table>
                 
                   
-                
                 
               
               
@@ -786,7 +785,7 @@
       
     </div>
     
-      <script src="../../assets/javascripts/application.808e90bb.js"></script>
+      <script src="../../assets/javascripts/application.ac79c3b0.js"></script>
       
       <script>app.initialize({version:"1.0.4",url:{base:"../.."}})</script>
       
