@@ -15,15 +15,22 @@ let buildConfig = {
 build.addSuppression(/^Warning - \[sass\].*$/);
 
 const envCheck = build.subTask('environmentCheck', (gulp, config, done) => {
+    let threading = false;
     if (!config.production) {
         //https://spblog.net/post/2019/09/18/spfx-overclockers-or-how-to-significantly-improve-your-sharepoint-framework-build-performance#h_296972879501568737888136
         log(`[${colors.cyan('configure-webpack')}] Turning off ${colors.cyan('tslint')}...`);
         build.tslintCmd.enabled = false;
+    } else {
+        threading = true;
     }
     build.configureWebpack.mergeConfig({
         additionalConfiguration: (generatedConfiguration) => {
 
             fs.writeFileSync("./temp/_webpack_config.json", JSON.stringify(generatedConfiguration, null, 2));
+
+            if (threading && generatedConfiguration.optimization) {
+                generatedConfiguration.optimization.minimizer[0].options.parallel = true;
+            }
 
             /********************************************************************************************
              * Adds an alias for handlebars in order to avoid errors while gulping the project
@@ -90,16 +97,16 @@ const useCustomServe = argv['custom-serve'];
 const workbenchApi = require("@microsoft/sp-webpart-workbench/lib/api");
 
 if (useCustomServe) {
-  const ensureWorkbenchSubtask = build.subTask('ensure-workbench-task', function (gulp, buildOptions, done) {
-    this.log('Creating workbench.html file...');
-    try {
-      workbenchApi.default["/workbench"]();
-    } catch (e) { }
+    const ensureWorkbenchSubtask = build.subTask('ensure-workbench-task', function(gulp, buildOptions, done) {
+        this.log('Creating workbench.html file...');
+        try {
+            workbenchApi.default["/workbench"]();
+        } catch (e) {}
 
-    done();
-  });
+        done();
+    });
 
-  build.rig.addPostBundleTask(build.task('ensure-workbench', ensureWorkbenchSubtask));
+    build.rig.addPostBundleTask(build.task('ensure-workbench', ensureWorkbenchSubtask));
 }
 
 build.initialize(require('gulp'));

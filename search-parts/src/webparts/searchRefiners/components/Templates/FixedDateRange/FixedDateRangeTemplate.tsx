@@ -8,6 +8,7 @@ import * as update from 'immutability-helper';
 import { Loader } from "../../../../../services/TemplateService/LoadHelper";
 import * as strings from 'SearchRefinersWebPartStrings';
 import { ITheme } from "@uifabric/styling";
+import { find } from "@microsoft/sp-lodash-subset";
 
 //CSS
 import styles from './FixedDateRangeTemplate.module.scss';
@@ -108,7 +109,7 @@ export default class FixedDateRangeTemplate extends React.Component<IFixedDateRa
 
         return <div className={styles.pnpRefinersTemplateFixedDateRange}>
             {
-                this.props.showValueFilter ? 
+                this.props.showValueFilter ?
                     <div className='pnp-font-s'>Value filters are not allowed for dates. Clear 'show filter' to remove this message</div>
                     : null
             }
@@ -123,7 +124,7 @@ export default class FixedDateRangeTemplate extends React.Component<IFixedDateRa
                         paddingLeft: 10,
                         backgroundColor: 'inherit'
                     },
-                    flexContainer:{
+                    flexContainer: {
                         selectors: {
                             label: {
                                 color: this.props.themeVariant.semanticColors.bodyText
@@ -188,32 +189,32 @@ export default class FixedDateRangeTemplate extends React.Component<IFixedDateRa
         switch (interval) {
             case Interval.Past24: {
                 startDate = this._getISOString("days", 1);
-                filterDisplayValue = this._options.find(x => x.key === Interval.Past24.toString()).text;
+                filterDisplayValue = find(this._options, x => x.key === Interval.Past24.toString()).text;
                 break;
             }
             case Interval.PastWeek: {
                 startDate = this._getISOString("weeks", 1);
-                filterDisplayValue = this._options.find(x => x.key === Interval.PastWeek.toString()).text;
+                filterDisplayValue = find(this._options, x => x.key === Interval.PastWeek.toString()).text;
                 break;
             }
             case Interval.PastMonth: {
                 startDate = this._getISOString("months", 1);
-                filterDisplayValue = this._options.find(x => x.key === Interval.PastMonth.toString()).text;
+                filterDisplayValue = find(this._options, x => x.key === Interval.PastMonth.toString()).text;
                 break;
             }
             case Interval.Past3Months: {
                 startDate = this._getISOString("months", 3);
-                filterDisplayValue = this._options.find(x => x.key === Interval.Past3Months.toString()).text;
+                filterDisplayValue = find(this._options, x => x.key === Interval.Past3Months.toString()).text;
                 break;
             }
             case Interval.PastYear: {
                 startDate = this._getISOString("years", 1);
-                filterDisplayValue = this._options.find(x => x.key === Interval.PastYear.toString()).text;
+                filterDisplayValue = find(this._options, x => x.key === Interval.PastYear.toString()).text;
                 break;
             }
             case Interval.OlderThanAYear: {
                 endDate = this._getISOString("years", 1);
-                filterDisplayValue = this._options.find(x => x.key === Interval.OlderThanAYear.toString()).text;
+                filterDisplayValue = find(this._options, x => x.key === Interval.OlderThanAYear.toString()).text;
                 break;
             }
         }
@@ -262,7 +263,7 @@ export default class FixedDateRangeTemplate extends React.Component<IFixedDateRa
         if (this.state.refinerSelectedFilterValues.length === 1) {
             const value = this.props.selectedValues[0].RefinementToken;
             const matches = /range\((.+)\,(.+)\)/.exec(value);
-            
+
             if (matches[1] === 'min') {
                 return Interval.OlderThanAYear.toString();
             }

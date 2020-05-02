@@ -3,7 +3,7 @@ import 'core-js/modules/es.string.includes';
 import 'core-js/modules/es.number.is-nan';
 import * as Handlebars from 'handlebars';
 import { ISearchResult } from '../../models/ISearchResult';
-import { isEmpty, uniqBy, uniq, trimEnd } from '@microsoft/sp-lodash-subset';
+import { isEmpty, uniqBy, uniq, trimEnd, get } from '@microsoft/sp-lodash-subset';
 import * as strings from 'SearchResultsWebPartStrings';
 import { Text } from '@microsoft/sp-core-library';
 import { DomHelper } from '../../helpers/DomHelper';
@@ -18,7 +18,7 @@ import { ISearchResultsWebPartProps } from '../../webparts/searchResults/ISearch
 import { IComboBoxOption } from 'office-ui-fabric-react/lib/ComboBox';
 import { IComponentFieldsConfiguration, TemplateService } from './TemplateService';
 import { WebPartContext } from '@microsoft/sp-webpart-base';
-import { ThemeProvider, IReadonlyTheme } from '@microsoft/sp-component-base';
+import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import groupBy from 'handlebars-group-by';
 import { Loader } from './LoadHelper';
 import { IComponentDefinition } from '../ExtensibilityService/IComponentDefinition';
@@ -174,10 +174,28 @@ abstract class BaseTemplateService {
         return moment(new Date(str)).format(pattern);
     }
 
+    private createOdspPreviewUrl(defaultEncodingURL: string): string {
+        let previewUrl: string;
+        if (defaultEncodingURL) {
+            const matches = defaultEncodingURL.match(/^(http[s]?:\/\/[^\/]*)(.+)\/(.+)$/);
+            // First match is the complete URL
+            if (matches) {
+                const [host, path, file] = matches.slice(1);
+                if (host && path && file) {
+                    previewUrl = `${host}${path}/?id=${path}/${file}&parent=${path}`;
+                }
+            }
+        }
+        return previewUrl;
+    }
+
     /**
      * Registers useful helpers for search results templates
      */
     private registerTemplateServices() {
+
+        //https://support.microsoft.com/en-us/office/file-types-supported-for-previewing-files-in-onedrive-sharepoint-and-teams-e054cd0f-8ef2-4ccb-937e-26e37419c5e4 
+        const validPreviewExt = ["DOC", "DOCM", "DOCX", "DOTM", "DOTX", "POT", "POTM", "POTX", "PPS", "PPSM", "PPSX", "PPT", "PPTM", "PPTX", "VSD", "VSDX", "XLS", "XLSB", "XLSX", "3G2", "3GP", "3MF", "AI", "ARW", "ASF", "BAS", "BMP", "CR2", "CRW", "CSV", "CUR", "DCM", "DNG", "DWG", "EML", "EPUB", "ERF", "GIF", "GLB", "GLTF", "HCP", "HTM", "HTML", "ICO", "ICON", "JPG", "KEY", "LOG", "M", "M2TS", "M4V", "MARKDOWN", "MD", "MEF", "MOV", "MOVIE", "MP4", "MP4V", "MRW", "MSG", "MTS", "NEF", "NRW", "ODP", "ODS", "ODT", "ORF", "PAGES", "PANO", "PDF", "PEF", "PICT", "PLY", "PNG", "PSB", "PSD", "RTF", "SKETCH", "STL", "SVG", "TIF", "TIFF", "TS", "WMV", "XBM", "XCF", "XD", "XPM", "ZIP", "GITCONFIG", "ABAP", "ADA", "ADP", "AHK", "AS", "AS3", "ASC", "ASCX", "ASM", "ASP", "AWK", "BASH", "BASH_LOGIN", "BASH_LOGOUT", "BASH_PROFILE", "BASHRC", "BAT", "BIB", "BSH", "BUILD", "BUILDER", "C", "CAPFILE", "CBL", "CC", "CFC", "CFM", "CFML", "CL", "CLJ", "CLS", "CMAKE", "CMD", "COFFEE", "CPP", "CPT", "CPY", "CS", "CSHTML", "CSON", "CSPROJ", "CSS", "CTP", "CXX", "D", "DDL", "DI.DIF", "DIFF", "DISCO", "DML", "DTD", "DTML", "EL", "EMAKEFILE", "ERB", "ERL", "F", "F90", "F95", "FS", "FSI", "FSSCRIPT", "FSX", "GEMFILE", "GEMSPEC", "GO", "GROOVY", "GVY", "H", "H++", "HAML", "HANDLEBARS", "HH", "HPP", "HRL", "HS", "HTC", "HXX", "IDL", "IIM", "INC", "INF", "INI", "INL", "IPP", "IRBRC", "JADE", "JAV", "JAVA", "JS", "JSON", "JSP", "JSX", "L", "LESS", "LHS", "LISP", "LST", "LTX", "LUA", "MAKE", "MARKDN", "MDOWN", "MKDN", "ML", "MLI", "MLL", "MLY", "MM", "MUD", "NFO", "OPML", "OSASCRIPT", "OUT", "P", "PAS", "PATCH", "PHP", "PHP2", "PHP3", "PHP4", "PHP5", "PL", "PLIST", "PM", "POD", "PP", "PROFILE", "PROPERTIES", "PS1", "PT", "PY", "PYW", "R", "RAKE", "RB", "RBX", "RC", "RE", "REG", "REST", "RESW", "RESX", "RHTML", "RJS", "RPROFILE", "RPY", "RSS", "RST", "RXML", "S", "SASS", "SCALA", "SCM", "SCONSCRIPT", "SCONSTRUCT", "SCRIPT", "SCSS", "SGML", "SH", "SHTML", "SML", "SQL", "STY", "TCL", "TEX", "TEXT", "TLD", "TLI", "TMPL", "TPL", "TXT", "VB", "VI", "VIM", "WSDL", "XAML", "XHTML", "XOML", "XML", "XSD", "XSL", "XSLT", "YAML", "YAWS", "YML", "ZS", "MP3", "FBX", "HEIC", "JPEG", "HBS", "TEXTILE", "C++"];
 
         // Return the URL of the search result item
         // Usage: <a href="{{url item}}">
@@ -185,16 +203,39 @@ abstract class BaseTemplateService {
 
             let url = '';
             if (!isEmpty(item)) {
-                if (!isEmpty(item.ServerRedirectedURL)) url = item.ServerRedirectedURL;
-                else if (item.FileType && ['png','jpeg','jpg','bmp','tif','tiff','gif','psd','ind','indd','indt','svg','svgz','eps'].indexOf(item.FileType) !== -1) {
+                if (!isEmpty(item.DefaultEncodingURL)
+                    && item.FileType
+                    && validPreviewExt.indexOf(item.FileType.toLocaleUpperCase()) !== -1) {
+                    url = this.createOdspPreviewUrl(item.DefaultEncodingURL);
+                }
+                else if (!isEmpty(item.ServerRedirectedURL)) {
+                    url = item.ServerRedirectedURL;
+                }
+                else if (item.FileType && ['ind', 'indd', 'indt', 'svgz', 'eps'].indexOf(item.FileType) !== -1) {
                     // Try to redirect to the preview image instead of the list item form
                     if (!isEmpty(item.SiteId) && !isEmpty(item.WebId) && !isEmpty(item.UniqueID)) {
-                        url = `${this._ctx.pageContext.site.absoluteUrl}/_layouts/15/getpreview.ashx?guidSite=${item.SiteId}&guidWeb=${item.WebId}&guidFile=${item.UniqueID.replace(/\{|\}/g,'')}&resolution=3`;
+                        url = `${this._ctx.pageContext.site.absoluteUrl}/_layouts/15/getpreview.ashx?guidSite=${item.SiteId}&guidWeb=${item.WebId}&guidFile=${item.UniqueID.replace(/\{|\}/g, '')}&resolution=3`;
                     }
-                } else url = item.Path; 
+                }
+                else if (item.OriginalPath) {
+                    url = item.OriginalPath;
+                }
+                else url = item.Path;
             }
 
             return new Handlebars.SafeString(url);
+        });
+
+        // Return SPFx page context variable
+        // Usage:
+        //   {{getPageContext "user.displayName"}}
+        //   {{getPageContext "cultureInfo.currentUICultureName"}}
+        Handlebars.registerHelper("getPageContext", (name: string) => {
+
+            if (!name) return "";
+            let value = get(this._ctx.pageContext, name);
+            if (value) return value;
+            return "";
         });
 
         // Get Attachments from LinkOfficeChild managed properties
@@ -203,18 +244,18 @@ abstract class BaseTemplateService {
         //      <a href="{{url}}">{{fileName}}</href>
         //   {{/getAttachments}}
         Handlebars.registerHelper("getAttachments", (value: string, options) => {
-            let out:string = "";
-            if (!isEmpty(value)){
-                let splitArr:string[] = value.split(/\n+/);
-            
+            let out: string = "";
+            if (!isEmpty(value)) {
+                let splitArr: string[] = value.split(/\n+/);
+
                 if (splitArr && splitArr.length > 0) {
                     for (let i of splitArr) {
-                    let pos:number = i.lastIndexOf("/");
-                    if (pos !== -1) {
-                        let fileName:string = i.substring(pos + 1);
-                        let objLine = { url: i, fileName: fileName };
-                        out += options.fn(objLine);
-                    }
+                        let pos: number = i.lastIndexOf("/");
+                        if (pos !== -1) {
+                            let fileName: string = i.substring(pos + 1);
+                            let objLine = { url: i, fileName: fileName };
+                            out += options.fn(objLine);
+                        }
                     }
                 }
             }
@@ -234,15 +275,16 @@ abstract class BaseTemplateService {
         Handlebars.registerHelper("getPreviewSrc", (item: ISearchResult) => {
 
             let previewSrc = "";
+            const nonSupportedGraphThumbnails = ["xls"]; //let's add more as we proceed
 
             if (item) {
                 if (!isEmpty(item.SiteLogo)) previewSrc = item.SiteLogo;
+                else if ((!isEmpty(item.FileType) && nonSupportedGraphThumbnails.indexOf(item.FileType) === -1) && !isEmpty(item.NormSiteID) && !isEmpty(item.NormListID) && !isEmpty(item.NormUniqueID)) previewSrc = `${this._ctx.pageContext.site.absoluteUrl}/_api/v2.0/sites/${item.NormSiteID}/lists/${item.NormListID}/items/${item.NormUniqueID}/driveItem/thumbnails/0/large/content?preferNoRedirect=true`;
                 else if (!isEmpty(item.PreviewUrl)) previewSrc = item.PreviewUrl;
                 else if (!isEmpty(item.PictureThumbnailURL)) previewSrc = item.PictureThumbnailURL;
                 else if (!isEmpty(item.ServerRedirectedPreviewURL)) previewSrc = item.ServerRedirectedPreviewURL;
                 else if (!isEmpty(item.ServerRedirectedURL)) previewSrc = UrlHelper.addOrReplaceQueryStringParam(item.ServerRedirectedURL, 'action', 'interactivepreview');
-                else if (!isEmpty(item.NormSiteID) && !isEmpty(item.NormListID) && !isEmpty(item.NormUniqueID)) previewSrc = `${this._ctx.pageContext.site.absoluteUrl}/_api/v2.0/sites/${item.NormSiteID}/lists/${item.NormListID}/items/${item.NormUniqueID}/driveItem/thumbnails/0/large/content?preferNoRedirect=true`;
-                else if (!isEmpty(item.SiteId) && !isEmpty(item.WebId) && !isEmpty(item.UniqueID)) previewSrc = `${this._ctx.pageContext.site.absoluteUrl}/_layouts/15/getpreview.ashx?guidSite=${item.SiteId}&guidWeb=${item.WebId}&guidFile=${item.UniqueID.replace(/\{|\}/g,'')}&resolution=3`;
+                else if (!isEmpty(item.SiteId) && !isEmpty(item.WebId) && !isEmpty(item.UniqueID)) previewSrc = `${this._ctx.pageContext.site.absoluteUrl}/_layouts/15/getpreview.ashx?guidSite=${item.SiteId}&guidWeb=${item.WebId}&guidFile=${item.UniqueID.replace(/\{|\}/g, '')}&resolution=3`;
             }
 
             return new Handlebars.SafeString(previewSrc);
@@ -363,19 +405,19 @@ abstract class BaseTemplateService {
             const component = customElements.get(wc.componentName);
             if (!component) {
                 customElements.define(wc.componentName, wc.componentClass);
-            } 
-            
+            }
+
             // Set the arbitrary property to all instances to get the WebPart context available in components (ex: PersonaCard)
             wc.componentClass.prototype._ctx = this._ctx;
         });
 
         // Register slider component as partial 
-        let sliderTemplate = Handlebars.compile(`<pnp-slider-component items="{{items}}" options="{{options}}" template="{{@partial-block}}"></pnp-slider-component>`);
+        let sliderTemplate = Handlebars.compile(`<pnp-slider-component data-items="{{items}}" data-options="{{options}}" data-template="{{@partial-block}}"></pnp-slider-component>`);
         Handlebars.registerPartial('slider', sliderTemplate);
 
         // Register live persona wrapper as partial
-        let livePersonaTemplate = Handlebars.compile(`<pnp-live-persona upn="{{upn}}" disable-hover="{{disableHover}}" template="{{@partial-block}}"></live-persona>`);
-        Handlebars.registerPartial('livepersona', livePersonaTemplate);        
+        let livePersonaTemplate = Handlebars.compile(`<pnp-live-persona data-upn="{{upn}}" data-disable-hover="{{disableHover}}" data-template="{{@partial-block}}"></live-persona>`);
+        Handlebars.registerPartial('livepersona', livePersonaTemplate);
     }
 
     public async optimizeLoadingForTemplate(templateContent: string): Promise<void> {
@@ -544,7 +586,7 @@ abstract class BaseTemplateService {
 
         this.UseOldSPIcons = templateContent && templateContent.indexOf("{{IconSrc}}") !== -1;
 
-        if (templateContent && templateContent.indexOf("fabric-icon") !== -1) {
+        if (templateContent && (templateContent.indexOf("fabric-icon") !== -1 || templateContent.indexOf("details-list") !== -1 || templateContent.indexOf("document-card") !== -1)) {
             // load CDN for icons
             Loader.LoadUIFabricIcons();
         }
@@ -594,7 +636,7 @@ abstract class BaseTemplateService {
                     let template = Handlebars.compile(tempTemplateContent, { noEscape: true });
 
                     // Pass the current item as context
-                    processedValue = template({ item: item }, { data: { themeVariant: themeVariant }});
+                    processedValue = template({ item: item }, { data: { themeVariant: themeVariant } });
 
                     processedValue = !isEmpty(processedValue) ? processedValue.trim() : null;
 
@@ -709,28 +751,30 @@ abstract class BaseTemplateService {
         const nodes = document.querySelectorAll('.document-preview-item');
 
         DomHelper.forEach(nodes, ((index, el) => {
-            el.addEventListener("click", (event) => {
-                const thumbnailElt = event.srcElement;
+            if (!el.onclick) {
+                el.addEventListener("click", (event) => {
+                    const thumbnailElt = event.srcElement;
 
-                // Get infos about the document to preview
-                const url: string = event.srcElement.getAttribute("data-url");
-                const previewImgUrl: string = event.srcElement.getAttribute("data-src");
+                    // Get infos about the document to preview
+                    const url: string = event.srcElement.getAttribute("data-url");
+                    const previewImgUrl: string = event.srcElement.getAttribute("data-src");
 
-                if (url) {
-                    let renderElement = React.createElement(
-                        PreviewContainer,
-                        {
-                            elementUrl: url.replace('interactivepreview', 'embedview'),
-                            targetElement: thumbnailElt,
-                            previewImageUrl: previewImgUrl,
-                            showPreview: true,
-                            previewType: PreviewType.Document
-                        } as IPreviewContainerProps
-                    );
+                    if (url) {
+                        let renderElement = React.createElement(
+                            PreviewContainer,
+                            {
+                                elementUrl: url.replace('interactivepreview', 'embedview'),
+                                targetElement: thumbnailElt,
+                                previewImageUrl: previewImgUrl,
+                                showPreview: true,
+                                previewType: PreviewType.Document
+                            } as IPreviewContainerProps
+                        );
 
-                    ReactDom.render(renderElement, el);
-                }
-            });
+                        ReactDom.render(renderElement, el);
+                    }
+                });
+            }
         }));
     }
 

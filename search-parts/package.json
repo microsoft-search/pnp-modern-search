@@ -1,6 +1,6 @@
 {
     "name": "pnp-modern-search",
-    "version": "3.11.0",
+    "version": "3.12.0",
     "private": true,
     "engines": {
         "node": ">=0.10.0"
@@ -51,7 +51,8 @@
         "office-ui-fabric-react": "6.194.0",
         "react-ace": "5.8.0",
         "react-js-pagination": "3.0.2",
-        "video.js": "7.6.6"
+        "video.js": "7.6.6",
+        "dompurify": "2.0.8"
     },
     "devDependencies": {
         "@microsoft/rush-stack-compiler-3.3": "0.3.5",

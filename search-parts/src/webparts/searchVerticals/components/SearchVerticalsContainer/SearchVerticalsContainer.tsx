@@ -3,54 +3,97 @@ import ISearchVerticalsContainerProps from './ISearchVerticalsContainerProps';
 import { Pivot, PivotItem, IPivotItemProps } from 'office-ui-fabric-react/lib/components/Pivot';
 import ISearchVerticalsContainerState from './ISearchVerticalsContainerState';
 import { ITheme } from '@uifabric/styling';
-import templateStyles from '../../../../services/TemplateService/BaseTemplateService.module.scss';
 import styles from './SearchVerticalsContainer.module.scss';
+import { PageOpenBehavior } from '../../../../helpers/UrlHelper';
+import { Icon, GlobalSettings } from 'office-ui-fabric-react';
 
 export default class SearchVerticalsContainer extends React.Component<ISearchVerticalsContainerProps, ISearchVerticalsContainerState> {
 
-  private _pivotRef: any;
+    private _pivotRef: any;
 
-  public constructor(props) {
-    super(props);
+    public constructor(props) {
+        super(props);
 
-    this.onVerticalSelected = this.onVerticalSelected.bind(this);
-  }
+        this.state = {
+            selectedKey: undefined
+        };
 
-  public render(): React.ReactElement<ISearchVerticalsContainerProps> {
+        this.onVerticalSelected = this.onVerticalSelected.bind(this);
+    }
 
-    const renderPivotItems = this.props.verticals.map(vertical => {
+    public render(): React.ReactElement<ISearchVerticalsContainerProps> {
 
-      let pivotItemProps: IPivotItemProps = {};
+        const renderPivotItems = this.props.verticals.map(vertical => {
 
-      if (this.props.showCounts && (vertical.count !== undefined || vertical.count !== null)) {
-        pivotItemProps.itemCount = vertical.count;
-      }
+            let pivotItemProps: IPivotItemProps = {};
 
-      if (vertical.iconName && vertical.iconName.trim() !== "") {
-        pivotItemProps.itemIcon = vertical.iconName;
-      }
+            if (this.props.showCounts && (vertical.count !== undefined || vertical.count !== null)) {
+                pivotItemProps.itemCount = vertical.count;
+            }
 
-      return <PivotItem
-        headerText={vertical.tabName}
-        itemKey={vertical.key}
-        {...pivotItemProps}>
-      </PivotItem>;
-    });
+            if (vertical.iconName && vertical.iconName.trim() !== "") {
+                pivotItemProps.itemIcon = vertical.iconName;
+            }
 
-    return <Pivot className={styles.searchVerticals}
-              componentRef={(e) => { this._pivotRef = e; }}
-              onLinkClick={this.onVerticalSelected}
-              theme={this.props.themeVariant as ITheme}>
-              {renderPivotItems}
-            </Pivot>;
-  }
+            return <PivotItem
+                headerText={vertical.tabName}
+                itemKey={vertical.key}
+                onRenderItemLink={(props, defaultRender) => {
 
-  public onVerticalSelected(item: PivotItem): void {
-    this.props.onVerticalSelected(item.props.itemKey);
-  }
+                    if (vertical.isLink) {
+                        return <div className={styles.isLink}>
+                            {defaultRender(props)}
+                            {vertical.openBehavior === PageOpenBehavior.NewTab ?
+                                <Icon styles={{ root: { fontSize: 10, paddingLeft: 3 } }} iconName='NavigateExternalInline'></Icon> :
+                                <Icon styles={{ root: { fontSize: 10, paddingLeft: 3 } }} iconName='Link'></Icon>
+                            }
+                        </div>;
+                    } else {
+                        return defaultRender(props);
+                    }
+                }}
+                {...pivotItemProps}>
+            </PivotItem>;
+        });
 
-  public componentDidMount() {
-    // Return the default selected key
-    this.props.onVerticalSelected(this._pivotRef.state.selectedKey);
-  }
+        return <Pivot className={styles.searchVerticals}
+            componentRef={(e) => { this._pivotRef = e; }}
+            onLinkClick={this.onVerticalSelected}
+            selectedKey={this.state.selectedKey}
+            defaultSelectedKey={this.props.defaultVerticalKey}
+            theme={this.props.themeVariant as ITheme}>
+            {renderPivotItems}
+        </Pivot>;
+    }
+
+    public onVerticalSelected(item: PivotItem): void {
+
+        const verticalIdx = this.props.verticals.map(vertical => vertical.key).indexOf(item.props.itemKey);
+
+        if (verticalIdx !== -1) {
+
+            const vertical = this.props.verticals[verticalIdx];
+            if (vertical.isLink) {
+                // Send the query to the new page
+                const behavior = vertical.openBehavior === PageOpenBehavior.NewTab ? '_blank' : '_self';
+                this.props.tokenService.replaceQueryVariables(vertical.linkUrl).then((resolvedUrl: string) => {
+                    resolvedUrl = resolvedUrl.replace(/\{searchTerms\}|\{SearchBoxQuery\}/gi, GlobalSettings.getValue('searchBoxQuery'));
+                    window.open(resolvedUrl, behavior);
+                });
+
+            } else {
+
+                this.setState({
+                    selectedKey: item.props.itemKey
+                });
+
+                this.props.onVerticalSelected(item.props.itemKey);
+            }
+        }
+    }
+
+    public componentDidMount() {
+        // Return the default selected key
+        this.props.onVerticalSelected(this._pivotRef.state.selectedKey);
+    }
 }

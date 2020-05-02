@@ -145,6 +145,14 @@ If provided layouts don't meet your requirements, you can modifiy them or start 
 
 ![Edit Template](../images/edit_template.png)
 
+### Styling
+
+You can write your own CSS styles inside templates. However, all CSS rules (including `@media` rules) will be prefixed automatically by an unique ID according to the follwoing pattern (**pnp-modern-search-template_\<Web Part instance ID\>**) to make sure styles are isolated from other Web Parts on the page.
+
+#### Sanitized HTML
+
+The HTML is sanitized automatically preventing XSS attacks using [`DOMPurify`](https://github.com/cure53/DOMPurify). It means for instance, you cannot add your own `<script>` tags or inline JavaScript.
+
 ### Handlebars helpers
 
 The following custom helpers are available in addition to the [handlebars-helpers](https://github.com/helpers/handlebars-helpers):
@@ -173,6 +181,7 @@ Setting | Description
 `{{#times 10}}<span>{{this}}</span>{{/times}}` | Iterate X times over a block
 `{{#group items by="owstaxidmetadataalltagsinfo"}}` | Group items by a specific results property. See [https://github.com/shannonmoeller/handlebars-group-by](https://github.com/shannonmoeller/handlebars-group-by) for usage.
 `{{#getAttachments LinkOfficeChild}} <a href="{{url}}">{{fileName}}</href> {{/getAttachments}}`| Get Attachments is Handlebars block helper intended to be used with the context variables it provides like this (url and filename) in the example.The helper is intended to be used only with the LinkOfficeChild managed property wich is the default managed property for list attachments.
+`{{getPageContext "property"}}` | Retrieve SPFx page context data to show in the template. See [https://docs.microsoft.com/en-us/javascript/api/sp-page-context/pagecontext](https://docs.microsoft.com/en-us/javascript/api/sp-page-context/pagecontext) for possible values. Example `{{getPageContext "user.displayName"}}` `{{getPageContext "cultureInfo.currentUICultureName"}}`.<br>**Note: Casing matches the object model.**
  
 
 You can also define your own in the *BaseTemplateService.ts* file. See [helper-moment](https://github.com/helpers/helper-moment) for date samples using moment.
@@ -192,10 +201,10 @@ The web part has a couple of helper web-components to ease rendering, used by th
 - fabric-icon - You only need to set one property, which are evaluated in order if multiple ones are set.
    ```handlebars
    <pnp-fabric-icon
-    image-url='[url to icon - pri 1]'
-    file-extension='[file extension - pri 2]'
-    icon-name='[office ui fabric icon name - pri 3]'
-    size='16 | 20 | 32 (default) | 40 | 48 | 64 | 96'
+    data-image-url='[url to icon - pri 1]'
+    data-file-extension='[file extension - pri 2]'
+    data-icon-name='[office ui fabric icon name - pri 3]'
+    data-size='16 | 20 | 32 (default) | 40 | 48 | 64 | 96'
     >
     </pnp-fabric-icon>
     ```
@@ -305,4 +314,4 @@ To see all available values, you can inspect the `themeVariant` objetc using the
 
 You may also define your own renderers, which most often should be SPFx application customizers. These should use the resultservice to register themselves as renderers, and will upon registration be available as a rendering choice in the "Result Layouts" Section.
 
-More information about custom code renderers may be found in a separate project `search-custom-renderer`, which showcases such a renderer.
+More information about custom code renderers may be found in a separate project [`search-custom-renderer`](https://github.com/microsoft-search/pnp-modern-search/tree/master/search-custom-renderer), which showcases such a renderer.

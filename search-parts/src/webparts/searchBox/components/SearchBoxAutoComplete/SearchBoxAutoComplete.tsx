@@ -7,6 +7,7 @@ import { Spinner, SpinnerSize, Text, FocusZone, FocusZoneDirection, SearchBox, I
 import { ITheme } from 'office-ui-fabric-react/lib/Styling';
 import { isEqual, debounce } from '@microsoft/sp-lodash-subset';
 import { ISuggestion } from '../../../../models/ISuggestion';
+import * as DOMPurify from 'dompurify';
 
 const SUGGESTION_CHAR_COUNT_TRIGGER = 2;
 const SUGGESTION_UPDATE_DEBOUNCE_DELAY = 200;
@@ -90,7 +91,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
           {suggestion.icon && <img src={suggestion.icon} />}
         </div>
         <div className={styles.suggestionContent}>
-          <span className={styles.suggestionDisplayText} dangerouslySetInnerHTML={{ __html: suggestion.displayText }}></span>
+          <span className={styles.suggestionDisplayText} dangerouslySetInnerHTML={{ __html: DOMPurify.default.sanitize(suggestion.displayText) }}></span>
           <span className={styles.suggestionDescription}>{suggestion.description ? suggestion.description : ""}</span>
         </div>
       </div>

@@ -93,6 +93,8 @@ To create a custom component, follow this procedure:
 
     The `resolveAttributes` method will transform custom element HTML attributes to React component props. By convention, web component attributes have to be passed using **camel case** to be tranformed into React component props.
 
+    > **All custom web components must use the prefix `data-` for attributes (ex: `data-my-parameter`) in the html comsumer. However, the `data-` part won't be included after the resolution by the `resolveAttributes` method.**
+
 For instance: a `preview-image` HTML attribute becomes `previewImage` prop.
 
 4. In the main entry point class (ex: `MyCompanyLibraryLibrary.ts`), extends the `IExtensibilityLibrary` interface and register your custom components this way:
@@ -113,6 +115,8 @@ For instance: a `preview-image` HTML attribute becomes `previewImage` prop.
                 ];
             }
         }
+
+    > **Custom web component tag names must be lowercase with at least one dash separator `-` (ex: `my-custom-component`.**
 
 5. In a custom Handlebars layout, reference your component like this, leveraging the Handlebars context values:
 

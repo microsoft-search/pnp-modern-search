@@ -15,6 +15,7 @@ import { GlobalSettings } from 'office-ui-fabric-react/lib/Utilities'; // has to
 import { BaseWebComponent } from "./BaseWebComponent";
 import * as ReactDOM from "react-dom";
 let globalSettings = (window as any).__globalSettings__;
+import * as DOMPurify from 'dompurify';
 
 /**
  * Document card props. These properties are retrieved from the web component attributes. They must be camel case.
@@ -189,7 +190,7 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
                 </div>
                 <DocumentCardDetails>
                     {processedProps.location && !this.props.isCompact ?
-                        <div className={documentCardLocationClassNames.root} dangerouslySetInnerHTML={{ __html: processedProps.location }}></div> : null
+                        <div className={documentCardLocationClassNames.root} dangerouslySetInnerHTML={{ __html: DOMPurify.default.sanitize(processedProps.location) }}></div> : null
                     }
                     <Link
                         theme={this.props.themeVariant as ITheme}
@@ -209,7 +210,7 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
                         />
                     </Link>
                     {processedProps.tags && !this.props.isCompact ?
-                        <div className={documentCardLocationClassNames.root} dangerouslySetInnerHTML={{ __html: processedProps.tags }}></div> : null
+                        <div className={documentCardLocationClassNames.root} dangerouslySetInnerHTML={{ __html: DOMPurify.default.sanitize(processedProps.tags) }}></div> : null
                     }
                     {processedProps.author ?
                         <DocumentCardActivity
