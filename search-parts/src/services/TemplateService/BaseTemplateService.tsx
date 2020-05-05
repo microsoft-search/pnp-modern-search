@@ -416,7 +416,7 @@ abstract class BaseTemplateService {
         Handlebars.registerPartial('slider', sliderTemplate);
 
         // Register live persona wrapper as partial
-        let livePersonaTemplate = Handlebars.compile(`<pnp-live-persona data-upn="{{upn}}" data-disable-hover="{{disableHover}}" data-template="{{@partial-block}}"></live-persona>`);
+        let livePersonaTemplate = Handlebars.compile(`<pnp-live-persona data-upn="{{upn}}" data-disable-hover="{{disableHover}}" data-template="{{@partial-block}}"></pnp-live-persona>`);
         Handlebars.registerPartial('livepersona', livePersonaTemplate);
     }
 
