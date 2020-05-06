@@ -1,8 +1,8 @@
 import { ISearchResults } from '../../../../models/ISearchResult';
-import { SortDirection } from "@pnp/sp";
+import { SortDirection, Sort } from "@pnp/sp";
 
 interface ISearchResultsContainerState {
-    
+
     /**
      * The current search results to display
      */
@@ -24,15 +24,10 @@ interface ISearchResultsContainerState {
     areResultsLoading: boolean;
 
     /**
-     * Keeps the field on which the results need to be sorted (after initial sort)
+     * Keeps the field and order on which the results need to be sorted (after initial sort)
      */
-    sortField?: string;
+    sort?: Sort;
 
-    /**
-     * Keeps the order in which the results need to be sorted (after initial sort)
-     */
-    sortDirection?: SortDirection;
-    
     /**
      *  Id for the current mounting node
      */
