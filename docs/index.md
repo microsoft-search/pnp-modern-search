@@ -6,7 +6,7 @@
 
 ## Current version
 
-![Current version](https://img.shields.io/badge/version-3.12.0-green.svg)
+![Current version](https://img.shields.io/badge/version-3.12.1-green.svg)
 
 **Get the latest release at our [releases page](https://github.com/microsoft-search/pnp-modern-search/releases/latest).**
 
