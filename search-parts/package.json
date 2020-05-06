@@ -10,7 +10,6 @@
         "build": "gulp bundle",
         "clean": "gulp clean",
         "test": "gulp test",
-        "debug": "gulp clean && gulp bundle && gulp serve --nobrowser",
         "serve": "gulp bundle --custom-serve && webpack-dev-server --mode development --config ./webpack.js --env.env=dev"
     },
     "dependencies": {

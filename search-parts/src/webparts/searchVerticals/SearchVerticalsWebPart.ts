@@ -57,14 +57,6 @@ export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearc
                     }
                 }
             }
-            else{
-                //if no defaultVerticalQuerystringParam configured - Try to handle default selected based on isLink and current page name
-                const pagename = window.location.pathname.toLowerCase();
-                const defaultSelected: ISearchVertical = find(this.properties.verticals, v => v.isLink && v.linkUrl.toLowerCase().indexOf(pagename) > -1);
-                if (defaultSelected) {
-                    defaultVerticalKey = defaultSelected.key;
-                }
-            }
 
             let searchResultSourceData: ISearchResultSourceData = undefined;
             // If the dynamic property exists, it means the Web Part ins connected to a search results Web Part
