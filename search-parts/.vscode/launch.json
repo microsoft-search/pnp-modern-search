@@ -28,7 +28,7 @@
       "name": "Hosted workbench",
       "type": "chrome",
       "request": "launch",
-      "url": "https://collaborationcorner.sharepoint.com/teams/PnPIntranet/_layouts/15/workbench.aspx",
+      "url": "https://kochind.sharepoint.com/sites/GP_PCC_TDO_DEV/_layouts/15/workbench.aspx",
       "webRoot": "${workspaceRoot}",
       "sourceMaps": true,
       "sourceMapPathOverrides": {
