@@ -4,17 +4,17 @@
 
 <!-- If you use a scope using #with, you need to access the current item with the parent path '../<item>|<property_name>' -->
 {{#with (split AuthorOWSUSER '|')}}
-    <document-card  title="{{../Title}}" 
-                    location="{{../SiteTitle}}"
-                    preview-image="{{getPreviewSrc ../item}}" 
-                    preview-url="{{../ServerRedirectedEmbedURL}}" 
-                    date="{{getDate ../Created 'LL'}}" 
-                    href="{{getUrl ../item}}" 
-                    author="{{../Author}}" 
-                    profile-image="/_layouts/15/userphoto.aspx?size=L&username={{[0]}}" 
-                    file-extension="\{{../IconExt}}" 
-                    enable-preview="{{@root.enablePreview}}" 
-                    show-file-icon="{{@root.showFileIcon}}">
+    <document-card  data-title="{{../Title}}" 
+                    data-location="{{../SiteTitle}}"
+                    data-preview-image="{{getPreviewSrc ../item}}" 
+                    data-preview-url="{{../ServerRedirectedEmbedURL}}" 
+                    data-date="{{getDate ../Created 'LL'}}" 
+                    data-href="{{getUrl ../item}}" 
+                    data-author="{{../Author}}" 
+                    data-profile-image="/_layouts/15/userphoto.aspx?size=L&username={{[0]}}" 
+                    data-file-extension="\{{../IconExt}}" 
+                    data-enable-preview="{{@root.enablePreview}}" 
+                    data-show-file-icon="{{@root.showFileIcon}}">
     </document-card>
 {{/with}}
 

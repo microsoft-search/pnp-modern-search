@@ -5,6 +5,9 @@ define([], function() {
     PlaceHolderConfigureBtnLabel: "Configurer",
     PlaceHolderIconText: "Web Part de verticaux de recherche",
     PlaceHolderDescription: "Ce composant permet de recherche à travers des périmètre de recherche prédéfinis",
+    SameTabOpenBehavior: "Utiliser l'onglet courant",
+    NewTabOpenBehavior: "Ouvrir dans un nouvel onglet",
+    PageOpenBehaviorLabel: "Mode d'ouverture de la page",
     PropertyPane: {
       Verticals: {
         PropertyLabel: "Verticaux de recherche",
@@ -15,11 +18,17 @@ define([], function() {
           TabName: "Nom de l'onglet",
           QueryTemplate: "Modèle de requête",
           ResultSource: "Identifiant de la source de résultats",
-          IconName: "Nom de l'icône Office UI Fabric"
+          IconName: "Nom de l'icône Office UI Fabric",
+          IsLink: "Est un lien",
+          LinkUrl: "URL du lien",
+          OpenBehavior: "Mode d'ouverture"
         }
       },
       ShowCounts: {
         PropertyLabel: "Afficher le nombre de résultats"
+      },
+      DefaultVerticalQuerystringParam: {
+        PropertyLabel: "Défaut paramètre de querystring verticale"
       },
       SearchResultsDataSource: {
         PropertyLabel: "Se connecter à un Web Part de résultats de recherche"

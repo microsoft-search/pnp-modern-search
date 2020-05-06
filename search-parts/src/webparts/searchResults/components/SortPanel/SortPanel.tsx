@@ -1,9 +1,9 @@
-import * as React from                                                 'react';
-import ISortPanelProps from                                            './ISortPanelProps';
-import ISortPanelState from                                            './ISortPanelState';
-import { Dropdown, IDropdownOption } from                              'office-ui-fabric-react/lib/Dropdown';
-import * as strings from                                               'SearchResultsWebPartStrings';
-import { ActionButton } from                                           'office-ui-fabric-react/lib/Button';
+import * as React from 'react';
+import ISortPanelProps from './ISortPanelProps';
+import ISortPanelState from './ISortPanelState';
+import { Dropdown, IDropdownOption } from 'office-ui-fabric-react/lib/Dropdown';
+import * as strings from 'SearchResultsWebPartStrings';
+import { ActionButton } from 'office-ui-fabric-react/lib/Button';
 import { SortDirection } from '@pnp/sp';
 import styles from '../SearchResultsWebPart.module.scss';
 import { ISortFieldDirection } from '../../../../models/ISortFieldConfiguration';
@@ -14,13 +14,30 @@ export default class SortPanel extends React.Component<ISortPanelProps, ISortPan
         super(props);
 
         this.state = {
-            sortDirection:this.props.sortDirection ? this.props.sortDirection :SortDirection.Ascending,
-            sortField:this.props.sortField ? this.props.sortField : null
+            sortDirection: this.props.sortDirection ? this.props.sortDirection : SortDirection.Ascending,
+            sortField: this.props.sortField ? this.props.sortField : null
         };
 
         this._setSortDirection = this._setSortDirection.bind(this);
         this._getDropdownOptions = this._getDropdownOptions.bind(this);
         this._onChangedSelectedField = this._onChangedSelectedField.bind(this);
+    }
+
+    public componentDidUpdate(prevProps){
+        let sortDirection = this.state.sortDirection;
+        if (this.props.sortDirection != prevProps.sortDirection){
+            sortDirection = this.props.sortDirection;
+        }
+        let sortField = this.state.sortField;
+        if (this.props.sortField != prevProps.sortField){
+            sortField = this.props.sortField;
+        }
+        if (sortDirection != this.state.sortDirection || sortField != this.state.sortField){
+            this.setState({
+                sortDirection: sortDirection,
+                sortField: sortField
+            });
+        }
     }
 
     public render(): React.ReactElement<ISortPanelProps> {
@@ -30,32 +47,32 @@ export default class SortPanel extends React.Component<ISortPanelProps, ISortPan
 
         return (
             <div className={styles.searchWp__buttonBar__button}>
-                    <ActionButton
-                        className={`${styles.searchWp__filterResultBtn} ms-fontWeight-semibold`}
-                        iconProps={{
-                            iconName: this.state.sortDirection === SortDirection.Ascending ? 'Ascending' : 'Descending'
-                        }}
-                        disabled={ !this.state.sortField ? true : false}
-                        title={ this.state.sortDirection === SortDirection.Ascending ? strings.Sort.SortDirectionAscendingLabel : strings.Sort.SortDirectionDescendingLabel }
-                        onClick={ () => {
-                            this._setSortDirection();
-                        }}
-                    />
-                    <Dropdown
-                            className={ styles.searchWp__sortDropdown }
-                            placeHolder={strings.Sort.SortPanelSortFieldPlaceHolder}
-                            ariaLabel={strings.Sort.SortPanelSortFieldAria}
-                            onChanged={this._onChangedSelectedField}
-                            selectedKey={this.state.sortField}
-                            options={dropdownOptions}
-                        />
-                </div>
+                <ActionButton
+                    className={`${styles.searchWp__filterResultBtn} ms-fontWeight-semibold`}
+                    iconProps={{
+                        iconName: this.state.sortDirection === SortDirection.Ascending ? 'Ascending' : 'Descending'
+                    }}
+                    disabled={!this.state.sortField ? true : false}
+                    title={this.state.sortDirection === SortDirection.Ascending ? strings.Sort.SortDirectionAscendingLabel : strings.Sort.SortDirectionDescendingLabel}
+                    onClick={() => {
+                        this._setSortDirection();
+                    }}
+                />
+                <Dropdown
+                    className={styles.searchWp__sortDropdown}
+                    placeHolder={strings.Sort.SortPanelSortFieldPlaceHolder}
+                    ariaLabel={strings.Sort.SortPanelSortFieldAria}
+                    onChanged={this._onChangedSelectedField}
+                    selectedKey={this.state.sortField}
+                    options={dropdownOptions}
+                />
+            </div>
         );
     }
 
     private _setSortDirection() {
 
-        let sortDirection;
+        let sortDirection = this.state.sortDirection;
 
         switch (this.state.sortDirection) {
             case SortDirection.Ascending:
@@ -75,21 +92,21 @@ export default class SortPanel extends React.Component<ISortPanelProps, ISortPan
             sortDirection: sortDirection,
         });
 
-        this.props.onUpdateSort(sortDirection,this.state.sortField);
+        this.props.onUpdateSort(sortDirection, this.state.sortField);
     }
 
-    private _getDropdownOptions():IDropdownOption[] {
+    private _getDropdownOptions(): IDropdownOption[] {
 
-        let dropdownOptions:IDropdownOption[] = [];
+        let dropdownOptions: IDropdownOption[] = [];
 
         // add default option to avoid onFocus bug on DropDown control
         dropdownOptions.push({
-          key: 'default-item',
-          text: strings.Sort.SortPanelSortFieldPlaceHolder,
-          ariaLabel: strings.Sort.SortPanelSortFieldAria,
-          disabled: true,
-          selected: true,
-          hidden: true,
+            key: 'default-item',
+            text: strings.Sort.SortPanelSortFieldPlaceHolder,
+            ariaLabel: strings.Sort.SortPanelSortFieldAria,
+            disabled: true,
+            selected: true,
+            hidden: true,
         });
 
         this.props.sortableFieldsConfiguration.map(e => {
@@ -97,7 +114,7 @@ export default class SortPanel extends React.Component<ISortPanelProps, ISortPan
                 key: e.sortField,
                 text: e.displayValue,
                 data: {
-                  sortDirection: e.sortField === this.state.sortField ? this.state.sortDirection : e.sortDirection
+                    sortDirection: e.sortField === this.state.sortField ? this.state.sortDirection : e.sortDirection
                 }
             });
         });
@@ -105,18 +122,18 @@ export default class SortPanel extends React.Component<ISortPanelProps, ISortPan
         return dropdownOptions;
     }
 
-    private _onChangedSelectedField(option: IDropdownOption):void {
+    private _onChangedSelectedField(option: IDropdownOption): void {
         const sortField = option.key.toString();
         let sortDirection;
         if (option.data.sortDirection) {
-          sortDirection = option.data.sortDirection === ISortFieldDirection.Ascending ? SortDirection.Ascending : SortDirection.Descending;
+            sortDirection = option.data.sortDirection === ISortFieldDirection.Ascending ? SortDirection.Ascending : SortDirection.Descending;
         } else {
-          sortDirection = this.state.sortDirection;
+            sortDirection = this.state.sortDirection;
         }
         this.setState({
             sortField: sortField,
             sortDirection: sortDirection
         });
-        this.props.onUpdateSort(this.state.sortDirection,sortField);
+        this.props.onUpdateSort(sortDirection, sortField);
     }
 }

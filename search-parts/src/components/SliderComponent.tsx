@@ -6,6 +6,7 @@ import * as ReactDOM from 'react-dom';
 import * as Handlebars from 'handlebars';
 import { MessageBar, MessageBarType } from 'office-ui-fabric-react/lib/MessageBar';
 import { BaseWebComponent } from './BaseWebComponent';
+import { TemplateService } from '../services/TemplateService/TemplateService';
 
 export interface ISliderProps {
     options?: any;
@@ -185,6 +186,10 @@ export class SliderComponent extends React.Component<ISliderComponentProps, ISli
         } catch (error) {
             return <MessageBar messageBarType={MessageBarType.error}>{error}</MessageBar>;
         }
+    }
+
+    public componentDidUpdate(prevState: ISliderComponentState, prevProps: ISliderComponentProps) {
+        TemplateService.initPreviewElements();
     }
 }
 

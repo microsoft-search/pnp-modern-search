@@ -25,3 +25,10 @@ Search Verticals | Allows users to search in predefined scopes.
   - `gulp serve`
 
 The `search-parts` project also supports faster development via [spfx-fast-serve](https://github.com/s-KaiNet/spfx-fast-serve) tool. To use "fast serve" run `npm run serve` instead of `gulp serve`.
+
+We recommend using `--nobrowser` when serving and use one of two approaches for debugging instead of the local workbench:
+* Hosted workbench on any site via: https://&lt;tenant&gt;.sharepoint.com/sites/yoursite/_layouts/15/workbench.aspx
+* Debug on a modern page by appending the below parameters to the URL. This allows page composition and debug as you were in production.
+  ```
+  ?loadSPFX=true&debugManifestsFile=https://localhost:4321/temp/manifests.js
+  ```

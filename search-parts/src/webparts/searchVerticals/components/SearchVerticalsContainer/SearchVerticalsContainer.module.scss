@@ -2,4 +2,12 @@
   div[role=tablist] {
     white-space: normal;
   }
+
+  .isLink {
+    display: flex;
+  }
+  
+  .isLink:hover {
+    color: "[theme: themePrimary, default: #005a9e]"!important;
+  }
 }

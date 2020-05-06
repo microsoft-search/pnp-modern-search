@@ -1,30 +1,26 @@
 ﻿<content id="template">
 
     <style>
-        
-        #pnp-modern-search_{{@root.instanceId}} {
-            /* Insert your CSS overrides here */
-        }
-
+        /* Insert your CSS overrides here */
     </style>
 
-    <div id="pnp-modern-search_{{@root.instanceId}}" class="template_root">
+    <div class="template_root">
         {{#if @root.hasPrimaryOrSecondaryResults}}   
             {{#if showResultsCount}}
                 <div class="template_resultCount">
                     <label class="ms-fontWeight-semibold">{{getCountMessage @root.paging.totalItemsCount keywords}}</label>
                 </div>
             {{/if}}
-            <pnp-details-list items="{{JSONstringify items}}" columns-configuration="{{JSONstringify detailsListColumns}}" show-file-icon="{{@root.showFileIcon}}" is-compact="{{@root.isCompact}}"></pnp-details-list>
+            <pnp-details-list data-items="{{JSONstringify items}}" data-columns-configuration="{{JSONstringify detailsListColumns}}" data-show-file-icon="{{@root.showFileIcon}}" data-is-compact="{{@root.isCompact}}"></pnp-details-list>
             {{#if @root.paging.showPaging}}
                 <pnp-pagination 
-                    total-items="{{@root.paging.totalItemsCount}}" 
-                    hide-first-last-pages="{{@root.paging.hideFirstLastPages}}"
-                    hide-disabled="{{@root.paging.hideDisabled}}"
-                    hide-navigation="{{@root.paging.hideNavigation}}"
-                    range="{{@root.paging.pagingRange}}" 
-                    items-count-per-page="{{@root.paging.itemsCountPerPage}}" 
-                    current-page-number="{{@root.paging.currentPageNumber}}"
+                    data-total-items="{{@root.paging.totalItemsCount}}" 
+                    data-hide-first-last-pages="{{@root.paging.hideFirstLastPages}}"
+                    data-hide-disabled="{{@root.paging.hideDisabled}}"
+                    data-hide-navigation="{{@root.paging.hideNavigation}}"
+                    data-range="{{@root.paging.pagingRange}}" 
+                    data-items-count-per-page="{{@root.paging.itemsCountPerPage}}" 
+                    data-current-page-number="{{@root.paging.currentPageNumber}}"
                 >
                 </pnp-pagination>
             {{/if}}
@@ -41,13 +37,13 @@
         /* Insert your CSS overrides here */
     </style>
 
-    <div id="pnp-modern-search_{{@root.instanceId}}" class="placeholder_root">
+    <div class="placeholder_root">
         {{#if showResultsCount}}
             <div class="template_resultCount">
                 <span class="shimmer line" style="width: 20%"></span>
             </div>
         {{/if}}
-        <pnp-details-list columns-configuration="{{JSONstringify @root.detailsListColumns}}" show-file-icon="{{@root.showFileIcon}}" is-compact="{{@root.isCompact}}" show-shimmers="true"></pnp-details-list>
+        <pnp-details-list data-columns-configuration="{{JSONstringify @root.detailsListColumns}}" data-show-file-icon="{{@root.showFileIcon}}" is-compact="{{@root.isCompact}}" data-show-shimmers="true"></pnp-details-list>
     </div>
 
 </content>

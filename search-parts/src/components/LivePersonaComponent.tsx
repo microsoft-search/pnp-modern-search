@@ -4,6 +4,7 @@ import { Log } from '@microsoft/sp-core-library';
 import { WebPartContext } from '@microsoft/sp-webpart-base';
 import { BaseWebComponent } from './BaseWebComponent';
 import * as ReactDOM from 'react-dom';
+import * as DOMPurify from 'dompurify';
 
 const LIVE_PERSONA_COMPONENT_ID: string = "914330ee-2df2-4f6e-a858-30c23a812408";
 
@@ -22,7 +23,7 @@ export interface ILivePersonaComponentProps {
     /**
      * If info should not appear on hover
      */
-    disableHover?: boolean;
+    disablehover?: boolean;
 
     /**
      * The content to wrap with persona info
@@ -60,13 +61,13 @@ export class LivePersonaComponent extends React.Component<ILivePersonaComponentP
             renderPersona = React.createElement(this.sharedLibrary.LivePersonaCard, {
                 className: 'livePersonaCard',
                 clientScenario: "PeopleWebPart",
-                disableHover: this.props.disableHover,
+                disableHover: this.props.disablehover,
                 hostAppPersonaInfo: {
                   PersonaType: "User"
                 },
                 upn: this.props.upn,
                 serviceScope: this.props.ctx.serviceScope,
-              }, <div dangerouslySetInnerHTML={{ __html: this.props.template }}></div>);
+              }, <div dangerouslySetInnerHTML={{ __html: DOMPurify.default.sanitize(this.props.template) }}></div>);
         }
         return renderPersona;
     }

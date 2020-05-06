@@ -1,12 +1,12 @@
 <content id="template">
 
     <style>
-        #pnp-modern-search_{{@root.instanceId}} .personaCard {
+        .personaCard {
             margin: 10px;
         }
     </style>
 
-    <div id="pnp-modern-search_{{@root.instanceId}}" class="template_root">
+    <div class="template_root">
         {{#if @root.hasPrimaryOrSecondaryResults}} 
             <div class="template_defaultCard">
                 {{#if showResultsCount}}
@@ -21,7 +21,7 @@
                             {{#> resultTypes item=item}}
                                 <div class="personaCard">
                                     {{#with (split AccountName '|')}}
-                                        <pnp-persona-card fields-configuration="{{JSONstringify ../../../peopleFields}}" item="{{JSONstringify item}}" persona-size="{{../../../personaSize}}" />
+                                        <pnp-persona-card data-fields-configuration="{{JSONstringify ../../../peopleFields}}" data-item="{{JSONstringify item}}" data-persona-size="{{../../../personaSize}}" />
                                     {{/with}}
                                 </div>
                             {{/resultTypes}}
@@ -32,13 +32,13 @@
             </div>
             {{#if @root.paging.showPaging}}
                 <pnp-pagination 
-                    total-items="{{@root.paging.totalItemsCount}}" 
-                    hide-first-last-pages="{{@root.paging.hideFirstLastPages}}"
-                    hide-disabled="{{@root.paging.hideDisabled}}"
-                    hide-navigation="{{@root.paging.hideNavigation}}"
-                    range="{{@root.paging.pagingRange}}" 
-                    items-count-per-page="{{@root.paging.itemsCountPerPage}}" 
-                    current-page-number="{{@root.paging.currentPageNumber}}"
+                    data-total-items="{{@root.paging.totalItemsCount}}" 
+                    data-hide-first-last-pages="{{@root.paging.hideFirstLastPages}}"
+                    data-hide-disabled="{{@root.paging.hideDisabled}}"
+                    data-hide-navigation="{{@root.paging.hideNavigation}}"
+                    data-range="{{@root.paging.pagingRange}}" 
+                    data-items-count-per-page="{{@root.paging.itemsCountPerPage}}" 
+                    data-current-page-number="{{@root.paging.currentPageNumber}}"
                 >
                 </pnp-pagination>
             {{/if}}
@@ -51,7 +51,7 @@
 </content>
     
 <content id="placeholder">   
-    <div id="pnp-modern-search_{{@root.instanceId}}" class="placeholder_root">
+    <div class="placeholder_root">
         <div class="template_defaultCard">
             {{#if showResultsCount}}
                 <div class="template_resultCount">
@@ -62,7 +62,7 @@
                 <div class="ms-Grid-row">
                     {{#times @root.paging.totalItemsCount}}
                         <div class="ms-Grid-col ms-sm12 ms-md12 ms-lg12">
-                            <pnp-persona-card-shimmers persona-size="{{@root.personaSize}}"></pnp-persona-card-shimmers>
+                            <pnp-persona-card-shimmers data-persona-size="{{@root.personaSize}}"></pnp-persona-card-shimmers>
                         </div>
                     {{/times}}
                 </div>

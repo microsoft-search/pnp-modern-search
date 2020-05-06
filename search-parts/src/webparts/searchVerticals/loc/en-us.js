@@ -5,6 +5,9 @@ define([], function() {
     PlaceHolderConfigureBtnLabel: "Configure",
     PlaceHolderIconText: "Search Verticals Web Part",
     PlaceHolderDescription: "This component allows you to search within scopes (i.e verticals)",
+    SameTabOpenBehavior: "Use the current tab",
+    NewTabOpenBehavior: "Open in a new tab",
+    PageOpenBehaviorLabel: "Opening behavior",
     PropertyPane: {
       Verticals: {
         PropertyLabel: "Search verticals",
@@ -15,11 +18,17 @@ define([], function() {
           TabName: "Tab name",
           QueryTemplate: "Query Template",
           ResultSource: "Result Source Identifier",
-          IconName: "Office UI Fabric icon name"
+          IconName: "Office UI Fabric icon name",
+          IsLink: "Is hyperlink",
+          LinkUrl: "Link URL",
+          OpenBehavior: "Open behavior"
         }
       },
       ShowCounts: {
         PropertyLabel: "Show result counts"
+      },
+      DefaultVerticalQuerystringParam: {
+        PropertyLabel: "Default vertical querystring parameter"
       },
       SearchResultsDataSource: {
         PropertyLabel: "Connect to a search results Web Part"
