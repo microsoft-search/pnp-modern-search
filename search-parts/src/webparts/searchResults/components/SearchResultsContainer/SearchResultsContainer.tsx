@@ -314,11 +314,11 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                     }
                     
                     if (resetSorting) {
-
                         // Get back to initial values
-                        this.props.searchService.sortList = [{ Property: this._defaultSortingValues.sortField, Direction: this._defaultSortingValues.sortDirection }];
+                        if(this._defaultSortingValues.sortField && this._defaultSortingValues.sortDirection){
+                            this.props.searchService.sortList = [{ Property: this._defaultSortingValues.sortField, Direction: this._defaultSortingValues.sortDirection }];
+                        }                        
                     }
-
                     const searchResults = await this._getSearchResults(this.props, selectedPage);
 
                     this.setState({
