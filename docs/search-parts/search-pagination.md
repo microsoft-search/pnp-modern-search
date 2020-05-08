@@ -3,13 +3,13 @@
 ```
 {{#if @root.paging.showPaging}}
     <pnp-pagination 
-        total-items="{{@root.paging.totalItemsCount}}" 
-        hide-first-last-pages="{{@root.paging.hideFirstLastPages}}"
-        hide-disabled="{{@root.paging.hideDisabled}}"
-        hide-navigation="{{@root.paging.hideNavigation}}"
-        range="{{@root.paging.pagingRange}}" 
-        items-count-per-page="{{@root.paging.itemsCountPerPage}}" 
-        current-page-number="{{@root.paging.currentPageNumber}}"
+        data-total-items="{{@root.paging.totalItemsCount}}" 
+        data-hide-first-last-pages="{{@root.paging.hideFirstLastPages}}"
+        data-hide-disabled="{{@root.paging.hideDisabled}}"
+        data-hide-navigation="{{@root.paging.hideNavigation}}"
+        data-range="{{@root.paging.pagingRange}}" 
+        data-items-count-per-page="{{@root.paging.itemsCountPerPage}}" 
+        data-current-page-number="{{@root.paging.currentPageNumber}}"
     >
     </pnp-pagination>
 {{/if}}
