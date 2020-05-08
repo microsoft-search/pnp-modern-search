@@ -57,7 +57,7 @@ For HTML fields you can use the special variable `@themeVariant` to use theme co
 | **Show file icon** | Hide or display the file icon in the card.
 | **Compact mode** | Display the cards in compact mode. 
 
-### Slider
+### Carousel/Slider
 
 Displays search results as a carousel using the [Flickity library](https://flickity.metafizzy.co/) (the same used in the [PnP Starter Intranet solution](https://github.com/SharePoint/PnP/blob/master/Solutions/Business.StarterIntranet/app/src/components/Carousel/CarouselViewModel.ts)).
 
@@ -208,11 +208,9 @@ The web part has a couple of helper web-components to ease rendering, used by th
     >
     </pnp-fabric-icon>
     ```
-
-fileExtension?: string;
-    iconName?: string;
-    size?: FileTypeIconSize;
-    imageUrl?: string;
+- accordion
+- popup
+- lookup-list-expander
 
 ### Use result types
 
