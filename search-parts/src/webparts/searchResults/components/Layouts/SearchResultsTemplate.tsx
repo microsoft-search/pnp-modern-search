@@ -71,7 +71,7 @@ export default class SearchResultsTemplate extends React.Component<ISearchResult
             const templateAsHtml = new DOMParser().parseFromString(template, "text/html");
 
             // Get <style> tags from Handlebars template content and prefix all CSS rules by the Web Part instance ID to isolate styles
-            const styleElements = templateAsHtml.getElementsByTagName("style"); 
+            const styleElements = templateAsHtml.getElementsByTagName("style");
             let prefixedStyles: string[] = [];
             let i, j, k = 0;
 
@@ -82,7 +82,7 @@ export default class SearchResultsTemplate extends React.Component<ISearchResult
 
                 for (i = 0; i < styleElements.length; i++) {
                     const style = styleElements.item(i);
-                    const sheet: any = style.sheet; 
+                    const sheet: any = style.sheet;
                     if ((sheet as CSSStyleSheet).cssRules) {
                         const cssRules = (sheet as CSSStyleSheet).cssRules;
 
@@ -108,7 +108,12 @@ export default class SearchResultsTemplate extends React.Component<ISearchResult
                     }
 
                     // Remove the element from DOM
-                    style.remove(); 
+                    if (style.remove) {
+                        style.remove();
+                    } else if ((style as any).removeNode) {
+                        //IE11
+                        (style as any).removeNode();
+                    }
                 }
             }
 
