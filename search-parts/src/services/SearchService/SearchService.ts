@@ -462,7 +462,7 @@ class SearchService implements ISearchService {
         // Update tokens in query template for all verticals
         let tokenPromises: Promise<string>[] = [];
 
-        tokenPromises = searchVerticals.map(vertical => {
+        tokenPromises = searchVerticals.filter(v => !v.isLink).map(vertical => {
             return this._tokenService.replaceQueryVariables(vertical.queryTemplate);
         });
 

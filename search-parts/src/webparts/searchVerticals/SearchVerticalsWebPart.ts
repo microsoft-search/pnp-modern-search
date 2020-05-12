@@ -244,16 +244,47 @@ export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearc
                     {
                         id: 'queryTemplate',
                         title: strings.PropertyPane.Verticals.Fields.QueryTemplate,
-                        type: this._customCollectionFieldType.string,
-                        required: true,
-                        defaultValue: "{searchTerms}"
+                        type: this._customCollectionFieldType.custom,
+                        onCustomRender: (field, value, onUpdate, item, itemId, onCustomFieldValidation) => {
+                          return (
+                              React.createElement("div", null,
+                                  React.createElement(TextField, {
+                                      defaultValue: value,
+                                      disabled: item.isLink ? true : false,
+                                      required: item.isLink ? false : true,
+                                      onGetErrorMessage: (value: string) => {
+                                          if (!value) {
+                                            onCustomFieldValidation(field.id, strings.PropertyPane.Verticals.FieldValidationErrorMessage);
+                                          } else {
+                                            onCustomFieldValidation(field.id, '');
+                                          }
+                                      },
+                                      placeholder: '{searchTerms}',
+                                      onChange: (ev, newValue) => {
+                                        onUpdate(field.id, newValue);
+                                      } 
+                                  } as ITextFieldProps)
+                              )
+                          );
+                        }
                     },
                     {
                         id: 'resultSourceId',
                         title: strings.PropertyPane.Verticals.Fields.ResultSource,
-                        type: this._customCollectionFieldType.string,
-                        required: false,
-
+                        type: this._customCollectionFieldType.custom,
+                        onCustomRender: (field, value, onUpdate, item, itemId, onCustomFieldValidation) => {
+                          return (
+                              React.createElement("div", null,
+                                  React.createElement(TextField, {
+                                      defaultValue: value,
+                                      disabled: item.isLink ? true : false,
+                                      onChange: (ev, newValue) => {
+                                        onUpdate(field.id, newValue);
+                                      } 
+                                  } as ITextFieldProps)
+                              )
+                          );
+                        }
                     },
                     {
                         id: 'iconName',

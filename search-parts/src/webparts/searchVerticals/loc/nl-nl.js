@@ -14,6 +14,7 @@ define([], function() {
         PanelHeader: "Configureer zoek verticals",
         PanelDescription: "Voeg een nieuwe vertical toe om te zoeken in een voorafgedefineerde scope.",
         ButtonLabel: "Configureren",
+        FieldValidationErrorMessage: "dit veld is verplicht",
         Fields: {
           TabName: "Tab naam",
           QueryTemplate: "zoekopdracht template",

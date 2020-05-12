@@ -14,6 +14,7 @@ define([], function () {
         PanelHeader: "Configurar Verticales de Búsqueda",
         PanelDescription: "Agregue una nueva vertical para permitir a los usuarios buscar en un ámbito predefinido.",
         ButtonLabel: "Configurar",
+        FieldValidationErrorMessage: "este campo es requerido",
         Fields: {
           TabName: "Nombre de Etiqueta",
           QueryTemplate: "Plantilla de Consulta",
