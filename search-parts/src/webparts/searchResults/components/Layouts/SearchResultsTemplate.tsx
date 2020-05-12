@@ -33,6 +33,14 @@ export default class SearchResultsTemplate extends React.Component<ISearchResult
                 data.allowedTags[data.tagName] = true;
             }
         });
+
+        // Allow all custom attributes
+        this._domPurify.addHook('uponSanitizeAttribute', (attr, data) => {
+
+            if (data && data.attrName) {
+                data.allowedAttributes[data.attrName] = true;
+            }
+        });   
     }
 
     public render() {
