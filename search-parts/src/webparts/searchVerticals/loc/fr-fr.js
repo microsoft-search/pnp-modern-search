@@ -14,6 +14,7 @@ define([], function() {
         PanelHeader: "Configurer les verticaux de recherche",
         PanelDescription: "Ajouter un vertical de recherche pour permettre aux utilisateurs de recherche selon un périmètre précis.",
         ButtonLabel: "Configurer",
+        FieldValidationErrorMessage: "Ce champ est requis",
         Fields: {
           TabName: "Nom de l'onglet",
           QueryTemplate: "Modèle de requête",
