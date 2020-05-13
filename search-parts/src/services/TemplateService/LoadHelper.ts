@@ -53,12 +53,11 @@ export class Loader {
         const icons = GlobalSettings.getValue("icons");
         if (icons && !icons["pagelink"]) {
             //load regular fabric icons if not present
-            initializeIcons();
+            initializeIcons(void 0, { disableWarnings: true });
         }
         if (icons && !icons["spo16_svg"]) {
             // load file type icons if not present
-            initializeFileTypeIcons('https://spoprod-a.akamaihd.net/files/fabric/assets/item-types-fluent/');
-            //initializeFileTypeIcons();
+            initializeFileTypeIcons(void 0, { disableWarnings: true });
         }
     }
 }
