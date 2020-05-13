@@ -252,8 +252,8 @@ export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearc
                                       defaultValue: value,
                                       disabled: item.isLink ? true : false,
                                       required: item.isLink ? false : true,
-                                      onGetErrorMessage: (value: string) => {
-                                          if (!value) {
+                                      onGetErrorMessage: (errValue: string) => {
+                                          if (!errValue) {
                                             onCustomFieldValidation(field.id, strings.PropertyPane.Verticals.FieldValidationErrorMessage);
                                           } else {
                                             onCustomFieldValidation(field.id, '');
