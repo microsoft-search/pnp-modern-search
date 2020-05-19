@@ -217,6 +217,9 @@ abstract class BaseTemplateService {
                         url = `${this._ctx.pageContext.site.absoluteUrl}/_layouts/15/getpreview.ashx?guidSite=${item.SiteId}&guidWeb=${item.WebId}&guidFile=${item.UniqueID.replace(/\{|\}/g, '')}&resolution=3`;
                     }
                 }
+                else if (item.FileType && item.FileType.toLowerCase() === "url" && item.ShortcutUrl){
+                    url = item.ShortcutUrl;
+                }
                 else if (item.OriginalPath) {
                     url = item.OriginalPath;
                 }
