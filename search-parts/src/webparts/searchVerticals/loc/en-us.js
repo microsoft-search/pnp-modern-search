@@ -14,6 +14,7 @@ define([], function() {
         PanelHeader: "Configure search verticals",
         PanelDescription: "Add a new vertical to allow users to search in a predefined scope.",
         ButtonLabel: "Configure",
+        FieldValidationErrorMessage: "This field is required",
         Fields: {
           TabName: "Tab name",
           QueryTemplate: "Query Template",

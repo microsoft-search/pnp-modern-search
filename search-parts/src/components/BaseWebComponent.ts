@@ -38,13 +38,14 @@ export abstract class BaseWebComponent extends HTMLElement {
                 const matches = attr.match(/data-(.+)/);
                 if (matches && matches.length === 2) {
                     attr = matches[1];
+                }
 
-                    // Booleans
-                    if (/^(true|false)$/i.test(value)) {
-                        props[camelCase(attr)] = (value === 'true');
-                    } else {
-                        props[camelCase(attr)] = value;
-                    }
+                // Booleans
+                if (/^(true|false)$/i.test(value)) {
+                    props[camelCase(attr)] = (value === 'true');
+                } else {
+                    // Any other attribute
+                    props[camelCase(attr)] = value;
                 }
             }         
         }

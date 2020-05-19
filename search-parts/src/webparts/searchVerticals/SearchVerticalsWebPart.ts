@@ -57,6 +57,14 @@ export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearc
                     }
                 }
             }
+            else {
+                //if no defaultVerticalQuerystringParam configured - Try to handle default selected based on isLink and current page name
+                const pagename = window.location.pathname.toLowerCase();
+                const defaultSelected: ISearchVertical = find(this.properties.verticals, v => v.isLink && v.linkUrl.toLowerCase().indexOf(pagename) > -1);
+                if (defaultSelected) {
+                    defaultVerticalKey = defaultSelected.key;
+                }
+            }
 
             let searchResultSourceData: ISearchResultSourceData = undefined;
             // If the dynamic property exists, it means the Web Part ins connected to a search results Web Part
@@ -236,16 +244,47 @@ export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearc
                     {
                         id: 'queryTemplate',
                         title: strings.PropertyPane.Verticals.Fields.QueryTemplate,
-                        type: this._customCollectionFieldType.string,
-                        required: true,
-                        defaultValue: "{searchTerms}"
+                        type: this._customCollectionFieldType.custom,
+                        onCustomRender: (field, value, onUpdate, item, itemId, onCustomFieldValidation) => {
+                          return (
+                              React.createElement("div", null,
+                                  React.createElement(TextField, {
+                                      defaultValue: value,
+                                      disabled: item.isLink ? true : false,
+                                      required: item.isLink ? false : true,
+                                      onGetErrorMessage: (errValue: string) => {
+                                          if (!errValue) {
+                                            onCustomFieldValidation(field.id, strings.PropertyPane.Verticals.FieldValidationErrorMessage);
+                                          } else {
+                                            onCustomFieldValidation(field.id, '');
+                                          }
+                                      },
+                                      placeholder: '{searchTerms}',
+                                      onChange: (ev, newValue) => {
+                                        onUpdate(field.id, newValue);
+                                      } 
+                                  } as ITextFieldProps)
+                              )
+                          );
+                        }
                     },
                     {
                         id: 'resultSourceId',
                         title: strings.PropertyPane.Verticals.Fields.ResultSource,
-                        type: this._customCollectionFieldType.string,
-                        required: false,
-
+                        type: this._customCollectionFieldType.custom,
+                        onCustomRender: (field, value, onUpdate, item, itemId, onCustomFieldValidation) => {
+                          return (
+                              React.createElement("div", null,
+                                  React.createElement(TextField, {
+                                      defaultValue: value,
+                                      disabled: item.isLink ? true : false,
+                                      onChange: (ev, newValue) => {
+                                        onUpdate(field.id, newValue);
+                                      } 
+                                  } as ITextFieldProps)
+                              )
+                          );
+                        }
                     },
                     {
                         id: 'iconName',

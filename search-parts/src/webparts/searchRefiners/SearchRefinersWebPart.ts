@@ -168,7 +168,7 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
     this.initThemeVariant();
 
     // Initialize File Type UI Fabric icon
-    initializeFileTypeIcons();
+    initializeFileTypeIcons(void 0, { disableWarnings: true });
 
     this._dynamicDataService = new DynamicDataService(this.context.dynamicDataProvider);
     this.ensureDataSourceConnection();

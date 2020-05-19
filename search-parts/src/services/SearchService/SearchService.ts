@@ -343,7 +343,7 @@ class SearchService implements ISearchService {
                             });
                         }
 
-                        // Secondary/Query Rule results are mapped through SecondaryQueryResults.RelevantResults
+                        // Secondary/Query Rule results are mapped through SecondaryQueryResults.RelevantResults OR SecondaryQueryResults.CustomResults
                         if (e.RelevantResults) {
                             const secondaryResultItems = e.RelevantResults.Table.Rows.map((srr) => {
                                 let result: ISearchResult = {};
@@ -364,6 +364,31 @@ class SearchService implements ISearchService {
                             if (secondaryResultBlock.Results.length > 0) {
                                 secondaryResults.push(secondaryResultBlock);
                             }
+                        }
+
+                        if (e.CustomResults && Array.isArray(e.CustomResults) && e.CustomResults.length > 0) {
+
+                            e.CustomResults.map((cr) => {
+                                const secondaryResultItems = cr.Table.Rows.map((srr) => {
+                                    let result: ISearchResult = {};
+
+                                    srr.Cells.map((item) => {
+                                        result[item.Key] = item.Value;
+                                    });
+
+                                    return result;
+                                });
+
+                                const secondaryResultBlock: ISearchResultBlock = {
+                                    Title: cr.ResultTitle,
+                                    Results: secondaryResultItems
+                                };
+
+                                // Only keep secondary result blocks which have items
+                                if (secondaryResultBlock.Results.length > 0) {
+                                    secondaryResults.push(secondaryResultBlock);
+                                }
+                            });
                         }
                     });
 
@@ -437,7 +462,7 @@ class SearchService implements ISearchService {
         // Update tokens in query template for all verticals
         let tokenPromises: Promise<string>[] = [];
 
-        tokenPromises = searchVerticals.map(vertical => {
+        tokenPromises = searchVerticals.filter(v => !v.isLink).map(vertical => {
             return this._tokenService.replaceQueryVariables(vertical.queryTemplate);
         });
 

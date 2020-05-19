@@ -27,7 +27,7 @@ export default class SearchVerticalsContainer extends React.Component<ISearchVer
 
             let pivotItemProps: IPivotItemProps = {};
 
-            if (this.props.showCounts && (vertical.count !== undefined || vertical.count !== null)) {
+            if (this.props.showCounts && (vertical.count !== undefined || vertical.count !== null) && !vertical.isLink) {
                 pivotItemProps.itemCount = vertical.count;
             }
 
