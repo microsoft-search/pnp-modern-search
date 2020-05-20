@@ -275,16 +275,20 @@ abstract class BaseTemplateService {
         Handlebars.registerHelper("getPreviewSrc", (item: ISearchResult) => {
 
             let previewSrc = "";
-            const nonSupportedGraphThumbnails = ["xls"]; //let's add more as we proceed
+            const nonSupportedGraphThumbnails = ["xls","aspx"]; //let's add more as we proceed
+            const nonSupportedPreviews = ["aspx"]; //let's add more as we proceed
 
             if (item) {
-                if (!isEmpty(item.SiteLogo)) previewSrc = item.SiteLogo;
-                else if ((!isEmpty(item.FileType) && nonSupportedGraphThumbnails.indexOf(item.FileType) === -1) && !isEmpty(item.NormSiteID) && !isEmpty(item.NormListID) && !isEmpty(item.NormUniqueID)) previewSrc = `${this._ctx.pageContext.site.absoluteUrl}/_api/v2.0/sites/${item.NormSiteID}/lists/${item.NormListID}/items/${item.NormUniqueID}/driveItem/thumbnails/0/large/content?preferNoRedirect=true`;
-                else if (!isEmpty(item.PreviewUrl)) previewSrc = item.PreviewUrl;
-                else if (!isEmpty(item.PictureThumbnailURL)) previewSrc = item.PictureThumbnailURL;
-                else if (!isEmpty(item.ServerRedirectedPreviewURL)) previewSrc = item.ServerRedirectedPreviewURL;
-                else if (!isEmpty(item.ServerRedirectedURL)) previewSrc = UrlHelper.addOrReplaceQueryStringParam(item.ServerRedirectedURL, 'action', 'interactivepreview');
-                else if (!isEmpty(item.SiteId) && !isEmpty(item.WebId) && !isEmpty(item.UniqueID)) previewSrc = `${this._ctx.pageContext.site.absoluteUrl}/_layouts/15/getpreview.ashx?guidSite=${item.SiteId}&guidWeb=${item.WebId}&guidFile=${item.UniqueID.replace(/\{|\}/g, '')}&resolution=3`;
+                if (!isEmpty(item.IsDocument) && item.IsDocument.toLowerCase() == "true"){ //Preivew only for documents
+                    if (!isEmpty(item.SiteLogo)) previewSrc = item.SiteLogo;
+                    else if ((!isEmpty(item.FileType) && nonSupportedGraphThumbnails.indexOf(item.FileType) === -1) && !isEmpty(item.NormSiteID) && !isEmpty(item.NormListID) && !isEmpty(item.NormUniqueID)) previewSrc = `${this._ctx.pageContext.site.absoluteUrl}/_api/v2.0/sites/${item.NormSiteID}/lists/${item.NormListID}/items/${item.NormUniqueID}/driveItem/thumbnails/0/large/content?preferNoRedirect=true`;
+                    else if (!isEmpty(item.FileType) && nonSupportedPreviews.indexOf(item.FileType) > -1) previewSrc = ""; //Empty for non supported preview filetypes
+                    else if (!isEmpty(item.PreviewUrl)) previewSrc = item.PreviewUrl;
+                    else if (!isEmpty(item.PictureThumbnailURL)) previewSrc = item.PictureThumbnailURL;
+                    else if (!isEmpty(item.ServerRedirectedPreviewURL)) previewSrc = item.ServerRedirectedPreviewURL;
+                    else if (!isEmpty(item.ServerRedirectedURL)) previewSrc = UrlHelper.addOrReplaceQueryStringParam(item.ServerRedirectedURL, 'action', 'interactivepreview');
+                    else if (!isEmpty(item.SiteId) && !isEmpty(item.WebId) && !isEmpty(item.UniqueID)) previewSrc = `${this._ctx.pageContext.site.absoluteUrl}/_layouts/15/getpreview.ashx?guidSite=${item.SiteId}&guidWeb=${item.WebId}&guidFile=${item.UniqueID.replace(/\{|\}/g, '')}&resolution=3`;
+                }
             }
 
             return new Handlebars.SafeString(previewSrc);
