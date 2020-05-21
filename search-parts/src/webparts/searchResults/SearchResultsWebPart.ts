@@ -95,6 +95,8 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
     private _synonymTable: ISynonymTable;
 
     private _extensibilityLibraries:string[] = [];
+    private _extensibilityEditor = null;
+
 
     /**
      * Available property pane options from Web Components
@@ -703,6 +705,9 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
     }
 
     protected async loadPropertyPaneResources(): Promise<void> {
+
+        // extensibility editor
+        this._extensibilityEditor = await import('../../components/ExtensibilityEditor');
 
         // tslint:disable-next-line:no-shadowed-variable
         const { PropertyFieldCodeEditor, PropertyFieldCodeEditorLanguages } = await import(
