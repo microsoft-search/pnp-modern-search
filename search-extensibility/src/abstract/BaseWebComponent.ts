@@ -39,14 +39,15 @@ export abstract class BaseWebComponent extends HTMLElement implements IWebCompon
                 const matches = attr.match(/data-(.+)/);
                 if (matches && matches.length === 2) {
                     attr = matches[1];
-
-                    // Booleans
-                    if (/^(true|false)$/i.test(value)) {
-                        this.allAttributes[camelCase(attr)] = (value === 'true');
-                    } else {
-                        this.allAttributes[camelCase(attr)] = value;
-                    }
                 }
+
+                // Booleans
+                if (/^(true|false)$/i.test(value)) {
+                    this.allAttributes[camelCase(attr)] = (value === 'true');
+                } else {
+                    this.allAttributes[camelCase(attr)] = value;
+                }
+                
             }         
         }
 

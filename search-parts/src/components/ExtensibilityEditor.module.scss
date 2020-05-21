@@ -1,0 +1,21 @@
+@import '~office-ui-fabric-react/dist/sass/References.scss';
+
+.extensibilityEditor {
+
+    .addContainer { display: block; }
+
+    .addText { display: block; }
+
+    .addButton{ display: block; }
+
+    .library { display: block; }
+
+    .list { display: block; }
+    
+    .title { @include ms-font-xl; margin-top: 0; }
+
+    .subTitle { @include ms-font-l; }
+
+    .description { @include ms-font-l; }
+
+}

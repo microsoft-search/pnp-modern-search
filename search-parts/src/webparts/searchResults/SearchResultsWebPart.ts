@@ -41,7 +41,7 @@ import { ResultTypeOperator } from '../../models/ISearchResultType';
 import IResultService from '../../services/ResultService/IResultService';
 import { ResultService, IRenderer } from '../../services/ResultService/ResultService';
 import { IDynamicDataCallables, IDynamicDataPropertyDefinition } from '@microsoft/sp-dynamic-data';
-import { IRefinementFilter, ISearchVerticalInformation, IRefinementResult, IRefinementValue } from '../../models/ISearchResult';
+import { IRefinementFilter, ISearchVerticalInformation, IRefinementResult, IRefinementValue } from 'search-extensibility';
 import IDynamicDataService from '../../services/DynamicDataService/IDynamicDataService';
 import { DynamicDataService } from '../../services/DynamicDataService/DynamicDataService';
 import { DynamicProperty, ThemeProvider, IReadonlyTheme, ThemeChangedEventArgs } from '@microsoft/sp-component-base';
@@ -57,20 +57,15 @@ import { IDropdownOption } from 'office-ui-fabric-react/lib/Dropdown';
 import { IComboBoxOption } from 'office-ui-fabric-react/lib/ComboBox';
 import { SearchManagedProperties, ISearchManagedPropertiesProps } from '../../controls/SearchManagedProperties/SearchManagedProperties';
 import { PropertyPaneSearchManagedProperties } from '../../controls/PropertyPaneSearchManagedProperties/PropertyPaneSearchManagedProperties';
-import { ExtensibilityService } from '../../services/ExtensibilityService/ExtensibilityService';
-import IExtensibilityService from '../../services/ExtensibilityService/IExtensibilityService';
-import { IComponentDefinition } from '../../services/ExtensibilityService/IComponentDefinition';
+import { BaseQueryModifier, ExtensibilityService, IExtensibilityService, IExtension, IQueryModifierInstance, ExtensionHelper, ExtensionTypes } from 'search-extensibility';
 import { AvailableComponents } from '../../components/AvailableComponents';
 import { BaseClientSideWebPart, IWebPartPropertiesMetadata } from "@microsoft/sp-webpart-base";
 import { IPropertyPaneGroup } from "@microsoft/sp-property-pane";
-import { IQueryModifierDefinition } from '../../services/ExtensibilityService/IQueryModifierDefinition';
-import { IQueryModifierInstance } from '../../services/ExtensibilityService/IQueryModifierInstance';
-import { ObjectCreator } from '../../services/ExtensibilityService/ObjectCreator';
-import { BaseQueryModifier } from '../../services/ExtensibilityService/BaseQueryModifier';
 import { Toggle, GlobalSettings } from 'office-ui-fabric-react';
 import IQueryModifierConfiguration from '../../models/IQueryModifierConfiguration';
 import { SearchHelper } from '../../helpers/SearchHelper';
 import { StringHelper } from '../../helpers/StringHelper';
+import { Guid } from '@microsoft/sp-core-library';
 
 export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchResultsWebPartProps> implements IDynamicDataCallables {
 
@@ -83,7 +78,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
     private _placeholder = null;
     private _propertyFieldCollectionData = null;
     private _customCollectionFieldType = null;
-    private _queryModifierInstance: IQueryModifierInstance<any> = null;
+    private _queryModifierInstance: IQueryModifierInstance = null;
 
     private _propertyFieldCodeEditorLanguages = null;
     private _resultService: IResultService;
@@ -98,6 +93,8 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
     private _codeRenderers: IRenderer[];
     private _searchContainer: JSX.Element;
     private _synonymTable: ISynonymTable;
+
+    private _extensibilityLibraries:string[] = [];
 
     /**
      * Available property pane options from Web Components
@@ -128,12 +125,12 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
     /**
      * The available web component definitions (not registered yet)
      */
-    private availableWebComponentDefinitions: IComponentDefinition<any>[] = AvailableComponents.BuiltinComponents;
+    private availableWebComponentDefinitions: IExtension<any>[] = AvailableComponents.BuiltinComponents;
 
     /**
      * The available query modifier definitions (not instancied yet)
      */
-    private availableQueryModifierDefinitions: IQueryModifierDefinition<any>[] = [];
+    private availableQueryModifierDefinitions: IExtension<BaseQueryModifier>[] = [];
     private queryModifierSelected: boolean = false;
 
     /**
@@ -232,7 +229,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         }
 
         const currentLocaleId = LocalizationHelper.getLocaleId(this.context.pageContext.cultureInfo.currentCultureName);
-        const queryModifier = this._queryModifierInstance && this._queryModifierInstance.isInitialized ? this._queryModifierInstance.instance : null;
+        const queryModifier = this._queryModifierInstance;
 
         // Configure the provider before the query according to our needs
         this._searchService = update(this._searchService, {
@@ -353,7 +350,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
         if (Environment.type === EnvironmentType.Local) {
             this._taxonomyService = new MockTaxonomyService();
-            this._templateService = new MockTemplateService(this.context.pageContext.cultureInfo.currentUICultureName, this.context);
+            this._templateService = new MockTemplateService(this.context.pageContext.cultureInfo.currentUICultureName, this.context, this._searchService);
             this._searchService = new MockSearchService();
 
         } else {
@@ -382,36 +379,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         this._dynamicDataService = new DynamicDataService(this.context.dynamicDataProvider);
         this._verticalsInformation = [];
 
-        // Load extensibility library if present
-        const extensibilityLibrary = await this._extensibilityService.loadExtensibilityLibrary();
-
-        // Load extensibility additions
-        if (extensibilityLibrary) {
-
-            // Add custom web components if any
-            this.availableWebComponentDefinitions = this.availableWebComponentDefinitions.concat(extensibilityLibrary.getCustomWebComponents());
-
-            // Get custom query modifiers if present
-            this.availableQueryModifierDefinitions = extensibilityLibrary.getCustomQueryModifiers ? extensibilityLibrary.getCustomQueryModifiers() : [];
-
-            // Initializes query modifiers property for selection
-            this.properties.queryModifiers = this.availableQueryModifierDefinitions.map(definition => {
-                return {
-                    queryModifierDisplayName: definition.displayName,
-                    queryModifierDescription: definition.description,
-                    queryModifierEnabled: this.properties.selectedQueryModifierDisplayName && this.properties.selectedQueryModifierDisplayName === definition.displayName ? true : false
-                } as IQueryModifierConfiguration;
-            });
-
-            // If we have a query modifier selected from config, we ensure it exists and is actually loaded fron the extensibility library
-            const queryModifierDefinition = this.availableQueryModifierDefinitions.filter(definition => definition.displayName === this.properties.selectedQueryModifierDisplayName);
-            if (this.properties.selectedQueryModifierDisplayName && queryModifierDefinition.length === 1) {
-                this.queryModifierSelected = true;
-                this._queryModifierInstance = await this._initQueryModifierInstance(queryModifierDefinition[0]);
-            } else {
-                this.properties.selectedQueryModifierDisplayName = null;
-            }
-        }
+        await this._loadExtensibility();
 
         // Set the default search results layout
         this.properties.selectedLayout = (this.properties.selectedLayout !== undefined && this.properties.selectedLayout !== null) ? this.properties.selectedLayout : ResultsLayoutOption.DetailsList;
@@ -433,7 +401,46 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         return super.onInit();
     }
 
-    private async _initQueryModifierInstance(queryModifierDefinition: IQueryModifierDefinition<any>): Promise<IQueryModifierInstance<any>> {
+    private async _loadExtensibility() : Promise<void> {
+        
+        // Load extensibility library if present
+        const extensibilityLibrary = await this._extensibilityService.loadExtensibilityLibraries(this._extensibilityLibraries.map((i)=>Guid.parse(i)));
+
+        // Load extensibility additions
+        if (extensibilityLibrary && extensibilityLibrary.length>0) {
+
+            const extensions = this._extensibilityService.getAllExtensions(extensibilityLibrary);
+
+            // Add custom web components if any
+            this.availableWebComponentDefinitions = this.availableWebComponentDefinitions.concat(
+                this._extensibilityService.filter(extensions, ExtensionTypes.WebComponent)
+            );
+
+            // Get custom query modifiers if present
+            this.availableQueryModifierDefinitions = this._extensibilityService.filter(extensions, ExtensionTypes.QueryModifer);
+
+            // Initializes query modifiers property for selection
+            this.properties.queryModifiers = this.availableQueryModifierDefinitions.map(definition => {
+                return {
+                    queryModifierDisplayName: definition.displayName,
+                    queryModifierDescription: definition.description,
+                    queryModifierEnabled: this.properties.selectedQueryModifierDisplayName && this.properties.selectedQueryModifierDisplayName === definition.displayName ? true : false
+                } as IQueryModifierConfiguration;
+            });
+
+            // If we have a query modifier selected from config, we ensure it exists and is actually loaded fron the extensibility library
+            const queryModifierDefinition = this.availableQueryModifierDefinitions.filter(definition => definition.displayName === this.properties.selectedQueryModifierDisplayName);
+            if (this.properties.selectedQueryModifierDisplayName && queryModifierDefinition.length === 1) {
+                this.queryModifierSelected = true;
+                this._queryModifierInstance = await this._initQueryModifierInstance(queryModifierDefinition[0]);
+            } else {
+                this.properties.selectedQueryModifierDisplayName = null;
+            }
+        }
+
+    }
+
+    private async _initQueryModifierInstance(queryModifierDefinition: IExtension<any>): Promise<BaseQueryModifier> {
 
         if (!queryModifierDefinition) {
             return null;
@@ -443,20 +450,21 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         let instance: BaseQueryModifier = null;
 
         try {
-            instance = ObjectCreator.createEntity(queryModifierDefinition.class, this.context);
+            instance = ExtensionHelper.create(queryModifierDefinition.extensionClass);
+            instance.context = {
+                webPart: this.context,
+                search: this._searchService,
+                template: this._templateService
+            };
             await instance.onInit();
             isInitialized = true;
+            return instance;
         }
         catch (error) {
             console.log(`Unable to initialize query modifier '${queryModifierDefinition.displayName}'. ${error}`);
+            return null;
         }
-        finally {
-            return {
-                ...queryModifierDefinition,
-                instance,
-                isInitialized
-            };
-        }
+
     }
 
     private _convertToSortConfig(sortList: string): ISortFieldConfiguration[] {

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { SPComponentLoader } from "@microsoft/sp-loader";
 import { Log } from '@microsoft/sp-core-library';
 import { WebPartContext } from '@microsoft/sp-webpart-base';
-import { BaseWebComponent } from './BaseWebComponent';
+import { BaseWebComponent, IExtensionContext } from 'search-extensibility';
 import * as ReactDOM from 'react-dom';
 import * as DOMPurify from 'dompurify';
 
@@ -13,7 +13,7 @@ export interface ILivePersonaComponentProps {
     /**
      * The Web Part context
      */
-    ctx: WebPartContext;
+    ctx: IExtensionContext;
 
     /**
      * The user UPN to use for the live information
@@ -66,7 +66,7 @@ export class LivePersonaComponent extends React.Component<ILivePersonaComponentP
                   PersonaType: "User"
                 },
                 upn: this.props.upn,
-                serviceScope: this.props.ctx.serviceScope,
+                serviceScope: this.props.ctx.webPart.serviceScope,
               }, <div dangerouslySetInnerHTML={{ __html: DOMPurify.default.sanitize(this.props.template) }}></div>);
         }
         return renderPersona;
@@ -89,7 +89,7 @@ export class LivePersonaComponent extends React.Component<ILivePersonaComponentP
                 });
     
             } catch (error) {
-               Log.error(`[LivePersona_Component]`, error, this.props.ctx.serviceScope);
+               Log.error(`[LivePersona_Component]`, error, this.props.ctx.webPart.serviceScope);
             }
         }        
     }
@@ -104,7 +104,7 @@ export class LivePersonaWebComponent extends BaseWebComponent {
     public connectedCallback() {
  
        let props = this.resolveAttributes();
-       const livePersonaItem = <LivePersonaComponent {...props} ctx={this._ctx}/>;
+       const livePersonaItem = <LivePersonaComponent {...props} ctx={this.context}/>;
        ReactDOM.render(livePersonaItem, this);
     }    
 }

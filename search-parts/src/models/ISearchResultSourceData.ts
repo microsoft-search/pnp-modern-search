@@ -1,4 +1,4 @@
-import { IRefinementResult, IPaginationInformation, ISearchVerticalInformation, IRefinementFilter } from "./ISearchResult";
+import { IRefinementResult, IPaginationInformation, ISearchVerticalInformation, IRefinementFilter } from "search-extensibility";
 import { ISearchServiceConfiguration } from "./ISearchServiceConfiguration";
 
 /**

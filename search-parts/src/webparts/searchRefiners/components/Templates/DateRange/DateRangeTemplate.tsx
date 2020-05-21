@@ -1,7 +1,7 @@
 import * as React from "react";
 import IBaseRefinerTemplateProps from '../IBaseRefinerTemplateProps';
 import IBaseRefinerTemplateState from '../IBaseRefinerTemplateState';
-import { IRefinementValue, RefinementOperator } from "../../../../../models/ISearchResult";
+import { IRefinementValue, RefinementOperator } from "search-extensibility";
 import { DatePicker, IDatePickerProps, IDatePickerStyleProps, IDatePickerStyles } from "office-ui-fabric-react/lib/DatePicker";
 import { Link } from "office-ui-fabric-react/lib/Link";
 import * as update from 'immutability-helper';

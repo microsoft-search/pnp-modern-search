@@ -1,4 +1,4 @@
-import { IComponentDefinition } from "../services/ExtensibilityService/IComponentDefinition";
+import { IExtension } from 'search-extensibility';
 import { DebugViewWebComponent } from './DebugViewComponent';
 import { DetailsListWebComponent } from './DetailsListComponent';
 import { DocumentCardWebComponent, VideoCardWebComponent } from './DocumentCardComponent';
@@ -15,50 +15,66 @@ export class AvailableComponents {
     /**
      * Returns the list of builtin web components available for Handlebars templates
      */
-    public static BuiltinComponents: IComponentDefinition<any>[] = [
+    public static BuiltinComponents: IExtension<any>[] = [
         {
-            componentName: 'pnp-document-card',
-            componentClass: DocumentCardWebComponent
+            name: 'pnp-document-card',
+            extensionClass: DocumentCardWebComponent,
+            displayName: "Document Card",
+            description: "Document card used in search results.",
+            icon:""
         },
         {
-            componentName: 'pnp-document-card-shimmers',
-            componentClass: DocumentCardShimmersWebComponent
+            name: 'pnp-document-card-shimmers',
+            extensionClass: DocumentCardShimmersWebComponent,
+            displayName: "Document Card Shimmer",
+            description: "The document card shimmer component",
+            icon: ""
+
         },
         {
-            componentName: 'pnp-details-list',
-            componentClass: DetailsListWebComponent
+            name: 'pnp-details-list',
+            extensionClass: DetailsListWebComponent,
+            displayName: "", description: "", icon: ""
         },
         {
-            componentName: 'pnp-video-card',
-            componentClass: VideoCardWebComponent
+            name: 'pnp-video-card',
+            extensionClass: VideoCardWebComponent,
+            displayName: "", description: "", icon: ""
         },
         {
-            componentName: 'pnp-debug-view',
-            componentClass: DebugViewWebComponent
+            name: 'pnp-debug-view',
+            extensionClass: DebugViewWebComponent,
+            displayName: "", description: "", icon: ""
         },
         {
-            componentName: 'pnp-slider-component',
-            componentClass: SliderWebComponent
+            name: 'pnp-slider-component',
+            extensionClass: SliderWebComponent,
+            displayName: "", description: "", icon: ""
         },
         {
-            componentName: 'pnp-persona-card',
-            componentClass: PersonaCardWebComponent
+            name: 'pnp-persona-card',
+            extensionClass: PersonaCardWebComponent,
+            displayName: "", description: "", icon: ""
         },
         {
-            componentName: 'pnp-persona-card-shimmers',
-            componentClass: PersonaCardShimmersWebComponent
+            name: 'pnp-persona-card-shimmers',
+            extensionClass: PersonaCardShimmersWebComponent,
+            displayName: "", description: "", icon: ""
         },
         {
-            componentName: 'pnp-live-persona',
-            componentClass: LivePersonaWebComponent
+            name: 'pnp-live-persona',
+            extensionClass: LivePersonaWebComponent,
+            displayName: "", description: "", icon: ""
         },
         {
-            componentName: 'pnp-fabric-icon',
-            componentClass: IconWebComponent
+            name: 'pnp-fabric-icon',
+            extensionClass: IconWebComponent,
+            displayName: "", description: "", icon: ""
         },
         {
-            componentName: 'pnp-pagination',
-            componentClass: PaginationWebComponent
+            name: 'pnp-pagination',
+            extensionClass: PaginationWebComponent,
+            displayName: "", description: "", icon: ""
         }
     ];
 }

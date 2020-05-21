@@ -12,7 +12,7 @@ export { IExtensionContext } from './models/IExtensionContext';
 export { IQueryModification } from './models/IQueryModification';
 export { IQueryModifierInput } from './models/IQueryModifierInput';
 export { ISearchParams } from './models/ISearchParams';
-export { ISearchResult, IPaginationInformation, IPromotedResult, IRefinementFilter, IRefinementResult, IRefinementValue, ISearchResultBlock, ISearchResults, ISearchVerticalInformation } from './models/ISearchResult';
+export { ISearchResult, IPaginationInformation, IPromotedResult, IRefinementFilter, IRefinementResult, IRefinementValue, RefinementOperator, ISearchResultBlock, ISearchResults, ISearchVerticalInformation } from './models/ISearchResult';
 export { ISuggestion } from './models/ISuggestion';
 export { IExtensionInstance } from './models/instance/IExtensionInstance';
 export { IHandlebarsHelperInstance } from './models/instance/IHandlebarsHelperInstance';

@@ -1,14 +1,17 @@
-import { ISearchResults, ISearchVerticalInformation, IRefinementFilter } from '../../models/ISearchResult';
+import { ISearchResults, ISearchVerticalInformation, IRefinementFilter } from 'search-extensibility';
 import { ISearchServiceConfiguration } from '../../models/ISearchServiceConfiguration';
 import { ISearchVertical } from '../../models/ISearchVertical';
 import IManagedPropertyInfo from '../../models/IManagedPropertyInfo';
+import { IContextSearch } from 'search-extensibility';
+import { ISharePointSearch } from './ISharePointSearch';
 
-interface ISearchService extends ISearchServiceConfiguration {
+interface ISearchService extends ISearchServiceConfiguration, IContextSearch {
+
     /**
      * Perfoms a search query.
-     * @returns ISearchResults object. Use the 'RelevantResults' property to acces results proeprties (returned as key/value pair object => item.[<Managed property name>])
+     * @param query ISearchResults object. Use the 'RelevantResults' property to acces results proeprties (returned as key/value pair object => item.[<Managed property name>])
      */
-    search(kqlQuery: string, pageNumber?: number, useOldSPIcons?: boolean): Promise<ISearchResults>;
+    search(kqlQuery:string, searchParams:ISharePointSearch) : Promise<ISearchResults>;
 
     /**
      * Retrieves search query suggestions

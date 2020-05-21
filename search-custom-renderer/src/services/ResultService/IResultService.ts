@@ -1,4 +1,4 @@
-import { ISearchResults } from "../../models/ISearchResult";
+import { ISearchResults } from "search-extensibility";
 import { IRenderer } from "./ResultService";
 import {ICustomTemplateFieldValue} from './ResultService';
 

@@ -6,7 +6,7 @@ import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
 import { Shimmer, ShimmerElementType as ElemType, ShimmerElementsGroup } from 'office-ui-fabric-react/lib/Shimmer';
 import { Logger, LogLevel } from '@pnp/logging';
 import * as strings from 'SearchResultsWebPartStrings';
-import { IRefinementValue, IRefinementResult, ISearchResult, ISearchResults } from '../../../../models/ISearchResult';
+import { IRefinementValue, IRefinementResult, ISearchResult, ISearchResults } from 'search-extensibility';
 import { Overlay } from 'office-ui-fabric-react/lib/Overlay';
 import { DisplayMode, Guid } from '@microsoft/sp-core-library';
 import { WebPartTitle } from "@pnp/spfx-controls-react/lib/WebPartTitle";
@@ -760,7 +760,11 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
     private async _getSearchResults(props: ISearchResultsContainerProps, pageNumber?: number): Promise<ISearchResults> {
 
         // Get search results
-        const searchResults = await props.searchService.search(props.queryKeywords, pageNumber, this.props.templateService.UseOldSPIcons);
+        const searchResults = await props.searchService.search(props.queryKeywords, {
+            pageNumber: pageNumber, 
+            useOldSPIcons: this.props.templateService.UseOldSPIcons,
+            clientType: "SharePoint"
+        });
 
         // Translates taxonomy refiners and result values by using terms ID if applicable
         if (props.enableLocalization) {

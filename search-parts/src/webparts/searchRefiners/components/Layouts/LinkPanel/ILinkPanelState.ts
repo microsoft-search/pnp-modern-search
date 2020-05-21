@@ -1,4 +1,4 @@
-import { IRefinementValue } from "../../../../../models/ISearchResult";
+import { IRefinementValue } from "search-extensibility";
 import { IGroup } from "office-ui-fabric-react/lib/components/GroupedList";
 
 interface ILinkPanelState {

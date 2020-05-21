@@ -10,7 +10,7 @@ import { ITheme } from '@uifabric/styling';
 import * as update from 'immutability-helper';
 
 // Interface
-import { IRefinementValue, RefinementOperator } from "../../../../../models/ISearchResult";
+import { IRefinementValue, RefinementOperator } from "search-extensibility";
 import IBaseRefinerTemplateProps from '../IBaseRefinerTemplateProps';
 import IBaseRefinerTemplateState from '../IBaseRefinerTemplateState';
 import { PersonaSize, Persona, Spinner, SpinnerSize, IExtendedPersonaProps, IPersonaProps, TextField, Link } from "office-ui-fabric-react";

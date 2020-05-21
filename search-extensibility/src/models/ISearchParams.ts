@@ -1,3 +1,3 @@
 export interface ISearchParams {
-    clientType: string;
+    clientType?: string;
 }

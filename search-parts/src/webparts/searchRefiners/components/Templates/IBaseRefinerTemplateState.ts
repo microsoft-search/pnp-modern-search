@@ -1,4 +1,4 @@
-import { IRefinementFilter, IRefinementValue } from "../../../../models/ISearchResult";
+import { IRefinementFilter, IRefinementValue } from "search-extensibility";
 
 interface IBaseRefinerTemplateState {
 

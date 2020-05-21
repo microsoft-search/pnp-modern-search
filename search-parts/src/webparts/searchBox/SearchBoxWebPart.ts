@@ -27,17 +27,14 @@ import SearchService from '../../services/SearchService/SearchService';
 import { PageOpenBehavior, QueryPathBehavior, UrlHelper } from '../../helpers/UrlHelper';
 import SearchBoxContainer from './components/SearchBoxContainer/SearchBoxContainer';
 import { SearchComponentType } from '../../models/SearchComponentType';
-import IExtensibilityService from '../../services/ExtensibilityService/IExtensibilityService';
-import { ExtensibilityService } from '../../services/ExtensibilityService/ExtensibilityService';
-import { ISuggestionProviderDefinition } from '../../services/ExtensibilityService/ISuggestionProviderDefinition';
+import { BaseSuggestionProvider, IExtensibilityService, ExtensibilityService, IExtension, ISuggestionProviderInstance, ExtensionHelper, ExtensionTypes } from 'search-extensibility';
 import { SharePointDefaultSuggestionProvider } from '../../providers/SharePointDefaultSuggestionProvider';
-import { ISuggestionProviderInstance } from '../../services/ExtensibilityService/ISuggestionProviderInstance';
-import { ObjectCreator } from '../../services/ExtensibilityService/ObjectCreator';
-import { BaseSuggestionProvider } from '../../providers/BaseSuggestionProvider';
 import { Toggle } from 'office-ui-fabric-react/lib/Toggle';
 import { ThemeProvider, ThemeChangedEventArgs, IReadonlyTheme } from '@microsoft/sp-component-base';
 import { isEqual, find } from '@microsoft/sp-lodash-subset';
 import { GlobalSettings } from 'office-ui-fabric-react';
+import { getGUID } from '@pnp/common';
+import { Guid } from '@microsoft/sp-core-library';
 
 export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWebPartProps> implements IDynamicDataCallables {
 
@@ -45,13 +42,15 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
   private _searchService: ISearchService;
   private _themeProvider: ThemeProvider;
   private _extensibilityService: IExtensibilityService;
-  private _suggestionProviderInstances: ISuggestionProviderInstance<any>[];
+  private _suggestionProviderInstances: ISuggestionProviderInstance[];
   private _initComplete: boolean = false;
   private _foundCustomSuggestionProviders: boolean = false;
 
   private _propertyFieldCollectionData = null;
   private _customCollectionFieldType = null;
   private _themeVariant: IReadonlyTheme;
+
+  private _extensibilityLibraries:string[] = [];
 
   constructor() {
     super();
@@ -81,7 +80,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
       this.context.dynamicDataSourceManager.notifyPropertyChanged('searchQuery');
     }
 
-    const enableSuggestions = this.properties.enableQuerySuggestions && this.properties.suggestionProviders.some(sp => sp.providerEnabled);
+    const enableSuggestions = this.properties.enableQuerySuggestions && this.properties.suggestionProviders.some(sp => sp.enabled);
 
     const element: React.ReactElement<ISearchBoxContainerProps> = React.createElement(
       SearchBoxContainer, {
@@ -246,13 +245,11 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
    * Initializes the query suggestions data provider instance according to the current environnement
    */
   private initSearchService() {
-
-      if (this.properties.enableQuerySuggestions) {
-        if (Environment.type === EnvironmentType.Local ) {
-          this._searchService = new MockSearchService();
-        } else {
-          this._searchService = new SearchService(this.context.pageContext, this.context.spHttpClient);
-        return "";
+    if (this.properties.enableQuerySuggestions) {
+      if (Environment.type === EnvironmentType.Local ) {
+        this._searchService = new MockSearchService();
+      } else {
+        this._searchService = new SearchService(this.context.pageContext, this.context.spHttpClient);
       }
     }
   }
@@ -265,7 +262,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
 
   }
 
-  private async getAllSuggestionProviders(): Promise<ISuggestionProviderDefinition<any>[]> {
+  private async getAllSuggestionProviders(): Promise<IExtension<any>[]> {
     const [ defaultProviders, customProviders ] = await Promise.all([
         this.getDefaultSuggestionProviders(),
         this.getCustomSuggestionProviders()
@@ -279,59 +276,70 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
     //Merge all providers together and set defaults
     const savedProviders = this.properties.suggestionProviders && this.properties.suggestionProviders.length > 0 ? this.properties.suggestionProviders : [];
     const providerDefinitions = [ ...defaultProviders, ...customProviders ].map(provider => {
-        const existingSavedProvider = find(savedProviders, sp => sp.providerName === provider.providerName);
 
-        provider.providerEnabled = existingSavedProvider && undefined !== existingSavedProvider.providerEnabled
-                                    ? existingSavedProvider.providerEnabled
-                                    : undefined !== provider.providerEnabled
-                                      ? provider.providerEnabled
+        const existingSavedProvider = find(savedProviders, sp => sp.name === provider.name);
+
+        provider.enabled = existingSavedProvider && undefined !== existingSavedProvider.enabled
+                                    ? existingSavedProvider.enabled
+                                    : undefined !== provider.enabled
+                                      ? provider.enabled
                                       : true;
-
+        
         return provider;
+
     });
     return providerDefinitions;
   }
 
-  private async getDefaultSuggestionProviders(): Promise<ISuggestionProviderDefinition<any>[]> {
+  private async getDefaultSuggestionProviders(): Promise<IExtension<any>[]> {
     return [{
-        providerName: SharePointDefaultSuggestionProvider.ProviderName,
-        providerDisplayName: SharePointDefaultSuggestionProvider.ProviderDisplayName,
-        providerDescription: SharePointDefaultSuggestionProvider.ProviderDescription,
-        providerClass: SharePointDefaultSuggestionProvider
+        name: SharePointDefaultSuggestionProvider.ProviderName,
+        displayName: SharePointDefaultSuggestionProvider.ProviderDisplayName,
+        description: SharePointDefaultSuggestionProvider.ProviderDescription,
+        extensionClass: SharePointDefaultSuggestionProvider,
+        enabled:true
     }];
   }
 
-  private async getCustomSuggestionProviders(): Promise<ISuggestionProviderDefinition<any>[]> {
-    let customSuggestionProviders: ISuggestionProviderDefinition<any>[] = [];
+  private async getCustomSuggestionProviders(): Promise<IExtension<any>[]> {
+    let customSuggestionProviders: IExtension<any>[] = [];
 
-    // Load extensibility library if present
-    const extensibilityLibrary = await this._extensibilityService.loadExtensibilityLibrary();
+    if(this._extensibilityLibraries && this._extensibilityLibraries.length>0) {
 
-    // Load extensibility additions
-    if (extensibilityLibrary && extensibilityLibrary.getCustomSuggestionProviders) {
+      // Load extensibility library if present
+      const libraries = await this._extensibilityService.loadExtensibilityLibraries(this._extensibilityLibraries.map((lib)=> Guid.parse(lib)));
 
-        // Add custom suggestion providers if any
-        customSuggestionProviders = extensibilityLibrary.getCustomSuggestionProviders();
+      const extensions = this._extensibilityService.getAllExtensions(libraries);
+
+      customSuggestionProviders = this._extensibilityService.filter(extensions, ExtensionTypes.SuggestionProvider);
+
     }
 
     return customSuggestionProviders;
   }
 
-  private async initSuggestionProviderInstances(providerDefinitions: ISuggestionProviderDefinition<any>[]): Promise<ISuggestionProviderInstance<any>[]> {
+  private async initSuggestionProviderInstances(providerDefinitions: IExtension<any>[]): Promise<BaseSuggestionProvider[]> {
 
     const webpartContext = this.context;
+    const instances : BaseSuggestionProvider[] = [];
 
-    let providerInstances = await Promise.all(providerDefinitions.map<Promise<ISuggestionProviderInstance<any>>>(async (provider) => {
+    return await Promise.all(providerDefinitions.map<Promise<IExtension<any>>>(async (provider) => {
       let isInitialized = false;
       let instance: BaseSuggestionProvider = null;
 
       try {
-        instance = ObjectCreator.createEntity(provider.providerClass, webpartContext);
+        instance = ExtensionHelper.create(provider.extensionClass);
+        instance.context = {
+          webPart: webpartContext,
+          search: this._searchService,
+          template: null
+        };
         await instance.onInit();
         isInitialized = true;
+        instances.push(instance);
       }
       catch (error) {
-        console.log(`Unable to initialize '${provider.providerName}'. ${error}`);
+        console.log(`Unable to initialize '${provider.name}'. ${error}`);
       }
       finally {
         return {
@@ -340,12 +348,11 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
           isInitialized
         };
       }
-    }));
-
-    // Keep only the onces that initialized successfully
-    providerInstances = providerInstances.filter(pi => pi.isInitialized);
-
-    return providerInstances;
+    }))
+    .then((values)=>{
+      return instances;
+    });
+    
   }
 
   protected get propertiesMetadata(): IWebPartPropertiesMetadata {
@@ -424,7 +431,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
           value: this.properties.suggestionProviders,
           fields: [
               {
-                  id: 'providerEnabled',
+                  id: 'enabled',
                   title: strings.SuggestionProviders.EnabledPropertyLabel,
                   type: this._customCollectionFieldType.custom,
                   onCustomRender: (field, value, onUpdate, item, itemId) => {

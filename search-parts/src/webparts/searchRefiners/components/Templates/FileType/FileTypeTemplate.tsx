@@ -23,7 +23,7 @@ import * as update from 'immutability-helper';
 import { FileHelper } from './../../../../../helpers/FileHelper';
 
 // Interface
-import { IRefinementValue, RefinementOperator } from '../../../../../models/ISearchResult';
+import { IRefinementValue, RefinementOperator } from 'search-extensibility';
 import IBaseRefinerTemplateProps from '../IBaseRefinerTemplateProps';
 import IBaseRefinerTemplateState from '../IBaseRefinerTemplateState';
 import { TextField } from 'office-ui-fabric-react';

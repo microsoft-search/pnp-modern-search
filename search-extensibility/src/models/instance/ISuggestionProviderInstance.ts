@@ -7,6 +7,8 @@ export interface ISuggestionProviderInstance extends IExtensionInstance {
 
     readonly isZeroTermSuggestionsEnabled: boolean;
 
+    enabled: boolean;
+
     onInit(): Promise<void>;
 
     getSuggestions(queryText: string): Promise<ISuggestion[]>;

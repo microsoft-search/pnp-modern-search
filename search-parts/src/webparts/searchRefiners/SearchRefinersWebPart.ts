@@ -13,7 +13,7 @@ import {
 } from "@microsoft/sp-property-pane";
 import { PropertyFieldCollectionData, CustomCollectionFieldType } from '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData';
 import * as strings from 'SearchRefinersWebPartStrings';
-import { IRefinementFilter, IRefinementResult } from '../../models/ISearchResult';
+import { IRefinementFilter, IRefinementResult } from 'search-extensibility';
 import SearchRefinersContainer from './components/SearchRefinersContainer/SearchRefinersContainer';
 import { IDynamicDataCallables, IDynamicDataPropertyDefinition, IDynamicDataSource } from '@microsoft/sp-dynamic-data';
 import { ISearchRefinersWebPartProps } from './ISearchRefinersWebPartProps';

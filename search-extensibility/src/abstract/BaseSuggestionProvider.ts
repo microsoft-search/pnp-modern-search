@@ -20,6 +20,8 @@ export abstract class BaseSuggestionProvider implements IExtensionInstance {
     return this._isZeroTermSuggestionsEnabled = false;
   }
 
+  public enabled: boolean;
+
   public async abstract onInit(): Promise<void>;
 
   public async abstract getSuggestions(queryText: string): Promise<ISuggestion[]>;

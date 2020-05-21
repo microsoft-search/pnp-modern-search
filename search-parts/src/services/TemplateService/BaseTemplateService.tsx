@@ -2,7 +2,7 @@ import 'core-js/features/array';
 import 'core-js/modules/es.string.includes';
 import 'core-js/modules/es.number.is-nan';
 import * as Handlebars from 'handlebars';
-import { ISearchResult } from '../../models/ISearchResult';
+import { ISearchResult } from 'search-extensibility';
 import { isEmpty, uniqBy, uniq, trimEnd, get } from '@microsoft/sp-lodash-subset';
 import * as strings from 'SearchResultsWebPartStrings';
 import { Text } from '@microsoft/sp-core-library';
@@ -21,12 +21,14 @@ import { WebPartContext } from '@microsoft/sp-webpart-base';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import groupBy from 'handlebars-group-by';
 import { Loader } from './LoadHelper';
-import { IComponentDefinition } from '../ExtensibilityService/IComponentDefinition';
+import { IExtension } from 'search-extensibility';
 import { UrlHelper } from '../../helpers/UrlHelper';
+import ISearchService from '../SearchService/ISearchService';
 
 abstract class BaseTemplateService {
 
     private _ctx: WebPartContext;
+    private _search: ISearchService;
 
     public CurrentLocale = "en";
     public TimeZoneBias = {
@@ -38,14 +40,16 @@ abstract class BaseTemplateService {
     private DayLightSavings = true;
     public UseOldSPIcons = false;
 
-    constructor(ctx?: WebPartContext) {
+    constructor(ctx?: WebPartContext, searchService?: ISearchService) {
 
         this._ctx = ctx;
+        this._search = searchService;
 
         // Registers all helpers
         this.registerTemplateServices();
 
         this.DayLightSavings = this.isDST();
+
     }
 
     private isDST() {
@@ -398,17 +402,22 @@ abstract class BaseTemplateService {
     /**
      * Registers web components on the current page to be able to use them in the Handlebars template
      */
-    public registerWebComponents(webComponents: IComponentDefinition<any>[]) {
+    public registerWebComponents(webComponents: IExtension<any>[]) {
 
         // Registers custom HTML elements
         webComponents.map(wc => {
-            const component = customElements.get(wc.componentName);
+            const component = customElements.get(wc.name);
             if (!component) {
-                customElements.define(wc.componentName, wc.componentClass);
+                customElements.define(wc.name, wc.extensionClass);
             }
 
             // Set the arbitrary property to all instances to get the WebPart context available in components (ex: PersonaCard)
-            wc.componentClass.prototype._ctx = this._ctx;
+            wc.extensionClass.prototype.context = {
+                webPart: this._ctx,
+                search: this._search,
+                template: this
+            };
+            
         });
 
         // Register slider component as partial 

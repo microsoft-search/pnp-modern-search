@@ -1,5 +1,5 @@
 import { ISearchParams } from "./ISearchParams";
-import { ISearchResults } from "./ISearchResult";
+import { ISearchResults } from "search-extensibility";
 
 export interface IContextSearch {
 

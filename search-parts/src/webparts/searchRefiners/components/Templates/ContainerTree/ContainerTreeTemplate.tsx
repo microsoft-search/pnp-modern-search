@@ -1,7 +1,7 @@
 import * as React from 'react';
 import IBaseRefinerTemplateProps from '../IBaseRefinerTemplateProps';
 import IBaseRefinerTemplateState from '../IBaseRefinerTemplateState';
-import { IRefinementValue, RefinementOperator } from "../../../../../models/ISearchResult";
+import { IRefinementValue, RefinementOperator } from "search-extensibility";
 import * as update from 'immutability-helper';
 import { INavLink, Nav, Icon, ITheme } from 'office-ui-fabric-react';
 import { cloneDeep, find } from "@microsoft/sp-lodash-subset";

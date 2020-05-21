@@ -1,4 +1,4 @@
-import { IRefinementFilter, IRefinementValue, RefinementOperator } from "../models/ISearchResult";
+import { IRefinementFilter, IRefinementValue, RefinementOperator } from "search-extensibility";
 import { UrlHelper } from "./UrlHelper";
 import { ConsoleListener, LogLevel, Logger } from '@pnp/logging';
 

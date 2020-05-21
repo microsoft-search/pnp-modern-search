@@ -25,6 +25,11 @@ export interface IExtension<T extends IExtensionInstance> {
     /**
      * The fabric icon to display the extension in the UI
      */
-    icon:string;
+    icon?:string;
+
+    /**
+     * Determines if the extension is enabled
+     */
+    enabled?:boolean;
 
 }
