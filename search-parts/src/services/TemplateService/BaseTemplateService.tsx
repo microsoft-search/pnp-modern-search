@@ -763,7 +763,6 @@ abstract class BaseTemplateService {
                         let renderElement = React.createElement(
                             PreviewContainer,
                             {
-                                //elementUrl: url.replace('interactivepreview', 'embedview'),
                                 elementUrl: url,
                                 targetElement: thumbnailElt,
                                 previewImageUrl: previewImgUrl,
