@@ -273,12 +273,12 @@ abstract class BaseTemplateService {
         // Return the preview image URL for the search result item
         // Usage: <img src="{{previewSrc item}}""/>
         Handlebars.registerHelper("getPreviewSrc", (item: ISearchResult) => {
-
             let previewSrc = "";
             const nonSupportedGraphThumbnails = ["xls"]; //let's add more as we proceed
 
             if (item) {
                 if (!isEmpty(item.SiteLogo)) previewSrc = item.SiteLogo;
+                else if (!isEmpty(item.IsDocument) && item.IsDocument == "false") previewSrc = "";                
                 else if ((!isEmpty(item.FileType) && nonSupportedGraphThumbnails.indexOf(item.FileType) === -1) && !isEmpty(item.NormSiteID) && !isEmpty(item.NormListID) && !isEmpty(item.NormUniqueID)) previewSrc = `${this._ctx.pageContext.site.absoluteUrl}/_api/v2.0/sites/${item.NormSiteID}/lists/${item.NormListID}/items/${item.NormUniqueID}/driveItem/thumbnails/0/large/content?preferNoRedirect=true`;
                 else if (!isEmpty(item.PreviewUrl)) previewSrc = item.PreviewUrl;
                 else if (!isEmpty(item.PictureThumbnailURL)) previewSrc = item.PictureThumbnailURL;
@@ -763,7 +763,7 @@ abstract class BaseTemplateService {
                         let renderElement = React.createElement(
                             PreviewContainer,
                             {
-                                elementUrl: url.replace('interactivepreview', 'embedview'),
+                                elementUrl: url,
                                 targetElement: thumbnailElt,
                                 previewImageUrl: previewImgUrl,
                                 showPreview: true,
