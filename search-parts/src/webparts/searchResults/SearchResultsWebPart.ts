@@ -575,6 +575,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                                                 "Filename",
                                                 "ServerRedirectedURL",
                                                 "DefaultEncodingURL",
+                                                "IsDocument",
                                                 "IsContainer",
                                                 "IsListItem",
                                                 "FileType",
