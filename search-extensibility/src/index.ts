@@ -22,3 +22,5 @@ export { IWebComponentInstance } from './models/instance/IWebComponentInstance';
 export { ExtensibilityService } from './service/ExtensibilityService';
 export { ExtensionHelper } from './utility/ExtensionHelper';
 export { ExtensionType, ExtensionTypes } from './utility/ExtensionTypes';
+export { IExtensibilityEditorPropertyPaneProps, IExtensibilityEditorPropertyPaneInternalProps, PropertyPaneExtensibilityEditor} from './components/ExtensibilityEditor/ExtensibilityEditorPropertyPane';
+export { IExtensibilityEditorProps, IExtensibilityEditorState, ExtensibilityEditor } from './components/ExtensibilityEditor/ExtensibilityEditor';

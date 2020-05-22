@@ -37,7 +37,7 @@
   },
   "externals": {},
   "localizedResources": {
-    "ExtensibilityEditorStrings": "lib/components/loc/{locale}.js",
+    "ModernSearchExtensibilityLibraryStrings": "node_modules/search-extensibility/lib/loc/{locale}.js",
     "SearchResultsWebPartStrings": "lib/webparts/searchResults/loc/{locale}.js",
     "SearchBoxWebPartStrings": "lib/webparts/searchBox/loc/{locale}.js",
     "ControlStrings": "node_modules/@pnp/spfx-controls-react/lib/loc/{locale}.js",

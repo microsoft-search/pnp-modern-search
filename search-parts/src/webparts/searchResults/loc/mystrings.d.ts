@@ -176,6 +176,10 @@ declare interface ISearchResultsWebPartStrings {
         HideNavigationFieldName: string;
         HideFirstLastPagesFieldName: string;
         HideDisabledFieldName: string;
+    },
+    Extensibility: {
+        GroupName: string;
+        ButtonLabel: string;
     }
 }
 

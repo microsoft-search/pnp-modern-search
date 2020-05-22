@@ -41,7 +41,7 @@ import { ResultTypeOperator } from '../../models/ISearchResultType';
 import IResultService from '../../services/ResultService/IResultService';
 import { ResultService, IRenderer } from '../../services/ResultService/ResultService';
 import { IDynamicDataCallables, IDynamicDataPropertyDefinition } from '@microsoft/sp-dynamic-data';
-import { IRefinementFilter, ISearchVerticalInformation, IRefinementResult, IRefinementValue } from 'search-extensibility';
+import { IRefinementFilter, ISearchVerticalInformation, IRefinementResult, IRefinementValue, IExtensibilityLibrary } from 'search-extensibility';
 import IDynamicDataService from '../../services/DynamicDataService/IDynamicDataService';
 import { DynamicDataService } from '../../services/DynamicDataService/DynamicDataService';
 import { DynamicProperty, ThemeProvider, IReadonlyTheme, ThemeChangedEventArgs } from '@microsoft/sp-component-base';
@@ -59,13 +59,14 @@ import { SearchManagedProperties, ISearchManagedPropertiesProps } from '../../co
 import { PropertyPaneSearchManagedProperties } from '../../controls/PropertyPaneSearchManagedProperties/PropertyPaneSearchManagedProperties';
 import { BaseQueryModifier, ExtensibilityService, IExtensibilityService, IExtension, IQueryModifierInstance, ExtensionHelper, ExtensionTypes } from 'search-extensibility';
 import { AvailableComponents } from '../../components/AvailableComponents';
-import { BaseClientSideWebPart, IWebPartPropertiesMetadata } from "@microsoft/sp-webpart-base";
+import { BaseClientSideWebPart, IWebPartPropertiesMetadata, PropertyPaneButton } from "@microsoft/sp-webpart-base";
 import { IPropertyPaneGroup } from "@microsoft/sp-property-pane";
 import { Toggle, GlobalSettings } from 'office-ui-fabric-react';
 import IQueryModifierConfiguration from '../../models/IQueryModifierConfiguration';
 import { SearchHelper } from '../../helpers/SearchHelper';
 import { StringHelper } from '../../helpers/StringHelper';
 import { Guid } from '@microsoft/sp-core-library';
+import { PropertyPaneExtensibilityEditor } from 'search-extensibility';
 
 export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchResultsWebPartProps> implements IDynamicDataCallables {
 
@@ -93,10 +94,6 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
     private _codeRenderers: IRenderer[];
     private _searchContainer: JSX.Element;
     private _synonymTable: ISynonymTable;
-
-    private _extensibilityLibraries:string[] = [];
-    private _extensibilityEditor = null;
-
 
     /**
      * Available property pane options from Web Components
@@ -144,6 +141,15 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
      * The current page number
      */
     private currentPageNumber: number = 1;
+
+
+    /**
+     * Extensibility functionality
+     */
+    private _loadedLibraries:IExtensibilityLibrary[] = [];
+    private _extensibilityLibraries:string[] = [];
+    private _extensibilityEditorComponent = null;
+    private _extensibilityEditorComponentCallback : ()=>void = null;
 
     public constructor() {
         super();
@@ -406,12 +412,12 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
     private async _loadExtensibility() : Promise<void> {
         
         // Load extensibility library if present
-        const extensibilityLibrary = await this._extensibilityService.loadExtensibilityLibraries(this._extensibilityLibraries.map((i)=>Guid.parse(i)));
+        this._loadedLibraries = await this._extensibilityService.loadExtensibilityLibraries(this._extensibilityLibraries.map((i)=>Guid.parse(i)));
 
         // Load extensibility additions
-        if (extensibilityLibrary && extensibilityLibrary.length>0) {
+        if (this._loadedLibraries && this._loadedLibraries.length>0) {
 
-            const extensions = this._extensibilityService.getAllExtensions(extensibilityLibrary);
+            const extensions = this._extensibilityService.getAllExtensions(this._loadedLibraries);
 
             // Add custom web components if any
             this.availableWebComponentDefinitions = this.availableWebComponentDefinitions.concat(
@@ -684,6 +690,10 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                         {
                             groupName: strings.Paging.PagingOptionsGroupName,
                             groupFields: this.getPagingGroupFields()
+                        },
+                        {
+                            groupName: strings.Extensibility.GroupName,
+                            groupFields: this._getExtensbilityGroupFields()
                         }
                     ],
                     displayGroupsAsAccordion: true
@@ -705,9 +715,6 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
     }
 
     protected async loadPropertyPaneResources(): Promise<void> {
-
-        // extensibility editor
-        this._extensibilityEditor = await import('../../components/ExtensibilityEditor');
 
         // tslint:disable-next-line:no-shadowed-variable
         const { PropertyFieldCodeEditor, PropertyFieldCodeEditorLanguages } = await import(
@@ -946,6 +953,24 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         } catch (error) {
             return Text.format(strings.ErrorTemplateResolve, error);
         }
+    }
+
+    private _getExtensbilityGroupFields():IPropertyPaneField<any>[] {
+        return [
+            new PropertyPaneExtensibilityEditor('extensibility',{
+                label: strings.Extensibility.ButtonLabel,
+                allowedExtensions: [ ExtensionTypes.QueryModifer, ExtensionTypes.WebComponent, ExtensionTypes.HandlebarsHelper ],
+                libraries: this._loadedLibraries,
+                onLibraryAdded: (id:Guid) => {
+                    this._extensibilityLibraries.push(id.toString());
+                    this._loadExtensibility();
+                },
+                onLibraryDeleted: (id:Guid) => {
+                    this._extensibilityLibraries = this._extensibilityLibraries.filter((lib)=> (lib != id.toString()));
+                    this._loadExtensibility();
+                }       
+            })
+        ];
     }
 
     /**
