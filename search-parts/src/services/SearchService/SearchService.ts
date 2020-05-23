@@ -686,18 +686,18 @@ class SearchService implements ISearchService {
                 encodedFileName = encodedFileName.slice(0, queryStringIndex);
             }
 
-            if (filename.indexOf('.') !== -1) {
+            if (
+                (!isEmpty(result.IsContainer) && result.IsContainer == "true")
+                && ((!isEmpty(result.contentclass) && result.contentclass.indexOf('STS_ListItem_') !== -1))) {
+                // we have a folder
+                result.IconExt = "IsContainer";
+            }
+            else if (filename.indexOf('.') !== -1) {
                 // we have a file
                 result.IconExt = filename.split('.').pop();
             }
             else if (!isEmpty(result.HtmlFileType) && result.HtmlFileType.indexOf("OneNote") !== -1) {
                 result.IconExt = "onetoc";
-            }
-            else if (
-                (!isEmpty(result.IsContainer) && result.IsContainer == "true")
-                && ((!isEmpty(result.contentclass) && result.contentclass.indexOf('STS_ListItem_') !== -1))) {
-                // we have a folder
-                result.IconExt = "IsContainer";
             }
             else if (isEmpty(result.FileType) && !isEmpty(result.IsListItem) && result.IsListItem == "true") {
                 result.IconExt = "IsListItem";
