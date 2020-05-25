@@ -51,6 +51,19 @@ export default class CheckboxTemplate extends React.Component<IBaseRefinerTempla
                     : null
             }
             {
+                this.props.isMultiValue && this.props.refinementResult.Values.length > 5 ?
+
+                    <div>
+                        <Link
+                            theme={this.props.themeVariant as ITheme}
+                            onClick={() => { this._applyFilters(this.state.refinerSelectedFilterValues); }}
+                            disabled={disableButtons}>{strings.Refiners.ApplyFiltersLabel}
+                        </Link>|<Link theme={this.props.themeVariant as ITheme}  onClick={this._clearFilters} disabled={this.state.refinerSelectedFilterValues.length === 0}>{strings.Refiners.ClearFiltersLabel}</Link>
+                    </div>
+
+                    : null
+            }
+            {
                 this.props.refinementResult.Values.filter(x => { return !this._isFilterMatch(x);}).map((refinementValue: IRefinementValue, j) => {
 
                     if (refinementValue.RefinementCount === 0) {
