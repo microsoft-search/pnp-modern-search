@@ -36,7 +36,8 @@ import { ObjectCreator } from '../../services/ExtensibilityService/ObjectCreator
 import { BaseSuggestionProvider } from '../../providers/BaseSuggestionProvider';
 import { Toggle } from 'office-ui-fabric-react/lib/Toggle';
 import { ThemeProvider, ThemeChangedEventArgs, IReadonlyTheme } from '@microsoft/sp-component-base';
-import { isEqual } from '@microsoft/sp-lodash-subset';
+import { isEqual, find } from '@microsoft/sp-lodash-subset';
+import { GlobalSettings } from 'office-ui-fabric-react';
 
 export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWebPartProps> implements IDynamicDataCallables {
 
@@ -73,6 +74,10 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
 
       // Notify subscriber a new value if available
       this._searchQuery = decodeURIComponent(inputValue);
+
+      // Save this value in a global context
+      GlobalSettings.setValue('searchBoxQuery', this._searchQuery);
+
       this.context.dynamicDataSourceManager.notifyPropertyChanged('searchQuery');
     }
 
@@ -194,6 +199,9 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
     this._searchQuery = searchQuery;
     this.context.dynamicDataSourceManager.notifyPropertyChanged('searchQuery');
 
+    // Save this value in a global context
+    GlobalSettings.setValue('searchBoxQuery', searchQuery);
+
     // Update URL with raw search query
     if (this.properties.useDynamicDataSource && this.properties.defaultQueryKeywords && this.properties.defaultQueryKeywords.reference) {
 
@@ -271,7 +279,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
     //Merge all providers together and set defaults
     const savedProviders = this.properties.suggestionProviders && this.properties.suggestionProviders.length > 0 ? this.properties.suggestionProviders : [];
     const providerDefinitions = [ ...defaultProviders, ...customProviders ].map(provider => {
-        const existingSavedProvider = savedProviders.find(sp => sp.providerName === provider.providerName);
+        const existingSavedProvider = find(savedProviders, sp => sp.providerName === provider.providerName);
 
         provider.providerEnabled = existingSavedProvider && undefined !== existingSavedProvider.providerEnabled
                                     ? existingSavedProvider.providerEnabled

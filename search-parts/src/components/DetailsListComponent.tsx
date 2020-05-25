@@ -13,6 +13,7 @@ import * as ReactDOM from 'react-dom';
 import { ITooltipHostProps, TooltipHost, ITooltipStyles, Shimmer, ShimmerElementsGroup, ShimmerElementType, IShimmerElement } from 'office-ui-fabric-react';
 import { DEFAULT_CELL_STYLE_PROPS, DEFAULT_ROW_HEIGHTS } from 'office-ui-fabric-react/lib/components/DetailsList/DetailsRow.styles';
 import * as DOMPurify from 'dompurify';
+import { TemplateService } from '../services/TemplateService/TemplateService';
 
 const DEFAULT_SHIMMER_HEIGHT = 7;
 const SHIMMER_LINE_VS_CELL_WIDTH_RATIO = 0.95;
@@ -218,6 +219,8 @@ export class DetailsListComponent extends React.Component<DetailsListComponentPr
 
                                     value = value ? value.trim() : null;
 
+                                    TemplateService.initPreviewElements();
+
                                 } catch (error) {
                                     hasError = true;
                                     value = `<span style="color:red;font-style: italic" title="${error.message}">${`Error: ${error.message}`}</span>`;
@@ -228,7 +231,8 @@ export class DetailsListComponent extends React.Component<DetailsListComponentPr
 
                             // Make the value clickable to the corresponding result item 
                             if (column.isResultItemLink) {
-                                renderColumnValue = <a style={{ color: this.props.themeVariant.semanticColors.link }} href={item.ServerRedirectedURL ? item.ServerRedirectedURL : item.Path} target='blank'>{renderColumnValue}</a>;
+                                let url = Handlebars.helpers.getUrl(item);
+                                renderColumnValue = <a style={{ color: this.props.themeVariant.semanticColors.link }} href={url} target='_blank' data-interception='off'>{renderColumnValue}</a>;
                             }
 
                             return renderColumnValue;
@@ -250,11 +254,11 @@ export class DetailsListComponent extends React.Component<DetailsListComponentPr
         let renderFilter: JSX.Element = null;
 
         if (this.props.enableFiltering) {
-            renderFilter =  <div className={classNames.controlWrapper}>
-                                <TextField label="Filter by name:" onChange={this._onChangeText.bind(this)} styles={controlStyles} />;
+            renderFilter = <div className={classNames.controlWrapper}>
+                <TextField label="Filter by name:" onChange={this._onChangeText.bind(this)} styles={controlStyles} />;
                             </div>;
         }
-        
+
         return (
             <Fabric>
                 {renderFilter}
@@ -262,14 +266,14 @@ export class DetailsListComponent extends React.Component<DetailsListComponentPr
                     theme={this.props.themeVariant as ITheme}
                     items={items}
                     compact={this.props.isCompact}
-                    columns={columns}                
+                    columns={columns}
                     selectionMode={SelectionMode.none}
                     setKey="set"
                     onRenderCustomPlaceholder={(rowProps: IDetailsRowProps): JSX.Element => {
 
                         // Logic updated from default logic https://github.com/OfficeDev/office-ui-fabric-react/blob/master/packages/office-ui-fabric-react/src/components/DetailsList/ShimmeredDetailsList.base.tsx
                         // tslint:disable-next-line:no-shadowed-variable
-                        const { columns , compact, selectionMode, checkboxVisibility, cellStyleProps = DEFAULT_CELL_STYLE_PROPS } = rowProps;
+                        const { columns, compact, selectionMode, checkboxVisibility, cellStyleProps = DEFAULT_CELL_STYLE_PROPS } = rowProps;
 
                         const { rowHeight, compactRowHeight } = DEFAULT_ROW_HEIGHTS;
                         const gapHeight: number = compact ? compactRowHeight : rowHeight + 1; // 1px to take into account the border-bottom of DetailsRow.
@@ -280,11 +284,11 @@ export class DetailsListComponent extends React.Component<DetailsListComponentPr
 
                         if (showCheckbox) {
                             shimmerElementsRow.push(
-                                <ShimmerElementsGroup 
-                                theme={this.props.themeVariant as ITheme} 
-                                backgroundColor={this.props.themeVariant.semanticColors.bodyBackground}
-                                key={'checkboxGap'} 
-                                shimmerElements={[{ type: ShimmerElementType.gap, width: '40px', height: gapHeight }]} />
+                                <ShimmerElementsGroup
+                                    theme={this.props.themeVariant as ITheme}
+                                    backgroundColor={this.props.themeVariant.semanticColors.bodyBackground}
+                                    key={'checkboxGap'}
+                                    shimmerElements={[{ type: ShimmerElementType.gap, width: '40px', height: gapHeight }]} />
                             );
                         }
 
@@ -329,9 +333,9 @@ export class DetailsListComponent extends React.Component<DetailsListComponentPr
                                 });
                             }
 
-                            shimmerElementsRow.push(<ShimmerElementsGroup 
-                                theme={this.props.themeVariant as ITheme}  
-                                key={columnIdx} width={`${groupWidth}px`} 
+                            shimmerElementsRow.push(<ShimmerElementsGroup
+                                theme={this.props.themeVariant as ITheme}
+                                key={columnIdx} width={`${groupWidth}px`}
                                 backgroundColor={this.props.themeVariant.semanticColors.bodyBackground}
                                 shimmerElements={shimmerElements} />);
                         });
@@ -341,23 +345,23 @@ export class DetailsListComponent extends React.Component<DetailsListComponentPr
                                 key={'endGap'}
                                 width={'100%'}
                                 backgroundColor={this.props.themeVariant.semanticColors.bodyBackground}
-                                theme={this.props.themeVariant as ITheme} 
+                                theme={this.props.themeVariant as ITheme}
                                 shimmerElements={[{ type: ShimmerElementType.gap, width: '100%', height: gapHeight }]}
                             />
                         );
-                        return <Shimmer 
-                        theme={this.props.themeVariant as ITheme}
-                        customElementsGroup={<div style={{ display: 'flex' }}>{shimmerElementsRow}</div>}/>;
+                        return <Shimmer
+                            theme={this.props.themeVariant as ITheme}
+                            customElementsGroup={<div style={{ display: 'flex' }}>{shimmerElementsRow}</div>} />;
                     }}
                     onRenderRow={(rowProps: IDetailsRowProps): JSX.Element => {
-                        return <DetailsRow {...rowProps} theme={this.props.themeVariant as ITheme}/>;
+                        return <DetailsRow {...rowProps} theme={this.props.themeVariant as ITheme} />;
                     }}
                     onRenderDetailsHeader={(props: IDetailsHeaderProps): JSX.Element => {
 
                         props.onRenderColumnHeaderTooltip = (tooltipHostProps: ITooltipHostProps) => {
 
                             const customStyles: Partial<ITooltipStyles> = {};
-                            customStyles.root = { 
+                            customStyles.root = {
                                 backgroundColor: this.props.themeVariant.semanticColors.listBackground,
                                 color: this.props.themeVariant.semanticColors.listText,
                                 selectors: {
@@ -369,11 +373,11 @@ export class DetailsListComponent extends React.Component<DetailsListComponentPr
                                     }
                                 }
                             };
-    
-                            return <TooltipHost {...tooltipHostProps} theme={this.props.themeVariant as ITheme} styles={customStyles}/>;
+
+                            return <TooltipHost {...tooltipHostProps} theme={this.props.themeVariant as ITheme} styles={customStyles} />;
                         };
 
-                        return <DetailsHeader {...props} theme={this.props.themeVariant as ITheme}/>;
+                        return <DetailsHeader {...props} theme={this.props.themeVariant as ITheme} />;
                     }}
                     layoutMode={DetailsListLayoutMode.justified}
                     isHeaderVisible={true}
@@ -419,14 +423,14 @@ function _copyAndSort<T>(items: T[], columnKey: string, isSortedDescending?: boo
 
 export class DetailsListWebComponent extends BaseWebComponent {
 
-  public constructor() {
-     super(); 
-  }
+    public constructor() {
+        super();
+    }
 
-  public connectedCallback() {
+    public connectedCallback() {
 
-     let props = this.resolveAttributes();
-     const detailsListComponent = <DetailsListComponent {...props}/>;
-     ReactDOM.render(detailsListComponent, this);
-  }
+        let props = this.resolveAttributes();
+        const detailsListComponent = <DetailsListComponent {...props} />;
+        ReactDOM.render(detailsListComponent, this);
+    }
 }

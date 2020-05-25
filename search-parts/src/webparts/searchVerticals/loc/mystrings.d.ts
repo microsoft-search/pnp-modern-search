@@ -4,6 +4,9 @@ declare interface ISearchVerticalsWebPartStrings {
   PlaceHolderConfigureBtnLabel: string;
   PlaceHolderIconText: string;
   PlaceHolderDescription: string;
+  SameTabOpenBehavior: string;
+  NewTabOpenBehavior: string;
+  PageOpenBehaviorLabel: string;
   PropertyPane: {
     Verticals: {
       PropertyLabel: string;
@@ -15,6 +18,9 @@ declare interface ISearchVerticalsWebPartStrings {
         QueryTemplate: string;
         ResultSource: string;
         IconName: string;
+        IsLink: string;
+        LinkUrl: string;
+        OpenBehavior: string;
       }
     },
     ShowCounts: {

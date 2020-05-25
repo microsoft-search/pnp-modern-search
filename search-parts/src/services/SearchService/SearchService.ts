@@ -4,7 +4,7 @@ import { ISearchResults, ISearchResult, IRefinementResult, IRefinementValue, IRe
 import { sp, SearchQuery, SearchResults, SPRest, Sort, SearchSuggestQuery, SortDirection } from '@pnp/sp';
 import { Logger, LogLevel, ConsoleListener } from '@pnp/logging';
 import { Text, Guid } from '@microsoft/sp-core-library';
-import { sortBy, isEmpty, escape } from '@microsoft/sp-lodash-subset';
+import { sortBy, isEmpty, findIndex } from '@microsoft/sp-lodash-subset';
 import LocalizationHelper from '../../helpers/LocalizationHelper';
 import "@pnp/polyfill-ie11";
 import IRefinerConfiguration from '../../models/IRefinerConfiguration';
@@ -257,7 +257,7 @@ class SearchService implements ISearchService {
                 });
 
                 if (properties.length === 1) {
-                    queryModification =  properties[0].Value;
+                    queryModification = properties[0].Value;
                     results.QueryModification = queryModification;
                 }
 
@@ -436,7 +436,7 @@ class SearchService implements ISearchService {
 
         // Update tokens in query template for all verticals
         let tokenPromises: Promise<string>[] = [];
-        
+
         tokenPromises = searchVerticals.map(vertical => {
             return this._tokenService.replaceQueryVariables(vertical.queryTemplate);
         });
@@ -458,7 +458,7 @@ class SearchService implements ISearchService {
             // More info here https://blog.mastykarz.nl/inconvenient-content-targeting-user-segments-search-rest-api/
             const rowLimit: string = enableQueryRules ? '1' : '0';
 
-            
+
 
             // See http://www.silver-it.com/node/127 for quotes handling with GET requests
             url = UrlHelper.addOrReplaceQueryStringParam(url, 'querytext', `'${encodeURIComponent(queryText.replace(/'/g, '\'\''))}'`);

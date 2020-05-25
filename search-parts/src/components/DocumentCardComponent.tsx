@@ -194,7 +194,7 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
                     }
                     <Link
                         theme={this.props.themeVariant as ITheme}
-                        href={processedProps.href} target='_blank' styles={{
+                        href={processedProps.href} target='_blank' data-interception="off" styles={{
                             root: {
                                 selectors: {
                                     ':hover': {

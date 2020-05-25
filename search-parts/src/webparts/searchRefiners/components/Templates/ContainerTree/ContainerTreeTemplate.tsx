@@ -4,7 +4,7 @@ import IBaseRefinerTemplateState from '../IBaseRefinerTemplateState';
 import { IRefinementValue, RefinementOperator } from "../../../../../models/ISearchResult";
 import * as update from 'immutability-helper';
 import { INavLink, Nav, Icon, ITheme } from 'office-ui-fabric-react';
-import { cloneDeep } from "@microsoft/sp-lodash-subset";
+import { cloneDeep, find } from "@microsoft/sp-lodash-subset";
 import { UrlHelper } from '../../../../../helpers/UrlHelper';
 
 //CSS
@@ -115,7 +115,7 @@ export default class ContainerTreeTemplate extends React.Component<IFoldersTempl
                 path.forEach((e, i) => {
 
                     const currPath = path.slice(0, i + 1).join("");
-                    const child = curr.links.find(link => link.path === currPath);
+                    const child = find(curr.links, link => link.path === currPath);
                     
                     if (child) {
                         curr = child;

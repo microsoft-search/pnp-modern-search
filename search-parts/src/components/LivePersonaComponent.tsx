@@ -23,7 +23,7 @@ export interface ILivePersonaComponentProps {
     /**
      * If info should not appear on hover
      */
-    disableHover?: boolean;
+    disablehover?: boolean;
 
     /**
      * The content to wrap with persona info
@@ -61,7 +61,7 @@ export class LivePersonaComponent extends React.Component<ILivePersonaComponentP
             renderPersona = React.createElement(this.sharedLibrary.LivePersonaCard, {
                 className: 'livePersonaCard',
                 clientScenario: "PeopleWebPart",
-                disableHover: this.props.disableHover,
+                disableHover: this.props.disablehover,
                 hostAppPersonaInfo: {
                   PersonaType: "User"
                 },
