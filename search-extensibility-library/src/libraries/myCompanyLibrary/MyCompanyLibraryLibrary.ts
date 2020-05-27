@@ -6,6 +6,7 @@ import { ISuggestionProviderDefinition } from "../../models/ISuggestionProviderD
 import { CustomSuggestionProvider } from "../CustomSuggestionProvider";
 import { IQueryModifierDefinition } from "../../models/IQueryModifierDefinition";
 import { CustomQueryModifier } from "../CustomQueryModifier";
+import { GraphPersonaComponentWebComponent } from "../GraphPersonaComponent";
 
 export class MyCompanyLibraryLibrary implements IExtensibilityLibrary {
 
@@ -14,6 +15,10 @@ export class MyCompanyLibraryLibrary implements IExtensibilityLibrary {
       {
         componentName: 'my-custom-component',
         componentClass: MyCustomComponentWebComponent
+      },
+      {
+        componentName: 'graph-persona-custom-component',
+        componentClass: GraphPersonaComponentWebComponent
       }
     ];
   }
