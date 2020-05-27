@@ -749,10 +749,10 @@ class SearchService implements ISearchService {
                 let updatedSearchResults = searchResults;
 
                 const batch = this._localPnPSetup.createBatch();
-                
+
                 const promises = searchResults.map(async result => {
 
-                    if (result.FileType.toLowerCase() === "url" && result.OriginalPath && result.SPSiteUrl) {
+                    if (result.FileType && result.FileType.toLowerCase() === "url" && result.OriginalPath && result.SPSiteUrl) {
                         const localWeb = new Web(result.SPSiteUrl);
                         const file = localWeb.getFileByServerRelativeUrl(result.OriginalPath.replace(/^(?:\/\/|[^/]+)*\//, '/'));
                         return  file.inBatch(batch).getText();
