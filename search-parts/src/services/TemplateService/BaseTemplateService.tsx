@@ -406,18 +406,21 @@ abstract class BaseTemplateService {
      * Registers third party handlebars helpers
      * @param helpers
      */
-    public registerHelpers(helpers: IExtension<any>[]) : void {
-
-        helpers.map(helper => {
-            try {
-                let instance = ExtensionHelper.create(helper.extensionClass) as IHandlebarsHelperInstance;
-                instance.context = { webPart: this._ctx, search: this._search, template: this };
-                Handlebars.registerHelper(helper.name, instance.helper);
-            } catch(ex) {
-                console.log(`Unable to initialize custom handlebars helper '${helper.displayName}'. ${ex}`);
-            }
-        });
-
+    public registerHelpers(helpers: IExtension<any>[]) {
+        if(helpers && helpers.length > 0) {
+            helpers.map(helper => {
+                const existingHelper = typeof Handlebars.helpers[helper.name] == "function";
+                if(!existingHelper) {
+                    try {
+                        let instance = ExtensionHelper.create(helper.extensionClass) as IHandlebarsHelperInstance;
+                        instance.context = { webPart: this._ctx, search: this._search, template: this };
+                        if(typeof instance.helper == "function") Handlebars.registerHelper(helper.name, instance.helper);
+                    } catch(ex) {
+                        console.log(`Unable to initialize custom handlebars helper '${helper.displayName}'. ${ex}`);
+                    }
+                }
+            });
+        }
     }
 
     /**

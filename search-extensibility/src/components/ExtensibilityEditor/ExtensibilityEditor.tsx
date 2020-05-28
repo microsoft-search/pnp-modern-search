@@ -130,10 +130,9 @@ export class ExtensibilityEditor extends React.Component<IExtensibilityEditorPro
 
     private async deleteLibrary(removeGuid:Guid) : Promise<void> {
         if(removeGuid) {
-            if(!(await this.props.onLibraryDeleted(removeGuid))) {
-                const newLibs = this.props.libraries.filter((lib)=>lib.guid.toString()!==removeGuid.toString());
-                this.setState({libraries: newLibs, reload: !this.state.reload});
-            }
+            const newLibs = this.props.libraries.filter((lib)=>lib.guid.toString()!==removeGuid.toString());
+            this.setState({libraries: newLibs, reload: !this.state.reload});
+            await this.props.onLibraryDeleted(removeGuid);
         }
     }
 

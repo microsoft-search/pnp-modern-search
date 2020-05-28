@@ -355,6 +355,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         this.initThemeVariant();
 
         // Initialize extensibility
+        this._extensibilityService = new ExtensibilityService();        
         await this._loadExtensibility();
 
         if (Environment.type === EnvironmentType.Local) {
@@ -383,17 +384,12 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         }
 
         this._resultService = new ResultService();
-        this._extensibilityService = new ExtensibilityService();
         this._codeRenderers = this._resultService.getRegisteredRenderers();
         this._dynamicDataService = new DynamicDataService(this.context.dynamicDataProvider);
         this._verticalsInformation = [];
 
         // Set the default search results layout
         this.properties.selectedLayout = (this.properties.selectedLayout !== undefined && this.properties.selectedLayout !== null) ? this.properties.selectedLayout : ResultsLayoutOption.DetailsList;
-
-        // Registers web components
-        this._templateService.registerWebComponents(this.availableWebComponentDefinitions);
-        this._templateService.registerHelpers(this._availableHelpers);
 
         this.context.dynamicDataSourceManager.initializeSource(this);
 
@@ -406,7 +402,37 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
         this.ensureDataSourceConnection();
 
+        await this._registerExtensions();
+
         return super.onInit();
+    }
+
+    private async _registerExtensions() : Promise<void> {
+
+        // Registers web components
+        this._templateService.registerWebComponents(this.availableWebComponentDefinitions);
+
+        // Register handlebars helpers
+        this._templateService.registerHelpers(this._availableHelpers);
+        
+        // Initializes query modifiers property for selection
+        this.properties.queryModifiers = this.availableQueryModifierDefinitions.map(definition => {
+            return {
+                queryModifierDisplayName: definition.displayName,
+                queryModifierDescription: definition.description,
+                queryModifierEnabled: this.properties.selectedQueryModifierDisplayName && this.properties.selectedQueryModifierDisplayName === definition.displayName ? true : false
+            } as IQueryModifierConfiguration;
+        });
+
+        // If we have a query modifier selected from config, we ensure it exists and is actually loaded from the extensibility library
+        const queryModifierDefinition = this.availableQueryModifierDefinitions.filter(definition => definition.displayName === this.properties.selectedQueryModifierDisplayName);
+        if (this.properties.selectedQueryModifierDisplayName && queryModifierDefinition.length === 1) {
+            this.queryModifierSelected = true;
+            this._queryModifierInstance = await this._initQueryModifierInstance(queryModifierDefinition[0]);
+        } else {
+            this.properties.selectedQueryModifierDisplayName = null;
+        }
+
     }
 
     private async _loadExtensibility() : Promise<void> {
@@ -429,24 +455,12 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
             // Get custom query modifiers if present
             this.availableQueryModifierDefinitions = this._extensibilityService.filter(extensions, ExtensionTypes.QueryModifer);
+            
+        } else {
 
-            // Initializes query modifiers property for selection
-            this.properties.queryModifiers = this.availableQueryModifierDefinitions.map(definition => {
-                return {
-                    queryModifierDisplayName: definition.displayName,
-                    queryModifierDescription: definition.description,
-                    queryModifierEnabled: this.properties.selectedQueryModifierDisplayName && this.properties.selectedQueryModifierDisplayName === definition.displayName ? true : false
-                } as IQueryModifierConfiguration;
-            });
-
-            // If we have a query modifier selected from config, we ensure it exists and is actually loaded from the extensibility library
-            const queryModifierDefinition = this.availableQueryModifierDefinitions.filter(definition => definition.displayName === this.properties.selectedQueryModifierDisplayName);
-            if (this.properties.selectedQueryModifierDisplayName && queryModifierDefinition.length === 1) {
-                this.queryModifierSelected = true;
-                this._queryModifierInstance = await this._initQueryModifierInstance(queryModifierDefinition[0]);
-            } else {
-                this.properties.selectedQueryModifierDisplayName = null;
-            }
+            this.availableWebComponentDefinitions = AvailableComponents.BuiltinComponents;
+            this._availableHelpers = [];
+            this.availableQueryModifierDefinitions = [];
             
         }
 
@@ -974,11 +988,13 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                 onLibraryAdded: async (id:Guid) => {
                     this.properties.extensibilityLibraries.push(id.toString());
                     await this._loadExtensibility();
+                    await this._registerExtensions();
                     return false;
                 },
                 onLibraryDeleted: async (id:Guid) => {
                     this.properties.extensibilityLibraries = this.properties.extensibilityLibraries.filter((lib)=> (lib != id.toString()));
                     await this._loadExtensibility();
+                    await this._registerExtensions();
                     return false;
                 }       
             })

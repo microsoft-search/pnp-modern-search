@@ -50,7 +50,7 @@ export class PropertyPaneExtensibilityEditor implements IPropertyPaneField<IExte
         
         const element: React.ReactElement<IExtensibilityEditorProps> = React.createElement(ExtensibilityEditor, {
             label: this.properties.label,
-            allowedExtensions: [ ExtensionTypes.QueryModifer, ExtensionTypes.WebComponent, ExtensionTypes.HandlebarsHelper ],
+            allowedExtensions: this.properties.allowedExtensions,
             libraries: this.properties.libraries,
             onLibraryAdded: this.onLibraryAdded.bind(this),
             onLibraryDeleted: this.onLibraryDeleted.bind(this)

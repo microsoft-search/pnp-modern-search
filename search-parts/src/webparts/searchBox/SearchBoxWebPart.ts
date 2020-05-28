@@ -136,6 +136,8 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
 
     this.context.dynamicDataSourceManager.initializeSource(this);
 
+    if(!this.properties.extensibilityLibraries) this.properties.extensibilityLibraries = [];
+    
     this.initSearchService();
     this.initThemeVariant();
     
@@ -318,6 +320,10 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
       const extensions = this._extensibilityService.getAllExtensions(this._loadedLibraries);
       this._customSuggestionProviders = this._extensibilityService.filter(extensions, ExtensionTypes.SuggestionProvider);
 
+    } else {
+      
+      this._customSuggestionProviders = [];
+
     }
 
   }
@@ -393,11 +399,13 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
             onLibraryAdded: async (id:Guid) => {
                 this.properties.extensibilityLibraries.push(id.toString());
                 await this._loadExtensibility();
+                await this.initSuggestionProviders();
                 return false;
             },
             onLibraryDeleted: async (id:Guid) => {
                 this.properties.extensibilityLibraries = this.properties.extensibilityLibraries.filter((lib)=> (lib != id.toString()));
                 await this._loadExtensibility();
+                await this.initSuggestionProviders();
                 return false;
             }       
         })
@@ -477,7 +485,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
                   }
               },
               {
-                  id: 'providerDisplayName',
+                  id: 'displayName',
                   title: strings.SuggestionProviders.ProviderNamePropertyLabel,
                   type: this._customCollectionFieldType.custom,
                   onCustomRender: (field, value) => {
@@ -487,7 +495,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
                   }
               },
               {
-                  id: 'providerDescription',
+                  id: 'description',
                   title: strings.SuggestionProviders.ProviderDescriptionPropertyLabel,
                   type: this._customCollectionFieldType.custom,
                   onCustomRender: (field, value) => {
