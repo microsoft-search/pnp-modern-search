@@ -44,7 +44,7 @@ export default class PersonaTemplate extends React.Component<IPersonaTemplatePro
   }
 
   public render() {
-    
+
     let renderTemplate: JSX.Element = null;
 
     if (this.state.isLoading) {
@@ -56,26 +56,26 @@ export default class PersonaTemplate extends React.Component<IPersonaTemplatePro
 
                               let imageProps: IPersonaProps = null;
 
-                              // Try to see if the value looks like a login claim                              
+                              // Try to see if the value looks like a login claim
                               let displayName = refinementValue.RefinementValue.split('|').length > 1 ? refinementValue.RefinementValue.split('|')[1].trim() : refinementValue.RefinementValue;
                               const claimMatch = refinementValue.RefinementValue.match(/([ic]:0[#.5!+\-%?\\e][.+][wstmrfc]\|.+?(?=\|)\|.*)/);
-                              
+
                               if (claimMatch) {
                                 const accountName = claimMatch[0];
                                 const claimParts = accountName.split('|');
                                 const accountNameWithoutClaim = claimParts[claimParts.length-1];
-  
+
                                 // Get the user info from the already fetched list
                                 const userInfos = this.state.userInfos.filter(user => {
                                     return user.AccountName.toLowerCase() === accountName.toLowerCase();
                                 });
-                                
+
                                 if (userInfos.length > 0) {
                                   displayName = userInfos[0].Properties.DisplayName;
                                   imageProps = {
                                     imageUrl: accountNameWithoutClaim ? `/_layouts/15/userphoto.aspx?size=L&accountname=${accountNameWithoutClaim.toLowerCase()}`: null
                                   };
-                                }                                
+                                }
                               }
 
                               if (refinementValue.RefinementCount === 0) {
@@ -84,7 +84,7 @@ export default class PersonaTemplate extends React.Component<IPersonaTemplatePro
                               return (
                                 <Persona
                                   {...imageProps}
-                                  key={j}           
+                                  key={j}
                                   className='pnp-persona'
                                   styles={{
                                     root: {
@@ -94,11 +94,11 @@ export default class PersonaTemplate extends React.Component<IPersonaTemplatePro
                                       fontWeight: this._isValueInFilterSelection(refinementValue) ? 'bold' : 'normal'
                                     }
                                   }}
-                                  size={PersonaSize.size40}                                  
+                                  size={PersonaSize.size40}
                                   primaryText={`${displayName} (${refinementValue.RefinementCount})`}
                                   theme={this.props.themeVariant as ITheme}
                                   onClick={() => {
-                                    if (!this._isValueInFilterSelection(refinementValue)) { 
+                                    if (!this._isValueInFilterSelection(refinementValue)) {
                                       refinementValue.RefinementValue = displayName;
                                       this._onFilterAdded(refinementValue);
                                     } else {
@@ -115,7 +115,7 @@ export default class PersonaTemplate extends React.Component<IPersonaTemplatePro
     return (
       <div className={styles.pnpRefinersTemplatePersona}>
         {
-            this.props.showValueFilter ? 
+            this.props.showValueFilter ?
                 <div className="pnp-value-filter-container">
                     <TextField value={this.state.valueFilter} placeholder="Filter" onChange={(event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>,newValue?: string) => { this._onValueFilterChanged(newValue); }} onClick={this._onValueFilterClick} />
                     <Link onClick={this._clearValueFilter} disabled={!this.state.valueFilter || this.state.valueFilter === ""}>Clear</Link>
@@ -144,7 +144,7 @@ export default class PersonaTemplate extends React.Component<IPersonaTemplatePro
   private async getUserInfos(props: IPersonaTemplateProps) {
 
     const accountNames = [];
-      
+
     props.refinementResult.Values.map((refinementValue: IRefinementValue) => {
 
       // Identify the login adress using Regex
@@ -225,7 +225,7 @@ export default class PersonaTemplate extends React.Component<IPersonaTemplatePro
         this._applyFilters(newFilterValues);
     }
   }
-  
+
   /**
    * Applies all selected filters for the current refiner
    */
@@ -252,8 +252,10 @@ export default class PersonaTemplate extends React.Component<IPersonaTemplatePro
    * Checks if an item-object matches the provided refinement value filter value
    * @param item The item-object to be checked
    */
-  private _isFilterMatch(item): boolean {
+  private _isFilterMatch(item: IRefinementValue): boolean {
       if(!this.state.valueFilter) { return false; }
+      const isSelected = this.state.refinerSelectedFilterValues.some(selectedValue => selectedValue.RefinementValue === item.RefinementValue);
+      if(isSelected) { return false; }
       let displayName = item.RefinementValue.split('|').length > 1 ? item.RefinementValue.split('|')[1].trim() : item.RefinementValue;
       return displayName.toLowerCase().indexOf(this.state.valueFilter.toLowerCase()) === -1 ;
   }

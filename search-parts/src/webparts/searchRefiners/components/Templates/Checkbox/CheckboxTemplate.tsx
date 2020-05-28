@@ -43,7 +43,7 @@ export default class CheckboxTemplate extends React.Component<IBaseRefinerTempla
 
         return <div className={styles.pnpRefinersTemplateCheckbox}>
             {
-                this.props.showValueFilter ? 
+                this.props.showValueFilter ?
                     <div className="pnp-value-filter-container">
                         <TextField className="pnp-value-filter" value={this.state.valueFilter} placeholder="Filter" onChange={(event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>,newValue?: string) => { this._onValueFilterChanged(newValue); }} onClick={this._onValueFilterClick} />
                         <Link onClick={this._clearValueFilter} disabled={!this.state.valueFilter || this.state.valueFilter === ""}>Clear</Link>
@@ -69,7 +69,7 @@ export default class CheckboxTemplate extends React.Component<IBaseRefinerTempla
                             checked={this._isValueInFilterSelection(refinementValue)}
                             disabled={this.state.refinerSelectedFilterValues.length > 0 && !this._isValueInFilterSelection(refinementValue) && !this.props.isMultiValue && refinementValue.RefinementName !== 'Size'}
                             label={Text.format(refinementValue.RefinementValue + ' ({0})', refinementValue.RefinementCount)}
-                            onChange={(ev, checked: boolean) => {  
+                            onChange={(ev, checked: boolean) => {
                                 checked ? this._onFilterAdded(refinementValue) : this._onFilterRemoved(refinementValue);
                             }} />
                     );
@@ -77,11 +77,11 @@ export default class CheckboxTemplate extends React.Component<IBaseRefinerTempla
             }
             {
                 this.props.isMultiValue ?
-            
+
                     <div>
-                        <Link 
-                            theme={this.props.themeVariant as ITheme} 
-                            onClick={() => { this._applyFilters(this.state.refinerSelectedFilterValues); }} 
+                        <Link
+                            theme={this.props.themeVariant as ITheme}
+                            onClick={() => { this._applyFilters(this.state.refinerSelectedFilterValues); }}
                             disabled={disableButtons}>{strings.Refiners.ApplyFiltersLabel}
                         </Link>|<Link theme={this.props.themeVariant as ITheme}  onClick={this._clearFilters} disabled={this.state.refinerSelectedFilterValues.length === 0}>{strings.Refiners.ClearFiltersLabel}</Link>
                     </div>
@@ -177,7 +177,7 @@ export default class CheckboxTemplate extends React.Component<IBaseRefinerTempla
     }
 
     /**
-     * Applies all selected filters for the current refiner 
+     * Applies all selected filters for the current refiner
      */
     private _applyFilters(updatedValues: IRefinementValue[]) {
         this.props.onFilterValuesUpdated(this.props.refinementResult.FilterName, updatedValues, this._operator);
@@ -199,9 +199,11 @@ export default class CheckboxTemplate extends React.Component<IBaseRefinerTempla
      * Checks if an item-object matches the provided refinement value filter value
      * @param item The item-object to be checked
      */
-    private _isFilterMatch(item): boolean {
+    private _isFilterMatch(item: IRefinementValue): boolean {
         if(!this.state.valueFilter) { return false; }
-        return item.RefinementValue.toLowerCase().indexOf(this.state.valueFilter.toLowerCase()) === -1 ;
+        const isSelected = this.state.refinerSelectedFilterValues.some(selectedValue => selectedValue.RefinementValue === item.RefinementValue);
+        if(isSelected) { return false; }
+        return item.RefinementValue.toLowerCase().indexOf(this.state.valueFilter.toLowerCase()) === -1;
     }
 
     /**

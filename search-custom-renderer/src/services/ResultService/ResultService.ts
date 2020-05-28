@@ -57,6 +57,9 @@ export class ResultService implements IResultService {
     }
 
     public getRegisteredRenderers(): IRenderer[] {
+        if (window[this.SEARCH_RENDERERS_OBJECT_NAME] === undefined) {
+            window[this.SEARCH_RENDERERS_OBJECT_NAME] = [];
+        }
         return window[this.SEARCH_RENDERERS_OBJECT_NAME];
     }
 
