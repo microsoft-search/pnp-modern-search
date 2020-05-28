@@ -1,33 +1,29 @@
-import { BaseSuggestionProvider } from '../models/BaseSuggestionProvider';
-import { ISuggestion } from '../models/ISuggestion';
+import { BaseSuggestionProvider, ISuggestion } from 'search-extensibility';
+import * as strings from 'SearchExtensibilityReferenceExtensionLibraryStrings';
 
 const PARKER_ICON_URL = 'https://raw.githubusercontent.com/pnp/media/master/parker/pnp/300w/parker.png';
 const PNP_ICON_URL = 'https://raw.githubusercontent.com/pnp/media/master/pnp-logos-generics/png/teal/300w/pnp-samples-teal-300.png';
 
-export class CustomSuggestionProvider extends BaseSuggestionProvider  {
+export default class CustomSuggestionProvider extends BaseSuggestionProvider  {
 
   private _zeroTermSuggestions: ISuggestion[] = [];
-
-  public static readonly ProviderName: string = 'custom-suggestion-provider';
-  public static readonly ProviderDisplayName: string = 'Custom Suggestion Provider';
-  public static readonly ProviderDescription: string = 'An example custom suggestion provider.';
 
   public async onInit(): Promise<void> {
       this._onSuggestionSelected.bind(this);
 
       // this._ctx // SPFx Webpart Context
-
       this._zeroTermSuggestions = [
         {
-          displayText: 'SharePoint Patterns and Practices',
-          groupName: 'Custom Suggestions',
+          displayText: strings.Extensions.Suggestion.Custom.Zero.DisplayText,
+          groupName: strings.Extensions.Suggestion.Custom.GroupName,
           icon: PARKER_ICON_URL,
           onSuggestionSelected: this._onSuggestionSelected,
-          description:'aka.ms/sppnp',
-          hoverText: `The SharePoint Development Community (also known as the SharePoint PnP community) is an open-source initiative coordinated by SharePoint engineering. This community controls SharePoint development documentation, samples, reusable controls, and other relevant open-source initiatives related to SharePoint development.`,
+          description:strings.Extensions.Suggestion.Custom.Zero.Description,
+          hoverText: strings.Extensions.Suggestion.Custom.Zero.HoverText,
           targetUrl: 'https://aka.ms/sppnp',
         }
       ];
+
   }
 
   public get isSuggestionsEnabled(): boolean {
@@ -53,19 +49,19 @@ export class CustomSuggestionProvider extends BaseSuggestionProvider  {
   private _getSampleSuggestions = async (queryText: string): Promise<ISuggestion[]> => {
       const sampleSuggestions = [
         {
-          displayText: `SPFx Training`,
-          groupName: 'SharePoint Framework',
+          displayText: strings.Extensions.Suggestion.Custom.ResultOne.DisplayText,
+          groupName: strings.Extensions.Suggestion.Custom.ResultOne.GroupName,
           icon: PNP_ICON_URL,
           onSuggestionSelected: this._onSuggestionSelected,
-          description: 'Sample Suggestion',
+          description: strings.Extensions.Suggestion.Custom.ResultTwo.Description,
           hoverText: `Sample Suggestion for ${queryText}`
         },
         {
-          displayText: `SPFx Documentation`,
-          groupName: 'SharePoint Framework',
+          displayText: strings.Extensions.Suggestion.Custom.ResultTwo.DisplayText,
+          groupName: strings.Extensions.Suggestion.Custom.ResultTwo.GroupName,
           icon: PARKER_ICON_URL,
           onSuggestionSelected: this._onSuggestionSelected,
-          description: 'Sample Suggestion',
+          description: strings.Extensions.Suggestion.Custom.ResultTwo.Description,
           hoverText: `Sample Suggestion for ${queryText}`
         }
       ];

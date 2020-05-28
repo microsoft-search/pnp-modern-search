@@ -18,6 +18,7 @@ interface ISearchBoxWebPartProps {
     defaultQueryKeywords: DynamicProperty<string>;
     placeholderText: string;
     suggestionProviders: IExtension<ISuggestionProviderInstance>[];
+    extensibilityLibraries: string[];
 }
 
 export default ISearchBoxWebPartProps;

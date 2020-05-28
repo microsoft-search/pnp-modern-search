@@ -54,9 +54,11 @@ export class ExtensibilityService implements IExtensibilityService {
             return library as IExtensibilityLibrary;
 
         } catch (error) {
-
-            Log.info(LogSource, `Error loading extensibility library: ${id.toString()}. Details: ${error}`);
+            const msg = `Error loading extensibility library: ${id.toString()}. Details: ${error}`;
+            Log.info(LogSource, msg);
             Log.error(LogSource, error);
+            console.log(msg);
+            console.log(error);
             return null;
             
         }
@@ -118,7 +120,10 @@ export class ExtensibilityService implements IExtensibilityService {
         try {
             extensions = library.getExtensions();
         } catch(e) {
-            Log.info(LogSource, `Failure getting extensions from library: ${library.name}. Details: ${e}`);
+            const msg: string = `Failure getting extensions from library: ${library.name}. Details: ${e}`;
+            Log.info(LogSource, msg);
+            console.log(msg);
+            console.log(e);
             Log.error(LogSource, e);
         }
         return extensions;

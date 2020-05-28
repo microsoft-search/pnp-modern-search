@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { BaseWebComponent } from '../models/BaseWebComponent';
+import { BaseWebComponent } from 'search-extensibility';
 import { Panel, PanelType, ActionButton } from "office-ui-fabric-react";
 
 export interface IObjectParam {

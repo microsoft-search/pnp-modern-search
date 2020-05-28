@@ -19,17 +19,20 @@ export class PropertyPaneExtensibilityEditor implements IPropertyPaneField<IExte
     public type: PropertyPaneFieldType = PropertyPaneFieldType.Custom;
     public targetProperty: string;
     public shouldFocus?: boolean;
-    public properties: IExtensibilityEditorPropertyPaneProps;
+    public properties: IExtensibilityEditorPropertyPaneInternalProps;
     private element: HTMLElement;
 
     constructor(targetProperty:string, properties: IExtensibilityEditorPropertyPaneProps) {
         this.targetProperty = targetProperty;
         this.properties = {
+            key:properties.label,
             label:properties.label,
             allowedExtensions: properties.allowedExtensions,
             libraries: properties.libraries,
             onLibraryAdded: properties.onLibraryAdded,
-            onLibraryDeleted: properties.onLibraryDeleted
+            onLibraryDeleted: properties.onLibraryDeleted,
+            onRender: this.onRender.bind(this),
+            onDispose: this.onDispose.bind(this)
         };
     }
 
@@ -57,12 +60,12 @@ export class PropertyPaneExtensibilityEditor implements IPropertyPaneField<IExte
 
     }
 
-    private onLibraryAdded(id:Guid):void {
-        this.properties.onLibraryAdded(id);
+    private async onLibraryAdded(id:Guid):Promise<boolean> {
+        return (await this.properties.onLibraryAdded(id));
     }
 
-    private onLibraryDeleted(id:Guid):void {
-        this.properties.onLibraryDeleted(id);
+    private async onLibraryDeleted(id:Guid):Promise<boolean> {
+        return (await this.properties.onLibraryDeleted(id));
     }
 
 }

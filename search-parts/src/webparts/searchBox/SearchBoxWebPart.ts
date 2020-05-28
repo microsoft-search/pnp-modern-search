@@ -27,13 +27,12 @@ import SearchService from '../../services/SearchService/SearchService';
 import { PageOpenBehavior, QueryPathBehavior, UrlHelper } from '../../helpers/UrlHelper';
 import SearchBoxContainer from './components/SearchBoxContainer/SearchBoxContainer';
 import { SearchComponentType } from '../../models/SearchComponentType';
-import { BaseSuggestionProvider, IExtensibilityService, ExtensibilityService, IExtension, ISuggestionProviderInstance, ExtensionHelper, ExtensionTypes } from 'search-extensibility';
+import { BaseSuggestionProvider, IExtensibilityService, ExtensibilityService, IExtension, ISuggestionProviderInstance, ExtensionHelper, ExtensionTypes, IExtensibilityLibrary } from 'search-extensibility';
 import { SharePointDefaultSuggestionProvider } from '../../providers/SharePointDefaultSuggestionProvider';
 import { Toggle } from 'office-ui-fabric-react/lib/Toggle';
 import { ThemeProvider, ThemeChangedEventArgs, IReadonlyTheme } from '@microsoft/sp-component-base';
 import { isEqual, find } from '@microsoft/sp-lodash-subset';
 import { GlobalSettings } from 'office-ui-fabric-react';
-import { getGUID } from '@pnp/common';
 import { Guid } from '@microsoft/sp-core-library';
 
 export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWebPartProps> implements IDynamicDataCallables {
@@ -50,7 +49,9 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
   private _customCollectionFieldType = null;
   private _themeVariant: IReadonlyTheme;
 
-  private _extensibilityLibraries:string[] = [];
+  private _loadedLibraries:IExtensibilityLibrary[] = [];
+  private _extensibilityEditor = null;
+  private _customSuggestionProviders : IExtension<any>[] = [];
 
   constructor() {
     super();
@@ -137,10 +138,11 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
 
     this.initSearchService();
     this.initThemeVariant();
-
+    
     this._bindHashChange();
 
     this._extensibilityService = new ExtensibilityService();
+    this._loadExtensibility();
     await this.initSuggestionProviders();
 
     this._initComplete = true;
@@ -167,6 +169,10 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
             {
               groupName: strings.SearchBoxNewPage,
               groupFields: this._getSearchBehaviorOptionsFields()
+            },
+            {
+              groupName: strings.Extensibility.GroupName,
+              groupFields: this._getExtensbilityGroupFields()
             }
           ],
           displayGroupsAsAccordion: true
@@ -265,7 +271,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
   private async getAllSuggestionProviders(): Promise<IExtension<any>[]> {
     const [ defaultProviders, customProviders ] = await Promise.all([
         this.getDefaultSuggestionProviders(),
-        this.getCustomSuggestionProviders()
+        this._customSuggestionProviders
     ]);
 
     //Track if we have any custom suggestion providers
@@ -301,21 +307,19 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
     }];
   }
 
-  private async getCustomSuggestionProviders(): Promise<IExtension<any>[]> {
-    let customSuggestionProviders: IExtension<any>[] = [];
+  private async _loadExtensibility() : Promise<void> {
+        
+    // Load extensibility library if present
+    this._loadedLibraries = await this._extensibilityService.loadExtensibilityLibraries(this.properties.extensibilityLibraries.map((i)=>Guid.parse(i)));
 
-    if(this._extensibilityLibraries && this._extensibilityLibraries.length>0) {
-
-      // Load extensibility library if present
-      const libraries = await this._extensibilityService.loadExtensibilityLibraries(this._extensibilityLibraries.map((lib)=> Guid.parse(lib)));
-
-      const extensions = this._extensibilityService.getAllExtensions(libraries);
-
-      customSuggestionProviders = this._extensibilityService.filter(extensions, ExtensionTypes.SuggestionProvider);
+    // Load extensibility additions
+    if (this._loadedLibraries && this._loadedLibraries.length>0) {
+        
+      const extensions = this._extensibilityService.getAllExtensions(this._loadedLibraries);
+      this._customSuggestionProviders = this._extensibilityService.filter(extensions, ExtensionTypes.SuggestionProvider);
 
     }
 
-    return customSuggestionProviders;
   }
 
   private async initSuggestionProviderInstances(providerDefinitions: IExtension<any>[]): Promise<BaseSuggestionProvider[]> {
@@ -365,6 +369,10 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
 
   protected async loadPropertyPaneResources(): Promise<void> {
 
+    const { PropertyPaneExtensibilityEditor } = await import('search-extensibility');
+
+    this._extensibilityEditor = PropertyPaneExtensibilityEditor;
+
     const { PropertyFieldCollectionData, CustomCollectionFieldType } = await import(
         /* webpackChunkName: 'search-property-pane' */
         '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData'
@@ -372,6 +380,30 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
     this._propertyFieldCollectionData = PropertyFieldCollectionData;
     this._customCollectionFieldType = CustomCollectionFieldType;
   }
+
+  /**
+   * Loads the extensibility editor into the property pane
+   */  
+  private _getExtensbilityGroupFields():IPropertyPaneField<any>[] {
+    return [
+        new this._extensibilityEditor('extensibilityGuid',{
+            label: strings.Extensibility.ButtonLabel,
+            allowedExtensions: [ ExtensionTypes.SuggestionProvider ],
+            libraries: this._loadedLibraries,
+            onLibraryAdded: async (id:Guid) => {
+                this.properties.extensibilityLibraries.push(id.toString());
+                await this._loadExtensibility();
+                return false;
+            },
+            onLibraryDeleted: async (id:Guid) => {
+                this.properties.extensibilityLibraries = this.properties.extensibilityLibraries.filter((lib)=> (lib != id.toString()));
+                await this._loadExtensibility();
+                return false;
+            }       
+        })
+    ];
+}
+
 
   /**
    * Determines the group fields for the search query options inside the property pane

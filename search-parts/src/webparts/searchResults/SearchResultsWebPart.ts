@@ -66,7 +66,6 @@ import IQueryModifierConfiguration from '../../models/IQueryModifierConfiguratio
 import { SearchHelper } from '../../helpers/SearchHelper';
 import { StringHelper } from '../../helpers/StringHelper';
 import { Guid } from '@microsoft/sp-core-library';
-import { PropertyPaneExtensibilityEditor } from 'search-extensibility';
 
 export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchResultsWebPartProps> implements IDynamicDataCallables {
 
@@ -147,9 +146,8 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
      * Extensibility functionality
      */
     private _loadedLibraries:IExtensibilityLibrary[] = [];
-    private _extensibilityLibraries:string[] = [];
-    private _extensibilityEditorComponent = null;
-    private _extensibilityEditorComponentCallback : ()=>void = null;
+    private _extensibilityEditor = null;
+    private _availableHelpers = null;
 
     public constructor() {
         super();
@@ -356,6 +354,9 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         // Get current theme info
         this.initThemeVariant();
 
+        // Initialize extensibility
+        await this._loadExtensibility();
+
         if (Environment.type === EnvironmentType.Local) {
             this._taxonomyService = new MockTaxonomyService();
             this._templateService = new MockTemplateService(this.context.pageContext.cultureInfo.currentUICultureName, this.context, this._searchService);
@@ -387,13 +388,12 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         this._dynamicDataService = new DynamicDataService(this.context.dynamicDataProvider);
         this._verticalsInformation = [];
 
-        await this._loadExtensibility();
-
         // Set the default search results layout
         this.properties.selectedLayout = (this.properties.selectedLayout !== undefined && this.properties.selectedLayout !== null) ? this.properties.selectedLayout : ResultsLayoutOption.DetailsList;
 
         // Registers web components
         this._templateService.registerWebComponents(this.availableWebComponentDefinitions);
+        this._templateService.registerHelpers(this._availableHelpers);
 
         this.context.dynamicDataSourceManager.initializeSource(this);
 
@@ -412,7 +412,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
     private async _loadExtensibility() : Promise<void> {
         
         // Load extensibility library if present
-        this._loadedLibraries = await this._extensibilityService.loadExtensibilityLibraries(this._extensibilityLibraries.map((i)=>Guid.parse(i)));
+        this._loadedLibraries = await this._extensibilityService.loadExtensibilityLibraries(this.properties.extensibilityLibraries.map((i)=>Guid.parse(i)));
 
         // Load extensibility additions
         if (this._loadedLibraries && this._loadedLibraries.length>0) {
@@ -420,9 +420,12 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             const extensions = this._extensibilityService.getAllExtensions(this._loadedLibraries);
 
             // Add custom web components if any
+            this.availableWebComponentDefinitions = AvailableComponents.BuiltinComponents;
             this.availableWebComponentDefinitions = this.availableWebComponentDefinitions.concat(
                 this._extensibilityService.filter(extensions, ExtensionTypes.WebComponent)
             );
+
+            this._availableHelpers = this._extensibilityService.filter(extensions, ExtensionTypes.HandlebarsHelper);
 
             // Get custom query modifiers if present
             this.availableQueryModifierDefinitions = this._extensibilityService.filter(extensions, ExtensionTypes.QueryModifer);
@@ -436,7 +439,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                 } as IQueryModifierConfiguration;
             });
 
-            // If we have a query modifier selected from config, we ensure it exists and is actually loaded fron the extensibility library
+            // If we have a query modifier selected from config, we ensure it exists and is actually loaded from the extensibility library
             const queryModifierDefinition = this.availableQueryModifierDefinitions.filter(definition => definition.displayName === this.properties.selectedQueryModifierDisplayName);
             if (this.properties.selectedQueryModifierDisplayName && queryModifierDefinition.length === 1) {
                 this.queryModifierSelected = true;
@@ -444,6 +447,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             } else {
                 this.properties.selectedQueryModifierDisplayName = null;
             }
+            
         }
 
     }
@@ -561,7 +565,8 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
      */
     private initializeRequiredProperties() {
 
-        this.properties.queryTemplate = this.properties.queryTemplate ? this.properties.queryTemplate : "{searchTerms}";
+        if(!this.properties.extensibilityLibraries) this.properties.extensibilityLibraries = [];
+        if(!this.properties.queryTemplate) this.properties.queryTemplate = "{searchTerms}";
 
         if (!Array.isArray(this.properties.sortList) && !isEmpty(this.properties.sortList)) {
             this.properties.sortList = this._convertToSortConfig(this.properties.sortList);
@@ -715,6 +720,10 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
     }
 
     protected async loadPropertyPaneResources(): Promise<void> {
+
+        const { PropertyPaneExtensibilityEditor } = await import('search-extensibility');
+
+        this._extensibilityEditor = PropertyPaneExtensibilityEditor;
 
         // tslint:disable-next-line:no-shadowed-variable
         const { PropertyFieldCodeEditor, PropertyFieldCodeEditorLanguages } = await import(
@@ -957,17 +966,19 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
     private _getExtensbilityGroupFields():IPropertyPaneField<any>[] {
         return [
-            new PropertyPaneExtensibilityEditor('extensibility',{
+            new this._extensibilityEditor('extensibilityGuid',{
                 label: strings.Extensibility.ButtonLabel,
                 allowedExtensions: [ ExtensionTypes.QueryModifer, ExtensionTypes.WebComponent, ExtensionTypes.HandlebarsHelper ],
                 libraries: this._loadedLibraries,
-                onLibraryAdded: (id:Guid) => {
-                    this._extensibilityLibraries.push(id.toString());
-                    this._loadExtensibility();
+                onLibraryAdded: async (id:Guid) => {
+                    this.properties.extensibilityLibraries.push(id.toString());
+                    await this._loadExtensibility();
+                    return false;
                 },
-                onLibraryDeleted: (id:Guid) => {
-                    this._extensibilityLibraries = this._extensibilityLibraries.filter((lib)=> (lib != id.toString()));
-                    this._loadExtensibility();
+                onLibraryDeleted: async (id:Guid) => {
+                    this.properties.extensibilityLibraries = this.properties.extensibilityLibraries.filter((lib)=> (lib != id.toString()));
+                    await this._loadExtensibility();
+                    return false;
                 }       
             })
         ];

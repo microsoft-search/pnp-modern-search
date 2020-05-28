@@ -2,7 +2,7 @@ import 'core-js/features/array';
 import 'core-js/modules/es.string.includes';
 import 'core-js/modules/es.number.is-nan';
 import * as Handlebars from 'handlebars';
-import { ISearchResult } from 'search-extensibility';
+import { ISearchResult, ExtensionHelper, IHandlebarsHelperInstance } from 'search-extensibility';
 import { isEmpty, uniqBy, uniq, trimEnd, get } from '@microsoft/sp-lodash-subset';
 import * as strings from 'SearchResultsWebPartStrings';
 import { Text } from '@microsoft/sp-core-library';
@@ -397,6 +397,24 @@ abstract class BaseTemplateService {
 
         // Group by a specific property
         Handlebars.registerHelper(groupBy(Handlebars));
+    }
+
+    /**
+     * Registers third party handlebars helpers
+     * @param helpers
+     */
+    public registerHelpers(helpers: IExtension<any>[]) : void {
+
+        helpers.map(helper => {
+            try {
+                let instance = ExtensionHelper.create(helper.extensionClass) as IHandlebarsHelperInstance;
+                instance.context = { webPart: this._ctx, search: this._search, template: this };
+                Handlebars.registerHelper(helper.name, instance.helper);
+            } catch(ex) {
+                console.log(`Unable to initialize custom handlebars helper '${helper.displayName}'. ${ex}`);
+            }
+        });
+
     }
 
     /**
