@@ -53,8 +53,8 @@ export class ExtensibilityEditor extends React.Component<IExtensibilityEditorPro
     public render(){
         
         const extensions = new Map<Guid, IExtension<any>>();
-        const libraries = this.props.libraries.length > 0 
-                ? this.props.libraries.map((lib)=>this.renderLibrary(lib,lib.getExtensions()))
+        const libraries = this.state.libraries.length > 0 
+                ? this.state.libraries.map((lib)=>this.renderLibrary(lib,lib.getExtensions()))
                 : <p>{strings.NoLibrariesAdded}</p>;
         
         return <div className={styles.default.extensibilityEditorButton}>
@@ -129,10 +129,9 @@ export class ExtensibilityEditor extends React.Component<IExtensibilityEditorPro
     }
 
     private async deleteLibrary(removeGuid:Guid) : Promise<void> {
-        if(removeGuid) {
-            const newLibs = this.props.libraries.filter((lib)=>lib.guid.toString()!==removeGuid.toString());
+        if(removeGuid && !(await this.props.onLibraryDeleted(removeGuid))) {
+            const newLibs = this.state.libraries.filter((lib)=>lib.guid.toString()!==removeGuid.toString());
             this.setState({libraries: newLibs, reload: !this.state.reload});
-            await this.props.onLibraryDeleted(removeGuid);
         }
     }
 
@@ -152,9 +151,9 @@ export class ExtensibilityEditor extends React.Component<IExtensibilityEditorPro
             
             if(libraryExtensions && libraryExtensions.length>0) {
             
-                this.props.libraries.push(loadedLibrary);
+                this.state.libraries.push(loadedLibrary);
                 if(!await this.props.onLibraryAdded(libraryGuid)) {
-                    this.setState({libraries:this.props.libraries, reload: !this.state.reload});
+                    this.setState({libraries:this.state.libraries, reload: !this.state.reload});
                 }
             
             } else {
@@ -172,8 +171,8 @@ export class ExtensibilityEditor extends React.Component<IExtensibilityEditorPro
     }
 
     private libraryAlreadyLoaded(guid:Guid):boolean{
-        return (guid && this.props.libraries && this.props.libraries.length>0)
-            ? this.props.libraries.filter((i)=>i.guid.toString()===guid.toString()).length > 0
+        return (guid && this.state.libraries && this.state.libraries.length>0)
+            ? this.state.libraries.filter((i)=>i.guid.toString()===guid.toString()).length > 0
             : false;
     }
 }

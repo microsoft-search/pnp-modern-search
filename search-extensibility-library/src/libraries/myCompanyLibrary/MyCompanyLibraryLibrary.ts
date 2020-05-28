@@ -54,7 +54,7 @@ export class MyCompanyLibraryLibrary extends ModernSearchExtensibilityLibrary {
         extensionClass: CustomQueryModifier
       },
       {
-        name: "log",
+        name: "logprop",
         description: strings.Extensions.HandlebarsHelper.Custom.Description,
         displayName: strings.Extensions.HandlebarsHelper.Custom.DisplayName,
         icon: "Handwriting",

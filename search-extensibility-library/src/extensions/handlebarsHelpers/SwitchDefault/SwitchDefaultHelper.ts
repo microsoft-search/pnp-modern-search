@@ -4,7 +4,7 @@ export class SwitchDefaultHelper extends BaseHandlebarsHelper {
     
     public helper(value: any, options: any) : string {
         if(this["switch_break"] != true) {
-            return value;
+            return options.fn(this);
         }
     }
 
