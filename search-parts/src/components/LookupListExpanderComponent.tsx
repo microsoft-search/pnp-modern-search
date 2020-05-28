@@ -68,19 +68,19 @@ export class LookupListExpanderComponent extends React.Component<ILookupListExpa
 
         //Error handle required properties
         if(isEmpty(this.props.template.trim())){
-             _errors.push("Please include template within <pnp-lookup-list-expander> component tags or {{#> lookuplistexpander}} template. This could be static HTML or search template.");
+             _errors.push("Please include template within <pnp-lookup-list-expander> component tags. This could be static HTML or search template.");
         }
         if (!this.props.listId || isEmpty(this.props.listId.trim())) {
-            _errors.push("Please include required parameter, data-list-id parameter on <pnp-lookup-list-expander> or listId on {{#> lookuplistexpander}}, with the value of the ListId of the search result item.");
+            _errors.push("Please include required parameter, data-list-id parameter on <pnp-lookup-list-expander>, with the value of the ListId of the search result item.");
         }
         if (!this.props.listItemId || this.props.listItemId < 0) {
-            _errors.push("Please include required parameter, data-list-item-id parameter on <pnp-lookup-list-expander> or listItemId on {{#> lookuplistexpander}}, with the value of the ListItemId of the search result item.");
+            _errors.push("Please include required parameter, data-list-item-id parameter on <pnp-lookup-list-expander>, with the value of the ListItemId of the search result item.");
         }
         if (!this.props.columnName || isEmpty(this.props.columnName.trim())) {
-            _errors.push("Please include required parameter, data-column-name parameter on <pnp-lookup-list-expander> or columnName on {{#> lookuplistexpander}}, with the value of the internalname of the lookup column.");
+            _errors.push("Please include required parameter, data-column-name parameter on <pnp-lookup-list-expander>, with the value of the internalname of the lookup column.");
         }
         if (!this.props.lookupListFields || isEmpty(this.props.lookupListFields.trim())) {
-            _errors.push("Please include required parameter, data-lookup-list-fields parameter on <pnp-lookup-list-expander> or lookupListFields on {{#> lookuplistexpander}}, with the value of comma separated list of columns to select from the lookup list.");
+            _errors.push("Please include required parameter, data-lookup-list-fields parameter on <pnp-lookup-list-expander>, with the value of comma separated list of columns to select from the lookup list.");
         }
 
         const ErrorMsgBar = (inMessage: string[]) => (

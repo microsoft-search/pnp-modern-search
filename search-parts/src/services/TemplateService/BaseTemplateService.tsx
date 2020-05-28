@@ -418,18 +418,6 @@ abstract class BaseTemplateService {
         // Register live persona wrapper as partial
         let livePersonaTemplate = Handlebars.compile(`<pnp-live-persona data-upn="{{upn}}" data-disable-hover="{{disableHover}}" data-template="{{@partial-block}}"></pnp-live-persona>`);
         Handlebars.registerPartial('livepersona', livePersonaTemplate);
-
-        // Register accordion wrapper as partial
-        let accordionTemplate = Handlebars.compile(`<pnp-accordion data-accordion-header-text="{{accordionHeaderText}}" data-size="{{#if size}}{{size}}{{else}}12{{/if}}" data-theme="{{#if theme}}{{theme}}{{else}}Default{{/if}}" data-start-open="{{#if startOpen}}{{startOpen}}{{else}}false{{/if}}" data-rounded-corners="{{#if roundedCorners}}{{roundedCorners}}{{else}}false{{/if}}" data-template="{{@partial-block}}"></pnp-accordion>`);
-        Handlebars.registerPartial('accordion', accordionTemplate);
-
-        // Register popup wrapper as partial
-        let popupTemplate = Handlebars.compile(`<pnp-popup data-template="{{@partial-block}}"></pnp-popup>`);
-        Handlebars.registerPartial('popup', popupTemplate);
-
-        // Register lookuplistexpander wrapper as partial
-        let lookupListExpanderTemplate = Handlebars.compile(`<pnp-lookup-list-expander data-list-url="{{listUrl}}" data-list-id="{{listId}}" data-list-item-id="{{listItemId}}" data-column-name="{{columnName}}" data-lookup-list-fields="{{lookupListFields}}" data-template="{{@partial-block}}"></pnp-lookup-list-expander>`);
-        Handlebars.registerPartial('lookuplistexpander', lookupListExpanderTemplate);
     }
 
     public async optimizeLoadingForTemplate(templateContent: string): Promise<void> {

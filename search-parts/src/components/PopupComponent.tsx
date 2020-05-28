@@ -50,25 +50,25 @@ export class PopupComponent extends React.Component<IPopupComponentProps, IPopup
         const domParser = new DOMParser();
         const htmlContent: Document = domParser.parseFromString(this.props.template.trim(), 'text/html');
 
-        //Get Click HTML from template and pull out just the Click HTML based on data-html-type property equal to "popupclick"
-        let _clickElement: HTMLElement = htmlContent.querySelector("[data-html-type='popupclick']");
+        //Get Click HTML from template and pull out just the Click HTML based on template element with id equal to "popupclick"
+        let _clickElement: HTMLElement = htmlContent.getElementById("popupclick");
         let _clickHTML = (_clickElement && !isEmpty(_clickElement.innerHTML)) ? _clickElement.innerHTML.trim() : "";
         if (isEmpty(_clickHTML)){
-            _errorsClick.push('HTML Element with data-html-type attribute equal to "popupclick" not found.');
+            _errorsClick.push('Template element with ID equal to "popupclick" not found.');
         }
 
-        //Get Header HTML from template and pull out just the Header HTML based on data-html-type property equal to "popupheader"
-        let _headerElement: HTMLElement = htmlContent.querySelector("[data-html-type='popupheader']");
+        //Get Header HTML from template and pull out just the Header HTML based on template element with id equal to "popupheader"
+        let _headerElement: HTMLElement = htmlContent.getElementById("popupheader");
         let _headerHTML = (_headerElement && !isEmpty(_headerElement.innerHTML)) ? _headerElement.innerHTML.trim() : "";
         if (isEmpty(_headerHTML)){
-            _errorsHeader.push('HTML Element with data-html-type attribute equal to "popupheader" not found.');
+            _errorsHeader.push('Template element with ID equal to "popupheader" not found.');
         }
 
-        //Get Body HTML from template and pull out just the Body HTML based on data-html-type property equal to "popupbody"
-        let _bodyElement: HTMLElement = htmlContent.querySelector("[data-html-type='popupbody']");
+        //Get Body HTML from template and pull out just the Body HTML based on template element with id equal to "popupbody"
+        let _bodyElement: HTMLElement = htmlContent.getElementById("popupbody");
         let _bodyHTML = (_bodyElement && !isEmpty(_bodyElement.innerHTML)) ? _bodyElement.innerHTML.trim() : "";
         if (isEmpty(_bodyHTML)){
-            _errorsBody.push('HTML Element with data-html-type attribute equal to "popupbody" not found.');
+            _errorsBody.push('Template element with ID equal to "popupbody" not found.');
         }        
 
         const ErrorMsgBar = (inMessage: string[]) => (

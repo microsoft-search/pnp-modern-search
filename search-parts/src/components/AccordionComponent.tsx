@@ -1,13 +1,14 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { BaseWebComponent } from './BaseWebComponent';
+import { WebPartContext } from '@microsoft/sp-webpart-base';
 import {
     Icon,
     MessageBar,
     MessageBarType
 } from 'office-ui-fabric-react';
-import Collapsible from 'react-collapsible';
 import { isEmpty } from '@microsoft/sp-lodash-subset';
+import { Log } from '@microsoft/sp-core-library';
 import styles from './AccordionComponent.module.scss';
 import * as DOMPurify from 'dompurify';
 
@@ -36,55 +37,106 @@ export interface IAccordionComponentProps {
      * Content shown in the accordion body
      */
     template?: string;
+    /**
+     * The Web Part context
+     */
+    ctx: WebPartContext;
+}
+
+export interface IAccordionComponentState {
+
+    /**
+     * Collapsible React component
+     */
+    Collapsible: any;
 }
 
 
-export class AccordionComponent extends React.Component<IAccordionComponentProps> {
+export class AccordionComponent extends React.Component<IAccordionComponentProps, IAccordionComponentState> {
 
-    
+
     constructor(props: IAccordionComponentProps) {
         super(props);
+
+        this.state = {
+            Collapsible: null,
+        };
     }
 
     public render() {
-        let _errors: string[] = [];
 
-        //Error handle properties
-        isEmpty(this.props.template.trim()) ? _errors.push("Please include template within <pnp-accordion> component tags or {{#> accordion}} template. This could be static HTML or search template.") : null;
-
-        let _themeStyles;
-        switch (this.props.theme.toLowerCase()) {
-            case "neutral":
-                _themeStyles = { closed: styles.accordionContainer__moreInfoBoxNeutral, open: styles.accordionContainer__moreInfoBoxNeutralOpen, rcClosed: this.props.roundedCorners ? ".5em" : "0", rcOpenHeader: this.props.roundedCorners ? ".5em .5em 0 0" : "0", rcOpenBody: this.props.roundedCorners ? "0 0 .5em .5em" : "0" };
-                break;
-            default:
-                _themeStyles = { closed: styles.accordionContainer__moreInfoBoxDefault, open: styles.accordionContainer__moreInfoBoxDefaultOpen, rcClosed: this.props.roundedCorners ? ".5em" : "0", rcOpenHeader: this.props.roundedCorners ? ".5em .5em 0 0" : "0", rcOpenBody: this.props.roundedCorners ? "0 0 .5em .5em" : "0" };
-                break;
+        if (!this.state.Collapsible) {
+            return <div>Loading ...</div>;
         }
-        const ErrorMsgBar = (inMessage: string[]) => (
-            inMessage.length > 0 ?
-                <MessageBar
-                    messageBarType={MessageBarType.error}
-                    isMultiline={true}
-                    dismissButtonAriaLabel="Close"
-                >
-                    {inMessage.map((errMessage) => {
-                        let msg = !isEmpty(errMessage) ? <span>{errMessage}<br /></span> : "";
-                        return msg;
-                    })}
-                </MessageBar> : null
-        );
+        else {
+            let _errors: string[] = [];
 
-        let dynamicStyles = { "--fontSize": this.props.size + "px", "--rcClosed": _themeStyles.rcClosed, "--rcOpenHeader": _themeStyles.rcOpenHeader, "--rcOpenBody": _themeStyles.rcOpenBody } as React.CSSProperties;
+            //Error handle properties
+            if(isEmpty(this.props.template.trim())) _errors.push("Please include template within <pnp-accordion> component tags. This could be static HTML or search template.");
 
-        var moreHeader = <div><span>{this.props.accordionHeaderText}</span><span><Icon iconName="ChevronRightSmall" /></span></div>;
+            let _themeStyles;
+            switch (this.props.theme.toLowerCase()) {
+                case "neutral":
+                    _themeStyles = { closed: styles.accordionContainer__moreInfoBoxNeutral, open: styles.accordionContainer__moreInfoBoxNeutralOpen, rcClosed: this.props.roundedCorners ? ".5em" : "0", rcOpenHeader: this.props.roundedCorners ? ".5em .5em 0 0" : "0", rcOpenBody: this.props.roundedCorners ? "0 0 .5em .5em" : "0" };
+                    break;
+                default:
+                    _themeStyles = { closed: styles.accordionContainer__moreInfoBoxDefault, open: styles.accordionContainer__moreInfoBoxDefaultOpen, rcClosed: this.props.roundedCorners ? ".5em" : "0", rcOpenHeader: this.props.roundedCorners ? ".5em .5em 0 0" : "0", rcOpenBody: this.props.roundedCorners ? "0 0 .5em .5em" : "0" };
+                    break;
+            }
+            const ErrorMsgBar = (inMessage: string[]) => (
+                inMessage.length > 0 ?
+                    <MessageBar
+                        messageBarType={MessageBarType.error}
+                        isMultiline={true}
+                        dismissButtonAriaLabel="Close"
+                    >
+                        {inMessage.map((errMessage) => {
+                            let msg = !isEmpty(errMessage) ? <span>{errMessage}<br /></span> : "";
+                            return msg;
+                        })}
+                    </MessageBar> : null
+            );
 
-        return <div style={dynamicStyles}>
-                    <Collapsible open={this.props.startOpen} triggerWhenOpen={this.checkOpen(moreHeader, this.props.accordionHeaderText)} trigger={moreHeader} className={_themeStyles.closed} openedClassName={_themeStyles.open} >
-                        {ErrorMsgBar(_errors)}
-                        <div dangerouslySetInnerHTML={{ __html: DOMPurify.default.sanitize(this.props.template) }}></div>
-                    </Collapsible>
-                </div>;
+            let dynamicStyles = { "--fontSize": this.props.size + "px", "--rcClosed": _themeStyles.rcClosed, "--rcOpenHeader": _themeStyles.rcOpenHeader, "--rcOpenBody": _themeStyles.rcOpenBody } as React.CSSProperties;
+
+            let moreHeader = <div><span>{this.props.accordionHeaderText}</span><span><Icon iconName="ChevronRightSmall" /></span></div>;
+
+            let renderCollapible = React.createElement(this.state.Collapsible.default, {
+                open: this.props.startOpen,
+                triggerWhenOpen: this.checkOpen(moreHeader, this.props.accordionHeaderText),
+                trigger: moreHeader,
+                className:_themeStyles.closed,
+                openedClassName:_themeStyles.open
+            }, <div>{ErrorMsgBar(_errors)}<div dangerouslySetInnerHTML={{ __html: DOMPurify.default.sanitize(this.props.template) }}></div></div>);
+
+            return  <div style={dynamicStyles}>
+                        {renderCollapible}
+                    </div>;
+        }
+    }
+
+    public async componentDidMount() {
+        await this._loadReactCollapsible();
+    }
+
+    private async _loadReactCollapsible() {
+
+        if (!this.state.Collapsible) {
+
+            try {
+
+                const Collapsible = await import(
+                    'react-collapsible'
+                );
+
+                this.setState({
+                    Collapsible: Collapsible
+                });
+
+            } catch (error) {
+                Log.error(`[Accordion_Component]`, error, this.props.ctx.serviceScope);
+            }
+        }
     }
 
     private checkOpen(header, text) {
@@ -111,7 +163,7 @@ export class AccordionWebComponent extends BaseWebComponent {
         //Move template from innerHTML to template property if template is empty
         props.template = (props.template && !isEmpty(props.template)) ? props.template : this.innerHTML.trim();
 
-        const accordionItem = <AccordionComponent {...props} />;
+        const accordionItem = <AccordionComponent {...props} ctx={this._ctx} />;
         ReactDOM.render(accordionItem, this);
     }
 }
