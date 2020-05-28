@@ -24,6 +24,7 @@ export interface ISearchResults {
     [key: string]: string;
     IconSrc?: string;
     IconExt?: string;
+    ShortcutUrl?: string;
   }
   
   export interface IRefinementResult {
