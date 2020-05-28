@@ -1,24 +1,115 @@
-
 ## Summary
 
-This solution allows you to create and register your own React component (wrapped as HTML web components) to be used in the search results Web Part Handlebars templates. View the sample project [here](https://github.com/microsoft-search/pnp-modern-search/tree/master/search-extensibility-library).
+This solution allows you to create and register your own extensions for the Modern Search Webparts. View the sample project [here](https://github.com/microsoft-search/pnp-modern-search/tree/master/search-extensibility-library).
+
 
 ## Used SharePoint Framework Version ##
 
 ![SPFx](https://img.shields.io/badge/drop-1.9.1-green.svg)
 
+
+## Types of Extensions
+
+### Web Components
+React components that extend HTML with custom user interfaces. Are implemented in custom Handlebars templates.
+
+### Handlebars Helpers
+React classes that expose custom logic to Handlebars templates. Are implemented in custom Handlebars templates.
+
+### Query Modifiers
+React classes that allow you to manipulate the user's search query before it is sent to SharePoint.
+
+### Suggestion Providers
+React classes that allow you to fetch and display custom content or person suggestions.
+
+
 ## Prerequisites
 
-The custom web components are defined in a SharePoint Framework project of type ['Library Component'](https://docs.microsoft.com/en-us/sharepoint/dev/spfx/library-component-overview). You have the choice to update the demo one or start from scratch with a new project. In this case, in the `<your_library_name>.manifest.json` file, make sure the `id` property id is `2501f2fd-d601-4da4-a04d-9f0bd85b1f54`. This identifier is used to load dynamically the library from the Search Results Web Part. Therefore, this value is **mandatory** to make the link. That is the only hook we need on our side.
+BREAKING CHANGE NOTES: 
+- Modern Search version v3.12.1 and before is capable of loading a single extensibility library with the ID of: `2501f2fd-d601-4da4-a04d-9f0bd85b1f54`.  More recent versions can load an unlimited number of extensibility libraries via configuration on the web part property pane.  To avoid conflicts with the sample provided it is recommended to update the id in your library manifest to be unique. 
+- In Modern Search versions >3.12.1 extension developers should delete shared models and reference from the search-extensibility library. This ensures fewer code changes as the base abstractions are upgraded and new extension types are added.
 
-            {
-                // The value should be this id to make the link with the Web Part
-                "id": "2501f2fd-d601-4da4-a04d-9f0bd85b1f54" /
-                "alias": "MyCompanyLibraryLibrary",
-                "componentType": "Library",
+Modern Search extensions are defined in a SharePoint Framework project of type ['Library Component'](https://docs.microsoft.com/en-us/sharepoint/dev/spfx/library-component-overview). Extensions leverage the search-extensibility library [here](https://github.com/microsoft-search/pnp-modern-search/tree/master/search-extensibility) for shared models, service definitions and must follow the patterns below for successful import. 
 
-                ...
-            }
+To develop a custom extensibility library, clone the Modern Search code, navigate to the search-extensibility folder and execute the following commands at the prompt:
+
+1) gulp bundle --ship
+2) gulp package-solution --ship
+3) npm link
+
+This packages the shared library and creates a package on your local machine that is imported when developing custom extensions.
+
+Navigate to your custom extensibility library and reference the shared search-extensibility package by executing the following command:
+
+1) npm link search-extensibility
+
+NOTE: The `id` property in the `<your_library_name>.manifest.json` file is used to load dynamically the library from the Search Results and Search Box Web Parts. You will need to enter this into the Web Part property pane so keep it handy.
+
+
+## Create the library interface
+
+The library interface is required for the Modern Search Webparts to import your custom extensions, it exposes all your extensions and provides user friendly functionality. Follow this procedure to create a third party library:
+
+1) Navigate to the library.ts file located at /src/libraries/libraryName/library.ts
+
+2) Import the shared library, strings and reference your extension classes:
+
+import { ModernSearchExtensibilityLibrary, IExtension } from 'search-extensibility';        // the shared search-extensibility package
+import * as strings from 'SearchExtensibilityReferenceExtensionLibraryStrings';             // your librarys strings
+// your libraries components
+import { MyCustomComponentWebComponent } from "../../extensions/webComponents/CustomComponent/CustomComponent"; 
+import SharePointSuggestionProvider from '../../extensions/suggestionProviders/SharePointSuggestionProvider/SharePointSuggestionProvider';
+import CustomQueryModifier from '../../extensions/queryModifiers/CustomQueryProvider/CustomQueryProvider';
+import { CustomHelper } from '../../extensions/handlebarsHelpers/Custom/CustomHelper';
+
+3) Extend the ModernSearchExtensibilityLibrary and implement all abstract interfaces. The main entry point of your library is the getExtensions() method which returns all extensions.
+
+export class MyCompanyLibraryLibrary extends ModernSearchExtensibilityLibrary {
+
+  public name         : string = strings.Library.Name;              // The display name of your library, should be unique.
+  public description  : string = strings.Library.Description;       // The description of your library, should explain to users what your library does.
+  public icon         : string = "Settings";                        // An office ui fabric icon to be displayed to end users in the user interface.
+
+  // All extension types are returned via the getExtensions method. 
+  public getExtensions(): IExtension<any>[] {
+    return [
+        // Custom Web Component
+        {
+            name: 'pnp-custom',                                                     // the tag name of the imported web component.
+            description: strings.Extensions.WebComponent.Custom.Description,        // the description of the web component.
+            displayName: strings.Extensions.WebComponent.Custom.DisplayName,        // the display name for the web component.
+            icon: "StatusCircleQuestionMark",                                       // an icon to identify the web component in the UI.
+            extensionClass: MyCustomComponentWebComponent                           // the extensions class name
+        },
+        // Custom Suggestion Provider
+        {
+            name: "sharepoint-suggestion-provider",                                 // the textual id for the suggestion provider
+            description: strings.Extensions.Suggestion.SharePoint.Description,
+            displayName: strings.Extensions.Suggestion.SharePoint.DisplayName,
+            icon: "SharePointAppIcon16",
+            extensionClass: SharePointSuggestionProvider
+        },
+        // Custom Query Modifier
+        {
+            name: "custom-query-modifer",                                           // the textual id for the query modifier
+            description: strings.Extensions.QueryModifier.Custom.Description,
+            displayName: strings.Extensions.QueryModifier.Custom.DisplayName,
+            icon: "BranchSearch",
+            extensionClass: CustomQueryModifier
+        },
+        // Custom Handlebars helper
+        {
+            name: "logprop",                                                        // the handlebars helper name ... EX// {{logprop Title}}
+            description: strings.Extensions.HandlebarsHelper.Custom.Description,
+            displayName: strings.Extensions.HandlebarsHelper.Custom.DisplayName,
+            icon: "Handwriting",
+            extensionClass: CustomHelper
+        }
+    ];
+  }
+  
+}
+
 
 ## Create a custom web component
 
@@ -32,7 +123,7 @@ To create a custom component, follow this procedure:
 
         import * as React from 'react';
         import * as ReactDOM from 'react-dom';
-        import { BaseWebComponent } from '../models/BaseWebComponent';
+        import { BaseWebComponent } from 'search-extensibility';
 
         export interface IObjectParam {
             myProperty: string;
@@ -86,8 +177,20 @@ To create a custom component, follow this procedure:
             public async connectedCallback() {
         
                 let props = this.resolveAttributes();
-                const debugView = <CustomComponent {...props}/>;
-                ReactDOM.render(debugView, this);
+
+                // You can use this.context here to access current context
+                // this.context.search      - limited search service
+                // this.context.template    - limited template service
+                // this.context.webPart     - the webpart context
+
+                // You can access component innerHTML, styles and themeVariant using the allAttributes property
+                // this.allAttributes.innerHTML
+                // this.allAttributes.styles
+                // this.allAttributes.themeVariant
+
+                const customComponent = <CustomComponent {...props}/>;
+                ReactDOM.render(customComponent, this);
+
             }    
         }
 
@@ -97,33 +200,13 @@ To create a custom component, follow this procedure:
 
 For instance: a `preview-image` HTML attribute becomes `previewImage` prop.
 
-4. In the main entry point class (ex: `MyCompanyLibraryLibrary.ts`), extends the `IExtensibilityLibrary` interface and register your custom components this way:
-
-        
-        import { MyCustomComponentWebComponent } from "../CustomComponent";
-        import { IComponentDefinition } from "../../models/IComponentDefinition";
-        import { IExtensibilityLibrary } from "../../models/IExtensibilityLibrary";
-
-        export class MyCompanyLibraryLibrary implements IExtensibilityLibrary {
-
-            public getCustomWebComponents(): IComponentDefinition<any>[] {
-                return [
-                {
-                    componentName: 'my-custom-component',
-                    componentClass: MyCustomComponentWebComponent
-                }
-                ];
-            }
-        }
-
-    > **Custom web component tag names must be lowercase with at least one dash separator `-` (ex: `my-custom-component`.**
-
-5. In a custom Handlebars layout, reference your component like this, leveraging the Handlebars context values:
+4. In a custom Handlebars layout, reference your component like this, leveraging the Handlebars context values:
 
         <my-custom-component my-string-param="{{MyStringProperty}}" my-object-param="{{JSONstringify MyObjectProperty 2}}"></my-custom-component>
 
 
 6. Bundle `gulp bundle --ship` and package your library `gulp package-solution --ship` and upload it either in the global or a site app catalog.
+
 
 ## Create a custom query suggestion provider
 A query suggestion provider allows you to fetch and display custom content or person suggestions. There is a default provider built-in which retrieves suggestions from SharePoint, however you may add additional providers using the approach outlined. In additional to dynamic suggestions as the user is typing, your provider may also surface "zero query" suggestions. These are displayed  when the search box has focus without any search text or if the search text is less than 2 characters.
@@ -133,17 +216,16 @@ To create a custom suggestion provider, follow this procedure:
 1. Create a new TypeScript class that implements the `BaseSuggestionProvider` abstract class. You can create it anywhere in your project.
 2. Implement the required methods and properties like the example below.
     
-        import { BaseSuggestionProvider } from '../models/BaseSuggestionProvider';
-        import { ISuggestion } from '../models/ISuggestion';
+        import { BaseSuggestionProvider, ISuggestion } from 'search-extensibility';
 
         export class CustomSuggestionProvider extends BaseSuggestionProvider  {
-            public static readonly ProviderName: string = 'custom-suggestion-provider';
-            public static readonly ProviderDisplayName: string = 'Custom Suggestion Provider';
-            public static readonly ProviderDescription: string = 'An example custom suggestion provider.';
-
+            
             public async onInit(): Promise<void> {
                 // initialization logic
-                // this._ctx // <-- SPFx Webpart Context
+                // You can use this.context here to access current context
+                // this.context.search      - limited search service
+                // this.context.template    - limited template service
+                // this.context.webPart     - the webpart context
             }
 
             public get isSuggestionsEnabled(): boolean {
@@ -163,33 +245,13 @@ To create a custom suggestion provider, follow this procedure:
             }
         }
 
-3. In the main entry point class (ex: MyCompanyLibraryLibrary.ts), register your custom query suggestion provider like the example below.
-
-        import { IExtensibilityLibrary } from "../../models/IExtensibilityLibrary";
-        import { ISuggestionProviderDefinition } from "../../models/ISuggestionProviderDefinition";
-        import { CustomSuggestionProvider } from "../CustomSuggestionProvider";
-
-        ...
-        
-        export class MyCompanyLibraryLibrary implements IExtensibilityLibrary {
-
-            public getCustomSuggestionProviders(): ISuggestionProviderDefinition<any>[] {
-                return [
-                    {
-                        providerName: CustomSuggestionProvider.ProviderName,
-                        providerDisplayName: CustomSuggestionProvider.ProviderDisplayName,
-                        providerDescription: CustomSuggestionProvider.ProviderDescription,
-                        providerClass: CustomSuggestionProvider
-                    },
-                ];
-            }
-        }
 
 ### Configure Suggestion Providers
 When one or more custom query suggestion providers are made available via the extensibility library, an additional configuration pane becomes availabe in the Search Box web part settings. From the panel you can enable or disable individual suggestion providers.
 
 ![Search Box](../images/sb_configure_suggestions.png)
 ![Search Box](../images/sb_custom_suggestion_providers.png)
+
 
 ## Create a custom query modifier
 
@@ -252,4 +314,21 @@ When a query modifier is made available via the extensibility library, an additi
 ![Search Results - Query Modifier](../images/query_modifiers.png)
 
 ![Search Results - Query Modifier](../images/query_modifiers_select.png)
+
+
+## Handlebars Helpers
+
+Handlebars helper extensions allows you to register custom helpers that are registerred and available for use in your custom templates. You may make your own helpers or incorporate third party tools.  Functionality is exposed via the helper method of any signature. The helper is registered within web parts that support templating and may be called from your template. Create a new file in your library and paste the following code:
+
+import { BaseHandlebarsHelper } from "search-extensibility";
+
+export class CustomHelper extends BaseHandlebarsHelper {
+    
+    public helper(input: string) : string {
+        // log the input to the console.
+        console.log(input);
+        return input;
+    }
+
+}
 

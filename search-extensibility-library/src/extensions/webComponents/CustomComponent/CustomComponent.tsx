@@ -82,10 +82,20 @@ export class MyCustomComponentWebComponent extends BaseWebComponent {
  
     public async connectedCallback() {
         
-       let props = this.resolveAttributes();
+        let props = this.resolveAttributes();
 
-       // You can use this._ctx here to access current Web Part context
-       const customComponent = <CustomComponent {...props}/>;
-       ReactDOM.render(customComponent, this);
+        // You can use this.context here to access current context
+        // this.context.search
+        // this.context.template
+        // this.context.webPart
+
+        // You can access component innerHTML, styles and themeVariant using the allAttributes property
+        // this.allAttributes.innerHTML
+        // this.allAttributes.styles
+        // this.allAttributes.themeVariant
+
+        const customComponent = <CustomComponent {...props}/>;
+        ReactDOM.render(customComponent, this);
+        
     }    
 }

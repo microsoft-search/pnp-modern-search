@@ -20,8 +20,14 @@ Search Verticals | Allows users to search in predefined scopes.
 ## Minimal Path to Awesome ##
 
 - Clone this repository
+- In the `search-extensibility` project, run the following commands:
+  - `npm install`
+  - `gulp bundle --ship`
+  - `gulp package-solution --ship`  
+  - `npm link`  
 - In the `search-parts` project, run the following commands:
   - `npm install`
+  - `npm link search-extensibility`  
   - `gulp serve`
 
 The `search-parts` project also supports faster development via [spfx-fast-serve](https://github.com/s-KaiNet/spfx-fast-serve) tool. To use "fast serve" run `npm run serve` instead of `gulp serve`.
