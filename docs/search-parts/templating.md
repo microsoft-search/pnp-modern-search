@@ -222,6 +222,7 @@ The web part has a couple of helper web-components to ease rendering, used by th
     ```
 
     Example:
+    
     ![Accordion Example](../images/WebComponent_Accordion_PopupExample.png)
 
 - popup - provides the ability to popup content in a modal window within the search result
@@ -240,11 +241,12 @@ The web part has a couple of helper web-components to ease rendering, used by th
     ```
 
     Example:
+
     ![Popup Example](../images/WebComponent_Accordion_PopupExample.png)
     ![Popup Modal Example](../images/WebComponent_Popup_Modal_Example.png)
 
 - lookup-list-expander - Ever needed to get additional data from a list or library in search? This provides that ability based on a lookup column of the result item.
- 
+
     In the example below, a related documents lookup column was added to the document library. This lookup column was a lookup back to the same document library so the admin could pick additional related documents for the documents.
 
     Remember for the inner template to be executed inside of the component the handlebar expressions must be escaped with `'\'` character (ex: `{{Title}}` becomes `\{{Title}}`).
@@ -272,7 +274,7 @@ The web part has a couple of helper web-components to ease rendering, used by th
     </pnp-lookup-list-expander>
     ```
 
-    The above example would display like:
+    The above example would display inside of the accordion like:
     ![LookupListExtender Example](../images/WebComponent_LookupListExtender_Example.png)
 
 ### Use result types
