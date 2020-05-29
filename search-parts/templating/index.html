@@ -1341,76 +1341,86 @@
 <li>slider-component</li>
 <li>persona-card</li>
 <li>persona-card-shimmers</li>
-<li>fabric-icon - You only need to set one property, which are evaluated in order if multiple ones are set.
-   <code>handlebars
-   &lt;pnp-fabric-icon
-    data-image-url='[url to icon - pri 1]'
-    data-file-extension='[file extension - pri 2]'
-    data-icon-name='[office ui fabric icon name - pri 3]'
-    data-size='16 | 20 | 32 (default) | 40 | 48 | 64 | 96'
-    &gt;
-    &lt;/pnp-fabric-icon&gt;</code></li>
-<li>
-<p>accordion - provides the ability to collaspe content in search result in an accordion fashion</p>
-<p><code>handlebars
-&lt;pnp-accordion 
-    data-accordion-header-text="Accordion Example" 
-    data-theme="Default (default) | Neutral" 
-    data-size="# | 12 (default)" 
-    data-start-open="true | false (default)" 
-    data-rounded-corners="true | false (default)"&gt;
-    &lt;h4&gt;Title: {{Title}}&lt;/h4&gt;
-&lt;/pnp-accordion&gt;</code></p>
+<li>fabric-icon - You only need to set one property, which are evaluated in order if multiple ones are set.</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="p">&lt;</span><span class="nt">pnp-fabric-icon</span>
+    <span class="na">data-image-url</span><span class="o">=</span><span class="s">&#39;[url to icon - pri 1]&#39;</span>
+    <span class="na">data-file-extension</span><span class="o">=</span><span class="s">&#39;[file extension - pri 2]&#39;</span>
+    <span class="na">data-icon-name</span><span class="o">=</span><span class="s">&#39;[office ui fabric icon name - pri 3]&#39;</span>
+    <span class="na">data-size</span><span class="o">=</span><span class="s">&#39;16 | 20 | 32 (default) | 40 | 48 | 64 | 96&#39;</span>
+<span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">pnp-fabric-icon</span><span class="p">&gt;</span>
+</pre></div>
+
+
+<ul>
+<li>accordion - provides the ability to collaspe content in search result in an accordion fashion</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="p">&lt;</span><span class="nt">pnp-accordion</span> 
+    <span class="na">data-accordion-header-text</span><span class="o">=</span><span class="s">&quot;Accordion Example&quot;</span> 
+    <span class="na">data-theme</span><span class="o">=</span><span class="s">&quot;Default (default) | Neutral&quot;</span> 
+    <span class="na">data-size</span><span class="o">=</span><span class="s">&quot;# | 12 (default)&quot;</span> 
+    <span class="na">data-start-open</span><span class="o">=</span><span class="s">&quot;true | false (default)&quot;</span> 
+    <span class="na">data-rounded-corners</span><span class="o">=</span><span class="s">&quot;true | false (default)&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">h4</span><span class="p">&gt;</span>Title: {{Title}}<span class="p">&lt;/</span><span class="nt">h4</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">pnp-accordion</span><span class="p">&gt;</span>
+</pre></div>
+
+
 <p>Example:</p>
 <p><img alt="Accordion Example" src="../../images/WebComponent_Accordion_PopupExample.png" /></p>
-</li>
-<li>
-<p>popup - provides the ability to popup content in a modal window within the search result
-    <code>handlebars
-    &lt;pnp-popup&gt;
-        &lt;template id="popupclick"&gt;
-            &lt;span&gt;Popup Example - Click Me&lt;/span&gt;
-        &lt;/template&gt;
-        &lt;template id="popupheader"&gt;
-            &lt;span&gt;Title: {{Title}}&lt;/span&gt;&lt;br /&gt;&lt;span&gt;Header HTML here&lt;/span&gt;
-        &lt;/template&gt;
-        &lt;template id="popupbody"&gt;
-            &lt;span&gt;Title: {{Title}}&lt;/span&gt;&lt;br /&gt;&lt;span&gt;Body HTML here&lt;/span&gt;
-        &lt;/template&gt;
-    &lt;/pnp-popup&gt;</code></p>
+<ul>
+<li>popup - provides the ability to popup content in a modal window within the search result</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="p">&lt;</span><span class="nt">pnp-popup</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">template</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;popupclick&quot;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">span</span><span class="p">&gt;</span>Popup Example - Click Me<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">template</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">template</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;popupheader&quot;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">span</span><span class="p">&gt;</span>Title: {{Title}}<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;&lt;</span><span class="nt">br</span> <span class="p">/&gt;&lt;</span><span class="nt">span</span><span class="p">&gt;</span>Header HTML here<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">template</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">template</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;popupbody&quot;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">span</span><span class="p">&gt;</span>Title: {{Title}}<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;&lt;</span><span class="nt">br</span> <span class="p">/&gt;&lt;</span><span class="nt">span</span><span class="p">&gt;</span>Body HTML here<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">template</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">pnp-popup</span><span class="p">&gt;</span>
+</pre></div>
+
+
 <p>Example:</p>
 <p><img alt="Popup Example" src="../../images/WebComponent_Accordion_PopupExample.png" />
 <img alt="Popup Modal Example" src="../../images/WebComponent_Popup_Modal_Example.png" /></p>
-</li>
+<ul>
 <li>
 <p>lookup-list-expander - Ever needed to get additional data from a list or library in search? This provides that ability based on a lookup column of the result item.</p>
 <p>In the example below, a related documents lookup column was added to the document library. This lookup column was a lookup back to the same document library so the admin could pick additional related documents for the documents.</p>
 <p>Remember for the inner template to be executed inside of the component the handlebar expressions must be escaped with <code>'\'</code> character (ex: <code>{{Title}}</code> becomes <code>\{{Title}}</code>).</p>
-<p><code>handlebars
-&lt;pnp-lookup-list-expander 
-    data-list-url="https://&lt;tenant&gt;/sites/&lt;sitename&gt;" 
-    data-list-id="{{ListID}}" 
-    data-list-item-id="{{ListItemID}}"
-    data-column-name="RelatedDocuments"
-    data-lookup-list-fields="Id,Title,FileRef,FileLeafRef,DocumentType,BusinessUnit/Title"&gt;
-    &lt;div&gt;
-        &lt;pnp-fabric-icon data-file-extension="\{{FileExtension}}"&gt;&lt;/pnp-fabric-icon&gt;
-        &lt;span&gt;&lt;a href="\{{FileRef}}?web=1"&gt;\{{{Title}}}&lt;/a&gt;&lt;/span&gt;
-        &lt;span&gt;
-            &lt;a href="\{{FileRef}}"&gt;
-                &lt;pnp-fabric-icon data-icon-name="Download" data-size="16"&gt;&lt;/pnp-fabric-icon&gt;
-            &lt;/a&gt;
-        &lt;/span&gt;
-        &lt;div&gt;
-            &lt;span&gt;\{{{DocumentType}}}&lt;/span&gt;
-            &lt;span&gt;\{{{BusinessUnit.Title}}}&lt;/span&gt;
-        &lt;/div&gt;
-    &lt;/div&gt;
-&lt;/pnp-lookup-list-expander&gt;</code></p>
-<p>The above example would display inside of the accordion like:
-<img alt="LookupListExtender Example" src="../../images/WebComponent_LookupListExtender_Example.png" /></p>
 </li>
 </ul>
+<div class="codehilite"><pre><span></span><span class="p">&lt;</span><span class="nt">pnp-lookup-list-expander</span> 
+    <span class="na">data-list-url</span><span class="o">=</span><span class="s">&quot;https://&lt;tenant&gt;/sites/&lt;sitename&gt;&quot;</span> 
+    <span class="na">data-list-id</span><span class="o">=</span><span class="s">&quot;{{ListID}}&quot;</span> 
+    <span class="na">data-list-item-id</span><span class="o">=</span><span class="s">&quot;{{ListItemID}}&quot;</span>
+    <span class="na">data-column-name</span><span class="o">=</span><span class="s">&quot;RelatedDocuments&quot;</span>
+    <span class="na">data-lookup-list-fields</span><span class="o">=</span><span class="s">&quot;Id,Title,FileRef,FileLeafRef,DocumentType,BusinessUnit/Title&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">pnp-fabric-icon</span> <span class="na">data-file-extension</span><span class="o">=</span><span class="s">&quot;\{{FileExtension}}&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">pnp-fabric-icon</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">span</span><span class="p">&gt;&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;\{{FileRef}}?web=1&quot;</span><span class="p">&gt;</span>\{{{Title}}}<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">span</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;\{{FileRef}}&quot;</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">pnp-fabric-icon</span> <span class="na">data-icon-name</span><span class="o">=</span><span class="s">&quot;Download&quot;</span> <span class="na">data-size</span><span class="o">=</span><span class="s">&quot;16&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">pnp-fabric-icon</span><span class="p">&gt;</span>
+            <span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">span</span><span class="p">&gt;</span>\{{{DocumentType}}}<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">span</span><span class="p">&gt;</span>\{{{BusinessUnit.Title}}}<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">pnp-lookup-list-expander</span><span class="p">&gt;</span>
+</pre></div>
+
+
+<p>The above example would display inside of the accordion like:
+<img alt="LookupListExtender Example" src="../../images/WebComponent_LookupListExtender_Example.png" /></p>
 <h3 id="use-result-types">Use result types<a class="headerlink" href="#use-result-types" title="Permanent link">&para;</a></h3>
 <p>Use the result types features form the property pane options to split your templates according to results characteristics instead of making a huge central template with multiple conditions. They can be defined in 'inline' mode or using an external file. You can also use the sorting option to determine to order of evaluation for each condition.</p>
 <p><img alt="Result Types" src="../../images/result_types.png" /></p>
