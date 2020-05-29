@@ -3,6 +3,7 @@ import { SPComponentLoader } from "@microsoft/sp-loader";
 import { Log } from '@microsoft/sp-core-library';
 import { WebPartContext } from '@microsoft/sp-webpart-base';
 import { BaseWebComponent } from './BaseWebComponent';
+import { isEmpty } from '@microsoft/sp-lodash-subset';
 import * as ReactDOM from 'react-dom';
 import * as DOMPurify from 'dompurify';
 
@@ -23,7 +24,7 @@ export interface ILivePersonaComponentProps {
     /**
      * If info should not appear on hover
      */
-    disablehover?: boolean;
+    disableHover?: boolean;
 
     /**
      * The content to wrap with persona info
@@ -42,7 +43,7 @@ export interface ILivePersonaComponentState {
 export class LivePersonaComponent extends React.Component<ILivePersonaComponentProps, ILivePersonaComponentState> {
 
     private sharedLibrary: any;
-    
+
     public constructor(props: ILivePersonaComponentProps) {
         super(props);
 
@@ -61,13 +62,13 @@ export class LivePersonaComponent extends React.Component<ILivePersonaComponentP
             renderPersona = React.createElement(this.sharedLibrary.LivePersonaCard, {
                 className: 'livePersonaCard',
                 clientScenario: "PeopleWebPart",
-                disableHover: this.props.disablehover,
+                disableHover: this.props.disableHover,
                 hostAppPersonaInfo: {
-                  PersonaType: "User"
+                    PersonaType: "User"
                 },
                 upn: this.props.upn,
                 serviceScope: this.props.ctx.serviceScope,
-              }, <div dangerouslySetInnerHTML={{ __html: DOMPurify.default.sanitize(this.props.template) }}></div>);
+            }, <div dangerouslySetInnerHTML={{ __html: DOMPurify.default.sanitize(this.props.template) }}></div>);
         }
         return renderPersona;
     }
@@ -82,29 +83,33 @@ export class LivePersonaComponent extends React.Component<ILivePersonaComponentP
 
             try {
 
-                this.sharedLibrary = await SPComponentLoader.loadComponentById(LIVE_PERSONA_COMPONENT_ID);   
+                this.sharedLibrary = await SPComponentLoader.loadComponentById(LIVE_PERSONA_COMPONENT_ID);
 
                 this.setState({
                     isComponentLoaded: true
                 });
-    
+
             } catch (error) {
-               Log.error(`[LivePersona_Component]`, error, this.props.ctx.serviceScope);
+                Log.error(`[LivePersona_Component]`, error, this.props.ctx.serviceScope);
             }
-        }        
+        }
     }
 }
 
 export class LivePersonaWebComponent extends BaseWebComponent {
-   
+
     constructor() {
         super();
     }
- 
+
     public connectedCallback() {
- 
-       let props = this.resolveAttributes();
-       const livePersonaItem = <LivePersonaComponent {...props} ctx={this._ctx}/>;
-       ReactDOM.render(livePersonaItem, this);
-    }    
+
+        let props = this.resolveAttributes();
+
+        //Move template from innerHTML to template property if template is empty
+        props.template = (props.template && !isEmpty(props.template)) ? props.template : this.innerHTML.trim();
+
+        const livePersonaItem = <LivePersonaComponent {...props} ctx={this._ctx} />;
+        ReactDOM.render(livePersonaItem, this);
+    }
 }

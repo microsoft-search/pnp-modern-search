@@ -1,0 +1,36 @@
+@import '~office-ui-fabric-react/dist/sass/References.scss';
+@import '~office-ui-fabric-react/dist/sass/ThemingSass.scss';
+
+.modalContainer{
+    width: 600px;
+    margin: 30px auto;
+    position: relative;
+    background-color: $ms-color-white;
+    background-clip: padding-box;
+    border: 1px solid;
+    border-color: $ms-color-neutralTertiary;
+    border-radius: 6px;
+    outline: 0;
+    box-shadow: 0 3px 9px $ms-color-neutralTertiary;
+    .modalHeader{
+        padding: 15px;
+        border-bottom: 1px solid;
+        border-color: $ms-color-neutralLight;
+        color: $ms-color-themePrimary;
+        font-weight: bolder;
+    }
+    .modalBody{
+        position: relative;
+        padding: 15px;
+    }
+    .modalFooter{
+        padding: 15px;
+        border-top: 1px solid;
+        border-color: $ms-color-neutralLight;
+
+        button {
+            float: right;
+            margin-bottom: 10px;
+        }
+    }
+}
