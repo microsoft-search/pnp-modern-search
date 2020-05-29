@@ -535,8 +535,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#slider" class="md-nav__link">
-    Slider
+  <a href="#carouselslider" class="md-nav__link">
+    Carousel/Slider
   </a>
   
 </li>
@@ -885,8 +885,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#slider" class="md-nav__link">
-    Slider
+  <a href="#carouselslider" class="md-nav__link">
+    Carousel/Slider
   </a>
   
 </li>
@@ -1112,7 +1112,7 @@
 | <strong>Enable result preview</strong> | If enabled, displays a preview callout when the document card image is clicked.
 | <strong>Show file icon</strong> | Hide or display the file icon in the card.
 | <strong>Compact mode</strong> | Display the cards in compact mode. </p>
-<h3 id="slider">Slider<a class="headerlink" href="#slider" title="Permanent link">&para;</a></h3>
+<h3 id="carouselslider">Carousel/Slider<a class="headerlink" href="#carouselslider" title="Permanent link">&para;</a></h3>
 <p>Displays search results as a carousel using the <a href="https://flickity.metafizzy.co/">Flickity library</a> (the same used in the <a href="https://github.com/SharePoint/PnP/blob/master/Solutions/Business.StarterIntranet/app/src/components/Carousel/CarouselViewModel.ts">PnP Starter Intranet solution</a>).</p>
 <p><img alt="Slider" src="../../images/slider_layout.png" /></p>
 <h3 id="customize-slide-content">Customize slide content<a class="headerlink" href="#customize-slide-content" title="Permanent link">&para;</a></h3>
@@ -1350,11 +1350,67 @@
     data-size='16 | 20 | 32 (default) | 40 | 48 | 64 | 96'
     &gt;
     &lt;/pnp-fabric-icon&gt;</code></li>
+<li>
+<p>accordion - provides the ability to collaspe content in search result in an accordion fashion</p>
+<p><code>handlebars
+&lt;pnp-accordion 
+    data-accordion-header-text="Accordion Example" 
+    data-theme="Default (default) | Neutral" 
+    data-size="# | 12 (default)" 
+    data-start-open="true | false (default)" 
+    data-rounded-corners="true | false (default)"&gt;
+    &lt;h4&gt;Title: {{Title}}&lt;/h4&gt;
+&lt;/pnp-accordion&gt;</code></p>
+<p>Example:</p>
+<p><img alt="Accordion Example" src="../../images/WebComponent_Accordion_PopupExample.png" /></p>
+</li>
+<li>
+<p>popup - provides the ability to popup content in a modal window within the search result
+    <code>handlebars
+    &lt;pnp-popup&gt;
+        &lt;template id="popupclick"&gt;
+            &lt;span&gt;Popup Example - Click Me&lt;/span&gt;
+        &lt;/template&gt;
+        &lt;template id="popupheader"&gt;
+            &lt;span&gt;Title: {{Title}}&lt;/span&gt;&lt;br /&gt;&lt;span&gt;Header HTML here&lt;/span&gt;
+        &lt;/template&gt;
+        &lt;template id="popupbody"&gt;
+            &lt;span&gt;Title: {{Title}}&lt;/span&gt;&lt;br /&gt;&lt;span&gt;Body HTML here&lt;/span&gt;
+        &lt;/template&gt;
+    &lt;/pnp-popup&gt;</code></p>
+<p>Example:</p>
+<p><img alt="Popup Example" src="../../images/WebComponent_Accordion_PopupExample.png" />
+<img alt="Popup Modal Example" src="../../images/WebComponent_Popup_Modal_Example.png" /></p>
+</li>
+<li>
+<p>lookup-list-expander - Ever needed to get additional data from a list or library in search? This provides that ability based on a lookup column of the result item.</p>
+<p>In the example below, a related documents lookup column was added to the document library. This lookup column was a lookup back to the same document library so the admin could pick additional related documents for the documents.</p>
+<p>Remember for the inner template to be executed inside of the component the handlebar expressions must be escaped with <code>'\'</code> character (ex: <code>{{Title}}</code> becomes <code>\{{Title}}</code>).</p>
+<p><code>handlebars
+&lt;pnp-lookup-list-expander 
+    data-list-url="https://&lt;tenant&gt;/sites/&lt;sitename&gt;" 
+    data-list-id="{{ListID}}" 
+    data-list-item-id="{{ListItemID}}"
+    data-column-name="RelatedDocuments"
+    data-lookup-list-fields="Id,Title,FileRef,FileLeafRef,DocumentType,BusinessUnit/Title"&gt;
+    &lt;div&gt;
+        &lt;pnp-fabric-icon data-file-extension="\{{FileExtension}}"&gt;&lt;/pnp-fabric-icon&gt;
+        &lt;span&gt;&lt;a href="\{{FileRef}}?web=1"&gt;\{{{Title}}}&lt;/a&gt;&lt;/span&gt;
+        &lt;span&gt;
+            &lt;a href="\{{FileRef}}"&gt;
+                &lt;pnp-fabric-icon data-icon-name="Download" data-size="16"&gt;&lt;/pnp-fabric-icon&gt;
+            &lt;/a&gt;
+        &lt;/span&gt;
+        &lt;div&gt;
+            &lt;span&gt;\{{{DocumentType}}}&lt;/span&gt;
+            &lt;span&gt;\{{{BusinessUnit.Title}}}&lt;/span&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/pnp-lookup-list-expander&gt;</code></p>
+<p>The above example would display inside of the accordion like:
+<img alt="LookupListExtender Example" src="../../images/WebComponent_LookupListExtender_Example.png" /></p>
+</li>
 </ul>
-<p>fileExtension?: string;
-    iconName?: string;
-    size?: FileTypeIconSize;
-    imageUrl?: string;</p>
 <h3 id="use-result-types">Use result types<a class="headerlink" href="#use-result-types" title="Permanent link">&para;</a></h3>
 <p>Use the result types features form the property pane options to split your templates according to results characteristics instead of making a huge central template with multiple conditions. They can be defined in 'inline' mode or using an external file. You can also use the sorting option to determine to order of evaluation for each condition.</p>
 <p><img alt="Result Types" src="../../images/result_types.png" /></p>

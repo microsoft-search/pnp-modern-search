@@ -613,13 +613,13 @@
 </blockquote>
 <div class="codehilite"><pre><span></span>{{#if @root.paging.showPaging}}
     &lt;pnp-pagination 
-        total-items=&quot;{{@root.paging.totalItemsCount}}&quot; 
-        hide-first-last-pages=&quot;{{@root.paging.hideFirstLastPages}}&quot;
-        hide-disabled=&quot;{{@root.paging.hideDisabled}}&quot;
-        hide-navigation=&quot;{{@root.paging.hideNavigation}}&quot;
-        range=&quot;{{@root.paging.pagingRange}}&quot; 
-        items-count-per-page=&quot;{{@root.paging.itemsCountPerPage}}&quot; 
-        current-page-number=&quot;{{@root.paging.currentPageNumber}}&quot;
+        data-total-items=&quot;{{@root.paging.totalItemsCount}}&quot; 
+        data-hide-first-last-pages=&quot;{{@root.paging.hideFirstLastPages}}&quot;
+        data-hide-disabled=&quot;{{@root.paging.hideDisabled}}&quot;
+        data-hide-navigation=&quot;{{@root.paging.hideNavigation}}&quot;
+        data-range=&quot;{{@root.paging.pagingRange}}&quot; 
+        data-items-count-per-page=&quot;{{@root.paging.itemsCountPerPage}}&quot; 
+        data-current-page-number=&quot;{{@root.paging.currentPageNumber}}&quot;
     &gt;
     &lt;/pnp-pagination&gt;
 {{/if}}

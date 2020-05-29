@@ -750,6 +750,10 @@
 <li><code>gulp serve</code></li>
 </ul>
 <p>The <code>search-parts</code> project also supports faster development via <a href="https://github.com/s-KaiNet/spfx-fast-serve">spfx-fast-serve</a> tool. To use "fast serve" run <code>npm run serve</code> instead of <code>gulp serve</code>.</p>
+<p>We recommend using <code>--nobrowser</code> when serving and use one of two approaches for debugging instead of the local workbench:
+* Hosted workbench on any site via: https://&lt;tenant&gt;.sharepoint.com/sites/yoursite/_layouts/15/workbench.aspx
+* Debug on a modern page by appending the below parameters to the URL. This allows page composition and debug as you were in production.
+  <code>?loadSPFX=true&amp;debugManifestsFile=https://localhost:4321/temp/manifests.js</code></p>
                 
                   
                 
