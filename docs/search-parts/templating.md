@@ -57,7 +57,7 @@ For HTML fields you can use the special variable `@themeVariant` to use theme co
 | **Show file icon** | Hide or display the file icon in the card.
 | **Compact mode** | Display the cards in compact mode. 
 
-### Slider
+### Carousel/Slider
 
 Displays search results as a carousel using the [Flickity library](https://flickity.metafizzy.co/) (the same used in the [PnP Starter Intranet solution](https://github.com/SharePoint/PnP/blob/master/Solutions/Business.StarterIntranet/app/src/components/Carousel/CarouselViewModel.ts)).
 
@@ -199,20 +199,85 @@ The web part has a couple of helper web-components to ease rendering, used by th
 - persona-card
 - persona-card-shimmers
 - fabric-icon - You only need to set one property, which are evaluated in order if multiple ones are set.
-   ```handlebars
-   <pnp-fabric-icon
+
+```html
+<pnp-fabric-icon
     data-image-url='[url to icon - pri 1]'
     data-file-extension='[file extension - pri 2]'
     data-icon-name='[office ui fabric icon name - pri 3]'
     data-size='16 | 20 | 32 (default) | 40 | 48 | 64 | 96'
-    >
-    </pnp-fabric-icon>
-    ```
+>
+</pnp-fabric-icon>
+```
+- accordion - provides the ability to collaspe content in search result in an accordion fashion
+    
+```html
+<pnp-accordion 
+    data-accordion-header-text="Accordion Example" 
+    data-theme="Default (default) | Neutral" 
+    data-size="# | 12 (default)" 
+    data-start-open="true | false (default)" 
+    data-rounded-corners="true | false (default)">
+    <h4>Title: {{Title}}</h4>
+</pnp-accordion>
+```
 
-fileExtension?: string;
-    iconName?: string;
-    size?: FileTypeIconSize;
-    imageUrl?: string;
+Example:
+
+![Accordion Example](../images/WebComponent_Accordion_PopupExample.png)
+
+- popup - provides the ability to popup content in a modal window within the search result
+
+```html
+<pnp-popup>
+    <template id="popupclick">
+        <span>Popup Example - Click Me</span>
+    </template>
+    <template id="popupheader">
+        <span>Title: {{Title}}</span><br /><span>Header HTML here</span>
+    </template>
+    <template id="popupbody">
+        <span>Title: {{Title}}</span><br /><span>Body HTML here</span>
+    </template>
+</pnp-popup>
+```
+
+Example:
+
+![Popup Example](../images/WebComponent_Accordion_PopupExample.png)
+![Popup Modal Example](../images/WebComponent_Popup_Modal_Example.png)
+
+- lookup-list-expander - Ever needed to get additional data from a list or library in search? This provides that ability based on a lookup column of the result item.
+
+    In the example below, a related documents lookup column was added to the document library. This lookup column was a lookup back to the same document library so the admin could pick additional related documents for the documents.
+
+    Remember for the inner template to be executed inside of the component the handlebar expressions must be escaped with `'\'` character (ex: `{{Title}}` becomes `\{{Title}}`).
+    
+```html
+<pnp-lookup-list-expander 
+    data-list-url="https://<tenant>/sites/<sitename>" 
+    data-list-id="{{ListID}}" 
+    data-list-item-id="{{ListItemID}}"
+    data-column-name="RelatedDocuments"
+    data-lookup-list-fields="Id,Title,FileRef,FileLeafRef,DocumentType,BusinessUnit/Title">
+    <div>
+        <pnp-fabric-icon data-file-extension="\{{FileExtension}}"></pnp-fabric-icon>
+        <span><a href="\{{FileRef}}?web=1">\{{{Title}}}</a></span>
+        <span>
+            <a href="\{{FileRef}}">
+                <pnp-fabric-icon data-icon-name="Download" data-size="16"></pnp-fabric-icon>
+            </a>
+        </span>
+        <div>
+            <span>\{{{DocumentType}}}</span>
+            <span>\{{{BusinessUnit.Title}}}</span>
+        </div>
+    </div>
+</pnp-lookup-list-expander>
+```
+
+The above example would display inside of the accordion like:
+![LookupListExtender Example](../images/WebComponent_LookupListExtender_Example.png)
 
 ### Use result types
 

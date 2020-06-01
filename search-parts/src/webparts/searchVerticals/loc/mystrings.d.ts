@@ -13,6 +13,7 @@ declare interface ISearchVerticalsWebPartStrings {
       PanelHeader: string;
       PanelDescription: string;
       ButtonLabel: string;
+      FieldValidationErrorMessage: string;
       Fields: {
         TabName: string;
         QueryTemplate: string;

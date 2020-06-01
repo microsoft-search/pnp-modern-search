@@ -1,7 +1,7 @@
 //import * as Handlebars from 'handlebars';
 import ISearchService from './ISearchService';
 import { ISearchResults, ISearchResult, IRefinementResult, IRefinementValue, IRefinementFilter, IPromotedResult, ISearchVerticalInformation, ISearchResultBlock } from '../../models/ISearchResult';
-import { sp, SearchQuery, SearchResults, SPRest, Sort, SearchSuggestQuery, SortDirection } from '@pnp/sp';
+import { sp, SearchQuery, SearchResults, SPRest, Sort, SearchSuggestQuery, SortDirection, Web } from '@pnp/sp';
 import { Logger, LogLevel, ConsoleListener } from '@pnp/logging';
 import { Text, Guid } from '@microsoft/sp-core-library';
 import { sortBy, isEmpty, findIndex } from '@microsoft/sp-lodash-subset';
@@ -283,6 +283,9 @@ class SearchService implements ISearchService {
                 // Map results icon (using batch)
                 searchResults = await this._mapToIcons(searchResults, useOldSPIcons);
 
+                // Map shortcut Urls if FileType url (using batch)
+                searchResults = await this._mapShortCutUrls(searchResults);
+
                 // Map refinement results
                 refinementRows.map((refiner) => {
 
@@ -343,7 +346,7 @@ class SearchService implements ISearchService {
                             });
                         }
 
-                        // Secondary/Query Rule results are mapped through SecondaryQueryResults.RelevantResults
+                        // Secondary/Query Rule results are mapped through SecondaryQueryResults.RelevantResults OR SecondaryQueryResults.CustomResults
                         if (e.RelevantResults) {
                             const secondaryResultItems = e.RelevantResults.Table.Rows.map((srr) => {
                                 let result: ISearchResult = {};
@@ -365,12 +368,38 @@ class SearchService implements ISearchService {
                                 secondaryResults.push(secondaryResultBlock);
                             }
                         }
+
+                        if (e.CustomResults && Array.isArray(e.CustomResults) && e.CustomResults.length > 0) {
+
+                            e.CustomResults.map((cr) => {
+                                const secondaryResultItems = cr.Table.Rows.map((srr) => {
+                                    let result: ISearchResult = {};
+
+                                    srr.Cells.map((item) => {
+                                        result[item.Key] = item.Value;
+                                    });
+
+                                    return result;
+                                });
+
+                                const secondaryResultBlock: ISearchResultBlock = {
+                                    Title: cr.ResultTitle,
+                                    Results: secondaryResultItems
+                                };
+
+                                // Only keep secondary result blocks which have items
+                                if (secondaryResultBlock.Results.length > 0) {
+                                    secondaryResults.push(secondaryResultBlock);
+                                }
+                            });
+                        }
                     });
 
                     results.PromotedResults = promotedResults;
 
                     secondaryResults = await Promise.all(secondaryResults.map(async (srb) => {
                         srb.Results = await this._mapToIcons(srb.Results, useOldSPIcons);
+                        srb.Results = await this._mapShortCutUrls(srb.Results);
                         return srb;
                     }));
                     results.SecondaryResults = secondaryResults;
@@ -437,7 +466,7 @@ class SearchService implements ISearchService {
         // Update tokens in query template for all verticals
         let tokenPromises: Promise<string>[] = [];
 
-        tokenPromises = searchVerticals.map(vertical => {
+        tokenPromises = searchVerticals.filter(v => !v.isLink).map(vertical => {
             return this._tokenService.replaceQueryVariables(vertical.queryTemplate);
         });
 
@@ -709,6 +738,53 @@ class SearchService implements ISearchService {
             }
         });
         return searchResults;
+    }
+
+    /**
+     * Gets the icons corresponding to the result file name extensions
+     * @param searchResults The raw search results
+     */
+    private async _mapShortCutUrls(searchResults: ISearchResult[]): Promise<ISearchResult[]> {
+        try {
+                let updatedSearchResults = searchResults;
+
+                const batch = this._localPnPSetup.createBatch();
+                
+                const promises = searchResults.map(async result => {
+
+                    if (result.FileType && result.FileType.toLowerCase() === "url" && result.OriginalPath && result.SPSiteUrl) {
+                        const localWeb = new Web(result.SPSiteUrl);
+                        const file = localWeb.getFileByServerRelativeUrl(result.OriginalPath.replace(/^(?:\/\/|[^/]+)*\//, '/'));
+                        return  file.inBatch(batch).getText();
+                    }
+                    else{
+                        return null;
+                    }
+                });
+
+                // Execute the batch
+                await batch.execute();
+
+                const response = await Promise.all(promises);
+
+                response.map((result: any, index: number) => {
+                    if (result) {
+                        if (result.indexOf("URL=") > -1)
+                        {
+                            let parts = result.split("URL=");
+                            if (parts.length == 2){
+                                updatedSearchResults[index].ShortcutUrl = parts[1].trim();
+                            }
+                        }
+                    }
+                });
+
+                return updatedSearchResults;
+
+            } catch (error) {
+                Logger.write('[SearchService._mapShortCutUrls()]: Error: ' + error, LogLevel.Error);
+                throw new Error(error);
+            }
     }
 
     /**

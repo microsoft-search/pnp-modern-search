@@ -191,7 +191,7 @@ export class TemplateService extends BaseTemplateService {
         }
 
         // Set required selected properties if not present
-        let requiredProperties = ['Title','Created','HitHighlightedSummary','IsContainer','IsListItem','HtmlFileType'];
+        let requiredProperties = ['Title','Created','HitHighlightedSummary','IsContainer','IsDocument','IsListItem','HtmlFileType'];
         this._ensureRequiredSelectedProperties(requiredProperties, properties);
 
         return [
