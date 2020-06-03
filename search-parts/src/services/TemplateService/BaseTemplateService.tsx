@@ -282,7 +282,7 @@ abstract class BaseTemplateService {
             if (item) {
                 if (!isEmpty(item.SiteLogo)) previewSrc = item.SiteLogo;
                 else if (!isEmpty(item.IsDocument) && item.IsDocument == "false") previewSrc = "";                
-                else if ((!isEmpty(item.FileType) && nonSupportedGraphThumbnails.indexOf(item.FileType) === -1) && !isEmpty(item.NormSiteID) && !isEmpty(item.NormListID) && !isEmpty(item.NormUniqueID)) previewSrc = `${this._ctx.pageContext.site.absoluteUrl}/_api/v2.0/sites/${item.NormSiteID}/lists/${item.NormListID}/items/${item.NormUniqueID}/driveItem/thumbnails/0/large/content?preferNoRedirect=true`;
+                else if ((!isEmpty(item.FileType) && nonSupportedGraphThumbnails.indexOf(item.FileType) === -1) && !isEmpty(item.NormSiteID) && !isEmpty(item.NormWebID) && !isEmpty(item.NormListID) && !isEmpty(item.NormUniqueID)) previewSrc = `${this._ctx.pageContext.site.absoluteUrl}/_api/v2.0/sites/${item.NormSiteID},${item.NormWebID}/lists/${item.NormListID}/items/${item.NormUniqueID}/driveItem/thumbnails/0/large/content?preferNoRedirect=true`;
                 else if (!isEmpty(item.PreviewUrl)) previewSrc = item.PreviewUrl;
                 else if (!isEmpty(item.PictureThumbnailURL)) previewSrc = item.PictureThumbnailURL;
                 else if (!isEmpty(item.ServerRedirectedPreviewURL)) previewSrc = item.ServerRedirectedPreviewURL;
