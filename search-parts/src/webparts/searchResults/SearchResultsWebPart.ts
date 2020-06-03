@@ -581,6 +581,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                                                 "FileType",
                                                 "HtmlFileType",
                                                 "NormSiteID",
+                                                "NormWebID",
                                                 "NormListID",
                                                 "NormUniqueID",
                                                 "Created",
