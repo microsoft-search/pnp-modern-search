@@ -217,7 +217,7 @@ abstract class BaseTemplateService {
                         url = `${this._ctx.pageContext.site.absoluteUrl}/_layouts/15/getpreview.ashx?guidSite=${item.SiteId}&guidWeb=${item.WebId}&guidFile=${item.UniqueID.replace(/\{|\}/g, '')}&resolution=3`;
                     }
                 }
-                else if (item.FileType && item.FileType.toLowerCase() === "url" && item.ShortcutUrl){
+                else if (item.FileType && item.FileType.toLowerCase() === "url" && item.ShortcutUrl) {
                     url = item.ShortcutUrl;
                 }
                 else if (item.OriginalPath) {
@@ -278,10 +278,11 @@ abstract class BaseTemplateService {
         Handlebars.registerHelper("getPreviewSrc", (item: ISearchResult) => {
             let previewSrc = "";
             const nonSupportedGraphThumbnails = ["xls"]; //let's add more as we proceed
+            const validImageExt = ["gif", "png", "tif", "tiff", "heic", "bmp", "svg", "jpg", "jpeg"];
 
             if (item) {
                 if (!isEmpty(item.SiteLogo)) previewSrc = item.SiteLogo;
-                else if (!isEmpty(item.IsDocument) && item.IsDocument == "false") previewSrc = "";                
+                else if (!isEmpty(item.IsDocument) && item.IsDocument == "false" && validImageExt.indexOf(item.FileType) === -1) previewSrc = "";
                 else if ((!isEmpty(item.FileType) && nonSupportedGraphThumbnails.indexOf(item.FileType) === -1) && !isEmpty(item.NormSiteID) && !isEmpty(item.NormWebID) && !isEmpty(item.NormListID) && !isEmpty(item.NormUniqueID)) previewSrc = `${this._ctx.pageContext.site.absoluteUrl}/_api/v2.0/sites/${item.NormSiteID},${item.NormWebID}/lists/${item.NormListID}/items/${item.NormUniqueID}/driveItem/thumbnails/0/large/content?preferNoRedirect=true`;
                 else if (!isEmpty(item.PreviewUrl)) previewSrc = item.PreviewUrl;
                 else if (!isEmpty(item.PictureThumbnailURL)) previewSrc = item.PictureThumbnailURL;
