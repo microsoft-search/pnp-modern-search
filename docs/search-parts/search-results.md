@@ -59,6 +59,8 @@ The search results Web Part supports automatic translation for taxonomy based fi
 
 ![Enable Localization](../images/enable_localization.png)
 
+When you enable this flag, you can still use the original property value for whatever reason by using the following property format in your Handlebars template: `<propertyName> + TaxId` (ex: `owstaxidmetadataalltagsinfo` will contain the translated terms and `owstaxidmetadataalltagsinfoTaxId`) will contain the original value of the managed property).
+
 ---
 
 #### Out of the box query variables
