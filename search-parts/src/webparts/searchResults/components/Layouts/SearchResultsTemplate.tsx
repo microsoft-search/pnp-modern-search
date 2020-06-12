@@ -23,6 +23,7 @@ export default class SearchResultsTemplate extends React.Component<ISearchResult
         this._domPurify.setConfig({
             ADD_TAGS: ['style'],
             ADD_ATTR: ['onerror', 'target', 'loading'],
+            ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|cid|xmpp|xxx|ms-\w+):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
             WHOLE_DOCUMENT: true
         });
 
@@ -40,7 +41,7 @@ export default class SearchResultsTemplate extends React.Component<ISearchResult
             if (data && data.attrName) {
                 data.allowedAttributes[data.attrName] = true;
             }
-        });   
+        });
     }
 
     public render() {
