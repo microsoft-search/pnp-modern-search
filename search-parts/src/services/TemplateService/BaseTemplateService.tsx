@@ -664,6 +664,8 @@ abstract class BaseTemplateService {
         return processedProps as T;
     }
 
+    private resultTypesTemplates : { [instanceId : string] : HandlebarsTemplateDelegate<any>} = {};
+
     /**
      * Builds and registers the result types as Handlebars partials
      * Based on https://github.com/helpers/handlebars-helpers/ operators
