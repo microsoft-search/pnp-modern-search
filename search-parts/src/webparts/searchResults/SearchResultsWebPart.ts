@@ -564,7 +564,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
         this.properties.sortableFields = Array.isArray(this.properties.sortableFields) ? this.properties.sortableFields : [];
 
-        // Ensure the minmal managed properties are here        
+        // Ensure the minmal managed properties are here
         const defaultManagedProperties =    [
                                                 "Title",
                                                 "Path",
@@ -607,7 +607,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
             defaultManagedProperties.map(property => {
 
-                const idx = findIndex(properties, item => property.toLowerCase() === item.toLowerCase());                
+                const idx = findIndex(properties, item => property.toLowerCase() === item.toLowerCase());
                 if (idx === -1) {
                     properties.push(property);
                 }
@@ -617,7 +617,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         } else {
             this.properties.selectedProperties = defaultManagedProperties.join(',');
         }
-        
+
         this.properties.resultTypes = Array.isArray(this.properties.resultTypes) ? this.properties.resultTypes : [];
         this.properties.synonymList = Array.isArray(this.properties.synonymList) ? this.properties.synonymList : [];
         this.properties.searchQueryLanguage = this.properties.searchQueryLanguage ? this.properties.searchQueryLanguage : -1;
@@ -907,7 +907,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         }
 
         // Register result types inside the template
-        this._templateService.registerResultTypes(this.properties.resultTypes);
+        this._templateService.registerResultTypes(this.properties.resultTypes, this.instanceId);
 
         await this._templateService.optimizeLoadingForTemplate(this._templateContentToDisplay);
     }
