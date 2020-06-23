@@ -1,4 +1,4 @@
-﻿import * as React from 'react';
+import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import { Version, Text, Environment, EnvironmentType, DisplayMode } from '@microsoft/sp-core-library';
 import {
@@ -204,6 +204,25 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         let queryDataSourceValue = this.properties.queryKeywords.tryGetValue();
 
         let queryKeywords = queryDataSourceValue ? queryDataSourceValue : this.properties.defaultSearchQuery;
+
+        if (typeof(queryKeywords) == "object")
+        {
+            //https://github.com/microsoft-search/pnp-modern-search/issues/325
+            //new issue with search body as object - 2020-06-23
+            const refChunks = this.properties.queryKeywords.reference.split(':');
+            if (refChunks.length >= 3) {
+                const paramType = refChunks[2];
+        
+                if (paramType === 'fragment') { 
+                    queryKeywords = queryDataSourceValue["fragment"]
+                }
+                else if (paramType.startsWith('queryParameters')) {
+                    const paramChunks = paramType.split('.');
+                    const queryTextParam = paramChunks.length === 2 ? paramChunks[1] : 'q';
+                    queryKeywords = queryDataSourceValue["queryParameters"][queryTextParam]
+                }
+            }
+        }
 
         // Get data from connected sources
         if (this._refinerSourceData && !this._refinerSourceData.isDisposed) {
