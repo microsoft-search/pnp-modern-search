@@ -70,15 +70,34 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
 
     let inputValue = this.properties.defaultQueryKeywords.tryGetValue();
 
-    if (inputValue && typeof(inputValue) === 'string') {
-
-      // Notify subscriber a new value if available
-      this._searchQuery = decodeURIComponent(inputValue);
+    if (inputValue) {
+      if (typeof(inputValue) === 'string') {
+        this._searchQuery = decodeURIComponent(inputValue);
+      }
+      else if (typeof(inputValue === 'object')) {
+        //https://github.com/microsoft-search/pnp-modern-search/issues/325
+        //new issue with search body as object - 2020-06-23
+        const refChunks = this.properties.defaultQueryKeywords.reference.split(':');
+        if (refChunks.length >= 3) {
+          const paramType = refChunks[2];
+  
+          if (paramType === 'fragment') { 
+            this._searchQuery = inputValue["fragment"]
+          }
+          else if (paramType.startsWith('queryParameters')) {
+            const paramChunks = paramType.split('.');
+            const queryTextParam = paramChunks.length === 2 ? paramChunks[1] : 'q';
+            this._searchQuery = inputValue["queryParameters"][queryTextParam]
+          }
+        }
+      }
 
       // Save this value in a global context
       GlobalSettings.setValue('searchBoxQuery', this._searchQuery);
 
+      // Notify subscriber a new value if available
       this.context.dynamicDataSourceManager.notifyPropertyChanged('searchQuery');
+      
     }
 
     const enableSuggestions = this.properties.enableQuerySuggestions && this.properties.suggestionProviders.some(sp => sp.providerEnabled);
