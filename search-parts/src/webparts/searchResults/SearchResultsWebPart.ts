@@ -1,4 +1,4 @@
-﻿import * as React from 'react';
+import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import { Version, Text, Environment, EnvironmentType, DisplayMode } from '@microsoft/sp-core-library';
 import {
@@ -895,17 +895,38 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
     }
 
     /**
-     * Ensures the result source id value is a valid GUID
+     * Ensures the result source id value is a valid GUID or a string with format: Level|Result source name
      * @param value the result source id
      */
-    private validateSourceId(value: string): string {
+    private _validateSourceId(value: string): string {
         if (value.length > 0) {
             if (!(/^(\{){0,1}[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}(\}){0,1}$/).test(value)) {
-                return strings.InvalidResultSourceIdMessage;
+              return this._validateSourceName(value);
             }
         }
 
         return '';
+    }
+
+    private _validateSourceName(value: string): string {
+      const validLevels: string[] = ["SPSiteSubscription", "SPSite", "SPWeb"];
+      if (value.length > 0) {
+        const parts: string[] = value.split("|");
+
+        if (parts.length !== 2) return strings.InvalidResultSourceIdMessage;
+
+        const level: string = parts[0];
+        const resultSourceName: string = parts[1];
+        if (validLevels.find(i => i.toLowerCase() === level.toLowerCase())) {
+          if (!resultSourceName) {
+            return strings.InvalidResultSourceIdMessage;
+          }
+        } else {
+            return strings.InvalidResultSourceIdMessage;
+        }
+      }
+
+      return '';
     }
 
     /**
@@ -995,8 +1016,9 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             }),
             PropertyPaneTextField('resultSourceId', {
                 label: strings.ResultSourceIdLabel,
+                description: strings.ResultSourceIdDescription,
                 multiline: false,
-                onGetErrorMessage: this.validateSourceId.bind(this),
+                onGetErrorMessage: this._validateSourceId.bind(this),
                 deferredValidationTime: 300
             }),
             this._propertyFieldCollectionData('sortList', {
