@@ -589,7 +589,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
         this.properties.sortableFields = Array.isArray(this.properties.sortableFields) ? this.properties.sortableFields : [];
 
-        // Ensure the minmal managed properties are here        
+        // Ensure the minmal managed properties are here
         const defaultManagedProperties = [
             "Title",
             "Path",
@@ -932,7 +932,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         }
 
         // Register result types inside the template
-        this._templateService.registerResultTypes(this.properties.resultTypes);
+        this._templateService.registerResultTypes(this.properties.resultTypes, this.instanceId);
 
         await this._templateService.optimizeLoadingForTemplate(this._templateContentToDisplay);
     }
