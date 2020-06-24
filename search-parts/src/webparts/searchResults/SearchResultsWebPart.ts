@@ -1,4 +1,4 @@
-﻿import * as React from 'react';
+import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import { Version, Text, Environment, EnvironmentType, DisplayMode } from '@microsoft/sp-core-library';
 import {
@@ -205,6 +205,31 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
         let queryKeywords = queryDataSourceValue ? queryDataSourceValue : this.properties.defaultSearchQuery;
 
+        if (typeof (queryKeywords) == "object") {
+            queryKeywords = "";
+            //https://github.com/microsoft-search/pnp-modern-search/issues/325
+            //new issue with search body as object - 2020-06-23
+            const refChunks = this.properties.queryKeywords.reference.split(':');
+            if (refChunks.length >= 3) {
+                const paramType = refChunks[2];
+
+                if (paramType === 'fragment') {
+                    queryKeywords = decodeURIComponent(queryDataSourceValue["fragment"]);
+                }
+                else if (paramType === 'searchQuery' && typeof queryDataSourceValue["searchQuery"] !== 'undefined') {
+                    queryKeywords = decodeURIComponent(queryDataSourceValue["searchQuery"]);
+                }
+                else if (paramType.startsWith('queryParameters')) {
+                    const paramChunks = paramType.split('.');
+                    const queryTextParam = paramChunks.length === 2 ? paramChunks[1] : 'q';
+                    if (queryDataSourceValue["queryParameters"][queryTextParam]) {
+                        queryKeywords = decodeURIComponent(queryDataSourceValue["queryParameters"][queryTextParam]);
+                    }
+                }
+            }
+        }
+
+
         // Get data from connected sources
         if (this._refinerSourceData && !this._refinerSourceData.isDisposed) {
             const refinerSourceData: IRefinerSourceData = this._refinerSourceData.tryGetValue();
@@ -231,7 +256,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             }
         }
 
-        const currentLocaleId = LocalizationHelper.getLocaleId(this.context.pageContext.cultureInfo.currentCultureName);
+        const currentLocaleId = LocalizationHelper.getLocaleId(this.context.pageContext.cultureInfo.currentUICultureName);
         const queryModifier = this._queryModifierInstance && this._queryModifierInstance.isInitialized ? this._queryModifierInstance.instance : null;
 
         // Configure the provider before the query according to our needs
@@ -564,42 +589,42 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
         this.properties.sortableFields = Array.isArray(this.properties.sortableFields) ? this.properties.sortableFields : [];
 
-        // Ensure the minmal managed properties are here
-        const defaultManagedProperties =    [
-                                                "Title",
-                                                "Path",
-                                                "OriginalPath",
-                                                "SiteLogo",
-                                                "contentclass",
-                                                "FileExtension",
-                                                "Filename",
-                                                "ServerRedirectedURL",
-                                                "DefaultEncodingURL",
-                                                "IsDocument",
-                                                "IsContainer",
-                                                "IsListItem",
-                                                "FileType",
-                                                "HtmlFileType",
-                                                "NormSiteID",
-                                                "NormWebID",
-                                                "NormListID",
-                                                "NormUniqueID",
-                                                "Created",
-                                                "PreviewUrl",
-                                                "PictureThumbnailURL",
-                                                "ServerRedirectedPreviewURL",
-                                                "HitHighlightedSummary",
-                                                "ServerRedirectedEmbedURL",
-                                                "ParentLink",
-                                                "owstaxidmetadataalltagsinfo",
-                                                "Author",
-                                                "AuthorOWSUSER",
-                                                "SPSiteUrl",
-                                                "SiteTitle",
-                                                "SiteId",
-                                                "WebId",
-                                                "UniqueID"
-                                            ];
+        // Ensure the minmal managed properties are here        
+        const defaultManagedProperties = [
+            "Title",
+            "Path",
+            "OriginalPath",
+            "SiteLogo",
+            "contentclass",
+            "FileExtension",
+            "Filename",
+            "ServerRedirectedURL",
+            "DefaultEncodingURL",
+            "IsDocument",
+            "IsContainer",
+            "IsListItem",
+            "FileType",
+            "HtmlFileType",
+            "NormSiteID",
+            "NormWebID",
+            "NormListID",
+            "NormUniqueID",
+            "Created",
+            "PreviewUrl",
+            "PictureThumbnailURL",
+            "ServerRedirectedPreviewURL",
+            "HitHighlightedSummary",
+            "ServerRedirectedEmbedURL",
+            "ParentLink",
+            "owstaxidmetadataalltagsinfo",
+            "Author",
+            "AuthorOWSUSER",
+            "SPSiteUrl",
+            "SiteTitle",
+            "SiteId",
+            "WebId",
+            "UniqueID"
+        ];
 
         if (this.properties.selectedProperties) {
 
