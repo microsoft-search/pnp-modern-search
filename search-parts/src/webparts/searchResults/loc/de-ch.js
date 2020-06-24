@@ -27,6 +27,7 @@ define([], function() {
         "PlaceHolderIconText": "Suchergebnisse Webpart",
         "PlaceHolderDescription": "Diese Komponente zeigt Suchergebnisse mit Paging an",
         "ResultSourceIdLabel": "ID Suchergebnisquelle",
+		"ResultSourceIdDescription": "Wenn Sie den Namen verwenden, verwenden Sie das Format: Quellenebene|Name (d.h.: SPSite|Meine Nachrichten). Gültige Ebenen sind: SPSiteAbonnement, SPSite, SPWeb",
         "InvalidResultSourceIdMessage": "Ungültige ID",
         "InvalidNumberIntervalMessage": "Zwischen 1 und 500",
         "EnableQueryRulesLabel": "Abfrageregeln aktivieren",
