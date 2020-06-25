@@ -207,6 +207,10 @@ abstract class BaseTemplateService {
                     && item.FileType
                     && validPreviewExt.indexOf(item.FileType.toLocaleUpperCase()) !== -1) {
                     url = this.createOdspPreviewUrl(item.DefaultEncodingURL);
+
+                    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                        url = item.DefaultEncodingURL + "?web=1";
+                    }
                 }
                 else if (!isEmpty(item.ServerRedirectedURL)) {
                     url = item.ServerRedirectedURL;
@@ -391,8 +395,8 @@ abstract class BaseTemplateService {
 
         const self = this;
         const hbs = Handlebars;
-        Handlebars.registerHelper('resultTypeResolve', (instanceId:string)=>{
-          return hbs.partials[`resultTypes-${instanceId}`] || "resultTypes-default";
+        Handlebars.registerHelper('resultTypeResolve', (instanceId: string) => {
+            return hbs.partials[`resultTypes-${instanceId}`] || "resultTypes-default";
         });
         Handlebars.registerPartial('resultTypes', '{{> (resultTypeResolve @root.instanceId)}}');
 
@@ -664,7 +668,7 @@ abstract class BaseTemplateService {
         return processedProps as T;
     }
 
-    private resultTypesTemplates : { [instanceId : string] : HandlebarsTemplateDelegate<any>} = {};
+    private resultTypesTemplates: { [instanceId: string]: HandlebarsTemplateDelegate<any> } = {};
 
     /**
      * Builds and registers the result types as Handlebars partials
@@ -672,12 +676,12 @@ abstract class BaseTemplateService {
      * @param resultTypes the configured result types from the property pane
      * @param instanceId id of the the webpart
      */
-    public async registerResultTypes(resultTypes: ISearchResultType[], instanceId:string): Promise<void> {
+    public async registerResultTypes(resultTypes: ISearchResultType[], instanceId: string): Promise<void> {
         if (resultTypes.length > 0) {
-          let content = await this._buildCondition(resultTypes, resultTypes[0], 0);
-          let template = Handlebars.compile(content);
-          Handlebars.registerPartial(`resultTypes-${instanceId}`, template);
-      }
+            let content = await this._buildCondition(resultTypes, resultTypes[0], 0);
+            let template = Handlebars.compile(content);
+            Handlebars.registerPartial(`resultTypes-${instanceId}`, template);
+        }
     }
 
 
