@@ -203,17 +203,15 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
         let queryDataSourceValue = this.properties.queryKeywords.tryGetValue();
 
-        let queryKeywords = queryDataSourceValue ? queryDataSourceValue : this.properties.defaultSearchQuery;
+        let queryKeywords = this.properties.defaultSearchQuery;
 
-        if (typeof (queryKeywords) == "object") {
-            queryKeywords = "";
+        if (queryDataSourceValue && typeof (queryDataSourceValue) == "object") {
             //https://github.com/microsoft-search/pnp-modern-search/issues/325
             //new issue with search body as object - 2020-06-23
             const refChunks = this.properties.queryKeywords.reference.split(':');
             if (refChunks.length >= 3) {
                 const environmentType = refChunks[1];
                 const paramType = refChunks[2];
-
                 if (environmentType == "UrlData" && paramType !== "fragment") {
                     const paramChunks = paramType.split('.');
                     const queryTextParam = paramChunks.length === 2 ? paramChunks[1] : 'q';
@@ -899,7 +897,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
     private _validateSourceId(value: string): string {
         if (value.length > 0) {
             if (!(/^(\{){0,1}[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}(\}){0,1}$/).test(value)) {
-              return this._validateSourceName(value);
+                return this._validateSourceName(value);
             }
         }
 
@@ -907,24 +905,24 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
     }
 
     private _validateSourceName(value: string): string {
-      const validLevels: string[] = ["SPSiteSubscription", "SPSite", "SPWeb"];
-      if (value.length > 0) {
-        const parts: string[] = value.split("|");
+        const validLevels: string[] = ["SPSiteSubscription", "SPSite", "SPWeb"];
+        if (value.length > 0) {
+            const parts: string[] = value.split("|");
 
-        if (parts.length !== 2) return strings.InvalidResultSourceIdMessage;
+            if (parts.length !== 2) return strings.InvalidResultSourceIdMessage;
 
-        const level: string = parts[0];
-        const resultSourceName: string = parts[1];
-        if (validLevels.find(i => i.toLowerCase() === level.toLowerCase())) {
-          if (!resultSourceName) {
-            return strings.InvalidResultSourceIdMessage;
-          }
-        } else {
-            return strings.InvalidResultSourceIdMessage;
+            const level: string = parts[0];
+            const resultSourceName: string = parts[1];
+            if (validLevels.find(i => i.toLowerCase() === level.toLowerCase())) {
+                if (!resultSourceName) {
+                    return strings.InvalidResultSourceIdMessage;
+                }
+            } else {
+                return strings.InvalidResultSourceIdMessage;
+            }
         }
-      }
 
-      return '';
+        return '';
     }
 
     /**
