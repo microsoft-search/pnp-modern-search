@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-## Check existing issues before logging new ones!
+!! Check existing issues before logging new ones !!
 
 **Version used**
 Ex: 3.13
