@@ -86,7 +86,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
               const fieldName = refChunks.length === 3 ? refChunks[2] : 'userName';
 
               if (inputValue[fieldName]) {
-                queryKeywords = inputValue[fieldName];
+                queryKeywords = decodeURIComponent(inputValue[fieldName]);
               }
             }
 
@@ -98,7 +98,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
               const fieldName = refChunks.length === 3 ? refChunks[2] : 'siteTitle';
 
               if (inputValue[fieldName]) {
-                queryKeywords = inputValue[fieldName];
+                queryKeywords = decodeURIComponent(inputValue[fieldName]);
               }
             }
 
@@ -110,7 +110,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
               const fieldName = refChunks.length === 3 ? refChunks[2] : 'searchQuery';
 
               if (inputValue[fieldName]) {
-                queryKeywords = inputValue[fieldName];
+                queryKeywords = decodeURIComponent(inputValue[fieldName]);
               }
             }
 

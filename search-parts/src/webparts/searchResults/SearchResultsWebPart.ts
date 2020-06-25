@@ -216,7 +216,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                 const fieldName = refChunks.length === 3 ? refChunks[2] : 'userName';
 
                 if (queryDataSourceValue[fieldName]) {
-                    queryKeywords = queryDataSourceValue[fieldName];
+                  queryKeywords = decodeURIComponent(queryDataSourceValue[fieldName]);
                 }
             }
 
@@ -228,7 +228,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                 const fieldName = refChunks.length === 3 ? refChunks[2] : 'siteTitle';
 
                 if (queryDataSourceValue[fieldName]) {
-                    queryKeywords = queryDataSourceValue[fieldName];
+                  queryKeywords = decodeURIComponent(queryDataSourceValue[fieldName]);
                 }
             }
 
@@ -240,7 +240,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                 const fieldName = refChunks.length === 3 ? refChunks[2] : 'searchQuery';
 
                 if (queryDataSourceValue[fieldName]) {
-                    queryKeywords = queryDataSourceValue[fieldName];
+                  queryKeywords = decodeURIComponent(queryDataSourceValue[fieldName]);
                 }
             }
 
