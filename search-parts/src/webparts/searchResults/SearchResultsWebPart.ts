@@ -295,7 +295,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             }
         }
 
-        const currentLocaleId = LocalizationHelper.getLocaleId(this.context.pageContext.cultureInfo.currentUICultureName);
+        const currentLocaleId = LocalizationHelper.getLocaleId(this.context.pageContext.cultureInfo.currentCultureName);
         const queryModifier = this._queryModifierInstance && this._queryModifierInstance.isInitialized ? this._queryModifierInstance.instance : null;
 
         // Configure the provider before the query according to our needs
@@ -629,41 +629,41 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         this.properties.sortableFields = Array.isArray(this.properties.sortableFields) ? this.properties.sortableFields : [];
 
         // Ensure the minmal managed properties are here        
-        const defaultManagedProperties =    [
-                                                "Title",
-                                                "Path",
-                                                "OriginalPath",
-                                                "SiteLogo",
-                                                "contentclass",
-                                                "FileExtension",
-                                                "Filename",
-                                                "ServerRedirectedURL",
-                                                "DefaultEncodingURL",
-                                                "IsDocument",
-                                                "IsContainer",
-                                                "IsListItem",
-                                                "FileType",
-                                                "HtmlFileType",
-                                                "NormSiteID",
-                                                "NormWebID",
-                                                "NormListID",
-                                                "NormUniqueID",
-                                                "Created",
-                                                "PreviewUrl",
-                                                "PictureThumbnailURL",
-                                                "ServerRedirectedPreviewURL",
-                                                "HitHighlightedSummary",
-                                                "ServerRedirectedEmbedURL",
-                                                "ParentLink",
-                                                "owstaxidmetadataalltagsinfo",
-                                                "Author",
-                                                "AuthorOWSUSER",
-                                                "SPSiteUrl",
-                                                "SiteTitle",
-                                                "SiteId",
-                                                "WebId",
-                                                "UniqueID"
-                                            ];
+      const defaultManagedProperties = [
+                                          "Title",
+                                          "Path",
+                                          "OriginalPath",
+                                          "SiteLogo",
+                                          "contentclass",
+                                          "FileExtension",
+                                          "Filename",
+                                          "ServerRedirectedURL",
+                                          "DefaultEncodingURL",
+                                          "IsDocument",
+                                          "IsContainer",
+                                          "IsListItem",
+                                          "FileType",
+                                          "HtmlFileType",
+                                          "NormSiteID",
+                                          "NormWebID",
+                                          "NormListID",
+                                          "NormUniqueID",
+                                          "Created",
+                                          "PreviewUrl",
+                                          "PictureThumbnailURL",
+                                          "ServerRedirectedPreviewURL",
+                                          "HitHighlightedSummary",
+                                          "ServerRedirectedEmbedURL",
+                                          "ParentLink",
+                                          "owstaxidmetadataalltagsinfo",
+                                          "Author",
+                                          "AuthorOWSUSER",
+                                          "SPSiteUrl",
+                                          "SiteTitle",
+                                          "SiteId",
+                                          "WebId",
+                                          "UniqueID"
+                                        ];
 
         if (this.properties.selectedProperties) {
 
