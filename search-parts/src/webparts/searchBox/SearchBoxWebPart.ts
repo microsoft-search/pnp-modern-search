@@ -78,65 +78,61 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
         queryKeywords = decodeURIComponent(inputValue);
       }
       else if (typeof(inputValue === 'object') && (this.properties.defaultQueryKeywords.reference)) {
-        if (this.properties.defaultQueryKeywords.reference.startsWith('PageContext:UserData'))
-            {
-              queryKeywords = "";
+        if (this.properties.defaultQueryKeywords.reference.startsWith('PageContext:UserData')) {
+          queryKeywords = "";
 
-              const refChunks = this.properties.defaultQueryKeywords.reference.split(':');
-              const fieldName = refChunks.length === 3 ? refChunks[2] : 'userName';
+          const refChunks = this.properties.defaultQueryKeywords.reference.split(':');
+          const fieldName = refChunks.length === 3 ? refChunks[2] : 'userName';
 
-              if (inputValue[fieldName]) {
-                queryKeywords = decodeURIComponent(inputValue[fieldName]);
+          if (inputValue[fieldName]) {
+            queryKeywords = decodeURIComponent(inputValue[fieldName]);
+          }
+        }
+
+        else if (this.properties.defaultQueryKeywords.reference.startsWith('PageContext:SiteData')) {
+          queryKeywords = "";
+
+          const refChunks = this.properties.defaultQueryKeywords.reference.split(':');
+          const fieldName = refChunks.length === 3 ? refChunks[2] : 'siteTitle';
+
+          if (inputValue[fieldName]) {
+            queryKeywords = decodeURIComponent(inputValue[fieldName]);
+          }
+        }
+
+        else if (this.properties.defaultQueryKeywords.reference.startsWith('PageContext:SearchData')) {
+          queryKeywords = "";
+
+          const refChunks = this.properties.defaultQueryKeywords.reference.split(':');
+          const fieldName = refChunks.length === 3 ? refChunks[2] : 'searchQuery';
+
+          if (inputValue[fieldName]) {
+            queryKeywords = decodeURIComponent(inputValue[fieldName]);
+          }
+        }
+
+        else if (this.properties.defaultQueryKeywords.reference.startsWith('PageContext:UrlData')) {
+          queryKeywords = "";
+
+          const refChunks = this.properties.defaultQueryKeywords.reference.split(':');
+          if (refChunks.length >= 3) {
+            const paramType = refChunks[2];
+
+            if (paramType === 'fragment') {
+              queryKeywords = decodeURIComponent(inputValue["fragment"]);
+            }
+            else if (paramType === 'searchQuery' && typeof inputValue["searchQuery"] !== 'undefined') {
+              queryKeywords = decodeURIComponent(inputValue["searchQuery"]);
+            }
+            else if (paramType.startsWith('queryParameters')) {
+              const paramChunks = paramType.split('.');
+              const queryTextParam = paramChunks.length === 2 ? paramChunks[1] : 'q';
+              if (inputValue["queryParameters"][queryTextParam]) {
+                queryKeywords = decodeURIComponent(inputValue["queryParameters"][queryTextParam]);
               }
             }
-
-            else if (this.properties.defaultQueryKeywords.reference.startsWith('PageContext:SiteData'))
-            {
-              queryKeywords = "";
-
-              const refChunks = this.properties.defaultQueryKeywords.reference.split(':');
-              const fieldName = refChunks.length === 3 ? refChunks[2] : 'siteTitle';
-
-              if (inputValue[fieldName]) {
-                queryKeywords = decodeURIComponent(inputValue[fieldName]);
-              }
-            }
-
-            else if (this.properties.defaultQueryKeywords.reference.startsWith('PageContext:SearchData'))
-            {
-              queryKeywords = "";
-
-              const refChunks = this.properties.defaultQueryKeywords.reference.split(':');
-              const fieldName = refChunks.length === 3 ? refChunks[2] : 'searchQuery';
-
-              if (inputValue[fieldName]) {
-                queryKeywords = decodeURIComponent(inputValue[fieldName]);
-              }
-            }
-
-            else if (this.properties.defaultQueryKeywords.reference.startsWith('PageContext:UrlData'))
-            {
-              queryKeywords = "";
-
-                const refChunks = this.properties.defaultQueryKeywords.reference.split(':');
-                if (refChunks.length >= 3) {
-                  const paramType = refChunks[2];
-
-                  if (paramType === 'fragment') {
-                    queryKeywords = decodeURIComponent(inputValue["fragment"]);
-                  }
-                  else if (paramType === 'searchQuery' && typeof inputValue["searchQuery"] !== 'undefined') {
-                    queryKeywords = decodeURIComponent(inputValue["searchQuery"]);
-                  }
-                  else if (paramType.startsWith('queryParameters')) {
-                      const paramChunks = paramType.split('.');
-                      const queryTextParam = paramChunks.length === 2 ? paramChunks[1] : 'q';
-                      if (inputValue["queryParameters"][queryTextParam]) {
-                        queryKeywords = decodeURIComponent(inputValue["queryParameters"][queryTextParam]);
-                      }
-                  }
-                }
-            }
+          }
+        }
       }
 
       // Save this value in a global context
@@ -145,7 +141,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
 
       // Notify subscriber a new value if available
       this.context.dynamicDataSourceManager.notifyPropertyChanged('searchQuery');
-      
+
     }
 
     const enableSuggestions = this.properties.enableQuerySuggestions && this.properties.suggestionProviders.some(sp => sp.providerEnabled);
@@ -177,8 +173,8 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
   public getPropertyDefinitions(): ReadonlyArray<IDynamicDataPropertyDefinition> {
     return [
       {
-          id: SearchComponentType.SearchBoxWebPart,
-          title: strings.DynamicData.SearchQueryPropertyLabel
+        id: SearchComponentType.SearchBoxWebPart,
+        title: strings.DynamicData.SearchQueryPropertyLabel
       },
     ];
   }
@@ -191,11 +187,11 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
 
     switch (propertyId) {
 
-        case 'searchQuery':
-            return this._searchQuery;
+      case 'searchQuery':
+        return this._searchQuery;
 
-        default:
-            throw new Error('Bad property id');
+      default:
+        throw new Error('Bad property id');
     }
   }
 
@@ -282,7 +278,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
         if (paramType === 'fragment') {
           window.history.pushState(undefined, undefined, `#${searchQuery}`);
         }
-        else if(paramType.startsWith('queryParameters')) {
+        else if (paramType.startsWith('queryParameters')) {
           const paramChunks = paramType.split('.');
           const queryTextParam = paramChunks.length === 2 ? paramChunks[1] : 'q';
           const newUrl = UrlHelper.addOrReplaceQueryStringParam(window.location.href, queryTextParam, searchQuery);
@@ -314,11 +310,11 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
    */
   private initSearchService() {
 
-      if (this.properties.enableQuerySuggestions) {
-        if (Environment.type === EnvironmentType.Local ) {
-          this._searchService = new MockSearchService();
-        } else {
-          this._searchService = new SearchService(this.context.pageContext, this.context.spHttpClient);
+    if (this.properties.enableQuerySuggestions) {
+      if (Environment.type === EnvironmentType.Local ) {
+        this._searchService = new MockSearchService();
+      } else {
+        this._searchService = new SearchService(this.context.pageContext, this.context.spHttpClient);
         return "";
       }
     }
@@ -334,8 +330,8 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
 
   private async getAllSuggestionProviders(): Promise<ISuggestionProviderDefinition<any>[]> {
     const [ defaultProviders, customProviders ] = await Promise.all([
-        this.getDefaultSuggestionProviders(),
-        this.getCustomSuggestionProviders()
+      this.getDefaultSuggestionProviders(),
+      this.getCustomSuggestionProviders()
     ]);
 
     //Track if we have any custom suggestion providers
@@ -346,25 +342,25 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
     //Merge all providers together and set defaults
     const savedProviders = this.properties.suggestionProviders && this.properties.suggestionProviders.length > 0 ? this.properties.suggestionProviders : [];
     const providerDefinitions = [ ...defaultProviders, ...customProviders ].map(provider => {
-        const existingSavedProvider = find(savedProviders, sp => sp.providerName === provider.providerName);
+      const existingSavedProvider = find(savedProviders, sp => sp.providerName === provider.providerName);
 
-        provider.providerEnabled = existingSavedProvider && undefined !== existingSavedProvider.providerEnabled
-                                    ? existingSavedProvider.providerEnabled
-                                    : undefined !== provider.providerEnabled
-                                      ? provider.providerEnabled
-                                      : true;
+      provider.providerEnabled = existingSavedProvider && undefined !== existingSavedProvider.providerEnabled
+        ? existingSavedProvider.providerEnabled
+        : undefined !== provider.providerEnabled
+          ? provider.providerEnabled
+          : true;
 
-        return provider;
+      return provider;
     });
     return providerDefinitions;
   }
 
   private async getDefaultSuggestionProviders(): Promise<ISuggestionProviderDefinition<any>[]> {
     return [{
-        providerName: SharePointDefaultSuggestionProvider.ProviderName,
-        providerDisplayName: SharePointDefaultSuggestionProvider.ProviderDisplayName,
-        providerDescription: SharePointDefaultSuggestionProvider.ProviderDescription,
-        providerClass: SharePointDefaultSuggestionProvider
+      providerName: SharePointDefaultSuggestionProvider.ProviderName,
+      providerDisplayName: SharePointDefaultSuggestionProvider.ProviderDisplayName,
+      providerDescription: SharePointDefaultSuggestionProvider.ProviderDescription,
+      providerClass: SharePointDefaultSuggestionProvider
     }];
   }
 
@@ -377,8 +373,8 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
     // Load extensibility additions
     if (extensibilityLibrary && extensibilityLibrary.getCustomSuggestionProviders) {
 
-        // Add custom suggestion providers if any
-        customSuggestionProviders = extensibilityLibrary.getCustomSuggestionProviders();
+      // Add custom suggestion providers if any
+      customSuggestionProviders = extensibilityLibrary.getCustomSuggestionProviders();
     }
 
     return customSuggestionProviders;
@@ -426,8 +422,8 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
   protected async loadPropertyPaneResources(): Promise<void> {
 
     const { PropertyFieldCollectionData, CustomCollectionFieldType } = await import(
-        /* webpackChunkName: 'search-property-pane' */
-        '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData'
+      /* webpackChunkName: 'search-property-pane' */
+      '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData'
     );
     this._propertyFieldCollectionData = PropertyFieldCollectionData;
     this._customCollectionFieldType = CustomCollectionFieldType;
@@ -440,10 +436,10 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
 
     // Sets up search query fields
     let searchQueryConfigFields: IPropertyPaneField<any>[] = [
-        PropertyPaneCheckbox('useDynamicDataSource', {
-            checked: false,
-            text: strings.DynamicData.UseDynamicDataSourceLabel,
-        })
+      PropertyPaneCheckbox('useDynamicDataSource', {
+        checked: false,
+        text: strings.DynamicData.UseDynamicDataSourceLabel,
+      })
     ];
 
     if (this.properties.useDynamicDataSource) {
@@ -463,7 +459,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
     }
 
     return searchQueryConfigFields;
-}
+  }
 
   /**
    * Determines the group fields for the search options inside the property pane
@@ -490,40 +486,42 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
           label: strings.SuggestionProviders.SuggestionProvidersLabel,
           value: this.properties.suggestionProviders,
           fields: [
-              {
-                  id: 'providerEnabled',
-                  title: strings.SuggestionProviders.EnabledPropertyLabel,
-                  type: this._customCollectionFieldType.custom,
-                  onCustomRender: (field, value, onUpdate, item, itemId) => {
-                    return (
-                      React.createElement("div", null,
-                        React.createElement(Toggle, { key: itemId, checked: value, onChange: (evt, checked) => {
-                          onUpdate(field.id, checked);
-                        }})
-                      )
-                    );
-                  }
-              },
-              {
-                  id: 'providerDisplayName',
-                  title: strings.SuggestionProviders.ProviderNamePropertyLabel,
-                  type: this._customCollectionFieldType.custom,
-                  onCustomRender: (field, value) => {
-                    return (
-                      React.createElement("div", { style: { 'fontWeight': 600 } }, value)
-                    );
-                  }
-              },
-              {
-                  id: 'providerDescription',
-                  title: strings.SuggestionProviders.ProviderDescriptionPropertyLabel,
-                  type: this._customCollectionFieldType.custom,
-                  onCustomRender: (field, value) => {
-                    return (
-                      React.createElement("div", null, value)
-                    );
-                  }
+            {
+              id: 'providerEnabled',
+              title: strings.SuggestionProviders.EnabledPropertyLabel,
+              type: this._customCollectionFieldType.custom,
+              onCustomRender: (field, value, onUpdate, item, itemId) => {
+                return (
+                  React.createElement("div", null,
+                    React.createElement(Toggle, {
+                      key: itemId, checked: value, onChange: (evt, checked) => {
+                        onUpdate(field.id, checked);
+                      }
+                    })
+                  )
+                );
               }
+            },
+            {
+              id: 'providerDisplayName',
+              title: strings.SuggestionProviders.ProviderNamePropertyLabel,
+              type: this._customCollectionFieldType.custom,
+              onCustomRender: (field, value) => {
+                return (
+                  React.createElement("div", { style: { 'fontWeight': 600 } }, value)
+                );
+              }
+            },
+            {
+              id: 'providerDescription',
+              title: strings.SuggestionProviders.ProviderDescriptionPropertyLabel,
+              type: this._customCollectionFieldType.custom,
+              onCustomRender: (field, value) => {
+                return (
+                  React.createElement("div", null, value)
+                );
+              }
+            }
           ]
         })
       ]);
@@ -549,7 +547,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
           onGetErrorMessage: this._validatePageUrl.bind(this)
         }),
         PropertyPaneDropdown('openBehavior', {
-          label:  strings.SearchBoxPageOpenBehaviorLabel,
+          label: strings.SearchBoxPageOpenBehaviorLabel,
           options: [
             { key: PageOpenBehavior.Self, text: strings.SearchBoxSameTabOpenBehavior },
             { key: PageOpenBehavior.NewTab, text: strings.SearchBoxNewTabOpenBehavior }
@@ -558,7 +556,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
           selectedKey: this.properties.openBehavior
         }),
         PropertyPaneDropdown('queryPathBehavior', {
-          label:  strings.SearchBoxQueryPathBehaviorLabel,
+          label: strings.SearchBoxQueryPathBehaviorLabel,
           options: [
             { key: QueryPathBehavior.URLFragment, text: strings.SearchBoxUrlFragmentQueryPathBehavior },
             { key: QueryPathBehavior.QueryParameter, text: strings.SearchBoxQueryStringQueryPathBehavior }
@@ -595,10 +593,10 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
    */
   private _bindHashChange() {
     if (this.properties.defaultQueryKeywords.tryGetSource() && this.properties.defaultQueryKeywords.reference.localeCompare('PageContext:UrlData:fragment') === 0) {
-        // Manually subscribe to hash change since the default property doesn't
-        window.addEventListener('hashchange', this.render);
+      // Manually subscribe to hash change since the default property doesn't
+      window.addEventListener('hashchange', this.render);
     } else {
-        window.removeEventListener('hashchange', this.render);
+      window.removeEventListener('hashchange', this.render);
     }
   }
 
@@ -623,8 +621,8 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
    */
   private _handleThemeChangedEvent(args: ThemeChangedEventArgs): void {
     if (!isEqual(this._themeVariant, args.theme)) {
-        this._themeVariant = args.theme;
-        this.render();
+      this._themeVariant = args.theme;
+      this.render();
     }
   }
 }

@@ -624,7 +624,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
     this.properties.sortableFields = Array.isArray(this.properties.sortableFields) ? this.properties.sortableFields : [];
 
-    // Ensure the minmal managed properties are here        
+    // Ensure the minmal managed properties are here
     const defaultManagedProperties = [
       "Title",
       "Path",
@@ -641,6 +641,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
       "FileType",
       "HtmlFileType",
       "NormSiteID",
+      "NormWebID",
       "NormListID",
       "NormUniqueID",
       "Created",
@@ -929,12 +930,33 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
   }
 
   /**
-   * Ensures the result source id value is a valid GUID
+   * Ensures the result source id value is a valid GUID or a string with format: Level|Result source name
    * @param value the result source id
    */
-  private validateSourceId(value: string): string {
+  private _validateSourceId(value: string): string {
     if (value.length > 0) {
       if (!(/^(\{){0,1}[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}(\}){0,1}$/).test(value)) {
+        return this._validateSourceName(value);
+      }
+    }
+
+    return '';
+  }
+
+  private _validateSourceName(value: string): string {
+    const validLevels: string[] = ["SPSiteSubscription", "SPSite", "SPWeb"];
+    if (value.length > 0) {
+      const parts: string[] = value.split("|");
+
+      if (parts.length !== 2) return strings.InvalidResultSourceIdMessage;
+
+      const level: string = parts[0];
+      const resultSourceName: string = parts[1];
+      if (validLevels.find(i => i.toLowerCase() === level.toLowerCase())) {
+        if (!resultSourceName) {
+          return strings.InvalidResultSourceIdMessage;
+        }
+      } else {
         return strings.InvalidResultSourceIdMessage;
       }
     }
@@ -966,7 +988,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
     }
 
     // Register result types inside the template
-    this._templateService.registerResultTypes(this.properties.resultTypes);
+    this._templateService.registerResultTypes(this.properties.resultTypes, this.instanceId);
 
     await this._templateService.optimizeLoadingForTemplate(this._templateContentToDisplay);
   }
@@ -1029,8 +1051,9 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
       }),
       PropertyPaneTextField('resultSourceId', {
         label: strings.ResultSourceIdLabel,
+        description: strings.ResultSourceIdDescription,
         multiline: false,
-        onGetErrorMessage: this.validateSourceId.bind(this),
+        onGetErrorMessage: this._validateSourceId.bind(this),
         deferredValidationTime: 300
       }),
       this._propertyFieldCollectionData('sortList', {
