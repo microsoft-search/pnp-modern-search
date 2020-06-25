@@ -1,4 +1,4 @@
-﻿import * as React from 'react';
+import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import { Version, Text, Environment, EnvironmentType, DisplayMode } from '@microsoft/sp-core-library';
 import {
@@ -205,6 +205,29 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
         let queryKeywords = queryDataSourceValue ? queryDataSourceValue : this.properties.defaultSearchQuery;
 
+        if (typeof (queryKeywords) == "object") {
+            queryKeywords = "";
+            //https://github.com/microsoft-search/pnp-modern-search/issues/325
+            //new issue with search body as object - 2020-06-23
+            const refChunks = this.properties.queryKeywords.reference.split(':');
+            if (refChunks.length >= 3) {
+                const environmentType = refChunks[1];
+                const paramType = refChunks[2];
+
+                if (environmentType == "UrlData" && paramType !== "fragment") {
+                    const paramChunks = paramType.split('.');
+                    const queryTextParam = paramChunks.length === 2 ? paramChunks[1] : 'q';
+                    if (queryDataSourceValue[paramChunks[0]][queryTextParam]) {
+                        queryKeywords = decodeURIComponent(queryDataSourceValue[paramChunks[0]][queryTextParam]);
+                    }
+                }
+                else if (queryDataSourceValue[paramType] && queryDataSourceValue[paramType] !== 'undefined') {
+                    queryKeywords = decodeURIComponent(queryDataSourceValue[paramType]);
+                }
+            }
+        }
+
+
         // Get data from connected sources
         if (this._refinerSourceData && !this._refinerSourceData.isDisposed) {
             const refinerSourceData: IRefinerSourceData = this._refinerSourceData.tryGetValue();
@@ -231,7 +254,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             }
         }
 
-        const currentLocaleId = LocalizationHelper.getLocaleId(this.context.pageContext.cultureInfo.currentCultureName);
+        const currentLocaleId = LocalizationHelper.getLocaleId(this.context.pageContext.cultureInfo.currentUICultureName);
         const queryModifier = this._queryModifierInstance && this._queryModifierInstance.isInitialized ? this._queryModifierInstance.instance : null;
 
         // Configure the provider before the query according to our needs
@@ -564,41 +587,42 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
         this.properties.sortableFields = Array.isArray(this.properties.sortableFields) ? this.properties.sortableFields : [];
 
-        // Ensure the minmal managed properties are here        
-        const defaultManagedProperties =    [
-                                                "Title",
-                                                "Path",
-                                                "OriginalPath",
-                                                "SiteLogo",
-                                                "contentclass",
-                                                "FileExtension",
-                                                "Filename",
-                                                "ServerRedirectedURL",
-                                                "DefaultEncodingURL",
-                                                "IsDocument",
-                                                "IsContainer",
-                                                "IsListItem",
-                                                "FileType",
-                                                "HtmlFileType",
-                                                "NormSiteID",
-                                                "NormListID",
-                                                "NormUniqueID",
-                                                "Created",
-                                                "PreviewUrl",
-                                                "PictureThumbnailURL",
-                                                "ServerRedirectedPreviewURL",
-                                                "HitHighlightedSummary",
-                                                "ServerRedirectedEmbedURL",
-                                                "ParentLink",
-                                                "owstaxidmetadataalltagsinfo",
-                                                "Author",
-                                                "AuthorOWSUSER",
-                                                "SPSiteUrl",
-                                                "SiteTitle",
-                                                "SiteId",
-                                                "WebId",
-                                                "UniqueID"
-                                            ];
+        // Ensure the minmal managed properties are here
+        const defaultManagedProperties = [
+            "Title",
+            "Path",
+            "OriginalPath",
+            "SiteLogo",
+            "contentclass",
+            "FileExtension",
+            "Filename",
+            "ServerRedirectedURL",
+            "DefaultEncodingURL",
+            "IsDocument",
+            "IsContainer",
+            "IsListItem",
+            "FileType",
+            "HtmlFileType",
+            "NormSiteID",
+            "NormWebID",
+            "NormListID",
+            "NormUniqueID",
+            "Created",
+            "PreviewUrl",
+            "PictureThumbnailURL",
+            "ServerRedirectedPreviewURL",
+            "HitHighlightedSummary",
+            "ServerRedirectedEmbedURL",
+            "ParentLink",
+            "owstaxidmetadataalltagsinfo",
+            "Author",
+            "AuthorOWSUSER",
+            "SPSiteUrl",
+            "SiteTitle",
+            "SiteId",
+            "WebId",
+            "UniqueID"
+        ];
 
         if (this.properties.selectedProperties) {
 
@@ -606,7 +630,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
             defaultManagedProperties.map(property => {
 
-                const idx = findIndex(properties, item => property.toLowerCase() === item.toLowerCase());                
+                const idx = findIndex(properties, item => property.toLowerCase() === item.toLowerCase());
                 if (idx === -1) {
                     properties.push(property);
                 }
@@ -616,7 +640,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         } else {
             this.properties.selectedProperties = defaultManagedProperties.join(',');
         }
-        
+
         this.properties.resultTypes = Array.isArray(this.properties.resultTypes) ? this.properties.resultTypes : [];
         this.properties.synonymList = Array.isArray(this.properties.synonymList) ? this.properties.synonymList : [];
         this.properties.searchQueryLanguage = this.properties.searchQueryLanguage ? this.properties.searchQueryLanguage : -1;
@@ -869,17 +893,38 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
     }
 
     /**
-     * Ensures the result source id value is a valid GUID
+     * Ensures the result source id value is a valid GUID or a string with format: Level|Result source name
      * @param value the result source id
      */
-    private validateSourceId(value: string): string {
+    private _validateSourceId(value: string): string {
         if (value.length > 0) {
             if (!(/^(\{){0,1}[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}(\}){0,1}$/).test(value)) {
-                return strings.InvalidResultSourceIdMessage;
+              return this._validateSourceName(value);
             }
         }
 
         return '';
+    }
+
+    private _validateSourceName(value: string): string {
+      const validLevels: string[] = ["SPSiteSubscription", "SPSite", "SPWeb"];
+      if (value.length > 0) {
+        const parts: string[] = value.split("|");
+
+        if (parts.length !== 2) return strings.InvalidResultSourceIdMessage;
+
+        const level: string = parts[0];
+        const resultSourceName: string = parts[1];
+        if (validLevels.find(i => i.toLowerCase() === level.toLowerCase())) {
+          if (!resultSourceName) {
+            return strings.InvalidResultSourceIdMessage;
+          }
+        } else {
+            return strings.InvalidResultSourceIdMessage;
+        }
+      }
+
+      return '';
     }
 
     /**
@@ -906,7 +951,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         }
 
         // Register result types inside the template
-        this._templateService.registerResultTypes(this.properties.resultTypes);
+        this._templateService.registerResultTypes(this.properties.resultTypes, this.instanceId);
 
         await this._templateService.optimizeLoadingForTemplate(this._templateContentToDisplay);
     }
@@ -969,8 +1014,9 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             }),
             PropertyPaneTextField('resultSourceId', {
                 label: strings.ResultSourceIdLabel,
+                description: strings.ResultSourceIdDescription,
                 multiline: false,
-                onGetErrorMessage: this.validateSourceId.bind(this),
+                onGetErrorMessage: this._validateSourceId.bind(this),
                 deferredValidationTime: 300
             }),
             this._propertyFieldCollectionData('sortList', {

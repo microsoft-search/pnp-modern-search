@@ -194,7 +194,7 @@ abstract class BaseTemplateService {
      */
     private registerTemplateServices() {
 
-        //https://support.microsoft.com/en-us/office/file-types-supported-for-previewing-files-in-onedrive-sharepoint-and-teams-e054cd0f-8ef2-4ccb-937e-26e37419c5e4 
+        //https://support.microsoft.com/en-us/office/file-types-supported-for-previewing-files-in-onedrive-sharepoint-and-teams-e054cd0f-8ef2-4ccb-937e-26e37419c5e4
         const validPreviewExt = ["DOC", "DOCM", "DOCX", "DOTM", "DOTX", "POT", "POTM", "POTX", "PPS", "PPSM", "PPSX", "PPT", "PPTM", "PPTX", "VSD", "VSDX", "XLS", "XLSB", "XLSX", "3G2", "3GP", "3MF", "AI", "ARW", "ASF", "BAS", "BMP", "CR2", "CRW", "CSV", "CUR", "DCM", "DNG", "DWG", "EML", "EPUB", "ERF", "GIF", "GLB", "GLTF", "HCP", "HTM", "HTML", "ICO", "ICON", "JPG", "KEY", "LOG", "M", "M2TS", "M4V", "MARKDOWN", "MD", "MEF", "MOV", "MOVIE", "MP4", "MP4V", "MRW", "MSG", "MTS", "NEF", "NRW", "ODP", "ODS", "ODT", "ORF", "PAGES", "PANO", "PDF", "PEF", "PICT", "PLY", "PNG", "PSB", "PSD", "RTF", "SKETCH", "STL", "SVG", "TIF", "TIFF", "TS", "WMV", "XBM", "XCF", "XD", "XPM", "ZIP", "GITCONFIG", "ABAP", "ADA", "ADP", "AHK", "AS", "AS3", "ASC", "ASCX", "ASM", "ASP", "AWK", "BASH", "BASH_LOGIN", "BASH_LOGOUT", "BASH_PROFILE", "BASHRC", "BAT", "BIB", "BSH", "BUILD", "BUILDER", "C", "CAPFILE", "CBL", "CC", "CFC", "CFM", "CFML", "CL", "CLJ", "CLS", "CMAKE", "CMD", "COFFEE", "CPP", "CPT", "CPY", "CS", "CSHTML", "CSON", "CSPROJ", "CSS", "CTP", "CXX", "D", "DDL", "DI.DIF", "DIFF", "DISCO", "DML", "DTD", "DTML", "EL", "EMAKEFILE", "ERB", "ERL", "F", "F90", "F95", "FS", "FSI", "FSSCRIPT", "FSX", "GEMFILE", "GEMSPEC", "GO", "GROOVY", "GVY", "H", "H++", "HAML", "HANDLEBARS", "HH", "HPP", "HRL", "HS", "HTC", "HXX", "IDL", "IIM", "INC", "INF", "INI", "INL", "IPP", "IRBRC", "JADE", "JAV", "JAVA", "JS", "JSON", "JSP", "JSX", "L", "LESS", "LHS", "LISP", "LST", "LTX", "LUA", "MAKE", "MARKDN", "MDOWN", "MKDN", "ML", "MLI", "MLL", "MLY", "MM", "MUD", "NFO", "OPML", "OSASCRIPT", "OUT", "P", "PAS", "PATCH", "PHP", "PHP2", "PHP3", "PHP4", "PHP5", "PL", "PLIST", "PM", "POD", "PP", "PROFILE", "PROPERTIES", "PS1", "PT", "PY", "PYW", "R", "RAKE", "RB", "RBX", "RC", "RE", "REG", "REST", "RESW", "RESX", "RHTML", "RJS", "RPROFILE", "RPY", "RSS", "RST", "RXML", "S", "SASS", "SCALA", "SCM", "SCONSCRIPT", "SCONSTRUCT", "SCRIPT", "SCSS", "SGML", "SH", "SHTML", "SML", "SQL", "STY", "TCL", "TEX", "TEXT", "TLD", "TLI", "TMPL", "TPL", "TXT", "VB", "VI", "VIM", "WSDL", "XAML", "XHTML", "XOML", "XML", "XSD", "XSL", "XSLT", "YAML", "YAWS", "YML", "ZS", "MP3", "FBX", "HEIC", "JPEG", "HBS", "TEXTILE", "C++"];
 
         // Return the URL of the search result item
@@ -217,7 +217,7 @@ abstract class BaseTemplateService {
                         url = `${this._ctx.pageContext.site.absoluteUrl}/_layouts/15/getpreview.ashx?guidSite=${item.SiteId}&guidWeb=${item.WebId}&guidFile=${item.UniqueID.replace(/\{|\}/g, '')}&resolution=3`;
                     }
                 }
-                else if (item.FileType && item.FileType.toLowerCase() === "url" && item.ShortcutUrl){
+                else if (item.FileType && item.FileType.toLowerCase() === "url" && item.ShortcutUrl) {
                     url = item.ShortcutUrl;
                 }
                 else if (item.OriginalPath) {
@@ -278,11 +278,12 @@ abstract class BaseTemplateService {
         Handlebars.registerHelper("getPreviewSrc", (item: ISearchResult) => {
             let previewSrc = "";
             const nonSupportedGraphThumbnails = ["xls"]; //let's add more as we proceed
+            const validImageExt = ["gif", "png", "tif", "tiff", "heic", "bmp", "svg", "jpg", "jpeg"];
 
             if (item) {
                 if (!isEmpty(item.SiteLogo)) previewSrc = item.SiteLogo;
-                else if (!isEmpty(item.IsDocument) && item.IsDocument == "false") previewSrc = "";                
-                else if ((!isEmpty(item.FileType) && nonSupportedGraphThumbnails.indexOf(item.FileType) === -1) && !isEmpty(item.NormSiteID) && !isEmpty(item.NormListID) && !isEmpty(item.NormUniqueID)) previewSrc = `${this._ctx.pageContext.site.absoluteUrl}/_api/v2.0/sites/${item.NormSiteID}/lists/${item.NormListID}/items/${item.NormUniqueID}/driveItem/thumbnails/0/large/content?preferNoRedirect=true`;
+                else if (!isEmpty(item.IsDocument) && item.IsDocument == "false" && validImageExt.indexOf(item.FileType) === -1) previewSrc = "";
+                else if ((!isEmpty(item.FileType) && nonSupportedGraphThumbnails.indexOf(item.FileType) === -1) && !isEmpty(item.NormSiteID) && !isEmpty(item.NormWebID) && !isEmpty(item.NormListID) && !isEmpty(item.NormUniqueID)) previewSrc = `${this._ctx.pageContext.site.absoluteUrl}/_api/v2.0/sites/${item.NormSiteID},${item.NormWebID}/lists/${item.NormListID}/items/${item.NormUniqueID}/driveItem/thumbnails/0/large/content?preferNoRedirect=true`;
                 else if (!isEmpty(item.PreviewUrl)) previewSrc = item.PreviewUrl;
                 else if (!isEmpty(item.PictureThumbnailURL)) previewSrc = item.PictureThumbnailURL;
                 else if (!isEmpty(item.ServerRedirectedPreviewURL)) previewSrc = item.ServerRedirectedPreviewURL;
@@ -386,6 +387,15 @@ abstract class BaseTemplateService {
             return accum;
         });
 
+        Handlebars.registerPartial("resultTypes-default", "{{> @partial-block }}");
+
+        const self = this;
+        const hbs = Handlebars;
+        Handlebars.registerHelper('resultTypeResolve', (instanceId:string)=>{
+          return hbs.partials[`resultTypes-${instanceId}`] || "resultTypes-default";
+        });
+        Handlebars.registerPartial('resultTypes', '{{> (resultTypeResolve @root.instanceId)}}');
+
         Handlebars.registerHelper("regex", (regx: string, str: string) => {
             let rx = new RegExp(regx);
             let i = rx.exec(str);
@@ -414,7 +424,7 @@ abstract class BaseTemplateService {
             wc.componentClass.prototype._ctx = this._ctx;
         });
 
-        // Register slider component as partial 
+        // Register slider component as partial
         let sliderTemplate = Handlebars.compile(`<pnp-slider-component data-items="{{items}}" data-options="{{options}}" data-template="{{@partial-block}}"></pnp-slider-component>`);
         Handlebars.registerPartial('slider', sliderTemplate);
 
@@ -654,20 +664,20 @@ abstract class BaseTemplateService {
         return processedProps as T;
     }
 
+    private resultTypesTemplates : { [instanceId : string] : HandlebarsTemplateDelegate<any>} = {};
+
     /**
      * Builds and registers the result types as Handlebars partials
      * Based on https://github.com/helpers/handlebars-helpers/ operators
      * @param resultTypes the configured result types from the property pane
+     * @param instanceId id of the the webpart
      */
-    public async registerResultTypes(resultTypes: ISearchResultType[]): Promise<void> {
-
+    public async registerResultTypes(resultTypes: ISearchResultType[], instanceId:string): Promise<void> {
         if (resultTypes.length > 0) {
-            let content = await this._buildCondition(resultTypes, resultTypes[0], 0);
-            let template = Handlebars.compile(content);
-            Handlebars.registerPartial('resultTypes', template);
-        } else {
-            Handlebars.registerPartial('resultTypes', '{{> @partial-block }}');
-        }
+          let content = await this._buildCondition(resultTypes, resultTypes[0], 0);
+          let template = Handlebars.compile(content);
+          Handlebars.registerPartial(`resultTypes-${instanceId}`, template);
+      }
     }
 
 

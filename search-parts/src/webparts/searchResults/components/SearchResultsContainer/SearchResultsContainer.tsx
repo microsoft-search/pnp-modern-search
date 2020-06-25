@@ -719,7 +719,8 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 if (existingResults.length > 0) {
 
                     existingResults[0].properties.map((res) => {
-                        result[res.propertyName] = res.termLabels.join(', ');
+                        result[`${res.propertyName}TaxId`] = result[res.propertyName]; // Original value
+                        result[res.propertyName] = res.termLabels.join(', '); // Translated value
                     });
                 }
 
