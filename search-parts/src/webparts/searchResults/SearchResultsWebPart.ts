@@ -624,42 +624,42 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
     this.properties.sortableFields = Array.isArray(this.properties.sortableFields) ? this.properties.sortableFields : [];
 
-    // Ensure the minmal managed properties are here
-    const defaultManagedProperties = [
-      "Title",
-      "Path",
-      "OriginalPath",
-      "SiteLogo",
-      "contentclass",
-      "FileExtension",
-      "Filename",
-      "ServerRedirectedURL",
-      "DefaultEncodingURL",
-      "IsDocument",
-      "IsContainer",
-      "IsListItem",
-      "FileType",
-      "HtmlFileType",
-      "NormSiteID",
-      "NormWebID",
-      "NormListID",
-      "NormUniqueID",
-      "Created",
-      "PreviewUrl",
-      "PictureThumbnailURL",
-      "ServerRedirectedPreviewURL",
-      "HitHighlightedSummary",
-      "ServerRedirectedEmbedURL",
-      "ParentLink",
-      "owstaxidmetadataalltagsinfo",
-      "Author",
-      "AuthorOWSUSER",
-      "SPSiteUrl",
-      "SiteTitle",
-      "SiteId",
-      "WebId",
-      "UniqueID"
-    ];
+        // Ensure the minmal managed properties are here
+        const defaultManagedProperties = [
+            "Title",
+            "Path",
+            "OriginalPath",
+            "SiteLogo",
+            "contentclass",
+            "FileExtension",
+            "Filename",
+            "ServerRedirectedURL",
+            "DefaultEncodingURL",
+            "IsDocument",
+            "IsContainer",
+            "IsListItem",
+            "FileType",
+            "HtmlFileType",
+            "NormSiteID",
+            "NormWebID",
+            "NormListID",
+            "NormUniqueID",
+            "Created",
+            "PreviewUrl",
+            "PictureThumbnailURL",
+            "ServerRedirectedPreviewURL",
+            "HitHighlightedSummary",
+            "ServerRedirectedEmbedURL",
+            "ParentLink",
+            "owstaxidmetadataalltagsinfo",
+            "Author",
+            "AuthorOWSUSER",
+            "SPSiteUrl",
+            "SiteTitle",
+            "SiteId",
+            "WebId",
+            "UniqueID"
+        ];
 
     if (this.properties.selectedProperties) {
 
@@ -667,23 +667,23 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
       defaultManagedProperties.map(property => {
 
-        const idx = findIndex(properties, item => property.toLowerCase() === item.toLowerCase());
-        if (idx === -1) {
-          properties.push(property);
+                const idx = findIndex(properties, item => property.toLowerCase() === item.toLowerCase());
+                if (idx === -1) {
+                    properties.push(property);
+                }
+            });
+
+            this.properties.selectedProperties = properties.join(',');
+        } else {
+            this.properties.selectedProperties = defaultManagedProperties.join(',');
         }
-      });
 
-      this.properties.selectedProperties = properties.join(',');
-    } else {
-      this.properties.selectedProperties = defaultManagedProperties.join(',');
-    }
-
-    this.properties.resultTypes = Array.isArray(this.properties.resultTypes) ? this.properties.resultTypes : [];
-    this.properties.synonymList = Array.isArray(this.properties.synonymList) ? this.properties.synonymList : [];
-    this.properties.searchQueryLanguage = this.properties.searchQueryLanguage ? this.properties.searchQueryLanguage : -1;
-    this.properties.templateParameters = this.properties.templateParameters ? this.properties.templateParameters : {};
-    this.properties.queryModifiers = !isEmpty(this.properties.queryModifiers) ? this.properties.queryModifiers : [];
-    this.properties.refinementFilters = this.properties.refinementFilters ? this.properties.refinementFilters : "";
+        this.properties.resultTypes = Array.isArray(this.properties.resultTypes) ? this.properties.resultTypes : [];
+        this.properties.synonymList = Array.isArray(this.properties.synonymList) ? this.properties.synonymList : [];
+        this.properties.searchQueryLanguage = this.properties.searchQueryLanguage ? this.properties.searchQueryLanguage : -1;
+        this.properties.templateParameters = this.properties.templateParameters ? this.properties.templateParameters : {};
+        this.properties.queryModifiers = !isEmpty(this.properties.queryModifiers) ? this.properties.queryModifiers : [];
+        this.properties.refinementFilters = this.properties.refinementFilters ? this.properties.refinementFilters : "";
 
     if (!this.properties.paging) {
 
@@ -929,40 +929,40 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
     return '';
   }
 
-  /**
-   * Ensures the result source id value is a valid GUID or a string with format: Level|Result source name
-   * @param value the result source id
-   */
-  private _validateSourceId(value: string): string {
-    if (value.length > 0) {
-      if (!(/^(\{){0,1}[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}(\}){0,1}$/).test(value)) {
-        return this._validateSourceName(value);
-      }
-    }
-
-    return '';
-  }
-
-  private _validateSourceName(value: string): string {
-    const validLevels: string[] = ["SPSiteSubscription", "SPSite", "SPWeb"];
-    if (value.length > 0) {
-      const parts: string[] = value.split("|");
-
-      if (parts.length !== 2) return strings.InvalidResultSourceIdMessage;
-
-      const level: string = parts[0];
-      const resultSourceName: string = parts[1];
-      if (validLevels.find(i => i.toLowerCase() === level.toLowerCase())) {
-        if (!resultSourceName) {
-          return strings.InvalidResultSourceIdMessage;
+    /**
+     * Ensures the result source id value is a valid GUID or a string with format: Level|Result source name
+     * @param value the result source id
+     */
+    private _validateSourceId(value: string): string {
+        if (value.length > 0) {
+            if (!(/^(\{){0,1}[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}(\}){0,1}$/).test(value)) {
+              return this._validateSourceName(value);
+            }
         }
-      } else {
-        return strings.InvalidResultSourceIdMessage;
-      }
+
+        return '';
     }
 
-    return '';
-  }
+    private _validateSourceName(value: string): string {
+      const validLevels: string[] = ["SPSiteSubscription", "SPSite", "SPWeb"];
+      if (value.length > 0) {
+        const parts: string[] = value.split("|");
+
+        if (parts.length !== 2) return strings.InvalidResultSourceIdMessage;
+
+        const level: string = parts[0];
+        const resultSourceName: string = parts[1];
+        if (validLevels.find(i => i.toLowerCase() === level.toLowerCase())) {
+          if (!resultSourceName) {
+            return strings.InvalidResultSourceIdMessage;
+          }
+        } else {
+            return strings.InvalidResultSourceIdMessage;
+        }
+      }
+
+      return '';
+    }
 
   /**
    * Init the template according to the property pane current configuration
@@ -987,8 +987,8 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
       this._templatePropertyPaneOptions = this._templateService.getTemplateParameters(this.properties.selectedLayout, this.properties, this._onUpdateAvailableProperties, this._availableManagedProperties);
     }
 
-    // Register result types inside the template
-    this._templateService.registerResultTypes(this.properties.resultTypes, this.instanceId);
+        // Register result types inside the template
+        this._templateService.registerResultTypes(this.properties.resultTypes, this.instanceId);
 
     await this._templateService.optimizeLoadingForTemplate(this._templateContentToDisplay);
   }
@@ -1038,39 +1038,39 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
       useSearchVerticals = false;
     }
 
-    // Sets up search settings fields
-    const searchSettingsFields: IPropertyPaneField<any>[] = [
-      PropertyPaneTextField('queryTemplate', {
-        label: strings.QueryTemplateFieldLabel,
-        value: this.properties.queryTemplate,
-        disabled: this.properties.searchVerticalDataSourceReference ? true : false,
-        multiline: true,
-        resizable: true,
-        placeholder: strings.SearchQueryPlaceHolderText,
-        deferredValidationTime: 1000
-      }),
-      PropertyPaneTextField('resultSourceId', {
-        label: strings.ResultSourceIdLabel,
-        description: strings.ResultSourceIdDescription,
-        multiline: false,
-        onGetErrorMessage: this._validateSourceId.bind(this),
-        deferredValidationTime: 300
-      }),
-      this._propertyFieldCollectionData('sortList', {
-        manageBtnLabel: strings.Sort.EditSortLabel,
-        key: 'sortList',
-        enableSorting: true,
-        panelHeader: strings.Sort.EditSortLabel,
-        panelDescription: strings.Sort.SortListDescription,
-        label: strings.Sort.SortPropertyPaneFieldLabel,
-        value: this.properties.sortList,
-        fields: [
-          {
-            id: 'sortField',
-            title: "Field name",
-            type: this._customCollectionFieldType.custom,
-            required: true,
-            onCustomRender: (field, value, onUpdate, item, itemId, onCustomFieldValidation) => {
+        // Sets up search settings fields
+        const searchSettingsFields: IPropertyPaneField<any>[] = [
+            PropertyPaneTextField('queryTemplate', {
+                label: strings.QueryTemplateFieldLabel,
+                value: this.properties.queryTemplate,
+                disabled: this.properties.searchVerticalDataSourceReference ? true : false,
+                multiline: true,
+                resizable: true,
+                placeholder: strings.SearchQueryPlaceHolderText,
+                deferredValidationTime: 1000
+            }),
+            PropertyPaneTextField('resultSourceId', {
+                label: strings.ResultSourceIdLabel,
+                description: strings.ResultSourceIdDescription,
+                multiline: false,
+                onGetErrorMessage: this._validateSourceId.bind(this),
+                deferredValidationTime: 300
+            }),
+            this._propertyFieldCollectionData('sortList', {
+                manageBtnLabel: strings.Sort.EditSortLabel,
+                key: 'sortList',
+                enableSorting: true,
+                panelHeader: strings.Sort.EditSortLabel,
+                panelDescription: strings.Sort.SortListDescription,
+                label: strings.Sort.SortPropertyPaneFieldLabel,
+                value: this.properties.sortList,
+                fields: [
+                    {
+                        id: 'sortField',
+                        title: "Field name",
+                        type: this._customCollectionFieldType.custom,
+                        required: true,
+                        onCustomRender: (field, value, onUpdate, item, itemId, onCustomFieldValidation) => {
 
               // Need to specify a React key to avoid item duplication when adding a new row
               return React.createElement("div", { key: `${field.id}-${itemId}` },
