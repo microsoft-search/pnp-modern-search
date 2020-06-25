@@ -69,16 +69,83 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
     }
 
     let inputValue = this.properties.defaultQueryKeywords.tryGetValue();
+    let queryKeywords = "";
 
-    if (inputValue && typeof(inputValue) === 'string') {
+    //https://github.com/microsoft-search/pnp-modern-search/issues/325
+    // kachihro - 2020-06-23
+    if (inputValue) {
+      if (typeof(inputValue) === 'string') {
+        queryKeywords = decodeURIComponent(inputValue);
+      }
+      else if (typeof(inputValue === 'object') && (this.properties.defaultQueryKeywords.reference)) {
+        if (this.properties.defaultQueryKeywords.reference.startsWith('PageContext:UserData'))
+            {
+              queryKeywords = "";
 
-      // Notify subscriber a new value if available
-      this._searchQuery = decodeURIComponent(inputValue);
+              const refChunks = this.properties.defaultQueryKeywords.reference.split(':');
+              const fieldName = refChunks.length === 3 ? refChunks[2] : 'userName';
+
+              if (inputValue[fieldName]) {
+                queryKeywords = inputValue[fieldName];
+              }
+            }
+
+            else if (this.properties.defaultQueryKeywords.reference.startsWith('PageContext:SiteData'))
+            {
+              queryKeywords = "";
+
+              const refChunks = this.properties.defaultQueryKeywords.reference.split(':');
+              const fieldName = refChunks.length === 3 ? refChunks[2] : 'siteTitle';
+
+              if (inputValue[fieldName]) {
+                queryKeywords = inputValue[fieldName];
+              }
+            }
+
+            else if (this.properties.defaultQueryKeywords.reference.startsWith('PageContext:SearchData'))
+            {
+              queryKeywords = "";
+
+              const refChunks = this.properties.defaultQueryKeywords.reference.split(':');
+              const fieldName = refChunks.length === 3 ? refChunks[2] : 'searchQuery';
+
+              if (inputValue[fieldName]) {
+                queryKeywords = inputValue[fieldName];
+              }
+            }
+
+            else if (this.properties.defaultQueryKeywords.reference.startsWith('PageContext:UrlData'))
+            {
+              queryKeywords = "";
+
+                const refChunks = this.properties.defaultQueryKeywords.reference.split(':');
+                if (refChunks.length >= 3) {
+                  const paramType = refChunks[2];
+
+                  if (paramType === 'fragment') {
+                    queryKeywords = decodeURIComponent(inputValue["fragment"]);
+                  }
+                  else if (paramType === 'searchQuery' && typeof inputValue["searchQuery"] !== 'undefined') {
+                    queryKeywords = decodeURIComponent(inputValue["searchQuery"]);
+                  }
+                  else if (paramType.startsWith('queryParameters')) {
+                      const paramChunks = paramType.split('.');
+                      const queryTextParam = paramChunks.length === 2 ? paramChunks[1] : 'q';
+                      if (inputValue["queryParameters"][queryTextParam]) {
+                        queryKeywords = decodeURIComponent(inputValue["queryParameters"][queryTextParam]);
+                      }
+                  }
+                }
+            }
+      }
 
       // Save this value in a global context
+      this._searchQuery = queryKeywords;
       GlobalSettings.setValue('searchBoxQuery', this._searchQuery);
 
+      // Notify subscriber a new value if available
       this.context.dynamicDataSourceManager.notifyPropertyChanged('searchQuery');
+      
     }
 
     const enableSuggestions = this.properties.enableQuerySuggestions && this.properties.suggestionProviders.some(sp => sp.providerEnabled);
