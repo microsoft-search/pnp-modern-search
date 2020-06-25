@@ -211,20 +211,18 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             //new issue with search body as object - 2020-06-23
             const refChunks = this.properties.queryKeywords.reference.split(':');
             if (refChunks.length >= 3) {
+                const environmentType = refChunks[1];
                 const paramType = refChunks[2];
 
-                if (paramType === 'fragment') {
-                    queryKeywords = decodeURIComponent(queryDataSourceValue["fragment"]);
-                }
-                else if (paramType === 'searchQuery' && typeof queryDataSourceValue["searchQuery"] !== 'undefined') {
-                    queryKeywords = decodeURIComponent(queryDataSourceValue["searchQuery"]);
-                }
-                else if (paramType.startsWith('queryParameters')) {
+                if (environmentType == "UrlData" && paramType !== "fragment") {
                     const paramChunks = paramType.split('.');
                     const queryTextParam = paramChunks.length === 2 ? paramChunks[1] : 'q';
-                    if (queryDataSourceValue["queryParameters"][queryTextParam]) {
-                        queryKeywords = decodeURIComponent(queryDataSourceValue["queryParameters"][queryTextParam]);
+                    if (queryDataSourceValue[paramChunks[0]][queryTextParam]) {
+                        queryKeywords = decodeURIComponent(queryDataSourceValue[paramChunks[0]][queryTextParam]);
                     }
+                }
+                else if (queryDataSourceValue[paramType] && queryDataSourceValue[paramType] !== 'undefined') {
+                    queryKeywords = decodeURIComponent(queryDataSourceValue[paramType]);
                 }
             }
         }

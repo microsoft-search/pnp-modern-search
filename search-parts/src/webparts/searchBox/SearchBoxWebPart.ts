@@ -80,20 +80,18 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
                 //new issue with search body as object - 2020-06-23
                 const refChunks = this.properties.defaultQueryKeywords.reference.split(':');
                 if (refChunks.length >= 3) {
+                    const environmentType = refChunks[1];
                     const paramType = refChunks[2];
 
-                    if (paramType === 'fragment') {
-                        this._searchQuery = decodeURIComponent(inputValue["fragment"]);
-                    }
-                    else if (paramType === 'searchQuery' && typeof inputValue["searchQuery"] !== 'undefined') {
-                        this._searchQuery = decodeURIComponent(inputValue["searchQuery"]);
-                    }
-                    else if (paramType.startsWith('queryParameters')) {
+                    if (environmentType == "UrlData" && paramType !== "fragment") {
                         const paramChunks = paramType.split('.');
                         const queryTextParam = paramChunks.length === 2 ? paramChunks[1] : 'q';
-                        if (inputValue["queryParameters"][queryTextParam]) {
-                            this._searchQuery = decodeURIComponent(inputValue["queryParameters"][queryTextParam]);
+                        if (inputValue[paramChunks[0]][queryTextParam]) {
+                            this._searchQuery = decodeURIComponent(inputValue[paramChunks[0]][queryTextParam]);
                         }
+                    }
+                    else if (inputValue[paramType] && inputValue[paramType] !== 'undefined') {
+                        this._searchQuery = decodeURIComponent(inputValue[paramType]);
                     }
                 }
             }
