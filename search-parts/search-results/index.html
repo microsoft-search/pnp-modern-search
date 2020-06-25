@@ -1080,6 +1080,7 @@
 <p>The search results Web Part supports automatic translation for taxonomy based filters and result metadata according to current site language. To get it work, you must map a new refinable managed property associated with <em>ows_taxId_<your_column_name></em> crawled property and turn on the <em>'Localization Enabled'</em> toggle in the search results property pane:</p>
 <p><img alt="Managed Property" src="../../images/managed-property.png" /></p>
 <p><img alt="Enable Localization" src="../../images/enable_localization.png" /></p>
+<p>When you enable this flag, you can still use the original property value for whatever reason by using the following property format in your Handlebars template: <code>&lt;propertyName&gt; + TaxId</code> (ex: <code>owstaxidmetadataalltagsinfo</code> will contain the translated terms and <code>owstaxidmetadataalltagsinfoTaxId</code>) will contain the original value of the managed property).</p>
 <hr />
 <h4 id="out-of-the-box-query-variables">Out of the box query variables<a class="headerlink" href="#out-of-the-box-query-variables" title="Permanent link">&para;</a></h4>
 <p>The following out of the box <a href="https://docs.microsoft.com/en-us/sharepoint/technical-reference/query-variables">query variables</a> are supported/tested:</p>
