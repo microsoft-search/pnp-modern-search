@@ -7,8 +7,10 @@ assignees: ''
 
 ---
 
+## Check existing issues before logging new ones!
+
 **Version used**
-Ex: 3.7
+Ex: 3.13
 
 **Describe the bug**
 A clear and concise description of what the bug is. Keep questions and bugs related to the web parts. If the issue relates to KQL or question around crawled and managed properties please use [Microsoft TechCommunity](https://techcommunity.microsoft.com/t5/sharepoint-developer/bd-p/SharePointDev). Which means, if you experience the same behavior in classic web parts, then it's not an issue with PnP Modern Search 😉
