@@ -1,3 +1,5 @@
+import { PageOpenBehavior } from "../helpers/UrlHelper";
+
 export interface ISearchVertical {
     /**
      * Unique key for the vertical
@@ -28,4 +30,19 @@ export interface ISearchVertical {
      * The result count for this vertical
      */
     count?: number;
+
+    /**
+     * Specifes if the vertical is a link
+     */
+    isLink: boolean;
+
+    /**
+     * The link URL
+     */
+    linkUrl: string;
+
+    /**
+     * The link open behavior
+     */
+    openBehavior: PageOpenBehavior;
 }

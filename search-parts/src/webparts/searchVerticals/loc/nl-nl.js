@@ -5,17 +5,24 @@ define([], function() {
     PlaceHolderConfigureBtnLabel: "Configureren",
     PlaceHolderIconText: "Zoek Verticals Webonderdeel",
     PlaceHolderDescription: "Dit onderdeel maakt het mogelijk om te zoeken in scopes (verticals)",
+    SameTabOpenBehavior: "Gebruik huidige tab",
+    NewTabOpenBehavior: "Open in nieuwe tab",
+    PageOpenBehaviorLabel: "Gedrag van openen",
     PropertyPane: {
       Verticals: {
         PropertyLabel: "Zoek verticals",
         PanelHeader: "Configureer zoek verticals",
         PanelDescription: "Voeg een nieuwe vertical toe om te zoeken in een voorafgedefineerde scope.",
         ButtonLabel: "Configureren",
+        FieldValidationErrorMessage: "dit veld is verplicht",
         Fields: {
           TabName: "Tab naam",
           QueryTemplate: "zoekopdracht template",
           ResultSource: "Id van de resultatenbron",
-          IconName: "Office UI Fabric icoon naam"
+          IconName: "Office UI Fabric icoon naam",
+          IsLink: "Is een link",
+          LinkUrl: "Koppeling URL",
+          OpenBehavior: "Openingsgedrag"
         }
       },
       ShowCounts: {

@@ -1,4 +1,4 @@
-import * as React from                                                 'react';
+import * as React from 'react';
 import { IPreviewContainerProps, PreviewType } from './IPreviewContainerProps';
 import IPreviewContainerState from './IPreviewContainerState';
 import { Callout } from 'office-ui-fabric-react/lib/components/Callout';
@@ -20,9 +20,9 @@ export class VideoPlayer extends React.Component<IVideoPlayerProps, {}> {
     private _videoNode: any;
 
     public render() {
-        return  <video ref={ node => this._videoNode = node } className={`video-js vjs-big-play-centered`}>
-                    <source src={this.props.videoUrl} type={`video/${this.props.fileExtension}`}/>
-                </video>;
+        return <video ref={node => this._videoNode = node} className={`video-js vjs-big-play-centered`}>
+            <source src={this.props.videoUrl} type={`video/${this.props.fileExtension}`} />
+        </video>;
     }
 
     public componentWillUnmount() {
@@ -65,6 +65,16 @@ export default class PreviewContainer extends React.Component<IPreviewContainerP
         };
 
         this._onCloseCallout = this._onCloseCallout.bind(this);
+        this._handleErrorOnLoad = this._handleErrorOnLoad.bind(this);
+    }
+
+    public _handleErrorOnLoad(element: any) {
+        if (element.target && element.target.contentDocument
+            && element.target.contentDocument.body.innerText.indexOf("error") !== -1
+            && element.target.contentDocument.body.innerText.length < 500) {
+            this.setState({ showCallout: false });
+        }
+        this.setState({ isLoading: false });
     }
 
     public render(): React.ReactElement<IPreviewContainerProps> {
@@ -74,47 +84,47 @@ export default class PreviewContainer extends React.Component<IPreviewContainerP
         switch (this.props.previewType) {
             case PreviewType.Document:
                 renderPreview = <div className={`${templateStyles.iframeContainer} ${this.state.isLoading ? templateStyles.hide : ''}`}>
-                                    <iframe 
-                                        src={this.props.elementUrl} frameBorder="0"
-                                        allowFullScreen
-                                        allowTransparency
-                                        onLoad={() => { this.setState({ isLoading: false}); }}
-                                    >
-                                    </iframe>
-                                </div>;
-            break;
+                    <iframe
+                        src={this.props.elementUrl} frameBorder="0"
+                        allowFullScreen
+                        allowTransparency
+                        onLoad={(event) => { this._handleErrorOnLoad(event); }}
+                    >
+                    </iframe>
+                </div>;
+                break;
 
             case PreviewType.Video:
-                renderPreview = <VideoPlayer fileExtension={this.props.videoProps.fileExtension} thumbnailSrc={this.props.previewImageUrl} videoUrl={this.props.elementUrl} isVideoPaused={this.state.isVideoPaused}/>;
+                renderPreview = <VideoPlayer fileExtension={this.props.videoProps.fileExtension} thumbnailSrc={this.props.previewImageUrl} videoUrl={this.props.elementUrl} isVideoPaused={this.state.isVideoPaused} />;
                 break;
 
             default:
                 break;
         }
 
-        let renderLoading: JSX.Element = this.state.isLoading ? <Overlay isDarkThemed={false} className={templateStyles.overlay}><Spinner size={ SpinnerSize.large }/></Overlay>: null;
+        let renderLoading: JSX.Element = this.state.isLoading ? <Overlay isDarkThemed={false} className={templateStyles.overlay}><Spinner size={SpinnerSize.large} /></Overlay> : null;
         let backgroundImage = this.state.isLoading ? `url('${this.props.previewImageUrl}')` : 'none';
- 
-        return  <Callout 
-                    gapSpace={0} 
-                    target={this.props.targetElement} 
-                    hidden={false} 
-                    className={`${!this.state.showCallout ? templateStyles.hide : ''} ${templateStyles.calloutContainer}`}
-                    onDismiss={this.props.previewType === PreviewType.Document ? this._onCloseCallout: null}
-                    setInitialFocus={true}
-                    preventDismissOnScroll={true}
-                    >
-                    <div className={templateStyles.calloutHeader}>
-                        <IconButton iconProps={{
-                            iconName: 'ChromeClose',
-                            onClick: this._onCloseCallout
-                        }}></IconButton>
-                    </div>
-                    <div className={templateStyles.calloutContentContainer} style={{backgroundImage: backgroundImage}}>
-                        {renderLoading}
-                        {renderPreview}
-                    </div>
-                </Callout>;
+
+        return <Callout
+            gapSpace={0}
+            target={this.props.targetElement}
+            hidden={false}
+            className={`${!this.state.showCallout ? templateStyles.hide : ''} ${templateStyles.calloutContainer}`}
+            onDismiss={this.props.previewType === PreviewType.Document ? this._onCloseCallout : null}
+            setInitialFocus={true}
+            preventDismissOnScroll={true}
+        >
+            <div className={templateStyles.calloutHeader}>
+                <IconButton iconProps={{
+                    iconName: 'ChromeClose',
+                    onClick: this._onCloseCallout
+                }}></IconButton>
+            </div>
+            <div className={templateStyles.calloutContentContainer} style={{ backgroundImage: backgroundImage }}>
+                {renderLoading}
+                {renderPreview}
+            </div>
+        </Callout>;
     }
 
     public componentDidMount() {
@@ -122,7 +132,7 @@ export default class PreviewContainer extends React.Component<IPreviewContainerP
             showCallout: this.props.showPreview,
             isLoading: this.props.previewType === PreviewType.Video ? false : true
         });
-    }   
+    }
 
     public UNSAFE_componentWillReceiveProps(nextProps: IPreviewContainerProps) {
         this.setState({

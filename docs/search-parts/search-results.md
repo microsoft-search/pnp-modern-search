@@ -22,7 +22,7 @@ Connect to a search refiners Web Part | If enable, select the search refiners We
 Connect to a search verticals Web Part | If enable, select the search verticals Web Part to connect to.
 Enable Query Rules | Enable the query rules if applies. Turn this options  'on' to display your SharePoint Promoted results (links only) and make result blocks available to custom renderers.
 Include OneDrive results | Include OneDrive results if applicable. Turn this option 'on' to make users' personal OneDrive results available to custom renderers. Read more [here](https://docs.microsoft.com/en-us/sharepoint/support/search/private-onedrive-results-not-included).
-Selected properties | The search managed properties to retrieve. You can select them from a predefined list or add them as free text if not listed. Then, these properties are available in your Handlebars template with the syntax (`item.property_name` or `property_name` inside the `{{#each}}` loop).
+Selected properties | The search managed properties to retrieve. You can select them from a predefined list or add them as free text if not listed. Then, these properties are available in your Handlebars template with the syntax (`item.property_name` or `property_name` inside the `{{#each}}` loop). The Web Part needs the following managed properties to get it work (`"Title,Path,Filename,SiteLogo,PreviewUrl,PictureThumbnailURL,ServerRedirectedPreviewURL,ServerRedirectedURL,HitHighlightedSummary,FileType,ServerRedirectedEmbedURL,ParentLink,owstaxidmetadataalltagsinfo,SPSiteUrl,SiteTitle,IsContainer,IsListItem,HtmlFileType,SiteId,WebId,UniqueID,OriginalPath,FileExtension,NormSiteID,NormListID,NormUniqueID,Created,contentclass,DefaultEncodingURL,Author,AuthorOWSUSER"`). **It you remove them, they will be re-added automatically on the next page refresh**.
 Refinement filters | The default refinement filters to apply to the query. Unlike URL `filters` params, these won't select the default values in the Search Filters WP if connected.
 Enable taxonomy values localization for refiners and results | If set, the Web Part will try to translate the taxonomy term IDs to their corresponding label according to the curent UI language. Refer to the [Taxonomy values dynamic translation](#) section of this page.
 Language of search request | The language to use for the search request. By default the search request will be made using the current UI language.
@@ -58,6 +58,8 @@ The search results Web Part supports automatic translation for taxonomy based fi
 ![Managed Property](../images/managed-property.png)
 
 ![Enable Localization](../images/enable_localization.png)
+
+When you enable this flag, you can still use the original property value for whatever reason by using the following property format in your Handlebars template: `<propertyName> + TaxId` (ex: `owstaxidmetadataalltagsinfo` will contain the translated terms and `owstaxidmetadataalltagsinfoTaxId`) will contain the original value of the managed property).
 
 ---
 

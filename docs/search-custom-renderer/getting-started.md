@@ -13,7 +13,7 @@ This package contains two separate renderers: a basic renderer and a persona ren
 ## Applies to
 * [SharePoint Framework](https:/dev.office.com/sharepoint)
 * [Office 365 tenant](https://dev.office.com/sharepoint/docs/spfx/set-up-your-development-environment)
-* [React Search Refiners](https://github.com/SharePoint/sp-dev-fx-webparts/tree/master/samples/react-search-refiners)
+* [React Search Refiners](https://github.com/microsoft-search/pnp-modern-search/tree/master/search-custom-renderer)
 
 ## Solution
 Solution|Author(s)
@@ -29,7 +29,7 @@ Version|Date|Comments
 
 ## Minimal Path to Awesome
 
-- Follow the Minimal Path to Awesome for [React Search Refiners](https://github.com/SharePoint/sp-dev-fx-webparts/tree/master/samples/react-search-refiners).
+- Follow the Minimal Path to Awesome for [React Search Refiners](https://github.com/microsoft-search/pnp-modern-search/tree/master/search-custom-renderer).
 - In this repository, run from the command line:
     - `npm install`
     - `gulp serve`

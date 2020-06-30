@@ -1,6 +1,9 @@
 <content id="template">
     <style>
         /* Insert your CSS overrides here */
+        .example-themePrimary a {
+            color: {{@root.themeVariant.palette.themePrimary}};
+        }
     </style>
 
     <div class="template_root">
@@ -13,7 +16,7 @@
                     <div class="template_result">
                         <pnp-fabric-icon data-file-extension='{{IconExt}}' data-image-url='{{SiteLogo}}'></pnp-fabric-icon>
                         <div class="template_contentContainer">
-                            <span class="template_title"><a href="{{getUrl item}}">{{Title}}</a></span>
+                            <span class="template_title example-themePrimary"><a href="{{getUrl item}}" target="_blank" data-interception="off">{{Title}}</a></span>
                             <my-custom-component data-my-string-param="{{Title}}" data-my-object-param="{{JSONstringify item}}"></my-custom-component>
                             <span>{{getSummary HitHighlightedSummary}}</span>
                             <span>{{getDate Created "LL"}}</span>
@@ -25,6 +28,20 @@
                                     {{/each}}
                                 {{/if}}
                             </div>
+                            <pnp-accordion data-accordion-header-text="Accordion Example" data-theme="Neutral" data-size="12" data-start-open="false" data-rounded-corners="false">
+                                <h4>Title: {{Title}}</h4>
+                                <pnp-popup>
+                                    <template id="popupclick">
+                                        <span>Popup Example - Click Me</span>
+                                    </template>
+                                    <template id="popupheader">
+                                        <span>Title: {{Title}}</span><br /><span>Header HTML here</span>
+                                    </template>
+                                    <template id="popupbody">
+                                        <span>Title: {{Title}}</span><br /><span>Body HTML here</span>
+                                    </template>
+                                </pnp-popup>
+                            </pnp-accordion>
                         </div>
                     </div>
                     {{/resultTypes}}
@@ -32,14 +49,14 @@
                 {{/each}}
             </ul>
             {{#if @root.paging.showPaging}}
-                <pnp-pagination 
-                    total-items="{{@root.paging.totalItemsCount}}" 
-                    hide-first-last-pages="{{@root.paging.hideFirstLastPages}}"
-                    hide-disabled="{{@root.paging.hideDisabled}}"
-                    hide-navigation="{{@root.paging.hideNavigation}}"
-                    range="{{@root.paging.pagingRange}}" 
-                    items-count-per-page="{{@root.paging.itemsCountPerPage}}" 
-                    current-page-number="{{@root.paging.currentPageNumber}}"
+                <pnp-pagination
+                    data-total-items="{{@root.paging.totalItemsCount}}"
+                    data-hide-first-last-pages="{{@root.paging.hideFirstLastPages}}"
+                    data-hide-disabled="{{@root.paging.hideDisabled}}"
+                    data-hide-navigation="{{@root.paging.hideNavigation}}"
+                    data-range="{{@root.paging.pagingRange}}"
+                    data-items-count-per-page="{{@root.paging.itemsCountPerPage}}"
+                    data-current-page-number="{{@root.paging.currentPageNumber}}"
                 >
                 </pnp-pagination>
             {{/if}}

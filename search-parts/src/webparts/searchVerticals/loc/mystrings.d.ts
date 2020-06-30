@@ -4,17 +4,24 @@ declare interface ISearchVerticalsWebPartStrings {
   PlaceHolderConfigureBtnLabel: string;
   PlaceHolderIconText: string;
   PlaceHolderDescription: string;
+  SameTabOpenBehavior: string;
+  NewTabOpenBehavior: string;
+  PageOpenBehaviorLabel: string;
   PropertyPane: {
     Verticals: {
       PropertyLabel: string;
       PanelHeader: string;
       PanelDescription: string;
       ButtonLabel: string;
+      FieldValidationErrorMessage: string;
       Fields: {
         TabName: string;
         QueryTemplate: string;
         ResultSource: string;
         IconName: string;
+        IsLink: string;
+        LinkUrl: string;
+        OpenBehavior: string;
       }
     },
     ShowCounts: {

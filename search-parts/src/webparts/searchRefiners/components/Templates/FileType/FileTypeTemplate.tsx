@@ -55,7 +55,7 @@ export default class FileTypeTemplate extends React.Component<IBaseRefinerTempla
     return (
       <div className={styles.pnpRefinersTemplateFileType}>
         {
-            this.props.showValueFilter ? 
+            this.props.showValueFilter ?
                 <div className="pnp-value-filter-container">
                     <TextField className="pnp-value-filter" value={this.state.valueFilter} placeholder="Filter" onChange={(event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>,newValue?: string) => { this._onValueFilterChanged(newValue); }} onClick={this._onValueFilterClick} />
                     <Link onClick={this._clearValueFilter} disabled={!this.state.valueFilter || this.state.valueFilter === ""}>Clear</Link>
@@ -103,8 +103,8 @@ export default class FileTypeTemplate extends React.Component<IBaseRefinerTempla
           this.props.isMultiValue ?
 
             <div>
-              <Link 
-                onClick={() => { this._applyFilters(this.state.refinerSelectedFilterValues); }} 
+              <Link
+                onClick={() => { this._applyFilters(this.state.refinerSelectedFilterValues); }}
                 disabled={disableButtons}>{strings.Refiners.ApplyFiltersLabel}</Link>|<Link onClick={this._clearFilters} disabled={this.state.refinerSelectedFilterValues.length === 0}>{strings.Refiners.ClearFiltersLabel}</Link>
             </div>
 
@@ -222,8 +222,10 @@ export default class FileTypeTemplate extends React.Component<IBaseRefinerTempla
    * Checks if an item-object matches the provided refinement value filter value
    * @param item The item-object to be checked
    */
-  private _isFilterMatch(item): boolean {
+  private _isFilterMatch(item: IRefinementValue): boolean {
       if(!this.state.valueFilter) { return false; }
+      const isSelected = this.state.refinerSelectedFilterValues.some(selectedValue => selectedValue.RefinementValue === item.RefinementValue);
+      if(isSelected) { return false; }
       return item.RefinementValue.toLowerCase().indexOf(this.state.valueFilter.toLowerCase()) === -1 ;
   }
 

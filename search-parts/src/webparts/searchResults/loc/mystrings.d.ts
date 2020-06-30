@@ -30,7 +30,9 @@ declare interface ISearchResultsWebPartStrings {
     PlaceHolderIconText: string;
     PlaceHolderDescription: string;
     ResultSourceIdLabel: string;
+    ResultSourceIdDescription: string;
     InvalidResultSourceIdMessage: string;
+    InvalidNumberIntervalMessage: string;
     EnableQueryRulesLabel: string;
     IncludeOneDriveResultsLabel: string;
     StylingSettingsGroupName: string;
