@@ -40,6 +40,7 @@ import IUserService from '../../services/UserService/IUserService';
 import { UserService } from '../../services/UserService/UserService';
 import { MockUserService } from '../../services/UserService/MockUserService';
 import { initializeFileTypeIcons } from '@uifabric/file-type-icons';
+import PnPTelemetry from "@pnp/telemetry-js";
 
 export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearchRefinersWebPartProps> implements IDynamicDataCallables {
 
@@ -163,6 +164,11 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
   }
 
   protected onInit(): Promise<void> {
+
+    
+    // Disable PnP Telemetry
+    const telemetry = PnPTelemetry.getInstance();
+    telemetry.optOut();
 
     this._initializeRequiredProperties();
     this.initThemeVariant();
