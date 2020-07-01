@@ -30,6 +30,7 @@
         "@pnp/sp-taxonomy": "1.3.4",
         "@pnp/spfx-controls-react": "1.16.0",
         "@pnp/spfx-property-controls": "1.16.0",
+        "@pnp/telemetry-js": "2.0.0",
         "@types/es6-promise": "0.0.33",
         "@types/react": "16.8.8",
         "@types/react-dom": "16.8.3",
