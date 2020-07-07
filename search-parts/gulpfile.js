@@ -8,9 +8,6 @@ const log = require('@microsoft/gulp-core-build').log;
 const bundleAnalyzer = require('webpack-bundle-analyzer');
 const colors = require("colors");
 const fs = require("fs");
-let buildConfig = {
-    parallel: os.cpus().length - 1
-};
 
 build.addSuppression(/^Warning - \[sass\].*$/);
 
@@ -29,6 +26,7 @@ const envCheck = build.subTask('environmentCheck', (gulp, config, done) => {
             fs.writeFileSync("./temp/_webpack_config.json", JSON.stringify(generatedConfiguration, null, 2));
 
             if (threading && generatedConfiguration.optimization) {
+                log(`[${colors.cyan('configure-webpack')}] Enabled minimizer threading...`)
                 generatedConfiguration.optimization.minimizer[0].options.parallel = true;
             }
 
@@ -52,37 +50,43 @@ const envCheck = build.subTask('environmentCheck', (gulp, config, done) => {
                 fs: 'empty'
             }
 
-            if (config.production) {
-                log(`[${colors.cyan('configure-webpack')}] Adding plugin ${colors.cyan('BundleAnalyzerPlugin')}...`);
-                const lastDirName = path.basename(__dirname);
-                const dropPath = path.join(__dirname, 'temp', 'stats');
-                generatedConfiguration.plugins.push(new bundleAnalyzer.BundleAnalyzerPlugin({
-                    openAnalyzer: false,
-                    analyzerMode: 'static',
-                    reportFilename: path.join(dropPath, `${lastDirName}.stats.html`),
-                    generateStatsFile: true,
-                    statsFilename: path.join(dropPath, `${lastDirName}.stats.json`),
-                    logLevel: 'error'
-                }));
-            }
+            // if (config.production) {
+            //     log(`[${colors.cyan('configure-webpack')}] Adding plugin ${colors.cyan('BundleAnalyzerPlugin')}...`);
+            //     const lastDirName = path.basename(__dirname);
+            //     const dropPath = path.join(__dirname, 'temp', 'stats');
+            //     generatedConfiguration.plugins.push(new bundleAnalyzer.BundleAnalyzerPlugin({
+            //         openAnalyzer: false,
+            //         analyzerMode: 'static',
+            //         reportFilename: path.join(dropPath, `${lastDirName}.stats.html`),
+            //         generateStatsFile: true,
+            //         statsFilename: path.join(dropPath, `${lastDirName}.stats.json`),
+            //         logLevel: 'error'
+            //     }));
+            // }
 
             // Optimize build times - https://www.eliostruyf.com/speed-sharepoint-framework-builds-wsl-2/
             if (!config.production) {
                 for (const rule of generatedConfiguration.module.rules) {
                     // Add include rule for webpack's source map loader
                     if (rule.use && typeof rule.use === 'string' && rule.use.indexOf('source-map-loader') !== -1) {
+                        log(`[${colors.cyan('configure-webpack')}] Fixing source-map-loader`);
                         rule.include = [
                             path.resolve(__dirname, 'lib')
                         ]
                     }
 
-                    // Disable minification for css-loader
-                    if (rule.use && rule.use instanceof Array && rule.use.length == 2 && rule.use[1].loader && rule.use[1].loader.indexOf('css-loader') !== -1) {
-                        log(`[${colors.cyan('configure-webpack')}] Setting ${colors.cyan('css-loader')} to disable minification`);
-                        rule.use[1].options.minimize = false;
+                    // Disable minification for postcss-loader
+                    if (rule.use && rule.use instanceof Array) {
+                        for (const innerRule of rule.use) {
+                            if (innerRule.loader && innerRule.loader.indexOf('postcss-loader') !== -1) {
+                                log(`[${colors.cyan('configure-webpack')}] Setting ${colors.cyan('postcss-loader')} to disable minification`);
+                                innerRule.options.minimize = false;
+                            }
+                        }
                     }
                 }
             }
+
 
             return generatedConfiguration;
         }
