@@ -75,7 +75,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
             if (typeof (inputValue) === 'string') {
                 this._searchQuery = decodeURIComponent(inputValue);
             }
-            else if (typeof (inputValue === 'object')) {
+            else if (typeof (inputValue) === 'object') {
                 this._searchQuery = "";
                 //https://github.com/microsoft-search/pnp-modern-search/issues/325
                 //new issue with search body as object - 2020-06-23

@@ -209,7 +209,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         if (queryDataSourceValue && typeof (queryDataSourceValue) === 'string') {
             queryKeywords = queryDataSourceValue;
         }
-        else if (queryDataSourceValue && typeof (queryDataSourceValue) == "object") {
+        else if (queryDataSourceValue && typeof (queryDataSourceValue) === 'object') {
             //https://github.com/microsoft-search/pnp-modern-search/issues/325
             //new issue with search body as object - 2020-06-23
             const refChunks = this.properties.queryKeywords.reference.split(':');
