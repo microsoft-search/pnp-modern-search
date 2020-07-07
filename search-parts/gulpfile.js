@@ -50,19 +50,19 @@ const envCheck = build.subTask('environmentCheck', (gulp, config, done) => {
                 fs: 'empty'
             }
 
-            // if (config.production) {
-            //     log(`[${colors.cyan('configure-webpack')}] Adding plugin ${colors.cyan('BundleAnalyzerPlugin')}...`);
-            //     const lastDirName = path.basename(__dirname);
-            //     const dropPath = path.join(__dirname, 'temp', 'stats');
-            //     generatedConfiguration.plugins.push(new bundleAnalyzer.BundleAnalyzerPlugin({
-            //         openAnalyzer: false,
-            //         analyzerMode: 'static',
-            //         reportFilename: path.join(dropPath, `${lastDirName}.stats.html`),
-            //         generateStatsFile: true,
-            //         statsFilename: path.join(dropPath, `${lastDirName}.stats.json`),
-            //         logLevel: 'error'
-            //     }));
-            // }
+            if (config.production) {
+                log(`[${colors.cyan('configure-webpack')}] Adding plugin ${colors.cyan('BundleAnalyzerPlugin')}...`);
+                const lastDirName = path.basename(__dirname);
+                const dropPath = path.join(__dirname, 'temp', 'stats');
+                generatedConfiguration.plugins.push(new bundleAnalyzer.BundleAnalyzerPlugin({
+                    openAnalyzer: false,
+                    analyzerMode: 'static',
+                    reportFilename: path.join(dropPath, `${lastDirName}.stats.html`),
+                    generateStatsFile: false,
+                    //statsFilename: path.join(dropPath, `${lastDirName}.stats.json`),
+                    logLevel: 'error'
+                }));
+            }
 
             // Optimize build times - https://www.eliostruyf.com/speed-sharepoint-framework-builds-wsl-2/
             if (!config.production) {
