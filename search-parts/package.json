@@ -1,6 +1,6 @@
 {
     "name": "pnp-modern-search",
-    "version": "3.14.1",
+    "version": "3.14.2",
     "private": true,
     "engines": {
         "node": ">=0.10.0"
