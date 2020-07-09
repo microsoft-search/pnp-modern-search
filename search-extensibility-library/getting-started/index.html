@@ -32,7 +32,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.4.3">
+      <meta name="generator" content="mkdocs-1.1, mkdocs-material-4.6.3">
     
     
       
@@ -40,7 +40,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/application.30686662.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/application.adb8469c.css">
       
         <link rel="stylesheet" href="../../assets/stylesheets/application-palette.a8b3c06d.css">
       
@@ -51,12 +51,12 @@
       
     
     
-      <script src="../../assets/javascripts/modernizr.74668098.js"></script>
+      <script src="../../assets/javascripts/modernizr.86422ebf.js"></script>
     
     
       
         <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono&display=fallback">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
         <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
       
     
@@ -87,7 +87,7 @@
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
     
-      <a href="#summary" tabindex="1" class="md-skip">
+      <a href="#summary" tabindex="0" class="md-skip">
         Skip to content
       </a>
     
@@ -96,7 +96,7 @@
   <nav class="md-header-nav md-grid">
     <div class="md-flex">
       <div class="md-flex__cell md-flex__cell--shrink">
-        <a href="../.." title="PnP Modern Search" class="md-header-nav__button md-logo">
+        <a href="../.." title="PnP Modern Search" aria-label="PnP Modern Search" class="md-header-nav__button md-logo">
           
             <i class="md-icon"></i>
           
@@ -127,7 +127,7 @@
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" name="search">
-      <input type="text" class="md-search__input" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+      <input type="text" class="md-search__input" aria-label="search" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
       <label class="md-icon md-search__icon" for="__search"></label>
       <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
         &#xE5CD;
@@ -791,12 +791,12 @@
                   <h1>Getting started</h1>
                 
                 <h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
-<p>This solution allows you to create and register your own React component (wrapped as HTML web components) to be used in the search results Web Part Handlebars templates. View the sample project <a href="https://github.com/microsoft-search/pnp-modern-search/tree/master/search-extensibility-library">here</a>.</p>
+<p>This solution allows you to create and register your own React component (wrapped as HTML web components) to be used in the search results Web Part Handlebars templates. View the sample project <a href="https://github.com/microsoft-search/pnp-modern-search/tree/main/search-extensibility-library">here</a>.</p>
 <h2 id="used-sharepoint-framework-version">Used SharePoint Framework Version<a class="headerlink" href="#used-sharepoint-framework-version" title="Permanent link">&para;</a></h2>
 <p><img alt="SPFx" src="https://img.shields.io/badge/drop-1.9.1-green.svg" /></p>
 <h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h2>
 <p>The custom web components are defined in a SharePoint Framework project of type <a href="https://docs.microsoft.com/en-us/sharepoint/dev/spfx/library-component-overview">'Library Component'</a>. You have the choice to update the demo one or start from scratch with a new project. In this case, in the <code>&lt;your_library_name&gt;.manifest.json</code> file, make sure the <code>id</code> property id is <code>2501f2fd-d601-4da4-a04d-9f0bd85b1f54</code>. This identifier is used to load dynamically the library from the Search Results Web Part. Therefore, this value is <strong>mandatory</strong> to make the link. That is the only hook we need on our side.</p>
-<div class="codehilite"><pre><span></span>        {
+<div class="codehilite"><pre><span></span><code>        {
             // The value should be this id to make the link with the Web Part
             &quot;id&quot;: &quot;2501f2fd-d601-4da4-a04d-9f0bd85b1f54&quot; /
             &quot;alias&quot;: &quot;MyCompanyLibraryLibrary&quot;,
@@ -804,7 +804,7 @@
 
             ...
         }
-</pre></div>
+</code></pre></div>
 
 
 <h2 id="create-a-custom-web-component">Create a custom web component<a class="headerlink" href="#create-a-custom-web-component" title="Permanent link">&para;</a></h2>
@@ -816,7 +816,7 @@
 </li>
 <li>
 <p>Implement your component like a regular React component.</p>
-<div class="codehilite"><pre><span></span>import * as React from &#39;react&#39;;
+<div class="codehilite"><pre><span></span><code>import * as React from &#39;react&#39;;
 import * as ReactDOM from &#39;react-dom&#39;;
 import { BaseWebComponent } from &#39;../models/BaseWebComponent&#39;;
 
@@ -858,14 +858,14 @@ export class CustomComponent extends React.Component&lt;ICustomComponentProps, I
         return &lt;div&gt;{this.props.myStringParam} {myObject.myProperty}&lt;/div&gt;;
     }
 }
-</pre></div>
+</code></pre></div>
 
 
 <p>Because <code>props</code> will be passed from an HTML template, they must to use always a <code>string</code> type. For complex objects, you will need to pass them as 'stringified' then use the <code>JSON.parse()</code> method to use them in your component logic.</p>
 </li>
 <li>
 <p>In the same file, create an other class, this time to define your web component by inheriting the <code>BaseWebComponent</code> abstact class`:</p>
-<div class="codehilite"><pre><span></span>export class MyCustomComponentWebComponent extends BaseWebComponent {
+<div class="codehilite"><pre><span></span><code>export class MyCustomComponentWebComponent extends BaseWebComponent {
 
     public constructor() {
         super(); 
@@ -878,7 +878,7 @@ export class CustomComponent extends React.Component&lt;ICustomComponentProps, I
         ReactDOM.render(debugView, this);
     }    
 }
-</pre></div>
+</code></pre></div>
 
 
 <p>The <code>resolveAttributes</code> method will transform custom element HTML attributes to React component props. By convention, web component attributes have to be passed using <strong>camel case</strong> to be tranformed into React component props.</p>
@@ -891,7 +891,7 @@ export class CustomComponent extends React.Component&lt;ICustomComponentProps, I
 <ol>
 <li>
 <p>In the main entry point class (ex: <code>MyCompanyLibraryLibrary.ts</code>), extends the <code>IExtensibilityLibrary</code> interface and register your custom components this way:</p>
-<div class="codehilite"><pre><span></span>import { MyCustomComponentWebComponent } from &quot;../CustomComponent&quot;;
+<div class="codehilite"><pre><span></span><code>import { MyCustomComponentWebComponent } from &quot;../CustomComponent&quot;;
 import { IComponentDefinition } from &quot;../../models/IComponentDefinition&quot;;
 import { IExtensibilityLibrary } from &quot;../../models/IExtensibilityLibrary&quot;;
 
@@ -906,7 +906,7 @@ export class MyCompanyLibraryLibrary implements IExtensibilityLibrary {
         ];
     }
 }
-</pre></div>
+</code></pre></div>
 
 
 <blockquote>
@@ -915,8 +915,8 @@ export class MyCompanyLibraryLibrary implements IExtensibilityLibrary {
 </li>
 <li>
 <p>In a custom Handlebars layout, reference your component like this, leveraging the Handlebars context values:</p>
-<div class="codehilite"><pre><span></span>&lt;my-custom-component my-string-param=&quot;{{MyStringProperty}}&quot; my-object-param=&quot;{{JSONstringify MyObjectProperty 2}}&quot;&gt;&lt;/my-custom-component&gt;
-</pre></div>
+<div class="codehilite"><pre><span></span><code>&lt;my-custom-component my-string-param=&quot;{{MyStringProperty}}&quot; my-object-param=&quot;{{JSONstringify MyObjectProperty 2}}&quot;&gt;&lt;/my-custom-component&gt;
+</code></pre></div>
 
 
 </li>
@@ -931,7 +931,7 @@ export class MyCompanyLibraryLibrary implements IExtensibilityLibrary {
 <li>Create a new TypeScript class that implements the <code>BaseSuggestionProvider</code> abstract class. You can create it anywhere in your project.</li>
 <li>
 <p>Implement the required methods and properties like the example below.</p>
-<div class="codehilite"><pre><span></span>import { BaseSuggestionProvider } from &#39;../models/BaseSuggestionProvider&#39;;
+<div class="codehilite"><pre><span></span><code>import { BaseSuggestionProvider } from &#39;../models/BaseSuggestionProvider&#39;;
 import { ISuggestion } from &#39;../models/ISuggestion&#39;;
 
 export class CustomSuggestionProvider extends BaseSuggestionProvider  {
@@ -960,13 +960,13 @@ export class CustomSuggestionProvider extends BaseSuggestionProvider  {
         // fetch zero term suggestions
     }
 }
-</pre></div>
+</code></pre></div>
 
 
 </li>
 <li>
 <p>In the main entry point class (ex: MyCompanyLibraryLibrary.ts), register your custom query suggestion provider like the example below.</p>
-<div class="codehilite"><pre><span></span>import { IExtensibilityLibrary } from &quot;../../models/IExtensibilityLibrary&quot;;
+<div class="codehilite"><pre><span></span><code>import { IExtensibilityLibrary } from &quot;../../models/IExtensibilityLibrary&quot;;
 import { ISuggestionProviderDefinition } from &quot;../../models/ISuggestionProviderDefinition&quot;;
 import { CustomSuggestionProvider } from &quot;../CustomSuggestionProvider&quot;;
 
@@ -985,7 +985,7 @@ export class MyCompanyLibraryLibrary implements IExtensibilityLibrary {
         ];
     }
 }
-</pre></div>
+</code></pre></div>
 
 
 </li>
@@ -1001,7 +1001,7 @@ export class MyCompanyLibraryLibrary implements IExtensibilityLibrary {
 <li>Create a new TypeScript class that implements the <code>BaseQueryModifier</code> abstract class. You can create it anywhere in your project.</li>
 <li>
 <p>Implement the required methods and properties like the example below.</p>
-<div class="codehilite"><pre><span></span>import { BaseQueryModifier } from &#39;../models/BaseQueryModifier&#39;;
+<div class="codehilite"><pre><span></span><code>import { BaseQueryModifier } from &#39;../models/BaseQueryModifier&#39;;
 import { IQueryModifierInput, IQueryModification } from &#39;../models/IQueryModification&#39;;
 
 export class CustomQueryModifier extends BaseQueryModifier  {
@@ -1026,13 +1026,13 @@ export class CustomQueryModifier extends BaseQueryModifier  {
         } as IQueryModification);
     }
 }
-</pre></div>
+</code></pre></div>
 
 
 </li>
 <li>
 <p>In the main entry point class (ex: MyCompanyLibraryLibrary.ts), register your custom query modifier like the example below.</p>
-<div class="codehilite"><pre><span></span>import { IExtensibilityLibrary } from &quot;../../models/IExtensibilityLibrary&quot;;
+<div class="codehilite"><pre><span></span><code>import { IExtensibilityLibrary } from &quot;../../models/IExtensibilityLibrary&quot;;
 import { IQueryModifierDefinition } from &quot;../../models/IQueryModifierDefinition&quot;;
 import { CustomQueryModifier } from &quot;../CustomQueryModifier&quot;;
 
@@ -1048,7 +1048,7 @@ export class MyCompanyLibraryLibrary implements IExtensibilityLibrary {
         };
     }
 }
-</pre></div>
+</code></pre></div>
 
 
 </li>
@@ -1059,6 +1059,7 @@ export class MyCompanyLibraryLibrary implements IExtensibilityLibrary {
 <p><img alt="Search Results - Query Modifier" src="../../images/query_modifiers_select.png" /></p>
                 
                   
+                
                 
               
               
@@ -1114,20 +1115,20 @@ export class MyCompanyLibraryLibrary implements IExtensibilityLibrary {
       <div class="md-footer-copyright">
         
         powered by
-        <a href="https://www.mkdocs.org">MkDocs</a>
+        <a href="https://www.mkdocs.org" target="_blank" rel="noopener">MkDocs</a>
         and
-        <a href="https://squidfunk.github.io/mkdocs-material/">
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
           Material for MkDocs</a>
       </div>
       
   <div class="md-footer-social">
     <link rel="stylesheet" href="../../assets/fonts/font-awesome.css">
     
-      <a href="https://twitter.com/officedevpnp" class="md-footer-social__link fa fa-twitter"></a>
+      <a href="https://twitter.com/officedevpnp" target="_blank" rel="noopener" title="twitter" class="md-footer-social__link fa fa-twitter"></a>
     
-      <a href="http://aka.ms/sppnp-videos" class="md-footer-social__link fa fa-youtube"></a>
+      <a href="http://aka.ms/sppnp-videos" target="_blank" rel="noopener" title="youtube" class="md-footer-social__link fa fa-youtube"></a>
     
-      <a href="https://aka.ms/sppnp" class="md-footer-social__link fa fa-link"></a>
+      <a href="https://aka.ms/sppnp" target="_blank" rel="noopener" title="link" class="md-footer-social__link fa fa-link"></a>
     
   </div>
 
@@ -1137,9 +1138,9 @@ export class MyCompanyLibraryLibrary implements IExtensibilityLibrary {
       
     </div>
     
-      <script src="../../assets/javascripts/application.ac79c3b0.js"></script>
+      <script src="../../assets/javascripts/application.c33a9706.js"></script>
       
-      <script>app.initialize({version:"1.0.4",url:{base:"../.."}})</script>
+      <script>app.initialize({version:"1.1",url:{base:"../.."}})</script>
       
     
   </body>

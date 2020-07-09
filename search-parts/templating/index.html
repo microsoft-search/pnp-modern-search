@@ -32,7 +32,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.4.3">
+      <meta name="generator" content="mkdocs-1.1, mkdocs-material-4.6.3">
     
     
       
@@ -40,7 +40,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/application.30686662.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/application.adb8469c.css">
       
         <link rel="stylesheet" href="../../assets/stylesheets/application-palette.a8b3c06d.css">
       
@@ -51,12 +51,12 @@
       
     
     
-      <script src="../../assets/javascripts/modernizr.74668098.js"></script>
+      <script src="../../assets/javascripts/modernizr.86422ebf.js"></script>
     
     
       
         <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono&display=fallback">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
         <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
       
     
@@ -87,7 +87,7 @@
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
     
-      <a href="#available-layouts" tabindex="1" class="md-skip">
+      <a href="#available-layouts" tabindex="0" class="md-skip">
         Skip to content
       </a>
     
@@ -96,7 +96,7 @@
   <nav class="md-header-nav md-grid">
     <div class="md-flex">
       <div class="md-flex__cell md-flex__cell--shrink">
-        <a href="../.." title="PnP Modern Search" class="md-header-nav__button md-logo">
+        <a href="../.." title="PnP Modern Search" aria-label="PnP Modern Search" class="md-header-nav__button md-logo">
           
             <i class="md-icon"></i>
           
@@ -127,7 +127,7 @@
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" name="search">
-      <input type="text" class="md-search__input" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+      <input type="text" class="md-search__input" aria-label="search" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
       <label class="md-icon md-search__icon" for="__search"></label>
       <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
         &#xE5CD;
@@ -1084,12 +1084,12 @@
 <p>Displays search results as cards view using the associated Office UI Fabric <a href="https://developer.microsoft.com/en-us/fabric#/controls/web/documentcard">DocumentCard control</a>:</p>
 <p><img alt="Document Card" src="../../images/documentcards_layout.png" /></p>
 <p><strong>Note</strong>: you can still manage the number of cards displayed by row by changing the grid CSS classes directly in the template:</p>
-<div class="codehilite"><pre><span></span>{{#each items as |item|}}
+<div class="codehilite"><pre><span></span><code>{{#each items as |item|}}
   &lt;div class=&quot;ms-Grid-col ms-sm12 ms-md6 ms-lg4&quot;&gt; &lt;!-- 3 cards by row here for large screen resolution --&gt;
     ...
   &lt;/div&gt;
 {{/each}}
-</pre></div>
+</code></pre></div>
 
 
 <h4 id="template-options_1">Template options<a class="headerlink" href="#template-options_1" title="Permanent link">&para;</a></h4>
@@ -1117,25 +1117,25 @@
 <p><img alt="Slider" src="../../images/slider_layout.png" /></p>
 <h3 id="customize-slide-content">Customize slide content<a class="headerlink" href="#customize-slide-content" title="Permanent link">&para;</a></h3>
 <p>By default, documents card are displayed in the slider but you can add your own HTML markup for each slide inside the <code>{{#&gt;slider}}</code> Handlebars partial:</p>
-<div class="codehilite"><pre><span></span>{{#&gt;slider items=(JSONstringify @root.items 2) options=(JSONstringify @root.sliderOptions)}}
+<div class="codehilite"><pre><span></span><code>{{#&gt;slider items=(JSONstringify @root.items 2) options=(JSONstringify @root.sliderOptions)}}
     &lt;!-- Slide content goes here --&gt;
     &lt;div class=&quot;slide&quot;&gt;
         &lt;!-- Your HTML markup --&gt;
     &lt;/div&gt;                
 {{/slider}}
-</pre></div>
+</code></pre></div>
 
 
 <p>Item properties and all Handlebars helpers are available inside the partial block (Ex: <code>{{Title}}</code>). However, to use them you must escape every Handlebars expression with the <code>'\'</code> character (ex: <code>{{Title}}</code> becomes <code>\{{Title}}</code>).</p>
 <p>This is because we don't want these expressions to be interpreted by the global Handlebars context. Actually, we use an internal compilation process with the item context so we need the raw expression to output the item properties and helpers correctly. For instance if you want an image carousel only, your HTML markup would be:</p>
-<div class="codehilite"><pre><span></span>{{#&gt;slider items=(JSONstringify @root.items 2) options=(JSONstringify @root.sliderOptions)}}
+<div class="codehilite"><pre><span></span><code>{{#&gt;slider items=(JSONstringify @root.items 2) options=(JSONstringify @root.sliderOptions)}}
     &lt;img src=&quot;\{{getPreviewSrc item}}&quot;/&gt;              
 {{/slider}}
-</pre></div>
+</code></pre></div>
 
 
 <p>Or only person cards:</p>
-<div class="codehilite"><pre><span></span>{{#&gt;slider items=(JSONstringify @root.items 2) options=(JSONstringify @root.sliderOptions)}}
+<div class="codehilite"><pre><span></span><code>{{#&gt;slider items=(JSONstringify @root.items 2) options=(JSONstringify @root.sliderOptions)}}
     &lt;div class=&quot;slide&quot;&gt;
       \{{#with (split AccountName &#39;|&#39;)}}
             &lt;persona-card 
@@ -1150,7 +1150,7 @@
         \{{/with}}
     &lt;/div&gt;                
 {{/slider}}
-</pre></div>
+</code></pre></div>
 
 
 <p>In the case of images, the slider is smart enough to adjsut the height automatically so you don't need to specify explicit values. However, you can set an arbitrary size for the slides updating the CSS <code>slide</code> class.</p>
@@ -1343,20 +1343,20 @@
 <li>persona-card-shimmers</li>
 <li>fabric-icon - You only need to set one property, which are evaluated in order if multiple ones are set.</li>
 </ul>
-<div class="codehilite"><pre><span></span><span class="p">&lt;</span><span class="nt">pnp-fabric-icon</span>
+<div class="codehilite"><pre><span></span><code><span class="p">&lt;</span><span class="nt">pnp-fabric-icon</span>
     <span class="na">data-image-url</span><span class="o">=</span><span class="s">&#39;[url to icon - pri 1]&#39;</span>
     <span class="na">data-file-extension</span><span class="o">=</span><span class="s">&#39;[file extension - pri 2]&#39;</span>
     <span class="na">data-icon-name</span><span class="o">=</span><span class="s">&#39;[office ui fabric icon name - pri 3]&#39;</span>
     <span class="na">data-size</span><span class="o">=</span><span class="s">&#39;16 | 20 | 32 (default) | 40 | 48 | 64 | 96&#39;</span>
 <span class="p">&gt;</span>
 <span class="p">&lt;/</span><span class="nt">pnp-fabric-icon</span><span class="p">&gt;</span>
-</pre></div>
+</code></pre></div>
 
 
 <ul>
 <li>accordion - provides the ability to collaspe content in search result in an accordion fashion</li>
 </ul>
-<div class="codehilite"><pre><span></span><span class="p">&lt;</span><span class="nt">pnp-accordion</span> 
+<div class="codehilite"><pre><span></span><code><span class="p">&lt;</span><span class="nt">pnp-accordion</span> 
     <span class="na">data-accordion-header-text</span><span class="o">=</span><span class="s">&quot;Accordion Example&quot;</span> 
     <span class="na">data-theme</span><span class="o">=</span><span class="s">&quot;Default (default) | Neutral&quot;</span> 
     <span class="na">data-size</span><span class="o">=</span><span class="s">&quot;# | 12 (default)&quot;</span> 
@@ -1364,7 +1364,7 @@
     <span class="na">data-rounded-corners</span><span class="o">=</span><span class="s">&quot;true | false (default)&quot;</span><span class="p">&gt;</span>
     <span class="p">&lt;</span><span class="nt">h4</span><span class="p">&gt;</span>Title: {{Title}}<span class="p">&lt;/</span><span class="nt">h4</span><span class="p">&gt;</span>
 <span class="p">&lt;/</span><span class="nt">pnp-accordion</span><span class="p">&gt;</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>Example:</p>
@@ -1372,7 +1372,7 @@
 <ul>
 <li>popup - provides the ability to popup content in a modal window within the search result</li>
 </ul>
-<div class="codehilite"><pre><span></span><span class="p">&lt;</span><span class="nt">pnp-popup</span><span class="p">&gt;</span>
+<div class="codehilite"><pre><span></span><code><span class="p">&lt;</span><span class="nt">pnp-popup</span><span class="p">&gt;</span>
     <span class="p">&lt;</span><span class="nt">template</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;popupclick&quot;</span><span class="p">&gt;</span>
         <span class="p">&lt;</span><span class="nt">span</span><span class="p">&gt;</span>Popup Example - Click Me<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
     <span class="p">&lt;/</span><span class="nt">template</span><span class="p">&gt;</span>
@@ -1383,7 +1383,7 @@
         <span class="p">&lt;</span><span class="nt">span</span><span class="p">&gt;</span>Title: {{Title}}<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;&lt;</span><span class="nt">br</span> <span class="p">/&gt;&lt;</span><span class="nt">span</span><span class="p">&gt;</span>Body HTML here<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
     <span class="p">&lt;/</span><span class="nt">template</span><span class="p">&gt;</span>
 <span class="p">&lt;/</span><span class="nt">pnp-popup</span><span class="p">&gt;</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>Example:</p>
@@ -1396,7 +1396,7 @@
 <p>Remember for the inner template to be executed inside of the component the handlebar expressions must be escaped with <code>'\'</code> character (ex: <code>{{Title}}</code> becomes <code>\{{Title}}</code>).</p>
 </li>
 </ul>
-<div class="codehilite"><pre><span></span><span class="p">&lt;</span><span class="nt">pnp-lookup-list-expander</span> 
+<div class="codehilite"><pre><span></span><code><span class="p">&lt;</span><span class="nt">pnp-lookup-list-expander</span> 
     <span class="na">data-list-url</span><span class="o">=</span><span class="s">&quot;https://&lt;tenant&gt;/sites/&lt;sitename&gt;&quot;</span> 
     <span class="na">data-list-id</span><span class="o">=</span><span class="s">&quot;{{ListID}}&quot;</span> 
     <span class="na">data-list-item-id</span><span class="o">=</span><span class="s">&quot;{{ListItemID}}&quot;</span>
@@ -1416,7 +1416,7 @@
         <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
     <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
 <span class="p">&lt;/</span><span class="nt">pnp-lookup-list-expander</span><span class="p">&gt;</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>The above example would display inside of the accordion like:
@@ -1435,13 +1435,13 @@
 - Greater than
 - Is not null</p>
 <p>To use it in your main template, just follow this pattern. This block is not mandatory.</p>
-<div class="codehilite"><pre><span></span>{{#&gt; resultTypes}}
+<div class="codehilite"><pre><span></span><code>{{#&gt; resultTypes}}
   {{!-- The block below will be used as default item template if no result types matched --}}
   &lt;div class=&quot;template_result&quot;&gt;
       &lt;!-- Your default template markup --&gt;
   &lt;/div&gt;
 {{/resultTypes}}
-</pre></div>
+</code></pre></div>
 
 
 <p>Handlebars <a href="https://handlebarsjs.com/partials.html">partials</a> are used behind the scenes and conditions are built dynamically using a recursive if/else structure.</p>
@@ -1461,20 +1461,20 @@
 <li><code>data-fileext</code>: the file extension for the video (for video only).</li>
 </ul>
 <p><strong>Preview on documents</strong></p>
-<div class="codehilite"><pre><span></span>&lt;img class=&quot;document-preview-item&quot; data-src=&quot;{{ServerRedirectedPreviewURL}}&quot; data-url=&quot;{{Path}}&quot;/&gt;
-</pre></div>
+<div class="codehilite"><pre><span></span><code>&lt;img class=&quot;document-preview-item&quot; data-src=&quot;{{ServerRedirectedPreviewURL}}&quot; data-url=&quot;{{Path}}&quot;/&gt;
+</code></pre></div>
 
 
 <p><strong>Preview on videos</strong></p>
-<div class="codehilite"><pre><span></span>&lt;img class=&quot;video-preview-item&quot; src=&quot;{{PictureThumbnailURL}}&quot; data-src=&quot;{{PictureThumbnailURL}}&quot; data-url=&quot;{{DefaultEncodingURL}}&quot; data-fileext=&quot;{{FileType}}&quot;/&gt;
-</pre></div>
+<div class="codehilite"><pre><span></span><code>&lt;img class=&quot;video-preview-item&quot; src=&quot;{{PictureThumbnailURL}}&quot; data-src=&quot;{{PictureThumbnailURL}}&quot; data-url=&quot;{{DefaultEncodingURL}}&quot; data-fileext=&quot;{{FileType}}&quot;/&gt;
+</code></pre></div>
 
 
 <h3 id="custom-placeholders-ie-shimmers">Custom placeholders (i.e. shimmers)<a class="headerlink" href="#custom-placeholders-ie-shimmers" title="Permanent link">&para;</a></h3>
 <p>You can define your own placeholders according your template markup. They will be loaded automatically before the results are loaded.</p>
 <p><img alt="Placeholders" src="../../images/placeholders.png" /></p>
 <p>To do this, insert your HTML markup as follow in your template content:</p>
-<div class="codehilite"><pre><span></span>&lt;content id=&quot;placeholder&quot;&gt;
+<div class="codehilite"><pre><span></span><code>&lt;content id=&quot;placeholder&quot;&gt;
     &lt;style&gt;
         /* Insert your CSS overrides here */
     &lt;/style&gt;
@@ -1484,26 +1484,27 @@
     &lt;/div&gt;
 
 &lt;/content&gt;
-</pre></div>
+</code></pre></div>
 
 
 <p>Notice your template content must be enclosed in a <code>&lt;content id="template"&gt;</code> tag if you define placeholders.</p>
 <h3 id="work-with-sharepoint-theme">Work with SharePoint theme<a class="headerlink" href="#work-with-sharepoint-theme" title="Permanent link">&para;</a></h3>
 <p>A <code>themeVariant</code> variable is available in the root Handlebars context. It contains all current theme information that can use in your CSS classes or inline styles. Example:</p>
-<div class="codehilite"><pre><span></span>&lt;style&gt;
+<div class="codehilite"><pre><span></span><code>&lt;style&gt;
     .example-themePrimary a {
         color: {{@root.themeVariant.palette.themePrimary}};
     }
 &lt;/style&gt;
-</pre></div>
+</code></pre></div>
 
 
 <p>To see all available values, you can inspect the <code>themeVariant</code> objetc using the 'Debug View' layout. Notice the values are udpated dynamically every time you udpate the theme through the UI.</p>
 <h3 id="custom-code-renderers">Custom code renderers<a class="headerlink" href="#custom-code-renderers" title="Permanent link">&para;</a></h3>
 <p>You may also define your own renderers, which most often should be SPFx application customizers. These should use the resultservice to register themselves as renderers, and will upon registration be available as a rendering choice in the "Result Layouts" Section.</p>
-<p>More information about custom code renderers may be found in a separate project <a href="https://github.com/microsoft-search/pnp-modern-search/tree/master/search-custom-renderer"><code>search-custom-renderer</code></a>, which showcases such a renderer.</p>
+<p>More information about custom code renderers may be found in a separate project <a href="https://github.com/microsoft-search/pnp-modern-search/tree/main/search-custom-renderer"><code>search-custom-renderer</code></a>, which showcases such a renderer.</p>
                 
                   
+                
                 
               
               
@@ -1559,20 +1560,20 @@
       <div class="md-footer-copyright">
         
         powered by
-        <a href="https://www.mkdocs.org">MkDocs</a>
+        <a href="https://www.mkdocs.org" target="_blank" rel="noopener">MkDocs</a>
         and
-        <a href="https://squidfunk.github.io/mkdocs-material/">
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
           Material for MkDocs</a>
       </div>
       
   <div class="md-footer-social">
     <link rel="stylesheet" href="../../assets/fonts/font-awesome.css">
     
-      <a href="https://twitter.com/officedevpnp" class="md-footer-social__link fa fa-twitter"></a>
+      <a href="https://twitter.com/officedevpnp" target="_blank" rel="noopener" title="twitter" class="md-footer-social__link fa fa-twitter"></a>
     
-      <a href="http://aka.ms/sppnp-videos" class="md-footer-social__link fa fa-youtube"></a>
+      <a href="http://aka.ms/sppnp-videos" target="_blank" rel="noopener" title="youtube" class="md-footer-social__link fa fa-youtube"></a>
     
-      <a href="https://aka.ms/sppnp" class="md-footer-social__link fa fa-link"></a>
+      <a href="https://aka.ms/sppnp" target="_blank" rel="noopener" title="link" class="md-footer-social__link fa fa-link"></a>
     
   </div>
 
@@ -1582,9 +1583,9 @@
       
     </div>
     
-      <script src="../../assets/javascripts/application.ac79c3b0.js"></script>
+      <script src="../../assets/javascripts/application.c33a9706.js"></script>
       
-      <script>app.initialize({version:"1.0.4",url:{base:"../.."}})</script>
+      <script>app.initialize({version:"1.1",url:{base:"../.."}})</script>
       
     
   </body>
