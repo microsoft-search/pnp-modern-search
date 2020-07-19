@@ -147,6 +147,11 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
      */
     private currentPageNumber: number = 1;
 
+    /**
+     * the original history.pushState
+     */
+    private _ops = null;
+
     public constructor() {
         super();
         this._templateContentToDisplay = '';
@@ -176,6 +181,8 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             );
             this._placeholder = Placeholder;
         }
+
+        console.log("rendering");
 
         this.renderCompleted();
     }
@@ -459,7 +466,24 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
         this.ensureDataSourceConnection();
 
+        this._handleQueryStringChange();
+        
         return super.onInit();
+    }
+
+    
+    /**
+     * Subscribes to URL query string change events
+     */
+    private _handleQueryStringChange() {
+        ((h) => {
+            this._ops = history.pushState;
+            h.pushState = (state, key, path) => {
+                this._ops.apply(history, [state, key, path]);
+                const qkw = this.properties.queryKeywords.tryGetSource();
+                if(qkw.id === SearchComponentType.PageEnvironment) this.render();
+            };
+        })(window.history);
     }
 
     private async _initQueryModifierInstance(queryModifierDefinition: IQueryModifierDefinition<any>): Promise<IQueryModifierInstance<any>> {
@@ -562,6 +586,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
     }
 
     protected onDispose(): void {
+        window.history.pushState = this._ops;
         ReactDom.unmountComponentAtNode(this.domElement);
     }
 

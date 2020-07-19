@@ -37,7 +37,7 @@ import { BaseSuggestionProvider } from '../../providers/BaseSuggestionProvider';
 import { Toggle } from 'office-ui-fabric-react/lib/Toggle';
 import { ThemeProvider, ThemeChangedEventArgs, IReadonlyTheme } from '@microsoft/sp-component-base';
 import { isEqual, find } from '@microsoft/sp-lodash-subset';
-import { GlobalSettings } from 'office-ui-fabric-react';
+import { GlobalSettings, hasHorizontalOverflow } from 'office-ui-fabric-react';
 import PnPTelemetry from "@pnp/telemetry-js";
 
 export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWebPartProps> implements IDynamicDataCallables {
@@ -53,6 +53,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
     private _propertyFieldCollectionData = null;
     private _customCollectionFieldType = null;
     private _themeVariant: IReadonlyTheme;
+    private _ops = null;
 
     constructor() {
         super();
@@ -169,6 +170,8 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
 
         this._bindHashChange();
 
+        this._handleQueryStringChange();
+
         this._extensibilityService = new ExtensibilityService();
         await this.initSuggestionProviders();
 
@@ -177,6 +180,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
     }
 
     protected onDispose(): void {
+        window.history.pushState = this._ops;
         ReactDom.unmountComponentAtNode(this.domElement);
     }
 
@@ -563,6 +567,20 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
         } else {
             window.removeEventListener('hashchange', this.render);
         }
+        
+    }
+
+    /**
+     * Subscribes to URL query string change events
+     */
+    private _handleQueryStringChange() {
+        ((h) => {
+            this._ops = history.pushState;
+            h.pushState = (state, key, path) => {
+                this._ops.apply(history, [state, key, path]);
+                this.render();
+            };
+        })(window.history);
     }
 
     /**
