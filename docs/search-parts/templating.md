@@ -91,15 +91,15 @@ Or only person cards:
 {{#>slider items=(JSONstringify @root.items 2) options=(JSONstringify @root.sliderOptions)}}
     <div class="slide">
       \{{#with (split AccountName '|')}}
-            <persona-card 
-                image-url="/_layouts/15/userphoto.aspx?size=L&username=\{{[2]}}"
-                text="\{{../FirstName}} \{{../LastName}}"
-                secondary-text="\{{../JobTitle}}"
-                tertiary-text="\{{[2]}}"
-                optional-text="\{{../WorkPhone}}"
-                persona-size="14"
+            <pnp-persona-card 
+                data-image-url="/_layouts/15/userphoto.aspx?size=L&username=\{{[2]}}"
+                data-text="\{{../FirstName}} \{{../LastName}}"
+                data-secondary-text="\{{../JobTitle}}"
+                data-tertiary-text="\{{[2]}}"
+                data-optional-text="\{{../WorkPhone}}"
+                data-persona-size="14"
                 >
-            </persona-card>
+            </pnp-persona-card>
         \{{/with}}
     </div>                
 {{/slider}}
