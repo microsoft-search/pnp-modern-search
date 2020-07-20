@@ -64,18 +64,26 @@ export class PersonaCardComponent extends React.Component<IPersonaCardComponentP
     }
 
     public renderProfileLink(props: IPersonaProps) {
-        let item = JSON.parse(this.props.item);
+        let path = "";
+        if(this.props.item) {
+            let item = JSON.parse(this.props.item);
+            path = item.Path;
+        }
         let palette = this.props.themeVariant.palette;
         return (
             <div className="ms-Persona-primaryText">
                 <Link
                     theme={this.props.themeVariant as ITheme}
-                    href={item.Path} target='_blank' data-interception="off" styles={{
+                    href={path} target='_blank' data-interception="off" styles={{
                         root: {
                             color: palette.black,
                             selectors: {                                
                                 ':hover': {
                                     textDecoration: 'underline',
+                                    color: palette.black
+                                },
+                                ':visited': {
+                                    textDecoration: 'none',
                                     color: palette.black
                                 }
                             }
