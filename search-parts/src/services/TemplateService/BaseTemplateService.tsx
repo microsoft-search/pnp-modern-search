@@ -308,8 +308,14 @@ abstract class BaseTemplateService {
 
         // Return the formatted date according to current locale using moment.js
         // <p>{{getDate Created "LL"}}</p>
-        Handlebars.registerHelper("getDate", (date: string, format: string, timeHandling?: number) => {
+        Handlebars.registerHelper("getDate", (date: string, format: string, timeHandling?: number, isZ?: boolean) => {
             try {
+                if(isZ && !date.toUpperCase().endsWith("Z")) {
+                    if(date.indexOf(' ') !== -1) {
+                        date += " ";
+                    }
+                    date += "Z";
+                }
                 let itemDate = new Date(date);
                 if (itemDate.toISOString() !== new Date(null).toISOString()) {
                     if (typeof timeHandling === "number") {
@@ -324,7 +330,7 @@ abstract class BaseTemplateService {
                         } else if (timeHandling === 4 && this.TimeZoneBias.UserBias) { // show as user region if any
                             date = this.addMinutes(itemDate, -this.TimeZoneBias.UserBias, -this.TimeZoneBias.UserDST).toISOString();
                             date = trimEnd(date, "Z");
-                        }
+                        } 
                     }
                     return this.momentHelper(date, format, this.CurrentLocale);
                 }
