@@ -147,6 +147,11 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
      */
     private currentPageNumber: number = 1;
 
+    /**
+     * the original history.pushState
+     */
+    private _ops = null;
+
     public constructor() {
         super();
         this._templateContentToDisplay = '';
@@ -459,7 +464,24 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
         this.ensureDataSourceConnection();
 
+        this._handleQueryStringChange();
+        
         return super.onInit();
+    }
+
+    
+    /**
+     * Subscribes to URL query string change events
+     */
+    private _handleQueryStringChange() {
+        ((h) => {
+            this._ops = history.pushState;
+            h.pushState = (state, key, path) => {
+                this._ops.apply(history, [state, key, path]);
+                const qkw = this.properties.queryKeywords.tryGetSource();
+                if(qkw.id === SearchComponentType.PageEnvironment) this.render();
+            };
+        })(window.history);
     }
 
     private async _initQueryModifierInstance(queryModifierDefinition: IQueryModifierDefinition<any>): Promise<IQueryModifierInstance<any>> {
@@ -562,6 +584,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
     }
 
     protected onDispose(): void {
+        window.history.pushState = this._ops;
         ReactDom.unmountComponentAtNode(this.domElement);
     }
 
@@ -1823,6 +1846,10 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
                             if (refinementValue.RefinementToken.indexOf(updatedSelectedFilterValue.RefinementToken) !== -1) {
                                 // Means the provided condition in URL is a text expression
+                                updatedSelectedFilterValues.push(refinementValue);
+                            } else if (updatedSelectedFilterValue && updatedSelectedFilterValue.RefinementValue &&
+                                updatedSelectedFilterValue.RefinementValue.indexOf(refinementValue.RefinementValue) > -1 ) {
+                                // There is a deep link filter in FQL expression that will be duplicated in the UI if the next else if is evaluated to true
                                 updatedSelectedFilterValues.push(refinementValue);
                             } else if (StringHelper.longestCommonSubstring(updatedSelectedFilterValue.RefinementToken, refinementValue.RefinementValue) && updatedSelectedFilterValue.RefinementToken.indexOf("range") === -1) {
                                 // Means the provided condition in URL is an FQL expression so we try to guess the corresponding refinement results using the text value contained in the expression itself
