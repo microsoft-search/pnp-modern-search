@@ -1847,6 +1847,10 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                             if (refinementValue.RefinementToken.indexOf(updatedSelectedFilterValue.RefinementToken) !== -1) {
                                 // Means the provided condition in URL is a text expression
                                 updatedSelectedFilterValues.push(refinementValue);
+                            } else if (updatedSelectedFilterValue && updatedSelectedFilterValue.RefinementValue &&
+                                updatedSelectedFilterValue.RefinementValue.indexOf(refinementValue.RefinementValue) > -1 ) {
+                                // There is a deep link filter in FQL expression that will be duplicated in the UI if the next else if is evaluated to true
+                                updatedSelectedFilterValues.push(refinementValue);
                             } else if (StringHelper.longestCommonSubstring(updatedSelectedFilterValue.RefinementToken, refinementValue.RefinementValue) && updatedSelectedFilterValue.RefinementToken.indexOf("range") === -1) {
                                 // Means the provided condition in URL is an FQL expression so we try to guess the corresponding refinement results using the text value contained in the expression itself
                                 updatedSelectedFilterValues.push(refinementValue);
