@@ -182,8 +182,6 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             this._placeholder = Placeholder;
         }
 
-        console.log("rendering");
-
         this.renderCompleted();
     }
 
