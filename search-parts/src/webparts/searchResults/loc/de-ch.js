@@ -60,6 +60,7 @@ define([], function() {
         "PanelCloseButtonAria": "schliessen",
         "UseRefinersWebPartLabel": "Verbindung zu einem Sucheinschränkungs Webpart herstellen",
         "UseRefinersFromComponentLabel": "Einschränkungen aus dieser Komponente verwenden",
+        "UseSearchVerticalsLabel": "Connect to a search vertical Web Part",
         "UsePaginationFromComponentLabel": "Paging aus dieser Komponente verwenden",
         "RefinementFilters": "Einschränkungsfilter",
         "customTemplateFieldsLabel": "Benutzerdefinierte Werte für Vorlagenfelder",
@@ -83,6 +84,8 @@ define([], function() {
             "SortableFieldDisplayValueField": "Anzuzeigender Feldname",
             "EditSortableFieldsLabel": "Sortierbare Felder bearbeiten",
             "EditSortLabel": "Sortierung bearbeiten",
+            "EditSortLabelFieldName": "Feild namme",
+            "EditSortDirection": "Sort Direction",
             "SortInvalidSortableFieldMessage": "Diese Eigenschaft ist nicht sortierbar"
         },
         "Synonyms": {
@@ -108,6 +111,7 @@ define([], function() {
             "ConditionValueLabel": "Bedingung",
             "CondtionOperatorValue": "Operator",
             "ExternalUrlLabel": "Externe Vorlagen-URL",
+            "ExternalUrlPlaceholder": "https://mysite/Documents/external.html",
             "EqualOperator": "Entspricht",
             "NotEqualOperator": "Nicht gleich",
             "ContainsOperator": "Enthält",
