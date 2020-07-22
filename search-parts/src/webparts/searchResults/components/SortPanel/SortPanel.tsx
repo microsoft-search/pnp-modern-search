@@ -63,7 +63,6 @@ export default class SortPanel extends React.Component<ISortPanelProps, ISortPan
                     placeHolder={strings.Sort.SortPanelSortFieldPlaceHolder}
                     ariaLabel={strings.Sort.SortPanelSortFieldAria}
                     onChanged={this._onChangedSelectedField}
-                    selectedKey={this.state.sortField}
                     options={dropdownOptions}
                 />
             </div>
@@ -113,6 +112,7 @@ export default class SortPanel extends React.Component<ISortPanelProps, ISortPan
             dropdownOptions.push({
                 key: e.sortField,
                 text: e.displayValue,
+                selected: (e.sortField === this.state.sortField),
                 data: {
                     sortDirection: e.sortField === this.state.sortField ? this.state.sortDirection : e.sortDirection
                 }
