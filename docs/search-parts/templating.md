@@ -198,7 +198,7 @@ The web part has a couple of helper web-components to ease rendering, used by th
 - slider-component
 - persona-card
 - persona-card-shimmers
-- fabric-icon - You only need to set one property, which are evaluated in order if multiple ones are set.
+- fabric-icon - You only need to set one property, which are evaluated in order if multiple ones are set. The data-error-image, used to set a fallback image on error, is used only when the data-image-url fails to load, it will not load a fallback for data-icon-name usage.
 
 ```html
 <pnp-fabric-icon
@@ -206,6 +206,7 @@ The web part has a couple of helper web-components to ease rendering, used by th
     data-file-extension='[file extension - pri 2]'
     data-icon-name='[office ui fabric icon name - pri 3]'
     data-size='16 | 20 | 32 (default) | 40 | 48 | 64 | 96'
+    data-error-image='[url to image]'
 >
 </pnp-fabric-icon>
 ```
