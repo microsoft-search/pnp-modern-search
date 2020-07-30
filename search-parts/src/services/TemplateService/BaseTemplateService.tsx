@@ -770,11 +770,11 @@ abstract class BaseTemplateService {
     public abstract ensureFileResolves(fileUrl: string): Promise<void>;
 
     private static _initDocumentPreviews() {
-
         const nodes = document.querySelectorAll('.document-preview-item');
 
         DomHelper.forEach(nodes, ((index, el) => {
-            if (!el.onclick) {
+            if (!el.attributes["data-listener"]) {
+                el.attributes["data-listener"] = "1";
                 el.addEventListener("click", (event) => {
                     const thumbnailElt = event.srcElement;
 
@@ -805,33 +805,36 @@ abstract class BaseTemplateService {
         const nodes = document.querySelectorAll('.video-preview-item');
 
         DomHelper.forEach(nodes, ((index, el) => {
-            el.addEventListener("click", (event) => {
+            if (!el.attributes["data-listener"]) {
+                el.attributes["data-listener"] = "1";
+                el.addEventListener("click", (event) => {
 
-                const thumbnailElt = event.srcElement;
+                    const thumbnailElt = event.srcElement;
 
-                // Get infos about the video to render
-                const url = event.srcElement.getAttribute("data-url");
-                const fileExtension = event.srcElement.getAttribute("data-fileext");
-                const previewImgUrl: string = event.srcElement.getAttribute("data-src");
+                    // Get infos about the video to render
+                    const url = event.srcElement.getAttribute("data-url");
+                    const fileExtension = event.srcElement.getAttribute("data-fileext");
+                    const previewImgUrl: string = event.srcElement.getAttribute("data-src");
 
-                if (url && fileExtension) {
-                    let renderElement = React.createElement(
-                        PreviewContainer,
-                        {
-                            videoProps: {
-                                fileExtension: fileExtension
-                            },
-                            showPreview: true,
-                            targetElement: thumbnailElt,
-                            previewImageUrl: previewImgUrl,
-                            elementUrl: url,
-                            previewType: PreviewType.Video
-                        } as IPreviewContainerProps
-                    );
+                    if (url && fileExtension) {
+                        let renderElement = React.createElement(
+                            PreviewContainer,
+                            {
+                                videoProps: {
+                                    fileExtension: fileExtension
+                                },
+                                showPreview: true,
+                                targetElement: thumbnailElt,
+                                previewImageUrl: previewImgUrl,
+                                elementUrl: url,
+                                previewType: PreviewType.Video
+                            } as IPreviewContainerProps
+                        );
 
-                    ReactDom.render(renderElement, el);
-                }
-            });
+                        ReactDom.render(renderElement, el);
+                    }
+                });
+            }
         }));
     }
 }

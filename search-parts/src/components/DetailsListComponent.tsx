@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { TextField } from 'office-ui-fabric-react/lib/TextField';
 import { Fabric } from 'office-ui-fabric-react/lib/Fabric';
-import { DetailsListLayoutMode, SelectionMode, IColumn, IDetailsRowProps, IDetailsRowStyles, DetailsRow, IDetailsHeaderBaseProps, IDetailsHeaderProps, DetailsHeader, IDetailsHeaderStyles, CheckboxVisibility } from 'office-ui-fabric-react/lib/DetailsList';
-import { mergeStyleSets, createTheme, ITheme } from 'office-ui-fabric-react/lib/Styling';
+import { DetailsListLayoutMode, SelectionMode, IColumn, IDetailsRowProps, DetailsRow, IDetailsHeaderProps, DetailsHeader, CheckboxVisibility } from 'office-ui-fabric-react/lib/DetailsList';
+import { mergeStyleSets, ITheme } from 'office-ui-fabric-react/lib/Styling';
 import { ISearchResult } from '../models/ISearchResult';
 import * as Handlebars from 'handlebars';
 import { ShimmeredDetailsList } from 'office-ui-fabric-react/lib/ShimmeredDetailsList';
@@ -198,7 +198,7 @@ export class DetailsListComponent extends React.Component<DetailsListComponentPr
                         onColumnClick: column.enableSorting ? this._onColumnClick : null,
                         data: 'string',
                         isPadded: true,
-                        onRender: (item: ISearchResult) => {
+                        onRender: (item: ISearchResult, index: number) => {
 
                             let value: any = item[column.value];
                             let renderColumnValue: JSX.Element = null;
@@ -218,8 +218,11 @@ export class DetailsListComponent extends React.Component<DetailsListComponentPr
                                     value = template({ item: item }, { data: { themeVariant: this.props.themeVariant } });
 
                                     value = value ? value.trim() : null;
-
-                                    TemplateService.initPreviewElements();
+                                    if (index == this._allItems.length - 1) {
+                                        //hack to ensure all items are rendered (most likely)
+                                        window.setTimeout( () => TemplateService.initPreviewElements(), 500);
+                                        //TemplateService.initPreviewElements();
+                                    }
 
                                 } catch (error) {
                                     hasError = true;
