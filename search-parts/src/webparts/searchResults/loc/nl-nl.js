@@ -84,8 +84,8 @@ define([], function() {
             "SortableFieldDisplayValueField": "Veldnaam om te tonen",
             "EditSortableFieldsLabel": "Bewerk sorteerbare velden",
             "EditSortLabel": "Bewerk sorteervolgorde",
-            "EditSortLabelFieldName": "Feild namme",
-            "EditSortDirection": "Sort Direction",
+            "EditSortLabelFieldName": "Veldnaam",
+            "EditSortDirection": "Sorteerrichting",
             "SortInvalidSortableFieldMessage": "Deze eigenschap is niet sorteerbaar"
         },
         "Synonyms": {

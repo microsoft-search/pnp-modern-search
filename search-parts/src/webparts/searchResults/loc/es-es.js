@@ -84,9 +84,9 @@ define([], function() {
             "SortableFieldDisplayValueField": "Nombre de campo para mostrar",
             "EditSortableFieldsLabel": "Editar campos ordenables",
             "EditSortLabel": "Edite el criterio de ordenación",
-            "EditSortLabelFieldName": "Feild namme",
-            "EditSortDirection": "Sort Direction",
-            "SortInvalidSortableFieldMessage": "This property is not sortable"
+            "EditSortLabelFieldName": "Nombre del campo",
+            "EditSortDirection": "Dirección de clasificación",
+            "SortInvalidSortableFieldMessage": "Esta propiedad no es ordenable"
         },
         "Synonyms": {
             "EditSynonymLabel": "Editar sinónimos",

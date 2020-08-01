@@ -60,7 +60,7 @@ define([], function() {
         "PanelCloseButtonAria": "Proche",
         "UseRefinersWebPartLabel": "Connectez un Web Part de filtres de recherche",
         "UseRefinersFromComponentLabel": "Utiliser les filtres à partir de ce composant",
-        "UseSearchVerticalsLabel": "Connect to a search vertical Web Part",
+        "UseSearchVerticalsLabel": "Se connecter à un composant WebPart vertical de recherche",
         "UsePaginationFromComponentLabel": "Utiliser la pagination à partir de ce composant",
         "RefinementFilters": "Filtres d'affinements",
         "customTemplateFieldsLabel": "Valeurs de champ de modèle personnalisé",
@@ -84,8 +84,8 @@ define([], function() {
             "SortableFieldDisplayValueField": "Intitulé du champ à afficher",
             "EditSortableFieldsLabel": "Éditer les champs de tri",
             "EditSortLabel": "Éditer l'ordre de tri",
-            "EditSortLabelFieldName": "Feild namme",
-            "EditSortDirection": "Sort Direction",
+            "EditSortLabelFieldName": "Nom de domaine",
+            "EditSortDirection": "Direction du tri",
             "SortInvalidSortableFieldMessage": "Cette propriété n'est pas triable"
         },
         "Synonyms": {

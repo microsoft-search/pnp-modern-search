@@ -84,7 +84,7 @@ define([], function() {
             "SortableFieldDisplayValueField": "Anzuzeigender Feldname",
             "EditSortableFieldsLabel": "Sortierbare Felder bearbeiten",
             "EditSortLabel": "Sortierung bearbeiten",
-            "EditSortLabelFieldName": "Feild namme",
+            "EditSortLabelFieldName": "Feldname",
             "EditSortDirection": "Sort Direction",
             "SortInvalidSortableFieldMessage": "Diese Eigenschaft ist nicht sortierbar"
         },
