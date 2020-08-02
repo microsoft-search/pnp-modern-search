@@ -1059,7 +1059,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                 fields: [
                     {
                         id: 'sortField',
-                        title: "Field name",
+                        title: strings.Sort.EditSortLabelFieldName,
                         type: this._customCollectionFieldType.custom,
                         required: true,
                         onCustomRender: (field, value, onUpdate, item, itemId, onCustomFieldValidation) => {
@@ -1086,7 +1086,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                     },
                     {
                         id: 'sortDirection',
-                        title: "Direction",
+                        title: strings.Sort.EditSortDirection,
                         type: this._customCollectionFieldType.dropdown,
                         required: true,
                         options: [
@@ -1144,7 +1144,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                     },
                     {
                         id: 'sortDirection',
-                        title: "Direction",
+                        title: strings.Sort.SortPanelSortDirectionLabel,
                         type: this._customCollectionFieldType.dropdown,
                         required: true,
                         options: [
@@ -1165,7 +1165,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                 checked: useRefiners
             }),
             PropertyPaneToggle('useSearchVerticals', {
-                label: "Connect to search verticals",
+                label: strings.UseSearchVerticalsLabel,
                 checked: useSearchVerticals
             }),
             PropertyPaneToggle('enableQueryRules', {
@@ -1258,7 +1258,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             searchSettingsFields.splice(this.properties.useRefiners ? 7 : 6, 0,
                 PropertyPaneDropdown('searchVerticalDataSourceReference', {
                     options: this._dynamicDataService.getAvailableDataSourcesByType(SearchComponentType.SearchVerticalsWebPart),
-                    label: "Use verticals from this component"
+                    label: strings.UseSearchVerticalsLabel
                 }));
         }
 
@@ -1682,7 +1682,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                             title: strings.ResultTypes.ExternalUrlLabel,
                             type: this._customCollectionFieldType.url,
                             onGetErrorMessage: this._onTemplateUrlChange.bind(this),
-                            placeholder: 'https://mysite/Documents/external.html'
+                            placeholder: strings.ResultTypes.ExternalUrlPlaceholder
                         },
                     ]
                 })
