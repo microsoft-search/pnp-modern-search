@@ -16,6 +16,7 @@ import { isEqual } from '@microsoft/sp-lodash-subset';
 import { ITheme } from '@uifabric/styling';
 import { Icon } from 'office-ui-fabric-react/lib/Icon';
 import { Text as TextUI } from 'office-ui-fabric-react/lib/Text';
+import { CssHelper } from '../../../../../helpers/CssHelper';
 
 export default class Vertical extends React.Component<IFilterLayoutProps, IVerticalState> {
 
@@ -68,7 +69,9 @@ export default class Vertical extends React.Component<IFilterLayoutProps, IVerti
         height: '100%',
         position: 'relative',
         maxHeight: 'inherit'
-      }}>
+      }}
+      id={CssHelper.convertToClassName(this.props.contentClassName)}
+      >
         <div className={styles.verticalLayout__filterPanel__body} data-is-scrollable={true}>       
           {renderAvailableFilters}
           {renderLinkRemoveAll} 

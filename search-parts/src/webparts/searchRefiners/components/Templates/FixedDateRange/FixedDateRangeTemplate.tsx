@@ -12,6 +12,7 @@ import { find } from "@microsoft/sp-lodash-subset";
 
 //CSS
 import styles from './FixedDateRangeTemplate.module.scss';
+import { CssHelper } from "../../../../../helpers/CssHelper";
 
 
 export interface IFixedDateRangeTemplateState extends IBaseRefinerTemplateState {
@@ -106,8 +107,10 @@ export default class FixedDateRangeTemplate extends React.Component<IFixedDateRa
         if (refinementResultValues[5].RefinementCount === 0) {
             options.pop();
         }
+        
+        const filterClassName = CssHelper.prefixAndValidateClassName("pnp-refiner-fixeddaterange", this.props.refinementResult.FilterName);
 
-        return <div className={styles.pnpRefinersTemplateFixedDateRange}>
+        return <div className={styles.pnpRefinersTemplateFixedDateRange + " " + filterClassName}>
             {
                 this.props.showValueFilter ?
                     <div className='pnp-font-s'>Value filters are not allowed for dates. Clear 'show filter' to remove this message</div>

@@ -16,8 +16,12 @@ import { find, isEqual } from '@microsoft/sp-lodash-subset';
 import RefinersSortOption from '../../../../models/RefinersSortOptions';
 import RefinerSortDirection from '../../../../models/RefinersSortDirection';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
+import { CssHelper } from '../../../../helpers/CssHelper';
+import { TemplateService } from '../../../../services/TemplateService/TemplateService';
 
 export default class SearchRefinersContainer extends React.Component<ISearchRefinersContainerProps, ISearchRefinersContainerState> {
+  
+  private _styleMarkup: string = null;
 
   public constructor(props: ISearchRefinersContainerProps) {
     super(props);
@@ -68,6 +72,7 @@ export default class SearchRefinersContainer extends React.Component<ISearchRefi
             themeVariant={this.props.themeVariant}
             selectedFilters={this.state.selectedRefinementFilters}
             userService={this.props.userService}
+            contentClassName={this.props.contentClassName}
           />;
           break;
 
@@ -91,19 +96,22 @@ export default class SearchRefinersContainer extends React.Component<ISearchRefi
             themeVariant={this.props.themeVariant}
             selectedFilters={this.state.selectedRefinementFilters}
             userService={this.props.userService}
+            contentClassName={this.props.contentClassName}
           />;
           break;
       }
     }
 
     return (
-      <div style={{ backgroundColor: semanticColors.bodyBackground }}>
+      <div style={{ backgroundColor: semanticColors.bodyBackground }} >
+        <div style={{display:"none"}} dangerouslySetInnerHTML={{__html: this.props.styles}}></div>
         <div className={styles.searchRefiners}>
           {renderWebPartTitle}
           {renderWpContent}
         </div>
       </div>
     );
+
   }
 
   public UNSAFE_componentWillReceiveProps(nextProps: ISearchRefinersContainerProps) {
@@ -197,7 +205,7 @@ export default class SearchRefinersContainer extends React.Component<ISearchRefi
     });
   }
 
-  public componentDidMount() {
+  public async componentDidMount() {
     this.setState({
       availableRefiners: this.props.availableRefiners
     });

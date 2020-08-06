@@ -22,6 +22,7 @@ interface ISearchResultsTemplateProps {
      * The Web Part instance ID
      */
     instanceId: string;
+
 }
 
 export default ISearchResultsTemplateProps;

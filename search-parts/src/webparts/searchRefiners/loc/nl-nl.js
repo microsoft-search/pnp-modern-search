@@ -19,6 +19,7 @@ define([], function() {
         "SelectedFiltersLabel": "Geselecteerde filters:",
         "RefinerLayoutLabel": "Filters weergave",
         "ConnectToSearchResultsLabel": "Verbind met een zoek webonderdeel",
+        "DialogButtonLabel": "Stijlen bewerken",
         "Refiners": {
             "RefinersFieldLabel": "Verfijningen",
             "RefinerManagedPropertyField": "Filter beheerde eigenschap",

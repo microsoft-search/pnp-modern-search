@@ -6,6 +6,7 @@ import * as update from 'immutability-helper';
 import { INavLink, Nav, Icon, ITheme } from 'office-ui-fabric-react';
 import { cloneDeep, find } from "@microsoft/sp-lodash-subset";
 import { UrlHelper } from '../../../../../helpers/UrlHelper';
+import { CssHelper } from '../../../../../helpers/CssHelper';
 
 //CSS
 import styles from './ContainerTreeTemplate.module.scss';
@@ -39,7 +40,9 @@ export default class ContainerTreeTemplate extends React.Component<IFoldersTempl
 
     public render() {
 
-        return  <div className={styles.pnpRefinersTemplateContainerTree}>
+        const filterClassName = CssHelper.prefixAndValidateClassName("pnp-refiner-tree", this.props.refinementResult.FilterName);
+
+        return  <div className={styles.pnpRefinersTemplateContainerTree + " " + filterClassName}>
                 {
                     this.props.showValueFilter ? 
                         <div className='pnp-font-s'>Value filters are not allowed for container trees. Clear 'show filter' to remove this message</div>
@@ -52,7 +55,7 @@ export default class ContainerTreeTemplate extends React.Component<IFoldersTempl
                         const isSelected = props.refinementValue && this._isValueInFilterSelection(props.refinementValue);
                         return  <div style={{
                                         fontWeight: isSelected ? 'bold' : 'inherit'
-                                    }}>
+                                    }} className={"pnp-refiner-tree " + CssHelper.prefixAndValidateClassName("pnp-ref-" + props.RefinementName, props.RefinementValue)}>
                                     {
                                         defautRender(cloneDeep(props))
                                     }

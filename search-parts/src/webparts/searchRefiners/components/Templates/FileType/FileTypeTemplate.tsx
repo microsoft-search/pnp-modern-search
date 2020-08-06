@@ -27,6 +27,8 @@ import { IRefinementValue, RefinementOperator } from '../../../../../models/ISea
 import IBaseRefinerTemplateProps from '../IBaseRefinerTemplateProps';
 import IBaseRefinerTemplateState from '../IBaseRefinerTemplateState';
 import { TextField } from 'office-ui-fabric-react';
+import { CssHelper } from '../../../../../helpers/CssHelper';
+
 
 // Class
 export default class FileTypeTemplate extends React.Component<IBaseRefinerTemplateProps, IBaseRefinerTemplateState> {
@@ -51,9 +53,11 @@ export default class FileTypeTemplate extends React.Component<IBaseRefinerTempla
     if (this.props.selectedValues.length === 0 && this.state.refinerSelectedFilterValues.length === 0) {
         disableButtons = true;
     }
+    
+    const filterClassName = CssHelper.prefixAndValidateClassName("pnp-refiner-filetype", this.props.refinementResult.FilterName);
 
     return (
-      <div className={styles.pnpRefinersTemplateFileType}>
+      <div className={styles.pnpRefinersTemplateFileType + " " + filterClassName}>
         {
             this.props.showValueFilter ?
                 <div className="pnp-value-filter-container">
@@ -79,6 +83,7 @@ export default class FileTypeTemplate extends React.Component<IBaseRefinerTempla
                   }
                 }}
                 key={j}
+                className={"pnp-refiner-filetype " + CssHelper.prefixAndValidateClassName("pnp-ref-" + refinementValue.RefinementName, refinementValue.RefinementValue)}
                 checked={this._isValueInFilterSelection(refinementValue)}
                 disabled={this.state.refinerSelectedFilterValues.length > 0 && !this._isValueInFilterSelection(refinementValue) && !this.props.isMultiValue}
                 onChange={(ev, checked: boolean) => {

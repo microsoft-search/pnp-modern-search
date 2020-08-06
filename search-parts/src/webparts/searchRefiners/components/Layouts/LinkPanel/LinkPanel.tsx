@@ -21,6 +21,8 @@ import IFilterLayoutProps from '../IFilterLayoutProps';
 import { isEqual } from '@microsoft/sp-lodash-subset';
 import { Icon } from 'office-ui-fabric-react/lib/Icon';
 import { Text as TextUI } from 'office-ui-fabric-react/lib/Text';
+import { CssHelper } from '../../../../../helpers/CssHelper';
+
 export default class LinkPanel extends React.Component<ILinkPanelProps, ILinkPanelState> {
 
   private _groupedList: IGroupedList;
@@ -33,7 +35,7 @@ export default class LinkPanel extends React.Component<ILinkPanelProps, ILinkPan
       items: [],
       groups: []
     };
-
+    
     this._onTogglePanel = this._onTogglePanel.bind(this);
     this._onClosePanel = this._onClosePanel.bind(this);
 
@@ -121,7 +123,9 @@ export default class LinkPanel extends React.Component<ILinkPanelProps, ILinkPan
                   height: '100%',
                   position: 'relative',
                   maxHeight: 'inherit'
-                }}>
+                }}
+                id={CssHelper.convertToClassName(this.props.contentClassName)}
+                >
                   <ScrollablePane styles={{
                     root: {
                       width: '100%',

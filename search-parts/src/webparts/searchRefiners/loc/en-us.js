@@ -19,6 +19,7 @@ define([], function () {
     "SelectedFiltersLabel": "Selected filters:",
     "RefinerLayoutLabel": "Filters layout",
     "ConnectToSearchResultsLabel": "Connect to search results Web Part",
+    "DialogButtonLabel": "Edit Styles",
     "Refiners": {
       "RefinersFieldLabel": "Refiners",
       "RefinerManagedPropertyField": "Filter managed property",

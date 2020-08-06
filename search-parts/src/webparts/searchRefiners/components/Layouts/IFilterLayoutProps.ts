@@ -55,6 +55,12 @@ interface IFilterLayoutProps {
    * The current theme variant
    */
   themeVariant: IReadonlyTheme | undefined;
+
+  /**
+   * Content class name
+   */
+  contentClassName: string;
+  
 }
 
 export default IFilterLayoutProps;

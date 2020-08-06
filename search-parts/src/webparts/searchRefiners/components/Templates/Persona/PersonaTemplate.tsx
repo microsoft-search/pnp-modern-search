@@ -15,6 +15,7 @@ import IBaseRefinerTemplateProps from '../IBaseRefinerTemplateProps';
 import IBaseRefinerTemplateState from '../IBaseRefinerTemplateState';
 import { PersonaSize, Persona, Spinner, SpinnerSize, IExtendedPersonaProps, IPersonaProps, TextField, Link } from "office-ui-fabric-react";
 import { IUserInfo } from "../../../../../models/IUser";
+import { CssHelper } from '../../../../../helpers/CssHelper';
 
 export interface IPersonaTemplateProps extends IBaseRefinerTemplateProps {
 }
@@ -46,11 +47,13 @@ export default class PersonaTemplate extends React.Component<IPersonaTemplatePro
   public render() {
 
     let renderTemplate: JSX.Element = null;
+    
+    const filterClassName = CssHelper.prefixAndValidateClassName("pnp-refiner-persona", this.props.refinementResult.FilterName);
 
     if (this.state.isLoading) {
       renderTemplate = <Spinner size={SpinnerSize.small}/>;
     } else {
-      renderTemplate =  <div>
+      renderTemplate =  <div className={filterClassName}>
                           {
                             this.props.refinementResult.Values.filter(x => { return !this._isFilterMatch(x);}).map((refinementValue: IRefinementValue, j) => {
 
@@ -81,11 +84,12 @@ export default class PersonaTemplate extends React.Component<IPersonaTemplatePro
                               if (refinementValue.RefinementCount === 0) {
                                 return null;
                               }
+
                               return (
                                 <Persona
                                   {...imageProps}
                                   key={j}
-                                  className='pnp-persona'
+                                  className={'pnp-persona pnp-refiner-persona ' + CssHelper.prefixAndValidateClassName("pnp-ref-" + refinementValue.RefinementName, displayName)}
                                   styles={{
                                     root: {
                                       marginBottom: 10

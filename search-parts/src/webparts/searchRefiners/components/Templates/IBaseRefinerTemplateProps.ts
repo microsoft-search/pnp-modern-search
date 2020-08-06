@@ -50,6 +50,7 @@ interface IBaseRefinerTemplateProps {
    * Indicates if the value filter should be visible
    */
   showValueFilter: boolean;
+
 }
 
 export default IBaseRefinerTemplateProps;

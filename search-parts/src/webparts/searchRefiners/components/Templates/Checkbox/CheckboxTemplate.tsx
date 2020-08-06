@@ -9,6 +9,7 @@ import * as strings from 'SearchRefinersWebPartStrings';
 import * as update from 'immutability-helper';
 import { ITheme } from "@uifabric/styling";
 import { TextField } from "office-ui-fabric-react";
+import { CssHelper } from '../../../../../helpers/CssHelper';
 
 //CSS
 import styles from './CheckboxTemplate.module.scss';
@@ -41,7 +42,9 @@ export default class CheckboxTemplate extends React.Component<IBaseRefinerTempla
             disableButtons = true;
         }
 
-        return <div className={styles.pnpRefinersTemplateCheckbox}>
+        let filterClass = CssHelper.prefixAndValidateClassName("pnp-refiner-checkbox", this.props.refinementResult.FilterName);
+
+        return <div className={styles.pnpRefinersTemplateCheckbox + " " + filterClass}>
             {
                 this.props.showValueFilter ?
                     <div className="pnp-value-filter-container">
@@ -77,6 +80,7 @@ export default class CheckboxTemplate extends React.Component<IBaseRefinerTempla
                                     padding: 10
                                 }
                             }}
+                            className={"pnp-refiner-checkbox " + CssHelper.prefixAndValidateClassName("pnp-ref-" + refinementValue.RefinementName, refinementValue.RefinementValue)}
                             theme={this.props.themeVariant as ITheme}
                             key={j}
                             checked={this._isValueInFilterSelection(refinementValue)}
@@ -84,7 +88,9 @@ export default class CheckboxTemplate extends React.Component<IBaseRefinerTempla
                             label={Text.format(refinementValue.RefinementValue + ' ({0})', refinementValue.RefinementCount)}
                             onChange={(ev, checked: boolean) => {
                                 checked ? this._onFilterAdded(refinementValue) : this._onFilterRemoved(refinementValue);
-                            }} />
+                            }}
+                            title={Text.format(refinementValue.RefinementValue + ' ({0})', refinementValue.RefinementCount)}
+                            />
                     );
                 })
             }

@@ -468,7 +468,6 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         
         return super.onInit();
     }
-
     
     /**
      * Subscribes to URL query string change events
