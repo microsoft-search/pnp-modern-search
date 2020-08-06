@@ -513,6 +513,11 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
     if (propertyPath.localeCompare('refinersConfiguration') === 0) {
       this.context.dynamicDataSourceManager.notifyPropertyChanged(SearchComponentType.RefinersWebPart);
     }
+
+    if(propertyPath.localeCompare('') === 0){
+      this._customStyles = await this._processStyles();
+    }
+
   }
 
   /**
