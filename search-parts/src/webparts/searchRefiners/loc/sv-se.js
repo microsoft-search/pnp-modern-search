@@ -19,6 +19,7 @@ define([], function () {
     "SelectedFiltersLabel": "Valda filter:",
     "RefinerLayoutLabel": "Filter utseende",
     "ConnectToSearchResultsLabel": "Anslut till sökresultatens webbdel",
+    "DialogButtonLabel": "Redigera stilar",
     "Refiners": {
       "RefinersFieldLabel": "Begränsningar",
       "RefinerManagedPropertyField": "Hanterad egenskaps filter",
