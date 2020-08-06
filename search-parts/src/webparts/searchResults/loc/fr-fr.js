@@ -60,6 +60,7 @@ define([], function() {
         "PanelCloseButtonAria": "Proche",
         "UseRefinersWebPartLabel": "Connectez un Web Part de filtres de recherche",
         "UseRefinersFromComponentLabel": "Utiliser les filtres à partir de ce composant",
+        "UseSearchVerticalsLabel": "Se connecter à un composant WebPart vertical de recherche",
         "UsePaginationFromComponentLabel": "Utiliser la pagination à partir de ce composant",
         "RefinementFilters": "Filtres d'affinements",
         "customTemplateFieldsLabel": "Valeurs de champ de modèle personnalisé",
@@ -83,6 +84,8 @@ define([], function() {
             "SortableFieldDisplayValueField": "Intitulé du champ à afficher",
             "EditSortableFieldsLabel": "Éditer les champs de tri",
             "EditSortLabel": "Éditer l'ordre de tri",
+            "EditSortLabelFieldName": "Nom de domaine",
+            "EditSortDirection": "Direction du tri",
             "SortInvalidSortableFieldMessage": "Cette propriété n'est pas triable"
         },
         "Synonyms": {
@@ -108,6 +111,7 @@ define([], function() {
             "ConditionValueLabel": "Valeur de la condition",
             "CondtionOperatorValue": "Opérateur",
             "ExternalUrlLabel": "URL du template externe",
+            "ExternalUrlPlaceholder": "https://mysite/Documents/external.html",
             "EqualOperator": "Égal",
             "NotEqualOperator": "N'est pas égal",
             "ContainsOperator": "Contient",

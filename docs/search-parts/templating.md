@@ -91,15 +91,15 @@ Or only person cards:
 {{#>slider items=(JSONstringify @root.items 2) options=(JSONstringify @root.sliderOptions)}}
     <div class="slide">
       \{{#with (split AccountName '|')}}
-            <persona-card 
-                image-url="/_layouts/15/userphoto.aspx?size=L&username=\{{[2]}}"
-                text="\{{../FirstName}} \{{../LastName}}"
-                secondary-text="\{{../JobTitle}}"
-                tertiary-text="\{{[2]}}"
-                optional-text="\{{../WorkPhone}}"
-                persona-size="14"
+            <pnp-persona-card 
+                data-image-url="/_layouts/15/userphoto.aspx?size=L&username=\{{[2]}}"
+                data-text="\{{../FirstName}} \{{../LastName}}"
+                data-secondary-text="\{{../JobTitle}}"
+                data-tertiary-text="\{{[2]}}"
+                data-optional-text="\{{../WorkPhone}}"
+                data-persona-size="14"
                 >
-            </persona-card>
+            </pnp-persona-card>
         \{{/with}}
     </div>                
 {{/slider}}
@@ -165,7 +165,7 @@ Setting | Description
 `{{actualResultsCount}}` | The actual number of results retrived.
 `{{keywords}}` | The search query.
 `{{getSummary HitHighlightedSummary}}` | Format the *HitHighlightedSummary* property with recognized words in bold.
-`{{getDate <date_managed_property> "<format>" <time handling>}}` | Format the date with [Moment.js](https://momentjs.com/docs/#/parsing/string-format/) according to the current language. Date in the managed property should be on the form `2018-09-10T06:29:25.0000000Z` for the function to work.<p>&lt;time handling&gt; is optional and takes <ul><li>0 = format to browsers time zone (default)</li><li>1 = ignore Z time and handle as browsers local time zone</li><li>2 = strip time and set to 00:00:00 in browsers local time zone</li><li>3 = display in the time zone for the current web</li><li>4 = display in the time zone from the uers profile</li>
+`{{getDate <date_managed_property> "<format>" <time handling> <isZ>}}` | Format the date with [Moment.js](https://momentjs.com/docs/#/parsing/string-format/) according to the current language. Date in the managed property should be on the form `2018-09-10T06:29:25.0000000Z` for the function to work.<p>&lt;time handling&gt; is optional and takes <ul><li>0 = format to browsers time zone (default)</li><li>1 = ignore Z time and handle as browsers local time zone</li><li>2 = strip time and set to 00:00:00 in browsers local time zone</li><li>3 = display in the time zone for the current web</li><li>4 = display in the time zone from the uers profile</li></ul><p>&lt;isZ&gt; (`true/false`) is optional and will append Z to the date if missing when set to true.
 `{{getPreviewSrc item}}` | Determine the image thumbnail URL if applicable. Include NormSiteID, NormListID and NormUniqueID as managed properties to esnure previews for Pages and Files.
 `{{getUrl item}}` | Get the item URL. For a document, it means the URL to the Office Online instance or the direct URL (to download it).
 `{{getUrlField managed_propertyOWSURLH "URL/Title"}}` | Return the URL or Title part of a URL field managed property.
@@ -380,4 +380,4 @@ To see all available values, you can inspect the `themeVariant` objetc using the
 
 You may also define your own renderers, which most often should be SPFx application customizers. These should use the resultservice to register themselves as renderers, and will upon registration be available as a rendering choice in the "Result Layouts" Section.
 
-More information about custom code renderers may be found in a separate project [`search-custom-renderer`](https://github.com/microsoft-search/pnp-modern-search/tree/master/search-custom-renderer), which showcases such a renderer.
+More information about custom code renderers may be found in a separate project [`search-custom-renderer`](https://github.com/microsoft-search/pnp-modern-search/tree/main/search-custom-renderer), which showcases such a renderer.

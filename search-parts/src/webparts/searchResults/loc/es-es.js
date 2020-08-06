@@ -60,6 +60,7 @@ define([], function() {
         "PanelCloseButtonAria": "Cerrar",
         "UseRefinersWebPartLabel": "Conectar con Web Part Refinadores de Búsqueda",
         "UseRefinersFromComponentLabel": "Utilice refinadores de este componente",
+        "UseSearchVerticalsLabel": "Connect to a search vertical Web Part",
         "UsePaginationFromComponentLabel": "Utilice la paginación de este componente",
         "RefinementFilters": "Filtros de refinamiento",
         "customTemplateFieldsLabel": "Valores de campo de plantilla personalizada",
@@ -83,7 +84,9 @@ define([], function() {
             "SortableFieldDisplayValueField": "Nombre de campo para mostrar",
             "EditSortableFieldsLabel": "Editar campos ordenables",
             "EditSortLabel": "Edite el criterio de ordenación",
-            "SortInvalidSortableFieldMessage": "This property is not sortable"
+            "EditSortLabelFieldName": "Nombre del campo",
+            "EditSortDirection": "Dirección de clasificación",
+            "SortInvalidSortableFieldMessage": "Esta propiedad no es ordenable"
         },
         "Synonyms": {
             "EditSynonymLabel": "Editar sinónimos",
@@ -108,6 +111,7 @@ define([], function() {
             "ConditionValueLabel": "Valo de condición",
             "CondtionOperatorValue": "Operador",
             "ExternalUrlLabel": "URL de plantilla externa",
+            "ExternalUrlPlaceholder": "https://mysite/Documents/external.html",
             "EqualOperator": "Iguales",
             "NotEqualOperator": "Not equals",
             "ContainsOperator": "Contiene",

@@ -274,9 +274,11 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             executeSearch = true;
 
             const lastSelectedProperties = (prevProps.searchService.selectedProperties) ? prevProps.searchService.selectedProperties.join(',') : undefined;
-            const lastQuery = prevProps.queryKeywords + prevProps.searchService.queryTemplate + lastSelectedProperties + prevProps.searchService.resultSourceId;
+            const lastRefinementFilters = (prevProps.searchService.refinementFilters) ? prevProps.searchService.refinementFilters.join(',') : undefined;            
+            const lastQuery = prevProps.queryKeywords + prevProps.searchService.queryTemplate + lastSelectedProperties + prevProps.searchService.resultSourceId + lastRefinementFilters;
             const nextSelectedProperties = (this.props.searchService.selectedProperties) ? this.props.searchService.selectedProperties.join(',') : undefined;
-            const query = this.props.queryKeywords + this.props.searchService.queryTemplate + nextSelectedProperties + this.props.searchService.resultSourceId;
+            const nextRefinementFilters = (this.props.searchService.refinementFilters) ? this.props.searchService.refinementFilters.join(',') : undefined;
+            const query = this.props.queryKeywords + this.props.searchService.queryTemplate + nextSelectedProperties + this.props.searchService.resultSourceId + nextRefinementFilters;
 
             resetSorting = true;
             this._defaultSortingValues = this._getDefaultSortingValues();
@@ -286,7 +288,10 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 // Reset current selected refinement filters when:
                 // - A search vertical is selected (i.e. query template is different)
                 // - A new query is performed via the search box of URL trigger (query keywords is different)
-                this.props.searchService.refinementFilters = [];
+                // - The previous refinement value is equal to the next refinement value (meaning that the update was not triggered by the refinement panel)
+                if(lastRefinementFilters == nextRefinementFilters){
+                    this.props.searchService.refinementFilters = [];
+                }               
 
                 // Reset page number
                 selectedPage = 1;
