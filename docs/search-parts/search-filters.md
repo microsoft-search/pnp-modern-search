@@ -71,3 +71,40 @@ The _"Container Tree" template is intended to work with the `ParentLink` managed
 The purpose of this template is to give the ability to navigate trough a folder hierarchy as metadata by parsing the parent link URL segments.
 
 ![Container Tree](../images/container_tree_template.png)
+
+### Custom CSS Skin Examples
+
+The following example skins target the owstaxidmetadataalltagsinfo managed property filter. 
+
+#### Changing Text Boxes into Toggle Buttons
+```
+.pnp-refiner-checkbox-owstaxidmetadataalltagsinfo .pnp-refiner-checkbox { position: relative; }
+.pnp-refiner-checkbox-owstaxidmetadataalltagsinfo .pnp-refiner-checkbox label > div { display:none; } 
+.pnp-refiner-checkbox-owstaxidmetadataalltagsinfo .pnp-refiner-checkbox label > span { padding-left: 8rem; width: 100%; display: block; white-space: nowrap; padding-top: 0.15rem; }
+.pnp-refiner-checkbox-owstaxidmetadataalltagsinfo .pnp-refiner-checkbox input { display: none; }
+.pnp-refiner-checkbox-owstaxidmetadataalltagsinfo .pnp-refiner-checkbox label { display: block; width: 48px; height: 24px; text-indent: -150%; clip: rect(0 0 0 0); color: transparent; user-select: none; }
+.pnp-refiner-checkbox-owstaxidmetadataalltagsinfo .pnp-refiner-checkbox label::before,
+.pnp-refiner-checkbox-owstaxidmetadataalltagsinfo .pnp-refiner-checkbox label::after { content: ""; display: block; position: absolute; cursor: pointer; }
+.pnp-refiner-checkbox-owstaxidmetadataalltagsinfo .pnp-refiner-checkbox label::before { width: 100%; height: 100%; background-color: #dedede; border-radius: 9999em; -webkit-transition: background-color 0.25s ease; transition: background-color 0.25s ease; }
+.pnp-refiner-checkbox-owstaxidmetadataalltagsinfo .pnp-refiner-checkbox label::after { top: 0; left: 0; width: 24px; height: 24px; border-radius: 50%; background-color: #fff; box-shadow: 0 0 2px rgba(0, 0, 0, 0.45); -webkit-transition: left 0.25s ease, background-color 0.25s ease; transition: left 0.25s ease, background-color 0.25s ease; }
+.pnp-refiner-checkbox-owstaxidmetadataalltagsinfo .pnp-refiner-checkbox.is-checked label::before { background-color: #89c12d; }
+.pnp-refiner-checkbox-owstaxidmetadataalltagsinfo .pnp-refiner-checkbox.is-checked label::after { left: 24px; }
+```
+
+#### Changing Color For One Specific Toggle Button
+```
+.pnp-refiner-checkbox-owstaxidmetadataalltagsinfo .pnp-refiner-checkbox.pnp-ref-owstaxidmetadataalltagsinfo-accounting label::after { background-color: red; }
+.pnp-refiner-checkbox-owstaxidmetadataalltagsinfo .pnp-refiner-checkbox.pnp-ref-owstaxidmetadataalltagsinfo-accounting.is-checked label::after { background-color:#fff; box-shadow: 0 0 5px rgba(207, 0, 15, 0.6); }
+.pnp-refiner-checkbox-owstaxidmetadataalltagsinfo .pnp-refiner-checkbox.pnp-ref-owstaxidmetadataalltagsinfo-accounting.is-checked label::before { background-color: red; }
+```
+
+#### Two Column Grid View of Refiners Using Current Theme
+```
+.pnp-refiner-checkbox-owstaxidmetadataalltagsinfo { display: flex; flex-wrap: wrap; }
+.pnp-refiner-checkbox-owstaxidmetadataalltagsinfo .pnp-refiner-checkbox { flex: 1 0 50%; white-space: nowrap; padding: 0; margin: 0; box-sizing: border-box; }
+.pnp-refiner-checkbox-owstaxidmetadataalltagsinfo .pnp-refiner-checkbox input,
+.pnp-refiner-checkbox-owstaxidmetadataalltagsinfo .pnp-refiner-checkbox label > div { display: none;}
+.pnp-refiner-checkbox-owstaxidmetadataalltagsinfo .pnp-refiner-checkbox label { width: 100%; margin: 0 1rem 1rem 0; position: relative; }
+.pnp-refiner-checkbox-owstaxidmetadataalltagsinfo .pnp-refiner-checkbox label > span { display: block; white-space: nowrap; text-align: center; background: #f0f0f0; margin: 0; text-overflow: ellipsis; overflow: hidden; width: 100%; max-width: 225px; padding: 1rem; }
+.pnp-refiner-checkbox-owstaxidmetadataalltagsinfo .pnp-refiner-checkbox.is-checked label > span { background: {{@root.themeVariant.palette.themePrimary}}; color: #fff; }
+```
