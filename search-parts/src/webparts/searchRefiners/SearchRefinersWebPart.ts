@@ -437,7 +437,7 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
         panelTitle: strings.DialogButtonLabel,
         initialValue: this.properties.styles,
         deferredValidationTime: 500,
-        onPropertyChange: this.onPropertyPaneFieldChanged,
+        onPropertyChange: this.onPropertyPaneFieldChanged.bind(this),
         properties: this.properties,
         key: 'inlineTemplateTextCodeEditor',
         language: this._propertyFieldCodeEditorLanguages.Handlebars
@@ -514,7 +514,7 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
       this.context.dynamicDataSourceManager.notifyPropertyChanged(SearchComponentType.RefinersWebPart);
     }
 
-    if(propertyPath.localeCompare('') === 0){
+    if(propertyPath.localeCompare('styles') === 0){
       this._customStyles = await this._processStyles();
     }
 

@@ -77,6 +77,9 @@ The purpose of this template is to give the ability to navigate trough a folder 
 The following example skins target the owstaxidmetadataalltagsinfo managed property filter. 
 
 #### Changing Text Boxes into Toggle Buttons
+
+![Toggle Button Skin](../images/Filter-ToggleButton-Skin.png)
+
 ```
 .pnp-refiner-checkbox-owstaxidmetadataalltagsinfo .pnp-refiner-checkbox { position: relative; }
 .pnp-refiner-checkbox-owstaxidmetadataalltagsinfo .pnp-refiner-checkbox label > div { display:none; } 
@@ -92,6 +95,9 @@ The following example skins target the owstaxidmetadataalltagsinfo managed prope
 ```
 
 #### Changing Color For One Specific Toggle Button
+
+See Toggle Button screenshot for demo.
+
 ```
 .pnp-refiner-checkbox-owstaxidmetadataalltagsinfo .pnp-refiner-checkbox.pnp-ref-owstaxidmetadataalltagsinfo-accounting label::after { background-color: red; }
 .pnp-refiner-checkbox-owstaxidmetadataalltagsinfo .pnp-refiner-checkbox.pnp-ref-owstaxidmetadataalltagsinfo-accounting.is-checked label::after { background-color:#fff; box-shadow: 0 0 5px rgba(207, 0, 15, 0.6); }
@@ -99,6 +105,9 @@ The following example skins target the owstaxidmetadataalltagsinfo managed prope
 ```
 
 #### Two Column Grid View of Refiners Using Current Theme
+
+![Grid Skin](../images/Filter-Grid-Skin.png)
+
 ```
 .pnp-refiner-checkbox-owstaxidmetadataalltagsinfo { display: flex; flex-wrap: wrap; }
 .pnp-refiner-checkbox-owstaxidmetadataalltagsinfo .pnp-refiner-checkbox { flex: 1 0 50%; white-space: nowrap; padding: 0; margin: 0; box-sizing: border-box; }
