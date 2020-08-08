@@ -145,6 +145,40 @@ If provided layouts don't meet your requirements, you can modifiy them or start 
 
 ![Edit Template](../images/edit_template.png)
 
+### Accessing items
+To iterate the regular result set use:
+
+```html
+{{#each items as |item|}}
+  <div>
+    {{Title}}
+    ...
+  </div>
+{{/each}}
+```
+
+To iterate promoted results use:
+
+```html
+{{#each promotedResults as |promotedResult|}}
+  <div>
+    {{Title}}
+    ...
+  </div>
+{{/each}}
+```
+
+To iterate result block results use:
+
+```html
+{{#each secondaryResults as |secondaryResult|}}
+  <div>
+    {{Title}}
+    ...
+  </div>
+{{/each}}
+```
+
 ### Styling
 
 You can write your own CSS styles inside templates. However, all CSS rules (including `@media` rules) will be prefixed automatically by an unique ID according to the follwoing pattern (**pnp-modern-search-template_\<Web Part instance ID\>**) to make sure styles are isolated from other Web Parts on the page.

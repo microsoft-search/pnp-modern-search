@@ -1,6 +1,8 @@
 //import * as Handlebars from 'handlebars';
 import ISearchService from './ISearchService';
-import { ISearchResults, ISearchResult, IRefinementResult, IRefinementValue, IRefinementFilter, IPromotedResult, ISearchVerticalInformation, ISearchResultBlock } from '../../models/ISearchResult';
+import { ISearchResults, ISearchResult, IRefinementResult, IRefinementValue, IPromotedResult, ISearchVerticalInformation, ISearchResultBlock } from '../../models/ISearchResult';
+import RefinersSortOption from '../../models/RefinersSortOptions';
+import RefinerSortDirection from '../../models/RefinersSortDirection';
 import { sp, SearchQuery, SearchResults, SPRest, Sort, SearchSuggestQuery, SortDirection, Web } from '@pnp/sp';
 import { Logger, LogLevel, ConsoleListener } from '@pnp/logging';
 import { Text, Guid } from '@microsoft/sp-core-library';
@@ -181,7 +183,11 @@ class SearchService implements ISearchService {
 
         if (this.refiners) {
             // Get the refiners order specified in the property pane
-            sortedRefiners = this.refiners.map(e => e.refinerName);
+            sortedRefiners = this.refiners.map(e => {
+                let sort = e.refinerSortType == RefinersSortOption.Alphabetical ? "name" : "frequency";
+                let direction = e.refinerSortDirection == RefinerSortDirection.Ascending ? "ascending" : "descending";
+                return `${e.refinerName}(sort=${sort}/${direction})`;
+            });
             searchQuery.Refiners = sortedRefiners.join(',');
 
             const refinableDate = /(RefinableDate\d+)(?=,|$)|(RefinableDateSingle\d+)(?=,|$)|(LastModifiedTime)(?=,|$)|(LastModifiedTimeForRetention)(?=,|$)|(Created)(?=,|$)/g;
@@ -199,7 +205,7 @@ class SearchService implements ISearchService {
             }
         }
 
-        if (this.refinementFilters && this.refinementFilters.length > 0) {
+        if (this.refinementFilters && this.refinementFilters.length > 0 && this.refinementFilters[0].length > 0) {
             searchQuery.RefinementFilters = this.refinementFilters;
         }
 
@@ -839,7 +845,7 @@ class SearchService implements ISearchService {
             if (queryParts) {
 
                 for (let i = 0; i < queryParts.length; i++) {
-                    let key = trimEnd(trimStart(queryParts[i].toLowerCase(),'"'),'"');
+                    let key = trimEnd(trimStart(queryParts[i].toLowerCase(), '"'), '"');
                     let value = this._synonymTable[key];
 
                     if (value) {

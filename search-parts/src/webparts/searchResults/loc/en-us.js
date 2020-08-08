@@ -58,7 +58,7 @@ define([], function() {
         "HandlebarsHelpersDescription": "Enable functions from moment and handlebars helpers. See https://github.com/SharePoint/sp-dev-fx-webparts/blob/master/samples/react-search-refiners/README.md#available-tokens for more information.",
         "PromotedResultsLabel": "Promoted result(s)",
         "PanelCloseButtonAria": "Close",
-        "UseRefinersWebPartLabel": "Connect to a search refiners Web Part",
+        "UseRefinersWebPartLabel": "Connect to a search filters Web Part",
         "UseRefinersFromComponentLabel": "Use refiners from this component",
         "UseSearchVerticalsLabel": "Connect to a search vertical Web Part",
         "UsePaginationFromComponentLabel": "Use pagination from this component",
