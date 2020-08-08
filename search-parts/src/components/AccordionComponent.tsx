@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { BaseWebComponent } from './BaseWebComponent';
+import { BaseWebComponent } from 'search-extensibility';
 import { WebPartContext } from '@microsoft/sp-webpart-base';
 import {
     Icon,
@@ -163,7 +163,7 @@ export class AccordionWebComponent extends BaseWebComponent {
         //Move template from innerHTML to template property if template is empty
         props.template = (props.template && !isEmpty(props.template)) ? props.template : this.innerHTML.trim();
 
-        const accordionItem = <AccordionComponent {...props} ctx={this._ctx} />;
+        const accordionItem = <AccordionComponent {...props} ctx={this.context.webPart} />;
         ReactDOM.render(accordionItem, this);
     }
 }

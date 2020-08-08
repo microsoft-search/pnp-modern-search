@@ -5,6 +5,7 @@ import { WebPartContext } from '@microsoft/sp-webpart-base';
 import { BaseWebComponent, IExtensionContext } from 'search-extensibility';
 import * as ReactDOM from 'react-dom';
 import * as DOMPurify from 'dompurify';
+import { isEmpty } from '@microsoft/sp-lodash-subset';
 
 const LIVE_PERSONA_COMPONENT_ID: string = "914330ee-2df2-4f6e-a858-30c23a812408";
 
@@ -66,7 +67,7 @@ export class LivePersonaComponent extends React.Component<ILivePersonaComponentP
                     PersonaType: "User"
                 },
                 upn: this.props.upn,
-                serviceScope: this.props.ctx.serviceScope,
+                serviceScope: this.props.ctx.webPart.serviceScope,
             }, <div dangerouslySetInnerHTML={{ __html: DOMPurify.default.sanitize(this.props.template) }}></div>);
         }
         return renderPersona;
@@ -89,7 +90,7 @@ export class LivePersonaComponent extends React.Component<ILivePersonaComponentP
                 });
 
             } catch (error) {
-                Log.error(`[LivePersona_Component]`, error, this.props.webpart.ctx.serviceScope);
+                Log.error(`[LivePersona_Component]`, error, this.props.ctx.webPart.serviceScope);
             }
         }
     }

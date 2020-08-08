@@ -75,23 +75,23 @@ export class AvailableComponents {
             displayName: "", description: "", icon: ""
         },
         {
-            componentName: 'pnp-pagination',
-            componentClass: PaginationWebComponent,
+            name: 'pnp-pagination',
+            extensionClass: PaginationWebComponent,
             displayName: "", description: "", icon: ""
         },
         {
-            componentName: 'pnp-accordion',
-            componentClass: AccordionWebComponent,
+            name: 'pnp-accordion',
+            extensionClass: AccordionWebComponent,
             displayName: "", description: "", icon: ""
         },
         {
-            componentName: 'pnp-popup',
-            componentClass: PopupWebComponent,
+            name: 'pnp-popup',
+            extensionClass: PopupWebComponent,
             displayName: "", description: "", icon: ""
         },
         {
-            componentName: 'pnp-lookup-list-expander',
-            componentClass: LookupListExpanderWebComponent,
+            name: 'pnp-lookup-list-expander',
+            extensionClass: LookupListExpanderWebComponent,
             displayName: "", description: "", icon: ""
         }
     ];

@@ -313,32 +313,35 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
 
     }
 
-    private async getAllSuggestionProviders(): Promise<ISuggestionProviderDefinition<any>[]> {
-        const [defaultProviders, customProviders] = await Promise.all([
+    private async getAllSuggestionProviders(): Promise<IExtension<any>[]> {
+        const [ defaultProviders, customProviders ] = await Promise.all([
             this.getDefaultSuggestionProviders(),
-            this.getCustomSuggestionProviders()
+            this._customSuggestionProviders
         ]);
-
+    
         //Track if we have any custom suggestion providers
         if (customProviders && customProviders.length > 0) {
-            this._foundCustomSuggestionProviders = true;
+          this._foundCustomSuggestionProviders = true;
         }
-
+    
         //Merge all providers together and set defaults
         const savedProviders = this.properties.suggestionProviders && this.properties.suggestionProviders.length > 0 ? this.properties.suggestionProviders : [];
-        const providerDefinitions = [...defaultProviders, ...customProviders].map(provider => {
-            const existingSavedProvider = find(savedProviders, sp => sp.providerName === provider.providerName);
-
-            provider.providerEnabled = existingSavedProvider && undefined !== existingSavedProvider.providerEnabled
-                ? existingSavedProvider.providerEnabled
-                : undefined !== provider.providerEnabled
-                    ? provider.providerEnabled
-                    : true;
-
+        const providerDefinitions = [ ...defaultProviders, ...customProviders ].map(provider => {
+    
+            const existingSavedProvider = find(savedProviders, sp => sp.name === provider.name);
+    
+            provider.enabled = existingSavedProvider && undefined !== existingSavedProvider.enabled
+                                        ? existingSavedProvider.enabled
+                                        : undefined !== provider.enabled
+                                          ? provider.enabled
+                                          : true;
+            
             return provider;
+    
         });
         return providerDefinitions;
-    }
+      }
+
 
     private async getDefaultSuggestionProviders(): Promise<IExtension<any>[]> {
         return [{
@@ -469,18 +472,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
             })
         ];
 
-        if (this.properties.useDynamicDataSource) {
-            
-            searchQueryConfigFields.push(
-                PropertyPaneDynamicFieldSet({
-                label: strings.DynamicData.DefaultQueryKeywordsPropertyLabel,
-                fields: [
-                    PropertyPaneDynamicField('defaultQueryKeywords', {
-                        label: strings.DynamicData.DefaultQueryKeywordsPropertyLabel,
-                    })
-                ];
-            }));
-            
+        if (this.properties.useDynamicDataSource) {           
 
             if (this.properties.useDynamicDataSource) {
                 searchQueryConfigFields.push(

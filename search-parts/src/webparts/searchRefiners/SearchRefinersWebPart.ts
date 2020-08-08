@@ -202,7 +202,7 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
     if (Environment.type === EnvironmentType.Local) {
       this._searchService = new MockSearchService();
       this._userService = new MockUserService();
-      this._templateService = new MockTemplateService(this.context.pageContext.cultureInfo.currentUICultureName, this.context);
+      this._templateService = new MockTemplateService(this.context.pageContext.cultureInfo.currentUICultureName, this.context, this._searchService);
     } else {
       this._searchService = new SearchService(this.context.pageContext, this.context.spHttpClient);
       this._userService = new UserService(this.context.pageContext);
