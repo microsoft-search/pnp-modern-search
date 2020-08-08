@@ -9,6 +9,7 @@ import * as strings from 'SearchRefinersWebPartStrings';
 import * as update from 'immutability-helper';
 import { ITheme } from "@uifabric/styling";
 import { TextField } from "office-ui-fabric-react";
+import { CssHelper } from '../../../../../helpers/CssHelper';
 
 //CSS
 import styles from './CheckboxTemplate.module.scss';
@@ -41,13 +42,28 @@ export default class CheckboxTemplate extends React.Component<IBaseRefinerTempla
             disableButtons = true;
         }
 
-        return <div className={styles.pnpRefinersTemplateCheckbox}>
+        let filterClass = CssHelper.prefixAndValidateClassName("pnp-refiner-checkbox", this.props.refinementResult.FilterName);
+
+        return <div className={styles.pnpRefinersTemplateCheckbox + " " + filterClass}>
             {
                 this.props.showValueFilter ?
                     <div className="pnp-value-filter-container">
                         <TextField className="pnp-value-filter" value={this.state.valueFilter} placeholder="Filter" onChange={(event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>,newValue?: string) => { this._onValueFilterChanged(newValue); }} onClick={this._onValueFilterClick} />
                         <Link onClick={this._clearValueFilter} disabled={!this.state.valueFilter || this.state.valueFilter === ""}>Clear</Link>
                     </div>
+                    : null
+            }
+            {
+                this.props.isMultiValue && this.props.refinementResult.Values.length > 5 ?
+
+                    <div>
+                        <Link
+                            theme={this.props.themeVariant as ITheme}
+                            onClick={() => { this._applyFilters(this.state.refinerSelectedFilterValues); }}
+                            disabled={disableButtons}>{strings.Refiners.ApplyFiltersLabel}
+                        </Link>|<Link theme={this.props.themeVariant as ITheme}  onClick={this._clearFilters} disabled={this.state.refinerSelectedFilterValues.length === 0}>{strings.Refiners.ClearFiltersLabel}</Link>
+                    </div>
+
                     : null
             }
             {
@@ -64,6 +80,7 @@ export default class CheckboxTemplate extends React.Component<IBaseRefinerTempla
                                     padding: 10
                                 }
                             }}
+                            className={"pnp-refiner-checkbox " + CssHelper.prefixAndValidateClassName("pnp-ref-" + refinementValue.RefinementName, refinementValue.RefinementValue)}
                             theme={this.props.themeVariant as ITheme}
                             key={j}
                             checked={this._isValueInFilterSelection(refinementValue)}
@@ -71,7 +88,9 @@ export default class CheckboxTemplate extends React.Component<IBaseRefinerTempla
                             label={Text.format(refinementValue.RefinementValue + ' ({0})', refinementValue.RefinementCount)}
                             onChange={(ev, checked: boolean) => {
                                 checked ? this._onFilterAdded(refinementValue) : this._onFilterRemoved(refinementValue);
-                            }} />
+                            }}
+                            title={Text.format(refinementValue.RefinementValue + ' ({0})', refinementValue.RefinementCount)}
+                            />
                     );
                 })
             }

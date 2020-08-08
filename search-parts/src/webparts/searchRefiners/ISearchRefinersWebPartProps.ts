@@ -7,4 +7,5 @@ export interface ISearchRefinersWebPartProps {
   refinersConfiguration: IRefinerConfiguration[];
   searchResultsDataSourceReference: string;
   selectedLayout: RefinersLayoutOption;
+  styles:string;
 }

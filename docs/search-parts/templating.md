@@ -57,7 +57,7 @@ For HTML fields you can use the special variable `@themeVariant` to use theme co
 | **Show file icon** | Hide or display the file icon in the card.
 | **Compact mode** | Display the cards in compact mode. 
 
-### Slider
+### Carousel/Slider
 
 Displays search results as a carousel using the [Flickity library](https://flickity.metafizzy.co/) (the same used in the [PnP Starter Intranet solution](https://github.com/SharePoint/PnP/blob/master/Solutions/Business.StarterIntranet/app/src/components/Carousel/CarouselViewModel.ts)).
 
@@ -91,15 +91,15 @@ Or only person cards:
 {{#>slider items=(JSONstringify @root.items 2) options=(JSONstringify @root.sliderOptions)}}
     <div class="slide">
       \{{#with (split AccountName '|')}}
-            <persona-card 
-                image-url="/_layouts/15/userphoto.aspx?size=L&username=\{{[2]}}"
-                text="\{{../FirstName}} \{{../LastName}}"
-                secondary-text="\{{../JobTitle}}"
-                tertiary-text="\{{[2]}}"
-                optional-text="\{{../WorkPhone}}"
-                persona-size="14"
+            <pnp-persona-card 
+                data-image-url="/_layouts/15/userphoto.aspx?size=L&username=\{{[2]}}"
+                data-text="\{{../FirstName}} \{{../LastName}}"
+                data-secondary-text="\{{../JobTitle}}"
+                data-tertiary-text="\{{[2]}}"
+                data-optional-text="\{{../WorkPhone}}"
+                data-persona-size="14"
                 >
-            </persona-card>
+            </pnp-persona-card>
         \{{/with}}
     </div>                
 {{/slider}}
@@ -145,6 +145,40 @@ If provided layouts don't meet your requirements, you can modifiy them or start 
 
 ![Edit Template](../images/edit_template.png)
 
+### Accessing items
+To iterate the regular result set use:
+
+```html
+{{#each items as |item|}}
+  <div>
+    {{Title}}
+    ...
+  </div>
+{{/each}}
+```
+
+To iterate promoted results use:
+
+```html
+{{#each promotedResults as |promotedResult|}}
+  <div>
+    {{Title}}
+    ...
+  </div>
+{{/each}}
+```
+
+To iterate result block results use:
+
+```html
+{{#each secondaryResults as |secondaryResult|}}
+  <div>
+    {{Title}}
+    ...
+  </div>
+{{/each}}
+```
+
 ### Styling
 
 You can write your own CSS styles inside templates. However, all CSS rules (including `@media` rules) will be prefixed automatically by an unique ID according to the follwoing pattern (**pnp-modern-search-template_\<Web Part instance ID\>**) to make sure styles are isolated from other Web Parts on the page.
@@ -165,7 +199,7 @@ Setting | Description
 `{{actualResultsCount}}` | The actual number of results retrived.
 `{{keywords}}` | The search query.
 `{{getSummary HitHighlightedSummary}}` | Format the *HitHighlightedSummary* property with recognized words in bold.
-`{{getDate <date_managed_property> "<format>" <time handling>}}` | Format the date with [Moment.js](https://momentjs.com/docs/#/parsing/string-format/) according to the current language. Date in the managed property should be on the form `2018-09-10T06:29:25.0000000Z` for the function to work.<p>&lt;time handling&gt; is optional and takes <ul><li>0 = format to browsers time zone (default)</li><li>1 = ignore Z time and handle as browsers local time zone</li><li>2 = strip time and set to 00:00:00 in browsers local time zone</li><li>3 = display in the time zone for the current web</li><li>4 = display in the time zone from the uers profile</li>
+`{{getDate <date_managed_property> "<format>" <time handling> <isZ>}}` | Format the date with [Moment.js](https://momentjs.com/docs/#/parsing/string-format/) according to the current language. Date in the managed property should be on the form `2018-09-10T06:29:25.0000000Z` for the function to work.<p>&lt;time handling&gt; is optional and takes <ul><li>0 = format to browsers time zone (default)</li><li>1 = ignore Z time and handle as browsers local time zone</li><li>2 = strip time and set to 00:00:00 in browsers local time zone</li><li>3 = display in the time zone for the current web</li><li>4 = display in the time zone from the uers profile</li></ul><p>&lt;isZ&gt; (`true/false`) is optional and will append Z to the date if missing when set to true.
 `{{getPreviewSrc item}}` | Determine the image thumbnail URL if applicable. Include NormSiteID, NormListID and NormUniqueID as managed properties to esnure previews for Pages and Files.
 `{{getUrl item}}` | Get the item URL. For a document, it means the URL to the Office Online instance or the direct URL (to download it).
 `{{getUrlField managed_propertyOWSURLH "URL/Title"}}` | Return the URL or Title part of a URL field managed property.
@@ -198,21 +232,87 @@ The web part has a couple of helper web-components to ease rendering, used by th
 - slider-component
 - persona-card
 - persona-card-shimmers
-- fabric-icon - You only need to set one property, which are evaluated in order if multiple ones are set.
-   ```handlebars
-   <pnp-fabric-icon
+- fabric-icon - You only need to set one property, which are evaluated in order if multiple ones are set. The data-error-image, used to set a fallback image on error, is used only when the data-image-url fails to load, it will not load a fallback for data-icon-name usage.
+
+```html
+<pnp-fabric-icon
     data-image-url='[url to icon - pri 1]'
     data-file-extension='[file extension - pri 2]'
     data-icon-name='[office ui fabric icon name - pri 3]'
     data-size='16 | 20 | 32 (default) | 40 | 48 | 64 | 96'
-    >
-    </pnp-fabric-icon>
-    ```
+    data-error-image='[url to image]'
+>
+</pnp-fabric-icon>
+```
+- accordion - provides the ability to collaspe content in search result in an accordion fashion
+    
+```html
+<pnp-accordion 
+    data-accordion-header-text="Accordion Example" 
+    data-theme="Default (default) | Neutral" 
+    data-size="# | 12 (default)" 
+    data-start-open="true | false (default)" 
+    data-rounded-corners="true | false (default)">
+    <h4>Title: {{Title}}</h4>
+</pnp-accordion>
+```
 
-fileExtension?: string;
-    iconName?: string;
-    size?: FileTypeIconSize;
-    imageUrl?: string;
+Example:
+
+![Accordion Example](../images/WebComponent_Accordion_PopupExample.png)
+
+- popup - provides the ability to popup content in a modal window within the search result
+
+```html
+<pnp-popup>
+    <template id="popupclick">
+        <span>Popup Example - Click Me</span>
+    </template>
+    <template id="popupheader">
+        <span>Title: {{Title}}</span><br /><span>Header HTML here</span>
+    </template>
+    <template id="popupbody">
+        <span>Title: {{Title}}</span><br /><span>Body HTML here</span>
+    </template>
+</pnp-popup>
+```
+
+Example:
+
+![Popup Example](../images/WebComponent_Accordion_PopupExample.png)
+![Popup Modal Example](../images/WebComponent_Popup_Modal_Example.png)
+
+- lookup-list-expander - Ever needed to get additional data from a list or library in search? This provides that ability based on a lookup column of the result item.
+
+    In the example below, a related documents lookup column was added to the document library. This lookup column was a lookup back to the same document library so the admin could pick additional related documents for the documents.
+
+    Remember for the inner template to be executed inside of the component the handlebar expressions must be escaped with `'\'` character (ex: `{{Title}}` becomes `\{{Title}}`).
+    
+```html
+<pnp-lookup-list-expander 
+    data-list-url="https://<tenant>/sites/<sitename>" 
+    data-list-id="{{ListID}}" 
+    data-list-item-id="{{ListItemID}}"
+    data-column-name="RelatedDocuments"
+    data-lookup-list-fields="Id,Title,FileRef,FileLeafRef,DocumentType,BusinessUnit/Title">
+    <div>
+        <pnp-fabric-icon data-file-extension="\{{FileExtension}}"></pnp-fabric-icon>
+        <span><a href="\{{FileRef}}?web=1">\{{{Title}}}</a></span>
+        <span>
+            <a href="\{{FileRef}}">
+                <pnp-fabric-icon data-icon-name="Download" data-size="16"></pnp-fabric-icon>
+            </a>
+        </span>
+        <div>
+            <span>\{{{DocumentType}}}</span>
+            <span>\{{{BusinessUnit.Title}}}</span>
+        </div>
+    </div>
+</pnp-lookup-list-expander>
+```
+
+The above example would display inside of the accordion like:
+![LookupListExtender Example](../images/WebComponent_LookupListExtender_Example.png)
 
 ### Use result types
 
@@ -314,4 +414,4 @@ To see all available values, you can inspect the `themeVariant` objetc using the
 
 You may also define your own renderers, which most often should be SPFx application customizers. These should use the resultservice to register themselves as renderers, and will upon registration be available as a rendering choice in the "Result Layouts" Section.
 
-More information about custom code renderers may be found in a separate project [`search-custom-renderer`](https://github.com/microsoft-search/pnp-modern-search/tree/master/search-custom-renderer), which showcases such a renderer.
+More information about custom code renderers may be found in a separate project [`search-custom-renderer`](https://github.com/microsoft-search/pnp-modern-search/tree/main/search-custom-renderer), which showcases such a renderer.

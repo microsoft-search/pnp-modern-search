@@ -4,6 +4,7 @@ import ISearchResultsTemplateState from './ISearchResultsTemplateState';
 import './SearchResultsTemplate.scss';
 import { TemplateService } from '../../../../services/TemplateService/TemplateService';
 import * as DOMPurify from 'dompurify';
+import { CssHelper } from '../../../../helpers/CssHelper';
 
 const TEMPLATE_ID_PREFIX = 'pnp-modern-search-template_';
 
@@ -23,6 +24,7 @@ export default class SearchResultsTemplate extends React.Component<ISearchResult
         this._domPurify.setConfig({
             ADD_TAGS: ['style'],
             ADD_ATTR: ['onerror', 'target', 'loading'],
+            ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|cid|xmpp|xxx|ms-\w+):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
             WHOLE_DOCUMENT: true
         });
 
@@ -40,7 +42,7 @@ export default class SearchResultsTemplate extends React.Component<ISearchResult
             if (data && data.attrName) {
                 data.allowedAttributes[data.attrName] = true;
             }
-        });   
+        });
     }
 
     public render() {
@@ -76,56 +78,10 @@ export default class SearchResultsTemplate extends React.Component<ISearchResult
 
             // Sanitize the template HTML
             template = this._domPurify.sanitize(`${template}`);
+            
             const templateAsHtml = new DOMParser().parseFromString(template, "text/html");
+            template = CssHelper.prefixStyleElements(templateAsHtml, `${TEMPLATE_ID_PREFIX}${this.props.instanceId}`);
 
-            // Get <style> tags from Handlebars template content and prefix all CSS rules by the Web Part instance ID to isolate styles
-            const styleElements = templateAsHtml.getElementsByTagName("style");
-            let prefixedStyles: string[] = [];
-            let i, j, k = 0;
-
-            if (styleElements.length > 0) {
-
-                // The prefix for all CSS selectors
-                const elementPrefixId = `${TEMPLATE_ID_PREFIX}${this.props.instanceId}`;
-
-                for (i = 0; i < styleElements.length; i++) {
-                    const style = styleElements.item(i);
-                    const sheet: any = style.sheet;
-                    if ((sheet as CSSStyleSheet).cssRules) {
-                        const cssRules = (sheet as CSSStyleSheet).cssRules;
-
-                        for (j = 0; j < cssRules.length; j++) {
-                            const cssRule: CSSRule = cssRules.item(j);
-
-                            // CSS Media rule
-                            if ((cssRule as CSSMediaRule).media) {
-                                const cssMediaRule = cssRule as CSSMediaRule;
-
-                                let cssPrefixedMediaRules = '';
-                                for (k = 0; k < cssMediaRule.cssRules.length; k++) {
-                                    const cssRuleMedia = cssMediaRule.cssRules.item(k);
-                                    cssPrefixedMediaRules += `#${elementPrefixId} ${cssRuleMedia.cssText}`;
-                                }
-
-                                prefixedStyles.push(`@media ${cssMediaRule.conditionText} { ${cssPrefixedMediaRules} }`);
-
-                            } else {
-                                prefixedStyles.push(`#${elementPrefixId} ${cssRule.cssText}`);
-                            }
-                        }
-                    }
-
-                    // Remove the element from DOM
-                    if (style.remove) {
-                        style.remove();
-                    } else if ((style as any).removeNode) {
-                        //IE11
-                        (style as any).removeNode();
-                    }
-                }
-            }
-
-            template = `<style>${prefixedStyles.join(' ')}</style><div id="${TEMPLATE_ID_PREFIX}${this.props.instanceId}">${templateAsHtml.body.innerHTML}</div>`;
         }
 
         this.setState({

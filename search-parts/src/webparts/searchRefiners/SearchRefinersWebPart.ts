@@ -34,12 +34,18 @@ import MockSearchService from '../../services/SearchService/MockSearchService';
 import SearchService from '../../services/SearchService/SearchService';
 import ISearchService from '../../services/SearchService/ISearchService';
 import { IComboBoxOption } from 'office-ui-fabric-react/lib/ComboBox';
-
+import BaseTemplateService from '../../services/TemplateService/BaseTemplateService';
+import MockTemplateService from '../../services/TemplateService/MockTemplateService';
+import { TemplateService } from '../../services/TemplateService/TemplateService';
 import { cloneDeep, isEqual } from '@microsoft/sp-lodash-subset';
 import IUserService from '../../services/UserService/IUserService';
 import { UserService } from '../../services/UserService/UserService';
 import { MockUserService } from '../../services/UserService/MockUserService';
 import { initializeFileTypeIcons } from '@uifabric/file-type-icons';
+import PnPTelemetry from "@pnp/telemetry-js";
+import { CssHelper } from '../../helpers/CssHelper';
+
+const STYLE_PREFIX :string = "pnp-filter-wp-";
 
 export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearchRefinersWebPartProps> implements IDynamicDataCallables {
 
@@ -51,6 +57,16 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
   private _themeProvider: ThemeProvider;
   private _themeVariant: IReadonlyTheme;
   private _userService: IUserService;
+  private _propertyFieldCodeEditor = null;
+  private _propertyFieldCodeEditorLanguages = null;
+  private _templateService: BaseTemplateService;
+  private _contentClassName:string = null;
+  private _customStyles:string = null;
+
+  /**
+   * Information about time zone bias (current user or web)
+   */
+  private _timeZoneBias: any;
 
   /**
    * The list of available managed managed properties (managed globally for all proeprty pane fiels if needed)
@@ -59,7 +75,7 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
 
   constructor() {
     super();
-    this._onUpdateAvailableProperties = this._onUpdateAvailableProperties.bind(this);
+    this._onUpdateAvailableProperties = this._onUpdateAvailableProperties.bind(this);    
   }
 
   public render(): void {
@@ -107,7 +123,10 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
           query: queryKeywords + queryTemplate + selectedProperties + resultSourceId,
           themeVariant: this._themeVariant,
           userService: this._userService,
-          defaultSelectedRefinementFilters: defaultSelectedFilters
+          defaultSelectedRefinementFilters: defaultSelectedFilters,
+          contentClassName: this._contentClassName,
+          styles: this._customStyles,
+          templateService: this._templateService
         } as ISearchRefinersContainerProps
       );
     } else {
@@ -162,7 +181,14 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
     }
   }
 
-  protected onInit(): Promise<void> {
+  protected async onInit(): Promise<void> {
+    
+    // assign the content class name to prefix styles
+    this._contentClassName = STYLE_PREFIX + this.instanceId;
+
+    // Disable PnP Telemetry
+    const telemetry = PnPTelemetry.getInstance();
+    telemetry.optOut();
 
     this._initializeRequiredProperties();
     this.initThemeVariant();
@@ -176,14 +202,38 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
     if (Environment.type === EnvironmentType.Local) {
       this._searchService = new MockSearchService();
       this._userService = new MockUserService();
+      this._templateService = new MockTemplateService(this.context.pageContext.cultureInfo.currentUICultureName, this.context, this._searchService);
     } else {
       this._searchService = new SearchService(this.context.pageContext, this.context.spHttpClient);
       this._userService = new UserService(this.context.pageContext);
+      
+      this._timeZoneBias = {
+          WebBias: this.context.pageContext.legacyPageContext.webTimeZoneData.Bias,
+          WebDST: this.context.pageContext.legacyPageContext.webTimeZoneData.DaylightBias,
+          UserBias: null,
+          UserDST: null,
+          Id: this.context.pageContext.legacyPageContext.webTimeZoneData.Id
+      };
+
+      if (this.context.pageContext.legacyPageContext.userTimeZoneData) {
+          this._timeZoneBias.UserBias = this.context.pageContext.legacyPageContext.userTimeZoneData.Bias;
+          this._timeZoneBias.UserDST = this.context.pageContext.legacyPageContext.userTimeZoneData.DaylightBias;
+          this._timeZoneBias.Id = this.context.pageContext.legacyPageContext.webTimeZoneData.Id;
+      }
+
+      this._templateService = new TemplateService(this.context.spHttpClient, 
+                                      this.context.pageContext.cultureInfo.currentUICultureName, this._searchService, 
+                                      this._timeZoneBias, this.context);
     }
 
     this.context.dynamicDataSourceManager.initializeSource(this);
 
-    return Promise.resolve();
+    if(!this.properties.styles || this.properties.styles.trim().length == 0) this.properties.styles = "<style></style>";
+    
+    this._customStyles = await this._processStyles();
+
+    return super.onInit();
+
   }
 
   protected onDispose(): void {
@@ -192,6 +242,20 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
 
   protected get dataVersion(): Version {
     return Version.parse('1.0');
+  }
+
+  private async _processStyles() : Promise<string> {
+    
+    if(this.properties.styles && this.properties.styles.length > 0 && this.properties.styles !== CssHelper.DEFAULT_STYLE_TAG) {
+      
+      const processedStyles = await this._templateService.processTemplate({themeVariant: this._themeVariant}, this.properties.styles);
+      const styleDoc : Document = (new DOMParser()).parseFromString(processedStyles, 'text/html');
+      return CssHelper.prefixStyleElements(styleDoc, CssHelper.convertToClassName(this._contentClassName), true);
+      
+    }
+
+    return "";
+
   }
 
   /**
@@ -367,6 +431,16 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
       PropertyPaneChoiceGroup('selectedLayout', {
         label: strings.RefinerLayoutLabel,
         options: layoutOptions
+      }),
+      this._propertyFieldCodeEditor('styles', {
+        label: strings.DialogButtonLabel,
+        panelTitle: strings.DialogButtonLabel,
+        initialValue: this.properties.styles,
+        deferredValidationTime: 500,
+        onPropertyChange: this.onPropertyPaneFieldChanged.bind(this),
+        properties: this.properties,
+        key: 'inlineTemplateTextCodeEditor',
+        language: this._propertyFieldCodeEditorLanguages.Handlebars
       })
     ];
 
@@ -391,6 +465,21 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
         }
       ]
     };
+  }
+
+  /**
+   * Load the property pane code editor
+   */
+  protected async loadPropertyPaneResources(): Promise<void> {
+
+    // tslint:disable-next-line:no-shadowed-variable
+    const { PropertyFieldCodeEditor, PropertyFieldCodeEditorLanguages } = await import(
+        /* webpackChunkName: 'search-property-pane' */
+        '@pnp/spfx-property-controls/lib/PropertyFieldCodeEditor'
+    );
+    this._propertyFieldCodeEditor = PropertyFieldCodeEditor;
+    this._propertyFieldCodeEditorLanguages = PropertyFieldCodeEditorLanguages;
+
   }
 
   /**
@@ -424,6 +513,18 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
     if (propertyPath.localeCompare('refinersConfiguration') === 0) {
       this.context.dynamicDataSourceManager.notifyPropertyChanged(SearchComponentType.RefinersWebPart);
     }
+
+    if(propertyPath.localeCompare('styles') === 0){
+      this._customStyles = await this._processStyles();
+    }
+
+  }
+
+  /**
+   * Initializes the property pane configuration
+   */
+  protected async onPropertyPaneConfigurationStart() {
+      await this.loadPropertyPaneResources();
   }
 
   /**
@@ -529,9 +630,10 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
    * Update the current theme variant reference and re-render.
    * @param args The new theme
    */
-  private _handleThemeChangedEvent(args: ThemeChangedEventArgs): void {
+  private async _handleThemeChangedEvent(args: ThemeChangedEventArgs): Promise<void> {
     if (!isEqual(this._themeVariant, args.theme)) {
       this._themeVariant = args.theme;
+      this._customStyles = await this._processStyles();
       this.render();
     }
   }

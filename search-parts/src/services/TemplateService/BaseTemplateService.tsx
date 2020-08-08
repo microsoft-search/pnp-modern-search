@@ -198,8 +198,8 @@ abstract class BaseTemplateService {
      */
     private registerTemplateServices() {
 
-        //https://support.microsoft.com/en-us/office/file-types-supported-for-previewing-files-in-onedrive-sharepoint-and-teams-e054cd0f-8ef2-4ccb-937e-26e37419c5e4 
-        const validPreviewExt = ["DOC", "DOCM", "DOCX", "DOTM", "DOTX", "POT", "POTM", "POTX", "PPS", "PPSM", "PPSX", "PPT", "PPTM", "PPTX", "VSD", "VSDX", "XLS", "XLSB", "XLSX", "3G2", "3GP", "3MF", "AI", "ARW", "ASF", "BAS", "BMP", "CR2", "CRW", "CSV", "CUR", "DCM", "DNG", "DWG", "EML", "EPUB", "ERF", "GIF", "GLB", "GLTF", "HCP", "HTM", "HTML", "ICO", "ICON", "JPG", "KEY", "LOG", "M", "M2TS", "M4V", "MARKDOWN", "MD", "MEF", "MOV", "MOVIE", "MP4", "MP4V", "MRW", "MSG", "MTS", "NEF", "NRW", "ODP", "ODS", "ODT", "ORF", "PAGES", "PANO", "PDF", "PEF", "PICT", "PLY", "PNG", "PSB", "PSD", "RTF", "SKETCH", "STL", "SVG", "TIF", "TIFF", "TS", "WMV", "XBM", "XCF", "XD", "XPM", "ZIP", "GITCONFIG", "ABAP", "ADA", "ADP", "AHK", "AS", "AS3", "ASC", "ASCX", "ASM", "ASP", "AWK", "BASH", "BASH_LOGIN", "BASH_LOGOUT", "BASH_PROFILE", "BASHRC", "BAT", "BIB", "BSH", "BUILD", "BUILDER", "C", "CAPFILE", "CBL", "CC", "CFC", "CFM", "CFML", "CL", "CLJ", "CLS", "CMAKE", "CMD", "COFFEE", "CPP", "CPT", "CPY", "CS", "CSHTML", "CSON", "CSPROJ", "CSS", "CTP", "CXX", "D", "DDL", "DI.DIF", "DIFF", "DISCO", "DML", "DTD", "DTML", "EL", "EMAKEFILE", "ERB", "ERL", "F", "F90", "F95", "FS", "FSI", "FSSCRIPT", "FSX", "GEMFILE", "GEMSPEC", "GO", "GROOVY", "GVY", "H", "H++", "HAML", "HANDLEBARS", "HH", "HPP", "HRL", "HS", "HTC", "HXX", "IDL", "IIM", "INC", "INF", "INI", "INL", "IPP", "IRBRC", "JADE", "JAV", "JAVA", "JS", "JSON", "JSP", "JSX", "L", "LESS", "LHS", "LISP", "LST", "LTX", "LUA", "MAKE", "MARKDN", "MDOWN", "MKDN", "ML", "MLI", "MLL", "MLY", "MM", "MUD", "NFO", "OPML", "OSASCRIPT", "OUT", "P", "PAS", "PATCH", "PHP", "PHP2", "PHP3", "PHP4", "PHP5", "PL", "PLIST", "PM", "POD", "PP", "PROFILE", "PROPERTIES", "PS1", "PT", "PY", "PYW", "R", "RAKE", "RB", "RBX", "RC", "RE", "REG", "REST", "RESW", "RESX", "RHTML", "RJS", "RPROFILE", "RPY", "RSS", "RST", "RXML", "S", "SASS", "SCALA", "SCM", "SCONSCRIPT", "SCONSTRUCT", "SCRIPT", "SCSS", "SGML", "SH", "SHTML", "SML", "SQL", "STY", "TCL", "TEX", "TEXT", "TLD", "TLI", "TMPL", "TPL", "TXT", "VB", "VI", "VIM", "WSDL", "XAML", "XHTML", "XOML", "XML", "XSD", "XSL", "XSLT", "YAML", "YAWS", "YML", "ZS", "MP3", "FBX", "HEIC", "JPEG", "HBS", "TEXTILE", "C++"];
+        //https://support.microsoft.com/en-us/office/file-types-supported-for-previewing-files-in-onedrive-sharepoint-and-teams-e054cd0f-8ef2-4ccb-937e-26e37419c5e4
+        const validPreviewExt = ["doc", "docm", "docx", "dotm", "dotx", "pot", "potm", "potx", "pps", "ppsm", "ppsx", "ppt", "pptm", "pptx", "vsd", "vsdx", "xls", "xlsb", "xlsx", "3g2", "3gp", "3mf", "ai", "arw", "asf", "bas", "bmp", "cr2", "crw", "csv", "cur", "dcm", "dng", "dwg", "eml", "epub", "erf", "gif", "glb", "gltf", "hcp", "htm", "html", "ico", "icon", "jpg", "key", "log", "m", "m2ts", "m4v", "markdown", "md", "mef", "mov", "movie", "mp4", "mp4v", "mrw", "msg", "mts", "nef", "nrw", "odp", "ods", "odt", "orf", "pages", "pano", "pdf", "pef", "pict", "ply", "png", "psb", "psd", "rtf", "sketch", "stl", "svg", "tif", "tiff", "ts", "wmv", "xbm", "xcf", "xd", "xpm", "zip", "gitconfig", "abap", "ada", "adp", "ahk", "as", "as3", "asc", "ascx", "asm", "asp", "awk", "bash", "bash_login", "bash_logout", "bash_profile", "bashrc", "bat", "bib", "bsh", "build", "builder", "c", "capfile", "cbl", "cc", "cfc", "cfm", "cfml", "cl", "clj", "cls", "cmake", "cmd", "coffee", "cpp", "cpt", "cpy", "cs", "cshtml", "cson", "csproj", "css", "ctp", "cxx", "d", "ddl", "di.dif", "diff", "disco", "dml", "dtd", "dtml", "el", "emakefile", "erb", "erl", "f", "f90", "f95", "fs", "fsi", "fsscript", "fsx", "gemfile", "gemspec", "go", "groovy", "gvy", "h", "h++", "haml", "handlebars", "hh", "hpp", "hrl", "hs", "htc", "hxx", "idl", "iim", "inc", "inf", "ini", "inl", "ipp", "irbrc", "jade", "jav", "java", "js", "json", "jsp", "jsx", "l", "less", "lhs", "lisp", "lst", "ltx", "lua", "make", "markdn", "mdown", "mkdn", "ml", "mli", "mll", "mly", "mm", "mud", "nfo", "opml", "osascript", "out", "p", "pas", "patch", "php", "php2", "php3", "php4", "php5", "pl", "plist", "pm", "pod", "pp", "profile", "properties", "ps1", "pt", "py", "pyw", "r", "rake", "rb", "rbx", "rc", "re", "reg", "rest", "resw", "resx", "rhtml", "rjs", "rprofile", "rpy", "rss", "rst", "rxml", "s", "sass", "scala", "scm", "sconscript", "sconstruct", "script", "scss", "sgml", "sh", "shtml", "sml", "sql", "sty", "tcl", "tex", "text", "tld", "tli", "tmpl", "tpl", "txt", "vb", "vi", "vim", "wsdl", "xaml", "xhtml", "xoml", "xml", "xsd", "xsl", "xslt", "yaml", "yaws", "yml", "zs", "mp3", "fbx", "heic", "jpeg", "hbs", "textile", "c++"];
 
         // Return the URL of the search result item
         // Usage: <a href="{{url item}}">
@@ -209,19 +209,17 @@ abstract class BaseTemplateService {
             if (!isEmpty(item)) {
                 if (!isEmpty(item.DefaultEncodingURL)
                     && item.FileType
-                    && validPreviewExt.indexOf(item.FileType.toLocaleUpperCase()) !== -1) {
+                    && validPreviewExt.indexOf(item.FileType.toLocaleLowerCase()) !== -1) {
                     url = this.createOdspPreviewUrl(item.DefaultEncodingURL);
+
+                    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                        url = item.DefaultEncodingURL + "?web=1";
+                    }
                 }
                 else if (!isEmpty(item.ServerRedirectedURL)) {
                     url = item.ServerRedirectedURL;
                 }
-                else if (item.FileType && ['ind', 'indd', 'indt', 'svgz', 'eps'].indexOf(item.FileType) !== -1) {
-                    // Try to redirect to the preview image instead of the list item form
-                    if (!isEmpty(item.SiteId) && !isEmpty(item.WebId) && !isEmpty(item.UniqueID)) {
-                        url = `${this._ctx.pageContext.site.absoluteUrl}/_layouts/15/getpreview.ashx?guidSite=${item.SiteId}&guidWeb=${item.WebId}&guidFile=${item.UniqueID.replace(/\{|\}/g, '')}&resolution=3`;
-                    }
-                }
-                else if (item.FileType && item.FileType.toLowerCase() === "url" && item.ShortcutUrl){
+                else if (item.FileType && item.FileType.toLowerCase() === "url" && item.ShortcutUrl) {
                     url = item.ShortcutUrl;
                 }
                 else if (item.OriginalPath) {
@@ -281,17 +279,14 @@ abstract class BaseTemplateService {
         // Usage: <img src="{{previewSrc item}}""/>
         Handlebars.registerHelper("getPreviewSrc", (item: ISearchResult) => {
             let previewSrc = "";
-            const nonSupportedGraphThumbnails = ["xls"]; //let's add more as we proceed
+            const validThumbExt = ["doc", "docm", "docx", "dotm", "dotx", "pot", "potm", "potx", "pps", "ppsm", "ppsx", "ppt", "pptm", "pptx", "xls", "xlsb", "xlsx", "3g2", "3gp", "3mf", "ai", "arw", "asf", "bas", "bmp", "cr2", "crw", "cur", "dcm", "dng", "dwg", "eml", "epub", "erf", "gif", "glb", "gltf", "hcp", "htm", "html", "ico", "icon", "jpg", "key", "log", "m", "m2ts", "m4v", "markdown", "md", "mef", "mov", "movie", "mp4", "mp4v", "mrw", "msg", "mts", "nef", "nrw", "odp", "ods", "odt", "orf", "pages", "pano", "pdf", "pef", "pict", "ply", "png", "psb", "psd", "rtf", "sketch", "stl", "svg", "tif", "tiff", "ts", "wmv", "xbm", "xcf", "xd", "xpm", "gitconfig", "abap", "ada", "adp", "ahk", "as", "as3", "asc", "ascx", "asm", "asp", "awk", "bash", "bash_login", "bash_logout", "bash_profile", "bashrc", "bat", "bib", "bsh", "build", "builder", "c", "capfile", "cbl", "cc", "cfc", "cfm", "cfml", "cl", "clj", "cls", "cmake", "cmd", "coffee", "cpp", "cpt", "cpy", "cs", "cshtml", "cson", "csproj", "css", "ctp", "cxx", "d", "ddl", "di.dif", "diff", "disco", "dml", "dtd", "dtml", "el", "emakefile", "erb", "erl", "f", "f90", "f95", "fs", "fsi", "fsscript", "fsx", "gemfile", "gemspec", "go", "groovy", "gvy", "h", "h++", "haml", "handlebars", "hh", "hpp", "hrl", "hs", "htc", "hxx", "idl", "iim", "inc", "inf", "ini", "inl", "ipp", "irbrc", "jade", "jav", "java", "js", "json", "jsp", "jsx", "l", "less", "lhs", "lisp", "lst", "ltx", "lua", "make", "markdn", "mdown", "mkdn", "ml", "mli", "mll", "mly", "mm", "mud", "nfo", "opml", "osascript", "out", "p", "pas", "patch", "php", "php2", "php3", "php4", "php5", "pl", "plist", "pm", "pod", "pp", "profile", "properties", "ps1", "pt", "py", "pyw", "r", "rake", "rb", "rbx", "rc", "re", "reg", "rest", "resw", "resx", "rhtml", "rjs", "rprofile", "rpy", "rss", "rst", "rxml", "s", "sass", "scala", "scm", "sconscript", "sconstruct", "script", "scss", "sgml", "sh", "shtml", "sml", "sql", "sty", "tcl", "tex", "text", "tld", "tli", "tmpl", "tpl", "txt", "vb", "vi", "vim", "wsdl", "xaml", "xhtml", "xoml", "xml", "xsd", "xsl", "xslt", "yaml", "yaws", "yml", "zs", "mp3", "fbx", "heic", "jpeg", "hbs", "textile", "c++"];
 
             if (item) {
                 if (!isEmpty(item.SiteLogo)) previewSrc = item.SiteLogo;
-                else if (!isEmpty(item.IsDocument) && item.IsDocument == "false") previewSrc = "";                
-                else if ((!isEmpty(item.FileType) && nonSupportedGraphThumbnails.indexOf(item.FileType) === -1) && !isEmpty(item.NormSiteID) && !isEmpty(item.NormListID) && !isEmpty(item.NormUniqueID)) previewSrc = `${this._ctx.pageContext.site.absoluteUrl}/_api/v2.0/sites/${item.NormSiteID}/lists/${item.NormListID}/items/${item.NormUniqueID}/driveItem/thumbnails/0/large/content?preferNoRedirect=true`;
+                else if (!isEmpty(item.FileType) && validThumbExt.indexOf(item.FileType.toLocaleLowerCase()) !== -1 && !isEmpty(item.NormSiteID) && !isEmpty(item.NormWebID) && !isEmpty(item.NormListID) && !isEmpty(item.NormUniqueID)) previewSrc = `${this._ctx.pageContext.site.absoluteUrl}/_api/v2.0/sites/${item.NormSiteID},${item.NormWebID}/lists/${item.NormListID}/items/${item.NormUniqueID}/driveItem/thumbnails/0/large/content?preferNoRedirect=true`;
                 else if (!isEmpty(item.PreviewUrl)) previewSrc = item.PreviewUrl;
                 else if (!isEmpty(item.PictureThumbnailURL)) previewSrc = item.PictureThumbnailURL;
                 else if (!isEmpty(item.ServerRedirectedPreviewURL)) previewSrc = item.ServerRedirectedPreviewURL;
-                else if (!isEmpty(item.ServerRedirectedURL)) previewSrc = UrlHelper.addOrReplaceQueryStringParam(item.ServerRedirectedURL, 'action', 'interactivepreview');
-                else if (!isEmpty(item.SiteId) && !isEmpty(item.WebId) && !isEmpty(item.UniqueID)) previewSrc = `${this._ctx.pageContext.site.absoluteUrl}/_layouts/15/getpreview.ashx?guidSite=${item.SiteId}&guidWeb=${item.WebId}&guidFile=${item.UniqueID.replace(/\{|\}/g, '')}&resolution=3`;
             }
 
             return new Handlebars.SafeString(previewSrc);
@@ -307,8 +302,14 @@ abstract class BaseTemplateService {
 
         // Return the formatted date according to current locale using moment.js
         // <p>{{getDate Created "LL"}}</p>
-        Handlebars.registerHelper("getDate", (date: string, format: string, timeHandling?: number) => {
+        Handlebars.registerHelper("getDate", (date: string, format: string, timeHandling?: number, isZ?: boolean) => {
             try {
+                if (isZ && !date.toUpperCase().endsWith("Z")) {
+                    if (date.indexOf(' ') !== -1) {
+                        date += " ";
+                    }
+                    date += "Z";
+                }
                 let itemDate = new Date(date);
                 if (itemDate.toISOString() !== new Date(null).toISOString()) {
                     if (typeof timeHandling === "number") {
@@ -390,6 +391,15 @@ abstract class BaseTemplateService {
             return accum;
         });
 
+        Handlebars.registerPartial("resultTypes-default", "{{> @partial-block }}");
+
+        const self = this;
+        const hbs = Handlebars;
+        Handlebars.registerHelper('resultTypeResolve', (instanceId: string) => {
+            return hbs.partials[`resultTypes-${instanceId}`] || "resultTypes-default";
+        });
+        Handlebars.registerPartial('resultTypes', '{{> (resultTypeResolve @root.instanceId)}}');
+
         Handlebars.registerHelper("regex", (regx: string, str: string) => {
             let rx = new RegExp(regx);
             let i = rx.exec(str);
@@ -444,7 +454,7 @@ abstract class BaseTemplateService {
             
         });
 
-        // Register slider component as partial 
+        // Register slider component as partial
         let sliderTemplate = Handlebars.compile(`<pnp-slider-component data-items="{{items}}" data-options="{{options}}" data-template="{{@partial-block}}"></pnp-slider-component>`);
         Handlebars.registerPartial('slider', sliderTemplate);
 
@@ -684,19 +694,19 @@ abstract class BaseTemplateService {
         return processedProps as T;
     }
 
+    private resultTypesTemplates: { [instanceId: string]: HandlebarsTemplateDelegate<any> } = {};
+
     /**
      * Builds and registers the result types as Handlebars partials
      * Based on https://github.com/helpers/handlebars-helpers/ operators
      * @param resultTypes the configured result types from the property pane
+     * @param instanceId id of the the webpart
      */
-    public async registerResultTypes(resultTypes: ISearchResultType[]): Promise<void> {
-
+    public async registerResultTypes(resultTypes: ISearchResultType[], instanceId: string): Promise<void> {
         if (resultTypes.length > 0) {
             let content = await this._buildCondition(resultTypes, resultTypes[0], 0);
             let template = Handlebars.compile(content);
-            Handlebars.registerPartial('resultTypes', template);
-        } else {
-            Handlebars.registerPartial('resultTypes', '{{> @partial-block }}');
+            Handlebars.registerPartial(`resultTypes-${instanceId}`, template);
         }
     }
 
@@ -780,11 +790,11 @@ abstract class BaseTemplateService {
     public abstract ensureFileResolves(fileUrl: string): Promise<void>;
 
     private static _initDocumentPreviews() {
-
         const nodes = document.querySelectorAll('.document-preview-item');
 
         DomHelper.forEach(nodes, ((index, el) => {
-            if (!el.onclick) {
+            if (!el.attributes["data-listener"]) {
+                el.attributes["data-listener"] = "1";
                 el.addEventListener("click", (event) => {
                     const thumbnailElt = event.srcElement;
 
@@ -815,33 +825,36 @@ abstract class BaseTemplateService {
         const nodes = document.querySelectorAll('.video-preview-item');
 
         DomHelper.forEach(nodes, ((index, el) => {
-            el.addEventListener("click", (event) => {
+            if (!el.attributes["data-listener"]) {
+                el.attributes["data-listener"] = "1";
+                el.addEventListener("click", (event) => {
 
-                const thumbnailElt = event.srcElement;
+                    const thumbnailElt = event.srcElement;
 
-                // Get infos about the video to render
-                const url = event.srcElement.getAttribute("data-url");
-                const fileExtension = event.srcElement.getAttribute("data-fileext");
-                const previewImgUrl: string = event.srcElement.getAttribute("data-src");
+                    // Get infos about the video to render
+                    const url = event.srcElement.getAttribute("data-url");
+                    const fileExtension = event.srcElement.getAttribute("data-fileext");
+                    const previewImgUrl: string = event.srcElement.getAttribute("data-src");
 
-                if (url && fileExtension) {
-                    let renderElement = React.createElement(
-                        PreviewContainer,
-                        {
-                            videoProps: {
-                                fileExtension: fileExtension
-                            },
-                            showPreview: true,
-                            targetElement: thumbnailElt,
-                            previewImageUrl: previewImgUrl,
-                            elementUrl: url,
-                            previewType: PreviewType.Video
-                        } as IPreviewContainerProps
-                    );
+                    if (url && fileExtension) {
+                        let renderElement = React.createElement(
+                            PreviewContainer,
+                            {
+                                videoProps: {
+                                    fileExtension: fileExtension
+                                },
+                                showPreview: true,
+                                targetElement: thumbnailElt,
+                                previewImageUrl: previewImgUrl,
+                                elementUrl: url,
+                                previewType: PreviewType.Video
+                            } as IPreviewContainerProps
+                        );
 
-                    ReactDom.render(renderElement, el);
-                }
-            });
+                        ReactDom.render(renderElement, el);
+                    }
+                });
+            }
         }));
     }
 }

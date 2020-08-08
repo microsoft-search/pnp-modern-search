@@ -30,6 +30,7 @@ declare interface ISearchResultsWebPartStrings {
     PlaceHolderIconText: string;
     PlaceHolderDescription: string;
     ResultSourceIdLabel: string;
+    ResultSourceIdDescription: string;
     InvalidResultSourceIdMessage: string;
     InvalidNumberIntervalMessage: string;
     EnableQueryRulesLabel: string;
@@ -60,6 +61,7 @@ declare interface ISearchResultsWebPartStrings {
     PanelCloseButtonAria:string;
     UseRefinersWebPartLabel: string;
     UseRefinersFromComponentLabel: string;
+    UseSearchVerticalsLabel: string;
     UsePaginationFromComponentLabel: string;
     RefinementFilters: string;
     customTemplateFieldsLabel: string;
@@ -83,6 +85,8 @@ declare interface ISearchResultsWebPartStrings {
         SortableFieldDisplayValueField: string;
         EditSortableFieldsLabel: string;
         EditSortLabel: string;
+        EditSortLabelFieldName: string;
+        EditSortDirection: string;
         SortInvalidSortableFieldMessage: string;
     },
     Synonyms: {
@@ -104,6 +108,7 @@ declare interface ISearchResultsWebPartStrings {
         ConditionValueLabel: string;
         CondtionOperatorValue: string;
         ExternalUrlLabel: string;
+        ExternalUrlPlaceholder: string;
         EqualOperator: string;
         NotEqualOperator: string;
         ContainsOperator: string;

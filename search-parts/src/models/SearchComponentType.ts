@@ -3,5 +3,6 @@ export enum SearchComponentType {
     RefinersWebPart = 'refinersWebPart',
     PaginationWebPart = 'paginationWebPart',
     SearchBoxWebPart = 'searchQuery',
-    SearchVerticalsWebPart = 'searchVerticals'
+    SearchVerticalsWebPart = 'searchVerticals',
+    PageEnvironment = 'PageContext'
 }

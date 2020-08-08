@@ -28,6 +28,20 @@
                                     {{/each}}
                                 {{/if}}
                             </div>
+                            <pnp-accordion data-accordion-header-text="Accordion Example" data-theme="Neutral" data-size="12" data-start-open="false" data-rounded-corners="false">
+                                <h4>Title: {{Title}}</h4>
+                                <pnp-popup>
+                                    <template id="popupclick">
+                                        <span>Popup Example - Click Me</span>
+                                    </template>
+                                    <template id="popupheader">
+                                        <span>Title: {{Title}}</span><br /><span>Header HTML here</span>
+                                    </template>
+                                    <template id="popupbody">
+                                        <span>Title: {{Title}}</span><br /><span>Body HTML here</span>
+                                    </template>
+                                </pnp-popup>
+                            </pnp-accordion>
                         </div>
                     </div>
                     {{/resultTypes}}

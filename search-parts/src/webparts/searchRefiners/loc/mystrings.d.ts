@@ -18,6 +18,7 @@ declare interface ISearchRefinersWebPartStrings {
     FilterResultsButtonLabel: string;
     RefinerLayoutLabel: string;
     ConnectToSearchResultsLabel: string;
+    DialogButtonLabel: string;
     Refiners: {
         RefinersFieldLabel: string;
         RefinersFieldDescription: string;

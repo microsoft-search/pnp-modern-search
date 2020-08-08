@@ -56,7 +56,8 @@
         }
       ],
       "searchQuery": "",
-      "availableRefiners": []
+      "availableRefiners": [],
+      "styles":"<style></style>"
     }
   }]
 }

@@ -1,6 +1,8 @@
 //import * as Handlebars from 'handlebars';
 import ISearchService from './ISearchService';
 import { ISearchResults, ISearchResult, IRefinementResult, IRefinementValue, IRefinementFilter, IPromotedResult, ISearchVerticalInformation, ISearchResultBlock } from 'search-extensibility';
+import RefinersSortOption from '../../models/RefinersSortOptions';
+import RefinerSortDirection from '../../models/RefinersSortDirection';
 import { sp, SearchQuery, SearchResults, SPRest, Sort, SearchSuggestQuery, SortDirection, Web } from '@pnp/sp';
 import { Logger, LogLevel, ConsoleListener } from '@pnp/logging';
 import { Text, Guid } from '@microsoft/sp-core-library';
@@ -20,6 +22,7 @@ import IManagedPropertyInfo from '../../models/IManagedPropertyInfo';
 import { Loader } from '../TemplateService/LoadHelper';
 import { BaseQueryModifier } from 'search-extensibility';
 import { ISharePointSearch } from './ISharePointSearch';
+import { trimStart, trimEnd } from '@microsoft/sp-lodash-subset';
 
 class SearchService implements ISearchService {
     private _initialSearchResult: SearchResults = null;
@@ -153,15 +156,19 @@ class SearchService implements ISearchService {
         searchQuery.EnableQueryRules = this._enableQueryRules ? this._enableQueryRules : false;
 
         if (this._resultSourceId) {
-            searchQuery.SourceId = this._resultSourceId;
+            if (Guid.isValid(this._resultSourceId)) {
+                searchQuery.SourceId = this._resultSourceId;
 
-            // enable phoenetic search for people result source
-            if (this._resultSourceId.toLocaleLowerCase() === "b09a7990-05ea-4af9-81ef-edfab16c4e31") {
-                searchQuery.EnableNicknames = true;
-                searchQuery.EnablePhonetic = true;
-            } else {
-                searchQuery.EnableNicknames = false;
-                searchQuery.EnablePhonetic = false;
+                // enable phoenetic search for people result source
+                if (this._isPeopleResultSource(this._resultSourceId)) {
+                    searchQuery.EnableNicknames = true;
+                    searchQuery.EnablePhonetic = true;
+                } else {
+                    searchQuery.EnableNicknames = false;
+                    searchQuery.EnablePhonetic = false;
+                }
+            } else { // result source specified by name: Level|Result source name (i.e: SPSiteSubscription|News in Spain)
+                searchQuery = this._setResultSourceByName(this._resultSourceId, searchQuery);
             }
         }
 
@@ -181,7 +188,11 @@ class SearchService implements ISearchService {
 
         if (this.refiners) {
             // Get the refiners order specified in the property pane
-            sortedRefiners = this.refiners.map(e => e.refinerName);
+            sortedRefiners = this.refiners.map(e => {
+                let sort = e.refinerSortType == RefinersSortOption.Alphabetical ? "name" : "frequency";
+                let direction = e.refinerSortDirection == RefinerSortDirection.Ascending ? "ascending" : "descending";
+                return `${e.refinerName}(sort=${sort}/${direction})`;
+            });
             searchQuery.Refiners = sortedRefiners.join(',');
 
             const refinableDate = /(RefinableDate\d+)(?=,|$)|(RefinableDateSingle\d+)(?=,|$)|(LastModifiedTime)(?=,|$)|(LastModifiedTimeForRetention)(?=,|$)|(Created)(?=,|$)/g;
@@ -199,7 +210,7 @@ class SearchService implements ISearchService {
             }
         }
 
-        if (this.refinementFilters && this.refinementFilters.length > 0) {
+        if (this.refinementFilters && this.refinementFilters.length > 0 && this.refinementFilters[0].length > 0) {
             searchQuery.RefinementFilters = this.refinementFilters;
         }
 
@@ -751,45 +762,44 @@ class SearchService implements ISearchService {
      */
     private async _mapShortCutUrls(searchResults: ISearchResult[]): Promise<ISearchResult[]> {
         try {
-                let updatedSearchResults = searchResults;
+            let updatedSearchResults = searchResults;
 
-                const batch = this._localPnPSetup.createBatch();
-                
-                const promises = searchResults.map(async result => {
+            const batch = this._localPnPSetup.createBatch();
 
-                    if (result.FileType && result.FileType.toLowerCase() === "url" && result.OriginalPath && result.SPSiteUrl) {
-                        const localWeb = new Web(result.SPSiteUrl);
-                        const file = localWeb.getFileByServerRelativeUrl(result.OriginalPath.replace(/^(?:\/\/|[^/]+)*\//, '/'));
-                        return  file.inBatch(batch).getText();
-                    }
-                    else{
-                        return null;
-                    }
-                });
+            const promises = searchResults.map(async result => {
 
-                // Execute the batch
-                await batch.execute();
+                if (result.FileType && result.FileType.toLowerCase() === "url" && result.OriginalPath && result.SPSiteUrl) {
+                    const localWeb = new Web(result.SPSiteUrl);
+                    const file = localWeb.getFileByServerRelativeUrl(result.OriginalPath.replace(/^(?:\/\/|[^/]+)*\//, '/'));
+                    return file.inBatch(batch).getText();
+                }
+                else {
+                    return null;
+                }
+            });
 
-                const response = await Promise.all(promises);
+            // Execute the batch
+            await batch.execute();
 
-                response.map((result: any, index: number) => {
-                    if (result) {
-                        if (result.indexOf("URL=") > -1)
-                        {
-                            let parts = result.split("URL=");
-                            if (parts.length == 2){
-                                updatedSearchResults[index].ShortcutUrl = parts[1].trim();
-                            }
+            const response = await Promise.all(promises);
+
+            response.map((result: any, index: number) => {
+                if (result) {
+                    if (result.indexOf("URL=") > -1) {
+                        let parts = result.split("URL=");
+                        if (parts.length == 2) {
+                            updatedSearchResults[index].ShortcutUrl = parts[1].trim();
                         }
                     }
-                });
+                }
+            });
 
-                return updatedSearchResults;
+            return updatedSearchResults;
 
-            } catch (error) {
-                Logger.write('[SearchService._mapShortCutUrls()]: Error: ' + error, LogLevel.Error);
-                throw new Error(error);
-            }
+        } catch (error) {
+            Logger.write('[SearchService._mapShortCutUrls()]: Error: ' + error, LogLevel.Error);
+            throw new Error(error);
+        }
     }
 
     /**
@@ -840,8 +850,8 @@ class SearchService implements ISearchService {
             if (queryParts) {
 
                 for (let i = 0; i < queryParts.length; i++) {
-                    const key = queryParts[i].toLowerCase();
-                    const value = this._synonymTable[key];
+                    let key = trimEnd(trimStart(queryParts[i].toLowerCase(), '"'), '"');
+                    let value = this._synonymTable[key];
 
                     if (value) {
                         // Replace the current query part in the query with all the synonyms
@@ -881,6 +891,41 @@ class SearchService implements ISearchService {
         }
 
         return result;
+    }
+
+    private _isPeopleResultSource(id: string) {
+        return id.toLocaleLowerCase() === "b09a7990-05ea-4af9-81ef-edfab16c4e31";
+    }
+
+    /**
+     * Configures the SearchQuery to allow search by Result source Name.
+     * When searching by result source name, the Source name and level has to be set as properties
+     * More info here: https://www.techmikael.com/2015/01/how-to-query-using-result-source-name.html
+     * @param _resultSourceId the value from the properties
+     * @param searchQuery the SearchQuery being configured
+     */
+    private _setResultSourceByName(_resultSourceId: string, searchQuery: SearchQuery): SearchQuery {
+        const parts: string[] = _resultSourceId.split("|");
+        const level: string = parts[0];
+        const resultSourceName: string = parts[1];
+
+        searchQuery.Properties.push({
+            Name: "SourceLevel",
+            Value: {
+                StrVal: level,
+                QueryPropertyValueTypeIndex: 1
+            }
+        });
+
+        searchQuery.Properties.push({
+            Name: "SourceName",
+            Value: {
+                StrVal: resultSourceName,
+                QueryPropertyValueTypeIndex: 1
+            }
+        });
+
+        return searchQuery;
     }
 }
 

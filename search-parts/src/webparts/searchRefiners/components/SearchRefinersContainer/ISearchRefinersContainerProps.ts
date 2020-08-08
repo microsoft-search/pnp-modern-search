@@ -4,6 +4,7 @@ import { DisplayMode } from "@microsoft/sp-core-library";
 import RefinersLayoutOption from "../../../../models/RefinersLayoutOptions";
 import IUserService from '../../../../services/UserService/IUserService';
 import { IReadonlyTheme } from "@microsoft/sp-component-base";
+import BaseTemplateService from "../../../../services/TemplateService/BaseTemplateService";
 
 export interface ISearchRefinersContainerProps {
   /**
@@ -65,4 +66,15 @@ export interface ISearchRefinersContainerProps {
    * The current theme variant
    */
   themeVariant: IReadonlyTheme | undefined;
+
+  /**
+   * Content class name
+   */
+  contentClassName: string;
+
+  /**
+   * Filter web part styles
+   */
+  styles: string;
+  
 }

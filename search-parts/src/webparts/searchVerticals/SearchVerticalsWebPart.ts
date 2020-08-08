@@ -20,6 +20,7 @@ import { Placeholder } from '@pnp/spfx-controls-react/lib/Placeholder';
 import { PageOpenBehavior } from '../../helpers/UrlHelper';
 import { TokenService, ITokenService } from '../../services/TokenService';
 import { TextField, ITextFieldProps, Dropdown, IDropdownProps } from 'office-ui-fabric-react';
+import PnPTelemetry from "@pnp/telemetry-js";
 
 export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearchVerticalsWebPartProps> implements IDynamicDataCallables {
 
@@ -146,6 +147,10 @@ export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearc
     }
 
     protected onInit(): Promise<void> {
+        
+        // Disable PnP Telemetry
+        const telemetry = PnPTelemetry.getInstance();
+        telemetry.optOut();
 
         this._dynamicDataService = new DynamicDataService(this.context.dynamicDataProvider);
         this.ensureDataSourceConnection();

@@ -9,6 +9,9 @@ import { LivePersonaWebComponent } from './LivePersonaComponent';
 import { PersonaCardShimmersWebComponent } from './PersonaCardShimmersComponent';
 import { IconWebComponent } from './IconComponent';
 import { PaginationWebComponent } from './PaginationComponent';
+import { AccordionWebComponent } from './AccordionComponent';
+import { PopupWebComponent } from './PopupComponent';
+import { LookupListExpanderWebComponent } from './LookupListExpanderComponent';
 
 export class AvailableComponents {
 
@@ -74,6 +77,21 @@ export class AvailableComponents {
         {
             name: 'pnp-pagination',
             extensionClass: PaginationWebComponent,
+            displayName: "", description: "", icon: ""
+        },
+        {
+            name: 'pnp-accordion',
+            extensionClass: AccordionWebComponent,
+            displayName: "", description: "", icon: ""
+        },
+        {
+            name: 'pnp-popup',
+            extensionClass: PopupWebComponent,
+            displayName: "", description: "", icon: ""
+        },
+        {
+            name: 'pnp-lookup-list-expander',
+            extensionClass: LookupListExpanderWebComponent,
             displayName: "", description: "", icon: ""
         }
     ];
