@@ -1,0 +1,9 @@
+{
+  "id": "ce5d834f-ee2e-48c3-b2d7-5f7b14024c5a",
+  "alias": "ModernSearchExtensibilityLibrary",
+  "componentType": "Library",
+
+  // The "*" signifies that the version should be taken from the package.json
+  "version": "*",
+  "manifestVersion": 2
+}

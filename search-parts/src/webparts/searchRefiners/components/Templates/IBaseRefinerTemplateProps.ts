@@ -1,4 +1,4 @@
-import { IRefinementResult, IRefinementFilter, IRefinementValue } from "../../../../models/ISearchResult";
+import { IRefinementResult, IRefinementFilter, IRefinementValue } from "search-extensibility";
 import RefinementFilterOperationCallback from "../../../../models/RefinementValueOperationCallback";
 import IUserService from '../../../../services/UserService/IUserService';
 import { IReadonlyTheme } from "@microsoft/sp-component-base";

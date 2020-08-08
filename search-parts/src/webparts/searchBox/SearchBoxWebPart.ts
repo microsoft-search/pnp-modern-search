@@ -27,17 +27,13 @@ import SearchService from '../../services/SearchService/SearchService';
 import { PageOpenBehavior, QueryPathBehavior, UrlHelper } from '../../helpers/UrlHelper';
 import SearchBoxContainer from './components/SearchBoxContainer/SearchBoxContainer';
 import { SearchComponentType } from '../../models/SearchComponentType';
-import IExtensibilityService from '../../services/ExtensibilityService/IExtensibilityService';
-import { ExtensibilityService } from '../../services/ExtensibilityService/ExtensibilityService';
-import { ISuggestionProviderDefinition } from '../../services/ExtensibilityService/ISuggestionProviderDefinition';
+import { BaseSuggestionProvider, IExtensibilityService, ExtensibilityService, IExtension, ISuggestionProviderInstance, ExtensionHelper, ExtensionTypes, IExtensibilityLibrary } from 'search-extensibility';
 import { SharePointDefaultSuggestionProvider } from '../../providers/SharePointDefaultSuggestionProvider';
-import { ISuggestionProviderInstance } from '../../services/ExtensibilityService/ISuggestionProviderInstance';
-import { ObjectCreator } from '../../services/ExtensibilityService/ObjectCreator';
-import { BaseSuggestionProvider } from '../../providers/BaseSuggestionProvider';
 import { Toggle } from 'office-ui-fabric-react/lib/Toggle';
 import { ThemeProvider, ThemeChangedEventArgs, IReadonlyTheme } from '@microsoft/sp-component-base';
 import { isEqual, find } from '@microsoft/sp-lodash-subset';
-import { GlobalSettings, hasHorizontalOverflow } from 'office-ui-fabric-react';
+import { GlobalSettings } from 'office-ui-fabric-react';
+import { Guid } from '@microsoft/sp-core-library';
 import PnPTelemetry from "@pnp/telemetry-js";
 
 export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWebPartProps> implements IDynamicDataCallables {
@@ -46,14 +42,16 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
     private _searchService: ISearchService;
     private _themeProvider: ThemeProvider;
     private _extensibilityService: IExtensibilityService;
-    private _suggestionProviderInstances: ISuggestionProviderInstance<any>[];
+    private _suggestionProviderInstances: ISuggestionProviderInstance[];
     private _initComplete: boolean = false;
     private _foundCustomSuggestionProviders: boolean = false;
-
     private _propertyFieldCollectionData = null;
     private _customCollectionFieldType = null;
     private _themeVariant: IReadonlyTheme;
     private _ops = null;
+    private _loadedLibraries:IExtensibilityLibrary[] = [];
+    private _extensibilityEditor = null;
+    private _customSuggestionProviders : IExtension<any>[] = [];
 
     constructor() {
         super();
@@ -106,26 +104,27 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
 
         }
 
-        const enableSuggestions = this.properties.enableQuerySuggestions && this.properties.suggestionProviders.some(sp => sp.providerEnabled);
+        const enableSuggestions = this.properties.enableQuerySuggestions && this.properties.suggestionProviders.some(sp => sp.enabled);
 
         const element: React.ReactElement<ISearchBoxContainerProps> = React.createElement(
-            SearchBoxContainer, {
-                onSearch: this._onSearch,
-                searchInNewPage: this.properties.searchInNewPage,
-                pageUrl: this.properties.pageUrl,
-                openBehavior: this.properties.openBehavior,
-                queryPathBehavior: this.properties.queryPathBehavior,
-                queryStringParameter: this.properties.queryStringParameter,
-                inputValue: this._searchQuery,
-                enableQuerySuggestions: enableSuggestions,
-                suggestionProviders: this._suggestionProviderInstances,
-                searchService: this._searchService,
-                placeholderText: this.properties.placeholderText,
-                domElement: this.domElement,
-                themeVariant: this._themeVariant
-            } as ISearchBoxContainerProps);
+        SearchBoxContainer, {
+            onSearch: this._onSearch,
+            searchInNewPage: this.properties.searchInNewPage,
+            pageUrl: this.properties.pageUrl,
+            openBehavior: this.properties.openBehavior,
+            queryPathBehavior: this.properties.queryPathBehavior,
+            queryStringParameter: this.properties.queryStringParameter,
+            inputValue: this._searchQuery,
+            enableQuerySuggestions: enableSuggestions,
+            suggestionProviders: this._suggestionProviderInstances,
+            searchService: this._searchService,
+            placeholderText: this.properties.placeholderText,
+            domElement: this.domElement,
+            themeVariant: this._themeVariant
+        } as ISearchBoxContainerProps);
 
         ReactDom.render(element, this.domElement);
+        
     }
 
     /**
@@ -155,9 +154,21 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
             default:
                 throw new Error('Bad property id');
         }
+
     }
 
     protected async onInit(): Promise<void> {
+    
+        if(!this.properties.extensibilityLibraries) this.properties.extensibilityLibraries = [];
+    
+        this.initSearchService();
+        this.initThemeVariant();
+        
+        this._bindHashChange();
+
+        this._extensibilityService = new ExtensibilityService();
+        this._loadExtensibility();
+        await this.initSuggestionProviders();
 
         // Disable PnP Telemetry
         const telemetry = PnPTelemetry.getInstance();
@@ -169,7 +180,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
         this.initThemeVariant();
 
         this._bindHashChange();
-
+        
         this._handleQueryStringChange();
 
         this._extensibilityService = new ExtensibilityService();
@@ -179,6 +190,31 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
         return super.onInit();
     }
 
+    protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
+        return {
+            pages: [
+            {
+                groups: [
+                {
+                    groupName: strings.SearchBoxQuerySettings,
+                    groupFields: this._getSearchQueryFields()
+                },
+                {
+                    groupName: strings.SearchBoxNewPage,
+                    groupFields: this._getSearchBehaviorOptionsFields()
+                },
+                {
+                    groupName: strings.Extensibility.GroupName,
+                    groupFields: this._getExtensbilityGroupFields()
+                }
+                ],
+                displayGroupsAsAccordion: true
+            }
+            ]
+        };
+    }
+
+
     protected onDispose(): void {
         window.history.pushState = this._ops;
         ReactDom.unmountComponentAtNode(this.domElement);
@@ -186,26 +222,6 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
 
     protected get dataVersion(): Version {
         return Version.parse('1.0');
-    }
-
-    protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
-        return {
-            pages: [
-                {
-                    groups: [
-                        {
-                            groupName: strings.SearchBoxQuerySettings,
-                            groupFields: this._getSearchQueryFields()
-                        },
-                        {
-                            groupName: strings.SearchBoxNewPage,
-                            groupFields: this._getSearchBehaviorOptionsFields()
-                        }
-                    ],
-                    displayGroupsAsAccordion: true
-                }
-            ]
-        };
     }
 
     protected async onPropertyPaneFieldChanged(propertyPath: string): Promise<void> {
@@ -324,79 +340,121 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
         return providerDefinitions;
     }
 
-    private async getDefaultSuggestionProviders(): Promise<ISuggestionProviderDefinition<any>[]> {
+    private async getDefaultSuggestionProviders(): Promise<IExtension<any>[]> {
         return [{
-            providerName: SharePointDefaultSuggestionProvider.ProviderName,
-            providerDisplayName: SharePointDefaultSuggestionProvider.ProviderDisplayName,
-            providerDescription: SharePointDefaultSuggestionProvider.ProviderDescription,
-            providerClass: SharePointDefaultSuggestionProvider
+            name: SharePointDefaultSuggestionProvider.ProviderName,
+            displayName: SharePointDefaultSuggestionProvider.ProviderDisplayName,
+            description: SharePointDefaultSuggestionProvider.ProviderDescription,
+            extensionClass: SharePointDefaultSuggestionProvider,
+            enabled:true
         }];
     }
 
-    private async getCustomSuggestionProviders(): Promise<ISuggestionProviderDefinition<any>[]> {
-        let customSuggestionProviders: ISuggestionProviderDefinition<any>[] = [];
-
+    private async _loadExtensibility() : Promise<void> {
+        
         // Load extensibility library if present
-        const extensibilityLibrary = await this._extensibilityService.loadExtensibilityLibrary();
+        this._loadedLibraries = await this._extensibilityService.loadExtensibilityLibraries(this.properties.extensibilityLibraries.map((i)=>Guid.parse(i)));
 
         // Load extensibility additions
-        if (extensibilityLibrary && extensibilityLibrary.getCustomSuggestionProviders) {
+        if (this._loadedLibraries && this._loadedLibraries.length>0) {
+            
+            const extensions = this._extensibilityService.getAllExtensions(this._loadedLibraries);
+            this._customSuggestionProviders = this._extensibilityService.filter(extensions, ExtensionTypes.SuggestionProvider);
 
-            // Add custom suggestion providers if any
-            customSuggestionProviders = extensibilityLibrary.getCustomSuggestionProviders();
+        } else {
+            
+            this._customSuggestionProviders = [];
+
         }
 
-        return customSuggestionProviders;
     }
 
-    private async initSuggestionProviderInstances(providerDefinitions: ISuggestionProviderDefinition<any>[]): Promise<ISuggestionProviderInstance<any>[]> {
+    private async initSuggestionProviderInstances(providerDefinitions: IExtension<any>[]): Promise<BaseSuggestionProvider[]> {
 
         const webpartContext = this.context;
+        const instances : BaseSuggestionProvider[] = [];
 
-        let providerInstances = await Promise.all(providerDefinitions.map<Promise<ISuggestionProviderInstance<any>>>(async (provider) => {
+        return await Promise.all(providerDefinitions.map<Promise<IExtension<any>>>(async (provider) => {
             let isInitialized = false;
             let instance: BaseSuggestionProvider = null;
 
             try {
-                instance = ObjectCreator.createEntity(provider.providerClass, webpartContext);
-                await instance.onInit();
-                isInitialized = true;
+            instance = ExtensionHelper.create(provider.extensionClass);
+            instance.context = {
+                webPart: webpartContext,
+                search: this._searchService,
+                template: null
+            };
+            await instance.onInit();
+            isInitialized = true;
+            instances.push(instance);
             }
             catch (error) {
-                console.log(`Unable to initialize '${provider.providerName}'. ${error}`);
+            console.log(`Unable to initialize '${provider.name}'. ${error}`);
             }
             finally {
-                return {
-                    ...provider,
-                    instance,
-                    isInitialized
-                };
+            return {
+                ...provider,
+                instance,
+                isInitialized
+            };
             }
-        }));
+        }))
+        .then((values)=>{
+            return instances;
+        });
 
-        // Keep only the onces that initialized successfully
-        providerInstances = providerInstances.filter(pi => pi.isInitialized);
-
-        return providerInstances;
     }
 
     protected get propertiesMetadata(): IWebPartPropertiesMetadata {
         return {
             'defaultQueryKeywords': {
-                dynamicPropertyType: 'string'
+            dynamicPropertyType: 'string'
             }
         };
     }
 
     protected async loadPropertyPaneResources(): Promise<void> {
 
+        const { PropertyPaneExtensibilityEditor } = await import('search-extensibility');
+
+        this._extensibilityEditor = PropertyPaneExtensibilityEditor;
+
         const { PropertyFieldCollectionData, CustomCollectionFieldType } = await import(
             /* webpackChunkName: 'search-property-pane' */
             '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData'
         );
+        
         this._propertyFieldCollectionData = PropertyFieldCollectionData;
         this._customCollectionFieldType = CustomCollectionFieldType;
+
     }
+
+    /**
+     * Loads the extensibility editor into the property pane
+     */  
+    private _getExtensbilityGroupFields():IPropertyPaneField<any>[] {
+        return [
+            new this._extensibilityEditor('extensibilityGuid',{
+                label: strings.Extensibility.ButtonLabel,
+                allowedExtensions: [ ExtensionTypes.SuggestionProvider ],
+                libraries: this._loadedLibraries,
+                onLibraryAdded: async (id:Guid) => {
+                    this.properties.extensibilityLibraries.push(id.toString());
+                    await this._loadExtensibility();
+                    await this.initSuggestionProviders();
+                    return false;
+                },
+                onLibraryDeleted: async (id:Guid) => {
+                    this.properties.extensibilityLibraries = this.properties.extensibilityLibraries.filter((lib)=> (lib != id.toString()));
+                    await this._loadExtensibility();
+                    await this.initSuggestionProviders();
+                    return false;
+                }       
+            })
+        ];
+    }
+
 
     /**
      * Determines the group fields for the search query options inside the property pane
@@ -412,22 +470,37 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
         ];
 
         if (this.properties.useDynamicDataSource) {
+            
             searchQueryConfigFields.push(
                 PropertyPaneDynamicFieldSet({
-                    label: strings.DynamicData.DefaultQueryKeywordsPropertyLabel,
-                    fields: [
-                        PropertyPaneDynamicField('defaultQueryKeywords', {
-                            label: strings.DynamicData.DefaultQueryKeywordsPropertyLabel,
-                        })
-                    ],
-                    sharedConfiguration: {
-                        depth: DynamicDataSharedDepth.Source,
-                    }
-                })
-            );
+                label: strings.DynamicData.DefaultQueryKeywordsPropertyLabel,
+                fields: [
+                    PropertyPaneDynamicField('defaultQueryKeywords', {
+                        label: strings.DynamicData.DefaultQueryKeywordsPropertyLabel,
+                    })
+                ];
+            }));
+            
+
+            if (this.properties.useDynamicDataSource) {
+                searchQueryConfigFields.push(
+                    PropertyPaneDynamicFieldSet({
+                        label: strings.DynamicData.DefaultQueryKeywordsPropertyLabel,
+                        fields: [
+                            PropertyPaneDynamicField('defaultQueryKeywords', {
+                                label: strings.DynamicData.DefaultQueryKeywordsPropertyLabel,
+                            })
+                        ],
+                        sharedConfiguration: {
+                            depth: DynamicDataSharedDepth.Source,
+                        }
+                    })
+                );
+            }
+
+            return searchQueryConfigFields;
         }
 
-        return searchQueryConfigFields;
     }
 
     /**
@@ -495,6 +568,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
                 })
             ]);
         }
+
 
         searchBehaviorOptionsFields = searchBehaviorOptionsFields.concat([
             PropertyPaneHorizontalRule(),
@@ -608,4 +682,5 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
             this.render();
         }
     }
+    
 }

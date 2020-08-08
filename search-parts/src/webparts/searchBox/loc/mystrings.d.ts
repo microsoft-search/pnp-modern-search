@@ -58,6 +58,10 @@ declare interface ISearchBoxWebPartStrings {
     InlineTemplateEditPanelTitle: string;
     DefaultSuggestionGroupName: string;
     SharePointSuggestionGroupName: string;
+  },
+  Extensibility:{
+    GroupName: string;
+    ButtonLabel: string;
   }
 }
 

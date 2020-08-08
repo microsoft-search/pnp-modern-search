@@ -158,8 +158,8 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
           const allProviderPromises = this.props.suggestionProviders.map(async (provider) => {
 
             // Verify we have a valid suggestion provider and it is enabled
-            if (provider && provider.providerEnabled && provider.instance.isSuggestionsEnabled) {
-              let suggestions = await provider.instance.getSuggestions(trimmedInputValue);
+            if (provider && provider.enabled && provider.isSuggestionsEnabled) {
+              let suggestions = await provider.getSuggestions(trimmedInputValue);
 
               // Verify before updating proposed suggestions
               //  1) the input value hasn't been searched
@@ -225,7 +225,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
     if ((!this.state.hasRetrievedZeroTermSuggestions && !this.state.isRetrievingZeroTermSuggestions) || forceUpdate) {
 
       // Verify we have at least one suggestion provider that has isZeroTermSuggestionsEnabled
-      if (this.props.suggestionProviders && this.props.suggestionProviders.some(sgp => sgp.instance && sgp.instance.isZeroTermSuggestionsEnabled)) {
+      if (this.props.suggestionProviders && this.props.suggestionProviders.some(sgp => sgp && sgp.isZeroTermSuggestionsEnabled)) {
         this.setState({
           zeroTermQuerySuggestions: [],
           isRetrievingZeroTermSuggestions: true,
@@ -235,8 +235,8 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
           let zeroTermSuggestions = [];
 
           // Verify we have a valid suggestion provider and it is enabled
-          if (provider && provider.providerEnabled && provider.instance.isZeroTermSuggestionsEnabled) {
-            zeroTermSuggestions = await provider.instance.getZeroTermSuggestions();
+          if (provider && provider.enabled && provider.isZeroTermSuggestionsEnabled) {
+            zeroTermSuggestions = await provider.getZeroTermSuggestions();
           }
 
           return zeroTermSuggestions;

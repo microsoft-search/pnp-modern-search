@@ -1,4 +1,4 @@
-import { IRefinementResult, IRefinementFilter, IRefinementValue } from "../../../../models/ISearchResult";
+import { IRefinementResult, IRefinementFilter, IRefinementValue } from "search-extensibility";
 import IRefinerConfiguration from "../../../../models/IRefinerConfiguration";
 import { DisplayMode } from "@microsoft/sp-core-library";
 import RefinersLayoutOption from "../../../../models/RefinersLayoutOptions";

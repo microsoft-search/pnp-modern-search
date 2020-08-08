@@ -1,5 +1,5 @@
 import * as React from 'react';
-import ISearchResultProps from './ISearchResultProps';
+import ISearchResultProps from 'search-extensibilityProps';
 import styles from './SearchResult.module.scss';
 import { PersonaCoin } from 'office-ui-fabric-react/lib/PersonaCoin';
 import * as moment from 'moment';

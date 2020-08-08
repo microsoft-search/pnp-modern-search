@@ -1,7 +1,7 @@
 import * as React from "react";
 import IBaseRefinerTemplateProps from '../IBaseRefinerTemplateProps';
 import IBaseRefinerTemplateState from '../IBaseRefinerTemplateState';
-import { IRefinementValue, RefinementOperator } from "../../../../../models/ISearchResult";
+import { IRefinementValue, RefinementOperator } from "search-extensibility";
 import { Checkbox } from 'office-ui-fabric-react/lib/Checkbox';
 import { Text } from '@microsoft/sp-core-library';
 import { Link } from 'office-ui-fabric-react/lib/Link';

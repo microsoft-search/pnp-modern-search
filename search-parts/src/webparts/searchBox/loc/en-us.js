@@ -56,7 +56,11 @@ define([], function() {
       "ExternalUrlLabel": "External Template Url",
       "InlineTemplateEditPanelTitle": "Edit suggestion template",
       "DefaultSuggestionGroupName": "Recommended",
-      "SharePointSuggestionGroupName": "Others have searched for",
+      "SharePointSuggestionGroupName": "Others have search for",
+    },
+    "Extensibility":{
+      "GroupName": "Third Party Extensibility",
+      "ButtonLabel": "Load Extensibility"
     }
   }
 });

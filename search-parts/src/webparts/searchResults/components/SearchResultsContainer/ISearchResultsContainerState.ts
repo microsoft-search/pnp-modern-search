@@ -1,4 +1,4 @@
-import { ISearchResults } from '../../../../models/ISearchResult';
+import { ISearchResults } from 'search-extensibility';
 import { SortDirection } from "@pnp/sp";
 
 interface ISearchResultsContainerState {

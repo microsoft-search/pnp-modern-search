@@ -1,4 +1,4 @@
-import { ISearchResults } from '../../../models/ISearchResult';
+import { ISearchResults } from '../search-extensibility';
 import IResultService from '../../../services/ResultService/IResultService';
 
 export default interface ISearchResultProps {

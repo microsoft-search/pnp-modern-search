@@ -6,7 +6,7 @@ import FixedDateRangeTemplate from "./FixedDateRange/FixedDateRangeTemplate";
 import PersonaTemplate from "./Persona/PersonaTemplate";
 import FileTypeTemplate from "./FileType/FileTypeTemplate";
 import ContainerTreeTemplate from "./ContainerTree/ContainerTreeTemplate";
-import { IRefinementResult, IRefinementValue } from "../../../../models/ISearchResult";
+import { IRefinementResult, IRefinementValue } from "search-extensibility";
 import RefinementFilterOperationCallback from '../../../../models/RefinementValueOperationCallback';
 import IUserService from '../../../../services/UserService/IUserService';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';

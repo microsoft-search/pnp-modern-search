@@ -5,7 +5,7 @@ import 'flickity/dist/flickity.min.css';
 import * as ReactDOM from 'react-dom';
 import * as Handlebars from 'handlebars';
 import { MessageBar, MessageBarType } from 'office-ui-fabric-react/lib/MessageBar';
-import { BaseWebComponent } from './BaseWebComponent';
+import { BaseWebComponent } from 'search-extensibility';
 import { TemplateService } from '../services/TemplateService/TemplateService';
 
 export interface ISliderProps {

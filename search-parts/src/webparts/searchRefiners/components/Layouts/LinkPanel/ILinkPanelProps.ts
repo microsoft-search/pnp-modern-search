@@ -1,5 +1,5 @@
 import IFilterLayoutProps from "../IFilterLayoutProps";
-import { IRefinementValue } from "../../../../../models/ISearchResult";
+import { IRefinementValue } from "search-extensibility";
 
 interface ILinkPanelProps extends IFilterLayoutProps {
   selectedFilterValues: IRefinementValue[];

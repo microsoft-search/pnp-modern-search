@@ -1,4 +1,4 @@
-import { IRefinementFilter, IRefinementResult } from "../../../../models/ISearchResult";
+import { IRefinementFilter, IRefinementResult } from "search-extensibility";
 
 export interface ISearchRefinersContainerState {
     selectedRefinementFilters: IRefinementFilter[];

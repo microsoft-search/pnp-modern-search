@@ -1,5 +1,5 @@
 import { Sort } from "@pnp/sp";
-import { IRefinementFilter } from "./ISearchResult";
+import { IRefinementFilter } from "search-extensibility";
 import IRefinerConfiguration from "./IRefinerConfiguration";
 
 export interface ISearchServiceConfiguration {

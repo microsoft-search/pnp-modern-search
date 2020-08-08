@@ -1,4 +1,4 @@
-import { ISearchResult, IPromotedResult } from '../../../../models/ISearchResult';
+import { ISearchResult, IPromotedResult } from 'search-extensibility';
 
 /**
  * Handlebars template context for search results

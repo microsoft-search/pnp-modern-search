@@ -58,7 +58,7 @@ export class TemplateService extends BaseTemplateService {
 
     constructor(spHttpClient: SPHttpClient, locale: string, searchService: ISearchService, timeZoneBias?: any, ctx?: WebPartContext) {
 
-        super(ctx);
+        super(ctx, searchService);
 
         this._searchService = searchService;
         this._spHttpClient = spHttpClient;

@@ -57,6 +57,10 @@ define([], function() {
       "InlineTemplateEditPanelTitle": "Rediger forslags mal",
       "DefaultSuggestionGroupName": "Anbefalt",
       "SharePointSuggestionGroupName": "Andre har søke etter",
+    },
+    "Extensibility":{
+      "GroupName": "Third Party Extensibility",
+      "ButtonLabel": "Load Extensibility"
     }
   }
 });

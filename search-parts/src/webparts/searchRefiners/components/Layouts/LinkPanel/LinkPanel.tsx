@@ -15,7 +15,7 @@ import { ActionButton } from 'office-ui-fabric-react/lib/Button';
 import styles from './LinkPanel.module.scss';
 import * as strings from 'SearchRefinersWebPartStrings';
 import TemplateRenderer from '../../Templates/TemplateRenderer';
-import { IRefinementResult, IRefinementValue } from '../../../../../models/ISearchResult';
+import { IRefinementResult, IRefinementValue } from 'search-extensibility';
 import IRefinerConfiguration from '../../../../../models/IRefinerConfiguration';
 import IFilterLayoutProps from '../IFilterLayoutProps';
 import { isEqual } from '@microsoft/sp-lodash-subset';

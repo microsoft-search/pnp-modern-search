@@ -1,4 +1,4 @@
-import { ISearchResults } from "../../models/ISearchResult";
+import { ISearchResults } from "search-extensibility";
 import IResultService from "./IResultService";
 import 'custom-event-polyfill';
 
