@@ -86,7 +86,6 @@ define([], function() {
             "EditSortLabel": "Redigera sorteringsordning",
             "EditSortLabelFieldName": "Fält nammn",
             "EditSortDirection": "Sorteringsriktning",
-            "SortPanelSortDirectionLabel": "Sorteringsriktning",
             "SortInvalidSortableFieldMessage": "Den här egenskapen är inte sorterbar"
         },
         "Synonyms": {
