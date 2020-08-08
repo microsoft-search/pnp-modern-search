@@ -88,9 +88,9 @@ The following example skins target the owstaxidmetadataalltagsinfo managed prope
 .pnp-refiner-checkbox-owstaxidmetadataalltagsinfo .pnp-refiner-checkbox label { display: block; width: 48px; height: 24px; text-indent: -150%; clip: rect(0 0 0 0); color: transparent; user-select: none; }
 .pnp-refiner-checkbox-owstaxidmetadataalltagsinfo .pnp-refiner-checkbox label::before,
 .pnp-refiner-checkbox-owstaxidmetadataalltagsinfo .pnp-refiner-checkbox label::after { content: ""; display: block; position: absolute; cursor: pointer; }
-.pnp-refiner-checkbox-owstaxidmetadataalltagsinfo .pnp-refiner-checkbox label::before { width: 100%; height: 100%; background-color: #dedede; border-radius: 9999em; -webkit-transition: background-color 0.25s ease; transition: background-color 0.25s ease; }
-.pnp-refiner-checkbox-owstaxidmetadataalltagsinfo .pnp-refiner-checkbox label::after { top: 0; left: 0; width: 24px; height: 24px; border-radius: 50%; background-color: #fff; box-shadow: 0 0 2px rgba(0, 0, 0, 0.45); -webkit-transition: left 0.25s ease, background-color 0.25s ease; transition: left 0.25s ease, background-color 0.25s ease; }
-.pnp-refiner-checkbox-owstaxidmetadataalltagsinfo .pnp-refiner-checkbox.is-checked label::before { background-color: #89c12d; }
+.pnp-refiner-checkbox-owstaxidmetadataalltagsinfo .pnp-refiner-checkbox label::before { width: 100%; height: 100%; background-color: {{@root.themeVariant.palette.themeLight}}; border-radius: 9999em; -webkit-transition: background-color 0.25s ease; transition: background-color 0.25s ease; }
+.pnp-refiner-checkbox-owstaxidmetadataalltagsinfo .pnp-refiner-checkbox label::after { top: 0; left: 0; width: 24px; height: 24px; border-radius: 50%; background-color: #fff; box-shadow: 0 0 2px {{@root.themeVariant.palette.themePrimary}}; -webkit-transition: left 0.25s ease, background-color 0.25s ease; transition: left 0.25s ease, background-color 0.25s ease; }
+.pnp-refiner-checkbox-owstaxidmetadataalltagsinfo .pnp-refiner-checkbox.is-checked label::before { background-color:{{@root.themeVariant.palette.themePrimary}}; }
 .pnp-refiner-checkbox-owstaxidmetadataalltagsinfo .pnp-refiner-checkbox.is-checked label::after { left: 24px; }
 ```
 
@@ -99,9 +99,9 @@ The following example skins target the owstaxidmetadataalltagsinfo managed prope
 See Toggle Button screenshot for demo.
 
 ```
-.pnp-refiner-checkbox-owstaxidmetadataalltagsinfo .pnp-refiner-checkbox.pnp-ref-owstaxidmetadataalltagsinfo-accounting label::after { background-color: red; }
-.pnp-refiner-checkbox-owstaxidmetadataalltagsinfo .pnp-refiner-checkbox.pnp-ref-owstaxidmetadataalltagsinfo-accounting.is-checked label::after { background-color:#fff; box-shadow: 0 0 5px rgba(207, 0, 15, 0.6); }
-.pnp-refiner-checkbox-owstaxidmetadataalltagsinfo .pnp-refiner-checkbox.pnp-ref-owstaxidmetadataalltagsinfo-accounting.is-checked label::before { background-color: red; }
+.pnp-refiner-checkbox-owstaxidmetadataalltagsinfo .pnp-refiner-checkbox.pnp-ref-owstaxidmetadataalltagsinfo-0-accounting label::after { background-color: {{@root.themeVariant.palette.neutralDark}}; }
+.pnp-refiner-checkbox-owstaxidmetadataalltagsinfo .pnp-refiner-checkbox.pnp-ref-owstaxidmetadataalltagsinfo-0-accounting.is-checked label::after { background-color:{{@root.themeVariant.palette.themeLight}}; box-shadow: 0 0 5px {{@root.themeVariant.palette.neutralDark}}; }
+.pnp-refiner-checkbox-owstaxidmetadataalltagsinfo .pnp-refiner-checkbox.pnp-ref-owstaxidmetadataalltagsinfo-0-accounting.is-checked label::before { background-color:{{@root.themeVariant.palette.themeLight}}; }
 ```
 
 #### Two Column Grid View of Refiners Using Current Theme
@@ -114,6 +114,9 @@ See Toggle Button screenshot for demo.
 .pnp-refiner-checkbox-owstaxidmetadataalltagsinfo .pnp-refiner-checkbox input,
 .pnp-refiner-checkbox-owstaxidmetadataalltagsinfo .pnp-refiner-checkbox label > div { display: none;}
 .pnp-refiner-checkbox-owstaxidmetadataalltagsinfo .pnp-refiner-checkbox label { width: 100%; margin: 0 1rem 1rem 0; position: relative; }
-.pnp-refiner-checkbox-owstaxidmetadataalltagsinfo .pnp-refiner-checkbox label > span { display: block; white-space: nowrap; text-align: center; background: #f0f0f0; margin: 0; text-overflow: ellipsis; overflow: hidden; width: 100%; max-width: 225px; padding: 1rem; }
-.pnp-refiner-checkbox-owstaxidmetadataalltagsinfo .pnp-refiner-checkbox.is-checked label > span { background: {{@root.themeVariant.palette.themePrimary}}; color: #fff; }
+.pnp-refiner-checkbox-owstaxidmetadataalltagsinfo .pnp-refiner-checkbox label > span { display: block; white-space: nowrap; text-align: center; background: {{@root.themeVariant.palette.themeLighterAlt}}; margin: 0; text-overflow: ellipsis; overflow: hidden; width: 100%; max-width: 225px; padding: 1rem; }
+.pnp-refiner-checkbox-owstaxidmetadataalltagsinfo .pnp-refiner-checkbox label > span:hover { background: {{@root.themeVariant.palette.themeLight}}; }
+.pnp-refiner-checkbox-owstaxidmetadataalltagsinfo .pnp-refiner-checkbox.is-checked label > span { background: {{@root.themeVariant.palette.themePrimary}}; color: {{@root.themeVariant.palette.themeLighterAlt}}; }
+.pnp-refiner-checkbox-owstaxidmetadataalltagsinfo .pnp-refiner-checkbox.is-checked label > span:hover { background: {{@root.themeVariant.palette.themeDarker}}; }
+.pnp-refiner-checkbox-owstaxidmetadataalltagsinfo .pnp-refiner-checkbox.is-disabled label > span { color: {{@root.themeVariant.palette.neutralDark}}; }
 ```
