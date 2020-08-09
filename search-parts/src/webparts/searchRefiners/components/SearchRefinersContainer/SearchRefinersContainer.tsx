@@ -16,13 +16,9 @@ import { find, isEqual } from '@microsoft/sp-lodash-subset';
 import RefinersSortOption from '../../../../models/RefinersSortOptions';
 import RefinerSortDirection from '../../../../models/RefinersSortDirection';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
-import { CssHelper } from '../../../../helpers/CssHelper';
-import { TemplateService } from '../../../../services/TemplateService/TemplateService';
 
 export default class SearchRefinersContainer extends React.Component<ISearchRefinersContainerProps, ISearchRefinersContainerState> {
   
-  private _styleMarkup: string = null;
-
     public constructor(props: ISearchRefinersContainerProps) {
         super(props);
 
@@ -104,6 +100,7 @@ export default class SearchRefinersContainer extends React.Component<ISearchRefi
 
         return (
             <div style={{ backgroundColor: semanticColors.bodyBackground }}>
+                <div style={{display:"none"}} dangerouslySetInnerHTML={{__html: this.props.styles}}></div>
                 <div className={styles.searchRefiners}>
                     {renderWebPartTitle}
                     {renderWpContent}

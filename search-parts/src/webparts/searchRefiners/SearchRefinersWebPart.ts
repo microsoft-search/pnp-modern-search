@@ -38,7 +38,7 @@ import BaseTemplateService from '../../services/TemplateService/BaseTemplateServ
 import MockTemplateService from '../../services/TemplateService/MockTemplateService';
 import { TemplateService } from '../../services/TemplateService/TemplateService';
 import { cloneDeep, isEqual } from '@microsoft/sp-lodash-subset';
-import IUserService from '../../services/UserService/IUserService';
+import { IUserService } from 'search-extensibility';
 import { UserService } from '../../services/UserService/UserService';
 import { MockUserService } from '../../services/UserService/MockUserService';
 import { initializeFileTypeIcons } from '@uifabric/file-type-icons';

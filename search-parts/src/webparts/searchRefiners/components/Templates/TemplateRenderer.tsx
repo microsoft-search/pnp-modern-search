@@ -7,8 +7,7 @@ import PersonaTemplate from "./Persona/PersonaTemplate";
 import FileTypeTemplate from "./FileType/FileTypeTemplate";
 import ContainerTreeTemplate from "./ContainerTree/ContainerTreeTemplate";
 import { IRefinementResult, IRefinementValue } from "search-extensibility";
-import RefinementFilterOperationCallback from '../../../../models/RefinementValueOperationCallback';
-import IUserService from '../../../../services/UserService/IUserService';
+import { RefinementFilterOperationCallback, IUserService } from 'search-extensibility';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import IRefinerConfiguration from '../../../../models/IRefinerConfiguration';
 

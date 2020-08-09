@@ -2,7 +2,7 @@ import { IRefinementResult, IRefinementFilter, IRefinementValue } from "search-e
 import IRefinerConfiguration from "../../../../models/IRefinerConfiguration";
 import { DisplayMode } from "@microsoft/sp-core-library";
 import RefinersLayoutOption from "../../../../models/RefinersLayoutOptions";
-import IUserService from '../../../../services/UserService/IUserService';
+import { IUserService } from 'search-extensibility';
 import { IReadonlyTheme } from "@microsoft/sp-component-base";
 import BaseTemplateService from "../../../../services/TemplateService/BaseTemplateService";
 

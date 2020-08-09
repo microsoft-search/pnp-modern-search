@@ -3,7 +3,7 @@ import { ConsoleListener, LogLevel, Logger } from '@pnp/logging';
 
 // Interface
 import { IUserInfo } from '../../models/IUser';
-import IUserService from './IUserService';
+import { IUserService } from 'search-extensibility';
 
 // MockData
 import { mockUserData } from './MockUserData';
