@@ -20,8 +20,6 @@ import { CssHelper } from '../../../../helpers/CssHelper';
 import { TemplateService } from '../../../../services/TemplateService/TemplateService';
 
 export default class SearchRefinersContainer extends React.Component<ISearchRefinersContainerProps, ISearchRefinersContainerState> {
-  
-  private _styleMarkup: string = null;
 
     public constructor(props: ISearchRefinersContainerProps) {
         super(props);
