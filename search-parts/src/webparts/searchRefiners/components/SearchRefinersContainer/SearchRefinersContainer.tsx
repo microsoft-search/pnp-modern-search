@@ -104,6 +104,7 @@ export default class SearchRefinersContainer extends React.Component<ISearchRefi
 
         return (
             <div style={{ backgroundColor: semanticColors.bodyBackground }}>
+                <div style={{display:"none"}} dangerouslySetInnerHTML={{__html: this.props.styles}}></div>
                 <div className={styles.searchRefiners}>
                     {renderWebPartTitle}
                     {renderWpContent}
