@@ -1,8 +1,10 @@
-import { IRefinementResult, IRefinementFilter, IRefinementValue } from "search-extensibility";
-import { RefinementFilterOperationCallback, IUserService } from 'search-extensibility';
-import { IReadonlyTheme } from "@microsoft/sp-component-base";
+import { IExtensionInstance } from "./IExtensionInstance";
+import { IRefinementResult, IRefinementValue } from "../ISearchResult";
+import { IReadonlyTheme } from '@microsoft/sp-component-base';
+import { IUserService } from "../IUserService";
+import { RefinementFilterOperationCallback } from "../RefinementFilterOperationCallback";
 
-interface IBaseRefinerTemplateProps {
+export interface IRefinerInstance extends IExtensionInstance {
 
   /**
    * The refiner values to render
@@ -51,5 +53,3 @@ interface IBaseRefinerTemplateProps {
   showValueFilter: boolean;
 
 }
-
-export default IBaseRefinerTemplateProps;

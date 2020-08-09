@@ -1,7 +1,6 @@
 import { IRefinementResult, IRefinementValue, IRefinementFilter } from "search-extensibility";
 import IRefinerConfiguration from "../../../../models/IRefinerConfiguration";
-import RefinementFilterOperationCallback from "../../../../models/RefinementValueOperationCallback";
-import IUserService from '../../../../services/UserService/IUserService';
+import { RefinementFilterOperationCallback, IUserService } from 'search-extensibility';
 import { IReadonlyTheme } from "@microsoft/sp-component-base";
 
 interface IFilterLayoutProps {

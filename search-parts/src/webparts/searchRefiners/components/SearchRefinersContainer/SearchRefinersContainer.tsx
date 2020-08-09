@@ -18,7 +18,7 @@ import RefinerSortDirection from '../../../../models/RefinersSortDirection';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 
 export default class SearchRefinersContainer extends React.Component<ISearchRefinersContainerProps, ISearchRefinersContainerState> {
-
+  
     public constructor(props: ISearchRefinersContainerProps) {
         super(props);
 

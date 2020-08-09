@@ -7,7 +7,7 @@ import { PageContext } from '@microsoft/sp-page-context';
 
 // Interface
 import { IUserInfo } from '../../models/IUser';
-import IUserService from './IUserService';
+import { IUserService } from 'search-extensibility';
 import { JSONParser } from '@pnp/odata';
 import { Guid } from '@microsoft/sp-core-library';
 
