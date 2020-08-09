@@ -16,8 +16,6 @@ import { find, isEqual } from '@microsoft/sp-lodash-subset';
 import RefinersSortOption from '../../../../models/RefinersSortOptions';
 import RefinerSortDirection from '../../../../models/RefinersSortDirection';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
-import { CssHelper } from '../../../../helpers/CssHelper';
-import { TemplateService } from '../../../../services/TemplateService/TemplateService';
 
 export default class SearchRefinersContainer extends React.Component<ISearchRefinersContainerProps, ISearchRefinersContainerState> {
 
