@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Shimmer, ShimmerElementType as ElemType, ShimmerElementsGroup } from 'office-ui-fabric-react/lib/Shimmer';
-import { BaseWebComponent } from "./BaseWebComponent";
+import { BaseWebComponent } from 'search-extensibility';
 import * as ReactDOM from 'react-dom';
 import { IReadonlyTheme } from "@microsoft/sp-component-base";
 import { ITheme } from "@uifabric/styling";

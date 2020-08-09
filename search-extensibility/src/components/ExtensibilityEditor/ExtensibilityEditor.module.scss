@@ -1,0 +1,53 @@
+@import '~office-ui-fabric-react/dist/sass/References.scss';
+
+.extensibilityEditorButton {
+    
+    .addButton{ display: block; margin-top: 0.5rem; margin-bottom: 0.5rem; }
+
+}
+
+.extensibilityEditor {
+    
+    padding-top: 1rem;
+
+    .addContainer { display: block; }
+
+    .addText { display: block; }
+
+    .deleteButton { margin: auto; }
+
+    .library { display: block; padding-top: 1rem; }
+
+    .list { display: block; }
+    
+    .title { @include ms-font-xl; position: relative; margin-top: 0; display: flex; align-items: center; justify-content: left; }
+
+    .subTitle { @include ms-font-l; margin-bottom: 0;}
+
+    .titleText{ display: block; margin-left: 0.5rem; }
+
+    .description { @include ms-font-l; }
+
+    .extensions {  
+        .libraryContainer {
+            margin: 1rem 0 1rem 0;
+        }
+    }
+
+}
+
+.extEditorPanel {
+    
+    :global(.ms-Panel-header) {
+
+       position: absolute;
+       top: 0;
+       left: 0;
+       padding: 1rem;
+       margin: 0; 
+
+       p { padding: 0; margin: 0; }
+
+    }
+
+}

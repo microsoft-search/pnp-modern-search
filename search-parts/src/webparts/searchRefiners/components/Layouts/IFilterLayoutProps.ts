@@ -1,4 +1,4 @@
-import { IRefinementResult, IRefinementValue, IRefinementFilter } from "../../../../models/ISearchResult";
+import { IRefinementResult, IRefinementValue, IRefinementFilter } from "search-extensibility";
 import IRefinerConfiguration from "../../../../models/IRefinerConfiguration";
 import RefinementFilterOperationCallback from "../../../../models/RefinementValueOperationCallback";
 import IUserService from '../../../../services/UserService/IUserService';

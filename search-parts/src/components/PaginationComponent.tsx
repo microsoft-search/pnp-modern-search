@@ -4,7 +4,7 @@ import Pagination from        'react-js-pagination';
 import { Icon, ITheme } from 'office-ui-fabric-react';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import styles from './PaginationComponent.module.scss';
-import { BaseWebComponent } from './BaseWebComponent';
+import { BaseWebComponent } from 'search-extensibility';
 
 export type PageUpdateCallback = (pageNumber: number) => void;
 

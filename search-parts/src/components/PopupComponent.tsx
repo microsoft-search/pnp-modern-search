@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { BaseWebComponent } from './BaseWebComponent';
+import { BaseWebComponent } from 'search-extensibility';
 import { WebPartContext } from '@microsoft/sp-webpart-base';
 import {
     ContextualMenu,
@@ -146,7 +146,7 @@ export class PopupWebComponent extends BaseWebComponent {
         props.template = (props.template && !isEmpty(props.template)) ? props.template : this.innerHTML.trim();
 
         // You can use this._ctx here to access current Web Part context
-        const popupItem = <PopupComponent {...props} ctx={this._ctx} />;
+        const popupItem = <PopupComponent {...props} ctx={this.context.webPart} />;
         ReactDOM.render(popupItem, this);
     }
 }

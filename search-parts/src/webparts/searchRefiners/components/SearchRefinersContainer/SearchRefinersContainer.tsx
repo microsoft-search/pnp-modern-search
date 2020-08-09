@@ -9,7 +9,7 @@ import RefinersLayoutOption from '../../../../models/RefinersLayoutOptions';
 import { MessageBarType, MessageBar } from 'office-ui-fabric-react/lib/MessageBar';
 import * as strings from 'SearchRefinersWebPartStrings';
 import { ISearchRefinersContainerState } from './ISearchRefinersContainerState';
-import { IRefinementFilter, IRefinementValue, RefinementOperator } from '../../../../models/ISearchResult';
+import { IRefinementFilter, IRefinementValue, RefinementOperator } from 'search-extensibility';
 import * as update from 'immutability-helper';
 import RefinerTemplateOption from '../../../../models/RefinerTemplateOption';
 import { find, isEqual } from '@microsoft/sp-lodash-subset';

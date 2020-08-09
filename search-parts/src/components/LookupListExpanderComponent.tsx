@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { BaseWebComponent } from './BaseWebComponent';
+import { BaseWebComponent } from 'search-extensibility';
 import { WebPartContext } from '@microsoft/sp-webpart-base';
 import {
     MessageBar,
@@ -188,7 +188,7 @@ export class LookupListExpanderWebComponent extends BaseWebComponent {
         props.template = (props.template && !isEmpty(props.template)) ? props.template : this.innerHTML.trim();
 
         // You can use this._ctx here to access current Web Part context
-        const lookupListExpanderItem = <LookupListExpanderComponent {...props} ctx={this._ctx} />;
+        const lookupListExpanderItem = <LookupListExpanderComponent {...props} ctx={this.context.webPart} />;
         ReactDOM.render(lookupListExpanderItem, this);
     }
 }

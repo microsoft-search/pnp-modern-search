@@ -6,7 +6,7 @@ import { ISearchResultType } from '../../models/ISearchResultType';
 import { ICustomTemplateFieldValue } from '../../services/ResultService/ResultService';
 import { ISynonymFieldConfiguration} from '../../models/ISynonymFieldConfiguration';
 import IQueryModifierConfiguration from '../../models/IQueryModifierConfiguration';
-import { IQueryModifierDefinition } from '../../services/ExtensibilityService/IQueryModifierDefinition';
+import { IExtension } from 'search-extensibility';
 import { IPagingSettings } from '../../models/IPagingSettings';
 
 export interface ISearchResultsWebPartProps {
@@ -41,6 +41,7 @@ export interface ISearchResultsWebPartProps {
     queryModifiers: IQueryModifierConfiguration[];
     selectedQueryModifierDisplayName: string;
     refinementFilters: string;
+    extensibilityLibraries: string[];
 
     /**
      * The Web Part paging settings

@@ -1,5 +1,5 @@
 import ISearchService from './ISearchService';
-import { ISearchResults, IRefinementFilter, ISearchResult, ISearchVerticalInformation } from '../../models/ISearchResult';
+import { ISearchResults, IRefinementFilter, ISearchResult, ISearchVerticalInformation } from 'search-extensibility';
 import { intersection, clone } from '@microsoft/sp-lodash-subset';
 import IRefinerConfiguration from '../../models/IRefinerConfiguration';
 import { Sort } from '@pnp/sp';
@@ -7,6 +7,7 @@ import { ISearchServiceConfiguration } from '../../models/ISearchServiceConfigur
 import ISearchVerticalSourceData from '../../models/ISearchVerticalSourceData';
 import { ISearchVertical } from '../../models/ISearchVertical';
 import IManagedPropertyInfo from '../../models/IManagedPropertyInfo';
+import { ISharePointSearch } from './ISharePointSearch';
 
 class MockSearchService implements ISearchService {
 
@@ -242,7 +243,7 @@ class MockSearchService implements ISearchService {
     ];
   }
 
-  public search(query: string, pageNumber?: number): Promise<ISearchResults> {
+  private _search(query: string, pageNumber?: number, useOldSPIcons?: boolean): Promise<ISearchResults> {
 
     const p1 = new Promise<ISearchResults>((resolve) => {
 
@@ -278,6 +279,10 @@ class MockSearchService implements ISearchService {
     });
 
     return p1;
+  }
+
+  public search(query: string, params: ISharePointSearch) : Promise<ISearchResults> {
+    return this._search(query, params.pageNumber, params.useOldSPIcons);
   }
 
   private _paginate(array, pageSize: number, pageNumber: number) {

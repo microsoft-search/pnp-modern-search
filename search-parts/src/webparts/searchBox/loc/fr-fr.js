@@ -57,6 +57,10 @@ define([], function() {
       "InlineTemplateEditPanelTitle": "Modifier le modèle de suggestion",
       "DefaultSuggestionGroupName": "Recommandé",
       "SharePointSuggestionGroupName": "D'autres ont la recherche de",
+    },
+    "Extensibility":{
+      "GroupName": "Third Party Extensibility",
+      "ButtonLabel": "Load Extensibility"
     }
   }
 });

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Suspense } from 'react';
-import { BaseWebComponent } from './BaseWebComponent';
+import { BaseWebComponent } from 'search-extensibility';
 const AceEditor = React.lazy(() => import('react-ace'));
 
 export interface IDebugViewProps {

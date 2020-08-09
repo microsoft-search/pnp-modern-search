@@ -1,6 +1,6 @@
 //import * as Handlebars from 'handlebars';
 import ISearchService from './ISearchService';
-import { ISearchResults, ISearchResult, IRefinementResult, IRefinementValue, IPromotedResult, ISearchVerticalInformation, ISearchResultBlock } from '../../models/ISearchResult';
+import { ISearchResults, ISearchResult, IRefinementResult, IRefinementValue, IRefinementFilter, IPromotedResult, ISearchVerticalInformation, ISearchResultBlock } from 'search-extensibility';
 import RefinersSortOption from '../../models/RefinersSortOptions';
 import RefinerSortDirection from '../../models/RefinersSortDirection';
 import { sp, SearchQuery, SearchResults, SPRest, Sort, SearchSuggestQuery, SortDirection, Web } from '@pnp/sp';
@@ -20,7 +20,8 @@ import { UrlHelper } from '../../helpers/UrlHelper';
 import { ISearchVertical } from '../../models/ISearchVertical';
 import IManagedPropertyInfo from '../../models/IManagedPropertyInfo';
 import { Loader } from '../TemplateService/LoadHelper';
-import { BaseQueryModifier } from '../ExtensibilityService/BaseQueryModifier';
+import { BaseQueryModifier } from 'search-extensibility';
+import { ISharePointSearch } from './ISharePointSearch';
 import { trimStart, trimEnd } from '@microsoft/sp-lodash-subset';
 
 class SearchService implements ISearchService {
@@ -104,8 +105,12 @@ class SearchService implements ISearchService {
      * Performs a search query against SharePoint
      * @param query The search query in KQL format
      * @return The search results
-     */
-    public async search(query: string, pageNumber?: number, useOldSPIcons?: boolean): Promise<ISearchResults> {
+     */  
+    public search(query: string, params: ISharePointSearch) : Promise<ISearchResults> {
+        return this._search(query, params.pageNumber, params.useOldSPIcons);
+    }
+
+    private async _search(query: string, pageNumber?: number, useOldSPIcons?: boolean): Promise<ISearchResults> {
 
         let searchQuery: SearchQuery = {};
         let sortedRefiners: string[] = [];

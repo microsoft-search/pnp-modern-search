@@ -13,7 +13,7 @@ import {
 } from "@microsoft/sp-property-pane";
 import { PropertyFieldCollectionData, CustomCollectionFieldType } from '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData';
 import * as strings from 'SearchRefinersWebPartStrings';
-import { IRefinementFilter, IRefinementResult } from '../../models/ISearchResult';
+import { IRefinementFilter, IRefinementResult } from 'search-extensibility';
 import SearchRefinersContainer from './components/SearchRefinersContainer/SearchRefinersContainer';
 import { IDynamicDataCallables, IDynamicDataPropertyDefinition, IDynamicDataSource } from '@microsoft/sp-dynamic-data';
 import { ISearchRefinersWebPartProps } from './ISearchRefinersWebPartProps';
@@ -202,7 +202,7 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
     if (Environment.type === EnvironmentType.Local) {
       this._searchService = new MockSearchService();
       this._userService = new MockUserService();
-      this._templateService = new MockTemplateService(this.context.pageContext.cultureInfo.currentUICultureName, this.context);
+      this._templateService = new MockTemplateService(this.context.pageContext.cultureInfo.currentUICultureName, this.context, this._searchService);
     } else {
       this._searchService = new SearchService(this.context.pageContext, this.context.spHttpClient);
       this._userService = new UserService(this.context.pageContext);

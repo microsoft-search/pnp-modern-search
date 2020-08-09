@@ -1,51 +1,87 @@
+import { ModernSearchExtensibilityLibrary, IExtension } from 'search-extensibility';
+import * as strings from 'SearchExtensibilityReferenceExtensionLibraryStrings';
+import { MyCustomComponentWebComponent } from "../../extensions/webComponents/CustomComponent/CustomComponent";
+import ExampleWebComponent from '../../extensions/webComponents/ExampleComponent/ExampleWebComponent';
+import SharePointSuggestionProvider from '../../extensions/suggestionProviders/SharePointSuggestionProvider/SharePointSuggestionProvider';
+import CustomSuggestionProvider from '../../extensions/suggestionProviders/CustomSuggestionProvider/CustomSuggestionProvider';
+import CustomQueryModifier from '../../extensions/queryModifiers/CustomQueryProvider/CustomQueryProvider';
+import { CustomHelper } from '../../extensions/handlebarsHelpers/Custom/CustomHelper';
+import { SwitchHelper } from '../../extensions/handlebarsHelpers/Switch/SwitchHelper';
+import { SwitchCaseHelper } from '../../extensions/handlebarsHelpers/SwitchCase/SwitchCaseHelper';
+import { SwitchDefaultHelper } from '../../extensions/handlebarsHelpers/SwitchDefault/SwitchDefaultHelper';
 
-import { MyCustomComponentWebComponent } from "../CustomComponent";
-import { IComponentDefinition } from "../../models/IComponentDefinition";
-import { IExtensibilityLibrary } from "../../models/IExtensibilityLibrary";
-import { ISuggestionProviderDefinition } from "../../models/ISuggestionProviderDefinition";
-import { CustomSuggestionProvider } from "../CustomSuggestionProvider";
-import { IQueryModifierDefinition } from "../../models/IQueryModifierDefinition";
-import { CustomQueryModifier } from "../CustomQueryModifier";
+export class MyCompanyLibraryLibrary extends ModernSearchExtensibilityLibrary {
 
-export class MyCompanyLibraryLibrary implements IExtensibilityLibrary {
+  public name         : string = strings.Library.Name;
+  public description  : string = strings.Library.Description;
+  public icon         : string = "Settings";
 
-  public getCustomWebComponents(): IComponentDefinition<any>[] {
+  public getExtensions(): IExtension<any>[] {
     return [
       {
-        componentName: 'my-custom-component',
-        componentClass: MyCustomComponentWebComponent
+        name: 'pnp-custom',
+        description: strings.Extensions.WebComponent.Custom.Description,
+        displayName: strings.Extensions.WebComponent.Custom.DisplayName,
+        icon: "StatusCircleQuestionMark",
+        extensionClass: MyCustomComponentWebComponent
+      },
+      {
+        name: "pnp-example",
+        description: strings.Extensions.WebComponent.Example.Description,
+        displayName: strings.Extensions.WebComponent.Example.DisplayName,
+        icon: "Link",
+        extensionClass: ExampleWebComponent
+      },
+      {
+        name: "sharepoint-suggestion-provider",
+        description: strings.Extensions.Suggestion.SharePoint.Description,
+        displayName: strings.Extensions.Suggestion.SharePoint.DisplayName,
+        icon: "SharePointAppIcon16",
+        extensionClass: SharePointSuggestionProvider
+      },
+      {
+        name: "custom-suggestion-provider",
+        description: strings.Extensions.Suggestion.Custom.Description,
+        displayName: strings.Extensions.Suggestion.Custom.DisplayName,
+        icon:"TextOverflow",
+        extensionClass: CustomSuggestionProvider
+      },
+      {
+        name: "custom-query-modifer",
+        description: strings.Extensions.QueryModifier.Custom.Description,
+        displayName: strings.Extensions.QueryModifier.Custom.DisplayName,
+        icon: "BranchSearch",
+        extensionClass: CustomQueryModifier
+      },
+      {
+        name: "logprop",
+        description: strings.Extensions.HandlebarsHelper.Custom.Description,
+        displayName: strings.Extensions.HandlebarsHelper.Custom.DisplayName,
+        icon: "Handwriting",
+        extensionClass: CustomHelper
+      },
+      {
+        name:"switch",
+        description: strings.Extensions.HandlebarsHelper.Switch.Description,
+        displayName: strings.Extensions.HandlebarsHelper.Switch.DisplayName,
+        icon: "Switch",
+        extensionClass: SwitchHelper
+      },
+      {
+        name:"case",
+        description: strings.Extensions.HandlebarsHelper.Case.Description,
+        displayName: strings.Extensions.HandlebarsHelper.Case.DisplayName,
+        icon: "Switch",
+        extensionClass: SwitchCaseHelper
+      },
+      {
+        name:"default",
+        description: strings.Extensions.HandlebarsHelper.Default.Description,
+        displayName: strings.Extensions.HandlebarsHelper.Default.DisplayName,
+        icon: "Switch",
+        extensionClass: SwitchDefaultHelper
       }
     ];
   }
 
-  public getCustomSuggestionProviders(): ISuggestionProviderDefinition<any>[] {
-    return [
-      {
-        providerName: CustomSuggestionProvider.ProviderName,
-        providerDisplayName: CustomSuggestionProvider.ProviderDisplayName,
-        providerDescription: CustomSuggestionProvider.ProviderDescription,
-        providerClass: CustomSuggestionProvider
-      },
-    ];
-  }
-
-  public getCustomQueryModifiers(): IQueryModifierDefinition<any>[] {
-    return [
-      {
-        displayName: CustomQueryModifier.DisplayName,
-        description: CustomQueryModifier.Description,
-        class: CustomQueryModifier
-      },
-      {
-        displayName: 'Test 2',
-        description: 'Test 2',
-        class: CustomQueryModifier
-      },
-      {
-        displayName: 'Test 3',
-        description: 'Test 3',
-        class: CustomQueryModifier
-      }
-    ];
-  }
 }

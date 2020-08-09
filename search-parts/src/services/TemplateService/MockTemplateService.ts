@@ -6,16 +6,19 @@ import { TemplateService } from './TemplateService';
 import MockSearchService from '../SearchService/MockSearchService';
 import { IPropertyPaneField } from '@microsoft/sp-property-pane';
 import { WebPartContext } from '@microsoft/sp-webpart-base';
+import ISearchService from '../SearchService/ISearchService';
 
 class MockTemplateService extends BaseTemplateService {
 
     private ctx: WebPartContext;
+    private searchService: ISearchService;
 
-    constructor(locale: string, ctx : WebPartContext) {
-        super(ctx);    
+    constructor(locale: string, ctx : WebPartContext, searchService:ISearchService) {
+        super(ctx, searchService);    
 
         this.ctx = ctx;
-
+        this.searchService = searchService;
+        
         this.CurrentLocale = locale;
     }
 

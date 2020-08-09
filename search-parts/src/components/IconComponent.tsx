@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Icon, IconType, mergeStyles, ImageFit, ITheme, ImageLoadState } from 'office-ui-fabric-react';
 import { getFileTypeIconProps, FileTypeIconSize, FileIconType } from '@uifabric/file-type-icons';
 import { isEmpty, trimStart } from '@microsoft/sp-lodash-subset';
-import { BaseWebComponent } from './BaseWebComponent';
+import { BaseWebComponent } from 'search-extensibility';
 import * as ReactDOM from 'react-dom';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 

@@ -13,6 +13,7 @@
   },
   "externals": {},
   "localizedResources": {
-    "MyCompanyLibraryLibraryStrings": "lib/libraries/myCompanyLibrary/loc/{locale}.js"
+    "SearchExtensibilityReferenceExtensionLibraryStrings": "lib/loc/{locale}.js",
+    "ModernSearchExtensibilityLibraryStrings": "node_modules/search-extensibility/lib/loc/{locale}.js"
   }
 }
