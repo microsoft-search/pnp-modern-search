@@ -152,6 +152,9 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
      */
     private _ops = null;
 
+    private prevVertical: string = "";
+    private firstLoad = true;
+
     public constructor() {
         super();
         this._templateContentToDisplay = '';
@@ -204,7 +207,10 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         let getVerticalsCounts: boolean = false;
 
         // Get default selected refiners from the URL
-        this.defaultSelectedFilters = SearchHelper.getRefinementFiltersFromUrl();
+        if(this.firstLoad) {
+            this.defaultSelectedFilters = SearchHelper.getRefinementFiltersFromUrl();
+            this.firstLoad = false;
+        }
         selectedFilters = this.defaultSelectedFilters;
 
         let queryDataSourceValue = this.properties.queryKeywords.tryGetValue();
@@ -257,6 +263,14 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                     queryTemplate = searchVerticalSourceData.selectedVertical.queryTemplate;
                     sourceId = searchVerticalSourceData.selectedVertical.resultSourceId;
                     getVerticalsCounts = searchVerticalSourceData.showCounts;
+
+                    if (searchVerticalSourceData.selectedVertical.tabName !== this.prevVertical && this.prevVertical !== "") {
+                        this.defaultSelectedFilters = [];
+                        this._searchService.refinementFilters = [];
+                        // Re-trigger for refinement web part to clear filter
+                        this.context.dynamicDataSourceManager.notifyPropertyChanged(SearchComponentType.SearchResultsWebPart);
+                    }
+                    this.prevVertical = searchVerticalSourceData.selectedVertical.tabName;
                 }
             }
         }
@@ -465,11 +479,11 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         this.ensureDataSourceConnection();
 
         this._handleQueryStringChange();
-        
+
         return super.onInit();
     }
 
-    
+
     /**
      * Subscribes to URL query string change events
      */
@@ -479,7 +493,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             h.pushState = (state, key, path) => {
                 this._ops.apply(history, [state, key, path]);
                 const qkw = this.properties.queryKeywords.tryGetSource();
-                if(qkw.id === SearchComponentType.PageEnvironment) this.render();
+                if (qkw.id === SearchComponentType.PageEnvironment) this.render();
             };
         })(window.history);
     }
@@ -1807,7 +1821,8 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             },
             searchServiceConfiguration: this._searchService.getConfiguration(),
             verticalsInformation: this._verticalsInformation,
-            defaultSelectedRefinementFilters: this._mapDefaultSelectedFiltersToRefinementResults(refinementResults, this.defaultSelectedFilters)
+            defaultSelectedRefinementFilters: this._mapDefaultSelectedFiltersToRefinementResults(refinementResults),
+            filterReset: this._searchService.refinementFilters.length == 0,
         };
 
         switch (propertyId) {
@@ -1825,7 +1840,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
      * @param refinementResults the current refinement results retrieved from the search
      * @param defaultSelectedFilters the current default selected filters applied through the URL params
      */
-    private _mapDefaultSelectedFiltersToRefinementResults(refinementResults: IRefinementResult[], defaultSelectedFilters: IRefinementFilter[]): IRefinementFilter[] {
+    private _mapDefaultSelectedFiltersToRefinementResults(refinementResults: IRefinementResult[]): IRefinementFilter[] {
 
         let updatedDefaultSelectedFilters: IRefinementFilter[] = [];
 
@@ -1848,7 +1863,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                                 // Means the provided condition in URL is a text expression
                                 updatedSelectedFilterValues.push(refinementValue);
                             } else if (updatedSelectedFilterValue && updatedSelectedFilterValue.RefinementValue &&
-                                updatedSelectedFilterValue.RefinementValue.indexOf(refinementValue.RefinementValue) > -1 ) {
+                                updatedSelectedFilterValue.RefinementValue.indexOf(refinementValue.RefinementValue) > -1) {
                                 // There is a deep link filter in FQL expression that will be duplicated in the UI if the next else if is evaluated to true
                                 updatedSelectedFilterValues.push(refinementValue);
                             } else if (StringHelper.longestCommonSubstring(updatedSelectedFilterValue.RefinementToken, refinementValue.RefinementValue) && updatedSelectedFilterValue.RefinementToken.indexOf("range") === -1) {
