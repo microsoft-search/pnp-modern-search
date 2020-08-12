@@ -10,6 +10,7 @@ import { IRefinementResult, IRefinementValue } from "search-extensibility";
 import { RefinementFilterOperationCallback, IUserService } from 'search-extensibility';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import IRefinerConfiguration from '../../../../models/IRefinerConfiguration';
+import { customTemplateFieldPropertyLabel } from 'SearchResultsWebPartStrings';
 
 export interface ITemplateRendererProps {
 
@@ -193,6 +194,9 @@ export default class TemplateRenderer extends React.Component<ITemplateRendererP
             showValueFilter={this.props.showValueFilter}
           />;
           break;
+      case RefinerTemplateOption.Custom:
+        renderTemplate = null;
+        break;
 
       default:
 

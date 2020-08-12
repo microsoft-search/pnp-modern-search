@@ -57,8 +57,6 @@ export class ExtensibilityService implements IExtensibilityService {
             const msg = `Error loading extensibility library: ${id.toString()}. Details: ${error}`;
             Log.info(LogSource, msg);
             Log.error(LogSource, error);
-            console.log(msg);
-            console.log(error);
             return null;
             
         }

@@ -7,7 +7,8 @@ enum RefinerTemplateOption {
     Persona = 6,
     FileType = 7,
     FileTypeMulti = 8,
-    ContainerTree = 9
+    ContainerTree = 9,
+    Custom = 10
 }
 
 export default RefinerTemplateOption;
