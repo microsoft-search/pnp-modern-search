@@ -5,7 +5,7 @@ import * as React from 'react';
 import * as strings from 'SearchRefinersWebPartStrings';
 
 // CSS
-import styles from './FileTypeTemplate.module.scss';
+import styles from './CustomTemplate.module.scss';
 
 // UI Fabric
 import { Checkbox } from 'office-ui-fabric-react/lib/Checkbox';
@@ -24,14 +24,13 @@ import { FileHelper } from './../../../../../helpers/FileHelper';
 
 // Interface
 import { IRefinementValue, RefinementOperator } from 'search-extensibility';
-import IRefinerProps from 'search-extensibility';
-import IBaseRefinerTemplateState from '../IBaseRefinerTemplateState';
+import { IRefinerProps, IRefinerState } from 'search-extensibility';
 import { TextField } from 'office-ui-fabric-react';
 import { CssHelper } from '../../../../../helpers/CssHelper';
 
 
 // Class
-export default class CustomTemplate extends React.Component<IRefinerProps, IBaseRefinerTemplateState> {
+export default class CustomTemplate extends React.Component<IRefinerProps, IRefinerState> {
 
   private _operator: RefinementOperator;
 
@@ -54,10 +53,10 @@ export default class CustomTemplate extends React.Component<IRefinerProps, IBase
         disableButtons = true;
     }
     
-    const filterClassName = CssHelper.prefixAndValidateClassName("pnp-refiner-filetype", this.props.refinementResult.FilterName);
+    const filterClassName = CssHelper.prefixAndValidateClassName("pnp-refiner-custom", this.props.refinementResult.FilterName);
 
     return (
-      <div className={styles.pnpRefinersTemplateFileType + " " + filterClassName}>
+      <div className={styles.pnpRefinersCustom + " " + filterClassName}>
         {
             this.props.showValueFilter ?
                 <div className="pnp-value-filter-container">
@@ -131,7 +130,7 @@ export default class CustomTemplate extends React.Component<IRefinerProps, IBase
     });
   }
 
-  public UNSAFE_componentWillReceiveProps(nextProps: IBaseRefinerTemplateProps) {
+  public UNSAFE_componentWillReceiveProps(nextProps: IRefinerProps) {
 
     if (nextProps.shouldResetFilters) {
       this.setState({

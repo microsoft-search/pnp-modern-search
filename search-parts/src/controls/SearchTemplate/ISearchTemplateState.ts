@@ -1,4 +1,4 @@
-interface ISearchResultsTemplateState {
+interface ISearchTemplateState {
     
     /**
      * The handlebar compiled template
@@ -6,4 +6,4 @@ interface ISearchResultsTemplateState {
     processedTemplate: string;
 }
 
-export default ISearchResultsTemplateState;
+export default ISearchTemplateState;

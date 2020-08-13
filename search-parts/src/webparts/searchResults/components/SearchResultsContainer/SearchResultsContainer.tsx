@@ -1,3 +1,4 @@
+import './SearchResultsTemplate.scss';
 import * as React from 'react';
 import ISearchResultsContainerProps from './ISearchResultsContainerProps';
 import ISearchResultsContainerState from './ISearchResultsContainerState';
@@ -10,7 +11,7 @@ import { IRefinementValue, IRefinementResult, ISearchResult, ISearchResults } fr
 import { Overlay } from 'office-ui-fabric-react/lib/Overlay';
 import { DisplayMode, Guid } from '@microsoft/sp-core-library';
 import { WebPartTitle } from "@pnp/spfx-controls-react/lib/WebPartTitle";
-import SearchResultsTemplate from '../Layouts/SearchResultsTemplate';
+import SearchTemplate from '../../../../controls/SearchTemplate/SearchTemplate';
 import styles from '../SearchResultsWebPart.module.scss';
 import { SortPanel } from '../SortPanel';
 import { SortDirection, Sort } from "@pnp/sp";
@@ -18,6 +19,7 @@ import { ITermData, ITerm } from '@pnp/sp-taxonomy';
 import LocalizationHelper from '../../../../helpers/LocalizationHelper';
 import { Text } from '@microsoft/sp-core-library';
 import { ILocalizableSearchResultProperty, ILocalizableSearchResult } from '../../../../models/ILocalizableSearchResults';
+import ISearchResultsTemplateContext from './ISearchResultsTemplateContext';
 import * as _ from '@microsoft/sp-lodash-subset';
 import { TemplateService } from '../../../../services/TemplateService/TemplateService';
 import { isEqual } from '@microsoft/sp-lodash-subset';
@@ -111,13 +113,14 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 templateContext = { ...templateContext, ...this.props.templateParameters };
 
                 if (placeHolderContent) {
-                    // Load placeholder content
-                    renderShimmerElements = <SearchResultsTemplate
-                        templateService={this.props.templateService}
-                        templateContent={placeHolderContent}
-                        templateContext={templateContext}
-                        instanceId={this.props.instanceId}
-                    />;
+                    
+                    renderShimmerElements = <SearchTemplate<ISearchResultsTemplateContext>
+                            templateService={this.props.templateService}
+                            templateContent={placeHolderContent}
+                            templateContext={templateContext}
+                            instanceId={this.props.instanceId}
+                        />;
+
                 } else {
                     // Use default shimmers
                     renderShimmerElements = this._getShimmerElements();
@@ -186,7 +189,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             let renderSearchResultTemplate = <div></div>;
             if (!this.props.useCodeRenderer) {
                 renderSearchResultTemplate =
-                    <SearchResultsTemplate
+                    <SearchTemplate<ISearchResultsTemplateContext>
                         templateService={this.props.templateService}
                         templateContent={TemplateService.getTemplateMarkup(this.props.templateContent)}
                         templateContext={templateContext}
@@ -217,6 +220,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 </div>
             </div>
         );
+
     }
 
     public async componentDidMount() {

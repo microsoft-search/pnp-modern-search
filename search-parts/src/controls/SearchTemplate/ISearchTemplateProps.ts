@@ -1,7 +1,6 @@
-import ISearchResultsTemplateContext from './ISearchResultsTemplateContext';
-import { TemplateService } from               '../../../../services/TemplateService/TemplateService';
+import { TemplateService } from               '../../services/TemplateService/TemplateService';
 
-interface ISearchResultsTemplateProps {
+interface ISearchTemplateProps<Context extends object> {
 
     /**
      * The template helper instance
@@ -11,7 +10,7 @@ interface ISearchResultsTemplateProps {
     /**
      * The template context
      */
-    templateContext: ISearchResultsTemplateContext;
+    templateContext: Context;
 
     /**
      * The Handlebars raw template content for a single item
@@ -25,4 +24,4 @@ interface ISearchResultsTemplateProps {
 
 }
 
-export default ISearchResultsTemplateProps;
+export default ISearchTemplateProps;

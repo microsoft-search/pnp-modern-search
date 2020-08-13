@@ -49,4 +49,14 @@ export interface IRefinerProps {
    */
   showValueFilter: boolean;
 
+  /**
+   * Indicates if the filter should show in expanded state
+   */
+  showExpanded?:boolean;
+
+  /**
+   * Language of the template
+   */
+  language?:string;
+
 }

@@ -1,20 +1,19 @@
 import * as React from 'react';
-import ISearchResultsTemplateProps from './ISearchResultsTemplateProps';
-import ISearchResultsTemplateState from './ISearchResultsTemplateState';
-import './SearchResultsTemplate.scss';
-import { TemplateService } from '../../../../services/TemplateService/TemplateService';
+import ISearchTemplateState from './ISearchTemplateState';
+import ISearchTemplateProps from './ISearchTemplateProps';
+import { TemplateService } from '../../services/TemplateService/TemplateService';
 import * as DOMPurify from 'dompurify';
-import { CssHelper } from '../../../../helpers/CssHelper';
+import { CssHelper } from '../../helpers/CssHelper';
 
 const TEMPLATE_ID_PREFIX = 'pnp-modern-search-template_';
 
-export default class SearchResultsTemplate extends React.Component<ISearchResultsTemplateProps, ISearchResultsTemplateState> {
+export default class SearchTemplate<DataContext extends object> extends React.Component<ISearchTemplateProps<DataContext>, ISearchTemplateState> {
 
     private _domPurify: any;
-
-    constructor(props: ISearchResultsTemplateProps) {
+    
+    constructor(props: ISearchTemplateProps<DataContext>) {
         super(props);
-
+        
         this.state = {
             processedTemplate: null
         };
@@ -43,6 +42,7 @@ export default class SearchResultsTemplate extends React.Component<ISearchResult
                 data.allowedAttributes[data.attrName] = true;
             }
         });
+
     }
 
     public render() {
@@ -63,11 +63,11 @@ export default class SearchResultsTemplate extends React.Component<ISearchResult
         TemplateService.initPreviewElements();
     }
 
-    public UNSAFE_componentWillReceiveProps(nextProps: ISearchResultsTemplateProps) {
+    public UNSAFE_componentWillReceiveProps(nextProps: ISearchTemplateProps<DataContext>) {
         this._updateTemplate(nextProps);
     }
 
-    private async _updateTemplate(props: ISearchResultsTemplateProps): Promise<void> {
+    private async _updateTemplate(props: ISearchTemplateProps<DataContext>): Promise<void> {
 
         let templateContent = props.templateContent;
 

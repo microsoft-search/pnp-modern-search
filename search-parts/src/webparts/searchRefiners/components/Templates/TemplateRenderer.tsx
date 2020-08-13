@@ -6,6 +6,7 @@ import FixedDateRangeTemplate from "./FixedDateRange/FixedDateRangeTemplate";
 import PersonaTemplate from "./Persona/PersonaTemplate";
 import FileTypeTemplate from "./FileType/FileTypeTemplate";
 import ContainerTreeTemplate from "./ContainerTree/ContainerTreeTemplate";
+import CustomTemplate from "./CustomTemplate/CustomTemplate";
 import { IRefinementResult, IRefinementValue } from "search-extensibility";
 import { RefinementFilterOperationCallback, IUserService } from 'search-extensibility';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
@@ -194,7 +195,19 @@ export default class TemplateRenderer extends React.Component<ITemplateRendererP
           />;
           break;
       case RefinerTemplateOption.Custom:
-        renderTemplate = null;
+        renderTemplate = <CustomTemplate
+          showExpanded={this.props.refinerConfiguration ? this.props.refinerConfiguration.showExpanded : false}
+          refinementResult={this.props.refinementResult}
+          onFilterValuesUpdated={this.props.onFilterValuesUpdated}
+          themeVariant={this.props.themeVariant}
+          shouldResetFilters={this.props.shouldResetFilters}
+          isMultiValue={true}
+          removeFilterValue={this.props.valueToRemove}
+          selectedValues={this.props.selectedValues}
+          showValueFilter={this.props.showValueFilter}
+          userService={this.props.userService}
+          language={this.props.language}
+        />;
         break;
 
       default:
