@@ -1,6 +1,5 @@
-import { IExtension } from "./IExtension";
 import { Guid } from '@microsoft/sp-core-library';
-import { ExtensionType } from '../utility/ExtensionTypes';
+import { IExtension, ExtensionType } from '..';
 
 export interface IExtensibilityLibrary {
 

@@ -1,7 +1,6 @@
 import * as React from 'react';
-import IBaseRefinerTemplateState from '../IBaseRefinerTemplateState';
-import { IRefinerProps, IRefinementValue, RefinementOperator } from "search-extensibility";
-import * as update from 'immutability-helper';
+import { IRefinerProps, IRefinerState, IRefinementValue, RefinementOperator } from "search-extensibility";
+import update from 'immutability-helper';
 import { INavLink, Nav, Icon, ITheme } from 'office-ui-fabric-react';
 import { cloneDeep, find } from "@microsoft/sp-lodash-subset";
 import { UrlHelper } from '../../../../../helpers/UrlHelper';
@@ -18,7 +17,7 @@ export interface IFoldersTemplateProps extends IRefinerProps {
     showExpanded: boolean;
 }
 
-export interface IFoldersTemplateState extends IBaseRefinerTemplateState {
+export interface IFoldersTemplateState extends IRefinerState {
 
     /**
      * The navigation links to display

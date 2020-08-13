@@ -1,6 +1,6 @@
-import { IRefinementFilter, IRefinementValue } from "search-extensibility";
+import { IRefinementValue } from "..";
 
-interface IBaseRefinerTemplateState {
+export interface IRefinerState {
 
     /**
      * The current selected values for the refiner 
@@ -12,5 +12,3 @@ interface IBaseRefinerTemplateState {
      */
     valueFilter?: string;
 } 
-
-export default IBaseRefinerTemplateState;

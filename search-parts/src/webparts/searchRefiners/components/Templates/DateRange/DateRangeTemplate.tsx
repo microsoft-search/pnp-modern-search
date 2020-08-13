@@ -1,9 +1,8 @@
 import * as React from "react";
-import IBaseRefinerTemplateState from '../IBaseRefinerTemplateState';
-import { IRefinerProps, IRefinementValue, RefinementOperator } from "search-extensibility";
+import { IRefinerProps, IRefinerState, IRefinementValue, RefinementOperator } from "search-extensibility";
 import { DatePicker, IDatePickerProps, IDatePickerStyleProps, IDatePickerStyles } from "office-ui-fabric-react/lib/DatePicker";
 import { Link } from "office-ui-fabric-react/lib/Link";
-import * as update from 'immutability-helper';
+import update from 'immutability-helper';
 import * as strings from 'SearchRefinersWebPartStrings';
 import { Loader } from "../../../../../services/TemplateService/LoadHelper";
 import { ITheme } from "@uifabric/styling";
@@ -12,7 +11,7 @@ import { ITheme } from "@uifabric/styling";
 import styles from './DateRangeTemplate.module.scss';
 import { CssHelper } from "../../../../../helpers/CssHelper";
 
-export interface IDateRangeTemplateState extends IBaseRefinerTemplateState {
+export interface IDateRangeTemplateState extends IRefinerState {
     selectedFromDate: Date;
     selectedToDate: Date;
     haveMoment: boolean;

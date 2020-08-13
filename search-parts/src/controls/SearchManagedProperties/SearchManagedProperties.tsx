@@ -4,7 +4,7 @@ import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/components/Spin
 import { isEqual } from '@microsoft/sp-lodash-subset';
 import ISearchService from '../../services/SearchService/ISearchService';
 import * as strings from 'SearchResultsWebPartStrings';
-import * as update from 'immutability-helper';
+import update from 'immutability-helper';
 
 const LOADING_KEY = 'LOADING';
 
@@ -224,13 +224,15 @@ export class SearchManagedProperties extends React.Component<ISearchManagedPrope
     public async onChangeMulti(event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) {
 
         let selectedKeys = this.state.selectedOptionKeys;
-
+        
         if (option) {
             const selectedKeyIdx = this.state.selectedOptionKeys.indexOf(option.key as string);
 
             if (option.selected && selectedKeyIdx === -1) {
 
-                selectedKeys = update(this.state.selectedOptionKeys, {$push: [option.key] });
+                let selectedKey : string = option.key ? option.key.toString() : "";
+
+                selectedKeys = update(this.state.selectedOptionKeys, {$push: [selectedKey] });
 
                 this.setState({
                     selectedOptionKeys: selectedKeys,
@@ -253,7 +255,7 @@ export class SearchManagedProperties extends React.Component<ISearchManagedPrope
 
             // User typed a freeform option
             const newOption: IComboBoxOption = { key: value, text: value };
-            selectedKeys = update(this.state.selectedOptionKeys, {$push: [newOption.key] });
+            selectedKeys = update(this.state.selectedOptionKeys, {$push: [value] });
             let options = update(this.state.options, {$push: [newOption] });
 
             // Re-sort ascending after adding free values

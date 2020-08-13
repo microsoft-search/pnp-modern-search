@@ -41,7 +41,7 @@ import { ResultTypeOperator } from '../../models/ISearchResultType';
 import IResultService from '../../services/ResultService/IResultService';
 import { ResultService, IRenderer } from '../../services/ResultService/ResultService';
 import { IDynamicDataCallables, IDynamicDataPropertyDefinition } from '@microsoft/sp-dynamic-data';
-import { IRefinementFilter, ISearchVerticalInformation, IRefinementResult, IRefinementValue, IExtensibilityLibrary } from 'search-extensibility';
+import { ITimeZoneBias, IRefinementFilter, ISearchVerticalInformation, IRefinementResult, IRefinementValue, IExtensibilityLibrary } from 'search-extensibility';
 import IDynamicDataService from '../../services/DynamicDataService/IDynamicDataService';
 import { DynamicDataService } from '../../services/DynamicDataService/DynamicDataService';
 import { DynamicProperty, ThemeProvider, IReadonlyTheme, ThemeChangedEventArgs } from '@microsoft/sp-component-base';
@@ -50,7 +50,7 @@ import IRefinerConfiguration from '../../models/IRefinerConfiguration';
 import { SearchComponentType } from '../../models/SearchComponentType';
 import ISearchResultSourceData from '../../models/ISearchResultSourceData';
 import ISynonymTable from '../../models/ISynonym';
-import * as update from 'immutability-helper';
+import update from 'immutability-helper';
 import ISearchVerticalSourceData from '../../models/ISearchVerticalSourceData';
 import LocalizationHelper from '../../helpers/LocalizationHelper';
 import { IDropdownOption } from 'office-ui-fabric-react/lib/Dropdown';
@@ -119,7 +119,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
     /**
      * Information about time zone bias (current user or web)
      */
-    private _timeZoneBias: any;
+    private _timeZoneBias: ITimeZoneBias;
 
     /**
      * The available web component definitions (not registered yet)
@@ -278,10 +278,11 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
         const currentLocaleId = LocalizationHelper.getLocaleId(this.context.pageContext.cultureInfo.currentCultureName);
         const queryModifier = this._queryModifierInstance;
+        const tz : number = this._timeZoneBias && this._timeZoneBias.Id ? this._timeZoneBias.Id : null;
 
         // Configure the provider before the query according to our needs
         this._searchService = update(this._searchService, {
-            timeZoneId: { $set: this._timeZoneBias && this._timeZoneBias.Id ? this._timeZoneBias.Id : null },
+            timeZoneId: { $set:  tz},
             resultsCount: { $set: this.properties.paging.itemsCountPerPage },
             queryTemplate: { $set: queryTemplate },
             resultSourceId: { $set: sourceId },

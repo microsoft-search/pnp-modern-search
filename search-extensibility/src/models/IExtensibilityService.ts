@@ -1,8 +1,5 @@
-import { IExtensibilityLibrary } from './IExtensibilityLibrary';
 import { Guid } from '@microsoft/sp-core-library';
-import { IExtension } from './IExtension';
-import { ExtensionType } from '../utility/ExtensionTypes';
-import { IExtensionInstance } from './instance/IExtensionInstance';
+import { IExtensibilityLibrary, IExtension, ExtensionType, IExtensionInstance } from '..';
 
 export interface IExtensibilityService {
 

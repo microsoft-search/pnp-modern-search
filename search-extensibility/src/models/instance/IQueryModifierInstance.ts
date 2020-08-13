@@ -1,6 +1,4 @@
-import { IExtensionInstance } from "./IExtensionInstance";
-import { IQueryModifierInput } from "../IQueryModifierInput";
-import { IQueryModification } from "../IQueryModification";
+import { IQueryModification, IQueryModifierInput, IExtensionInstance } from "../..";
 
 export interface IQueryModifierInstance extends IExtensionInstance {
     

@@ -3,8 +3,8 @@ export { BaseHandlebarsHelper } from './abstract/BaseHandlebarsHelper';
 export { BaseQueryModifier } from './abstract/BaseQueryModifier';
 export { BaseSuggestionProvider } from './abstract/BaseSuggestionProvider';
 export { BaseWebComponent } from './abstract/BaseWebComponent';
-export { IContextSearch } from './models/IContextSearch';
-export { IContextTemplate } from './models/IContextTemplate';
+export { ISearchContext } from './models/ISearchContext';
+export { ITemplateContext } from './models/ITemplateContext';
 export { IExtensibilityLibrary } from './models/IExtensibilityLibrary';
 export { IExtensibilityService } from './models/IExtensibilityService';
 export { IExtension } from './models/IExtension';
@@ -28,3 +28,6 @@ export { IExtensibilityEditorProps, IExtensibilityEditorState, ExtensibilityEdit
 export { IUserService } from './models/IUserService';
 export { IRefinerProps } from './models/IRefinerProps';
 export { RefinementFilterOperationCallback } from './models/RefinementFilterOperationCallback';
+export { IPropertyPaneComposite } from './models/IPropertyPaneComposite';
+export { IRefinerState } from './models/IRefinerState';
+export { ITimeZoneBias } from './models/ITimeZoneBias';

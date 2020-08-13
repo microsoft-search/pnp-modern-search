@@ -20,6 +20,7 @@ export class ExtensibilityService implements IExtensibilityService {
         this._validators[ExtensionTypes.QueryModifer] = ExtensionHelper.IsQueryModifier;
         this._validators[ExtensionTypes.SuggestionProvider] = ExtensionHelper.IsSuggestionProvider;
         this._validators[ExtensionTypes.HandlebarsHelper] = ExtensionHelper.IsHandlebarsHelper;
+        this._validators[ExtensionTypes.Refiner] = ExtensionHelper.IsRefiner;
 
     }
 

@@ -7,11 +7,10 @@ import styles from './PersonaTemplate.module.scss';
 import { ITheme } from '@uifabric/styling';
 
 // Thirs party Lib
-import * as update from 'immutability-helper';
+import update from 'immutability-helper';
 
 // Interface
-import { IRefinerProps, IRefinementValue, RefinementOperator } from "search-extensibility";
-import IBaseRefinerTemplateState from '../IBaseRefinerTemplateState';
+import { IRefinerProps, IRefinerState, IRefinementValue, RefinementOperator } from "search-extensibility";
 import { PersonaSize, Persona, Spinner, SpinnerSize, IExtendedPersonaProps, IPersonaProps, TextField, Link } from "office-ui-fabric-react";
 import { IUserInfo } from "../../../../../models/IUser";
 import { CssHelper } from '../../../../../helpers/CssHelper';
@@ -19,7 +18,7 @@ import { CssHelper } from '../../../../../helpers/CssHelper';
 export interface IPersonaTemplateProps extends IRefinerProps {
 }
 
-export interface IPersonaTemplateState extends IBaseRefinerTemplateState {
+export interface IPersonaTemplateState extends IRefinerState {
   isLoading: boolean;
   userInfos: IUserInfo[];
 }

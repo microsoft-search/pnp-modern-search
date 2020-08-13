@@ -1,7 +1,6 @@
-import { ISearchParams } from "./ISearchParams";
-import { ISearchResults } from "../models/ISearchResult";
+import { ISearchParams, ISearchResults } from "..";
 
-export interface IContextSearch {
+export interface ISearchContext {
 
     /**
      * Perfoms a search query.

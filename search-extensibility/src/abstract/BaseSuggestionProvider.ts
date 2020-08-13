@@ -1,7 +1,4 @@
-import { ISuggestion } from '../models/ISuggestion';
-import { IExtensionContext } from '../models/IExtensionContext';
-import { ISuggestionProviderInstance } from '../models/instance/ISuggestionProviderInstance';
-import { ExtensionTypes } from "../utility/ExtensionTypes";
+import { ISuggestion, IExtensionContext, ISuggestionProviderInstance, ExtensionTypes } from "..";
 
 export abstract class BaseSuggestionProvider implements ISuggestionProviderInstance {
 

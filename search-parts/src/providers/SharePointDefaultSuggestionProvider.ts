@@ -1,10 +1,10 @@
-import { BaseSuggestionProvider, ISuggestion, IContextSearch } from 'search-extensibility';
+import { BaseSuggestionProvider, ISuggestion, ISearchContext } from 'search-extensibility';
 import SearchService from '../services/SearchService/SearchService';
 import * as strings from 'SearchBoxWebPartStrings';
 
 export class SharePointDefaultSuggestionProvider extends BaseSuggestionProvider  {
   
-  private _searchService: IContextSearch;
+  private _searchService: ISearchContext;
 
   public static readonly ProviderName: string = 'default';
   public static readonly ProviderDisplayName: string = 'SharePoint Query Suggestions';

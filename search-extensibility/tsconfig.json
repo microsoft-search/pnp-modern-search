@@ -30,7 +30,7 @@
     ]
   },
   "include": [
-    "src/**/*.ts"
+    "src/**/*.ts", "src/abstract/BaseRefiner.tsx"
   ],
   "exclude": [
     "node_modules",

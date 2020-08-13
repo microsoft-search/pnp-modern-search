@@ -21,8 +21,7 @@ import { WebPartContext } from '@microsoft/sp-webpart-base';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import groupBy from 'handlebars-group-by';
 import { Loader } from './LoadHelper';
-import { IExtension } from 'search-extensibility';
-import { UrlHelper } from '../../helpers/UrlHelper';
+import { IExtension, ITimeZoneBias } from 'search-extensibility';
 import ISearchService from '../SearchService/ISearchService';
 
 abstract class BaseTemplateService {
@@ -31,7 +30,7 @@ abstract class BaseTemplateService {
     private _search: ISearchService;
 
     public CurrentLocale = "en";
-    public TimeZoneBias = {
+    public TimeZoneBias : ITimeZoneBias = {
         WebBias: 0,
         UserBias: 0,
         WebDST: 0,

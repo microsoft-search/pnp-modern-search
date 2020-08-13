@@ -13,7 +13,7 @@ import {
 } from "@microsoft/sp-property-pane";
 import { PropertyFieldCollectionData, CustomCollectionFieldType } from '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData';
 import * as strings from 'SearchRefinersWebPartStrings';
-import { IRefinementFilter, IUserService } from 'search-extensibility';
+import { IRefinementFilter, IUserService, ITimeZoneBias } from 'search-extensibility';
 import SearchRefinersContainer from './components/SearchRefinersContainer/SearchRefinersContainer';
 import { IDynamicDataCallables, IDynamicDataPropertyDefinition, IDynamicDataSource } from '@microsoft/sp-dynamic-data';
 import { ISearchRefinersWebPartProps } from './ISearchRefinersWebPartProps';
@@ -65,7 +65,7 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
   /**
    * Information about time zone bias (current user or web)
    */
-  private _timeZoneBias: any;
+  private _timeZoneBias: ITimeZoneBias;
 
   /**
    * The list of available managed managed properties (managed globally for all proeprty pane fiels if needed)
@@ -211,7 +211,7 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
           WebDST: this.context.pageContext.legacyPageContext.webTimeZoneData.DaylightBias,
           UserBias: null,
           UserDST: null,
-          Id: this.context.pageContext.legacyPageContext.webTimeZoneData.Id
+          Id:  this.context.pageContext.legacyPageContext.webTimeZoneData.Id
       };
 
       if (this.context.pageContext.legacyPageContext.userTimeZoneData) {

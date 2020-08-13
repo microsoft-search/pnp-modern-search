@@ -1,9 +1,8 @@
 import { WebPartContext } from "@microsoft/sp-webpart-base";
-import { IContextTemplate } from "./IContextTemplate";
-import { IContextSearch } from "./IContextSearch";
+import { ISearchContext, ITemplateContext } from '..';
 
 export interface IExtensionContext {
     webPart: WebPartContext;
-    search: IContextSearch;
-    template: IContextTemplate;
+    search: ISearchContext;
+    template: ITemplateContext;
 }

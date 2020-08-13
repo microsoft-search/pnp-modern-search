@@ -10,7 +10,7 @@ import { MessageBarType, MessageBar } from 'office-ui-fabric-react/lib/MessageBa
 import * as strings from 'SearchRefinersWebPartStrings';
 import { ISearchRefinersContainerState } from './ISearchRefinersContainerState';
 import { IRefinementFilter, IRefinementValue, RefinementOperator } from 'search-extensibility';
-import * as update from 'immutability-helper';
+import update from 'immutability-helper';
 import RefinerTemplateOption from '../../../../models/RefinerTemplateOption';
 import { find, isEqual } from '@microsoft/sp-lodash-subset';
 import RefinersSortOption from '../../../../models/RefinersSortOptions';

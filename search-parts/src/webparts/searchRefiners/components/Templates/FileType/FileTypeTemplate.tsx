@@ -17,20 +17,19 @@ import { getFileTypeIconProps } from '@uifabric/file-type-icons';
 import { ITheme } from '@uifabric/styling';
 
 // Third party lib
-import * as update from 'immutability-helper';
+import update from 'immutability-helper';
 
 // Helper
 import { FileHelper } from './../../../../../helpers/FileHelper';
 
 // Interface
-import { IRefinerProps, IRefinementValue, RefinementOperator } from 'search-extensibility';
-import IBaseRefinerTemplateState from '../IBaseRefinerTemplateState';
+import { IRefinerProps, IRefinerState, IRefinementValue, RefinementOperator } from 'search-extensibility';
 import { TextField } from 'office-ui-fabric-react';
 import { CssHelper } from '../../../../../helpers/CssHelper';
 
 
 // Class
-export default class FileTypeTemplate extends React.Component<IRefinerProps, IBaseRefinerTemplateState> {
+export default class FileTypeTemplate extends React.Component<IRefinerProps, IRefinerState> {
 
   private _operator: RefinementOperator;
 

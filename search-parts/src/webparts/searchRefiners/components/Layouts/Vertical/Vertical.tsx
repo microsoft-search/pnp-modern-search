@@ -1,7 +1,7 @@
 import * as React from 'react';
 import IFilterLayoutProps from '../IFilterLayoutProps';
 import IVerticalState from './IVerticalState';
-import * as update from 'immutability-helper';
+import update from 'immutability-helper';
 import {
     GroupedList,
     IGroup,

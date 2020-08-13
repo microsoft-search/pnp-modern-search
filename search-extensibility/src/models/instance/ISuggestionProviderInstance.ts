@@ -1,5 +1,4 @@
-import { IExtensionInstance } from "./IExtensionInstance";
-import { ISuggestion } from '../ISuggestion';
+import { IExtensionInstance, ISuggestion } from "../..";
 
 export interface ISuggestionProviderInstance extends IExtensionInstance {
 

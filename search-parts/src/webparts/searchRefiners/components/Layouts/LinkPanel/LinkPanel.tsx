@@ -3,7 +3,7 @@ import ILinkPanelProps from './ILinkPanelProps';
 import ILinkPanelState from './ILinkPanelState';
 import { Panel, PanelType } from 'office-ui-fabric-react/lib/Panel';
 import { Label } from 'office-ui-fabric-react/lib/Label';
-import * as update from 'immutability-helper';
+import update from 'immutability-helper';
 import {
   GroupedList,
   IGroup,

@@ -15,6 +15,7 @@ import { ISliderOptions } from '../../components/SliderComponent';
 import { cloneDeep } from '@microsoft/sp-lodash-subset';
 import { WebPartContext } from "@microsoft/sp-webpart-base";
 import { PropertyPaneChoiceGroup } from "@microsoft/sp-property-pane";
+import { ITimeZoneBias } from "search-extensibility";
 
 const PEOPLE_RESULT_SOURCEID = 'b09a7990-05ea-4af9-81ef-edfab16c4e31';
 
@@ -56,7 +57,7 @@ export class TemplateService extends BaseTemplateService {
      */
     private _availableManagedProperties: IComboBoxOption[];
 
-    constructor(spHttpClient: SPHttpClient, locale: string, searchService: ISearchService, timeZoneBias?: any, ctx?: WebPartContext) {
+    constructor(spHttpClient: SPHttpClient, locale: string, searchService: ISearchService, timeZoneBias?: ITimeZoneBias, ctx?: WebPartContext) {
 
         super(ctx, searchService);
 

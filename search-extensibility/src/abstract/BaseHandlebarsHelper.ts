@@ -1,6 +1,4 @@
-import { IExtensionContext } from "../models/IExtensionContext";
-import { IHandlebarsHelperInstance } from "../models/instance/IHandlebarsHelperInstance";
-import { ExtensionTypes } from "../utility/ExtensionTypes";
+import { IExtensionContext, IHandlebarsHelperInstance, ExtensionTypes } from "..";
 
 export abstract class BaseHandlebarsHelper implements IHandlebarsHelperInstance {
 

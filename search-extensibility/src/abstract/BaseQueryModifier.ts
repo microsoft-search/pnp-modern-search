@@ -1,8 +1,6 @@
-import { IQueryModifierInput } from '../models/IQueryModifierInput';
-import { IQueryModification } from '../models/IQueryModification';
-import { IExtensionContext } from '../models/IExtensionContext';
-import { IQueryModifierInstance } from '../models/instance/IQueryModifierInstance';
-import { ExtensionTypes } from "../utility/ExtensionTypes";
+import { IQueryModifierInput, IQueryModification,
+          IExtensionContext, IQueryModifierInstance, 
+          ExtensionTypes } from "..";
 
 export abstract class BaseQueryModifier implements IQueryModifierInstance {
 

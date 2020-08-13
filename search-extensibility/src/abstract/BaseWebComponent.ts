@@ -1,9 +1,7 @@
 import * as ReactDOM from 'react-dom';
 import { camelCase } from '@microsoft/sp-lodash-subset';
 import { IReadonlyTheme, ThemeProvider } from '@microsoft/sp-component-base';
-import { IExtensionContext } from '../models/IExtensionContext';
-import { IWebComponentInstance } from '../models/instance/IWebComponentInstance';
-import { ExtensionTypes } from "../utility/ExtensionTypes";
+import { IExtensionContext, IWebComponentInstance, ExtensionTypes } from "..";
 import '@webcomponents/custom-elements/src/native-shim';
 import '@webcomponents/custom-elements/custom-elements.min';
 

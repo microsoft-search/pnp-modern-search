@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { Icon, SelectionMode, DetailsListLayoutMode, DefaultButton, DetailsList, Panel, TextField, IIconProps, PanelType} from 'office-ui-fabric-react';
-import { IExtensibilityLibrary } from '../../models/IExtensibilityLibrary';
-import {  IExtension } from '../../models/IExtension';
-import { ExtensibilityService } from '../../service/ExtensibilityService';
 import { Guid } from '@microsoft/sp-core-library';
+import { IExtensibilityLibrary, IExtension, ExtensibilityService } from '../..';
 import * as styles from './ExtensibilityEditor.module.scss';
 import * as strings from 'ModernSearchExtensibilityLibraryStrings';
 

@@ -1,4 +1,4 @@
-import { IExtensionInstance } from "./IExtensionInstance";
+import { IExtensionInstance } from "../..";
 
 export interface IHandlebarsHelperInstance extends IExtensionInstance {
 

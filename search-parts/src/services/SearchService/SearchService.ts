@@ -20,7 +20,7 @@ import { UrlHelper } from '../../helpers/UrlHelper';
 import { ISearchVertical } from '../../models/ISearchVertical';
 import IManagedPropertyInfo from '../../models/IManagedPropertyInfo';
 import { Loader } from '../TemplateService/LoadHelper';
-import { BaseQueryModifier } from 'search-extensibility';
+import { BaseQueryModifier, ITimeZoneBias } from 'search-extensibility';
 import { ISharePointSearch } from './ISharePointSearch';
 import { trimStart, trimEnd } from '@microsoft/sp-lodash-subset';
 
@@ -41,6 +41,8 @@ class SearchService implements ISearchService {
     private _queryCulture: number;
     private _timeZoneId: number;
     private _queryModifier: BaseQueryModifier;
+
+    public timeZonebias: ITimeZoneBias;
 
     public get resultsCount(): number { return this._resultsCount; }
     public set resultsCount(value: number) { this._resultsCount = value; }

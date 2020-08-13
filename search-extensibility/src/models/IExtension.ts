@@ -1,4 +1,4 @@
-import { IExtensionInstance } from "./instance/IExtensionInstance";
+import { IExtensionInstance } from "..";
 
 export interface IExtension<T extends IExtensionInstance> {
     

@@ -1,4 +1,4 @@
-import { IExtensionContext } from "../IExtensionContext";
+import { IExtensionContext } from "../..";
 
 export interface IExtensionInstance {
     

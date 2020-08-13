@@ -1,9 +1,8 @@
 import * as React from "react";
-import IBaseRefinerTemplateState from '../IBaseRefinerTemplateState';
-import { IRefinerProps, IRefinementValue, RefinementOperator } from "search-extensibility";
+import { IRefinerProps, IRefinerState, IRefinementValue, RefinementOperator } from "search-extensibility";
 import { IChoiceGroupOption, ChoiceGroup } from "office-ui-fabric-react/lib/ChoiceGroup";
 import { Guid } from '@microsoft/sp-core-library';
-import * as update from 'immutability-helper';
+import update from 'immutability-helper';
 import { Loader } from "../../../../../services/TemplateService/LoadHelper";
 import * as strings from 'SearchRefinersWebPartStrings';
 import { ITheme } from "@uifabric/styling";
@@ -14,7 +13,7 @@ import styles from './FixedDateRangeTemplate.module.scss';
 import { CssHelper } from "../../../../../helpers/CssHelper";
 
 
-export interface IFixedDateRangeTemplateState extends IBaseRefinerTemplateState {
+export interface IFixedDateRangeTemplateState extends IRefinerState {
     haveMoment: boolean;
 }
 

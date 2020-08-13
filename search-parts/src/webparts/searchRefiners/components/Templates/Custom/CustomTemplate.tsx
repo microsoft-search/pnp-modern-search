@@ -17,7 +17,7 @@ import { getFileTypeIconProps } from '@uifabric/file-type-icons';
 import { ITheme } from '@uifabric/styling';
 
 // Third party lib
-import * as update from 'immutability-helper';
+import update from 'immutability-helper';
 
 // Helper
 import { FileHelper } from './../../../../../helpers/FileHelper';
