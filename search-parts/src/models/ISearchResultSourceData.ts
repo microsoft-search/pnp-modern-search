@@ -34,6 +34,11 @@ interface ISearchResultSourceData {
      * The search verticals information
      */
     verticalsInformation: ISearchVerticalInformation[];
+
+    /**
+     * Reset filter based on vertical switch
+     */
+    filterReset: boolean;
 }
 
 export default ISearchResultSourceData;
