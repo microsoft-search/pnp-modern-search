@@ -23,14 +23,15 @@ import * as update from 'immutability-helper';
 import { FileHelper } from './../../../../../helpers/FileHelper';
 
 // Interface
-import { IRefinerProps, IRefinementValue, RefinementOperator } from 'search-extensibility';
+import { IRefinementValue, RefinementOperator } from 'search-extensibility';
+import IRefinerProps from 'search-extensibility';
 import IBaseRefinerTemplateState from '../IBaseRefinerTemplateState';
 import { TextField } from 'office-ui-fabric-react';
 import { CssHelper } from '../../../../../helpers/CssHelper';
 
 
 // Class
-export default class FileTypeTemplate extends React.Component<IRefinerProps, IBaseRefinerTemplateState> {
+export default class CustomTemplate extends React.Component<IRefinerProps, IBaseRefinerTemplateState> {
 
   private _operator: RefinementOperator;
 
@@ -130,7 +131,7 @@ export default class FileTypeTemplate extends React.Component<IRefinerProps, IBa
     });
   }
 
-  public UNSAFE_componentWillReceiveProps(nextProps: IRefinerProps) {
+  public UNSAFE_componentWillReceiveProps(nextProps: IBaseRefinerTemplateProps) {
 
     if (nextProps.shouldResetFilters) {
       this.setState({

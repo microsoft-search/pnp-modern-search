@@ -10,7 +10,6 @@ import { IRefinementResult, IRefinementValue } from "search-extensibility";
 import { RefinementFilterOperationCallback, IUserService } from 'search-extensibility';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import IRefinerConfiguration from '../../../../models/IRefinerConfiguration';
-import { customTemplateFieldPropertyLabel } from 'SearchResultsWebPartStrings';
 
 export interface ITemplateRendererProps {
 

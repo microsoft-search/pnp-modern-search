@@ -1,7 +1,6 @@
 import * as React from "react";
-import IBaseRefinerTemplateProps from '../IBaseRefinerTemplateProps';
 import IBaseRefinerTemplateState from '../IBaseRefinerTemplateState';
-import { IRefinementValue, RefinementOperator } from "search-extensibility";
+import { IRefinerProps, IRefinementValue, RefinementOperator } from "search-extensibility";
 import { IChoiceGroupOption, ChoiceGroup } from "office-ui-fabric-react/lib/ChoiceGroup";
 import { Guid } from '@microsoft/sp-core-library';
 import * as update from 'immutability-helper';
@@ -19,7 +18,7 @@ export interface IFixedDateRangeTemplateState extends IBaseRefinerTemplateState 
     haveMoment: boolean;
 }
 
-export interface IFixedDateRangeTemplateProps extends IBaseRefinerTemplateProps {
+export interface IFixedDateRangeTemplateProps extends IRefinerProps {
     language: string;
 }
 
@@ -154,7 +153,7 @@ export default class FixedDateRangeTemplate extends React.Component<IFixedDateRa
         });
     }
 
-    public UNSAFE_componentWillReceiveProps(nextProps: IBaseRefinerTemplateProps) {
+    public UNSAFE_componentWillReceiveProps(nextProps: IRefinerProps) {
 
         if (nextProps.shouldResetFilters) {
             this.setState({

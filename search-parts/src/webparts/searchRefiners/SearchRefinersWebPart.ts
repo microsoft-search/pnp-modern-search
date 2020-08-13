@@ -13,7 +13,7 @@ import {
 } from "@microsoft/sp-property-pane";
 import { PropertyFieldCollectionData, CustomCollectionFieldType } from '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData';
 import * as strings from 'SearchRefinersWebPartStrings';
-import { IRefinementFilter, IRefinementResult } from '../../models/ISearchResult';
+import { IRefinementFilter, IUserService } from 'search-extensibility';
 import SearchRefinersContainer from './components/SearchRefinersContainer/SearchRefinersContainer';
 import { IDynamicDataCallables, IDynamicDataPropertyDefinition, IDynamicDataSource } from '@microsoft/sp-dynamic-data';
 import { ISearchRefinersWebPartProps } from './ISearchRefinersWebPartProps';
@@ -38,7 +38,6 @@ import BaseTemplateService from '../../services/TemplateService/BaseTemplateServ
 import MockTemplateService from '../../services/TemplateService/MockTemplateService';
 import { TemplateService } from '../../services/TemplateService/TemplateService';
 import { cloneDeep, isEqual } from '@microsoft/sp-lodash-subset';
-import IUserService from '../../services/UserService/IUserService';
 import { UserService } from '../../services/UserService/UserService';
 import { MockUserService } from '../../services/UserService/MockUserService';
 import { initializeFileTypeIcons } from '@uifabric/file-type-icons';

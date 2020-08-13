@@ -10,14 +10,13 @@ import { ITheme } from '@uifabric/styling';
 import * as update from 'immutability-helper';
 
 // Interface
-import { IRefinementValue, RefinementOperator } from "search-extensibility";
-import IBaseRefinerTemplateProps from '../IBaseRefinerTemplateProps';
+import { IRefinerProps, IRefinementValue, RefinementOperator } from "search-extensibility";
 import IBaseRefinerTemplateState from '../IBaseRefinerTemplateState';
 import { PersonaSize, Persona, Spinner, SpinnerSize, IExtendedPersonaProps, IPersonaProps, TextField, Link } from "office-ui-fabric-react";
 import { IUserInfo } from "../../../../../models/IUser";
 import { CssHelper } from '../../../../../helpers/CssHelper';
 
-export interface IPersonaTemplateProps extends IBaseRefinerTemplateProps {
+export interface IPersonaTemplateProps extends IRefinerProps {
 }
 
 export interface IPersonaTemplateState extends IBaseRefinerTemplateState {
