@@ -74,5 +74,9 @@ define([], function () {
         "RefinerSortTypeSortDirectionDescending": "Descending"
       }
     },
+    "Extensibility": {
+        "GroupName": "Third Party Extensibility",
+        "ButtonLabel": "Load Extensibility"
+    }
   }
 });

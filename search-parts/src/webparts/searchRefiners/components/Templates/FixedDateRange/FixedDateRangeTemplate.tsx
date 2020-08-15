@@ -80,11 +80,11 @@ export default class FixedDateRangeTemplate extends React.Component<IFixedDateRa
 
     public render() {
         if (!this.state.haveMoment) return null;
-
+/*
         if (this.props.refinementResult.Values.length !== 6) {
             return <div>This template only works for Created, LastModifiedTime, LastModifiedTimeForRetention and RefinableDateXX properties</div>;
         }
-
+*/
         if (this.state.refinerSelectedFilterValues.length > 1) {
             return <div>This template only works when 1 refinement value is selected</div>;
         }
@@ -102,7 +102,7 @@ export default class FixedDateRangeTemplate extends React.Component<IFixedDateRa
         }
 
         // remove last option if no old docs
-        if (refinementResultValues[5].RefinementCount === 0) {
+        if (refinementResultValues[refinementResultValues.length-1].RefinementCount === 0) {
             options.pop();
         }
         

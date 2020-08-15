@@ -76,5 +76,10 @@ export interface ISearchRefinersContainerProps {
    * Filter web part styles
    */
   styles: string;
+
+  /**
+   * DOM element
+   */
+  domElement:HTMLElement;
   
 }

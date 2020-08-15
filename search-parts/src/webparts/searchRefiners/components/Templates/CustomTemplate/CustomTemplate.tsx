@@ -46,6 +46,12 @@ export default class CustomTemplate extends React.Component<IRefinerProps, IRefi
     this._clearValueFilter = this._clearValueFilter.bind(this);
   }
 
+  public configureEvents() : void {
+
+
+
+  }
+
   public render() {
 
     let disableButtons = false;
@@ -55,65 +61,16 @@ export default class CustomTemplate extends React.Component<IRefinerProps, IRefi
     
     const filterClassName = CssHelper.prefixAndValidateClassName("pnp-refiner-custom", this.props.refinementResult.FilterName);
 
+    /**
+     * Events to handle
+     * 
+     * 
+     * 
+     */
+
     return (
       <div className={styles.pnpRefinersCustom + " " + filterClassName}>
-        {
-            this.props.showValueFilter ?
-                <div className="pnp-value-filter-container">
-                    <TextField className="pnp-value-filter" value={this.state.valueFilter} placeholder="Filter" onChange={(event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>,newValue?: string) => { this._onValueFilterChanged(newValue); }} onClick={this._onValueFilterClick} />
-                    <Link onClick={this._clearValueFilter} disabled={!this.state.valueFilter || this.state.valueFilter === ""}>Clear</Link>
-                </div>
-                : null
-        }
-        {
-          this.props.refinementResult.Values.filter(x => { return !this._isFilterMatch(x);}).map((refinementValue: IRefinementValue, j) => {
-
-            if (refinementValue.RefinementCount === 0) {
-              return null;
-            }
-
-            let extension: string = refinementValue.RefinementValue.toLowerCase();
-
-            return (
-              <Checkbox
-                styles={{
-                  root: {
-                    padding: 10
-                  }
-                }}
-                key={j}
-                className={"pnp-refiner-filetype " + CssHelper.prefixAndValidateClassName("pnp-ref-" + refinementValue.RefinementName, refinementValue.RefinementValue)}
-                checked={this._isValueInFilterSelection(refinementValue)}
-                disabled={this.state.refinerSelectedFilterValues.length > 0 && !this._isValueInFilterSelection(refinementValue) && !this.props.isMultiValue}
-                onChange={(ev, checked: boolean) => {
-                  refinementValue.RefinementValue = FileHelper.extensionToLabel(extension);
-                  checked ? this._onFilterAdded(refinementValue) : this._onFilterRemoved(refinementValue);
-                }}
-                theme={this.props.themeVariant as ITheme}
-                onRenderLabel={() => {
-                  return (
-                    <>
-                      <Icon {...getFileTypeIconProps({ extension: extension, size: 20, imageFileType: 'svg' })} />
-                      <TextUI className='pnp-lbl' block={true} nowrap={true}>{Text.format(`${FileHelper.extensionToLabel(extension)} ({0})`, refinementValue.RefinementCount)}</TextUI>
-                    </>
-                  );
-                }}
-              >
-              </Checkbox>
-            );
-          })
-        }
-        {
-          this.props.isMultiValue ?
-
-            <div>
-              <Link
-                onClick={() => { this._applyFilters(this.state.refinerSelectedFilterValues); }}
-                disabled={disableButtons}>{strings.Refiners.ApplyFiltersLabel}</Link>|<Link onClick={this._clearFilters} disabled={this.state.refinerSelectedFilterValues.length === 0}>{strings.Refiners.ClearFiltersLabel}</Link>
-            </div>
-
-            : null
-        }
+        
       </div>
     );
   }

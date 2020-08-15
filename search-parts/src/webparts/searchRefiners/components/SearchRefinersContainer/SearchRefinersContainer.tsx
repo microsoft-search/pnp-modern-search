@@ -195,15 +195,75 @@ export default class SearchRefinersContainer extends React.Component<ISearchRefi
             }
         });
 
+        this.bindFilterEvents();
+
         this.setState({
             availableRefiners: availableFilters
         });
+
     }
 
     public componentDidMount() {
         this.setState({
             availableRefiners: this.props.availableRefiners
         });
+    }
+
+    /**
+     * Binds events fired by custom templates
+     */
+    private bindFilterEvents() {
+
+        this.props.domElement.addEventListener('removeFilter', ((ev:CustomEvent) => {
+            
+            ev.stopImmediatePropagation();
+            
+            console.log("Remove filter event.");
+
+            const newValues: IRefinementValue[] = [];
+
+            if(this.state.selectedRefinementFilters.some((filter)=>{
+                if(filter.FilterName === ev.detail.FilterName) {        
+                    filter.Values.map((filterValue)=>{
+                        if(filterValue !== ev.detail.FilterValue) {
+                            newValues.push(filterValue);
+                        }
+                    });
+                    return true;
+                }
+            })) {
+
+                this.onFilterValuesUpdated(ev.detail.FilterName, newValues, ev.detail.Operator);
+
+            }
+
+        }).bind(this));
+
+        this.props.domElement.addEventListener('addFilter', ((ev:CustomEvent) => {
+            
+            ev.stopImmediatePropagation();
+            
+            console.log("Add filter value event");
+
+            const newValues: IRefinementValue[] = [];
+            
+            if(!this.state.selectedRefinementFilters.some((filter)=> filter.FilterName === ev.detail.FilterName 
+                && !filter.Values.some((filterValue) => filterValue === ev.detail.FilterValue))) {
+                this.onFilterValuesUpdated(ev.detail.FilterName, newValues, ev.detail.Operator);
+            }
+
+        }).bind(this));
+
+        this.props.domElement.addEventListener('removeAllFilters', ((ev:CustomEvent) => {
+
+            ev.stopImmediatePropagation();
+
+            console.log("Remove all filters event");
+
+            this.onRemoveAllFilters();
+
+        }).bind(this));
+
     }
 
     /**

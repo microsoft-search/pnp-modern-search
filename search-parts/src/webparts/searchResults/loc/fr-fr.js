@@ -180,6 +180,10 @@ define([], function() {
             "HideNavigationFieldName": "Cacher/Montrer les boutons de navigation (précédent, suivant, etc.)",
             "HideFirstLastPagesFieldName": "Cacher/Montrer les boutons de navigation 'dernier'/'premier'.",
             "HideDisabledFieldName": "Cacher/Montrer les boutons de navigation si désactivés",
+        },
+        "Extensibility": {
+            "GroupName": "Third Party Extensibility",
+            "ButtonLabel": "Load Extensibility"
         }
     }
 });

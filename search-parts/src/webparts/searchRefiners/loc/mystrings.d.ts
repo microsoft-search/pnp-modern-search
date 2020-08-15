@@ -74,6 +74,10 @@ declare interface ISearchRefinersWebPartStrings {
             RefinerSortTypeSortDirectionDescending: string
         }
     },
+    Extensibility: {
+        ButtonLabel: string;
+        GroupName: string;
+    }
 }
 
 declare module 'SearchRefinersWebPartStrings' {

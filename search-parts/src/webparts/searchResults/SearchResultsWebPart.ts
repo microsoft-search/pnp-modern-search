@@ -153,6 +153,10 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
     private _loadedLibraries:IExtensibilityLibrary[] = [];
     private _extensibilityEditor = null;
     private _availableHelpers = null;
+    
+    /**
+     * Switch between verticals & reset filters
+     */
     private prevVertical: string = "";
     private firstLoad = true;
 
@@ -401,10 +405,6 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         // Get current theme info
         this.initThemeVariant();
 
-        // Initialize extensibility
-        this._extensibilityService = new ExtensibilityService();        
-        await this._loadExtensibility();
-
         if (Environment.type === EnvironmentType.Local) {
             this._taxonomyService = new MockTaxonomyService();
             this._templateService = new MockTemplateService(this.context.pageContext.cultureInfo.currentUICultureName, this.context, this._searchService);
@@ -450,8 +450,10 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         this.ensureDataSourceConnection();
 
         this._handleQueryStringChange();
-        
-        await this._registerExtensions();
+
+        // Initialize extensibility
+        this._extensibilityService = new ExtensibilityService();        
+        await this._loadExtensibility();
 
         return super.onInit();
     }
@@ -526,6 +528,8 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             this.availableQueryModifierDefinitions = [];
             
         }
+
+        await this._registerExtensions();
 
     }
 
@@ -1074,13 +1078,11 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                 onLibraryAdded: async (id:Guid) => {
                     this.properties.extensibilityLibraries.push(id.toString());
                     await this._loadExtensibility();
-                    await this._registerExtensions();
                     return false;
                 },
                 onLibraryDeleted: async (id:Guid) => {
                     this.properties.extensibilityLibraries = this.properties.extensibilityLibraries.filter((lib)=> (lib != id.toString()));
                     await this._loadExtensibility();
-                    await this._registerExtensions();
                     return false;
                 }       
             })

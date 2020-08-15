@@ -8,4 +8,5 @@ export interface ISearchRefinersWebPartProps {
   searchResultsDataSourceReference: string;
   selectedLayout: RefinersLayoutOption;
   styles:string;
+  extensibilityLibraries: string[];
 }

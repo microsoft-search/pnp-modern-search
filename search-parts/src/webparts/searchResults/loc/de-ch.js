@@ -180,6 +180,10 @@ define([], function() {
             "HideNavigationFieldName": "Navigationsschaltflächen ausblenden (vorherige Seite, nächste Seite)",
             "HideFirstLastPagesFieldName": "Erste/letzte Navigationschaltfläche ausblenden",
             "HideDisabledFieldName": "Navigationsschaltflächen (zurück, nächste, erste, letzte) ausblenden, wenn sie deaktiviert sind.",
+        },
+        "Extensibility": {
+            "GroupName": "Third Party Extensibility",
+            "ButtonLabel": "Load Extensibility"
         }
     }
 });

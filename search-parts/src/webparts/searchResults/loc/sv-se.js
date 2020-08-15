@@ -180,6 +180,10 @@ define([], function() {
             "HideNavigationFieldName": "Dölj navigeringsval (föregående sida, nästa sida)",
             "HideFirstLastPagesFieldName": "Dölj första och sista navigeringsval",
             "HideDisabledFieldName": "Dölj navigeringsval (föregående, nästa, första, sista) om de är inaktiverade.",
+        },
+        "Extensibility": {
+            "GroupName": "Third Party Extensibility",
+            "ButtonLabel": "Load Extensibility"
         }
     }
 });

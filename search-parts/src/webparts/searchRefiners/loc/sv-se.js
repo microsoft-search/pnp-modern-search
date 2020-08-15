@@ -74,5 +74,9 @@ define([], function () {
         "RefinerSortTypeSortDirectionDescending": "Fallande"
       }
     },
+    "Extensibility": {
+        "GroupName": "Third Party Extensibility",
+        "ButtonLabel": "Load Extensibility"
+    }
   }
 });

@@ -13,7 +13,7 @@ import {
 } from "@microsoft/sp-property-pane";
 import { PropertyFieldCollectionData, CustomCollectionFieldType } from '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData';
 import * as strings from 'SearchRefinersWebPartStrings';
-import { IRefinementFilter, IUserService, ITimeZoneBias } from 'search-extensibility';
+import { ExtensionTypes, IExtension, ExtensibilityService, IExtensibilityService, IExtensibilityLibrary, IRefinementFilter, IUserService, ITimeZoneBias } from 'search-extensibility';
 import SearchRefinersContainer from './components/SearchRefinersContainer/SearchRefinersContainer';
 import { IDynamicDataCallables, IDynamicDataPropertyDefinition, IDynamicDataSource } from '@microsoft/sp-dynamic-data';
 import { ISearchRefinersWebPartProps } from './ISearchRefinersWebPartProps';
@@ -43,6 +43,8 @@ import { MockUserService } from '../../services/UserService/MockUserService';
 import { initializeFileTypeIcons } from '@uifabric/file-type-icons';
 import PnPTelemetry from "@pnp/telemetry-js";
 import { CssHelper } from '../../helpers/CssHelper';
+import { AvailableComponents } from '../../components/AvailableComponents';
+import { Guid } from '@microsoft/sp-core-library';
 
 const STYLE_PREFIX :string = "pnp-filter-wp-";
 
@@ -71,6 +73,16 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
    * The list of available managed managed properties (managed globally for all proeprty pane fiels if needed)
    */
   private _availableManagedProperties: IComboBoxOption[];
+
+
+  /**
+   * Extensibility functionality
+   */
+  private _extensibilityService: IExtensibilityService;
+  private _loadedLibraries:IExtensibilityLibrary[] = [];
+  private _extensibilityEditor = null;
+  private _availableHelpers = null;
+  private availableWebComponentDefinitions: IExtension<any>[] = AvailableComponents.BuiltinComponents;
 
   constructor() {
     super();
@@ -125,7 +137,8 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
           defaultSelectedRefinementFilters: defaultSelectedFilters,
           contentClassName: this._contentClassName,
           styles: this._customStyles,
-          templateService: this._templateService
+          templateService: this._templateService,
+          domElement: this.domElement
         } as ISearchRefinersContainerProps
       );
     } else {
@@ -230,10 +243,45 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
     if(!this.properties.styles || this.properties.styles.trim().length == 0) this.properties.styles = "<style></style>";
     
     this._customStyles = await this._processStyles();
+    
+    this._extensibilityService = new ExtensibilityService();        
+    await this._loadExtensibility();
 
     return super.onInit();
 
   }
+
+  /**
+   * Load extensibility functionality
+   */
+  private async _loadExtensibility() : Promise<void> {
+        
+    // Load extensibility library if present
+    this._loadedLibraries = await this._extensibilityService.loadExtensibilityLibraries(this.properties.extensibilityLibraries.map((i)=>Guid.parse(i)));
+
+    // Load extensibility additions
+    if (this._loadedLibraries && this._loadedLibraries.length>0) {
+
+        const extensions = this._extensibilityService.getAllExtensions(this._loadedLibraries);
+
+        // Add custom web components if any
+        this.availableWebComponentDefinitions = AvailableComponents.BuiltinComponents;
+        this.availableWebComponentDefinitions = this.availableWebComponentDefinitions.concat(
+            this._extensibilityService.filter(extensions, ExtensionTypes.WebComponent)
+        );
+
+        this._availableHelpers = this._extensibilityService.filter(extensions, ExtensionTypes.HandlebarsHelper);
+        
+    } else {
+
+        this.availableWebComponentDefinitions = AvailableComponents.BuiltinComponents;
+        this._availableHelpers = [];
+        
+    }
+
+    return await this._registerExtensions();
+
+}
 
   protected onDispose(): void {
     ReactDom.unmountComponentAtNode(this.domElement);
@@ -446,6 +494,36 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
     return stylingFields;
   }
 
+  private _getExtensbilityGroupFields():IPropertyPaneField<any>[] {
+    return [
+        new this._extensibilityEditor('extensibilityGuid',{
+            label: strings.Extensibility.ButtonLabel,
+            allowedExtensions: [ ExtensionTypes.WebComponent, ExtensionTypes.HandlebarsHelper ],
+            libraries: this._loadedLibraries,
+            onLibraryAdded: async (id:Guid) => {
+                this.properties.extensibilityLibraries.push(id.toString());
+                await this._loadExtensibility();
+                return false;
+            },
+            onLibraryDeleted: async (id:Guid) => {
+                this.properties.extensibilityLibraries = this.properties.extensibilityLibraries.filter((lib)=> (lib != id.toString()));
+                await this._loadExtensibility();
+                return false;
+            }       
+        })
+    ];
+  }
+  
+  private async _registerExtensions() : Promise<void> {
+
+    // Registers web components
+    this._templateService.registerWebComponents(this.availableWebComponentDefinitions);
+
+    // Register handlebars helpers
+    this._templateService.registerHelpers(this._availableHelpers);
+    
+  }
+
   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
     return {
       pages: [
@@ -458,6 +536,10 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
             {
               groupName: strings.StylingSettingsGroupName,
               groupFields: this._getStylingFields()
+            },
+            {
+              groupName: strings.Extensibility.GroupName,
+              groupFields: this._getExtensbilityGroupFields()
             }
           ],
           displayGroupsAsAccordion: true
@@ -479,6 +561,10 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
     this._propertyFieldCodeEditor = PropertyFieldCodeEditor;
     this._propertyFieldCodeEditorLanguages = PropertyFieldCodeEditorLanguages;
 
+    const { PropertyPaneExtensibilityEditor } = await import('search-extensibility');
+
+    this._extensibilityEditor = PropertyPaneExtensibilityEditor;
+
   }
 
   /**
@@ -497,10 +583,13 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
       this._searchResultSourceData.register(this.render);
 
     } else {
+
       if (this._searchResultSourceData) {
         this._searchResultSourceData.unregister(this.render);
       }
+
     }
+
   }
 
   protected async onPropertyPaneFieldChanged(propertyPath: string) {
@@ -530,6 +619,8 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
    * Initializes the Web Part required properties if there are not present in the manifest (i.e. during an update scenario)
    */
   private _initializeRequiredProperties() {
+    
+    if(!this.properties.extensibilityLibraries) this.properties.extensibilityLibraries = [];
 
     if (<any>this.properties.refinersConfiguration === "") {
       this.properties.refinersConfiguration = [];
