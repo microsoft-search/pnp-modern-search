@@ -6,7 +6,6 @@ import {
     IPropertyPaneCustomFieldProps
 } from '@microsoft/sp-property-pane';
 import { IExtensibilityEditorProps, ExtensibilityEditor } from './ExtensibilityEditor';
-import { ExtensionTypes } from '../../utility/ExtensionTypes';
 import { Guid } from '@microsoft/sp-core-library';
 
 export interface IExtensibilityEditorPropertyPaneProps extends IExtensibilityEditorProps {

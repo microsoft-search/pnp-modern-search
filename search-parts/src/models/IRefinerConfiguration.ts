@@ -39,6 +39,11 @@ interface IRefinerConfiguration {
      * Show filter textbox to search inside the refiner values
      */
     showValueFilter: boolean;
+
+    /**
+     * The handlebars template
+     */
+    customTemplate?:string;
 }
 
 export default IRefinerConfiguration;

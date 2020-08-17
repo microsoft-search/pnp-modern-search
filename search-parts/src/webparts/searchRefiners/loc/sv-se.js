@@ -71,12 +71,16 @@ define([], function () {
         "RefinerSortTypeByNumberOfResults": "Efter antal resultat",
         "RefinerSortTypeSortOrderLabel": "Sorteringriktning",
         "RefinerSortTypeSortDirectionAscending": "Stigande",
-        "RefinerSortTypeSortDirectionDescending": "Fallande"
+        "RefinerSortTypeSortDirectionDescending": "Fallande",
+        "Custom": {
+          "ItemTemplateLabel": "Benutzerdefinierte Vorlage",
+          "EditLabel": "Edit Template"
+        },
       }
     },
     "Extensibility": {
-        "GroupName": "Third Party Extensibility",
-        "ButtonLabel": "Load Extensibility"
+        "GroupName": "Anpassad mall",
+        "ButtonLabel": "Lastförlängbarhet"
     }
   }
 });

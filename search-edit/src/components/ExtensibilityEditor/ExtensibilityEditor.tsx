@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Icon, SelectionMode, DetailsListLayoutMode, DefaultButton, DetailsList, Panel, TextField, IIconProps, PanelType} from 'office-ui-fabric-react';
 import { Guid } from '@microsoft/sp-core-library';
-import { IExtensibilityLibrary, IExtension, ExtensibilityService } from '../..';
+import { IExtensibilityLibrary, IExtension, ExtensibilityService } from 'search-extensibility';
 import * as styles from './ExtensibilityEditor.module.scss';
-import * as strings from 'ModernSearchExtensibilityLibraryStrings';
+import * as strings from 'SearchEditComponentsLibraryStrings';
 
 export interface IExtensibilityEditorProps {
     label: string;
@@ -22,12 +22,12 @@ export interface IExtensibilityEditorState {
 export class ExtensibilityEditor extends React.Component<IExtensibilityEditorProps, IExtensibilityEditorState> {
 
     private _c = [
-        { key: 'i', name: strings.IconLabel, fieldName: 'icon', minWidth: 20, maxWidth: 20, isResizable: true, onRender: (item:IExtension<any>)=>{
+        { key: 'i', name: strings.ExtensibilityEditor.IconLabel, fieldName: 'icon', minWidth: 20, maxWidth: 20, isResizable: true, onRender: (item:IExtension<any>)=>{
           return <Icon iconName={item.icon && item.icon != "" ? item.icon : "Settings"} />;
         }},
-        { key: 'dn', name: strings.DisplayNameLabel, fieldName: 'displayName', minWidth: 100, maxWidth: 150, isResizable: true },
-        { key: 'n', name: strings.NameLabel, fieldName: 'name', minWidth: 150, maxWidth: 300, isResizable: true },
-        { key: 'd', name: strings.DescLabel, fieldName: 'description', minWidth: 300, maxWidth: 800, isResizable: true }
+        { key: 'dn', name: strings.ExtensibilityEditor.DisplayNameLabel, fieldName: 'displayName', minWidth: 100, maxWidth: 150, isResizable: true },
+        { key: 'n', name: strings.ExtensibilityEditor.NameLabel, fieldName: 'name', minWidth: 150, maxWidth: 300, isResizable: true },
+        { key: 'd', name: strings.ExtensibilityEditor.DescLabel, fieldName: 'description', minWidth: 300, maxWidth: 800, isResizable: true }
       ];
 
     private _deleteIcon: IIconProps = { iconName: 'Delete' };    
@@ -53,7 +53,7 @@ export class ExtensibilityEditor extends React.Component<IExtensibilityEditorPro
         const extensions = new Map<Guid, IExtension<any>>();
         const libraries = this.state.libraries.length > 0 
                 ? this.state.libraries.map((lib)=>this.renderLibrary(lib,lib.getExtensions()))
-                : <p>{strings.NoLibrariesAdded}</p>;
+                : <p>{strings.ExtensibilityEditor.NoLibrariesAdded}</p>;
         
         return <div className={styles.default.extensibilityEditorButton}>
             <DefaultButton 
@@ -64,7 +64,7 @@ export class ExtensibilityEditor extends React.Component<IExtensibilityEditorPro
                 </DefaultButton>
             <Panel
                 className={styles.default.extEditorPanel}
-                headerText={strings.PanelTitle}
+                headerText={strings.ExtensibilityEditor.PanelTitle}
                 isOpen={this.state.show}    
                 type={PanelType.large}
                 isLightDismiss={true}
@@ -75,7 +75,7 @@ export class ExtensibilityEditor extends React.Component<IExtensibilityEditorPro
                 }}>
                 <div className={styles.default.extensibilityEditor}>
                     <div className={styles.default.addContainer}>
-                        <TextField className={styles.default.addText} placeholder={strings.AddPlaceholder} onGetErrorMessage={this.validateLibrary.bind(this)} validateOnFocusOut={true} validateOnLoad={false}></TextField>
+                        <TextField className={styles.default.addText} placeholder={strings.ExtensibilityEditor.AddPlaceholder} onGetErrorMessage={this.validateLibrary.bind(this)} validateOnFocusOut={true} validateOnLoad={false}></TextField>
                     </div>
                     {libraries}
                 </div>
@@ -88,7 +88,7 @@ export class ExtensibilityEditor extends React.Component<IExtensibilityEditorPro
         if(!extensions || extensions.length === 0) {
           return <div>
               <h2 className={styles.default.subTitle}>{library.name}</h2>
-              <p className={styles.default.description}>{strings.NoExtensions}</p>
+              <p className={styles.default.description}>{strings.ExtensibilityEditor.NoExtensions}</p>
             </div>;
         }
 
@@ -113,10 +113,10 @@ export class ExtensibilityEditor extends React.Component<IExtensibilityEditorPro
                     iconProps={this._deleteIcon}
                     className={styles.default.deleteButton}
                     onClick={this.deleteLibrary.bind(this, library.guid)}
-                    >{strings.Delete}</DefaultButton>
+                    >{strings.ExtensibilityEditor.Delete}</DefaultButton>
             </h1>
-            <h2 className={styles.default.subTitle}>{strings.LibraryDescription}{library.description}</h2>
-            <h2 className={styles.default.subTitle}>{strings.LibraryGuid}{library.guid.toString()}</h2>
+            <h2 className={styles.default.subTitle}>{strings.ExtensibilityEditor.LibraryDescription}{library.description}</h2>
+            <h2 className={styles.default.subTitle}>{strings.ExtensibilityEditor.LibraryGuid}{library.guid.toString()}</h2>
             {lists}
         </div>;
     
@@ -137,11 +137,11 @@ export class ExtensibilityEditor extends React.Component<IExtensibilityEditorPro
         let libraryGuid:Guid;
         let loadedLibrary:IExtensibilityLibrary;
         
-        if(!guid || guid.trim() == "") return strings.EnterValidGuid;
+        if(!guid || guid.trim() == "") return strings.ExtensibilityEditor.EnterValidGuid;
         
-        if(!(libraryGuid = Guid.tryParse(guid))) return strings.EnterValidGuid;
+        if(!(libraryGuid = Guid.tryParse(guid))) return strings.ExtensibilityEditor.EnterValidGuid;
 
-        if(this.libraryAlreadyLoaded(libraryGuid)) return strings.LibraryAlreadyLoaded;
+        if(this.libraryAlreadyLoaded(libraryGuid)) return strings.ExtensibilityEditor.LibraryAlreadyLoaded;
 
         if(loadedLibrary = await this._service.tryLoadExtensibilityLibrary(libraryGuid)) {
             
@@ -156,13 +156,13 @@ export class ExtensibilityEditor extends React.Component<IExtensibilityEditorPro
             
             } else {
             
-                return strings.LibraryHasNoExtensions;
+                return strings.ExtensibilityEditor.LibraryHasNoExtensions;
             
             }
 
         } else {
 
-            return strings.LibraryCouldNotBeLoaded;
+            return strings.ExtensibilityEditor.LibraryCouldNotBeLoaded;
 
         }
 

@@ -71,7 +71,11 @@ declare interface ISearchRefinersWebPartStrings {
             RefinerSortTypeByNumberOfResults: string,
             RefinerSortTypeSortOrderLabel: string,
             RefinerSortTypeSortDirectionAscending: string,
-            RefinerSortTypeSortDirectionDescending: string
+            RefinerSortTypeSortDirectionDescending: string,
+            Custom: {
+                ItemTemplateLabel: string;
+                EditLabel: string;
+            },
         }
     },
     Extensibility: {

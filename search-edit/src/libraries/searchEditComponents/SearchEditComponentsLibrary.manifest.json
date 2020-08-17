@@ -1,0 +1,9 @@
+{
+  "id": "b4c35af5-102d-4a2d-a448-4b25a7e66a94",
+  "alias": "SearchEditComponentsLibrary",
+  "componentType": "Library",
+
+  // The "*" signifies that the version should be taken from the package.json
+  "version": "*",
+  "manifestVersion": 2
+}

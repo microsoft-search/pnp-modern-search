@@ -804,10 +804,15 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
     }
 
     protected async loadPropertyPaneResources(): Promise<void> {
-
+        /*
         const { PropertyPaneExtensibilityEditor } = await import('search-extensibility');
 
         this._extensibilityEditor = PropertyPaneExtensibilityEditor;
+        */
+        const { SearchEditComponentsLibrary } = await import('search-edit');
+        const lib = new SearchEditComponentsLibrary();
+
+        this._extensibilityEditor = lib.getExtensibilityEditor();
 
         // tslint:disable-next-line:no-shadowed-variable
         const { PropertyFieldCodeEditor, PropertyFieldCodeEditorLanguages } = await import(

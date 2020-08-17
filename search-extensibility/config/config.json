@@ -12,7 +12,5 @@
     }
   },
   "externals": {},
-  "localizedResources": {
-    "ModernSearchExtensibilityLibraryStrings": "lib/loc/{locale}.js"
-  }
+  "localizedResources": {}
 }

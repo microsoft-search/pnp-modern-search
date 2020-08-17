@@ -11,9 +11,8 @@ import {
   PropertyPaneTextField,
   PropertyPaneToggle
 } from "@microsoft/sp-property-pane";
-import { PropertyFieldCollectionData, CustomCollectionFieldType } from '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData';
 import * as strings from 'SearchRefinersWebPartStrings';
-import { ExtensionTypes, IExtension, ExtensibilityService, IExtensibilityService, IExtensibilityLibrary, IRefinementFilter, IUserService, ITimeZoneBias } from 'search-extensibility';
+import { ExtensionTypes, IExtension, ExtensibilityService, IExtensibilityService, IExtensibilityLibrary, IRefinementFilter, IUserService, ITimeZoneBias, IRefinementValue } from 'search-extensibility';
 import SearchRefinersContainer from './components/SearchRefinersContainer/SearchRefinersContainer';
 import { IDynamicDataCallables, IDynamicDataPropertyDefinition, IDynamicDataSource } from '@microsoft/sp-dynamic-data';
 import { ISearchRefinersWebPartProps } from './ISearchRefinersWebPartProps';
@@ -45,6 +44,8 @@ import PnPTelemetry from "@pnp/telemetry-js";
 import { CssHelper } from '../../helpers/CssHelper';
 import { AvailableComponents } from '../../components/AvailableComponents';
 import { Guid } from '@microsoft/sp-core-library';
+import IRefinerConfiguration from '../../models/IRefinerConfiguration';
+import { ICustomCollectionField } from '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData';
 
 const STYLE_PREFIX :string = "pnp-filter-wp-";
 
@@ -58,11 +59,17 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
   private _themeProvider: ThemeProvider;
   private _themeVariant: IReadonlyTheme;
   private _userService: IUserService;
-  private _propertyFieldCodeEditor = null;
-  private _propertyFieldCodeEditorLanguages = null;
   private _templateService: BaseTemplateService;
   private _contentClassName:string = null;
   private _customStyles:string = null;
+
+  /**
+   * Lazy loaded property pane controls
+   */
+  private _propertyFieldCodeEditor = null;
+  private _propertyFieldCodeEditorLanguages = null;
+  private _propertyFieldCollectionData = null;
+  private _customCollectionFieldType = null;
 
   /**
    * Information about time zone bias (current user or web)
@@ -311,7 +318,7 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
   private _getRefinerSettings(): IPropertyPaneField<any>[] {
 
     const refinerSettings = [
-      PropertyFieldCollectionData('refinersConfiguration', {
+      this._propertyFieldCollectionData('refinersConfiguration', {
         manageBtnLabel: strings.Refiners.EditRefinersLabel,
         key: 'refiners',
         enableSorting: true,
@@ -323,7 +330,7 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
           {
             id: 'refinerName',
             title: strings.Refiners.RefinerManagedPropertyField,
-            type: CustomCollectionFieldType.custom,
+            type: this._customCollectionFieldType.custom,
             onCustomRender: (field, value, onUpdate, item, itemId, onCustomFieldValidation) => {
               // Need to specify a React key to avoid item duplication when adding a new row
               return React.createElement("div", { key: `${field.id}-${itemId}` },
@@ -343,12 +350,12 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
           {
             id: 'displayValue',
             title: strings.Refiners.RefinerDisplayValueField,
-            type: CustomCollectionFieldType.string
+            type: this._customCollectionFieldType.string
           },
           {
             id: 'template',
             title: strings.Refiners.RefinerTemplateField,
-            type: CustomCollectionFieldType.dropdown,
+            type: this._customCollectionFieldType.dropdown,
             options: [
               {
                 key: RefinerTemplateOption.CheckBox,
@@ -381,13 +388,17 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
               {
                 key: RefinerTemplateOption.ContainerTree,
                 text: strings.Refiners.Templates.ContainerTreeRefinementItemTemplateLabel
+              },
+              {
+                key: RefinerTemplateOption.Custom,
+                text: strings.Refiners.Templates.Custom.ItemTemplateLabel
               }
             ]
           },
           {
             id: 'refinerSortType',
             title: strings.Refiners.Templates.RefinerSortTypeLabel,
-            type: CustomCollectionFieldType.dropdown,
+            type: this._customCollectionFieldType.dropdown,
             options: [
               {
                 key: RefinersSortOption.Default,
@@ -408,7 +419,7 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
           {
             id: 'refinerSortDirection',
             title: strings.Refiners.Templates.RefinerSortTypeSortOrderLabel,
-            type: CustomCollectionFieldType.dropdown,
+            type: this._customCollectionFieldType.dropdown,
             options: [
               {
                 key: RefinersSortDirection.Ascending,
@@ -425,12 +436,40 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
           {
             id: 'showExpanded',
             title: strings.Refiners.ShowExpanded,
-            type: CustomCollectionFieldType.boolean
+            type: this._customCollectionFieldType.boolean
           },
           {
             id: 'showValueFilter',
             title: strings.Refiners.showValueFilter,
-            type: CustomCollectionFieldType.boolean
+            type: this._customCollectionFieldType.boolean
+          },
+          {
+            id:'customTemplate',
+            title: strings.Refiners.Templates.Custom.EditLabel,
+            type: this._customCollectionFieldType.custom,
+            onCustomRender: (field:ICustomCollectionField,
+                              value:string,
+                              onUpdate: (fieldId:string, value:string) => void, 
+                              item:IRefinerConfiguration,
+                              itemId:string,
+                              onError:(fieldId:string, errorMessage:string) => void) => {
+              
+              return (item.template !== RefinerTemplateOption.Custom 
+                ? null
+                : this._propertyFieldCodeEditor('template' + itemId, {
+                    label: strings.Refiners.Templates.Custom.EditLabel,
+                    panelTitle: strings.Refiners.Templates.Custom.EditLabel,
+                    initialValue: value,
+                    deferredValidationTime: 500,
+                    onPropertyChange: async(propertyPath: string, oldValue: any, newValue: any) => {
+                      onUpdate(field.id, newValue);
+                    },
+                    properties: item,
+                    key: 'refinerTemplate'+itemId,
+                    language: this._propertyFieldCodeEditorLanguages.Handlebars
+                })
+              );
+            }
           }
         ]
       }),
@@ -560,10 +599,23 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
     );
     this._propertyFieldCodeEditor = PropertyFieldCodeEditor;
     this._propertyFieldCodeEditorLanguages = PropertyFieldCodeEditorLanguages;
-
+/*
     const { PropertyPaneExtensibilityEditor } = await import('search-extensibility');
 
     this._extensibilityEditor = PropertyPaneExtensibilityEditor;
+*/
+
+    const { SearchEditComponentsLibrary } = await import('search-edit');
+    const lib = new SearchEditComponentsLibrary();
+
+    this._extensibilityEditor = lib.getExtensibilityEditor();
+
+    const { PropertyFieldCollectionData, CustomCollectionFieldType } = await import(
+        /* webpackChunkName: 'search-property-pane' */
+        '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData'
+    );
+    this._propertyFieldCollectionData = PropertyFieldCollectionData;
+    this._customCollectionFieldType = CustomCollectionFieldType;
 
   }
 

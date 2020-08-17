@@ -419,9 +419,11 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
 
     protected async loadPropertyPaneResources(): Promise<void> {
 
-        const { PropertyPaneExtensibilityEditor } = await import('search-extensibility');
+        //const { PropertyPaneExtensibilityEditor } = await import('search-extensibility');
+        const { SearchEditComponentsLibrary } = await import('search-edit');
+        const lib = new SearchEditComponentsLibrary();
 
-        this._extensibilityEditor = PropertyPaneExtensibilityEditor;
+        this._extensibilityEditor = lib.getExtensibilityEditor();
 
         const { PropertyFieldCollectionData, CustomCollectionFieldType } = await import(
             /* webpackChunkName: 'search-property-pane' */

@@ -71,7 +71,11 @@ define([], function () {
         "RefinerSortTypeByNumberOfResults": "By number of results",
         "RefinerSortTypeSortOrderLabel": "Sort order",
         "RefinerSortTypeSortDirectionAscending": "Ascending",
-        "RefinerSortTypeSortDirectionDescending": "Descending"
+        "RefinerSortTypeSortDirectionDescending": "Descending",
+        "Custom": {
+          "ItemTemplateLabel": "Custom Template",
+          "EditLabel": "Edit Template"
+        },
       }
     },
     "Extensibility": {
