@@ -1032,11 +1032,15 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             } else {
                 this._templateContentToDisplay = this.properties.inlineTemplateText ? this.properties.inlineTemplateText : TemplateService.getTemplateContent(ResultsLayoutOption.Custom);
             }
+
         } else {
+
+            if(typeof this._templateService["loadPropertyPaneResources"] === "function") this._templateService["loadPropertyPaneResources"]();
 
             // Builtin templates with options
             this._templateContentToDisplay = TemplateService.getTemplateContent(this.properties.selectedLayout);
             this._templatePropertyPaneOptions = this._templateService.getTemplateParameters(this.properties.selectedLayout, this.properties, this._onUpdateAvailableProperties, this._availableManagedProperties);
+
         }
 
         // Register result types inside the template

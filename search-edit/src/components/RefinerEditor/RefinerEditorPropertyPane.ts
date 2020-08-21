@@ -14,7 +14,7 @@ export interface IRefinerEditorPropertyPaneProps extends IRefinerEditorProps {
 
 export interface IRefinerEditorPropertyPaneInternalProps extends IRefinerEditorPropertyPaneProps, IPropertyPaneCustomFieldProps {}
 
-export class PropertyPaneExtensibilityEditor implements IPropertyPaneField<IRefinerEditorPropertyPaneProps> {
+export class PropertyPaneRefinerEditor implements IPropertyPaneField<IRefinerEditorPropertyPaneProps> {
     public type: PropertyPaneFieldType = PropertyPaneFieldType.Custom;
     public targetProperty: string;
     public shouldFocus?: boolean;

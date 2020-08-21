@@ -1,6 +1,6 @@
 import { PropertyPaneSearchManagedProperties } from '../../components/PropertyPaneSearchManagedProperties/PropertyPaneSearchManagedProperties';
 import { PropertyPaneExtensibilityEditor } from '../../components/ExtensibilityEditor/ExtensibilityEditorPropertyPane';
-import { RefinerEditor } from '../../components/RefinerEditor/RefinerEditor';
+import { PropertyPaneRefinerEditor } from '../../components/RefinerEditor/RefinerEditorPropertyPane';
 import { TemplateValueFieldEditor } from '../../components/TemplateValueFieldEditor/TemplateValueFieldEditor';
 import { SearchManagedProperties } from '../../controls/SearchManagedProperties/SearchManagedProperties';
 
@@ -10,8 +10,8 @@ export class SearchEditComponentsLibrary {
     return PropertyPaneExtensibilityEditor;
   }
 
-  public getRefinersEditor() : typeof RefinerEditor {
-    return RefinerEditor;
+  public getRefinersEditor() : typeof PropertyPaneRefinerEditor {
+    return PropertyPaneRefinerEditor;
   }
   
   public getSearchManagedPropertiesEditor() : typeof SearchManagedProperties {

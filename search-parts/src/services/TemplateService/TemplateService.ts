@@ -65,6 +65,7 @@ export class TemplateService extends BaseTemplateService {
         this._spHttpClient = spHttpClient;
         this.CurrentLocale = locale;
         this.TimeZoneBias = timeZoneBias;
+        
     }
 
     /**
@@ -607,6 +608,6 @@ export class TemplateService extends BaseTemplateService {
         const lib = new SearchEditComponentsLibrary();
         this._templateEditor = lib.getTemplateValueFieldEditor();
 
-
     }
+
 }

@@ -319,8 +319,13 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
   private _getRefinerSettings(): IPropertyPaneField<any>[] {
 
     const refinerSettings = [
-      this._refinerEditor('refinersConfiguration', {
-        
+      new this._refinerEditor('refinersConfiguration', {
+        key: "refinersConfiguration",
+        label: strings.Refiners.EditRefinersLabel,
+        refiners: this.properties.refinersConfiguration,
+        onAvailablePropertiesUpdated: this._onUpdateAvailableProperties.bind(this),
+        searchService: this._searchService,
+        availableProperties: this._availableManagedProperties
       }),
       PropertyPaneDropdown('searchResultsDataSourceReference', {
         options: this._dynamicDataService.getAvailableDataSourcesByType(SearchComponentType.SearchResultsWebPart),
