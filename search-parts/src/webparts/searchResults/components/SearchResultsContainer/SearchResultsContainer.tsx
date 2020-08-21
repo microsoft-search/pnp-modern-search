@@ -280,8 +280,6 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
 
             const isVerticalSwitch = (this.props.searchService.queryTemplate + this.props.searchService.resultSourceId) !== (prevProps.searchService.queryTemplate + prevProps.searchService.resultSourceId);
 
-            // Reset the current sort order
-            resetSorting = true;
             this._defaultSortingValues = this._getDefaultSortingValues();
 
             if (lastQuery !== query) {
@@ -296,6 +294,9 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
 
                 // Reset page number
                 selectedPage = 1;
+
+                // Reset the current sort order
+                resetSorting = true;
             }
 
             if (selectedPage !== prevProps.selectedPage) {
