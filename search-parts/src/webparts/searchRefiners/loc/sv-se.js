@@ -33,14 +33,6 @@ define([], function () {
       "ShowExpanded": "Expandera filter som standard",
       "showValueFilter": "Visa filter för avgränsningar",
       "Templates": {
-        "RefinementItemTemplateLabel": "Standard filter",
-        "MutliValueRefinementItemTemplateLabel": "Fler värdes filter",
-        "PersonaRefinementItemLabel": "Person",
-        "DateRangeRefinementItemLabel": "Datumintervall",
-        "FixedDateRangeRefinementItemLabel": "Datumintervall (fasta intervall)",
-        "FileTypeRefinementItemTemplateLabel": "Filtyp",
-        "FileTypeMutliValueRefinementItemTemplateLabel": "Flera filtyp",
-        "ContainerTreeRefinementItemTemplateLabel": "Container-träd",
         "DateFromLabel": "Från",
         "DateTolabel": "Till",
         "DatePickerStrings": {
@@ -65,16 +57,6 @@ define([], function () {
           "Past3Months": "Senaste 3 månaderna",
           "PastYear": "Senaste år",
           "Older": "Äldre än ett år"
-        },
-        "RefinerSortTypeLabel": "Sorteringsordning",
-        "RefinerSortTypeAlphabetical": "Alfabetisk",
-        "RefinerSortTypeByNumberOfResults": "Efter antal resultat",
-        "RefinerSortTypeSortOrderLabel": "Sorteringriktning",
-        "RefinerSortTypeSortDirectionAscending": "Stigande",
-        "RefinerSortTypeSortDirectionDescending": "Fallande",
-        "Custom": {
-          "ItemTemplateLabel": "Benutzerdefinierte Vorlage",
-          "EditLabel": "Edit Template"
         },
       }
     },

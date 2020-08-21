@@ -12,7 +12,10 @@ import {
   PropertyPaneToggle
 } from "@microsoft/sp-property-pane";
 import * as strings from 'SearchRefinersWebPartStrings';
-import { ExtensionTypes, IExtension, ExtensibilityService, IExtensibilityService, IExtensibilityLibrary, IRefinementFilter, IUserService, ITimeZoneBias, IRefinementValue } from 'search-extensibility';
+import { ExtensionTypes, IExtension, ExtensibilityService, IExtensibilityService, 
+  IExtensibilityLibrary, IRefinementFilter, IUserService, ITimeZoneBias, 
+  RefinersLayoutOption, RefinerTemplateOption,
+  RefinersSortOption, RefinerSortDirection } from 'search-extensibility';
 import SearchRefinersContainer from './components/SearchRefinersContainer/SearchRefinersContainer';
 import { IDynamicDataCallables, IDynamicDataPropertyDefinition, IDynamicDataSource } from '@microsoft/sp-dynamic-data';
 import { ISearchRefinersWebPartProps } from './ISearchRefinersWebPartProps';
@@ -20,15 +23,10 @@ import { Placeholder } from '@pnp/spfx-controls-react/lib/Placeholder';
 import IRefinerSourceData from '../../models/IRefinerSourceData';
 import { DynamicProperty, ThemeChangedEventArgs, ThemeProvider, IReadonlyTheme } from '@microsoft/sp-component-base';
 import { SearchComponentType } from '../../models/SearchComponentType';
-import RefinersLayoutOption from '../../models/RefinersLayoutOptions';
 import { ISearchRefinersContainerProps } from './components/SearchRefinersContainer/ISearchRefinersContainerProps';
 import ISearchResultSourceData from '../../models/ISearchResultSourceData';
 import { DynamicDataService } from '../../services/DynamicDataService/DynamicDataService';
 import IDynamicDataService from '../../services/DynamicDataService/IDynamicDataService';
-import RefinerTemplateOption from '../../models/RefinerTemplateOption';
-import RefinersSortOption from '../../models/RefinersSortOptions';
-import RefinersSortDirection from '../../models/RefinersSortDirection';
-import { SearchManagedProperties, ISearchManagedPropertiesProps } from '../../controls/SearchManagedProperties/SearchManagedProperties';
 import MockSearchService from '../../services/SearchService/MockSearchService';
 import SearchService from '../../services/SearchService/SearchService';
 import ISearchService from '../../services/SearchService/ISearchService';
@@ -44,8 +42,6 @@ import PnPTelemetry from "@pnp/telemetry-js";
 import { CssHelper } from '../../helpers/CssHelper';
 import { AvailableComponents } from '../../components/AvailableComponents';
 import { Guid } from '@microsoft/sp-core-library';
-import IRefinerConfiguration from '../../models/IRefinerConfiguration';
-import { ICustomCollectionField } from '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData';
 
 const STYLE_PREFIX :string = "pnp-filter-wp-";
 
@@ -90,6 +86,11 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
   private _extensibilityEditor = null;
   private _availableHelpers = null;
   private availableWebComponentDefinitions: IExtension<any>[] = AvailableComponents.BuiltinComponents;
+
+  /**
+   * Refiner editor functionality
+   */
+  private _refinerEditor = null;
 
   constructor() {
     super();
@@ -318,160 +319,8 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
   private _getRefinerSettings(): IPropertyPaneField<any>[] {
 
     const refinerSettings = [
-      this._propertyFieldCollectionData('refinersConfiguration', {
-        manageBtnLabel: strings.Refiners.EditRefinersLabel,
-        key: 'refiners',
-        enableSorting: true,
-        panelHeader: strings.Refiners.EditRefinersLabel,
-        panelDescription: strings.Refiners.RefinersFieldDescription,
-        label: strings.Refiners.RefinersFieldLabel,
-        value: this.properties.refinersConfiguration,
-        fields: [
-          {
-            id: 'refinerName',
-            title: strings.Refiners.RefinerManagedPropertyField,
-            type: this._customCollectionFieldType.custom,
-            onCustomRender: (field, value, onUpdate, item, itemId, onCustomFieldValidation) => {
-              // Need to specify a React key to avoid item duplication when adding a new row
-              return React.createElement("div", { key: `${field.id}-${itemId}` },
-                React.createElement(SearchManagedProperties, {
-                  defaultSelectedKey: item[field.id] ? item[field.id] : '',
-                  onUpdate: (newValue: any, isSortable: boolean) => {
-                    onUpdate(field.id, newValue);
-                    onCustomFieldValidation(field.id, '');
-                  },
-                  searchService: this._searchService,
-                  validateSortable: false,
-                  availableProperties: this._availableManagedProperties,
-                  onUpdateAvailableProperties: this._onUpdateAvailableProperties
-                } as ISearchManagedPropertiesProps));
-            }
-          },
-          {
-            id: 'displayValue',
-            title: strings.Refiners.RefinerDisplayValueField,
-            type: this._customCollectionFieldType.string
-          },
-          {
-            id: 'template',
-            title: strings.Refiners.RefinerTemplateField,
-            type: this._customCollectionFieldType.dropdown,
-            options: [
-              {
-                key: RefinerTemplateOption.CheckBox,
-                text: strings.Refiners.Templates.RefinementItemTemplateLabel
-              },
-              {
-                key: RefinerTemplateOption.CheckBoxMulti,
-                text: strings.Refiners.Templates.MutliValueRefinementItemTemplateLabel
-              },
-              {
-                key: RefinerTemplateOption.DateRange,
-                text: strings.Refiners.Templates.DateRangeRefinementItemLabel,
-              },
-              {
-                key: RefinerTemplateOption.FixedDateRange,
-                text: strings.Refiners.Templates.FixedDateRangeRefinementItemLabel,
-              },
-              {
-                key: RefinerTemplateOption.Persona,
-                text: strings.Refiners.Templates.PersonaRefinementItemLabel,
-              },
-              {
-                key: RefinerTemplateOption.FileType,
-                text: strings.Refiners.Templates.FileTypeRefinementItemTemplateLabel
-              },
-              {
-                key: RefinerTemplateOption.FileTypeMulti,
-                text: strings.Refiners.Templates.FileTypeMutliValueRefinementItemTemplateLabel
-              },
-              {
-                key: RefinerTemplateOption.ContainerTree,
-                text: strings.Refiners.Templates.ContainerTreeRefinementItemTemplateLabel
-              },
-              {
-                key: RefinerTemplateOption.Custom,
-                text: strings.Refiners.Templates.Custom.ItemTemplateLabel
-              }
-            ]
-          },
-          {
-            id: 'refinerSortType',
-            title: strings.Refiners.Templates.RefinerSortTypeLabel,
-            type: this._customCollectionFieldType.dropdown,
-            options: [
-              {
-                key: RefinersSortOption.Default,
-                text: "--"
-              },
-              {
-                key: RefinersSortOption.ByNumberOfResults,
-                text: strings.Refiners.Templates.RefinerSortTypeByNumberOfResults,
-                ariaLabel: strings.Refiners.Templates.RefinerSortTypeByNumberOfResults
-              },
-              {
-                key: RefinersSortOption.Alphabetical,
-                text: strings.Refiners.Templates.RefinerSortTypeAlphabetical,
-                ariaLabel: strings.Refiners.Templates.RefinerSortTypeAlphabetical
-              }
-            ]
-          },
-          {
-            id: 'refinerSortDirection',
-            title: strings.Refiners.Templates.RefinerSortTypeSortOrderLabel,
-            type: this._customCollectionFieldType.dropdown,
-            options: [
-              {
-                key: RefinersSortDirection.Ascending,
-                text: strings.Refiners.Templates.RefinerSortTypeSortDirectionAscending,
-                ariaLabel: strings.Refiners.Templates.RefinerSortTypeSortDirectionAscending
-              },
-              {
-                key: RefinersSortDirection.Descending,
-                text: strings.Refiners.Templates.RefinerSortTypeSortDirectionDescending,
-                ariaLabel: strings.Refiners.Templates.RefinerSortTypeSortDirectionDescending
-              }
-            ]
-          },
-          {
-            id: 'showExpanded',
-            title: strings.Refiners.ShowExpanded,
-            type: this._customCollectionFieldType.boolean
-          },
-          {
-            id: 'showValueFilter',
-            title: strings.Refiners.showValueFilter,
-            type: this._customCollectionFieldType.boolean
-          },
-          {
-            id:'customTemplate',
-            title: strings.Refiners.Templates.Custom.EditLabel,
-            type: this._customCollectionFieldType.custom,
-            onCustomRender: (field:ICustomCollectionField,
-                              value:string,
-                              onUpdate: (fieldId:string, value:string) => void, 
-                              item:IRefinerConfiguration,
-                              itemId:string,
-                              onError:(fieldId:string, errorMessage:string) => void) => {
-              
-              return (item.template !== RefinerTemplateOption.Custom 
-                ? null
-                : this._propertyFieldCodeEditor('template' + itemId, {
-                    label: strings.Refiners.Templates.Custom.EditLabel,
-                    panelTitle: strings.Refiners.Templates.Custom.EditLabel,
-                    initialValue: value,
-                    deferredValidationTime: 500,
-                    onPropertyChange: async(propertyPath: string, oldValue: any, newValue: any) => {
-                      onUpdate(field.id, newValue);
-                    },
-                    properties: item,
-                    key: 'refinerTemplate'+itemId,
-                    language: this._propertyFieldCodeEditorLanguages.Handlebars
-                })
-              );
-            }
-          }
-        ]
+      this._refinerEditor('refinersConfiguration', {
+        
       }),
       PropertyPaneDropdown('searchResultsDataSourceReference', {
         options: this._dynamicDataService.getAvailableDataSourcesByType(SearchComponentType.SearchResultsWebPart),
@@ -501,7 +350,7 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
           officeFabricIconFontName: 'ClosePane'
         },
         text: 'Panel',
-        key: RefinersLayoutOption.LinkAndPanel
+        key: RefinersLayoutOption.LinkAndPanel 
       }
     ] as IPropertyPaneChoiceGroupOption[];
 
@@ -610,6 +459,8 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
 
     this._extensibilityEditor = lib.getExtensibilityEditor();
 
+    this._refinerEditor = lib.getRefinersEditor();
+
     const { PropertyFieldCollectionData, CustomCollectionFieldType } = await import(
         /* webpackChunkName: 'search-property-pane' */
         '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData'
@@ -688,7 +539,7 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
           config.refinerSortType = RefinersSortOption.ByNumberOfResults;
         }
         if (!config.refinerSortDirection) {
-          config.refinerSortDirection = config.refinerSortType == RefinersSortOption.Alphabetical ? RefinersSortDirection.Ascending : RefinersSortDirection.Descending;
+          config.refinerSortDirection = config.refinerSortType == RefinersSortOption.Alphabetical ? RefinerSortDirection.Ascending : RefinerSortDirection.Descending;
         }
 
         return config;
@@ -703,7 +554,7 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
           displayValue: "Created Date",
           template: RefinerTemplateOption.CheckBox,
           refinerSortType: RefinersSortOption.Default,
-          refinerSortDirection: RefinersSortDirection.Ascending,
+          refinerSortDirection: RefinerSortDirection.Ascending,
           showExpanded: false,
           showValueFilter: false
         },
@@ -712,7 +563,7 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
           displayValue: "Size of the file",
           template: RefinerTemplateOption.CheckBox,
           refinerSortType: RefinersSortOption.ByNumberOfResults,
-          refinerSortDirection: RefinersSortDirection.Descending,
+          refinerSortDirection: RefinerSortDirection.Descending,
           showExpanded: false,
           showValueFilter: false
         },
@@ -721,7 +572,7 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
           displayValue: "Tags",
           template: RefinerTemplateOption.CheckBox,
           refinerSortType: RefinersSortOption.Alphabetical,
-          refinerSortDirection: RefinersSortDirection.Ascending,
+          refinerSortDirection: RefinerSortDirection.Ascending,
           showExpanded: false,
           showValueFilter: false
         },
@@ -730,7 +581,7 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
           displayValue: "Person",
           template: RefinerTemplateOption.Persona,
           refinerSortType: RefinersSortOption.Alphabetical,
-          refinerSortDirection: RefinersSortDirection.Ascending,
+          refinerSortDirection: RefinerSortDirection.Ascending,
           showExpanded: false,
           showValueFilter: false
         }

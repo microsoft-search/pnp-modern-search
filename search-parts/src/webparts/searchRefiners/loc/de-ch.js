@@ -33,14 +33,6 @@ define([], function () {
       "ShowExpanded": "Filter standardmässig erweitern",
       "showValueFilter": "Filter für Einschränkungswerte anzeigen",
       "Templates": {
-        "RefinementItemTemplateLabel": "Standard-Einschränkungselement",
-        "MutliValueRefinementItemTemplateLabel": "Mehrwertiges Einschränkungselement",
-        "PersonaRefinementItemLabel": "Persona",
-        "DateRangeRefinementItemLabel": "Datumsbereich",
-        "FixedDateRangeRefinementItemLabel": "Datumsbereich (feste Intervalle)",
-        "FileTypeRefinementItemTemplateLabel": "Dateityp",
-        "FileTypeMutliValueRefinementItemTemplateLabel": "Mehrere Dateitypen",
-        "ContainerTreeRefinementItemTemplateLabel": "Container-Baum",
         "DateFromLabel": "Von",
         "DateTolabel": "An",
         "DatePickerStrings": {
@@ -65,16 +57,6 @@ define([], function () {
           "Past3Months": "Vergangene 3 Monate",
           "PastYear": "Vergangenes Jahr",
           "Older": "Älter als 1 Jahr"
-        },
-        "RefinerSortTypeLabel": "Einschränkungs Sortiertyp",
-        "RefinerSortTypeAlphabetical": "Alphabetisch",
-        "RefinerSortTypeByNumberOfResults": "Nach Anzahl der Ergebnisse",
-        "RefinerSortTypeSortOrderLabel": "Sortierreihenfolge",
-        "RefinerSortTypeSortDirectionAscending": "Aufsteigend",
-        "RefinerSortTypeSortDirectionDescending": "Absteigend",
-        "Custom": {
-          "ItemTemplateLabel": "Benutzerdefinierte Vorlage",
-          "EditLabel": "Edit Template"
         },
       }
     },

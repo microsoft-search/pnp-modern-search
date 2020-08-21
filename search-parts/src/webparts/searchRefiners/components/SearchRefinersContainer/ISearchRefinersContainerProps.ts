@@ -1,10 +1,7 @@
-import { IRefinementResult, IRefinementFilter, IRefinementValue } from "search-extensibility";
-import IRefinerConfiguration from "../../../../models/IRefinerConfiguration";
+import { IRefinementResult, IRefinementFilter, IRefinerConfiguration, RefinersLayoutOption } from "search-extensibility";
 import { DisplayMode } from "@microsoft/sp-core-library";
-import RefinersLayoutOption from "../../../../models/RefinersLayoutOptions";
 import { IUserService } from 'search-extensibility';
 import { IReadonlyTheme } from "@microsoft/sp-component-base";
-import BaseTemplateService from "../../../../services/TemplateService/BaseTemplateService";
 
 export interface ISearchRefinersContainerProps {
   /**

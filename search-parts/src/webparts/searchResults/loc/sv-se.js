@@ -160,7 +160,6 @@ define([], function() {
             "PersonaSizeLarge": "Stor",
             "PersonaSizeExtraLarge": "Extra stor",
         },
-        "ManagedPropertiesListPlaceHolder": "Välj eller lägg till en hanterad egenskap",
         "QueryModifier": {
             "FieldLbl": "Modifiering av sökfråga",
             "ConfigureBtn": "Konfigurera",

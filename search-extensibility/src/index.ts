@@ -31,3 +31,9 @@ export { RefinementFilterOperationCallback } from './models/RefinementFilterOper
 export { IPropertyPaneComposite } from './models/IPropertyPaneComposite';
 export { IRefinerState } from './models/IRefinerState';
 export { ITimeZoneBias } from './models/ITimeZoneBias';
+export { RefinersLayoutOption } from './models/RefinersLayoutOption';
+export { RefinerSortDirection } from './models/RefinerSortDirection';
+export { RefinersSortOption } from './models/RefinersSortOption';
+export { RefinerTemplateOption } from './models/RefinerTemplateOption';
+export { IRefinerConfiguration } from './models/IRefinerConfiguration';
+export { IManagedPropertyInfo } from './models/IManagedPropertyInfo';

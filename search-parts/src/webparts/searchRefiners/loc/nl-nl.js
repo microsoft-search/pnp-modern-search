@@ -33,14 +33,6 @@ define([], function() {
             "ShowExpanded": "Vouw filters standaard uit",
             "showValueFilter": "Filter weergeven voor verfijningswaarden",
             "Templates": {
-                "RefinementItemTemplateLabel": "Standaard verfijningsitem",
-                "MutliValueRefinementItemTemplateLabel": "Multi-value verfijningsitem",
-                "PersonaRefinementItemLabel": "Persona",
-                "DateRangeRefinementItemLabel": "Datumbereik",
-                "FixedDateRangeRefinementItemLabel": "Datumbereik (vaste intervallen)",
-                "FileTypeRefinementItemTemplateLabel": "Bestandstypen",
-                "FileTypeMutliValueRefinementItemTemplateLabel": "Meerdere bestandstypen",
-                "ContainerTreeRefinementItemTemplateLabel": "Containerhiërarchie",
                 "DateFromLabel": "Van",
                 "DateTolabel": "Tot",
                 "DatePickerStrings": {
@@ -65,16 +57,6 @@ define([], function() {
                     "Past3Months": "Afgelopen 3 maanden",
                     "PastYear": "Afgelopen jaar",
                     "Older": "Ouder dan een jaar"
-                },
-                "RefinerSortTypeLabel": "Verijning sorteertype",
-                "RefinerSortTypeAlphabetical": "Alfabetisch",
-                "RefinerSortTypeByNumberOfResults": "Aantal resultaten",
-                "RefinerSortTypeSortOrderLabel": "Sorteervolgorde",
-                "RefinerSortTypeSortDirectionAscending": "Oplopend",
-                "RefinerSortTypeSortDirectionDescending": "Aflopend",
-                "Custom": {
-                    "ItemTemplateLabel": "Benutzerdefinierte Vorlage",
-                    "EditLabel": "Edit Template"
                 },
             }
         },

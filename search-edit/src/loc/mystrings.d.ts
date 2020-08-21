@@ -24,6 +24,41 @@ declare interface ISearchEditComponentsLibraryStrings {
     LibraryDescription:string;
     LibraryGuid:string;
     LibraryAlreadyLoaded:string;
+  },
+  RefinementEditor: {
+    CodeHeaderText: string;
+    HeaderText: string;
+    ApplyButtonLabel: string;
+    CancelButtonLabel: string;
+    ImportButtonLabel: string;
+    ExportButtonLabel: string;
+    JsonFileRequiredMessage: string;
+    ManagedPropertiesListPlaceHolder: string;
+    EditHandlebarsExpressionLabel:string;
+    AddHandlebarsExpressionDialogLabel:string;
+    SaveButtonLabel:string;
+    Templates: {
+      RefinerSortTypeSortDirectionAscending: string;
+      RefinerSortTypeSortDirectionDescending: string;            
+      RefinerSortTypeLabel: string;
+      RefinerSortTypeAlphabetical: string;
+      RefinerSortTypeByNumberOfResults: string;
+      RefinerSortTypeSortOrderLabel: string;
+      RefinementItemTemplateLabel: string;
+      MutliValueRefinementItemTemplateLabel: string;
+      DateRangeRefinementItemLabel: string;
+      FixedDateRangeRefinementItemLabel: string;
+      PersonaRefinementItemLabel: string;
+      FileTypeRefinementItemTemplateLabel: string;
+      FileTypeMutliValueRefinementItemTemplateLabel: string;
+      ContainerTreeRefinementItemTemplateLabel: string;
+      CustomItemTemplateLabel:string;
+      CustomEditLabel:string;
+      CustomEditRefinerTemplate:string;
+    }
+  },
+  Sort: {
+    SortInvalidSortableFieldMessage: string;
   }
 }
 

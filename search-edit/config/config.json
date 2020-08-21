@@ -13,6 +13,7 @@
   },
   "externals": {},
   "localizedResources": {
-    "SearchEditComponentsLibraryStrings": "lib/loc/{locale}.js"
+    "SearchEditComponentsLibraryStrings": "lib/loc/{locale}.js",
+    "PropertyControlStrings": "node_modules/@pnp/spfx-property-controls/lib/loc/{locale}.js"
   }
 }

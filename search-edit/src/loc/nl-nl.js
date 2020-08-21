@@ -33,34 +33,33 @@ define([], function() {
       "ExportButtonLabel": "Export",
       "ImportButtonLabel": "ImportButtonLabel",
       "JsonFileRequiredMessage": "Please upload a json file",
-      "ManagedPropertiesListPlaceHolder": "Select or add a managed property",
+      "ManagedPropertiesListPlaceHolder": "Selecteer of voeg een beheerde eigenschap toe",      
 
-      "SaveButtonLabel": "Save",
-      "EditHandlebarsExpressionLabel": "Edit Handlebars expression",
-      "AddHandlebarsExpressionDialogLabel": "Add Handlebars expression",
-      
+      "SaveButtonLabel": "Opslaan",
+      "EditHandlebarsExpressionLabel": "Bewerk Stuuruitdrukking",
+      "AddHandlebarsExpressionDialogLabel": "Voeg Handlebars-uitdrukking toe",
+
       "Templates": {
-        "RefinerSortTypeSortDirectionAscending": "Ascending",
-        "RefinerSortTypeSortDirectionDescending": "Descending",
-        "RefinerSortTypeLabel": "Refiner sort type",
-        "RefinerSortTypeAlphabetical": "Alphabetical",
-        "RefinerSortTypeByNumberOfResults": "By number of results",
-        "RefinerSortTypeSortOrderLabel": "Sort order",
-        "RefinementItemTemplateLabel": "Default refinement item",
-        "MutliValueRefinementItemTemplateLabel": "Multi-value refinement item",
+        "RefinerSortTypeSortDirectionAscending": "Oplopend",
+        "RefinerSortTypeSortDirectionDescending": "Aflopend",
+        "RefinerSortTypeLabel": "Verijning sorteertype",
+        "RefinerSortTypeAlphabetical": "Alfabetisch",
+        "RefinerSortTypeByNumberOfResults": "Aantal resultaten",
+        "RefinerSortTypeSortOrderLabel": "Sorteervolgorde",
+        "RefinementItemTemplateLabel": "Standaard verfijningsitem",
+        "MutliValueRefinementItemTemplateLabel": "Multi-value verfijningsitem",
         "PersonaRefinementItemLabel": "Persona",
-        "DateRangeRefinementItemLabel": "Date range",
-        "FixedDateRangeRefinementItemLabel": "Date range (fixed intervals)",
-        "FileTypeRefinementItemTemplateLabel": "File type",
-        "FileTypeMutliValueRefinementItemTemplateLabel": "Multiple file type",
-        "ContainerTreeRefinementItemTemplateLabel": "Container Tree",
-        "CustomItemTemplateLabel": "Custom Template",
-        "CustomEditLabel": "Edit Template",
-        "CustomEditRefinerTemplate": "Edit Refiner Template"
-      },
-      "Sort": {
-        "SortInvalidSortableFieldMessage": "This property is not sortable"
+        "DateRangeRefinementItemLabel": "Datumbereik",
+        "FixedDateRangeRefinementItemLabel": "Datumbereik (vaste intervallen)",
+        "FileTypeRefinementItemTemplateLabel": "Bestandstypen",
+        "FileTypeMutliValueRefinementItemTemplateLabel": "Meerdere bestandstypen",
+        "ContainerTreeRefinementItemTemplateLabel": "Containerhiërarchie",
+        "CustomItemTemplateLabel": "Benutzerdefinierte Vorlage",
+        "CustomEditLabel": "Edit Template"       
       }
+    },
+    "Sort": {
+      "SortInvalidSortableFieldMessage": "Deze eigenschap is niet sorteerbaar"
     }
   }
 });

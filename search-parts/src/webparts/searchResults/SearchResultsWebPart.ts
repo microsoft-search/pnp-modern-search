@@ -41,12 +41,11 @@ import { ResultTypeOperator } from '../../models/ISearchResultType';
 import IResultService from '../../services/ResultService/IResultService';
 import { ResultService, IRenderer } from '../../services/ResultService/ResultService';
 import { IDynamicDataCallables, IDynamicDataPropertyDefinition } from '@microsoft/sp-dynamic-data';
-import { ITimeZoneBias, IRefinementFilter, ISearchVerticalInformation, IRefinementResult, IRefinementValue, IExtensibilityLibrary } from 'search-extensibility';
+import { IRefinerConfiguration, ITimeZoneBias, IRefinementFilter, ISearchVerticalInformation, IRefinementResult, IRefinementValue, IExtensibilityLibrary } from 'search-extensibility';
 import IDynamicDataService from '../../services/DynamicDataService/IDynamicDataService';
 import { DynamicDataService } from '../../services/DynamicDataService/DynamicDataService';
 import { DynamicProperty, ThemeProvider, IReadonlyTheme, ThemeChangedEventArgs } from '@microsoft/sp-component-base';
 import IRefinerSourceData from '../../models/IRefinerSourceData';
-import IRefinerConfiguration from '../../models/IRefinerConfiguration';
 import { SearchComponentType } from '../../models/SearchComponentType';
 import ISearchResultSourceData from '../../models/ISearchResultSourceData';
 import ISynonymTable from '../../models/ISynonym';
@@ -55,8 +54,6 @@ import ISearchVerticalSourceData from '../../models/ISearchVerticalSourceData';
 import LocalizationHelper from '../../helpers/LocalizationHelper';
 import { IDropdownOption } from 'office-ui-fabric-react/lib/Dropdown';
 import { IComboBoxOption } from 'office-ui-fabric-react/lib/ComboBox';
-import { SearchManagedProperties, ISearchManagedPropertiesProps } from '../../controls/SearchManagedProperties/SearchManagedProperties';
-import { PropertyPaneSearchManagedProperties } from '../../controls/PropertyPaneSearchManagedProperties/PropertyPaneSearchManagedProperties';
 import { BaseQueryModifier, ExtensibilityService, IExtensibilityService, IExtension, IQueryModifierInstance, ExtensionHelper, ExtensionTypes } from 'search-extensibility';
 import { AvailableComponents } from '../../components/AvailableComponents';
 import { BaseClientSideWebPart, IWebPartPropertiesMetadata, PropertyPaneButton } from "@microsoft/sp-webpart-base";
@@ -74,13 +71,14 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
     private _taxonomyService: ITaxonomyService;
     private _templateService: BaseTemplateService;
     private _extensibilityService: IExtensibilityService;
-    private _textDialogComponent = null;
     private _propertyFieldCodeEditor = null;
     private _placeholder = null;
     private _propertyFieldCollectionData = null;
     private _customCollectionFieldType = null;
+    private _searchManagedProperties = null;
+    private _propertyPaneSearchManagedProperties = null;
+    private _textDialogComponent = null;
     private _queryModifierInstance: IQueryModifierInstance = null;
-
     private _propertyFieldCodeEditorLanguages = null;
     private _resultService: IResultService;
 
@@ -814,6 +812,10 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
         this._extensibilityEditor = lib.getExtensibilityEditor();
 
+        this._searchManagedProperties = lib.getSearchManagedPropertiesEditor();
+
+        this._propertyPaneSearchManagedProperties = lib.getPropertyPaneSearchManagedProperties();
+
         // tslint:disable-next-line:no-shadowed-variable
         const { PropertyFieldCodeEditor, PropertyFieldCodeEditorLanguages } = await import(
             /* webpackChunkName: 'search-property-pane' */
@@ -821,12 +823,6 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         );
         this._propertyFieldCodeEditor = PropertyFieldCodeEditor;
         this._propertyFieldCodeEditorLanguages = PropertyFieldCodeEditorLanguages;
-
-        // Code editor component for property pane controls
-        this._textDialogComponent = await import(
-            /* webpackChunkName: 'search-property-pane' */
-            '../../controls/TextDialog'
-        );
 
         const { PropertyFieldCollectionData, CustomCollectionFieldType } = await import(
             /* webpackChunkName: 'search-property-pane' */
@@ -1150,7 +1146,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
                             // Need to specify a React key to avoid item duplication when adding a new row
                             return React.createElement("div", { key: `${field.id}-${itemId}` },
-                                React.createElement(SearchManagedProperties, {
+                                React.createElement(this._searchManagedProperties, {
                                     defaultSelectedKey: item[field.id] ? item[field.id] : '',
                                     onUpdate: (newValue: any, isSortable: boolean) => {
 
@@ -1165,7 +1161,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                                     validateSortable: true,
                                     availableProperties: this._availableManagedProperties,
                                     onUpdateAvailableProperties: this._onUpdateAvailableProperties
-                                } as ISearchManagedPropertiesProps));
+                                }));
                         }
                     },
                     {
@@ -1203,7 +1199,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                         onCustomRender: (field, value, onUpdate, item, itemId, onCustomFieldValidation) => {
                             // Need to specify a React key to avoid item duplication when adding a new row
                             return React.createElement("div", { key: `${field.id}-${itemId}` },
-                                React.createElement(SearchManagedProperties, {
+                                React.createElement(this._searchManagedProperties, {
                                     defaultSelectedKey: item[field.id] ? item[field.id] : '',
                                     onUpdate: (newValue: any, isSortable: boolean) => {
 
@@ -1218,7 +1214,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                                     validateSortable: true,
                                     availableProperties: this._availableManagedProperties,
                                     onUpdateAvailableProperties: this._onUpdateAvailableProperties
-                                } as ISearchManagedPropertiesProps));
+                                }));
                         }
                     },
                     {
@@ -1260,7 +1256,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                 label: strings.IncludeOneDriveResultsLabel,
                 checked: this.properties.includeOneDriveResults,
             }),
-            new PropertyPaneSearchManagedProperties('selectedProperties', {
+            new this._propertyPaneSearchManagedProperties('selectedProperties', {
                 label: strings.SelectedPropertiesFieldLabel,
                 description: strings.SelectedPropertiesFieldDescription,
                 allowMultiSelect: true,
@@ -1676,7 +1672,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                             onCustomRender: (field, value, onUpdate, item, itemId, onCustomFieldValidation) => {
                                 // Need to specify a React key to avoid item duplication when adding a new row
                                 return React.createElement("div", { key: itemId },
-                                    React.createElement(SearchManagedProperties, {
+                                    React.createElement(this._searchManagedProperties, {
                                         defaultSelectedKey: item[field.id] ? item[field.id] : '',
                                         onUpdate: (newValue: any, isSortable: boolean) => {
                                             onUpdate(field.id, newValue);
@@ -1685,7 +1681,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                                         validateSortable: false,
                                         availableProperties: this._availableManagedProperties,
                                         onUpdateAvailableProperties: this._onUpdateAvailableProperties
-                                    } as ISearchManagedPropertiesProps));
+                                    }));
                             }
                         },
                         {

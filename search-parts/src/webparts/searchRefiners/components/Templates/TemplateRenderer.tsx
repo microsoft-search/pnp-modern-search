@@ -1,5 +1,4 @@
 import * as React from 'react';
-import RefinerTemplateOption from '../../../../models/RefinerTemplateOption';
 import CheckboxTemplate from "./Checkbox/CheckboxTemplate";
 import DateRangeTemplate from "./DateRange/DateRangeTemplate";
 import FixedDateRangeTemplate from "./FixedDateRange/FixedDateRangeTemplate";
@@ -7,10 +6,9 @@ import PersonaTemplate from "./Persona/PersonaTemplate";
 import FileTypeTemplate from "./FileType/FileTypeTemplate";
 import ContainerTreeTemplate from "./ContainerTree/ContainerTreeTemplate";
 import CustomTemplate from "./CustomTemplate/CustomTemplate";
-import { IRefinementResult, IRefinementValue } from "search-extensibility";
+import { IRefinementResult, IRefinementValue, RefinerTemplateOption, IRefinerConfiguration } from "search-extensibility";
 import { RefinementFilterOperationCallback, IUserService } from 'search-extensibility';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
-import IRefinerConfiguration from '../../../../models/IRefinerConfiguration';
 
 export interface ITemplateRendererProps {
 

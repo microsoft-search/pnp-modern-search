@@ -1,6 +1,5 @@
 import { Sort } from "@pnp/sp";
-import { ITimeZoneBias, IQueryModifierInstance } from "search-extensibility";
-import IRefinerConfiguration from "./IRefinerConfiguration";
+import { IRefinerConfiguration, IQueryModifierInstance } from "search-extensibility";
 
 export interface ISearchServiceConfiguration {
     /**

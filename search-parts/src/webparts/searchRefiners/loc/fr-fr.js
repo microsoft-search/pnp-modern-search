@@ -33,14 +33,6 @@ define([], function () {
       "ShowExpanded": "Mode développé par défaut",
       "showValueFilter": "Afficher le filtre pour les valeurs de raffinement",
       "Templates": {
-        "RefinementItemTemplateLabel": "Filtre par défaut",
-        "MutliValueRefinementItemTemplateLabel": "Filtre à valeurs multiples",
-        "PersonaRefinementItemLabel": "Persona",
-        "DateRangeRefinementItemLabel": "Sélecteur de dates",
-        "FixedDateRangeRefinementItemLabel": "Sélecteur de dates (intervalles fixes)",
-        "FileTypeRefinementItemTemplateLabel": "Types de fichier",
-        "FileTypeMutliValueRefinementItemTemplateLabel": "Types de fichier multiple",
-        "ContainerTreeRefinementItemTemplateLabel": "Hiérarchie de conteneurs",
         "DateFromLabel": "Du",
         "DateTolabel": "Jusqu'au",
         "DatePickerStrings": {
@@ -65,16 +57,6 @@ define([], function () {
           "Past3Months": "3 derniers mois",
           "PastYear": "Année dernière",
           "Older": "Antérieur à un an"
-        },
-        "RefinerSortTypeLabel": "Trier selon ce critère",
-        "RefinerSortTypeAlphabetical": "Alphabétique",
-        "RefinerSortTypeByNumberOfResults": "Par nombre de résultats",
-        "RefinerSortTypeSortOrderLabel": "Ordre de tri",
-        "RefinerSortTypeSortDirectionAscending": "Ascendant",
-        "RefinerSortTypeSortDirectionDescending": "Descendant",
-        "Custom": {
-          "ItemTemplateLabel": "Modèle personnalisé",
-          "EditLabel": "Edit Template"
         },
       }
     },

@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { Suspense } from 'react';
-import * as strings from 'SearchResultsWebPartStrings';
-const TextDialog = React.lazy(() => import('../TextDialog/TextDialog'));
+import * as strings from 'SearchEditComponentsLibraryStrings';
+const TextDialog = React.lazy(() => import('../../controls/TextDialog/TextDialog'));
 import { ICustomCollectionField } from '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData';
-import { SearchManagedProperties } from '../SearchManagedProperties/SearchManagedProperties';
+import { SearchManagedProperties } from '../../controls/SearchManagedProperties/SearchManagedProperties';
 import { IComboBoxOption } from 'office-ui-fabric-react/lib/ComboBox';
-import ISearchService from '../../services/SearchService/ISearchService';
+import { ISearchContext } from 'search-extensibility';
 
 export interface ITemplateValueFieldEditorState {
 }
@@ -15,7 +15,7 @@ export interface ITemplateValueFieldEditorProps {
     /**
      * The search service instance
      */
-    searchService: ISearchService;
+    searchService: ISearchContext;
 
     /**
      * The field mode to render
@@ -74,7 +74,7 @@ export class TemplateValueFieldEditor extends React.Component<ITemplateValueFiel
     public render(): JSX.Element {
 
         let renderField: JSX.Element = null;
-
+ 
         if (this.props.useHandlebarsExpr) {
             let lang: any = "handlebars";
             renderField = <Suspense fallback={""}><TextDialog
@@ -84,10 +84,10 @@ export class TemplateValueFieldEditor extends React.Component<ITemplateValueFiel
                     this.props.onUpdate(this.props.field.id, fieldValue);
                 }}
                 strings={{
-                    cancelButtonText: strings.CancelButtonText,
-                    dialogButtonText: "Edit Handlebars expression",
-                    dialogTitle: "Add Handlebars expression",
-                    saveButtonText: strings.SaveButtonText
+                    cancelButtonText: strings.RefinementEditor.CancelButtonLabel,
+                    dialogButtonText: strings.RefinementEditor.EditHandlebarsExpressionLabel,
+                    dialogTitle: strings.RefinementEditor.AddHandlebarsExpressionDialogLabel,
+                    saveButtonText: strings.RefinementEditor.SaveButtonLabel
                 }}
             /></Suspense>;
         } else {

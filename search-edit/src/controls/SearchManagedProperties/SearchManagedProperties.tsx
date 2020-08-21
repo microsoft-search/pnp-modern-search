@@ -2,8 +2,8 @@ import * as React from 'react';
 import { ComboBox, IComboBoxOption, IComboBox, SelectableOptionMenuItemType, IComboBoxStyles } from 'office-ui-fabric-react/lib/ComboBox';
 import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/components/Spinner';
 import { isEqual } from '@microsoft/sp-lodash-subset';
-import ISearchService from '../../services/SearchService/ISearchService';
-import * as strings from 'SearchResultsWebPartStrings';
+import { ISearchContext } from 'search-extensibility';
+import * as strings from 'SearchEditComponentsLibraryStrings';
 import update from 'immutability-helper';
 
 const LOADING_KEY = 'LOADING';
@@ -13,7 +13,7 @@ export interface ISearchManagedPropertiesProps {
     /**
      * The search service instance
      */
-    searchService: ISearchService;
+    searchService: ISearchContext;
 
     /**
      * The default selected key
@@ -107,7 +107,7 @@ export class SearchManagedProperties extends React.Component<ISearchManagedPrope
                                 useComboBoxAsMenuWidth={true}
                                 onMenuOpen={this.getAvailableSearchProperties}
                                 options={this.state.options}
-                                placeholder={ strings.ManagedPropertiesListPlaceHolder }
+                                placeholder={strings.RefinementEditor.ManagedPropertiesListPlaceHolder }
                                 onRenderOption={this.onRenderOption}
                             />;
         } else {
@@ -122,7 +122,7 @@ export class SearchManagedProperties extends React.Component<ISearchManagedPrope
                                 useComboBoxAsMenuWidth={true}
                                 onMenuOpen={this.getAvailableSearchProperties}
                                 options={this.state.options}
-                                placeholder={ strings.ManagedPropertiesListPlaceHolder }
+                                placeholder={strings.RefinementEditor.ManagedPropertiesListPlaceHolder }
                                 multiSelect
                                 onRenderOption={this.onRenderOption}
                             />;

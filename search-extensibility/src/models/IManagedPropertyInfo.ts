@@ -1,7 +1,7 @@
 /**
  * Defines informationa about a SharePoint search managed property 
  */
-export default interface IManagedPropertyInfo {
+export interface IManagedPropertyInfo {
 
     /**
      * The name of the search managed property

@@ -160,7 +160,6 @@ define([], function() {
             "PersonaSizeLarge": "Groot",
             "PersonaSizeExtraLarge": "Extra groot"
         },
-        "ManagedPropertiesListPlaceHolder": "Selecteer of voeg een beheerde eigenschap toe",
         "QueryModifier": {
             "FieldLbl": "Modificaties voor zoekopdrachten",
             "ConfigureBtn": "Configure",

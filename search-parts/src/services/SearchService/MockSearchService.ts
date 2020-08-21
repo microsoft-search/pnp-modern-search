@@ -1,12 +1,11 @@
 import ISearchService from './ISearchService';
 import { ISearchResults, ITimeZoneBias, ISearchResult, ISearchVerticalInformation } from 'search-extensibility';
 import { intersection, clone } from '@microsoft/sp-lodash-subset';
-import IRefinerConfiguration from '../../models/IRefinerConfiguration';
 import { Sort } from '@pnp/sp';
 import { ISearchServiceConfiguration } from '../../models/ISearchServiceConfiguration';
 import ISearchVerticalSourceData from '../../models/ISearchVerticalSourceData';
 import { ISearchVertical } from '../../models/ISearchVertical';
-import IManagedPropertyInfo from '../../models/IManagedPropertyInfo';
+import { IManagedPropertyInfo, IRefinerConfiguration } from 'search-extensibility';
 import { ISharePointSearch } from './ISharePointSearch';
 
 class MockSearchService implements ISearchService {

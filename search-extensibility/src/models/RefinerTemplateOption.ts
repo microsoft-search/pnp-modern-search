@@ -1,4 +1,4 @@
-enum RefinerTemplateOption {
+export enum RefinerTemplateOption {
     DateRange = 1,
     CheckBox = 2,
     CheckBoxMulti = 3,
@@ -10,5 +10,3 @@ enum RefinerTemplateOption {
     ContainerTree = 9,
     Custom = 10
 }
-
-export default RefinerTemplateOption;

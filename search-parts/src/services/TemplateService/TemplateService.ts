@@ -7,7 +7,6 @@ import { IPropertyPaneField, PropertyPaneToggle, PropertyPaneSlider } from '@mic
 import { IDetailsListColumnConfiguration } from '../../components/DetailsListComponent';
 import { PropertyFieldCollectionData, CustomCollectionFieldType } from '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData';
 import * as React from 'react';
-import { TemplateValueFieldEditor, ITemplateValueFieldEditorProps } from '../../controls/TemplateValueFieldEditor/TemplateValueFieldEditor';
 import * as strings from 'SearchResultsWebPartStrings';
 import { IComboBoxOption } from 'office-ui-fabric-react/lib/ComboBox';
 import { Icon, IIconProps } from 'office-ui-fabric-react/lib/Icon';
@@ -51,6 +50,7 @@ export class TemplateService extends BaseTemplateService {
 
     private _spHttpClient: SPHttpClient;
     private _searchService: ISearchService;
+    private _templateEditor = null;
 
     /**
      * The list of available managed managed properties (managed globally for all proeprty pane fiels if needed)
@@ -219,7 +219,7 @@ export class TemplateService extends BaseTemplateService {
                         required: true,
                         onCustomRender: (field, value, onUpdate, item, itemId, onCustomFieldValidation) => {
                             return React.createElement("div", { key: `${field.id}-${itemId}` }, 
-                                React.createElement(TemplateValueFieldEditor, {
+                                React.createElement(this._templateEditor, {
                                     currentItem: item,
                                     field: field,
                                     useHandlebarsExpr: item.useHandlebarsExpr,
@@ -237,7 +237,7 @@ export class TemplateService extends BaseTemplateService {
                                     searchService: this._searchService,
                                     validateSortable: false,
                                     onCustomFieldValidation: onCustomFieldValidation
-                                } as ITemplateValueFieldEditorProps)
+                                })
                             );
                         }
                     },
@@ -368,7 +368,7 @@ export class TemplateService extends BaseTemplateService {
                         title: strings.TemplateParameters.PlaceholderValueFieldLabel,
                         onCustomRender: (field, value, onUpdate, item, itemId, onCustomFieldValidation) => {
                             return React.createElement("div", { key: `${field.id}-${itemId}` }, 
-                                React.createElement(TemplateValueFieldEditor, {
+                                React.createElement(this._templateEditor, {
                                     currentItem: item,
                                     field: field,
                                     useHandlebarsExpr: item.useHandlebarsExpr,
@@ -386,7 +386,7 @@ export class TemplateService extends BaseTemplateService {
                                     searchService: this._searchService,
                                     validateSortable: false,
                                     onCustomFieldValidation: onCustomFieldValidation
-                                } as ITemplateValueFieldEditorProps)
+                                })
                             );
                         }
                     },
@@ -533,7 +533,7 @@ export class TemplateService extends BaseTemplateService {
                         title: strings.TemplateParameters.PlaceholderValueFieldLabel,
                         onCustomRender: (field, value, onUpdate, item, itemId, onCustomFieldValidation) => {
                             return React.createElement("div", { key: `${field.id}-${itemId}` }, 
-                                React.createElement(TemplateValueFieldEditor, {
+                                React.createElement(this._templateEditor, {
                                     currentItem: item,
                                     field: field,
                                     useHandlebarsExpr: item.useHandlebarsExpr,
@@ -551,7 +551,7 @@ export class TemplateService extends BaseTemplateService {
                                     searchService: this._searchService,
                                     validateSortable: false,
                                     onCustomFieldValidation: onCustomFieldValidation
-                                } as ITemplateValueFieldEditorProps)
+                                })
                             );
                         }
                     },
@@ -599,5 +599,14 @@ export class TemplateService extends BaseTemplateService {
                 wpProperties.selectedProperties = selectedProperties.join(',');
             }
         });       
+    }
+
+    public async loadPropertyPaneResources() : Promise<void> {
+
+        const { SearchEditComponentsLibrary } = await import('search-edit');
+        const lib = new SearchEditComponentsLibrary();
+        this._templateEditor = lib.getTemplateValueFieldEditor();
+
+
     }
 }

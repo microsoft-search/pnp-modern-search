@@ -33,14 +33,6 @@ declare interface ISearchRefinersWebPartStrings {
         ShowExpanded: string;
         showValueFilter: string;
         Templates: {
-            RefinementItemTemplateLabel: string;
-            MutliValueRefinementItemTemplateLabel: string;
-            DateRangeRefinementItemLabel: string;
-            FixedDateRangeRefinementItemLabel: string;
-            PersonaRefinementItemLabel: string;
-            FileTypeRefinementItemTemplateLabel: string;
-            FileTypeMutliValueRefinementItemTemplateLabel: string;
-            ContainerTreeRefinementItemTemplateLabel: string;
             DateFromLabel: string;
             DateTolabel: string;
             DatePickerStrings: {
@@ -66,12 +58,6 @@ declare interface ISearchRefinersWebPartStrings {
                 PastYear: string;
                 Older: string;
             },
-            RefinerSortTypeLabel: string,
-            RefinerSortTypeAlphabetical: string,
-            RefinerSortTypeByNumberOfResults: string,
-            RefinerSortTypeSortOrderLabel: string,
-            RefinerSortTypeSortDirectionAscending: string,
-            RefinerSortTypeSortDirectionDescending: string,
             Custom: {
                 ItemTemplateLabel: string;
                 EditLabel: string;

@@ -7,7 +7,7 @@ define([], function() {
       "DescriptionFieldLabel": "Description Field",
       "Delete": "Delete",
       "NoExtensions": "No extensions in this library",
-      "DisplayNameLabel": "Display Name",
+      "DisplayNameLabel": "Display Name", 
       "IconLabel": "Icon",
       "NameLabel": "Name",
       "DescLabel": "Description",
@@ -33,34 +33,33 @@ define([], function() {
       "ExportButtonLabel": "Export",
       "ImportButtonLabel": "ImportButtonLabel",
       "JsonFileRequiredMessage": "Please upload a json file",
-      "ManagedPropertiesListPlaceHolder": "Select or add a managed property",
+      "ManagedPropertiesListPlaceHolder": "Välj eller lägg till en hanterad egenskap",
 
-      "SaveButtonLabel": "Save",
-      "EditHandlebarsExpressionLabel": "Edit Handlebars expression",
-      "AddHandlebarsExpressionDialogLabel": "Add Handlebars expression",
-      
+      "SaveButtonLabel": "Spara",
+      "EditHandlebarsExpressionLabel": "Redigera uttrycket för styret",
+      "AddHandlebarsExpressionDialogLabel": "Lägg till styret uttryck",
+
       "Templates": {
-        "RefinerSortTypeSortDirectionAscending": "Ascending",
-        "RefinerSortTypeSortDirectionDescending": "Descending",
-        "RefinerSortTypeLabel": "Refiner sort type",
-        "RefinerSortTypeAlphabetical": "Alphabetical",
-        "RefinerSortTypeByNumberOfResults": "By number of results",
-        "RefinerSortTypeSortOrderLabel": "Sort order",
-        "RefinementItemTemplateLabel": "Default refinement item",
-        "MutliValueRefinementItemTemplateLabel": "Multi-value refinement item",
-        "PersonaRefinementItemLabel": "Persona",
-        "DateRangeRefinementItemLabel": "Date range",
-        "FixedDateRangeRefinementItemLabel": "Date range (fixed intervals)",
-        "FileTypeRefinementItemTemplateLabel": "File type",
-        "FileTypeMutliValueRefinementItemTemplateLabel": "Multiple file type",
-        "ContainerTreeRefinementItemTemplateLabel": "Container Tree",
-        "CustomItemTemplateLabel": "Custom Template",
-        "CustomEditLabel": "Edit Template",
-        "CustomEditRefinerTemplate": "Edit Refiner Template"
-      },
-      "Sort": {
-        "SortInvalidSortableFieldMessage": "This property is not sortable"
+        "RefinerSortTypeSortDirectionAscending": "Stigande",
+        "RefinerSortTypeSortDirectionDescending": "Fallande",
+        "RefinerSortTypeLabel": "Sorteringsordning",
+        "RefinerSortTypeAlphabetical": "Alfabetisk",
+        "RefinerSortTypeByNumberOfResults": "Efter antal resultat",
+        "RefinerSortTypeSortOrderLabel": "Sorteringriktning",        
+        "RefinementItemTemplateLabel": "Standard filter",
+        "MutliValueRefinementItemTemplateLabel": "Fler värdes filter",
+        "PersonaRefinementItemLabel": "Person",
+        "DateRangeRefinementItemLabel": "Datumintervall",
+        "FixedDateRangeRefinementItemLabel": "Datumintervall (fasta intervall)",
+        "FileTypeRefinementItemTemplateLabel": "Filtyp",
+        "FileTypeMutliValueRefinementItemTemplateLabel": "Flera filtyp",
+        "ContainerTreeRefinementItemTemplateLabel": "Container-träd",
+        "CustomItemTemplateLabel": "Benutzerdefinierte Vorlage",
+        "CustomEditLabel": "Edit Template"
       }
+    },
+    "Sort": {
+      "SortInvalidSortableFieldMessage": "Den här egenskapen är inte sorterbar"
     }
   }
 });

@@ -1,5 +1,4 @@
-import { IRefinementFilter } from "search-extensibility";
-import IRefinerConfiguration from "./IRefinerConfiguration";
+import { IRefinerConfiguration, IRefinementFilter } from "search-extensibility";
 
 /**
  * Represents the data exposeed by a search refiner Web Part for dynamic data connection

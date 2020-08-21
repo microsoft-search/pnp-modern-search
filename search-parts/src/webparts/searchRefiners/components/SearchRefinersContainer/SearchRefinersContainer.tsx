@@ -5,16 +5,12 @@ import { DisplayMode } from '@microsoft/sp-core-library';
 import { WebPartTitle } from "@pnp/spfx-controls-react/lib/WebPartTitle";
 import Vertical from '../Layouts/Vertical/Vertical';
 import LinkPanel from '../Layouts/LinkPanel/LinkPanel';
-import RefinersLayoutOption from '../../../../models/RefinersLayoutOptions';
 import { MessageBarType, MessageBar } from 'office-ui-fabric-react/lib/MessageBar';
 import * as strings from 'SearchRefinersWebPartStrings';
 import { ISearchRefinersContainerState } from './ISearchRefinersContainerState';
-import { IRefinementFilter, IRefinementValue, RefinementOperator } from 'search-extensibility';
+import { RefinerSortDirection, RefinersSortOption, RefinerTemplateOption, RefinersLayoutOption, IRefinementFilter, IRefinementValue, RefinementOperator } from 'search-extensibility';
 import update from 'immutability-helper';
-import RefinerTemplateOption from '../../../../models/RefinerTemplateOption';
 import { find, isEqual } from '@microsoft/sp-lodash-subset';
-import RefinersSortOption from '../../../../models/RefinersSortOptions';
-import RefinerSortDirection from '../../../../models/RefinersSortDirection';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 
 export default class SearchRefinersContainer extends React.Component<ISearchRefinersContainerProps, ISearchRefinersContainerState> {

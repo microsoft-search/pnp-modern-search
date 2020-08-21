@@ -1,5 +1,4 @@
-import { IRefinementResult, IRefinementValue, IRefinementFilter } from "search-extensibility";
-import IRefinerConfiguration from "../../../../models/IRefinerConfiguration";
+import { IRefinementResult, IRefinerConfiguration, IRefinementFilter } from "search-extensibility";
 import { RefinementFilterOperationCallback, IUserService } from 'search-extensibility';
 import { IReadonlyTheme } from "@microsoft/sp-component-base";
 

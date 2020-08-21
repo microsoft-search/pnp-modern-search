@@ -160,8 +160,7 @@ declare interface ISearchResultsWebPartStrings {
         PersonaSizeRegular: string;
         PersonaSizeLarge: string;
         PersonaSizeExtraLarge: string;
-    }
-    ManagedPropertiesListPlaceHolder: string;
+    },
     QueryModifier: {
         FieldLbl: string;
         ConfigureBtn: string;

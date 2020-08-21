@@ -1,8 +1,8 @@
-import { ISearchManagedPropertiesProps, SearchManagedProperties } from "../SearchManagedProperties/SearchManagedProperties";
+import { ISearchManagedPropertiesProps, SearchManagedProperties } from "../../controls/SearchManagedProperties/SearchManagedProperties";
 import { IPropertyPaneField, PropertyPaneFieldType, IPropertyPaneCustomFieldProps } from "@microsoft/sp-property-pane";
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
-import ISearchService from "../../services/SearchService/ISearchService";
+import { ISearchContext } from "search-extensibility";
 import { IComboBoxOption } from "office-ui-fabric-react/lib/ComboBox";
 
 /**
@@ -33,7 +33,7 @@ export interface IPropertyPaneSearchManagedPropertiesProps {
     /**
      * The search service instance
      */
-    searchService: ISearchService;
+    searchService: ISearchContext;
 
     /**
      * Callback when the list of managed properties is fetched by the control

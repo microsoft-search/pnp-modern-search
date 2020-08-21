@@ -33,14 +33,6 @@ define([], function() {
             "ShowExpanded": "Expandir filtro predeterminado",
             "showValueFilter": "Mostrar filtro para valores de refinamiento",
             "Templates": {
-                "RefinementItemTemplateLabel": "Elemento de refinamiento predeterminado",
-                "MutliValueRefinementItemTemplateLabel": "Elemento de refinamiento multivalor",
-                "PersonaRefinementItemLabel": "Persona",
-                "DateRangeRefinementItemLabel": "Rango Fecha",
-                "FixedDateRangeRefinementItemLabel": "Rango Fecha (intervalos fijos)",
-                "FileTypeRefinementItemTemplateLabel": "Tipos de archivos",
-                "FileTypeMutliValueRefinementItemTemplateLabel": "Múltiples tipos de archivos",
-                "ContainerTreeRefinementItemTemplateLabel": "Árbol de contenedores",
                 "DateFromLabel": "De",
                 "DateTolabel": "Hasta",
                 "DatePickerStrings": {
@@ -65,16 +57,6 @@ define([], function() {
                     "Past3Months": "Últimos 3 meses",
                     "PastYear": "Año pasado",
                     "Older": "Antigüedad superior a un año"
-                },
-                "RefinerSortTypeLabel": "Ordenar refinador por tipo",
-                "RefinerSortTypeAlphabetical": "Alfabéticamente",
-                "RefinerSortTypeByNumberOfResults": "Por número de resultados",
-                "RefinerSortTypeSortOrderLabel": "Criterio de ordenación",
-                "RefinerSortTypeSortDirectionAscending": "Ascendente",
-                "RefinerSortTypeSortDirectionDescending": "Descendente",
-                "Custom": {
-                    "ItemTemplateLabel": "Plantilla personalizada",
-                    "EditLabel": "Edit Template"
                 },
             }
         },

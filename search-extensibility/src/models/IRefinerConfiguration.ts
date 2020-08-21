@@ -1,8 +1,8 @@
-import RefinersSortOption from './RefinersSortOptions';
-import RefinerTemplateOption from './RefinerTemplateOption';
-import RefinerSortDirection from './RefinersSortDirection';
+import { RefinersSortOption } from './RefinersSortOption';
+import { RefinerTemplateOption } from './RefinerTemplateOption';
+import { RefinerSortDirection } from './RefinerSortDirection';
 
-interface IRefinerConfiguration {
+export interface IRefinerConfiguration {
 
     /**
      * The SharePoint refiner name
@@ -45,5 +45,3 @@ interface IRefinerConfiguration {
      */
     customTemplate?:string;
 }
-
-export default IRefinerConfiguration;

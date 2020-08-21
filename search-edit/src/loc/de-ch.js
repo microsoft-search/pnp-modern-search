@@ -33,33 +33,32 @@ define([], function() {
       "ExportButtonLabel": "Export",
       "ImportButtonLabel": "ImportButtonLabel",
       "JsonFileRequiredMessage": "Please upload a json file",
-      "ManagedPropertiesListPlaceHolder": "Select or add a managed property",
-
-      "SaveButtonLabel": "Save",
-      "EditHandlebarsExpressionLabel": "Edit Handlebars expression",
-      "AddHandlebarsExpressionDialogLabel": "Add Handlebars expression",
+      "ManagedPropertiesListPlaceHolder": "Auswählen oder Hinzufügen einer verwalteten Eigenschaft",
       
+      "SaveButtonLabel": "Speichern",
+      "EditHandlebarsExpressionLabel": "Lenkerausdruck bearbeiten",
+      "AddHandlebarsExpressionDialogLabel": "Lenkerausdruck hinzufügen",
+
       "Templates": {
-        "RefinerSortTypeSortDirectionAscending": "Ascending",
-        "RefinerSortTypeSortDirectionDescending": "Descending",
-        "RefinerSortTypeLabel": "Refiner sort type",
-        "RefinerSortTypeAlphabetical": "Alphabetical",
-        "RefinerSortTypeByNumberOfResults": "By number of results",
-        "RefinerSortTypeSortOrderLabel": "Sort order",
-        "RefinementItemTemplateLabel": "Default refinement item",
-        "MutliValueRefinementItemTemplateLabel": "Multi-value refinement item",
+        "RefinerSortTypeSortDirectionAscending": "Aufsteigend",
+        "RefinerSortTypeSortDirectionDescending": "Absteigend",
+        "RefinerSortTypeLabel": "Einschränkungs Sortiertyp",
+        "RefinerSortTypeAlphabetical": "Alphabetisch",
+        "RefinerSortTypeByNumberOfResults": "Nach Anzahl der Ergebnisse",
+        "RefinerSortTypeSortOrderLabel": "Sortierreihenfolge",
+        "RefinementItemTemplateLabel": "Standard-Einschränkungselement",
+        "MutliValueRefinementItemTemplateLabel": "Mehrwertiges Einschränkungselement",
         "PersonaRefinementItemLabel": "Persona",
-        "DateRangeRefinementItemLabel": "Date range",
-        "FixedDateRangeRefinementItemLabel": "Date range (fixed intervals)",
-        "FileTypeRefinementItemTemplateLabel": "File type",
-        "FileTypeMutliValueRefinementItemTemplateLabel": "Multiple file type",
-        "ContainerTreeRefinementItemTemplateLabel": "Container Tree",
-        "CustomItemTemplateLabel": "Custom Template",
-        "CustomEditLabel": "Edit Template",
-        "CustomEditRefinerTemplate": "Edit Refiner Template"
+        "DateRangeRefinementItemLabel": "Datumsbereich",
+        "FixedDateRangeRefinementItemLabel": "Datumsbereich (feste Intervalle)",
+        "FileTypeRefinementItemTemplateLabel": "Dateityp",
+        "FileTypeMutliValueRefinementItemTemplateLabel": "Mehrere Dateitypen",
+        "ContainerTreeRefinementItemTemplateLabel": "Container-Baum",
+        "CustomItemTemplateLabel": "Benutzerdefinierte Vorlage",
+        "CustomEditLabel": "Edit Template"
       },
       "Sort": {
-        "SortInvalidSortableFieldMessage": "This property is not sortable"
+        "SortInvalidSortableFieldMessage": "Diese Eigenschaft ist nicht sortierbar"
       }
     }
   }

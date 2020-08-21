@@ -1,4 +1,4 @@
-import { ISearchParams, ISearchResults } from "..";
+import { ISearchParams, ISearchResults, IManagedPropertyInfo } from "..";
 
 export interface ISearchContext {
 
@@ -13,5 +13,16 @@ export interface ISearchContext {
      * @param query the term to suggest from
      */
     suggest(query: string): Promise<string[]>;
+
+    /**
+     * Gets available search managed properties in the search schema
+     */
+    getAvailableManagedProperties(): Promise<IManagedPropertyInfo[]>;
+
+    /**
+     * Checks if the provided manage property is sortable or not
+     * @param property the managed property to verify
+     */
+    validateSortableProperty(property: string): Promise<boolean>;
 
 }
