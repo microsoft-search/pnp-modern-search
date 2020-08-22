@@ -37,6 +37,9 @@ declare interface ISearchEditComponentsLibraryStrings {
     EditHandlebarsExpressionLabel:string;
     AddHandlebarsExpressionDialogLabel:string;
     SaveButtonLabel:string;
+    AvailableRefinersLabel: string;
+    RefinerDisplayValueField: string;
+    RefinerTemplateField: string;           
     Templates: {
       RefinerSortTypeSortDirectionAscending: string;
       RefinerSortTypeSortDirectionDescending: string;            

@@ -38,6 +38,9 @@ define([], function() {
       "SaveButtonLabel": "Opslaan",
       "EditHandlebarsExpressionLabel": "Bewerk Stuuruitdrukking",
       "AddHandlebarsExpressionDialogLabel": "Voeg Handlebars-uitdrukking toe",
+      "AvailableRefinersLabel": "Beschikbare verfijners",      
+      "RefinerDisplayValueField": "Filter naam om te tonen",
+      "RefinerTemplateField": "Verfijningssjabloon",            
 
       "Templates": {
         "RefinerSortTypeSortDirectionAscending": "Oplopend",

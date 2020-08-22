@@ -38,6 +38,9 @@ define([], function() {
       "SaveButtonLabel": "Enregistrer",
       "EditHandlebarsExpressionLabel": "Modifier l'expression des guidons",
       "AddHandlebarsExpressionDialogLabel": "Ajouter une expression de guidon",
+      "AvailableRefinersLabel": "Filtre(s) disponible(s)",
+      "RefinerDisplayValueField": "Intitulé du filtre à afficher",
+      "RefinerTemplateField": "Modèle de filtre",      
 
       "Templates": {
         "RefinerSortTypeSortDirectionAscending": "Ascendant",

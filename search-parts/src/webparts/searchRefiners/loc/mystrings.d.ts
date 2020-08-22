@@ -23,11 +23,8 @@ declare interface ISearchRefinersWebPartStrings {
         RefinersFieldLabel: string;
         RefinersFieldDescription: string;
         RefinerManagedPropertyField: string;
-        RefinerDisplayValueField: string;
-        RefinerTemplateField: string;
         EditRefinersLabel: string;
         EditSortLabel: string;
-        AvailableRefinersLabel: string;
         ApplyFiltersLabel: string;
         ClearFiltersLabel: string;
         ShowExpanded: string;

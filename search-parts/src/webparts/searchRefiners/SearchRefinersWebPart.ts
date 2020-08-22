@@ -15,7 +15,7 @@ import * as strings from 'SearchRefinersWebPartStrings';
 import { ExtensionTypes, IExtension, ExtensibilityService, IExtensibilityService, 
   IExtensibilityLibrary, IRefinementFilter, IUserService, ITimeZoneBias, 
   RefinersLayoutOption, RefinerTemplateOption,
-  RefinersSortOption, RefinerSortDirection } from 'search-extensibility';
+  RefinersSortOption, RefinerSortDirection, IEditorLibrary } from 'search-extensibility';
 import SearchRefinersContainer from './components/SearchRefinersContainer/SearchRefinersContainer';
 import { IDynamicDataCallables, IDynamicDataPropertyDefinition, IDynamicDataSource } from '@microsoft/sp-dynamic-data';
 import { ISearchRefinersWebPartProps } from './ISearchRefinersWebPartProps';
@@ -222,7 +222,7 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
     if (Environment.type === EnvironmentType.Local) {
       this._searchService = new MockSearchService();
       this._userService = new MockUserService();
-      this._templateService = new MockTemplateService(this.context.pageContext.cultureInfo.currentUICultureName, this.context, this._searchService);
+      this._templateService = new MockTemplateService(this.context.pageContext.cultureInfo.currentUICultureName, this.context, this._searchService, this._extensibilityService);
     } else {
       this._searchService = new SearchService(this.context.pageContext, this.context.spHttpClient);
       this._userService = new UserService(this.context.pageContext);
@@ -242,7 +242,7 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
       }
 
       this._templateService = new TemplateService(this.context.spHttpClient, 
-                                      this.context.pageContext.cultureInfo.currentUICultureName, this._searchService, 
+                                      this.context.pageContext.cultureInfo.currentUICultureName, this._searchService,  this._extensibilityService,
                                       this._timeZoneBias, this.context);
     }
 
@@ -453,14 +453,8 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
     );
     this._propertyFieldCodeEditor = PropertyFieldCodeEditor;
     this._propertyFieldCodeEditorLanguages = PropertyFieldCodeEditorLanguages;
-/*
-    const { PropertyPaneExtensibilityEditor } = await import('search-extensibility');
 
-    this._extensibilityEditor = PropertyPaneExtensibilityEditor;
-*/
-
-    const { SearchEditComponentsLibrary } = await import('search-edit');
-    const lib = new SearchEditComponentsLibrary();
+    const lib : IEditorLibrary = await this._extensibilityService.getEditorLibrary();
 
     this._extensibilityEditor = lib.getExtensibilityEditor();
 

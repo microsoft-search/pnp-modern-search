@@ -27,7 +27,7 @@ import SearchService from '../../services/SearchService/SearchService';
 import { PageOpenBehavior, QueryPathBehavior, UrlHelper } from '../../helpers/UrlHelper';
 import SearchBoxContainer from './components/SearchBoxContainer/SearchBoxContainer';
 import { SearchComponentType } from '../../models/SearchComponentType';
-import { BaseSuggestionProvider, IExtensibilityService, ExtensibilityService, IExtension, ISuggestionProviderInstance, ExtensionHelper, ExtensionTypes, IExtensibilityLibrary } from 'search-extensibility';
+import { BaseSuggestionProvider, IExtensibilityService, ExtensibilityService, IExtension, ISuggestionProviderInstance, ExtensionHelper, ExtensionTypes, IExtensibilityLibrary, IEditorLibrary } from 'search-extensibility';
 import { SharePointDefaultSuggestionProvider } from '../../providers/SharePointDefaultSuggestionProvider';
 import { Toggle } from 'office-ui-fabric-react/lib/Toggle';
 import { ThemeProvider, ThemeChangedEventArgs, IReadonlyTheme } from '@microsoft/sp-component-base';
@@ -419,10 +419,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
 
     protected async loadPropertyPaneResources(): Promise<void> {
 
-        //const { PropertyPaneExtensibilityEditor } = await import('search-extensibility');
-        const { SearchEditComponentsLibrary } = await import('search-edit');
-        const lib = new SearchEditComponentsLibrary();
-
+        const lib : IEditorLibrary = await this._extensibilityService.getEditorLibrary();
         this._extensibilityEditor = lib.getExtensibilityEditor();
 
         const { PropertyFieldCollectionData, CustomCollectionFieldType } = await import(

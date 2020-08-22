@@ -16,24 +16,11 @@
 
     .deleteButton { margin: auto; }
 
-    .library { display: block; padding-top: 1rem; }
+    .refinerHeader { display: flex; align-items: center; cursor: pointer; }
 
-    .list { display: block; }
-    
-    .title { @include ms-font-xl; position: relative; margin-top: 0; display: flex; align-items: center; justify-content: left; }
+    .refinerMenu { margin-left: auto; }
 
-    .subTitle { @include ms-font-l; margin-bottom: 0;}
-
-    .titleText{ display: block; margin-left: 0.5rem; }
-
-    .description { @include ms-font-l; }
-
-    .extensions {  
-        .libraryContainer {
-            margin: 1rem 0 1rem 0;
-        }
-    }
-
+    .expandCollapse { margin-right: 1rem; }
 }
 
 .refEditorPanel {

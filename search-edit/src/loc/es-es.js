@@ -38,6 +38,9 @@ define([], function() {
       "SaveButtonLabel": "Guardar",
       "EditHandlebarsExpressionLabel": "Editar expresión de manillar",
       "AddHandlebarsExpressionDialogLabel": "Agregar expresión de manillar",
+      "AvailableRefinersLabel": "Refinadores disponibles",
+      "RefinerDisplayValueField": "Nombre del filtro para mostrar",            
+      "RefinerTemplateField": "Plantilla de refinador",            
 
       "Templates": {
         "RefinerSortTypeSortDirectionAscending": "Ascendente",

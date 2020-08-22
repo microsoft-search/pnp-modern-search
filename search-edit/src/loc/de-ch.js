@@ -38,6 +38,9 @@ define([], function() {
       "SaveButtonLabel": "Speichern",
       "EditHandlebarsExpressionLabel": "Lenkerausdruck bearbeiten",
       "AddHandlebarsExpressionDialogLabel": "Lenkerausdruck hinzufügen",
+      "AvailableRefinersLabel": "Verfügbare Einschränkungen ",
+      "RefinerDisplayValueField": "Name des anzuzeigenden Filters",
+      "RefinerTemplateField": "Einschränkungs Vorlage",      
 
       "Templates": {
         "RefinerSortTypeSortDirectionAscending": "Aufsteigend",

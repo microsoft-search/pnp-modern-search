@@ -23,8 +23,6 @@ export { IRefinerInstance } from './models/instance/IRefinerInstance';
 export { ExtensibilityService } from './service/ExtensibilityService';
 export { ExtensionHelper } from './utility/ExtensionHelper';
 export { ExtensionType, ExtensionTypes } from './utility/ExtensionTypes';
-/*export { IExtensibilityEditorPropertyPaneProps, IExtensibilityEditorPropertyPaneInternalProps, PropertyPaneExtensibilityEditor} from './components/ExtensibilityEditor/ExtensibilityEditorPropertyPane';
-export { IExtensibilityEditorProps, IExtensibilityEditorState, ExtensibilityEditor } from './components/ExtensibilityEditor/ExtensibilityEditor';*/
 export { IUserService } from './models/IUserService';
 export { IRefinerProps } from './models/IRefinerProps';
 export { RefinementFilterOperationCallback } from './models/RefinementFilterOperationCallback';
@@ -37,3 +35,11 @@ export { RefinersSortOption } from './models/RefinersSortOption';
 export { RefinerTemplateOption } from './models/RefinerTemplateOption';
 export { IRefinerConfiguration } from './models/IRefinerConfiguration';
 export { IManagedPropertyInfo } from './models/IManagedPropertyInfo';
+export { IRefinerEditorPropertyPaneProps, IRefinerEditorProps } from './models/editors/IRefinerEditorProps';
+export { IExtensibilityEditorPropertyPaneProps, IExtensibilityEditorProps } from './models/editors/IExtensibilityEditorProps';
+export { IPropertyPaneSearchManagedPropertiesProps } from './models/editors/IPropertyPaneSearchManagedPropertiesProps';
+export { ITemplateValueFieldEditorProps } from './models/editors/ITemplateValueFieldEditorProps';
+export { ISearchManagedPropertiesProps } from './models/editors/ISearchManagedPropertiesProps';
+export { IEditorLibrary, BasePropertyPaneExtensibilityEditor,  
+    BasePropertyPaneRefinerEditor, BaseSearchManagedProperties,  
+    BasePropertyPaneSearchManagedProperties, BaseTemplateValueFieldEditor } from './models/editors/IEditorLibrary';

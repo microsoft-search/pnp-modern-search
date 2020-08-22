@@ -23,11 +23,8 @@ define([], function() {
         "Refiners": {
             "RefinersFieldLabel": "Verfijningen",
             "RefinerManagedPropertyField": "Filter beheerde eigenschap",
-            "RefinerDisplayValueField": "Filter naam om te tonen",
-            "RefinerTemplateField": "Verfijningssjabloon",
             "RefinersFieldDescription": "Specificeer de eigenschappen die als verfijner moeten worden getoond. Lege filters worden niet getoond.",
             "EditRefinersLabel": "Bewerk verfijners",
-            "AvailableRefinersLabel": "Beschikbare verfijners",
             "ApplyFiltersLabel": "Toepassen",
             "ClearFiltersLabel": "Opschonen",
             "ShowExpanded": "Vouw filters standaard uit",

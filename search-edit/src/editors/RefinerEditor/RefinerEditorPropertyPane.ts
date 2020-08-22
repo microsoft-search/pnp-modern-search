@@ -5,24 +5,18 @@ import {
     PropertyPaneFieldType,
     IPropertyPaneCustomFieldProps
 } from '@microsoft/sp-property-pane';
-import { IRefinerEditorProps, RefinerEditor } from './RefinerEditor';
-import { IRefinerConfiguration } from 'search-extensibility';
-
-export interface IRefinerEditorPropertyPaneProps extends IRefinerEditorProps {
-    disabled?: boolean;    
-}
+import { RefinerEditor } from './RefinerEditor';
+import { IRefinerConfiguration, IRefinerEditorProps, IRefinerEditorPropertyPaneProps,BasePropertyPaneRefinerEditor } from 'search-extensibility';
+import { setVirtualParent } from 'office-ui-fabric-react';
 
 export interface IRefinerEditorPropertyPaneInternalProps extends IRefinerEditorPropertyPaneProps, IPropertyPaneCustomFieldProps {}
 
-export class PropertyPaneRefinerEditor implements IPropertyPaneField<IRefinerEditorPropertyPaneProps> {
-    public type: PropertyPaneFieldType = PropertyPaneFieldType.Custom;
-    public targetProperty: string;
-    public shouldFocus?: boolean;
+export class PropertyPaneRefinerEditor extends BasePropertyPaneRefinerEditor {
     public properties: IRefinerEditorPropertyPaneInternalProps;
     private element: HTMLElement;
 
     constructor(targetProperty:string, properties: IRefinerEditorPropertyPaneProps) {
-        this.targetProperty = targetProperty;
+        super(targetProperty,properties);
         this.properties = {
             key:properties.label,
             label:properties.label,

@@ -23,11 +23,8 @@ define([], function () {
     "Refiners": {
       "RefinersFieldLabel": "Einschränkungen",
       "RefinerManagedPropertyField": "Verwaltete Eigenschaft filtern",
-      "RefinerDisplayValueField": "Name des anzuzeigenden Filters",
-      "RefinerTemplateField": "Einschränkungs Vorlage",
       "RefinersFieldDescription": "Gibt verwaltete Eigenschaften an, die als Einschränkungen verwendet werden. Wenn es für eine Filtereigenschaft keine Werte gibt, wird sie nicht im Panel angezeigt.",
       "EditRefinersLabel": "Einschränkungen bearbeiten",
-      "AvailableRefinersLabel": "Verfügbare Einschränkungen ",
       "ApplyFiltersLabel": "Anwenden",
       "ClearFiltersLabel": "Löschen",
       "ShowExpanded": "Filter standardmässig erweitern",

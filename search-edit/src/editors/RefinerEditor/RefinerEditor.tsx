@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { Icon, PrimaryButton, DefaultButton, Panel, IIconProps, PanelType} from 'office-ui-fabric-react';
-import { IComboBoxOption } from 'office-ui-fabric-react/lib/ComboBox';
+import { Icon, DefaultButton, Panel, IIconProps, PanelType} from 'office-ui-fabric-react';
 import { Text as TextUI } from 'office-ui-fabric-react/lib/Text';
-import { IRefinerConfiguration, ISearchContext } from 'search-extensibility';
+import { IRefinerConfiguration, ISearchContext,IRefinerEditorProps } from 'search-extensibility';
 import { Refiner } from './controls/Refiner/Refiner';
 import * as styles from './RefinerEditor.module.scss';
 import * as strings from 'SearchEditComponentsLibraryStrings';
@@ -11,18 +10,9 @@ import {
     IGroup,
     IGroupDividerProps,
     IGroupedList
-} from 'office-ui-fabric-react/lib/components/GroupedList/index';
+} from 'office-ui-fabric-react/lib/components/GroupedList';
 import { CommandBarButton } from 'office-ui-fabric-react/lib/Button';
 import { IOverflowSetItemProps, OverflowSet } from 'office-ui-fabric-react/lib/OverflowSet';
-
-export interface IRefinerEditorProps {
-    label: string;
-    refiners: IRefinerConfiguration[];
-    onChange: (refiners: IRefinerConfiguration[]) => Promise<boolean>;
-    onAvailablePropertiesUpdated: (properties:IComboBoxOption[])=>void;
-    searchService: ISearchContext;
-    availableProperties: IComboBoxOption[];
-}
 
 export interface IRefinerEditorState {
     refiners: IRefinerConfiguration[];
@@ -35,17 +25,17 @@ export interface IRefinerEditorMenuItem extends IOverflowSetItemProps {
     displayName:string;
     icon:string;
     onClick:(key:string) => void;
-
 }
 
 export class RefinerEditor extends React.Component<IRefinerEditorProps, IRefinerEditorState> {
 
+    private _groups : IGroup[] = null;
     private _groupedList: IGroupedList;
     private _deleteIcon: IIconProps = { iconName: 'Delete' };    
     private _settingsIcon: IIconProps = { iconName: 'Settings' };
     private _addIcon: IIconProps = { iconName: 'Add' };
     private _fileRef: HTMLInputElement = null;
-    private _cancel:boolean = true;
+    private _collapsedState : Map<string,boolean> = null;
     private _buttonStyles = { root: { padding: '10px' }, menuIcon: { fontSize: '16px' } };
 
     constructor(props:IRefinerEditorProps, state:IRefinerEditorState){
@@ -60,7 +50,8 @@ export class RefinerEditor extends React.Component<IRefinerEditorProps, IRefiner
     }
 
     public render(){
-                
+        if(!this._groups) this._groups = this._createGroups(this.state.refiners);
+
         return <div className={styles.default.refinerEditorButton}>
             <DefaultButton 
                 iconProps={this._settingsIcon}
@@ -85,11 +76,11 @@ export class RefinerEditor extends React.Component<IRefinerEditorProps, IRefiner
                         ref='groupedList'
                         componentRef={(g) => { this._groupedList = g; }}
                         items={this.state.refiners}
-                        onRenderCell={this._onRenderGroupCell}
+                        onRenderCell={this._onRenderGroupCell.bind(this)}
                         onShouldVirtualize={() => false}
                         listProps={{ onShouldVirtualize: () => false }}
-                        groupProps={{ onRenderHeader: this._onRenderGroupHeader }}
-                        groups={this._createGroups(this.state.refiners)} />;
+                        groupProps={{ onRenderHeader: this._onRenderGroupHeader.bind(this) }}
+                        groups={this._groups} />
                     </div>
                 </div>
             </Panel>
@@ -123,45 +114,89 @@ export class RefinerEditor extends React.Component<IRefinerEditorProps, IRefiner
     private _onRenderGroupHeader(props: IGroupDividerProps): JSX.Element {
 
         const menuItems : IRefinerEditorMenuItem[] = [
-            { key: 'moveUp', icon: 'Up', displayName: 'moveUp', onClick: this._moveUp.bind(this, [props.group.key]) },
-            { key: 'moveDown', icon: 'Down', displayName: 'moveDown', onClick: this._moveDown.bind(this, [props.group.key]) },
-            { key: 'delete', icon: 'Delete', displayName: 'delete', onClick: this._delete.bind(this,[props.group.key]) },
+            { key: 'delete', icon: 'Delete', displayName: 'delete', onClick: () => { this._delete(props.group.key); } },
         ];
+
+        if(props.groupIndex > 0) menuItems.push({ key: 'moveUp', icon: 'Up', displayName: 'moveUp', onClick: () => { this._moveUp(props.group.key); }});
+        if(props.groupIndex < (this.state.refiners.length-1)) menuItems.push({ key: 'moveDown', icon: 'Down', displayName: 'moveDown', onClick: () => { this._moveDown(props.group.key); }});
 
         return (
             <div
                 style={props.groupIndex > 0 ? { marginTop: '10px' } : undefined}
-                onClick={() => { props.onToggleCollapse(props.group); }}>
-                <div>{props.group.isCollapsed ? <Icon iconName='ChevronDown' /> : <Icon iconName='ChevronUp' /> }</div>
+                onClick={() => { props.onToggleCollapse(props.group); }}
+                className={styles.default.refinerHeader}>
+                <div>{props.group.isCollapsed ? <Icon className={styles.default.expandCollapse} iconName='ChevronDown' /> : <Icon className={styles.default.expandCollapse} iconName='ChevronUp' /> }</div>
                 <TextUI variant={'large'}>{props.group.name}</TextUI>
-                <OverflowSet role="menubar" items={menuItems} onRenderItem={this._onRenderCommandItem.bind(this)} onRenderOverflowButton={null} />
+                <OverflowSet className={styles.default.refinerMenu} 
+                    role="menubar" 
+                    items={menuItems} 
+                    onRenderItem={this._onRenderCommandItem.bind(this)} 
+                    onRenderOverflowButton={null} />
             </div>
         );
 
     }    
 
     private _moveUp(refinerName: string) : void {
-
+        this.setState({
+            refiners: this._reorder(this.state.refiners, refinerName, -1)
+        });
     }
 
     private _moveDown(refinerName: string) : void {
+        this.setState({
+            refiners: this._reorder(this.state.refiners, refinerName, 1)
+        });        
+    }
+
+    private _reorder(refiners: IRefinerConfiguration[], refinerName:string, adder: number) : IRefinerConfiguration[] {
+        
+        let newConfig : IRefinerConfiguration[] = [];
+        let index: number = -1;
+        let item: IRefinerConfiguration = null;
+
+        if(refiners.some((config: IRefinerConfiguration, i: number)=>{
+                index = i;
+                item = config;
+                return config.refinerName === refinerName;
+            }) && index > -1 && index < refiners.length){
+            
+            index = index - adder;
+
+            refiners.map((config:IRefinerConfiguration, i:number)=>{
+                
+                if (i === index) {
+                    newConfig.push(item);
+                    newConfig.push(config);
+                } else if (i !== (index+adder)) {
+                    newConfig.push(config);
+                }
+
+            });
+
+        }
+
+        return newConfig;
 
     }
 
     private _delete(refinerName: string) : void {
-
+        this.setState({
+            refiners: this.state.refiners.filter((refiner:IRefinerConfiguration)=>refiner.refinerName !== refinerName)
+        });
     }
 
     private _onRenderCommandItem(item: IRefinerEditorMenuItem) : JSX.Element {
-        return (<CommandBarButton
+        
+        return <CommandBarButton
             role="menuitem"
-            title={item.key}
+            title={item.displayName}
             styles={this._buttonStyles}
-            menuIconProps={{ iconName: 'More' }}
-            menuProps={{ items: overflowItems! }}
-          />);
-    }
+            iconProps={{iconName:item.icon}}
+            onClick={item.onClick.bind(this, [item.key])}
+          />;
 
+    }
 
     private onUpdate(config:IRefinerConfiguration) : Promise<void> {
         

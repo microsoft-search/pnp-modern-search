@@ -23,11 +23,8 @@ define([], function () {
     "Refiners": {
       "RefinersFieldLabel": "Refiners",
       "RefinerManagedPropertyField": "Filter managed property",
-      "RefinerDisplayValueField": "Filter name to display",
-      "RefinerTemplateField": "Refiner template",
       "RefinersFieldDescription": "Specifies managed properties used as refiners. If there are no values for a filter property, it won't appear in the panel.",
       "EditRefinersLabel": "Edit refiners",
-      "AvailableRefinersLabel": "Available refiners",
       "ApplyFiltersLabel": "Apply",
       "ClearFiltersLabel": "Clear",
       "ShowExpanded": "Expand filter by default",

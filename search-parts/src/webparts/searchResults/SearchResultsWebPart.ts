@@ -41,7 +41,7 @@ import { ResultTypeOperator } from '../../models/ISearchResultType';
 import IResultService from '../../services/ResultService/IResultService';
 import { ResultService, IRenderer } from '../../services/ResultService/ResultService';
 import { IDynamicDataCallables, IDynamicDataPropertyDefinition } from '@microsoft/sp-dynamic-data';
-import { IRefinerConfiguration, ITimeZoneBias, IRefinementFilter, ISearchVerticalInformation, IRefinementResult, IRefinementValue, IExtensibilityLibrary } from 'search-extensibility';
+import { IRefinerConfiguration, ITimeZoneBias, IRefinementFilter, ISearchVerticalInformation, IRefinementResult, IRefinementValue, IExtensibilityLibrary, IEditorLibrary } from 'search-extensibility';
 import IDynamicDataService from '../../services/DynamicDataService/IDynamicDataService';
 import { DynamicDataService } from '../../services/DynamicDataService/DynamicDataService';
 import { DynamicProperty, ThemeProvider, IReadonlyTheme, ThemeChangedEventArgs } from '@microsoft/sp-component-base';
@@ -405,7 +405,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
         if (Environment.type === EnvironmentType.Local) {
             this._taxonomyService = new MockTaxonomyService();
-            this._templateService = new MockTemplateService(this.context.pageContext.cultureInfo.currentUICultureName, this.context, this._searchService);
+            this._templateService = new MockTemplateService(this.context.pageContext.cultureInfo.currentUICultureName, this.context, this._searchService, this._extensibilityService);
             this._searchService = new MockSearchService();
 
         } else {
@@ -425,7 +425,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             }
 
             this._searchService = new SearchService(this.context.pageContext, this.context.spHttpClient);
-            this._templateService = new TemplateService(this.context.spHttpClient, this.context.pageContext.cultureInfo.currentUICultureName, this._searchService, this._timeZoneBias, this.context);
+            this._templateService = new TemplateService(this.context.spHttpClient, this.context.pageContext.cultureInfo.currentUICultureName, this._searchService, this._extensibilityService, this._timeZoneBias, this.context);
         }
 
         this._resultService = new ResultService();
@@ -802,14 +802,9 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
     }
 
     protected async loadPropertyPaneResources(): Promise<void> {
-        /*
-        const { PropertyPaneExtensibilityEditor } = await import('search-extensibility');
 
-        this._extensibilityEditor = PropertyPaneExtensibilityEditor;
-        */
-        const { SearchEditComponentsLibrary } = await import('search-edit');
-        const lib = new SearchEditComponentsLibrary();
-
+        const lib : IEditorLibrary = await this._extensibilityService.getEditorLibrary();
+        
         this._extensibilityEditor = lib.getExtensibilityEditor();
 
         this._searchManagedProperties = lib.getSearchManagedPropertiesEditor();

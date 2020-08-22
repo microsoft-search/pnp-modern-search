@@ -38,6 +38,9 @@ define([], function() {
       "SaveButtonLabel": "Save",
       "EditHandlebarsExpressionLabel": "Edit Handlebars expression",
       "AddHandlebarsExpressionDialogLabel": "Add Handlebars expression",
+      "AvailableRefinersLabel": "Available refiners",      
+      "RefinerDisplayValueField": "Filter name to display",      
+      "RefinerTemplateField": "Refiner template",
       
       "Templates": {
         "RefinerSortTypeSortDirectionAscending": "Ascending",

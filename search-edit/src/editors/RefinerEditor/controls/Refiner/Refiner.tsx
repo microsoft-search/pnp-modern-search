@@ -2,6 +2,7 @@ import * as React from 'react';
 import { IRefinerConfiguration, ISearchContext, RefinerTemplateOption, RefinersSortOption, RefinerSortDirection } from 'search-extensibility';
 import { IComboBoxOption } from 'office-ui-fabric-react/lib/ComboBox';
 import { TextField } from 'office-ui-fabric-react/lib/TextField';
+import { Label } from 'office-ui-fabric-react/lib/Label';
 import { ComboBox, IComboBox } from 'office-ui-fabric-react/lib/ComboBox';
 import { SearchManagedProperties } from '../../../../controls/SearchManagedProperties/SearchManagedProperties';
 import PropertyFieldCodeEditorHost  from '@pnp/spfx-property-controls/lib/propertyFields/codeEditor/PropertyFieldCodeEditorHost';
@@ -32,6 +33,7 @@ export class Refiner extends React.Component<IRefinerProps, IRefinerState> {
 
         return <div className={styles.default.refiner}>
             <div className={styles.default.property}>
+                <Label>{strings.RefinementEditor.AvailableRefinersLabel}</Label>
                 <SearchManagedProperties
                     defaultSelectedKey={this.props.config.refinerName}
                     onUpdate={(newValue: string, isSortable: boolean)=>{
@@ -49,29 +51,37 @@ export class Refiner extends React.Component<IRefinerProps, IRefinerState> {
                     }}></SearchManagedProperties>
             </div>
             <div className={styles.default.displayName}>
-                <TextField value={this.props.config.displayValue}></TextField>
+                <Label>{strings.RefinementEditor.RefinerDisplayValueField}</Label>
+                <TextField defaultValue={this.props.config.displayValue} placeholder={strings.RefinementEditor.RefinerDisplayValueField} onChange={this._onDisplayNameChanged.bind(this)}></TextField>
             </div>
             <div className={styles.default.templateType}>
+                <Label>{strings.RefinementEditor.RefinerTemplateField}</Label>
                 <ComboBox options={this._getTemplates()} 
                     selectedKey={this.props.config.template}
                     onChange={this._templateChanged.bind(this)}
+                    placeholder={strings.RefinementEditor.RefinerTemplateField}
                 ></ComboBox>
             </div>
             <div className={styles.default.sortType}>
+                <Label>{strings.RefinementEditor.Templates.RefinerSortTypeLabel}</Label>
                 <ComboBox options={this._getSortTypes()}
                     selectedKey={this.props.config.refinerSortType}
-                    onChange={this._sortTypeChanged.bind(this)}>
+                    onChange={this._sortTypeChanged.bind(this)}
+                    placeholder={strings.RefinementEditor.Templates.RefinerSortTypeLabel}>
                 </ComboBox>
             </div>
             <div className={styles.default.sortDirection}>
+                <Label>{strings.RefinementEditor.Templates.RefinerSortTypeSortOrderLabel}</Label>
                 <ComboBox options={this._getSortDirection()}
                     selectedKey={this.props.config.refinerSortDirection}
-                    onChange={this._sortDirectionChanged.bind(this)}>
+                    onChange={this._sortDirectionChanged.bind(this)}
+                    placeholder={strings.RefinementEditor.Templates.RefinerSortTypeSortOrderLabel}>
                 </ComboBox>
             </div>
             {this.props.config.template === RefinerTemplateOption.Custom
                 ? <div className={styles.default.customTemplate}>
-                   <PropertyFieldCodeEditorHost
+                    <Label>{strings.RefinementEditor.Templates.CustomItemTemplateLabel}</Label>
+                    <PropertyFieldCodeEditorHost
                         label={strings.RefinementEditor.Templates.CustomEditLabel}
                         targetProperty={"customTemplate"}
                         panelTitle={strings.RefinementEditor.Templates.CustomEditRefinerTemplate}
@@ -85,11 +95,17 @@ export class Refiner extends React.Component<IRefinerProps, IRefinerState> {
                         key={this.props.config.refinerName}
                         disabled={false}
                         deferredValidationTime={200}>
-                   </PropertyFieldCodeEditorHost>
+                    </PropertyFieldCodeEditorHost>
                 </div>
             : null}
         </div>;
 
+    }
+
+    private _onDisplayNameChanged(event: React.FormEvent<HTMLTextAreaElement>, newValue?:string) : void {
+        const config = this.state.config;
+        config.displayValue = newValue;
+        this._updateState(config);
     }
 
     private _customTemplateChanged(targetProperty?: string, newValue?: any) : void {

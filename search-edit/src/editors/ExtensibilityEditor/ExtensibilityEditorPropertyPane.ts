@@ -5,24 +5,18 @@ import {
     PropertyPaneFieldType,
     IPropertyPaneCustomFieldProps
 } from '@microsoft/sp-property-pane';
-import { IExtensibilityEditorProps, ExtensibilityEditor } from './ExtensibilityEditor';
+import { ExtensibilityEditor } from './ExtensibilityEditor';
+import { IExtensibilityEditorProps, IExtensibilityEditorPropertyPaneProps, BasePropertyPaneExtensibilityEditor } from 'search-extensibility';
 import { Guid } from '@microsoft/sp-core-library';
-
-export interface IExtensibilityEditorPropertyPaneProps extends IExtensibilityEditorProps {
-    disabled?: boolean;    
-}
 
 export interface IExtensibilityEditorPropertyPaneInternalProps extends IExtensibilityEditorPropertyPaneProps, IPropertyPaneCustomFieldProps {}
 
-export class PropertyPaneExtensibilityEditor implements IPropertyPaneField<IExtensibilityEditorPropertyPaneProps> {
-    public type: PropertyPaneFieldType = PropertyPaneFieldType.Custom;
-    public targetProperty: string;
-    public shouldFocus?: boolean;
+export class PropertyPaneExtensibilityEditor extends BasePropertyPaneExtensibilityEditor {
     public properties: IExtensibilityEditorPropertyPaneInternalProps;
     private element: HTMLElement;
 
     constructor(targetProperty:string, properties: IExtensibilityEditorPropertyPaneProps) {
-        this.targetProperty = targetProperty;
+        super(targetProperty,properties);
         this.properties = {
             key:properties.label,
             label:properties.label,

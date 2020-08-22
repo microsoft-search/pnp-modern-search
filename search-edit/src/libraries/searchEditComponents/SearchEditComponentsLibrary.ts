@@ -1,10 +1,11 @@
-import { PropertyPaneSearchManagedProperties } from '../../components/PropertyPaneSearchManagedProperties/PropertyPaneSearchManagedProperties';
-import { PropertyPaneExtensibilityEditor } from '../../components/ExtensibilityEditor/ExtensibilityEditorPropertyPane';
-import { PropertyPaneRefinerEditor } from '../../components/RefinerEditor/RefinerEditorPropertyPane';
-import { TemplateValueFieldEditor } from '../../components/TemplateValueFieldEditor/TemplateValueFieldEditor';
+import { PropertyPaneSearchManagedProperties } from '../../editors/PropertyPaneSearchManagedProperties/PropertyPaneSearchManagedProperties';
+import { PropertyPaneExtensibilityEditor } from '../../editors/ExtensibilityEditor/ExtensibilityEditorPropertyPane';
+import { PropertyPaneRefinerEditor } from '../../editors/RefinerEditor/RefinerEditorPropertyPane';
+import { TemplateValueFieldEditor } from '../../editors/TemplateValueFieldEditor/TemplateValueFieldEditor';
 import { SearchManagedProperties } from '../../controls/SearchManagedProperties/SearchManagedProperties';
+import { IEditorLibrary } from 'search-extensibility';
 
-export class SearchEditComponentsLibrary {
+export class SearchEditComponentsLibrary implements IEditorLibrary {
   
   public getExtensibilityEditor() : typeof PropertyPaneExtensibilityEditor {
     return PropertyPaneExtensibilityEditor;

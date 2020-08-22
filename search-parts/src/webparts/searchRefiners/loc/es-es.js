@@ -23,11 +23,8 @@ define([], function() {
         "Refiners": {
             "RefinersFieldLabel": "Refinadores",
             "RefinerManagedPropertyField": "Filtrar la propiedad administrada",
-            "RefinerDisplayValueField": "Nombre del filtro para mostrar",
-            "RefinerTemplateField": "Plantilla de refinador",
             "RefinersFieldDescription": "Especifica las propiedades administradas utilizadas como refinadores. Si no hay valores para una propiedad de filtro, no aparecerá en el panel.",
             "EditRefinersLabel": "Editar refinadores",
-            "AvailableRefinersLabel": "Refinadores disponibles",
             "ApplyFiltersLabel": "Aplicar",
             "ClearFiltersLabel": "Limpiar",
             "ShowExpanded": "Expandir filtro predeterminado",

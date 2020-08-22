@@ -38,6 +38,9 @@ define([], function() {
       "SaveButtonLabel": "Spara",
       "EditHandlebarsExpressionLabel": "Redigera uttrycket för styret",
       "AddHandlebarsExpressionDialogLabel": "Lägg till styret uttryck",
+      "AvailableRefinersLabel": "Tillgängliga filter",      
+      "RefinerDisplayValueField": "Filternamn som ska visas",
+      "RefinerTemplateField": "Filtermall",            
 
       "Templates": {
         "RefinerSortTypeSortDirectionAscending": "Stigande",

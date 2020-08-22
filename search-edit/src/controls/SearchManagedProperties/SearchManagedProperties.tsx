@@ -2,60 +2,12 @@ import * as React from 'react';
 import { ComboBox, IComboBoxOption, IComboBox, SelectableOptionMenuItemType, IComboBoxStyles } from 'office-ui-fabric-react/lib/ComboBox';
 import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/components/Spinner';
 import { isEqual } from '@microsoft/sp-lodash-subset';
-import { ISearchContext } from 'search-extensibility';
+import { ISearchContext, ISearchManagedPropertiesProps } from 'search-extensibility';
 import * as strings from 'SearchEditComponentsLibraryStrings';
 import update from 'immutability-helper';
 
 const LOADING_KEY = 'LOADING';
 
-export interface ISearchManagedPropertiesProps {
-
-    /**
-     * The search service instance
-     */
-    searchService: ISearchContext;
-
-    /**
-     * The default selected key
-     */
-    defaultSelectedKey?: string;
-
-    /**
-     * The default selected key
-     */
-    defaultSelectedKeys?: string [];
-
-    /**
-     * Handler when a field value is updated
-     */
-    onUpdate: (value: any, isSortable?: boolean) => void;
-
-    /**
-     * Callback when the list of managed properties is fetched by the control
-     */
-    onUpdateAvailableProperties: (properties: IComboBoxOption[]) => void;
-
-    /**
-     * The list of available managed properties already fetched once
-     */
-    availableProperties: IComboBoxOption[];
-
-    /**
-     * Indicates whether or not we should check if the selected proeprty is sortable or not
-     */
-    validateSortable?: boolean;
-
-    /**
-     * Indicates whether or not we should allow multiple selection
-     */
-    allowMultiSelect?: boolean;
-
-    /**
-     * The field label
-     */
-    label?: string;
-
-}
 
 export interface ISearchManagedPropertiesState {
 
