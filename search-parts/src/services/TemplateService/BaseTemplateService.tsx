@@ -174,43 +174,18 @@ abstract class BaseTemplateService {
         return moment(new Date(str)).format(pattern);
     }
 
-    private createOdspPreviewUrl(defaultEncodingURL: string): string {
-        let previewUrl: string;
-        if (defaultEncodingURL) {
-            const matches = defaultEncodingURL.match(/^(http[s]?:\/\/[^\/]*)(.+)\/(.+)$/);
-            // First match is the complete URL
-            if (matches) {
-                const [host, path, file] = matches.slice(1);
-                if (host && path && file) {
-                    previewUrl = `${host}${path}/?id=${path}/${file}&parent=${path}`;
-                }
-            }
-        }
-        return previewUrl;
-    }
-
     /**
      * Registers useful helpers for search results templates
      */
     private registerTemplateServices() {
-
-        //https://support.microsoft.com/en-us/office/file-types-supported-for-previewing-files-in-onedrive-sharepoint-and-teams-e054cd0f-8ef2-4ccb-937e-26e37419c5e4
-        const validPreviewExt = ["doc", "docm", "docx", "dotm", "dotx", "pot", "potm", "potx", "pps", "ppsm", "ppsx", "ppt", "pptm", "pptx", "vsd", "vsdx", "xls", "xlsb", "xlsx", "3g2", "3gp", "3mf", "ai", "arw", "asf", "bas", "bmp", "cr2", "crw", "csv", "cur", "dcm", "dng", "dwg", "eml", "epub", "erf", "gif", "glb", "gltf", "hcp", "htm", "html", "ico", "icon", "jpg", "key", "log", "m", "m2ts", "m4v", "markdown", "md", "mef", "mov", "movie", "mp4", "mp4v", "mrw", "msg", "mts", "nef", "nrw", "odp", "ods", "odt", "orf", "pages", "pano", "pdf", "pef", "pict", "ply", "png", "psb", "psd", "rtf", "sketch", "stl", "svg", "tif", "tiff", "ts", "wmv", "xbm", "xcf", "xd", "xpm", "zip", "gitconfig", "abap", "ada", "adp", "ahk", "as", "as3", "asc", "ascx", "asm", "asp", "awk", "bash", "bash_login", "bash_logout", "bash_profile", "bashrc", "bat", "bib", "bsh", "build", "builder", "c", "capfile", "cbl", "cc", "cfc", "cfm", "cfml", "cl", "clj", "cls", "cmake", "cmd", "coffee", "cpp", "cpt", "cpy", "cs", "cshtml", "cson", "csproj", "css", "ctp", "cxx", "d", "ddl", "di.dif", "diff", "disco", "dml", "dtd", "dtml", "el", "emakefile", "erb", "erl", "f", "f90", "f95", "fs", "fsi", "fsscript", "fsx", "gemfile", "gemspec", "go", "groovy", "gvy", "h", "h++", "haml", "handlebars", "hh", "hpp", "hrl", "hs", "htc", "hxx", "idl", "iim", "inc", "inf", "ini", "inl", "ipp", "irbrc", "jade", "jav", "java", "js", "json", "jsp", "jsx", "l", "less", "lhs", "lisp", "lst", "ltx", "lua", "make", "markdn", "mdown", "mkdn", "ml", "mli", "mll", "mly", "mm", "mud", "nfo", "opml", "osascript", "out", "p", "pas", "patch", "php", "php2", "php3", "php4", "php5", "pl", "plist", "pm", "pod", "pp", "profile", "properties", "ps1", "pt", "py", "pyw", "r", "rake", "rb", "rbx", "rc", "re", "reg", "rest", "resw", "resx", "rhtml", "rjs", "rprofile", "rpy", "rss", "rst", "rxml", "s", "sass", "scala", "scm", "sconscript", "sconstruct", "script", "scss", "sgml", "sh", "shtml", "sml", "sql", "sty", "tcl", "tex", "text", "tld", "tli", "tmpl", "tpl", "txt", "vb", "vi", "vim", "wsdl", "xaml", "xhtml", "xoml", "xml", "xsd", "xsl", "xslt", "yaml", "yaws", "yml", "zs", "mp3", "fbx", "heic", "jpeg", "hbs", "textile", "c++"];
-
         // Return the URL of the search result item
         // Usage: <a href="{{url item}}">
         Handlebars.registerHelper("getUrl", (item: ISearchResult) => {
 
             let url = '';
             if (!isEmpty(item)) {
-                if (!isEmpty(item.DefaultEncodingURL)
-                    && item.FileType
-                    && validPreviewExt.indexOf(item.FileType.toLocaleLowerCase()) !== -1) {
-                    url = this.createOdspPreviewUrl(item.DefaultEncodingURL);
-
-                    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-                        url = item.DefaultEncodingURL + "?web=1";
-                    }
+                if (!isEmpty(item.DefaultEncodingURL)) {
+                    url = item.DefaultEncodingURL + "?web=1";
                 }
                 else if (!isEmpty(item.ServerRedirectedURL)) {
                     url = item.ServerRedirectedURL;
