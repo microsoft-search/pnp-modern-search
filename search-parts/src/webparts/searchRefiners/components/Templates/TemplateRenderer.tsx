@@ -10,6 +10,7 @@ import { IRefinementResult, IRefinementValue, RefinerTemplateOption, IRefinerCon
 import { RefinementFilterOperationCallback, IUserService } from 'search-extensibility';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import ISearchRefinersTemplateContext from './CustomTemplate/ISearchRefinersTemplateContext';
+import BaseTemplateService from '../../../../services/TemplateService/BaseTemplateService';
 
 export interface ITemplateRendererProps {
 
@@ -58,6 +59,11 @@ export interface ITemplateRendererProps {
   * UserService
   */
   userService: IUserService;
+
+  /**
+   * Template Service
+   */
+  templateService: BaseTemplateService;
 
   /**
    * The current theme variant
@@ -216,6 +222,7 @@ export default class TemplateRenderer extends React.Component<ITemplateRendererP
           removeFilterValue={this.props.valueToRemove}
           selectedValues={this.props.selectedValues}
           showValueFilter={this.props.showValueFilter}
+          templateService={this.props.templateService}
           userService={this.props.userService}
           language={this.props.language}
           instanceId={this.props.instanceId}

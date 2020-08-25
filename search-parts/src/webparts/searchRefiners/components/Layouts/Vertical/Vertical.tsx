@@ -211,6 +211,7 @@ export default class Vertical extends React.Component<IFilterLayoutProps, IVerti
                     themeVariant={props.themeVariant}
                     selectedValues={selectedFilterValues}
                     userService={this.props.userService}
+                    templateService={this.props.templateService}
                     instanceId={this.props.instanceId}
                     showValueFilter={!!configuredFilter[0]  && !!configuredFilter[0].showValueFilter ? configuredFilter[0].showValueFilter : false}
                     refinerContext={context}

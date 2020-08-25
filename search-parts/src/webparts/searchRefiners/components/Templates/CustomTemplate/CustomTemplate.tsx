@@ -4,28 +4,17 @@ import * as React from 'react';
 // Localization
 import * as strings from 'SearchRefinersWebPartStrings';
 
+import { Shimmer, ShimmerElementType, ShimmerElementsGroup } from 'office-ui-fabric-react/lib/Shimmer';
+
 // CSS
 import styles from './CustomTemplate.module.scss';
-
-// UI Fabric
-import { Checkbox } from 'office-ui-fabric-react/lib/Checkbox';
-import { Text } from '@microsoft/sp-core-library';
-import { Link } from 'office-ui-fabric-react/lib/Link';
-import { Icon } from 'office-ui-fabric-react/lib/Icon';
-import { Text as TextUI } from 'office-ui-fabric-react/lib/Text';
-import { getFileTypeIconProps } from '@uifabric/file-type-icons';
-import { ITheme } from '@uifabric/styling';
 
 // Third party lib
 import update from 'immutability-helper';
 
-// Helper
-import { FileHelper } from './../../../../../helpers/FileHelper';
-
 // Interface
 import { IRefinementValue, RefinementOperator } from 'search-extensibility';
 import { IRefinerProps, IRefinerState } from 'search-extensibility';
-import { TextField } from 'office-ui-fabric-react';
 import { CssHelper } from '../../../../../helpers/CssHelper';
 import SearchTemplate from '../../../../../controls/SearchTemplate/SearchTemplate';
 import ISearchRefinersTemplateContext from './ISearchRefinersTemplateContext';
@@ -45,6 +34,11 @@ export interface CustomRefinerState extends IRefinerState {
 export class CustomTemplate extends React.Component<CustomTemplateProps, CustomRefinerState> {
 
   private _operator: RefinementOperator;
+  private radioShimmer = [
+    { type: ShimmerElementType.circle },
+    { type: ShimmerElementType.gap, width: '2%' },
+    { type: ShimmerElementType.line },
+  ];
 
   public constructor(props: CustomTemplateProps) {
     super(props);
@@ -64,7 +58,7 @@ export class CustomTemplate extends React.Component<CustomTemplateProps, CustomR
   }
 
   public render() {
-
+    let contentToDisplay : JSX.Element = null;
     let disableButtons = false;
 
     if (this.props.selectedValues.length === 0 && this.state.refinerSelectedFilterValues.length === 0) {
@@ -75,14 +69,25 @@ export class CustomTemplate extends React.Component<CustomTemplateProps, CustomR
 
     const ts = this.props.templateService as TemplateService;
 
+    if(this.state.templateContent) {
+      contentToDisplay = <SearchTemplate<ISearchRefinersTemplateContext>
+          templateService={ts}
+          templateContent={ts.getTemplateMarkup(this.state.templateContent)}
+          templateContext={this.props.templateContext}
+          instanceId={this.props.instanceId}
+        />;
+    } else {
+      contentToDisplay = <div>
+        <Shimmer shimmerElements={this.radioShimmer}></Shimmer>
+        <Shimmer shimmerElements={this.radioShimmer}></Shimmer>
+        <Shimmer shimmerElements={this.radioShimmer}></Shimmer>
+        <Shimmer shimmerElements={this.radioShimmer}></Shimmer>
+      </div>;
+    }
+
     return (
       <div className={styles.pnpRefinersCustom + " " + filterClassName}>
-         <SearchTemplate<ISearchRefinersTemplateContext>
-              templateService={ts}
-              templateContent={ts.getTemplateMarkup(this.state.templateContent)}
-              templateContext={this.props.templateContext}
-              instanceId={this.props.instanceId}
-            />;
+        {contentToDisplay}
       </div>
     );
   }

@@ -1,6 +1,7 @@
 import { IRefinementResult, IRefinerConfiguration, IRefinementFilter } from "search-extensibility";
 import { RefinementFilterOperationCallback, IUserService } from 'search-extensibility';
 import { IReadonlyTheme } from "@microsoft/sp-component-base";
+import BaseTemplateService from "../../../../services/TemplateService/BaseTemplateService";
 
 interface IFilterLayoutProps {
 
@@ -49,6 +50,11 @@ interface IFilterLayoutProps {
    */
   userService: IUserService;
 
+  /**
+   * Template Service
+   */
+  templateService: BaseTemplateService;
+  
   /**
    * The current theme variant
    */
