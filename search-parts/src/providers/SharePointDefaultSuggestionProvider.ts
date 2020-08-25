@@ -11,7 +11,7 @@ export class SharePointDefaultSuggestionProvider extends BaseSuggestionProvider 
   public static readonly ProviderDescription: string = 'Default SharePoint query suggestions.';
 
   public async onInit(): Promise<void> {
-    this._searchService = this.context.search; //new SearchService(this._ctx.pageContext, this._ctx.spHttpClient);
+    this._searchService = this.context.search;
   }
 
   public get isSuggestionsEnabled(): boolean {

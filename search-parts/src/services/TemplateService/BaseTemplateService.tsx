@@ -146,6 +146,10 @@ abstract class BaseTemplateService {
         }
     }
 
+    public getTemplateMarkup(templateContent: string): string {
+        return TemplateService.getTemplateMarkup(templateContent);
+    }
+
     /**
      * Gets the placeholder HTML markup in the full template content
      * @param templateContent the full template content
@@ -806,6 +810,16 @@ abstract class BaseTemplateService {
     public abstract getFileContent(fileUrl: string): Promise<string>;
 
     public abstract ensureFileResolves(fileUrl: string): Promise<void>;
+
+    public async getTemplateContent(templateHtml: string, templateFilePath: string) : Promise<string> {
+        
+        if (templateFilePath) {
+            return await this.getFileContent(templateFilePath);
+        } else {
+            return templateHtml;
+        }
+
+    }
 
     private static _initDocumentPreviews() {
         const nodes = document.querySelectorAll('.document-preview-item');

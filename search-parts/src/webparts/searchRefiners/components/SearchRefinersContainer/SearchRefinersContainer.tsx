@@ -65,6 +65,9 @@ export default class SearchRefinersContainer extends React.Component<ISearchRefi
                         selectedFilters={this.state.selectedRefinementFilters}
                         userService={this.props.userService}
                         contentClassName={this.props.contentClassName}
+                        instanceId={this.props.instanceId}
+                        webUrl={this.props.webUrl}
+                        siteUrl={this.props.siteUrl}
                     />;
                     break;
 
@@ -89,6 +92,9 @@ export default class SearchRefinersContainer extends React.Component<ISearchRefi
                         selectedFilters={this.state.selectedRefinementFilters}
                         userService={this.props.userService}
                         contentClassName={this.props.contentClassName}
+                        instanceId={this.props.instanceId}
+                        webUrl={this.props.webUrl}
+                        siteUrl={this.props.siteUrl}
                     />;
                     break;
             }

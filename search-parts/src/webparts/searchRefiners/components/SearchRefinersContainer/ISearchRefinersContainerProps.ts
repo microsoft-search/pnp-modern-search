@@ -70,6 +70,11 @@ export interface ISearchRefinersContainerProps {
   contentClassName: string;
 
   /**
+   * Instance Id
+   */
+  instanceId: string;
+
+  /**
    * Filter web part styles
    */
   styles: string;
@@ -78,5 +83,15 @@ export interface ISearchRefinersContainerProps {
    * DOM element
    */
   domElement:HTMLElement;
+
+  /**
+   * Web url
+   */
+  webUrl: string;
+
+  /**
+   * Site url
+   */
+  siteUrl:string;
   
 }

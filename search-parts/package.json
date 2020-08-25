@@ -54,7 +54,8 @@
         "react-collapsible": "2.7.0",
         "react-dom": "16.8.5",
         "react-js-pagination": "3.0.2",
-        "video.js": "7.8.3"
+        "video.js": "7.8.3",
+        "search-extensibility": "1.0.0"
     },
     "devDependencies": {
         "@microsoft/rush-stack-compiler-3.3": "0.3.5",

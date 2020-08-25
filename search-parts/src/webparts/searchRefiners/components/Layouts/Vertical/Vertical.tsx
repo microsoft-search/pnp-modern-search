@@ -17,6 +17,8 @@ import { ITheme } from '@uifabric/styling';
 import { Icon } from 'office-ui-fabric-react/lib/Icon';
 import { Text as TextUI } from 'office-ui-fabric-react/lib/Text';
 import { CssHelper } from '../../../../../helpers/CssHelper';
+import { IRefinerConfiguration, IRefinementResult, IRefinementValue, RefinerTemplateOption } from 'search-extensibility';
+import ISearchRefinersTemplateContext from '../../Templates/CustomTemplate/ISearchRefinersTemplateContext';
 
 export default class Vertical extends React.Component<IFilterLayoutProps, IVerticalState> {
 
@@ -193,20 +195,25 @@ export default class Vertical extends React.Component<IFilterLayoutProps, IVerti
             // In this case we use the refiners global state to recreate the 'local' state for this component
             const selectedFilter = props.selectedFilters.filter(filter => { return filter.FilterName === refinementResult.FilterName; });
             const selectedFilterValues = selectedFilter.length === 1 ? selectedFilter[0].Values : [];
+            const templateType = !!configuredFilter[0] ? configuredFilter[0].template : null;
+            const refinerConfig = !!configuredFilter[0] ? configuredFilter[0] : null;
+            const context = this._createRefinerContext(i, refinerConfig, refinementResult, selectedFilterValues, null, templateType);
 
             items.push(
                 <TemplateRenderer
                     key={i}
-                    refinerConfiguration={!!configuredFilter[0] ? configuredFilter[0] : null}
+                    refinerConfiguration={refinerConfig}
                     refinementResult={refinementResult}
                     shouldResetFilters={props.shouldResetFilters}
-                    templateType={!!configuredFilter[0] ? configuredFilter[0].template : null}
+                    templateType={templateType}
                     onFilterValuesUpdated={props.onFilterValuesUpdated}
                     language={props.language}
                     themeVariant={props.themeVariant}
                     selectedValues={selectedFilterValues}
                     userService={this.props.userService}
+                    instanceId={this.props.instanceId}
                     showValueFilter={!!configuredFilter[0]  && !!configuredFilter[0].showValueFilter ? configuredFilter[0].showValueFilter : false}
+                    refinerContext={context}
                 />
             );
         });
@@ -214,5 +221,31 @@ export default class Vertical extends React.Component<IFilterLayoutProps, IVerti
         this.setState({
             items: update(this.state.items, { $set: items })
         });
+    }
+
+    
+    private _createRefinerContext(key: number, 
+        config: IRefinerConfiguration, 
+        refiners: IRefinementResult,
+        selectedRefiners: IRefinementValue[],
+        valueToRemove: IRefinementValue,
+        templateType: RefinerTemplateOption): ISearchRefinersTemplateContext {
+
+        return {
+            key: key,
+            configuration: config,
+            refiners: refiners,
+            selectedRefiners: selectedRefiners,
+            strings: strings,
+            webUrl: this.props.webUrl,
+            siteUrl: this.props.siteUrl,
+            themeVariant: this.props.themeVariant,
+            instanceId: this.props.instanceId,
+            shouldResetFilters: this.props.shouldResetFilters,
+            language: this.props.language,
+            valueToRemove: valueToRemove,
+            templateType: templateType
+        };
+
     }
 }

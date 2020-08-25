@@ -58,6 +58,21 @@ interface IFilterLayoutProps {
    * Content class name
    */
   contentClassName: string;
+
+  /**
+   * Instance id
+   */
+  instanceId: string;
+
+  /**
+   * Web Url
+   */
+  webUrl: string;
+
+  /**
+   * Site Url
+   */
+  siteUrl:string;
   
 }
 

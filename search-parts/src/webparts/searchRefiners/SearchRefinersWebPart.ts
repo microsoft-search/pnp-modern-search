@@ -146,7 +146,10 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
           contentClassName: this._contentClassName,
           styles: this._customStyles,
           templateService: this._templateService,
-          domElement: this.domElement
+          domElement: this.domElement,
+          instanceId: this.instanceId,
+          webUrl: this.context.pageContext.web.serverRelativeUrl,
+          siteUrl: this.context.pageContext.site.serverRelativeUrl
         } as ISearchRefinersContainerProps
       );
     } else {

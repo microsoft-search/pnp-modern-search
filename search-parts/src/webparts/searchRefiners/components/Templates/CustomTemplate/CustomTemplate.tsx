@@ -27,18 +27,31 @@ import { IRefinementValue, RefinementOperator } from 'search-extensibility';
 import { IRefinerProps, IRefinerState } from 'search-extensibility';
 import { TextField } from 'office-ui-fabric-react';
 import { CssHelper } from '../../../../../helpers/CssHelper';
+import SearchTemplate from '../../../../../controls/SearchTemplate/SearchTemplate';
+import ISearchRefinersTemplateContext from './ISearchRefinersTemplateContext';
+import { TemplateService } from '../../../../../services/TemplateService/TemplateService';
+import BaseTemplateService from '../../../../../services/TemplateService/BaseTemplateService';
 
+export interface CustomTemplateProps extends IRefinerProps {
+  templateContext: ISearchRefinersTemplateContext;
+  instanceId: string;
+}
+
+export interface CustomRefinerState extends IRefinerState {
+  templateContent: string;
+}
 
 // Class
-export default class CustomTemplate extends React.Component<IRefinerProps, IRefinerState> {
+export class CustomTemplate extends React.Component<CustomTemplateProps, CustomRefinerState> {
 
   private _operator: RefinementOperator;
 
-  public constructor(props: IRefinerProps) {
+  public constructor(props: CustomTemplateProps) {
     super(props);
 
     this.state = {
-      refinerSelectedFilterValues: []
+      refinerSelectedFilterValues: [],
+      templateContent: null
     };
 
     this._onValueFilterChanged = this._onValueFilterChanged.bind(this);
@@ -48,44 +61,51 @@ export default class CustomTemplate extends React.Component<IRefinerProps, IRefi
 
   public configureEvents() : void {
 
-
-
   }
 
   public render() {
 
     let disableButtons = false;
+
     if (this.props.selectedValues.length === 0 && this.state.refinerSelectedFilterValues.length === 0) {
         disableButtons = true;
     }
     
     const filterClassName = CssHelper.prefixAndValidateClassName("pnp-refiner-custom", this.props.refinementResult.FilterName);
 
-    /**
-     * Events to handle
-     * 
-     * 
-     * 
-     */
+    const ts = this.props.templateService as TemplateService;
 
     return (
       <div className={styles.pnpRefinersCustom + " " + filterClassName}>
-        
+         <SearchTemplate<ISearchRefinersTemplateContext>
+              templateService={ts}
+              templateContent={ts.getTemplateMarkup(this.state.templateContent)}
+              templateContext={this.props.templateContext}
+              instanceId={this.props.instanceId}
+            />;
       </div>
     );
   }
 
-  public componentDidMount() {
+  public async componentDidMount() {
 
     // Determine the operator according to multi value setting
     this._operator = this.props.isMultiValue ? RefinementOperator.OR : RefinementOperator.AND;
+    const templateService = this.props.templateService as BaseTemplateService;
+
+    const templateContent = await templateService.getTemplateContent(
+                              this.props.templateContext.configuration.customTemplate,
+                              this.props.templateContext.configuration.customTemplateUrl);
 
     // This scenario happens due to the behavior of the Office UI Fabric GroupedList component who recreates child components when a greoup is collapsed/expanded, causing a state reset for sub components
     // In this case we use the refiners global state to recreate the 'local' state for this component
     this.setState({
-      refinerSelectedFilterValues: this.props.selectedValues
+      refinerSelectedFilterValues: this.props.selectedValues,
+      templateContent: templateContent
     });
+
   }
+
 
   public UNSAFE_componentWillReceiveProps(nextProps: IRefinerProps) {
 

@@ -1,5 +1,6 @@
 import { RefinementFilterOperationCallback, IUserService, IExtensionInstance, IRefinementResult, IRefinementValue, } from "..";
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
+import { ITemplateContext } from "./ITemplateContext";
 
 export interface IRefinerProps {
 
@@ -38,6 +39,11 @@ export interface IRefinerProps {
    * UserService
    */
   userService?: IUserService;
+
+  /**
+   * Template Service
+   */
+  templateService?: ITemplateContext;
 
   /**
    * The current theme variant
