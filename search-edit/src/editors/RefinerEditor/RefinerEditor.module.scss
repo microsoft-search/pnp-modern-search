@@ -10,7 +10,7 @@
     
     padding-top: 1rem;
 
-    .addContainer { display: block; }
+    .addContainer { display: block; padding-bottom: 1rem;}
 
     .addText { display: block; }
 
@@ -21,6 +21,20 @@
     .refinerMenu { margin-left: auto; }
 
     .expandCollapse { margin-right: 1rem; }
+
+    .collapseIcon { padding-top: 0.5rem; padding-left: 0.5rem; }
+    
+    .groupList {
+        .newItem,
+        :global(.ms-GroupedList-group) {
+            padding: 0.25rem; margin: 0.25rem 0 0.25rem 0;
+            border: 1px solid '[theme:neutralQuaternary, default:#0078d7]';
+            :global(.ms-List-cell){
+                padding: 0.25rem;
+            }
+        }
+    }
+
 }
 
 .refEditorPanel {
@@ -37,6 +51,12 @@
 
     }
 
+}
+
+.footerPanel {
+    padding: 1rem 1.5rem 1rem 1.5rem;
+    background: '[theme:white, default:#0078d7]';
+    :global(.ms-Button) { margin-right: 1rem; }
 }
 
 .refCodeEditor {

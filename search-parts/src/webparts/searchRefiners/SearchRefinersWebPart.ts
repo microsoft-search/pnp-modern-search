@@ -15,7 +15,7 @@ import * as strings from 'SearchRefinersWebPartStrings';
 import { ExtensionTypes, IExtension, ExtensibilityService, IExtensibilityService, 
   IExtensibilityLibrary, IRefinementFilter, IUserService, ITimeZoneBias, 
   RefinersLayoutOption, RefinerTemplateOption,
-  RefinersSortOption, RefinerSortDirection, IEditorLibrary } from 'search-extensibility';
+  RefinersSortOption, RefinerSortDirection, IEditorLibrary, IRefinerConfiguration } from 'search-extensibility';
 import SearchRefinersContainer from './components/SearchRefinersContainer/SearchRefinersContainer';
 import { IDynamicDataCallables, IDynamicDataPropertyDefinition, IDynamicDataSource } from '@microsoft/sp-dynamic-data';
 import { ISearchRefinersWebPartProps } from './ISearchRefinersWebPartProps';
@@ -210,6 +210,8 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
     const telemetry = PnPTelemetry.getInstance();
     telemetry.optOut();
 
+    this._extensibilityService = new ExtensibilityService();
+
     this._initializeRequiredProperties();
     this.initThemeVariant();
 
@@ -251,8 +253,7 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
     if(!this.properties.styles || this.properties.styles.trim().length == 0) this.properties.styles = "<style></style>";
     
     this._customStyles = await this._processStyles();
-    
-    this._extensibilityService = new ExtensibilityService();        
+         
     await this._loadExtensibility();
 
     return super.onInit();
@@ -324,6 +325,10 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
         label: strings.Refiners.EditRefinersLabel,
         refiners: this.properties.refinersConfiguration,
         onAvailablePropertiesUpdated: this._onUpdateAvailableProperties.bind(this),
+        onChange : (refiners: IRefinerConfiguration[]) =>{
+          this.properties.refinersConfiguration = refiners;
+          this.context.dynamicDataSourceManager.notifyPropertyChanged(SearchComponentType.RefinersWebPart);
+        },
         searchService: this._searchService,
         availableProperties: this._availableManagedProperties
       }),

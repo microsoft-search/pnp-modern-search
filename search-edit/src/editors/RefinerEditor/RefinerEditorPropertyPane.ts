@@ -1,8 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import {
-    IPropertyPaneField,
-    PropertyPaneFieldType,
     IPropertyPaneCustomFieldProps
 } from '@microsoft/sp-property-pane';
 import { RefinerEditor } from './RefinerEditor';
@@ -21,11 +19,12 @@ export class PropertyPaneRefinerEditor extends BasePropertyPaneRefinerEditor {
             key:properties.label,
             label:properties.label,
             refiners: properties.refiners,
-            onRender: this.onRender.bind(this),
-            onChange: this.onChange.bind(this),
-            onAvailablePropertiesUpdated: properties.onAvailablePropertiesUpdated.bind(this),
+            onChange: properties.onChange,
+            onAvailablePropertiesUpdated: properties.onAvailablePropertiesUpdated,
             searchService: properties.searchService,
-            availableProperties: properties.availableProperties
+            availableProperties: properties.availableProperties,
+            onRender: this.onRender.bind(this),
+            onDispose: this.onDispose.bind(this)
         };
     }
 
@@ -55,7 +54,7 @@ export class PropertyPaneRefinerEditor extends BasePropertyPaneRefinerEditor {
     }
 
     private async onChange(refiners: IRefinerConfiguration[]):Promise<boolean> {
-        return (await this.properties.onChange(refiners));
+        return await this.properties.onChange(refiners);
     }
 
 }

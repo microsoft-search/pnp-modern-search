@@ -63,6 +63,7 @@ export class TemplateService extends BaseTemplateService {
         super(ctx, searchService);
 
         this._searchService = searchService;
+        this._extensibilityService = extensibilityService;
         this._spHttpClient = spHttpClient;
         this.CurrentLocale = locale;
         this.TimeZoneBias = timeZoneBias;
@@ -605,9 +606,10 @@ export class TemplateService extends BaseTemplateService {
 
     public async loadPropertyPaneResources() : Promise<void> {
 
-        const lib : IEditorLibrary = await this._extensibilityService.getEditorLibrary();
-
-        this._templateEditor = lib.getTemplateValueFieldEditor();
+        if(!this._templateEditor) {
+            const lib : IEditorLibrary = await this._extensibilityService.getEditorLibrary();
+            this._templateEditor = lib.getTemplateValueFieldEditor();
+        }
 
     }
 

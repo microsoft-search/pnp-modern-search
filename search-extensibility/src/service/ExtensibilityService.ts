@@ -10,6 +10,7 @@ import { IExtensibilityService } from '../models/IExtensibilityService';
 import { IEditorLibrary } from "../models/editors/IEditorLibrary";
 
 const LogSource = "ExtensibilityService";
+const EDITOR_LIBRARY_ID = "b4c35af5-102d-4a2d-a448-4b25a7e66a94";
 
 export class ExtensibilityService implements IExtensibilityService {
 
@@ -168,7 +169,7 @@ export class ExtensibilityService implements IExtensibilityService {
     public async getEditorLibrary() : Promise<IEditorLibrary> {
 
         let library: any = undefined;
-        const editLibrary = this.tryLoadLibrary(Guid.parse("fd98133b-bc39-4130-9a62-8193c7f87c95"));
+        const editLibrary = await this.tryLoadLibrary(Guid.parse(EDITOR_LIBRARY_ID));
         const libraryMainEntryPoints = Object.keys(editLibrary).filter(property => {
             // Return the library main entry point object by checking the prototype methods. They should be matching the IEditorLibrary interface.
             return property.indexOf('__') === -1 

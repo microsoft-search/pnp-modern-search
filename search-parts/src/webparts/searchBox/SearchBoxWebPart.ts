@@ -183,9 +183,6 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
         
         this._handleQueryStringChange();
 
-        this._extensibilityService = new ExtensibilityService();
-        await this.initSuggestionProviders();
-
         this._initComplete = true;
         return super.onInit();
     }
@@ -415,6 +412,14 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
             dynamicPropertyType: 'string'
             }
         };
+    }
+
+    
+    /**
+     * Initializes the property pane configuration
+     */
+    protected async onPropertyPaneConfigurationStart() {
+        await this.loadPropertyPaneResources();
     }
 
     protected async loadPropertyPaneResources(): Promise<void> {

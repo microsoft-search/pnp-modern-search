@@ -1,8 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import {
-    IPropertyPaneField,
-    PropertyPaneFieldType,
     IPropertyPaneCustomFieldProps
 } from '@microsoft/sp-property-pane';
 import { ExtensibilityEditor } from './ExtensibilityEditor';

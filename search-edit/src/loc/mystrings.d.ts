@@ -26,6 +26,8 @@ declare interface ISearchEditComponentsLibraryStrings {
     LibraryAlreadyLoaded:string;
   },
   RefinementEditor: {
+    AddRefiner: string;
+    NewFilter:string;
     CodeHeaderText: string;
     HeaderText: string;
     ApplyButtonLabel: string;
@@ -40,6 +42,9 @@ declare interface ISearchEditComponentsLibraryStrings {
     AvailableRefinersLabel: string;
     RefinerDisplayValueField: string;
     RefinerTemplateField: string;           
+    SaveNewRefiner: string;
+    IsCollapsed:string;
+    ShowValueFilter:string;
     Templates: {
       RefinerSortTypeSortDirectionAscending: string;
       RefinerSortTypeSortDirectionDescending: string;            

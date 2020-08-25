@@ -9,6 +9,6 @@
     "isDomainIsolated": false
   },
   "paths": {
-    "zippedPackage": "solution/search-edit.sppkg"
+    "zippedPackage": "solution/pnp-modern-search-edit.sppkg"
   }
 }

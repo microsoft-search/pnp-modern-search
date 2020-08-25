@@ -26,6 +26,8 @@ define([], function() {
       "LibraryAlreadyLoaded": "This library is already loaded. Please try another GUID :)."
     },
     "RefinementEditor" : {
+      "AddRefiner": "Add Filter",
+      "NewFilter": "New Filter",
       "CodeHeaderText": "Edit Refiner Template",
       "HeaderText": "Edit Refiners",
       "ApplyButtonLabel" : "Apply",
@@ -41,7 +43,9 @@ define([], function() {
       "AvailableRefinersLabel": "Refinadores disponibles",
       "RefinerDisplayValueField": "Nombre del filtro para mostrar",            
       "RefinerTemplateField": "Plantilla de refinador",            
-
+      "SaveNewRefiner": "Save New Refiner",
+      "IsCollapsed":"Show Expanded",
+      "ShowValueFilter":"Show Filter",
       "Templates": {
         "RefinerSortTypeSortDirectionAscending": "Ascendente",
         "RefinerSortTypeSortDirectionDescending": "Descendente",

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Icon, DefaultButton, Panel, IIconProps, PanelType} from 'office-ui-fabric-react';
 import { Text as TextUI } from 'office-ui-fabric-react/lib/Text';
-import { IRefinerConfiguration, ISearchContext,IRefinerEditorProps } from 'search-extensibility';
+import { IRefinerConfiguration, IRefinerEditorProps, RefinerTemplateOption, RefinersSortOption, RefinerSortDirection } from 'search-extensibility';
 import { Refiner } from './controls/Refiner/Refiner';
 import * as styles from './RefinerEditor.module.scss';
 import * as strings from 'SearchEditComponentsLibraryStrings';
@@ -11,13 +11,15 @@ import {
     IGroupDividerProps,
     IGroupedList
 } from 'office-ui-fabric-react/lib/components/GroupedList';
-import { CommandBarButton } from 'office-ui-fabric-react/lib/Button';
+import { CommandBarButton, PrimaryButton } from 'office-ui-fabric-react/lib/Button';
 import { IOverflowSetItemProps, OverflowSet } from 'office-ui-fabric-react/lib/OverflowSet';
 
 export interface IRefinerEditorState {
     refiners: IRefinerConfiguration[];
     show: boolean;
     reload: boolean;
+    groups: IGroup[];
+    addNew: boolean;
 }
 
 export interface IRefinerEditorMenuItem extends IOverflowSetItemProps {
@@ -29,13 +31,9 @@ export interface IRefinerEditorMenuItem extends IOverflowSetItemProps {
 
 export class RefinerEditor extends React.Component<IRefinerEditorProps, IRefinerEditorState> {
 
-    private _groups : IGroup[] = null;
-    private _groupedList: IGroupedList;
-    private _deleteIcon: IIconProps = { iconName: 'Delete' };    
+    private _groupedList: IGroupedList;    
     private _settingsIcon: IIconProps = { iconName: 'Settings' };
     private _addIcon: IIconProps = { iconName: 'Add' };
-    private _fileRef: HTMLInputElement = null;
-    private _collapsedState : Map<string,boolean> = null;
     private _buttonStyles = { root: { padding: '10px' }, menuIcon: { fontSize: '16px' } };
 
     constructor(props:IRefinerEditorProps, state:IRefinerEditorState){
@@ -44,13 +42,14 @@ export class RefinerEditor extends React.Component<IRefinerEditorProps, IRefiner
         this.state = {
             show: false,
             refiners: this.props.refiners,
-            reload: true
+            reload: true,
+            groups: this._createGroups(this.props.refiners),
+            addNew: false
         };
 
     }
 
-    public render(){
-        if(!this._groups) this._groups = this._createGroups(this.state.refiners);
+    public render(){ 
 
         return <div className={styles.default.refinerEditorButton}>
             <DefaultButton 
@@ -58,13 +57,14 @@ export class RefinerEditor extends React.Component<IRefinerEditorProps, IRefiner
                 className={styles.default.addButton}
                 onClick={()=>{this.setState({show:!this.state.show});}}>
                     {this.props.label}
-                </DefaultButton>
+            </DefaultButton>
             <Panel
                 className={styles.default.refEditorPanel}
                 headerText={strings.RefinementEditor.HeaderText}
                 isOpen={this.state.show}    
                 type={PanelType.medium}
                 isLightDismiss={true}
+                onRenderFooter={this.renderPanelFooter.bind(this)}
                 onDismiss={()=>{
                     this.setState({
                         show: false
@@ -72,6 +72,18 @@ export class RefinerEditor extends React.Component<IRefinerEditorProps, IRefiner
                 }}>
                 <div className={styles.default.refinerEditor}>
                     <div className={styles.default.addContainer}>
+                        <DefaultButton 
+                            iconProps={this._addIcon}
+                            className={styles.default.addButton}
+                            onClick={this._addRefiner.bind(this)}>
+                                {strings.RefinementEditor.AddRefiner}
+                        </DefaultButton>
+                        
+                        {this.state.addNew
+                            ? this._renderAddNew()
+                            : null}
+
+                    </div>
                     <GroupedList
                         ref='groupedList'
                         componentRef={(g) => { this._groupedList = g; }}
@@ -80,8 +92,9 @@ export class RefinerEditor extends React.Component<IRefinerEditorProps, IRefiner
                         onShouldVirtualize={() => false}
                         listProps={{ onShouldVirtualize: () => false }}
                         groupProps={{ onRenderHeader: this._onRenderGroupHeader.bind(this) }}
-                        groups={this._groups} />
-                    </div>
+                        groups={this.state.groups}
+                        className={styles.default.groupList}
+                        />
                 </div>
             </Panel>
         </div>;
@@ -89,13 +102,22 @@ export class RefinerEditor extends React.Component<IRefinerEditorProps, IRefiner
 
     private _createGroups(refiners:IRefinerConfiguration[]):IGroup[] {
 
+        const groupHash : Map<string,IGroup> = new Map<string, IGroup>();
+
+        if(this.state && this.state.groups) {
+            this.state.groups.map((group: IGroup)=>{
+                groupHash.set(group.key, group);
+            });
+        }
+
         return refiners.map((refiner:IRefinerConfiguration, index:number)=>{
+            const isCollapsed = groupHash.has(refiner.refinerName) ? groupHash.get(refiner.refinerName).isCollapsed : true;
             return {
                 key: refiner.refinerName,
                 name: refiner.displayValue,
                 count: 1,
                 startIndex: index,
-                isCollapsed: true
+                isCollapsed: isCollapsed
             };         
         });
 
@@ -122,10 +144,9 @@ export class RefinerEditor extends React.Component<IRefinerEditorProps, IRefiner
 
         return (
             <div
-                style={props.groupIndex > 0 ? { marginTop: '10px' } : undefined}
                 onClick={() => { props.onToggleCollapse(props.group); }}
                 className={styles.default.refinerHeader}>
-                <div>{props.group.isCollapsed ? <Icon className={styles.default.expandCollapse} iconName='ChevronDown' /> : <Icon className={styles.default.expandCollapse} iconName='ChevronUp' /> }</div>
+                <div className={styles.default.collapseIcon}>{props.group.isCollapsed ? <Icon className={styles.default.expandCollapse} iconName='ChevronDown' /> : <Icon className={styles.default.expandCollapse} iconName='ChevronUp' /> }</div>
                 <TextUI variant={'large'}>{props.group.name}</TextUI>
                 <OverflowSet className={styles.default.refinerMenu} 
                     role="menubar" 
@@ -135,54 +156,73 @@ export class RefinerEditor extends React.Component<IRefinerEditorProps, IRefiner
             </div>
         );
 
-    }    
+    }
 
-    private _moveUp(refinerName: string) : void {
-        this.setState({
-            refiners: this._reorder(this.state.refiners, refinerName, -1)
+    private _renderAddNew() : JSX.Element {
+
+        const newItem = {
+                refinerName: "",
+                displayValue: "",
+                template: RefinerTemplateOption.CheckBox,
+                refinerSortType: RefinersSortOption.Default,
+                refinerSortDirection: RefinerSortDirection.Ascending,
+                showExpanded:false,
+                showValueFilter:false
+            };
+
+        return <div className={styles.default.newItem}>
+            <Refiner
+                searchService={this.props.searchService}                   
+                config={newItem}
+                onUpdate={this.onUpdate.bind(this)}
+                onUpdateAvailableProperties={this.props.onAvailablePropertiesUpdated.bind(this)}
+                availableProperties={this.props.availableProperties}
+                isNew={true}>
+            </Refiner>
+        </div>;
+
+    }
+
+    private async _addRefiner(newRefiner:IRefinerConfiguration): Promise<void> {
+        await this._updateState({
+            addNew: true
         });
     }
 
-    private _moveDown(refinerName: string) : void {
-        this.setState({
-            refiners: this._reorder(this.state.refiners, refinerName, 1)
+    private async _moveUp(refinerName: string) : Promise<void> {
+        const refiners = this._reorder(refinerName, this.state.refiners, -1);
+        await this._updateState({
+            refiners: refiners,
+            groups: this._createGroups(refiners)
+        });
+    }
+
+    private async _moveDown(refinerName: string) : Promise<void> {
+        const refiners = this._reorder(refinerName, this.state.refiners, 1);
+        await this._updateState({
+            refiners: refiners,
+            groups: this._createGroups(refiners)
         });        
     }
 
-    private _reorder(refiners: IRefinerConfiguration[], refinerName:string, adder: number) : IRefinerConfiguration[] {
-        
-        let newConfig : IRefinerConfiguration[] = [];
-        let index: number = -1;
-        let item: IRefinerConfiguration = null;
-
-        if(refiners.some((config: IRefinerConfiguration, i: number)=>{
-                index = i;
-                item = config;
-                return config.refinerName === refinerName;
-            }) && index > -1 && index < refiners.length){
-            
-            index = index - adder;
-
-            refiners.map((config:IRefinerConfiguration, i:number)=>{
-                
-                if (i === index) {
-                    newConfig.push(item);
-                    newConfig.push(config);
-                } else if (i !== (index+adder)) {
-                    newConfig.push(config);
-                }
-
-            });
-
+    private _reorder(refinerName: string, refiners: IRefinerConfiguration[], dir: number) : IRefinerConfiguration[] {
+        let index : number = -1;
+        if(refiners.some((refiner, i)=>{
+            index = i;
+            return refiner.refinerName === refinerName;
+        })) {
+            const sp = index+dir;
+            const t : IRefinerConfiguration = refiners.splice(index, 1)[0];
+            refiners.splice(index+dir, 0, t);
+            return refiners;
         }
-
-        return newConfig;
-
     }
 
-    private _delete(refinerName: string) : void {
-        this.setState({
-            refiners: this.state.refiners.filter((refiner:IRefinerConfiguration)=>refiner.refinerName !== refinerName)
+    private async _delete(refinerName: string) : Promise<void> {
+        const refiners = this.state.refiners.filter((refiner:IRefinerConfiguration)=>refiner.refinerName !== refinerName);
+        await this._updateState({
+            refiners: refiners,
+            groups: this._createGroups(refiners)
         });
     }
 
@@ -198,20 +238,46 @@ export class RefinerEditor extends React.Component<IRefinerEditorProps, IRefiner
 
     }
 
-    private onUpdate(config:IRefinerConfiguration) : Promise<void> {
+    private async onUpdate(config:IRefinerConfiguration, isNew?:boolean) : Promise<void> {
         
-        const newRefiners = this.state.refiners.map((refiner:IRefinerConfiguration)=>{
-            return config.refinerName === refiner.refinerName
-                ? config
-                : refiner;
-        });
+        let newRefiners : IRefinerConfiguration[] = this.state.refiners;
+        let addNew:boolean = this.state.addNew;
+
+        if(isNew) {
+            newRefiners.push(config);
+            addNew = false;
+        } else {
+            newRefiners = this.state.refiners.map((refiner:IRefinerConfiguration)=>{
+                return config.refinerName === refiner.refinerName ? config : refiner;
+            });
+        }
         
-        this.setState({
-            refiners: newRefiners
+        await this._updateState({
+            refiners: newRefiners,
+            groups: this._createGroups(newRefiners),
+            addNew: addNew
         });
 
         return;
 
+    }
+
+    private async _updateState(newState:any) : Promise<void>{
+        this.setState(newState);
+    }
+
+    private renderPanelFooter() : JSX.Element {
+        return <div className={styles.default.footerPanel}>
+            <PrimaryButton onClick={this._saveRefiners.bind(this)}>
+                {strings.RefinementEditor.SaveButtonLabel}
+            </PrimaryButton>
+            <DefaultButton onClick={()=>{this.setState({show:false});}}>{strings.RefinementEditor.CancelButtonLabel}</DefaultButton>
+        </div>;
+    }
+
+    private async _saveRefiners() : Promise<void> {
+        await this.props.onChange(this.state.refiners);
+        this._updateState({show:false});
     }
     
 }

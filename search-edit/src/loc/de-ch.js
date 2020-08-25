@@ -26,6 +26,8 @@ define([], function() {
       "LibraryAlreadyLoaded": "This library is already loaded. Please try another GUID :)."
     },
     "RefinementEditor" : {
+      "AddRefiner": "Add Filter",
+      "NewFilter": "New Filter",
       "CodeHeaderText": "Edit Refiner Template",
       "HeaderText": "Edit Refiners",
       "ApplyButtonLabel" : "Apply",
@@ -41,7 +43,9 @@ define([], function() {
       "AvailableRefinersLabel": "Verfügbare Einschränkungen ",
       "RefinerDisplayValueField": "Name des anzuzeigenden Filters",
       "RefinerTemplateField": "Einschränkungs Vorlage",      
-
+      "SaveNewRefiner": "Save New Refiner",
+      "IsCollapsed":"Show Expanded",
+      "ShowValueFilter":"Show Filter",
       "Templates": {
         "RefinerSortTypeSortDirectionAscending": "Aufsteigend",
         "RefinerSortTypeSortDirectionDescending": "Absteigend",

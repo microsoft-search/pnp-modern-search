@@ -5,10 +5,13 @@
     .sortType,
     .templateType,
     .displayName,
+    .isCollapsed,
+    .showValueFilter,
     .property {padding: 0.5rem 0 0.5rem 0;}
 
     padding-bottom: 1rem;
-    border-bottom: 1px solid '[theme:themeDarker, default:#0078d7]';
     margin-bottom: 1rem; 
     
+    .addButton { display: block;}
+    .errorMessage { margin: 1.5rem 0 0.5rem 0;}
 }

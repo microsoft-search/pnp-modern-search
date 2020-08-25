@@ -398,6 +398,9 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         const telemetry = PnPTelemetry.getInstance();
         telemetry.optOut();
 
+        // Initialize extensibility
+        this._extensibilityService = new ExtensibilityService();        
+
         this.initializeRequiredProperties();
 
         // Get current theme info
@@ -449,8 +452,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
         this._handleQueryStringChange();
 
-        // Initialize extensibility
-        this._extensibilityService = new ExtensibilityService();        
+        // load extensibility components
         await this._loadExtensibility();
 
         return super.onInit();

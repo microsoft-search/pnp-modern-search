@@ -25,7 +25,6 @@ export class ExtensibilityEditor extends React.Component<IExtensibilityEditorPro
 
     private _deleteIcon: IIconProps = { iconName: 'Delete' };    
     private _settingsIcon: IIconProps = { iconName: 'Settings' };
-    private _addIcon: IIconProps = { iconName: 'Add' };
     private _service: ExtensibilityService = null;
 
     constructor(props:IExtensibilityEditorProps, state:IExtensibilityEditorState){
