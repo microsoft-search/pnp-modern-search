@@ -125,7 +125,8 @@ export class RefinerEditor extends React.Component<IRefinerEditorProps, IRefiner
 
     private _onRenderGroupCell(nestingDepth: number, item: IRefinerConfiguration, itemIndex: number) : JSX.Element {
         return <Refiner
-            searchService={this.props.searchService}                   
+            searchService={this.props.searchService}  
+            templateService={this.props.templateService}                 
             config={item}
             onUpdate={this.onUpdate.bind(this)}
             onUpdateAvailableProperties={this.props.onAvailablePropertiesUpdated.bind(this)}
@@ -172,7 +173,8 @@ export class RefinerEditor extends React.Component<IRefinerEditorProps, IRefiner
 
         return <div className={styles.default.newItem}>
             <Refiner
-                searchService={this.props.searchService}                   
+                searchService={this.props.searchService}   
+                templateService={this.props.templateService}                
                 config={newItem}
                 onUpdate={this.onUpdate.bind(this)}
                 onUpdateAvailableProperties={this.props.onAvailablePropertiesUpdated.bind(this)}

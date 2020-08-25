@@ -45,6 +45,8 @@ declare interface ISearchEditComponentsLibraryStrings {
     SaveNewRefiner: string;
     IsCollapsed:string;
     ShowValueFilter:string;
+    EnterDefaultTemplate:string;
+    CustomItemTemplateFileLabel:string;
     Templates: {
       RefinerSortTypeSortDirectionAscending: string;
       RefinerSortTypeSortDirectionDescending: string;            

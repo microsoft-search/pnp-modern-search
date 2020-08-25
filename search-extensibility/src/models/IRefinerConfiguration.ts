@@ -44,4 +44,10 @@ export interface IRefinerConfiguration {
      * The handlebars template
      */
     customTemplate?:string;
+
+    /**
+     * The custom template URL
+     */
+    customTemplateUrl?:string;
+    
 }

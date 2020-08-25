@@ -22,6 +22,7 @@ export class PropertyPaneRefinerEditor extends BasePropertyPaneRefinerEditor {
             onChange: properties.onChange,
             onAvailablePropertiesUpdated: properties.onAvailablePropertiesUpdated,
             searchService: properties.searchService,
+            templateService: properties.templateService,
             availableProperties: properties.availableProperties,
             onRender: this.onRender.bind(this),
             onDispose: this.onDispose.bind(this)
@@ -46,6 +47,7 @@ export class PropertyPaneRefinerEditor extends BasePropertyPaneRefinerEditor {
             onChange: this.onChange.bind(this),
             onAvailablePropertiesUpdated: this.properties.onAvailablePropertiesUpdated.bind(this),
             searchService: this.properties.searchService,
+            templateService:this.properties.templateService,
             availableProperties: this.properties.availableProperties
         });
 

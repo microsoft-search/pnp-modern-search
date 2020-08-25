@@ -1032,7 +1032,8 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
         } else {
 
-            if(typeof this._templateService["loadPropertyPaneResources"] === "function") this._templateService["loadPropertyPaneResources"]();
+            if(this.displayMode == DisplayMode.Edit)
+                await this.tryLoadTemplatePropertyPaneResources(this._templateService);
 
             // Builtin templates with options
             this._templateContentToDisplay = TemplateService.getTemplateContent(this.properties.selectedLayout);
@@ -1046,29 +1047,15 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         await this._templateService.optimizeLoadingForTemplate(this._templateContentToDisplay);
     }
 
+    private async tryLoadTemplatePropertyPaneResources(test:any) : Promise<void> {
+        if(typeof test.loadPropertyPaneResources === "function") await test.loadPropertyPaneResources();
+    }
     /**
      * Custom handler when the external template file URL
      * @param value the template file URL value
      */
     private async _onTemplateUrlChange(value: string): Promise<String> {
-
-        try {
-            // Doesn't raise any error if file is empty (otherwise error message will show on initial load...)
-            if (isEmpty(value)) {
-                return '';
-            }
-            // Resolves an error if the file isn't a valid .htm or .html file
-            else if (!TemplateService.isValidTemplateFile(value)) {
-                return strings.ErrorTemplateExtension;
-            }
-            // Resolves an error if the file doesn't answer a simple head request
-            else {
-                await this._templateService.ensureFileResolves(value);
-                return '';
-            }
-        } catch (error) {
-            return Text.format(strings.ErrorTemplateResolve, error);
-        }
+        return this._templateService.isValidTemplateFile(value);
     }
 
     private _getExtensbilityGroupFields():IPropertyPaneField<any>[] {

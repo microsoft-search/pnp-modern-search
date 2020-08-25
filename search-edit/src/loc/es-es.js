@@ -46,6 +46,8 @@ define([], function() {
       "SaveNewRefiner": "Save New Refiner",
       "IsCollapsed":"Show Expanded",
       "ShowValueFilter":"Show Filter",
+      "EnterDefaultTemplate":"Enter template url",
+      "CustomItemTemplateFileLabel":"Custom Template Url",
       "Templates": {
         "RefinerSortTypeSortDirectionAscending": "Ascendente",
         "RefinerSortTypeSortDirectionDescending": "Descendente",

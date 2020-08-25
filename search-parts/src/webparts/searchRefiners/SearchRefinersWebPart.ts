@@ -330,6 +330,7 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
           this.context.dynamicDataSourceManager.notifyPropertyChanged(SearchComponentType.RefinersWebPart);
         },
         searchService: this._searchService,
+        templateService: this._templateService,
         availableProperties: this._availableManagedProperties
       }),
       PropertyPaneDropdown('searchResultsDataSourceReference', {

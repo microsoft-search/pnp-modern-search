@@ -1,4 +1,4 @@
-import { IRefinerConfiguration, ISearchContext } from '../..';
+import { IRefinerConfiguration, ISearchContext, ITemplateContext } from '../..';
 import { IComboBoxOption } from 'office-ui-fabric-react/lib/ComboBox';
 
 export interface IRefinerEditorProps {
@@ -7,6 +7,7 @@ export interface IRefinerEditorProps {
     onChange: (refiners: IRefinerConfiguration[]) => Promise<boolean>;
     onAvailablePropertiesUpdated: (properties:IComboBoxOption[])=>void;
     searchService: ISearchContext;
+    templateService: ITemplateContext;
     availableProperties: IComboBoxOption[];
 }
 

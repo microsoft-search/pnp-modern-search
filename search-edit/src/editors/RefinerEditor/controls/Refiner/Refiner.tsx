@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { IRefinerConfiguration, ISearchContext, RefinerTemplateOption, RefinersSortOption, RefinerSortDirection } from 'search-extensibility';
+import { IRefinerConfiguration, ISearchContext, RefinerTemplateOption, RefinersSortOption, RefinerSortDirection, ITemplateContext } from 'search-extensibility';
 import { IComboBoxOption } from 'office-ui-fabric-react/lib/ComboBox';
 import { DefaultButton } from 'office-ui-fabric-react/lib/Button';
 import { TextField } from 'office-ui-fabric-react/lib/TextField';
@@ -16,6 +16,7 @@ import * as strings from 'SearchEditComponentsLibraryStrings';
 
 export interface IRefinerProps {
     searchService: ISearchContext;
+    templateService: ITemplateContext;
     config: IRefinerConfiguration; 
     onUpdate : (config:IRefinerConfiguration, isNew?:boolean) => Promise<void>;
     onUpdateAvailableProperties: (properties:IComboBoxOption[])=>void;
@@ -99,26 +100,14 @@ export class Refiner extends React.Component<IRefinerProps, IRefinerState> {
             <div className={styles.default.showValueFilter}>
                 <Checkbox label={strings.RefinementEditor.ShowValueFilter} checked={this.state.config.showValueFilter} onChange={this._onShowValueFilterChanged.bind(this)} />
             </div>
+            
             {this.state.config.template === RefinerTemplateOption.Custom
-                ? <div className={styles.default.customTemplate}>
-                    <Label>{strings.RefinementEditor.Templates.CustomItemTemplateLabel}</Label>
-                    <PropertyFieldCodeEditorHost
-                        label={strings.RefinementEditor.Templates.CustomEditLabel}
-                        targetProperty={"customTemplate"}
-                        panelTitle={strings.RefinementEditor.Templates.CustomEditRefinerTemplate}
-                        language={PropertyFieldCodeEditorLanguages.Handlebars}
-                        initialValue={this.state.config.customTemplate}
-                        onDispose={null}
-                        onRender={this.render.bind(this)}
-                        onChange={this._customTemplateChanged.bind(this)}
-                        onPropertyChange={null}
-                        properties={this.state.config}
-                        key={this.state.config.refinerName}
-                        disabled={false}
-                        deferredValidationTime={200}>
-                    </PropertyFieldCodeEditorHost>
-                </div>
-            : null }
+                ? this.renderCustomTemplate()
+                : null }
+
+            {this.state.config.template === RefinerTemplateOption.Custom
+                ? this.renderCustomTemplateUrl()
+                : null }
 
             {this.props.isNew === true
                 ? <DefaultButton 
@@ -131,6 +120,45 @@ export class Refiner extends React.Component<IRefinerProps, IRefinerState> {
 
         </div>;
 
+    }
+
+    private renderCustomTemplate():JSX.Element{
+        return <div className={styles.default.customTemplate}>
+            <Label>{strings.RefinementEditor.Templates.CustomItemTemplateLabel}</Label>
+            
+            <PropertyFieldCodeEditorHost
+                label={strings.RefinementEditor.Templates.CustomEditLabel}
+                targetProperty={"customTemplate"}
+                panelTitle={strings.RefinementEditor.Templates.CustomEditRefinerTemplate}
+                language={PropertyFieldCodeEditorLanguages.Handlebars}
+                initialValue={this.state.config.customTemplate}
+                onDispose={null}
+                onRender={this.render.bind(this)}
+                onChange={this._customTemplateChanged.bind(this)}
+                onPropertyChange={null}
+                properties={this.state.config}
+                key={this.state.config.refinerName}
+                disabled={false}
+                deferredValidationTime={200}>
+            </PropertyFieldCodeEditorHost>
+        </div>;
+    }
+
+    private renderCustomTemplateUrl():JSX.Element {
+        return <div className={styles.default.customTemplateUrl}> 
+            <Label>{strings.RefinementEditor.CustomItemTemplateFileLabel}</Label>
+            <TextField placeholder={strings.RefinementEditor.EnterDefaultTemplate} defaultValue={this.state.config.customTemplateUrl} onGetErrorMessage={this._onTemplateUrlChange.bind(this)}></TextField>
+        </div>;
+    }
+
+    private async _onTemplateUrlChange(value: string): Promise<String> {
+        const msg = await this.props.templateService.isValidTemplateFile(value);
+        if(this.ie(msg)) {
+            const config = this.state.config;
+            config.customTemplateUrl = value;
+            this._updateState(config);
+        }
+        return msg;
     }
 
     private _addNewRefiner() : void {
@@ -275,7 +303,9 @@ export class Refiner extends React.Component<IRefinerProps, IRefinerState> {
     private _validateConfig(config:IRefinerConfiguration) : string {
         if(this.ie(config.displayValue)) return "Please enter a valid display name.";
         if(this.ie(config.refinerName)) return "Please select a valid refiner";
-        if(config.template == RefinerTemplateOption.Custom && this.ie(config.customTemplate)) return "Custom templates require a handlebars template. Please enter a handlebars template.";
+        if(config.template == RefinerTemplateOption.Custom
+            && (this.ie(config.customTemplate) && this.ie(config.customTemplateUrl))) 
+            return "Custom templates require a handlebars template. Please enter a handlebars template or file.";
         return null;
     }
 

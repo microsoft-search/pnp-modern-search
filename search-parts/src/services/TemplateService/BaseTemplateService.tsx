@@ -784,6 +784,25 @@ abstract class BaseTemplateService {
         this._initDocumentPreviews();
     }
 
+    public async isValidTemplateFile(filePath:string) : Promise<string> {
+        try {
+            // Doesn't raise any error if file is empty (otherwise error message will show on initial load...)
+            if (isEmpty(filePath)) { 
+                return '';
+            // Resolves an error if the file isn't a valid .htm or .html file
+            } else if (!BaseTemplateService.isValidTemplateFile(filePath)) {
+                return strings.ErrorTemplateExtension;
+            }
+            // Resolves an error if the file doesn't answer a simple head request
+            else {
+                await this.ensureFileResolves(filePath);
+                return '';
+            }
+        } catch (error) {
+            return Text.format(strings.ErrorTemplateResolve, error);
+        }
+    }
+
     public abstract getFileContent(fileUrl: string): Promise<string>;
 
     public abstract ensureFileResolves(fileUrl: string): Promise<void>;

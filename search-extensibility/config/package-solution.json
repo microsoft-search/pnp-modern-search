@@ -1,7 +1,7 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
   "solution": {
-    "name": "Search Extensibility Core",
+    "name": "PnP Modern Search - Extensibility Core",
     "id": "f5171cc2-924c-4578-a07c-7ac27b964a4a",
     "version": "1.0.0.0",
     "includeClientSideAssets": true,
