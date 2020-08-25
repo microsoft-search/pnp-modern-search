@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { IPersonaSharedProps, IPersonaProps, Persona, Link } from 'office-ui-fabric-react';
-import { TemplateService } from "../services/TemplateService/TemplateService";
+import { TemplateService } from "../../services/TemplateService/TemplateService";
 import { BaseWebComponent } from 'search-extensibility';
 import * as ReactDOM from 'react-dom';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';

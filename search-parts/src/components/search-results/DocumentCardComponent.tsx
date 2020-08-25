@@ -1,10 +1,10 @@
 import * as React from "react";
 import { IDocumentCardPreviewProps, DocumentCard, DocumentCardPreview, DocumentCardTitle, DocumentCardActivity, DocumentCardType, DocumentCardLocation, DocumentCardDetails, IDocumentCardLocationStyleProps, IDocumentCardLocationStyles, IDocumentCardStyleProps, IDocumentCardStyles } from 'office-ui-fabric-react/lib/DocumentCard';
 import { ImageFit } from 'office-ui-fabric-react/lib/Image';
-import PreviewContainer from '../controls/PreviewContainer/PreviewContainer';
-import { PreviewType } from '../controls/PreviewContainer/IPreviewContainerProps';
+import PreviewContainer from '../../controls/PreviewContainer/PreviewContainer';
+import { PreviewType } from '../../controls/PreviewContainer/IPreviewContainerProps';
 import { Link } from 'office-ui-fabric-react/lib/Link';
-import { TemplateService } from "../services/TemplateService/TemplateService";
+import { TemplateService } from "../../services/TemplateService/TemplateService";
 import * as documentCardLocationGetStyles from 'office-ui-fabric-react/lib/components/DocumentCard/DocumentCardLocation.styles';
 import { getTheme, mergeStyleSets, ITheme } from "office-ui-fabric-react/lib/Styling";
 import { classNamesFunction } from "office-ui-fabric-react/lib/Utilities";

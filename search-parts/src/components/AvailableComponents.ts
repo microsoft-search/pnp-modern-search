@@ -1,17 +1,17 @@
 import { IExtension } from 'search-extensibility';
-import { DebugViewWebComponent } from './DebugViewComponent';
-import { DetailsListWebComponent } from './DetailsListComponent';
-import { DocumentCardWebComponent, VideoCardWebComponent } from './DocumentCardComponent';
-import { DocumentCardShimmersWebComponent } from './DocumentCardShimmersComponent'; 
-import { SliderWebComponent } from './SliderComponent';
-import { PersonaCardWebComponent } from './PersonaCardComponent';
-import { LivePersonaWebComponent } from './LivePersonaComponent';
-import { PersonaCardShimmersWebComponent } from './PersonaCardShimmersComponent';
-import { IconWebComponent } from './IconComponent';
-import { PaginationWebComponent } from './PaginationComponent';
-import { AccordionWebComponent } from './AccordionComponent';
-import { PopupWebComponent } from './PopupComponent';
-import { LookupListExpanderWebComponent } from './LookupListExpanderComponent';
+import { DebugViewWebComponent } from './search-results/DebugViewComponent';
+import { DetailsListWebComponent } from './search-results/DetailsListComponent';
+import { DocumentCardWebComponent, VideoCardWebComponent } from './search-results/DocumentCardComponent';
+import { DocumentCardShimmersWebComponent } from './search-results/DocumentCardShimmersComponent'; 
+import { SliderWebComponent } from './search-results/SliderComponent';
+import { PersonaCardWebComponent } from './search-results/PersonaCardComponent';
+import { LivePersonaWebComponent } from './search-results/LivePersonaComponent';
+import { PersonaCardShimmersWebComponent } from './search-results/PersonaCardShimmersComponent';
+import { IconWebComponent } from './search-results/IconComponent';
+import { PaginationWebComponent } from './search-results/PaginationComponent';
+import { AccordionWebComponent } from './search-results/AccordionComponent';
+import { PopupWebComponent } from './search-results/PopupComponent';
+import { LookupListExpanderWebComponent } from './search-results/LookupListExpanderComponent';
 
 export class AvailableComponents {
 
