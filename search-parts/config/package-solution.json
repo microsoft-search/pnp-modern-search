@@ -6,7 +6,13 @@
         "version": "3.14.2.0",
         "includeClientSideAssets": true,
         "skipFeatureDeployment": true,
-        "isDomainIsolated": false
+        "isDomainIsolated": false,
+        "webApiPermissionRequests": [
+            {
+              "resource": "Microsoft Graph",
+              "scope": "User.ReadBasic.All"
+            }
+          ]
     },
     "paths": {
         "zippedPackage": "solution/pnp-modern-search-parts.sppkg"
