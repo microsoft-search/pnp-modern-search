@@ -638,4 +638,5 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
       this.render();
     }
   }
+
 }

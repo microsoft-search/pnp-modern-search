@@ -12,6 +12,7 @@ import { PaginationWebComponent } from './search-results/PaginationComponent';
 import { AccordionWebComponent } from './search-results/AccordionComponent';
 import { PopupWebComponent } from './search-results/PopupComponent';
 import { LookupListExpanderWebComponent } from './search-results/LookupListExpanderComponent';
+import { FilterCheckboxWebComponent } from './search-refiners/FilterCheckbox';
 
 export class AvailableComponents {
 
@@ -92,6 +93,11 @@ export class AvailableComponents {
         {
             name: 'pnp-lookup-list-expander',
             extensionClass: LookupListExpanderWebComponent,
+            displayName: "", description: "", icon: ""
+        },
+        {
+            name: 'pnp-filter-checkbox',
+            extensionClass: FilterCheckboxWebComponent,
             displayName: "", description: "", icon: ""
         }
     ];

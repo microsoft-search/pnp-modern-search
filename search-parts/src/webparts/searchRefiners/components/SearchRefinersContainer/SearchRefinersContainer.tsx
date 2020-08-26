@@ -15,6 +15,10 @@ import { IReadonlyTheme } from '@microsoft/sp-component-base';
 
 export default class SearchRefinersContainer extends React.Component<ISearchRefinersContainerProps, ISearchRefinersContainerState> {
   
+    private __eventAddFilter = null;
+    private __eventRemoveFilter = null;
+    private __eventRemoveAllFilters = null;
+
     public constructor(props: ISearchRefinersContainerProps) {
         super(props);
 
@@ -26,6 +30,10 @@ export default class SearchRefinersContainer extends React.Component<ISearchRefi
 
         this.onFilterValuesUpdated = this.onFilterValuesUpdated.bind(this);
         this.onRemoveAllFilters = this.onRemoveAllFilters.bind(this);
+
+        this.__eventAddFilter = this._eventAddFilter.bind(this);
+        this.__eventRemoveFilter = this._eventRemoveFilter.bind(this);
+        this.__eventRemoveAllFilters = this._eventRemoveAllFilters.bind(this);
     }
 
     public render(): React.ReactElement<ISearchRefinersContainerProps> {
@@ -111,6 +119,10 @@ export default class SearchRefinersContainer extends React.Component<ISearchRefi
                 </div>
             </div>
         );
+    }
+
+    public componentWillUnmount() {
+        this.unbindFilterEvents();
     }
 
     public UNSAFE_componentWillReceiveProps(nextProps: ISearchRefinersContainerProps) {
@@ -213,60 +225,85 @@ export default class SearchRefinersContainer extends React.Component<ISearchRefi
         });
     }
 
+    private _eventRemoveFilter(ev:CustomEvent) : void {
+
+        ev.stopImmediatePropagation();
+        
+        console.log("Remove filter event.");
+
+        const newValues: IRefinementValue[] = [];
+        const refiner: IRefinementValue = ev.detail.refiner; 
+
+        if(this.state.selectedRefinementFilters.some((filter)=>{
+            if(filter.FilterName === refiner.RefinementName) {        
+                filter.Values.map((filterValue)=>{
+                    if(filterValue.RefinementValue !== refiner.RefinementValue) {
+                        newValues.push(filterValue);
+                    }
+                });
+                return true;
+            }
+        })) {
+
+            this.onFilterValuesUpdated(ev.detail.FilterName, newValues, ev.detail.operator);
+
+        }
+
+    }
+
+    private _eventAddFilter(ev:CustomEvent) : void {
+        
+        ev.stopImmediatePropagation();
+        
+        console.log("Add filter value event");
+
+        const newValues: IRefinementValue[] = [ ];
+        const refiner: IRefinementValue = ev.detail.refiner; 
+        const selected : IRefinementFilter = this.state.selectedRefinementFilters.filter((f)=> f.FilterName == refiner.RefinementName)[0];
+        const alreadySelected : boolean = selected
+                    ? selected.Values.some((f)=> f.RefinementValue === refiner.RefinementValue)
+                    : false;
+        const filterConfig = this.props.refinersConfiguration.filter((f)=> f.refinerName === refiner.RefinementName)[0];
+
+        if(!alreadySelected) {
+            
+            newValues.push(refiner);
+
+            this.onFilterValuesUpdated(refiner.RefinementName, newValues, ev.detail.operator);
+        
+        }
+
+    }
+
+    private _eventRemoveAllFilters(ev:CustomEvent) : void {
+
+        ev.stopImmediatePropagation();
+
+        console.log("Remove all filters event");
+
+        this.onRemoveAllFilters();
+
+    }
+
     /**
      * Binds events fired by custom templates
      */
     private bindFilterEvents() {
 
-        this.props.domElement.addEventListener('removeFilter', ((ev:CustomEvent) => {
-            
-            ev.stopImmediatePropagation();
-            
-            console.log("Remove filter event.");
+        window.addEventListener('removeFilter', this.__eventRemoveFilter);
+        window.addEventListener('addFilter', this.__eventAddFilter);
+        window.addEventListener('removeAllFilters', this.__eventRemoveAllFilters);
 
-            const newValues: IRefinementValue[] = [];
+    }
 
-            if(this.state.selectedRefinementFilters.some((filter)=>{
-                if(filter.FilterName === ev.detail.FilterName) {        
-                    filter.Values.map((filterValue)=>{
-                        if(filterValue !== ev.detail.FilterValue) {
-                            newValues.push(filterValue);
-                        }
-                    });
-                    return true;
-                }
-            })) {
+    /*
+    * Unbinds events fired by custom templates
+    */
+    private unbindFilterEvents() {
 
-                this.onFilterValuesUpdated(ev.detail.FilterName, newValues, ev.detail.Operator);
-
-            }
-
-        }).bind(this));
-
-        this.props.domElement.addEventListener('addFilter', ((ev:CustomEvent) => {
-            
-            ev.stopImmediatePropagation();
-            
-            console.log("Add filter value event");
-
-            const newValues: IRefinementValue[] = [];
-            
-            if(!this.state.selectedRefinementFilters.some((filter)=> filter.FilterName === ev.detail.FilterName 
-                && !filter.Values.some((filterValue) => filterValue === ev.detail.FilterValue))) {
-                this.onFilterValuesUpdated(ev.detail.FilterName, newValues, ev.detail.Operator);
-            }
-
-        }).bind(this));
-
-        this.props.domElement.addEventListener('removeAllFilters', ((ev:CustomEvent) => {
-
-            ev.stopImmediatePropagation();
-
-            console.log("Remove all filters event");
-
-            this.onRemoveAllFilters();
-
-        }).bind(this));
+        window.removeEventListener('removeFilter', this.__eventRemoveFilter);
+        window.removeEventListener('addFilter', this.__eventAddFilter);
+        window.removeEventListener('removeAllFilters', this.__eventRemoveAllFilters);
 
     }
 

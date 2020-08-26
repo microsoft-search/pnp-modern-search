@@ -101,6 +101,8 @@ export class CustomTemplate extends React.Component<CustomTemplateProps, CustomR
     const templateContent = await templateService.getTemplateContent(
                               this.props.templateContext.configuration.customTemplate,
                               this.props.templateContext.configuration.customTemplateUrl);
+    
+    await templateService.optimizeLoadingForTemplate(templateContent);
 
     // This scenario happens due to the behavior of the Office UI Fabric GroupedList component who recreates child components when a greoup is collapsed/expanded, causing a state reset for sub components
     // In this case we use the refiners global state to recreate the 'local' state for this component
