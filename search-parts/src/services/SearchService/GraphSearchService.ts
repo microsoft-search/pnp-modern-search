@@ -1,5 +1,4 @@
-/*
-import ISearchService from './ISearchService';
+/*import ISearchService from './ISearchService';
 import { IGraphSearch } from './IGraphSearch';
 import { ISearchServiceConfiguration } from '../../models/ISearchServiceConfiguration';
 import { PageContext } from '@microsoft/sp-page-context';
@@ -7,9 +6,10 @@ import { TokenService } from '../TokenService';
 import { SPHttpClient } from '@microsoft/sp-http';
 import { WebPartContext } from '@microsoft/sp-webpart-base';
 import { SortDirection } from '@pnp/sp';
+import { IManagedPropertyInfo, ISearchResults, ISearchVerticalInformation } from 'search-extensibility';
 
 class GraphSearchService implements ISearchService {
-    
+
     public resultsCount: number;
     public selectedProperties: string[];
     public queryTemplate?: string;
@@ -27,16 +27,24 @@ class GraphSearchService implements ISearchService {
     private _pageContext: PageContext = null;
     private _webPartContext: WebPartContext = null;
     private _tokenService: TokenService = null;
+    private sortableProperties : string[] = [
+        "PersonalScore"
+    ];
+    private refineableProperties: IManagedPropertyInfo[] = [
+        {
+            name: "LastModifiedTime",
+            sortable: false
+        }
+    ];
 
     public constructor(pageContext: PageContext, webPartContext: WebPartContext, spHttpClient: SPHttpClient) {
         this._pageContext = pageContext;
         this._tokenService = new TokenService(this._pageContext, spHttpClient);
         this._webPartContext = webPartContext;
-        
     }
 
-    public async search(kqlQuery: string, searchParams: IGraphSearch): Promise<any> {
-        
+    public async search(kqlQuery: string, searchParams: IGraphSearch): Promise<ISearchResults> {
+
         const page : number = typeof searchParams.pageNumber === "number" 
                                     ? searchParams.pageNumber
                                     : 1;
@@ -47,7 +55,7 @@ class GraphSearchService implements ISearchService {
         const query = {
             EntityRequests: [ {
                 EntityType: [ "File" ],
-                ContentSources: [ "SharePoint", "OneDriveBusiness" ],
+                ContentSources: [ "SharePoint", "OneDriveBusiness" ], // could do this by sp
                 Query: { 
                     "DisplayQueryString":kqlQuery,
                     "QueryString":kqlQuery,
@@ -72,6 +80,23 @@ class GraphSearchService implements ISearchService {
         return response;
     }
 
+    private _parseResponse(response:any) : Promise<ISearchResults> {
+        const res : ISearchResults = {
+            
+        };
+
+    }
+
+    private _getResultSources(): string[] {
+        if(this.resultSourceId) {
+            return this.resultSourceId.split(","); // split the result source IDs by commans
+        } else if(!this.includeOneDriveResults) {
+            return ["SharePoint","Exchange","PowerBI"];
+        } else {
+            return ["SharePoint","Exchange","OneDriveBusiness","PowerBI"]
+        }
+    }
+
     private _getSort():any {
         return this.sortList.map((sl) => {
             return {
@@ -89,18 +114,29 @@ class GraphSearchService implements ISearchService {
     }
     
     public getConfiguration(): ISearchServiceConfiguration {
-        throw new Error("Method not implemented.");
+        return {
+            enableQueryRules: this.enableQueryRules,
+            queryTemplate: this.queryTemplate,
+            refinementFilters: this.refinementFilters,
+            refiners: this.refiners,
+            resultSourceId: this.resultSourceId,
+            resultsCount: this.resultsCount,
+            selectedProperties: this.selectedProperties,
+            sortList: this.sortList,
+            synonymTable: this.synonymTable,
+            queryCulture: this.queryCulture
+        } as ISearchServiceConfiguration; 
     }
     
-    public async getAvailableManagedProperties(): Promise<any[]> {
-        throw new Error("Method not implemented.");
+    public async getAvailableManagedProperties(): Promise<IManagedPropertyInfo[]> {
+        return this.refineableProperties;
     }
     
     public async validateSortableProperty(property: string): Promise<boolean> {
-        throw new Error("Method not implemented.");
+        return this.sortableProperties.filter((prop)=>prop === property).length>0;
     }
     
-    public async getSearchVerticalCounts(queryText: string, searchVerticals: import("../../models/ISearchVertical").ISearchVertical[], enableQueryRules: boolean): Promise<any[]> {
+    public async getSearchVerticalCounts(queryText: string, searchVerticals: import("../../models/ISearchVertical").ISearchVertical[], enableQueryRules: boolean): Promise<ISearchVerticalInformation[]> {
         throw new Error("Method not implemented.");
     }
 
@@ -110,5 +146,4 @@ class GraphSearchService implements ISearchService {
 
 }
 
-export default GraphSearchService;
-*/
+export default GraphSearchService;*/

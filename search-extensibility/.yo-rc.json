@@ -1,6 +1,6 @@
 {
   "@microsoft/generator-sharepoint": {
-    "version": "1.10.0",
+    "version": "1.11.0",
     "libraryName": "search-extensibility",
     "libraryId": "f5171cc2-924c-4578-a07c-7ac27b964a4a",
     "environment": "spo",

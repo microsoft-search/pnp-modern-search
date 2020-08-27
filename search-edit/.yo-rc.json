@@ -1,6 +1,6 @@
 {
   "@microsoft/generator-sharepoint": {
-    "version": "1.10.0",
+    "version": "1.11.0",
     "libraryName": "search-edit",
     "libraryId": "fd98133b-bc39-4130-9a62-8193c7f87c95",
     "environment": "spo",
