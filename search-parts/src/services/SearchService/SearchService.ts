@@ -129,6 +129,40 @@ class SearchService implements ISearchService {
             }
         }];
 
+        if (this._pageContext.list !== null) {
+            searchQuery.Properties.push({
+                Name: "ListId",
+                Value: {
+                    StrVal: this._pageContext.list.id.toString(),
+                    QueryPropertyValueTypeIndex: 1
+                }
+            });
+        }
+
+        if (this._pageContext.listItem !== null) {
+            searchQuery.Properties.push({
+                Name: "ListItemId",
+                Value: {
+                    StrVal: this._pageContext.listItem.id.toString(),
+                    QueryPropertyValueTypeIndex: 1
+                }
+            });
+        }
+
+        searchQuery.Properties = [{
+            Name: "EnableDynamicGroups",
+            Value: {
+                BoolVal: true,
+                QueryPropertyValueTypeIndex: 3
+            }
+        }, {
+            Name: "EnableMultiGeoSearch",
+            Value: {
+                BoolVal: true,
+                QueryPropertyValueTypeIndex: 3
+            }
+        }];
+
         // Toggle to include user's personal OneDrive results as a secondary result block
         // https://docs.microsoft.com/en-us/sharepoint/support/search/private-onedrive-results-not-included
         if (this._includeOneDriveResults) {
