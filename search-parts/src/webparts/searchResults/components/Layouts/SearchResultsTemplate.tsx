@@ -37,16 +37,15 @@ export default class SearchResultsTemplate extends React.Component<ISearchResult
             }
         });
 
-        /*
-        Leaving this out to fix script injection - might reintroduce if needed to support non-data prefixed attributes
-        // Allow all custom attributes on custom elements - except javascript ones
+        
+        // Allow all custom attributes on custom elements - except javascript events ones starting with "on"
+        // Ideally we'd support only data- ones, but we know other web components don't follow this pattern
         this._domPurify.addHook('uponSanitizeAttribute', (attr, data) => {
             if (data && data.attrName && customTags.indexOf(attr.tagName) !== -1) {
                 if(data.attrName.indexOf("on") == 0) return;
                 data.allowedAttributes[data.attrName] = true;
             }
-        });
-        */
+        });        
     }
 
     public render() {
