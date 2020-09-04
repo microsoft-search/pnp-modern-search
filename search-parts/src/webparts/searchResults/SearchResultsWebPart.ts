@@ -493,7 +493,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             h.pushState = (state, key, path) => {
                 this._ops.apply(history, [state, key, path]);
                 const qkw = this.properties.queryKeywords.tryGetSource();
-                if (qkw.id === SearchComponentType.PageEnvironment) this.render();
+                if (qkw && qkw.id === SearchComponentType.PageEnvironment) this.render();
             };
         })(window.history);
     }
