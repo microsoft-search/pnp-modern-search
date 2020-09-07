@@ -171,7 +171,7 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
 
         // Disable PnP Telemetry
         const telemetry = PnPTelemetry.getInstance();
-        telemetry.optOut();
+        if (telemetry.optOut) telemetry.optOut();
 
         this._initializeRequiredProperties();
         this.initThemeVariant();
