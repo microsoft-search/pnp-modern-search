@@ -27,21 +27,25 @@ export default class SearchTemplate<DataContext extends object> extends React.Co
             WHOLE_DOCUMENT: true
         });
 
+        let customTags = [];
         // Allow custom elements (ex: my-component)
         this._domPurify.addHook('uponSanitizeElement', (node, data) => {
             if (node.nodeName && node.nodeName.match(/^\w+((-\w+)+)+$/)
                 && !data.allowedTags[data.tagName]) {
-                data.allowedTags[data.tagName] = true;
+                data.allowedTags[data.tagName] = true;                
+                customTags.push(data.tagName.toLocaleUpperCase());
             }
         });
 
-        // Allow all custom attributes
+        
+        // Allow all custom attributes on custom elements - except javascript events ones starting with "on"
+        // Ideally we'd support only data- ones, but we know other web components don't follow this pattern
         this._domPurify.addHook('uponSanitizeAttribute', (attr, data) => {
-
-            if (data && data.attrName) {
+            if (data && data.attrName && customTags.indexOf(attr.tagName) !== -1) {
+                if(data.attrName.indexOf("on") == 0) return;
                 data.allowedAttributes[data.attrName] = true;
             }
-        });
+        });        
 
     }
 

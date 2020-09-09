@@ -270,6 +270,10 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
         
     // Load extensibility library if present
     this._loadedLibraries = await this._extensibilityService.loadExtensibilityLibraries(this.properties.extensibilityLibraries.map((i)=>Guid.parse(i)));
+    
+    // Disable PnP Telemetry
+    const telemetry = PnPTelemetry.getInstance();
+    if (telemetry.optOut) telemetry.optOut();
 
     // Load extensibility additions
     if (this._loadedLibraries && this._loadedLibraries.length>0) {

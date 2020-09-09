@@ -396,7 +396,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
         // Disable PnP Telemetry
         const telemetry = PnPTelemetry.getInstance();
-        telemetry.optOut();
+        if (telemetry.optOut) telemetry.optOut();
 
         // Initialize extensibility
         this._extensibilityService = new ExtensibilityService();        

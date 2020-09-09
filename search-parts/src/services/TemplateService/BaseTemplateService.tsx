@@ -182,21 +182,6 @@ abstract class BaseTemplateService {
         return moment(new Date(str)).format(pattern);
     }
 
-    private createOdspPreviewUrl(defaultEncodingURL: string): string {
-        let previewUrl: string;
-        if (defaultEncodingURL) {
-            const matches = defaultEncodingURL.match(/^(http[s]?:\/\/[^\/]*)(.+)\/(.+)$/);
-            // First match is the complete URL
-            if (matches) {
-                const [host, path, file] = matches.slice(1);
-                if (host && path && file) {
-                    previewUrl = `${host}${path}/?id=${path}/${file}&parent=${path}`;
-                }
-            }
-        }
-        return previewUrl;
-    }
-
     /**
      * Registers useful helpers for search results templates
      */
@@ -220,14 +205,8 @@ abstract class BaseTemplateService {
 
             let url = '';
             if (!isEmpty(item)) {
-                if (!isEmpty(item.DefaultEncodingURL)
-                    && item.FileType
-                    && validPreviewExt.indexOf(item.FileType.toLocaleLowerCase()) !== -1) {
-                    url = this.createOdspPreviewUrl(item.DefaultEncodingURL);
-
-                    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-                        url = item.DefaultEncodingURL + "?web=1";
-                    }
+                if (!isEmpty(item.DefaultEncodingURL)) {
+                    url = item.DefaultEncodingURL + "?web=1";
                 }
                 else if (!isEmpty(item.ServerRedirectedURL)) {
                     url = item.ServerRedirectedURL;

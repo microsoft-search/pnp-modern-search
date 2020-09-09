@@ -172,7 +172,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
 
         // Disable PnP Telemetry
         const telemetry = PnPTelemetry.getInstance();
-        telemetry.optOut();
+        if (telemetry.optOut) telemetry.optOut();
 
         this.context.dynamicDataSourceManager.initializeSource(this);
 
@@ -637,7 +637,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
         } else {
             window.removeEventListener('hashchange', this.render);
         }
-        
+
     }
 
     /**

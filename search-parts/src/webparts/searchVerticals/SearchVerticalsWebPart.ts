@@ -150,7 +150,7 @@ export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearc
         
         // Disable PnP Telemetry
         const telemetry = PnPTelemetry.getInstance();
-        telemetry.optOut();
+        if (telemetry.optOut) telemetry.optOut();
 
         this._dynamicDataService = new DynamicDataService(this.context.dynamicDataProvider);
         this.ensureDataSourceConnection();
