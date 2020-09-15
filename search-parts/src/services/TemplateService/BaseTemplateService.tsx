@@ -174,26 +174,55 @@ abstract class BaseTemplateService {
         return moment(new Date(str)).format(pattern);
     }
 
+    private createOdspPreviewUrl(defaultEncodingURL: string): string {
+        let previewUrl: string;
+        if (defaultEncodingURL) {
+            const matches = defaultEncodingURL.match(/^(http[s]?:\/\/[^\/]*)(.+)\/(.+)$/);
+            // First match is the complete URL
+            if (matches) {
+                const [host, path, file] = matches.slice(1);
+                if (host && path && file) {
+                    previewUrl = `${host}${path}/?id=${path}/${file}&parent=${path}`;
+                }
+            }
+        }
+        return previewUrl;
+    }
+
     /**
      * Registers useful helpers for search results templates
      */
     private registerTemplateServices() {
         // Return the URL of the search result item
         // Usage: <a href="{{url item}}">
-        Handlebars.registerHelper("getUrl", (item: ISearchResult) => {
+        Handlebars.registerHelper("getUrl", (item: ISearchResult, forceDirectLink: boolean = false) => {
 
             let url = '';
             if (!isEmpty(item)) {
-                if (!isEmpty(item.DefaultEncodingURL)) {
-                    url = item.DefaultEncodingURL + "?web=1";
-                }
-                else if (!isEmpty(item.ServerRedirectedURL)) {
-                    url = item.ServerRedirectedURL;
-                }
-                else if (item.FileType && item.FileType.toLowerCase() === "url" && item.ShortcutUrl) {
+                const officeExtensions = ["doc", "docm", "docx", "dotx", "odp", "ods", "odt", "pot", "potm", "potx", "pps", "ppsx", "ppt", "pptm", "pptx", "rtf", "xls", "xlsb", "xlsm", "xlsx", "eml", "msg", "pdf", "vsd", "vsdx"];
+                const isOfficeDoc = !isEmpty(item.FileType) && officeExtensions.indexOf(item.FileType.toLocaleLowerCase()) !== -1;
+                const isLibItem = !isEmpty(item.contentclass) && item.contentclass.indexOf("Library") !== -1;
+                const isMobile = (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
+
+                // Handle shortcut url's
+                if (!isEmpty(item.FileType) && item.FileType.toLowerCase() === "url" && item.ShortcutUrl) {
                     url = item.ShortcutUrl;
                 }
-                else if (item.OriginalPath) {
+                // Create ODSP viewer link for all files except office files or if on mobile
+                else if (!forceDirectLink && !isEmpty(item.DefaultEncodingURL) && !isMobile && isLibItem && !isOfficeDoc) {
+                    url = this.createOdspPreviewUrl(item.DefaultEncodingURL);
+                }
+                // Open with ?web=1 for office files or all files if on mobile
+                else if (!isEmpty(item.DefaultEncodingURL) && isLibItem && !forceDirectLink) {
+                    url = item.DefaultEncodingURL + "?web=1";
+                }
+                else if (!isEmpty(item.ServerRedirectedURL) && !isMobile && !forceDirectLink) {
+                    url = item.ServerRedirectedURL;
+                }
+                else if (!isEmpty(item.DefaultEncodingURL) && isLibItem) {
+                    url = item.DefaultEncodingURL;
+                }
+                else if (!isEmpty(item.OriginalPath)) {
                     url = item.OriginalPath;
                 }
                 else url = item.Path;
