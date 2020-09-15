@@ -158,6 +158,12 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
     private prevVertical: string = "";
     private firstLoad = true;
 
+    /**
+     * Search Data Source
+     */
+    private _availableDataSources : string [] = [];
+
+
     public constructor() {
         super();
         this._templateContentToDisplay = '';
@@ -528,6 +534,8 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             this.availableQueryModifierDefinitions = [];
             
         }
+
+        this._availableDataSources = [ "SharePoint", "MicrosoftSearch" ];
 
         await this._registerExtensions();
 
@@ -1080,6 +1088,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
     /**
      * Determines the group fields for the search settings options inside the property pane
+     * 
      */
     private _getSearchSettingsFields(): IPropertyPaneField<any>[] {
 
@@ -1100,6 +1109,14 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
         // Sets up search settings fields
         const searchSettingsFields: IPropertyPaneField<any>[] = [
+            PropertyPaneDropdown('dataSource', {
+                label: "Search Data Source",
+                options: [{
+                    key: -1,
+                    text: strings.QueryCultureUseUiLanguageLabel
+                } as IDropdownOption].concat(sortBy(this._availableLanguages, ['text'])),
+                selectedKey: this.properties.searchQueryLanguage ? this.properties.searchQueryLanguage : 0
+            }), 
             PropertyPaneTextField('queryTemplate', {
                 label: strings.QueryTemplateFieldLabel,
                 value: this.properties.queryTemplate,

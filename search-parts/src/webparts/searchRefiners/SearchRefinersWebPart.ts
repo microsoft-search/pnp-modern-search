@@ -139,7 +139,7 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
           },
           selectedLayout: this.properties.selectedLayout,
           language: this.context.pageContext.cultureInfo.currentUICultureName,
-          query: queryKeywords + queryTemplate + selectedProperties + resultSourceId,
+          query: queryKeywords + queryTemplate + selectedProperties + resultSourceId, // this is used as a generic key to check if the query is unique.
           themeVariant: this._themeVariant,
           userService: this._userService,
           defaultSelectedRefinementFilters: defaultSelectedFilters,

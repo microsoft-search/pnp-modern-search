@@ -1,5 +1,5 @@
 import {ISearchParams} from 'search-extensibility';
 
-export interface IGraphSearch extends ISearchParams {
+export interface IGraphSearchParams extends ISearchParams {
     pageNumber?:number;
 }

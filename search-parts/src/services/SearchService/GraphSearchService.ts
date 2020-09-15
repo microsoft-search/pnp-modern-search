@@ -1,5 +1,5 @@
-/*import ISearchService from './ISearchService';
-import { IGraphSearch } from './IGraphSearch';
+import ISearchService from './ISearchService';
+import { IGraphSearchParams } from './IGraphSearchParams';
 import { ISearchServiceConfiguration } from '../../models/ISearchServiceConfiguration';
 import { PageContext } from '@microsoft/sp-page-context';
 import { TokenService } from '../TokenService';
@@ -43,57 +43,96 @@ class GraphSearchService implements ISearchService {
         this._webPartContext = webPartContext;
     }
 
-    public async search(kqlQuery: string, searchParams: IGraphSearch): Promise<ISearchResults> {
+    public async search(kqlQuery: string, searchParams: IGraphSearchParams): Promise<ISearchResults> {
 
         const page : number = typeof searchParams.pageNumber === "number" 
                                     ? searchParams.pageNumber
                                     : 1;
         const startRow : number = (page-1)* this.resultsCount;
-        const endRow : number = startRow + this.resultsCount;
-
         const client = await this._webPartContext.msGraphClientFactory.getClient();
-        const query = {
-            EntityRequests: [ {
-                EntityType: [ "File" ],
-                ContentSources: [ "SharePoint", "OneDriveBusiness" ], // could do this by sp
-                Query: { 
-                    "DisplayQueryString":kqlQuery,
-                    "QueryString":kqlQuery,
-                    "QueryTemplate": this.queryTemplate
-                },
-                Fields: this.selectedProperties,
-                Filter: null,
-                From: startRow,
-                Size: endRow,
-                Sort: this._getSort(),
-                EnableQueryUnderstanding:false,
-                EnableSpeller:false,
-                ResultsMerge:{
-                    Type:"Interleaved"
+
+        const request = {
+            requests: [
+                {
+                    contentSources: this._getResultSources(),
+                    entityTypes: [],
+                    query: {
+                        query_string: kqlQuery + " " + this.queryTemplate
+                    },
+                    from: startRow,
+                    size: this.resultsCount,
+                    stored_fields: this._getStoredFields()
                 }
-              }
             ]
-          };
-          
-        const response = await client.api("/search/query").version("2.0").post(query);
-
-        return response;
-    }
-
-    private _parseResponse(response:any) : Promise<ISearchResults> {
-        const res : ISearchResults = {
-            
         };
 
+        const response = await client.api("/search/query").version("beta").post(request);
+
+        return this._parseResponse(kqlQuery, page, response);
     }
 
+    private _parseResponse(query: string, pageNumber: number, response:any) : ISearchResults {
+ 
+        let results: ISearchResults = {
+            QueryKeywords: query,
+            RelevantResults: [],
+            SecondaryResults: [],
+            RefinementResults: [],
+            PaginationInformation: {
+                CurrentPage: pageNumber,
+                MaxResultsPerPage: this.resultsCount,
+                TotalRows: 0
+            }
+        };
+
+        if(response  && response.value  && response.value.length > 0
+            && response.value[0].hitsContainers  && response.value[0].hitsContainers.length > 0
+            && response.value[0].hitsContainers[0].hits && response.value[0].hitsContainers[0].hits.length > 0) {
+       
+            // Map the JSON response to the output array
+            response.value[0].hitsContainers[0].hits.map((item: any) => {
+                let res : any = {};
+
+                item.map((props:string, key:string)=>{
+                    const newKey = key.startsWith("_") ? key.substr(1): key;
+                    res[newKey] = props;
+                });
+
+                if(item._source) {
+                    if (item._source.webLink) {
+                        item.link = item._source.webLink;
+                    }
+                    if (item._source.webUrl) {
+                        item.link = item._source.webUrl;
+                    }
+                    /*
+                    if (this.state.resultType == 'event') {
+                        item.link = "https://outlook.office365.com/calendar/view/month";
+                    }
+                    */
+                }
+
+                item.type = item._source["@odata.type"];
+
+            });
+
+        }
+
+        return results;
+
+    }
+
+    private _getStoredFields():string[] {
+        if(this.resultSourceId.indexOf("externalItem") >= -1) return this.selectedProperties;
+        return [];
+    }
     private _getResultSources(): string[] {
         if(this.resultSourceId) {
             return this.resultSourceId.split(","); // split the result source IDs by commans
         } else if(!this.includeOneDriveResults) {
             return ["SharePoint","Exchange","PowerBI"];
         } else {
-            return ["SharePoint","Exchange","OneDriveBusiness","PowerBI"]
+            return ["SharePoint","Exchange","OneDriveBusiness","PowerBI"];
         }
     }
 
@@ -146,4 +185,4 @@ class GraphSearchService implements ISearchService {
 
 }
 
-export default GraphSearchService;*/
+export default GraphSearchService;

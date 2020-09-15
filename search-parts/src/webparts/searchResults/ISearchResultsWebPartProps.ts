@@ -10,16 +10,28 @@ import { IExtension } from 'search-extensibility';
 import { IPagingSettings } from '../../models/IPagingSettings';
 
 export interface ISearchResultsWebPartProps {
+    // specific to all search datasources
     queryKeywords: DynamicProperty<string>;
+    queryTemplate: string;
     defaultSearchQuery: string;
     useDefaultSearchQuery: boolean;
-    queryTemplate: string;
+    searchQueryLanguage: number;
+    enableLocalization: boolean;
+    
+    // new properties to help with dynamic data source
+    searchDataSource:string;
+    searchDataSourceParameters: { [key:string]:any };
+
+    /*
+    * Eliminate these in version 6, here for backwards compatability to support upgrade
+    *   These properties support SharePoint search and will be moved into 
+    *   the search datasource parameters property
+    */
     resultSourceId: string;
-    sortList: ISortFieldConfiguration[];
     enableQueryRules: boolean;
     includeOneDriveResults: boolean;
-    selectedProperties: string;
-    sortableFields: ISortableFieldConfiguration[];
+    
+    // template and UI properties
     showResultsCount: boolean;
     showBlank: boolean;
     selectedLayout: ResultsLayoutOption;
@@ -29,15 +41,18 @@ export interface ISearchResultsWebPartProps {
     resultTypes: ISearchResultType[];
     rendererId: string;
     customTemplateFieldValues: ICustomTemplateFieldValue[];
-    enableLocalization: boolean;
+    templateParameters: { [key:string]: any };
+
+    // generic settings
+    selectedProperties: string;
+    sortList: ISortFieldConfiguration[];
+    sortableFields: ISortableFieldConfiguration[];
     useRefiners: boolean;
     useSearchVerticals: boolean;
     refinerDataSourceReference: string;
     searchVerticalDataSourceReference: string;
     paginationDataSourceReference: string;
     synonymList: ISynonymFieldConfiguration[];
-    searchQueryLanguage: number;
-    templateParameters: { [key:string]: any };
     queryModifiers: IQueryModifierConfiguration[];
     selectedQueryModifierDisplayName: string;
     refinementFilters: string;
@@ -47,4 +62,5 @@ export interface ISearchResultsWebPartProps {
      * The Web Part paging settings
      */
     paging: IPagingSettings;
+
 }
