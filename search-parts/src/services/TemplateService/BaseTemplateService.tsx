@@ -228,7 +228,7 @@ abstract class BaseTemplateService {
                 else url = item.Path;
             }
 
-            return new Handlebars.SafeString(url);
+            return new Handlebars.SafeString(url.replace(/\+/g,"%2B"));
         });
 
         // Return SPFx page context variable
