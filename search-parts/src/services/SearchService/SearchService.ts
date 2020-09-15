@@ -5,7 +5,7 @@ import { ISearchResults, ISearchResult, IRefinementResult, IRefinementValue, IRe
 import { sp, SearchQuery, SearchResults, SPRest, Sort, SearchSuggestQuery, SortDirection, Web } from '@pnp/sp';
 import { Logger, LogLevel, ConsoleListener } from '@pnp/logging';
 import { Text, Guid } from '@microsoft/sp-core-library';
-import { sortBy, isEmpty, findIndex } from '@microsoft/sp-lodash-subset';
+import { sortBy, isEmpty} from '@microsoft/sp-lodash-subset';
 import LocalizationHelper from '../../helpers/LocalizationHelper';
 import "@pnp/polyfill-ie11";
 import { ISearchServiceConfiguration } from '../../models/ISearchServiceConfiguration';
@@ -113,6 +113,7 @@ class SearchService implements ISearchService {
 
         let searchQuery: SearchQuery = {};
         let sortedRefiners: string[] = [];
+        let sortedRefinersCleanName: string[] = [];
         let queryModification: string = null;
 
         // Search paging option is one based
@@ -252,6 +253,9 @@ class SearchService implements ISearchService {
                     return `${e.refinerName}(sort=${sort}/${direction})`;
                 }
             });
+            sortedRefinersCleanName = this.refiners.map(e=> {
+                return e.refinerName;
+            });
             searchQuery.Refiners = sortedRefiners.join(',');
         }
 
@@ -371,7 +375,7 @@ class SearchService implements ISearchService {
                 refinementResults = sortBy(refinementResults, (refinement) => {
 
                     // Get the index of the corresponding filter name
-                    return sortedRefiners.indexOf(refinement.FilterName);
+                    return sortedRefinersCleanName.indexOf(refinement.FilterName);
                 });
 
                 results.RelevantResults = searchResults;
