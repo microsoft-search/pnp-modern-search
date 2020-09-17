@@ -246,7 +246,7 @@ class SearchService implements ISearchService {
 
                     let sort = e.refinerSortType == RefinersSortOption.Alphabetical ? "name" : "frequency";
                     let direction = e.refinerSortDirection == RefinerSortDirection.Ascending ? "ascending" : "descending";
-                    return `${e.refinerName}(sort=${sort}/${direction})`;
+                    return `${e.refinerName}(filter=50000/0/*,sort=${sort}/${direction})`;
                 }
             });
             sortedRefinersCleanName = this.refiners.map(e=> {
