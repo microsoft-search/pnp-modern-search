@@ -1,9 +1,11 @@
 import * as React from 'react';
 import ISearchTemplateState from './ISearchTemplateState';
 import ISearchTemplateProps from './ISearchTemplateProps';
-import { TemplateService } from '../../services/TemplateService/TemplateService';
 import * as DOMPurify from 'dompurify';
 import { CssHelper } from '../../helpers/CssHelper';
+import { LogLevel } from '@pnp/logging';
+import Logger from '../../services/LogService/LogService';
+import { Guid } from '@microsoft/sp-core-library';
 
 const TEMPLATE_ID_PREFIX = 'pnp-modern-search-template_';
 
@@ -47,27 +49,42 @@ export default class SearchTemplate<DataContext extends object> extends React.Co
             }
         });        
 
+        Logger.write('[MSWP.SearchTemplate.constructor()]');
+
     }
 
     public render() {
-        const objectNode: any = document.querySelector("object[data='about:blank']");
-        if (objectNode) {
-            objectNode.style.display = "none";
-        }
+        if(this.state.processedTemplate) {
+            const objectNode: any = document.querySelector("object[data='about:blank']");
+            if (objectNode) {
+                objectNode.style.display = "none";
+            }
+            
+            Logger.write('[MSWP.SearchTemplate.render()]: rendering search template: ' + this.props.instanceId);
+            Logger.write('[MSWP.SearchTemplate.render()]: \n' + this.state.processedTemplate, LogLevel.Verbose);
+            
+            return <div>
+                <div key={JSON.stringify(this.props.templateContext)} dangerouslySetInnerHTML={{ __html: this.state.processedTemplate }}></div>
+            </div>;
 
-        return <div key={JSON.stringify(this.props.templateContext)} dangerouslySetInnerHTML={{ __html: DOMPurify.default.sanitize(this.state.processedTemplate) }}></div>;
+        } else {
+            return null;
+        }
     }
 
-    public componentDidMount() {
+    public componentDidMount() : void {
+        Logger.write('[MSWP.SearchTemplate.componentDidMount()]: component did mount.');
         this._updateTemplate(this.props);
     }
 
-    public componentDidUpdate() {
+    public componentDidUpdate() : void {
         // Post render operations (previews on elements, etc.)
-        TemplateService.initPreviewElements();
+        Logger.write('[MSWP.SearchTemplate.componentDidUpdate()]: component did update.');
+        this.props.templateService.initPreviewElements();
     }
 
     public UNSAFE_componentWillReceiveProps(nextProps: ISearchTemplateProps<DataContext>) {
+        Logger.write('[MSWP.SearchTemplate.UNSAFE_componentWillReceiveProps()]: updating template again.');
         this._updateTemplate(nextProps);
     }
 
@@ -77,6 +94,9 @@ export default class SearchTemplate<DataContext extends object> extends React.Co
 
         // Process the Handlebars template
         let template = await this.props.templateService.processTemplate(props.templateContext, templateContent);
+        
+        Logger.write('[MSWP.SearchTemplate._updateTemplate()]: processed template: ' + template, LogLevel.Info);
+        Logger.write('[MSWP.SearchTemplate._updateTemplate()]: \n' + template, LogLevel.Verbose);
 
         if (template) {
 
@@ -91,5 +111,7 @@ export default class SearchTemplate<DataContext extends object> extends React.Co
         this.setState({
             processedTemplate: template
         });
+
     }
+
 }

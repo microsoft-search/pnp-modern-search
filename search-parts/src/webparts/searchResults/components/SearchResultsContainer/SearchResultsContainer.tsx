@@ -5,7 +5,8 @@ import ISearchResultsContainerState from './ISearchResultsContainerState';
 import { MessageBar, MessageBarType } from 'office-ui-fabric-react/lib/MessageBar';
 import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
 import { Shimmer, ShimmerElementType as ElemType, ShimmerElementsGroup } from 'office-ui-fabric-react/lib/Shimmer';
-import { Logger, LogLevel } from '@pnp/logging';
+import { LogLevel } from '@pnp/logging';
+import Logger from '../../../../services/LogService/LogService';
 import * as strings from 'SearchResultsWebPartStrings';
 import { IRefinementValue, IRefinementResult, ISearchResult, ISearchResults } from 'search-extensibility';
 import { Overlay } from 'office-ui-fabric-react/lib/Overlay';
@@ -21,7 +22,6 @@ import { Text } from '@microsoft/sp-core-library';
 import { ILocalizableSearchResultProperty, ILocalizableSearchResult } from '../../../../models/ILocalizableSearchResults';
 import ISearchResultsTemplateContext from './ISearchResultsTemplateContext';
 import * as _ from '@microsoft/sp-lodash-subset';
-import { TemplateService } from '../../../../services/TemplateService/TemplateService';
 import { isEqual } from '@microsoft/sp-lodash-subset';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import { ITheme } from '@uifabric/styling';
@@ -96,7 +96,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 </div>;
             } else {
 
-                const placeHolderContent = TemplateService.getPlaceholderMarkup(this.props.templateContent);
+                const placeHolderContent = this.props.templateService.getPlaceholderMarkup(this.props.templateContent);
 
                 let templateContext = {
                     items: [],
@@ -143,6 +143,8 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             && this.props.showBlank
             && this.props.selectedLayout !== ResultsLayoutOption.Debug) {
 
+            Logger.write("[MSWP.SearchResultsContainer.render()]: No search results");
+
             renderWebPartTitle = null;
 
             if (this.props.displayMode === DisplayMode.Edit) {
@@ -187,20 +189,24 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             templateContext = { ...templateContext, ...this.props.templateParameters };
 
             let renderSearchResultTemplate = <div></div>;
-            if (!this.props.useCodeRenderer) {
+            if (!this.props.useCodeRenderer && !areResultsLoading) {
+                
+                Logger.write("[MSWP.SearchResultsContainer.render()]: Rendering template");
+
                 renderSearchResultTemplate =
                     <SearchTemplate<ISearchResultsTemplateContext>
                         templateService={this.props.templateService}
-                        templateContent={TemplateService.getTemplateMarkup(this.props.templateContent)}
+                        templateContent={this.props.templateService.getTemplateMarkup(this.props.templateContent)}
                         templateContext={templateContext}
                         instanceId={this.props.instanceId}
                     />;
+
             }
 
             renderWpContent =
                 <div>
                     <div className={styles.searchWp__buttonBar}>{sortPanel}</div>
-                    <div id={this.state.mountingNodeId} />
+                    <div id={this.state.mountingNodeId}></div>
                     {renderOverlay}
                     {renderSearchResultTemplate}
                 </div>;
@@ -210,6 +216,8 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
         if (hasError) {
             renderWpContent = <MessageBar messageBarType={MessageBarType.error}>{errorMessage}</MessageBar>;
         }
+        
+        Logger.write('[MSWP.SearchResultsContainer.render()]: rendering search template');
 
         return (
             <div style={{ backgroundColor: semanticColors.bodyBackground }}>
@@ -229,12 +237,14 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
         if (this.props.queryKeywords) {
             try {
 
+                Logger.write("[MSWP.SearchResultsContainer.componentDidMount()]: Before results loaded render.");
                 this.setState({
                     areResultsLoading: true,
                 });
 
                 const searchResults = await this._getSearchResults(this.props, 1);
 
+                Logger.write("[MSWP.SearchResultsContainer.componentDidMount()]: After results loaded render.");
                 this.setState({
                     results: searchResults,
                     areResultsLoading: false
@@ -243,8 +253,9 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 this.handleResultUpdateBroadCast(searchResults);
 
             } catch (error) {
-
-                Logger.write('[SearchContainer._componentDidMount()]: Error: ' + error, LogLevel.Error);
+                
+                Logger.error(error);
+                Logger.write('[MSWP.SearchResultsContainer._componentDidMount()]: Error: ' + error, LogLevel.Error);
 
                 let results: ISearchResults = { QueryKeywords: this.state.results.QueryKeywords, RefinementResults: [], RelevantResults: [], SecondaryResults: [] };
 
@@ -258,6 +269,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 this.handleResultUpdateBroadCast(results);
             }
         } else {
+            Logger.write("[MSWP.SearchResultsContainer.componentDidMount()]: No keywords render.");
             this.setState({
                 areResultsLoading: false
             });
@@ -307,11 +319,13 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 isPageUpdated = true;
             }
         }
-
         if (executeSearch) {
+
             // Don't perform search is there is no keywords
             if (this.props.queryKeywords) {
                 try {
+
+                    Logger.write("[MSWP.SearchResultsContainer.componentDidUpdate()]: clear selected filters on a new query or refiners render.");
                     // Clear selected filters on a new query or new refiners
                     this.setState({
                         areResultsLoading: true,
@@ -334,7 +348,8 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                     }
 
                     const searchResults = await this._getSearchResults(this.props, selectedPage);
-
+                    
+                    Logger.write("[MSWP.SearchResultsContainer.componentDidUpdate()]: after get search results render.");
                     this.setState({
                         results: searchResults,
                         areResultsLoading: false,
@@ -346,7 +361,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
 
                 } catch (error) {
 
-                    Logger.write('[SearchContainer._componentWillReceiveProps()]: Error: ' + error, LogLevel.Error);
+                    Logger.write('[MSWP.SearchResultsContainer._componentWillReceiveProps()]: Error: ' + error, LogLevel.Error);
 
                     let results: ISearchResults = { QueryKeywords: this.state.results.QueryKeywords, RefinementResults: [], RelevantResults: [], SecondaryResults: [] };
 
@@ -356,9 +371,12 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                         hasError: true,
                         errorMessage: error.message
                     });
+
                     this.handleResultUpdateBroadCast(results);
+
                 }
             } else {
+                Logger.write("[MSWP.SearchResultsContainer.componentDidUpdate()]: No keywords render.");
                 let results: ISearchResults = { QueryKeywords: '', RefinementResults: [], RelevantResults: [], SecondaryResults: [] };
                 this.setState({
                     areResultsLoading: false,
@@ -367,7 +385,9 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
 
                 this.handleResultUpdateBroadCast(results);
             }
+
         } else {
+
             // Refresh the template without making a new search query because we don't need to
             if (this.props.templateContent !== prevProps.templateContent ||
                 this.props.showResultsCount !== prevProps.showResultsCount ||
@@ -375,16 +395,20 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
 
                 // Reset template errors if it has
                 if (this.state.hasError) {
+                    Logger.write("[MSWP.SearchResultsContainer.componentDidUpdate()]: reset tempate errors render.");
                     this.setState({
                         hasError: false,
                     });
                 } else {
                     // We don't use a state variable for the template since it is passed from props
                     // so we force a re render to apply the new template
+                    Logger.write("[MSWP.SearchResultsContainer.componentDidUpdate()]: forced render.");
                     this.forceUpdate();
                 }
             }
-        }
+
+        }       
+
     }
 
     private _convertToSortList(sortList: ISortFieldConfiguration[]): Sort[] {
@@ -420,6 +444,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
     private async _onUpdateSort(sortDirection: SortDirection, sortField?: string) {
 
         if (sortField) {
+            Logger.write("[MSWP.SearchResultsContainer._onUpdateSort()]: on update sort render.");
             // Get back to the first page when new sorting has been selected
             this.setState({
                 sortField: sortField,
@@ -435,6 +460,8 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
 
                 const searchResults = await this._getSearchResults(this.props, 1);
 
+                Logger.write("[MSWP.SearchResultsContainer._onUpdateSort()]: on after update sort search render.");
+
                 this.setState({
                     results: searchResults,
                     areResultsLoading: false,
@@ -443,7 +470,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 this.handleResultUpdateBroadCast(searchResults);
             }
             catch (error) {
-                Logger.write('[SearchContainer._onUpdateSort()]: Error: ' + error, LogLevel.Error);
+                Logger.write('[MSWP.SearchResultsContainer._onUpdateSort()]: Error: ' + error, LogLevel.Error);
                 const errorMessage = /\"value\":\"[^:]+: SortList\.\"/.test(error.message) ? strings.Sort.SortErrorMessage : error.message;
 
                 let results: ISearchResults = { QueryKeywords: this.state.results.QueryKeywords, RefinementResults: [], RelevantResults: [], SecondaryResults: [] };

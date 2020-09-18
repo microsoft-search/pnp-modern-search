@@ -45,6 +45,8 @@ export default class LinkPanel extends React.Component<ILinkPanelProps, ILinkPan
   }
 
   public render(): React.ReactElement<ILinkPanelProps> {
+    
+    const t = strings.FilterPanelTitle;
 
     const renderSelectedFilterValues: JSX.Element[] = this.props.selectedFilterValues.map((value) => {
 
@@ -115,38 +117,20 @@ export default class LinkPanel extends React.Component<ILinkPanelProps, ILinkPan
           isLightDismiss={true}
           isHiddenOnDismiss={true}
           onDismiss={this._onClosePanel}
-          headerText={strings.FilterPanelTitle}
-          onRenderBody={() => {
-            if (this.props.refinementResults.length > 0) {
-              return (
-                <div style={{
-                  height: '100%',
-                  position: 'relative',
-                  maxHeight: 'inherit'
-                }}
-                id={CssHelper.convertToClassName(this.props.contentClassName)}
-                >
-                  <ScrollablePane styles={{
-                    root: {
-                      width: '100%',
-                      height: '100%',
-                    }
-                  }}>
-                  <div className={styles.linkPanelLayout__filterPanel__body} data-is-scrollable={true}>
-                    {renderLinkRemoveAll}
-                    {renderAvailableFilters}
-                  </div>
-                  </ScrollablePane>
-                </div>
-              );
-            } else {
-              return (
-                <div className={styles.linkPanelLayout__filterPanel__body}>
+          headerText={t}
+          hasCloseButton={true}
+          >
+          {(this.props.refinementResults.length > 0) 
+              ? (<div id={CssHelper.convertToClassName(this.props.contentClassName)}>
+                    <div className={styles.linkPanelLayout__filterPanel__body} data-is-scrollable={true}>
+                      {renderLinkRemoveAll}
+                      {renderAvailableFilters}
+                    </div>
+                </div>)
+              : (<div className={styles.linkPanelLayout__filterPanel__body}>
                   {strings.NoFilterConfiguredLabel}
-                </div>
-              );
-            }
-          }}>
+                </div>)
+          }
         </Panel>
       </div>
     );

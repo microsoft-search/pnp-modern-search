@@ -4,8 +4,8 @@ import { DatePicker, IDatePickerProps, IDatePickerStyleProps, IDatePickerStyles 
 import { Link } from "office-ui-fabric-react/lib/Link";
 import update from 'immutability-helper';
 import * as strings from 'SearchRefinersWebPartStrings';
-import { Loader } from "../../../../../services/TemplateService/LoadHelper";
 import { ITheme } from "@uifabric/styling";
+import ITemplateService from '../../../../../services/TemplateService/ITemplateService';
 
 // CSS
 import styles from './DateRangeTemplate.module.scss';
@@ -26,11 +26,13 @@ export default class DateRangeTemplate extends React.Component<IDateRangeTemplat
     public constructor(props: IDateRangeTemplateProps) {
         super(props);
 
+        const ts = props.templateService as ITemplateService;
+
         this.state = {
             refinerSelectedFilterValues: [],
             selectedFromDate: null,
             selectedToDate: null,
-            haveMoment: ((window as any).searchHBHelper) ? true : false
+            haveMoment: ts.Moment ? true : false
         };
 
         this._updateFromDate = this._updateFromDate.bind(this);
@@ -61,6 +63,8 @@ export default class DateRangeTemplate extends React.Component<IDateRangeTemplat
             return customStyles;
         };
 
+        const ts = this.props.templateService as ITemplateService;
+
         const fromProps: IDatePickerProps = {
             placeholder: strings.Refiners.Templates.DateFromLabel,
             onSelectDate: this._updateFromDate,
@@ -84,7 +88,7 @@ export default class DateRangeTemplate extends React.Component<IDateRangeTemplat
         };
 
         // Check if moment js is present on the current page (loaded from a search results WP)
-        if ((window as any).searchHBHelper) {
+        if (ts.Moment) {
             toProps.formatDate = this._onFormatDate;
             fromProps.formatDate = this._onFormatDate;
         }
@@ -117,7 +121,8 @@ export default class DateRangeTemplate extends React.Component<IDateRangeTemplat
 
     public async componentWillMount() {
         if (!this.state.haveMoment) {
-            await Loader.LoadHandlebarsHelpers();
+            const ts = this.props.templateService as ITemplateService;
+            await ts.loadHandlebarsHelpers();
             this.setState({ haveMoment: true });
         }
     }
@@ -198,12 +203,13 @@ export default class DateRangeTemplate extends React.Component<IDateRangeTemplat
 
         let startDate = selectedFromDate ? selectedFromDate.toISOString() : "min";
         let endDate = selectedToDate ? selectedToDate.toISOString() : "max";
-
+        
         const rangeConditions = `range(${startDate},${endDate})`;
+        const ts = this.props.templateService as ITemplateService;
 
         let filterDisplayValue: string[] = [];
 
-        if ((window as any).searchHBHelper) {
+        if (ts.Moment) {
 
             if (startDate.localeCompare('min') !== 0) {
                 filterDisplayValue.push(`>= ${this._onFormatDate(new Date(startDate))}`);
@@ -248,8 +254,9 @@ export default class DateRangeTemplate extends React.Component<IDateRangeTemplat
     }
 
     private _onFormatDate(date: Date): string {
-        if ((window as any).searchHBHelper) {
-            return (window as any).searchMoment(date).locale(this.props.language).format('LL');
+        if (this.props.templateService) {
+            const ts = this.props.templateService as ITemplateService;
+            return ts.Moment(date).locale(this.props.language).format('LL');
         }
     }
 }

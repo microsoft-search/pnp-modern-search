@@ -1,15 +1,9 @@
-import BaseTemplateService from                    './BaseTemplateService';
-import ResultsLayoutOption from '../../models/ResultsLayoutOption';
-import { ISearchResultsWebPartProps } from '../../webparts/searchResults/ISearchResultsWebPartProps';
-import { IComboBoxOption } from 'office-ui-fabric-react/lib/ComboBox';
-import { TemplateService } from './TemplateService';
-import MockSearchService from '../SearchService/MockSearchService';
-import { IPropertyPaneField } from '@microsoft/sp-property-pane';
+import { BaseTemplateService } from                    './BaseTemplateService';
 import { WebPartContext } from '@microsoft/sp-webpart-base';
 import ISearchService from '../SearchService/ISearchService';
 import { IExtensibilityService } from 'search-extensibility';
 
-class MockTemplateService extends BaseTemplateService {
+export default class MockTemplateService extends BaseTemplateService {
 
     private ctx: WebPartContext;
     private searchService: ISearchService;
@@ -22,6 +16,7 @@ class MockTemplateService extends BaseTemplateService {
         this.searchService = searchService;
         this._extensibilityService = extensibilityService;
         this.CurrentLocale = locale;
+
     }
 
     private readonly _mockFileContent: string = require('../../templates/layouts/mock.html');
@@ -41,11 +36,4 @@ class MockTemplateService extends BaseTemplateService {
         return Promise.resolve();
     }
 
-    public getTemplateParameters(layout: ResultsLayoutOption, properties: ISearchResultsWebPartProps, onUpdateAvailableProperties?: (properties: IComboBoxOption[]) => void, availableProperties?: IComboBoxOption[]): IPropertyPaneField<any>[] {
-        
-        const templateService = new TemplateService(null, this.CurrentLocale, this.searchService, this._extensibilityService, null, this.ctx);
-        return templateService.getTemplateParameters(layout, properties, onUpdateAvailableProperties);
-    }
 }
-
-export default MockTemplateService;

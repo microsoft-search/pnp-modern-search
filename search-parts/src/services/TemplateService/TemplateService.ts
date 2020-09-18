@@ -1,4 +1,4 @@
-import BaseTemplateService from './BaseTemplateService';
+import { BaseTemplateService,IComponentFieldsConfiguration} from './BaseTemplateService';
 import { SPHttpClient, SPHttpClientResponse } from '@microsoft/sp-http';
 import ISearchService from '../SearchService/ISearchService';
 import ResultsLayoutOption from '../../models/ResultsLayoutOption';
@@ -18,35 +18,7 @@ import { ITimeZoneBias, IExtensibilityService, IEditorLibrary } from "search-ext
 
 const PEOPLE_RESULT_SOURCEID = 'b09a7990-05ea-4af9-81ef-edfab16c4e31';
 
-export interface IComponentFieldsConfiguration {
-
-    /**
-     * The name of the field
-     */
-    name: string;
-
-    /**
-     * The field name for the inner component props
-     */
-    field: string;
-
-    /**
-     * The value of the field
-     */
-    value: string;
-
-    /**
-     * Indicates if the calue is an Handlebars expression
-     */
-    useHandlebarsExpr: boolean;
-
-    /**
-     * Indicates if the field supports HTML markup injection
-     */
-    supportHtml: boolean;
-}
-
-export class TemplateService extends BaseTemplateService {
+export default class TemplateService extends BaseTemplateService {
 
     private _spHttpClient: SPHttpClient;
     private _searchService: ISearchService;
@@ -67,7 +39,7 @@ export class TemplateService extends BaseTemplateService {
         this._spHttpClient = spHttpClient;
         this.CurrentLocale = locale;
         this.TimeZoneBias = timeZoneBias;
-        
+
     }
 
     /**

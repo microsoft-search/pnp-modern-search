@@ -3,10 +3,10 @@ import { IRefinerProps, IRefinerState, IRefinementValue, RefinementOperator } fr
 import { IChoiceGroupOption, ChoiceGroup } from "office-ui-fabric-react/lib/ChoiceGroup";
 import { Guid } from '@microsoft/sp-core-library';
 import update from 'immutability-helper';
-import { Loader } from "../../../../../services/TemplateService/LoadHelper";
 import * as strings from 'SearchRefinersWebPartStrings';
 import { ITheme } from "@uifabric/styling";
 import { find } from "@microsoft/sp-lodash-subset";
+import ITemplateService from '../../../../../services/TemplateService/ITemplateService';
 
 //CSS
 import styles from './FixedDateRangeTemplate.module.scss';
@@ -68,10 +68,11 @@ export default class FixedDateRangeTemplate extends React.Component<IFixedDateRa
 
     public constructor(props: IFixedDateRangeTemplateProps) {
         super(props);
+        const ts = this.props.templateService as ITemplateService;
 
         this.state = {
             refinerSelectedFilterValues: [],
-            haveMoment: ((window as any).searchHBHelper) ? true : false
+            haveMoment: ts.Moment ? true : false
         };
 
         this._updateFilter = this._updateFilter.bind(this);
@@ -139,7 +140,8 @@ export default class FixedDateRangeTemplate extends React.Component<IFixedDateRa
 
     public async componentWillMount() {
         if (!this.state.haveMoment) {
-            await Loader.LoadHandlebarsHelpers();
+            const ts = this.props.templateService as ITemplateService;
+            await ts.loadHandlebarsHelpers();
             this.setState({ haveMoment: true });
         }
     }
@@ -255,8 +257,9 @@ export default class FixedDateRangeTemplate extends React.Component<IFixedDateRa
     }
 
     private _getIntervalDateFromStartDate(startDate: Date, unit: string, count: number): Date {
-        if ((window as any).searchHBHelper) {
-            return (window as any).searchMoment(startDate).subtract(count, unit).toDate();
+        if (this.props.templateService) {
+            const ts = this.props.templateService as ITemplateService;
+            return ts.Moment(startDate).subtract(count, unit).toDate();
         }
     }
 

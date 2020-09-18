@@ -10,7 +10,7 @@ import { IRefinementResult, IRefinementValue, RefinerTemplateOption, IRefinerCon
 import { RefinementFilterOperationCallback, IUserService } from 'search-extensibility';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import ISearchRefinersTemplateContext from './CustomTemplate/ISearchRefinersTemplateContext';
-import BaseTemplateService from '../../../../services/TemplateService/BaseTemplateService';
+import ITemplateService from '../../../../services/TemplateService/ITemplateService';
 
 export interface ITemplateRendererProps {
 
@@ -63,7 +63,7 @@ export interface ITemplateRendererProps {
   /**
    * Template Service
    */
-  templateService: BaseTemplateService;
+  templateService: ITemplateService;
 
   /**
    * The current theme variant
@@ -106,6 +106,7 @@ export default class TemplateRenderer extends React.Component<ITemplateRendererP
       case RefinerTemplateOption.CheckBox:
 
         renderTemplate = <CheckboxTemplate
+          templateService={this.props.templateService}
           refinementResult={this.props.refinementResult}
           onFilterValuesUpdated={this.props.onFilterValuesUpdated}
           shouldResetFilters={this.props.shouldResetFilters}
@@ -119,6 +120,7 @@ export default class TemplateRenderer extends React.Component<ITemplateRendererP
 
       case RefinerTemplateOption.CheckBoxMulti:
         renderTemplate = <CheckboxTemplate
+          templateService={this.props.templateService}
           refinementResult={this.props.refinementResult}
           onFilterValuesUpdated={this.props.onFilterValuesUpdated}
           themeVariant={this.props.themeVariant}
@@ -132,6 +134,7 @@ export default class TemplateRenderer extends React.Component<ITemplateRendererP
 
       case RefinerTemplateOption.DateRange:
         renderTemplate = <DateRangeTemplate
+          templateService={this.props.templateService}
           refinementResult={this.props.refinementResult}
           onFilterValuesUpdated={this.props.onFilterValuesUpdated}
           shouldResetFilters={this.props.shouldResetFilters}
@@ -146,6 +149,7 @@ export default class TemplateRenderer extends React.Component<ITemplateRendererP
 
       case RefinerTemplateOption.FixedDateRange:
         renderTemplate = <FixedDateRangeTemplate
+          templateService={this.props.templateService}
           refinementResult={this.props.refinementResult}
           onFilterValuesUpdated={this.props.onFilterValuesUpdated}
           shouldResetFilters={this.props.shouldResetFilters}
@@ -160,6 +164,7 @@ export default class TemplateRenderer extends React.Component<ITemplateRendererP
 
       case RefinerTemplateOption.Persona:
         renderTemplate = <PersonaTemplate
+          templateService={this.props.templateService}
           refinementResult={this.props.refinementResult}
           onFilterValuesUpdated={this.props.onFilterValuesUpdated}
           shouldResetFilters={this.props.shouldResetFilters}
@@ -174,6 +179,7 @@ export default class TemplateRenderer extends React.Component<ITemplateRendererP
 
       case RefinerTemplateOption.FileType:
         renderTemplate = <FileTypeTemplate
+          templateService={this.props.templateService}
           refinementResult={this.props.refinementResult}
           onFilterValuesUpdated={this.props.onFilterValuesUpdated}
           shouldResetFilters={this.props.shouldResetFilters}
@@ -187,6 +193,7 @@ export default class TemplateRenderer extends React.Component<ITemplateRendererP
 
       case RefinerTemplateOption.FileTypeMulti:
         renderTemplate = <FileTypeTemplate
+          templateService={this.props.templateService}
           refinementResult={this.props.refinementResult}
           onFilterValuesUpdated={this.props.onFilterValuesUpdated}
           shouldResetFilters={this.props.shouldResetFilters}
@@ -200,6 +207,7 @@ export default class TemplateRenderer extends React.Component<ITemplateRendererP
 
       case RefinerTemplateOption.ContainerTree:
           renderTemplate = <ContainerTreeTemplate
+            templateService={this.props.templateService}
             showExpanded={this.props.refinerConfiguration ? this.props.refinerConfiguration.showExpanded : false}
             refinementResult={this.props.refinementResult}
             onFilterValuesUpdated={this.props.onFilterValuesUpdated}

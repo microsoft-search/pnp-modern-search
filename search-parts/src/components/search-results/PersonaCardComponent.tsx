@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { IPersonaSharedProps, IPersonaProps, Persona, Link } from 'office-ui-fabric-react';
-import { TemplateService } from "../../services/TemplateService/TemplateService";
-import { BaseWebComponent } from 'search-extensibility';
+import { BaseWebComponent, IExtensionContext } from 'search-extensibility';
 import * as ReactDOM from 'react-dom';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import { ITheme } from '@uifabric/styling';
+import ITemplateService from '../../services/TemplateService/ITemplateService';
 
 export interface IPersonaCardComponentProps {
 
@@ -30,6 +30,8 @@ export interface IPersonaCardComponentProps {
      * The current theme settings
      */
     themeVariant?: IReadonlyTheme;
+
+    context?: IExtensionContext;
 }
 
 export interface IPersonaCardComponentState {
@@ -47,7 +49,8 @@ export class PersonaCardComponent extends React.Component<IPersonaCardComponentP
         let processedProps: IPersonaCardComponentProps = this.props;
 
         if (this.props.fieldsConfiguration && this.props.item) {
-            processedProps = TemplateService.processFieldsConfiguration<IPersonaCardComponentProps>(this.props.fieldsConfiguration, this.props.item);
+            const ts = this.props.context.template as ITemplateService;
+            processedProps = ts.processFieldsConfiguration<IPersonaCardComponentProps>(this.props.fieldsConfiguration, this.props.item);
         }
 
         const persona: IPersonaSharedProps | IPersonaProps = {
@@ -106,6 +109,7 @@ export class PersonaCardWebComponent extends BaseWebComponent {
     public connectedCallback() {
 
         let props = this.resolveAttributes();
+        props.context = this.context;
         const personaItem = <PersonaCardComponent {...props} />;
         ReactDOM.render(personaItem, this);
     }

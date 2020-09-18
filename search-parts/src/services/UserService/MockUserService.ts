@@ -1,13 +1,5 @@
-// PnP
-import { ConsoleListener, LogLevel, Logger } from '@pnp/logging';
-
 // Interface
-import { IUserInfo } from '../../models/IUser';
 import { IUserService } from 'search-extensibility';
-
-// MockData
-import { mockUserData } from './MockUserData';
-
 // Class
 export class MockUserService implements IUserService {
   
@@ -15,8 +7,4 @@ export class MockUserService implements IUserService {
     throw new Error("Method not implemented.");
   }
 
-  constructor() {
-    const consoleListener = new ConsoleListener();
-    Logger.subscribe(consoleListener);
-  }
 }

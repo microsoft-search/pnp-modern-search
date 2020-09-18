@@ -3,13 +3,13 @@ import Flickity from 'flickity';
 import 'flickity-imagesloaded';
 import 'flickity/dist/flickity.min.css';
 import * as ReactDOM from 'react-dom';
-import * as Handlebars from 'handlebars';
 import { MessageBar, MessageBarType } from 'office-ui-fabric-react/lib/MessageBar';
-import { BaseWebComponent } from 'search-extensibility';
-import { TemplateService } from '../../services/TemplateService/TemplateService';
+import { BaseWebComponent, IExtensionContext } from 'search-extensibility';
+import ITemplateService from '../../services/TemplateService/ITemplateService';
 
 export interface ISliderProps {
     options?: any;
+    context: IExtensionContext;
 }
 
 export interface ISliderState {
@@ -128,6 +128,8 @@ export interface ISliderComponentProps {
      * Slider options
      */
     options?: string;
+
+    context?: IExtensionContext;
 }
 
 export interface ISliderComponentState {
@@ -142,6 +144,7 @@ export class SliderComponent extends React.Component<ISliderComponentProps, ISli
             // Get item properties
             const items = this.props.items ? JSON.parse(this.props.items) : [];
             const sliderOptions = this.props.options ? JSON.parse(this.props.options) as ISliderOptions : {};
+            const ts = this.props.context.template as ITemplateService;
 
             let autoPlayValue: any = sliderOptions.autoPlay;
 
@@ -165,12 +168,13 @@ export class SliderComponent extends React.Component<ISliderComponentProps, ISli
                             pageDots: sliderOptions.showPageDots,
                             imagesLoaded: true
                         }}
+                        context={this.props.context}
                         >
                         {items.map((item, index) => {
                             
                             // Create a temp context with the current so we can use global registered helpers on the current item
                             const tempTemplateContent = `{{#with item as |item|}}${this.props.template.trim()}{{/with}}`;
-                            let template = Handlebars.compile(tempTemplateContent);
+                            let template = ts.Handlebars.compile(tempTemplateContent);
 
                             const templateContentValue = template({
                                 item: item
@@ -189,7 +193,8 @@ export class SliderComponent extends React.Component<ISliderComponentProps, ISli
     }
 
     public componentDidUpdate(prevState: ISliderComponentState, prevProps: ISliderComponentProps) {
-        TemplateService.initPreviewElements();
+        const ts = this.props.context.template as ITemplateService;
+        ts.initPreviewElements();
     }
 }
 
@@ -202,6 +207,7 @@ export class SliderWebComponent extends BaseWebComponent {
     public connectedCallback() {
  
        let props = this.resolveAttributes();
+       props.context = this.context;
        const sliderComponent = <SliderComponent {...props}/>;
        ReactDOM.render(sliderComponent, this);
     }    

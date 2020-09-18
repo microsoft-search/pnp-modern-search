@@ -5,8 +5,9 @@ import { PageContext } from '@microsoft/sp-page-context';
 import { TokenService } from '../TokenService';
 import { SPHttpClient } from '@microsoft/sp-http';
 import { WebPartContext } from '@microsoft/sp-webpart-base';
-import { SortDirection } from '@pnp/sp';
+import { SortDirection,Sort } from '@pnp/sp';
 import { IManagedPropertyInfo, ISearchResults, ISearchVerticalInformation } from 'search-extensibility';
+import ITemplateService from '../TemplateService/ITemplateService';
 
 class GraphSearchService implements ISearchService {
 
@@ -14,7 +15,7 @@ class GraphSearchService implements ISearchService {
     public selectedProperties: string[];
     public queryTemplate?: string;
     public resultSourceId?: string;
-    public sortList?: import("@pnp/sp").Sort[];
+    public sortList?: Sort[];
     public enableQueryRules?: boolean;
     public refiners?: any[];
     public refinementFilters?: string[];
@@ -27,6 +28,7 @@ class GraphSearchService implements ISearchService {
     private _pageContext: PageContext = null;
     private _webPartContext: WebPartContext = null;
     private _tokenService: TokenService = null;
+    private _templateService: ITemplateService = null;
     private sortableProperties : string[] = [
         "PersonalScore"
     ];
@@ -181,6 +183,10 @@ class GraphSearchService implements ISearchService {
 
     public async getAvailableQueryLanguages(): Promise<any[]> {
         throw new Error("Method not implemented.");
+    }
+
+    public initializeTemplateService(svc:ITemplateService): void {
+        this._templateService = svc;
     }
 
 }

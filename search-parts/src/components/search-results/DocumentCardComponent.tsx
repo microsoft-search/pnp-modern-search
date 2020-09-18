@@ -4,7 +4,6 @@ import { ImageFit } from 'office-ui-fabric-react/lib/Image';
 import PreviewContainer from '../../controls/PreviewContainer/PreviewContainer';
 import { PreviewType } from '../../controls/PreviewContainer/IPreviewContainerProps';
 import { Link } from 'office-ui-fabric-react/lib/Link';
-import { TemplateService } from "../../services/TemplateService/TemplateService";
 import * as documentCardLocationGetStyles from 'office-ui-fabric-react/lib/components/DocumentCard/DocumentCardLocation.styles';
 import { getTheme, mergeStyleSets, ITheme } from "office-ui-fabric-react/lib/Styling";
 import { classNamesFunction } from "office-ui-fabric-react/lib/Utilities";
@@ -12,10 +11,11 @@ import { IReadonlyTheme } from "@microsoft/sp-component-base";
 import { merge, trimStart, isEmpty } from '@microsoft/sp-lodash-subset';
 import { getFileTypeIconProps, FileIconType } from '@uifabric/file-type-icons';
 import { GlobalSettings } from 'office-ui-fabric-react/lib/Utilities'; // has to be present
-import { BaseWebComponent } from 'search-extensibility';
+import { BaseWebComponent, IExtensionContext } from 'search-extensibility';
 import * as ReactDOM from "react-dom";
 let globalSettings = (window as any).__globalSettings__;
 import * as DOMPurify from 'dompurify';
+import ITemplateService from '../../services/TemplateService/ITemplateService';
 
 /**
  * Document card props. These properties are retrieved from the web component attributes. They must be camel case.
@@ -53,6 +53,12 @@ export interface IDocumentCardComponentProps {
      * The current theme settings
      */
     themeVariant?: IReadonlyTheme;
+
+    /**
+     * The extension context
+     */
+    context?: IExtensionContext;
+
 }
 
 export interface IDocumentCardComponentState {
@@ -79,7 +85,8 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
         let processedProps: IDocumentCardComponentProps = this.props;
 
         if (this.props.fieldsConfiguration && this.props.item) {
-            processedProps = TemplateService.processFieldsConfiguration<IDocumentCardComponentProps>(this.props.fieldsConfiguration, this.props.item, this.props.themeVariant);
+            const ts = this.props.context.template as ITemplateService;
+            processedProps = ts.processFieldsConfiguration<IDocumentCardComponentProps>(this.props.fieldsConfiguration, this.props.item, this.props.themeVariant);
         }
 
         if (this.state.showCallout && (processedProps.previewUrl || processedProps.previewImage) && this.props.enablePreview) {
@@ -241,6 +248,7 @@ export class DocumentCardWebComponent extends BaseWebComponent {
     public connectedCallback() {
 
         let props = this.resolveAttributes();
+        props.context = this.context;
         const documentCarditem = <DocumentCardComponent {...props} />;
         ReactDOM.render(documentCarditem, this);
     }
@@ -259,6 +267,7 @@ export class VideoCardWebComponent extends BaseWebComponent {
 
         // Add video props
         props.isVideo = true;
+        props.context = this.context;
 
         const documentCarditem = <DocumentCardComponent {...props} />;
         ReactDOM.render(documentCarditem, this);

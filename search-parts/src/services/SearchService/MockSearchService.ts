@@ -3,13 +3,14 @@ import { ISearchResults, ITimeZoneBias, ISearchResult, ISearchVerticalInformatio
 import { intersection, clone } from '@microsoft/sp-lodash-subset';
 import { Sort } from '@pnp/sp';
 import { ISearchServiceConfiguration } from '../../models/ISearchServiceConfiguration';
-import ISearchVerticalSourceData from '../../models/ISearchVerticalSourceData';
+import ITemplateService from '../TemplateService/ITemplateService';
 import { ISearchVertical } from '../../models/ISearchVertical';
 import { IManagedPropertyInfo, IRefinerConfiguration } from 'search-extensibility';
 import { ISharePointSearch } from './ISharePointSearch';
 
 class MockSearchService implements ISearchService {
 
+  private _templateService : ITemplateService = null;
   private _suggestions: string[];
   private _resultsCount: number;
   private _selectedProperties: string[];
@@ -413,6 +414,10 @@ class MockSearchService implements ISearchService {
    */
   public async validateSortableProperty(property: string): Promise<boolean> {
     return Promise.resolve(true);
+  }
+
+  public initializeTemplateService(svc: ITemplateService) : void {
+    this._templateService = svc;
   }
 }
 

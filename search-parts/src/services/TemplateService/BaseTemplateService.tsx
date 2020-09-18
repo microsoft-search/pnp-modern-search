@@ -10,26 +10,58 @@ import { DomHelper } from '../../helpers/DomHelper';
 import { ISearchResultType, ResultTypeOperator } from '../../models/ISearchResultType';
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
+import ITemplateService from './ITemplateService';
 import PreviewContainer from '../../controls/PreviewContainer/PreviewContainer';
 import { IPreviewContainerProps, PreviewType } from '../../controls/PreviewContainer/IPreviewContainerProps';
 import { IPropertyPaneField } from '@microsoft/sp-property-pane';
 import ResultsLayoutOption from '../../models/ResultsLayoutOption';
 import { ISearchResultsWebPartProps } from '../../webparts/searchResults/ISearchResultsWebPartProps';
 import { IComboBoxOption } from 'office-ui-fabric-react/lib/ComboBox';
-import { IComponentFieldsConfiguration, TemplateService } from './TemplateService';
 import { WebPartContext } from '@microsoft/sp-webpart-base';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import groupBy from 'handlebars-group-by';
-import { Loader } from './LoadHelper';
 import { IExtension, ITimeZoneBias } from 'search-extensibility';
 import ISearchService from '../SearchService/ISearchService';
-import { flatten } from 'office-ui-fabric-react';
+import Logger from '../LogService/LogService';
+import { LogLevel } from '@pnp/logging';
+import { initializeIcons } from '@uifabric/icons';
+import { initializeFileTypeIcons } from '@uifabric/file-type-icons';
+import { GlobalSettings } from '@uifabric/utilities';
 
-abstract class BaseTemplateService {
+export interface IComponentFieldsConfiguration {
+
+    /**
+     * The name of the field
+     */
+    name: string;
+
+    /**
+     * The field name for the inner component props
+     */
+    field: string;
+
+    /**
+     * The value of the field
+     */
+    value: string;
+
+    /**
+     * Indicates if the calue is an Handlebars expression
+     */
+    useHandlebarsExpr: boolean;
+
+    /**
+     * Indicates if the field supports HTML markup injection
+     */
+    supportHtml: boolean;
+}
+
+export abstract class BaseTemplateService implements ITemplateService {
 
     private _ctx: WebPartContext;
     private _search: ISearchService;
-
+    
+    
     public CurrentLocale = "en";
     public TimeZoneBias : ITimeZoneBias = {
         WebBias: 0,
@@ -38,13 +70,18 @@ abstract class BaseTemplateService {
         UserDST: 0
     };
     private DayLightSavings = true;
+    
     public UseOldSPIcons = false;
+    public Handlebars = null;
+    public Moment = null;
+    public Helpers = null;
 
     constructor(ctx?: WebPartContext, searchService?: ISearchService) {
 
         this._ctx = ctx;
         this._search = searchService;
-
+        this.Handlebars = Handlebars.create();
+        
         // Registers all helpers
         this.registerTemplateServices();
 
@@ -75,7 +112,7 @@ abstract class BaseTemplateService {
      * Gets the default Handlebars template content used for a specific layout
      * @returns the template HTML markup
      */
-    public static getTemplateContent(layout: ResultsLayoutOption): string {
+    public getTemplateDefaultContent(layout: ResultsLayoutOption): string {
 
         switch (layout) {
 
@@ -109,7 +146,7 @@ abstract class BaseTemplateService {
      * Gets the default Handlebars result type list item
      * @returns the template HTML markup
      */
-    public static getDefaultResultTypeListItem(): string {
+    public getDefaultResultTypeListItem(): string {
         return require('../../templates/resultTypes/default_list.html');
     }
 
@@ -117,7 +154,7 @@ abstract class BaseTemplateService {
      * Gets the default Handlebars result type tile item
      * @returns the template HTML markup
      */
-    public static getDefaultResultTypeTileItem(): string {
+    public getDefaultResultTypeTileItem(): string {
         return require('../../templates/resultTypes/default_tile.html');
     }
 
@@ -125,7 +162,7 @@ abstract class BaseTemplateService {
      * Gets the default Handlebars result type custom item
      * @returns the template HTML markup
      */
-    public static getDefaultResultTypeCustomItem(): string {
+    public getDefaultResultTypeCustomItem(): string {
         return require('../../templates/resultTypes/default_custom.html');
     }
 
@@ -133,7 +170,7 @@ abstract class BaseTemplateService {
      * Gets the template HTML markup in the full template content
      * @param templateContent the full template content
      */
-    public static getTemplateMarkup(templateContent: string): string {
+    public getTemplateMarkup(templateContent: string): string {
 
         const domParser = new DOMParser();
         const htmlContent: Document = domParser.parseFromString(templateContent, 'text/html');
@@ -147,15 +184,11 @@ abstract class BaseTemplateService {
         }
     }
 
-    public getTemplateMarkup(templateContent: string): string {
-        return TemplateService.getTemplateMarkup(templateContent);
-    }
-
     /**
      * Gets the placeholder HTML markup in the full template content
      * @param templateContent the full template content
      */
-    public static getPlaceholderMarkup(templateContent: string): string {
+    public getPlaceholderMarkup(templateContent: string): string {
         const domParser = new DOMParser();
         const htmlContent: Document = domParser.parseFromString(templateContent, 'text/html');
 
@@ -168,7 +201,7 @@ abstract class BaseTemplateService {
         }
     }
 
-    private addMinutes(date: Date, minutes: number, dst: number) {
+    private addMinutes(date: Date, minutes: number, dst: number) : Date {
         if (this.DayLightSavings) {
             minutes += dst;
         }
@@ -176,10 +209,8 @@ abstract class BaseTemplateService {
     }
 
     private momentHelper(str, pattern, lang) {
-        // if no args are passed, return a formatted date
-        let moment = (window as any).searchMoment;
-        moment.locale(lang);
-        return moment(new Date(str)).format(pattern);
+        this.Moment.locale(lang);
+        return this.Moment(new Date(str)).format(pattern);
     }
 
     private createOdspPreviewUrl(defaultEncodingURL: string): string {
@@ -205,7 +236,7 @@ abstract class BaseTemplateService {
         //https://support.microsoft.com/en-us/office/file-types-supported-for-previewing-files-in-onedrive-sharepoint-and-teams-e054cd0f-8ef2-4ccb-937e-26e37419c5e4
         const validPreviewExt = ["doc", "docm", "docx", "dotm", "dotx", "pot", "potm", "potx", "pps", "ppsm", "ppsx", "ppt", "pptm", "pptx", "vsd", "vsdx", "xls", "xlsb", "xlsx", "3g2", "3gp", "3mf", "ai", "arw", "asf", "bas", "bmp", "cr2", "crw", "csv", "cur", "dcm", "dng", "dwg", "eml", "epub", "erf", "gif", "glb", "gltf", "hcp", "htm", "html", "ico", "icon", "jpg", "key", "log", "m", "m2ts", "m4v", "markdown", "md", "mef", "mov", "movie", "mp4", "mp4v", "mrw", "msg", "mts", "nef", "nrw", "odp", "ods", "odt", "orf", "pages", "pano", "pdf", "pef", "pict", "ply", "png", "psb", "psd", "rtf", "sketch", "stl", "svg", "tif", "tiff", "ts", "wmv", "xbm", "xcf", "xd", "xpm", "zip", "gitconfig", "abap", "ada", "adp", "ahk", "as", "as3", "asc", "ascx", "asm", "asp", "awk", "bash", "bash_login", "bash_logout", "bash_profile", "bashrc", "bat", "bib", "bsh", "build", "builder", "c", "capfile", "cbl", "cc", "cfc", "cfm", "cfml", "cl", "clj", "cls", "cmake", "cmd", "coffee", "cpp", "cpt", "cpy", "cs", "cshtml", "cson", "csproj", "css", "ctp", "cxx", "d", "ddl", "di.dif", "diff", "disco", "dml", "dtd", "dtml", "el", "emakefile", "erb", "erl", "f", "f90", "f95", "fs", "fsi", "fsscript", "fsx", "gemfile", "gemspec", "go", "groovy", "gvy", "h", "h++", "haml", "handlebars", "hh", "hpp", "hrl", "hs", "htc", "hxx", "idl", "iim", "inc", "inf", "ini", "inl", "ipp", "irbrc", "jade", "jav", "java", "js", "json", "jsp", "jsx", "l", "less", "lhs", "lisp", "lst", "ltx", "lua", "make", "markdn", "mdown", "mkdn", "ml", "mli", "mll", "mly", "mm", "mud", "nfo", "opml", "osascript", "out", "p", "pas", "patch", "php", "php2", "php3", "php4", "php5", "pl", "plist", "pm", "pod", "pp", "profile", "properties", "ps1", "pt", "py", "pyw", "r", "rake", "rb", "rbx", "rc", "re", "reg", "rest", "resw", "resx", "rhtml", "rjs", "rprofile", "rpy", "rss", "rst", "rxml", "s", "sass", "scala", "scm", "sconscript", "sconstruct", "script", "scss", "sgml", "sh", "shtml", "sml", "sql", "sty", "tcl", "tex", "text", "tld", "tli", "tmpl", "tpl", "txt", "vb", "vi", "vim", "wsdl", "xaml", "xhtml", "xoml", "xml", "xsd", "xsl", "xslt", "yaml", "yaws", "yml", "zs", "mp3", "fbx", "heic", "jpeg", "hbs", "textile", "c++"];
 
-        Handlebars.registerHelper("isFilterSelected", (filter: IRefinementValue, selected: IRefinementValue[])=>{
+        this.Handlebars.registerHelper("isFilterSelected", (filter: IRefinementValue, selected: IRefinementValue[])=>{
             if(selected && selected.length > 0) {
                 return selected.some((f)=> {
                     return f.RefinementName===filter.RefinementName && f.RefinementValue===filter.RefinementValue;
@@ -216,7 +247,7 @@ abstract class BaseTemplateService {
 
         // Return the URL of the search result item
         // Usage: <a href="{{url item}}">
-        Handlebars.registerHelper("getUrl", (item: ISearchResult, forceDirectLink: boolean = false) => {
+        this.Handlebars.registerHelper("getUrl", (item: ISearchResult, forceDirectLink: boolean = false) => {
 
             let url = '';
             if (!isEmpty(item)) {
@@ -249,14 +280,14 @@ abstract class BaseTemplateService {
                 else url = item.Path;
             }
 
-            return new Handlebars.SafeString(url.replace(/\+/g,"%2B"));
+            return new this.Handlebars.SafeString(url.replace(/\+/g,"%2B"));
         });
 
         // Return SPFx page context variable
         // Usage:
         //   {{getPageContext "user.displayName"}}
         //   {{getPageContext "cultureInfo.currentUICultureName"}}
-        Handlebars.registerHelper("getPageContext", (name: string) => {
+        this.Handlebars.registerHelper("getPageContext", (name: string) => {
 
             if (!name) return "";
             let value = get(this._ctx.pageContext, name);
@@ -269,7 +300,7 @@ abstract class BaseTemplateService {
         //   {{#getAttachments LinkOfficeChild}}
         //      <a href="{{url}}">{{fileName}}</href>
         //   {{/getAttachments}}
-        Handlebars.registerHelper("getAttachments", (value: string, options) => {
+        this.Handlebars.registerHelper("getAttachments", (value: string, options) => {
             let out: string = "";
             if (!isEmpty(value)) {
                 let splitArr: string[] = value.split(/\n+/);
@@ -290,15 +321,15 @@ abstract class BaseTemplateService {
 
         // Return the search result count message
         // Usage: {{getCountMessage totalRows keywords}} or {{getCountMessage totalRows null}}
-        Handlebars.registerHelper("getCountMessage", (totalRows: string, inputQuery?: string) => {
+        this.Handlebars.registerHelper("getCountMessage", (totalRows: string, inputQuery?: string) => {
 
             const countResultMessage = inputQuery ? Text.format(strings.CountMessageLong, totalRows, inputQuery) : Text.format(strings.CountMessageShort, totalRows);
-            return new Handlebars.SafeString(countResultMessage);
+            return new this.Handlebars.SafeString(countResultMessage);
         });
 
         // Return the preview image URL for the search result item
         // Usage: <img src="{{previewSrc item}}""/>
-        Handlebars.registerHelper("getPreviewSrc", (item: ISearchResult) => {
+        this.Handlebars.registerHelper("getPreviewSrc", (item: ISearchResult) => {
             let previewSrc = "";
             const validThumbExt = ["doc", "docm", "docx", "dotm", "dotx", "pot", "potm", "potx", "pps", "ppsm", "ppsx", "ppt", "pptm", "pptx", "xls", "xlsb", "xlsx", "3g2", "3gp", "3mf", "ai", "arw", "asf", "bas", "bmp", "cr2", "crw", "cur", "dcm", "dng", "dwg", "eml", "epub", "erf", "gif", "glb", "gltf", "hcp", "htm", "html", "ico", "icon", "jpg", "key", "log", "m", "m2ts", "m4v", "markdown", "md", "mef", "mov", "movie", "mp4", "mp4v", "mrw", "msg", "mts", "nef", "nrw", "odp", "ods", "odt", "orf", "pages", "pano", "pdf", "pef", "pict", "ply", "png", "psb", "psd", "rtf", "sketch", "stl", "svg", "tif", "tiff", "ts", "wmv", "xbm", "xcf", "xd", "xpm", "gitconfig", "abap", "ada", "adp", "ahk", "as", "as3", "asc", "ascx", "asm", "asp", "awk", "bash", "bash_login", "bash_logout", "bash_profile", "bashrc", "bat", "bib", "bsh", "build", "builder", "c", "capfile", "cbl", "cc", "cfc", "cfm", "cfml", "cl", "clj", "cls", "cmake", "cmd", "coffee", "cpp", "cpt", "cpy", "cs", "cshtml", "cson", "csproj", "css", "ctp", "cxx", "d", "ddl", "di.dif", "diff", "disco", "dml", "dtd", "dtml", "el", "emakefile", "erb", "erl", "f", "f90", "f95", "fs", "fsi", "fsscript", "fsx", "gemfile", "gemspec", "go", "groovy", "gvy", "h", "h++", "haml", "handlebars", "hh", "hpp", "hrl", "hs", "htc", "hxx", "idl", "iim", "inc", "inf", "ini", "inl", "ipp", "irbrc", "jade", "jav", "java", "js", "json", "jsp", "jsx", "l", "less", "lhs", "lisp", "lst", "ltx", "lua", "make", "markdn", "mdown", "mkdn", "ml", "mli", "mll", "mly", "mm", "mud", "nfo", "opml", "osascript", "out", "p", "pas", "patch", "php", "php2", "php3", "php4", "php5", "pl", "plist", "pm", "pod", "pp", "profile", "properties", "ps1", "pt", "py", "pyw", "r", "rake", "rb", "rbx", "rc", "re", "reg", "rest", "resw", "resx", "rhtml", "rjs", "rprofile", "rpy", "rss", "rst", "rxml", "s", "sass", "scala", "scm", "sconscript", "sconstruct", "script", "scss", "sgml", "sh", "shtml", "sml", "sql", "sty", "tcl", "tex", "text", "tld", "tli", "tmpl", "tpl", "txt", "vb", "vi", "vim", "wsdl", "xaml", "xhtml", "xoml", "xml", "xsd", "xsl", "xslt", "yaml", "yaws", "yml", "zs", "mp3", "fbx", "heic", "jpeg", "hbs", "textile", "c++"];
 
@@ -310,20 +341,20 @@ abstract class BaseTemplateService {
                 else if (!isEmpty(item.ServerRedirectedPreviewURL)) previewSrc = item.ServerRedirectedPreviewURL;
             }
 
-            return new Handlebars.SafeString(previewSrc);
+            return new this.Handlebars.SafeString(previewSrc);
         });
 
         // Return the highlighted summary of the search result item
         // <p>{{summary HitHighlightedSummary}}</p>
-        Handlebars.registerHelper("getSummary", (hitHighlightedSummary: string) => {
+        this.Handlebars.registerHelper("getSummary", (hitHighlightedSummary: string) => {
             if (!isEmpty(hitHighlightedSummary)) {
-                return new Handlebars.SafeString(hitHighlightedSummary.replace(/<c0\>/g, "<strong>").replace(/<\/c0\>/g, "</strong>").replace(/<ddd\/>/g, "&#8230;"));
+                return new this.Handlebars.SafeString(hitHighlightedSummary.replace(/<c0\>/g, "<strong>").replace(/<\/c0\>/g, "</strong>").replace(/<ddd\/>/g, "&#8230;"));
             }
         });
 
         // Return the formatted date according to current locale using moment.js
         // <p>{{getDate Created "LL"}}</p>
-        Handlebars.registerHelper("getDate", (date: string, format: string, timeHandling?: number, isZ?: boolean) => {
+        this.Handlebars.registerHelper("getDate", (date: string, format: string, timeHandling?: number, isZ?: boolean) => {
             try {
                 if (isZ && !date.toUpperCase().endsWith("Z")) {
                     if (date.indexOf(' ') !== -1) {
@@ -356,7 +387,7 @@ abstract class BaseTemplateService {
 
         // Return the URL or Title part of a URL automatic managed property
         // <p>{{getUrlField MyLinkOWSURLH "Title"}}</p>
-        Handlebars.registerHelper("getUrlField", (urlField: string, value: "URL" | "Title") => {
+        this.Handlebars.registerHelper("getUrlField", (urlField: string, value: "URL" | "Title") => {
             if (!isEmpty(urlField)) {
                 let separatorPos = urlField.indexOf(",");
                 if (separatorPos === -1) {
@@ -367,12 +398,12 @@ abstract class BaseTemplateService {
                 }
                 return urlField.substr(separatorPos + 1).trim();
             }
-            return new Handlebars.SafeString(urlField);
+            return new this.Handlebars.SafeString(urlField);
         });
 
         // Return the unique count based on an array or property of an object in the array
         // <p>{{getUniqueCount items "Title"}}</p>
-        Handlebars.registerHelper("getUniqueCount", (array: any[], property: string) => {
+        this.Handlebars.registerHelper("getUniqueCount", (array: any[], property: string) => {
             if (!Array.isArray(array)) return 0;
             if (array.length === 0) return 0;
 
@@ -389,7 +420,7 @@ abstract class BaseTemplateService {
 
         // Return the unique values as a new array based on an array or property of an object in the array
         // <p>{{getUnique items "NewsCategory"}}</p>
-        Handlebars.registerHelper("getUnique", (array: any[], property: string) => {
+        this.Handlebars.registerHelper("getUnique", (array: any[], property: string) => {
             if (!Array.isArray(array)) return 0;
             if (array.length === 0) return 0;
 
@@ -405,23 +436,23 @@ abstract class BaseTemplateService {
         // Repeat the block N times
         // https://stackoverflow.com/questions/11924452/iterating-over-basic-for-loop-using-handlebars-js
         // <p>{{#times 10}}</p>
-        Handlebars.registerHelper('times', (n, block) => {
+        this.Handlebars.registerHelper('times', (n, block) => {
             var accum = '';
             for (var i = 0; i < n; ++i)
                 accum += block.fn(i);
             return accum;
         });
 
-        Handlebars.registerPartial("resultTypes-default", "{{> @partial-block }}");
+        this.Handlebars.registerPartial("resultTypes-default", "{{> @partial-block }}");
 
         const self = this;
-        const hbs = Handlebars;
-        Handlebars.registerHelper('resultTypeResolve', (instanceId: string) => {
-            return hbs.partials[`resultTypes-${instanceId}`] || "resultTypes-default";
+        
+        this.Handlebars.registerHelper('resultTypeResolve', (instanceId: string) => {
+            return this.Handlebars.partials[`resultTypes-${instanceId}`] || "resultTypes-default";
         });
-        Handlebars.registerPartial('resultTypes', '{{> (resultTypeResolve @root.instanceId)}}');
+        this.Handlebars.registerPartial('resultTypes', '{{> (resultTypeResolve @root.instanceId)}}');
 
-        Handlebars.registerHelper("regex", (regx: string, str: string) => {
+        this.Handlebars.registerHelper("regex", (regx: string, str: string) => {
             let rx = new RegExp(regx);
             let i = rx.exec(str);
             if (!!!i || i.length === 0) return "-";
@@ -430,24 +461,25 @@ abstract class BaseTemplateService {
         });
 
         // Group by a specific property
-        Handlebars.registerHelper(groupBy(Handlebars));
+        this.Handlebars.registerHelper(groupBy(this.Handlebars));
     }
 
     /**
      * Registers third party handlebars helpers
      * @param helpers
      */
-    public registerHelpers(helpers: IExtension<any>[]) {
+    public registerHelpers(helpers: IExtension<any>[]) : void {
         if(helpers && helpers.length > 0) {
             helpers.map(helper => {
-                const existingHelper = typeof Handlebars.helpers[helper.name] == "function";
+                const existingHelper = typeof this.Handlebars.helpers[helper.name] == "function";
                 if(!existingHelper) {
                     try {
                         let instance = ExtensionHelper.create(helper.extensionClass) as IHandlebarsHelperInstance;
                         instance.context = { webPart: this._ctx, search: this._search, template: this };
-                        if(typeof instance.helper == "function") Handlebars.registerHelper(helper.name, instance.helper);
+                        if(typeof instance.helper == "function") this.Handlebars.registerHelper(helper.name, instance.helper);
                     } catch(ex) {
-                        console.log(`Unable to initialize custom handlebars helper '${helper.displayName}'. ${ex}`);
+                        Logger.error(ex);
+                        Logger.write(`[MSWP.BaseTemplateService.registerHelpers()]: Unable to initialize custom handlebars helper '${helper.displayName}'. ${ex}`,LogLevel.Error);
                     }
                 }
             });
@@ -457,7 +489,7 @@ abstract class BaseTemplateService {
     /**
      * Registers web components on the current page to be able to use them in the Handlebars template
      */
-    public registerWebComponents(webComponents: IExtension<any>[]) {
+    public registerWebComponents(webComponents: IExtension<any>[]) : void {
 
         // Registers custom HTML elements
         webComponents.map(wc => {
@@ -476,12 +508,12 @@ abstract class BaseTemplateService {
         });
 
         // Register slider component as partial
-        let sliderTemplate = Handlebars.compile(`<pnp-slider-component data-items="{{items}}" data-options="{{options}}" data-template="{{@partial-block}}"></pnp-slider-component>`);
-        Handlebars.registerPartial('slider', sliderTemplate);
+        let sliderTemplate = this.Handlebars.compile(`<pnp-slider-component data-items="{{items}}" data-options="{{options}}" data-template="{{@partial-block}}"></pnp-slider-component>`);
+        this.Handlebars.registerPartial('slider', sliderTemplate);
 
         // Register live persona wrapper as partial
-        let livePersonaTemplate = Handlebars.compile(`<pnp-live-persona data-upn="{{upn}}" data-disable-hover="{{disableHover}}" data-template="{{@partial-block}}"></pnp-live-persona>`);
-        Handlebars.registerPartial('livepersona', livePersonaTemplate);
+        let livePersonaTemplate = this.Handlebars.compile(`<pnp-live-persona data-upn="{{upn}}" data-disable-hover="{{disableHover}}" data-template="{{@partial-block}}"></pnp-live-persona>`);
+        this.Handlebars.registerPartial('livepersona', livePersonaTemplate);
     }
 
     public async optimizeLoadingForTemplate(templateContent: string): Promise<void> {
@@ -643,7 +675,7 @@ abstract class BaseTemplateService {
 
             let regEx = new RegExp("{{#?.*?" + element + ".*?}}", "m");
             if (regEx.test(templateContent)) {
-                await Loader.LoadHandlebarsHelpers();
+                await this.loadHandlebarsHelpers();
                 break;
             }
         }
@@ -652,11 +684,11 @@ abstract class BaseTemplateService {
 
         if (templateContent && (templateContent.indexOf("fabric-icon") !== -1 || templateContent.indexOf("details-list") !== -1 || templateContent.indexOf("document-card") !== -1)) {
             // load CDN for icons
-            Loader.LoadUIFabricIcons();
+            this.loadUIFabricIcons();
         }
 
         if (templateContent && templateContent.indexOf("video-card") !== -1) {
-            await Loader.LoadVideoLibrary();
+            await this.loadVideoLibrary();
         }
     }
 
@@ -665,10 +697,10 @@ abstract class BaseTemplateService {
      * @returns the compiled HTML template string
      */
     public async processTemplate(templateContext: any, templateContent: string): Promise<string> {
-        let template = Handlebars.compile(templateContent);
+        let template = this.Handlebars.compile(templateContent);
         let result = template(templateContext);
         if (result.indexOf("video-preview-item") !== -1) {
-            await Loader.LoadVideoLibrary();
+            await this.loadVideoLibrary();
         }
         return result;
     }
@@ -679,7 +711,7 @@ abstract class BaseTemplateService {
      * @param itemAsString the item context as stringified object
      * @param themeVariant the current theem variant
      */
-    public static processFieldsConfiguration<T>(fieldsConfigurationAsString: string, itemAsString: string, themeVariant?: IReadonlyTheme): T {
+    public processFieldsConfiguration<T>(fieldsConfigurationAsString: string, itemAsString: string, themeVariant?: IReadonlyTheme): T {
 
         let processedProps = {};
 
@@ -697,7 +729,7 @@ abstract class BaseTemplateService {
                 try {
                     // Create a temp context with the current so we can use global registered helpers on the current item
                     const tempTemplateContent = `{{#with item as |item|}}${configuration.value}{{/with}}`;
-                    let template = Handlebars.compile(tempTemplateContent, { noEscape: true });
+                    let template = this.Handlebars.compile(tempTemplateContent, { noEscape: true });
 
                     // Pass the current item as context
                     processedValue = template({ item: item }, { data: { themeVariant: themeVariant } });
@@ -726,8 +758,8 @@ abstract class BaseTemplateService {
     public async registerResultTypes(resultTypes: ISearchResultType[], instanceId: string): Promise<void> {
         if (resultTypes.length > 0) {
             let content = await this._buildCondition(resultTypes, resultTypes[0], 0);
-            let template = Handlebars.compile(content);
-            Handlebars.registerPartial(`resultTypes-${instanceId}`, template);
+            let template = this.Handlebars.compile(content);
+            this.Handlebars.registerPartial(`resultTypes-${instanceId}`, template);
         }
     }
 
@@ -791,20 +823,13 @@ abstract class BaseTemplateService {
      * Verifies if the template fiel path is correct
      * @param filePath the file path string
      */
-    public static isValidTemplateFile(filePath: string): boolean {
+    private static isValidTemplateFile(filePath: string): boolean {
 
         let path = filePath.toLowerCase().trim();
         let pathExtension = path.substring(path.lastIndexOf('.'));
         return (pathExtension == '.htm' || pathExtension == '.html');
     }
 
-    /**
-     * Initializes the previews on search results for documents and videos. Called when a template is updated/changed
-     */
-    public static initPreviewElements(): void {
-        this._initVideoPreviews();
-        this._initDocumentPreviews();
-    }
 
     public async isValidTemplateFile(filePath:string) : Promise<string> {
         try {
@@ -825,6 +850,14 @@ abstract class BaseTemplateService {
         }
     }
 
+    /**
+     * Initializes the previews on search results for documents and videos. Called when a template is updated/changed
+     */
+    public async initPreviewElements(): Promise<void> {
+        await this._initVideoPreviews();
+        this._initDocumentPreviews();
+    }
+
     public abstract getFileContent(fileUrl: string): Promise<string>;
 
     public abstract ensureFileResolves(fileUrl: string): Promise<void>;
@@ -839,7 +872,7 @@ abstract class BaseTemplateService {
 
     }
 
-    private static _initDocumentPreviews() {
+    private _initDocumentPreviews() : void {
         const nodes = document.querySelectorAll('.document-preview-item');
 
         DomHelper.forEach(nodes, ((index, el) => {
@@ -871,7 +904,7 @@ abstract class BaseTemplateService {
         }));
     }
 
-    private static _initVideoPreviews() {
+    private _initVideoPreviews() : void {
         const nodes = document.querySelectorAll('.video-preview-item');
 
         DomHelper.forEach(nodes, ((index, el) => {
@@ -907,6 +940,52 @@ abstract class BaseTemplateService {
             }
         }));
     }
-}
 
-export default BaseTemplateService;
+    public async loadHandlebarsHelpers() : Promise<void> {
+
+        if (!this.Moment) {
+            let moment = await import(
+                /* webpackChunkName: 'search-handlebars-helpers' */
+                /* webpackMode: 'lazy' */
+                'moment'
+            );
+            this.Moment = (moment as any).default;
+        }
+    
+        if (!this.Helpers) {          
+            let component = await import(
+                /* webpackChunkName: 'search-handlebars-helpers' */
+                /* webpackMode: 'lazy' */
+                'handlebars-helpers'
+            );
+            this.Helpers = component.default({ handlebars: this.Handlebars });
+        } 
+
+    }
+
+    public async loadVideoLibrary() : Promise<void> {
+        // Load Videos-Js on Demand
+        // Webpack will create a other bundle loaded on demand just for this library
+        if ((window as any).searchVideoJS === undefined) {
+            const videoJs = await import(
+                /* webpackChunkName: 'videos-js' */
+                './video-js'
+            );
+            (window as any).searchVideoJS = videoJs.default.getVideoJs();
+        }
+    }
+
+    public loadUIFabricIcons() : void {
+        const icons = GlobalSettings.getValue("icons");
+        if (icons && !icons["pagelink"]) {
+            //load regular fabric icons if not present
+            initializeIcons(void 0, { disableWarnings: true });
+        }
+        if (icons && !icons["spo16_svg"]) {
+            // load file type icons if not present
+            initializeFileTypeIcons(void 0, { disableWarnings: true });
+        }
+    }
+
+    
+}

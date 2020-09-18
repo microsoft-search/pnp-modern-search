@@ -1,11 +1,11 @@
-import { TemplateService } from               '../../services/TemplateService/TemplateService';
+import ITemplateService from               '../../services/TemplateService/ITemplateService';
 
 interface ISearchTemplateProps<Context extends object> {
 
     /**
      * The template helper instance
      */
-    templateService: TemplateService;
+    templateService: ITemplateService;
     
     /**
      * The template context

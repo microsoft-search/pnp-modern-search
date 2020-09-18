@@ -15,7 +15,7 @@
     "@microsoft/sp-core-library": "1.11.0",
     "@microsoft/sp-property-pane": "1.11.0",
     "@microsoft/sp-webpart-base": "1.11.0",
-    "@pnp/spfx-property-controls": "^1.19.0",
+    "@pnp/spfx-property-controls": "^1.20.0",
     "@webcomponents/custom-elements": "^1.4.1",
     "immutability-helper": "^3.1.1",
     "office-ui-fabric-react": "6.214.0"

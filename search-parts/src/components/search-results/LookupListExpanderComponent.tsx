@@ -1,14 +1,14 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { BaseWebComponent } from 'search-extensibility';
+import { BaseWebComponent, IExtensionContext } from 'search-extensibility';
 import { WebPartContext } from '@microsoft/sp-webpart-base';
 import {
     MessageBar,
     MessageBarType
 } from 'office-ui-fabric-react';
 import { isEmpty } from '@microsoft/sp-lodash-subset';
-import * as Handlebars from 'handlebars';
 import { sp, Web } from "@pnp/sp";
+import ITemplateService from '../../services/TemplateService/ITemplateService';
 
 export interface ILookupListExpanderComponentProps {
     /**
@@ -38,7 +38,7 @@ export interface ILookupListExpanderComponentProps {
     /**
      * WebPartContext for this component
      */
-    ctx: WebPartContext;
+    context?: IExtensionContext;
 }
 
 export interface ILookupListExpanderComponentState {
@@ -52,7 +52,7 @@ export class LookupListExpanderComponent extends React.Component<ILookupListExpa
         super(props);
 
         sp.setup({
-            spfxContext: this.props.ctx
+            spfxContext: this.props.context.webPart
         });
 
         this.state = {
@@ -64,7 +64,7 @@ export class LookupListExpanderComponent extends React.Component<ILookupListExpa
     public render() {
 
         let _errors: string[] = [];
-        const hb = ((window as any).searchHBHelper !== undefined) ? (window as any).searchHBHelper : Handlebars;       
+        const ts = this.props.context.template as ITemplateService;
 
         //Error handle required properties
         if(isEmpty(this.props.template.trim())){
@@ -116,7 +116,7 @@ export class LookupListExpanderComponent extends React.Component<ILookupListExpa
 
                         // Create a temp context with the current so we can use global registered helpers on the current item
                         const tempTemplateContent = `{{#with item as |item|}}${this.props.template.trim()}{{/with}}`;
-                        let template = hb.compile(tempTemplateContent);
+                        let template = ts.Handlebars.compile(tempTemplateContent);
 
                         const templateContentValue = template({
                             item: lookupItem
@@ -188,7 +188,7 @@ export class LookupListExpanderWebComponent extends BaseWebComponent {
         props.template = (props.template && !isEmpty(props.template)) ? props.template : this.innerHTML.trim();
 
         // You can use this._ctx here to access current Web Part context
-        const lookupListExpanderItem = <LookupListExpanderComponent {...props} ctx={this.context.webPart} />;
+        const lookupListExpanderItem = <LookupListExpanderComponent {...props} context={this.context} />;
         ReactDOM.render(lookupListExpanderItem, this);
     }
 }

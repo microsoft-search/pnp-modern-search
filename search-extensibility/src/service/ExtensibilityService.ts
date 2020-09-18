@@ -133,8 +133,6 @@ export class ExtensibilityService implements IExtensibilityService {
         } catch(e) {
             const msg: string = `Failure getting extensions from library: ${library.name}. Details: ${e}`;
             Log.info(LogSource, msg);
-            console.log(msg);
-            console.log(e);
             Log.error(LogSource, e);
         }
         return extensions;

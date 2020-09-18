@@ -1,5 +1,5 @@
 // PnP
-import { ConsoleListener, LogLevel, Logger } from '@pnp/logging';
+import Logger from '../LogService/LogService';
 import { sp, SPRest } from '@pnp/sp';
 
 // SPFx
@@ -19,10 +19,6 @@ export class UserService implements IUserService {
 
   constructor(pageContext: PageContext, ) {
     this._pageContext = pageContext;
-
-    const consoleListener = new ConsoleListener();
-    Logger.subscribe(consoleListener);
-
     this._localPnPSetup = sp.configure({
       headers: {
         Accept: 'application/json; odata=nometadata',
@@ -42,14 +38,16 @@ export class UserService implements IUserService {
 
     let userInfos: IUserInfo[] = [];
 
-    const promises = accountNames.map(async accountName => {
+    const promises = accountNames.map(async (accountName:string,index:number) => {
 
         let url = `${this._pageContext.web.absoluteUrl}/_api/SP.UserProfiles.PeopleManager/GetPropertiesFor(accountName=@v)?@v='${encodeURIComponent(accountName)}'&$select=DisplayName,AccountName`;
+  
         return batch.add(url, 'GET', {
             headers: {
                 Accept: 'application/json; odata=nometadata'
             }
         }, parser, batchId);
+
     });
 
     // Execute the batch

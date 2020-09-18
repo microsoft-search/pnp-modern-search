@@ -12,6 +12,8 @@ import { RefinerSortDirection, RefinersSortOption, RefinerTemplateOption, Refine
 import update from 'immutability-helper';
 import { find, isEqual } from '@microsoft/sp-lodash-subset';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
+import Logger from '../../../../services/LogService/LogService';
+import { LogLevel } from '@pnp/logging';
 
 export default class SearchRefinersContainer extends React.Component<ISearchRefinersContainerProps, ISearchRefinersContainerState> {
   
@@ -229,7 +231,7 @@ export default class SearchRefinersContainer extends React.Component<ISearchRefi
 
         ev.stopImmediatePropagation();
         
-        console.log("Remove filter event.");
+        Logger.write("[MSWP.SearchRefinersContainer._eventRemoveFilter()]: Remove filter event.", LogLevel.Info);
 
         const newValues: IRefinementValue[] = [];
         const refiner: IRefinementValue = ev.detail.refiner; 
@@ -255,7 +257,7 @@ export default class SearchRefinersContainer extends React.Component<ISearchRefi
         
         ev.stopImmediatePropagation();
         
-        console.log("Add filter value event");
+        Logger.write("[MSWP.SearchRefinersContainer._eventAddFilter()]: Add filter value event");
 
         const newValues: IRefinementValue[] = [ ];
         const refiner: IRefinementValue = ev.detail.refiner; 
@@ -279,7 +281,7 @@ export default class SearchRefinersContainer extends React.Component<ISearchRefi
 
         ev.stopImmediatePropagation();
 
-        console.log("Remove all filters event");
+        Logger.write("[MSWP.SearchRefinersContainer._eventRemoveAllFilters()]: Remove all filters event");
 
         this.onRemoveAllFilters();
 

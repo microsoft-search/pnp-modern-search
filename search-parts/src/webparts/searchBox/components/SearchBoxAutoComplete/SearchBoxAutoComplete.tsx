@@ -8,6 +8,8 @@ import { ITheme } from 'office-ui-fabric-react/lib/Styling';
 import { isEqual, debounce } from '@microsoft/sp-lodash-subset';
 import { ISuggestion } from '../../../../models/ISuggestion';
 import * as DOMPurify from 'dompurify';
+import Logger from '../../../../services/LogService/LogService';
+import { LogLevel } from '@pnp/logging';
 
 const SUGGESTION_CHAR_COUNT_TRIGGER = 2;
 const SUGGESTION_UPDATE_DEBOUNCE_DELAY = 200;
@@ -277,7 +279,8 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
         suggestion.onSuggestionSelected(suggestion);
       }
       catch (error) {
-        console.log(`Error occurred while executing custom onSuggestionSeleted() handler. ${error}`);
+        Logger.error(error);
+        Logger.write(`[MSWP.SearchBoxAutoComplete._selectQuerySuggestion()]: Error occurred while executing custom onSuggestionSeleted() handler. ${error}`, LogLevel.Error);
       }
     }
 

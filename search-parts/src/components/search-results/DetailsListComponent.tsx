@@ -2,9 +2,8 @@ import * as React from 'react';
 import { TextField } from 'office-ui-fabric-react/lib/TextField';
 import { Fabric } from 'office-ui-fabric-react/lib/Fabric';
 import { DetailsListLayoutMode, SelectionMode, IColumn, IDetailsRowProps, IDetailsRowStyles, DetailsRow, IDetailsHeaderBaseProps, IDetailsHeaderProps, DetailsHeader, IDetailsHeaderStyles, CheckboxVisibility } from 'office-ui-fabric-react/lib/DetailsList';
-import { mergeStyleSets, createTheme, ITheme } from 'office-ui-fabric-react/lib/Styling';
-import { ISearchResult } from 'search-extensibility';
-import * as Handlebars from 'handlebars';
+import { mergeStyleSets, ITheme } from 'office-ui-fabric-react/lib/Styling';
+import { IExtensionContext, ISearchResult } from 'search-extensibility';
 import { ShimmeredDetailsList } from 'office-ui-fabric-react/lib/ShimmeredDetailsList';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import { IconComponent } from './IconComponent';
@@ -13,7 +12,7 @@ import * as ReactDOM from 'react-dom';
 import { ITooltipHostProps, TooltipHost, ITooltipStyles, Shimmer, ShimmerElementsGroup, ShimmerElementType, IShimmerElement } from 'office-ui-fabric-react';
 import { DEFAULT_CELL_STYLE_PROPS, DEFAULT_ROW_HEIGHTS } from 'office-ui-fabric-react/lib/components/DetailsList/DetailsRow.styles';
 import * as DOMPurify from 'dompurify';
-import { TemplateService } from '../../services/TemplateService/TemplateService';
+import ITemplateService from '../../services/TemplateService/ITemplateService';
 
 const DEFAULT_SHIMMER_HEIGHT = 7;
 const SHIMMER_LINE_VS_CELL_WIDTH_RATIO = 0.95;
@@ -137,6 +136,9 @@ export interface DetailsListComponentProps {
      * The current theme settings
      */
     themeVariant?: IReadonlyTheme;
+
+    context? : IExtensionContext;
+
 }
 
 export interface IDetailsListComponentState {
@@ -150,11 +152,11 @@ export class DetailsListComponent extends React.Component<DetailsListComponentPr
 
     constructor(props: DetailsListComponentProps) {
         super(props);
-
+        
         this._allItems = this.props.items ? JSON.parse(this.props.items) : [];
 
-        const columns: IColumn[] = [
-        ];
+        const columns: IColumn[] = [];
+        const ts = this.props.context.template as ITemplateService;        
 
         // Show file icon pption
         if (this.props.showFileIcon) {
@@ -211,8 +213,7 @@ export class DetailsListComponent extends React.Component<DetailsListComponentPr
 
                                     // Create a temp context with the current so we can use global registered helper on the current item
                                     const tempTemplateContent = `{{#with item as |item|}}${column.value}{{/with}}`;
-
-                                    let template = Handlebars.compile(tempTemplateContent);
+                                    let template = ts.Handlebars.compile(tempTemplateContent);
 
                                     // Pass the current item as context
                                     value = template({ item: item }, { data: { themeVariant: this.props.themeVariant } });
@@ -220,8 +221,7 @@ export class DetailsListComponent extends React.Component<DetailsListComponentPr
                                     value = value ? value.trim() : null;
                                     if (index == this._allItems.length - 1) {
                                         //hack to ensure all items are rendered (most likely)
-                                        window.setTimeout( () => TemplateService.initPreviewElements(), 500);
-                                        //TemplateService.initPreviewElements();
+                                        window.setTimeout( () => ts.initPreviewElements(), 500);
                                     }
 
                                 } catch (error) {
@@ -234,7 +234,7 @@ export class DetailsListComponent extends React.Component<DetailsListComponentPr
 
                             // Make the value clickable to the corresponding result item 
                             if (column.isResultItemLink) {
-                                let url = Handlebars.helpers.getUrl(item);
+                                let url = ts.Handlebars.helpers.getUrl(item);
                                 renderColumnValue = <a style={{ color: this.props.themeVariant.semanticColors.link }} href={url} target='_blank' data-interception='off'>{renderColumnValue}</a>;
                             }
 
@@ -433,6 +433,7 @@ export class DetailsListWebComponent extends BaseWebComponent {
     public connectedCallback() {
 
         let props = this.resolveAttributes();
+        props.context = this.context;
         const detailsListComponent = <DetailsListComponent {...props} />;
         ReactDOM.render(detailsListComponent, this);
     }

@@ -18,8 +18,7 @@ import { IRefinerProps, IRefinerState } from 'search-extensibility';
 import { CssHelper } from '../../../../../helpers/CssHelper';
 import SearchTemplate from '../../../../../controls/SearchTemplate/SearchTemplate';
 import ISearchRefinersTemplateContext from './ISearchRefinersTemplateContext';
-import { TemplateService } from '../../../../../services/TemplateService/TemplateService';
-import BaseTemplateService from '../../../../../services/TemplateService/BaseTemplateService';
+import ITemplateService from '../../../../../services/TemplateService/ITemplateService';
 
 export interface CustomTemplateProps extends IRefinerProps {
   templateContext: ISearchRefinersTemplateContext;
@@ -67,7 +66,7 @@ export class CustomTemplate extends React.Component<CustomTemplateProps, CustomR
     
     const filterClassName = CssHelper.prefixAndValidateClassName("pnp-refiner-custom", this.props.refinementResult.FilterName);
 
-    const ts = this.props.templateService as TemplateService;
+    const ts = this.props.templateService as ITemplateService;
 
     if(this.state.templateContent) {
       contentToDisplay = <SearchTemplate<ISearchRefinersTemplateContext>
@@ -96,10 +95,9 @@ export class CustomTemplate extends React.Component<CustomTemplateProps, CustomR
 
     // Determine the operator according to multi value setting
     this._operator = this.props.isMultiValue ? RefinementOperator.OR : RefinementOperator.AND;
-    const templateService = this.props.templateService as BaseTemplateService;
+    const templateService = this.props.templateService as ITemplateService;
 
-    const templateContent = await templateService.getTemplateContent(
-                              this.props.templateContext.configuration.customTemplate,
+    const templateContent = await templateService.getTemplateContent(this.props.templateContext.configuration.customTemplate,
                               this.props.templateContext.configuration.customTemplateUrl);
     
     await templateService.optimizeLoadingForTemplate(templateContent);

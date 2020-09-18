@@ -3,6 +3,7 @@ import { ISearchServiceConfiguration } from '../../models/ISearchServiceConfigur
 import { ISearchVertical } from '../../models/ISearchVertical';
 import { ISearchContext, IManagedPropertyInfo } from 'search-extensibility';
 import { ISharePointSearch } from './ISharePointSearch';
+import ITemplateService from '../TemplateService/ITemplateService';
 
 interface ISearchService extends ISearchServiceConfiguration, ISearchContext {
 
@@ -46,6 +47,9 @@ interface ISearchService extends ISearchServiceConfiguration, ISearchContext {
      * Gets all available languages for the search query
      */
     getAvailableQueryLanguages(): Promise<any[]>;
+
+    initializeTemplateService(svc: ITemplateService) : void;
+    
 }
 
  export default ISearchService;

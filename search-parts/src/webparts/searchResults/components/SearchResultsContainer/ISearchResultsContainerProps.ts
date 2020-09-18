@@ -1,7 +1,7 @@
 import ISearchService from '../../../../services/SearchService/ISearchService';
 import ITaxonomyService from '../../../../services/TaxonomyService/ITaxonomyService';
 import { DisplayMode } from '@microsoft/sp-core-library';
-import { TemplateService } from '../../../../services/TemplateService/TemplateService';
+import ITemplateService from '../../../../services/TemplateService/ITemplateService';
 import ISortableFieldConfiguration from '../../../../models/ISortableFieldConfiguration';
 import { ISearchResultType } from '../../../../models/ISearchResultType';
 import {ICustomTemplateFieldValue} from '../../../../services/ResultService/ResultService';
@@ -61,7 +61,7 @@ interface ISearchResultsContainerProps {
     /**
      * The template helper instance
      */
-    templateService: TemplateService;
+    templateService: ITemplateService;
 
     /**
      * The template raw content to display

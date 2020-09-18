@@ -2,7 +2,7 @@ import { IRefinementResult, IRefinementFilter, IRefinerConfiguration, RefinersLa
 import { DisplayMode } from "@microsoft/sp-core-library";
 import { IUserService } from 'search-extensibility';
 import { IReadonlyTheme } from "@microsoft/sp-component-base";
-import BaseTemplateService from "../../../../services/TemplateService/BaseTemplateService";
+import ITemplateService from "../../../../services/TemplateService/ITemplateService";
 
 export interface ISearchRefinersContainerProps {
   /**
@@ -63,7 +63,7 @@ export interface ISearchRefinersContainerProps {
   /**
    * Template Service
    */
-  templateService: BaseTemplateService;
+  templateService: ITemplateService;
 
   /**
    * The current theme variant

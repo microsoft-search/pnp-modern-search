@@ -1,11 +1,10 @@
-//import * as Handlebars from 'handlebars';
 import ISearchService from './ISearchService';
 import { ISearchResults, ISearchResult, IRefinementResult, IRefinementValue, IRefinementFilter, IPromotedResult, ISearchVerticalInformation, ISearchResultBlock,
     RefinersSortOption, RefinerSortDirection, IRefinerConfiguration, IManagedPropertyInfo } from 'search-extensibility';
-import { sp, SearchQuery, SearchResults, SPRest, Sort, SearchSuggestQuery, SortDirection, Web } from '@pnp/sp';
-import { Logger, LogLevel, ConsoleListener } from '@pnp/logging';
+import { LogLevel } from '@pnp/logging';
+import Logger from '../../services/LogService/LogService';
 import { Text, Guid } from '@microsoft/sp-core-library';
-import { sortBy, isEmpty} from '@microsoft/sp-lodash-subset';
+import { sortBy, isEmpty } from '@microsoft/sp-lodash-subset';
 import LocalizationHelper from '../../helpers/LocalizationHelper';
 import "@pnp/polyfill-ie11";
 import { ISearchServiceConfiguration } from '../../models/ISearchServiceConfiguration';
@@ -16,16 +15,19 @@ import ISynonymTable from '../../models/ISynonym';
 import { JSONParser } from '@pnp/odata';
 import { UrlHelper } from '../../helpers/UrlHelper';
 import { ISearchVertical } from '../../models/ISearchVertical';
-import { Loader } from '../TemplateService/LoadHelper';
+
 import { BaseQueryModifier, ITimeZoneBias } from 'search-extensibility';
 import { ISharePointSearch } from './ISharePointSearch';
 import { trimStart, trimEnd } from '@microsoft/sp-lodash-subset';
+import { sp, SearchQuery, SearchResults, SPRest, Sort, SearchSuggestQuery, SortDirection, Web } from '@pnp/sp';
+import ITemplateService from '../TemplateService/ITemplateService';
 
 class SearchService implements ISearchService {
     private _initialSearchResult: SearchResults = null;
     private _resultsCount: number;
     private _pageContext: PageContext;
     private _tokenService: ITokenService;
+    private _templateService: ITemplateService;
     private _selectedProperties: string[];
     private _queryTemplate: string;
     private _resultSourceId: string;
@@ -85,10 +87,6 @@ class SearchService implements ISearchService {
     public constructor(pageContext: PageContext, spHttpClient: SPHttpClient) {
         this._pageContext = pageContext;
         this._tokenService = new TokenService(this._pageContext, spHttpClient);
-
-        // Setup the PnP JS instance
-        const consoleListener = new ConsoleListener();
-        Logger.subscribe(consoleListener);
 
         // To limit the payload size, we set odata=nometadata
         // We just need to get list items here
@@ -209,7 +207,8 @@ class SearchService implements ISearchService {
         // To be able to use search query variable according to the current context
         // http://www.techmikael.com/2015/07/sharepoint-rest-do-support-query.html
         searchQuery.QueryTemplate = await this._tokenService.replaceQueryVariables(this._queryTemplate);
-
+        
+        
         searchQuery.RowLimit = this._resultsCount ? this._resultsCount : 50;
         searchQuery.SelectProperties = this._selectedProperties;
         searchQuery.TrimDuplicates = false;
@@ -229,7 +228,7 @@ class SearchService implements ISearchService {
                 const res = refinableDate.test(element.refinerName);
                 if (res) {
                     // load moment
-                    await Loader.LoadHandlebarsHelpers();
+                    await this._templateService.loadHandlebarsHelpers();
                     break;
                 }
             }
@@ -292,11 +291,11 @@ class SearchService implements ISearchService {
                             searchQuery.QueryTemplate = queryModificationValue.queryTemplate;
                         }
                         else {
-                            Logger.write('[SearchService.search()]: Query modifier return an invalid response. Using original query.', LogLevel.Error);
+                            Logger.write('[MSWP.SearchService.search()]: Query modifier return an invalid response. Using original query.', LogLevel.Error);
                         }
                     }
                     catch (error) {
-                        Logger.write('[SearchService.search()]: Query modification failed. Using original query. ' + error, LogLevel.Error);
+                        Logger.write('[MSWP.SearchService.search()]: Query modification failed. Using original query. ' + error, LogLevel.Error);
                     }
                 }
 
@@ -474,7 +473,8 @@ class SearchService implements ISearchService {
             return results;
 
         } catch (error) {
-            Logger.write('[SearchService.search()]: Error: ' + error, LogLevel.Error);
+            Logger.error(error);
+            Logger.write('[MSWP.SearchService.search()]: Error: ' + error, LogLevel.Error);
             throw error;
         }
     }
@@ -510,7 +510,8 @@ class SearchService implements ISearchService {
             return suggestions;
 
         } catch (error) {
-            Logger.write("[SearchService.suggest()]: Error: " + error, LogLevel.Error);
+            Logger.error(error);
+            Logger.write("[MSWP.SearchService.suggest()]: Error: " + error, LogLevel.Error);
             throw error;
         }
     }
@@ -542,7 +543,7 @@ class SearchService implements ISearchService {
             searchVerticals[i].queryTemplate = token;
         });
 
-        const promises = searchVerticals.map(async vertical => {
+        const promises = searchVerticals.map(async (vertical, index:number) => {
 
             // Specify the same query parameters as the current vertical one to be sure to get the same total rows
             // POST request does not seem to work well with batching so we use a GET request here
@@ -551,8 +552,6 @@ class SearchService implements ISearchService {
             // When query rules are enabled, we need to set the row limit to minimum 1 to get data in the 'PrimaryQueryResult' property and get the 'TotalRows'
             // More info here https://blog.mastykarz.nl/inconvenient-content-targeting-user-segments-search-rest-api/
             const rowLimit: string = enableQueryRules ? '1' : '0';
-
-
 
             // See http://www.silver-it.com/node/127 for quotes handling with GET requests
             url = UrlHelper.addOrReplaceQueryStringParam(url, 'querytext', `'${encodeURIComponent(queryText.replace(/'/g, '\'\''))}'`);
@@ -584,6 +583,7 @@ class SearchService implements ISearchService {
                     Accept: 'application/json; odata=nometadata'
                 }
             }, parser, batchId);
+
         });
 
         // Execute the batch
@@ -624,7 +624,8 @@ class SearchService implements ISearchService {
             return languages.Items;
 
         } catch (error) {
-            Logger.write('[SearchService._getQueryLanguages()]: Error: ' + error, LogLevel.Error);
+            Logger.error(error);
+            Logger.write('[MSWP.SearchService._getQueryLanguages()]: Error: ' + error, LogLevel.Error);
             throw new Error(error);
         }
     }
@@ -658,7 +659,8 @@ class SearchService implements ISearchService {
             });
 
         } catch (error) {
-            Logger.write('[SearchService.getAvailableManagedProperties()]: Error: ' + error, LogLevel.Error);
+            Logger.error(error);
+            Logger.write('[MSWP.SearchService.getAvailableManagedProperties()]: Error: ' + error, LogLevel.Error);
             throw error;
         }
 
@@ -726,7 +728,7 @@ class SearchService implements ISearchService {
                 const parser = new JSONParser();
                 const batchId = Guid.newGuid().toString();
 
-                const promises = searchResults.map(async result => {
+                const promises = searchResults.map(async (result:ISearchResult,index:number) => {
 
                     const filename = result.Filename || (result.FileExtension ? `.${result.FileExtension}` : '');
 
@@ -742,8 +744,9 @@ class SearchService implements ISearchService {
                         return batch.add(url, 'GET', {
                             headers: {
                                 Accept: 'application/json; odata=nometadata'
-                            }
-                        }, parser, batchId);
+                             }
+                         }, parser, batchId);
+
                     }
                 });
 
@@ -765,7 +768,8 @@ class SearchService implements ISearchService {
                 return updatedSearchResults;
 
             } catch (error) {
-                Logger.write('[SearchService._mapToIcons()]: Error: ' + error, LogLevel.Error);
+                Logger.error(error);
+                Logger.write('[MSWP.SearchService._mapToIcons()]: Error: ' + error, LogLevel.Error);
                 throw new Error(error);
             }
         }
@@ -846,7 +850,8 @@ class SearchService implements ISearchService {
             return updatedSearchResults;
 
         } catch (error) {
-            Logger.write('[SearchService._mapShortCutUrls()]: Error: ' + error, LogLevel.Error);
+            Logger.error(error);
+            Logger.write('[MSWP.SearchService._mapShortCutUrls()]: Error: ' + error, LogLevel.Error);
             throw new Error(error);
         }
     }
@@ -872,15 +877,15 @@ class SearchService implements ISearchService {
     }
 
     private _getISOString(unit: string, count: number) {
-        if ((window as any).searchHBHelper) {
-            return (window as any).searchMoment(new Date()).subtract(count, unit).toDate().toISOString();
+        if (this._templateService && this._templateService.Moment) {
+            return this._templateService.Moment(new Date()).subtract(count, unit).toDate().toISOString();
         }
         return "";
     }
 
     private momentHelper(str, pattern, lang) {
         // if no args are passed, return a formatted date
-        let moment = (<any>window).searchMoment;
+        let moment = this._templateService.Moment;
         moment.locale(lang);
         return moment(new Date(str)).format(pattern);
     }
@@ -975,6 +980,10 @@ class SearchService implements ISearchService {
         });
 
         return searchQuery;
+    }
+
+    public initializeTemplateService(svc: ITemplateService) : void {
+        this._templateService = svc;
     }
 }
 

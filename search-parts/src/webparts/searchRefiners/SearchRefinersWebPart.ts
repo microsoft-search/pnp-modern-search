@@ -31,9 +31,7 @@ import MockSearchService from '../../services/SearchService/MockSearchService';
 import SearchService from '../../services/SearchService/SearchService';
 import ISearchService from '../../services/SearchService/ISearchService';
 import { IComboBoxOption } from 'office-ui-fabric-react/lib/ComboBox';
-import BaseTemplateService from '../../services/TemplateService/BaseTemplateService';
-import MockTemplateService from '../../services/TemplateService/MockTemplateService';
-import { TemplateService } from '../../services/TemplateService/TemplateService';
+import ITemplateService from '../../services/TemplateService/ITemplateService';
 import { cloneDeep, isEqual } from '@microsoft/sp-lodash-subset';
 import { UserService } from '../../services/UserService/UserService';
 import { MockUserService } from '../../services/UserService/MockUserService';
@@ -55,7 +53,8 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
   private _themeProvider: ThemeProvider;
   private _themeVariant: IReadonlyTheme;
   private _userService: IUserService;
-  private _templateService: BaseTemplateService;
+  private _templateServiceImport = null;
+  private _templateService: ITemplateService;
   private _contentClassName:string = null;
   private _customStyles:string = null;
 
@@ -227,7 +226,8 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
     if (Environment.type === EnvironmentType.Local) {
       this._searchService = new MockSearchService();
       this._userService = new MockUserService();
-      this._templateService = new MockTemplateService(this.context.pageContext.cultureInfo.currentUICultureName, this.context, this._searchService, this._extensibilityService);
+      this._templateServiceImport = await import('../../services/TemplateService/MockTemplateService');
+      this._templateService = new this._templateServiceImport.default(this.context.pageContext.cultureInfo.currentUICultureName, this.context, this._searchService, this._extensibilityService);
     } else {
       this._searchService = new SearchService(this.context.pageContext, this.context.spHttpClient);
       this._userService = new UserService(this.context.pageContext);
@@ -245,11 +245,14 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
           this._timeZoneBias.UserDST = this.context.pageContext.legacyPageContext.userTimeZoneData.DaylightBias;
           this._timeZoneBias.Id = this.context.pageContext.legacyPageContext.webTimeZoneData.Id;
       }
-
-      this._templateService = new TemplateService(this.context.spHttpClient, 
+      
+      this._templateServiceImport = await import('../../services/TemplateService/TemplateService');
+      this._templateService = new this._templateServiceImport.default(this.context.spHttpClient, 
                                       this.context.pageContext.cultureInfo.currentUICultureName, this._searchService,  this._extensibilityService,
                                       this._timeZoneBias, this.context);
     }
+
+    this._searchService.initializeTemplateService(this._templateService);
 
     this.context.dynamicDataSourceManager.initializeSource(this);
 
@@ -427,7 +430,7 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
 
     // Register handlebars helpers
     this._templateService.registerHelpers(this._availableHelpers);
-    
+   
   }
 
   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {

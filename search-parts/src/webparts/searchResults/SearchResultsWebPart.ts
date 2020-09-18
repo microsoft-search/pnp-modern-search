@@ -22,14 +22,12 @@ import {
 import * as strings from 'SearchResultsWebPartStrings';
 import SearchResultsContainer from './components/SearchResultsContainer/SearchResultsContainer';
 import { ISearchResultsWebPartProps } from './ISearchResultsWebPartProps';
-import BaseTemplateService from '../../services/TemplateService/BaseTemplateService';
 import ISearchService from '../../services/SearchService/ISearchService';
 import ITaxonomyService from '../../services/TaxonomyService/ITaxonomyService';
 import ResultsLayoutOption from '../../models/ResultsLayoutOption';
-import { TemplateService } from '../../services/TemplateService/TemplateService';
+import ITemplateService from '../../services/TemplateService/ITemplateService';
 import { isEmpty, find, sortBy, cloneDeep, isEqual, findIndex } from '@microsoft/sp-lodash-subset';
 import MockSearchService from '../../services/SearchService/MockSearchService';
-import MockTemplateService from '../../services/TemplateService/MockTemplateService';
 import SearchService from '../../services/SearchService/SearchService';
 import TaxonomyService from '../../services/TaxonomyService/TaxonomyService';
 import MockTaxonomyService from '../../services/TaxonomyService/MockTaxonomyService';
@@ -64,12 +62,15 @@ import { SearchHelper } from '../../helpers/SearchHelper';
 import { StringHelper } from '../../helpers/StringHelper';
 import PnPTelemetry from "@pnp/telemetry-js";
 import { Guid } from '@microsoft/sp-core-library';
+import { LogLevel } from '@pnp/logging';
+import Logger from '../../services/LogService/LogService';
 
 export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchResultsWebPartProps> implements IDynamicDataCallables {
 
     private _searchService: ISearchService;
     private _taxonomyService: ITaxonomyService;
-    private _templateService: BaseTemplateService;
+    private _templateServiceImport  = null;
+    private _templateService: ITemplateService;
     private _extensibilityService: IExtensibilityService;
     private _propertyFieldCodeEditor = null;
     private _placeholder = null;
@@ -414,7 +415,8 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
         if (Environment.type === EnvironmentType.Local) {
             this._taxonomyService = new MockTaxonomyService();
-            this._templateService = new MockTemplateService(this.context.pageContext.cultureInfo.currentUICultureName, this.context, this._searchService, this._extensibilityService);
+            this._templateServiceImport = await import('../../services/TemplateService/MockTemplateService');
+            this._templateService = new this._templateServiceImport.default(this.context.pageContext.cultureInfo.currentUICultureName, this.context, this._searchService, this._extensibilityService);
             this._searchService = new MockSearchService();
 
         } else {
@@ -434,8 +436,11 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             }
 
             this._searchService = new SearchService(this.context.pageContext, this.context.spHttpClient);
-            this._templateService = new TemplateService(this.context.spHttpClient, this.context.pageContext.cultureInfo.currentUICultureName, this._searchService, this._extensibilityService, this._timeZoneBias, this.context);
+            this._templateServiceImport = await import('../../services/TemplateService/TemplateService');
+            this._templateService = new this._templateServiceImport.default(this.context.spHttpClient, this.context.pageContext.cultureInfo.currentUICultureName, this._searchService, this._extensibilityService, this._timeZoneBias, this.context);
         }
+
+        this._searchService.initializeTemplateService(this._templateService);
 
         this._resultService = new ResultService();
         this._codeRenderers = this._resultService.getRegisteredRenderers();
@@ -473,6 +478,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             h.pushState = (state, key, path) => {
                 this._ops.apply(history, [state, key, path]);
                 const qkw = this.properties.queryKeywords.tryGetSource();
+                Logger.write("[MSWP.SearchResultsWebPart.handleQueryStringChange()]: Query string change render", LogLevel.Verbose);
                 if (qkw && qkw.id === SearchComponentType.PageEnvironment) this.render();
             };
         })(window.history);
@@ -562,7 +568,8 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             return instance;
         }
         catch (error) {
-            console.log(`Unable to initialize query modifier '${queryModifierDefinition.displayName}'. ${error}`);
+            Logger.error(error);
+            Logger.write(`[MSWP.SearchResultsWebPart._initQueryModifierInstance()]: Unable to initialize query modifier '${queryModifierDefinition.displayName}'. ${error}`,LogLevel.Error);
             return null;
         }
 
@@ -1035,16 +1042,16 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             if (this.properties.externalTemplateUrl) {
                 this._templateContentToDisplay = await this._templateService.getFileContent(this.properties.externalTemplateUrl);
             } else {
-                this._templateContentToDisplay = this.properties.inlineTemplateText ? this.properties.inlineTemplateText : TemplateService.getTemplateContent(ResultsLayoutOption.Custom);
+                this._templateContentToDisplay = this.properties.inlineTemplateText ? this.properties.inlineTemplateText : this._templateService.getTemplateDefaultContent(ResultsLayoutOption.Custom);
             }
 
         } else {
 
             if(this.displayMode == DisplayMode.Edit)
                 await this.tryLoadTemplatePropertyPaneResources(this._templateService);
-
+            
             // Builtin templates with options
-            this._templateContentToDisplay = TemplateService.getTemplateContent(this.properties.selectedLayout);
+            this._templateContentToDisplay = this._templateService.getTemplateDefaultContent(this.properties.selectedLayout);
             this._templatePropertyPaneOptions = this._templateService.getTemplateParameters(this.properties.selectedLayout, this.properties, this._onUpdateAvailableProperties, this._availableManagedProperties);
 
         }
@@ -1270,7 +1277,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                 onPropertyChange: (propertyPath: string, newValue: any) => {
                     this.properties[propertyPath] = newValue.join(',');
                     this.onPropertyPaneFieldChanged(propertyPath);
-
+                    Logger.write("[MSWP.SearchResultsWebPart.onPropertyChange]: Selected properties change render",LogLevel.Verbose);
                     // Refresh the WP with new selected properties
                     this.render();
                 },
@@ -1470,6 +1477,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                 this.properties.useDefaultSearchQuery = false;
                 this.properties.defaultSearchQuery = '';
                 this.properties.queryKeywords.setValue('');
+                Logger.write("[MSWP.SearchResultsWebPart._getSearchQueryFields()]: Show primary group render", LogLevel.Verbose);
                 this.render();
             }
         } as IPropertyPaneConditionalGroup;
@@ -1614,15 +1622,15 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         if (!this.codeRendererIsSelected()) {
             switch (this.properties.selectedLayout) {
                 case ResultsLayoutOption.DetailsList:
-                    dialogTextFieldValue = BaseTemplateService.getDefaultResultTypeListItem();
+                    dialogTextFieldValue = this._templateService.getDefaultResultTypeListItem();
                     break;
 
                 case ResultsLayoutOption.Tiles:
-                    dialogTextFieldValue = BaseTemplateService.getDefaultResultTypeTileItem();
+                    dialogTextFieldValue = this._templateService.getDefaultResultTypeTileItem();
                     break;
 
                 default:
-                    dialogTextFieldValue = BaseTemplateService.getDefaultResultTypeCustomItem();
+                    dialogTextFieldValue = this._templateService.getDefaultResultTypeCustomItem();
                     break;
             }
         }
@@ -1970,6 +1978,8 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
         // Refresh all fields so other property controls can use the new list
         this.context.propertyPane.refresh();
+
+        Logger.write("[MSWP.SearchResultsWebPart._onUpdateAvailableProperties()]: On update available properties render", LogLevel.Verbose);
         this.render();
     }
 
@@ -1995,6 +2005,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
         if (!isEqual(this._themeVariant, args.theme)) {
             this._themeVariant = args.theme;
+            Logger.write("[MSWP.SearchResultsWebPart._handleThemeChangedEvent()]: Theme changed render");
             this.render();
         }
     }
@@ -2011,7 +2022,8 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
             // These information comes from the PaginationWebComponent class
             this.currentPageNumber = ev.detail.pageNumber;
-
+            
+            Logger.write("[MSWP.SearchResultsWebPart.bindPagingEvents()]: Bind paging events render");
             this.render();
 
         }).bind(this));

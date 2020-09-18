@@ -1,6 +1,7 @@
 import { IRefinementFilter, IRefinementValue, RefinementOperator } from "search-extensibility";
 import { UrlHelper } from "./UrlHelper";
-import { ConsoleListener, LogLevel, Logger } from '@pnp/logging';
+import { LogLevel } from '@pnp/logging';
+import Logger from '../services/LogService/LogService';
 
 export interface IUrlFilterParam {
 
@@ -134,9 +135,7 @@ export class SearchHelper {
             });
         } catch (error) {
 
-            const consoleListener = new ConsoleListener();
-            Logger.subscribe(consoleListener);
-
+            Logger.error(error);
             Logger.log({
                 level: LogLevel.Error,
                 message: `[SearchHelper::getRefinementFiltersFromUrl()] Error when parsing URL filter params (Details: '${error}')`
