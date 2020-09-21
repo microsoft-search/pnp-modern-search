@@ -6,7 +6,7 @@ import RefinerSortDirection from '../../models/RefinersSortDirection';
 import { sp, SearchQuery, SearchResults, SPRest, Sort, SearchSuggestQuery, SortDirection, Web } from '@pnp/sp';
 import { Logger, LogLevel, ConsoleListener } from '@pnp/logging';
 import { Text, Guid } from '@microsoft/sp-core-library';
-import { sortBy, isEmpty} from '@microsoft/sp-lodash-subset';
+import { sortBy, isEmpty } from '@microsoft/sp-lodash-subset';
 import LocalizationHelper from '../../helpers/LocalizationHelper';
 import "@pnp/polyfill-ie11";
 import IRefinerConfiguration from '../../models/IRefinerConfiguration';
@@ -128,7 +128,13 @@ class SearchService implements ISearchService {
                 BoolVal: true,
                 QueryPropertyValueTypeIndex: 3
             }
-        }];
+        }, {
+            Name: "ClientFunction",
+            Value: {
+                StrVal: "PnPSearchWebPart",
+                QueryPropertyValueTypeIndex: 1
+            }
+        }];        
 
         if (this._pageContext.list !== null) {
             searchQuery.Properties.push({
@@ -249,7 +255,7 @@ class SearchService implements ISearchService {
                     return `${e.refinerName}(filter=50000/0/*,sort=${sort}/${direction})`;
                 }
             });
-            sortedRefinersCleanName = this.refiners.map(e=> {
+            sortedRefinersCleanName = this.refiners.map(e => {
                 return e.refinerName;
             });
             searchQuery.Refiners = sortedRefiners.join(',');
