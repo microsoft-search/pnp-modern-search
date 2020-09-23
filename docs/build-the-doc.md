@@ -13,7 +13,9 @@ For example:
 - [Install MkDocs](https://www.mkdocs.org/#installation)
     - `pip install mkdocs`
 - Install the Material theme
-    - `pip install mkdocs-material`
+    - `pip install mkdocs-material==4.6.3`
 - Serve it up
     - `mkdocs serve`
     - Open a browser to http://127.0.0.1:8000/
+- Deploy
+    - `mkdocs gh-deploy` from main branch
