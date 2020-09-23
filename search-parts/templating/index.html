@@ -1310,11 +1310,11 @@
 </tr>
 <tr>
 <td><code>{{getPreviewSrc item}}</code></td>
-<td>Determine the image thumbnail URL if applicable. Include NormSiteID, NormListID and NormUniqueID as managed properties to esnure previews for Pages and Files.</td>
+<td>Determine the image thumbnail URL if applicable. Include NormSiteID, NormListID and NormUniqueID as managed properties to ensure previews for Pages and Files.</td>
 </tr>
 <tr>
-<td><code>{{getUrl item}}</code></td>
-<td>Get the item URL. For a document, it means the URL to the Office Online instance or the direct URL (to download it).</td>
+<td><code>{{getUrl item &lt;forceDirectLink&gt;}}</code></td>
+<td>Get the item URL. For a document, it means the URL to the Office Online instance or the direct URL (to download it). <p>&lt;forceDirectLink&gt; (<code>true/false</code>) is optional with a default value of <code>false</code>. Set to <code>true</code> to avoid smart logic to create the open URL.</td>
 </tr>
 <tr>
 <td><code>{{getUrlField managed_propertyOWSURLH "URL/Title"}}</code></td>
