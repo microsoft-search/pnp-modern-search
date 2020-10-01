@@ -134,7 +134,7 @@ class SearchService implements ISearchService {
                 StrVal: "PnPSearchWebPart",
                 QueryPropertyValueTypeIndex: 1
             }
-        }];        
+        }];
 
         if (this._pageContext.list !== null) {
             searchQuery.Properties.push({
@@ -239,8 +239,12 @@ class SearchService implements ISearchService {
             sortedRefiners = this.refiners.map(e => {
                 // fails to pass into map, so re-init regex
                 const _refinableDate = /(RefinableDate\d+)|(RefinableDateSingle\d+)|(LastModifiedTime)|(LastModifiedTimeForRetention)|(Created)/gi;
-                const res = _refinableDate.test(e.refinerName);
-                if (res) {
+                const _refinableNum = /(RefinableInt\d+)|(RefinableDecimal\d+)/gi;
+                const _refinableString = /(RefinableString\d+)/gi;
+                const isDateManagedProperty = _refinableDate.test(e.refinerName);
+                //const isNumberManagedProperty = _refinableNum.test(e.refinerName);
+                const isStringManagedProperty = _refinableString.test(e.refinerName);
+                if (isDateManagedProperty) {
                     // set refiner spec intervals to be used for fixed interval template - and which makes more sense overall
                     let yesterDay = this._getISOString("days", 1);
                     let weekAgo = this._getISOString("weeks", 1);
@@ -248,11 +252,14 @@ class SearchService implements ISearchService {
                     let threeMonthsAgo = this._getISOString("months", 3);
                     let yearAgo = this._getISOString("years", 1);
                     return `${e.refinerName}(discretize=manual/${yearAgo}/${threeMonthsAgo}/${monthAgo}/${weekAgo}/${yesterDay})`
-                } else {
-
+                } else if (isStringManagedProperty) {
                     let sort = e.refinerSortType == RefinersSortOption.Alphabetical ? "name" : "frequency";
                     let direction = e.refinerSortDirection == RefinerSortDirection.Ascending ? "ascending" : "descending";
                     return `${e.refinerName}(filter=50000/0/*,sort=${sort}/${direction})`;
+                } else {
+                    let sort = e.refinerSortType == RefinersSortOption.Alphabetical ? "name" : "frequency";
+                    let direction = e.refinerSortDirection == RefinerSortDirection.Ascending ? "ascending" : "descending";
+                    return `${e.refinerName}(sort=${sort}/${direction})`;
                 }
             });
             sortedRefinersCleanName = this.refiners.map(e => {
