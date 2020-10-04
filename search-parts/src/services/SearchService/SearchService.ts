@@ -251,7 +251,7 @@ class SearchService implements ISearchService {
                     let monthAgo = this._getISOString("months", 1);
                     let threeMonthsAgo = this._getISOString("months", 3);
                     let yearAgo = this._getISOString("years", 1);
-                    return `${e.refinerName}(discretize=manual/${yearAgo}/${threeMonthsAgo}/${monthAgo}/${weekAgo}/${yesterDay})`
+                    return `${e.refinerName}(discretize=manual/${yearAgo}/${threeMonthsAgo}/${monthAgo}/${weekAgo}/${yesterDay})`;
                 } else if (isStringManagedProperty) {
                     let sort = e.refinerSortType == RefinersSortOption.Alphabetical ? "name" : "frequency";
                     let direction = e.refinerSortDirection == RefinerSortDirection.Ascending ? "ascending" : "descending";
