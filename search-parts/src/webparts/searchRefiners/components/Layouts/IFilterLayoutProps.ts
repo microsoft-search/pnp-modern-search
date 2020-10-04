@@ -44,7 +44,7 @@ interface IFilterLayoutProps {
   /**
    * The current UI language
    */
-  elanguage: string;
+  language: string;
 
   /**
    * UserService
