@@ -193,6 +193,18 @@ abstract class BaseTemplateService {
      * Registers useful helpers for search results templates
      */
     private registerTemplateServices() {
+        
+        // Return a new array based on the regex filter specified property for an object in the array
+        // {{#each (filterArrayByProperty items "Topic" "^[Aa]|^[Bb]")}}</p>
+        Handlebars.registerHelper("filterArrayByProperty", (array: any[], property: string, regex: string) => {
+            if (!Array.isArray(array)) return 0;
+            if (array.length === 0 || property.length === 0 || regex.length === 0) return 0;
+
+            return array.filter( (arrayItem) => {
+                return new RegExp(regex).test(arrayItem[property]);
+            });
+        });
+        
         // Return the URL of the search result item
         // Usage: <a href="{{url item}}">
         Handlebars.registerHelper("getUrl", (item: ISearchResult, forceDirectLink: boolean = false) => {
