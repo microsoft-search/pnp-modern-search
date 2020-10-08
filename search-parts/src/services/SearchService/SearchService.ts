@@ -136,7 +136,7 @@ class SearchService implements ISearchService {
             }
         }];
 
-        if (this._pageContext.list !== null) {
+        if (this._pageContext.list) {
             searchQuery.Properties.push({
                 Name: "ListId",
                 Value: {
@@ -146,7 +146,7 @@ class SearchService implements ISearchService {
             });
         }
 
-        if (this._pageContext.listItem !== null) {
+        if (this._pageContext.listItem) {
             searchQuery.Properties.push({
                 Name: "ListItemId",
                 Value: {
