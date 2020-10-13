@@ -197,6 +197,10 @@ abstract class BaseTemplateService {
         // Usage: <a href="{{url item}}">
         Handlebars.registerHelper("getUrl", (item: ISearchResult, forceDirectLink: boolean = false) => {
 
+            if (typeof forceDirectLink !== "boolean") {
+                forceDirectLink = false;
+            }
+
             let url = '';
             if (!isEmpty(item)) {
                 const officeExtensions = ["doc", "docm", "docx", "dotx", "odp", "ods", "odt", "pot", "potm", "potx", "pps", "ppsx", "ppt", "pptm", "pptx", "rtf", "xls", "xlsb", "xlsm", "xlsx", "eml", "msg", "pdf", "vsd", "vsdx"];
@@ -228,7 +232,7 @@ abstract class BaseTemplateService {
                 else url = item.Path;
             }
 
-            return new Handlebars.SafeString(url.replace(/\+/g,"%2B"));
+            return new Handlebars.SafeString(url.replace(/\+/g, "%2B"));
         });
 
         // Return SPFx page context variable
