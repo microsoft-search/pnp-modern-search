@@ -134,6 +134,7 @@ export class PopupComponent extends React.Component<IPopupComponentProps, IPopup
 
 export class PopupWebComponent extends BaseWebComponent {
 
+    private _template = "";
     public constructor() {
         super();
     }
@@ -143,7 +144,13 @@ export class PopupWebComponent extends BaseWebComponent {
         let props = this.resolveAttributes();
                 
         //Move template from innerHTML to template property if template is empty
-        props.template = (props.template && !isEmpty(props.template)) ? props.template : this.innerHTML.trim();
+        const template = (props.template && !isEmpty(props.template)) ? props.template : this.innerHTML.trim();
+
+        if(!this._template && !isEmpty(template)) {
+            this._template = template;
+        }
+
+        props.template = this._template;
 
         // You can use this._ctx here to access current Web Part context
         const popupItem = <PopupComponent {...props} ctx={this._ctx} />;

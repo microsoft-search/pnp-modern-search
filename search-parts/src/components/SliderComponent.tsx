@@ -4,9 +4,11 @@ import 'flickity-imagesloaded';
 import 'flickity/dist/flickity.min.css';
 import * as ReactDOM from 'react-dom';
 import * as Handlebars from 'handlebars';
+import { isEmpty } from '@microsoft/sp-lodash-subset';
 import { MessageBar, MessageBarType } from 'office-ui-fabric-react/lib/MessageBar';
 import { BaseWebComponent } from './BaseWebComponent';
 import { TemplateService } from '../services/TemplateService/TemplateService';
+import * as DOMPurify from 'dompurify';
 
 export interface ISliderProps {
     options?: any;
@@ -177,7 +179,7 @@ export class SliderComponent extends React.Component<ISliderComponentProps, ISli
                             });
                             
                             return  <div style={{ position: 'relative' }} key={index}>
-                                        <div dangerouslySetInnerHTML={ { __html : templateContentValue}}></div>    
+                                        <div dangerouslySetInnerHTML={ { __html : DOMPurify.default.sanitize(templateContentValue)}}></div>    
                                     </div>;               
                         }
                         )}
@@ -202,6 +204,7 @@ export class SliderWebComponent extends BaseWebComponent {
     public connectedCallback() {
  
        let props = this.resolveAttributes();
+       props.template = (props.template && !isEmpty(props.template)) ? props.template : this.innerHTML.trim();
        const sliderComponent = <SliderComponent {...props}/>;
        ReactDOM.render(sliderComponent, this);
     }    
