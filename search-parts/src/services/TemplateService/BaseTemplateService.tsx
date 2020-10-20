@@ -203,7 +203,7 @@ abstract class BaseTemplateService {
 
             let url = '';
             if (!isEmpty(item)) {
-                const officeExtensions = ["doc", "docm", "docx", "dotx", "odp", "ods", "odt", "pot", "potm", "potx", "pps", "ppsx", "ppt", "pptm", "pptx", "rtf", "xls", "xlsb", "xlsm", "xlsx", "eml", "msg", "pdf", "vsd", "vsdx"];
+                const officeExtensions = ["aspx", "doc", "docm", "docx", "dotx", "odp", "ods", "odt", "pot", "potm", "potx", "pps", "ppsx", "ppt", "pptm", "pptx", "rtf", "xls", "xlsb", "xlsm", "xlsx", "eml", "msg", "pdf", "vsd", "vsdx"];
                 const isOfficeDoc = !isEmpty(item.FileType) && officeExtensions.indexOf(item.FileType.toLocaleLowerCase()) !== -1;
                 const isLibItem = !isEmpty(item.contentclass) && item.contentclass.indexOf("Library") !== -1;
                 const isMobile = (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
