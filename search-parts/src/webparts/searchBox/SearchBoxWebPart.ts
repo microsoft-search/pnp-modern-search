@@ -578,7 +578,8 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
             this._ops = history.pushState;
             h.pushState = (state, key, path) => {
                 this._ops.apply(history, [state, key, path]);
-                this.render();
+                const qkw = this.properties.defaultQueryKeywords.tryGetSource();
+                if (qkw && qkw.id === SearchComponentType.PageEnvironment) this.render();
             };
         })(window.history);
     }
