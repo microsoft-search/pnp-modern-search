@@ -408,6 +408,33 @@ abstract class BaseTemplateService {
             return ret;
         });
 
+        // Sort array by CreatedDate in descending order, get the top n values, randomize them then return a set of n unique values
+        // <p>{{randomize items 15 5}}</p>
+        Handlebars.registerHelper('randomize', (array: any[], firstSlice: number, secondSlice) => {
+
+            var newArray = [];
+            var sortedDates = [];
+            
+            sortedDates = array.sort((b, a) =>
+            a.CreatedDate.split('/').reverse().join().localeCompare(b.CreatedDate.split('/').reverse().join())); 
+            let mostRecent = sortedDates.slice(0, firstSlice);
+            
+            //console.log("mostRecent");
+            //console.log(mostRecent);
+
+            for (var i = 0; i < mostRecent.length; ++i)
+            {
+                    var random = mostRecent[Math.floor(Math.random() * mostRecent .length)];
+                    newArray.push(random);    
+            }
+
+            var uniqueArray = Array.from(new Set(newArray));
+            //console.log("uniqueArray");
+            //console.log(uniqueArray);
+
+            return uniqueArray.slice(0, secondSlice);
+
+          });
         // Group by a specific property
         Handlebars.registerHelper(groupBy(Handlebars));
     }
