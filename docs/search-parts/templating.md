@@ -342,7 +342,7 @@ To use it in your main template, just follow this pattern. This block is not man
 {{/resultTypes}}
 ```
 
-Handlebars [partials](https://handlebarsjs.com/partials.html) are used behind the scenes and conditions are built dynamically using a recursive if/else structure.
+Handlebars [partials](https://handlebarsjs.com/guide/partials.html) are used behind the scenes and conditions are built dynamically using a recursive if/else structure.
 
 ### Elements previews
 
