@@ -1,6 +1,6 @@
 ![PnP Modern Search Solution](https://devofficecdn.azureedge.net/media/Default/PnP/sppnp.png)
 
-# PnP Modern Search Solution (v4 preview)
+# PnP Modern Search Solution (v4)
 
 This is a open source solution that helps you to build engaging search based solutions in the SharePoint modern experience.
 
