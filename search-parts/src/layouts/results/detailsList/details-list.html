@@ -1,0 +1,80 @@
+<content id="data-content">
+
+    <style>
+        /* Insert your CSS overrides here */
+    </style>
+
+    <div class="template">
+
+        {{#if @root.properties.showSelectedFilters}}
+            <pnp-selectedfilters 
+                data-filters="{{JSONstringify filters.selectedFilters 2}}" 
+                data-filters-configuration="{{JSONstringify filters.filtersConfiguration 2}}" 
+                data-instance-id="{{filters.instanceId}}"
+                data-operator="{{filters.filterOperator}}"
+                data-theme-variant="{{JSONstringify @root.theme}}"
+            >
+            </pnp-selectedfilters>
+        {{/if}}
+        
+        {{#if @root.properties.showResultsCount}}
+            <div class="template--resultCount">
+                <label class="ms-fontWeight-semibold">{{getCountMessage @root.data.totalItemsCount @root.inputQueryText}}</label>
+            </div>
+        {{/if}}
+
+        <pnp-detailslist 
+            data-items="{{JSONstringify data.items}}" 
+            data-columns-configuration="{{JSONstringify properties.layoutProperties.detailsListColumns}}" 
+            data-show-file-icon="{{properties.layoutProperties.showFileIcon}}" 
+            data-file-extension-field="{{properties.layoutProperties.fieldIconExtension}}"  
+            data-is-container-field="{{@root.slots.IsFolder}}"
+            data-is-compact="{{properties.layoutProperties.isCompact}}"
+            data-group-by="{{properties.layoutProperties.groupByField}}"
+            data-groups-collapsed="{{properties.layoutProperties.groupsCollapsed}}"
+            data-context="{{JSONstringify @root}}"
+            data-theme-variant="{{JSONstringify @root.theme}}"
+        >
+        </pnp-detailslist>
+
+        {{#if @root.properties.paging.showPaging}}
+            <pnp-pagination 
+                data-total-items="{{@root.data.totalItemsCount}}" 
+                data-hide-first-last-pages="{{@root.properties.paging.hideFirstLastPages}}"
+                data-hide-disabled="{{@root.properties.paging.hideDisabled}}"
+                data-hide-navigation="{{@root.properties.paging.hideNavigation}}"
+                data-range="{{@root.properties.paging.pagingRange}}" 
+                data-items-count-per-page="{{@root.properties.paging.itemsCountPerPage}}" 
+                data-current-page-number="{{@root.paging.currentPageNumber}}"
+                data-page-links="{{JSONstringify @root.data.paging.links}}"
+                data-theme-variant="{{JSONstringify @root.theme}}"
+            >
+            </pnp-pagination>
+        {{/if}}
+    </div>
+</content>
+
+<content id="placeholder-content">
+    <style>
+        /* Insert your CSS overrides here */
+    </style>
+
+    <div class="placeholder">
+        {{!-- #if showResultsCount --}}
+            <div class="template--resultCount">
+                <span class="placeholder--shimmer placeholder--line" style="width: 20%"></span>
+            </div>
+        {{!-- /if --}}
+        <pnp-detailslist 
+            data-columns-configuration="{{JSONstringify properties.layoutProperties.detailsListColumns}}" 
+            data-show-file-icon="{{properties.layoutProperties.showFileIcon}}" 
+            data-is-compact="{{properties.layoutProperties.isCompact}}" 
+            data-show-shimmers="true"
+            data-group-by="{{properties.layoutProperties.groupByField}}"
+            data-groups-collapsed="{{properties.layoutProperties.groupsCollapsed}}"
+            data-theme-variant="{{JSONstringify @root.theme}}"
+            >
+        </pnp-detailslist>
+    </div>
+
+</content>

@@ -1,0 +1,24 @@
+.asyncCombo {
+
+    .errorMessage {
+        animation-name: css-0, css-13;
+        animation-duration: 0.367s;
+        animation-timing-function: cubic-bezier(0.1, 0.9, 0.2, 1);
+        animation-fill-mode: both;
+        -webkit-font-smoothing: antialiased;
+        font-size: 12px;
+        font-weight: 400;
+        color: #A80000;
+        margin-top: 0px;
+        margin-right: 0px;
+        margin-bottom: 0px;
+        margin-left: 0px;
+        padding-top: 5px;
+        display: flex;
+        align-items: center;
+    }
+
+    .spinner {
+        display: inline-block;
+    }
+}

@@ -1,0 +1,16 @@
+ .filterComboBox {
+
+    display: flex;
+    align-items: center;
+    padding: 10px;
+
+    i {
+        margin-right: 5px;
+        margin-left: 5px;
+    }
+
+    i:hover {
+        color: "[theme: themePrimary, default: #005a9e]";
+        cursor: pointer;
+    }
+ }       

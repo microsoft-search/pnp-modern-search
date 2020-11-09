@@ -1,0 +1,31 @@
+<content id="data-content">
+
+	{{#each @root.filters as |filter|}}    
+	
+		<div><strong>{{filter.filterName}}</strong></div>
+	
+		{{#each filter.values}}
+			<pnp-filtercheckbox 
+				data-filter-name="{{filter.filterName}}" 
+				data-name="{{name}}" 
+				data-value="{{value}}" 
+				data-selected="{{selected}}" 
+				data-disabled="{{disabled}}"
+				data-theme-variant="{{JSONstringify @root.theme}}"
+			>
+			</pnp-filtercheckbox>
+		{{/each}}
+		
+		
+		{{#eq filter.values.length 0}}
+			<div>{{@root.strings.FilterNoValuesMessage}}</div>
+		{{else}}
+		
+			{{#if filter.isMulti}}
+				<pnp-filter-multi data-filter-name="{{filter.filterName}}" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-filter-multi>
+			{{/if}}
+		{{/eq}}
+
+	{{/each}}
+
+</content>

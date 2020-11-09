@@ -1,0 +1,130 @@
+.searchBox {
+
+  position: relative;
+
+  .searchBoxWrapper {
+      display: flex;
+      border: 1px solid #c2c2c2;
+
+      &:hover {
+        border-color: #272727;
+      }
+  }
+
+  .searchTextField {
+      width: 100%;
+      flex: 1 1 auto;
+      border: none;
+  }
+
+  .searchButton {
+      background: '[theme:primaryButtonBackground, default:#0078d7]';
+      &:hover {
+        background: '[theme:primaryButtonBackgroundHovered, default:#0078d7]';
+      }
+
+      & i {
+        color: '[theme:primaryButtonText, default:#ffffff]';
+        &:hover {
+          color: '[theme:primaryButtonTextHovered, default:#ffffff]';
+        }
+      }
+  }
+
+  .errorMessage {
+      margin-bottom: 10px;
+  }
+
+  *::-ms-clear {
+      display: none;
+  }
+
+  .loadingIndicator {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      padding: 8px;
+  }
+
+  .suggestionContainer {
+      display: flex;
+      align-items: flex-start;
+  }
+
+  .suggestionGroupName {
+      padding: 6px;
+      font-size: 14px;
+      font-weight: 400;
+      color: #777;
+  }
+
+  .suggestionItem {
+      padding: 2px 10px;
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      flex-direction: row;
+      text-decoration: none;
+      min-height: 28px;
+      cursor: pointer;
+      color: #333;
+
+      &:hover {
+          background-color: #f4f4f4;
+      }
+
+      .suggestionIcon {
+          display: block;
+          height: 100%;
+
+          & > img {
+              width: 24px;
+              height: 24px;
+              padding-left: 10px;
+              vertical-align: middle;
+          }
+      }
+
+      .suggestionContent {
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          align-items: center;
+          padding: 0 10px;
+          flex: 1 1 auto;
+          margin-top: 1px;
+      }
+
+      .suggestionDisplayText {
+          padding-right: 4px;
+      }
+
+      .suggestionDescription {
+          font-size: 0.9em;
+          color: #777;
+      }
+
+      .suggestionAction {
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+          font-size: 16px;
+      }
+  }
+
+  .suggestionPanel {
+      position: absolute;
+      width: 100%;
+      box-sizing: border-box;
+      z-index: 1;
+      background-color: #ffffff;
+      border-bottom: 1px solid #ccc;
+      border-left: 1px solid #ccc;
+      border-right: 1px solid #ccc;
+  }
+}
+
+.parentStackingCtx {
+  position: relative;
+  z-index: 1;
+}

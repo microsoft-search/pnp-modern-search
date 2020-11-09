@@ -1,0 +1,21 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "PnP Modern Search - Extensibility Library Demo",
+    "id": "4896309f-54bc-48f2-a7ee-0785e019d195",
+    "version": "4.0.0.0",
+    "includeClientSideAssets": true,
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "developer": {
+      "mpnId": "",
+      "name": "PnP Team",
+      "termsOfUseUrl": "https://github.com/microsoft-search/pnp-modern-search/blob/main/LICENSE",
+      "privacyUrl": "",
+      "websiteUrl": "https://pnp.github.io/"
+    }
+  },
+  "paths": {
+    "zippedPackage": "solution/pnp-modern-search-extensibility-demo.sppkg"
+  }
+}

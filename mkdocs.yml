@@ -1,0 +1,57 @@
+site_name: PnP Modern Search (v4)
+nav:
+  - Getting Started:
+    - Introduction: index.md
+    - Installation: installation.md
+    - How to contribute?: how-to-contribute.md 
+    - Building documentation: build-the-doc.md
+  - Search Results:
+    - Usage: usage/search-results/index.md
+    - Data sources: usage/search-results/data-sources/index.md
+    - Slots: usage/search-results/slots.md
+    - Tokens: usage/search-results/tokens.md
+    - Layouts: usage/search-results/layouts/index.md
+    - Connections: usage/search-results/connections/index.md
+    - Extensibility: extensibility/index.md
+  - Search Filters:
+    - Usage: usage/search-filters/index.md
+    - Layouts: usage/search-filters/layouts/index.md
+  - Search Verticals:
+    - Usage: usage/search-verticals/index.md 
+  - Search Box:
+    - Usage: usage/search-box/index.md
+  - Extensibility:
+    - Introduction: extensibility/index.md
+    - Templating: extensibility/templating.md
+    - Custom web component: extensibility/custom_web_component.md
+    - Custom suggestions provider: extensibility/custom_suggestions_provider.md
+    - Custom Handlebars customizations: extensibility/handlebars_customizations.md
+theme:
+  name: 'material'
+  palette:
+    primary: 'blue'
+    accent: orange
+  feature:
+    tabs: true
+  logo: 'assets/pnp_logo.png'
+  font:
+    code: 'Ubuntu Mono'
+extra_css:
+  - 'assets/extra.css'
+markdown_extensions:
+  - attr_list
+  - admonition
+  - codehilite:
+      guess_lang: false
+  - toc:
+      permalink: true
+  - markdown_include.include:
+          base_path: docs
+extra:
+  social:
+    - type: 'twitter'
+      link: 'https://twitter.com/m365pnp'
+    - type: 'link'
+      link: 'https://microsoft-search.github.io/pnp-modern-search/'
+repo_url: https://github.com/microsoft-search/pnp-modern-search/
+edit_uri: blob/master/docs

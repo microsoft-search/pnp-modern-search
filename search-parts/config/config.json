@@ -1,0 +1,48 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/config.2.0.schema.json",
+  "version": "2.0",
+  "bundles": {
+    "modern-search-results-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/searchResults/SearchResultsWebPart.js",
+          "manifest": "./src/webparts/searchResults/SearchResultsWebPart.manifest.json"
+        }
+      ]
+    },
+    "modern-search-filters-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/searchFilters/SearchFiltersWebPart.js",
+          "manifest": "./src/webparts/searchFilters/SearchFiltersWebPart.manifest.json"
+        }
+      ]
+    },
+    "modern-search-box-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/searchBox/SearchBoxWebPart.js",
+          "manifest": "./src/webparts/searchBox/SearchBoxWebPart.manifest.json"
+        }
+      ]
+    },
+    "modern-search-verticals-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/searchVerticals/SearchVerticalsWebPart.js",
+          "manifest": "./src/webparts/searchVerticals/SearchVerticalsWebPart.manifest.json"
+        }
+      ]
+    }
+  },
+  "externals": {},
+  "localizedResources": {
+    "SearchResultsWebPartStrings": "lib/webparts/searchResults/loc/{locale}.js",
+    "CommonStrings": "lib/loc/{locale}.js",
+    "ControlStrings": "node_modules/@pnp/spfx-controls-react/lib/loc/{locale}.js",
+    "PropertyControlStrings": "node_modules/@pnp/spfx-property-controls/lib/loc/{locale}.js",
+    "SearchFiltersWebPartStrings": "lib/webparts/searchFilters/loc/{locale}.js",
+    "SearchBoxWebPartStrings": "lib/webparts/searchBox/loc/{locale}.js",
+    "SearchVerticalsWebPartStrings": "lib/webparts/searchVerticals/loc/{locale}.js"
+  }
+}
