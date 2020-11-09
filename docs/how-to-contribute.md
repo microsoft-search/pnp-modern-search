@@ -32,21 +32,21 @@ Before making any PR, you need to setup this project locally on your machine. Th
 | Project | Description
 | --------| ----------
 | `search-parts` | SPFx Web Parts code
-| `search-extensibility` | SPFx library component containing shared code between core Web Parts and extesnbilioty library.
+| `search-extensibility` | SPFx library component containing shared code between core Web Parts and extensibilty library.
 | `search-extensibility-demo`  | Reusable components to extend capabilities of core Web Parts.
 
 ## Setup the **search-extensibility** project
 
 The `search-extensibilty` project is an SPFx library component containing all the shared interfaces for the `search-parts` and `search-extensibility-demo` other SPFx projects. As a result, **it must be linked to these project first before using them**:
 
-1. Open the `search-extensibility` project install dependencies using `npm i`
-2. Build it using `gulp bundle` cmd.
-3. Then use the `npm link` cmd to create a symbolic link.
+1. Open the `search-extensibility` project and install dependencies using `npm i` or your favorite package manager.
+2. Build the project using the command `gulp bundle`.
+3. Run the command `npm link` to create a symbolic link.
 
 You can also refer to the official [SPFx documentation about library component usage](https://docs.microsoft.com/en-us/sharepoint/dev/spfx/library-component-tutorial).
 
 ## Setup the **search-parts** and **search-extensibility-demo** projects
 
-1. From the `search-parts` or `search-extensibility-demo` projects, link the reference to `@pnp/modern-search-extensibility` project by using the following command `npm link @pnp/modern-search-extensibility`.
-3. Build the project using `gulp bundle`.
+1. From the `search-parts` or `search-extensibility-demo` project, link a reference to the `@pnp/modern-search-extensibility` project by using the following command `npm link @pnp/modern-search-extensibility`.
+2. Build the project using `gulp bundle`.
 
