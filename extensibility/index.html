@@ -1,0 +1,1060 @@
+
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <meta http-equiv="x-ua-compatible" content="ie=edge">
+      
+      
+      
+      
+        <meta name="lang:clipboard.copy" content="Copy to clipboard">
+      
+        <meta name="lang:clipboard.copied" content="Copied to clipboard">
+      
+        <meta name="lang:search.language" content="en">
+      
+        <meta name="lang:search.pipeline.stopwords" content="True">
+      
+        <meta name="lang:search.pipeline.trimmer" content="True">
+      
+        <meta name="lang:search.result.none" content="No matching documents">
+      
+        <meta name="lang:search.result.one" content="1 matching document">
+      
+        <meta name="lang:search.result.other" content="# matching documents">
+      
+        <meta name="lang:search.tokenizer" content="[\s\-]+">
+      
+      <link rel="shortcut icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1, mkdocs-material-4.6.3">
+    
+    
+      
+        <title>Introduction - PnP Modern Search (v4)</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/application.adb8469c.css">
+      
+        <link rel="stylesheet" href="../assets/stylesheets/application-palette.a8b3c06d.css">
+      
+      
+        
+        
+        <meta name="theme-color" content="#2196f3">
+      
+    
+    
+      <script src="../assets/javascripts/modernizr.86422ebf.js"></script>
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=:300,400,400i,700%7CUbuntu+Mono&display=fallback">
+        <style>body,input{font-family:"","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Ubuntu Mono","Courier New",Courier,monospace}</style>
+      
+    
+    <link rel="stylesheet" href="../assets/fonts/material-icons.css">
+    
+    
+      <link rel="stylesheet" href="../assets/extra.css">
+    
+    
+      
+    
+    
+  </head>
+  
+    
+    
+    <body dir="ltr" data-md-color-primary="blue" data-md-color-accent="orange">
+  
+    <svg class="md-svg">
+      <defs>
+        
+        
+          <svg xmlns="http://www.w3.org/2000/svg" width="416" height="448" viewBox="0 0 416 448" id="__github"><path fill="currentColor" d="M160 304q0 10-3.125 20.5t-10.75 19T128 352t-18.125-8.5-10.75-19T96 304t3.125-20.5 10.75-19T128 256t18.125 8.5 10.75 19T160 304zm160 0q0 10-3.125 20.5t-10.75 19T288 352t-18.125-8.5-10.75-19T256 304t3.125-20.5 10.75-19T288 256t18.125 8.5 10.75 19T320 304zm40 0q0-30-17.25-51T296 232q-10.25 0-48.75 5.25Q229.5 240 208 240t-39.25-2.75Q130.75 232 120 232q-29.5 0-46.75 21T56 304q0 22 8 38.375t20.25 25.75 30.5 15 35 7.375 37.25 1.75h42q20.5 0 37.25-1.75t35-7.375 30.5-15 20.25-25.75T360 304zm56-44q0 51.75-15.25 82.75-9.5 19.25-26.375 33.25t-35.25 21.5-42.5 11.875-42.875 5.5T212 416q-19.5 0-35.5-.75t-36.875-3.125-38.125-7.5-34.25-12.875T37 371.5t-21.5-28.75Q0 312 0 260q0-59.25 34-99-6.75-20.5-6.75-42.5 0-29 12.75-54.5 27 0 47.5 9.875t47.25 30.875Q171.5 96 212 96q37 0 70 8 26.25-20.5 46.75-30.25T376 64q12.75 25.5 12.75 54.5 0 21.75-6.75 42 34 40 34 99.5z"/></svg>
+        
+      </defs>
+    </svg>
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
+    
+      <a href="#extensibility-possibilities" tabindex="0" class="md-skip">
+        Skip to content
+      </a>
+    
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid">
+    <div class="md-flex">
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <a href=".." title="PnP Modern Search (v4)" aria-label="PnP Modern Search (v4)" class="md-header-nav__button md-logo">
+          
+            <img alt="logo" src="../assets/pnp_logo.png" width="24" height="24">
+          
+        </a>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
+      </div>
+      <div class="md-flex__cell md-flex__cell--stretch">
+        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+          
+            <span class="md-header-nav__topic">
+              PnP Modern Search (v4)
+            </span>
+            <span class="md-header-nav__topic">
+              
+                Introduction
+              
+            </span>
+          
+        </div>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        
+          <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
+          
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" aria-label="search" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+      <label class="md-icon md-search__icon" for="__search"></label>
+      <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
+        &#xE5CD;
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="result">
+          <div class="md-search-result__meta">
+            Type to start searching
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+        
+      </div>
+      
+        <div class="md-flex__cell md-flex__cell--shrink">
+          <div class="md-header-nav__source">
+            
+
+
+  
+
+<a href="https://github.com/microsoft-search/pnp-modern-search/" title="Go to repository" class="md-source" data-md-source="github">
+  
+    <div class="md-source__icon">
+      <svg viewBox="0 0 24 24" width="24" height="24">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+          </div>
+        </div>
+      
+    </div>
+  </nav>
+</header>
+    
+    <div class="md-container">
+      
+        
+      
+      
+        
+
+  
+
+<nav class="md-tabs md-tabs--active" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href=".." class="md-tabs__link">
+          Getting Started
+        </a>
+      
+    </li>
+  
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../usage/search-results/" class="md-tabs__link">
+          Search Results
+        </a>
+      
+    </li>
+  
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../usage/search-filters/" class="md-tabs__link">
+          Search Filters
+        </a>
+      
+    </li>
+  
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../usage/search-verticals/" class="md-tabs__link">
+          Search Verticals
+        </a>
+      
+    </li>
+  
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../usage/search-box/" class="md-tabs__link">
+          Search Box
+        </a>
+      
+    </li>
+  
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="./" class="md-tabs__link md-tabs__link--active">
+          Extensibility
+        </a>
+      
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+      
+      <main class="md-main" role="main">
+        <div class="md-main__inner md-grid" data-md-component="container">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" data-md-level="0">
+  <label class="md-nav__title md-nav__title--site" for="__drawer">
+    <a href=".." title="PnP Modern Search (v4)" class="md-nav__button md-logo">
+      
+        <img alt="logo" src="../assets/pnp_logo.png" width="48" height="48">
+      
+    </a>
+    PnP Modern Search (v4)
+  </label>
+  
+    <div class="md-nav__source">
+      
+
+
+  
+
+<a href="https://github.com/microsoft-search/pnp-modern-search/" title="Go to repository" class="md-source" data-md-source="github">
+  
+    <div class="md-source__icon">
+      <svg viewBox="0 0 24 24" width="24" height="24">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-1" type="checkbox" id="nav-1">
+    
+    <label class="md-nav__link" for="nav-1">
+      Getting Started
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-1">
+        Getting Started
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href=".." title="Introduction" class="md-nav__link">
+      Introduction
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../installation/" title="Installation" class="md-nav__link">
+      Installation
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../how-to-contribute/" title="How to contribute?" class="md-nav__link">
+      How to contribute?
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../build-the-doc/" title="Building documentation" class="md-nav__link">
+      Building documentation
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2">
+    
+    <label class="md-nav__link" for="nav-2">
+      Search Results
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-2">
+        Search Results
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../usage/search-results/" title="Usage" class="md-nav__link">
+      Usage
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../usage/search-results/data-sources/" title="Data sources" class="md-nav__link">
+      Data sources
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../usage/search-results/slots/" title="Slots" class="md-nav__link">
+      Slots
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../usage/search-results/tokens/" title="Tokens" class="md-nav__link">
+      Tokens
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../usage/search-results/layouts/" title="Layouts" class="md-nav__link">
+      Layouts
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../usage/search-results/connections/" title="Connections" class="md-nav__link">
+      Connections
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="./" title="Extensibility" class="md-nav__link">
+      Extensibility
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3">
+    
+    <label class="md-nav__link" for="nav-3">
+      Search Filters
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-3">
+        Search Filters
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../usage/search-filters/" title="Usage" class="md-nav__link">
+      Usage
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../usage/search-filters/layouts/" title="Layouts" class="md-nav__link">
+      Layouts
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4">
+    
+    <label class="md-nav__link" for="nav-4">
+      Search Verticals
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-4">
+        Search Verticals
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../usage/search-verticals/" title="Usage" class="md-nav__link">
+      Usage
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-5" type="checkbox" id="nav-5">
+    
+    <label class="md-nav__link" for="nav-5">
+      Search Box
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-5">
+        Search Box
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../usage/search-box/" title="Usage" class="md-nav__link">
+      Usage
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-6" type="checkbox" id="nav-6" checked>
+    
+    <label class="md-nav__link" for="nav-6">
+      Extensibility
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-6">
+        Extensibility
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Introduction
+      </label>
+    
+    <a href="./" title="Introduction" class="md-nav__link md-nav__link--active">
+      Introduction
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#basic-customizations" class="md-nav__link">
+    Basic customizations
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-customizations" class="md-nav__link">
+    Advanced customizations
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prerequistes" class="md-nav__link">
+    Prerequistes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#supported-extensions" class="md-nav__link">
+    Supported extensions
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#register-your-extensibility-library-with-a-web-part" class="md-nav__link">
+    Register your extensibility library with a Web Part
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-an-extensibility-library" class="md-nav__link">
+    Create an extensibility library
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#debug-a-library-component" class="md-nav__link">
+    Debug a library component
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="templating/" title="Templating" class="md-nav__link">
+      Templating
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="custom_web_component/" title="Custom web component" class="md-nav__link">
+      Custom web component
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="custom_suggestions_provider/" title="Custom suggestions provider" class="md-nav__link">
+      Custom suggestions provider
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="handlebars_customizations/" title="Custom Handlebars customizations" class="md-nav__link">
+      Custom Handlebars customizations
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#basic-customizations" class="md-nav__link">
+    Basic customizations
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-customizations" class="md-nav__link">
+    Advanced customizations
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prerequistes" class="md-nav__link">
+    Prerequistes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#supported-extensions" class="md-nav__link">
+    Supported extensions
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#register-your-extensibility-library-with-a-web-part" class="md-nav__link">
+    Register your extensibility library with a Web Part
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-an-extensibility-library" class="md-nav__link">
+    Create an extensibility library
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#debug-a-library-component" class="md-nav__link">
+    Debug a library component
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/microsoft-search/pnp-modern-search/blob/master/docs/extensibility/index.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
+                
+                
+                <h1 id="extensibility-possibilities">Extensibility possibilities<a class="headerlink" href="#extensibility-possibilities" title="Permanent link">&para;</a></h1>
+<p>This solution supports different levels of customizations depending your requirements:</p>
+<ul>
+<li><strong>'Basic' customizations</strong>: these include custom settings for data sources, search box, verticals and filters Web Parts + minor updates to existing layouts by adding custom HTML markup (ex: add a custom field in the UI from a data source), updates to builtin layouts fields ('Cards','Details List' and 'People'), etc. <strong>They only require HTML, CSS and Handlebars skills to be done</strong>. Typically a super user or a webmaster could do that.</li>
+<li><strong>'Advanced' customizations</strong>: these include major updates like adding a new data source, layout, component or suggestions provider. <strong>These are build from scratch and require SharePoint Framework development skills to be done</strong>. Typically, a front-end/SharePoint developer could do that.</li>
+</ul>
+<h2 id="basic-customizations">Basic customizations<a class="headerlink" href="#basic-customizations" title="Permanent link">&para;</a></h2>
+<p>'Basic' customizations cover the layout templates updates with HTML, CSS and Handlebars. Refer to the templating <a href="templating/">documentation</a> to know more.</p>
+<h2 id="advanced-customizations">Advanced customizations<a class="headerlink" href="#advanced-customizations" title="Permanent link">&para;</a></h2>
+<p>The solution uses the concept of <strong>'extensibility libraries'</strong>. Basically, these are <a href="https://docs.microsoft.com/en-us/sharepoint/dev/spfx/library-component-tutorial">SharePoint Framework library components</a> you put in the global or site collection app catalog that will be loaded automatically by Web Parts to enhance the experience and options (ex: new data source with new options, custom layout, etc.). Simple as that!</p>
+<blockquote>
+<p>As a demonstration of capabilities, all builtin data sources, layouts, web components or suggestions providers are built using <strong>the same exact interfaces and methods</strong> that are publically available in the <code>@pnp/modern-search-extensibility</code> SPFx library project.</p>
+<p>All documentation procedures for extensions are based on the demo extensibility library available in the same repository that you can use as reference.</p>
+</blockquote>
+<h3 id="prerequistes">Prerequistes<a class="headerlink" href="#prerequistes" title="Permanent link">&para;</a></h3>
+<p>For your project to be a valid extensibility library, you must have the following prerequisites:</p>
+<ul>
+<li>Your project must be an <a href="https://docs.microsoft.com/en-us/sharepoint/dev/spfx/library-component-overview">SPFx library component</a>.</li>
+<li>The main entry point of your library must implement the <code>IExtensibilityLibrary</code> interface from the <code>@pnp/modern-search-extensibility</code> library.</li>
+<li>You library <strong>manifest ID</strong> must be registered in the Web Part where you want to use the extension.</li>
+</ul>
+<h3 id="supported-extensions">Supported extensions<a class="headerlink" href="#supported-extensions" title="Permanent link">&para;</a></h3>
+<p>Each Web Part type in the solution supports several extensions or no extension at all. It means even your extensibility library contains all possible extensions, they won't be loaded if the Web Part does not support them.</p>
+<table>
+<thead>
+<tr>
+<th>Web Part type</th>
+<th>Supported extensions</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Search Results</strong></td>
+<td><ul><li>Custom web components.</li><li>Custom Handlebars <a href="https://handlebarsjs.com/api-reference/runtime.html">customizations</a> (ex: helpers, partials ,etc.).</li></ul></td>
+</tr>
+<tr>
+<td><strong>Search Filters</strong></td>
+<td><ul><li>Custom web components (<em>not directly but via the 'Search Results' Web Part extensibility library registration</em>).</li></ul></td>
+</tr>
+<tr>
+<td><strong>Search box</strong></td>
+<td><ul><li>Custom suggestions providers.</li></ul></td>
+</tr>
+<tr>
+<td><strong>Search Verticals</strong></td>
+<td>None.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="register-your-extensibility-library-with-a-web-part">Register your extensibility library with a Web Part<a class="headerlink" href="#register-your-extensibility-library-with-a-web-part" title="Permanent link">&para;</a></h3>
+<p>When a Web Part type supports one or multiple extensions, you can register them going to the last property pane confguration page in the <em>'Extensibility configuration'</em> section:</p>
+<p><a href="../assets/extensibility/extensibility_configuration.png"><img alt="&quot;Extensibility configuration&quot;" class="center" src="../assets/extensibility/extensibility_configuration.png" /></a></p>
+<p>From here, you can add the manifest IDs of your libraries and decide to enable or disabled certain libraries. The manifest ID can be found in the <code>&lt;your_library_name&gt;.manifest.json</code> file:</p>
+<p><a href="../assets/extensibility/library_manifest_id.png"><img alt="&quot;Library manifest ID&quot;" class="center" src="../assets/extensibility/library_manifest_id.png" /></a></p>
+<p><a href="../assets/extensibility/extensibility_configuration_manifest.png"><img alt="&quot;Extensibility manifests registration&quot;" class="center" src="../assets/extensibility/extensibility_configuration_manifest.png" /></a></p>
+<blockquote>
+<p>Multiple librairies can be registred for a single Web Part instance allowing you to split your extensions into multiple projects (in the end, they will be all concatenated). For instance, this could be convenient when extensions come from different IT providers.</p>
+</blockquote>
+<h3 id="create-an-extensibility-library">Create an extensibility library<a class="headerlink" href="#create-an-extensibility-library" title="Permanent link">&para;</a></h3>
+<p>To create an extensibility library, you have the choice to reuse the one provided in the GitHub repository or start from scratch. In this case:</p>
+<ol>
+<li>Create a new SharePoint Framework project of type 'Library' with <code>yo @microsoft/sharepoint</code>.</li>
+<li>Link the <code>@pnp/modern-search-extensibility</code> library using the <code>npm link @pnp/modern-search-extensibility</code> cmd.</li>
+<li>In the main entry point, implement the <code>IExtensibilityLibrary</code> interface. Provide all method implementations (return empty arrays if you don't implement specific extensions).
+    <img alt="&quot;Extensibility interface implementation&quot;" class="center" src="../assets/extensibility/implement_interface.png" /></li>
+<li>
+<p>Implement your extension(s) depending of the type:</p>
+<ul>
+<li><a href="custom_web_component/">Web component</a></li>
+<li><a href="custom_suggestions_provider/">Suggestions providers</a></li>
+<li><a href="handlebars_customizations/">Handlebars customizations</a></li>
+</ul>
+<p>Creation process always follows more or less the same pattern:</p>
+<ol>
+<li>Create the extension data logic or render logic.</li>
+<li>Register the information about the extension to be discovered and instanciated by the target Web Part by implementing the corresponding method according to the <code>IExtensibilityLibrary</code> interface.</li>
+</ol>
+</li>
+<li>
+<p>Bundle <code>gulp bundle --ship</code> and package <code>gulp package-solution --ship</code> and add the solution to the global or site collection catalog (for this one, it must be the same site collection where the Web Part loading that extension(s) is present).</p>
+</li>
+<li><a href="#register-your-extensibility-library-with-a-web-part">Register your manifest ID in the target Web Part instance</a>.</li>
+<li>Enjoy!</li>
+</ol>
+<h4 id="debug-a-library-component">Debug a library component<a class="headerlink" href="#debug-a-library-component" title="Permanent link">&para;</a></h4>
+<p>Debugging a library component is exactly the same as debugging an SPFx Web Part. Run <code>gulp serve</code> in the hosted workbench and put a <em>'Search Results'</em>,<em>'Search Filters'</em> or <em>'Search Box'</em> Web Part depending the extension you want to test. If registered correctly, your breakpoints will be triggerred by the main Web Part loading your extension.</p>
+                
+                  
+                
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid">
+        
+          <a href="../usage/search-box/" title="Usage" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
+            </div>
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Usage
+              </span>
+            </div>
+          </a>
+        
+        
+          <a href="templating/" title="Templating" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Templating
+              </span>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        powered by
+        <a href="https://www.mkdocs.org" target="_blank" rel="noopener">MkDocs</a>
+        and
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs</a>
+      </div>
+      
+  <div class="md-footer-social">
+    <link rel="stylesheet" href="../assets/fonts/font-awesome.css">
+    
+      <a href="https://twitter.com/m365pnp" target="_blank" rel="noopener" title="twitter" class="md-footer-social__link fa fa-twitter"></a>
+    
+      <a href="https://microsoft-search.github.io/pnp-modern-search/" target="_blank" rel="noopener" title="link" class="md-footer-social__link fa fa-link"></a>
+    
+  </div>
+
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../assets/javascripts/application.c33a9706.js"></script>
+      
+      <script>app.initialize({version:"1.1",url:{base:".."}})</script>
+      
+    
+  </body>
+</html>
