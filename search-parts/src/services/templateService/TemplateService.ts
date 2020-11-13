@@ -62,18 +62,18 @@ export class TemplateService implements ITemplateService {
     public static ServiceKey: ServiceKey<ITemplateService> = ServiceKey.create(TemplateService_ServiceKey, TemplateService);
 
     public constructor(serviceScope: ServiceScope) {
-             
+
         this.serviceScope = serviceScope;
 
-        serviceScope.whenFinished(async() => {
-            
+        serviceScope.whenFinished(async () => {
+
             // Consume from the root scope
             this.pageContext = serviceScope.consume<PageContext>(PageContext.serviceKey);
             this.spHttpClient = serviceScope.consume<SPHttpClient>(SPHttpClient.serviceKey);
 
             this.dateHelper = serviceScope.consume<DateHelper>(DateHelper.ServiceKey); // Resolved in the same scope
             this.dayLightSavings = this.dateHelper.isDST();
-            
+
             this.timeZoneBias = {
                 WebBias: this.pageContext.legacyPageContext.webTimeZoneData.Bias,
                 WebDST: this.pageContext.legacyPageContext.webTimeZoneData.DaylightBias,
@@ -110,7 +110,7 @@ export class TemplateService implements ITemplateService {
         // Register icons and pull the fonts from the default SharePoint cdn.
         initializeFileTypeIcons();
     }
-    
+
     /**
      * Gets the template HTML markup in the full template content
      * @param templateContent the full template content
@@ -146,10 +146,10 @@ export class TemplateService implements ITemplateService {
         }
     }
 
-        /**
-     * Gets the external file content from the specified URL
-     * @param fileUrl the file URL
-     */
+    /**
+ * Gets the external file content from the specified URL
+ * @param fileUrl the file URL
+ */
     public async getFileContent(fileUrl: string): Promise<string> {
 
         const response: SPHttpClientResponse = await this.spHttpClient.get(fileUrl, SPHttpClient.configurations.v1, {
@@ -210,7 +210,7 @@ export class TemplateService implements ITemplateService {
 
         let template = this.Handlebars.compile(templateContent);
         let result = template(templateContext);
-        
+
         return result;
     }
 
@@ -220,16 +220,16 @@ export class TemplateService implements ITemplateService {
     public async registerWebComponents(webComponents: IComponentDefinition<any>[]): Promise<void> {
 
         return new Promise<void>((resolve) => {
-            
+
             this.serviceScope.whenFinished(() => {
-                
+
                 // Registers custom HTML elements
                 webComponents.forEach(wc => {
 
                     const component = window.customElements.get(wc.componentName);
 
                     if (!component) {
-                         
+
                         // Set the arbitrary property to all instances to get the WebPart context available in components (ex: PersonaCard)
                         wc.componentClass.prototype._serviceScope = this.serviceScope;
                         wc.componentClass.prototype.moment = this.moment;
@@ -248,7 +248,7 @@ export class TemplateService implements ITemplateService {
      * @param itemAsString the item context as stringified object
      * @param themeVariant the current theme variant
      */
-    public processFieldsConfiguration<T>(fieldsConfiguration: IComponentFieldsConfiguration[], item: {[key:string]: any}, context?: IDataResultsTemplateContext | any): T {
+    public processFieldsConfiguration<T>(fieldsConfiguration: IComponentFieldsConfiguration[], item: { [key: string]: any }, context?: IDataResultsTemplateContext | any): T {
 
         let processedProps = {};
 
@@ -261,15 +261,15 @@ export class TemplateService implements ITemplateService {
 
                 try {
 
-                    let templateContext: IDataResultsTemplateContext | any = context ? context : {};                    
+                    let templateContext: IDataResultsTemplateContext | any = context ? context : {};
                     // Create a temp context with the current so we can use global registered helpers on the current item
                     const tempTemplateContent = `{{#with item as |item|}}${configuration.value}{{/with}}`;
                     let template = this.Handlebars.compile(tempTemplateContent, {
                         noEscape: true
                     });
-                    
+
                     // Pass the current item as context
-                    processedValue = template({ item: item}, { 
+                    processedValue = template({ item: item }, {
                         data: {
                             root: {
                                 slots: templateContext.slots,
@@ -306,7 +306,7 @@ export class TemplateService implements ITemplateService {
         if (resultTypes.length > 0) {
             let content = await this._buildCondition(resultTypes, resultTypes[0], 0);
             let template = this.Handlebars.compile(content);
-            
+
             this.Handlebars.registerPartial('resultTypes', template);
         } else {
             this.Handlebars.registerPartial('resultTypes', '{{> @partial-block }}');
@@ -399,8 +399,15 @@ export class TemplateService implements ITemplateService {
 
         // Return the formatted date according to current locale using moment.js
         // <p>{{getDate Created "LL"}}</p>
-        this.Handlebars.registerHelper("getDate", ((date: string, format: string, timeHandling?: number) => {
+        this.Handlebars.registerHelper("getDate", ((date: string, format: string, timeHandling?: number, isZ?: boolean) => {
             try {
+                if (isZ && !date.toUpperCase().endsWith("Z")) {
+                    if (date.indexOf(' ') !== -1) {
+                        date += " ";
+                    }
+                    date += "Z";
+                }
+
                 let itemDate = new Date(date);
                 if (itemDate.toISOString() !== new Date(null).toISOString()) {
                     if (typeof timeHandling === "number") {
@@ -501,7 +508,7 @@ export class TemplateService implements ITemplateService {
                 return value;
             }
         });
-        
+
         // Match and return an email in the specified expression
         this.Handlebars.registerHelper("getUserEmail", (expr: string) => {
 
