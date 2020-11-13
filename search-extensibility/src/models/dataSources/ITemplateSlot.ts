@@ -17,7 +17,9 @@ export enum BuiltinTemplateSlots {
     IsFolder = 'IsFolder',
     PersonQuery = 'PersonQuery',
     UserDisplayName = 'UserDisplayName',
-    UserEmail = 'UserEmail'
+    UserEmail = 'UserEmail',
+    ContentClass = 'contentclass',
+    DriveId = "DriveId",
 }
 
 export interface ITemplateSlot {
