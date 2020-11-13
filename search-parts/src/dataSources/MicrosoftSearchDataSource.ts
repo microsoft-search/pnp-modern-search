@@ -34,10 +34,6 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             text: "Drive Items"
         },
         {
-            key: "microsoft.graph.externalFile",
-            text: "External Files"
-        },
-        {
             key: "microsoft.graph.externalItem",
             text: "External Items"
         },
