@@ -62,7 +62,7 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
                                                 [
                                                     {
                                                         name: 'Title',
-                                                        value: '<a href="{{getGraphPreviewUrl (slot item @root.slots.Path)}}" target="_blank" style="color: {{@root.theme.semanticColors.link}}">\n\t{{slot item @root.slots.Title}}\n</a>',
+                                                        value: '<a href="{{slot item @root.slots.PreviewUrl}}" target="_blank" style="color: {{@root.theme.semanticColors.link}}">\n\t{{slot item @root.slots.Title}}\n</a>',
                                                         useHandlebarsExpr: true,
                                                         minWidth: '80',
                                                         maxWidth: '300',

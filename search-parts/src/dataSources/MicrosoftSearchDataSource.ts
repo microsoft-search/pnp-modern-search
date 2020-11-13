@@ -92,21 +92,21 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             let startRow = 0;
 
             if (dataContext.pageNumber > 1) {
-                startRow = (dataContext.pageNumber-1) * dataContext.itemsCountPerPage;
+                startRow = (dataContext.pageNumber - 1) * dataContext.itemsCountPerPage;
             }
 
             results = await this.search(queryText, this.properties.entityTypes, startRow, dataContext.itemsCountPerPage);
         }
-       
+
         return results;
     }
 
     public getPropertyPaneGroupsConfiguration(): IPropertyPaneGroup[] {
 
-        return  [
+        return [
             {
-              groupName: commonStrings.DataSources.MicrosoftSearch.SourceConfigurationGroupName,
-              groupFields: [
+                groupName: commonStrings.DataSources.MicrosoftSearch.SourceConfigurationGroupName,
+                groupFields: [
                     PropertyPaneLabel('', {
                         text: commonStrings.DataSources.SharePointSearch.QueryTextFieldLabel
                     }),
@@ -125,15 +125,15 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                         defaultSelectedKeys: this.properties.entityTypes,
                         onPropertyChange: this.onCustomPropertyUpdate.bind(this),
                     })
-              ]
+                ]
             }
         ];
     }
 
     public onCustomPropertyUpdate(propertyPath: string, newValue: any): void {
-    
+
         if (propertyPath.localeCompare('dataSourceProperties.entityTypes') === 0) {
-            this.properties.entityTypes = (cloneDeep(newValue) as IComboBoxOption[]).map(v => {return v.key as string;});
+            this.properties.entityTypes = (cloneDeep(newValue) as IComboBoxOption[]).map(v => { return v.key as string; });
             this.context.propertyPane.refresh();
             this.render();
         }
@@ -165,6 +165,19 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                 slotName: BuiltinTemplateSlots.PreviewUrl,
                 slotField: 'AutoPreviewUrl' // Field added automatically
             }
+            ,
+            {
+                slotName: BuiltinTemplateSlots.SiteId,
+                slotField: '_source.parentReference.siteId'
+            },
+            {
+                slotName: BuiltinTemplateSlots.DriveId,
+                slotField: '_source.parentReference.driveId'
+            },
+            {
+                slotName: BuiltinTemplateSlots.ItemId,
+                slotField: '_source.id'
+            }
         ];
     }
 
@@ -186,8 +199,8 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         // Get an instance to the MSGraphClient
         const msGraphClientFactory = this.serviceScope.consume<MSGraphClientFactory>(MSGraphClientFactory.serviceKey);
         const msGraphClient = await msGraphClientFactory.getClient();
-        const request = await msGraphClient.api(MICROSOFT_SEARCH_URL);     
-            
+        const request = await msGraphClient.api(MICROSOFT_SEARCH_URL);
+
         const graphBody = {
             "requests": [
                 {

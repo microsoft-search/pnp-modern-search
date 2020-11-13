@@ -374,13 +374,6 @@ export class TemplateService implements ITemplateService {
      * Registers custom Handlebars helpers in the global context
      */
     private registerCustomHelpers() {
-
-        // Return the URL of the search result item
-        // Usage: <a href="{{getGraphPreviewUrl url}}">
-        this.Handlebars.registerHelper("getGraphPreviewUrl", (url: any, context?: any) => {
-            return new this.Handlebars.SafeString(UrlHelper.getGraphPreviewUrl(url));
-        });
-
         // Return the search result count message
         // Usage: {{getCountMessage totalRows keywords}} or {{getCountMessage totalRows null}}
         this.Handlebars.registerHelper("getCountMessage", (totalRows: string, inputQuery?: string) => {
