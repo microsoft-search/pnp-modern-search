@@ -176,6 +176,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
         await this.initSuggestionProviders();
 
         this._initComplete = true;
+
         return super.onInit();
     }
 
@@ -576,12 +577,15 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
     private _handleQueryStringChange() {
         ((h) => {
             this._ops = history.pushState;
-            h.pushState = (state, key, path) => {
-                this._ops.apply(history, [state, key, path]);
-                const qkw = this.properties.defaultQueryKeywords.tryGetSource();
-                if (qkw && qkw.id === SearchComponentType.PageEnvironment) this.render();
-            };
+            h.pushState = this.pushStateHandler.bind(this);
         })(window.history);
+    }
+
+    private pushStateHandler(state, key, path) {        
+        this._ops.apply(history, [state, key, path]);
+        if (this.properties.defaultQueryKeywords.isDisposed) return;
+        const qkw = this.properties.defaultQueryKeywords.tryGetSource();
+        if (qkw && qkw.id === SearchComponentType.PageEnvironment) this.render();
     }
 
     /**

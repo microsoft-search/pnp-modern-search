@@ -207,7 +207,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         let getVerticalsCounts: boolean = false;
 
         // Get default selected refiners from the URL
-        if(this.firstLoad) {
+        if (this.firstLoad) {
             this.defaultSelectedFilters = SearchHelper.getRefinementFiltersFromUrl();
             this.firstLoad = false;
         }
@@ -490,12 +490,15 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
     private _handleQueryStringChange() {
         ((h) => {
             this._ops = history.pushState;
-            h.pushState = (state, key, path) => {
-                this._ops.apply(history, [state, key, path]);
-                const qkw = this.properties.queryKeywords.tryGetSource();
-                if (qkw && qkw.id === SearchComponentType.PageEnvironment) this.render();
-            };
+            h.pushState = this.pushStateHandler.bind(this);
         })(window.history);
+    }
+
+    private pushStateHandler(state, key, path) {
+        this._ops.apply(history, [state, key, path]);
+        if (this.properties.queryKeywords.isDisposed) return;
+        const qkw = this.properties.queryKeywords.tryGetSource();
+        if (qkw && qkw.id === SearchComponentType.PageEnvironment) this.render();
     }
 
     private async _initQueryModifierInstance(queryModifierDefinition: IQueryModifierDefinition<any>): Promise<IQueryModifierInstance<any>> {
