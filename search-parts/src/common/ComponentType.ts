@@ -6,5 +6,6 @@ export enum ComponentType {
     SearchResults = 'pnpSearchResultsWebPart',
     SearchFilters = 'pnpSearchFiltersWebPart',
     SearchBox = 'pnpSearchBoxWebPart',
-    SearchVerticals = 'pnpSearchVerticalsWebPart'
+    SearchVerticals = 'pnpSearchVerticalsWebPart',
+    PageEnvironment = 'PageContext'
 }

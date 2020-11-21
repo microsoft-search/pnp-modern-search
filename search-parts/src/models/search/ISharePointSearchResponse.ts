@@ -1,4 +1,4 @@
-export interface ISearchResponse {
+export interface ISharePointSearchResponse {
     ElapsedTime: number;
     Properties?: {
         Key: string;

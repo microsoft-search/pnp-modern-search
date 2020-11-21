@@ -116,6 +116,24 @@ define([], function() {
             SelectedPropertiesFieldDescription: "Specifies the properties to retrieve from the search results.",
             SelectedPropertiesPlaceholderLabel: "Select properties",
             TermNotFound: "(Term with ID '{0}' not found)",
+            ApplyQueryTemplateBtnText: "Apply",
+            EnableAudienceTargetingTglLabel: "Enable audience targeting"
+          },
+          MicrosoftSearch: {
+            QueryTextFieldLabel: "Query text",
+            QueryTextFieldInfoMessage: "Use the <strong>Available connections</strong> Web Part configuration tab to specifiy either a static value or a value from a dynamic component on the page like a searchbox",
+            SourceName: "Microsoft Search (beta)",
+            SourceConfigurationGroupName: "Microsoft Search (beta)",
+            EntityTypesField: "Entity types to search",
+            SelectedFieldsPropertiesFieldLabel: "Selected fields",
+            SelectedFieldsPropertiesFieldDescription: "Specifies the fields to retrieve from the search results.",
+            SelectedFieldsPlaceholderLabel: "Select fields",
+            EnableTopResultsLabel: "Enable top results",
+            ContentSourcesFieldLabel: "Content sources",
+            ContentSourcesFieldDescriptionLabel: "IDs of connections defined in the Connectors Administration.",
+            ContentSourcesFieldPlaceholderLabel: "ex: 35d64c45-b88a-4f41-b197-1e19d9e7cea0"
+          },
+          SearchCommon: {
             Sort: {
               SortPropertyPaneFieldLabel: "Sort order",
               SortListDescription: "Specify the initial sort order for the search results. You can either select a field from the dropdown list (only if the data source data have already be fetched) or type your own custom value (press 'Enter' to save your entry)",
@@ -129,17 +147,9 @@ define([], function() {
               SortDirectionColumnLabel: "Direction",
               SortFieldColumnLabel: "Field name",
               EditSortLabel: "Edit sort order",
-              SortInvalidSortableFieldMessage: "This property is not sortable"
-            },
-            ApplyQueryTemplateBtnText: "Apply",
-            EnableAudienceTargetingTglLabel: "Enable audience targeting"
-          },
-          MicrosoftSearch: {
-            QueryTextFieldLabel: "Query text",
-            QueryTextFieldInfoMessage: "Use the <strong>Available connections</strong> Web Part configuration tab to specifiy either a static value or a value from a dynamic component on the page like a searchbox",
-            SourceName: "Microsoft Search (beta)",
-            SourceConfigurationGroupName: "Microsoft Search (beta)",
-            EntityTypesField: "Entity types to search"
+              SortInvalidSortableFieldMessage: "This property is not sortable",
+              SortFieldColumnPlaceholder: "Select field..."
+            }
           }
         },
         Controls: {

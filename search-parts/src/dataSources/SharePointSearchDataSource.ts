@@ -8,7 +8,7 @@ import {
     PropertyPaneDropdown,
     PropertyPaneLabel 
 } from "@microsoft/sp-property-pane";
-import * as strings from 'CommonStrings';
+import * as commonStrings from 'CommonStrings';
 import { ServiceScope, Guid, Text } from '@microsoft/sp-core-library';
 import { sortBy, isEmpty, uniq, cloneDeep } from "@microsoft/sp-lodash-subset";
 import { PagingBehavior } from "@pnp/modern-search-extensibility";
@@ -20,11 +20,11 @@ import { PageContext } from "@microsoft/sp-page-context";
 import { TokenService } from "../services/tokenService/TokenService";
 import { ITaxonomyService } from "../services/taxonomyService/ITaxonomyService";
 import { TaxonomyService } from "../services/taxonomyService/TaxonomyService";
-import { ISearchResult } from "../models/search/ISearchResult";
+import { ISharePointSearchResult } from "../models/search/ISharePointSearchResults";
 import { ILocalizableSearchResult, ILocalizableSearchResultProperty } from "../models/search/ILocalizableSearchResult";
 import { PropertyPaneAsyncCombo } from "../controls/PropertyPaneAsyncCombo/PropertyPaneAsyncCombo";
 import { IComboBoxOption } from "office-ui-fabric-react";
-import { ISearchQuery, SortDirection, ISort } from "../models/search/ISearchQuery";
+import { ISharePointSearchQuery, SortDirection, ISort } from "../models/search/ISharePointSearchQuery";
 import update from 'immutability-helper';
 import { AsyncCombo } from '../controls/PropertyPaneAsyncCombo/components/AsyncCombo';
 import { IAsyncComboProps } from '../controls/PropertyPaneAsyncCombo/components/IAsyncComboProps';
@@ -33,6 +33,8 @@ import { PropertyPaneNonReactiveTextField } from '../controls/PropertyPaneNonRea
 import { ITerm } from '../services/taxonomyService/ITaxonomyItems';
 import { BuiltinFilterTemplates } from '../layouts/AvailableTemplates';
 import { DataFilterHelper } from '../helpers/DataFilterHelper';
+import { ISortFieldConfiguration, SortFieldDirection } from '../models/search/ISortFieldConfiguration';
+import { EnumHelper } from '../helpers/EnumHelper';
 
 export enum BuiltinSourceIds {
     Documents = 'e7ec8cee-ded8-43c9-beb5-436b54b31e84',
@@ -50,16 +52,6 @@ export enum BuiltinSourceIds {
     RecentlyChangedItems = 'ba63bbae-fa9c-42c0-b027-9a878f16557c',
     RecommendedItems = 'ec675252-14fa-4fbe-84dd-8d098ed74181',
     Wiki = '9479bf85-e257-4318-b5a8-81a180f5faa1',
-}
-
-export interface ISortFieldConfiguration {
-    sortField: string;
-    sortDirection: SortFieldDirection;
-}
-
-export enum SortFieldDirection {
-    Ascending = 1,
-    Descending= 2    
 }
 
 /**
@@ -168,13 +160,12 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
 
         // Use the same chunk name as the main Web Part to avoid recreating/loading a new one
         const { PropertyFieldCollectionData, CustomCollectionFieldType } = await import(
-            /* webpackChunkName: 'pnp-modern-search-property-pane' */
+            /* webpackChunkName: 'data-visualizer-property-pane' */
             '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData'
         );
 
         const { PropertyPaneWebPartInformation } = await import(
-            /* webpackChunkName: 'pnp-modern-search-property-pane' */
-
+            /* webpackChunkName: 'data-visualizer-property-pane' */
             '@pnp/spfx-property-controls/lib/PropertyPaneWebPartInformation'
         );
 
@@ -229,22 +220,22 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
 
         return  [
             {
-                groupName: strings.DataSources.SharePointSearch.SourceName,
+                groupName: commonStrings.DataSources.SharePointSearch.SourceName,
                 groupFields: [
                     PropertyPaneLabel('', {
-                        text: strings.DataSources.SharePointSearch.QueryTextFieldLabel
+                        text: commonStrings.DataSources.SharePointSearch.QueryTextFieldLabel
                     }),
                     this._propertyPaneWebPartInformation({
-                        description: `<em>${strings.DataSources.SharePointSearch.QueryTextFieldInfoMessage}</em>`,
+                        description: `<em>${commonStrings.DataSources.SharePointSearch.QueryTextFieldInfoMessage}</em>`,
                         key: 'queryText'
                     }),
                     new PropertyPaneNonReactiveTextField('dataSourceProperties.queryTemplate', {
                         defaultValue: this.properties.queryTemplate,
-                        label: strings.DataSources.SharePointSearch.QueryTemplateFieldLabel,
-                        placeholderText: strings.DataSources.SharePointSearch.QueryTemplatePlaceHolderText,
+                        label: commonStrings.DataSources.SharePointSearch.QueryTemplateFieldLabel,
+                        placeholderText: commonStrings.DataSources.SharePointSearch.QueryTemplatePlaceHolderText,
                         multiline: true,
-                        description: strings.DataSources.SharePointSearch.QueryTemplateFieldDescription,
-                        applyBtnText: strings.DataSources.SharePointSearch.ApplyQueryTemplateBtnText,
+                        description: commonStrings.DataSources.SharePointSearch.QueryTemplateFieldDescription,
+                        applyBtnText: commonStrings.DataSources.SharePointSearch.ApplyQueryTemplateBtnText,
                         allowEmptyValue: false,
                         rows: 8
                     }),
@@ -252,12 +243,12 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                         availableOptions: this._resultSourcesOptions,
                         allowMultiSelect: false,
                         allowFreeform: true,
-                        description: strings.DataSources.SharePointSearch.ResultSourceIdDescription,
-                        label: strings.DataSources.SharePointSearch.ResultSourceIdLabel,
+                        description: commonStrings.DataSources.SharePointSearch.ResultSourceIdDescription,
+                        label: commonStrings.DataSources.SharePointSearch.ResultSourceIdLabel,
                         onLoadOptions: this.getBuiltinSourceIdOptions.bind(this),
                         searchAsYouType: false,
                         defaultSelectedKey: this.properties.resultSourceId,
-                        textDisplayValue: this.getEnumKeyByEnumValue(BuiltinSourceIds, this.properties.resultSourceId) !== null ? this.getEnumKeyByEnumValue(BuiltinSourceIds, this.properties.resultSourceId) : this.properties.resultSourceId,
+                        textDisplayValue: EnumHelper.getEnumKeyByEnumValue(BuiltinSourceIds, this.properties.resultSourceId) !== null ? EnumHelper.getEnumKeyByEnumValue(BuiltinSourceIds, this.properties.resultSourceId) : this.properties.resultSourceId,
                         onGetErrorMessage: this.validateSourceId.bind(this),
                         onPropertyChange: this.onCustomPropertyUpdate.bind(this),
                         onUpdateOptions: ((options: IComboBoxOption[]) => {
@@ -268,9 +259,9 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                         availableOptions: this._availableManagedProperties,
                         allowMultiSelect: true,
                         allowFreeform: true,
-                        description: strings.DataSources.SharePointSearch.SelectedPropertiesFieldDescription,
-                        label: strings.DataSources.SharePointSearch.SelectedPropertiesFieldLabel,
-                        placeholder: strings.DataSources.SharePointSearch.SelectedPropertiesPlaceholderLabel,
+                        description: commonStrings.DataSources.SharePointSearch.SelectedPropertiesFieldDescription,
+                        label: commonStrings.DataSources.SharePointSearch.SelectedPropertiesFieldLabel,
+                        placeholder: commonStrings.DataSources.SharePointSearch.SelectedPropertiesPlaceholderLabel,
                         onLoadOptions: this.getAvailableProperties.bind(this),
                         searchAsYouType: false,
                         defaultSelectedKeys: this.properties.selectedProperties,
@@ -280,17 +271,17 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                         }).bind(this)
                     }),
                     this._propertyFieldCollectionData('dataSourceProperties.sortList', {
-                        manageBtnLabel: strings.DataSources.SharePointSearch.Sort.EditSortLabel,
+                        manageBtnLabel: commonStrings.DataSources.SearchCommon.Sort.EditSortLabel,
                         key: 'sortList',
                         enableSorting: true,
-                        panelHeader: strings.DataSources.SharePointSearch.Sort.EditSortLabel,
-                        panelDescription: strings.DataSources.SharePointSearch.Sort.SortListDescription,
-                        label: strings.DataSources.SharePointSearch.Sort.SortPropertyPaneFieldLabel,
+                        panelHeader: commonStrings.DataSources.SearchCommon.Sort.EditSortLabel,
+                        panelDescription: commonStrings.DataSources.SearchCommon.Sort.SortListDescription,
+                        label: commonStrings.DataSources.SearchCommon.Sort.SortPropertyPaneFieldLabel,
                         value: this.properties.sortList,
                         fields: [
                             {
                                 id: 'sortField',
-                                title: strings.DataSources.SharePointSearch.Sort.SortFieldColumnLabel,
+                                title: commonStrings.DataSources.SearchCommon.Sort.SortFieldColumnLabel,
                                 type: this._customCollectionFieldType.custom,
                                 required: true,
                                 onCustomRender: ((field, value, onUpdate, item, itemId, onError) => {
@@ -302,7 +293,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
 
                                                 this._sharePointSearchService.validateSortableProperty(option.key as string).then((sortable: boolean) => {
                                                     if (!sortable) {
-                                                        onError(field.id, strings.DataSources.SharePointSearch.Sort.SortInvalidSortableFieldMessage);
+                                                        onError(field.id, commonStrings.DataSources.SearchCommon.Sort.SortInvalidSortableFieldMessage);
                                                     } else {
                                                         onUpdate(field.id, option.key as string);
                                                         onError(field.id, '');
@@ -315,23 +306,25 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                                             onLoadOptions: this.getAvailableProperties.bind(this),
                                             onUpdateOptions: ((options: IComboBoxOption[]) => {
                                                 this._availableManagedProperties = options;
-                                            }).bind(this)
+                                            }).bind(this),
+                                            placeholder: commonStrings.DataSources.SearchCommon.Sort.SortFieldColumnPlaceholder,
+                                            useComboBoxAsMenuWidth: false // Used when screen resolution is too small to display the complete value  
                                         } as IAsyncComboProps));
                                 }).bind(this)
                             },
                             {
                                 id: 'sortDirection',
-                                title: strings.DataSources.SharePointSearch.Sort.SortDirectionColumnLabel,
+                                title: commonStrings.DataSources.SearchCommon.Sort.SortDirectionColumnLabel,
                                 type: this._customCollectionFieldType.dropdown,
                                 required: true,
                                 options: [
                                     {
                                         key: SortFieldDirection.Ascending,
-                                        text: strings.DataSources.SharePointSearch.Sort.SortDirectionAscendingLabel
+                                        text: commonStrings.DataSources.SearchCommon.Sort.SortDirectionAscendingLabel
                                     },
                                     {
                                         key: SortFieldDirection.Descending,
-                                        text: strings.DataSources.SharePointSearch.Sort.SortDirectionDescendingLabel
+                                        text: commonStrings.DataSources.SearchCommon.Sort.SortDirectionDescendingLabel
                                     }
                                 ],
                                 defaultValue: SortFieldDirection.Ascending                                
@@ -340,40 +333,40 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                     }),
                     new PropertyPaneNonReactiveTextField('dataSourceProperties.refinementFilters', {
                         defaultValue: this.properties.refinementFilters,
-                        label: strings.DataSources.SharePointSearch.RefinementFilters,
+                        label: commonStrings.DataSources.SharePointSearch.RefinementFilters,
                         placeholderText: `ex: FileType:equals("docx")`,
                         multiline: true,
                         allowEmptyValue: true,
-                        description: strings.DataSources.SharePointSearch.RefinementFiltersDescription,
-                        applyBtnText: strings.DataSources.SharePointSearch.ApplyQueryTemplateBtnText,
+                        description: commonStrings.DataSources.SharePointSearch.RefinementFiltersDescription,
+                        applyBtnText: commonStrings.DataSources.SharePointSearch.ApplyQueryTemplateBtnText,
                         rows: 3
                     }),
                     PropertyPaneDropdown('dataSourceProperties.searchQueryLanguage', {
-                        label:  strings.DataSources.SharePointSearch.QueryCultureLabel,
+                        label:  commonStrings.DataSources.SharePointSearch.QueryCultureLabel,
                         options: [{
                             type: PropertyPaneDropdownOptionType.Normal,
                             key: this._currentLocaleId,
-                            text: strings.DataSources.SharePointSearch.QueryCultureUseUiLanguageLabel
+                            text: commonStrings.DataSources.SharePointSearch.QueryCultureUseUiLanguageLabel
                         } as IPropertyPaneDropdownOption].concat(sortBy(this._availableLanguages, ['text'])),
                         selectedKey: this.properties.searchQueryLanguage ? this.properties.searchQueryLanguage : this._currentLocaleId
                     }),
                     PropertyPaneToggle('dataSourceProperties.enableQueryRules', {
-                        label: strings.DataSources.SharePointSearch.EnableQueryRulesLabel,
+                        label: commonStrings.DataSources.SharePointSearch.EnableQueryRulesLabel,
                         checked: this.properties.enableQueryRules,
                     }),
                     PropertyPaneToggle('dataSourceProperties.includeOneDriveResults', {
-                        label: strings.DataSources.SharePointSearch.IncludeOneDriveResultsLabel,
+                        label: commonStrings.DataSources.SharePointSearch.IncludeOneDriveResultsLabel,
                         checked: this.properties.includeOneDriveResults,
                     }),
                     PropertyPaneToggle('dataSourceProperties.enableAudienceTargeting', {
-                        label: strings.DataSources.SharePointSearch.EnableAudienceTargetingTglLabel,
+                        label: commonStrings.DataSources.SharePointSearch.EnableAudienceTargetingTglLabel,
                         checked: this.properties.enableAudienceTargeting,
                     }),
                     PropertyPaneToggle('dataSourceProperties.enableLocalization', {
                         checked: this.properties.enableLocalization,
-                        label: strings.DataSources.SharePointSearch.EnableLocalizationLabel,
-                        onText: strings.DataSources.SharePointSearch.EnableLocalizationOnLabel,
-                        offText: strings.DataSources.SharePointSearch.EnableLocalizationOffLabel
+                        label: commonStrings.DataSources.SharePointSearch.EnableLocalizationLabel,
+                        onText: commonStrings.DataSources.SharePointSearch.EnableLocalizationOnLabel,
+                        offText: commonStrings.DataSources.SharePointSearch.EnableLocalizationOffLabel
                     })
                 ]
             }
@@ -523,63 +516,63 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         this._resultSourcesOptions = [
             {
                 key: BuiltinSourceIds.Documents,
-                text: this.getEnumKeyByEnumValue(BuiltinSourceIds, BuiltinSourceIds.Documents)
+                text: EnumHelper.getEnumKeyByEnumValue(BuiltinSourceIds, BuiltinSourceIds.Documents)
             },
             {
                 key: BuiltinSourceIds.ItemsMatchingContentType,
-                text: this.getEnumKeyByEnumValue(BuiltinSourceIds, BuiltinSourceIds.ItemsMatchingContentType)
+                text: EnumHelper.getEnumKeyByEnumValue(BuiltinSourceIds, BuiltinSourceIds.ItemsMatchingContentType)
             },
             {
                 key: BuiltinSourceIds.ItemsMatchingTag,
-                text: this.getEnumKeyByEnumValue(BuiltinSourceIds, BuiltinSourceIds.ItemsMatchingTag)
+                text: EnumHelper.getEnumKeyByEnumValue(BuiltinSourceIds, BuiltinSourceIds.ItemsMatchingTag)
             },
             {
                 key: BuiltinSourceIds.ItemsRelatedToCurrentUser,
-                text: this.getEnumKeyByEnumValue(BuiltinSourceIds, BuiltinSourceIds.ItemsRelatedToCurrentUser)
+                text: EnumHelper.getEnumKeyByEnumValue(BuiltinSourceIds, BuiltinSourceIds.ItemsRelatedToCurrentUser)
             },
             {
                 key: BuiltinSourceIds.ItemsWithSameKeywordAsThisItem,
-                text: this.getEnumKeyByEnumValue(BuiltinSourceIds, BuiltinSourceIds.ItemsWithSameKeywordAsThisItem)
+                text: EnumHelper.getEnumKeyByEnumValue(BuiltinSourceIds, BuiltinSourceIds.ItemsWithSameKeywordAsThisItem)
             },
             {
                 key: BuiltinSourceIds.LocalPeopleResults,
-                text: this.getEnumKeyByEnumValue(BuiltinSourceIds, BuiltinSourceIds.LocalPeopleResults)
+                text: EnumHelper.getEnumKeyByEnumValue(BuiltinSourceIds, BuiltinSourceIds.LocalPeopleResults)
             },
             {
                 key: BuiltinSourceIds.LocalReportsAndDataResults,
-                text: this.getEnumKeyByEnumValue(BuiltinSourceIds, BuiltinSourceIds.LocalReportsAndDataResults)
+                text: EnumHelper.getEnumKeyByEnumValue(BuiltinSourceIds, BuiltinSourceIds.LocalReportsAndDataResults)
             },
             {
                 key: BuiltinSourceIds.LocalSharePointResults,
-                text: this.getEnumKeyByEnumValue(BuiltinSourceIds, BuiltinSourceIds.LocalSharePointResults)
+                text: EnumHelper.getEnumKeyByEnumValue(BuiltinSourceIds, BuiltinSourceIds.LocalSharePointResults)
             },
             {
                 key: BuiltinSourceIds.LocalVideoResults,
-                text: this.getEnumKeyByEnumValue(BuiltinSourceIds, BuiltinSourceIds.LocalVideoResults)
+                text: EnumHelper.getEnumKeyByEnumValue(BuiltinSourceIds, BuiltinSourceIds.LocalVideoResults)
             },
             {
                 key: BuiltinSourceIds.Pages,
-                text: this.getEnumKeyByEnumValue(BuiltinSourceIds, BuiltinSourceIds.Pages)
+                text: EnumHelper.getEnumKeyByEnumValue(BuiltinSourceIds, BuiltinSourceIds.Pages)
             },
             {
                 key: BuiltinSourceIds.Pictures,
-                text:this.getEnumKeyByEnumValue(BuiltinSourceIds, BuiltinSourceIds.Pictures)
+                text:EnumHelper.getEnumKeyByEnumValue(BuiltinSourceIds, BuiltinSourceIds.Pictures)
             },
             {
                 key: BuiltinSourceIds.Popular,
-                text: this.getEnumKeyByEnumValue(BuiltinSourceIds, BuiltinSourceIds.Popular)
+                text: EnumHelper.getEnumKeyByEnumValue(BuiltinSourceIds, BuiltinSourceIds.Popular)
             },
             {
                 key: BuiltinSourceIds.RecentlyChangedItems,
-                text: this.getEnumKeyByEnumValue(BuiltinSourceIds, BuiltinSourceIds.RecentlyChangedItems)
+                text: EnumHelper.getEnumKeyByEnumValue(BuiltinSourceIds, BuiltinSourceIds.RecentlyChangedItems)
             },
             {
                 key: BuiltinSourceIds.RecommendedItems,
-                text: this.getEnumKeyByEnumValue(BuiltinSourceIds, BuiltinSourceIds.RecommendedItems)
+                text: EnumHelper.getEnumKeyByEnumValue(BuiltinSourceIds, BuiltinSourceIds.RecommendedItems)
             },
             {
                 key: BuiltinSourceIds.Wiki,
-                text: this.getEnumKeyByEnumValue(BuiltinSourceIds, BuiltinSourceIds.Wiki)
+                text: EnumHelper.getEnumKeyByEnumValue(BuiltinSourceIds, BuiltinSourceIds.Wiki)
             },
         ];
 
@@ -626,10 +619,10 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         });
     }
 
-    private async buildSharePointSearchQuery(dataContext: IDataContext): Promise<ISearchQuery> {
+    private async buildSharePointSearchQuery(dataContext: IDataContext): Promise<ISharePointSearchQuery> {
 
         // Build the search query according to options
-        let searchQuery: ISearchQuery = {};
+        let searchQuery: ISharePointSearchQuery = {};
 
         searchQuery.ClientType = 'ContentSearchRegular';
         searchQuery.Properties = [{
@@ -790,6 +783,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
     /**
      * Build the refinement condition in FQL format
      * @param selectedFilters The selected filter array
+     * @param filtersConfiguration The current filters configuration
      * @param encodeTokens If true, encodes the taxonomy refinement tokens in UTF-8 to work with GET requests. Javascript encodes natively in UTF-16 by default.
      */
     private buildRefinementQueryString(selectedFilters: IDataFilter[], filtersConfiguration: IDataFilterConfiguration[], encodeTokens?: boolean): string[] {
@@ -829,6 +823,11 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                             }
                         }
 
+                        // We know the taxonomy picker sends the selected taxonomy ID every time so we can safely use the value without processing
+                        if (filterConfiguration.selectedTemplate === BuiltinFilterTemplates.TaxonomyPicker) {
+                            value = `GP0|#${filterValue.value},L0|#0${filterValue.value}`; // Refine a SharePoint taxonomy term (only items with that specific term are retrieved)
+                        }
+
                         return /ǂǂ/.test(value) && encodeTokens ? encodeURIComponent(value) : value;
                     });
 
@@ -850,7 +849,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
 
                         // We know the taxonomy picker sends the selected taxonomy ID every time so we can safely use the value without processing
                         if (filterConfiguration.selectedTemplate === BuiltinFilterTemplates.TaxonomyPicker) {
-                            refinementToken = `or(${filterValue.value}, L0|#0${filterValue.value})`; // Refine a SharePoint taxonomy term
+                            refinementToken = `or(GP0|#${filterValue.value}, L0|#0${filterValue.value})`; // Refine a SharePoint taxonomy term (only results with that term). See https://docs.microsoft.com/en-us/sharepoint/technical-reference/automatically-created-managed-properties-in-sharepoint
                         }
 
                         // https://docs.microsoft.com/en-us/sharepoint/dev/general-development/fast-query-language-fql-syntax-reference#fql_range_operator
@@ -882,7 +881,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
     private validateSourceId(value: string): string {
         if (value.length > 0) {
             if (!(/^(\{){0,1}[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}(\}){0,1}$/).test(value)) {
-                return strings.DataSources.SharePointSearch.InvalidResultSourceIdMessage;
+                return commonStrings.DataSources.SharePointSearch.InvalidResultSourceIdMessage;
             }
         }
 
@@ -1028,7 +1027,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                     localizedTerms.push({
                         uniqueIdentifier: termToLocalize.uniqueIdentifier,
                         termId: termToLocalize.termId,
-                        localizedTermLabel: Text.format(strings.DataSources.SharePointSearch.TermNotFound, termToLocalize.termId)
+                        localizedTermLabel: Text.format(commonStrings.DataSources.SharePointSearch.TermNotFound, termToLocalize.termId)
                     });
                 }
             });
@@ -1064,14 +1063,14 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
      * @param rawResults The raw search results to translate coming from SharePoint search
      * @param currentUICultureName the current culture UI name (ex: 'en-US')
      */
-    private async _getLocalizedMetadata(rawResults: ISearchResult[], currentUICultureName: string): Promise<ISearchResult[]> {
+    private async _getLocalizedMetadata(rawResults: ISharePointSearchResult[], currentUICultureName: string): Promise<ISharePointSearchResult[]> {
 
         // Get the current lcid according to current page language
         const lcid = LocalizationHelper.getLocaleId(currentUICultureName);
 
         let resultsToLocalize: ILocalizableSearchResult[] = [];
 
-        let updatedResults: ISearchResult[] = [];
+        let updatedResults: ISharePointSearchResult[] = [];
         let localizedTerms = [];
 
         // Step #1: identify all taxonomy like properties and gather corresponding term ids for such properties.
@@ -1194,7 +1193,10 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                 if (existingResults.length > 0) {
 
                     existingResults[0].properties.forEach((res) => {
-                        result[res.propertyName] = res.termLabels.join(', ');
+
+                        // Create a new property and keep the original value with the original property name
+                        // This allow to let the original value accessible in templates 
+                        result[`Auto${res.propertyName}`] = res.termLabels.join(', ');                        
                     });
                 }
 
@@ -1206,10 +1208,5 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         } else {
             return rawResults;
         }
-    }
-
-    private getEnumKeyByEnumValue(myEnum: any, enumValue: any): string {
-        let keys = Object.keys(myEnum).filter(x => myEnum[x] == enumValue);
-        return keys.length > 0 ? keys[0] : null;
     }
 }

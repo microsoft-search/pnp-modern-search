@@ -1,3 +1,4 @@
+import * as jspath from 'jspath';
 
 export class ObjectHelper {
 
@@ -11,9 +12,22 @@ export class ObjectHelper {
      */
     public static flatten(object: any, prefix = ''): any {
         return Object.keys(object).reduce((prev, element) => {
-            return object[element]  && typeof object[element] == 'object' &&  !Array.isArray(element)
-            ? { ...prev, ...this.flatten(object[element], `${prefix}${element}.`) }
-            : { ...prev, ...{ [`${prefix}${element}`]: object[element] } };
+
+            let flattenObject;
+
+            // For properties with dots in the name (ex: @odata.type), we enclose them with "". This way they could be resolved by the jspath library. 
+            if (element.split('.').length > 1) {
+                element = `"${element}"`;
+            }
+
+            if (object[element] && typeof object[element] == 'object' && !Array.isArray(element)) {
+                flattenObject = { ...prev, ...this.flatten(object[element], `${prefix}${element}.`) };
+            } else {
+                flattenObject = { ...prev, ...{ [`${prefix}${element}`]: object[element] } };
+            }
+
+            return flattenObject;
+
         }, {});
     }
 
@@ -21,25 +35,21 @@ export class ObjectHelper {
      * Get object proeprty value by its deep path.
      * @param object the object containg the property path
      * @param path the property path to get
-     * @returns the property value if found, null otherwise
+     * @returns the property value if found, undefined otherwise
      */
     public static byPath(object: any, path: string): any  {
 
         if (path && object) {
-            path = path.replace(/\[(\w+)\]/g, '.$1');
-            path = path.replace(/^\./, '');           
-            var a = path.split('.');
-            for (var i = 0, n = a.length; i < n; ++i) {
-                var k = a[i];
-                if (k in object) {
-                    object = object[k];
-                } else {
-                    return null;
-                }
+
+            try {
+                return jspath.apply(`.${path}`,object)[0];   
+            } catch (error) {
+                // Case when unexpected string or tokens are passed in the path
+                return null;
             }
-            return object;
+                 
         } else {
-            return null;
+            return undefined;
         }
     }
 }

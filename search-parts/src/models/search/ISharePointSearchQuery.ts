@@ -1,7 +1,7 @@
 /**
  * Describes the SearchQuery interface
  */
-export interface ISearchQuery {
+export interface ISharePointSearchQuery {
     /**
      * A string that contains the text for the search query.
      */

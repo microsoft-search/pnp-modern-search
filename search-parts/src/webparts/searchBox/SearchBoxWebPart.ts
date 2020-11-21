@@ -78,6 +78,8 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
    */
   private _selectedCustomProviders: ISuggestionProvider[] = [];
 
+  private _pushStateCallback = null;
+
   constructor() {
     super();
 
@@ -98,6 +100,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
     await this.loadExtensions(this.properties.extensibilityLibraryConfiguration);
 
     this._bindHashChange();
+    this._handleQueryStringChange();
 
     this.context.dynamicDataSourceManager.initializeSource(this);
 
@@ -176,6 +179,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
   }
 
   protected onDispose(): void {
+    window.history.pushState = this._pushStateCallback;
     ReactDom.unmountComponentAtNode(this.domElement);
   }
 
@@ -778,5 +782,22 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
     }
 
     return '';
+  }
+
+  /**
+   * Subscribes to URL query string change events using SharePoint page router
+   */
+  private _handleQueryStringChange() {
+      ((h) => {
+          this._pushStateCallback = history.pushState;
+          h.pushState = this.pushStateHandler.bind(this);
+      })(window.history);
+  }
+
+  private pushStateHandler(state, key, path) {        
+      this._pushStateCallback.apply(history, [state, key, path]);
+      if (this.properties.queryText.isDisposed) return;
+      const source = this.properties.queryText.tryGetSource();
+      if (source && source.id === ComponentType.PageEnvironment) this.render();
   }
 }

@@ -4,7 +4,7 @@ import { TextField, Fabric, ShimmeredDetailsList, IShimmeredDetailsListProps } f
 import { ITooltipHostProps, TooltipHost, ITooltipStyles, Shimmer, ShimmerElementsGroup, ShimmerElementType, IShimmerElement, mergeStyleSets, ITheme } from 'office-ui-fabric-react';
 import * as Handlebars from 'handlebars';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
-import { BaseWebComponent, BuiltinTemplateSlots } from '@pnp/modern-search-extensibility';
+import { BaseWebComponent } from '@pnp/modern-search-extensibility';
 import { groupBy, findIndex, isEmpty } from "@microsoft/sp-lodash-subset";
 import { FileIcon } from '../components/FileIconComponent';
 import { DetailsListLayoutMode, SelectionMode, IColumn, IGroup, IDetailsRowProps, DetailsRow, IDetailsHeaderProps, DetailsHeader, CheckboxVisibility } from 'office-ui-fabric-react/lib/DetailsList';
@@ -232,19 +232,21 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
             isRowHeader: true,
             isResizable: column.isResizable === true,
             isMultiline: column.isMultiline === true,
-            isSorted: column.enableSorting === true,
+            isSorted: column.enableSorting && !column.useHandlebarsExpr === true,
             isSortedDescending: false,
             sortAscendingAriaLabel: 'Sorted A to Z',
             sortDescendingAriaLabel: 'Sorted Z to A',
-            onColumnClick: column.enableSorting ? this._onColumnClick : null,
+            onColumnClick: column.enableSorting && !column.useHandlebarsExpr ? this._onColumnClick : null,
             data: {
               // Set arbitrary data for the current column
-              useHandlebarsExpr: column.useHandlebarsExpr
+              useHandlebarsExpr: column.useHandlebarsExpr,
+
+              // Set the column value for sorting (i.e field to use)
+              value: column.value
             },
             isPadded: true,
             onRender: (item: any) => {
-
-              let value: any = ObjectHelper.byPath(item, column.value);
+              let value: any; 
               let renderColumnValue: JSX.Element = null;
               let hasError: boolean = false;
               let toolTipText: string = column.useHandlebarsExpr ? value : '';
@@ -257,6 +259,10 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
                   hasError = true;
                   value = `<span style="color:red;font-style: italic" title="${error.message}">${`Error: ${error.message}`}</span>`;
                 }
+              } else {
+
+                // A field has been selected
+                value = ObjectHelper.byPath(item, column.value);
               }
 
               renderColumnValue = <span title={!hasError ? toolTipText : ''} dangerouslySetInnerHTML={{ __html: this._domPurify.sanitize(value) }}></span>;
@@ -278,14 +284,6 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
 
   public render() {
     const { columns, items } = this.state;
-
-    let renderFilter: JSX.Element = null;
-
-    if (this.props.enableFiltering) {
-      renderFilter = <div className={classNames.controlWrapper}>
-        <TextField label="Filter by name:" onChange={this._onChangeText.bind(this)} styles={controlStyles} />;
-      </div>;
-    }
 
     let shimmeredDetailsListProps: IShimmeredDetailsListProps = {
       theme: this.props.themeVariant as ITheme,
@@ -422,16 +420,9 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
 
     return (
       <Fabric>
-        {renderFilter}
         <ShimmeredDetailsList {...shimmeredDetailsListProps}/>
       </Fabric>
     );
-  }
-
-  private _onChangeText = (ev: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, text: string): void => {
-    this.setState({
-      items: text ? this._allItems.filter(i => i.Title.toLowerCase().indexOf(text) > -1) : this._allItems
-    });
   }
 
   private _onColumnClick = (ev: React.MouseEvent<HTMLElement>, column: IColumn): void => {
@@ -449,7 +440,7 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
     });
 
     // Sort is done on the original value, not the processed one
-    const newItems = this._copyAndSort(items, currColumn.fieldName!, currColumn.isSortedDescending);
+    const newItems = this._copyAndSort(items, currColumn.data.value, currColumn.isSortedDescending);
     this.setState({
       columns: newColumns,
       items: newItems
@@ -458,7 +449,10 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
 
   private _buildGroups(items: any[], groupByField: string): IGroup[] {
 
-    const groupedItems = groupBy(items, groupByField);
+    const groupedItems = groupBy(items, (i) => {
+      return ObjectHelper.byPath(i, groupByField);
+    });
+
     let groups: IGroup[] = [];
 
     for (const group in groupedItems) {
@@ -515,12 +509,11 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
   }
 
   private _copyAndSort<T>(items: T[], columnKey: string, isSortedDescending: boolean): T[] {
-    const key = columnKey as keyof T;
-  
+
     return items.slice(0).sort((a: T, b: T) => {
   
-      let aValue: any = a[key];
-      let bValue: any = b[key];
+      let aValue: any = ObjectHelper.byPath(a, columnKey);
+      let bValue: any = ObjectHelper.byPath(b, columnKey);
     
       return ((isSortedDescending ? aValue < bValue : aValue > bValue) ? 1 : -1);
   

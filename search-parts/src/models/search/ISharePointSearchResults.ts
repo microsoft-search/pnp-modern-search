@@ -1,6 +1,6 @@
 import { IDataFilterResult } from "@pnp/modern-search-extensibility";
 
-export interface ISearchResult {
+export interface ISharePointSearchResult {
     [key: string]: string;
 
     // Known SharePoint managed properties
@@ -20,7 +20,7 @@ export interface ISearchResult {
 export interface ISharePointSearchResults {
     queryModification?: string;
     queryKeywords: string;
-    relevantResults: ISearchResult[];
+    relevantResults: ISharePointSearchResult[];
     secondaryResults: ISharePointSearchResultBlock[];
     refinementResults: IDataFilterResult[];
     promotedResults?: ISharePointSearchPromotedResult[];
@@ -36,6 +36,6 @@ export interface ISharePointSearchPromotedResult {
 
 export interface ISharePointSearchResultBlock {
     title: string;
-    results: ISearchResult[];
+    results: ISharePointSearchResult[];
 }
   

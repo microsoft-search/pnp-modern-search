@@ -164,12 +164,20 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
   private webPartInstanceServiceScope: ServiceScope;
 
   private _lastSelectedFilters: IDataFilter[] = [];
-  private _lastInputQueryText: string;
+  private _lastInputQueryText: string = undefined;
 
   /**
    * The default template slots when the data source is instanciated for the first time
    */
   private _defaultTemplateSlots: ITemplateSlot[];
+
+  private _pushStateCallback = null;
+
+  constructor() {
+    super();
+
+    this._bindHashChange = this._bindHashChange.bind(this);    
+  }
 
   public async render(): Promise<void> {    
 
@@ -337,6 +345,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
       if (!isEqual(inputQueryText, this._lastInputQueryText)) {
         dataContext.pageNumber = 1;
+        this.currentPageNumber = 1;
+        this._resetPagingData();
       }
 
       this._lastInputQueryText = inputQueryText;
@@ -369,14 +379,34 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
       // Remove the blank space introduced by the control zone when the Web Part displays nothing
       // WARNING: in theory, we are not supposed to touch DOM outside of the Web Part root element, This will break if the page sttribute change
-      const parentControlZone = document.querySelector(`div[data-sp-a11y-id="ControlZone_${this.instanceId}"]`);
+      
+      // 1st attempt: use the DOM element with the Web Part instance id     
+      let parentControlZone =  document.getElementById(this.instanceId);
+
+      if (!parentControlZone) {
+
+        // 2nd attempt: Try the data-automation-id attribute as we suppose MS tests won't change this name for a while for convenience.
+        parentControlZone = this.domElement.closest(`div[data-automation-id='CanvasControl'], .CanvasControl`);
+
+        if (!parentControlZone) {
+
+          // 3rd attempt: try the Control zone with ID
+          parentControlZone = this.domElement.closest(`div[data-sp-a11y-id="ControlZone_${this.instanceId}"]`);
+
+          if (!parentControlZone) {
+            Log.warn(LogSource,`Parent control zone DOM element was not found in the DOM.`, this.webPartInstanceServiceScope);
+          }
+        }
+      }
       
       // If the current selected vertical is not the one configured for this Web Part, we show nothing
       if (verticalData && verticalData.selectedVertical.key !== this.properties.selectedVerticalKey) {
 
         if (this.displayMode === DisplayMode.Edit) {
 
-          parentControlZone.removeAttribute('style');
+          if (parentControlZone) {
+            parentControlZone.removeAttribute('style');
+          }
 
           renderRootElement = React.createElement('div', {}, 
                                 React.createElement(
@@ -396,12 +426,17 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             availablefilters: []
           };
 
-          // Remove margin and padding for the empty control zone
-          parentControlZone.setAttribute('style', 'margin-top:0px;padding:0px');
+          if (parentControlZone) {
+            // Remove margin and padding for the empty control zone
+            parentControlZone.setAttribute('style', 'margin-top:0px;padding:0px');
+          }
         }
 
       } else {
-        parentControlZone.removeAttribute('style');
+
+        if (parentControlZone) {
+          parentControlZone.removeAttribute('style');
+        }
       }
     }  
     
@@ -437,6 +472,9 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
     // Bind web component events
     this.bindPagingEvents();
+
+    this._bindHashChange();
+    this._handleQueryStringChange();
 
     // Register Web Components in the global page context. We need to do this BEFORE the template processing to avoid race condition.
     // Web components are only defined once.
@@ -686,7 +724,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
     // Remove the connection when static query text or unused
     if ((propertyPath.localeCompare('queryTextSource') === 0 && this.properties.queryTextSource === QueryTextSource.StaticValue) ||
-        !this.properties.useInputQueryText || (oldValue  === QueryTextSource.StaticValue && newValue === QueryTextSource.DynamicValue)) {
+        (propertyPath.localeCompare('queryTextSource') === 0 && oldValue  === QueryTextSource.StaticValue && newValue === QueryTextSource.DynamicValue) ||
+        (propertyPath.localeCompare('useInputQueryText') === 0 && !this.properties.useInputQueryText)) {
 
         if (this.properties.queryText.tryGetSource()) {
           this.properties.queryText.unregister(this.render);
@@ -1047,6 +1086,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
           label: webPartStrings.PropertyPane.LayoutPage.TemplateUrlFieldLabel,
           placeholder: webPartStrings.PropertyPane.LayoutPage.TemplateUrlPlaceholder,
           deferredValidationTime: 500,
+          validateOnFocusIn: true,
+          validateOnFocusOut: true,
           onGetErrorMessage: this.onTemplateUrlChange.bind(this)
       }));
     }
@@ -1580,19 +1621,19 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
       try {
           // Doesn't raise any error if file is empty (otherwise error message will show on initial load...)
           if (isEmpty(value)) {
-              return '';
+            Promise.resolve('');
           }
           // Resolves an error if the file isn't a valid .htm or .html file
           else if (!this.templateService.isValidTemplateFile(value)) {
-              return webPartStrings.PropertyPane.LayoutPage.ErrorTemplateExtension;
+              return Promise.resolve(webPartStrings.PropertyPane.LayoutPage.ErrorTemplateExtension);
           }
           // Resolves an error if the file doesn't answer a simple head request
           else {
               await this.templateService.ensureFileResolves(value);
-              return '';
+              return Promise.resolve('');
           }
       } catch (error) {
-          return Text.format(webPartStrings.PropertyPane.LayoutPage.ErrorTemplateResolve, error);
+          return Promise.resolve(Text.format(webPartStrings.PropertyPane.LayoutPage.ErrorTemplateResolve, error));
       }
   }
 
@@ -1785,5 +1826,35 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
   private _resetPagingData() {
     this.availablePageLinks = [];
     this.currentPageLinkUrl = null;
+  }
+
+    /**
+   * Subscribes to URL hash change if the dynamic property is set to the default 'URL Fragment' property
+   */
+  private _bindHashChange() {
+    
+    if (this.properties.queryText.tryGetSource() && this.properties.queryText.reference.localeCompare('PageContext:UrlData:fragment') === 0) {
+        // Manually subscribe to hash change since the default property doesn't
+        window.addEventListener('hashchange', this.render);
+    } else {
+        window.removeEventListener('hashchange', this.render);
+    }
+  }
+
+  /**
+   * Subscribes to URL query string change events using SharePoint page router
+   */
+  private _handleQueryStringChange() {
+      ((h) => {
+          this._pushStateCallback = history.pushState;
+          h.pushState = this.pushStateHandler.bind(this);
+      })(window.history);
+  }
+
+  private pushStateHandler(state, key, path) {        
+      this._pushStateCallback.apply(history, [state, key, path]);
+      if (this.properties.queryText.isDisposed) return;
+      const source = this.properties.queryText.tryGetSource();
+      if (source && source.id === ComponentType.PageEnvironment) this.render();
   }
 }

@@ -53,7 +53,7 @@ export class TokenService implements ITokenService {
      * The list of static tokens values set by the Web Part as context
      */
     private tokenValuesList: { [key: string]: any } = {
-        [BuiltinTokenNames.inputQueryText]: null,
+        [BuiltinTokenNames.inputQueryText]: undefined,
         [BuiltinTokenNames.filters]: {}
     };
 
@@ -123,8 +123,18 @@ export class TokenService implements ITokenService {
                     // Take the expression inside curly brackets
                     const tokenName = token.substr(1).slice(0, -1);
 
-                    if (ObjectHelper.byPath(this.tokenValuesList, tokenName) !== null) {
-                        inputString = inputString.replace(new RegExp(token, 'gi'), ObjectHelper.byPath(this.tokenValuesList, tokenName));
+                    // Check if the proeprty exists in the object
+                    // 'undefined' => token hasn't been initialized in the TokenService instance. We left the token expression untouched (ex: {token}).
+                    // 'null' => token has been initialized and set with a null value. We replace by an empty string as we don't want the string 'null' litterally.
+                    // '' (empty string) => replaced in the original string with an empty string as well.
+                    if (ObjectHelper.byPath(this.tokenValuesList, tokenName) !== undefined) {
+                        
+                        if (ObjectHelper.byPath(this.tokenValuesList, tokenName) !== null) {
+                            inputString = inputString.replace(new RegExp(token, 'gi'), ObjectHelper.byPath(this.tokenValuesList, tokenName));
+                        } else {
+                            // If the property value is 'null', we replace by an empty string. 'null' means it has been already set but resolved as empty.
+                            inputString = inputString.replace(new RegExp(token, 'gi'), '');
+                        }
                     }
                 });
             }

@@ -115,6 +115,24 @@ declare interface ICommonStrings {
         SelectedPropertiesFieldDescription: string;
         SelectedPropertiesPlaceholderLabel: string;
         TermNotFound: string;
+        ApplyQueryTemplateBtnText: string;
+        EnableAudienceTargetingTglLabel: string;
+      },
+      MicrosoftSearch: {
+        QueryTextFieldLabel: string;
+        QueryTextFieldInfoMessage: string;
+        SourceName: string;
+        SourceConfigurationGroupName: string;
+        EntityTypesField: string;
+        SelectedFieldsPropertiesFieldLabel: string;
+        SelectedFieldsPropertiesFieldDescription: string;
+        SelectedFieldsPlaceholderLabel: string;
+        ContentSourcesFieldLabel: string;
+        ContentSourcesFieldDescriptionLabel: string;
+        ContentSourcesFieldPlaceholderLabel: string;
+        EnableTopResultsLabel: string;
+      },
+      SearchCommon: {
         Sort: {
           SortPropertyPaneFieldLabel
           SortListDescription: string;
@@ -131,16 +149,8 @@ declare interface ICommonStrings {
           SortableFieldDisplayValueField: string;
           EditSortLabel: string;
           SortInvalidSortableFieldMessage: string;
+          SortFieldColumnPlaceholder: string;
         };
-        ApplyQueryTemplateBtnText: string;
-        EnableAudienceTargetingTglLabel: string;
-      },
-      MicrosoftSearch: {
-        QueryTextFieldLabel: string;
-        QueryTextFieldInfoMessage: string;
-        SourceName: string;
-        SourceConfigurationGroupName: string;
-        EntityTypesField: string;
       }
     },
     Controls: {

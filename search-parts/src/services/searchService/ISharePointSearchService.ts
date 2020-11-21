@@ -1,6 +1,6 @@
 import ISharePointManagedProperty from "../../models/search/ISharePointManagedProperty";
-import { ISharePointSearchResults } from "../../models/search/ISearchResult";
-import { ISearchQuery } from "../../models/search/ISearchQuery";
+import { ISharePointSearchResults } from "../../models/search/ISharePointSearchResults";
+import { ISharePointSearchQuery } from "../../models/search/ISharePointSearchQuery";
 
 export interface ISharePointSearchService {
 
@@ -9,7 +9,7 @@ export interface ISharePointSearchService {
      * @param searchQuery The search query in KQL format
      * @return The search results
      */
-     search(searchQuery: ISearchQuery): Promise<ISharePointSearchResults>;
+     search(searchQuery: ISharePointSearchQuery): Promise<ISharePointSearchResults>;
 
 	/**
      * Get available SharePoint search managed properties from the search schema

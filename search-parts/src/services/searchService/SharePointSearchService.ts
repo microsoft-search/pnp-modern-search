@@ -5,14 +5,14 @@ import { ISharePointSearchService } from './ISharePointSearchService';
 import { PnPClientStorage } from "@pnp/common/storage";
 import { dateAdd } from "@pnp/common/util";
 import { PageContext } from '@microsoft/sp-page-context';
-import { ISearchResult, ISharePointSearchResults, ISharePointSearchResultBlock, ISharePointSearchPromotedResult } from '../../models/search/ISearchResult';
+import { ISharePointSearchResult, ISharePointSearchResults, ISharePointSearchResultBlock, ISharePointSearchPromotedResult } from '../../models/search/ISharePointSearchResults';
 import ISharePointManagedProperty from '../../models/search/ISharePointManagedProperty';
 import { isEmpty } from '@microsoft/sp-lodash-subset';
 import { IDataFilterResultValue, IDataFilterResult, FilterComparisonOperator } from '@pnp/modern-search-extensibility';
 import LocalizationHelper from '../../helpers/LocalizationHelper';
-import { ISearchResponse } from '../../models/search/ISearchResponse';
+import { ISharePointSearchResponse } from '../../models/search/ISharePointSearchResponse';
 import { ISuggestResult, ISuggestQuery } from '../../models/search/ISuggestQuery';
-import { ISearchQuery, SortDirection } from '../../models/search/ISearchQuery';
+import { ISharePointSearchQuery, SortDirection } from '../../models/search/ISharePointSearchQuery';
 import { cloneDeep } from "@microsoft/sp-lodash-subset";
 import { Constants } from '../../common/Constants';
 
@@ -68,7 +68,7 @@ export class SharePointSearchService implements ISharePointSearchService {
      * @param searchQuery The search query in KQL format
      * @return The search results
      */
-    public async search(searchQuery: ISearchQuery): Promise<ISharePointSearchResults> {
+    public async search(searchQuery: ISharePointSearchQuery): Promise<ISharePointSearchResults> {
 
 		let results: ISharePointSearchResults = {
             queryKeywords: searchQuery.Querytext,
@@ -91,7 +91,7 @@ export class SharePointSearchService implements ISharePointSearchService {
             });
 
             if (response.ok) {
-                const searchResponse: ISearchResponse = await response.json();
+                const searchResponse: ISharePointSearchResponse = await response.json();
 
                 if (searchResponse.PrimaryQueryResult) {
 
@@ -112,7 +112,7 @@ export class SharePointSearchService implements ISharePointSearchService {
                     const refinementRows: any = refinementResultsRows ? refinementResultsRows.Refiners : [];
 
                     // Map search results
-                    let searchResults: ISearchResult[] = this.getSearchResults(resultRows);
+                    let searchResults: ISharePointSearchResult[] = this.getSearchResults(resultRows);
 
                     // Map refinement results
                     refinementRows.forEach((refiner) => {
@@ -204,7 +204,7 @@ export class SharePointSearchService implements ISharePointSearchService {
     public async getAvailableManagedProperties(): Promise<ISharePointManagedProperty[]> {
 
         let managedProperties: ISharePointManagedProperty[] = [];
-        let searchQuery: ISearchQuery = {};
+        let searchQuery: ISharePointSearchQuery = {};
 
         searchQuery.Querytext = '*';
         searchQuery.Refiners = 'ManagedProperties(filter=50000/0/*,sort=name/ascending)';
@@ -222,7 +222,7 @@ export class SharePointSearchService implements ISharePointSearchService {
 
             if (response.ok) {
 
-                const searchResponse: ISearchResponse = await response.json();
+                const searchResponse: ISharePointSearchResponse = await response.json();
                 const refinementResultsRows = searchResponse.PrimaryQueryResult.RefinementResults;
                 const refinementRows: any = refinementResultsRows ? refinementResultsRows.Refiners : [];
 
@@ -287,7 +287,7 @@ export class SharePointSearchService implements ISharePointSearchService {
 
         let isSortable: boolean = false;
 
-        let searchQuery: ISearchQuery = {};
+        let searchQuery: ISharePointSearchQuery = {};
         searchQuery.Querytext = "*";
         searchQuery.SortList = [
             {
@@ -384,14 +384,14 @@ export class SharePointSearchService implements ISharePointSearchService {
 	 * Extracts search results from search response rows
 	 * @param resultRows the search result rows
 	 */
-	private getSearchResults(resultRows: any): ISearchResult[] {
+	private getSearchResults(resultRows: any): ISharePointSearchResult[] {
 		
         // Map search results
-        let searchResults: ISearchResult[] = resultRows.map((elt) => {
+        let searchResults: ISharePointSearchResult[] = resultRows.map((elt) => {
 
 			// Build item result dynamically
 			// We can't type the response here because search results are by definition too heterogeneous so we treat them as key-value object
-			let result: ISearchResult = {};
+			let result: ISharePointSearchResult = {};
 
 			elt.Cells.map((item) => {
 				result[item.Key] = item.Value;
@@ -403,7 +403,7 @@ export class SharePointSearchService implements ISharePointSearchService {
 		return searchResults;
     }
     
-    private getRequestPayload(searchQuery: ISearchQuery): string {
+    private getRequestPayload(searchQuery: ISharePointSearchQuery): string {
 
         let queryPayload: any = cloneDeep(searchQuery); 
 
