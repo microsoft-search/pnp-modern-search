@@ -966,19 +966,19 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         try {
             // Doesn't raise any error if file is empty (otherwise error message will show on initial load...)
             if (isEmpty(value)) {
-                return '';
+                return Promise.resolve('');
             }
             // Resolves an error if the file isn't a valid .htm or .html file
             else if (!TemplateService.isValidTemplateFile(value)) {
-                return strings.ErrorTemplateExtension;
+                return Promise.resolve(strings.ErrorTemplateExtension);
             }
             // Resolves an error if the file doesn't answer a simple head request
             else {
                 await this._templateService.ensureFileResolves(value);
-                return '';
+                return Promise.resolve('');
             }
         } catch (error) {
-            return Text.format(strings.ErrorTemplateResolve, error);
+            return Promise.resolve(Text.format(strings.ErrorTemplateResolve, error));
         }
     }
 
@@ -1666,6 +1666,8 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                 label: strings.TemplateUrlFieldLabel,
                 placeholder: strings.TemplateUrlPlaceholder,
                 deferredValidationTime: 500,
+                validateOnFocusOut: true,
+                validateOnFocusIn: true,
                 onGetErrorMessage: this._onTemplateUrlChange.bind(this)
             }));
         }
