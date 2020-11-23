@@ -156,20 +156,6 @@ class SearchService implements ISearchService {
             });
         }
 
-        searchQuery.Properties = [{
-            Name: "EnableDynamicGroups",
-            Value: {
-                BoolVal: true,
-                QueryPropertyValueTypeIndex: 3
-            }
-        }, {
-            Name: "EnableMultiGeoSearch",
-            Value: {
-                BoolVal: true,
-                QueryPropertyValueTypeIndex: 3
-            }
-        }];
-
         // Toggle to include user's personal OneDrive results as a secondary result block
         // https://docs.microsoft.com/en-us/sharepoint/support/search/private-onedrive-results-not-included
         if (this._includeOneDriveResults) {
