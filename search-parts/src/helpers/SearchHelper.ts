@@ -82,7 +82,7 @@ export class SearchHelper {
 
                         // Check if the condition seems to be an FQL filter or not (i.e. value contains one or more FQL reserved operators NOT in quotes)
                         // See https://docs.microsoft.com/en-us/sharepoint/dev/general-development/fast-query-language-fql-syntax-reference
-                        if (!(/(and|or|any|andnot|count|decimal|rank|near|onear|int|in32|int64|float|double|datetime|max|min|range|phrase|scope|filter|not|string|starts-with|ends-with|equals|words|xrank)(?=[^"]*("[^"]*"[^"]*)*$)/gm.test(value))) {                            
+                        if (!(/(and|or|any|andnot|count|decimal|rank|near|onear|int|in32|int64|float|double|datetime|max|min|range|phrase|scope|filter|not|string|starts-with|ends-with|equals|words|xrank)\((?=[^"]*("[^"]*"[^"]*)*$)/gm.test(value))) {                            
                             // Encode the text value in HEX
                             token = `ǂǂ${this._stringToHex(value)}`;
                         } else {
