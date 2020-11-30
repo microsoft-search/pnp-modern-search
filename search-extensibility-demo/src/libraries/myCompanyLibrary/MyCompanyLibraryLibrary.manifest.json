@@ -2,8 +2,6 @@
   "id": "dc4f961b-dbe0-44b4-982d-5776bf99d015",
   "alias": "MyCompanyLibraryLibrary",
   "componentType": "Library",
-
-  // The "*" signifies that the version should be taken from the package.json
   "version": "*",
   "manifestVersion": 2
 }
