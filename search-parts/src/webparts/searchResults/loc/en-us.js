@@ -58,8 +58,9 @@ define([], function() {
         "HandlebarsHelpersDescription": "Enable functions from moment and handlebars helpers. See https://github.com/SharePoint/sp-dev-fx-webparts/blob/master/samples/react-search-refiners/README.md#available-tokens for more information.",
         "PromotedResultsLabel": "Promoted result(s)",
         "PanelCloseButtonAria": "Close",
-        "UseRefinersWebPartLabel": "Connect to a search refiners Web Part",
+        "UseRefinersWebPartLabel": "Connect to a search filters Web Part",
         "UseRefinersFromComponentLabel": "Use refiners from this component",
+        "UseSearchVerticalsLabel": "Connect to a search vertical Web Part",
         "UsePaginationFromComponentLabel": "Use pagination from this component",
         "RefinementFilters": "Refinement filters",
         "customTemplateFieldsLabel": "Custom template field values",
@@ -83,6 +84,8 @@ define([], function() {
             "SortableFieldDisplayValueField": "Field name to display",
             "EditSortableFieldsLabel": "Edit sortable fields",
             "EditSortLabel": "Edit sort order",
+            "EditSortLabelFieldName": "Field name",
+            "EditSortDirection": "Sort Direction",
             "SortInvalidSortableFieldMessage": "This property is not sortable"
         },
         "Synonyms": {
@@ -108,6 +111,7 @@ define([], function() {
             "ConditionValueLabel": "Condition Value",
             "CondtionOperatorValue": "Operator",
             "ExternalUrlLabel": "External Template Url",
+            "ExternalUrlPlaceholder": "https://mysite/Documents/external.html",
             "EqualOperator": "Equals",
             "NotEqualOperator": "Not equals",
             "ContainsOperator": "Contains",

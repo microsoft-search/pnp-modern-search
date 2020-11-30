@@ -71,6 +71,7 @@ import { Toggle, GlobalSettings } from 'office-ui-fabric-react';
 import IQueryModifierConfiguration from '../../models/IQueryModifierConfiguration';
 import { SearchHelper } from '../../helpers/SearchHelper';
 import { StringHelper } from '../../helpers/StringHelper';
+import PnPTelemetry from "@pnp/telemetry-js";
 
 export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchResultsWebPartProps> implements IDynamicDataCallables {
 
@@ -146,6 +147,14 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
      */
     private currentPageNumber: number = 1;
 
+    /**
+     * the original history.pushState
+     */
+    private _ops = null;
+
+    private prevVertical: string = "";
+    private firstLoad = true;
+
     public constructor() {
         super();
         this._templateContentToDisplay = '';
@@ -198,7 +207,10 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         let getVerticalsCounts: boolean = false;
 
         // Get default selected refiners from the URL
-        this.defaultSelectedFilters = SearchHelper.getRefinementFiltersFromUrl();
+        if(this.firstLoad) {
+            this.defaultSelectedFilters = SearchHelper.getRefinementFiltersFromUrl();
+            this.firstLoad = false;
+        }
         selectedFilters = this.defaultSelectedFilters;
 
         let queryDataSourceValue = this.properties.queryKeywords.tryGetValue();
@@ -208,7 +220,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         if (queryDataSourceValue && typeof (queryDataSourceValue) === 'string') {
             queryKeywords = queryDataSourceValue;
         }
-        else if (queryDataSourceValue && typeof (queryDataSourceValue) == "object") {
+        else if (queryDataSourceValue && typeof (queryDataSourceValue) === 'object') {
             //https://github.com/microsoft-search/pnp-modern-search/issues/325
             //new issue with search body as object - 2020-06-23
             const refChunks = this.properties.queryKeywords.reference.split(':');
@@ -251,6 +263,14 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                     queryTemplate = searchVerticalSourceData.selectedVertical.queryTemplate;
                     sourceId = searchVerticalSourceData.selectedVertical.resultSourceId;
                     getVerticalsCounts = searchVerticalSourceData.showCounts;
+
+                    if (searchVerticalSourceData.selectedVertical.tabName !== this.prevVertical && this.prevVertical !== "") {
+                        this.defaultSelectedFilters = [];
+                        this._searchService.refinementFilters = [];
+                        // Re-trigger for refinement web part to clear filter
+                        this.context.dynamicDataSourceManager.notifyPropertyChanged(SearchComponentType.SearchResultsWebPart);
+                    }
+                    this.prevVertical = searchVerticalSourceData.selectedVertical.tabName;
                 }
             }
         }
@@ -370,6 +390,10 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
     protected async onInit(): Promise<void> {
 
+        // Disable PnP Telemetry
+        const telemetry = PnPTelemetry.getInstance();
+        if (telemetry.optOut) telemetry.optOut();
+
         this.initializeRequiredProperties();
 
         // Get current theme info
@@ -454,7 +478,24 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
         this.ensureDataSourceConnection();
 
+        this._handleQueryStringChange();
+
         return super.onInit();
+    }
+
+
+    /**
+     * Subscribes to URL query string change events
+     */
+    private _handleQueryStringChange() {
+        ((h) => {
+            this._ops = history.pushState;
+            h.pushState = (state, key, path) => {
+                this._ops.apply(history, [state, key, path]);
+                const qkw = this.properties.queryKeywords.tryGetSource();
+                if (qkw && qkw.id === SearchComponentType.PageEnvironment) this.render();
+            };
+        })(window.history);
     }
 
     private async _initQueryModifierInstance(queryModifierDefinition: IQueryModifierDefinition<any>): Promise<IQueryModifierInstance<any>> {
@@ -557,6 +598,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
     }
 
     protected onDispose(): void {
+        window.history.pushState = this._ops;
         ReactDom.unmountComponentAtNode(this.domElement);
     }
 
@@ -1031,7 +1073,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                 fields: [
                     {
                         id: 'sortField',
-                        title: "Field name",
+                        title: strings.Sort.EditSortLabelFieldName,
                         type: this._customCollectionFieldType.custom,
                         required: true,
                         onCustomRender: (field, value, onUpdate, item, itemId, onCustomFieldValidation) => {
@@ -1058,7 +1100,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                     },
                     {
                         id: 'sortDirection',
-                        title: "Direction",
+                        title: strings.Sort.EditSortDirection,
                         type: this._customCollectionFieldType.dropdown,
                         required: true,
                         options: [
@@ -1116,7 +1158,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                     },
                     {
                         id: 'sortDirection',
-                        title: "Direction",
+                        title: strings.Sort.SortPanelSortDirectionLabel,
                         type: this._customCollectionFieldType.dropdown,
                         required: true,
                         options: [
@@ -1137,7 +1179,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                 checked: useRefiners
             }),
             PropertyPaneToggle('useSearchVerticals', {
-                label: "Connect to search verticals",
+                label: strings.UseSearchVerticalsLabel,
                 checked: useSearchVerticals
             }),
             PropertyPaneToggle('enableQueryRules', {
@@ -1230,7 +1272,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             searchSettingsFields.splice(this.properties.useRefiners ? 7 : 6, 0,
                 PropertyPaneDropdown('searchVerticalDataSourceReference', {
                     options: this._dynamicDataService.getAvailableDataSourcesByType(SearchComponentType.SearchVerticalsWebPart),
-                    label: "Use verticals from this component"
+                    label: strings.UseSearchVerticalsLabel
                 }));
         }
 
@@ -1654,7 +1696,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                             title: strings.ResultTypes.ExternalUrlLabel,
                             type: this._customCollectionFieldType.url,
                             onGetErrorMessage: this._onTemplateUrlChange.bind(this),
-                            placeholder: 'https://mysite/Documents/external.html'
+                            placeholder: strings.ResultTypes.ExternalUrlPlaceholder
                         },
                     ]
                 })
@@ -1779,7 +1821,8 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             },
             searchServiceConfiguration: this._searchService.getConfiguration(),
             verticalsInformation: this._verticalsInformation,
-            defaultSelectedRefinementFilters: this._mapDefaultSelectedFiltersToRefinementResults(refinementResults, this.defaultSelectedFilters)
+            defaultSelectedRefinementFilters: this._mapDefaultSelectedFiltersToRefinementResults(refinementResults),
+            filterReset: this._searchService.refinementFilters.length == 0,
         };
 
         switch (propertyId) {
@@ -1797,7 +1840,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
      * @param refinementResults the current refinement results retrieved from the search
      * @param defaultSelectedFilters the current default selected filters applied through the URL params
      */
-    private _mapDefaultSelectedFiltersToRefinementResults(refinementResults: IRefinementResult[], defaultSelectedFilters: IRefinementFilter[]): IRefinementFilter[] {
+    private _mapDefaultSelectedFiltersToRefinementResults(refinementResults: IRefinementResult[]): IRefinementFilter[] {
 
         let updatedDefaultSelectedFilters: IRefinementFilter[] = [];
 
@@ -1818,6 +1861,10 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
                             if (refinementValue.RefinementToken.indexOf(updatedSelectedFilterValue.RefinementToken) !== -1) {
                                 // Means the provided condition in URL is a text expression
+                                updatedSelectedFilterValues.push(refinementValue);
+                            } else if (updatedSelectedFilterValue && updatedSelectedFilterValue.RefinementValue &&
+                                updatedSelectedFilterValue.RefinementValue.indexOf(refinementValue.RefinementValue) > -1) {
+                                // There is a deep link filter in FQL expression that will be duplicated in the UI if the next else if is evaluated to true
                                 updatedSelectedFilterValues.push(refinementValue);
                             } else if (StringHelper.longestCommonSubstring(updatedSelectedFilterValue.RefinementToken, refinementValue.RefinementValue) && updatedSelectedFilterValue.RefinementToken.indexOf("range") === -1) {
                                 // Means the provided condition in URL is an FQL expression so we try to guess the corresponding refinement results using the text value contained in the expression itself

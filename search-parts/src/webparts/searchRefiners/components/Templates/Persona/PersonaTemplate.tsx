@@ -67,7 +67,12 @@ export default class PersonaTemplate extends React.Component<IPersonaTemplatePro
 
                                 // Get the user info from the already fetched list
                                 const userInfos = this.state.userInfos.filter(user => {
+                                  if (user && user.AccountName) {
                                     return user.AccountName.toLowerCase() === accountName.toLowerCase();
+                                  }
+                                  else{
+                                    return false;
+                                  }
                                 });
 
                                 if (userInfos.length > 0) {
