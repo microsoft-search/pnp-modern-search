@@ -645,7 +645,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
             }
         }];
 
-        if (this._pageContext.list !== null) {
+        if (this._pageContext.list) {
             searchQuery.Properties.push({
                 Name: "ListId",
                 Value: {
@@ -655,7 +655,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
             });
         }
 
-        if (this._pageContext.listItem !== null) {
+        if (this._pageContext.listItem) {
             searchQuery.Properties.push({
                 Name: "ListItemId",
                 Value: {
