@@ -321,6 +321,13 @@ define([], function() {
             ProviderName: "SharePoint Static search suggestions",
             ProviderDescription: "Retrieve SharePoint static user defined search suggestions"
           }
+        },
+        ConfigurationPage: {
+          KeyLabel: "Key",
+          CustomGroupName: "Custom Configurations",
+          ConfigurationTypeLabel: "Configuration Type",
+          ManageConfigurationButtonLabel: "Manage Configurations",
+          ManageConfigurationHeaderLabel: "Add/Remove Custom Configurations"
         }
     }
 })

@@ -1,4 +1,4 @@
-import { IDataFilterConfiguration, IDataFilter, IDataFilterResult } from "@pnp/modern-search-extensibility";
+import { IConfigurationProps, IDataFilterConfiguration, IDataFilter, IDataFilterResult } from "@pnp/modern-search-extensibility";
 import ISearchFiltersWebPartProps from "../ISearchFiltersWebPartProps";
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import { ITemplateService } from "../../../services/templateService/ITemplateService";
@@ -60,4 +60,10 @@ export interface ISearchFiltersContainerProps {
    * The Web Part Title props
    */
   webPartTitleProps: IWebPartTitleProps;
+
+  /**
+   * Custom configurations
+   */
+  configurations: IConfigurationProps[];
+  
 }

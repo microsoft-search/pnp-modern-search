@@ -1,9 +1,10 @@
-import { ITemplateSlot } from "@pnp/modern-search-extensibility";
+import { ITemplateSlot, IConfigurationProps } from "@pnp/modern-search-extensibility";
 import { IDataResultType } from "../../models/common/IDataResultType";
 import { IPagingSettings } from "../../models/common/IPagingSettings";
 import { IBaseWebPartProps } from "../../models/common/IBaseWebPartProps";
 import { DynamicProperty } from "@microsoft/sp-component-base";
 import { IExtensibilityConfiguration } from "../../models/common/IExtensibilityConfiguration";
+import { IConfigSetup } from "../../models/common/IConfigSetup";
 
 export enum QueryTextSource {
     StaticValue,
@@ -149,5 +150,16 @@ export default interface ISearchResultsWebPartProps extends IBaseWebPartProps {
      * The extensibility configuraion to load
      */
     extensibilityLibraryConfiguration: IExtensibilityConfiguration[];
+
+    /**
+     * Custom configuration setup
+     */
+    configurationSetup: IConfigSetup[];
+
+    /**
+     * Custom configuration data
+     */
+    configurations: IConfigurationProps[];
+    
 }
 

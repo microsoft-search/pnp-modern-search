@@ -23,3 +23,7 @@ export * from './models/suggestions/ISuggestion';
 export * from './models/suggestions/ISuggestionProvider';
 export * from './models/suggestions/ISuggestionProviderDefinition';
 export * from './constants/ExtensibilityConstants';
+export * from './models/configurations/IConfigurationProps';
+export * from './models/configurations/IConfigurationDefinition';
+export * from './models/configurations/IConfiguration';
+export * from './models/configurations/Configuration';

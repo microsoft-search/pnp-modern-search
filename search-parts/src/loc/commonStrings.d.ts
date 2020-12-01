@@ -321,6 +321,13 @@ declare interface ICommonStrings {
         ProviderName: string;
         ProviderDescription: string;
       }
+    },
+    ConfigurationPage: {
+      KeyLabel: string;
+      CustomGroupName: string;
+      ConfigurationTypeLabel: string;
+      ManageConfigurationButtonLabel: string;
+      ManageConfigurationHeaderLabel: string;
     }
 }
   

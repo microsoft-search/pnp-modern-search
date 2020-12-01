@@ -1,6 +1,7 @@
 import { IComponentDefinition } from './layouts/IComponentDefinition';
 import { ISuggestionProviderDefinition } from './suggestions/ISuggestionProviderDefinition';
 import * as Handlebars from 'handlebars';
+import { IConfigurationDefinition } from './configurations/IConfigurationDefinition';
 
 export interface IExtensibilityLibrary {
     
@@ -19,4 +20,10 @@ export interface IExtensibilityLibrary {
      * @param namespace the current Web Part Handlebars namespace
      */
     registerHandlebarsCustomizations?(handlebarsNamespace: typeof Handlebars): void;
+
+    /**
+     * Returns custom configuration pages
+     */
+    getConfigurations() : IConfigurationDefinition<any>[];
+    
 }

@@ -17,6 +17,7 @@ import { ObjectHelper } from '../../../helpers/ObjectHelper';
 import { BuiltinLayoutsKeys } from '../../../layouts/AvailableLayouts';
 import { WebPartTitle } from '@pnp/spfx-controls-react/lib/WebPartTitle';
 import * as webPartStrings from 'SearchResultsWebPartStrings';
+import { ConfigurationHelper } from '../../../helpers/ConfigurationHelper';
 
 const LogSource = "SearchResultsContainer";
 
@@ -434,7 +435,8 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             // Any other useful informations
             utils: {
                 defaultImage: Constants.DEFAULT_IMAGE_CONTENT
-            }
+            },
+            configs: ConfigurationHelper.convertToContextObject(this.props.configurations)
         };
     }
 
