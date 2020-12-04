@@ -6,7 +6,7 @@ import { IWebPartPropertiesMetadata } from '@microsoft/sp-webpart-base';
 import * as webPartStrings from 'SearchResultsWebPartStrings';
 import * as commonStrings from 'CommonStrings';
 import { ISearchResultsContainerProps } from './components/ISearchResultsContainerProps';
-import { IConfigurationDefinition, IConfiguration, IDataSource, IDataSourceDefinition, IComponentDefinition, ILayoutDefinition, ILayout, IDataFilter, LayoutType, FilterType, FilterComparisonOperator, BaseDataSource } from '@pnp/modern-search-extensibility';
+import { IDataSource, IDataSourceDefinition, IComponentDefinition, ILayoutDefinition, ILayout, IDataFilter, LayoutType, FilterType, FilterComparisonOperator, BaseDataSource } from '@pnp/modern-search-extensibility';
 import { 
   IPropertyPaneConfiguration,
   IPropertyPaneChoiceGroupOption, 
@@ -57,9 +57,7 @@ import { BuiltinFilterTemplates } from '../../layouts/AvailableTemplates';
 import { IExtensibilityConfiguration } from '../../models/common/IExtensibilityConfiguration';
 import { IDataVerticalSourceData } from '../../models/dynamicData/IDataVerticalSourceData';
 import { BaseWebPart } from '../../common/BaseWebPart';
-import { ApplicationInsights, IConfig, IConfiguration as IAppInsightConfiguration } from '@microsoft/applicationinsights-web';
-import { ConfigurationHelper } from '../../helpers/ConfigurationHelper';
-import { stringIsNullOrEmpty } from '@pnp/common/util';
+import { ApplicationInsights } from '@microsoft/applicationinsights-web';
 
 const LogSource = "SearchResultsWebPart";
 
@@ -175,12 +173,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
   private _pushStateCallback = null;
 
-  /**
-   * Custom configurations
-   */
-  private availableConfigurations : IConfigurationDefinition<any>[] = [];
-  private activeConfigurations : IConfiguration[] = [];
-
   constructor() {
     super();
 
@@ -283,7 +275,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         templateContent: this.templateContentToDisplay,
         instanceId: this.instanceId,
         properties: JSON.parse(JSON.stringify(this.properties)), // Create a copy to avoid unexpected reference value updates from data sources 
-        configurations: this.properties.configurations,
         onDataRetrieved: (availableFields, filters, pageNumber, nextLinkUrl, pageLinks) => {
           
           this._dataResultsSourceData.availableFieldsFromResults = availableFields;
@@ -635,11 +626,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
       groupName: commonStrings.PropertyPane.InformationPage.Extensibility.GroupName,
       groupFields: this.getExtensibilityFields()
     });
-
-    // Custom configurations
-    if(this.availableConfigurations && this.availableConfigurations.length > 0) {
-      propertyPanePages = propertyPanePages.concat(this.getCustomConfigurationsPages());
-    }
+     
 
     // 'About' infos
     propertyPanePages.push(      
@@ -781,17 +768,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
       await this.loadMsGraphToolkit();
     }
 
-    if(propertyPath.localeCompare("configurationSetup") === 0 && oldValue !== newValue) {
-
-      const syncd = ConfigurationHelper.synchronizeConfigurations(newValue, this.availableConfigurations, this.properties.configurations, this.activeConfigurations);
-      this.activeConfigurations = syncd.Configurations;
-      this.properties.configurations = syncd.Properties;
-      if(this.context.propertyPane.isPropertyPaneOpen) this.context.propertyPane.refresh();
-
-    }
-    
-    console.log("Property pane field changed");
-
     // Reset the page number to 1 every time the Web Part properties change
     this.currentPageNumber = 1;
   }
@@ -837,10 +813,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         
           // Registers Handlebars customizations in the local namespace
           extensibilityLibrary.registerHandlebarsCustomizations(this.templateService.Handlebars);
-
-          // Load available custom configurations if any
-          this.availableConfigurations = this.availableConfigurations.concat(extensibilityLibrary.getConfigurations());
-
         });
      }
   }
@@ -854,6 +826,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     
     this._propertyFieldCodeEditor = PropertyFieldCodeEditor;
     this._propertyFieldCodeEditorLanguages = PropertyFieldCodeEditorLanguages;
+
 
     const { PropertyFieldCollectionData, CustomCollectionFieldType } = await import(
       /* webpackChunkName: 'pnp-modern-search-property-pane' */
@@ -887,10 +860,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     this._propertyFieldCalloutTriggers = CalloutTriggers;
 
     this._propertyFieldDropownWithCallout = PropertyFieldDropdownWithCallout;
-
-    // load any custom configurations
-    this.activeConfigurations = ConfigurationHelper.loadCustomConfigurations(this.availableConfigurations, this.properties.configurations);
-
   }
 
   /**
@@ -1888,107 +1857,4 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
       const source = this.properties.queryText.tryGetSource();
       if (source && source.id === ComponentType.PageEnvironment) this.render();
   }
-  
-  /**
-   * Get 3rd party custom configuration pages
-   */
-  private getCustomConfigurationsPages() : IPropertyPanePage[] {
-
-    let pages: IPropertyPanePage[] = [];
-    const configHash = ConfigurationHelper.makeConfigurationDefinitionHash(this.availableConfigurations);
-
-    const configTypes = this.availableConfigurations.map(m => {
-      return {
-        key: m.id,
-        text: m.displayName
-      };
-    });
-
-    const creationPage: IPropertyPanePage = {
-      displayGroupsAsAccordion: true,
-      groups: [ 
-        {
-          groupName: commonStrings.ConfigurationPage.CustomGroupName,
-          isCollapsed: false,
-          groupFields: [
-            this._propertyFieldCollectionData('configurationSetup', {
-              key: "configurationSetup",
-              panelHeader: commonStrings.ConfigurationPage.ManageConfigurationButtonLabel,
-              manageBtnLabel: commonStrings.ConfigurationPage.ConfigurationTypeLabel,
-              value: this.properties.configurationSetup,
-              fields: [
-                {
-                  id: "Type",
-                  title: commonStrings.ConfigurationPage.ConfigurationTypeLabel,
-                  type: this._customCollectionFieldType.dropdown,
-                  options: configTypes,
-                  required: true
-                },
-                {
-                  id:"Key",
-                  title: commonStrings.ConfigurationPage.KeyLabel,
-                  type: this._customCollectionFieldType.string,
-                  required: true
-                }
-              ]
-            })
-          ]
-        }
-      ]
-    };
-
-    const customGroups : IPropertyPaneGroup[] = this.activeConfigurations.map((c,i) =>{
-      
-      const definition = configHash[c.properties.configurationId];
-    
-      return definition
-        ? this.createConfigurationGroup(c, definition, i)
-        : null;
-
-    }).filter(c=>{ return c;});
-
-    if(customGroups && customGroups.length > 0) {
-      creationPage.groups = creationPage.groups.concat(customGroups);
-    }
-
-    pages.push(creationPage);
-
-    return pages;
-
-  }
-
-  /**
-   * Create a 3rd Party configuration group in the Property Pane
-   */
-  private createConfigurationGroup(config: IConfiguration, definition: IConfigurationDefinition<any>, index: number) : IPropertyPaneGroup {
-    
-    const prefix : string = "configurations[" + index.toString() + "].";
-    let customProperties : IPropertyPaneField<any>[] = [];
-
-    try {
-
-      customProperties = config.getPropertyPaneFields(prefix);
-
-    } catch (ex) {
-
-      Log.error("[MSWP.SearchResultsWebPart.createConfigurationGroup()]: Failure Loading Custom Configuration!", ex);
-
-    }
-    
-    return customProperties && customProperties.length > 0
-      ? {
-          groupName: index.toString() + ": " + definition.displayName,
-          isCollapsed: true,
-          groupFields: ([ PropertyPaneTextField(prefix + "key", { 
-            label: commonStrings.ConfigurationPage.KeyLabel, 
-            deferredValidationTime: 500,
-            validateOnFocusIn: true,
-            validateOnFocusOut: true, 
-            onGetErrorMessage: this._validateEmptyField.bind(this)
-          }) ]).concat(customProperties)
-        }
-      : null;
-
-  }
-
 }

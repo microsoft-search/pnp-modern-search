@@ -23,7 +23,6 @@ import { ISearchFiltersTemplateContext } from '../../../models/common/ITemplateC
 import { flatten } from '@microsoft/sp-lodash-subset';
 import { DisplayMode } from '@microsoft/sp-core-library';
 import { DataFilterHelper } from '../../../helpers/DataFilterHelper';
-import { ConfigurationHelper } from '../../../helpers/ConfigurationHelper';
 
 export default class SearchFiltersContainer extends React.Component<ISearchFiltersContainerProps, ISearchFiltersContainerState> {
 
@@ -493,9 +492,6 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
   // Build the template context
   private getTemplateContext(): ISearchFiltersTemplateContext {
-    
-    // convert configurations into a plain object
-    
 
     return {
       filters: this.state.currentUiFilters,
@@ -507,7 +503,6 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
       properties: {
         ...this.props.properties
       },
-      configs: ConfigurationHelper.convertToContextObject(this.props.configurations)
     };
   }
 }

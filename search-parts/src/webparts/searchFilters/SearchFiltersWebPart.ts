@@ -7,7 +7,7 @@ import {
   PropertyPaneTextField,
   IPropertyPaneGroup,
   PropertyPaneChoiceGroup,
-} from '@microsoft/sp-property-pane';
+} from '@microsoft/sp-webpart-base';
 import { DynamicProperty } from '@microsoft/sp-component-base';
 import { IPropertyPanePage } from '@microsoft/sp-property-pane';
 import * as webPartStrings from 'SearchFiltersWebPartStrings';
@@ -21,7 +21,7 @@ import { DynamicDataService } from '../../services/dynamicDataService/DynamicDat
 import { IDynamicDataCallables, IDynamicDataPropertyDefinition } from '@microsoft/sp-dynamic-data';
 import { ComponentType } from '../../common/ComponentType';
 import { IDataFilterSourceData } from '../../models/dynamicData/IDataFilterSourceData';
-import { IConfigurationDefinition, IConfiguration, IDataFilter, ILayoutDefinition, LayoutType, ILayout, FilterConditionOperator, IDataFilterResult, IDataFilterConfiguration, FilterType, IDataFilterResultValue, IComponentDefinition, FilterSortType, FilterSortDirection } from '@pnp/modern-search-extensibility';
+import { IDataFilter, ILayoutDefinition, LayoutType, ILayout, FilterConditionOperator, IDataFilterResult, IDataFilterConfiguration, FilterType, IDataFilterResultValue, IComponentDefinition, FilterSortType, FilterSortDirection } from '@pnp/modern-search-extensibility';
 import { AsyncCombo } from '../../controls/PropertyPaneAsyncCombo/components/AsyncCombo';
 import { IAsyncComboProps } from '../../controls/PropertyPaneAsyncCombo/components/IAsyncComboProps';
 import { AvailableLayouts, BuiltinLayoutsKeys } from '../../layouts/AvailableLayouts';
@@ -35,7 +35,6 @@ import { ServiceScope } from '@microsoft/sp-core-library';
 import { AvailableComponents } from '../../components/AvailableComponents';
 import { PropertyPaneAsyncCombo } from '../../controls/PropertyPaneAsyncCombo/PropertyPaneAsyncCombo';
 import { BaseWebPart } from '../../common/BaseWebPart';
-import { ConfigurationHelper } from '../../helpers/ConfigurationHelper';
 
 export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebPartProps> implements IDynamicDataCallables {
 
@@ -93,12 +92,6 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
    * The available web component definitions (not registered yet)
    */
   private availableWebComponentDefinitions: IComponentDefinition<any>[] = AvailableComponents.BuiltinComponents;
-  
-  /**
-   * Custom configurations
-   */
-  private availableConfigurations : IConfigurationDefinition<any>[] = [];
-  private activeConfigurations : IConfiguration[] = [];
 
   protected async onInit() {
 
@@ -202,8 +195,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
             updateProperty: (value: string) => {
               this.properties.title = value;
             }
-          },
-          configurations: this.properties.configurations
+          }
         } as ISearchFiltersContainerProps
       );
 
@@ -290,11 +282,6 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
       }
     );
 
-    // Custom configurations
-    if(this.availableConfigurations && this.availableConfigurations.length > 0) {
-      propertyPanePages = propertyPanePages.concat(this.getCustomConfigurationsPages());
-    }
-
     // 'About' infos
     propertyPanePages.push(      
       {
@@ -368,16 +355,6 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     if (propertyPath.localeCompare('selectedLayoutKey') === 0 && !isEqual(oldValue, newValue) && this.properties.selectedLayoutKey !== BuiltinLayoutsKeys.ResultsDebug.toString()) {
       this.properties.layoutProperties = {};
     }
-
-    if(propertyPath.localeCompare("configurationSetup") === 0 && oldValue !== newValue) {
-
-      const syncd = ConfigurationHelper.synchronizeConfigurations(newValue, this.availableConfigurations, this.properties.configurations, this.activeConfigurations);
-      this.activeConfigurations = syncd.Configurations;
-      this.properties.configurations = syncd.Properties;
-      if(this.context.propertyPane.isPropertyPaneOpen) this.context.propertyPane.refresh();
-
-    }
-
   }
 
   protected get isRenderAsync(): boolean {
@@ -873,10 +850,6 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     );
     this._propertyFieldCollectionData = PropertyFieldCollectionData;
     this._customCollectionFieldType = CustomCollectionFieldType;
-
-    // load any custom configurations
-    this.activeConfigurations = ConfigurationHelper.loadCustomConfigurations(this.availableConfigurations, this.properties.configurations);
-
   }
 
   /**
@@ -1003,120 +976,4 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
 
     return dataResultsSourceData;
   }
- 
-  /**
-   * Get 3rd party custom configuration pages
-   */
-  private getCustomConfigurationsPages() : IPropertyPanePage[] {
-
-    let pages: IPropertyPanePage[] = [];
-    const configHash = ConfigurationHelper.makeConfigurationDefinitionHash(this.availableConfigurations);
-
-    const configTypes = this.availableConfigurations.map(m => {
-      return {
-        key: m.id,
-        text: m.displayName
-      };
-    });
-
-    const creationPage: IPropertyPanePage = {
-      displayGroupsAsAccordion: true,
-      groups: [ 
-        {
-          groupName: commonStrings.ConfigurationPage.CustomGroupName,
-          isCollapsed: false,
-          groupFields: [
-            this._propertyFieldCollectionData('configurationSetup', {
-              key: "configurationSetup",
-              panelHeader: commonStrings.ConfigurationPage.ManageConfigurationButtonLabel,
-              manageBtnLabel: commonStrings.ConfigurationPage.ConfigurationTypeLabel,
-              value: this.properties.configurationSetup,
-              fields: [
-                {
-                  id: "Type",
-                  title: commonStrings.ConfigurationPage.ConfigurationTypeLabel,
-                  type: this._customCollectionFieldType.dropdown,
-                  options: configTypes,
-                  required: true
-                },
-                {
-                  id:"Key",
-                  title: commonStrings.ConfigurationPage.KeyLabel,
-                  type: this._customCollectionFieldType.string,
-                  required: true
-                }
-              ]
-            })
-          ]
-        }
-      ]
-    };
-
-    const customGroups : IPropertyPaneGroup[] = this.activeConfigurations.map((c,i) =>{
-      
-      const definition = configHash[c.properties.configurationId];
-    
-      return definition
-        ? this.createConfigurationGroup(c, definition, i)
-        : null;
-
-    }).filter(c=>{ return c;});
-
-    if(customGroups && customGroups.length > 0) {
-      creationPage.groups = creationPage.groups.concat(customGroups);
-    }
-
-    pages.push(creationPage);
-
-    return pages;
-
-  }
-
-  /**
-   * Create a 3rd Party configuration group in the Property Pane
-   */
-  private createConfigurationGroup(config: IConfiguration, definition: IConfigurationDefinition<any>, index: number) : IPropertyPaneGroup {
-    
-    const prefix : string = "configurations[" + index.toString() + "].";
-    let customProperties : IPropertyPaneField<any>[] = [];
-
-    try {
-
-      customProperties = config.getPropertyPaneFields(prefix);
-
-    } catch (ex) {
-
-      Log.error("[MSWP.SearchResultsWebPart.createConfigurationGroup()]: Failure Loading Custom Configuration!", ex);
-
-    }
-    
-    return customProperties && customProperties.length > 0
-      ? {
-          groupName: index.toString() + ": " + definition.displayName,
-          isCollapsed: true,
-          groupFields: ([ PropertyPaneTextField(prefix + "key", { 
-            label: commonStrings.ConfigurationPage.KeyLabel, 
-            deferredValidationTime: 500,
-            validateOnFocusIn: true,
-            validateOnFocusOut: true, 
-            onGetErrorMessage: this._validateEmptyField.bind(this)
-          }) ]).concat(customProperties)
-        }
-      : null;
-
-  }
-
-  /**
-  * Checks if a field if empty or not
-  * @param value the value to check
-  */
-  private _validateEmptyField(value: string): string {
-
-    if (!value) {
-        return commonStrings.General.EmptyFieldErrorMessage;
-    }
-
-    return '';
-  }
-  
 }

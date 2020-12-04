@@ -1,8 +1,7 @@
-import { Guid, ServiceKey } from "@microsoft/sp-core-library";
-import { IConfigurationDefinition, IExtensibilityLibrary, IComponentDefinition, ISuggestionProviderDefinition, ISuggestionProvider } from "@pnp/modern-search-extensibility";
+import { ServiceKey } from "@microsoft/sp-core-library";
+import { IExtensibilityLibrary, IComponentDefinition, ISuggestionProviderDefinition, ISuggestionProvider } from "@pnp/modern-search-extensibility";
 import { MyCustomComponentWebComponent } from "../CustomComponent";
 import { CustomSuggestionProvider } from "../CustomSuggestionProvider";
-import { ExampleConfiguration } from "../ExampleConfiguration";
 
 export class MyCompanyLibraryLibrary implements IExtensibilityLibrary {
 
@@ -34,15 +33,4 @@ export class MyCompanyLibraryLibrary implements IExtensibilityLibrary {
       return new namespace.SafeString(value.toUpperCase());
     });
   }
-
-  public getConfigurations() : IConfigurationDefinition<any>[] { 
-    return [
-      {
-        id: "b0a8b7dc-798b-4b35-8c50-568d9662faca",
-        displayName: "Example Configuration",
-        configurationClass: ExampleConfiguration
-      }
-    ];
-  }
-
 }

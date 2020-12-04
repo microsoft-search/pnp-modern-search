@@ -1,7 +1,7 @@
 import { IDataSource, IDataFilterResult } from "@pnp/modern-search-extensibility";
 import ISearchResultsWebPartProps from "../ISearchResultsWebPartProps";
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
-import { IDataContext, IConfigurationProps } from "@pnp/modern-search-extensibility";
+import { IDataContext } from "@pnp/modern-search-extensibility";
 import { PageContext } from "@microsoft/sp-page-context";
 import { ServiceScope } from "@microsoft/sp-core-library";
 import { IWebPartTitleProps } from "@pnp/spfx-controls-react/lib/WebPartTitle";
@@ -62,10 +62,4 @@ export interface ISearchResultsContainerProps {
    * The Web Part Title props
    */
   webPartTitleProps: IWebPartTitleProps;
-
-  /**
-   * Custom configuration properties
-   */
-  configurations: IConfigurationProps[];
-
 }

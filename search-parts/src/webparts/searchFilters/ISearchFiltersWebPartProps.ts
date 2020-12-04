@@ -1,6 +1,5 @@
 import { IBaseWebPartProps } from "../../models/common/IBaseWebPartProps";
-import { IDataFilterConfiguration, FilterConditionOperator, IConfigurationProps } from "@pnp/modern-search-extensibility";
-import { IConfigSetup } from "../../models/common/IConfigSetup";
+import { IDataFilterConfiguration, FilterConditionOperator } from "@pnp/modern-search-extensibility";
 
 export default interface ISearchFiltersWebPartProps extends IBaseWebPartProps {
     
@@ -49,15 +48,4 @@ export default interface ISearchFiltersWebPartProps extends IBaseWebPartProps {
      * The Web Part title
      */
     title: string;
-
-    /**
-     * Custom configurations
-     */
-    configurations: IConfigurationProps[];
-
-    /**
-     * Custom configuration setup
-     */
-    configurationSetup: IConfigSetup[];
-
 }

@@ -6,7 +6,7 @@ import { uniqBy, uniq, isEmpty, trimEnd } from "@microsoft/sp-lodash-subset";
 import * as strings from 'CommonStrings';
 import { DateHelper } from "../../helpers/DateHelper";
 import { PageContext } from "@microsoft/sp-page-context";
-import { IComponentDefinition, IConfigurationProps } from "@pnp/modern-search-extensibility";
+import { IComponentDefinition } from "@pnp/modern-search-extensibility";
 import groupBy from 'handlebars-group-by';
 import { IComponentFieldsConfiguration } from "../../models/common/IComponentFieldsConfiguration";
 import { initializeFileTypeIcons } from '@uifabric/file-type-icons';

@@ -1,4 +1,4 @@
-import { IConfigurationProps, IDataSourceData, IDataFilterInternal, IDataFilter, FilterConditionOperator, IDataFilterConfiguration } from "@pnp/modern-search-extensibility";
+import { IDataSourceData, IDataFilterInternal, IDataFilter, FilterConditionOperator, IDataFilterConfiguration } from "@pnp/modern-search-extensibility";
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import ISearchResultsWebPartProps from "../../webparts/searchResults/ISearchResultsWebPartProps";
 import { SPSite, SPWeb, SPUser, SPList, SPListItem, CultureInfo } from "@microsoft/sp-page-context";
@@ -124,12 +124,6 @@ export interface IDataResultsTemplateContext {
          */
         defaultImage: string;
     };
-
-    /**
-     * Custom configurations
-     */
-    configs : any;
-
 }
 
 /**
@@ -171,10 +165,4 @@ export interface ISearchFiltersTemplateContext {
      * The filter Web Part properties
      */
     properties: ISearchFiltersWebPartProps;
-
-    /**
-     * Custom configurations
-     */
-    configs : any;
-
 }

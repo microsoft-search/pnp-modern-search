@@ -1,4 +1,4 @@
-import { IComponentDefinition, IConfigurationProps } from "@pnp/modern-search-extensibility";
+import { IComponentDefinition } from "@pnp/modern-search-extensibility";
 import { IDataResultType } from "../../models/common/IDataResultType";
 import { IComponentFieldsConfiguration } from "../../models/common/IComponentFieldsConfiguration";
 import { IDataResultsTemplateContext } from "../../models/common/ITemplateContext";

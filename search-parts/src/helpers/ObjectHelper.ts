@@ -52,14 +52,4 @@ export class ObjectHelper {
             return undefined;
         }
     }
-
-    /**
-     * Creates an instance of an object
-     * @param type the type we want to create
-     * @param args arguments to use in the constructor
-     */
-    public static create<T>(type: {new(...args:any[]): T;}, ...args:any[]): T {
-        return new type(...args);
-    }
-
 }
