@@ -130,8 +130,8 @@ define([], function() {
             SelectedFieldsPlaceholderLabel: "Select fields",
             EnableTopResultsLabel: "Enable top results",
             ContentSourcesFieldLabel: "Content sources",
-            ContentSourcesFieldDescriptionLabel: "IDs of connections defined in the Connectors Administration.",
-            ContentSourcesFieldPlaceholderLabel: "ex: 35d64c45-b88a-4f41-b197-1e19d9e7cea0"
+            ContentSourcesFieldDescriptionLabel: "IDs of connections defined in the Microsoft Search connectors administration portal.",
+            ContentSourcesFieldPlaceholderLabel: "ex: 'MyCustomConnectorId'"
           },
           SearchCommon: {
             Sort: {

@@ -296,6 +296,12 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             this.context.propertyPane.refresh();
             this.render();
         }
+
+        if (propertyPath.localeCompare('dataSourceProperties.contentSourceConnectionIds') === 0) {
+            this.properties.contentSourceConnectionIds = (cloneDeep(newValue) as IComboBoxOption[]).map(v => {return v.key as string;});
+            this.context.propertyPane.refresh();
+            this.render();
+        }
     }
 
     public getTemplateSlots(): ITemplateSlot[] {

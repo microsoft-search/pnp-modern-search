@@ -50,3 +50,7 @@ You can also refer to the official [SPFx documentation about library component u
 1. From the `search-parts` or `search-extensibility-demo` project, link a reference to the `@pnp/modern-search-extensibility` project by using the following command `npm link @pnp/modern-search-extensibility`.
 2. Build the project using `gulp bundle`.
 
+## Debug the solution
+
+- From Visual Studio Code console or any other console, from the `search-parts` folder, use the `npm run serve` command to start the server. We use [SPFx Fast Serve Tool](https://github.com/s-KaiNet/spfx-fast-serve) from Sergei Sergeev to speed up development process.
+- From Visual Studio Code, use the 'Hosted Workbench' debug configuration with your URL to debug the Web Parts. Any changes to the code will trigger a new build and refresh your page automatically within seconds.
