@@ -1,43 +1,42 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
-  "solution": {
-    "name": "PnP Modern Search - Search Web Parts",
-    "id": "59903278-dd5d-4e9e-bef6-562aae716b8b",
-    "version": "4.0.0.0",
-    "includeClientSideAssets": true,
-    "skipFeatureDeployment": true,
-    "isDomainIsolated": false,
-    "webApiPermissionRequests": [
-      {
-        "resource": "Microsoft Graph",
-        "scope": "User.Read"
-      },
-      {
-        "resource": "Microsoft Graph",
-        "scope": "Files.Read.All"
-      },
-      {
-        "resource": "Microsoft Graph",
-        "scope": "People.Read"
-      },
-      {
-        "resource": "Microsoft Graph",
-        "scope": "Contacts.Read"
-      },
-      {
-        "resource": "Microsoft Graph",
-        "scope": "User.ReadBasic.All"
-      }
-    ],
-    "developer": {
-      "mpnId": "",
-      "name": "PnP Team",
-      "termsOfUseUrl": "https://github.com/microsoft-search/pnp-modern-search/blob/main/LICENSE",
-      "privacyUrl": "",
-      "websiteUrl": ""
+    "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+    "solution": {
+        "name": "PnP Modern Search - Search Web Parts - v4",
+        "id": "59903278-dd5d-4e9e-bef6-562aae716b8b",
+        "version": "4.0.0.0",
+        "includeClientSideAssets": true,
+        "skipFeatureDeployment": true,
+        "isDomainIsolated": false,
+        "webApiPermissionRequests": [{
+                "resource": "Microsoft Graph",
+                "scope": "User.Read"
+            },
+            {
+                "resource": "Microsoft Graph",
+                "scope": "Files.Read.All"
+            },
+            {
+                "resource": "Microsoft Graph",
+                "scope": "People.Read"
+            },
+            {
+                "resource": "Microsoft Graph",
+                "scope": "Contacts.Read"
+            },
+            {
+                "resource": "Microsoft Graph",
+                "scope": "User.ReadBasic.All"
+            }
+        ],
+        "developer": {
+            "mpnId": "",
+            "name": "PnP Team",
+            "termsOfUseUrl": "https://github.com/microsoft-search/pnp-modern-search/blob/main/LICENSE",
+            "privacyUrl": "",
+            "websiteUrl": ""
+        }
+    },
+    "paths": {
+        "zippedPackage": "solution/pnp-modern-search-parts-v4.sppkg"
     }
-  },
-  "paths": {
-    "zippedPackage": "solution/pnp-modern-search-parts.sppkg"
-  }
 }
