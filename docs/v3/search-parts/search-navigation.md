@@ -1,0 +1,1 @@
+﻿> **This WebPart has been removed since the 3.11.0 version and replaced by the Search Verticals Web Part**
