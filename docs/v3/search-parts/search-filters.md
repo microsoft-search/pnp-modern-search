@@ -1,4 +1,5 @@
 
+# Search Filters - v3
 ![Search Filters](../images/search-filters-property-pane.png)
 
 #### Refiner Options

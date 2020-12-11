@@ -1,3 +1,4 @@
+# Search Query Enhancer - v3
 ## Summary
 
 The search query enhancer function can be used in conjunction with the [Query Modifier feature](../../search-extensibility-library/getting-started#create-a-custom-query-modifier) to alter the query before being sent to the search results Web Part. This sample demonstrates the following principles to help you with the setup:

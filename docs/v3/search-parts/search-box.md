@@ -1,3 +1,4 @@
+# Search Box - v3
 ![Search Box](../images/sb_property_pane.png)
 
 #### Default Search Query Settings

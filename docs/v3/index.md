@@ -11,23 +11,17 @@
 **Get the latest release at our [releases page](https://github.com/microsoft-search/pnp-modern-search/releases/latest).**
 
 ## Table of contents
-- [Versions](version.md)
 - [Contributors](contributors.md)
-- Web Parts: 
-    - [Getting started](search-parts/getting-started.md)
+- [Web Parts](search-parts/getting-started.md)
     - [Search Box](search-parts/search-box.md)
     - [Search Results](search-parts/search-results.md)
     - [Search Filters](search-parts/search-filters.md)
     - [Search Pagination](search-parts/search-pagination.md)
-    - [Search Navigation](search-parts/search-navigation.md)
     - [Search Verticals](search-parts/search-verticals.md)
     - [Templating](search-parts/templating.md)
-- Extensibility Library
-    - [Getting started](search-extensibility-library/getting-started.md)
-- Custom Renderer
-    - [Getting Started](search-custom-renderer/getting-started.md)
-- Search Query Enhancer
-    - [Getting started](search-query-enhancer/getting-started.md)
+- [Extensibility Library](search-extensibility-library/getting-started.md)
+- [Custom Renderer](search-custom-renderer/getting-started.md)
+- [Search Query Enhancer](search-query-enhancer/getting-started.md)
     - [Debug locally](search-query-enhancer/debug-locally.md)
 
 ## Summary

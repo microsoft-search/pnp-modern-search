@@ -1,3 +1,4 @@
+# Search Query Enhancer - Debug locally - v3
 ### Prerequisites
 
 - In VSCode, open the root folder `./functions`.

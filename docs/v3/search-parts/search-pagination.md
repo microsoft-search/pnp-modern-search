@@ -1,4 +1,6 @@
-﻿> **This WebPart has been removed since the 3.11.0 version. If you had custom templates and need pagination, add the following code snippet in your template**:
+﻿# Search Pagination - v3
+
+> **This WebPart has been removed since the 3.11.0 version. If you had custom templates and need pagination, add the following code snippet in your template**:
 
 ```
 {{#if @root.paging.showPaging}}

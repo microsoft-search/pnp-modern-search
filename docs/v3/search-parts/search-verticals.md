@@ -1,3 +1,5 @@
+# Search Verticals - v3
+
 ![Search Verticals](../images/search_verticals.png)
 
 The search verticals Web Part allow users to search through predefined scopes (i.e videos, people, etc.) or redirect to an arbitrary URL. We simply replace the query template and result source dynamically for a chosen vertical. To get it work, you simply need to connect the search verticals Web Part to a search results Web Part using the associated option. Also, if you want to display counts for each verticals **when a new query is performed** (for instance a search box query or an URL fragment update), connect the search results Web Part to the search verticals one (two ways connection in this case).
