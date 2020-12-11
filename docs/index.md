@@ -4,7 +4,7 @@
 
 The PnP 'Modern Search' solution is a set of SharePoint Online modern Web Parts allowing SharePoint super users, webmasters and developers to create highly flexible and personalized search based experiences in minutes.
 
-**The v3 documentation is available [here](https://web.archive.org/web/20201103152956/https://microsoft-search.github.io/pnp-modern-search/)**
+**Looking for the v3 documentation? [Here you go!](./v3/index.md)**
 
 !!! important "PnP Modern Search v3.x deprecation"
     **The v4 version (this version) uses a brand new code architecture and replaces the older v3 codebase**. As a result, all v3.x versions are now considered as deprecated. Because not all features from v3.x exist in v4.x yet, you can still use the v3.x packages to meet your requirements if v4.x doesn't do the job for you. However, the main focus is now on the new v4 version. Nothing personal ;)
