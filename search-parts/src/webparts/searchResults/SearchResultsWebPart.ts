@@ -58,6 +58,7 @@ import { IExtensibilityConfiguration } from '../../models/common/IExtensibilityC
 import { IDataVerticalSourceData } from '../../models/dynamicData/IDataVerticalSourceData';
 import { BaseWebPart } from '../../common/BaseWebPart';
 import { ApplicationInsights } from '@microsoft/applicationinsights-web';
+import styles from './components/SearchResultsContainer.module.scss'
 
 const LogSource = "SearchResultsWebPart";
 
@@ -319,7 +320,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
           updateProperty: (value: string) => {
             this.properties.title = value;
           },
-          themeVariant: this._themeVariant
+          themeVariant: this._themeVariant,
+          className: styles.title
         }
       } as ISearchResultsContainerProps);
 
