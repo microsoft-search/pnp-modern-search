@@ -10,7 +10,6 @@ import * as commonStrings from 'CommonStrings';
 import { IMicrosoftSearchRequest, ISearchRequestAggregation, SearchAggregationSortBy, ISearchSortProperty } from '../models/search/IMicrosoftSearchRequest';
 import { DateHelper } from '../helpers/DateHelper';
 import { DataFilterHelper } from "../helpers/DataFilterHelper";
-import { BuiltinFilterTemplates } from '../layouts/AvailableTemplates';
 import { IMicrosoftSearchResponse } from "../models/search/IMicrosoftSearchResponse";
 import { ISortFieldConfiguration, SortFieldDirection } from '../models/search/ISortFieldConfiguration';
 
@@ -398,7 +397,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                     sortBy: filterConfig.sortBy === FilterSortType.ByCount ? SearchAggregationSortBy.Count : SearchAggregationSortBy.KeyAsString
                 },
                 size: 10
-            }
+            };
 
             if (filterConfig.selectedTemplate === "DateIntervalFilterTemplate" ) {
 
