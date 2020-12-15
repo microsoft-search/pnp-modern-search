@@ -1,4 +1,5 @@
 # Search Verticals - v3
+[Table of contents](../index.md)
 
 ![Search Verticals](../images/search_verticals.png)
 

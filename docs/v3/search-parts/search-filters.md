@@ -1,6 +1,8 @@
 
 # Search Filters - v3
+[Table of contents](../index.md)
 ![Search Filters](../images/search-filters-property-pane.png)
+
 
 #### Refiner Options
 

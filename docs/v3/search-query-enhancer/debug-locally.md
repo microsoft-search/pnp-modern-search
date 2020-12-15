@@ -1,4 +1,5 @@
 # Search Query Enhancer - Debug locally - v3
+[Table of contents](../index.md)
 ### Prerequisites
 
 - In VSCode, open the root folder `./functions`.

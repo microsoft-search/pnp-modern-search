@@ -1,4 +1,5 @@
 # Contributors - v3
+[Table of contents](../index.md)
 
 This solution won't be here without the volunteer work of these people. Feel free to support them if you like the solution!
 

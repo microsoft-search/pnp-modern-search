@@ -1,5 +1,6 @@
 
 # Search extensibility library - v3
+[Table of contents](../index.md)
 ## Summary - v3
 This solution allows you to create and register your own React component (wrapped as HTML web components) to be used in the search results Web Part Handlebars templates. View the sample project [here](https://github.com/microsoft-search/pnp-modern-search/tree/main/search-extensibility-library).
 

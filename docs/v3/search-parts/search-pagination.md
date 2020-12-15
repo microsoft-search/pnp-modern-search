@@ -1,4 +1,5 @@
 ﻿# Search Pagination - v3
+[Table of contents](../index.md)
 
 > **This WebPart has been removed since the 3.11.0 version. If you had custom templates and need pagination, add the following code snippet in your template**:
 

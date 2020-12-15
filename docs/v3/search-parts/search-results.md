@@ -1,4 +1,5 @@
 # Search Results - v3
+[Table of contents](../index.md)
 
 | Page 1 | Page 2 | Page 3 |
 | ------ | ------ | ------ |

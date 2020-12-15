@@ -1,4 +1,5 @@
 # Web parts - v3
+[Table of contents](../index.md)
 ## Summary
 
 This solution contains all search Web Parts you can use on your SharePoint modern pages.

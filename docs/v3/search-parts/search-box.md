@@ -1,4 +1,5 @@
 # Search Box - v3
+[Table of contents](../index.md)
 ![Search Box](../images/sb_property_pane.png)
 
 #### Default Search Query Settings

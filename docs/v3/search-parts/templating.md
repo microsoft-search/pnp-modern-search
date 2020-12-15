@@ -1,4 +1,5 @@
 # Templating - v3
+[Table of contents](../index.md)
 ## Available layouts ##
 
 By default, the search results Web Part comes with multiples layouts. All layouts rely on Handlebars templates. 
