@@ -58,6 +58,7 @@ import { IExtensibilityConfiguration } from '../../models/common/IExtensibilityC
 import { IDataVerticalSourceData } from '../../models/dynamicData/IDataVerticalSourceData';
 import { BaseWebPart } from '../../common/BaseWebPart';
 import { ApplicationInsights } from '@microsoft/applicationinsights-web';
+import styles from './components/SearchResultsContainer.module.scss';
 
 const LogSource = "SearchResultsWebPart";
 
@@ -172,6 +173,11 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
   private _defaultTemplateSlots: ITemplateSlot[];
 
   private _pushStateCallback = null;
+
+  /**
+   * The available connections as property pane group
+   */
+  private propertyPaneConnectionsGroup: IPropertyPaneGroup[] = [];
 
   constructor() {
     super();
@@ -319,7 +325,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
           updateProperty: (value: string) => {
             this.properties.title = value;
           },
-          themeVariant: this._themeVariant
+          themeVariant: this._themeVariant,
+          className: styles.title
         }
       } as ISearchResultsContainerProps);
 
@@ -614,7 +621,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         },
         {
           groups: [
-            ...this.getConnectionOptionsGroup()
+            ...this.propertyPaneConnectionsGroup
           ],
           displayGroupsAsAccordion: true
         }
@@ -768,6 +775,10 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
       await this.loadMsGraphToolkit();
     }
 
+    // Refresh list of available connections
+    this.propertyPaneConnectionsGroup = await this.getConnectionOptionsGroup();
+    this.context.propertyPane.refresh();
+
     // Reset the page number to 1 every time the Web Part properties change
     this.currentPageNumber = 1;
   }
@@ -860,6 +871,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     this._propertyFieldCalloutTriggers = CalloutTriggers;
 
     this._propertyFieldDropownWithCallout = PropertyFieldDropdownWithCallout;
+
+    this.propertyPaneConnectionsGroup = await this.getConnectionOptionsGroup();
   }
 
   /**
@@ -1415,7 +1428,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     return searchQueryTextFields;
   }
 
-  private getFiltersConnectionFields(): IPropertyPaneField<any>[] {
+  private async getFiltersConnectionFields(): Promise<IPropertyPaneField<any>[]> {
 
     let filtersConnectionFields: IPropertyPaneField<any>[] = [
       PropertyPaneToggle('useFilters', {
@@ -1427,7 +1440,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     if (this.properties.useFilters) {
       filtersConnectionFields.splice(1,0,
         PropertyPaneDropdown('filtersDataSourceReference', {
-          options: this.dynamicDataService.getAvailableDataSourcesByType(ComponentType.SearchFilters),
+          options: await this.dynamicDataService.getAvailableDataSourcesByType(ComponentType.SearchFilters),
           label: webPartStrings.PropertyPane.ConnectionsPage.UseFiltersFromComponentLabel
         })
       );
@@ -1436,7 +1449,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     return filtersConnectionFields;
   }
 
-  private getVerticalsConnectionFields(): IPropertyPaneField<any>[] {
+  private async getVerticalsConnectionFields(): Promise<IPropertyPaneField<any>[]> {
   
     let verticalsConnectionFields: IPropertyPaneField<any>[] = [
       PropertyPaneToggle('useVerticals', {
@@ -1448,7 +1461,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     if (this.properties.useVerticals) {
       verticalsConnectionFields.splice(1,0,
         PropertyPaneDropdown('verticalsDataSourceReference', {
-          options: this.dynamicDataService.getAvailableDataSourcesByType(ComponentType.SearchVerticals),
+          options: await this.dynamicDataService.getAvailableDataSourcesByType(ComponentType.SearchVerticals),
           label: webPartStrings.PropertyPane.ConnectionsPage.UseSearchVerticalsFromComponentLabel
         })
       );
@@ -1483,7 +1496,10 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     return verticalsConnectionFields;
   }
 
-  private getConnectionOptionsGroup(): IPropertyPaneGroup[] {
+  private async getConnectionOptionsGroup(): Promise<IPropertyPaneGroup[]> {
+
+    const filterConnectionFields = await this.getFiltersConnectionFields();
+    const verticalConnectionFields = await this.getVerticalsConnectionFields();
     
     let availableConnectionsGroup: IPropertyPaneGroup[] = [
       {
@@ -1491,9 +1507,9 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         groupFields: [
           ...this.getSearchQueryTextFields(),
           PropertyPaneHorizontalRule(),
-          ...this.getFiltersConnectionFields(),
+          ...filterConnectionFields,
           PropertyPaneHorizontalRule(),
-          ...this.getVerticalsConnectionFields(),
+          ...verticalConnectionFields,
         ]
       }
     ];

@@ -7,7 +7,7 @@ export interface IMicrosoftSearchResponse {
 }
 
 export interface ISearchHitsContainer {
-    hits: ISearchHit[],
+    hits: ISearchHit[];
     moreResultsAvailable: boolean;
     total: number;
     aggregations: ISearchResponseAggregation[];

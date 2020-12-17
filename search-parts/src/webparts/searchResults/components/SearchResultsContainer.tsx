@@ -75,6 +75,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 updateProperty={this.props.webPartTitleProps.updateProperty}
                 moreLink={this.props.webPartTitleProps.moreLink}
                 themeVariant={this.props.webPartTitleProps.themeVariant}
+                className={this.props.webPartTitleProps.className}
             />
         </div>;
 

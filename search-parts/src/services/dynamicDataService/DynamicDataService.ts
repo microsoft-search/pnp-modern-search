@@ -27,14 +27,15 @@ export class DynamicDataService implements IDynamicDataService {
      * Get available data sources on the page with specific property Id (i.e. corresponding to the underlying component type)
      * @param propertyId The proeprty id to look for to determine sources
      */
-    public getAvailableDataSourcesByType(propertyId: string): IDataSourceProperty[] {
+    public async getAvailableDataSourcesByType(propertyId: string): Promise<IDataSourceProperty[]> {
         let propertyOptions: IDataSourceProperty[] = [];
 
         if (!this.dynamicDataProvider.isDisposed) {
-            this._dynamicDataProvider.getAvailableSources().forEach((sourceInfo) => {
+            this._dynamicDataProvider.getAvailableSources().forEach(async (sourceInfo) => {
                 const source: IDynamicDataSource = this._dynamicDataProvider.tryGetSource(sourceInfo.id);
                 if (source) {
-                    source.getPropertyDefinitions().forEach(prop => {
+                    const properties = await source.getPropertyDefinitionsAsync();
+                    properties.forEach(prop => {
                         if (prop.id === propertyId) {
                             propertyOptions.push({
                                 key: `${source.id}:${prop.id}`,

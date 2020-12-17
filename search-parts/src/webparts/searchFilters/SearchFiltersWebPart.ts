@@ -7,7 +7,7 @@ import {
   PropertyPaneTextField,
   IPropertyPaneGroup,
   PropertyPaneChoiceGroup,
-} from '@microsoft/sp-webpart-base';
+} from '@microsoft/sp-property-pane';
 import { DynamicProperty } from '@microsoft/sp-component-base';
 import { IPropertyPanePage } from '@microsoft/sp-property-pane';
 import * as webPartStrings from 'SearchFiltersWebPartStrings';
@@ -92,6 +92,11 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
    * The available web component definitions (not registered yet)
    */
   private availableWebComponentDefinitions: IComponentDefinition<any>[] = AvailableComponents.BuiltinComponents;
+
+  /**
+   * The available connections as property pane fields
+   */
+  private propertyPaneConnectionsFields: IPropertyPaneField<any>[] = [];
 
   protected async onInit() {
 
@@ -231,7 +236,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
               title: this.properties.title ? `${this.properties.title} - ${this.instanceId}` : `${webPartStrings.General.WebPartDefaultTitle} - ${this.instanceId}`
           }
       ];
-  }    
+  }
 
   public getPropertyValue(propertyId: string) {
 
@@ -267,7 +272,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
         groups: [
           {
             groupName: commonStrings.PropertyPane.ConnectionsPage.DataConnectionsGroupName,
-            groupFields: this.getConnectionOptions(),
+            groupFields: this.propertyPaneConnectionsFields,
           },
           {
             groupName: webPartStrings.PropertyPane.FiltersSettingsPage.SettingsGroupName,
@@ -301,7 +306,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     await this.loadPropertyPaneResources();
   }
 
-  protected onPropertyPaneFieldChanged(propertyPath: string, oldValue: any, newValue: any): void{
+  protected async onPropertyPaneFieldChanged(propertyPath: string, oldValue: any, newValue: any): Promise<void>{
 
     if (propertyPath.localeCompare('filtersConfiguration') === 0 && !isEqual(oldValue, newValue)) {
 
@@ -355,15 +360,21 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     if (propertyPath.localeCompare('selectedLayoutKey') === 0 && !isEqual(oldValue, newValue) && this.properties.selectedLayoutKey !== BuiltinLayoutsKeys.ResultsDebug.toString()) {
       this.properties.layoutProperties = {};
     }
+
+    // Refresh list of available connections
+    this.propertyPaneConnectionsFields = await this.getConnectionOptions();
+    this.context.propertyPane.refresh();
   }
 
   protected get isRenderAsync(): boolean {
     return true;
   }
 
-  private getConnectionOptions(): IPropertyPaneField<any>[] {
+  private async getConnectionOptions(): Promise<IPropertyPaneField<any>[]> {
 
-    const sourceOptions = this.dynamicDataService.getAvailableDataSourcesByType(ComponentType.SearchResults).map(source => {
+    const availableSources = await this.dynamicDataService.getAvailableDataSourcesByType(ComponentType.SearchResults);
+    
+    const sourceOptions = availableSources.map(source => {
       return {
         text: source.text,
         key: source.key
@@ -850,6 +861,8 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     );
     this._propertyFieldCollectionData = PropertyFieldCollectionData;
     this._customCollectionFieldType = CustomCollectionFieldType;
+
+    this.propertyPaneConnectionsFields = await this.getConnectionOptions();
   }
 
   /**
