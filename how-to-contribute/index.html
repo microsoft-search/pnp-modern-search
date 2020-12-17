@@ -265,6 +265,19 @@
   
 
       
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../v3/" class="md-tabs__link">
+          Version 3
+        </a>
+      
+    </li>
+  
+
+      
     </ul>
   </div>
 </nav>
@@ -703,6 +716,42 @@
   </li>
 
     
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-7" type="checkbox" id="nav-7">
+    
+    <label class="md-nav__link" for="nav-7">
+      Version 3
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-7">
+        Version 3
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../v3/" title="Documentation" class="md-nav__link">
+      Documentation
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
   </ul>
 </nav>
                   </div>
@@ -801,6 +850,11 @@
 <li>From the <code>search-parts</code> or <code>search-extensibility-demo</code> project, link a reference to the <code>@pnp/modern-search-extensibility</code> project by using the following command <code>npm link @pnp/modern-search-extensibility</code>.</li>
 <li>Build the project using <code>gulp bundle</code>.</li>
 </ol>
+<h2 id="debug-the-solution">Debug the solution<a class="headerlink" href="#debug-the-solution" title="Permanent link">&para;</a></h2>
+<ul>
+<li>From Visual Studio Code console or any other console, from the <code>search-parts</code> folder, use the <code>npm run serve</code> command to start the server. We use <a href="https://github.com/s-KaiNet/spfx-fast-serve">SPFx Fast Serve Tool</a> from Sergei Sergeev to speed up development process.</li>
+<li>From Visual Studio Code, use the 'Hosted Workbench' debug configuration with your URL to debug the Web Parts. Any changes to the code will trigger a new build and refresh your page automatically within seconds.</li>
+</ul>
                 
                   
                 

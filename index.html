@@ -265,6 +265,19 @@
   
 
       
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="v3/" class="md-tabs__link">
+          Version 3
+        </a>
+      
+    </li>
+  
+
+      
     </ul>
   </div>
 </nav>
@@ -774,6 +787,42 @@
   </li>
 
     
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-7" type="checkbox" id="nav-7">
+    
+    <label class="md-nav__link" for="nav-7">
+      Version 3
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-7">
+        Version 3
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="v3/" title="Documentation" class="md-nav__link">
+      Documentation
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
   </ul>
 </nav>
                   </div>
@@ -865,11 +914,15 @@
                 <p><img alt="&quot;PnP&quot;" class="center logo" src="https://pnp.github.io/images/hero-parker-p-1080.png" /></p>
 <h1 id="pnp-modern-search-v4-preview">PnP Modern Search v4 (preview)<a class="headerlink" href="#pnp-modern-search-v4-preview" title="Permanent link">&para;</a></h1>
 <p>The PnP 'Modern Search' solution is a set of SharePoint Online modern Web Parts allowing SharePoint super users, webmasters and developers to create highly flexible and personalized search based experiences in minutes.</p>
-<p><strong>The v3 documentation is available <a href="https://web.archive.org/web/20201103152956/https://microsoft-search.github.io/pnp-modern-search/">here</a></strong></p>
+<p><strong>Looking for the v3 documentation? <a href="v3/">Here you go!</a></strong></p>
 <div class="admonition important">
 <p class="admonition-title">PnP Modern Search v3.x deprecation</p>
-<p><strong>The v4 version (this version) uses a brand new code architecture and replaces the older v3 codebase</strong>. As a result, all v3.x versions are now considered as deprecated. Because not all features from v3.x exist in v4.x yet, you can still use the v3.x packages to meet your requirements if v4.x doesn't do the job for you. However, the main focus is now on the new v4 version. Nothing personal ;)</p>
-<p><strong>v3 and v4 don't share the same Web Part and solution IDs meaning you can have them side by side on a page if necessary without overlap. However, in this case, you will have to rename *.sppkg files to be able to upload both versions in your App Catalog because they share the same SPFx package name <code>pnp-modern-search-parts.sppkg</code>.</strong></p>
+<p><strong>The v4 version uses a brand new code architecture and replaces the older v3 codebase</strong>. There will be no new features added to v3.x, but we will continue to
+provide bug fixes as needed. Because v4.x is not at feature parity yet with v3.x, you can still use the v3.x packages to meet your requirements. Also, there is not an
+auto-upgrade path from v3 to v4 due to the new architecture, so you are perfectly ok
+to stay on the v3 version until v4 provides the features validating your upgrade.
+However, the main focus is on the v4 version, and new search functionality backed by the Microsoft Graph Search API will be v4 only.</p>
+<p><strong>v3 and v4 don't share the same package name, Web Part and solution IDs meaning you can have them side by side on a page if necessary without overlap.</strong></p>
 <p><img alt="&quot;V3 &amp; v4&quot;" class="center" src="assets/v3_v4.png" /></p>
 </div>
 <h2 id="whats-included">What's included?<a class="headerlink" href="#whats-included" title="Permanent link">&para;</a></h2>
