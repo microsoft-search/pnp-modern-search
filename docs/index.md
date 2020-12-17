@@ -13,7 +13,7 @@ The PnP 'Modern Search' solution is a set of SharePoint Online modern Web Parts 
     to stay on the v3 version until v4 provides the features validating your upgrade.
     However, the main focus is on the v4 version, and new search functionality backed by the Microsoft Graph Search API will be v4 only.
 
-    **v3 and v4 don't share the same Web Part and solution IDs meaning you can have them side by side on a page if necessary without overlap. However, in this case, you will have to rename *.sppkg files to be able to upload both versions in your App Catalog because they share the same SPFx package name `pnp-modern-search-parts.sppkg`.**
+    **v3 and v4 don't share the same package name, Web Part and solution IDs meaning you can have them side by side on a page if necessary without overlap.**
     
     !["V3 & v4"](./assets/v3_v4.png){: .center}
 

@@ -26,7 +26,7 @@ nav:
     - Custom web component: extensibility/custom_web_component.md
     - Custom suggestions provider: extensibility/custom_suggestions_provider.md
     - Custom Handlebars customizations: extensibility/handlebars_customizations.md
-  - v3:
+  - Version 3:
     - Documentation: v3/index.md
 theme:
   name: 'material'
