@@ -127,7 +127,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
 
         // WebPart Title
         if (this.props.webPartTitle && this.props.webPartTitle.length > 0) {
-            renderWebPartTitle = <WebPartTitle title={this.props.webPartTitle} updateProperty={null} displayMode={DisplayMode.Read} />;
+            renderWebPartTitle = <WebPartTitle title={this.props.webPartTitle} updateProperty={null} displayMode={DisplayMode.Read} themeVariant={this.props.themeVariant} />;
         }
 
         let totalPrimaryAndSecondaryResults = this.state.results.RelevantResults.length;
