@@ -622,7 +622,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                     }
 
                     // Map refinement results
-                    hitContainer.aggregations.forEach((aggregation) => {
+                    hitContainer.aggregations && hitContainer.aggregations.forEach((aggregation) => {
 
                         let values: IDataFilterResultValue[] = [];
                         aggregation.buckets.forEach((bucket) => {
