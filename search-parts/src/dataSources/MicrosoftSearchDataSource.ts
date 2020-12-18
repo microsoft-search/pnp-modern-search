@@ -23,7 +23,7 @@ export enum EntityType {
     ExternalItem = 'externalItem',
     List = 'list',
     ListItem = 'listItem',
-    Site ='site'
+    Site = 'site'
 }
 
 export interface IMicrosoftSearchDataSourceProperties {
@@ -95,7 +95,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
      * The data source items count
      */
     private _itemsCount: number = 0;
-    
+
     /**
      * A date helper instance
      */
@@ -160,7 +160,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
 
         const searchRequest = await this.buildMicrosoftSearchRequest(dataContext);
         results = await this.search(searchRequest);
-        
+
         return results;
     }
 
@@ -210,7 +210,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         ];
 
         // Sorting results is currently only supported on the following SharePoint and OneDrive types: driveItem, listItem, list, site.
-        if (this.properties.entityTypes.indexOf(EntityType.DriveItem) !== -1  ||
+        if (this.properties.entityTypes.indexOf(EntityType.DriveItem) !== -1 ||
             this.properties.entityTypes.indexOf(EntityType.ListItem) !== -1 ||
             this.properties.entityTypes.indexOf(EntityType.Site) !== -1 ||
             this.properties.entityTypes.indexOf(EntityType.List) !== -1) {
@@ -245,7 +245,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                                     text: commonStrings.DataSources.SearchCommon.Sort.SortDirectionDescendingLabel
                                 }
                             ],
-                            defaultValue: SortFieldDirection.Ascending                                
+                            defaultValue: SortFieldDirection.Ascending
                         }
                     ]
                 })
@@ -272,32 +272,32 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             groupFields.push(PropertyPaneToggle('dataSourceProperties.enableTopResults', {
                 label: commonStrings.DataSources.MicrosoftSearch.EnableTopResultsLabel
             }));
-        } 
+        }
 
-        return  [
+        return [
             {
-              groupName: commonStrings.DataSources.MicrosoftSearch.SourceConfigurationGroupName,
-              groupFields: groupFields 
+                groupName: commonStrings.DataSources.MicrosoftSearch.SourceConfigurationGroupName,
+                groupFields: groupFields
             }
         ];
     }
 
     public onCustomPropertyUpdate(propertyPath: string, newValue: any): void {
-    
+
         if (propertyPath.localeCompare('dataSourceProperties.entityTypes') === 0) {
-            this.properties.entityTypes = (cloneDeep(newValue) as IComboBoxOption[]).map(v => {return v.key as EntityType;});
+            this.properties.entityTypes = (cloneDeep(newValue) as IComboBoxOption[]).map(v => { return v.key as EntityType; });
             this.context.propertyPane.refresh();
             this.render();
         }
 
         if (propertyPath.localeCompare('dataSourceProperties.fields') === 0) {
-            this.properties.fields = (cloneDeep(newValue) as IComboBoxOption[]).map(v => {return v.key as string;});
+            this.properties.fields = (cloneDeep(newValue) as IComboBoxOption[]).map(v => { return v.key as string; });
             this.context.propertyPane.refresh();
             this.render();
         }
 
         if (propertyPath.localeCompare('dataSourceProperties.contentSourceConnectionIds') === 0) {
-            this.properties.contentSourceConnectionIds = (cloneDeep(newValue) as IComboBoxOption[]).map(v => {return v.key as string;});
+            this.properties.contentSourceConnectionIds = (cloneDeep(newValue) as IComboBoxOption[]).map(v => { return v.key as string; });
             this.context.propertyPane.refresh();
             this.render();
         }
@@ -359,8 +359,8 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
     private initProperties(): void {
         this.properties.entityTypes = this.properties.entityTypes !== undefined ? this.properties.entityTypes : [EntityType.DriveItem];
 
-        const SharePointFields = ["Title","Path","DefaultEncodingUrl",,"ContentTypeId"];
-        const CommonFields = ["name","webUrl","filetype","createdBy","createdDateTime","lastModifiedDateTime","parentReference","size","description","file","folder"];
+        const SharePointFields = ["Title", "Path", "DefaultEncodingUrl", , "ContentTypeId"];
+        const CommonFields = ["name", "webUrl", "filetype", "createdBy", "createdDateTime", "lastModifiedDateTime", "parentReference", "size", "description", "file", "folder"];
 
         this.properties.fields = this.properties.fields !== undefined ? this.properties.fields : SharePointFields.concat(CommonFields);
         this.properties.sortProperties = this.properties.sortProperties !== undefined ? this.properties.sortProperties : [];
@@ -368,10 +368,10 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
     }
 
     private async buildMicrosoftSearchRequest(dataContext: IDataContext): Promise<IMicrosoftSearchRequest> {
-        
+
         let aggregations: ISearchRequestAggregation[] = [];
         let aggregationFilters: string[] = [];
-        let sortProperties : ISearchSortProperty[] = [];
+        let sortProperties: ISearchSortProperty[] = [];
         let contentSources: string[] = [];
         let queryText = '*'; // Default query string if not specified, the API does not support empty value
         let from = 0;
@@ -383,7 +383,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
 
         // Paging
         if (dataContext.pageNumber > 1) {
-            from = (dataContext.pageNumber-1) * dataContext.itemsCountPerPage;
+            from = (dataContext.pageNumber - 1) * dataContext.itemsCountPerPage;
         }
 
         // Build aggregations
@@ -399,7 +399,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                 size: 10
             };
 
-            if (filterConfig.selectedTemplate === "DateIntervalFilterTemplate" ) {
+            if (filterConfig.selectedTemplate === "DateIntervalFilterTemplate") {
 
                 const pastYear = this.moment(new Date()).subtract(1, 'years').subtract('minutes', 1).toISOString();
                 const past3Months = this.moment(new Date()).subtract(3, 'months').subtract('minutes', 1).toISOString();
@@ -450,7 +450,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                 if (!isEmpty(refinementString)) {
                     aggregationFilters = aggregationFilters.concat([`${dataContext.filters.filterOperator}(${refinementString})`]);
                 }
-                
+
             } else {
                 aggregationFilters = aggregationFilters.concat(this.buildAggregationFilters(dataContext.filters.selectedFilters, dataContext.filters.filtersConfiguration));
             }
@@ -469,7 +469,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                 isDescending: sortProperty.sortDirection === SortFieldDirection.Descending ? true : false
             });
         });
-        
+
         // Build search request
         let searchRequest: IMicrosoftSearchRequest = {
             entityTypes: this.properties.entityTypes,
@@ -487,7 +487,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         if (aggregations.length > 0) {
             searchRequest.aggregations = aggregations.filter(a => a);
         }
-        
+
         if (aggregationFilters.length > 0) {
             searchRequest.aggregationFilters = aggregationFilters;
         }
@@ -532,9 +532,9 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                     // A refiner can have multiple values selected in a multi or mon multi selection scenario
                     // The correct operator is determined by the refiner display template according to its behavior
                     const conditions = filter.values.map(filterValue => {
-                        
+
                         let value = filterValue.value;
-                
+
                         if (this.moment(value, this.moment.ISO_8601, true).isValid()) {
 
                             if (!startDate && (filterValue.operator === FilterComparisonOperator.Geq || filterValue.operator === FilterComparisonOperator.Gt)) {
@@ -579,7 +579,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                                 refinementToken = `range(min,${refinementToken})`;
                             }
                         }
-                        
+
                         refinementQueryConditions.push(`${filter.filterName}:${refinementToken}`);
                     }
                 }
@@ -605,9 +605,9 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         // Get an instance to the MSGraphClient
         const msGraphClientFactory = this.serviceScope.consume<MSGraphClientFactory>(MSGraphClientFactory.serviceKey);
         const msGraphClient = await msGraphClientFactory.getClient();
-        const request = await msGraphClient.api(MICROSOFT_SEARCH_URL);     
-            
-        const jsonResponse = await request.post({ requests : [searchRequest]});
+        const request = await msGraphClient.api(MICROSOFT_SEARCH_URL).header('SdkVersion', `PnPModernSearch/${this.context.manifest.version}`);        
+
+        const jsonResponse = await request.post({ requests: [searchRequest] });
 
         if (jsonResponse.value && Array.isArray(jsonResponse.value)) {
 
@@ -638,9 +638,9 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                             filterName: aggregation.field,
                             values: values
                         });
-                     });
+                    });
 
-                     response.filters = aggregationResults;
+                    response.filters = aggregationResults;
                 });
             });
         }
