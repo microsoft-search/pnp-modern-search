@@ -1,6 +1,3 @@
-import 'core-js/features/array';
-import 'core-js/modules/es.string.includes';
-import 'core-js/modules/es.number.is-nan';
 import * as Handlebars from 'handlebars';
 import { ISearchResult } from '../../models/ISearchResult';
 import { isEmpty, uniqBy, uniq, trimEnd, get } from '@microsoft/sp-lodash-subset';
@@ -22,7 +19,6 @@ import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import groupBy from 'handlebars-group-by';
 import { Loader } from './LoadHelper';
 import { IComponentDefinition } from '../ExtensibilityService/IComponentDefinition';
-import { UrlHelper } from '../../helpers/UrlHelper';
 
 abstract class BaseTemplateService {
 
