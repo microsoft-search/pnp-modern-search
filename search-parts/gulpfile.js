@@ -64,6 +64,18 @@ const envCheck = build.subTask('environmentCheck', (gulp, config, done) => {
                 include: [
                     /node_modules/,
                 ]
+            }, {
+                // Skip logging helpers as they break on webpack and are not needed
+                test: /index.js$/,
+                loader: 'string-replace-loader',
+                include: [
+                    /handlebars-helpers/,
+                ],
+                options: {
+                    search: 'logging: require.*?,',
+                    replace: '',
+                    flags: 'g'
+                }
             });
 
             // Exclude moment.js locale for performance purpose
@@ -78,8 +90,7 @@ const envCheck = build.subTask('environmentCheck', (gulp, config, done) => {
                     openAnalyzer: false,
                     analyzerMode: 'static',
                     reportFilename: path.join(dropPath, `${lastDirName}.stats.html`),
-                    generateStatsFile: true,
-                    //statsFilename: path.join(dropPath, `${lastDirName}.stats.json`),
+                    generateStatsFile: false,
                     logLevel: 'error'
                 }));
             }
