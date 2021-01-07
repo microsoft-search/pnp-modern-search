@@ -1090,43 +1090,43 @@
 </thead>
 <tbody>
 <tr>
-<td Site="Site" align="left"></td>
+<td align="left"><strong>{Site}</strong> or <strong>{Site.URL}</strong>  <br/></td>
 <td align="left">URL of the site from where the query was issued. For example, this value can be used to query content of the managed property Path.  <br/></td>
 </tr>
 <tr>
-<td Site.ID="Site.ID" align="left"></td>
+<td align="left"><strong>{Site.ID}</strong>  <br/></td>
 <td align="left">GUID of site from where the query was issued. This value corresponds to the value of the managed property SiteID.  <br/></td>
 </tr>
 <tr>
-<td Site.LCID="Site.LCID" align="left"></td>
+<td align="left"><strong>{Site.LCID}</strong>  <br/></td>
 <td align="left">Numeric value of the locale as specified by the Regional Settings in the Site Settings on the Site from where the query was issued.  <br/></td>
 </tr>
 <tr>
-<td Site.Locale="Site.Locale" align="left"></td>
+<td align="left"><strong>{Site.Locale}</strong>  <br/></td>
 <td align="left">Language of the Site from where the query was issued in ll-cc format — for example, en-us.  <br/></td>
 </tr>
 <tr>
-<td Site._property_62_="Site.\&lt;property>" align="left"></td>
+<td align="left"><strong>{Site.&lt;property&gt;}</strong>  <br/></td>
 <td align="left">Any property from the property bag of the site (SPWeb) from where the query was issued, including custom properties.  <br/></td>
 </tr>
 <tr>
-<td SiteCollection="SiteCollection" align="left"></td>
+<td align="left"><strong>{SiteCollection}</strong> or <strong>{SiteCollection.URL}</strong>  <br/></td>
 <td align="left">URL of site collection from where the query was issued. For example, this value can be used to query content of the managed property Path.  <br/></td>
 </tr>
 <tr>
-<td SiteCollection.ID="SiteCollection.ID" align="left"></td>
+<td align="left"><strong>{SiteCollection.ID}</strong>  <br/></td>
 <td align="left">GUID of site collection from where the query was issued.  <br/></td>
 </tr>
 <tr>
-<td SiteCollection.LCID="SiteCollection.LCID" align="left"></td>
+<td align="left"><strong>{SiteCollection.LCID}</strong>  <br/></td>
 <td align="left">Numeric value of the locale as specified by the Regional Settings in the Site Settings on the Site Collection from where the query was issued.  <br/></td>
 </tr>
 <tr>
-<td SiteCollection.Locale="SiteCollection.Locale" align="left"></td>
+<td align="left"><strong>{SiteCollection.Locale}</strong>  <br/></td>
 <td align="left">Language of the Site Collection from where the query was issued in ll-cc format — for example, en-us.  <br/></td>
 </tr>
 <tr>
-<td SiteCollection._property_62_="SiteCollection.\&lt;property>" align="left"></td>
+<td align="left"><strong>{SiteCollection.&lt;property&gt;}</strong>  <br/></td>
 <td align="left">Any property from the property bag of the root site (SPWeb) in the site collection (SPSite) from where the query was issued, including custom properties.  <br/></td>
 </tr>
 </tbody>
@@ -1141,11 +1141,11 @@
 </thead>
 <tbody>
 <tr>
-<td URLToken._integer_62_="URLToken.\&lt;integer>" align="left"></td>
+<td align="left"><strong>{URLToken.&lt;integer&gt;}</strong>  <br/></td>
 <td URLToken.1="URLToken.1" align="left">A value from the URL of a page. The integer represents the position of the value in the URL as counted from right to left. For example, for the page http://www.contoso/audio/mp3/1010101, the query variable </td>
 </tr>
 <tr>
-<td Request._PropertyName_62_="Request.\&lt;PropertyName>" align="left"></td>
+<td align="left"><strong>{Request.&lt;PropertyName&gt;}</strong>  <br/></td>
 <td Request.Url="Request.Url" align="left">A value from the current http request - for example, </td>
 </tr>
 </tbody>
@@ -1160,23 +1160,23 @@
 </thead>
 <tbody>
 <tr>
-<td User="User" align="left"></td>
+<td align="left"><strong>{User}</strong> or <strong>{User.Name}</strong> <br/></td>
 <td align="left">Display name of the user who issued the query. For example, this value can be used to query content of the managed property Author.  <br/></td>
 </tr>
 <tr>
-<td User.Email="User.Email" align="left"></td>
+<td align="left"><strong>{User.Email}</strong>  <br/></td>
 <td align="left">Email address of the user who issued the query. For example, this value can be used to query content of the managed property WorkEmail.  <br/></td>
 </tr>
 <tr>
-<td User.PreferredContentLanguage="User.PreferredContentLanguage" align="left"></td>
+<td align="left"><strong>{User.PreferredContentLanguage}</strong>  <br/></td>
 <td align="left">Language as specified as Preferred Content Language in the profile of the user who issued the query.  <br/></td>
 </tr>
 <tr>
-<td User.PreferredDisplayLanguage="User.PreferredDisplayLanguage" align="left"></td>
+<td align="left"><strong>{User.PreferredDisplayLanguage}</strong>  <br/></td>
 <td align="left">Language as specified as Preferred Display Language in the profile of the user who issued the query.  <br/></td>
 </tr>
 <tr>
-<td User._property_62_="User.\&lt;property>" align="left"></td>
+<td align="left"><strong>{User.&lt;property&gt;}</strong>  <br/></td>
 <td align="left">Any property from the user profile of the user who issued the query — for example, SPS-Interests, including custom properties.  <br/></td>
 </tr>
 </tbody>
@@ -1191,19 +1191,19 @@
 </thead>
 <tbody>
 <tr>
-<td Today_-="Today+/-" _integer="\&lt;integer" align="left" days_62_="days>" for="for" number="number" of="of" value="value"></td>
+<td align="left"><strong>{Today+/- &lt;integer value for number of days&gt;}</strong>  <br/></td>
 <td align="left">A date calculated by adding/subtracting the specified number of days to/from the date when the query is issued. Date format is YYYY-MM-DD. For example, this value can be used to query content of the managed property LastModifiedTime.  <br/></td>
 </tr>
 <tr>
-<td SearchBoxQuery="SearchBoxQuery" align="left"></td>
+<td align="left"><strong>{SearchBoxQuery}</strong> or <strong>{searchTerms}</strong> <br/></td>
 <td align="left">The query value entered into a search box on a page.  <br/></td>
 </tr>
 <tr>
-<td CurrentDisplayLanguage="CurrentDisplayLanguage" align="left"></td>
+<td align="left"><strong>{CurrentDisplayLanguage}</strong>  <br/></td>
 <td align="left">The current display language based on MUI in ll-cc format.  <br/></td>
 </tr>
 <tr>
-<td CurrentDisplayLCID="CurrentDisplayLCID" align="left"></td>
+<td align="left"><strong>{CurrentDisplayLCID}</strong>  <br/></td>
 <td align="left">Numeric value of the current display language based on MUI in ll-cc format.  <br/></td>
 </tr>
 </tbody>
@@ -1219,31 +1219,35 @@
 </thead>
 <tbody>
 <tr>
-<td Page._wzxhzdk:27_FieldName_wzxhzdk:28_="Page.&lt;FieldName&gt;" align="left"></td>
+<td align="left"><strong>{Page.&lt;FieldName&gt;}</strong> <br/></td>
 <td align="left">The value of a field on the page from where the query was issued. For example, if the page from where the query was issued contained a site column named "ContentOwner," specifying {Page.ContentOwner} would allow you to query for the value of "ContentOwner." FieldName is the internal name of the field. When used with taxonomy columns, use <code>{Page.&lt;FieldName&gt;.Label}</code> or <code>{Page.&lt;FieldName&gt;.TermID}</code> <br/></td>
 </tr>
 <tr>
-<td CurrentYear="CurrentYear" align="left"></td>
+<td align="left"><strong>{CurrentYear}</strong>  <br/></td>
 <td align="left">Todays's date four digits, 2018 <br/></td>
 </tr>
 <tr>
-<td CurrentMonth="CurrentMonth" align="left"></td>
+<td align="left"><strong>{CurrentMonth}</strong>  <br/></td>
 <td align="left">Today's month, 1-12 <br/></td>
 </tr>
 <tr>
-<td CurrentDate="CurrentDate" align="left"></td>
+<td align="left"><strong>{CurrentDate}</strong>  <br/></td>
 <td align="left">Today's date, 1-31 <br/></td>
 </tr>
 <tr>
-<td QueryString._wzxhzdk:17_ParameterName_wzxhzdk:18_="QueryString.&lt;ParameterName&gt;" align="left"></td>
+<td align="left"><strong>{QueryString.&lt;ParameterName&gt;}</strong> <br/></td>
 <td QueryString.ItemNumber="QueryString.ItemNumber" align="left">A value from a query string in the URL of the current page. For example, if the URL of the current page contains a query string such as ItemNumber=567, you could obtain the value 567 by specifying </td>
 </tr>
 <tr>
-<td PageContext._wzxhzdk:13_ParameterName_wzxhzdk:14_="PageContext.&lt;ParameterName&gt;" align="left"></td>
+<td align="left"><strong>{QueryString.&lt;ParameterName&gt;}</strong> <br/></td>
+<td QueryString.ItemNumber="QueryString.ItemNumber" align="left">A value from a query string in the URL of the current page. For example, if the URL of the current page contains a query string such as ItemNumber=567, you could obtain the value 567 by specifying </td>
+</tr>
+<tr>
+<td align="left"><strong>{PageContext.&lt;ParameterName&gt;}</strong> <br/></td>
 <td PageContext.hubSiteId="PageContext.hubSiteId" align="left">A value from the legacyPageContext object on the page. For example, if the legacyPageContext object of the current page contains a property "hubSiteId": "166aa115-7ae7-4c21-9e02-9e0c8872be28", you could obtain the value 166aa115-7ae7-4c21-9e02-9e0c8872be28 by specifying </td>
 </tr>
 <tr>
-<td TenantUrl="TenantUrl" align="left"></td>
+<td align="left"><strong>{TenantUrl}</strong>  <br/></td>
 <td align="left">URL of the tenant (root site)<br/></td>
 </tr>
 </tbody>
