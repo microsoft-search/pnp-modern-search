@@ -949,7 +949,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                     values.forEach((term) => {
 
                         // Use FQL expression here to get the correct output. Otherwise a full match is performed
-                        const fqlFilterValue = `phrase("${term}")`;
+                        const fqlFilterValue = `"ǂǂ${this._bytesToHex(this._stringToUTF8Bytes(term))}"`;
                         const existingFilterIdx = updatedValues.map(updatedValue => updatedValue.name).indexOf(term);
 
                         if (existingFilterIdx === -1) {
@@ -1234,5 +1234,16 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         } else {
             return rawResults;
         }
+    }
+
+    private _bytesToHex(bytes) {
+        return Array.from(
+          bytes,
+          byte => (byte as any).toString(16).padStart(2, "0")
+        ).join("");
+    }
+
+    private _stringToUTF8Bytes(string) {
+        return new TextEncoder().encode(string);
     }
 }
