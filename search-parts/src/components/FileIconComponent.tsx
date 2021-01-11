@@ -48,17 +48,18 @@ export class FileIcon extends React.Component<IFileIconProps, IFileIconState> {
         
         if (this.props.extension || this.props.isContainer) {
 
-            if (this.props.isContainer) {
+            let isContainer = this.props.isContainer ? this.props.isContainer.toString() : undefined;
+            if (isContainer) {
                 
                 // Folder
                 // SharePointCAML SharePoint REST => FSObjType = 1
                 // SharePoint Search => ContentTypeId => 0x0120...
-                if ((this.props.isContainer === "true" || this.props.isContainer === "1" || this.props.isContainer.indexOf('0x0120') !== -1)) {
+                if ((isContainer === "true" || isContainer === "1" || isContainer.indexOf('0x0120') !== -1)) {
                     iconProps = getFileTypeIconProps({ type: FileIconType.folder, size: size, imageFileType: 'svg' });
                 }
 
                 // SharePoint Document Set
-                if (this.props.isContainer.indexOf('0x0120D520') !== -1) {
+                if (isContainer.indexOf('0x0120D520') !== -1) {
                     iconProps = getFileTypeIconProps({ type: FileIconType.docset, size: size, imageFileType: 'svg' });
                 }      
             }

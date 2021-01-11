@@ -49,7 +49,12 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
     let renderTitle: JSX.Element = null;
 
      // WP title
-     renderTitle = <WebPartTitle displayMode={this.props.webPartTitleProps.displayMode} title={this.props.webPartTitleProps.title} updateProperty={this.props.webPartTitleProps.updateProperty} />;
+     renderTitle =  <WebPartTitle 
+                      displayMode={this.props.webPartTitleProps.displayMode} 
+                      title={this.props.webPartTitleProps.title} 
+                      updateProperty={this.props.webPartTitleProps.updateProperty}
+                      className={this.props.webPartTitleProps.className}
+                    />;
     
     // If no filter 
     if (this.state.currentUiFilters.length === 0) {

@@ -20,6 +20,7 @@ import { PageOpenBehavior } from '../../helpers/UrlHelper';
 import { TokenService } from '../../services/tokenService/TokenService';
 import { ITokenService } from '@pnp/modern-search-extensibility';
 import { BaseWebPart } from '../../common/BaseWebPart';
+import commonStyles from '../../styles/Common.module.scss';
 
 export default class SearchVerticalsWebPart extends BaseWebPart<ISearchVerticalsWebPartProps> implements IDynamicDataCallables {
 
@@ -73,7 +74,8 @@ export default class SearchVerticalsWebPart extends BaseWebPart<ISearchVerticals
           title: this.properties.title,
           updateProperty: (value: string) => {
             this.properties.title = value;
-          }
+          },
+          className: commonStyles.wpTitle
         },
         tokenService: this.tokenService,
         themeVariant: this._themeVariant,

@@ -32,7 +32,12 @@ export default class SearchVerticalsContainer extends React.Component<ISearchVer
     let renderTitle: JSX.Element = null;
 
     // Web Part title
-    renderTitle = <WebPartTitle displayMode={this.props.webPartTitleProps.displayMode} title={this.props.webPartTitleProps.title} updateProperty={this.props.webPartTitleProps.updateProperty} />;
+    renderTitle = <WebPartTitle 
+                    displayMode={this.props.webPartTitleProps.displayMode} 
+                    title={this.props.webPartTitleProps.title} 
+                    updateProperty={this.props.webPartTitleProps.updateProperty}
+                    className={this.props.webPartTitleProps.className}
+                  />;
 
     const renderPivotItems = this.props.verticals.map(vertical => {
 

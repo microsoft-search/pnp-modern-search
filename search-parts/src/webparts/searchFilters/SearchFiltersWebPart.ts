@@ -35,6 +35,7 @@ import { ServiceScope } from '@microsoft/sp-core-library';
 import { AvailableComponents } from '../../components/AvailableComponents';
 import { PropertyPaneAsyncCombo } from '../../controls/PropertyPaneAsyncCombo/PropertyPaneAsyncCombo';
 import { BaseWebPart } from '../../common/BaseWebPart';
+import commonStyles from '../../styles/Common.module.scss';
 
 export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebPartProps> implements IDynamicDataCallables {
 
@@ -199,7 +200,8 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
             title: this.properties.title,
             updateProperty: (value: string) => {
               this.properties.title = value;
-            }
+            },
+            className: commonStyles.wpTitle
           }
         } as ISearchFiltersContainerProps
       );
