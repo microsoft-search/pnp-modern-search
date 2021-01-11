@@ -23,7 +23,11 @@ export enum BuiltinTokenNames {
 
 export class TokenService implements ITokenService {
 
-    private genericTokenRegexp: RegExp = /\{[^\{]*?\}/gi;
+    /**
+     * This regex only matches expressions enclosed with single, not escaped, curly braces '{}'
+     */
+    private genericTokenRegexp: RegExp = /(?<!\\){[^\{]*?}(?!\\)/gi;
+
     /**
      * The list of user properties. Used to avoid refetching it every time.
      */
@@ -138,6 +142,9 @@ export class TokenService implements ITokenService {
                     }
                 });
             }
+
+            // Replace manually escaped characters
+            inputString = inputString.replace(/\\(.)/gi, '$1');
         }
 
         return inputString;

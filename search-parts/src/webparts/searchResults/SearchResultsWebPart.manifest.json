@@ -6,6 +6,7 @@
     "version": "4.0.0",
     "manifestVersion": 2,
     "requiresCustomScript": false,
+    "supportsFullBleed": true,
     "supportedHosts": [
         "SharePointWebPart"
     ],

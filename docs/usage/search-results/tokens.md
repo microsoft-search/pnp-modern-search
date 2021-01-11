@@ -32,6 +32,8 @@ Tokens related to connected Web Parts in the Search Results.
 
 > These tokens can only be used in the 'Search Results' Web Part.
 
+> You can escape curly braces characters using `'\'` to avoid: ex: `DepartmentId:\{edbfd618-ef1d-4cc5-a214-95bf44ddf4ee\}`
+
 |**Token**|**Definition**|
 |:-----|:-----|
 |**{inputQueryText}**<br/> | The query value entered into a search box on a page. The value depends on the configuration of input text connection of the Search Results Web Part. <br/> |

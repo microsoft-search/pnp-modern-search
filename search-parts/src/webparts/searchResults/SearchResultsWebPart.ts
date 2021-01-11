@@ -495,31 +495,49 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
       Log.warn(LogSource, `Opt out for PnP Telemetry failed. Details: ${error}`, this.context.serviceScope);
     }
 
-    const usageEvent = {
-      name: Constants.PNP_MODERN_SEARCH_EVENT_NAME,
-      properties: {
-        selectedDataSource: this.properties.dataSourceKey,
-        version: this.manifest.version
+    if (this.properties.dataSourceKey && this.properties.selectedLayoutKey) {
+
+      const usageEvent = {
+        name: Constants.PNP_MODERN_SEARCH_EVENT_NAME,
+        properties: {
+          selectedDataSource: this.properties.dataSourceKey,
+          selectedLayout: this.properties.selectedLayoutKey,
+          useFilters: this.properties.useFilters,
+          useVerticals: this.properties.useVerticals
+        }
       }
-    };
 
-    // Track event with application insights
-    const appInsights = new ApplicationInsights({ 
-      config: {
-        instrumentationKey: Constants.PNP_APP_INSIGHTS_INSTRUMENTATION_KEY
-      } 
-    });
+      // Track event with application insights (PnP)
+      const appInsights = new ApplicationInsights({ 
+        config: {
+          maxBatchInterval: 0,
+          instrumentationKey: Constants.PNP_APP_INSIGHTS_INSTRUMENTATION_KEY,
+          namePrefix: LogSource,
+          disableFetchTracking: true,
+          disableAjaxTracking: true
+        } 
+      });
+  
+      // Track event with application insights (Fallback)
+      const appInsightsFallback = new ApplicationInsights({ 
+        config: {
+          maxBatchInterval: 0,
+          instrumentationKey: Constants.PNP_APP_INSIGHTS_INSTRUMENTATION_KEY_FALLBACK,
+          namePrefix: LogSource,
+          disableFetchTracking: true,
+          disableAjaxTracking: true
+        } 
+      });
 
-    // Track event with application insights (Fallback)
-    const appInsightsFallback = new ApplicationInsights({ 
-      config: {
-        instrumentationKey: Constants.PNP_APP_INSIGHTS_INSTRUMENTATION_KEY_FALLBACK
-      } 
-    });
+      appInsights.loadAppInsights();
+      appInsights.context.application.ver = this.manifest.version;
+      appInsights.trackEvent(usageEvent);
 
-    appInsights.trackEvent(usageEvent);
-    appInsightsFallback.trackEvent(usageEvent);
-
+      appInsightsFallback.loadAppInsights();   
+      appInsightsFallback.context.application.ver = this.manifest.version;
+      appInsightsFallback.trackEvent(usageEvent);
+    }
+   
     // Initializes MS Graph Toolkit
     if (this.properties.useMicrosoftGraphToolkit) {
       await this.loadMsGraphToolkit();
