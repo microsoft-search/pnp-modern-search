@@ -75,6 +75,10 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
         showClearButton: !isReset
       });
 
+      var searchTermsRegex = new RegExp("{searchTerms}", 'gi');
+      var queryTemplate = await this.props.tokenService.resolveTokens(this.props.queryTemplate);
+      queryText = queryTemplate.replace(searchTermsRegex, queryText);
+
       if (this.props.searchInNewPage && !isReset && this.props.pageUrl) {
         const urlEncodedQueryText = encodeURIComponent(queryText);
 
