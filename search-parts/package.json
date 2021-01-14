@@ -39,7 +39,7 @@
         "@uifabric/icons": "7.5.17",
         "@uifabric/styling": "6.50.7",
         "custom-event-polyfill": "1.0.7",
-        "dompurify": "2.0.12",
+        "dompurify": "2.0.17",
         "flickity": "2.2.2",
         "flickity-imagesloaded": "2.0.0",
         "handlebars": "4.5.3",
