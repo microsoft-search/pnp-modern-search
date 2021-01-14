@@ -44,6 +44,18 @@ const envCheck = build.subTask('environmentCheck', (gulp, config, done) => {
                 include: [
                     /node_modules/,
                 ]
+            }, {
+                // Skip logging helpers as they break on webpack and are not needed
+                test: /index.js$/,
+                loader: 'string-replace-loader',
+                include: [
+                    /handlebars-helpers/,
+                ],
+                options: {
+                    search: 'logging: require.*?,',
+                    replace: '',
+                    flags: 'g'
+                }
             });
 
             generatedConfiguration.node = {
@@ -59,7 +71,6 @@ const envCheck = build.subTask('environmentCheck', (gulp, config, done) => {
                     analyzerMode: 'static',
                     reportFilename: path.join(dropPath, `${lastDirName}.stats.html`),
                     generateStatsFile: false,
-                    //statsFilename: path.join(dropPath, `${lastDirName}.stats.json`),
                     logLevel: 'error'
                 }));
             }
