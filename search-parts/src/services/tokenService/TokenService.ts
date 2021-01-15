@@ -235,7 +235,7 @@ export class TokenService implements ITokenService {
     private async replacePageTokens(inputString: string): Promise<string> {
 
         const pageTokenRegExp: RegExp = /\{(?:Page)\.(.*?)\}/gi;
-        let matches = pageTokenRegExp.exec(inputString.toLowerCase());
+        let matches = pageTokenRegExp.exec(inputString);
         let item = {};
 
         // Make a check to the listItem property in the case we are in the hosted workbench
@@ -263,8 +263,8 @@ export class TokenService implements ITokenService {
                 if (/\.Label|\.TermID/gi.test(pageProperty)) {
 
                     let term = pageProperty.split(".");
-                    let columnName = term[0];
-                    let labelOrTermId = term[1];
+                    let columnName = term[0].toLowerCase();
+                    let labelOrTermId = term[1].toLowerCase();
 
                     // Handle multi or single taxonomy values
                     if (Array.isArray(item[columnName]) && item[columnName].length > 0) {
@@ -280,10 +280,10 @@ export class TokenService implements ITokenService {
                 } else {
 
                     // Return the property as is
-                    itemProp = item[pageProperty];
+                    itemProp = ObjectHelper.byPath(item, pageProperty.toLowerCase());
                 }
 
-                inputString = inputString.toLowerCase().replace(matches[0], itemProp);
+                inputString = inputString.replace(matches[0], itemProp);
                 matches = pageTokenRegExp.exec(inputString);
             }
         }
