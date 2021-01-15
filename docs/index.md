@@ -1,6 +1,6 @@
 !["PnP"](https://pnp.github.io/images/hero-parker-p-1080.png){: .center .logo}
 
-# PnP Modern Search v4 (preview)
+# PnP Modern Search v4
 
 The PnP 'Modern Search' solution is a set of SharePoint Online modern Web Parts allowing SharePoint super users, webmasters and developers to create highly flexible and personalized search based experiences in minutes.
 
