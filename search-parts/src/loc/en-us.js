@@ -122,8 +122,8 @@ define([], function() {
           MicrosoftSearch: {
             QueryTextFieldLabel: "Query text",
             QueryTextFieldInfoMessage: "Use the <strong>Available connections</strong> Web Part configuration tab to specifiy either a static value or a value from a dynamic component on the page like a searchbox",
-            SourceName: "Microsoft Search (beta)",
-            SourceConfigurationGroupName: "Microsoft Search (beta)",
+            SourceName: "Microsoft Search",
+            SourceConfigurationGroupName: "Microsoft Search",
             EntityTypesField: "Entity types to search",
             SelectedFieldsPropertiesFieldLabel: "Selected fields",
             SelectedFieldsPropertiesFieldDescription: "Specifies the fields to retrieve from the search results.",

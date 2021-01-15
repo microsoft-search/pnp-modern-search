@@ -15,8 +15,8 @@ devDependencies:
   '@types/chai': 3.4.34
   '@types/mocha': 2.2.38
   '@types/react-dom': 16.8.3
-  '@webcomponents/custom-elements': 1.4.1
-  '@webcomponents/webcomponentsjs': 2.4.3
+  '@webcomponents/custom-elements': 1.4.3
+  '@webcomponents/webcomponentsjs': 2.5.0
   ajv: 5.2.5
   gulp: 3.9.1
   handlebars: 4.7.6
@@ -1616,14 +1616,14 @@ packages:
     dev: true
     resolution:
       integrity: sha512-w0U0pD4EhlnvRyeJzBqaVSJAo9w/ce7/WPogeXLzGkO6hzhr4GnQIZ4W4uUt5b9ooAaXPtnXlj0gzsXEOUNYMg==
-  /@webcomponents/custom-elements/1.4.1:
+  /@webcomponents/custom-elements/1.4.3:
     dev: true
     resolution:
-      integrity: sha512-vNCS1+3sxJOpoIsBjUQiXjGLngakEAGOD5Ale+6ikg6OZG5qI5O39frm3raPhud/IwnF4vec5ags05YBsgzcuA==
-  /@webcomponents/webcomponentsjs/2.4.3:
+      integrity: sha512-iD0YW46SreUQANGccywK/eC+gZELNHocZZrY2fGwrIlx/biQOTkAF9IohisibHbrmIHmA9pVCIdGwzfO+W0gig==
+  /@webcomponents/webcomponentsjs/2.5.0:
     dev: true
     resolution:
-      integrity: sha512-cV4+sAmshf8ysU2USutrSRYQkJzEYKHsRCGa0CkMElGpG5747VHtkfsW3NdVIBV/m2MDKXTDydT4lkrysH7IFA==
+      integrity: sha512-C0l51MWQZ9kLzcxOZtniOMohpIFdCLZum7/TEHv3XWFc1Fvt5HCpbSX84x8ltka/JuNKcuiDnxXFkiB2gaePcg==
   /@xtuc/ieee754/1.2.0:
     dev: true
     resolution:
@@ -12568,8 +12568,8 @@ specifiers:
   '@types/mocha': 2.2.38
   '@types/react-dom': 16.8.3
   '@types/webpack-env': 1.13.1
-  '@webcomponents/custom-elements': 1.4.1
-  '@webcomponents/webcomponentsjs': 2.4.3
+  '@webcomponents/custom-elements': 1.4.3
+  '@webcomponents/webcomponentsjs': 2.5.0
   ajv: ~5.2.2
   gulp: ~3.9.1
   handlebars: 4.7.6
