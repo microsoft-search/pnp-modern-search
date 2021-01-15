@@ -52,6 +52,9 @@ By getting this solution, you also benefit from an advanced [extensibility model
 
 With these available customizations options, you can do pretty much anything!
 
+!!! note
+    Extensibility samples are centralized in a dedicated repository: [https://github.com/microsoft-search/pnp-modern-search-extensibility-samples/tree/main](https://github.com/microsoft-search/pnp-modern-search-extensibility-samples/tree/main). Use them to get started to create your own or reuse existing samples in your projects.
+
 ## Troubleshooting
 
 If you encounter an issue, please use the GitHub issues list of [this repository](https://github.com/microsoft-search/pnp-modern-search/issues). Also, to help us to resolve your issue, you can include screenshots or error messages coming from:

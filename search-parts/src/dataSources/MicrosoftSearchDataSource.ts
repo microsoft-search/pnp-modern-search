@@ -622,24 +622,26 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                     }
 
                     // Map refinement results
-                    hitContainer.aggregations && hitContainer.aggregations.forEach((aggregation) => {
+                    if (hitContainer.aggregations) {
+                        hitContainer.aggregations.forEach((aggregation) => {
 
-                        let values: IDataFilterResultValue[] = [];
-                        aggregation.buckets.forEach((bucket) => {
-                            values.push({
-                                count: bucket.count,
-                                name: bucket.key,
-                                value: bucket.aggregationFilterToken,
-                                operator: FilterComparisonOperator.Contains
-                            } as IDataFilterResultValue);
+                            let values: IDataFilterResultValue[] = [];
+                            aggregation.buckets.forEach((bucket) => {
+                                values.push({
+                                    count: bucket.count,
+                                    name: bucket.key,
+                                    value: bucket.aggregationFilterToken,
+                                    operator: FilterComparisonOperator.Contains
+                                } as IDataFilterResultValue);
+                            });
+    
+                            aggregationResults.push({
+                                filterName: aggregation.field,
+                                values: values
+                            });
                         });
-
-                        aggregationResults.push({
-                            filterName: aggregation.field,
-                            values: values
-                        });
-                    });
-
+                    }
+                    
                     response.filters = aggregationResults;
                 });
             });

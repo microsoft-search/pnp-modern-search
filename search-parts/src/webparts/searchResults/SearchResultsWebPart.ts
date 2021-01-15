@@ -505,7 +505,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
           useFilters: this.properties.useFilters,
           useVerticals: this.properties.useVerticals
         }
-      }
+      };
 
       // Track event with application insights (PnP)
       const appInsights = new ApplicationInsights({ 
