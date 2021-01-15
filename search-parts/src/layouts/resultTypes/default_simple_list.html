@@ -1,0 +1,44 @@
+<style>
+    /* Insert your CSS here */
+</style>
+
+<div class="template--listItem--result">
+    {{#if @root.properties.layoutProperties.showFileIcon}}
+    <pnp-iconfile class="template--listItem--icon" data-extension="{{slot item @root.slots.FileType}}" data-is-container="{{slot item @root.slots.IsFolder}}" data-size="32" data-theme-variant="{{JSONstringify @root.theme}}">
+    </pnp-iconfile>
+    {{/if}}
+    <div class="template--listItem--contentContainer">
+        <span class="template--listItem--title example-themePrimary">
+            <a href="{{slot item @root.slots.PreviewUrl}}" target="_blank" data-interception="off">{{slot item @root.slots.Title}}</a>
+        </span>
+        <span>
+            {{getSummary (slot item @root.slots.Summary)}}
+            <span class="template--listItem--author">
+                {{#with (split (slot item @root.slots.Author) '|')}}
+                    {{[1]}}
+                {{/with}}
+            </span>
+        </span>
+        <span>{{getDate (slot item @root.slots.Date) "LL"}}</span>
+        <div class="template--listItem--tags example-themePrimary">
+            {{#if (slot item @root.slots.Tags)}}
+            <pnp-icon data-ame="Tag" data-theme-variant="{{JSONstringify @root.theme}}" aria-hidden="true"></pnp-icon>
+            {{#each (split (slot item @root.slots.Tags) ",") as |tag| }}
+            <a href="#{{slot item @root.slots.Tags}}:'{{trim tag}}'">{{tag}}</a> {{/each}} {{/if}}
+        </div>
+    </div>
+</div>
+{{#if @root.properties.layoutProperties.showItemThumbnail}}
+<div class="template--listItem--thumbnailContainer">
+    <div class="thumbnail--image">
+        <pnp-filepreview data-preview-url="{{slot item @root.slots.PreviewUrl}}" data-preview-image-url="{{slot item @root.slots.PreviewImageUrl}}" data-theme-variant="{{JSONstringify @root.theme}}">
+            <img alt='preview-image' width="120" src="{{slot item @root.slots.PreviewImageUrl}}" loading="lazy" onerror="this.onerror=null;this.src='{{@root.utils.defaultImage}}';" />
+        </pnp-filepreview>
+        <div class="thumbnail--hover">
+            <div>
+                <pnp-icon data-name="DocumentSearch" data-theme-variant="{{JSONstringify @root.theme}}" aria-hidden="true"></pnp-icon>
+            </div>
+        </div>
+    </div>
+</div>
+{{/if}}

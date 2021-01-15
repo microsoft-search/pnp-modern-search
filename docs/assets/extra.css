@@ -1,0 +1,10 @@
+.center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.logo {
+    width: 150px;
+}
+

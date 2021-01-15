@@ -1,0 +1,76 @@
+
+<content id="data-content">
+    <style>
+        .flickity-page-dots { 
+            bottom: 5px; 
+        }
+    </style>
+
+    <div class="template">
+
+        {{#if @root.properties.showSelectedFilters}}
+            <pnp-selectedfilters 
+                data-filters="{{JSONstringify filters.selectedFilters 2}}" 
+                data-filters-configuration="{{JSONstringify filters.filtersConfiguration 2}}" 
+                data-instance-id="{{filters.instanceId}}" 
+                data-operator="{{filters.filterOperator}}" 
+                data-theme-variant="{{JSONstringify @root.theme}}"
+            >
+            </pnp-selectedfilters>
+        {{/if}}
+
+        {{#if @root.properties.showResultsCount}}
+            <div class="template--resultCount">
+                <label class="ms-fontWeight-semibold">{{getCountMessage @root.data.totalItemsCount @root.inputQueryText}}</label>
+            </div>
+        {{/if}}
+
+        <pnp-slider data-items="{{JSONstringify @root.data.items 2}}" data-options="{{JSONstringify @root.properties.layoutProperties.sliderOptions}}" data-context="{{JSONstringify @root}}">
+
+            <div class="template--slide" style="height: {{@root.properties.layoutProperties.slideHeight}}px;width: {{@root.properties.layoutProperties.slideWidth}}px;margin: 5px;">
+
+                    <!-- 
+                        To get item properties, you need to escape every Handlebars expression (ex: \{{MyProperty}}) because item context is compiled manually inside the web component 
+                        If you omit the escape character '\', the Handlebars expression will be resolved from the root context
+                    -->
+                    <pnp-documentcard 
+                                    data-ui-test-id="resultCard"	
+                                    data-title="\{{slot item @root.slots.Title}}" 
+                                    data-location="\{{SiteTitle}}"
+                                    data-preview-image="\{{slot item @root.slots.PreviewImageUrl}}" 
+                                    data-preview-url="\{{slot item @root.slots.PreviewUrl}}" 
+                                    data-date="\{{getDate (slot item @root.slots.Date) 'LL'}}" 
+                                    data-href="\{{slot item @root.slots.Path}}" 
+                                    data-author="\{{slot item @root.slots.Author}}" 
+                                    data-profile-image="/_layouts/15/userphoto.aspx?size=L&username=\{{getUserEmail (slot item @root.slots.UserEmail)}}" 
+                                    data-file-extension="\{{slot item @root.slots.FileType}}"
+                                    data-is-container="\{{slot item @root.slots.IsFolder}}"
+                                    data-enable-preview="false" 
+                                    data-show-file-icon="true"
+                                    data-is-compact="false"
+                                    data-context="{{JSONstringify @root 2}}"
+                                    data-theme-variant="{{JSONstringify @root.theme}}"
+                                    >
+                    </pnp-documentcard>
+            </div>
+
+		</pnp-slider>
+    </div>
+</content>
+
+<content id="placeholder-content"> 
+
+    <style>        
+        .flickity-page-dots { 
+            bottom: 10px; 
+        }
+    </style>
+
+    <div class="placeholder">
+        <pnp-slider items="[{},{},{},{},{}]" options="{{JSONstringify @root.properties.layoutProperties.sliderOptions}}">
+            <div class="template--slide" style="height: {{@root.properties.layoutProperties.slideHeight}}px; width: {{@root.properties.layoutProperties.slideWidth}}px;margin: 5px;">
+                <pnp-documentcardshimmers data-ui-test-id="fakeCard" data-is-compact="false"></pnp-documentcardshimmers>
+            </div>  
+        </pnp-slider>
+    </div>
+</content>
