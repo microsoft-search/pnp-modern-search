@@ -1,4 +1,4 @@
-# PnP Modern Search Solution (v4)
+# PnP Modern Search Solution
 
 This is a open source solution that helps you to build engaging search based solutions in the SharePoint modern experience.
 
