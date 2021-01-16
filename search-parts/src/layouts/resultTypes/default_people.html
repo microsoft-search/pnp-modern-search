@@ -1,0 +1,14 @@
+<style>
+    /* Insert your CSS here */
+</style>
+
+<pnp-persona
+    data-image-url="/_layouts/15/userphoto.aspx?size=L&username={{getUserEmail (slot item @root.slots.UserEmail)}}"
+    data-primary-text="{{slot item @root.slots.UserDisplayName}}"
+    data-secondary-text="{{JobTitle}}"
+    data-tertiary-text="{{getUserEmail (slot item @root.slots.UserEmail)}}"
+    data-optional-text="WorkPhone"
+    data-persona-size="{{@root.properties.layoutProperties.personaSize}}"
+    data-theme-variant="{{JSONstringify @root.theme}}"
+>
+</pnp-persona>

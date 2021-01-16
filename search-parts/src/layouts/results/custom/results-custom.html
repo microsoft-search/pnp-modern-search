@@ -1,0 +1,107 @@
+<content id="data-content">
+
+    <style>
+
+        /* Insert your CSS overrides here */
+        .example-themePrimary a {
+            color: {{@root.theme.palette.themePrimary}};
+        }
+
+        .icon {
+            width: 20px;
+            height: 16px;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        ul li {
+            display: flex;
+            padding: 8px;
+        }
+        
+    </style>
+
+    <div class="template">
+        
+        {{#if @root.properties.showSelectedFilters}}
+            <pnp-selectedfilters 
+                data-filters="{{JSONstringify filters.selectedFilters 2}}" 
+                data-filters-configuration="{{JSONstringify filters.filtersConfiguration 2}}" 
+                data-instance-id="{{filters.instanceId}}" 
+                data-operator="{{filters.filterOperator}}"
+                data-theme-variant="{{JSONstringify @root.theme}}"
+            ></pnp-selectedfilters>
+        {{/if}}
+       
+        {{#if @root.properties.showResultsCount}}
+            <div class="template--resultCount">
+                <label class="ms-fontWeight-semibold">{{getCountMessage @root.data.totalItemsCount @root.inputQueryText}}</label>
+            </div>
+        {{/if}}
+
+        <ul class="template--custom">
+            {{#each data.items as |item|}}
+
+                {{#> resultTypes item=item}}
+                    {{!-- The block below will be used as default item template if no result types matched --}}
+                    <li>
+                        <pnp-iconfile class="icon" data-extension="{{slot item @root.slots.FileType}}" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-iconfile>
+                        <span class="example-themePrimary"><a href="{{slot item @root.slots.Path}}">{{slot item @root.slots.Title}}</a></span>
+                    </li>
+                {{/resultTypes}}
+
+            {{/each}}
+        </ul>
+    </div>
+</content>
+
+<content id="placeholder-content">
+
+    <style>
+
+        .placeholder .icon {
+            width: 20px;
+            height: 16px;
+            margin-right: 5px;
+        }
+
+        .placeholder ul {
+            list-style: none;
+        }
+
+        .placeholder ul li {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+        }
+            
+    </style>
+
+    <div class="placeholder">
+        <ul>
+            {{#times @root.properties.paging.itemsCountPerPage}}   
+                <li>
+                    <div class="icon placeholder--shimmer"></div>
+                    <span class="placeholder--shimmer placeholder--line" style="width: 60%"></span>                
+                </li>
+            {{/times}}
+        </ul>
+
+        {{#if @root.properties.paging.showPaging}}
+            <pnp-pagination 
+                data-total-items="{{@root.data.totalItemsCount}}" 
+                data-hide-first-last-pages="{{@root.properties.paging.hideFirstLastPages}}"
+                data-hide-disabled="{{@root.properties.paging.hideDisabled}}"
+                data-hide-navigation="{{@root.properties.paging.hideNavigation}}"
+                data-range="{{@root.properties.paging.pagingRange}}" 
+                data-items-count-per-page="{{@root.properties.paging.itemsCountPerPage}}" 
+                data-current-page-number="{{@root.paging.currentPageNumber}}"
+                data-page-links="{{JSONstringify @root.data.paging.links}}"
+            >
+            </pnp-pagination>
+        {{/if}}
+
+    </div>
+</content>

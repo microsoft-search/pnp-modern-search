@@ -1,0 +1,121 @@
+<content id="data-content">
+
+    <style>
+        /* Assign the correct size % ratio according to the number of wanted cards on a single row. We use flexbox instead of static grid to deal with SharePoint canvas sections*/
+        .template--card {
+            flex-grow: 1;
+            flex-shrink: 1;
+            min-width: 206px; /* Min width of the Office UI Fabric document card */
+            flex-basis: {{@root.properties.layoutProperties.columnSizePercentage}}%;
+        }    
+    </style>
+
+    <div class="template">
+
+        {{#if @root.properties.showSelectedFilters}}
+            <pnp-selectedfilters 
+                data-filters="{{JSONstringify filters.selectedFilters 2}}" 
+                data-filters-configuration="{{JSONstringify filters.filtersConfiguration 2}}" 
+                data-instance-id="{{filters.instanceId}}" 
+                data-operator="{{filters.filterOperator}}"
+                data-theme-variant="{{JSONstringify @root.theme}}"
+            >
+            </pnp-selectedfilters>
+        {{/if}}
+       
+        {{#if @root.properties.showResultsCount}}
+            <div class="template--resultCount">
+                <label class="ms-fontWeight-semibold">{{getCountMessage @root.data.totalItemsCount @root.inputQueryText}}</label>
+            </div>
+        {{/if}}
+
+        <div class="template--cardContainer">
+            {{#each data.items as |item|}}    
+            
+                {{#> resultTypes item=item}}
+                    <pnp-documentcard class="template--card" 
+                        data-ui-test-id="resultCard" 
+                        data-item="{{JSONstringify item}}" 
+                        data-fields-configuration="{{JSONstringify @root.properties.layoutProperties.documentCardFields}}" 
+                        data-enable-preview="{{@root.properties.layoutProperties.enablePreview}}" 
+                        data-show-file-icon="{{@root.properties.layoutProperties.showFileIcon}}" 
+                        data-is-compact="{{@root.properties.layoutProperties.isCompact}}" 
+                        data-context="{{JSONstringify @root}}"
+                        data-theme-variant="{{JSONstringify @root.theme}}"
+                        >
+                    </pnp-documentcard>
+                {{/resultTypes}}
+
+            {{/each}}
+
+            <!-- Generate fake items to correctly align cards on rows using flexbox -->
+            {{#times @root.properties.layoutProperties.preferedCardNumberPerRow}}
+                <pnp-documentcard 
+                    class="template--card" 
+                    data-ui-test-id="fakeCard"
+                    data-theme-variant="{{JSONstringify @root.theme}}"
+                    style="visibility:hidden;height: 0;padding: 0">
+                </pnp-documentcard>
+            {{/times}}
+        </div>
+
+        {{#if @root.properties.paging.showPaging}}
+            <pnp-pagination 
+                data-total-items="{{@root.data.totalItemsCount}}" 
+                data-hide-first-last-pages="{{@root.properties.paging.hideFirstLastPages}}"
+                data-hide-disabled="{{@root.properties.paging.hideDisabled}}"
+                data-hide-navigation="{{@root.properties.paging.hideNavigation}}"
+                data-range="{{@root.properties.paging.pagingRange}}" 
+                data-items-count-per-page="{{@root.properties.paging.itemsCountPerPage}}" 
+                data-current-page-number="{{@root.paging.currentPageNumber}}"
+                data-page-links="{{JSONstringify @root.data.paging.links}}"
+                data-theme-variant="{{JSONstringify @root.theme}}"
+            >
+            </pnp-pagination>
+        {{/if}}
+
+    </div>
+
+</content>
+
+<content id="placeholder-content">   
+
+        <style>
+            /* Assign the correct size % ratio according to the number of wanted cards on a single row. We use flexbox instead of static grid to deal with SharePoint canvas sections*/
+            .template--card {
+                flex-grow: 1;
+                flex-shrink: 1;
+                min-width: 206px; /* Min width of the Office UI Fabric document card */
+                flex-basis: {{@root.properties.layoutProperties.columnSizePercentage}}%;
+            }    
+        </style>
+
+    <div class="placeholder">
+
+        {{!-- #if showResultsCount --}}
+        <div class="template--resultCount">
+            <span class="placeholder--shimmer placeholder--line" style="width: 20%"></span>
+        </div>
+        {{!-- /if --}}
+        <div class="template--cardContainer">
+
+            {{#times @root.properties.paging.itemsCountPerPage}}
+                <pnp-documentcardshimmers class="template--card" 
+                    data-ui-test-id="fakeCard"
+                    data-theme-variant="{{JSONstringify @root.theme}}"
+                    data-is-compact="{{@root.properties.layoutProperties.isCompact}}">
+                </pnp-documentcardshimmers>
+            {{/times}}
+
+            <!-- Generate fake items to correctly align cards on rows using flexbox -->
+            {{#times @root.properties.layoutProperties.preferedCardNumberPerRow}}
+                <pnp-documentcard class="template--card" 
+                    data-ui-test-id="fakeCard"
+                    data-theme-variant="{{JSONstringify @root.theme}}"
+                    style="visibility:hidden;height: 0;padding: 0">
+                </pnp-documentcard>
+            {{/times}}
+        </div>
+
+    </div>
+</content>

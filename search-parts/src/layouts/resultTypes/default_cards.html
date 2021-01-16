@@ -1,0 +1,9 @@
+<style>
+    /* Insert your CSS here */
+</style>
+
+<pnp-documentcard class="template--card" data-location="&lt;a style=&quot;color:{{@root.theme.palette.themePrimary}};font-weight:600;font-family:'{{@root.theme.fonts.small.fontFamily}}'&quot; href=\&quot;{{SPSiteUrl}}\&quot;&gt;{{SiteTitle}}&lt;/a&gt;"
+    data-title="{{slot item @root.slots.Title}}" data-preview-image="{{slot item @root.slots.PreviewImageUrl}}" data-preview-url="{{slot item @root.slots.PreviewUrl}}" data-date="{{getDate (slot item @root.slots.Date) 'LL'}}" data-href="{{slot item @root.slots.PreviewUrl}}"
+    data-author="{{slot item @root.slots.Author}}" data-profile-image="/_layouts/15/userphoto.aspx?size=L&username={{slot item @root.slots.UserEmail}}" data-file-extension="{{slot item @root.slots.FileType}}" data-enable-preview="true" data-is-container="{{slot item @root.slots.IsContainer}}"
+    data-show-file-icon="true" data-theme-variant="{{JSONstringify @root.theme}}">
+</pnp-documentcard>

@@ -1,0 +1,109 @@
+<content id="data-content">
+
+    <style>
+        mgt-person {
+            --initials-background-color: {{@root.theme.palette.themePrimary}};
+        }
+
+    </style>
+
+    <div class="template">
+
+        {{#if @root.properties.showSelectedFilters}}
+            <pnp-selectedfilters 
+                data-filters="{{JSONstringify filters.selectedFilters 2}}" 
+                data-filters-configuration="{{JSONstringify filters.filtersConfiguration 2}}" 
+                data-instance-id="{{filters.instanceId}}" 
+                data-operator="{{filters.filterOperator}}"
+                data-theme-variant="{{JSONstringify @root.theme}}"
+            >
+            </pnp-selectedfilters>
+        {{/if}}
+       
+        {{#if @root.properties.showResultsCount}}
+            <div class="template--resultCount">
+                <label class="ms-fontWeight-semibold">{{getCountMessage @root.data.totalItemsCount @root.inputQueryText}}</label>
+            </div>
+        {{/if}}
+        
+        <div>
+            <ul class="template--defaultList">
+                {{#each data.items as |item|}}
+                    <li class="template--peopleListItem" tabindex="0">
+                        {{#> resultTypes item=item}}
+
+                            {{#if @root.properties.layoutProperties.showPersonaCard}}
+                                <mgt-person person-query="{{getUserEmail (slot item @root.slots.PersonQuery)}}" person-card="hover">
+                                    <template>
+                                        <pnp-persona 
+                                            data-image-url="\{{personImage}}" 
+                                            data-fields-configuration="{{JSONstringify @root.properties.layoutProperties.peopleFields}}" 
+                                            data-item="{{JSONstringify item}}" 
+                                            data-persona-size="{{@root.properties.layoutProperties.personaSize}}"
+                                            data-theme-variant="{{JSONstringify @root.theme}}"
+                                            data-context="{{JSONstringify @root}}">
+                                        </pnp-persona>
+                                    </template>
+                                    <template data-type="person-card">
+                                        <mgt-person-card inherit-details>
+                                        </mgt-person-card>
+                                    </template>
+                                </mgt-person>
+                            {{else}}
+                                <pnp-persona 
+                                    data-fields-configuration="{{JSONstringify @root.properties.layoutProperties.peopleFields}}"
+                                    data-item="{{JSONstringify item}}" 
+                                    data-persona-size="{{@root.properties.layoutProperties.personaSize}}" 
+                                    data-context="{{JSONstringify @root}}"
+                                    data-theme-variant="{{JSONstringify @root.theme}}"
+                                ></pnp-persona>
+                            {{/if}}
+                            
+                        {{/resultTypes}}
+                    </li>
+                {{/each}}
+            </ul>
+        </div>
+
+        {{#if @root.properties.paging.showPaging}}
+            <pnp-pagination 
+                data-total-items="{{@root.data.totalItemsCount}}" 
+                data-hide-first-last-pages="{{@root.properties.paging.hideFirstLastPages}}"
+                data-hide-disabled="{{@root.properties.paging.hideDisabled}}"
+                data-hide-navigation="{{@root.properties.paging.hideNavigation}}"
+                data-range="{{@root.properties.paging.pagingRange}}" 
+                data-items-count-per-page="{{@root.properties.paging.itemsCountPerPage}}" 
+                data-current-page-number="{{@root.paging.currentPageNumber}}"
+                data-page-links="{{JSONstringify @root.data.paging.links}}"
+                data-theme-variant="{{JSONstringify @root.theme}}"
+            >
+            </pnp-pagination>
+        {{/if}}
+
+    </div>
+
+</content>
+
+<content id="placeholder-content">
+    <div class="placeholder">
+
+        {{#if @root.properties.showResultsCount}}
+            <div class="template--resultCount">
+                <span class="placeholder--shimmer placeholder--line" style="width: 20%"></span>
+            </div>
+        {{/if}}
+
+        <div>
+            <ul class="template--defaultList">
+                {{#times @root.properties.paging.itemsCountPerPage}}   
+                    <pnp-personashimmers 
+                        data-persona-size="{{@root.properties.layoutProperties.personaSize}}"
+                        data-theme-variant="{{JSONstringify @root.theme}}"
+                    >
+                    </pnp-personashimmers>
+                {{/times}}
+            </ul>
+        </div>
+    </div>
+</content>
+

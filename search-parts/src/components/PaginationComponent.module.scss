@@ -1,0 +1,53 @@
+.paginationContainer {
+    margin: 0;
+
+    &__paginationContainer {
+        text-align: center;        
+
+        &__pagination {
+            display: inline-block;
+            text-align: center;
+
+            .inverted a {
+                color:  #ffffff;
+            }
+    
+            .standard a {
+                color: "[theme: themePrimary, default: #005a9e]";
+            }
+
+            ul {
+                display: inline-block;
+                padding-left: 0;
+                margin: 0;
+
+                li {
+                    display: inline;
+
+                    a {
+                        float: left;
+                        padding: 5px 5px;
+                        text-decoration: none;
+                        i {
+                            font-size: 10px;
+                        }
+                    }
+
+                    .active {
+                        font-weight: bold;
+                        color:  "[theme: themePrimary, default: #005a9e]";
+                    }
+
+                    .active__inverted {
+                        font-weight: bold;
+                        color: #ffffff;
+                    }
+        
+                    a:visited {
+                        color: inherit;
+                    }
+                }
+            }
+        }
+    }
+}

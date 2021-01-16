@@ -1,0 +1,144 @@
+<content id="data-content">
+    
+    <style>
+
+       .horizontal {
+			display: flex;
+			flex-wrap: wrap;
+            justify-content: space-between;
+		}
+    
+		.filter--value {
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			display: flex;
+			align-items: center;
+		}
+
+		.filter--message {
+			padding: 10px;
+		}
+		
+	    .filter--name {
+			font-weight: {{@root.theme.fonts.large.fontWeight}};
+			font-size: {{@root.theme.fonts.large.fontSize}}px;
+			margin-bottom: 10px;
+		}
+
+		/* Assign the correct size % ratio according to the number of wanted cards on a single row. We use flexbox instead of static grid to deal with SharePoint canvas sections*/
+		.filter {
+            flex-grow: 1;
+            flex-shrink: 1;
+            min-width: 206px; /* Min width of the Office UI Fabric document card */
+            flex-basis: {{@root.properties.layoutProperties.columnSizePercentage}}%;
+        }   
+
+		pnp-filtercheckbox {
+			max-width: 100%;
+		}
+				        		                
+    </style>
+
+    <div class="template horizontal">  
+
+		{{#each @root.filters as |filter|}}
+			<div class="filter">
+				{{#eq filter.selectedTemplate 'ComboBoxFilterTemplate'}}
+						<div class="filter--name">{{filter.displayName}}</div>
+						<div class="filter--value">
+							<pnp-filtercombobox 
+								data-instance-id="{{@root.instanceId}}" 
+								data-filter-name="{{filter.filterName}}" 
+								data-is-multi="{{filter.isMulti}}" 
+								data-show-count="{{filter.showCount}}"
+								data-theme-variant="{{JSONstringify @root.theme}}"
+							>
+									{{#each filter.values}}
+										<option value="{{value}}" data-selected="{{selected}}" data-disabled="{{disabled}}" data-count="{{count}}">{{name}}</option>
+									{{/each}}
+							</pnp-filtercombobox>
+						</div>
+				{{else}}
+					<pnp-collapsible data-group-name="{{filter.displayName}}" data-default-collapsed="{{#or hasSelectedValues expandByDefault selectedOnce}}false{{else}}true{{/or}}" data-theme-variant="{{JSONstringify @root.theme}}">
+							
+						<template id="collapsible-content" item-class="filter--value">
+
+							{{#eq filter.selectedTemplate 'DateRangeFilterTemplate'}}
+								<div class="filter--value">
+									<pnp-filterdaterange 
+										data-instance-id="{{@root.instanceId}}" 
+										data-filter="{{JSONstringify filter 2}}"
+										data-theme-variant="{{JSONstringify @root.theme}}"
+									>
+									</pnp-filterdaterange>
+								</div>
+							{{else}}
+								{{#eq filter.selectedTemplate 'CheckboxFilterTemplate'}}
+									{{#each filter.values}}
+										<div title="{{name}} {{#if ../showCount}}({{count}}){{/if}}" class="filter--value">
+											<pnp-filtercheckbox 
+												data-instance-id="{{@root.instanceId}}" 
+												data-filter-name="{{filter.filterName}}" 
+												data-name="{{name}}" data-value="{{value}}" 
+												data-selected="{{selected}}" 
+												data-disabled="{{disabled}}" 
+												data-count="{{count}}"
+												data-theme-variant="{{JSONstringify @root.theme}}"
+											>
+											</pnp-filtercheckbox>
+											{{#if ../showCount}}
+												<span>({{count}})</span>
+											{{/if}}
+										</div>
+									{{/each}}
+								{{else}}
+									{{#eq filter.selectedTemplate 'DateIntervalFilterTemplate'}}
+										<div class="filter--value">
+											<pnp-filterdateinterval 
+												data-instance-id="{{@root.instanceId}}" 
+												data-filter="{{JSONstringify filter 2}}"
+												data-theme-variant="{{JSONstringify @root.theme}}"
+											>
+											</pnp-filterdateinterval>
+										</div>									
+									{{/eq}}	
+								{{/eq}}
+							{{/eq}}
+
+						</template>
+
+						<template id="collapsible-footer">
+							{{#isnt filter.selectedTemplate 'DateRangeFilterTemplate'}}
+								{{#isnt filter.selectedTemplate 'TaxonomyPickerFilterTemplate'}}
+									{{#eq filter.values.length 0}}
+										<div class="filter--message">
+											{{@root.strings.FilterNoValuesMessage}}
+										</div>
+									{{else}}
+										{{#if filter.isMulti}}
+											<pnp-filtermultiselect 
+												data-instance-id="{{@root.instanceId}}" 
+												data-filter-name="{{filter.filterName}}" 
+												data-apply-disabled="{{#if filter.canApply}}false{{else}}true{{/if}}" 
+												data-clear-disabled="{{#if filter.canClear}}false{{else}}true{{/if}}"
+												data-theme-variant="{{JSONstringify @root.theme}}"
+											>
+											</pnp-filtermultiselect>
+										{{/if}}
+									{{/eq}}
+								{{/isnt}}
+							{{/isnt}}
+						</template>
+
+					</pnp-collapsible>
+				{{/eq}}
+			</div>		
+    	{{/each}}
+		
+		<!-- Generate fake items to correctly align cards on rows using flexbox -->
+		{{#times @root.properties.layoutProperties.preferedCardNumberPerRow}}
+			<div class="filter" style="visibility:hidden;height: 0;padding: 0"></div>
+		{{/times}}
+	</div>
+</content>
