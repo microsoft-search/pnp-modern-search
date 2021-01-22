@@ -2,15 +2,15 @@
 
 The 'Search box' Web Part allows users to enter free text search queries connected to a 'Search Results' Web Part.
 
-!["pnp Search Box Web Part"](../../assets/webparts/search_box/search_box_wp_picker.png){: .center}
+!["pnp Search Box Web Part"](../../assets/webparts/search-box/search_box_wp_picker.png){: .center}
 
-!["pnp Search Box Web Part"](../../assets/webparts/search_box/search_box_wp_default.png){: .center}
+!["pnp Search Box Web Part"](../../assets/webparts/search-box/search_box_wp_default.png){: .center}
 
 ## Configuration
 
 ### Search box settings
 
-!["Search Box settings"](../../assets/webparts/search_box/search_box_settings.png){: .center}
+!["Search Box settings"](../../assets/webparts/search-box/search_box_settings.png){: .center}
 
 | Setting | Description | Default value |
 | ------- |---------------- | ---------- |
@@ -19,11 +19,11 @@ The 'Search box' Web Part allows users to enter free text search queries connect
 
 ### Query suggestions
 
-!["Search Box suggestions"](../../assets/webparts/search_box/search_box_suggestions.png){: .center}
+!["Search Box suggestions"](../../assets/webparts/search-box/search_box_suggestions.png){: .center}
 
 The query suggestions allows users to easily find relevant query keywords based on their entry:
 
-!["Search Box suggestions"](../../assets/webparts/search_box/suggestions_demo.png){: .center}
+!["Search Box suggestions"](../../assets/webparts/search-box/suggestions_demo.png){: .center}
 
 | Setting | Description | Default value |
 | ------- |---------------- | ---------- |
@@ -33,6 +33,6 @@ The query suggestions allows users to easily find relevant query keywords based 
 
 ### Connections
 
-!["Search Box connections"](../../assets/webparts/search_box/dynamic_data_source.png){: .center}
+!["Search Box connections"](../../assets/webparts/search-box/dynamic_data_source.png){: .center}
 
 Optionally, you can set a default query text coming from an other dynamic data source on the page. For instance, connect the search box to a page environment variable like a query string parameter. The value retrieved from a connected data source will be displayed automatically at page load in the text box if present and broadcasted to any other Web Parts connected to the search box Web Part (ex: a 'Search Results' Web Part) resulting to a cascading effect.
