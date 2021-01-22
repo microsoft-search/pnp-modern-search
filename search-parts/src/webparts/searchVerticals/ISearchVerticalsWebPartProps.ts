@@ -9,7 +9,7 @@ export interface ISearchVerticalsWebPartProps extends IBaseWebPartProps {
     title: string;
 
     /**
-     * The configured data verticals 
+     * The configured verticals 
      */
     verticals: IDataVertical[];
 }

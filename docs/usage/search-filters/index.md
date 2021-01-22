@@ -1,6 +1,6 @@
 # Search Filters Web Part
 
-The 'Data Filters' Web Part allows to filter the current results displayed in a 'Search Results' Web Part. This component is higly configurable to meet you requirements and it works for all data sources.
+The 'Filters' Web Part allows to filter the current results displayed in a 'Search Results' Web Part. This component is higly configurable to meet you requirements and it works for all data sources.
 
 !["PnP Search Filters Web Part"](../../assets/webparts/search-filters/search_filters_wp_picker.png){: .center}
 
@@ -11,7 +11,7 @@ The 'Data Filters' Web Part allows to filter the current results displayed in a 
 
 ### Connection
 
-To use the data filters, we must first connect it to one or multiple 'Search Results' Web Parts. In the other hand, you must conenct back those Web Parts to the 'Data Filters' one. It is a **two-ways connection**.
+To use the filters, we must first connect it to one or multiple 'Search Results' Web Parts. In the other hand, you must connect back those Web Parts to the 'Filters' one. It is a **two-ways connection**.
 
 !["Filters connection"](../../assets/webparts/search-filters/wp_connection.png){: .center} 
 
@@ -63,5 +63,5 @@ Using an indexed property bag value could be useful to store information about a
 
 `L0|#a2cf1afb-44b6-4cf4-bf37-642bb2e9bff3|Category 1;L0|#02e3406c0-1048-4bce-90eb-e7a51dfa7f31|Category3;L0|#07e094327-23d7-48af-9699-781eb26dc40f|Category2`
 
-These taxonomy values can then be used in the Data Filters Web Part using a `RefinableStringXX` search managed property to filter specific sites or elements. As an example, you can refer to the ["Create an end-to-end Office 365 groups provisioning solution"](https://github.com/pnp/tutorial-workspace-provisioning) tutorial GitHub project to leverage this format.
+These taxonomy values can then be used in the Filters Web Part using a `RefinableStringXX` search managed property to filter specific sites or elements. As an example, you can refer to the ["Create an end-to-end Office 365 groups provisioning solution"](https://github.com/pnp/tutorial-workspace-provisioning) tutorial GitHub project to leverage this format.
 
