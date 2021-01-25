@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { BaseWebComponent, IDataFilterInfo, ExtensibilityConstants } from '@pnp/modern-search-extensibility';
 import * as ReactDOM from 'react-dom';
-import { Panel, PanelType, Text, ITheme, ScrollablePane } from 'office-ui-fabric-react';
+import { Panel, PanelType, Text, ITheme } from 'office-ui-fabric-react';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import { Log } from "@microsoft/sp-core-library";
 import styles from "./PanelComponent.module.scss";
@@ -97,25 +97,12 @@ export class PanelComponent extends React.Component<IPanelProps, IPanelState> {
                         headerText={this.props.panelHeaderText}
                         onRenderBody={() => {
 
-                            return <div style={{
-                                height: '100%',
-                                position: 'relative',
-                                maxHeight: 'inherit'
-                              }}>
-                                <ScrollablePane styles={{
-                                  root: {
-                                    width: '100%',
-                                    height: '100%',
-                                  }
-                                }}>
-                                    <div style={{
-                                        overflow: 'auto',
-                                        marginLeft: 15
-                                    }} data-is-scrollable={true}>
-                                        <div dangerouslySetInnerHTML={{ __html: DOMPurify.default.sanitize(this.props.contentTemplate) }}></div>
-                                    </div>
-                                </ScrollablePane>
-                              </div>;
+                            return  <div style={{
+                                overflow: 'auto',
+                                marginLeft: 15
+                            }} dangerouslySetInnerHTML={{ __html: DOMPurify.default.sanitize(this.props.contentTemplate) }}>
+                            </div>
+                            
                         }}>
                     </Panel>
                 </div>;
