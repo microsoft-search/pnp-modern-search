@@ -1792,7 +1792,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
    */
   private ensureDataSourceConnection() {
 
-      // Data Filters Web Part data source
+      // Filters Web Part data source
       if (this.properties.filtersDataSourceReference) {
 
           if (!this._filtersSourceData) {
@@ -1809,7 +1809,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
           }
       }
 
-      // Data Verticals Web Part data source
+      // Verticals Web Part data source
       if (this.properties.verticalsDataSourceReference) {
 
         if (!this._verticalsSourceData) {
