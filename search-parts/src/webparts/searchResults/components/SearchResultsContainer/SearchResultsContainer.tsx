@@ -316,8 +316,13 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                     });
 
                     if (isPageUpdated) {
-                        // Set the focus at the top of the component
-                        this._searchWpRef.focus();
+                      // This is WebKit only, so defensively code and fallback to a simple "focus"
+                      if ((this._searchWpRef as any).scrollIntoViewIfNeeded) {                          
+                        (this._searchWpRef as any).scrollIntoViewIfNeeded(false);
+                      } else {
+                        // Scroll to the top of the component
+                        this._searchWpRef.scrollIntoView(true);
+                      }                      
                     }
 
                     if (resetSorting) {
