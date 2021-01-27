@@ -320,8 +320,8 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                       if ((this._searchWpRef as any).scrollIntoViewIfNeeded) {                          
                         (this._searchWpRef as any).scrollIntoViewIfNeeded(false);
                       } else {
-                        // Set the focus at the top of the component
-                        this._searchWpRef.focus();
+                        // Scroll to the top of the component
+                        this._searchWpRef.scrollIntoView(true);
                       }                      
                     }
 
