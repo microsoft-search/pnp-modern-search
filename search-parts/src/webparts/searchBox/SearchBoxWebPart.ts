@@ -743,31 +743,37 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
    */
   private async loadExtensions(librariesConfiguration: IExtensibilityConfiguration[]) {
 
-    this.properties.suggestionProviderConfiguration = [];
+    const customSuggestionProviderConfiguration: ISuggestionProviderConfiguration[] = [];
 
-      // Load extensibility library if present
-      const extensibilityLibraries = await this.extensibilityService.loadExtensibilityLibraries(librariesConfiguration);
+    // Load extensibility library if present
+    const extensibilityLibraries = await this.extensibilityService.loadExtensibilityLibraries(librariesConfiguration);
 
-      // Load extensibility additions
-      if (extensibilityLibraries.length > 0) {
-        
-        extensibilityLibraries.forEach(extensibilityLibrary => {
-          // Add custom suggestions providers if any
-          this.availableCustomProviders = this.availableCustomProviders.concat(extensibilityLibrary.getCustomSuggestionProviders());
-        });
-      }
-
-      // Resolve the provider configuration for the property pane according to providers
-      this.availableCustomProviders.forEach(provider => {
-        if (this.properties.suggestionProviderConfiguration.filter(p => p.key === provider.key).length === 0) {
-          this.properties.suggestionProviderConfiguration = this.properties.suggestionProviderConfiguration.concat({
-            key: provider.key,
-            description: provider.description,
-            enabled: false,
-            name: provider.name
-          });
-        }
+    // Load extensibility additions
+    if (extensibilityLibraries.length > 0) {
+      
+      extensibilityLibraries.forEach(extensibilityLibrary => {
+        // Add custom suggestions providers if any
+        this.availableCustomProviders = this.availableCustomProviders.concat(extensibilityLibrary.getCustomSuggestionProviders());
       });
+    }
+
+    // Resolve the provider configuration for the property pane according to providers
+    this.availableCustomProviders.forEach(provider => {
+      
+      if (!this.properties.suggestionProviderConfiguration.some(p => p.key === provider.key)) {
+
+        customSuggestionProviderConfiguration.push({
+          key: provider.key,
+          description: provider.description,
+          enabled: false,
+          name: provider.name
+        });
+
+      }
+    });
+
+    // Add custom providers to the available providers
+    this.properties.suggestionProviderConfiguration = this.properties.suggestionProviderConfiguration.concat(customSuggestionProviderConfiguration);
   }
 
   /**
