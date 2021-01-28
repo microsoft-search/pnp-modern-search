@@ -37,17 +37,19 @@ export class ObjectHelper {
      * @param path the property path to get
      * @returns the property value if found, undefined otherwise
      */
-    public static byPath(object: any, path: string): any  {
+    public static byPath(object: any, path: string, allItems = false): any {
 
         if (path && object) {
 
             try {
-                return jspath.apply(`.${path}`,object)[0];   
+                let result = jspath.apply(`.${path}`, object);
+                if (allItems && Array.isArray(result)) return result;
+                return result[0];
             } catch (error) {
                 // Case when unexpected string or tokens are passed in the path
                 return null;
             }
-                 
+
         } else {
             return undefined;
         }
