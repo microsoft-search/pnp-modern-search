@@ -101,7 +101,7 @@ export class PanelComponent extends React.Component<IPanelProps, IPanelState> {
                                 overflow: 'auto',
                                 marginLeft: 15
                             }} dangerouslySetInnerHTML={{ __html: DOMPurify.default.sanitize(this.props.contentTemplate) }}>
-                            </div>
+                            </div>;
                             
                         }}>
                     </Panel>
