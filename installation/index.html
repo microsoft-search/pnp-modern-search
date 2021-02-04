@@ -785,9 +785,10 @@
                 <h1 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h1>
 <ol>
 <li>Download the latest SharePoint Framework packages <strong>pnp-modern-search-parts.sppkg</strong> and <strong>pnp-modern-search-extensibility.sppkg</strong> from the <a href="https://github.com/microsoft-search/pnp-modern-search/releases">GitHub repository</a>.</li>
+<li>Deploy <strong>pnp-modern-search-extensibility.sppkg</strong> to the global tenant app catalog, and ensure you check "Make this solution available to all sites in the organization". This is currently a limitation of SPFx libraries - but should not be an issue as it cannot work by itself, and poses no security risk. If you don't have an app catalog, follow this <a href="https://docs.microsoft.com/en-us/sharepoint/use-app-catalog">procedure</a> to create one.</li>
 <li>
-<p>Add the packages to your global app catalog or site collection app catalog. If you don't have an app catalog, follow this <a href="https://docs.microsoft.com/en-us/sharepoint/use-app-catalog">procedure</a> to create one.</p>
-<p><strong>You must deploy the two SPFx packages to get it work.</strong></p>
+<p>Add <strong>pnp-modern-search-parts.sppkg</strong> to the global teant app catalog or a site collection app catalog. </p>
+<p><strong>You <em>must</em> deploy both SPFx packages to get a working solution.</strong></p>
 <p><img alt="&quot;App Catalog &quot;" class="center" src="../assets/app_catalog.png" /></p>
 <blockquote>
 <ul>
@@ -798,7 +799,10 @@
 <p>For the <strong>pnp-modern-search-parts.sppkg</strong> package, you can choose to make the solution available in <a href="https://docs.microsoft.com/en-us/sharepoint/dev/spfx/tenant-scoped-deployment">all sites</a> or force to install an app to the site every time.</p>
 </li>
 <li>
-<p>The solution asks the following API permissions by default to enhance the experience. These permissions are <strong>not mandatory</strong>. If you don't accept them, you will simpy have less available features.</p>
+<p>The solution asks the following API permissions by default to enhance the experience. These permissions are <strong>not mandatory</strong>. If you don't accept them, you will simply have less available features.</p>
+</li>
+<li>
+<p>You can approve scopes from https://&lt;tenant&gt;-admin.sharepoint.com/_layouts/15/online/AdminHome.aspx#/webApiPermissionManagement</p>
 </li>
 </ul>
 </blockquote>
@@ -823,8 +827,28 @@
 <td>Same as above.</td>
 </tr>
 <tr>
-<td><em>User.ReadBAsic.All</em></td>
+<td><em>User.ReadBasic.All</em></td>
 <td>Same as above.</td>
+</tr>
+<tr>
+<td><em>Files.Read.All</em></td>
+<td>Allow search for files using Graph API (Drive / Drive Items).</td>
+</tr>
+<tr>
+<td><em>Mail.Read</em></td>
+<td>Allow search for user's e-mail using Graph API (Messages).</td>
+</tr>
+<tr>
+<td><em>Calendars.Read</em></td>
+<td>Allow search for user's calendar appointments using Graph API (Events).</td>
+</tr>
+<tr>
+<td><em>Sites.Read.All</em></td>
+<td>Allow search for sites using Graph API (Sites / List Items).</td>
+</tr>
+<tr>
+<td><em>ExternalItem.Read.All</em></td>
+<td>Allow search for connector items using Graph API (External Items).</td>
 </tr>
 </tbody>
 </table>
