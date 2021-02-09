@@ -14,7 +14,7 @@
 
     > * The solution asks the following API permissions by default to enhance the experience. These permissions are **not mandatory**. If you don't accept them, you will simply have less available features.
 
-    > * You can approve scopes from https://&lt;tenant&gt;-admin.sharepoint.com/_layouts/15/online/AdminHome.aspx#/webApiPermissionManagement
+    > * You can approve scopes from the API Access screen in the SharePoint Admin Center: https://&lt;tenant&gt;-admin.sharepoint.com/_layouts/15/online/AdminHome.aspx#/webApiPermissionManagement If you'd like more details on this step, please see the [Approving Scopes](#approving-scopes) section below.
 
     | Requested API permission | Used for |
     | -------------- | --------- |
@@ -31,3 +31,15 @@
 3. Add the Web Parts to a SharePoint and start building!
 
 !["Available Web Parts"](./assets/webparts.png){: .center}
+
+# Approving Scopes
+
+You can approve the required scopes in the SharePoint Admin Center on the API Access page. When you visit that page, you will see any pending requests. The screenshot below shows the pending requests for the v4 solution.
+
+!["App Catalog"](./assets/api-access-pending.jpg){: .center}
+
+You'll need to approve each request one at a time. If you have questions about what the requested scopes mean and what permissions they provide, check the article [Manage access to Azure AD-secured APIs](https://docs.microsoft.com/en-us/sharepoint/api-access).
+
+After you approve each request your view will be as shown in the screenshot below.
+
+!["App Catalog"](./assets/api-access-approved.jpg){: .center}
