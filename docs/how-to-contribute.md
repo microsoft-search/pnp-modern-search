@@ -48,8 +48,8 @@ You can also refer to the official [SPFx documentation about library component u
 ## Setup the **search-parts** and **search-extensibility-demo** projects
 
 1. From the `search-parts` or `search-extensibility-demo` project, link a reference to the `@pnp/modern-search-extensibility` project by using the following command `npm link @pnp/modern-search-extensibility`.
-1. Run `npm install`.
-1. Build the project using `gulp bundle`.
+2. Run `npm i`.
+3. Build the project using `gulp bundle`.
 
 ## Debug the solution
 
