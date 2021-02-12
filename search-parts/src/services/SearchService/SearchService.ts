@@ -898,6 +898,7 @@ class SearchService implements ISearchService {
             // Remove complex query parts AND/OR/NOT/ANY/ALL/parenthasis/property queries/exclusions - can probably be improved
             const cleanQuery = query.replace(/(-\w+)|(-"\w+.*?")|(-?\w+[:=<>]+\w+)|(-?\w+[:=<>]+".*?")|((\w+)?\(.*?\))|(AND)|(OR)|(NOT)/g, '');
             const queryParts: string[] = cleanQuery.match(/("[^"]+"|[^"\s]+)/g);
+            queryParts.push(query);
 
             // code which should modify the current query based on context for each new query
             if (queryParts) {
