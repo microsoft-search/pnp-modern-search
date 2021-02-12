@@ -269,9 +269,11 @@ export class TokenService implements ITokenService {
                     // Handle multi or single taxonomy values
                     if (Array.isArray(item[columnName]) && item[columnName].length > 0) {
                         
+                        // By convention, multi values should be separated by a comma, which is the default array delimiter for the array toString() method
+                        // This value could be processed in the replaceOrOperator() method so we need to keep the same delimiter convention
                         itemProp = item[columnName].map(taxonomyValue => { 
                             return taxonomyValue[labelOrTermId]; // Use the 'TermId' or 'Label' properties
-                        }).join(' ');
+                        }).join(',');
                     }
                     else if (!Array.isArray(item[columnName]) && item[columnName] !== undefined && item[columnName] !== "") {
                         itemProp = item[columnName][labelOrTermId];

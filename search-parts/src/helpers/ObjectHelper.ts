@@ -42,7 +42,8 @@ export class ObjectHelper {
         if (path && object) {
 
             try {
-                return jspath.apply(`.${path}`,object)[0];   
+                // Returns the value "as is". If it is an array, values will be separated by a comma (default delimiter for the toString() method)
+                return jspath.apply(`.${path}`,object);   
             } catch (error) {
                 // Case when unexpected string or tokens are passed in the path
                 return null;
