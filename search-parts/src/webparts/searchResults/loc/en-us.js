@@ -181,6 +181,7 @@ define([], function() {
             "HideFirstLastPagesFieldName": "Hide first/last navigation buttons",
             "HideDisabledFieldName": "Hide navigation buttons (prev, next, first, last) if they are disabled.",
         },
-        "ImportExport": "Import / Export settings"
+        "ImportExport": "Import / Export settings",
+        "MultiGeo": "Enable multi-geo"
     }
 });

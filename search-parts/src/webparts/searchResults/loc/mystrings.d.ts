@@ -183,6 +183,7 @@ declare interface ISearchResultsWebPartStrings {
         HideDisabledFieldName: string;
     },
     ImportExport: string;
+    MultiGeo: string;
 }
 
 declare module 'SearchResultsWebPartStrings' {

@@ -294,6 +294,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             refinementFilters: { $set: selectedFilters.length > 0 ? SearchHelper.buildRefinementQueryString(selectedFilters) : [this.properties.refinementFilters.replace(/\'/g, '"')] },
             refiners: { $set: refinerConfiguration },
             queryModifier: { $set: queryModifier },
+            multiGeo: { $set: this.properties.multiGeo }
         });
 
         const isValueConnected = !!this.properties.queryKeywords.tryGetSource();
@@ -464,6 +465,8 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
         // Set the default search results layout
         this.properties.selectedLayout = (this.properties.selectedLayout !== undefined && this.properties.selectedLayout !== null) ? this.properties.selectedLayout : ResultsLayoutOption.DetailsList;
+
+        this.properties.multiGeo = (this.properties.multiGeo !== undefined && this.properties.multiGeo !== null) ? this.properties.multiGeo : true;
 
         // Registers web components
         this._templateService.registerWebComponents(this.availableWebComponentDefinitions);
@@ -1210,6 +1213,10 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             PropertyPaneToggle('includeOneDriveResults', {
                 label: strings.IncludeOneDriveResultsLabel,
                 checked: this.properties.includeOneDriveResults,
+            }),
+            PropertyPaneToggle('multiGeo', {
+                label: strings.MultiGeo,
+                checked: this.properties.multiGeo,
             }),
             new PropertyPaneSearchManagedProperties('selectedProperties', {
                 label: strings.SelectedPropertiesFieldLabel,

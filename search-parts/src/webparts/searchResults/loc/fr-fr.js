@@ -180,6 +180,8 @@ define([], function() {
             "HideNavigationFieldName": "Cacher/Montrer les boutons de navigation (précédent, suivant, etc.)",
             "HideFirstLastPagesFieldName": "Cacher/Montrer les boutons de navigation 'dernier'/'premier'.",
             "HideDisabledFieldName": "Cacher/Montrer les boutons de navigation si désactivés",
-        }
+        },
+        "ImportExport": "Importer / exporter les paramètres",
+        "MultiGeo": "Activer le multi-géo"
     }
 });

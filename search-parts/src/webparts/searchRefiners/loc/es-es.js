@@ -73,5 +73,6 @@ define([], function() {
                 "RefinerSortTypeSortDirectionDescending": "Descendente"
             }
         },
+        "ImportExport": "Importar / Exportar configuraciones",
     }
 });

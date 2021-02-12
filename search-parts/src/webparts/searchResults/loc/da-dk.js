@@ -180,6 +180,8 @@ define([], function() {
             "HideNavigationFieldName": "Skjul navigationsknapper (foregående side, næste side)",
             "HideFirstLastPagesFieldName": "Skjul første/sidste navigationsknapper",
             "HideDisabledFieldName": "Skjul navigationsknapper (foregående, næste, første, sidste) hvis de er inaktive.",
-        }
+        },
+        "ImportExport": "Import / eksport-indstillinger",
+        "MultiGeo": "Aktivér multi-geo"
     }
 });

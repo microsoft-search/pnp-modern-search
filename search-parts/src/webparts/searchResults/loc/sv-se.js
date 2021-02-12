@@ -28,7 +28,7 @@ define([], function() {
         "PlaceHolderDescription": "Den här komponenten visar sökresultat med sidindelning",
         "ResultSourceIdLabel": "Resultatkälla-id / namn",
         "ResultSourceIdDescription": "När du använder namnet använd formatet: Källnivå|Namn (dvs: SPSite|Mina nyheter). Giltiga nivåer är: SPSiteSubscription, SPSite, SPWeb",
-        "InvalidResultSourceIdMessage": "Ange antingen en resultatkällas id (guid) eller ett namn med formatet: Nivå|Namn (dvs: SPSite|Min resultatkälla)",								
+        "InvalidResultSourceIdMessage": "Ange antingen en resultatkällas id (guid) eller ett namn med formatet: Nivå|Namn (dvs: SPSite|Min resultatkälla)",
         "InvalidNumberIntervalMessage": "Mellan 1 och 500",
         "EnableQueryRulesLabel": "Aktivera frågaregler",
         "IncludeOneDriveResultsLabel": "Inkludera personliga OneDrive-resultat",
@@ -181,6 +181,7 @@ define([], function() {
             "HideNavigationFieldName": "Dölj navigeringsval (föregående sida, nästa sida)",
             "HideFirstLastPagesFieldName": "Dölj första och sista navigeringsval",
             "HideDisabledFieldName": "Dölj navigeringsval (föregående, nästa, första, sista) om de är inaktiverade.",
-        }
+        },
+        "ImportExport": "Importera / exportera inställningar",
     }
 });

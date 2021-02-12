@@ -41,6 +41,7 @@ export interface ISearchResultsWebPartProps {
     queryModifiers: IQueryModifierConfiguration[];
     selectedQueryModifierDisplayName: string;
     refinementFilters: string;
+    multiGeo: boolean;
 
     /**
      * The Web Part paging settings
