@@ -47,9 +47,9 @@ export interface ISearchBoxWebPartProps extends IBaseWebPartProps {
     queryText: DynamicProperty<string>;
 
     /**
-     * The query transformation to apply on the queryText before sending
+     * The transformation to apply on the queryText before sending to a different page
      */
-    queryTemplate: string;
+    inputTemplate: string;
 
     /**
      * Placeholder text to display in the search box

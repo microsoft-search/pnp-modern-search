@@ -161,7 +161,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
       placeholderText: this.properties.placeholderText,
       queryPathBehavior: this.properties.queryPathBehavior,
       queryStringParameter: this.properties.queryStringParameter,
-      queryTemplate: this.properties.queryTemplate,
+      inputTemplate: this.properties.inputTemplate,
       searchInNewPage: this.properties.searchInNewPage,
       themeVariant: this._themeVariant,
       onSearch: this._onSearch,
@@ -444,11 +444,6 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
       PropertyPaneTextField('placeholderText', {
         label: webPartStrings.PropertyPane.SearchBoxSettingsGroup.PlaceholderTextLabel
       }),
-      PropertyPaneTextField('queryTemplate', {
-        label: commonStrings.DataSources.SharePointSearch.QueryTemplateFieldLabel,
-        multiline: true,
-        placeholder: "{searchTerms}"
-      }),
       PropertyPaneToggle("searchInNewPage", {
         label: webPartStrings.PropertyPane.SearchBoxSettingsGroup.SearchInNewPageLabel
       })
@@ -464,6 +459,11 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
           validateOnFocusOut: true,
           validateOnFocusIn: true,
           placeholder: 'https://...'
+        }),
+        PropertyPaneTextField('inputTemplate', {
+          label: commonStrings.DataSources.SharePointSearch.QueryTemplateFieldLabel,
+          multiline: true,
+          placeholder: `{${BuiltinTokenNames.inputQueryText}}`
         }),
         PropertyPaneDropdown('openBehavior', {
           label: commonStrings.General.PageOpenBehaviorLabel,
@@ -575,7 +575,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
    */
   private initializeProperties() {
     this.properties.queryText = this.properties.queryText ? this.properties.queryText : new DynamicProperty<string>(this.context.dynamicDataProvider);
-    this.properties.queryTemplate = this.properties.queryTemplate ? this.properties.queryTemplate : "{searchTerms}";
+    this.properties.inputTemplate = this.properties.inputTemplate ? this.properties.inputTemplate : "{searchTerms}";
 
     this.properties.openBehavior = this.properties.openBehavior ? this.properties.openBehavior : PageOpenBehavior.Self;
     this.properties.queryPathBehavior = this.properties.queryPathBehavior ? this.properties.queryPathBehavior : QueryPathBehavior.URLFragment;

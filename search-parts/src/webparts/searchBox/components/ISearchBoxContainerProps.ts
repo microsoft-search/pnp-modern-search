@@ -31,9 +31,9 @@ export interface ISearchBoxContainerProps {
     queryStringParameter: string;
 
     /**
-     * The query transformation to apply on the queryText before sending
+     * The transformation to apply on the queryText before sending to a different page
      */
-    queryTemplate: string;
+    inputTemplate: string;
 
     /**
      * Flag indicating if the search box should open a new tab or use the current page
