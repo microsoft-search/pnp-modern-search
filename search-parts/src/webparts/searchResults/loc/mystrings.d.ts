@@ -181,7 +181,8 @@ declare interface ISearchResultsWebPartStrings {
         HideNavigationFieldName: string;
         HideFirstLastPagesFieldName: string;
         HideDisabledFieldName: string;
-    }
+    },
+    ImportExport: string;
 }
 
 declare module 'SearchResultsWebPartStrings' {

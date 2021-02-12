@@ -81,6 +81,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
     private _extensibilityService: IExtensibilityService;
     private _textDialogComponent = null;
     private _propertyFieldCodeEditor = null;
+    private _propertyPanePropertyEditor = null;
     private _placeholder = null;
     private _propertyFieldCollectionData = null;
     private _customCollectionFieldType = null;
@@ -752,6 +753,17 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                 {
                     groups: stylingPageGroups,
                     displayGroupsAsAccordion: true
+                },
+                {
+                    groups: [
+                        {
+                            groupName: strings.ImportExport,
+                            groupFields: [this._propertyPanePropertyEditor({
+                                webpart: this,
+                                key: 'propertyEditor'
+                            })]
+                        }
+                    ]
                 }
             ]
         };
@@ -787,6 +799,12 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         );
         this._propertyFieldCollectionData = PropertyFieldCollectionData;
         this._customCollectionFieldType = CustomCollectionFieldType;
+
+        const { PropertyPanePropertyEditor } = await import(
+            /* webpackChunkName: 'search-property-pane' */
+            '@pnp/spfx-property-controls/lib/PropertyPanePropertyEditor'
+        );
+        this._propertyPanePropertyEditor = PropertyPanePropertyEditor;
 
         if (this._availableLanguages.length == 0) {
             const languages = await this._searchService.getAvailableQueryLanguages();

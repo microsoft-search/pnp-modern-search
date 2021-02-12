@@ -73,6 +73,7 @@ declare interface ISearchRefinersWebPartStrings {
             RefinerSortTypeSortDirectionDescending: string
         }
     },
+    ImportExport: string,
 }
 
 declare module 'SearchRefinersWebPartStrings' {

@@ -180,6 +180,7 @@ define([], function() {
             "HideNavigationFieldName": "Hide navigation buttons (prev page, next page)",
             "HideFirstLastPagesFieldName": "Hide first/last navigation buttons",
             "HideDisabledFieldName": "Hide navigation buttons (prev, next, first, last) if they are disabled.",
-        }
+        },
+        "ImportExport": "Import / Export settings"
     }
 });

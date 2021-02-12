@@ -33,7 +33,8 @@ declare interface ISearchVerticalsWebPartStrings {
     SearchResultsDataSource:{
       PropertyLabel: string;
     } 
-  }
+  },
+  ImportExport: string;
 }
 
 declare module 'SearchVerticalsWebPartStrings' {
