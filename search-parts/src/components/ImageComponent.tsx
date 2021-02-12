@@ -4,7 +4,7 @@ import * as ReactDOM from 'react-dom';
 
 
 export interface IImageState {
-    hasError: boolean;    
+    hasError: boolean;
 }
 
 interface IImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
@@ -28,14 +28,16 @@ export class ImageComponent extends React.Component<IImageProps, IImageState> {
         return <img {...imgProps} onError={this.addDefaultSrc} />;
     }
 
-    private addDefaultSrc(ev:any) {
+    private addDefaultSrc(ev: any) {
         if (!this.state.hasError) {
             const element = ev.target as HTMLImageElement;
-            if(this.props.hideOnError) {
-                element.parentElement.removeChild(element);
+            if (this.props.hideOnError) {
+                try {
+                    element.parentElement.removeChild(element);
+                } finally {}
             } else {
                 element.src = this.props.errorImage;
-            }            
+            }
             this.setState({ hasError: true });
         }
     }
