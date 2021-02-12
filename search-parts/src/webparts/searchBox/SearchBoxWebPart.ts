@@ -452,6 +452,11 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
 
     if (this.properties.searchInNewPage) {
       searchBehaviorOptionsFields = searchBehaviorOptionsFields.concat([
+        PropertyPaneTextField('inputTemplate', {
+          label: webPartStrings.PropertyPane.SearchBoxSettingsGroup.QueryInputTransformationLabel,
+          multiline: true,
+          placeholder: `{${BuiltinTokenNames.inputQueryText}}`
+        }),
         PropertyPaneTextField('pageUrl', {
           disabled: !this.properties.searchInNewPage,
           label: webPartStrings.PropertyPane.SearchBoxSettingsGroup.PageUrlLabel,
@@ -459,11 +464,6 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
           validateOnFocusOut: true,
           validateOnFocusIn: true,
           placeholder: 'https://...'
-        }),
-        PropertyPaneTextField('inputTemplate', {
-          label: commonStrings.DataSources.SharePointSearch.QueryTemplateFieldLabel,
-          multiline: true,
-          placeholder: `{${BuiltinTokenNames.inputQueryText}}`
         }),
         PropertyPaneDropdown('openBehavior', {
           label: commonStrings.General.PageOpenBehaviorLabel,
@@ -575,7 +575,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
    */
   private initializeProperties() {
     this.properties.queryText = this.properties.queryText ? this.properties.queryText : new DynamicProperty<string>(this.context.dynamicDataProvider);
-    this.properties.inputTemplate = this.properties.inputTemplate ? this.properties.inputTemplate : "{searchTerms}";
+    this.properties.inputTemplate = this.properties.inputTemplate ? this.properties.inputTemplate : `{${BuiltinTokenNames.inputQueryText}}`;
 
     this.properties.openBehavior = this.properties.openBehavior ? this.properties.openBehavior : PageOpenBehavior.Self;
     this.properties.queryPathBehavior = this.properties.queryPathBehavior ? this.properties.queryPathBehavior : QueryPathBehavior.URLFragment;
