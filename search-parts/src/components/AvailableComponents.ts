@@ -12,6 +12,7 @@ import { PaginationWebComponent } from './PaginationComponent';
 import { AccordionWebComponent } from './AccordionComponent';
 import { PopupWebComponent } from './PopupComponent';
 import { LookupListExpanderWebComponent } from './LookupListExpanderComponent';
+import { ImageWebComponent } from './ImageComponent';
 
 export class AvailableComponents {
 
@@ -74,6 +75,10 @@ export class AvailableComponents {
         {
             componentName: 'pnp-lookup-list-expander',
             componentClass: LookupListExpanderWebComponent
+        },
+        {
+            componentName: 'pnp-img',
+            componentClass: ImageWebComponent
         }
     ];
 }
