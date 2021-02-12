@@ -316,13 +316,13 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                     });
 
                     if (isPageUpdated) {
-                      // This is WebKit only, so defensively code and fallback to a simple "focus"
-                      if ((this._searchWpRef as any).scrollIntoViewIfNeeded) {                          
-                        (this._searchWpRef as any).scrollIntoViewIfNeeded(false);
-                      } else {
-                        // Scroll to the top of the component
-                        this._searchWpRef.scrollIntoView(true);
-                      }                      
+                        // This is WebKit only, so defensively code and fallback to a simple "focus"
+                        if ((this._searchWpRef as any).scrollIntoViewIfNeeded) {
+                            (this._searchWpRef as any).scrollIntoViewIfNeeded(false);
+                        } else {
+                            // Scroll to the top of the component
+                            this._searchWpRef.scrollIntoView(true);
+                        }
                     }
 
                     if (resetSorting) {
@@ -459,6 +459,28 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 this.handleResultUpdateBroadCast(results);
             }
         }
+    }
+
+    /**
+     * Remove guid value filters which are causing noise          
+     * @param filters The raw refinement results to translate coming from SharePoint search results
+     */
+    private _removeGuidValues(filters: IRefinementResult[]): IRefinementResult[] {
+        for (let j = filters.length - 1; j >= 0; j--) {
+            const filterResult = filters[j];
+
+            for (let i = filterResult.Values.length - 1; i >= 0; i--) {
+                const element = filterResult.Values[i];
+                const isGuid = /[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/.test(element.RefinementValue);
+                if (isGuid) {
+                    filterResult.Values.splice(i, 1);
+                }
+            }
+            if (filterResult.Values.length == 0) {
+                filters.splice(j, 1);
+            }
+        }
+        return filters;
     }
 
     /**
@@ -781,6 +803,8 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             const localizedResults = await this._getLocalizedMetadata(searchResults.RelevantResults, props.currentUICultureName);
             searchResults.RelevantResults = localizedResults;
         }
+
+        searchResults.RefinementResults = this._removeGuidValues(searchResults.RefinementResults);
 
         return searchResults;
     }
