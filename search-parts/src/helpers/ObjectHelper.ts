@@ -1,3 +1,4 @@
+import { isArray } from '@pnp/common/util';
 import * as jspath from 'jspath';
 
 export class ObjectHelper {
@@ -43,7 +44,9 @@ export class ObjectHelper {
 
             try {
                 // Returns the value "as is". If it is an array, values will be separated by a comma (default delimiter for the toString() method)
-                return jspath.apply(`.${path}`,object);   
+                const value = jspath.apply(`.${path}`,object); // this can return an array.
+                if(isArray(value)) return value.join(); // check for array and return as comma delimited string.
+                return value; // not an array return value
             } catch (error) {
                 // Case when unexpected string or tokens are passed in the path
                 return null;
