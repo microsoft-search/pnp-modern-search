@@ -15,7 +15,7 @@ The 'Search box' Web Part allows users to enter free text search queries connect
 | Setting | Description | Default value |
 | ------- |---------------- | ---------- |
 | **Placeholder text** | The placeholder text to display in the search box. | _"Enter your search terms..."_
-| **Send the query to a new page** | Sends the search query text to a new page. From here you can select the page URL, the open behavior and send method (URL fragment '#' or a query string parameter). | False.
+| **Send the query to a new page** | Sends the search query text to a new page. From here you can select the page URL, the open behavior and send method (URL fragment '#' or a query string parameter). The input value can be transformed before sending it to another page. `{inputQueryText}` is replaced with the value from the search box and [other tokens](../search-results/tokens.md) are also supported. | False.
 
 ### Query suggestions
 

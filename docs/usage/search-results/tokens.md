@@ -16,6 +16,9 @@ You can use tokens in the following locations:
     - In the link URL when the vertical item is a link.
     - In the vertical tab value.
 
+- **Search Box Web Part**
+    - In the Query input transformation template when sending the query to a new page.
+
 #### Supported tokens (all data sources)
 
 > Tokens are case insensitive
@@ -30,7 +33,7 @@ You can use tokens in the following locations:
 
 Tokens related to connected Web Parts in the Search Results. 
 
-> These tokens can only be used in the 'Search Results' Web Part.
+> These tokens can be used in the 'Search Results' and 'Search Box' Web Parts.
 
 > You can escape curly braces characters using `'\'` to avoid: ex: `DepartmentId:\{edbfd618-ef1d-4cc5-a214-95bf44ddf4ee\}`
 
