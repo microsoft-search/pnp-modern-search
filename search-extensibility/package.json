@@ -14,7 +14,8 @@
     },
     "dependencies": {
         "@types/webpack-env": "1.13.1",
-        "@types/es6-promise": "0.0.33"
+        "@types/es6-promise": "0.0.33",
+        "@webcomponents/custom-elements": "1.4.3"
     },
     "devDependencies": {
         "@microsoft/sp-property-pane": "1.11.0",
@@ -27,7 +28,6 @@
         "react-dom": "16.8.5",
         "tslib": "^1.10.0",
         "handlebars": "4.7.6",
-        "@webcomponents/custom-elements": "1.4.3",
         "@webcomponents/webcomponentsjs": "2.5.0",
         "@microsoft/sp-build-web": "1.11.0",
         "@microsoft/sp-tslint-rules": "1.11.0",
