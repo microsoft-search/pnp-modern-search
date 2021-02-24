@@ -515,7 +515,7 @@ export class TemplateService implements ITemplateService {
                 }
 
             }
-            
+
         });
 
         // Return SPFx page context variable
@@ -527,6 +527,30 @@ export class TemplateService implements ITemplateService {
             let value = get(this.pageContext, name);
             if (value) return value;
             return "";
+        });
+
+        // Get Attachments from LinkOfficeChild managed properties
+        // Usage:
+        //   {{#getAttachments LinkOfficeChild}}
+        //      <a href="{{url}}">{{fileName}}</href>
+        //   {{/getAttachments}}
+        this.Handlebars.registerHelper("getAttachments", (value: string, options) => {
+            let out: string = "";
+            if (!isEmpty(value)) {
+                let splitArr: string[] = value.split(/\n+/);
+
+                if (splitArr && splitArr.length > 0) {
+                    for (let i of splitArr) {
+                        let pos: number = i.lastIndexOf("/");
+                        if (pos !== -1) {
+                            let fileName: string = i.substring(pos + 1);
+                            let objLine = { url: i, fileName: fileName };
+                            out += options.fn(objLine);
+                        }
+                    }
+                }
+            }
+            return out;
         });
 
     }
