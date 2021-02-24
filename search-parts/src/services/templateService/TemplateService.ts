@@ -2,7 +2,7 @@ import { ITemplateService } from "./ITemplateService";
 import { ServiceKey, ServiceScope, Text } from "@microsoft/sp-core-library";
 import { SPHttpClient, SPHttpClientResponse } from '@microsoft/sp-http';
 import * as Handlebars from 'handlebars';
-import { uniqBy, uniq, isEmpty, trimEnd } from "@microsoft/sp-lodash-subset";
+import { uniqBy, uniq, isEmpty, trimEnd, get } from "@microsoft/sp-lodash-subset";
 import * as strings from 'CommonStrings';
 import { DateHelper } from "../../helpers/DateHelper";
 import { PageContext } from "@microsoft/sp-page-context";
@@ -513,7 +513,21 @@ export class TemplateService implements ITemplateService {
                 } else {
                     return expr;
                 }
+
             }
+            
         });
+
+        // Return SPFx page context variable
+        // Usage:
+        //   {{getPageContext "user.displayName"}}
+        //   {{getPageContext "cultureInfo.currentUICultureName"}}
+        this.Handlebars.registerHelper("getPageContext", (name: string) => {
+            if (!name) return "";
+            let value = get(this.pageContext, name);
+            if (value) return value;
+            return "";
+        });
+
     }
 }
