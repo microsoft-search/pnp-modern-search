@@ -169,7 +169,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 siteUrl: this.props.siteServerRelativeUrl,
                 webUrl: this.props.webServerRelativeUrl,
                 actualResultsCount: items.RelevantResults.length,
-                hasPrimaryOrSecondaryResults: totalPrimaryAndSecondaryResults > 0,
+                hasPrimaryOrSecondaryResults: totalPrimaryAndSecondaryResults > 0 || (this.state.results.PromotedResults && this.state.results.PromotedResults.length > 0),
                 totalPrimaryAndSecondaryResults: totalPrimaryAndSecondaryResults,
                 strings: strings,
                 showBlank: this.props.showBlank,
