@@ -1,3 +1,4 @@
+import { isArray } from '@pnp/common/util';
 import * as jspath from 'jspath';
 import { isEmpty } from '@microsoft/sp-lodash-subset';
 
