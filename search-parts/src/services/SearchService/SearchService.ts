@@ -311,7 +311,7 @@ class SearchService implements ISearchService {
 
             // Need to do this check
             // More info here: https://github.com/SharePoint/PnP-JS-Core/issues/337
-            if (this._initialSearchResult.RawSearchResults.PrimaryQueryResult) {
+            if (this._initialSearchResult.RawSearchResults && this._initialSearchResult.RawSearchResults.PrimaryQueryResult) {
 
                 // Be careful, there was an issue with paging calculation under 2.0.8 version of sp-pnp-js library
                 // More info https://github.com/SharePoint/PnP-JS-Core/issues/535
@@ -387,12 +387,12 @@ class SearchService implements ISearchService {
                 results.PaginationInformation.TotalRows = this._initialSearchResult.TotalRows;
             }
 
-            if (!isEmpty(this._initialSearchResult.RawSearchResults.SpellingSuggestion)) {
+            if (this._initialSearchResult.RawSearchResults && !isEmpty(this._initialSearchResult.RawSearchResults.SpellingSuggestion)) {
                 results.SpellingSuggestion = this._initialSearchResult.RawSearchResults.SpellingSuggestion;
             }
 
             // Query rules handling
-            if (this._initialSearchResult.RawSearchResults.SecondaryQueryResults) {
+            if (this._initialSearchResult.RawSearchResults && this._initialSearchResult.RawSearchResults.SecondaryQueryResults) {
 
                 const secondaryQueryResults = this._initialSearchResult.RawSearchResults.SecondaryQueryResults;
 
