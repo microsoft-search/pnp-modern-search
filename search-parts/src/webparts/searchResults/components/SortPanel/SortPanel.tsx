@@ -64,6 +64,7 @@ export default class SortPanel extends React.Component<ISortPanelProps, ISortPan
                     ariaLabel={strings.Sort.SortPanelSortFieldAria}
                     onChanged={this._onChangedSelectedField}
                     options={dropdownOptions}
+                    key={this.props.queryHash}
                 />
             </div>
         );
@@ -98,7 +99,7 @@ export default class SortPanel extends React.Component<ISortPanelProps, ISortPan
 
         let dropdownOptions: IDropdownOption[] = [];
 
-        // add default option to avoid onFocus bug on DropDown control
+        // add default option to avoid onFocus bug on DropDown control        
         dropdownOptions.push({
             key: 'default-item',
             text: strings.Sort.SortPanelSortFieldPlaceHolder,
@@ -107,7 +108,7 @@ export default class SortPanel extends React.Component<ISortPanelProps, ISortPan
             selected: true,
             hidden: true,
         });
-
+        
         this.props.sortableFieldsConfiguration.map(e => {
             dropdownOptions.push({
                 key: e.sortField,

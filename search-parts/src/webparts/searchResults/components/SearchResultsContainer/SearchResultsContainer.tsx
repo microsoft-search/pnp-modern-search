@@ -79,7 +79,9 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             onUpdateSort={this._onUpdateSort}
             sortableFieldsConfiguration={this.props.sortableFields}
             sortDirection={this.state.sortDirection}
-            sortField={this.state.sortField} />;
+            sortField={this.state.sortField}
+            queryHash={this.props.searchService.resultSourceId + "" + this.props.searchService.queryTemplate + ""}
+        />;
 
         const { semanticColors }: IReadonlyTheme = this.props.themeVariant;
 
