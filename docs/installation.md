@@ -1,10 +1,7 @@
 # Installation
 
-1. Download the latest SharePoint Framework packages **pnp-modern-search-parts.sppkg** and **pnp-modern-search-extensibility.sppkg** from the [GitHub repository](https://github.com/microsoft-search/pnp-modern-search/releases).
-2. Deploy **pnp-modern-search-extensibility.sppkg** to the global tenant app catalog, and ensure you check "Make this solution available to all sites in the organization". This is currently a limitation of SPFx libraries - but should not be an issue as it cannot work by itself, and poses no security risk. If you don't have an app catalog, follow this [procedure](https://docs.microsoft.com/en-us/sharepoint/use-app-catalog) to create one.
-2. Add **pnp-modern-search-parts.sppkg** to the global teant app catalog or a site collection app catalog. 
-
-    **You _must_ deploy both SPFx packages to get a working solution.**
+1. Download the latest SharePoint Framework packages **pnp-modern-search-parts.sppkg** from the [GitHub repository](https://github.com/microsoft-search/pnp-modern-search/releases).
+2. Add **pnp-modern-search-parts.sppkg** to the global teant app catalog or a site collection app catalog. If you don't have an app catalog, follow this [procedure](https://docs.microsoft.com/en-us/sharepoint/use-app-catalog) to create one. 
 
     !["App Catalog "](./assets/app_catalog.png){: .center}
 
