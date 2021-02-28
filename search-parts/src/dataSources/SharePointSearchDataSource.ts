@@ -643,16 +643,18 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                 StrVal: "PnPSearchWebPart",
                 QueryPropertyValueTypeIndex: 1
             }
-        }, {
-            // Sample query: foo:test
-            // As "foo" is not an OOB schema property it will be treated as text "foo test" instead
-            // of non-existing property query - yielding results instead of a blank page
-            Name: "ImplicitPropertiesAsStrings",
-            Value: {
-                BoolVal: true,
-                QueryPropertyValueTypeIndex: 3
-            }
-        }];
+        }
+        // , {
+        //     // Sample query: foo:test
+        //     // As "foo" is not an OOB schema property it will be treated as text "foo test" instead
+        //     // of non-existing property query - yielding results instead of a blank page
+        //     Name: "ImplicitPropertiesAsStrings",
+        //     Value: {
+        //         BoolVal: true,
+        //         QueryPropertyValueTypeIndex: 3
+        //     }
+        // }
+    ];
         if (this._pageContext.list) {
             searchQuery.Properties.push({
                 Name: "ListId",
