@@ -3,7 +3,7 @@
     "solution": {
         "name": "PnP Modern Search - Search Web Parts - v4",
         "id": "59903278-dd5d-4e9e-bef6-562aae716b8b",
-        "version": "4.0.0.0",
+        "version": "4.1.0.0",
         "includeClientSideAssets": true,
         "skipFeatureDeployment": true,
         "isDomainIsolated": false,

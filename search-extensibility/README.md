@@ -1,26 +1,19 @@
-## pnp-search-extensibility
+## PnP Search Extensibility library
 
-This is where you include your WebPart documentation.
+PnP Modern Search uses the concept of 'extensibility libraries'. These are SharePoint Framework library components you put in the global or site collection app catalog that will be loaded automatically by Web Parts to enhance the experience and options (ex: new data source with new options, custom layout, etc.). Simple as that!
 
-### Building the code
+## Get started
 
-```bash
-git clone the repo
-npm i
-npm i -g gulp
-gulp
-```
+More information to get started can be found in the documentation for PnP Moderns Search at https://microsoft-search.github.io/pnp-modern-search/extensibility/.
 
-This package produces the following:
+## Code of Conduct
 
-* lib/* - intermediate-stage commonjs build artifacts
-* dist/* - the bundled script, along with other resources
-* deploy/* - all resources which should be uploaded to a CDN.
+This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
+For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
+contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
-### Build options
+## "Sharing is Caring"
 
-gulp clean - TODO
-gulp test - TODO
-gulp serve - TODO
-gulp bundle - TODO
-gulp package-solution - TODO
+## Disclaimer
+
+**THIS CODE IS PROVIDED *AS IS* WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.**
