@@ -1,33 +1,31 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/spfx/client-side-web-part-manifest.schema.json",
-  "id": "544c1372-77ae-40a0-9095-805ae2a0d5e9",
-  "alias": "pnpSearchVerticalsWebPart",
-  "componentType": "WebPart",
-  "version": "4.0.0",
-  "manifestVersion": 2,
-  "requiresCustomScript": false,
-  "supportedHosts": [
-    "SharePointWebPart"
-  ],
-  "supportsThemeVariants": true,
-  "preconfiguredEntries": [
-      {
-          "groupId": "5c03119e-3074-46fd-976b-c60198311f70",
-          "group": {
-              "default": "Other"
-          },
-          "title": {
-              "default": "PnP - Search Verticals",
-              "fr-fr": "Recherche moderne - Verticaux de recherche"
-          },
-          "description": {
-              "default": "Allows to browse data as verticals (i.e silos)",
-              "fr-fr": "Permet de parcourir les données de manière verticale (en silos)"
-          },
-          "officeFabricIconFontName": "Sections",
-          "properties": {
-              "documentationLink": "https://microsoft-search.github.io/pnp-modern-search/"
-          }
-      }
-  ]
+    "$schema": "https://developer.microsoft.com/json-schemas/spfx/client-side-web-part-manifest.schema.json",
+    "id": "544c1372-77ae-40a0-9095-805ae2a0d5e9",
+    "alias": "pnpSearchVerticalsWebPart",
+    "componentType": "WebPart",
+    "version": "*",
+    "manifestVersion": 2,
+    "requiresCustomScript": false,
+    "supportedHosts": [
+        "SharePointWebPart"
+    ],
+    "supportsThemeVariants": true,
+    "preconfiguredEntries": [{
+        "groupId": "5c03119e-3074-46fd-976b-c60198311f70",
+        "group": {
+            "default": "Other"
+        },
+        "title": {
+            "default": "PnP - Search Verticals",
+            "fr-fr": "Recherche moderne - Verticaux de recherche"
+        },
+        "description": {
+            "default": "Allows to browse data as verticals (i.e silos)",
+            "fr-fr": "Permet de parcourir les données de manière verticale (en silos)"
+        },
+        "officeFabricIconFontName": "Sections",
+        "properties": {
+            "documentationLink": "https://microsoft-search.github.io/pnp-modern-search/"
+        }
+    }]
 }
