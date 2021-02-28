@@ -1,36 +1,28 @@
 .pnp-modern-search {
-    
-    @import '~office-ui-fabric-react/dist/sass/_References.scss';
-
-    .template, .placeholder {
-
+    @import "~office-ui-fabric-react/dist/sass/_References.scss";
+    .template,
+    .placeholder {
         &--defaultList {
-    
             padding: 0;
-        
             strong {
                 color: "[theme: themePrimary, default: #005a9e]";
             }
-
             .template--peopleListItem {
-                display:flex;
+                display: flex;
                 padding: 10px;
                 outline: none;
                 justify-content: space-between;
                 flex-wrap: wrap-reverse;
             }
-    
             .template--listItem {
-    
-                display:flex;
+                display: flex;
                 padding: 10px;
                 min-height: 110px;
                 justify-content: space-between;
                 flex-wrap: wrap-reverse;
                 outline: none;
-                   
                 &--result {
-                    display: flex;    
+                    display: flex;
                     flex-grow: 0;
                     flex-shrink: 1;
                     flex-basis: 74%;
@@ -38,38 +30,32 @@
                     word-break: break-word;
                     overflow: hidden;
                 }
-                
                 &--contentContainer {
                     display: flex;
-                    width: 100%;                    
+                    width: 100%;
                     flex-direction: column;
                     margin-right: 15px;
                 }
-    
                 &--title {
                     font-size: 16px;
                     margin-bottom: 10px;
                     font-weight: 600;
                     word-wrap: break-word;
                 }
-    
                 &--author {
                     display: inline-block;
                     font-size: 12px;
                     margin-bottom: 5px;
                     text-decoration: underline;
                 }
-    
                 &--tags {
                     display: flex;
                     align-items: center;
                     margin-top: 5px;
-    
                     i {
                         margin-right: 5px;
                     }
                 }
-                
                 &--thumbnailContainer {
                     align-items: flex-start;
                     display: flex;
@@ -78,49 +64,40 @@
                     padding-bottom: 8px;
                     flex-grow: 1;
                 }
-
                 @include ms-screen-sm-down {
                     &--thumbnailContainer {
-                        display: none!important;
+                        display: none !important;
                     }
                 }
-                
                 &--icon {
                     height: 32px;
                     width: 32px;
                     margin-right: 15px;
-                }   
+                }
             }
         }
-
         &--filterName {
             padding: 10px;
             font-size: 16px;
         }
-
         &--filterValue {
             display: flex;
             align-items: center;
         }
-        
         &--resultCount {
             padding: 10px;
         }
-    
         &--cardContainer {
             display: flex;
             flex-wrap: wrap;
             justify-content: space-between;
             padding: 10px;
         }
-
         &--card {
-             box-sizing: border-box;
+            box-sizing: border-box;
             padding: 8px 8px 8px 0px; // Same as default SharePoint Highlighted Content card
         }
-
         &--paginationContainer {
-
             ul {
                 padding-left: 0;
                 display: flex;
@@ -128,43 +105,53 @@
                 align-items: center;
                 list-style-type: none;
                 justify-content: center;
-
                 li {
                     i {
                         font-size: 10px; // Size of icons
                         color: "[theme: themePrimary, default: #0078d7]";
                         font-weight: 700;
                     }
-
-                    a {      
+                    a {
                         color: "[theme: themeLight, default: #fd969b]";
                         text-decoration: none;
                     }
-
                     a.active {
                         color: "[theme: themePrimary, default: #0078d7]";
                         font-weight: 700;
                     }
                 }
-
                 li.disabled a i {
                     color: "[theme: themeLight, default: #fd969b]";
                     font-weight: normal;
                 }
-
                 li~li {
                     margin-left: 6px;
                 }
             }
         }
-
-        pnp-persona, pnp-filtercheckbox {
+        &--promotedResults {
+            border: 1px solid #eaeaea;
+            list-style: none;
+            padding: 15px;
+            margin-bottom: 15px;
+            .title {
+                margin-bottom: 15px;
+            }
+            li {
+                display: flex;
+                white-space: normal;
+            }
+            i {
+                padding-right: 10px;
+                padding-left: 10px;
+            }
+        }
+        pnp-persona,
+        pnp-filtercheckbox {
             max-width: 100%;
         }
-
-
         .thumbnail--hover {
-            transition: .5s ease;
+            transition: 0.5s ease;
             opacity: 0;
             position: absolute;
             top: 50%;
@@ -174,53 +161,43 @@
             text-align: center;
             pointer-events: none;
         }
-        
         .thumbnail--image {
             position: relative;
             margin: 0 auto;
         }
-        
         .thumbnail--image:hover img {
             opacity: 0.2;
         }
-        
         .thumbnail--image:hover .thumbnail--hover {
             opacity: 1;
         }
     }
-    
     .placeholder {
-    
         &--shimmer {
             background: #f6f7f8;
-            background-image: linear-gradient(to right, #f6f7f8 0%, #edeef1 20%, #f6f7f8 40%, #f6f7f8 100%);
+            background-image: linear-gradient( to right, #f6f7f8 0%, #edeef1 20%, #f6f7f8 40%, #f6f7f8 100%);
             background-repeat: no-repeat;
-            background-size: 800px 104px; 
+            background-size: 800px 104px;
             display: inline-block;
-            position: relative; 
-            
+            position: relative;
             -webkit-animation-duration: 1s;
-            -webkit-animation-fill-mode: forwards; 
+            -webkit-animation-fill-mode: forwards;
             -webkit-animation-iteration-count: infinite;
             -webkit-animation-name: placeholderShimmer;
             -webkit-animation-timing-function: linear;
         }
-    
         @-webkit-keyframes placeholderShimmer {
             0% {
                 background-position: -468px 0;
             }
-            
             100% {
-                background-position: 468px 0; 
+                background-position: 468px 0;
             }
         }
-    
         &--line {
             height: 10px;
         }
-    
-        .placeholder--line.placeholder--shimmer + .placeholder--line.placeholder--shimmer {
+        .placeholder--line.placeholder--shimmer+.placeholder--line.placeholder--shimmer {
             margin-top: 10px;
         }
     }
