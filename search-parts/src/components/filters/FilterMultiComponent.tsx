@@ -32,6 +32,11 @@ export interface IFilterMultiProps {
      */
     applyDisabled?: boolean;
     clearDisabled?: boolean;
+
+    /**
+     * Add class name to the control
+     */
+    className?:string;
 }
 
 export interface IFilterMultiState {
@@ -46,7 +51,7 @@ export class FilterMulti extends React.Component<IFilterMultiProps, IFilterMulti
     }
     
     public render() {
-        return <div>
+        return <div className={this.props.className}>
                     <Link 
                         styles={{
                             root: {

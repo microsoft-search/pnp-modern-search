@@ -37,7 +37,8 @@ import { Toggle, IToggleProps, MessageBar, MessageBarType, Link } from "office-u
 import { ISuggestionProviderConfiguration } from '../../providers/ISuggestionProviderConfiguration';
 import { IExtensibilityConfiguration } from '../../models/common/IExtensibilityConfiguration';
 import { Constants } from '../../common/Constants';
-import { BuiltinTokenNames } from '../../services/tokenService/TokenService';
+import { ITokenService } from '@pnp/modern-search-extensibility';
+import { BuiltinTokenNames, TokenService } from '../../services/tokenService/TokenService';
 import { BaseWebPart } from '../../common/BaseWebPart';
 
 export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps> implements IDynamicDataCallables {
@@ -79,6 +80,11 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
   private _selectedCustomProviders: ISuggestionProvider[] = [];
 
   private _pushStateCallback = null;
+
+  /**
+   * The token service instance
+   */
+  private tokenService: ITokenService;
 
   constructor() {
     super();
@@ -155,11 +161,13 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
       placeholderText: this.properties.placeholderText,
       queryPathBehavior: this.properties.queryPathBehavior,
       queryStringParameter: this.properties.queryStringParameter,
+      inputTemplate: this.properties.inputTemplate,
       searchInNewPage: this.properties.searchInNewPage,
       themeVariant: this._themeVariant,
       onSearch: this._onSearch,
       suggestionProviders: this._selectedCustomProviders,
-      numberOfSuggestionsPerGroup: this.properties.numberOfSuggestionsPerGroup
+      numberOfSuggestionsPerGroup: this.properties.numberOfSuggestionsPerGroup,
+      tokenService: this.tokenService
     } as ISearchBoxContainerProps);  
 
     // Error message
@@ -444,6 +452,11 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
 
     if (this.properties.searchInNewPage) {
       searchBehaviorOptionsFields = searchBehaviorOptionsFields.concat([
+        PropertyPaneTextField('inputTemplate', {
+          label: webPartStrings.PropertyPane.SearchBoxSettingsGroup.QueryInputTransformationLabel,
+          multiline: true,
+          placeholder: `{${BuiltinTokenNames.inputQueryText}}`
+        }),
         PropertyPaneTextField('pageUrl', {
           disabled: !this.properties.searchInNewPage,
           label: webPartStrings.PropertyPane.SearchBoxSettingsGroup.PageUrlLabel,
@@ -562,6 +575,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
    */
   private initializeProperties() {
     this.properties.queryText = this.properties.queryText ? this.properties.queryText : new DynamicProperty<string>(this.context.dynamicDataProvider);
+    this.properties.inputTemplate = this.properties.inputTemplate ? this.properties.inputTemplate : `{${BuiltinTokenNames.inputQueryText}}`;
 
     this.properties.openBehavior = this.properties.openBehavior ? this.properties.openBehavior : PageOpenBehavior.Self;
     this.properties.queryPathBehavior = this.properties.queryPathBehavior ? this.properties.queryPathBehavior : QueryPathBehavior.URLFragment;
@@ -578,7 +592,8 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
     }];
   }
 
-  private initializeWebPartServices(): void {    
+  private initializeWebPartServices(): void {
+    this.tokenService = this.context.serviceScope.consume<ITokenService>(TokenService.ServiceKey);
     this.webPartInstanceServiceScope = this.context.serviceScope.startNewChild();
     this.dynamicDataService = this.webPartInstanceServiceScope.createAndProvide(DynamicDataService.ServiceKey, DynamicDataService);
     this.dynamicDataService.dynamicDataProvider = this.context.dynamicDataProvider;

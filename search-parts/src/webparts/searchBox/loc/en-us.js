@@ -11,6 +11,7 @@ define([], function() {
         PageUrlLabel: "Page URL",
         UrlErrorMessage: "Please provide a valid URL.",
         QueryPathBehaviorLabel: "Method",
+        QueryInputTransformationLabel: "Query input transformation template",
         UrlFragmentQueryPathBehavior: "URL fragment",
         QueryStringQueryPathBehavior: "Query string parameter",
         QueryStringParameterName: "Parameter name",
