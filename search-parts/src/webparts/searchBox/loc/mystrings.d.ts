@@ -58,7 +58,8 @@ declare interface ISearchBoxWebPartStrings {
     InlineTemplateEditPanelTitle: string;
     DefaultSuggestionGroupName: string;
     SharePointSuggestionGroupName: string;
-  }
+  },
+  ImportExport: string;
 }
 
 declare module 'SearchBoxWebPartStrings' {

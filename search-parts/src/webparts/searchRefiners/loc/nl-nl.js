@@ -73,5 +73,6 @@ define([], function() {
                 "RefinerSortTypeSortDirectionDescending": "Aflopend"
             }
         },
+        "ImportExport": "Instellingen importeren / exporteren",
     }
 });

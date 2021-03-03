@@ -181,7 +181,9 @@ declare interface ISearchResultsWebPartStrings {
         HideNavigationFieldName: string;
         HideFirstLastPagesFieldName: string;
         HideDisabledFieldName: string;
-    }
+    },
+    ImportExport: string;
+    MultiGeo: string;
 }
 
 declare module 'SearchResultsWebPartStrings' {

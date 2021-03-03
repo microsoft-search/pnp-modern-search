@@ -81,6 +81,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
     private _extensibilityService: IExtensibilityService;
     private _textDialogComponent = null;
     private _propertyFieldCodeEditor = null;
+    private _propertyPanePropertyEditor = null;
     private _placeholder = null;
     private _propertyFieldCollectionData = null;
     private _customCollectionFieldType = null;
@@ -293,6 +294,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             refinementFilters: { $set: selectedFilters.length > 0 ? SearchHelper.buildRefinementQueryString(selectedFilters) : [this.properties.refinementFilters.replace(/\'/g, '"')] },
             refiners: { $set: refinerConfiguration },
             queryModifier: { $set: queryModifier },
+            multiGeo: { $set: this.properties.multiGeo }
         });
 
         const isValueConnected = !!this.properties.queryKeywords.tryGetSource();
@@ -463,6 +465,8 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
         // Set the default search results layout
         this.properties.selectedLayout = (this.properties.selectedLayout !== undefined && this.properties.selectedLayout !== null) ? this.properties.selectedLayout : ResultsLayoutOption.DetailsList;
+
+        this.properties.multiGeo = (this.properties.multiGeo !== undefined && this.properties.multiGeo !== null) ? this.properties.multiGeo : true;
 
         // Registers web components
         this._templateService.registerWebComponents(this.availableWebComponentDefinitions);
@@ -752,6 +756,17 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                 {
                     groups: stylingPageGroups,
                     displayGroupsAsAccordion: true
+                },
+                {
+                    groups: [
+                        {
+                            groupName: strings.ImportExport,
+                            groupFields: [this._propertyPanePropertyEditor({
+                                webpart: this,
+                                key: 'propertyEditor'
+                            })]
+                        }
+                    ]
                 }
             ]
         };
@@ -787,6 +802,12 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         );
         this._propertyFieldCollectionData = PropertyFieldCollectionData;
         this._customCollectionFieldType = CustomCollectionFieldType;
+
+        const { PropertyPanePropertyEditor } = await import(
+            /* webpackChunkName: 'search-property-pane' */
+            '@pnp/spfx-property-controls/lib/PropertyPanePropertyEditor'
+        );
+        this._propertyPanePropertyEditor = PropertyPanePropertyEditor;
 
         if (this._availableLanguages.length == 0) {
             const languages = await this._searchService.getAvailableQueryLanguages();
@@ -1192,6 +1213,10 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             PropertyPaneToggle('includeOneDriveResults', {
                 label: strings.IncludeOneDriveResultsLabel,
                 checked: this.properties.includeOneDriveResults,
+            }),
+            PropertyPaneToggle('multiGeo', {
+                label: strings.MultiGeo,
+                checked: this.properties.multiGeo,
             }),
             new PropertyPaneSearchManagedProperties('selectedProperties', {
                 label: strings.SelectedPropertiesFieldLabel,

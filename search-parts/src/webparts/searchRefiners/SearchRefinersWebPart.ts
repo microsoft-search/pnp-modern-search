@@ -52,6 +52,7 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
     private _themeProvider: ThemeProvider;
     private _themeVariant: IReadonlyTheme;
     private _userService: IUserService;
+    private _propertyPanePropertyEditor = null;
 
     /**
      * The list of available managed managed properties (managed globally for all proeprty pane fiels if needed)
@@ -131,6 +132,10 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
             }
         }
         ReactDom.render(renderElement, this.domElement);
+    }
+
+    protected async onPropertyPaneConfigurationStart() {
+        await this.loadPropertyPaneResources();
     }
 
     /**
@@ -397,6 +402,17 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
                         }
                     ],
                     displayGroupsAsAccordion: true
+                },
+                {
+                    groups: [
+                        {
+                            groupName: strings.ImportExport,
+                            groupFields: [this._propertyPanePropertyEditor({
+                                webpart: this,
+                                key: 'propertyEditor'
+                            })]
+                        }
+                    ]
                 }
             ]
         };
@@ -422,6 +438,15 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
                 this._searchResultSourceData.unregister(this.render);
             }
         }
+    }
+
+    protected async loadPropertyPaneResources(): Promise<void> {
+
+        const { PropertyPanePropertyEditor } = await import(
+            /* webpackChunkName: 'search-property-pane' */
+            '@pnp/spfx-property-controls/lib/PropertyPanePropertyEditor'
+        );
+        this._propertyPanePropertyEditor = PropertyPanePropertyEditor;
     }
 
     protected async onPropertyPaneFieldChanged(propertyPath: string) {

@@ -134,16 +134,18 @@ class SearchService implements ISearchService {
                 StrVal: "PnPSearchWebPart",
                 QueryPropertyValueTypeIndex: 1
             }
-        }, {
-            // Sample query: foo:test
-            // As "foo" is not an OOB schema property it will be treated as text "foo test" instead
-            // of non-existing property query - yielding results instead of a blank page
-            Name: "ImplicitPropertiesAsStrings",
-            Value: {
-                BoolVal: true,
-                QueryPropertyValueTypeIndex: 3
-            }
-        }];
+        }
+        // , {
+        //     // Sample query: foo:test
+        //     // As "foo" is not an OOB schema property it will be treated as text "foo test" instead
+        //     // of non-existing property query - yielding results instead of a blank page
+        //     Name: "ImplicitPropertiesAsStrings",
+        //     Value: {
+        //         BoolVal: true,
+        //         QueryPropertyValueTypeIndex: 3
+        //     }
+        // }
+    ];
 
         if (this._pageContext.list) {
             searchQuery.Properties.push({
@@ -235,7 +237,7 @@ class SearchService implements ISearchService {
                 // fails to pass into map, so re-init regex
                 const _refinableDate = /(RefinableDate\d+)|(RefinableDateSingle\d+)|(LastModifiedTime)|(LastModifiedTimeForRetention)|(Created)/gi;
                 const _refinableNum = /(RefinableInt\d+)|(RefinableDecimal\d+)/gi;
-                const _refinableString = /(RefinableString\d+)|(JobTitle\d+)/gi;
+                const _refinableString = /(RefinableString\d+)|(JobTitle)|(Tags)|(Department)/gi;
                 const isDateManagedProperty = _refinableDate.test(e.refinerName);
                 //const isNumberManagedProperty = _refinableNum.test(e.refinerName);
                 const isStringManagedProperty = _refinableString.test(e.refinerName);
@@ -311,7 +313,7 @@ class SearchService implements ISearchService {
 
             // Need to do this check
             // More info here: https://github.com/SharePoint/PnP-JS-Core/issues/337
-            if (this._initialSearchResult.RawSearchResults.PrimaryQueryResult) {
+            if (this._initialSearchResult.RawSearchResults && this._initialSearchResult.RawSearchResults.PrimaryQueryResult) {
 
                 // Be careful, there was an issue with paging calculation under 2.0.8 version of sp-pnp-js library
                 // More info https://github.com/SharePoint/PnP-JS-Core/issues/535
@@ -387,12 +389,12 @@ class SearchService implements ISearchService {
                 results.PaginationInformation.TotalRows = this._initialSearchResult.TotalRows;
             }
 
-            if (!isEmpty(this._initialSearchResult.RawSearchResults.SpellingSuggestion)) {
+            if (this._initialSearchResult.RawSearchResults && !isEmpty(this._initialSearchResult.RawSearchResults.SpellingSuggestion)) {
                 results.SpellingSuggestion = this._initialSearchResult.RawSearchResults.SpellingSuggestion;
             }
 
             // Query rules handling
-            if (this._initialSearchResult.RawSearchResults.SecondaryQueryResults) {
+            if (this._initialSearchResult.RawSearchResults && this._initialSearchResult.RawSearchResults.SecondaryQueryResults) {
 
                 const secondaryQueryResults = this._initialSearchResult.RawSearchResults.SecondaryQueryResults;
 
@@ -898,6 +900,7 @@ class SearchService implements ISearchService {
             // Remove complex query parts AND/OR/NOT/ANY/ALL/parenthasis/property queries/exclusions - can probably be improved
             const cleanQuery = query.replace(/(-\w+)|(-"\w+.*?")|(-?\w+[:=<>]+\w+)|(-?\w+[:=<>]+".*?")|((\w+)?\(.*?\))|(AND)|(OR)|(NOT)/g, '');
             const queryParts: string[] = cleanQuery.match(/("[^"]+"|[^"\s]+)/g);
+            queryParts.push(query);
 
             // code which should modify the current query based on context for each new query
             if (queryParts) {

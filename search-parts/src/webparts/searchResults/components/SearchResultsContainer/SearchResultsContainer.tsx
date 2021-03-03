@@ -79,7 +79,9 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             onUpdateSort={this._onUpdateSort}
             sortableFieldsConfiguration={this.props.sortableFields}
             sortDirection={this.state.sortDirection}
-            sortField={this.state.sortField} />;
+            sortField={this.state.sortField}
+            queryHash={this.props.searchService.resultSourceId + "" + this.props.searchService.queryTemplate + ""}
+        />;
 
         const { semanticColors }: IReadonlyTheme = this.props.themeVariant;
 
@@ -462,6 +464,28 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
     }
 
     /**
+     * Remove guid value filters which are causing noise          
+     * @param filters The raw refinement results to translate coming from SharePoint search results
+     */
+    private _removeGuidValues(filters: IRefinementResult[]): IRefinementResult[] {
+        for (let j = filters.length - 1; j >= 0; j--) {
+            const filterResult = filters[j];
+
+            for (let i = filterResult.Values.length - 1; i >= 0; i--) {
+                const element = filterResult.Values[i];
+                const isGuid = /[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/.test(element.RefinementValue);
+                if (isGuid) {
+                    filterResult.Values.splice(i, 1);
+                }
+            }
+            if (filterResult.Values.length == 0) {
+                filters.splice(j, 1);
+            }
+        }
+        return filters;
+    }
+
+    /**
      * Translates all refinement results according the current culture
      * By default SharePoint stores the taxonomy values according to the current site language. Because we can't create a communication site in French (as of 08/12/2017)
      * we need to do the translation afterwards
@@ -781,6 +805,8 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             const localizedResults = await this._getLocalizedMetadata(searchResults.RelevantResults, props.currentUICultureName);
             searchResults.RelevantResults = localizedResults;
         }
+
+        searchResults.RefinementResults = this._removeGuidValues(searchResults.RefinementResults);
 
         return searchResults;
     }

@@ -7,6 +7,7 @@ interface ISortPanelProps {
     onUpdateSort: UpdateSortOperationCallback;
     sortDirection?:SortDirection;
     sortField?:string;
+    queryHash: string;
 }
   
 export default ISortPanelProps;

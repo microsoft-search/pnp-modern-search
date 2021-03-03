@@ -26,6 +26,7 @@ export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearc
 
     private _propertyFieldCollectionData;
     private _customCollectionFieldType;
+    private _propertyPanePropertyEditor;
     private _dynamicDataService: IDynamicDataService;
     private _searchResultSourceData: DynamicProperty<ISearchResultSourceData>;
     private _selectedVertical: ISearchVertical;
@@ -147,7 +148,7 @@ export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearc
     }
 
     protected onInit(): Promise<void> {
-        
+
         // Disable PnP Telemetry
         const telemetry = PnPTelemetry.getInstance();
         if (telemetry.optOut) telemetry.optOut();
@@ -186,6 +187,12 @@ export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearc
 
         this._propertyFieldCollectionData = PropertyFieldCollectionData;
         this._customCollectionFieldType = CustomCollectionFieldType;
+
+        const { PropertyPanePropertyEditor } = await import(
+            /* webpackChunkName: 'search-property-pane' */
+            '@pnp/spfx-property-controls/lib/PropertyPanePropertyEditor'
+        );
+        this._propertyPanePropertyEditor = PropertyPanePropertyEditor;
     }
 
     protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
@@ -199,6 +206,17 @@ export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearc
                         }
                     ],
                     displayGroupsAsAccordion: true
+                },
+                {
+                    groups: [
+                        {
+                            groupName: strings.ImportExport,
+                            groupFields: [this._propertyPanePropertyEditor({
+                                webpart: this,
+                                key: 'propertyEditor'
+                            })]
+                        }
+                    ]
                 }
             ]
         };
@@ -251,26 +269,26 @@ export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearc
                         title: strings.PropertyPane.Verticals.Fields.QueryTemplate,
                         type: this._customCollectionFieldType.custom,
                         onCustomRender: (field, value, onUpdate, item, itemId, onCustomFieldValidation) => {
-                          return (
-                              React.createElement("div", null,
-                                  React.createElement(TextField, {
-                                      defaultValue: value,
-                                      disabled: item.isLink ? true : false,
-                                      required: item.isLink ? false : true,
-                                      onGetErrorMessage: (errValue: string) => {
-                                          if (!errValue) {
-                                            onCustomFieldValidation(field.id, strings.PropertyPane.Verticals.FieldValidationErrorMessage);
-                                          } else {
-                                            onCustomFieldValidation(field.id, '');
-                                          }
-                                      },
-                                      placeholder: '{searchTerms}',
-                                      onChange: (ev, newValue) => {
-                                        onUpdate(field.id, newValue);
-                                      } 
-                                  } as ITextFieldProps)
-                              )
-                          );
+                            return (
+                                React.createElement("div", null,
+                                    React.createElement(TextField, {
+                                        defaultValue: value,
+                                        disabled: item.isLink ? true : false,
+                                        required: item.isLink ? false : true,
+                                        onGetErrorMessage: (errValue: string) => {
+                                            if (!errValue) {
+                                                onCustomFieldValidation(field.id, strings.PropertyPane.Verticals.FieldValidationErrorMessage);
+                                            } else {
+                                                onCustomFieldValidation(field.id, '');
+                                            }
+                                        },
+                                        placeholder: '{searchTerms}',
+                                        onChange: (ev, newValue) => {
+                                            onUpdate(field.id, newValue);
+                                        }
+                                    } as ITextFieldProps)
+                                )
+                            );
                         }
                     },
                     {
@@ -278,17 +296,17 @@ export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearc
                         title: strings.PropertyPane.Verticals.Fields.ResultSource,
                         type: this._customCollectionFieldType.custom,
                         onCustomRender: (field, value, onUpdate, item, itemId, onCustomFieldValidation) => {
-                          return (
-                              React.createElement("div", null,
-                                  React.createElement(TextField, {
-                                      defaultValue: value,
-                                      disabled: item.isLink ? true : false,
-                                      onChange: (ev, newValue) => {
-                                        onUpdate(field.id, newValue);
-                                      } 
-                                  } as ITextFieldProps)
-                              )
-                          );
+                            return (
+                                React.createElement("div", null,
+                                    React.createElement(TextField, {
+                                        defaultValue: value,
+                                        disabled: item.isLink ? true : false,
+                                        onChange: (ev, newValue) => {
+                                            onUpdate(field.id, newValue);
+                                        }
+                                    } as ITextFieldProps)
+                                )
+                            );
                         }
                     },
                     {
@@ -302,53 +320,53 @@ export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearc
                         title: strings.PropertyPane.Verticals.Fields.IsLink,
                         type: this._customCollectionFieldType.boolean,
                         required: false
-                      },
-                      {
+                    },
+                    {
                         id: 'linkUrl',
                         title: strings.PropertyPane.Verticals.Fields.LinkUrl,
                         type: this._customCollectionFieldType.custom,
                         onCustomRender: (field, value, onUpdate, item, itemId, onCustomFieldValidation) => {
-                          return (
-                              React.createElement("div", null,
-                                  React.createElement(TextField, {
-                                      defaultValue: value,
-                                      disabled: item.isLink ? false : true,
-                                      placeholder: 'https://...',
-                                      onChange: (ev, newValue) => {
-                                        onUpdate(field.id, newValue);
-                                      } 
-                                  } as ITextFieldProps)
-                              )
-                          );
+                            return (
+                                React.createElement("div", null,
+                                    React.createElement(TextField, {
+                                        defaultValue: value,
+                                        disabled: item.isLink ? false : true,
+                                        placeholder: 'https://...',
+                                        onChange: (ev, newValue) => {
+                                            onUpdate(field.id, newValue);
+                                        }
+                                    } as ITextFieldProps)
+                                )
+                            );
                         }
-                      },
-                      {
+                    },
+                    {
                         id: 'openBehavior',
                         title: strings.PropertyPane.Verticals.Fields.OpenBehavior,
                         type: this._customCollectionFieldType.custom,
                         defaultValue: PageOpenBehavior.NewTab,
                         onCustomRender: (field, value, onUpdate, item, itemId, onCustomFieldValidation) => {
-                          return (
-                              React.createElement("div", null,
-                                  React.createElement(Dropdown, {
-                                    options: [
-                                      {
-                                        key: PageOpenBehavior.NewTab,
-                                        text: strings.NewTabOpenBehavior
-                                      },
-                                      {
-                                        key: PageOpenBehavior.Self,
-                                        text: strings.SameTabOpenBehavior
-                                      },
-                                    ],
-                                    disabled: item.isLink ? false : true,
-                                    defaultSelectedKey: item.openBehavior,
-                                    onChange: (ev, option) => onUpdate(field.id, option.key),
-                                  } as IDropdownProps)
-                              )
-                          );
+                            return (
+                                React.createElement("div", null,
+                                    React.createElement(Dropdown, {
+                                        options: [
+                                            {
+                                                key: PageOpenBehavior.NewTab,
+                                                text: strings.NewTabOpenBehavior
+                                            },
+                                            {
+                                                key: PageOpenBehavior.Self,
+                                                text: strings.SameTabOpenBehavior
+                                            },
+                                        ],
+                                        disabled: item.isLink ? false : true,
+                                        defaultSelectedKey: item.openBehavior,
+                                        onChange: (ev, option) => onUpdate(field.id, option.key),
+                                    } as IDropdownProps)
+                                )
+                            );
                         }
-                      }
+                    }
                 ]
             })
         ];
@@ -414,37 +432,37 @@ export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearc
     private initializeProperties() {
 
         this.properties.verticals = this.properties.verticals ? this.properties.verticals : [
-                                                                                                {
-                                                                                                    key: "64db0487-0b73-4ffa-b250-d7869d85b7fe",
-                                                                                                    queryTemplate: "{searchTerms}",
-                                                                                                    resultSourceId: "78b793ce-7956-4669-aa3b-451fc5defebf",
-                                                                                                    tabName: "Videos",
-                                                                                                    iconName : "Video",
-                                                                                                    openBehavior: PageOpenBehavior.NewTab,
-                                                                                                    isLink: false,
-                                                                                                    linkUrl: ''
-                                                                                                },
-                                                                                                {
-                                                                                                    key: "afb855dc-7808-4366-a320-4a73be69a979",
-                                                                                                    queryTemplate: "{searchTerms}",
-                                                                                                    resultSourceId: "b09a7990-05ea-4af9-81ef-edfab16c4e31",
-                                                                                                    tabName: "People",
-                                                                                                    iconName : "People",
-                                                                                                    openBehavior: PageOpenBehavior.NewTab,
-                                                                                                    isLink: false,
-                                                                                                    linkUrl: ''
-                                                                                                },
-                                                                                                {
-                                                                                                    key: "9da0e1d9-4765-42ff-b562-cf7796d408f6",
-                                                                                                    queryTemplate: "{searchTerms}",
-                                                                                                    resultSourceId: "ba63bbae-fa9c-42c0-b027-9a878f16557c",
-                                                                                                    tabName: "Recently changed items",
-                                                                                                    iconName: "Documentation",
-                                                                                                    openBehavior: PageOpenBehavior.NewTab,
-                                                                                                    isLink: false,
-                                                                                                    linkUrl: ''
-                                                                                                }
-                                                                                            ];
+            {
+                key: "64db0487-0b73-4ffa-b250-d7869d85b7fe",
+                queryTemplate: "{searchTerms}",
+                resultSourceId: "78b793ce-7956-4669-aa3b-451fc5defebf",
+                tabName: "Videos",
+                iconName: "Video",
+                openBehavior: PageOpenBehavior.NewTab,
+                isLink: false,
+                linkUrl: ''
+            },
+            {
+                key: "afb855dc-7808-4366-a320-4a73be69a979",
+                queryTemplate: "{searchTerms}",
+                resultSourceId: "b09a7990-05ea-4af9-81ef-edfab16c4e31",
+                tabName: "People",
+                iconName: "People",
+                openBehavior: PageOpenBehavior.NewTab,
+                isLink: false,
+                linkUrl: ''
+            },
+            {
+                key: "9da0e1d9-4765-42ff-b562-cf7796d408f6",
+                queryTemplate: "{searchTerms}",
+                resultSourceId: "ba63bbae-fa9c-42c0-b027-9a878f16557c",
+                tabName: "Recently changed items",
+                iconName: "Documentation",
+                openBehavior: PageOpenBehavior.NewTab,
+                isLink: false,
+                linkUrl: ''
+            }
+        ];
     }
 
     /**

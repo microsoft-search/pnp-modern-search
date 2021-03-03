@@ -52,6 +52,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
 
     private _propertyFieldCollectionData = null;
     private _customCollectionFieldType = null;
+    private _propertyPanePropertyEditor = null;
     private _themeVariant: IReadonlyTheme;
     private _ops = null;
 
@@ -204,6 +205,17 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
                         }
                     ],
                     displayGroupsAsAccordion: true
+                },
+                {
+                    groups: [
+                        {
+                            groupName: strings.ImportExport,
+                            groupFields: [this._propertyPanePropertyEditor({
+                                webpart: this,
+                                key: 'propertyEditor'
+                            })]
+                        }
+                    ]
                 }
             ]
         };
@@ -397,6 +409,12 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
         );
         this._propertyFieldCollectionData = PropertyFieldCollectionData;
         this._customCollectionFieldType = CustomCollectionFieldType;
+
+        const { PropertyPanePropertyEditor } = await import(
+            /* webpackChunkName: 'search-property-pane' */
+            '@pnp/spfx-property-controls/lib/PropertyPanePropertyEditor'
+        );
+        this._propertyPanePropertyEditor = PropertyPanePropertyEditor;
     }
 
     /**

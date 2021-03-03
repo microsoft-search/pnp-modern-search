@@ -27,7 +27,7 @@ define([], function() {
         "PlaceHolderIconText": "Suchergebnisse Webpart",
         "PlaceHolderDescription": "Diese Komponente zeigt Suchergebnisse mit Paging an",
         "ResultSourceIdLabel": "ID Suchergebnisquelle",
-		"ResultSourceIdDescription": "Wenn Sie den Namen verwenden, verwenden Sie das Format: Quellenebene|Name (d.h.: SPSite|Meine Nachrichten). Gültige Ebenen sind: SPSiteAbonnement, SPSite, SPWeb",
+        "ResultSourceIdDescription": "Wenn Sie den Namen verwenden, verwenden Sie das Format: Quellenebene|Name (d.h.: SPSite|Meine Nachrichten). Gültige Ebenen sind: SPSiteAbonnement, SPSite, SPWeb",
         "InvalidResultSourceIdMessage": "Ungültige ID",
         "InvalidNumberIntervalMessage": "Zwischen 1 und 500",
         "EnableQueryRulesLabel": "Abfrageregeln aktivieren",
@@ -180,6 +180,8 @@ define([], function() {
             "HideNavigationFieldName": "Navigationsschaltflächen ausblenden (vorherige Seite, nächste Seite)",
             "HideFirstLastPagesFieldName": "Erste/letzte Navigationschaltfläche ausblenden",
             "HideDisabledFieldName": "Navigationsschaltflächen (zurück, nächste, erste, letzte) ausblenden, wenn sie deaktiviert sind.",
-        }
+        },
+        "ImportExport": "Einstellungen importieren / exportieren",
+        "MultiGeo": "Aktivieren Sie Multi-Geo"
     }
 });
