@@ -1,11 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { TextField, Fabric, ShimmeredDetailsList, IShimmeredDetailsListProps } from 'office-ui-fabric-react';
+import { Fabric, ShimmeredDetailsList, IShimmeredDetailsListProps } from 'office-ui-fabric-react';
 import { ITooltipHostProps, TooltipHost, ITooltipStyles, Shimmer, ShimmerElementsGroup, ShimmerElementType, IShimmerElement, mergeStyleSets, ITheme } from 'office-ui-fabric-react';
 import * as Handlebars from 'handlebars';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import { BaseWebComponent } from '@pnp/modern-search-extensibility';
-import { groupBy, findIndex, isEmpty } from "@microsoft/sp-lodash-subset";
+import { groupBy, sortBy, findIndex, isEmpty } from "@microsoft/sp-lodash-subset";
 import { FileIcon } from '../components/FileIconComponent';
 import { DetailsListLayoutMode, SelectionMode, IColumn, IGroup, IDetailsRowProps, DetailsRow, IDetailsHeaderProps, DetailsHeader, CheckboxVisibility } from 'office-ui-fabric-react/lib/DetailsList';
 import { DEFAULT_CELL_STYLE_PROPS, DEFAULT_ROW_HEIGHTS } from 'office-ui-fabric-react/lib/components/DetailsList/DetailsRow.styles';
@@ -47,12 +47,6 @@ const classNames = mergeStyleSets({
     flexWrap: 'wrap'
   }
 });
-const controlStyles = {
-  root: {
-    margin: '0 30px 20px 0',
-    maxWidth: '300px'
-  }
-};
 
 export interface IDetailsListColumnConfiguration {
 
@@ -168,6 +162,7 @@ export interface IDetailsListComponentProps {
 export interface IDetailsListComponentState {
   columns: IColumn[];
   items: any[];
+  groups: IGroup[];
 }
 
 export class DetailsListComponent extends React.Component<IDetailsListComponentProps, IDetailsListComponentState> {
@@ -276,7 +271,8 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
       
     this.state = {
       items: this._allItems,
-      columns: columns
+      columns: columns,
+      groups: []
     };
 
     this._copyAndSort = this._copyAndSort.bind(this);
@@ -406,13 +402,11 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
           };
 
           return <DetailsHeader {...props} theme={this.props.themeVariant as ITheme}/>;
-      }
+      }    
     };
 
-    // If a field has been set to group, build groups dynamically
-    if (this.props.groupBy) {
-      const groups = this._buildGroups(items, this.props.groupBy);
-      shimmeredDetailsListProps.groups = groups;
+    if (this.state.groups.length > 0) {
+      shimmeredDetailsListProps.groups = this.state.groups;
       shimmeredDetailsListProps.groupProps = {
         showEmptyGroups: true
       };
@@ -425,8 +419,28 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
     );
   }
 
+  public componentDidMount() {
+
+    // Build the intitial groups
+    if (this.props.groupBy) {
+
+      // Because groups are determined by a start index and a count, we need to sort items to regroup them in the collection before processing. 
+      const items = sortBy(this.state.items, this.props.groupBy);
+      const groups = this._buildGroups(items, this.props.groupBy);
+      
+      this.setState({
+        groups: groups,
+        items: items 
+      });
+    }
+  }
+
   private _onColumnClick = (ev: React.MouseEvent<HTMLElement>, column: IColumn): void => {
+
     const { columns, items } = this.state;
+
+    let newItems = [];
+
     const newColumns: IColumn[] = columns.slice();
     const currColumn: IColumn = newColumns.filter(currCol => column.key === currCol.key)[0];
     newColumns.forEach((newCol: IColumn) => {
@@ -439,8 +453,21 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
       }
     });
 
-    // Sort is done on the original value, not the processed one
-    const newItems = this._copyAndSort(items, currColumn.data.value, currColumn.isSortedDescending);
+    if (!this.props.groupBy) {
+      newItems = this._copyAndSort(items, currColumn.data.value, currColumn.isSortedDescending);
+    } else {
+
+      // Sort items for each group individually. Group indexes don't change here, only items order.
+      const groupedItems = groupBy(items, (i) => {
+        return ObjectHelper.byPath(i, this.props.groupBy);
+      });
+
+      for (const group in groupedItems) {
+        const sortedItemsByGroup = this._copyAndSort(groupedItems[group], currColumn.data.value, currColumn.isSortedDescending);
+        newItems = newItems.concat(sortedItemsByGroup);
+      }
+    }
+    
     this.setState({
       columns: newColumns,
       items: newItems
@@ -467,13 +494,15 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
         }
       });
 
-      groups.push({
+      let groupProps: IGroup = {
         name: group,
         key: group,
         startIndex: idx,
         count: groupedItems[group].length,
         isCollapsed: this.props.groupsCollapsed
-      });
+      };
+
+      groups.push(groupProps);
     }
 
     return groups;
