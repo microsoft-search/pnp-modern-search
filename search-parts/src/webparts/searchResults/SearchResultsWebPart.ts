@@ -562,6 +562,9 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
   }
 
   protected onDispose(): void {
+    if (this._pushStateCallback) {
+        window.history.pushState = this._pushStateCallback;
+    }
     ReactDom.unmountComponentAtNode(this.domElement);
   }
 
