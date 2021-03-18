@@ -182,7 +182,9 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
     }
 
     protected onDispose(): void {
-        window.history.pushState = this._ops;
+        if (this._ops) {
+            window.history.pushState = this._ops;
+        }
         ReactDom.unmountComponentAtNode(this.domElement);
     }
 
@@ -599,7 +601,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
         })(window.history);
     }
 
-    private pushStateHandler(state, key, path) {        
+    private pushStateHandler(state, key, path) {
         this._ops.apply(history, [state, key, path]);
         if (this.properties.defaultQueryKeywords.isDisposed) return;
         const qkw = this.properties.defaultQueryKeywords.tryGetSource();

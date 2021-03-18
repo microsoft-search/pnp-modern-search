@@ -605,7 +605,9 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
     }
 
     protected onDispose(): void {
-        window.history.pushState = this._ops;
+        if (this._ops) {
+            window.history.pushState = this._ops;
+        }
         ReactDom.unmountComponentAtNode(this.domElement);
     }
 
