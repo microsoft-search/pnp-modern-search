@@ -438,7 +438,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
             },
             {
                 slotName: BuiltinTemplateSlots.Author,
-                slotField: 'CreatedBy'
+                slotField: 'AuthorOWSUSER'
             },
             {
                 slotName: BuiltinTemplateSlots.Tags,
@@ -504,8 +504,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                 'JobTitle',
                 'WorkPhone',
                 'SPSiteUrl',
-                'SiteTitle',
-                'CreatedBy'
+                'SiteTitle'                
             ];
         this.properties.resultSourceId = this.properties.resultSourceId !== undefined ? this.properties.resultSourceId : BuiltinSourceIds.LocalSharePointResults;
         this.properties.sortList = this.properties.sortList !== undefined ? this.properties.sortList : [];

@@ -48,7 +48,7 @@
                     <pnp-icon data-name="MiniLink" aria-hidden="true"></pnp-icon>
                 </div>
                 <div>
-                    <a href="{{url}}">{{title}}</a>
+                    <a href="{{url}}" style="color:{{@root.theme.semanticColors.link}}">{{title}}</a>
                     <div>{{description}}</div>
                 </div>
             </li>
@@ -65,17 +65,17 @@
                     {{/if}}
                     <div class="template--listItem--contentContainer">
                         <span class="template--listItem--title example-themePrimary">
-                            <a href="{{slot item @root.slots.PreviewUrl}}" target="_blank" data-interception="off">{{slot item @root.slots.Title}}</a>
+                            <a href="{{slot item @root.slots.PreviewUrl}}" target="_blank" style="color:{{@root.theme.semanticColors.link}}" data-interception="off">{{slot item @root.slots.Title}}</a>
                         </span>
-                        <span>
-                            {{getSummary (slot item @root.slots.Summary)}}
+                        <span>                            
                             <span class="template--listItem--author">
                                 {{#with (split (slot item @root.slots.Author) '|')}}
                                     {{[1]}}
                                 {{/with}}
                             </span>
-                        </span>
-                        <span>{{getDate (slot item @root.slots.Date) "LL"}}</span>
+                            <span class="template--listItem--date">{{getDate (slot item @root.slots.Date) "LL"}}</span>                            
+                        </span>                        
+                        {{getSummary (slot item @root.slots.Summary)}}
                         <div class="template--listItem--tags example-themePrimary">
                             {{#if (slot item @root.slots.Tags)}}
                             <pnp-icon data-name="Tag" aria-hidden="true" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-icon>
