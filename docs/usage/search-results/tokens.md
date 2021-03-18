@@ -60,7 +60,7 @@ Except for `{Hub}`, these a shortands to the `{PageContext}` tokens. They return
 |**Token**|**Definition**|
 |:-----|:-----|
 | **{Site.&lt;PropertyName&gt;}**| Resolves current site related tokens. You can use the 'Debug' layout and the `context` property to see all available values for a site. Ex `{Site.id._guid}` or `{Site.absoluteUrl}`.
-| **{Hub.&lt;PropertyName&gt;}** | Resolves current hub site related tokens. Valid property names are `{Hub.HubSiteId}`, `{Hub.Id}` and `{Hub.IsHubSite}`.
+| **{Hub.&lt;PropertyName&gt;}** | Resolves current hub site related tokens. Valid property names are `{Hub.HubSiteId}`, `{Hub.Id}` and `{Hub.IsHubSite}` You can target a hub with the template: `DepartmentId:\{{Hub.HubSiteId}\}`.
 | **{Group.&lt;PropertyName&gt;}** | Resolves current Office 365 group related tokens. You can use the 'Debug' layout and the `context` property to see all available values for a site.
 | **{List.&lt;PropertyName&gt;}** | Resolves current list related tokens. Ex `{List.id._guid}` or `{List.absoluteUrl}`.
 | **{Web.&lt;PropertyName&gt;}** | Resolves current web related tokens  You can use the 'Debug' layout and the `context` property to see all available values for a site. Ex `{Web.id._guid}` or `{Web.absoluteUrl}`.
