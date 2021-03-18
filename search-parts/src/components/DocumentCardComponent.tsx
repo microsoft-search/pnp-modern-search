@@ -169,7 +169,7 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
         let author = "";
         if (processedProps.author) {
             const parts = processedProps.author.split('|');
-            author = parts.length === 1 ? parts[0] : parts[1]
+            author = parts.length === 1 ? parts[0] : parts[1];
         }
 
         return <div>
