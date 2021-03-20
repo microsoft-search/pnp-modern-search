@@ -396,7 +396,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                     minimumCount: 0,
                     sortBy: filterConfig.sortBy === FilterSortType.ByCount ? SearchAggregationSortBy.Count : SearchAggregationSortBy.KeyAsString
                 },
-                size: 10
+                size: filterConfig?.maxBuckets ? filterConfig.maxBuckets : 10
             };
 
             if (filterConfig.selectedTemplate === "DateIntervalFilterTemplate") {

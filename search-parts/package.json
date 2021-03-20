@@ -24,7 +24,7 @@
         "@microsoft/sp-page-context": "1.11.0",
         "@microsoft/sp-property-pane": "1.11.0",
         "@microsoft/sp-webpart-base": "1.11.0",
-        "@pnp/modern-search-extensibility": "1.0.0",
+        "@pnp/modern-search-extensibility": "1.0.1",
         "@pnp/common": "2.0.13",
         "@pnp/spfx-controls-react": "2.3.0",
         "@pnp/spfx-property-controls": "2.2.0",

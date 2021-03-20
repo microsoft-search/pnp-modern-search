@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { IDataSourceData, BaseDataSource, ITokenService, IDataFilter, ITemplateSlot, IDataFilterResult, IDataFilterResultValue, BuiltinTemplateSlots, FilterComparisonOperator, IDataFilterConfiguration, FilterBehavior } from "@pnp/modern-search-extensibility";
+import { IDataSourceData, BaseDataSource, ITokenService, IDataFilter, ITemplateSlot, IDataFilterResult, IDataFilterResultValue, BuiltinTemplateSlots, FilterComparisonOperator, IDataFilterConfiguration, FilterBehavior, FilterSortType, FilterSortDirection } from "@pnp/modern-search-extensibility";
 import {
     IPropertyPaneGroup,
     IPropertyPaneDropdownOption,
@@ -438,7 +438,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
             },
             {
                 slotName: BuiltinTemplateSlots.Author,
-                slotField: 'CreatedBy'
+                slotField: 'AuthorOWSUSER'
             },
             {
                 slotName: BuiltinTemplateSlots.Tags,
@@ -644,17 +644,17 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                 QueryPropertyValueTypeIndex: 1
             }
         }
-        // , {
-        //     // Sample query: foo:test
-        //     // As "foo" is not an OOB schema property it will be treated as text "foo test" instead
-        //     // of non-existing property query - yielding results instead of a blank page
-        //     Name: "ImplicitPropertiesAsStrings",
-        //     Value: {
-        //         BoolVal: true,
-        //         QueryPropertyValueTypeIndex: 3
-        //     }
-        // }
-    ];
+            // , {
+            //     // Sample query: foo:test
+            //     // As "foo" is not an OOB schema property it will be treated as text "foo test" instead
+            //     // of non-existing property query - yielding results instead of a blank page
+            //     Name: "ImplicitPropertiesAsStrings",
+            //     Value: {
+            //         BoolVal: true,
+            //         QueryPropertyValueTypeIndex: 3
+            //     }
+            // }
+        ];
         if (this._pageContext.list) {
             searchQuery.Properties.push({
                 Name: "ListId",
@@ -758,7 +758,12 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
 
                     return `${filterConfig.filterName}(discretize=manual/${pastYear}/${past3Months}/${pastMonth}/${pastWeek}/${past24hours}/${today})`;
 
-                } else {
+                } else if (filterConfig.maxBuckets) {
+                    const sort = filterConfig.sortBy == FilterSortType.ByName ? "name" : "frequency";
+                    const direction = filterConfig.sortDirection == FilterSortDirection.Ascending ? "ascending" : "descending";
+                    return `${filterConfig.filterName}(filter=${filterConfig.maxBuckets}/0/*,sort=${sort}/${direction})`;
+                }
+                else {
                     return filterConfig.filterName;
                 }
 
@@ -1248,8 +1253,8 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
 
     private _bytesToHex(bytes) {
         return Array.from(
-          bytes,
-          byte => (byte as any).toString(16).padStart(2, "0")
+            bytes,
+            byte => (byte as any).toString(16).padStart(2, "0")
         ).join("");
     }
 

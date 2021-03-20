@@ -22,6 +22,7 @@ declare interface ISearchFiltersWebPartStrings {
     DataFilterCollection: {
       SelectFilterComboBoxLabel: string;
       FilterNameLabel: string;
+      FilterMaxBuckets: string;
       FilterDisplayName: string;
       FilterTemplate: string;
       FilterExpandByDefault: string;
