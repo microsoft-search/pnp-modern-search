@@ -35,7 +35,7 @@ export interface IDataResultsTemplateContext {
         filterOperator: FilterConditionOperator;
 
         /**
-         * The Data Filters Web Part instance ID
+         * The Filters Web Part instance ID
          */
         instanceId: string;
 
@@ -127,7 +127,7 @@ export interface IDataResultsTemplateContext {
 }
 
 /**
- * Represents the context passed to the Handlebars template (Data Filters)
+ * Represents the context passed to the Handlebars template (Filters)
  */
 export interface ISearchFiltersTemplateContext {
 

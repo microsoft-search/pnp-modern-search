@@ -1,6 +1,7 @@
 {
     "name": "@pnp/modern-search-extensibility",
-    "version": "1.0.0",
+    "description": "Base library for creating PnP Modern Search extensions",
+    "version": "1.0.1",
     "private": false,
     "main": "lib/index.js",
     "engines": {
@@ -13,7 +14,8 @@
     },
     "dependencies": {
         "@types/webpack-env": "1.13.1",
-        "@types/es6-promise": "0.0.33"
+        "@types/es6-promise": "0.0.33",
+        "@webcomponents/custom-elements": "1.4.3"
     },
     "devDependencies": {
         "@microsoft/sp-property-pane": "1.11.0",
@@ -26,7 +28,6 @@
         "react-dom": "16.8.5",
         "tslib": "^1.10.0",
         "handlebars": "4.7.6",
-        "@webcomponents/custom-elements": "1.4.3",
         "@webcomponents/webcomponentsjs": "2.5.0",
         "@microsoft/sp-build-web": "1.11.0",
         "@microsoft/sp-tslint-rules": "1.11.0",
@@ -37,5 +38,23 @@
         "@types/chai": "3.4.34",
         "@types/mocha": "2.2.38",
         "ajv": "~5.2.2"
-    }
+    },
+    "directories": {
+        "lib": "lib"
+    },
+    "bugs": {
+        "url": "https://github.com/microsoft-search/pnp-modern-search/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/microsoft-search/pnp-modern-search/tree/main/search-extensibility"
+    },
+    "license": "MIT",
+    "keywords": [
+        "sharepoint",
+        "office365",
+        "tools",
+        "spfx",
+        "framework"
+    ]
 }

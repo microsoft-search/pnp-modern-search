@@ -50,6 +50,12 @@ export interface IFilterCheckBoxProps {
      * Handler when a filter value is selected
      */
     onChecked: (filterName: string, filterValue: IDataFilterValueInfo) => void;
+
+    /**
+     * The class name to apply to the checkbox
+     */
+    className?: string;
+    
 }
 
 export interface IFilterCheckBoxState {
@@ -77,6 +83,7 @@ export class FilterCheckBoxComponent extends React.Component<IFilterCheckBoxProp
                             color: this.props.count && this.props.count === 0 ? this.props.themeVariant.semanticColors.disabledText : this.props.themeVariant.semanticColors.bodyText
                         }
                     }}
+                    className={this.props.className}
                     theme={this.props.themeVariant as ITheme}
                     defaultChecked={this.props.selected}
                     disabled={this.props.disabled}

@@ -19,7 +19,7 @@ export enum FilterSortType {
     /**
      * Sort filter values by their count
      */
-    ByCount= 'ByCount',
+    ByCount = 'ByCount',
 
     /**
      * Sort filter values by their display name
@@ -93,4 +93,14 @@ export interface IDataFilterConfiguration {
      * The index of this filter in the configuration
      */
     sortIdx: number;
+
+    /**
+     * Number of buckets to fetch
+     */
+    maxBuckets: number;
+
+    /**
+    * Range definition
+    */
+    rangeDefinition: number;
 }

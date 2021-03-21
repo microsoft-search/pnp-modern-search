@@ -2,14 +2,28 @@
 
 # PnP Modern Search v4
 
+![Current version](https://img.shields.io/github/v/release/microsoft-search/pnp-modern-search)
+
 The PnP 'Modern Search' solution is a set of SharePoint Online modern Web Parts allowing SharePoint super users, webmasters and developers to create highly flexible and personalized search based experiences in minutes.
+
+Before modern pages and web parts built on SPFx was introduced search driven scenarios was covered by the highly flexible classic search web parts, which
+supported any developer to add any HTML, CSS or JavaScript they wanted to tailor their specific scenario. In the modern world this was replaced by the
+Highlighted Content Web Part and a not very configurable search solution for Microsoft Search.
+
+To close the gap of customization and freedom the PnP Modern Search web parts got stated back in 2017, and have stabilized on v3. While allowing flexibility
+it introduces security measures to block JavaScript and CSS injection, key to many of the enterprise companies using the web parts today in productions.
+
+As the project progressed and the search API's are moving from SharePoint to Microsoft Graph there was a need to restructure and re-invent the web parts.
+Hence v4 was born. The goal of v4 is to solve scenarios already solved by v3, but at the same time allow greater flexibility in how you extend the solution using web components and custom developer solutions outside of HTML/handlebars.
+
+As more and more Microsoft Search functionality is exposed via the Microsoft Graph Search API's, we will keep on investing in v4 to surface these great capabilities.
 
 **Looking for the v3 documentation? [Here you go!](./v3/index.md)**
 
 !!! important "PnP Modern Search v3.x deprecation"
-    **The v4 version uses a brand new code architecture and replaces the older v3 codebase**. There will be no new features added to v3.x, but we will continue to
-    provide bug fixes as needed. Because v4.x is not at feature parity yet with v3.x, you can still use the v3.x packages to meet your requirements. Also, there is not an
-    auto-upgrade path from v3 to v4 due to the new architecture, so you are perfectly ok
+    **v4 uses a brand new code architecture and replace the older v3 codebase**. There will be no new features added to v3.x, but we will continue to
+    provide bug fixes and minor changes as needed. As v4.x is not yet at feature parity with v3.x, you can still use the v3.x packages to meet your requirements.
+    Also not that there is not an auto-upgrade path from v3 to v4 due to the new architecture, so you are perfectly ok
     to stay on the v3 version until v4 provides the features validating your upgrade.
     However, the main focus is on the v4 version, and new search functionality backed by the Microsoft Graph Search API will be v4 only.
 
@@ -38,7 +52,7 @@ Here is the list of supported browsers:
 - Edge Chromium
 - Brave
 
-**We don't support Internet Explorer 11**. We think there are plenty of other options for enteprise scenarios in the market. Maybe it's time to move on. For developers, it represents an **huge** ammount of time to make the solution compatible for a very low benefit. Hope you understand, ain't personal ;).
+**PnP Modern Search do not explicitly support Internet Explorer 11**. We think there are plenty of other options for enteprise scenarios in the market. Maybe it's time to move on. For developers, it represents an **huge** amount of time to make the solution compatible for a very low benefit. Hope you understand, ain't personal ;).
 
 ## Extensibility model
 

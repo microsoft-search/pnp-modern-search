@@ -34,21 +34,22 @@
         {{#if @root.properties.showSelectedFilters}}
         <pnp-selectedfilters data-filters="{{JSONstringify filters.selectedFilters 2}}" data-filters-configuration="{{JSONstringify filters.filtersConfiguration 2}}" data-instance-id="{{filters.instanceId}}" data-operator="{{filters.filterOperator}}" data-theme-variant="{{JSONstringify @root.theme}}">
         </pnp-selectedfilters>
-        {{/if}} {{#if @root.properties.showResultsCount}}
+        {{/if}}
+        {{#if @root.properties.showResultsCount}}
         <div class="template--resultCount">
             <label class="ms-fontWeight-semibold">{{getCountMessage @root.data.totalItemsCount @root.inputQueryText}}</label>
         </div>
-        {{/if}} {{#if @root.data.promotedResults}}
+        {{/if}}
+        {{#if @root.data.promotedResults}}
         <ul class="template--defaultList template--promotedResults">
-            <li class="template--listItem--title">{{strings.PromotedResultsLabel}}</li>
             {{#each @root.data.promotedResults as |promotedResult|}}
             <li>
                 <div>
                     <pnp-icon data-name="MiniLink" aria-hidden="true"></pnp-icon>
                 </div>
                 <div>
-                    <a href="{{slot item @root.slots.Path}}">{{slot item @root.slots.Path}}</a>
-                    <div>{{Description}}</div>
+                    <a href="{{url}}" style="color:{{@root.theme.semanticColors.link}}">{{title}}</a>
+                    <div>{{description}}</div>
                 </div>
             </li>
             {{/each}}
@@ -64,17 +65,17 @@
                     {{/if}}
                     <div class="template--listItem--contentContainer">
                         <span class="template--listItem--title example-themePrimary">
-                                            <a href="{{slot item @root.slots.PreviewUrl}}" target="_blank" data-interception="off">{{slot item @root.slots.Title}}</a>
-                                        </span>
-                        <span>
-                                            {{getSummary (slot item @root.slots.Summary)}}
-                                            <span class="template--listItem--author">
-                                                {{#with (split (slot item @root.slots.Author) '|')}}
-                                                    {{[1]}}
-                                                {{/with}}
-                                            </span>
+                            <a href="{{slot item @root.slots.PreviewUrl}}" target="_blank" style="color:{{@root.theme.semanticColors.link}}" data-interception="off">{{slot item @root.slots.Title}}</a>
                         </span>
-                        <span>{{getDate (slot item @root.slots.Date) "LL"}}</span>
+                        <span>                            
+                            <span class="template--listItem--author">
+                                {{#with (split (slot item @root.slots.Author) '|')}}
+                                    {{[1]}}
+                                {{/with}}
+                            </span>
+                            <span class="template--listItem--date">{{getDate (slot item @root.slots.Date) "LL"}}</span>                            
+                        </span>                        
+                        {{getSummary (slot item @root.slots.Summary)}}
                         <div class="template--listItem--tags example-themePrimary">
                             {{#if (slot item @root.slots.Tags)}}
                             <pnp-icon data-name="Tag" aria-hidden="true" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-icon>
@@ -101,12 +102,12 @@
             {{/each}}
         </ul>
 
-        {{#if @root.properties.paging.showPaging}}
+        {{#if @root.properties.paging.showPaging}} {{#gt @root.data.totalItemsCount @root.properties.paging.itemsCountPerPage}}
         <pnp-pagination data-total-items="{{@root.data.totalItemsCount}}" data-hide-first-last-pages="{{@root.properties.paging.hideFirstLastPages}}" data-hide-disabled="{{@root.properties.paging.hideDisabled}}" data-hide-navigation="{{@root.properties.paging.hideNavigation}}"
             data-range="{{@root.properties.paging.pagingRange}}" data-items-count-per-page="{{@root.properties.paging.itemsCountPerPage}}" data-current-page-number="{{@root.paging.currentPageNumber}}" data-page-links="{{JSONstringify @root.data.paging.links}}"
             data-theme-variant="{{JSONstringify @root.theme}}">
         </pnp-pagination>
-        {{/if}}
+        {{/gt}} {{/if}}
 
     </div>
 </content>

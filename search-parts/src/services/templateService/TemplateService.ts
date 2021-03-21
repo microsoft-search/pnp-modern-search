@@ -2,7 +2,7 @@ import { ITemplateService } from "./ITemplateService";
 import { ServiceKey, ServiceScope, Text } from "@microsoft/sp-core-library";
 import { SPHttpClient, SPHttpClientResponse } from '@microsoft/sp-http';
 import * as Handlebars from 'handlebars';
-import { uniqBy, uniq, isEmpty, trimEnd } from "@microsoft/sp-lodash-subset";
+import { uniqBy, uniq, isEmpty, trimEnd, get } from "@microsoft/sp-lodash-subset";
 import * as strings from 'CommonStrings';
 import { DateHelper } from "../../helpers/DateHelper";
 import { PageContext } from "@microsoft/sp-page-context";
@@ -513,7 +513,45 @@ export class TemplateService implements ITemplateService {
                 } else {
                     return expr;
                 }
+
             }
+
         });
+
+        // Return SPFx page context variable
+        // Usage:
+        //   {{getPageContext "user.displayName"}}
+        //   {{getPageContext "cultureInfo.currentUICultureName"}}
+        this.Handlebars.registerHelper("getPageContext", (name: string) => {
+            if (!name) return "";
+            let value = get(this.pageContext, name);
+            if (value) return value;
+            return "";
+        });
+
+        // Get Attachments from LinkOfficeChild managed properties
+        // Usage:
+        //   {{#getAttachments LinkOfficeChild}}
+        //      <a href="{{url}}">{{fileName}}</href>
+        //   {{/getAttachments}}
+        this.Handlebars.registerHelper("getAttachments", (value: string, options) => {
+            let out: string = "";
+            if (!isEmpty(value)) {
+                let splitArr: string[] = value.split(/\n+/);
+
+                if (splitArr && splitArr.length > 0) {
+                    for (let i of splitArr) {
+                        let pos: number = i.lastIndexOf("/");
+                        if (pos !== -1) {
+                            let fileName: string = i.substring(pos + 1);
+                            let objLine = { url: i, fileName: fileName };
+                            out += options.fn(objLine);
+                        }
+                    }
+                }
+            }
+            return out;
+        });
+
     }
 }

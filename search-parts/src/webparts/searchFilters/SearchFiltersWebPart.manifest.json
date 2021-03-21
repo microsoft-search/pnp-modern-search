@@ -1,15 +1,14 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/spfx/client-side-web-part-manifest.schema.json",
-  "id": "544c1372-fb1d-4e96-bc1e-31fd66979667",
-  "alias": "pnpSearchFiltersWebPart",
-  "componentType": "WebPart",
-  "version": "4.0.0",
-  "manifestVersion": 2,
-  "requiresCustomScript": false,
-  "supportedHosts": ["SharePointWebPart"],
-  "supportsThemeVariants": true,
-  "preconfiguredEntries": [
-    {
+    "$schema": "https://developer.microsoft.com/json-schemas/spfx/client-side-web-part-manifest.schema.json",
+    "id": "544c1372-fb1d-4e96-bc1e-31fd66979667",
+    "alias": "pnpSearchFiltersWebPart",
+    "componentType": "WebPart",
+    "version": "*",
+    "manifestVersion": 2,
+    "requiresCustomScript": false,
+    "supportedHosts": ["SharePointWebPart"],
+    "supportsThemeVariants": true,
+    "preconfiguredEntries": [{
         "groupId": "5c03119e-3074-46fd-976b-c60198311f70",
         "group": {
             "default": "Other"
@@ -24,8 +23,7 @@
         },
         "officeFabricIconFontName": "Filter",
         "properties": {
-          "documentationLink": "https://microsoft-search.github.io/pnp-modern-search/"
-      }
-    }
-  ]
+            "documentationLink": "https://microsoft-search.github.io/pnp-modern-search/"
+        }
+    }]
 }

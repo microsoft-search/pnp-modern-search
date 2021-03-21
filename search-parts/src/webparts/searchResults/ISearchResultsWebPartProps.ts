@@ -91,7 +91,7 @@ export default interface ISearchResultsWebPartProps extends IBaseWebPartProps {
     useInputQueryText: boolean;
 
     /**
-     * Determines if the Web Part shoul use data verticals from an othe Web Part
+     * Determines if the Web Part shoul use verticals from an other Web Part
      */
     useVerticals: boolean;
 

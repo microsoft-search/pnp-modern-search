@@ -8,6 +8,7 @@ import { isEqual } from '@microsoft/sp-lodash-subset';
 import * as webPartStrings from 'SearchBoxWebPartStrings';
 import SearchBoxAutoComplete from './SearchBoxAutoComplete/SearchBoxAutoComplete';
 import styles from './SearchBoxContainer.module.scss';
+import { BuiltinTokenNames } from '../../../services/tokenService/TokenService';
 
 export default class SearchBoxContainer extends React.Component<ISearchBoxContainerProps, ISearchBoxContainerState> {
 
@@ -76,6 +77,10 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
       });
 
       if (this.props.searchInNewPage && !isReset && this.props.pageUrl) {
+        
+        this.props.tokenService.setTokenValue(BuiltinTokenNames.inputQueryText, queryText);
+        queryText = await this.props.tokenService.resolveTokens(this.props.inputTemplate);
+
         const urlEncodedQueryText = encodeURIComponent(queryText);
 
         const searchUrl = new URL(this.props.pageUrl);

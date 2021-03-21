@@ -37,7 +37,8 @@ import { Toggle, IToggleProps, MessageBar, MessageBarType, Link } from "office-u
 import { ISuggestionProviderConfiguration } from '../../providers/ISuggestionProviderConfiguration';
 import { IExtensibilityConfiguration } from '../../models/common/IExtensibilityConfiguration';
 import { Constants } from '../../common/Constants';
-import { BuiltinTokenNames } from '../../services/tokenService/TokenService';
+import { ITokenService } from '@pnp/modern-search-extensibility';
+import { BuiltinTokenNames, TokenService } from '../../services/tokenService/TokenService';
 import { BaseWebPart } from '../../common/BaseWebPart';
 
 export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps> implements IDynamicDataCallables {
@@ -79,6 +80,11 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
   private _selectedCustomProviders: ISuggestionProvider[] = [];
 
   private _pushStateCallback = null;
+
+  /**
+   * The token service instance
+   */
+  private tokenService: ITokenService;
 
   constructor() {
     super();
@@ -155,11 +161,13 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
       placeholderText: this.properties.placeholderText,
       queryPathBehavior: this.properties.queryPathBehavior,
       queryStringParameter: this.properties.queryStringParameter,
+      inputTemplate: this.properties.inputTemplate,
       searchInNewPage: this.properties.searchInNewPage,
       themeVariant: this._themeVariant,
       onSearch: this._onSearch,
       suggestionProviders: this._selectedCustomProviders,
-      numberOfSuggestionsPerGroup: this.properties.numberOfSuggestionsPerGroup
+      numberOfSuggestionsPerGroup: this.properties.numberOfSuggestionsPerGroup,
+      tokenService: this.tokenService
     } as ISearchBoxContainerProps);  
 
     // Error message
@@ -179,7 +187,9 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
   }
 
   protected onDispose(): void {
-    window.history.pushState = this._pushStateCallback;
+    if (this._pushStateCallback) {
+        window.history.pushState = this._pushStateCallback;
+    }
     ReactDom.unmountComponentAtNode(this.domElement);
   }
 
@@ -444,6 +454,11 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
 
     if (this.properties.searchInNewPage) {
       searchBehaviorOptionsFields = searchBehaviorOptionsFields.concat([
+        PropertyPaneTextField('inputTemplate', {
+          label: webPartStrings.PropertyPane.SearchBoxSettingsGroup.QueryInputTransformationLabel,
+          multiline: true,
+          placeholder: `{${BuiltinTokenNames.inputQueryText}}`
+        }),
         PropertyPaneTextField('pageUrl', {
           disabled: !this.properties.searchInNewPage,
           label: webPartStrings.PropertyPane.SearchBoxSettingsGroup.PageUrlLabel,
@@ -562,6 +577,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
    */
   private initializeProperties() {
     this.properties.queryText = this.properties.queryText ? this.properties.queryText : new DynamicProperty<string>(this.context.dynamicDataProvider);
+    this.properties.inputTemplate = this.properties.inputTemplate ? this.properties.inputTemplate : `{${BuiltinTokenNames.inputQueryText}}`;
 
     this.properties.openBehavior = this.properties.openBehavior ? this.properties.openBehavior : PageOpenBehavior.Self;
     this.properties.queryPathBehavior = this.properties.queryPathBehavior ? this.properties.queryPathBehavior : QueryPathBehavior.URLFragment;
@@ -578,7 +594,8 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
     }];
   }
 
-  private initializeWebPartServices(): void {    
+  private initializeWebPartServices(): void {
+    this.tokenService = this.context.serviceScope.consume<ITokenService>(TokenService.ServiceKey);
     this.webPartInstanceServiceScope = this.context.serviceScope.startNewChild();
     this.dynamicDataService = this.webPartInstanceServiceScope.createAndProvide(DynamicDataService.ServiceKey, DynamicDataService);
     this.dynamicDataService.dynamicDataProvider = this.context.dynamicDataProvider;
@@ -743,31 +760,37 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
    */
   private async loadExtensions(librariesConfiguration: IExtensibilityConfiguration[]) {
 
-    this.properties.suggestionProviderConfiguration = [];
+    const customSuggestionProviderConfiguration: ISuggestionProviderConfiguration[] = [];
 
-      // Load extensibility library if present
-      const extensibilityLibraries = await this.extensibilityService.loadExtensibilityLibraries(librariesConfiguration);
+    // Load extensibility library if present
+    const extensibilityLibraries = await this.extensibilityService.loadExtensibilityLibraries(librariesConfiguration);
 
-      // Load extensibility additions
-      if (extensibilityLibraries.length > 0) {
-        
-        extensibilityLibraries.forEach(extensibilityLibrary => {
-          // Add custom suggestions providers if any
-          this.availableCustomProviders = this.availableCustomProviders.concat(extensibilityLibrary.getCustomSuggestionProviders());
-        });
-      }
-
-      // Resolve the provider configuration for the property pane according to providers
-      this.availableCustomProviders.forEach(provider => {
-        if (this.properties.suggestionProviderConfiguration.filter(p => p.key === provider.key).length === 0) {
-          this.properties.suggestionProviderConfiguration = this.properties.suggestionProviderConfiguration.concat({
-            key: provider.key,
-            description: provider.description,
-            enabled: false,
-            name: provider.name
-          });
-        }
+    // Load extensibility additions
+    if (extensibilityLibraries.length > 0) {
+      
+      extensibilityLibraries.forEach(extensibilityLibrary => {
+        // Add custom suggestions providers if any
+        this.availableCustomProviders = this.availableCustomProviders.concat(extensibilityLibrary.getCustomSuggestionProviders());
       });
+    }
+
+    // Resolve the provider configuration for the property pane according to providers
+    this.availableCustomProviders.forEach(provider => {
+      
+      if (!this.properties.suggestionProviderConfiguration.some(p => p.key === provider.key)) {
+
+        customSuggestionProviderConfiguration.push({
+          key: provider.key,
+          description: provider.description,
+          enabled: false,
+          name: provider.name
+        });
+
+      }
+    });
+
+    // Add custom providers to the available providers
+    this.properties.suggestionProviderConfiguration = this.properties.suggestionProviderConfiguration.concat(customSuggestionProviderConfiguration);
   }
 
   /**

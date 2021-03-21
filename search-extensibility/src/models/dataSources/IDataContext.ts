@@ -44,7 +44,7 @@ export interface IDataContext {
     filters?: {
 
         /**
-         * If connected to a 'Data Filters' Web Part, the filters configuration (will remain null otherwise)
+         * If connected to a 'Filters' Web Part, the filters configuration (will remain null otherwise)
          */
         filtersConfiguration?: IDataFilterConfiguration[];
 

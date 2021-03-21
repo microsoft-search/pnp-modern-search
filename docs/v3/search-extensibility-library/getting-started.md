@@ -121,7 +121,7 @@ For instance: a `preview-image` HTML attribute becomes `previewImage` prop.
 
 5. In a custom Handlebars layout, reference your component like this, leveraging the Handlebars context values:
 
-        <my-custom-component my-string-param="{{MyStringProperty}}" my-object-param="{{JSONstringify MyObjectProperty 2}}"></my-custom-component>
+        <my-custom-component data-my-string-param="{{MyStringProperty}}" data-my-object-param="{{JSONstringify MyObjectProperty 2}}"></my-custom-component>
 
 
 6. Bundle `gulp bundle --ship` and package your library `gulp package-solution --ship` and upload it either in the global or a site app catalog.

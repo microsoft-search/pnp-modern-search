@@ -25,7 +25,7 @@ export class TokenService implements ITokenService {
 
     /**
      * This regex only matches expressions enclosed with single, not escaped, curly braces '{}'
-     */
+     */    
     private genericTokenRegexp: RegExp = /(?<!\\){[^\{]*?}(?!\\)/gi;
 
     /**
@@ -46,13 +46,13 @@ export class TokenService implements ITokenService {
     /**
      * The current page context
      */
-    private  pageContext: PageContext;
+    private pageContext: PageContext;
 
     /**
      * The SPHttpClient instance
      */
     private spHttpClient: SPHttpClient;
-    
+
     /**
      * The list of static tokens values set by the Web Part as context
      */
@@ -77,7 +77,7 @@ export class TokenService implements ITokenService {
 
         this.serviceScope = serviceScope;
 
-		serviceScope.whenFinished(() => {
+        serviceScope.whenFinished(() => {
 
             this.dateHelper = serviceScope.consume<DateHelper>(DateHelper.ServiceKey);
             this.pageContext = serviceScope.consume<PageContext>(PageContext.serviceKey);
@@ -86,7 +86,7 @@ export class TokenService implements ITokenService {
     }
 
     public setTokenValue(token: string, value: any) {
-        
+
         // Check if the token is in the whitelist
         if (Object.keys(this.tokenValuesList).indexOf(token) !== -1) {
             this.tokenValuesList[token] = value;
@@ -99,7 +99,7 @@ export class TokenService implements ITokenService {
 
         if (inputString) {
 
-            this.moment  = await this.dateHelper.moment();
+            this.moment = await this.dateHelper.moment();
 
             // Resolves dynamic tokens (i.e. tokens resolved asynchronously versus static ones set by the Web Part context)
             inputString = await this.replacePageTokens(inputString);
@@ -114,7 +114,7 @@ export class TokenService implements ITokenService {
             inputString = this.replaceLegacyPageContextTokens(inputString);
             inputString = this.replaceOrOperator(inputString);
             inputString = await this.replaceHubTokens(inputString);
-            
+
             inputString = inputString.replace(/\{TenantUrl\}/gi, `https://` + window.location.host);
 
             // Look for static tokens in the specified string
@@ -127,12 +127,12 @@ export class TokenService implements ITokenService {
                     // Take the expression inside curly brackets
                     const tokenName = token.substr(1).slice(0, -1);
 
-                    // Check if the proeprty exists in the object
+                    // Check if the property exists in the object
                     // 'undefined' => token hasn't been initialized in the TokenService instance. We left the token expression untouched (ex: {token}).
                     // 'null' => token has been initialized and set with a null value. We replace by an empty string as we don't want the string 'null' litterally.
                     // '' (empty string) => replaced in the original string with an empty string as well.
                     if (ObjectHelper.byPath(this.tokenValuesList, tokenName) !== undefined) {
-                        
+
                         if (ObjectHelper.byPath(this.tokenValuesList, tokenName) !== null) {
                             inputString = inputString.replace(new RegExp(token, 'gi'), ObjectHelper.byPath(this.tokenValuesList, tokenName));
                         } else {
@@ -153,14 +153,14 @@ export class TokenService implements ITokenService {
     /**
      * Retrieves available current page item properties
      */
-    public async getPageProperties(): Promise<any>  {
+    public async getPageProperties(): Promise<any> {
 
         let item = null;
 
         // Do this check to ensure we are not in the workbench
         if (this.pageContext.listItem) {
 
-            const url = this.pageContext .web.absoluteUrl + `/_api/web/GetList(@v1)/RenderExtendedListFormData(itemId=${this.pageContext.listItem.id},formId='viewform',mode='2',options=7)?@v1='${this.pageContext.list.serverRelativeUrl}'`;
+            const url = this.pageContext.web.absoluteUrl + `/_api/web/GetList(@v1)/RenderExtendedListFormData(itemId=${this.pageContext.listItem.id},formId='viewform',mode='2',options=7)?@v1='${this.pageContext.list.serverRelativeUrl}'`;
 
             try {
                 const response = await this.spHttpClient.post(url, SPHttpClient.configurations.v1, {
@@ -210,7 +210,7 @@ export class TokenService implements ITokenService {
             responseJson = await response.json();
 
             if (responseJson.UserProfileProperties) {
-                
+
                 responseJson.UserProfileProperties.forEach(property => {
                     userProperties[property.Key.toLowerCase()] = property.Value;
                 });
@@ -247,7 +247,7 @@ export class TokenService implements ITokenService {
                 // Get page properties dymamically
                 pageItem = await this.getPageProperties();
             }
-            
+
             let properties = Object.keys(pageItem);
             properties.forEach(property => {
                 item[property] = pageItem[property];
@@ -268,10 +268,12 @@ export class TokenService implements ITokenService {
 
                     // Handle multi or single taxonomy values
                     if (Array.isArray(item[columnName]) && item[columnName].length > 0) {
-                        
-                        itemProp = item[columnName].map(taxonomyValue => { 
+
+                        // By convention, multi values should be separated by a comma, which is the default array delimiter for the array toString() method
+                        // This value could be processed in the replaceOrOperator() method so we need to keep the same delimiter convention
+                        itemProp = item[columnName].map(taxonomyValue => {
                             return taxonomyValue[labelOrTermId]; // Use the 'TermId' or 'Label' properties
-                        }).join(' ');
+                        }).join(',');
                     }
                     else if (!Array.isArray(item[columnName]) && item[columnName] !== undefined && item[columnName] !== "") {
                         itemProp = item[columnName][labelOrTermId];
@@ -308,7 +310,7 @@ export class TokenService implements ITokenService {
                 matches = siteRegExp.exec(inputString);
             }
         }
-        
+
         return inputString;
     }
 
@@ -342,20 +344,20 @@ export class TokenService implements ITokenService {
                 switch (userProperty) {
 
                     case "email":
-                            propertyValue = this.pageContext.user.email;
-                            break;
+                        propertyValue = this.pageContext.user.email;
+                        break;
 
                     case "name":
-                            propertyValue = this.pageContext.user.displayName;
-                            break;
+                        propertyValue = this.pageContext.user.displayName;
+                        break;
                     default:
-                            propertyValue = this.pageContext.user.displayName;
-                            break;
+                        propertyValue = this.pageContext.user.displayName;
+                        break;
                 }
             }
 
             const tokenExprToReplace = new RegExp(matches[0], 'gi');
-            
+
             // Replace the match with the property value
             inputString = inputString.replace(tokenExprToReplace, propertyValue);
 
@@ -403,7 +405,7 @@ export class TokenService implements ITokenService {
         inputString = inputString.replace(currentDate, d.getDate().toString());
         inputString = inputString.replace(currentMonth, (d.getMonth() + 1).toString());
         inputString = inputString.replace(currentYear, d.getFullYear().toString());
-        
+
         return inputString;
     }
 
@@ -414,6 +416,7 @@ export class TokenService implements ITokenService {
     private replaceQueryStringTokens(inputString: string) {
 
         const webRegExp = /\{(?:QueryString)\.(.*?)\}/gi;
+        let modifiedString = inputString;
         let matches = webRegExp.exec(inputString);
 
         if (matches != null) {
@@ -422,11 +425,11 @@ export class TokenService implements ITokenService {
             while (matches !== null) {
                 const qsProp = matches[1];
                 const itemProp = decodeURIComponent(queryParameters.getValue(qsProp) || "");
-                inputString = inputString.replace(new RegExp(matches[0], "gi"), itemProp);
+                modifiedString = modifiedString.replace(new RegExp(matches[0], "gi"), itemProp);
                 matches = webRegExp.exec(inputString);
             }
         }
-        return inputString;
+        return modifiedString;
     }
 
     /**
@@ -467,7 +470,7 @@ export class TokenService implements ITokenService {
                 matches = siteRegExp.exec(inputString);
             }
         }
-        
+
         return inputString;
     }
 
@@ -504,7 +507,7 @@ export class TokenService implements ITokenService {
         const groupRegExp = /\{(?:Group)\.(.*?)\}/gi;
         let matches = groupRegExp.exec(inputString);
 
-        if (matches != null ) {
+        if (matches != null) {
 
             while (matches !== null) {
                 const groupProp = matches[1];
@@ -562,14 +565,14 @@ export class TokenService implements ITokenService {
         // Example match: {|owstaxidmetadataalltagsinfo:{Page.<TaxnomyProperty>.TermID}}
         const orConditionTokens = /\{(?:\|(.+?)(>=|=|<=|:|<>|<|>))(\{?.*?\}?\s*)\}/gi;
         let reQueryTemplate = inputString;
-        let match = orConditionTokens.exec(inputString);        
+        let match = orConditionTokens.exec(inputString);
 
         if (match != null) {
             while (match !== null) {
 
                 let conditions = [];
                 const property = match[1];
-                const operator = match[2];                
+                const operator = match[2];
                 const tokenValue = match[3];
 
                 // {User} tokens are resolved server-side by SharePoint so we exclude them
@@ -615,7 +618,7 @@ export class TokenService implements ITokenService {
                 }
             }
 
-            return null;            
+            return null;
         } catch (error) {
 
             Log.error(TokenService_ServiceKey, new Error(`Error while fetching Hub site data. Details: ${error}`), this.serviceScope);

@@ -12,7 +12,7 @@ The template context object exposes the following properties:
 "filters": {
     "selectedFilters": "<List of currently selected filters>",
     "filterOperator": "<Operator to use between filters>",
-    "instanceId": "<The connected Data Filters Web Part instance ID>",
+    "instanceId": "<The connected Filters Web Part instance ID>",
     "filtersConfiguration": "<The filters configuration>"
 },
 "inputQueryText": "<The current input query text (Ex: search box text)>",
