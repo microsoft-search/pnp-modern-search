@@ -784,11 +784,9 @@
                 
                 <h1 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h1>
 <ol>
-<li>Download the latest SharePoint Framework packages <strong>pnp-modern-search-parts.sppkg</strong> and <strong>pnp-modern-search-extensibility.sppkg</strong> from the <a href="https://github.com/microsoft-search/pnp-modern-search/releases">GitHub repository</a>.</li>
-<li>Deploy <strong>pnp-modern-search-extensibility.sppkg</strong> to the global tenant app catalog, and ensure you check "Make this solution available to all sites in the organization". This is currently a limitation of SPFx libraries - but should not be an issue as it cannot work by itself, and poses no security risk. If you don't have an app catalog, follow this <a href="https://docs.microsoft.com/en-us/sharepoint/use-app-catalog">procedure</a> to create one.</li>
+<li>Download the latest SharePoint Framework packages <strong>pnp-modern-search-parts.sppkg</strong> from the <a href="https://github.com/microsoft-search/pnp-modern-search/releases">GitHub repository</a>.</li>
 <li>
-<p>Add <strong>pnp-modern-search-parts.sppkg</strong> to the global teant app catalog or a site collection app catalog. </p>
-<p><strong>You <em>must</em> deploy both SPFx packages to get a working solution.</strong></p>
+<p>Add <strong>pnp-modern-search-parts.sppkg</strong> to the global teant app catalog or a site collection app catalog. If you don't have an app catalog, follow this <a href="https://docs.microsoft.com/en-us/sharepoint/use-app-catalog">procedure</a> to create one. </p>
 <p><img alt="&quot;App Catalog &quot;" class="center" src="../assets/app_catalog.png" /></p>
 <blockquote>
 <ul>
@@ -802,7 +800,7 @@
 <p>The solution asks the following API permissions by default to enhance the experience. These permissions are <strong>not mandatory</strong>. If you don't accept them, you will simply have less available features.</p>
 </li>
 <li>
-<p>You can approve scopes from https://&lt;tenant&gt;-admin.sharepoint.com/_layouts/15/online/AdminHome.aspx#/webApiPermissionManagement</p>
+<p>You can approve scopes from the API Access screen in the SharePoint Admin Center: https://&lt;tenant&gt;-admin.sharepoint.com/_layouts/15/online/AdminHome.aspx#/webApiPermissionManagement If you'd like more details on this step, please see the <a href="#approving-scopes">Approving Scopes</a> section below.</p>
 </li>
 </ul>
 </blockquote>
@@ -858,6 +856,12 @@
 </li>
 </ol>
 <p><img alt="&quot;Available Web Parts&quot;" class="center" src="../assets/webparts.png" /></p>
+<h1 id="approving-scopes">Approving Scopes<a class="headerlink" href="#approving-scopes" title="Permanent link">&para;</a></h1>
+<p>You can approve the required scopes in the SharePoint Admin Center on the API Access page. When you visit that page, you will see any pending requests. The screenshot below shows the pending requests for the v4 solution.</p>
+<p><img alt="&quot;App Catalog&quot;" class="center" src="../assets/api-access-pending.jpg" /></p>
+<p>You'll need to approve each request one at a time. If you have questions about what the requested scopes mean and what permissions they provide, check the article <a href="https://docs.microsoft.com/en-us/sharepoint/api-access">Manage access to Azure AD-secured APIs</a>.</p>
+<p>After you approve each request your view will be as shown in the screenshot below.</p>
+<p><img alt="&quot;App Catalog&quot;" class="center" src="../assets/api-access-approved.jpg" /></p>
                 
                   
                 

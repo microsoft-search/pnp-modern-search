@@ -819,8 +819,16 @@
 <td>Configure the search verticals to display. When you set a query template or a result source id for a vertical, these override the ones in the connected search results. You can also set an icon for a vertical using <a href="https://developer.microsoft.com/en-us/fabric#/styles/icons">Office UI Fabric icons names</a>. The query keywords are shared across all verticals. For instance, if you need default results for tabs, just specify a default query in the connected search results Web Part (like <code>*</code>) and the <code>{searchTerms}</code> expression in your vertical query template. Also, selected refinement filters are reset, if present, when a new vertical is selected. You can also specify an arbitrary link for a vertical. In this case, the selected vertical won't be sent to the connected search results WP. You can use tokens inside the <strong>Link URL</strong> field. The supported tokens are <code>{Page.xxx}</code>, <code>{CurrentDate}</code>, <code>{CurrentYear}</code>, <code>{CurrentMonth}</code>, <code>{URLToken.xxx}</code>, <code>{QueryString.xxx}</code>, <code>{PageContext.xxx}</code>, <code>{TenantUrl}</code>, <code>{searchTerms}</code> and <code>{SearchBoxQuery}</code>.</td>
 </tr>
 <tr>
-<td>Show results count</td>
+<td>Show result counts</td>
 <td>Indicates if the results count should be displayed for each vertical. In this case, you need to connect the Web Part to an existing search results Web Part on the page.</td>
+</tr>
+<tr>
+<td>Default vertical querystring parameter</td>
+<td>Parameter to pick up from the query string to default activate a vertical. Matches the name of the tab. Enter <code>v</code> if you for pass in <code>v=People</code> as part of your URL to match a vertical named  <code>People</code>.</td>
+</tr>
+<tr>
+<td>Connect to a search results Web Part</td>
+<td>The result web part the vertical web part is connected to.</td>
 </tr>
 </tbody>
 </table>

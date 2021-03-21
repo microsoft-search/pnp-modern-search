@@ -1015,6 +1015,12 @@
 <li>In the vertical tab value.</li>
 </ul>
 </li>
+<li>
+<p><strong>Search Box Web Part</strong></p>
+<ul>
+<li>In the Query input transformation template when sending the query to a new page.</li>
+</ul>
+</li>
 </ul>
 <h4 id="supported-tokens-all-data-sources">Supported tokens (all data sources)<a class="headerlink" href="#supported-tokens-all-data-sources" title="Permanent link">&para;</a></h4>
 <blockquote>
@@ -1038,7 +1044,7 @@
 <h5 id="connections-tokens">Connections tokens<a class="headerlink" href="#connections-tokens" title="Permanent link">&para;</a></h5>
 <p>Tokens related to connected Web Parts in the Search Results. </p>
 <blockquote>
-<p>These tokens can only be used in the 'Search Results' Web Part.</p>
+<p>These tokens can be used in the 'Search Results' and 'Search Box' Web Parts.</p>
 <p>You can escape curly braces characters using <code>'\'</code> to avoid: ex: <code>DepartmentId:\{edbfd618-ef1d-4cc5-a214-95bf44ddf4ee\}</code></p>
 </blockquote>
 <table>
@@ -1110,7 +1116,7 @@
 </tr>
 <tr>
 <td align="left"><strong>{Hub.&lt;PropertyName&gt;}</strong></td>
-<td align="left">Resolves current hub site related tokens. Valid property names are <code>{Hub.HubSiteId}</code>, <code>{Hub.Id}</code> and <code>{Hub.IsHubSite}</code>.</td>
+<td align="left">Resolves current hub site related tokens. Valid property names are <code>{Hub.HubSiteId}</code>, <code>{Hub.Id}</code> and <code>{Hub.IsHubSite}</code> You can target a hub with the template: <code>DepartmentId:\{{Hub.HubSiteId}\}</code>.</td>
 </tr>
 <tr>
 <td align="left"><strong>{Group.&lt;PropertyName&gt;}</strong></td>
