@@ -187,7 +187,9 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
   }
 
   protected onDispose(): void {
-    window.history.pushState = this._pushStateCallback;
+    if (this._pushStateCallback) {
+        window.history.pushState = this._pushStateCallback;
+    }
     ReactDom.unmountComponentAtNode(this.domElement);
   }
 

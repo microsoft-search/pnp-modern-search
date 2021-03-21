@@ -90,6 +90,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
   private _propertyFieldToogleWithCallout: any = null;
   private _propertyFieldDropownWithCallout: any = null;
   private _propertyFieldCalloutTriggers: any = null;
+  private _propertyFieldNumber: any = null;
   private _customCollectionFieldType: any = null;
   private _textDialogComponent: any = null;
 
@@ -561,6 +562,9 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
   }
 
   protected onDispose(): void {
+    if (this._pushStateCallback) {
+        window.history.pushState = this._pushStateCallback;
+    }
     ReactDom.unmountComponentAtNode(this.domElement);
   }
 
@@ -880,15 +884,22 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
       '@pnp/spfx-property-controls/lib/common/callout/Callout'
     );
 
-    const { PropertyFieldDropdownWithCallout  } = await import(
+    const { PropertyFieldNumber  } = await import(
       /* webpackChunkName: 'pnp-modern-search-property-pane' */
-      '@pnp/spfx-property-controls/lib/PropertyFieldDropdownWithCallout'
+      '@pnp/spfx-property-controls/lib/PropertyFieldNumber'
     );
+
+    const { PropertyFieldDropdownWithCallout  } = await import(
+        /* webpackChunkName: 'pnp-modern-search-property-pane' */
+        '@pnp/spfx-property-controls/lib/PropertyFieldDropdownWithCallout'
+      );
 
     this._propertyFieldToogleWithCallout = PropertyFieldToggleWithCallout;
     this._propertyFieldCalloutTriggers = CalloutTriggers;
 
     this._propertyFieldDropownWithCallout = PropertyFieldDropdownWithCallout;
+
+    this._propertyFieldNumber = PropertyFieldNumber;
 
     this.propertyPaneConnectionsGroup = await this.getConnectionOptionsGroup();
   }
@@ -1184,14 +1195,13 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
           PropertyPaneToggle('paging.showPaging', {
             label: webPartStrings.PropertyPane.DataSourcePage.ShowPagingFieldName,
           }),
-          PropertyPaneSlider('paging.itemsCountPerPage', {
+          this._propertyFieldNumber('paging.itemsCountPerPage', {
             label: webPartStrings.PropertyPane.DataSourcePage.ItemsCountPerPageFieldName,
-            max: 50,
-            min: 1,
-            step: 1,
-            showValue: true,
+            maxValue: 500,
+            minValue: 1,            
             value: this.properties.paging.itemsCountPerPage,
-            disabled: !this.properties.paging.showPaging
+            disabled: !this.properties.paging.showPaging,
+            key: 'paging.itemsCountPerPage'
           }),
           PropertyPaneSlider('paging.pagingRange', {
             label: webPartStrings.PropertyPane.DataSourcePage.PagingRangeFieldName,

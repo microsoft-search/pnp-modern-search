@@ -23,6 +23,7 @@ define([], function() {
             DataFilterCollection: {
                 SelectFilterComboBoxLabel: "Select field",
                 FilterNameLabel: "Filter field",
+                FilterMaxBuckets: "# of values",
                 FilterDisplayName: "Display name",
                 FilterTemplate: "Template",
                 FilterExpandByDefault: "Expand by default",
