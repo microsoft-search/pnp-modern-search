@@ -2,6 +2,8 @@
 
 # PnP Modern Search v4
 
+![Current version](https://img.shields.io/github/v/release/microsoft-search/pnp-modern-search)
+
 The PnP 'Modern Search' solution is a set of SharePoint Online modern Web Parts allowing SharePoint super users, webmasters and developers to create highly flexible and personalized search based experiences in minutes.
 
 Before modern pages and web parts built on SPFx was introduced search driven scenarios was covered by the highly flexible classic search web parts, which
