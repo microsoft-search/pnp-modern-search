@@ -9,7 +9,7 @@
     "scripts": {
         "build": "gulp bundle",
         "clean": "gulp clean",
-        "serve": "gulp bundle --custom-serve && webpack-dev-server --mode development --config ./webpack.js --env.env=dev"
+        "serve": "cross-env NODE_OPTIONS=--max_old_space_size=4096 gulp bundle --custom-serve && cross-env NODE_OPTIONS=--max_old_space_size=4096 webpack-dev-server --mode development --config ./fast-serve/webpack.js --env.env=dev"
     },
     "dependencies": {
         "@microsoft/applicationinsights-web": "^2.5.10",
@@ -88,6 +88,8 @@
         "webpack": "4.42.0",
         "webpack-bundle-analyzer": "^3.3.2",
         "webpack-cli": "3.3.11",
-        "webpack-dev-server": "3.10.3"
+        "webpack-dev-server": "3.10.3",
+        "webpack-merge": "4.2.2",
+        "cross-env": "7.0.2"
     }
 }
