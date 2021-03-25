@@ -1116,7 +1116,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 type: this._customCollectionFieldType.url,
                 onGetErrorMessage: this.onTemplateUrlChange.bind(this),
                 placeholder: 'https://mysite/Documents/external.html'
-            },
+            }
         ]
       })
     );
@@ -1665,7 +1665,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
       try {
           // Doesn't raise any error if file is empty (otherwise error message will show on initial load...)
           if (isEmpty(value)) {
-            Promise.resolve('');
+            return Promise.resolve('');
           }
           // Resolves an error if the file isn't a valid .htm or .html file
           else if (!this.templateService.isValidTemplateFile(value)) {
