@@ -18,9 +18,8 @@ import { ITermData, ITerm } from '@pnp/sp-taxonomy';
 import LocalizationHelper from '../../../../helpers/LocalizationHelper';
 import { Text } from '@microsoft/sp-core-library';
 import { ILocalizableSearchResultProperty, ILocalizableSearchResult } from '../../../../models/ILocalizableSearchResults';
-import * as _ from '@microsoft/sp-lodash-subset';
 import { TemplateService } from '../../../../services/TemplateService/TemplateService';
-import { isEqual } from '@microsoft/sp-lodash-subset';
+import { isEqual, uniq } from '@microsoft/sp-lodash-subset';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import { ITheme } from '@uifabric/styling';
 import ResultsLayoutOption from '../../../../models/ResultsLayoutOption';
@@ -689,7 +688,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             });
 
             // Remove duplicates
-            allTerms = _.uniq<string>(allTerms);
+            allTerms = uniq<string>(allTerms);
 
             // Get the terms from taxonomy
             // If a term doesn't exist anymore, it won't be retrieved by the API so the termValues count could be less than termsToLocalize count
