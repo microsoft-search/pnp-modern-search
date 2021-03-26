@@ -269,7 +269,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
         let selectedPage = this.props.selectedPage || 1;
 
         // New props are passed to the component when the search query has been changed
-        if (!isEqual(this.props, prevProps)) {
+        if (this.queryChanged(this.props, prevProps)) {
             executeSearch = true;
 
             const lastSelectedProperties = (prevProps.searchService.selectedProperties) ? prevProps.searchService.selectedProperties.join(',') : undefined;
@@ -864,5 +864,27 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             return (c === "x" ? r : (r & 0x3 | 0x8)).toString(16);
         });
         return guid;
+    }
+
+    private queryChanged(current:ISearchResultsContainerProps, previous:ISearchResultsContainerProps) : boolean {
+        if(current.searchService.refinementFilters.length === 1 && current.searchService.refinementFilters[0].length === 0 ){
+            current.searchService.refinementFilters = [];
+        }        
+        
+        if(!isEqual(current.queryKeywords,previous.queryKeywords)) return true;
+        if(!isEqual(current.searchService.queryTemplate,previous.searchService.queryTemplate)) return true;
+        if(!isEqual(current.selectedPage,previous.selectedPage)) return true;
+        if(!isEqual(current.searchService.resultSourceId,previous.searchService.resultSourceId)) return true;
+        if(!isEqual(current.searchService.selectedProperties,previous.searchService.selectedProperties)) return true;
+        if(!isEqual(current.sortList,previous.sortList)) return true;
+        if(!isEqual(current.sortableFields,previous.sortableFields)) return true;
+        if(!isEqual(current.searchService.enableQueryRules,previous.searchService.enableQueryRules)) return true;
+        if(!isEqual(current.searchService.refinementFilters,previous.searchService.refinementFilters)) return true;
+        if(!isEqual(current.searchService.refiners,previous.searchService.refiners)) return true;
+        if(!isEqual(current.searchService.resultsCount,previous.searchService.resultsCount)) return true;
+        if(!isEqual(current.searchService.sortList,previous.searchService.sortList)) return true;
+        if(!isEqual(current.searchService.synonymTable,previous.searchService.synonymTable)) return true;
+
+        return false;
     }
 }
