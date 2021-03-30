@@ -12,7 +12,7 @@ define([], function() {
         ButtonLabel: "Konfigurér vertikaler",
         Fields: {
           TabName: "Navn på fane",
-          IconName: "Office UI Fabric ikonnavn",
+          IconName: "Fluent UI ikonnavn",
           IsLink: "Er hyperlink",
           LinkUrl: "Link til URL",
           OpenBehavior: "Åben adfærd"
