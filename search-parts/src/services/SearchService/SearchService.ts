@@ -24,7 +24,6 @@ import { BaseQueryModifier } from '../ExtensibilityService/BaseQueryModifier';
 import { trimStart, trimEnd } from '@microsoft/sp-lodash-subset';
 
 class SearchService implements ISearchService {
-    private _initialSearchResult: SearchResults = null;
     private _resultsCount: number;
     private _pageContext: PageContext;
     private _tokenService: ITokenService;
@@ -135,17 +134,17 @@ class SearchService implements ISearchService {
                 QueryPropertyValueTypeIndex: 1
             }
         }
-        // , {
-        //     // Sample query: foo:test
-        //     // As "foo" is not an OOB schema property it will be treated as text "foo test" instead
-        //     // of non-existing property query - yielding results instead of a blank page
-        //     Name: "ImplicitPropertiesAsStrings",
-        //     Value: {
-        //         BoolVal: true,
-        //         QueryPropertyValueTypeIndex: 3
-        //     }
-        // }
-    ];
+            // , {
+            //     // Sample query: foo:test
+            //     // As "foo" is not an OOB schema property it will be treated as text "foo test" instead
+            //     // of non-existing property query - yielding results instead of a blank page
+            //     Name: "ImplicitPropertiesAsStrings",
+            //     Value: {
+            //         BoolVal: true,
+            //         QueryPropertyValueTypeIndex: 3
+            //     }
+            // }
+        ];
 
         if (this._pageContext.list) {
             searchQuery.Properties.push({
@@ -282,48 +281,39 @@ class SearchService implements ISearchService {
         };
 
         try {
-            if (!this._initialSearchResult || page == 1) {
+            // If we have a query modifier, then send query to it before sending to SharePoint
+            if (this._queryModifier) {
+                try {
+                    const queryModificationValue = await this._queryModifier.modifyQuery({
+                        queryText: searchQuery.Querytext,
+                        queryTemplate: searchQuery.QueryTemplate,
+                        resultSourceId: searchQuery.SourceId,
+                    });
 
-                // If we have a query modifier, then send query to it before sending to SharePoint
-                if (this._queryModifier) {
-                    try {
-                        const queryModificationValue = await this._queryModifier.modifyQuery({
-                            queryText: searchQuery.Querytext,
-                            queryTemplate: searchQuery.QueryTemplate,
-                            resultSourceId: searchQuery.SourceId,
-                        });
-
-                        if (queryModificationValue) {
-                            searchQuery.Querytext = queryModificationValue.queryText;
-                            searchQuery.QueryTemplate = queryModificationValue.queryTemplate;
-                        }
-                        else {
-                            Logger.write('[SearchService.search()]: Query modifier return an invalid response. Using original query.', LogLevel.Error);
-                        }
+                    if (queryModificationValue) {
+                        searchQuery.Querytext = queryModificationValue.queryText;
+                        searchQuery.QueryTemplate = queryModificationValue.queryTemplate;
                     }
-                    catch (error) {
-                        Logger.write('[SearchService.search()]: Query modification failed. Using original query. ' + error, LogLevel.Error);
+                    else {
+                        Logger.write('[SearchService.search()]: Query modifier return an invalid response. Using original query.', LogLevel.Error);
                     }
                 }
-                this._initialSearchResult = await this._localPnPSetup.search(searchQuery);
+                catch (error) {
+                    Logger.write('[SearchService.search()]: Query modification failed. Using original query. ' + error, LogLevel.Error);
+                }
             }
+            searchQuery.StartRow = (this._resultsCount * (page-1)); //start row is zero based
+            const searchResultResponse = await this._localPnPSetup.search(searchQuery);
+
 
             let refinementResults: IRefinementResult[] = [];
 
             // Need to do this check
             // More info here: https://github.com/SharePoint/PnP-JS-Core/issues/337
-            if (this._initialSearchResult.RawSearchResults && this._initialSearchResult.RawSearchResults.PrimaryQueryResult) {
-
-                // Be careful, there was an issue with paging calculation under 2.0.8 version of sp-pnp-js library
-                // More info https://github.com/SharePoint/PnP-JS-Core/issues/535
-                if (page > 1) {
-                    searchQuery.StartRow = (this._resultsCount * (page-1)); //start row is zero based
-                    //r2 = await this._initialSearchResult.getPage(page, this._resultsCount);
-                    this._initialSearchResult = await this._localPnPSetup.search(searchQuery); 
-                }
+            if (searchResultResponse.RawSearchResults && searchResultResponse.RawSearchResults.PrimaryQueryResult) {
 
                 // Get the transformed query submitted to SharePoint
-                const properties = this._initialSearchResult.RawSearchResults.PrimaryQueryResult.RelevantResults.Properties.filter((property) => {
+                const properties = searchResultResponse.RawSearchResults.PrimaryQueryResult.RelevantResults.Properties.filter((property) => {
                     return property.Key === 'QueryModification';
                 });
 
@@ -332,8 +322,8 @@ class SearchService implements ISearchService {
                     results.QueryModification = queryModification;
                 }
 
-                const resultRows = this._initialSearchResult.RawSearchResults.PrimaryQueryResult.RelevantResults.Table.Rows;
-                let refinementResultsRows = this._initialSearchResult.RawSearchResults.PrimaryQueryResult.RefinementResults;
+                const resultRows = searchResultResponse.RawSearchResults.PrimaryQueryResult.RelevantResults.Table.Rows;
+                let refinementResultsRows = searchResultResponse.RawSearchResults.PrimaryQueryResult.RefinementResults;
 
                 const refinementRows: any = refinementResultsRows ? refinementResultsRows.Refiners : [];
 
@@ -386,17 +376,17 @@ class SearchService implements ISearchService {
 
                 results.RelevantResults = searchResults;
                 results.RefinementResults = refinementResults;
-                results.PaginationInformation.TotalRows = this._initialSearchResult.TotalRows;
+                results.PaginationInformation.TotalRows = searchResultResponse.TotalRows;
             }
 
-            if (this._initialSearchResult.RawSearchResults && !isEmpty(this._initialSearchResult.RawSearchResults.SpellingSuggestion)) {
-                results.SpellingSuggestion = this._initialSearchResult.RawSearchResults.SpellingSuggestion;
+            if (searchResultResponse.RawSearchResults && !isEmpty(searchResultResponse.RawSearchResults.SpellingSuggestion)) {
+                results.SpellingSuggestion = searchResultResponse.RawSearchResults.SpellingSuggestion;
             }
 
             // Query rules handling
-            if (this._initialSearchResult.RawSearchResults && this._initialSearchResult.RawSearchResults.SecondaryQueryResults) {
+            if (searchResultResponse.RawSearchResults && searchResultResponse.RawSearchResults.SecondaryQueryResults) {
 
-                const secondaryQueryResults = this._initialSearchResult.RawSearchResults.SecondaryQueryResults;
+                const secondaryQueryResults = searchResultResponse.RawSearchResults.SecondaryQueryResults;
 
                 if (Array.isArray(secondaryQueryResults) && secondaryQueryResults.length > 0) {
 
