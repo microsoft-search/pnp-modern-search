@@ -236,7 +236,7 @@ class SearchService implements ISearchService {
                 // fails to pass into map, so re-init regex
                 const _refinableDate = /(RefinableDate\d+)|(RefinableDateSingle\d+)|(LastModifiedTime)|(LastModifiedTimeForRetention)|(Created)/gi;
                 const _refinableNum = /(RefinableInt\d+)|(RefinableDecimal\d+)/gi;
-                const _refinableString = /(RefinableString\d+)|(JobTitle)|(Tags)|(Department)/gi;
+                const _refinableString = /(RefinableString\d+)|(JobTitle)|(Tags)|(Department)|(FileType)/gi;
                 const isDateManagedProperty = _refinableDate.test(e.refinerName);
                 //const isNumberManagedProperty = _refinableNum.test(e.refinerName);
                 const isStringManagedProperty = _refinableString.test(e.refinerName);
