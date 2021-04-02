@@ -558,7 +558,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
         if (synonymList) {
             synonymList.forEach(item => {
-                const currentTerm = item.Term.toLowerCase();
+                const currentTerm = item.Term.toLowerCase().replace(/\"/g, "");
                 const currentSynonyms = this._splitSynonyms(item.Synonyms);
 
                 //add to array
