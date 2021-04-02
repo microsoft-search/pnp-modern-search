@@ -305,7 +305,6 @@ class SearchService implements ISearchService {
                         Logger.write('[SearchService.search()]: Query modification failed. Using original query. ' + error, LogLevel.Error);
                     }
                 }
-
                 this._initialSearchResult = await this._localPnPSetup.search(searchQuery);
             }
 
@@ -317,13 +316,14 @@ class SearchService implements ISearchService {
 
                 // Be careful, there was an issue with paging calculation under 2.0.8 version of sp-pnp-js library
                 // More info https://github.com/SharePoint/PnP-JS-Core/issues/535
-                let r2 = this._initialSearchResult;
                 if (page > 1) {
-                    r2 = await this._initialSearchResult.getPage(page, this._resultsCount);
+                    searchQuery.StartRow = (this._resultsCount * (page-1)); //start row is zero based
+                    //r2 = await this._initialSearchResult.getPage(page, this._resultsCount);
+                    this._initialSearchResult = await this._localPnPSetup.search(searchQuery); 
                 }
 
                 // Get the transformed query submitted to SharePoint
-                const properties = r2.RawSearchResults.PrimaryQueryResult.RelevantResults.Properties.filter((property) => {
+                const properties = this._initialSearchResult.RawSearchResults.PrimaryQueryResult.RelevantResults.Properties.filter((property) => {
                     return property.Key === 'QueryModification';
                 });
 
@@ -332,8 +332,8 @@ class SearchService implements ISearchService {
                     results.QueryModification = queryModification;
                 }
 
-                const resultRows = r2.RawSearchResults.PrimaryQueryResult.RelevantResults.Table.Rows;
-                let refinementResultsRows = r2.RawSearchResults.PrimaryQueryResult.RefinementResults;
+                const resultRows = this._initialSearchResult.RawSearchResults.PrimaryQueryResult.RelevantResults.Table.Rows;
+                let refinementResultsRows = this._initialSearchResult.RawSearchResults.PrimaryQueryResult.RefinementResults;
 
                 const refinementRows: any = refinementResultsRows ? refinementResultsRows.Refiners : [];
 

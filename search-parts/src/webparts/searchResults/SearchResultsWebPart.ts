@@ -323,6 +323,10 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                 enableLocalization: this.properties.enableLocalization,
                 selectedPage: this.currentPageNumber,
                 selectedLayout: this.properties.selectedLayout,
+                onSearchReset: () => {
+                    this.currentPageNumber = 1;
+                    this.render();
+                },
                 onSearchResultsUpdate: async (results, mountingNodeId, searchService) => {
                     if (this.properties.selectedLayout in ResultsLayoutOption) {
                         let node = document.getElementById(mountingNodeId);
