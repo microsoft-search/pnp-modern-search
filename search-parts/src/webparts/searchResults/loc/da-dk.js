@@ -66,7 +66,6 @@ define([], function() {
           LessOrEqualOperator: "Mindre eller lig",
           LessThanOperator: "Mindre end",
           CancelButtonText: "Annuller",
-          DialogButtonLabel: "Redigér skabelon",
           DialogButtonText: "Redigér skabelon",
           DialogTitle: "Redigér resultatsskabelon",
           SaveButtonText: "Gem"
