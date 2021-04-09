@@ -11,6 +11,7 @@ define([], function() {
         PageUrlLabel: "Sidens URL",
         UrlErrorMessage: "Indsæt venligst en gyldig URL.",
         QueryPathBehaviorLabel: "Metode",
+        QueryInputTransformationLabel: "Query input transformation template",
         UrlFragmentQueryPathBehavior: "URL-fragment",
         QueryStringQueryPathBehavior: "URL-parametre",
         QueryStringParameterName: "Parameternnavn",
