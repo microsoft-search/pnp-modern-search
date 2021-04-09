@@ -1,7 +1,7 @@
 # Installation
 
 1. Download the latest SharePoint Framework packages **pnp-modern-search-parts.sppkg** from the [GitHub repository](https://github.com/microsoft-search/pnp-modern-search/releases).
-2. Add **pnp-modern-search-parts.sppkg** to the global teant app catalog or a site collection app catalog. If you don't have an app catalog, follow this [procedure](https://docs.microsoft.com/en-us/sharepoint/use-app-catalog) to create one. 
+2. Add **pnp-modern-search-parts.sppkg** to the global tenant app catalog or a site collection app catalog. If you don't have an app catalog, follow this [procedure](https://docs.microsoft.com/en-us/sharepoint/use-app-catalog) to create one. 
 
     !["App Catalog "](./assets/app_catalog.png){: .center}
 
