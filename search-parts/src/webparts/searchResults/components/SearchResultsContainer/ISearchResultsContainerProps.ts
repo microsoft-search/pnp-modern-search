@@ -10,6 +10,7 @@ import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import ResultsLayoutOption from '../../../../models/ResultsLayoutOption';
 import { ISortFieldConfiguration } from '../../../../models/ISortFieldConfiguration';
 import { IPagingSettings } from '../../../../models/IPagingSettings';
+import SearchResetOperationCallback from '../../../../models/SearchResetOperationCallback';
 
 interface ISearchResultsContainerProps {
 
@@ -118,6 +119,11 @@ interface ISearchResultsContainerProps {
      * Handler method when search results are updated
      */
     onSearchResultsUpdate: SearchResultsOperationCallback;
+
+    /**
+     * Handler method when search results are updated
+     */
+    onSearchReset: SearchResetOperationCallback;
 
     /*
      * The selected page to show for the search results

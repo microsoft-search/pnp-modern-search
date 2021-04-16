@@ -231,6 +231,39 @@ abstract class BaseTemplateService {
             return new Handlebars.SafeString(url.replace(/\+/g, "%2B"));
         });
 
+        Handlebars.registerHelper("getInteractiveUrl", (item: ISearchResult) => {
+            let url = '';
+            if (!isEmpty(item)) {
+                const forceODSPPreviewer = ["doc", "docm", "docx", "dotx", "pot", "potm", "potx", "pps", "ppsx", "ppt", "pptm", "pptx", "xls", "xlsb", "xlsm", "xlsx", "png", "gif", "jpg"]
+                const isOfficeDoc = !isEmpty(item.FileType) && forceODSPPreviewer.indexOf(item.FileType.toLocaleLowerCase()) !== -1;
+                const isLibItem = !isEmpty(item.contentclass) && item.contentclass.indexOf("Library") !== -1;
+
+                if (!isEmpty(item.ServerRedirectedEmbedURL)) {
+                    url = item.ServerRedirectedEmbedURL.replace("WopiFrame.aspx", "WopiFrame2.aspx");
+                }
+                // Force ODSP viewer for WXP/Images, but not on mobile
+                else if (!isEmpty(item.DefaultEncodingURL) && isOfficeDoc) {
+                    url = this.createOdspPreviewUrl(item.DefaultEncodingURL);
+                }
+                // Open with ?web=1 for office files or all files if on mobile
+                else if (!isEmpty(item.DefaultEncodingURL) && isLibItem) {
+                    url = item.DefaultEncodingURL + "?web=1";
+                }
+                else if (!isEmpty(item.ServerRedirectedURL)) {
+                    url = item.ServerRedirectedURL;
+                }
+                else if (!isEmpty(item.DefaultEncodingURL) && isLibItem) {
+                    url = item.DefaultEncodingURL;
+                }
+                else if (!isEmpty(item.OriginalPath)) {
+                    url = item.OriginalPath;
+                }
+                else url = item.Path;
+            }
+
+            return new Handlebars.SafeString(url.replace(/\+/g, "%2B"));
+        });
+
         // Return SPFx page context variable
         // Usage:
         //   {{getPageContext "user.displayName"}}
@@ -766,15 +799,15 @@ abstract class BaseTemplateService {
     private static _initDocumentPreviews() {
         const nodes = document.querySelectorAll('.document-preview-item');
 
-        DomHelper.forEach(nodes, ((index, el) => {
+        DomHelper.forEach(nodes, ((index, el: HTMLElement) => {
             if (!el.attributes["data-listener"]) {
                 el.attributes["data-listener"] = "1";
                 el.addEventListener("click", (event) => {
-                    const thumbnailElt = event.srcElement;
+                    const thumbnailElt = event.srcElement as HTMLElement;
 
                     // Get infos about the document to preview
-                    const url: string = event.srcElement.getAttribute("data-url");
-                    const previewImgUrl: string = event.srcElement.getAttribute("data-src");
+                    const url: string = thumbnailElt.getAttribute("data-url") || thumbnailElt.getAttribute("url");
+                    const previewImgUrl: string = thumbnailElt.getAttribute("data-src") || thumbnailElt.getAttribute("src");
 
                     if (url) {
                         let renderElement = React.createElement(
@@ -788,7 +821,10 @@ abstract class BaseTemplateService {
                             } as IPreviewContainerProps
                         );
 
-                        ReactDom.render(renderElement, el);
+                        var hover = document.createElement("span");
+                        el.insertAdjacentElement("afterend", hover);
+
+                        ReactDom.render(renderElement, hover);
                     }
                 });
             }
@@ -806,9 +842,9 @@ abstract class BaseTemplateService {
                     const thumbnailElt = event.srcElement;
 
                     // Get infos about the video to render
-                    const url = event.srcElement.getAttribute("data-url");
-                    const fileExtension = event.srcElement.getAttribute("data-fileext");
-                    const previewImgUrl: string = event.srcElement.getAttribute("data-src");
+                    const url = event.srcElement.getAttribute("data-url") || event.srcElement.getAttribute("url");
+                    const fileExtension = event.srcElement.getAttribute("data-fileext") || event.srcElement.getAttribute("fileext");
+                    const previewImgUrl: string = event.srcElement.getAttribute("data-src") || event.srcElement.getAttribute("src");
 
                     if (url && fileExtension) {
                         let renderElement = React.createElement(
@@ -825,7 +861,10 @@ abstract class BaseTemplateService {
                             } as IPreviewContainerProps
                         );
 
-                        ReactDom.render(renderElement, el);
+                        var hover = document.createElement("span");
+                        el.insertAdjacentElement("afterend", hover);
+
+                        ReactDom.render(renderElement, hover);
                     }
                 });
             }

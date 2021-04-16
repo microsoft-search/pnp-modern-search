@@ -293,10 +293,9 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                     this.props.searchService.refinementFilters = [];
                 }
 
-                // Reset page number
+                // Reset page render
                 selectedPage = 1;
-
-                // Reset the current sort order
+                this.props.onSearchReset(); // TODO: requery will cause two calls, but ensure paging works
                 resetSorting = true;
             }
 
@@ -432,6 +431,8 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             });
 
             this.props.searchService.sortList = [{ Property: sortField, Direction: sortDirection }];
+
+            this.props.onSearchReset(); // TODO: requery will cause two calls, but ensure paging works
 
             try {
 
@@ -866,24 +867,24 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
         return guid;
     }
 
-    private queryChanged(current:ISearchResultsContainerProps, previous:ISearchResultsContainerProps) : boolean {
-        if(current.searchService.refinementFilters.length === 1 && current.searchService.refinementFilters[0].length === 0 ){
+    private queryChanged(current: ISearchResultsContainerProps, previous: ISearchResultsContainerProps): boolean {
+        if (current.searchService.refinementFilters.length === 1 && current.searchService.refinementFilters[0].length === 0) {
             current.searchService.refinementFilters = [];
-        }        
-        
-        if(!isEqual(current.queryKeywords,previous.queryKeywords)) return true;
-        if(!isEqual(current.searchService.queryTemplate,previous.searchService.queryTemplate)) return true;
-        if(!isEqual(current.selectedPage,previous.selectedPage)) return true;
-        if(!isEqual(current.searchService.resultSourceId,previous.searchService.resultSourceId)) return true;
-        if(!isEqual(current.searchService.selectedProperties,previous.searchService.selectedProperties)) return true;
-        if(!isEqual(current.sortList,previous.sortList)) return true;
-        if(!isEqual(current.sortableFields,previous.sortableFields)) return true;
-        if(!isEqual(current.searchService.enableQueryRules,previous.searchService.enableQueryRules)) return true;
-        if(!isEqual(current.searchService.refinementFilters,previous.searchService.refinementFilters)) return true;
-        if(!isEqual(current.searchService.refiners,previous.searchService.refiners)) return true;
-        if(!isEqual(current.searchService.resultsCount,previous.searchService.resultsCount)) return true;
-        if(!isEqual(current.searchService.sortList,previous.searchService.sortList)) return true;
-        if(!isEqual(current.searchService.synonymTable,previous.searchService.synonymTable)) return true;
+        }
+
+        if (!isEqual(current.queryKeywords, previous.queryKeywords)) return true;
+        if (!isEqual(current.searchService.queryTemplate, previous.searchService.queryTemplate)) return true;
+        if (!isEqual(current.selectedPage, previous.selectedPage)) return true;
+        if (!isEqual(current.searchService.resultSourceId, previous.searchService.resultSourceId)) return true;
+        if (!isEqual(current.searchService.selectedProperties, previous.searchService.selectedProperties)) return true;
+        if (!isEqual(current.sortList, previous.sortList)) return true;
+        if (!isEqual(current.sortableFields, previous.sortableFields)) return true;
+        if (!isEqual(current.searchService.enableQueryRules, previous.searchService.enableQueryRules)) return true;
+        if (!isEqual(current.searchService.refinementFilters, previous.searchService.refinementFilters)) return true;
+        if (!isEqual(current.searchService.refiners, previous.searchService.refiners)) return true;
+        if (!isEqual(current.searchService.resultsCount, previous.searchService.resultsCount)) return true;
+        if (!isEqual(current.searchService.sortList, previous.searchService.sortList)) return true;
+        if (!isEqual(current.searchService.synonymTable, previous.searchService.synonymTable)) return true;
 
         return false;
     }

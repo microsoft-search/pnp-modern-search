@@ -24,7 +24,6 @@ import { BaseQueryModifier } from '../ExtensibilityService/BaseQueryModifier';
 import { trimStart, trimEnd } from '@microsoft/sp-lodash-subset';
 
 class SearchService implements ISearchService {
-    private _initialSearchResult: SearchResults = null;
     private _resultsCount: number;
     private _pageContext: PageContext;
     private _tokenService: ITokenService;
@@ -135,17 +134,17 @@ class SearchService implements ISearchService {
                 QueryPropertyValueTypeIndex: 1
             }
         }
-        // , {
-        //     // Sample query: foo:test
-        //     // As "foo" is not an OOB schema property it will be treated as text "foo test" instead
-        //     // of non-existing property query - yielding results instead of a blank page
-        //     Name: "ImplicitPropertiesAsStrings",
-        //     Value: {
-        //         BoolVal: true,
-        //         QueryPropertyValueTypeIndex: 3
-        //     }
-        // }
-    ];
+            // , {
+            //     // Sample query: foo:test
+            //     // As "foo" is not an OOB schema property it will be treated as text "foo test" instead
+            //     // of non-existing property query - yielding results instead of a blank page
+            //     Name: "ImplicitPropertiesAsStrings",
+            //     Value: {
+            //         BoolVal: true,
+            //         QueryPropertyValueTypeIndex: 3
+            //     }
+            // }
+        ];
 
         if (this._pageContext.list) {
             searchQuery.Properties.push({
@@ -237,7 +236,7 @@ class SearchService implements ISearchService {
                 // fails to pass into map, so re-init regex
                 const _refinableDate = /(RefinableDate\d+)|(RefinableDateSingle\d+)|(LastModifiedTime)|(LastModifiedTimeForRetention)|(Created)/gi;
                 const _refinableNum = /(RefinableInt\d+)|(RefinableDecimal\d+)/gi;
-                const _refinableString = /(RefinableString\d+)|(JobTitle)|(Tags)|(Department)/gi;
+                const _refinableString = /(RefinableString\d+)|(JobTitle)|(Tags)|(Department)|(FileType)/gi;
                 const isDateManagedProperty = _refinableDate.test(e.refinerName);
                 //const isNumberManagedProperty = _refinableNum.test(e.refinerName);
                 const isStringManagedProperty = _refinableString.test(e.refinerName);
@@ -282,48 +281,39 @@ class SearchService implements ISearchService {
         };
 
         try {
-            if (!this._initialSearchResult || page == 1) {
+            // If we have a query modifier, then send query to it before sending to SharePoint
+            if (this._queryModifier) {
+                try {
+                    const queryModificationValue = await this._queryModifier.modifyQuery({
+                        queryText: searchQuery.Querytext,
+                        queryTemplate: searchQuery.QueryTemplate,
+                        resultSourceId: searchQuery.SourceId,
+                    });
 
-                // If we have a query modifier, then send query to it before sending to SharePoint
-                if (this._queryModifier) {
-                    try {
-                        const queryModificationValue = await this._queryModifier.modifyQuery({
-                            queryText: searchQuery.Querytext,
-                            queryTemplate: searchQuery.QueryTemplate,
-                            resultSourceId: searchQuery.SourceId,
-                        });
-
-                        if (queryModificationValue) {
-                            searchQuery.Querytext = queryModificationValue.queryText;
-                            searchQuery.QueryTemplate = queryModificationValue.queryTemplate;
-                        }
-                        else {
-                            Logger.write('[SearchService.search()]: Query modifier return an invalid response. Using original query.', LogLevel.Error);
-                        }
+                    if (queryModificationValue) {
+                        searchQuery.Querytext = queryModificationValue.queryText;
+                        searchQuery.QueryTemplate = queryModificationValue.queryTemplate;
                     }
-                    catch (error) {
-                        Logger.write('[SearchService.search()]: Query modification failed. Using original query. ' + error, LogLevel.Error);
+                    else {
+                        Logger.write('[SearchService.search()]: Query modifier return an invalid response. Using original query.', LogLevel.Error);
                     }
                 }
-
-                this._initialSearchResult = await this._localPnPSetup.search(searchQuery);
+                catch (error) {
+                    Logger.write('[SearchService.search()]: Query modification failed. Using original query. ' + error, LogLevel.Error);
+                }
             }
+            searchQuery.StartRow = (this._resultsCount * (page - 1)); //start row is zero based
+            const searchResultResponse = await this._localPnPSetup.search(searchQuery);
+
 
             let refinementResults: IRefinementResult[] = [];
 
             // Need to do this check
             // More info here: https://github.com/SharePoint/PnP-JS-Core/issues/337
-            if (this._initialSearchResult.RawSearchResults && this._initialSearchResult.RawSearchResults.PrimaryQueryResult) {
-
-                // Be careful, there was an issue with paging calculation under 2.0.8 version of sp-pnp-js library
-                // More info https://github.com/SharePoint/PnP-JS-Core/issues/535
-                let r2 = this._initialSearchResult;
-                if (page > 1) {
-                    r2 = await this._initialSearchResult.getPage(page, this._resultsCount);
-                }
+            if (searchResultResponse.RawSearchResults && searchResultResponse.RawSearchResults.PrimaryQueryResult) {
 
                 // Get the transformed query submitted to SharePoint
-                const properties = r2.RawSearchResults.PrimaryQueryResult.RelevantResults.Properties.filter((property) => {
+                const properties = searchResultResponse.RawSearchResults.PrimaryQueryResult.RelevantResults.Properties.filter((property) => {
                     return property.Key === 'QueryModification';
                 });
 
@@ -332,8 +322,8 @@ class SearchService implements ISearchService {
                     results.QueryModification = queryModification;
                 }
 
-                const resultRows = r2.RawSearchResults.PrimaryQueryResult.RelevantResults.Table.Rows;
-                let refinementResultsRows = r2.RawSearchResults.PrimaryQueryResult.RefinementResults;
+                const resultRows = searchResultResponse.RawSearchResults.PrimaryQueryResult.RelevantResults.Table.Rows;
+                let refinementResultsRows = searchResultResponse.RawSearchResults.PrimaryQueryResult.RefinementResults;
 
                 const refinementRows: any = refinementResultsRows ? refinementResultsRows.Refiners : [];
 
@@ -386,17 +376,17 @@ class SearchService implements ISearchService {
 
                 results.RelevantResults = searchResults;
                 results.RefinementResults = refinementResults;
-                results.PaginationInformation.TotalRows = this._initialSearchResult.TotalRows;
+                results.PaginationInformation.TotalRows = searchResultResponse.TotalRows;
             }
 
-            if (this._initialSearchResult.RawSearchResults && !isEmpty(this._initialSearchResult.RawSearchResults.SpellingSuggestion)) {
-                results.SpellingSuggestion = this._initialSearchResult.RawSearchResults.SpellingSuggestion;
+            if (searchResultResponse.RawSearchResults && !isEmpty(searchResultResponse.RawSearchResults.SpellingSuggestion)) {
+                results.SpellingSuggestion = searchResultResponse.RawSearchResults.SpellingSuggestion;
             }
 
             // Query rules handling
-            if (this._initialSearchResult.RawSearchResults && this._initialSearchResult.RawSearchResults.SecondaryQueryResults) {
+            if (searchResultResponse.RawSearchResults && searchResultResponse.RawSearchResults.SecondaryQueryResults) {
 
-                const secondaryQueryResults = this._initialSearchResult.RawSearchResults.SecondaryQueryResults;
+                const secondaryQueryResults = searchResultResponse.RawSearchResults.SecondaryQueryResults;
 
                 if (Array.isArray(secondaryQueryResults) && secondaryQueryResults.length > 0) {
 
@@ -895,31 +885,46 @@ class SearchService implements ISearchService {
 
     // Function to inject synonyms at run-time
     private _injectSynonyms(query: string): string {
-
+        const origQuery = query;
         if (this._synonymTable && Object.keys(this._synonymTable).length > 0) {
             // Remove complex query parts AND/OR/NOT/ANY/ALL/parenthasis/property queries/exclusions - can probably be improved
             const cleanQuery = query.replace(/(-\w+)|(-"\w+.*?")|(-?\w+[:=<>]+\w+)|(-?\w+[:=<>]+".*?")|((\w+)?\(.*?\))|(AND)|(OR)|(NOT)/g, '');
             const queryParts: string[] = cleanQuery.match(/("[^"]+"|[^"\s]+)/g);
-            queryParts.push(query);
 
             // code which should modify the current query based on context for each new query
             if (queryParts) {
 
+                const replaceTable = {};
+                // replace all parts with random guids
                 for (let i = 0; i < queryParts.length; i++) {
+                    let tokenGuid = Guid.newGuid().toString();
                     let key = trimEnd(trimStart(queryParts[i].toLowerCase(), '"'), '"');
+                    replaceTable[tokenGuid] = key;
+                    query = query.replace(new RegExp(queryParts[i], "g"), tokenGuid);
+                }
+
+                // expand guids to synonyms
+                for (let tokenGuid in replaceTable) {
+                    let key = replaceTable[tokenGuid];
                     let value = this._synonymTable[key];
 
                     if (value) {
                         // Replace the current query part in the query with all the synonyms
-                        query = query.replace(queryParts[i],
+                        query = query.replace(tokenGuid,
                             Text.format('({0} OR {1})',
-                                this._formatSynonym(queryParts[i]),
+                                tokenGuid,
                                 this._formatSynonymsSearchQuery(value)));
                     }
                 }
+
+                // replace guids back
+                for (let tokenGuid in replaceTable) {
+                    query = query.replace(new RegExp(tokenGuid, "g"), this._formatSynonym(replaceTable[tokenGuid]));
+                }
+
             }
         }
-        return query;
+        return Text.format('({0}) OR ({1})', origQuery, query);
     }
 
     private _formatSynonym(value: string): string {
