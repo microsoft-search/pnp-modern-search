@@ -77,7 +77,7 @@ export default class SearchVerticalsContainer extends React.Component<ISearchVer
                 // Send the query to the new page
                 const behavior = vertical.openBehavior === PageOpenBehavior.NewTab ? '_blank' : '_self';
                 this.props.tokenService.replaceQueryVariables(vertical.linkUrl).then((resolvedUrl: string) => {
-                    resolvedUrl = resolvedUrl.replace(/\{searchTerms\}|\{SearchBoxQuery\}/gi, GlobalSettings.getValue('searchBoxQuery'));
+                    resolvedUrl = resolvedUrl.replace(/\{searchTerms\}|\{SearchBoxQuery\}/gi, GlobalSettings.getValue('searchBoxQuery',''));
                     window.open(resolvedUrl, behavior);
                 });
 
