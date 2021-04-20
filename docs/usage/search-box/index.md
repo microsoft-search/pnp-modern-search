@@ -28,7 +28,7 @@ The query suggestions allows users to easily find relevant query keywords based 
 | Setting | Description | Default value |
 | ------- |---------------- | ---------- |
 |**Enable query suggestions**| Enable or disable query suggestions. | False.
-|**Configure available providers** | Enable or disable the suggestions providers available for this Web Part. By default, only the _"SharePoint Static search suggestions"_ is available (disabled by default). <p align="center">[!["Search Box suggestions"](../../assets/webparts/search_box/suggestions_providers_panel.png)](../../assets/webparts/search_box/suggestions_providers_panel.png)</p> To add values for this provider, refer to the following [documentation](https://docs.microsoft.com/en-us/sharepoint/search/manage-query-suggestions) (caution: it can take up to 24h for changes to take effect). Multiple providers can be enabled at once.
+|**Configure available providers** | Enable or disable the suggestions providers available for this Web Part. By default, only the _"SharePoint Static search suggestions"_ is available (disabled by default). <p align="center">[!["Configure available providers"](../../assets/webparts/search-box/suggestions_providers_panel.png)](../../assets/webparts/search_box/suggestions_providers_panel.png)</p> To add values for this provider, refer to the following [documentation](https://docs.microsoft.com/en-us/sharepoint/search/manage-query-suggestions) (caution: it can take up to 24h for changes to take effect). Multiple providers can be enabled at once.
 |**Number of suggestions to show per group**| The number of suggestions to show per group. | 10.
 
 ### Connections
