@@ -12,7 +12,7 @@
             <a href="{{slot item @root.slots.PreviewUrl}}" target="_blank" data-interception="off">{{slot item @root.slots.Title}}</a>
         </span>
         <span>
-            {{getSummary (slot item @root.slots.Summary)}}
+            <div>{{getSummary (slot item @root.slots.Summary)}}</div>
             <span class="template--listItem--author">
                 {{#with (split (slot item @root.slots.Author) '|')}}
                     {{[1]}}
