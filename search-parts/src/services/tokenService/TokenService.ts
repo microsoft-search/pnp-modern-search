@@ -26,7 +26,7 @@ export class TokenService implements ITokenService {
     /**
      * This regex only matches expressions enclosed with single, not escaped, curly braces '{}'
      */    
-    private genericTokenRegexp: RegExp = /(?<!\\){[^\{]*?}(?!\\)/gi;
+    private genericTokenRegexp: RegExp = /{[^\{]+?[^\\]}/gi;
 
     /**
      * The list of user properties. Used to avoid refetching it every time.
