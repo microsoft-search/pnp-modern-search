@@ -182,7 +182,6 @@ define([], function () {
           ResizableColumnLabel: "Storleken kan redigeras",
           MultilineColumnLabel: "Flera linjer",
           LinkToItemColumnLabel: "Länk till artikel",
-          SupportHTMLColumnLabel: "Tillåt HTML",
           CompactModeLabel: "Kompakt läge",
           ShowFileIcon: "Visa filikon",
           ManageDetailsListColumnDescription: "Lägg till, uppdatera eller ta bort kolumner från layouten i detaljlistan. Du kan antingen använda egenskapsvärden i listan direkt utan någon transformation, eller så kan du använda ett styruttryck som fältets värde. HTML stöds för användning i alla fält.",
@@ -324,4 +323,3 @@ define([], function () {
       }
     }
   })
-  
