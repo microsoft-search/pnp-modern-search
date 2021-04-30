@@ -6,7 +6,7 @@ import RefinerSortDirection from '../../models/RefinersSortDirection';
 import { sp, SearchQuery, SearchResults, SPRest, Sort, SearchSuggestQuery, SortDirection, Web } from '@pnp/sp';
 import { Logger, LogLevel, ConsoleListener } from '@pnp/logging';
 import { Text, Guid } from '@microsoft/sp-core-library';
-import { sortBy, isEmpty } from '@microsoft/sp-lodash-subset';
+import { sortBy, isEmpty, uniq } from '@microsoft/sp-lodash-subset';
 import LocalizationHelper from '../../helpers/LocalizationHelper';
 import "@pnp/polyfill-ie11";
 import IRefinerConfiguration from '../../models/IRefinerConfiguration';
@@ -884,25 +884,34 @@ class SearchService implements ISearchService {
 
 
     // Function to inject synonyms at run-time
-    private _injectSynonyms(query: string): string {
-        const origQuery = query;
+    private _injectSynonyms(query: string): string {        
+        const origQuery = query = query.trim().toLocaleLowerCase();
+
         if (this._synonymTable && Object.keys(this._synonymTable).length > 0) {
             // Remove complex query parts AND/OR/NOT/ANY/ALL/parenthasis/property queries/exclusions - can probably be improved
             const cleanQuery = query.replace(/(-\w+)|(-"\w+.*?")|(-?\w+[:=<>]+\w+)|(-?\w+[:=<>]+".*?")|((\w+)?\(.*?\))|(AND)|(OR)|(NOT)/g, '');
-            const queryParts: string[] = cleanQuery.match(/("[^"]+"|[^"\s]+)/g);
+            const queryParts: string[] = uniq(cleanQuery.match(/("[^"]+"|[^"\s]+)/g));
+
+            // Add original query as a candidate if a multi-term query
+            if (queryParts.length > 1 && this._synonymTable[origQuery]) {
+                queryParts.push(origQuery);
+            }
 
             // code which should modify the current query based on context for each new query
             if (queryParts) {
-
                 const replaceTable = {};
                 // replace all parts with random guids
                 for (let i = 0; i < queryParts.length; i++) {
                     let tokenGuid = Guid.newGuid().toString();
                     let key = trimEnd(trimStart(queryParts[i].toLowerCase(), '"'), '"');
-                    replaceTable[tokenGuid] = key;
-                    query = query.replace(new RegExp(queryParts[i], "g"), tokenGuid);
-                }
+                    if (key == "*") { continue; } // skip wildcard parts
 
+                    // replace parts we have a synonym for with a guid
+                    if (this._synonymTable[key]) {
+                        replaceTable[tokenGuid] = key;
+                        query = query.replace(new RegExp(queryParts[i], "gi"), tokenGuid);
+                    }
+                }
                 // expand guids to synonyms
                 for (let tokenGuid in replaceTable) {
                     let key = replaceTable[tokenGuid];
@@ -924,12 +933,18 @@ class SearchService implements ISearchService {
 
             }
         }
-        return Text.format('({0}) OR ({1})', origQuery, query);
+        if (origQuery !== query) {
+            return Text.format('({0}) OR ({1})', origQuery, query);
+        }
+        return origQuery;
     }
 
     private _formatSynonym(value: string): string {
+        if (!value) return "";
         value = value.trim().replace(/"/g, '').trim();
-        value = '"' + value + '"';
+        if (value.indexOf(' ') > -1) {
+            value = '"' + value + '"';
+        }
 
         return value;
     }
