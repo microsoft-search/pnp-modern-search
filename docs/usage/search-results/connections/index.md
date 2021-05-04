@@ -32,7 +32,7 @@ Optionaly, you can set a default query text **when there is no value for the con
 
 !["Verticals"](../../../assets/webparts/search-results/connections/verticals.png){: .center}
 
-When you connect the Web Part to a Data Verticals one, you must specify on which vertical the Web Part content should be displayed.
+When you connect the Web Part to a Verticals one, you must specify on which vertical the Web Part content should be displayed.
 
 !["Select vertical"](../../../assets/webparts/search-results/connections/select_vertical.png){: .center}
 

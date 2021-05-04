@@ -12,7 +12,7 @@ You can contribute to this project at multiple levels:
 - Add new reusable [components](./extensibility/custom_web_component.md) or [suggestions providers](./extensibility/custom_suggestions_provider.md) to the extensibility library.
 - Add Web Part translations
 
-As a result, we accept pull requests fom the community. You can refer to [this post](https://tahoeninjas.blog/2019/08/18/my-github-cheat-sheet-for-pnp-contributions-an-interactive-cheat-sheet/) by Hugo Bernier to know how make a PR on a GitHub repository.
+As a result, we accept pull requests from the community. You can refer to [this post](https://tahoeninjas.blog/2019/08/18/my-github-cheat-sheet-for-pnp-contributions-an-interactive-cheat-sheet/) by Hugo Bernier to know how make a PR on a GitHub repository.
 
 !!! note
     Your PR must target the `develop` branch.
@@ -48,7 +48,8 @@ You can also refer to the official [SPFx documentation about library component u
 ## Setup the **search-parts** and **search-extensibility-demo** projects
 
 1. From the `search-parts` or `search-extensibility-demo` project, link a reference to the `@pnp/modern-search-extensibility` project by using the following command `npm link @pnp/modern-search-extensibility`.
-2. Build the project using `gulp bundle`.
+2. Run `npm i`.
+3. Build the project using `gulp bundle`.
 
 ## Debug the solution
 
