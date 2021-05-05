@@ -19,3 +19,11 @@ The first step in setting up search-driven solutions is getting the appropriate 
 [Build a page showing content with filters which are Managed Metadata columns](using-managed-metadata.md)
 
 Managed Metadata columns can be tricky to work with because of the way they are managed and stored in the platform. In this scenario, we step through the process of setting up a simple search experience page with a Managed Metadata column used as a filter.
+
+## Potential Future Scenarios
+
+* Rolling up Hub News (in yet another way!) - Jim Love @jimmywim
+* Hooking up to the Suite Bar Search (combined with Set-PnPSearchSettings) - Jim Love @jimmywim
+* Creating a simple People Directory - Jim Love @jimmywim
+* How to use the search results as a "content query" to show a list of sites - Marijn Somers @marijnsomers
+* How to properly set the select fields (when they don't show up)!  I end up exporting page to pnp template file, tweaking the select fields using text editor, saving template, then importing the page back in. - Brian McCullough @bpmccullough

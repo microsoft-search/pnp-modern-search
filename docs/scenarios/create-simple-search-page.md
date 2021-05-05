@@ -6,7 +6,7 @@
 Any page can contain the PnP Modern Search Web Parts. For simple Search Results only, we may embed the Web Part in a page with other content, but generally we create a new page.
 
 > [!NOTE]
-> The PnP Modern Search Web Parts must be deployed to your App Catalog and activated on your site.
+> The PnP Modern Search Web Parts must be deployed to your App Catalog and activated on your site. See the [installation documentation](../installation.md) for details.
 
 From the home page of you site (you must be a Site Owner), click on + New / Page.
 
@@ -28,7 +28,7 @@ Below the PnP Search Box, add **PnP Search Results**.
 
 ## Connect the Web Parts
 
-Now you need to connect the Web Parts in their properties panes. For this simple scenario, you don't need to change any properties for the PnP Search Box. Click on the Configure button in the middle of the **PnP Search Results** Web Part. This will open the property pane for the Web Part.
+Now you need to connect the Web Parts in their properties panes. For this simple scenario, you don't need to change any properties for the **PnP Search Box**. Click on the Configure button in the middle of the **PnP Search Results** Web Part. This will open the property pane for the Web Part.
 
 Again, keeping things simple, click the **SharePoint Search** button.
 
