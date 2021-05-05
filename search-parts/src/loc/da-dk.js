@@ -182,7 +182,6 @@ define([], function() {
                 ResizableColumnLabel: "Størrelse kan redigeres",
                 MultilineColumnLabel: "Multi-linje",
                 LinkToItemColumnLabel: "Link til item",
-                SupportHTMLColumnLabel: "Tillad HTML",
                 CompactModeLabel: "Compakt-mode",
                 ShowFileIcon: "Vis filikon",
                 ManageDetailsListColumnDescription: "Tilføj, opdatér eller fjern kolonner fra layoutet på detaljelisten. Du kan enten bruge egenskabsværdier i listen direkte uden nogen transformation, eller du kan bruge et Handlebars-udtryk som feltets værdi. HTML er supporteret til brug i alle felter.",

@@ -42,7 +42,6 @@ declare interface ISearchResultsWebPartStrings {
       ErrorTemplateResolve: string;
       DialogButtonLabel: string;
       DialogTitle: string;
-      ManageDetailsListColumnLabel: string;
       ShowSelectedFilters: string;
       ShowBlankIfNoResult: string;
       ShowResultsCount: string;

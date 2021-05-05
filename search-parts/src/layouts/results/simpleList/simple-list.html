@@ -75,7 +75,7 @@
                             </span>
                             <span class="template--listItem--date">{{getDate (slot item @root.slots.Date) "LL"}}</span>                            
                         </span>                        
-                        {{getSummary (slot item @root.slots.Summary)}}
+                        <div>{{getSummary (slot item @root.slots.Summary)}}</div>
                         <div class="template--listItem--tags example-themePrimary">
                             {{#if (slot item @root.slots.Tags)}}
                             <pnp-icon data-name="Tag" aria-hidden="true" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-icon>

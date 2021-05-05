@@ -182,7 +182,6 @@ define([], function() {
                 ResizableColumnLabel: "Resizable",
                 MultilineColumnLabel: "Multiline",
                 LinkToItemColumnLabel: "Link to item",
-                SupportHTMLColumnLabel: "Allow HTML",
                 CompactModeLabel: "Compact mode",
                 ShowFileIcon: "Show file icon",
                 ManageDetailsListColumnDescription: "Add, update or remove columns for the details list layout. You can use either property values in the list directly without any transformation or use an Handlebars expression in the value field. HTML is supported for all fields as well.",
