@@ -889,7 +889,7 @@ class SearchService implements ISearchService {
 
         if (this._synonymTable && Object.keys(this._synonymTable).length > 0) {
             // Remove complex query parts AND/OR/NOT/ANY/ALL/parenthasis/property queries/exclusions - can probably be improved
-            const cleanQuery = query.replace(/(-\w+)|(-"\w+.*?")|(-?\w+[:=<>]+\w+)|(-?\w+[:=<>]+".*?")|((\w+)?\(.*?\))|(AND)|(OR)|(NOT)/g, '');
+            const cleanQuery = query.replace(/((^|\s)-[\w-]+[\s$])|(-"\w+.*?")|(-?\w+[:=<>]+\w+)|(-?\w+[:=<>]+".*?")|((\w+)?\(.*?\))|(AND)|(OR)|(NOT)/g, '');
             const queryParts: string[] = uniq(cleanQuery.match(/("[^"]+"|[^"\s]+)/g));
 
             // Add original query as a candidate if a multi-term query
