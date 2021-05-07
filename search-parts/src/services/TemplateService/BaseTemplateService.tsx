@@ -234,7 +234,7 @@ abstract class BaseTemplateService {
         Handlebars.registerHelper("getInteractiveUrl", (item: ISearchResult) => {
             let url = '';
             if (!isEmpty(item)) {
-                const forceODSPPreviewer = ["doc", "docm", "docx", "dotx", "pot", "potm", "potx", "pps", "ppsx", "ppt", "pptm", "pptx", "xls", "xlsb", "xlsm", "xlsx", "png", "gif", "jpg"]
+                const forceODSPPreviewer = ["doc", "docm", "docx", "dotx", "pot", "potm", "potx", "pps", "ppsx", "ppt", "pptm", "pptx", "xls", "xlsb", "xlsm", "xlsx", "png", "gif", "jpg"];
                 const isOfficeDoc = !isEmpty(item.FileType) && forceODSPPreviewer.indexOf(item.FileType.toLocaleLowerCase()) !== -1;
                 const isLibItem = !isEmpty(item.contentclass) && item.contentclass.indexOf("Library") !== -1;
 
