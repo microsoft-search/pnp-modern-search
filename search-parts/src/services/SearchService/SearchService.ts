@@ -886,58 +886,46 @@ class SearchService implements ISearchService {
     // Function to inject synonyms at run-time
     private _injectSynonyms(query: string): string {
         const origQuery = query = query.trim().toLocaleLowerCase();
+        // match longest term first
+        const synonymKeys = Object.keys(this._synonymTable).sort((a, b) => {
+            return b.length - a.length;
+        });
 
-        if (this._synonymTable && Object.keys(this._synonymTable).length > 0) {
+        if (this._synonymTable && synonymKeys.length > 0) {
             // Remove complex query parts AND/OR/NOT/ANY/ALL/parenthasis/property queries/exclusions - can probably be improved
-            const cleanQuery = query.replace(/((^|\s)-[\w-]+[\s$])|(-"\w+.*?")|(-?\w+[:=<>]+\w+)|(-?\w+[:=<>]+".*?")|((\w+)?\(.*?\))|(AND)|(OR)|(NOT)/g, '');
-            const queryParts: string[] = uniq(cleanQuery.match(/("[^"]+"|[^"\s]+)/g));
-
-            // Add original query as a candidate if a multi-term query
-            if (queryParts.length > 1 && this._synonymTable[origQuery]) {
-                queryParts.push(origQuery);
+            const cleanQuery = query.replace(/((^|\s)-[\w-]+[\s$])|(-"\w+.*?")|(-?\w+[:=<>]+\w+)|(-?\w+[:=<>]+".*?")|((\w+)?\(.*?\))|(AND)|(OR)|(NOT)/g, ` `);
+            const replaceTable = {};
+            
+            //Check if synonyms are in the include parts of the query
+            for (let i = 0; i < synonymKeys.length; i++) {
+                const synonym = synonymKeys[i];
+                if (cleanQuery.indexOf(synonym) !== -1) {
+                    let tokenGuid = Guid.newGuid().toString();
+                    replaceTable[tokenGuid] = synonym;
+                    query = query.replace(new RegExp(synonym, "gi"), tokenGuid);
+                }
             }
 
-            queryParts.sort((a, b) => {
-                return b.length - a.length;
-            });
+            // Expand synonym
+            for (let tokenGuid in replaceTable) {
+                let key = replaceTable[tokenGuid];
+                let value = this._synonymTable[key];
 
-            // code which should modify the current query based on context for each new query
-            if (queryParts) {
-                const replaceTable = {};
-                // replace all parts with random guids
-                for (let i = 0; i < queryParts.length; i++) {
-                    let tokenGuid = Guid.newGuid().toString();
-                    let key = trimEnd(trimStart(queryParts[i].toLowerCase(), '"'), '"');
-                    if (key == "*") { continue; } // skip wildcard parts
-
-                    // replace parts we have a synonym for with a guid
-                    if (this._synonymTable[key]) {
-                        replaceTable[tokenGuid] = key;
-                        query = query.replace(new RegExp(queryParts[i], "gi"), tokenGuid);
-                    }
+                if (value) {
+                    // Replace the current query part in the query with all the synonyms
+                    query = query.replace(tokenGuid,
+                        Text.format('({0} OR {1})',
+                            tokenGuid,
+                            this._formatSynonymsSearchQuery(value)));
                 }
-                // expand guids to synonyms
-                for (let tokenGuid in replaceTable) {
-                    let key = replaceTable[tokenGuid];
-                    let value = this._synonymTable[key];
+            }
 
-                    if (value) {
-                        // Replace the current query part in the query with all the synonyms
-                        query = query.replace(tokenGuid,
-                            Text.format('({0} OR {1})',
-                                tokenGuid,
-                                this._formatSynonymsSearchQuery(value)));
-                    }
-                }
-
-                // replace guids back
-                for (let tokenGuid in replaceTable) {
-                    query = query.replace(new RegExp(tokenGuid, "g"), this._formatSynonym(replaceTable[tokenGuid]));
-                }
-
+            // replace guids back
+            for (let tokenGuid in replaceTable) {
+                query = query.replace(new RegExp(tokenGuid, "g"), this._formatSynonym(replaceTable[tokenGuid]));
             }
         }
-        if (origQuery !== query) {
+        if (origQuery !== query && query.length > 0) {
             return Text.format('({0}) OR ({1})', origQuery, query);
         }
         return origQuery;
