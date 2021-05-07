@@ -884,7 +884,7 @@ class SearchService implements ISearchService {
 
 
     // Function to inject synonyms at run-time
-    private _injectSynonyms(query: string): string {        
+    private _injectSynonyms(query: string): string {
         const origQuery = query = query.trim().toLocaleLowerCase();
 
         if (this._synonymTable && Object.keys(this._synonymTable).length > 0) {
@@ -896,6 +896,10 @@ class SearchService implements ISearchService {
             if (queryParts.length > 1 && this._synonymTable[origQuery]) {
                 queryParts.push(origQuery);
             }
+
+            queryParts.sort((a, b) => {
+                return b.length - a.length;
+            });
 
             // code which should modify the current query based on context for each new query
             if (queryParts) {
