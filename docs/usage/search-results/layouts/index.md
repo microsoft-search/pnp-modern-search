@@ -79,7 +79,7 @@ The following operators are supported:
 - Greater than
 - Is not null
 
-In the case you use a custom template, you can still benefit from this feature following this markup:
+In case you use a custom template, you can still benefit from this feature following this markup:
 
 ```html
 {{#> resultTypes}}
@@ -90,5 +90,5 @@ In the case you use a custom template, you can still benefit from this feature f
 {{/resultTypes}}
 ```
 
-Handlebars [partials](https://handlebarsjs.com/partials.html) are used behind the scenes and conditions are built dynamically using a recursive if/else structure.
+Handlebars [partials](https://handlebarsjs.com/guide/partials.html) are used behind the scenes and conditions are built dynamically using a recursive if/else structure.
 
