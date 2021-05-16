@@ -2,66 +2,66 @@ define([], function() {
     return {
         General: {
             PlaceHolder: {
-                EditLabel: "Edit",
-                IconText: "Search Filters by @PnP",
-                Description: "Displays filters from a connected search results Web Part",
-                ConfigureBtnLabel: "Configure"
+                EditLabel: "Modifier",
+                IconText: "Filtres de recherche par @PnP",
+                Description: "Affiche les filtres d’un composant Web connecté des résultats de recherche ",
+                ConfigureBtnLabel: "Configurer"
             },
-            NoAvailableFilterMessage: "No available filter to display.",
-            WebPartDefaultTitle: "Search Filters Web Part"
+            NoAvailableFilterMessage: "Aucun filtre disponible à afficher.",
+            WebPartDefaultTitle: "Composant Web des filtres de recherche"
         },
         PropertyPane: {
             ConnectionsPage: {
-                UseDataResultsWebPartLabel: "Connect to a data results Web Part",
-                UseDataResultsFromComponentsLabel: "Use data from these Web Parts",
-                UseDataResultsFromComponentsDescription: "If you connect more than one Web Part, the filter values and counts will be merged for similar filter names.",
+                UseDataResultsWebPartLabel: "Se connecter à un composant Web des résultats des données",
+                UseDataResultsFromComponentsLabel: "Utiliser les données de ces composants Web",
+                UseDataResultsFromComponentsDescription: "Si vous connectez plusieurs composants Web, les valeurs et les nombres de filtres seront fusionnés avec les noms de filtres similaires",
             },
             FiltersSettingsPage: {
-                SettingsGroupName: "Filters settings",
-                FilterOperator: "Operator to use between filters"
+                SettingsGroupName: "Paramètres des filtres",
+                FilterOperator: "Opérateur à utiliser entre les filtres"
             },
             DataFilterCollection: {
-                SelectFilterComboBoxLabel: "Select field",
-                FilterNameLabel: "Filter field",
-                FilterMaxBuckets: "# of values",
-                FilterDisplayName: "Display name",
-                FilterTemplate: "Template",
-                FilterExpandByDefault: "Expand by default",
-                FilterType: "Filter type",
-                FilterTypeRefiner: "This filter template acts as a refiner and receives/sends available/selected values from/to the connected data source.",
-                FilterTypeStaticFilter: "This filter template acts as a static filter and only sends arbitrary selected values to the connected data source. Incoming filter values are not taken into account.",
-                CustomizeFiltersBtnLabel: "Edit",
-                CustomizeFiltersHeader: "Edit filters",
-                CustomizeFiltersDescription: "Configure search filters by adding or removing rows. You can select fields from the data source results (if already selected) or use static values for filters.",
-                CustomizeFiltersFieldLabel: "Customize filters",
-                ShowCount: "Show count",
-                Operator: "Operator between values",
-                ANDOperator: "AND",
-                OROperator: "OR",
-                IsMulti: "Multi values",
+                SelectFilterComboBoxLabel: "Sélectionner un champ",
+                FilterNameLabel: "Champ Filtre",
+                FilterMaxBuckets: "Nombre de valeurs",
+                FilterDisplayName: "Nom d’affichage",
+                FilterTemplate: "Modèle",
+                FilterExpandByDefault: "Agrandir par défaut",
+                FilterType: "Type de filtre",
+                FilterTypeRefiner: "Ce modèle de filtre sert de raffineur et reçoit/envoie les valeurs disponibles/sélectionnées à partir de/vers la source de données connectée.",
+                FilterTypeStaticFilter: "Ce modèle de filtre agit comme un filtre statique et envoie uniquement les valeurs sélectionnées de façon arbitraire à la source de données connectée. Les valeurs des filtres entrants ne sont pas prises en compte",
+                CustomizeFiltersBtnLabel: "Modifier",
+                CustomizeFiltersHeader: "Modifier les filtres",
+                CustomizeFiltersDescription: "Configurez les filtres de recherche en ajoutant ou en supprimant des lignes Vous pouvez sélectionner des champs dans les résultats de la source de données (si vous l’avez déjà fait) ou utiliser des valeurs statiques pour les filtres.",
+                CustomizeFiltersFieldLabel: "Personnaliser les filtres",
+                ShowCount: "Afficher le nombre",
+                Operator: "Opérateur entre les valeurs",
+                ANDOperator: "ET",
+                OROperator: "OU",
+                IsMulti: "Valeur multiple",
                 Templates: {
-                    CheckBoxTemplate: "Check box",
-                    DateRangeTemplate: "Date range",
-                    ComboBoxTemplate: "Combo box",
-                    DateIntervalTemplate: "Date interval",
-                    TaxonomyPickerTemplate: "Taxonomy picker"
+                    CheckBoxTemplate: "Case à cocher",
+                    DateRangeTemplate: "Période",
+                    ComboBoxTemplate: "Zone de liste modifiable",
+                    DateIntervalTemplate: "Intervalle de dates",
+                    TaxonomyPickerTemplate: "Sélecteur de taxonomie"
                 },
-                SortBy: "Sort values by",
-                SortDirection: "Sort direction",
-                SortByName: "By name",
-                SortByCount: "By count",
-                SortAscending: "Ascending",
-                SortDescending: "Descending"
+                SortBy: "Trier les valeurs par",
+                SortDirection: "Sens de tri",
+                SortByName: "Par nom",
+                SortByCount: "Par nombre",
+                SortAscending: "Croissant",
+                SortDescending: "Décroissant"
             },
             LayoutPage: {
-                AvailableLayoutsGroupName: "Available layouts",
-                LayoutTemplateOptionsGroupName: "Layout options",
-                TemplateUrlFieldLabel: "Use an external template URL",
+                AvailableLayoutsGroupName: "Mises en page disponibles",
+                LayoutTemplateOptionsGroupName: "Options de mise en page",
+                TemplateUrlFieldLabel: "Utiliser une adresse URL de modèle externe",
                 TemplateUrlPlaceholder: "https://myfile.html",
-                ErrorTemplateExtension: "The template must be a valid .htm or .html file",
-                ErrorTemplateResolve: "Unable to resolve the specified template. Error details: '{0}'",
-                FiltersTemplateFieldLabel: "Edit filters template",
-                FiltersTemplatePanelHeader: "Edit filters template"
+                ErrorTemplateExtension: "Le modèle doit être un fichier .htm ou .html valide",
+                ErrorTemplateResolve: "Impossible de résoudre le modèle indiqué. Renseignements sur l’erreur '{0}'",
+                FiltersTemplateFieldLabel: "Modifier le modèle de filtres",
+                FiltersTemplatePanelHeader: "Modifier le modèle de filtres"
             }
         }
     }

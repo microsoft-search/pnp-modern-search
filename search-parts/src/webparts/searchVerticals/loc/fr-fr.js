@@ -1,21 +1,21 @@
 define([], function() {
     return {
         General: {
-            WebPartDefaultTitle: "Search Verticals Web Part"
+            WebPartDefaultTitle: "Composant Web des secteurs verticaux de recherche"
         },
         PropertyPane: {
-            SearchVerticalsGroupName: "Search verticals configuration",
+            SearchVerticalsGroupName: "Configuration des secteurs verticaux de recherche",
             Verticals: {
-                PropertyLabel: "Verticals",
-                PanelHeader: "Configure verticals",
-                PanelDescription: "Add a new vertical to allow users to search in a predefined scope or data source.",
-                ButtonLabel: "Configure verticals",
+                PropertyLabel: "Secteurs verticaux",
+                PanelHeader: "Configurer les secteurs verticaux",
+                PanelDescription: "Ajoutez un nouveau secteur vertical pour permettre aux utilisateurs de faire des recherches dans une portée ou une source de données prédéfinie.",
+                ButtonLabel: "Configurer les secteurs verticaux",
                 Fields: {
-                    TabName: "Tab name",
-                    IconName: "Fluent UI icon name",
-                    IsLink: "Is hyperlink",
-                    LinkUrl: "Link URL",
-                    OpenBehavior: "Open behavior"
+                    TabName: "Nom de l’onglet",
+                    IconName: "Nom de l’icône Office UI Fabric",
+                    IsLink: "Est un hyperlien",
+                    LinkUrl: "Lien URL",
+                    OpenBehavior: "Comportement d’ouverture"
                 }
             }
         }

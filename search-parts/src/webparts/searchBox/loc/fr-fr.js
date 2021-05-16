@@ -1,48 +1,48 @@
 define([], function() {
   return {
     General: {
-      DynamicPropertyDefinition: "Search query"
+      DynamicPropertyDefinition: "Requête de recherche"
     },
     PropertyPane: {
       SearchBoxSettingsGroup: {
-        GroupName: "Search box settings",
-        PlaceholderTextLabel: "Placeholder text to display in the search box",
-        SearchInNewPageLabel: "Send the query to a new page",
-        PageUrlLabel: "Page URL",
-        UrlErrorMessage: "Please provide a valid URL.",
-        QueryPathBehaviorLabel: "Method",
-        QueryInputTransformationLabel: "Query input transformation template",
-        UrlFragmentQueryPathBehavior: "URL fragment",
-        QueryStringQueryPathBehavior: "Query string parameter",
-        QueryStringParameterName: "Parameter name",
-        QueryParameterNotEmpty: "Please provide a value for the parameter."
+        GroupName: "Recherche des paramètres de la zone",
+        PlaceholderTextLabel: "Texte de l’espace réservé à afficher dans la zone de recherche",
+        SearchInNewPageLabel: "Envoyer la requête vers une nouvelle page",
+        PageUrlLabel: "Adresse URL de la page",
+        UrlErrorMessage: "Entrez une adresse URL valide",
+        QueryPathBehaviorLabel: "Méthode",
+            QueryInputTransformationLabel: "Modèle de transformation de la saisie de requêtes",
+            UrlFragmentQueryPathBehavior: "Fragment d’URL",
+            QueryStringQueryPathBehavior: "Paramètres de la chaîne de requête",
+            QueryStringParameterName: "Nom du paramètre",
+        QueryParameterNotEmpty: "Veuillez fournir une valeur pour le critère"
       },
       AvailableConnectionsGroup: {
-        GroupName: "Available connections",
-        UseDynamicDataSourceLabel: "Use dynamic data source as default input",
+        GroupName: "Connexions disponibles",
+        UseDynamicDataSourceLabel: "Utiliser la source de données dynamique comme entrée par défaut",
         QueryKeywordsPropertyLabel: ""
       },
       QuerySuggestionsGroup: {
-        GroupName: "Query suggestions",
-        EnableQuerySuggestions: "Enable query suggestions",
-        EditSuggestionProvidersLabel: "Configure available providers",
-        SuggestionProvidersLabel: "Suggestion providers",
-        SuggestionProvidersDescription: "Enable or disable individual suggestion providers.",
-        EnabledPropertyLabel: "Enabled",
-        ProviderNamePropertyLabel: "Name",
+        GroupName: "Suggestions de requête",
+        EnableQuerySuggestions: "Activer les suggestions de requête",
+        EditSuggestionProvidersLabel: "Configurer les fournisseurs disponibles",
+        SuggestionProvidersLabel: "Fournisseurs de suggestions",
+        SuggestionProvidersDescription: "Activez ou désactivez chaque fournisseur de suggestions",
+          EnabledPropertyLabel: "Activé",
+        ProviderNamePropertyLabel: "Nom",
         ProviderDescriptionPropertyLabel: "Description",
-        DefaultSuggestionGroupName: "Recommended",
-        NumberOfSuggestionsToShow: "Number of suggestions to show per group"
+        DefaultSuggestionGroupName: "Recommandation",
+        NumberOfSuggestionsToShow: "Nombre de suggestions à afficher par groupe"
       },
       InformationPage: {
         Extensibility: {
-          PanelHeader: "Configure extensibility libraries to load at startup for custom suggestions providers",
-          PanelDescription: "Add/Remove your custom extensibility library IDs here. You can specify a display name and decide if the library should be loaded or not at startup. Only custom suggestions providers will be loaded here.",
+          PanelHeader: "Configurer les bibliothèques d’extensibilité pour qu’elles soient téléchargées au démarrage pour les fournisseurs de suggestions personnalisées",
+          PanelDescription: "Ajoutez ou supprimez vos identifiants personnalisés de la bibliothèque d’extensibilités ici. Vous pouvez préciser un nom d’affichage et décider si la bibliothèque doit être téléchargée ou non au démarrage. Seuls les fournisseurs de suggestions personnalisées seront chargés ici.",
         }
       }
     },
     SearchBox: {
-      DefaultPlaceholder: "Enter your search terms..."
+      DefaultPlaceholder: "Entrez les critères de recherche…"
     }
   }
 });
