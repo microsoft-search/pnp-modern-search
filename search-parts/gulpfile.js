@@ -50,8 +50,6 @@ const envCheck = build.subTask('environmentCheck', (gulp, config, done) => {
     build.configureWebpack.mergeConfig({
         additionalConfiguration: (generatedConfiguration) => {
 
-            fs.writeFileSync("./temp/_webpack_config.json", JSON.stringify(generatedConfiguration, null, 2));
-
             generatedConfiguration.resolve.alias = { handlebars: 'handlebars/dist/handlebars.min.js' };
 
             generatedConfiguration.node = {
@@ -104,21 +102,10 @@ const envCheck = build.subTask('environmentCheck', (gulp, config, done) => {
 
 build.rig.addPreBuildTask(envCheck);
 
-const argv = build.rig.getYargs().argv;
-const useCustomServe = argv['custom-serve'];
-const workbenchApi = require("@microsoft/sp-webpart-workbench/lib/api");
+/* fast-serve */
+const { addFastServe } = require("spfx-fast-serve-helpers");
+addFastServe(build);
+/* end of fast-serve */
 
-if (useCustomServe) {
-    const ensureWorkbenchSubtask = build.subTask('ensure-workbench-task', function(gulp, buildOptions, done) {
-        this.log('Creating workbench.html file...');
-        try {
-            workbenchApi.default["/workbench"]();
-        } catch (e) {}
+build.initialize(require('gulp'));
 
-        done();
-    });
-
-    build.rig.addPostBuildTask(build.task('ensure-workbench', ensureWorkbenchSubtask));
-}
-
-build.initialize(gulp);
