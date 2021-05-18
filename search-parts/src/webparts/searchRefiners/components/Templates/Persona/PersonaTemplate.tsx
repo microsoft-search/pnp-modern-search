@@ -148,26 +148,24 @@ export default class PersonaTemplate extends React.Component<IPersonaTemplatePro
 
   private async getUserInfos(props: IPersonaTemplateProps) {
 
-    const accountNames = [];
-
+    const userInfos: IUserInfo[] = [];
     props.refinementResult.Values.map((refinementValue: IRefinementValue) => {
 
       // Identify the login adress using Regex
       let accountName = refinementValue.RefinementValue.match(/([ic]:0[#.5!+\-%?\\e][.+][wstmrfc]\|.+?(?=\|)\|.*)/);
       if (accountName) {
-        accountNames.push(accountName[0]);
+        let displayName: string = refinementValue.RefinementValue.split('|').length > 1 ? refinementValue.RefinementValue.split('|')[1].trim() : null;
+        userInfos.push({
+          AccountName: accountName[0],
+          Properties: {
+            DisplayName: displayName,
+          }
+        })
       }
     });
 
     this.setState({
-      isLoading: true
-    });
-
-    const userInfos = await this.props.userService.getUserInfos(accountNames);
-
-    this.setState({
       userInfos: userInfos,
-      isLoading: false
     });
   }
 
