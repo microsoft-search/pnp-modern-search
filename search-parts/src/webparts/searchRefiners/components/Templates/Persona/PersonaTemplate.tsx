@@ -149,24 +149,43 @@ export default class PersonaTemplate extends React.Component<IPersonaTemplatePro
   private async getUserInfos(props: IPersonaTemplateProps) {
 
     const accountNames = [];
+    const userInfosArray: IUserInfo[] = [];
+
+    this.setState({
+      isLoading: true
+    });
 
     props.refinementResult.Values.map((refinementValue: IRefinementValue) => {
 
       // Identify the login adress using Regex
       let accountName = refinementValue.RefinementValue.match(/([ic]:0[#.5!+\-%?\\e][.+][wstmrfc]\|.+?(?=\|)\|.*)/);
       if (accountName) {
-        accountNames.push(accountName[0]);
+        let displayName: string = refinementValue.RefinementValue.split('|').length > 1 ? refinementValue.RefinementValue.split('|')[1].trim() : null;
+        if (!displayName) {
+          // if display name not available, add to array of accounts to query
+          accountNames.push(accountName[0]);
+        }
+        userInfosArray.push({
+          AccountName: accountName[0],
+          Properties: {
+            DisplayName: displayName,
+          }
+        });
       }
     });
 
-    this.setState({
-      isLoading: true
-    });
+    if (accountNames.length > 0) {
+      // query user info for users that require it
+      const userInfos = await this.props.userService.getUserInfos(accountNames);
+      // Copy new display names to users array
+      for (let index = 0; index < userInfos.length; index++) {
+        const arrayIndex = userInfosArray.findIndex(user => user.AccountName === userInfos[index].AccountName);
+        userInfosArray[arrayIndex].Properties.DisplayName = userInfos[index].Properties.DisplayName;
+      }
+    }
 
-    const userInfos = await this.props.userService.getUserInfos(accountNames);
-
     this.setState({
-      userInfos: userInfos,
+      userInfos: userInfosArray,
       isLoading: false
     });
   }
