@@ -1324,7 +1324,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         let templateSlotFields: IPropertyPaneField<any>[] = [];
         if (this.dataSource) {
 
-            let availableOptions: IComboBoxOption[]
+            let availableOptions: IComboBoxOption[];
             if (this._dataResultsSourceData.availableFieldsFromResults.length > 0) {
                 availableOptions = this._dataResultsSourceData.availableFieldsFromResults.map(field => {
                     return {
