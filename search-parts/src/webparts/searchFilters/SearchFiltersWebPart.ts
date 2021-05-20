@@ -854,7 +854,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
         }
     }
 
-    private async loadPropertyPaneResources(): Promise<void> {
+    public async loadPropertyPaneResources(): Promise<void> {
 
         const { PropertyFieldCodeEditor, PropertyFieldCodeEditorLanguages } = await import(
             /* webpackChunkName: 'data-filter-property-pane' */
