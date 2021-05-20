@@ -9,7 +9,7 @@
     "scripts": {
         "build": "gulp bundle",
         "clean": "gulp clean",
-        "serve": "cross-env NODE_OPTIONS=--max_old_space_size=4096 gulp bundle --custom-serve && cross-env NODE_OPTIONS=--max_old_space_size=4096 webpack-dev-server --mode development --config ./fast-serve/webpack.js --env.env=dev"
+        "serve": "gulp bundle --custom-serve --max_old_space_size=4096 && fast-serve"
     },
     "dependencies": {
         "@microsoft/applicationinsights-web": "^2.5.10",
@@ -24,10 +24,10 @@
         "@microsoft/sp-page-context": "1.11.0",
         "@microsoft/sp-property-pane": "1.11.0",
         "@microsoft/sp-webpart-base": "1.11.0",
-        "@pnp/modern-search-extensibility": "1.0.1",
         "@pnp/common": "2.0.13",
-        "@pnp/spfx-controls-react": "2.6.0",
-        "@pnp/spfx-property-controls": "2.5.0",
+        "@pnp/modern-search-extensibility": "1.0.1",
+        "@pnp/spfx-controls-react": "2.3.0",
+        "@pnp/spfx-property-controls": "2.2.0",
         "@pnp/telemetry-js": "2.0.0",
         "@types/es6-promise": "0.0.33",
         "@types/react": "16.8.8",
@@ -70,26 +70,13 @@
         "@types/mocha": "2.2.38",
         "ajv": "~5.2.2",
         "colors": "1.4.0",
-        "css-loader": "3.4.2",
-        "css-modules-typescript-loader": "4.0.1",
-        "del": "5.1.0",
         "fancy-log": "1.3.3",
-        "fork-ts-checker-webpack-plugin": "4.1.0",
         "gulp": "~3.9.1",
         "html-loader": "1.1.0",
-        "node-sass": "4.13.1",
-        "node-sp-auth": "2.5.7",
-        "sass-loader": "8.0.2",
         "semver": "6.3.0",
+        "spfx-fast-serve-helpers": "~1.11.0",
         "string-replace-loader": "2.3.0",
-        "style-loader": "1.1.3",
-        "ts-loader": "6.2.1",
         "unlazy-loader": "0.1.3",
-        "webpack": "4.42.0",
-        "webpack-bundle-analyzer": "^3.3.2",
-        "webpack-cli": "3.3.11",
-        "webpack-dev-server": "3.10.3",
-        "webpack-merge": "4.2.2",
-        "cross-env": "7.0.2"
+        "webpack-bundle-analyzer": "^3.3.2"
     }
 }
