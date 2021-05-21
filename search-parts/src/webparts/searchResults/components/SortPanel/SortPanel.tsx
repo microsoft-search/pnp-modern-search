@@ -3,7 +3,7 @@ import ISortPanelProps from './ISortPanelProps';
 import ISortPanelState from './ISortPanelState';
 import { Dropdown, IDropdownOption } from 'office-ui-fabric-react/lib/Dropdown';
 import * as strings from 'SearchResultsWebPartStrings';
-import { ActionButton } from 'office-ui-fabric-react/lib/Button';
+import { ActionButton, IconButton } from 'office-ui-fabric-react/lib/Button';
 import { SortDirection } from '@pnp/sp';
 import styles from '../SearchResultsWebPart.module.scss';
 import { ISortFieldDirection } from '../../../../models/ISortFieldConfiguration';
@@ -21,6 +21,7 @@ export default class SortPanel extends React.Component<ISortPanelProps, ISortPan
         this._setSortDirection = this._setSortDirection.bind(this);
         this._getDropdownOptions = this._getDropdownOptions.bind(this);
         this._onChangedSelectedField = this._onChangedSelectedField.bind(this);
+        this._onClickedClearSort = this._onClickedClearSort.bind(this);
     }
 
     public componentDidUpdate(prevProps){
@@ -44,7 +45,7 @@ export default class SortPanel extends React.Component<ISortPanelProps, ISortPan
         if (this.props.sortableFieldsConfiguration.length === 0) return <span />;
 
         const dropdownOptions: IDropdownOption[] = this._getDropdownOptions();
-
+        const isSorted = !!this.state.sortField;
         return (
             <div className={styles.searchWp__buttonBar__button}>
                 <ActionButton
@@ -65,7 +66,9 @@ export default class SortPanel extends React.Component<ISortPanelProps, ISortPan
                     onChanged={this._onChangedSelectedField}
                     options={dropdownOptions}
                     key={this.props.queryHash}
+                    defaultSelectedKey={isSorted ? this.state.sortField : 'default-item'}
                 />
+                {isSorted  && <IconButton iconProps={{iconName: 'Cancel'}} onClick={this._onClickedClearSort} /> }
             </div>
         );
     }
@@ -99,7 +102,7 @@ export default class SortPanel extends React.Component<ISortPanelProps, ISortPan
 
         let dropdownOptions: IDropdownOption[] = [];
 
-        // add default option to avoid onFocus bug on DropDown control        
+        // add default option to avoid onFocus bug on DropDown control
         dropdownOptions.push({
             key: 'default-item',
             text: strings.Sort.SortPanelSortFieldPlaceHolder,
@@ -108,7 +111,7 @@ export default class SortPanel extends React.Component<ISortPanelProps, ISortPan
             selected: true,
             hidden: true,
         });
-        
+
         this.props.sortableFieldsConfiguration.map(e => {
             dropdownOptions.push({
                 key: e.sortField,
@@ -134,6 +137,16 @@ export default class SortPanel extends React.Component<ISortPanelProps, ISortPan
         this.setState({
             sortField: sortField,
             sortDirection: sortDirection
+        });
+        this.props.onUpdateSort(sortDirection, sortField);
+    }
+
+    private _onClickedClearSort(): void {
+        const sortField = null;
+        const sortDirection = SortDirection.Ascending;
+        this.setState({
+            sortField,
+            sortDirection
         });
         this.props.onUpdateSort(sortDirection, sortField);
     }

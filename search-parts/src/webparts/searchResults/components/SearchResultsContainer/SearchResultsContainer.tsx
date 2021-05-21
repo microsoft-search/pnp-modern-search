@@ -420,7 +420,6 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
      */
     private async _onUpdateSort(sortDirection: SortDirection, sortField?: string) {
 
-        if (sortField) {
             // Get back to the first page when new sorting has been selected
             this.setState({
                 sortField: sortField,
@@ -430,7 +429,11 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 errorMessage: null
             });
 
-            this.props.searchService.sortList = [{ Property: sortField, Direction: sortDirection }];
+            if (sortField) {
+                this.props.searchService.sortList = [{ Property: sortField, Direction: sortDirection }];
+            } else {
+                this.props.searchService.sortList = this._convertToSortList(this.props.sortList);
+            }
 
             this.props.onSearchReset(); // TODO: requery will cause two calls, but ensure paging works
 
@@ -460,11 +463,10 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
 
                 this.handleResultUpdateBroadCast(results);
             }
-        }
     }
 
     /**
-     * Remove guid value filters which are causing noise          
+     * Remove guid value filters which are causing noise
      * @param filters The raw refinement results to translate coming from SharePoint search results
      */
     private _removeGuidValues(filters: IRefinementResult[]): IRefinementResult[] {
