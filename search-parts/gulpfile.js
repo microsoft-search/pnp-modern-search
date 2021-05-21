@@ -107,5 +107,13 @@ const { addFastServe } = require("spfx-fast-serve-helpers");
 addFastServe(build);
 /* end of fast-serve */
 
-build.initialize(require('gulp'));
+var getTasks = build.rig.getTasks;
+build.rig.getTasks = function() {
+    var result = getTasks.call(build.rig);
 
+    result.set('serve', result.get('serve-deprecated'));
+
+    return result;
+};
+
+build.initialize(require('gulp'));

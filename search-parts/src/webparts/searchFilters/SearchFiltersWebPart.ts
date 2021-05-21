@@ -512,7 +512,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                                 placeholder: webPartStrings.PropertyPane.DataFilterCollection.SelectFilterComboBoxLabel,
                                 textDisplayValue: item[field.id] ? item[field.id] : '',
                                 defaultSelectedKey: item[field.id] ? item[field.id] : '',
-                                loadOptions: () => {
+                                onLoadOptions: () => {
                                     return Promise.resolve(availableFieldOptionsFromResults);
                                 },
                                 onUpdateOptions: () => { },
@@ -854,7 +854,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
         }
     }
 
-    private async loadPropertyPaneResources(): Promise<void> {
+    public async loadPropertyPaneResources(): Promise<void> {
 
         const { PropertyFieldCodeEditor, PropertyFieldCodeEditorLanguages } = await import(
             /* webpackChunkName: 'data-filter-property-pane' */
