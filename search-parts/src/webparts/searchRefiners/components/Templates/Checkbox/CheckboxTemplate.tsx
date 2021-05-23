@@ -12,6 +12,7 @@ import { TextField } from "office-ui-fabric-react";
 
 //CSS
 import styles from './CheckboxTemplate.module.scss';
+import { isEqual } from "@microsoft/sp-lodash-subset";
 
 export default class CheckboxTemplate extends React.Component<IBaseRefinerTemplateProps, IBaseRefinerTemplateState> {
 
@@ -37,7 +38,10 @@ export default class CheckboxTemplate extends React.Component<IBaseRefinerTempla
 
         let disableButtons = false;
 
-        if ((this.props.selectedValues.length === 0 && this.state.refinerSelectedFilterValues.length === 0)) {
+        if (
+          (this.props.selectedValues.length === 0 && this.state.refinerSelectedFilterValues.length === 0) ||
+          (isEqual(this.props.selectedValues, this.state.refinerSelectedFilterValues))
+        ) {
             disableButtons = true;
         }
 
