@@ -16,7 +16,7 @@ This solution supports different levels of customizations depending your require
 
 The solution uses the concept of **'extensibility libraries'**. Basically, these are [SharePoint Framework library components](https://docs.microsoft.com/en-us/sharepoint/dev/spfx/library-component-tutorial) you put in the global or site collection app catalog that will be loaded automatically by Web Parts to enhance the experience and options (ex: new data source with new options, custom layout, etc.). Simple as that!
 
-> As a demonstration of capabilities, all builtin data sources, layouts, web components or suggestions providers are built using **the same exact interfaces and methods** that are publically available in the `@pnp/modern-search-extensibility` SPFx library project.
+> As a demonstration of capabilities, all builtin data sources, layouts, web components or suggestions providers are built using **the same exact interfaces and methods** that are publicly available in the `@pnp/modern-search-extensibility` SPFx library project.
 
 > All documentation procedures for extensions are based on the demo extensibility library available in the same repository that you can use as reference.
 
@@ -58,7 +58,7 @@ From here, you can add the manifest IDs of your libraries and decide to enable o
 To create an extensibility library, you have the choice to reuse the one provided in the GitHub repository or start from scratch. In this case:
 
 1. Create a new SharePoint Framework project of type 'Library' with `yo @microsoft/sharepoint`.
-2. Link the `@pnp/modern-search-extensibility` library using the `npm link @pnp/modern-search-extensibility` cmd.
+2. Add an npm reference to `@pnp/modern-search-extensibility` library using `npm i @pnp/modern-search-extensibility` cmd.
 3. In the main entry point, implement the `IExtensibilityLibrary` interface. Provide all method implementations (return empty arrays if you don't implement specific extensions).
     !["Extensibility interface implementation"](../assets/extensibility/implement_interface.png){: .center}
 5. Implement your extension(s) depending of the type:
