@@ -13,6 +13,7 @@ export interface ISharePointSearchResult {
     Created?: string;
     UniqueID?: string;
     NormSiteID?: string;
+    NormWebID?: string;
     NormListID?: string;
     NormUniqueID?: string;
 }

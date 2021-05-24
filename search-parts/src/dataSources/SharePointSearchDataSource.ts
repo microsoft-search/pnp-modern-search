@@ -453,6 +453,10 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                 slotField: 'NormSiteID'
             },
             {
+                slotName: BuiltinTemplateSlots.WebId,
+                slotField: 'NormWebID'
+            },
+            {
                 slotName: BuiltinTemplateSlots.ListId,
                 slotField: 'NormListID'
             },
@@ -501,6 +505,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                 'Created',
                 'UniqueID',
                 'NormSiteID',
+                'NormWebID',
                 'NormListID',
                 'NormUniqueID',
                 'ContentTypeId',

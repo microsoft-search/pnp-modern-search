@@ -342,6 +342,10 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                 slotField: 'NormSiteID'
             },
             {
+                slotName: BuiltinTemplateSlots.WebId,
+                slotField: 'NormWebID'
+            },
+            {
                 slotName: BuiltinTemplateSlots.ListId,
                 slotField: 'NormListID'
             },
