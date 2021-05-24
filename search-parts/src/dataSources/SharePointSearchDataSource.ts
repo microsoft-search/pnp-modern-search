@@ -465,6 +465,10 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                 slotField: 'ContentTypeId'
             },
             {
+                slotName: BuiltinTemplateSlots.ContentClass,
+                slotField: 'contentclass'
+            },
+            {
                 slotName: BuiltinTemplateSlots.PersonQuery,
                 slotField: 'UserName'
             },
@@ -500,6 +504,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                 'NormListID',
                 'NormUniqueID',
                 'ContentTypeId',
+                'contentclass',
                 'UserName',
                 'JobTitle',
                 'WorkPhone',
