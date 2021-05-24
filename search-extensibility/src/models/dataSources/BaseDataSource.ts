@@ -57,7 +57,7 @@ export abstract class BaseDataSource<T> implements IDataSource {
     public onInit(): void | Promise<void> {
     }
 
-    public abstract async getData(dataContext?: IDataContext): Promise<IDataSourceData>;
+    public abstract getData(dataContext?: IDataContext): Promise<IDataSourceData>;
 
     public getPropertyPaneGroupsConfiguration(): IPropertyPaneGroup[] {
 
