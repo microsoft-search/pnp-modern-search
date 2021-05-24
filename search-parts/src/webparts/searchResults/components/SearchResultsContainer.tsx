@@ -306,7 +306,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                     itemId = this.getGuidFromString(itemId);
 
                     if(webId) {
-                        siteId = siteId + "," + this.getGuidFromString(webId);; // add web id if present, needed for sub-sites
+                        siteId = siteId + "," + this.getGuidFromString(webId); // add web id if present, needed for sub-sites
                     }
 
                     const itemFileType = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.FileType]);
