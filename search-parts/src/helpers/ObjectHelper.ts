@@ -44,7 +44,6 @@ export class ObjectHelper {
         if (path && object) {
 
             try {
-
                 // jsPath always returns an array. See https://www.npmjs.com/package/jspath#result
                 const value: any[] = jspath.apply(`.${path}`, object);
 
@@ -68,7 +67,7 @@ export class ObjectHelper {
             
             } catch (error) {
                 // Case when unexpected string or tokens are passed in the path
-                return null;
+                return object[path]; // fallback to see if the prop is on the object verbatim
             }
                  
         } else {
