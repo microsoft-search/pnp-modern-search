@@ -79,6 +79,7 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
 
     public constructor(props: IDocumentCardComponentProps) {
         super(props);
+        this.showPreviewOnClick = this.showPreviewOnClick.bind(this);
 
         this.state = {
             showCallout: false
@@ -92,6 +93,12 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
 
         this._domPurify.addHook('uponSanitizeElement', DomPurifyHelper.allowCustomComponentsHook);
         this._domPurify.addHook('uponSanitizeAttribute', DomPurifyHelper.allowCustomAttributesHook);
+    }
+
+    private showPreviewOnClick() {
+        this.setState({
+            showCallout: true
+        });
     }
 
     public render() {
@@ -172,14 +179,12 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
             author = parts.length === 1 ? parts[0] : parts[1];
         }
 
+        let previewFunc = this.props.enablePreview ? this.showPreviewOnClick : null;
+
         return <div>
             <DocumentCard
                 theme={this.props.themeVariant as ITheme}
-                onClick={() => {
-                    this.setState({
-                        showCallout: true
-                    });
-                }}
+                onClick={previewFunc}
                 styles={documentCardStyles}
                 type={this.props.isCompact ? DocumentCardType.compact : DocumentCardType.normal}
             >
