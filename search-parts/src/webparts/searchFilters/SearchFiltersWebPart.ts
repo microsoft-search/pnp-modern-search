@@ -107,7 +107,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
         await this.initializeBaseWebPart();
 
         // Initializes the Web Part instance services
-        this.initializeWebPartServices();
+        await this.initializeWebPartServices();
 
         if (this.displayMode === DisplayMode.Edit) {
             const { Placeholder } = await import(
@@ -801,10 +801,15 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
         return;
     }
 
-    private initializeWebPartServices(): void {
+    private timeout(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    private async initializeWebPartServices(): Promise<void> {
         this.webPartInstanceServiceScope = this.context.serviceScope.startNewChild();
-        this.templateService = this.webPartInstanceServiceScope.createAndProvide(TemplateService.ServiceKey, TemplateService);
-        this.dynamicDataService = this.webPartInstanceServiceScope.createAndProvide(DynamicDataService.ServiceKey, DynamicDataService);
+        await this.timeout(100); // hack to avoid race condition to ensure result WP instantiates the first TemplateService
+        this.templateService = this.webPartInstanceServiceScope.createDefaultAndProvide(TemplateService.ServiceKey);
+        this.dynamicDataService = this.webPartInstanceServiceScope.createDefaultAndProvide(DynamicDataService.ServiceKey);
         this.dynamicDataService.dynamicDataProvider = this.context.dynamicDataProvider;
         this.webPartInstanceServiceScope.finish();
     }

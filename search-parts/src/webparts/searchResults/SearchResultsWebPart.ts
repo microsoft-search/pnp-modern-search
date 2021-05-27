@@ -1739,8 +1739,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         // Register specific Web Part service instances
         this.webPartInstanceServiceScope = this.context.serviceScope.startNewChild();
-        this.templateService = this.webPartInstanceServiceScope.createAndProvide(TemplateService.ServiceKey, TemplateService);
-        this.dynamicDataService = this.webPartInstanceServiceScope.createAndProvide(DynamicDataService.ServiceKey, DynamicDataService);
+        this.templateService = this.webPartInstanceServiceScope.createDefaultAndProvide(TemplateService.ServiceKey);
+        this.dynamicDataService = this.webPartInstanceServiceScope.createDefaultAndProvide(DynamicDataService.ServiceKey);
         this.dynamicDataService.dynamicDataProvider = this.context.dynamicDataProvider;
         this.webPartInstanceServiceScope.finish();
     }
