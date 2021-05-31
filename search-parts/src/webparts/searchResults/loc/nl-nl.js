@@ -2,14 +2,14 @@ define([], function() {
   return {
     General: {
       PlaceHolder: {
-        EditLabel: "Bewerkt",
+        EditLabel: "Bewerk",
         IconText: "Zoekresultaten webonderdeel door @PnP",
         Description: "Toont zoekresultaten uit SharePoint of Microsoft search.",
         ConfigureBtnLabel: "Configureer"
       },
       WebPartDefaultTitle: "Zoekresultaten webonderdeel",
       ShowBlankEditInfoMessage: "Geen resultaten gevonden voor deze zoekopdracht. Dit webonderdeel blijft leeg in weergave modus conform parameters.",
-      CurrentVerticalNotSelectedMessage: "De nu selecteerde vertikaal komt niet overeen met degene die geassocieerd is met dit webonderdeel. Dit webonderdeel blijft leeg in weergave modus."
+      CurrentVerticalNotSelectedMessage: "De nu selecteerde zoekverticaal komt niet overeen met degene die geassocieerd is met dit webonderdeel. Dit webonderdeel blijft leeg in weergave modus."
     },
     PropertyPane: {
       DataSourcePage: {
@@ -75,10 +75,10 @@ define([], function() {
         ConnectionsPageGroupName: "Beschikbare verbindingen",
         UseFiltersWebPartLabel: "Verbind met een filter webonderdeel",
         UseFiltersFromComponentLabel: "Gebruik filters van dit onderdeel",
-        UseSearchVerticalsWebPartLabel: "Connect to a verticals Web Part",
-        UseSearchVerticalsFromComponentLabel: "Gebruik vertikalen van dit onderdeel",
-        LinkToVerticalLabel: "Toon data alleen wanneer de volgende vertikaal geselecteerd is",
-        LinkToVerticalLabelHoverMessage: "De resultaten worden enkel getoond wanneer de geselecteerde vertikaal overeenkomt met degene die geconfigureerd is voor dit webonderdeel. Wanneer dit niet het geval is blijft dit webonderdeel leeg in weergave modus (zonder marge en zonder padding)",
+        UseSearchVerticalsWebPartLabel: "Verbind met een zoekverticalen webonderdeel",
+        UseSearchVerticalsFromComponentLabel: "Gebruik zoekverticalen van dit onderdeel",
+        LinkToVerticalLabel: "Toon data alleen wanneer de volgende zoekverticaal geselecteerd is",
+        LinkToVerticalLabelHoverMessage: "De resultaten worden enkel getoond wanneer de geselecteerde zoekverticaal overeenkomt met degene die geconfigureerd is voor dit webonderdeel. Wanneer dit niet het geval is blijft dit webonderdeel leeg in weergave modus (zonder marge en zonder padding)",
         UseInputQueryText: "Gebruik ingegeven zoekopdracht",
         UseInputQueryTextHoverMessage: "Gebruik het {searchQueryText} token in je databron om de waarde op te halen",
         SearchQueryTextFieldLabel: "Zoekopdracht",

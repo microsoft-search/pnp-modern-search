@@ -16,7 +16,7 @@ define([], function() {
                 UseDataResultsFromComponentsLabel: "Gebruik data van deze webonderdelen",
                 UseDataResultsFromComponentsDescription: "Wanneer je verbindt met meer dan één webonderdeel worden aantallen en waardes voor gelijknamige filters samengevoegd.",
             },
-            FiltersSettingsPage: {
+            FiltersSettingsPage: { 
                 SettingsGroupName: "Filter instellingen",
                 FilterOperator: "Bewerking om tussen filters te gebruiken"
             },
