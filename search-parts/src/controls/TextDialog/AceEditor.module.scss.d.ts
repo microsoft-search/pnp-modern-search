@@ -4,5 +4,5 @@ interface CssExports {
   'ace_autocomplete': string;
   'ace_editor': string;
 }
-export const cssExports: CssExports;
+const cssExports: CssExports;
 export default cssExports;

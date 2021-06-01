@@ -3,5 +3,5 @@
 interface CssExports {
   'textDialog': string;
 }
-export const cssExports: CssExports;
+const cssExports: CssExports;
 export default cssExports;

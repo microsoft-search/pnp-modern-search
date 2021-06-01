@@ -6,7 +6,14 @@
         "version": "3.19.2.0",
         "includeClientSideAssets": true,
         "skipFeatureDeployment": true,
-        "isDomainIsolated": false
+        "isDomainIsolated": false,
+        "developer": {
+            "mpnId": "",
+            "name": "PnP Team",
+            "termsOfUseUrl": "https://github.com/microsoft-search/pnp-modern-search/blob/main/LICENSE",
+            "privacyUrl": "",
+            "websiteUrl": ""
+        }
     },
     "paths": {
         "zippedPackage": "solution/pnp-modern-search-parts.sppkg"

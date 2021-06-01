@@ -23,8 +23,6 @@ const envCheck = build.subTask('environmentCheck', (gulp, config, done) => {
     build.configureWebpack.mergeConfig({
         additionalConfiguration: (generatedConfiguration) => {
 
-            fs.writeFileSync("./temp/_webpack_config.json", JSON.stringify(generatedConfiguration, null, 2));
-
             if (threading && generatedConfiguration.optimization) {
                 log(`[${colors.cyan('configure-webpack')}] Enabled minimizer threading...`)
                 generatedConfiguration.optimization.minimizer[0].options.parallel = true;
@@ -107,21 +105,18 @@ const envCheck = build.subTask('environmentCheck', (gulp, config, done) => {
 });
 build.rig.addPreBuildTask(envCheck);
 
-const argv = build.rig.getYargs().argv;
-const useCustomServe = argv['custom-serve'];
-const workbenchApi = require("@microsoft/sp-webpart-workbench/lib/api");
+var getTasks = build.rig.getTasks;
+build.rig.getTasks = function() {
+    var result = getTasks.call(build.rig);
 
-if (useCustomServe) {
-    const ensureWorkbenchSubtask = build.subTask('ensure-workbench-task', function(gulp, buildOptions, done) {
-        this.log('Creating workbench.html file...');
-        try {
-            workbenchApi.default["/workbench"]();
-        } catch (e) {}
+    result.set('serve', result.get('serve-deprecated'));
 
-        done();
-    });
+    return result;
+};
 
-    build.rig.addPostBundleTask(build.task('ensure-workbench', ensureWorkbenchSubtask));
-}
+/* fast-serve */
+const { addFastServe } = require("spfx-fast-serve-helpers");
+addFastServe(build);
+/* end of fast-serve */
 
 build.initialize(require('gulp'));

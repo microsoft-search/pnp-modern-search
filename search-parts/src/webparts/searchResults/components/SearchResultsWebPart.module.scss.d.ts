@@ -11,5 +11,5 @@ interface CssExports {
   'searchWp__sortPanel__body': string;
   'searchWp__sortResultBtn': string;
 }
-export const cssExports: CssExports;
+const cssExports: CssExports;
 export default cssExports;

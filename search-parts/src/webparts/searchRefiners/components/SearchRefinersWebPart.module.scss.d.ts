@@ -4,5 +4,5 @@ interface CssExports {
   'searchRefiners': string;
   'searchRefiners__noFilter': string;
 }
-export const cssExports: CssExports;
+const cssExports: CssExports;
 export default cssExports;

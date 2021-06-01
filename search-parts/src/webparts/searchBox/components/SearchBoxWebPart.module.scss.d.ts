@@ -18,5 +18,5 @@ interface CssExports {
   'suggestionItem': string;
   'suggestionPanel': string;
 }
-export const cssExports: CssExports;
+const cssExports: CssExports;
 export default cssExports;

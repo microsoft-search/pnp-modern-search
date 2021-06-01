@@ -4,5 +4,5 @@ interface CssExports {
   'isLink': string;
   'searchVerticals': string;
 }
-export const cssExports: CssExports;
+const cssExports: CssExports;
 export default cssExports;
