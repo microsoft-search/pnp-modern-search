@@ -414,16 +414,6 @@ abstract class BaseTemplateService {
             return result;
         });
 
-        // Repeat the block N times
-        // https://stackoverflow.com/questions/11924452/iterating-over-basic-for-loop-using-handlebars-js
-        // <p>{{#times 10}}</p>
-        Handlebars.registerHelper('times', (n, block) => {
-            var accum = '';
-            for (var i = 0; i < n; ++i)
-                accum += block.fn(i);
-            return accum;
-        });
-
         Handlebars.registerPartial("resultTypes-default", "{{> @partial-block }}");
 
         const self = this;
@@ -612,6 +602,7 @@ abstract class BaseTemplateService {
             "snakecase",
             "split",
             "startsWith",
+            "times",
             "titleize",
             "trim",
             "uppercase",
