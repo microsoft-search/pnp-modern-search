@@ -93,6 +93,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     private _propertyFieldNumber: any = null;
     private _customCollectionFieldType: any = null;
     private _textDialogComponent: any = null;
+    private _propertyPanePropertyEditor = null;
 
     /**
      * The selected data source for the WebPart
@@ -663,7 +664,14 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 displayGroupsAsAccordion: true,
                 groups: [
                     ...this.getPropertyPaneWebPartInfoGroups(),
-                    ...extensibilityConfigurationGroups
+                    ...extensibilityConfigurationGroups,
+                    {
+                        groupName: webPartStrings.PropertyPane.ImportExport,
+                        groupFields: [this._propertyPanePropertyEditor({
+                            webpart: this,
+                            key: 'propertyEditor'
+                        })]
+                    }
                 ]
             }
         );
@@ -893,6 +901,12 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             /* webpackChunkName: 'pnp-modern-search-property-pane' */
             '@pnp/spfx-property-controls/lib/PropertyFieldDropdownWithCallout'
         );
+
+        const { PropertyPanePropertyEditor } = await import(
+            /* webpackChunkName: 'pnp-modern-search-property-pane' */
+            '@pnp/spfx-property-controls/lib/PropertyPanePropertyEditor'
+        );
+        this._propertyPanePropertyEditor = PropertyPanePropertyEditor;
 
         this._propertyFieldToogleWithCallout = PropertyFieldToggleWithCallout;
         this._propertyFieldCalloutTriggers = CalloutTriggers;
