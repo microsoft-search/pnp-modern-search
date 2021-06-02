@@ -710,7 +710,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
                 case BuiltinSuggestionProviderKeys.SharePointStaticSuggestions:
 
                     const { SharePointSuggestionProvider } = await import(
-                        /* webpackChunkName: 'sharepoint-static-suggestions' */
+                        /* webpackChunkName: 'pnp-modern-search-sharepoint-static-suggestions' */
                         '../../providers/SharePointSuggestionProvider'
                     );
 

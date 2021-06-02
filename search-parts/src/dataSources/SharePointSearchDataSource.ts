@@ -160,12 +160,12 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
 
         // Use the same chunk name as the main Web Part to avoid recreating/loading a new one
         const { PropertyFieldCollectionData, CustomCollectionFieldType } = await import(
-            /* webpackChunkName: 'data-visualizer-property-pane' */
+            /* webpackChunkName: 'pnp-modern-search-property-pane' */
             '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData'
         );
 
         const { PropertyPaneWebPartInformation } = await import(
-            /* webpackChunkName: 'data-visualizer-property-pane' */
+            /* webpackChunkName: 'pnp-modern-search-property-pane' */
             '@pnp/spfx-property-controls/lib/PropertyPaneWebPartInformation'
         );
 

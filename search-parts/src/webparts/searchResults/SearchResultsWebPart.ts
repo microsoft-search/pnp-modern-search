@@ -1591,7 +1591,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 case BuiltinDataSourceProviderKeys.SharePointSearch:
 
                     const { SharePointSearchDataSource } = await import(
-                        /* webpackChunkName: 'sharepoint-search-datasource' */
+                        /* webpackChunkName: 'pnp-modern-search-sharepoint-search-datasource' */
                         '../../dataSources/SharePointSearchDataSource'
                     );
 
@@ -1602,7 +1602,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 case BuiltinDataSourceProviderKeys.MicrosoftSearch:
 
                     const { MicrosoftSearchDataSource } = await import(
-                        /* webpackChunkName: 'microsoft-search-datasource' */
+                        /* webpackChunkName: 'pnp-modern-search-microsoft-search-datasource' */
                         '../../dataSources/MicrosoftSearchDataSource'
                     );
 
