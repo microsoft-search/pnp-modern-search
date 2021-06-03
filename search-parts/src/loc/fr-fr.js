@@ -1,4 +1,4 @@
-:)define([], function() {
+define([], function() {
     return {
         Tokens: {
             SelectTokenLabel: "Sélectionnez un jeton...",
@@ -106,53 +106,54 @@
                 EnableQueryRulesLabel: "Activer les règles de requête",
                 IncludeOneDriveResultsLabel: "Inclure les résultats de OneDrive Entreprise",
                 RefinementFilters: "Filtres de recherche avancée",
-                RefinementFiltersDescription: "Filtres initiaux de recherche avancée à appliquer à la requête Ils ne figureront pas dans les filtres sélectionnés. Pour les expressions de chaîne, utilisez des guillemets doubles (") plutôt qu’un seul guillemet (‘).",
-                EnableLocalizationLabel: "Activer la localisation",
-                EnableLocalizationOnLabel: "Activé",
-                EnableLocalizationOffLabel: "Désactivé",
-                QueryCultureLabel: "Langue de la requête de recherche",
-                QueryCultureUseUiLanguageLabel: "Utilisez la langue de l’interface",
-                SelectedPropertiesFieldLabel: "Propriétés sélectionnées",
-                SelectedPropertiesFieldDescription: "Indique les propriétés à extraire des résultats de recherche",
-                SelectedPropertiesPlaceholderLabel: "Propriétés de sélection",
-                TermNotFound: "(Le critère contenant l’identifiant « {0} » est introuvable)",
-                ApplyQueryTemplateBtnText: "Appliquer",
-                EnableAudienceTargetingTglLabel: "Permet de cibler l’auditoire"
-            },
-            MicrosoftSearch: {
-                QueryTextFieldLabel: "Texte de la requête",
-                QueryTextFieldInfoMessage: "Utilisez l’onglet de configuration de composant Web <strong>Connexions disponibles</strong> pour indiquer une valeur statique ou une valeur de composant dynamique sur la page, comme une boîte de recherche",
-                SourceName: "Recherche dans Microsoft",
-                SourceConfigurationGroupName: "Recherche dans Microsoft",
-                EntityTypesField: "Types d’entités à rechercher",
-                SelectedFieldsPropertiesFieldLabel: "Champs sélectionnés",
-                SelectedFieldsPropertiesFieldDescription: "Indique les champs à extraire des résultats de recherche",
-                SelectedFieldsPlaceholderLabel: "Sélectionner les champs",
-                EnableTopResultsLabel: "Obtenir les meilleurs résultats",
-                ContentSourcesFieldLabel: "Sources du contenu",
-                ContentSourcesFieldDescriptionLabel: "Identifiants de connexion définis dans le portail d’administration des connecteurs de recherche Microsoft.",
-                ContentSourcesFieldPlaceholderLabel: "Exemple : « MyCustomConnectorID » "
-            },
-            SearchCommon: {
-                Sort: {
-                    SortPropertyPaneFieldLabel: "Ordre de tri",
-                    SortListDescription: "Précisez l’ordre de tri initial pour les résultats de recherche. Vous pouvez sélectionner un champ dans la liste déroulante (seulement si les données sources des données ont déjà été récupérées) ou entrer votre propre valeur personnalisée (appuyer sur Entrée pour enregistrer)",
-                    SortDirectionAscendingLabel: "Croissant",
-                    SortDirectionDescendingLabel: "Décroissant",
-                    SortErrorMessage: "Propriété de recherche non valide (vérifier si la propriété gérée est triable).",
-                    SortPanelSortFieldLabel: "Trier par champ",
-                    SortPanelSortFieldAria: "Trier par",
-                    SortPanelSortFieldPlaceHolder: "Trier par",
-                    SortPanelSortDirectionLabel: "Sens de tri",
-                    SortDirectionColumnLabel: "Sens",
-                    SortFieldColumnLabel: "Nom du champ",
-                    EditSortLabel: "Modifier l’ordre de tri",
-                    SortInvalidSortableFieldMessage: "Cette propriété n’est pas triable",
-                    SortFieldColumnPlaceholder: "Sélectionner le champ..."
-                }
-            }
+                RefinementFiltersDescription: "Filtres initiaux de recherche avancée à appliquer à la requête Ils ne figureront pas dans les filtres sélectionnés. Pour les expressions de chaîne, utilisez des guillemets doubles (") plutôt qu’ un seul guillemet(‘).
+            ",
+            EnableLocalizationLabel: "Activer la localisation",
+            EnableLocalizationOnLabel: "Activé",
+            EnableLocalizationOffLabel: "Désactivé",
+            QueryCultureLabel: "Langue de la requête de recherche",
+            QueryCultureUseUiLanguageLabel: "Utilisez la langue de l’interface",
+            SelectedPropertiesFieldLabel: "Propriétés sélectionnées",
+            SelectedPropertiesFieldDescription: "Indique les propriétés à extraire des résultats de recherche",
+            SelectedPropertiesPlaceholderLabel: "Propriétés de sélection",
+            TermNotFound: "(Le critère contenant l’identifiant « {0} » est introuvable)",
+            ApplyQueryTemplateBtnText: "Appliquer",
+            EnableAudienceTargetingTglLabel: "Permet de cibler l’auditoire"
         },
-        Controls: {
+        MicrosoftSearch: {
+            QueryTextFieldLabel: "Texte de la requête",
+            QueryTextFieldInfoMessage: "Utilisez l’onglet de configuration de composant Web <strong>Connexions disponibles</strong> pour indiquer une valeur statique ou une valeur de composant dynamique sur la page, comme une boîte de recherche",
+            SourceName: "Recherche dans Microsoft",
+            SourceConfigurationGroupName: "Recherche dans Microsoft",
+            EntityTypesField: "Types d’entités à rechercher",
+            SelectedFieldsPropertiesFieldLabel: "Champs sélectionnés",
+            SelectedFieldsPropertiesFieldDescription: "Indique les champs à extraire des résultats de recherche",
+            SelectedFieldsPlaceholderLabel: "Sélectionner les champs",
+            EnableTopResultsLabel: "Obtenir les meilleurs résultats",
+            ContentSourcesFieldLabel: "Sources du contenu",
+            ContentSourcesFieldDescriptionLabel: "Identifiants de connexion définis dans le portail d’administration des connecteurs de recherche Microsoft.",
+            ContentSourcesFieldPlaceholderLabel: "Exemple : « MyCustomConnectorID » "
+        },
+        SearchCommon: {
+            Sort: {
+                SortPropertyPaneFieldLabel: "Ordre de tri",
+                SortListDescription: "Précisez l’ordre de tri initial pour les résultats de recherche. Vous pouvez sélectionner un champ dans la liste déroulante (seulement si les données sources des données ont déjà été récupérées) ou entrer votre propre valeur personnalisée (appuyer sur Entrée pour enregistrer)",
+                SortDirectionAscendingLabel: "Croissant",
+                SortDirectionDescendingLabel: "Décroissant",
+                SortErrorMessage: "Propriété de recherche non valide (vérifier si la propriété gérée est triable).",
+                SortPanelSortFieldLabel: "Trier par champ",
+                SortPanelSortFieldAria: "Trier par",
+                SortPanelSortFieldPlaceHolder: "Trier par",
+                SortPanelSortDirectionLabel: "Sens de tri",
+                SortDirectionColumnLabel: "Sens",
+                SortFieldColumnLabel: "Nom du champ",
+                EditSortLabel: "Modifier l’ordre de tri",
+                SortInvalidSortableFieldMessage: "Cette propriété n’est pas triable",
+                SortFieldColumnPlaceholder: "Sélectionner le champ..."
+            }
+        }
+    },
+    Controls: {
             TextDialogButtonText: "Ajouter les expressions entre accolades",
             TextDialogTitle: "Modifier les expressions entre accolades",
             TextDialogCancelButtonText: "Annuler",
@@ -322,5 +323,5 @@
                 ProviderDescription: "Récupération des suggestions de recherche définies par l’utilisateur dans SharePoint"
             }
         }
-    }
+}
 })
