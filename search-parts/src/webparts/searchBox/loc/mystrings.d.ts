@@ -38,7 +38,8 @@ declare interface ISearchBoxWebPartStrings {
         PanelHeader: string;
         PanelDescription: string;
       }
-    }
+    },
+    ImportExport: string;
   },
   SearchBox:{
     DefaultPlaceholder: string;

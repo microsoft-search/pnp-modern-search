@@ -52,6 +52,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
      * Dynamically loaded components for property pane
      */
     private _propertyFieldCollectionData: any = null;
+    private _propertyPanePropertyEditor = null;
     private _customCollectionFieldType: any = null;
 
     /**
@@ -258,7 +259,14 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
                 displayGroupsAsAccordion: true,
                 groups: [
                     ...this.getPropertyPaneWebPartInfoGroups(),
-                    ...extensibilityConfigurationGroups
+                    ...extensibilityConfigurationGroups,
+                    {
+                        groupName: webPartStrings.PropertyPane.ImportExport,
+                        groupFields: [this._propertyPanePropertyEditor({
+                            webpart: this,
+                            key: 'propertyEditor'
+                        })]
+                    }
                 ]
             }
         );
@@ -271,11 +279,17 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
     protected async loadPropertyPaneResources(): Promise<void> {
 
         const { PropertyFieldCollectionData, CustomCollectionFieldType } = await import(
-            /* webpackChunkName: 'searchbox-property-pane' */
+            /* webpackChunkName: 'pnp-modern-search-property-pane' */
             '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData'
         );
         this._propertyFieldCollectionData = PropertyFieldCollectionData;
         this._customCollectionFieldType = CustomCollectionFieldType;
+
+        const { PropertyPanePropertyEditor } = await import(
+            /* webpackChunkName: 'pnp-modern-search-property-pane' */
+            '@pnp/spfx-property-controls/lib/PropertyPanePropertyEditor'
+        );
+        this._propertyPanePropertyEditor = PropertyPanePropertyEditor;
     }
 
     protected get propertiesMetadata(): IWebPartPropertiesMetadata {
@@ -696,7 +710,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
                 case BuiltinSuggestionProviderKeys.SharePointStaticSuggestions:
 
                     const { SharePointSuggestionProvider } = await import(
-                        /* webpackChunkName: 'sharepoint-static-suggestions' */
+                        /* webpackChunkName: 'pnp-modern-search-sharepoint-static-suggestions' */
                         '../../providers/SharePointSuggestionProvider'
                     );
 

@@ -53,17 +53,17 @@ export class PeopleLayout extends BaseLayout<IPeopleLayoutProperties> {
         }
 
         const { PropertyFieldCollectionData, CustomCollectionFieldType  } = await import(
-            /* webpackChunkName: 'pnp-modern-search-property-pane' */
+            /* webpackChunkName: 'pnp-modern-search-results-people-layout' */
             '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData'
         );
 
         const { PropertyFieldToggleWithCallout } = await import(
-            /* webpackChunkName: 'pnp-modern-search-property-pane' */
+            /* webpackChunkName: 'pnp-modern-search-results-people-layout' */
             '@pnp/spfx-property-controls/lib/PropertyFieldToggleWithCallout'
         );
 
         const { CalloutTriggers } = await import(
-            /* webpackChunkName: 'pnp-modern-search-property-pane' */
+            /* webpackChunkName: 'pnp-modern-search-results-people-layout' */
             '@pnp/spfx-property-controls/lib/common/callout/Callout'
         );
 

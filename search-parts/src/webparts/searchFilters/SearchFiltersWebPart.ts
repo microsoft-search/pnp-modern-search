@@ -53,6 +53,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     private _propertyFieldCodeEditor: any = null;
     private _propertyFieldCodeEditorLanguages: any = null;
     private _customCollectionFieldType: any = null;
+    private _propertyPanePropertyEditor = null;
 
     /**
      * Properties to avoid to recreate instances every render
@@ -294,7 +295,14 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
             {
                 displayGroupsAsAccordion: true,
                 groups: [
-                    ...this.getPropertyPaneWebPartInfoGroups()
+                    ...this.getPropertyPaneWebPartInfoGroups(),
+                    {
+                        groupName: webPartStrings.PropertyPane.ImportExport,
+                        groupFields: [this._propertyPanePropertyEditor({
+                            webpart: this,
+                            key: 'propertyEditor'
+                        })]
+                    }
                 ]
             }
         );
@@ -862,7 +870,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     public async loadPropertyPaneResources(): Promise<void> {
 
         const { PropertyFieldCodeEditor, PropertyFieldCodeEditorLanguages } = await import(
-            /* webpackChunkName: 'data-filter-property-pane' */
+            /* webpackChunkName: 'pnp-modern-search-property-pane' */
             '@pnp/spfx-property-controls/lib/propertyFields/codeEditor'
         );
 
@@ -870,11 +878,17 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
         this._propertyFieldCodeEditorLanguages = PropertyFieldCodeEditorLanguages;
 
         const { PropertyFieldCollectionData, CustomCollectionFieldType } = await import(
-            /* webpackChunkName: 'data-filter-property-pane' */
+            /* webpackChunkName: 'pnp-modern-search-property-pane' */
             '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData'
         );
         this._propertyFieldCollectionData = PropertyFieldCollectionData;
         this._customCollectionFieldType = CustomCollectionFieldType;
+
+        const { PropertyPanePropertyEditor } = await import(
+            /* webpackChunkName: 'pnp-modern-search-property-pane' */
+            '@pnp/spfx-property-controls/lib/PropertyPanePropertyEditor'
+        );
+        this._propertyPanePropertyEditor = PropertyPanePropertyEditor;
 
         this.propertyPaneConnectionsFields = await this.getConnectionOptions();
     }
