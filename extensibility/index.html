@@ -32,7 +32,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.1, mkdocs-material-4.6.3">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-4.6.3">
     
     
       
@@ -950,7 +950,7 @@
 <h2 id="advanced-customizations">Advanced customizations<a class="headerlink" href="#advanced-customizations" title="Permanent link">&para;</a></h2>
 <p>The solution uses the concept of <strong>'extensibility libraries'</strong>. Basically, these are <a href="https://docs.microsoft.com/en-us/sharepoint/dev/spfx/library-component-tutorial">SharePoint Framework library components</a> you put in the global or site collection app catalog that will be loaded automatically by Web Parts to enhance the experience and options (ex: new data source with new options, custom layout, etc.). Simple as that!</p>
 <blockquote>
-<p>As a demonstration of capabilities, all builtin data sources, layouts, web components or suggestions providers are built using <strong>the same exact interfaces and methods</strong> that are publically available in the <code>@pnp/modern-search-extensibility</code> SPFx library project.</p>
+<p>As a demonstration of capabilities, all builtin data sources, layouts, web components or suggestions providers are built using <strong>the same exact interfaces and methods</strong> that are publicly available in the <code>@pnp/modern-search-extensibility</code> SPFx library project.</p>
 <p>All documentation procedures for extensions are based on the demo extensibility library available in the same repository that you can use as reference.</p>
 </blockquote>
 <h3 id="prerequistes">Prerequistes<a class="headerlink" href="#prerequistes" title="Permanent link">&para;</a></h3>
@@ -1001,7 +1001,7 @@
 <p>To create an extensibility library, you have the choice to reuse the one provided in the GitHub repository or start from scratch. In this case:</p>
 <ol>
 <li>Create a new SharePoint Framework project of type 'Library' with <code>yo @microsoft/sharepoint</code>.</li>
-<li>Link the <code>@pnp/modern-search-extensibility</code> library using the <code>npm link @pnp/modern-search-extensibility</code> cmd.</li>
+<li>Add an npm reference to <code>@pnp/modern-search-extensibility</code> library using <code>npm i @pnp/modern-search-extensibility</code> cmd.</li>
 <li>In the main entry point, implement the <code>IExtensibilityLibrary</code> interface. Provide all method implementations (return empty arrays if you don't implement specific extensions).
     <img alt="&quot;Extensibility interface implementation&quot;" class="center" src="../assets/extensibility/implement_interface.png" /></li>
 <li>
@@ -1106,7 +1106,7 @@
     
       <script src="../assets/javascripts/application.c33a9706.js"></script>
       
-      <script>app.initialize({version:"1.1",url:{base:".."}})</script>
+      <script>app.initialize({version:"1.1.2",url:{base:".."}})</script>
       
     
   </body>

@@ -32,7 +32,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.1, mkdocs-material-4.6.3">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-4.6.3">
     
     
       
@@ -817,7 +817,7 @@
 </tr>
 <tr>
 <td><strong>Show persona card on hover</strong></td>
-<td>If enabled, show a person card on hover for the current item. <p align="center"><a href="../../../../assets/webparts/search-results/layouts/persona_card_hover.png"><img alt="&quot;Persona card hover&quot;" src="../../../../assets/webparts/search-results/layouts/persona_card_hover.png" /></a></p> This feature uses Microsoft Graph and <a href="https://docs.microsoft.com/en-us/graph/toolkit/components/person">Microsoft Graph Toolkit</a> to display information about the user and needs the following API permissions in your tenant to work: <ul><li>User.Read</li><li>People.Read</li><li>Contacts.Read</li><li>User.ReadBasic.All</li></ul><strong>If these permissions are not set, the card won't appear</strong>. You can use <a href="https://pnp.github.io/office365-cli/cmd/spo/serviceprincipal/serviceprincipal-grant-add/">PnP Office 365 CLI</a> to add correct permissions for this feature:</br></br><code>o365$ spo serviceprincipal grant add --resource '&lt;aad_app_display_name&gt;' --scope 'user_impersonation'</code>. Refer to the section below about <a href="#persona-hover-card">persona hover card customization</a>.</td>
+<td>If enabled, show a person card on hover for the current item. <p align="center"><a href="../../../../assets/webparts/search-results/layouts/persona_card_hover.png"><img alt="&quot;Persona card hover&quot;" src="../../../../assets/webparts/search-results/layouts/persona_card_hover.png" /></a></p> This feature uses Microsoft Graph and <a href="https://docs.microsoft.com/en-us/graph/toolkit/components/person">Microsoft Graph Toolkit</a> to display information about the user and needs the following API permissions in your tenant to work: <ul><li>User.Read</li><li>People.Read</li><li>Contacts.Read</li><li>User.ReadBasic.All</li></ul><strong>If these permissions are not set, the card won't appear</strong>. You can use <a href="https://pnp.github.io/office365-cli/cmd/spo/serviceprincipal/serviceprincipal-grant-add/">PnP Office 365 CLI</a> to add correct permissions for this feature:</br></br><code>$m365 spo serviceprincipal grant add --resource '&lt;aad_app_display_name&gt;' --scope 'user_impersonation'</code>. Refer to the section below about <a href="#persona-hover-card">persona hover card customization</a>.</td>
 <td></td>
 </tr>
 <tr>
@@ -891,7 +891,7 @@
     
       <script src="../../../../assets/javascripts/application.c33a9706.js"></script>
       
-      <script>app.initialize({version:"1.1",url:{base:"../../../.."}})</script>
+      <script>app.initialize({version:"1.1.2",url:{base:"../../../.."}})</script>
       
     
   </body>

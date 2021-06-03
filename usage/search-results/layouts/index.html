@@ -32,7 +32,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.1, mkdocs-material-4.6.3">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-4.6.3">
     
     
       
@@ -1094,7 +1094,7 @@
 </tr>
 <tr>
 <td><strong>Compact mode</strong></td>
-<td>Display the details list in compact mode</td>
+<td>Display the details list in compact mode.</td>
 <td></td>
 </tr>
 </tbody>
@@ -1149,7 +1149,7 @@
 <tr>
 <td><strong>Slide width (in px)</strong></td>
 <td>Dynamically set the slides width to adjust your results.</td>
-<td>318px</td>
+<td>318px.</td>
 </tr>
 </tbody>
 </table>
@@ -1173,7 +1173,7 @@
 <tr>
 <td><strong>Show thumbnail</strong></td>
 <td>If enabled, display a thumbnail for the itme + a callout with an interactive preview of the document on click based on the value specified value for the <code>PreviewUrl</code> current data source <a href="../slots/">slot</a>.</br> <p align="center"><a href="../../../assets/webparts/search-results/layouts/simple_list_thumbnail.png"><img alt="&quot;Card Preview&quot;" src="../../../assets/webparts/search-results/layouts/simple_list_thumbnail.png" /></a></p></td>
-<td>False</td>
+<td>False.</td>
 </tr>
 </tbody>
 </table>
@@ -1197,7 +1197,7 @@
 </tr>
 <tr>
 <td><strong>Show persona card on hover</strong></td>
-<td>If enabled, show a person card on hover for the current item. <p align="center"><a href="../../../assets/webparts/search-results/layouts/persona_card_hover.png"><img alt="&quot;Persona card hover&quot;" src="../../../assets/webparts/search-results/layouts/persona_card_hover.png" /></a></p> This feature uses Microsoft Graph and <a href="https://docs.microsoft.com/en-us/graph/toolkit/components/person">Microsoft Graph Toolkit</a> to display information about the user and needs the following API permissions in your tenant to work: <ul><li>User.Read</li><li>People.Read</li><li>Contacts.Read</li><li>User.ReadBasic.All</li></ul><strong>If these permissions are not set, the card won't appear</strong>. You can use <a href="https://pnp.github.io/office365-cli/cmd/spo/serviceprincipal/serviceprincipal-grant-add/">PnP Office 365 CLI</a> to add correct permissions for this feature:</br></br><code>o365$ spo serviceprincipal grant add --resource '&lt;aad_app_display_name&gt;' --scope 'user_impersonation'</code>. Refer to the section below about <a href="#persona-hover-card">persona hover card customization</a>.</td>
+<td>If enabled, show a person card on hover for the current item. <p align="center"><a href="../../../assets/webparts/search-results/layouts/persona_card_hover.png"><img alt="&quot;Persona card hover&quot;" src="../../../assets/webparts/search-results/layouts/persona_card_hover.png" /></a></p> This feature uses Microsoft Graph and <a href="https://docs.microsoft.com/en-us/graph/toolkit/components/person">Microsoft Graph Toolkit</a> to display information about the user and needs the following API permissions in your tenant to work: <ul><li>User.Read</li><li>People.Read</li><li>Contacts.Read</li><li>User.ReadBasic.All</li></ul><strong>If these permissions are not set, the card won't appear</strong>. You can use <a href="https://pnp.github.io/office365-cli/cmd/spo/serviceprincipal/serviceprincipal-grant-add/">PnP Office 365 CLI</a> to add correct permissions for this feature:</br></br><code>$m365 spo serviceprincipal grant add --resource '&lt;aad_app_display_name&gt;' --scope 'user_impersonation'</code>. Refer to the section below about <a href="#persona-hover-card">persona hover card customization</a>.</td>
 <td></td>
 </tr>
 <tr>
@@ -1224,7 +1224,7 @@
 </code></pre></div>
 
 
-<p>More information <a href="https://docs.microsoft.com/en-us/graph/toolkit/components/person-card">here</a></p>
+<p>More information <a href="https://docs.microsoft.com/en-us/graph/toolkit/components/person-card">here</a>.</p>
 <h3 id="debug">Debug<a class="headerlink" href="#debug" title="Permanent link">&para;</a></h3>
 <p>The 'debug' layout allows you to see all relevant data used by layout templates or data sources during render.</p>
 <p><img alt="&quot;Debug layout&quot;" class="center" src="../../../assets/webparts/search-results/layouts/debug_layout.png" /> </p>
@@ -1329,7 +1329,7 @@
 <li>Greater than</li>
 <li>Is not null</li>
 </ul>
-<p>In the case you use a custom template, you can still benefit from this feature following this markup:</p>
+<p>In case you use a custom template, you can still benefit from this feature following this markup:</p>
 <div class="codehilite"><pre><span></span><code>{{#&gt; resultTypes}}
   {{!-- The block below will be used as default item template if no result types matched --}}
   <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;template_result&quot;</span><span class="p">&gt;</span>
@@ -1339,7 +1339,7 @@
 </code></pre></div>
 
 
-<p>Handlebars <a href="https://handlebarsjs.com/partials.html">partials</a> are used behind the scenes and conditions are built dynamically using a recursive if/else structure.</p>
+<p>Handlebars <a href="https://handlebarsjs.com/guide/partials.html">partials</a> are used behind the scenes and conditions are built dynamically using a recursive if/else structure.</p>
                 
                   
                 
@@ -1421,7 +1421,7 @@
     
       <script src="../../../assets/javascripts/application.c33a9706.js"></script>
       
-      <script>app.initialize({version:"1.1",url:{base:"../../.."}})</script>
+      <script>app.initialize({version:"1.1.2",url:{base:"../../.."}})</script>
       
     
   </body>
