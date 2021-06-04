@@ -15,7 +15,7 @@
         },
         "title": {
             "default": "PnP - Search Filters",
-            "fr-fr": "Recherche moderne - Filtres de recherche"
+            "fr-fr": "PnP - Filtres de recherche"
         },
         "description": {
             "default": "Filters results from the search results Web Part",
