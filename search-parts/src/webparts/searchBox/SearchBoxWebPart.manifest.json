@@ -16,7 +16,7 @@
         },
         "title": {
             "default": "PnP - Search Box",
-            "fr-fr": "Recherche moderne - Boîte de recherche"
+            "fr-fr": "PnP - Boîte de recherche"
         },
         "description": {
             "default": "Allows users to search data source results using query text",
