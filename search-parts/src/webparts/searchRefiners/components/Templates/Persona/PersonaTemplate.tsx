@@ -15,6 +15,7 @@ import IBaseRefinerTemplateProps from '../IBaseRefinerTemplateProps';
 import IBaseRefinerTemplateState from '../IBaseRefinerTemplateState';
 import { PersonaSize, Persona, Spinner, SpinnerSize, IExtendedPersonaProps, IPersonaProps, TextField, Link } from "office-ui-fabric-react";
 import { IUserInfo } from "../../../../../models/IUser";
+import * as strings from 'SearchRefinersWebPartStrings';
 
 export interface IPersonaTemplateProps extends IBaseRefinerTemplateProps {
 }
@@ -41,6 +42,7 @@ export default class PersonaTemplate extends React.Component<IPersonaTemplatePro
     this._onValueFilterChanged = this._onValueFilterChanged.bind(this);
     this._isFilterMatch = this._isFilterMatch.bind(this);
     this._clearValueFilter = this._clearValueFilter.bind(this);
+    this._clearFilters = this._clearFilters.bind(this);
   }
 
   public render() {
@@ -113,6 +115,11 @@ export default class PersonaTemplate extends React.Component<IPersonaTemplatePro
                                 />
                               );
                             })
+                          }
+                          {
+                            <div>
+                                <Link theme={this.props.themeVariant as ITheme} onClick={this._clearFilters} disabled={this.state.refinerSelectedFilterValues.length === 0}>{strings.Refiners.ClearFiltersLabel}</Link>
+                            </div>
                           }
                         </div>;
     }
@@ -255,6 +262,18 @@ export default class PersonaTemplate extends React.Component<IPersonaTemplatePro
    */
   private _applyFilters = (updatedValues: IRefinementValue[]) => {
     this.props.onFilterValuesUpdated(this.props.refinementResult.FilterName, updatedValues, this._operator);
+  }
+
+  /**
+   * Clears all selected filters for the current refiner
+   */
+  private _clearFilters() {
+
+    this.setState({
+        refinerSelectedFilterValues: []
+    });
+
+    this._applyFilters([]);
   }
 
   /**
