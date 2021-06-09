@@ -254,7 +254,9 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         let renderRootElement: JSX.Element = null;
         let renderDataContainer: JSX.Element = null;
 
-        const inputQueryFromDataSource = !this.properties.queryText.isDisposed && this.properties.queryText.tryGetValue();
+        const valueFromDynamicSource = this.properties.queryText.tryGetValue();
+        const decodedValueFromDynamicSource = valueFromDynamicSource ? decodeURIComponent(valueFromDynamicSource) : null;
+        const inputQueryFromDataSource = !this.properties.queryText.isDisposed && decodedValueFromDynamicSource;
         const inputQueryText = inputQueryFromDataSource ? inputQueryFromDataSource : this.properties.defaultQueryText;
 
         // Build the data context to pass to the data source
