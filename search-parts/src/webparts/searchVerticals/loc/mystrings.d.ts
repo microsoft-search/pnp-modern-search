@@ -16,7 +16,8 @@ declare interface ISearchVerticalsWebPartStrings {
         LinkUrl: string;
         OpenBehavior: string;
       }
-    }
+    },
+    ImportExport: string;
   }
 }
 

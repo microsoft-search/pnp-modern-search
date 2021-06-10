@@ -92,23 +92,23 @@ export class TemplateService implements ITemplateService {
                     this.moment = moment;
                 });
             }
+
+            // Create a distinct version of the Handlebars namespace to avoid conflcit with multiple versions
+            this._handlebars = Handlebars.create();
+
+            const helpers = handlebarsHelpers();
+
+            // Registers all helpers in the global Handlebars context
+            Object.keys(helpers).forEach(helperName => {
+                this._handlebars.registerHelper(helperName, helpers[helperName]);
+            });
+
+            // Register helpers
+            this.registerCustomHelpers();
+
+            // Register icons and pull the fonts from the default SharePoint cdn.
+            initializeFileTypeIcons();
         });
-
-        // Create a distinct version of the Handlebars namespace to avoid conflcit with multiple versions
-        this._handlebars = Handlebars.create();
-
-        const helpers = handlebarsHelpers();
-
-        // Registers all helpers in the global Handlebars context
-        Object.keys(helpers).forEach(helperName => {
-            this._handlebars.registerHelper(helperName, helpers[helperName]);
-        });
-
-        // Register helpers
-        this.registerCustomHelpers();
-
-        // Register icons and pull the fonts from the default SharePoint cdn.
-        initializeFileTypeIcons();
     }
 
     /**

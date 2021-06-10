@@ -17,7 +17,7 @@
         },
         "title": {
             "default": "PnP - Search Verticals",
-            "fr-fr": "Recherche moderne - Verticaux de recherche"
+            "fr-fr": "PnP - Verticaux de recherche"
         },
         "description": {
             "default": "Allows to browse data as verticals (i.e silos)",

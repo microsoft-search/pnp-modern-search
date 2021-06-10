@@ -146,7 +146,7 @@ Here are the list of all **reusable** web components you can use to customize yo
 ```html
 <pnp-collapsible 
     data-group-name="Collapsible content" 
-    data-is-default-collapsed="true">
+    data-default-collapsed="true">
 
     <template id="collapsible-content">
         <div>
@@ -165,7 +165,7 @@ Here are the list of all **reusable** web components you can use to customize yo
 
 | Parameter | Description |
 | --------- | ----------- |
-|**data-is-default-collapsed**|If the content should be collapsed by default `true/false`.
+|**data-default-collapsed**|If the content should be collapsed by default `true/false`.
 |**data-group-name** |The header group name for expand/collapse.
 
 ## `<pnp-persona>`

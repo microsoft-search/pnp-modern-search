@@ -22,14 +22,14 @@ export class DateHelper {
             return Promise.resolve(this.momentLibrary);
         } else {
             let moment: any = await import(
-                /* webpackChunkName: 'moment' */
+                /* webpackChunkName: 'pnp-modern-search-moment' */
                 'moment'
             );
 
             // Moment is by default 'en-us'
             if (['en-us','en'].indexOf(this.pageContext.cultureInfo.currentUICultureName.toLowerCase()) === -1) {
                 await import(
-                    /* webpackChunkName: 'moment' */
+                    /* webpackChunkName: 'pnp-modern-search-moment' */
                     `moment/locale/${this.pageContext.cultureInfo.currentUICultureName.toLowerCase().split('-')[0]}.js`
                 );
             }

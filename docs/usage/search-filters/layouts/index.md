@@ -6,21 +6,20 @@ By default, the following layouts are provided:
 
 ### Vertical
 
-{!usage/data-filters/layouts/vertical.md!}
+{!usage/search-filters/layouts/vertical.md!}
 
 ### Horizontal
 
-{!usage/data-filters/layouts/horizontal.md!}
+{!usage/search-filters/layouts/horizontal.md!}
 
 ### Panel
 
-{!usage/data-filters/layouts/panel.md!}
+{!usage/search-filters/layouts/panel.md!}
 
 ### Debug
 
-{!usage/data-filters/layouts/debug.md!}
+{!usage/search-filters/layouts/debug.md!}
 
 ### Custom
 
-{!usage/data-filters/layouts/custom.md!}
-
+{!usage/search-filters/layouts/custom.md!}

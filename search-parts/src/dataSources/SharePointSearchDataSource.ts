@@ -160,12 +160,12 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
 
         // Use the same chunk name as the main Web Part to avoid recreating/loading a new one
         const { PropertyFieldCollectionData, CustomCollectionFieldType } = await import(
-            /* webpackChunkName: 'data-visualizer-property-pane' */
+            /* webpackChunkName: 'pnp-modern-search-property-pane' */
             '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData'
         );
 
         const { PropertyPaneWebPartInformation } = await import(
-            /* webpackChunkName: 'data-visualizer-property-pane' */
+            /* webpackChunkName: 'pnp-modern-search-property-pane' */
             '@pnp/spfx-property-controls/lib/PropertyPaneWebPartInformation'
         );
 
@@ -453,6 +453,10 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                 slotField: 'NormSiteID'
             },
             {
+                slotName: BuiltinTemplateSlots.WebId,
+                slotField: 'NormWebID'
+            },
+            {
                 slotName: BuiltinTemplateSlots.ListId,
                 slotField: 'NormListID'
             },
@@ -463,6 +467,10 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
             {
                 slotName: BuiltinTemplateSlots.IsFolder,
                 slotField: 'ContentTypeId'
+            },
+            {
+                slotName: BuiltinTemplateSlots.ContentClass,
+                slotField: 'contentclass'
             },
             {
                 slotName: BuiltinTemplateSlots.PersonQuery,
@@ -497,9 +505,11 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                 'Created',
                 'UniqueID',
                 'NormSiteID',
+                'NormWebID',
                 'NormListID',
                 'NormUniqueID',
                 'ContentTypeId',
+                'contentclass',
                 'UserName',
                 'JobTitle',
                 'WorkPhone',

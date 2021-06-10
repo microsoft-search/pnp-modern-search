@@ -12,6 +12,7 @@ For example:
 
 - [Install MkDocs](https://www.mkdocs.org/#installation)
     - `pip install mkdocs`
+    - `pip install markdown-include`
 - Install the Material theme
     - `pip install mkdocs-material==4.6.3`
 - Serve it up

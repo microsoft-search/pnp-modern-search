@@ -74,17 +74,17 @@ export class CardsLayout extends BaseLayout<ICardsLayoutProperties> {
         this.properties.columnSizePercentage = this.properties.columnSizePercentage ? this.properties.columnSizePercentage : 33;
 
         const { PropertyFieldCollectionData, CustomCollectionFieldType } = await import(
-            /* webpackChunkName: 'pnp-modern-search-property-pane' */
+            /* webpackChunkName: 'pnp-modern-search-results-cards-layout' */
             '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData'
         );
 
         const { PropertyFieldToggleWithCallout } = await import(
-            /* webpackChunkName: 'pnp-modern-search-property-pane' */
+            /* webpackChunkName: 'pnp-modern-search-results-cards-layout' */
             '@pnp/spfx-property-controls/lib/PropertyFieldToggleWithCallout'
         );
 
         const { CalloutTriggers } = await import(
-            /* webpackChunkName: 'pnp-modern-search-property-pane' */
+            /* webpackChunkName: 'pnp-modern-search-results-cards-layout' */
             '@pnp/spfx-property-controls/lib/common/callout/Callout'
         );
         

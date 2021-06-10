@@ -295,6 +295,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             data.items = data.items.map(item => {
 
                 let siteId = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.SiteId]);
+                let webId = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.WebId]);
                 let listId = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.ListId]);
                 let itemId = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.ItemId]); // Could be UniqueId or item ID
 
@@ -303,6 +304,11 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                     siteId = this.getGuidFromString(siteId);
                     listId = this.getGuidFromString(listId);
                     itemId = this.getGuidFromString(itemId);
+
+                    if(webId) {
+                        siteId = siteId + "," + this.getGuidFromString(webId); // add web id if present, needed for sub-sites
+                    }
+
                     const itemFileType = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.FileType]);
 
                     if (itemFileType && validPreviewExt.indexOf(itemFileType.toUpperCase()) !== -1) {

@@ -50,7 +50,7 @@ export class DebugViewWebComponent extends BaseWebComponent {
  
        // Reuse the 'brace' imports from the PnP control instead of reference them explicitly in the debug view
        await import(
-          /* webpackChunkName: 'debug-view' */
+          /* webpackChunkName: 'pnp-modern-search-debug-view' */
           '@pnp/spfx-property-controls/lib/propertyFields/codeEditor'
        );
  

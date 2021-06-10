@@ -1,7 +1,7 @@
 {
     "name": "@pnp/modern-search-extensibility",
     "description": "Base library for creating PnP Modern Search extensions",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "private": false,
     "main": "lib/index.js",
     "engines": {
@@ -14,30 +14,26 @@
     },
     "dependencies": {
         "@types/webpack-env": "1.13.1",
-        "@types/es6-promise": "0.0.33",
         "@webcomponents/custom-elements": "1.4.3"
     },
     "devDependencies": {
-        "@microsoft/sp-property-pane": "1.11.0",
-        "@microsoft/sp-webpart-base": "1.11.0",
-        "@microsoft/sp-lodash-subset": "1.11.0",
-        "@microsoft/sp-core-library": "1.11.0",
-        "@microsoft/sp-component-base": "1.11.0",
-        "@types/es6-promise": "0.0.33",
-        "@types/react-dom": "16.8.3",
-        "react-dom": "16.8.5",
-        "tslib": "^1.10.0",
-        "handlebars": "4.7.6",
-        "@webcomponents/webcomponentsjs": "2.5.0",
-        "@microsoft/sp-build-web": "1.11.0",
-        "@microsoft/sp-tslint-rules": "1.11.0",
-        "@microsoft/sp-module-interfaces": "1.11.0",
-        "@microsoft/sp-webpart-workbench": "1.11.0",
         "@microsoft/rush-stack-compiler-3.7": "0.2.8",
-        "gulp": "~3.9.1",
-        "@types/chai": "3.4.34",
-        "@types/mocha": "2.2.38",
-        "ajv": "~5.2.2"
+        "@microsoft/sp-build-web": "1.12.1",
+        "@microsoft/sp-component-base": "1.12.1",
+        "@microsoft/sp-core-library": "1.12.1",
+        "@microsoft/sp-lodash-subset": "1.12.1",
+        "@microsoft/sp-module-interfaces": "1.12.1",
+        "@microsoft/sp-property-pane": "1.12.1",
+        "@microsoft/sp-tslint-rules": "1.12.1",
+        "@microsoft/sp-webpart-base": "1.12.1",
+        "@microsoft/sp-webpart-workbench": "1.12.1",
+        "@types/react-dom": "16.9.8",
+        "@webcomponents/webcomponentsjs": "2.5.0",
+        "ajv": "~5.2.2",
+        "gulp": "4.0.2",
+        "handlebars": "4.7.6",
+        "react-dom": "16.8.5",
+        "tslib": "^1.10.0"
     },
     "directories": {
         "lib": "lib"
