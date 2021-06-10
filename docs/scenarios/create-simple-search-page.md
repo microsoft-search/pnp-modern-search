@@ -9,7 +9,7 @@ Any page can contain the PnP Modern Search Web Parts. For simple Search Results 
 
 From the home page of you site (you must be a Site Owner), click on + New / Page.
 
-![New Page](../assets/scenarios/create-simple-search-page/new-page.jpg){: .center}
+![New Page](assets/create-simple-search-page/new-page.jpg){: .center}
 
 Configure the page as you would any other, adding a page name.
 
@@ -17,13 +17,13 @@ Configure the page as you would any other, adding a page name.
 
 Click on the + where you would like to add a PnP Modern Search Web Part and type "PnP" to filter to the Web Parts.
 
-![Web Part Toolbox searching for PnP Modern Search](../assets/scenarios/create-simple-search-page/web-part-toolbox-pnp-modern-search.jpg){: .center}
+![Web Part Toolbox searching for PnP Modern Search](assets/create-simple-search-page/web-part-toolbox-pnp-modern-search.jpg){: .center}
 
 Select the **PnP Search Box**.
 
 Below the PnP Search Box, add **PnP Search Results**.
 
-![Add Web Parts to page](../assets/scenarios/create-simple-search-page/add-web-parts-to-page.jpg){: .center}
+![Add Web Parts to page](assets/create-simple-search-page/add-web-parts-to-page.jpg){: .center}
 
 ## Connect the Web Parts
 
@@ -31,11 +31,11 @@ Now you need to connect the Web Parts in their properties panes. For this simple
 
 Again, keeping things simple, click the **SharePoint Search** button.
 
-![Available data sources](../assets/scenarios/create-simple-search-page/available-data-sources.jpg){: .center}
+![Available data sources](assets/create-simple-search-page/available-data-sources.jpg){: .center}
 
 At the bottom of the property pane, click Next to go to the third property panel. Turn on the **Use input query text** toggle and set the options as shown.
 
-![Use input query text](../assets/scenarios/create-simple-search-page/use-input-query-text.jpg){: .center}
+![Use input query text](assets/create-simple-search-page/use-input-query-text.jpg){: .center}
 
 Publish the page.
 
