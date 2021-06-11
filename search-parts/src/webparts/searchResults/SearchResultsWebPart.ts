@@ -484,12 +484,12 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         this._bindHashChange();
         this._handleQueryStringChange();
 
+        // Load extensibility libaries extensions
+        await this.loadExtensions(this.properties.extensibilityLibraryConfiguration);
+
         // Register Web Components in the global page context. We need to do this BEFORE the template processing to avoid race condition.
         // Web components are only defined once.
         await this.templateService.registerWebComponents(this.availableWebComponentDefinitions);
-
-        // Load extensibility libaries extensions
-        await this.loadExtensions(this.properties.extensibilityLibraryConfiguration);
 
         try {
             // Disable PnP Telemetry
