@@ -131,7 +131,7 @@ define([], function() {
                 EnableTopResultsLabel: "Topresultaten inschakelen",
                 ContentSourcesFieldLabel: "Inhoudsbronnen",
                 ContentSourcesFieldDescriptionLabel: "IDs van verbingingen gedefinieerd in de Microsoft Search connectors administratie portaal.",
-                ContentSourcesFieldPlaceholderLabel: "bijv: 'MuCustomConnectorId'"
+                ContentSourcesFieldPlaceholderLabel: "bijv: 'MyCustomConnectorId'"
             },
             SearchCommon: {
                 Sort: {
@@ -184,10 +184,10 @@ define([], function() {
                 LinkToItemColumnLabel: "Link naar item",
                 CompactModeLabel: "Compacte modus",
                 ShowFileIcon: "Toon bestandspictogram",
-                ManageDetailsListColumnDescription: "Kolommen toevoegen, bewerken of verwijderen voor de detailslijst indeling. Je kan eigenschapswaarden direct in de lijst gebruiken zonder transformaties toe te passen, of een Handlebars-uitdrukking gebruiken in het veld voor de waarde. HTML wordt ook ondersteund voor alle velden.",
+                ManageDetailsListColumnDescription: "Kolommen toevoegen, bewerken of verwijderen voor de detailslijst indeling. Je kan eigenschapswaarden direct in de lijst gebruiken zonder transformaties toe te passen, of een Handlebars-uitdrukking gebruiken als veldwaarde. HTML wordt ook ondersteund voor alle velden.",
                 ManageDetailsListColumnLabel: "Beheer kolommen",
                 ValueColumnLabel: "Kolomwaarde",
-                DisplayNameColumnLabel: "Kolom weergavenaam",
+                DisplayNameColumnLabel: "Kolom weergavenaam",//TODO!!
                 FileExtensionFieldLabel: "Field to use for file extension",
                 GroupByFieldLabel: "Groepeer op veld",
                 EnableGrouping: "Groeperen inschakelen",
@@ -195,130 +195,130 @@ define([], function() {
                 ResetFieldsBtnLabel: "Reset velden naar standaard waarden"
             },
             Cards: {
-                Name: "Cards",
-                ManageTilesFieldsLabel: "Managed card fields",
-                ManageTilesFieldsPanelDescriptionLabel: "Here you can map each field values with the corresponding card placeholders. You can use either a result property directly without any transformation or use an Handlebars expression as field value. Also, when specified, you can also inject your own HTML code in annotated fields.",
-                PlaceholderNameFieldLabel: "Name",
-                SupportHTMLColumnLabel: "Allow HTML",
-                PlaceholderValueFieldLabel: "Value",
-                UseHandlebarsExpressionLabel: "Use Handlebars expression",
-                EnableItemPreview: "Enable result preview",
+                Name: "Kaarten",
+                ManageTilesFieldsLabel: "Beheer velden op kaart",
+                ManageTilesFieldsPanelDescriptionLabel: "Hier kunt u veldwaarden toewijzen aan de bijbehorende placeholder op de kaart. U kunt een resultaateigenschap rechtstreeks gebruiken zonder enige transformatie of een Handlebars-uitdrukking gebruiken als veldwaarde. Ook kunt u, indien opgegeven, uw eigen HTML-code invoegen in geannoteerde velden.",
+                PlaceholderNameFieldLabel: "Naam",
+                SupportHTMLColumnLabel: "Sta HTML toe",
+                PlaceholderValueFieldLabel: "Waarde",
+                UseHandlebarsExpressionLabel: "Gebruik Handlebars-uitdrukking",
+                EnableItemPreview: "Schakel resultaatvoorbeeld in", //TODO!!
                 EnableItemPreviewHoverMessage: "Turning on this option may have an impact on performances if too many items are displayed at once and you use the 'AutoPreviewUrl' slot field. We recommend you to use this option with a small amount of items or use predefined preview URLs from your data source fields in slots.",
-                ShowFileIcon: "Show file icon",
-                CompactModeLabel: "Compact mode",
-                PreferedCardNumberPerRow: "Preferred number of cards per row",
+                ShowFileIcon: "Toon bestandspictogram",
+                CompactModeLabel: "Compacte modus",
+                PreferedCardNumberPerRow: "Gewenst aantal kaarten per rij",
                 Fields: {
-                    Title: "Title",
-                    Location: "Location",
+                    Title: "Titel",
+                    Location: "Locatie",
                     Tags: "Tags",
-                    PreviewImage: "Preview Image",
-                    PreviewUrl: "Preview Url",
+                    PreviewImage: "Voorbeeld afbeelding",
+                    PreviewUrl: "Voorbeeld Url",
                     Url: "Url",
-                    Date: "Date",
-                    Author: "Author",
-                    ProfileImage: "Profile Image Url",
-                    FileExtension: "File Extension",
-                    IsContainer: "Is Folder"
+                    Date: "Datum",
+                    Author: "Auteur",
+                    ProfileImage: "Proefielafbeelding Url",
+                    FileExtension: "Bestandsextensie",
+                    IsContainer: "Is folder"
                 },
-                ResetFieldsBtnLabel: "Reset fields to default values"
+                ResetFieldsBtnLabel: "Velden resetten naar standaardwaarde"
             },
             Slider: {
                 Name: "Slider",
-                SliderAutoPlay: "Auto play",
-                SliderAutoPlayDuration: "Auto play duration (in seconds)",
-                SliderPauseAutoPlayOnHover: "Pause on hover",
-                SliderGroupCells: "Number of elements to group together in slides",
-                SliderShowPageDots: "Show page dots",
-                SliderWrapAround: "Infinite scrolling",
-                SlideHeight: "Slide height (in px)",
-                SlideWidth: "Slide width (in px)"
+                SliderAutoPlay: "Automatisch afspelen",
+                SliderAutoPlayDuration: "Duur van automatisch afsprelen (in seconden)",
+                SliderPauseAutoPlayOnHover: "Pauzeren bij 'hover'",
+                SliderGroupCells: "Aantal te groeperen elementen in slides",
+                SliderShowPageDots: "Toon puntjes voor callout",
+                SliderWrapAround: "Oneindig scrollen",
+                SlideHeight: "Slide hoogte (in px)",
+                SlideWidth: "Slide breedte (in px)"
             },
             People: {
-                Name: "People",
-                ManagePeopleFieldsLabel: "Manage people fields",
+                Name: "Personen",
+                ManagePeopleFieldsLabel: "Beheer velden voor personen", //TODO!!
                 ManagePeopleFieldsPanelDescriptionLabel: "Here you can map each field values with the corresponding persona placeholders. You can use either data source field value directly without any transformation or use an Handlebars expression in the value field.",
-                PlaceholderNameFieldLabel: "Name",
-                PlaceholderValueFieldLabel: "Value",
-                UseHandlebarsExpressionLabel: "Use Handlebars expression",
-                PersonaSizeOptionsLabel: "Component size",
-                PersonaSizeExtraSmall: "Extra small",
-                PersonaSizeSmall: "Small",
-                PersonaSizeRegular: "Regular",
-                PersonaSizeLarge: "Large",
-                PersonaSizeExtraLarge: "Extra large",
-                ShowInitialsToggleLabel: "Show initials if no picture available",
-                SupportHTMLColumnLabel: "Allow HTML",
-                ResetFieldsBtnLabel: "Reset fields to default values",
-                ShowPersonaCardOnHover: "Show persona card on hover",
+                PlaceholderNameFieldLabel: "Naam",
+                PlaceholderValueFieldLabel: "Waarde",
+                UseHandlebarsExpressionLabel: "Gebruik Handlebars-uitdrukking",
+                PersonaSizeOptionsLabel: "Grootte onderdeel",
+                PersonaSizeExtraSmall: "Extra klein",
+                PersonaSizeSmall: "Klein",
+                PersonaSizeRegular: "Normaal",
+                PersonaSizeLarge: "Groot",
+                PersonaSizeExtraLarge: "Extra groot",
+                ShowInitialsToggleLabel: "Toon initialen wanneer geen foto beschikbaar",
+                SupportHTMLColumnLabel: "Sta HTML toe",
+                ResetFieldsBtnLabel: "Reset velden naar standaard waarden",
+                ShowPersonaCardOnHover: "Toon persona card bij 'hover'", //TODO!!
                 ShowPersonaCardOnHoverCalloutMsg: "This feature uses Microsoft Graph to display information about the user and needs the following API permissions in your tenant to work: ['User.Read','People.Read','Contacts.Read','User.ReadBasic.All'].",
                 Fields: {
-                    ImageUrl: "Image URL",
-                    PrimaryText: "Primary text",
-                    SecondaryText: "Secondary text",
-                    TertiaryText: "Tertiary text",
-                    OptionalText: "Optional text"
+                    ImageUrl: "Afbeeldings URL",
+                    PrimaryText: "Primaire tekst",
+                    SecondaryText: "Secondaire tekst",
+                    TertiaryText: "Tertiaire tekst",
+                    OptionalText: "Optionele tekst"
                 }
             },
             Vertical: {
-                Name: "Vertical"
+                Name: "Vertikaal"
             },
             Horizontal: {
-                Name: "Horizontal",
-                PreferedFilterNumberPerRow: "Preferred number of filters per row",
+                Name: "Horizontaal",
+                PreferedFilterNumberPerRow: "Gewenst aantal filters per rij",
             },
             Panel: {
-                Name: "Panel",
+                Name: "Paneel",
                 IsModal: "Modal",
-                IsLightDismiss: "Light dismiss",
-                Size: "Panel size",
-                ButtonLabel: "Show filters",
-                ButtonLabelFieldName: "Button label to display",
+                IsLightDismiss: "'Light dismiss'",
+                Size: "Paneel grootte",
+                ButtonLabel: "Toon filters",
+                ButtonLabelFieldName: "Te tonen tekst op knop",
                 HeaderText: "Filters",
-                HeaderTextFieldName: "Panel header text",
+                HeaderTextFieldName: "Paneel koptekst",
                 SizeOptions: {
-                    SmallFixedFar: 'Small (default)',
-                    SmallFixedNear: 'Small, near side',
+                    SmallFixedFar: 'Klein (standaard)',
+                    SmallFixedNear: 'Klein, bij rand',
                     Medium: 'Medium',
-                    Large: 'Large',
-                    LargeFixed: 'Large fixed-width',
-                    ExtraLarge: 'Extra large',
-                    SmallFluid: 'Full-width (fluid)'
+                    Large: 'Groot',
+                    LargeFixed: 'Groot vaste breedte',
+                    ExtraLarge: 'Extra groot',
+                    SmallFluid: 'Volledige breedte (fluid)'
                 }
             }
         },
         HandlebarsHelpers: {
-            CountMessageLong: "<b>{0}</b> results for '<em>{1}</em>'",
-            CountMessageShort: "<b>{0}</b> results",
+            CountMessageLong: "<b>{0}</b> resultaten voor '<em>{1}</em>'",
+            CountMessageShort: "<b>{0}</b> resultaten",
         },
         PropertyPane: {
             ConnectionsPage: {
-                DataConnectionsGroupName: "Available connections"
+                DataConnectionsGroupName: "Beschikbare verbindingen"
             },
             InformationPage: {
                 Extensibility: {
-                    GroupName: "Extensibility configuration",
-                    FieldLabel: "Extensibility libraries to load",
-                    ManageBtnLabel: "Configure",
+                    GroupName: "Configuratie van uitbreidingen",
+                    FieldLabel: "Te laden uitbreidingsbiliotheken",
+                    ManageBtnLabel: "Configureer",
                     Columns: {
-                        Name: "Name/Purpose",
+                        Name: "Naam/Doel",
                         Id: "Manifest GUID",
-                        Enabled: "Enabled/Disabled"
+                        Enabled: "Aan/Uit"
                     }
                 }
             }
         },
         Filters: {
-            ApplyAllFiltersButtonLabel: "Apply",
-            ClearAllFiltersButtonLabel: "Clear",
-            FilterNoValuesMessage: "No values for this filter",
+            ApplyAllFiltersButtonLabel: "Toepassen",
+            ClearAllFiltersButtonLabel: "Wissen",
+            FilterNoValuesMessage: "Geen waarden voor deze filter",
             OrOperator: "OR",
             AndOperator: "AND",
-            ComboBoxPlaceHolder: "Select value"
+            ComboBoxPlaceHolder: "Selecteer waarde"
         },
         SuggestionProviders: {
             SharePointStatic: {
-                ProviderName: "SharePoint Static search suggestions",
-                ProviderDescription: "Retrieve SharePoint static user defined search suggestions"
+                ProviderName: "SharePoint statische zoeksuggesties",
+                ProviderDescription: "Haal statische door gebruiker gedefinieerde SharePoint zoeksuggesties op"
             }
         }
     }
