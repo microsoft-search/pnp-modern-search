@@ -63,7 +63,7 @@ You can also refer to the official [SPFx documentation about library component u
 2. Build the project using `npm run build` or `gulp bundle`.
 
 !!! note
-    If you made local changes on the `search-extensibility` project, after each `npm i`,  you must link the local `search-extensibility` project using the command `npm link @pnp/modern-search-extensibility`
+    If you made local changes on the `search-extensibility` project, after each `npm i`, you must link your local `search-extensibility` project using the command `npm link @pnp/modern-search-extensibility`
 
 ## Debug the solution
 
