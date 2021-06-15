@@ -2,13 +2,13 @@
 
 Here are the list of all **reusable** web components you can use to customize your templates. 
 
-- [&lt;pnp-iconfile&gt;](#ltpnp-iconfilegt)
-- [&lt;pnp-documentcard&gt;](#ltpnp-documentcardgt)
-- [&lt;pnp-filepreview&gt;](#ltpnp-filepreviewgt)
-- [&lt;pnp-icon&gt;](#ltpnp-icongt)
-- [&lt;pnp-panel&gt;](#ltpnp-panelgt)
-- [&lt;pnp-collapsible&gt;](#ltpnp-collapsiblegt)
-- [&lt;pnp-persona&gt;](#ltpnp-personagt)
+- [&lt;pnp-iconfile&gt;](#pnp-iconfile)
+- [&lt;pnp-documentcard&gt;](#pnp-documentcard)
+- [&lt;pnp-filepreview&gt;](#pnp-filepreview)
+- [&lt;pnp-icon&gt;](#pnp-icon)
+- [&lt;pnp-panel&gt;](#pnp-panel)
+- [&lt;pnp-collapsible&gt;](#pnp-collapsible)
+- [&lt;pnp-persona&gt;](#pnp-persona)
 
 > All other web components you will see in builtin layout templates are considered **internal** and are not supported for custom use.
 
