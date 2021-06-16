@@ -4,8 +4,51 @@
    * Chrome browser: https://aka.ms/spfx-debugger-extensions
    */
   "version": "0.2.0",
-  "configurations": [{
-      "name": "Local workbench",
+  "configurations": [
+    {
+      "name": "EDGE: DTI STAGE",
+      "request": "launch",
+      "type": "pwa-msedge",
+      "url": "https://dtistage.sharepoint.com/_layouts/workbench.aspx",
+      "webRoot": "${workspaceFolder}",
+      "sourceMaps": true,
+      "sourceMapPathOverrides": {
+        "webpack:///.././src/*": "${webRoot}/src/*",
+        "webpack:///../../../src/*": "${webRoot}/src/*",
+        "webpack:///../../../../src/*": "${webRoot}/src/*",
+        "webpack:///../../../../../src/*": "${webRoot}/src/*"
+      }
+    },
+    {
+      "name": "EDGE: MOBI DEV MH",
+      "request": "launch",
+      "type": "pwa-msedge",
+      "url": "https://devmarc365.sharepoint.com/_layouts/workbench.aspx",
+      "webRoot": "${workspaceFolder}",
+      "sourceMaps": true,
+      "sourceMapPathOverrides": {
+        "webpack:///.././src/*": "${webRoot}/src/*",
+        "webpack:///../../../src/*": "${webRoot}/src/*",
+        "webpack:///../../../../src/*": "${webRoot}/src/*",
+        "webpack:///../../../../../src/*": "${webRoot}/src/*"
+      }
+    },
+    {
+      "name": "EDGE: MOBI TEST",
+      "request": "launch",
+      "type": "pwa-msedge",
+      "url": "https://mtranet.sharepoint.com/sites/start/_layouts/workbench.aspx",
+      "webRoot": "${workspaceFolder}",
+      "sourceMaps": true,
+      "sourceMapPathOverrides": {
+        "webpack:///.././src/*": "${webRoot}/src/*",
+        "webpack:///../../../src/*": "${webRoot}/src/*",
+        "webpack:///../../../../src/*": "${webRoot}/src/*",
+        "webpack:///../../../../../src/*": "${webRoot}/src/*"
+      }
+    },
+    {
+    "name": "CHROME: Local workbench",
       "type": "chrome",
       "request": "launch",
       "url": "https://localhost:4321/temp/workbench.html",
