@@ -396,15 +396,15 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
               value={ this.state.searchInputValue }
               autoComplete= "off"
               data-is-focusable={this.state.proposedQuerySuggestions.length > 0}
-              onChange={ (value) => {
+              onChange={ (event) => {
                 if (!this._onChangeDebounced) {
                   this._onChangeDebounced = debounce((newValue) => {
                     this._updateQuerySuggestions(newValue);
                   }, SUGGESTION_UPDATE_DEBOUNCE_DELAY);
                 }
-                this._onChangeDebounced(value);
+                this._onChangeDebounced(event.currentTarget.value);
                 this.setState({
-                  searchInputValue: value,
+                  searchInputValue: event.currentTarget.value,
                   isRetrievingSuggestions: true,
                   isSearchExecuted: false,
                 });

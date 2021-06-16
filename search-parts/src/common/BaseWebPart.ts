@@ -1,5 +1,6 @@
 import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 import {
+  IPropertyPaneGroup,
     PropertyPaneLabel,
     PropertyPaneLink
 } from '@microsoft/sp-property-pane';
@@ -53,7 +54,7 @@ export abstract class BaseWebPart<T extends IBaseWebPartProps> extends BaseClien
     /**
      * Returns common information groups for the property pane
      */
-    protected getPropertyPaneWebPartInfoGroups() {
+    protected getPropertyPaneWebPartInfoGroups(): IPropertyPaneGroup[] {
 
         return [
             {

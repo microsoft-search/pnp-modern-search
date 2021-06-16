@@ -6,14 +6,13 @@ The 'Filters' Web Part allows to filter the current results displayed in a 'Sear
 
 !["PnP Search Filters Web Part"](../../assets/webparts/search-filters/search_filters_wp_default.png){: .center}
 
-
 ## Configuration
 
 ### Connection
 
 To use the filters, we must first connect it to one or multiple 'Search Results' Web Parts. In the other hand, you must connect back those Web Parts to the 'Filters' one. It is a **two-ways connection**.
 
-!["Filters connection"](../../assets/webparts/search-filters/wp_connection.png){: .center} 
+!["Filters connection"](../../assets/webparts/search-filters/wp_connection.png){: .center}
 
 If you connect more than one Web Part, the filter values and counts will be merged for similar filter names:
 
@@ -23,17 +22,18 @@ Data sources #1 and #1 expose respectively a _'FileType'_ filter with values and
 
 ### Filter settings
 
-!["Filter settings"](../../assets/webparts/search-filters/filter_settings.png){: .center} 
+!["Filter settings"](../../assets/webparts/search-filters/filter_settings.png){: .center}
 
 The filter settings are as follow:
 
-!["Filter settings panel"](../../assets/webparts/search-filters/filter_settings_panel.png){: .center} 
+!["Filter settings panel"](../../assets/webparts/search-filters/filter_settings_panel.png){: .center}
 
 | **Setting** | **Description** |
 |------------|-----------------|
 | **Display Name** | A friendly name for the filter |
 | **Filter field** | The internal data source field to use as filter. Here you can select a field from the current data source (if data have been already retrieved) of type your own custom value (press enter to validate).
-| **Template** | The template to use to display filter values. The builtin templates are: </br><ul><li>**Check box** <p align="center">!["Check box"](../../assets/webparts/search-filters/checkbox_template.png)</p></li><li>**Date range** <p align="center">!["Date range"](../../assets/webparts/search-results/daterange_template.png)</p></li><li>**Date interval** <p align="center">!["Date interval"](../../assets/webparts/search-filters/dateinterval_template.png)</p></li><li>**Combo** <p align="center">!["Combo"](../../assets/webparts/search-filters/combo_template.png)</p></br> You can search a value directly in the list by typing keywords in the combo text field.</li></ul>
+| **# of values** | The maximum number of filter values/buckets to return (may be restricted by the API).
+| **Template** | The template to use to display filter values. The builtin templates are: </br><ul><li>**Check box** <p align="center">!["Check box"](../../assets/webparts/search-filters/checkbox_template.png)</p></li><li>**Date range** <p align="center">!["Date range"](../../assets/webparts/search-filters/daterange_template.png)</p></li><li>**Date interval** <p align="center">!["Date interval"](../../assets/webparts/search-filters/dateinterval_template.png)</p></li><li>**Combo** <p align="center">!["Combo"](../../assets/webparts/search-filters/combo_template.png)</p></br> You can search a value directly in the list by typing keywords in the combo text field.</li></ul>
 | **Filter type** | Specify if the filter is a 'static' filter or a 'refiner' filter. See below for more information.
 | **Expand by default** | If applicable for the selected template, display values as expanded.
 | **Show count** | If applicable for the selected template, display counts for values.
@@ -44,7 +44,7 @@ The filter settings are as follow:
 
 ### Operator between filters
 
-!["Operator filters"](../../assets/webparts/search-results/operator_filters.png){: .center} 
+!["Operator filters"](../../assets/webparts/search-filters/operator_filters.png){: .center}
 
 You can select the operator to use between filters (OR or AND).
 
@@ -64,4 +64,3 @@ Using an indexed property bag value could be useful to store information about a
 `L0|#a2cf1afb-44b6-4cf4-bf37-642bb2e9bff3|Category 1;L0|#02e3406c0-1048-4bce-90eb-e7a51dfa7f31|Category3;L0|#07e094327-23d7-48af-9699-781eb26dc40f|Category2`
 
 These taxonomy values can then be used in the Filters Web Part using a `RefinableStringXX` search managed property to filter specific sites or elements. As an example, you can refer to the ["Create an end-to-end Office 365 groups provisioning solution"](https://github.com/pnp/tutorial-workspace-provisioning) tutorial GitHub project to leverage this format.
-

@@ -21,28 +21,28 @@ const AvailableQueryLanguages_StorageKey = 'pnpSearchResults_AvailableQueryLangu
 
 export class SharePointSearchService implements ISharePointSearchService {
 
-	public static ServiceKey: ServiceKey<ISharePointSearchService> = ServiceKey.create(SearchService_ServiceKey, SharePointSearchService);
+    public static ServiceKey: ServiceKey<ISharePointSearchService> = ServiceKey.create(SearchService_ServiceKey, SharePointSearchService);
 
-	/**
-	 * The current page context instance
-	 */
+    /**
+     * The current page context instance
+     */
     private pageContext: PageContext;
-    
+
     /**
      * The SharePoint search service endpoint REST URL
      */
     private searchEndpointUrl: string;
 
-	/**
-	 * The current service scope
-	 */
-	private serviceScope: ServiceScope;
-	
-	/**
-	 * The SPHttpClient instance
-	 */
+    /**
+     * The current service scope
+     */
+    private serviceScope: ServiceScope;
+
+    /**
+     * The SPHttpClient instance
+     */
     private spHttpClient: SPHttpClient;
-    
+
     /**
      * The client storage instance
      */
@@ -51,18 +51,18 @@ export class SharePointSearchService implements ISharePointSearchService {
     constructor(serviceScope: ServiceScope) {
 
         this.serviceScope = serviceScope;
-        
+
         this.clientStorage = new PnPClientStorage();
-		
-		serviceScope.whenFinished(async () => {
+
+        serviceScope.whenFinished(async () => {
 
             this.pageContext = serviceScope.consume<PageContext>(PageContext.serviceKey);
             this.spHttpClient = serviceScope.consume<SPHttpClient>(SPHttpClient.serviceKey);
 
             this.searchEndpointUrl = `${this.pageContext.web.absoluteUrl}/_api/search/postquery`;
-		});
+        });
     }
-    
+
     /**
      * Performs a search query against SharePoint
      * @param searchQuery The search query in KQL format
@@ -70,14 +70,14 @@ export class SharePointSearchService implements ISharePointSearchService {
      */
     public async search(searchQuery: ISharePointSearchQuery): Promise<ISharePointSearchResults> {
 
-		let results: ISharePointSearchResults = {
+        let results: ISharePointSearchResults = {
             queryKeywords: searchQuery.Querytext,
             refinementResults: [],
             relevantResults: [],
             secondaryResults: [],
             totalRows: 0
         };
-        		
+
         try {
 
             const response = await this.spHttpClient.post(this.searchEndpointUrl, SPHttpClient.configurations.v1, {
@@ -120,10 +120,10 @@ export class SharePointSearchService implements ISharePointSearchService {
                         let values: IDataFilterResultValue[] = [];
                         refiner.Entries.forEach((item) => {
                             values.push({
-                            count: parseInt(item.RefinementCount, 10),
-                            name: item.RefinementValue.replace("string;#", ""), // Replace string;# for calculated columns https://github.com/SharePoint/sp-dev-solutions/issues/304
-                            value: item.RefinementToken,
-                            operator: FilterComparisonOperator.Contains
+                                count: parseInt(item.RefinementCount, 10),
+                                name: item.RefinementValue.replace("string;#", ""), // Replace string;# for calculated columns https://github.com/SharePoint/sp-dev-solutions/issues/304
+                                value: item.RefinementToken,
+                                operator: FilterComparisonOperator.Contains
                             } as IDataFilterResultValue);
                         });
 
@@ -136,57 +136,56 @@ export class SharePointSearchService implements ISharePointSearchService {
                     results.relevantResults = searchResults;
                     results.refinementResults = refinementResults;
                     results.totalRows = searchResponse.PrimaryQueryResult.RelevantResults.TotalRows;
-                
+
                     if (!isEmpty(searchResponse.SpellingSuggestion)) {
                         results.spellingSuggestion = searchResponse.SpellingSuggestion;
                     }
-
-                    // Query rules handling
-                    if (searchResponse.SecondaryQueryResults) {
-
-                        const secondaryQueryResults = searchResponse.SecondaryQueryResults;
-
-                        if (Array.isArray(secondaryQueryResults) && secondaryQueryResults.length > 0) {
-
-                            let promotedResults: ISharePointSearchPromotedResult[] = [];
-                            let secondaryResults: ISharePointSearchResultBlock[] = [];
-
-                            secondaryQueryResults.forEach((e) => {
-
-                                // Best bets are mapped through the "SpecialTermResults" https://msdn.microsoft.com/en-us/library/dd907265(v=office.12).aspx
-                                if (e.SpecialTermResults) {
-                                    // Casting as pnpjs has an incorrect mapping of SpecialTermResults
-                                    (e.SpecialTermResults).Results.forEach((result) => {
-                                        promotedResults.push({
-                                            title: result.Title,
-                                            url: result.Url,
-                                            description: result.Description
-                                        } as ISharePointSearchPromotedResult);
-                                    });
-                                }
-
-                                // Secondary/Query Rule results are mapped through SecondaryQueryResults.RelevantResults
-                                if (e.RelevantResults) {
-                                    const secondaryResultItems = this.getSearchResults(e.RelevantResults.Table.Rows);
-
-                                    const secondaryResultBlock: ISharePointSearchResultBlock = {
-                                        title: e.RelevantResults.ResultTitle,
-                                        results: secondaryResultItems
-                                    };
-
-                                    // Only keep secondary result blocks which have items
-                                    if (secondaryResultBlock.results.length > 0) {
-                                        secondaryResults.push(secondaryResultBlock);
-                                    }
-                                }
-                            });
-
-                            results.promotedResults = promotedResults;					
-                            results.secondaryResults = secondaryResults;
-                        }
-                    }
                 }
 
+                // Query rules handling
+                if (searchResponse.SecondaryQueryResults) {
+
+                    const secondaryQueryResults = searchResponse.SecondaryQueryResults;
+
+                    if (Array.isArray(secondaryQueryResults) && secondaryQueryResults.length > 0) {
+
+                        let promotedResults: ISharePointSearchPromotedResult[] = [];
+                        let secondaryResults: ISharePointSearchResultBlock[] = [];
+
+                        secondaryQueryResults.forEach((e) => {
+
+                            // Best bets are mapped through the "SpecialTermResults" https://msdn.microsoft.com/en-us/library/dd907265(v=office.12).aspx
+                            if (e.SpecialTermResults) {
+                                // Casting as pnpjs has an incorrect mapping of SpecialTermResults
+                                (e.SpecialTermResults).Results.forEach((result) => {
+                                    promotedResults.push({
+                                        title: result.Title,
+                                        url: result.Url,
+                                        description: result.Description
+                                    } as ISharePointSearchPromotedResult);
+                                });
+                            }
+
+                            // Secondary/Query Rule results are mapped through SecondaryQueryResults.RelevantResults
+                            if (e.RelevantResults) {
+                                const secondaryResultItems = this.getSearchResults(e.RelevantResults.Table.Rows);
+
+                                const secondaryResultBlock: ISharePointSearchResultBlock = {
+                                    title: e.RelevantResults.ResultTitle,
+                                    results: secondaryResultItems
+                                };
+
+                                // Only keep secondary result blocks which have items
+                                if (secondaryResultBlock.results.length > 0) {
+                                    secondaryResults.push(secondaryResultBlock);
+                                }
+                            }
+                        });
+
+                        results.promotedResults = promotedResults;
+                        results.secondaryResults = secondaryResults;
+                    }
+                }
                 return results;
             } else {
                 throw new Error(`${response['statusMessage']}`);
@@ -198,7 +197,7 @@ export class SharePointSearchService implements ISharePointSearchService {
         }
     }
 
-	/**
+    /**
      * Get available SharePoint search managed properties from the search schema
      */
     public async getAvailableManagedProperties(): Promise<ISharePointManagedProperty[]> {
@@ -245,9 +244,9 @@ export class SharePointSearchService implements ISharePointSearchService {
         }
 
         return managedProperties;
-	}
+    }
 
-	/**
+    /**
      * Get all available languages for the search query
      */
     public async getAvailableQueryLanguages(): Promise<any> {
@@ -272,13 +271,13 @@ export class SharePointSearchService implements ISharePointSearchService {
                 } else {
                     throw new Error(`${response['statusMessage']}`);
                 }
-            }            
+            }
         } catch (error) {
             Log.error("[SharePointSearchService._getQueryLanguages()]", error, this.serviceScope);
             throw new Error(error);
         }
     }
-	
+
     /**
      * Determine if a SharePoint managed property is sortable
      * @param property the SharePoint managed property
@@ -344,15 +343,15 @@ export class SharePointSearchService implements ISharePointSearchService {
         try {
 
             const endpointUrl = Text.format(
-                                            `${this.pageContext.web.absoluteUrl}/_api/search/suggest?querytext='{0}'&inumberofquerysuggestions={1}&fHitHighlighting={2}&fCapitalizeFirstLetters={3}&Culture={4}&fPrefixMatchAllTerms={5}`,
-                                            searchSuggestQuery.queryText,
-                                            searchSuggestQuery.numberOfQuerySuggestions,
-                                            searchSuggestQuery.hitHighlighting,
-                                            searchSuggestQuery.capitalize,
-                                            searchSuggestQuery.culture,
-                                            searchSuggestQuery.prefixMatch
-                                        );
-      
+                `${this.pageContext.web.absoluteUrl}/_api/search/suggest?querytext='{0}'&inumberofquerysuggestions={1}&fHitHighlighting={2}&fCapitalizeFirstLetters={3}&Culture={4}&fPrefixMatchAllTerms={5}`,
+                searchSuggestQuery.queryText,
+                searchSuggestQuery.numberOfQuerySuggestions,
+                searchSuggestQuery.hitHighlighting,
+                searchSuggestQuery.capitalize,
+                searchSuggestQuery.culture,
+                searchSuggestQuery.prefixMatch
+            );
+
             const response = await this.spHttpClient.get(endpointUrl, SPHttpClient.configurations.v1, {
                 headers: {
                     'X-ClientService-ClientTag': Constants.X_CLIENTSERVICE_CLIENTTAG,
@@ -369,43 +368,43 @@ export class SharePointSearchService implements ISharePointSearchService {
                         return elt.Query;
                     });
                 }
-    
+
                 return suggestions;
             } else {
                 throw new Error(`${response['statusMessage']}`);
-            }            
+            }
         } catch (error) {
             Log.error("[SharePointSearchService.suggest()]", error, this.serviceScope);
             throw error;
         }
     }
 
-	/**
-	 * Extracts search results from search response rows
-	 * @param resultRows the search result rows
-	 */
-	private getSearchResults(resultRows: any): ISharePointSearchResult[] {
-		
+    /**
+     * Extracts search results from search response rows
+     * @param resultRows the search result rows
+     */
+    private getSearchResults(resultRows: any): ISharePointSearchResult[] {
+
         // Map search results
         let searchResults: ISharePointSearchResult[] = resultRows.map((elt) => {
 
-			// Build item result dynamically
-			// We can't type the response here because search results are by definition too heterogeneous so we treat them as key-value object
-			let result: ISharePointSearchResult = {};
+            // Build item result dynamically
+            // We can't type the response here because search results are by definition too heterogeneous so we treat them as key-value object
+            let result: ISharePointSearchResult = {};
 
-			elt.Cells.map((item) => {
-				result[item.Key] = item.Value;
-			});
+            elt.Cells.map((item) => {
+                result[item.Key] = item.Value;
+            });
 
-			return result;
-		});
+            return result;
+        });
 
-		return searchResults;
+        return searchResults;
     }
-    
+
     private getRequestPayload(searchQuery: ISharePointSearchQuery): string {
 
-        let queryPayload: any = cloneDeep(searchQuery); 
+        let queryPayload: any = cloneDeep(searchQuery);
 
         queryPayload.HitHighlightedProperties = this.fixArrProp(queryPayload.HitHighlightedProperties);
         queryPayload.Properties = this.fixArrProp(queryPayload.Properties);
@@ -413,9 +412,9 @@ export class SharePointSearchService implements ISharePointSearchService {
         queryPayload.ReorderingRules = this.fixArrProp(queryPayload.ReorderingRules);
         queryPayload.SelectProperties = this.fixArrProp(queryPayload.SelectProperties);
         queryPayload.SortList = this.fixArrProp(queryPayload.SortList);
-        
+
         const postBody = {
-            request:{ 
+            request: {
                 '__metadata': {
                     'type': 'Microsoft.Office.Server.Search.REST.SearchRequest'
                 },

@@ -38,18 +38,23 @@
         </pnp-detailslist>
 
         {{#if @root.properties.paging.showPaging}}
-            <pnp-pagination 
-                data-total-items="{{@root.data.totalItemsCount}}" 
-                data-hide-first-last-pages="{{@root.properties.paging.hideFirstLastPages}}"
-                data-hide-disabled="{{@root.properties.paging.hideDisabled}}"
-                data-hide-navigation="{{@root.properties.paging.hideNavigation}}"
-                data-range="{{@root.properties.paging.pagingRange}}" 
-                data-items-count-per-page="{{@root.properties.paging.itemsCountPerPage}}" 
-                data-current-page-number="{{@root.paging.currentPageNumber}}"
-                data-page-links="{{JSONstringify @root.data.paging.links}}"
-                data-theme-variant="{{JSONstringify @root.theme}}"
-            >
-            </pnp-pagination>
+
+            {{#gt @root.data.totalItemsCount @root.properties.paging.itemsCountPerPage}}
+            
+                <pnp-pagination 
+                    data-total-items="{{@root.data.totalItemsCount}}" 
+                    data-hide-first-last-pages="{{@root.properties.paging.hideFirstLastPages}}"
+                    data-hide-disabled="{{@root.properties.paging.hideDisabled}}"
+                    data-hide-navigation="{{@root.properties.paging.hideNavigation}}"
+                    data-range="{{@root.properties.paging.pagingRange}}" 
+                    data-items-count-per-page="{{@root.properties.paging.itemsCountPerPage}}" 
+                    data-current-page-number="{{@root.paging.currentPageNumber}}"
+                    data-page-links="{{JSONstringify @root.data.paging.links}}"
+                    data-theme-variant="{{JSONstringify @root.theme}}"
+                >
+                </pnp-pagination>
+            {{/gt}}
+            
         {{/if}}
     </div>
 </content>

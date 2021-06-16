@@ -52,11 +52,11 @@ export abstract class BaseSuggestionProvider<T> implements ISuggestionProvider {
         // Do nothing by default      
     }
 
-    public async getSuggestions(queryText: string): Promise<ISuggestion[]> {
+    public getSuggestions(queryText: string): Promise<ISuggestion[]> {
         throw 'Not implemented';
     }
 
-    public async getZeroTermSuggestions(): Promise<ISuggestion[]> {
+    public getZeroTermSuggestions(): Promise<ISuggestion[]> {
         throw 'Not implemented';
     }
 }

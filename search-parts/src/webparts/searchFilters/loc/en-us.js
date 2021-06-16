@@ -23,6 +23,7 @@ define([], function() {
             DataFilterCollection: {
                 SelectFilterComboBoxLabel: "Select field",
                 FilterNameLabel: "Filter field",
+                FilterMaxBuckets: "# of values",
                 FilterDisplayName: "Display name",
                 FilterTemplate: "Template",
                 FilterExpandByDefault: "Expand by default",
@@ -61,7 +62,8 @@ define([], function() {
                 ErrorTemplateResolve: "Unable to resolve the specified template. Error details: '{0}'",
                 FiltersTemplateFieldLabel: "Edit filters template",
                 FiltersTemplatePanelHeader: "Edit filters template"
-            }
+            },
+            ImportExport: "Import / Export settings"
         }
     }
 });

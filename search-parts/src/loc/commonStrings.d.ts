@@ -145,8 +145,6 @@ declare interface ICommonStrings {
           SortPanelSortDirectionLabel:string;
           SortDirectionColumnLabel: string;
           SortFieldColumnLabel: string;
-          SortableFieldManagedPropertyField: string;
-          SortableFieldDisplayValueField: string;
           EditSortLabel: string;
           SortInvalidSortableFieldMessage: string;
           SortFieldColumnPlaceholder: string;
@@ -323,9 +321,8 @@ declare interface ICommonStrings {
       }
     }
 }
-  
+
 declare module 'CommonStrings' {
   const strings: ICommonStrings;
   export = strings;
 }
-  

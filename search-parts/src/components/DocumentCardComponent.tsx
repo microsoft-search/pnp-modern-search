@@ -28,7 +28,7 @@ import { TestConstants } from "../common/Constants";
 export interface IDocumentCardComponentProps {
 
     // Item context
-    item?: {[key:string]: any};
+    item?: { [key: string]: any };
 
     // Fields configuration object
     fieldsConfiguration?: IComponentFieldsConfiguration[];
@@ -79,6 +79,7 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
 
     public constructor(props: IDocumentCardComponentProps) {
         super(props);
+        this.showPreviewOnClick = this.showPreviewOnClick.bind(this);
 
         this.state = {
             showCallout: false
@@ -91,7 +92,13 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
         });
 
         this._domPurify.addHook('uponSanitizeElement', DomPurifyHelper.allowCustomComponentsHook);
-        this._domPurify.addHook('uponSanitizeAttribute', DomPurifyHelper.allowCustomAttributesHook); 
+        this._domPurify.addHook('uponSanitizeAttribute', DomPurifyHelper.allowCustomAttributesHook);
+    }
+
+    private showPreviewOnClick() {
+        this.setState({
+            showCallout: true
+        });
     }
 
     public render() {
@@ -117,7 +124,7 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
                 targetElement={this.documentCardPreviewRef.current}
                 showPreview={this.state.showCallout}
             />;
-        }        
+        }
 
         // Get the current loaded theme
         const theme = merge(getTheme(), this.props.themeVariant);
@@ -153,7 +160,7 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
                     previewImageSrc: processedProps.previewImage ? UrlHelper.decode(processedProps.previewImage) : '#',
                     imageFit: ImageFit.centerCover,
                     height: 126
-                }             
+                }
             ]
         };
 
@@ -166,14 +173,18 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
             };
         }
 
+        let author = "";
+        if (processedProps.author) {
+            const parts = processedProps.author.split('|');
+            author = parts.length === 1 ? parts[0] : parts[1];
+        }
+
+        let previewFunc = this.props.enablePreview ? this.showPreviewOnClick : null;
+
         return <div>
             <DocumentCard
                 theme={this.props.themeVariant as ITheme}
-                onClick={() => {
-                    this.setState({
-                        showCallout: true
-                    });
-                }}
+                onClick={previewFunc}
                 styles={documentCardStyles}
                 type={this.props.isCompact ? DocumentCardType.compact : DocumentCardType.normal}
             >
@@ -190,14 +201,14 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
                     <Link
                         theme={this.props.themeVariant as ITheme}
                         href={processedProps.href} target='_blank' styles={{
-                        root: {
-                            selectors: {
-                                ':hover': {
-                                    textDecoration: 'underline'
+                            root: {
+                                selectors: {
+                                    ':hover': {
+                                        textDecoration: 'underline'
+                                    }
                                 }
                             }
-                        }
-                    }}>
+                        }}>
                         <DocumentCardTitle
                             theme={this.props.themeVariant as ITheme}
                             title={processedProps.title}
@@ -205,13 +216,13 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
                         />
                     </Link>
                     {processedProps.tags && !this.props.isCompact ?
-                        <div className={documentCardLocationClassNames.root} style={{whiteSpace: 'pre-line'}} dangerouslySetInnerHTML={{ __html: this._domPurify.sanitize(processedProps.tags) }}></div> : null
+                        <div className={documentCardLocationClassNames.root} style={{ whiteSpace: 'pre-line' }} dangerouslySetInnerHTML={{ __html: this._domPurify.sanitize(processedProps.tags) }}></div> : null
                     }
                     {processedProps.author ?
                         <DocumentCardActivity
                             theme={this.props.themeVariant as ITheme}
                             activity={processedProps.date}
-                            people={[{ name: processedProps.author, profileImageSrc: processedProps.profileImage }]}
+                            people={[{ name: author, profileImageSrc: processedProps.profileImage }]}
                         /> : null
                     }
                 </DocumentCardDetails>
@@ -222,17 +233,17 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
 }
 
 export class DocumentCardWebComponent extends BaseWebComponent {
-   
-    public constructor() {
-        super(); 
-    }
- 
-    public connectedCallback() {
- 
-       let props = this.resolveAttributes();
 
-       const templateService = this._serviceScope.consume<ITemplateService>(TemplateService.ServiceKey);
-       const documentCarditem = <DocumentCardComponent {...props} templateService={templateService}/>;
-       ReactDOM.render(documentCarditem, this);
-    }    
+    public constructor() {
+        super();
+    }
+
+    public connectedCallback() {
+
+        let props = this.resolveAttributes();
+
+        const templateService = this._serviceScope.consume<ITemplateService>(TemplateService.ServiceKey);
+        const documentCarditem = <DocumentCardComponent {...props} templateService={templateService} />;
+        ReactDOM.render(documentCarditem, this);
+    }
 }

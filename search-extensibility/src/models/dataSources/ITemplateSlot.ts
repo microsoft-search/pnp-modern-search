@@ -12,6 +12,7 @@ export enum BuiltinTemplateSlots {
     Author = 'Author',
     Tags = 'Tags',
     SiteId = 'SiteId',
+    WebId = 'WebId',
     ListId = 'ListId',
     ItemId = 'ItemId',
     IsFolder = 'IsFolder',

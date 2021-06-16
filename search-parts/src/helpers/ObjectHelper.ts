@@ -1,4 +1,6 @@
+import { isArray } from '@pnp/common/util';
 import * as jspath from 'jspath';
+import { isEmpty } from '@microsoft/sp-lodash-subset';
 
 export class ObjectHelper {
 
@@ -35,17 +37,37 @@ export class ObjectHelper {
      * Get object proeprty value by its deep path.
      * @param object the object containg the property path
      * @param path the property path to get
-     * @returns the property value if found, undefined otherwise
+     * @returns the property value as string if found, 'undefined' otherwise
      */
-    public static byPath(object: any, path: string): any  {
+    public static byPath(object: any, path: string): string  {
 
         if (path && object) {
 
             try {
-                return jspath.apply(`.${path}`,object)[0];   
+                // jsPath always returns an array. See https://www.npmjs.com/package/jspath#result
+                const value: any[] = jspath.apply(`.${path}`, object);
+
+                // Empty array returned by jsPath
+                if (isEmpty(value)) {
+
+                    // i.e the value to look for does not exist in the provided object
+                    return undefined;
+                }
+
+                // Check if value is an object
+                // - Arrays of objects will return '[object Object],[object Object]' etc.
+                if (value.toString().indexOf('[object Object]') !== -1) {
+
+                    // Returns the stringified array
+                    return JSON.stringify(value);                         
+                }
+
+                // Use the default behavior of the toString() method. Arrays of simple values (string, integer, etc.) will be separated by a comma (',')
+                return value.toString();                                  
+            
             } catch (error) {
                 // Case when unexpected string or tokens are passed in the path
-                return null;
+                return object[path]; // fallback to see if the prop is on the object verbatim
             }
                  
         } else {

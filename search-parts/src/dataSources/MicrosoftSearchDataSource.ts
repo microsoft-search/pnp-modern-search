@@ -124,12 +124,12 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
 
         // Use the same chunk name as the main Web Part to avoid recreating/loading a new one
         const { PropertyFieldCollectionData, CustomCollectionFieldType } = await import(
-            /* webpackChunkName: 'data-visualizer-property-pane' */
+            /* webpackChunkName: 'pnp-modern-search-property-pane' */
             '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData'
         );
 
         const { PropertyPaneWebPartInformation } = await import(
-            /* webpackChunkName: 'data-visualizer-property-pane' */
+            /* webpackChunkName: 'pnp-modern-search-property-pane' */
             '@pnp/spfx-property-controls/lib/PropertyPaneWebPartInformation'
         );
 
@@ -342,6 +342,10 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                 slotField: 'NormSiteID'
             },
             {
+                slotName: BuiltinTemplateSlots.WebId,
+                slotField: 'NormWebID'
+            },
+            {
                 slotName: BuiltinTemplateSlots.ListId,
                 slotField: 'NormListID'
             },
@@ -396,7 +400,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                     minimumCount: 0,
                     sortBy: filterConfig.sortBy === FilterSortType.ByCount ? SearchAggregationSortBy.Count : SearchAggregationSortBy.KeyAsString
                 },
-                size: 10
+                size: filterConfig?.maxBuckets ? filterConfig.maxBuckets : 10
             };
 
             if (filterConfig.selectedTemplate === "DateIntervalFilterTemplate") {

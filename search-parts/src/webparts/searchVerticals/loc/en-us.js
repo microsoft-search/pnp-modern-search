@@ -12,12 +12,13 @@ define([], function() {
                 ButtonLabel: "Configure verticals",
                 Fields: {
                     TabName: "Tab name",
-                    IconName: "Office UI Fabric icon name",
+                    IconName: "Fluent UI icon name",
                     IsLink: "Is hyperlink",
                     LinkUrl: "Link URL",
                     OpenBehavior: "Open behavior"
                 }
-            }
+            },
+            ImportExport: "Import / Export settings"
         }
     }
 });

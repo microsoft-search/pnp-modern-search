@@ -2,7 +2,7 @@
 
 Custom suggestions providers can be added to a search box Web Part to get normalized keywords during search.
 
-!["Custom web component"](../assets/webparts/search_box/suggestions_demo.png){: .center}
+!["Custom web component"](../assets/webparts/search-box/suggestions_demo.png){: .center}
 
 A suggestions provider supports:
 

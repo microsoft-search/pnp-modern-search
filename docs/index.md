@@ -2,6 +2,8 @@
 
 # PnP Modern Search v4
 
+![Current version](https://img.shields.io/github/v/release/microsoft-search/pnp-modern-search)
+
 The PnP 'Modern Search' solution is a set of SharePoint Online modern Web Parts allowing SharePoint super users, webmasters and developers to create highly flexible and personalized search based experiences in minutes.
 
 Before modern pages and web parts built on SPFx was introduced search driven scenarios was covered by the highly flexible classic search web parts, which
@@ -50,7 +52,7 @@ Here is the list of supported browsers:
 - Edge Chromium
 - Brave
 
-**PnP Modern Search do not explicitly support Internet Explorer 11**. We think there are plenty of other options for enteprise scenarios in the market. Maybe it's time to move on. For developers, it represents an **huge** amount of time to make the solution compatible for a very low benefit. Hope you understand, ain't personal ;).
+**PnP Modern Search do not explicitly support Internet Explorer 11**. We think there are plenty of other options for enterprise scenarios in the market. Maybe it's time to move on. For developers, it represents an **huge** amount of time to make the solution compatible for a very low benefit. Hope you understand, ain't personal ;).
 
 ## Extensibility model
 

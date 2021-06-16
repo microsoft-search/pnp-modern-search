@@ -10,6 +10,7 @@ declare interface ISearchBoxWebPartStrings {
       PageUrlLabel: string;
       UrlErrorMessage: string;
       QueryPathBehaviorLabel: string;
+      QueryInputTransformationLabel: string;
       UrlFragmentQueryPathBehavior: string;
       QueryStringQueryPathBehavior: string;
       QueryStringParameterName: string;
@@ -37,7 +38,8 @@ declare interface ISearchBoxWebPartStrings {
         PanelHeader: string;
         PanelDescription: string;
       }
-    }
+    },
+    ImportExport: string;
   },
   SearchBox:{
     DefaultPlaceholder: string;
