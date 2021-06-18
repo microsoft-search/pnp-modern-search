@@ -82,6 +82,40 @@ export class UrlHelper {
         const htmlContent: Document = domParser.parseFromString(`<!doctype html><body>${encodedStr}</body>`, 'text/html');
         return htmlContent.body.textContent;
     }
+
+    /**
+     * Try to guess the item URL according to its . (i.e the URL where the user will be redirected to)
+     * @param item the result item
+     */
+    public static getGraphPreviewUrl(url: string) {
+
+        // Try to guess the href link according to URL using the Microsoft Graph format
+        if (url) {
+            // See https://support.microsoft.com/en-us/office/file-types-supported-for-previewing-files-in-onedrive-sharepoint-and-teams-e054cd0f-8ef2-4ccb-937e-26e37419c5e4
+            url = UrlHelper.createOdspPreviewUrl(url);
+        }
+    
+        return url;
+    }
+
+    public static createOdspPreviewUrl(url: string): string {
+
+        let previewUrl: string = url;
+
+        if (url) {
+
+            const matches = url.match(/^(http[s]?:\/\/[^\/]*)(.+)\/(.+)$/);
+            // First match is the complete URL
+            if (matches) {
+                const [host, path, file] = matches.slice(1);
+                if (host && path && file) {
+                    previewUrl = `${host}${path}/?id=${path}/${file}&parent=${path}`;
+                }
+            }
+        }
+
+        return previewUrl;
+    }
 }
 
 export enum PageOpenBehavior {
