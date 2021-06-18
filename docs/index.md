@@ -56,7 +56,7 @@ Here is the list of supported browsers:
 
 ## Extensibility model
 
-By getting this solution, you also benefit from an advanced [extensibility model](./extensibility/index.md) allowing you to customize the solution according to your requirements if default features don't do the job for you. 
+By getting this solution, you also benefit from an advanced [extensibility model](./extensibility/index.md) allowing you to customize the solution according to your requirements if default features don't do the job for you.
 
 **The supported extensions are:**
 
@@ -73,7 +73,7 @@ With these available customizations options, you can do pretty much anything!
 
 If you encounter an issue, please use the GitHub issues list of [this repository](https://github.com/microsoft-search/pnp-modern-search/issues). Also, to help us to resolve your issue, you can include screenshots or error messages coming from:
 
-- The faulty Web Part itself. 
+- The faulty Web Part itself.
 - Errors displayed in the browser console (typically pressing F12).
 - Errors displayed in the SharePoint console (pressing CTRL+F12)
 
