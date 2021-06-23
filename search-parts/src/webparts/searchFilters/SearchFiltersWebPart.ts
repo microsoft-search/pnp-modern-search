@@ -951,6 +951,15 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                 // 1. Concatenate all values from all connected results Web Parts
                 allAvailableFieldsFromResults = allAvailableFieldsFromResults.concat(dataSourceData.availableFieldsFromResults);
                 allAvailableFilters = allAvailableFilters.concat(dataSourceData.availablefilters);
+
+                // Merge all custom registred Handlebars helpers from all connected Data Visualizer Web Parts
+                if (dataSourceData.handlebarsContext) {
+                    Object.keys(dataSourceData.handlebarsContext.helpers).forEach(helperName => {
+                        if (!this.templateService.Handlebars.helpers[helperName]) {
+                            this.templateService.Handlebars.registerHelper(helperName, dataSourceData.handlebarsContext.helpers[helperName]);
+                        }
+                    });            
+                }
             }
         });
 

@@ -243,6 +243,10 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         switch (propertyId) {
             case ComponentType.SearchResults:
+
+                // Pass the Handlebars context to consumers, so they can register custom helpers for their own services 
+                this._dataResultsSourceData.handlebarsContext = this.templateService.Handlebars;
+
                 return this._dataResultsSourceData;
         }
 
