@@ -20,6 +20,7 @@ import * as DOMPurify from 'dompurify';
 import { DomPurifyHelper } from "../helpers/DomPurifyHelper";
 import { IComponentFieldsConfiguration } from "../models/common/IComponentFieldsConfiguration";
 import { TestConstants } from "../common/Constants";
+import { ServiceScope, ServiceKey } from '@microsoft/sp-core-library';
 
 /**
  * Document card props. These properties are retrieved from the web component attributes. They must be camel case.
@@ -241,8 +242,18 @@ export class DocumentCardWebComponent extends BaseWebComponent {
     public connectedCallback() {
 
         let props = this.resolveAttributes();
+        let serviceScope: ServiceScope = this.serviceScope; // Default is the root shared service scope regardless the current Web Part 
+        let templateServiceKey: ServiceKey<any> = TemplateService.ServiceKey; // Defaut service key for TemplateService
 
-        const templateService = this._serviceScope.consume<ITemplateService>(TemplateService.ServiceKey);
+        if (props.instanceId) {
+
+          // Get the service scope and keys associated to the current Web Part displaying the component
+          serviceScope = this._webPartServiceScopes.get(props.instanceId) ? this._webPartServiceScopes.get(props.instanceId) : serviceScope;
+          templateServiceKey = this._webPartServiceKeys.get(props.instanceId) ? this._webPartServiceKeys.get(props.instanceId).TemplateService : templateServiceKey;
+        }
+
+        const templateService = serviceScope.consume<ITemplateService>(templateServiceKey);
+
         const documentCarditem = <DocumentCardComponent {...props} templateService={templateService} />;
         ReactDOM.render(documentCarditem, this);
     }

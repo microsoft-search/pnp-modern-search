@@ -11,6 +11,7 @@ import { UrlHelper } from '../helpers/UrlHelper';
 import { isEmpty } from '@microsoft/sp-lodash-subset';
 import { DomPurifyHelper } from '../helpers/DomPurifyHelper';
 import { IComponentFieldsConfiguration } from '../models/common/IComponentFieldsConfiguration';
+import { ServiceScope, ServiceKey } from '@microsoft/sp-core-library';
 
 export interface IPersonaComponentProps {
 
@@ -146,10 +147,21 @@ export class PersonaWebComponent extends BaseWebComponent {
     }
  
     public connectedCallback() {
- 
-       let props = this.resolveAttributes();
-       const templateService = this._serviceScope.consume<ITemplateService>(TemplateService.ServiceKey);
-       const personaItem = <PersonaComponent {...props} templateService={templateService}/>;
-       ReactDOM.render(personaItem, this);
+
+        let props = this.resolveAttributes();
+        let serviceScope: ServiceScope = this.serviceScope; // Default is the root shared service scope regardless the current Web Part 
+        let templateServiceKey: ServiceKey<any> = TemplateService.ServiceKey; // Defaut service key for TemplateService
+
+        if (props.instanceId) {
+
+            // Get the service scope and keys associated to the current Web Part displaying the component
+            serviceScope = this._webPartServiceScopes.get(props.instanceId) ? this._webPartServiceScopes.get(props.instanceId) : serviceScope;
+            templateServiceKey = this._webPartServiceKeys.get(props.instanceId) ? this._webPartServiceKeys.get(props.instanceId).TemplateService : templateServiceKey;
+        }
+
+        const templateService = serviceScope.consume<ITemplateService>(templateServiceKey);
+
+        const personaItem = <PersonaComponent {...props} templateService={templateService}/>;
+        ReactDOM.render(personaItem, this);
     }    
 }

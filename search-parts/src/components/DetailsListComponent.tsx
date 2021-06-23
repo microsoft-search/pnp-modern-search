@@ -15,6 +15,7 @@ import * as DOMPurify from 'dompurify';
 import { DomPurifyHelper } from '../helpers/DomPurifyHelper';
 import { ITemplateService } from '../services/templateService/ITemplateService';
 import { TemplateService } from '../services/templateService/TemplateService';
+import { ServiceScope, ServiceKey } from '@microsoft/sp-core-library';
 
 const DEFAULT_SHIMMER_HEIGHT = 7;
 const SHIMMER_LINE_VS_CELL_WIDTH_RATIO = 0.95;
@@ -558,9 +559,18 @@ export class DetailsListWebComponent extends BaseWebComponent {
  
     public connectedCallback() {
  
-       let props = this.resolveAttributes();
+      let props = this.resolveAttributes();
+      let serviceScope: ServiceScope = this.serviceScope; // Default is the root shared service scope regardless the current Web Part 
+      let templateServiceKey: ServiceKey<any> = TemplateService.ServiceKey; // Defaut service key for TemplateService
 
-       const templateService = this._serviceScope.consume<ITemplateService>(TemplateService.ServiceKey);
+      if (props.instanceId) {
+
+        // Get the service scope and keys associated to the current Web Part displaying the component
+        serviceScope = this._webPartServiceScopes.get(props.instanceId) ? this._webPartServiceScopes.get(props.instanceId) : serviceScope;
+        templateServiceKey = this._webPartServiceKeys.get(props.instanceId) ? this._webPartServiceKeys.get(props.instanceId).TemplateService : templateServiceKey;
+      }
+
+      const templateService = serviceScope.consume<ITemplateService>(templateServiceKey);
 
        const detailsListComponent = <DetailsListComponent {...props} handlebars={templateService.Handlebars}/>;
        ReactDOM.render(detailsListComponent, this);
