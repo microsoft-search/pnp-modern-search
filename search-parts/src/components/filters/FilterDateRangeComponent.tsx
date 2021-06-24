@@ -218,7 +218,7 @@ export class FilterDateRangeWebComponent extends BaseWebComponent {
  
     public async connectedCallback() {
 
-        const dateHelper = this.serviceScope.consume<DateHelper>(DateHelper.ServiceKey);
+        const dateHelper = this._serviceScope.consume<DateHelper>(DateHelper.ServiceKey);
         const moment = await dateHelper.moment();
  
         let props = this.resolveAttributes();

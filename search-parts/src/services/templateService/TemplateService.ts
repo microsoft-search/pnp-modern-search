@@ -249,7 +249,7 @@ export class TemplateService implements ITemplateService {
                         wc.componentClass.prototype._webPartServiceKeys.set(instanceId, availableServiceKeys);
 
                         // Set the root service scope for common services (SPHttpClient, HttpClient, etc.)
-                        wc.componentClass.prototype.serviceScope = ServiceScopeHelper.getRootServiceScope(this.serviceScope);
+                        wc.componentClass.prototype._serviceScope = ServiceScopeHelper.getRootServiceScope(this.serviceScope);
 
                         wc.componentClass.prototype.moment = this.moment;
                         window.customElements.define(wc.componentName, wc.componentClass);

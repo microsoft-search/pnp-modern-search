@@ -12,7 +12,7 @@ export abstract class BaseWebComponent extends HTMLElement {
     /**
      * The root shared service scope for all Web Part instances on the page. Use this scope to consume common services (ex: SPHttpClient, HttpClient , etc.) 
      */
-    public serviceScope: ServiceScope;
+    public _serviceScope: ServiceScope;
 
     /**
      * INTERNAL USE ONLY. Array of service scopes of Web Part IDs who registered this web component. Use this array to look up correct service scope for a specific Web Part instance ID.
@@ -92,8 +92,8 @@ export abstract class BaseWebComponent extends HTMLElement {
         // Be careful: the theme variant will be the one of the last registered Web Part on the page (because serviceScope is set using prototype and called every time a Web part is rendered) 
         // The theme variant may not correspond to the actual Web Part section theme
         // We set this property as a fallback if the web component does not set the data-theme-variant attribute.
-        if (this.serviceScope && !props.themeVariant) {
-            const themeProvider = this.serviceScope.consume(ThemeProvider.serviceKey);
+        if (this._serviceScope && !props.themeVariant) {
+            const themeProvider = this._serviceScope.consume(ThemeProvider.serviceKey);
             const themeVariant = themeProvider.tryGetTheme();
             props.themeVariant = themeVariant;
         }

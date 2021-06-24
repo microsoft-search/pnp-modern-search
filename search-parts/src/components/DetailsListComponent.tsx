@@ -560,7 +560,7 @@ export class DetailsListWebComponent extends BaseWebComponent {
     public connectedCallback() {
  
       let props = this.resolveAttributes();
-      let serviceScope: ServiceScope = this.serviceScope; // Default is the root shared service scope regardless the current Web Part 
+      let serviceScope: ServiceScope = this._serviceScope; // Default is the root shared service scope regardless the current Web Part 
       let templateServiceKey: ServiceKey<any> = TemplateService.ServiceKey; // Defaut service key for TemplateService
 
       if (props.instanceId) {
