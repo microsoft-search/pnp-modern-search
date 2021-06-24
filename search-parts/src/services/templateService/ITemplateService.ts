@@ -11,7 +11,7 @@ export interface ITemplateService {
     ensureFileResolves(fileUrl: string): Promise<void>;
     isValidTemplateFile(filePath: string): boolean;
     processTemplate(templateContext: any, templateContent: string): Promise<string>;
-    registerWebComponents(webComponents: IComponentDefinition<any>[]): Promise<void>;
+    registerWebComponents(webComponents: IComponentDefinition<any>[], instanceId: string): Promise<void>;
     processFieldsConfiguration<T>(fieldsConfiguration: IComponentFieldsConfiguration[], item: {[key:string]: any}, context?: IDataResultsTemplateContext | any): T;
     registerResultTypes(resultTypes: IDataResultType[]): Promise<void>;
 }

@@ -22,4 +22,23 @@ export class ServiceScopeHelper {
 
 		return childScope;
 	}
+
+	/**
+	 * Gets the top root service scope from a child scope
+	 * @param scope a child service scope
+	 * @returns 
+	 */
+	public static getRootServiceScope(scope: ServiceScope) {
+
+		let rootServiceScope;
+		
+		let parentScope = scope.getParent();
+		
+		while (parentScope !== undefined) {
+			rootServiceScope = parentScope;
+			parentScope = parentScope.getParent();
+		}
+
+		return rootServiceScope
+	}
 }

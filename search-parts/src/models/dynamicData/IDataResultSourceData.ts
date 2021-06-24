@@ -11,4 +11,9 @@ export interface IDataResultSourceData {
      * The available filters from the data source results
      */
     availablefilters: IDataFilterResult[];
+
+    /**
+     * The Hanlebars context available for consumers
+     */
+    handlebarsContext?: typeof Handlebars;
 }

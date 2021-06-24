@@ -243,6 +243,10 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         switch (propertyId) {
             case ComponentType.SearchResults:
+
+                // Pass the Handlebars context to consumers, so they can register custom helpers for their own services 
+                this._dataResultsSourceData.handlebarsContext = this.templateService.Handlebars;
+
                 return this._dataResultsSourceData;
         }
 
@@ -489,7 +493,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         // Register Web Components in the global page context. We need to do this BEFORE the template processing to avoid race condition.
         // Web components are only defined once.
-        await this.templateService.registerWebComponents(this.availableWebComponentDefinitions);
+        await this.templateService.registerWebComponents(this.availableWebComponentDefinitions, this.instanceId);
 
         try {
             // Disable PnP Telemetry
@@ -1755,8 +1759,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         // Register specific Web Part service instances
         this.webPartInstanceServiceScope = this.context.serviceScope.startNewChild();
-        this.templateService = this.webPartInstanceServiceScope.createDefaultAndProvide(TemplateService.ServiceKey);
-        this.dynamicDataService = this.webPartInstanceServiceScope.createDefaultAndProvide(DynamicDataService.ServiceKey);
+        this.templateService = this.webPartInstanceServiceScope.createAndProvide(TemplateService.ServiceKey, TemplateService);
+        this.dynamicDataService = this.webPartInstanceServiceScope.createAndProvide(DynamicDataService.ServiceKey, DynamicDataService);
         this.dynamicDataService.dynamicDataProvider = this.context.dynamicDataProvider;
         this.webPartInstanceServiceScope.finish();
     }
