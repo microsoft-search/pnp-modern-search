@@ -1,0 +1,1520 @@
+
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <meta http-equiv="x-ua-compatible" content="ie=edge">
+      
+      
+      
+      
+        <meta name="lang:clipboard.copy" content="Copy to clipboard">
+      
+        <meta name="lang:clipboard.copied" content="Copied to clipboard">
+      
+        <meta name="lang:search.language" content="en">
+      
+        <meta name="lang:search.pipeline.stopwords" content="True">
+      
+        <meta name="lang:search.pipeline.trimmer" content="True">
+      
+        <meta name="lang:search.result.none" content="No matching documents">
+      
+        <meta name="lang:search.result.one" content="1 matching document">
+      
+        <meta name="lang:search.result.other" content="# matching documents">
+      
+        <meta name="lang:search.tokenizer" content="[\s\-]+">
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.2.1, mkdocs-material-4.6.3">
+    
+    
+      
+        <title>Templating - v3 - PnP Modern Search (v4)</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/application.adb8469c.css">
+      
+        <link rel="stylesheet" href="../../assets/stylesheets/application-palette.a8b3c06d.css">
+      
+      
+        
+        
+        <meta name="theme-color" content="#2196f3">
+      
+    
+    
+      <script src="../../assets/javascripts/modernizr.86422ebf.js"></script>
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=:300,400,400i,700%7CUbuntu+Mono&display=fallback">
+        <style>body,input{font-family:"","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Ubuntu Mono","Courier New",Courier,monospace}</style>
+      
+    
+    <link rel="stylesheet" href="../../assets/fonts/material-icons.css">
+    
+    
+      <link rel="stylesheet" href="../../assets/extra.css">
+    
+    
+      
+    
+    
+  </head>
+  
+    
+    
+    <body dir="ltr" data-md-color-primary="blue" data-md-color-accent="orange">
+  
+    <svg class="md-svg">
+      <defs>
+        
+        
+          <svg xmlns="http://www.w3.org/2000/svg" width="416" height="448" viewBox="0 0 416 448" id="__github"><path fill="currentColor" d="M160 304q0 10-3.125 20.5t-10.75 19T128 352t-18.125-8.5-10.75-19T96 304t3.125-20.5 10.75-19T128 256t18.125 8.5 10.75 19T160 304zm160 0q0 10-3.125 20.5t-10.75 19T288 352t-18.125-8.5-10.75-19T256 304t3.125-20.5 10.75-19T288 256t18.125 8.5 10.75 19T320 304zm40 0q0-30-17.25-51T296 232q-10.25 0-48.75 5.25Q229.5 240 208 240t-39.25-2.75Q130.75 232 120 232q-29.5 0-46.75 21T56 304q0 22 8 38.375t20.25 25.75 30.5 15 35 7.375 37.25 1.75h42q20.5 0 37.25-1.75t35-7.375 30.5-15 20.25-25.75T360 304zm56-44q0 51.75-15.25 82.75-9.5 19.25-26.375 33.25t-35.25 21.5-42.5 11.875-42.875 5.5T212 416q-19.5 0-35.5-.75t-36.875-3.125-38.125-7.5-34.25-12.875T37 371.5t-21.5-28.75Q0 312 0 260q0-59.25 34-99-6.75-20.5-6.75-42.5 0-29 12.75-54.5 27 0 47.5 9.875t47.25 30.875Q171.5 96 212 96q37 0 70 8 26.25-20.5 46.75-30.25T376 64q12.75 25.5 12.75 54.5 0 21.75-6.75 42 34 40 34 99.5z"/></svg>
+        
+      </defs>
+    </svg>
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
+    
+      <a href="#templating-v3" tabindex="0" class="md-skip">
+        Skip to content
+      </a>
+    
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid">
+    <div class="md-flex">
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <a href="../.." title="PnP Modern Search (v4)" aria-label="PnP Modern Search (v4)" class="md-header-nav__button md-logo">
+          
+            <img alt="logo" src="../../assets/pnp_logo.png" width="24" height="24">
+          
+        </a>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
+      </div>
+      <div class="md-flex__cell md-flex__cell--stretch">
+        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+          
+            <span class="md-header-nav__topic">
+              PnP Modern Search (v4)
+            </span>
+            <span class="md-header-nav__topic">
+              
+                Templating - v3
+              
+            </span>
+          
+        </div>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        
+          <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
+          
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" aria-label="search" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+      <label class="md-icon md-search__icon" for="__search"></label>
+      <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
+        &#xE5CD;
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="result">
+          <div class="md-search-result__meta">
+            Type to start searching
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+        
+      </div>
+      
+        <div class="md-flex__cell md-flex__cell--shrink">
+          <div class="md-header-nav__source">
+            
+
+
+  
+
+<a href="https://github.com/microsoft-search/pnp-modern-search/" title="Go to repository" class="md-source" data-md-source="github">
+  
+    <div class="md-source__icon">
+      <svg viewBox="0 0 24 24" width="24" height="24">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+          </div>
+        </div>
+      
+    </div>
+  </nav>
+</header>
+    
+    <div class="md-container">
+      
+        
+      
+      
+        
+
+<nav class="md-tabs" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../../index.html" class="md-tabs__link">
+          Getting Started
+        </a>
+      
+    </li>
+  
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../../usage/search-results/index.html" class="md-tabs__link">
+          Search Results
+        </a>
+      
+    </li>
+  
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../../usage/search-filters/index.html" class="md-tabs__link">
+          Search Filters
+        </a>
+      
+    </li>
+  
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../../usage/search-verticals/index.html" class="md-tabs__link">
+          Search Verticals
+        </a>
+      
+    </li>
+  
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../../usage/search-box/index.html" class="md-tabs__link">
+          Search Box
+        </a>
+      
+    </li>
+  
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../../extensibility/index.html" class="md-tabs__link">
+          Extensibility
+        </a>
+      
+    </li>
+  
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../index.html" class="md-tabs__link">
+          Version 3
+        </a>
+      
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+      
+      <main class="md-main" role="main">
+        <div class="md-main__inner md-grid" data-md-component="container">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" data-md-level="0">
+  <label class="md-nav__title md-nav__title--site" for="__drawer">
+    <a href="../.." title="PnP Modern Search (v4)" class="md-nav__button md-logo">
+      
+        <img alt="logo" src="../../assets/pnp_logo.png" width="48" height="48">
+      
+    </a>
+    PnP Modern Search (v4)
+  </label>
+  
+    <div class="md-nav__source">
+      
+
+
+  
+
+<a href="https://github.com/microsoft-search/pnp-modern-search/" title="Go to repository" class="md-source" data-md-source="github">
+  
+    <div class="md-source__icon">
+      <svg viewBox="0 0 24 24" width="24" height="24">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-1" type="checkbox" id="nav-1">
+    
+    <label class="md-nav__link" for="nav-1">
+      Getting Started
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-1">
+        Getting Started
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../index.html" title="Introduction" class="md-nav__link">
+      Introduction
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../installation.html" title="Installation" class="md-nav__link">
+      Installation
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../scenarios/index.html" title="Scenario tutorials" class="md-nav__link">
+      Scenario tutorials
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../how-to-contribute.html" title="How to contribute?" class="md-nav__link">
+      How to contribute?
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../build-the-doc.html" title="Building documentation" class="md-nav__link">
+      Building documentation
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2">
+    
+    <label class="md-nav__link" for="nav-2">
+      Search Results
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-2">
+        Search Results
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../usage/search-results/index.html" title="Usage" class="md-nav__link">
+      Usage
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../usage/search-results/data-sources/index.html" title="Data sources" class="md-nav__link">
+      Data sources
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../usage/search-results/slots.html" title="Slots" class="md-nav__link">
+      Slots
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../usage/search-results/tokens.html" title="Tokens" class="md-nav__link">
+      Tokens
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../usage/search-results/layouts/index.html" title="Layouts" class="md-nav__link">
+      Layouts
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../usage/search-results/connections/index.html" title="Connections" class="md-nav__link">
+      Connections
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../extensibility/index.html" title="Extensibility" class="md-nav__link">
+      Extensibility
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3">
+    
+    <label class="md-nav__link" for="nav-3">
+      Search Filters
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-3">
+        Search Filters
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../usage/search-filters/index.html" title="Usage" class="md-nav__link">
+      Usage
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../usage/search-filters/layouts/index.html" title="Layouts" class="md-nav__link">
+      Layouts
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4">
+    
+    <label class="md-nav__link" for="nav-4">
+      Search Verticals
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-4">
+        Search Verticals
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../usage/search-verticals/index.html" title="Usage" class="md-nav__link">
+      Usage
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-5" type="checkbox" id="nav-5">
+    
+    <label class="md-nav__link" for="nav-5">
+      Search Box
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-5">
+        Search Box
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../usage/search-box/index.html" title="Usage" class="md-nav__link">
+      Usage
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-6" type="checkbox" id="nav-6">
+    
+    <label class="md-nav__link" for="nav-6">
+      Extensibility
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-6">
+        Extensibility
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../extensibility/index.html" title="Introduction" class="md-nav__link">
+      Introduction
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../extensibility/templating.html" title="Templating" class="md-nav__link">
+      Templating
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../extensibility/custom_web_component.html" title="Custom web component" class="md-nav__link">
+      Custom web component
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../extensibility/custom_suggestions_provider.html" title="Custom suggestions provider" class="md-nav__link">
+      Custom suggestions provider
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../extensibility/handlebars_customizations.html" title="Custom Handlebars customizations" class="md-nav__link">
+      Custom Handlebars customizations
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-7" type="checkbox" id="nav-7">
+    
+    <label class="md-nav__link" for="nav-7">
+      Version 3
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-7">
+        Version 3
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../index.html" title="Documentation" class="md-nav__link">
+      Documentation
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#available-layouts" class="md-nav__link">
+    Available layouts
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#simple-list" class="md-nav__link">
+    Simple List
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#details-list" class="md-nav__link">
+    Details List
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#template-options" class="md-nav__link">
+    Template options
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#document-card" class="md-nav__link">
+    Document Card
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#template-options_1" class="md-nav__link">
+    Template options
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#carouselslider" class="md-nav__link">
+    Carousel/Slider
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#customize-slide-content" class="md-nav__link">
+    Customize slide content
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#template-options_2" class="md-nav__link">
+    Template options
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#debug-view" class="md-nav__link">
+    Debug View
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#people-view" class="md-nav__link">
+    People View
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#template-options_3" class="md-nav__link">
+    Template options
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#customize-templates-with-handlebars" class="md-nav__link">
+    Customize templates with Handlebars
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#accessing-items" class="md-nav__link">
+    Accessing items
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#styling" class="md-nav__link">
+    Styling
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sanitized-html" class="md-nav__link">
+    Sanitized HTML
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#handlebars-helpers" class="md-nav__link">
+    Handlebars helpers
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#web-components" class="md-nav__link">
+    Web-components
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#use-result-types" class="md-nav__link">
+    Use result types
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#elements-previews" class="md-nav__link">
+    Elements previews
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#custom-placeholders-ie-shimmers" class="md-nav__link">
+    Custom placeholders (i.e. shimmers)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#work-with-sharepoint-theme" class="md-nav__link">
+    Work with SharePoint theme
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#custom-code-renderers" class="md-nav__link">
+    Custom code renderers
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/microsoft-search/pnp-modern-search/blob/develop/docs/v3/search-parts/templating.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
+                
+                
+                <h1 id="templating-v3">Templating - v3<a class="headerlink" href="#templating-v3" title="Permanent link">&para;</a></h1>
+<p><a href="../index.html">Table of contents</a></p>
+<h2 id="available-layouts">Available layouts<a class="headerlink" href="#available-layouts" title="Permanent link">&para;</a></h2>
+<p>By default, the search results Web Part comes with multiples layouts. All layouts rely on Handlebars templates. </p>
+<p><img alt="All layouts" src="../images/all_layouts.png" /></p>
+<p>The templating feature comes directly from the original <a href="https://github.com/SharePoint/sp-dev-fx-webparts/tree/master/samples/react-content-query-webpart">react-content-query-webpart</a> so thanks to @spplante!</p>
+<p>Some provided templates embed web components (via custom HTML elements) wrapping Office UI Fabric React controls (ex: DetailsList, DocumentCard). For those, you can only customize them using the provided template options and placeholders and it means you don't have access to their underlying HTML markup.</p>
+<h3 id="simple-list">Simple List<a class="headerlink" href="#simple-list" title="Permanent link">&para;</a></h3>
+<p>Displays the search results as a simple list with previews:</p>
+<p><img alt="Simple list" src="../images/simple_list_layout.png" /></p>
+<h3 id="details-list">Details List<a class="headerlink" href="#details-list" title="Permanent link">&para;</a></h3>
+<p>Displays the search results inside a tabular view using the associated Office UI Fabric <a href="https://developer.microsoft.com/en-us/fabric#/controls/web/detailslist">DetailsList control</a>:</p>
+<p><img alt="Details list" src="../images/details_list_layout.png" /></p>
+<h4 id="template-options">Template options<a class="headerlink" href="#template-options" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Manage columns</strong></td>
+<td>Allows you to build you own table view by adding or removing columns dynamically. For each column, you get the following options:<br><img alt="Details list columns" src="../images/details_list_manage_columns.png" /><ul><li><strong>Column name</strong>: the column name to display.</li><li><strong>Minimum width in px</strong>: the minimum width of the column.</li><li><strong>Maximum width in px</strong>: the maximum width of the column.</li><li><strong>Sortable</strong>: allows you to sort column values alphabetically when the column header is clicked (ascending or descending).</li><li><strong>Resizable</strong>: allows you to resize the column dynamically in display mode.</li><li><strong>Multiline</strong>: if the column column should be multiline. By default only ellipsis (...) will be display for larger text.</li><li><strong>Link to item</strong>: if enabled, wrap the column value with an URL link pointing to the search result item (i.e. Path). This option is especially suitable for the 'Title' column.</li><li><strong>Column value</strong>: you can choose here either a managed property value (from the list or as free text) without any transformation or use an Handlebars expression by clicking on the checkbox next to it. In this case, all helpers from the main template are available and you can also add you own HTML markup in the column value. For HTML fields you can use the special variable <code>@themeVariant</code> to use theme colors (ex: <code>@themeVariant.palette.themePrimary</code>)<br><img alt="Handlebars Expression" src="../images/details_list_hb_expr.png" /><br><br><img alt="Handlebars Expression 2" src="../images/details_list_hb_expr2.png" /></ul></td>
+</tr>
+<tr>
+<td><strong>Show file icon</strong></td>
+<td>Hide or display the file icon in the first column.</td>
+</tr>
+<tr>
+<td><strong>Compact mode</strong></td>
+<td>Display the details list in compact mode.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="document-card">Document Card<a class="headerlink" href="#document-card" title="Permanent link">&para;</a></h3>
+<p>Displays search results as cards view using the associated Office UI Fabric <a href="https://developer.microsoft.com/en-us/fabric#/controls/web/documentcard">DocumentCard control</a>:</p>
+<p><img alt="Document Card" src="../images/documentcards_layout.png" /></p>
+<p><strong>Note</strong>: you can still manage the number of cards displayed by row by changing the grid CSS classes directly in the template:</p>
+<div class="codehilite"><pre><span></span><code>{{#each items as |item|}}
+  &lt;div class=&quot;ms-Grid-col ms-sm12 ms-md6 ms-lg4&quot;&gt; &lt;!-- 3 cards by row here for large screen resolution --&gt;
+    ...
+  &lt;/div&gt;
+{{/each}}
+</code></pre></div>
+
+<h4 id="template-options_1">Template options<a class="headerlink" href="#template-options_1" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Manage card fields</strong></td>
+<td>Allows you to define you own values for card placeholder fields. By default, the document card fields come with predefined mappings but you can set your own.<br><img alt="Manage Fields" src="../images/documentcards_manage_fields.png" /> As a field value, you can choose either a managed property value (from the list or as free text) and without any transformation or use an Handlebars expression by clicking on the checkbox next to it. In this case, all helpers from the main template are available. Also, if the field doesn't have the <strong>'Allow HTML'</strong> indication flag enabled, it means the value will be always interpreted as text, whatever if you set an HTML value. Otherwise, your value will be interpreted as HTML for those fields (ex: '<em>Location</em>' and '<em>Tags</em>' placeholder fields).</td>
+</tr>
+</tbody>
+</table>
+<p>In order to use the property <code>IconSrc</code>, ensure you do not specify a property for <code>File Extension</code> to not override the custom IconSrc. A custom icon should be a 16x16 pixel image.</p>
+<p>For HTML fields you can use the special variable <code>@themeVariant</code> to use theme colors (ex: <code>@themeVariant.palette.themePrimary</code>). If you don't set a value for those fields (i.e an empty value), they won't appear in the UI:<br><img alt="HTML Fields" src="../images/documentcards_html_fields.png" /></p>
+| <strong>Enable result preview</strong> | If enabled, displays a preview callout when the document card image is clicked.
+| <strong>Show file icon</strong> | Hide or display the file icon in the card.
+| <strong>Compact mode</strong> | Display the cards in compact mode. </p>
+<h3 id="carouselslider">Carousel/Slider<a class="headerlink" href="#carouselslider" title="Permanent link">&para;</a></h3>
+<p>Displays search results as a carousel using the <a href="https://flickity.metafizzy.co/">Flickity library</a> (the same used in the <a href="https://github.com/SharePoint/PnP/blob/master/Solutions/Business.StarterIntranet/app/src/components/Carousel/CarouselViewModel.ts">PnP Starter Intranet solution</a>).</p>
+<p><img alt="Slider" src="../images/slider_layout.png" /></p>
+<h3 id="customize-slide-content">Customize slide content<a class="headerlink" href="#customize-slide-content" title="Permanent link">&para;</a></h3>
+<p>By default, documents card are displayed in the slider but you can add your own HTML markup for each slide inside the <code>{{#&gt;slider}}</code> Handlebars partial:</p>
+<div class="codehilite"><pre><span></span><code>{{#&gt;slider items=(JSONstringify @root.items 2) options=(JSONstringify @root.sliderOptions)}}
+    &lt;!-- Slide content goes here --&gt;
+    &lt;div class=&quot;slide&quot;&gt;
+        &lt;!-- Your HTML markup --&gt;
+    &lt;/div&gt;                
+{{/slider}}
+</code></pre></div>
+
+<p>Item properties and all Handlebars helpers are available inside the partial block (Ex: <code>{{Title}}</code>). However, to use them you must escape every Handlebars expression with the <code>'\'</code> character (ex: <code>{{Title}}</code> becomes <code>\{{Title}}</code>).</p>
+<p>This is because we don't want these expressions to be interpreted by the global Handlebars context. Actually, we use an internal compilation process with the item context so we need the raw expression to output the item properties and helpers correctly. For instance if you want an image carousel only, your HTML markup would be:</p>
+<div class="codehilite"><pre><span></span><code>{{#&gt;slider items=(JSONstringify @root.items 2) options=(JSONstringify @root.sliderOptions)}}
+    &lt;img src=&quot;\{{getPreviewSrc item}}&quot;/&gt;              
+{{/slider}}
+</code></pre></div>
+
+<p>Or only person cards:</p>
+<div class="codehilite"><pre><span></span><code>{{#&gt;slider items=(JSONstringify @root.items 2) options=(JSONstringify @root.sliderOptions)}}
+    &lt;div class=&quot;slide&quot;&gt;
+      \{{#with (split AccountName &#39;|&#39;)}}
+            &lt;pnp-persona-card 
+                data-image-url=&quot;/_layouts/15/userphoto.aspx?size=L&amp;username=\{{[2]}}&quot;
+                data-text=&quot;\{{../FirstName}} \{{../LastName}}&quot;
+                data-secondary-text=&quot;\{{../JobTitle}}&quot;
+                data-tertiary-text=&quot;\{{[2]}}&quot;
+                data-optional-text=&quot;\{{../WorkPhone}}&quot;
+                data-persona-size=&quot;14&quot;
+                &gt;
+            &lt;/pnp-persona-card&gt;
+        \{{/with}}
+    &lt;/div&gt;                
+{{/slider}}
+</code></pre></div>
+
+<p>In the case of images, the slider is smart enough to adjsut the height automatically so you don't need to specify explicit values. However, you can set an arbitrary size for the slides updating the CSS <code>slide</code> class.</p>
+<h4 id="template-options_2">Template options<a class="headerlink" href="#template-options_2" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Auto play</strong></td>
+<td>If enabled, slides move automatically every X seconds.</td>
+</tr>
+<tr>
+<td><strong>Auto play duration</strong></td>
+<td>Move elements every X seconds.</td>
+</tr>
+<tr>
+<td><strong>Pause on hover</strong></td>
+<td>If enabled, pause the slider on mouse hover.</td>
+</tr>
+<tr>
+<td><strong>Number of elements to group together in slides</strong></td>
+<td>Groups cells together in slides.</td>
+</tr>
+<tr>
+<td><strong>Show page dots</strong></td>
+<td>Enable or disable slider navigation. You can adjust the dots position by updating the <code>.flickity-page-dots</code> CSS class.</td>
+</tr>
+<tr>
+<td><strong>Infinite scrolling</strong></td>
+<td>Enable or disable infinite scrolling on the carousel.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="debug-view">Debug View<a class="headerlink" href="#debug-view" title="Permanent link">&para;</a></h3>
+<p>Displays search result items and global Handlebars context in a debug view (read only):</p>
+<p><img alt="Debug Layout" src="../images/debug_layout.png" /></p>
+<h4 id="people-view">People View<a class="headerlink" href="#people-view" title="Permanent link">&para;</a></h4>
+<p>Displays people:</p>
+<p><img alt="People Layout" src="../images/people_layout.png" /></p>
+<h4 id="template-options_3">Template options<a class="headerlink" href="#template-options_3" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Manage persona fields</strong></td>
+<td>Allows you to define you own values for card placeholder fields. Like the document card, by default, the persona card fields come with predefined mappings but you can set your own.</td>
+</tr>
+<tr>
+<td><strong>Picture size</strong></td>
+<td>The size of the person picture to isplay. The more the size is and the more information will be displayed for each item and vice versa.</td>
+</tr>
+<tr>
+<td><strong>Disable info on hover</strong></td>
+<td>Disable the hover behavior for people info panel. (for future use)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="customize-templates-with-handlebars">Customize templates with Handlebars<a class="headerlink" href="#customize-templates-with-handlebars" title="Permanent link">&para;</a></h2>
+<p>If provided layouts don't meet your requirements, you can modifiy them or start from scratch using Handlebars and the following helpers/features:</p>
+<p><img alt="Edit Template" src="../images/edit_template.png" /></p>
+<h3 id="accessing-items">Accessing items<a class="headerlink" href="#accessing-items" title="Permanent link">&para;</a></h3>
+<p>To iterate the regular result set use:</p>
+<div class="codehilite"><pre><span></span><code>{{#each items as |item|}}
+  <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+    {{Title}}
+    ...
+  <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+{{/each}}
+</code></pre></div>
+
+<p>To iterate promoted results use:</p>
+<div class="codehilite"><pre><span></span><code>{{#each promotedResults as |promotedResult|}}
+  <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+    {{Title}}
+    ...
+  <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+{{/each}}
+</code></pre></div>
+
+<p>To iterate result block results use:</p>
+<div class="codehilite"><pre><span></span><code>{{#each secondaryResults as |secondaryResult|}}
+  <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+    {{Title}}
+    ...
+  <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+{{/each}}
+</code></pre></div>
+
+<h3 id="styling">Styling<a class="headerlink" href="#styling" title="Permanent link">&para;</a></h3>
+<p>You can write your own CSS styles inside templates. However, all CSS rules (including <code>@media</code> rules) will be prefixed automatically by an unique ID according to the follwoing pattern (<strong>pnp-modern-search-template_\&lt;Web Part instance ID></strong>) to make sure styles are isolated from other Web Parts on the page.</p>
+<h4 id="sanitized-html">Sanitized HTML<a class="headerlink" href="#sanitized-html" title="Permanent link">&para;</a></h4>
+<p>The HTML is sanitized automatically preventing XSS attacks using <a href="https://github.com/cure53/DOMPurify"><code>DOMPurify</code></a>. It means for instance, you cannot add your own <code>&lt;script&gt;</code> tags or inline JavaScript.</p>
+<h3 id="handlebars-helpers">Handlebars helpers<a class="headerlink" href="#handlebars-helpers" title="Permanent link">&para;</a></h3>
+<p>The following custom helpers are available in addition to the <a href="https://github.com/helpers/handlebars-helpers">handlebars-helpers</a>:</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>{{showResultsCount}}</code></td>
+<td>Boolean flag corresponding to the associated in the property pane.</td>
+</tr>
+<tr>
+<td><code>{{totalRows}}</code></td>
+<td>The result count.</td>
+</tr>
+<tr>
+<td><code>{{maxResultsCount}}</code></td>
+<td>The number of results configured to retrieve in the web part.</td>
+</tr>
+<tr>
+<td><code>{{actualResultsCount}}</code></td>
+<td>The actual number of results retrived.</td>
+</tr>
+<tr>
+<td><code>{{keywords}}</code></td>
+<td>The search query.</td>
+</tr>
+<tr>
+<td><code>{{getSummary HitHighlightedSummary}}</code></td>
+<td>Format the <em>HitHighlightedSummary</em> property with recognized words in bold.</td>
+</tr>
+<tr>
+<td><code>{{getDate &lt;date_managed_property&gt; "&lt;format&gt;" &lt;time handling&gt; &lt;isZ&gt;}}</code></td>
+<td>Format the date with <a href="https://momentjs.com/docs/#/parsing/string-format/">Moment.js</a> according to the current language. Date in the managed property should be on the form <code>2018-09-10T06:29:25.0000000Z</code> for the function to work.<p>&lt;time handling&gt; is optional and takes <ul><li>0 = format to browsers time zone (default)</li><li>1 = ignore Z time and handle as browsers local time zone</li><li>2 = strip time and set to 00:00:00 in browsers local time zone</li><li>3 = display in the time zone for the current web</li><li>4 = display in the time zone from the uers profile</li></ul><p>&lt;isZ&gt; (<code>true/false</code>) is optional and will append Z to the date if missing when set to true.</td>
+</tr>
+<tr>
+<td><code>{{getPreviewSrc item}}</code></td>
+<td>Determine the image thumbnail URL if applicable. Include NormSiteID, NormListID and NormUniqueID as managed properties to ensure previews for Pages and Files.</td>
+</tr>
+<tr>
+<td><code>{{getUrl item &lt;forceDirectLink&gt;}}</code></td>
+<td>Get the item URL. For a document, it means the URL to the Office Online instance or the direct URL (to download it). <p>&lt;forceDirectLink&gt; (<code>true/false</code>) is optional with a default value of <code>false</code>. Set to <code>true</code> to avoid smart logic to create the open URL.</td>
+</tr>
+<tr>
+<td><code>{{getUrlField managed_propertyOWSURLH "URL/Title"}}</code></td>
+<td>Return the URL or Title part of a URL field managed property.</td>
+</tr>
+<tr>
+<td><code>{{getCountMessage totalRows &lt;?keywords&gt;}}</code></td>
+<td>Display a friendly message displaying the result and the entered keywords.</td>
+</tr>
+<tr>
+<td><code>{{&lt;search_managed_property_name&gt;}}</code></td>
+<td>Any valid search managed property returned in the results set. These are typically managed properties set in the <em>"Selected properties"</em> setting in the property pane. You don't need to prefix them with <code>item.</code> if you are in the "each" loop.</td>
+</tr>
+<tr>
+<td><code>{{webUrl}}</code></td>
+<td>The current web relative url. Use <code>{{@root/webUrl}}</code> inside a loop.</td>
+</tr>
+<tr>
+<td><code>{{siteUrl}}</code></td>
+<td>The current site relative url. Use <code>{{@root/siteUrl}}</code> inside a loop.</td>
+</tr>
+<tr>
+<td><code>{{spellingSuggestion}}</code></td>
+<td>Spelling suggestions returned for the query to be used for "Did you mean" functionality.</td>
+</tr>
+<tr>
+<td><code>{{getUniqueCount items "property"}}</code></td>
+<td>Get the unique count of a property over the result set (or another array)</td>
+</tr>
+<tr>
+<td><code>{{getUniqueCount array}}</code></td>
+<td>Get the unique count of objects in an array. Example: [1,1,1,2,2,4] would return <code>3</code>.</td>
+</tr>
+<tr>
+<td><code>{{getUnique items "NewsCategory"}}</code></td>
+<td>Return the unique values as a new array based on an array or property of an object in the array.</td>
+</tr>
+<tr>
+<td><code>{{regex &lt;exp&gt; &lt;string&gt; }}</code></td>
+<td>Match a regular expression against a string.</td>
+</tr>
+<tr>
+<td><code>{{#times 10}}&lt;span&gt;{{this}}&lt;/span&gt;{{/times}}</code></td>
+<td>Iterate X times over a block</td>
+</tr>
+<tr>
+<td><code>{{#group items by="owstaxidmetadataalltagsinfo"}}</code></td>
+<td>Group items by a specific results property. See <a href="https://github.com/shannonmoeller/handlebars-group-by">https://github.com/shannonmoeller/handlebars-group-by</a> for usage.</td>
+</tr>
+<tr>
+<td><code>{{#getAttachments LinkOfficeChild}} &lt;a href="{{url}}"&gt;{{fileName}}&lt;/href&gt; {{/getAttachments}}</code></td>
+<td>Get Attachments is Handlebars block helper intended to be used with the context variables it provides like this (url and filename) in the example.The helper is intended to be used only with the LinkOfficeChild managed property wich is the default managed property for list attachments.</td>
+</tr>
+<tr>
+<td><code>{{getPageContext "property"}}</code></td>
+<td>Retrieve SPFx page context data to show in the template. See <a href="https://docs.microsoft.com/en-us/javascript/api/sp-page-context/pagecontext">https://docs.microsoft.com/en-us/javascript/api/sp-page-context/pagecontext</a> for possible values. Example <code>{{getPageContext "user.displayName"}}</code> <code>{{getPageContext "cultureInfo.currentUICultureName"}}</code>.<br><strong>Note: Casing matches the object model.</strong></td>
+</tr>
+</tbody>
+</table>
+<p>You can also define your own in the <em>BaseTemplateService.ts</em> file. See <a href="https://github.com/helpers/helper-moment">helper-moment</a> for date samples using moment.</p>
+<h3 id="web-components">Web-components<a class="headerlink" href="#web-components" title="Permanent link">&para;</a></h3>
+<p>The web part has a couple of helper web-components to ease rendering, used by the default templates. You may also use these in your custom templates. Pick one of the default templates, then click on customize to see how they are used. It's important to prefix these web-components with <strong>pnp-</strong>.</p>
+<ul>
+<li>document-card</li>
+<li>document-card-shimmers</li>
+<li>details-list</li>
+<li>video-card</li>
+<li>debug-view</li>
+<li>slider-component</li>
+<li>persona-card</li>
+<li>persona-card-shimmers</li>
+<li>fabric-icon - You only need to set one property, which are evaluated in order if multiple ones are set. The data-error-image, used to set a fallback image on error, is used only when the data-image-url fails to load, it will not load a fallback for data-icon-name usage.</li>
+</ul>
+<div class="codehilite"><pre><span></span><code><span class="p">&lt;</span><span class="nt">pnp-fabric-icon</span>
+    <span class="na">data-image-url</span><span class="o">=</span><span class="s">&#39;[url to icon - pri 1]&#39;</span>
+    <span class="na">data-file-extension</span><span class="o">=</span><span class="s">&#39;[file extension - pri 2]&#39;</span>
+    <span class="na">data-icon-name</span><span class="o">=</span><span class="s">&#39;[office ui fabric icon name - pri 3]&#39;</span>
+    <span class="na">data-size</span><span class="o">=</span><span class="s">&#39;16 | 20 | 32 (default) | 40 | 48 | 64 | 96&#39;</span>
+    <span class="na">data-error-image</span><span class="o">=</span><span class="s">&#39;[url to image]&#39;</span>
+<span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">pnp-fabric-icon</span><span class="p">&gt;</span>
+</code></pre></div>
+
+<ul>
+<li>accordion - provides the ability to collaspe content in search result in an accordion fashion</li>
+</ul>
+<div class="codehilite"><pre><span></span><code><span class="p">&lt;</span><span class="nt">pnp-accordion</span> 
+    <span class="na">data-accordion-header-text</span><span class="o">=</span><span class="s">&quot;Accordion Example&quot;</span> 
+    <span class="na">data-theme</span><span class="o">=</span><span class="s">&quot;Default (default) | Neutral&quot;</span> 
+    <span class="na">data-size</span><span class="o">=</span><span class="s">&quot;# | 12 (default)&quot;</span> 
+    <span class="na">data-start-open</span><span class="o">=</span><span class="s">&quot;true | false (default)&quot;</span> 
+    <span class="na">data-rounded-corners</span><span class="o">=</span><span class="s">&quot;true | false (default)&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">h4</span><span class="p">&gt;</span>Title: {{Title}}<span class="p">&lt;/</span><span class="nt">h4</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">pnp-accordion</span><span class="p">&gt;</span>
+</code></pre></div>
+
+<p>Example:</p>
+<p><img alt="Accordion Example" src="../images/WebComponent_Accordion_PopupExample.png" /></p>
+<ul>
+<li>popup - provides the ability to popup content in a modal window within the search result</li>
+</ul>
+<div class="codehilite"><pre><span></span><code><span class="p">&lt;</span><span class="nt">pnp-popup</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">template</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;popupclick&quot;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">span</span><span class="p">&gt;</span>Popup Example - Click Me<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">template</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">template</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;popupheader&quot;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">span</span><span class="p">&gt;</span>Title: {{Title}}<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;&lt;</span><span class="nt">br</span> <span class="p">/&gt;&lt;</span><span class="nt">span</span><span class="p">&gt;</span>Header HTML here<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">template</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">template</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;popupbody&quot;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">span</span><span class="p">&gt;</span>Title: {{Title}}<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;&lt;</span><span class="nt">br</span> <span class="p">/&gt;&lt;</span><span class="nt">span</span><span class="p">&gt;</span>Body HTML here<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">template</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">pnp-popup</span><span class="p">&gt;</span>
+</code></pre></div>
+
+<p>Example:</p>
+<p><img alt="Popup Example" src="../images/WebComponent_Accordion_PopupExample.png" />
+<img alt="Popup Modal Example" src="../images/WebComponent_Popup_Modal_Example.png" /></p>
+<ul>
+<li>
+<p>lookup-list-expander - Ever needed to get additional data from a list or library in search? This provides that ability based on a lookup column of the result item.</p>
+<p>In the example below, a related documents lookup column was added to the document library. This lookup column was a lookup back to the same document library so the admin could pick additional related documents for the documents.</p>
+<p>Remember for the inner template to be executed inside of the component the handlebar expressions must be escaped with <code>'\'</code> character (ex: <code>{{Title}}</code> becomes <code>\{{Title}}</code>).</p>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><code><span class="p">&lt;</span><span class="nt">pnp-lookup-list-expander</span> 
+    <span class="na">data-list-url</span><span class="o">=</span><span class="s">&quot;https://&lt;tenant&gt;/sites/&lt;sitename&gt;&quot;</span> 
+    <span class="na">data-list-id</span><span class="o">=</span><span class="s">&quot;{{ListID}}&quot;</span> 
+    <span class="na">data-list-item-id</span><span class="o">=</span><span class="s">&quot;{{ListItemID}}&quot;</span>
+    <span class="na">data-column-name</span><span class="o">=</span><span class="s">&quot;RelatedDocuments&quot;</span>
+    <span class="na">data-lookup-list-fields</span><span class="o">=</span><span class="s">&quot;Id,Title,FileRef,FileLeafRef,DocumentType,BusinessUnit/Title&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">pnp-fabric-icon</span> <span class="na">data-file-extension</span><span class="o">=</span><span class="s">&quot;\{{FileExtension}}&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">pnp-fabric-icon</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">span</span><span class="p">&gt;&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;\{{FileRef}}?web=1&quot;</span><span class="p">&gt;</span>\{{{Title}}}<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">span</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;\{{FileRef}}&quot;</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">pnp-fabric-icon</span> <span class="na">data-icon-name</span><span class="o">=</span><span class="s">&quot;Download&quot;</span> <span class="na">data-size</span><span class="o">=</span><span class="s">&quot;16&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">pnp-fabric-icon</span><span class="p">&gt;</span>
+            <span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">span</span><span class="p">&gt;</span>\{{{DocumentType}}}<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">span</span><span class="p">&gt;</span>\{{{BusinessUnit.Title}}}<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">pnp-lookup-list-expander</span><span class="p">&gt;</span>
+</code></pre></div>
+
+<p>The above example would display inside of the accordion like:
+<img alt="LookupListExtender Example" src="../images/WebComponent_LookupListExtender_Example.png" /></p>
+<h3 id="use-result-types">Use result types<a class="headerlink" href="#use-result-types" title="Permanent link">&para;</a></h3>
+<p>Use the result types features form the property pane options to split your templates according to results characteristics instead of making a huge central template with multiple conditions. They can be defined in 'inline' mode or using an external file. You can also use the sorting option to determine to order of evaluation for each condition.</p>
+<p><img alt="Result Types" src="../images/result_types.png" /></p>
+<p>The following operators are supported:
+- Equals
+- Not equals
+- Contains
+- StartsWith
+- Greater Or Equal
+- Less Or Equal
+- Less than
+- Greater than
+- Is not null</p>
+<p>To use it in your main template, just follow this pattern. This block is not mandatory.</p>
+<div class="codehilite"><pre><span></span><code>{{#&gt; resultTypes}}
+  {{!-- The block below will be used as default item template if no result types matched --}}
+  &lt;div class=&quot;template_result&quot;&gt;
+      &lt;!-- Your default template markup --&gt;
+  &lt;/div&gt;
+{{/resultTypes}}
+</code></pre></div>
+
+<p>Handlebars <a href="https://handlebarsjs.com/guide/partials.html">partials</a> are used behind the scenes and conditions are built dynamically using a recursive if/else structure.</p>
+<h3 id="elements-previews">Elements previews<a class="headerlink" href="#elements-previews" title="Permanent link">&para;</a></h3>
+<p>Previews are available by default for the simple list layout, for Office documents and Office 365 videos (not Microsoft Stream). The embed URL is directly taken from the <code>ServerRedirectedEmbedURL</code> managed property retrieved from the search results.</p>
+<p><img alt="Result Preview" src="../images/result_preview.png" /></p>
+<p>The WebPart must have the following selected properties in the configuration to get the preview feature work (they are set by default):
+- ServerRedirectedPreviewURL
+- ServerRedirectedURL
+- contentclass
+- ServerRedirectedEmbedURL
+- DefaultEncodingURL</p>
+<p>This preview is displayed as an <em>iframe</em> or a <em>video</em> tag when the user clicks on the corresponding preview image or compliant HTML elements. To enable the callout preview in your templates, your HTML elements must have the  <code>document-preview-item</code> or <code>video-preview-item</code> CSS class and provide the following attributes:</p>
+<ul>
+<li><code>data-src</code>: the URL of the preview image.</li>
+<li><code>data-url</code>: the URL of the iframe source or the video.</li>
+<li><code>data-fileext</code>: the file extension for the video (for video only).</li>
+</ul>
+<p><strong>Preview on documents</strong></p>
+<div class="codehilite"><pre><span></span><code>&lt;img class=&quot;document-preview-item&quot; data-src=&quot;{{ServerRedirectedPreviewURL}}&quot; data-url=&quot;{{Path}}&quot;/&gt;
+</code></pre></div>
+
+<p><strong>Preview on videos</strong></p>
+<div class="codehilite"><pre><span></span><code>&lt;img class=&quot;video-preview-item&quot; src=&quot;{{PictureThumbnailURL}}&quot; data-src=&quot;{{PictureThumbnailURL}}&quot; data-url=&quot;{{DefaultEncodingURL}}&quot; data-fileext=&quot;{{FileType}}&quot;/&gt;
+</code></pre></div>
+
+<h3 id="custom-placeholders-ie-shimmers">Custom placeholders (i.e. shimmers)<a class="headerlink" href="#custom-placeholders-ie-shimmers" title="Permanent link">&para;</a></h3>
+<p>You can define your own placeholders according your template markup. They will be loaded automatically before the results are loaded.</p>
+<p><img alt="Placeholders" src="../images/placeholders.png" /></p>
+<p>To do this, insert your HTML markup as follow in your template content:</p>
+<div class="codehilite"><pre><span></span><code>&lt;content id=&quot;placeholder&quot;&gt;
+    &lt;style&gt;
+        /* Insert your CSS overrides here */
+    &lt;/style&gt;
+
+    &lt;div class=&quot;placeholder_root&quot;&gt;
+      &lt;!-- Your placeholder content --&gt;
+    &lt;/div&gt;
+
+&lt;/content&gt;
+</code></pre></div>
+
+<p>Notice your template content must be enclosed in a <code>&lt;content id="template"&gt;</code> tag if you define placeholders.</p>
+<h3 id="work-with-sharepoint-theme">Work with SharePoint theme<a class="headerlink" href="#work-with-sharepoint-theme" title="Permanent link">&para;</a></h3>
+<p>A <code>themeVariant</code> variable is available in the root Handlebars context. It contains all current theme information that can use in your CSS classes or inline styles. Example:</p>
+<div class="codehilite"><pre><span></span><code>&lt;style&gt;
+    .example-themePrimary a {
+        color: {{@root.themeVariant.palette.themePrimary}};
+    }
+&lt;/style&gt;
+</code></pre></div>
+
+<p>To see all available values, you can inspect the <code>themeVariant</code> objetc using the 'Debug View' layout. Notice the values are udpated dynamically every time you udpate the theme through the UI.</p>
+<h3 id="custom-code-renderers">Custom code renderers<a class="headerlink" href="#custom-code-renderers" title="Permanent link">&para;</a></h3>
+<p>You may also define your own renderers, which most often should be SPFx application customizers. These should use the resultservice to register themselves as renderers, and will upon registration be available as a rendering choice in the "Result Layouts" Section.</p>
+<p>More information about custom code renderers may be found in a separate project <a href="https://github.com/microsoft-search/pnp-modern-search/tree/main/search-custom-renderer"><code>search-custom-renderer</code></a>, which showcases such a renderer.</p>
+                
+                  
+                
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        powered by
+        <a href="https://www.mkdocs.org" target="_blank" rel="noopener">MkDocs</a>
+        and
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs</a>
+      </div>
+      
+  <div class="md-footer-social">
+    <link rel="stylesheet" href="../../assets/fonts/font-awesome.css">
+    
+      <a href="https://twitter.com/m365pnp" target="_blank" rel="noopener" title="twitter" class="md-footer-social__link fa fa-twitter"></a>
+    
+      <a href="https://microsoft-search.github.io/pnp-modern-search/" target="_blank" rel="noopener" title="link" class="md-footer-social__link fa fa-link"></a>
+    
+  </div>
+
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/application.c33a9706.js"></script>
+      
+      <script>app.initialize({version:"1.2.1",url:{base:"../.."}})</script>
+      
+    
+  </body>
+</html>

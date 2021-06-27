@@ -1,0 +1,1397 @@
+
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <meta http-equiv="x-ua-compatible" content="ie=edge">
+      
+      
+      
+      
+        <meta name="lang:clipboard.copy" content="Copy to clipboard">
+      
+        <meta name="lang:clipboard.copied" content="Copied to clipboard">
+      
+        <meta name="lang:search.language" content="en">
+      
+        <meta name="lang:search.pipeline.stopwords" content="True">
+      
+        <meta name="lang:search.pipeline.trimmer" content="True">
+      
+        <meta name="lang:search.result.none" content="No matching documents">
+      
+        <meta name="lang:search.result.one" content="1 matching document">
+      
+        <meta name="lang:search.result.other" content="# matching documents">
+      
+        <meta name="lang:search.tokenizer" content="[\s\-]+">
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.2.1, mkdocs-material-4.6.3">
+    
+    
+      
+        <title>Search Results - v3 - PnP Modern Search (v4)</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/application.adb8469c.css">
+      
+        <link rel="stylesheet" href="../../assets/stylesheets/application-palette.a8b3c06d.css">
+      
+      
+        
+        
+        <meta name="theme-color" content="#2196f3">
+      
+    
+    
+      <script src="../../assets/javascripts/modernizr.86422ebf.js"></script>
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=:300,400,400i,700%7CUbuntu+Mono&display=fallback">
+        <style>body,input{font-family:"","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Ubuntu Mono","Courier New",Courier,monospace}</style>
+      
+    
+    <link rel="stylesheet" href="../../assets/fonts/material-icons.css">
+    
+    
+      <link rel="stylesheet" href="../../assets/extra.css">
+    
+    
+      
+    
+    
+  </head>
+  
+    
+    
+    <body dir="ltr" data-md-color-primary="blue" data-md-color-accent="orange">
+  
+    <svg class="md-svg">
+      <defs>
+        
+        
+          <svg xmlns="http://www.w3.org/2000/svg" width="416" height="448" viewBox="0 0 416 448" id="__github"><path fill="currentColor" d="M160 304q0 10-3.125 20.5t-10.75 19T128 352t-18.125-8.5-10.75-19T96 304t3.125-20.5 10.75-19T128 256t18.125 8.5 10.75 19T160 304zm160 0q0 10-3.125 20.5t-10.75 19T288 352t-18.125-8.5-10.75-19T256 304t3.125-20.5 10.75-19T288 256t18.125 8.5 10.75 19T320 304zm40 0q0-30-17.25-51T296 232q-10.25 0-48.75 5.25Q229.5 240 208 240t-39.25-2.75Q130.75 232 120 232q-29.5 0-46.75 21T56 304q0 22 8 38.375t20.25 25.75 30.5 15 35 7.375 37.25 1.75h42q20.5 0 37.25-1.75t35-7.375 30.5-15 20.25-25.75T360 304zm56-44q0 51.75-15.25 82.75-9.5 19.25-26.375 33.25t-35.25 21.5-42.5 11.875-42.875 5.5T212 416q-19.5 0-35.5-.75t-36.875-3.125-38.125-7.5-34.25-12.875T37 371.5t-21.5-28.75Q0 312 0 260q0-59.25 34-99-6.75-20.5-6.75-42.5 0-29 12.75-54.5 27 0 47.5 9.875t47.25 30.875Q171.5 96 212 96q37 0 70 8 26.25-20.5 46.75-30.25T376 64q12.75 25.5 12.75 54.5 0 21.75-6.75 42 34 40 34 99.5z"/></svg>
+        
+      </defs>
+    </svg>
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
+    
+      <a href="#search-results-v3" tabindex="0" class="md-skip">
+        Skip to content
+      </a>
+    
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid">
+    <div class="md-flex">
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <a href="../.." title="PnP Modern Search (v4)" aria-label="PnP Modern Search (v4)" class="md-header-nav__button md-logo">
+          
+            <img alt="logo" src="../../assets/pnp_logo.png" width="24" height="24">
+          
+        </a>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
+      </div>
+      <div class="md-flex__cell md-flex__cell--stretch">
+        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+          
+            <span class="md-header-nav__topic">
+              PnP Modern Search (v4)
+            </span>
+            <span class="md-header-nav__topic">
+              
+                Search Results - v3
+              
+            </span>
+          
+        </div>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        
+          <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
+          
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" aria-label="search" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+      <label class="md-icon md-search__icon" for="__search"></label>
+      <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
+        &#xE5CD;
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="result">
+          <div class="md-search-result__meta">
+            Type to start searching
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+        
+      </div>
+      
+        <div class="md-flex__cell md-flex__cell--shrink">
+          <div class="md-header-nav__source">
+            
+
+
+  
+
+<a href="https://github.com/microsoft-search/pnp-modern-search/" title="Go to repository" class="md-source" data-md-source="github">
+  
+    <div class="md-source__icon">
+      <svg viewBox="0 0 24 24" width="24" height="24">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+          </div>
+        </div>
+      
+    </div>
+  </nav>
+</header>
+    
+    <div class="md-container">
+      
+        
+      
+      
+        
+
+<nav class="md-tabs" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../../index.html" class="md-tabs__link">
+          Getting Started
+        </a>
+      
+    </li>
+  
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../../usage/search-results/index.html" class="md-tabs__link">
+          Search Results
+        </a>
+      
+    </li>
+  
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../../usage/search-filters/index.html" class="md-tabs__link">
+          Search Filters
+        </a>
+      
+    </li>
+  
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../../usage/search-verticals/index.html" class="md-tabs__link">
+          Search Verticals
+        </a>
+      
+    </li>
+  
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../../usage/search-box/index.html" class="md-tabs__link">
+          Search Box
+        </a>
+      
+    </li>
+  
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../../extensibility/index.html" class="md-tabs__link">
+          Extensibility
+        </a>
+      
+    </li>
+  
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../index.html" class="md-tabs__link">
+          Version 3
+        </a>
+      
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+      
+      <main class="md-main" role="main">
+        <div class="md-main__inner md-grid" data-md-component="container">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" data-md-level="0">
+  <label class="md-nav__title md-nav__title--site" for="__drawer">
+    <a href="../.." title="PnP Modern Search (v4)" class="md-nav__button md-logo">
+      
+        <img alt="logo" src="../../assets/pnp_logo.png" width="48" height="48">
+      
+    </a>
+    PnP Modern Search (v4)
+  </label>
+  
+    <div class="md-nav__source">
+      
+
+
+  
+
+<a href="https://github.com/microsoft-search/pnp-modern-search/" title="Go to repository" class="md-source" data-md-source="github">
+  
+    <div class="md-source__icon">
+      <svg viewBox="0 0 24 24" width="24" height="24">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-1" type="checkbox" id="nav-1">
+    
+    <label class="md-nav__link" for="nav-1">
+      Getting Started
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-1">
+        Getting Started
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../index.html" title="Introduction" class="md-nav__link">
+      Introduction
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../installation.html" title="Installation" class="md-nav__link">
+      Installation
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../scenarios/index.html" title="Scenario tutorials" class="md-nav__link">
+      Scenario tutorials
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../how-to-contribute.html" title="How to contribute?" class="md-nav__link">
+      How to contribute?
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../build-the-doc.html" title="Building documentation" class="md-nav__link">
+      Building documentation
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2">
+    
+    <label class="md-nav__link" for="nav-2">
+      Search Results
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-2">
+        Search Results
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../usage/search-results/index.html" title="Usage" class="md-nav__link">
+      Usage
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../usage/search-results/data-sources/index.html" title="Data sources" class="md-nav__link">
+      Data sources
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../usage/search-results/slots.html" title="Slots" class="md-nav__link">
+      Slots
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../usage/search-results/tokens.html" title="Tokens" class="md-nav__link">
+      Tokens
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../usage/search-results/layouts/index.html" title="Layouts" class="md-nav__link">
+      Layouts
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../usage/search-results/connections/index.html" title="Connections" class="md-nav__link">
+      Connections
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../extensibility/index.html" title="Extensibility" class="md-nav__link">
+      Extensibility
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3">
+    
+    <label class="md-nav__link" for="nav-3">
+      Search Filters
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-3">
+        Search Filters
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../usage/search-filters/index.html" title="Usage" class="md-nav__link">
+      Usage
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../usage/search-filters/layouts/index.html" title="Layouts" class="md-nav__link">
+      Layouts
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4">
+    
+    <label class="md-nav__link" for="nav-4">
+      Search Verticals
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-4">
+        Search Verticals
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../usage/search-verticals/index.html" title="Usage" class="md-nav__link">
+      Usage
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-5" type="checkbox" id="nav-5">
+    
+    <label class="md-nav__link" for="nav-5">
+      Search Box
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-5">
+        Search Box
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../usage/search-box/index.html" title="Usage" class="md-nav__link">
+      Usage
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-6" type="checkbox" id="nav-6">
+    
+    <label class="md-nav__link" for="nav-6">
+      Extensibility
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-6">
+        Extensibility
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../extensibility/index.html" title="Introduction" class="md-nav__link">
+      Introduction
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../extensibility/templating.html" title="Templating" class="md-nav__link">
+      Templating
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../extensibility/custom_web_component.html" title="Custom web component" class="md-nav__link">
+      Custom web component
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../extensibility/custom_suggestions_provider.html" title="Custom suggestions provider" class="md-nav__link">
+      Custom suggestions provider
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../extensibility/handlebars_customizations.html" title="Custom Handlebars customizations" class="md-nav__link">
+      Custom Handlebars customizations
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-7" type="checkbox" id="nav-7">
+    
+    <label class="md-nav__link" for="nav-7">
+      Version 3
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-7">
+        Version 3
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../index.html" title="Documentation" class="md-nav__link">
+      Documentation
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#search-query-configuration" class="md-nav__link">
+    Search Query Configuration
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#search-settings" class="md-nav__link">
+    Search Settings
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#paging-settings" class="md-nav__link">
+    Paging settings
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#styling-options" class="md-nav__link">
+    Styling Options
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#miscellaneous-taxonomy-values-dynamic-translation" class="md-nav__link">
+    Miscellaneous: Taxonomy values dynamic translation
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#out-of-the-box-query-variables" class="md-nav__link">
+    Out of the box query variables
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#site-and-site-collection-properties" class="md-nav__link">
+    Site and site collection properties
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#url-token-and-request-properties" class="md-nav__link">
+    URL token and request properties
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#user-properties" class="md-nav__link">
+    User properties
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#other-properties" class="md-nav__link">
+    Other properties
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#custom-query-variables" class="md-nav__link">
+    Custom query variables
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#use-the-or-operator" class="md-nav__link">
+    Use the 'OR' operator
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#best-bets" class="md-nav__link">
+    Best bets
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#filters-deep-links" class="md-nav__link">
+    Filters deep links
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-default-selected-values-are-set-in-the-search-filters-wp" class="md-nav__link">
+    How default selected values are set in the search filters WP?
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/microsoft-search/pnp-modern-search/blob/develop/docs/v3/search-parts/search-results.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
+                
+                
+                <h1 id="search-results-v3">Search Results - v3<a class="headerlink" href="#search-results-v3" title="Permanent link">&para;</a></h1>
+<p><a href="../index.html">Table of contents</a></p>
+<table>
+<thead>
+<tr>
+<th>Page 1</th>
+<th>Page 2</th>
+<th>Page 3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><img alt="Page 1" src="../images/property_pane.png" /></td>
+<td><img alt="Page 2" src="../images/property_pane2.png" /></td>
+<td><img alt="Page 3" src="../images/property_pane3.png" /></td>
+</tr>
+</tbody>
+</table>
+<h4 id="search-query-configuration">Search Query Configuration<a class="headerlink" href="#search-query-configuration" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Search query keywords</td>
+<td>Here you choose to use a static search query or a query coming from a data source. It is recommended to use the associated Web Part coming with this sample. The search query is in KQL format so you can use search query variables (See this <a href="http://www.techmikael.com/2015/07/sharepoint-rest-do-support-query.html">post</a> to know which ones are allowed). You can only plug one source to this Web Part.</td>
+</tr>
+</tbody>
+</table>
+<p><img alt="Web Part connection" src="../images/wp_connection.png" /></p>
+<h4 id="search-settings">Search Settings<a class="headerlink" href="#search-settings" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Query template</td>
+<td>The search query template in KQL format. You can use search variables here (like Path:{Site}).</td>
+</tr>
+<tr>
+<td>Result Source Identifier</td>
+<td>The GUID of a SharePoint result source.</td>
+</tr>
+<tr>
+<td>Sort order</td>
+<td>The initial search results sort order, where you can use one or multiple properties to sort by. <strong>By default, results are sorted by created date (ascending) and size (descending). Remove these values to reset default sorting</strong></td>
+</tr>
+<tr>
+<td>Sortable fields</td>
+<td>The search managed properties to use for sorting. With SharePoint Online, you have to reuse the default ones to do so (RefinableStringXX etc.). The order is the same as they will appear in the sort panel. You can also provide your own custom labels using the following format RefinableString01:"You custom filter label",RefinableString02:"You custom filter label",... If no sortable fields are provided, the 'Sort' button will not be visible.</td>
+</tr>
+<tr>
+<td>Connect to a search refiners Web Part</td>
+<td>If enable, select the search refiners Web Part to use on the current page to get selected filters. It is a 2 ways connection so don't forget to connect the targeted search refiners to the search results Web Part as well.</td>
+</tr>
+<tr>
+<td>Connect to a search verticals Web Part</td>
+<td>If enable, select the search verticals Web Part to connect to.</td>
+</tr>
+<tr>
+<td>Enable Query Rules</td>
+<td>Enable the query rules if applies. Turn this options  'on' to display your SharePoint Promoted results (links only) and make result blocks available to custom renderers.</td>
+</tr>
+<tr>
+<td>Include OneDrive results</td>
+<td>Include OneDrive results if applicable. Turn this option 'on' to make users' personal OneDrive results available to custom renderers. Read more <a href="https://docs.microsoft.com/en-us/sharepoint/support/search/private-onedrive-results-not-included">here</a>.</td>
+</tr>
+<tr>
+<td>Selected properties</td>
+<td>The search managed properties to retrieve. You can select them from a predefined list or add them as free text if not listed. Then, these properties are available in your Handlebars template with the syntax (<code>item.property_name</code> or <code>property_name</code> inside the <code>{{#each}}</code> loop). The Web Part needs the following managed properties to get it work (<code>"Title,Path,Filename,SiteLogo,PreviewUrl,PictureThumbnailURL,ServerRedirectedPreviewURL,ServerRedirectedURL,HitHighlightedSummary,FileType,ServerRedirectedEmbedURL,ParentLink,owstaxidmetadataalltagsinfo,SPSiteUrl,SiteTitle,IsContainer,IsListItem,HtmlFileType,SiteId,WebId,UniqueID,OriginalPath,FileExtension,NormSiteID,NormListID,NormUniqueID,Created,contentclass,DefaultEncodingURL,Author,AuthorOWSUSER"</code>). <strong>It you remove them, they will be re-added automatically on the next page refresh</strong>.</td>
+</tr>
+<tr>
+<td>Refinement filters</td>
+<td>The default refinement filters to apply to the query. Unlike URL <code>filters</code> params, these won't select the default values in the Search Filters WP if connected.</td>
+</tr>
+<tr>
+<td>Enable taxonomy values localization for refiners and results</td>
+<td>If set, the Web Part will try to translate the taxonomy term IDs to their corresponding label according to the curent UI language. Refer to the <a href="#">Taxonomy values dynamic translation</a> section of this page.</td>
+</tr>
+<tr>
+<td>Language of search request</td>
+<td>The language to use for the search request. By default the search request will be made using the current UI language.</td>
+</tr>
+<tr>
+<td>Synonyms</td>
+<td>Ability to define synonyms for the search querytext. Synonyms can be configured in a two-ways mode.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="paging-settings">Paging settings<a class="headerlink" href="#paging-settings" title="Permanent link">&para;</a></h4>
+<p><img alt="Paging settings" src="../images/paging_settings.png" /></p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Show paging</td>
+<td>Displays or not the paging control at the bottom.</td>
+</tr>
+<tr>
+<td>Number of items per page</td>
+<td>Corresponds to the number of search results to retrieve per page.</td>
+</tr>
+<tr>
+<td>Number of pages to display in range</td>
+<td>The number of page digits to display in the range.</td>
+</tr>
+<tr>
+<td>Hide navigation buttons</td>
+<td>If set, hide the previous and next page buttons.</td>
+</tr>
+<tr>
+<td>Hide first/last navigation buttons</td>
+<td>If set, hide the last and first navigation buttons.</td>
+</tr>
+<tr>
+<td>Hide navigation buttons</td>
+<td>If set, hide the previous, next, first and last if disabled (i.e. no page available).</td>
+</tr>
+</tbody>
+</table>
+<h4 id="styling-options">Styling Options<a class="headerlink" href="#styling-options" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Web Part Title</td>
+<td>Shows a title for this Web Part. Set blank if you don't want a title.</td>
+</tr>
+<tr>
+<td>Show blank if no result</td>
+<td>Shows nothing if there is no result. If a WP title is set, this will be hidden as well.</td>
+</tr>
+<tr>
+<td>Show result count</td>
+<td>Shows the result count and entered keywords.</td>
+</tr>
+<tr>
+<td>Result Layouts options</td>
+<td>Choose the template to use to display search results. Some layouts are defined by default but you can create your own either by clicking on the <strong>"Custom"</strong> tile, or <strong>"Edit template"</strong> from an existing chosen template. In custom mode, you can set an external template. It has to be in the same SharePoint tenant. Behind the scenes, the Office UI React controls are used. Custom code templates will also automatically be displayed here upon registration. See the <a href="templating.html">templating documentation</a> for more information about templating.</td>
+</tr>
+<tr>
+<td>Result types</td>
+<td>Allows you to set a custom template at item level according to a specific condition (ex: FileType equals 'pdf').</td>
+</tr>
+</tbody>
+</table>
+<h5 id="miscellaneous-taxonomy-values-dynamic-translation">Miscellaneous: Taxonomy values dynamic translation<a class="headerlink" href="#miscellaneous-taxonomy-values-dynamic-translation" title="Permanent link">&para;</a></h5>
+<p>The search results Web Part supports automatic translation for taxonomy based filters and result metadata according to current site language. To get it work, you must map a new refinable managed property associated with <em>ows_taxId_<your_column_name></em> crawled property and turn on the <em>'Localization Enabled'</em> toggle in the search results property pane:</p>
+<p><img alt="Managed Property" src="../images/managed-property.png" /></p>
+<p><img alt="Enable Localization" src="../images/enable_localization.png" /></p>
+<p>When you enable this flag, you can still use the original property value for whatever reason by using the following property format in your Handlebars template: <code>&lt;propertyName&gt; + TaxId</code> (ex: <code>owstaxidmetadataalltagsinfo</code> will contain the translated terms and <code>owstaxidmetadataalltagsinfoTaxId</code>) will contain the original value of the managed property).</p>
+<hr />
+<h4 id="out-of-the-box-query-variables">Out of the box query variables<a class="headerlink" href="#out-of-the-box-query-variables" title="Permanent link">&para;</a></h4>
+<p>The following out of the box <a href="https://docs.microsoft.com/en-us/sharepoint/technical-reference/query-variables">query variables</a> are supported/tested:</p>
+<h5 id="site-and-site-collection-properties">Site and site collection properties<a class="headerlink" href="#site-and-site-collection-properties" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th align="left"><strong>Query variable</strong></th>
+<th align="left"><strong>Definition</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><strong>{Site}</strong> or <strong>{Site.URL}</strong>  <br/></td>
+<td align="left">URL of the site from where the query was issued. For example, this value can be used to query content of the managed property Path.  <br/></td>
+</tr>
+<tr>
+<td align="left"><strong>{Site.ID}</strong>  <br/></td>
+<td align="left">GUID of site from where the query was issued. This value corresponds to the value of the managed property SiteID.  <br/></td>
+</tr>
+<tr>
+<td align="left"><strong>{Site.LCID}</strong>  <br/></td>
+<td align="left">Numeric value of the locale as specified by the Regional Settings in the Site Settings on the Site from where the query was issued.  <br/></td>
+</tr>
+<tr>
+<td align="left"><strong>{Site.Locale}</strong>  <br/></td>
+<td align="left">Language of the Site from where the query was issued in ll-cc format — for example, en-us.  <br/></td>
+</tr>
+<tr>
+<td align="left"><strong>{Site.&lt;property&gt;}</strong>  <br/></td>
+<td align="left">Any property from the property bag of the site (SPWeb) from where the query was issued, including custom properties.  <br/></td>
+</tr>
+<tr>
+<td align="left"><strong>{SiteCollection}</strong> or <strong>{SiteCollection.URL}</strong>  <br/></td>
+<td align="left">URL of site collection from where the query was issued. For example, this value can be used to query content of the managed property Path.  <br/></td>
+</tr>
+<tr>
+<td align="left"><strong>{SiteCollection.ID}</strong>  <br/></td>
+<td align="left">GUID of site collection from where the query was issued.  <br/></td>
+</tr>
+<tr>
+<td align="left"><strong>{SiteCollection.LCID}</strong>  <br/></td>
+<td align="left">Numeric value of the locale as specified by the Regional Settings in the Site Settings on the Site Collection from where the query was issued.  <br/></td>
+</tr>
+<tr>
+<td align="left"><strong>{SiteCollection.Locale}</strong>  <br/></td>
+<td align="left">Language of the Site Collection from where the query was issued in ll-cc format — for example, en-us.  <br/></td>
+</tr>
+<tr>
+<td align="left"><strong>{SiteCollection.&lt;property&gt;}</strong>  <br/></td>
+<td align="left">Any property from the property bag of the root site (SPWeb) in the site collection (SPSite) from where the query was issued, including custom properties.  <br/></td>
+</tr>
+</tbody>
+</table>
+<h5 id="url-token-and-request-properties">URL token and request properties<a class="headerlink" href="#url-token-and-request-properties" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th align="left"><strong>Query variable</strong></th>
+<th align="left"><strong>Definition</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><strong>{URLToken.&lt;integer&gt;}</strong>  <br/></td>
+<td align="left">A value from the URL of a page. The integer represents the position of the value in the URL as counted from right to left. For example, for the page http://www.contoso/audio/mp3/1010101, the query variable {URLToken.1} will query for the last value in the URL, 1010101. The query variable {URLToken.3} will query for the third last property in the URL, audio. You can query for values up to the ninth last position in a URL.  <br/></td>
+</tr>
+<tr>
+<td align="left"><strong>{Request.&lt;PropertyName&gt;}</strong>  <br/></td>
+<td align="left">A value from the current http request - for example, {Request.Url}.  <br/></td>
+</tr>
+</tbody>
+</table>
+<h5 id="user-properties">User properties<a class="headerlink" href="#user-properties" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th align="left"><strong>Query variable</strong></th>
+<th align="left"><strong>Definition</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><strong>{User}</strong> or <strong>{User.Name}</strong> <br/></td>
+<td align="left">Display name of the user who issued the query. For example, this value can be used to query content of the managed property Author.  <br/></td>
+</tr>
+<tr>
+<td align="left"><strong>{User.Email}</strong>  <br/></td>
+<td align="left">Email address of the user who issued the query. For example, this value can be used to query content of the managed property WorkEmail.  <br/></td>
+</tr>
+<tr>
+<td align="left"><strong>{User.PreferredContentLanguage}</strong>  <br/></td>
+<td align="left">Language as specified as Preferred Content Language in the profile of the user who issued the query.  <br/></td>
+</tr>
+<tr>
+<td align="left"><strong>{User.PreferredDisplayLanguage}</strong>  <br/></td>
+<td align="left">Language as specified as Preferred Display Language in the profile of the user who issued the query.  <br/></td>
+</tr>
+<tr>
+<td align="left"><strong>{User.&lt;property&gt;}</strong>  <br/></td>
+<td align="left">Any property from the user profile of the user who issued the query — for example, SPS-Interests, including custom properties.  <br/></td>
+</tr>
+</tbody>
+</table>
+<h5 id="other-properties">Other properties<a class="headerlink" href="#other-properties" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th align="left"><strong>Query variable</strong></th>
+<th align="left"><strong>Definition</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><strong>{Today+/- &lt;integer value for number of days&gt;}</strong>  <br/></td>
+<td align="left">A date calculated by adding/subtracting the specified number of days to/from the date when the query is issued. Date format is YYYY-MM-DD. For example, this value can be used to query content of the managed property LastModifiedTime.  <br/></td>
+</tr>
+<tr>
+<td align="left"><strong>{SearchBoxQuery}</strong> or <strong>{searchTerms}</strong> <br/></td>
+<td align="left">The query value entered into a search box on a page.  <br/></td>
+</tr>
+<tr>
+<td align="left"><strong>{CurrentDisplayLanguage}</strong>  <br/></td>
+<td align="left">The current display language based on MUI in ll-cc format.  <br/></td>
+</tr>
+<tr>
+<td align="left"><strong>{CurrentDisplayLCID}</strong>  <br/></td>
+<td align="left">Numeric value of the current display language based on MUI in ll-cc format.  <br/></td>
+</tr>
+</tbody>
+</table>
+<h4 id="custom-query-variables">Custom query variables<a class="headerlink" href="#custom-query-variables" title="Permanent link">&para;</a></h4>
+<p>The following custom query variables are supported:</p>
+<table>
+<thead>
+<tr>
+<th align="left"><strong>Query variable</strong></th>
+<th align="left"><strong>Definition</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><strong>{Page.&lt;FieldName&gt;}</strong> <br/></td>
+<td align="left">The value of a field on the page from where the query was issued. For example, if the page from where the query was issued contained a site column named "ContentOwner," specifying {Page.ContentOwner} would allow you to query for the value of "ContentOwner." FieldName is the internal name of the field. When used with taxonomy columns, use <code>{Page.&lt;FieldName&gt;.Label}</code> or <code>{Page.&lt;FieldName&gt;.TermID}</code> <br/></td>
+</tr>
+<tr>
+<td align="left"><strong>{CurrentYear}</strong>  <br/></td>
+<td align="left">Todays's date four digits, 2018 <br/></td>
+</tr>
+<tr>
+<td align="left"><strong>{CurrentMonth}</strong>  <br/></td>
+<td align="left">Today's month, 1-12 <br/></td>
+</tr>
+<tr>
+<td align="left"><strong>{CurrentDate}</strong>  <br/></td>
+<td align="left">Today's date, 1-31 <br/></td>
+</tr>
+<tr>
+<td align="left"><strong>{QueryString.&lt;ParameterName&gt;}</strong> <br/></td>
+<td align="left">A value from a query string in the URL of the current page. For example, if the URL of the current page contains a query string such as ItemNumber=567, you could obtain the value 567 by specifying {QueryString.ItemNumber}. <br/></td>
+</tr>
+<tr>
+<td align="left"><strong>{QueryString.&lt;ParameterName&gt;}</strong> <br/></td>
+<td align="left">A value from a query string in the URL of the current page. For example, if the URL of the current page contains a query string such as ItemNumber=567, you could obtain the value 567 by specifying {QueryString.ItemNumber}. <br/></td>
+</tr>
+<tr>
+<td align="left"><strong>{PageContext.&lt;ParameterName&gt;}</strong> <br/></td>
+<td align="left">A value from the legacyPageContext object on the page. For example, if the legacyPageContext object of the current page contains a property "hubSiteId": "166aa115-7ae7-4c21-9e02-9e0c8872be28", you could obtain the value 166aa115-7ae7-4c21-9e02-9e0c8872be28 by specifying {PageContext.hubSiteId}. The property name is case sensitive!<br/></td>
+</tr>
+<tr>
+<td align="left"><strong>{TenantUrl}</strong>  <br/></td>
+<td align="left">URL of the tenant (root site)<br/></td>
+</tr>
+</tbody>
+</table>
+<h4 id="use-the-or-operator">Use the 'OR' operator<a class="headerlink" href="#use-the-or-operator" title="Permanent link">&para;</a></h4>
+<p>To deal with mutli valued properties (like taxonomy multi or choices), you can use the 'OR' operator syntax <code>{|&lt;property&gt;&lt;operator&gt;&lt;multi_valuesporperty&gt;}</code>. The search query will be expanded like this:</p>
+<div class="codehilite"><pre><span></span><code>((&lt;property&gt;&lt;operator&gt;&lt;value_1&gt;) OR (&lt;property&gt;&lt;operator&gt;&lt;value_2&gt;) OR (&lt;property&gt;&lt;operator&gt;&lt;value_3&gt;) ...)
+</code></pre></div>
+
+<p><strong>Examples:</strong></p>
+<ul>
+<li>Using an user profile multi values taxonomy property: <code>{|owstaxidmetadataalltagsinfo:{User.SPS-Hashtags}}</code></li>
+<li>Using a page multi values taxonomy property: <code>{|owstaxidmetadataalltagsinfo:{Page.myTaxonomyMultiColumn.TermID}}</code></li>
+<li>Using a page multi values choice property: <code>{|RefinableStringXX:{Page.myChoiceMultiColumn}}</code></li>
+</ul>
+<p>At any time, you can see the resolved query using the 'Debug' layout an inspecting the <code>queryModification</code> property.</p>
+<h4 id="best-bets">Best bets<a class="headerlink" href="#best-bets" title="Permanent link">&para;</a></h4>
+<p>This WP supports SharePoint best bets via SharePoint query rules:</p>
+<p><img alt="Query Rules" src="../images/query_rules.png" /></p>
+<p><img alt="Best Bets" src="../images/best_bets.png" /></p>
+<h4 id="filters-deep-links">Filters deep links<a class="headerlink" href="#filters-deep-links" title="Permanent link">&para;</a></h4>
+<p>You can pre-select refinement filters by using the <code>filters</code> URL query string parameter. They can be used with or without the search filters Web Part but need at least a search results Web Part on the page. The URL parameter format is as follow:</p>
+<p><code>?filters=[{"n":"&lt;property-name&gt;","t":["&lt;condition1&gt;","&lt;condition2&gt;",...],"o":"&lt;operator&gt;"}]</code></p>
+<p>Where:</p>
+<ul>
+<li><code>n</code>: the refiner managed property name (ex: <code>RefinableStringXX</code>)</li>
+<li><code>t</code>: the condition tokens. This must be an array even with a single value. Raw text values and <a href="https://docs.microsoft.com/en-us/sharepoint/dev/general-development/fast-query-language-fql-syntax-reference">FQL expressions</a> are allowed here.</li>
+<li><code>o</code>: the operator to use between condition values (optionnal).</li>
+</ul>
+<blockquote>
+<p><strong>Pre-selected filters are only applied at page load</strong>.</p>
+<p>Provided refinement filter values are independant from the search filters Web Part configuration.</p>
+<p>URL params refinement filters take priority over default refinement filters set in the search results Web Part options. </p>
+</blockquote>
+<h5 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h5>
+<p><strong>Use free text values</strong></p>
+<div class="codehilite"><pre><span></span><code>?filters=[{&quot;n&quot;:&quot;FileType&quot;,&quot;t&quot;:[&quot;docx&quot;]}]
+</code></pre></div>
+
+<p><strong>FQL expressions with multiple values</strong></p>
+<div class="codehilite"><pre><span></span><code>?filters=[{&quot;n&quot;:&quot;FileType&quot;,&quot;t&quot;:[&quot;equals(&#39;docx&#39;)&quot;,&quot;equals(&#39;pptx&#39;)&quot;],&quot;o&quot;:&quot;or&quot;}]
+</code></pre></div>
+
+<blockquote>
+<p>If the targeted refiner template doesn't support multi values, only the first matching value will be selected by default.</p>
+</blockquote>
+<p><strong>Date intervals</strong></p>
+<div class="codehilite"><pre><span></span><code>?filters=[{&quot;n&quot;:&quot;Created&quot;,&quot;t&quot;:[&quot;yearAgo&quot;]}]
+</code></pre></div>
+
+<p>Valid values are <code>yesterday</code>, <code>weekAgo</code>, <code>monthAgo</code>, <code>threeMonthsAgo</code>, <code>yearAgo</code>, <code>olderThanYear</code>.</p>
+<p><strong>Date range</strong></p>
+<div class="codehilite"><pre><span></span><code>?filters=[{&quot;n&quot;:&quot;Created&quot;,&quot;t&quot;:[&quot;range(2019-09-01T04:00:00.000Z,max)&quot;],&quot;o&quot;:&quot;or&quot;}]
+</code></pre></div>
+
+<p><strong>Taxonomy values</strong></p>
+<div class="codehilite"><pre><span></span><code>?filters=[{&quot;n&quot;:&quot;owstaxidmetadataalltagsinfo&quot;,&quot;t&quot;:[&quot;IT&quot;,&quot;string(&#39;Governance&#39;)&quot;],&quot;o&quot;:&quot;or&quot;}] // Only the &#39;Governance&#39; results will show up since &#39;IT&#39; is tokenized to HEX
+
+?filters=[{&quot;n&quot;:&quot;owstaxidmetadataalltagsinfo&quot;,&quot;t&quot;:[&quot;string(&#39;IT&#39;)&quot;,&quot;string(&#39;Governance&#39;)&quot;],&quot;o&quot;:&quot;or&quot;}] // &#39;IT&#39; and &#39;Governance&#39; results will show up
+</code></pre></div>
+
+<p><strong>Persona</strong></p>
+<div class="codehilite"><pre><span></span><code>?filters=[{&quot;n&quot;:&quot;RefinableString05&quot;,&quot;t&quot;:[&quot;string(&#39;Franck&#39;)&quot;],&quot;o&quot;:&quot;or&quot;}]
+</code></pre></div>
+
+<p><strong>Filter containing substring value</strong></p>
+<div class="codehilite"><pre><span></span><code>?filters=[{&quot;n&quot;:&quot;FileType&quot;,&quot;t&quot;:[&quot;ppt*&quot;]}]
+
+OR 
+
+?filters=[{&quot;n&quot;:&quot;FileType&quot;,&quot;t&quot;:[&quot;string(&#39;ppt*&#39;)&quot;]}]
+</code></pre></div>
+
+<p><strong>Use multiple refiner properties</strong></p>
+<div class="codehilite"><pre><span></span><code>?filters=[{&quot;n&quot;:&quot;Created&quot;,&quot;t&quot;:[&quot;yearAgo&quot;],&quot;o&quot;:&quot;or&quot;},{&quot;n&quot;:&quot;FileType&quot;,&quot;t&quot;:[&quot;equals(&#39;docx&#39;)&quot;,&quot;equals(&#39;pptx&#39;)&quot;],&quot;o&quot;:&quot;or&quot;}]
+</code></pre></div>
+
+<h5 id="how-default-selected-values-are-set-in-the-search-filters-wp">How default selected values are set in the search filters WP?<a class="headerlink" href="#how-default-selected-values-are-set-in-the-search-filters-wp" title="Permanent link">&para;</a></h5>
+<p>If a search filters Web Part is connected to a search results WP, the refinement values will be automatically selected at page load according to this mechanism:</p>
+<p><img alt="Default Selected Filters" src="../images/default_selected_filters.png" /></p>
+<ul>
+<li>When the provided condition IS NOT an FQL expression (ex: "t":["docx"]), the value is converted to HEX and matched with the refinement results retrieved from the search engine. This token is then used to determine default selected state.</li>
+<li>When the provided condition IS an FQL expression (ex: <code>"t":["equals('docx')","equals('pptx')"]</code>), the value is left untouched and matched with the refinement results by determining the common substring values and determine default selected state. It means in this case, mutliple refinement results can match a single provided condition (ex: <code>'Franck*'</code> will match <code>'Cornu, Franck'</code> or <code>'Franck Cornu'</code> so they will both selected by default).</li>
+</ul>
+                
+                  
+                
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        powered by
+        <a href="https://www.mkdocs.org" target="_blank" rel="noopener">MkDocs</a>
+        and
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs</a>
+      </div>
+      
+  <div class="md-footer-social">
+    <link rel="stylesheet" href="../../assets/fonts/font-awesome.css">
+    
+      <a href="https://twitter.com/m365pnp" target="_blank" rel="noopener" title="twitter" class="md-footer-social__link fa fa-twitter"></a>
+    
+      <a href="https://microsoft-search.github.io/pnp-modern-search/" target="_blank" rel="noopener" title="link" class="md-footer-social__link fa fa-link"></a>
+    
+  </div>
+
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/application.c33a9706.js"></script>
+      
+      <script>app.initialize({version:"1.2.1",url:{base:"../.."}})</script>
+      
+    
+  </body>
+</html>

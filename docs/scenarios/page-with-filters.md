@@ -42,7 +42,7 @@ In the PnP Filters Web Part properties, click on the **Edit** button
 
 :::image type="content" source="assets/page-with-filters/set-up-filters-properties.png" alt-text="Set up filters properties":::
 
-In this panel, you can add each filter you'd like to provide to your users and select a template to use for displaying it. See the [PnP Filters Web Part documentation](../usage/search-filters\index.md) for the specifics.
+In this panel, you can add each filter you'd like to provide to your users and select a template to use for displaying it. See the [PnP Filters Web Part documentation](../usage/search-filters/index.md) for the specifics.
 
 In this example, we're setting up filters for **Created** and **Created By**. Note we are using appropriate templates based on the type of data in each Managed Property.
 
