@@ -16,6 +16,7 @@ A SharePoint site within your tenant is perfect for this scenario, because  you 
 * Approval flows (if you want)
 * plus more...
 
+
  ## How to do this checklist:
 1. Create a SharePoint site
 2. Give "Everyone except externals" read access to the site
@@ -31,11 +32,11 @@ Now you can reference these templates using the URL to the file.
 
 | Site title | Library name | Folder name | Template names |
 | :---------- | ------------ | ----------- | ------------- |
-| contoso_Resources  | PnPSearch    | Templates   | mytemplate.html, mytemplate2.html|
+| SharePointResources  | PnPSearch    | Templates   | mytemplate.html, mytemplate2.html|
 
 Urls for the templates in this example:
 
-mytemplate.html: `https://contoso.sharepoint.com/sites/contoso_resources/PnPSearch/Templates/mytemplate.html`
+mytemplate.html: `https://contoso.sharepoint.com/sites/SharePointResources/PnPSearch/Templates/mytemplate.html`
 
-mytemplate2.html: `https://contoso.sharepoint.com/sites/contoso_resources/PnPSearch/Templates/mytemplate2.html`
+mytemplate2.html: `https://contoso.sharepoint.com/sites/SharePointResources/PnPSearch/Templates/mytemplate2.html`
 
