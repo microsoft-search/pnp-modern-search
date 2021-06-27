@@ -20,6 +20,12 @@ In order to use your custom column values as filters in your PnP Modern Search s
 
 Most search solutions require some filters (aks refiners) to allow the user to filter the initial results.
 
+## Scenario: Create your first custom template
+
+[Scenario Create your first custom template](create-your-first-custom-template.md)
+
+Create your first custom template
+
 ---
 
 More to come!
