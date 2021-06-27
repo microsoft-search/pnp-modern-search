@@ -20,6 +20,12 @@ In order to use your custom column values as filters in your PnP Modern Search s
 
 Most search solutions require some filters (aks refiners) to allow the user to filter the initial results.
 
+## Scenario 4
+
+[Store custom templates in SharePoint](store-custom-templates-in-SharePoint.md)
+
+Storing custom templates as files in a SharePoint site, is great when you want to use them across sites and want some control.
+
 ---
 
 More to come!
