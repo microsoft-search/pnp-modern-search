@@ -19,7 +19,7 @@ A SharePoint site within your tenant is perfect for this scenario, because you g
 - Use OneDrive for sync
 - Approval flows (if you want)
 
-## How to do this:
+## 5 steps to create a central repository in SharePoint:
 
 1. Create a SharePoint site
 2. Give "Everyone except externals" read access to the site
@@ -33,7 +33,7 @@ Now you can reference these templates using the URL to the file.
 
 ![A sharePoint Library holding some templates](assets\store-custom-templates-in-sharepoint\SharePoint_Resources_Library.png)
 
-## Example for the a tenant named Contoso.
+### Example for the a tenant named Contoso.
 
 | Site title          | Library name | Folder name | Template names                    |
 | :------------------ | ------------ | ----------- | --------------------------------- |
