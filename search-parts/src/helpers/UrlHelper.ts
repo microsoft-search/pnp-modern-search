@@ -64,10 +64,10 @@ export class UrlHelper {
             // Append new param
             const hasQuestionMark = /\?/.test(url);
             delimiter = hasQuestionMark ? "&" : "?";
-            newString = url + delimiter + param + "=" + value;
+            newString = url + delimiter + param + "=" + encodeURIComponent(value);
         } else {
             delimiter = match[0].charAt(0);
-            newString = url.replace(re, delimiter + param + "=" + value);
+            newString = url.replace(re, delimiter + param + "=" + encodeURIComponent(value));
         }
 
         return newString;
