@@ -512,6 +512,7 @@ export class TemplateService implements ITemplateService {
         // Repeat the block N times
         // https://stackoverflow.com/questions/11924452/iterating-over-basic-for-loop-using-handlebars-js
         // <p>{{#times 10}}</p>
+        this.Handlebars.unregisterHelper('times'); // unregister times alias for multiply from helpers
         this.Handlebars.registerHelper('times', (n, block) => {
             var accum = '';
             for (var i = 0; i < n; ++i)

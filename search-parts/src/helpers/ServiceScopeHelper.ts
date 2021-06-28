@@ -39,6 +39,6 @@ export class ServiceScopeHelper {
 			parentScope = parentScope.getParent();
 		}
 
-		return rootServiceScope
+		return rootServiceScope;
 	}
 }
