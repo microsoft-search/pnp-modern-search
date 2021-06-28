@@ -20,19 +20,19 @@ In order to use your custom column values as filters in your PnP Modern Search s
 
 Most search solutions require some filters (aka refiners) to allow the user to filter the initial results.
 
-## Scenario: Create your first custom template
+## Scenario 4
 
 [Scenario Create your first custom template](create-your-first-custom-template.md)
 
 Create your first custom template
 
-## Scenario 4
+## Scenario 5
 
 [Store custom templates in SharePoint](store-custom-templates-in-SharePoint.md)
 
 Storing custom templates as files in a SharePoint site, is great when you want to use them across sites and want some control.
 
-## Scenario 5
+## Scenario 6
 
 [Edit custom templates in SharePoint](edit-custom-templates-in-sharepoint.md)
 
