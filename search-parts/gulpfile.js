@@ -70,7 +70,7 @@ const envCheck = build.subTask('environmentCheck', (gulp, config, done) => {
                     /handlebars-helpers/,
                 ],
                 options: {
-                    search: 'logging: require.*?,',
+                    search: '(logging|markdown): require.*?,',
                     replace: '',
                     flags: 'g'
                 }
@@ -91,6 +91,20 @@ const envCheck = build.subTask('environmentCheck', (gulp, config, done) => {
                     generateStatsFile: false,
                     logLevel: 'error'
                 }));
+
+                // generatedConfiguration.optimization = {
+                //     //runtimeChunk: 'single',
+                //     splitChunks: {
+                //         cacheGroups: {
+                //             vendor: {
+                //                 test: /[\\/]node_modules[\\/]/,
+                //                 name: 'vendors',
+                //                 enforce: true,
+                //                 chunks: 'all'
+                //             }
+                //         }
+                //     }
+                // };
             }
 
             return generatedConfiguration;
