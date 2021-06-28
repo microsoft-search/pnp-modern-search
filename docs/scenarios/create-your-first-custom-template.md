@@ -18,7 +18,7 @@ On your computer, create a file with the name: mycustomtemplate.html
 
 Open this file in a text editor, like Notepad, VS Code or whatnot.
 
-![Screenshot of myfirsttemplate.html file.](assets\create-your-first-custom-template\myfirsttemplate-file-screenshot.png)
+![Screenshot of myfirsttemplate.html file.](assets\create-your-first-custom-template\myfirsttemplate_file-screenshot.png)
 
 The file is empty, so we need to add some basic needed html code.
 
@@ -158,7 +158,7 @@ If not, check if you copied all the text into the file, and that you did not cha
 ## Pictures
 
 Insert the URL in "Use an external template URL"
-![alt](assets\create-your-first-custom-template\Insert-External-Url-for-custom-template.png)
+![alt](assets\create-your-first-custom-template\insert_external-url-for-custom-template.png)
 
 What the custom search result looks like
-![alt](assets\create-your-first-custom-template\Custom-Search-Results-example.png)
+![alt](assets\create-your-first-custom-template\custom_search-results-example.png)
