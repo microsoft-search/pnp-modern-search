@@ -28,7 +28,7 @@ Create your first custom template
 
 ## Scenario 5
 
-[Store custom templates in SharePoint](store-custom-templates-in-SharePoint.md)
+[Store custom templates in SharePoint](howto-store-custom-templates-in-sharepoint.md)
 
 Storing custom templates as files in a SharePoint site, is great when you want to use them across sites and want some control.
 
