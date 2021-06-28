@@ -127,7 +127,7 @@ The URL to this template is:
 
 `<siteurl>/Shared Documents/PnPSearchTemplates/mycustomtemplate.html`
 
-Change `<siteurl>` with the url of the site you created/are using.
+Change `<siteurl>` with the URL of the site you created/are using.
 
 Will be something like this: `https://contoso.sharepoint.com/sites/mydevsite`
 
