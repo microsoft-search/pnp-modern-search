@@ -91,20 +91,6 @@ const envCheck = build.subTask('environmentCheck', (gulp, config, done) => {
                     generateStatsFile: false,
                     logLevel: 'error'
                 }));
-
-                // generatedConfiguration.optimization = {
-                //     //runtimeChunk: 'single',
-                //     splitChunks: {
-                //         cacheGroups: {
-                //             vendor: {
-                //                 test: /[\\/]node_modules[\\/]/,
-                //                 name: 'vendors',
-                //                 enforce: true,
-                //                 chunks: 'all'
-                //             }
-                //         }
-                //     }
-                // };
             }
 
             return generatedConfiguration;
