@@ -16,13 +16,13 @@ You can edit a custom template directly in SharePoint.
 !!! note
     Step 2
 
-    The article [Store custom templates in SharePoint](store-custom-templates-in-sharepoint.md), explains how you can create a central repository for templates in SharePoint.
+    The article [Store custom templates in SharePoint](howto-store-custom-templates-in-sharepoint.md), explains how you can create a central repository for templates in SharePoint.
 
 ## Edit the template in SharePoint
 
 Prerequisites: You have created your first template and it is stored in SharePoint. (Step 1 and Step 2)
 
-![SharePoint Resource Library](assets/store-custom-templates-in-sharepoint/sharepoint-Resources-Library.png)
+![SharePoint Resource Library](assets/store-custom-templates-in-sharepoint/sharepoint-resources-lib.png)
 
 1. Open your SharePoint site and navigate to the SharePoint library and folder where the template is stored.
 
