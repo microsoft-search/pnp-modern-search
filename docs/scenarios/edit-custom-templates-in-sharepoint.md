@@ -34,9 +34,9 @@ Prerequisites: You have created your first template and it is stored in SharePoi
 
 5. Close the Tab.
 
->![How to click the open in text editor](assets\edit-custom-templates-in-sharepoint\open_htmlfile-in-text-editor.png)
+>![How to click the open in text editor](assets/edit-custom-templates-in-sharepoint/open_htmlfile-in-text-editor.png)
 
-![How to save the changes](assets\edit-custom-templates-in-sharepoint\save_the-changed-file.png)
+![How to save the changes](assets/edit-custom-templates-in-sharepoint/save_the-changed-file.png)
 
 ## Check your changes
 

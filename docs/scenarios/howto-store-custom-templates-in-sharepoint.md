@@ -2,7 +2,7 @@
 
 You can create your own custom templates. If you store them in a central repository, they can be used across PnP Search Result web parts across sites in your tenant.
 
-![Image of central repository and multiple search sites](assets\store-custom-templates-in-sharepoint\central-repository-multiple-sites.png)
+![Image of central repository and multiple search sites](assets/store-custom-templates-in-sharepoint/central-repository-multiple-sites.png)
 
 Requirements for using a custom template, referenced by URL are:
 
@@ -31,7 +31,7 @@ Now you can reference these templates using the URL to the file.
 
 `https://<tenantname>.sharepoint.com/sites/<sitetitle>/<libraryname>/<foldername>/<templatename>.html`
 
-![A sharePoint Library holding some templates](assets\store-custom-templates-in-sharepoint\sharepoint-resources-lib.png)
+![A sharePoint Library holding some templates](assets/store-custom-templates-in-sharepoint/sharepoint-resources-lib.png)
 
 ### Example for the a tenant named Contoso
 
@@ -54,4 +54,4 @@ mytemplate2.html: `https://contoso.sharepoint.com/sites/SharePointResources/PnPS
 
 When you edit the custom template, you just have to refresh the page where the web part is embedded to see the changes you made.
 
-![Screenshot of where you set the URL for a custom template](assets\store-custom-templates-in-sharepoint\custom-template-external-url-edit.png)
+![Screenshot of where you set the URL for a custom template](assets/store-custom-templates-in-sharepoint/custom-template-external-url-edit.png)
