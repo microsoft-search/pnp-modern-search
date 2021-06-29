@@ -38,6 +38,14 @@ Storing custom templates as files in a SharePoint site, is great when you want t
 
 Storing custom templates as files in a SharePoint site, is great when you want to use them across sites and want some control.
 
+## Scenario 7
+
+[Edit custom templates locally in Visual Studio Code](edit-templates-using-vscode-and-onedrive.md)
+
+When you have your templates in SharePoint, it is easy to setup a way to edit locally on your computer and still get the result in SharePoint almost instantly.
+
+
+
 ---
 
 More to come!
