@@ -36,7 +36,7 @@
     
     
       
-        <title>Scenario 2: Set up Managed Properties - PnP Modern Search (v4)</title>
+        <title>Edit a custom web part in SharePoint - PnP Modern Search (v4)</title>
       
     
     
@@ -87,7 +87,7 @@
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
     
-      <a href="#scenario-2-set-up-managed-properties" tabindex="0" class="md-skip">
+      <a href="#edit-a-custom-web-part-in-sharepoint" tabindex="0" class="md-skip">
         Skip to content
       </a>
     
@@ -113,7 +113,7 @@
             </span>
             <span class="md-header-nav__topic">
               
-                Scenario 2: Set up Managed Properties
+                Edit a custom web part in SharePoint
               
             </span>
           
@@ -772,8 +772,22 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#set-up-site-columns-and-managed-properties" class="md-nav__link">
-    Set up Site Columns and Managed Properties
+  <a href="#steps" class="md-nav__link">
+    Steps
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#edit-the-template-in-sharepoint" class="md-nav__link">
+    Edit the template in SharePoint
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#check-your-changes" class="md-nav__link">
+    Check your changes
   </a>
   
 </li>
@@ -794,22 +808,53 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/microsoft-search/pnp-modern-search/blob/develop/docs/scenarios/set-up-managed-properties.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
+                  <a href="https://github.com/microsoft-search/pnp-modern-search/blob/develop/docs/scenarios/edit-custom-templates-in-sharepoint.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
                 
                 
-                <h1 id="scenario-2-set-up-managed-properties">Scenario 2: Set up Managed Properties<a class="headerlink" href="#scenario-2-set-up-managed-properties" title="Permanent link">&para;</a></h1>
+                <h1 id="edit-a-custom-web-part-in-sharepoint">Edit a custom web part in SharePoint<a class="headerlink" href="#edit-a-custom-web-part-in-sharepoint" title="Permanent link">&para;</a></h1>
+<p>You can edit a custom template directly in SharePoint.</p>
+<h2 id="steps">Steps<a class="headerlink" href="#steps" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Create a custom template</li>
+<li>Store the template in a SharePoint library</li>
+<li>Edit the template in directly in SharePoint</li>
+</ol>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The PnP Modern Search Web Parts must be deployed to your App Catalog and activated on your site. See the <a href="../../installation/">installation documentation</a> for details.</p>
+<p>Step 1</p>
+<p>The article <a href="../create-your-first-custom-template/">Create your first custom template</a>, explains how you can create a template and upload it to SharePoint.</p>
 </div>
-<p>If you've followed <a href="../create-simple-search-page/">Scenario 1: Create a simple search page</a>, you already have a functioning search experience.</p>
-<p>One of the big benefits of the PnP Modern Search Web Parts is the ability to add filters, also known as refiners.</p>
-<h2 id="set-up-site-columns-and-managed-properties">Set up Site Columns and Managed Properties<a class="headerlink" href="#set-up-site-columns-and-managed-properties" title="Permanent link">&para;</a></h2>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Read the article <a href="https://docs.microsoft.com/microsoft-365/community/how-do-site-columns-become-managed-properties-thus-available-for-search">How Do Site Columns Become Managed Properties - Thus Available for Search</a> to learn about how to set up your Managed Metadata Site Columns for use in search experiences.</p>
+<p>Step 2</p>
+<p>The article <a href="../howto-store-custom-templates-in-sharepoint/">Store custom templates in SharePoint</a>, explains how you can create a central repository for templates in SharePoint.</p>
 </div>
-<p>At this point, you've set up Managed Properties you can use as you display results in the PnP Search Results Web Part as well as in your PnP Filters Web Part.</p>
+<h2 id="edit-the-template-in-sharepoint">Edit the template in SharePoint<a class="headerlink" href="#edit-the-template-in-sharepoint" title="Permanent link">&para;</a></h2>
+<p>Prerequisites: You have created your first template and it is stored in SharePoint. (Step 1 and Step 2)</p>
+<p><img alt="SharePoint Resource Library" src="../assets/store-custom-templates-in-sharepoint/sharepoint-resources-lib.png" /></p>
+<ol>
+<li>
+<p>Open your SharePoint site and navigate to the SharePoint library and folder where the template is stored.</p>
+</li>
+<li>
+<p>Click the template Title to open it.</p>
+</li>
+<li>
+<p>Open the menu "Open" and select "Open in Text Editor"</p>
+</li>
+<li>
+<p>Do your changes and Click Save.</p>
+</li>
+<li>
+<p>Close the Tab.</p>
+</li>
+</ol>
+<blockquote>
+<p><img alt="How to click the open in text editor" src="../assets/edit-custom-templates-in-sharepoint/open_htmlfile-in-text-editor.png" /></p>
+</blockquote>
+<p><img alt="How to save the changes" src="../assets/edit-custom-templates-in-sharepoint/save_the-changed-file.png" /></p>
+<h2 id="check-your-changes">Check your changes<a class="headerlink" href="#check-your-changes" title="Permanent link">&para;</a></h2>
+<p>To look at your changes, open a page where you have used the custom template, and refresh the page. The changes you made should now be effective.</p>
                 
                   
                 

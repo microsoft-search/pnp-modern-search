@@ -36,7 +36,7 @@
     
     
       
-        <title>Scenario 2: Set up Managed Properties - PnP Modern Search (v4)</title>
+        <title>Edit custom templates using Visual Studio Code and OneDrive - PnP Modern Search (v4)</title>
       
     
     
@@ -87,7 +87,7 @@
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
     
-      <a href="#scenario-2-set-up-managed-properties" tabindex="0" class="md-skip">
+      <a href="#edit-custom-templates-using-visual-studio-code-and-onedrive" tabindex="0" class="md-skip">
         Skip to content
       </a>
     
@@ -113,7 +113,7 @@
             </span>
             <span class="md-header-nav__topic">
               
-                Scenario 2: Set up Managed Properties
+                Edit custom templates using Visual Studio Code and OneDrive
               
             </span>
           
@@ -772,8 +772,42 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#set-up-site-columns-and-managed-properties" class="md-nav__link">
-    Set up Site Columns and Managed Properties
+  <a href="#steps" class="md-nav__link">
+    Steps
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create-the-sharepoint-environment-for-developing-templates" class="md-nav__link">
+    Create the SharePoint environment for developing templates.
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync-the-template-locally-and-edit-using-a-local-editor" class="md-nav__link">
+    Sync the template locally and edit using a local editor
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#troubleshoot" class="md-nav__link">
+    Troubleshoot
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tips" class="md-nav__link">
+    Tips
   </a>
   
 </li>
@@ -794,22 +828,77 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/microsoft-search/pnp-modern-search/blob/develop/docs/scenarios/set-up-managed-properties.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
+                  <a href="https://github.com/microsoft-search/pnp-modern-search/blob/develop/docs/scenarios/edit-templates-using-vscode-and-onedrive.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
                 
                 
-                <h1 id="scenario-2-set-up-managed-properties">Scenario 2: Set up Managed Properties<a class="headerlink" href="#scenario-2-set-up-managed-properties" title="Permanent link">&para;</a></h1>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>The PnP Modern Search Web Parts must be deployed to your App Catalog and activated on your site. See the <a href="../../installation/">installation documentation</a> for details.</p>
-</div>
-<p>If you've followed <a href="../create-simple-search-page/">Scenario 1: Create a simple search page</a>, you already have a functioning search experience.</p>
-<p>One of the big benefits of the PnP Modern Search Web Parts is the ability to add filters, also known as refiners.</p>
-<h2 id="set-up-site-columns-and-managed-properties">Set up Site Columns and Managed Properties<a class="headerlink" href="#set-up-site-columns-and-managed-properties" title="Permanent link">&para;</a></h2>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Read the article <a href="https://docs.microsoft.com/microsoft-365/community/how-do-site-columns-become-managed-properties-thus-available-for-search">How Do Site Columns Become Managed Properties - Thus Available for Search</a> to learn about how to set up your Managed Metadata Site Columns for use in search experiences.</p>
-</div>
-<p>At this point, you've set up Managed Properties you can use as you display results in the PnP Search Results Web Part as well as in your PnP Filters Web Part.</p>
+                <h1 id="edit-custom-templates-using-visual-studio-code-and-onedrive">Edit custom templates using Visual Studio Code and OneDrive<a class="headerlink" href="#edit-custom-templates-using-visual-studio-code-and-onedrive" title="Permanent link">&para;</a></h1>
+<p>If you want to achieve the following list, dont't stop reading.</p>
+<ul>
+<li>You have a local development environment for editing you templates.</li>
+<li>You can see your changes as fast as you can hit the refresh button in your browser.</li>
+<li>You can see how the template looks in your SharePoint environment.</li>
+<li>You can use real search results as data.</li>
+<li>You can use Extensions in VSCode to make it easier to edit html files.</li>
+</ul>
+<p>We are going to use Visual Studio Code (VSCode) and OneDrive to reach our goal.
+You do NOT have to use VSCode, you can use any text editor you want.</p>
+<p>If you need to install VSCode, you can get it here:</p>
+<ul>
+<li><a href="https://code.visualstudio.com/download">Visual Studio Code</a></li>
+</ul>
+<p>I guess you already have OneDrive, if not, here is the instructions to get started.</p>
+<ul>
+<li><a href="https://support.microsoft.com/en-us/office/sync-files-with-onedrive-in-windows-615391c4-2bd3-4aae-a42a-858262e42a49">Sync files with OneDrive (Windows)</a></li>
+<li><a href="https://support.microsoft.com/en-us/office/sync-files-with-onedrive-on-mac-os-x-d11b9f29-00bb-4172-be39-997da46f913f">Sync files with OneDrive on Mac OS X</a></li>
+</ul>
+<h2 id="steps">Steps<a class="headerlink" href="#steps" title="Permanent link">&para;</a></h2>
+<h3 id="create-the-sharepoint-environment-for-developing-templates">Create the SharePoint environment for developing templates.<a class="headerlink" href="#create-the-sharepoint-environment-for-developing-templates" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Setup a SharePoint site, where you want to store your templates. <a href="../howto-store-custom-templates-in-sharepoint/">Store custom templates in SahrePoint</a></li>
+<li>Create a page using PnP Search Results. <a href="../create-simple-search-page/">Create a simple search page</a></li>
+<li>Create a custom template and store it in SharePoint. <a href="../create-your-first-custom-template/">Create your first custom template</a></li>
+<li>Configure your search web part to use the new template. (See article in step 3)</li>
+</ol>
+<h3 id="sync-the-template-locally-and-edit-using-a-local-editor">Sync the template locally and edit using a local editor<a class="headerlink" href="#sync-the-template-locally-and-edit-using-a-local-editor" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Open the SharePoint site and library where you have stored your template.</li>
+<li>Choose "Sync" or "Add Shortcut to OneDrive", whatever you prefer.
+   <img alt="Sync or add Shortcut to OneDrive" src="../assets/edit-templates-using-vscode-and-onedrive/sync-or-addshortcut-to-onedrive.png" /></li>
+<li>Open VSCode (or any other editor you prefer)</li>
+<li>Open the synced folder in your OneDrive.</li>
+<li>File - Open Folder</li>
+<li>Select the folder you just synced</li>
+<li>You will now see all your templates in this folder.</li>
+</ol>
+<p><img alt="Open template folder in VS Code" src="../assets/edit-templates-using-vscode-and-onedrive/open-template-folder-onedrive.png" /></p>
+<ol>
+<li>Edit a template.</li>
+<li>Save a template.</li>
+<li>Wait a moment till OneDrive is finished syncing. (Should be almost instant)</li>
+<li>Refresh the Browser window where you have the search web part that is using your template.</li>
+</ol>
+<p><img alt="Refresh the page and see the result of your changes" src="../assets/edit-templates-using-vscode-and-onedrive/refresh-search-page-and-see-result-of-changes.png" /></p>
+<ol>
+<li>
+<p>You should now see the change you made</p>
+</li>
+<li>
+<p>Repeat 9 - 12, until you are happy with your awesome custom template.</p>
+</li>
+</ol>
+<h3 id="troubleshoot">Troubleshoot<a class="headerlink" href="#troubleshoot" title="Permanent link">&para;</a></h3>
+<p>You cannot see any changes on the webpage</p>
+<ul>
+<li>Check the sync status in OneDrive</li>
+<li>Make a change that is noticeable</li>
+<li>Check if the custom template has been set as the template for the search part you are looking at.</li>
+<li>Did you refresh the page?</li>
+<li>Is your file-extension .html?</li>
+<li>Check the code in the template.</li>
+</ul>
+<h2 id="tips">Tips<a class="headerlink" href="#tips" title="Permanent link">&para;</a></h2>
+<p>In VS Code you can format the code by selecting the language mode for the document you are editing. For files with extension .HTML, they are automatically formatted by a rule set for HTML.
+Since you are going to use Handlebar you should change the language mode to "Handlebars".</p>
                 
                   
                 

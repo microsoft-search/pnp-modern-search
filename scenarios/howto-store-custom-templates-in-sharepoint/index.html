@@ -36,7 +36,7 @@
     
     
       
-        <title>Scenario 2: Set up Managed Properties - PnP Modern Search (v4)</title>
+        <title>Store custom templates in SharePoint - PnP Modern Search (v4)</title>
       
     
     
@@ -87,7 +87,7 @@
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
     
-      <a href="#scenario-2-set-up-managed-properties" tabindex="0" class="md-skip">
+      <a href="#store-custom-templates-in-sharepoint" tabindex="0" class="md-skip">
         Skip to content
       </a>
     
@@ -113,7 +113,7 @@
             </span>
             <span class="md-header-nav__topic">
               
-                Scenario 2: Set up Managed Properties
+                Store custom templates in SharePoint
               
             </span>
           
@@ -772,8 +772,28 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#set-up-site-columns-and-managed-properties" class="md-nav__link">
-    Set up Site Columns and Managed Properties
+  <a href="#5-steps-to-create-a-central-repository-in-sharepoint" class="md-nav__link">
+    5 steps to create a central repository in SharePoint
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-for-the-a-tenant-named-contoso" class="md-nav__link">
+    Example for the a tenant named Contoso
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#use-the-links-in-a-pnp-search-results-web-part" class="md-nav__link">
+    Use the links in a PnP Search Results web part
   </a>
   
 </li>
@@ -794,22 +814,69 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/microsoft-search/pnp-modern-search/blob/develop/docs/scenarios/set-up-managed-properties.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
+                  <a href="https://github.com/microsoft-search/pnp-modern-search/blob/develop/docs/scenarios/howto-store-custom-templates-in-sharepoint.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
                 
                 
-                <h1 id="scenario-2-set-up-managed-properties">Scenario 2: Set up Managed Properties<a class="headerlink" href="#scenario-2-set-up-managed-properties" title="Permanent link">&para;</a></h1>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>The PnP Modern Search Web Parts must be deployed to your App Catalog and activated on your site. See the <a href="../../installation/">installation documentation</a> for details.</p>
-</div>
-<p>If you've followed <a href="../create-simple-search-page/">Scenario 1: Create a simple search page</a>, you already have a functioning search experience.</p>
-<p>One of the big benefits of the PnP Modern Search Web Parts is the ability to add filters, also known as refiners.</p>
-<h2 id="set-up-site-columns-and-managed-properties">Set up Site Columns and Managed Properties<a class="headerlink" href="#set-up-site-columns-and-managed-properties" title="Permanent link">&para;</a></h2>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Read the article <a href="https://docs.microsoft.com/microsoft-365/community/how-do-site-columns-become-managed-properties-thus-available-for-search">How Do Site Columns Become Managed Properties - Thus Available for Search</a> to learn about how to set up your Managed Metadata Site Columns for use in search experiences.</p>
-</div>
-<p>At this point, you've set up Managed Properties you can use as you display results in the PnP Search Results Web Part as well as in your PnP Filters Web Part.</p>
+                <h1 id="store-custom-templates-in-sharepoint">Store custom templates in SharePoint<a class="headerlink" href="#store-custom-templates-in-sharepoint" title="Permanent link">&para;</a></h1>
+<p>You can create your own custom templates. If you store them in a central repository, they can be used across PnP Search Result web parts across sites in your tenant.</p>
+<p><img alt="Image of central repository and multiple search sites" src="../assets/store-custom-templates-in-sharepoint/central-repository-multiple-sites.png" /></p>
+<p>Requirements for using a custom template, referenced by URL are:</p>
+<ul>
+<li>All users of the PnP Search Result web part, must be able to read those templates.</li>
+<li>Templates need to have their own URL.</li>
+</ul>
+<p>A SharePoint site within your tenant is perfect for this scenario, because you get some additional features:</p>
+<ul>
+<li>Central repository</li>
+<li>Version control</li>
+<li>No public access</li>
+<li>Secure change access</li>
+<li>Share to others outside of your company</li>
+<li>Use OneDrive for sync</li>
+<li>Approval flows (if you want)</li>
+</ul>
+<h2 id="5-steps-to-create-a-central-repository-in-sharepoint">5 steps to create a central repository in SharePoint<a class="headerlink" href="#5-steps-to-create-a-central-repository-in-sharepoint" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Create a SharePoint site</li>
+<li>Give "Everyone except externals" read access to the site</li>
+<li>Create a Library</li>
+<li>Create a Templates Folder</li>
+<li>Add your custom templates to this folder.</li>
+</ol>
+<p>Now you can reference these templates using the URL to the file.</p>
+<p><code>https://&lt;tenantname&gt;.sharepoint.com/sites/&lt;sitetitle&gt;/&lt;libraryname&gt;/&lt;foldername&gt;/&lt;templatename&gt;.html</code></p>
+<p><img alt="A sharePoint Library holding some templates" src="../assets/store-custom-templates-in-sharepoint/sharepoint-resources-lib.png" /></p>
+<h3 id="example-for-the-a-tenant-named-contoso">Example for the a tenant named Contoso<a class="headerlink" href="#example-for-the-a-tenant-named-contoso" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th align="left">Site title</th>
+<th>Library name</th>
+<th>Folder name</th>
+<th>Template names</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">SharePointResources</td>
+<td>PnPSearch</td>
+<td>Templates</td>
+<td>mytemplate.html, mytemplate2.html</td>
+</tr>
+</tbody>
+</table>
+<p>URLs for the templates in this example:</p>
+<p>mytemplate.html: <code>https://contoso.sharepoint.com/sites/SharePointResources/PnPSearch/Templates/mytemplate.html</code></p>
+<p>mytemplate2.html: <code>https://contoso.sharepoint.com/sites/SharePointResources/PnPSearch/Templates/mytemplate2.html</code></p>
+<h2 id="use-the-links-in-a-pnp-search-results-web-part">Use the links in a PnP Search Results web part<a class="headerlink" href="#use-the-links-in-a-pnp-search-results-web-part" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Edit the settings for the PnP Search Results web part.</li>
+<li>On page 2, under Available Layouts, choose Custom.</li>
+<li>Type the URL to your custom template in "Use an external template URL.</li>
+<li>Republish the page</li>
+</ol>
+<p>When you edit the custom template, you just have to refresh the page where the web part is embedded to see the changes you made.</p>
+<p><img alt="Screenshot of where you set the URL for a custom template" src="../assets/store-custom-templates-in-sharepoint/custom-template-external-url-edit.png" /></p>
                 
                   
                 
