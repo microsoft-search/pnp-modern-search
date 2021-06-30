@@ -35,6 +35,7 @@ import { BuiltinFilterTemplates } from '../layouts/AvailableTemplates';
 import { DataFilterHelper } from '../helpers/DataFilterHelper';
 import { ISortFieldConfiguration, SortFieldDirection } from '../models/search/ISortFieldConfiguration';
 import { EnumHelper } from '../helpers/EnumHelper';
+import { IDisplayMode } from './IDisplayMode';
 
 export enum BuiltinSourceIds {
     Documents = 'e7ec8cee-ded8-43c9-beb5-436b54b31e84',
@@ -57,7 +58,7 @@ export enum BuiltinSourceIds {
 /**
  * SharePoint search data source property pane properties
  */
-export interface ISharePointSearchDataSourceProperties {
+export interface ISharePointSearchDataSourceProperties extends IDisplayMode {
 
     /**
      * The search query template
@@ -75,7 +76,7 @@ export interface ISharePointSearchDataSourceProperties {
     enableQueryRules: boolean;
 
     /**
-     * Flag indicating if the OneDrive for Business results shoud be included/excluded
+     * Flag indicating if the OneDrive for Business results should be included/excluded
      */
     includeOneDriveResults: boolean;
 
@@ -158,20 +159,23 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         this.dateHelper = this.serviceScope.consume<DateHelper>(DateHelper.ServiceKey);
         this.moment = await this.dateHelper.moment();
 
-        // Use the same chunk name as the main Web Part to avoid recreating/loading a new one
-        const { PropertyFieldCollectionData, CustomCollectionFieldType } = await import(
-            /* webpackChunkName: 'pnp-modern-search-property-pane' */
-            '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData'
-        );
+        if (this.properties.editMode)
+        {
+            // Use the same chunk name as the main Web Part to avoid recreating/loading a new one
+            const { PropertyFieldCollectionData, CustomCollectionFieldType } = await import(
+                /* webpackChunkName: 'pnp-modern-search-property-pane' */
+                '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData'
+            );
 
-        const { PropertyPaneWebPartInformation } = await import(
-            /* webpackChunkName: 'pnp-modern-search-property-pane' */
-            '@pnp/spfx-property-controls/lib/PropertyPaneWebPartInformation'
-        );
+            const { PropertyPaneWebPartInformation } = await import(
+                /* webpackChunkName: 'pnp-modern-search-property-pane' */
+                '@pnp/spfx-property-controls/lib/PropertyPaneWebPartInformation'
+            );
 
-        this._propertyFieldCollectionData = PropertyFieldCollectionData;
-        this._customCollectionFieldType = CustomCollectionFieldType;
-        this._propertyPaneWebPartInformation = PropertyPaneWebPartInformation;
+            this._propertyFieldCollectionData = PropertyFieldCollectionData;
+            this._customCollectionFieldType = CustomCollectionFieldType;
+            this._propertyPaneWebPartInformation = PropertyPaneWebPartInformation;
+        }
 
         this._currentLocaleId = LocalizationHelper.getLocaleId(this._pageContext.cultureInfo.currentUICultureName);
 
