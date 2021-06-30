@@ -1,7 +1,8 @@
 
 # Scenario 1: Create a simple search page
 
-[!INCLUDE [deployment-note](includes/deployment-note.md)]
+!!! note
+    The PnP Modern Search Web Parts must be deployed to your App Catalog and activated on your site. See the [installation documentation](../installation.md) for details.
 
 ## Create a new SharePoint page
 
