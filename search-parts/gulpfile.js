@@ -102,15 +102,6 @@ const envCheck = build.subTask('environmentCheck', (gulp, config, done) => {
 
 build.rig.addPreBuildTask(envCheck);
 
-let momentCopy = build.subTask('momentCopy', (gulp, config, done) => {
-    if (!config.production) {
-        gulp.src('./sharepoint/solution/debug/ClientSideAssets/moment_*.js')
-            .pipe(gulp.dest('./dist'));
-    }
-    done();
-});
-build.rig.addPreBuildTask(momentCopy);
-
 /* fast-serve */
 const { addFastServe } = require("spfx-fast-serve-helpers");
 addFastServe(build);
