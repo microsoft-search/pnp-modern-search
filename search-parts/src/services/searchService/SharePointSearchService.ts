@@ -70,6 +70,9 @@ export class SharePointSearchService implements ISharePointSearchService {
      */
     public async search(searchQuery: ISharePointSearchQuery): Promise<ISharePointSearchResults> {
 
+        // 20210701/mh: enrich the query test with synonyms...
+        searchQuery.Querytext = this.enrichQueryWithSynonyms(searchQuery.Querytext);
+
         let results: ISharePointSearchResults = {
             queryKeywords: searchQuery.Querytext,
             refinementResults: [],
@@ -435,5 +438,20 @@ export class SharePointSearchService implements ISharePointSearchService {
             return ({ results: [] });
         }
         return { results: Array.isArray(prop) ? prop : [prop] };
+    }
+
+    //TODO: fertigstellen/ausarbeiten der Funktion
+    private enrichQueryWithSynonyms(queryText:string): string {
+        // fetching the original query to enrich it with synonyms...
+        let queryToModify: string = queryText;
+
+        // only modify the query if it is not undefined, otherwise we would have the string 'undefined' in the query
+        if (queryToModify != undefined) {
+            //HACK : only for development
+            queryToModify = queryToModify + " OR Communication";
+        }
+
+        // and returning the (un)modified query text...
+        return queryToModify;
     }
 }
