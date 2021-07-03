@@ -35,7 +35,6 @@ import { BuiltinFilterTemplates } from '../layouts/AvailableTemplates';
 import { DataFilterHelper } from '../helpers/DataFilterHelper';
 import { ISortFieldConfiguration, SortFieldDirection } from '../models/search/ISortFieldConfiguration';
 import { EnumHelper } from '../helpers/EnumHelper';
-import { IDisplayMode } from './IDisplayMode';
 
 export enum BuiltinSourceIds {
     Documents = 'e7ec8cee-ded8-43c9-beb5-436b54b31e84',
@@ -58,7 +57,7 @@ export enum BuiltinSourceIds {
 /**
  * SharePoint search data source property pane properties
  */
-export interface ISharePointSearchDataSourceProperties extends IDisplayMode {
+export interface ISharePointSearchDataSourceProperties {
 
     /**
      * The search query template
@@ -159,7 +158,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         this.dateHelper = this.serviceScope.consume<DateHelper>(DateHelper.ServiceKey);
         this.moment = await this.dateHelper.moment();
 
-        if (this.properties.editMode)
+        if (this.editMode)
         {
             // Use the same chunk name as the main Web Part to avoid recreating/loading a new one
             const { PropertyFieldCollectionData, CustomCollectionFieldType } = await import(

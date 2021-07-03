@@ -1664,9 +1664,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                         // Initializes Web part lifecycle methods and properties
                         dataSource.properties = this.properties.dataSourceProperties;
                         dataSource.context = this.context;
-                        dataSource.render = this.render;
-
-                        dataSource.properties.editMode = this.displayMode == DisplayMode.Edit;
+                        dataSource.editMode = this.displayMode == DisplayMode.Edit;
+                        dataSource.render = this.render;                        
 
                         // Initializes available services
                         dataSource.serviceKeys = {
