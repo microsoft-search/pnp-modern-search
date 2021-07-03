@@ -16,6 +16,7 @@ export abstract class BaseDataSource<T> implements IDataSource {
     protected _properties: T;
     private _serviceKeys: IServiceKeysConfiguration;
     private _context: WebPartContext;
+    private _editMode: boolean;
     private _render: () => void | Promise<void>;
 
     get properties(): T {
@@ -52,6 +53,14 @@ export abstract class BaseDataSource<T> implements IDataSource {
 
     public constructor(serviceScope: ServiceScope) {
         this.serviceScope = serviceScope;
+    }
+
+    get editMode() {
+        return this._editMode;
+    }
+    
+    set editMode(editMode: boolean) {
+        this._editMode = editMode;
     }
 
     public onInit(): void | Promise<void> {
