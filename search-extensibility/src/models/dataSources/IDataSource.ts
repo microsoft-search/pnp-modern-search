@@ -34,6 +34,11 @@ export interface IDataSource {
     context: WebPartContext;
 
     /**
+    * Check if web part is in display or edit mode
+    */
+    editMode: boolean;
+
+    /**
      * List of available service keys you can use in your data source to consume shared services.
      */
     serviceKeys: IServiceKeysConfiguration;
@@ -75,7 +80,7 @@ export interface IDataSource {
      * Returns the total of items. This can be the `items` array length or the total of items in general. This information will be used to generate page numbers.
      */
     getItemCount(): number;
-    
+
     /**
      * Returns the available template slots for this data source.
      */

@@ -1599,7 +1599,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                     const { SharePointSearchDataSource } = await import(
                         /* webpackChunkName: 'pnp-modern-search-sharepoint-search-datasource' */
                         '../../dataSources/SharePointSearchDataSource'
-                    );
+                    );                    
 
                     serviceKey = ServiceKey.create<IDataSource>('ModernSearch:SharePointSearchDataSource', SharePointSearchDataSource);
                     break;
@@ -1641,7 +1641,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                     dataSource = childServiceScope.consume<IDataSource>(serviceKey);
 
                     // Verifiy if the data source implements correctly the IDataSource interface and BaseDataSource methods
-                    const isValidDataSource = (dataSourceInstance: IDataSource): dataSourceInstance is BaseDataSource<any> => {
+                    const isValidDataSource = (dataSourceInstance: IDataSource): dataSourceInstance is BaseDataSource<any> => {                        
                         return (
                             (dataSourceInstance as BaseDataSource<any>).getAppliedFilters !== undefined &&
                             (dataSourceInstance as BaseDataSource<any>).getData !== undefined &&
@@ -1661,11 +1661,11 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
                     // Initialize the data source with current Web Part properties
                     if (dataSource) {
-
                         // Initializes Web part lifecycle methods and properties
                         dataSource.properties = this.properties.dataSourceProperties;
                         dataSource.context = this.context;
-                        dataSource.render = this.render;
+                        dataSource.editMode = this.displayMode == DisplayMode.Edit;
+                        dataSource.render = this.render;                        
 
                         // Initializes available services
                         dataSource.serviceKeys = {

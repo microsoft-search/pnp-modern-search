@@ -122,20 +122,22 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         this.dateHelper = this.serviceScope.consume<DateHelper>(DateHelper.ServiceKey);
         this.moment = await this.dateHelper.moment();
 
-        // Use the same chunk name as the main Web Part to avoid recreating/loading a new one
-        const { PropertyFieldCollectionData, CustomCollectionFieldType } = await import(
-            /* webpackChunkName: 'pnp-modern-search-property-pane' */
-            '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData'
-        );
+        if (this.editMode) {
+            // Use the same chunk name as the main Web Part to avoid recreating/loading a new one
+            const { PropertyFieldCollectionData, CustomCollectionFieldType } = await import(
+                /* webpackChunkName: 'pnp-modern-search-property-pane' */
+                '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData'
+            );
 
-        const { PropertyPaneWebPartInformation } = await import(
-            /* webpackChunkName: 'pnp-modern-search-property-pane' */
-            '@pnp/spfx-property-controls/lib/PropertyPaneWebPartInformation'
-        );
+            const { PropertyPaneWebPartInformation } = await import(
+                /* webpackChunkName: 'pnp-modern-search-property-pane' */
+                '@pnp/spfx-property-controls/lib/PropertyPaneWebPartInformation'
+            );
 
-        this._propertyPaneWebPartInformation = PropertyPaneWebPartInformation;
-        this._propertyFieldCollectionData = PropertyFieldCollectionData;
-        this._customCollectionFieldType = CustomCollectionFieldType;
+            this._propertyPaneWebPartInformation = PropertyPaneWebPartInformation;
+            this._propertyFieldCollectionData = PropertyFieldCollectionData;
+            this._customCollectionFieldType = CustomCollectionFieldType;
+        }
 
         this.initProperties();
     }
@@ -609,7 +611,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         // Get an instance to the MSGraphClient
         const msGraphClientFactory = this.serviceScope.consume<MSGraphClientFactory>(MSGraphClientFactory.serviceKey);
         const msGraphClient = await msGraphClientFactory.getClient();
-        const request = await msGraphClient.api(MICROSOFT_SEARCH_URL).header('SdkVersion', `PnPModernSearch/${this.context.manifest.version}`);        
+        const request = await msGraphClient.api(MICROSOFT_SEARCH_URL).header('SdkVersion', `PnPModernSearch/${this.context.manifest.version}`);
 
         const jsonResponse = await request.post({ requests: [searchRequest] });
 
@@ -638,14 +640,14 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                                     operator: FilterComparisonOperator.Contains
                                 } as IDataFilterResultValue);
                             });
-    
+
                             aggregationResults.push({
                                 filterName: aggregation.field,
                                 values: values
                             });
                         });
                     }
-                    
+
                     response.filters = aggregationResults;
                 });
             });
