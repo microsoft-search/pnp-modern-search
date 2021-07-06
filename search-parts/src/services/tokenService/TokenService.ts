@@ -25,7 +25,7 @@ export class TokenService implements ITokenService {
 
     /**
      * This regex only matches expressions enclosed with single, not escaped, curly braces '{}'
-     */    
+     */
     private genericTokenRegexp: RegExp = /{[^\{]+?[^\\]}/gi;
 
     /**
@@ -381,11 +381,10 @@ export class TokenService implements ITokenService {
         const currentYear = /\{CurrentYear\}/gi;
 
         // Replaces any "{Today} +/- [digit]" expression
-        let results = /\{Today\}\s*[\+-]\s*\[{0,1}\d{1,}\]{0,1}/gi.exec(inputString);
-
-        if (results != null) {
-            for (let result of results) {
-
+        let results = /\{Today\s*[\+-]\s*\[{0,1}\d{1,}\]{0,1}\}/gi;
+        let match;
+        while ((match = results.exec(inputString)) !== null) {
+            for (let result of match) {
                 const operator = result.indexOf('+') !== -1 ? '+' : '-';
                 const addOrRemove = operator == '+' ? 1 : -1;
                 const operatorSplit = result.split(operator);
