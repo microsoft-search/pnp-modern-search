@@ -76,15 +76,15 @@ export class TemplateService implements ITemplateService {
             this.dayLightSavings = this.dateHelper.isDST();
 
             this.timeZoneBias = {
-                WebBias: this.pageContext.legacyPageContext.webTimeZoneData.Bias,
-                WebDST: this.pageContext.legacyPageContext.webTimeZoneData.DaylightBias,
+                WebBias: this.pageContext.legacyPageContext.webTimeZoneData.Bias ? this.pageContext.legacyPageContext.webTimeZoneData.Bias : 0,
+                WebDST: this.pageContext.legacyPageContext.webTimeZoneData.DaylightBias ? this.pageContext.legacyPageContext.webTimeZoneData.DaylightBias : 0,
                 UserBias: null,
                 UserDST: null
             };
 
             if (this.pageContext.legacyPageContext.userTimeZoneData) {
-                this.timeZoneBias.UserBias = this.pageContext.legacyPageContext.userTimeZoneData.Bias;
-                this.timeZoneBias.UserDST = this.pageContext.legacyPageContext.userTimeZoneData.DaylightBias;
+                this.timeZoneBias.UserBias = this.pageContext.legacyPageContext.userTimeZoneData.Bias ? this.pageContext.legacyPageContext.userTimeZoneData.Bias : 0;
+                this.timeZoneBias.UserDST = this.pageContext.legacyPageContext.userTimeZoneData.DaylightBias ? this.pageContext.legacyPageContext.userTimeZoneData.DaylightBias : 0;
             }
 
             // Get a global moment instance
@@ -225,14 +225,14 @@ export class TemplateService implements ITemplateService {
             // List of serice keys we want to expose to web components
             // Because multiple Web Part types can call the template service in separate bundles, using TemplateService.ServiceKey in a web component would result of a race condition and incoherent results as multiple keys will be created and last created would be used
             // See https://github.com/SharePoint/sp-dev-docs/issues/1419#issuecomment-371584038
-            const availableServiceKeys: {[key: string]: ServiceKey<any>} = {
+            const availableServiceKeys: { [key: string]: ServiceKey<any> } = {
                 TemplateService: TemplateService.ServiceKey
             };
 
             this.serviceScope.whenFinished(() => {
 
-                 // Registers custom HTML elements
-                 webComponents.forEach(wc => {
+                // Registers custom HTML elements
+                webComponents.forEach(wc => {
 
                     const component = window.customElements.get(wc.componentName);
 
@@ -242,10 +242,10 @@ export class TemplateService implements ITemplateService {
 
                         // To be able to get the right service scope and service keys for a particular web component corresponding to its parent Web Part (i.e. the Web Part currently rendering it), we need to an array of Web Part instance Ids references.
                         // This implies this instance ID has to be passed in the web component HTML attribute to retrieve the correct context for the current Web Part (ex: data-instance-id="{{@root.instanceId}}") 
-                        wc.componentClass.prototype._webPartServiceScopes =  new Map<string, ServiceScope>();
+                        wc.componentClass.prototype._webPartServiceScopes = new Map<string, ServiceScope>();
                         wc.componentClass.prototype._webPartServiceScopes.set(instanceId, this.serviceScope);
 
-                        wc.componentClass.prototype._webPartServiceKeys =  new Map<string, {[key: string]: ServiceKey<any>}>();
+                        wc.componentClass.prototype._webPartServiceKeys = new Map<string, { [key: string]: ServiceKey<any> }>();
                         wc.componentClass.prototype._webPartServiceKeys.set(instanceId, availableServiceKeys);
 
                         // Set the root service scope for common services (SPHttpClient, HttpClient, etc.)
@@ -255,14 +255,14 @@ export class TemplateService implements ITemplateService {
                         window.customElements.define(wc.componentName, wc.componentClass);
 
                     } else {
-                        
+
                         // Update the instances array for all calling Web Parts
                         if (!component.prototype._webPartServiceScopes.get(instanceId)) {
-                            component.prototype._webPartServiceScopes.set(instanceId, this.serviceScope); 
+                            component.prototype._webPartServiceScopes.set(instanceId, this.serviceScope);
                         }
 
                         if (!component.prototype._webPartServiceKeys.get(instanceId)) {
-                            component.prototype._webPartServiceKeys.set(instanceId, availableServiceKeys); 
+                            component.prototype._webPartServiceKeys.set(instanceId, availableServiceKeys);
                         }
                     }
                 });

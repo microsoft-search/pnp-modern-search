@@ -158,8 +158,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         this.dateHelper = this.serviceScope.consume<DateHelper>(DateHelper.ServiceKey);
         this.moment = await this.dateHelper.moment();
 
-        if (this.editMode)
-        {
+        if (this.editMode) {
             // Use the same chunk name as the main Web Part to avoid recreating/loading a new one
             const { PropertyFieldCollectionData, CustomCollectionFieldType } = await import(
                 /* webpackChunkName: 'pnp-modern-search-property-pane' */
@@ -710,16 +709,16 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
 
         // Determine time zone bias
         let timeZoneBias = {
-            WebBias: this._pageContext.legacyPageContext.webTimeZoneData.Bias,
-            WebDST: this._pageContext.legacyPageContext.webTimeZoneData.DaylightBias,
+            WebBias: this._pageContext.legacyPageContext.webTimeZoneData.Bias ? this._pageContext.legacyPageContext.webTimeZoneData.Bias : 0,
+            WebDST: this._pageContext.legacyPageContext.webTimeZoneData.DaylightBias ? this._pageContext.legacyPageContext.webTimeZoneData.DaylightBias : 0,
             UserBias: null,
             UserDST: null,
             Id: this._pageContext.legacyPageContext.webTimeZoneData.Id
         };
 
         if (this._pageContext.legacyPageContext.userTimeZoneData) {
-            timeZoneBias.UserBias = this._pageContext.legacyPageContext.userTimeZoneData.Bias;
-            timeZoneBias.UserDST = this._pageContext.legacyPageContext.userTimeZoneData.DaylightBias;
+            timeZoneBias.UserBias = this._pageContext.legacyPageContext.userTimeZoneData.Bias ? this._pageContext.legacyPageContext.userTimeZoneData.Bias : 0;
+            timeZoneBias.UserDST = this._pageContext.legacyPageContext.userTimeZoneData.DaylightBias ? this._pageContext.legacyPageContext.userTimeZoneData.DaylightBias : 0;
             timeZoneBias.Id = this._pageContext.legacyPageContext.webTimeZoneData.Id;
         }
 
