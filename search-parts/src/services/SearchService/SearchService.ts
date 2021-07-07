@@ -885,7 +885,7 @@ class SearchService implements ISearchService {
 
     // Function to inject synonyms at run-time
     private _injectSynonyms(query: string): string {
-        const origQuery = query = query.trim().toLocaleLowerCase();
+        const origQuery = query = query.trim();
         // match longest term first
         const synonymKeys = Object.keys(this._synonymTable).sort((a, b) => {
             return b.length - a.length;
@@ -893,7 +893,7 @@ class SearchService implements ISearchService {
 
         if (this._synonymTable && synonymKeys.length > 0) {
             // Remove complex query parts AND/OR/NOT/ANY/ALL/parenthasis/property queries/exclusions - can probably be improved
-            const cleanQuery = query.replace(/((^|\s)-[\w-]+[\s$])|(-"\w+.*?")|(-?\w+[:=<>]+\w+)|(-?\w+[:=<>]+".*?")|((\w+)?\(.*?\))|(AND)|(OR)|(NOT)/g, ` `);
+            const cleanQuery = query.replace(/((^|\s)-[\w-]+[\s$])|(-"\w+.*?")|(-?\w+[:=<>]+\w+)|(-?\w+[:=<>]+".*?")|((\w+)?\(.*?\))|(AND)|(OR)|(NOT)/g, ` `).toLocaleLowerCase();
             const replaceTable = {};
             
             //Check if synonyms are in the include parts of the query
@@ -902,7 +902,7 @@ class SearchService implements ISearchService {
                 if (cleanQuery.indexOf(synonym) !== -1) {
                     let tokenGuid = Guid.newGuid().toString();
                     replaceTable[tokenGuid] = synonym;
-                    query = query.replace(new RegExp(synonym, "gi"), tokenGuid);
+                    query = query.replace(new RegExp("\\b" + synonym + "\\b", "gi"), tokenGuid);                    
                 }
             }
 
