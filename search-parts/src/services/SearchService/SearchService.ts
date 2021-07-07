@@ -813,7 +813,7 @@ class SearchService implements ISearchService {
 
             const promises = searchResults.map(async result => {
 
-                if (result.FileType && result.FileType.toLowerCase() === "url" && result.OriginalPath && result.SPSiteUrl) {
+                if (result.FileType && result.FileType.toLowerCase() === "url" && result.OriginalPath && result.SPSiteUrl.toLowerCase().indexOf(window.location.host.toLowerCase()) !== -1) {
                     const localWeb = new Web(result.SPSiteUrl);
                     const file = localWeb.getFileByServerRelativeUrl(result.OriginalPath.replace(/^(?:\/\/|[^/]+)*\//, '/'));
                     return file.inBatch(batch).getText();
