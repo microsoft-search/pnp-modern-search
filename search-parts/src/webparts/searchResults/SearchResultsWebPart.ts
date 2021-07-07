@@ -306,7 +306,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                         const verticalData = this._verticalsSourceData.tryGetValue();
 
                         // For edit mode only, we want to see the data
-                        if (verticalData && verticalData.selectedVertical.key !== this.properties.selectedVerticalKey) {
+                        if (verticalData && verticalData.selectedVertical.key !== this.properties.selectedVerticalKey && this.displayMode === DisplayMode.Read) {
 
                             // If the current selected vertical is not the one configured for this Web Part, we reset
                             // the data soure information since we don't want to expose them to consumers
