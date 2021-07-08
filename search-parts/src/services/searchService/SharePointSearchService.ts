@@ -530,9 +530,9 @@ export class SharePointSearchService implements ISharePointSearchService {
                 //TODO: Develop and fill the correct synonyms list object which is prepared from a sharepoint list...
 
                 // do the lookup in the synonym table...
-                let foundSynonymListEntries = synonymsList.filter(entry => entry.synonyms.split(';').filter(synonym => synonym.toLowerCase() == combination.queryTerm).length > 0)
+                let foundSynonymListEntries = synonymsList.filter(entry => entry.synonyms.split(';').filter(synonym => synonym.toLowerCase() == combination.queryTerm).length > 0);
                 if (foundSynonymListEntries.length > 0) {
-                    let synonymsForTerm = ""
+                    let synonymsForTerm = "";
                     for (let listEntry of foundSynonymListEntries) {
                         let listEntrySynonyms = listEntry.synonyms.toLocaleLowerCase();
                         if (listEntry.mutual == false) {
@@ -584,7 +584,7 @@ export class SharePointSearchService implements ISharePointSearchService {
 
                         // finally replacing the term combination in the original query
                         // case insensitive to keep query operators as OR, AND, NOT,... in their case (operators have to be uppercase to be handled as operators!)
-                        var regex = new RegExp(combination.queryTerm, "gi")
+                        var regex = new RegExp(combination.queryTerm, "gi");
                         let replacedOriginalQuery = originalQuery.replace(regex, orVariation);
 
                         // putting the original query with replaced synonyms as OR variation to the query string 
