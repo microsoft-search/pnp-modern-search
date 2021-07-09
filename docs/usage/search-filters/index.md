@@ -55,7 +55,7 @@ The Web Part supports two types of filters (_'Static'_ and _'Refiner'_). However
 - **Refiner**: a 'Refiner' filter means the filter gets its values from the data source and sends back the selected ones the data source. If the data source has no result, there won't be any refiner values, simple as that.
 - **Static filter**: a 'Static' filter means the filter doesn't care about filter values sent by the data source and provides its own arbitrary values regardless of input values. A date range picker (or any picker) are good examples of what an 'Static' filter is. Such a filter do not need necessarily need a Search Results connection.
 
-## Use indexed property bag properties with taxonomny values
+## Use indexed property bag properties with taxonomy values
 
 > **This behavior only works with the SharePoint Search Data source and the _Enabled localization_ flag activated.**
 
