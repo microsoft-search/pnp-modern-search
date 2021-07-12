@@ -96,7 +96,7 @@ define([], function() {
                 SourceName: "SharePoint Zoeken",
                 SourceConfigurationGroupName: "Bron configuratie",
                 QueryTextFieldLabel: "Zoekopdracht",
-                QueryTextFieldInfoMessage: "Gebruik de  <strong>Beschikbare verbindingen</strong> webonderdeel instellingen tab om een statische waarde of een waarde uit een dynamische component op de pagina zoals een zoekvak in te stellen",
+                QueryTextFieldInfoMessage: "Gebruik de <strong>Beschikbare verbindingen</strong> webonderdeel instellingen tab om een statische waarde of een waarde uit een dynamische component op de pagina zoals een zoekvak in te stellen",
                 QueryTemplateFieldLabel: "Zoekopdracht template",
                 QueryTemplatePlaceHolderText: "ex: Path:{Site}",
                 QueryTemplateFieldDescription: "Het zoekopdracht template. Je kan ook {<tokens>} gebruiken om een dynamische zoekopdracht op te bouwen.",
