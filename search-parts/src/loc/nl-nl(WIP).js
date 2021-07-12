@@ -53,13 +53,13 @@ define([], function() {
                 PleaseReferToDocumentationMessage: "Raadpleeg de officiele documetatie."
             },
             Extensibility: { //TODO!!
-                InvalidDataSourceInstance: "The selected data source '{0}' does not implement the 'BaseDataSource' abstract class correctly. Some methods are missing.",
-                DataSourceDefinitionNotFound: "The custom data source with key '{0}' was not found. Make sure the solution is correctly deployed to the app caltog and the manifest ID registered for this Web Part.",
-                LayoutDefinitionNotFound: "The custom layout with key '{0}' was not found. Make sure the solution is correctly deployed to the app caltog and the manifest ID registered for this Web Part.",
-                InvalidLayoutInstance: "The selected layout '{0}' does not implement the 'BaseLayout' abstract class correctly. Some methods are missing.",
-                DefaultExtensibilityLibraryName: "Default extensibility library",
-                InvalidProviderInstance: "The selected suggestions provider '{0}' does not implement the 'BaseSuggestionProvider' abstract class correctly. Some methods are missing.",
-                ProviderDefinitionNotFound: "The custom suggestions provider with key '{0}' was not found. Make sure the solution is correctly deployed to the app caltog and the manifest ID registered for this Web Part.",
+                InvalidDataSourceInstance: "Geselecteerde databron '{0}' implemententeert de abstracte class 'BaseDataSource' niet op correcte wijze. Sommige methodes missen.",
+                DataSourceDefinitionNotFound: "aangepaste databron met sleutel '{0}' kon niet worden gevonden. Zorg er voor dat het pakket correct geinstalleerd is in de app catalogus en dat het manifest ID dat geregistreerd is voor dit webonderdeel de juiste is.",
+                LayoutDefinitionNotFound: "De aangepaste indeling met sleutel '{0}' kon niet worden gevonden. Zorg er voor dat het pakket correct geinstalleerd is in de app catalogus en dat het manifest ID dat geregistreerd is voor dit webonderdeel de juiste is.",
+                InvalidLayoutInstance: "Geselecteerde indeling '{0}' implementeert de abstracte class 'BaseLayout' niet op correcte wijze. Sommige methodes missen.",
+                DefaultExtensibilityLibraryName: "Standaard uitbreidingsbibliotheek",
+                InvalidProviderInstance: "Geselecteerde zoeksuggestiebron '{0}' implemententeert de abstracte class 'BaseSuggestionProvider' niet op correcte wijze. Sommige methodes missen.",
+                ProviderDefinitionNotFound: "De aangepaste zoeksuggestiebron met sleutel '{0}' kon niet worden gevonden. Zorg er voor dat het pakket correct geinstalleerd is in de app catalogus en dat het manifest ID dat geregistreerd is voor dit webonderdeel de juiste is.",
             },
             DateFromLabel: "Van",
             DateTolabel: "Tot",
@@ -121,7 +121,7 @@ define([], function() {
             },
             MicrosoftSearch: {
                 QueryTextFieldLabel: "Zoekopdracht",
-                QueryTextFieldInfoMessage: "Gebruik de  <strong>Beschikbare verbindingen</strong> webonderdeel instellingen tab om een statische waarde of een waarde uit een dynamische component op de pagina zoals een zoekvak in te stellen",
+                QueryTextFieldInfoMessage: "Gebruik de <strong>Beschikbare verbindingen</strong> webonderdeel instellingen tab om een statische waarde of een waarde uit een dynamische component op de pagina zoals een zoekvak in te stellen",
                 SourceName: "Microsoft Search",
                 SourceConfigurationGroupName: "Microsoft Search",
                 EntityTypesField: "Entiteitstypen om te zoeken",
@@ -187,8 +187,8 @@ define([], function() {
                 ManageDetailsListColumnDescription: "Kolommen toevoegen, bewerken of verwijderen voor de detailslijst indeling. Je kan eigenschapswaarden direct in de lijst gebruiken zonder transformaties toe te passen, of een Handlebars-uitdrukking gebruiken als veldwaarde. HTML wordt ook ondersteund voor alle velden.",
                 ManageDetailsListColumnLabel: "Beheer kolommen",
                 ValueColumnLabel: "Kolomwaarde",
-                DisplayNameColumnLabel: "Kolom weergavenaam",//TODO!!
-                FileExtensionFieldLabel: "Field to use for file extension",
+                DisplayNameColumnLabel: "Kolom weergavenaam",
+                FileExtensionFieldLabel: "Te gebruiken veld voor bestandsextensie",
                 GroupByFieldLabel: "Groepeer op veld",
                 EnableGrouping: "Groeperen inschakelen",
                 CollapsedGroupsByDefault: "Toon ingeklapt",
@@ -202,8 +202,8 @@ define([], function() {
                 SupportHTMLColumnLabel: "Sta HTML toe",
                 PlaceholderValueFieldLabel: "Waarde",
                 UseHandlebarsExpressionLabel: "Gebruik Handlebars-uitdrukking",
-                EnableItemPreview: "Schakel resultaatvoorbeeld in", //TODO!!
-                EnableItemPreviewHoverMessage: "Turning on this option may have an impact on performances if too many items are displayed at once and you use the 'AutoPreviewUrl' slot field. We recommend you to use this option with a small amount of items or use predefined preview URLs from your data source fields in slots.",
+                EnableItemPreview: "Schakel resultaatvoorbeeld in",
+                EnableItemPreviewHoverMessage: "Het aanzetten van deze optie kan negatieve impact hebben op de performance wanneer er te veel items tegelijk worden weergegeven in combinatie met het 'AutoPreviewUrl' sleuf. We raden aan deze optie enkel te gebruiken bij kleine aantallen items of gebruik te maken van voorgedefinieerde preview URLs vanuit de databron in de sleuven.",
                 ShowFileIcon: "Toon bestandspictogram",
                 CompactModeLabel: "Compacte modus",
                 PreferedCardNumberPerRow: "Gewenst aantal kaarten per rij",
@@ -235,8 +235,8 @@ define([], function() {
             },
             People: {
                 Name: "Personen",
-                ManagePeopleFieldsLabel: "Beheer velden voor personen", //TODO!!
-                ManagePeopleFieldsPanelDescriptionLabel: "Here you can map each field values with the corresponding persona placeholders. You can use either data source field value directly without any transformation or use an Handlebars expression in the value field.",
+                ManagePeopleFieldsLabel: "Beheer velden voor personen",
+                ManagePeopleFieldsPanelDescriptionLabel: "Hier kan je elke veldwaarde kopppelen aan de corresponderende Persona placeholders. Je kan een veld uit de databron direct gebruiken zonder transformatie of een handlebars expressie gebruiken in de veldwaarde.",
                 PlaceholderNameFieldLabel: "Naam",
                 PlaceholderValueFieldLabel: "Waarde",
                 UseHandlebarsExpressionLabel: "Gebruik Handlebars-uitdrukking",
@@ -249,8 +249,8 @@ define([], function() {
                 ShowInitialsToggleLabel: "Toon initialen wanneer geen foto beschikbaar",
                 SupportHTMLColumnLabel: "Sta HTML toe",
                 ResetFieldsBtnLabel: "Reset velden naar standaard waarden",
-                ShowPersonaCardOnHover: "Toon persona card bij 'hover'", //TODO!!
-                ShowPersonaCardOnHoverCalloutMsg: "This feature uses Microsoft Graph to display information about the user and needs the following API permissions in your tenant to work: ['User.Read','People.Read','Contacts.Read','User.ReadBasic.All'].",
+                ShowPersonaCardOnHover: "Toon persona card bij 'hover'",
+                ShowPersonaCardOnHoverCalloutMsg: "Deze feature gebruikt Microsoft Graph om informatie over de gebruiker te tonen en heeft de volgende API rechten nodig in de tenant om te kunnen werken: ['User.Read','People.Read','Contacts.Read','User.ReadBasic.All'].",
                 Fields: {
                     ImageUrl: "Afbeeldings URL",
                     PrimaryText: "Primaire tekst",
