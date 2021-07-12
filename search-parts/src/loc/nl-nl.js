@@ -50,7 +50,7 @@ define([], function() {
             Resources: {
                 GroupName: "Bronnen",
                 Documentation: "Documentatie",
-                PleaseReferToDocumentationMessage: "Raadpleeg de officiele documetatie."
+                PleaseReferToDocumentationMessage: "Raadpleeg de officiele documentatie."
             },
             Extensibility: { //TODO!!
                 InvalidDataSourceInstance: "Geselecteerde databron '{0}' implemententeert de abstracte class 'BaseDataSource' niet op correcte wijze. Sommige methodes missen.",
@@ -236,7 +236,7 @@ define([], function() {
             People: {
                 Name: "Personen",
                 ManagePeopleFieldsLabel: "Beheer velden voor personen",
-                ManagePeopleFieldsPanelDescriptionLabel: "Hier kan je elke veldwaarde kopppelen aan de corresponderende Persona placeholders. Je kan een veld uit de databron direct gebruiken zonder transformatie of een handlebars expressie gebruiken in de veldwaarde.",
+                ManagePeopleFieldsPanelDescriptionLabel: "Hier kan je elke veldwaarde koppelen aan de corresponderende Persona placeholders. Je kan een veld uit de databron direct gebruiken zonder transformatie of een handlebars expressie gebruiken in de veldwaarde.",
                 PlaceholderNameFieldLabel: "Naam",
                 PlaceholderValueFieldLabel: "Waarde",
                 UseHandlebarsExpressionLabel: "Gebruik Handlebars-uitdrukking",
@@ -260,7 +260,7 @@ define([], function() {
                 }
             },
             Vertical: {
-                Name: "Vertikaal"
+                Name: "Verticaal"
             },
             Horizontal: {
                 Name: "Horizontaal",
