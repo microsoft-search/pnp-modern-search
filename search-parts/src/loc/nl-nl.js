@@ -52,7 +52,7 @@ define([], function() {
                 Documentation: "Documentatie",
                 PleaseReferToDocumentationMessage: "Raadpleeg de officiele documentatie."
             },
-            Extensibility: { //TODO!!
+            Extensibility: {
                 InvalidDataSourceInstance: "Geselecteerde databron '{0}' implemententeert de abstracte class 'BaseDataSource' niet op correcte wijze. Sommige methodes missen.",
                 DataSourceDefinitionNotFound: "aangepaste databron met sleutel '{0}' kon niet worden gevonden. Zorg er voor dat het pakket correct geinstalleerd is in de app catalogus en dat het manifest ID dat geregistreerd is voor dit webonderdeel de juiste is.",
                 LayoutDefinitionNotFound: "De aangepaste indeling met sleutel '{0}' kon niet worden gevonden. Zorg er voor dat het pakket correct geinstalleerd is in de app catalogus en dat het manifest ID dat geregistreerd is voor dit webonderdeel de juiste is.",
