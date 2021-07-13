@@ -1,7 +1,6 @@
 import { PageOpenBehavior, QueryPathBehavior } from "../../../helpers/UrlHelper";
 import { IReadonlyTheme } from "@microsoft/sp-component-base";
 import { ISuggestionProvider, ITokenService } from "@pnp/modern-search-extensibility";
-import { IToken } from "office-ui-fabric-react";
 
 export interface ISearchBoxContainerProps {
 

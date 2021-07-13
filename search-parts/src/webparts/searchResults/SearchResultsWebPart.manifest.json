@@ -18,7 +18,7 @@
         },
         "title": {
             "default": "PnP - Search Results",
-            "fr-fr": "Recherche Moderne - PnP"
+            "fr-fr": "PnP - Résultats de recherche"
         },
         "description": {
             "default": "Displays JSON based data using customizable templates",

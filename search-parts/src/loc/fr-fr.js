@@ -1,4 +1,4 @@
-:)define([], function() {
+define([], function() {
     return {
         Tokens: {
             SelectTokenLabel: "Sélectionnez un jeton...",
@@ -106,7 +106,7 @@
                 EnableQueryRulesLabel: "Activer les règles de requête",
                 IncludeOneDriveResultsLabel: "Inclure les résultats de OneDrive Entreprise",
                 RefinementFilters: "Filtres de recherche avancée",
-                RefinementFiltersDescription: "Filtres initiaux de recherche avancée à appliquer à la requête Ils ne figureront pas dans les filtres sélectionnés. Pour les expressions de chaîne, utilisez des guillemets doubles (") plutôt qu’un seul guillemet (‘).",
+                RefinementFiltersDescription: "Filtres initiaux de recherche avancée à appliquer à la requête Ils ne figureront pas dans les filtres sélectionnés. Pour les expressions de chaîne, utilisez des guillemets doubles (\") plutôt qu’ un seul guillemet(‘).",
                 EnableLocalizationLabel: "Activer la localisation",
                 EnableLocalizationOnLabel: "Activé",
                 EnableLocalizationOffLabel: "Désactivé",

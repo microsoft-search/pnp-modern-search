@@ -100,7 +100,7 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
         this.properties.groupsCollapsed = this.properties.groupsCollapsed !== null && this.properties.groupsCollapsed !== undefined ?  this.properties.groupsCollapsed: true;
     
         const { PropertyFieldCollectionData, CustomCollectionFieldType } = await import(
-            /* webpackChunkName: 'pnp-modern-search-property-pane' */
+            /* webpackChunkName: 'pnp-modern-search-results-detailslist-layout' */
             '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData'
         );
 

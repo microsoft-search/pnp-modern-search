@@ -62,7 +62,8 @@ define([], function() {
                 ErrorTemplateResolve: "Unable to resolve the specified template. Error details: '{0}'",
                 FiltersTemplateFieldLabel: "Edit filters template",
                 FiltersTemplatePanelHeader: "Edit filters template"
-            }
+            },
+            ImportExport: "Import / Export settings"
         }
     }
 });

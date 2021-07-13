@@ -46,7 +46,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
           className={ styles.searchTextField }
           value={ this.state.searchInputValue }
           autoComplete= "off"
-          onChange={(value) => this.setState({ searchInputValue: value })}
+          onChange={(event) => this.setState({ searchInputValue: event.currentTarget.value })}
           onSearch={() => this._onSearch(this.state.searchInputValue)}
           onClear={() => this._onSearch('', true)}
         />

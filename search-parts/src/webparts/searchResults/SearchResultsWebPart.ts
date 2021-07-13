@@ -93,6 +93,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     private _propertyFieldNumber: any = null;
     private _customCollectionFieldType: any = null;
     private _textDialogComponent: any = null;
+    private _propertyPanePropertyEditor = null;
 
     /**
      * The selected data source for the WebPart
@@ -253,7 +254,9 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         let renderRootElement: JSX.Element = null;
         let renderDataContainer: JSX.Element = null;
 
-        const inputQueryFromDataSource = !this.properties.queryText.isDisposed && this.properties.queryText.tryGetValue();
+        const valueFromDynamicSource = this.properties.queryText.tryGetValue();
+        const decodedValueFromDynamicSource = valueFromDynamicSource ? decodeURIComponent(valueFromDynamicSource) : null;
+        const inputQueryFromDataSource = !this.properties.queryText.isDisposed && decodedValueFromDynamicSource;
         const inputQueryText = inputQueryFromDataSource ? inputQueryFromDataSource : this.properties.defaultQueryText;
 
         // Build the data context to pass to the data source
@@ -481,12 +484,12 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         this._bindHashChange();
         this._handleQueryStringChange();
 
+        // Load extensibility libaries extensions
+        await this.loadExtensions(this.properties.extensibilityLibraryConfiguration);
+
         // Register Web Components in the global page context. We need to do this BEFORE the template processing to avoid race condition.
         // Web components are only defined once.
         await this.templateService.registerWebComponents(this.availableWebComponentDefinitions);
-
-        // Load extensibility libaries extensions
-        await this.loadExtensions(this.properties.extensibilityLibraryConfiguration);
 
         try {
             // Disable PnP Telemetry
@@ -663,7 +666,14 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 displayGroupsAsAccordion: true,
                 groups: [
                     ...this.getPropertyPaneWebPartInfoGroups(),
-                    ...extensibilityConfigurationGroups
+                    ...extensibilityConfigurationGroups,
+                    {
+                        groupName: webPartStrings.PropertyPane.ImportExport,
+                        groupFields: [this._propertyPanePropertyEditor({
+                            webpart: this,
+                            key: 'propertyEditor'
+                        })]
+                    }
                 ]
             }
         );
@@ -893,6 +903,12 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             /* webpackChunkName: 'pnp-modern-search-property-pane' */
             '@pnp/spfx-property-controls/lib/PropertyFieldDropdownWithCallout'
         );
+
+        const { PropertyPanePropertyEditor } = await import(
+            /* webpackChunkName: 'pnp-modern-search-property-pane' */
+            '@pnp/spfx-property-controls/lib/PropertyPanePropertyEditor'
+        );
+        this._propertyPanePropertyEditor = PropertyPanePropertyEditor;
 
         this._propertyFieldToogleWithCallout = PropertyFieldToggleWithCallout;
         this._propertyFieldCalloutTriggers = CalloutTriggers;
@@ -1577,7 +1593,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 case BuiltinDataSourceProviderKeys.SharePointSearch:
 
                     const { SharePointSearchDataSource } = await import(
-                        /* webpackChunkName: 'sharepoint-search-datasource' */
+                        /* webpackChunkName: 'pnp-modern-search-sharepoint-search-datasource' */
                         '../../dataSources/SharePointSearchDataSource'
                     );
 
@@ -1588,7 +1604,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 case BuiltinDataSourceProviderKeys.MicrosoftSearch:
 
                     const { MicrosoftSearchDataSource } = await import(
-                        /* webpackChunkName: 'microsoft-search-datasource' */
+                        /* webpackChunkName: 'pnp-modern-search-microsoft-search-datasource' */
                         '../../dataSources/MicrosoftSearchDataSource'
                     );
 

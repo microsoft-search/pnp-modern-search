@@ -34,7 +34,7 @@ export class LayoutHelper {
                 case BuiltinLayoutsKeys.DetailsList:
 
                     const { DetailsListLayout } = await import(
-                        /* webpackChunkName: 'results-detailslist-layout' */
+                        /* webpackChunkName: 'pnp-modern-search-results-detailslist-layout' */
                         '../layouts/results/detailsList/DetailListLayout'
                     );
 
@@ -45,7 +45,7 @@ export class LayoutHelper {
                 case BuiltinLayoutsKeys.ResultsDebug:
 
                     const { ResultsDebugLayout } = await import(
-                        /* webpackChunkName: 'results-debug-layout' */
+                        /* webpackChunkName: 'pnp-modern-search-results-debug-layout' */
                         '../layouts/results/debug/ResultsDebugLayout'
                     );
 
@@ -56,7 +56,7 @@ export class LayoutHelper {
                 case BuiltinLayoutsKeys.FiltersDebug:
 
                     const { DebugFilterLayout } = await import(
-                        /* webpackChunkName: 'filters-debug-layout' */
+                        /* webpackChunkName: 'pnp-modern-search-filters-debug-layout' */
                         '../layouts/filters/debug/DebugFilterLayout'
                     );
 
@@ -67,7 +67,7 @@ export class LayoutHelper {
                 case BuiltinLayoutsKeys.ResultsCustom:
 
                     const { ResultsCustomLayout } = await import(
-                        /* webpackChunkName: 'results-custom-layout' */
+                        /* webpackChunkName: 'pnp-modern-search-results-custom-layout' */
                         '../layouts/results/custom/ResultsCustomLayout'
                     );
 
@@ -78,7 +78,7 @@ export class LayoutHelper {
                 case BuiltinLayoutsKeys.FiltersCustom:
 
                     const { FiltersCustomLayout } = await import(
-                        /* webpackChunkName: 'filters-custom-layout' */
+                        /* webpackChunkName: 'pnp-modern-search-filters-custom-layout' */
                         '../layouts/filters/custom/FiltersCustomLayout'
                     );
 
@@ -89,7 +89,7 @@ export class LayoutHelper {
                 case BuiltinLayoutsKeys.Cards:
 
                     const { CardsLayout } = await import(
-                        /* webpackChunkName: 'results-cards-layout' */
+                        /* webpackChunkName: 'pnp-modern-search-results-cards-layout' */
                         '../layouts/results/cards/CardsLayout'
                     );
 
@@ -100,7 +100,7 @@ export class LayoutHelper {
                 case BuiltinLayoutsKeys.Slider:
 
                     const { SliderLayout } = await import(
-                        /* webpackChunkName: 'results-slider-layout' */
+                        /* webpackChunkName: 'pnp-modern-search-results-slider-layout' */
                         '../layouts/results/slider/SliderLayout'
                     );
 
@@ -111,7 +111,7 @@ export class LayoutHelper {
                 case BuiltinLayoutsKeys.SimpleList:
 
                     const { SimpleListLayout } = await import(
-                        /* webpackChunkName: 'results-simple-list-layout' */
+                        /* webpackChunkName: 'pnp-modern-search-results-simple-list-layout' */
                         '../layouts/results/simpleList/SimpleListLayout'
                     );
 
@@ -122,7 +122,7 @@ export class LayoutHelper {
                 case BuiltinLayoutsKeys.People:
 
                     const { PeopleLayout } = await import(
-                        /* webpackChunkName: 'results-people-layout' */
+                        /* webpackChunkName: 'pnp-modern-search-results-people-layout' */
                         '../layouts/results/people/PeopleLayout'
                     );
 
@@ -133,7 +133,7 @@ export class LayoutHelper {
                 case BuiltinLayoutsKeys.Vertical:
 
                     const { VerticalFilterLayout } = await import(
-                        /* webpackChunkName: 'filters-vertical-layout' */
+                        /* webpackChunkName: 'pnp-modern-search-filters-vertical-layout' */
                         '../layouts/filters/vertical/VerticalFilterLayout'
                     );
 
@@ -144,7 +144,7 @@ export class LayoutHelper {
                 case BuiltinLayoutsKeys.Horizontal:
 
                     const { HorizontalFilterLayout } = await import(
-                        /* webpackChunkName: 'filters-horizontal-layout' */
+                        /* webpackChunkName: 'pnp-modern-search-filters-horizontal-layout' */
                         '../layouts/filters/horizontal/HorizontalFilterLayout'
                     );
 
@@ -155,7 +155,7 @@ export class LayoutHelper {
                 case BuiltinLayoutsKeys.Panel:
 
                     const { PanelFilterLayout } = await import(
-                        /* webpackChunkName: 'filters-panel-layout' */
+                        /* webpackChunkName: 'pnp-modern-search-filters-panel-layout' */
                         '../layouts/filters/panel/PanelFilterLayout'
                     );
 
