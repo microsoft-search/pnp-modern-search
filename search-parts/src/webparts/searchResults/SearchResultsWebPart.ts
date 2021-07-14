@@ -414,15 +414,15 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             this._taxonomyService = new TaxonomyService(this.context.pageContext.site.absoluteUrl);
 
             this._timeZoneBias = {
-                WebBias: this.context.pageContext.legacyPageContext.webTimeZoneData.Bias,
-                WebDST: this.context.pageContext.legacyPageContext.webTimeZoneData.DaylightBias,
+                WebBias: this.context.pageContext.legacyPageContext.webTimeZoneData.Bias ? this.context.pageContext.legacyPageContext.webTimeZoneData.Bias : 0,
+                WebDST: this.context.pageContext.legacyPageContext.webTimeZoneData.DaylightBias ? this.context.pageContext.legacyPageContext.webTimeZoneData.DaylightBias : 0,
                 UserBias: null,
                 UserDST: null,
                 Id: this.context.pageContext.legacyPageContext.webTimeZoneData.Id
             };
             if (this.context.pageContext.legacyPageContext.userTimeZoneData) {
-                this._timeZoneBias.UserBias = this.context.pageContext.legacyPageContext.userTimeZoneData.Bias;
-                this._timeZoneBias.UserDST = this.context.pageContext.legacyPageContext.userTimeZoneData.DaylightBias;
+                this._timeZoneBias.UserBias = this.context.pageContext.legacyPageContext.userTimeZoneData.Bias ? this.context.pageContext.legacyPageContext.userTimeZoneData.Bias : 0;
+                this._timeZoneBias.UserDST = this.context.pageContext.legacyPageContext.userTimeZoneData.DaylightBias ? this.context.pageContext.legacyPageContext.userTimeZoneData.DaylightBias : 0;
                 this._timeZoneBias.Id = this.context.pageContext.legacyPageContext.webTimeZoneData.Id;
             }
 
