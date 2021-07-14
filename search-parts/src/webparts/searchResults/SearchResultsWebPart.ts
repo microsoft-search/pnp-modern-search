@@ -835,10 +835,12 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         // Load Microsoft Graph Toolkit dynamically
         const { Providers, SharePointProvider } = await import(
             /* webpackChunkName: 'microsoft-graph-toolkit' */
-            '@microsoft/mgt/dist/es6'
+            '@microsoft/mgt-spfx'
         );
 
-        Providers.globalProvider = new SharePointProvider(this.context);
+        if (!Providers.globalProvider) {
+            Providers.globalProvider = new SharePointProvider(this.context);
+        }
     }
 
     /**
@@ -1599,7 +1601,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                     const { SharePointSearchDataSource } = await import(
                         /* webpackChunkName: 'pnp-modern-search-sharepoint-search-datasource' */
                         '../../dataSources/SharePointSearchDataSource'
-                    );                    
+                    );
 
                     serviceKey = ServiceKey.create<IDataSource>('ModernSearch:SharePointSearchDataSource', SharePointSearchDataSource);
                     break;
@@ -1641,7 +1643,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                     dataSource = childServiceScope.consume<IDataSource>(serviceKey);
 
                     // Verifiy if the data source implements correctly the IDataSource interface and BaseDataSource methods
-                    const isValidDataSource = (dataSourceInstance: IDataSource): dataSourceInstance is BaseDataSource<any> => {                        
+                    const isValidDataSource = (dataSourceInstance: IDataSource): dataSourceInstance is BaseDataSource<any> => {
                         return (
                             (dataSourceInstance as BaseDataSource<any>).getAppliedFilters !== undefined &&
                             (dataSourceInstance as BaseDataSource<any>).getData !== undefined &&
@@ -1665,7 +1667,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                         dataSource.properties = this.properties.dataSourceProperties;
                         dataSource.context = this.context;
                         dataSource.editMode = this.displayMode == DisplayMode.Edit;
-                        dataSource.render = this.render;                        
+                        dataSource.render = this.render;
 
                         // Initializes available services
                         dataSource.serviceKeys = {
