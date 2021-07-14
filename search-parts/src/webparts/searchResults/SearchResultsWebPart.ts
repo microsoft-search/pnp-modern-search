@@ -835,7 +835,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         // Load Microsoft Graph Toolkit dynamically
         const { Providers, SharePointProvider } = await import(
             /* webpackChunkName: 'microsoft-graph-toolkit' */
-            '@microsoft/mgt-spfx'
+            '@microsoft/mgt/dist/es6'
         );
 
         if (!Providers.globalProvider) {
