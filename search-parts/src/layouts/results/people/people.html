@@ -33,7 +33,7 @@
                         {{#> resultTypes item=item}}
 
                             {{#if @root.properties.layoutProperties.showPersonaCard}}
-                                <mgt-person person-query="{{getUserEmail (slot item @root.slots.PersonQuery)}}" person-card="hover">
+                                <mgt-person user-id="{{getUserEmail (slot item @root.slots.PersonQuery)}}" person-card="hover">
                                     <template>
                                         <pnp-persona 
                                             data-image-url="\{{personImage}}" 
