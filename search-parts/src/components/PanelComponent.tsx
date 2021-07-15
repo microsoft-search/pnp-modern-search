@@ -1,15 +1,16 @@
 import * as React from 'react';
 import { BaseWebComponent, IDataFilterInfo, ExtensibilityConstants } from '@pnp/modern-search-extensibility';
 import * as ReactDOM from 'react-dom';
-import { Panel, PanelType, Text, ITheme } from 'office-ui-fabric-react';
+import { Panel, PanelType, IPanelProps, Text, ITheme } from 'office-ui-fabric-react';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import { Log } from "@microsoft/sp-core-library";
 import styles from "./PanelComponent.module.scss";
 import * as DOMPurify from 'dompurify';
+import { PnPClientStorage } from "@pnp/common/storage";
 
-const PanelComponent_LogSource = "PnPModernSearchPanelComponent";
+const PanelComponent_LogSource = "ModernDataVisualizer:PanelComponent";
 
-export interface IPanelProps {
+export interface IPanelComponentProps {
 
     /**
      * If the panel is open by default
@@ -50,6 +51,16 @@ export interface IPanelProps {
      * The current theme settings
      */
     themeVariant?: IReadonlyTheme;
+
+    /**
+     * The panel component unique key for storage
+     */
+    stateKey?: string;
+
+    /**
+     * If specified, disabled the panel transition animation
+     */
+    disableAnimation?: boolean;
 }
 
 export interface IPanelState {
@@ -60,9 +71,15 @@ export interface IPanelState {
     showPanel?: boolean;
 }
 
-export class PanelComponent extends React.Component<IPanelProps, IPanelState> {
+export class PanelComponent extends React.Component<IPanelComponentProps, IPanelState> {
 
-    constructor(props: IPanelProps) {
+    /**
+     * The client storage instance
+     */
+    private clientStorage: PnPClientStorage;
+    private panelComponentUniqueKey: string = "ModernDataVisualizer:PanelComponent";
+
+    constructor(props: IPanelComponentProps) {
         super(props);
 
         this.state = {
@@ -74,9 +91,44 @@ export class PanelComponent extends React.Component<IPanelProps, IPanelState> {
         this._updateFilter = this._updateFilter.bind(this);
         this._applyAllFilters = this._applyAllFilters.bind(this);
         this._clearAllFilters = this._clearAllFilters.bind(this);
+
+        this.clientStorage = new PnPClientStorage();
+
+        if (props.stateKey) {
+            this.panelComponentUniqueKey = `${this.panelComponentUniqueKey}:${props.stateKey}`;
+        }
     }
     
     public render() {
+
+        let panelProps: IPanelProps = {
+            theme: this.props.themeVariant as ITheme,
+            isOpen: this.state.showPanel,
+            type: this.props.size ? Number(this.props.size) : PanelType.medium,                        
+            isHiddenOnDismiss: false,
+            isBlocking: this.props.isBlocking,
+            isLightDismiss: this.props.isLightDismiss,
+            onDismiss: this._onClosePanel,
+            headerText: this.props.panelHeaderText,
+            onRenderBody: () => {
+
+                return  <div style={{
+                            overflow: 'auto',
+                            marginLeft: 15
+                        }} dangerouslySetInnerHTML={{ __html: DOMPurify.default.sanitize(this.props.contentTemplate) }}>
+                        </div>;
+            }
+        };
+        
+        // Avoid panel animation flickering when the control is re-rerendered after a filter is selected
+        if (this.props.disableAnimation) {
+            panelProps.styles =  {
+                main: {
+                    transition: 'none', 
+                    animation: 'none'
+                }
+            };
+        }
 
         return  <div>
                     <Text theme={this.props.themeVariant as ITheme}>
@@ -86,29 +138,24 @@ export class PanelComponent extends React.Component<IPanelProps, IPanelState> {
                             dangerouslySetInnerHTML={{__html: DOMPurify.default.sanitize(this.props.openTemplate)}}>
                         </div>
                     </Text>
-                    <Panel
-                        theme={this.props.themeVariant as ITheme}
-                        isOpen={this.state.showPanel}
-                        type={this.props.size ? Number(this.props.size) : PanelType.medium}                        
-                        isHiddenOnDismiss={false}
-                        isBlocking={this.props.isBlocking}
-                        isLightDismiss={this.props.isLightDismiss}
-                        onDismiss={this._onClosePanel}
-                        headerText={this.props.panelHeaderText}
-                        onRenderBody={() => {
-
-                            return  <div style={{
-                                overflow: 'auto',
-                                marginLeft: 15
-                            }} dangerouslySetInnerHTML={{ __html: DOMPurify.default.sanitize(this.props.contentTemplate) }}>
-                            </div>;
-                            
-                        }}>
-                    </Panel>
+                    <Panel {...panelProps}/>
                 </div>;
     }
 
     public componentDidMount() {
+
+        // Get expand state if any
+        const isOpen = this.clientStorage.session.get(this.panelComponentUniqueKey);
+
+        if (isOpen !== null) {
+            this.setState({ showPanel: isOpen });
+        }
+
+        // Reset the state when the page is refreshed or the window location is updated
+        window.onbeforeunload  = () => {
+            this.clientStorage.session.delete(this.panelComponentUniqueKey);
+        };
+
         this._bindEvents();
     }
 
@@ -124,10 +171,16 @@ export class PanelComponent extends React.Component<IPanelProps, IPanelState> {
 
     private _onClosePanel() {
         this.setState({ showPanel: false });
+
+        // Save the panel open state
+        this.clientStorage.session.put(this.panelComponentUniqueKey, false);
     }
 
     private _onTogglePanel() {
         this.setState({ showPanel: !this.state.showPanel });
+        
+        // Save the panel open state
+        this.clientStorage.session.put(this.panelComponentUniqueKey, !this.state.showPanel);
     }
 
     /**

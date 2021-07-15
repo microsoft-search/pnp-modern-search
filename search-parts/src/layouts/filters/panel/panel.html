@@ -47,8 +47,8 @@
     </style>
 
     <div class="template">
-        <pnp-panel   data-is-open="{{@root.selectedOnce}}" 
-                        data-is-light-dismiss="{{@root.properties.layoutProperties.isLightDismiss}}"
+        <pnp-panel      data-state-key="{{@root.instanceId}}"
+                        data-disable-animation="true"
                         data-is-blocking="{{@root.properties.layoutProperties.isBlocking}}"
                         data-size="{{@root.properties.layoutProperties.size}}"
                         data-theme-variant="{{JSONstringify @root.theme}}"
