@@ -28,8 +28,6 @@
         }
     },
     "externals": {
-        "moment": "node_modules/moment/min/moment.min.js",
-        "handlebars": "node_modules/handlebars/dist/handlebars.min.js"
     },
     "localizedResources": {
         "SearchResultsWebPartStrings": "lib/webparts/searchResults/loc/{locale}.js",
