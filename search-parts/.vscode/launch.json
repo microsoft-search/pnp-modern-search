@@ -48,6 +48,20 @@
       }
     },
     {
+      "name": "EDGE: MOBI DEV SG",
+      "request": "launch",
+      "type": "pwa-msedge",
+      "url": "https://devseb365.sharepoint.com/_layouts/workbench.aspx",
+      "webRoot": "${workspaceFolder}",
+      "sourceMaps": true,
+      "sourceMapPathOverrides": {
+        "webpack:///.././src/*": "${webRoot}/src/*",
+        "webpack:///../../../src/*": "${webRoot}/src/*",
+        "webpack:///../../../../src/*": "${webRoot}/src/*",
+        "webpack:///../../../../../src/*": "${webRoot}/src/*"
+      }
+    },
+    {
     "name": "CHROME: Local workbench",
       "type": "chrome",
       "request": "launch",

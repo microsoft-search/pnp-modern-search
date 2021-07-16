@@ -15,35 +15,18 @@ import { ISuggestResult, ISuggestQuery } from '../../models/search/ISuggestQuery
 import { ISharePointSearchQuery, SortDirection } from '../../models/search/ISharePointSearchQuery';
 import { cloneDeep } from "@microsoft/sp-lodash-subset";
 import { Constants } from '../../common/Constants';
+import { SharePointListService } from '../listService/SharePointListService';
+import { ISharePointListService } from '../listService/ISharePointListService';
+import { ISynonymTableEntry } from '../../models/search/ISynonymeTableEntry';
 
 const SearchService_ServiceKey = 'pnpSearchResults:SharePointSearchService';
 const AvailableQueryLanguages_StorageKey = 'pnpSearchResults_AvailableQueryLanguages';
 
 // *********** DTI DEVELOP *************
-// TODO: Interfaces in externe Dateien auslagern und über Import wieder hinzufügen
-// Info: In der SP Liste gibt es 3 Spalten: KeyWord, Synonyms und Mutual;
-// Im Obekt werden aber Keyword und Synonyme in einerSpalte zusammengefast
-interface synonymTableEntry {
-    synonyms: string;
-    mutual: boolean;
-}
-
 interface queryTermsToResolvedSynonymsEntry {
     queryTerm: string;
     foundSynonyms: string;
 }
-
-// TODO: Aus SharePoint auslesen und abfüllen... --> Funktion und als private Variable in Klasse?
-// Info: In der SP Liste gibt es 3 Spalten: KeyWord, Synonyms und Mutual;
-// Im Obekt werden aber Keyword und Synonyme in einerSpalte zusammengefast
-let synonymsList = [
-    <synonymTableEntry>{ synonyms: "DTI;DTI Schweiz AG;Document Text Information;Fritz", mutual: true },
-    <synonymTableEntry>{ synonyms: "ACS;Automobilclub Schweiz", mutual: true },
-    <synonymTableEntry>{ synonyms: "Auto;Automobil;Autoclub Deutschland", mutual: true },
-    <synonymTableEntry>{ synonyms: "Bank;Sitzbank;Kantonale Bank", mutual: true},
-    <synonymTableEntry>{ synonyms: "DTI;Marc Hoffmann", mutual: true },
-    <synonymTableEntry>{ synonyms: "Neuigkeiten;News deutsh;News français;News italiano", mutual: true }
-];
 // *********** DTI DEVELOP *************
 
 export class SharePointSearchService implements ISharePointSearchService {
@@ -75,11 +58,15 @@ export class SharePointSearchService implements ISharePointSearchService {
      */
     private clientStorage: PnPClientStorage;
 
+    private sharePointListService: ISharePointListService;
+
     constructor(serviceScope: ServiceScope) {
 
         this.serviceScope = serviceScope;
 
         this.clientStorage = new PnPClientStorage();
+
+        this.sharePointListService = new SharePointListService();
 
         serviceScope.whenFinished(async () => {
 
@@ -99,7 +86,7 @@ export class SharePointSearchService implements ISharePointSearchService {
 
         // enrich the query test with synonyms (if enabled)...
         // TODO: evaluate webparts 'synonyms' enabled config flag --> maybe do here or in enrichFunction
-        searchQuery.Querytext = this.enrichQueryWithSynonyms(searchQuery.Querytext);
+        searchQuery.Querytext = await this.enrichQueryWithSynonyms(searchQuery.Querytext);
 
         let results: ISharePointSearchResults = {
             queryKeywords: searchQuery.Querytext,
@@ -468,7 +455,7 @@ export class SharePointSearchService implements ISharePointSearchService {
         return { results: Array.isArray(prop) ? prop : [prop] };
     }
 
-    private enrichQueryWithSynonyms(queryText:string): string {
+    private async enrichQueryWithSynonyms(queryText: string): Promise<string> {
         // storing the original query to use for query expansion bulding...
         // wee are keeping the case of the queryText to keep AND, NOT,... in their case (operators have to be uppercase to be handled as operators!)
         let originalQuery: string = queryText;
@@ -530,6 +517,7 @@ export class SharePointSearchService implements ISharePointSearchService {
                 //TODO: Develop and fill the correct synonyms list object which is prepared from a sharepoint list...
 
                 // do the lookup in the synonym table...
+                let synonymsList = await this.sharePointListService.getAllItemsFromList("Synonyms")
                 let foundSynonymListEntries = synonymsList.filter(entry => entry.synonyms.split(';').filter(synonym => synonym.toLowerCase() == combination.queryTerm).length > 0);
                 if (foundSynonymListEntries.length > 0) {
                     let synonymsForTerm = "";
@@ -562,7 +550,7 @@ export class SharePointSearchService implements ISharePointSearchService {
 
                 // ... and adding OR variations of the original query replaced with the synonyms for each term combination...
                 for (let combination of termCombinations) {
-                    
+
                     // only process combination entries where we have found synonyms 
                     if (combination.foundSynonyms) {
 
@@ -597,6 +585,7 @@ export class SharePointSearchService implements ISharePointSearchService {
         } else {
             // no query to modify...
         }
+
 
         // TODO: maybe remove/comment out in a later stage        
         // writing some output for debugging purposes
