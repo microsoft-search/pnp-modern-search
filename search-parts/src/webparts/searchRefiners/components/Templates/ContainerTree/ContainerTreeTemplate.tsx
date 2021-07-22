@@ -127,6 +127,10 @@ export default class ContainerTreeTemplate extends React.Component<IFoldersTempl
                             isExpanded: this.props.showExpanded,
                             refinementValue: url === currPath ? value : null,
                             onClick: (ev, item: INavLink) => {
+
+                                // Re-encode the refinement token to make sure it corresponds to the actual path
+                                // If the path is too long, the SharePoint search will return a truncated refinement token value resulting to empty results 
+                                value.RefinementToken = `"${value.RefinementValue}"`;
             
                                 ev.preventDefault();
             
