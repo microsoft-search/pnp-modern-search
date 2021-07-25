@@ -251,7 +251,7 @@ define([], function() {
                 SupportHTMLColumnLabel: "Autoriser HTML",
                 ResetFieldsBtnLabel: "Rétablir la valeur par défaut dans les champs",
                 ShowPersonaCardOnHover: "Afficher l’image de la carte en pointant le curseur",
-                ShowPersonaCardOnHoverCalloutMsg: "Cette fonction utilise Microsoft Graph pour afficher des renseignements sur l’utilisateur et nécessite les autorisations API suivantes pour que votre utilisateur puisse travailler : [« User.Read », « People.Read », « Contacts.Read », « User.ReadBasic.All »].",
+                ShowPersonaCardOnHoverCalloutMsg: "Cette fonction utilise Microsoft Graph pour afficher des renseignements sur l’utilisateur et nécessite les autorisations API suivantes pour que votre utilisateur puisse travailler : [« User.Read », « People.Read », « Contacts.Read », « User.Read.All »].",
                 Fields: {
                     ImageUrl: "URL de l’image",
                     PrimaryText: "Texte principal",
