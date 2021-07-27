@@ -304,6 +304,9 @@ declare interface ICommonStrings {
             Enabled: string;
           }
         }
+      },
+      SynonymsPage: {
+        GroupName: string;
       }
     },
     Filters: {

@@ -305,6 +305,9 @@ define([], function() {
                         Enabled: "Enabled/Disabled"
                     }
                 }
+            },
+            SynonymsPage: {
+                GroupName: "Synonyms DK"
             }
         },
         Filters: {

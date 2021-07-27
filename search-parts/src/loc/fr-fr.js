@@ -306,6 +306,9 @@ define([], function() {
                         Enabled: "Activé/Désactivé"
                     }
                 }
+            },
+            SynonymsPage: {
+                GroupName: "Synonyms FR"
             }
         },
         Filters: {

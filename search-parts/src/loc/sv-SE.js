@@ -305,6 +305,9 @@ define([], function () {
               Enabled: "Aktiverad/Inaktiverad"
             }
           }
+        },
+        SynonymsPage: {
+            GroupName: "Synonyms SE"
         }
       },
       Filters: {

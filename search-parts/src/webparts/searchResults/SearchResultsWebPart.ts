@@ -592,6 +592,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         let layoutSlotsGroup: IPropertyPaneGroup[] = [];
         let commonDataSourceProperties: IPropertyPaneGroup[] = [];
         let extensibilityConfigurationGroups: IPropertyPaneGroup[] = [];
+        let synonymsConfigurationGroups: IPropertyPaneGroup[] = [];
 
         // Retrieve the property settings for the data source provider
         let dataSourceProperties: IPropertyPaneGroup[] = [];
@@ -612,6 +613,12 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 displayGroupsAsAccordion: true
             }
         );
+
+        // DTI Synonyms
+        synonymsConfigurationGroups.push({
+            groupName: commonStrings.PropertyPane.SynonymsPage.GroupName,
+            groupFields: this.getSynonymFields()
+        });
 
         // A data source is selected
         if (this.dataSource && !this.errorMessage) {
@@ -635,7 +642,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 {
                     groupName: webPartStrings.PropertyPane.DataSourcePage.PagingOptionsGroupName,
                     groupFields: this.getPagingGroupFields()
-                }
+                },
+                ...synonymsConfigurationGroups
             ]);
 
             // Other pages
@@ -646,7 +654,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 },
                 {
                     groups: [
-                        ...this.propertyPaneConnectionsGroup
+                        ...this.propertyPaneConnectionsGroup,
                     ],
                     displayGroupsAsAccordion: true
                 }
@@ -658,7 +666,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             groupName: commonStrings.PropertyPane.InformationPage.Extensibility.GroupName,
             groupFields: this.getExtensibilityFields()
         });
-
 
         // 'About' infos
         propertyPanePages.push(
@@ -1297,6 +1304,22 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         ];
 
         return extensibilityFields;
+    }
+
+    private getSynonymFields(): IPropertyPaneField<any>[] {
+        let synonymFields: IPropertyPaneField<any>[] = [
+            PropertyPaneCheckbox('enableSynonyms', {
+                text: 'Enable Synonyms'
+            }),
+            PropertyPaneTextField('weburl', {
+                label: 'Web Url'
+            }),
+            PropertyPaneTextField('listname', {
+                label: 'List Name'
+            })
+
+        ];
+        return synonymFields;
     }
 
     /**

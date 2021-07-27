@@ -475,25 +475,14 @@ export class SharePointSearchService implements ISharePointSearchService {
             // now prepare all term/word combinations from the raw query to get possible standing terms (like 'United States of America)
             // (each loop gets forward and backward combinations from the term/word)
             var termCombinations = [];
-            for (var _i = 0; _i < queryTerms.length; _i++) {
 
-                if (_i >= 0) {
-                    termCombinations.push(<queryTermsToResolvedSynonymsEntry>{ queryTerm: queryTerms[_i] });
-                }
-                if (_i > 0) {
-                    termCombinations.push(<queryTermsToResolvedSynonymsEntry>{ queryTerm: queryTerms[_i - 1] + " " + queryTerms[_i] });
-                }
-                if (_i > 1) {
-                    termCombinations.push(<queryTermsToResolvedSynonymsEntry>{ queryTerm: queryTerms[_i - 2] + " " + queryTerms[_i - 1] + " " + queryTerms[_i] });
-                }
-                if (_i > 2) {
-                    termCombinations.push(<queryTermsToResolvedSynonymsEntry>{ queryTerm: queryTerms[_i - 3] + " " + queryTerms[_i - 2] + " " + queryTerms[_i - 1] + " " + queryTerms[_i] });
-                }
-                if (_i > 3) {
-                    termCombinations.push(<queryTermsToResolvedSynonymsEntry>{ queryTerm: queryTerms[_i - 4] + " " + queryTerms[_i - 3] + " " + queryTerms[_i - 2] + " " + queryTerms[_i - 1] + " " + queryTerms[_i] });
-                }
-                if (_i > 4) {
-                    termCombinations.push(<queryTermsToResolvedSynonymsEntry>{ queryTerm: queryTerms[_i - 5] + " " + queryTerms[_i - 4] + " " + queryTerms[_i - 3] + " " + queryTerms[_i - 2] + " " + queryTerms[_i - 1] + " " + queryTerms[_i] });
+            for (var i = 0; i < queryTerms.length; i++) {
+                termCombinations.push(<queryTermsToResolvedSynonymsEntry>{ queryTerm: queryTerms[i]});
+                for (var j = i; j < queryTerms.length; j++)
+                {
+                    if (j < queryTerms.length - 1) {
+                        termCombinations.push(<queryTermsToResolvedSynonymsEntry>{ queryTerm: termCombinations[termCombinations.length - 1].queryTerm + " " + queryTerms[j + 1]});
+                    }
                 }
             }
 
