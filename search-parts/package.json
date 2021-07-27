@@ -34,8 +34,6 @@
         "@types/react-dom": "16.8.3",
         "@uifabric/file-type-icons": "7.6.30",
         "@uifabric/icons": "7.5.23",
-        "@uifabric/styling": "7.19.0",
-        "@uifabric/utilities": "7.33.5",
         "@webcomponents/webcomponentsjs": "2.5.0",
         "core-js": "3.15.2",
         "dompurify": "2.0.17",
