@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { Persona, IPersonaProps, IPersonaSharedProps, getInitials, Icon } from 'office-ui-fabric-react';
+import { Persona, IPersonaProps, IPersonaSharedProps, getInitials, Icon, ITheme } from 'office-ui-fabric-react';
 import { TemplateService } from "../services/templateService/TemplateService";
 import * as ReactDOM from 'react-dom';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
-import { ITheme } from '@uifabric/styling';
 import { BaseWebComponent } from '@pnp/modern-search-extensibility';
 import { ITemplateService } from '../services/templateService/ITemplateService';
 import * as DOMPurify from 'dompurify';
