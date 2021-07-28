@@ -305,8 +305,14 @@ declare interface ICommonStrings {
           }
         }
       },
-      SynonymsPage: {
-        GroupName: string;
+      Synonyms: {
+        SynonymSettingsGroupName: string;
+        EnableSwitchLabel:string;
+        SiteUrlLabel:string;
+        SynonymListLabel:string;
+        SynonymListFieldNameKeyword:string;
+        SynonymListFieldNameSynonyms:string;
+        SynonymListFieldNameMutual:string;
       }
     },
     Filters: {

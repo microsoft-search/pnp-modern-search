@@ -306,9 +306,15 @@ define([], function () {
             }
           }
         },
-        SynonymsPage: {
-            GroupName: "Synonyms SE"
-        }
+        Synonyms: {
+          SynonymSettingsGroupName: "Synonymer",
+          EnableSwitchLabel: "Aktivera Synonymer",
+          SiteUrlLabel: "Webbplatsens URL för Synonymer Lista",
+          SynonymListLabel: "Synonymer Lista Namn",
+          SynonymListFieldNameKeyword: "Nyckelord Fältnamn namn (normalt fältet 'titel')",
+          SynonymListFieldNameSynonyms: "Synonymer Fältnamn (text)",
+          SynonymListFieldNameMutual: "Ömsesidigt fältnamn (boolean)"
+  }
       },
       Filters: {
         ApplyAllFiltersButtonLabel: "Tillämpa",

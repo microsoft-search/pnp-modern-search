@@ -306,8 +306,14 @@ define([], function() {
                     }
                 }
             },
-            SynonymsPage: {
-                GroupName: "Synonyms EN"
+            Synonyms: {
+                SynonymSettingsGroupName: "Synonyms",
+                EnableSwitchLabel: "Enable Synonyms",
+                SiteUrlLabel: "Site URL of Synonym List ",
+                SynonymListLabel: "Synonyms List Name",
+                SynonymListFieldNameKeyword: "Keyword Field Name (normally 'title' field)",
+                SynonymListFieldNameSynonyms: "Synonyms Field Name (text)",
+                SynonymListFieldNameMutual: "Mutual Field Name (boolean)"
             }
         },
         Filters: {

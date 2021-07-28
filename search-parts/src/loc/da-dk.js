@@ -306,8 +306,14 @@ define([], function() {
                     }
                 }
             },
-            SynonymsPage: {
-                GroupName: "Synonyms DK"
+            Synonyms: {
+                SynonymSettingsGroupName: "Synonymer",
+                EnableSwitchLabel: "Aktivere Synonymer",
+                SiteUrlLabel: "Webstedets URL for synonymlisten",
+                SynonymListLabel: "Synonymer Liste Navn",
+                SynonymListFieldNameKeyword: "Nøgleord Feltnavn (normalt 'title' feltet)",
+                SynonymListFieldNameSynonyms: "Synonyms Feltnavn (tekst)",
+                SynonymListFieldNameMutual: "Gensidigt feltnavn (boolean)"
             }
         },
         Filters: {

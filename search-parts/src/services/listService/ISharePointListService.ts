@@ -1,5 +1,5 @@
-import { ISynonymTableEntry } from "../../models/search/ISynonymeTableEntry";
+import { ISynonymsTableEntry } from "../../models/search/ISynonymsTableEntry";
 
 export interface ISharePointListService {
-    getAllItemsFromList(listName: string): Promise<ISynonymTableEntry[]>;
+    getAllItemsFromList(listName: string): Promise<ISynonymsTableEntry[]>;
 }

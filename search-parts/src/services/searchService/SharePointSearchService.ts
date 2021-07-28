@@ -17,17 +17,11 @@ import { cloneDeep } from "@microsoft/sp-lodash-subset";
 import { Constants } from '../../common/Constants';
 import { SharePointListService } from '../listService/SharePointListService';
 import { ISharePointListService } from '../listService/ISharePointListService';
-import { ISynonymTableEntry } from '../../models/search/ISynonymeTableEntry';
+//import { ISynonymsTableEntry } from '../../models/search/ISynonymsTableEntry';
+import { IQueryTermToSynonymsEntry } from '../../models/search/IQueryTermToSynonymsEntry';
 
 const SearchService_ServiceKey = 'pnpSearchResults:SharePointSearchService';
 const AvailableQueryLanguages_StorageKey = 'pnpSearchResults_AvailableQueryLanguages';
-
-// *********** DTI DEVELOP *************
-interface queryTermsToResolvedSynonymsEntry {
-    queryTerm: string;
-    foundSynonyms: string;
-}
-// *********** DTI DEVELOP *************
 
 export class SharePointSearchService implements ISharePointSearchService {
 
@@ -468,35 +462,24 @@ export class SharePointSearchService implements ISharePointSearchService {
         if (modifiedQuery != undefined) {
 
             // evaluating the raw query by stripping query operators and converting to lowercase...
-            let rawQuery = originalQuery.replace(/((^|\s)-[\w-]+[\s$])|(-"\w+.*?")|(-?\w+[:=<>]+\w+)|(-?\w+[:=<>]+".*?")|((\w+)?\(.*?\))|(AND)|(OR)|(NOT)/g, " ").replace(/[ ]{2,}/, " ").toLocaleLowerCase();
-            let queryTerms = rawQuery.split(" ");
+            let rawQuery = originalQuery.replace(/((^|\s)-[\w-]+[\s$])|(-"\w+.*?")|(-?\w+[:=<>]+\w+)|(-?\w+[:=<>]+".*?")|((\w+)?\(.*?\))|(AND)|(OR)|(NOT)/g, " ").replace(/[ ]{2,}/, " ").toLocaleLowerCase().trim();
 
-            //TODO: optimization/generic solution which is not limited to 5 query terms
             // now prepare all term/word combinations from the raw query to get possible standing terms (like 'United States of America)
             // (each loop gets forward and backward combinations from the term/word)
             var termCombinations = [];
-
-            for (var i = 0; i < queryTerms.length; i++) {
-                termCombinations.push(<queryTermsToResolvedSynonymsEntry>{ queryTerm: queryTerms[i]});
-                for (var j = i; j < queryTerms.length; j++)
-                {
-                    if (j < queryTerms.length - 1) {
-                        termCombinations.push(<queryTermsToResolvedSynonymsEntry>{ queryTerm: termCombinations[termCombinations.length - 1].queryTerm + " " + queryTerms[j + 1]});
+            if (rawQuery.length > 0 ) {
+                // only do, if the raw query is not empty after rempoving all the operators...
+                let queryTerms = rawQuery.split(" ");
+                for (var i = 0; i < queryTerms.length; i++) {
+                    termCombinations.push(<IQueryTermToSynonymsEntry>{ queryTerm: queryTerms[i]});
+                    for (var j = i; j < queryTerms.length; j++)
+                    {
+                        if (j < queryTerms.length - 1) {
+                            termCombinations.push(<IQueryTermToSynonymsEntry>{ queryTerm: termCombinations[termCombinations.length - 1].queryTerm + " " + queryTerms[j + 1]});
+                        }
                     }
                 }
             }
-
-            // 20210707/mh: sorting is not required amymore, because we check all combinations for synonyms
-            /*
-            termCombinationToAdd.sort((a, b) => {
-                if (a.queryTerm.length < b.queryTerm.length) {
-                    return 1
-                } else if (a.queryTerm.length > b.queryTerm.length) {
-                    return -1
-                }
-                return 0
-            })
-            */
 
             // now looping through each term/word combination and check if there has been synonyms defined for this combination
             // (per default synonyms are handled mutual if not specified otherwise)
@@ -524,7 +507,7 @@ export class SharePointSearchService implements ISharePointSearchService {
                     // trimming leadidnd trailing semmicolons of the combined string
                     synonymsForTerm = synonymsForTerm.replace(/^;+|;+$/g, '');
 
-                    // and adding the prepared synonyms to the desired queryTermsToResolvedSynonymsEntry and increasing the counter
+                    // and adding the prepared synonyms to the desired QueryTermToSynonymsEntry and increasing the counter
                     combination.foundSynonyms = synonymsForTerm;
                     termsWithSynonymsCounter++;
                 }
@@ -575,7 +558,6 @@ export class SharePointSearchService implements ISharePointSearchService {
             // no query to modify...
         }
 
-
         // TODO: maybe remove/comment out in a later stage        
         // writing some output for debugging purposes
         console.log("original query: '" + originalQuery + "'");
@@ -583,12 +565,6 @@ export class SharePointSearchService implements ISharePointSearchService {
 
         // and returning the (un)modified query text...
         return modifiedQuery;
-
-        // Develop: expected example:
-        // (Original Query            )    (Variation 1                                       )    (Variation 2                                                                                                                           )
-        // (Marc Hoffmann AND DTI Hans) OR ((Marc Hoffmann AND DTI Hans) OR (dti AND DTI Hans)) OR ((Marc Hoffmann AND DTI Hans) OR (Marc Hoffmann AND ("dti schweiz ag" OR "document text information" OR Fritz OR "marc hoffmann") Hans))
-        // can be reduced to:
-        // (Marc Hoffmann AND DTI Hans) OR (dti AND DTI Hans) OR (Marc Hoffmann AND ("dti schweiz ag" OR "document text information" OR Fritz OR "marc hoffmann") Hans)
     }
 
     // Helper function to put multi value terms into quotation marks

@@ -307,8 +307,14 @@ define([], function() {
                     }
                 }
             },
-            SynonymsPage: {
-                GroupName: "Synonyms FR"
+            Synonyms: {
+                SynonymSettingsGroupName: "Synonymes",
+                EnableSwitchLabel: "Activation Synonyms",
+                SiteUrlLabel: "URL du site de la liste des synonymes ",
+                SynonymListLabel: "Liste des synonymes Nom",
+                SynonymListFieldNameKeyword: "Nom du champ de mots-clés (normalement le champ 'titre')",
+                SynonymListFieldNameSynonyms: "Nom du champ Synonymes (texte)",
+                SynonymListFieldNameMutual: "Nom du champ mutuel (booléen)"
             }
         },
         Filters: {

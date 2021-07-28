@@ -689,7 +689,6 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
 
         searchQuery.EnableQueryRules = this.properties.enableQueryRules;
         searchQuery.QueryTemplate = await this._tokenService.resolveTokens(this.properties.queryTemplate);
-
         if (this.properties.resultSourceId) {
             searchQuery.SourceId = this.properties.resultSourceId;
         }

@@ -614,10 +614,10 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             }
         );
 
-        // DTI Synonyms
+        // Synonym configuration parameters
         synonymsConfigurationGroups.push({
-            groupName: commonStrings.PropertyPane.SynonymsPage.GroupName,
-            groupFields: this.getSynonymFields()
+            groupName: commonStrings.PropertyPane.Synonyms.SynonymSettingsGroupName,
+            groupFields: this.getSynonymGroupFields()
         });
 
         // A data source is selected
@@ -1306,20 +1306,39 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         return extensibilityFields;
     }
 
-    private getSynonymFields(): IPropertyPaneField<any>[] {
-        let synonymFields: IPropertyPaneField<any>[] = [
+    private getSynonymGroupFields(): IPropertyPaneField<any>[] {
+        let synonymGroupFields: IPropertyPaneField<any>[] = [
             PropertyPaneCheckbox('enableSynonyms', {
-                text: 'Enable Synonyms'
+                text: commonStrings.PropertyPane.Synonyms.EnableSwitchLabel,
+                checked: true
             }),
             PropertyPaneTextField('weburl', {
-                label: 'Web Url'
+                label: commonStrings.PropertyPane.Synonyms.SiteUrlLabel,
+                //TODO: remove after development
+                value: "https://devmarc365.sharepoint.com/sites/playground"
             }),
             PropertyPaneTextField('listname', {
-                label: 'List Name'
+                label: commonStrings.PropertyPane.Synonyms.SynonymListLabel,
+                //TODO: remove after development
+                value: "SynonymsRedNet"
+            }),
+            PropertyPaneTextField('listfieldkeyword', {
+                label: commonStrings.PropertyPane.Synonyms.SynonymListFieldNameKeyword,
+                //TODO: remove after development
+                value: "Title"
+            }),
+            PropertyPaneTextField('listfieldsynonyms', {
+                label: commonStrings.PropertyPane.Synonyms.SynonymListFieldNameSynonyms,
+                //TODO: remove after development
+                value: "SYN_Synonyms"
+            }),
+            PropertyPaneTextField('listfieldmutual', {
+                label: commonStrings.PropertyPane.Synonyms.SynonymListFieldNameMutual,
+                //TODO: remove after development
+                value: "SYN_Mutual"
             })
-
-        ];
-        return synonymFields;
+       ];
+        return synonymGroupFields;
     }
 
     /**
