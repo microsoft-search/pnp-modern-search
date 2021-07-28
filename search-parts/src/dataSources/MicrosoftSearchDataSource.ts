@@ -13,6 +13,12 @@ import { DataFilterHelper } from "../helpers/DataFilterHelper";
 import { IMicrosoftSearchResponse } from "../models/search/IMicrosoftSearchResponse";
 import { ISortFieldConfiguration, SortFieldDirection } from '../models/search/ISortFieldConfiguration';
 
+// for synonyms functionality
+import { SharePointListService } from '../services/listService/SharePointListService';
+import { ISharePointListService } from '../services/listService/ISharePointListService';
+import { SynonymsService } from '../services/synonymsService/SynonymsService';
+import { ISynonymsService } from '../services/synonymsService/ISynonymsService';
+
 const MICROSOFT_SEARCH_URL = "https://graph.microsoft.com/beta/search/query";
 
 export enum EntityType {
@@ -109,8 +115,16 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
     private _propertyFieldCollectionData: any = null;
     private _customCollectionFieldType: any = null;
 
+    // for synonyms functionality
+    private _sharePointListService: ISharePointListService;
+    private _synonymsService: ISynonymsService;
+
     public constructor(serviceScope: ServiceScope) {
         super(serviceScope);
+
+        // for synonyms functionality
+        this._sharePointListService = new SharePointListService();
+        this._synonymsService = new SynonymsService();
 
         serviceScope.whenFinished(() => {
             this._tokenService = serviceScope.consume<ITokenService>(TokenService.ServiceKey);
@@ -159,6 +173,16 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         };
 
         const searchRequest = await this.buildMicrosoftSearchRequest(dataContext);
+
+        // TODO: evaluation of the Synonyms Enabled flag
+        // enrich the query with synonyms if enabled....
+        // if () {
+
+            var test = this.getPropertyPaneGroupsConfiguration();
+            let synonymsList = await this._sharePointListService.getAllItemsFromList("hjhj");
+            searchRequest.query.queryString = await this._synonymsService.enrichQueryWithSynonyms(searchRequest.query.queryString, synonymsList);
+        //}
+
         results = await this.search(searchRequest);
 
         return results;

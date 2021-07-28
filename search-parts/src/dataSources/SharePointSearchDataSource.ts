@@ -36,6 +36,11 @@ import { DataFilterHelper } from '../helpers/DataFilterHelper';
 import { ISortFieldConfiguration, SortFieldDirection } from '../models/search/ISortFieldConfiguration';
 import { EnumHelper } from '../helpers/EnumHelper';
 
+import { SharePointListService } from '../services/listService/SharePointListService';
+import { ISharePointListService } from '../services/listService/ISharePointListService';
+import { SynonymsService } from '../services/synonymsService/SynonymsService';
+import { ISynonymsService } from '../services/synonymsService/ISynonymsService';
+
 export enum BuiltinSourceIds {
     Documents = 'e7ec8cee-ded8-43c9-beb5-436b54b31e84',
     ItemsMatchingContentType = '5dc9f503-801e-4ced-8a2c-5d1237132419',
@@ -140,8 +145,16 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
     */
     private moment: any;
 
+    // for synonyms functionality
+    private _sharePointListService: ISharePointListService;
+    private _synonymsService: ISynonymsService;
+
     public constructor(serviceScope: ServiceScope) {
         super(serviceScope);
+
+        // for synonyms functionality
+        this._sharePointListService = new SharePointListService();
+        this._synonymsService = new SynonymsService();
 
         serviceScope.whenFinished(() => {
             this._sharePointSearchService = serviceScope.consume<ISharePointSearchService>(SharePointSearchService.ServiceKey);
@@ -191,6 +204,15 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
     public async getData(dataContext: IDataContext): Promise<IDataSourceData> {
 
         const searchQuery = await this.buildSharePointSearchQuery(dataContext);
+
+        // enrich the query test with synonyms (if enabled)...
+        // we do it here and not in the SharePoint Search Service as for MS Search there is no Search Service
+        // TODO: evaluation of the Synonyms Enabled flag
+        // if () {
+            let synonymsList = await this._sharePointListService.getAllItemsFromList("SynonymsRedNet")
+            searchQuery.Querytext = await this._synonymsService.enrichQueryWithSynonyms(searchQuery.Querytext, synonymsList);
+        //}
+
         const results = await this._sharePointSearchService.search(searchQuery);
 
         let data: IDataSourceData = {

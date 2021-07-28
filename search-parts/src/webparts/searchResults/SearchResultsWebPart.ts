@@ -59,6 +59,7 @@ import { IDataVerticalSourceData } from '../../models/dynamicData/IDataVerticalS
 import { BaseWebPart } from '../../common/BaseWebPart';
 import { ApplicationInsights } from '@microsoft/applicationinsights-web';
 import commonStyles from '../../styles/Common.module.scss';
+import { SynonymsService } from '../../services/synonymsService/SynonymsService';
 
 const LogSource = "SearchResultsWebPart";
 
@@ -985,6 +986,10 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 useNextLinks: false
             };
         }
+
+        this.properties.synonymsEnabled = this.properties.synonymsEnabled !== undefined ? this.properties.synonymsEnabled : false;
+        this.properties.synonymsWebUrl = this.properties.synonymsWebUrl ? this.properties.synonymsWebUrl : "";
+        this.properties.synonymsListName = this.properties.synonymsListName ? this.properties.synonymsListName : "";
     }
 
     /**
@@ -1308,16 +1313,16 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
     private getSynonymGroupFields(): IPropertyPaneField<any>[] {
         let synonymGroupFields: IPropertyPaneField<any>[] = [
-            PropertyPaneCheckbox('enableSynonyms', {
+            PropertyPaneCheckbox('synonymsEnabled', {
                 text: commonStrings.PropertyPane.Synonyms.EnableSwitchLabel,
                 checked: true
             }),
-            PropertyPaneTextField('weburl', {
+            PropertyPaneTextField('synonymsWebUrl', {
                 label: commonStrings.PropertyPane.Synonyms.SiteUrlLabel,
                 //TODO: remove after development
                 value: "https://devmarc365.sharepoint.com/sites/playground"
             }),
-            PropertyPaneTextField('listname', {
+            PropertyPaneTextField('synonymsListName', {
                 label: commonStrings.PropertyPane.Synonyms.SynonymListLabel,
                 //TODO: remove after development
                 value: "SynonymsRedNet"
