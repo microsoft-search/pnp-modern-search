@@ -1,10 +1,18 @@
 import { ISynonymsService } from './ISynonymsService';
-import { ISynonymsTableEntry } from '../../models/search/ISynonymsTableEntry';
+import { ISynonymsListEntry } from '../../models/search/ISynonymsListEntry';
 import { IQueryTermToSynonymsEntry } from '../../models/search/IQueryTermToSynonymsEntry';
+
+// includes for SharePoint List access
+import { Web } from "@pnp/sp/webs";
+import "@pnp/sp/lists";
+import "@pnp/sp/items";
+
+// misc includes
+import { Exception } from 'handlebars';
 
 export class SynonymsService implements ISynonymsService {
 
-    public async enrichQueryWithSynonyms(queryText: string, synonymsList: ISynonymsTableEntry[]): Promise<string> {
+    public async enrichQueryWithSynonyms(queryText: string, synonymsList: ISynonymsListEntry[]): Promise<string> {
         // storing the original query to use for query expansion bulding...
         // wee are keeping the case of the queryText to keep AND, NOT,... in their case (operators have to be uppercase to be handled as operators!)
         let originalQuery: string = queryText;
@@ -129,4 +137,25 @@ export class SynonymsService implements ISynonymsService {
         return value;
     }
 
+    public async getItemsFromSharePointSynonymsList(webUrl: string, listName: string, fieldNameKeyword: string, fieldNameSynonyms: string, fieldNameMutual: string): Promise<ISynonymsListEntry[]> {
+        // initalizing an empty return value...
+        let synonyms: ISynonymsListEntry[] = [];
+
+        try {
+            if (webUrl == "" || listName == "" || fieldNameKeyword == "" || fieldNameSynonyms == "" || fieldNameMutual == "") {
+                throw new Exception("Synonyms configuration not completed or wrong");
+            }
+            const web = Web(webUrl);
+            const response = await web();
+            const items: any[] = await web.lists.getByTitle(listName).items.get();
+            for (let index = 0; index < items.length; index++) {
+                synonyms.push(<ISynonymsListEntry>{ synonyms: items[index][fieldNameKeyword] + ";" + items[index][fieldNameSynonyms], mutual: items[index][fieldNameMutual]});
+            }
+        }
+        catch (Error) {
+            console.log("getAllItemsFromList: " + Error.message);
+        }
+
+        return synonyms;
+    }
 }

@@ -593,7 +593,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         let layoutSlotsGroup: IPropertyPaneGroup[] = [];
         let commonDataSourceProperties: IPropertyPaneGroup[] = [];
         let extensibilityConfigurationGroups: IPropertyPaneGroup[] = [];
-        let synonymsConfigurationGroups: IPropertyPaneGroup[] = [];
 
         // Retrieve the property settings for the data source provider
         let dataSourceProperties: IPropertyPaneGroup[] = [];
@@ -614,12 +613,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 displayGroupsAsAccordion: true
             }
         );
-
-        // Synonym configuration parameters
-        synonymsConfigurationGroups.push({
-            groupName: commonStrings.PropertyPane.Synonyms.SynonymSettingsGroupName,
-            groupFields: this.getSynonymGroupFields()
-        });
 
         // A data source is selected
         if (this.dataSource && !this.errorMessage) {
@@ -643,8 +636,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 {
                     groupName: webPartStrings.PropertyPane.DataSourcePage.PagingOptionsGroupName,
                     groupFields: this.getPagingGroupFields()
-                },
-                ...synonymsConfigurationGroups
+                }
             ]);
 
             // Other pages
@@ -986,10 +978,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 useNextLinks: false
             };
         }
-
-        this.properties.synonymsEnabled = this.properties.synonymsEnabled !== undefined ? this.properties.synonymsEnabled : false;
-        this.properties.synonymsWebUrl = this.properties.synonymsWebUrl ? this.properties.synonymsWebUrl : "";
-        this.properties.synonymsListName = this.properties.synonymsListName ? this.properties.synonymsListName : "";
     }
 
     /**
@@ -1309,41 +1297,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         ];
 
         return extensibilityFields;
-    }
-
-    private getSynonymGroupFields(): IPropertyPaneField<any>[] {
-        let synonymGroupFields: IPropertyPaneField<any>[] = [
-            PropertyPaneCheckbox('synonymsEnabled', {
-                text: commonStrings.PropertyPane.Synonyms.EnableSwitchLabel,
-                checked: true
-            }),
-            PropertyPaneTextField('synonymsWebUrl', {
-                label: commonStrings.PropertyPane.Synonyms.SiteUrlLabel,
-                //TODO: remove after development
-                value: "https://devmarc365.sharepoint.com/sites/playground"
-            }),
-            PropertyPaneTextField('synonymsListName', {
-                label: commonStrings.PropertyPane.Synonyms.SynonymListLabel,
-                //TODO: remove after development
-                value: "SynonymsRedNet"
-            }),
-            PropertyPaneTextField('listfieldkeyword', {
-                label: commonStrings.PropertyPane.Synonyms.SynonymListFieldNameKeyword,
-                //TODO: remove after development
-                value: "Title"
-            }),
-            PropertyPaneTextField('listfieldsynonyms', {
-                label: commonStrings.PropertyPane.Synonyms.SynonymListFieldNameSynonyms,
-                //TODO: remove after development
-                value: "SYN_Synonyms"
-            }),
-            PropertyPaneTextField('listfieldmutual', {
-                label: commonStrings.PropertyPane.Synonyms.SynonymListFieldNameMutual,
-                //TODO: remove after development
-                value: "SYN_Mutual"
-            })
-       ];
-        return synonymGroupFields;
     }
 
     /**

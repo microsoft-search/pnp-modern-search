@@ -15,11 +15,6 @@ import { ISuggestResult, ISuggestQuery } from '../../models/search/ISuggestQuery
 import { ISharePointSearchQuery, SortDirection } from '../../models/search/ISharePointSearchQuery';
 import { cloneDeep } from "@microsoft/sp-lodash-subset";
 import { Constants } from '../../common/Constants';
-import { SharePointListService } from '../listService/SharePointListService';
-import { ISharePointListService } from '../listService/ISharePointListService';
-import { SynonymsService } from '../synonymsService/SynonymsService';
-import { ISynonymsService } from '../synonymsService/ISynonymsService';
-
 
 const SearchService_ServiceKey = 'pnpSearchResults:SharePointSearchService';
 const AvailableQueryLanguages_StorageKey = 'pnpSearchResults_AvailableQueryLanguages';

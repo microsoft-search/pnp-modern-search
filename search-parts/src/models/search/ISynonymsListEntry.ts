@@ -1,4 +1,4 @@
-export interface ISynonymsTableEntry {
+export interface ISynonymsListEntry {
     
     /**
      * Semicolon separated string with synonyms

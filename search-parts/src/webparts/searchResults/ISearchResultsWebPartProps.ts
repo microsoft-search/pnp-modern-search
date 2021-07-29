@@ -149,18 +149,5 @@ export default interface ISearchResultsWebPartProps extends IBaseWebPartProps {
      * The extensibility configuraion to load
      */
     extensibilityLibraryConfiguration: IExtensibilityConfiguration[];
-
-    /**
-     */
-     synonymsEnabled : boolean;
-
-    /**
-     */
-     synonymsWebUrl : string;
-
-    /**
-     */
-     synonymsListName : string;
-     
 }
 
