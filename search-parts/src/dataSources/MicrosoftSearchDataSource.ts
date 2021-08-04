@@ -748,15 +748,15 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             }),
             PropertyPaneTextField('dataSourceProperties.synonymsListFieldKeyword', {
                 label: commonStrings.PropertyPane.Synonyms.SynonymListFieldNameKeyword,
-                value: "Title"
+                value: this.properties.synonymsFieldNameKeyword
             }),
             PropertyPaneTextField('dataSourceProperties.synonymsListFieldSynonyms', {
                 label: commonStrings.PropertyPane.Synonyms.SynonymListFieldNameSynonyms,
-                value: "SYN_Synonyms"
+                value: this.properties.synonymsFieldNameSynonyms
             }),
             PropertyPaneTextField('dataSourceProperties.synonymsListFieldMutual', {
                 label: commonStrings.PropertyPane.Synonyms.SynonymListFieldNameMutual,
-                value: "SYN_Mutual"
+                value: this.properties.synonymsFieldNameMutual
             })
        ];
         return synonymGroupFields;
