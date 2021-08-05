@@ -590,7 +590,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         this.properties.resultSourceId = this.properties.resultSourceId !== undefined ? this.properties.resultSourceId : BuiltinSourceIds.LocalSharePointResults;
         this.properties.sortList = this.properties.sortList !== undefined ? this.properties.sortList : [];
 
-        //TODO: Remove default values after developmnet
+        //TODO: Remove default values after developmnet (before Pull-Request at Github)
         this.properties.synonymsEnabled = this.properties.synonymsEnabled !== undefined ? this.properties.synonymsEnabled : false;
         this.properties.synonymsWebUrl = this.properties.synonymsWebUrl ? this.properties.synonymsWebUrl : "https://devmarc365.sharepoint.com/sites/playground";
         this.properties.synonymsListName = this.properties.synonymsListName ? this.properties.synonymsListName : "SynonymsRedNet";
