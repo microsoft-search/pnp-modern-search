@@ -54,8 +54,6 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     private _propertyFieldCodeEditorLanguages: any = null;
     private _customCollectionFieldType: any = null;
     private _propertyPanePropertyEditor = null;
-    private _filterResults: IDataFilterResult[] = [];
-    private _templateServiceInitialized = false;
 
     /**
      * Properties to avoid to recreate instances every render
@@ -126,11 +124,19 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
         // That's why we need to fetch the licence info before calling this method
         this.ensureDataSourcesConnection();
 
+        // Register Web Components in the global page context. We need to do this BEFORE the template processing to avoid race condition.
+        // Web components are only defined once.
+        // We need to register components here in the case where the Data Visualizer WP is not present on the page
+        await this.templateService.registerWebComponents(this.availableWebComponentDefinitions, this.instanceId);
+
         return super.onInit();
     }
 
     public async render(): Promise<void> {
-        await this.initializeTemplateService();
+
+        // Determine the template content to display
+        // In the case of an external template is selected, the render is done asynchronously waiting for the content to be fetched
+        await this.initTemplate();        
 
         // Get and initialize layout instance if different (i.e avoid to create a new instance every time)
         if (this.lastLayoutKey !== this.properties.selectedLayoutKey) {
@@ -149,20 +155,32 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     protected renderCompleted(): void {
 
         let renderRootElement: JSX.Element = null;
+        let filterResults: IDataFilterResult[] = [];
 
         // Display the Web Part only if a valid configuration is set
-        if (this.templateContentToDisplay && this._filterResults.length > 0) {
+        if (this.templateContentToDisplay && this.properties.filtersConfiguration.length > 0) {
+
+            // Get data from connected sources
+            if (this._dataSourceDynamicProperties.length > 0) {
+
+                // Merge available filters and values from multiple sources
+                const dataResultsSourceData = this.mergeFiltersDataFromSources(this._dataSourceDynamicProperties);
+                
+                // Get filter results
+                filterResults = dataResultsSourceData.availablefilters;     
+            }
+
             // Case when no search results WP is connected and we have 'Static' filters configured.
             // OR the data results don't contain this filter name. 
             // We create fake entries for those filters to be able to render them in the template
             // We do this by convenience to avoid refactoring the Handlebars templates
-            this._filterResults = this._initStaticFilters(this._filterResults, this.properties.filtersConfiguration);
+            filterResults = this._initStaticFilters(filterResults, this.properties.filtersConfiguration);
 
             renderRootElement = React.createElement(
                 SearchFilters,
                 {
                     templateContent: this.templateContentToDisplay,
-                    availableFilters: this._filterResults,
+                    availableFilters: filterResults,
                     filtersConfiguration: this.properties.filtersConfiguration,
                     domElement: this.domElement,
                     instanceId: this.instanceId,
@@ -792,42 +810,10 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
 
     private async initializeWebPartServices(): Promise<void> {
         this.webPartInstanceServiceScope = this.context.serviceScope.startNewChild();
-        this.dynamicDataService = this.webPartInstanceServiceScope.createDefaultAndProvide(DynamicDataService.ServiceKey);
+        this.templateService = this.webPartInstanceServiceScope.createAndProvide(TemplateService.ServiceKey, TemplateService);
+        this.dynamicDataService = this.webPartInstanceServiceScope.createAndProvide(DynamicDataService.ServiceKey, DynamicDataService);
         this.dynamicDataService.dynamicDataProvider = this.context.dynamicDataProvider;
         this.webPartInstanceServiceScope.finish();
-    }
-
-    private async initializeTemplateService(): Promise<void> {
-        if (this.properties.filtersConfiguration.length > 0) {
-            // Get data from connected sources
-            if (this._dataSourceDynamicProperties.length > 0) {
-                // Merge available filters and values from multiple sources
-                const dataResultsSourceData = this.mergeFiltersDataFromSources(this._dataSourceDynamicProperties);
-
-                // Get filter results
-                this._filterResults = dataResultsSourceData.availablefilters;
-            } else {
-                this._filterResults = [];
-            }
-
-            if (this._filterResults.length > 0 && !this._templateServiceInitialized) {
-                // Delay loading of template service in the filter web part until there is data
-                this.webPartInstanceServiceScope = this.context.serviceScope.startNewChild();
-                this.templateService = this.webPartInstanceServiceScope.createDefaultAndProvide(TemplateService.ServiceKey);
-                this.webPartInstanceServiceScope.finish();
-
-                // Register Web Components in the global page context. We need to do this BEFORE the template processing to avoid race condition.
-                // Web components are only defined once.
-                // We need to register components here in the case where the Search Results WP is not present on the page
-                await this.templateService.registerWebComponents(this.availableWebComponentDefinitions);
-                this._templateServiceInitialized = true;
-            }
-            if (this._filterResults.length > 0) {
-                // Determine the template content to display
-                // In the case of an external template is selected, the render is done asynchronously waiting for the content to be fetched
-                this.initTemplate();
-            }
-        }
     }
 
     /**
@@ -965,6 +951,15 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                 // 1. Concatenate all values from all connected results Web Parts
                 allAvailableFieldsFromResults = allAvailableFieldsFromResults.concat(dataSourceData.availableFieldsFromResults);
                 allAvailableFilters = allAvailableFilters.concat(dataSourceData.availablefilters);
+
+                // Merge all custom registred Handlebars helpers from all connected Data Visualizer Web Parts
+                if (dataSourceData.handlebarsContext) {
+                    Object.keys(dataSourceData.handlebarsContext.helpers).forEach(helperName => {
+                        if (!this.templateService.Handlebars.helpers[helperName]) {
+                            this.templateService.Handlebars.registerHelper(helperName, dataSourceData.handlebarsContext.helpers[helperName]);
+                        }
+                    });            
+                }
             }
         });
 

@@ -11,6 +11,7 @@ import * as DOMPurify from 'dompurify';
 import { ITemplateService } from '../services/templateService/ITemplateService';
 import { TemplateService } from '../services/templateService/TemplateService';
 import { DomPurifyHelper } from '../helpers/DomPurifyHelper';
+import { ServiceScope, ServiceKey } from '@microsoft/sp-core-library';
 
 export interface ISliderProps {
     options?: any;
@@ -237,11 +238,20 @@ export class SliderWebComponent extends BaseWebComponent {
  
     public connectedCallback() {
  
-       let props = this.resolveAttributes();
+        let props = this.resolveAttributes();
+        let serviceScope: ServiceScope = this._serviceScope; // Default is the root shared service scope regardless the current Web Part 
+        let templateServiceKey: ServiceKey<any> = TemplateService.ServiceKey; // Defaut service key for TemplateService
 
-       const templateService = this._serviceScope.consume<ITemplateService>(TemplateService.ServiceKey);
-       
-       const sliderComponent = <SliderComponent {...props} template={this.innerHTML} handlebars={templateService.Handlebars}/>;
-       ReactDOM.render(sliderComponent, this);
+        if (props.instanceId) {
+
+            // Get the service scope and keys associated to the current Web Part displaying the component
+            serviceScope = this._webPartServiceScopes.get(props.instanceId) ? this._webPartServiceScopes.get(props.instanceId) : serviceScope;
+            templateServiceKey = this._webPartServiceKeys.get(props.instanceId) ? this._webPartServiceKeys.get(props.instanceId).TemplateService : templateServiceKey;
+        }
+
+        const templateService = serviceScope.consume<ITemplateService>(templateServiceKey);
+        
+        const sliderComponent = <SliderComponent {...props} template={this.innerHTML} handlebars={templateService.Handlebars}/>;
+        ReactDOM.render(sliderComponent, this);
     }    
  }

@@ -16,6 +16,7 @@ import { UrlHelper } from "../../helpers/UrlHelper";
 import { ObjectHelper } from "../../helpers/ObjectHelper";
 import { Constants } from "../../common/Constants";
 import * as handlebarsHelpers from 'handlebars-helpers';
+import { ServiceScopeHelper } from "../../helpers/ServiceScopeHelper";
 
 const TemplateService_ServiceKey = 'PnPModernSearchTemplateService';
 
@@ -75,15 +76,15 @@ export class TemplateService implements ITemplateService {
             this.dayLightSavings = this.dateHelper.isDST();
 
             this.timeZoneBias = {
-                WebBias: this.pageContext.legacyPageContext.webTimeZoneData.Bias,
-                WebDST: this.pageContext.legacyPageContext.webTimeZoneData.DaylightBias,
+                WebBias: this.pageContext.legacyPageContext.webTimeZoneData.Bias ? this.pageContext.legacyPageContext.webTimeZoneData.Bias : 0,
+                WebDST: this.pageContext.legacyPageContext.webTimeZoneData.DaylightBias ? this.pageContext.legacyPageContext.webTimeZoneData.DaylightBias : 0,
                 UserBias: null,
                 UserDST: null
             };
 
             if (this.pageContext.legacyPageContext.userTimeZoneData) {
-                this.timeZoneBias.UserBias = this.pageContext.legacyPageContext.userTimeZoneData.Bias;
-                this.timeZoneBias.UserDST = this.pageContext.legacyPageContext.userTimeZoneData.DaylightBias;
+                this.timeZoneBias.UserBias = this.pageContext.legacyPageContext.userTimeZoneData.Bias ? this.pageContext.legacyPageContext.userTimeZoneData.Bias : 0;
+                this.timeZoneBias.UserDST = this.pageContext.legacyPageContext.userTimeZoneData.DaylightBias ? this.pageContext.legacyPageContext.userTimeZoneData.DaylightBias : 0;
             }
 
             // Get a global moment instance
@@ -217,9 +218,16 @@ export class TemplateService implements ITemplateService {
     /**
      * Registers web components on the current page to be able to use them in the Handlebars template
      */
-    public async registerWebComponents(webComponents: IComponentDefinition<any>[]): Promise<void> {
+    public async registerWebComponents(webComponents: IComponentDefinition<any>[], instanceId: string): Promise<void> {
 
         return new Promise<void>((resolve) => {
+
+            // List of serice keys we want to expose to web components
+            // Because multiple Web Part types can call the template service in separate bundles, using TemplateService.ServiceKey in a web component would result of a race condition and incoherent results as multiple keys will be created and last created would be used
+            // See https://github.com/SharePoint/sp-dev-docs/issues/1419#issuecomment-371584038
+            const availableServiceKeys: { [key: string]: ServiceKey<any> } = {
+                TemplateService: TemplateService.ServiceKey
+            };
 
             this.serviceScope.whenFinished(() => {
 
@@ -230,10 +238,32 @@ export class TemplateService implements ITemplateService {
 
                     if (!component) {
 
-                        // Set the arbitrary property to all instances to get the WebPart context available in components (ex: PersonaCard)
-                        wc.componentClass.prototype._serviceScope = this.serviceScope;
+                        // Set arbitrary properties to all component instances via prototype
+
+                        // To be able to get the right service scope and service keys for a particular web component corresponding to its parent Web Part (i.e. the Web Part currently rendering it), we need to an array of Web Part instance Ids references.
+                        // This implies this instance ID has to be passed in the web component HTML attribute to retrieve the correct context for the current Web Part (ex: data-instance-id="{{@root.instanceId}}") 
+                        wc.componentClass.prototype._webPartServiceScopes = new Map<string, ServiceScope>();
+                        wc.componentClass.prototype._webPartServiceScopes.set(instanceId, this.serviceScope);
+
+                        wc.componentClass.prototype._webPartServiceKeys = new Map<string, { [key: string]: ServiceKey<any> }>();
+                        wc.componentClass.prototype._webPartServiceKeys.set(instanceId, availableServiceKeys);
+
+                        // Set the root service scope for common services (SPHttpClient, HttpClient, etc.)
+                        wc.componentClass.prototype._serviceScope = ServiceScopeHelper.getRootServiceScope(this.serviceScope);
+
                         wc.componentClass.prototype.moment = this.moment;
                         window.customElements.define(wc.componentName, wc.componentClass);
+
+                    } else {
+
+                        // Update the instances array for all calling Web Parts
+                        if (!component.prototype._webPartServiceScopes.get(instanceId)) {
+                            component.prototype._webPartServiceScopes.set(instanceId, this.serviceScope);
+                        }
+
+                        if (!component.prototype._webPartServiceKeys.get(instanceId)) {
+                            component.prototype._webPartServiceKeys.set(instanceId, availableServiceKeys);
+                        }
                     }
                 });
 
@@ -374,6 +404,13 @@ export class TemplateService implements ITemplateService {
      * Registers custom Handlebars helpers in the global context
      */
     private registerCustomHelpers() {
+
+        // Return the URL of the search result item
+        // Usage: <a href="{{getGraphPreviewUrl url}}">
+        this.Handlebars.registerHelper("getGraphPreviewUrl", (url: any, context?: any) => {
+            return new this.Handlebars.SafeString(UrlHelper.getGraphPreviewUrl(url));
+        });
+
         // Return the search result count message
         // Usage: {{getCountMessage totalRows keywords}} or {{getCountMessage totalRows null}}
         this.Handlebars.registerHelper("getCountMessage", (totalRows: string, inputQuery?: string) => {
@@ -475,6 +512,7 @@ export class TemplateService implements ITemplateService {
         // Repeat the block N times
         // https://stackoverflow.com/questions/11924452/iterating-over-basic-for-loop-using-handlebars-js
         // <p>{{#times 10}}</p>
+        this.Handlebars.unregisterHelper('times'); // unregister times alias for multiply from helpers
         this.Handlebars.registerHelper('times', (n, block) => {
             var accum = '';
             for (var i = 0; i < n; ++i)
