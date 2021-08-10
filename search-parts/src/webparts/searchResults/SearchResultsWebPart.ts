@@ -1,4 +1,4 @@
-import * as React from 'react';
+﻿import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import { Version, Text, DisplayMode, ServiceScope, Log } from '@microsoft/sp-core-library';
 import { IComboBoxOption, Toggle, IToggleProps, MessageBarType, MessageBar, Link } from 'office-ui-fabric-react';
@@ -651,7 +651,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 },
                 {
                     groups: [
-                        ...this.propertyPaneConnectionsGroup,
+                        ...this.propertyPaneConnectionsGroup
                     ],
                     displayGroupsAsAccordion: true
                 }
