@@ -80,7 +80,7 @@ define([], function() {
         LinkToVerticalLabel: "Toon data alleen wanneer de volgende zoekverticaal geselecteerd is",
         LinkToVerticalLabelHoverMessage: "De resultaten worden enkel getoond wanneer de geselecteerde zoekverticaal overeenkomt met degene die geconfigureerd is voor dit webonderdeel. Wanneer dit niet het geval is blijft dit webonderdeel leeg in weergave modus (zonder marge en zonder padding)",
         UseInputQueryText: "Gebruik ingegeven zoekopdracht",
-        UseInputQueryTextHoverMessage: "Gebruik het {searchQueryText} token in je databron om de waarde op te halen",
+        UseInputQueryTextHoverMessage: "Gebruik het {inputQueryText} token in je databron om de waarde op te halen",
         SearchQueryTextFieldLabel: "Zoekopdracht",
         SearchQueryTextFieldDescription: "",
         SearchQueryPlaceHolderText: "Geef zoekopdracht...",
