@@ -37,7 +37,7 @@
       "name": "EDGE: MOBI TEST",
       "request": "launch",
       "type": "pwa-msedge",
-      "url": "https://mtranet.sharepoint.com/sites/start/_layouts/workbench.aspx",
+      "url": "https://mtranet.sharepoint.com/_layouts/workbench.aspx",
       "webRoot": "${workspaceFolder}",
       "sourceMaps": true,
       "sourceMapPathOverrides": {

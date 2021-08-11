@@ -590,13 +590,12 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         this.properties.resultSourceId = this.properties.resultSourceId !== undefined ? this.properties.resultSourceId : BuiltinSourceIds.LocalSharePointResults;
         this.properties.sortList = this.properties.sortList !== undefined ? this.properties.sortList : [];
 
-        //TODO: Remove default values after developmnet (before Pull-Request at Github)
         this.properties.synonymsEnabled = this.properties.synonymsEnabled !== undefined ? this.properties.synonymsEnabled : false;
-        this.properties.synonymsWebUrl = this.properties.synonymsWebUrl ? this.properties.synonymsWebUrl : "https://devmarc365.sharepoint.com/sites/playground";
-        this.properties.synonymsListName = this.properties.synonymsListName ? this.properties.synonymsListName : "SynonymsRedNet";
-        this.properties.synonymsFieldNameKeyword = this.properties.synonymsFieldNameKeyword ? this.properties.synonymsFieldNameKeyword : "Title";
-        this.properties.synonymsFieldNameSynonyms = this.properties.synonymsFieldNameSynonyms ? this.properties.synonymsFieldNameSynonyms : "SYN_Synonyms";
-        this.properties.synonymsFieldNameMutual = this.properties.synonymsFieldNameMutual ? this.properties.synonymsFieldNameMutual : "SYN_Mutual";
+        this.properties.synonymsWebUrl = this.properties.synonymsWebUrl ? this.properties.synonymsWebUrl : "";
+        this.properties.synonymsListName = this.properties.synonymsListName ? this.properties.synonymsListName : "";
+        this.properties.synonymsFieldNameKeyword = this.properties.synonymsFieldNameKeyword ? this.properties.synonymsFieldNameKeyword : "";
+        this.properties.synonymsFieldNameSynonyms = this.properties.synonymsFieldNameSynonyms ? this.properties.synonymsFieldNameSynonyms : "";
+        this.properties.synonymsFieldNameMutual = this.properties.synonymsFieldNameMutual ? this.properties.synonymsFieldNameMutual : "";
 
     }
 
@@ -1051,16 +1050,27 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
 
                     values.forEach((term) => {
 
-                        // Use FQL expression here to get the correct output. Otherwise a full match is performed
-                        const fqlFilterValue = `"ǂǂ${this._bytesToHex(this._stringToUTF8Bytes(term))}"`;
-                        const existingFilterIdx = updatedValues.map(updatedValue => updatedValue.name).indexOf(term);
+                        // 20210811: We strip the language specific part of the term and use the GP0 value as the filter value
+                        // and use also the striped value as the new term/key...
+                        // --> 'GP0|#a2cf1afb-44b6-4cf4-bf37-642bb2e9bff3' instead of 'L0|#a2cf1afb-44b6-4cf4-bf37-642bb2e9bff3|Category 1' for the name
+                        // --> 'L0|#a2cf1afb-44b6-4cf4-bf37-642bb2e9bff3' instead of 'L0|#a2cf1afb-44b6-4cf4-bf37-642bb2e9bff3|Category 1' for the name
+                        // Background: if the same term is used on sites with different default language the indexed taxid property value contains the 
+                        // translation of that site collection and therefore it comes back as different values meaning the same with the same id but causing
+                        // separate filters.
+                        // (Example: 'L0|#a2cf1afb-44b6-4cf4-bf37-642bb2e9bff3|Food' 'L0|#a2cf1afb-44b6-4cf4-bf37-642bb2e9bff3|Nahrung')
+                        let matches = /L0\|#(.+)\|/.exec(value.name);
+                        let termId = Guid.isValid(matches[1]) ? matches[1] : matches[1].substr(1);
+                        let stripedTermFilter = "GP0|#" + termId.toString();
+                        let stripedTerm = term.substring(0,term.lastIndexOf('|')+1); // (we keep the last pipe for compatibility with further code/regexp)
+
+                        const fqlFilterValue = `"ǂǂ${this._bytesToHex(this._stringToUTF8Bytes(stripedTermFilter))}"`;
+                        const existingFilterIdx = updatedValues.map(updatedValue => updatedValue.name).indexOf(stripedTerm);
 
                         if (existingFilterIdx === -1) {
-
                             // Create a dedicated filter value entry
                             updatedValues.push({
                                 count: value.count,
-                                name: term, // Ex: 'L0|#a2cf1afb-44b6-4cf4-bf37-642bb2e9bff3|Category 1'
+                                name: stripedTerm, // New stripped term, ex: 'L0|#a2cf1afb-44b6-4cf4-bf37-642bb2e9bff3' instead of 'L0|#a2cf1afb-44b6-4cf4-bf37-642bb2e9bff3|Category 1'
                                 value: fqlFilterValue
                             } as IDataFilterResultValue);
 
@@ -1170,7 +1180,12 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                     const existingFilters = localizedTerms.filter((e) => { return e.uniqueIdentifier === value.value; });
 
                     if (existingFilters.length > 0) {
-                        value.name = existingFilters[0].localizedTermLabel;
+                        // 20210811: because we heve modified the filter value with the GP0 item the mapping also returns items which are not L0
+                        // therefore we have to check the name for L0 again and only replace those...
+                        const isTerm = /L0\|#(.+)\|/.test(value.name);
+                        if (isTerm) {
+                            value.name = existingFilters[0].localizedTermLabel;
+                        }
                     }
 
                     // Keep only terms (L0). The crawl property ows_taxid_xxx return term sets too.
