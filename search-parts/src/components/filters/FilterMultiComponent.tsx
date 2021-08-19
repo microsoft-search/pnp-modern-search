@@ -59,7 +59,7 @@ export class FilterMulti extends React.Component<IFilterMultiProps, IFilterMulti
         const stickyStyle: React.CSSProperties = this.props.isComboBox ? {
             position: 'fixed',
             bottom: 0,
-            width: '170px',
+            width: 'calc(100% - 25px)',
             backgroundColor: '#fff',
             height: '40px',
             borderTop: '1px solid rgb(237, 235, 233)'
