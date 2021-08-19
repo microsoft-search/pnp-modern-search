@@ -110,6 +110,7 @@ export class PanelComponent extends React.Component<IPanelComponentProps, IPanel
             isLightDismiss: this.props.isLightDismiss,
             onDismiss: this._onClosePanel,
             headerText: this.props.panelHeaderText,
+            allowTouchBodyScroll: true,
             onRenderBody: () => {
 
                 return  <div style={{
