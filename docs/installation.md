@@ -18,7 +18,7 @@
     | _User.Read_ | The Microsoft Graph Toolkit [persona card](https://docs.microsoft.com/en-us/graph/toolkit/components/person-card#microsoft-graph-permissions) in the people layout.  |
     | _People.Read_ | Same as above.
     | _Contacts.Read_ | Same as above.
-    | _User.ReadBasic.All_ | Same as above.
+    | _User.Read.All_ | Same as above.
     | _Files.Read.All_ | Allow search for files using Graph API (Drive / Drive Items).
     | _Mail.Read_ | Allow search for user's e-mail using Graph API (Messages).
     | _Calendars.Read_ | Allow search for user's calendar appointments using Graph API (Events).

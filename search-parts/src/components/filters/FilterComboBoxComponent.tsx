@@ -29,7 +29,7 @@ export interface IFilterComboBoxProps {
     /**
      * The options to display in the combo box
      */
-    options: IComboBoxOption[];
+    defaultOptions: IComboBoxOption[];
 
     /**
      * The current theme settings
@@ -50,6 +50,11 @@ export interface IFilterComboBoxProps {
 export interface IFilterComboBoxState {
 
     /**
+     * The current selected keys in the combo box
+     */
+    selectedOptionKeys: string[];
+
+    /**
      * The current values updated by the user (selected or unselected)
      */
     selectedValues: IDataFilterValueInfo[];
@@ -63,6 +68,11 @@ export interface IFilterComboBoxState {
      * The input search value
      */
     searchValue: string;
+
+    /**
+     * The current combo box options
+     */
+    options: IComboBoxOption[];    
 }
 
 export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilterComboBoxState> {
@@ -84,6 +94,8 @@ export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilte
         super(props);
 
         this.state = {
+            selectedOptionKeys: [],
+            options: cloneDeep(props.defaultOptions),
             selectedValues: [],
             isDirty: false,
             searchValue: undefined
@@ -102,17 +114,18 @@ export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilte
             }
         });
 
-        let options = this.props.options;
+        let options = this.state.options;
 
+        // Filter the current collection by the search value
         if (this.state.searchValue) {
-            const matchExpr = new RegExp(this.state.searchValue, "i");
-            options = options.filter(option => {
 
-                if (option.text && matchExpr.test(option.text)) {
+            options = this.state.options.filter(option => {
+
+                if (option.text && option.text.indexOf(this.state.searchValue) !== -1) {
                     return true;
                 }
-
-                if (option.key && matchExpr.test(option.key as string)) {
+    
+                if (option.key && (option.key as string).indexOf(this.state.searchValue) !== -1) {
                     return true;
                 }
             });
@@ -122,11 +135,12 @@ export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilte
         let renderCombo: JSX.Element = <Fabric className={wrapperClassName}>
             <ComboBox
                 allowFreeform={true}
-                text={this.state.searchValue ? this.state.searchValue : this.props.options.filter(option => option.selected).map(option => option.text).join(',')}
+                text={this.state.searchValue ? this.state.searchValue : this.props.defaultOptions.filter(option => option.selected).map(option => option.text).join(',')}
                 componentRef={this.comboRef}
-                disabled={this.props.options.length === 0}
+                disabled={this.props.defaultOptions.length === 0}
+                selectedKey={this.state.selectedOptionKeys}
                 options={options} // This will be mutated by the combo box when values are selected/unselected
-                placeholder={this.props.options.length === 0 ? strings.Filters.FilterNoValuesMessage : strings.Filters.ComboBoxPlaceHolder}
+                placeholder={this.props.defaultOptions.length === 0 ? strings.Filters.FilterNoValuesMessage : strings.Filters.ComboBoxPlaceHolder}
                 onRenderOption={this._onRenderOption}
                 useComboBoxAsMenuWidth={true}
                 onPendingValueChanged={(option?: IComboBoxOption, index?: number, value?: string) => {
@@ -202,7 +216,7 @@ export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilte
     public componentDidMount() {
 
         // Build the initial array of selected values
-        const selectedValues: IDataFilterValueInfo[] = this.props.options.map(option => {
+        const selectedValues: IDataFilterValueInfo[] = this.props.defaultOptions.map(option => {
 
             // Convert the option to a IDataFilterValue
             if (option.itemType === SelectableOptionMenuItemType.Normal && option.selected) {
@@ -212,24 +226,40 @@ export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilte
                     selected: option.selected
                 };
             }
-        });
-
-        const updatedValues = update(this.state.selectedValues, { $set: selectedValues.filter(v => v) });
+        }).filter(s => s);
 
         this.setState({
-            selectedValues: updatedValues
+            selectedValues: selectedValues,
+            selectedOptionKeys: selectedValues.map(v => v.value)
         });
 
-        this._initialOptions = cloneDeep(this.props.options);
-
         // Save the initial state wo we could compare afterwards
-        this._initialSelectedValues = cloneDeep(updatedValues);
+        this._initialOptions = cloneDeep(this.props.defaultOptions);
+        this._initialSelectedValues = cloneDeep(selectedValues);
     }
 
     private _onChange(event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) {
 
+        let selectedKeys = this.state.selectedOptionKeys;
+
         if (option) {
+
+            // Determine the selection state
             let updatedSelectedValues: IDataFilterValueInfo[] = [];
+            const selectedKeyIdx = this.state.selectedOptionKeys.indexOf(option.key as string);
+
+            if (option.selected && selectedKeyIdx === -1) {
+                selectedKeys = update(this.state.selectedOptionKeys, {$push: [option.key as string] });
+            } else {
+                selectedKeys = update(this.state.selectedOptionKeys, { $splice: [[selectedKeyIdx, 1]] });
+            }
+
+            // Update options selected state as well to match with selected keys 
+            let options: IComboBoxOption[] = [];
+            options = this.state.options.map((comboOption) => {
+                comboOption.selected = selectedKeys.indexOf(comboOption.key as string) !== -1;
+                return comboOption;
+            });
 
             // Get the corresponding value in selected values and change the selected flag
             const selectedValueIdx = this.state.selectedValues.map(selectedValue => { return selectedValue.value; }).indexOf(option.key as string);
@@ -258,6 +288,8 @@ export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilte
             }
 
             this.setState({
+                options: options,
+                selectedOptionKeys: selectedKeys,
                 selectedValues: updatedSelectedValues,
                 isDirty: true,
                 searchValue: undefined
@@ -364,7 +396,7 @@ export class FilterComboBoxWebComponent extends BaseWebComponent {
 
         filterComboBox = <FilterComboBox
             {...props}
-            options={options}
+            defaultOptions={options}
             onChange={((filterValues: IDataFilterValueInfo[], forceUpdate?: boolean) => {
                 // Bubble event through the DOM
                 this.dispatchEvent(new CustomEvent(ExtensibilityConstants.EVENT_FILTER_UPDATED, {

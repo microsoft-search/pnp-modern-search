@@ -12,10 +12,10 @@ For example:
 `python -m pip install mkdocs-material`
 
 - [Install MkDocs](https://www.mkdocs.org/#installation)
-    - `pip install mkdocs`
+    - `pip install mkdocs==1.2.2`
     - `pip install markdown-include`
 - Install the Material theme
-    - `pip install mkdocs-material==4.6.3`
+    - `pip install mkdocs-material==7.2.4`
 - Serve it up
     - `mkdocs serve`
     - Open a browser to http://127.0.0.1:8000/

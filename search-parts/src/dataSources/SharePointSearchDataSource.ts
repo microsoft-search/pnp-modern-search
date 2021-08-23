@@ -1,4 +1,4 @@
-import * as React from 'react';
+﻿import * as React from 'react';
 import { IDataSourceData, BaseDataSource, ITokenService, IDataFilter, ITemplateSlot, IDataFilterResult, IDataFilterResultValue, BuiltinTemplateSlots, FilterComparisonOperator, IDataFilterConfiguration, FilterBehavior, FilterSortType, FilterSortDirection } from "@pnp/modern-search-extensibility";
 import {
     IPropertyPaneGroup,
@@ -975,16 +975,27 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
 
                     values.forEach((term) => {
 
-                        // Use FQL expression here to get the correct output. Otherwise a full match is performed
-                        const fqlFilterValue = `"ǂǂ${this._bytesToHex(this._stringToUTF8Bytes(term))}"`;
-                        const existingFilterIdx = updatedValues.map(updatedValue => updatedValue.name).indexOf(term);
+                        // 20210811: We strip the language specific part of the term and use the GP0 value as the filter value
+                        // and use also the striped value as the new term/key...
+                        // --> 'GP0|#a2cf1afb-44b6-4cf4-bf37-642bb2e9bff3' instead of 'L0|#a2cf1afb-44b6-4cf4-bf37-642bb2e9bff3|Category 1' for the value/filter
+                        // --> 'L0|#a2cf1afb-44b6-4cf4-bf37-642bb2e9bff3|' instead of 'L0|#a2cf1afb-44b6-4cf4-bf37-642bb2e9bff3|Category 1' for the name
+                        // Background: if the same term is used on sites with different default language, the indexed taxid property value contains the 
+                        // translation of that site collection and therefore it comes back as different values meaning the same with the same id but causing
+                        // separate filters.
+                        // (Example: 'L0|#a2cf1afb-44b6-4cf4-bf37-642bb2e9bff3|Food' and 'L0|#a2cf1afb-44b6-4cf4-bf37-642bb2e9bff3|Nahrung')
+                        let matches = /L0\|#(.+)\|/.exec(value.name);
+                        let termId = Guid.isValid(matches[1]) ? matches[1] : matches[1].substr(1);
+                        let strippedTermFilter = "GP0|#" + termId.toString();
+                        let strippedTerm = term.substring(0,term.lastIndexOf('|')+1); // (we keep the last pipe for compatibility with further code/regexp)
+
+                        const fqlFilterValue = `"ǂǂ${this._bytesToHex(this._stringToUTF8Bytes(strippedTermFilter))}"`;
+                        const existingFilterIdx = updatedValues.map(updatedValue => updatedValue.name).indexOf(strippedTerm);
 
                         if (existingFilterIdx === -1) {
-
                             // Create a dedicated filter value entry
                             updatedValues.push({
                                 count: value.count,
-                                name: term, // Ex: 'L0|#a2cf1afb-44b6-4cf4-bf37-642bb2e9bff3|Category 1'
+                                name: strippedTerm, // New stripped term, ex: 'L0|#a2cf1afb-44b6-4cf4-bf37-642bb2e9bff3' instead of 'L0|#a2cf1afb-44b6-4cf4-bf37-642bb2e9bff3|Category 1'
                                 value: fqlFilterValue
                             } as IDataFilterResultValue);
 
@@ -1094,7 +1105,12 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                     const existingFilters = localizedTerms.filter((e) => { return e.uniqueIdentifier === value.value; });
 
                     if (existingFilters.length > 0) {
-                        value.name = existingFilters[0].localizedTermLabel;
+                        // 20210811: because we have modified the filter value to use the GP0 also for the L0 items, the mapping also returns items which are not L0
+                        // therefore we have to check the name for L0 again and only replace those...
+                        const isTerm = /L0\|#(.+)\|/.test(value.name);
+                        if (isTerm) {
+                            value.name = existingFilters[0].localizedTermLabel;
+                        }
                     }
 
                     // Keep only terms (L0). The crawl property ows_taxid_xxx return term sets too.

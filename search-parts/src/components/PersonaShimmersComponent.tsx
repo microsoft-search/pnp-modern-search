@@ -1,8 +1,7 @@
 import * as React from "react";
-import { Shimmer, ShimmerElementType as ElemType, ShimmerElementsGroup } from 'office-ui-fabric-react';
+import { Shimmer, ShimmerElementType as ElemType, ShimmerElementsGroup, ITheme } from 'office-ui-fabric-react';
 import * as ReactDOM from 'react-dom';
 import { IReadonlyTheme } from "@microsoft/sp-component-base";
-import { ITheme } from "@uifabric/styling";
 import { BaseWebComponent } from '@pnp/modern-search-extensibility';
 
 export interface IPersonaCardShimmersComponentProps {
