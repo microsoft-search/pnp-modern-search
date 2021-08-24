@@ -429,7 +429,7 @@ export class TokenService implements ITokenService {
                 }
                 else if (matches[0].includes("?")) {
                     // If QueryString Token is specified like this, {?QueryString.Parameter}, it is changed to an * if the QueryString doesn't exist
-                    modifiedString = modifiedString.replace(matches[0], "*");
+                    modifiedString = modifiedString.replace(matches[0], "");
                 }
 
                 matches = webRegExp.exec(inputString);
