@@ -428,7 +428,7 @@ export class TokenService implements ITokenService {
                     modifiedString = modifiedString.replace(matches[0], itemProp);
                 }
                 else if (matches[0].includes("?")) {
-                    // If QueryString Token is specified like this, {?QueryString.Parameter}, it is changed to an * if the QueryString doesn't exist
+                    // If QueryString Token is specified like this, {?QueryString.Parameter}, it is removed if the QueryString doesn't exist
                     modifiedString = modifiedString.replace(matches[0], "");
                 }
 
