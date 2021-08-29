@@ -414,7 +414,7 @@ export class TokenService implements ITokenService {
      */
     private replaceQueryStringTokens(inputString: string) {
 
-        const webRegExp = /\{(?:QueryString)\.(.*?)\}/gi;
+        const webRegExp = /\{(?:\?){0,1}(?:QueryString)\.(.*?)\}/gi;
         let modifiedString = inputString;
         let matches = webRegExp.exec(inputString);
 
@@ -424,7 +424,14 @@ export class TokenService implements ITokenService {
             while (matches !== null) {
                 const qsProp = matches[1];
                 const itemProp = decodeURIComponent(queryParameters.getValue(qsProp) || "");
-                modifiedString = modifiedString.replace(new RegExp(matches[0], "gi"), itemProp);
+                if (itemProp) {
+                    modifiedString = modifiedString.replace(matches[0], itemProp);
+                }
+                else if (matches[0].includes("?")) {
+                    // If QueryString Token is specified like this, {?QueryString.Parameter}, it is removed if the QueryString doesn't exist
+                    modifiedString = modifiedString.replace(matches[0], "");
+                }
+
                 matches = webRegExp.exec(inputString);
             }
         }
