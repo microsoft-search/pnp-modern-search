@@ -90,7 +90,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
           newUrl = searchUrl.href;
         }
         else {
-          newUrl = UrlHelper.addOrReplaceQueryStringParam(searchUrl.href, this.props.queryStringParameter, urlEncodedQueryText);
+          newUrl = UrlHelper.addOrReplaceQueryStringParam(searchUrl.href, this.props.queryStringParameter, queryText);
         }
 
         // Send the query to the new page
