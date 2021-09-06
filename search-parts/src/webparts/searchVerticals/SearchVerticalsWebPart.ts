@@ -33,6 +33,7 @@ export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearc
     private _themeProvider: ThemeProvider;
     private _themeVariant: IReadonlyTheme;
     private _tokenService: ITokenService;
+    private _ops = null;
 
     public constructor() {
         super();
@@ -98,6 +99,7 @@ export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearc
                     themeVariant: this._themeVariant,
                     defaultVerticalKey: defaultVerticalKey,
                     tokenService: this._tokenService,
+                    key: defaultVerticalKey,
                 } as ISearchVerticalsContainerProps
             );
 
@@ -158,6 +160,8 @@ export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearc
 
         this.initThemeVariant();
 
+        this._handleQueryStringChange();
+
         this.initializeProperties();
 
         this._tokenService = new TokenService(this.context.pageContext, this.context.spHttpClient);
@@ -202,7 +206,7 @@ export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearc
                     groups: [
                         {
                             groupName: strings.SearchVerticalsGroupName,
-                            groupFields: this._getVerticalsConfguration()
+                            groupFields: this._getVerticalsConfiguration()
                         }
                     ],
                     displayGroupsAsAccordion: true
@@ -246,7 +250,7 @@ export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearc
         this.context.dynamicDataSourceManager.notifyPropertyChanged(SearchComponentType.SearchVerticalsWebPart);
     }
 
-    private _getVerticalsConfguration(): IPropertyPaneField<any>[] {
+    private _getVerticalsConfiguration(): IPropertyPaneField<any>[] {
 
         let settingFields: IPropertyPaneField<any>[] = [
             this._propertyFieldCollectionData('verticals', {
@@ -495,6 +499,30 @@ export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearc
         if (!isEqual(this._themeVariant, args.theme)) {
             this._themeVariant = args.theme;
             this.render();
+        }
+    }
+
+    /**
+     * Subscribes to URL query string change events
+     */
+    private _handleQueryStringChange() {
+        ((h) => {
+            this._ops = history.pushState;
+            h.pushState = this.pushStateHandler.bind(this);
+        })(window.history);
+    }
+
+    private pushStateHandler(state, key, path) {
+        this._ops.apply(history, [state, key, path]);
+        if (this.properties.defaultVerticalQuerystringParam) {
+            const queryParms: UrlQueryParameterCollection = new UrlQueryParameterCollection(window.location.href.toLowerCase());
+            const defaultQueryVal: string = queryParms.getValue(this.properties.defaultVerticalQuerystringParam.toLowerCase());
+            if (defaultQueryVal) {
+                const defaultSelected: ISearchVertical = find(this.properties.verticals, v => v.tabName.toLowerCase() == decodeURIComponent(defaultQueryVal));
+                if (defaultSelected) {
+                    this.render();
+                }
+            }
         }
     }
 }
