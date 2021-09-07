@@ -226,8 +226,12 @@ export default class FileTypeTemplate extends React.Component<IBaseRefinerTempla
       if(!this.state.valueFilter) { return false; }
       const isSelected = this.state.refinerSelectedFilterValues.some(selectedValue => selectedValue.RefinementValue === item.RefinementValue);
       if(isSelected) { return false; }
-      return item.RefinementValue.toLowerCase().indexOf(this.state.valueFilter.toLowerCase()) === -1 ;
+      return this._normalize(item.RefinementValue).indexOf(this._normalize(this.state.valueFilter)) === -1 ;
   }
+
+  private _normalize(s: string) : string {
+    return s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+}
 
   /**
    * Event triggered when a new value is provided in the refinement value filter textfield.

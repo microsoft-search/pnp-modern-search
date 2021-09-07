@@ -21,312 +21,316 @@ export interface IPersonaTemplateProps extends IBaseRefinerTemplateProps {
 }
 
 export interface IPersonaTemplateState extends IBaseRefinerTemplateState {
-  isLoading: boolean;
-  userInfos: IUserInfo[];
+    isLoading: boolean;
+    userInfos: IUserInfo[];
 }
 
 // Class
 export default class PersonaTemplate extends React.Component<IPersonaTemplateProps, IPersonaTemplateState> {
 
-  private _operator: RefinementOperator;
+    private _operator: RefinementOperator;
 
-  public constructor(props: IPersonaTemplateProps) {
-    super(props);
+    public constructor(props: IPersonaTemplateProps) {
+        super(props);
 
-    this.state = {
-      refinerSelectedFilterValues: [],
-      isLoading: false,
-      userInfos: []
-    };
+        this.state = {
+            refinerSelectedFilterValues: [],
+            isLoading: false,
+            userInfos: []
+        };
 
-    this._onValueFilterChanged = this._onValueFilterChanged.bind(this);
-    this._isFilterMatch = this._isFilterMatch.bind(this);
-    this._clearValueFilter = this._clearValueFilter.bind(this);
-    this._clearFilters = this._clearFilters.bind(this);
-  }
+        this._onValueFilterChanged = this._onValueFilterChanged.bind(this);
+        this._isFilterMatch = this._isFilterMatch.bind(this);
+        this._clearValueFilter = this._clearValueFilter.bind(this);
+        this._clearFilters = this._clearFilters.bind(this);
+    }
 
-  public render() {
+    public render() {
 
-    let renderTemplate: JSX.Element = null;
+        let renderTemplate: JSX.Element = null;
 
-    if (this.state.isLoading) {
-      renderTemplate = <Spinner size={SpinnerSize.small}/>;
-    } else {
-      renderTemplate =  <div>
-                          {
-                            this.props.refinementResult.Values.filter(x => { return !this._isFilterMatch(x);}).map((refinementValue: IRefinementValue, j) => {
+        if (this.state.isLoading) {
+            renderTemplate = <Spinner size={SpinnerSize.small} />;
+        } else {
+            renderTemplate = <div>
+                {
+                    this.props.refinementResult.Values.filter(x => { return !this._isFilterMatch(x); }).map((refinementValue: IRefinementValue, j) => {
 
-                              let imageProps: IPersonaProps = null;
+                        let imageProps: IPersonaProps = null;
 
-                              // Try to see if the value looks like a login claim
-                              let displayName = refinementValue.RefinementValue.split('|').length > 1 ? refinementValue.RefinementValue.split('|')[1].trim() : refinementValue.RefinementValue;
-                              const claimMatch = refinementValue.RefinementValue.match(/([ic]:0[#.5!+\-%?\\e][.+][wstmrfc]\|.+?(?=\|)\|.*)/);
+                        // Try to see if the value looks like a login claim
+                        let displayName = refinementValue.RefinementValue.split('|').length > 1 ? refinementValue.RefinementValue.split('|')[1].trim() : refinementValue.RefinementValue;
+                        const claimMatch = refinementValue.RefinementValue.match(/([ic]:0[#.5!+\-%?\\e][.+][wstmrfc]\|.+?(?=\|)\|.*)/);
 
-                              if (claimMatch) {
-                                const accountName = claimMatch[0];
-                                const claimParts = accountName.split('|');
-                                const accountNameWithoutClaim = claimParts[claimParts.length-1];
+                        if (claimMatch) {
+                            const accountName = claimMatch[0];
+                            const claimParts = accountName.split('|');
+                            const accountNameWithoutClaim = claimParts[claimParts.length - 1];
 
-                                // Get the user info from the already fetched list
-                                const userInfos = this.state.userInfos.filter(user => {
-                                  if (user && user.AccountName) {
+                            // Get the user info from the already fetched list
+                            const userInfos = this.state.userInfos.filter(user => {
+                                if (user && user.AccountName) {
                                     return user.AccountName.toLowerCase() === accountName.toLowerCase();
-                                  }
-                                  else{
-                                    return false;
-                                  }
-                                });
-
-                                if (userInfos.length > 0) {
-                                  displayName = userInfos[0].Properties.DisplayName;
-                                  imageProps = {
-                                    imageUrl: accountNameWithoutClaim ? `/_layouts/15/userphoto.aspx?size=L&accountname=${accountNameWithoutClaim.toLowerCase()}`: null
-                                  };
                                 }
-                              }
+                                else {
+                                    return false;
+                                }
+                            });
 
-                              if (refinementValue.RefinementCount === 0) {
-                                return null;
-                              }
-                              return (
-                                <Persona
-                                  {...imageProps}
-                                  key={j}
-                                  className='pnp-persona'
-                                  styles={{
+                            if (userInfos.length > 0) {
+                                displayName = userInfos[0].Properties.DisplayName;
+                                imageProps = {
+                                    imageUrl: accountNameWithoutClaim ? `/_layouts/15/userphoto.aspx?size=L&accountname=${accountNameWithoutClaim.toLowerCase()}` : null
+                                };
+                            }
+                        }
+
+                        if (refinementValue.RefinementCount === 0) {
+                            return null;
+                        }
+                        return (
+                            <Persona
+                                {...imageProps}
+                                key={j}
+                                className='pnp-persona'
+                                styles={{
                                     root: {
-                                      marginBottom: 10
+                                        marginBottom: 10
                                     },
                                     primaryText: {
-                                      fontWeight: this._isValueInFilterSelection(refinementValue) ? 'bold' : 'normal'
+                                        fontWeight: this._isValueInFilterSelection(refinementValue) ? 'bold' : 'normal'
                                     }
-                                  }}
-                                  size={PersonaSize.size40}
-                                  primaryText={`${displayName} (${refinementValue.RefinementCount})`}
-                                  theme={this.props.themeVariant as ITheme}
-                                  onClick={() => {
+                                }}
+                                size={PersonaSize.size40}
+                                primaryText={`${displayName} (${refinementValue.RefinementCount})`}
+                                theme={this.props.themeVariant as ITheme}
+                                onClick={() => {
                                     if (!this._isValueInFilterSelection(refinementValue)) {
-                                      refinementValue.RefinementValue = displayName;
-                                      this._onFilterAdded(refinementValue);
+                                        refinementValue.RefinementValue = displayName;
+                                        this._onFilterAdded(refinementValue);
                                     } else {
-                                      this._onFilterRemoved(refinementValue);
+                                        this._onFilterRemoved(refinementValue);
                                     }
-                                  }}
-                                />
-                              );
-                            })
-                          }
-                          {
-                            <div>
-                                <Link theme={this.props.themeVariant as ITheme} onClick={this._clearFilters} disabled={this.state.refinerSelectedFilterValues.length === 0}>{strings.Refiners.ClearFiltersLabel}</Link>
-                            </div>
-                          }
-                        </div>;
+                                }}
+                            />
+                        );
+                    })
+                }
+                {
+                    <div>
+                        <Link theme={this.props.themeVariant as ITheme} onClick={this._clearFilters} disabled={this.state.refinerSelectedFilterValues.length === 0}>{strings.Refiners.ClearFiltersLabel}</Link>
+                    </div>
+                }
+            </div>;
+        }
+
+        return (
+            <div className={styles.pnpRefinersTemplatePersona}>
+                {
+                    this.props.showValueFilter ?
+                        <div className="pnp-value-filter-container">
+                            <TextField value={this.state.valueFilter} placeholder="Filter" onChange={(event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => { this._onValueFilterChanged(newValue); }} onClick={this._onValueFilterClick} />
+                            <Link onClick={this._clearValueFilter} disabled={!this.state.valueFilter || this.state.valueFilter === ""}>Clear</Link>
+                        </div>
+                        : null
+                }
+                {renderTemplate}
+            </div>
+        );
     }
 
-    return (
-      <div className={styles.pnpRefinersTemplatePersona}>
-        {
-            this.props.showValueFilter ?
-                <div className="pnp-value-filter-container">
-                    <TextField value={this.state.valueFilter} placeholder="Filter" onChange={(event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>,newValue?: string) => { this._onValueFilterChanged(newValue); }} onClick={this._onValueFilterClick} />
-                    <Link onClick={this._clearValueFilter} disabled={!this.state.valueFilter || this.state.valueFilter === ""}>Clear</Link>
-                </div>
-                : null
-        }
-        {renderTemplate}
-      </div>
-    );
-  }
+    public async componentDidMount() {
 
-  public async componentDidMount() {
+        // Determine the operator according to multi value setting
+        this._operator = this.props.isMultiValue ? RefinementOperator.OR : RefinementOperator.AND;
 
-    // Determine the operator according to multi value setting
-    this._operator = this.props.isMultiValue ? RefinementOperator.OR : RefinementOperator.AND;
-
-    // This scenario happens due to the behavior of the Office UI Fabric GroupedList component who recreates child components when a greoup is collapsed/expanded, causing a state reset for sub components
-    // In this case we use the refiners global state to recreate the 'local' state for this component
-    this.setState({
-      refinerSelectedFilterValues: this.props.selectedValues
-    });
-
-    await this.getUserInfos(this.props);
-  }
-
-  private async getUserInfos(props: IPersonaTemplateProps) {
-
-    const accountNames = [];
-    const userInfosArray: IUserInfo[] = [];
-
-    this.setState({
-      isLoading: true
-    });
-
-    props.refinementResult.Values.map((refinementValue: IRefinementValue) => {
-
-      // Identify the login adress using Regex
-      let accountName = refinementValue.RefinementValue.match(/([ic]:0[#.5!+\-%?\\e][.+][wstmrfc]\|.+?(?=\|)\|.*)/);
-      if (accountName) {
-        let displayName: string = refinementValue.RefinementValue.split('|').length > 1 ? refinementValue.RefinementValue.split('|')[1].trim() : null;
-        if (!displayName) {
-          // if display name not available, add to array of accounts to query
-          accountNames.push(accountName[0]);
-        }
-        userInfosArray.push({
-          AccountName: accountName[0],
-          Properties: {
-            DisplayName: displayName,
-          }
+        // This scenario happens due to the behavior of the Office UI Fabric GroupedList component who recreates child components when a greoup is collapsed/expanded, causing a state reset for sub components
+        // In this case we use the refiners global state to recreate the 'local' state for this component
+        this.setState({
+            refinerSelectedFilterValues: this.props.selectedValues
         });
-      }
-    });
 
-    if (accountNames.length > 0) {
-      // query user info for users that require it
-      const userInfos = await this.props.userService.getUserInfos(accountNames);
-      // Copy new display names to users array
-      for (let index = 0; index < userInfos.length; index++) {
-        const arrayIndex = userInfosArray.findIndex(user => user.AccountName === userInfos[index].AccountName);
-        userInfosArray[arrayIndex].Properties.DisplayName = userInfos[index].Properties.DisplayName;
-      }
+        await this.getUserInfos(this.props);
     }
 
-    this.setState({
-      userInfos: userInfosArray,
-      isLoading: false
-    });
-  }
+    private async getUserInfos(props: IPersonaTemplateProps) {
 
-  public UNSAFE_componentWillReceiveProps(nextProps: IPersonaTemplateProps) {
+        const accountNames = [];
+        const userInfosArray: IUserInfo[] = [];
 
-    if (nextProps.shouldResetFilters) {
-      this.setState({
-        refinerSelectedFilterValues: []
-      });
+        this.setState({
+            isLoading: true
+        });
+
+        props.refinementResult.Values.map((refinementValue: IRefinementValue) => {
+
+            // Identify the login adress using Regex
+            let accountName = refinementValue.RefinementValue.match(/([ic]:0[#.5!+\-%?\\e][.+][wstmrfc]\|.+?(?=\|)\|.*)/);
+            if (accountName) {
+                let displayName: string = refinementValue.RefinementValue.split('|').length > 1 ? refinementValue.RefinementValue.split('|')[1].trim() : null;
+                if (!displayName) {
+                    // if display name not available, add to array of accounts to query
+                    accountNames.push(accountName[0]);
+                }
+                userInfosArray.push({
+                    AccountName: accountName[0],
+                    Properties: {
+                        DisplayName: displayName,
+                    }
+                });
+            }
+        });
+
+        if (accountNames.length > 0) {
+            // query user info for users that require it
+            const userInfos = await this.props.userService.getUserInfos(accountNames);
+            // Copy new display names to users array
+            for (let index = 0; index < userInfos.length; index++) {
+                const arrayIndex = userInfosArray.findIndex(user => user.AccountName === userInfos[index].AccountName);
+                userInfosArray[arrayIndex].Properties.DisplayName = userInfos[index].Properties.DisplayName;
+            }
+        }
+
+        this.setState({
+            userInfos: userInfosArray,
+            isLoading: false
+        });
     }
 
-    // Remove an arbitrary value from the inner state
-    // Useful when the remove filter action is also present in the parent layout component
-    if (nextProps.removeFilterValue) {
+    public UNSAFE_componentWillReceiveProps(nextProps: IPersonaTemplateProps) {
 
-      const newFilterValues = this.state.refinerSelectedFilterValues.filter((elt) => {
-        return elt.RefinementValue !== nextProps.removeFilterValue.RefinementValue;
-      });
+        if (nextProps.shouldResetFilters) {
+            this.setState({
+                refinerSelectedFilterValues: []
+            });
+        }
 
-      this.setState({
-        refinerSelectedFilterValues: newFilterValues
-      });
+        // Remove an arbitrary value from the inner state
+        // Useful when the remove filter action is also present in the parent layout component
+        if (nextProps.removeFilterValue) {
 
-      this._applyFilters(newFilterValues);
+            const newFilterValues = this.state.refinerSelectedFilterValues.filter((elt) => {
+                return elt.RefinementValue !== nextProps.removeFilterValue.RefinementValue;
+            });
+
+            this.setState({
+                refinerSelectedFilterValues: newFilterValues
+            });
+
+            this._applyFilters(newFilterValues);
+        }
     }
-  }
 
-  /**
-   * Handler when a new filter value is selected
-   * @param addedValue the filter value added
-   */
-  private _onFilterAdded = (addedValue: IRefinementValue) => {
+    /**
+     * Handler when a new filter value is selected
+     * @param addedValue the filter value added
+     */
+    private _onFilterAdded = (addedValue: IRefinementValue) => {
 
-    let newFilterValues = update(this.state.refinerSelectedFilterValues, { $push: [addedValue] });
+        let newFilterValues = update(this.state.refinerSelectedFilterValues, { $push: [addedValue] });
 
-    this.setState({
-      refinerSelectedFilterValues: newFilterValues
-    });
+        this.setState({
+            refinerSelectedFilterValues: newFilterValues
+        });
 
-    if (!this.props.isMultiValue) {
-      this._applyFilters(newFilterValues);
+        if (!this.props.isMultiValue) {
+            this._applyFilters(newFilterValues);
+        }
     }
-  }
 
-  /**
-   * Handler when a filter value is unselected
-   * @param removedValue the filter value removed
-   */
-  private _onFilterRemoved(removedValue: IRefinementValue) {
+    /**
+     * Handler when a filter value is unselected
+     * @param removedValue the filter value removed
+     */
+    private _onFilterRemoved(removedValue: IRefinementValue) {
 
-    const newFilterValues = this.state.refinerSelectedFilterValues.filter((elt) => {
-        return elt.RefinementValue !== removedValue.RefinementValue;
-    });
+        const newFilterValues = this.state.refinerSelectedFilterValues.filter((elt) => {
+            return elt.RefinementValue !== removedValue.RefinementValue;
+        });
 
-    this.setState({
-        refinerSelectedFilterValues: newFilterValues
-    });
+        this.setState({
+            refinerSelectedFilterValues: newFilterValues
+        });
 
-    if (!this.props.isMultiValue) {
-        this._applyFilters(newFilterValues);
+        if (!this.props.isMultiValue) {
+            this._applyFilters(newFilterValues);
+        }
     }
-  }
 
-  /**
-   * Applies all selected filters for the current refiner
-   */
-  private _applyFilters = (updatedValues: IRefinementValue[]) => {
-    this.props.onFilterValuesUpdated(this.props.refinementResult.FilterName, updatedValues, this._operator);
-  }
+    /**
+     * Applies all selected filters for the current refiner
+     */
+    private _applyFilters = (updatedValues: IRefinementValue[]) => {
+        this.props.onFilterValuesUpdated(this.props.refinementResult.FilterName, updatedValues, this._operator);
+    }
 
-  /**
-   * Clears all selected filters for the current refiner
-   */
-  private _clearFilters() {
+    /**
+     * Clears all selected filters for the current refiner
+     */
+    private _clearFilters() {
 
-    this.setState({
-        refinerSelectedFilterValues: []
-    });
+        this.setState({
+            refinerSelectedFilterValues: []
+        });
 
-    this._applyFilters([]);
-  }
+        this._applyFilters([]);
+    }
 
-  /**
-   * Checks if the current filter value is present in the list of the selected values for the current refiner
-   * @param valueToCheck The filter value to check
-   */
-  private _isValueInFilterSelection(valueToCheck: IRefinementValue): boolean {
+    /**
+     * Checks if the current filter value is present in the list of the selected values for the current refiner
+     * @param valueToCheck The filter value to check
+     */
+    private _isValueInFilterSelection(valueToCheck: IRefinementValue): boolean {
 
-      let displayName: string = valueToCheck.RefinementValue.split('|').length > 1 ? valueToCheck.RefinementValue.split('|')[1].trim() : null;
+        let displayName: string = valueToCheck.RefinementValue.split('|').length > 1 ? valueToCheck.RefinementValue.split('|')[1].trim() : null;
 
-      let newFilters = this.state.refinerSelectedFilterValues.filter((filter) => {
-          return filter.RefinementToken === valueToCheck.RefinementToken && (filter.RefinementValue === valueToCheck.RefinementValue || filter.RefinementValue === displayName);
-      });
+        let newFilters = this.state.refinerSelectedFilterValues.filter((filter) => {
+            return filter.RefinementToken === valueToCheck.RefinementToken && (filter.RefinementValue === valueToCheck.RefinementValue || filter.RefinementValue === displayName);
+        });
 
-      return newFilters.length === 0 ? false : true;
-  }
+        return newFilters.length === 0 ? false : true;
+    }
 
-  /**
-   * Checks if an item-object matches the provided refinement value filter value
-   * @param item The item-object to be checked
-   */
-  private _isFilterMatch(item: IRefinementValue): boolean {
-      if(!this.state.valueFilter) { return false; }
-      const isSelected = this.state.refinerSelectedFilterValues.some(selectedValue => selectedValue.RefinementValue === item.RefinementValue);
-      if(isSelected) { return false; }
-      let displayName = item.RefinementValue.split('|').length > 1 ? item.RefinementValue.split('|')[1].trim() : item.RefinementValue;
-      return displayName.toLowerCase().indexOf(this.state.valueFilter.toLowerCase()) === -1 ;
-  }
+    /**
+     * Checks if an item-object matches the provided refinement value filter value
+     * @param item The item-object to be checked
+     */
+    private _isFilterMatch(item: IRefinementValue): boolean {
+        if (!this.state.valueFilter) { return false; }
+        const isSelected = this.state.refinerSelectedFilterValues.some(selectedValue => selectedValue.RefinementValue === item.RefinementValue);
+        if (isSelected) { return false; }
+        let displayName = item.RefinementValue.split('|').length > 1 ? item.RefinementValue.split('|')[1].trim() : item.RefinementValue;
+        return this._normalize(displayName).indexOf(this._normalize(this.state.valueFilter)) === -1;
+    }
 
-  /**
-   * Event triggered when a new value is provided in the refinement value filter textfield.
-   * @param newvalue The new value provided through the textfield
-   */
-  private _onValueFilterChanged(newValue: string) {
-      this.setState({
-          valueFilter: newValue
-      });
-  }
+    private _normalize(s: string) : string {
+        return s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    }
 
-  /**
-   * Clears the filter applied to the refinement values
-   */
-  private _clearValueFilter() {
-      this.setState({
-          valueFilter: ""
-      });
-  }
+    /**
+     * Event triggered when a new value is provided in the refinement value filter textfield.
+     * @param newvalue The new value provided through the textfield
+     */
+    private _onValueFilterChanged(newValue: string) {
+        this.setState({
+            valueFilter: newValue
+        });
+    }
 
-  /**
-   * Prevents the parent group to be colapsed
-   * @param event The event that triggered the click
-   */
-  private _onValueFilterClick(event: React.MouseEvent<HTMLInputElement | HTMLTextAreaElement, MouseEvent>) {
-      event.stopPropagation();
-  }
+    /**
+     * Clears the filter applied to the refinement values
+     */
+    private _clearValueFilter() {
+        this.setState({
+            valueFilter: ""
+        });
+    }
+
+    /**
+     * Prevents the parent group to be colapsed
+     * @param event The event that triggered the click
+     */
+    private _onValueFilterClick(event: React.MouseEvent<HTMLInputElement | HTMLTextAreaElement, MouseEvent>) {
+        event.stopPropagation();
+    }
 }
