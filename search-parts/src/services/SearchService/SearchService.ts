@@ -779,8 +779,13 @@ class SearchService implements ISearchService {
             if (
                 (!isEmpty(result.IsContainer) && result.IsContainer == "true")
                 && ((!isEmpty(result.contentclass) && result.contentclass.indexOf('STS_ListItem_') !== -1))) {
-                // we have a folder
-                result.IconExt = "IsContainer";
+
+                if (result.HtmlFileType === "OneNote.Notebook") {
+                    result.IconExt = "onetoc";
+                } else {
+                    // we have a folder
+                    result.IconExt = "IsContainer";
+                }
             }
             else if (filename.indexOf('.') !== -1) {
                 // we have a file
@@ -895,14 +900,14 @@ class SearchService implements ISearchService {
             // Remove complex query parts AND/OR/NOT/ANY/ALL/parenthasis/property queries/exclusions - can probably be improved
             const cleanQuery = query.replace(/((^|\s)-[\w-]+[\s$])|(-"\w+.*?")|(-?\w+[:=<>]+\w+)|(-?\w+[:=<>]+".*?")|((\w+)?\(.*?\))|(AND)|(OR)|(NOT)/g, ` `).toLocaleLowerCase();
             const replaceTable = {};
-            
+
             //Check if synonyms are in the include parts of the query
             for (let i = 0; i < synonymKeys.length; i++) {
                 const synonym = synonymKeys[i];
                 if (cleanQuery.indexOf(synonym) !== -1) {
                     let tokenGuid = Guid.newGuid().toString();
                     replaceTable[tokenGuid] = synonym;
-                    query = query.replace(new RegExp("\\b" + synonym + "\\b", "gi"), tokenGuid);                    
+                    query = query.replace(new RegExp("\\b" + synonym + "\\b", "gi"), tokenGuid);
                 }
             }
 

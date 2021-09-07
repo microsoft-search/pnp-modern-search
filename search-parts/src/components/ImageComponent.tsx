@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { BaseWebComponent } from './BaseWebComponent';
 import * as ReactDOM from 'react-dom';
+import { isEmpty } from '@microsoft/sp-lodash-subset';
 
 
 export interface IImageState {
@@ -25,6 +26,7 @@ export class ImageComponent extends React.Component<IImageProps, IImageState> {
 
     public render() {
         const { errorImage, ...imgProps } = this.props;
+        if(isEmpty(imgProps.src)) return null;
         return <img {...imgProps} onError={this.addDefaultSrc} />;
     }
 
