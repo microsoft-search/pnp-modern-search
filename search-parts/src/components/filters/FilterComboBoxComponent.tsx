@@ -72,7 +72,7 @@ export interface IFilterComboBoxState {
     /**
      * The current combo box options
      */
-    options: IComboBoxOption[];    
+    options: IComboBoxOption[];
 }
 
 export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilterComboBoxState> {
@@ -119,14 +119,14 @@ export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilte
 
         // Filter the current collection by the search value
         if (this.state.searchValue) {
-            
+
             options = this.state.options.filter(option => {
 
-                if (option.text && option.text.indexOf(this.state.searchValue) !== -1) {
+                if (option.text && this._normalize(option.text).indexOf(this._normalize(this.state.searchValue)) !== -1) {
                     return true;
                 }
-    
-                if (option.key && (option.key as string).indexOf(this.state.searchValue) !== -1) {
+
+                if (option.key && this._normalize(option.key as string).indexOf(this._normalize(this.state.searchValue)) !== -1) {
                     return true;
                 }
             });
@@ -246,7 +246,7 @@ export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilte
             const selectedKeyIdx = this.state.selectedOptionKeys.indexOf(option.key as string);
 
             if (option.selected && selectedKeyIdx === -1) {
-                selectedKeys = update(this.state.selectedOptionKeys, {$push: [option.key as string] });
+                selectedKeys = update(this.state.selectedOptionKeys, { $push: [option.key as string] });
             } else {
                 selectedKeys = update(this.state.selectedOptionKeys, { $splice: [[selectedKeyIdx, 1]] });
             }
@@ -334,6 +334,10 @@ export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilte
         } else {
             return defaultRender(option);
         }
+    }
+
+    private _normalize(s: string): string {
+        return s.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
     }
 }
 
