@@ -331,7 +331,7 @@ export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilte
                         themeVariant={this.props.themeVariant}
                         applyDisabled={isEqual(sortBy(this.state.selectedValues, 'value'), sortBy(this._initialSelectedValues, 'value'))}
                         clearDisabled={this._initialOptions.filter(initialOption => initialOption.selected).length === 0}
-                        isComboBox={true}
+                        stickyFilter={true}
                     />
                 </div>
             );
