@@ -108,7 +108,6 @@ export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilte
     }
 
     public render() {
-
         const wrapperClassName = mergeStyles({
             selectors: {
                 '& .ms-ComboBox': { maxWidth: '200px' }
@@ -169,7 +168,11 @@ export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilte
                     },
                     header: {
                         height: '100%'
-                    }
+                    },
+                    optionsContainer: {
+                        paddingBottom: this.props.isMulti ? '40px' : ''
+                    },
+
                 }}
                 multiSelect={this.props.isMulti}
                 onChange={this._onChange}
@@ -328,6 +331,7 @@ export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilte
                         themeVariant={this.props.themeVariant}
                         applyDisabled={isEqual(sortBy(this.state.selectedValues, 'value'), sortBy(this._initialSelectedValues, 'value'))}
                         clearDisabled={this._initialOptions.filter(initialOption => initialOption.selected).length === 0}
+                        isComboBox={true}
                     />
                 </div>
             );
