@@ -393,7 +393,12 @@ export class SharePointSearchService implements ISharePointSearchService {
             let result: ISharePointSearchResult = {};
 
             elt.Cells.map((item) => {
-                result[item.Key] = item.Value;
+                if (item.Key === "HtmlFileType" && item.Value) {
+                    result["FileType"] = item.Value;
+                }
+                else if (!result[item.Key]) {
+                    result[item.Key] = item.Value;
+                }
             });
 
             return result;

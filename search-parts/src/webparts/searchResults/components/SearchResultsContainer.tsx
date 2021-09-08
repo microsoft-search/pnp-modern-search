@@ -275,14 +275,18 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 const hasContentClass = !isEmpty(contentClass);
                 const isLibItem = hasContentClass && contentClass.indexOf("Library") !== -1;
 
-                let pathProperty = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.Path]);
-                if (!pathProperty || (hasContentClass && !isLibItem)) {
-                    pathProperty = ObjectHelper.byPath(item, BuiltinTemplateSlots.Path); // Fallback to using Path for if DefaultEncodingURL is missing
-                }
-                if (pathProperty && pathProperty.indexOf("?") === -1) {
-                    item.AutoPreviewUrl = pathProperty + "?web=1";
-                } else {
-                    item.AutoPreviewUrl = pathProperty;
+                let contentTypeId = ObjectHelper.byPath(item, "ContentTypeId");
+                const isContainer = contentTypeId ? contentTypeId.indexOf('0x0120') !== -1 : false;
+                if (!isContainer) {
+                    let pathProperty = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.Path]);
+                    if (!pathProperty || (hasContentClass && !isLibItem)) {
+                        pathProperty = ObjectHelper.byPath(item, BuiltinTemplateSlots.Path); // Fallback to using Path for if DefaultEncodingURL is missing
+                    }
+                    if (pathProperty && pathProperty.indexOf("?") === -1) {
+                        item.AutoPreviewUrl = pathProperty + "?web=1";
+                    } else {
+                        item.AutoPreviewUrl = pathProperty;
+                    }
                 }
                 return item;
             });
@@ -305,7 +309,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                     listId = this.getGuidFromString(listId);
                     itemId = this.getGuidFromString(itemId);
 
-                    if(webId) {
+                    if (webId) {
                         siteId = siteId + "," + this.getGuidFromString(webId); // add web id if present, needed for sub-sites
                     }
 
