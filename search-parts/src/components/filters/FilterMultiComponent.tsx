@@ -4,8 +4,8 @@ import * as ReactDOM from "react-dom";
 import { Link } from "office-ui-fabric-react";
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import { ITheme } from "office-ui-fabric-react";
-import { Constants } from '../../common/Constants';
 import * as strings from 'CommonStrings';
+import styles from './FilterMultiComponent.module.scss';
 
 type FilterMultiEventCallback = () => void;
 
@@ -41,7 +41,7 @@ export interface IFilterMultiProps {
     /**
      * Enable sticky FilterMulti
      */
-    isComboBox?: boolean;
+    stickyFilter?: boolean;
 }
 
 export interface IFilterMultiState {
@@ -56,16 +56,7 @@ export class FilterMulti extends React.Component<IFilterMultiProps, IFilterMulti
     }
 
     public render() {
-        const stickyStyle: React.CSSProperties = this.props.isComboBox ? {
-            position: 'fixed',
-            bottom: 0,
-            width: 'calc(100% - 25px)',
-            backgroundColor: '#fff',
-            height: '40px',
-            borderTop: '1px solid rgb(237, 235, 233)'
-        } : {};
-        return <div className={this.props.className}
-            style={stickyStyle}
+        return <div className={`${this.props.className ? this.props.className : ""} ${this.props.stickyFilter ? styles.sticky : ""}`}
         >
             <Link
                 styles={{
