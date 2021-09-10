@@ -163,6 +163,23 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
                         }
                     },
                     {
+                        id: 'valueSorting',
+                        title:strings.Layouts.DetailsList.ValueSortingColumnLabel,
+                        type: this._customCollectionFieldType.custom,
+                        onCustomRender: (field, value, onUpdate, item, itemId, onCustomFieldValidation) => {
+                            return item.useHandlebarsExpr && item.enableSorting && React.createElement("div", { key: `${field.id}-${itemId}` }, 
+                                React.createElement(TemplateValueFieldEditor, {
+                                    currentItem: item,
+                                    field: field,
+                                    useHandlebarsExpr: false,
+                                    onUpdate: onUpdate,
+                                    value: value,
+                                    availableProperties: availableOptions,
+                                } as ITemplateValueFieldEditorProps)
+                            );
+                        }
+                    },
+                    {
                         id: 'useHandlebarsExpr',
                         type: this._customCollectionFieldType.boolean,
                         defaultValue: false,
