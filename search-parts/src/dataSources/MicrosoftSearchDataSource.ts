@@ -341,23 +341,23 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             },
             {
                 slotName: BuiltinTemplateSlots.SiteId,
-                slotField: 'NormSiteID'
+                slotField: 'resource.fields.normSiteID'
             },
             {
                 slotName: BuiltinTemplateSlots.WebId,
-                slotField: 'NormWebID'
+                slotField: 'resource.fields.normWebID'
             },
             {
                 slotName: BuiltinTemplateSlots.ListId,
-                slotField: 'NormListID'
+                slotField: 'resource.fields.normListID'
             },
             {
                 slotName: BuiltinTemplateSlots.ItemId,
-                slotField: 'NormUniqueID'
+                slotField: 'resource.fields.normUniqueID'
             },
             {
                 slotName: BuiltinTemplateSlots.IsFolder,
-                slotField: 'ContentTypeId'
+                slotField: 'resource.fields.contentTypeId'
             }
         ];
     }
@@ -365,8 +365,8 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
     private initProperties(): void {
         this.properties.entityTypes = this.properties.entityTypes !== undefined ? this.properties.entityTypes : [EntityType.DriveItem];
 
-        const SharePointFields = ["Title", "Path", "DefaultEncodingUrl", "ContentTypeId"];
-        const CommonFields = ["name", "webUrl", "filetype", "createdBy", "createdDateTime", "lastModifiedDateTime", "parentReference", "size", "description", "file", "folder"];
+        const SharePointFields = ["title", "path", "defaultEncodingUrl", "contentTypeId", "htmlFileType","normSiteID","normWebID","normListID","normUniqueID","owstaxidmetadataalltagsinfo"];
+        const CommonFields = ["name", "webUrl", "fileType", "createdBy", "createdDateTime", "lastModifiedDateTime", "parentReference", "size", "description", "file", "folder"];
 
         this.properties.fields = this.properties.fields !== undefined ? this.properties.fields : SharePointFields.concat(CommonFields);
         this.properties.sortProperties = this.properties.sortProperties !== undefined ? this.properties.sortProperties : [];
