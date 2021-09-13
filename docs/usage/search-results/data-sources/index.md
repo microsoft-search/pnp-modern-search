@@ -16,6 +16,10 @@ By default, the following data sources are provided:
 
 {!usage/search-results/data-sources/microsoft-search.md!}
 
+### Synonyms (based on SharePoint list)
+
+{!usage/search-results/common/synonyms.md!}
+
 ## Paging
 
 {!usage/search-results/common/paging.md!}
