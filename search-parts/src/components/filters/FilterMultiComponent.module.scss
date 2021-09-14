@@ -1,0 +1,8 @@
+.sticky {
+    position: fixed;
+    bottom: 0;
+    width: calc(100% - 25px);
+    background-color: "[theme: white, default: #fff]";
+    height: 40px;
+    border-top: 1px solid "[theme: Gray30, default: #edebe9]";
+}

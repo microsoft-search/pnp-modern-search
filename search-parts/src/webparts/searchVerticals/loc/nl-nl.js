@@ -17,7 +17,8 @@ define([], function() {
                     LinkUrl: "Link URL",
                     OpenBehavior: "Gedrag bij openen"
                 }
-            }
+            },
+            ImportExport: "Importeer / Exporteer instellingen "
         }
     }
 });
