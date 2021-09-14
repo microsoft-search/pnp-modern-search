@@ -9,7 +9,5 @@
     "**/lib-amd": true,
     "src/**/*.scss.ts": true
   },
-  "typescript.tsdk": "node_modules/typescript/lib",
-  "todo-tree.tree.showBadges": true,
-  "todo-tree.tree.scanMode": "workspace"
+  "typescript.tsdk": "node_modules/typescript/lib"
 }
