@@ -9,8 +9,13 @@ import "@pnp/sp/items";
 
 // misc includes
 import { Exception } from 'handlebars';
+import { ServiceKey, ServiceScope, Log } from "@microsoft/sp-core-library";
+
+const SynonymsService_ServiceKey = 'PnPModernSearch:SynonymsService';
 
 export class SynonymsService implements ISynonymsService {
+
+    public static ServiceKey: ServiceKey<ISynonymsService> = ServiceKey.create(SynonymsService_ServiceKey, SynonymsService);
 
     public async enrichQueryWithSynonyms(queryText: string, synonymsList: ISynonymsListEntry[]): Promise<string> {
         // storing the original query to use for query expansion bulding...
@@ -21,7 +26,7 @@ export class SynonymsService implements ISynonymsService {
         let modifiedQuery: string = queryText;
 
         // only modify the query if it is not undefined, otherwise we would have the string 'undefined' in the query
-        if (modifiedQuery != undefined) {
+        if (modifiedQuery !== undefined) {
 
             // evaluating the raw query by stripping query operators and converting to lowercase...
             let rawQuery = originalQuery.replace(/((^|\s)-[\w-]+[\s$])|(-"\w+.*?")|(-?\w+[:=<>]+\w+)|(-?\w+[:=<>]+".*?")|((\w+)?\(.*?\))|(AND)|(OR)|(NOT)/g, " ").replace(/[ ]{2,}/, " ").toLocaleLowerCase().trim();
@@ -49,7 +54,6 @@ export class SynonymsService implements ISynonymsService {
             let termsWithSynonymsCounter = 0;
             for (let combination of termCombinations) {
                 // do the lookup in the synonym table...
-                //let synonymsList = await this.sharePointListService.getAllItemsFromList("Synonyms")
                 let foundSynonymListEntries = synonymsList.filter(entry => entry.synonyms.split(';').filter(synonym => synonym.toLowerCase() == combination.queryTerm).length > 0);
                 if (foundSynonymListEntries.length > 0) {
                     let synonymsForTerm = "";
@@ -118,10 +122,9 @@ export class SynonymsService implements ISynonymsService {
             // no query to modify...
         }
 
-        // TODO: maybe remove/comment out in a later stage        
-        // writing some output for debugging purposes
-        console.log("original query: '" + originalQuery + "'");
-        console.log("modified query: '" + modifiedQuery + "'");
+        // writing some log for debugging purposes
+        Log.verbose(SynonymsService_ServiceKey, "Original query: '" + originalQuery + "'");
+        Log.verbose(SynonymsService_ServiceKey, "Modified query: '" + modifiedQuery + "'");
 
         // and returning the (un)modified query text...
         return modifiedQuery;
@@ -152,8 +155,8 @@ export class SynonymsService implements ISynonymsService {
                 synonyms.push(<ISynonymsListEntry>{ synonyms: items[index][fieldNameKeyword] + ";" + items[index][fieldNameSynonyms], mutual: items[index][fieldNameMutual]});
             }
         }
-        catch (Error) {
-            console.log("getAllItemsFromList: " + Error.message);
+        catch (error) {
+            Log.error(SynonymsService_ServiceKey, error);
         }
 
         return synonyms;

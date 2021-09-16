@@ -12,13 +12,17 @@ import { DateHelper } from '../helpers/DateHelper';
 import { DataFilterHelper } from "../helpers/DataFilterHelper";
 import { IMicrosoftSearchResponse } from "../models/search/IMicrosoftSearchResponse";
 import { ISortFieldConfiguration, SortFieldDirection } from '../models/search/ISortFieldConfiguration';
+import { Log } from "@microsoft/sp-core-library";
 
 // for synonyms functionality
 import { SynonymsService } from '../services/synonymsService/SynonymsService';
 import { ISynonymsService } from '../services/synonymsService/ISynonymsService';
 import { ISynonymsListEntry } from '../models/search/ISynonymsListEntry';
+import { ISynonymsProps } from '../models/common/ISynonymsProps';
 
 const MICROSOFT_SEARCH_URL = "https://graph.microsoft.com/beta/search/query";
+
+const SourceNameForLog = 'PnPModernSearch:MicrosoftSearchDataSource';
 
 export enum EntityType {
     Message = 'message',
@@ -31,7 +35,7 @@ export enum EntityType {
     Site = 'site'
 }
 
-export interface IMicrosoftSearchDataSourceProperties {
+export interface IMicrosoftSearchDataSourceProperties extends ISynonymsProps {
 
     /**
      * The entity types to search. See for the complete list
@@ -58,37 +62,6 @@ export interface IMicrosoftSearchDataSourceProperties {
      * The content sources for external items
      */
     contentSourceConnectionIds: string[];
-
-    // Synonyms Functionality
-    /**
-     * Flag indicating if synonym expansion should be applied/enabled
-     */
-     synonymsEnabled : boolean;
-
-    /**
-     * SharePoint web url to the site where the synonyms list is located
-     */
-     synonymsWebUrl : string;
-
-    /**
-     * Name of the synonyms list
-     */
-     synonymsListName : string;
-     
-    /**
-     * Name of the keyword column (normally the 'title' field)
-     */
-     synonymsFieldNameKeyword : string;
-
-    /**
-     * Name of the synonyms column (text type field)
-     */
-     synonymsFieldNameSynonyms : string;
-
-    /**
-     * Name of the mutual flag column (boolean type)
-     */
-     synonymsFieldNameMutual : string;
 
 }
 
@@ -153,11 +126,10 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
     public constructor(serviceScope: ServiceScope) {
         super(serviceScope);
 
-        // for synonyms functionality
-        this._synonymsService = new SynonymsService();
-
         serviceScope.whenFinished(() => {
             this._tokenService = serviceScope.consume<ITokenService>(TokenService.ServiceKey);
+            // for synonyms functionality
+            this._synonymsService = serviceScope.consume<ISynonymsService>(SynonymsService.ServiceKey);
         });
     }
 
@@ -187,7 +159,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
 
         // initialize/Loading the synonyms list at page load...
         if(this.properties.synonymsEnabled) {
-            console.log("initializing/loading the synonyms table...");
+            Log.verbose(SourceNameForLog, "initializing/loading the synonyms table at page load time...");
             this._synonymsList = await this._synonymsService.getItemsFromSharePointSynonymsList(this.properties.synonymsWebUrl, this.properties.synonymsListName, this.properties.synonymsFieldNameKeyword, this.properties.synonymsFieldNameSynonyms,this.properties.synonymsFieldNameMutual);
         }
 
@@ -215,9 +187,9 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
 
         // enrich the query with synonyms if enabled....
         if (this.properties.synonymsEnabled) {
-            if (this._synonymsList == undefined) {
+            if (this._synonymsList === undefined) {
                 // if the synonyms list has not been loaded during startup/initalization (typically ind debug/dev mode) load it again here
-                console.log("initializing/loading the synonyms table at query time...");
+                Log.verbose(SourceNameForLog, "initializing/loading the synonyms table at query time...");
                 this._synonymsList = await this._synonymsService.getItemsFromSharePointSynonymsList(this.properties.synonymsWebUrl, this.properties.synonymsListName, this.properties.synonymsFieldNameKeyword, this.properties.synonymsFieldNameSynonyms,this.properties.synonymsFieldNameMutual);
             }
             searchRequest.query.queryString = await this._synonymsService.enrichQueryWithSynonyms(searchRequest.query.queryString, this._synonymsList);
@@ -445,7 +417,6 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         this.properties.synonymsFieldNameKeyword = this.properties.synonymsFieldNameKeyword ? this.properties.synonymsFieldNameKeyword : "";
         this.properties.synonymsFieldNameSynonyms = this.properties.synonymsFieldNameSynonyms ? this.properties.synonymsFieldNameSynonyms : "";
         this.properties.synonymsFieldNameMutual = this.properties.synonymsFieldNameMutual ? this.properties.synonymsFieldNameMutual : "";
-
     }
 
     private async buildMicrosoftSearchRequest(dataContext: IDataContext): Promise<IMicrosoftSearchRequest> {
