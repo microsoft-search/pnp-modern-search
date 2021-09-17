@@ -60,6 +60,10 @@ export class FilePreview extends React.Component<IFilePreviewProps, IFileIconSta
             />;
         }   
 
+        if(!this.props.previewImageUrl) {
+            return null;
+        }
+
         return  <div>
                     <div 
                         ref={this.elementPreviewRef} 

@@ -303,7 +303,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                         defaultSelectedKeys: this.properties.selectedProperties,
                         onPropertyChange: this.onCustomPropertyUpdate.bind(this),
                         onUpdateOptions: ((options: IComboBoxOption[]) => {
-                            this._availableManagedProperties = options;
+                            this._availableManagedProperties = this.parseAndCleanOptions(options);
                         }).bind(this)
                     }),
                     this._propertyFieldCollectionData('dataSourceProperties.sortList', {
@@ -417,7 +417,8 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
     public onCustomPropertyUpdate(propertyPath: string, newValue: any): void {
 
         if (propertyPath.localeCompare('dataSourceProperties.selectedProperties') === 0) {
-            this.properties.selectedProperties = (cloneDeep(newValue) as IComboBoxOption[]).map(v => { return v.key as string; });
+            let options = this.parseAndCleanOptions((cloneDeep(newValue) as IComboBoxOption[]));
+            this.properties.selectedProperties = options.map(v => { return v.key as string; });
             this.context.propertyPane.refresh();
             this.render();
         }
@@ -556,7 +557,8 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                 'WorkPhone',
                 'SPSiteUrl',
                 'SiteTitle',
-                'CreatedBy'
+                'CreatedBy',
+                'HtmlFileType'
             ];
         this.properties.resultSourceId = this.properties.resultSourceId !== undefined ? this.properties.resultSourceId : BuiltinSourceIds.LocalSharePointResults;
         this.properties.sortList = this.properties.sortList !== undefined ? this.properties.sortList : [];
@@ -857,7 +859,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
 
         searchQuery.TrimDuplicates = false;
         searchQuery.SortList = this._convertToSortList(this.properties.sortList);
-        searchQuery.SelectProperties = this.properties.selectedProperties;
+        searchQuery.SelectProperties = this.properties.selectedProperties.filter(a => a); // Fix to remove null values;
 
         // Toggle to include user's personal OneDrive results as a secondary result block
         // https://docs.microsoft.com/en-us/sharepoint/support/search/private-onedrive-results-not-included
@@ -1367,4 +1369,11 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         return synonymGroupFields;
     }
 
+    private parseAndCleanOptions(options: IComboBoxOption[]): IComboBoxOption[] {
+        let optionWithComma = options.find(o => (o.key as string).indexOf(",") > 0);
+        if (optionWithComma) {
+            return (optionWithComma.key as string).split(",").map(k => { return { key: k.trim(), text: k.trim(), selected: true }; });
+        }
+        return options;
+    }
 }

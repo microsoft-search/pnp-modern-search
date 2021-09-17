@@ -1,4 +1,6 @@
 site_name: PnP Modern Search (v4)
+site_url: 'http://127.0.0.1:8000/'
+use_directory_urls: true
 nav:
   - Getting Started:
     - Introduction: index.md
@@ -31,14 +33,14 @@ nav:
     - Documentation: v3/index.md
 theme:
   name: 'material'
-  palette:
-    primary: 'blue'
-    accent: orange
-  feature:
-    tabs: true
-  logo: 'assets/pnp_logo.png'
+  features:
+    - navigation.tabs
+    - instant
   font:
     code: 'Ubuntu Mono'
+  logo: 'assets/pnp_logo.png'
+  icon:
+    logo: material/cloud
 extra_css:
   - 'assets/extra.css'
 markdown_extensions:
@@ -52,9 +54,9 @@ markdown_extensions:
           base_path: docs
 extra:
   social:
-    - type: 'twitter'
+    - icon: fontawesome/brands/twitter
       link: 'https://twitter.com/m365pnp'
-    - type: 'link'
+    - icon: fontawesome/brands/twitter
       link: 'https://microsoft-search.github.io/pnp-modern-search/'
 repo_url: https://github.com/microsoft-search/pnp-modern-search/
 edit_uri: blob/develop/docs

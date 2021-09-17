@@ -240,7 +240,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                 defaultSelectedKeys: this.properties.fields,
                 onPropertyChange: this.onCustomPropertyUpdate.bind(this),
                 onUpdateOptions: ((options: IComboBoxOption[]) => {
-                    this._availableFields = options;
+                    this._availableFields = this.parseAndCleanOptions(options);
                 }).bind(this)
             })           
         ];
@@ -324,7 +324,6 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
     }
 
     public onCustomPropertyUpdate(propertyPath: string, newValue: any): void {
-
         if (propertyPath.localeCompare('dataSourceProperties.entityTypes') === 0) {
             this.properties.entityTypes = (cloneDeep(newValue) as IComboBoxOption[]).map(v => { return v.key as EntityType; });
             this.context.propertyPane.refresh();
@@ -332,7 +331,8 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         }
 
         if (propertyPath.localeCompare('dataSourceProperties.fields') === 0) {
-            this.properties.fields = (cloneDeep(newValue) as IComboBoxOption[]).map(v => { return v.key as string; });
+            let options = this.parseAndCleanOptions((cloneDeep(newValue) as IComboBoxOption[]));
+            this.properties.fields = options.map(v => { return v.key as string; });
             this.context.propertyPane.refresh();
             this.render();
         }
@@ -380,23 +380,23 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             },
             {
                 slotName: BuiltinTemplateSlots.SiteId,
-                slotField: 'NormSiteID'
+                slotField: 'resource.fields.normSiteID'
             },
             {
                 slotName: BuiltinTemplateSlots.WebId,
-                slotField: 'NormWebID'
+                slotField: 'resource.fields.normWebID'
             },
             {
                 slotName: BuiltinTemplateSlots.ListId,
-                slotField: 'NormListID'
+                slotField: 'resource.fields.normListID'
             },
             {
                 slotName: BuiltinTemplateSlots.ItemId,
-                slotField: 'NormUniqueID'
+                slotField: 'resource.fields.normUniqueID'
             },
             {
                 slotName: BuiltinTemplateSlots.IsFolder,
-                slotField: 'ContentTypeId'
+                slotField: 'resource.fields.contentTypeId'
             }
         ];
     }
@@ -404,8 +404,8 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
     private initProperties(): void {
         this.properties.entityTypes = this.properties.entityTypes !== undefined ? this.properties.entityTypes : [EntityType.DriveItem];
 
-        const SharePointFields = ["Title", "Path", "DefaultEncodingUrl", , "ContentTypeId"];
-        const CommonFields = ["name", "webUrl", "filetype", "createdBy", "createdDateTime", "lastModifiedDateTime", "parentReference", "size", "description", "file", "folder"];
+        const SharePointFields = ["title", "path", "defaultEncodingUrl", "contentTypeId", "htmlFileType","normSiteID","normWebID","normListID","normUniqueID","owstaxidmetadataalltagsinfo"];
+        const CommonFields = ["name", "webUrl", "fileType", "createdBy", "createdDateTime", "lastModifiedDateTime", "parentReference", "size", "description", "file", "folder"];
 
         this.properties.fields = this.properties.fields !== undefined ? this.properties.fields : SharePointFields.concat(CommonFields);
         this.properties.sortProperties = this.properties.sortProperties !== undefined ? this.properties.sortProperties : [];
@@ -448,7 +448,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                     minimumCount: 0,
                     sortBy: filterConfig.sortBy === FilterSortType.ByCount ? SearchAggregationSortBy.Count : SearchAggregationSortBy.KeyAsString
                 },
-                size: filterConfig?.maxBuckets ? filterConfig.maxBuckets : 10
+                size: filterConfig && filterConfig.maxBuckets ? filterConfig.maxBuckets : 10
             };
 
             if (filterConfig.selectedTemplate === "DateIntervalFilterTemplate") {
@@ -533,7 +533,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         };
 
         if (this.properties.fields.length > 0) {
-            searchRequest.fields = this.properties.fields;
+            searchRequest.fields = this.properties.fields.filter(a => a); // Fix to remove null values
         }
 
         if (aggregations.length > 0) {
@@ -735,4 +735,11 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         return synonymGroupFields;
     }
 
+    private parseAndCleanOptions(options: IComboBoxOption[]): IComboBoxOption[] {
+        let optionWithComma = options.find(o => (o.key as string).indexOf(",") > 0);
+        if (optionWithComma) {
+            return (optionWithComma.key as string).split(",").map(k => { return { key: k.trim(), text: k.trim(), selected: true }; });
+        }
+        return options;
+    }
 }

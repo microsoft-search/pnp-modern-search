@@ -36,4 +36,6 @@ obj
 
 # Pnpm lock file
 pnpm-lock.yaml
-/package-lock.json
+
+#npm lock file
+package-lock.json

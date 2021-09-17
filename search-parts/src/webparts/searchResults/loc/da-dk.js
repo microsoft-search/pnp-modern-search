@@ -80,7 +80,7 @@ define([], function() {
         LinkToVerticalLabel: "Vis kun data, når følgende vertikaler er valgt",
         LinkToVerticalLabelHoverMessage: "Resultaterne vil kun blive vist, hvis de valgte vertikaler matcher med den, der er konfigureret til denne webpart. Ellers vil denne webpart være blank.",
         UseInputQueryText: "Anvend input til forespørgselstekst",
-        UseInputQueryTextHoverMessage: "Anvend {searchQueryText} token i din datakilde for at hente denne værdi",
+        UseInputQueryTextHoverMessage: "Anvend {inputQueryText} token i din datakilde for at hente denne værdi",
         SearchQueryTextFieldLabel: "Forespørgselstekst",
         SearchQueryTextFieldDescription: "",
         SearchQueryPlaceHolderText: "Indsæt forespørgselstekst...",

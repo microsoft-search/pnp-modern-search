@@ -4,8 +4,8 @@ import * as ReactDOM from "react-dom";
 import { Link } from "office-ui-fabric-react";
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import { ITheme } from "office-ui-fabric-react";
-import { Constants } from '../../common/Constants';
 import * as strings from 'CommonStrings';
+import styles from './FilterMultiComponent.module.scss';
 
 type FilterMultiEventCallback = () => void;
 
@@ -36,7 +36,12 @@ export interface IFilterMultiProps {
     /**
      * Add class name to the control
      */
-    className?:string;
+    className?: string;
+
+    /**
+     * Enable sticky FilterMulti
+     */
+    stickyFilter?: boolean;
 }
 
 export interface IFilterMultiState {
@@ -47,35 +52,36 @@ export class FilterMulti extends React.Component<IFilterMultiProps, IFilterMulti
     public constructor(props: IFilterMultiProps) {
         super(props);
         this._applyFilters = this._applyFilters.bind(this);
-        this._clearFilters = this._clearFilters.bind(this);     
+        this._clearFilters = this._clearFilters.bind(this);
     }
-    
+
     public render() {
-        return <div className={this.props.className}>
-                    <Link 
-                        styles={{
-                            root: {
-                                padding: 10
-                            }
-                        }}
-                        disabled={this.props.applyDisabled}
-                        theme={this.props.themeVariant as ITheme} 
-                        onClick={this._applyFilters}>
-                        {strings.Filters.ApplyAllFiltersButtonLabel}
-                    </Link>
-                    <span>|</span>
-                    <Link 
-                        styles={{
-                            root: {
-                                padding: 10
-                            }
-                        }}
-                        theme={this.props.themeVariant as ITheme}
-                        disabled={this.props.clearDisabled}
-                        onClick={this._clearFilters}>
-                        {strings.Filters.ClearAllFiltersButtonLabel}
-                    </Link>
-                </div>;
+        return <div className={`${this.props.className ? this.props.className : ""} ${this.props.stickyFilter ? styles.sticky : ""}`}
+        >
+            <Link
+                styles={{
+                    root: {
+                        padding: 10
+                    }
+                }}
+                disabled={this.props.applyDisabled}
+                theme={this.props.themeVariant as ITheme}
+                onClick={this._applyFilters}>
+                {strings.Filters.ApplyAllFiltersButtonLabel}
+            </Link>
+            <span>|</span>
+            <Link
+                styles={{
+                    root: {
+                        padding: 10
+                    }
+                }}
+                theme={this.props.themeVariant as ITheme}
+                disabled={this.props.clearDisabled}
+                onClick={this._clearFilters}>
+                {strings.Filters.ClearAllFiltersButtonLabel}
+            </Link>
+        </div>;
     }
 
     /**
@@ -94,38 +100,38 @@ export class FilterMulti extends React.Component<IFilterMultiProps, IFilterMulti
 }
 
 export class FilterMultiWebComponent extends BaseWebComponent {
-   
+
     public constructor() {
-        super(); 
+        super();
     }
- 
+
     public async connectedCallback() {
- 
-       let props = this.resolveAttributes();
-       const filterMulti = <FilterMulti {...props}
-                                onApply={(() => {
-                                    // Bubble event through the DOM
-                                    this.dispatchEvent(new CustomEvent(ExtensibilityConstants.EVENT_FILTER_APPLY_ALL, { 
-                                        detail: {
-                                            filterName: props.filterName,
-                                            instanceId: props.instanceId
-                                        },
-                                        bubbles: true,
-                                        cancelable: true
-                                    }));
-                                }).bind(this)}
-                                onClear={(() => {
-                                    // Bubble event through the DOM
-                                    this.dispatchEvent(new CustomEvent(ExtensibilityConstants.EVENT_FILTER_CLEAR_ALL, { 
-                                        detail: {
-                                            filterName: props.filterName,
-                                            instanceId: props.instanceId
-                                        },
-                                        bubbles: true,
-                                        cancelable: true
-                                    }));
-                                }).bind(this)}
-                            />;
-       ReactDOM.render(filterMulti, this);
-    }    
+
+        let props = this.resolveAttributes();
+        const filterMulti = <FilterMulti {...props}
+            onApply={(() => {
+                // Bubble event through the DOM
+                this.dispatchEvent(new CustomEvent(ExtensibilityConstants.EVENT_FILTER_APPLY_ALL, {
+                    detail: {
+                        filterName: props.filterName,
+                        instanceId: props.instanceId
+                    },
+                    bubbles: true,
+                    cancelable: true
+                }));
+            }).bind(this)}
+            onClear={(() => {
+                // Bubble event through the DOM
+                this.dispatchEvent(new CustomEvent(ExtensibilityConstants.EVENT_FILTER_CLEAR_ALL, {
+                    detail: {
+                        filterName: props.filterName,
+                        instanceId: props.instanceId
+                    },
+                    bubbles: true,
+                    cancelable: true
+                }));
+            }).bind(this)}
+        />;
+        ReactDOM.render(filterMulti, this);
+    }
 }
