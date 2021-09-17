@@ -8,7 +8,7 @@ The synonyms are managed in an external SharePoint list which need the following
 | Field Name | Type | Description | Default value |
 | --------| ----------- | ---------------|---------------|
 |**Keyword** | Text | The main keyword for the synonyms. This is typically the 'Title' field of the list.
-|**Synonyms** | Multiline Text | All synonyms separated by semicolon (;)
+|**Synonyms** | Multiline Text (Text only) | All synonyms separated by semicolon (;)
 |**Mutual** | Boolean | Flag how synonyms should be expanded (false: unidirectional, true: mutual)| true
 
 !["Synonyms Table Example"](../../../assets/webparts/search-results/page1/synonyms_table.png){: .left}
