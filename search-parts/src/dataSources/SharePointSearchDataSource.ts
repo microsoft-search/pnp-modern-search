@@ -560,25 +560,13 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
             ];
         this.properties.resultSourceId = this.properties.resultSourceId !== undefined ? this.properties.resultSourceId : BuiltinSourceIds.LocalSharePointResults;
         this.properties.sortList = this.properties.sortList !== undefined ? this.properties.sortList : [];
-/*
+
         this.properties.synonymsEnabled = this.properties.synonymsEnabled !== undefined ? this.properties.synonymsEnabled : false;
         this.properties.synonymsWebUrl = this.properties.synonymsWebUrl ? this.properties.synonymsWebUrl : "";
         this.properties.synonymsListName = this.properties.synonymsListName ? this.properties.synonymsListName : "";
         this.properties.synonymsFieldNameKeyword = this.properties.synonymsFieldNameKeyword ? this.properties.synonymsFieldNameKeyword : "";
         this.properties.synonymsFieldNameSynonyms = this.properties.synonymsFieldNameSynonyms ? this.properties.synonymsFieldNameSynonyms : "";
         this.properties.synonymsFieldNameMutual = this.properties.synonymsFieldNameMutual ? this.properties.synonymsFieldNameMutual : "";
-*/
-
-//TODO: Remove default values after developmnet (before Pull-Request at Github)
-this.properties.synonymsEnabled = this.properties.synonymsEnabled !== undefined ? this.properties.synonymsEnabled : false;
-this.properties.synonymsWebUrl = this.properties.synonymsWebUrl ? this.properties.synonymsWebUrl : "https://devmarc365.sharepoint.com/sites/playground";
-this.properties.synonymsListName = this.properties.synonymsListName ? this.properties.synonymsListName : "Synonyms";
-this.properties.synonymsFieldNameKeyword = this.properties.synonymsFieldNameKeyword ? this.properties.synonymsFieldNameKeyword : "Title";
-this.properties.synonymsFieldNameSynonyms = this.properties.synonymsFieldNameSynonyms ? this.properties.synonymsFieldNameSynonyms : "Synonyms";
-this.properties.synonymsFieldNameMutual = this.properties.synonymsFieldNameMutual ? this.properties.synonymsFieldNameMutual : "Mutual";
-
-
-
     }
 
     private getBuiltinSourceIdOptions(): IComboBoxOption[] {
