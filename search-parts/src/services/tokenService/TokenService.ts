@@ -397,7 +397,7 @@ export class TokenService implements ITokenService {
         }
 
         // Replaces any "{Today}" expression by it's actual value
-        let formattedDate = this.moment(new Date()).format("YYYY-MM-DDTHH:mm:ss\\Z");
+        let formattedDate = this.moment(new Date()).utc().format("YYYY-MM-DDTHH:mm:ss\\Z");
         inputString = inputString.replace(new RegExp("{Today}", 'gi'), formattedDate);
 
         const d = new Date();
