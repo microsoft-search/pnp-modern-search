@@ -330,8 +330,8 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                     }
                 }
 
-                if (!this.isCurrentDomain(item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl], false)) {
-                    //item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = null;
+                if (!this.isOnlineDomain(item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl])) {
+                    item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = null;
                 }
                 return item;
             });
@@ -341,13 +341,10 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
     }
 
     /**
-     * Check if we're on the same domain
+     * Check if we're on an online domain
      * @param domain
      */
-    private isCurrentDomain(url: string, exact: boolean) {
-        if (exact) {
-            return !isEmpty(url) && url.toLocaleLowerCase().indexOf(window.location.hostname.toLocaleLowerCase()) !== -1;
-        }
+    private isOnlineDomain(url: string) {
         return !isEmpty(url) && url.toLocaleLowerCase().indexOf(window.location.hostname.split('.').slice(-2).join('.').toLocaleLowerCase()) !== -1;
     }
 
