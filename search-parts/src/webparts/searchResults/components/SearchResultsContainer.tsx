@@ -275,7 +275,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 const hasContentClass = !isEmpty(contentClass);
                 const isLibItem = hasContentClass && contentClass.indexOf("Library") !== -1;
 
-                let contentTypeId = ObjectHelper.byPath(item, "ContentTypeId");
+                let contentTypeId = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.IsFolder]);
                 const isContainer = contentTypeId ? contentTypeId.indexOf('0x0120') !== -1 : false;
                 if (!isContainer) {
                     let pathProperty = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.Path]);
@@ -287,6 +287,9 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                     } else {
                         item.AutoPreviewUrl = pathProperty;
                     }
+                }
+                if (!this.isCurrentDomain(item.AutoPreviewUrl, true)) {
+                    item.AutoPreviewUrl = null; // cannot show preview on other domains due to auth
                 }
                 return item;
             });
@@ -303,7 +306,10 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 let listId = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.ListId]);
                 let itemId = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.ItemId]); // Could be UniqueId or item ID
 
-                if (siteId && listId && itemId) {
+                let contentTypeId = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.IsFolder]);
+                const isContainer = contentTypeId ? contentTypeId.indexOf('0x0120') !== -1 : false;
+
+                if (siteId && listId && itemId && !isContainer) {
                     // SP item logic
                     siteId = this.getGuidFromString(siteId);
                     listId = this.getGuidFromString(listId);
@@ -328,12 +334,25 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                     }
                 }
 
-
+                if (!this.isCurrentDomain(item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl], false)) {
+                    item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = null;
+                }
                 return item;
             });
         }
 
         return data;
+    }
+
+    /**
+     * Check if we're on the same domain
+     * @param domain
+     */
+    private isCurrentDomain(url: string, exact: boolean) {
+        if (exact) {
+            return !isEmpty(url) && url.toLocaleLowerCase().indexOf(window.location.hostname.toLocaleLowerCase()) !== -1;            
+        }
+        return !isEmpty(url) && url.toLocaleLowerCase().indexOf(window.location.hostname.split('.').slice(-2).join('.').toLocaleLowerCase()) !== -1;
     }
 
     /**
