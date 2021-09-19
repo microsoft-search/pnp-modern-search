@@ -277,19 +277,15 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
 
                 let contentTypeId = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.IsFolder]);
                 const isContainer = contentTypeId ? contentTypeId.indexOf('0x0120') !== -1 : false;
-                if (!isContainer) {
-                    let pathProperty = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.Path]);
-                    if (!pathProperty || (hasContentClass && !isLibItem)) {
-                        pathProperty = ObjectHelper.byPath(item, BuiltinTemplateSlots.Path); // Fallback to using Path for if DefaultEncodingURL is missing
-                    }
-                    if (pathProperty && pathProperty.indexOf("?") === -1) {
-                        item.AutoPreviewUrl = pathProperty + "?web=1";
-                    } else {
-                        item.AutoPreviewUrl = pathProperty;
-                    }
+
+                let pathProperty = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.Path]);
+                if (!pathProperty || (hasContentClass && !isLibItem)) {
+                    pathProperty = ObjectHelper.byPath(item, BuiltinTemplateSlots.Path); // Fallback to using Path for if DefaultEncodingURL is missing
                 }
-                if (!this.isCurrentDomain(item.AutoPreviewUrl, true)) {
-                    item.AutoPreviewUrl = null; // cannot show preview on other domains due to auth
+                if (pathProperty && pathProperty.indexOf("?") === -1 && !isContainer) {
+                    item.AutoPreviewUrl = pathProperty + "?web=1";
+                } else {
+                    item.AutoPreviewUrl = pathProperty;
                 }
                 return item;
             });
@@ -335,7 +331,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 }
 
                 if (!this.isCurrentDomain(item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl], false)) {
-                    item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = null;
+                    //item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = null;
                 }
                 return item;
             });
@@ -350,7 +346,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
      */
     private isCurrentDomain(url: string, exact: boolean) {
         if (exact) {
-            return !isEmpty(url) && url.toLocaleLowerCase().indexOf(window.location.hostname.toLocaleLowerCase()) !== -1;            
+            return !isEmpty(url) && url.toLocaleLowerCase().indexOf(window.location.hostname.toLocaleLowerCase()) !== -1;
         }
         return !isEmpty(url) && url.toLocaleLowerCase().indexOf(window.location.hostname.split('.').slice(-2).join('.').toLocaleLowerCase()) !== -1;
     }
