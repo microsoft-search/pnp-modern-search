@@ -389,9 +389,9 @@ export class TokenService implements ITokenService {
                 const addOrRemove = operator == '+' ? 1 : -1;
                 const operatorSplit = result.split(operator);
                 const digit = parseInt(operatorSplit[operatorSplit.length - 1].replace("{", "").replace("}", "").trim()) * addOrRemove;
-                let dt = new Date();
+                let dt = this.moment(new Date()).utc().toDate();
                 dt.setDate(dt.getDate() + digit);
-                const formatDate = this.moment(dt).format("YYYY-MM-DDTHH:mm:ss\\Z");
+                const formatDate = this.moment(dt).utc().format("YYYY-MM-DDTHH:mm:ss\\Z");
                 inputString = inputString.replace(result, formatDate);
             }
         }
