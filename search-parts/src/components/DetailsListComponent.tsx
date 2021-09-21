@@ -222,7 +222,7 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
     if (this.props.columnsConfiguration) {
 
       this.props.columnsConfiguration.forEach((column: IDetailsListColumnConfiguration) => {
-        let allowSorting = column.enableSorting && (column.useHandlebarsExpr !== true || (column.valueSorting && column.valueSorting.length > 0));
+        const allowSorting = column.enableSorting && (column.useHandlebarsExpr !== true || (column.valueSorting && column.valueSorting.length > 0));
         columns.push(
           {
             key: column.name,
@@ -243,7 +243,7 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
               useHandlebarsExpr: column.useHandlebarsExpr,
 
               // Set the column value for sorting (i.e field to use)
-              value: (column.useHandlebarsExpr && column.valueSorting) || column.value
+              value: column.valueSorting || column.value
             },
             isPadded: true,
             onRender: (item: any) => {

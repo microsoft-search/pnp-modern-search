@@ -1,10 +1,13 @@
 import * as React from "react";
 import { BaseLayout } from "@pnp/modern-search-extensibility";
 import * as strings from 'CommonStrings';
-import { IComboBoxOption } from 'office-ui-fabric-react';
+import * as propertyControlStrings from 'PropertyControlStrings';
+import { Checkbox, ICheckboxProps, IComboBoxOption } from 'office-ui-fabric-react';
 import { IDetailsListColumnConfiguration } from '../../../components/DetailsListComponent';
 import { IPropertyPaneField, PropertyPaneToggle, PropertyPaneDropdown, PropertyPaneHorizontalRule, PropertyPaneButton, PropertyPaneButtonType } from '@microsoft/sp-property-pane';
 import { TemplateValueFieldEditor, ITemplateValueFieldEditorProps } from '../../../controls/TemplateValueFieldEditor/TemplateValueFieldEditor';
+import { AsyncCombo } from "../../../controls/PropertyPaneAsyncCombo/components/AsyncCombo";
+import { IAsyncComboProps } from "../../../controls/PropertyPaneAsyncCombo/components/IAsyncComboProps";
 
 /**
  * Details List Builtin Layout
@@ -59,46 +62,48 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
 
         // Setup default values
         this.properties.detailsListColumns = this.properties.detailsListColumns ? this.properties.detailsListColumns :
-                                                [
-                                                    {
-                                                        name: 'Title',
-                                                        value: '<a href="{{slot item @root.slots.PreviewUrl}}" target="_blank" style="color: {{@root.theme.semanticColors.link}}">\n\t{{slot item @root.slots.Title}}\n</a>',
-                                                        useHandlebarsExpr: true,
-                                                        minWidth: '80',
-                                                        maxWidth: '300',
-                                                        enableSorting: true,
-                                                        isMultiline: false,
-                                                        isResizable: true          
-                                                    },
-                                                    {
-                                                        name: 'Created',
-                                                        value: "{{getDate (slot item @root.slots.Date) 'LL'}}",
-                                                        useHandlebarsExpr: true,
-                                                        minWidth: '80',
-                                                        maxWidth: '120',
-                                                        enableSorting: false,
-                                                        isMultiline: false,
-                                                        isResizable: false                    
-                                                    },
-                                                    {
-                                                        name: 'Summary',
-                                                        value: "{{getSummary (slot item @root.slots.Summary)}}",
-                                                        useHandlebarsExpr: true,
-                                                        minWidth: '80',
-                                                        maxWidth: '300',
-                                                        enableSorting: false,
-                                                        isMultiline: true,
-                                                        isResizable: false                    
-                                                    }
-                                                ] as IDetailsListColumnConfiguration[];
+            [
+                {
+                    name: 'Title',
+                    value: '<a href="{{slot item @root.slots.PreviewUrl}}" target="_blank" style="color: {{@root.theme.semanticColors.link}}">\n\t{{slot item @root.slots.Title}}\n</a>',
+                    valueSorting: 'Title',
+                    useHandlebarsExpr: true,
+                    minWidth: '80',
+                    maxWidth: '300',
+                    enableSorting: true,
+                    isMultiline: false,
+                    isResizable: true
+                },
+                {
+                    name: 'Created',
+                    value: "{{getDate (slot item @root.slots.Date) 'LL'}}",
+                    valueSorting: 'Created',
+                    useHandlebarsExpr: true,
+                    minWidth: '80',
+                    maxWidth: '120',
+                    enableSorting: false,
+                    isMultiline: false,
+                    isResizable: false
+                },
+                {
+                    name: 'Summary',
+                    value: "{{getSummary (slot item @root.slots.Summary)}}",
+                    useHandlebarsExpr: true,
+                    minWidth: '80',
+                    maxWidth: '300',
+                    enableSorting: false,
+                    isMultiline: true,
+                    isResizable: false
+                }
+            ] as IDetailsListColumnConfiguration[];
 
-        this.properties.isCompact = this.properties.isCompact !== null && this.properties.isCompact !== undefined ?  this.properties.isCompact: false;
-        this.properties.showFileIcon = this.properties.showFileIcon !== null && this.properties.showFileIcon !== undefined ?  this.properties.showFileIcon : true;
-        this.properties.fieldIconExtension = this.properties.fieldIconExtension ?  this.properties.fieldIconExtension: 'FileType';
-        this.properties.enableGrouping = this.properties.enableGrouping !== null && this.properties.enableGrouping !== undefined ?  this.properties.enableGrouping: false;
-        this.properties.groupByField = this.properties.groupByField ?  this.properties.groupByField: '';     
-        this.properties.groupsCollapsed = this.properties.groupsCollapsed !== null && this.properties.groupsCollapsed !== undefined ?  this.properties.groupsCollapsed: true;
-    
+        this.properties.isCompact = this.properties.isCompact !== null && this.properties.isCompact !== undefined ? this.properties.isCompact : false;
+        this.properties.showFileIcon = this.properties.showFileIcon !== null && this.properties.showFileIcon !== undefined ? this.properties.showFileIcon : true;
+        this.properties.fieldIconExtension = this.properties.fieldIconExtension ? this.properties.fieldIconExtension : 'FileType';
+        this.properties.enableGrouping = this.properties.enableGrouping !== null && this.properties.enableGrouping !== undefined ? this.properties.enableGrouping : false;
+        this.properties.groupByField = this.properties.groupByField ? this.properties.groupByField : '';
+        this.properties.groupsCollapsed = this.properties.groupsCollapsed !== null && this.properties.groupsCollapsed !== undefined ? this.properties.groupsCollapsed : true;
+
         const { PropertyFieldCollectionData, CustomCollectionFieldType } = await import(
             /* webpackChunkName: 'pnp-modern-search-results-detailslist-layout' */
             '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData'
@@ -110,7 +115,7 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
 
     public getPropertyPaneFieldsConfiguration(availableFields: string[]): IPropertyPaneField<any>[] {
 
-        let availableOptions: IComboBoxOption[] = availableFields.map((fieldName) => { return  { key: fieldName, text: fieldName } as IComboBoxOption; });
+        let availableOptions: IComboBoxOption[] = availableFields.map((fieldName) => { return { key: fieldName, text: fieldName } as IComboBoxOption; });
 
         // Sort ascending
         availableOptions = availableOptions.sort((a, b) => {
@@ -121,11 +126,11 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
             if (aValue && bValue) {
                 if (aValue.toLowerCase() > bValue.toLowerCase()) return 1;
                 if (bValue.toLowerCase() > aValue.toLowerCase()) return -1;
-            } 
+            }
 
             return 0;
         });
-        
+
         // Column builder
         let propertyPaneFields: IPropertyPaneField<any>[] = [
 
@@ -142,15 +147,15 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
                         id: 'name',
                         title: strings.Layouts.DetailsList.DisplayNameColumnLabel,
                         type: this._customCollectionFieldType.string,
-                        required: true,                               
+                        required: true,
                     },
                     {
                         id: 'value',
-                        title:strings.Layouts.DetailsList.ValueColumnLabel,
+                        title: strings.Layouts.DetailsList.ValueColumnLabel,
                         type: this._customCollectionFieldType.custom,
                         required: true,
                         onCustomRender: (field, value, onUpdate, item, itemId, onCustomFieldValidation) => {
-                            return React.createElement("div", { key: `${field.id}-${itemId}` }, 
+                            return React.createElement("div", { key: `${field.id}-${itemId}` },
                                 React.createElement(TemplateValueFieldEditor, {
                                     currentItem: item,
                                     field: field,
@@ -164,26 +169,39 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
                     },
                     {
                         id: 'valueSorting',
-                        title:strings.Layouts.DetailsList.ValueSortingColumnLabel,
+                        title: this.properties.detailsListColumns.find(c => c.enableSorting && c.useHandlebarsExpr) ?
+                            strings.Layouts.DetailsList.ValueSortingColumnLabel : '',
                         type: this._customCollectionFieldType.custom,
-                        onCustomRender: (field, value, onUpdate, item, itemId, onCustomFieldValidation) => {
-                            return item.useHandlebarsExpr && item.enableSorting && React.createElement("div", { key: `${field.id}-${itemId}` }, 
-                                React.createElement(TemplateValueFieldEditor, {
-                                    currentItem: item,
-                                    field: field,
-                                    useHandlebarsExpr: false,
-                                    onUpdate: onUpdate,
-                                    value: value,
-                                    availableProperties: availableOptions,
-                                } as ITemplateValueFieldEditorProps)
-                            );
+                        onCustomRender: (field, _value, onUpdate, item, itemId, onCustomFieldValidation) => {
+                            return item.useHandlebarsExpr && item.enableSorting &&
+                                React.createElement("div", { key: `${field.id}-${itemId}` },
+                                    React.createElement(AsyncCombo, {
+                                        allowFreeform: false,
+                                        availableOptions: availableOptions,
+                                        placeholder: strings.Layouts.DetailsList.ValueSortingColumnLabel,
+                                        textDisplayValue: item[field.id] ? item[field.id] : '',
+                                        defaultSelectedKey: item[field.id] ? item[field.id] : '',
+                                        onUpdate: (filterValue: IComboBoxOption) => {
+                                            onUpdate(field.id, filterValue.key);
+                                            this._updateRequiredValueSorting(item.useHandlebarsExpr, 'enableSorting', item, onCustomFieldValidation, filterValue.key);
+                                        }
+                                    } as IAsyncComboProps));
                         }
                     },
                     {
                         id: 'useHandlebarsExpr',
-                        type: this._customCollectionFieldType.boolean,
+                        type: this._customCollectionFieldType.custom,
                         defaultValue: false,
-                        title: strings.Layouts.DetailsList.UseHandlebarsExpressionLabel
+                        title: strings.Layouts.DetailsList.UseHandlebarsExpressionLabel,
+                        onCustomRender: (field, _value, onUpdate, item, itemId, onCustomFieldValidation) => {
+                            return this._renderValueSortingAwareCheckbox(field, item, itemId, onCustomFieldValidation, 'enableSorting',
+                                (fieldId, value) => {
+                                    onUpdate(fieldId, value);
+                                    if (!value) {
+                                        onUpdate('valueSorting', null); // Clear value soring
+                                    }
+                                });
+                        }
                     },
                     {
                         id: 'minWidth',
@@ -202,31 +220,34 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
                     {
                         id: 'enableSorting',
                         title: strings.Layouts.DetailsList.SortableColumnLabel,
-                        type: this._customCollectionFieldType.boolean,
+                        type: this._customCollectionFieldType.custom,
                         defaultValue: false,
-                        required: false                                
+                        required: false,
+                        onCustomRender: (field, _value, onUpdate, item, itemId, onCustomFieldValidation) => {
+                            return this._renderValueSortingAwareCheckbox(field, item, itemId, onCustomFieldValidation, 'useHandlebarsExpr', onUpdate);
+                        }
                     },
                     {
                         id: 'isResizable',
                         title: strings.Layouts.DetailsList.ResizableColumnLabel,
                         type: this._customCollectionFieldType.boolean,
                         defaultValue: false,
-                        required: false                                
+                        required: false
                     },
                     {
                         id: 'isMultiline',
                         title: strings.Layouts.DetailsList.MultilineColumnLabel,
                         type: this._customCollectionFieldType.boolean,
                         defaultValue: false,
-                        required: false          
-                    }                                                
+                        required: false
+                    }
                 ]
             }),
             PropertyPaneButton('layoutProperties.resetFields', {
                 buttonType: PropertyPaneButtonType.Command,
                 icon: 'Refresh',
                 text: strings.Layouts.DetailsList.ResetFieldsBtnLabel,
-                onClick: ()=> {
+                onClick: () => {
                     // Just reset the fields
                     this.properties.detailsListColumns = null;
                     this.onInit();
@@ -234,18 +255,18 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
             }),
             // Compact mode
             PropertyPaneToggle('layoutProperties.isCompact', {
-                label: strings.Layouts.DetailsList.CompactModeLabel,                        
+                label: strings.Layouts.DetailsList.CompactModeLabel,
                 checked: this.properties.isCompact ? this.properties.isCompact : true
             }),
             PropertyPaneToggle('layoutProperties.showFileIcon', {
-                label: strings.Layouts.DetailsList.ShowFileIcon,                        
+                label: strings.Layouts.DetailsList.ShowFileIcon,
                 checked: this.properties.showFileIcon
             }),
         ];
 
         // Show file icon
         if (this.properties.showFileIcon) {
-            
+
             propertyPaneFields.push(
                 PropertyPaneDropdown('layoutProperties.fieldIconExtension', {
                     label: strings.Layouts.DetailsList.FileExtensionFieldLabel,
@@ -256,15 +277,15 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
             );
         }
 
-        propertyPaneFields.push(            
+        propertyPaneFields.push(
             PropertyPaneToggle('layoutProperties.enableGrouping', {
-            label: strings.Layouts.DetailsList.EnableGrouping,                        
-            checked: this.properties.enableGrouping
-        }));
+                label: strings.Layouts.DetailsList.EnableGrouping,
+                checked: this.properties.enableGrouping
+            }));
 
         // Grouping options
         if (this.properties.enableGrouping) {
-            
+
             propertyPaneFields.push(
                 PropertyPaneDropdown('layoutProperties.groupByField', {
                     label: strings.Layouts.DetailsList.GroupByFieldLabel,
@@ -272,9 +293,9 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
                     selectedKey: this.properties.groupByField
                 }),
                 PropertyPaneToggle('layoutProperties.groupsCollapsed', {
-                    label: strings.Layouts.DetailsList.CollapsedGroupsByDefault,                        
+                    label: strings.Layouts.DetailsList.CollapsedGroupsByDefault,
                     checked: this.properties.groupsCollapsed
-                })  
+                })
             );
         }
 
@@ -285,6 +306,28 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
 
         if (propertyPath.localeCompare('layoutProperties.enableGrouping') === 0) {
             this.properties.groupByField = '';
+        }
+    }
+
+    private _renderValueSortingAwareCheckbox(field: any, item: IDetailsListColumnConfiguration, itemId: string, onCustomFieldValidation: (fieldId: string, errorMessage: string) => void, otherDependentField: string, onChange: (fieldId: string, value: any) => void): JSX.Element {
+        return React.createElement(Checkbox, {
+            key: `${field.id}-${itemId}`,
+            checked: item[field.id] ? item[field.id] : false,
+            onChange: (ev, value) => {
+                onChange(field.id, value)
+                this._updateRequiredValueSorting(value, otherDependentField, item, onCustomFieldValidation);
+            },
+            disabled: field.disableEdit,
+            className: "PropertyFieldCollectionData__panel__boolean-field"
+        } as ICheckboxProps);
+    }
+
+    private _updateRequiredValueSorting(value: boolean, otherDependentField: string, item: IDetailsListColumnConfiguration, onCustomFieldValidation: (fieldId: string, errorMessage: string) => void, newValueSorting?: string | number) {
+        if (!value || item.valueSorting || newValueSorting) {
+            onCustomFieldValidation('enableSorting', '');
+        }
+        else if (item[otherDependentField]) {
+            onCustomFieldValidation('enableSorting', `${strings.Layouts.DetailsList.ValueSortingColumnLabel} - ${propertyControlStrings.CollectionDataItemFieldRequiredLabel}`);
         }
     }
 }
