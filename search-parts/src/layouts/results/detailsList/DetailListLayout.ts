@@ -169,8 +169,7 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
                     },
                     {
                         id: 'valueSorting',
-                        title: this.properties.detailsListColumns.find(c => c.enableSorting && c.useHandlebarsExpr) ?
-                            strings.Layouts.DetailsList.ValueSortingColumnLabel : '',
+                        title: '',
                         type: this._customCollectionFieldType.custom,
                         onCustomRender: (field, _value, onUpdate, item, itemId, onCustomFieldValidation) => {
                             return item.useHandlebarsExpr && item.enableSorting &&
