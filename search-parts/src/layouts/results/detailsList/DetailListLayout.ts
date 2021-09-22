@@ -197,7 +197,7 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
                                 (fieldId, value) => {
                                     onUpdate(fieldId, value);
                                     if (!value) {
-                                        onUpdate('valueSorting', null); // Clear value soring
+                                        onUpdate('valueSorting', null); // Clear value sorting
                                     }
                                 });
                         }
