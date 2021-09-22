@@ -175,8 +175,14 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
             this._propertyPaneWebPartInformation = PropertyPaneWebPartInformation;
         }
 
-        const cultureName = this.getTranslatedCultureFromUrl() ?? this._pageContext.cultureInfo.currentUICultureName;
-        this._currentLocaleId = LocalizationHelper.getLocaleId(cultureName);
+        let culture =  this.getTranslatedCultureFromUrl();
+        if (culture) {
+            this._currentLocaleId = LocalizationHelper.getLocaleId(culture);
+        }
+
+        if (!culture || this._currentLocaleId === 0) {
+            this._currentLocaleId = LocalizationHelper.getLocaleId(this._pageContext.cultureInfo.currentUICultureName);
+        }
 
         // Initialize the list of available languages
         if (this._availableLanguages.length == 0) {
@@ -191,6 +197,9 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         }
     }
 
+    /**
+    * Pick culture from url in translated pages as they are folder names like: "en", "no", "de"
+    */
     private getTranslatedCultureFromUrl(): string {
         const reCulture = /\/SitePages\/(\w+)\/.*?\.aspx/gi;
         let match = reCulture.exec(window.location.pathname);
