@@ -177,6 +177,7 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
                                     React.createElement(AsyncCombo, {
                                         allowFreeform: false,
                                         availableOptions: availableOptions,
+                                        label: strings.Layouts.DetailsList.ValueSortingColumnLabel,
                                         placeholder: strings.Layouts.DetailsList.ValueSortingColumnLabel,
                                         textDisplayValue: item[field.id] ? item[field.id] : '',
                                         defaultSelectedKey: item[field.id] ? item[field.id] : '',
