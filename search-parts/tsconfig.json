@@ -1,6 +1,7 @@
 {
   "extends": "@microsoft/rush-stack-compiler-3.9/includes/tsconfig-web.json",
   "compilerOptions": {
+    "rootDir": "src",
     "target": "ES6",
     "forceConsistentCasingInFileNames": true,
     "module": "esnext",
