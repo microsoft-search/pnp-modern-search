@@ -201,11 +201,9 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
     * Pick culture from url in translated pages as they are folder names like: "en", "no", "de"
     */
     private getTranslatedCultureFromUrl(): string {
-        const reCulture = /\/SitePages\/(\w+)\/.*?\.aspx/gi;
-        let match = reCulture.exec(window.location.pathname);
-        if (match) {
-            return match[1];
-        }
+        const pathParts = window.location.pathname.toLocaleLowerCase().split('/');
+        const cultureFolderCandidate = pathParts[pathParts.length-2];
+        if(cultureFolderCandidate.length == 2) return cultureFolderCandidate; //ISO-639-1 uses two letter codes
         return null;
     }
 
