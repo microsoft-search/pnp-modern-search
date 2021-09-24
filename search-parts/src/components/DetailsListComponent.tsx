@@ -62,6 +62,11 @@ export interface IDetailsListColumnConfiguration {
   value: string;
 
   /**
+   * Alternate column for sorting
+   */
+  valueSorting: string;
+
+  /**
    * Indicates if the value is an Handlebars expression
    */
   useHandlebarsExpr: boolean;
@@ -217,7 +222,7 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
     if (this.props.columnsConfiguration) {
 
       this.props.columnsConfiguration.forEach((column: IDetailsListColumnConfiguration) => {
-
+        const allowSorting = column.enableSorting && (column.useHandlebarsExpr !== true || (column.valueSorting && column.valueSorting.length > 0));
         columns.push(
           {
             key: column.name,
@@ -228,17 +233,17 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
             isRowHeader: true,
             isResizable: column.isResizable === true,
             isMultiline: column.isMultiline === true,
-            isSorted: column.enableSorting && !column.useHandlebarsExpr === true,
+            isSorted: allowSorting,
             isSortedDescending: false,
             sortAscendingAriaLabel: 'Sorted A to Z',
             sortDescendingAriaLabel: 'Sorted Z to A',
-            onColumnClick: column.enableSorting && !column.useHandlebarsExpr ? this._onColumnClick : null,
+            onColumnClick: allowSorting ? this._onColumnClick : null,
             data: {
               // Set arbitrary data for the current column
               useHandlebarsExpr: column.useHandlebarsExpr,
 
               // Set the column value for sorting (i.e field to use)
-              value: column.value
+              value: column.valueSorting || column.value
             },
             isPadded: true,
             onRender: (item: any) => {

@@ -187,6 +187,7 @@ define([], function() {
                 ManageDetailsListColumnDescription: "Tilføj, opdatér eller fjern kolonner fra layoutet på detaljelisten. Du kan enten bruge egenskabsværdier i listen direkte uden nogen transformation, eller du kan bruge et Handlebars-udtryk som feltets værdi. HTML er supporteret til brug i alle felter.",
                 ManageDetailsListColumnLabel: "Administrér kolonner",
                 ValueColumnLabel: "Kolonnes værdi",
+                ValueSortingColumnLabel: "Kolonne værdi sortering",
                 DisplayNameColumnLabel: "Kolonnens visningsnavn",
                 FileExtensionFieldLabel: "Felt til brug af file extension",
                 GroupByFieldLabel: "Gruppér efter felt",

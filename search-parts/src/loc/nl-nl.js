@@ -187,6 +187,7 @@ define([], function() {
                 ManageDetailsListColumnDescription: "Kolommen toevoegen, bewerken of verwijderen voor de detailslijst indeling. Je kan eigenschapswaarden direct in de lijst gebruiken zonder transformaties toe te passen, of een Handlebars-uitdrukking gebruiken als veldwaarde. HTML wordt ook ondersteund voor alle velden.",
                 ManageDetailsListColumnLabel: "Beheer kolommen",
                 ValueColumnLabel: "Kolomwaarde",
+                ValueSortingColumnLabel: "Kolomwaarde sorteren",
                 DisplayNameColumnLabel: "Kolom weergavenaam",
                 FileExtensionFieldLabel: "Te gebruiken veld voor bestandsextensie",
                 GroupByFieldLabel: "Groepeer op veld",

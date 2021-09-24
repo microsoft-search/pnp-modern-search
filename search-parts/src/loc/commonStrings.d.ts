@@ -187,6 +187,7 @@ declare interface ICommonStrings {
         ManageDetailsListColumnDescription: string;
         DisplayNameColumnLabel: string;
         ValueColumnLabel: string;
+        ValueSortingColumnLabel: string;
         FileExtensionFieldLabel: string;
         GroupByFieldLabel: string;
         EnableGrouping: string;
