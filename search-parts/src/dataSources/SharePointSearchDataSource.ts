@@ -812,7 +812,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         }
 
         searchQuery.TrimDuplicates = false;
-        searchQuery.SortList = this._convertToSortList(this.properties.sortList);
+        searchQuery.SortList = this._convertToSortList(dataContext.sorting.selectedSorting ?? this.properties.sortList);
         searchQuery.SelectProperties = this.properties.selectedProperties.filter(a => a); // Fix to remove null values;
 
         // Toggle to include user's personal OneDrive results as a secondary result block

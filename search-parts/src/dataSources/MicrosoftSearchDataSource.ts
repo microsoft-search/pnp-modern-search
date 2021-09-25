@@ -468,8 +468,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         });
 
         // Build sort properties
-        this.properties.sortProperties.forEach(sortProperty => {
-
+        (dataContext.sorting.selectedSorting ?? this.properties.sortProperties).forEach(sortProperty => {
             sortProperties.push({
                 name: sortProperty.sortField,
                 isDescending: sortProperty.sortDirection === SortFieldDirection.Descending ? true : false
