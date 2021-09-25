@@ -8,6 +8,9 @@ import { IPropertyPaneField, PropertyPaneToggle, PropertyPaneDropdown, PropertyP
 import { TemplateValueFieldEditor, ITemplateValueFieldEditorProps } from '../../../controls/TemplateValueFieldEditor/TemplateValueFieldEditor';
 import { AsyncCombo } from "../../../controls/PropertyPaneAsyncCombo/components/AsyncCombo";
 import { IAsyncComboProps } from "../../../controls/PropertyPaneAsyncCombo/components/IAsyncComboProps";
+import { SharePointSearchService } from "../../../services/searchService/SharePointSearchService";
+import { ISharePointSearchService } from "../../../services/searchService/ISharePointSearchService";
+import { ICustomCollectionField } from "@pnp/spfx-property-controls/lib/propertyFields/collectionData/ICustomCollectionField";
 
 /**
  * Details List Builtin Layout
@@ -57,6 +60,7 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
      */
     private _propertyFieldCollectionData: any = null;
     private _customCollectionFieldType: any = null;
+    private _sharePointSearchService: ISharePointSearchService;
 
     public async onInit(): Promise<void> {
 
@@ -111,6 +115,8 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
 
         this._propertyFieldCollectionData = PropertyFieldCollectionData;
         this._customCollectionFieldType = CustomCollectionFieldType;
+        
+        this._sharePointSearchService = this.context.serviceScope.consume<ISharePointSearchService>(SharePointSearchService.ServiceKey);
     }
 
     public getPropertyPaneFieldsConfiguration(availableFields: string[]): IPropertyPaneField<any>[] {
@@ -160,7 +166,10 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
                                     currentItem: item,
                                     field: field,
                                     useHandlebarsExpr: item.useHandlebarsExpr,
-                                    onUpdate: onUpdate,
+                                    onUpdate: (fieldId, value) => {
+                                        if(item.useHandlebarsExpr) { onUpdate(fieldId, value); }
+                                        else { this._handleDynamicSorting(value, field, item, onCustomFieldValidation, onUpdate); }
+                                    },
                                     value: value,
                                     availableProperties: availableOptions,
                                 } as ITemplateValueFieldEditorProps)
@@ -182,8 +191,11 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
                                         textDisplayValue: item[field.id] ? item[field.id] : '',
                                         defaultSelectedKey: item[field.id] ? item[field.id] : '',
                                         onUpdate: (filterValue: IComboBoxOption) => {
-                                            onUpdate(field.id, filterValue.key);
-                                            this._updateRequiredValueSorting(item.useHandlebarsExpr, 'enableSorting', item, onCustomFieldValidation, filterValue.key);
+                                            this._handleDynamicSorting(filterValue.key as string, field, item, onCustomFieldValidation, (fieldId, value) => 
+                                            {
+                                                onUpdate(field.id, value);
+                                                this._updateRequiredValueSorting(item.useHandlebarsExpr, 'enableSorting', item, onCustomFieldValidation, filterValue.key);
+                                            });
                                         }
                                     } as IAsyncComboProps));
                         }
@@ -194,13 +206,19 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
                         defaultValue: false,
                         title: strings.Layouts.DetailsList.UseHandlebarsExpressionLabel,
                         onCustomRender: (field, _value, onUpdate, item, itemId, onCustomFieldValidation) => {
-                            return this._renderValueSortingAwareCheckbox(field, item, itemId, onCustomFieldValidation, 'enableSorting',
-                                (fieldId, value) => {
-                                    onUpdate(fieldId, value);
+                            return React.createElement(Checkbox, {
+                                key: `${field.id}-${itemId}`,
+                                checked: item[field.id] ? item[field.id] : false,
+                                onChange: (ev, value) => {
+                                    onUpdate(field.id, value)
                                     if (!value) {
                                         onUpdate('valueSorting', null); // Clear value sorting
                                     }
-                                });
+                                    this._updateRequiredValueSorting(value, 'enableSorting', item, onCustomFieldValidation);
+                                },
+                                disabled: field.disableEdit,
+                                className: "PropertyFieldCollectionData__panel__boolean-field"
+                            } as ICheckboxProps);
                         }
                     },
                     {
@@ -220,11 +238,18 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
                     {
                         id: 'enableSorting',
                         title: strings.Layouts.DetailsList.SortableColumnLabel,
-                        type: this._customCollectionFieldType.custom,
+                        type: this._customCollectionFieldType.dropdown,
                         defaultValue: false,
                         required: false,
-                        onCustomRender: (field, _value, onUpdate, item, itemId, onCustomFieldValidation) => {
-                            return this._renderValueSortingAwareCheckbox(field, item, itemId, onCustomFieldValidation, 'useHandlebarsExpr', onUpdate);
+                        options: [
+                            { key: false, text: 'No' },
+                            { key: true, text: 'Yes, static' },
+                            { key: 'dynamic', text: 'Yes, dynamic' }
+                        ],
+                        onGetErrorMessage: (value, index, currentItem) => {
+                            let message = null;
+                            this._updateRequiredValueSorting(value, 'useHandlebarsExpr', currentItem, (fieldId, errorMessage) => message = errorMessage);
+                            return message;
                         }
                     },
                     {
@@ -308,26 +333,27 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
             this.properties.groupByField = '';
         }
     }
-
-    private _renderValueSortingAwareCheckbox(field: any, item: IDetailsListColumnConfiguration, itemId: string, onCustomFieldValidation: (fieldId: string, errorMessage: string) => void, otherDependentField: string, onChange: (fieldId: string, value: any) => void): JSX.Element {
-        return React.createElement(Checkbox, {
-            key: `${field.id}-${itemId}`,
-            checked: item[field.id] ? item[field.id] : false,
-            onChange: (ev, value) => {
-                onChange(field.id, value)
-                this._updateRequiredValueSorting(value, otherDependentField, item, onCustomFieldValidation);
-            },
-            disabled: field.disableEdit,
-            className: "PropertyFieldCollectionData__panel__boolean-field"
-        } as ICheckboxProps);
-    }
-
     private _updateRequiredValueSorting(value: boolean, otherDependentField: string, item: IDetailsListColumnConfiguration, onCustomFieldValidation: (fieldId: string, errorMessage: string) => void, newValueSorting?: string | number) {
         if (!value || item.valueSorting || newValueSorting) {
             onCustomFieldValidation('enableSorting', '');
         }
         else if (item[otherDependentField]) {
             onCustomFieldValidation('enableSorting', `${strings.Layouts.DetailsList.ValueSortingColumnLabel} - ${propertyControlStrings.CollectionDataItemFieldRequiredLabel}`);
+        }
+    }
+
+    private _handleDynamicSorting(value: string, field: ICustomCollectionField, item: IDetailsListColumnConfiguration,  onCustomFieldValidation: (fieldId: string, errorMessage: string) => void, onUpdate: (fieldId: string, value: any) => void) {
+        if(item.enableSorting !== 'dynamic') {
+            onUpdate(field.id, value);
+        } else {
+            this._sharePointSearchService.validateSortableProperty(value).then((sortable: boolean) => {
+                if (!sortable) {
+                    onCustomFieldValidation(field.id, strings.DataSources.SearchCommon.Sort.SortInvalidSortableFieldMessage);
+                } else {            
+                    onUpdate(field.id, value);
+                    onCustomFieldValidation(field.id, '');
+                }
+            });
         }
     }
 }
