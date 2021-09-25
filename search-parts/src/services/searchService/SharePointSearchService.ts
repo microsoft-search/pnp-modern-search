@@ -291,10 +291,10 @@ export class SharePointSearchService implements ISharePointSearchService {
         searchQuery.SortList = [
             {
                 Property: property,
-                Direction: SortDirection.Ascending
+                Direction: SortDirection.Descending
             }
         ];
-        searchQuery.RowLimit = 1;
+        searchQuery.RowLimit = 2;
         searchQuery.SelectProperties = ['Path'];
 
         try {
