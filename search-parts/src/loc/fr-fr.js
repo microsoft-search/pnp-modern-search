@@ -148,7 +148,10 @@ define([], function() {
                     SortFieldColumnLabel: "Nom du champ",
                     EditSortLabel: "Modifier l’ordre de tri",
                     SortInvalidSortableFieldMessage: "Cette propriété n’est pas triable",
-                    SortFieldColumnPlaceholder: "Sélectionner le champ..."
+                    SortFieldColumnPlaceholder: "Sélectionner le champ...",
+                    EnableSortingNoLabel : "Non",
+                    EnableSortingYesStaticLabel : "Oui, statique",
+                    EnableSortingYesDynamicLabel : "Oui, dynamique"
                 }
             }
         },

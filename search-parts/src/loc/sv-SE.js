@@ -148,7 +148,10 @@ define([], function () {
             SortFieldColumnLabel: "Fält namn",
             EditSortLabel: "Redigera sorteringsordning",
             SortInvalidSortableFieldMessage: "Den här egenskapen kan inte sorteras",
-            SortFieldColumnPlaceholder: "Välj fält..."
+            SortFieldColumnPlaceholder: "Välj fält...",
+            EnableSortingNoLabel: "Nej",
+            EnableSortingYesStaticLabel: "Ja, statisk",
+            EnableSortingYesDynamicLabel: "Ja, dynamisk"
           }
         }
       },

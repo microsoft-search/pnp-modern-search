@@ -148,7 +148,10 @@ define([], function() {
                     SortFieldColumnLabel: "Feltnavn",
                     EditSortLabel: "Redigér sorteringsrækkefølge",
                     SortInvalidSortableFieldMessage: "Denne egenskab er ikke sorterbar",
-                    SortFieldColumnPlaceholder: "Vælg felt..."
+                    SortFieldColumnPlaceholder: "Vælg felt...",
+                    EnableSortingNoLabel: "Nej",
+                    EnableSortingYesStaticLabel: "Ja, statisk",
+                    EnableSortingYesDynamicLabel: "Ja, dynamisk"
                 }
             }
         },

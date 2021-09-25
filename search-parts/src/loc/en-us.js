@@ -148,7 +148,10 @@ define([], function() {
                     SortFieldColumnLabel: "Field name",
                     EditSortLabel: "Edit sort order",
                     SortInvalidSortableFieldMessage: "This property is not sortable",
-                    SortFieldColumnPlaceholder: "Select field..."
+                    SortFieldColumnPlaceholder: "Select field...",
+                    EnableSortingNoLabel: "No",
+                    EnableSortingYesStaticLabel: "Yes, static",
+                    EnableSortingYesDynamicLabel: "Yes, dynamic"
                 }
             }
         },

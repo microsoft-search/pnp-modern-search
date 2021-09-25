@@ -148,6 +148,9 @@ declare interface ICommonStrings {
           EditSortLabel: string;
           SortInvalidSortableFieldMessage: string;
           SortFieldColumnPlaceholder: string;
+          EnableSortingNoLabel: string;
+          EnableSortingYesStaticLabel: string;
+          EnableSortingYesDynamicLabel: string;
         };
       }
     },

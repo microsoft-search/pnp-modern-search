@@ -148,7 +148,10 @@ define([], function() {
                     SortFieldColumnLabel: "Veldnaam",
                     EditSortLabel: "Bewerk sorteervolgorde",
                     SortInvalidSortableFieldMessage: "Deze eigenschap kan niet worden gesorteerd",
-                    SortFieldColumnPlaceholder: "Selecteer veld..."
+                    SortFieldColumnPlaceholder: "Selecteer veld...",
+                    EnableSortingNoLabel: "Nee",
+                    EnableSortingYesStaticLabel: "Ja, statisch",
+                    EnableSortingYesDynamicLabel: "Ja, dynamisch"
                 }
             }
         },
