@@ -16,6 +16,8 @@ import { DomPurifyHelper } from '../helpers/DomPurifyHelper';
 import { ITemplateService } from '../services/templateService/ITemplateService';
 import { TemplateService } from '../services/templateService/TemplateService';
 import { ServiceScope, ServiceKey } from '@microsoft/sp-core-library';
+import { ISortEventInfo } from '../models/search/ISortEventInfo';
+import { SortFieldDirection } from '../models/search/ISortFieldConfiguration';
 
 const DEFAULT_SHIMMER_HEIGHT = 7;
 const SHIMMER_LINE_VS_CELL_WIDTH_RATIO = 0.95;
@@ -84,7 +86,7 @@ export interface IDetailsListColumnConfiguration {
   /**
    * Enable sorting on the column
    */
-  enableSorting: boolean;
+  enableSorting: boolean | 'dynamic';
 
   /**
    * Enable column dynamic resize
@@ -243,7 +245,10 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
               useHandlebarsExpr: column.useHandlebarsExpr,
 
               // Set the column value for sorting (i.e field to use)
-              value: column.valueSorting || column.value
+              value: column.valueSorting || column.value,
+
+              // Set if search sorting is done data source
+              isDynamic: column.enableSorting == 'dynamic'
             },
             isPadded: true,
             onRender: (item: any) => {
@@ -379,7 +384,7 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
                 shimmerElements={[{ type: ShimmerElementType.gap, width: '100%', height: gapHeight }]}
             />
         );
-        return <Shimmer 
+        return <Shimmer
         theme={this.props.themeVariant as ITheme}
         customElementsGroup={<div style={{ display: 'flex' }}>{shimmerElementsRow}</div>}/>;
       },
@@ -459,25 +464,36 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
       }
     });
 
-    if (!this.props.groupBy) {
-      newItems = this._copyAndSort(items, currColumn.data.value, currColumn.isSortedDescending);
+    if(currColumn.data.isDynamic) {
+      // Bubble event through the DOM
+      ev.target.dispatchEvent(new CustomEvent('sortingUpdated', { 
+        detail: {
+            sortList: [ { sortField: currColumn.data.value, sortDirection: currColumn.isSortedDescending ? SortFieldDirection.Descending : SortFieldDirection.Ascending }]
+        } as ISortEventInfo, 
+        bubbles: true,
+        cancelable: true
+      }));
     } else {
+      if (!this.props.groupBy) {
+        newItems = this._copyAndSort(items, currColumn.data.value, currColumn.isSortedDescending);
+      } else {
 
-      // Sort items for each group individually. Group indexes don't change here, only items order.
-      const groupedItems = groupBy(items, (i) => {
-        return ObjectHelper.byPath(i, this.props.groupBy);
-      });
+        // Sort items for each group individually. Group indexes don't change here, only items order.
+        const groupedItems = groupBy(items, (i) => {
+          return ObjectHelper.byPath(i, this.props.groupBy);
+        });
 
-      for (const group in groupedItems) {
-        const sortedItemsByGroup = this._copyAndSort(groupedItems[group], currColumn.data.value, currColumn.isSortedDescending);
-        newItems = newItems.concat(sortedItemsByGroup);
+        for (const group in groupedItems) {
+          const sortedItemsByGroup = this._copyAndSort(groupedItems[group], currColumn.data.value, currColumn.isSortedDescending);
+          newItems = newItems.concat(sortedItemsByGroup);
+        }
       }
+      
+      this.setState({
+        columns: newColumns,
+        items: newItems
+      });
     }
-    
-    this.setState({
-      columns: newColumns,
-      items: newItems
-    });
   }
 
   private _buildGroups(items: any[], groupByField: string): IGroup[] {

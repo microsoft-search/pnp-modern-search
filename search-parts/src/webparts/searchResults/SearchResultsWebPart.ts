@@ -59,6 +59,8 @@ import { IDataVerticalSourceData } from '../../models/dynamicData/IDataVerticalS
 import { BaseWebPart } from '../../common/BaseWebPart';
 import { ApplicationInsights } from '@microsoft/applicationinsights-web';
 import commonStyles from '../../styles/Common.module.scss';
+import { ISortFieldConfiguration } from '../../models/search/ISortFieldConfiguration';
+import { ISortEventInfo } from '../../models/search/ISortEventInfo';
 
 const LogSource = "SearchResultsWebPart";
 
@@ -140,6 +142,11 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
      * The current page number
      */
     private currentPageNumber: number = 1;
+
+    /**
+     * The current page sorting
+     */
+    private currentSorting: ISortFieldConfiguration[];
 
     /**
      * The page URL link if provided by the data source
@@ -277,6 +284,9 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 instanceId: undefined,
                 filterOperator: undefined
             },
+            sorting: {
+                selectedSorting: this.currentSorting
+            },
             inputQueryText: inputQueryText,
         };
 
@@ -348,7 +358,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                         dataContext.pageNumber = 1;
                     }
 
-                    // Use the filter confiugration and then get the corresponding values 
+                    // Use the filter configuration and then get the corresponding values 
                     dataContext.filters.filtersConfiguration = filtersSourceData.filterConfiguration;
                     dataContext.filters.selectedFilters = filtersSourceData.selectedFilters;
                     dataContext.filters.filterOperator = filtersSourceData.filterOperator;
@@ -484,6 +494,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         // Bind web component events
         this.bindPagingEvents();
+        this.bindSortingEvents();
 
         this._bindHashChange();
         this._handleQueryStringChange();
@@ -942,6 +953,26 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             this.currentPageNumber = eventDetails.pageNumber;
             this.currentPageLinkUrl = eventDetails.pageLink;
             this.availablePageLinks = eventDetails.pageLinks;
+
+            this.render();
+
+        }).bind(this));
+    }
+
+    /**
+     * Binds event fired from sorting web components
+     */
+    private bindSortingEvents() {
+
+        this.domElement.addEventListener('sortingUpdated', ((ev: CustomEvent) => {
+
+            // We ensure the event if not propagated outside the component (i.e. other Web Part instances)
+            ev.stopImmediatePropagation();
+
+            const eventDetails: ISortEventInfo = ev.detail;
+
+            // These information comes from the PaginationWebComponent class
+            this.currentSorting = eventDetails.sortList;
 
             this.render();
 
@@ -1867,7 +1898,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 this._verticalsSourceData.unregister(this.render);
             }
         }
-
     }
 
     /**
