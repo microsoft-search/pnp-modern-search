@@ -120,7 +120,7 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
     }
 
     public getPropertyPaneFieldsConfiguration(availableFields: string[]): IPropertyPaneField<any>[] {
-        
+
         let availableOptions: IComboBoxOption[] = availableFields.map((fieldName) => { return { key: fieldName, text: fieldName } as IComboBoxOption; });
 
         // Sort ascending
@@ -136,6 +136,8 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
 
             return 0;
         });
+
+        const ignoreSortableValidation = availableOptions.findIndex(o => o.key === 'rank') > -1;
 
         // Column builder
         let propertyPaneFields: IPropertyPaneField<any>[] = [
@@ -168,7 +170,7 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
                                     useHandlebarsExpr: item.useHandlebarsExpr,
                                     onUpdate: (fieldId, value) => {
                                         if(item.useHandlebarsExpr) { onUpdate(fieldId, value); }
-                                        else { this._handleDynamicSorting(value, field, item, onCustomFieldValidation, onUpdate); }
+                                        else { this._handleDynamicSorting(value, field, item, ignoreSortableValidation, onCustomFieldValidation, onUpdate); }
                                     },
                                     value: value,
                                     availableProperties: availableOptions,
@@ -191,7 +193,7 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
                                         textDisplayValue: item[field.id] ? item[field.id] : '',
                                         defaultSelectedKey: item[field.id] ? item[field.id] : '',
                                         onUpdate: (filterValue: IComboBoxOption) => {
-                                            this._handleDynamicSorting(filterValue.key as string, field, item, onCustomFieldValidation, (fieldId, value) => 
+                                            this._handleDynamicSorting(filterValue.key as string, field, item, ignoreSortableValidation, onCustomFieldValidation, (fieldId, value) => 
                                             {
                                                 onUpdate(field.id, value);
                                                 this._updateRequiredValueSorting(item.useHandlebarsExpr, 'enableSorting', item, onCustomFieldValidation, filterValue.key);
@@ -343,8 +345,8 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
         }
     }
 
-    private _handleDynamicSorting(value: string, field: ICustomCollectionField, item: IDetailsListColumnConfiguration,  onCustomFieldValidation: (fieldId: string, errorMessage: string) => void, onUpdate: (fieldId: string, value: any) => void) {
-        if(item.enableSorting !== 'dynamic') {
+    private _handleDynamicSorting(value: string, field: ICustomCollectionField, item: IDetailsListColumnConfiguration,  ignoreValidation: boolean, onCustomFieldValidation: (fieldId: string, errorMessage: string) => void, onUpdate: (fieldId: string, value: any) => void) {
+        if(ignoreValidation || item.enableSorting !== 'dynamic') {
             onUpdate(field.id, value);
         } else {
             // TODO: How to detect Microsoft Search as source?
