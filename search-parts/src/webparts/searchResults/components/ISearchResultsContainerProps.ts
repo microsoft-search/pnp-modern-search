@@ -5,6 +5,7 @@ import { IDataContext } from "@pnp/modern-search-extensibility";
 import { PageContext } from "@microsoft/sp-page-context";
 import { ServiceScope } from "@microsoft/sp-core-library";
 import { IWebPartTitleProps } from "@pnp/spfx-controls-react/lib/WebPartTitle";
+import { ISortFieldConfiguration } from "../../../models/search/ISortFieldConfiguration";
 
 export interface ISearchResultsContainerProps {
 
@@ -51,7 +52,7 @@ export interface ISearchResultsContainerProps {
   /**
    * Handler when the data have been retrieved form the source. Useful to list all available fields from the source.
    */
-  onDataRetrieved: (availableDataSourceFields: string[], filters?: IDataFilterResult[], pageNumber?: number, nextLinkUrl?: string, pageLinks?: string[]) => void;
+  onDataRetrieved: (availableDataSourceFields: string[], filters?: IDataFilterResult[], pageNumber?: number, nextLinkUrl?: string, pageLinks?: string[], sortList?: ISortFieldConfiguration[]) => void;
 
   /**
    * The current service scope

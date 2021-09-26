@@ -120,7 +120,7 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
     }
 
     public getPropertyPaneFieldsConfiguration(availableFields: string[]): IPropertyPaneField<any>[] {
-
+        
         let availableOptions: IComboBoxOption[] = availableFields.map((fieldName) => { return { key: fieldName, text: fieldName } as IComboBoxOption; });
 
         // Sort ascending
@@ -333,6 +333,7 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
             this.properties.groupByField = '';
         }
     }
+
     private _updateRequiredValueSorting(value: boolean, otherDependentField: string, item: IDetailsListColumnConfiguration, onCustomFieldValidation: (fieldId: string, errorMessage: string) => void, newValueSorting?: string | number) {
         if (!value || item.valueSorting || newValueSorting) {
             onCustomFieldValidation('enableSorting', '');
@@ -346,6 +347,7 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
         if(item.enableSorting !== 'dynamic') {
             onUpdate(field.id, value);
         } else {
+            // TODO: How to detect Microsoft Search as source?
             this._sharePointSearchService.validateSortableProperty(value).then((sortable: boolean) => {
                 if (!sortable) {
                     onCustomFieldValidation(field.id, strings.DataSources.SearchCommon.Sort.SortInvalidSortableFieldMessage);

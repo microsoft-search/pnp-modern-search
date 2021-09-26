@@ -299,12 +299,13 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 templateContent: this.templateContentToDisplay,
                 instanceId: this.instanceId,
                 properties: JSON.parse(JSON.stringify(this.properties)), // Create a copy to avoid unexpected reference value updates from data sources 
-                onDataRetrieved: (availableFields, filters, pageNumber, nextLinkUrl, pageLinks) => {
+                onDataRetrieved: (availableFields, filters, pageNumber, nextLinkUrl, pageLinks, sortList) => {
 
                     this._dataResultsSourceData.availableFieldsFromResults = availableFields;
                     this.currentPageNumber = pageNumber;
                     this.availablePageLinks = pageLinks;
                     this.currentPageLinkUrl = nextLinkUrl;
+                    this.currentSorting = sortList;
 
                     // Set the available filters from the data source 
                     if (filters) {
@@ -1619,6 +1620,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         let dataSource: IDataSource = undefined;
         let serviceKey: ServiceKey<IDataSource> = undefined;
+        let getInitialSorting: (props: ISearchResultsWebPartProps) => ISortFieldConfiguration[];
 
         if (dataSourceKey) {
 
@@ -1634,6 +1636,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                         '../../dataSources/SharePointSearchDataSource'
                     );
 
+                    this.currentSorting = this.properties.dataSourceProperties.sortList || [];
+
                     serviceKey = ServiceKey.create<IDataSource>('ModernSearch:SharePointSearchDataSource', SharePointSearchDataSource);
                     break;
 
@@ -1644,6 +1648,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                         /* webpackChunkName: 'pnp-modern-search-microsoft-search-datasource' */
                         '../../dataSources/MicrosoftSearchDataSource'
                     );
+                    
+                    this.currentSorting = this.properties.dataSourceProperties.sortProperties || [];
 
                     serviceKey = ServiceKey.create<IDataSource>('ModernSearch:SharePointSearchDataSource', MicrosoftSearchDataSource);
                     break;
@@ -1651,6 +1657,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 default:
                     break;
             }
+
 
             return new Promise<IDataSource>((resolve, reject) => {
 

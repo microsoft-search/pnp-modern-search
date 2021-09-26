@@ -163,7 +163,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         const searchRequest = await this.buildMicrosoftSearchRequest(dataContext);
         results = await this.search(searchRequest);
 
-        return results;
+        return { ...results, sortList: dataContext.sorting.selectedSorting ?? this.properties.sortProperties };
     }
 
     public getPropertyPaneGroupsConfiguration(): IPropertyPaneGroup[] {

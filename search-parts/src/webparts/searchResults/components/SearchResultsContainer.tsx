@@ -231,7 +231,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 }
             }
 
-            this.props.onDataRetrieved(this.getAvailableFieldsFromResults(data), availableFilters, pageNumber, nextLinkUrl, pageLinks);
+            this.props.onDataRetrieved(this.getAvailableFieldsFromResults(data), availableFilters, pageNumber, nextLinkUrl, pageLinks, data.sortList);
 
             // Persist the total items count
             this._totalItemsCount = totalItemsCount;
@@ -456,6 +456,9 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             // Any other useful informations
             utils: {
                 defaultImage: Constants.DEFAULT_IMAGE_CONTENT
+            },
+            sorting: {
+                sortList: this.props.dataContext.sorting.selectedSorting || []
             }
         };
     }

@@ -16,6 +16,8 @@ import { DomPurifyHelper } from '../helpers/DomPurifyHelper';
 import { ITemplateService } from '../services/templateService/ITemplateService';
 import { TemplateService } from '../services/templateService/TemplateService';
 import { ServiceScope, ServiceKey } from '@microsoft/sp-core-library';
+import { ISortFieldConfiguration, SortFieldDirection } from '../models/search/ISortFieldConfiguration';
+import { ISortEventInfo } from '../models/search/ISortEventInfo';
 
 const DEFAULT_SHIMMER_HEIGHT = 7;
 const SHIMMER_LINE_VS_CELL_WIDTH_RATIO = 0.95;
@@ -24,6 +26,11 @@ const classNames = mergeStyleSets({
   fileIconHeaderIcon: {
     padding: 0,
     fontSize: '16px'
+  },  
+  sortHeaderIcon: {
+    fontSize: '12px',
+    opacity: 0.5,
+    padding: '0 5px 0 0'
   },
   fileIconCell: {
     textAlign: 'center',
@@ -220,9 +227,13 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
 
     // Build columns dynamically
     if (this.props.columnsConfiguration) {
+      const sortList: ISortFieldConfiguration[] = this.props.context?.sorting?.sortList as ISortFieldConfiguration[] || [];
+      const hasInitialSortMatch = sortList && sortList.find(sl => this.props.columnsConfiguration.findIndex(c => c.enableSorting && (c.valueSorting || c.value) == sl.sortField))
 
       this.props.columnsConfiguration.forEach((column: IDetailsListColumnConfiguration) => {
+        const sortField = column.valueSorting || column.value;
         const allowSorting = column.enableSorting && (column.useHandlebarsExpr !== true || (column.valueSorting && column.valueSorting.length > 0));
+        const sortMatch = sortList && allowSorting && sortList.find(sl => sl.sortField == sortField);
         columns.push(
           {
             key: column.name,
@@ -233,8 +244,10 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
             isRowHeader: true,
             isResizable: column.isResizable === true,
             isMultiline: column.isMultiline === true,
-            isSorted: allowSorting,
-            isSortedDescending: false,
+            iconClassName: allowSorting ? classNames.sortHeaderIcon : null,
+            iconName: allowSorting ? 'Sort' : null,
+            isSorted: allowSorting && sortMatch != null,
+            isSortedDescending: sortMatch ? sortMatch.sortDirection == 2 : false,
             sortAscendingAriaLabel: 'Sorted A to Z',
             sortDescendingAriaLabel: 'Sorted Z to A',
             onColumnClick: allowSorting ? this._onColumnClick : null,
@@ -243,7 +256,7 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
               useHandlebarsExpr: column.useHandlebarsExpr,
 
               // Set the column value for sorting (i.e field to use)
-              value: column.valueSorting || column.value,
+              value: sortField,
 
               // Set if search sorting is done data source
               isDynamic: column.enableSorting == 'dynamic'

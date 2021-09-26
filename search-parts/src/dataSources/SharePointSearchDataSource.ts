@@ -218,7 +218,8 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
             queryModification: results.queryModification,
             secondaryResults: results.secondaryResults,
             spellingSuggestion: results.spellingSuggestion,
-            promotedResults: results.promotedResults
+            promotedResults: results.promotedResults,
+            sortList: dataContext.sorting.selectedSorting ?? this.properties.sortList
         };
 
         // Translates taxonomy refiners and result values by using terms ID if applicable
