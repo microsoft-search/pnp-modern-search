@@ -32,6 +32,12 @@ const classNames = mergeStyleSets({
     opacity: 0.5,
     padding: '0 5px 0 0'
   },
+  sortDynamicHeaderIcon: {
+    fontSize: '18px',
+    lineHeight: '12px',
+    opacity: 0.5,
+    padding: '0 5px 0 0'
+  },
   fileIconCell: {
     textAlign: 'center',
     selectors: {
@@ -234,6 +240,7 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
         const sortField = column.valueSorting || column.value;
         const allowSorting = column.enableSorting && (column.useHandlebarsExpr !== true || (column.valueSorting && column.valueSorting.length > 0));
         const sortMatch = sortList && allowSorting && sortList.find(sl => sl.sortField == sortField);
+        const isDynamic = column.enableSorting == 'dynamic';
         columns.push(
           {
             key: column.name,
@@ -244,8 +251,8 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
             isRowHeader: true,
             isResizable: column.isResizable === true,
             isMultiline: column.isMultiline === true,
-            iconClassName: allowSorting ? classNames.sortHeaderIcon : null,
-            iconName: allowSorting ? 'Sort' : null,
+            iconClassName: allowSorting ? isDynamic ? classNames.sortDynamicHeaderIcon : classNames.sortHeaderIcon : null,
+            iconName: allowSorting ? isDynamic ? 'CloudImportExport' : 'Sort' : null,
             isSorted: allowSorting && sortMatch != null,
             isSortedDescending: sortMatch ? sortMatch.sortDirection == 2 : false,
             sortAscendingAriaLabel: 'Sorted A to Z',
@@ -259,7 +266,7 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
               value: sortField,
 
               // Set if search sorting is done data source
-              isDynamic: column.enableSorting == 'dynamic'
+              isDynamic: isDynamic
             },
             isPadded: true,
             onRender: (item: any) => {
