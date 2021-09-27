@@ -187,6 +187,7 @@ define([], function() {
                 ManageDetailsListColumnDescription: "Add, update or remove columns for the details list layout. You can use either property values in the list directly without any transformation or use an Handlebars expression in the value field. HTML is supported for all fields as well.",
                 ManageDetailsListColumnLabel: "Manage columns",
                 ValueColumnLabel: "Column value",
+                ValueSortingColumnLabel: "Column value sorting",
                 DisplayNameColumnLabel: "Column display name",
                 FileExtensionFieldLabel: "Field to use for file extension",
                 GroupByFieldLabel: "Group by field",

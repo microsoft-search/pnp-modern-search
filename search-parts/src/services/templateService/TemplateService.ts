@@ -262,11 +262,11 @@ export class TemplateService implements ITemplateService {
                     } else {
 
                         // Update the instances array for all calling Web Parts
-                        if (!component.prototype._webPartServiceScopes.get(instanceId)) {
+                        if (component.prototype._webPartServiceScopes && !component.prototype._webPartServiceScopes.get(instanceId)) {
                             component.prototype._webPartServiceScopes.set(instanceId, this.serviceScope);
                         }
 
-                        if (!component.prototype._webPartServiceKeys.get(instanceId)) {
+                        if (component.prototype._webPartServiceScopes && !component.prototype._webPartServiceKeys.get(instanceId)) {
                             component.prototype._webPartServiceKeys.set(instanceId, availableServiceKeys);
                         }
                     }

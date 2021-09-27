@@ -80,7 +80,7 @@
                             {{#if (slot item @root.slots.Tags)}}
                             <pnp-icon data-name="Tag" aria-hidden="true" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-icon>
                             {{#each (split (slot item @root.slots.Tags) ",") as |tag| }}
-                            <a href="#{{slot item @root.slots.Tags}}:'{{trim tag}}'">{{tag}}</a> {{/each}} {{/if}}
+                            <a href="#{{slot item @root.slots.Tags}}:'{{trim tag}}'">{{tag}}</a>&nbsp;{{/each}} {{/if}}
                         </div>
                     </div>
                 </div>

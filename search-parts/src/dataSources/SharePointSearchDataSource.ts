@@ -175,7 +175,14 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
             this._propertyPaneWebPartInformation = PropertyPaneWebPartInformation;
         }
 
-        this._currentLocaleId = LocalizationHelper.getLocaleId(this._pageContext.cultureInfo.currentUICultureName);
+        let culture =  this.getTranslatedCultureFromUrl();
+        if (culture) {
+            this._currentLocaleId = LocalizationHelper.getLocaleId(culture);
+        }
+
+        if (!culture || this._currentLocaleId === 0) {
+            this._currentLocaleId = LocalizationHelper.getLocaleId(this._pageContext.cultureInfo.currentUICultureName);
+        }
 
         // Initialize the list of available languages
         if (this._availableLanguages.length == 0) {
@@ -188,6 +195,16 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                 };
             });
         }
+    }
+
+    /**
+    * Pick culture from url in translated pages as they are folder names like: "en", "no", "de"
+    */
+    private getTranslatedCultureFromUrl(): string {
+        const pathParts = window.location.pathname.toLocaleLowerCase().split('/');
+        const cultureFolderCandidate = pathParts[pathParts.length-2];
+        if(cultureFolderCandidate.length == 2) return cultureFolderCandidate; //ISO-639-1 uses two letter codes
+        return null;
     }
 
     public async getData(dataContext: IDataContext): Promise<IDataSourceData> {
@@ -206,10 +223,10 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
 
         // Translates taxonomy refiners and result values by using terms ID if applicable
         if (this.properties.enableLocalization) {
-            const localizedFilters = await this._getLocalizedFilters(data.filters, this._pageContext.cultureInfo.currentUICultureName);
+            const localizedFilters = await this._getLocalizedFilters(data.filters, this._currentLocaleId);
             data.filters = localizedFilters;
 
-            const localizedResults = await this._getLocalizedMetadata(data.items, this._pageContext.cultureInfo.currentUICultureName);
+            const localizedResults = await this._getLocalizedMetadata(data.items, this._currentLocaleId);
             data.items = localizedResults;
         }
 
@@ -948,13 +965,9 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
      * By default SharePoint stores the taxonomy values according to the current site language. Because we can't create a communication site in French (as of 08/12/2017)
      * we need to do the translation afterwards
      * @param rawFilters The raw refinement results to translate coming from SharePoint search results
-     * @param currentUICultureName the current culture UI name (ex: 'en-US')
+     * @param lcid the current culture UI number (ex: '1044')
      */
-    private async _getLocalizedFilters(rawFilters: IDataFilterResult[], currentUICultureName: string): Promise<IDataFilterResult[]> {
-
-        // Get the current lcid according to current page language
-        const lcid = LocalizationHelper.getLocaleId(currentUICultureName);
-
+    private async _getLocalizedFilters(rawFilters: IDataFilterResult[], lcid: number): Promise<IDataFilterResult[]> {
         let termsToLocalize: { uniqueIdentifier: string, termId: string, localizedTermLabel: string }[] = [];
         let updatedFilters: IDataFilterResult[] = [];
         let localizedTerms = [];
@@ -988,7 +1001,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                         let matches = /L0\|#(.+)\|/.exec(value.name);
                         let termId = Guid.isValid(matches[1]) ? matches[1] : matches[1].substr(1);
                         let strippedTermFilter = "GP0|#" + termId.toString();
-                        let strippedTerm = term.substring(0,term.lastIndexOf('|')+1); // (we keep the last pipe for compatibility with further code/regexp)
+                        let strippedTerm = term.substring(0, term.lastIndexOf('|') + 1); // (we keep the last pipe for compatibility with further code/regexp)
 
                         const fqlFilterValue = `"ǂǂ${this._bytesToHex(this._stringToUTF8Bytes(strippedTermFilter))}"`;
                         const existingFilterIdx = updatedValues.map(updatedValue => updatedValue.name).indexOf(strippedTerm);
@@ -1132,13 +1145,9 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
     /**
      * Translates all result taxonomy values (owsTaxId...) according the current culture
      * @param rawResults The raw search results to translate coming from SharePoint search
-     * @param currentUICultureName the current culture UI name (ex: 'en-US')
+     * @param lcid the current culture UI number (ex: '1044')
      */
-    private async _getLocalizedMetadata(rawResults: ISharePointSearchResult[], currentUICultureName: string): Promise<ISharePointSearchResult[]> {
-
-        // Get the current lcid according to current page language
-        const lcid = LocalizationHelper.getLocaleId(currentUICultureName);
-
+    private async _getLocalizedMetadata(rawResults: ISharePointSearchResult[], lcid: number): Promise<ISharePointSearchResult[]> {
         let resultsToLocalize: ILocalizableSearchResult[] = [];
 
         let updatedResults: ISharePointSearchResult[] = [];

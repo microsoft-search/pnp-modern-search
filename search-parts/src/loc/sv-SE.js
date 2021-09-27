@@ -187,6 +187,7 @@ define([], function () {
           ManageDetailsListColumnDescription: "Lägg till, uppdatera eller ta bort kolumner från layouten i detaljlistan. Du kan antingen använda egenskapsvärden i listan direkt utan någon transformation, eller så kan du använda ett styruttryck som fältets värde. HTML stöds för användning i alla fält.",
           ManageDetailsListColumnLabel: "Hantera kolumner",
           ValueColumnLabel: "Kolumnvärde",
+          ValueSortingColumnLabel: "Kolumnvärde sortering",
           DisplayNameColumnLabel: "Kolumnens visningsnamn",
           FileExtensionFieldLabel: "Fält för användning av filtillägg",
           GroupByFieldLabel: "Gruppera efter fält",

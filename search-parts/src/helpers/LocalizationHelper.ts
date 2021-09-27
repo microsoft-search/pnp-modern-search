@@ -60,15 +60,25 @@ class LocalizationHelper {
     };
 
     public static getLocaleId(localeName: string): number {
+        if(this.isInt(localeName)) {
+            return parseInt(localeName);
+        }
 
-        const lcid = Object.keys(LocalizationHelper.locales).filter(elt => { return LocalizationHelper.locales[elt] === localeName; });
+        const lcid = Object.keys(LocalizationHelper.locales).filter(elt => {
+            return LocalizationHelper.locales[elt].toLocaleLowerCase().indexOf(localeName.toLocaleLowerCase()) === 0;
+        });
 
         if (lcid.length > 0) {
-          return parseInt(lcid[0]);
+            return parseInt(lcid[0]);
         }
         else {
-          return 0;
+            return 0;
         }
+    }
+
+    private static isInt(value: any) :boolean {
+        var x = parseFloat(value);
+        return !isNaN(value) && (x | 0) === x;
       }
 }
 
