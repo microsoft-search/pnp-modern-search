@@ -49,7 +49,7 @@ The following custom helpers are available in addition to the [handlebars-helper
 | `{{#times <number>}}` | Iterate the block `<number>` times. | `{{#times 5}} some mark up  {{/times}}`
 | `{{regex <expression> <string>}}` | Run a regular expression and return the match. Return `-` if not match. | `{{regex '\d+' 'digit 15 is a number'}}` will return `15`.
 | `{{getPageContext "<SPFx page property>"}}` | Retrieve a property from the SPFx context object. | `{{getPageContext "user.displayName"}}` or `{{getPageContext "cultureInfo.currentUICultureName"}}`
-| `{{getAttachments}}`| Return object structure for list item attachments. | `{{#getAttachments LinkOfficeChild}}<a href="{{url}}">{{fileName}}</href>{{/getAttachments}}`
+| `{{getAttachments}}`| Return object structure for list item attachments. | `{{#getAttachments LinkOfficeChild}}<a href="{{url}}">{{index}} - {{fileName}}</href>{{/getAttachments}}`
 
 
 > Need any other helper? Let us know [here](https://github.com/aequos-solutions/modern-search-results/issues)!
