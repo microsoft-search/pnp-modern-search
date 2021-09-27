@@ -583,12 +583,14 @@ export class TemplateService implements ITemplateService {
                 let splitArr: string[] = value.split(/\n+/);
 
                 if (splitArr && splitArr.length > 0) {
+                    let index: number = 0;
                     for (let i of splitArr) {
                         let pos: number = i.lastIndexOf("/");
                         if (pos !== -1) {
                             let fileName: string = i.substring(pos + 1);
-                            let objLine = { url: i, fileName: fileName };
+                            let objLine = { url: i, fileName: fileName, index: index };
                             out += options.fn(objLine);
+                            index++;
                         }
                     }
                 }
