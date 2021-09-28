@@ -71,7 +71,13 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
             return;
         }
 
-        let inputValue = this.properties.defaultQueryKeywords.tryGetValue();
+        let inputValue = "";
+        try {
+            inputValue = this.properties.defaultQueryKeywords.tryGetValue();
+        } catch (error) {
+            // Likely issue when q=%25 in spfx 
+        }
+
 
         if (inputValue) {
             if (typeof (inputValue) === 'string') {
@@ -265,7 +271,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
                 else if (paramType.startsWith('queryParameters')) {
                     const paramChunks = paramType.split('.');
                     const queryTextParam = paramChunks.length === 2 ? paramChunks[1] : 'q';
-                    const newUrl = UrlHelper.addOrReplaceQueryStringParam(window.location.href, queryTextParam, searchQuery);
+                    const newUrl = UrlHelper.addOrReplaceQueryStringParam(window.location.href, queryTextParam, encodeURIComponent(searchQuery));
 
                     if (window.location.href !== newUrl) {
                         window.history.pushState({ path: newUrl }, undefined, newUrl);

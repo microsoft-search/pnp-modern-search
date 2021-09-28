@@ -111,8 +111,15 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
 
 
     public UNSAFE_componentWillReceiveProps(nextProps: ISearchBoxContainerProps) {
+        let query = nextProps.inputValue;
+        try {
+            query = decodeURIComponent(nextProps.inputValue);
+            
+        } catch (error) {
+            // Likely issue when q=%25 in spfx
+        }
         this.setState({
-            searchInputValue: decodeURIComponent(nextProps.inputValue),
+            searchInputValue: query,
         });
     }
 
