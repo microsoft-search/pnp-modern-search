@@ -33,10 +33,10 @@ const classNames = mergeStyleSets({
     padding: '0 5px 0 0'
   },
   sortDynamicHeaderIcon: {
-    fontSize: '18px',
-    lineHeight: '12px',
+    fontSize: '19px',
     opacity: 0.5,
-    padding: '0 5px 0 0'
+    padding: '0 5px 0 0',
+    verticalAlign: '-3px'
   },
   fileIconCell: {
     textAlign: 'center',

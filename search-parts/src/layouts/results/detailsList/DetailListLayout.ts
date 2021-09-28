@@ -2,7 +2,7 @@ import * as React from "react";
 import { BaseLayout } from "@pnp/modern-search-extensibility";
 import * as strings from 'CommonStrings';
 import * as propertyControlStrings from 'PropertyControlStrings';
-import { Checkbox, ICheckboxProps, IComboBoxOption } from 'office-ui-fabric-react';
+import { Checkbox, Dropdown, ICheckboxProps, IComboBoxOption, IDropdownProps } from 'office-ui-fabric-react';
 import { IDetailsListColumnConfiguration } from '../../../components/DetailsListComponent';
 import { IPropertyPaneField, PropertyPaneToggle, PropertyPaneDropdown, PropertyPaneHorizontalRule, PropertyPaneButton, PropertyPaneButtonType } from '@microsoft/sp-property-pane';
 import { TemplateValueFieldEditor, ITemplateValueFieldEditorProps } from '../../../controls/TemplateValueFieldEditor/TemplateValueFieldEditor';
@@ -240,18 +240,27 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
                     {
                         id: 'enableSorting',
                         title: strings.Layouts.DetailsList.SortableColumnLabel,
-                        type: this._customCollectionFieldType.dropdown,
+                        type: this._customCollectionFieldType.custom,
                         defaultValue: false,
                         required: false,
                         options: [
-                            { key: false, text: 'No' },
-                            { key: true, text: 'Yes, static' },
-                            { key: 'dynamic', text: 'Yes, dynamic' }
+                            { key: false.toString(), text: strings.DataSources.SearchCommon.Sort.EnableSortingNoLabel },
+                            { key: true.toString(), text: strings.DataSources.SearchCommon.Sort.EnableSortingYesStaticLabel },
+                            { key: 'dynamic', text: strings.DataSources.SearchCommon.Sort.EnableSortingYesDynamicLabel }
                         ],
-                        onGetErrorMessage: (value, index, currentItem) => {
-                            let message = null;
-                            this._updateRequiredValueSorting(value, 'useHandlebarsExpr', currentItem, (fieldId, errorMessage) => message = errorMessage);
-                            return message;
+                        onCustomRender: (field, value, onUpdate, item, itemId, onCustomFieldValidation) => {
+                            return React.createElement(Dropdown, {
+                                key: `${field.id}-${itemId}`,
+                                options: field.options,
+                                selectedKey: typeof value === 'boolean' ? value.toString() : value,
+                                onChange: (ev, value) => {
+                                    const parsedValue: boolean | string | any = value.key === 'dynamic' ? value.key : value.key === true.toString();
+                                    onUpdate(field.id, parsedValue)
+                                    this._updateRequiredValueSorting(parsedValue, 'useHandlebarsExpr', item, onCustomFieldValidation);
+                                },
+                                disabled: field.disableEdit,
+                                className: "PropertyFieldCollectionData__panel__boolean-field"
+                            } as IDropdownProps);
                         }
                     },
                     {
@@ -336,7 +345,7 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
         }
     }
 
-    private _updateRequiredValueSorting(value: boolean, otherDependentField: string, item: IDetailsListColumnConfiguration, onCustomFieldValidation: (fieldId: string, errorMessage: string) => void, newValueSorting?: string | number) {
+    private _updateRequiredValueSorting(value: boolean | string, otherDependentField: string, item: IDetailsListColumnConfiguration, onCustomFieldValidation: (fieldId: string, errorMessage: string) => void, newValueSorting?: string | number) {
         if (!value || item.valueSorting || newValueSorting) {
             onCustomFieldValidation('enableSorting', '');
         }
