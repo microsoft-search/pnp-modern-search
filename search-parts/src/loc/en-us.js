@@ -175,7 +175,6 @@ define([], function() {
             },
             DetailsList: {
                 Name: "Details List",
-                UseHandlebarsExpressionLabel: "Use Handlebars expression",
                 MinimumWidthColumnLabel: "Minimum width (px)",
                 MaximumWidthColumnLabel: "Maximum width (px)",
                 SortableColumnLabel: "Sortable",
@@ -186,14 +185,11 @@ define([], function() {
                 ShowFileIcon: "Show file icon",
                 ManageDetailsListColumnDescription: "Add, update or remove columns for the details list layout. You can use either property values in the list directly without any transformation or use an Handlebars expression in the value field. HTML is supported for all fields as well.",
                 ManageDetailsListColumnLabel: "Manage columns",
-                ValueColumnLabel: "Column value",
                 ValueSortingColumnLabel: "Column value sorting",
-                DisplayNameColumnLabel: "Column display name",
                 FileExtensionFieldLabel: "Field to use for file extension",
                 GroupByFieldLabel: "Group by field",
                 EnableGrouping: "Enable grouping",
-                CollapsedGroupsByDefault: "Show collapsed",
-                ResetFieldsBtnLabel: "Reset fields to default values"
+                CollapsedGroupsByDefault: "Show collapsed"
             },
             Cards: {
                 Name: "Cards",
@@ -220,8 +216,7 @@ define([], function() {
                     ProfileImage: "Profile Image Url",
                     FileExtension: "File Extension",
                     IsContainer: "Is Folder"
-                },
-                ResetFieldsBtnLabel: "Reset fields to default values"
+                }
             },
             Slider: {
                 Name: "Slider",
@@ -249,7 +244,6 @@ define([], function() {
                 PersonaSizeExtraLarge: "Extra large",
                 ShowInitialsToggleLabel: "Show initials if no picture available",
                 SupportHTMLColumnLabel: "Allow HTML",
-                ResetFieldsBtnLabel: "Reset fields to default values",
                 ShowPersonaCardOnHover: "Show persona card on hover",
                 ShowPersonaCardOnHoverCalloutMsg: "This feature uses Microsoft Graph to display information about the user and needs the following API permissions in your tenant to work: ['User.Read','People.Read','Contacts.Read','User.Read.All'].",
                 Fields: {
@@ -285,6 +279,15 @@ define([], function() {
                     ExtraLarge: 'Extra large',
                     SmallFluid: 'Full-width (fluid)'
                 }
+            },
+            Shared: {
+                EnableExport: "Enable export",
+                ManageExportColumnsLabel: "Manage columns",
+                ManageExportColumnsDescription: "Add, update or remove columns for the export. You can use either property values in the list directly without any transformation or use an Handlebars expression in the value field.",
+                DisplayNameColumnLabel: "Column display name",
+                UseHandlebarsExpressionLabel: "Use Handlebars expression",
+                ValueColumnLabel: "Column value",
+                ResetFieldsBtnLabel: "Reset fields to default values"
             }
         },
         HandlebarsHelpers: {

@@ -175,7 +175,6 @@ define([], function() {
             },
             DetailsList: {
                 Name: "Details Lijst",
-                UseHandlebarsExpressionLabel: "Gebruik Handlebars-uitdrukking",
                 MinimumWidthColumnLabel: "Minimale breedte (px)",
                 MaximumWidthColumnLabel: "Maximale breedte (px)",
                 SortableColumnLabel: "Sorteerbaar",
@@ -186,14 +185,11 @@ define([], function() {
                 ShowFileIcon: "Toon bestandspictogram",
                 ManageDetailsListColumnDescription: "Kolommen toevoegen, bewerken of verwijderen voor de detailslijst indeling. Je kan eigenschapswaarden direct in de lijst gebruiken zonder transformaties toe te passen, of een Handlebars-uitdrukking gebruiken als veldwaarde. HTML wordt ook ondersteund voor alle velden.",
                 ManageDetailsListColumnLabel: "Beheer kolommen",
-                ValueColumnLabel: "Kolomwaarde",
                 ValueSortingColumnLabel: "Kolomwaarde sorteren",
-                DisplayNameColumnLabel: "Kolom weergavenaam",
                 FileExtensionFieldLabel: "Te gebruiken veld voor bestandsextensie",
                 GroupByFieldLabel: "Groepeer op veld",
                 EnableGrouping: "Groeperen inschakelen",
-                CollapsedGroupsByDefault: "Toon ingeklapt",
-                ResetFieldsBtnLabel: "Reset velden naar standaard waarden"
+                CollapsedGroupsByDefault: "Toon ingeklapt"
             },
             Cards: {
                 Name: "Kaarten",
@@ -220,8 +216,7 @@ define([], function() {
                     ProfileImage: "Proefielafbeelding Url",
                     FileExtension: "Bestandsextensie",
                     IsContainer: "Is folder"
-                },
-                ResetFieldsBtnLabel: "Velden resetten naar standaardwaarde"
+                }
             },
             Slider: {
                 Name: "Slider",
@@ -249,7 +244,6 @@ define([], function() {
                 PersonaSizeExtraLarge: "Extra groot",
                 ShowInitialsToggleLabel: "Toon initialen wanneer geen foto beschikbaar",
                 SupportHTMLColumnLabel: "Sta HTML toe",
-                ResetFieldsBtnLabel: "Reset velden naar standaard waarden",
                 ShowPersonaCardOnHover: "Toon persona card bij 'hover'",
                 ShowPersonaCardOnHoverCalloutMsg: "Deze feature gebruikt Microsoft Graph om informatie over de gebruiker te tonen en heeft de volgende API rechten nodig in de tenant om te kunnen werken: ['User.Read','People.Read','Contacts.Read','User.Read.All'].",
                 Fields: {
@@ -285,6 +279,15 @@ define([], function() {
                     ExtraLarge: 'Extra groot',
                     SmallFluid: 'Volledige breedte (fluid)'
                 }
+            },
+            Shared: {
+                EnableExport: "Exporteren inschakelen",
+                ManageExportColumnsLabel: "Beheer kolommen",
+                ManageExportColumnsDescription: "Kolommen toevoegen, bewerken of verwijderen voor export. Je kan eigenschapswaarden direct in de lijst gebruiken zonder transformaties toe te passen, of een Handlebars-uitdrukking gebruiken als veldwaarde.",
+                DisplayNameColumnLabel: "Kolom weergavenaam",
+                UseHandlebarsExpressionLabel: "Gebruik Handlebars-uitdrukking",
+                ValueColumnLabel: "Kolomwaarde",
+                ResetFieldsBtnLabel: "Reset velden naar standaard waarden"
             }
         },
         HandlebarsHelpers: {

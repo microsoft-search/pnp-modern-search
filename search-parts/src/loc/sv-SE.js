@@ -175,7 +175,6 @@ define([], function () {
         },
         DetailsList: {
           Name: "Detaljerad lista",
-          UseHandlebarsExpressionLabel: "Använd Handlebars-uttryck",
           MinimumWidthColumnLabel: "Minimum bredd (px)",
           MaximumWidthColumnLabel: "Maximum bredd (px)",
           SortableColumnLabel: "Sorterbar",
@@ -186,14 +185,11 @@ define([], function () {
           ShowFileIcon: "Visa filikon",
           ManageDetailsListColumnDescription: "Lägg till, uppdatera eller ta bort kolumner från layouten i detaljlistan. Du kan antingen använda egenskapsvärden i listan direkt utan någon transformation, eller så kan du använda ett styruttryck som fältets värde. HTML stöds för användning i alla fält.",
           ManageDetailsListColumnLabel: "Hantera kolumner",
-          ValueColumnLabel: "Kolumnvärde",
           ValueSortingColumnLabel: "Kolumnvärde sortering",
-          DisplayNameColumnLabel: "Kolumnens visningsnamn",
           FileExtensionFieldLabel: "Fält för användning av filtillägg",
           GroupByFieldLabel: "Gruppera efter fält",
           EnableGrouping: "Aktivera gruppering",
-          CollapsedGroupsByDefault: "Visa kollapsade",
-          ResetFieldsBtnLabel: "Återställ fält till standardvärden"
+          CollapsedGroupsByDefault: "Visa kollapsade"
         },
         Cards: {
           Name: "Kort",
@@ -220,8 +216,7 @@ define([], function () {
             ProfileImage: "Url för profilbild",
             FileExtension: "Filändelsen",
             IsContainer: "Är mapp"
-          },
-          ResetFieldsBtnLabel: "Återställ fält till standardvärden"
+          }
         },
         Slider: {
           Name: "Slider",
@@ -249,7 +244,6 @@ define([], function () {
           PersonaSizeExtraLarge: "Extra stor",
           ShowInitialsToggleLabel: "Visa initialer om ingen bild är tillgänglig",
           SupportHTMLColumnLabel: "Tillåt HTML",
-          ResetFieldsBtnLabel: "Återställ fält till standardvärden",
           ShowPersonaCardOnHover: "Visa personakort genom att föra musen över",
           ShowPersonaCardOnHoverCalloutMsg: "Denna funktion använder Microsoft Graph för att visa information om användaren och måste använda följande API-behörigheter i din klient för att den ska fungera: ['User.Read','People.Read','Contacts.Read','User.Read.All'].",
           Fields: {
@@ -285,6 +279,15 @@ define([], function () {
             ExtraLarge: 'Extra stor',
             SmallFluid: 'Fullbredd (flytande)'
           }
+        },
+        Shared: {
+            EnableExport: "Aktivera export",
+            ManageExportColumnsLabel: "Hantera kolumner",
+            ManageExportColumnsDescription: "Lägg till, uppdatera eller ta bort kolumner från exporten. Du kan antingen använda egenskapsvärden i listan direkt utan någon transformation, eller så kan du använda ett styruttryck som fältets värde.",
+            DisplayNameColumnLabel: "Kolumnens visningsnamn",
+            UseHandlebarsExpressionLabel: "Använd Handlebars-uttryck",
+            ValueColumnLabel: "Kolumnvärde",
+            ResetFieldsBtnLabel: "Återställ fält till standardvärden"
         }
       },
       HandlebarsHelpers: {

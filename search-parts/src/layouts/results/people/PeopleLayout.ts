@@ -132,14 +132,14 @@ export class PeopleLayout extends BaseLayout<IPeopleLayoutProperties> {
                     {
                         id: 'useHandlebarsExpr',
                         type: this._customCollectionFieldType.boolean,
-                        title: strings.Layouts.People.UseHandlebarsExpressionLabel
+                        title: strings.Layouts.Shared.UseHandlebarsExpressionLabel
                     }
                 ]
             }),
             PropertyPaneButton('layoutProperties.resetFields', {
                 buttonType: PropertyPaneButtonType.Command,
                 icon: 'Refresh',
-                text: strings.Layouts.People.ResetFieldsBtnLabel,
+                text: strings.Layouts.Shared.ResetFieldsBtnLabel,
                 onClick: () => {
                     // Just reset the fields
                     this.properties.peopleFields = null;

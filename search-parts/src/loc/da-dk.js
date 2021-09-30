@@ -175,7 +175,6 @@ define([], function() {
             },
             DetailsList: {
                 Name: "Detaljeliste",
-                UseHandlebarsExpressionLabel: "Anvend Handlebars-udtryk",
                 MinimumWidthColumnLabel: "Minimum bredde (px)",
                 MaximumWidthColumnLabel: "Maksimum bredde (px)",
                 SortableColumnLabel: "Sortérbar",
@@ -186,14 +185,11 @@ define([], function() {
                 ShowFileIcon: "Vis filikon",
                 ManageDetailsListColumnDescription: "Tilføj, opdatér eller fjern kolonner fra layoutet på detaljelisten. Du kan enten bruge egenskabsværdier i listen direkte uden nogen transformation, eller du kan bruge et Handlebars-udtryk som feltets værdi. HTML er supporteret til brug i alle felter.",
                 ManageDetailsListColumnLabel: "Administrér kolonner",
-                ValueColumnLabel: "Kolonnes værdi",
                 ValueSortingColumnLabel: "Kolonne værdi sortering",
-                DisplayNameColumnLabel: "Kolonnens visningsnavn",
                 FileExtensionFieldLabel: "Felt til brug af file extension",
                 GroupByFieldLabel: "Gruppér efter felt",
                 EnableGrouping: "Aktivér gruppering",
-                CollapsedGroupsByDefault: "Vis collapsed",
-                ResetFieldsBtnLabel: "Nulstil felter til standardværdier"
+                CollapsedGroupsByDefault: "Vis collapsed"
             },
             Cards: {
                 Name: "Cards",
@@ -220,8 +216,7 @@ define([], function() {
                     ProfileImage: "Url til profilbillede",
                     FileExtension: "Extension af fil",
                     IsContainer: "Er Folder"
-                },
-                ResetFieldsBtnLabel: "Nulstil felter til standard værdier"
+                }
             },
             Slider: {
                 Name: "Slider",
@@ -249,7 +244,6 @@ define([], function() {
                 PersonaSizeExtraLarge: "Ekstra stor",
                 ShowInitialsToggleLabel: "Vis initialer hvis der ikke er et billede tilgængeligt",
                 SupportHTMLColumnLabel: "Tillad HTML",
-                ResetFieldsBtnLabel: "Nulstil felter til standardværdier",
                 ShowPersonaCardOnHover: "Vis persona-card ved at hover",
                 ShowPersonaCardOnHoverCalloutMsg: "Denne feature bruger Microsoft Graph til at vise information om brugeren og skal bruge de følgende API-tilladelser i din tenant, for at det virker: ['User.Read','People.Read','Contacts.Read','User.Read.All'].",
                 Fields: {
@@ -285,6 +279,15 @@ define([], function() {
                     ExtraLarge: 'Ekstra stor',
                     SmallFluid: 'Fuld bredde (fluid)'
                 }
+            },
+            Shared: {
+                EnableExport: "Aktiver eksport",
+                ManageExportColumnsLabel: "Administrér kolonner",
+                ManageExportColumnsDescription: "Tilføj, opdatér eller fjern kolonner til eksporten. Du kan enten bruge egenskabsværdier i listen direkte uden nogen transformation, eller du kan bruge et Handlebars-udtryk som feltets værdi.",
+                DisplayNameColumnLabel: "Kolonnens visningsnavn",
+                UseHandlebarsExpressionLabel: "Anvend Handlebars-udtryk",
+                ValueColumnLabel: "Kolonnes værdi",
+                ResetFieldsBtnLabel: "Nulstil felter til standardværdier"
             }
         },
         HandlebarsHelpers: {

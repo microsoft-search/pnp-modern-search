@@ -196,7 +196,7 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
     const columns: IColumn[] = [
     ];
 
-    // Show file icon pption
+    // Show file icon option
     if (this.props.showFileIcon) {
       columns.push(
         {

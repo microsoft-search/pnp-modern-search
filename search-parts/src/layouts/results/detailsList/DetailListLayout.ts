@@ -8,11 +8,12 @@ import { IPropertyPaneField, PropertyPaneToggle, PropertyPaneDropdown, PropertyP
 import { TemplateValueFieldEditor, ITemplateValueFieldEditorProps } from '../../../controls/TemplateValueFieldEditor/TemplateValueFieldEditor';
 import { AsyncCombo } from "../../../controls/PropertyPaneAsyncCombo/components/AsyncCombo";
 import { IAsyncComboProps } from "../../../controls/PropertyPaneAsyncCombo/components/IAsyncComboProps";
+import { IExportLayoutProperties } from "../../../models/common/IExportLayoutProperties";
 
 /**
  * Details List Builtin Layout
  */
-export interface IDetailsListLayoutProperties {
+export interface IDetailsListLayoutProperties extends IExportLayoutProperties  {
 
     /**
      * The details list column configuration
@@ -145,13 +146,13 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
                 fields: [
                     {
                         id: 'name',
-                        title: strings.Layouts.DetailsList.DisplayNameColumnLabel,
+                        title: strings.Layouts.Shared.DisplayNameColumnLabel,
                         type: this._customCollectionFieldType.string,
                         required: true,
                     },
                     {
                         id: 'value',
-                        title: strings.Layouts.DetailsList.ValueColumnLabel,
+                        title: strings.Layouts.Shared.ValueColumnLabel,
                         type: this._customCollectionFieldType.custom,
                         required: true,
                         onCustomRender: (field, value, onUpdate, item, itemId, onCustomFieldValidation) => {
@@ -192,7 +193,7 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
                         id: 'useHandlebarsExpr',
                         type: this._customCollectionFieldType.custom,
                         defaultValue: false,
-                        title: strings.Layouts.DetailsList.UseHandlebarsExpressionLabel,
+                        title: strings.Layouts.Shared.UseHandlebarsExpressionLabel,
                         onCustomRender: (field, _value, onUpdate, item, itemId, onCustomFieldValidation) => {
                             return this._renderValueSortingAwareCheckbox(field, item, itemId, onCustomFieldValidation, 'enableSorting',
                                 (fieldId, value) => {
@@ -246,7 +247,7 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
             PropertyPaneButton('layoutProperties.resetFields', {
                 buttonType: PropertyPaneButtonType.Command,
                 icon: 'Refresh',
-                text: strings.Layouts.DetailsList.ResetFieldsBtnLabel,
+                text: strings.Layouts.Shared.ResetFieldsBtnLabel,
                 onClick: () => {
                     // Just reset the fields
                     this.properties.detailsListColumns = null;
@@ -295,6 +296,70 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
                 PropertyPaneToggle('layoutProperties.groupsCollapsed', {
                     label: strings.Layouts.DetailsList.CollapsedGroupsByDefault,
                     checked: this.properties.groupsCollapsed
+                })
+            );
+        }
+
+        propertyPaneFields.push(
+            PropertyPaneToggle('layoutProperties.enableExport', {
+                label: strings.Layouts.Shared.EnableExport,
+                checked: this.properties.enableExport
+            }));
+
+        // Export options
+        if (this.properties.enableExport) {
+
+            propertyPaneFields.push(
+                this._propertyFieldCollectionData('layoutProperties.exportColumns', {
+                    manageBtnLabel: strings.Layouts.Shared.ManageExportColumnsLabel,
+                    key: 'layoutProperties.exportColumns',
+                    panelHeader: strings.Layouts.Shared.ManageExportColumnsLabel,
+                    panelDescription: strings.Layouts.Shared.ManageExportColumnsDescription,
+                    enableSorting: true,
+                    label: strings.Layouts.Shared.ManageExportColumnsLabel,
+                    value: this.properties.exportColumns,
+                    fields: [
+                        {
+                            id: 'name',
+                            title: strings.Layouts.Shared.DisplayNameColumnLabel,
+                            type: this._customCollectionFieldType.string,
+                            required: true,
+                        },
+                        {
+                            id: 'value',
+                            title: strings.Layouts.Shared.ValueColumnLabel,
+                            type: this._customCollectionFieldType.custom,
+                            required: true,
+                            onCustomRender: (field, value, onUpdate, item, itemId, onCustomFieldValidation) => {
+                                return React.createElement("div", { key: `${field.id}-${itemId}` },
+                                    React.createElement(TemplateValueFieldEditor, {
+                                        currentItem: item,
+                                        field: field,
+                                        useHandlebarsExpr: item.useHandlebarsExpr,
+                                        onUpdate: onUpdate,
+                                        value: value,
+                                        availableProperties: availableOptions,
+                                    } as ITemplateValueFieldEditorProps)
+                                );
+                            }
+                        },
+                        {
+                            id: 'useHandlebarsExpr',
+                            type: this._customCollectionFieldType.boolean,
+                            defaultValue: false,
+                            title: strings.Layouts.Shared.UseHandlebarsExpressionLabel
+                        }
+                    ]
+                }),
+                PropertyPaneButton('layoutProperties.resetExportFields', {
+                    buttonType: PropertyPaneButtonType.Command,
+                    icon: 'Refresh',
+                    text: strings.Layouts.Shared.ResetFieldsBtnLabel,
+                    onClick: () => {
+                        // Just reset the fields
+                        this.properties.exportColumns = null;
+                        this.onInit();
+                    }
                 })
             );
         }

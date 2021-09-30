@@ -174,7 +174,6 @@ declare interface ICommonStrings {
       }
       DetailsList: {
         Name: string;
-        UseHandlebarsExpressionLabel: string;
         MinimumWidthColumnLabel: string;
         MaximumWidthColumnLabel: string;
         SortableColumnLabel: string;
@@ -185,14 +184,11 @@ declare interface ICommonStrings {
         CompactModeLabel: string;
         ManageDetailsListColumnLabel: string;
         ManageDetailsListColumnDescription: string;
-        DisplayNameColumnLabel: string;
-        ValueColumnLabel: string;
         ValueSortingColumnLabel: string;
         FileExtensionFieldLabel: string;
         GroupByFieldLabel: string;
         EnableGrouping: string;
         CollapsedGroupsByDefault: string;
-        ResetFieldsBtnLabel: string;
       };
       Cards: {
         Name: string;
@@ -201,7 +197,6 @@ declare interface ICommonStrings {
         PlaceholderNameFieldLabel: string;
         SupportHTMLColumnLabel: string;
         PlaceholderValueFieldLabel: string;
-        UseHandlebarsExpressionLabel: string;
         EnableItemPreview: string;
         EnableItemPreviewHoverMessage: string;
         ShowFileIcon: string;
@@ -219,8 +214,7 @@ declare interface ICommonStrings {
           ProfileImage: string;
           FileExtension: string;
           IsContainer: string;
-        },
-        ResetFieldsBtnLabel: string;
+        }
       };
       Slider: {
         Name: string;
@@ -239,7 +233,6 @@ declare interface ICommonStrings {
         ManagePeopleFieldsPanelDescriptionLabel: string;
         PlaceholderNameFieldLabel: string;
         PlaceholderValueFieldLabel: string;
-        UseHandlebarsExpressionLabel: string;
         PersonaSizeOptionsLabel: string,
         PersonaSizeExtraSmall: string;
         PersonaSizeSmall: string;
@@ -248,7 +241,6 @@ declare interface ICommonStrings {
         PersonaSizeExtraLarge: string;
         ShowInitialsToggleLabel: string;
         SupportHTMLColumnLabel: string;
-        ResetFieldsBtnLabel: string;
         ShowPersonaCardOnHover: string;
         ShowPersonaCardOnHoverCalloutMsg: string;
         Fields: {
@@ -284,6 +276,15 @@ declare interface ICommonStrings {
           ExtraLarge: string;
           SmallFluid: string;
         }
+      },
+      Shared: {
+        EnableExport: string;
+        ManageExportColumnsLabel: string;
+        ManageExportColumnsDescription: string;
+        DisplayNameColumnLabel: string;
+        UseHandlebarsExpressionLabel: string;
+        ValueColumnLabel: string;
+        ResetFieldsBtnLabel: string;
       }
     },
     HandlebarsHelpers: {

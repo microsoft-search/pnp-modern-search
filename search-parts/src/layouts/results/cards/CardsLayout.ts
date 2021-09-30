@@ -150,14 +150,14 @@ export class CardsLayout extends BaseLayout<ICardsLayoutProperties> {
                     {
                         id: 'useHandlebarsExpr',
                         type: this._customCollectionFieldType.boolean,
-                        title: strings.Layouts.Cards.UseHandlebarsExpressionLabel
+                        title: strings.Layouts.Shared.UseHandlebarsExpressionLabel
                     }
                 ]
             }),
             PropertyPaneButton('layoutProperties.resetFields', {
                 buttonType: PropertyPaneButtonType.Command,
                 icon: 'Refresh',
-                text: strings.Layouts.Cards.ResetFieldsBtnLabel,
+                text: strings.Layouts.Shared.ResetFieldsBtnLabel,
                 onClick: ()=> {
                     // Just reset the fields
                     this.properties.documentCardFields = null;

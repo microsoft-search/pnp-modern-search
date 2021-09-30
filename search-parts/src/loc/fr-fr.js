@@ -175,7 +175,6 @@ define([], function() {
             },
             DetailsList: {
                 Name: "Liste de détails",
-                UseHandlebarsExpressionLabel: "Utiliser les expressions entre accolades",
                 MinimumWidthColumnLabel: "Largeur minimale (pixels)",
                 MaximumWidthColumnLabel: "Largeur maximale (pixels)",
                 SortableColumnLabel: "Triable",
@@ -187,14 +186,11 @@ define([], function() {
                 ShowFileIcon: "Afficher l’icône de fichier",
                 ManageDetailsListColumnDescription: "Ajouter, modifier ou supprimer des colonnes dans la présentation de la liste de détails. Vous pouvez utiliser la valeur des propriétés directement dans la liste, sans modification, ou utiliser une expression entre accolades dans le champ de valeur Le format HTML est également pris en charge dans tous les champs",
                 ManageDetailsListColumnLabel: "Gérer les colonnes",
-                ValueColumnLabel: "Valeur de la colonne",
                 ValueSortingColumnLabel: "Tri par valeur de colonne",
-                DisplayNameColumnLabel: "Nom d’affichage de la colonne",
                 FileExtensionFieldLabel: "Champ à utiliser pour l’extension de fichier",
                 GroupByFieldLabel: "Regrouper par champ",
                 EnableGrouping: "Permettre le regroupement",
-                CollapsedGroupsByDefault: "Afficher les groupes réduits",
-                ResetFieldsBtnLabel: "Rétablir la valeur par défaut dans les champs"
+                CollapsedGroupsByDefault: "Afficher les groupes réduits"
             },
             Cards: {
                 Name: "Cartes",
@@ -221,8 +217,7 @@ define([], function() {
                     ProfileImage: "URL de l’image du profil",
                     FileExtension: "Extension de fichier",
                     IsContainer: "Est un dossier"
-                },
-                ResetFieldsBtnLabel: "Rétablir la valeur par défaut dans les champs"
+                }
             },
             Slider: {
                 Name: "Curseur de défilement",
@@ -250,7 +245,6 @@ define([], function() {
                 PersonaSizeExtraLarge: "Très grand",
                 ShowInitialsToggleLabel: "Afficher les initiales si aucune photo n’est disponible",
                 SupportHTMLColumnLabel: "Autoriser HTML",
-                ResetFieldsBtnLabel: "Rétablir la valeur par défaut dans les champs",
                 ShowPersonaCardOnHover: "Afficher l’image de la carte en pointant le curseur",
                 ShowPersonaCardOnHoverCalloutMsg: "Cette fonction utilise Microsoft Graph pour afficher des renseignements sur l’utilisateur et nécessite les autorisations API suivantes pour que votre utilisateur puisse travailler : [« User.Read », « People.Read », « Contacts.Read », « User.Read.All »].",
                 Fields: {
@@ -286,6 +280,15 @@ define([], function() {
                     ExtraLarge: 'Très grand',
                     SmallFluid: 'Pleine largeur (fluide)'
                 }
+            },
+            Shared: {
+                EnableExport: "Activer l'exportation",
+                ManageExportColumnsLabel: "Gérer les colonnes",
+                ManageExportColumnsDescription: "Ajouter, modifier ou supprimer des colonnes pour l'exportation. Vous pouvez utiliser la valeur des propriétés directement dans la liste, sans modification, ou utiliser une expression entre accolades dans le champ de valeur.",
+                DisplayNameColumnLabel: "Nom d’affichage de la colonne",
+                UseHandlebarsExpressionLabel: "Utiliser les expressions entre accolades",
+                ValueColumnLabel: "Valeur de la colonne",
+                ResetFieldsBtnLabel: "Rétablir la valeur par défaut dans les champs",
             }
         },
         HandlebarsHelpers: {
