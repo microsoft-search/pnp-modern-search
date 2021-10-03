@@ -12,6 +12,7 @@ import { ITemplateService } from '../services/templateService/ITemplateService';
 import { TemplateService } from '../services/templateService/TemplateService';
 import { DomPurifyHelper } from '../helpers/DomPurifyHelper';
 import { ServiceScope, ServiceKey } from '@microsoft/sp-core-library';
+import { HandlebarsHelper } from '../helpers/HandlebarsHelper';
 
 export interface ISliderProps {
     options?: any;
@@ -199,23 +200,7 @@ export class SliderComponent extends React.Component<ISliderComponentProps, ISli
                         >
                         {items.map((item, index) => {
                             
-                            // Create a temp context with the current so we can use global registered helpers on the current item
-                            const tempTemplateContent = `{{#with item as |item|}}${this.props.template.trim()}{{/with}}`;
-                            
-                            let template = this.props.handlebars.compile(tempTemplateContent);
-
-                            const templateContentValue =    template(
-                                                                { 
-                                                                    item: item 
-                                                                }, 
-                                                                { 
-                                                                    data: {
-                                                                        root: {
-                                                                            ...templateContext
-                                                                        }
-                                                                    }
-                                                                }
-                                                            ); 
+                            const templateContentValue  = HandlebarsHelper.getHandleBarsTemplateContentValue(this.props.template.trim(), item, templateContext, this.props.handlebars)
                             
                             return  <div style={{ position: 'relative' }} key={index}>
                                         <div dangerouslySetInnerHTML={ { __html : this._domPurify.sanitize(templateContentValue)}}></div>    

@@ -6,7 +6,7 @@ import { IWebPartPropertiesMetadata } from '@microsoft/sp-webpart-base';
 import * as webPartStrings from 'SearchResultsWebPartStrings';
 import * as commonStrings from 'CommonStrings';
 import { ISearchResultsContainerProps } from './components/ISearchResultsContainerProps';
-import { IDataSource, IDataSourceDefinition, IComponentDefinition, ILayoutDefinition, ILayout, IDataFilter, LayoutType, FilterType, FilterComparisonOperator, BaseDataSource } from '@pnp/modern-search-extensibility';
+import { IDataSource, IDataSourceDefinition, IComponentDefinition, ILayoutDefinition, ILayout, IDataFilter, LayoutType } from '@pnp/modern-search-extensibility';
 import {
     IPropertyPaneConfiguration,
     IPropertyPaneChoiceGroupOption,
@@ -23,23 +23,18 @@ import {
     PropertyPaneDynamicField,
 } from "@microsoft/sp-property-pane";
 import ISearchResultsWebPartProps, { QueryTextSource } from './ISearchResultsWebPartProps';
-import { AvailableDataSources, BuiltinDataSourceProviderKeys } from '../../dataSources/AvailableDataSources';
-import { ServiceKey } from "@microsoft/sp-core-library";
+import { AvailableDataSources } from '../../dataSources/AvailableDataSources';
 import SearchResultsContainer from './components/SearchResultsContainer';
 import { AvailableLayouts, BuiltinLayoutsKeys } from '../../layouts/AvailableLayouts';
 import { ITemplateService } from '../../services/templateService/ITemplateService';
 import { TemplateService } from '../../services/templateService/TemplateService';
-import { ServiceScopeHelper } from '../../helpers/ServiceScopeHelper';
 import { isEmpty, isEqual, uniqBy } from "@microsoft/sp-lodash-subset";
 import { AvailableComponents } from '../../components/AvailableComponents';
 import { DynamicProperty } from '@microsoft/sp-component-base';
 import { ITemplateSlot } from '@pnp/modern-search-extensibility';
 import { IDataContext } from '@pnp/modern-search-extensibility';
 import { ResultTypeOperator } from '../../models/common/IDataResultType';
-import { TokenService, BuiltinTokenNames } from '../../services/tokenService/TokenService';
 import { ITokenService } from '@pnp/modern-search-extensibility';
-import { TaxonomyService } from '../../services/taxonomyService/TaxonomyService';
-import { SharePointSearchService } from '../../services/searchService/SharePointSearchService';
 import IDynamicDataService from '../../services/dynamicDataService/IDynamicDataService';
 import { IDataFilterSourceData } from '../../models/dynamicData/IDataFilterSourceData';
 import { ComponentType } from '../../common/ComponentType';
@@ -52,13 +47,12 @@ import { AsyncCombo } from '../../controls/PropertyPaneAsyncCombo/components/Asy
 import { Constants } from '../../common/Constants';
 import PnPTelemetry from "@pnp/telemetry-js";
 import { IPageEventInfo } from '../../components/PaginationComponent';
-import { DataFilterHelper } from '../../helpers/DataFilterHelper';
-import { BuiltinFilterTemplates } from '../../layouts/AvailableTemplates';
 import { IExtensibilityConfiguration } from '../../models/common/IExtensibilityConfiguration';
 import { IDataVerticalSourceData } from '../../models/dynamicData/IDataVerticalSourceData';
 import { BaseWebPart } from '../../common/BaseWebPart';
 import { ApplicationInsights } from '@microsoft/applicationinsights-web';
 import commonStyles from '../../styles/Common.module.scss';
+import { DataSourceHelper } from '../../helpers/DataSourceHelper';
 
 const LogSource = "SearchResultsWebPart";
 
@@ -197,13 +191,23 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         // SPFx has an inner routine in reactive mode to trigger a render every time a property bag value is updated conflicting with the way data source and layouts share properties (see _afterPropertyUpdated)
 
         try {
-
             // Reset the error message every time
             this.errorMessage = undefined;
 
             // Get and initialize the data source instance if different (i.e avoid to create a new instance every time)
             if (this.lastDataSourceKey !== this.properties.dataSourceKey) {
-                this.dataSource = await this.getDataSourceInstance(this.properties.dataSourceKey);
+                var { dataSource, tokenService } = await DataSourceHelper.getDataSourceInstance(this.properties.dataSourceKey, this.webPartInstanceServiceScope, this.properties.dataSourceProperties);
+                dataSource.context = this.context;
+                dataSource.editMode = this.displayMode == DisplayMode.Edit;
+                dataSource.render = this.render;
+                this.dataSource = dataSource;
+                this.tokenService = tokenService;
+                // Initialize slots
+                if (isEmpty(this.properties.templateSlots)) {
+                    this.properties.templateSlots = this.dataSource.getTemplateSlots();
+                    this._defaultTemplateSlots = this.dataSource.getTemplateSlots();
+                }
+                await dataSource.onInit();
                 this.lastDataSourceKey = this.properties.dataSourceKey;
             }
 
@@ -219,7 +223,11 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         }
 
         // Refresh the token values with the latest information from environment (i.e connections and settings)
-        this.setTokens();
+        // Input query text
+        const inputQueryFromDataSource = !this.properties.queryText.isDisposed && this.properties.queryText.tryGetValue();
+        const inputQueryText = inputQueryFromDataSource ? inputQueryFromDataSource : this.properties.defaultQueryText;
+        
+        DataSourceHelper.setTokens(this.tokenService, inputQueryText, this._filtersSourceData?.tryGetValue());
 
         // Refresh the property pane to get layout and data source options
         if (this.context && this.context.propertyPane && this.context.propertyPane.isPropertyPaneOpen()) {
@@ -1579,117 +1587,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     }
 
     /**
-     * Gets the data source instance according to the current selected one
-     * @param dataSourceKey the selected data source provider key
-     * @param dataSourceDefinitions the available source definitions
-     * @returns the data source provider instance
-     */
-    private async getDataSourceInstance(dataSourceKey: string): Promise<IDataSource> {
-
-        let dataSource: IDataSource = undefined;
-        let serviceKey: ServiceKey<IDataSource> = undefined;
-
-        if (dataSourceKey) {
-
-            // If it is a builtin data source, we load the corresponding known class file asynchronously for performance purpose
-            // We also create the service key at the same time to be able to get an instance
-            switch (dataSourceKey) {
-
-                // SharePoint Search API
-                case BuiltinDataSourceProviderKeys.SharePointSearch:
-
-                    const { SharePointSearchDataSource } = await import(
-                        /* webpackChunkName: 'pnp-modern-search-sharepoint-search-datasource' */
-                        '../../dataSources/SharePointSearchDataSource'
-                    );
-
-                    serviceKey = ServiceKey.create<IDataSource>('ModernSearch:SharePointSearchDataSource', SharePointSearchDataSource);
-                    break;
-
-                // Microsoft Search API
-                case BuiltinDataSourceProviderKeys.MicrosoftSearch:
-
-                    const { MicrosoftSearchDataSource } = await import(
-                        /* webpackChunkName: 'pnp-modern-search-microsoft-search-datasource' */
-                        '../../dataSources/MicrosoftSearchDataSource'
-                    );
-
-                    serviceKey = ServiceKey.create<IDataSource>('ModernSearch:SharePointSearchDataSource', MicrosoftSearchDataSource);
-                    break;
-
-                default:
-                    break;
-            }
-
-            return new Promise<IDataSource>((resolve, reject) => {
-
-                // Register here services we want to expose to custom data sources (ex: TokenService)
-                // The instances are shared across all data sources. It means when properties will be set once for all consumers. Be careful manipulating these instance properties. 
-                const childServiceScope = ServiceScopeHelper.registerChildServices(this.webPartInstanceServiceScope, [
-                    serviceKey,
-                    TaxonomyService.ServiceKey,
-                    SharePointSearchService.ServiceKey,
-                    TokenService.ServiceKey
-                ]);
-
-                childServiceScope.whenFinished(async () => {
-
-                    this.tokenService = childServiceScope.consume<ITokenService>(TokenService.ServiceKey);
-
-                    // Initialize the token values
-                    this.setTokens();
-
-                    // Register the data source service in the Web Part scope only (child scope of the current scope)
-                    dataSource = childServiceScope.consume<IDataSource>(serviceKey);
-
-                    // Verifiy if the data source implements correctly the IDataSource interface and BaseDataSource methods
-                    const isValidDataSource = (dataSourceInstance: IDataSource): dataSourceInstance is BaseDataSource<any> => {
-                        return (
-                            (dataSourceInstance as BaseDataSource<any>).getAppliedFilters !== undefined &&
-                            (dataSourceInstance as BaseDataSource<any>).getData !== undefined &&
-                            (dataSourceInstance as BaseDataSource<any>).getFilterBehavior !== undefined &&
-                            (dataSourceInstance as BaseDataSource<any>).getItemCount !== undefined &&
-                            (dataSourceInstance as BaseDataSource<any>).getPagingBehavior !== undefined &&
-                            (dataSourceInstance as BaseDataSource<any>).getPropertyPaneGroupsConfiguration !== undefined &&
-                            (dataSourceInstance as BaseDataSource<any>).getTemplateSlots !== undefined &&
-                            (dataSourceInstance as BaseDataSource<any>).onInit !== undefined &&
-                            (dataSourceInstance as BaseDataSource<any>).onPropertyUpdate !== undefined
-                        );
-                    };
-
-                    if (!isValidDataSource(dataSource)) {
-                        reject(new Error(Text.format(commonStrings.General.Extensibility.InvalidDataSourceInstance, dataSourceKey)));
-                    }
-
-                    // Initialize the data source with current Web Part properties
-                    if (dataSource) {
-                        // Initializes Web part lifecycle methods and properties
-                        dataSource.properties = this.properties.dataSourceProperties;
-                        dataSource.context = this.context;
-                        dataSource.editMode = this.displayMode == DisplayMode.Edit;
-                        dataSource.render = this.render;
-
-                        // Initializes available services
-                        dataSource.serviceKeys = {
-                            TokenService: TokenService.ServiceKey
-                        };
-
-                        await dataSource.onInit();
-
-                        // Initialize slots
-                        if (isEmpty(this.properties.templateSlots)) {
-                            this.properties.templateSlots = dataSource.getTemplateSlots();
-                            this._defaultTemplateSlots = dataSource.getTemplateSlots();
-                        }
-
-                        resolve(dataSource);
-                    }
-                });
-            });
-        }
-    }
-
-    /**
       * Custom handler when the external template file URL
       * @param value the template file URL value
       */
@@ -1767,68 +1664,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         this.webPartInstanceServiceScope.finish();
     }
 
-    /**
-     * Set token values from Web Part property bag
-     */
-    private setTokens() {
-
-        if (this.tokenService) {
-
-            // Input query text
-            const inputQueryFromDataSource = !this.properties.queryText.isDisposed && this.properties.queryText.tryGetValue();
-            const inputQueryText = inputQueryFromDataSource ? inputQueryFromDataSource : this.properties.defaultQueryText;
-            this.tokenService.setTokenValue(BuiltinTokenNames.inputQueryText, inputQueryText);
-
-            // Selected filters
-            if (this._filtersSourceData) {
-                const filtersSourceData: IDataFilterSourceData = this._filtersSourceData.tryGetValue();
-                if (filtersSourceData) {
-
-                    /* Example structure
-                      {
-                        filterName: value(GUID), // Taxonomy
-                        filterName:{ // Date range
-                          startDate: <ISO_Date>,
-                          endDate: <ISO_Date>
-                      }
-                    }*/
-                    let filterTokens: { [key: string]: string | { [key: string]: string } } = {};
-
-                    filtersSourceData.selectedFilters.forEach(filter => {
-
-                        const configuration = DataFilterHelper.getConfigurationForFilter(filter, filtersSourceData.filterConfiguration);
-
-                        if (configuration && configuration.type === FilterType.StaticFilter) {
-
-                            if (configuration.selectedTemplate === BuiltinFilterTemplates.DateRange) {
-
-                                let fromDate = undefined;
-                                let toDate = undefined;
-
-                                // Determine start and end dates by operator
-                                filter.values.forEach(filterValue => {
-                                    if (filterValue.operator === FilterComparisonOperator.Geq && !fromDate) {
-                                        fromDate = filterValue.value;
-                                    }
-
-                                    if (filterValue.operator === FilterComparisonOperator.Lt && !toDate) {
-                                        toDate = fromDate = filterValue.value;
-                                    }
-                                });
-
-                                filterTokens[filter.filterName] = {
-                                    startDate: fromDate,
-                                    endDate: toDate
-                                };
-                            }
-                        }
-                    });
-
-                    this.tokenService.setTokenValue(BuiltinTokenNames.filters, filterTokens);
-                }
-            }
-        }
-    }
 
     /**
      * Make sure the dynamic properties are correctly connected to the corresponding sources according to the proeprty pane settings

@@ -18,6 +18,7 @@ import { ObjectHelper } from "../../helpers/ObjectHelper";
 import { Constants } from "../../common/Constants";
 import * as handlebarsHelpers from 'handlebars-helpers';
 import { ServiceScopeHelper } from "../../helpers/ServiceScopeHelper";
+import { HandlebarsHelper } from "../../helpers/HandlebarsHelper";
 
 const TemplateService_ServiceKey = 'PnPModernSearchTemplateService';
 
@@ -286,44 +287,14 @@ export class TemplateService implements ITemplateService {
     public processFieldsConfiguration<T>(fieldsConfiguration: IComponentFieldsConfiguration[], item: { [key: string]: any }, context?: IDataResultsTemplateContext | any): T {
 
         let processedProps = {};
+        let templateContext: IDataResultsTemplateContext | any = context ? context : {};
 
         // Use configuration
         fieldsConfiguration.forEach(configuration => {
+            const { value, hasError } = HandlebarsHelper.getColumnValue(configuration, item, templateContext, this.Handlebars, 
+                (error) => `###Error: ${error.message}###`, { noEscape: true })
 
-            let processedValue = ObjectHelper.byPath(item, configuration.value);
-
-            if (configuration.useHandlebarsExpr && configuration.value) {
-
-                try {
-
-                    let templateContext: IDataResultsTemplateContext | any = context ? context : {};
-                    // Create a temp context with the current so we can use global registered helpers on the current item
-                    const tempTemplateContent = `{{#with item as |item|}}${configuration.value}{{/with}}`;
-                    let template = this.Handlebars.compile(tempTemplateContent, {
-                        noEscape: true
-                    });
-
-                    // Pass the current item as context
-                    processedValue = template({ item: item }, {
-                        data: {
-                            root: {
-                                slots: templateContext.slots,
-                                theme: templateContext.theme,
-                                context: templateContext.context,
-                                instanceId: templateContext.instanceId
-                            }
-                        }
-                    });
-
-
-                    processedValue = processedValue ? processedValue.trim() : null;
-
-                } catch (error) {
-                    processedValue = `###Error: ${error.message}###`;
-                }
-            }
-
-            processedProps[configuration.field] = processedValue;
+            processedProps[configuration.field] = value;
         });
 
         return processedProps as T;

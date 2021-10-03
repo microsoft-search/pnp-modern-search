@@ -1,17 +1,5 @@
-export interface IExportColumnConfiguration {
+import { IHandlebarsColumnConfiguration } from "./IHandlebarsColumnConfiguration";
 
-  /**
-   * The name of the column
-   */
-  name: string;
+export interface IExportColumnConfiguration  extends IHandlebarsColumnConfiguration {
 
-  /**
-   * The value of the column
-   */
-  value: string;
-
-  /**
-   * Indicates if the value is an Handlebars expression
-   */
-  useHandlebarsExpr: boolean;
 }

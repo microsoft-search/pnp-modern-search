@@ -23,6 +23,16 @@
             </div>
         {{/if}}
 
+        {{#if @root.properties.layoutProperties.enableExport}}
+            <pnp-export 
+                data-columns-configuration="{{JSONstringify properties.layoutProperties.exportColumns}}"
+                data-data-source-key="{{properties.dataSourceKey}}"
+                data-data-source-properties="{{JSONstringify properties.dataSourceProperties 2}}"
+                data-context="{{JSONstringify @root}}"
+            >
+            </pnp-export>
+        {{/if}}
+
         <pnp-detailslist 
             data-items="{{JSONstringify data.items}}" 
             data-columns-configuration="{{JSONstringify properties.layoutProperties.detailsListColumns}}" 

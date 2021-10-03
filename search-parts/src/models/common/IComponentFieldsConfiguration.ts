@@ -1,24 +1,11 @@
-export interface IComponentFieldsConfiguration {
+import { IHandlebarsColumnConfiguration } from "./IHandlebarsColumnConfiguration";
 
-    /**
-     * The name of the field
-     */
-    name: string;
+export interface IComponentFieldsConfiguration extends IHandlebarsColumnConfiguration {
 
     /**
      * The field name for the inner component props
      */
     field: string;
-
-    /**
-     * The value of the field
-     */
-    value: string;
-
-    /**
-     * Indicates if the calue is an Handlebars expression
-     */
-    useHandlebarsExpr: boolean;
 
     /**
      * Indicates if the field supports HTML markup injection

@@ -16,6 +16,8 @@ import { DomPurifyHelper } from '../helpers/DomPurifyHelper';
 import { ITemplateService } from '../services/templateService/ITemplateService';
 import { TemplateService } from '../services/templateService/TemplateService';
 import { ServiceScope, ServiceKey } from '@microsoft/sp-core-library';
+import { IHandlebarsColumnConfiguration } from '../models/common/IHandlebarsColumnConfiguration';
+import { HandlebarsHelper } from '../helpers/HandlebarsHelper';
 
 const DEFAULT_SHIMMER_HEIGHT = 7;
 const SHIMMER_LINE_VS_CELL_WIDTH_RATIO = 0.95;
@@ -49,28 +51,12 @@ const classNames = mergeStyleSets({
   }
 });
 
-export interface IDetailsListColumnConfiguration {
-
-  /**
-   * The name of the column
-   */
-  name: string;
-
-  /**
-   * The value of the column
-   */
-  value: string;
+export interface IDetailsListColumnConfiguration extends IHandlebarsColumnConfiguration {
 
   /**
    * Alternate column for sorting
    */
   valueSorting: string;
-
-  /**
-   * Indicates if the value is an Handlebars expression
-   */
-  useHandlebarsExpr: boolean;
-
   /**
    * Column maximum width in px
    */
@@ -247,28 +233,12 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
             },
             isPadded: true,
             onRender: (item: any) => {
-              let value: any; 
-              let renderColumnValue: JSX.Element = null;
-              let hasError: boolean = false;
+
+              const { value, hasError } = HandlebarsHelper.getColumnValue(column, item, this._templateContext, this.props.handlebars, (error) =>
+                `<span style="color:red;font-style: italic" title="${error.message}">${`Error: ${error.message}`}</span>`);
+              
               let toolTipText: string = column.useHandlebarsExpr ? value : '';
-
-              // Check if the value in an Handlebars expression
-              if (column.useHandlebarsExpr) {
-                try {
-                  value = this._processHandleBarsExprValue(column.value, item);
-                } catch (error) {
-                  hasError = true;
-                  value = `<span style="color:red;font-style: italic" title="${error.message}">${`Error: ${error.message}`}</span>`;
-                }
-              } else {
-
-                // A field has been selected
-                value = ObjectHelper.byPath(item, column.value);
-              }
-
-              renderColumnValue = <span title={!hasError ? toolTipText : ''} dangerouslySetInnerHTML={{ __html: this._domPurify.sanitize(value) }}></span>;
-            
-              return renderColumnValue;
+              return <span title={!hasError ? toolTipText : ''} dangerouslySetInnerHTML={{ __html: this._domPurify.sanitize(value) }}></span>;
             },
           },
         );
@@ -512,35 +482,6 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
     }
 
     return groups;
-  }
-
-  private _processHandleBarsExprValue(columnValue: string, item: any): string {
-
-    let exprValue: string = null;
-
-    // Create a temp context with the current so we can use global registered helper on the current item
-    const tempTemplateContent = `{{#with item as |item|}}${columnValue}{{/with}}`;
-    let template = this.props.handlebars.compile(tempTemplateContent);
-
-    // Pass the current item as context
-    exprValue = template(
-                    { 
-                      item: item 
-                    }, 
-                    { 
-                      data: {
-                        root: {
-                          slots: this._templateContext.slots,
-                          theme: this._templateContext.theme,
-                          context: this._templateContext.context,
-                          instanceId: this._templateContext.instanceId
-                        }
-                      }
-                    }
-                );
-    exprValue = exprValue ? exprValue.trim() : null;
-
-    return exprValue;
   }
 
   private _copyAndSort<T>(items: T[], columnKey: string, isSortedDescending: boolean): T[] {
