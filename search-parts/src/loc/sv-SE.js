@@ -159,7 +159,15 @@ define([], function () {
         TextDialogSaveButtonText: "Spara",
         SelectItemComboPlaceHolder: "Välj egenskap",
         AddStaticDataLabel: "Lägg till statisk data",
-        TextFieldApplyButtonText: "Tillämpa"
+        TextFieldApplyButtonText: "Tillämpa",
+        ExportButtonText: "Exportera (csv)",
+        ExportSettingsText: "Exportinställningar",
+        ExportDialogHelpText: "Välj om du vill exportera den aktuella sidan/vyn eller all data (med högst {maxhits} rader). Lägg märke till att det kan vara en skillnad i visade kolumner, värdeformatering och tillämpad sortering i den utmatade filen jämfört med nuvarande vy.",
+        ExportFilenameLabel: "Filnamn",
+        ExportFilenameAriaLabel: "Filnamnet för det exporterade csv",
+        ExportCurrentPageLabel: "Nuvarande sida/vy",
+        ExportAllLabel: "Alla (max {maxhits} rader)",
+        ExportDialogOKButtonText: "OK"
       },
       Layouts: {
         Debug: {

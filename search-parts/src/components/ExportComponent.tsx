@@ -1,5 +1,5 @@
 import * as React from "react";
-import { DefaultButton, ITheme } from 'office-ui-fabric-react';
+import { ChoiceGroup, DefaultButton, Dialog, DialogFooter, DialogType, ITheme, PrimaryButton, ProgressIndicator, TextField } from 'office-ui-fabric-react';
 import * as ReactDOM from 'react-dom';
 import { BaseWebComponent, IDataSource, ITokenService } from '@pnp/modern-search-extensibility';
 import { IExportColumnConfiguration } from "../models/common/IExportColumnConfiguration";
@@ -11,7 +11,7 @@ import { IDataFilterSourceData } from "../models/dynamicData/IDataFilterSourceDa
 import { HandlebarsHelper } from "../helpers/HandlebarsHelper";
 import { IDataResultsTemplateContext } from "../models/common/ITemplateContext";
 import { ExportHelper } from "../helpers/ExportHelper";
-import { accentFill } from "@fluentui/web-components";
+import * as strings from "CommonStrings";
 
 export interface IExportComponentProps {
     /**
@@ -35,88 +35,164 @@ export interface IExportComponentProps {
     serviceScope: ServiceScope;
 }
 
-export interface IExportComponentState {
-
-    /**
-     * Currently exporting
-     */
-    exporting: boolean
+enum ExportType {
+    CurrentPage,
+    All
 }
 
+export interface IExportComponentState {
+    hideSettingsDialog: boolean
+    isExporting: boolean
+    fileName: string,
+    exportType: ExportType,
+    exportProgress: number
+}
 
 export class ExportComponent extends React.Component<IExportComponentProps, IExportComponentState> {
 
     private dataSourceContext: { dataSource: IDataSource, tokenService: ITokenService };
+    private readonly maxhits = 5000;
+    private readonly extension = ".csv";
 
     constructor(props: IExportComponentProps) {
         super(props);
-
+        
         this.state = {
-            exporting: false
+            hideSettingsDialog: true,
+            isExporting: false,
+            fileName: "",
+            exportType: ExportType.CurrentPage,
+            exportProgress: 1.0,
         };
 
-        this.exportClicked = this.exportClicked.bind(this);
+        this.toggleExportDialog = this.toggleExportDialog.bind(this);
+        this.onChangeFilename = this.onChangeFilename.bind(this);
+        this.exportTrigger = this.exportTrigger.bind(this);
+    }
+
+    public componentDidMount() {
+        const { title, dataSourceKey } = this.props.context?.properties;
+        this.onChangeFilename(null, (title ?? dataSourceKey ?? "csvExport") + " " + new Date().toLocaleDateString())
+    }
+
+    private toggleExportDialog(): void {
+        this.setState(p => ({ hideSettingsDialog: !p.hideSettingsDialog }));
+    }
+
+    private onChangeFilename = (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
+        const value = newValue && newValue.replace(/[#%&{}\\<>*?/$!'":@+`|=\t_]/g, "").trim();
+        this.setState({ fileName: value})
+    };
+
+    private async exportTrigger(exportAll?: boolean): Promise<void> {
+        const { columnsConfiguration, context, serviceScope, handlebars } = this.props;
+        const { dataSourceKey, dataSourceProperties } = context.properties;
+        const { instanceId, filterOperator, filtersConfiguration, selectedFilters } = context.filters;
+        const { fileName, exportType } = this.state;
+        this.setState({ isExporting: true, hideSettingsDialog: true, exportProgress: 0 });
+        try {
+            let items: any[] = [];
+            let errorOccured = false;
+            let errorColumnValue = false;
+            if(exportAll === true || exportType == ExportType.All) {
+                if (!this.dataSourceContext) {
+                    
+                    const filteredProperties = ExportHelper.getReferencedProperties(columnsConfiguration, context);
+
+                    this.dataSourceContext = await DataSourceHelper.getDataSourceInstance(dataSourceKey, serviceScope,
+                        { ...dataSourceProperties, selectedProperties: filteredProperties });
+                    this.dataSourceContext.dataSource.editMode = false;
+                    await this.dataSourceContext.dataSource.onInit();
+                }
+
+                const filtersSourceData: IDataFilterSourceData = { instanceId: instanceId, filterOperator: filterOperator, filterConfiguration: filtersConfiguration, selectedFilters: selectedFilters }
+                DataSourceHelper.setTokens(this.dataSourceContext.tokenService, context.inputQueryText, filtersSourceData)
+
+                try {
+                    let currentPageNumber = 0;
+                    let lastItems: any[] = [1];
+                    const totalItems = context.data.totalItemsCount || this.maxhits;
+                    const progressMax = totalItems < this.maxhits ? totalItems : this.maxhits;
+                    while(items.length < this.maxhits && lastItems) {
+                        const data = await this.dataSourceContext.dataSource.getData({ 
+                            inputQueryText: context.inputQueryText, itemsCountPerPage: 500, pageNumber: ++currentPageNumber, filters: context.filters })
+                        lastItems = data.items;
+                        if(lastItems) {
+                            items = items.concat(lastItems);
+                            this.setState({ exportProgress: items.length / progressMax });
+                            console.log(`Processed page ${currentPageNumber} with a total of ${items.length} fetched`);
+                        }
+                    }
+                }
+                catch {
+                    errorOccured = true;
+                }
+            }
+            else {
+                items = context.data.items;
+            }
+
+            if (items) {
+                var result = items.map(item => {
+                    return columnsConfiguration.map(column => {
+                        const { value, hasError } = HandlebarsHelper.getColumnValue(column, item, context, handlebars);
+                        errorColumnValue = errorColumnValue || hasError;
+                        return value;
+                    });
+                });
+
+                ExportHelper.exportToCsv(fileName + this.extension, result, columnsConfiguration.map(c => c.name));
+            }
+        }
+        finally {
+            this.setState({ isExporting: false  });
+        }
     }
 
     public render() {
         const { columnsConfiguration, serviceScope, context } = this.props;
-        if (!columnsConfiguration || !serviceScope ||!context) return null;
-        return <DefaultButton text="Export" onClick={this.exportClicked} disabled={this.state.exporting} theme={context.theme as ITheme}  />
-    }
-
-    private exportClicked(): void {
-        const { columnsConfiguration, context, serviceScope, handlebars } = this.props;
-        const { dataSourceKey, dataSourceProperties } = context.properties;
-        const { instanceId, filterOperator, filtersConfiguration, selectedFilters } = context.filters;
-        this.setState({ exporting: true },
-            async () => {
-                try {
-                    if (!this.dataSourceContext) {
-                        const regexpItem = new RegExp(/item\.(\w+)/gm);
-                        const regexpSlots = new RegExp(/slots\.(\w+)/gm);
-                        const filteredProperties = columnsConfiguration.map(column => {
-                            const result = []
-                            if(!column.useHandlebarsExpr && column.value) result.push(column.value);
-                            else if(column.value) {
-                                let match: RegExpExecArray;
-                                while ((match = regexpItem.exec(column.value)) !== null) {
-                                    result.push(match[1]);
-                                }
-                                while ((match = regexpSlots.exec(column.value)) !== null) {
-                                    result.push(context.slots[match[1]]);
-                                }
-                            }
-                            return result;
-                        })
-                        .reduce((pv, cv) => pv.concat(cv))
-                        .filter((value, index, self) => value && self.indexOf(value) === index);
-
-                        this.dataSourceContext = await DataSourceHelper.getDataSourceInstance(dataSourceKey, serviceScope, 
-                            { ...dataSourceProperties, selectedProperties: filteredProperties });
-                        this.dataSourceContext.dataSource.editMode = false;
-                        await this.dataSourceContext.dataSource.onInit();
+        if (!columnsConfiguration || !serviceScope || !context) return null;
+        const { isExporting, hideSettingsDialog, fileName, exportType, exportProgress } = this.state;
+        const { items, totalItemsCount } = context.data;
+        return <>
+            <DefaultButton text={strings.Controls.ExportButtonText} split onClick={() => this.exportTrigger()} disabled={isExporting || !totalItemsCount} theme={context.theme as ITheme}
+                menuProps={{ items: [ 
+                    {
+                        key: 'exportAll',
+                        text: strings.Controls.ExportAllLabel?.replace("{maxhits}", this.maxhits.toString()),
+                        onClick: () => { this.exportTrigger(true) }
+                    },
+                    {
+                      key: 'exportSettings',
+                      text: strings.Controls.ExportSettingsText,
+                      iconProps: { iconName: 'Settings' },
+                      onClick: this.toggleExportDialog
                     }
-
-                    const filtersSourceData: IDataFilterSourceData =  { instanceId: instanceId, filterOperator: filterOperator, filterConfiguration: filtersConfiguration, selectedFilters: selectedFilters }
-                    DataSourceHelper.setTokens(this.dataSourceContext.tokenService, context.inputQueryText, filtersSourceData)
-
-                    const data = await this.dataSourceContext.dataSource.getData({ inputQueryText: context.inputQueryText, itemsCountPerPage: 100, pageNumber: 1, filters: context.filters })
-
-                    if (data && data.items) {
-                        var result = data.items.map(item => {
-                            return columnsConfiguration.map(column => {
-                                const { value, hasError } = HandlebarsHelper.getColumnValue(column, item, context, handlebars);
-                                return value;
-                            });
-                        });
-
-                        ExportHelper.exportToCsv("test.csv", result, columnsConfiguration.map(c => c.name));
-                    }
-                }
-                finally {
-                    this.setState({ exporting: false });
-                }
-            });
+                  ]}} />
+            {!hideSettingsDialog && <Dialog
+                hidden={hideSettingsDialog}
+                onDismiss={this.toggleExportDialog}
+                dialogContentProps={{
+                    type: DialogType.normal,
+                    title: strings.Controls.ExportSettingsText,
+                    showCloseButton: false,
+                    subText: strings.Controls.ExportDialogHelpText?.replace("{maxhits}", this.maxhits.toString()),
+                }}
+                modalProps={{ isBlocking: true }}
+                theme={context.theme as ITheme}>
+                <ChoiceGroup defaultSelectedKey={ExportType[exportType]} options={[
+                    { key: ExportType[ExportType.CurrentPage], text: strings.Controls.ExportCurrentPageLabel },
+                    { key: ExportType[ExportType.All], text: strings.Controls.ExportAllLabel?.replace("{maxhits}", this.maxhits.toString()), disabled: totalItemsCount <= (items && items.length) }
+                ]} onChange={(e, option) => this.setState({ exportType: ExportType[option.key] }, () => console.log(this.state.exportType))} />
+                <TextField label={strings.Controls.ExportFilenameLabel} title={fileName + this.extension}
+                    ariaLabel={strings.Controls.ExportFilenameAriaLabel} required={true}
+                    suffix=".csv" onChange={this.onChangeFilename} value={fileName} />
+                <DialogFooter>
+                    <PrimaryButton onClick={this.toggleExportDialog} text={strings.Controls.ExportDialogOKButtonText} />
+                </DialogFooter>
+            </Dialog>}
+            {isExporting && <ProgressIndicator percentComplete={exportProgress} />}
+        </>
     }
 }
 

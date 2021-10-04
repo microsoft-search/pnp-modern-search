@@ -159,7 +159,15 @@ define([], function() {
             TextDialogSaveButtonText: "Enregistrer",
             SelectItemComboPlaceHolder: "Sélectionnez la propriété",
             AddStaticDataLabel: "Ajouter des données statiques",
-            TextFieldApplyButtonText: "Appliquer"
+            TextFieldApplyButtonText: "Appliquer",
+            ExportButtonText: "Exportation (csv)",
+            ExportSettingsText: "Paramètres d'exportation",
+            ExportDialogHelpText: "Sélectionnez si vous souhaitez exporter la page/vue actuelle ou toutes les données (avec un maximum de {maxhits} lignes). Notez qu'il peut y avoir une différence dans les colonnes affichées, le formatage des valeurs et le tri appliqué dans le fichier généré par rapport à la vue actuelle.",
+            ExportFilenameLabel: "Nom de fichier",
+            ExportFilenameAriaLabel: "Le nom de fichier du csv exporté",
+            ExportCurrentPageLabel: "Page/vue actuelle",
+            ExportAllLabel: "Tous (max {maxhits} lignes)",
+            ExportDialogOKButtonText: "OK"
         },
         Layouts: {
             Debug: {

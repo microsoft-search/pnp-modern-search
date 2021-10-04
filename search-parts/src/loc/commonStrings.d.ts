@@ -159,6 +159,14 @@ declare interface ICommonStrings {
       SelectItemComboPlaceHolder: string;
       AddStaticDataLabel: string;
       TextFieldApplyButtonText: string;
+      ExportButtonText: string;
+      ExportSettingsText: string;
+      ExportDialogHelpText: string; 
+      ExportFilenameLabel: string;
+      ExportFilenameAriaLabel: string;
+      ExportCurrentPageLabel: string;
+      ExportAllLabel: string;
+      ExportDialogOKButtonText: string;
     },
     Layouts: {
       Debug: {

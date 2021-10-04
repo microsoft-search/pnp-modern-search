@@ -5,6 +5,8 @@ import { IPropertyPaneField, PropertyPaneToggle, PropertyPaneButton, PropertyPan
 import { ITemplateValueFieldEditorProps, TemplateValueFieldEditor } from '../controls/TemplateValueFieldEditor/TemplateValueFieldEditor';
 import { IComboBoxOption } from 'office-ui-fabric-react';
 import { BaseLayout } from '@pnp/modern-search-extensibility/lib/models/layouts/BaseLayout';
+import { IExportColumnConfiguration } from '../models/common/IExportColumnConfiguration';
+import { IDataResultsTemplateContext } from '../models/common/ITemplateContext';
 
 export class ExportHelper {
 
@@ -17,6 +19,7 @@ export class ExportHelper {
 
         // Export options
         if (layout.properties.enableExport) {
+            layout.properties.exportColumns = layout.properties.exportColumns ?? this.getDefaultExportColumns();
             propertyPaneFields.push(
                 propertyFieldCollectionData('layoutProperties.exportColumns', {
                     manageBtnLabel: strings.Layouts.Shared.ManageExportColumnsLabel,
@@ -72,6 +75,42 @@ export class ExportHelper {
             );
         }
         return propertyPaneFields;
+    }
+
+    public static getDefaultExportColumns() : IExportColumnConfiguration[] { 
+        return [
+            {
+                name: 'Title',
+                value: '{{slot item @root.slots.Title}}}',
+                useHandlebarsExpr: true,
+            },
+            {
+                name: 'Created',
+                value: "{{getDate (slot item @root.slots.Date) 'LL'}}",
+                useHandlebarsExpr: true,
+            }
+        ];
+    }
+
+    public static getReferencedProperties(columnsConfiguration: IExportColumnConfiguration[], context: IDataResultsTemplateContext) : string[] {
+        const regexpItem = new RegExp(/item\.(\w+)/gm);
+        const regexpSlots = new RegExp(/slots\.(\w+)/gm);
+        return columnsConfiguration.map(column => {
+            const result = []
+            if (!column.useHandlebarsExpr && column.value) result.push(column.value);
+            else if (column.value) {
+                let match: RegExpExecArray;
+                while ((match = regexpItem.exec(column.value)) !== null) {
+                    result.push(match[1]);
+                }
+                while ((match = regexpSlots.exec(column.value)) !== null) {
+                    result.push(context.slots[match[1]]);
+                }
+            }
+            return result;
+        })
+        .reduce((pv, cv) => pv.concat(cv))
+        .filter((value, index, self) => value && self.indexOf(value) === index);
     }
 
     public static exportToCsv(filename: string, rows: object[], headers?: string[]): void {

@@ -6,32 +6,37 @@
 
     <div class="template">
 
-        {{#if @root.properties.showSelectedFilters}}
-            <pnp-selectedfilters 
-                data-filters="{{JSONstringify filters.selectedFilters 2}}" 
-                data-filters-configuration="{{JSONstringify filters.filtersConfiguration 2}}" 
-                data-instance-id="{{filters.instanceId}}"
-                data-operator="{{filters.filterOperator}}"
-                data-theme-variant="{{JSONstringify @root.theme}}"
-            >
-            </pnp-selectedfilters>
-        {{/if}}
-        
-        {{#if @root.properties.showResultsCount}}
-            <div class="template--resultCount">
-                <label class="ms-fontWeight-semibold">{{getCountMessage @root.data.totalItemsCount @root.inputQueryText}}</label>
+        <div class="template--topContainer">
+            <div>
+            {{#if @root.properties.showSelectedFilters}}
+                <pnp-selectedfilters 
+                    data-filters="{{JSONstringify filters.selectedFilters 2}}" 
+                    data-filters-configuration="{{JSONstringify filters.filtersConfiguration 2}}" 
+                    data-instance-id="{{filters.instanceId}}"
+                    data-operator="{{filters.filterOperator}}"
+                    data-theme-variant="{{JSONstringify @root.theme}}"
+                >
+                </pnp-selectedfilters>
+            {{/if}}
+            
+            {{#if @root.properties.showResultsCount}}
+                <div class="template--resultCount">
+                    <label class="ms-fontWeight-semibold">{{getCountMessage @root.data.totalItemsCount @root.inputQueryText}}</label>
+                </div>
+            {{/if}}
             </div>
-        {{/if}}
-
-        {{#if @root.properties.layoutProperties.enableExport}}
-            <pnp-export 
-                data-columns-configuration="{{JSONstringify properties.layoutProperties.exportColumns}}"
-                data-data-source-key="{{properties.dataSourceKey}}"
-                data-data-source-properties="{{JSONstringify properties.dataSourceProperties 2}}"
-                data-context="{{JSONstringify @root}}"
-            >
-            </pnp-export>
-        {{/if}}
+            <div>
+            {{#if @root.properties.layoutProperties.enableExport}}
+                <pnp-export 
+                    data-columns-configuration="{{JSONstringify properties.layoutProperties.exportColumns}}"
+                    data-data-source-key="{{properties.dataSourceKey}}"
+                    data-data-source-properties="{{JSONstringify properties.dataSourceProperties 2}}"
+                    data-context="{{JSONstringify @root}}"
+                >
+                </pnp-export>
+            {{/if}}
+            </div>
+        </div>
 
         <pnp-detailslist 
             data-items="{{JSONstringify data.items}}" 

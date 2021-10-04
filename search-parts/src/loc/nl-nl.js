@@ -159,7 +159,15 @@ define([], function() {
             TextDialogSaveButtonText: "Bewaar",
             SelectItemComboPlaceHolder: "Selecteer eigenschap",
             AddStaticDataLabel: "Voeg statische data toe",
-            TextFieldApplyButtonText: "Toepassen"
+            TextFieldApplyButtonText: "Toepassen",
+            ExportButtonText: "Exporteren (csv)",
+            ExportSettingsText: "Instellingen exporteren",
+            ExportDialogHelpText: "Selecteer of u de huidige pagina/weergave of alle gegevens (met een maximum van {maxhits} rijen) wilt exporteren. Merk op dat er een verschil kan zijn in getoonde kolommen, waardeopmaak en toegepaste sortering in het uitgevoerde bestand in vergelijking met de huidige weergave.",
+            ExportFilenameLabel: "Bestandsnaam",
+            ExportFilenameAriaLabel: "De bestandsnaam voor de geëxporteerde csv",
+            ExportCurrentPageLabel: "Huidige pagina/weergave",
+            ExportAllLabel: "Alle (max. {maxhits} rijen)",
+            ExportDialogOKButtonText: "OK"
         },
         Layouts: {
             Debug: {
