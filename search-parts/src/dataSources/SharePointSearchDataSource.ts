@@ -219,7 +219,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
             secondaryResults: results.secondaryResults,
             spellingSuggestion: results.spellingSuggestion,
             promotedResults: results.promotedResults,
-            sortList: dataContext.sorting.selectedSorting ?? this.properties.sortList
+            sortList: dataContext.sorting?.selectedSorting ?? this.properties.sortList
         };
 
         // Translates taxonomy refiners and result values by using terms ID if applicable
@@ -830,7 +830,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         }
 
         searchQuery.TrimDuplicates = false;
-        searchQuery.SortList = this._convertToSortList(dataContext.sorting.selectedSorting ?? this.properties.sortList);
+        searchQuery.SortList = this._convertToSortList(dataContext.sorting?.selectedSorting ?? this.properties.sortList);
         searchQuery.SelectProperties = this.properties.selectedProperties.filter(a => a); // Fix to remove null values;
 
         // Toggle to include user's personal OneDrive results as a secondary result block

@@ -163,7 +163,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         const searchRequest = await this.buildMicrosoftSearchRequest(dataContext);
         results = await this.search(searchRequest);
 
-        return { ...results, sortList: dataContext.sorting.selectedSorting ?? this.properties.sortProperties };
+        return { ...results, sortList: dataContext.sorting?.selectedSorting ?? this.properties.sortProperties };
     }
 
     public getPropertyPaneGroupsConfiguration(): IPropertyPaneGroup[] {
@@ -468,7 +468,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         });
 
         // Build sort properties
-        (dataContext.sorting.selectedSorting ?? this.properties.sortProperties).forEach(sortProperty => {
+        (dataContext.sorting?.selectedSorting ?? this.properties.sortProperties).forEach(sortProperty => {
             sortProperties.push({
                 name: sortProperty.sortField,
                 isDescending: sortProperty.sortDirection === SortFieldDirection.Descending ? true : false

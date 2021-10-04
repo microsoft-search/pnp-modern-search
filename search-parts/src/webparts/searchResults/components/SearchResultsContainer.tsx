@@ -458,7 +458,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 defaultImage: Constants.DEFAULT_IMAGE_CONTENT
             },
             sorting: {
-                sortList: this.props.dataContext.sorting.selectedSorting || []
+                sortList: this.props.dataContext.sorting?.selectedSorting || []
             }
         };
     }
