@@ -81,7 +81,7 @@ export class ExportHelper {
         return [
             {
                 name: 'Title',
-                value: '{{slot item @root.slots.Title}}}',
+                value: '{{slot item @root.slots.Title}}',
                 useHandlebarsExpr: true,
             },
             {
