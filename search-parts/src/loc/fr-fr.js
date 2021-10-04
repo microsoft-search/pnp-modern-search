@@ -189,7 +189,6 @@ define([], function() {
                 ResizableColumnLabel: "Redimensionnable",
                 MultilineColumnLabel: "Multiligne",
                 LinkToItemColumnLabel: "Lien de l’élément",
-                SupportHTMLColumnLabel: "Autoriser HTML",
                 CompactModeLabel: "Mode compact",
                 ShowFileIcon: "Afficher l’icône de fichier",
                 ManageDetailsListColumnDescription: "Ajouter, modifier ou supprimer des colonnes dans la présentation de la liste de détails. Vous pouvez utiliser la valeur des propriétés directement dans la liste, sans modification, ou utiliser une expression entre accolades dans le champ de valeur Le format HTML est également pris en charge dans tous les champs",
