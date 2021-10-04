@@ -110,15 +110,15 @@ export class ExportComponent extends React.Component<IExportComponentProps, IExp
 
                 try {
                     let currentPageNumber = 0;
-                    let lastItems: any[] = [1];
+                    let fetchMore = true;
                     const totalItems = context.data.totalItemsCount || this.maxhits;
                     const progressMax = totalItems < this.maxhits ? totalItems : this.maxhits;
-                    while(items.length < this.maxhits && lastItems) {
+                    while(items.length < this.maxhits && fetchMore) {
                         const data = await this.dataSourceContext.dataSource.getData({ 
                             inputQueryText: context.inputQueryText, itemsCountPerPage: 500, pageNumber: ++currentPageNumber, filters: context.filters })
-                        lastItems = data.items;
-                        if(lastItems) {
-                            items = items.concat(lastItems);
+                        fetchMore = data.items && data.items.length > 0;
+                        if(fetchMore) {
+                            items = items.concat(data.items);
                             this.setState({ exportProgress: items.length / progressMax });
                             console.log(`Processed page ${currentPageNumber} with a total of ${items.length} fetched`);
                         }
