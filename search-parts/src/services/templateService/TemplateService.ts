@@ -535,7 +535,7 @@ export class TemplateService implements ITemplateService {
         });
 
         // Group by a specific property
-        this.Handlebars.registerHelper(groupBy(Handlebars));
+        this.Handlebars.registerHelper(groupBy(this.Handlebars));
 
         // Return the value for a specific slot
         this.Handlebars.registerHelper("slot", (item: any, propertyPath: string) => {
