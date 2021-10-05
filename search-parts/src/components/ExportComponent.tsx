@@ -51,12 +51,13 @@ export interface IExportComponentState {
 export class ExportComponent extends React.Component<IExportComponentProps, IExportComponentState> {
 
     private dataSourceContext: { dataSource: IDataSource, tokenService: ITokenService };
-    private readonly maxhits = 5000;
+    private readonly maxhits = 10000;
+    private readonly pagesize = 500;
     private readonly extension = ".csv";
 
     constructor(props: IExportComponentProps) {
         super(props);
-        
+
         this.state = {
             hideSettingsDialog: true,
             isExporting: false,
@@ -81,7 +82,7 @@ export class ExportComponent extends React.Component<IExportComponentProps, IExp
 
     private onChangeFilename = (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
         const value = newValue && newValue.replace(/[#%&{}\\<>*?/$!'":@+`|=\t_]/g, "").trim();
-        this.setState({ fileName: value})
+        this.setState({ fileName: value })
     };
 
     private async exportTrigger(exportAll?: boolean): Promise<void> {
@@ -94,9 +95,9 @@ export class ExportComponent extends React.Component<IExportComponentProps, IExp
             let items: any[] = [];
             let errorOccured = false;
             let errorColumnValue = false;
-            if(exportAll === true || exportType == ExportType.All) {
+            if (exportAll === true || exportType == ExportType.All) {
                 if (!this.dataSourceContext) {
-                    
+
                     const filteredProperties = ExportHelper.getReferencedProperties(columnsConfiguration, context);
 
                     this.dataSourceContext = await DataSourceHelper.getDataSourceInstance(dataSourceKey, serviceScope,
@@ -108,24 +109,38 @@ export class ExportComponent extends React.Component<IExportComponentProps, IExp
                 const filtersSourceData: IDataFilterSourceData = { instanceId: instanceId, filterOperator: filterOperator, filterConfiguration: filtersConfiguration, selectedFilters: selectedFilters }
                 DataSourceHelper.setTokens(this.dataSourceContext.tokenService, context.inputQueryText, filtersSourceData)
 
+                console.time("fetching");
                 try {
                     let currentPageNumber = 0;
                     let fetchMore = true;
+                    let itemsFetched = 0;
                     const totalItems = context.data.totalItemsCount || this.maxhits;
                     const progressMax = totalItems < this.maxhits ? totalItems : this.maxhits;
-                    while(items.length < this.maxhits && fetchMore) {
-                        const data = await this.dataSourceContext.dataSource.getData({ 
-                            inputQueryText: context.inputQueryText, itemsCountPerPage: 500, pageNumber: ++currentPageNumber, filters: context.filters })
-                        fetchMore = data.items && data.items.length > 0;
-                        if(fetchMore) {
-                            items = items.concat(data.items);
-                            this.setState({ exportProgress: items.length / progressMax });
-                            console.log(`Processed page ${currentPageNumber} with a total of ${items.length} fetched`);
-                        }
+                    while (items.length < this.maxhits && fetchMore) {
+                        const pagesToProcess = [++currentPageNumber, ++currentPageNumber, ++currentPageNumber, ++currentPageNumber];
+                        const itemResults = await Promise.all(pagesToProcess.map(async page => {
+                            const data = await this.dataSourceContext.dataSource.getData({
+                                inputQueryText: context.inputQueryText, itemsCountPerPage: this.pagesize, pageNumber: page, filters: context.filters
+                            })
+                            itemsFetched += data.items?.length || 0;
+                            this.setState({ exportProgress: itemsFetched / progressMax });
+                            return data.items || [];
+                        }));
+
+                        itemResults.forEach(i => {
+                            fetchMore = fetchMore && i.length == this.pagesize;
+                            if (i.length > 0) { items = items.concat(i); }
+                        });
+                        this.setState({ exportProgress: items.length / progressMax });
+                        console.log(`Processed '${pagesToProcess.join(", ")}', items total fetched ${items.length}`);
                     }
                 }
-                catch {
+                catch (error) {
                     errorOccured = true;
+                    console.log(`Error occurred while fetching result for csv export. ${error}`);
+                }
+                finally {
+                    console.timeEnd("fetching")
                 }
             }
             else {
@@ -133,6 +148,7 @@ export class ExportComponent extends React.Component<IExportComponentProps, IExp
             }
 
             if (items) {
+                console.time("mapvalues");
                 var result = items.map(item => {
                     return columnsConfiguration.map(column => {
                         const { value, hasError } = HandlebarsHelper.getColumnValue(column, item, context, handlebars);
@@ -140,12 +156,18 @@ export class ExportComponent extends React.Component<IExportComponentProps, IExp
                         return value;
                     });
                 });
+                console.timeEnd("mapvalues")
 
+                
+                console.time("exporttocsv");
+                const emptyRows = result.filter(r => r.every(c => !c)).length;
                 ExportHelper.exportToCsv(fileName + this.extension, result, columnsConfiguration.map(c => c.name));
+                console.log(`Processed '${fileName + this.extension}', items total exported ${result.length}, has error column value: ${errorColumnValue}, empty rows: ${emptyRows}`);
+                console.timeEnd("exporttocsv")
             }
         }
         finally {
-            this.setState({ isExporting: false  });
+            this.setState({ isExporting: false });
         }
     }
 
@@ -156,19 +178,21 @@ export class ExportComponent extends React.Component<IExportComponentProps, IExp
         const { items, totalItemsCount } = context.data;
         return <>
             <DefaultButton text={strings.Controls.ExportButtonText} split onClick={() => this.exportTrigger()} disabled={isExporting || !totalItemsCount} theme={context.theme as ITheme}
-                menuProps={{ items: [ 
-                    {
-                        key: 'exportAll',
-                        text: strings.Controls.ExportAllLabel?.replace("{maxhits}", this.maxhits.toString()),
-                        onClick: () => { this.exportTrigger(true) }
-                    },
-                    {
-                      key: 'exportSettings',
-                      text: strings.Controls.ExportSettingsText,
-                      iconProps: { iconName: 'Settings' },
-                      onClick: this.toggleExportDialog
-                    }
-                  ]}} />
+                menuProps={{
+                    items: [
+                        {
+                            key: 'exportAll',
+                            text: strings.Controls.ExportAllLabel?.replace("{maxhits}", this.maxhits.toString()),
+                            onClick: () => { this.exportTrigger(true) }
+                        },
+                        {
+                            key: 'exportSettings',
+                            text: strings.Controls.ExportSettingsText,
+                            iconProps: { iconName: 'Settings' },
+                            onClick: this.toggleExportDialog
+                        }
+                    ]
+                }} />
             {!hideSettingsDialog && <Dialog
                 hidden={hideSettingsDialog}
                 onDismiss={this.toggleExportDialog}
@@ -211,7 +235,6 @@ export class ExportWebComponent extends BaseWebComponent {
         let templateServiceKey: ServiceKey<any> = TemplateService.ServiceKey; // Defaut service key for TemplateService
 
         if (props.context && props.context.instanceId) {
-
             const instanceId = props.instanceId;
             // Get the service scope and keys associated to the current Web Part displaying the component
             serviceScope = this._webPartServiceScopes.get(instanceId) ? this._webPartServiceScopes.get(instanceId) : serviceScope;
