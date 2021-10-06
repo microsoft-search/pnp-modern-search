@@ -1,4 +1,3 @@
-import { template } from "lodash";
 import { IHandlebarsColumnConfiguration } from "../models/common/IHandlebarsColumnConfiguration";
 import { IDataResultsTemplateContext } from "../models/common/ITemplateContext";
 import { ObjectHelper } from "./ObjectHelper";
