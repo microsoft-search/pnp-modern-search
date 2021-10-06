@@ -95,6 +95,8 @@ export class ExportComponent extends React.Component<IExportComponentProps, IExp
             let items: any[] = [];
             let errorOccured = false;
             let errorColumnValue = false;
+            const totalItems = context.data.totalItemsCount || this.maxhits;
+            const progressMax = totalItems < this.maxhits ? totalItems : this.maxhits;
             if (exportAll === true || exportType == ExportType.All) {
                 if (!this.dataSourceContext) {
 
@@ -114,8 +116,6 @@ export class ExportComponent extends React.Component<IExportComponentProps, IExp
                     let currentPageNumber = 0;
                     let fetchMore = true;
                     let itemsFetched = 0;
-                    const totalItems = context.data.totalItemsCount || this.maxhits;
-                    const progressMax = totalItems < this.maxhits ? totalItems : this.maxhits;
                     while (items.length < this.maxhits && fetchMore) {
                         const pagesToProcess = [++currentPageNumber, ++currentPageNumber, ++currentPageNumber, ++currentPageNumber];
                         const itemResults = await Promise.all(pagesToProcess.map(async page => {
@@ -123,7 +123,7 @@ export class ExportComponent extends React.Component<IExportComponentProps, IExp
                                 inputQueryText: context.inputQueryText, itemsCountPerPage: this.pagesize, pageNumber: page, filters: context.filters
                             })
                             itemsFetched += data.items?.length || 0;
-                            this.setState({ exportProgress: itemsFetched / progressMax });
+                            this.setState({ exportProgress: itemsFetched / (progressMax * 2) });
                             return data.items || [];
                         }));
 
@@ -131,7 +131,7 @@ export class ExportComponent extends React.Component<IExportComponentProps, IExp
                             fetchMore = fetchMore && i.length == this.pagesize;
                             if (i.length > 0) { items = items.concat(i); }
                         });
-                        this.setState({ exportProgress: items.length / progressMax });
+                        this.setState({ exportProgress: items.length / (progressMax * 2) });
                         console.log(`Processed '${pagesToProcess.join(", ")}', items total fetched ${items.length}`);
                     }
                 }
@@ -149,10 +149,18 @@ export class ExportComponent extends React.Component<IExportComponentProps, IExp
 
             if (items) {
                 console.time("mapvalues");
-                var result = items.map(item => {
-                    return columnsConfiguration.map(column => {
-                        const { value, hasError } = HandlebarsHelper.getColumnValue(column, item, context, handlebars);
+                const columnWithHandler = columnsConfiguration.map(c => {
+                    return {
+                        column: c,
+                        template: c.useHandlebarsExpr && c.value ? HandlebarsHelper.getHandleBarsTemplate(c.value, handlebars) : null
+                    }
+                });
+                var result = items.map((item, index) => {
+                    return columnWithHandler.map(({column, template}) => {
+                        const { value, hasError } = HandlebarsHelper.getColumnValueWithHandler(column, item, 
+                            () => HandlebarsHelper.getHandleBarsContentValue(item, context, template))
                         errorColumnValue = errorColumnValue || hasError;
+                        if(index % 100 == 0) this.setState({ exportProgress: items.length + index / (progressMax * 2) });
                         return value;
                     });
                 });
