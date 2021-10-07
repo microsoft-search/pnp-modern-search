@@ -17,7 +17,6 @@ import { ObjectHelper } from '../../../helpers/ObjectHelper';
 import { BuiltinLayoutsKeys } from '../../../layouts/AvailableLayouts';
 import { WebPartTitle } from '@pnp/spfx-controls-react/lib/WebPartTitle';
 import * as webPartStrings from 'SearchResultsWebPartStrings';
-import { DataSources } from 'CommonStrings';
 
 const LogSource = "SearchResultsContainer";
 
@@ -302,11 +301,11 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 let webId = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.WebId]);
                 let listId = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.ListId]);
                 let itemId = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.ItemId]); // Could be UniqueId or item ID
+ 
+                let isFolder = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.IsFolder]); 
+                const isContainerType = isFolder === "true" || isFolder === "1" || isFolder.indexOf('0x0120') !== -1;
 
-                let contentTypeId = this.props.dataSource.getTemplateSlots()[BuiltinTemplateSlots.IsFolder];
-                const isContainer = contentTypeId ? contentTypeId.indexOf('0x0120') !== -1 : false;
-
-                if (siteId && listId && itemId && !isContainer) {
+                if (siteId && listId && itemId && !isContainerType) {
                     // SP item logic
                     siteId = this.getGuidFromString(siteId);
                     listId = this.getGuidFromString(listId);
