@@ -275,18 +275,17 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 const hasContentClass = !isEmpty(contentClass);
                 const isLibItem = hasContentClass && contentClass.indexOf("Library") !== -1;
 
-                let contentTypeId = ObjectHelper.byPath(item, "ContentTypeId");
+                let contentTypeId = this.props.dataSource.getTemplateSlots()[BuiltinTemplateSlots.IsFolder];
                 const isContainer = contentTypeId ? contentTypeId.indexOf('0x0120') !== -1 : false;
-                if (!isContainer) {
-                    let pathProperty = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.Path]);
-                    if (!pathProperty || (hasContentClass && !isLibItem)) {
-                        pathProperty = ObjectHelper.byPath(item, BuiltinTemplateSlots.Path); // Fallback to using Path for if DefaultEncodingURL is missing
-                    }
-                    if (pathProperty && pathProperty.indexOf("?") === -1) {
-                        item.AutoPreviewUrl = pathProperty + "?web=1";
-                    } else {
-                        item.AutoPreviewUrl = pathProperty;
-                    }
+
+                let pathProperty = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.Path]);
+                if (!pathProperty || (hasContentClass && !isLibItem)) {
+                    pathProperty = ObjectHelper.byPath(item, BuiltinTemplateSlots.Path); // Fallback to using Path for if DefaultEncodingURL is missing
+                }
+                if (pathProperty && pathProperty.indexOf("?") === -1 && !isContainer) {
+                    item.AutoPreviewUrl = pathProperty + "?web=1";
+                } else {
+                    item.AutoPreviewUrl = pathProperty;
                 }
                 return item;
             });
@@ -302,8 +301,11 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 let webId = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.WebId]);
                 let listId = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.ListId]);
                 let itemId = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.ItemId]); // Could be UniqueId or item ID
+ 
+                let isFolder = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.IsFolder]); 
+                const isContainerType = isFolder === "true" || isFolder === "1" || isFolder.indexOf('0x0120') !== -1;
 
-                if (siteId && listId && itemId) {
+                if (siteId && listId && itemId && !isContainerType) {
                     // SP item logic
                     siteId = this.getGuidFromString(siteId);
                     listId = this.getGuidFromString(listId);
@@ -328,12 +330,22 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                     }
                 }
 
-
+                if (!this.isOnlineDomain(item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl])) {
+                    item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = null;
+                }
                 return item;
             });
         }
 
         return data;
+    }
+
+    /**
+     * Check if we're on an online domain
+     * @param domain
+     */
+    private isOnlineDomain(url: string) {
+        return !isEmpty(url) && url.toLocaleLowerCase().indexOf(window.location.hostname.split('.').slice(-2).join('.').toLocaleLowerCase()) !== -1;
     }
 
     /**
