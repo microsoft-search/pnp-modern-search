@@ -1,21 +1,39 @@
 import { ISynonymsService } from './ISynonymsService';
 import { ISynonymsListEntry } from '../../models/search/ISynonymsListEntry';
 import { IQueryTermToSynonymsEntry } from '../../models/search/IQueryTermToSynonymsEntry';
-
-// includes for SharePoint List access
-import { Web } from "@pnp/sp/webs";
-import "@pnp/sp/lists";
-import "@pnp/sp/items";
+import { ISharePointSynonymsListEntry } from '../../models/search/ISharePointSynonymsListEntry';
+import { ISharePointSynonymsListCache } from '../../models/search/ISharePointSynonymsListCache';
 
 // misc includes
 import { Exception } from 'handlebars';
 import { ServiceKey, ServiceScope, Log } from "@microsoft/sp-core-library";
+import { SPHttpClient } from '@microsoft/sp-http';
+import { Constants } from '../../common/Constants';
 
 const SynonymsService_ServiceKey = 'PnPModernSearch:SynonymsService';
 
 export class SynonymsService implements ISynonymsService {
 
+    /**
+     * The current service scope
+     */
+    private serviceScope: ServiceScope;
+
+    /**
+     * The SPHttpClient instance
+     */
+    private spHttpClient: SPHttpClient;
+
     public static ServiceKey: ServiceKey<ISynonymsService> = ServiceKey.create(SynonymsService_ServiceKey, SynonymsService);
+
+    constructor(serviceScope: ServiceScope) {
+
+        this.serviceScope = serviceScope;
+
+        serviceScope.whenFinished(async () => {
+            this.spHttpClient = serviceScope.consume<SPHttpClient>(SPHttpClient.serviceKey);
+        });
+    }
 
     public async enrichQueryWithSynonyms(queryText: string, synonymsList: ISynonymsListEntry[]): Promise<string> {
         // storing the original query to use for query expansion bulding...
@@ -29,20 +47,19 @@ export class SynonymsService implements ISynonymsService {
         if (modifiedQuery !== undefined) {
 
             // evaluating the raw query by stripping query operators and converting to lowercase...
-            let rawQuery = originalQuery.replace(/((^|\s)-[\w-]+[\s$])|(-"\w+.*?")|(-?\w+[:=<>]+\w+)|(-?\w+[:=<>]+".*?")|((\w+)?\(.*?\))|(AND)|(OR)|(NOT)/g, " ").replace(/[ ]{2,}/, " ").toLocaleLowerCase().trim();
+            let rawQuery = originalQuery.replace(/((^|\s)-[\w-]+[\s$])|(-"\w+.*?")|(-?\w+[:=<>]+\w+)|(-?\w+[:=<>]+".*?")|((\w+)+\(.*?\))|[()]|(AND)|(OR)|(NOT)/g, " ").replace(/[ ]{2,}/, " ").toLocaleLowerCase().trim();
 
             // now prepare all term/word combinations from the raw query to get possible standing terms (like 'United States of America)
             // (each loop gets forward and backward combinations from the term/word)
             var termCombinations = [];
-            if (rawQuery.length > 0 ) {
+            if (rawQuery.length > 0) {
                 // only do, if the raw query is not empty after rempoving all the operators...
                 let queryTerms = rawQuery.split(" ");
                 for (var i = 0; i < queryTerms.length; i++) {
-                    termCombinations.push(<IQueryTermToSynonymsEntry>{ queryTerm: queryTerms[i]});
-                    for (var j = i; j < queryTerms.length; j++)
-                    {
+                    termCombinations.push(<IQueryTermToSynonymsEntry>{ queryTerm: queryTerms[i] });
+                    for (var j = i; j < queryTerms.length; j++) {
                         if (j < queryTerms.length - 1) {
-                            termCombinations.push(<IQueryTermToSynonymsEntry>{ queryTerm: termCombinations[termCombinations.length - 1].queryTerm + " " + queryTerms[j + 1]});
+                            termCombinations.push(<IQueryTermToSynonymsEntry>{ queryTerm: termCombinations[termCombinations.length - 1].queryTerm + " " + queryTerms[j + 1] });
                         }
                     }
                 }
@@ -148,11 +165,39 @@ export class SynonymsService implements ISynonymsService {
             if (webUrl == "" || listName == "" || fieldNameKeyword == "" || fieldNameSynonyms == "" || fieldNameMutual == "") {
                 throw new Exception("Synonyms configuration not completed or wrong");
             }
-            const web = Web(webUrl);
-            const response = await web();
-            const items: any[] = await web.lists.getByTitle(listName).items.get();
-            for (let index = 0; index < items.length; index++) {
-                synonyms.push(<ISynonymsListEntry>{ synonyms: items[index][fieldNameKeyword] + ";" + items[index][fieldNameSynonyms], mutual: items[index][fieldNameMutual]});
+
+            // Get stored values from Local Storage
+            var synonymsServiceString = localStorage.getItem(SynonymsService_ServiceKey);
+            if (synonymsServiceString) {
+                var synonymsListCache: ISharePointSynonymsListCache = JSON.parse(synonymsServiceString)
+                // If Local Storage values are not to old, use them
+                if (new Date(synonymsListCache.updated).getTime() + (1000 * 60 * 60 * 24) > new Date().getTime()) {
+                    Log.info(SynonymsService_ServiceKey, 'Get Synonyms from LocalStorage');
+                    synonyms = synonymsListCache.synonyms;
+                }
+            }
+            // Check if Local Storage values are used. If empty, get values via List
+            if (synonyms.length == 0) {
+                Log.info(SynonymsService_ServiceKey, 'Get Synonyms from List');
+                const response = await this.spHttpClient.get(`${webUrl}/_api/web/lists/getbytitle('${listName}')/items`, SPHttpClient.configurations.v1, {
+                    headers: {
+                        'X-ClientService-ClientTag': Constants.X_CLIENTSERVICE_CLIENTTAG,
+                        'UserAgent': Constants.X_CLIENTSERVICE_CLIENTTAG
+                    }
+                });
+                if (response.ok) {
+                    const synonymsResponse: any = await response.json();
+
+                    var items: ISharePointSynonymsListEntry[] = synonymsResponse.value;
+                    for (let index = 0; index < items.length; index++) {
+                        synonyms.push(<ISynonymsListEntry>{ synonyms: items[index][fieldNameKeyword] + ";" + items[index][fieldNameSynonyms], mutual: items[index][fieldNameMutual] });
+                    }
+                } else {
+                    throw new Error(`${response['statusMessage']}`);
+                }
+                // Save values to Local Storage
+                var synonymsListCache: ISharePointSynonymsListCache = { updated: new Date(), synonyms: synonyms };
+                localStorage.setItem(SynonymsService_ServiceKey, JSON.stringify(synonymsListCache));
             }
         }
         catch (error) {
