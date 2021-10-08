@@ -5,13 +5,15 @@ Depending on a 'mutual' flag the synonyms are expanded in one direction only (ke
 
 The synonyms are managed in an external SharePoint list which need the following requirements/columns (the column names are not fixed, you have to specify them in the configuration):
 
-| Field Name | Type | Description | Default value |
+| Field Name (internal) | Type | Description | Default value |
 | --------| ----------- | ---------------|---------------|
 |**Keyword** | Text | The main keyword for the synonyms. This is typically the 'Title' field of the list.
 |**Synonyms** | Multiline Text (Text only) | All synonyms separated by semicolon (;)
 |**Mutual** | Boolean | Flag how synonyms should be expanded (false: unidirectional, true: mutual)| true
 
 !["Synonyms Table Example"](../../../assets/webparts/search-results/page1/synonyms_table.png){: .left}
+
+**The synonyms list has to be excluded from search inxexing!**
 
 **All users which have access to the search center/page will also need to have read access to the synonyms list.**
 

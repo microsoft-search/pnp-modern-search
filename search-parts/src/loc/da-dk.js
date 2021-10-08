@@ -313,7 +313,7 @@ define([], function() {
                 SynonymListLabel: "Synonymer Liste Navn",
                 SynonymListFieldNameKeyword: "Nøgleord Feltnavn (normalt 'title' feltet)",
                 SynonymListFieldNameSynonyms: "Synonyms Feltnavn (tekst)",
-                SynonymListFieldNameMutual: "Gensidigt feltnavn (boolean)"
+                SynonymListFieldNameMutual: "Gensidigt feltnavn (ja/nej)"
             }
         },
         Filters: {

@@ -314,7 +314,7 @@ define([], function() {
                 SynonymListLabel: "Liste des synonymes Nom",
                 SynonymListFieldNameKeyword: "Nom du champ de mots-clés (normalement le champ 'titre')",
                 SynonymListFieldNameSynonyms: "Nom du champ Synonymes (texte)",
-                SynonymListFieldNameMutual: "Nom du champ mutuel (booléen)"
+                SynonymListFieldNameMutual: "Nom du champ mutuel (oui/non)"
             }
         },
         Filters: {

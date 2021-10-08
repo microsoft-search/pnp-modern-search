@@ -313,7 +313,7 @@ define([], function() {
                 SynonymListLabel: "Synonyms List Name",
                 SynonymListFieldNameKeyword: "Keyword Field Name (normally 'title' field)",
                 SynonymListFieldNameSynonyms: "Synonyms Field Name (text)",
-                SynonymListFieldNameMutual: "Mutual Field Name (boolean)"
+                SynonymListFieldNameMutual: "Mutual Field Name (yes/no)"
             }
         },
         Filters: {

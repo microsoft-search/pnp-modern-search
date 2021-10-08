@@ -305,6 +305,15 @@ define([], function() {
                         Enabled: "Aan/Uit"
                     }
                 }
+            },
+            Synonyms: {
+                SynonymSettingsGroupName: "Synoniemen",
+                EnableSwitchLabel: "Enable Synoniemen",
+                SiteUrlLabel: "ite URL van synoniemenlijst",
+                SynonymListLabel: "Synoniemenlijst Naam",
+                SynonymListFieldNameKeyword: "Trefwoord Veldnaam (normaliter 'title' veld)",
+                SynonymListFieldNameSynonyms: "Synoniemen (text)",
+                SynonymListFieldNameMutual: "Wederzijds Veldnaam (ja/nee)"
             }
         },
         Filters: {
