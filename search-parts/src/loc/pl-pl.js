@@ -18,12 +18,12 @@ define([], function() {
             },
             Date: {
                 DateTokensGroupName: "Date tokens",
-                Today: "Today",
-                Yesterday: "Yesterday",
-                Tomorrow: "Tomorrow",
-                OneWeekAgo: "One week ago",
-                OneMonthAgo: "One month ago",
-                OneYearAgo: "One year ago"
+                Today: "Dziś",
+                Yesterday: "Wczoraj",
+                Tomorrow: "Jutro",
+                OneWeekAgo: "Tydzień temu",
+                OneMonthAgo: "Mieiąc temu",
+                OneYearAgo: "Rok temu"
             },
             Page: {
                 PageTokensGroupName: "Page tokens",
@@ -33,8 +33,8 @@ define([], function() {
             },
             User: {
                 UserTokensGroupName: "User tokens",
-                UserName: "User Name",
-                Me: "Me",
+                UserName: "Nazwa użytkownika",
+                Me: "Ja",
                 UserDepartment: "User Department",
                 UserCustom: "User custom property"
             }
@@ -137,14 +137,14 @@ define([], function() {
                 Sort: {
                     SortPropertyPaneFieldLabel: "Sort order",
                     SortListDescription: "Specify the initial sort order for the search results. You can either select a field from the dropdown list (only if the data source data have already be fetched) or type your own custom value (press 'Enter' to save your entry)",
-                    SortDirectionAscendingLabel: "Ascending",
-                    SortDirectionDescendingLabel: "Descending",
+                    SortDirectionAscendingLabel: "Rosnąco",
+                    SortDirectionDescendingLabel: "Malejąco",
                     SortErrorMessage: "Invalid search property (Check if the managed property is sortable).",
                     SortPanelSortFieldLabel: "Sort on field",
                     SortPanelSortFieldAria: "Sort by",
                     SortPanelSortFieldPlaceHolder: "Sort by",
-                    SortPanelSortDirectionLabel: "Sort Direction",
-                    SortDirectionColumnLabel: "Direction",
+                    SortPanelSortDirectionLabel: "Kierunek sortowania",
+                    SortDirectionColumnLabel: "Kierunek",
                     SortFieldColumnLabel: "Field name",
                     EditSortLabel: "Edit sort order",
                     SortInvalidSortableFieldMessage: "This property is not sortable",
