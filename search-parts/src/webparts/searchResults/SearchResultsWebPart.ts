@@ -258,8 +258,20 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         let renderRootElement: JSX.Element = null;
         let renderDataContainer: JSX.Element = null;
 
-        const valueFromDynamicSource = this.properties.queryText.tryGetValue();
-        const decodedValueFromDynamicSource = valueFromDynamicSource ? decodeURIComponent(valueFromDynamicSource) : null;
+        let valueFromDynamicSource = "";
+        if (this.properties.queryText && !this.properties.queryText.isDisposed) {
+
+            valueFromDynamicSource = this.properties.queryText.tryGetValue();
+            try {
+                valueFromDynamicSource = decodeURIComponent(valueFromDynamicSource);
+
+            } catch (error) {
+                // Likely issue when q=%25 in spfx
+            }
+
+        }
+
+        const decodedValueFromDynamicSource = valueFromDynamicSource && !isEmpty(valueFromDynamicSource) ? valueFromDynamicSource : null;
         const inputQueryFromDataSource = !this.properties.queryText.isDisposed && decodedValueFromDynamicSource;
         const inputQueryText = inputQueryFromDataSource ? inputQueryFromDataSource : this.properties.defaultQueryText;
 
