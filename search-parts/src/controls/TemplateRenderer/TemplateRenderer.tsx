@@ -27,7 +27,7 @@ export class TemplateRenderer extends React.Component<ITemplateRendererProps, IT
         this._domPurify.setConfig({
             ADD_TAGS: ['style'],
             ADD_ATTR: ['onerror', 'target', 'loading'],
-            ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|cid|xmpp|xxx|ms-\w+):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
+            ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|file|tel|callto|cid|xmpp|xxx|ms-\w+):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
             WHOLE_DOCUMENT: true
         });
 
