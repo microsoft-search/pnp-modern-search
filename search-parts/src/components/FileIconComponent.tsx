@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { BaseWebComponent } from '@pnp/modern-search-extensibility';
 import * as ReactDOM from 'react-dom';
-import { Icon, ITheme, IIconStyles } from 'office-ui-fabric-react';
+import { Icon, ITheme, IIconStyles, ImageFit } from 'office-ui-fabric-react';
 import { getFileTypeIconProps, FileTypeIconSize, FileIconType } from '@uifabric/file-type-icons';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import { isEmpty } from '@microsoft/sp-lodash-subset';
@@ -22,6 +22,11 @@ export interface IFileIconProps {
      * The icon size
      */
     size?: string;
+
+    /**
+     * Image url to use as the icon
+     */
+    imageUrl?: string;
 
     /**
      * The current theme settings
@@ -46,11 +51,17 @@ export class FileIcon extends React.Component<IFileIconProps, IFileIconState> {
 
         const size = this.props.size ? parseInt(this.props.size) as FileTypeIconSize : 16;
 
-        if (this.props.extension || this.props.isContainer) {
+        if (this.props.extension || this.props.isContainer || this.props.imageUrl) {
 
             let isContainer = this.props.isContainer ? this.props.isContainer.toString() : undefined;
             const isOneNote = this.props.extension && this.props.extension.indexOf("OneNote") !== -1 ? true : false;
-            if (isContainer && !isOneNote) {
+
+            if (!isEmpty(this.props.imageUrl)) {
+
+                iconProps = { imageProps: { src: this.props.imageUrl, imageFit: ImageFit.contain, width: size + 'px', height: size + 'px' } };
+
+            }
+            else if (isContainer && !isOneNote) {
                 // Folder
                 // SharePointCAML SharePoint REST => FSObjType = 1
                 // SharePoint Search => ContentTypeId => 0x0120...
