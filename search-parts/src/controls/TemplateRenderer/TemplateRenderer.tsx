@@ -27,9 +27,9 @@ export class TemplateRenderer extends React.Component<ITemplateRendererProps, IT
         this._domPurify.setConfig({
             ADD_TAGS: ['style'],
             ADD_ATTR: ['target', 'loading'],
-            FORBID_ATTR: ['onclick', 'onerror', 'onfocus'],
+            ALLOW_DATA_ATTR: true,
             ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|file|tel|callto|cid|xmpp|xxx|ms-\w+):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
-            WHOLE_DOCUMENT: false,
+            WHOLE_DOCUMENT: false,            
         });
 
         this._domPurify.addHook('uponSanitizeElement', DomPurifyHelper.allowCustomComponentsHook);
@@ -67,7 +67,7 @@ export class TemplateRenderer extends React.Component<ITemplateRendererProps, IT
         if (template) {
 
             // Sanitize the template HTML
-            template = template ? this._domPurify.sanitize(`${template}`) : template;
+            template = template ? this._domPurify.sanitize(template) : template;
             const templateAsHtml = new DOMParser().parseFromString(template, "text/html");
 
             // Get <style> tags from Handlebars template content and prefix all CSS rules by the Web Part instance ID to isolate styles
