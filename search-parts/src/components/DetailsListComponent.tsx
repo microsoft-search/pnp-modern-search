@@ -16,7 +16,7 @@ import { DomPurifyHelper } from '../helpers/DomPurifyHelper';
 import { ITemplateService } from '../services/templateService/ITemplateService';
 import { TemplateService } from '../services/templateService/TemplateService';
 import { ServiceScope, ServiceKey } from '@microsoft/sp-core-library';
-import { ISortFieldConfiguration, SortFieldDirection } from '../models/search/ISortFieldConfiguration';
+import { ISortFieldConfiguration, SortFieldDirection } from '@pnp/modern-search-extensibility/lib/models/ISortFieldConfiguration';
 import { ISortEventInfo } from '../models/search/ISortEventInfo';
 
 const DEFAULT_SHIMMER_HEIGHT = 7;

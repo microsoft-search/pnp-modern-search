@@ -59,7 +59,7 @@ import { IDataVerticalSourceData } from '../../models/dynamicData/IDataVerticalS
 import { BaseWebPart } from '../../common/BaseWebPart';
 import { ApplicationInsights } from '@microsoft/applicationinsights-web';
 import commonStyles from '../../styles/Common.module.scss';
-import { ISortFieldConfiguration } from '../../models/search/ISortFieldConfiguration';
+import { ISortFieldConfiguration } from '@pnp/modern-search-extensibility/lib/models/ISortFieldConfiguration';
 import { ISortEventInfo } from '../../models/search/ISortEventInfo';
 
 const LogSource = "SearchResultsWebPart";

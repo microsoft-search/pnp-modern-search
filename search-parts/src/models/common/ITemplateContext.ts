@@ -3,7 +3,7 @@ import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import ISearchResultsWebPartProps from "../../webparts/searchResults/ISearchResultsWebPartProps";
 import { SPSite, SPWeb, SPUser, SPList, SPListItem, CultureInfo } from "@microsoft/sp-page-context";
 import ISearchFiltersWebPartProps from "../../webparts/searchFilters/ISearchFiltersWebPartProps";
-import { ISortFieldConfiguration } from "../search/ISortFieldConfiguration";
+import { ISortFieldConfiguration } from '@pnp/modern-search-extensibility/lib/models/ISortFieldConfiguration';
 
 /**
  * Represents the context passed to the Handlebars template (Search Results)

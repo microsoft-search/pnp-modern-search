@@ -5,7 +5,7 @@ import { IDataContext } from "@pnp/modern-search-extensibility";
 import { PageContext } from "@microsoft/sp-page-context";
 import { ServiceScope } from "@microsoft/sp-core-library";
 import { IWebPartTitleProps } from "@pnp/spfx-controls-react/lib/WebPartTitle";
-import { ISortFieldConfiguration } from "../../../models/search/ISortFieldConfiguration";
+import { ISortFieldConfiguration } from '@pnp/modern-search-extensibility/lib/models/ISortFieldConfiguration';
 
 export interface ISearchResultsContainerProps {
 

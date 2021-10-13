@@ -1,4 +1,4 @@
-import { ISortFieldConfiguration } from "./ISortFieldConfiguration";
+import { ISortFieldConfiguration } from '@pnp/modern-search-extensibility/lib/models/ISortFieldConfiguration';
 
 export interface ISortEventInfo {
     

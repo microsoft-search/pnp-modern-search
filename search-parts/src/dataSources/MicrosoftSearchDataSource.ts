@@ -11,7 +11,7 @@ import { IMicrosoftSearchRequest, ISearchRequestAggregation, SearchAggregationSo
 import { DateHelper } from '../helpers/DateHelper';
 import { DataFilterHelper } from "../helpers/DataFilterHelper";
 import { IMicrosoftSearchResponse } from "../models/search/IMicrosoftSearchResponse";
-import { ISortFieldConfiguration, SortFieldDirection } from '../models/search/ISortFieldConfiguration';
+import { ISortFieldConfiguration, SortFieldDirection } from '@pnp/modern-search-extensibility/lib/models/ISortFieldConfiguration';
 
 const MICROSOFT_SEARCH_URL = "https://graph.microsoft.com/beta/search/query";
 

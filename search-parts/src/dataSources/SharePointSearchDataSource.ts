@@ -33,7 +33,7 @@ import { PropertyPaneNonReactiveTextField } from '../controls/PropertyPaneNonRea
 import { ITerm } from '../services/taxonomyService/ITaxonomyItems';
 import { BuiltinFilterTemplates } from '../layouts/AvailableTemplates';
 import { DataFilterHelper } from '../helpers/DataFilterHelper';
-import { ISortFieldConfiguration, SortFieldDirection } from '../models/search/ISortFieldConfiguration';
+import { ISortFieldConfiguration, SortFieldDirection } from '@pnp/modern-search-extensibility/lib/models/ISortFieldConfiguration';
 import { EnumHelper } from '../helpers/EnumHelper';
 
 export enum BuiltinSourceIds {
