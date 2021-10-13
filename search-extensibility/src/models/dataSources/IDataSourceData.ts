@@ -1,4 +1,5 @@
 import { IDataFilterResult } from '../filters/IDataFilter';
+import { ISortFieldConfiguration } from '../ISortFieldConfiguration';
 
 export interface IDataSourceData {
 
@@ -16,4 +17,9 @@ export interface IDataSourceData {
      * The available filters provided by the data source according to the filters configuration provided from the data context (if applicable).
      */
     filters?: IDataFilterResult[];
+
+    /**
+     * The sort list by the data source
+     */
+    sortList?: ISortFieldConfiguration[];
 }
