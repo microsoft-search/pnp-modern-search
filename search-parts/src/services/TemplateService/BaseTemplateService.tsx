@@ -432,6 +432,17 @@ abstract class BaseTemplateService {
             return ret;
         });
 
+        /// Re-register the "default" helper using the name "coalesce", which better describes the helper
+        // and gets around an issue trying to use this helper - https://github.com/microsoft-search/pnp-modern-search/issues/1392
+        // --- Returns the first value that is not undefined, otherwise the "default" value is returned.
+        // --- e.g. {{coalesce MyProperty1 MyProperty2 "some default fallback value here"}}
+        Handlebars.registerHelper("coalesce", function() {
+          for (var i = 0; i < arguments.length - 1; i++) {
+            if (arguments[i] != null) return arguments[i];
+          }
+          return '';
+        });
+
         // Group by a specific property
         Handlebars.registerHelper(groupBy(Handlebars));
     }
