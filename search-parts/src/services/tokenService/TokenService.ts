@@ -583,7 +583,7 @@ export class TokenService implements ITokenService {
 
                 // {User} tokens are resolved server-side by SharePoint so we exclude them
                 if (!/\{(?:User)\.(.*?)\}/gi.test(tokenValue)) {
-                    const allValues = tokenValue.split(','); // Works with taxonomy multi values (TermID, Label) + multi choices fields
+                    const allValues = tokenValue.split(/[,|]/); // Works with taxonomy multi values (TermID, Label) + multi choices fields + User
                     if (allValues.length > 0) {
                         allValues.forEach(value => {
                             conditions.push(`(${property}${operator}${/\s/g.test(value) ? `"${value}"` : value})`);
