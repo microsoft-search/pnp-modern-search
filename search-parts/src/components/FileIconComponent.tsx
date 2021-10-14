@@ -56,7 +56,7 @@ export class FileIcon extends React.Component<IFileIconProps, IFileIconState> {
             let isContainer = this.props.isContainer ? this.props.isContainer.toString() : undefined;
             const isOneNote = this.props.extension && this.props.extension.indexOf("OneNote") !== -1 ? true : false;
 
-            if (!isEmpty(this.props.imageUrl)) {
+            if (this.props.imageUrl && !isEmpty(this.props.imageUrl)) {
 
                 iconProps = { imageProps: { src: this.props.imageUrl, imageFit: ImageFit.contain, width: size + 'px', height: size + 'px' } };
 
