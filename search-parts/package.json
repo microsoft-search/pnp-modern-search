@@ -36,7 +36,7 @@
         "@uifabric/icons": "7.6.1",
         "@webcomponents/webcomponentsjs": "2.5.0",
         "core-js": "3.15.2",
-        "dompurify": "2.0.17",
+        "dompurify": "2.3.3",
         "flickity": "2.2.2",
         "flickity-imagesloaded": "2.0.0",
         "handlebars": "4.7.7",
