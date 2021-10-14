@@ -70,7 +70,8 @@ export default class DateRangeTemplate extends React.Component<IDateRangeTemplat
             borderless: true,
             styles: datePcikerStyles,
             theme: this.props.themeVariant as ITheme,
-            strings: strings.Refiners.Templates.DatePickerStrings
+            strings: strings.Refiners.Templates.DatePickerStrings,
+            allowTextInput: true
         };
 
         let toProps: IDatePickerProps = {
@@ -81,7 +82,8 @@ export default class DateRangeTemplate extends React.Component<IDateRangeTemplat
             styles: datePcikerStyles,
             theme: this.props.themeVariant as ITheme,
             borderless: true,
-            strings: strings.Refiners.Templates.DatePickerStrings
+            strings: strings.Refiners.Templates.DatePickerStrings,
+            allowTextInput: true
         };
 
         // Check if moment js is present on the current page (loaded from a search results WP)
