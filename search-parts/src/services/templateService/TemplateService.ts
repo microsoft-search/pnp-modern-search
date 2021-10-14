@@ -539,7 +539,7 @@ export class TemplateService implements ITemplateService {
 
         // Return the value for a specific slot
         this.Handlebars.registerHelper("slot", (item: any, propertyPath: string) => {
-            if (!isEmpty(propertyPath)) {
+            if (propertyPath && !isEmpty(propertyPath)) {
                 const value = ObjectHelper.byPath(item, propertyPath);
                 return value;
             }

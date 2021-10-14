@@ -212,7 +212,7 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
           onRender: (item: any) => {
 
             // A default icon will be displayed if the feld is not a valid extension (a full path with file name works as well)
-            return <FileIcon extension={ObjectHelper.byPath(item, this.props.fileExtensionField)} isContainer={ObjectHelper.byPath(item, this.props.isContainerField)} />;
+            return <FileIcon extension={ObjectHelper.byPath(item, this.props.fileExtensionField)} isContainer={ObjectHelper.byPath(item, this.props.isContainerField)} imageUrl={ObjectHelper.byPath(item, "SiteLogo")} />;
           }
         }
       );
