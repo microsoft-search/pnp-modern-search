@@ -53,6 +53,11 @@ export interface IMicrosoftSearchDataSourceProperties {
      * The content sources for external items
      */
     contentSourceConnectionIds: string[];
+
+    /**
+     * The manifest version
+     */
+    manifestVersion?: string;
 }
 
 export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDataSourceProperties> {
@@ -610,7 +615,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         // Get an instance to the MSGraphClient
         const msGraphClientFactory = this.serviceScope.consume<MSGraphClientFactory>(MSGraphClientFactory.serviceKey);
         const msGraphClient = await msGraphClientFactory.getClient();
-        const request = await msGraphClient.api(MICROSOFT_SEARCH_URL).header('SdkVersion', `PnPModernSearch/${this.context.manifest.version}`);
+        const request = await msGraphClient.api(MICROSOFT_SEARCH_URL).header('SdkVersion', `PnPModernSearch/${this.context?.manifest?.version ?? this.properties.manifestVersion}`);
 
         const jsonResponse = await request.post({ requests: [searchRequest] });
 

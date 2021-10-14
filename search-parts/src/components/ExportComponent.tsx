@@ -103,7 +103,7 @@ export class ExportComponent extends React.Component<IExportComponentProps, IExp
                     const filteredProperties = ExportHelper.getReferencedProperties(columnsConfiguration, context);
 
                     this.dataSourceContext = await DataSourceHelper.getDataSourceInstance(dataSourceKey, serviceScope,
-                        { ...dataSourceProperties, selectedProperties: filteredProperties });
+                        { ...dataSourceProperties, selectedProperties: filteredProperties, fields: filteredProperties, manifestVersion: context.manifestVersion });
                     this.dataSourceContext.dataSource.editMode = false;
                     await this.dataSourceContext.dataSource.onInit();
                 }

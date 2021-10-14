@@ -62,4 +62,9 @@ export interface ISearchResultsContainerProps {
    * The Web Part Title props
    */
   webPartTitleProps: IWebPartTitleProps;
+
+  /**
+   * The manifest version
+   */
+  manifestVersion: string;
 }

@@ -456,7 +456,8 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             // Any other useful informations
             utils: {
                 defaultImage: Constants.DEFAULT_IMAGE_CONTENT
-            }
+            },
+            manifestVersion: this.props.manifestVersion
         };
     }
 

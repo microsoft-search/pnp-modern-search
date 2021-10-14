@@ -93,18 +93,18 @@ export class ExportHelper {
     }
 
     public static getReferencedProperties(columnsConfiguration: IExportColumnConfiguration[], context: IDataResultsTemplateContext) : string[] {
-        const regexpItem = new RegExp(/item\.(\w+)/gm);
-        const regexpSlots = new RegExp(/slots\.(\w+)/gm);
+        const regexpItem = new RegExp(/item\.(resource\.)?(fields\.)?(?<name>\w+)/gm);
+        const regexpSlots = new RegExp(/slots\.(?<name>\w+)/gm);
         return columnsConfiguration.map(column => {
             const result = []
             if (!column.useHandlebarsExpr && column.value) result.push(column.value);
             else if (column.value) {
                 let match: RegExpExecArray;
                 while ((match = regexpItem.exec(column.value)) !== null) {
-                    result.push(match[1]);
+                    result.push(match[match.length-1]);
                 }
                 while ((match = regexpSlots.exec(column.value)) !== null) {
-                    result.push(context.slots[match[1]]);
+                    result.push(context.slots[match[match.length-1]]);
                 }
             }
             return result;

@@ -124,6 +124,11 @@ export interface IDataResultsTemplateContext {
          */
         defaultImage: string;
     };
+
+    /**
+     * The current manifest version
+     */
+    manifestVersion: string;
 }
 
 /**

@@ -343,7 +343,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                     },
                     themeVariant: this._themeVariant,
                     className: commonStyles.wpTitle
-                }
+                },
+                manifestVersion: this.context.manifest.version
             } as ISearchResultsContainerProps);
 
             // Get data from connected sources
