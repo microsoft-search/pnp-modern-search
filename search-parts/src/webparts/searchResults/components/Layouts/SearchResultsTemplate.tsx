@@ -32,20 +32,20 @@ export default class SearchResultsTemplate extends React.Component<ISearchResult
         this._domPurify.addHook('uponSanitizeElement', (node, data) => {
             if (node.nodeName && node.nodeName.match(/^\w+((-\w+)+)+$/)
                 && !data.allowedTags[data.tagName]) {
-                data.allowedTags[data.tagName] = true;                
+                data.allowedTags[data.tagName] = true;
                 customTags.push(data.tagName.toLocaleUpperCase());
             }
         });
 
-        
+
         // Allow all custom attributes on custom elements - except javascript events ones starting with "on"
         // Ideally we'd support only data- ones, but we know other web components don't follow this pattern
         this._domPurify.addHook('uponSanitizeAttribute', (attr, data) => {
             if (data && data.attrName && customTags.indexOf(attr.tagName) !== -1) {
-                if(data.attrName.indexOf("on") == 0) return;
+                if (data.attrName.indexOf("on") == 0) return;
                 data.allowedAttributes[data.attrName] = true;
             }
-        });        
+        });
     }
 
     public render() {
@@ -111,11 +111,13 @@ export default class SearchResultsTemplate extends React.Component<ISearchResult
                                     const cssRuleMedia = cssMediaRule.cssRules.item(k);
                                     cssPrefixedMediaRules += `#${elementPrefixId} ${cssRuleMedia.cssText}`;
                                 }
-
                                 prefixedStyles.push(`@media ${cssMediaRule.conditionText} { ${cssPrefixedMediaRules} }`);
-
                             } else {
-                                prefixedStyles.push(`#${elementPrefixId} ${cssRule.cssText}`);
+                                if (cssRule.cssText.indexOf("pnpSearchResultsErrorMessage") !== -1) {
+                                    prefixedStyles.push(`${cssRule.cssText}`);
+                                } else {
+                                    prefixedStyles.push(`#${elementPrefixId} ${cssRule.cssText}`);
+                                }
                             }
                         }
                     }

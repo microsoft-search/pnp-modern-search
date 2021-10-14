@@ -205,8 +205,9 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
         }
 
         // Error Message
+        let error = null;
         if (hasError) {
-            renderWpContent = <MessageBar messageBarType={MessageBarType.error}>{errorMessage}</MessageBar>;
+            error = <MessageBar className="pnpSearchResultsErrorMessage" messageBarType={MessageBarType.error}>{errorMessage}</MessageBar>;
         }
 
         return (
@@ -214,6 +215,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 <div className={styles.searchWp}>
                     <div tabIndex={-1} ref={(ref) => { this._searchWpRef = ref; }}></div>
                     {renderWebPartTitle}
+                    {error}
                     {renderShimmerElements ? renderShimmerElements : renderWpContent}
                 </div>
             </div>
