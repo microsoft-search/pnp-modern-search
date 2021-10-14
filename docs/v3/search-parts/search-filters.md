@@ -27,7 +27,9 @@ The persona template work with technical account name (ex : i:0#.f|membership|pi
 By default, the _"Author"_ managed property returns only the display name (ex : "Pierre Dupont"). 
 To get the 'Persona' template work with "Author", you need to map crawled properties `ows_q_USER_Author` to a managed properties `RefinableStringXX`.
 
-All crawled properties `ows_q_USER_\<name>` and managed properties like `People:Manager`,`People:AccountName`,etc. return technical account name.
+All crawled properties of `ows_q_USER_\<name>` and like `People:Manager`,`People:AccountName` etc. return technical account name.
+
+If you want the display name only for the *Created by* person you can map the crawled property `Office:4` to a managed property and use that. 
 
 ##### File Type
 
