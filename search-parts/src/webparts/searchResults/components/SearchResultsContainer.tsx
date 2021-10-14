@@ -145,9 +145,10 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             }
         }
 
+        let errorTemplate = null;
         // Error handling
         if (this.state.errorMessage) {
-            renderTemplate = <div data-ui-test-id={TestConstants.SearchResultsErrorMessage}><MessageBar messageBarType={MessageBarType.error}>{this.state.errorMessage}</MessageBar></div>;
+            errorTemplate = <div className={TestConstants.SearchResultsErrorMessage} data-ui-test-id={TestConstants.SearchResultsErrorMessage}><MessageBar messageBarType={MessageBarType.error}>{this.state.errorMessage}</MessageBar></div>;
         }
 
         return <div data-instance-id={this.props.instanceId}
@@ -155,6 +156,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             {renderOverlay}
             {renderInfoMessage}
             {renderTitle}
+            {errorTemplate}
             {renderTemplate}
         </div>;
     }

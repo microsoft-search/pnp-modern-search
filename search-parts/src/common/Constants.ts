@@ -31,11 +31,11 @@ export enum AutoCalculatedDataSourceFields {
 }
 
 export class TestConstants {
-    public static SearchResultsWebPart = "dataVisualizerWebPart";
-    public static SearchResultsErrorMessage = "dataVisualizerErrorMessage";
-    public static SearchResultsLoadingOverlay = "dataVisualizerLoadingOverlay";
-    public static SearchResultsWebPartTitle = "dataVisualizerWebPartTitle";
-    public static SearchResultsLicenseMessageBar = "dataVisualizerLicenseMessageBar";
+    public static SearchResultsWebPart = "pnpSearchResultsWebPart";
+    public static SearchResultsErrorMessage = "pnpSearchResultsErrorMessage";
+    public static SearchResultsLoadingOverlay = "pnpSearchResultsLoadingOverlay";
+    public static SearchResultsWebPartTitle = "pnpSearchResultsWebPartTitle";
+    public static SearchResultsLicenseMessageBar = "pnpSearchResultsLicenseMessageBar";
     public static PreviewCallout = "previewCallout";
     public static DocumentCardFileIcon = "documentCardFileIcon";
     public static ResultDocumentCard = "resultCard";

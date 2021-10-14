@@ -64,15 +64,11 @@ Inside an HTML template (or layout field), you can write your own CSS styles usi
 
 ```html
 <content id="data-content">
-
     <style>
-
         .example-themePrimary a {
             color: {{@root.theme.palette.themePrimary}};
         }
-
-        ...
-        
+        ...     
     </style>
 
     <div class="template">
@@ -81,6 +77,24 @@ Inside an HTML template (or layout field), you can write your own CSS styles usi
 ```
 
 However, all CSS rules (including `@media` rules) will be all prefixed automatically by an unique ID (**pnp-template_&lt;Web Part instance ID&gt;**) to make sure styles are isolated from other Web Parts on the page. We do this to avoid conflicts between classes in the global context.
+
+## Hide error message using CSS
+By default the web parts will output an error message if something goes wrong on for example API calls.
+
+If you want to hide the error message you can add the following CSS in your custom template.
+
+```html
+<content id="data-content">
+
+    <style>
+        .pnpSearchResultsErrorMessage { display:none; }
+        ...      
+    </style>
+
+    <div class="template">
+        ...
+    ...
+```
 
 ## Use SharePoint theme in your templates
 
