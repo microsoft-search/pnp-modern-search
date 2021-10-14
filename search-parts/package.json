@@ -26,7 +26,6 @@
         "@microsoft/sp-webpart-base": "1.12.1",
         "@pnp/common": "2.0.13",
         "@pnp/modern-search-extensibility": "1.0.5",
-        "@pnp/spfx-controls-react": "3.2.1",
         "@pnp/spfx-controls-react": "3.3.0",
         "@pnp/spfx-property-controls": "3.2.0",
         "@pnp/telemetry-js": "2.0.0",
