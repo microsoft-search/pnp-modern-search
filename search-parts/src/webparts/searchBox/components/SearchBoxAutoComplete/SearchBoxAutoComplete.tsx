@@ -419,6 +419,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
                 <IconButton
                   onClick={this._handleOnSearch}
                   iconProps={{iconName: 'Forward' }}
+                  ariaLabel={webPartStrings.SearchBox.SearchButtonLabel}
                 />
               }
             </div>

@@ -55,6 +55,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                         <IconButton
                             onClick={() => this._onSearch(this.state.searchInputValue)}
                             iconProps={{ iconName: 'Forward' }}
+                            ariaLabel={webPartStrings.SearchBox.SearchButtonLabel}
                         />
                     }
                 </div>

@@ -43,7 +43,8 @@ define([], function() {
             ImportExport: "Import / Export settings"
         },
         SearchBox: {
-            DefaultPlaceholder: "Enter your search terms..."
+            DefaultPlaceholder: "Enter your search terms...",
+            SearchButtonLabel: "Search"
         }
     }
 });
