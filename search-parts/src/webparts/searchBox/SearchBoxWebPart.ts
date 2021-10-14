@@ -129,7 +129,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
             this.errorMessage = error.message ? error.message : error;
         }
 
-        if (this.context.propertyPane.isPropertyPaneOpen()) {
+        if (this.context.propertyPane && this.context.propertyPane.isPropertyPaneOpen()) {
             this.context.propertyPane.refresh();
         }
 
@@ -140,7 +140,16 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
 
         let renderRootElement: JSX.Element = null;
 
-        let inputValue = this.properties.queryText.tryGetValue();
+        let inputValue = "";
+        if (this.properties.queryText && !this.properties.queryText.isDisposed) {
+            try {
+                inputValue = this.properties.queryText.tryGetValue();
+                inputValue = decodeURIComponent(inputValue);
+
+            } catch (error) {
+                // Likely issue when q=%25 in spfx
+            }
+        }
 
         if (inputValue && typeof (inputValue) === 'string') {
 
