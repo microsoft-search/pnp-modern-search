@@ -11,7 +11,7 @@ import { IMicrosoftSearchRequest, ISearchRequestAggregation, SearchAggregationSo
 import { DateHelper } from '../helpers/DateHelper';
 import { DataFilterHelper } from "../helpers/DataFilterHelper";
 import { IMicrosoftSearchResponse } from "../models/search/IMicrosoftSearchResponse";
-import { ISortFieldConfiguration, SortFieldDirection } from '../models/search/ISortFieldConfiguration';
+import { ISortFieldConfiguration, SortFieldDirection } from '@pnp/modern-search-extensibility/lib/models/ISortFieldConfiguration';
 
 const MICROSOFT_SEARCH_URL = "https://graph.microsoft.com/beta/search/query";
 
@@ -163,7 +163,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         const searchRequest = await this.buildMicrosoftSearchRequest(dataContext);
         results = await this.search(searchRequest);
 
-        return results;
+        return { ...results, sortList: dataContext.sorting?.selectedSorting ?? this.properties.sortProperties };
     }
 
     public getPropertyPaneGroupsConfiguration(): IPropertyPaneGroup[] {
@@ -468,8 +468,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         });
 
         // Build sort properties
-        this.properties.sortProperties.forEach(sortProperty => {
-
+        (dataContext.sorting?.selectedSorting ?? this.properties.sortProperties).forEach(sortProperty => {
             sortProperties.push({
                 name: sortProperty.sortField,
                 isDescending: sortProperty.sortDirection === SortFieldDirection.Descending ? true : false
