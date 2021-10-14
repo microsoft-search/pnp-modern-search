@@ -436,6 +436,7 @@ abstract class BaseTemplateService {
         // and gets around an issue trying to use this helper - https://github.com/microsoft-search/pnp-modern-search/issues/1392
         // --- Returns the first value that is not undefined, otherwise the "default" value is returned.
         // --- e.g. {{coalesce MyProperty1 MyProperty2 "some default fallback value here"}}
+        // tslint:disable-next-line: no-function-expression
         Handlebars.registerHelper("coalesce", function() {
           for (var i = 0; i < arguments.length - 1; i++) {
             if (arguments[i] != null) return arguments[i];
