@@ -148,12 +148,12 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             }
 
         } else {
-
             let templateContext = {
                 queryModification: this.state.results.QueryModification,
                 items: this.state.results.RelevantResults,
                 secondaryResults: this.state.results.SecondaryResults,
                 promotedResults: this.state.results.PromotedResults,
+                refinementResults: this.state.results.RefinementResults,
                 paging: {
                     showPaging: this.props.pagingSettings.showPaging,
                     currentPageNumber: this.state.results.PaginationInformation ? this.state.results.PaginationInformation.CurrentPage : 1,
