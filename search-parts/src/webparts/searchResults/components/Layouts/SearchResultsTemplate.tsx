@@ -23,7 +23,8 @@ export default class SearchResultsTemplate extends React.Component<ISearchResult
         this._domPurify.setConfig({
             ADD_TAGS: ['style'],
             ADD_ATTR: ['target', 'loading'],
-            ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|cid|xmpp|xxx|ms-\w+):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
+            ALLOW_DATA_ATTR: true,
+            ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|file|tel|callto|cid|xmpp|xxx|ms-\w+):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
             WHOLE_DOCUMENT: true
         });
 
@@ -44,6 +45,7 @@ export default class SearchResultsTemplate extends React.Component<ISearchResult
             if (data && data.attrName && customTags.indexOf(attr.tagName) !== -1) {
                 if (data.attrName.indexOf("on") == 0) return;
                 data.allowedAttributes[data.attrName] = true;
+                data.forceKeepAttr = true;
             }
         });
     }
