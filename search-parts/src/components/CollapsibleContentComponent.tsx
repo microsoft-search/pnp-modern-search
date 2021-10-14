@@ -69,6 +69,7 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
 
         this._onRenderCell = this._onRenderCell.bind(this);
         this._onRenderHeader = this._onRenderHeader.bind(this);
+        this._onTogglePanel = this._onTogglePanel.bind(this);
 
         this._domPurify = DOMPurify.default;
     }
@@ -76,57 +77,57 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
     public componentDidMount() {
         this._initItems(this.props);
     }
-    
+
     public render() {
 
         const groups: IGroup[] = [
             {
                 key: this.props.groupName,
                 name: this.props.groupName,
-                count: this.state.items.length === 0 ? 1: this.state.items.length, // The count should be at least 1 to show the header
+                count: this.state.items.length === 0 ? 1 : this.state.items.length, // The count should be at least 1 to show the header
                 startIndex: 0,
-                isShowingAll:  true, 
-                hasMoreData: false,               
+                isShowingAll: true,
+                hasMoreData: false,
                 isCollapsed: this.state.isCollapsed,
             }
         ];
 
-        let items = cloneDeep(this.state.items); 
+        let items = cloneDeep(this.state.items);
 
         const groupedList = <GroupedList
-                                items={items}
-                                styles={{
-                                    root: {
-                                        selectors: {
-                                            '.ms-List-cell': {
-                                                minHeight: 0
-                                            }
-                                        }
-                                    }
-                                }}
-                                onRenderCell={this._onRenderCell}
-                                className={styles.collapsible__filterPanel__body__group}     
-                                onShouldVirtualize={() => false}
-                                listProps={ { onShouldVirtualize: () => false } }           
-                                groupProps={
-                                    {  
-                                        onRenderHeader: this._onRenderHeader,
-                                        onRenderFooter: ((props) => {
+            items={items}
+            styles={{
+                root: {
+                    selectors: {
+                        '.ms-List-cell': {
+                            minHeight: 0
+                        }
+                    }
+                }
+            }}
+            onRenderCell={this._onRenderCell}
+            className={styles.collapsible__filterPanel__body__group}
+            onShouldVirtualize={() => false}
+            listProps={{ onShouldVirtualize: () => false }}
+            groupProps={
+                {
+                    onRenderHeader: this._onRenderHeader,
+                    onRenderFooter: ((props) => {
 
-                                            if (!props.group.isCollapsed) {
-                                                return <div dangerouslySetInnerHTML={{ __html: this._domPurify.sanitize(this.props.footerTemplateContent)}}></div>;
-                                            } else {
-                                                return null;
-                                            }                                        
-                                        }).bind(this),
-                                    }
-                                }
-                                groups={groups} 
-                            />;
+                        if (!props.group.isCollapsed) {
+                            return <div dangerouslySetInnerHTML={{ __html: this._domPurify.sanitize(this.props.footerTemplateContent) }}></div>;
+                        } else {
+                            return null;
+                        }
+                    }).bind(this),
+                }
+            }
+            groups={groups}
+        />;
 
         return <div ref={this.componentRef} data-is-scrollable={true}> {groupedList}</div>;
     }
-    
+
     /**
      * Initializes items in for goups in the GroupedList
      * @param refinementResults the refinements results
@@ -139,7 +140,7 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
 
             const htmlObject = document.createElement('div');
             htmlObject.innerHTML = props.itemsTemplateContent;
-            
+
             if (props.itemClass) {
 
                 htmlObject.querySelectorAll(`.${props.itemClass}`).forEach((node, key) => {
@@ -149,34 +150,44 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
             } else {
                 items.push(<div dangerouslySetInnerHTML={{ __html: this._domPurify.sanitize(htmlObject.outerHTML) }} data-id={'0'}></div>);
             }
-        }   
+        }
 
         this.setState({
             items: items
         });
     }
-  
+
+    private _onTogglePanel(props: IGroupDividerProps) {
+        this.setState({
+            isCollapsed: !props.group.isCollapsed
+        });
+        props.onToggleCollapse(props.group);
+    }
+
     private _onRenderHeader(props: IGroupDividerProps): JSX.Element {
 
         return (
             <div className={styles.collapsible__filterPanel__body__group__header}
-            onClick={() => {
-
-                this.setState({
-                    isCollapsed: !props.group.isCollapsed
-                });
-
-                props.onToggleCollapse(props.group);
-            }}>
-            <Text variant={'large'}>{props.group.name}</Text>
-            <div className={styles.collapsible__filterPanel__body__headerIcon}>
-              {props.group.isCollapsed ?
-                <Icon iconName='ChevronDown' />
-                :
-                <Icon iconName='ChevronUp' />
-              }
+                role={"menubar"}
+                tabIndex={0}
+                onClick={() => {
+                    this._onTogglePanel(props)
+                }}
+                onKeyPress={(e) => {
+                    if (e.charCode === 13) {
+                        this._onTogglePanel(props);
+                    }
+                }}
+            >
+                <Text variant={'large'}>{props.group.name}</Text>
+                <div className={styles.collapsible__filterPanel__body__headerIcon}>
+                    {props.group.isCollapsed ?
+                        <Icon iconName='ChevronDown' />
+                        :
+                        <Icon iconName='ChevronUp' />
+                    }
+                </div>
             </div>
-          </div>
         );
     }
 
@@ -190,11 +201,11 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
 }
 
 export class CollapsibleContentWebComponent extends BaseWebComponent {
-   
+
     public constructor() {
-        super(); 
+        super();
     }
- 
+
     public async connectedCallback() {
 
         const domParser = new DOMParser();
@@ -203,7 +214,7 @@ export class CollapsibleContentWebComponent extends BaseWebComponent {
         // Get the templates
         const contentTemplate = htmlContent.getElementById('collapsible-content');
         const footerTemplate = htmlContent.getElementById('collapsible-footer');
-        
+
         let itemsTemplateContent = null;
         let itemClass = null;
         let footerTemplateContent = null;
@@ -212,13 +223,13 @@ export class CollapsibleContentWebComponent extends BaseWebComponent {
             itemsTemplateContent = contentTemplate.innerHTML;
             itemClass = contentTemplate.getAttribute('item-class');
         }
-        
+
         if (footerTemplate) {
             footerTemplateContent = footerTemplate.innerHTML;
         }
 
         let props = this.resolveAttributes();
-        const collapsibleContent = <CollapsibleContentComponent {...props} itemsTemplateContent={itemsTemplateContent} footerTemplateContent={footerTemplateContent} itemClass={itemClass}/>;
+        const collapsibleContent = <CollapsibleContentComponent {...props} itemsTemplateContent={itemsTemplateContent} footerTemplateContent={footerTemplateContent} itemClass={itemClass} />;
         ReactDOM.render(collapsibleContent, this);
-    }    
+    }
 }
