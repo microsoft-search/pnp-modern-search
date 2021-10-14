@@ -391,11 +391,12 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
           <div className={styles.searchBoxWrapper}>
             <SearchBox
               placeholder={this.props.placeholderText ? this.props.placeholderText : webPartStrings.SearchBox.DefaultPlaceholder}
+              ariaLabel={this.props.placeholderText ? this.props.placeholderText : webPartStrings.SearchBox.DefaultPlaceholder}
               theme={this.props.themeVariant as ITheme}
               className={ styles.searchTextField }
               value={ this.state.searchInputValue }
-              autoComplete= "off"
-              data-is-focusable={this.state.proposedQuerySuggestions.length > 0}
+              autoComplete="off"
+              //data-is-focusable={this.state.proposedQuerySuggestions.length > 0}
               onChange={ (event) => {
                 if (!this._onChangeDebounced) {
                   this._onChangeDebounced = debounce((newValue) => {
