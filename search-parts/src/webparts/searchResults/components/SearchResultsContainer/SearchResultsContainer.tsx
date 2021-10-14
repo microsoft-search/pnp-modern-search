@@ -153,7 +153,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 items: this.state.results.RelevantResults,
                 secondaryResults: this.state.results.SecondaryResults,
                 promotedResults: this.state.results.PromotedResults,
-                refinementResults: this.state.results.RefinementResults,
+                filters: this.state.results.RefinementResults,
                 paging: {
                     showPaging: this.props.pagingSettings.showPaging,
                     currentPageNumber: this.state.results.PaginationInformation ? this.state.results.PaginationInformation.CurrentPage : 1,
