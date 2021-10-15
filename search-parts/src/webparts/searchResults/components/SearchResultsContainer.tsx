@@ -151,14 +151,14 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             errorTemplate = <div className={TestConstants.SearchResultsErrorMessage} data-ui-test-id={TestConstants.SearchResultsErrorMessage}><MessageBar messageBarType={MessageBarType.error}>{this.state.errorMessage}</MessageBar></div>;
         }
 
-        return <div data-instance-id={this.props.instanceId}
+        return <main><div data-instance-id={this.props.instanceId}
             data-ui-test-id={TestConstants.SearchResultsWebPart}>
             {renderOverlay}
             {renderInfoMessage}
             {renderTitle}
             {errorTemplate}
             {renderTemplate}
-        </div>;
+        </div></main>;
     }
 
     public async componentDidMount() {
