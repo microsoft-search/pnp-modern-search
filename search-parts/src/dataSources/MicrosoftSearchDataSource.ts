@@ -23,7 +23,8 @@ export enum EntityType {
     ExternalItem = 'externalItem',
     List = 'list',
     ListItem = 'listItem',
-    Site = 'site'
+    Site = 'site',
+    Person = 'person'
 }
 
 export interface IMicrosoftSearchDataSourceProperties {
@@ -85,10 +86,18 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         {
             key: EntityType.ListItem,
             text: "List Items"
+        },        
+        {
+            key: EntityType.List,
+            text: "List"
         },
         {
             key: EntityType.Site,
             text: "Sites"
+        },
+        {
+            key: EntityType.Person,
+            text: "Person"
         }
     ];
     /**
