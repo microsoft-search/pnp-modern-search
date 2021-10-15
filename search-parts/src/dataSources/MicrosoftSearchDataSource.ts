@@ -97,7 +97,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         },
         {
             key: EntityType.Person,
-            text: "Person"
+            text: "People"
         }
     ];
     /**
