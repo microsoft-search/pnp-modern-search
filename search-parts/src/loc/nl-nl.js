@@ -161,10 +161,9 @@ define([], function() {
             AddStaticDataLabel: "Voeg statische data toe",
             TextFieldApplyButtonText: "Toepassen",
             ExportButtonText: "Exporteren (csv)",
-            ExportSettingsText: "Instellingen exporteren",
+            ExportInfoText: "Informatie",
             ExportDialogHelpText: "Selecteer of u de huidige pagina/weergave of alle gegevens (met een maximum van {maxhits} rijen) wilt exporteren. Merk op dat er een verschil kan zijn in getoonde kolommen, waardeopmaak en toegepaste sortering in het uitgevoerde bestand in vergelijking met de huidige weergave.",
-            ExportFilenameLabel: "Bestandsnaam",
-            ExportFilenameAriaLabel: "De bestandsnaam voor de geëxporteerde csv",
+            ExportBrowserNotSupportedText: "Browser wordt niet ondersteund. Probeer het opnieuw met een andere browser.",
             ExportCurrentPageLabel: "Huidige pagina/weergave",
             ExportAllLabel: "Alle (max. {maxhits} rijen)",
             ExportDialogOKButtonText: "OK"

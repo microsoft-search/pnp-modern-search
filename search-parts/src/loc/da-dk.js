@@ -161,10 +161,9 @@ define([], function() {
             AddStaticDataLabel: "Tilføj statisk data",
             TextFieldApplyButtonText: "Anvend",
             ExportButtonText: "Eksport (csv)",
-            ExportSettingsText: "Eksporter indstillinger",
+            ExportInfoText: "Information",
             ExportDialogHelpText: "Vælg, om du vil eksportere den aktuelle side/visning eller alle data (med maksimalt {maxhits} rækker). Bemærk, at der kan være en forskel i viste kolonner, værdiformatering og anvendt sortering i den udsendte fil i forhold til den aktuelle visning.",
-            ExportFilenameLabel: "Filnavn",
-            ExportFilenameAriaLabel: "Filnavnet for den eksporterede csv",
+            ExportBrowserNotSupportedText: "Browser understøttes ikke. Prøv igen med en anden browser.",
             ExportCurrentPageLabel: "Nuværende side/visning",
             ExportAllLabel: "Alle (max {maxhits} rækker)",
             ExportDialogOKButtonText: "OK"

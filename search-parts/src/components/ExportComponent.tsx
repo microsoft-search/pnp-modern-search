@@ -41,9 +41,8 @@ enum ExportType {
 }
 
 export interface IExportComponentState {
-    hideSettingsDialog: boolean
+    hideInfoDialog: boolean
     isExporting: boolean
-    fileName: string,
     exportType: ExportType,
     exportProgress: number
 }
@@ -54,43 +53,35 @@ export class ExportComponent extends React.Component<IExportComponentProps, IExp
     private readonly maxhits = 10000;
     private readonly pagesize = 500;
     private readonly extension = ".csv";
+    private readonly isExportSupported: boolean = false;
 
     constructor(props: IExportComponentProps) {
         super(props);
 
+        this.isExportSupported = document && ("download" in document.createElement("a"));
+
         this.state = {
-            hideSettingsDialog: true,
+            hideInfoDialog: true,
             isExporting: false,
-            fileName: "",
             exportType: ExportType.CurrentPage,
             exportProgress: 1.0,
         };
 
-        this.toggleExportDialog = this.toggleExportDialog.bind(this);
-        this.onChangeFilename = this.onChangeFilename.bind(this);
+        this.toggleInfoDialog = this.toggleInfoDialog.bind(this);
         this.exportTrigger = this.exportTrigger.bind(this);
     }
 
-    public componentDidMount() {
-        const { title, dataSourceKey } = this.props.context?.properties;
-        this.onChangeFilename(null, (title ?? dataSourceKey ?? "csvExport") + " " + new Date().toLocaleDateString())
+    private toggleInfoDialog(): void {
+        this.setState(p => ({ hideInfoDialog: !p.hideInfoDialog }));
     }
-
-    private toggleExportDialog(): void {
-        this.setState(p => ({ hideSettingsDialog: !p.hideSettingsDialog }));
-    }
-
-    private onChangeFilename = (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-        const value = newValue && newValue.replace(/[#%&{}\\<>*?/$!'":@+`|=\t_]/g, "").trim();
-        this.setState({ fileName: value })
-    };
 
     private async exportTrigger(exportAll?: boolean): Promise<void> {
         const { columnsConfiguration, context, serviceScope, handlebars } = this.props;
         const { dataSourceKey, dataSourceProperties } = context.properties;
         const { instanceId, filterOperator, filtersConfiguration, selectedFilters } = context.filters;
-        const { fileName, exportType } = this.state;
-        this.setState({ isExporting: true, hideSettingsDialog: true, exportProgress: 0 });
+        const { exportType } = this.state;
+        const fileName = "csvExport_" + (new Date().toLocaleDateString() + "_" + new Date().toLocaleTimeString()).replace(/[^\d_-]/g, "").trim();
+        this.setState({ isExporting: true, hideInfoDialog: true, exportProgress: 0 });
         try {
             let items: any[] = [];
             let errorOccured = false;
@@ -156,17 +147,17 @@ export class ExportComponent extends React.Component<IExportComponentProps, IExp
                     }
                 });
                 var result = items.map((item, index) => {
-                    return columnWithHandler.map(({column, template}) => {
-                        const { value, hasError } = HandlebarsHelper.getColumnValueWithHandler(column, item, 
+                    return columnWithHandler.map(({ column, template }) => {
+                        const { value, hasError } = HandlebarsHelper.getColumnValueWithHandler(column, item,
                             () => HandlebarsHelper.getHandleBarsContentValue(item, context, template))
                         errorColumnValue = errorColumnValue || hasError;
-                        if(index % 100 == 0) this.setState({ exportProgress: items.length + index / (progressMax * 2) });
+                        if (index % 100 == 0) this.setState({ exportProgress: items.length + index / (progressMax * 2) });
                         return value;
                     });
                 });
                 console.timeEnd("mapvalues")
 
-                
+
                 console.time("exporttocsv");
                 const emptyRows = result.filter(r => r.every(c => !c)).length;
                 ExportHelper.exportToCsv(fileName + this.extension, result, columnsConfiguration.map(c => c.name));
@@ -182,45 +173,45 @@ export class ExportComponent extends React.Component<IExportComponentProps, IExp
     public render() {
         const { columnsConfiguration, serviceScope, context } = this.props;
         if (!columnsConfiguration || !serviceScope || !context) return null;
-        const { isExporting, hideSettingsDialog, fileName, exportType, exportProgress } = this.state;
-        const { items, totalItemsCount } = context.data;
+        const { isExporting, hideInfoDialog: hideInfoDialog, exportProgress } = this.state;
+        const { totalItemsCount } = context.data;
+        const disableExport = !this.isExportSupported || isExporting || !totalItemsCount;
         return <>
-            <DefaultButton text={strings.Controls.ExportButtonText} split onClick={() => this.exportTrigger()} disabled={isExporting || !totalItemsCount} theme={context.theme as ITheme}
+            <DefaultButton text={strings.Controls.ExportButtonText} split onClick={() => this.exportTrigger()}
+                theme={context.theme as ITheme}
+                primaryDisabled={disableExport}
+                iconProps={{ iconName: "Save" }}
                 menuProps={{
                     items: [
                         {
                             key: 'exportAll',
                             text: strings.Controls.ExportAllLabel?.replace("{maxhits}", this.maxhits.toString()),
-                            onClick: () => { this.exportTrigger(true) }
+                            iconProps: { iconName: 'SaveAll' },
+                            onClick: () => { this.exportTrigger(true) },
+                            disabled: disableExport
                         },
                         {
-                            key: 'exportSettings',
-                            text: strings.Controls.ExportSettingsText,
-                            iconProps: { iconName: 'Settings' },
-                            onClick: this.toggleExportDialog
+                            key: 'information',
+                            text: strings.Controls.ExportInfoText,
+                            iconProps: { iconName: 'Info' },
+                            onClick: this.toggleInfoDialog
                         }
                     ]
                 }} />
-            {!hideSettingsDialog && <Dialog
-                hidden={hideSettingsDialog}
-                onDismiss={this.toggleExportDialog}
+            {!hideInfoDialog && <Dialog
+                hidden={hideInfoDialog}
+                onDismiss={this.toggleInfoDialog}
                 dialogContentProps={{
                     type: DialogType.normal,
-                    title: strings.Controls.ExportSettingsText,
+                    title: strings.Controls.ExportInfoText,
                     showCloseButton: false,
-                    subText: strings.Controls.ExportDialogHelpText?.replace("{maxhits}", this.maxhits.toString()),
+                    subText: strings.Controls.ExportDialogHelpText?.replace("{maxhits}", this.maxhits.toString())
                 }}
                 modalProps={{ isBlocking: true }}
                 theme={context.theme as ITheme}>
-                <ChoiceGroup defaultSelectedKey={ExportType[exportType]} options={[
-                    { key: ExportType[ExportType.CurrentPage], text: strings.Controls.ExportCurrentPageLabel },
-                    { key: ExportType[ExportType.All], text: strings.Controls.ExportAllLabel?.replace("{maxhits}", this.maxhits.toString()), disabled: totalItemsCount <= (items && items.length) }
-                ]} onChange={(e, option) => this.setState({ exportType: ExportType[option.key] }, () => console.log(this.state.exportType))} />
-                <TextField label={strings.Controls.ExportFilenameLabel} title={fileName + this.extension}
-                    ariaLabel={strings.Controls.ExportFilenameAriaLabel} required={true}
-                    suffix=".csv" onChange={this.onChangeFilename} value={fileName} />
+                {!this.isExportSupported && strings.Controls.ExportBrowserNotSupportedText}
                 <DialogFooter>
-                    <PrimaryButton onClick={this.toggleExportDialog} text={strings.Controls.ExportDialogOKButtonText} />
+                    <PrimaryButton onClick={this.toggleInfoDialog} text={strings.Controls.ExportDialogOKButtonText} />
                 </DialogFooter>
             </Dialog>}
             {isExporting && <ProgressIndicator percentComplete={exportProgress} />}

@@ -160,10 +160,9 @@ declare interface ICommonStrings {
       AddStaticDataLabel: string;
       TextFieldApplyButtonText: string;
       ExportButtonText: string;
-      ExportSettingsText: string;
-      ExportDialogHelpText: string; 
-      ExportFilenameLabel: string;
-      ExportFilenameAriaLabel: string;
+      ExportInfoText: string;
+      ExportDialogHelpText: string;
+      ExportBrowserNotSupportedText: string;
       ExportCurrentPageLabel: string;
       ExportAllLabel: string;
       ExportDialogOKButtonText: string;
