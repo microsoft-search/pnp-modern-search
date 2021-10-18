@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ChoiceGroup, DefaultButton, Dialog, DialogFooter, DialogType, ITheme, PrimaryButton, ProgressIndicator, TextField } from 'office-ui-fabric-react';
+import { DefaultButton, Dialog, DialogFooter, DialogType, ITheme, PrimaryButton, ProgressIndicator } from 'office-ui-fabric-react';
 import * as ReactDOM from 'react-dom';
 import { BaseWebComponent, IDataSource, ITokenService } from '@pnp/modern-search-extensibility';
 import { IExportColumnConfiguration } from "../models/common/IExportColumnConfiguration";
@@ -173,7 +173,7 @@ export class ExportComponent extends React.Component<IExportComponentProps, IExp
     public render() {
         const { columnsConfiguration, serviceScope, context } = this.props;
         if (!columnsConfiguration || !serviceScope || !context) return null;
-        const { isExporting, hideInfoDialog: hideInfoDialog, exportProgress } = this.state;
+        const { isExporting, hideInfoDialog, exportProgress } = this.state;
         const { totalItemsCount } = context.data;
         const disableExport = !this.isExportSupported || isExporting || !totalItemsCount;
         return <>
