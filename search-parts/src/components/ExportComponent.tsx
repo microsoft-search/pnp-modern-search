@@ -1,7 +1,7 @@
 import * as React from "react";
 import { ChoiceGroup, DefaultButton, Dialog, DialogFooter, DialogType, ITheme, PrimaryButton, ProgressIndicator, TextField } from 'office-ui-fabric-react';
 import * as ReactDOM from 'react-dom';
-import { BaseWebComponent, IDataSource, ITokenService, SortFieldDirection } from '@pnp/modern-search-extensibility';
+import { BaseWebComponent, IDataSource, ITokenService } from '@pnp/modern-search-extensibility';
 import { IExportColumnConfiguration } from "../models/common/IExportColumnConfiguration";
 import { DataSourceHelper } from "../helpers/DataSourceHelper";
 import { TemplateService } from "../services/templateService/TemplateService";
@@ -113,25 +113,26 @@ export class ExportComponent extends React.Component<IExportComponentProps, IExp
 
                 console.time("fetching");
                 try {
+                    let currentPageNumber = 0;
                     let fetchMore = true;
                     let itemsFetched = 0;
-                    const initialQuery = context.inputQueryText;
-                    let pagesFetched = 0;
                     while (items.length < this.maxhits && fetchMore) {
-                        let inputQueryText = initialQuery;
-                        if(items.length > 0) {
-                            const docIdQuery = `IndexDocId > ${items[items.length-1]["DocId"]}`;
-                            inputQueryText = initialQuery ? `${docIdQuery} (${initialQuery})` : docIdQuery;
-                        }
-                        const data = await this.dataSourceContext.dataSource.getData({
-                            inputQueryText: inputQueryText, itemsCountPerPage: this.pagesize, pageNumber: 1, filters: context.filters, sorting: { selectedSorting: [{ sortField: "[DocId]", sortDirection: SortFieldDirection.Ascending }]}
+                        const pagesToProcess = [++currentPageNumber, ++currentPageNumber, ++currentPageNumber, ++currentPageNumber];
+                        const itemResults = await Promise.all(pagesToProcess.map(async page => {
+                            const data = await this.dataSourceContext.dataSource.getData({
+                                inputQueryText: context.inputQueryText, itemsCountPerPage: this.pagesize, pageNumber: page, filters: context.filters
+                            })
+                            itemsFetched += data.items?.length || 0;
+                            this.setState({ exportProgress: itemsFetched / (progressMax * 2) });
+                            return data.items || [];
+                        }));
+
+                        itemResults.forEach(i => {
+                            fetchMore = fetchMore && i.length == this.pagesize;
+                            if (i.length > 0) { items = items.concat(i); }
                         });
-                        itemsFetched += data.items?.length || 0;
-                        this.setState({ exportProgress: itemsFetched / (progressMax * 2) });
-                   
-                        fetchMore = fetchMore && data.items?.length == this.pagesize;
-                        if (data.items?.length > 0) { items = items.concat(data.items); }
-                        console.log(`Processed '${++pagesFetched}', items total fetched ${items.length}`);
+                        this.setState({ exportProgress: items.length / (progressMax * 2) });
+                        console.log(`Processed '${pagesToProcess.join(", ")}', items total fetched ${items.length}`);
                     }
                 }
                 catch (error) {
