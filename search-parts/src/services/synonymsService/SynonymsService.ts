@@ -171,7 +171,8 @@ export class SynonymsService implements ISynonymsService {
             if (synonymsServiceString) {
                 var synonymsListCache: ISharePointSynonymsListCache = JSON.parse(synonymsServiceString)
                 // If Local Storage values are not to old, use them
-                if (new Date(synonymsListCache.updated).getTime() + (1000 * 60 * refresh) > new Date().getTime()) {
+                // refresh == 0 means no chaching
+                if (refresh != 0 && new Date(synonymsListCache.updated).getTime() + (1000 * 60 * refresh) > new Date().getTime()) {
                     Log.info(SynonymsService_ServiceKey, 'Get Synonyms from LocalStorage');
                     synonyms = synonymsListCache.synonyms;
                 }

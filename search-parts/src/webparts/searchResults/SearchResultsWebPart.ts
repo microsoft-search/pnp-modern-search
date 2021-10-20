@@ -59,7 +59,6 @@ import { IDataVerticalSourceData } from '../../models/dynamicData/IDataVerticalS
 import { BaseWebPart } from '../../common/BaseWebPart';
 import { ApplicationInsights } from '@microsoft/applicationinsights-web';
 import commonStyles from '../../styles/Common.module.scss';
-import { SynonymsService } from '../../services/synonymsService/SynonymsService';
 
 const LogSource = "SearchResultsWebPart";
 
