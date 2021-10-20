@@ -81,7 +81,7 @@ define([], function() {
         LinkToVerticalLabel: "Afficher les données seulement lorsque le composant vertical suivant est sélectionné",
         LinkToVerticalLabelHoverMessage: "Les résultats s’afficheront seulement si le secteur vertical sélectionné correspond à celui configuré pour ce composant Web Sinon, le composant Web sera vide (aucune marge et aucun remplissage) en mode d’affichage.",
         UseInputQueryText: "Utiliser le texte de la requête",
-        UseInputQueryTextHoverMessage: "Utilisez le jeton {searchQueryText} de votre source de données pour récupérer cette valeur",
+        UseInputQueryTextHoverMessage: "Utilisez le jeton {inputQueryText} de votre source de données pour récupérer cette valeur",
         SearchQueryTextFieldLabel: "Texte de la requête",
         SearchQueryTextFieldDescription: "",
         SearchQueryPlaceHolderText: "Entrez le texte qui suit...",

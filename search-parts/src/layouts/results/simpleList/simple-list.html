@@ -57,11 +57,11 @@
         {{/if}}
         <ul class="template--defaultList">
             {{#each data.items as |item|}}
-            <li class="template--listItem" tabindex="0">
+            <li class="template--listItem">
                 {{#> resultTypes item=item}}
                 <div class="template--listItem--result">
                     {{#if @root.properties.layoutProperties.showFileIcon}}
-                    <pnp-iconfile class="template--listItem--icon" data-extension="{{slot item @root.slots.FileType}}" data-is-container="{{slot item @root.slots.IsFolder}}" data-size="32" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-iconfile>
+                    <pnp-iconfile class="template--listItem--icon" data-extension="{{slot item @root.slots.FileType}}" data-is-container="{{slot item @root.slots.IsFolder}}" data-image-url="{{item.SiteLogo}}" data-size="32" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-iconfile>
                     {{/if}}
                     <div class="template--listItem--contentContainer">
                         <span class="template--listItem--title example-themePrimary">
@@ -80,7 +80,7 @@
                             {{#if (slot item @root.slots.Tags)}}
                             <pnp-icon data-name="Tag" aria-hidden="true" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-icon>
                             {{#each (split (slot item @root.slots.Tags) ",") as |tag| }}
-                            <a href="#{{slot item @root.slots.Tags}}:'{{trim tag}}'">{{tag}}</a> {{/each}} {{/if}}
+                            <a href="#{{slot item @root.slots.Tags}}:'{{trim tag}}'">{{tag}}</a>&nbsp;{{/each}} {{/if}}
                         </div>
                     </div>
                 </div>
@@ -88,7 +88,7 @@
                 <div class="template--listItem--thumbnailContainer">
                     <div class="thumbnail--image">
                         <pnp-filepreview data-preview-url="{{slot item @root.slots.PreviewUrl}}" data-preview-image-url="{{slot item @root.slots.PreviewImageUrl}}" data-theme-variant="{{JSONstringify @root.theme}}">
-                            <img alt='preview-image' width="120" src="{{slot item @root.slots.PreviewImageUrl}}" loading="lazy" onerror="this.onerror=null;this.src='{{@root.utils.defaultImage}}';" />
+                            <pnp-img alt='preview-image' width="120" src="{{slot item @root.slots.PreviewImageUrl}}" loading="lazy" data-error-image="{{@root.utils.defaultImage}}" />
                         </pnp-filepreview>
                         <div class="thumbnail--hover">
                             <div>

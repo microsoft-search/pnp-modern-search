@@ -10,6 +10,7 @@ import { IComponentDefinition } from "@pnp/modern-search-extensibility";
 import groupBy from 'handlebars-group-by';
 import { IComponentFieldsConfiguration } from "../../models/common/IComponentFieldsConfiguration";
 import { initializeFileTypeIcons } from '@uifabric/file-type-icons';
+import { GlobalSettings } from 'office-ui-fabric-react';
 import { IDataResultType, ResultTypeOperator } from "../../models/common/IDataResultType";
 import { IDataResultsTemplateContext } from "../../models/common/ITemplateContext";
 import { UrlHelper } from "../../helpers/UrlHelper";
@@ -108,7 +109,11 @@ export class TemplateService implements ITemplateService {
             this.registerCustomHelpers();
 
             // Register icons and pull the fonts from the default SharePoint cdn.
-            initializeFileTypeIcons();
+            // Do not load icons twice as it may generate warnings
+            if  (!GlobalSettings.getValue('fileTypeIconsInitialized')) {
+                initializeFileTypeIcons();
+                GlobalSettings.setValue('fileTypeIconsInitialized', true);
+            }
         });
     }
 
@@ -257,11 +262,11 @@ export class TemplateService implements ITemplateService {
                     } else {
 
                         // Update the instances array for all calling Web Parts
-                        if (!component.prototype._webPartServiceScopes.get(instanceId)) {
+                        if (component.prototype._webPartServiceScopes && !component.prototype._webPartServiceScopes.get(instanceId)) {
                             component.prototype._webPartServiceScopes.set(instanceId, this.serviceScope);
                         }
 
-                        if (!component.prototype._webPartServiceKeys.get(instanceId)) {
+                        if (component.prototype._webPartServiceScopes && !component.prototype._webPartServiceKeys.get(instanceId)) {
                             component.prototype._webPartServiceKeys.set(instanceId, availableServiceKeys);
                         }
                     }
@@ -530,11 +535,11 @@ export class TemplateService implements ITemplateService {
         });
 
         // Group by a specific property
-        this.Handlebars.registerHelper(groupBy(Handlebars));
+        this.Handlebars.registerHelper(groupBy(this.Handlebars));
 
         // Return the value for a specific slot
         this.Handlebars.registerHelper("slot", (item: any, propertyPath: string) => {
-            if (!isEmpty(propertyPath)) {
+            if (propertyPath && !isEmpty(propertyPath)) {
                 const value = ObjectHelper.byPath(item, propertyPath);
                 return value;
             }
@@ -578,12 +583,14 @@ export class TemplateService implements ITemplateService {
                 let splitArr: string[] = value.split(/\n+/);
 
                 if (splitArr && splitArr.length > 0) {
+                    let index: number = 0;
                     for (let i of splitArr) {
                         let pos: number = i.lastIndexOf("/");
                         if (pos !== -1) {
                             let fileName: string = i.substring(pos + 1);
-                            let objLine = { url: i, fileName: fileName };
+                            let objLine = { url: i, fileName: fileName, index: index };
                             out += options.fn(objLine);
+                            index++;
                         }
                     }
                 }

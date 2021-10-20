@@ -6,7 +6,7 @@ This section of the documentation provides some scenario-based recipes for build
 
 [Create a simple search page](create-simple-search-page.md)
 
-We can create a search-driven experience simply by adding the PmP Modern Search Web Parts to a page: PnP Search Box and PnP Search Results.
+We can create a search-driven experience simply by adding the PnP Modern Search Web Parts to a page: PnP Search Box and PnP Search Results.
 
 ## Scenario 2
 

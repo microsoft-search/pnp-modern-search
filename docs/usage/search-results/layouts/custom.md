@@ -1,4 +1,6 @@
-The 'custom' layout is the minimal layout to start with if you want to create your own customized UI from scratch. You can also start from an existing layout.
+The 'Custom' layout is a minimal layout to start with if you want to create your own customized UI from scratch.
+
+You can also start from an existing layout by first selecting it, and then click `{}` next to the *Edit results tempalte* field. This will copy the selected template and allow you to make modifications as needed.
 
 !["Custom layout"](../../../assets/webparts/search-results/layouts/custom_layout.png){: .center} 
 

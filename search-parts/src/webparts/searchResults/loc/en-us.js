@@ -80,7 +80,7 @@ define([], function() {
                 LinkToVerticalLabel: "Display data only when the following vertical is selected",
                 LinkToVerticalLabelHoverMessage: "The results will be displayed only if the selected vertical matches with the one configured for this Web Part. Otherwise, the Web part will be blank (no margin and no padding) in display mode.",
                 UseInputQueryText: "Use input query text",
-                UseInputQueryTextHoverMessage: "Use the {searchQueryText} token in your data source to retrieve this value",
+                UseInputQueryTextHoverMessage: "Use the {inputQueryText} token in your data source to retrieve this value",
                 SearchQueryTextFieldLabel: "Query text",
                 SearchQueryTextFieldDescription: "",
                 SearchQueryPlaceHolderText: "Enter query text...",

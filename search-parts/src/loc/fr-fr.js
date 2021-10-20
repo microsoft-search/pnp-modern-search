@@ -79,12 +79,12 @@ define([], function() {
             },
             DateIntervalStrings: {
                 AnyTime: "N’importe quand",
-                PastDay: "Dernières 24 heures",
-                PastWeek: "Semaine dernière",
-                PastMonth: "Mois dernier",
-                Past3Months: "Trois derniers mois",
-                PastYear: "Année dernière",
-                Older: "Il y a plus d’un an"
+                PastDay: "Entre 24 heures et 1 semaine",
+                PastWeek: "Entre 1 semaine et 1 mois",
+                PastMonth: "Entre 1 et 3 mois",
+                Past3Months: "Entre 3 mois et 1 an",
+                PastYear: "Depuis l'année dernière",
+                Older: "Il y a plus d'un an"
             },
             SameTabOpenBehavior: "Utiliser l’onglet actuel",
             NewTabOpenBehavior: "Ouvrir dans un nouvel onglet",
@@ -188,6 +188,7 @@ define([], function() {
                 ManageDetailsListColumnDescription: "Ajouter, modifier ou supprimer des colonnes dans la présentation de la liste de détails. Vous pouvez utiliser la valeur des propriétés directement dans la liste, sans modification, ou utiliser une expression entre accolades dans le champ de valeur Le format HTML est également pris en charge dans tous les champs",
                 ManageDetailsListColumnLabel: "Gérer les colonnes",
                 ValueColumnLabel: "Valeur de la colonne",
+                ValueSortingColumnLabel: "Tri par valeur de colonne",
                 DisplayNameColumnLabel: "Nom d’affichage de la colonne",
                 FileExtensionFieldLabel: "Champ à utiliser pour l’extension de fichier",
                 GroupByFieldLabel: "Regrouper par champ",
@@ -251,7 +252,7 @@ define([], function() {
                 SupportHTMLColumnLabel: "Autoriser HTML",
                 ResetFieldsBtnLabel: "Rétablir la valeur par défaut dans les champs",
                 ShowPersonaCardOnHover: "Afficher l’image de la carte en pointant le curseur",
-                ShowPersonaCardOnHoverCalloutMsg: "Cette fonction utilise Microsoft Graph pour afficher des renseignements sur l’utilisateur et nécessite les autorisations API suivantes pour que votre utilisateur puisse travailler : [« User.Read », « People.Read », « Contacts.Read », « User.ReadBasic.All »].",
+                ShowPersonaCardOnHoverCalloutMsg: "Cette fonction utilise Microsoft Graph pour afficher des renseignements sur l’utilisateur et nécessite les autorisations API suivantes pour que votre utilisateur puisse travailler : [« User.Read », « People.Read », « Contacts.Read », « User.Read.All »].",
                 Fields: {
                     ImageUrl: "URL de l’image",
                     PrimaryText: "Texte principal",

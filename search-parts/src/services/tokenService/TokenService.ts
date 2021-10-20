@@ -391,13 +391,13 @@ export class TokenService implements ITokenService {
                 const digit = parseInt(operatorSplit[operatorSplit.length - 1].replace("{", "").replace("}", "").trim()) * addOrRemove;
                 let dt = new Date();
                 dt.setDate(dt.getDate() + digit);
-                const formatDate = this.moment(dt).format("YYYY-MM-DDTHH:mm:ss\\Z");
+                const formatDate = this.moment(dt).utc().format("YYYY-MM-DDTHH:mm:ss\\Z");
                 inputString = inputString.replace(result, formatDate);
             }
         }
 
         // Replaces any "{Today}" expression by it's actual value
-        let formattedDate = this.moment(new Date()).format("YYYY-MM-DDTHH:mm:ss\\Z");
+        let formattedDate = this.moment(new Date()).utc().format("YYYY-MM-DDTHH:mm:ss\\Z");
         inputString = inputString.replace(new RegExp("{Today}", 'gi'), formattedDate);
 
         const d = new Date();
@@ -414,7 +414,7 @@ export class TokenService implements ITokenService {
      */
     private replaceQueryStringTokens(inputString: string) {
 
-        const webRegExp = /\{(?:QueryString)\.(.*?)\}/gi;
+        const webRegExp = /\{(?:\?){0,1}(?:QueryString)\.(.*?)\}/gi;
         let modifiedString = inputString;
         let matches = webRegExp.exec(inputString);
 
@@ -424,7 +424,14 @@ export class TokenService implements ITokenService {
             while (matches !== null) {
                 const qsProp = matches[1];
                 const itemProp = decodeURIComponent(queryParameters.getValue(qsProp) || "");
-                modifiedString = modifiedString.replace(new RegExp(matches[0], "gi"), itemProp);
+                if (itemProp) {
+                    modifiedString = modifiedString.replace(matches[0], itemProp);
+                }
+                else if (matches[0].includes("?")) {
+                    // If QueryString Token is specified like this, {?QueryString.Parameter}, it is removed if the QueryString doesn't exist
+                    modifiedString = modifiedString.replace(matches[0], "");
+                }
+
                 matches = webRegExp.exec(inputString);
             }
         }
@@ -576,7 +583,7 @@ export class TokenService implements ITokenService {
 
                 // {User} tokens are resolved server-side by SharePoint so we exclude them
                 if (!/\{(?:User)\.(.*?)\}/gi.test(tokenValue)) {
-                    const allValues = tokenValue.split(','); // Works with taxonomy multi values (TermID, Label) + multi choices fields
+                    const allValues = tokenValue.split(/[,|]/); // Works with taxonomy multi values (TermID, Label) + multi choices fields + User
                     if (allValues.length > 0) {
                         allValues.forEach(value => {
                             conditions.push(`(${property}${operator}${/\s/g.test(value) ? `"${value}"` : value})`);

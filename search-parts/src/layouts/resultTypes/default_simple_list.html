@@ -32,7 +32,7 @@
 <div class="template--listItem--thumbnailContainer">
     <div class="thumbnail--image">
         <pnp-filepreview data-preview-url="{{slot item @root.slots.PreviewUrl}}" data-preview-image-url="{{slot item @root.slots.PreviewImageUrl}}" data-theme-variant="{{JSONstringify @root.theme}}">
-            <img alt='preview-image' width="120" src="{{slot item @root.slots.PreviewImageUrl}}" loading="lazy" onerror="this.onerror=null;this.src='{{@root.utils.defaultImage}}';" />
+            <pnp-img alt='preview-image' width="120" src="{{slot item @root.slots.PreviewImageUrl}}" loading="lazy" data-error-image="{{@root.utils.defaultImage}}" />
         </pnp-filepreview>
         <div class="thumbnail--hover">
             <div>

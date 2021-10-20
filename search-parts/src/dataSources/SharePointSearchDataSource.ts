@@ -1,4 +1,4 @@
-import * as React from 'react';
+﻿import * as React from 'react';
 import { IDataSourceData, BaseDataSource, ITokenService, IDataFilter, ITemplateSlot, IDataFilterResult, IDataFilterResultValue, BuiltinTemplateSlots, FilterComparisonOperator, IDataFilterConfiguration, FilterBehavior, FilterSortType, FilterSortDirection } from "@pnp/modern-search-extensibility";
 import {
     IPropertyPaneGroup,
@@ -175,7 +175,14 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
             this._propertyPaneWebPartInformation = PropertyPaneWebPartInformation;
         }
 
-        this._currentLocaleId = LocalizationHelper.getLocaleId(this._pageContext.cultureInfo.currentUICultureName);
+        let culture =  this.getTranslatedCultureFromUrl();
+        if (culture) {
+            this._currentLocaleId = LocalizationHelper.getLocaleId(culture);
+        }
+
+        if (!culture || this._currentLocaleId === 0) {
+            this._currentLocaleId = LocalizationHelper.getLocaleId(this._pageContext.cultureInfo.currentUICultureName);
+        }
 
         // Initialize the list of available languages
         if (this._availableLanguages.length == 0) {
@@ -188,6 +195,16 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                 };
             });
         }
+    }
+
+    /**
+    * Pick culture from url in translated pages as they are folder names like: "en", "no", "de"
+    */
+    private getTranslatedCultureFromUrl(): string {
+        const pathParts = window.location.pathname.toLocaleLowerCase().split('/');
+        const cultureFolderCandidate = pathParts[pathParts.length-2];
+        if(cultureFolderCandidate.length == 2) return cultureFolderCandidate; //ISO-639-1 uses two letter codes
+        return null;
     }
 
     public async getData(dataContext: IDataContext): Promise<IDataSourceData> {
@@ -206,10 +223,10 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
 
         // Translates taxonomy refiners and result values by using terms ID if applicable
         if (this.properties.enableLocalization) {
-            const localizedFilters = await this._getLocalizedFilters(data.filters, this._pageContext.cultureInfo.currentUICultureName);
+            const localizedFilters = await this._getLocalizedFilters(data.filters, this._currentLocaleId);
             data.filters = localizedFilters;
 
-            const localizedResults = await this._getLocalizedMetadata(data.items, this._pageContext.cultureInfo.currentUICultureName);
+            const localizedResults = await this._getLocalizedMetadata(data.items, this._currentLocaleId);
             data.items = localizedResults;
         }
 
@@ -269,7 +286,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                         defaultSelectedKeys: this.properties.selectedProperties,
                         onPropertyChange: this.onCustomPropertyUpdate.bind(this),
                         onUpdateOptions: ((options: IComboBoxOption[]) => {
-                            this._availableManagedProperties = options;
+                            this._availableManagedProperties = this.parseAndCleanOptions(options);
                         }).bind(this)
                     }),
                     this._propertyFieldCollectionData('dataSourceProperties.sortList', {
@@ -378,7 +395,8 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
     public onCustomPropertyUpdate(propertyPath: string, newValue: any): void {
 
         if (propertyPath.localeCompare('dataSourceProperties.selectedProperties') === 0) {
-            this.properties.selectedProperties = (cloneDeep(newValue) as IComboBoxOption[]).map(v => { return v.key as string; });
+            let options = this.parseAndCleanOptions((cloneDeep(newValue) as IComboBoxOption[]));
+            this.properties.selectedProperties = options.map(v => { return v.key as string; });
             this.context.propertyPane.refresh();
             this.render();
         }
@@ -517,7 +535,9 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                 'WorkPhone',
                 'SPSiteUrl',
                 'SiteTitle',
-                'CreatedBy'
+                'CreatedBy',
+                'HtmlFileType',
+                'SiteLogo'
             ];
         this.properties.resultSourceId = this.properties.resultSourceId !== undefined ? this.properties.resultSourceId : BuiltinSourceIds.LocalSharePointResults;
         this.properties.sortList = this.properties.sortList !== undefined ? this.properties.sortList : [];
@@ -811,7 +831,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
 
         searchQuery.TrimDuplicates = false;
         searchQuery.SortList = this._convertToSortList(this.properties.sortList);
-        searchQuery.SelectProperties = this.properties.selectedProperties;
+        searchQuery.SelectProperties = this.properties.selectedProperties.filter(a => a); // Fix to remove null values;
 
         // Toggle to include user's personal OneDrive results as a secondary result block
         // https://docs.microsoft.com/en-us/sharepoint/support/search/private-onedrive-results-not-included
@@ -946,13 +966,9 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
      * By default SharePoint stores the taxonomy values according to the current site language. Because we can't create a communication site in French (as of 08/12/2017)
      * we need to do the translation afterwards
      * @param rawFilters The raw refinement results to translate coming from SharePoint search results
-     * @param currentUICultureName the current culture UI name (ex: 'en-US')
+     * @param lcid the current culture UI number (ex: '1044')
      */
-    private async _getLocalizedFilters(rawFilters: IDataFilterResult[], currentUICultureName: string): Promise<IDataFilterResult[]> {
-
-        // Get the current lcid according to current page language
-        const lcid = LocalizationHelper.getLocaleId(currentUICultureName);
-
+    private async _getLocalizedFilters(rawFilters: IDataFilterResult[], lcid: number): Promise<IDataFilterResult[]> {
         let termsToLocalize: { uniqueIdentifier: string, termId: string, localizedTermLabel: string }[] = [];
         let updatedFilters: IDataFilterResult[] = [];
         let localizedTerms = [];
@@ -975,16 +991,27 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
 
                     values.forEach((term) => {
 
-                        // Use FQL expression here to get the correct output. Otherwise a full match is performed
-                        const fqlFilterValue = `"ǂǂ${this._bytesToHex(this._stringToUTF8Bytes(term))}"`;
-                        const existingFilterIdx = updatedValues.map(updatedValue => updatedValue.name).indexOf(term);
+                        // 20210811: We strip the language specific part of the term and use the GP0 value as the filter value
+                        // and use also the striped value as the new term/key...
+                        // --> 'GP0|#a2cf1afb-44b6-4cf4-bf37-642bb2e9bff3' instead of 'L0|#a2cf1afb-44b6-4cf4-bf37-642bb2e9bff3|Category 1' for the value/filter
+                        // --> 'L0|#a2cf1afb-44b6-4cf4-bf37-642bb2e9bff3|' instead of 'L0|#a2cf1afb-44b6-4cf4-bf37-642bb2e9bff3|Category 1' for the name
+                        // Background: if the same term is used on sites with different default language, the indexed taxid property value contains the 
+                        // translation of that site collection and therefore it comes back as different values meaning the same with the same id but causing
+                        // separate filters.
+                        // (Example: 'L0|#a2cf1afb-44b6-4cf4-bf37-642bb2e9bff3|Food' and 'L0|#a2cf1afb-44b6-4cf4-bf37-642bb2e9bff3|Nahrung')
+                        let matches = /L0\|#(.+)\|/.exec(value.name);
+                        let termId = Guid.isValid(matches[1]) ? matches[1] : matches[1].substr(1);
+                        let strippedTermFilter = "GP0|#" + termId.toString();
+                        let strippedTerm = term.substring(0, term.lastIndexOf('|') + 1); // (we keep the last pipe for compatibility with further code/regexp)
+
+                        const fqlFilterValue = `"ǂǂ${this._bytesToHex(this._stringToUTF8Bytes(strippedTermFilter))}"`;
+                        const existingFilterIdx = updatedValues.map(updatedValue => updatedValue.name).indexOf(strippedTerm);
 
                         if (existingFilterIdx === -1) {
-
                             // Create a dedicated filter value entry
                             updatedValues.push({
                                 count: value.count,
-                                name: term, // Ex: 'L0|#a2cf1afb-44b6-4cf4-bf37-642bb2e9bff3|Category 1'
+                                name: strippedTerm, // New stripped term, ex: 'L0|#a2cf1afb-44b6-4cf4-bf37-642bb2e9bff3' instead of 'L0|#a2cf1afb-44b6-4cf4-bf37-642bb2e9bff3|Category 1'
                                 value: fqlFilterValue
                             } as IDataFilterResultValue);
 
@@ -1094,7 +1121,12 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                     const existingFilters = localizedTerms.filter((e) => { return e.uniqueIdentifier === value.value; });
 
                     if (existingFilters.length > 0) {
-                        value.name = existingFilters[0].localizedTermLabel;
+                        // 20210811: because we have modified the filter value to use the GP0 also for the L0 items, the mapping also returns items which are not L0
+                        // therefore we have to check the name for L0 again and only replace those...
+                        const isTerm = /L0\|#(.+)\|/.test(value.name);
+                        if (isTerm) {
+                            value.name = existingFilters[0].localizedTermLabel;
+                        }
                     }
 
                     // Keep only terms (L0). The crawl property ows_taxid_xxx return term sets too.
@@ -1114,13 +1146,9 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
     /**
      * Translates all result taxonomy values (owsTaxId...) according the current culture
      * @param rawResults The raw search results to translate coming from SharePoint search
-     * @param currentUICultureName the current culture UI name (ex: 'en-US')
+     * @param lcid the current culture UI number (ex: '1044')
      */
-    private async _getLocalizedMetadata(rawResults: ISharePointSearchResult[], currentUICultureName: string): Promise<ISharePointSearchResult[]> {
-
-        // Get the current lcid according to current page language
-        const lcid = LocalizationHelper.getLocaleId(currentUICultureName);
-
+    private async _getLocalizedMetadata(rawResults: ISharePointSearchResult[], lcid: number): Promise<ISharePointSearchResult[]> {
         let resultsToLocalize: ILocalizableSearchResult[] = [];
 
         let updatedResults: ISharePointSearchResult[] = [];
@@ -1272,5 +1300,13 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
 
     private _stringToUTF8Bytes(string) {
         return new TextEncoder().encode(string);
+    }
+
+    private parseAndCleanOptions(options: IComboBoxOption[]): IComboBoxOption[] {
+        let optionWithComma = options.find(o => (o.key as string).indexOf(",") > 0);
+        if (optionWithComma) {
+            return (optionWithComma.key as string).split(",").map(k => { return { key: k.trim(), text: k.trim(), selected: true }; });
+        }
+        return options;
     }
 }

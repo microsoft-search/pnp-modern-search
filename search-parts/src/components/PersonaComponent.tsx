@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { Persona, IPersonaProps, IPersonaSharedProps, getInitials, Icon } from 'office-ui-fabric-react';
+import { Persona, IPersonaProps, IPersonaSharedProps, getInitials, Icon, ITheme } from 'office-ui-fabric-react';
 import { TemplateService } from "../services/templateService/TemplateService";
 import * as ReactDOM from 'react-dom';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
-import { ITheme } from '@uifabric/styling';
 import { BaseWebComponent } from '@pnp/modern-search-extensibility';
 import { ITemplateService } from '../services/templateService/ITemplateService';
 import * as DOMPurify from 'dompurify';
@@ -18,7 +17,7 @@ export interface IPersonaComponentProps {
     /**
      * The item context
      */
-    item?: {[key:string]: any};
+    item?: { [key: string]: any };
 
     /**
      * The current field configuration
@@ -91,7 +90,7 @@ export class PersonaComponent extends React.Component<IPersonaComponentProps, IP
         });
 
         this._domPurify.addHook('uponSanitizeElement', DomPurifyHelper.allowCustomComponentsHook);
-        this._domPurify.addHook('uponSanitizeAttribute', DomPurifyHelper.allowCustomAttributesHook);   
+        this._domPurify.addHook('uponSanitizeAttribute', DomPurifyHelper.allowCustomAttributesHook);
     }
 
     public render() {
@@ -101,13 +100,13 @@ export class PersonaComponent extends React.Component<IPersonaComponentProps, IP
         if (this.props.fieldsConfiguration && this.props.item) {
             processedProps = this.props.templateService.processFieldsConfiguration<IPersonaComponentProps>(this.props.fieldsConfiguration, this.props.item, this.props.context);
         }
-        
+
         const persona: IPersonaProps = {
-            theme:this.props.themeVariant as ITheme,
+            theme: this.props.themeVariant as ITheme,
             imageUrl: this.props.imageUrl ? this.props.imageUrl : processedProps.imageUrl,
             imageShouldFadeIn: false,
             imageShouldStartVisible: true,
-            styles:{
+            styles: {
                 root: {
                     height: '100%'
                 }
@@ -122,30 +121,30 @@ export class PersonaComponent extends React.Component<IPersonaComponentProps, IP
 
                 return imageInitials ? <span>{imageInitials}</span> : <Icon iconName="Contact" />;
             },
-            onRenderPrimaryText: (props: IPersonaProps) => {                
-                return <div style={{display: 'inline'}} dangerouslySetInnerHTML={{__html: this._domPurify.sanitize(processedProps.primaryText) }}></div>;
+            onRenderPrimaryText: (props: IPersonaProps) => {
+                return <div style={{ display: 'inline', whiteSpace: 'normal' }} dangerouslySetInnerHTML={{ __html: this._domPurify.sanitize(processedProps.primaryText) }}></div>;
             },
             onRenderSecondaryText: (props: IPersonaProps) => {
-                return <div style={{display: 'inline'}} dangerouslySetInnerHTML={{__html: this._domPurify.sanitize(processedProps.secondaryText) }}></div>;
+                return <div style={{ display: 'inline', whiteSpace: 'normal' }} dangerouslySetInnerHTML={{ __html: this._domPurify.sanitize(processedProps.secondaryText) }}></div>;
             },
             onRenderTertiaryText: (props: IPersonaProps) => {
-                return <div style={{display: 'inline'}} dangerouslySetInnerHTML={{__html: this._domPurify.sanitize(processedProps.tertiaryText) }}></div>;
+                return <div style={{ display: 'inline', whiteSpace: 'normal' }} dangerouslySetInnerHTML={{ __html: this._domPurify.sanitize(processedProps.tertiaryText) }}></div>;
             },
             onRenderOptionalText: (props: IPersonaProps) => {
-                return <div style={{display: 'inline'}} dangerouslySetInnerHTML={{__html: this._domPurify.sanitize(processedProps.optionalText) }}></div>;
+                return <div style={{ display: 'inline', whiteSpace: 'normal' }} dangerouslySetInnerHTML={{ __html: this._domPurify.sanitize(processedProps.optionalText) }}></div>;
             }
         };
 
-        return  <Persona {...persona} size={parseInt(this.props.personaSize)}></Persona>;
+        return <Persona {...persona} size={parseInt(this.props.personaSize)}></Persona>;
     }
 }
 
 export class PersonaWebComponent extends BaseWebComponent {
-   
+
     constructor() {
         super();
     }
- 
+
     public connectedCallback() {
 
         let props = this.resolveAttributes();
@@ -161,7 +160,7 @@ export class PersonaWebComponent extends BaseWebComponent {
 
         const templateService = serviceScope.consume<ITemplateService>(templateServiceKey);
 
-        const personaItem = <PersonaComponent {...props} templateService={templateService}/>;
+        const personaItem = <PersonaComponent {...props} templateService={templateService} />;
         ReactDOM.render(personaItem, this);
-    }    
+    }
 }

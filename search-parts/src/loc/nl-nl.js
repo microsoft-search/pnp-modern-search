@@ -79,12 +79,12 @@ define([], function() {
             },
             DateIntervalStrings: {
                 AnyTime: "Altijd",
-                PastDay: "Laatste 24 uur",
-                PastWeek: "Laatste week",
-                PastMonth: "Laatste maand",
-                Past3Months: "Laatste 3 maanden",
-                PastYear: "Laatste jaar",
-                Older: "Ouder dan 1 jaar"
+                PastDay: "Van afgelopen 24 uur tot afgelopen week",
+                PastWeek: "Van afgelopen week tot afgelopen maand",
+                PastMonth: "Van afgelopen maand tot afgelopen 3 maanden",
+                Past3Months: "Van de afgelopen 3 maanden tot het afgelopen jaar",
+                PastYear: "Van vorig jaar",
+                Older: "Ouder dan een jaar"
             },
             SameTabOpenBehavior: "Gebruik de huidige tab",
             NewTabOpenBehavior: "Open in een nieuwe tab",
@@ -187,6 +187,7 @@ define([], function() {
                 ManageDetailsListColumnDescription: "Kolommen toevoegen, bewerken of verwijderen voor de detailslijst indeling. Je kan eigenschapswaarden direct in de lijst gebruiken zonder transformaties toe te passen, of een Handlebars-uitdrukking gebruiken als veldwaarde. HTML wordt ook ondersteund voor alle velden.",
                 ManageDetailsListColumnLabel: "Beheer kolommen",
                 ValueColumnLabel: "Kolomwaarde",
+                ValueSortingColumnLabel: "Kolomwaarde sorteren",
                 DisplayNameColumnLabel: "Kolom weergavenaam",
                 FileExtensionFieldLabel: "Te gebruiken veld voor bestandsextensie",
                 GroupByFieldLabel: "Groepeer op veld",
@@ -250,7 +251,7 @@ define([], function() {
                 SupportHTMLColumnLabel: "Sta HTML toe",
                 ResetFieldsBtnLabel: "Reset velden naar standaard waarden",
                 ShowPersonaCardOnHover: "Toon persona card bij 'hover'",
-                ShowPersonaCardOnHoverCalloutMsg: "Deze feature gebruikt Microsoft Graph om informatie over de gebruiker te tonen en heeft de volgende API rechten nodig in de tenant om te kunnen werken: ['User.Read','People.Read','Contacts.Read','User.ReadBasic.All'].",
+                ShowPersonaCardOnHoverCalloutMsg: "Deze feature gebruikt Microsoft Graph om informatie over de gebruiker te tonen en heeft de volgende API rechten nodig in de tenant om te kunnen werken: ['User.Read','People.Read','Contacts.Read','User.Read.All'].",
                 Fields: {
                     ImageUrl: "Afbeeldings URL",
                     PrimaryText: "Primaire tekst",

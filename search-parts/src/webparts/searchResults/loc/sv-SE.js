@@ -80,7 +80,7 @@ define([], function() {
         LinkToVerticalLabel: "Visa endast data när följande vertikaler är valda",
         LinkToVerticalLabelHoverMessage: "Resultaten visas endast om de valda vertikalerna matchar den som har konfigurerats för denna webbdel. Annars är den här webbdelen tom.",
         UseInputQueryText: "Använd inmatning för sökfrågetext",
-        UseInputQueryTextHoverMessage: "Använd {searchQueryText} i din datakälla för att hämta detta värde",
+        UseInputQueryTextHoverMessage: "Använd {inputQueryText} i din datakälla för att hämta detta värde",
         SearchQueryTextFieldLabel: "Sökfrågetext",
         SearchQueryTextFieldDescription: "",
         SearchQueryPlaceHolderText: "Ange frågetext ...",

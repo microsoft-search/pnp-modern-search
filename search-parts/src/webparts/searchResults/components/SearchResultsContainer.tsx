@@ -145,18 +145,20 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             }
         }
 
+        let errorTemplate = null;
         // Error handling
         if (this.state.errorMessage) {
-            renderTemplate = <div data-ui-test-id={TestConstants.SearchResultsErrorMessage}><MessageBar messageBarType={MessageBarType.error}>{this.state.errorMessage}</MessageBar></div>;
+            errorTemplate = <div className={TestConstants.SearchResultsErrorMessage} data-ui-test-id={TestConstants.SearchResultsErrorMessage}><MessageBar messageBarType={MessageBarType.error}>{this.state.errorMessage}</MessageBar></div>;
         }
 
-        return <div data-instance-id={this.props.instanceId}
+        return <main><div data-instance-id={this.props.instanceId}
             data-ui-test-id={TestConstants.SearchResultsWebPart}>
             {renderOverlay}
             {renderInfoMessage}
             {renderTitle}
+            {errorTemplate}
             {renderTemplate}
-        </div>;
+        </div></main>;
     }
 
     public async componentDidMount() {
@@ -275,11 +277,14 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 const hasContentClass = !isEmpty(contentClass);
                 const isLibItem = hasContentClass && contentClass.indexOf("Library") !== -1;
 
+                let contentTypeId = this.props.dataSource.getTemplateSlots()[BuiltinTemplateSlots.IsFolder];
+                const isContainer = contentTypeId ? contentTypeId.indexOf('0x0120') !== -1 : false;
+
                 let pathProperty = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.Path]);
                 if (!pathProperty || (hasContentClass && !isLibItem)) {
                     pathProperty = ObjectHelper.byPath(item, BuiltinTemplateSlots.Path); // Fallback to using Path for if DefaultEncodingURL is missing
                 }
-                if (pathProperty && pathProperty.indexOf("?") === -1) {
+                if (pathProperty && pathProperty.indexOf("?") === -1 && !isContainer) {
                     item.AutoPreviewUrl = pathProperty + "?web=1";
                 } else {
                     item.AutoPreviewUrl = pathProperty;
@@ -294,42 +299,58 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             // TODO: I'd like to move this logic over to each provider
             data.items = data.items.map(item => {
 
-                let siteId = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.SiteId]);
-                let webId = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.WebId]);
-                let listId = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.ListId]);
-                let itemId = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.ItemId]); // Could be UniqueId or item ID
+                let contentClass = ObjectHelper.byPath(item, BuiltinTemplateSlots.ContentClass);
+                if (!isEmpty(contentClass) && (contentClass.toLocaleLowerCase() !== "sts_site" && contentClass.toLocaleLowerCase() !== "sts_web")) {
+                    let siteId = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.SiteId]);
+                    let webId = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.WebId]);
+                    let listId = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.ListId]);
+                    let itemId = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.ItemId]); // Could be UniqueId or item ID
 
-                if (siteId && listId && itemId) {
-                    // SP item logic
-                    siteId = this.getGuidFromString(siteId);
-                    listId = this.getGuidFromString(listId);
-                    itemId = this.getGuidFromString(itemId);
+                    let isFolder = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.IsFolder]);
+                    const isContainerType = isFolder === "true" || isFolder === "1" || (isFolder && isFolder.indexOf('0x0120') !== -1);
 
-                    if(webId) {
-                        siteId = siteId + "," + this.getGuidFromString(webId); // add web id if present, needed for sub-sites
-                    }
+                    if (siteId && listId && itemId && !isContainerType) {
+                        // SP item logic
+                        siteId = this.getGuidFromString(siteId);
+                        listId = this.getGuidFromString(listId);
+                        itemId = this.getGuidFromString(itemId);
 
-                    const itemFileType = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.FileType]);
+                        if (webId) {
+                            siteId = siteId + "," + this.getGuidFromString(webId); // add web id if present, needed for sub-sites
+                        }
 
-                    if (itemFileType && validPreviewExt.indexOf(itemFileType.toUpperCase()) !== -1) {
-                        // Can lead to 404 errors but it is a trade of for performances. We take a guess with this url instead of batching calls for all items and process only 200.
-                        item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = `${this.props.pageContext.site.absoluteUrl}/_api/v2.1/sites/${siteId}/lists/${listId}/items/${itemId}/driveItem/thumbnails/0/large/content?preferNoRedirect=true`;
-                    }
-                } else {
-                    // Graph items logic
-                    const driveId = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.DriveId]);
-                    //GET /drives/{drive-id}/items/{item-id}/thumbnails
-                    if (driveId && siteId && itemId) {
-                        item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = `${this.props.pageContext.site.absoluteUrl}/_api/v2.1/sites/${siteId}/drives/${driveId}/items/${itemId}/thumbnails/thumbnails/0/large/content?preferNoRedirect=true`;
+                        const itemFileType = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.FileType]);
+
+                        if (itemFileType && validPreviewExt.indexOf(itemFileType.toUpperCase()) !== -1) {
+                            // Can lead to 404 errors but it is a trade of for performances. We take a guess with this url instead of batching calls for all items and process only 200.
+                            item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = `${this.props.pageContext.site.absoluteUrl}/_api/v2.1/sites/${siteId}/lists/${listId}/items/${itemId}/driveItem/thumbnails/0/large/content?preferNoRedirect=true`;
+                        }
+                    } else {
+                        // Graph items logic
+                        const driveId = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.DriveId]);
+                        //GET /drives/{drive-id}/items/{item-id}/thumbnails
+                        if (driveId && siteId && itemId) {
+                            item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = `${this.props.pageContext.site.absoluteUrl}/_api/v2.1/sites/${siteId}/drives/${driveId}/items/${itemId}/thumbnails/thumbnails/0/large/content?preferNoRedirect=true`;
+                        }
                     }
                 }
 
-
+                if (!this.isOnlineDomain(item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl])) {
+                    item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = null;
+                }
                 return item;
             });
         }
 
         return data;
+    }
+
+    /**
+     * Check if we're on an online domain
+     * @param domain
+     */
+    private isOnlineDomain(url: string) {
+        return !isEmpty(url) && url.toLocaleLowerCase().indexOf(window.location.hostname.split('.').slice(-2).join('.').toLocaleLowerCase()) !== -1;
     }
 
     /**

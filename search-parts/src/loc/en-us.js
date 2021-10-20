@@ -79,11 +79,11 @@ define([], function() {
             },
             DateIntervalStrings: {
                 AnyTime: "Any time",
-                PastDay: "Past 24 hours",
-                PastWeek: "Past week",
-                PastMonth: "Past month",
-                Past3Months: "Past 3 months",
-                PastYear: "Past year",
+                PastDay: "From past 24 hours to past week",
+                PastWeek: "From past week to past month",
+                PastMonth: "From past month to past 3 months",
+                Past3Months: "From past 3 months to past year",
+                PastYear: "From past year",
                 Older: "Older than a year"
             },
             SameTabOpenBehavior: "Use the current tab",
@@ -187,6 +187,7 @@ define([], function() {
                 ManageDetailsListColumnDescription: "Add, update or remove columns for the details list layout. You can use either property values in the list directly without any transformation or use an Handlebars expression in the value field. HTML is supported for all fields as well.",
                 ManageDetailsListColumnLabel: "Manage columns",
                 ValueColumnLabel: "Column value",
+                ValueSortingColumnLabel: "Column value sorting",
                 DisplayNameColumnLabel: "Column display name",
                 FileExtensionFieldLabel: "Field to use for file extension",
                 GroupByFieldLabel: "Group by field",
@@ -250,7 +251,7 @@ define([], function() {
                 SupportHTMLColumnLabel: "Allow HTML",
                 ResetFieldsBtnLabel: "Reset fields to default values",
                 ShowPersonaCardOnHover: "Show persona card on hover",
-                ShowPersonaCardOnHoverCalloutMsg: "This feature uses Microsoft Graph to display information about the user and needs the following API permissions in your tenant to work: ['User.Read','People.Read','Contacts.Read','User.ReadBasic.All'].",
+                ShowPersonaCardOnHoverCalloutMsg: "This feature uses Microsoft Graph to display information about the user and needs the following API permissions in your tenant to work: ['User.Read','People.Read','Contacts.Read','User.Read.All'].",
                 Fields: {
                     ImageUrl: "Image URL",
                     PrimaryText: "Primary text",

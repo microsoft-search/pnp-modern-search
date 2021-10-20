@@ -79,12 +79,12 @@ define([], function () {
         },
         DateIntervalStrings: {
           AnyTime: "När som helst",
-          PastDay: "Senaste 24 timmarna",
-          PastWeek: "Senaste veckan",
-          PastMonth: "Senaste månaden",
-          Past3Months: "Senaste 3 månaderna",
-          PastYear: "Senaste året",
-          Older: "Äldre än ett år"
+          PastDay: "Från senaste 24 timmarna till senaste veckan",
+          PastWeek: "Från förra veckan till förra månaden",
+          PastMonth: "Från förra månaden till de senaste tre månaderna",
+          Past3Months: "Från de senaste tre månaderna till det senaste året",
+          PastYear: "Från förra året",
+          Older: "Äldre än ett år" 
         },
         SameTabOpenBehavior: "Använd den aktuella fliken",
         NewTabOpenBehavior: "Öppna i en ny flik",
@@ -187,6 +187,7 @@ define([], function () {
           ManageDetailsListColumnDescription: "Lägg till, uppdatera eller ta bort kolumner från layouten i detaljlistan. Du kan antingen använda egenskapsvärden i listan direkt utan någon transformation, eller så kan du använda ett styruttryck som fältets värde. HTML stöds för användning i alla fält.",
           ManageDetailsListColumnLabel: "Hantera kolumner",
           ValueColumnLabel: "Kolumnvärde",
+          ValueSortingColumnLabel: "Kolumnvärde sortering",
           DisplayNameColumnLabel: "Kolumnens visningsnamn",
           FileExtensionFieldLabel: "Fält för användning av filtillägg",
           GroupByFieldLabel: "Gruppera efter fält",
@@ -250,7 +251,7 @@ define([], function () {
           SupportHTMLColumnLabel: "Tillåt HTML",
           ResetFieldsBtnLabel: "Återställ fält till standardvärden",
           ShowPersonaCardOnHover: "Visa personakort genom att föra musen över",
-          ShowPersonaCardOnHoverCalloutMsg: "Denna funktion använder Microsoft Graph för att visa information om användaren och måste använda följande API-behörigheter i din klient för att den ska fungera: ['User.Read','People.Read','Contacts.Read','User.ReadBasic.All'].",
+          ShowPersonaCardOnHoverCalloutMsg: "Denna funktion använder Microsoft Graph för att visa information om användaren och måste använda följande API-behörigheter i din klient för att den ska fungera: ['User.Read','People.Read','Contacts.Read','User.Read.All'].",
           Fields: {
             ImageUrl: "Bild URL",
             PrimaryText: "Primärtext",

@@ -18,6 +18,7 @@ import { FilterComboBoxWebComponent } from './filters/FilterComboBoxComponent';
 import { FilterDateIntervalWebComponent } from './filters/FilterDateIntervalComponent';
 import { PersonaWebComponent } from './PersonaComponent';
 import { PersonaShimmersWebComponent } from './PersonaShimmersComponent';
+import { ImageWebComponent} from './ImageComponent';
 
 export class AvailableComponents {
 
@@ -100,6 +101,10 @@ export class AvailableComponents {
         {
             componentName: 'pnp-personashimmers',
             componentClass: PersonaShimmersWebComponent
+        },
+        {
+            componentName: 'pnp-img',
+            componentClass: ImageWebComponent
         }
     ];
 }
