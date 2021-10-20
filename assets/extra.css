@@ -8,3 +8,15 @@
     width: 150px;
 }
 
+.md-header {
+    background-color: #0078d4;
+}
+
+.md-tabs {
+    background-color: #ecf0f1;
+}
+
+.md-tabs__link {
+    opacity: 1;
+    color: #0078d4;
+}
