@@ -9,6 +9,7 @@ import {
     PropertyPaneLabel,
     IPropertyPaneField,
     PropertyPaneTextField,
+    PropertyPaneSlider,
 } from "@microsoft/sp-property-pane";
 import * as commonStrings from 'CommonStrings';
 import { ServiceScope, Guid, Text } from '@microsoft/sp-core-library';
@@ -208,7 +209,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         // initialize/Loading the synonyms list at page load...
         if(this.properties.synonymsEnabled) {
             Log.verbose(SourceNameForLog, "initializing/loading the synonyms table at page load time...");
-            this._synonymsList = await this._synonymsService.getItemsFromSharePointSynonymsList(this.properties.synonymsWebUrl, this.properties.synonymsListName, this.properties.synonymsFieldNameKeyword, this.properties.synonymsFieldNameSynonyms,this.properties.synonymsFieldNameMutual);
+            this._synonymsList = await this._synonymsService.getItemsFromSharePointSynonymsList(this.properties.synonymsRefresh, this.properties.synonymsWebUrl, this.properties.synonymsListName, this.properties.synonymsFieldNameKeyword, this.properties.synonymsFieldNameSynonyms,this.properties.synonymsFieldNameMutual);
         }
     }
 
@@ -222,7 +223,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
             if (this._synonymsList === undefined) {
                 // if the synonyms list has not been loaded during startup/initalization (typically ind debug/dev mode) load it again here
                 Log.verbose(SourceNameForLog, "initializing/loading the synonyms table at query time...");
-                this._synonymsList = await this._synonymsService.getItemsFromSharePointSynonymsList(this.properties.synonymsWebUrl, this.properties.synonymsListName, this.properties.synonymsFieldNameKeyword, this.properties.synonymsFieldNameSynonyms,this.properties.synonymsFieldNameMutual);
+                this._synonymsList = await this._synonymsService.getItemsFromSharePointSynonymsList(this.properties.synonymsRefresh, this.properties.synonymsWebUrl, this.properties.synonymsListName, this.properties.synonymsFieldNameKeyword, this.properties.synonymsFieldNameSynonyms,this.properties.synonymsFieldNameMutual);
             }
             searchQuery.Querytext = await this._synonymsService.enrichQueryWithSynonyms(searchQuery.Querytext, this._synonymsList);
         }
@@ -564,6 +565,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         this.properties.sortList = this.properties.sortList !== undefined ? this.properties.sortList : [];
 
         this.properties.synonymsEnabled = this.properties.synonymsEnabled !== undefined ? this.properties.synonymsEnabled : false;
+        this.properties.synonymsRefresh = this.properties.synonymsRefresh !== undefined ? this.properties.synonymsRefresh : 1440;
         this.properties.synonymsWebUrl = this.properties.synonymsWebUrl ? this.properties.synonymsWebUrl : "";
         this.properties.synonymsListName = this.properties.synonymsListName ? this.properties.synonymsListName : "";
         this.properties.synonymsFieldNameKeyword = this.properties.synonymsFieldNameKeyword ? this.properties.synonymsFieldNameKeyword : "";
@@ -1343,7 +1345,15 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         let synonymGroupFields: IPropertyPaneField<any>[] = [
             PropertyPaneToggle('dataSourceProperties.synonymsEnabled', {
                 label:  commonStrings.PropertyPane.Synonyms.EnableSwitchLabel,
-                checked: this.properties.synonymsEnabled,
+                checked: this.properties.synonymsEnabled
+            }),
+            PropertyPaneSlider ('dataSourceProperties.synonymsRefesh', {
+                label:  commonStrings.PropertyPane.Synonyms.SynonymRefreshLabel,
+                min: 1,
+                max: 1440,
+                value: this.properties.synonymsRefresh,
+                showValue: true,
+                step: 1
             }),
             PropertyPaneTextField('dataSourceProperties.synonymsWebUrl', {
                 label: commonStrings.PropertyPane.Synonyms.SiteUrlLabel,

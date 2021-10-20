@@ -157,7 +157,7 @@ export class SynonymsService implements ISynonymsService {
         return value;
     }
 
-    public async getItemsFromSharePointSynonymsList(webUrl: string, listName: string, fieldNameKeyword: string, fieldNameSynonyms: string, fieldNameMutual: string): Promise<ISynonymsListEntry[]> {
+    public async getItemsFromSharePointSynonymsList(refresh: number, webUrl: string, listName: string, fieldNameKeyword: string, fieldNameSynonyms: string, fieldNameMutual: string): Promise<ISynonymsListEntry[]> {
         // initalizing an empty return value...
         let synonyms: ISynonymsListEntry[] = [];
 
@@ -171,7 +171,7 @@ export class SynonymsService implements ISynonymsService {
             if (synonymsServiceString) {
                 var synonymsListCache: ISharePointSynonymsListCache = JSON.parse(synonymsServiceString)
                 // If Local Storage values are not to old, use them
-                if (new Date(synonymsListCache.updated).getTime() + (1000 * 60 * 60 * 24) > new Date().getTime()) {
+                if (new Date(synonymsListCache.updated).getTime() + (1000 * 60 * refresh) > new Date().getTime()) {
                     Log.info(SynonymsService_ServiceKey, 'Get Synonyms from LocalStorage');
                     synonyms = synonymsListCache.synonyms;
                 }

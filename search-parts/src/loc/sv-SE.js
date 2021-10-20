@@ -309,6 +309,7 @@ define([], function () {
         Synonyms: {
           SynonymSettingsGroupName: "Synonymer",
           EnableSwitchLabel: "Aktivera Synonymer",
+          SynonymRefreshLabel: "Intervall för återkoppling i minuter",
           SiteUrlLabel: "Webbplatsens URL för Synonymer Lista",
           SynonymListLabel: "Synonymer Lista Namn",
           SynonymListFieldNameKeyword: "Nyckelord Fältnamn namn (normalt fältet 'titel')",

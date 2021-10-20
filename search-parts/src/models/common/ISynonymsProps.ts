@@ -6,6 +6,11 @@ export interface ISynonymsProps {
      synonymsEnabled : boolean;
 
     /**
+     * Refesh interval in minutes (to read the synonyms from the defined synonyms list)
+     */
+     synonymsRefresh : number;
+
+    /**
      * SharePoint web url to the site where the synonyms list is located
      */
      synonymsWebUrl : string;

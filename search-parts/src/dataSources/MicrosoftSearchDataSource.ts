@@ -1,5 +1,5 @@
 import { BaseDataSource, IDataSourceData, IDataFilter, IDataFilterConfiguration, FilterSortType, FilterSortDirection, ITemplateSlot, BuiltinTemplateSlots, IDataContext, ITokenService, FilterBehavior, PagingBehavior, IDataFilterResult, IDataFilterResultValue, FilterComparisonOperator } from "@pnp/modern-search-extensibility";
-import { IPropertyPaneGroup, PropertyPaneLabel, IPropertyPaneField, PropertyPaneToggle, PropertyPaneTextField} from "@microsoft/sp-property-pane";
+import { IPropertyPaneGroup, PropertyPaneLabel, IPropertyPaneField, PropertyPaneToggle, PropertyPaneTextField, PropertyPaneSlider} from "@microsoft/sp-property-pane";
 import { cloneDeep, isEmpty } from '@microsoft/sp-lodash-subset';
 import { MSGraphClientFactory } from "@microsoft/sp-http";
 import { TokenService } from "../services/tokenService/TokenService";
@@ -160,7 +160,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         // initialize/Loading the synonyms list at page load...
         if(this.properties.synonymsEnabled) {
             Log.verbose(SourceNameForLog, "initializing/loading the synonyms table at page load time...");
-            this._synonymsList = await this._synonymsService.getItemsFromSharePointSynonymsList(this.properties.synonymsWebUrl, this.properties.synonymsListName, this.properties.synonymsFieldNameKeyword, this.properties.synonymsFieldNameSynonyms,this.properties.synonymsFieldNameMutual);
+            this._synonymsList = await this._synonymsService.getItemsFromSharePointSynonymsList(this.properties.synonymsRefresh, this.properties.synonymsWebUrl, this.properties.synonymsListName, this.properties.synonymsFieldNameKeyword, this.properties.synonymsFieldNameSynonyms,this.properties.synonymsFieldNameMutual);
         }
 
     }
@@ -190,7 +190,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             if (this._synonymsList === undefined) {
                 // if the synonyms list has not been loaded during startup/initalization (typically ind debug/dev mode) load it again here
                 Log.verbose(SourceNameForLog, "initializing/loading the synonyms table at query time...");
-                this._synonymsList = await this._synonymsService.getItemsFromSharePointSynonymsList(this.properties.synonymsWebUrl, this.properties.synonymsListName, this.properties.synonymsFieldNameKeyword, this.properties.synonymsFieldNameSynonyms,this.properties.synonymsFieldNameMutual);
+                this._synonymsList = await this._synonymsService.getItemsFromSharePointSynonymsList(this.properties.synonymsRefresh, this.properties.synonymsWebUrl, this.properties.synonymsListName, this.properties.synonymsFieldNameKeyword, this.properties.synonymsFieldNameSynonyms,this.properties.synonymsFieldNameMutual);
             }
             searchRequest.query.queryString = await this._synonymsService.enrichQueryWithSynonyms(searchRequest.query.queryString, this._synonymsList);
         }
@@ -412,6 +412,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         this.properties.contentSourceConnectionIds = this.properties.contentSourceConnectionIds !== undefined ? this.properties.contentSourceConnectionIds : [];
 
         this.properties.synonymsEnabled = this.properties.synonymsEnabled !== undefined ? this.properties.synonymsEnabled : false;
+        this.properties.synonymsRefresh = this.properties.synonymsRefresh !== undefined ? this.properties.synonymsRefresh : 1440;
         this.properties.synonymsWebUrl = this.properties.synonymsWebUrl ? this.properties.synonymsWebUrl : "";
         this.properties.synonymsListName = this.properties.synonymsListName ? this.properties.synonymsListName : "";
         this.properties.synonymsFieldNameKeyword = this.properties.synonymsFieldNameKeyword ? this.properties.synonymsFieldNameKeyword : "";
@@ -710,6 +711,14 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             PropertyPaneToggle('dataSourceProperties.synonymsEnabled', {
                 label:  commonStrings.PropertyPane.Synonyms.EnableSwitchLabel,
                 checked: this.properties.synonymsEnabled,
+            }),
+            PropertyPaneSlider ('dataSourceProperties.synonymsRefesh', {
+                label:  commonStrings.PropertyPane.Synonyms.SynonymRefreshLabel,
+                min: 1,
+                max: 1440,
+                value: this.properties.synonymsRefresh,
+                showValue: true,
+                step: 1
             }),
             PropertyPaneTextField('dataSourceProperties.synonymsWebUrl', {
                 label: commonStrings.PropertyPane.Synonyms.SiteUrlLabel,

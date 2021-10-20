@@ -308,6 +308,7 @@ declare interface ICommonStrings {
       Synonyms: {
         SynonymSettingsGroupName: string;
         EnableSwitchLabel:string;
+        SynonymRefreshLabel:string;
         SiteUrlLabel:string;
         SynonymListLabel:string;
         SynonymListFieldNameKeyword:string;
