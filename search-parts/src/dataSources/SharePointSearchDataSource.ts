@@ -209,7 +209,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         // initialize/Loading the synonyms list at page load...
         if (this.properties.synonymsEnabled) {
             Log.verbose(SourceNameForLog, "initializing/loading the synonyms table at page load time...");
-            this._synonymsList = await this._synonymsService.getItemsFromSharePointSynonymsList(this.properties.synonymsRefresh, this.properties.synonymsWebUrl, this.properties.synonymsListName, this.properties.synonymsFieldNameKeyword, this.properties.synonymsFieldNameSynonyms, this.properties.synonymsFieldNameMutual);
+            this._synonymsList = await this._synonymsService.getItemsFromSharePointSynonymsList(this.properties.synonymsCacheRefreshInterval, this.properties.synonymsSiteUrl, this.properties.synonymsListName, this.properties.synonymsListFieldNameKeyword, this.properties.synonymsListFieldNameSynonyms, this.properties.synonymsListFieldNameMutual);
         }
     }
 
@@ -220,11 +220,11 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         // enrich the query test with synonyms (if enabled)...
         // we do it here and not in the SharePoint Search Service as for MS Search there is no Search Service
         if (this.properties.synonymsEnabled) {
-            //if (this._synonymsList === undefined) {
-            // if the synonyms list has not been loaded during startup/initalization (typically ind debug/dev mode) load it again here
-            Log.verbose(SourceNameForLog, "initializing/loading the synonyms table at query time...");
-            this._synonymsList = await this._synonymsService.getItemsFromSharePointSynonymsList(this.properties.synonymsRefresh, this.properties.synonymsWebUrl, this.properties.synonymsListName, this.properties.synonymsFieldNameKeyword, this.properties.synonymsFieldNameSynonyms, this.properties.synonymsFieldNameMutual);
-            //}
+            if (this._synonymsList === undefined) {
+                // if the synonyms list has not been loaded during startup/initalization (typically ind debug/dev mode) load it again here
+                Log.verbose(SourceNameForLog, "initializing/loading the synonyms table at query time...");
+                this._synonymsList = await this._synonymsService.getItemsFromSharePointSynonymsList(this.properties.synonymsCacheRefreshInterval, this.properties.synonymsSiteUrl, this.properties.synonymsListName, this.properties.synonymsListFieldNameKeyword, this.properties.synonymsListFieldNameSynonyms, this.properties.synonymsListFieldNameMutual);
+            }
             searchQuery.Querytext = await this._synonymsService.enrichQueryWithSynonyms(searchQuery.Querytext, this._synonymsList);
         }
 
@@ -409,7 +409,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
             },
             // Synonym configuration parameters
             {
-                groupName: commonStrings.PropertyPane.Synonyms.SynonymSettingsGroupName,
+                groupName: commonStrings.PropertyPane.Synonyms.GroupName,
                 groupFields: this.getSynonymGroupFields()
             }
         ];
@@ -565,12 +565,12 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         this.properties.sortList = this.properties.sortList !== undefined ? this.properties.sortList : [];
 
         this.properties.synonymsEnabled = this.properties.synonymsEnabled !== undefined ? this.properties.synonymsEnabled : false;
-        this.properties.synonymsRefresh = this.properties.synonymsRefresh !== undefined ? this.properties.synonymsRefresh : 1440;
-        this.properties.synonymsWebUrl = this.properties.synonymsWebUrl ? this.properties.synonymsWebUrl : "";
+        this.properties.synonymsCacheRefreshInterval = this.properties.synonymsCacheRefreshInterval !== undefined ? this.properties.synonymsCacheRefreshInterval : 1440;
+        this.properties.synonymsSiteUrl = this.properties.synonymsSiteUrl ? this.properties.synonymsSiteUrl : "";
         this.properties.synonymsListName = this.properties.synonymsListName ? this.properties.synonymsListName : "";
-        this.properties.synonymsFieldNameKeyword = this.properties.synonymsFieldNameKeyword ? this.properties.synonymsFieldNameKeyword : "";
-        this.properties.synonymsFieldNameSynonyms = this.properties.synonymsFieldNameSynonyms ? this.properties.synonymsFieldNameSynonyms : "";
-        this.properties.synonymsFieldNameMutual = this.properties.synonymsFieldNameMutual ? this.properties.synonymsFieldNameMutual : "";
+        this.properties.synonymsListFieldNameKeyword = this.properties.synonymsListFieldNameKeyword ? this.properties.synonymsListFieldNameKeyword : "";
+        this.properties.synonymsListFieldNameSynonyms = this.properties.synonymsListFieldNameSynonyms ? this.properties.synonymsListFieldNameSynonyms : "";
+        this.properties.synonymsListFieldNameMutual = this.properties.synonymsListFieldNameMutual ? this.properties.synonymsListFieldNameMutual : "";
     }
 
     private getBuiltinSourceIdOptions(): IComboBoxOption[] {
@@ -1347,33 +1347,33 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                 label: commonStrings.PropertyPane.Synonyms.EnableSwitchLabel,
                 checked: this.properties.synonymsEnabled
             }),
-            PropertyPaneSlider('dataSourceProperties.synonymsRefresh', {
-                label: commonStrings.PropertyPane.Synonyms.SynonymRefreshLabel,
+            PropertyPaneSlider('dataSourceProperties.synonymsCacheRefreshInterval', {
+                label: commonStrings.PropertyPane.Synonyms.CacheRefreshIntervalLabel,
                 min: 0,
                 max: 1440,
-                value: this.properties.synonymsRefresh,
+                value: this.properties.synonymsCacheRefreshInterval,
                 showValue: true,
                 step: 1
             }),
-            PropertyPaneTextField('dataSourceProperties.synonymsWebUrl', {
+            PropertyPaneTextField('dataSourceProperties.synonymsSiteUrl', {
                 label: commonStrings.PropertyPane.Synonyms.SiteUrlLabel,
-                value: this.properties.synonymsWebUrl
+                value: this.properties.synonymsSiteUrl
             }),
             PropertyPaneTextField('dataSourceProperties.synonymsListName', {
-                label: commonStrings.PropertyPane.Synonyms.SynonymListLabel,
+                label: commonStrings.PropertyPane.Synonyms.ListNameLabel,
                 value: this.properties.synonymsListName
             }),
-            PropertyPaneTextField('dataSourceProperties.synonymsFieldNameKeyword', {
-                label: commonStrings.PropertyPane.Synonyms.SynonymListFieldNameKeyword,
-                value: this.properties.synonymsFieldNameKeyword
+            PropertyPaneTextField('dataSourceProperties.synonymsListFieldNameKeyword', {
+                label: commonStrings.PropertyPane.Synonyms.ListFieldNameKeywordLabel,
+                value: this.properties.synonymsListFieldNameKeyword
             }),
-            PropertyPaneTextField('dataSourceProperties.synonymsFieldNameSynonyms', {
-                label: commonStrings.PropertyPane.Synonyms.SynonymListFieldNameSynonyms,
-                value: this.properties.synonymsFieldNameSynonyms
+            PropertyPaneTextField('dataSourceProperties.synonymsListFieldNameSynonyms', {
+                label: commonStrings.PropertyPane.Synonyms.ListFieldNameSynonymsLabel,
+                value: this.properties.synonymsListFieldNameSynonyms
             }),
-            PropertyPaneTextField('dataSourceProperties.synonymsFieldNameMutual', {
-                label: commonStrings.PropertyPane.Synonyms.SynonymListFieldNameMutual,
-                value: this.properties.synonymsFieldNameMutual
+            PropertyPaneTextField('dataSourceProperties.synonymsListFieldNameMutual', {
+                label: commonStrings.PropertyPane.Synonyms.ListFieldNameMutualLabel,
+                value: this.properties.synonymsListFieldNameMutual
             })
         ];
         return synonymGroupFields;

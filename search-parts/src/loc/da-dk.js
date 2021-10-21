@@ -1,4 +1,4 @@
-define([], function() {
+define([], function () {
     return {
         Tokens: {
             SelectTokenLabel: "Vælg token...",
@@ -307,14 +307,14 @@ define([], function() {
                 }
             },
             Synonyms: {
-                SynonymSettingsGroupName: "Synonymer",
+                GroupName: "Synonymer",
                 EnableSwitchLabel: "Aktivere Synonymer",
-                SynonymRefreshLabel: "Refesh Interval i minutter",
+                CacheRefreshIntervalLabel: "Cache-opdateringsinterval i minutter",
                 SiteUrlLabel: "Webstedets URL for synonymlisten",
-                SynonymListLabel: "Synonymer Liste Navn",
-                SynonymListFieldNameKeyword: "Nøgleord Feltnavn (normalt 'title' feltet)",
-                SynonymListFieldNameSynonyms: "Synonyms Feltnavn (tekst)",
-                SynonymListFieldNameMutual: "Gensidigt feltnavn (ja/nej)"
+                ListNameLabel: "Synonymer Liste Navn",
+                ListFieldNameKeywordLabel: "Nøgleord Feltnavn (normalt 'title' feltet)",
+                ListFieldNameSynonymsLabel: "Synonyms Feltnavn (tekst)",
+                ListFieldNameMutualLabel: "Gensidigt feltnavn (ja/nej)"
             }
         },
         Filters: {

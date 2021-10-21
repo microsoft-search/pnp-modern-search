@@ -1,4 +1,4 @@
-define([], function() {
+define([], function () {
     return {
         Tokens: {
             SelectTokenLabel: "Select a token...",
@@ -307,14 +307,14 @@ define([], function() {
                 }
             },
             Synonyms: {
-                SynonymSettingsGroupName: "Synonyms",
+                GroupName: "Synonyms",
                 EnableSwitchLabel: "Enable Synonyms",
-                SynonymRefreshLabel: "Refesh Interval in Minutes",
-                SiteUrlLabel: "Site URL of Synonym List ",
-                SynonymListLabel: "Synonyms List Name",
-                SynonymListFieldNameKeyword: "Keyword Field Name (normally 'title' field)",
-                SynonymListFieldNameSynonyms: "Synonyms Field Name (text)",
-                SynonymListFieldNameMutual: "Mutual Field Name (yes/no)"
+                CacheRefreshIntervalLabel: "Cache Refresh Interval in Minutes",
+                SiteUrlLabel: "Site URL of Synonym List",
+                ListNameLabel: "Synonyms List Name",
+                ListFieldNameKeywordLabel: "Keyword Field Name (normally 'title' field)",
+                ListFieldNameSynonymsLabel: "Synonyms Field Name (text)",
+                ListFieldNameMutualLabel: "Mutual Field Name (yes/no)"
             }
         },
         Filters: {

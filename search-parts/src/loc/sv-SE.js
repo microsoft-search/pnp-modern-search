@@ -1,4 +1,4 @@
-define([], function () {
+﻿define([], function () {
     return {
       Tokens: {
         SelectTokenLabel: "Välj tecken...",
@@ -307,15 +307,15 @@ define([], function () {
           }
         },
         Synonyms: {
-          SynonymSettingsGroupName: "Synonymer",
-          EnableSwitchLabel: "Aktivera Synonymer",
-          SynonymRefreshLabel: "Intervall för återkoppling i minuter",
-          SiteUrlLabel: "Webbplatsens URL för Synonymer Lista",
-          SynonymListLabel: "Synonymer Lista Namn",
-          SynonymListFieldNameKeyword: "Nyckelord Fältnamn namn (normalt fältet 'titel')",
-          SynonymListFieldNameSynonyms: "Synonymer Fältnamn (text)",
-          SynonymListFieldNameMutual: "Ömsesidigt fältnamn (ja/nej)"
-  }
+        GroupName: "Synonymer",
+        EnableSwitchLabel: "Aktivera Synonymer",
+        CacheRefreshIntervalLabel: "Intervall för uppdatering av cacheminnet i minuter",
+        SiteUrlLabel: "Webbplatsens URL för Synonymer Lista",
+        ListNameLabel: "Synonymer Lista Namn",
+        ListFieldNameKeywordLabel: "Nyckelord Fältnamn namn (normalt fältet 'titel')",
+        ListFieldNameSynonymsLabel: "Synonymer Fältnamn (text)",
+        ListFieldNameMutualLabel: "Ömsesidigt fältnamn (ja/nej)"
+        }
       },
       Filters: {
         ApplyAllFiltersButtonLabel: "Tillämpa",

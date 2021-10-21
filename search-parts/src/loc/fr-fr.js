@@ -1,4 +1,4 @@
-define([], function() {
+define([], function () {
     return {
         Tokens: {
             SelectTokenLabel: "Sélectionnez un jeton...",
@@ -308,14 +308,14 @@ define([], function() {
                 }
             },
             Synonyms: {
-                SynonymSettingsGroupName: "Synonymes",
+                GroupName: "Synonymes",
                 EnableSwitchLabel: "Activation Synonyms",
-                SynonymRefreshLabel: "Intervalle de rafraîchissement en minutes",
+                CacheRefreshIntervalLabel: "Intervalle de rafraîchissement du cache en minutes",
                 SiteUrlLabel: "URL du site de la liste des synonymes ",
-                SynonymListLabel: "Liste des synonymes Nom",
-                SynonymListFieldNameKeyword: "Nom du champ de mots-clés (normalement le champ 'titre')",
-                SynonymListFieldNameSynonyms: "Nom du champ Synonymes (texte)",
-                SynonymListFieldNameMutual: "Nom du champ mutuel (oui/non)"
+                ListNameLabel: "Liste des synonymes Nom",
+                ListFieldNameKeywordLabel: "Nom du champ de mots-clés (normalement le champ 'titre')",
+                ListFieldNameSynonymsLabel: "Nom du champ Synonymes (texte)",
+                ListFieldNameMutualLabel: "Nom du champ mutuel (oui/non)"
             }
         },
         Filters: {

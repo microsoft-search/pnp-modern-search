@@ -168,8 +168,9 @@ export class SynonymsService implements ISynonymsService {
 
             // Get stored values from Local Storage
             var synonymsServiceString = localStorage.getItem(SynonymsService_ServiceKey);
+            var synonymsListCache: ISharePointSynonymsListCache;
             if (synonymsServiceString) {
-                var synonymsListCache: ISharePointSynonymsListCache = JSON.parse(synonymsServiceString)
+                synonymsListCache = JSON.parse(synonymsServiceString);
                 // If Local Storage values are not to old, use them
                 // refresh == 0 means no chaching
                 if (refresh != 0 && new Date(synonymsListCache.updated).getTime() + (1000 * 60 * refresh) > new Date().getTime()) {
@@ -197,7 +198,7 @@ export class SynonymsService implements ISynonymsService {
                     throw new Error(`${response['statusMessage']}`);
                 }
                 // Save values to Local Storage
-                var synonymsListCache: ISharePointSynonymsListCache = { updated: new Date(), synonyms: synonyms };
+                synonymsListCache = { updated: new Date(), synonyms: synonyms };
                 localStorage.setItem(SynonymsService_ServiceKey, JSON.stringify(synonymsListCache));
             }
         }

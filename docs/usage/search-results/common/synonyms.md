@@ -28,6 +28,7 @@ To enable the synonym functionality/expansion you have to configure the followin
 | Setting | Description | Default value |
 | --------| ----------- |---------------|
 |**Enable Synonyms** | Enables or disables the synonyms feature/expansion.|off
+|**Cache Refresh Interval in Minutes** | Refresh Interval Slider to define how often the synonyms cache should be refreshed from the SharePoint list (0-1440, 0=no caching)|1440
 |**Site URL of Synonym list** | The URL of the site where the synonyms list is stored.
 |**Synonyms List Name** | Name of the synonyms list (technical name).
 |**Keyword Field Name** | Name of the field which contains the keyword (technical name)|This is typically the 'Title' field of the list.

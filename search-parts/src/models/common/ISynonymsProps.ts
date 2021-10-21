@@ -8,12 +8,12 @@ export interface ISynonymsProps {
     /**
      * Refesh interval in minutes (to read the synonyms from the defined synonyms list)
      */
-     synonymsRefresh : number;
+     synonymsCacheRefreshInterval : number;
 
     /**
-     * SharePoint web url to the site where the synonyms list is located
+     * SharePoint site url to the site where the synonyms list is located
      */
-     synonymsWebUrl : string;
+     synonymsSiteUrl : string;
 
     /**
      * Name of the synonyms list
@@ -23,15 +23,15 @@ export interface ISynonymsProps {
     /**
      * Name of the keyword column (normally the 'title' field)
      */
-     synonymsFieldNameKeyword : string;
+     synonymsListFieldNameKeyword : string;
 
     /**
      * Name of the synonyms column (text type field)
      */
-     synonymsFieldNameSynonyms : string;
+     synonymsListFieldNameSynonyms : string;
 
     /**
      * Name of the mutual flag column (boolean type)
      */
-     synonymsFieldNameMutual : string;
+     synonymsListFieldNameMutual : string;
 }
