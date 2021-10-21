@@ -1,325 +1,325 @@
 define([], function() {
-    return {
-        Tokens: {
-            SelectTokenLabel: "Select a token...",
-            Context: {
-                ContextTokensGroupName: "Context tokens",
-                SiteAbsoluteUrl: "Site absolute URL",
-                SiteRelativeUrl: "Site server relative URL",
-                WebAbsoluteUrl: "Web absolute URL",
-                WebRelativeUrl: "Web server relative URL",
-                WebTitle: "Web title",
-                InputQueryText: "Input query text"
-            },
-            Custom: {
-                CustomTokensGroupName: "Custom value",
-                CustomValuePlaceholder: "Enter a value...",
-                InvalidtokenFormatErrorMessage: "Please enter a supported token format using '{' and '}'. (ex: {Today})"
-            },
-            Date: {
-                DateTokensGroupName: "Date tokens",
-                Today: "Dziś",
-                Yesterday: "Wczoraj",
-                Tomorrow: "Jutro",
-                OneWeekAgo: "Tydzień temu",
-                OneMonthAgo: "Mieiąc temu",
-                OneYearAgo: "Rok temu"
-            },
-            Page: {
-                PageTokensGroupName: "Page tokens",
-                PageId: "Page ID",
-                PageTitle: "Page Title",
-                PageCustom: "Other page column",
-            },
-            User: {
-                UserTokensGroupName: "User tokens",
-                UserName: "Nazwa użytkownika",
-                Me: "Ja",
-                UserDepartment: "User Department",
-                UserCustom: "User custom property"
-            }
-        },
-        General: {
-            OnTextLabel: "On",
-            OffTextLabel: "Off",
-            StaticArrayFieldName: "Array like field",
-            About: "About",
-            Authors: "Author(s)",
-            Version: "Version",
-            InstanceId: "Web Part instance ID",
-            Resources: {
-                GroupName: "Resources",
-                Documentation: "Documentation",
-                PleaseReferToDocumentationMessage: "Please refer to the official documentation."
-            },
-            Extensibility: {
-                InvalidDataSourceInstance: "The selected data source '{0}' does not implement the 'BaseDataSource' abstract class correctly. Some methods are missing.",
-                DataSourceDefinitionNotFound: "The custom data source with key '{0}' was not found. Make sure the solution is correctly deployed to the app caltog and the manifest ID registered for this Web Part.",
-                LayoutDefinitionNotFound: "The custom layout with key '{0}' was not found. Make sure the solution is correctly deployed to the app caltog and the manifest ID registered for this Web Part.",
-                InvalidLayoutInstance: "The selected layout '{0}' does not implement the 'BaseLayout' abstract class correctly. Some methods are missing.",
-                DefaultExtensibilityLibraryName: "Default extensibility library",
-                InvalidProviderInstance: "The selected suggestions provider '{0}' does not implement the 'BaseSuggestionProvider' abstract class correctly. Some methods are missing.",
-                ProviderDefinitionNotFound: "The custom suggestions provider with key '{0}' was not found. Make sure the solution is correctly deployed to the app caltog and the manifest ID registered for this Web Part.",
-            },
-            DateFromLabel: "From",
-            DateTolabel: "To",
-            DatePickerStrings: {
-                months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-                shortMonths: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                days: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-                shortDays: ['S', 'M', 'T', 'W', 'T', 'F', 'S'],
-                goToToday: 'Go to today',
-                prevMonthAriaLabel: 'Go to previous month',
-                nextMonthAriaLabel: 'Go to next month',
-                prevYearAriaLabel: 'Go to previous year',
-                nextYearAriaLabel: 'Go to next year',
-                closeButtonAriaLabel: 'Close date picker',
-                isRequiredErrorMessage: 'Start date is required.',
-                invalidInputErrorMessage: 'Invalid date format.'
-            },
-            DateIntervalStrings: {
-                AnyTime: "Any time",
-                PastDay: "Past 24 hours",
-                PastWeek: "Past week",
-                PastMonth: "Past month",
-                Past3Months: "Past 3 months",
-                PastYear: "Past year",
-                Older: "Older than a year"
-            },
-            SameTabOpenBehavior: "Use the current tab",
-            NewTabOpenBehavior: "Open in a new tab",
-            PageOpenBehaviorLabel: "Opening behavior",
-            EmptyFieldErrorMessage: "This field cannot be empty"
-        },
-        DataSources: {
-            SharePointSearch: {
-                SourceName: "SharePoint Search",
-                SourceConfigurationGroupName: "Source configuration",
-                QueryTextFieldLabel: "Query text",
-                QueryTextFieldInfoMessage: "Use the <strong>Available connections</strong> Web Part configuration tab to specifiy either a static value or a value from a dynamic component on the page like a searchbox",
-                QueryTemplateFieldLabel: "Query template",
-                QueryTemplatePlaceHolderText: "ex: Path:{Site}",
-                QueryTemplateFieldDescription: "The search query template. You can also use {<tokens>} to build a dynamic query.",
-                ResultSourceIdLabel: "Result source ID",
-                ResultSourceIdDescription: "Use a default SharePoint result source ID or type your own GUID value and press 'Enter' to save.",
-                InvalidResultSourceIdMessage: "The provided value is not a valid GUID",
-                EnableQueryRulesLabel: "Enable query rules",
-                IncludeOneDriveResultsLabel: "Include OneDrive for Business results",
-                RefinementFilters: "Refinement filters",
-                RefinementFiltersDescription: "Initial refinement filters to apply to the query. These won't appear in the selected filters. For string expressions, use double quotes (\") instead of single quote (').",
-                EnableLocalizationLabel: "Enable localization",
-                EnableLocalizationOnLabel: "On",
-                EnableLocalizationOffLabel: "Off",
-                QueryCultureLabel: "Language of search request",
-                QueryCultureUseUiLanguageLabel: "Use interface language",
-                SelectedPropertiesFieldLabel: "Selected properties",
-                SelectedPropertiesFieldDescription: "Specifies the properties to retrieve from the search results.",
-                SelectedPropertiesPlaceholderLabel: "Select properties",
-                TermNotFound: "(Term with ID '{0}' not found)",
-                ApplyQueryTemplateBtnText: "Apply",
-                EnableAudienceTargetingTglLabel: "Enable audience targeting"
-            },
-            MicrosoftSearch: {
-                QueryTextFieldLabel: "Query text",
-                QueryTextFieldInfoMessage: "Use the <strong>Available connections</strong> Web Part configuration tab to specifiy either a static value or a value from a dynamic component on the page like a searchbox",
-                SourceName: "Microsoft Search",
-                SourceConfigurationGroupName: "Microsoft Search",
-                EntityTypesField: "Entity types to search",
-                SelectedFieldsPropertiesFieldLabel: "Selected fields",
-                SelectedFieldsPropertiesFieldDescription: "Specifies the fields to retrieve from the search results.",
-                SelectedFieldsPlaceholderLabel: "Select fields",
-                EnableTopResultsLabel: "Enable top results",
-                ContentSourcesFieldLabel: "Content sources",
-                ContentSourcesFieldDescriptionLabel: "IDs of connections defined in the Microsoft Search connectors administration portal.",
-                ContentSourcesFieldPlaceholderLabel: "ex: 'MyCustomConnectorId'"
-            },
-            SearchCommon: {
-                Sort: {
-                    SortPropertyPaneFieldLabel: "Sort order",
-                    SortListDescription: "Specify the initial sort order for the search results. You can either select a field from the dropdown list (only if the data source data have already be fetched) or type your own custom value (press 'Enter' to save your entry)",
-                    SortDirectionAscendingLabel: "Rosnąco",
-                    SortDirectionDescendingLabel: "Malejąco",
-                    SortErrorMessage: "Invalid search property (Check if the managed property is sortable).",
-                    SortPanelSortFieldLabel: "Sort on field",
-                    SortPanelSortFieldAria: "Sort by",
-                    SortPanelSortFieldPlaceHolder: "Sort by",
-                    SortPanelSortDirectionLabel: "Kierunek sortowania",
-                    SortDirectionColumnLabel: "Kierunek",
-                    SortFieldColumnLabel: "Field name",
-                    EditSortLabel: "Edit sort order",
-                    SortInvalidSortableFieldMessage: "This property is not sortable",
-                    SortFieldColumnPlaceholder: "Select field..."
-                }
-            }
-        },
-        Controls: {
-            TextDialogButtonText: "Add Handlebars expression",
-            TextDialogTitle: "Edit Handlebars expression",
-            TextDialogCancelButtonText: "Cancel",
-            TextDialogSaveButtonText: "Save",
-            SelectItemComboPlaceHolder: "Select property",
-            AddStaticDataLabel: "Add static data",
-            TextFieldApplyButtonText: "Apply"
-        },
-        Layouts: {
-            Debug: {
-                Name: "Debug"
-            },
-            Custom: {
-                Name: "Custom"
-            },
-            SimpleList: {
-                Name: "List",
-                ShowFileIconLabel: "Show file icon",
-                ShowItemThumbnailLabel: "Show thumbnail"
-            },
-            DetailsList: {
-                Name: "Details List",
-                UseHandlebarsExpressionLabel: "Use Handlebars expression",
-                MinimumWidthColumnLabel: "Minimum width (px)",
-                MaximumWidthColumnLabel: "Maximum width (px)",
-                SortableColumnLabel: "Sortable",
-                ResizableColumnLabel: "Resizable",
-                MultilineColumnLabel: "Multiline",
-                LinkToItemColumnLabel: "Link to item",
-                CompactModeLabel: "Compact mode",
-                ShowFileIcon: "Show file icon",
-                ManageDetailsListColumnDescription: "Add, update or remove columns for the details list layout. You can use either property values in the list directly without any transformation or use an Handlebars expression in the value field. HTML is supported for all fields as well.",
-                ManageDetailsListColumnLabel: "Manage columns",
-                ValueColumnLabel: "Column value",
-                DisplayNameColumnLabel: "Column display name",
-                FileExtensionFieldLabel: "Field to use for file extension",
-                GroupByFieldLabel: "Group by field",
-                EnableGrouping: "Enable grouping",
-                CollapsedGroupsByDefault: "Show collapsed",
-                ResetFieldsBtnLabel: "Reset fields to default values"
-            },
-            Cards: {
-                Name: "Cards",
-                ManageTilesFieldsLabel: "Managed card fields",
-                ManageTilesFieldsPanelDescriptionLabel: "Here you can map each field values with the corresponding card placeholders. You can use either a result property directly without any transformation or use an Handlebars expression as field value. Also, when specified, you can also inject your own HTML code in annotated fields.",
-                PlaceholderNameFieldLabel: "Name",
-                SupportHTMLColumnLabel: "Allow HTML",
-                PlaceholderValueFieldLabel: "Value",
-                UseHandlebarsExpressionLabel: "Use Handlebars expression",
-                EnableItemPreview: "Enable result preview",
-                EnableItemPreviewHoverMessage: "Turning on this option may have an impact on performances if too many items are displayed at once and you use the 'AutoPreviewUrl' slot field. We recommend you to use this option with a small amount of items or use predefined preview URLs from your data source fields in slots.",
-                ShowFileIcon: "Show file icon",
-                CompactModeLabel: "Compact mode",
-                PreferedCardNumberPerRow: "Preferred number of cards per row",
-                Fields: {
-                    Title: "Title",
-                    Location: "Location",
-                    Tags: "Tags",
-                    PreviewImage: "Preview Image",
-                    PreviewUrl: "Preview Url",
-                    Url: "Url",
-                    Date: "Date",
-                    Author: "Author",
-                    ProfileImage: "Profile Image Url",
-                    FileExtension: "File Extension",
-                    IsContainer: "Is Folder"
-                },
-                ResetFieldsBtnLabel: "Reset fields to default values"
-            },
-            Slider: {
-                Name: "Slider",
-                SliderAutoPlay: "Auto play",
-                SliderAutoPlayDuration: "Auto play duration (in seconds)",
-                SliderPauseAutoPlayOnHover: "Pause on hover",
-                SliderGroupCells: "Number of elements to group together in slides",
-                SliderShowPageDots: "Show page dots",
-                SliderWrapAround: "Infinite scrolling",
-                SlideHeight: "Slide height (in px)",
-                SlideWidth: "Slide width (in px)"
-            },
-            People: {
-                Name: "People",
-                ManagePeopleFieldsLabel: "Manage people fields",
-                ManagePeopleFieldsPanelDescriptionLabel: "Here you can map each field values with the corresponding persona placeholders. You can use either data source field value directly without any transformation or use an Handlebars expression in the value field.",
-                PlaceholderNameFieldLabel: "Name",
-                PlaceholderValueFieldLabel: "Value",
-                UseHandlebarsExpressionLabel: "Use Handlebars expression",
-                PersonaSizeOptionsLabel: "Component size",
-                PersonaSizeExtraSmall: "Extra small",
-                PersonaSizeSmall: "Small",
-                PersonaSizeRegular: "Regular",
-                PersonaSizeLarge: "Large",
-                PersonaSizeExtraLarge: "Extra large",
-                ShowInitialsToggleLabel: "Show initials if no picture available",
-                SupportHTMLColumnLabel: "Allow HTML",
-                ResetFieldsBtnLabel: "Reset fields to default values",
-                ShowPersonaCardOnHover: "Show persona card on hover",
-                ShowPersonaCardOnHoverCalloutMsg: "This feature uses Microsoft Graph to display information about the user and needs the following API permissions in your tenant to work: ['User.Read','People.Read','Contacts.Read','User.ReadBasic.All'].",
-                Fields: {
-                    ImageUrl: "Image URL",
-                    PrimaryText: "Primary text",
-                    SecondaryText: "Secondary text",
-                    TertiaryText: "Tertiary text",
-                    OptionalText: "Optional text"
-                }
-            },
-            Vertical: {
-                Name: "Vertical"
-            },
-            Horizontal: {
-                Name: "Horizontal",
-                PreferedFilterNumberPerRow: "Preferred number of filters per row",
-            },
-            Panel: {
-                Name: "Panel",
-                IsModal: "Modal",
-                IsLightDismiss: "Light dismiss",
-                Size: "Panel size",
-                ButtonLabel: "Show filters",
-                ButtonLabelFieldName: "Button label to display",
-                HeaderText: "Filters",
-                HeaderTextFieldName: "Panel header text",
-                SizeOptions: {
-                    SmallFixedFar: 'Small (default)',
-                    SmallFixedNear: 'Small, near side',
-                    Medium: 'Medium',
-                    Large: 'Large',
-                    LargeFixed: 'Large fixed-width',
-                    ExtraLarge: 'Extra large',
-                    SmallFluid: 'Full-width (fluid)'
-                }
-            }
-        },
-        HandlebarsHelpers: {
-            CountMessageLong: "<b>{0}</b> results for '<em>{1}</em>'",
-            CountMessageShort: "<b>{0}</b> results",
-        },
-        PropertyPane: {
-            ConnectionsPage: {
-                DataConnectionsGroupName: "Available connections"
-            },
-            InformationPage: {
-                Extensibility: {
-                    GroupName: "Extensibility configuration",
-                    FieldLabel: "Extensibility libraries to load",
-                    ManageBtnLabel: "Configure",
-                    Columns: {
-                        Name: "Name/Purpose",
-                        Id: "Manifest GUID",
-                        Enabled: "Enabled/Disabled"
-                    }
-                }
-            }
-        },
-        Filters: {
-            ApplyAllFiltersButtonLabel: "Apply",
-            ClearAllFiltersButtonLabel: "Clear",
-            FilterNoValuesMessage: "No values for this filter",
-            OrOperator: "OR",
-            AndOperator: "AND",
-            ComboBoxPlaceHolder: "Select value"
-        },
-        SuggestionProviders: {
-            SharePointStatic: {
-                ProviderName: "SharePoint Static search suggestions",
-                ProviderDescription: "Retrieve SharePoint static user defined search suggestions"
-            }
-        }
-    }
+  return {
+      Tokens: {
+          SelectTokenLabel: "Wybierz token...",
+          Context: {
+              ContextTokensGroupName: "Tokeny kontekstowe",
+              SiteAbsoluteUrl: "Absolutny adres URL kolekcji witryn",
+              SiteRelativeUrl: "Relatywny adres URL kolekcji witryn",
+              WebAbsoluteUrl: "Absolutny adres URL witryny",
+              WebRelativeUrl: "Relatywny adres URL witryny",
+              WebTitle: "Tytuł witryny",
+              InputQueryText: "Wprowadź tekst zapytania"
+          },
+          Custom: {
+              CustomTokensGroupName: "Wartość niestandardowa",
+              CustomValuePlaceholder: "Wprowadź wartość...",
+              InvalidtokenFormatErrorMessage: "Proszę wprowadzić poprawny format tokenu używając '{' oraz '}'. (na przykład: {Today})"
+          },
+          Date: {
+              DateTokensGroupName: "Tokeny dat",
+              Today: "Dziś",
+              Yesterday: "Wczoraj",
+              Tomorrow: "Jutro",
+              OneWeekAgo: "Tydzień temu",
+              OneMonthAgo: "Miesiąc temu",
+              OneYearAgo: "Rok temu"
+          },
+          Page: {
+              PageTokensGroupName: "Tokeny strony",
+              PageId: "Identyfikator strony",
+              PageTitle: "Tytuł strony",
+              PageCustom: "Inna kolumna strony",
+          },
+          User: {
+              UserTokensGroupName: "Tokeny użytkownika",
+              UserName: "Nazwa użytkownika",
+              Me: "Ja",
+              UserDepartment: "Departament użytkownika",
+              UserCustom: "Właściwość niestandardowa"
+          }
+      },
+      General: {
+          OnTextLabel: "Włączone",
+          OffTextLabel: "Wyłączone",
+          StaticArrayFieldName: "Tablica jako pole",
+          About: "O produkcie",
+          Authors: "Autorzy",
+          Version: "Wersja",
+          InstanceId: "Identyfikator instancji składnika Web Part",
+          Resources: {
+              GroupName: "Zasoby",
+              Documentation: "Dokumentacja",
+              PleaseReferToDocumentationMessage: "Proszę zapoznać się z oficjalną dokumentacją."
+          },
+          Extensibility: {
+              InvalidDataSourceInstance: "Wybrane źródło danych '{0}' nie implementuje poprawnie klasy abstrakcyjnej 'BaseDataSource'. Brakuje niektórych metod.",
+              DataSourceDefinitionNotFound: "Nie znaleziono niestandardowego źródła danych o kluczu '{0}'. Upewnij się, że rozwiązanie jest poprawnie wdrożone do katalogu aplikacji oraz ID manifetu jest zarejetrowany dla tego składnika Web Part.",
+              LayoutDefinitionNotFound: "Nie znaleziono niestandardowego układu o kluczu '{0}'. Upewnij się, że rozwiązanie jest poprawnie wdrożone do katalogu aplikacji oraz ID manifetu jest zarejetrowany dla tego składnika Web Part.",
+              InvalidLayoutInstance: "Wybrane układ '{0}' nie implementuje poprawnie klasy abstrakcyjnej 'BaseLayout'. Brakuje niektórych metod.",
+              DefaultExtensibilityLibraryName: "Domyślna biblioteka rozszerzalności",
+              InvalidProviderInstance: "Wybrany dostawca sugestii '{0}' nie implementuje poprawnie abstrakcyjnej klasy 'BaseSuggestionProvider'. Brakuje niektórych metod.",
+              ProviderDefinitionNotFound: "Nie znaleziono niestandardowego dostawcy sugestii o kluczu '{0}'. Upewnij się, że rozwiązanie jest poprawnie wdrożone do katalogu aplikacji oraz ID manifetu jest zarejetrowany dla tego składnika Web Part.",
+          },
+          DateFromLabel: "Od",
+          DateTolabel: "Do",
+          DatePickerStrings: {
+              months: ['Styczeń', 'Luty', 'Marzec', 'Kwiecień', 'Maj', 'Czerwiec', 'Lipiec', 'Sierpień', 'Wrzesień', 'Październik', 'Listopad', 'Grudzień'],
+              shortMonths: ['Sty', 'Lut', 'Mar', 'Kwi', 'Maj', 'Cze', 'Lip', 'Sie', 'Wrz', 'Paź', 'Lis', 'Gru'],
+              days: ['Niedziela', 'Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota'],
+              shortDays: ['N', 'P', 'W', 'Ś', 'C', 'P', 'S'],
+              goToToday: 'Dziś',
+              prevMonthAriaLabel: 'Poprzedni miesiąc',
+              nextMonthAriaLabel: 'Następny miesiąć',
+              prevYearAriaLabel: 'Poprzedni rok',
+              nextYearAriaLabel: 'Następny rok',
+              closeButtonAriaLabel: 'Zamknij wybór daty',
+              isRequiredErrorMessage: 'Data początkowa jest wymagana.',
+              invalidInputErrorMessage: 'Nieprawidłowy format daty.'
+          },
+          DateIntervalStrings: {
+              AnyTime: "Dowolny czas",
+              PastDay: "Ostatnie 24 godziny",
+              PastWeek: "Ostatni tydzień",
+              PastMonth: "Ostatni miesiąc",
+              Past3Months: "Ostatie 3 miesiące",
+              PastYear: "Ostatni rok",
+              Older: "Starsze niż rok"
+          },
+          SameTabOpenBehavior: "Użyj bieżącej karty",
+          NewTabOpenBehavior: "Otwórz w nowej karcie",
+          PageOpenBehaviorLabel: "Sposób otwierania",
+          EmptyFieldErrorMessage: "To pole nie może być puste"
+      },
+      DataSources: {
+          SharePointSearch: {
+              SourceName: "SharePoint Search",
+              SourceConfigurationGroupName: "Konfiguracja źródła",
+              QueryTextFieldLabel: "Tekst zapytania",
+              QueryTextFieldInfoMessage: "Użyj karty <strong>Dostępne połączenia</strong> konfiguracji składnika Web Part aby wskazać wartość statyczną lub wartość dynamiczną z komponentu na stronie, jak na przykład searchbox",
+              QueryTemplateFieldLabel: "Szablon zapytania",
+              QueryTemplatePlaceHolderText: "przykładowo: Path:{Site}",
+              QueryTemplateFieldDescription: "Szablon zapytania. Możesz używać {<tokeny>} aby zbudować dynamiczne zapytanie.",
+              ResultSourceIdLabel: "Identyfikator źródła wyników",
+              ResultSourceIdDescription: "Użyj domyślnego źródła wyników lub wpisz własny GUID i naciśnij 'Enter' aby zapisać.",
+              InvalidResultSourceIdMessage: "Wprowadzona wartość nie jest poprawnym GUID",
+              EnableQueryRulesLabel: "Włącz reguły zapytania",
+              IncludeOneDriveResultsLabel: "Dołączaj wyniki z OneDrive for Business",
+              RefinementFilters: "Filtry zawężające",
+              RefinementFiltersDescription: "Początkowe filtry zawężające stosowane do zapytania. Nie pojawią się one w wybranych filtrach. Dla wyrażeń tekstowych, używaj cudzysłowów (\") zamiast apostrofów (').",
+              EnableLocalizationLabel: "Włącz lokalizację",
+              EnableLocalizationOnLabel: "Włączone",
+              EnableLocalizationOffLabel: "Wyłączone",
+              QueryCultureLabel: "Język dla zapytań wyszukiwania",
+              QueryCultureUseUiLanguageLabel: "Użyj języka interfejsu",
+              SelectedPropertiesFieldLabel: "Wybrane właściwości",
+              SelectedPropertiesFieldDescription: "Wskaż właściwości do pobrania.",
+              SelectedPropertiesPlaceholderLabel: "Wybierz właściwości",
+              TermNotFound: "(Nie znaleziono terminu o identyfikatorze '{0}')",
+              ApplyQueryTemplateBtnText: "Zastosuj",
+              EnableAudienceTargetingTglLabel: "Włącz audiencje"
+          },
+          MicrosoftSearch: {
+              QueryTextFieldLabel: "Tekst zapytania",
+              QueryTextFieldInfoMessage: "Użyj karty <strong>Dostępne połączenia</strong> konfiguracji składnika Web Part aby wskazać wartość statyczną lub wartość dynamiczną z komponentu na stronie, jak na przykład searchbox",
+              SourceName: "Microsoft Search",
+              SourceConfigurationGroupName: "Microsoft Search",
+              EntityTypesField: "Typy encji do wyszukania",
+              SelectedFieldsPropertiesFieldLabel: "Wybrane pola",
+              SelectedFieldsPropertiesFieldDescription: "Wskaż właściwości do pobrania.",
+              SelectedFieldsPlaceholderLabel: "Wybierz pola",
+              EnableTopResultsLabel: "Włącz najlepsze wyniki",
+              ContentSourcesFieldLabel: "Źródła zawartości",
+              ContentSourcesFieldDescriptionLabel: "Identyfikatory połączeń zdefiniowanych w portalu administracyjnym Microsoft Search.",
+              ContentSourcesFieldPlaceholderLabel: "przykładowo: 'MyCustomConnectorId'"
+          },
+          SearchCommon: {
+              Sort: {
+                  SortPropertyPaneFieldLabel: "Kolejność sortowania",
+                  SortListDescription: "Wybierz początkowy porzdek sortowania. Możesz wskazać pole z listy rozwijalnej (tylko jeśli dane zostały już pobrane) lub wprowadzić własną wartość niestandardową (naciśnij 'Enter' aby zapisać)",
+                  SortDirectionAscendingLabel: "Rosnąco",
+                  SortDirectionDescendingLabel: "Malejąco",
+                  SortErrorMessage: "Nieprawidłowa właściwość wyszukiwania (sprawdź czy właściwość jest sortowalna).",
+                  SortPanelSortFieldLabel: "Sortowanie po polu",
+                  SortPanelSortFieldAria: "Sortowanie po",
+                  SortPanelSortFieldPlaceHolder: "Sortowanie po",
+                  SortPanelSortDirectionLabel: "Kierunek sortowania",
+                  SortDirectionColumnLabel: "Kierunek",
+                  SortFieldColumnLabel: "Nazwa pola",
+                  EditSortLabel: "Edytuj porządek sortowania",
+                  SortInvalidSortableFieldMessage: "Ta właściwość nie jest sortowalna",
+                  SortFieldColumnPlaceholder: "Wybierz pole..."
+              }
+          }
+      },
+      Controls: {
+          TextDialogButtonText: "Dodaj wyrażenie Handlebars",
+          TextDialogTitle: "Edytuj wyrażenie Handlebars",
+          TextDialogCancelButtonText: "Anuluj",
+          TextDialogSaveButtonText: "Zapisz",
+          SelectItemComboPlaceHolder: "Wybierz właściwość",
+          AddStaticDataLabel: "Dodaj dane statyczne",
+          TextFieldApplyButtonText: "Zastosuj"
+      },
+      Layouts: {
+          Debug: {
+              Name: "Diagnostyczny"
+          },
+          Custom: {
+              Name: "Niestandardowy"
+          },
+          SimpleList: {
+              Name: "Lista",
+              ShowFileIconLabel: "Pokaż ikonę pliku",
+              ShowItemThumbnailLabel: "Pokaż miniaturę"
+          },
+          DetailsList: {
+              Name: "Lista ze szczegółami",
+              UseHandlebarsExpressionLabel: "Użyj wyrażenia Handlebars",
+              MinimumWidthColumnLabel: "Minimalna szerokość (px)",
+              MaximumWidthColumnLabel: "Maksymalna szerokość (px)",
+              SortableColumnLabel: "Sortowalne",
+              ResizableColumnLabel: "Skalowalne",
+              MultilineColumnLabel: "Wieloliniowe",
+              LinkToItemColumnLabel: "Łącze do elementu",
+              CompactModeLabel: "Tryb kompaktowy",
+              ShowFileIcon: "Pokaż ikonę pliku",
+              ManageDetailsListColumnDescription: "Dodawaj, usuwaj i aktualizuj kolumny układu listy ze szczegółami. Możesz używać wartości pól bezpośrednio bez żadnych przekształceń lub użyć wyrażeń Handlebars. HTML jest wspierany przez wszystkie pola.",
+              ManageDetailsListColumnLabel: "Zarządzaj kolumnami",
+              ValueColumnLabel: "Wartość kolumny",
+              DisplayNameColumnLabel: "Nazwa wyświetlana kolumny",
+              FileExtensionFieldLabel: "Pole używane dla rozszerzenia pliku",
+              GroupByFieldLabel: "Grupuj po polu",
+              EnableGrouping: "Grupowanie włączone",
+              CollapsedGroupsByDefault: "Pokaż zapadnięte",
+              ResetFieldsBtnLabel: "Resetuj pola do wartości domyślnych"
+          },
+          Cards: {
+              Name: "Karty",
+              ManageTilesFieldsLabel: "Pola kart",
+              ManageTilesFieldsPanelDescriptionLabel: "Tutaj możesz przyporządkować wartości pól do symboli zastępczych (placeholders). Możesz używać wartości pól bezpośrednio bez żadnych przekształceń lub użyć wyrażeń Handlebars. Również możesz umieścić własny kod HTML w polach z adnotacjami.",
+              PlaceholderNameFieldLabel: "Nazwa",
+              SupportHTMLColumnLabel: "Zezwalaj na HTML",
+              PlaceholderValueFieldLabel: "Wartość",
+              UseHandlebarsExpressionLabel: "Użyj wyrażenia Handlebars",
+              EnableItemPreview: "Włącz podgląd wyniku",
+              EnableItemPreviewHoverMessage: "Włączenie tej opcji może mieć skutki wydajnościowe jeśli będzie widocznych zbyt wiele elementów używających slotu 'AutoPreviewUrl'. Rekomenduje się użyte tej opcji tylko dl małych ilości elementów lub użycie predefiniowanych URL podglądu ze źródła danych w slotach.",
+              ShowFileIcon: "Pokaż ikonę pliku",
+              CompactModeLabel: "Tryb kompaktowy",
+              PreferedCardNumberPerRow: "Preferowana liczba kart na wiersz",
+              Fields: {
+                  Title: "Tytuł",
+                  Location: "Lokalizacja",
+                  Tags: "Tagi",
+                  PreviewImage: "Obraz podglądu",
+                  PreviewUrl: "URL podglądu",
+                  Url: "URL",
+                  Date: "Data",
+                  Author: "Autor",
+                  ProfileImage: "URL obrazu profilu",
+                  FileExtension: "Rozszerzenie pliku",
+                  IsContainer: "Jest folderem"
+              },
+              ResetFieldsBtnLabel: "Resetuj pola do wartości domyślnych"
+          },
+          Slider: {
+              Name: "Slajder",
+              SliderAutoPlay: "Autoodtwarzanie",
+              SliderAutoPlayDuration: "Czas autoodtwarzania (w sekundach)",
+              SliderPauseAutoPlayOnHover: "Pauza podczas wskazania",
+              SliderGroupCells: "Liczba elementów grupowanych na slajdach",
+              SliderShowPageDots: "Pokaż kropki",
+              SliderWrapAround: "Nieskończone przewijanie",
+              SlideHeight: "Wysokość slajdu (w pikselach)",
+              SlideWidth: "Szerokość slajdu (w pikselach)"
+          },
+          People: {
+              Name: "Osoba",
+              ManagePeopleFieldsLabel: "Zarządzaj polami",
+              ManagePeopleFieldsPanelDescriptionLabel: "Tutaj możesz przyporządkować wartości pól do symboli zastępczych (placeholders). Możesz używać wartości pól bezpośrednio bez żadnych przekształceń lub użyć wyrażeń Handlebars.",
+              PlaceholderNameFieldLabel: "Nazwa",
+              PlaceholderValueFieldLabel: "Wartość",
+              UseHandlebarsExpressionLabel: "Użyj wyrażenia Handlebars",
+              PersonaSizeOptionsLabel: "Rozmiar komponentu",
+              PersonaSizeExtraSmall: "Bardzo mały",
+              PersonaSizeSmall: "Mały",
+              PersonaSizeRegular: "Standardowy",
+              PersonaSizeLarge: "Duży",
+              PersonaSizeExtraLarge: "Bardzo duży",
+              ShowInitialsToggleLabel: "Pokaż inicjały jeśli zdjęcie nie jest dostępne",
+              SupportHTMLColumnLabel: "Zezwalaj na HTML",
+              ResetFieldsBtnLabel: "Resetuj pola do wartości domyślnych",
+              ShowPersonaCardOnHover: "Pokaż kartę po wskazaniu",
+              ShowPersonaCardOnHoverCalloutMsg: "Ta funkcja używa Microsoft Graph aby wyświetlić informacje o użytkowniku i wymaga następujcych uprawnień API: ['User.Read','People.Read','Contacts.Read','User.ReadBasic.All'].",
+              Fields: {
+                  ImageUrl: "URL obrazu",
+                  PrimaryText: "Tekst podstawowy",
+                  SecondaryText: "Tekst drugorzędny",
+                  TertiaryText: "Tekst trzeciorzędny",
+                  OptionalText: "Tekst opcjonalny"
+              }
+          },
+          Vertical: {
+              Name: "Pionowo"
+          },
+          Horizontal: {
+              Name: "Poziomo",
+              PreferedFilterNumberPerRow: "Preferowana liczba filtrów na wiersz",
+          },
+          Panel: {
+              Name: "Panel",
+              IsModal: "Modal",
+              IsLightDismiss: "Light dismiss",
+              Size: "Rozmiar panelu",
+              ButtonLabel: "Pokaż filtry",
+              ButtonLabelFieldName: "Etykieta przycisku",
+              HeaderText: "Filtry",
+              HeaderTextFieldName: "Tekst nagłówka panelu",
+              SizeOptions: {
+                  SmallFixedFar: 'Małe (domyślnie)',
+                  SmallFixedNear: 'Małe, blisko strony',
+                  Medium: 'Średnie',
+                  Large: 'Duże',
+                  LargeFixed: 'Duże (stały rozmiar)',
+                  ExtraLarge: 'Bardzo duże',
+                  SmallFluid: 'Pełna szerokość (płynnie)'
+              }
+          }
+      },
+      HandlebarsHelpers: {
+          CountMessageLong: "<b>{0}</b> wyników dla '<em>{1}</em>'",
+          CountMessageShort: "<b>{0}</b> wyników",
+      },
+      PropertyPane: {
+          ConnectionsPage: {
+              DataConnectionsGroupName: "Dostępne połączenia"
+          },
+          InformationPage: {
+              Extensibility: {
+                  GroupName: "Konfiguracja rozszerzalności",
+                  FieldLabel: "Używane biblioteki rozszerzalności",
+                  ManageBtnLabel: "Konfiguruj",
+                  Columns: {
+                      Name: "Nazwa/Cel",
+                      Id: "GUID manifestu",
+                      Enabled: "Włączone/Wyłączone"
+                  }
+              }
+          }
+      },
+      Filters: {
+          ApplyAllFiltersButtonLabel: "Zastosuj",
+          ClearAllFiltersButtonLabel: "Wyczyść",
+          FilterNoValuesMessage: "Brak wartości dla tego filtra",
+          OrOperator: "LUB",
+          AndOperator: "ORAZ",
+          ComboBoxPlaceHolder: "Wybierz wartość"
+      },
+      SuggestionProviders: {
+          SharePointStatic: {
+              ProviderName: "SharePoint Static search suggestions",
+              ProviderDescription: "Pobieranie sugestii wyszukiwania SharePoint zdefiniowanych przez użytkownika"
+          }
+      }
+  }
 })
