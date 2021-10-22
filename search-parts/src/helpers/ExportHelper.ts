@@ -96,7 +96,7 @@ export class ExportHelper {
         const regexpItem = new RegExp(/item\.(resource\.)?(fields\.)?(?<name>\w+)/gm);
         const regexpSlots = new RegExp(/slots\.(?<name>\w+)/gm);
         return columnsConfiguration.map(column => {
-            const result = []
+            const result = [];
             if (!column.useHandlebarsExpr && column.value) result.push(column.value);
             else if (column.value) {
                 let match: RegExpExecArray;

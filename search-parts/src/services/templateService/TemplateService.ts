@@ -292,7 +292,7 @@ export class TemplateService implements ITemplateService {
         // Use configuration
         fieldsConfiguration.forEach(configuration => {
             const { value, hasError } = HandlebarsHelper.getColumnValue(configuration, item, templateContext, this.Handlebars, 
-                (error) => `###Error: ${error.message}###`, { noEscape: true })
+                (error) => `###Error: ${error.message}###`, { noEscape: true });
 
             processedProps[configuration.field] = value;
         });

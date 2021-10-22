@@ -41,10 +41,10 @@ enum ExportType {
 }
 
 export interface IExportComponentState {
-    hideInfoDialog: boolean
-    isExporting: boolean
-    exportType: ExportType,
-    exportProgress: number
+    hideInfoDialog: boolean;
+    isExporting: boolean;
+    exportType: ExportType;
+    exportProgress: number;
 }
 
 export class ExportComponent extends React.Component<IExportComponentProps, IExportComponentState> {
@@ -99,8 +99,8 @@ export class ExportComponent extends React.Component<IExportComponentProps, IExp
                     await this.dataSourceContext.dataSource.onInit();
                 }
 
-                const filtersSourceData: IDataFilterSourceData = { instanceId: instanceId, filterOperator: filterOperator, filterConfiguration: filtersConfiguration, selectedFilters: selectedFilters }
-                DataSourceHelper.setTokens(this.dataSourceContext.tokenService, context.inputQueryText, filtersSourceData)
+                const filtersSourceData: IDataFilterSourceData = { instanceId: instanceId, filterOperator: filterOperator, filterConfiguration: filtersConfiguration, selectedFilters: selectedFilters };
+                DataSourceHelper.setTokens(this.dataSourceContext.tokenService, context.inputQueryText, filtersSourceData);
 
                 console.time("fetching");
                 try {
@@ -112,7 +112,7 @@ export class ExportComponent extends React.Component<IExportComponentProps, IExp
                         const itemResults = await Promise.all(pagesToProcess.map(async page => {
                             const data = await this.dataSourceContext.dataSource.getData({
                                 inputQueryText: context.inputQueryText, itemsCountPerPage: this.pagesize, pageNumber: page, filters: context.filters
-                            })
+                            });
                             itemsFetched += data.items?.length || 0;
                             this.setState({ exportProgress: itemsFetched / (progressMax * 2) });
                             return data.items || [];
@@ -131,7 +131,7 @@ export class ExportComponent extends React.Component<IExportComponentProps, IExp
                     console.log(`Error occurred while fetching result for csv export. ${error}`);
                 }
                 finally {
-                    console.timeEnd("fetching")
+                    console.timeEnd("fetching");
                 }
             }
             else {
@@ -144,25 +144,25 @@ export class ExportComponent extends React.Component<IExportComponentProps, IExp
                     return {
                         column: c,
                         template: c.useHandlebarsExpr && c.value ? HandlebarsHelper.getHandleBarsTemplate(c.value, handlebars) : null
-                    }
+                    };
                 });
                 var result = items.map((item, index) => {
                     return columnWithHandler.map(({ column, template }) => {
                         const { value, hasError } = HandlebarsHelper.getColumnValueWithHandler(column, item,
-                            () => HandlebarsHelper.getHandleBarsContentValue(item, context, template))
+                            () => HandlebarsHelper.getHandleBarsContentValue(item, context, template));
                         errorColumnValue = errorColumnValue || hasError;
                         if (index % 100 == 0) this.setState({ exportProgress: items.length + index / (progressMax * 2) });
                         return value;
                     });
                 });
-                console.timeEnd("mapvalues")
+                console.timeEnd("mapvalues");
 
 
                 console.time("exporttocsv");
                 const emptyRows = result.filter(r => r.every(c => !c)).length;
                 ExportHelper.exportToCsv(fileName + this.extension, result, columnsConfiguration.map(c => c.name));
                 console.log(`Processed '${fileName + this.extension}', items total exported ${result.length}, has error column value: ${errorColumnValue}, empty rows: ${emptyRows}`);
-                console.timeEnd("exporttocsv")
+                console.timeEnd("exporttocsv");
             }
         }
         finally {
@@ -187,7 +187,7 @@ export class ExportComponent extends React.Component<IExportComponentProps, IExp
                             key: 'exportAll',
                             text: strings.Controls.ExportAllLabel?.replace("{maxhits}", this.maxhits.toString()),
                             iconProps: { iconName: 'SaveAll' },
-                            onClick: () => { this.exportTrigger(true) },
+                            onClick: () => { this.exportTrigger(true); },
                             disabled: disableExport
                         },
                         {
@@ -215,7 +215,7 @@ export class ExportComponent extends React.Component<IExportComponentProps, IExp
                 </DialogFooter>
             </Dialog>}
             {isExporting && <ProgressIndicator percentComplete={exportProgress} />}
-        </>
+        </>;
     }
 }
 
@@ -246,7 +246,7 @@ export class ExportWebComponent extends BaseWebComponent {
         {
             dataSourceKey: props.dataSourceKey,
             columnsConfiguration: props.columnsConfiguration ? props.columnsConfiguration as IExportColumnConfiguration[] : []
-        }
+        };
 
         const exportComponent = <ExportComponent {...props} {...parsedProps} handlebars={templateService.Handlebars} serviceScope={serviceScope} />;
         ReactDOM.render(exportComponent, this);

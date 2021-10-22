@@ -200,7 +200,7 @@ export class SliderComponent extends React.Component<ISliderComponentProps, ISli
                         >
                         {items.map((item, index) => {
                             
-                            const templateContentValue  = HandlebarsHelper.getHandleBarsTemplateContentValue(this.props.template.trim(), item, templateContext, this.props.handlebars)
+                            const templateContentValue  = HandlebarsHelper.getHandleBarsTemplateContentValue(this.props.template.trim(), item, templateContext, this.props.handlebars);
                             
                             return  <div style={{ position: 'relative' }} key={index}>
                                         <div dangerouslySetInnerHTML={ { __html : this._domPurify.sanitize(templateContentValue)}}></div>    

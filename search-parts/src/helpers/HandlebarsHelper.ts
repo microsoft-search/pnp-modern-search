@@ -4,11 +4,6 @@ import { ObjectHelper } from "./ObjectHelper";
 
 export class HandlebarsHelper {
 
-  /**
-   * The isolated Handlebars namespace 
-   */
-  handlebars: typeof Handlebars;
-
   public static getColumnValue(column: IHandlebarsColumnConfiguration, item: any, templateContext: IDataResultsTemplateContext, handlebars: typeof Handlebars, valueFallbackOnError?: (error: any) => string, options?: CompileOptions): { value: any, hasError: boolean } {
 
     return this.getColumnValueWithHandler(column, item, () => 
