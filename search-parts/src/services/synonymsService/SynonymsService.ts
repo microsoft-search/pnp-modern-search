@@ -166,21 +166,25 @@ export class SynonymsService implements ISynonymsService {
                 throw new Exception("Synonyms configuration not completed or wrong");
             }
 
+            // preparing a unique local storage key so that we can have different synonyms lists
+            var listUrl = webUrl + "/lists/" + listName;
+            var localStorageKey = SynonymsService_ServiceKey + "_" + listUrl;
+
             // Get stored values from Local Storage
-            var synonymsServiceString = localStorage.getItem(SynonymsService_ServiceKey);
+            var synonymsServiceString = localStorage.getItem(localStorageKey);
             var synonymsListCache: ISharePointSynonymsListCache;
             if (synonymsServiceString) {
                 synonymsListCache = JSON.parse(synonymsServiceString);
                 // If Local Storage values are not to old, use them
                 // refresh == 0 means no chaching
                 if (refresh != 0 && new Date(synonymsListCache.updated).getTime() + (1000 * 60 * refresh) > new Date().getTime()) {
-                    Log.info(SynonymsService_ServiceKey, 'Get Synonyms from LocalStorage');
+                    Log.verbose(SynonymsService_ServiceKey, 'Getting synonyms from LocalStorage ' + localStorageKey);
                     synonyms = synonymsListCache.synonyms;
                 }
             }
-            // Check if Local Storage values are used. If empty, get values via List
+            // Check if Local Storage values are used. If empty (no local storage values or to old), get values via List
             if (synonyms.length == 0) {
-                Log.info(SynonymsService_ServiceKey, 'Get Synonyms from List');
+                Log.verbose(SynonymsService_ServiceKey, 'Getting synonyms from list ' + listUrl);
                 const response = await this.spHttpClient.get(`${webUrl}/_api/web/lists/getbytitle('${listName}')/items`, SPHttpClient.configurations.v1, {
                     headers: {
                         'X-ClientService-ClientTag': Constants.X_CLIENTSERVICE_CLIENTTAG,
@@ -199,7 +203,7 @@ export class SynonymsService implements ISynonymsService {
                 }
                 // Save values to Local Storage
                 synonymsListCache = { updated: new Date(), synonyms: synonyms };
-                localStorage.setItem(SynonymsService_ServiceKey, JSON.stringify(synonymsListCache));
+                localStorage.setItem(localStorageKey, JSON.stringify(synonymsListCache));
             }
         }
         catch (error) {
