@@ -18,11 +18,13 @@
         },
         "title": {
             "default": "PnP - Search Results",
-            "fr-fr": "PnP - Résultats de recherche"
+            "fr-fr": "PnP - Résultats de recherche",
+            "pl-pl": "PnP - Wyniki wyszukiwania"
         },
         "description": {
             "default": "Displays JSON based data using customizable templates",
-            "fr-fr": "Affiche des données de multiples source de données au format JSON selon des modèles d'affichage personnalisables."
+            "fr-fr": "Affiche des données de multiples source de données au format JSON selon des modèles d'affichage personnalisables.",
+            "pl-pl": "Wyświetla dane typu JSON używając konfigurowalnych szablonów"
         },
         "officeFabricIconFontName": "SearchAndApps",
         "properties": {
