@@ -64,3 +64,12 @@ Using an indexed property bag value could be useful to store information about a
 `L0|#a2cf1afb-44b6-4cf4-bf37-642bb2e9bff3|Category 1;L0|#02e3406c0-1048-4bce-90eb-e7a51dfa7f31|Category3;L0|#07e094327-23d7-48af-9699-781eb26dc40f|Category2`
 
 These taxonomy values can then be used in the Filters Web Part using a `RefinableStringXX` search managed property to filter specific sites or elements. As an example, you can refer to the ["Create an end-to-end Office 365 groups provisioning solution"](https://github.com/pnp/tutorial-workspace-provisioning) tutorial GitHub project to leverage this format.
+
+## Filter deep linking
+
+The Search Filter Web Part supports deep linking, meaning you can preselect filters from the URL at page load. When filter values are selected, a query string parameter `f` is append to the current URL containing the current filter values data.
+
+!["Filters deep linking"](../../assets/webparts/search-filters/filter_deep_linking.png){: .center}
+
+!!! important
+    **We recommend to use the URL generated from filter values selection instead of crafting the URL manually.**
