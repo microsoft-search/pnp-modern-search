@@ -15,11 +15,13 @@
         },
         "title": {
             "default": "PnP - Search Filters",
-            "fr-fr": "PnP - Filtres de recherche"
+            "fr-fr": "PnP - Filtres de recherche",
+            "pl-pl": "PnP - Filtry wyszukiwania"
         },
         "description": {
             "default": "Filters results from the search results Web Part",
-            "fr-fr": "Filtre les résultats provenant du Web Part de visualistion de données"
+            "fr-fr": "Filtre les résultats provenant du Web Part de visualistion de données",
+            "pl-pl": "Filtruje wyniki ze składnika Web Part Wyników wyszukiwania"
         },
         "officeFabricIconFontName": "Filter",
         "properties": {
