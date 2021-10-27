@@ -268,8 +268,8 @@ define([], function() {
           },
           Panel: {
               Name: "Panel",
-              IsModal: "Modal",
-              IsLightDismiss: "Light dismiss",
+              IsModal: "Modalny",
+              IsLightDismiss: "Lekkie odrzucenie",
               Size: "Rozmiar panelu",
               ButtonLabel: "Pokaż filtry",
               ButtonLabelFieldName: "Etykieta przycisku",
