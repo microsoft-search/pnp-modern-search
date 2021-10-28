@@ -59,6 +59,7 @@ import { IDataVerticalSourceData } from '../../models/dynamicData/IDataVerticalS
 import { BaseWebPart } from '../../common/BaseWebPart';
 import { ApplicationInsights } from '@microsoft/applicationinsights-web';
 import commonStyles from '../../styles/Common.module.scss';
+import { UrlHelper } from '../../helpers/UrlHelper';
 
 const LogSource = "SearchResultsWebPart";
 
@@ -290,6 +291,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 filterOperator: undefined
             },
             inputQueryText: inputQueryText,
+            queryStringParameters: UrlHelper.getQueryStringParams()
         };
 
         if (this.dataSource) {
@@ -1941,9 +1943,15 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     }
 
     private pushStateHandler(state, key, path) {
+        
         this._pushStateCallback.apply(history, [state, key, path]);
-        if (this.properties.queryText.isDisposed) return;
+        if (this.properties.queryText.isDisposed) {
+            return;
+        }
+
         const source = this.properties.queryText.tryGetSource();
-        if (source && source.id === ComponentType.PageEnvironment) this.render();
+        if (source && source.id === ComponentType.PageEnvironment) {
+            this.render();
+        }
     }
 }

@@ -171,7 +171,7 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
                 role={"menubar"}
                 tabIndex={0}
                 onClick={() => {
-                    this._onTogglePanel(props)
+                    this._onTogglePanel(props);
                 }}
                 onKeyPress={(e) => {
                     if (e.charCode === 13) {

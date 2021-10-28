@@ -6,7 +6,7 @@ define([], function() {
         PropertyPane: {
             SearchVerticalsGroupName: "Konfigurera sökvertikaler",
             Verticals: {
-                PropertyLabel: "Data vertikaler",
+                PropertyLabel: "Datavertikaler",
                 PanelHeader: "Konfigurera vertikala data",
                 PanelDescription: "Lägg till en ny vertikal så att användare kan söka i en fördefinierad datakälla eller omfattning.",
                 ButtonLabel: "Konfigurera",
