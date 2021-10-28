@@ -624,7 +624,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
       }
 
       this.getFiltersDeepLink();
-    }      
+    };      
   }
 
   private resetSelectedFilterValues(currentUiFilters: IDataFilterInternal[]): IDataFilterInternal[] {
