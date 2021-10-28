@@ -69,6 +69,8 @@ These taxonomy values can then be used in the Filters Web Part using a `Refinabl
 
 The Search Filter Web Part supports deep linking, meaning you can preselect filters from the URL at page load. When filter values are selected, a query string parameter `f` is append to the current URL containing the current filter values data.
 
+> If you have connected the search result web part to a search box, ensure the search term is set to be dynamic and part of the URL in the search box web part. If not, copying the URL will not contain the search terms."
+
 !["Filters deep linking"](../../assets/webparts/search-filters/filter_deep_linking.png){: .center}
 
 !!! important
