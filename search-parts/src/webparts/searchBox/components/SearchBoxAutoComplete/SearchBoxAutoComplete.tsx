@@ -35,7 +35,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
 
         this._updateQuerySuggestions = this._updateQuerySuggestions.bind(this);
         this._selectQuerySuggestion = this._selectQuerySuggestion.bind(this);
-        this._handleOnClear = this._handleOnClear.bind(this)
+        this._handleOnClear = this._handleOnClear.bind(this);
         this._containerElemRef = React.createRef();
     }
 

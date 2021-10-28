@@ -314,7 +314,7 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
             key: `${field.id}-${itemId}`,
             checked: item[field.id] ? item[field.id] : false,
             onChange: (ev, value) => {
-                onChange(field.id, value)
+                onChange(field.id, value);
                 this._updateRequiredValueSorting(value, otherDependentField, item, onCustomFieldValidation);
             },
             disabled: field.disableEdit,
