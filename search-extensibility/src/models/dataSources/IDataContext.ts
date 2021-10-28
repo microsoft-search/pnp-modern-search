@@ -1,5 +1,6 @@
 import { IDataFilterConfiguration } from '../filters/IDataFilterConfiguration';
 import { IDataFilter, FilterConditionOperator } from '../filters/IDataFilter';
+import { ISortFieldConfiguration } from '../ISortFieldConfiguration';
 
 /**
  * Provides useful information about the current Web Part context.
@@ -63,4 +64,20 @@ export interface IDataContext {
          */
         instanceId?: string;
     };
+
+    /**
+     * Data source sorting information
+     */
+    sorting?: {
+
+        /**
+         * The current selected sorting for this data source
+         */
+        selectedSorting?: ISortFieldConfiguration[];
+    };
+
+    /**
+     * Information about current query string parameters
+     */
+    queryStringParameters?: {[name: string]: string };
 }

@@ -59,6 +59,7 @@ import { IDataVerticalSourceData } from '../../models/dynamicData/IDataVerticalS
 import { BaseWebPart } from '../../common/BaseWebPart';
 import { ApplicationInsights } from '@microsoft/applicationinsights-web';
 import commonStyles from '../../styles/Common.module.scss';
+import { UrlHelper } from '../../helpers/UrlHelper';
 
 const LogSource = "SearchResultsWebPart";
 
@@ -258,8 +259,20 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         let renderRootElement: JSX.Element = null;
         let renderDataContainer: JSX.Element = null;
 
-        const valueFromDynamicSource = this.properties.queryText.tryGetValue();
-        const decodedValueFromDynamicSource = valueFromDynamicSource ? decodeURIComponent(valueFromDynamicSource) : null;
+        let valueFromDynamicSource = "";
+        if (this.properties.queryText && !this.properties.queryText.isDisposed) {
+
+            valueFromDynamicSource = this.properties.queryText.tryGetValue();
+            try {
+                valueFromDynamicSource = decodeURIComponent(valueFromDynamicSource);
+
+            } catch (error) {
+                // Likely issue when q=%25 in spfx
+            }
+
+        }
+
+        const decodedValueFromDynamicSource = valueFromDynamicSource && !isEmpty(valueFromDynamicSource) ? valueFromDynamicSource : null;
         const inputQueryFromDataSource = !this.properties.queryText.isDisposed && decodedValueFromDynamicSource;
         const inputQueryText = inputQueryFromDataSource ? inputQueryFromDataSource : this.properties.defaultQueryText;
 
@@ -278,6 +291,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 filterOperator: undefined
             },
             inputQueryText: inputQueryText,
+            queryStringParameters: UrlHelper.getQueryStringParams()
         };
 
         if (this.dataSource) {
@@ -1929,9 +1943,15 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     }
 
     private pushStateHandler(state, key, path) {
+        
         this._pushStateCallback.apply(history, [state, key, path]);
-        if (this.properties.queryText.isDisposed) return;
+        if (this.properties.queryText.isDisposed) {
+            return;
+        };
+
         const source = this.properties.queryText.tryGetSource();
-        if (source && source.id === ComponentType.PageEnvironment) this.render();
+        if (source && source.id === ComponentType.PageEnvironment) {
+            this.render();
+        }
     }
 }

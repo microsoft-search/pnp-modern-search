@@ -89,7 +89,8 @@ export class FilterDateRangeComponent extends React.Component<IFilterDateRangeCo
             styles: datePickerStyles,
             theme: this.props.themeVariant as ITheme,
             strings: strings.General.DatePickerStrings,
-            formatDate: this._onFormatDate
+            formatDate: this._onFormatDate,
+            allowTextInput: true
         };
 
         let toProps: IDatePickerProps = {
@@ -101,7 +102,8 @@ export class FilterDateRangeComponent extends React.Component<IFilterDateRangeCo
             theme: this.props.themeVariant as ITheme,
             borderless: true,
             strings: strings.General.DatePickerStrings,
-            formatDate: this._onFormatDate
+            formatDate: this._onFormatDate,
+            allowTextInput: true
         };        
 
         if (this.state.selectedFromDate) {

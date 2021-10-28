@@ -536,7 +536,8 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                 'SPSiteUrl',
                 'SiteTitle',
                 'CreatedBy',
-                'HtmlFileType'
+                'HtmlFileType',
+                'SiteLogo'
             ];
         this.properties.resultSourceId = this.properties.resultSourceId !== undefined ? this.properties.resultSourceId : BuiltinSourceIds.LocalSharePointResults;
         this.properties.sortList = this.properties.sortList !== undefined ? this.properties.sortList : [];

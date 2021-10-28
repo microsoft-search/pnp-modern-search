@@ -8,8 +8,10 @@ export class DomPurifyHelper {
     public static allowCustomAttributesHook(attr, data) {
 
         if(data && data.attrName) {
+            if(data.attrName.indexOf("on") == 0) return;
             data.allowedAttributes[data.attrName] = true;
-        }
+            data.forceKeepAttr = true;
+        }        
     }
 
     /**
@@ -19,7 +21,7 @@ export class DomPurifyHelper {
      */
     public static allowCustomComponentsHook(node, data) {
         if(node.nodeName && node.nodeName.match(/^\w+(-\w+)+$/)
-            && !data.allowedTags[data.tagName]) {
+            && !data.allowedTags[data.tagName]) {            
             data.allowedTags[data.tagName] = true;
         }
     }

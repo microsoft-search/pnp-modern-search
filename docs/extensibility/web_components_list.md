@@ -2,13 +2,14 @@
 
 Here are the list of all **reusable** web components you can use to customize your templates. 
 
-- [&lt;pnp-iconfile&gt;](#pnp-iconfile)
-- [&lt;pnp-documentcard&gt;](#pnp-documentcard)
-- [&lt;pnp-filepreview&gt;](#pnp-filepreview)
-- [&lt;pnp-icon&gt;](#pnp-icon)
-- [&lt;pnp-panel&gt;](#pnp-panel)
-- [&lt;pnp-collapsible&gt;](#pnp-collapsible)
-- [&lt;pnp-persona&gt;](#pnp-persona)
+- [&lt;pnp-iconfile&gt;](#ltpnp-iconfilegt)
+- [&lt;pnp-documentcard&gt;](#ltpnp-documentcardgt)
+- [&lt;pnp-filepreview&gt;](#ltpnp-filepreviewgt)
+- [&lt;pnp-icon&gt;](#ltpnp-icongt)
+- [&lt;pnp-panel&gt;](#ltpnp-panelgt)
+- [&lt;pnp-collapsible&gt;](#ltpnp-collapsiblegt)
+- [&lt;pnp-persona&gt;](#ltpnp-personagt)
+- [&lt;pnp-img&gt;](#ltpnp-imggt)
 
 > All other web components you will see in builtin layout templates are considered **internal** and are not supported for custom use.
 
@@ -194,3 +195,17 @@ Here are the list of all **reusable** web components you can use to customize yo
 |**data-tertiary-text**|The tertiary text to display (ex: work phone).
 |**data-optional-text**|The optional text to display.
 |**data-persona-size**|The size of the persona **item** to display (no only the picture). Valid values are <ul><li>tiny = 0</li><li>extraExtraSmall = 1</li><li>extraSmall = 2</li><li>small = 3</li><li>regular = 4</li><li>large = 5</li><li>extraLarge = 6</li></ul>
+
+## `<pnp-img>` 
+- **Description**: Display an image with support for fallback behavior.
+
+- **Usage**
+```html
+<pnp-img loading="lazy" src="https://someimage.png" data-error-image="https://fallbackimage.png" /> 
+<pnp-img src="https://someimage.png" hideOnError/> 
+```
+
+| Parameter | Description |
+| --------- | ----------- |
+|**errorImage**|URL to the fallback image
+|**hideOnError**|Hide image on error

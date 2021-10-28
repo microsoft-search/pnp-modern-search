@@ -17,11 +17,13 @@
         },
         "title": {
             "default": "PnP - Search Verticals",
-            "fr-fr": "PnP - Verticaux de recherche"
+            "fr-fr": "PnP - Verticaux de recherche",
+            "pl-pl": "PnP - Wertykały wyszukiwania"
         },
         "description": {
             "default": "Allows to browse data as verticals (i.e silos)",
-            "fr-fr": "Permet de parcourir les données de manière verticale (en silos)"
+            "fr-fr": "Permet de parcourir les données de manière verticale (en silos)",
+            "pl-pl": "Pozwala przeglądać dane wertykalnie"
         },
         "officeFabricIconFontName": "Sections",
         "properties": {
