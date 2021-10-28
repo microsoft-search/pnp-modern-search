@@ -23,18 +23,18 @@ define([], function() {
         HideFirstLastPagesFieldName: "Dölj första/sista navigeringsknapparna",
         HideDisabledFieldName: "Dölj navigeringsval (föregående, nästa, första, sista) om de är inaktiverade.",
         TemplateSlots: {
-          GroupName: "Layout slots",
-          ConfigureSlotsLabel: "Redigera layout-slots för den här datakällan",
+          GroupName: "Layout",
+          ConfigureSlotsLabel: "Redigera layout för den här datakällan",
           ConfigureSlotsBtnLabel: "Anpassa",
-          ConfigureSlotsPanelHeader: "Layout slots",
-          ConfigureSlotsPanelDescription: "Här kan du lägga till slots som ska användas för de olika layouterna. En slot är en platshållarvariabel som du infogar i din mall, där värdet kommer att ersättas med ett fältvärde från en datakälla. På så sätt blir dina mallar mer generiska och lättare att återanvända. Om du vill använda dem använder du `{{slot item @root.slots.<SlotName>}}` Handlebars-uttrycket.",
-          SlotNameFieldName: "Slot namn",
-          SlotFieldFieldName: "Slot fält",
+          ConfigureSlotsPanelHeader: "Layout",
+          ConfigureSlotsPanelDescription: "Här kan du lägga till namn och fält som ska användas för de olika layouterna. Ett fält är en platshållarvariabel som du infogar i din mall, där värdet kommer att ersättas med ett fältvärde från en datakälla. På så sätt blir dina mallar mer generiska och lättare att återanvända. Om du vill använda dem använder du `{{slot item @root.slots.<SlotName>}}` Handlebars-uttrycket.",
+          SlotNameFieldName: "Namn",
+          SlotFieldFieldName: "Fält",
           SlotFieldPlaceholderName: "Välj ett fält"
         }
       },
       LayoutPage: {
-        LayoutSelectionGroupName: "Tillgängliga layouts",
+        LayoutSelectionGroupName: "Tillgängliga layouter",
         LayoutTemplateOptionsGroupName: "Layoutalternativ",
         CommonOptionsGroupName: "Vanlig",
         TemplateUrlFieldLabel: "Använd en extern URL för mall",
