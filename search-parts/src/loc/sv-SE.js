@@ -17,7 +17,7 @@ define([], function () {
           InvalidtokenFormatErrorMessage: "Vänligen ange ett teckenformat som använder sig av '{' och '}'. (t.ex: {Today})"
         },
         Date: {
-          DateTokensGroupName: "Datum tecken",
+          DateTokensGroupName: "Datumtecken",
           Today: "Idag",
           Yesterday: "Igår",
           Tomorrow: "Imorgon",
@@ -26,13 +26,13 @@ define([], function () {
           OneYearAgo: "Ett år sedan"
         },
         Page: {
-          PageTokensGroupName: "Sidotecken",
+          PageTokensGroupName: "Sidtecken",
           PageId: "Sidans ID",
           PageTitle: "Sidans titel",
           PageCustom: "Annan sidkolumn",
         },
         User: {
-          UserTokensGroupName: "Anvädartecken",
+          UserTokensGroupName: "Användartecken",
           UserName: "Användarnamn",
           Me: "Jag",
           UserDepartment: "Användaravdelning",
@@ -93,7 +93,7 @@ define([], function () {
       },
       DataSources: {
         SharePointSearch: {
-          SourceName: "SharePoint sök",
+          SourceName: "SharePoint-sök",
           SourceConfigurationGroupName: "Källkonfiguration",
           QueryTextFieldLabel: "Sökfrågetext",
           QueryTextFieldInfoMessage: "Använd konfigurationsfliken i webbdelen <strong>Tillgängliga anslutningar</strong> för att ange antingen ett statiskt värde eller ett värde från en dynamisk komponent på sidan, till exempel en sökruta.",
@@ -106,7 +106,7 @@ define([], function () {
           EnableQueryRulesLabel: "Aktivera frågeregler",
           IncludeOneDriveResultsLabel: "Inkludera resultat från OneDrive för Företag",
           RefinementFilters: "Förfiningsfilter",
-          RefinementFiltersDescription: "Inledande förfiningsfilter som kan användas i en fråga. Dessa vissas inte i de valda filtren. Om du vill infoga text använder du citattecken (\") istället för (').",
+          RefinementFiltersDescription: "Inledande förfiningsfilter som kan användas i en fråga. Dessa visas inte i de valda filtren. Om du vill infoga text använder du citattecken (\") istället för (').",
           EnableLocalizationLabel: "Aktivera lokalisering",
           EnableLocalizationOnLabel: "På",
           EnableLocalizationOffLabel: "Av",
@@ -122,8 +122,8 @@ define([], function () {
         MicrosoftSearch: {
           QueryTextFieldLabel: "Sökfrågetext",
           QueryTextFieldInfoMessage: "Använd konfigurationsfliken i webbdelen <strong>Tillgängliga anslutningar</strong> för att ange antingen ett statiskt värde eller ett värde från en dynamisk komponent på sidan, till exempel en sökruta.",
-          SourceName: "Microsoft sök",
-          SourceConfigurationGroupName: "Microsoft sök",
+          SourceName: "Microsoft-sök",
+          SourceConfigurationGroupName: "Microsoft-sök",
           EntityTypesField: "Sökbara enhetstyper",
           SelectedFieldsPropertiesFieldLabel: "Valda fält",
           SelectedFieldsPropertiesFieldDescription: "Anger fälten som ska hämtas från sökresultaten.",
@@ -136,16 +136,16 @@ define([], function () {
         SearchCommon: {
           Sort: {
             SortPropertyPaneFieldLabel: "Sorteringsordning",
-            SortListDescription: "Ange den första sorteringsordningen för sökresultaten. Du kan antingen välja ett fält i listrutan (endast om datakällan redan har hämtats) eller skriv ditt eget anpassade värde (tryck på 'Enter' för att spara)",
+            SortListDescription: "Ange den första sorteringsordningen för sökresultaten. Du kan antingen välja ett fält i rullistan (endast om datakällan redan har hämtats) eller skriv ditt eget anpassade värde (tryck på 'Enter' för att spara)",
             SortDirectionAscendingLabel: "Stigande",
             SortDirectionDescendingLabel: "Fallande",
             SortErrorMessage: "Ogiltig sökegenskap (Kontrollera om den hanterade egenskapen är sorterbar).",
             SortPanelSortFieldLabel: "Sortera efter fält",
             SortPanelSortFieldAria: "Sortera efter",
             SortPanelSortFieldPlaceHolder: "Sortera efter",
-            SortPanelSortDirectionLabel: "Sortering riktning",
+            SortPanelSortDirectionLabel: "Sorteringsriktning",
             SortDirectionColumnLabel: "Riktning",
-            SortFieldColumnLabel: "Fält namn",
+            SortFieldColumnLabel: "Fältnamn",
             EditSortLabel: "Redigera sorteringsordning",
             SortInvalidSortableFieldMessage: "Den här egenskapen kan inte sorteras",
             SortFieldColumnPlaceholder: "Välj fält..."
@@ -153,8 +153,8 @@ define([], function () {
         }
       },
       Controls: {
-        TextDialogButtonText: "Lägg till Handlebars-uttryck",
-        TextDialogTitle: "Redigera Handlebars-uttryck",
+        TextDialogButtonText: "Lägg till Handlebars",
+        TextDialogTitle: "Redigera Handlebars",
         TextDialogCancelButtonText: "Avbryt",
         TextDialogSaveButtonText: "Spara",
         SelectItemComboPlaceHolder: "Välj egenskap",
@@ -175,16 +175,16 @@ define([], function () {
         },
         DetailsList: {
           Name: "Detaljerad lista",
-          UseHandlebarsExpressionLabel: "Använd Handlebars-uttryck",
-          MinimumWidthColumnLabel: "Minimum bredd (px)",
-          MaximumWidthColumnLabel: "Maximum bredd (px)",
+          UseHandlebarsExpressionLabel: "Använd Handlebars",
+          MinimumWidthColumnLabel: "Minimal bredd (px)",
+          MaximumWidthColumnLabel: "Maximal bredd (px)",
           SortableColumnLabel: "Sorterbar",
           ResizableColumnLabel: "Storleken kan redigeras",
           MultilineColumnLabel: "Flera linjer",
           LinkToItemColumnLabel: "Länk till artikel",
           CompactModeLabel: "Kompakt läge",
           ShowFileIcon: "Visa filikon",
-          ManageDetailsListColumnDescription: "Lägg till, uppdatera eller ta bort kolumner från layouten i detaljlistan. Du kan antingen använda egenskapsvärden i listan direkt utan någon transformation, eller så kan du använda ett styruttryck som fältets värde. HTML stöds för användning i alla fält.",
+          ManageDetailsListColumnDescription: "Lägg till, uppdatera eller ta bort kolumner från layouten i detaljlistan. Du kan antingen använda egenskapsvärden i listan direkt utan någon omvandling, eller så kan du använda ett styruttryck som fältets värde. HTML stöds för användning i alla fält.",
           ManageDetailsListColumnLabel: "Hantera kolumner",
           ValueColumnLabel: "Kolumnvärde",
           ValueSortingColumnLabel: "Kolumnvärde sortering",
@@ -198,13 +198,13 @@ define([], function () {
         Cards: {
           Name: "Kort",
           ManageTilesFieldsLabel: "Hantera kortfält",
-          ManageTilesFieldsPanelDescriptionLabel: "Här kan du mappa varje fältvärde med motsvarande kortplatshållare. Du kan antingen använda en resultategenskap direkt utan någon transformation, eller så kan du använda ett Handlebars-uttryck som fältets värde. När du har angett kan du klistra in din egen HTML-kod i kommenterade fält.",
+          ManageTilesFieldsPanelDescriptionLabel: "Här kan du mappa varje fältvärde med motsvarande kortplatshållare. Du kan antingen använda en resultategenskap direkt utan någon omvandling, eller så kan du använda Handlebars för fältets värde. När du har angett kan du klistra in din egen HTML-kod i kommenterade fält.",
           PlaceholderNameFieldLabel: "Namn",
           SupportHTMLColumnLabel: "Tillåt HTML",
           PlaceholderValueFieldLabel: "Värde",
-          UseHandlebarsExpressionLabel: "Använd Handlebars-uttryck",
+          UseHandlebarsExpressionLabel: "Använd Handlebars",
           EnableItemPreview: "Tillåt förhandsgranskning av resultatet",
-          EnableItemPreviewHoverMessage: "Att aktivera den här funktionen kan påverka prestandan om för många objekt visas samtidigt och du använder fältet 'AutoPreviewUrl'. Vi rekommenderar att du använder det här alternativet med få objekt, eller genom att använda fördefinierade förhandsgranskningar av URL:er från datakällas fält i platser.",
+          EnableItemPreviewHoverMessage: "Att aktivera den här funktionen kan påverka prestandan om för många objekt visas samtidigt och du använder fältet 'AutoPreviewUrl'. Vi rekommenderar att du använder det här alternativet med få objekt, eller genom att använda fördefinierade förhandsgranskningar av URL:er från datakällans fält i platser.",
           ShowFileIcon: "Visa filikon",
           CompactModeLabel: "Kompakt läge",
           PreferedCardNumberPerRow: "Önskat antal kort per rad",
@@ -213,34 +213,34 @@ define([], function () {
             Location: "Plats",
             Tags: "Taggar",
             PreviewImage: "Förhandsgranskning av bild",
-            PreviewUrl: "Förhandsgranskning av Url",
-            Url: "Url",
+            PreviewUrl: "Förhandsgranskning av URL",
+            Url: "URL",
             Date: "Datum",
             Author: "Författare",
-            ProfileImage: "Url för profilbild",
+            ProfileImage: "URL för profilbild",
             FileExtension: "Filändelsen",
             IsContainer: "Är mapp"
           },
           ResetFieldsBtnLabel: "Återställ fält till standardvärden"
         },
         Slider: {
-          Name: "Slider",
+          Name: "Reglage",
           SliderAutoPlay: "Automatisk uppspelning",
           SliderAutoPlayDuration: "Varaktighet för automatisk uppspelning (i sekunder)",
           SliderPauseAutoPlayOnHover: "Pausa genom att föra musen över",
-          SliderGroupCells: "Antalet element som ska grupperas i slides",
+          SliderGroupCells: "Antalet element som ska grupperas inom ett reglage",
           SliderShowPageDots: "Visa sidpunkter",
           SliderWrapAround: "Oändlig scroll",
-          SlideHeight: "Slide höjd (i px)",
-          SlideWidth: "Slide bredd (i px)"
+          SlideHeight: "Reglagehöjd (px)",
+          SlideWidth: "Reglagebredd (px)"
         },
         People: {
           Name: "Person",
           ManagePeopleFieldsLabel: "Hantera fält för personer",
-          ManagePeopleFieldsPanelDescriptionLabel: "Här kan du mappa varje fältvärde med motsvarande person-placeholder. Du kan antingen använda datakällans fältvärde direkt utan någon omvandling, eller så kan du använda ett styruttryck i värdefältet.",
+          ManagePeopleFieldsPanelDescriptionLabel: "Här kan du koppla varje fältvärde med motsvarande person-platshållare. Du kan antingen använda datakällans fältvärde direkt utan någon omvandling, eller så kan du använda ett styruttryck i värdefältet.",
           PlaceholderNameFieldLabel: "Namn",
           PlaceholderValueFieldLabel: "Värde",
-          UseHandlebarsExpressionLabel: "Använd Handlebars-uttryck",
+          UseHandlebarsExpressionLabel: "Använd Handlebars",
           PersonaSizeOptionsLabel: "Komponentstorlek",
           PersonaSizeExtraSmall: "Extra liten",
           PersonaSizeSmall: "Liten",
@@ -319,7 +319,7 @@ define([], function () {
       SuggestionProviders: {
         SharePointStatic: {
           ProviderName: "SharePoint statiska sökförslag",
-          ProviderDescription: "Hämta SharePoint statiska användadefinierade sökförslag"
+          ProviderDescription: "Hämta SharePoint statiska användardefinierade sökförslag"
         }
       }
     }

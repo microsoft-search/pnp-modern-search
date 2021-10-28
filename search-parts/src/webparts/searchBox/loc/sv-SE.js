@@ -11,7 +11,7 @@ define([], function() {
         PageUrlLabel: "Sidans URL",
         UrlErrorMessage: "Ange en giltig URL.",
         QueryPathBehaviorLabel: "Metod",
-        QueryInputTransformationLabel: "Mallen för transformering av frågeinmatning",
+        QueryInputTransformationLabel: "Mallen för omvandling av frågeinmatning",
         UrlFragmentQueryPathBehavior: "URL-fragment",
         QueryStringQueryPathBehavior: "URL-parameter",
         QueryStringParameterName: "Parameternamn",
@@ -19,7 +19,7 @@ define([], function() {
       },
       AvailableConnectionsGroup: {
         GroupName: "Tillgängliga anslutningar",
-        UseDynamicDataSourceLabel: "Använd dynamisk datakälla som standardingång",
+        UseDynamicDataSourceLabel: "Använd dynamisk datakälla som standardinmatning",
         QueryKeywordsPropertyLabel: ""
       },
       QuerySuggestionsGroup: {
