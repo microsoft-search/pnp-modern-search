@@ -4,7 +4,7 @@ define([], function() {
             PlaceHolder: {
                 EditLabel: "Redigera",
                 IconText: "Sökfilter av @PnP",
-                Description: "Visar datafilter från ett anslutet sökresultats webbdel",
+                Description: "Visar datafilter från ansluten webbdel för sökresultat",
                 ConfigureBtnLabel: "Konfigurera"
             },
             NoAvailableFilterMessage: "Inget tillgängligt filter att visa.",

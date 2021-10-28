@@ -16,11 +16,13 @@
         },
         "title": {
             "default": "PnP - Search Box",
-            "fr-fr": "PnP - Boîte de recherche"
+            "fr-fr": "PnP - Boîte de recherche",
+            "pl-pl": "PnP - Pole Wyszukiwania"
         },
         "description": {
             "default": "Allows users to search data source results using query text",
-            "fr-fr": "Permet aux utilisateurs de rechercher dans un source de données sur la base d'une requête textuelle"
+            "fr-fr": "Permet aux utilisateurs de rechercher dans un source de données sur la base d'une requête textuelle",
+            "pl-pl": "Pozwala użytkownikom na wprowadzenie tekstu wyszukiwania"
         },
         "officeFabricIconFontName": "Search",
         "properties": {

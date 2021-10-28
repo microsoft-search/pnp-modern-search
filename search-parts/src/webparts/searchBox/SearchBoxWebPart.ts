@@ -423,7 +423,9 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
                                         React.createElement(Toggle, {
                                             key: itemId, checked: value, onChange: (evt, checked) => {
                                                 onUpdate(field.id, checked);
-                                            }
+                                            },
+                                            offText: commonStrings.General.OffTextLabel,
+                                            onText: commonStrings.General.OnTextLabel
                                         })
                                     )
                                 );

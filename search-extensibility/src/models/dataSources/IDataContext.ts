@@ -73,6 +73,11 @@ export interface IDataContext {
         /**
          * The current selected sorting for this data source
          */
-         selectedSorting?: ISortFieldConfiguration[];
+        selectedSorting?: ISortFieldConfiguration[];
     };
+
+    /**
+     * Information about current query string parameters
+     */
+    queryStringParameters?: {[name: string]: string };
 }
