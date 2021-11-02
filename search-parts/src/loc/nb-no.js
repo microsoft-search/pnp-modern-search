@@ -100,7 +100,7 @@ define([], function () {
           QueryTemplateFieldLabel: "Søkemal",
           QueryTemplatePlaceHolderText: "f.eks.: Path:{Site}",
           QueryTemplateFieldDescription: "Søkemalen. Du kan også bruke {<tokens>} for å lage et dynamisk søk.",
-          ResultSourceIdLabel: "ID for resultatetkilden",
+          ResultSourceIdLabel: "ID for resultatkilden",
           ResultSourceIdDescription: "Bruk en standard SharePoint-ID i søkeresultatet, eller skriv inn din egen GUID-verdi och trykk 'Enter' for å lagre.",
           InvalidResultSourceIdMessage: "Den oppgitte verdien er ikke en gyldig GUID",
           EnableQueryRulesLabel: "Aktiver søkeregler",
