@@ -1947,7 +1947,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         this._pushStateCallback.apply(history, [state, key, path]);
         if (this.properties.queryText.isDisposed) {
             return;
-        };
+        }
 
         const source = this.properties.queryText.tryGetSource();
         if (source && source.id === ComponentType.PageEnvironment) {
