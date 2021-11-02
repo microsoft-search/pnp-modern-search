@@ -432,6 +432,13 @@ export class TemplateService implements ITemplateService {
             }
         });
 
+        // Return tag name from a tag string
+        this.Handlebars.registerHelper("getTagName", (tag: string) => {
+            if (!isEmpty(tag)) {
+                return new Handlebars.SafeString(tag.split("|").pop());
+            }
+        });
+        
         // Return the formatted date according to current locale using moment.js
         // <p>{{getDate Created "LL"}}</p>
         this.Handlebars.registerHelper("getDate", ((date: string, format: string, timeHandling?: number, isZ?: boolean) => {
