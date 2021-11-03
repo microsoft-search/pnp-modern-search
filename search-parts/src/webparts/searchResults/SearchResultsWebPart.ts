@@ -61,6 +61,7 @@ import { ApplicationInsights } from '@microsoft/applicationinsights-web';
 import commonStyles from '../../styles/Common.module.scss';
 import { ISortFieldConfiguration } from '@pnp/modern-search-extensibility/lib/models/ISortFieldConfiguration';
 import { ISortEventInfo } from '../../models/search/ISortEventInfo';
+import { UrlHelper } from '../../helpers/UrlHelper';
 
 const LogSource = "SearchResultsWebPart";
 
@@ -270,8 +271,9 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
             valueFromDynamicSource = this.properties.queryText.tryGetValue();
             try {
-                valueFromDynamicSource = decodeURIComponent(valueFromDynamicSource);
-
+                if (valueFromDynamicSource !== undefined) {
+                    valueFromDynamicSource = decodeURIComponent(valueFromDynamicSource);
+                }
             } catch (error) {
                 // Likely issue when q=%25 in spfx
             }
@@ -300,6 +302,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 selectedSorting: this.currentSorting
             },
             inputQueryText: inputQueryText,
+            queryStringParameters: UrlHelper.getQueryStringParams()
         };
 
         if (this.dataSource) {
@@ -1978,9 +1981,15 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     }
 
     private pushStateHandler(state, key, path) {
+        
         this._pushStateCallback.apply(history, [state, key, path]);
-        if (this.properties.queryText.isDisposed) return;
+        if (this.properties.queryText.isDisposed) {
+            return;
+        }
+
         const source = this.properties.queryText.tryGetSource();
-        if (source && source.id === ComponentType.PageEnvironment) this.render();
+        if (source && source.id === ComponentType.PageEnvironment) {
+            this.render();
+        }
     }
 }

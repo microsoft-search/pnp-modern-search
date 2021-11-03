@@ -49,6 +49,7 @@
     <div class="template">
         <pnp-panel      data-state-key="{{@root.instanceId}}"
                         data-disable-animation="true"
+                        data-is-light-dismiss="{{@root.properties.layoutProperties.isLightDismiss}}"
                         data-is-blocking="{{@root.properties.layoutProperties.isBlocking}}"
                         data-size="{{@root.properties.layoutProperties.size}}"
                         data-theme-variant="{{JSONstringify @root.theme}}"
@@ -56,7 +57,7 @@
 
             <template id="panel-open">
                 <div class="panelOpenBar">
-                    <pnp-icon data-name="Filter" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-icon><span>{{@root.properties.layoutProperties.btnLabel}}</span>
+                    <pnp-icon data-name="Filter" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-icon><span role="button" aria-label="{{@root.properties.layoutProperties.btnLabel}}">{{@root.properties.layoutProperties.btnLabel}}</span>
                 </div>
             </template>
 

@@ -21,8 +21,11 @@ import {
 } from '@pnp/modern-search-extensibility';
 import { ISearchFiltersTemplateContext } from '../../../models/common/ITemplateContext';
 import { flatten } from '@microsoft/sp-lodash-subset';
-import { DisplayMode } from '@microsoft/sp-core-library';
+import { DisplayMode, Log } from '@microsoft/sp-core-library';
 import { DataFilterHelper } from '../../../helpers/DataFilterHelper';
+import { UrlHelper } from '../../../helpers/UrlHelper';
+
+const DEEPLINK_QUERYSTRING_PARAM = 'f';
 
 export default class SearchFiltersContainer extends React.Component<ISearchFiltersContainerProps, ISearchFiltersContainerState> {
 
@@ -97,6 +100,11 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
     // Initial state
     this.getFiltersToDisplay(this.props.availableFilters, [], this.props.filtersConfiguration);
+  
+    // Process deep links
+    this.getFiltersDeepLink();
+
+    this._handleQueryStringChange();
   }
 
   public componentDidUpdate(prevProps: ISearchFiltersContainerProps, prevState: ISearchFiltersContainerState) {
@@ -105,16 +113,12 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
     if (!isEqual(prevProps.selectedLayoutKey, this.props.selectedLayoutKey) 
         || !isEqual(prevProps.properties, this.props.properties)) {
 
-      const updatedfilters = this.state.currentUiFilters.map(selectedFilter => { 
-
-        const updatedFilter = cloneDeep(selectedFilter);
-        updatedFilter.values = [];
-        return updatedFilter;
-      });
-
+      const updatedfilters = this.resetSelectedFilterValues(this.state.currentUiFilters);
       const submittedFilters = this.getSelectedFiltersFromUIFilters(updatedfilters);
 
       this.getFiltersToDisplay(this.props.availableFilters, [], this.props.filtersConfiguration);
+
+      this.resetFiltersDeepLink();
 
       this.props.onUpdateFilters(submittedFilters);
     }
@@ -348,10 +352,19 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
           
           this.setState({
             submittedFilters: submittedFilters
-          });
+          }, () => {
 
-          // Send only selected filters to the data source
-          this.props.onUpdateFilters(submittedFilters);
+            // Send only selected filters to the data source
+            this.props.onUpdateFilters(submittedFilters);
+
+            // Set the filter links in URL
+            this.setFiltersDeepLink(submittedFilters);
+            
+            // Force a UI refresh is the submitted filters come from 'Apply' button to get the correct disabled/active state set
+            if (filterConfiguration.isMulti) {
+              this.forceUpdate();
+            }
+          });
         }
 
         this.getFiltersToDisplay(this.props.availableFilters, currentUiFilters, this.props.filtersConfiguration);
@@ -439,6 +452,9 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
       const submittedFilters = this.getSelectedFiltersFromUIFilters(this.state.currentUiFilters);
 
+      // Set the filter links in URL
+      this.setFiltersDeepLink(submittedFilters);
+
       // Refresh the UI
       this.getFiltersToDisplay(this.props.availableFilters, this.state.currentUiFilters, this.props.filtersConfiguration);
 
@@ -489,6 +505,8 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
       // Refresh the UI
       this.getFiltersToDisplay(this.props.availableFilters, updatedfilters, this.props.filtersConfiguration);
 
+      this.resetFiltersDeepLink();
+
       // Send selected filters to the data source
       this.props.onUpdateFilters(updateSubmittedFilters);
 
@@ -509,5 +527,114 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         ...this.props.properties
       },
     };
+  }
+
+  /**
+   * Retrieves the default filters from the URL and set them as initial state
+   */
+   private getFiltersDeepLink() {
+
+    const queryString = UrlHelper.getQueryStringParam(DEEPLINK_QUERYSTRING_PARAM, window.location.href);
+
+    if (queryString) {
+
+        try {
+
+          const dataFilters: IDataFilter[] = JSON.parse(decodeURIComponent(queryString));
+          const currentUiFilters = dataFilters.map(filter => {
+
+            const filterConfiguration = DataFilterHelper.getConfigurationForFilter(filter, this.props.filtersConfiguration);
+
+            return {
+              displayName: filterConfiguration.displayValue ? filterConfiguration.displayValue : filter.filterName,
+              expandByDefault: filterConfiguration.expandByDefault,
+              filterName: filter.filterName,
+              isMulti: filterConfiguration.isMulti,
+              selectedTemplate: filterConfiguration.selectedTemplate,
+              showCount: filterConfiguration.showCount,
+              selectedOnce: true,
+              operator: filter.operator,
+              values: filter.values.map((value: IDataFilterValueInternal )=> {
+                value.selected = true;
+                value.selectedOnce = true;
+                return value;
+              }),
+              canApply: false,
+              canClear: true
+            } as IDataFilterInternal;
+          });
+
+          // Update the connected data source (if applicable)
+          this.props.onUpdateFilters(dataFilters);
+
+          // Update selected filters in the UI
+          this.setState({
+            currentUiFilters: currentUiFilters,
+            submittedFilters: dataFilters
+          });
+          
+        } catch (e) {
+          Log.verbose(`[SearchFiltersContainer.getFiltersDeepLink]`, `Filters format in the query string is invalid.`);
+        }  
+    }
+  }
+
+  /**
+   * Set the current selected filters as query string in the URL for deep linking
+   * @param submittedFilters the current submitted filters
+   */
+  private setFiltersDeepLink(submittedFilters: IDataFilter[]) {
+
+    let filtersDeepLinkUrl: string;
+    if (submittedFilters.length > 0) {
+      filtersDeepLinkUrl = UrlHelper.addOrReplaceQueryStringParam(window.location.href, DEEPLINK_QUERYSTRING_PARAM, JSON.stringify(submittedFilters));              
+    } else {
+      filtersDeepLinkUrl = UrlHelper.removeQueryStringParam(DEEPLINK_QUERYSTRING_PARAM, window.location.href);
+    }
+    
+    window.history.pushState({ path: filtersDeepLinkUrl },'', filtersDeepLinkUrl);
+  }
+
+  private resetFiltersDeepLink() {
+    // Reset filters query string
+    const filtersDeepLinkUrl = UrlHelper.removeQueryStringParam(DEEPLINK_QUERYSTRING_PARAM, window.location.href);
+    window.history.pushState({ path: filtersDeepLinkUrl },'', filtersDeepLinkUrl);
+  }
+
+  /**
+   * Subscribes to URL query string change events using SharePoint page router
+   */
+  private _handleQueryStringChange() {
+
+    // When the browser 'back' or 'forward' button is pressed
+    window.onpopstate = (ev) => {
+
+      const queryString = UrlHelper.getQueryStringParam(DEEPLINK_QUERYSTRING_PARAM, window.location.href);
+
+      // Initial state where no filter are selected
+      if (!queryString) {
+        
+        this.setState({
+          currentUiFilters: this.resetSelectedFilterValues(this.state.currentUiFilters),
+          submittedFilters: []
+        });
+
+        // Notify connected Web Parts
+        this.props.onUpdateFilters([]);
+      }
+
+      this.getFiltersDeepLink();
+    };      
+  }
+
+  private resetSelectedFilterValues(currentUiFilters: IDataFilterInternal[]): IDataFilterInternal[] {
+
+    const updatedfilters = currentUiFilters.map(selectedFilter => { 
+      const updatedFilter = cloneDeep(selectedFilter);
+      updatedFilter.values = [];
+      return updatedFilter;
+    });
+
+    return updatedfilters;
   }
 }

@@ -57,7 +57,7 @@
         {{/if}}
         <ul class="template--defaultList">
             {{#each data.items as |item|}}
-            <li class="template--listItem" tabindex="0">
+            <li class="template--listItem">
                 {{#> resultTypes item=item}}
                 <div class="template--listItem--result">
                     {{#if @root.properties.layoutProperties.showFileIcon}}

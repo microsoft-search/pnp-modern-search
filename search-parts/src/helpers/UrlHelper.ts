@@ -74,6 +74,21 @@ export class UrlHelper {
     }
 
     /**
+     * Gets the current query string parameters
+     * @returns query string parameters as object
+     */
+    public static getQueryStringParams(): {[parameter: string]: string } {
+
+        let queryStringParameters: {[parameter: string]: string } = {};
+        const urlParams = new URLSearchParams(window.location.search);
+        urlParams.forEach((value, key) => {
+            queryStringParameters[key] = value;
+        });
+
+        return queryStringParameters;
+    }
+
+    /**
      * Decodes a provided string
      * @param encodedStr the string to decode
      */

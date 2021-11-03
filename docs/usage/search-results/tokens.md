@@ -97,7 +97,7 @@ To deal with mutli valued properties (like taxonomy multi or choices SharePoint 
 **Examples:**
 
 - Using an user profile multi values taxonomy property: `{|owstaxidmetadataalltagsinfo:{User.SPS-Hashtags}}`
-- Using a page multi values taxonomy property: `{|owstaxidmetadataalltagsinfo:{Page.myTaxonomyMultiColumn.TermID}}` or `{|owstaxidmetadataalltagsinfo:{Page.myTaxonomyMultiColumn.TermLabel}}`
+- Using a page multi values taxonomy property: `{|owstaxidmetadataalltagsinfo:{Page.myTaxonomyMultiColumn.TermID}}` or `{|owstaxidmetadataalltagsinfo:{Page.myTaxonomyMultiColumn.Label}}`
 - Using a page multi values choice property: `{|RefinableStringXX:{Page.myChoiceMultiColumn}}`
 
 At any time, you can see the resolved query using the 'Debug' layout an inspecting the `data.queryModification` property.

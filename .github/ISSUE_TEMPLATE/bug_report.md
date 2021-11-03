@@ -11,6 +11,8 @@ assignees: ''
 
 ### Issues related to data mapping, e.g. SharePoint columns to crawled properties to managed properties, will be closed by default and should be asked elsewhere as it's outside the scope of this project. However if you cannot repro the issue with classic web parts, then it's ok as it relates to these web parts 🙂
 
+**For any question regarding Web Parts usage, please use the ["Discussions"](https://github.com/microsoft-search/pnp-modern-search/discussions) tab instead of creating a new issue.**.
+
 __Remove the above section before submitting, and removal of the below template will result in the issue being closed.__
 
 **Version used**
