@@ -1,4 +1,4 @@
-import { BaseDataSource, IDataSourceData, IDataFilter, IDataFilterConfiguration, FilterSortType, FilterSortDirection, ITemplateSlot, BuiltinTemplateSlots, IDataContext, ITokenService, FilterBehavior, PagingBehavior, IDataFilterResult, IDataFilterResultValue, FilterComparisonOperator } from "@pnp/modern-search-extensibility";
+import { BaseDataSource, IDataFilter, IDataFilterConfiguration, FilterSortType, FilterSortDirection, ITemplateSlot, BuiltinTemplateSlots, IDataContext, ITokenService, FilterBehavior, PagingBehavior, IDataFilterResult, IDataFilterResultValue, FilterComparisonOperator } from "@pnp/modern-search-extensibility";
 import { IPropertyPaneGroup, PropertyPaneLabel, IPropertyPaneField, PropertyPaneToggle } from "@microsoft/sp-property-pane";
 import { cloneDeep, isEmpty } from '@microsoft/sp-lodash-subset';
 import { MSGraphClientFactory } from "@microsoft/sp-http";
@@ -12,6 +12,8 @@ import { DateHelper } from '../helpers/DateHelper';
 import { DataFilterHelper } from "../helpers/DataFilterHelper";
 import { IMicrosoftSearchResponse } from "../models/search/IMicrosoftSearchResponse";
 import { ISortFieldConfiguration, SortFieldDirection } from '../models/search/ISortFieldConfiguration';
+import { IMicrosoftSearchDataSourceData } from "../models/search/IMicrosoftSearchDataSourceData";
+import { IQueryAlterationOptions } from "../models/search/IQueryAlterationOptions";
 
 const MICROSOFT_SEARCH_URL = "https://graph.microsoft.com/beta/search/query";
 
@@ -86,7 +88,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         {
             key: EntityType.ListItem,
             text: "List Items"
-        },        
+        },
         {
             key: EntityType.List,
             text: "List"
@@ -163,13 +165,15 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         return PagingBehavior.Dynamic;
     }
 
-    public async getData(dataContext: IDataContext): Promise<IDataSourceData> {
+    public async getData(dataContext: IDataContext): Promise<IMicrosoftSearchDataSourceData> {
 
-        let results: IDataSourceData = {
+        let results: IMicrosoftSearchDataSourceData = {
             items: []
         };
 
         const searchRequest = await this.buildMicrosoftSearchRequest(dataContext);
+        const queryAlterationOptions = undefined;
+
         results = await this.search(searchRequest);
 
         return results;
@@ -374,7 +378,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
     private initProperties(): void {
         this.properties.entityTypes = this.properties.entityTypes !== undefined ? this.properties.entityTypes : [EntityType.DriveItem];
 
-        const SharePointFields = ["title", "path", "defaultEncodingUrl", "contentTypeId", "htmlFileType","normSiteID","normWebID","normListID","normUniqueID","owstaxidmetadataalltagsinfo"];
+        const SharePointFields = ["title", "path", "defaultEncodingUrl", "contentTypeId", "htmlFileType", "normSiteID", "normWebID", "normListID", "normUniqueID", "owstaxidmetadataalltagsinfo"];
         const CommonFields = ["name", "webUrl", "fileType", "createdBy", "createdDateTime", "lastModifiedDateTime", "parentReference", "size", "description", "file", "folder"];
 
         this.properties.fields = this.properties.fields !== undefined ? this.properties.fields : SharePointFields.concat(CommonFields);
@@ -608,10 +612,10 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
      * Retrieves data from Microsoft Graph API
      * @param searchRequest the Microsoft Search search request
      */
-    private async search(searchRequest: IMicrosoftSearchRequest): Promise<IDataSourceData> {
+    private async search(searchRequest: IMicrosoftSearchRequest, alterationOptions?: IQueryAlterationOptions): Promise<IMicrosoftSearchDataSourceData> {
 
         let itemsCount = 0;
-        let response: IDataSourceData = {
+        let response: IMicrosoftSearchDataSourceData = {
             items: [],
             filters: []
         };
@@ -622,7 +626,14 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         const msGraphClient = await msGraphClientFactory.getClient();
         const request = await msGraphClient.api(MICROSOFT_SEARCH_URL).header('SdkVersion', `PnPModernSearch/${this.context.manifest.version}`);
 
-        const jsonResponse = await request.post({ requests: [searchRequest] });
+        let jsonResponse = undefined;
+
+        if (alterationOptions) {
+            jsonResponse = await request.post({ requests: [searchRequest] });
+        }
+        else {
+            jsonResponse = await request.post({ requests: [searchRequest], queryAlterationOptions: alterationOptions });
+        }
 
         if (jsonResponse.value && Array.isArray(jsonResponse.value)) {
 
@@ -660,6 +671,10 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                     response.filters = aggregationResults;
                 });
             });
+        }
+
+        if (jsonResponse?.queryAlterationResponse) {
+            response.queryAlterationResponse = jsonResponse.queryAlterationResponse;
         }
 
         this._itemsCount = itemsCount;
