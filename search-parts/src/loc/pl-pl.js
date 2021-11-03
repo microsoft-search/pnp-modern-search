@@ -148,7 +148,10 @@ define([], function() {
                   SortFieldColumnLabel: "Nazwa pola",
                   EditSortLabel: "Edytuj porządek sortowania",
                   SortInvalidSortableFieldMessage: "Ta właściwość nie jest sortowalna",
-                  SortFieldColumnPlaceholder: "Wybierz pole..."
+                  SortFieldColumnPlaceholder: "Wybierz pole...",
+                  EnableSortingNoLabel: "Nie",
+                  EnableSortingYesStaticLabel: "Tak, statyczny",
+                  EnableSortingYesDynamicLabel: "Tak, dynamiczny"
               }
           }
       },
@@ -187,6 +190,7 @@ define([], function() {
               ManageDetailsListColumnDescription: "Dodawaj, usuwaj i aktualizuj kolumny układu listy ze szczegółami. Możesz używać wartości pól bezpośrednio bez żadnych przekształceń lub użyć wyrażeń Handlebars. HTML jest wspierany przez wszystkie pola.",
               ManageDetailsListColumnLabel: "Zarządzaj kolumnami",
               ValueColumnLabel: "Wartość kolumny",
+              ValueSortingColumnLabel: "Wartość kolumny sortowanie",
               DisplayNameColumnLabel: "Nazwa wyświetlana kolumny",
               FileExtensionFieldLabel: "Pole używane dla rozszerzenia pliku",
               GroupByFieldLabel: "Grupuj po polu",
