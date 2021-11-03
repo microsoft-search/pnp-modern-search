@@ -159,7 +159,14 @@ define([], function() {
           TextDialogSaveButtonText: "Zapisz",
           SelectItemComboPlaceHolder: "Wybierz właściwość",
           AddStaticDataLabel: "Dodaj dane statyczne",
-          TextFieldApplyButtonText: "Zastosuj"
+          TextFieldApplyButtonText: "Zastosuj",
+          ExportButtonText: "Eksport (csv)",
+          ExportInfoText: "Informacja",
+          ExportDialogHelpText: "Wybierz, czy chcesz wyeksportować bieżącą stronę/widok, czy wszystkie dane (maks. {maxhits} rzędów). Zauważ, że mogą występować różnice w wyświetlanych kolumnach, formatowaniu wartości i zastosowanym sortowaniu w pliku wyjściowym w porównaniu z bieżącym widokiem.",
+          ExportBrowserNotSupportedText: "Przeglądarka nie jest obsługiwana. Spróbuj ponownie w innej przeglądarce.",
+          ExportCurrentPageLabel: "Bieżąca strona/widok",
+          ExportAllLabel: "Wszystkie (maks. {maxhits} rzędów)",
+          ExportDialogOKButtonText: "OK"
       },
       Layouts: {
           Debug: {
@@ -175,7 +182,6 @@ define([], function() {
           },
           DetailsList: {
               Name: "Lista ze szczegółami",
-              UseHandlebarsExpressionLabel: "Użyj wyrażenia Handlebars",
               MinimumWidthColumnLabel: "Minimalna szerokość (px)",
               MaximumWidthColumnLabel: "Maksymalna szerokość (px)",
               SortableColumnLabel: "Sortowalne",
@@ -186,13 +192,10 @@ define([], function() {
               ShowFileIcon: "Pokaż ikonę pliku",
               ManageDetailsListColumnDescription: "Dodawaj, usuwaj i aktualizuj kolumny układu listy ze szczegółami. Możesz używać wartości pól bezpośrednio bez żadnych przekształceń lub użyć wyrażeń Handlebars. HTML jest wspierany przez wszystkie pola.",
               ManageDetailsListColumnLabel: "Zarządzaj kolumnami",
-              ValueColumnLabel: "Wartość kolumny",
-              DisplayNameColumnLabel: "Nazwa wyświetlana kolumny",
               FileExtensionFieldLabel: "Pole używane dla rozszerzenia pliku",
               GroupByFieldLabel: "Grupuj po polu",
               EnableGrouping: "Grupowanie włączone",
               CollapsedGroupsByDefault: "Pokaż zapadnięte",
-              ResetFieldsBtnLabel: "Resetuj pola do wartości domyślnych"
           },
           Cards: {
               Name: "Karty",
@@ -201,7 +204,6 @@ define([], function() {
               PlaceholderNameFieldLabel: "Nazwa",
               SupportHTMLColumnLabel: "Zezwalaj na HTML",
               PlaceholderValueFieldLabel: "Wartość",
-              UseHandlebarsExpressionLabel: "Użyj wyrażenia Handlebars",
               EnableItemPreview: "Włącz podgląd wyniku",
               EnableItemPreviewHoverMessage: "Włączenie tej opcji może mieć skutki wydajnościowe jeśli będzie widocznych zbyt wiele elementów używających slotu 'AutoPreviewUrl'. Rekomenduje się użyte tej opcji tylko dl małych ilości elementów lub użycie predefiniowanych URL podglądu ze źródła danych w slotach.",
               ShowFileIcon: "Pokaż ikonę pliku",
@@ -220,7 +222,6 @@ define([], function() {
                   FileExtension: "Rozszerzenie pliku",
                   IsContainer: "Jest folderem"
               },
-              ResetFieldsBtnLabel: "Resetuj pola do wartości domyślnych"
           },
           Slider: {
               Name: "Slajder",
@@ -239,7 +240,6 @@ define([], function() {
               ManagePeopleFieldsPanelDescriptionLabel: "Tutaj możesz przyporządkować wartości pól do symboli zastępczych (placeholders). Możesz używać wartości pól bezpośrednio bez żadnych przekształceń lub użyć wyrażeń Handlebars.",
               PlaceholderNameFieldLabel: "Nazwa",
               PlaceholderValueFieldLabel: "Wartość",
-              UseHandlebarsExpressionLabel: "Użyj wyrażenia Handlebars",
               PersonaSizeOptionsLabel: "Rozmiar komponentu",
               PersonaSizeExtraSmall: "Bardzo mały",
               PersonaSizeSmall: "Mały",
@@ -248,7 +248,6 @@ define([], function() {
               PersonaSizeExtraLarge: "Bardzo duży",
               ShowInitialsToggleLabel: "Pokaż inicjały jeśli zdjęcie nie jest dostępne",
               SupportHTMLColumnLabel: "Zezwalaj na HTML",
-              ResetFieldsBtnLabel: "Resetuj pola do wartości domyślnych",
               ShowPersonaCardOnHover: "Pokaż kartę po wskazaniu",
               ShowPersonaCardOnHoverCalloutMsg: "Ta funkcja używa Microsoft Graph aby wyświetlić informacje o użytkowniku i wymaga następujcych uprawnień API: ['User.Read','People.Read','Contacts.Read','User.ReadBasic.All'].",
               Fields: {
@@ -284,6 +283,15 @@ define([], function() {
                   ExtraLarge: 'Bardzo duże',
                   SmallFluid: 'Pełna szerokość (płynnie)'
               }
+          },
+          Shared: {
+              EnableExport: "Włącz eksport",
+              ManageExportColumnsLabel: "Zarządzaj kolumnami",
+              ManageExportColumnsDescription: "Dodawaj, usuwaj i aktualizuj kolumny z eksportu. Możesz używać wartości pól bezpośrednio bez żadnych przekształceń lub użyć wyrażeń Handlebars.",
+              DisplayNameColumnLabel: "Nazwa wyświetlana kolumny",
+              UseHandlebarsExpressionLabel: "Użyj wyrażenia Handlebars",
+              ValueColumnLabel: "Wartość kolumny",
+              ResetFieldsBtnLabel: "Resetuj pola do wartości domyślnych",
           }
       },
       HandlebarsHelpers: {
