@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ISearchBoxContainerProps } from './ISearchBoxContainerProps';
 import { QueryPathBehavior, UrlHelper, PageOpenBehavior } from '../../../helpers/UrlHelper';
-import { MessageBar, MessageBarType, SearchBox, IconButton, ITheme } from 'office-ui-fabric-react';
+import { MessageBar, MessageBarType, SearchBox, IconButton, ITheme, ISearchBox } from 'office-ui-fabric-react';
 import { ISearchBoxContainerState } from './ISearchBoxContainerState';
 import { isEqual } from '@microsoft/sp-lodash-subset';
 import * as webPartStrings from 'SearchBoxWebPartStrings';
@@ -37,23 +37,32 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
     }
 
     private renderBasicSearchBox(): JSX.Element {
+
+        let searchBoxRef = React.createRef<ISearchBox>();
+
         return (
             <div className={styles.searchBoxWrapper}>
                 <SearchBox
+                    componentRef={searchBoxRef}
                     placeholder={this.props.placeholderText ? this.props.placeholderText : webPartStrings.SearchBox.DefaultPlaceholder}
+                    ariaLabel={this.props.placeholderText ? this.props.placeholderText : webPartStrings.SearchBox.DefaultPlaceholder}
                     theme={this.props.themeVariant as ITheme}
                     className={styles.searchTextField}
                     value={this.state.searchInputValue}
                     autoComplete="off"
                     onChange={(event) => this.setState({ searchInputValue: event.currentTarget.value })}
                     onSearch={() => this._onSearch(this.state.searchInputValue)}
-                    onClear={() => this._onSearch('', true)}
+                    onClear={() => {
+                        this._onSearch('', true);
+                        searchBoxRef.current.focus();
+                    }}
                 />
                 <div className={styles.searchButton}>
                     {this.state.searchInputValue &&
                         <IconButton
                             onClick={() => this._onSearch(this.state.searchInputValue)}
                             iconProps={{ iconName: 'Forward' }}
+                            ariaLabel={webPartStrings.SearchBox.SearchButtonLabel}
                         />
                     }
                 </div>

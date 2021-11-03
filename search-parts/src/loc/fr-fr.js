@@ -79,12 +79,12 @@ define([], function() {
             },
             DateIntervalStrings: {
                 AnyTime: "N’importe quand",
-                PastDay: "Dernières 24 heures",
-                PastWeek: "Semaine dernière",
-                PastMonth: "Mois dernier",
-                Past3Months: "Trois derniers mois",
-                PastYear: "Année dernière",
-                Older: "Il y a plus d’un an"
+                PastDay: "Entre 24 heures et 1 semaine",
+                PastWeek: "Entre 1 semaine et 1 mois",
+                PastMonth: "Entre 1 et 3 mois",
+                Past3Months: "Entre 3 mois et 1 an",
+                PastYear: "Depuis l'année dernière",
+                Older: "Il y a plus d'un an"
             },
             SameTabOpenBehavior: "Utiliser l’onglet actuel",
             NewTabOpenBehavior: "Ouvrir dans un nouvel onglet",

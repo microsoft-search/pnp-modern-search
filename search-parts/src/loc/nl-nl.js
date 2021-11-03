@@ -79,12 +79,12 @@ define([], function() {
             },
             DateIntervalStrings: {
                 AnyTime: "Altijd",
-                PastDay: "Laatste 24 uur",
-                PastWeek: "Laatste week",
-                PastMonth: "Laatste maand",
-                Past3Months: "Laatste 3 maanden",
-                PastYear: "Laatste jaar",
-                Older: "Ouder dan 1 jaar"
+                PastDay: "Van afgelopen 24 uur tot afgelopen week",
+                PastWeek: "Van afgelopen week tot afgelopen maand",
+                PastMonth: "Van afgelopen maand tot afgelopen 3 maanden",
+                Past3Months: "Van de afgelopen 3 maanden tot het afgelopen jaar",
+                PastYear: "Van vorig jaar",
+                Older: "Ouder dan een jaar"
             },
             SameTabOpenBehavior: "Gebruik de huidige tab",
             NewTabOpenBehavior: "Open in een nieuwe tab",

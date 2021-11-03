@@ -144,15 +144,12 @@ export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilte
                 onRenderOption={this._onRenderOption}
                 useComboBoxAsMenuWidth={true}
                 onPendingValueChanged={(option?: IComboBoxOption, index?: number, value?: string) => {
+
+                    // Open the combo box
+                    this.comboRef.current.focus(true);
+
                     // A new value has been entered
                     if (value !== undefined) {
-
-                        if (this.state.searchValue === undefined) {
-
-                            // Open the combo box
-                            this.comboRef.current.focus(true);
-                        }
-
                         this.setState({
                             searchValue: value
                         });

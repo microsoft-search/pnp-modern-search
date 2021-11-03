@@ -79,11 +79,11 @@ define([], function() {
             },
             DateIntervalStrings: {
                 AnyTime: "Any time",
-                PastDay: "Past 24 hours",
-                PastWeek: "Past week",
-                PastMonth: "Past month",
-                Past3Months: "Past 3 months",
-                PastYear: "Past year",
+                PastDay: "From past 24 hours to past week",
+                PastWeek: "From past week to past month",
+                PastMonth: "From past month to past 3 months",
+                Past3Months: "From past 3 months to past year",
+                PastYear: "From past year",
                 Older: "Older than a year"
             },
             SameTabOpenBehavior: "Use the current tab",

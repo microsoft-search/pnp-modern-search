@@ -144,7 +144,9 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
         if (this.properties.queryText && !this.properties.queryText.isDisposed) {
             try {
                 inputValue = this.properties.queryText.tryGetValue();
-                inputValue = decodeURIComponent(inputValue);
+                if (inputValue !== undefined) {
+                    inputValue = decodeURIComponent(inputValue);
+                }
 
             } catch (error) {
                 // Likely issue when q=%25 in spfx
@@ -421,7 +423,9 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
                                         React.createElement(Toggle, {
                                             key: itemId, checked: value, onChange: (evt, checked) => {
                                                 onUpdate(field.id, checked);
-                                            }
+                                            },
+                                            offText: commonStrings.General.OffTextLabel,
+                                            onText: commonStrings.General.OnTextLabel
                                         })
                                     )
                                 );
