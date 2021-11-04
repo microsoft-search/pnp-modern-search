@@ -131,7 +131,9 @@ define([], function () {
           EnableTopResultsLabel: "Aktivera toppresultat",
           ContentSourcesFieldLabel: "Innehållskällor",
           ContentSourcesFieldDescriptionLabel: "Visar ID för de anslutningar som definierats i administrationsportalen för Microsoft Search Connectors",
-          ContentSourcesFieldPlaceholderLabel: "ex: 'MyCustomConnectorId'"
+          ContentSourcesFieldPlaceholderLabel: "ex: 'MyCustomConnectorId'",
+          EnableSuggestionLabel: "Enable spelling suggestions",
+          EnableModificationLabel: "Enable spelling modifications",
         },
         SearchCommon: {
           Sort: {

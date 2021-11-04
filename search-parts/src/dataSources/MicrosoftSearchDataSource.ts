@@ -56,6 +56,11 @@ export interface IMicrosoftSearchDataSourceProperties {
      * The content sources for external items
      */
     contentSourceConnectionIds: string[];
+
+    /**
+     * The query alteration options for spelling corrections
+     */
+    queryAlterationOptions: IQueryAlterationOptions;
 }
 
 export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDataSourceProperties> {
@@ -172,8 +177,6 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         };
 
         const searchRequest = await this.buildMicrosoftSearchRequest(dataContext);
-        const queryAlterationOptions = undefined;
-
         results = await this.search(searchRequest);
 
         return results;
@@ -289,6 +292,27 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             }));
         }
 
+        if (this.properties.entityTypes.indexOf(EntityType.Message) !== -1 ||
+            this.properties.entityTypes.indexOf(EntityType.Event) !== -1 ||
+            this.properties.entityTypes.indexOf(EntityType.Site) !== -1 ||
+            this.properties.entityTypes.indexOf(EntityType.Drive) !== -1 ||
+            this.properties.entityTypes.indexOf(EntityType.DriveItem) !== -1 ||
+            this.properties.entityTypes.indexOf(EntityType.List) !== -1 ||
+            this.properties.entityTypes.indexOf(EntityType.ListItem) !== -1 ||
+            this.properties.entityTypes.indexOf(EntityType.ExternalItem) !== -1) {
+            groupFields.push(
+                PropertyPaneToggle('dataSourceProperties.queryAlterationOptions.enableSuggestion', {
+                    label: commonStrings.DataSources.MicrosoftSearch.EnableSuggestionLabel,
+                    checked: this.properties.queryAlterationOptions.enableSuggestion
+                }),
+                PropertyPaneToggle('dataSourceProperties.queryAlterationOptions.enableModification', {
+                    label: commonStrings.DataSources.MicrosoftSearch.EnableModificationLabel,
+                    checked: this.properties.queryAlterationOptions.enableModification
+                })
+            );
+        }
+
+
         return [
             {
                 groupName: commonStrings.DataSources.MicrosoftSearch.SourceConfigurationGroupName,
@@ -384,6 +408,8 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         this.properties.fields = this.properties.fields !== undefined ? this.properties.fields : SharePointFields.concat(CommonFields);
         this.properties.sortProperties = this.properties.sortProperties !== undefined ? this.properties.sortProperties : [];
         this.properties.contentSourceConnectionIds = this.properties.contentSourceConnectionIds !== undefined ? this.properties.contentSourceConnectionIds : [];
+
+        this.properties.queryAlterationOptions = this.properties.queryAlterationOptions ?? { enableModification: false, enableSuggestion: false };
     }
 
     private async buildMicrosoftSearchRequest(dataContext: IDataContext): Promise<IMicrosoftSearchRequest> {
@@ -612,7 +638,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
      * Retrieves data from Microsoft Graph API
      * @param searchRequest the Microsoft Search search request
      */
-    private async search(searchRequest: IMicrosoftSearchRequest, alterationOptions?: IQueryAlterationOptions): Promise<IMicrosoftSearchDataSourceData> {
+    private async search(searchRequest: IMicrosoftSearchRequest): Promise<IMicrosoftSearchDataSourceData> {
 
         let itemsCount = 0;
         let response: IMicrosoftSearchDataSourceData = {
@@ -628,11 +654,11 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
 
         let jsonResponse = undefined;
 
-        if (alterationOptions) {
-            jsonResponse = await request.post({ requests: [searchRequest] });
+        if (this.properties.queryAlterationOptions.enableModification || this.properties.queryAlterationOptions.enableSuggestion) {
+            jsonResponse = await request.post({ requests: [searchRequest], queryAlterationOptions: this.properties.queryAlterationOptions });
         }
         else {
-            jsonResponse = await request.post({ requests: [searchRequest], queryAlterationOptions: alterationOptions });
+            jsonResponse = await request.post({ requests: [searchRequest] });
         }
 
         if (jsonResponse.value && Array.isArray(jsonResponse.value)) {

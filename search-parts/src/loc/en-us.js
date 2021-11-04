@@ -131,7 +131,9 @@ define([], function() {
                 EnableTopResultsLabel: "Enable top results",
                 ContentSourcesFieldLabel: "Content sources",
                 ContentSourcesFieldDescriptionLabel: "IDs of connections defined in the Microsoft Search connectors administration portal.",
-                ContentSourcesFieldPlaceholderLabel: "ex: 'MyCustomConnectorId'"
+                ContentSourcesFieldPlaceholderLabel: "ex: 'MyCustomConnectorId'",
+                EnableSuggestionLabel: "Enable spelling suggestions",
+                EnableModificationLabel: "Enable spelling modifications",
             },
             SearchCommon: {
                 Sort: {
