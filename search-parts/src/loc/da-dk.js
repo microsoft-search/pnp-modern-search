@@ -131,7 +131,11 @@ define([], function() {
                 EnableTopResultsLabel: "Aktivér topresultater",
                 ContentSourcesFieldLabel: "Indholdskilder",
                 ContentSourcesFieldDescriptionLabel: "Viser ID af de forbindelser der er defineret i administrationsportalen for Microsoft Search-connectors.",
-                ContentSourcesFieldPlaceholderLabel: "Fx: 'MyCustomConnectorId'"
+                ContentSourcesFieldPlaceholderLabel: "Fx: 'MyCustomConnectorId'",
+                QueryModifierFieldLabel: "Forespørgselsmodifikator",
+                QueryModifierPlaceHolderText: "AND IsDocument:true",
+                QueryModifierFieldDescription: "Søgemodifikator-skabelonen. Du kan også bruge {<tokens>} og KQL til at bygge en dynamisk forespørgsel. Alt sammenkædes til inputQueryText",
+                ApplyQueryModifierBtnText: "Anvend"
             },
             SearchCommon: {
                 Sort: {

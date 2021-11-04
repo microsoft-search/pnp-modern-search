@@ -12,6 +12,7 @@ import { DateHelper } from '../helpers/DateHelper';
 import { DataFilterHelper } from "../helpers/DataFilterHelper";
 import { IMicrosoftSearchResponse } from "../models/search/IMicrosoftSearchResponse";
 import { ISortFieldConfiguration, SortFieldDirection } from '../models/search/ISortFieldConfiguration';
+import { PropertyPaneNonReactiveTextField } from "../controls/PropertyPaneNonReactiveTextField/PropertyPaneNonReactiveTextField";
 
 const MICROSOFT_SEARCH_URL = "https://graph.microsoft.com/beta/search/query";
 
@@ -54,6 +55,13 @@ export interface IMicrosoftSearchDataSourceProperties {
      * The content sources for external items
      */
     contentSourceConnectionIds: string[];
+
+    /**
+     * The search modfier template. Extends the query with additional KQL
+     * e.g. if tempalte is set to 'AND IsDocument:true' a search with the input string 'security'
+     * will be transformed to 'security AND IsDocument:true'
+     */
+    queryModifierTemplate: string;
 }
 
 export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDataSourceProperties> {
@@ -203,6 +211,16 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                 defaultSelectedKeys: this.properties.entityTypes,
                 onPropertyChange: this.onCustomPropertyUpdate.bind(this),
                 textDisplayValue: entityTypesDisplayValue.filter(e => e).join(",")
+            }),
+            new PropertyPaneNonReactiveTextField('dataSourceProperties.queryModifierTemplate', {
+                defaultValue: this.properties.queryModifierTemplate,
+                label: commonStrings.DataSources.MicrosoftSearch.QueryModifierFieldLabel,
+                placeholderText: commonStrings.DataSources.MicrosoftSearch.QueryModifierPlaceHolderText,
+                multiline: true,
+                description: commonStrings.DataSources.MicrosoftSearch.QueryModifierFieldDescription,
+                applyBtnText: commonStrings.DataSources.MicrosoftSearch.ApplyQueryModifierBtnText,
+                allowEmptyValue: false,
+                rows: 8
             }),
             new PropertyPaneAsyncCombo('dataSourceProperties.fields', {
                 availableOptions: this._availableFields,
@@ -380,6 +398,8 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         this.properties.fields = this.properties.fields !== undefined ? this.properties.fields : SharePointFields.concat(CommonFields);
         this.properties.sortProperties = this.properties.sortProperties !== undefined ? this.properties.sortProperties : [];
         this.properties.contentSourceConnectionIds = this.properties.contentSourceConnectionIds !== undefined ? this.properties.contentSourceConnectionIds : [];
+        
+        this.properties.queryModifierTemplate = this.properties.queryModifierTemplate ?? "";
     }
 
     private async buildMicrosoftSearchRequest(dataContext: IDataContext): Promise<IMicrosoftSearchRequest> {
@@ -390,10 +410,17 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         let contentSources: string[] = [];
         let queryText = '*'; // Default query string if not specified, the API does not support empty value
         let from = 0;
-
+    
         // Query text
         if (dataContext.inputQueryText) {
             queryText = await this._tokenService.resolveTokens(dataContext.inputQueryText);
+        }
+
+        // Query modification
+        const queryModifierTemplate = await this._tokenService.resolveTokens(this.properties.queryModifierTemplate);
+        if(queryModifierTemplate)
+        {
+            queryText = `${queryText} ${queryModifierTemplate.trimLeft()}`;
         }
 
         // Paging

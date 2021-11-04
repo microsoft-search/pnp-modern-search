@@ -131,7 +131,11 @@ define([], function() {
                 EnableTopResultsLabel: "Enable top results",
                 ContentSourcesFieldLabel: "Content sources",
                 ContentSourcesFieldDescriptionLabel: "IDs of connections defined in the Microsoft Search connectors administration portal.",
-                ContentSourcesFieldPlaceholderLabel: "ex: 'MyCustomConnectorId'"
+                ContentSourcesFieldPlaceholderLabel: "ex: 'MyCustomConnectorId'",
+                QueryModifierFieldLabel: "Query modifier",
+                QueryModifierPlaceHolderText: "AND IsDocument:true",
+                QueryModifierFieldDescription: "The search modifier template. You can also use {<tokens>} and KQL to build a dynamic query. Everything is concatenated to the inputQueryText",
+                ApplyQueryModifierBtnText: "Apply"
             },
             SearchCommon: {
                 Sort: {

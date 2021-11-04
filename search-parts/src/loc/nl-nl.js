@@ -131,7 +131,11 @@ define([], function() {
                 EnableTopResultsLabel: "Topresultaten inschakelen",
                 ContentSourcesFieldLabel: "Inhoudsbronnen",
                 ContentSourcesFieldDescriptionLabel: "IDs van verbingingen gedefinieerd in de Microsoft Search connectors administratie portaal.",
-                ContentSourcesFieldPlaceholderLabel: "bijv: 'MyCustomConnectorId'"
+                ContentSourcesFieldPlaceholderLabel: "bijv: 'MyCustomConnectorId'",
+                QueryModifierFieldLabel: "Query-modifier",
+                QueryModifierPlaceHolderText: "AND IsDocument:true",
+                QueryModifierFieldDescription: "De sjabloon voor zoekmodificatie. U kunt ook {<tokens>} en KQL gebruiken om een ​​dynamische query te maken. Alles is aaneengeschakeld naar de inputQueryText",
+                ApplyQueryModifierBtnText: "Toepassen"
             },
             SearchCommon: {
                 Sort: {
