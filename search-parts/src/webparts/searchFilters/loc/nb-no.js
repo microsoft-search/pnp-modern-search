@@ -23,7 +23,7 @@ define([], function() {
             DataFilterCollection: {
                 SelectFilterComboBoxLabel: "Velg felt",
                 FilterNameLabel: "Felt for filter",
-                FilterMaxBuckets: "# av verdier",
+                FilterMaxBuckets: "Antall verdier",
                 FilterDisplayName: "Visningsnavn",
                 FilterTemplate: "Mal",
                 FilterExpandByDefault: "Utvid som standard",
