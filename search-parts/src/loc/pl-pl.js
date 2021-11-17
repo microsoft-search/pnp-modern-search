@@ -131,7 +131,8 @@ define([], function() {
               EnableTopResultsLabel: "Włącz najlepsze wyniki",
               ContentSourcesFieldLabel: "Źródła zawartości",
               ContentSourcesFieldDescriptionLabel: "Identyfikatory połączeń zdefiniowanych w portalu administracyjnym Microsoft Search.",
-              ContentSourcesFieldPlaceholderLabel: "przykładowo: 'MyCustomConnectorId'"
+              ContentSourcesFieldPlaceholderLabel: "przykładowo: 'MyCustomConnectorId'",
+              UseBetaEndpoint: "Użyj punktu końcowego wersji beta"
           },
           SearchCommon: {
               Sort: {

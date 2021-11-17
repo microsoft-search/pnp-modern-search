@@ -131,7 +131,8 @@ define([], function () {
           EnableTopResultsLabel: "Aktiver toppresultater",
           ContentSourcesFieldLabel: "Innholdskilder",
           ContentSourcesFieldDescriptionLabel: "Viser ID for de tilkoblinger som er definert i admin-portalen for Microsoft Search Connectors",
-          ContentSourcesFieldPlaceholderLabel: "f.eks.: 'MyCustomConnectorId'"
+          ContentSourcesFieldPlaceholderLabel: "f.eks.: 'MyCustomConnectorId'",
+          UseBetaEndpoint: "Bruk betaendepunkt"
         },
         SearchCommon: {
           Sort: {
