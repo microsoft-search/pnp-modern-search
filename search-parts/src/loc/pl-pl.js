@@ -89,7 +89,11 @@ define([], function() {
           SameTabOpenBehavior: "Użyj bieżącej karty",
           NewTabOpenBehavior: "Otwórz w nowej karcie",
           PageOpenBehaviorLabel: "Sposób otwierania",
-          EmptyFieldErrorMessage: "To pole nie może być puste"
+          EmptyFieldErrorMessage: "To pole nie może być puste",
+          TagPickerStrings: {
+            NoResultsSearchMessage: "Nie znaleziono wyników",
+            SearchPlaceholder: "Wyszukaj wartość..."
+          }
       },
       DataSources: {
           SharePointSearch: {

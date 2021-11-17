@@ -89,7 +89,11 @@ define([], function () {
         SameTabOpenBehavior: "Bruk den aktuelle fanen",
         NewTabOpenBehavior: "Åpne i ny fane",
         PageOpenBehaviorLabel: "Sideåpningsmodus",
-        EmptyFieldErrorMessage: "Dette feltet kan ikke være tomt"
+        EmptyFieldErrorMessage: "Dette feltet kan ikke være tomt",
+        TagPickerStrings: {
+          NoResultsSearchMessage: "Ingen resultater",
+          SearchPlaceholder: "Søk etter en verdi..."
+        }
       },
       DataSources: {
         SharePointSearch: {

@@ -3,6 +3,8 @@
 	{{#each @root.filters as |filter|}}    
 	
 		<div><strong>{{filter.filterName}}</strong></div>
+
+		<pnp-filtersearchbox data-filter="{{JSONstringify filter}}" data-instance-id="{{@root.instanceId}}"></pnp-filtersearchbox>
 	
 		{{#each filter.values}}
 			<pnp-filtercheckbox 
@@ -15,7 +17,6 @@
 			>
 			</pnp-filtercheckbox>
 		{{/each}}
-		
 		
 		{{#eq filter.values.length 0}}
 			<div>{{@root.strings.FilterNoValuesMessage}}</div>

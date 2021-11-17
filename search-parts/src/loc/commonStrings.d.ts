@@ -89,6 +89,10 @@ declare interface ICommonStrings {
       NewTabOpenBehavior: string;
       PageOpenBehaviorLabel: string;
       EmptyFieldErrorMessage: string;
+      TagPickerStrings: {
+        NoResultsSearchMessage: string;
+        SearchPlaceholder: string;
+      }
     },
     DataSources: {
       SharePointSearch: {

@@ -89,7 +89,11 @@ define([], function() {
             SameTabOpenBehavior: "Gebruik de huidige tab",
             NewTabOpenBehavior: "Open in een nieuwe tab",
             PageOpenBehaviorLabel: "Gedrag voor openen",
-            EmptyFieldErrorMessage: "Dit veld mag niet leeg zijn"
+            EmptyFieldErrorMessage: "Dit veld mag niet leeg zijn",
+            TagPickerStrings: {
+                NoResultsSearchMessage: "Geen resultaten gevonden",
+                SearchPlaceholder: "Zoek een waarde..."
+            }
         },
         DataSources: {
             SharePointSearch: {

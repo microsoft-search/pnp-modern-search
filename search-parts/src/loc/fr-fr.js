@@ -89,7 +89,11 @@ define([], function() {
             SameTabOpenBehavior: "Utiliser l’onglet actuel",
             NewTabOpenBehavior: "Ouvrir dans un nouvel onglet",
             PageOpenBehaviorLabel: "Comportement d’ouverture",
-            EmptyFieldErrorMessage: "Ce champ ne doit pas être vide."
+            EmptyFieldErrorMessage: "Ce champ ne doit pas être vide.",
+            TagPickerStrings: {
+                NoResultsSearchMessage: "Aucun résultat trouvé",
+                SearchPlaceholder: "Rechercher une valeur..."
+            }
         },
         DataSources: {
             SharePointSearch: {

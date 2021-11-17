@@ -89,7 +89,11 @@ define([], function() {
             SameTabOpenBehavior: "Use the current tab",
             NewTabOpenBehavior: "Open in a new tab",
             PageOpenBehaviorLabel: "Opening behavior",
-            EmptyFieldErrorMessage: "This field cannot be empty"
+            EmptyFieldErrorMessage: "This field cannot be empty",
+            TagPickerStrings: {
+                NoResultsSearchMessage: "No results found",
+                SearchPlaceholder: "Search a value..."
+            }
         },
         DataSources: {
             SharePointSearch: {

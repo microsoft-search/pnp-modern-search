@@ -89,7 +89,11 @@ define([], function () {
         SameTabOpenBehavior: "Använd den aktuella fliken",
         NewTabOpenBehavior: "Öppna i en ny flik",
         PageOpenBehaviorLabel: "Öppningsbeteende",
-        EmptyFieldErrorMessage: "Det här fältet får inte vara tomt"
+        EmptyFieldErrorMessage: "Det här fältet får inte vara tomt",
+        TagPickerStrings: {
+          NoResultsSearchMessage: "Inga resultat funna",
+          SearchPlaceholder: "Sök efter ett värde..."
+        }
       },
       DataSources: {
         SharePointSearch: {
