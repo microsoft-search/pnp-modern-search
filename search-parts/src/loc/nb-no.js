@@ -1,4 +1,4 @@
-define([], function () {
+  define([], function () {
     return {
       Tokens: {
         SelectTokenLabel: "Velg token…",
@@ -159,7 +159,14 @@ define([], function () {
         TextDialogSaveButtonText: "Lagre",
         SelectItemComboPlaceHolder: "Velg egenskap",
         AddStaticDataLabel: "Legg til statisk data",
-        TextFieldApplyButtonText: "Lagre"
+        TextFieldApplyButtonText: "Lagre",
+        ExportButtonText: "Exportera (csv)",
+        ExportInfoText: "Information",
+        ExportDialogHelpText: "Välj om du vill exportera den aktuella sidan/vyn eller all data (med högst {maxhits} rader). Lägg märke till att det kan vara en skillnad i visade kolumner, värdeformatering och tillämpad sortering i den utmatade filen jämfört med nuvarande vy.",
+        ExportBrowserNotSupportedText: "Webbläsare stöds inte. Försök igen med en annan webbläsare.",
+        ExportCurrentPageLabel: "Nuvarande sida/vy",
+        ExportAllLabel: "Alla (max {maxhits} rader)",
+        ExportDialogOKButtonText: "OK"
       },
       Layouts: {
         Debug: {
@@ -175,7 +182,6 @@ define([], function () {
         },
         DetailsList: {
           Name: "Detaljert liste",
-          UseHandlebarsExpressionLabel: "Bruk Handlebars",
           MinimumWidthColumnLabel: "Minimal bredde (px)",
           MaximumWidthColumnLabel: "Maksimal bredde (px)",
           SortableColumnLabel: "Sorterbar",
@@ -186,14 +192,11 @@ define([], function () {
           ShowFileIcon: "Vis fil-ikon",
           ManageDetailsListColumnDescription: "Legg til, oppdater eller fjern kolonner fra detaljert liste-malen. Du kan enten bruke egenskapsverdien i listen direkte uten omforming, eller du kan bruke et Handlebars-uttrykk som verdi. HTML støttes også i alle felt.",
           ManageDetailsListColumnLabel: "Rediger kolonner",
-          ValueColumnLabel: "Kolonneverdi",
           ValueSortingColumnLabel: "Kolonneverdisortering",
-          DisplayNameColumnLabel: "Kolonnens visningsnavn",
           FileExtensionFieldLabel: "Felt för filendelse",
           GroupByFieldLabel: "Grupper etter felt",
           EnableGrouping: "Aktiver gruppering",
-          CollapsedGroupsByDefault: "Vis kollapsede",
-          ResetFieldsBtnLabel: "Bruk standardverdiene"
+          CollapsedGroupsByDefault: "Vis kollapsede"
         },
         Cards: {
           Name: "Kort",
@@ -202,7 +205,6 @@ define([], function () {
           PlaceholderNameFieldLabel: "Navn",
           SupportHTMLColumnLabel: "Tillat HTML",
           PlaceholderValueFieldLabel: "Verdi",
-          UseHandlebarsExpressionLabel: "Bruk Handlebars",
           EnableItemPreview: "Tillat forhåndsvisning",
           EnableItemPreviewHoverMessage: "Å bruke denne funksjonen kan påvirke ytelsen hvis mange objekter vises samtidig og du bruker feltet 'AutoPreviewUrl'. Vi anbefaler at du bruker dette alternativet med få objekter, eller ved å bruke forhåndsdefinerte forhåndsvisnings-URL-er fra datakildens egenskaper i «slots».",
           ShowFileIcon: "Vis fil-ikon",
@@ -221,7 +223,6 @@ define([], function () {
             FileExtension: "Filendelse",
             IsContainer: "Er mappe"
           },
-          ResetFieldsBtnLabel: "Bruk standardverdiene"
         },
         Slider: {
           Name: "Lysbildefremvisning",
@@ -240,7 +241,6 @@ define([], function () {
           ManagePeopleFieldsPanelDescriptionLabel: "Her kan du bestemme hvilke felter som skal oppta hvilke plassholdere. Du kan enten bruke egenskapsverdien i listen direkte uten omforming, eller du kan bruke et Handlebars-uttrykk som verdi. HTML støttes også i alle felt.",
           PlaceholderNameFieldLabel: "Navn",
           PlaceholderValueFieldLabel: "Verdi",
-          UseHandlebarsExpressionLabel: "Bruk Handlebars",
           PersonaSizeOptionsLabel: "Komponentstørrelse",
           PersonaSizeExtraSmall: "Ekstra liten",
           PersonaSizeSmall: "Liten",
@@ -249,7 +249,6 @@ define([], function () {
           PersonaSizeExtraLarge: "Ekstra stor",
           ShowInitialsToggleLabel: "Vis initialer hvis bilde ikke er tilgjengelig",
           SupportHTMLColumnLabel: "Tillat HTML",
-          ResetFieldsBtnLabel: "Bruk standardverdier",
           ShowPersonaCardOnHover: "Vis personkort når du fører musen over",
           ShowPersonaCardOnHoverCalloutMsg: "Denne funksjonen bruker Microsoft Graph for å vise informasjon om brukere og må ha følgende API-tilganger i din klient for at det skal virke: ['User.Read','People.Read','Contacts.Read','User.Read.All'].",
           Fields: {
@@ -285,6 +284,15 @@ define([], function () {
             ExtraLarge: 'Ekstra stor',
             SmallFluid: 'Full bredde (flytende)'
           }
+        },
+        Shared: {
+          EnableExport: "Aktiver eksport",
+          ManageExportColumnsLabel: "Rediger kolonner",
+          ManageExportColumnsDescription: "Legg til, oppdater eller fjern kolonner fra eksporten. Du kan enten bruke egenskapsverdier i listen direkte uten omforming, eller du kan bruke et Handlebars-uttrykk som verdi",
+          DisplayNameColumnLabel: "Kolonnens visningsnavn",
+          UseHandlebarsExpressionLabel: "Bruk Handlebars",
+          ValueColumnLabel: "Kolonneverdi",
+          ResetFieldsBtnLabel: "Bruk standardverdiene"
         }
       },
       HandlebarsHelpers: {
@@ -324,4 +332,3 @@ define([], function () {
       }
     }
   })
-  
