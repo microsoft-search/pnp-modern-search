@@ -162,7 +162,7 @@
         TextFieldApplyButtonText: "Lagre",
         ExportButtonText: "Eksport (csv)",
         ExportInfoText: "Informasjon",
-        ExportDialogHelpText: "Velg om du vil eksportere gjeldende side/visning eller alle data (med maksimalt {maxhits} linjer). Merk at det kan være en forskjell i viste kolonner, verdiformatering og anvendt sortering i utdatafilen sammenlignet med gjeldende visning.",
+        ExportDialogHelpText: "Velg om du vil eksportere gjeldende side/visning eller alle data (med maksimalt {maxhits} linjer). Merk at det kan være en forskjell i viste kolonner, verdiformatering og anvendt sortering i utdatafilen sammenlignet med gjeldende visning. Det er heller ingen garanti for at det eksporterte innholdet har inkludert alle potensielle treff.",
         ExportBrowserNotSupportedText: "Nettleser støttes ikke. Prøv igjen med en annen nettleser.",
         ExportCurrentPageLabel: "Gjeldende side/visning",
         ExportAllLabel: "Alle (maks {maxhits} linjer)",
