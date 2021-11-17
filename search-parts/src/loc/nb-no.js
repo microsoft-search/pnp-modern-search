@@ -160,12 +160,12 @@
         SelectItemComboPlaceHolder: "Velg egenskap",
         AddStaticDataLabel: "Legg til statisk data",
         TextFieldApplyButtonText: "Lagre",
-        ExportButtonText: "Exportera (csv)",
-        ExportInfoText: "Information",
-        ExportDialogHelpText: "Välj om du vill exportera den aktuella sidan/vyn eller all data (med högst {maxhits} rader). Lägg märke till att det kan vara en skillnad i visade kolumner, värdeformatering och tillämpad sortering i den utmatade filen jämfört med nuvarande vy.",
-        ExportBrowserNotSupportedText: "Webbläsare stöds inte. Försök igen med en annan webbläsare.",
-        ExportCurrentPageLabel: "Nuvarande sida/vy",
-        ExportAllLabel: "Alla (max {maxhits} rader)",
+        ExportButtonText: "Eksport (csv)",
+        ExportInfoText: "Informasjon",
+        ExportDialogHelpText: "Velg om du vil eksportere gjeldende side/visning eller alle data (med maksimalt {maxhits} linjer). Merk at det kan være en forskjell i viste kolonner, verdiformatering og anvendt sortering i utdatafilen sammenlignet med gjeldende visning.",
+        ExportBrowserNotSupportedText: "Nettleser støttes ikke. Prøv igjen med en annen nettleser.",
+        ExportCurrentPageLabel: "Gjeldende side/visning",
+        ExportAllLabel: "Alle (maks {maxhits} linjer)",
         ExportDialogOKButtonText: "OK"
       },
       Layouts: {
