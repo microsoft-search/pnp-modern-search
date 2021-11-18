@@ -30,6 +30,11 @@
 			margin-bottom: 5px;
 		}
 
+		.filter--option {
+			margin-bottom: 8px;
+			padding-left: 10px;
+		}
+
 		pnp-filtercheckbox {
 			max-width: 100%;
 		}
@@ -48,8 +53,9 @@
 								data-filter-name="{{filter.filterName}}" 
 								data-is-multi="{{filter.isMulti}}"
 								data-show-count="{{filter.showCount}}"
+								data-operator="{{filter.operator}}"
 								data-theme-variant="{{JSONstringify @root.theme}}"
-							>
+								>
 									{{#each filter.values}}
 										<option value="{{value}}" data-selected="{{selected}}" data-disabled="{{disabled}}" data-count="{{count}}">{{name}}</option>
 									{{/each}}
@@ -59,8 +65,7 @@
 					<pnp-collapsible data-group-name="{{filter.displayName}}" data-default-collapsed="{{#or hasSelectedValues expandByDefault selectedOnce}}false{{else}}true{{/or}}" data-theme-variant="{{JSONstringify @root.theme}}">
 						
 						<template id="collapsible-header">
-
-							
+														
 						</template>
 						
 						<template id="collapsible-content">
@@ -74,6 +79,16 @@
 								</div>
 							{{else}}
 								{{#eq filter.selectedTemplate 'CheckboxFilterTemplate'}}
+
+									{{#if filter.isMulti}}
+										<div class="filter--option">
+											<pnp-filteroperator 
+												data-filter-name="{{filter.filterName}}" 
+												data-operator="{{filter.operator}}" 
+												data-theme-variant="{{JSONstringify @root.theme}}"
+											></pnp-filteroperator>
+										</div>
+									{{/if}}
 								
 									<div class="filter--option">
 										<pnp-filtersearchbox data-filter="{{JSONstringify filter}}" data-instance-id="{{@root.instanceId}}" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-filtersearchbox>

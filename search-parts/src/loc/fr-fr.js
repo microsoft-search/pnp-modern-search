@@ -319,7 +319,10 @@ define([], function() {
             FilterNoValuesMessage: "Aucune valeur pour ce filtre",
             OrOperator: "OU",
             AndOperator: "ET",
-            ComboBoxPlaceHolder: "Choisir une valeur"
+            ComboBoxPlaceHolder: "Choisir une valeur",
+            UseAndOperatorValues: "Utiliser l'opérateur ET entre les valeurs",
+            UseOrOperatorValues: "Utiliser l'opérateur OU entre les valeurs",
+            UseValuesOperators: "Sélectionne l'opérateur à utiliser entre les valeurs de ce filtre"
         },
         SuggestionProviders: {
             SharePointStatic: {

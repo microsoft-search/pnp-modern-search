@@ -318,7 +318,10 @@ define([], function() {
             FilterNoValuesMessage: "Ingen værdier for dette filter",
             OrOperator: "ELLER",
             AndOperator: "OG",
-            ComboBoxPlaceHolder: "Vælg værdi"
+            ComboBoxPlaceHolder: "Vælg værdi",
+            UseAndOperatorValues: "Use an AND operator between values",
+            UseOrOperatorValues: "Use an OR operator between values",
+            UseValuesOperators: "Select operator to use between this filter values"
         },
         SuggestionProviders: {
             SharePointStatic: {

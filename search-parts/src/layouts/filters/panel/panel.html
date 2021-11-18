@@ -30,6 +30,7 @@
         .filterPanelContent {
             padding-left: 32px;
             padding-right: 32px;
+            margin-top: 15px;
         }
 
         .panelOpenBar {
@@ -50,17 +51,18 @@
 		pnp-filtercheckbox {
 			max-width: 100%;
 		}
+
 		        	                
     </style>
 
     <div class="template">
-        <pnp-panel  data-state-key="{{@root.instanceId}}"
-                    data-disable-animation="true"
-                    data-is-light-dismiss="{{@root.properties.layoutProperties.isLightDismiss}}"
-                    data-is-blocking="{{@root.properties.layoutProperties.isBlocking}}"
-                    data-size="{{@root.properties.layoutProperties.size}}"
-                    data-theme-variant="{{JSONstringify @root.theme}}"
-                    data-panel-header-text="{{@root.properties.layoutProperties.headerText}}">
+        <pnp-panel   data-state-key="{{@root.instanceId}}"
+                        data-disable-animation="true"
+                        data-is-light-dismiss="{{@root.properties.layoutProperties.isLightDismiss}}"
+                        data-is-blocking="{{@root.properties.layoutProperties.isBlocking}}"
+                        data-size="{{@root.properties.layoutProperties.size}}"
+                        data-theme-variant="{{JSONstringify @root.theme}}"
+                        data-panel-header-text="{{@root.properties.layoutProperties.headerText}}">
 
             <template id="panel-open">
                 <div class="panelOpenBar">
@@ -69,7 +71,7 @@
             </template>
 
             <template id="panel-content">
-                <div id="aequos-template_{{@root.instanceId}}">
+                <div id="pnp-template_{{@root.instanceId}}">
                     <div class="filterPanelContent">
                         {{#each @root.filters as |filter|}}
                             <div class="filter">
@@ -79,7 +81,7 @@
                                             <pnp-filtercombobox 
                                                 data-instance-id="{{@root.instanceId}}" 
                                                 data-filter-name="{{filter.filterName}}" 
-                                                data-is-multi="{{filter.isMulti}}" 
+                                                data-is-multi="{{filter.isMulti}}"
                                                 data-show-count="{{filter.showCount}}"
                                                 data-operator="{{filter.operator}}"
                                                 data-theme-variant="{{JSONstringify @root.theme}}"
@@ -101,12 +103,25 @@
                                                         data-filter="{{JSONstringify filter 2}}"
                                                         data-theme-variant="{{JSONstringify @root.theme}}"
                                                     >
-                                                </pnp-filterdaterange>
+                                                    </pnp-filterdaterange>
                                                 </div>
                                             {{else}}
                                                 {{#eq filter.selectedTemplate 'CheckboxFilterTemplate'}}
-                                                    <pnp-filtersearchbox data-filter="{{JSONstringify filter}}" data-instance-id="{{@root.instanceId}}" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-filtersearchbox>
 
+                                                    {{#if filter.isMulti}}
+                                                        <div class="filter--option">
+                                                            <pnp-filteroperator 
+                                                                data-filter-name="{{filter.filterName}}" 
+                                                                data-operator="{{filter.operator}}" 
+                                                                data-theme-variant="{{JSONstringify @root.theme}}"
+                                                            ></pnp-filteroperator>
+                                                        </div>
+                                                    {{/if}}
+                                                
+                                                    <div class="filter--option">
+                                                        <pnp-filtersearchbox data-filter="{{JSONstringify filter}}" data-instance-id="{{@root.instanceId}}" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-filtersearchbox>
+                                                    </div>
+                                                    
                                                     <div class="filter--values-list">
                                                         {{#each filter.values}}
                                                             <div title="{{name}} {{#if ../showCount}}({{count}}){{/if}}" class="filter--value">
@@ -137,7 +152,7 @@
                                                                 data-theme-variant="{{JSONstringify @root.theme}}"
                                                             >
                                                             </pnp-filterdateinterval>
-                                                        </div>
+                                                        </div>									
                                                     {{/eq}}	
                                                 {{/eq}}
                                             {{/eq}}
@@ -146,22 +161,24 @@
                 
                                         <template id="collapsible-footer">
                                             {{#isnt filter.selectedTemplate 'DateRangeFilterTemplate'}}
-                                                {{#eq filter.values.length 0}}
-                                                    <div class="filter--message">
-                                                        {{@root.strings.FilterNoValuesMessage}}
-                                                    </div>
-                                                {{else}}
-                                                    {{#if filter.isMulti}}
-                                                        <pnp-filtermultiselect 
-                                                            data-instance-id="{{@root.instanceId}}" 
-                                                            data-filter-name="{{filter.filterName}}" 
-                                                            data-apply-disabled="{{#if filter.canApply}}false{{else}}true{{/if}}" 
-                                                            data-clear-disabled="{{#if filter.canClear}}false{{else}}true{{/if}}"
-                                                            data-theme-variant="{{JSONstringify @root.theme}}"
-                                                        >
-                                                        </pnp-filtermultiselect>
-                                                    {{/if}}
-                                                {{/eq}}
+                                                {{#isnt filter.selectedTemplate 'TaxonomyPickerFilterTemplate'}}
+                                                    {{#eq filter.values.length 0}}
+                                                        <div class="filter--message">
+                                                            {{@root.strings.FilterNoValuesMessage}}
+                                                        </div>
+                                                    {{else}}
+                                                        {{#if filter.isMulti}}
+                                                            <pnp-filtermultiselect 
+                                                                data-instance-id="{{@root.instanceId}}" 
+                                                                data-filter-name="{{filter.filterName}}" 
+                                                                data-apply-disabled="{{#if filter.canApply}}false{{else}}true{{/if}}" 
+                                                                data-clear-disabled="{{#if filter.canClear}}false{{else}}true{{/if}}"
+                                                                data-theme-variant="{{JSONstringify @root.theme}}"
+                                                            >
+                                                            </pnp-filtermultiselect>
+                                                        {{/if}}
+                                                    {{/eq}}
+                                                {{/isnt}}
                                             {{/isnt}}
                                         </template>
                 

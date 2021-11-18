@@ -317,7 +317,10 @@ define([], function() {
           FilterNoValuesMessage: "Brak wartości dla tego filtra",
           OrOperator: "LUB",
           AndOperator: "ORAZ",
-          ComboBoxPlaceHolder: "Wybierz wartość"
+          ComboBoxPlaceHolder: "Wybierz wartość",
+          UseAndOperatorValues: "Använd en AND-operator mellan värden",
+          UseOrOperatorValues: "Använd en ELLER-operator mellan värden",
+          UseValuesOperators: "Välj operator att använda mellan dessa filtervärden"
       },
       SuggestionProviders: {
           SharePointStatic: {

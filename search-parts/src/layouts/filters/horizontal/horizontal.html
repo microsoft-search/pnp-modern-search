@@ -32,6 +32,11 @@
 			margin-bottom: 5px;
 		}
 
+		.filter--option {
+			margin-bottom: 8px;
+			padding-left: 10px;
+		}
+
 		/* Assign the correct size % ratio according to the number of wanted cards on a single row. We use flexbox instead of static grid to deal with SharePoint canvas sections*/
 		.filter {
             flex-grow: 1;
@@ -56,8 +61,9 @@
 							<pnp-filtercombobox 
 								data-instance-id="{{@root.instanceId}}" 
 								data-filter-name="{{filter.filterName}}" 
-								data-is-multi="{{filter.isMulti}}" 
+								data-is-multi="{{filter.isMulti}}"
 								data-show-count="{{filter.showCount}}"
+								data-operator="{{filter.operator}}"
 								data-theme-variant="{{JSONstringify @root.theme}}"
 							>
 									{{#each filter.values}}
@@ -84,7 +90,20 @@
 								</div>
 							{{else}}
 								{{#eq filter.selectedTemplate 'CheckboxFilterTemplate'}}
-									<pnp-filtersearchbox data-filter="{{JSONstringify filter}}" data-instance-id="{{@root.instanceId}}" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-filtersearchbox>
+								
+									{{#if filter.isMulti}}
+										<div class="filter--option">
+											<pnp-filteroperator 
+												data-filter-name="{{filter.filterName}}" 
+												data-operator="{{filter.operator}}" 
+												data-theme-variant="{{JSONstringify @root.theme}}"
+											></pnp-filteroperator>
+										</div>
+									{{/if}}
+								
+									<div class="filter--option">
+										<pnp-filtersearchbox data-filter="{{JSONstringify filter}}" data-instance-id="{{@root.instanceId}}" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-filtersearchbox>
+									</div>
 
 									<div class="filter--values-list">
 										{{#each filter.values}}

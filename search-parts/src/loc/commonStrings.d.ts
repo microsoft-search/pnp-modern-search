@@ -318,6 +318,9 @@ declare interface ICommonStrings {
       OrOperator: string;
       AndOperator: string;
       ComboBoxPlaceHolder: string;
+      UseAndOperatorValues: string;
+      UseOrOperatorValues: string;
+      UseValuesOperators: string;
     },
     SuggestionProviders: {
       SharePointStatic: {
