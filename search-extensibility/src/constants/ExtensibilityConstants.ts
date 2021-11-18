@@ -13,4 +13,9 @@ export class ExtensibilityConstants {
      * Event name to use when all filter values are cleared at once
      */
     public static readonly EVENT_FILTER_CLEAR_ALL = 'filterClearAll';
+
+    /**
+     * Event name to use when the operator between filter values changes
+     */
+    public static readonly EVENT_FILTER_VALUE_OPERATOR_UPDATED = 'filterOperatorUpdated';
 }
