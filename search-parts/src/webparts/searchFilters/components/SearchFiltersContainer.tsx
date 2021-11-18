@@ -17,13 +17,15 @@ import {
   IDataFilter, 
   FilterComparisonOperator, 
   IDataFilterInfo,
-  ExtensibilityConstants
+  ExtensibilityConstants,
+  FilterConditionOperator
 } from '@pnp/modern-search-extensibility';
 import { ISearchFiltersTemplateContext } from '../../../models/common/ITemplateContext';
 import { flatten } from '@microsoft/sp-lodash-subset';
 import { DisplayMode, Log } from '@microsoft/sp-core-library';
 import { DataFilterHelper } from '../../../helpers/DataFilterHelper';
 import { UrlHelper } from '../../../helpers/UrlHelper';
+import { BuiltinFilterTemplates } from '../../../layouts/AvailableTemplates';
 
 const DEEPLINK_QUERYSTRING_PARAM = 'f';
 
@@ -390,6 +392,11 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
     const selectedFilters: IDataFilter[] = currentUiFilters.map(selectedFilter => { 
 
       const newSelectedFilter = cloneDeep(selectedFilter);
+
+      // Update the operator to 'or' when single value mode is selected and multiple values are submitted
+      if (selectedFilter.values.some(v => v.selected) && !selectedFilter.isMulti && selectedFilter.selectedTemplate !== BuiltinFilterTemplates.DateRange) {
+        newSelectedFilter.operator = FilterConditionOperator.OR;
+      }
 
       const values = newSelectedFilter.values.filter(selectedValue => {
         return selectedValue.selected;
