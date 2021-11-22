@@ -5,6 +5,7 @@ import { SPHttpClient } from '@microsoft/sp-http';
 import { DateHelper } from "../../helpers/DateHelper";
 import { Constants } from "../../common/Constants";
 import { ObjectHelper } from "../../helpers/ObjectHelper";
+import { StringHelper } from "../../helpers/StringHelper";
 
 const TokenService_ServiceKey = 'ModernSearchTokenService';
 
@@ -99,7 +100,7 @@ export class TokenService implements ITokenService {
 
         if (inputString) {
 
-            this.moment = await this.dateHelper.moment();
+            this.moment  = await this.dateHelper.moment();
 
             // Resolves dynamic tokens (i.e. tokens resolved asynchronously versus static ones set by the Web Part context)
             inputString = await this.replacePageTokens(inputString);
@@ -112,9 +113,8 @@ export class TokenService implements ITokenService {
             inputString = this.replaceListTokens(inputString);
             inputString = this.replaceGroupTokens(inputString);
             inputString = this.replaceLegacyPageContextTokens(inputString);
-            inputString = this.replaceOrOperator(inputString);
             inputString = await this.replaceHubTokens(inputString);
-
+            
             inputString = inputString.replace(/\{TenantUrl\}/gi, `https://` + window.location.host);
 
             // Look for static tokens in the specified string
@@ -128,20 +128,25 @@ export class TokenService implements ITokenService {
                     const tokenName = token.substr(1).slice(0, -1);
 
                     // Check if the property exists in the object
-                    // 'undefined' => token hasn't been initialized in the TokenService instance. We left the token expression untouched (ex: {token}).
-                    // 'null' => token has been initialized and set with a null value. We replace by an empty string as we don't want the string 'null' litterally.
+                    // 'undefined' => token hasn't been initialized in the TokenService instance. We left the token expression untouched (ex: {token}). Ex: no filters Web Part connected, etc.
+                    // 'null' => token has been initialized but set with a null value. We replace by an empty string as we don't want the string 'null' litterally in the output.
                     // '' (empty string) => replaced in the original string with an empty string as well.
-                    if (ObjectHelper.byPath(this.tokenValuesList, tokenName) !== undefined) {
+                    const tokenValue = ObjectHelper.byPath(this.tokenValuesList, tokenName);
 
-                        if (ObjectHelper.byPath(this.tokenValuesList, tokenName) !== null) {
-                            inputString = inputString.replace(new RegExp(token, 'gi'), ObjectHelper.byPath(this.tokenValuesList, tokenName));
+                    if (tokenValue !== undefined) {
+                        
+                        if (tokenValue !== null) {
+                            inputString = inputString.replace(new RegExp(StringHelper.escapeRegExp(token), 'gi'), tokenValue);
                         } else {
                             // If the property value is 'null', we replace by an empty string. 'null' means it has been already set but resolved as empty.
-                            inputString = inputString.replace(new RegExp(token, 'gi'), '');
+                            inputString = inputString.replace(new RegExp(StringHelper.escapeRegExp(token), 'gi'), '');
                         }
                     }
                 });
             }
+
+            // The 'OR/AND' operator should be called after all tokens are processed (works with comma delimited values potentially coming from resolved)
+            inputString = this.replaceAndOrOperator(inputString);                
 
             // Replace manually escaped characters
             inputString = inputString.replace(/\\(.)/gi, '$1');
@@ -566,39 +571,48 @@ export class TokenService implements ITokenService {
         return inputString;
     }
 
-    private replaceOrOperator(inputString: string) {
+    private replaceAndOrOperator(inputString: string) {
 
         // Example match: {|owstaxidmetadataalltagsinfo:{Page.<TaxnomyProperty>.TermID}}
-        const orConditionTokens = /\{(?:\|(.+?)(>=|=|<=|:|<>|<|>))(\{?.*?\}?\s*)\}/gi;
+        const orAndConditionTokens = /\{(?:(\||\&)(.+?)(>=|=|<=|:|<>|<|>))(\{?.*?\}?\s*)\}/gi;
         let reQueryTemplate = inputString;
-        let match = orConditionTokens.exec(inputString);
+        let match = orAndConditionTokens.exec(inputString);        
 
         if (match != null) {
             while (match !== null) {
 
                 let conditions = [];
-                const property = match[1];
-                const operator = match[2];
-                const tokenValue = match[3];
+                const conditionOperator = match[1];
+                const property = match[2];
+                const operator = match[3];                
+                const tokenValue = match[4];
+
+
+                let quotes = '"';
+                let orAndOperator = conditionOperator === '|' ? 'OR': 'AND';
 
                 // {User} tokens are resolved server-side by SharePoint so we exclude them
                 if (!/\{(?:User)\.(.*?)\}/gi.test(tokenValue)) {
-                    const allValues = tokenValue.split(/[,|]/); // Works with taxonomy multi values (TermID, Label) + multi choices fields + User
+                    const allValues = tokenValue.split(','); // Works with taxonomy multi values (TermID, Label) + multi choices fields + {filters.<value>.valueAsText} token. By convention, all multi values for this operator should be sparated by a comma
+
+                    // If the token value contains a whitespace or is an OData query, we enclose the value with quotes
                     if (allValues.length > 0) {
                         allValues.forEach(value => {
-                            conditions.push(`(${property}${operator}${/\s/g.test(value) ? `"${value}"` : value})`);
+                            conditions.push(`(${property}${operator}${/\s/g.test(value) ? `${quotes}${value}${quotes}` : value})`);
                         });
                     } else {
-                        conditions.push(`${property}${operator}${/\s/g.test(tokenValue) ? `"${tokenValue}"` : tokenValue})`);
+                        conditions.push(`(${property}${operator}${/\s/g.test(tokenValue) ? `${quotes}${tokenValue}${quotes}` : tokenValue})`);
                     }
 
-                    inputString = inputString.replace(match[0], `(${conditions.join(' OR ')})`);
+                    let condition = `${conditions.join(` ${orAndOperator} `)}`;
+
+                    inputString = inputString.replace(match[0], condition);
                 }
 
-                match = orConditionTokens.exec(reQueryTemplate);
+                match = orAndConditionTokens.exec(reQueryTemplate);
             }
         }
-
+        
         return inputString;
     }
 
