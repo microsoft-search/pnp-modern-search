@@ -101,7 +101,7 @@ define([], function () {
           QueryTemplatePlaceHolderText: "ex: Path:{Site}",
           QueryTemplateFieldDescription: "Sökfrågemallen. Du kan också använda {<tokens>} för att skapa en dynamisk fråga.",
           ResultSourceIdLabel: "ID för sökresultatets ID / Nivå|Namn",
-          ResultSourceIdDescription: "Välj en inbyggd källa, skriv en anpassad käll-GUID eller NIVÅ och NAMN på källan separerade med | (dvs: SPSite|Nyheter). Giltiga nivå är [SPSite-abonnemang, SPSite, SPWeb]. Tryck på [Enter] för att spara.",
+          ResultSourceIdDescription: "Välj en inbyggd källa, skriv en anpassad käll-GUID eller NIVÅ och NAMN på källan separerade med | (dvs: SPSite|Nyheter). Giltiga nivå är [SPSiteSubscription, SPSite, SPWeb]. Tryck på [Enter] för att spara.",
           InvalidResultSourceIdMessage: "Det angivna värdet är inte en giltigt GUID eller formaterad som NIVÅ|NAMN",
           EnableQueryRulesLabel: "Aktivera frågeregler",
           IncludeOneDriveResultsLabel: "Inkludera resultat från OneDrive för Företag",

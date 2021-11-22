@@ -101,7 +101,7 @@ define([], function() {
                 QueryTemplatePlaceHolderText: "Exemple : Chemin d’accès : {Site}",
                 QueryTemplateFieldDescription: "Modèle de requête de recherche Vous pouvez également utiliser {<jetons>} pour créer une requête dynamique.",
                 ResultSourceIdLabel: "D’origine de résultat Id / Niveau|Nome",
-                ResultSourceIdDescription: "Sélectionnez une source intégrée, saisissez un GUID de source personnalisé ou NIVEAU et NOM de la source séparés par | (c'est-à-dire : SPSite|Actualités). Les niveaux valides sont [Abonnement SPSite, SPSite, SPWeb]. Appuyez sur [Entrée] pour enregistrer.",
+                ResultSourceIdDescription: "Sélectionnez une source intégrée, saisissez un GUID de source personnalisé ou NIVEAU et NOM de la source séparés par | (c'est-à-dire : SPSite|Actualités). Les niveaux valides sont [SPSiteSubscription, SPSite, SPWeb]. Appuyez sur [Entrée] pour enregistrer.",
                 InvalidResultSourceIdMessage: "La valeur fournie n’est pas une valeur GUID valide ou au format NIVEAU|NOM",
                 EnableQueryRulesLabel: "Activer les règles de requête",
                 IncludeOneDriveResultsLabel: "Inclure les résultats de OneDrive Entreprise",

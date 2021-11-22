@@ -101,7 +101,7 @@ define([], function() {
               QueryTemplatePlaceHolderText: "przykładowo: Path:{Site}",
               QueryTemplateFieldDescription: "Szablon zapytania. Możesz używać {<tokeny>} aby zbudować dynamiczne zapytanie.",
               ResultSourceIdLabel: "Źródła wyników  Id / Poziom|Nazwa",
-              ResultSourceIdDescription: "Wybierz wbudowane źródło, wpisz niestandardowy GUID źródła lub POZIOM i NAZWA źródła oddzielone znakiem | (np. SPSite|News). Prawidłowe zakresy to [subskrypcja SPSite, SPSite, SPWeb]. Naciśnij [Enter], aby zapisać.",
+              ResultSourceIdDescription: "Wybierz wbudowane źródło, wpisz niestandardowy GUID źródła lub POZIOM i NAZWA źródła oddzielone znakiem | (np. SPSite|News). Prawidłowe zakresy to [SPSiteSubscription, SPSite, SPWeb]. Naciśnij [Enter], aby zapisać.",
               InvalidResultSourceIdMessage: "Wprowadzona wartość nie jest poprawnym GUID lub jest sformatowana jako Poziom|Nazwa",
               EnableQueryRulesLabel: "Włącz reguły zapytania",
               IncludeOneDriveResultsLabel: "Dołączaj wyniki z OneDrive for Business",

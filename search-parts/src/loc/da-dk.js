@@ -101,7 +101,7 @@ define([], function() {
                 QueryTemplatePlaceHolderText: "Fx: Sti:{Site}",
                 QueryTemplateFieldDescription: "Søgeforespørgselsskabelonen. Du kan også anvende {<tokens>} for at bygge en dynamisk forespørgsel.",
                 ResultSourceIdLabel: "Søgekildens Id / Niveau|Navn",
-                ResultSourceIdDescription: "Vælg en indbygget kilde, skriv en brugerdefineret kilde-GUID eller NIVEAU og NAVN på kilden adskilt af | (dvs.: SPSite|Nyheder). Gyldige niveauer er [SPSite-abonnement, SPSite, SPWeb]. Tryk på [Enter] for at gemme.",
+                ResultSourceIdDescription: "Vælg en indbygget kilde, skriv en brugerdefineret kilde-GUID eller NIVEAU og NAVN på kilden adskilt af | (dvs.: SPSite|Nyheder). Gyldige niveauer er [SPSiteSubscription, SPSite, SPWeb]. Tryk på [Enter] for at gemme.",
                 InvalidResultSourceIdMessage: "Værdien er ikke en gyldig GUID eller formateret som NIVEAU|NAVN",
                 EnableQueryRulesLabel: "Aktivér forespørgselsregler",
                 IncludeOneDriveResultsLabel: "Inkludér resultater fra OneDrive for Business",

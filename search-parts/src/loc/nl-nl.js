@@ -101,7 +101,7 @@ define([], function() {
                 QueryTemplatePlaceHolderText: "bijv: Path:{Site}",
                 QueryTemplateFieldDescription: "Het zoekopdracht template. Je kan ook {<tokens>} gebruiken om een dynamische zoekopdracht op te bouwen.",
                 ResultSourceIdLabel: "Resultaatbron Id / Niveau|Naam",
-                ResultSourceIdDescription: "Selecteer een ingebouwde bron, typ een aangepaste bron-GUID of NIVEAU en NAAM van de bron gescheiden door | (d.w.z. SPSite|Nieuws). Geldige niveaus zijn [SPSite Subscription, SPSite, SPWeb]. Druk op [Enter] om op te slaan.",
+                ResultSourceIdDescription: "Selecteer een ingebouwde bron, typ een aangepaste bron-GUID of NIVEAU en NAAM van de bron gescheiden door | (d.w.z. SPSite|Nieuws). Geldige niveaus zijn [SPSiteSubscription, SPSite, SPWeb]. Druk op [Enter] om op te slaan.",
                 InvalidResultSourceIdMessage: "De opgegeven waarde is geen valide GUID of is opgemaakt als NIVEAU|NAAM",
                 EnableQueryRulesLabel: "Zoekregels inschakelen",
                 IncludeOneDriveResultsLabel: "Resultaten van OneDrive voor Bedrijven opnemen",
