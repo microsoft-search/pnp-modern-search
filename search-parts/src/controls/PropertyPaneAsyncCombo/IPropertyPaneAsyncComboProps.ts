@@ -63,6 +63,16 @@ export interface IPropertyPaneAsyncComboProps {
     placeholder?: string;
 
     /**
+     * Whether to use the ComboBoxes width as the menu's width
+     */
+    useComboBoxAsMenuWidth?: boolean;
+
+    /**
+     * Flag indicating if the control should clear the text when the user focus the combobox
+     */
+    clearTextOnFocus?: boolean;
+
+    /**
      * The method used to load options dynamically when menu opens (ex: async using an async call)
      * If you don't need to load data dynamically, just use the 'availableOptions' property
      * @param inputText an input text to narrow the initial query
@@ -76,8 +86,11 @@ export interface IPropertyPaneAsyncComboProps {
 
     /**
      * Callback when the property is updated
+     * @param propertyPath the updated property name
+     * @param newValue the new values
+     * @param changeCallback optionnal callback to notify SPFx something has changed add retrigger a render
      */
-    onPropertyChange: (propertyPath: string, newValue: IComboBoxOption | IComboBoxOption[]) => void;
+    onPropertyChange: (propertyPath: string, newValue: IComboBoxOption | IComboBoxOption[], changeCallback?: (targetProperty?: string, newValue?: any) => void) => void;
 
     /**
      * The method is used to get the validation error message and determine whether the input value is valid or not.

@@ -605,5 +605,17 @@ export class TemplateService implements ITemplateService {
             return out;
         });
 
+        // Parse a JSON object
+        // <p>{{JSONparse jsonObject}}</p>
+        this.Handlebars.registerHelper("JSONparse", (str: string, options: any) => {
+            return JSON.parse(str);
+        });
+
+        this.Handlebars.registerHelper("isItemSelected", (selectedKeys: any[], itemIndex: any, options: any) => {
+            if (Array.isArray(selectedKeys) && selectedKeys.length > 0) {
+                return selectedKeys.indexOf(`${options.data.root.paging.currentPageNumber}${itemIndex}`) !== -1;
+            }
+        });
+
     }
 }

@@ -283,6 +283,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                         placeholder: commonStrings.DataSources.SharePointSearch.SelectedPropertiesPlaceholderLabel,
                         onLoadOptions: this.getAvailableProperties.bind(this),
                         searchAsYouType: false,
+                        clearTextOnFocus: true,
                         defaultSelectedKeys: this.properties.selectedProperties,
                         onPropertyChange: this.onCustomPropertyUpdate.bind(this),
                         onUpdateOptions: ((options: IComboBoxOption[]) => {
@@ -326,6 +327,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                                             onUpdateOptions: ((options: IComboBoxOption[]) => {
                                                 this._availableManagedProperties = options;
                                             }).bind(this),
+                                            clearTextOnFocus: true,
                                             placeholder: commonStrings.DataSources.SearchCommon.Sort.SortFieldColumnPlaceholder,
                                             useComboBoxAsMenuWidth: false // Used when screen resolution is too small to display the complete value  
                                         } as IAsyncComboProps));
@@ -806,13 +808,13 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
 
                 // Make sure, if we have multiple filters, at least two filters have values to avoid apply an operator ('or','and') on only one condition failing the query.
                 if (dataContext.filters.selectedFilters.length > 1 && dataContext.filters.selectedFilters.filter(selectedFilter => selectedFilter.values.length > 0).length > 1) {
-                    const refinementString = this.buildRefinementQueryString(dataContext.filters.selectedFilters, dataContext.filters.filtersConfiguration).join(',');
+                    const refinementString = DataFilterHelper.buildFqlRefinementString(dataContext.filters.selectedFilters, dataContext.filters.filtersConfiguration, this.moment).join(',');
                     if (!isEmpty(refinementString)) {
                         refinementFilters = refinementFilters.concat([`${dataContext.filters.filterOperator}(${refinementString})`]);
                     }
 
                 } else {
-                    refinementFilters = refinementFilters.concat(this.buildRefinementQueryString(dataContext.filters.selectedFilters, dataContext.filters.filtersConfiguration));
+                    refinementFilters = refinementFilters.concat(DataFilterHelper.buildFqlRefinementString(dataContext.filters.selectedFilters, dataContext.filters.filtersConfiguration, this.moment));
                 }
             }
 

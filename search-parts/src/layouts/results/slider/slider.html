@@ -34,24 +34,28 @@
                         If you omit the escape character '\', the Handlebars expression will be resolved from the root context
                     -->
                     <pnp-documentcard 
-                                    data-ui-test-id="resultCard"	
-                                    data-title="\{{slot item @root.slots.Title}}" 
-                                    data-location="\{{SiteTitle}}"
-                                    data-preview-image="\{{slot item @root.slots.PreviewImageUrl}}" 
-                                    data-preview-url="\{{slot item @root.slots.PreviewUrl}}" 
-                                    data-date="\{{getDate (slot item @root.slots.Date) 'LL'}}" 
-                                    data-href="\{{slot item @root.slots.Path}}" 
-                                    data-author="\{{slot item @root.slots.Author}}" 
-                                    data-profile-image="/_layouts/15/userphoto.aspx?size=L&username=\{{getUserEmail (slot item @root.slots.UserEmail)}}" 
-                                    data-file-extension="\{{slot item @root.slots.FileType}}"
-                                    data-is-container="\{{slot item @root.slots.IsFolder}}"
-                                    data-enable-preview="false" 
-                                    data-show-file-icon="true"
-                                    data-is-compact="false"
-                                    data-context="{{JSONstringify @root 2}}"
-                                    data-instance-id="{{@root.instanceId}}"
-                                    data-theme-variant="{{JSONstringify @root.theme}}"
-                                    >
+                        data-ui-test-id="resultCard"	
+                        data-title="\{{slot item @root.slots.Title}}" 
+                        data-location="\{{SiteTitle}}"
+                        data-preview-image="\{{slot item @root.slots.PreviewImageUrl}}" 
+                        data-preview-url="\{{slot item @root.slots.PreviewUrl}}" 
+                        data-date="\{{getDate (slot item @root.slots.Date) 'LL'}}" 
+                        data-href="\{{slot item @root.slots.Path}}" 
+                        data-author="\{{slot item @root.slots.Author}}" 
+                        data-profile-image="/_layouts/15/userphoto.aspx?size=L&username=\{{getUserEmail (slot item @root.slots.UserEmail)}}" 
+                        data-file-extension="\{{slot item @root.slots.FileType}}"
+                        data-is-container="\{{slot item @root.slots.IsFolder}}"
+                        data-enable-preview="false" 
+                        data-show-file-icon="true"
+                        data-is-compact="false"
+                        data-context="{{JSONstringify @root 2}}"
+                        data-instance-id="{{@root.instanceId}}"
+                        data-theme-variant="{{JSONstringify @root.theme}}"
+                        data-allow-item-selection="{{@root.properties.itemSelectionProps.allowItemSelection}}"
+                        data-item-key="{{@root.paging.currentPageNumber}}\{{@index}}"                     
+                        data-selected-keys="{{JSONstringify @root.selectedKeys}}"
+                        data-index="\{{@index}}"
+                    >
                     </pnp-documentcard>
             </div>
 

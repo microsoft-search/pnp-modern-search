@@ -1,6 +1,7 @@
 import { IDataFilterConfiguration } from '../filters/IDataFilterConfiguration';
 import { IDataFilter, FilterConditionOperator } from '../filters/IDataFilter';
 import { ISortFieldConfiguration } from '../ISortFieldConfiguration';
+import { IDataVertical } from '../verticals/IDataVertical';
 
 /**
  * Provides useful information about the current Web Part context.
@@ -75,6 +76,21 @@ export interface IDataContext {
          */
         selectedSorting?: ISortFieldConfiguration[];
     };
+
+    /**
+     * Information about connected verticals
+     */
+     verticals?: {
+        /**
+         * The current selected vertical information
+         */
+        selectedVertical: IDataVertical;
+    };
+
+    /**
+     * Information about connected Data Visualizer or OOTB SharePoint sources
+     */
+    selectedItemValues?: string[];
 
     /**
      * Information about current query string parameters

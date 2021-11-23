@@ -36,4 +36,8 @@ When you connect the Web Part to a Verticals one, you must specify on which vert
 
 !["Select vertical"](../../../assets/webparts/search-results/connections/select_vertical.png){: .center}
 
-This mechanism allows to build a complete search center using verticals tabs. 
+This mechanism allows to build a complete search center using verticals tabs.
+
+## Search Results
+
+{!usage/search-results/connections/item-selection.md!}
