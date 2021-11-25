@@ -428,7 +428,7 @@ export class TemplateService implements ITemplateService {
         // <p>{{getSummary HitHighlightedSummary}}</p>
         this.Handlebars.registerHelper("getSummary", (hitHighlightedSummary: string) => {
             if (!isEmpty(hitHighlightedSummary)) {
-                return new this.Handlebars.SafeString(hitHighlightedSummary.replace(/<c0\>/g, "<strong>").replace(/<\/c0\>/g, "</strong>").replace(/<ddd\/>/g, "&#8230;"));
+                return new this.Handlebars.SafeString(hitHighlightedSummary.replace(/<c0\>/g, "<strong>").replace(/<\/c0\>/g, "</strong>").replace(/<ddd\/>/g, "&#8230;").replace(/\w+-\w+-\w+-\w+-\w+/g,""));
             }
         });
 
