@@ -1992,9 +1992,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 // Make sure we have values in selected filters
                 if (filtersSourceData.selectedFilters.length > 0 && !isEmpty(allValues)) {
 
-                    filterTokens = {
-                    operator: filtersSourceData.filterOperator
-                    };
+                    filterTokens = {};
 
                     // Build the initial structure for the configured filter names
                     filtersSourceData.filterConfiguration.forEach(filterConfiguration => {
@@ -2005,45 +2003,43 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                     
                     filtersSourceData.selectedFilters.forEach(filter => {
                 
-                    const configuration = DataFilterHelper.getConfigurationForFilter(filter, filtersSourceData.filterConfiguration);
+                        const configuration = DataFilterHelper.getConfigurationForFilter(filter, filtersSourceData.filterConfiguration);
 
-                    if (configuration) {
+                        if (configuration) {
 
-                        let filterTokenValue: IDataFilterTokenValue = null;
+                            let filterTokenValue: IDataFilterTokenValue = null;
 
-                        const filterValues = filter.values.map(value => value.value).join(','); 
+                            const filterValues = filter.values.map(value => value.value).join(','); 
 
-                        // Don't tokenize the filter if there is no value.
-                        if (filterValues.length > 0) {
-                        filterTokenValue = {
-                            valueAsText: filterValues,
-                            valueAsObject: filter.values,
-                            operator: filter.operator
-                        } ;
-                        }
-
-                        if (configuration.selectedTemplate === BuiltinFilterTemplates.DateRange) {
-
-                        let fromDate = undefined;
-                        let toDate = undefined;
-
-                        // Determine start and end dates by operator
-                        filter.values.forEach(filterValue => {
-                            if (filterValue.operator === FilterComparisonOperator.Geq && !fromDate) {
-                            fromDate = filterValue.value;
+                            // Don't tokenize the filter if there is no value.
+                            if (filterValues.length > 0) {
+                                filterTokenValue = {
+                                    valueAsText: filterValues
+                                };
                             }
 
-                            if (filterValue.operator === FilterComparisonOperator.Lt && !toDate) {
-                            toDate = fromDate = filterValue.value;
-                            }
-                        });
-                        
-                        filterTokenValue.fromDate = fromDate;
-                        filterTokenValue.toDate = toDate;
-                        }
+                            if (configuration.selectedTemplate === BuiltinFilterTemplates.DateRange) {
 
-                        filterTokens[filter.filterName] = filterTokenValue;
-                    }
+                            let fromDate = undefined;
+                            let toDate = undefined;
+
+                            // Determine start and end dates by operator
+                            filter.values.forEach(filterValue => {
+                                if (filterValue.operator === FilterComparisonOperator.Geq && !fromDate) {
+                                    fromDate = filterValue.value;
+                                }
+
+                                if (filterValue.operator === FilterComparisonOperator.Lt && !toDate) {
+                                    toDate = fromDate = filterValue.value;
+                                }
+                            });
+                            
+                            filterTokenValue.fromDate = fromDate;
+                            filterTokenValue.toDate = toDate;
+                            }
+
+                            filterTokens[filter.filterName] = filterTokenValue;
+                        }
                     });
                 }
                 
@@ -2058,24 +2054,12 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             if (destinationFieldName) {
 
                 let filterTokens = {
-                    operator: FilterConditionOperator.OR,
                     [destinationFieldName]: {
-                    valueAsObject: [],
-                    valueAsText: null,
+                        valueAsText: null,
                     } as IDataFilterTokenValue
                 };
 
-                itemFieldValues.forEach(value => {
-
-                (filterTokens[destinationFieldName] as IDataFilterTokenValue).valueAsObject.push({
-                    name: destinationFieldName,
-                    value: value,
-                    operator: FilterComparisonOperator.Eq
-                });
-
-                (filterTokens[destinationFieldName] as IDataFilterTokenValue).valueAsText = (filterTokens[destinationFieldName] as IDataFilterTokenValue).valueAsObject.map(v => v.value).join(','); 
-                });
-
+                filterTokens[destinationFieldName].valueAsText = itemFieldValues.join(',');
                 this.tokenService.setTokenValue(BuiltinTokenNames.filters, filterTokens);
             }
             
