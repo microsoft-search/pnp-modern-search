@@ -5,7 +5,7 @@ pnp-select {
         position: relative;
 
         &:hover {
-            background-color: "[theme: HoverBackground]";
+            background-color:  "[theme: themeLighterAlt]";
         }
 
         .itemRow {
@@ -16,6 +16,6 @@ pnp-select {
     }
 
     .selected {
-        background-color: "[theme: HoverBackground]";
+        background-color: "[theme: themeLighterAlt]";
     }
 }

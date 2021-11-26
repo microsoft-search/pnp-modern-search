@@ -783,6 +783,11 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             // Reset the default SPFx property pane field automatically as this configuration is not allowed for this scenario
             if (reference && reference.indexOf(ComponentType.SearchResults) !== -1) {
                 this.properties.selectedItemFieldValue.setValue('');
+                this.properties.selectedItemFieldValue.unregister(this.render);
+            } else {
+                if (!oldValue.reference) {
+                    this.properties.selectedItemFieldValue.register(this.render);
+                }
             }
         }
       

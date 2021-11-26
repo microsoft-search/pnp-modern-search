@@ -102,7 +102,6 @@ define([], function() {
         InputQueryTextDynamicValue: "Valeur dynamique",
         SearchQueryTextUseDefaultQuery: "Utilisez une valeur par défaut",
         SearchQueryTextDefaultValue: "Valeur par défaut",
-        SearchQueryTextDefaultValue: "Valeur par défaut",
         SourceDestinationFieldLabel: "Champ de destination",
         SourceDestinationFieldDescription: "Champ de destination dans cette source à utiliser pour la correspondance des valeurs sélectionnées",
         AvailableFieldValuesFromResults: "Champ contenant la valeur de filtre"
