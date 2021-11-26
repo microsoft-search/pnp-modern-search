@@ -9,7 +9,7 @@ jobs:
         runs-on: ubuntu-latest
         defaults:
             run:
-                working-directory: ./search-extensibility
+                working-directory: search-extensibility
 
         # Steps represent a sequence of tasks that will be executed as part of the job
         steps:
