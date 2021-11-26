@@ -12,7 +12,7 @@ define([], function() {
         },
         PropertyPane: {
             ConnectionsPage: {
-                UseDataResultsWebPartLabel: "Connect to a data results Web Part",
+                UseDataResultsWebPartLabel: "Connect to a search results Web Part",
                 UseDataResultsFromComponentsLabel: "Use data from these Web Parts",
                 UseDataResultsFromComponentsDescription: "If you connect more than one Web Part, the filter values and counts will be merged for similar filter names.",
             },

@@ -1,5 +1,5 @@
 import { IBaseWebPartProps } from "../../models/common/IBaseWebPartProps";
-import { IDataVertical } from "../../models/common/IDataVertical";
+import { IDataVerticalConfiguration } from "../../models/common/IDataVerticalConfiguration";
 
 export interface ISearchVerticalsWebPartProps extends IBaseWebPartProps {
 
@@ -9,7 +9,12 @@ export interface ISearchVerticalsWebPartProps extends IBaseWebPartProps {
     title: string;
 
     /**
-     * The configured verticals 
+     * The configured search verticals 
      */
-    verticals: IDataVertical[];
+    verticals: IDataVerticalConfiguration[];
+
+    /**
+     * The query string parameter name to use to select a vertical tab by default
+     */
+    defaultVerticalQueryStringParam: string;
 }

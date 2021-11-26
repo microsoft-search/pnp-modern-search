@@ -126,7 +126,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
 
         // Register Web Components in the global page context. We need to do this BEFORE the template processing to avoid race condition.
         // Web components are only defined once.
-        // We need to register components here in the case where the Data Visualizer WP is not present on the page
+        // We need to register components here in the case where the Search Results WP is not present on the page
         await this.templateService.registerWebComponents(this.availableWebComponentDefinitions, this.instanceId);
 
         return super.onInit();
@@ -952,7 +952,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                 allAvailableFieldsFromResults = allAvailableFieldsFromResults.concat(dataSourceData.availableFieldsFromResults);
                 allAvailableFilters = allAvailableFilters.concat(dataSourceData.availablefilters);
 
-                // Merge all custom registred Handlebars helpers from all connected Data Visualizer Web Parts
+                // Merge all custom registred Handlebars helpers from all connected Search Results Web Parts
                 if (dataSourceData.handlebarsContext) {
                     Object.keys(dataSourceData.handlebarsContext.helpers).forEach(helperName => {
                         if (!this.templateService.Handlebars.helpers[helperName]) {

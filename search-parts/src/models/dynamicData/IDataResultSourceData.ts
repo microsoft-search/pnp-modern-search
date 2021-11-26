@@ -16,4 +16,9 @@ export interface IDataResultSourceData {
      * The Hanlebars context available for consumers
      */
     handlebarsContext?: typeof Handlebars;
+
+    /**
+     * The current selected items in the Search Results Web Part
+     */
+    selectedItems?: {[key: string]: string}[];
 }

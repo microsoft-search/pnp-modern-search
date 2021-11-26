@@ -68,14 +68,27 @@ define([], function() {
           CancelButtonText: "Avbryt",
           DialogButtonText: "Redigera mall",
           DialogTitle: "Redigera resultatmall",
-          SaveButtonText: "Spara"
+          SaveButtonText: "Spara",
+          AllowItemSelection: "Tillåt val av objekt",
+          AllowMultipleItemSelection: "Tillåt flera val",
+          SelectionModeLabel: "Urvalsläge",
+          AsTokensSelectionMode: "Bearbeta valda värden som tokens (manuellt läge)",
+          AsDataFiltersSelectionMode: "Bearbeta valda värden som filter (standardläge)",
+          AsDataFiltersDescription: "I det här läget skickas valda värden till datakällan som vanliga filter",
+          AsTokensDescription: "I det här läget används valda värden manuellt genom tokens och tillgängliga metoder. Exempel med SharePoint-sökfrågemall: {?Title:{filters.&lt;destination_field_name&gt;.valueAsText}}",
+          FilterValuesOperator: "Den logiska operatorn att använda mellan valda värden",
+          FieldToConsumeLabel: "Källfält att konsumera",
+          FieldToConsumeDescription: "Använd detta fältvärde för valda objekt"
         }
       },
       ConnectionsPage: {
         ConnectionsPageGroupName: "Tillgängliga anslutningar",
         UseFiltersWebPartLabel: "Anslut till en filter-webbdel",
         UseFiltersFromComponentLabel: "Använd filter från den här komponenten",
-        UseSearchVerticalsWebPartLabel: "Anslut till en vertikal-webbdel",
+        UseDynamicFilteringsWebPartLabel: "Anslut till en webbdel för dataresultat",
+        UseDataResultsFromComponentsLabel: "Använd data från denna webbdel",
+        UseDataResultsFromComponentsDescription: "Use data from selected items in these Web Parts",
+        UseSearchVerticalsWebPartLabel: "Använd data från valda objekt i dessa webbdelar",
         UseSearchVerticalsFromComponentLabel: "Använd vertikaler från denna komponent",
         LinkToVerticalLabel: "Visa endast data när följande vertikaler är valda",
         LinkToVerticalLabelHoverMessage: "Resultaten visas endast om de valda vertikalerna matchar den som har konfigurerats för denna webbdel. Annars är den här webbdelen tom.",
@@ -87,7 +100,10 @@ define([], function() {
         InputQueryTextStaticValue: "Statiskt värde",
         InputQueryTextDynamicValue: "Dynamiskt värde",
         SearchQueryTextUseDefaultQuery: "Använd ett standardvärde",
-        SearchQueryTextDefaultValue: "Standardvärde"
+        SearchQueryTextDefaultValue: "Standardvärde",
+        SourceDestinationFieldLabel: "Destinationsfältets namn",
+        SourceDestinationFieldDescription: "Destinationsfält som ska användas i den här webbdelen för att matcha de valda värdena",
+        AvailableFieldValuesFromResults: "Fält som innehåller filtervärdet"
       },
       InformationPage: {
         Extensibility: {

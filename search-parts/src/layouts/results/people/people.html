@@ -29,40 +29,49 @@
         <div>
             <ul class="template--defaultList">
                 {{#each data.items as |item|}}
-                    <li class="template--peopleListItem" tabindex="0">
-                        {{#> resultTypes item=item}}
+                    <pnp-select 
+                        data-enabled="{{@root.properties.itemSelectionProps.allowItemSelection}}" 
+                        data-index="{{@index}}" 
+                        data-is-selected="{{isItemSelected @root.selectedKeys @index}}">
 
-                            {{#if @root.properties.layoutProperties.showPersonaCard}}
-                                <mgt-person user-id="{{getUserEmail (slot item @root.slots.PersonQuery)}}" person-card="hover">
-                                    <template>
+                        <template id="content">
+                            <li class="template--peopleListItem" tabindex="0">
+                                {{#> resultTypes item=item}}
+
+                                    {{#if @root.properties.layoutProperties.showPersonaCard}}
+                                        <mgt-person user-id="{{getUserEmail (slot item @root.slots.PersonQuery)}}" person-card="hover">
+                                            <template>
+                                                <pnp-persona 
+                                                    data-image-url="\{{personImage}}" 
+                                                    data-fields-configuration="{{JSONstringify @root.properties.layoutProperties.peopleFields}}" 
+                                                    data-item="{{JSONstringify item}}" 
+                                                    data-persona-size="{{@root.properties.layoutProperties.personaSize}}"
+                                                    data-theme-variant="{{JSONstringify @root.theme}}"
+                                                    data-instance-id="{{@root.instanceId}}"
+                                                    data-context="{{JSONstringify @root}}">
+                                                </pnp-persona>
+                                            </template>
+                                            <template data-type="person-card">
+                                                <mgt-person-card inherit-details>
+                                                </mgt-person-card>
+                                            </template>
+                                        </mgt-person>
+                                    {{else}}
                                         <pnp-persona 
-                                            data-image-url="\{{personImage}}" 
-                                            data-fields-configuration="{{JSONstringify @root.properties.layoutProperties.peopleFields}}" 
+                                            data-fields-configuration="{{JSONstringify @root.properties.layoutProperties.peopleFields}}"
                                             data-item="{{JSONstringify item}}" 
-                                            data-persona-size="{{@root.properties.layoutProperties.personaSize}}"
-                                            data-theme-variant="{{JSONstringify @root.theme}}"
+                                            data-persona-size="{{@root.properties.layoutProperties.personaSize}}" 
+                                            data-context="{{JSONstringify @root}}"
                                             data-instance-id="{{@root.instanceId}}"
-                                            data-context="{{JSONstringify @root}}">
-                                        </pnp-persona>
-                                    </template>
-                                    <template data-type="person-card">
-                                        <mgt-person-card inherit-details>
-                                        </mgt-person-card>
-                                    </template>
-                                </mgt-person>
-                            {{else}}
-                                <pnp-persona 
-                                    data-fields-configuration="{{JSONstringify @root.properties.layoutProperties.peopleFields}}"
-                                    data-item="{{JSONstringify item}}" 
-                                    data-persona-size="{{@root.properties.layoutProperties.personaSize}}" 
-                                    data-context="{{JSONstringify @root}}"
-                                    data-instance-id="{{@root.instanceId}}"
-                                    data-theme-variant="{{JSONstringify @root.theme}}"
-                                ></pnp-persona>
-                            {{/if}}
+                                            data-theme-variant="{{JSONstringify @root.theme}}"
+                                        ></pnp-persona>
+                                    {{/if}}
+                                    
+                                {{/resultTypes}}
+                            </li>
+                        </template>
                             
-                        {{/resultTypes}}
-                    </li>
+                    </pnp-select>
                 {{/each}}
             </ul>
         </div>

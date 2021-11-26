@@ -282,6 +282,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                         placeholder: commonStrings.DataSources.SharePointSearch.SelectedPropertiesPlaceholderLabel,
                         onLoadOptions: this.getAvailableProperties.bind(this),
                         searchAsYouType: false,
+                        clearTextOnFocus: true,
                         defaultSelectedKeys: this.properties.selectedProperties,
                         onPropertyChange: this.onCustomPropertyUpdate.bind(this),
                         onUpdateOptions: ((options: IComboBoxOption[]) => {
@@ -325,6 +326,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                                             onUpdateOptions: ((options: IComboBoxOption[]) => {
                                                 this._availableManagedProperties = options;
                                             }).bind(this),
+                                            clearTextOnFocus: true,
                                             placeholder: commonStrings.DataSources.SearchCommon.Sort.SortFieldColumnPlaceholder,
                                             useComboBoxAsMenuWidth: false // Used when screen resolution is too small to display the complete value  
                                         } as IAsyncComboProps));

@@ -1,6 +1,6 @@
 import { PageOpenBehavior } from "../../helpers/UrlHelper";
 
-export interface IDataVertical {
+export interface IDataVerticalConfiguration {
     /**
      * Unique key for the vertical
      */
@@ -10,6 +10,11 @@ export interface IDataVertical {
      * The vertical tab name
      */
     tabName: string;
+
+    /**
+     * The vertical tab value that will be sent to connected Web Parts
+     */
+    tabValue: string;
 
     /**
      * Specifes if the vertical is a link
@@ -27,7 +32,12 @@ export interface IDataVertical {
     openBehavior: PageOpenBehavior;
 
     /**
-     * The Office UI Fabric icon name
+     * If the vertical is a link, show a icon near the tab name to indicate user it is a link.
+     */
+    showLinkIcon: boolean;
+
+    /**
+     * The Fluent UI icon name
      */
     iconName?: string;
 }

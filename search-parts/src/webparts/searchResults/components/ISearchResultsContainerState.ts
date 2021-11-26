@@ -6,6 +6,11 @@ export interface ISearchResultsContainerState {
      * The current loaded data
      */
     data: IDataSourceData;
+
+    /**
+     * The current selected item keys in results regardless the page
+     */
+    selectedItemKeys: string[];    
     
     /**
      * Flag indicating if results are loading

@@ -19,7 +19,12 @@ export enum BuiltinTokenNames {
     /**
      * The current selected filters if any
      */
-    filters = 'filters'
+    filters = 'filters',
+
+    /**
+     * The current selected verticals if any
+     */
+    verticals = 'verticals'
 }
 
 export class TokenService implements ITokenService {
@@ -58,8 +63,9 @@ export class TokenService implements ITokenService {
      * The list of static tokens values set by the Web Part as context
      */
     private tokenValuesList: { [key: string]: any } = {
-        [BuiltinTokenNames.inputQueryText]: undefined,
-        [BuiltinTokenNames.filters]: {}
+        [BuiltinTokenNames.inputQueryText]: null, // Should always be resolved as an empty string
+        [BuiltinTokenNames.filters]: null, // Should always be resolved as an empty string
+        [BuiltinTokenNames.verticals]: undefined
     };
 
     /**
@@ -94,6 +100,10 @@ export class TokenService implements ITokenService {
         } else {
             Log.warn(TokenService_ServiceKey, `The token '${token}' not allowed.`);
         }
+    }
+
+    public getTokenValue(token: string): any {
+        return this.tokenValuesList[token];
     }
 
     public async resolveTokens(inputString: string): Promise<string> {
@@ -275,7 +285,7 @@ export class TokenService implements ITokenService {
                     if (Array.isArray(item[columnName]) && item[columnName].length > 0) {
 
                         // By convention, multi values should be separated by a comma, which is the default array delimiter for the array toString() method
-                        // This value could be processed in the replaceOrOperator() method so we need to keep the same delimiter convention
+                        // This value could be processed in the replaceAndOrOperator() method so we need to keep the same delimiter convention
                         itemProp = item[columnName].map(taxonomyValue => {
                             return taxonomyValue[labelOrTermId]; // Use the 'TermId' or 'Label' properties
                         }).join(',');
@@ -596,7 +606,7 @@ export class TokenService implements ITokenService {
                 if (!/\{(?:User)\.(.*?)\}/gi.test(tokenValue)) {
                     const allValues = tokenValue.split(','); // Works with taxonomy multi values (TermID, Label) + multi choices fields + {filters.<value>.valueAsText} token. By convention, all multi values for this operator should be sparated by a comma
 
-                    // If the token value contains a whitespace or is an OData query, we enclose the value with quotes
+                    // If the token value contains a whitespace, we enclose the value with quotes
                     if (allValues.length > 0) {
                         allValues.forEach(value => {
                             conditions.push(`(${property}${operator}${/\s/g.test(value) ? `${quotes}${value}${quotes}` : value})`);
