@@ -131,6 +131,7 @@ declare interface ICommonStrings {
         ContentSourcesFieldDescriptionLabel: string;
         ContentSourcesFieldPlaceholderLabel: string;
         EnableTopResultsLabel: string;
+        UseBetaEndpoint: string;
       },
       SearchCommon: {
         Sort: {

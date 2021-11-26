@@ -131,7 +131,8 @@ define([], function() {
                 EnableTopResultsLabel: "Topresultaten inschakelen",
                 ContentSourcesFieldLabel: "Inhoudsbronnen",
                 ContentSourcesFieldDescriptionLabel: "IDs van verbingingen gedefinieerd in de Microsoft Search connectors administratie portaal.",
-                ContentSourcesFieldPlaceholderLabel: "bijv: 'MyCustomConnectorId'"
+                ContentSourcesFieldPlaceholderLabel: "bijv: 'MyCustomConnectorId'",
+                UseBetaEndpoint: "Bèta-eindpunt gebruiken"
             },
             SearchCommon: {
                 Sort: {
