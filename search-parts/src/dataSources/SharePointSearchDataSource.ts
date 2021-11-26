@@ -1,5 +1,5 @@
 ﻿import * as React from 'react';
-import { IDataSourceData, BaseDataSource, ITokenService, IDataFilter, ITemplateSlot, IDataFilterResult, IDataFilterResultValue, BuiltinTemplateSlots, FilterComparisonOperator, IDataFilterConfiguration, FilterBehavior, FilterSortType, FilterSortDirection } from "@pnp/modern-search-extensibility";
+import { IDataSourceData, BaseDataSource, ITokenService, ITemplateSlot, IDataFilterResult, IDataFilterResultValue, BuiltinTemplateSlots, FilterBehavior, FilterSortType, FilterSortDirection } from "@pnp/modern-search-extensibility";
 import {
     IPropertyPaneGroup,
     IPropertyPaneDropdownOption,
