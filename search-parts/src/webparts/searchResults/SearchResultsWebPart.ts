@@ -264,8 +264,9 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
             valueFromDynamicSource = this.properties.queryText.tryGetValue();
             try {
-                valueFromDynamicSource = decodeURIComponent(valueFromDynamicSource);
-
+                if (valueFromDynamicSource !== undefined) {
+                    valueFromDynamicSource = decodeURIComponent(valueFromDynamicSource);
+                }
             } catch (error) {
                 // Likely issue when q=%25 in spfx
             }
