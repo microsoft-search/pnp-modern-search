@@ -89,6 +89,10 @@ declare interface ICommonStrings {
       NewTabOpenBehavior: string;
       PageOpenBehaviorLabel: string;
       EmptyFieldErrorMessage: string;
+      TagPickerStrings: {
+        NoResultsSearchMessage: string;
+        SearchPlaceholder: string;
+      }
     },
     DataSources: {
       SharePointSearch: {
@@ -315,6 +319,9 @@ declare interface ICommonStrings {
       OrOperator: string;
       AndOperator: string;
       ComboBoxPlaceHolder: string;
+      UseAndOperatorValues: string;
+      UseOrOperatorValues: string;
+      UseValuesOperators: string;
     },
     SuggestionProviders: {
       SharePointStatic: {

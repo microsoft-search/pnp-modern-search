@@ -89,7 +89,11 @@ define([], function() {
             SameTabOpenBehavior: "Gebruik de huidige tab",
             NewTabOpenBehavior: "Open in een nieuwe tab",
             PageOpenBehaviorLabel: "Gedrag voor openen",
-            EmptyFieldErrorMessage: "Dit veld mag niet leeg zijn"
+            EmptyFieldErrorMessage: "Dit veld mag niet leeg zijn",
+            TagPickerStrings: {
+                NoResultsSearchMessage: "Geen resultaten gevonden",
+                SearchPlaceholder: "Zoek een waarde..."
+            }
         },
         DataSources: {
             SharePointSearch: {
@@ -315,7 +319,10 @@ define([], function() {
             FilterNoValuesMessage: "Geen waarden voor deze filter",
             OrOperator: "OR",
             AndOperator: "AND",
-            ComboBoxPlaceHolder: "Selecteer waarde"
+            ComboBoxPlaceHolder: "Selecteer waarde",
+            UseAndOperatorValues: "Use an AND operator between values",
+            UseOrOperatorValues: "Use an OR operator between values",
+            UseValuesOperators: "Select operator to use between this filter values"
         },
         SuggestionProviders: {
             SharePointStatic: {

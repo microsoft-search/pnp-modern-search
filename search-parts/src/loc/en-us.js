@@ -89,7 +89,11 @@ define([], function() {
             SameTabOpenBehavior: "Use the current tab",
             NewTabOpenBehavior: "Open in a new tab",
             PageOpenBehaviorLabel: "Opening behavior",
-            EmptyFieldErrorMessage: "This field cannot be empty"
+            EmptyFieldErrorMessage: "This field cannot be empty",
+            TagPickerStrings: {
+                NoResultsSearchMessage: "No results found",
+                SearchPlaceholder: "Search a value..."
+            }
         },
         DataSources: {
             SharePointSearch: {
@@ -315,7 +319,10 @@ define([], function() {
             FilterNoValuesMessage: "No values for this filter",
             OrOperator: "OR",
             AndOperator: "AND",
-            ComboBoxPlaceHolder: "Select value"
+            ComboBoxPlaceHolder: "Select value",
+            UseAndOperatorValues: "Use an AND operator between values",
+            UseOrOperatorValues: "Use an OR operator between values",
+            UseValuesOperators: "Select operator to use between this filter values"
         },
         SuggestionProviders: {
             SharePointStatic: {

@@ -1,4 +1,4 @@
-import { IDataFilterValue } from "./IDataFilter";
+import { FilterConditionOperator, IDataFilterValue } from "./IDataFilter";
 
 /**
  * This interface is used to send filter information back to the Web Part through predefined events
@@ -14,6 +14,11 @@ export interface IDataFilterInfo {
      * The selected or unselected values for that filter
      */
     filterValues: IDataFilterValueInfo[];
+
+    /**
+     * The operator to use between filters values (optional). If specified, will override the default filter operator configuration.
+     */
+    operator?: FilterConditionOperator;
 
     /**
      * Indicates if the new filters should be submitted to the data source. This is useful when you want to clear multi values filters in a single operation

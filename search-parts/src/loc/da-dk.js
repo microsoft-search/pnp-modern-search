@@ -89,7 +89,11 @@ define([], function() {
             SameTabOpenBehavior: "Brug det nuværende faneblad",
             NewTabOpenBehavior: "Åben i et nyt faneblad",
             PageOpenBehaviorLabel: "Opening-egenskaber",
-            EmptyFieldErrorMessage: "Dette felt må ikke stå tomt"
+            EmptyFieldErrorMessage: "Dette felt må ikke stå tomt",
+            TagPickerStrings: {
+                NoResultsSearchMessage: "Ingen resultater fundet",
+                SearchPlaceholder: "Søg efter en værdi..."
+            }
         },
         DataSources: {
             SharePointSearch: {
@@ -315,7 +319,10 @@ define([], function() {
             FilterNoValuesMessage: "Ingen værdier for dette filter",
             OrOperator: "ELLER",
             AndOperator: "OG",
-            ComboBoxPlaceHolder: "Vælg værdi"
+            ComboBoxPlaceHolder: "Vælg værdi",
+            UseAndOperatorValues: "Use an AND operator between values",
+            UseOrOperatorValues: "Use an OR operator between values",
+            UseValuesOperators: "Select operator to use between this filter values"
         },
         SuggestionProviders: {
             SharePointStatic: {

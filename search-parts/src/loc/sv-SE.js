@@ -89,7 +89,11 @@ define([], function () {
         SameTabOpenBehavior: "Använd den aktuella fliken",
         NewTabOpenBehavior: "Öppna i en ny flik",
         PageOpenBehaviorLabel: "Öppningsbeteende",
-        EmptyFieldErrorMessage: "Det här fältet får inte vara tomt"
+        EmptyFieldErrorMessage: "Det här fältet får inte vara tomt",
+        TagPickerStrings: {
+          NoResultsSearchMessage: "Inga resultat funna",
+          SearchPlaceholder: "Sök efter ett värde..."
+        }
       },
       DataSources: {
         SharePointSearch: {
@@ -315,7 +319,10 @@ define([], function () {
         FilterNoValuesMessage: "Inga värden för detta filter",
         OrOperator: "ELLER",
         AndOperator: "OCH",
-        ComboBoxPlaceHolder: "Välj värde"
+        ComboBoxPlaceHolder: "Välj värde",
+        UseAndOperatorValues: "Använd en AND-operator mellan värden ",
+        UseOrOperatorValues: "Använd en ELLER-operator mellan värden",
+        UseValuesOperators: "Välj operator att använda mellan dessa filtervärden"
       },
       SuggestionProviders: {
         SharePointStatic: {

@@ -89,7 +89,11 @@ define([], function() {
           SameTabOpenBehavior: "Użyj bieżącej karty",
           NewTabOpenBehavior: "Otwórz w nowej karcie",
           PageOpenBehaviorLabel: "Sposób otwierania",
-          EmptyFieldErrorMessage: "To pole nie może być puste"
+          EmptyFieldErrorMessage: "To pole nie może być puste",
+          TagPickerStrings: {
+            NoResultsSearchMessage: "Nie znaleziono wyników",
+            SearchPlaceholder: "Wyszukaj wartość..."
+          }
       },
       DataSources: {
           SharePointSearch: {
@@ -314,7 +318,10 @@ define([], function() {
           FilterNoValuesMessage: "Brak wartości dla tego filtra",
           OrOperator: "LUB",
           AndOperator: "ORAZ",
-          ComboBoxPlaceHolder: "Wybierz wartość"
+          ComboBoxPlaceHolder: "Wybierz wartość",
+          UseAndOperatorValues: "Använd en AND-operator mellan värden",
+          UseOrOperatorValues: "Använd en ELLER-operator mellan värden",
+          UseValuesOperators: "Välj operator att använda mellan dessa filtervärden"
       },
       SuggestionProviders: {
           SharePointStatic: {

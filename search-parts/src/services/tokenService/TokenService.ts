@@ -424,11 +424,12 @@ export class TokenService implements ITokenService {
         let matches = webRegExp.exec(inputString);
 
         if (matches != null) {
-            const queryParameters = new UrlQueryParameterCollection(window.location.href);
+            const url = new URL(window.location.href);
+            const queryParameters = new URLSearchParams(url.search);
 
             while (matches !== null) {
                 const qsProp = matches[1];
-                const itemProp = decodeURIComponent(queryParameters.getValue(qsProp) || "");
+                const itemProp = decodeURIComponent(queryParameters.get(qsProp) || "");
                 if (itemProp) {
                     modifiedString = modifiedString.replace(matches[0], itemProp);
                 }

@@ -89,7 +89,11 @@ define([], function() {
             SameTabOpenBehavior: "Utiliser l’onglet actuel",
             NewTabOpenBehavior: "Ouvrir dans un nouvel onglet",
             PageOpenBehaviorLabel: "Comportement d’ouverture",
-            EmptyFieldErrorMessage: "Ce champ ne doit pas être vide."
+            EmptyFieldErrorMessage: "Ce champ ne doit pas être vide.",
+            TagPickerStrings: {
+                NoResultsSearchMessage: "Aucun résultat trouvé",
+                SearchPlaceholder: "Rechercher une valeur..."
+            }
         },
         DataSources: {
             SharePointSearch: {
@@ -316,7 +320,10 @@ define([], function() {
             FilterNoValuesMessage: "Aucune valeur pour ce filtre",
             OrOperator: "OU",
             AndOperator: "ET",
-            ComboBoxPlaceHolder: "Choisir une valeur"
+            ComboBoxPlaceHolder: "Choisir une valeur",
+            UseAndOperatorValues: "Utiliser l'opérateur ET entre les valeurs",
+            UseOrOperatorValues: "Utiliser l'opérateur OU entre les valeurs",
+            UseValuesOperators: "Sélectionne l'opérateur à utiliser entre les valeurs de ce filtre"
         },
         SuggestionProviders: {
             SharePointStatic: {
