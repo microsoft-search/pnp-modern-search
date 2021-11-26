@@ -43,7 +43,7 @@ jobs:
 
             # Runs a single command using the runners shell
             - name: Build
-            - run: npm run ship
+              run: npm run ship
 
             - name: Publish
               run: npm publish
