@@ -25,27 +25,16 @@ jobs:
                   cache: npm
                   cache-dependency-path: ./package-lock.json
                   registry-url: "https://registry.npmjs.org"
-            # cache node modules
-            - name: Cache node modules
-              id: cache
-              uses: actions/cache@v2
-              with:
-                  path: |
-                      **/node_modules
-                  key: node_modules-${{ hashFiles('**/package-lock.json') }}
             # if cache failed, use npm to install
             - name: Restore dependencies
               if: steps.cache.outputs.cache-hit != 'true'
               run: npm ci
-
             # Runs a set of commands using the runners shell
             - name: Test - not setup
               run: echo this would be the tests
-
             # Runs a single command using the runners shell
             - name: Build
               run: npm run ship
-
             - name: Publish
               run: npm publish
               env:
