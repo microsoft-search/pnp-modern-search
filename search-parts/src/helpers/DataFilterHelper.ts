@@ -85,7 +85,7 @@ export class DataFilterHelper {
    * @param encodeTokens If true, encodes the taxonomy refinement tokens in UTF-8 to work with GET requests. Javascript encodes natively in UTF-16 by default.
    */
   public static buildFqlRefinementString(selectedFilters: IDataFilter[], filtersConfiguration: IDataFilterConfiguration[], moment: any, encodeTokens?: boolean): string[] {
-
+    
     let refinementQueryConditions: string[] = [];
 
     selectedFilters.forEach(filter => {

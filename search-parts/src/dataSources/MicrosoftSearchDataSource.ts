@@ -1,4 +1,4 @@
-import { BaseDataSource, IDataSourceData, IDataFilter, IDataFilterConfiguration, FilterSortType, FilterSortDirection, ITemplateSlot, BuiltinTemplateSlots, IDataContext, ITokenService, FilterBehavior, PagingBehavior, IDataFilterResult, IDataFilterResultValue, FilterComparisonOperator } from "@pnp/modern-search-extensibility";
+import { BaseDataSource, IDataSourceData, FilterSortType, FilterSortDirection, ITemplateSlot, BuiltinTemplateSlots, IDataContext, ITokenService, FilterBehavior, PagingBehavior, IDataFilterResult, IDataFilterResultValue, FilterComparisonOperator } from "@pnp/modern-search-extensibility";
 import { IPropertyPaneGroup, PropertyPaneLabel, IPropertyPaneField, PropertyPaneToggle } from "@microsoft/sp-property-pane";
 import { cloneDeep, isEmpty } from '@microsoft/sp-lodash-subset';
 import { MSGraphClientFactory } from "@microsoft/sp-http";
@@ -12,8 +12,11 @@ import { DateHelper } from '../helpers/DateHelper';
 import { DataFilterHelper } from "../helpers/DataFilterHelper";
 import { IMicrosoftSearchResponse } from "../models/search/IMicrosoftSearchResponse";
 import { ISortFieldConfiguration, SortFieldDirection } from '../models/search/ISortFieldConfiguration';
-
-const MICROSOFT_SEARCH_URL = "https://graph.microsoft.com/beta/search/query";
+import { AsyncCombo } from "../controls/PropertyPaneAsyncCombo/components/AsyncCombo";
+import { IAsyncComboProps } from "../controls/PropertyPaneAsyncCombo/components/IAsyncComboProps";
+import { ISharePointSearchService } from "../services/searchService/ISharePointSearchService";
+import { SharePointSearchService } from "../services/searchService/SharePointSearchService";
+import * as React from "react";
 
 export enum EntityType {
     Message = 'message',
@@ -54,13 +57,22 @@ export interface IMicrosoftSearchDataSourceProperties {
      * The content sources for external items
      */
     contentSourceConnectionIds: string[];
+
+    /**
+     * Flag indicating if the Microsoft Search beta endpoint should be used
+     */
+    useBetaEndpoint: boolean;
 }
 
 export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDataSourceProperties> {
 
     private _tokenService: ITokenService;
+    private _sharePointSearchService: ISharePointSearchService;
+
     private _propertyPaneWebPartInformation: any = null;
     private _availableFields: IComboBoxOption[] = [];
+    private _microsoftSearchUrl: string;
+    private _availableManagedProperties: IComboBoxOption[] = [];
 
     private _availableEntityTypeOptions: IComboBoxOption[] = [
         {
@@ -100,11 +112,12 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             text: "People"
         }
     ];
+
     /**
      * The data source items count
      */
     private _itemsCount: number = 0;
-
+    
     /**
      * A date helper instance
      */
@@ -123,6 +136,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
 
         serviceScope.whenFinished(() => {
             this._tokenService = serviceScope.consume<ITokenService>(TokenService.ServiceKey);
+            this._sharePointSearchService = serviceScope.consume<ISharePointSearchService>(SharePointSearchService.ServiceKey);
         });
     }
 
@@ -169,9 +183,16 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             items: []
         };
 
-        const searchRequest = await this.buildMicrosoftSearchRequest(dataContext);
-        results = await this.search(searchRequest);
-
+        // Ensuring at least one entity type is selected before launching a search
+        if (this._properties.entityTypes.length > 0) {
+            const searchRequest = await this.buildMicrosoftSearchRequest(dataContext);
+            results = await this.search(searchRequest);
+        } else {
+            // If no entity is selected, manually set the results to prevent
+            // having the previous search results items count displayed.
+            this._itemsCount = 0;
+        }
+        
         return results;
     }
 
@@ -204,24 +225,13 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                 onPropertyChange: this.onCustomPropertyUpdate.bind(this),
                 textDisplayValue: entityTypesDisplayValue.filter(e => e).join(",")
             }),
-            new PropertyPaneAsyncCombo('dataSourceProperties.fields', {
-                availableOptions: this._availableFields,
-                allowMultiSelect: true,
-                allowFreeform: true,
-                description: commonStrings.DataSources.MicrosoftSearch.SelectedFieldsPropertiesFieldDescription,
-                label: commonStrings.DataSources.MicrosoftSearch.SelectedFieldsPropertiesFieldLabel,
-                placeholder: commonStrings.DataSources.MicrosoftSearch.SelectedFieldsPlaceholderLabel,
-                searchAsYouType: false,
-                defaultSelectedKeys: this.properties.fields,
-                onPropertyChange: this.onCustomPropertyUpdate.bind(this),
-                onUpdateOptions: ((options: IComboBoxOption[]) => {
-                    this._availableFields = this.parseAndCleanOptions(options);
-                }).bind(this)
+            PropertyPaneToggle('dataSourceProperties.useBetaEndpoint', {
+                label: commonStrings.DataSources.MicrosoftSearch.UseBetaEndpoint
             })
         ];
 
         // Sorting results is currently only supported on the following SharePoint and OneDrive types: driveItem, listItem, list, site.
-        if (this.properties.entityTypes.indexOf(EntityType.DriveItem) !== -1 ||
+        if (this.properties.entityTypes.indexOf(EntityType.DriveItem) !== -1  ||
             this.properties.entityTypes.indexOf(EntityType.ListItem) !== -1 ||
             this.properties.entityTypes.indexOf(EntityType.Site) !== -1 ||
             this.properties.entityTypes.indexOf(EntityType.List) !== -1) {
@@ -239,13 +249,41 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                         {
                             id: 'sortField',
                             title: commonStrings.DataSources.SearchCommon.Sort.SortFieldColumnLabel,
-                            type: this._customCollectionFieldType.string,
+                            type: this._customCollectionFieldType.custom,
+                            required: true,
+                            onCustomRender: ((field, value, onUpdate, item, itemId, onError) => {
+    
+                                return React.createElement("div", { key: `${field.id}-${itemId}` },
+                                    React.createElement(AsyncCombo, {
+                                        defaultSelectedKey: item[field.id] ? item[field.id] : '',
+                                        onUpdate: (option: IComboBoxOption) => {
+
+                                            this._sharePointSearchService.validateSortableProperty(option.key as string).then((sortable: boolean) => {
+                                                if (!sortable) {
+                                                    onError(field.id, commonStrings.DataSources.SearchCommon.Sort.SortInvalidSortableFieldMessage);
+                                                } else {
+                                                    onUpdate(field.id, option.key as string);
+                                                    onError(field.id, '');
+                                                }
+                                            });
+                                        },
+                                        allowMultiSelect: false,
+                                        allowFreeform: true,
+                                        availableOptions: this._availableManagedProperties,
+                                        onLoadOptions: this.getAvailableProperties.bind(this),
+                                        onUpdateOptions: ((options: IComboBoxOption[]) => {
+                                            this._availableManagedProperties = options;
+                                        }).bind(this),
+                                        placeholder: commonStrings.DataSources.SearchCommon.Sort.SortFieldColumnPlaceholder,
+                                        useComboBoxAsMenuWidth: false // Used when screen resolution is too small to display the complete value  
+                                    } as IAsyncComboProps));
+                            }).bind(this)
                         },
                         {
                             id: 'sortDirection',
                             title: commonStrings.DataSources.SearchCommon.Sort.SortDirectionColumnLabel,
                             type: this._customCollectionFieldType.dropdown,
-                            required: true,
+                            required: false,
                             options: [
                                 {
                                     key: SortFieldDirection.Ascending,
@@ -256,7 +294,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                                     text: commonStrings.DataSources.SearchCommon.Sort.SortDirectionDescendingLabel
                                 }
                             ],
-                            defaultValue: SortFieldDirection.Ascending
+                            defaultValue: SortFieldDirection.Ascending                                
                         }
                     ]
                 })
@@ -279,21 +317,55 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             );
         }
 
+        // Only available for ListItem an ExternalItem entities
+        // https://docs.microsoft.com/en-us/graph/api/resources/search-api-overview?view=graph-rest-1.0#get-selected-properties
+        if (this.properties.entityTypes.indexOf(EntityType.ListItem) !== -1 || this.properties.entityTypes.indexOf(EntityType.ExternalItem) !== -1) {
+            groupFields.splice(3, 0, 
+                new PropertyPaneAsyncCombo('dataSourceProperties.fields', {
+                    availableOptions: this._availableFields,
+                    allowMultiSelect: true,
+                    allowFreeform: true,
+                    description: commonStrings.DataSources.MicrosoftSearch.SelectedFieldsPropertiesFieldDescription,
+                    label: commonStrings.DataSources.MicrosoftSearch.SelectedFieldsPropertiesFieldLabel,
+                    placeholder: commonStrings.DataSources.MicrosoftSearch.SelectedFieldsPlaceholderLabel,
+                    searchAsYouType: false,
+                    defaultSelectedKeys: this.properties.fields,
+                    onPropertyChange: this.onCustomPropertyUpdate.bind(this),
+                    onUpdateOptions: ((options: IComboBoxOption[]) => {
+                        this._availableFields = options;
+                    }).bind(this)
+                })
+            );
+        }
+
         if (this.properties.entityTypes.indexOf(EntityType.Message) !== -1 && this.properties.entityTypes.length === 1) {
             groupFields.push(PropertyPaneToggle('dataSourceProperties.enableTopResults', {
                 label: commonStrings.DataSources.MicrosoftSearch.EnableTopResultsLabel
             }));
-        }
+        } 
 
-        return [
+        return  [
             {
-                groupName: commonStrings.DataSources.MicrosoftSearch.SourceConfigurationGroupName,
-                groupFields: groupFields
+              groupName: commonStrings.DataSources.MicrosoftSearch.SourceConfigurationGroupName,
+              groupFields: groupFields 
             }
         ];
     }
 
-    public onCustomPropertyUpdate(propertyPath: string, newValue: any): void {
+    public onPropertyUpdate(propertyPath: string, oldValue: any, newValue: any) {
+
+        if (propertyPath.localeCompare('dataSourceProperties.useBetaEndpoint') === 0) {
+
+            if (newValue) {
+                this._microsoftSearchUrl = "https://graph.microsoft.com/beta/search/query";
+            } else {
+                this._microsoftSearchUrl = "https://graph.microsoft.com/v1.0/search/query";
+            } 
+        }
+    }
+
+    public onCustomPropertyUpdate(propertyPath: string, newValue: any, changeCallback?: (targetProperty?: string, newValue?: any) => void): void {
+    
         if (propertyPath.localeCompare('dataSourceProperties.entityTypes') === 0) {
             this.properties.entityTypes = (cloneDeep(newValue) as IComboBoxOption[]).map(v => { return v.key as EntityType; });
             this.context.propertyPane.refresh();
@@ -374,16 +446,22 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
     private initProperties(): void {
         this.properties.entityTypes = this.properties.entityTypes !== undefined ? this.properties.entityTypes : [EntityType.DriveItem];
 
-        const SharePointFields = ["title", "path", "defaultEncodingUrl", "contentTypeId", "htmlFileType","normSiteID","normWebID","normListID","normUniqueID","owstaxidmetadataalltagsinfo"];
-        const CommonFields = ["name", "webUrl", "fileType", "createdBy", "createdDateTime", "lastModifiedDateTime", "parentReference", "size", "description", "file", "folder"];
+        const CommonFields = ["name","webUrl","filetype","createdBy","createdDateTime","lastModifiedDateTime","parentReference","size","description","file","folder"];
 
-        this.properties.fields = this.properties.fields !== undefined ? this.properties.fields : SharePointFields.concat(CommonFields);
+        this.properties.fields = this.properties.fields !== undefined ? this.properties.fields : CommonFields;
         this.properties.sortProperties = this.properties.sortProperties !== undefined ? this.properties.sortProperties : [];
         this.properties.contentSourceConnectionIds = this.properties.contentSourceConnectionIds !== undefined ? this.properties.contentSourceConnectionIds : [];
+        this.properties.useBetaEndpoint = this.properties.useBetaEndpoint !== undefined ? this.properties.useBetaEndpoint : false;
+
+        if (this.properties.useBetaEndpoint) {
+            this._microsoftSearchUrl = "https://graph.microsoft.com/beta/search/query";
+        } else {
+            this._microsoftSearchUrl = "https://graph.microsoft.com/v1.0/search/query";
+        }
     }
 
     private async buildMicrosoftSearchRequest(dataContext: IDataContext): Promise<IMicrosoftSearchRequest> {
-
+        
         let aggregations: ISearchRequestAggregation[] = [];
         let aggregationFilters: string[] = [];
         let sortProperties: ISearchSortProperty[] = [];
@@ -461,30 +539,35 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
 
             // Make sure, if we have multiple filters, at least two filters have values to avoid apply an operator ('or','and') on only one condition failing the query.
             if (dataContext.filters.selectedFilters.length > 1 && dataContext.filters.selectedFilters.filter(selectedFilter => selectedFilter.values.length > 0).length > 1) {
-                const refinementString = this.buildAggregationFilters(dataContext.filters.selectedFilters, dataContext.filters.filtersConfiguration).join(',');
+                const refinementString = DataFilterHelper.buildFqlRefinementString(dataContext.filters.selectedFilters, dataContext.filters.filtersConfiguration, this.moment).join(',');
                 if (!isEmpty(refinementString)) {
                     aggregationFilters = aggregationFilters.concat([`${dataContext.filters.filterOperator}(${refinementString})`]);
                 }
-
+                
             } else {
-                aggregationFilters = aggregationFilters.concat(this.buildAggregationFilters(dataContext.filters.selectedFilters, dataContext.filters.filtersConfiguration));
+                aggregationFilters = aggregationFilters.concat(DataFilterHelper.buildFqlRefinementString(dataContext.filters.selectedFilters, dataContext.filters.filtersConfiguration, this.moment));
             }
         }
 
-        // Build sort properties
-        this.properties.contentSourceConnectionIds.forEach(id => {
-            contentSources.push(`/external/connections/${id}`);
-        });
-
-        // Build sort properties
-        this.properties.sortProperties.forEach(sortProperty => {
-
-            sortProperties.push({
-                name: sortProperty.sortField,
-                isDescending: sortProperty.sortDirection === SortFieldDirection.Descending ? true : false
+        if (this.properties.entityTypes.indexOf(EntityType.ExternalItem) !== -1) {
+            // Build external connection ID
+            this.properties.contentSourceConnectionIds.forEach(id => {
+                contentSources.push(`/external/connections/${id}`);
             });
-        });
+        }
 
+        if (this.properties.entityTypes.indexOf(EntityType.ListItem) !== -1) {
+
+            // Build sort properties (only relevant for SharePoint manged properties)
+            this.properties.sortProperties.filter(s => s.sortField).forEach(sortProperty => {
+
+                sortProperties.push({
+                    name: sortProperty.sortField,
+                    isDescending: sortProperty.sortDirection === SortFieldDirection.Descending ? true : false
+                });
+            });
+        }
+        
         // Build search request
         let searchRequest: IMicrosoftSearchRequest = {
             entityTypes: this.properties.entityTypes,
@@ -502,7 +585,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         if (aggregations.length > 0) {
             searchRequest.aggregations = aggregations.filter(a => a);
         }
-
+        
         if (aggregationFilters.length > 0) {
             searchRequest.aggregationFilters = aggregationFilters;
         }
@@ -516,92 +599,6 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         }
 
         return searchRequest;
-    }
-
-    /**
-     * Build the refinement condition in FQL format
-     * @param selectedFilters The selected filter array
-     * @param filtersConfiguration The current filters configuration
-     * @param encodeTokens If true, encodes the taxonomy refinement tokens in UTF-8 to work with GET requests. Javascript encodes natively in UTF-16 by default.
-     */
-    private buildAggregationFilters(selectedFilters: IDataFilter[], filtersConfiguration: IDataFilterConfiguration[], encodeTokens?: boolean): string[] {
-
-        let refinementQueryConditions: string[] = [];
-
-        selectedFilters.forEach(filter => {
-
-            let operator: any = filter.operator;
-
-            // Get the configuration for this filter
-            const filterConfiguration: IDataFilterConfiguration = DataFilterHelper.getConfigurationForFilter(filter, filtersConfiguration);
-
-            // The configuration should always be here for a filter. Not a valid scenario otherwise.
-            if (filterConfiguration) {
-
-                // Mutli values
-                if (filter.values.length > 1) {
-
-                    let startDate = null;
-                    let endDate = null;
-
-                    // A refiner can have multiple values selected in a multi or mon multi selection scenario
-                    // The correct operator is determined by the refiner display template according to its behavior
-                    const conditions = filter.values.map(filterValue => {
-
-                        let value = filterValue.value;
-
-                        if (this.moment(value, this.moment.ISO_8601, true).isValid()) {
-
-                            if (!startDate && (filterValue.operator === FilterComparisonOperator.Geq || filterValue.operator === FilterComparisonOperator.Gt)) {
-                                startDate = value;
-                            }
-
-                            if (!endDate && (filterValue.operator === FilterComparisonOperator.Lt || filterValue.operator === FilterComparisonOperator.Leq)) {
-                                endDate = value;
-                            }
-                        }
-
-                        return /ǂǂ/.test(value) && encodeTokens ? encodeURIComponent(value) : value;
-                    });
-
-                    if (startDate && endDate) {
-                        refinementQueryConditions.push(`${filter.filterName}:range(${startDate},${endDate})`);
-
-
-                    } else {
-                        refinementQueryConditions.push(`${filter.filterName}:${operator}(${conditions.join(',')})`);
-                    }
-
-                } else {
-
-                    // Single value
-                    if (filter.values.length === 1) {
-
-                        const filterValue = filter.values[0];
-
-                        // See https://sharepoint.stackexchange.com/questions/258081/how-to-hex-encode-refiners/258161
-                        let refinementToken = /ǂǂ/.test(filterValue.value) && encodeTokens ? encodeURIComponent(filterValue.value) : filterValue.value;
-
-                        // https://docs.microsoft.com/en-us/sharepoint/dev/general-development/fast-query-language-fql-syntax-reference#fql_range_operator
-                        if (this.moment(refinementToken, this.moment.ISO_8601, true).isValid()) {
-
-                            if (filterValue.operator === FilterComparisonOperator.Gt || filterValue.operator === FilterComparisonOperator.Geq) {
-                                refinementToken = `range(${refinementToken},max)`;
-                            }
-
-                            // Ex: scenario ('older than a year')
-                            if (filterValue.operator === FilterComparisonOperator.Leq || filterValue.operator === FilterComparisonOperator.Lt) {
-                                refinementToken = `range(min,${refinementToken})`;
-                            }
-                        }
-
-                        refinementQueryConditions.push(`${filter.filterName}:${refinementToken}`);
-                    }
-                }
-            }
-        });
-
-        return refinementQueryConditions;
     }
 
     /**
@@ -620,8 +617,8 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         // Get an instance to the MSGraphClient
         const msGraphClientFactory = this.serviceScope.consume<MSGraphClientFactory>(MSGraphClientFactory.serviceKey);
         const msGraphClient = await msGraphClientFactory.getClient();
-        const request = await msGraphClient.api(MICROSOFT_SEARCH_URL).header('SdkVersion', `PnPModernSearch/${this.context.manifest.version}`);
-
+        const request = await msGraphClient.api(this._microsoftSearchUrl);     
+            
         const jsonResponse = await request.post({ requests: [searchRequest] });
 
         if (jsonResponse.value && Array.isArray(jsonResponse.value)) {
@@ -633,11 +630,26 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                     itemsCount += hitContainer.total;
 
                     if (hitContainer.hits) {
-                        response.items = response.items.concat(hitContainer.hits);
+
+                        const hits = hitContainer.hits.map(hit => {
+
+                            if (hit.resource.fields) {
+
+                                // Flatten 'fields' to be usable with the Search Fitler WP as refiners
+                                Object.keys(hit.resource.fields).forEach(field => {
+                                    hit[field] = hit.resource.fields[field];
+                                });
+                            }
+
+                            return hit;
+                        });
+
+                        response.items = response.items.concat(hits);
                     }
 
-                    // Map refinement results
                     if (hitContainer.aggregations) {
+
+                        // Map refinement results
                         hitContainer.aggregations.forEach((aggregation) => {
 
                             let values: IDataFilterResultValue[] = [];
@@ -649,15 +661,15 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                                     operator: FilterComparisonOperator.Contains
                                 } as IDataFilterResultValue);
                             });
-
+    
                             aggregationResults.push({
                                 filterName: aggregation.field,
                                 values: values
                             });
-                        });
+                         });
+    
+                         response.filters = aggregationResults;
                     }
-
-                    response.filters = aggregationResults;
                 });
             });
         }
@@ -674,4 +686,18 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         }
         return options;
     }
+
+    private async getAvailableProperties(): Promise<IComboBoxOption[]> {
+
+        const searchManagedProperties = await this._sharePointSearchService.getAvailableManagedProperties();
+
+        this._availableManagedProperties = searchManagedProperties.map(managedProperty => {
+            return {
+                key: managedProperty.name,
+                text: managedProperty.name,
+            } as IComboBoxOption;
+        });
+
+        return this._availableManagedProperties;
+    }    
 }

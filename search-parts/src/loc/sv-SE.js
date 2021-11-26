@@ -89,7 +89,11 @@ define([], function () {
         SameTabOpenBehavior: "Använd den aktuella fliken",
         NewTabOpenBehavior: "Öppna i en ny flik",
         PageOpenBehaviorLabel: "Öppningsbeteende",
-        EmptyFieldErrorMessage: "Det här fältet får inte vara tomt"
+        EmptyFieldErrorMessage: "Det här fältet får inte vara tomt",
+        TagPickerStrings: {
+          NoResultsSearchMessage: "Inga resultat funna",
+          SearchPlaceholder: "Sök efter ett värde..."
+        }
       },
       DataSources: {
         SharePointSearch: {
@@ -100,9 +104,9 @@ define([], function () {
           QueryTemplateFieldLabel: "Sökfrågemall",
           QueryTemplatePlaceHolderText: "ex: Path:{Site}",
           QueryTemplateFieldDescription: "Sökfrågemallen. Du kan också använda {<tokens>} för att skapa en dynamisk fråga.",
-          ResultSourceIdLabel: "ID för sökresultatet",
-          ResultSourceIdDescription: "Använd ett standard SharePoint-ID i sökresultatet, eller skriv in ditt eget GUID-värde och tryck på 'Enter' för att spara.",
-          InvalidResultSourceIdMessage: "Det angivna värdet är inte en giltigt GUID",
+          ResultSourceIdLabel: "ID för sökresultatets ID / Nivå|Namn",
+          ResultSourceIdDescription: "Välj en inbyggd källa, skriv en anpassad käll-GUID eller NIVÅ och NAMN på källan separerade med | (dvs: SPSite|Nyheter). Giltiga nivå är [SPSiteSubscription, SPSite, SPWeb]. Tryck på [Enter] för att spara.",
+          InvalidResultSourceIdMessage: "Det angivna värdet är inte en giltigt GUID eller formaterad som NIVÅ|NAMN",
           EnableQueryRulesLabel: "Aktivera frågeregler",
           IncludeOneDriveResultsLabel: "Inkludera resultat från OneDrive för Företag",
           RefinementFilters: "Förfiningsfilter",
@@ -131,7 +135,8 @@ define([], function () {
           EnableTopResultsLabel: "Aktivera toppresultat",
           ContentSourcesFieldLabel: "Innehållskällor",
           ContentSourcesFieldDescriptionLabel: "Visar ID för de anslutningar som definierats i administrationsportalen för Microsoft Search Connectors",
-          ContentSourcesFieldPlaceholderLabel: "ex: 'MyCustomConnectorId'"
+          ContentSourcesFieldPlaceholderLabel: "ex: 'MyCustomConnectorId'",
+          UseBetaEndpoint: "Använd beta endpoint"
         },
         SearchCommon: {
           Sort: {
@@ -314,7 +319,10 @@ define([], function () {
         FilterNoValuesMessage: "Inga värden för detta filter",
         OrOperator: "ELLER",
         AndOperator: "OCH",
-        ComboBoxPlaceHolder: "Välj värde"
+        ComboBoxPlaceHolder: "Välj värde",
+        UseAndOperatorValues: "Använd en AND-operator mellan värden ",
+        UseOrOperatorValues: "Använd en ELLER-operator mellan värden",
+        UseValuesOperators: "Välj operator att använda mellan dessa filtervärden"
       },
       SuggestionProviders: {
         SharePointStatic: {

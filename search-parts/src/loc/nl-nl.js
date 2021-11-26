@@ -89,7 +89,11 @@ define([], function() {
             SameTabOpenBehavior: "Gebruik de huidige tab",
             NewTabOpenBehavior: "Open in een nieuwe tab",
             PageOpenBehaviorLabel: "Gedrag voor openen",
-            EmptyFieldErrorMessage: "Dit veld mag niet leeg zijn"
+            EmptyFieldErrorMessage: "Dit veld mag niet leeg zijn",
+            TagPickerStrings: {
+                NoResultsSearchMessage: "Geen resultaten gevonden",
+                SearchPlaceholder: "Zoek een waarde..."
+            }
         },
         DataSources: {
             SharePointSearch: {
@@ -100,9 +104,9 @@ define([], function() {
                 QueryTemplateFieldLabel: "Zoekopdracht template",
                 QueryTemplatePlaceHolderText: "bijv: Path:{Site}",
                 QueryTemplateFieldDescription: "Het zoekopdracht template. Je kan ook {<tokens>} gebruiken om een dynamische zoekopdracht op te bouwen.",
-                ResultSourceIdLabel: "Resultaatbron ID",
-                ResultSourceIdDescription: "Gebruik een standaard resultaatbron ID of geef je eigen GUID waarde in en druk op 'Enter' om op te slaan.",
-                InvalidResultSourceIdMessage: "De opgegeven waarde is geen valide GUID",
+                ResultSourceIdLabel: "Resultaatbron Id / Niveau|Naam",
+                ResultSourceIdDescription: "Selecteer een ingebouwde bron, typ een aangepaste bron-GUID of NIVEAU en NAAM van de bron gescheiden door | (d.w.z. SPSite|Nieuws). Geldige niveaus zijn [SPSiteSubscription, SPSite, SPWeb]. Druk op [Enter] om op te slaan.",
+                InvalidResultSourceIdMessage: "De opgegeven waarde is geen valide GUID of is opgemaakt als NIVEAU|NAAM",
                 EnableQueryRulesLabel: "Zoekregels inschakelen",
                 IncludeOneDriveResultsLabel: "Resultaten van OneDrive voor Bedrijven opnemen",
                 RefinementFilters: "Refinement filters",
@@ -131,7 +135,8 @@ define([], function() {
                 EnableTopResultsLabel: "Topresultaten inschakelen",
                 ContentSourcesFieldLabel: "Inhoudsbronnen",
                 ContentSourcesFieldDescriptionLabel: "IDs van verbingingen gedefinieerd in de Microsoft Search connectors administratie portaal.",
-                ContentSourcesFieldPlaceholderLabel: "bijv: 'MyCustomConnectorId'"
+                ContentSourcesFieldPlaceholderLabel: "bijv: 'MyCustomConnectorId'",
+                UseBetaEndpoint: "Bèta-eindpunt gebruiken"
             },
             SearchCommon: {
                 Sort: {
@@ -314,7 +319,10 @@ define([], function() {
             FilterNoValuesMessage: "Geen waarden voor deze filter",
             OrOperator: "OR",
             AndOperator: "AND",
-            ComboBoxPlaceHolder: "Selecteer waarde"
+            ComboBoxPlaceHolder: "Selecteer waarde",
+            UseAndOperatorValues: "Use an AND operator between values",
+            UseOrOperatorValues: "Use an OR operator between values",
+            UseValuesOperators: "Select operator to use between this filter values"
         },
         SuggestionProviders: {
             SharePointStatic: {
