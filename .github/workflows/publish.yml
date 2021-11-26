@@ -23,6 +23,7 @@ jobs:
               with:
                   node-version: 14
                   cache: npm
+                  cache-dependency-path: package-lock.json
                   registry-url: "https://registry.npmjs.org"
             # cache node modules
             - name: Cache node modules
