@@ -4,7 +4,7 @@ on:
     workflow_dispatch:
 
 jobs:
-    monthly-release:
+    extensibility-release:
         # The type of runner that the job will run on
         runs-on: ubuntu-latest
         defaults:
@@ -16,7 +16,7 @@ jobs:
             # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
             - uses: actions/checkout@v2
               with:
-                  ref: npm-workflow-test
+                  ref: develop
             # setup nodejs
             - name: Use Node.js 14
               uses: actions/setup-node@v2
