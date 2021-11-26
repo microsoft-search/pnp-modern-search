@@ -885,11 +885,18 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             // Load customizations from extensibility libraries
             extensibilityLibraries.forEach(extensibilityLibrary => {
 
-                // Add custom web components if any
-                this.availableWebComponentDefinitions = this.availableWebComponentDefinitions.concat(extensibilityLibrary.getCustomWebComponents());
+            // Add custom layouts if any
+            if (extensibilityLibrary.getCustomLayouts)
+                this.availableLayoutDefinitions = this.availableLayoutDefinitions.concat(extensibilityLibrary.getCustomLayouts());
 
-                // Registers Handlebars customizations in the local namespace
+            // Add custom web components if any
+            if (extensibilityLibrary.getCustomWebComponents)
+                this.availableWebComponentDefinitions = this.availableWebComponentDefinitions.concat(extensibilityLibrary.getCustomWebComponents());
+            
+            // Registers Handlebars customizations in the local namespace
+            if (extensibilityLibrary.registerHandlebarsCustomizations)
                 extensibilityLibrary.registerHandlebarsCustomizations(this.templateService.Handlebars);
+                
             });
         }
     }

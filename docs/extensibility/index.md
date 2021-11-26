@@ -62,6 +62,7 @@ To create an extensibility library, you have the choice to reuse the one provide
 3. In the main entry point, implement the `IExtensibilityLibrary` interface. Provide all method implementations (return empty arrays if you don't implement specific extensions).
     !["Extensibility interface implementation"](../assets/extensibility/implement_interface.png){: .center}
 5. Implement your extension(s) depending of the type:
+    - [Layout](./custom_layout.md)
     - [Web component](./custom_web_component.md)
     - [Suggestions providers](./custom_suggestions_provider.md)
     - [Handlebars customizations](./handlebars_customizations.md)
