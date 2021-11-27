@@ -835,6 +835,18 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../extensibility/custom_layout/" class="md-nav__link">
+        Custom layout
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../extensibility/custom_web_component/" class="md-nav__link">
         Custom web component
       </a>
@@ -1115,6 +1127,14 @@
 <tr>
 <td align="left"><strong>{inputQueryText}</strong><br/></td>
 <td align="left">The query value entered into a search box on a page. The value depends on the configuration of input text connection of the Search Results Web Part. <br/></td>
+</tr>
+<tr>
+<td align="left"><strong>{filters.&lt;FilterName&gt;.&lt;|valueAsText|fromDate|toDate\&gt;}</strong></td>
+<td align="left">The current selected filters. <em>'FilterName'</em> corresponds to the filter name specified in the Search Filters Web Part (not the display name). The available values for a filter are as follow: <ul><li><code>valueAsText</code>: the filter value as text. For multi values filter, values will be separated by a comma <code>','</code>.</li><li><code>fromDate</code>: if the filter is a <strong>date range</strong> template, the 'from' date selected by the user in UTC format.</li><li><code>toDate</code>: if the filter is a <strong>date range</strong> template, the 'to' date selected by the user in UTC format.</li></ul></br>If no filter are selected (i.e. no values), the <code>{filters}</code> expression will be resolved as an empty string <code>''</code>.</td>
+</tr>
+<tr>
+<td align="left"><strong>{verticals.&lt;value|name&gt;}</strong></td>
+<td align="left">If connected, get the current selected vertical tab name or associated value.</td>
 </tr>
 </tbody>
 </table>

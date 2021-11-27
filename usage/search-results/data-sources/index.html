@@ -810,6 +810,18 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../extensibility/custom_layout/" class="md-nav__link">
+        Custom layout
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../extensibility/custom_web_component/" class="md-nav__link">
         Custom web component
       </a>
@@ -1025,7 +1037,7 @@
 </tr>
 <tr>
 <td><strong>Result source ID</strong></td>
-<td>Can be either a built-in result source ID listed in the dropdown or a custom result source GUID that you type. In this case to take effect, you must press <em>'Enter'</em> to save the value.</td>
+<td>Can be either a built-in result source ID listed in the dropdown, or a custom result source that you specify. Type the <code>GUID</code> of the result source, or the <code>SCOPE</code> and <code>NAME</code>, separated by <code>\|</code> (pipe character). For this to take effect, you must press <em>'Enter'</em> to save the value. Valid scopes are <code>SPSiteSubscription</code>, <code>SPSite</code>, <code>SPWeb</code>. Examples: <ul><li>SPWeb<code>\|</code>Local News</li><li>SPSite<code>\|</code>Contracts</li><li>SPSiteSubscription<code>\|</code>Intranet</li></ul></td>
 <td>LocalSharePointResults</td>
 </tr>
 <tr>
@@ -1040,7 +1052,7 @@
 </tr>
 <tr>
 <td><strong>Refinement filters</strong></td>
-<td>The initial refinement filters to apply to the query. Both KQL (Keyword Query Language) and FQL (<a href="https://docs.microsoft.com/sharepoint/dev/general-development/fast-query-language-fql-syntax-reference">Fast Query Language</a>) expressions work here (Ex: KQL <code>FileType:docx</code>, FQL: <code>FileType:equals("docx")</code>). They will be applied every time to the current search query regardless selected filters from connected Web Parts. Note: for string expressions, use <code>"</code> instead of <code>'</code>.</td>
+<td>The initial refinement filters to apply to the query. Filters has to be written using FQL (<a href="https://docs.microsoft.com/sharepoint/dev/general-development/fast-query-language-fql-syntax-reference">Fast Query Language</a>) (e.g. <code>FileType:equals("docx")</code>). They will be applied every time to the current search query regardless selected filters from connected Web Parts. Note: for string expressions, use <code>"</code> instead of <code>'</code>.</td>
 <td>None.</td>
 </tr>
 <tr>

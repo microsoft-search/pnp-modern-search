@@ -793,10 +793,29 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#build-templates-with-item-selection" class="md-nav__link">
+    Build templates with item selection
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
       
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../custom_layout/" class="md-nav__link">
+        Custom layout
+      </a>
     </li>
   
 
@@ -966,6 +985,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#build-templates-with-item-selection" class="md-nav__link">
+    Build templates with item selection
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1031,8 +1057,8 @@
 <tbody>
 <tr>
 <td><code>{{getGraphPreviewUrl "&lt;absolute_URL&gt;"</code></td>
-<td>Try to determine the preview URL based on an absolute URL using the unified Microsoft Graph URL syntax. For instance, <em>https://aequosdev.sharepoint.com/sites/dev/Shared%20Documents/MyDocument.pdf</em> becomes <em>https://aequosdev.sharepoint.com/sites/dev/Shared%20Documents/?id=/sites/dev/Shared%20Documents/MyDocument.pdf&amp;parent=/sites/dev/Shared%20Documents</em></td>
-<td><code>{{getGraphPreviewUrl 'https://aequosdev.sharepoint.com/sites/dev/Shared%20Documents/MyDocument.pdf'}}</code></td>
+<td>Try to determine the preview URL based on an absolute URL using the unified Microsoft Graph URL syntax. For instance, <em>https://contoso.sharepoint.com/sites/dev/Shared%20Documents/MyDocument.pdf</em> becomes <em>https://contoso.sharepoint.com/sites/dev/Shared%20Documents/?id=/sites/dev/Shared%20Documents/MyDocument.pdf&amp;parent=/sites/dev/Shared%20Documents</em></td>
+<td><code>{{getGraphPreviewUrl 'https://contoso.sharepoint.com/sites/dev/Shared%20Documents/MyDocument.pdf'}}</code></td>
 </tr>
 <tr>
 <td><code>{{getCountMessage &lt;total items count&gt; &lt;?keywords&gt;}}</code></td>
@@ -1043,6 +1069,11 @@
 <td><code>{{getSummary "&lt;value&gt;"}}</code></td>
 <td><em>Use with SharePoint Search data source and the HitHighlightedSummary SharePoint search managed property</em>. Returns the formatted value for rendering.</td>
 <td><code>{{getSummary HitHighlightedSummary}}</code></td>
+</tr>
+<tr>
+<td><code>{{getTagName "&lt;value&gt;"}}</code></td>
+<td><em>Use with tag fields</em>. Returns the name of the tag, omitting the ID in the tag string (<code>L0\|#000000000-0000-0000-0000-000000000000\|…</code>).</td>
+<td><code>{{getTagName Tag}}</code></td>
 </tr>
 <tr>
 <td><code>{{getDate &lt;data_value&gt; "&lt;format&gt;" &lt;time handling&gt;}}</code></td>
@@ -1077,7 +1108,7 @@
 <tr>
 <td><code>{{getUserEmail &lt;value&gt;}}</code></td>
 <td>Extract the user email in a string based on a email regex  (ex: a claim). Returns the first match.</td>
-<td><code>{{getUserEmail "franck.cornu@aequosdev.onmicrosoft.com | Franck Cornu | 693A30232E667C6D656D626572736869707C6672616E636B2E636F726E7540616571756F736465762E6F6E6D6963726F736F66742E636F6D i:0#.f|membership|franck.cornu@aequosdev.onmicrosoft.com"}}</code></td>
+<td><code>{{getUserEmail "franck.cornu@contoso.onmicrosoft.com | Franck Cornu | 693A30232E667C6D656D626572736869707C6672616E636B2E636F726E7540616571756F736465762E6F6E6D6963726F736F66742E636F6D i:0#.f|membership|franck.cornu@contoso.onmicrosoft.com"}}</code></td>
 </tr>
 <tr>
 <td><code>{{#times &lt;number&gt;}}</code></td>
@@ -1213,6 +1244,57 @@ The placeholder is only loaded during first data load. For subsequent requests, 
 </blockquote>
 <p>In the solution, you can use Graph Tookit components whitout the need to re-authenticate against Microsoft Graph because the Web Parts already use the <a href="https://docs.microsoft.com/en-us/graph/toolkit/providers/sharepoint">SharePoint provider</a>.</p>
 <p>Refer to the official documentation to see <a href="https://docs.microsoft.com/en-us/graph/toolkit/components/login">all available components</a>. For instance, we use the Microsoft Graph Toolkit for the <a href="../../usage/search-results/layouts/people/">people layout</a> via <code>&lt;mgt-person&gt;</code>.</p>
+<h2 id="build-templates-with-item-selection">Build templates with item selection<a class="headerlink" href="#build-templates-with-item-selection" title="Permanent link">&para;</a></h2>
+<p>If your template requires items selection for dynamic filtering, you can follow these guidelines to design your template structure. The item selection feature is based on the Office Fluent UI <a href="https://developer.microsoft.com/en-us/fluentui#/controls/web/selection"><strong>Selection</strong></a> component and custom <code>data</code> attributes.</p>
+<p>The available data attributes you can use in your HTML template are:</p>
+<ul>
+<li>
+<p><code>data-selection-index</code>: the index of the item being represented. This would go on the root of the tile/row. </p>
+</li>
+<li>
+<p><code>data-selection-toggle</code>: this boolean flag would be set on the element which should handle toggles.This could be a checkbox or a div.</p>
+</li>
+<li>
+<p><code>data-selection-toggle-all</code>: this boolean flag indicates that clicking it should toggle all selection.</p>
+</li>
+<li>
+<p><code>data-selection-disabled</code>: allows a branch of the DOM to be marked to ignore input events that alter selections.</p>
+</li>
+<li>
+<p><code>data-selection-select</code>: allows a branch of the DOM to ensure that the current item is selected upon interaction.</p>
+</li>
+</ul>
+<p>As item key you must use the builtin Handlebars <code>{{@index}}</code> property in the <code>{{#each}}</code> loop. Also because state managed is internaly managed by the Web Part, we provide you an Handlebars helper <code>isItemSelected</code> to help to apply styles depending of the selection (ex: apply a CSS class or not). To use this helper correctly, you must pass the current selected keys and current index to get the selected state for an item:</p>
+<div class="codehilite"><pre><span></span><code>(isItemSelected @root.selectedKeys @index)
+</code></pre></div>
+
+
+<p><strong>Template example with item selection</strong></p>
+<div class="codehilite"><pre><span></span><code>&lt;style&gt;
+
+    .selected {
+        background-color: {{@root.theme.palette.themeLighter}};
+        border: 1px solid {{@root.theme.palette.themePrimary}};
+        color: {{@root.theme.palette.themePrimary}};
+    }
+    ...
+
+&lt;/style&gt;
+...
+{{#each data.items as |item|}}
+    &lt;div class=&quot;{{#if (isItemSelected @root.selectedKeys @index)}}selected{{/if}}&quot; data-is-focusable data-selection-index=&quot;{{@index}}&quot; data-selection-toggle&gt;
+        &lt;span&gt;{{slot item @root.slots.Title}}&lt;/span&gt;
+    &lt;/div&gt;
+{{/each}}
+</code></pre></div>
+
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul>
+<li>If you allowed multi items selection, you must use <code>CTRL</code> + <code>Left click</code> to select multiple elements. You can also select a range of elements using <code>SHIFT</code> + <code>Left click</code>.</li>
+</ul>
+</div>
                 
               
               
@@ -1248,13 +1330,13 @@ The placeholder is only loaded during first data load. For subsequent requests, 
       
       
         
-        <a href="../custom_web_component/" class="md-footer__link md-footer__link--next" aria-label="Next: Custom web component" rel="next">
+        <a href="../custom_layout/" class="md-footer__link md-footer__link--next" aria-label="Next: Custom layout" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              Custom web component
+              Custom layout
             </div>
           </div>
           <div class="md-footer__button md-icon">
