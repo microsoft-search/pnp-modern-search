@@ -21,4 +21,9 @@ export interface IDataResultSourceData {
      * The current selected items in the Search Results Web Part
      */
     selectedItems?: {[key: string]: string}[];
+
+    /**
+     * The count of items returned by the getItemCount method of a datasource
+     */
+    totalCount?:number;
 }
