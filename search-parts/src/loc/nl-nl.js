@@ -93,7 +93,8 @@ define([], function() {
             TagPickerStrings: {
                 NoResultsSearchMessage: "Geen resultaten gevonden",
                 SearchPlaceholder: "Zoek een waarde..."
-            }
+            },
+            CurrentVerticalNotSelectedMessage: "De huidige geselecteerde branche komt niet overeen met die welke zijn gekoppeld aan dit webonderdeel ({0}). Het blijft leeg in de weergavemodus."
         },
         DataSources: {
             SharePointSearch: {
@@ -298,7 +299,9 @@ define([], function() {
         },
         PropertyPane: {
             ConnectionsPage: {
-                DataConnectionsGroupName: "Beschikbare verbindingen"
+                DataConnectionsGroupName: "Beschikbare verbindingen",
+                UseDataVerticalsWebPartLabel: "Verbinding maken met een verticaal webonderdeel",
+                UseDataVerticalsFromComponentLabel: "Gebruik verticalen van dit onderdeel"
             },
             InformationPage: {
                 Extensibility: {

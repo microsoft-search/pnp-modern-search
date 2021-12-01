@@ -93,7 +93,8 @@ define([], function() {
             TagPickerStrings: {
                 NoResultsSearchMessage: "No results found",
                 SearchPlaceholder: "Search a value..."
-            }
+            },
+            CurrentVerticalNotSelectedMessage: "The current selected vertical does not match with the ones associated for this Web Part ({0}). It will remains blank in display mode."
         },
         DataSources: {
             SharePointSearch: {
@@ -298,7 +299,9 @@ define([], function() {
         },
         PropertyPane: {
             ConnectionsPage: {
-                DataConnectionsGroupName: "Available connections"
+                DataConnectionsGroupName: "Available connections",
+                UseDataVerticalsWebPartLabel: "Connect to a verticals Web Part",
+                UseDataVerticalsFromComponentLabel: "Use verticals from this component"
             },
             InformationPage: {
                 Extensibility: {

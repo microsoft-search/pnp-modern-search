@@ -93,6 +93,7 @@ declare interface ICommonStrings {
         NoResultsSearchMessage: string;
         SearchPlaceholder: string;
       }
+      CurrentVerticalNotSelectedMessage: string;
     },
     DataSources: {
       SharePointSearch: {
@@ -298,6 +299,8 @@ declare interface ICommonStrings {
     PropertyPane: {
       ConnectionsPage: {
         DataConnectionsGroupName: string;
+        UseDataVerticalsWebPartLabel: string;
+        UseDataVerticalsFromComponentLabel: string;
       },
       InformationPage: {
         Extensibility: {
