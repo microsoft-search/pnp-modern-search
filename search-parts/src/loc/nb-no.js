@@ -93,7 +93,8 @@ define([], function () {
         TagPickerStrings: {
           NoResultsSearchMessage: "Ingen resultater",
           SearchPlaceholder: "Søk etter en verdi..."
-        }
+        },
+        CurrentVerticalNotSelectedMessage: "Den gjeldende valgte vertikalen samsvarer ikke med de som er knyttet til denne nettdelen ({0}). Det vil forbli tomt i visningsmodus."
       },
       DataSources: {
         SharePointSearch: {
@@ -298,7 +299,9 @@ define([], function () {
       },
       PropertyPane: {
         ConnectionsPage: {
-          DataConnectionsGroupName: "Tilgjengelige tilkoblinger"
+          DataConnectionsGroupName: "Tilgjengelige tilkoblinger",
+          UseDataVerticalsWebPartLabel: "Koble til en vertikal webdel",
+          UseDataVerticalsFromComponentLabel: "Bruk vertikaler fra denne komponenten"
         },
         InformationPage: {
           Extensibility: {

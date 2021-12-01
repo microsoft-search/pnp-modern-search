@@ -93,7 +93,8 @@ define([], function() {
           TagPickerStrings: {
             NoResultsSearchMessage: "Nie znaleziono wyników",
             SearchPlaceholder: "Wyszukaj wartość..."
-          }
+          },
+          CurrentVerticalNotSelectedMessage: "Aktualnie wybrana branża nie odpowiada branżom powiązanym z tym składnikiem Web Part ({0}). W trybie wyświetlania pozostanie puste."
       },
       DataSources: {
           SharePointSearch: {
@@ -297,7 +298,9 @@ define([], function() {
       },
       PropertyPane: {
           ConnectionsPage: {
-              DataConnectionsGroupName: "Dostępne połączenia"
+              DataConnectionsGroupName: "Dostępne połączenia",
+              UseDataVerticalsWebPartLabel: "Użyj pionów z tego komponentu",
+              UseDataVerticalsFromComponentLabel: "Użyj pionów z tego komponentu"
           },
           InformationPage: {
               Extensibility: {
