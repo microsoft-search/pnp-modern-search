@@ -356,67 +356,55 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             const verticalData = this._verticalsConnectionSourceData.tryGetValue();
 
             // Remove the blank space introduced by the control zone when the Web Part displays nothing
-            // WARNING: in theory, we are not supposed to touch DOM outside of the Web Part root element, This will break if the page sttribute change
-
-            // 1st attempt: use the DOM element with the Web Part instance id     
-            let parentControlZone = document.getElementById(this.instanceId);
-
-            if (!parentControlZone) {
-
-                // 2nd attempt: Try the data-automation-id attribute as we suppose MS tests won't change this name for a while for convenience.
-                parentControlZone = this.domElement.closest(`div[data-automation-id='CanvasControl'], .CanvasControl`);
-
-                if (!parentControlZone) {
-
-                    // 3rd attempt: try the Control zone with ID
-                    parentControlZone = this.domElement.closest(`div[data-sp-a11y-id="ControlZone_${this.instanceId}"]`);
-
-                    if (!parentControlZone) {
-                        Log.warn(LogSource, `Parent control zone DOM element was not found in the DOM.`, this.webPartInstanceServiceScope);
-                    }
-                }
-            }
+            // WARNING: in theory, we are not supposed to touch DOM outside of the Web Part root element, This will break if the page attribute change
+            const parentControlZone = this.getParentControlZone();
 
             // If the current selected vertical is not the one configured for this Web Part, we show nothing
             if (verticalData && this.properties.selectedVerticalKeys.indexOf(verticalData.selectedVertical.key) === -1) {
 
-                if (this.displayMode === DisplayMode.Edit) {
+            if (this.displayMode === DisplayMode.Edit) {
 
-                    if (parentControlZone) {
-                        parentControlZone.removeAttribute('style');
-                    }
-
-                    renderRootElement = React.createElement('div', {},
-                        React.createElement(
-                            MessageBar, {
-                            messageBarType: MessageBarType.info,
-                        },
-                            webPartStrings.General.CurrentVerticalNotSelectedMessage
-                        ),
-                        renderRootElement
-                    );
-                } else {
-                    renderRootElement = null;
-
-                    // Reset data source information
-                    this._currentDataResultsSourceData = {
-                        availableFieldsFromResults: [],
-                        availablefilters: []
-                    };
-
-                    if (parentControlZone) {
-                        // Remove margin and padding for the empty control zone
-                        parentControlZone.setAttribute('style', 'margin-top:0px;padding:0px');
-                    }
+                if (parentControlZone) {
+                parentControlZone.removeAttribute('style');
                 }
+
+                // Get tab name of selected verticals
+                const verticalNames = verticalData.verticalsConfiguration.filter(cfg => {
+                return this.properties.selectedVerticalKeys.indexOf(cfg.key) !== -1;
+                }).map(v => v.tabName);
+                
+                renderRootElement = React.createElement('div', {}, 
+                                    React.createElement(
+                                        MessageBar, {
+                                        messageBarType: MessageBarType.info,
+                                        }, 
+                                        Text.format(commonStrings.General.CurrentVerticalNotSelectedMessage,verticalNames.join(','))
+                                    ),
+                                    renderRootElement
+                                    );
+            } else {
+                renderRootElement = null;
+
+                // Reset data source information
+                this._currentDataResultsSourceData = {
+                availableFieldsFromResults: [],
+                availablefilters: []
+                };
+
+                // Remove margin and padding for the empty control zone
+                if (parentControlZone) {
+                parentControlZone.setAttribute('style', 'margin-top:0px;padding:0px');
+                }
+                
+            }
 
             } else {
 
-                if (parentControlZone) {
-                    parentControlZone.removeAttribute('style');
-                }
+            if (parentControlZone) {
+                parentControlZone.removeAttribute('style');
+            }          
             }
-        }
+        }  
 
         // Error message
         if (this.errorMessage) {
