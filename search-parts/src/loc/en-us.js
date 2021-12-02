@@ -138,7 +138,7 @@ define([], function() {
                 ContentSourcesFieldDescriptionLabel: "IDs of connections defined in the Microsoft Search connectors administration portal.",
                 ContentSourcesFieldPlaceholderLabel: "ex: 'MyCustomConnectorId'",
                 QueryModifierFieldLabel: "Query modifier",
-                QueryModifierPlaceHolderText: "AND IsDocument:true",
+                QueryModifierPlaceHolderText: "IsDocument:true",
                 QueryModifierFieldDescription: "The search modifier template. You can also use {<tokens>} and KQL to build a dynamic query. Everything is concatenated to the inputQueryText",
                 ApplyQueryModifierBtnText: "Apply",
                 UseBetaEndpoint: "Use beta endpoint"

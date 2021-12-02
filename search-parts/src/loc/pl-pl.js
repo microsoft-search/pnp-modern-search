@@ -138,7 +138,7 @@ define([], function() {
               ContentSourcesFieldDescriptionLabel: "Identyfikatory połączeń zdefiniowanych w portalu administracyjnym Microsoft Search.",
               ContentSourcesFieldPlaceholderLabel: "przykładowo: 'MyCustomConnectorId'",
               QueryModifierFieldLabel: "Modyfikator zapytania",
-              QueryModifierPlaceHolderText: "AND IsDocument:true",
+              QueryModifierPlaceHolderText: "IsDocument:true",
               QueryModifierFieldDescription: "Szablon modyfikatora wyszukiwania. Możesz również użyć {<tokenów>} i KQL do zbudowania dynamicznego zapytania. Wszystko jest połączone z inputQueryText",
               ApplyQueryModifierBtnText: "Zastosuj",
               UseBetaEndpoint: "Użyj punktu końcowego wersji beta"

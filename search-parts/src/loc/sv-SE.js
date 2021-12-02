@@ -138,7 +138,7 @@ define([], function () {
           ContentSourcesFieldDescriptionLabel: "Visar ID för de anslutningar som definierats i administrationsportalen för Microsoft Search Connectors",
           ContentSourcesFieldPlaceholderLabel: "ex: 'MyCustomConnectorId'",
           QueryModifierFieldLabel: "Frågemodifierare",
-          QueryModifierPlaceHolderText: "AND IsDocument:true",
+          QueryModifierPlaceHolderText: "IsDocument:true",
           QueryModifierFieldDescription: "Sökmodifieringsmallen. Du kan också använda {<tokens>} och KQL för att bygga en dynamisk fråga. Allt är kopplat till inputQueryText",
           ApplyQueryModifierBtnText: "Tillämpa",
           UseBetaEndpoint: "Använd beta endpoint"
