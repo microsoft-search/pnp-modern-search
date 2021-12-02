@@ -432,6 +432,13 @@ export class TemplateService implements ITemplateService {
             }
         });
 
+        // Return tag name from a tag string
+        this.Handlebars.registerHelper("getTagName", (tag: string) => {
+            if (!isEmpty(tag)) {
+                return new Handlebars.SafeString(tag.split("|").pop());
+            }
+        });
+        
         // Return the formatted date according to current locale using moment.js
         // <p>{{getDate Created "LL"}}</p>
         this.Handlebars.registerHelper("getDate", ((date: string, format: string, timeHandling?: number, isZ?: boolean) => {
@@ -596,6 +603,18 @@ export class TemplateService implements ITemplateService {
                 }
             }
             return out;
+        });
+
+        // Parse a JSON object
+        // <p>{{JSONparse jsonObject}}</p>
+        this.Handlebars.registerHelper("JSONparse", (str: string, options: any) => {
+            return JSON.parse(str);
+        });
+
+        this.Handlebars.registerHelper("isItemSelected", (selectedKeys: any[], itemIndex: any, options: any) => {
+            if (Array.isArray(selectedKeys) && selectedKeys.length > 0) {
+                return selectedKeys.indexOf(`${options.data.root.paging.currentPageNumber}${itemIndex}`) !== -1;
+            }
         });
 
     }

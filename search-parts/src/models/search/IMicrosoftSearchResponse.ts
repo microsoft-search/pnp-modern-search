@@ -18,7 +18,7 @@ export interface ISearchHit {
     rank: number;
     summary: string;
     contentSource: string;
-    resource: EntityType;
+    resource: ISearchResponseResource;
 }
 
 export interface ISearchResponseAggregation {
@@ -31,4 +31,11 @@ export interface IBucket {
     key: string;
     count: number;
     aggregationFilterToken: string;
+}
+
+export interface ISearchResponseResource {
+    "@odata.type": string;
+    fields?: {
+        [fieldName: string]: string;
+    };
 }

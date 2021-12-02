@@ -9,6 +9,12 @@ export interface ITokenService {
     setTokenValue(token: string, value: any): void;
 
     /**
+     * Gets the value of a specific token
+     * @param token the token name to retrieve
+     */
+    getTokenValue(token: string): any;    
+
+    /**
      * Resolves tokens for the specified input string.
      * @param string 
      */

@@ -15,6 +15,8 @@ define([], function() {
                 UseDataResultsWebPartLabel: "Se connecter à un composant Web des résultats des données",
                 UseDataResultsFromComponentsLabel: "Utiliser les données de ces composants Web",
                 UseDataResultsFromComponentsDescription: "Si vous connectez plusieurs composants Web, les valeurs et les nombres de filtres seront fusionnés avec les noms de filtres similaires",
+                UseDataVerticalsWebPartLabel: "Se connecter à un composant WebPart de verticales",
+                UseDataVerticalsFromComponentLabel: "Utiliser les verticales de ce composant"
             },
             FiltersSettingsPage: {
                 SettingsGroupName: "Paramètres des filtres",

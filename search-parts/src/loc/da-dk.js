@@ -89,7 +89,12 @@ define([], function() {
             SameTabOpenBehavior: "Brug det nuværende faneblad",
             NewTabOpenBehavior: "Åben i et nyt faneblad",
             PageOpenBehaviorLabel: "Opening-egenskaber",
-            EmptyFieldErrorMessage: "Dette felt må ikke stå tomt"
+            EmptyFieldErrorMessage: "Dette felt må ikke stå tomt",
+            TagPickerStrings: {
+                NoResultsSearchMessage: "Ingen resultater fundet",
+                SearchPlaceholder: "Søg efter en værdi..."
+            },
+            CurrentVerticalNotSelectedMessage: "Den aktuelle valgte vertikal stemmer ikke overens med dem, der er knyttet til denne webdel ({0}). Den forbliver tom i visningstilstand."
         },
         DataSources: {
             SharePointSearch: {
@@ -100,9 +105,9 @@ define([], function() {
                 QueryTemplateFieldLabel: "Søgeforespørgsselsskabelon",
                 QueryTemplatePlaceHolderText: "Fx: Sti:{Site}",
                 QueryTemplateFieldDescription: "Søgeforespørgselsskabelonen. Du kan også anvende {<tokens>} for at bygge en dynamisk forespørgsel.",
-                ResultSourceIdLabel: "ID på søgeresultatet",
-                ResultSourceIdDescription: "Anvend et standard SharePoint ID på søgeresultatet, eller indsæt din egen GUID-værdi eller tryk 'Enter' for at gemme.",
-                InvalidResultSourceIdMessage: "Værdien er ikke en gyldig GUID",
+                ResultSourceIdLabel: "Søgekildens Id / Niveau|Navn",
+                ResultSourceIdDescription: "Vælg en indbygget kilde, skriv en brugerdefineret kilde-GUID eller NIVEAU og NAVN på kilden adskilt af | (dvs.: SPSite|Nyheder). Gyldige niveauer er [SPSiteSubscription, SPSite, SPWeb]. Tryk på [Enter] for at gemme.",
+                InvalidResultSourceIdMessage: "Værdien er ikke en gyldig GUID eller formateret som NIVEAU|NAVN",
                 EnableQueryRulesLabel: "Aktivér forespørgselsregler",
                 IncludeOneDriveResultsLabel: "Inkludér resultater fra OneDrive for Business",
                 RefinementFilters: "Refinement-filtre",
@@ -134,6 +139,7 @@ define([], function() {
                 ContentSourcesFieldPlaceholderLabel: "Fx: 'MyCustomConnectorId'",
                 EnableSuggestionLabel: "Aktiver staveforslag",
                 EnableModificationLabel: "Aktiver staveændringer",
+                UseBetaEndpoint: "Brug beta-endepunkt"
             },
             SearchCommon: {
                 Sort: {
@@ -295,7 +301,9 @@ define([], function() {
         },
         PropertyPane: {
             ConnectionsPage: {
-                DataConnectionsGroupName: "Tilgængelige forbindelser"
+                DataConnectionsGroupName: "Tilgængelige forbindelser",
+                UseDataVerticalsWebPartLabel: "Anslut till en vertikal webbdel",
+                UseDataVerticalsFromComponentLabel: "Använd vertikaler från denna komponent"
             },
             InformationPage: {
                 Extensibility: {
@@ -316,7 +324,10 @@ define([], function() {
             FilterNoValuesMessage: "Ingen værdier for dette filter",
             OrOperator: "ELLER",
             AndOperator: "OG",
-            ComboBoxPlaceHolder: "Vælg værdi"
+            ComboBoxPlaceHolder: "Vælg værdi",
+            UseAndOperatorValues: "Use an AND operator between values",
+            UseOrOperatorValues: "Use an OR operator between values",
+            UseValuesOperators: "Select operator to use between this filter values"
         },
         SuggestionProviders: {
             SharePointStatic: {

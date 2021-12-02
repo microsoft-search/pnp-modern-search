@@ -89,7 +89,12 @@ define([], function() {
           SameTabOpenBehavior: "Użyj bieżącej karty",
           NewTabOpenBehavior: "Otwórz w nowej karcie",
           PageOpenBehaviorLabel: "Sposób otwierania",
-          EmptyFieldErrorMessage: "To pole nie może być puste"
+          EmptyFieldErrorMessage: "To pole nie może być puste",
+          TagPickerStrings: {
+            NoResultsSearchMessage: "Nie znaleziono wyników",
+            SearchPlaceholder: "Wyszukaj wartość..."
+          },
+          CurrentVerticalNotSelectedMessage: "Aktualnie wybrana branża nie odpowiada branżom powiązanym z tym składnikiem Web Part ({0}). W trybie wyświetlania pozostanie puste."
       },
       DataSources: {
           SharePointSearch: {
@@ -100,9 +105,9 @@ define([], function() {
               QueryTemplateFieldLabel: "Szablon zapytania",
               QueryTemplatePlaceHolderText: "przykładowo: Path:{Site}",
               QueryTemplateFieldDescription: "Szablon zapytania. Możesz używać {<tokeny>} aby zbudować dynamiczne zapytanie.",
-              ResultSourceIdLabel: "Identyfikator źródła wyników",
-              ResultSourceIdDescription: "Użyj domyślnego źródła wyników lub wpisz własny GUID i naciśnij 'Enter' aby zapisać.",
-              InvalidResultSourceIdMessage: "Wprowadzona wartość nie jest poprawnym GUID",
+              ResultSourceIdLabel: "Źródła wyników  Id / Poziom|Nazwa",
+              ResultSourceIdDescription: "Wybierz wbudowane źródło, wpisz niestandardowy GUID źródła lub POZIOM i NAZWA źródła oddzielone znakiem | (np. SPSite|News). Prawidłowe zakresy to [SPSiteSubscription, SPSite, SPWeb]. Naciśnij [Enter], aby zapisać.",
+              InvalidResultSourceIdMessage: "Wprowadzona wartość nie jest poprawnym GUID lub jest sformatowana jako Poziom|Nazwa",
               EnableQueryRulesLabel: "Włącz reguły zapytania",
               IncludeOneDriveResultsLabel: "Dołączaj wyniki z OneDrive for Business",
               RefinementFilters: "Filtry zawężające",
@@ -134,6 +139,7 @@ define([], function() {
               ContentSourcesFieldPlaceholderLabel: "przykładowo: 'MyCustomConnectorId'",
               EnableSuggestionLabel: "Włącz sugestie pisowni",
               EnableModificationLabel: "Włącz modyfikacje pisowni",
+              UseBetaEndpoint: "Użyj punktu końcowego wersji beta"
           },
           SearchCommon: {
               Sort: {
@@ -294,7 +300,9 @@ define([], function() {
       },
       PropertyPane: {
           ConnectionsPage: {
-              DataConnectionsGroupName: "Dostępne połączenia"
+              DataConnectionsGroupName: "Dostępne połączenia",
+              UseDataVerticalsWebPartLabel: "Użyj pionów z tego komponentu",
+              UseDataVerticalsFromComponentLabel: "Użyj pionów z tego komponentu"
           },
           InformationPage: {
               Extensibility: {
@@ -315,7 +323,10 @@ define([], function() {
           FilterNoValuesMessage: "Brak wartości dla tego filtra",
           OrOperator: "LUB",
           AndOperator: "ORAZ",
-          ComboBoxPlaceHolder: "Wybierz wartość"
+          ComboBoxPlaceHolder: "Wybierz wartość",
+          UseAndOperatorValues: "Använd en AND-operator mellan värden",
+          UseOrOperatorValues: "Använd en ELLER-operator mellan värden",
+          UseValuesOperators: "Välj operator att använda mellan dessa filtervärden"
       },
       SuggestionProviders: {
           SharePointStatic: {

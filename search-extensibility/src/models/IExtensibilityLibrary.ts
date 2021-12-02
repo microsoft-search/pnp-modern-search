@@ -1,8 +1,14 @@
 import { IComponentDefinition } from './layouts/IComponentDefinition';
+import { ILayoutDefinition } from './layouts/ILayoutDefinition';
 import { ISuggestionProviderDefinition } from './suggestions/ISuggestionProviderDefinition';
 import * as Handlebars from 'handlebars';
 
 export interface IExtensibilityLibrary {
+
+    /**
+     * Returns custom layouts
+     */
+    getCustomLayouts(): ILayoutDefinition[];
     
     /**
      * Returns custom web components

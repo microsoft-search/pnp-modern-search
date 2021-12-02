@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as ReactDOM from 'react-dom';
-import { IDocumentCardPreviewProps, DocumentCard, DocumentCardPreview, DocumentCardTitle, DocumentCardActivity, DocumentCardType, DocumentCardDetails, IDocumentCardLocationStyleProps, IDocumentCardLocationStyles, IDocumentCardStyles } from 'office-ui-fabric-react/lib/DocumentCard';
+import { IDocumentCardPreviewProps, DocumentCard, DocumentCardPreview, DocumentCardTitle, DocumentCardActivity, DocumentCardType, DocumentCardDetails, IDocumentCardLocationStyleProps, IDocumentCardLocationStyles, IDocumentCardStyles, ITheme, Check } from 'office-ui-fabric-react';
 import { ImageFit } from 'office-ui-fabric-react';
 import PreviewContainer from '../controls/PreviewContainer/PreviewContainer';
 import { PreviewType } from '../controls/PreviewContainer/IPreviewContainerProps';
@@ -13,23 +13,22 @@ import { merge } from '@microsoft/sp-lodash-subset';
 import { BaseWebComponent } from "@pnp/modern-search-extensibility";
 import { TemplateService } from "../services/templateService/TemplateService";
 import { ITemplateService } from "../services/templateService/ITemplateService";
-import { ITheme } from 'office-ui-fabric-react/lib/Styling';
 import { UrlHelper } from "../helpers/UrlHelper";
 import { FileIcon } from "./FileIconComponent";
 import * as DOMPurify from 'dompurify';
 import { DomPurifyHelper } from "../helpers/DomPurifyHelper";
 import { IComponentFieldsConfiguration } from "../models/common/IComponentFieldsConfiguration";
 import { TestConstants } from "../common/Constants";
-import { ServiceScope, ServiceKey } from '@microsoft/sp-core-library';
-
+import { ServiceScope, ServiceKey } from "@microsoft/sp-core-library";
+import { ISelectableComponentItem } from "../models/common/ISelectableComponentItem";
 /**
  * Document card props. These properties are retrieved from the web component attributes. They must be camel case.
  * (ex: a 'preview-image' HTML attribute becomes 'previewImage' prop, etc.)
  */
-export interface IDocumentCardComponentProps {
+export interface IDocumentCardComponentProps extends ISelectableComponentItem {
 
     // Item context
-    item?: { [key: string]: any };
+    item?: {[key:string]: any};
 
     // Fields configuration object
     fieldsConfiguration?: IComponentFieldsConfiguration[];
@@ -65,7 +64,7 @@ export interface IDocumentCardComponentProps {
     /**
      * A template service instance
      */
-    templateService: ITemplateService;
+    templateService: ITemplateService;   
 }
 
 export interface IDocumentCardComponentState {
@@ -93,7 +92,7 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
         });
 
         this._domPurify.addHook('uponSanitizeElement', DomPurifyHelper.allowCustomComponentsHook);
-        this._domPurify.addHook('uponSanitizeAttribute', DomPurifyHelper.allowCustomAttributesHook);
+        this._domPurify.addHook('uponSanitizeAttribute', DomPurifyHelper.allowCustomAttributesHook); 
     }
 
     private showPreviewOnClick() {
@@ -104,14 +103,16 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
 
     public render() {
 
-        let renderPreviewCallout = null;
+        let renderPreviewCallout: JSX.Element = null;
+        let renderItemCheck: JSX.Element = null;
+        let isSelected = false;
+        let fileExtension = null;
         let processedProps: IDocumentCardComponentProps = this.props;
 
         if (this.props.fieldsConfiguration && this.props.item) {
             processedProps = this.props.templateService.processFieldsConfiguration<IDocumentCardComponentProps>(this.props.fieldsConfiguration, this.props.item, this.props.context);
         }
 
-        let fileExtension = null;
         if (processedProps.fileExtension) {
             fileExtension = processedProps.fileExtension.split("?")[0].split("#")[0].split('.').pop();
         }
@@ -125,7 +126,7 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
                 targetElement={this.documentCardPreviewRef.current}
                 showPreview={this.state.showCallout}
             />;
-        }
+        }        
 
         // Get the current loaded theme
         const theme = merge(getTheme(), this.props.themeVariant);
@@ -149,7 +150,8 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
 
         const documentCardStyles: IDocumentCardStyles = {
             root: {
-                margin: '0 auto'
+                margin: '0 auto',
+                boxShadow: 'rgba(0, 0, 0, 0.133) 0px 1.6px 3.6px 0px, rgba(0, 0, 0, 0.11) 0px 0.3px 0.9px 0px'
             }
         };
 
@@ -161,7 +163,7 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
                     previewImageSrc: processedProps.previewImage ? UrlHelper.decode(processedProps.previewImage) : '#',
                     imageFit: ImageFit.centerCover,
                     height: 126
-                }
+                }             
             ]
         };
 
@@ -182,65 +184,92 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
 
         let previewFunc = this.props.enablePreview ? this.showPreviewOnClick : null;
 
-        return <div>
-            <DocumentCard
-                theme={this.props.themeVariant as ITheme}
-                onClick={previewFunc}
-                styles={documentCardStyles}
-                type={this.props.isCompact ? DocumentCardType.compact : DocumentCardType.normal}
-            >
-                <div ref={this.documentCardPreviewRef} style={{ position: 'relative', height: '100%' }}>
-                    <DocumentCardPreview {...previewProps} />
-                    {this.props.showFileIcon ?
-                        <div data-ui-test-id={TestConstants.DocumentCardFileIcon}><FileIcon styles={iconstyles} size="32" extension={fileExtension} isContainer={processedProps.isContainer} /></div> : null
-                    }
-                </div>
-                <DocumentCardDetails>
-                    {processedProps.location && !this.props.isCompact ?
-                        <div className={documentCardLocationClassNames.root} dangerouslySetInnerHTML={{ __html: this._domPurify.sanitize(processedProps.location) }}></div> : null
-                    }
-                    <Link
+        // Handle item selection
+        if (this.props.allowItemSelection && this.props.itemKey) {
+            isSelected = this.props.selectedKeys ? this.props.selectedKeys.indexOf(this.props.itemKey.toString()) !== -1 : false;
+            renderItemCheck =   <div>
+                                    <div data-is-focusable data-selection-select>
+                                    <Check  checked={isSelected} 
+                                            styles={{
+                                                root: {
+                                                    position: 'absolute',
+                                                    top: 10,
+                                                    left: 10,
+                                                    zIndex: 1
+                                                }
+                                            }}
+                                    />
+                                    </div>
+                                </div>;
+            
+            if (isSelected) {
+                documentCardStyles.root = {
+                    borderWidth: '2px',
+                    borderColor: this.props.themeVariant.semanticColors.primaryButtonBackgroundHovered
+                };
+            }
+        }
+       
+        return  <div data-is-focusable data-selection-index={this.props.index} data-selection-toggle>
+                    <DocumentCard
                         theme={this.props.themeVariant as ITheme}
-                        href={processedProps.href} target='_blank' styles={{
-                            root: {
-                                selectors: {
-                                    ':hover': {
-                                        textDecoration: 'underline'
+                        onClick={previewFunc}
+                        styles={documentCardStyles}
+                        type={this.props.isCompact ? DocumentCardType.compact : DocumentCardType.normal}
+                    >
+                        <div ref={this.documentCardPreviewRef} style={{ position: 'relative', height: '100%' }}>
+                            {renderItemCheck}
+                            <DocumentCardPreview {...previewProps} />
+                            {this.props.showFileIcon ?
+                                <div data-ui-test-id={TestConstants.DocumentCardFileIcon}><FileIcon styles={iconstyles} size="32" extension={fileExtension} isContainer={processedProps.isContainer} /></div> : null
+                            }
+                        </div>
+                        <DocumentCardDetails>
+                            {processedProps.location && !this.props.isCompact ?
+                                <div className={documentCardLocationClassNames.root} dangerouslySetInnerHTML={{ __html: this._domPurify.sanitize(processedProps.location) }}></div> : null
+                            }
+                            <Link
+                                theme={this.props.themeVariant as ITheme}
+                                href={processedProps.href} target='_blank' styles={{
+                                root: {
+                                    selectors: {
+                                        ':hover': {
+                                            textDecoration: 'underline'
+                                        }
                                     }
                                 }
+                            }}>
+                                <DocumentCardTitle
+                                    theme={this.props.themeVariant as ITheme}
+                                    title={processedProps.title}
+                                    shouldTruncate={true}
+                                />
+                            </Link>
+                            {processedProps.tags && !this.props.isCompact ?
+                                <div className={documentCardLocationClassNames.root} style={{whiteSpace: 'pre-line'}} dangerouslySetInnerHTML={{ __html: this._domPurify.sanitize(processedProps.tags) }}></div> : null
                             }
-                        }}>
-                        <DocumentCardTitle
-                            theme={this.props.themeVariant as ITheme}
-                            title={processedProps.title}
-                            shouldTruncate={true}
-                        />
-                    </Link>
-                    {processedProps.tags && !this.props.isCompact ?
-                        <div className={documentCardLocationClassNames.root} style={{ whiteSpace: 'pre-line' }} dangerouslySetInnerHTML={{ __html: this._domPurify.sanitize(processedProps.tags) }}></div> : null
-                    }
-                    {processedProps.author ?
-                        <DocumentCardActivity
-                            theme={this.props.themeVariant as ITheme}
-                            activity={processedProps.date}
-                            people={[{ name: author, profileImageSrc: processedProps.profileImage }]}
-                        /> : null
-                    }
-                </DocumentCardDetails>
-            </DocumentCard>
-            {renderPreviewCallout}
-        </div>;
+                            {processedProps.author ?
+                                <DocumentCardActivity
+                                    theme={this.props.themeVariant as ITheme}
+                                    activity={processedProps.date}
+                                    people={[{ name: author, profileImageSrc: processedProps.profileImage }]}
+                                /> : null
+                            }
+                        </DocumentCardDetails>
+                    </DocumentCard>
+                    {renderPreviewCallout}
+                </div>;
     }
 }
 
 export class DocumentCardWebComponent extends BaseWebComponent {
-
+   
     public constructor() {
-        super();
+        super(); 
     }
-
+ 
     public connectedCallback() {
-
+ 
         let props = this.resolveAttributes();
         let serviceScope: ServiceScope = this._serviceScope; // Default is the root shared service scope regardless the current Web Part 
         let templateServiceKey: ServiceKey<any> = TemplateService.ServiceKey; // Defaut service key for TemplateService
@@ -254,7 +283,7 @@ export class DocumentCardWebComponent extends BaseWebComponent {
 
         const templateService = serviceScope.consume<ITemplateService>(templateServiceKey);
 
-        const documentCarditem = <DocumentCardComponent {...props} templateService={templateService} />;
+        const documentCarditem = <DocumentCardComponent {...props} templateService={templateService}/>;
         ReactDOM.render(documentCarditem, this);
-    }
+    }    
 }

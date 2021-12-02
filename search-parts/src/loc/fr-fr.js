@@ -89,7 +89,12 @@ define([], function() {
             SameTabOpenBehavior: "Utiliser l’onglet actuel",
             NewTabOpenBehavior: "Ouvrir dans un nouvel onglet",
             PageOpenBehaviorLabel: "Comportement d’ouverture",
-            EmptyFieldErrorMessage: "Ce champ ne doit pas être vide."
+            EmptyFieldErrorMessage: "Ce champ ne doit pas être vide.",
+            TagPickerStrings: {
+                NoResultsSearchMessage: "Aucun résultat trouvé",
+                SearchPlaceholder: "Rechercher une valeur..."
+            },
+            CurrentVerticalNotSelectedMessage: "La verticale actuellement sélectionnée ne correspond pas à celles associées à ce composant WebPart ({0}). Il restera vide en mode d'affichage."
         },
         DataSources: {
             SharePointSearch: {
@@ -100,9 +105,9 @@ define([], function() {
                 QueryTemplateFieldLabel: "Modèle de requête",
                 QueryTemplatePlaceHolderText: "Exemple : Chemin d’accès : {Site}",
                 QueryTemplateFieldDescription: "Modèle de requête de recherche Vous pouvez également utiliser {<jetons>} pour créer une requête dynamique.",
-                ResultSourceIdLabel: "Identifiant d’origine de résultat",
-                ResultSourceIdDescription: "Utilisez un identifiant d’origine de résultat par défaut dans SharePoint ou entrez votre propre valeur GUID et appuyez sur Entrée pour enregistrer.",
-                InvalidResultSourceIdMessage: "La valeur fournie n’est pas une valeur GUID valide",
+                ResultSourceIdLabel: "D’origine de résultat Id / Niveau|Nome",
+                ResultSourceIdDescription: "Sélectionnez une source intégrée, saisissez un GUID de source personnalisé ou NIVEAU et NOM de la source séparés par | (c'est-à-dire : SPSite|Actualités). Les niveaux valides sont [SPSiteSubscription, SPSite, SPWeb]. Appuyez sur [Entrée] pour enregistrer.",
+                InvalidResultSourceIdMessage: "La valeur fournie n’est pas une valeur GUID valide ou au format NIVEAU|NOM",
                 EnableQueryRulesLabel: "Activer les règles de requête",
                 IncludeOneDriveResultsLabel: "Inclure les résultats de OneDrive Entreprise",
                 RefinementFilters: "Filtres de recherche avancée",
@@ -134,6 +139,8 @@ define([], function() {
                 ContentSourcesFieldPlaceholderLabel: "Exemple : « MyCustomConnectorID » ",
                 EnableSuggestionLabel: "Activer les suggestions orthographiques",
                 EnableModificationLabel: "Activer les modifications orthographiques",
+                ContentSourcesFieldPlaceholderLabel: "Exemple : « MyCustomConnectorID »",
+                UseBetaEndpoint: "Utiliser le point de terminaison beta"
             },
             SearchCommon: {
                 Sort: {
@@ -296,7 +303,9 @@ define([], function() {
         },
         PropertyPane: {
             ConnectionsPage: {
-                DataConnectionsGroupName: "Connexions disponibles"
+                DataConnectionsGroupName: "Connexions disponibles",
+                UseDataVerticalsWebPartLabel: "Se connecter à un composant WebPart de verticales",
+                UseDataVerticalsFromComponentLabel: "Utiliser les verticales de ce composant"
             },
             InformationPage: {
                 Extensibility: {
@@ -317,7 +326,10 @@ define([], function() {
             FilterNoValuesMessage: "Aucune valeur pour ce filtre",
             OrOperator: "OU",
             AndOperator: "ET",
-            ComboBoxPlaceHolder: "Choisir une valeur"
+            ComboBoxPlaceHolder: "Choisir une valeur",
+            UseAndOperatorValues: "Utiliser l'opérateur ET entre les valeurs",
+            UseOrOperatorValues: "Utiliser l'opérateur OU entre les valeurs",
+            UseValuesOperators: "Sélectionne l'opérateur à utiliser entre les valeurs de ce filtre"
         },
         SuggestionProviders: {
             SharePointStatic: {
