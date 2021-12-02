@@ -1,7 +1,13 @@
 define([], function() {
     return {
         General: {
-            WebPartDefaultTitle: "Zoekverticalen webonderdeel"
+            WebPartDefaultTitle: "Zoekverticalen webonderdeel",
+            PlaceHolder: {
+                EditLabel: "Bewerking",
+                IconText: "Search Verticals Web Part door @pnp",
+                Description: "Maakt het mogelijk om door gegevens te bladeren als verticale lijnen (d.w.z. silo's). Dit webonderdeel is bedoeld om te worden verbonden met de webonderdelen 'Zoekresultaten' op de pagina.",
+                ConfigureBtnLabel: "Configureren"
+            }
         },
         PropertyPane: {
             SearchVerticalsGroupName: "Zoekverticalen configuratie",
@@ -15,7 +21,9 @@ define([], function() {
                     IconName: "Fluent UI icoon naam",
                     IsLink: "Is hyperlink",
                     LinkUrl: "Link URL",
-                    OpenBehavior: "Gedrag bij openen"
+                    OpenBehavior: "Gedrag bij openen",
+                    TabValue: "Tabwaarde",
+                    ShowLinkIcon: "Toon linkpictogram",
                 }
             },
             ImportExport: "Importeer / Exporteer instellingen "

@@ -68,13 +68,26 @@ define([], function() {
                     CancelButtonText: "Anuluj",
                     DialogButtonText: "Edytuj szablon",
                     DialogTitle: "Edytuj szablon wyników",
-                    SaveButtonText: "Zapisz"
+                    SaveButtonText: "Zapisz",
+                    AllowItemSelection: "Zezwalaj na wybór przedmiotów",
+                    AllowMultipleItemSelection: "Zezwalaj na wielokrotny wybór",
+                    SelectionModeLabel: "Tryb wyboru",
+                    AsTokensSelectionMode: "Przetwarzaj wybrane wartości jako tokeny (tryb ręczny)",
+                    AsDataFiltersSelectionMode: "Przetwarzaj wybrane wartości jako filtry (tryb domyślny)",
+                    AsDataFiltersDescription: "W tym trybie wybrane wartości są wysyłane do źródła danych jako zwykłe filtry",
+                    AsTokensDescription: "W tym trybie wybrane wartości są używane ręcznie za pomocą tokenów i dostępnych metod. Przykład z szablonem zapytania wyszukiwania SharePoint: {?Title:{filters.&lt;destination_field_name&gt;.valueAsText}}",
+                    FilterValuesOperator: "Operator logiczny do użycia między wybranymi wartościami",
+                    FieldToConsumeLabel: "Pole źródłowe do wykorzystania",
+                    FieldToConsumeDescription: "Użyj tej wartości pola dla wybranych elementów" 
                 }
             },
             ConnectionsPage: {
                 ConnectionsPageGroupName: "Dostępne połączenia",
                 UseFiltersWebPartLabel: "Połącz ze składnikiem Web Part filtrowania",
                 UseFiltersFromComponentLabel: "Użyj filtrów z tego komponentu",
+                UseDynamicFilteringsWebPartLabel: "Connect to a search results Web Part",
+                UseDataResultsFromComponentsLabel: "Use data from this Web Part",
+                UseDataResultsFromComponentsDescription: "Use data from selected items in these Web Parts",
                 UseSearchVerticalsWebPartLabel: "Połącz ze składnikiem Web Part Wertykały",
                 UseSearchVerticalsFromComponentLabel: "Użyj wertykałów z tego komponentu",
                 LinkToVerticalLabel: "Pokaż dane tylko jeśli następujący wertykał jest wybrany",
@@ -87,7 +100,10 @@ define([], function() {
                 InputQueryTextStaticValue: "Wartość statyczna",
                 InputQueryTextDynamicValue: "Wartość dynamiczna",
                 SearchQueryTextUseDefaultQuery: "Użyj wartości domyślnej",
-                SearchQueryTextDefaultValue: "Wartość domyślna"
+                SearchQueryTextDefaultValue: "Wartość domyślna",
+                SourceDestinationFieldLabel: "Nazwa pola docelowego",
+                SourceDestinationFieldDescription: "Pole docelowe do użycia w tym składniku Web Part w celu dopasowania wybranych wartości",
+                AvailableFieldValuesFromResults: "Pole zawierające wartość filtra"
             },
             InformationPage: {
                 Extensibility: {

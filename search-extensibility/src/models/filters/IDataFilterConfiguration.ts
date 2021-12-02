@@ -75,11 +75,6 @@ export interface IDataFilterConfiguration {
     type: FilterType;
 
     /**
-     * The associated taxonomy items IDs (used for Taxonomy Picker control)
-     */
-    taxonomyItemIds?: string[];
-
-    /**
      * If the filter should be sorted by name or by count
      */
     sortBy: FilterSortType;

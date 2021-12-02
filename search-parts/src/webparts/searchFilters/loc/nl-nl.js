@@ -15,6 +15,8 @@ define([], function() {
                 UseDataResultsWebPartLabel: "Vebind met data van een resultaat webonderdeel",
                 UseDataResultsFromComponentsLabel: "Gebruik data van deze webonderdelen",
                 UseDataResultsFromComponentsDescription: "Wanneer je verbindt met meer dan één webonderdeel worden aantallen en waarden voor gelijknamige filters samengevoegd.",
+                LinkToVerticalLabel: "Filters alleen weergeven als de volgende verticalen zijn geselecteerd",
+                LinkToVerticalLabelHoverMessage: "De filters worden alleen weergegeven als de geselecteerde verticale lijn overeenkomt met de filters die voor dit webonderdeel zijn geconfigureerd. Anders is het webonderdeel leeg (geen marge en geen opvulling) in de weergavemodus."
             },
             FiltersSettingsPage: { 
                 SettingsGroupName: "Filter instellingen",

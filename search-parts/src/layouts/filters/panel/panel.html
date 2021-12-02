@@ -11,18 +11,26 @@
             align-items: center;
 		}
 
+        .filter--values-list {
+			overflow: auto;
+			max-height: 400px;
+		}
+
         .filter--message {
 			padding: 10px;
 		}
 		
 	    .filter--name {
+			font-family: {{@root.theme.fonts.large.fontFamily}};
 			font-weight: {{@root.theme.fonts.large.fontWeight}};
 			font-size: {{@root.theme.fonts.large.fontSize}};
 			margin-bottom: 5px;
 		}
-
+        
         .filterPanelContent {
             padding-left: 32px;
+            padding-right: 32px;
+            margin-top: 15px;
         }
 
         .panelOpenBar {
@@ -43,11 +51,12 @@
 		pnp-filtercheckbox {
 			max-width: 100%;
 		}
+
 		        	                
     </style>
 
     <div class="template">
-        <pnp-panel      data-state-key="{{@root.instanceId}}"
+        <pnp-panel   data-state-key="{{@root.instanceId}}"
                         data-disable-animation="true"
                         data-is-light-dismiss="{{@root.properties.layoutProperties.isLightDismiss}}"
                         data-is-blocking="{{@root.properties.layoutProperties.isBlocking}}"
@@ -57,7 +66,7 @@
 
             <template id="panel-open">
                 <div class="panelOpenBar">
-                    <pnp-icon data-name="Filter" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-icon><span role="button" aria-label="{{@root.properties.layoutProperties.btnLabel}}">{{@root.properties.layoutProperties.btnLabel}}</span>
+                    <pnp-icon data-name="Filter" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-icon><span>{{@root.properties.layoutProperties.btnLabel}}</span>
                 </div>
             </template>
 
@@ -72,8 +81,9 @@
                                             <pnp-filtercombobox 
                                                 data-instance-id="{{@root.instanceId}}" 
                                                 data-filter-name="{{filter.filterName}}" 
-                                                data-is-multi="{{filter.isMulti}}" 
+                                                data-is-multi="{{filter.isMulti}}"
                                                 data-show-count="{{filter.showCount}}"
+                                                data-operator="{{filter.operator}}"
                                                 data-theme-variant="{{JSONstringify @root.theme}}"
                                             >
                                                     {{#each filter.values}}
@@ -93,28 +103,46 @@
                                                         data-filter="{{JSONstringify filter 2}}"
                                                         data-theme-variant="{{JSONstringify @root.theme}}"
                                                     >
-                                                </pnp-filterdaterange>
+                                                    </pnp-filterdaterange>
                                                 </div>
                                             {{else}}
                                                 {{#eq filter.selectedTemplate 'CheckboxFilterTemplate'}}
-                                                    {{#each filter.values}}
-                                                        <div title="{{name}} {{#if ../showCount}}({{count}}){{/if}}" class="filter--value">
-                                                            <pnp-filtercheckbox 
-                                                                data-instance-id="{{@root.instanceId}}" 
+
+                                                    {{#if filter.isMulti}}
+                                                        <div class="filter--option">
+                                                            <pnp-filteroperator 
                                                                 data-filter-name="{{filter.filterName}}" 
-                                                                data-name="{{name}}" 
-                                                                data-value="{{value}}" 
-                                                                data-selected="{{selected}}" 
-                                                                data-disabled="{{disabled}}" 
-                                                                data-count="{{count}}"
+                                                                data-operator="{{filter.operator}}" 
                                                                 data-theme-variant="{{JSONstringify @root.theme}}"
-                                                            >
-                                                            </pnp-filtercheckbox>
-                                                            {{#if ../showCount}}
-                                                                <span>({{count}})</span>
-                                                            {{/if}}
+                                                            ></pnp-filteroperator>
                                                         </div>
-                                                    {{/each}}
+                                                    {{/if}}
+                                                
+                                                    <div class="filter--option">
+                                                        <pnp-filtersearchbox data-filter="{{JSONstringify filter}}" data-instance-id="{{@root.instanceId}}" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-filtersearchbox>
+                                                    </div>
+                                                    
+                                                    <div class="filter--values-list">
+                                                        {{#each filter.values}}
+                                                            <div title="{{name}} {{#if ../showCount}}({{count}}){{/if}}" class="filter--value">
+                                                                <pnp-filtercheckbox 
+                                                                    data-instance-id="{{@root.instanceId}}" 
+                                                                    data-filter-name="{{filter.filterName}}" 
+                                                                    data-name="{{name}}" 
+                                                                    data-value="{{value}}" 
+                                                                    data-selected="{{selected}}" 
+                                                                    data-disabled="{{disabled}}" 
+                                                                    data-count="{{count}}"
+                                                                    data-is-multi="{{../isMulti}}"
+                                                                    data-theme-variant="{{JSONstringify @root.theme}}"
+                                                                >
+                                                                </pnp-filtercheckbox>
+                                                                {{#if ../showCount}}
+                                                                    <span>({{count}})</span>
+                                                                {{/if}}
+                                                            </div>
+                                                        {{/each}}
+                                                    </div>
                                                 {{else}}
                                                     {{#eq filter.selectedTemplate 'DateIntervalFilterTemplate'}}
                                                         <div class="filter--value">
@@ -123,7 +151,7 @@
                                                                 data-filter="{{JSONstringify filter 2}}"
                                                                 data-theme-variant="{{JSONstringify @root.theme}}"
                                                             >
-                                                        </pnp-filterdateinterval>
+                                                            </pnp-filterdateinterval>
                                                         </div>									
                                                     {{/eq}}	
                                                 {{/eq}}
@@ -146,7 +174,6 @@
                                                                 data-apply-disabled="{{#if filter.canApply}}false{{else}}true{{/if}}" 
                                                                 data-clear-disabled="{{#if filter.canClear}}false{{else}}true{{/if}}"
                                                                 data-theme-variant="{{JSONstringify @root.theme}}"
-                                                                data-sticky-filter="true"
                                                             >
                                                             </pnp-filtermultiselect>
                                                         {{/if}}

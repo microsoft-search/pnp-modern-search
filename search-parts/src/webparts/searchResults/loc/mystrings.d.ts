@@ -69,11 +69,24 @@ declare interface ISearchResultsWebPartStrings {
                 DialogTitle: string;
                 SaveButtonText: string;
             }
+            AllowItemSelection: string;
+            AllowMultipleItemSelection: string;
+            SelectionModeLabel: string;
+            AsTokensSelectionMode: string;
+            AsDataFiltersSelectionMode: string;
+            AsDataFiltersDescription: string;
+            AsTokensDescription: string;
+            FilterValuesOperator: string;
+            FieldToConsumeLabel: string;
+            FieldToConsumeDescription: string;
         },
         ConnectionsPage: {
             ConnectionsPageGroupName: string;
             UseFiltersWebPartLabel: string;
             UseFiltersFromComponentLabel: string;
+            UseDynamicFilteringsWebPartLabel: string;
+            UseDataResultsFromComponentsLabel: string;
+            UseDataResultsFromComponentsDescription: string;
             UseSearchVerticalsWebPartLabel: string;
             UseSearchVerticalsFromComponentLabel: string;
             LinkToVerticalLabel: string;
@@ -87,6 +100,9 @@ declare interface ISearchResultsWebPartStrings {
             InputQueryTextDynamicValue: string;
             SearchQueryTextUseDefaultQuery: string;
             SearchQueryTextDefaultValue: string;
+            SourceDestinationFieldLabel: string;
+            SourceDestinationFieldDescription: string;
+            AvailableFieldValuesFromResults: string;
         },
         InformationPage: {
             Extensibility: {

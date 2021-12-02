@@ -89,6 +89,11 @@ declare interface ICommonStrings {
       NewTabOpenBehavior: string;
       PageOpenBehaviorLabel: string;
       EmptyFieldErrorMessage: string;
+      TagPickerStrings: {
+        NoResultsSearchMessage: string;
+        SearchPlaceholder: string;
+      }
+      CurrentVerticalNotSelectedMessage: string;
     },
     DataSources: {
       SharePointSearch: {
@@ -135,6 +140,7 @@ declare interface ICommonStrings {
         QueryModifierPlaceHolderText: string;
         QueryModifierFieldDescription: string;
         ApplyQueryModifierBtnText: string;
+        UseBetaEndpoint: string;
       },
       SearchCommon: {
         Sort: {
@@ -297,6 +303,8 @@ declare interface ICommonStrings {
     PropertyPane: {
       ConnectionsPage: {
         DataConnectionsGroupName: string;
+        UseDataVerticalsWebPartLabel: string;
+        UseDataVerticalsFromComponentLabel: string;
       },
       InformationPage: {
         Extensibility: {
@@ -318,6 +326,9 @@ declare interface ICommonStrings {
       OrOperator: string;
       AndOperator: string;
       ComboBoxPlaceHolder: string;
+      UseAndOperatorValues: string;
+      UseOrOperatorValues: string;
+      UseValuesOperators: string;
     },
     SuggestionProviders: {
       SharePointStatic: {
