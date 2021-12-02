@@ -454,7 +454,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             Log.warn(LogSource, `Opt out for PnP Telemetry failed. Details: ${error}`, this.context.serviceScope);
         }
 
-        if (this.properties.dataSourceKey && this.properties.selectedLayoutKey) {
+        if (this.properties.dataSourceKey && this.properties.selectedLayoutKey && this.properties.enableTelemetry) {
 
             const usageEvent = {
                 name: Constants.PNP_MODERN_SEARCH_EVENT_NAME,
@@ -477,24 +477,9 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 }
             });
 
-            // Track event with application insights (Fallback)
-            const appInsightsFallback = new ApplicationInsights({
-                config: {
-                    maxBatchInterval: 0,
-                    instrumentationKey: Constants.PNP_APP_INSIGHTS_INSTRUMENTATION_KEY_FALLBACK,
-                    namePrefix: LogSource,
-                    disableFetchTracking: true,
-                    disableAjaxTracking: true
-                }
-            });
-
             appInsights.loadAppInsights();
             appInsights.context.application.ver = this.manifest.version;
             appInsights.trackEvent(usageEvent);
-
-            appInsightsFallback.loadAppInsights();
-            appInsightsFallback.context.application.ver = this.manifest.version;
-            appInsightsFallback.trackEvent(usageEvent);
         }
 
         // Initializes MS Graph Toolkit
@@ -624,10 +609,17 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                     ...extensibilityConfigurationGroups,
                     {
                         groupName: webPartStrings.PropertyPane.ImportExport,
-                        groupFields: [this._propertyPanePropertyEditor({
-                            webpart: this,
-                            key: 'propertyEditor'
-                        })]
+                        groupFields: [
+                            this._propertyPanePropertyEditor({
+                                webpart: this,
+                                key: 'propertyEditor'
+                            }),
+                            PropertyPaneToggle('enableTelemetry', {
+                                label: webPartStrings.PropertyPane.InformationPage.EnableTelemetryLabel,
+                                offText: webPartStrings.PropertyPane.InformationPage.EnableTelemetryOn,
+                                onText: webPartStrings.PropertyPane.InformationPage.EnableTelemetryOff,
+                            })
+                        ]
                     }
                 ]
             }
@@ -993,6 +985,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         this.properties.showResultsCount = this.properties.showResultsCount !== undefined ? this.properties.showResultsCount : true;
         this.properties.showBlankIfNoResult = this.properties.showBlankIfNoResult !== undefined ? this.properties.showBlankIfNoResult : false;
         this.properties.useMicrosoftGraphToolkit = this.properties.useMicrosoftGraphToolkit !== undefined ? this.properties.useMicrosoftGraphToolkit : false;
+        this.properties.enableTelemetry = this.properties.enableTelemetry !== undefined ? this.properties.enableTelemetry : true;
 
         // Item selection properties
         if (!this.properties.selectedItemFieldValue) {
