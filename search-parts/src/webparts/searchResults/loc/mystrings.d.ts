@@ -108,7 +108,10 @@ declare interface ISearchResultsWebPartStrings {
             Extensibility: {
                 PanelHeader: string;
                 PanelDescription: string;
-            }
+            },
+            EnableTelemetryLabel: string;
+            EnableTelemetryOn: string;
+            EnableTelemetryOff: string;
         },
         ImportExport: string;
     }

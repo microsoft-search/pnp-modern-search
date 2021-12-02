@@ -109,7 +109,10 @@ define([], function() {
         Extensibility: {
           PanelHeader: "Konfigurera utbyggnadsbibliotek som ska laddas vid start.",
           PanelDescription: "Lägg till/ta bort anpassade utbyggnadsbiblioteket-ID:n här. Du kan ange ett visningsnamn och bestämma om biblioteket ska laddas eller ej vid start. Här laddas bara anpassade datakällor, layouter, webbkomponenter och styrhjälpmedel.",
-        }
+        },
+        EnableTelemetryLabel: "PnP-telemetri",
+        EnableTelemetryOn: "Slå på telemetri",
+        EnableTelemetryOff: "Stäng av telemetri"
       }
     }
   }

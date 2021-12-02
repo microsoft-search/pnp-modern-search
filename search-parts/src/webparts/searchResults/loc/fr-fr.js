@@ -110,7 +110,10 @@ define([], function() {
         Extensibility: {
           PanelHeader: "Configurez les bibliothèques d’extensibilité pour qu’elles soient chargées au démarrage.",
           PanelDescription: "Ajoutez ou supprimez vos identifiants personnalisés de la bibliothèque d’extensibilités ici. Vous pouvez préciser un nom d’affichage et décider si la bibliothèque doit être téléchargée ou non au démarrage. Seuls les sources de données, les mises en page, les composants Web et les assistants d’expressions entre accolades personnalisés sont chargés ici.",
-        }
+        },
+        EnableTelemetryLabel: "Télémétrie PnP",
+        EnableTelemetryOn: "Activer la télémétrie",
+        EnableTelemetryOff: "Désactiver la télémétrie"
       }
     }
   }

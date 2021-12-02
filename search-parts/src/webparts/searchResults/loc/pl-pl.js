@@ -109,7 +109,10 @@ define([], function() {
                 Extensibility: {
                     PanelHeader: "Konfiguruj biblioteki rozszerzalności ładowane przy starcie.",
                     PanelDescription: "Dodaj/Usuń identyfikatory niestandardowych bibliotek rozszerzalności. Wybierz nazwę i zdecyduj czy mają być ładowane przy starcie. Tylko niestandardowe źródł danych, układy, komponenty web i Handlebars będą tutaj ładowani.",
-                }
+                },
+                EnableTelemetryLabel: "Telemetria PnP",
+                EnableTelemetryOn: "Włącz telemetrię",
+                EnableTelemetryOff: "Wyłącz telemetrię"
             },
             ImportExport: "Importuj / Eksportuj ustwienia"
         }

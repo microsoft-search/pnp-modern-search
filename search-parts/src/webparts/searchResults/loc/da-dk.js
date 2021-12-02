@@ -109,7 +109,10 @@ define([], function() {
         Extensibility: {
           PanelHeader: "Konfigurér extensibility-biblioteker så de indlæser ved opstart.",
           PanelDescription: "Tilføj/Fjern ID på dit extensibility-bibliotek her. Du kan specificere et visningsnavn og beslutte, om biblioteket skal indlæses eller ej ved opstart. Kun brugerdefinerede datakilder, layouts, web-komponenter og Handlebars-hjælpere vil blive loadet her.",
-        }
+        },
+        EnableTelemetryLabel: "PnP telemetri",
+        EnableTelemetryOn: "Slå telemetri til",
+        EnableTelemetryOff: "Slå telemetri fra"
       }
     }
   }

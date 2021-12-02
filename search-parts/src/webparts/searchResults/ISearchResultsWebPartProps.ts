@@ -161,5 +161,10 @@ export default interface ISearchResultsWebPartProps extends IBaseWebPartProps {
      * Can't be a nested property to be able to use with OOTB Dynamic Data property pane fields  
      */
     selectedItemFieldValue: DynamicProperty<string>;
+
+    /**
+     * Flag indicating if telemetry are enabled
+     */
+     enableTelemetry: boolean;
 }
 
