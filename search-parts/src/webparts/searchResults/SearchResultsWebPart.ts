@@ -2323,20 +2323,27 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
      * Subscribes to URL query string change events using SharePoint page router
      */
     private _handleQueryStringChange() {
-        ((h) => {
-            this._pushStateCallback = history.pushState;
-            h.pushState = this.pushStateHandler.bind(this);
-        })(window.history);
+
+        // To avoid pushState modification from many components on the page (ex: search box, etc.), 
+        // only subscribe to query string changes if the connected source is either the searc queyr or explicit query string parameter
+        if (/^(PageContext:SearchData:searchQuery)|(PageContext:UrlData:queryParameters)/.test(this.properties.queryText.reference)) {
+
+            ((h) => {
+                this._pushStateCallback = history.pushState;
+                h.pushState = this.pushStateHandler.bind(this);
+            })(window.history);
+        } 
     }
 
-    private pushStateHandler(state, key, path) {
-        
+    private pushStateHandler(state, key, path) {   
+
         this._pushStateCallback.apply(history, [state, key, path]);
         if (this.properties.queryText.isDisposed) {
             return;
         }
 
         const source = this.properties.queryText.tryGetSource();
+
         if (source && source.id === ComponentType.PageEnvironment) {
             this.render();
         }
