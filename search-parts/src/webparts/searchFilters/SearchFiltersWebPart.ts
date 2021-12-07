@@ -1108,7 +1108,8 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
 
         let dataResultsSourceData: IDataResultSourceData = {
             availableFieldsFromResults: [],
-            availablefilters: []
+            availablefilters: [],
+            selectedVerticalKeys:[]
         };
 
         let allAvailableFieldsFromResults: string[] = [];

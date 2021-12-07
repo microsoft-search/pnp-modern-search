@@ -82,7 +82,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     private _currentDataResultsSourceData: IDataResultSourceData = {
         availableFieldsFromResults: [],
         availablefilters: [],
-        selectedItems: []
+        selectedItems: [],
+        selectedVerticalKeys:[]
     };
 
     /**
@@ -262,14 +263,14 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     }
 
     public getPropertyValue(propertyId: string) {
-
+    
         switch (propertyId) {
-            case ComponentType.SearchResults:
-
+            case ComponentType.SearchResults:                
                 // Pass the Handlebars context to consumers, so they can register custom helpers for their own services 
-                this._currentDataResultsSourceData.handlebarsContext = this.templateService.Handlebars;
-                this._currentDataResultsSourceData.totalCount = this.dataSource.getItemCount();
-               
+                this._currentDataResultsSourceData.handlebarsContext = this.templateService.Handlebars;                
+                this._currentDataResultsSourceData.totalCount = this.dataSource?.getItemCount();               
+                // TODO: Check if in getPropertydef or custom propertyid?       
+                this._currentDataResultsSourceData.selectedVerticalKeys = this.properties.selectedVerticalKeys;
                 return this._currentDataResultsSourceData;
 
             case DynamicDataProperties.AvailableFieldValuesFromResults:
@@ -388,7 +389,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 // Reset data source information
                 this._currentDataResultsSourceData = {
                 availableFieldsFromResults: [],
-                availablefilters: []
+                availablefilters: [],
+                selectedVerticalKeys:[]
                 };
 
                 // Remove margin and padding for the empty control zone
@@ -2295,7 +2297,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             // the data soure information since we don't want to expose them to consumers
             this._currentDataResultsSourceData = {
             availableFieldsFromResults: [],
-            availablefilters: []
+            availablefilters: [],
+            selectedVerticalKeys:[]
             };
         }
         }

@@ -26,4 +26,9 @@ export interface IDataResultSourceData {
      * The count of items returned by the getItemCount method of a datasource
      */
     totalCount?:number;
+
+    /**
+     * Passing the selectedVerticalKeys Properties
+     */
+     selectedVerticalKeys:string[];
 }

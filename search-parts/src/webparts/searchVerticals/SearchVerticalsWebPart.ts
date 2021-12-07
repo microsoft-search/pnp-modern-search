@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
-import { Version, Guid, UrlQueryParameterCollection, DisplayMode } from '@microsoft/sp-core-library';
+import { Version, Guid, UrlQueryParameterCollection, DisplayMode, ServiceScope } from '@microsoft/sp-core-library';
 import {
   IPropertyPaneConfiguration,
   IPropertyPanePage,
@@ -22,6 +22,8 @@ import { BaseWebPart } from '../../common/BaseWebPart';
 import { PageOpenBehavior } from '../../helpers/UrlHelper';
 import { IDataVerticalConfiguration } from '../../models/common/IDataVerticalConfiguration';
 import commonStyles from '../../styles/Common.module.scss';
+import IDynamicDataService from '../../services/dynamicDataService/IDynamicDataService';
+import { DynamicDataService } from '../../services/dynamicDataService/DynamicDataService';
 
 export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWebPartProps> implements IDynamicDataCallables {
 
@@ -42,6 +44,16 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
    */
   private tokenService: ITokenService;
 
+   /**
+     * the dynamic data service instance
+     */
+    private dynamicDataService: IDynamicDataService;
+
+    /**
+     * The service scope for this specific Web Part instance
+     */
+    private webPartInstanceServiceScope: ServiceScope;
+    
   public constructor() {
     super();
 
@@ -58,7 +70,7 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
 
     // Initializes the Web Part instance services
     this.initializeWebPartServices();
-
+    
     // Initializes this component as a discoverable dynamic data source
     this.context.dynamicDataSourceManager.initializeSource(this);
 
@@ -70,7 +82,7 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
       this._placeholderComponent = Placeholder;
     }
   }
-
+  
   public render(): void {
 
     let renderRootElement: JSX.Element = null;
@@ -114,7 +126,7 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
 
         renderRootElement = React.createElement(
             SearchVerticalsContainer,
-            {
+            {              
                 verticals: this.properties.verticals,
                 webPartTitleProps: {
                 displayMode: this.displayMode,
@@ -122,12 +134,13 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
                 updateProperty: (value: string) => {
                 this.properties.title = value;
                 },
-                className: commonStyles.wpTitle
+                className: commonStyles.wpTitle            
             },
             tokenService: this.tokenService,
             themeVariant: this._themeVariant,
             onVerticalSelected: this.onVerticalSelected.bind(this),
-            defaultSelectedKey: defaultSelectedKey
+            defaultSelectedKey: defaultSelectedKey,
+            dynamicDataProvider:this.dynamicDataService.dynamicDataProvider
             } as ISearchVerticalsContainerProps
         );
     }
@@ -354,6 +367,10 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
 
   private initializeWebPartServices(): void {
     this.tokenService = this.context.serviceScope.consume<ITokenService>(TokenService.ServiceKey);
+    this.webPartInstanceServiceScope = this.context.serviceScope.startNewChild();
+    this.dynamicDataService = this.webPartInstanceServiceScope.createAndProvide(DynamicDataService.ServiceKey, DynamicDataService);
+    this.dynamicDataService.dynamicDataProvider = this.context.dynamicDataProvider;
+    this.webPartInstanceServiceScope.finish();
   }
 
   /**

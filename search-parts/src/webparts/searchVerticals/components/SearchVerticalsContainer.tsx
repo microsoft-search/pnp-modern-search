@@ -6,6 +6,7 @@ import { WebPartTitle } from '@pnp/spfx-controls-react/lib/WebPartTitle';
 import { PageOpenBehavior } from '../../../helpers/UrlHelper';
 import { ISearchVerticalsContainerState } from './ISearchVerticalsContainerState';
 import { BuiltinTokenNames } from '../../../services/tokenService/TokenService';
+import { ComponentType } from '../../../common/ComponentType';
 
 export default class SearchVerticalsContainer extends React.Component<ISearchVerticalsContainerProps, ISearchVerticalsContainerState> {
 
@@ -13,7 +14,8 @@ export default class SearchVerticalsContainer extends React.Component<ISearchVer
     super(props);
 
     this.state = {
-      selectedKey: undefined
+      selectedKey: undefined,
+      connectedWebParts:[]
     };
 
     // Listen to inputQueryText value change on the page
@@ -24,7 +26,52 @@ export default class SearchVerticalsContainer extends React.Component<ISearchVer
     });
 
     this.onVerticalSelected = this.onVerticalSelected.bind(this);
+    
+    this.availableSourcesUpdated();
+    this.props.dynamicDataProvider.registerAvailableSourcesChanged(this.availableSourcesUpdated);    
   }
+
+  private sourceUpdated = async (id:string) =>{
+    const source = this.props.dynamicDataProvider.tryGetSource(id);        
+    const propValue = await source.getPropertyValueAsync(source?.metadata?.alias);
+
+    let copy = [...this.state.connectedWebParts];
+    copy.find(item=>item.id === source.id ).totalCount = propValue.totalCount;
+
+    this.setState({
+      connectedWebParts:copy
+    });
+  }
+
+  private availableSourcesUpdated = async () =>{
+    const sources= this.props.dynamicDataProvider.getAvailableSources();    
+
+    sources.forEach(async (source)=>{
+            
+      if(this.state.connectedWebParts.find(webpart=> webpart.id === source.id))
+      {        
+        return;
+      }     
+      // get it once to see if it supports totalCount
+      const propValue = await source.getPropertyValueAsync(source?.metadata?.alias);      
+      if( !propValue || !('totalCount' in propValue))
+        return;
+      
+      this.props.dynamicDataProvider.registerSourceChanged(source.id, ()=>{this.sourceUpdated(source.id);} );
+      this.props.dynamicDataProvider.registerPropertyChanged(source.id,ComponentType.SearchResults,  ()=>{this.sourceUpdated(source.id);});
+      
+      this.setState({
+        connectedWebParts:[...this.state.connectedWebParts, 
+          {
+            id: source.id,
+            verticalIds:propValue.selectedVerticalKeys,
+            totalCount:propValue.totalCount
+           }
+        ]
+      });
+    });
+  }
+
 
   public render(): React.ReactElement<ISearchVerticalsContainerProps> {
 
@@ -52,9 +99,12 @@ export default class SearchVerticalsContainer extends React.Component<ISearchVer
                         <Icon styles={{ root: { fontSize: 10, paddingLeft: 3 }}} iconName='NavigateExternalInline'></Icon>:
                         <Icon styles={{ root: { fontSize: 10, paddingLeft: 3 }}} iconName='Link'></Icon>;
       }
-
+      
+      let entryCount = 0;
+      this.state.connectedWebParts.filter(_=>_.verticalIds.some(vId=> vId === vertical.key))?.forEach(entry=>entryCount+=entry.totalCount);
+    
       return  <PivotItem
-                headerText={vertical.tabName}
+                headerText={`${vertical.tabName} ${ entryCount ? ` (${entryCount})` : ''}`}
                 itemKey={vertical.key}                
                 onRenderItemLink={(props, defaultRender) => {
 
