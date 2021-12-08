@@ -62,7 +62,7 @@ export default class SearchVerticalsContainer extends React.Component<ISearchVer
         return;
       
       this.props.dynamicDataProvider.registerSourceChanged(source.id, ()=>{this.sourceUpdated(source.id);} );
-      this.props.dynamicDataProvider.registerPropertyChanged(source.id,ComponentType.SearchResults,  ()=>{this.sourceUpdated(source.id);});
+      this.props.dynamicDataProvider.registerPropertyChanged(source.id, source?.metadata?.alias,  ()=>{this.sourceUpdated(source.id);});
       
       this.setState({
         connectedWebParts:[...this.state.connectedWebParts, 
@@ -105,7 +105,7 @@ export default class SearchVerticalsContainer extends React.Component<ISearchVer
       }
       
       let entryCount = 0;
-      this.state.connectedWebParts.filter(_=>_.verticalIds.some(vId=> vId === vertical.key))?.forEach(entry=>entryCount+=entry.totalCount);
+      this.state.connectedWebParts.filter(webpart=>webpart.verticalIds?.some(vId=> vId === vertical.key))?.forEach(entry=>entryCount+=entry.totalCount);
     
       return  <PivotItem
                 headerText={`${vertical.tabName} ${ entryCount ? ` (${entryCount})` : ''}`}
