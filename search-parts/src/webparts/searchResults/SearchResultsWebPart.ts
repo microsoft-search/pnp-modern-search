@@ -268,7 +268,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
                 // Pass the Handlebars context to consumers, so they can register custom helpers for their own services 
                 this._currentDataResultsSourceData.handlebarsContext = this.templateService.Handlebars;
-                this._currentDataResultsSourceData.totalCount = this.dataSource.getItemCount();
+                this._currentDataResultsSourceData.totalCount = this.dataSource?.getItemCount();
                
                 return this._currentDataResultsSourceData;
 
@@ -1690,7 +1690,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         let verticalsConnectionFields: IPropertyPaneField<any>[] = [
             PropertyPaneToggle('useVerticals', {
                 label: webPartStrings.PropertyPane.ConnectionsPage.UseSearchVerticalsWebPartLabel,
-                checked: this.properties.useFilters
+                checked: this.properties.useVerticals
             })
         ];
 
