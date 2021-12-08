@@ -37,7 +37,7 @@ export default class SearchVerticalsContainer extends React.Component<ISearchVer
   private sourceUpdated = async (id:string) =>{
     const source = this.props.dynamicDataProvider.tryGetSource(id);        
     const propValue = await source.getPropertyValueAsync(source?.metadata?.alias);
-
+    console.log("source updated",source,propValue);
     let copy = [...this.state.connectedWebParts];
     copy.find(item=>item.id === source.id ).totalCount = propValue.totalCount;
 
@@ -48,19 +48,21 @@ export default class SearchVerticalsContainer extends React.Component<ISearchVer
 
   private availableSourcesUpdated = async () =>{
     const sources= this.props.dynamicDataProvider.getAvailableSources();    
-
+console.log("sources",sources);
     sources.forEach(async (source)=>{
             
       // if we already added the webpart, skip it.
-      if(this.state.connectedWebParts.find(webpart=> webpart.id === source.id))
+      if(this.state.connectedWebParts.some(webpart=> webpart.id === source.id))
       {        
+        
         return;
       }     
       // get it once to see if it supports totalCount
       const propValue = await source.getPropertyValueAsync(source?.metadata?.alias);      
+      console.log("propval",source.metadata.alias, propValue);
       if( !propValue || !('totalCount' in propValue))
         return;
-      
+        console.log("totalCount exists",sources);
       this.props.dynamicDataProvider.registerSourceChanged(source.id, ()=>{this.sourceUpdated(source.id);} );
       this.props.dynamicDataProvider.registerPropertyChanged(source.id, source?.metadata?.alias,  ()=>{this.sourceUpdated(source.id);});
       
