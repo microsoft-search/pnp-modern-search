@@ -1690,7 +1690,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         let verticalsConnectionFields: IPropertyPaneField<any>[] = [
             PropertyPaneToggle('useVerticals', {
                 label: webPartStrings.PropertyPane.ConnectionsPage.UseSearchVerticalsWebPartLabel,
-                checked: this.properties.useFilters
+                checked: this.properties.useVerticals
             })
         ];
 
