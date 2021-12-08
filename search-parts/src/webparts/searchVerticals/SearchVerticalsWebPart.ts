@@ -5,7 +5,8 @@ import {
   IPropertyPaneConfiguration,
   IPropertyPanePage,
   IPropertyPaneField,
-  PropertyPaneTextField
+  PropertyPaneTextField,
+  PropertyPaneToggle
 } from '@microsoft/sp-property-pane';
 import * as commonStrings from 'CommonStrings';
 import * as webPartStrings from 'SearchVerticalsWebPartStrings';
@@ -140,7 +141,8 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
             themeVariant: this._themeVariant,
             onVerticalSelected: this.onVerticalSelected.bind(this),
             defaultSelectedKey: defaultSelectedKey,
-            dynamicDataProvider:this.dynamicDataService.dynamicDataProvider
+            dynamicDataProvider:this.dynamicDataService.dynamicDataProvider,
+            showResultsCount: this.properties.showResultsCount
             } as ISearchVerticalsContainerProps
         );
     }
@@ -359,6 +361,9 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
       PropertyPaneTextField('defaultVerticalQueryStringParam', {
         label: webPartStrings.PropertyPane.Verticals.DefaultVerticalQueryStringParamLabel,
         description: webPartStrings.PropertyPane.Verticals.DefaultVerticalQueryStringParamDescription
+      }),
+      PropertyPaneToggle('showResultsCount', {
+        label: webPartStrings.PropertyPane.Verticals.ShowResultsCountLabel,        
       })
     ];
 
@@ -366,7 +371,7 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
   }
 
   private initializeWebPartServices(): void {
-    this.tokenService = this.context.serviceScope.consume<ITokenService>(TokenService.ServiceKey);
+    this.tokenService = this.context.serviceScope.consume<ITokenService>(TokenService.ServiceKey);    
     this.webPartInstanceServiceScope = this.context.serviceScope.startNewChild();
     this.dynamicDataService = this.webPartInstanceServiceScope.createAndProvide(DynamicDataService.ServiceKey, DynamicDataService);
     this.dynamicDataService.dynamicDataProvider = this.context.dynamicDataProvider;

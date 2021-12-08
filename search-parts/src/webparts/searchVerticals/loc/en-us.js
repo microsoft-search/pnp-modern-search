@@ -18,6 +18,7 @@ define([], function() {
           ButtonLabel: "Configure verticals",
           DefaultVerticalQueryStringParamLabel: "Query string parameter to use to select a vertical tab by default",
           DefaultVerticalQueryStringParamDescription: "The match will be done against the tab name or the current page URL (if the tab is an hyperlink)",
+          ShowResultsCountLabel: "Show results count",          
           Fields: {
             TabName: "Tab name",
             TabValue: "Tab value",

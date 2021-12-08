@@ -16,6 +16,7 @@ define([], function() {
                 PanelHeader: "Configureer zoekverticalen",
                 PanelDescription: "Voeg nieuwe zoekverticalen toe zodat gebruikers kunnen zoeken in een voorgedefinieerde scope of databron.",
                 ButtonLabel: "Configureer zoekverticalen",
+                ShowResultsCountLabel: "Toon aantal resultaten", 
                 Fields: {
                     TabName: "Tab naam",
                     IconName: "Fluent UI icoon naam",

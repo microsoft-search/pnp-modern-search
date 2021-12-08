@@ -17,4 +17,9 @@ export interface ISearchVerticalsWebPartProps extends IBaseWebPartProps {
      * The query string parameter name to use to select a vertical tab by default
      */
     defaultVerticalQueryStringParam: string;
+    
+    /**
+     * The option used to set if the count of connected resultWebparts should be displayed
+     */
+     showResultsCount:boolean;
 }

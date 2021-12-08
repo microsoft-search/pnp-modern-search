@@ -41,7 +41,7 @@ export interface ISearchVerticalsContainerProps {
   dynamicDataProvider: DynamicDataProvider;  
 
   /**
-   * The option to set showCount of result Webparts
+   * The option used to set if the count of connected resultWebparts should be displayed
    */
-  //showCount:boolean;
+   showResultsCount:boolean;
 }

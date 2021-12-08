@@ -16,6 +16,7 @@ define([], function() {
                 PanelHeader: "Konfigurer vertikaler",
                 PanelDescription: "Legg til ny vertikal som lar brukerne søke i en predefinert avgrensning eller datakilde.",
                 ButtonLabel: "Konfigurer vertikaler",
+                ShowResultsCountLabel: "Vis antall resultat", 
                 Fields: {
                     TabName: "Fane",
                     IconName: "Fluent UI ikonnavn",

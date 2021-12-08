@@ -18,6 +18,7 @@ define([], function() {
           ButtonLabel: "Configurer les verticales",
           DefaultVerticalQueryStringParamLabel: "Paramètre de requête à utiliser pour sélectionner un onglet vertical par défaut",
           DefaultVerticalQueryStringParamDescription: "La correspondance sera faite avec le nom de l'onglet ou l'URL de la page actuelle (si l'onglet est un lien hypertexte)",
+          ShowResultsCountLabel: "Afficher le nombre de résultats", 
           Fields: {
             TabName: "Nom de l'onglet",
             TabValue: "Valeur de l'onglet",

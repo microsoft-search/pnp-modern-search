@@ -26,9 +26,12 @@ export default class SearchVerticalsContainer extends React.Component<ISearchVer
     });
 
     this.onVerticalSelected = this.onVerticalSelected.bind(this);
-    
-    this.availableSourcesUpdated();
-    this.props.dynamicDataProvider.registerAvailableSourcesChanged(this.availableSourcesUpdated);    
+    // Listen to changes in result webparts only when showResultsCount is true
+    if(this.props.showResultsCount)
+    {
+      this.availableSourcesUpdated();
+      this.props.dynamicDataProvider.registerAvailableSourcesChanged(this.availableSourcesUpdated);    
+    }
   }
 
   private sourceUpdated = async (id:string) =>{
@@ -48,6 +51,7 @@ export default class SearchVerticalsContainer extends React.Component<ISearchVer
 
     sources.forEach(async (source)=>{
             
+      // if we already added the webpart, skip it.
       if(this.state.connectedWebParts.find(webpart=> webpart.id === source.id))
       {        
         return;

@@ -16,6 +16,7 @@ define([], function() {
                 PanelHeader: "Konfigurera vertikala data",
                 PanelDescription: "Lägg till en ny vertikal så att användare kan söka i en fördefinierad datakälla eller omfattning.",
                 ButtonLabel: "Konfigurera",
+                ShowResultsCountLabel: "Visa antalet resultat", 
                 Fields: {
                     TabName: "Fliknamn",
                     IconName: "Fluent UI Fabric ikonnamn",
