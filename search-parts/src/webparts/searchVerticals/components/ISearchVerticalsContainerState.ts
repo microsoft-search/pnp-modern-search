@@ -8,10 +8,11 @@ export interface ISearchVerticalsContainerState {
     /**
      * The connected Result Webparts for checking the count
      */
-    connectedWebParts:  {
-            id:string;
-            verticalIds:string[];
-            totalCount:number;
-    }[];
+    connectedWebParts: IConnectedResultWebpart[];
 }
 
+export interface IConnectedResultWebpart{
+    id:string;
+    verticalIds:string[];
+    totalCount:number;
+}
