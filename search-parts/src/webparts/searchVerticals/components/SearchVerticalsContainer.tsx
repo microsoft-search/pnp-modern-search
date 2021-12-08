@@ -43,7 +43,12 @@ export default class SearchVerticalsContainer extends React.Component<ISearchVer
   }
 
   private availableSourcesUpdated = async () => {
-    const sources = this.props.dynamicDataProvider.getAvailableSources();
+    const sources = this.props.dynamicDataProvider?.getAvailableSources();
+    if(!sources)
+    {
+      return;
+    }
+
     const webparts = new Array<IConnectedResultWebpart>();
 
     for (const source of sources) {
