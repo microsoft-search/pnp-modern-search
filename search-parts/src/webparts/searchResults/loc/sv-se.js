@@ -31,7 +31,6 @@ define([], function() {
         "InvalidResultSourceIdMessage": "Ange antingen en resultatkällas id (guid) eller ett namn med formatet: Nivå|Namn (dvs: SPSite|Min resultatkälla)",
         "InvalidNumberIntervalMessage": "Mellan 1 och 500",
         "EnableQueryRulesLabel": "Aktivera frågaregler",
-        "IncludeOneDriveResultsLabel": "Inkludera personliga OneDrive-resultat",
         "StylingSettingsGroupName": "Stylingalternativ",
         "SelectedPropertiesFieldDescription": "Anger egenskaperna som ska hämtas från sökresultaten.",
         "SearchQueryKeywordsFieldDescription": "Använd fördefinierade sökfrågeord för att hämta en statisk uppsättning av resultat.",

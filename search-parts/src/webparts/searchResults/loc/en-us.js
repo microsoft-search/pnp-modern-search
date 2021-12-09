@@ -31,7 +31,6 @@ define([], function() {
         "InvalidResultSourceIdMessage": "Enter either a result source id (guid) or a name with format: Level|Name (i.e: SPSite|My result source)",
         "InvalidNumberIntervalMessage": "Between 1 and 500",
         "EnableQueryRulesLabel": "Enable query rules",
-        "IncludeOneDriveResultsLabel": "Include personal OneDrive results",
         "StylingSettingsGroupName": "Styling options",
         "SelectedPropertiesFieldDescription": "Specifies the properties to retrieve from the search results.",
         "SearchQueryKeywordsFieldDescription": "Use pre-defined search query keywords to retrieve a static set of results.",

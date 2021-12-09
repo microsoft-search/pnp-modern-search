@@ -38,7 +38,7 @@
             ],
             "selectedProperties": "Title,Path,Created,Filename,SiteLogo,PreviewUrl,PictureThumbnailURL,ServerRedirectedPreviewURL,ServerRedirectedURL,HitHighlightedSummary,FileType,contentclass,ServerRedirectedEmbedURL,ParentLink,DefaultEncodingURL,owstaxidmetadataalltagsinfo,Author,AuthorOWSUSER,SPSiteUrl,SiteTitle,IsContainer,IsListItem,HtmlFileType,SiteId,WebId,UniqueID",
             "enableQueryRules": false,
-            "includeOneDriveResults": false,
+            "multiGeo": false,
             "showBlank": true,
             "showResultsCount": true,
             "webPartTitle": "",

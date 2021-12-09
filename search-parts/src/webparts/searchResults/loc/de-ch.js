@@ -31,7 +31,6 @@ define([], function() {
         "InvalidResultSourceIdMessage": "Ungültige ID",
         "InvalidNumberIntervalMessage": "Zwischen 1 und 500",
         "EnableQueryRulesLabel": "Abfrageregeln aktivieren",
-        "IncludeOneDriveResultsLabel": "Persönliche OneDrive Ergebnisse einbeziehen",
         "StylingSettingsGroupName": "Styling Optionen",
         "SelectedPropertiesFieldDescription": "Gibt die Eigenschaften an, die aus den Suchergebnissen abgerufen werden sollen.",
         "SearchQueryKeywordsFieldDescription": "Verwenden Sie vordefinierte Suchabfrage Schlüsselwörter, um einen statischen Satz von Ergebnissen abzurufen.",

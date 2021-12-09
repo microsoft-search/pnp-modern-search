@@ -31,7 +31,6 @@ define([], function() {
         "InvalidResultSourceIdMessage": "Indsæt enten et resultatkilde-id (guid) eller et navn med format: Niveau|Navn (fx: SPSite|Min resultatkilde)",
         "InvalidNumberIntervalMessage": "Mellem 1 og 500",
         "EnableQueryRulesLabel": "Aktivér forespørgselsregler",
-        "IncludeOneDriveResultsLabel": "Inkluder personlige OneDrive-resultater",
         "StylingSettingsGroupName": "Stylingmuligheder",
         "SelectedPropertiesFieldDescription": "Specificerer egenskaberne for at hente fra søgeresultaterne.",
         "SearchQueryKeywordsFieldDescription": "Anvend predefinerede søgord i søgeforespørgsler for at hente et statistisk sæt af resultater.",

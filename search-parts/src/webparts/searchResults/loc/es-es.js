@@ -31,7 +31,6 @@ define([], function() {
         "InvalidResultSourceIdMessage": "Indentificador Inválido",
         "InvalidNumberIntervalMessage": "Entre 1 y 500",
         "EnableQueryRulesLabel": "Habilitar reglas de consulta",
-        "IncludeOneDriveResultsLabel": "Incluir resultados personales de OneDrive",
         "StylingSettingsGroupName": "Opciones de Estilo",
         "SelectedPropertiesFieldDescription": "Especificar las propiedades para recuperar de los resultados de búsqueda.",
         "SearchQueryKeywordsFieldDescription": "Utilice palabras clave de consulta de búsqueda predefinidas para recuperar un conjunto estático de resultados.",

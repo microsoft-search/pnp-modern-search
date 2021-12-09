@@ -287,7 +287,6 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             resultSourceId: { $set: sourceId },
             sortList: { $set: this._searchService.sortList || this._convertToSortList(this.properties.sortList) },
             enableQueryRules: { $set: this.properties.enableQueryRules },
-            includeOneDriveResults: { $set: this.properties.includeOneDriveResults },
             selectedProperties: { $set: this.properties.selectedProperties ? this.properties.selectedProperties.replace(/\s|,+$/g, '').split(',') : [] },
             synonymTable: { $set: this._synonymTable },
             queryCulture: { $set: this.properties.searchQueryLanguage !== -1 ? this.properties.searchQueryLanguage : currentLocaleId },
@@ -1215,10 +1214,6 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             PropertyPaneToggle('enableQueryRules', {
                 label: strings.EnableQueryRulesLabel,
                 checked: this.properties.enableQueryRules,
-            }),
-            PropertyPaneToggle('includeOneDriveResults', {
-                label: strings.IncludeOneDriveResultsLabel,
-                checked: this.properties.includeOneDriveResults,
             }),
             PropertyPaneToggle('multiGeo', {
                 label: strings.MultiGeo,

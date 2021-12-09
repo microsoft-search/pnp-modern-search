@@ -31,7 +31,6 @@ define([], function() {
         "InvalidResultSourceIdMessage": "Identifiant invalide",
         "InvalidNumberIntervalMessage": "Entre 1 et 500",
         "EnableQueryRulesLabel": "Activer les règles de requête",
-        "IncludeOneDriveResultsLabel": "Inclure les résultats personnels OneDrive",
         "StylingSettingsGroupName": "Options d'affichage",
         "SelectedPropertiesFieldDescription": "Propriétés à récupérer des résulats de recherche.",
         "SearchQueryKeywordsFieldDescription": "Utilisez une requête de recherche prédéfinie pour obtenir un ensemble de résultats statique.",

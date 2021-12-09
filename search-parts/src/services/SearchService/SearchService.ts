@@ -32,7 +32,6 @@ class SearchService implements ISearchService {
     private _resultSourceId: string;
     private _sortList: Sort[];
     private _enableQueryRules: boolean;
-    private _includeOneDriveResults: boolean;
     private _refiners: IRefinerConfiguration[];
     private _refinementFilters: string[];
     private _synonymTable: ISynonymTable;
@@ -57,9 +56,6 @@ class SearchService implements ISearchService {
 
     public set enableQueryRules(value: boolean) { this._enableQueryRules = value; }
     public get enableQueryRules(): boolean { return this._enableQueryRules; }
-
-    public set includeOneDriveResults(value: boolean) { this._includeOneDriveResults = value; }
-    public get includeOneDriveResults(): boolean { return this._includeOneDriveResults; }
 
     public set refiners(value: IRefinerConfiguration[]) { this._refiners = value; }
     public get refiners(): IRefinerConfiguration[] { return this._refiners; }
@@ -162,18 +158,6 @@ class SearchService implements ISearchService {
                 Value: {
                     StrVal: this._pageContext.listItem.id.toString(),
                     QueryPropertyValueTypeIndex: 1
-                }
-            });
-        }
-
-        // Toggle to include user's personal OneDrive results as a secondary result block
-        // https://docs.microsoft.com/en-us/sharepoint/support/search/private-onedrive-results-not-included
-        if (this._includeOneDriveResults) {
-            searchQuery.Properties.push({
-                Name: "ContentSetting",
-                Value: {
-                    IntVal: 3,
-                    QueryPropertyValueTypeIndex: 2
                 }
             });
         }

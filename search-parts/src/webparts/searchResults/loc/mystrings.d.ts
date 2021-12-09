@@ -34,7 +34,6 @@ declare interface ISearchResultsWebPartStrings {
     InvalidResultSourceIdMessage: string;
     InvalidNumberIntervalMessage: string;
     EnableQueryRulesLabel: string;
-    IncludeOneDriveResultsLabel: string;
     StylingSettingsGroupName: string;
     CountMessageShort: string;
     CountMessageLong: string;
