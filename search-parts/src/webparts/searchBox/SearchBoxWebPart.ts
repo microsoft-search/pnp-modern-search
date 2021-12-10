@@ -144,7 +144,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
         if (this.properties.queryText && !this.properties.queryText.isDisposed) {
             try {
                 inputValue = this.properties.queryText.tryGetValue();
-                if (inputValue !== undefined) {
+                if (inputValue !== undefined && typeof (inputValue) === 'string') {
                     inputValue = decodeURIComponent(inputValue);
                 }
 
