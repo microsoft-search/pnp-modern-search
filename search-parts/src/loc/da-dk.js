@@ -137,6 +137,8 @@ define([], function() {
                 ContentSourcesFieldLabel: "Indholdskilder",
                 ContentSourcesFieldDescriptionLabel: "Viser ID af de forbindelser der er defineret i administrationsportalen for Microsoft Search-connectors.",
                 ContentSourcesFieldPlaceholderLabel: "Fx: 'MyCustomConnectorId'",
+                EnableSuggestionLabel: "Aktiver staveforslag",
+                EnableModificationLabel: "Aktiver staveændringer",
                 UseBetaEndpoint: "Brug beta-endepunkt"
             },
             SearchCommon: {

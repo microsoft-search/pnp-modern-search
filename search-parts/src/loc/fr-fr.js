@@ -136,6 +136,9 @@ define([], function() {
                 EnableTopResultsLabel: "Obtenir les meilleurs résultats",
                 ContentSourcesFieldLabel: "Sources du contenu",
                 ContentSourcesFieldDescriptionLabel: "Identifiants de connexion définis dans le portail d’administration des connecteurs de recherche Microsoft.",
+                ContentSourcesFieldPlaceholderLabel: "Exemple : « MyCustomConnectorID » ",
+                EnableSuggestionLabel: "Activer les suggestions orthographiques",
+                EnableModificationLabel: "Activer les modifications orthographiques",
                 ContentSourcesFieldPlaceholderLabel: "Exemple : « MyCustomConnectorID »",
                 UseBetaEndpoint: "Utiliser le point de terminaison beta"
             },

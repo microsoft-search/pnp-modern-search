@@ -137,6 +137,8 @@ define([], function() {
               ContentSourcesFieldLabel: "Źródła zawartości",
               ContentSourcesFieldDescriptionLabel: "Identyfikatory połączeń zdefiniowanych w portalu administracyjnym Microsoft Search.",
               ContentSourcesFieldPlaceholderLabel: "przykładowo: 'MyCustomConnectorId'",
+              EnableSuggestionLabel: "Włącz sugestie pisowni",
+              EnableModificationLabel: "Włącz modyfikacje pisowni",
               UseBetaEndpoint: "Użyj punktu końcowego wersji beta"
           },
           SearchCommon: {

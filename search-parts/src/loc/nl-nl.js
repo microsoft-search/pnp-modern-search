@@ -137,6 +137,8 @@ define([], function() {
                 ContentSourcesFieldLabel: "Inhoudsbronnen",
                 ContentSourcesFieldDescriptionLabel: "IDs van verbingingen gedefinieerd in de Microsoft Search connectors administratie portaal.",
                 ContentSourcesFieldPlaceholderLabel: "bijv: 'MyCustomConnectorId'",
+                EnableSuggestionLabel: "Spellingsuggesties inschakelen",
+                EnableModificationLabel: "Spellingaanpassingen inschakelen",
                 UseBetaEndpoint: "Bèta-eindpunt gebruiken"
             },
             SearchCommon: {
