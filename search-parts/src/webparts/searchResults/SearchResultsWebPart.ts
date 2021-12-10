@@ -841,7 +841,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             }
 
         } else if (typeof (inputQueryFromDataSource) === 'string') {
-
             inputQueryText = decodeURIComponent(inputQueryFromDataSource);
         }
 
