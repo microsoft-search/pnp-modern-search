@@ -14,6 +14,7 @@ import { ITooltipHostProps, TooltipHost, ITooltipStyles, Shimmer, ShimmerElement
 import { DEFAULT_CELL_STYLE_PROPS, DEFAULT_ROW_HEIGHTS } from 'office-ui-fabric-react/lib/components/DetailsList/DetailsRow.styles';
 import * as DOMPurify from 'dompurify';
 import { TemplateService } from '../services/TemplateService/TemplateService';
+import { isEmpty } from '@microsoft/sp-lodash-subset';
 
 const DEFAULT_SHIMMER_HEIGHT = 7;
 const SHIMMER_LINE_VS_CELL_WIDTH_RATIO = 0.95;
@@ -172,7 +173,13 @@ export class DetailsListComponent extends React.Component<DetailsListComponentPr
                     maxWidth: 16,
                     onColumnClick: this._onColumnClick,
                     onRender: (item: ISearchResult) => {
-                        return (<IconComponent fileExtension={item.IconExt} imageUrl={item.SiteLogo} size={16} ></IconComponent>);
+                        let siteLogoFallback = "";
+                        let contentclass = (item.contentclass + "").toLowerCase();
+                        if (!isEmpty(item.contentclass) && (contentclass == "sts_site" || contentclass == "sts_site")) {
+                            siteLogoFallback = item.SiteLogo;
+                        }
+
+                        return (<IconComponent fileExtension={item.IconExt} imageUrl={siteLogoFallback} size={16} ></IconComponent>);
                     }
                 }
             );
@@ -220,7 +227,7 @@ export class DetailsListComponent extends React.Component<DetailsListComponentPr
                                     value = value ? value.trim() : null;
                                     if (index == this._allItems.length - 1) {
                                         //hack to ensure all items are rendered (most likely)
-                                        window.setTimeout( () => TemplateService.initPreviewElements(), 500);
+                                        window.setTimeout(() => TemplateService.initPreviewElements(), 500);
                                         //TemplateService.initPreviewElements();
                                     }
 
@@ -259,7 +266,7 @@ export class DetailsListComponent extends React.Component<DetailsListComponentPr
         if (this.props.enableFiltering) {
             renderFilter = <div className={classNames.controlWrapper}>
                 <TextField label="Filter by name:" onChange={this._onChangeText.bind(this)} styles={controlStyles} />;
-                            </div>;
+            </div>;
         }
 
         return (

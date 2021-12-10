@@ -37,7 +37,11 @@
                         {{#> resultTypes item=item}}
                             {{!-- The block below will be used as default item template if no result types matched --}}
                             <div class="template_result">
-                                    <pnp-fabric-icon data-file-extension='{{IconExt}}' data-image-url='{{SiteLogo}}'></pnp-fabric-icon>
+                                    {{#contains "['STS_Site','STS_Web']" item.contentclass}}
+                                        <pnp-fabric-icon data-file-extension='{{IconExt}}' data-image-url='{{SiteLogo}}'></pnp-fabric-icon>
+                                    {{else}}
+                                        <pnp-fabric-icon data-file-extension='{{IconExt}}'></pnp-fabric-icon>
+                                    {{/contains}}
                                     <div class="template_contentContainer">
                                         <span class="template_title example-themePrimary"><a data-interception="off" href="{{getUrl item}}" target="_blank">{{Title}}</a></span>
                                         <span>
