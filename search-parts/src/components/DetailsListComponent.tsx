@@ -4,7 +4,7 @@ import { Fabric, ShimmeredDetailsList, IShimmeredDetailsListProps } from 'office
 import { ITooltipHostProps, TooltipHost, ITooltipStyles, Shimmer, ShimmerElementsGroup, ShimmerElementType, IShimmerElement, mergeStyleSets, ITheme, Selection } from 'office-ui-fabric-react';
 import * as Handlebars from 'handlebars';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
-import { BaseWebComponent } from '@pnp/modern-search-extensibility';
+import { BaseWebComponent, BuiltinTemplateSlots } from '@pnp/modern-search-extensibility';
 import { groupBy, sortBy, findIndex, isEmpty, cloneDeep } from "@microsoft/sp-lodash-subset";
 import { FileIcon } from '../components/FileIconComponent';
 import { DetailsListLayoutMode, SelectionMode, IColumn, IGroup, IDetailsRowProps, DetailsRow, IDetailsHeaderProps, DetailsHeader, CheckboxVisibility, DetailsRowCheck, IDetailsListCheckboxProps } from 'office-ui-fabric-react/lib/DetailsList';
@@ -245,8 +245,11 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
           onColumnClick: this._onColumnClick,
           onRender: (item: any) => {
 
+            const contentclass= (ObjectHelper.byPath(item, BuiltinTemplateSlots.ContentClass) + "").toLowerCase();
+            const fallbackSiteLogo = !isEmpty(contentclass) && (contentclass == "sts_site" || contentclass == "sts_web") ? ObjectHelper.byPath(item, "SiteLogo") : "";
+
             // A default icon will be displayed if the feld is not a valid extension (a full path with file name works as well)
-            return <FileIcon extension={ObjectHelper.byPath(item, this.props.fileExtensionField)} isContainer={ObjectHelper.byPath(item, this.props.isContainerField)} imageUrl={ObjectHelper.byPath(item, "SiteLogo")} />;
+            return <FileIcon extension={ObjectHelper.byPath(item, this.props.fileExtensionField)} isContainer={ObjectHelper.byPath(item, this.props.isContainerField)} imageUrl={fallbackSiteLogo} />;
           }
         }
       );
