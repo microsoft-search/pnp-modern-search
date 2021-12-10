@@ -231,7 +231,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                 if (environmentType == "UrlData" && paramType !== "fragment") {
                     const paramChunks = paramType.split('.');
                     const queryTextParam = paramChunks.length === 2 ? paramChunks[1] : 'q';
-                    if (queryDataSourceValue[paramChunks[0]][queryTextParam]) {
+                    if (queryDataSourceValue[paramChunks[0]] && queryDataSourceValue[paramChunks[0]][queryTextParam]) {
                         queryKeywords = decodeURIComponent(queryDataSourceValue[paramChunks[0]][queryTextParam]);
                     }
                 }

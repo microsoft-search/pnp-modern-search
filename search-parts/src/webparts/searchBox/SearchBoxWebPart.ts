@@ -69,15 +69,13 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
 
         if (!this._initComplete) {
             return;
-        }
-
+        }        
         let inputValue = "";
         try {
             inputValue = this.properties.defaultQueryKeywords.tryGetValue();
         } catch (error) {
             // Likely issue when q=%25 in spfx 
         }
-
 
         if (inputValue) {
             if (typeof (inputValue) === 'string') {
@@ -95,7 +93,8 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
                     if (environmentType == "UrlData" && paramType !== "fragment") {
                         const paramChunks = paramType.split('.');
                         const queryTextParam = paramChunks.length === 2 ? paramChunks[1] : 'q';
-                        if (inputValue[paramChunks[0]][queryTextParam]) {
+
+                        if (inputValue[paramChunks[0]] && inputValue[paramChunks[0]][queryTextParam]) {
                             this._searchQuery = decodeURIComponent(inputValue[paramChunks[0]][queryTextParam]);
                         }
                     }
