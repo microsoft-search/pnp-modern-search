@@ -165,7 +165,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
               //  1) the input value hasn't been searched
               //  2) we have suggestions from this provider
               //  3) the input value hasn't changed while the provider was retrieving suggestions
-              if (!this.state.isSearchExecuted && suggestions.length > 0 && (!this.state.termToSuggestFrom || inputValue === this.state.searchInputValue)) {
+              if (!this.state.isSearchExecuted && suggestions.length > 0 && inputValue === this.state.searchInputValue) {
                 this.setState({
                   proposedQuerySuggestions: this.state.proposedQuerySuggestions.concat(suggestions), // Merge suggestions
                   termToSuggestFrom: inputValue, // The term that was used as basis to get the suggestions from
