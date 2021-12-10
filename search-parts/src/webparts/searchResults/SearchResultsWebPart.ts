@@ -269,7 +269,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 // Pass the Handlebars context to consumers, so they can register custom helpers for their own services 
                 this._currentDataResultsSourceData.handlebarsContext = this.templateService.Handlebars;
                 this._currentDataResultsSourceData.totalCount = this.dataSource?.getItemCount();
-               
+
                 return this._currentDataResultsSourceData;
 
             case DynamicDataProperties.AvailableFieldValuesFromResults:
@@ -277,19 +277,19 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 // Dynamic data values should be flatten https://docs.microsoft.com/en-us/sharepoint/dev/spfx/dynamic-data
                 let fields = {};
                 this._currentDataResultsSourceData.availableFieldsFromResults.forEach((field: string) => {
-        
+
                     // Aggregate all values for this specific field across all items
                     // Ex:
                     // "FileType":['docx','pdf']
                     let fieldValue = undefined;
-        
+
                     if (this._currentDataResultsSourceData.selectedItems.length > 0) {
                         fieldValue = ObjectHelper.byPath(this._currentDataResultsSourceData.selectedItems, field);
                     }
-                    
+
                     fields[field] = fieldValue ? fieldValue.split(',') : undefined;
                 });
-        
+
                 return fields;
         }
 
@@ -362,49 +362,49 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             // If the current selected vertical is not the one configured for this Web Part, we show nothing
             if (verticalData && this.properties.selectedVerticalKeys.indexOf(verticalData.selectedVertical.key) === -1) {
 
-            if (this.displayMode === DisplayMode.Edit) {
+                if (this.displayMode === DisplayMode.Edit) {
 
-                if (parentControlZone) {
-                parentControlZone.removeAttribute('style');
+                    if (parentControlZone) {
+                        parentControlZone.removeAttribute('style');
+                    }
+
+                    // Get tab name of selected verticals
+                    const verticalNames = verticalData.verticalsConfiguration.filter(cfg => {
+                        return this.properties.selectedVerticalKeys.indexOf(cfg.key) !== -1;
+                    }).map(v => v.tabName);
+
+                    renderRootElement = React.createElement('div', {},
+                        React.createElement(
+                            MessageBar, {
+                            messageBarType: MessageBarType.info,
+                        },
+                            Text.format(commonStrings.General.CurrentVerticalNotSelectedMessage, verticalNames.join(','))
+                        ),
+                        renderRootElement
+                    );
+                } else {
+                    renderRootElement = null;
+
+                    // Reset data source information
+                    this._currentDataResultsSourceData = {
+                        availableFieldsFromResults: [],
+                        availablefilters: []
+                    };
+
+                    // Remove margin and padding for the empty control zone
+                    if (parentControlZone) {
+                        parentControlZone.setAttribute('style', 'margin-top:0px;padding:0px');
+                    }
+
                 }
 
-                // Get tab name of selected verticals
-                const verticalNames = verticalData.verticalsConfiguration.filter(cfg => {
-                return this.properties.selectedVerticalKeys.indexOf(cfg.key) !== -1;
-                }).map(v => v.tabName);
-                
-                renderRootElement = React.createElement('div', {}, 
-                                    React.createElement(
-                                        MessageBar, {
-                                        messageBarType: MessageBarType.info,
-                                        }, 
-                                        Text.format(commonStrings.General.CurrentVerticalNotSelectedMessage,verticalNames.join(','))
-                                    ),
-                                    renderRootElement
-                                    );
             } else {
-                renderRootElement = null;
 
-                // Reset data source information
-                this._currentDataResultsSourceData = {
-                availableFieldsFromResults: [],
-                availablefilters: []
-                };
-
-                // Remove margin and padding for the empty control zone
                 if (parentControlZone) {
-                parentControlZone.setAttribute('style', 'margin-top:0px;padding:0px');
+                    parentControlZone.removeAttribute('style');
                 }
-                
             }
-
-            } else {
-
-            if (parentControlZone) {
-                parentControlZone.removeAttribute('style');
-            }          
-            }
-        }  
+        }
 
         // Error message
         if (this.errorMessage) {
@@ -635,7 +635,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         // Bind connected data sources
         if (propertyPath.localeCompare('filtersDataSourceReference') === 0 && this.properties.filtersDataSourceReference ||
             propertyPath.localeCompare('verticalsDataSourceReference') === 0 && this.properties.verticalsDataSourceReference
-            ) {
+        ) {
             this.ensureDynamicDataSourcesConnection();
             this.context.propertyPane.refresh();
         }
@@ -760,7 +760,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         if (propertyPath.localeCompare('selectedItemFieldValue') === 0) {
 
             const reference = this.properties.selectedItemFieldValue.reference;
-    
+
             // Reset the default SPFx property pane field automatically as this configuration is not allowed for this scenario
             if (reference && reference.indexOf(ComponentType.SearchResults) !== -1) {
                 this.properties.selectedItemFieldValue.setValue('');
@@ -771,16 +771,16 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 }
             }
         }
-      
+
         if (propertyPath.localeCompare('itemSelectionProps.destinationFieldName') === 0 && !isEqual(oldValue, newValue)) {
-    
+
             const filterToken = this.tokenService.getTokenValue(BuiltinTokenNames.filters);
-    
+
             if (filterToken) {
                 // Reset previous token value 
                 delete filterToken[oldValue];
             }
-    
+
         }
 
         // Refresh list of available connections
@@ -792,9 +792,9 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     }
 
     public onCustomPropertyUpdate(propertyPath: string, newValue: any, changeCallback?: (targetProperty?: string, newValue?: any) => void): void {
-    
+
         if (propertyPath.localeCompare('selectedVerticalKeys') === 0) {
-            changeCallback(propertyPath, (cloneDeep(newValue) as IComboBoxOption[]).map(v => {return v.key as string;}));
+            changeCallback(propertyPath, (cloneDeep(newValue) as IComboBoxOption[]).map(v => { return v.key as string; }));
             this.context.propertyPane.refresh();
         }
 
@@ -821,16 +821,27 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         // tryGetValue() will resolve to '' if no Web Part is connected or if the connection is removed
         // The value can be also 'undefined' if the data source is not already loaded on the page.
-        const inputQueryFromDataSource = this.properties.queryText.tryGetValue();
+        let inputQueryFromDataSource = "";
+        if (this.properties.queryText && !this.properties.queryText.isDisposed) {
+            try {
+                inputQueryFromDataSource = this.properties.queryText.tryGetValue();
+                if (inputQueryFromDataSource !== undefined && typeof (inputQueryFromDataSource) === 'string') {
+                    inputQueryFromDataSource = decodeURIComponent(inputQueryFromDataSource);
+                }
+
+            } catch (error) {
+                // Likely issue when q=%25 in spfx
+            }
+        }
 
         if (!inputQueryFromDataSource) { // '' or 'undefined'
-        
-        if (this.properties.useDefaultQueryText) {
-            inputQueryText = this.properties.defaultQueryText;
-        }
-        
-        } else {
-        inputQueryText = inputQueryFromDataSource;
+
+            if (this.properties.useDefaultQueryText) {
+                inputQueryText = this.properties.defaultQueryText;
+            }
+
+        } else if (typeof (inputQueryFromDataSource) === 'string') {
+            inputQueryText = decodeURIComponent(inputQueryFromDataSource);
         }
 
         return inputQueryText;
@@ -866,18 +877,18 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             // Load customizations from extensibility libraries
             extensibilityLibraries.forEach(extensibilityLibrary => {
 
-            // Add custom layouts if any
-            if (extensibilityLibrary.getCustomLayouts)
-                this.availableLayoutDefinitions = this.availableLayoutDefinitions.concat(extensibilityLibrary.getCustomLayouts());
+                // Add custom layouts if any
+                if (extensibilityLibrary.getCustomLayouts)
+                    this.availableLayoutDefinitions = this.availableLayoutDefinitions.concat(extensibilityLibrary.getCustomLayouts());
 
-            // Add custom web components if any
-            if (extensibilityLibrary.getCustomWebComponents)
-                this.availableWebComponentDefinitions = this.availableWebComponentDefinitions.concat(extensibilityLibrary.getCustomWebComponents());
-            
-            // Registers Handlebars customizations in the local namespace
-            if (extensibilityLibrary.registerHandlebarsCustomizations)
-                extensibilityLibrary.registerHandlebarsCustomizations(this.templateService.Handlebars);
-                
+                // Add custom web components if any
+                if (extensibilityLibrary.getCustomWebComponents)
+                    this.availableWebComponentDefinitions = this.availableWebComponentDefinitions.concat(extensibilityLibrary.getCustomWebComponents());
+
+                // Registers Handlebars customizations in the local namespace
+                if (extensibilityLibrary.registerHandlebarsCustomizations)
+                    extensibilityLibrary.registerHandlebarsCustomizations(this.templateService.Handlebars);
+
             });
         }
     }
@@ -915,7 +926,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             /* webpackChunkName: 'pnp-modern-search-property-pane' */
             '@pnp/spfx-property-controls/lib/PropertyPaneWebPartInformation'
         );
-      
+
         this._propertyPaneWebPartInformation = PropertyPaneWebPartInformation;
 
         const { CalloutTriggers } = await import(
@@ -1010,7 +1021,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         if (this.properties.selectedVerticalKeys === undefined) {
             this.properties.selectedVerticalKeys = [];
         }
-    
+
         // Adapt to new schema since 4.1.0
         if (this.properties['selectedVerticalKey'] && this.properties.selectedVerticalKeys.indexOf(this.properties['selectedVerticalKey']) === -1) {
             this.properties.selectedVerticalKeys.push(this.properties['selectedVerticalKey']);
@@ -1234,9 +1245,9 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         if (this.properties.itemSelectionProps.allowItemSelection) {
 
-            layoutOptionsFields.splice(1,0,  
+            layoutOptionsFields.splice(1, 0,
                 PropertyPaneToggle('itemSelectionProps.allowMulti', {
-                label: webPartStrings.PropertyPane.LayoutPage.AllowMultipleItemSelection, 
+                    label: webPartStrings.PropertyPane.LayoutPage.AllowMultipleItemSelection,
                 }),
                 PropertyPaneHorizontalRule()
             );
@@ -1550,117 +1561,117 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     private async getDataResultsConnectionFields(): Promise<IPropertyPaneField<any>[]> {
 
         let dataResultsConnectionFields: IPropertyPaneField<any>[] = [
-          PropertyPaneToggle('useDynamicFiltering', {
-            label: webPartStrings.PropertyPane.ConnectionsPage.UseDynamicFilteringsWebPartLabel,
-            checked: this.properties.useDynamicFiltering
-          })
-        ];
-        
-        if (this.properties.useDynamicFiltering) {
-    
-          let isSourceFieldConfigured: boolean = false;
-          
-          // Make sure a property is selected in the source according to the reference format.
-          // Ex: PageContext:UrlData:queryParameters.q = Page environment
-          // Ex: WebPart.544c1372-42df-47c3-94d6-017428cd2baf.1272b161-3435-4815-99a1-996590334cff:AvailableFieldValuesFromResults:FileType = Search Results
-          if (this.properties.selectedItemFieldValue.reference) {
-            isSourceFieldConfigured = /^.+:.+:(.+)$/.test(this.properties.selectedItemFieldValue.reference);
-          }
-    
-          dataResultsConnectionFields.push(
-              
-              // Allow both 'Search Results' Web Parts and OOTB SharePoint List Web Parts 
-              PropertyPaneDynamicFieldSet({
-                label: webPartStrings.PropertyPane.ConnectionsPage.UseDataResultsFromComponentsLabel,
-                fields: [
-                    PropertyPaneDynamicField('selectedItemFieldValue', {
-                      label: webPartStrings.PropertyPane.ConnectionsPage.UseDataResultsFromComponentsLabel,
-                    })
-                ],
-                sharedConfiguration: {
-                  depth: DynamicDataSharedDepth.Property,
-                  property: {
-                    filters: {
-                      propertyId: DynamicDataProperties.AvailableFieldValuesFromResults
-                    }
-                  }
-                }
+            PropertyPaneToggle('useDynamicFiltering', {
+                label: webPartStrings.PropertyPane.ConnectionsPage.UseDynamicFilteringsWebPartLabel,
+                checked: this.properties.useDynamicFiltering
             })
-          );
-    
-          if (isSourceFieldConfigured) {
-    
-            const availableOptions: IComboBoxOption[]= this._currentDataResultsSourceData.availableFieldsFromResults.map(field => {
-              return {
-                key: field,
-                text: field
-              };
-            });
-    
-            dataResultsConnectionFields.splice(4,0,
-              new PropertyPaneAsyncCombo('itemSelectionProps.destinationFieldName', {
-                label: webPartStrings.PropertyPane.ConnectionsPage.SourceDestinationFieldLabel,
-                availableOptions: availableOptions,
-                description: webPartStrings.PropertyPane.ConnectionsPage.SourceDestinationFieldDescription,
-                allowMultiSelect: false,
-                allowFreeform: true,
-                searchAsYouType: false,
-                defaultSelectedKeys: this.properties.selectedVerticalKeys,
-                textDisplayValue: this.properties.itemSelectionProps.destinationFieldName,
-                onPropertyChange: this.onCustomPropertyUpdate.bind(this),
-              })
-            );
-          }
-    
-          if (isSourceFieldConfigured && this.properties.itemSelectionProps.destinationFieldName) {
-    
-            dataResultsConnectionFields.splice(4,0,
-              PropertyPaneChoiceGroup('itemSelectionProps.selectionMode', {
-                options: [
-                  {
-                    key: ItemSelectionMode.AsDataFilter,
-                    text: webPartStrings.PropertyPane.LayoutPage.AsDataFiltersSelectionMode
-                  },
-                  {
-                    key: ItemSelectionMode.AsTokenValue,
-                    text: webPartStrings.PropertyPane.LayoutPage.AsTokensSelectionMode
-                  }
-                ],
-                label: webPartStrings.PropertyPane.LayoutPage.SelectionModeLabel,
-              })
-            );
-    
-            if (this.properties.itemSelectionProps.selectionMode === ItemSelectionMode.AsDataFilter) {
-              dataResultsConnectionFields.splice(5,0,
-                this._propertyPaneWebPartInformation({
-                  description: `<em>${webPartStrings.PropertyPane.LayoutPage.AsDataFiltersDescription}</em>`,
-                  key: 'selectionModeText'
-                }),
-                PropertyPaneChoiceGroup('itemSelectionProps.valuesOperator', {
-                  options: [
-                    {
-                      key: FilterConditionOperator.OR,
-                      text: 'OR'                
-                    },
-                    {
-                      key: FilterConditionOperator.AND,
-                      text: 'AND'
-                    },
-                  ],
-                  label: webPartStrings.PropertyPane.LayoutPage.FilterValuesOperator
-                })
-              );
-            } else {
-              dataResultsConnectionFields.splice(4,0,
-                this._propertyPaneWebPartInformation({
-                  description: `<em>${webPartStrings.PropertyPane.LayoutPage.AsTokensDescription}</em>`,
-                  key: 'selectionModeText'
-                })
-              );
+        ];
+
+        if (this.properties.useDynamicFiltering) {
+
+            let isSourceFieldConfigured: boolean = false;
+
+            // Make sure a property is selected in the source according to the reference format.
+            // Ex: PageContext:UrlData:queryParameters.q = Page environment
+            // Ex: WebPart.544c1372-42df-47c3-94d6-017428cd2baf.1272b161-3435-4815-99a1-996590334cff:AvailableFieldValuesFromResults:FileType = Search Results
+            if (this.properties.selectedItemFieldValue.reference) {
+                isSourceFieldConfigured = /^.+:.+:(.+)$/.test(this.properties.selectedItemFieldValue.reference);
             }
-          }
+
+            dataResultsConnectionFields.push(
+
+                // Allow both 'Search Results' Web Parts and OOTB SharePoint List Web Parts 
+                PropertyPaneDynamicFieldSet({
+                    label: webPartStrings.PropertyPane.ConnectionsPage.UseDataResultsFromComponentsLabel,
+                    fields: [
+                        PropertyPaneDynamicField('selectedItemFieldValue', {
+                            label: webPartStrings.PropertyPane.ConnectionsPage.UseDataResultsFromComponentsLabel,
+                        })
+                    ],
+                    sharedConfiguration: {
+                        depth: DynamicDataSharedDepth.Property,
+                        property: {
+                            filters: {
+                                propertyId: DynamicDataProperties.AvailableFieldValuesFromResults
+                            }
+                        }
+                    }
+                })
+            );
+
+            if (isSourceFieldConfigured) {
+
+                const availableOptions: IComboBoxOption[] = this._currentDataResultsSourceData.availableFieldsFromResults.map(field => {
+                    return {
+                        key: field,
+                        text: field
+                    };
+                });
+
+                dataResultsConnectionFields.splice(4, 0,
+                    new PropertyPaneAsyncCombo('itemSelectionProps.destinationFieldName', {
+                        label: webPartStrings.PropertyPane.ConnectionsPage.SourceDestinationFieldLabel,
+                        availableOptions: availableOptions,
+                        description: webPartStrings.PropertyPane.ConnectionsPage.SourceDestinationFieldDescription,
+                        allowMultiSelect: false,
+                        allowFreeform: true,
+                        searchAsYouType: false,
+                        defaultSelectedKeys: this.properties.selectedVerticalKeys,
+                        textDisplayValue: this.properties.itemSelectionProps.destinationFieldName,
+                        onPropertyChange: this.onCustomPropertyUpdate.bind(this),
+                    })
+                );
+            }
+
+            if (isSourceFieldConfigured && this.properties.itemSelectionProps.destinationFieldName) {
+
+                dataResultsConnectionFields.splice(4, 0,
+                    PropertyPaneChoiceGroup('itemSelectionProps.selectionMode', {
+                        options: [
+                            {
+                                key: ItemSelectionMode.AsDataFilter,
+                                text: webPartStrings.PropertyPane.LayoutPage.AsDataFiltersSelectionMode
+                            },
+                            {
+                                key: ItemSelectionMode.AsTokenValue,
+                                text: webPartStrings.PropertyPane.LayoutPage.AsTokensSelectionMode
+                            }
+                        ],
+                        label: webPartStrings.PropertyPane.LayoutPage.SelectionModeLabel,
+                    })
+                );
+
+                if (this.properties.itemSelectionProps.selectionMode === ItemSelectionMode.AsDataFilter) {
+                    dataResultsConnectionFields.splice(5, 0,
+                        this._propertyPaneWebPartInformation({
+                            description: `<em>${webPartStrings.PropertyPane.LayoutPage.AsDataFiltersDescription}</em>`,
+                            key: 'selectionModeText'
+                        }),
+                        PropertyPaneChoiceGroup('itemSelectionProps.valuesOperator', {
+                            options: [
+                                {
+                                    key: FilterConditionOperator.OR,
+                                    text: 'OR'
+                                },
+                                {
+                                    key: FilterConditionOperator.AND,
+                                    text: 'AND'
+                                },
+                            ],
+                            label: webPartStrings.PropertyPane.LayoutPage.FilterValuesOperator
+                        })
+                    );
+                } else {
+                    dataResultsConnectionFields.splice(4, 0,
+                        this._propertyPaneWebPartInformation({
+                            description: `<em>${webPartStrings.PropertyPane.LayoutPage.AsTokensDescription}</em>`,
+                            key: 'selectionModeText'
+                        })
+                    );
+                }
+            }
         }
-    
+
         return dataResultsConnectionFields;
     }
 
@@ -1706,40 +1717,40 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
                 // Get all available verticals
                 if (this._verticalsConnectionSourceData) {
-                  const availableVerticals = this._verticalsConnectionSourceData.tryGetValue();
-        
-                  if (availableVerticals) {
-        
-                    // Get the corresponding text for selected keys
-                    let selectedKeysAsText: string[] = [];
-                    
-                    availableVerticals.verticalsConfiguration.forEach(verticalConfiguration => {
-                      if (this.properties.selectedVerticalKeys.indexOf(verticalConfiguration.key) !== -1) {
-                        selectedKeysAsText.push(verticalConfiguration.tabName);
-                      }
-                    });
-        
-                    verticalsConnectionFields.push(
-                      new PropertyPaneAsyncCombo('selectedVerticalKeys', {
-                          availableOptions: availableVerticals.verticalsConfiguration.filter(v => !v.isLink).map(verticalConfiguration => {
-                            return {
-                              key: verticalConfiguration.key,
-                              text: verticalConfiguration.tabName
-                            };
-                          }),
-                          allowMultiSelect: true,
-                          allowFreeform: false,
-                          description: webPartStrings.PropertyPane.ConnectionsPage.LinkToVerticalLabelHoverMessage,
-                          label: webPartStrings.PropertyPane.ConnectionsPage.LinkToVerticalLabel,
-                          searchAsYouType: false,
-                          defaultSelectedKeys: this.properties.selectedVerticalKeys,
-                          textDisplayValue: selectedKeysAsText.join(','),
-                          onPropertyChange: this.onCustomPropertyUpdate.bind(this),
-                      }),
-                    );
-                  }
+                    const availableVerticals = this._verticalsConnectionSourceData.tryGetValue();
+
+                    if (availableVerticals) {
+
+                        // Get the corresponding text for selected keys
+                        let selectedKeysAsText: string[] = [];
+
+                        availableVerticals.verticalsConfiguration.forEach(verticalConfiguration => {
+                            if (this.properties.selectedVerticalKeys.indexOf(verticalConfiguration.key) !== -1) {
+                                selectedKeysAsText.push(verticalConfiguration.tabName);
+                            }
+                        });
+
+                        verticalsConnectionFields.push(
+                            new PropertyPaneAsyncCombo('selectedVerticalKeys', {
+                                availableOptions: availableVerticals.verticalsConfiguration.filter(v => !v.isLink).map(verticalConfiguration => {
+                                    return {
+                                        key: verticalConfiguration.key,
+                                        text: verticalConfiguration.tabName
+                                    };
+                                }),
+                                allowMultiSelect: true,
+                                allowFreeform: false,
+                                description: webPartStrings.PropertyPane.ConnectionsPage.LinkToVerticalLabelHoverMessage,
+                                label: webPartStrings.PropertyPane.ConnectionsPage.LinkToVerticalLabel,
+                                searchAsYouType: false,
+                                defaultSelectedKeys: this.properties.selectedVerticalKeys,
+                                textDisplayValue: selectedKeysAsText.join(','),
+                                onPropertyChange: this.onCustomPropertyUpdate.bind(this),
+                            }),
+                        );
+                    }
                 }
-              }
+            }
         }
 
         return verticalsConnectionFields;
@@ -1965,8 +1976,14 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         if (this.tokenService) {
 
+            let inputQueryFromDataSource: string = null;
             // Input query text
-            const inputQueryFromDataSource = !this.properties.queryText.isDisposed && this.properties.queryText.tryGetValue();
+            try {
+                inputQueryFromDataSource = !this.properties.queryText.isDisposed && this.properties.queryText.tryGetValue();               
+            }  catch (error) {
+                // Likely issue when q=%25 in spfx
+            }
+
             const inputQueryText = inputQueryFromDataSource ? inputQueryFromDataSource : this.properties.defaultQueryText;
             this.tokenService.setTokenValue(BuiltinTokenNames.inputQueryText, inputQueryText);
 
@@ -1977,67 +1994,67 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
                 if (filtersSourceData) {
 
-                // Set the token as 'null' if no filter is selected meaning the token is available but with no data (different from 'undefined')
-                // It is the caller responsability to check if the value is empty before using it in an expression (ex: `if(empty('{filters}'),'doA','doB)`)
-                let filterTokens: IDataFilterToken = null;
-                
-                const allValues = flatten(filtersSourceData.selectedFilters.map(f => f.values));
+                    // Set the token as 'null' if no filter is selected meaning the token is available but with no data (different from 'undefined')
+                    // It is the caller responsability to check if the value is empty before using it in an expression (ex: `if(empty('{filters}'),'doA','doB)`)
+                    let filterTokens: IDataFilterToken = null;
 
-                // Make sure we have values in selected filters
-                if (filtersSourceData.selectedFilters.length > 0 && !isEmpty(allValues)) {
+                    const allValues = flatten(filtersSourceData.selectedFilters.map(f => f.values));
 
-                    filterTokens = {};
+                    // Make sure we have values in selected filters
+                    if (filtersSourceData.selectedFilters.length > 0 && !isEmpty(allValues)) {
 
-                    // Build the initial structure for the configured filter names
-                    filtersSourceData.filterConfiguration.forEach(filterConfiguration => {
+                        filterTokens = {};
 
-                    // Initialize to an empty object so the token service can resolve it to an empty string instead leaving the token '{filters}' as is
-                    filterTokens[filterConfiguration.filterName] = null;
-                    });
-                    
-                    filtersSourceData.selectedFilters.forEach(filter => {
-                
-                        const configuration = DataFilterHelper.getConfigurationForFilter(filter, filtersSourceData.filterConfiguration);
+                        // Build the initial structure for the configured filter names
+                        filtersSourceData.filterConfiguration.forEach(filterConfiguration => {
 
-                        if (configuration) {
+                            // Initialize to an empty object so the token service can resolve it to an empty string instead leaving the token '{filters}' as is
+                            filterTokens[filterConfiguration.filterName] = null;
+                        });
 
-                            let filterTokenValue: IDataFilterTokenValue = null;
+                        filtersSourceData.selectedFilters.forEach(filter => {
 
-                            const filterValues = filter.values.map(value => value.value).join(','); 
+                            const configuration = DataFilterHelper.getConfigurationForFilter(filter, filtersSourceData.filterConfiguration);
 
-                            // Don't tokenize the filter if there is no value.
-                            if (filterValues.length > 0) {
-                                filterTokenValue = {
-                                    valueAsText: filterValues
-                                };
-                            }
+                            if (configuration) {
 
-                            if (configuration.selectedTemplate === BuiltinFilterTemplates.DateRange) {
+                                let filterTokenValue: IDataFilterTokenValue = null;
 
-                            let fromDate = undefined;
-                            let toDate = undefined;
+                                const filterValues = filter.values.map(value => value.value).join(',');
 
-                            // Determine start and end dates by operator
-                            filter.values.forEach(filterValue => {
-                                if (filterValue.operator === FilterComparisonOperator.Geq && !fromDate) {
-                                    fromDate = filterValue.value;
+                                // Don't tokenize the filter if there is no value.
+                                if (filterValues.length > 0) {
+                                    filterTokenValue = {
+                                        valueAsText: filterValues
+                                    };
                                 }
 
-                                if (filterValue.operator === FilterComparisonOperator.Lt && !toDate) {
-                                    toDate = fromDate = filterValue.value;
-                                }
-                            });
-                            
-                            filterTokenValue.fromDate = fromDate;
-                            filterTokenValue.toDate = toDate;
-                            }
+                                if (configuration.selectedTemplate === BuiltinFilterTemplates.DateRange) {
 
-                            filterTokens[filter.filterName] = filterTokenValue;
-                        }
-                    });
-                }
-                
-                this.tokenService.setTokenValue(BuiltinTokenNames.filters, filterTokens);  
+                                    let fromDate = undefined;
+                                    let toDate = undefined;
+
+                                    // Determine start and end dates by operator
+                                    filter.values.forEach(filterValue => {
+                                        if (filterValue.operator === FilterComparisonOperator.Geq && !fromDate) {
+                                            fromDate = filterValue.value;
+                                        }
+
+                                        if (filterValue.operator === FilterComparisonOperator.Lt && !toDate) {
+                                            toDate = fromDate = filterValue.value;
+                                        }
+                                    });
+
+                                    filterTokenValue.fromDate = fromDate;
+                                    filterTokenValue.toDate = toDate;
+                                }
+
+                                filterTokens[filter.filterName] = filterTokenValue;
+                            }
+                        });
+                    }
+
+                    this.tokenService.setTokenValue(BuiltinTokenNames.filters, filterTokens);
                 }
             }
 
@@ -2056,7 +2073,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 filterTokens[destinationFieldName].valueAsText = itemFieldValues.join(',');
                 this.tokenService.setTokenValue(BuiltinTokenNames.filters, filterTokens);
             }
-            
+
             // Current selected vertical
             if (this._verticalsConnectionSourceData) {
 
@@ -2070,7 +2087,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                         name: verticalSourceData.selectedVertical.name,
                         value: await this.tokenService.resolveTokens(verticalSourceData.selectedVertical.value)
                     };
-                    
+
                     this.tokenService.setTokenValue(BuiltinTokenNames.verticals, resolvedSelectedVertical);
                 }
             }
@@ -2188,19 +2205,19 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
             // Set the selected items to the data context. This will force data to be fetched again
             dataContext.selectedItemValues = itemFieldValues;
-                
+
             // Convert the current selection into search filters format, just like the Data Filter Web Part
             if (this.properties.itemSelectionProps.selectionMode === ItemSelectionMode.AsDataFilter) {
-                
+
                 const filterValues: IDataFilterValue[] = uniq(itemFieldValues) // Remove duplicate values selected by the user
-                                                        .filter(value => !isEmpty(value) && typeof value === 'string') // Make sure the value is actually a not empty/null 'string'
-                                                        .map(fieldValue => {
-                                                            return {
-                                                            name: fieldValue,
-                                                            value: fieldValue,
-                                                            operator: FilterComparisonOperator.Eq              
-                                                            };
-                                                        });
+                    .filter(value => !isEmpty(value) && typeof value === 'string') // Make sure the value is actually a not empty/null 'string'
+                    .map(fieldValue => {
+                        return {
+                            name: fieldValue,
+                            value: fieldValue,
+                            operator: FilterComparisonOperator.Eq
+                        };
+                    });
                 if (filterValues.length > 0) {
                     dataContext.filters.selectedFilters.push({
                         filterName: this.properties.itemSelectionProps.destinationFieldName,
@@ -2210,7 +2227,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 }
             }
         }
-        
+
         // Connected Search Filters
         if (this._filtersConnectionSourceData) {
             const filtersSourceData: IDataFilterSourceData = this._filtersConnectionSourceData.tryGetValue();
@@ -2220,7 +2237,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 if (!isEqual(filtersSourceData.selectedFilters, this._lastSelectedFilters)) {
                     dataContext.pageNumber = 1;
                 }
-            
+
                 // Use the filter confiugration and then get the corresponding values 
                 dataContext.filters.filtersConfiguration = filtersSourceData.filterConfiguration;
                 dataContext.filters.selectedFilters = dataContext.filters.selectedFilters.concat(filtersSourceData.selectedFilters);
@@ -2238,9 +2255,9 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 dataContext.verticals.selectedVertical = verticalsSourceData.selectedVertical;
             }
         }
-        
+
         // If input query text changes, then we need to reset the paging
-        if (!isEqual(inputQueryText, this._lastInputQueryText)) {          
+        if (!isEqual(inputQueryText, this._lastInputQueryText)) {
             dataContext.pageNumber = 1;
             this.currentPageNumber = 1;
             this._resetPagingData();
@@ -2273,7 +2290,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
      * @param pageLinks the page links
      */
     private _onDataRetrieved(availableDataSourceFields: string[], filters?: IDataFilterResult[], pageNumber?: number, nextLinkUrl?: string, pageLinks?: string[]) {
-                
+
         this._currentDataResultsSourceData.availableFieldsFromResults = availableDataSourceFields;
         this.currentPageNumber = pageNumber;
         this.availablePageLinks = pageLinks;
@@ -2281,28 +2298,28 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         // Set the available filters from the data source 
         if (filters) {
-        this._currentDataResultsSourceData.availablefilters = filters;
+            this._currentDataResultsSourceData.availablefilters = filters;
         }
 
         // Check if the Web part is connected to a data vertical
         if (this._verticalsConnectionSourceData && this.properties.selectedVerticalKeys.length > 0) {
-        const verticalData = this._verticalsConnectionSourceData.tryGetValue();
+            const verticalData = this._verticalsConnectionSourceData.tryGetValue();
 
-        // For edit mode only, we want to see the data
-        if (verticalData && this.properties.selectedVerticalKeys.indexOf(verticalData.selectedVertical.key) === -1 && this.displayMode === DisplayMode.Read) {
+            // For edit mode only, we want to see the data
+            if (verticalData && this.properties.selectedVerticalKeys.indexOf(verticalData.selectedVertical.key) === -1 && this.displayMode === DisplayMode.Read) {
 
-            // If the current selected vertical is not the one configured for this Web Part, we reset
-            // the data soure information since we don't want to expose them to consumers
-            this._currentDataResultsSourceData = {
-            availableFieldsFromResults: [],
-            availablefilters: []
-            };
-        }
+                // If the current selected vertical is not the one configured for this Web Part, we reset
+                // the data soure information since we don't want to expose them to consumers
+                this._currentDataResultsSourceData = {
+                    availableFieldsFromResults: [],
+                    availablefilters: []
+                };
+            }
         }
 
         // Notfify dynamic data consumers data have changed
         this.context.dynamicDataSourceManager.notifyPropertyChanged(ComponentType.SearchResults);
-        
+
         // Extra call to refresh the property pane in the case where data sources rely on results fields in there configuration (ex: ODataDataSource)
         this.context.propertyPane.refresh();
     }
@@ -2311,10 +2328,10 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
      * Handler when an item is selected in the results 
      * @param currentSelectedItems the current selected items
      */
-    private _onItemSelected(currentSelectedItems: {[key: string]: any}[]) {
-    
+    private _onItemSelected(currentSelectedItems: { [key: string]: any }[]) {
+
         this._currentDataResultsSourceData.selectedItems = cloneDeep(currentSelectedItems);
-        
+
         // Notfify dynamic data consumers data have changed
         this.context.dynamicDataSourceManager.notifyPropertyChanged(DynamicDataProperties.AvailableFieldValuesFromResults);
     }
@@ -2332,10 +2349,10 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 this._pushStateCallback = history.pushState;
                 h.pushState = this.pushStateHandler.bind(this);
             })(window.history);
-        } 
+        }
     }
 
-    private pushStateHandler(state, key, path) {   
+    private pushStateHandler(state, key, path) {
 
         this._pushStateCallback.apply(history, [state, key, path]);
         if (this.properties.queryText.isDisposed) {
