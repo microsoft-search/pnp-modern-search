@@ -65,7 +65,8 @@ export interface IMicrosoftSearchDataSourceProperties {
      * will be transformed to 'security IsDocument:true'
      */
      
-    queryModifierTemplate: string;
+    queryTemplate: string;
+
     /**
     * Flag indicating if the Microsoft Search beta endpoint should be used
      */
@@ -233,13 +234,13 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                 onPropertyChange: this.onCustomPropertyUpdate.bind(this),
                 textDisplayValue: entityTypesDisplayValue.filter(e => e).join(",")
             }),
-            new PropertyPaneNonReactiveTextField('dataSourceProperties.queryModifierTemplate', {
-                defaultValue: this.properties.queryModifierTemplate,
-                label: commonStrings.DataSources.MicrosoftSearch.QueryModifierFieldLabel,
-                placeholderText: commonStrings.DataSources.MicrosoftSearch.QueryModifierPlaceHolderText,
+            new PropertyPaneNonReactiveTextField('dataSourceProperties.queryTemplate', {
+                defaultValue: this.properties.queryTemplate,
+                label: commonStrings.DataSources.MicrosoftSearch.QueryTemplateFieldLabel,
+                placeholderText: commonStrings.DataSources.MicrosoftSearch.QueryTemplatePlaceHolderText,
                 multiline: true,
-                description: commonStrings.DataSources.MicrosoftSearch.QueryModifierFieldDescription,
-                applyBtnText: commonStrings.DataSources.MicrosoftSearch.ApplyQueryModifierBtnText,
+                description: commonStrings.DataSources.MicrosoftSearch.QueryTemplateFieldDescription,
+                applyBtnText: commonStrings.DataSources.MicrosoftSearch.ApplyQueryTemplateBtnText,
                 allowEmptyValue: false,
                 rows: 8
             }),
@@ -484,7 +485,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         this.properties.sortProperties = this.properties.sortProperties !== undefined ? this.properties.sortProperties : [];
         this.properties.contentSourceConnectionIds = this.properties.contentSourceConnectionIds !== undefined ? this.properties.contentSourceConnectionIds : [];
         
-        this.properties.queryModifierTemplate = this.properties.queryModifierTemplate ?? "";
+        this.properties.queryTemplate = this.properties.queryTemplate ? this.properties.queryTemplate : "{searchTerms}";
         this.properties.useBetaEndpoint = this.properties.useBetaEndpoint !== undefined ? this.properties.useBetaEndpoint : false;
 
         if (this.properties.useBetaEndpoint) {
@@ -509,10 +510,11 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         }
 
         // Query modification
-        const queryModifierTemplate = await this._tokenService.resolveTokens(this.properties.queryModifierTemplate);
-        if(queryModifierTemplate)
-        {
-            queryText = `${queryText} ${queryModifierTemplate.trimLeft()}`;
+        const queryTemplate = await this._tokenService.resolveTokens(this.properties.queryTemplate);
+        if (queryTemplate) {
+
+            // Use {searchTerms} or {inputQueryText} to use orginal value
+            queryText = queryTemplate.trim();
         }
 
         // Paging

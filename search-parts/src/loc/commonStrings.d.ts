@@ -136,10 +136,10 @@ declare interface ICommonStrings {
         ContentSourcesFieldDescriptionLabel: string;
         ContentSourcesFieldPlaceholderLabel: string;
         EnableTopResultsLabel: string;
-        QueryModifierFieldLabel: string;
-        QueryModifierPlaceHolderText: string;
-        QueryModifierFieldDescription: string;
-        ApplyQueryModifierBtnText: string;
+        QueryTemplateFieldLabel: string;
+        QueryTemplatePlaceHolderText: string;
+        QueryTemplateFieldDescription: string;
+        ApplyQueryTemplateBtnText: string;
         UseBetaEndpoint: string;
       },
       SearchCommon: {

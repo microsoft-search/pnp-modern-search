@@ -137,11 +137,10 @@ define([], function() {
                 ContentSourcesFieldLabel: "Sources du contenu",
                 ContentSourcesFieldDescriptionLabel: "Identifiants de connexion définis dans le portail d’administration des connecteurs de recherche Microsoft.",
                 ContentSourcesFieldPlaceholderLabel: "Exemple : « MyCustomConnectorID » ",
-                QueryModifierFieldLabel: "Modificateur de requête",
-                QueryModifierPlaceHolderText: "IsDocument:true",
-                QueryModifierFieldDescription: "Le modèle de modificateur de recherche. Vous pouvez également utiliser {<tokens>} et KQL pour créer une requête dynamique. Tout est concaténé au inputQueryText",
-                ApplyQueryModifierBtnText: "Appliquer",
-                ContentSourcesFieldPlaceholderLabel: "Exemple : « MyCustomConnectorID »",
+                QueryTemplateFieldLabel: "Modèle de requête",
+                QueryTemplatePlaceHolderText: "ex: {searchTerms} IsDocument:true",
+                QueryTemplateFieldDescription: "Vous pouvez également utiliser {<tokens>} et KQL pour créer une requête dynamique.",
+                ApplyQueryTemplateBtnText: "Appliquer",
                 UseBetaEndpoint: "Utiliser le point de terminaison beta"
             },
             SearchCommon: {
