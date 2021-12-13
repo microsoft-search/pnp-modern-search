@@ -15,6 +15,8 @@ define([], function() {
                 UseDataResultsWebPartLabel: "Koble til den søkeresultat-nettdel",
                 UseDataResultsFromComponentsLabel: "Bruk data fra disse nettdelene",
                 UseDataResultsFromComponentsDescription: "Om du kobler til mer enn 1 nettdel slås filterverdiene sammen til liknende filternavn.",
+                LinkToVerticalLabel: "Vis filtre bare når følgende vertikaler er valgt",
+                LinkToVerticalLabelHoverMessage: "Filtrene vil bare vises hvis den valgte vertikalen samsvarer med de som er konfigurert for denne webdelen. Ellers vil webdelen være tom (ingen marg og ingen utfylling) i visningsmodus."
             },
             FiltersSettingsPage: {
                 SettingsGroupName: "Filterinnstillinger",

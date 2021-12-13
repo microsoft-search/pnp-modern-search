@@ -51,11 +51,6 @@ export interface IDataFilterInternal extends IDataFilter {
     isMulti: boolean;
 
     /**
-     * The associated taxonomy items IDs (used for Taxonomy Picker control)
-     */
-    taxonomyItemIds?: string[];
-
-    /**
      * Flag determining if the all filter values could be cleared
      */
     canClear?: boolean;

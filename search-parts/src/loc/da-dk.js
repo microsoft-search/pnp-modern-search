@@ -89,7 +89,12 @@ define([], function() {
             SameTabOpenBehavior: "Brug det nuværende faneblad",
             NewTabOpenBehavior: "Åben i et nyt faneblad",
             PageOpenBehaviorLabel: "Opening-egenskaber",
-            EmptyFieldErrorMessage: "Dette felt må ikke stå tomt"
+            EmptyFieldErrorMessage: "Dette felt må ikke stå tomt",
+            TagPickerStrings: {
+                NoResultsSearchMessage: "Ingen resultater fundet",
+                SearchPlaceholder: "Søg efter en værdi..."
+            },
+            CurrentVerticalNotSelectedMessage: "Den aktuelle valgte vertikal stemmer ikke overens med dem, der er knyttet til denne webdel ({0}). Den forbliver tom i visningstilstand."
         },
         DataSources: {
             SharePointSearch: {
@@ -131,7 +136,14 @@ define([], function() {
                 EnableTopResultsLabel: "Aktivér topresultater",
                 ContentSourcesFieldLabel: "Indholdskilder",
                 ContentSourcesFieldDescriptionLabel: "Viser ID af de forbindelser der er defineret i administrationsportalen for Microsoft Search-connectors.",
-                ContentSourcesFieldPlaceholderLabel: "Fx: 'MyCustomConnectorId'"
+                ContentSourcesFieldPlaceholderLabel: "Fx: 'MyCustomConnectorId'",
+                EnableSuggestionLabel: "Aktiver staveforslag",
+                EnableModificationLabel: "Aktiver staveændringer",
+                QueryTemplateFieldLabel: "Forespørgselsmodifikator",
+                QueryTemplatePlaceHolderText: "ex: {searchTerms} IsDocument:true",
+                QueryTemplateFieldDescription: "Søgemodifikator-skabelonen. Du kan også bruge {<tokens>} og KQL til at bygge en dynamisk forespørgsel. Alt sammenkædes til inputQueryText",
+                ApplyQueryTemplateBtnText: "Anvend",
+                UseBetaEndpoint: "Brug beta-endepunkt"
             },
             SearchCommon: {
                 Sort: {
@@ -293,7 +305,9 @@ define([], function() {
         },
         PropertyPane: {
             ConnectionsPage: {
-                DataConnectionsGroupName: "Tilgængelige forbindelser"
+                DataConnectionsGroupName: "Tilgængelige forbindelser",
+                UseDataVerticalsWebPartLabel: "Anslut till en vertikal webbdel",
+                UseDataVerticalsFromComponentLabel: "Använd vertikaler från denna komponent"
             },
             InformationPage: {
                 Extensibility: {
@@ -314,7 +328,10 @@ define([], function() {
             FilterNoValuesMessage: "Ingen værdier for dette filter",
             OrOperator: "ELLER",
             AndOperator: "OG",
-            ComboBoxPlaceHolder: "Vælg værdi"
+            ComboBoxPlaceHolder: "Vælg værdi",
+            UseAndOperatorValues: "Use an AND operator between values",
+            UseOrOperatorValues: "Use an OR operator between values",
+            UseValuesOperators: "Select operator to use between this filter values"
         },
         SuggestionProviders: {
             SharePointStatic: {

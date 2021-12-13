@@ -1,13 +1,13 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Fabric, ShimmeredDetailsList, IShimmeredDetailsListProps } from 'office-ui-fabric-react';
-import { ITooltipHostProps, TooltipHost, ITooltipStyles, Shimmer, ShimmerElementsGroup, ShimmerElementType, IShimmerElement, mergeStyleSets, ITheme } from 'office-ui-fabric-react';
+import { ITooltipHostProps, TooltipHost, ITooltipStyles, Shimmer, ShimmerElementsGroup, ShimmerElementType, IShimmerElement, mergeStyleSets, ITheme, Selection } from 'office-ui-fabric-react';
 import * as Handlebars from 'handlebars';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
-import { BaseWebComponent } from '@pnp/modern-search-extensibility';
-import { groupBy, sortBy, findIndex, isEmpty } from "@microsoft/sp-lodash-subset";
+import { BaseWebComponent, BuiltinTemplateSlots } from '@pnp/modern-search-extensibility';
+import { groupBy, sortBy, findIndex, isEmpty, cloneDeep } from "@microsoft/sp-lodash-subset";
 import { FileIcon } from '../components/FileIconComponent';
-import { DetailsListLayoutMode, SelectionMode, IColumn, IGroup, IDetailsRowProps, DetailsRow, IDetailsHeaderProps, DetailsHeader, CheckboxVisibility } from 'office-ui-fabric-react/lib/DetailsList';
+import { DetailsListLayoutMode, SelectionMode, IColumn, IGroup, IDetailsRowProps, DetailsRow, IDetailsHeaderProps, DetailsHeader, CheckboxVisibility, DetailsRowCheck, IDetailsListCheckboxProps } from 'office-ui-fabric-react/lib/DetailsList';
 import { DEFAULT_CELL_STYLE_PROPS, DEFAULT_ROW_HEIGHTS } from 'office-ui-fabric-react/lib/components/DetailsList/DetailsRow.styles';
 import { IDataResultsTemplateContext } from '../models/common/ITemplateContext';
 import { ObjectHelper } from '../helpers/ObjectHelper';
@@ -15,7 +15,7 @@ import * as DOMPurify from 'dompurify';
 import { DomPurifyHelper } from '../helpers/DomPurifyHelper';
 import { ITemplateService } from '../services/templateService/ITemplateService';
 import { TemplateService } from '../services/templateService/TemplateService';
-import { ServiceScope, ServiceKey } from '@microsoft/sp-core-library';
+import { ServiceScope, ServiceKey } from "@microsoft/sp-core-library";
 
 const DEFAULT_SHIMMER_HEIGHT = 7;
 const SHIMMER_LINE_VS_CELL_WIDTH_RATIO = 0.95;
@@ -98,7 +98,7 @@ export interface IDetailsListColumnConfiguration {
 }
 
 export interface IDetailsListComponentProps {
-
+  
     /**
      * Current items
      */
@@ -157,12 +157,27 @@ export interface IDetailsListComponentProps {
     /**
      * The Handlebars context to inject in columns content (ex: @root)
      */
-    context?: any;
+    context?: IDataResultsTemplateContext;
 
     /**
      * The isolated Handlebars namespace 
      */
     handlebars: typeof Handlebars;
+
+    /**
+    * The current selection keys. Needed to set the selected state of the component.
+    */
+    selectedKeys?: string[];
+
+    /**
+     * Flag indicating if items can be selected in the results
+     */
+    allowItemSelection?: boolean;
+
+    /**
+    * Allow multiple values to be select=ed
+    */
+    allowMulti?: boolean;
 }
 
 export interface IDetailsListComponentState {
@@ -176,6 +191,8 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
   private _allItems: any[];
   private _templateContext: IDataResultsTemplateContext;
   private _domPurify: any;
+  private _selection: Selection;
+  private _selectionMode: SelectionMode = SelectionMode.none;
 
   constructor(props: IDetailsListComponentProps) {
     super(props);
@@ -191,12 +208,29 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
 
     this._allItems = this.props.items ? this.props.items : [];
 
-    this._templateContext = !isEmpty(this.props.context) ? this.props.context : null;
+    if (!isEmpty(this.props.context)) {
+
+      this._selection = new Selection(
+        {
+          getKey: (item, index) => {
+            // Use of the same key format as the main selection mechanism
+            // The selection is not managed directly in the details list as it is rendered every time due to Handlebars
+            return item.key = `${this.props.context.paging.currentPageNumber}${index}`;
+          }
+        }
+      );
+
+      if (this.props.allowItemSelection) {
+        this._selectionMode = this.props.allowMulti ? SelectionMode.multiple : SelectionMode.single;
+      } 
+
+      this._templateContext = this.props.context;
+    }
 
     const columns: IColumn[] = [
     ];
 
-    // Show file icon pption
+    // Show file icon option
     if (this.props.showFileIcon) {
       columns.push(
         {
@@ -211,8 +245,11 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
           onColumnClick: this._onColumnClick,
           onRender: (item: any) => {
 
+            const contentclass= (ObjectHelper.byPath(item, BuiltinTemplateSlots.ContentClass) + "").toLowerCase();
+            const fallbackSiteLogo = !isEmpty(contentclass) && (contentclass == "sts_site" || contentclass == "sts_web") ? ObjectHelper.byPath(item, "SiteLogo") : "";
+
             // A default icon will be displayed if the feld is not a valid extension (a full path with file name works as well)
-            return <FileIcon extension={ObjectHelper.byPath(item, this.props.fileExtensionField)} isContainer={ObjectHelper.byPath(item, this.props.isContainerField)} imageUrl={ObjectHelper.byPath(item, "SiteLogo")} />;
+            return <FileIcon extension={ObjectHelper.byPath(item, this.props.fileExtensionField)} isContainer={ObjectHelper.byPath(item, this.props.isContainerField)} imageUrl={fallbackSiteLogo} />;
           }
         }
       );
@@ -223,6 +260,7 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
 
       this.props.columnsConfiguration.forEach((column: IDetailsListColumnConfiguration) => {
         const allowSorting = column.enableSorting && (column.useHandlebarsExpr !== true || (column.valueSorting && column.valueSorting.length > 0));
+
         columns.push(
           {
             key: column.name,
@@ -255,7 +293,7 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
               // Check if the value in an Handlebars expression
               if (column.useHandlebarsExpr) {
                 try {
-                  value = this._processHandleBarsExprValue(column.value, item);
+                  value = this.props.handlebars ? this._processHandleBarsExprValue(column.value, item): column.value;
                 } catch (error) {
                   hasError = true;
                   value = `<span style="color:red;font-style: italic" title="${error.message}">${`Error: ${error.message}`}</span>`;
@@ -282,9 +320,13 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
     };
 
     this._copyAndSort = this._copyAndSort.bind(this);
+    this._onRenderCustomPlaceholder = this._onRenderCustomPlaceholder.bind(this);
+    this._onRenderDetailsHeader = this._onRenderDetailsHeader.bind(this);
+    this._onRenderRow = this._onRenderRow.bind(this);
   }
 
   public render() {
+
     const { columns, items } = this.state;
 
     let shimmeredDetailsListProps: IShimmeredDetailsListProps = {
@@ -292,123 +334,16 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
       items: items,
       compact: this.props.isCompact,
       columns: columns,
-      selectionMode: SelectionMode.none,
-      setKey: "set",
+      selectionMode: this._selectionMode,
+      selection: this._selection,
       layoutMode: DetailsListLayoutMode.justified,
       isHeaderVisible: true,
       enableShimmer: this.props.showShimmers,
       selectionPreservedOnEmptyClick: true,
       enterModalSelectionOnTouch: true,
-      onRenderCustomPlaceholder: (rowProps: IDetailsRowProps): JSX.Element => {
-
-        // Logic updated from default logic https://github.com/OfficeDev/office-ui-fabric-react/blob/master/packages/office-ui-fabric-react/src/components/DetailsList/ShimmeredDetailsList.base.tsx
-        // tslint:disable-next-line:no-shadowed-variable
-        const { columns , compact, selectionMode, checkboxVisibility, cellStyleProps = DEFAULT_CELL_STYLE_PROPS } = rowProps;
-
-        const { rowHeight, compactRowHeight } = DEFAULT_ROW_HEIGHTS;
-        const gapHeight: number = compact ? compactRowHeight : rowHeight + 1; // 1px to take into account the border-bottom of DetailsRow.
-
-        const shimmerElementsRow: JSX.Element[] = [];
-
-        const showCheckbox = selectionMode !== SelectionMode.none && checkboxVisibility !== CheckboxVisibility.hidden;
-
-        if (showCheckbox) {
-            shimmerElementsRow.push(
-                <ShimmerElementsGroup 
-                theme={this.props.themeVariant as ITheme} 
-                backgroundColor={this.props.themeVariant.semanticColors.bodyBackground}
-                key={'checkboxGap'} 
-                shimmerElements={[{ type: ShimmerElementType.gap, width: '40px', height: gapHeight }]} />
-            );
-        }
-
-        columns.forEach((column, columnIdx) => {
-            const shimmerElements: IShimmerElement[] = [];
-            const groupWidth: number =
-                cellStyleProps.cellLeftPadding +
-                cellStyleProps.cellRightPadding +
-                column.calculatedWidth! +
-                (column.isPadded ? cellStyleProps.cellExtraRightPadding : 0);
-
-            shimmerElements.push({
-                type: ShimmerElementType.gap,
-                width: cellStyleProps.cellLeftPadding,
-                height: gapHeight
-            });
-
-            if (column.isIconOnly) {
-                shimmerElements.push({
-                    type: ShimmerElementType.line,
-                    width: column.calculatedWidth!,
-                    height: column.calculatedWidth!
-                });
-                shimmerElements.push({
-                    type: ShimmerElementType.gap,
-                    width: cellStyleProps.cellRightPadding,
-                    height: gapHeight
-                });
-            } else {
-                shimmerElements.push({
-                    type: ShimmerElementType.line,
-                    width: column.calculatedWidth! * SHIMMER_LINE_VS_CELL_WIDTH_RATIO,
-                    height: DEFAULT_SHIMMER_HEIGHT
-                });
-                shimmerElements.push({
-                    type: ShimmerElementType.gap,
-                    width:
-                        cellStyleProps.cellRightPadding +
-                        (column.calculatedWidth! - column.calculatedWidth! * SHIMMER_LINE_VS_CELL_WIDTH_RATIO) +
-                        (column.isPadded ? cellStyleProps.cellExtraRightPadding : 0),
-                    height: gapHeight
-                });
-            }
-
-            shimmerElementsRow.push(<ShimmerElementsGroup 
-                theme={this.props.themeVariant as ITheme}  
-                key={columnIdx} width={`${groupWidth}px`} 
-                backgroundColor={this.props.themeVariant.semanticColors.bodyBackground}
-                shimmerElements={shimmerElements} />);
-        });
-        // When resizing the window from narrow to wider, we need to cover the exposed Shimmer wave until the column resizing logic is done.
-        shimmerElementsRow.push(
-            <ShimmerElementsGroup
-                key={'endGap'}
-                width={'100%'}
-                backgroundColor={this.props.themeVariant.semanticColors.bodyBackground}
-                theme={this.props.themeVariant as ITheme} 
-                shimmerElements={[{ type: ShimmerElementType.gap, width: '100%', height: gapHeight }]}
-            />
-        );
-        return <Shimmer 
-        theme={this.props.themeVariant as ITheme}
-        customElementsGroup={<div style={{ display: 'flex' }}>{shimmerElementsRow}</div>}/>;
-      },
-      onRenderRow: (rowProps: IDetailsRowProps): JSX.Element => {
-          return <DetailsRow {...rowProps} theme={this.props.themeVariant as ITheme}/>;
-      },
-      onRenderDetailsHeader: (props: IDetailsHeaderProps): JSX.Element => {
-
-          props.onRenderColumnHeaderTooltip = (tooltipHostProps: ITooltipHostProps) => {
-
-              const customStyles: Partial<ITooltipStyles> = {};
-              customStyles.root = { 
-                  backgroundColor: this.props.themeVariant.semanticColors.listBackground,
-                  color: this.props.themeVariant.semanticColors.listText,
-                  selectors: {
-                      ':hover': {
-                          backgroundColor: this.props.themeVariant.semanticColors.listHeaderBackgroundHovered
-                      },
-                      i: {
-                          color: this.props.themeVariant.semanticColors.listText,
-                      }
-                  }
-              };
-
-              return <TooltipHost {...tooltipHostProps} theme={this.props.themeVariant as ITheme} styles={customStyles}/>;
-          };
-
-          return <DetailsHeader {...props} theme={this.props.themeVariant as ITheme}/>;
-      }    
+      onRenderCustomPlaceholder: this._onRenderCustomPlaceholder,
+      onRenderRow: this._onRenderRow,
+      onRenderDetailsHeader: this._onRenderDetailsHeader,
     };
 
     if (this.state.groups.length > 0) {
@@ -439,6 +374,129 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
         items: items 
       });
     }
+
+    // Manually select the items in the list
+    if (this.props.selectedKeys) {
+
+      this.props.selectedKeys.forEach(key => {
+        this._selection.setKeySelected(key, true, false);
+      });
+
+      this.forceUpdate();
+    }
+  }
+
+  private _onRenderCustomPlaceholder(rowProps: IDetailsRowProps): JSX.Element {
+
+    // Logic updated from default logic https://github.com/OfficeDev/office-ui-fabric-react/blob/master/packages/office-ui-fabric-react/src/components/DetailsList/ShimmeredDetailsList.base.tsx
+    // tslint:disable-next-line:no-shadowed-variable
+    const { columns , compact, selectionMode, checkboxVisibility, cellStyleProps = DEFAULT_CELL_STYLE_PROPS } = rowProps;
+
+    const { rowHeight, compactRowHeight } = DEFAULT_ROW_HEIGHTS;
+    const gapHeight: number = compact ? compactRowHeight : rowHeight + 1; // 1px to take into account the border-bottom of DetailsRow.
+
+    const shimmerElementsRow: JSX.Element[] = [];
+
+    const showCheckbox = selectionMode !== SelectionMode.none && checkboxVisibility !== CheckboxVisibility.hidden;
+
+    if (showCheckbox) {
+        shimmerElementsRow.push(
+            <ShimmerElementsGroup 
+            theme={this.props.themeVariant as ITheme} 
+            backgroundColor={this.props.themeVariant.semanticColors.bodyBackground}
+            key={'checkboxGap'} 
+            shimmerElements={[{ type: ShimmerElementType.gap, width: '40px', height: gapHeight }]} />
+        );
+    }
+
+    columns.forEach((column, columnIdx) => {
+        const shimmerElements: IShimmerElement[] = [];
+        const groupWidth: number =
+            cellStyleProps.cellLeftPadding +
+            cellStyleProps.cellRightPadding +
+            column.calculatedWidth! +
+            (column.isPadded ? cellStyleProps.cellExtraRightPadding : 0);
+
+        shimmerElements.push({
+            type: ShimmerElementType.gap,
+            width: cellStyleProps.cellLeftPadding,
+            height: gapHeight
+        });
+
+        if (column.isIconOnly) {
+            shimmerElements.push({
+                type: ShimmerElementType.line,
+                width: column.calculatedWidth!,
+                height: column.calculatedWidth!
+            });
+            shimmerElements.push({
+                type: ShimmerElementType.gap,
+                width: cellStyleProps.cellRightPadding,
+                height: gapHeight
+            });
+        } else {
+            shimmerElements.push({
+                type: ShimmerElementType.line,
+                width: column.calculatedWidth! * SHIMMER_LINE_VS_CELL_WIDTH_RATIO,
+                height: DEFAULT_SHIMMER_HEIGHT
+            });
+            shimmerElements.push({
+                type: ShimmerElementType.gap,
+                width:
+                    cellStyleProps.cellRightPadding +
+                    (column.calculatedWidth! - column.calculatedWidth! * SHIMMER_LINE_VS_CELL_WIDTH_RATIO) +
+                    (column.isPadded ? cellStyleProps.cellExtraRightPadding : 0),
+                height: gapHeight
+            });
+        }
+
+        shimmerElementsRow.push(<ShimmerElementsGroup 
+            theme={this.props.themeVariant as ITheme}  
+            key={columnIdx} width={`${groupWidth}px`} 
+            backgroundColor={this.props.themeVariant.semanticColors.bodyBackground}
+            shimmerElements={shimmerElements} />);
+    });
+    // When resizing the window from narrow to wider, we need to cover the exposed Shimmer wave until the column resizing logic is done.
+    shimmerElementsRow.push(
+        <ShimmerElementsGroup
+            key={'endGap'}
+            width={'100%'}
+            backgroundColor={this.props.themeVariant.semanticColors.bodyBackground}
+            theme={this.props.themeVariant as ITheme} 
+            shimmerElements={[{ type: ShimmerElementType.gap, width: '100%', height: gapHeight }]}
+        />
+    );
+    return <Shimmer 
+    theme={this.props.themeVariant as ITheme}
+    customElementsGroup={<div style={{ display: 'flex' }}>{shimmerElementsRow}</div>}/>;
+  }
+
+  private _onRenderRow(rowProps: IDetailsRowProps): JSX.Element {
+    return <DetailsRow {...rowProps} theme={this.props.themeVariant as ITheme}/>;
+  }
+
+  private _onRenderDetailsHeader(props: IDetailsHeaderProps): JSX.Element {
+    
+    props.onRenderColumnHeaderTooltip = (tooltipHostProps: ITooltipHostProps) => {
+
+        const customStyles: Partial<ITooltipStyles> = {};
+        customStyles.root = { 
+            backgroundColor: this.props.themeVariant.semanticColors.listBackground,
+            color: this.props.themeVariant.semanticColors.listText,
+            selectors: {
+                ':hover': {
+                    backgroundColor: this.props.themeVariant.semanticColors.listHeaderBackgroundHovered
+                },
+                i: {
+                    color: this.props.themeVariant.semanticColors.listText,
+                }
+            }
+        };
+
+      return <TooltipHost {...tooltipHostProps} theme={this.props.themeVariant as ITheme} styles={customStyles}/>;
+    };
+
+    return <DetailsHeader {...props} theme={this.props.themeVariant as ITheme}/>;
   }
 
   private _onColumnClick = (ev: React.MouseEvent<HTMLElement>, column: IColumn): void => {
@@ -564,20 +622,20 @@ export class DetailsListWebComponent extends BaseWebComponent {
  
     public connectedCallback() {
  
-      let props = this.resolveAttributes();
-      let serviceScope: ServiceScope = this._serviceScope; // Default is the root shared service scope regardless the current Web Part 
-      let templateServiceKey: ServiceKey<any> = TemplateService.ServiceKey; // Defaut service key for TemplateService
+        let props = this.resolveAttributes();
+        let serviceScope: ServiceScope = this._serviceScope; // Default is the root shared service scope regardless the current Web Part 
+        let templateServiceKey: ServiceKey<any> = TemplateService.ServiceKey; // Defaut service key for TemplateService
 
-      if (props.instanceId) {
+        if (props.instanceId) {
 
-        // Get the service scope and keys associated to the current Web Part displaying the component
-        serviceScope = this._webPartServiceScopes.get(props.instanceId) ? this._webPartServiceScopes.get(props.instanceId) : serviceScope;
-        templateServiceKey = this._webPartServiceKeys.get(props.instanceId) ? this._webPartServiceKeys.get(props.instanceId).TemplateService : templateServiceKey;
-      }
+          // Get the service scope and keys associated to the current Web Part displaying the component
+          serviceScope = this._webPartServiceScopes.get(props.instanceId) ? this._webPartServiceScopes.get(props.instanceId) : serviceScope;
+          templateServiceKey = this._webPartServiceKeys.get(props.instanceId) ? this._webPartServiceKeys.get(props.instanceId).TemplateService : templateServiceKey;
+        }
 
-      const templateService = serviceScope.consume<ITemplateService>(templateServiceKey);
-
-       const detailsListComponent = <DetailsListComponent {...props} handlebars={templateService.Handlebars}/>;
-       ReactDOM.render(detailsListComponent, this);
+        const templateService = serviceScope.consume<ITemplateService>(templateServiceKey);
+        
+        const detailsListComponent = <DetailsListComponent {...props} handlebars={templateService.Handlebars}/>;
+        ReactDOM.render(detailsListComponent, this);
     }
 }

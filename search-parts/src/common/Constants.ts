@@ -19,7 +19,6 @@ export class Constants {
      * The PnP Application Insights instrumentation key and events for stats tracking
      */
     public static readonly PNP_APP_INSIGHTS_INSTRUMENTATION_KEY = '0f0b9db6-680c-480c-804d-f75830e2c383';
-    public static readonly PNP_APP_INSIGHTS_INSTRUMENTATION_KEY_FALLBACK = '0144990f-ee63-4e5b-83d2-f1e21d4f8785';
     public static readonly PNP_MODERN_SEARCH_EVENT_NAME = 'pnpModernSearchV4';
 }
 

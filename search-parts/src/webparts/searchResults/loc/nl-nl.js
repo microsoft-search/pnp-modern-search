@@ -68,13 +68,26 @@ define([], function() {
           CancelButtonText: "Annuleer",
           DialogButtonText: "Bewerk sjabloon",
           DialogTitle: "Bewerk resultaatsjabloon",
-          SaveButtonText: "Bewaar"
+          SaveButtonText: "Bewaar",
+          AllowItemSelection: "Selectie van items toestaan",
+          AllowMultipleItemSelection: "Meerdere selectie toestaan",
+          SelectionModeLabel: "Selectiemodus",
+          AsTokensSelectionMode: "Verwerk geselecteerde waarden als tokens (handmatige modus)",
+          AsDataFiltersSelectionMode: "Verwerk geselecteerde waarden als filters (standaardmodus)",
+          AsDataFiltersDescription: "In deze modus worden geselecteerde waarden als gewone filters naar de gegevensbron verzonden",
+          AsTokensDescription: "In deze modus worden geselecteerde waarden handmatig gebruikt via tokens en beschikbare methoden. Voorbeeld met SharePoint-zoekopdrachtsjabloon: {?Title:{filters.&lt;destination_field_name&gt;.valueAsText}}",
+          FilterValuesOperator: "De logische operator die tussen geselecteerde waarden moet worden gebruikt",
+          FieldToConsumeLabel: "Bronveld om te consumeren",
+          FieldToConsumeDescription: "Gebruik deze veldwaarde voor geselecteerde items"
         }
       },
       ConnectionsPage: {
         ConnectionsPageGroupName: "Beschikbare verbindingen",
         UseFiltersWebPartLabel: "Verbind met een filter webonderdeel",
         UseFiltersFromComponentLabel: "Gebruik filters van dit onderdeel",
+        UseDynamicFilteringsWebPartLabel: "Verbinding maken met een webonderdeel met gegevensresultaten",
+        UseDataResultsFromComponentsLabel: "Gegevens uit dit webonderdeel gebruiken",
+        UseDataResultsFromComponentsDescription: "Gegevens gebruiken van geselecteerde items in deze webonderdelen",
         UseSearchVerticalsWebPartLabel: "Verbind met een zoekverticalen webonderdeel",
         UseSearchVerticalsFromComponentLabel: "Gebruik zoekverticalen van dit onderdeel",
         LinkToVerticalLabel: "Toon data alleen wanneer de volgende zoekverticaal geselecteerd is",
@@ -87,13 +100,19 @@ define([], function() {
         InputQueryTextStaticValue: "Statische waarde",
         InputQueryTextDynamicValue: "Dynamische waarde",
         SearchQueryTextUseDefaultQuery: "Gebruik een standaardwaarde",
-        SearchQueryTextDefaultValue: "Standaardwaarde"
+        SearchQueryTextDefaultValue: "Standaardwaarde",
+        SourceDestinationFieldLabel: "Naam van bestemmingsveld",
+        SourceDestinationFieldDescription: "Bestemmingsveld dat in dit webonderdeel moet worden gebruikt om overeen te komen met de geselecteerde waarden",
+        AvailableFieldValuesFromResults: "Veld met de filterwaarde"
       },
       InformationPage: {
         Extensibility: {
           PanelHeader: "Configureer inladen van uitbreidingsbibliotheken bij opstarten",
           PanelDescription:"Beheer hier je aangepaste uitbreidingsbibliotheek ID's. Je kan hier een weergavenaam specificeren en aangeven of de bibliotheek geladen moet worden. Alleen aangepaste databronnen, indelingen, web componenten en Handlebars helpers worden hier geladen.",
-        }
+        },
+        EnableTelemetryLabel: "PnP-telemetrie",
+        EnableTelemetryOn: "Telemetrie inschakelen",
+        EnableTelemetryOff: "Telemetrie uitschakelen"
       },
       ImportExport: "Importeer / Exporteer instellingen "
     }

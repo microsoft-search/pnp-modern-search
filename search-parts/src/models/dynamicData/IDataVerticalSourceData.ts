@@ -1,4 +1,5 @@
-import { IDataVertical } from "../common/IDataVertical";
+import { IDataVertical } from "@pnp/modern-search-extensibility";
+import { IDataVerticalConfiguration } from "../common/IDataVerticalConfiguration";
 
 export interface IDataVerticalSourceData {
 
@@ -10,5 +11,5 @@ export interface IDataVerticalSourceData {
     /**
      * The serch verticals configuration. Used to determnine counts for other tabs.
      */
-    verticalsConfiguration: IDataVertical[];
+    verticalsConfiguration: IDataVerticalConfiguration[];
 }

@@ -15,6 +15,8 @@ define([], function() {
                 UseDataResultsWebPartLabel: "Połącz z wynikami Web Parta",
                 UseDataResultsFromComponentsLabel: "Użyj danych z następujących Web Partów",
                 UseDataResultsFromComponentsDescription: "Jeśli połączysz więcej niż jeden Web Part, wartości filtrów i liczność będzie połączona po nazwach filtrów.",
+                LinkToVerticalLabel: "Wyświetlaj filtry tylko wtedy, gdy wybrane są następujące branże",
+                LinkToVerticalLabelHoverMessage: "Filtry będą wyświetlane tylko wtedy, gdy wybrana branża pasuje do tych skonfigurowanych dla tego składnika Web Part. W przeciwnym razie składnik Web Part będzie pusty (bez marginesów i dopełnienia) w trybie wyświetlania."
             },
             FiltersSettingsPage: {
                 SettingsGroupName: "Ustawienia filtrów",

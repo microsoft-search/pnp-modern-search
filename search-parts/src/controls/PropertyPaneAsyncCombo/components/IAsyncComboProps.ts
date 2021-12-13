@@ -89,4 +89,14 @@ export interface IAsyncComboProps {
      *
      */
     onGetErrorMessage?: (value: string) => string;
+
+    /**
+     * Whether to use the ComboBoxes width as the menu's width
+     */
+    useComboBoxAsMenuWidth?: boolean;
+
+    /**
+     * Flag indicating if the control should clear the text when the user focus the combobox
+     */
+    clearTextOnFocus?: boolean;
 }

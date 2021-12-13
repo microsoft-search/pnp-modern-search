@@ -89,7 +89,12 @@ define([], function() {
             SameTabOpenBehavior: "Utiliser l’onglet actuel",
             NewTabOpenBehavior: "Ouvrir dans un nouvel onglet",
             PageOpenBehaviorLabel: "Comportement d’ouverture",
-            EmptyFieldErrorMessage: "Ce champ ne doit pas être vide."
+            EmptyFieldErrorMessage: "Ce champ ne doit pas être vide.",
+            TagPickerStrings: {
+                NoResultsSearchMessage: "Aucun résultat trouvé",
+                SearchPlaceholder: "Rechercher une valeur..."
+            },
+            CurrentVerticalNotSelectedMessage: "La verticale actuellement sélectionnée ne correspond pas à celles associées à ce composant WebPart ({0}). Il restera vide en mode d'affichage."
         },
         DataSources: {
             SharePointSearch: {
@@ -131,7 +136,14 @@ define([], function() {
                 EnableTopResultsLabel: "Obtenir les meilleurs résultats",
                 ContentSourcesFieldLabel: "Sources du contenu",
                 ContentSourcesFieldDescriptionLabel: "Identifiants de connexion définis dans le portail d’administration des connecteurs de recherche Microsoft.",
-                ContentSourcesFieldPlaceholderLabel: "Exemple : « MyCustomConnectorID » "
+                ContentSourcesFieldPlaceholderLabel: "Exemple: « MyCustomConnectorID » ",
+                EnableSuggestionLabel: "Activer les suggestions orthographiques",
+                EnableModificationLabel: "Activer les modifications orthographiques",
+                QueryTemplateFieldLabel: "Modèle de requête",
+                QueryTemplatePlaceHolderText: "ex: {searchTerms} IsDocument:true",
+                QueryTemplateFieldDescription: "Vous pouvez également utiliser {<tokens>} et KQL pour créer une requête dynamique.",
+                ApplyQueryTemplateBtnText: "Appliquer",
+                UseBetaEndpoint: "Utiliser le point de terminaison beta"
             },
             SearchCommon: {
                 Sort: {
@@ -294,7 +306,9 @@ define([], function() {
         },
         PropertyPane: {
             ConnectionsPage: {
-                DataConnectionsGroupName: "Connexions disponibles"
+                DataConnectionsGroupName: "Connexions disponibles",
+                UseDataVerticalsWebPartLabel: "Se connecter à un composant WebPart de verticales",
+                UseDataVerticalsFromComponentLabel: "Utiliser les verticales de ce composant"
             },
             InformationPage: {
                 Extensibility: {
@@ -315,7 +329,10 @@ define([], function() {
             FilterNoValuesMessage: "Aucune valeur pour ce filtre",
             OrOperator: "OU",
             AndOperator: "ET",
-            ComboBoxPlaceHolder: "Choisir une valeur"
+            ComboBoxPlaceHolder: "Choisir une valeur",
+            UseAndOperatorValues: "Utiliser l'opérateur ET entre les valeurs",
+            UseOrOperatorValues: "Utiliser l'opérateur OU entre les valeurs",
+            UseValuesOperators: "Sélectionne l'opérateur à utiliser entre les valeurs de ce filtre"
         },
         SuggestionProviders: {
             SharePointStatic: {

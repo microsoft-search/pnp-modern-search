@@ -1,5 +1,5 @@
 ﻿import * as React from 'react';
-import { IDataSourceData, BaseDataSource, ITokenService, IDataFilter, ITemplateSlot, IDataFilterResult, IDataFilterResultValue, BuiltinTemplateSlots, FilterComparisonOperator, IDataFilterConfiguration, FilterBehavior, FilterSortType, FilterSortDirection } from "@pnp/modern-search-extensibility";
+import { IDataSourceData, BaseDataSource, ITokenService, ITemplateSlot, IDataFilterResult, IDataFilterResultValue, BuiltinTemplateSlots, FilterBehavior, FilterSortType, FilterSortDirection } from "@pnp/modern-search-extensibility";
 import {
     IPropertyPaneGroup,
     IPropertyPaneDropdownOption,
@@ -31,7 +31,6 @@ import { IAsyncComboProps } from '../controls/PropertyPaneAsyncCombo/components/
 import { DateHelper } from '../helpers/DateHelper';
 import { PropertyPaneNonReactiveTextField } from '../controls/PropertyPaneNonReactiveTextField/PropertyPaneNonReactiveTextField';
 import { ITerm } from '../services/taxonomyService/ITaxonomyItems';
-import { BuiltinFilterTemplates } from '../layouts/AvailableTemplates';
 import { DataFilterHelper } from '../helpers/DataFilterHelper';
 import { ISortFieldConfiguration, SortFieldDirection } from '../models/search/ISortFieldConfiguration';
 import { EnumHelper } from '../helpers/EnumHelper';
@@ -283,6 +282,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                         placeholder: commonStrings.DataSources.SharePointSearch.SelectedPropertiesPlaceholderLabel,
                         onLoadOptions: this.getAvailableProperties.bind(this),
                         searchAsYouType: false,
+                        clearTextOnFocus: true,
                         defaultSelectedKeys: this.properties.selectedProperties,
                         onPropertyChange: this.onCustomPropertyUpdate.bind(this),
                         onUpdateOptions: ((options: IComboBoxOption[]) => {
@@ -326,6 +326,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                                             onUpdateOptions: ((options: IComboBoxOption[]) => {
                                                 this._availableManagedProperties = options;
                                             }).bind(this),
+                                            clearTextOnFocus: true,
                                             placeholder: commonStrings.DataSources.SearchCommon.Sort.SortFieldColumnPlaceholder,
                                             useComboBoxAsMenuWidth: false // Used when screen resolution is too small to display the complete value  
                                         } as IAsyncComboProps));
@@ -812,13 +813,13 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
 
                 // Make sure, if we have multiple filters, at least two filters have values to avoid apply an operator ('or','and') on only one condition failing the query.
                 if (dataContext.filters.selectedFilters.length > 1 && dataContext.filters.selectedFilters.filter(selectedFilter => selectedFilter.values.length > 0).length > 1) {
-                    const refinementString = this.buildRefinementQueryString(dataContext.filters.selectedFilters, dataContext.filters.filtersConfiguration).join(',');
+                    const refinementString = DataFilterHelper.buildFqlRefinementString(dataContext.filters.selectedFilters, dataContext.filters.filtersConfiguration, this.moment).join(',');
                     if (!isEmpty(refinementString)) {
                         refinementFilters = refinementFilters.concat([`${dataContext.filters.filterOperator}(${refinementString})`]);
                     }
-
+                    
                 } else {
-                    refinementFilters = refinementFilters.concat(this.buildRefinementQueryString(dataContext.filters.selectedFilters, dataContext.filters.filtersConfiguration));
+                    refinementFilters = refinementFilters.concat(DataFilterHelper.buildFqlRefinementString(dataContext.filters.selectedFilters, dataContext.filters.filtersConfiguration, this.moment));
                 }
             }
 
@@ -860,101 +861,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
     }
 
     /**
-     * Build the refinement condition in FQL format
-     * @param selectedFilters The selected filter array
-     * @param filtersConfiguration The current filters configuration
-     * @param encodeTokens If true, encodes the taxonomy refinement tokens in UTF-8 to work with GET requests. Javascript encodes natively in UTF-16 by default.
-     */
-    private buildRefinementQueryString(selectedFilters: IDataFilter[], filtersConfiguration: IDataFilterConfiguration[], encodeTokens?: boolean): string[] {
-
-        let refinementQueryConditions: string[] = [];
-
-        selectedFilters.forEach(filter => {
-
-            let operator: any = filter.operator;
-
-            // Get the configuration for this filter
-            const filterConfiguration: IDataFilterConfiguration = DataFilterHelper.getConfigurationForFilter(filter, filtersConfiguration);
-
-            // The configuration should always be here for a filter. Not a valid scenario otherwise.
-            if (filterConfiguration) {
-
-                // Mutli values
-                if (filter.values.length > 1) {
-
-                    let startDate = null;
-                    let endDate = null;
-
-                    // A refiner can have multiple values selected in a multi or mon multi selection scenario
-                    // The correct operator is determined by the refiner display template according to its behavior
-                    const conditions = filter.values.map(filterValue => {
-
-                        let value = filterValue.value;
-
-                        if (this.moment(value, this.moment.ISO_8601, true).isValid()) {
-
-                            if (!startDate && (filterValue.operator === FilterComparisonOperator.Geq || filterValue.operator === FilterComparisonOperator.Gt)) {
-                                startDate = value;
-                            }
-
-                            if (!endDate && (filterValue.operator === FilterComparisonOperator.Lt || filterValue.operator === FilterComparisonOperator.Leq)) {
-                                endDate = value;
-                            }
-                        }
-
-                        // We know the taxonomy picker sends the selected taxonomy ID every time so we can safely use the value without processing
-                        if (filterConfiguration.selectedTemplate === BuiltinFilterTemplates.TaxonomyPicker) {
-                            value = `GP0|#${filterValue.value},L0|#0${filterValue.value}`; // Refine a SharePoint taxonomy term (only items with that specific term are retrieved)
-                        }
-
-                        return /ǂǂ/.test(value) && encodeTokens ? encodeURIComponent(value) : value;
-                    });
-
-                    if (startDate && endDate) {
-                        refinementQueryConditions.push(`${filter.filterName}:range(${startDate},${endDate})`);
-                    } else {
-                        refinementQueryConditions.push(`${filter.filterName}:${operator}(${conditions.join(',')})`);
-                    }
-
-                } else {
-
-                    // Single value
-                    if (filter.values.length === 1) {
-
-                        const filterValue = filter.values[0];
-
-                        // See https://sharepoint.stackexchange.com/questions/258081/how-to-hex-encode-refiners/258161
-                        let refinementToken = /ǂǂ/.test(filterValue.value) && encodeTokens ? encodeURIComponent(filterValue.value) : filterValue.value;
-
-                        // We know the taxonomy picker sends the selected taxonomy ID every time so we can safely use the value without processing
-                        if (filterConfiguration.selectedTemplate === BuiltinFilterTemplates.TaxonomyPicker) {
-                            refinementToken = `or(GP0|#${filterValue.value}, L0|#0${filterValue.value})`; // Refine a SharePoint taxonomy term (only results with that term). See https://docs.microsoft.com/en-us/sharepoint/technical-reference/automatically-created-managed-properties-in-sharepoint
-                        }
-
-                        // https://docs.microsoft.com/en-us/sharepoint/dev/general-development/fast-query-language-fql-syntax-reference#fql_range_operator
-                        if (this.moment(refinementToken, this.moment.ISO_8601, true).isValid()) {
-
-                            if (filterValue.operator === FilterComparisonOperator.Gt || filterValue.operator === FilterComparisonOperator.Geq) {
-                                refinementToken = `range(${refinementToken},max)`;
-                            }
-
-                            // Ex: scenario ('older than a year')
-                            if (filterValue.operator === FilterComparisonOperator.Leq || filterValue.operator === FilterComparisonOperator.Lt) {
-                                refinementToken = `range(min,${refinementToken})`;
-                            }
-                        }
-
-                        refinementQueryConditions.push(`${filter.filterName}:${refinementToken}`);
-                    }
-                }
-            }
-        });
-
-        return refinementQueryConditions;
-    }
-
-    /**
-     * Ensures the result source id value is a valid GUID or a string with format: Level|Result source name
+     * Ensures the result source id value is a valid GUID
      * @param value the result source id
      */
     private validateSourceId(value: string): string {

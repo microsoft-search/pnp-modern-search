@@ -68,13 +68,26 @@ define([], function() {
             CancelButtonText: "Avbryt",
             DialogButtonText: "Rediger mal",
             DialogTitle: "Rediger resultatmal",
-            SaveButtonText: "Lagre"
+            SaveButtonText: "Lagre",
+            AllowItemSelection: "Tillat valg av elementer",
+            AllowMultipleItemSelection: "Tillat flere valg",
+            SelectionModeLabel: "Valgmodus",
+            AsTokensSelectionMode: "Behandle valgte verdier som tokens (manuell modus)",
+            AsDataFiltersSelectionMode: "Behandle valgte verdier som filtre (standardmodus)",
+            AsDataFiltersDescription: "I denne modusen sendes valgte verdier til datakilden som vanlige filtre",
+            AsTokensDescription: "I denne modusen brukes valgte verdier manuelt gjennom tokens og tilgjengelige metoder. Eksempel med SharePoint-søkemal: {?Title:{filters.&lt;destination_field_name&gt;.valueAsText}}",
+            FilterValuesOperator: "Den logiske operatoren som skal brukes mellom valgte verdier",
+            FieldToConsumeLabel: "Kildefelt å konsumere",
+            FieldToConsumeDescription: "Bruk denne feltverdien for valgte elementer"
           }
         },
         ConnectionsPage: {
           ConnectionsPageGroupName: "Tilgjengelige tilkoblinger",
           UseFiltersWebPartLabel: "Koble til en filter-nettdel",
           UseFiltersFromComponentLabel: "Bruk filter fra denne komponenten",
+          UseDynamicFilteringsWebPartLabel: "Koble til en dataresultatwebdel",
+          UseDataResultsFromComponentsLabel: "Bruk data fra denne webdelen",
+          UseDataResultsFromComponentsDescription: "Bruk data fra utvalgte elementer i disse webdelene",
           UseSearchVerticalsWebPartLabel: "Koble til en vertikal-nettdel",
           UseSearchVerticalsFromComponentLabel: "Bruk vertikaler fra denne komponenten",
           LinkToVerticalLabel: "Vis kun data når følgende vertikaler er valgt",
@@ -87,13 +100,19 @@ define([], function() {
           InputQueryTextStaticValue: "Statisk verdi",
           InputQueryTextDynamicValue: "Dynamisk verdi",
           SearchQueryTextUseDefaultQuery: "Bruk standardverdi",
-          SearchQueryTextDefaultValue: "Standardverdi"
+          SearchQueryTextDefaultValue: "Standardverdi",
+          SourceDestinationFieldLabel: "Navn på destinasjonsfelt",
+          SourceDestinationFieldDescription: "Destinasjonsfelt som skal brukes i denne webdelen for å matche de valgte verdiene",
+          AvailableFieldValuesFromResults: "Felt som inneholder filterverdien"
         },
         InformationPage: {
           Extensibility: {
             PanelHeader: "Konfigurer utvidelsesbibliotek som skal lastes ved oppstart.",
             PanelDescription: "Legg til / fjern ID-en til ditt tilpassede utvidelsesbibliotek her. Du kan angi et visningsnavn og bestemme om biblioteket skal lastes ved oppstart eller ikke. Har lastes kun tilpassede datakilder, maler, web-komponenter og Handlebars-hjelpere.",
-          }
+          },
+          EnableTelemetryLabel: "PnP-telemetri",
+          EnableTelemetryOn: "Slå på telemetri",
+          EnableTelemetryOff: "Slå av telemetri"
         },
         ImportExport: "Importer/eksporter innstillinger"
       }

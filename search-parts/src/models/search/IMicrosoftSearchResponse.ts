@@ -1,7 +1,10 @@
 // https://docs.microsoft.com/en-us/graph/api/resources/searchresponse?view=graph-rest-beta
-import { EntityType } from "../../dataSources/MicrosoftSearchDataSource";
-
 export interface IMicrosoftSearchResponse {
+    value: IMicrosoftSearchResultSet;
+    queryAlterationResponse?: IQueryAlterationResponse;
+}
+
+export interface IMicrosoftSearchResultSet {
     hitsContainers: ISearchHitsContainer[];
     searchTerms: string[];
 }
@@ -18,7 +21,7 @@ export interface ISearchHit {
     rank: number;
     summary: string;
     contentSource: string;
-    resource: EntityType;
+    resource: ISearchResponseResource;
 }
 
 export interface ISearchResponseAggregation {
@@ -31,4 +34,31 @@ export interface IBucket {
     key: string;
     count: number;
     aggregationFilterToken: string;
+}
+
+export interface ISearchResponseResource {
+    "@odata.type": string;
+    fields?: {
+        [fieldName: string]: string;
+    };
+}
+
+// Query alteration response
+// https://docs.microsoft.com/en-us/graph/api/resources/alterationresponse?view=graph-rest-beta 
+export interface IQueryAlterationResponse {
+    originalQueryString:string;
+    queryAlteration:ISearchAlteration;
+    queryAlterationType: "suggestion"|"modification";
+}
+
+export interface ISearchAlteration {
+    alteredQueryString:string;
+    alteredHighlightedQueryString:string;
+    alteredQueryTokens:IAlteredQueryTokens[];
+}
+
+export interface IAlteredQueryTokens {
+    offset:number;
+    length:number;
+    suggestion:string;
 }

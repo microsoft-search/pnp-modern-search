@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ComboBox, IComboBoxOption, IComboBoxProps, IComboBox, SelectableOptionMenuItemType, Label } from 'office-ui-fabric-react';
+import { ComboBox, IComboBoxOption, IComboBoxProps, IComboBox, SelectableOptionMenuItemType, IComboBoxStyles, Label } from 'office-ui-fabric-react';
 import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/components/Spinner';
 import { isEqual, isEmpty } from '@microsoft/sp-lodash-subset';
 import update from 'immutability-helper';
@@ -49,9 +49,29 @@ export class AsyncCombo extends React.Component<IAsyncComboProps, IAsyncComboSta
                     backgroundColor: 'inherit'
                 }
             },
-            useComboBoxAsMenuWidth: true,                
+            onFocus: () => {
+
+                if (this.props.clearTextOnFocus) {
+                    this.setState({
+                        textDisplayValue: null
+                    });
+                }
+            },
+            onBlur: () => {
+
+                if (this.props.allowMultiSelect && this.state.selectedOptionKeys.length > 0) {
+                    this.setState({
+                        textDisplayValue: this.state.selectedOptionKeys.join(',')
+                    });
+                } else {
+                    this.setState({
+                        textDisplayValue: this.getTextDisplayValue()
+                    });
+                }
+            },
+            useComboBoxAsMenuWidth: this.props.useComboBoxAsMenuWidth !== null ? this.props.useComboBoxAsMenuWidth : true,                
             options: this.state.options,
-            placeholder: this.props.placeholder, 
+            placeholder: this.props.placeholder,
             onRenderOption: this.onRenderOption,
         };
 
@@ -324,7 +344,7 @@ export class AsyncCombo extends React.Component<IAsyncComboProps, IAsyncComboSta
                         key: LOADING_KEY,
                         text: '',
                         disabled: true,
-                        itemType: SelectableOptionMenuItemType.Header                        
+                        itemType: SelectableOptionMenuItemType.Header,                    
                     } as IComboBoxOption
                 ]
             });
@@ -369,6 +389,7 @@ export class AsyncCombo extends React.Component<IAsyncComboProps, IAsyncComboSta
             if (this.props.onUpdateOptions) {
                 this.props.onUpdateOptions(options);
             }
+    
         }
     }
 
@@ -376,6 +397,7 @@ export class AsyncCombo extends React.Component<IAsyncComboProps, IAsyncComboSta
 
         let initialValue: string = null;
 
+        // If a display value has been passed explicitly, we use it otherwise, we use the default selected keys
         if (this.props.textDisplayValue) {
 
             initialValue = this.props.textDisplayValue;

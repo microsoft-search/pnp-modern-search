@@ -1,4 +1,4 @@
-import { IDataFilter, IDataFilterConfiguration, FilterType, IDataFilterResult } from "@pnp/modern-search-extensibility";
+import { IDataFilter, IDataFilterConfiguration, FilterType, IDataFilterResult, FilterComparisonOperator } from "@pnp/modern-search-extensibility";
 import { BuiltinTokenNames } from "../services/tokenService/TokenService";
 
 export class DataFilterHelper {
@@ -76,4 +76,83 @@ export class DataFilterHelper {
 
     return selectedFiltersInTokens;
   }
+
+  /**
+   * Build the refinement condition in FQL format
+   * @param selectedFilters The selected filter array
+   * @param filtersConfiguration The current filters configuration
+   * @param moment The moment.js instance to resolve dates
+   * @param encodeTokens If true, encodes the taxonomy refinement tokens in UTF-8 to work with GET requests. Javascript encodes natively in UTF-16 by default.
+   */
+  public static buildFqlRefinementString(selectedFilters: IDataFilter[], filtersConfiguration: IDataFilterConfiguration[], moment: any, encodeTokens?: boolean): string[] {
+    
+    let refinementQueryConditions: string[] = [];
+
+    selectedFilters.forEach(filter => {
+
+        let operator: any = filter.operator;
+
+        // Mutli values
+        if (filter.values.length > 1) {
+
+            let startDate = null;
+            let endDate = null;
+
+            // A refiner can have multiple values selected in a multi or mon multi selection scenario
+            // The correct operator is determined by the refiner display template according to its behavior
+            const conditions = filter.values.map(filterValue => {
+
+                    let value = filterValue.value;
+            
+                    if (moment(value, moment.ISO_8601, true).isValid()) {
+
+                        if (!startDate && (filterValue.operator === FilterComparisonOperator.Geq || filterValue.operator === FilterComparisonOperator.Gt)) {
+                            startDate = value;
+                        }
+
+                        if (!endDate && (filterValue.operator === FilterComparisonOperator.Lt || filterValue.operator === FilterComparisonOperator.Leq)) {
+                            endDate = value;
+                        }
+                    }
+
+                    return /ǂǂ/.test(value) && encodeTokens ? encodeURIComponent(value) : value;
+                
+            }).filter(c => c);
+
+            if (startDate && endDate) {
+                refinementQueryConditions.push(`${filter.filterName}:range(${startDate},${endDate})`);
+            } else {
+                refinementQueryConditions.push(`${filter.filterName}:${operator}(${conditions.join(',')})`);
+            }
+
+        } else {
+
+            // Single value
+            if (filter.values.length === 1) {
+
+                const filterValue = filter.values[0];
+
+                // See https://sharepoint.stackexchange.com/questions/258081/how-to-hex-encode-refiners/258161
+                let refinementToken = /ǂǂ/.test(filterValue.value) && encodeTokens ? encodeURIComponent(filterValue.value) : filterValue.value;
+
+                // https://docs.microsoft.com/en-us/sharepoint/dev/general-development/fast-query-language-fql-syntax-reference#fql_range_operator
+                if (moment(refinementToken, moment.ISO_8601, true).isValid()) {
+
+                    if (filterValue.operator === FilterComparisonOperator.Gt || filterValue.operator === FilterComparisonOperator.Geq) {
+                        refinementToken = `range(${refinementToken},max)`;
+                    }
+
+                    // Ex: scenario ('older than a year')
+                    if (filterValue.operator === FilterComparisonOperator.Leq || filterValue.operator === FilterComparisonOperator.Lt) {
+                        refinementToken = `range(min,${refinementToken})`;
+                    }
+                }
+                
+                refinementQueryConditions.push(`${filter.filterName}:${refinementToken}`);
+            }
+        }
+    });
+
+    return refinementQueryConditions;
+  } 
 }
