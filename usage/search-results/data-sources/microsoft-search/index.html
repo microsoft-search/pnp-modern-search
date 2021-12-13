@@ -856,7 +856,6 @@
                 <p>The <em>'Microsoft Search'</em> data source retrieve items from the Microsoft search engine.</p>
 <blockquote>
 <p>This data source uses the Microsoft Search beta API that is not suitable for a production use. An enhanced version of this data source will follow when the GA version will be released.</p>
-<p>Search filters are not supported yet.</p>
 </blockquote>
 <h4 id="source-configuration">Source configuration<a class="headerlink" href="#source-configuration" title="Permanent link">&para;</a></h4>
 <table>
@@ -872,6 +871,16 @@
 <td><strong>Entity types to search</strong></td>
 <td>The entity types to search. See the <a href="https://docs.microsoft.com/en-us/graph/api/resources/search-api-overview?view=graph-rest-beta">Microsoft Search API documentation</a> to see valid combinations.</td>
 <td>Drive items (SharePoint &amp; OneDrive)</td>
+</tr>
+<tr>
+<td><strong>Query template</strong></td>
+<td>A query template allowing to use tokens to set a base query the same way as SharePoint search.</td>
+<td><code>{searchTerms}</code></td>
+</tr>
+<tr>
+<td><strong>Use beta endpoint</strong></td>
+<td>Flag to switch between <code>v1.0</code> and <code>beta</code> Microsoft Graph endpoint.</td>
+<td><strong>false</strong></td>
 </tr>
 </tbody>
 </table>
