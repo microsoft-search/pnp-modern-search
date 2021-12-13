@@ -60,11 +60,8 @@ export interface IMicrosoftSearchDataSourceProperties {
     contentSourceConnectionIds: string[];
 
     /**
-     * The search modfier template. Extends the query with additional KQL
-     * e.g. if tempalte is set to 'IsDocument:true' a search with the input string 'security'
-     * will be transformed to 'security IsDocument:true'
+     * The search query template
      */
-     
     queryTemplate: string;
 
     /**
