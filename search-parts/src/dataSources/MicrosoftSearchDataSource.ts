@@ -1,5 +1,5 @@
 import { BaseDataSource, IDataSourceData, FilterSortType, FilterSortDirection, ITemplateSlot, BuiltinTemplateSlots, IDataContext, ITokenService, FilterBehavior, PagingBehavior, IDataFilterResult, IDataFilterResultValue, FilterComparisonOperator } from "@pnp/modern-search-extensibility";
-import { IPropertyPaneGroup, PropertyPaneLabel, IPropertyPaneField, PropertyPaneToggle } from "@microsoft/sp-property-pane";
+import { IPropertyPaneGroup, PropertyPaneLabel, IPropertyPaneField, PropertyPaneToggle, PropertyPaneHorizontalRule } from "@microsoft/sp-property-pane";
 import { cloneDeep, isEmpty } from '@microsoft/sp-lodash-subset';
 import { MSGraphClientFactory } from "@microsoft/sp-http";
 import { TokenService } from "../services/tokenService/TokenService";
@@ -14,12 +14,14 @@ import { IMicrosoftSearchResultSet } from "../models/search/IMicrosoftSearchResp
 import { ISortFieldConfiguration, SortFieldDirection } from '../models/search/ISortFieldConfiguration';
 import { AsyncCombo } from "../controls/PropertyPaneAsyncCombo/components/AsyncCombo";
 import { IAsyncComboProps } from "../controls/PropertyPaneAsyncCombo/components/IAsyncComboProps";
+import { PropertyPaneNonReactiveTextField } from "../controls/PropertyPaneNonReactiveTextField/PropertyPaneNonReactiveTextField";
 import { ISharePointSearchService } from "../services/searchService/ISharePointSearchService";
 import { SharePointSearchService } from "../services/searchService/SharePointSearchService";
 import { IMicrosoftSearchDataSourceData } from "../models/search/IMicrosoftSearchDataSourceData";
 
 import * as React from "react";
 import { IMicrosoftSearchResponse } from "../models/search/IMicrosoftSearchResponse";
+import { IPropertyFieldToggleWithCalloutHostProps } from "@pnp/spfx-property-controls/lib/PropertyFieldToggleWithCallout";
 
 export enum EntityType {
     Message = 'message',
@@ -67,7 +69,12 @@ export interface IMicrosoftSearchDataSourceProperties {
     queryAlterationOptions: IQueryAlterationOptions;
     
      /**
-     * Flag indicating if the Microsoft Search beta endpoint should be used
+     * The search query template
+     */
+    queryTemplate: string;
+
+    /**
+    * Flag indicating if the Microsoft Search beta endpoint should be used
      */
     useBetaEndpoint: boolean;
 }
@@ -211,9 +218,12 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                 return option.text;
             }
         });
-
-        let groupFields: IPropertyPaneField<any>[] = [
-
+        let selectFieldsFields: IPropertyPaneField<any>[] = [];
+        let contentSourceConnectionIdsFields: IPropertyPaneField<any>[] = [];
+        let enableTopResultsFields: IPropertyPaneField<any>[] = [];
+        let sortPropertiesFields: IPropertyPaneField<any>[] = [];
+        let queryAlterationFields: IPropertyPaneField<any>[] = [];
+        let commonFields: IPropertyPaneField<any>[] = [
             PropertyPaneLabel('', {
                 text: commonStrings.DataSources.MicrosoftSearch.QueryTextFieldLabel
             }),
@@ -233,6 +243,19 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                 onPropertyChange: this.onCustomPropertyUpdate.bind(this),
                 textDisplayValue: entityTypesDisplayValue.filter(e => e).join(",")
             }),
+            new PropertyPaneNonReactiveTextField('dataSourceProperties.queryTemplate', {
+                defaultValue: this.properties.queryTemplate,
+                label: commonStrings.DataSources.MicrosoftSearch.QueryTemplateFieldLabel,
+                placeholderText: commonStrings.DataSources.MicrosoftSearch.QueryTemplatePlaceHolderText,
+                multiline: true,
+                description: commonStrings.DataSources.MicrosoftSearch.QueryTemplateFieldDescription,
+                applyBtnText: commonStrings.DataSources.MicrosoftSearch.ApplyQueryTemplateBtnText,
+                allowEmptyValue: false,
+                rows: 8
+            }),
+        ];
+        let useBetaEndpointFields: IPropertyPaneField<any>[] = [
+            PropertyPaneHorizontalRule(),
             PropertyPaneToggle('dataSourceProperties.useBetaEndpoint', {
                 label: commonStrings.DataSources.MicrosoftSearch.UseBetaEndpoint
             })
@@ -244,8 +267,8 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             this.properties.entityTypes.indexOf(EntityType.Site) !== -1 ||
             this.properties.entityTypes.indexOf(EntityType.List) !== -1) {
 
-            groupFields.push(
-                this._propertyFieldCollectionData('dataSourceProperties.sortProperties', {
+                sortPropertiesFields.push(
+                    this._propertyFieldCollectionData('dataSourceProperties.sortProperties', {
                     manageBtnLabel: commonStrings.DataSources.SearchCommon.Sort.EditSortLabel,
                     key: 'sortProperties',
                     enableSorting: true,
@@ -310,7 +333,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         }
 
         if (this.properties.entityTypes.indexOf(EntityType.ExternalItem) !== -1) {
-            groupFields.push(
+            contentSourceConnectionIdsFields.push(
                 new PropertyPaneAsyncCombo('dataSourceProperties.contentSourceConnectionIds', {
                     availableOptions: [],
                     allowMultiSelect: true,
@@ -328,7 +351,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         // Only available for ListItem an ExternalItem entities
         // https://docs.microsoft.com/en-us/graph/api/resources/search-api-overview?view=graph-rest-1.0#get-selected-properties
         if (this.properties.entityTypes.indexOf(EntityType.ListItem) !== -1 || this.properties.entityTypes.indexOf(EntityType.ExternalItem) !== -1) {
-            groupFields.splice(3, 0, 
+            selectFieldsFields.push( 
                 new PropertyPaneAsyncCombo('dataSourceProperties.fields', {
                     availableOptions: this._availableFields,
                     allowMultiSelect: true,
@@ -347,7 +370,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         }
 
         if (this.properties.entityTypes.indexOf(EntityType.Message) !== -1 && this.properties.entityTypes.length === 1) {
-            groupFields.push(PropertyPaneToggle('dataSourceProperties.enableTopResults', {
+            enableTopResultsFields.push(PropertyPaneToggle('dataSourceProperties.enableTopResults', {
                 label: commonStrings.DataSources.MicrosoftSearch.EnableTopResultsLabel
             }));
         } 
@@ -362,17 +385,27 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             this.properties.entityTypes.indexOf(EntityType.List) !== -1 ||
             this.properties.entityTypes.indexOf(EntityType.ListItem) !== -1 ||
             this.properties.entityTypes.indexOf(EntityType.ExternalItem) !== -1)) {
-            groupFields.push(
-                PropertyPaneToggle('dataSourceProperties.queryAlterationOptions.enableSuggestion', {
-                    label: commonStrings.DataSources.MicrosoftSearch.EnableSuggestionLabel,
-                    checked: this.properties.queryAlterationOptions.enableSuggestion
-                }),
-                PropertyPaneToggle('dataSourceProperties.queryAlterationOptions.enableModification', {
-                    label: commonStrings.DataSources.MicrosoftSearch.EnableModificationLabel,
-                    checked: this.properties.queryAlterationOptions.enableModification
-                })
-            );
+                queryAlterationFields.push(
+                    PropertyPaneToggle('dataSourceProperties.queryAlterationOptions.enableSuggestion', {
+                        label: commonStrings.DataSources.MicrosoftSearch.EnableSuggestionLabel,
+                        checked: this.properties.queryAlterationOptions.enableSuggestion
+                    }),
+                    PropertyPaneToggle('dataSourceProperties.queryAlterationOptions.enableModification', {
+                        label: commonStrings.DataSources.MicrosoftSearch.EnableModificationLabel,
+                        checked: this.properties.queryAlterationOptions.enableModification
+                    })
+                );
         }
+
+        let groupFields: IPropertyPaneField<any>[] = [
+           ...commonFields,
+           ...selectFieldsFields,
+           ...sortPropertiesFields,
+           ...enableTopResultsFields,
+           ...contentSourceConnectionIdsFields,
+           ...useBetaEndpointFields,
+           ...queryAlterationFields
+        ];
 
         return [
             {
@@ -489,6 +522,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         this.properties.contentSourceConnectionIds = this.properties.contentSourceConnectionIds !== undefined ? this.properties.contentSourceConnectionIds : [];
 
         this.properties.queryAlterationOptions = this.properties.queryAlterationOptions ?? { enableModification: false, enableSuggestion: false };
+        this.properties.queryTemplate = this.properties.queryTemplate ? this.properties.queryTemplate : "{searchTerms}";
         this.properties.useBetaEndpoint = this.properties.useBetaEndpoint !== undefined ? this.properties.useBetaEndpoint : false;
 
         if (this.properties.useBetaEndpoint) {
@@ -513,10 +547,18 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         let contentSources: string[] = [];
         let queryText = '*'; // Default query string if not specified, the API does not support empty value
         let from = 0;
-
+    
         // Query text
         if (dataContext.inputQueryText) {
             queryText = await this._tokenService.resolveTokens(dataContext.inputQueryText);
+        }
+
+        // Query modification
+        const queryTemplate = await this._tokenService.resolveTokens(this.properties.queryTemplate);
+        if (!isEmpty(queryTemplate.trim())) {
+
+            // Use {searchTerms} or {inputQueryText} to use orginal value
+            queryText = queryTemplate.trim();
         }
 
         // Paging

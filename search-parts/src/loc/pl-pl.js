@@ -139,6 +139,10 @@ define([], function() {
               ContentSourcesFieldPlaceholderLabel: "przykładowo: 'MyCustomConnectorId'",
               EnableSuggestionLabel: "Włącz sugestie pisowni",
               EnableModificationLabel: "Włącz modyfikacje pisowni",
+              QueryTemplateFieldLabel: "Modyfikator zapytania",
+              QueryTemplatePlaceHolderText: "ex: {searchTerms} IsDocument:true",
+              QueryTemplateFieldDescription: "Szablon modyfikatora wyszukiwania. Możesz również użyć {<tokenów>} i KQL do zbudowania dynamicznego zapytania. Wszystko jest połączone z inputQueryText",
+              ApplyQueryTemplateBtnText: "Zastosuj",
               UseBetaEndpoint: "Użyj punktu końcowego wersji beta"
           },
           SearchCommon: {

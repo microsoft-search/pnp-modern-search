@@ -17,6 +17,11 @@ export enum BuiltinTokenNames {
     inputQueryText = 'inputQueryText',
 
     /**
+     * Similar as 'inputQueryText' to match the SharePoint search token
+     */
+    searchTerms = 'searchTerms',
+
+    /**
      * The current selected filters if any
      */
     filters = 'filters',
@@ -64,6 +69,7 @@ export class TokenService implements ITokenService {
      */
     private tokenValuesList: { [key: string]: any } = {
         [BuiltinTokenNames.inputQueryText]: null, // Should always be resolved as an empty string
+        [BuiltinTokenNames.searchTerms]: null, // Should always be resolved as an empty string
         [BuiltinTokenNames.filters]: null, // Should always be resolved as an empty string
         [BuiltinTokenNames.verticals]: undefined
     };

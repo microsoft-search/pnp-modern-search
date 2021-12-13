@@ -68,7 +68,11 @@
                             {{#> resultTypes item=item}}
                             <div class="template--listItem--result">
                                 {{#if @root.properties.layoutProperties.showFileIcon}}
-                                <pnp-iconfile class="template--listItem--icon" data-extension="{{slot item @root.slots.FileType}}" data-is-container="{{slot item @root.slots.IsFolder}}" data-image-url="{{item.SiteLogo}}" data-size="32" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-iconfile>
+                                {{#contains "['STS_Site','STS_Web']" (slot item @root.slots.contentclass)}}
+                                    <pnp-iconfile class="template--listItem--icon" data-extension="{{slot item @root.slots.FileType}}" data-is-container="{{slot item @root.slots.IsFolder}}" data-image-url="{{item.SiteLogo}}" data-size="32" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-iconfile>    
+                                {{else}}
+                                    <pnp-iconfile class="template--listItem--icon" data-extension="{{slot item @root.slots.FileType}}" data-is-container="{{slot item @root.slots.IsFolder}}" data-size="32" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-iconfile>
+                                {{/contains}}
                                 {{/if}}
                                 <div class="template--listItem--contentContainer">
                                     <span class="template--listItem--title example-themePrimary">

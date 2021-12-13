@@ -343,7 +343,11 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             data.items = data.items.map(item => {
 
                 let contentClass = ObjectHelper.byPath(item, BuiltinTemplateSlots.ContentClass);
-                if (!isEmpty(contentClass) && (contentClass.toLocaleLowerCase() !== "sts_site" && contentClass.toLocaleLowerCase() !== "sts_web")) {
+                
+                if (!isEmpty(contentClass) && (contentClass.toLocaleLowerCase() == "sts_site" || contentClass.toLocaleLowerCase() == "sts_web")) {
+                    item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] =  ObjectHelper.byPath(item, "SiteLogo");
+                }
+                else {
                     let siteId = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.SiteId]);
                     let webId = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.WebId]);
                     let listId = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.ListId]);

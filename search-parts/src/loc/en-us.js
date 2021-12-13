@@ -139,6 +139,10 @@ define([], function() {
                 ContentSourcesFieldPlaceholderLabel: "ex: 'MyCustomConnectorId'",
                 EnableSuggestionLabel: "Enable spelling suggestions",
                 EnableModificationLabel: "Enable spelling modifications",
+                QueryTemplateFieldLabel: "Query template",
+                QueryTemplatePlaceHolderText: "ex: {searchTerms} IsDocument:true",
+                QueryTemplateFieldDescription: "The search query template. You can also use {<tokens>} and KQL to build a dynamic query.",
+                ApplyQueryTemplateBtnText: "Apply",
                 UseBetaEndpoint: "Use beta endpoint"
             },
             SearchCommon: {

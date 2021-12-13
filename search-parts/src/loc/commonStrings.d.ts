@@ -138,6 +138,10 @@ declare interface ICommonStrings {
         EnableTopResultsLabel: string;
         EnableSuggestionLabel: string;
         EnableModificationLabel: string;
+        QueryTemplateFieldLabel: string;
+        QueryTemplatePlaceHolderText: string;
+        QueryTemplateFieldDescription: string;
+        ApplyQueryTemplateBtnText: string;
         UseBetaEndpoint: string;
       },
       SearchCommon: {

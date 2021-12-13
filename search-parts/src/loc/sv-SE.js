@@ -139,6 +139,10 @@ define([], function () {
           ContentSourcesFieldPlaceholderLabel: "ex: 'MyCustomConnectorId'",
           EnableSuggestionLabel: "Aktivera stavningsförslag",
           EnableModificationLabel: "Aktivera stavningsändringar",
+          QueryTemplateFieldLabel: "Frågemodifierare",
+          QueryTemplatePlaceHolderText: "ex: {searchTerms} IsDocument:true",
+          QueryTemplateFieldDescription: "Sökmodifieringsmallen. Du kan också använda {<tokens>} och KQL för att bygga en dynamisk fråga. Allt är kopplat till inputQueryText",
+          ApplyQueryTemplateBtnText: "Tillämpa",
           UseBetaEndpoint: "Använd beta endpoint"
         },
         SearchCommon: {
