@@ -241,20 +241,6 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                 allowEmptyValue: false,
                 rows: 8
             }),
-            new PropertyPaneAsyncCombo('dataSourceProperties.fields', {
-                availableOptions: this._availableFields,
-                allowMultiSelect: true,
-                allowFreeform: true,
-                description: commonStrings.DataSources.MicrosoftSearch.SelectedFieldsPropertiesFieldDescription,
-                label: commonStrings.DataSources.MicrosoftSearch.SelectedFieldsPropertiesFieldLabel,
-                placeholder: commonStrings.DataSources.MicrosoftSearch.SelectedFieldsPlaceholderLabel,
-                searchAsYouType: false,
-                defaultSelectedKeys: this.properties.fields,
-                onPropertyChange: this.onCustomPropertyUpdate.bind(this),
-                onUpdateOptions: ((options: IComboBoxOption[]) => {
-                    this._availableFields = this.parseAndCleanOptions(options);
-                }).bind(this)
-            }),
             PropertyPaneToggle('dataSourceProperties.useBetaEndpoint', {
                 label: commonStrings.DataSources.MicrosoftSearch.UseBetaEndpoint
             })
