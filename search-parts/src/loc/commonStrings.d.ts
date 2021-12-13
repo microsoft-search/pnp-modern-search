@@ -136,6 +136,8 @@ declare interface ICommonStrings {
         ContentSourcesFieldDescriptionLabel: string;
         ContentSourcesFieldPlaceholderLabel: string;
         EnableTopResultsLabel: string;
+        EnableSuggestionLabel: string;
+        EnableModificationLabel: string;
         QueryTemplateFieldLabel: string;
         QueryTemplatePlaceHolderText: string;
         QueryTemplateFieldDescription: string;

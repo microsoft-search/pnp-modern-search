@@ -1,10 +1,14 @@
 import { EntityType } from "../../dataSources/MicrosoftSearchDataSource";
 
+export interface IMicrosoftSearchQuery {
+    requests: IMicrosoftSearchRequest[];
+    queryAlterationOptions?: IQueryAlterationOptions;
+}
+
 /**
  * https://docs.microsoft.com/en-us/graph/api/resources/searchrequest?view=graph-rest-beta
  */
 export interface IMicrosoftSearchRequest {
-
     entityTypes: EntityType[];
     query: {
         queryString: string;
@@ -46,4 +50,9 @@ export enum SearchAggregationSortBy {
 export interface IBucketRangeDefinition {
     from?: number | string;
     to?: number | string;
+}
+
+export interface IQueryAlterationOptions {
+    enableSuggestion: boolean;
+    enableModification: boolean;
 }

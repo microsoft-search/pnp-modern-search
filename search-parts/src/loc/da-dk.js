@@ -137,6 +137,8 @@ define([], function() {
                 ContentSourcesFieldLabel: "Indholdskilder",
                 ContentSourcesFieldDescriptionLabel: "Viser ID af de forbindelser der er defineret i administrationsportalen for Microsoft Search-connectors.",
                 ContentSourcesFieldPlaceholderLabel: "Fx: 'MyCustomConnectorId'",
+                EnableSuggestionLabel: "Aktiver staveforslag",
+                EnableModificationLabel: "Aktiver staveændringer",
                 QueryTemplateFieldLabel: "Forespørgselsmodifikator",
                 QueryTemplatePlaceHolderText: "ex: {searchTerms} IsDocument:true",
                 QueryTemplateFieldDescription: "Søgemodifikator-skabelonen. Du kan også bruge {<tokens>} og KQL til at bygge en dynamisk forespørgsel. Alt sammenkædes til inputQueryText",
