@@ -137,6 +137,10 @@ define([], function() {
                 ContentSourcesFieldLabel: "Inhoudsbronnen",
                 ContentSourcesFieldDescriptionLabel: "IDs van verbingingen gedefinieerd in de Microsoft Search connectors administratie portaal.",
                 ContentSourcesFieldPlaceholderLabel: "bijv: 'MyCustomConnectorId'",
+                QueryTemplateFieldLabel: "Query-modifier",
+                QueryTemplatePlaceHolderText: "ex: {searchTerms} IsDocument:true",
+                QueryTemplateFieldDescription: "De sjabloon voor zoekmodificatie. U kunt ook {<tokens>} en KQL gebruiken om een ​​dynamische query te maken. Alles is aaneengeschakeld naar de inputQueryText",
+                ApplyQueryTemplateBtnText: "Toepassen",
                 UseBetaEndpoint: "Bèta-eindpunt gebruiken"
             },
             SearchCommon: {

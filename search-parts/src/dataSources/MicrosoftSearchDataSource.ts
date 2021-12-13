@@ -14,6 +14,7 @@ import { IMicrosoftSearchResponse } from "../models/search/IMicrosoftSearchRespo
 import { ISortFieldConfiguration, SortFieldDirection } from '../models/search/ISortFieldConfiguration';
 import { AsyncCombo } from "../controls/PropertyPaneAsyncCombo/components/AsyncCombo";
 import { IAsyncComboProps } from "../controls/PropertyPaneAsyncCombo/components/IAsyncComboProps";
+import { PropertyPaneNonReactiveTextField } from "../controls/PropertyPaneNonReactiveTextField/PropertyPaneNonReactiveTextField";
 import { ISharePointSearchService } from "../services/searchService/ISharePointSearchService";
 import { SharePointSearchService } from "../services/searchService/SharePointSearchService";
 import * as React from "react";
@@ -59,7 +60,12 @@ export interface IMicrosoftSearchDataSourceProperties {
     contentSourceConnectionIds: string[];
 
     /**
-     * Flag indicating if the Microsoft Search beta endpoint should be used
+     * The search query template
+     */
+    queryTemplate: string;
+
+    /**
+    * Flag indicating if the Microsoft Search beta endpoint should be used
      */
     useBetaEndpoint: boolean;
 }
@@ -224,6 +230,16 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                 defaultSelectedKeys: this.properties.entityTypes,
                 onPropertyChange: this.onCustomPropertyUpdate.bind(this),
                 textDisplayValue: entityTypesDisplayValue.filter(e => e).join(",")
+            }),
+            new PropertyPaneNonReactiveTextField('dataSourceProperties.queryTemplate', {
+                defaultValue: this.properties.queryTemplate,
+                label: commonStrings.DataSources.MicrosoftSearch.QueryTemplateFieldLabel,
+                placeholderText: commonStrings.DataSources.MicrosoftSearch.QueryTemplatePlaceHolderText,
+                multiline: true,
+                description: commonStrings.DataSources.MicrosoftSearch.QueryTemplateFieldDescription,
+                applyBtnText: commonStrings.DataSources.MicrosoftSearch.ApplyQueryTemplateBtnText,
+                allowEmptyValue: false,
+                rows: 8
             }),
             PropertyPaneToggle('dataSourceProperties.useBetaEndpoint', {
                 label: commonStrings.DataSources.MicrosoftSearch.UseBetaEndpoint
@@ -451,6 +467,8 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         this.properties.fields = this.properties.fields !== undefined ? this.properties.fields : CommonFields;
         this.properties.sortProperties = this.properties.sortProperties !== undefined ? this.properties.sortProperties : [];
         this.properties.contentSourceConnectionIds = this.properties.contentSourceConnectionIds !== undefined ? this.properties.contentSourceConnectionIds : [];
+        
+        this.properties.queryTemplate = this.properties.queryTemplate ? this.properties.queryTemplate : "{searchTerms}";
         this.properties.useBetaEndpoint = this.properties.useBetaEndpoint !== undefined ? this.properties.useBetaEndpoint : false;
 
         if (this.properties.useBetaEndpoint) {
@@ -468,10 +486,18 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         let contentSources: string[] = [];
         let queryText = '*'; // Default query string if not specified, the API does not support empty value
         let from = 0;
-
+    
         // Query text
         if (dataContext.inputQueryText) {
             queryText = await this._tokenService.resolveTokens(dataContext.inputQueryText);
+        }
+
+        // Query modification
+        const queryTemplate = await this._tokenService.resolveTokens(this.properties.queryTemplate);
+        if (queryTemplate) {
+
+            // Use {searchTerms} or {inputQueryText} to use orginal value
+            queryText = queryTemplate.trim();
         }
 
         // Paging

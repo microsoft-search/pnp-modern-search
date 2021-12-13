@@ -137,6 +137,10 @@ define([], function () {
           ContentSourcesFieldLabel: "Innholdskilder",
           ContentSourcesFieldDescriptionLabel: "Viser ID for de tilkoblinger som er definert i admin-portalen for Microsoft Search Connectors",
           ContentSourcesFieldPlaceholderLabel: "f.eks.: 'MyCustomConnectorId'",
+          QueryTemplateFieldLabel: "Forespørselsmal",
+          QueryTemplatePlaceHolderText: "ex: {searchTerms} IsDocument:true",
+          QueryTemplateFieldDescription: "Søkemalen. Du kan også bruke {<tokens>} og KQL for å bygge en dynamisk spørring.",
+          ApplyQueryTemplateBtnText: "Søke om",
           UseBetaEndpoint: "Bruk betaendepunkt"
         },
         SearchCommon: {
