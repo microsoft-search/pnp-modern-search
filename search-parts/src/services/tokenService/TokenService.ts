@@ -348,39 +348,44 @@ export class TokenService implements ITokenService {
         while (matches !== null) {
 
             let userProperty = matches[1].toLowerCase();
-            let propertyValue = null;
 
-            // Check if other user profile properties have to be retrieved
-            if (!/^(name|email)$/gi.test(userProperty)) {
+            // {User.Audiences} is resolved server side by SharePoint
+            if (!/^(audiences)$/gi.test(userProperty)) {
 
-                // Check if the user profile api was already called
-                if (!this.userProperties) {
-                    this.userProperties = await this.getUserProfileProperties();
+                let propertyValue = null;
+
+                // Check if other user profile properties have to be retrieved
+                if (!/^(name|email)$/gi.test(userProperty)) {
+
+                    // Check if the user profile api was already called
+                    if (!this.userProperties) {
+                        this.userProperties = await this.getUserProfileProperties();
+                    }
+
+                    propertyValue = this.userProperties[userProperty] ? this.userProperties[userProperty] : '';
+
+                } else {
+
+                    switch (userProperty) {
+
+                        case "email":
+                            propertyValue = this.pageContext.user.email;
+                            break;
+
+                        case "name":
+                            propertyValue = this.pageContext.user.displayName;
+                            break;
+                        default:
+                            propertyValue = this.pageContext.user.displayName;
+                            break;
+                    }
                 }
 
-                propertyValue = this.userProperties[userProperty] ? this.userProperties[userProperty] : '';
+                const tokenExprToReplace = new RegExp(matches[0], 'gi');
 
-            } else {
-
-                switch (userProperty) {
-
-                    case "email":
-                        propertyValue = this.pageContext.user.email;
-                        break;
-
-                    case "name":
-                        propertyValue = this.pageContext.user.displayName;
-                        break;
-                    default:
-                        propertyValue = this.pageContext.user.displayName;
-                        break;
-                }
+                // Replace the match with the property value
+                inputString = inputString.replace(tokenExprToReplace, propertyValue);
             }
-
-            const tokenExprToReplace = new RegExp(matches[0], 'gi');
-
-            // Replace the match with the property value
-            inputString = inputString.replace(tokenExprToReplace, propertyValue);
 
             // Look for other tokens
             matches = userTokenRegExp.exec(inputString);

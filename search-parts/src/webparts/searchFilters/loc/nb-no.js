@@ -64,8 +64,7 @@ define([], function() {
                 ErrorTemplateResolve: "Det går ikke å vise denne malen. Feil: '{0}'",
                 FiltersTemplateFieldLabel: "Rediger filtermal",
                 FiltersTemplatePanelHeader: "Rediger filtermal"
-            },
-            ImportExport: "Importer/eksporter innstillinger"
+            }
         }
     }
 });

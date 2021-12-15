@@ -318,7 +318,8 @@ declare interface ICommonStrings {
             Id: string;
             Enabled: string;
           }
-        }
+        },
+        ImportExport: string;
       }
     },
     Filters: {

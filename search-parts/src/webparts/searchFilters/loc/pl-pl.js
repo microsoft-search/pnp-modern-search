@@ -64,8 +64,7 @@ define([], function() {
                 ErrorTemplateResolve: "Nie można rozwiązać wskazanego szablonu. Szczegóły błędu: '{0}'",
                 FiltersTemplateFieldLabel: "Edytuj filtry szablonu",
                 FiltersTemplatePanelHeader: "Edytuj filtry szablonu"
-            },
-            ImportExport: "Importuj / Eksportuj ustawienia"
+            }
         }
     }
 });

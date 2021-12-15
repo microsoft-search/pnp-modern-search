@@ -113,8 +113,7 @@ define([], function() {
                 EnableTelemetryLabel: "Telemetria PnP",
                 EnableTelemetryOn: "Włącz telemetrię",
                 EnableTelemetryOff: "Wyłącz telemetrię"
-            },
-            ImportExport: "Importuj / Eksportuj ustwienia"
+            }
         }
     }
 });

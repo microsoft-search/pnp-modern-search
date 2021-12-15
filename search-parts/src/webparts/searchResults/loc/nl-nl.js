@@ -113,8 +113,7 @@ define([], function() {
         EnableTelemetryLabel: "PnP-telemetrie",
         EnableTelemetryOn: "Telemetrie inschakelen",
         EnableTelemetryOff: "Telemetrie uitschakelen"
-      },
-      ImportExport: "Importeer / Exporteer instellingen "
+      }
     }
   }
 });

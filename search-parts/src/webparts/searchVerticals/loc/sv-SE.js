@@ -5,7 +5,7 @@ define([], function() {
             PlaceHolder: {
                 EditLabel: "Redigera",
                 IconText: "Search Verticals Web Part av @pnp",
-                Description: "Tillåter att bläddra i data som vertikaler (dvs silor). Den här webbdelen är avsedd att kopplas till webbdelarna "Sökresultat" på sidan.",
+                Description: "Tillåter att bläddra i data som vertikaler (dvs silor). Den här webbdelen är avsedd att kopplas till webbdelarna 'Sökresultat' på sidan.",
                 ConfigureBtnLabel: "Konfigurera"
             }            
         },

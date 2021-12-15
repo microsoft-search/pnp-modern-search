@@ -64,8 +64,7 @@ define([], function() {
                 ErrorTemplateResolve: "Kan het opgegeven template niet inladen. Foutmelding: '{0}'",
                 FiltersTemplateFieldLabel: "Bewerk filters sjabloon",
                 FiltersTemplatePanelHeader: "Bewerk filters sjabloon"
-            },
-            ImportExport: "Importeer / Exporteer instellingen "
+            }
         }
     }
 });
