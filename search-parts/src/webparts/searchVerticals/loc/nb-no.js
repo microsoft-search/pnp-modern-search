@@ -25,8 +25,7 @@ define([], function() {
                     TabValue: "Tab-verdi",
                     ShowLinkIcon: "Vis lenkeikon",
                 }
-            },
-            ImportExport: "Importer/eksporter innstillinger"
+            }
         }
     }
 });

@@ -272,7 +272,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
                     ...this.getPropertyPaneWebPartInfoGroups(),
                     ...extensibilityConfigurationGroups,
                     {
-                        groupName: webPartStrings.PropertyPane.ImportExport,
+                        groupName: commonStrings.PropertyPane.InformationPage.ImportExport,
                         groupFields: [this._propertyPanePropertyEditor({
                             webpart: this,
                             key: 'propertyEditor'

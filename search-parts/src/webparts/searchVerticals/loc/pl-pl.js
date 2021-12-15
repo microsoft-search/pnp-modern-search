@@ -24,8 +24,7 @@ define([], function() {
                         OpenBehavior: "Sposób otwierania",
                         TabValue: "Wartość tabulatora",
                         ShowLinkIcon: "Pokaż ikonę linku",
-                },
-                ImportExport: "Importuj / Eksportuj ustawienia"
+                }
             }
         }
     }

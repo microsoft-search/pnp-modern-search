@@ -25,8 +25,7 @@ define([], function() {
                     TabValue: "Tabwaarde",
                     ShowLinkIcon: "Toon linkpictogram",
                 }
-            },
-            ImportExport: "Importeer / Exporteer instellingen "
+            }
         }
     }
 });

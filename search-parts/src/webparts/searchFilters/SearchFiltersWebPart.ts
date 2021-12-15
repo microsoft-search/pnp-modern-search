@@ -361,7 +361,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                 groups: [
                     ...this.getPropertyPaneWebPartInfoGroups(),
                     {
-                        groupName: webPartStrings.PropertyPane.ImportExport,
+                        groupName: commonStrings.PropertyPane.InformationPage.ImportExport,
                         groupFields: [this._propertyPanePropertyEditor({
                             webpart: this,
                             key: 'propertyEditor'

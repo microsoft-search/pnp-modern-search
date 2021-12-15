@@ -113,8 +113,7 @@ define([], function() {
                 EnableTelemetryLabel: "PnP telemetry",
                 EnableTelemetryOn: "Turn on telemetry",
                 EnableTelemetryOff: "Turn off telemetry"
-            },
-            ImportExport: "Import / Export settings"
+            }
         }
     }
 });

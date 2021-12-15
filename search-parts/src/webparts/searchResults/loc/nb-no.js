@@ -113,8 +113,7 @@ define([], function() {
           EnableTelemetryLabel: "PnP-telemetri",
           EnableTelemetryOn: "Slå på telemetri",
           EnableTelemetryOff: "Slå av telemetri"
-        },
-        ImportExport: "Importer/eksporter innstillinger"
+        }
       }
     }
   });

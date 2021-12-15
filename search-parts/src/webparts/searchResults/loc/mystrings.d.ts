@@ -112,8 +112,7 @@ declare interface ISearchResultsWebPartStrings {
             EnableTelemetryLabel: string;
             EnableTelemetryOn: string;
             EnableTelemetryOff: string;
-        },
-        ImportExport: string;
+        }
     }
 }
 
