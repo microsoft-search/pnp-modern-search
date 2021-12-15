@@ -63,6 +63,7 @@ import { UrlHelper } from '../../helpers/UrlHelper';
 import { ObjectHelper } from '../../helpers/ObjectHelper';
 import { ItemSelectionMode } from '../../models/common/IItemSelectionProps';
 import { PropertyPaneAsyncCombo } from '../../controls/PropertyPaneAsyncCombo/PropertyPaneAsyncCombo';
+import { DynamicPropertyHelper } from '../../helpers/DynamicPropertyHelper';
 
 const LogSource = "SearchResultsWebPart";
 
@@ -353,7 +354,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         // Check if the Web part is connected to a data vertical
         if (this._verticalsConnectionSourceData && this.properties.selectedVerticalKeys.length > 0) {
-            const verticalData = this._verticalsConnectionSourceData.tryGetValue();
+            const verticalData = DynamicPropertyHelper.tryGetValueSafe(this._verticalsConnectionSourceData);
 
             // Remove the blank space introduced by the control zone when the Web Part displays nothing
             // WARNING: in theory, we are not supposed to touch DOM outside of the Web Part root element, This will break if the page attribute change
@@ -822,9 +823,9 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         // tryGetValue() will resolve to '' if no Web Part is connected or if the connection is removed
         // The value can be also 'undefined' if the data source is not already loaded on the page.
         let inputQueryFromDataSource = "";
-        if (this.properties.queryText && !this.properties.queryText.isDisposed) {
+        if (this.properties.queryText) {
             try {
-                inputQueryFromDataSource = this.properties.queryText.tryGetValue();
+                inputQueryFromDataSource = DynamicPropertyHelper.tryGetValueSafe(this.properties.queryText);
                 if (inputQueryFromDataSource !== undefined && typeof (inputQueryFromDataSource) === 'string') {
                     inputQueryFromDataSource = decodeURIComponent(inputQueryFromDataSource);
                 }
@@ -1717,7 +1718,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
                 // Get all available verticals
                 if (this._verticalsConnectionSourceData) {
-                    const availableVerticals = this._verticalsConnectionSourceData.tryGetValue();
+                    const availableVerticals = DynamicPropertyHelper.tryGetValueSafe(this._verticalsConnectionSourceData);
 
                     if (availableVerticals) {
 
@@ -1979,21 +1980,21 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             let inputQueryFromDataSource: string = null;
             // Input query text
             try {
-                inputQueryFromDataSource = !this.properties.queryText.isDisposed && this.properties.queryText.tryGetValue();               
-            }  catch (error) {
+                inputQueryFromDataSource = DynamicPropertyHelper.tryGetValueSafe(this.properties.queryText);
+            } catch (error) {
                 // Likely issue when q=%25 in spfx
             }
 
             const inputQueryText = inputQueryFromDataSource ? inputQueryFromDataSource : this.properties.defaultQueryText;
             this.tokenService.setTokenValue(BuiltinTokenNames.inputQueryText, inputQueryText);
-            
+
             // Legacy token for SharePoint and Microsoft Search data sources
             this.tokenService.setTokenValue(BuiltinTokenNames.searchTerms, inputQueryText === undefined ? '' : inputQueryText);
 
             // Selected filters
             if (this._filtersConnectionSourceData) {
 
-                const filtersSourceData: IDataFilterSourceData = this._filtersConnectionSourceData.tryGetValue();
+                const filtersSourceData: IDataFilterSourceData = DynamicPropertyHelper.tryGetValueSafe(this._filtersConnectionSourceData);
 
                 if (filtersSourceData) {
 
@@ -2063,7 +2064,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
             // Current selected Search Results or SharePoint List Web Part
             const destinationFieldName = this.properties.itemSelectionProps.destinationFieldName;
-            const itemFieldValues: string[] = this.properties.selectedItemFieldValue.tryGetValues();
+
+            const itemFieldValues: string[] = DynamicPropertyHelper.tryGetValuesSafe(this.properties.selectedItemFieldValue);
 
             if (destinationFieldName) {
 
@@ -2079,8 +2081,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
             // Current selected vertical
             if (this._verticalsConnectionSourceData) {
-
-                const verticalSourceData = this._verticalsConnectionSourceData.tryGetValue();
+                const verticalSourceData = DynamicPropertyHelper.tryGetValueSafe(this._verticalsConnectionSourceData);
 
                 // Tokens for verticals are resolved first locally in the Search Verticals WP itself. If some tokens are not recognized in the string (ex: undefined in their TokenService instance), they will be left untounched. 
                 // In this case, we need to resolve them in the current Search Results WP context as they only exist here (ex: itemsCountPerPage)
@@ -2202,9 +2203,9 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         };
 
         // Connected Search Results or SharePoint List Web Part
-        const itemFieldValues: string[] = this.properties.selectedItemFieldValue.tryGetValues();
+        const itemFieldValues: string[] = DynamicPropertyHelper.tryGetValuesSafe(this.properties.selectedItemFieldValue);
 
-        if (itemFieldValues.length > 0 && this.properties.itemSelectionProps.destinationFieldName) {
+        if (itemFieldValues && itemFieldValues.length > 0 && this.properties.itemSelectionProps.destinationFieldName) {
 
             // Set the selected items to the data context. This will force data to be fetched again
             dataContext.selectedItemValues = itemFieldValues;
@@ -2233,7 +2234,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         // Connected Search Filters
         if (this._filtersConnectionSourceData) {
-            const filtersSourceData: IDataFilterSourceData = this._filtersConnectionSourceData.tryGetValue();
+            const filtersSourceData: IDataFilterSourceData = DynamicPropertyHelper.tryGetValueSafe(this._filtersConnectionSourceData);
             if (filtersSourceData) {
 
                 // Reset the page number if filters have been updated by the user
@@ -2253,7 +2254,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         // Connected Search Verticals
         if (this._verticalsConnectionSourceData) {
-            const verticalsSourceData: IDataVerticalSourceData = this._verticalsConnectionSourceData.tryGetValue();
+            const verticalsSourceData: IDataVerticalSourceData = DynamicPropertyHelper.tryGetValueSafe(this._verticalsConnectionSourceData);
             if (verticalsSourceData) {
                 dataContext.verticals.selectedVertical = verticalsSourceData.selectedVertical;
             }
@@ -2306,7 +2307,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         // Check if the Web part is connected to a data vertical
         if (this._verticalsConnectionSourceData && this.properties.selectedVerticalKeys.length > 0) {
-            const verticalData = this._verticalsConnectionSourceData.tryGetValue();
+            const verticalData = DynamicPropertyHelper.tryGetValueSafe(this._verticalsConnectionSourceData);
 
             // For edit mode only, we want to see the data
             if (verticalData && this.properties.selectedVerticalKeys.indexOf(verticalData.selectedVertical.key) === -1 && this.displayMode === DisplayMode.Read) {
@@ -2321,10 +2322,14 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         }
 
         // Notfify dynamic data consumers data have changed
-        this.context.dynamicDataSourceManager.notifyPropertyChanged(ComponentType.SearchResults);
+        if (this.context && this.context.dynamicDataSourceManager && !this.context.dynamicDataSourceManager.isDisposed) {
+            this.context.dynamicDataSourceManager.notifyPropertyChanged(ComponentType.SearchResults);
+        }
 
         // Extra call to refresh the property pane in the case where data sources rely on results fields in there configuration (ex: ODataDataSource)
-        this.context.propertyPane.refresh();
+        if (this.context && this.context.propertyPane) {
+            this.context.propertyPane.refresh();
+        }
     }
 
     /**

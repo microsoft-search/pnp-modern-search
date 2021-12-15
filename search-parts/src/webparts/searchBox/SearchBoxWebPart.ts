@@ -40,6 +40,7 @@ import { Constants } from '../../common/Constants';
 import { ITokenService } from '@pnp/modern-search-extensibility';
 import { BuiltinTokenNames, TokenService } from '../../services/tokenService/TokenService';
 import { BaseWebPart } from '../../common/BaseWebPart';
+import { DynamicPropertyHelper } from '../../helpers/DynamicPropertyHelper';
 
 export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps> implements IDynamicDataCallables {
 
@@ -138,12 +139,15 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
 
     protected renderCompleted(): void {
 
+        if (!this.domElement) {
+            return;
+        }
         let renderRootElement: JSX.Element = null;
 
         let inputValue = "";
-        if (this.properties.queryText && !this.properties.queryText.isDisposed) {
+        if (this.properties.queryText) {
             try {
-                inputValue = this.properties.queryText.tryGetValue();
+                inputValue = DynamicPropertyHelper.tryGetValueSafe(this.properties.queryText);
                 if (inputValue !== undefined && typeof (inputValue) === 'string') {
                     inputValue = decodeURIComponent(inputValue);
                 }
@@ -850,20 +854,20 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
                 this._pushStateCallback = history.pushState;
                 h.pushState = this.pushStateHandler.bind(this);
             })(window.history);
-        }      
+        }
     }
 
     private pushStateHandler(state, key, path) {
 
         this._pushStateCallback.apply(history, [state, key, path]);
         if (this.properties.queryText.isDisposed) {
-          return;
+            return;
         }
-    
+
         const source = this.properties.queryText.tryGetSource();
-    
+
         if (source && source.id === ComponentType.PageEnvironment) {
-          this.render();
+            this.render();
         }
     }
 }

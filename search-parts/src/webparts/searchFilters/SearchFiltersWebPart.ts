@@ -40,6 +40,7 @@ import { PropertyPaneAsyncCombo } from '../../controls/PropertyPaneAsyncCombo/Pr
 import { BaseWebPart } from '../../common/BaseWebPart';
 import commonStyles from '../../styles/Common.module.scss';
 import { IDataVerticalSourceData } from '../../models/dynamicData/IDataVerticalSourceData';
+import { DynamicPropertyHelper } from '../../helpers/DynamicPropertyHelper';
 
 export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebPartProps> implements IDynamicDataCallables {
 
@@ -47,7 +48,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
      * Dynamic properties for all connected sources
      */
     private _dataSourceDynamicProperties: DynamicProperty<IDataResultSourceData>[] = [];
-    private _verticalsSourceData: DynamicProperty<IDataVerticalSourceData>;  
+    private _verticalsSourceData: DynamicProperty<IDataVerticalSourceData>;
     private _selectedFilters: IDataFilter[] = [];
 
     /**
@@ -141,7 +142,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
 
         // Determine the template content to display
         // In the case of an external template is selected, the render is done asynchronously waiting for the content to be fetched
-        await this.initTemplate();        
+        await this.initTemplate();
 
         // Get and initialize layout instance if different (i.e avoid to create a new instance every time)
         if (this.lastLayoutKey !== this.properties.selectedLayoutKey) {
@@ -170,9 +171,9 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
 
                 // Merge available filters and values from multiple sources
                 const dataResultsSourceData = this.mergeFiltersDataFromSources(this._dataSourceDynamicProperties);
-                
+
                 // Get filter results
-                filterResults = dataResultsSourceData.availablefilters;     
+                filterResults = dataResultsSourceData.availablefilters;
             }
 
             // Case when no search results WP is connected and we have 'Static' filters configured.
@@ -232,14 +233,14 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
 
         // Check if the Web part is connected to a data vertical
         if (this._verticalsSourceData && this.properties.selectedVerticalKeys.length > 0) {
-            const verticalData = this._verticalsSourceData.tryGetValue();
+            const verticalData = DynamicPropertyHelper.tryGetValueSafe(this._verticalsSourceData);
 
             // Remove the blank space introduced by the control zone when the Web Part displays nothing
             // WARNING: in theory, we are not supposed to touch DOM outside of the Web Part root element, This will break if the page attribute change
             const parentControlZone = this.getParentControlZone();
 
             // If the current selected vertical is not the one configured for this Web Part, we show nothing
-            if (verticalData && this.properties.selectedVerticalKeys.indexOf(verticalData.selectedVertical.key) === -1) {
+            if (verticalData && verticalData.selectedVertical && this.properties.selectedVerticalKeys.indexOf(verticalData.selectedVertical.key) === -1) {
 
                 if (this.displayMode === DisplayMode.Edit) {
 
@@ -251,16 +252,16 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                     const verticalNames = verticalData.verticalsConfiguration.filter(cfg => {
                         return this.properties.selectedVerticalKeys.indexOf(cfg.key) !== -1;
                     }).map(v => v.tabName);
-                    
-                    renderRootElement = React.createElement('div', {}, 
-                                        React.createElement(
-                                            MessageBar, {
-                                            messageBarType: MessageBarType.info,
-                                            }, 
-                                            Text.format(commonStrings.General.CurrentVerticalNotSelectedMessage,verticalNames.join(','))
-                                        ),
-                                        renderRootElement
-                                        );
+
+                    renderRootElement = React.createElement('div', {},
+                        React.createElement(
+                            MessageBar, {
+                            messageBarType: MessageBarType.info,
+                        },
+                            Text.format(commonStrings.General.CurrentVerticalNotSelectedMessage, verticalNames.join(','))
+                        ),
+                        renderRootElement
+                    );
                 } else {
 
                     renderRootElement = null;
@@ -278,7 +279,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
 
                 if (parentControlZone) {
                     parentControlZone.removeAttribute('style');
-                }          
+                }
             }
         }
 
@@ -315,9 +316,9 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     }
 
     public onCustomPropertyUpdate(propertyPath: string, newValue: any, changeCallback?: (targetProperty?: string, newValue?: any) => void): void {
-    
+
         if (propertyPath.localeCompare('selectedVerticalKeys') === 0) {
-            changeCallback(propertyPath, (cloneDeep(newValue) as IComboBoxOption[]).map(v => {return v.key as string;}));
+            changeCallback(propertyPath, (cloneDeep(newValue) as IComboBoxOption[]).map(v => { return v.key as string; }));
             this.context.propertyPane.refresh();
         }
     }
@@ -438,7 +439,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
         if (propertyPath.localeCompare('verticalsDataSourceReference') === 0 && this.properties.verticalsDataSourceReference) {
             this.ensureDynamicDataSourcesConnection();
             this.context.propertyPane.refresh();
-          }
+        }
 
         if (propertyPath.localeCompare('useVerticals') === 0) {
             if (!this.properties.useVerticals) {
@@ -458,7 +459,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     }
 
     private async getDataResultsConnectionFields(): Promise<IPropertyPaneField<any>[]> {
-    
+
         const availableSources = await this.dynamicDataService.getAvailableDataSourcesByType(ComponentType.SearchResults);
         const sourceOptions = availableSources.map(source => {
             return {
@@ -474,7 +475,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                 textDisplayValues.push(option.text);
             }
         });
-        
+
         return [
             new PropertyPaneAsyncCombo('dataResultsDataSourceReferences', {
                 availableOptions: sourceOptions,
@@ -500,14 +501,14 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     private async getConnectionOptionsFields(): Promise<IPropertyPaneField<any>[]> {
 
         const dataResultsConnectionsFields = await this.getDataResultsConnectionFields();
-        const verticalConnectionFields = await this.getVerticalsConnectionFields();        
-       
+        const verticalConnectionFields = await this.getVerticalsConnectionFields();
+
         const connectionFields: IPropertyPaneField<any>[] = [
             ...dataResultsConnectionsFields,
             PropertyPaneHorizontalRule(),
             ...verticalConnectionFields
         ];
-    
+
         return connectionFields;
     }
 
@@ -586,7 +587,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
             let allAvailableFieldsFromResults: string[] = [];
             this._dataSourceDynamicProperties.forEach(dataSourceDynamicProperty => {
 
-                const dataResultsData = dataSourceDynamicProperty.tryGetValue();
+                const dataResultsData = DynamicPropertyHelper.tryGetValueSafe(dataSourceDynamicProperty);
                 if (dataResultsData) {
                     allAvailableFieldsFromResults = allAvailableFieldsFromResults.concat(dataResultsData.availableFieldsFromResults);
                 }
@@ -851,62 +852,62 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     }
 
     private async getVerticalsConnectionFields(): Promise<IPropertyPaneField<any>[]> {
- 
+
         let verticalsConnectionFields: IPropertyPaneField<any>[] = [
-          PropertyPaneToggle('useVerticals', {
-            label: commonStrings.PropertyPane.ConnectionsPage.UseDataVerticalsWebPartLabel,
-            checked: this.properties.useVerticals
-          })
-        ];
-    
-        if (this.properties.useVerticals) {
-          verticalsConnectionFields.splice(1,0,
-            PropertyPaneDropdown('verticalsDataSourceReference', {
-              options: await this.dynamicDataService.getAvailableDataSourcesByType(ComponentType.SearchVerticals),
-              label: commonStrings.PropertyPane.ConnectionsPage.UseDataVerticalsFromComponentLabel
+            PropertyPaneToggle('useVerticals', {
+                label: commonStrings.PropertyPane.ConnectionsPage.UseDataVerticalsWebPartLabel,
+                checked: this.properties.useVerticals
             })
-          );
-    
-          if (this.properties.verticalsDataSourceReference) {
-    
-            // Get all available verticals
-            if (this._verticalsSourceData) {
-              const availableVerticals = this._verticalsSourceData.tryGetValue();
-    
-              if (availableVerticals) {
-    
-                // Get the corresponding text for selected keys
-                let selectedKeysAsText: string[] = [];
-                
-                availableVerticals.verticalsConfiguration.forEach(verticalConfiguration => {
-                  if (this.properties.selectedVerticalKeys.indexOf(verticalConfiguration.key) !== -1) {
-                    selectedKeysAsText.push(verticalConfiguration.tabName);
-                  }
-                });
-    
-                verticalsConnectionFields.push(
-                  new PropertyPaneAsyncCombo('selectedVerticalKeys', {
-                      availableOptions: availableVerticals.verticalsConfiguration.filter(v => !v.isLink).map(verticalConfiguration => {
-                        return {
-                          key: verticalConfiguration.key,
-                          text: verticalConfiguration.tabName
-                        };
-                      }),
-                      allowMultiSelect: true,
-                      allowFreeform: false,
-                      description: webPartStrings.PropertyPane.ConnectionsPage.LinkToVerticalLabelHoverMessage,
-                      label: webPartStrings.PropertyPane.ConnectionsPage.LinkToVerticalLabel,
-                      searchAsYouType: false,
-                      defaultSelectedKeys: this.properties.selectedVerticalKeys,
-                      textDisplayValue: selectedKeysAsText.join(','),
-                      onPropertyChange: this.onCustomPropertyUpdate.bind(this),
-                  })
-                );
-              }
+        ];
+
+        if (this.properties.useVerticals) {
+            verticalsConnectionFields.splice(1, 0,
+                PropertyPaneDropdown('verticalsDataSourceReference', {
+                    options: await this.dynamicDataService.getAvailableDataSourcesByType(ComponentType.SearchVerticals),
+                    label: commonStrings.PropertyPane.ConnectionsPage.UseDataVerticalsFromComponentLabel
+                })
+            );
+
+            if (this.properties.verticalsDataSourceReference) {
+
+                // Get all available verticals
+                if (this._verticalsSourceData) {
+                    const availableVerticals = DynamicPropertyHelper.tryGetValueSafe(this._verticalsSourceData);
+
+                    if (availableVerticals) {
+
+                        // Get the corresponding text for selected keys
+                        let selectedKeysAsText: string[] = [];
+
+                        availableVerticals.verticalsConfiguration.forEach(verticalConfiguration => {
+                            if (this.properties.selectedVerticalKeys.indexOf(verticalConfiguration.key) !== -1) {
+                                selectedKeysAsText.push(verticalConfiguration.tabName);
+                            }
+                        });
+
+                        verticalsConnectionFields.push(
+                            new PropertyPaneAsyncCombo('selectedVerticalKeys', {
+                                availableOptions: availableVerticals.verticalsConfiguration.filter(v => !v.isLink).map(verticalConfiguration => {
+                                    return {
+                                        key: verticalConfiguration.key,
+                                        text: verticalConfiguration.tabName
+                                    };
+                                }),
+                                allowMultiSelect: true,
+                                allowFreeform: false,
+                                description: webPartStrings.PropertyPane.ConnectionsPage.LinkToVerticalLabelHoverMessage,
+                                label: webPartStrings.PropertyPane.ConnectionsPage.LinkToVerticalLabel,
+                                searchAsYouType: false,
+                                defaultSelectedKeys: this.properties.selectedVerticalKeys,
+                                textDisplayValue: selectedKeysAsText.join(','),
+                                onPropertyChange: this.onCustomPropertyUpdate.bind(this),
+                            })
+                        );
+                    }
+                }
             }
-          }
         }
-    
+
         return verticalsConnectionFields;
     }
 
@@ -1022,7 +1023,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
         if (this.properties.verticalsDataSourceReference) {
 
             if (!this._verticalsSourceData) {
-            this._verticalsSourceData = new DynamicProperty<IDataVerticalSourceData>(this.context.dynamicDataProvider);
+                this._verticalsSourceData = new DynamicProperty<IDataVerticalSourceData>(this.context.dynamicDataProvider);
             }
 
             this._verticalsSourceData.setReference(this.properties.verticalsDataSourceReference);
@@ -1030,7 +1031,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
 
         } else {
             if (this._verticalsSourceData) {
-            this._verticalsSourceData.unregister(this.render);
+                this._verticalsSourceData.unregister(this.render);
             }
         }
     }
@@ -1119,7 +1120,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
         // Get values for all dynamic properties
         dynamicProperties.forEach(dataSourceDynamicProperty => {
 
-            const dataSourceData = dataSourceDynamicProperty.tryGetValue();
+            const dataSourceData = DynamicPropertyHelper.tryGetValueSafe(dataSourceDynamicProperty);
             if (dataSourceData) {
 
                 // 1. Concatenate all values from all connected results Web Parts
@@ -1132,7 +1133,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                         if (!this.templateService.Handlebars.helpers[helperName]) {
                             this.templateService.Handlebars.registerHelper(helperName, dataSourceData.handlebarsContext.helpers[helperName]);
                         }
-                    });            
+                    });
                 }
             }
         });
