@@ -320,7 +320,8 @@ define([], function() {
                         Id: "GUID manifeste",
                         Enabled: "Activé/Désactivé"
                     }
-                }
+                },
+                ImportExport: "Paramètres d'importation/exportation"
             }
         },
         Filters: {

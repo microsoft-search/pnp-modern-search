@@ -29,6 +29,7 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
    * Dynamically loaded components for property pane
    */
   private _propertyFieldCollectionData: any = null;
+  private _propertyPanePropertyEditor = null;
   private _customCollectionFieldType: any = null;
   private _placeholderComponent: any = null;
 
@@ -201,7 +202,16 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
       {
         displayGroupsAsAccordion: true,
         groups: [
-          ...this.getPropertyPaneWebPartInfoGroups()
+          ...this.getPropertyPaneWebPartInfoGroups(),
+          {
+            groupName: commonStrings.PropertyPane.InformationPage.ImportExport,
+            groupFields: [
+                this._propertyPanePropertyEditor({
+                    webpart: this,
+                    key: 'propertyEditor'
+                })
+            ]
+        }
         ]
       }
     );
@@ -219,12 +229,19 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
 
     // tslint:disable-next-line:no-shadowed-variable
     const { PropertyFieldCollectionData, CustomCollectionFieldType } = await import(
-        /* webpackChunkName: 'search-property-pane' */
+        /* webpackChunkName: 'pnp-modern-search-property-pane' */
         '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData'
     );
 
     this._propertyFieldCollectionData = PropertyFieldCollectionData;
     this._customCollectionFieldType = CustomCollectionFieldType;
+
+    const { PropertyPanePropertyEditor } = await import(
+      /* webpackChunkName: 'pnp-modern-search-property-pane' */
+      '@pnp/spfx-property-controls/lib/PropertyPanePropertyEditor'
+    );
+
+    this._propertyPanePropertyEditor = PropertyPanePropertyEditor;
   }
 
   private _getVerticalsConfguration(): IPropertyPaneField<any>[] {

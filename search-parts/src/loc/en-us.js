@@ -319,7 +319,8 @@ define([], function() {
                         Id: "Manifest GUID",
                         Enabled: "Enabled/Disabled"
                     }
-                }
+                },
+                ImportExport: "Import/Export settings"
             }
         },
         Filters: {

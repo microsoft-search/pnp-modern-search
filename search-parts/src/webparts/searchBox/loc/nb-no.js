@@ -40,7 +40,6 @@ define([], function() {
                     PanelDescription: "Legg til / fjern ID for tilpassede utvidelsesbibliotek her. Du kan angi et visningsavn og bestemme om biblioteket skal lastes ved oppstart. Kun leverandører av tilpassede søkeforslag lastes her.",
                 }
             },
-            ImportExport: "Importer/eksporter innstillinger"
         },
         SearchBox: {
             DefaultPlaceholder: "Angi søkeord…",

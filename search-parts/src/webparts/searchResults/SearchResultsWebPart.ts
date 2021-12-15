@@ -608,7 +608,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                     ...this.getPropertyPaneWebPartInfoGroups(),
                     ...extensibilityConfigurationGroups,
                     {
-                        groupName: webPartStrings.PropertyPane.ImportExport,
+                        groupName: commonStrings.PropertyPane.InformationPage.ImportExport,
                         groupFields: [
                             this._propertyPanePropertyEditor({
                                 webpart: this,

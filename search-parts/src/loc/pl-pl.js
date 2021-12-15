@@ -318,7 +318,8 @@ define([], function() {
                       Id: "GUID manifestu",
                       Enabled: "Włączone/Wyłączone"
                   }
-              }
+              },
+              ImportExport: "Importuj / Eksportuj ustawienia"
           }
       },
       Filters: {

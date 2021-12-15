@@ -319,7 +319,8 @@ define([], function() {
                         Id: "Manifest GUID",
                         Enabled: "Aan/Uit"
                     }
-                }
+                },
+                ImportExport: "Importeer/Exporteer instellingen"
             }
         },
         Filters: {

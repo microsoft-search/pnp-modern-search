@@ -63,8 +63,7 @@ declare interface ISearchFiltersWebPartStrings {
             ErrorTemplateResolve: string;
             FiltersTemplateFieldLabel: string;
             FiltersTemplatePanelHeader: string;
-        },
-        ImportExport: "Import / Export settings";
+        }
     }
 }
 
