@@ -229,7 +229,7 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
 
     // tslint:disable-next-line:no-shadowed-variable
     const { PropertyFieldCollectionData, CustomCollectionFieldType } = await import(
-        /* webpackChunkName: 'pnp-modern-search-verticals-property-pane' */
+        /* webpackChunkName: 'pnp-modern-search-property-pane' */
         '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData'
     );
 
@@ -237,7 +237,7 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
     this._customCollectionFieldType = CustomCollectionFieldType;
 
     const { PropertyPanePropertyEditor } = await import(
-      /* webpackChunkName: 'pnp-modern-search-verticals-property-pane' */
+      /* webpackChunkName: 'pnp-modern-search-property-pane' */
       '@pnp/spfx-property-controls/lib/PropertyPanePropertyEditor'
     );
 
