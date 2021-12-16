@@ -109,7 +109,6 @@ define([], function() {
               ResultSourceIdDescription: "Wybierz wbudowane źródło, wpisz niestandardowy GUID źródła lub POZIOM i NAZWA źródła oddzielone znakiem | (np. SPSite|News). Prawidłowe zakresy to [SPSiteSubscription, SPSite, SPWeb]. Naciśnij [Enter], aby zapisać.",
               InvalidResultSourceIdMessage: "Wprowadzona wartość nie jest poprawnym GUID lub jest sformatowana jako Poziom|Nazwa",
               EnableQueryRulesLabel: "Włącz reguły zapytania",
-              IncludeOneDriveResultsLabel: "Dołączaj wyniki z OneDrive for Business",
               RefinementFilters: "Filtry zawężające",
               RefinementFiltersDescription: "Początkowe filtry zawężające stosowane do zapytania. Nie pojawią się one w wybranych filtrach. Dla wyrażeń tekstowych, używaj cudzysłowów (\") zamiast apostrofów (').",
               EnableLocalizationLabel: "Włącz lokalizację",
