@@ -109,7 +109,6 @@ define([], function() {
                 ResultSourceIdDescription: "Sélectionnez une source intégrée, saisissez un GUID de source personnalisé ou NIVEAU et NOM de la source séparés par | (c'est-à-dire : SPSite|Actualités). Les niveaux valides sont [SPSiteSubscription, SPSite, SPWeb]. Appuyez sur [Entrée] pour enregistrer.",
                 InvalidResultSourceIdMessage: "La valeur fournie n’est pas une valeur GUID valide ou au format NIVEAU|NOM",
                 EnableQueryRulesLabel: "Activer les règles de requête",
-                IncludeOneDriveResultsLabel: "Inclure les résultats de OneDrive Entreprise",
                 RefinementFilters: "Filtres de recherche avancée",
                 RefinementFiltersDescription: "Filtres initiaux de recherche avancée à appliquer à la requête Ils ne figureront pas dans les filtres sélectionnés. Pour les expressions de chaîne, utilisez des guillemets doubles (\") plutôt qu’ un seul guillemet(‘).",
                 EnableLocalizationLabel: "Activer la localisation",

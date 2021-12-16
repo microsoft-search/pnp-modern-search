@@ -109,7 +109,6 @@ define([], function() {
                 ResultSourceIdDescription: "Vælg en indbygget kilde, skriv en brugerdefineret kilde-GUID eller NIVEAU og NAVN på kilden adskilt af | (dvs.: SPSite|Nyheder). Gyldige niveauer er [SPSiteSubscription, SPSite, SPWeb]. Tryk på [Enter] for at gemme.",
                 InvalidResultSourceIdMessage: "Værdien er ikke en gyldig GUID eller formateret som NIVEAU|NAVN",
                 EnableQueryRulesLabel: "Aktivér forespørgselsregler",
-                IncludeOneDriveResultsLabel: "Inkludér resultater fra OneDrive for Business",
                 RefinementFilters: "Refinement-filtre",
                 RefinementFiltersDescription: "Initiale refinement-filtre der kan bruges i en forespørgsel. Disse vil ikke fremgå i de valgte filtre. Hvis du ønsker at indsætte tekst, anvend da sitationstegn (\") frem for (').",
                 EnableLocalizationLabel: "Aktivér lokalisering",

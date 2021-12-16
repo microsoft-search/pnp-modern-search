@@ -109,7 +109,6 @@ define([], function() {
                 ResultSourceIdDescription: "Select a built-in source, type a custom source GUID, or SCOPE and NAME of the source separated by | (i.e: SPSite|News). Valid scopes are [SPSiteSubscription, SPSite, SPWeb]. Press [Enter] to save.",
                 InvalidResultSourceIdMessage: "The provided value is not a valid GUID, or formatted as SCOPE|NAME",
                 EnableQueryRulesLabel: "Enable query rules",
-                IncludeOneDriveResultsLabel: "Include OneDrive for Business results",
                 RefinementFilters: "Refinement filters",
                 RefinementFiltersDescription: "Initial refinement filters to apply to the query. These won't appear in the selected filters. For string expressions, use double quotes (\") instead of single quote (').",
                 EnableLocalizationLabel: "Enable localization",

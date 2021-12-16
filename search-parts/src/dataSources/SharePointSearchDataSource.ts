@@ -74,11 +74,6 @@ export interface ISharePointSearchDataSourceProperties {
     enableQueryRules: boolean;
 
     /**
-     * Flag indicating if the OneDrive for Business results should be included/excluded
-     */
-    includeOneDriveResults: boolean;
-
-    /**
      * The KQL or FQL refinement filters to apply to the query
      */
     refinementFilters: string;
@@ -374,10 +369,6 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                         label: commonStrings.DataSources.SharePointSearch.EnableQueryRulesLabel,
                         checked: this.properties.enableQueryRules,
                     }),
-                    PropertyPaneToggle('dataSourceProperties.includeOneDriveResults', {
-                        label: commonStrings.DataSources.SharePointSearch.IncludeOneDriveResultsLabel,
-                        checked: this.properties.includeOneDriveResults,
-                    }),
                     PropertyPaneToggle('dataSourceProperties.enableAudienceTargeting', {
                         label: commonStrings.DataSources.SharePointSearch.EnableAudienceTargetingTglLabel,
                         checked: this.properties.enableAudienceTargeting,
@@ -512,7 +503,6 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         this.properties.queryTemplate = this.properties.queryTemplate ? this.properties.queryTemplate : "{searchTerms}";
         this.properties.enableQueryRules = this.properties.enableQueryRules !== undefined ? this.properties.enableQueryRules : false;
         this.properties.enableLocalization = this.properties.enableLocalization !== undefined ? this.properties.enableLocalization : false;
-        this.properties.includeOneDriveResults = this.properties.includeOneDriveResults !== undefined ? this.properties.includeOneDriveResults : false;
         this.properties.refinementFilters = this.properties.refinementFilters ? this.properties.refinementFilters : '';
         this.properties.selectedProperties = this.properties.selectedProperties !== undefined ? this.properties.selectedProperties :
             [
@@ -839,18 +829,6 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         searchQuery.TrimDuplicates = false;
         searchQuery.SortList = this._convertToSortList(this.properties.sortList);
         searchQuery.SelectProperties = this.properties.selectedProperties.filter(a => a); // Fix to remove null values;
-
-        // Toggle to include user's personal OneDrive results as a secondary result block
-        // https://docs.microsoft.com/en-us/sharepoint/support/search/private-onedrive-results-not-included
-        if (this.properties.includeOneDriveResults) {
-            searchQuery.Properties.push({
-                Name: "ContentSetting",
-                Value: {
-                    IntVal: 3,
-                    QueryPropertyValueTypeIndex: 2
-                }
-            });
-        }
 
         // Audience targeting
         if (this.properties.enableAudienceTargeting) {
