@@ -109,7 +109,6 @@ define([], function() {
                 ResultSourceIdDescription: "Selecteer een ingebouwde bron, typ een aangepaste bron-GUID of NIVEAU en NAAM van de bron gescheiden door | (d.w.z. SPSite|Nieuws). Geldige niveaus zijn [SPSiteSubscription, SPSite, SPWeb]. Druk op [Enter] om op te slaan.",
                 InvalidResultSourceIdMessage: "De opgegeven waarde is geen valide GUID of is opgemaakt als NIVEAU|NAAM",
                 EnableQueryRulesLabel: "Zoekregels inschakelen",
-                IncludeOneDriveResultsLabel: "Resultaten van OneDrive voor Bedrijven opnemen",
                 RefinementFilters: "Refinement filters",
                 RefinementFiltersDescription: "Initiële verfijningen om toe te passen op de zoekopdracht. Deze verschijnen niet in de geselecteerde filters. Voor tekenreeksuitdrukkingen gebruik je dubbele aanhalingstekens (\") in plaats van enkele (').",
                 EnableLocalizationLabel: "Lokalisatie inschakelen",

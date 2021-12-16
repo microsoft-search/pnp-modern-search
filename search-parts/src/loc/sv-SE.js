@@ -109,7 +109,6 @@ define([], function () {
           ResultSourceIdDescription: "Välj en inbyggd källa, skriv en anpassad käll-GUID eller NIVÅ och NAMN på källan separerade med | (dvs: SPSite|Nyheter). Giltiga nivå är [SPSiteSubscription, SPSite, SPWeb]. Tryck på [Enter] för att spara.",
           InvalidResultSourceIdMessage: "Det angivna värdet är inte en giltigt GUID eller formaterad som NIVÅ|NAMN",
           EnableQueryRulesLabel: "Aktivera frågeregler",
-          IncludeOneDriveResultsLabel: "Inkludera resultat från OneDrive för Företag",
           RefinementFilters: "Förfiningsfilter",
           RefinementFiltersDescription: "Inledande förfiningsfilter som kan användas i en fråga. Dessa visas inte i de valda filtren. Om du vill infoga text använder du citattecken (\") istället för (').",
           EnableLocalizationLabel: "Aktivera lokalisering",

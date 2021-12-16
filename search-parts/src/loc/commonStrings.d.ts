@@ -108,7 +108,6 @@ declare interface ICommonStrings {
         ResultSourceIdDescription: string;
         InvalidResultSourceIdMessage: string;
         EnableQueryRulesLabel: string;
-        IncludeOneDriveResultsLabel: string;
         RefinementFilters: string;
         RefinementFiltersDescription: string;
         EnableLocalizationLabel: string;

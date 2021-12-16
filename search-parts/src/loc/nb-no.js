@@ -109,7 +109,6 @@ define([], function () {
           ResultSourceIdDescription: "Velg en standard kilde, skriv en brukerdefiner kilde-GUID eller SCOPE og NAVN på kilden adskilt av | (dvs.: SPSite|Nyheder). Gyldige scopes er [SPSiteSubscription, SPSite, SPWeb]. Trykk [Enter] for å lagre.",
           InvalidResultSourceIdMessage: "Verdien er ikke en gyldig GUID eller formatert som SCOPE|NAVN",
           EnableQueryRulesLabel: "Aktiver søkeregler",
-          IncludeOneDriveResultsLabel: "Inkluder resultater fra OneDrive for Business",
           RefinementFilters: "Søkefilter",
           RefinementFiltersDescription: "Filter som legges på spørringen. Disse dukker ikke opp i de valgte filterene. For tekst-strenger: bruk bruk (\") istedenfor (').",
           EnableLocalizationLabel: "Aktiver lokalisering",
