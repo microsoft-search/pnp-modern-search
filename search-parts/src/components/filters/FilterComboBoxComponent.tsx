@@ -344,7 +344,8 @@ export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilte
                         fontWeight: 'normal',
                         height: '100%',
                         color: this.props.themeVariant.semanticColors.bodyText,
-                        fontSize: 12
+                        fontSize: 12,
+                        marginLeft: -8
                     }}>
                         <FilterMulti
                             onApply={this._applyFilters}
@@ -362,7 +363,8 @@ export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilte
                         fontWeight: 'normal',
                         height: '100%',
                         color: this.props.themeVariant.semanticColors.bodyText,
-                        fontSize: 12
+                        fontSize: 12,
+                        marginLeft: 5
                     }}>
                         <FilterValueOperator
                             onFilterOperatorUpdated={this._updatedOperator}
@@ -432,17 +434,17 @@ export class FilterComboBoxWebComponent extends BaseWebComponent {
                 );
 
                 // Multi control
-                options.push(
-                    {
-                        key: undefined,
-                        text: undefined,
-                        itemType: SelectableOptionMenuItemType.Divider,
-                    },
+                options.unshift(
                     {
                         key: FILTER_MULTI_KEY,
                         text: '',
                         disabled: true,
                         itemType: SelectableOptionMenuItemType.Header
+                    },
+                    {
+                        key: undefined,
+                        text: undefined,
+                        itemType: SelectableOptionMenuItemType.Divider,
                     }
                 );
             }
