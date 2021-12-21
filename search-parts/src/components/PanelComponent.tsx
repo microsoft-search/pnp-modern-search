@@ -134,6 +134,8 @@ export class PanelComponent extends React.Component<IPanelComponentProps, IPanel
         return <div>
             <Text theme={this.props.themeVariant as ITheme}>
                 <div
+                    role={"menubar"}
+                    tabIndex={0}
                     className={styles.panel__open}
                     onClick={this._onTogglePanel}
                     onKeyPress={(e) => {
