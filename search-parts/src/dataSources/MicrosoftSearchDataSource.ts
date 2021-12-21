@@ -231,6 +231,16 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                 description: `<em>${commonStrings.DataSources.MicrosoftSearch.QueryTextFieldInfoMessage}</em>`,
                 key: 'queryText'
             }),
+            new PropertyPaneNonReactiveTextField('dataSourceProperties.queryTemplate', {
+                defaultValue: this.properties.queryTemplate,
+                label: commonStrings.DataSources.MicrosoftSearch.QueryTemplateFieldLabel,
+                placeholderText: commonStrings.DataSources.MicrosoftSearch.QueryTemplatePlaceHolderText,
+                multiline: true,
+                description: commonStrings.DataSources.MicrosoftSearch.QueryTemplateFieldDescription,
+                applyBtnText: commonStrings.DataSources.MicrosoftSearch.ApplyQueryTemplateBtnText,
+                allowEmptyValue: false,
+                rows: 8
+            }),
             new PropertyPaneAsyncCombo('dataSourceProperties.entityTypes', {
                 availableOptions: this._availableEntityTypeOptions,
                 allowMultiSelect: true,
@@ -243,16 +253,20 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                 onPropertyChange: this.onCustomPropertyUpdate.bind(this),
                 textDisplayValue: entityTypesDisplayValue.filter(e => e).join(",")
             }),
-            new PropertyPaneNonReactiveTextField('dataSourceProperties.queryTemplate', {
-                defaultValue: this.properties.queryTemplate,
-                label: commonStrings.DataSources.MicrosoftSearch.QueryTemplateFieldLabel,
-                placeholderText: commonStrings.DataSources.MicrosoftSearch.QueryTemplatePlaceHolderText,
-                multiline: true,
-                description: commonStrings.DataSources.MicrosoftSearch.QueryTemplateFieldDescription,
-                applyBtnText: commonStrings.DataSources.MicrosoftSearch.ApplyQueryTemplateBtnText,
-                allowEmptyValue: false,
-                rows: 8
-            }),
+            new PropertyPaneAsyncCombo('dataSourceProperties.fields', {
+                availableOptions: this._availableFields,
+                allowMultiSelect: true,
+                allowFreeform: true,
+                description: commonStrings.DataSources.MicrosoftSearch.SelectedFieldsPropertiesFieldDescription,
+                label: commonStrings.DataSources.MicrosoftSearch.SelectedFieldsPropertiesFieldLabel,
+                placeholder: commonStrings.DataSources.MicrosoftSearch.SelectedFieldsPlaceholderLabel,
+                searchAsYouType: false,
+                defaultSelectedKeys: this.properties.fields,
+                onPropertyChange: this.onCustomPropertyUpdate.bind(this),
+                onUpdateOptions: ((options: IComboBoxOption[]) => {
+                    this._availableFields = options;
+                }).bind(this)
+            })
         ];
         let useBetaEndpointFields: IPropertyPaneField<any>[] = [
             PropertyPaneHorizontalRule(),
@@ -347,28 +361,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                 })
             );
         }
-
-        // Only available for ListItem an ExternalItem entities
-        // https://docs.microsoft.com/en-us/graph/api/resources/search-api-overview?view=graph-rest-1.0#get-selected-properties
-        if (this.properties.entityTypes.indexOf(EntityType.ListItem) !== -1 || this.properties.entityTypes.indexOf(EntityType.ExternalItem) !== -1) {
-            selectFieldsFields.push( 
-                new PropertyPaneAsyncCombo('dataSourceProperties.fields', {
-                    availableOptions: this._availableFields,
-                    allowMultiSelect: true,
-                    allowFreeform: true,
-                    description: commonStrings.DataSources.MicrosoftSearch.SelectedFieldsPropertiesFieldDescription,
-                    label: commonStrings.DataSources.MicrosoftSearch.SelectedFieldsPropertiesFieldLabel,
-                    placeholder: commonStrings.DataSources.MicrosoftSearch.SelectedFieldsPlaceholderLabel,
-                    searchAsYouType: false,
-                    defaultSelectedKeys: this.properties.fields,
-                    onPropertyChange: this.onCustomPropertyUpdate.bind(this),
-                    onUpdateOptions: ((options: IComboBoxOption[]) => {
-                        this._availableFields = options;
-                    }).bind(this)
-                })
-            );
-        }
-
+   
         if (this.properties.entityTypes.indexOf(EntityType.Message) !== -1 && this.properties.entityTypes.length === 1) {
             enableTopResultsFields.push(PropertyPaneToggle('dataSourceProperties.enableTopResults', {
                 label: commonStrings.DataSources.MicrosoftSearch.EnableTopResultsLabel
@@ -515,7 +508,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
     private initProperties(): void {
         this.properties.entityTypes = this.properties.entityTypes !== undefined ? this.properties.entityTypes : [EntityType.DriveItem];
 
-        const CommonFields = ["name","webUrl","filetype","createdBy","createdDateTime","lastModifiedDateTime","parentReference","size","description","file","folder"];
+        const CommonFields = ["name","webUrl","filetype","createdBy","createdDateTime","lastModifiedDateTime","parentReference","size","description","file","folder","subject","bodyPreview","replyTo","from","sender","start","end","displayName","givenName","surname","userPrincipalName","phones","department"];
 
         this.properties.fields = this.properties.fields !== undefined ? this.properties.fields : CommonFields;
         this.properties.sortProperties = this.properties.sortProperties !== undefined ? this.properties.sortProperties : [];
