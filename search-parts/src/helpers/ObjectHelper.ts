@@ -41,9 +41,19 @@ export class ObjectHelper {
      */
     public static byPath(object: any, path: string): string  {
 
-        if (path && object) {
+        let isValidPredicate = true;
+        
+        // Test if the provided path is a valid predicate https://www.npmjs.com/package/jspath#documentation
+        try {
+            jspath.compile(`.${path}`);
+        } catch (e) {
+            isValidPredicate = false;
+        }
+
+        if (path && object && isValidPredicate) {
 
             try {
+
                 // jsPath always returns an array. See https://www.npmjs.com/package/jspath#result
                 const value: any[] = jspath.apply(`.${path}`, object);
 
@@ -67,7 +77,7 @@ export class ObjectHelper {
             
             } catch (error) {
                 // Case when unexpected string or tokens are passed in the path
-                return object[path]; // fallback to see if the prop is on the object verbatim
+                return null;
             }
                  
         } else {
