@@ -38,7 +38,7 @@
                             <li class="template--peopleListItem" tabindex="0">
                                 {{#> resultTypes item=item}}
 
-                                    {{#if @root.properties.layoutProperties.showPersonaCard}}
+                                    {{#and @root.properties.layoutProperties.showPersonaCard (slot item @root.slots.PersonQuery)}}
                                         <mgt-person user-id="{{getUserEmail (slot item @root.slots.PersonQuery)}}" person-card="hover">
                                             <template>
                                                 <pnp-persona 
@@ -65,7 +65,7 @@
                                             data-instance-id="{{@root.instanceId}}"
                                             data-theme-variant="{{JSONstringify @root.theme}}"
                                         ></pnp-persona>
-                                    {{/if}}
+                                    {{/and}}
                                     
                                 {{/resultTypes}}
                             </li>

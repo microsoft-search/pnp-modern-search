@@ -486,7 +486,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
             },
             {
                 slotName: BuiltinTemplateSlots.PersonQuery,
-                slotField: 'UserName'
+                slotField: 'AADObjectID'
             },
             {
                 slotName: BuiltinTemplateSlots.UserDisplayName,
