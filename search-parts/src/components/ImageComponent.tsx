@@ -11,6 +11,7 @@ export interface IImageState {
 interface IImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
     errorImage?: string;
     hideOnError?: boolean;
+    imageSize?: string;
 }
 
 export class ImageComponent extends React.Component<IImageProps, IImageState> {
@@ -26,8 +27,10 @@ export class ImageComponent extends React.Component<IImageProps, IImageState> {
 
     public render() {
         const { errorImage, ...imgProps } = this.props;
-        if(isEmpty(imgProps.src)) return null;
-        return <img {...imgProps} onError={this.addDefaultSrc} />;
+        const { src, imageSize } = imgProps;
+        if(isEmpty(src)) return null;
+        const imgSrc = imageSize ? src.replace('/thumbnails/0/large/content', `/thumbnails/0/${imageSize}/content`) : src;
+        return <img {...imgProps} src={imgSrc} onError={this.addDefaultSrc} />;
     }
 
     private addDefaultSrc(ev: any) {

@@ -209,9 +209,11 @@ Here are the list of all **reusable** web components you can use to customize yo
 ```html
 <pnp-img loading="lazy" src="https://someimage.png" data-error-image="https://fallbackimage.png" /> 
 <pnp-img src="https://someimage.png" hideOnError/> 
+<pnp-img src="https://someimage.png" data-image-size="c194x110_crop" /> 
 ```
 
 | Parameter | Description |
 | --------- | ----------- |
 |**errorImage**|URL to the fallback image
 |**hideOnError**|Hide image on error
+|**imageSource**|Provide image size for use with the field AutoPreviewImageUrl. Replaces "large" in the url with this string, e.g. `c194x110_crop`
