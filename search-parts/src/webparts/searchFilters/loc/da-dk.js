@@ -15,6 +15,8 @@ define([], function() {
                 UseDataResultsWebPartLabel: "Forbind til en dataresultat-webpart",
                 UseDataResultsFromComponentsLabel: "Anvend data fra disse webparts",
                 UseDataResultsFromComponentsDescription: "Hvis du forbinder mere end en webpart, flettes filterværdier til lignende filternavne.",
+                LinkToVerticalLabel: "Vis kun filtre, når følgende vertikaler er valgt",
+                LinkToVerticalLabelHoverMessage: "Filtrene vil kun blive vist, hvis den valgte vertikal matcher med dem, der er konfigureret til denne webdel. Ellers vil webdelen være tom (ingen margen og ingen polstring) i visningstilstand."
             },
             FiltersSettingsPage: {
                 SettingsGroupName: "Indstillinger til filtre",

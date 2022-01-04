@@ -152,11 +152,16 @@ export class PanelComponent extends React.Component<IPanelComponentProps, IPanel
 
     public componentDidMount() {
 
-        // Get expand state if any
-        const isOpen = this.clientStorage.session.get(this.panelComponentUniqueKey);
+        if (this.props.isOpen !== undefined) {
+            this.setState({ showPanel: this.props.isOpen });
+        } else {
 
-        if (isOpen !== null) {
-            this.setState({ showPanel: isOpen });
+            // Get expand state if any
+            const isOpen = this.clientStorage.session.get(this.panelComponentUniqueKey);
+
+            if (isOpen !== null) {
+                this.setState({ showPanel: isOpen });
+            }
         }
 
         // Reset the state when the page is refreshed or the window location is updated
