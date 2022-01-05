@@ -37,9 +37,10 @@ export class ObjectHelper {
      * Get object proeprty value by its deep path.
      * @param object the object containg the property path
      * @param path the property path to get
+     * @param delimiter if multiple matches are found, sepcifiy the delimiter character to use to separate values in the returned string 
      * @returns the property value as string if found, 'undefined' otherwise
      */
-    public static byPath(object: any, path: string): string  {
+    public static byPath(object: any, path: string, delimiter?: string): string  {
 
         let isValidPredicate = true;
         
@@ -70,6 +71,10 @@ export class ObjectHelper {
 
                     // Returns the stringified array
                     return JSON.stringify(value);                         
+                }
+
+                if (delimiter && value.length > 1) {
+                    return value.join(delimiter);
                 }
 
                 // Use the default behavior of the toString() method. Arrays of simple values (string, integer, etc.) will be separated by a comma (',')

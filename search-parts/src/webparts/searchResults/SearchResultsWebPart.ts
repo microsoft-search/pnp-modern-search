@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
-import { Version, Text, DisplayMode, ServiceScope, Log } from '@microsoft/sp-core-library';
+import { Version, Text, DisplayMode, ServiceScope, Log, Guid } from '@microsoft/sp-core-library';
 import { IComboBoxOption, Toggle, IToggleProps, MessageBarType, MessageBar, Link } from 'office-ui-fabric-react';
 import { IWebPartPropertiesMetadata } from '@microsoft/sp-webpart-base';
 import * as webPartStrings from 'SearchResultsWebPartStrings';
@@ -282,13 +282,29 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                     // Aggregate all values for this specific field across all items
                     // Ex:
                     // "FileType":['docx','pdf']
-                    let fieldValue = undefined;
+                    fields[field] = [];
+                    this._currentDataResultsSourceData.selectedItems.forEach(selectedItem => {
+                        const fieldValue =  ObjectHelper.byPath(selectedItem, field);
 
-                    if (this._currentDataResultsSourceData.selectedItems.length > 0) {
-                        fieldValue = ObjectHelper.byPath(this._currentDataResultsSourceData.selectedItems, field);
-                    }
+                        // Special case where there value is a taxonomy item. In this case, we only take the GP0 part as it won't work otherwise with SharePoint search refiners or KQL conditions
+                        const taxonomyItemRegExp = /GP0\|#0?((\{){0,1}[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}(\}){0,1})/gi;
 
-                    fields[field] = fieldValue ? fieldValue.split(',') : undefined;
+                        if (taxonomyItemRegExp.test(fieldValue)) {
+                            fieldValue.match(taxonomyItemRegExp).forEach(match => {
+                                fields[field].push(match);
+                            });
+                        } else {
+
+                            if (fieldValue) {
+                                // Break down multiple values in a field value (like a multi choice or taxonomy column)
+                                fieldValue.split(";").forEach(value => {
+                                    fields[field].push(value);
+                                });
+                            } else {
+                                fields[field].push(undefined);
+                            }
+                        }
+                    });
                 });
 
                 return fields;
@@ -1989,7 +2005,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             this.tokenService.setTokenValue(BuiltinTokenNames.inputQueryText, inputQueryText);
 
             // Legacy token for SharePoint and Microsoft Search data sources
-            this.tokenService.setTokenValue(BuiltinTokenNames.searchTerms, inputQueryText === undefined ? '' : inputQueryText);
+            this.tokenService.setTokenValue(BuiltinTokenNames.searchTerms, inputQueryText);
 
             // Selected filters
             if (this._filtersConnectionSourceData) {
@@ -2075,7 +2091,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                     } as IDataFilterTokenValue
                 };
 
-                filterTokens[destinationFieldName].valueAsText = itemFieldValues.join(',');
+                filterTokens[destinationFieldName].valueAsText = itemFieldValues.length > 0 ? itemFieldValues.join(',') : undefined;  // This allow the `{? <KQL expression>}` to work
                 this.tokenService.setTokenValue(BuiltinTokenNames.filters, filterTokens);
             }
 
@@ -2214,11 +2230,13 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             if (this.properties.itemSelectionProps.selectionMode === ItemSelectionMode.AsDataFilter) {
 
                 const filterValues: IDataFilterValue[] = uniq(itemFieldValues) // Remove duplicate values selected by the user
-                    .filter(value => !isEmpty(value) && typeof value === 'string') // Make sure the value is actually a not empty/null 'string'
-                    .map(fieldValue => {
+                    .map(value => value ? value : "string('')", )   // If the value is null or undefined, we replace it by the FQL expression string('')
+                                                                    // Otherwise the query syntax won't be vaild resuting of to an HTTP 500 
+                    .filter(value => typeof value === 'string') // Make sure the value is actually a not empty/null 'string'
+                    .map(fieldValue => {                       
                         return {
                             name: fieldValue,
-                            value: fieldValue,
+                            value: fieldValue ? fieldValue : "string('')", 
                             operator: FilterComparisonOperator.Eq
                         };
                     });

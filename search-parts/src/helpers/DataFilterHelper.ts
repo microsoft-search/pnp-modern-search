@@ -115,6 +115,11 @@ export class DataFilterHelper {
                         }
                     }
 
+                    // Enclose the expression with quotes if the value contains spaces
+                    if (/\s/.test(value)) {
+                      value = `"${value}"`;
+                    }
+
                     return /ǂǂ/.test(value) && encodeTokens ? encodeURIComponent(value) : value;
                 
             }).filter(c => c);
@@ -146,6 +151,11 @@ export class DataFilterHelper {
                     if (filterValue.operator === FilterComparisonOperator.Leq || filterValue.operator === FilterComparisonOperator.Lt) {
                         refinementToken = `range(min,${refinementToken})`;
                     }
+                }
+
+                // Enclose the expression with quotes if the value contains spaces
+                if (/\s/.test(refinementToken)) {
+                  refinementToken = `"${refinementToken}"`;
                 }
                 
                 refinementQueryConditions.push(`${filter.filterName}:${refinementToken}`);
