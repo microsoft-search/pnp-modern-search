@@ -941,7 +941,11 @@
 <p class="admonition-title">Filtering general behavior</p>
 </div>
 <ul>
-<li><code>null</code> ou <code>empty</code> filters values <strong>are ignored</strong> in the resulting query.</li>
+<li>If the source selected item field is <code>null</code> ou <code>empty</code>:<ul>
+<li>It will be replaced by the FQL expression <code>string('')</code> expression if the mode is <strong>Process values as filters</strong></li>
+<li>It will be resolved as an empty string if the mode is <strong>Process values as tokens</strong>.</li>
+</ul>
+</li>
 <li>Duplicate values are trimmed (ex: user select items with the same filter values).</li>
 <li>Filter values should be 'string' values. All other types will be ignored (ex: 'objects' from JSON response).</li>
 </ul>
