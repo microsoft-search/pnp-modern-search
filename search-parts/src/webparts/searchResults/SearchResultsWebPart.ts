@@ -834,7 +834,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
      */
     private _getInputQueryTextValue(): string {
 
-        let inputQueryText: string = null; // {inputQueryText} token should always resolve as '' by default
+        let inputQueryText: string = undefined; // {inputQueryText} token should always resolve as '' by default
 
         // tryGetValue() will resolve to '' if no Web Part is connected or if the connection is removed
         // The value can be also 'undefined' if the data source is not already loaded on the page.
@@ -1993,15 +1993,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         if (this.tokenService) {
 
-            let inputQueryFromDataSource: string = null;
             // Input query text
-            try {
-                inputQueryFromDataSource = DynamicPropertyHelper.tryGetValueSafe(this.properties.queryText);
-            } catch (error) {
-                // Likely issue when q=%25 in spfx
-            }
-
-            const inputQueryText = inputQueryFromDataSource ? inputQueryFromDataSource : this.properties.defaultQueryText;
+            const inputQueryText = this._getInputQueryTextValue();
             this.tokenService.setTokenValue(BuiltinTokenNames.inputQueryText, inputQueryText);
 
             // Legacy token for SharePoint and Microsoft Search data sources
@@ -2230,7 +2223,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             if (this.properties.itemSelectionProps.selectionMode === ItemSelectionMode.AsDataFilter) {
 
                 const filterValues: IDataFilterValue[] = uniq(itemFieldValues) // Remove duplicate values selected by the user
-                    .filter(value => !value || typeof value === 'string') // Make sure the value is actually a not empty/null 'string'
+                    .filter(value => !value || typeof value === 'string')
                     .map(fieldValue => {                       
                         return {
                             name: fieldValue,

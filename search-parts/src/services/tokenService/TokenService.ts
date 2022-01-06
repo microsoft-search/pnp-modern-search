@@ -69,9 +69,9 @@ export class TokenService implements ITokenService {
      * The list of static tokens values set by the Web Part as context
      */
     private tokenValuesList: { [key: string]: any } = {
-        [BuiltinTokenNames.inputQueryText]: null, // Should always be resolved as an empty string
-        [BuiltinTokenNames.searchTerms]: null, // Should always be resolved as an empty string
-        [BuiltinTokenNames.filters]: null, // Should always be resolved as an empty string
+        [BuiltinTokenNames.inputQueryText]: undefined,
+        [BuiltinTokenNames.searchTerms]: undefined,
+        [BuiltinTokenNames.filters]: undefined,
         [BuiltinTokenNames.verticals]: undefined
     };
 
