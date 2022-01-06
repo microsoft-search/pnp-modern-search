@@ -2230,13 +2230,11 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             if (this.properties.itemSelectionProps.selectionMode === ItemSelectionMode.AsDataFilter) {
 
                 const filterValues: IDataFilterValue[] = uniq(itemFieldValues) // Remove duplicate values selected by the user
-                    .map(value => value ? value : "string('')", )   // If the value is null or undefined, we replace it by the FQL expression string('')
-                                                                    // Otherwise the query syntax won't be vaild resuting of to an HTTP 500 
-                    .filter(value => typeof value === 'string') // Make sure the value is actually a not empty/null 'string'
+                    .filter(value => !value || typeof value === 'string') // Make sure the value is actually a not empty/null 'string'
                     .map(fieldValue => {                       
                         return {
                             name: fieldValue,
-                            value: fieldValue ? fieldValue : "string('')", 
+                            value: fieldValue, 
                             operator: FilterComparisonOperator.Eq
                         };
                     });
