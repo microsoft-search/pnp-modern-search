@@ -44,7 +44,12 @@ Storing custom templates as files in a SharePoint site, is great when you want t
 
 When you have your templates in SharePoint, it is easy to setup a way to edit locally on your computer and still get the result in SharePoint almost instantly.
 
+## Scenario 8
 
+[Create a search page with verticals (within the same page)](Create-a-search-page-with-verticals-within-the-same-page.md)
+
+Search verticals can be used to selectively search specific content per vertical. Using the SharePoint provider you can use result sources to limit the content returned,
+or you can add the required KQL in the web part itself. This sample shows how to set up multiple search verticals on the same page.
 
 ---
 
