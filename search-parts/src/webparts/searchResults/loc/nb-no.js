@@ -68,18 +68,18 @@ define([], function() {
             CancelButtonText: "Avbryt",
             DialogButtonText: "Rediger mal",
             DialogTitle: "Rediger resultatmal",
-            SaveButtonText: "Lagre",
-            AllowItemSelection: "Tillat valg av elementer",
-            AllowMultipleItemSelection: "Tillat flere valg",
-            SelectionModeLabel: "Valgmodus",
-            AsTokensSelectionMode: "Behandle valgte verdier som tokens (manuell modus)",
-            AsDataFiltersSelectionMode: "Behandle valgte verdier som filtre (standardmodus)",
-            AsDataFiltersDescription: "I denne modusen sendes valgte verdier til datakilden som vanlige filtre",
-            AsTokensDescription: "I denne modusen brukes valgte verdier manuelt gjennom tokens og tilgjengelige metoder. Eksempel med SharePoint-søkemal: {?Title:{filters.&lt;destination_field_name&gt;.valueAsText}}",
-            FilterValuesOperator: "Den logiske operatoren som skal brukes mellom valgte verdier",
-            FieldToConsumeLabel: "Kildefelt å konsumere",
-            FieldToConsumeDescription: "Bruk denne feltverdien for valgte elementer"
-          }
+            SaveButtonText: "Lagre"
+          },
+          AllowItemSelection: "Tillat valg av elementer",
+          AllowMultipleItemSelection: "Tillat flere valg",
+          SelectionModeLabel: "Valgmodus",
+          AsTokensSelectionMode: "Behandle valgte verdier som tokens (manuell modus)",
+          AsDataFiltersSelectionMode: "Behandle valgte verdier som filtre (standardmodus)",
+          AsDataFiltersDescription: "I denne modusen sendes valgte verdier til datakilden som vanlige filtre",
+          AsTokensDescription: "I denne modusen brukes valgte verdier manuelt gjennom tokens og tilgjengelige metoder. Eksempel med SharePoint-søkemal: {?Title:{filters.&lt;destination_field_name&gt;.valueAsText}}",
+          FilterValuesOperator: "Den logiske operatoren som skal brukes mellom valgte verdier",
+          FieldToConsumeLabel: "Kildefelt å konsumere",
+          FieldToConsumeDescription: "Bruk denne feltverdien for valgte elementer"
         },
         ConnectionsPage: {
           ConnectionsPageGroupName: "Tilgjengelige tilkoblinger",

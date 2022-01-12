@@ -1,3 +1,4 @@
+import { isEmpty } from "@microsoft/sp-lodash-subset";
 import { IDataFilter, IDataFilterConfiguration, FilterType, IDataFilterResult, FilterComparisonOperator } from "@pnp/modern-search-extensibility";
 import { BuiltinTokenNames } from "../services/tokenService/TokenService";
 
@@ -115,6 +116,17 @@ export class DataFilterHelper {
                         }
                     }
 
+                    // If the value is null or undefined, we replace it by the FQL expression string('')
+                    // Otherwise the query syntax won't be vaild resuting of to an HTTP 500 
+                    if (isEmpty(value)) {
+                      value = "string('')";
+                    }
+
+                    // Enclose the expression with quotes if the value contains spaces
+                    if (/\s/.test(value)) {
+                      value = `"${value}"`;
+                    }
+
                     return /ǂǂ/.test(value) && encodeTokens ? encodeURIComponent(value) : value;
                 
             }).filter(c => c);
@@ -146,6 +158,17 @@ export class DataFilterHelper {
                     if (filterValue.operator === FilterComparisonOperator.Leq || filterValue.operator === FilterComparisonOperator.Lt) {
                         refinementToken = `range(min,${refinementToken})`;
                     }
+                }
+
+                // If the value is null or undefined, we replace it by the FQL expression string('')
+                // Otherwise the query syntax won't be vaild resuting of to an HTTP 500 
+                if (isEmpty(refinementToken)) {
+                  refinementToken = "string('')";
+                }
+
+                // Enclose the expression with quotes if the value contains spaces
+                if (/\s/.test(refinementToken)) {
+                  refinementToken = `"${refinementToken}"`;
                 }
                 
                 refinementQueryConditions.push(`${filter.filterName}:${refinementToken}`);

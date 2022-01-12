@@ -6,6 +6,7 @@ import { DateHelper } from "../../helpers/DateHelper";
 import { Constants } from "../../common/Constants";
 import { ObjectHelper } from "../../helpers/ObjectHelper";
 import { StringHelper } from "../../helpers/StringHelper";
+import { isEmpty, uniq } from "@microsoft/sp-lodash-subset";
 
 const TokenService_ServiceKey = 'ModernSearchTokenService';
 
@@ -68,9 +69,9 @@ export class TokenService implements ITokenService {
      * The list of static tokens values set by the Web Part as context
      */
     private tokenValuesList: { [key: string]: any } = {
-        [BuiltinTokenNames.inputQueryText]: null, // Should always be resolved as an empty string
-        [BuiltinTokenNames.searchTerms]: null, // Should always be resolved as an empty string
-        [BuiltinTokenNames.filters]: null, // Should always be resolved as an empty string
+        [BuiltinTokenNames.inputQueryText]: undefined,
+        [BuiltinTokenNames.searchTerms]: undefined,
+        [BuiltinTokenNames.filters]: undefined,
         [BuiltinTokenNames.verticals]: undefined
     };
 
@@ -617,13 +618,20 @@ export class TokenService implements ITokenService {
                 if (!/\{(?:User)\.(.*?)\}/gi.test(tokenValue)) {
                     const allValues = tokenValue.split(','); // Works with taxonomy multi values (TermID, Label) + multi choices fields + {filters.<value>.valueAsText} token. By convention, all multi values for this operator should be sparated by a comma
 
-                    // If the token value contains a whitespace, we enclose the value with quotes
                     if (allValues.length > 0) {
-                        allValues.forEach(value => {
-                            conditions.push(`(${property}${operator}${/\s/g.test(value) ? `${quotes}${value}${quotes}` : value})`);
+                        // Remove duplicates before processing
+                        uniq(allValues).forEach(value => {
+
+                            if (!isEmpty(value)) {
+                                // If the token value contains a whitespace, we enclose the value with quotes
+                                conditions.push(`(${property}${operator}${/\s/g.test(value) ? `${quotes}${value}${quotes}` : value})`);
+                            }
                         });
                     } else {
-                        conditions.push(`(${property}${operator}${/\s/g.test(tokenValue) ? `${quotes}${tokenValue}${quotes}` : tokenValue})`);
+
+                        if (!isEmpty(tokenValue)) {
+                            conditions.push(`(${property}${operator}${/\s/g.test(tokenValue) ? `${quotes}${tokenValue}${quotes}` : tokenValue})`);
+                        }
                     }
 
                     let condition = `${conditions.join(` ${orAndOperator} `)}`;

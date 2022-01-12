@@ -68,18 +68,18 @@ define([], function() {
           CancelButtonText: "Avbryt",
           DialogButtonText: "Redigera mall",
           DialogTitle: "Redigera resultatmall",
-          SaveButtonText: "Spara",
-          AllowItemSelection: "Tillåt val av objekt",
-          AllowMultipleItemSelection: "Tillåt flera val",
-          SelectionModeLabel: "Urvalsläge",
-          AsTokensSelectionMode: "Bearbeta valda värden som tokens (manuellt läge)",
-          AsDataFiltersSelectionMode: "Bearbeta valda värden som filter (standardläge)",
-          AsDataFiltersDescription: "I det här läget skickas valda värden till datakällan som vanliga filter",
-          AsTokensDescription: "I det här läget används valda värden manuellt genom tokens och tillgängliga metoder. Exempel med SharePoint-sökfrågemall: {?Title:{filters.&lt;destination_field_name&gt;.valueAsText}}",
-          FilterValuesOperator: "Den logiska operatorn att använda mellan valda värden",
-          FieldToConsumeLabel: "Källfält att konsumera",
-          FieldToConsumeDescription: "Använd detta fältvärde för valda objekt"
-        }
+          SaveButtonText: "Spara"
+        },
+        AllowItemSelection: "Tillåt val av objekt",
+        AllowMultipleItemSelection: "Tillåt flera val",
+        SelectionModeLabel: "Urvalsläge",
+        AsTokensSelectionMode: "Bearbeta valda värden som tokens (manuellt läge)",
+        AsDataFiltersSelectionMode: "Bearbeta valda värden som filter (standardläge)",
+        AsDataFiltersDescription: "I det här läget skickas valda värden till datakällan som vanliga filter",
+        AsTokensDescription: "I det här läget används valda värden manuellt genom tokens och tillgängliga metoder. Exempel med SharePoint-sökfrågemall: {?Title:{filters.&lt;destination_field_name&gt;.valueAsText}}",
+        FilterValuesOperator: "Den logiska operatorn att använda mellan valda värden",
+        FieldToConsumeLabel: "Källfält att konsumera",
+        FieldToConsumeDescription: "Använd detta fältvärde för valda objekt"
       },
       ConnectionsPage: {
         ConnectionsPageGroupName: "Tillgängliga anslutningar",

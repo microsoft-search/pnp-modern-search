@@ -68,18 +68,18 @@ define([], function() {
                     CancelButtonText: "Anuluj",
                     DialogButtonText: "Edytuj szablon",
                     DialogTitle: "Edytuj szablon wyników",
-                    SaveButtonText: "Zapisz",
-                    AllowItemSelection: "Zezwalaj na wybór przedmiotów",
-                    AllowMultipleItemSelection: "Zezwalaj na wielokrotny wybór",
-                    SelectionModeLabel: "Tryb wyboru",
-                    AsTokensSelectionMode: "Przetwarzaj wybrane wartości jako tokeny (tryb ręczny)",
-                    AsDataFiltersSelectionMode: "Przetwarzaj wybrane wartości jako filtry (tryb domyślny)",
-                    AsDataFiltersDescription: "W tym trybie wybrane wartości są wysyłane do źródła danych jako zwykłe filtry",
-                    AsTokensDescription: "W tym trybie wybrane wartości są używane ręcznie za pomocą tokenów i dostępnych metod. Przykład z szablonem zapytania wyszukiwania SharePoint: {?Title:{filters.&lt;destination_field_name&gt;.valueAsText}}",
-                    FilterValuesOperator: "Operator logiczny do użycia między wybranymi wartościami",
-                    FieldToConsumeLabel: "Pole źródłowe do wykorzystania",
-                    FieldToConsumeDescription: "Użyj tej wartości pola dla wybranych elementów" 
-                }
+                    SaveButtonText: "Zapisz"
+                },
+                AllowItemSelection: "Zezwalaj na wybór przedmiotów",
+                AllowMultipleItemSelection: "Zezwalaj na wielokrotny wybór",
+                SelectionModeLabel: "Tryb wyboru",
+                AsTokensSelectionMode: "Przetwarzaj wybrane wartości jako tokeny (tryb ręczny)",
+                AsDataFiltersSelectionMode: "Przetwarzaj wybrane wartości jako filtry (tryb domyślny)",
+                AsDataFiltersDescription: "W tym trybie wybrane wartości są wysyłane do źródła danych jako zwykłe filtry",
+                AsTokensDescription: "W tym trybie wybrane wartości są używane ręcznie za pomocą tokenów i dostępnych metod. Przykład z szablonem zapytania wyszukiwania SharePoint: {?Title:{filters.&lt;destination_field_name&gt;.valueAsText}}",
+                FilterValuesOperator: "Operator logiczny do użycia między wybranymi wartościami",
+                FieldToConsumeLabel: "Pole źródłowe do wykorzystania",
+                FieldToConsumeDescription: "Użyj tej wartości pola dla wybranych elementów" 
             },
             ConnectionsPage: {
                 ConnectionsPageGroupName: "Dostępne połączenia",
