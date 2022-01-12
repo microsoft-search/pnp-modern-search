@@ -941,15 +941,27 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
 
                     values.forEach((term) => {
 
+                        const matches = TAXONOMY_REFINER_REGEX.exec(term);
+                        // We strip the language specific part of the term and use the GP0 value as the filter value
+                        // and use also the striped value as the new term/key...
+                        // --> 'GP0|#a2cf1afb-44b6-4cf4-bf37-642bb2e9bff3' instead of 'L0|#a2cf1afb-44b6-4cf4-bf37-642bb2e9bff3|Category 1' for the value/filter
+                        // --> 'L0|#a2cf1afb-44b6-4cf4-bf37-642bb2e9bff3|' instead of 'L0|#a2cf1afb-44b6-4cf4-bf37-642bb2e9bff3|Category 1' for the name
+                        // If the same term is used on sites with different default language, the indexed taxid property value contains the 
+                        // translation of that site collection and therefore it comes back as different values meaning the same with the same id but causing
+                        // separate filters.
+                        // (Example: 'L0|#a2cf1afb-44b6-4cf4-bf37-642bb2e9bff3|Food' and 'L0|#a2cf1afb-44b6-4cf4-bf37-642bb2e9bff3|Nahrung')
+                        // Using the GP0 refinement will ensure content will be filtered regardless of translations
+                        const strippedTerm = matches[1];
+
                         // Use FQL expression here to get the correct output. Otherwise a full match is performed
                         const fqlFilterValue = `"ǂǂ${this._bytesToHex(this._stringToUTF8Bytes(term))}"`;
-                        const existingFilterIdx = updatedValues.map(updatedValue => updatedValue.name).indexOf(term);
-
+                        const existingFilterIdx = updatedValues.map(updatedValue => updatedValue.name).indexOf(strippedTerm);
+                     
                         if (existingFilterIdx === -1) {
                             // Create a dedicated filter value entry
                             updatedValues.push({
                                 count: value.count,
-                                name: term,
+                                name: strippedTerm,
                                 value: fqlFilterValue
                             } as IDataFilterResultValue);
 
@@ -1066,13 +1078,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                             const termId = matches[3];
                             const termPrefix = matches[2]; // 'L0'
                             if (termPrefix.localeCompare("L0") === 0) {
-
-                                // If the same term is used on sites with different default language, the indexed taxid property value contains the 
-                                // translation of that site collection and therefore it comes back as different values meaning the same with the same id but causing
-                                // separate filters.
-                                // (Example: 'L0|#a2cf1afb-44b6-4cf4-bf37-642bb2e9bff3|Food' and 'L0|#a2cf1afb-44b6-4cf4-bf37-642bb2e9bff3|Nahrung')
-                                // Using the GP0 refinement will ensure content will be filtered regardless of translations
-                                const termFilterWithoutTranslations =  `ǂǂ${this._bytesToHex(this._stringToUTF8Bytes(`GP0|#${termId.toString()}`))}`;
+                                const termFilterWithoutTranslations =  `"ǂǂ${this._bytesToHex(this._stringToUTF8Bytes(`GP0|#${termId.toString()}`))}"`;
                                 value.value = `or(${value.value},${termFilterWithoutTranslations})`;
                             }
                         }
