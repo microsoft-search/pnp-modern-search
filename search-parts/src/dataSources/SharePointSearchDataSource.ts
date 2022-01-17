@@ -1079,7 +1079,12 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                             const termPrefix = matches[2]; // 'L0'
                             if (termPrefix.localeCompare("L0") === 0) {
                                 const termFilterWithoutTranslations =  `"ǂǂ${this._bytesToHex(this._stringToUTF8Bytes(`GP0|#${termId.toString()}`))}"`;
-                                value.value = `or(${value.value},${termFilterWithoutTranslations})`;
+                                const termTextFilter = `L0|#${termId.toString()}`;
+
+                                // value.value: HEX encoded value => original refiner value 
+                                // termFilterWithoutTranslations => language agnostic term value
+                                // termTextFilter => Text value in case the value is a string (ex: a property bag value or a text column)
+                                value.value = `or(${value.value},${termFilterWithoutTranslations},${termTextFilter})`;
                             }
                         }
 
