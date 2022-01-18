@@ -85,7 +85,6 @@ export class PersonaComponent extends React.Component<IPersonaComponentProps, IP
         this._domPurify = DOMPurify.default;
 
         this._domPurify.setConfig({
-            FORBID_TAGS: ['style'],
             WHOLE_DOCUMENT: true
         });
 
