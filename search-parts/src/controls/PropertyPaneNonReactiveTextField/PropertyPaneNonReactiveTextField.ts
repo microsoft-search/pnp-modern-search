@@ -20,7 +20,8 @@ export class PropertyPaneNonReactiveTextField implements IPropertyPaneField<IPro
         this.targetProperty = targetProperty;
 
         this.properties = {
-            key: properties.label,
+            componentKey: properties.componentKey,
+            key: properties.componentKey,
             description: properties.description,
             label: properties.label,
             placeholderText: properties.placeholderText,
@@ -54,6 +55,7 @@ export class PropertyPaneNonReactiveTextField implements IPropertyPaneField<IPro
 
         const element: React.ReactElement<any> = React.createElement("div", { key: this.properties.key },
             React.createElement(NonReactiveTextField, {
+             key: this.properties.componentKey,
              onUpdate: ((value) => {
                 changeCallback(this.targetProperty, value);
              }).bind(this),
