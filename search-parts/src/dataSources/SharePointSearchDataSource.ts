@@ -35,6 +35,7 @@ import { DataFilterHelper } from '../helpers/DataFilterHelper';
 import { ISortFieldConfiguration, SortFieldDirection } from '../models/search/ISortFieldConfiguration';
 
 import { EnumHelper } from '../helpers/EnumHelper';
+import { BuiltinDataSourceProviderKeys } from './AvailableDataSources';
 const TAXONOMY_REFINER_REGEX = /((L0)\|#.?([0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}))\|?/;
 
 export enum BuiltinSourceIds {
@@ -245,6 +246,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                         key: 'queryText'
                     }),
                     new PropertyPaneNonReactiveTextField('dataSourceProperties.queryTemplate', {
+                        componentKey: `${BuiltinDataSourceProviderKeys.SharePointSearch}-queryTemplate`,
                         defaultValue: this.properties.queryTemplate,
                         label: commonStrings.DataSources.SharePointSearch.QueryTemplateFieldLabel,
                         placeholderText: commonStrings.DataSources.SharePointSearch.QueryTemplatePlaceHolderText,
@@ -349,6 +351,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                         ]
                     }),
                     new PropertyPaneNonReactiveTextField('dataSourceProperties.refinementFilters', {
+                        componentKey: `${BuiltinDataSourceProviderKeys.SharePointSearch}-refinementFilters`,
                         defaultValue: this.properties.refinementFilters,
                         label: commonStrings.DataSources.SharePointSearch.RefinementFilters,
                         placeholderText: `ex: FileType:equals("docx")`,
