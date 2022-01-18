@@ -13,7 +13,7 @@ export interface IUrlFilterParam {
      * The refinement operator to use between conditions
      */
     o: RefinementOperator;
-    
+
     /**
      * List of conditions for this refiners. These can be raw text (including wildcards) or FQL expressions
      */
@@ -22,37 +22,37 @@ export interface IUrlFilterParam {
 
 export class SearchHelper {
 
-   /**
-    * Build the refinement condition in FQL format
-    * @param selectedFilters The selected filter array
-    * @param encodeTokens If true, encodes the taxonomy refinement tokens in UTF-8 to work with GET requests. Javascript encodes natively in UTF-16 by default.
-    */
-   public static buildRefinementQueryString(selectedFilters: IRefinementFilter[], encodeTokens?: boolean): string[] {
+    /**
+     * Build the refinement condition in FQL format
+     * @param selectedFilters The selected filter array
+     * @param encodeTokens If true, encodes the taxonomy refinement tokens in UTF-8 to work with GET requests. Javascript encodes natively in UTF-16 by default.
+     */
+    public static buildRefinementQueryString(selectedFilters: IRefinementFilter[], encodeTokens?: boolean): string[] {
 
-       let refinementQueryConditions: string[] = [];
+        let refinementQueryConditions: string[] = [];
 
-       selectedFilters.map(filter => {
-           if (filter.Values.length > 1) {
+        selectedFilters.map(filter => {
+            if (filter.Values.length > 1) {
 
-               // A refiner can have multiple values selected in a multi or mon multi selection scenario
-               // The correct operator is determined by the refiner display template according to its behavior
-               const conditions = filter.Values.map(value => {
+                // A refiner can have multiple values selected in a multi or mon multi selection scenario
+                // The correct operator is determined by the refiner display template according to its behavior
+                const conditions = filter.Values.map(value => {
 
-                   return /ǂǂ/.test(value.RefinementToken) && encodeTokens ? encodeURIComponent(value.RefinementToken) : value.RefinementToken;
-               });
-               refinementQueryConditions.push(`${filter.FilterName}:${filter.Operator}(${conditions.join(',')})`);
-           } else {
-               if (filter.Values.length === 1) {
+                    return /ǂǂ/.test(value.RefinementToken) && encodeTokens ? encodeURIComponent(value.RefinementToken) : value.RefinementToken;
+                });
+                refinementQueryConditions.push(`${filter.FilterName}:${filter.Operator}(${conditions.join(',')})`);
+            } else {
+                if (filter.Values.length === 1) {
 
-                   // See https://sharepoint.stackexchange.com/questions/258081/how-to-hex-encode-refiners/258161
-                   let refinementToken = /ǂǂ/.test(filter.Values[0].RefinementToken) && encodeTokens ? encodeURIComponent(filter.Values[0].RefinementToken) : filter.Values[0].RefinementToken;
-                   refinementQueryConditions.push(`${filter.FilterName}:${refinementToken}`);
-               }
-           }
-       });
+                    // See https://sharepoint.stackexchange.com/questions/258081/how-to-hex-encode-refiners/258161
+                    let refinementToken = /ǂǂ/.test(filter.Values[0].RefinementToken) && encodeTokens ? encodeURIComponent(filter.Values[0].RefinementToken) : filter.Values[0].RefinementToken;
+                    refinementQueryConditions.push(`${filter.FilterName}:${refinementToken}`);
+                }
+            }
+        });
 
-       return refinementQueryConditions;
-   }
+        return refinementQueryConditions;
+    }
 
     /**
      * Get the default pre-selected filters based on the url parameters
@@ -65,7 +65,7 @@ export class SearchHelper {
 
         try {
             const urlFilters: IUrlFilterParam[] = JSON.parse(decodeURIComponent(urlParamValue));
-        
+
             // Return if url param is not found
             if (!urlFilters) return refinementFilters;
 
@@ -82,13 +82,13 @@ export class SearchHelper {
 
                         // Check if the condition seems to be an FQL filter or not (i.e. value contains one or more FQL reserved operators NOT in quotes)
                         // See https://docs.microsoft.com/en-us/sharepoint/dev/general-development/fast-query-language-fql-syntax-reference
-                        if (!(/(and|or|any|andnot|count|decimal|rank|near|onear|int|in32|int64|float|double|datetime|max|min|range|phrase|scope|filter|not|string|starts-with|ends-with|equals|words|xrank)\((?=[^"]*("[^"]*"[^"]*)*$)/gm.test(value))) {                            
+                        if (!(/(and|or|any|andnot|count|decimal|rank|near|onear|int|in32|int64|float|double|datetime|max|min|range|phrase|scope|filter|not|string|starts-with|ends-with|equals|words|xrank)\((?=[^"]*("[^"]*"[^"]*)*$)/gm.test(value))) {
                             // Encode the text value in HEX
                             token = `ǂǂ${this._stringToHex(value)}`;
                         } else {
-                            token = value.replace(/\'/g,'"'); // FQL expressions use double quotes to get it work
+                            token = value.replace(/\'/g, '"'); // FQL expressions use double quotes to get it work
                         }
-                        
+
                         let refinementValue: IRefinementValue = {
                             RefinementCount: -1,
                             RefinementName: value,
@@ -119,7 +119,7 @@ export class SearchHelper {
                             default:
                                 break;
                         }
-            
+
                         filterValues.push(refinementValue);
                     });
 
@@ -154,8 +154,14 @@ export class SearchHelper {
     private static _stringToHex(value: string): string {
         let tokenValue = "";
         for (let i = 0; i < value.length; i++) {
-            const charCode = value.charCodeAt(i);
-            tokenValue += charCode.toString(16);
+            let encodedChar = encodeURIComponent(value[i]);
+            if (encodedChar.length == 1) {
+                const charCode = value.charCodeAt(i);
+                tokenValue += charCode.toString(16);
+            } else {
+                encodedChar = encodedChar.replace(/%/g,"").toLocaleLowerCase();
+                tokenValue += encodedChar;
+            }
         }
         return tokenValue;
     }
