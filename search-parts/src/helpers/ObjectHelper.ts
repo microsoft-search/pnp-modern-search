@@ -37,13 +37,24 @@ export class ObjectHelper {
      * Get object proeprty value by its deep path.
      * @param object the object containg the property path
      * @param path the property path to get
+     * @param delimiter if multiple matches are found, sepcifiy the delimiter character to use to separate values in the returned string 
      * @returns the property value as string if found, 'undefined' otherwise
      */
-    public static byPath(object: any, path: string): string  {
+    public static byPath(object: any, path: string, delimiter?: string): string  {
 
-        if (path && object) {
+        let isValidPredicate = true;
+        
+        // Test if the provided path is a valid predicate https://www.npmjs.com/package/jspath#documentation
+        try {
+            jspath.compile(`.${path}`);
+        } catch (e) {
+            isValidPredicate = false;
+        }
+
+        if (path && object && isValidPredicate) {
 
             try {
+
                 // jsPath always returns an array. See https://www.npmjs.com/package/jspath#result
                 const value: any[] = jspath.apply(`.${path}`, object);
 
@@ -62,12 +73,16 @@ export class ObjectHelper {
                     return JSON.stringify(value);                         
                 }
 
+                if (delimiter && value.length > 1) {
+                    return value.join(delimiter);
+                }
+
                 // Use the default behavior of the toString() method. Arrays of simple values (string, integer, etc.) will be separated by a comma (',')
                 return value.toString();                                  
             
             } catch (error) {
                 // Case when unexpected string or tokens are passed in the path
-                return object[path]; // fallback to see if the prop is on the object verbatim
+                return null;
             }
                  
         } else {

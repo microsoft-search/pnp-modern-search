@@ -4,7 +4,6 @@ import * as ReactDOM from 'react-dom';
 import { IGroup, IGroupDividerProps, Icon, Text, GroupedList } from 'office-ui-fabric-react';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import styles from './CollapsibleContentComponent.module.scss';
-import { cloneDeep } from '@microsoft/sp-lodash-subset';
 import 'core-js/features/dom-collections';
 import * as DOMPurify from 'dompurify';
 
@@ -21,19 +20,19 @@ export interface ICollapsibleContentComponentProps {
     defaultCollapsed?: boolean;
 
     /**
-     * The item CSS class to use to generate items. If not provided, 'item' template will be rendered in a single block
+     * Content of the header template
      */
-    itemClass: string;
+    headerTemplate?: string;
 
     /**
      * Content of the items template
      */
-    itemsTemplateContent: string;
+    contentTemplate: string;
 
     /**
      * Content of the footer template
      */
-    footerTemplateContent: string;
+    footerTemplate?: string;
 
     /**
      * The current theme settings
@@ -47,11 +46,6 @@ export interface ICollapsibleContentComponentState {
      * Current collapse/expand state for the group
      */
     isCollapsed: boolean;
-
-    /**
-     * Current items in the group
-     */
-    items: JSX.Element[];
 }
 
 export class CollapsibleContentComponent extends React.Component<ICollapsibleContentComponentProps, ICollapsibleContentComponentState> {
@@ -63,7 +57,6 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
         super(props);
 
         this.state = {
-            items: [],
             isCollapsed: props.defaultCollapsed ? true : false,
         };
 
@@ -74,9 +67,6 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
         this._domPurify = DOMPurify.default;
     }
 
-    public componentDidMount() {
-        this._initItems(this.props);
-    }
 
     public render() {
 
@@ -84,7 +74,7 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
             {
                 key: this.props.groupName,
                 name: this.props.groupName,
-                count: this.state.items.length === 0 ? 1 : this.state.items.length, // The count should be at least 1 to show the header
+                count: 1, // The count should be at least 1 to show the header
                 startIndex: 0,
                 isShowingAll: true,
                 hasMoreData: false,
@@ -92,10 +82,10 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
             }
         ];
 
-        let items = cloneDeep(this.state.items);
-
         const groupedList = <GroupedList
-            items={items}
+            items={[
+                <div dangerouslySetInnerHTML={{ __html: this._domPurify.sanitize(this.props.contentTemplate) }}></div>
+            ]}
             styles={{
                 root: {
                     selectors: {
@@ -115,7 +105,7 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
                     onRenderFooter: ((props) => {
 
                         if (!props.group.isCollapsed) {
-                            return <div dangerouslySetInnerHTML={{ __html: this._domPurify.sanitize(this.props.footerTemplateContent) }}></div>;
+                            return <div dangerouslySetInnerHTML={{ __html: this._domPurify.sanitize(this.props.footerTemplate) }}></div>;
                         } else {
                             return null;
                         }
@@ -125,36 +115,7 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
             groups={groups}
         />;
 
-        return <div ref={this.componentRef} data-is-scrollable={true}> {groupedList}</div>;
-    }
-
-    /**
-     * Initializes items in for goups in the GroupedList
-     * @param refinementResults the refinements results
-     */
-    private _initItems(props: ICollapsibleContentComponentProps): void {
-
-        let items: JSX.Element[] = [];
-
-        if (props.itemsTemplateContent) {
-
-            const htmlObject = document.createElement('div');
-            htmlObject.innerHTML = props.itemsTemplateContent;
-
-            if (props.itemClass) {
-
-                htmlObject.querySelectorAll(`.${props.itemClass}`).forEach((node, key) => {
-                    items.push(<div dangerouslySetInnerHTML={{ __html: this._domPurify.sanitize(node.outerHTML) }} data-id={`${key}`}></div>);
-                });
-
-            } else {
-                items.push(<div dangerouslySetInnerHTML={{ __html: this._domPurify.sanitize(htmlObject.outerHTML) }} data-id={'0'}></div>);
-            }
-        }
-
-        this.setState({
-            items: items
-        });
+        return <div ref={this.componentRef} data-name={this.props.groupName} data-is-scrollable={true}>{groupedList}</div>;
     }
 
     private _onTogglePanel(props: IGroupDividerProps) {
@@ -167,26 +128,34 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
     private _onRenderHeader(props: IGroupDividerProps): JSX.Element {
 
         return (
-            <div className={styles.collapsible__filterPanel__body__group__header}
-                role={"menubar"}
-                tabIndex={0}
-                onClick={() => {
-                    this._onTogglePanel(props);
-                }}
-                onKeyPress={(e) => {
-                    if (e.charCode === 13) {
+            <div style={{ position: 'relative' }}>
+                <div
+                    className={styles.collapsible__filterPanel__body__group__header}
+                    role={"menubar"}
+                    tabIndex={0}
+                    onClick={() => {
                         this._onTogglePanel(props);
-                    }
-                }}
-            >
-                <Text variant={'large'}>{props.group.name}</Text>
-                <div className={styles.collapsible__filterPanel__body__headerIcon}>
-                    {props.group.isCollapsed ?
-                        <Icon iconName='ChevronDown' />
-                        :
-                        <Icon iconName='ChevronUp' />
-                    }
+                    }}
+                    onKeyPress={(e) => {
+                        if (e.charCode === 13) {
+                            this._onTogglePanel(props);
+                        }
+                    }}
+                >
+                    <Text variant={'large'}>{props.group.name}</Text>
+                    <div className={styles.collapsible__filterPanel__body__headerIcon}>
+                        {props.group.isCollapsed ?
+                            <Icon iconName='ChevronDown' />
+                            :
+                            <Icon iconName='ChevronUp' />
+                        }
+                    </div>
                 </div>
+                {!props.group.isCollapsed ?
+                    <div dangerouslySetInnerHTML={{ __html: this._domPurify.sanitize(this.props.headerTemplate) }}></div>
+                    :
+                    null
+                }
             </div>
         );
     }
@@ -212,24 +181,34 @@ export class CollapsibleContentWebComponent extends BaseWebComponent {
         const htmlContent: Document = domParser.parseFromString(this.innerHTML, 'text/html');
 
         // Get the templates
-        const contentTemplate = htmlContent.getElementById('collapsible-content');
-        const footerTemplate = htmlContent.getElementById('collapsible-footer');
+        const headerTemplateContent = htmlContent.getElementById('collapsible-header');
+        const contentTemplateContent = htmlContent.getElementById('collapsible-content');
+        const footerTemplateContent = htmlContent.getElementById('collapsible-footer');
 
-        let itemsTemplateContent = null;
-        let itemClass = null;
-        let footerTemplateContent = null;
+        let contentTemplate = null;
+        let footerTemplate = null;
+        let headerTemplate = null;
 
-        if (contentTemplate) {
-            itemsTemplateContent = contentTemplate.innerHTML;
-            itemClass = contentTemplate.getAttribute('item-class');
+        if (contentTemplateContent) {
+            contentTemplate = contentTemplateContent.innerHTML;
         }
 
-        if (footerTemplate) {
-            footerTemplateContent = footerTemplate.innerHTML;
+        if (footerTemplateContent) {
+            footerTemplate = footerTemplateContent.innerHTML;
+        }
+
+        if (headerTemplateContent) {
+            headerTemplate = headerTemplateContent.innerHTML;
         }
 
         let props = this.resolveAttributes();
-        const collapsibleContent = <CollapsibleContentComponent {...props} itemsTemplateContent={itemsTemplateContent} footerTemplateContent={footerTemplateContent} itemClass={itemClass} />;
+        const collapsibleContent = <CollapsibleContentComponent
+            {...props}
+            headerTemplate={headerTemplate}
+            contentTemplate={contentTemplate}
+            footerTemplate={footerTemplate}
+        />;
+
         ReactDOM.render(collapsibleContent, this);
     }
 }

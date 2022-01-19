@@ -50,9 +50,14 @@ export interface ISearchResultsContainerProps {
   instanceId: string;
 
   /**
-   * Handler when the data have been retrieved form the source. Useful to list all available fields from the source.
+   * Handler when the data have been retrieved from the source. Useful to list all available fields from the source.
    */
   onDataRetrieved: (availableDataSourceFields: string[], filters?: IDataFilterResult[], pageNumber?: number, nextLinkUrl?: string, pageLinks?: string[], sortList?: ISortFieldConfiguration[]) => void;
+
+  /**
+   * Handler when a item has been selected from results
+   */
+  onItemSelected: (currentSelectedItems: {[key: string]: any}[]) => void;  
 
   /**
    * The current service scope

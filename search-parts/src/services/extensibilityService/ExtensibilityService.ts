@@ -43,6 +43,7 @@ export class ExtensibilityService {
                             return property.indexOf('__') === -1 && (
                                 extensibilityLibraryPrototype.getCustomSuggestionProviders ||
                                 extensibilityLibraryPrototype.getCustomWebComponents ||
+                                extensibilityLibraryPrototype.getCustomLayouts ||
                                 extensibilityLibraryPrototype.registerHandlebarsCustomizations);
                         });
             

@@ -89,7 +89,12 @@ define([], function() {
             SameTabOpenBehavior: "Use the current tab",
             NewTabOpenBehavior: "Open in a new tab",
             PageOpenBehaviorLabel: "Opening behavior",
-            EmptyFieldErrorMessage: "This field cannot be empty"
+            EmptyFieldErrorMessage: "This field cannot be empty",
+            TagPickerStrings: {
+                NoResultsSearchMessage: "No results found",
+                SearchPlaceholder: "Search a value..."
+            },
+            CurrentVerticalNotSelectedMessage: "The current selected vertical does not match with the ones associated for this Web Part ({0}). It will remains blank in display mode."
         },
         DataSources: {
             SharePointSearch: {
@@ -100,11 +105,10 @@ define([], function() {
                 QueryTemplateFieldLabel: "Query template",
                 QueryTemplatePlaceHolderText: "ex: Path:{Site}",
                 QueryTemplateFieldDescription: "The search query template. You can also use {<tokens>} to build a dynamic query.",
-                ResultSourceIdLabel: "Result source ID",
-                ResultSourceIdDescription: "Use a default SharePoint result source ID or type your own GUID value and press 'Enter' to save.",
-                InvalidResultSourceIdMessage: "The provided value is not a valid GUID",
+                ResultSourceIdLabel: "Result Source Id / Scope|Name",
+                ResultSourceIdDescription: "Select a built-in source, type a custom source GUID, or SCOPE and NAME of the source separated by | (i.e: SPSite|News). Valid scopes are [SPSiteSubscription, SPSite, SPWeb]. Press [Enter] to save.",
+                InvalidResultSourceIdMessage: "The provided value is not a valid GUID, or formatted as SCOPE|NAME",
                 EnableQueryRulesLabel: "Enable query rules",
-                IncludeOneDriveResultsLabel: "Include OneDrive for Business results",
                 RefinementFilters: "Refinement filters",
                 RefinementFiltersDescription: "Initial refinement filters to apply to the query. These won't appear in the selected filters. For string expressions, use double quotes (\") instead of single quote (').",
                 EnableLocalizationLabel: "Enable localization",
@@ -131,7 +135,14 @@ define([], function() {
                 EnableTopResultsLabel: "Enable top results",
                 ContentSourcesFieldLabel: "Content sources",
                 ContentSourcesFieldDescriptionLabel: "IDs of connections defined in the Microsoft Search connectors administration portal.",
-                ContentSourcesFieldPlaceholderLabel: "ex: 'MyCustomConnectorId'"
+                ContentSourcesFieldPlaceholderLabel: "ex: 'MyCustomConnectorId'",
+                EnableSuggestionLabel: "Enable spelling suggestions",
+                EnableModificationLabel: "Enable spelling modifications",
+                QueryTemplateFieldLabel: "Query template",
+                QueryTemplatePlaceHolderText: "ex: {searchTerms} IsDocument:true",
+                QueryTemplateFieldDescription: "The search query template. You can also use {<tokens>} and KQL to build a dynamic query.",
+                ApplyQueryTemplateBtnText: "Apply",
+                UseBetaEndpoint: "Use beta endpoint"
             },
             SearchCommon: {
                 Sort: {
@@ -296,7 +307,9 @@ define([], function() {
         },
         PropertyPane: {
             ConnectionsPage: {
-                DataConnectionsGroupName: "Available connections"
+                DataConnectionsGroupName: "Available connections",
+                UseDataVerticalsWebPartLabel: "Connect to a verticals Web Part",
+                UseDataVerticalsFromComponentLabel: "Use verticals from this component"
             },
             InformationPage: {
                 Extensibility: {
@@ -308,7 +321,8 @@ define([], function() {
                         Id: "Manifest GUID",
                         Enabled: "Enabled/Disabled"
                     }
-                }
+                },
+                ImportExport: "Import/Export settings"
             }
         },
         Filters: {
@@ -317,7 +331,10 @@ define([], function() {
             FilterNoValuesMessage: "No values for this filter",
             OrOperator: "OR",
             AndOperator: "AND",
-            ComboBoxPlaceHolder: "Select value"
+            ComboBoxPlaceHolder: "Select value",
+            UseAndOperatorValues: "Use an AND operator between values",
+            UseOrOperatorValues: "Use an OR operator between values",
+            UseValuesOperators: "Select operator to use between this filter values"
         },
         SuggestionProviders: {
             SharePointStatic: {

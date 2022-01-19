@@ -40,7 +40,6 @@ define([], function() {
                     PanelDescription: "Dodaj/Usuń identyfikatory niestandardowych bibliotek rozszerzalności. Wybierz nazwę i zdecyduj czy mają być ładowane przy starcie. Tylko niestandardowi dostawcy sugestii będą tutaj ładowani.",
                 }
             },
-            ImportExport: "Importuj / Eksportuj ustawienia"
         },
         SearchBox: {
             DefaultPlaceholder: "Wprowadź zapytanie..."

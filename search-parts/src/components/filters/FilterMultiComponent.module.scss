@@ -1,8 +1,16 @@
-.sticky {
-    position: fixed;
-    bottom: 0;
-    width: calc(100% - 25px);
-    background-color: "[theme: white, default: #fff]";
-    height: 40px;
-    border-top: 1px solid "[theme: Gray30, default: #edebe9]";
+.filterMultiActions {
+
+    padding: 10px;
+
+    button.applyBtn {
+        border: none;
+    }
+
+    button.clearBtn {
+        border-color: "[theme: neutralLight, default: #edebe9]";
+    }
+
+    button~button {
+        margin-left: 10px;
+    }
 }
