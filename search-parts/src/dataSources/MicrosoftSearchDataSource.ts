@@ -10,8 +10,6 @@ import * as commonStrings from 'CommonStrings';
 import { IMicrosoftSearchRequest, ISearchRequestAggregation, SearchAggregationSortBy, ISearchSortProperty, IMicrosoftSearchQuery, IQueryAlterationOptions } from '../models/search/IMicrosoftSearchRequest';
 import { DateHelper } from '../helpers/DateHelper';
 import { DataFilterHelper } from "../helpers/DataFilterHelper";
-
-const MICROSOFT_SEARCH_URL = "https://graph.microsoft.com/beta/search/query";
 import { IMicrosoftSearchResultSet } from "../models/search/IMicrosoftSearchResponse";
 import { ISortFieldConfiguration, SortFieldDirection } from '@pnp/modern-search-extensibility/lib/models/ISortFieldConfiguration';
 import { AsyncCombo } from "../controls/PropertyPaneAsyncCombo/components/AsyncCombo";
