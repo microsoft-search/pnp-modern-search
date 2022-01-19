@@ -2,7 +2,7 @@ import * as React from "react";
 import { BaseLayout } from "@pnp/modern-search-extensibility";
 import * as strings from 'CommonStrings';
 import * as propertyControlStrings from 'PropertyControlStrings';
-import { Checkbox, Dropdown, ICheckboxProps, IComboBoxOption, IDropdownProps } from 'office-ui-fabric-react';
+import { IComboBoxOption } from 'office-ui-fabric-react';
 import { IDetailsListColumnConfiguration } from '../../../components/DetailsListComponent';
 import { IPropertyPaneField, PropertyPaneToggle, PropertyPaneDropdown, PropertyPaneHorizontalRule, PropertyPaneButton, PropertyPaneButtonType } from '@microsoft/sp-property-pane';
 import { TemplateValueFieldEditor, ITemplateValueFieldEditorProps } from '../../../controls/TemplateValueFieldEditor/TemplateValueFieldEditor';
@@ -180,7 +180,7 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
                     },
                     {
                         id: 'valueSorting',
-                        title: '',
+                        title: strings.Layouts.DetailsList.ValueSortingColumnLabel,
                         type: this._customCollectionFieldType.custom,
                         onCustomRender: (field, _value, onUpdate, item, itemId, onCustomFieldValidation) => {
                             return item.useHandlebarsExpr && item.enableSorting &&
@@ -188,7 +188,6 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
                                     React.createElement(AsyncCombo, {
                                         allowFreeform: false,
                                         availableOptions: availableOptions,
-                                        label: strings.Layouts.DetailsList.ValueSortingColumnLabel,
                                         placeholder: strings.Layouts.DetailsList.ValueSortingColumnLabel,
                                         textDisplayValue: item[field.id] ? item[field.id] : '',
                                         defaultSelectedKey: item[field.id] ? item[field.id] : '',
@@ -196,32 +195,26 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
                                             this._handleDynamicSorting(filterValue.key as string, field, item, ignoreSortableValidation, onCustomFieldValidation, (fieldId, value) => 
                                             {
                                                 onUpdate(field.id, value);
-                                                this._updateRequiredValueSorting(item.useHandlebarsExpr, 'enableSorting', item, onCustomFieldValidation, filterValue.key);
                                             });
                                         }
                                     } as IAsyncComboProps));
+                        },
+                        isVisible: (field, items) => {
+                            return items && items.findIndex(i => i.useHandlebarsExpr && i.enableSorting) >= 0;
+                        },
+                        onGetErrorMessage: (value, index, currentItem) => {
+                            if(currentItem && !value && currentItem.useHandlebarsExpr && currentItem.enableSorting)  {
+                                return propertyControlStrings.CollectionDataItemFieldRequiredLabel
+                            }
+                            return '';
                         }
                     },
                     {
                         id: 'useHandlebarsExpr',
-                        type: this._customCollectionFieldType.custom,
+                        type: this._customCollectionFieldType.boolean,
                         defaultValue: false,
                         title: strings.Layouts.DetailsList.UseHandlebarsExpressionLabel,
-                        onCustomRender: (field, _value, onUpdate, item, itemId, onCustomFieldValidation) => {
-                            return React.createElement(Checkbox, {
-                                key: `${field.id}-${itemId}`,
-                                checked: item[field.id] ? item[field.id] : false,
-                                onChange: (ev, value) => {
-                                    onUpdate(field.id, value)
-                                    if (!value) {
-                                        onUpdate('valueSorting', null); // Clear value sorting
-                                    }
-                                    this._updateRequiredValueSorting(value, 'enableSorting', item, onCustomFieldValidation);
-                                },
-                                disabled: field.disableEdit,
-                                className: "PropertyFieldCollectionData__panel__boolean-field"
-                            } as ICheckboxProps);
-                        }
+                        required: false
                     },
                     {
                         id: 'minWidth',
@@ -240,28 +233,14 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
                     {
                         id: 'enableSorting',
                         title: strings.Layouts.DetailsList.SortableColumnLabel,
-                        type: this._customCollectionFieldType.custom,
+                        type: this._customCollectionFieldType.dropdown,
                         defaultValue: false,
                         required: false,
                         options: [
-                            { key: false.toString(), text: strings.DataSources.SearchCommon.Sort.EnableSortingNoLabel },
-                            { key: true.toString(), text: strings.DataSources.SearchCommon.Sort.EnableSortingYesStaticLabel },
+                            { key: false, text: strings.DataSources.SearchCommon.Sort.EnableSortingNoLabel },
+                            { key: true, text: strings.DataSources.SearchCommon.Sort.EnableSortingYesStaticLabel },
                             { key: 'dynamic', text: strings.DataSources.SearchCommon.Sort.EnableSortingYesDynamicLabel }
-                        ],
-                        onCustomRender: (field, value, onUpdate, item, itemId, onCustomFieldValidation) => {
-                            return React.createElement(Dropdown, {
-                                key: `${field.id}-${itemId}`,
-                                options: field.options,
-                                selectedKey: typeof value === 'boolean' ? value.toString() : value,
-                                onChange: (ev, value) => {
-                                    const parsedValue: boolean | string | any = value.key === 'dynamic' ? value.key : value.key === true.toString();
-                                    onUpdate(field.id, parsedValue)
-                                    this._updateRequiredValueSorting(parsedValue, 'useHandlebarsExpr', item, onCustomFieldValidation);
-                                },
-                                disabled: field.disableEdit,
-                                className: "PropertyFieldCollectionData__panel__boolean-field"
-                            } as IDropdownProps);
-                        }
+                        ]
                     },
                     {
                         id: 'isResizable',
@@ -342,15 +321,6 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
 
         if (propertyPath.localeCompare('layoutProperties.enableGrouping') === 0) {
             this.properties.groupByField = '';
-        }
-    }
-
-    private _updateRequiredValueSorting(value: boolean | string, otherDependentField: string, item: IDetailsListColumnConfiguration, onCustomFieldValidation: (fieldId: string, errorMessage: string) => void, newValueSorting?: string | number) {
-        if (!value || item.valueSorting || newValueSorting) {
-            onCustomFieldValidation('enableSorting', '');
-        }
-        else if (item[otherDependentField]) {
-            onCustomFieldValidation('enableSorting', `${strings.Layouts.DetailsList.ValueSortingColumnLabel} - ${propertyControlStrings.CollectionDataItemFieldRequiredLabel}`);
         }
     }
 
