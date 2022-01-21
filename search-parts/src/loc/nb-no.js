@@ -119,8 +119,8 @@ define([], function () {
           SelectedPropertiesFieldLabel: "Valgte egenskaper",
           SelectedPropertiesFieldDescription: "Angi egenskapene som skal hentes søkeresultatene.",
           SelectedPropertiesPlaceholderLabel: "Velg egenskaper",
-          HitHighlightedPropertiesFieldLabel:"Egenskaper for utheving av treff",
-          HitHighlightedPropertiesFieldDescription:"Angir de uthevede egenskapene som skal hentes fra søkeresultatene. Du må legge til 'HitHighlightedProperties' i 'Velg egenskaper' når du vil bruke den",
+          HitHighlightedPropertiesFieldLabel: "Treffuthevede egenskaper",
+          HitHighlightedPropertiesFieldDescription: "Angi listen over forvaltede egenskaper som skal utheves etter treff.",
           TermNotFound: "(Term med ID '{0}' ble ikke funnet)",
           ApplyQueryTemplateBtnText: "Lagre",
           EnableAudienceTargetingTglLabel: "Aktiver målgruppetilpasning"

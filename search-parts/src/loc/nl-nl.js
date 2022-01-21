@@ -119,8 +119,8 @@ define([], function() {
                 SelectedPropertiesFieldLabel: "Geselecteerde eigenschappen",
                 SelectedPropertiesFieldDescription: "Specificeert de uit de zoekresultaten op te halen eigenschappen.",
                 SelectedPropertiesPlaceholderLabel: "Selecteer eigenschappen",
-                HitHighlightedPropertiesFieldLabel:"Populaire gemarkeerde eigenschappen",
-                HitHighlightedPropertiesFieldDescription:"Hiermee geeft u de gemarkeerde eigenschappen op die u wilt ophalen uit de zoekresultaten. U moet 'HitHighlightedProperties' toevoegen in 'Eigenschappen selecteren' wanneer u het wilt gebruiken",
+                HitHighlightedPropertiesFieldLabel: "Hit-gemarkeerde eigenschappen",
+                HitHighlightedPropertiesFieldDescription: "De lijst van beheerde eigenschappen opgeven om markeren in te schakelen. ",
                 TermNotFound: "(Term met ID '{0}' niet gevonden)",
                 ApplyQueryTemplateBtnText: "Toepassen",
                 EnableAudienceTargetingTglLabel: "Schakel doelgroepen in"

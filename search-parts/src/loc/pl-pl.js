@@ -119,8 +119,8 @@ define([], function() {
               SelectedPropertiesFieldLabel: "Wybrane właściwości",
               SelectedPropertiesFieldDescription: "Wskaż właściwości do pobrania.",
               SelectedPropertiesPlaceholderLabel: "Wybierz właściwości",
-              HitHighlightedPropertiesFieldLabel:"Kliknij Wyróżnione właściwości",
-              HitHighlightedPropertiesFieldDescription:"Określa właściwości wyróżnione do pobrania z wyników wyszukiwania. Musisz dodać 'HitHighlightedProperties' w 'Wybierz właściwości', gdy chcesz go użyć",
+              HitHighlightedPropertiesFieldLabel: "Właściwości wyróżnionych trafień",
+              HitHighlightedPropertiesFieldDescription: "Podaj listę właściwości zarządzanych w celu wyróżniania trafień.",
               TermNotFound: "(Nie znaleziono terminu o identyfikatorze '{0}')",
               ApplyQueryTemplateBtnText: "Zastosuj",
               EnableAudienceTargetingTglLabel: "Włącz audiencje"

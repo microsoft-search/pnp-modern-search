@@ -294,17 +294,6 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                             this._availableManagedProperties = this.parseAndCleanOptions(options);
                         }).bind(this)
                     }),
-                    new PropertyPaneNonReactiveTextField('dataSourceProperties.hitHighlightedProperties', {
-                        componentKey: `${BuiltinDataSourceProviderKeys.SharePointSearch}-hitHighlightedProperties`,
-                        defaultValue: this.properties.hitHighlightedProperties,
-                        label: commonStrings.DataSources.SharePointSearch.HitHighlightedPropertiesFieldLabel,
-                        placeholderText: `ex: Department,UserName`,
-                        multiline: false,
-                        allowEmptyValue: true,
-                        description: commonStrings.DataSources.SharePointSearch.HitHighlightedPropertiesFieldDescription,
-                        applyBtnText: commonStrings.DataSources.SharePointSearch.ApplyQueryTemplateBtnText,
-                        rows: 1
-                    }),
                     this._propertyFieldCollectionData('dataSourceProperties.sortList', {
                         manageBtnLabel: commonStrings.DataSources.SearchCommon.Sort.EditSortLabel,
                         key: 'sortList',
@@ -400,7 +389,19 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                         label: commonStrings.DataSources.SharePointSearch.EnableLocalizationLabel,
                         onText: commonStrings.DataSources.SharePointSearch.EnableLocalizationOnLabel,
                         offText: commonStrings.DataSources.SharePointSearch.EnableLocalizationOffLabel
+                    }),
+                    new PropertyPaneNonReactiveTextField('dataSourceProperties.hitHighlightedProperties', {
+                        componentKey: `${BuiltinDataSourceProviderKeys.SharePointSearch}-hitHighlightedProperties`,
+                        defaultValue: this.properties.hitHighlightedProperties,
+                        label: commonStrings.DataSources.SharePointSearch.HitHighlightedPropertiesFieldLabel,
+                        placeholderText: `ex: Department,UserName`,
+                        multiline: false,
+                        allowEmptyValue: true,
+                        description: commonStrings.DataSources.SharePointSearch.HitHighlightedPropertiesFieldDescription,
+                        applyBtnText: commonStrings.DataSources.SharePointSearch.ApplyQueryTemplateBtnText,
+                        rows: 1
                     })
+
                 ]
             }
         ];
