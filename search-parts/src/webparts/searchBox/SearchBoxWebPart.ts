@@ -40,6 +40,7 @@ import { Constants } from '../../common/Constants';
 import { ITokenService } from '@pnp/modern-search-extensibility';
 import { BuiltinTokenNames, TokenService } from '../../services/tokenService/TokenService';
 import { BaseWebPart } from '../../common/BaseWebPart';
+import { DynamicPropertyHelper } from '../../helpers/DynamicPropertyHelper';
 
 export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps> implements IDynamicDataCallables {
 
@@ -138,13 +139,18 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
 
     protected renderCompleted(): void {
 
+        if (!this.domElement) {
+            return;
+        }
         let renderRootElement: JSX.Element = null;
 
         let inputValue = "";
-        if (this.properties.queryText && !this.properties.queryText.isDisposed) {
+        if (this.properties.queryText) {
             try {
-                inputValue = this.properties.queryText.tryGetValue();
-                inputValue = decodeURIComponent(inputValue);
+                inputValue = DynamicPropertyHelper.tryGetValueSafe(this.properties.queryText);
+                if (inputValue !== undefined && typeof (inputValue) === 'string') {
+                    inputValue = decodeURIComponent(inputValue);
+                }
 
             } catch (error) {
                 // Likely issue when q=%25 in spfx
@@ -270,7 +276,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
                     ...this.getPropertyPaneWebPartInfoGroups(),
                     ...extensibilityConfigurationGroups,
                     {
-                        groupName: webPartStrings.PropertyPane.ImportExport,
+                        groupName: commonStrings.PropertyPane.InformationPage.ImportExport,
                         groupFields: [this._propertyPanePropertyEditor({
                             webpart: this,
                             key: 'propertyEditor'
@@ -421,7 +427,9 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
                                         React.createElement(Toggle, {
                                             key: itemId, checked: value, onChange: (evt, checked) => {
                                                 onUpdate(field.id, checked);
-                                            }
+                                            },
+                                            offText: commonStrings.General.OffTextLabel,
+                                            onText: commonStrings.General.OnTextLabel
                                         })
                                     )
                                 );
@@ -837,16 +845,29 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
      * Subscribes to URL query string change events using SharePoint page router
      */
     private _handleQueryStringChange() {
-        ((h) => {
-            this._pushStateCallback = history.pushState;
-            h.pushState = this.pushStateHandler.bind(this);
-        })(window.history);
+
+        // To avoid pushState modification from many components on the page (ex: search box, etc.), 
+        // only subscribe to query string changes if the connected source is either the searc queyr or explicit query string parameter
+        if (/^(PageContext:SearchData:searchQuery)|(PageContext:UrlData:queryParameters)/.test(this.properties.queryText.reference)) {
+
+            ((h) => {
+                this._pushStateCallback = history.pushState;
+                h.pushState = this.pushStateHandler.bind(this);
+            })(window.history);
+        }
     }
 
     private pushStateHandler(state, key, path) {
+
         this._pushStateCallback.apply(history, [state, key, path]);
-        if (this.properties.queryText.isDisposed) return;
+        if (this.properties.queryText.isDisposed) {
+            return;
+        }
+
         const source = this.properties.queryText.tryGetSource();
-        if (source && source.id === ComponentType.PageEnvironment) this.render();
+
+        if (source && source.id === ComponentType.PageEnvironment) {
+            this.render();
+        }
     }
 }

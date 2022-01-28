@@ -19,7 +19,6 @@ export class Constants {
      * The PnP Application Insights instrumentation key and events for stats tracking
      */
     public static readonly PNP_APP_INSIGHTS_INSTRUMENTATION_KEY = '0f0b9db6-680c-480c-804d-f75830e2c383';
-    public static readonly PNP_APP_INSIGHTS_INSTRUMENTATION_KEY_FALLBACK = '0144990f-ee63-4e5b-83d2-f1e21d4f8785';
     public static readonly PNP_MODERN_SEARCH_EVENT_NAME = 'pnpModernSearchV4';
 }
 
@@ -31,11 +30,11 @@ export enum AutoCalculatedDataSourceFields {
 }
 
 export class TestConstants {
-    public static SearchResultsWebPart = "dataVisualizerWebPart";
-    public static SearchResultsErrorMessage = "dataVisualizerErrorMessage";
-    public static SearchResultsLoadingOverlay = "dataVisualizerLoadingOverlay";
-    public static SearchResultsWebPartTitle = "dataVisualizerWebPartTitle";
-    public static SearchResultsLicenseMessageBar = "dataVisualizerLicenseMessageBar";
+    public static SearchResultsWebPart = "pnpSearchResultsWebPart";
+    public static SearchResultsErrorMessage = "pnpSearchResultsErrorMessage";
+    public static SearchResultsLoadingOverlay = "pnpSearchResultsLoadingOverlay";
+    public static SearchResultsWebPartTitle = "pnpSearchResultsWebPartTitle";
+    public static SearchResultsLicenseMessageBar = "pnpSearchResultsLicenseMessageBar";
     public static PreviewCallout = "previewCallout";
     public static DocumentCardFileIcon = "documentCardFileIcon";
     public static ResultDocumentCard = "resultCard";

@@ -45,7 +45,17 @@ export default interface ISearchFiltersWebPartProps extends IBaseWebPartProps {
     };
 
     /**
-     * The Web Part title
+     * Determines if the Web Part shoul use data verticals from an othe Web Part
+    */
+    useVerticals: boolean;
+
+    /**
+     * Dynamic data connection references for verticals
      */
-    title: string;
+    verticalsDataSourceReference: string;
+
+    /**
+     * The selected vertical fro the Web Part
+     */
+    selectedVerticalKeys: string[];
 }

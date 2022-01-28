@@ -35,6 +35,9 @@
             data-context="{{JSONstringify @root}}"
             data-instance-id="{{@root.instanceId}}"
             data-theme-variant="{{JSONstringify @root.theme}}"
+            data-allow-item-selection="{{properties.itemSelectionProps.allowItemSelection}}"
+            data-allow-multi={{properties.itemSelectionProps.allowMulti}}
+            data-selected-keys="{{JSONstringify @root.selectedKeys}}"
         >
         </pnp-detailslist>
 

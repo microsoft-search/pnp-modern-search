@@ -23,18 +23,18 @@ define([], function() {
         HideFirstLastPagesFieldName: "Dölj första/sista navigeringsknapparna",
         HideDisabledFieldName: "Dölj navigeringsval (föregående, nästa, första, sista) om de är inaktiverade.",
         TemplateSlots: {
-          GroupName: "Layout slots",
-          ConfigureSlotsLabel: "Redigera layout-slots för den här datakällan",
+          GroupName: "Layout",
+          ConfigureSlotsLabel: "Redigera layout för den här datakällan",
           ConfigureSlotsBtnLabel: "Anpassa",
-          ConfigureSlotsPanelHeader: "Layout slots",
-          ConfigureSlotsPanelDescription: "Här kan du lägga till slots som ska användas för de olika layouterna. En slot är en platshållarvariabel som du infogar i din mall, där värdet kommer att ersättas med ett fältvärde från en datakälla. På så sätt blir dina mallar mer generiska och lättare att återanvända. Om du vill använda dem använder du `{{slot item @root.slots.<SlotName>}}` Handlebars-uttrycket.",
-          SlotNameFieldName: "Slot namn",
-          SlotFieldFieldName: "Slot fält",
+          ConfigureSlotsPanelHeader: "Layout",
+          ConfigureSlotsPanelDescription: "Här kan du lägga till namn och fält som ska användas för de olika layouterna. Ett fält är en platshållarvariabel som du infogar i din mall, där värdet kommer att ersättas med ett fältvärde från en datakälla. På så sätt blir dina mallar mer generiska och lättare att återanvända. Om du vill använda dem använder du `{{slot item @root.slots.<SlotName>}}` Handlebars-uttrycket.",
+          SlotNameFieldName: "Namn",
+          SlotFieldFieldName: "Fält",
           SlotFieldPlaceholderName: "Välj ett fält"
         }
       },
       LayoutPage: {
-        LayoutSelectionGroupName: "Tillgängliga layouts",
+        LayoutSelectionGroupName: "Tillgängliga layouter",
         LayoutTemplateOptionsGroupName: "Layoutalternativ",
         CommonOptionsGroupName: "Vanlig",
         TemplateUrlFieldLabel: "Använd en extern URL för mall",
@@ -69,13 +69,26 @@ define([], function() {
           DialogButtonText: "Redigera mall",
           DialogTitle: "Redigera resultatmall",
           SaveButtonText: "Spara"
-        }
+        },
+        AllowItemSelection: "Tillåt val av objekt",
+        AllowMultipleItemSelection: "Tillåt flera val",
+        SelectionModeLabel: "Urvalsläge",
+        AsTokensSelectionMode: "Bearbeta valda värden som tokens (manuellt läge)",
+        AsDataFiltersSelectionMode: "Bearbeta valda värden som filter (standardläge)",
+        AsDataFiltersDescription: "I det här läget skickas valda värden till datakällan som vanliga filter",
+        AsTokensDescription: "I det här läget används valda värden manuellt genom tokens och tillgängliga metoder. Exempel med SharePoint-sökfrågemall: {?Title:{filters.&lt;destination_field_name&gt;.valueAsText}}",
+        FilterValuesOperator: "Den logiska operatorn att använda mellan valda värden",
+        FieldToConsumeLabel: "Källfält att konsumera",
+        FieldToConsumeDescription: "Använd detta fältvärde för valda objekt"
       },
       ConnectionsPage: {
         ConnectionsPageGroupName: "Tillgängliga anslutningar",
         UseFiltersWebPartLabel: "Anslut till en filter-webbdel",
         UseFiltersFromComponentLabel: "Använd filter från den här komponenten",
-        UseSearchVerticalsWebPartLabel: "Anslut till en vertikal-webbdel",
+        UseDynamicFilteringsWebPartLabel: "Anslut till en webbdel för dataresultat",
+        UseDataResultsFromComponentsLabel: "Använd data från denna webbdel",
+        UseDataResultsFromComponentsDescription: "Use data from selected items in these Web Parts",
+        UseSearchVerticalsWebPartLabel: "Använd data från valda objekt i dessa webbdelar",
         UseSearchVerticalsFromComponentLabel: "Använd vertikaler från denna komponent",
         LinkToVerticalLabel: "Visa endast data när följande vertikaler är valda",
         LinkToVerticalLabelHoverMessage: "Resultaten visas endast om de valda vertikalerna matchar den som har konfigurerats för denna webbdel. Annars är den här webbdelen tom.",
@@ -87,13 +100,19 @@ define([], function() {
         InputQueryTextStaticValue: "Statiskt värde",
         InputQueryTextDynamicValue: "Dynamiskt värde",
         SearchQueryTextUseDefaultQuery: "Använd ett standardvärde",
-        SearchQueryTextDefaultValue: "Standardvärde"
+        SearchQueryTextDefaultValue: "Standardvärde",
+        SourceDestinationFieldLabel: "Destinationsfältets namn",
+        SourceDestinationFieldDescription: "Destinationsfält som ska användas i den här webbdelen för att matcha de valda värdena",
+        AvailableFieldValuesFromResults: "Fält som innehåller filtervärdet"
       },
       InformationPage: {
         Extensibility: {
           PanelHeader: "Konfigurera utbyggnadsbibliotek som ska laddas vid start.",
           PanelDescription: "Lägg till/ta bort anpassade utbyggnadsbiblioteket-ID:n här. Du kan ange ett visningsnamn och bestämma om biblioteket ska laddas eller ej vid start. Här laddas bara anpassade datakällor, layouter, webbkomponenter och styrhjälpmedel.",
-        }
+        },
+        EnableTelemetryLabel: "PnP-telemetri",
+        EnableTelemetryOn: "Slå på telemetri",
+        EnableTelemetryOff: "Stäng av telemetri"
       }
     }
   }

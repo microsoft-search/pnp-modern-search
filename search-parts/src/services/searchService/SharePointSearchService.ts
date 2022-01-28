@@ -208,6 +208,10 @@ export class SharePointSearchService implements ISharePointSearchService {
         searchQuery.Querytext = '*';
         searchQuery.Refiners = 'ManagedProperties(filter=50000/0/*,sort=name/ascending)';
         searchQuery.RowLimit = 1;
+        searchQuery.SortList = [{
+            Property: "[DocId]",
+            Direction: SortDirection.Ascending
+        }];
 
         try {
 

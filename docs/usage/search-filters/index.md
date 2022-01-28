@@ -32,7 +32,7 @@ The filter settings are as follow:
 |------------|-----------------|
 | **Display Name** | A friendly name for the filter |
 | **Filter field** | The internal data source field to use as filter. Here you can select a field from the current data source (if data have been already retrieved) of type your own custom value (press enter to validate).
-| **# of values** | The maximum number of filter values/buckets to return (may be restricted by the API).
+| **# of values** | The maximum number of values to be retrieved for a given filter. This value is useful if you use SharePoint refiners with a lot of refiner values. By default SharePoint will only retreve the first 100 values. To get all refiner values, you must specify an higher number manually (maximum value is 1000).
 | **Template** | The template to use to display filter values. The builtin templates are: </br><ul><li>**Check box** <p align="center">!["Check box"](../../assets/webparts/search-filters/checkbox_template.png)</p></li><li>**Date range** <p align="center">!["Date range"](../../assets/webparts/search-filters/daterange_template.png)</p></li><li>**Date interval** <p align="center">!["Date interval"](../../assets/webparts/search-filters/dateinterval_template.png)</p></li><li>**Combo** <p align="center">!["Combo"](../../assets/webparts/search-filters/combo_template.png)</p></br> You can search a value directly in the list by typing keywords in the combo text field.</li></ul>
 | **Filter type** | Specify if the filter is a 'static' filter or a 'refiner' filter. See below for more information.
 | **Expand by default** | If applicable for the selected template, display values as expanded.
@@ -64,3 +64,14 @@ Using an indexed property bag value could be useful to store information about a
 `L0|#a2cf1afb-44b6-4cf4-bf37-642bb2e9bff3|Category 1;L0|#02e3406c0-1048-4bce-90eb-e7a51dfa7f31|Category3;L0|#07e094327-23d7-48af-9699-781eb26dc40f|Category2`
 
 These taxonomy values can then be used in the Filters Web Part using a `RefinableStringXX` search managed property to filter specific sites or elements. As an example, you can refer to the ["Create an end-to-end Office 365 groups provisioning solution"](https://github.com/pnp/tutorial-workspace-provisioning) tutorial GitHub project to leverage this format.
+
+## Filter deep linking
+
+The Search Filter Web Part supports deep linking, meaning you can preselect filters from the URL at page load. When filter values are selected, a query string parameter `f` is append to the current URL containing the current filter values data.
+
+> If you have connected the search result web part to a search box, ensure the search term is set to be dynamic and part of the URL in the search box web part. If not, copying the URL will not contain the search terms."
+
+!["Filters deep linking"](../../assets/webparts/search-filters/filter_deep_linking.png){: .center}
+
+!!! important
+    **We recommend to use the URL generated from filter values selection instead of crafting the URL manually.**

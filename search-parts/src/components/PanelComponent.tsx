@@ -44,7 +44,7 @@ export interface IPanelComponentProps {
 
     /**
      * The content to render to open the panel
-     */ 
+     */
     openTemplate: string;
 
     /**
@@ -98,13 +98,13 @@ export class PanelComponent extends React.Component<IPanelComponentProps, IPanel
             this.panelComponentUniqueKey = `${this.panelComponentUniqueKey}:${props.stateKey}`;
         }
     }
-    
+
     public render() {
 
         let panelProps: IPanelProps = {
             theme: this.props.themeVariant as ITheme,
             isOpen: this.state.showPanel,
-            type: this.props.size ? Number(this.props.size) : PanelType.medium,                        
+            type: this.props.size ? Number(this.props.size) : PanelType.medium,
             isHiddenOnDismiss: false,
             isBlocking: this.props.isBlocking,
             isLightDismiss: this.props.isLightDismiss,
@@ -113,47 +113,59 @@ export class PanelComponent extends React.Component<IPanelComponentProps, IPanel
             allowTouchBodyScroll: true,
             onRenderBody: () => {
 
-                return  <div style={{
-                            overflow: 'auto',
-                            marginLeft: 15
-                        }} dangerouslySetInnerHTML={{ __html: DOMPurify.default.sanitize(this.props.contentTemplate) }}>
-                        </div>;
+                return <div style={{
+                    overflow: 'auto',
+                    marginLeft: 15
+                }} dangerouslySetInnerHTML={{ __html: DOMPurify.default.sanitize(this.props.contentTemplate) }}>
+                </div>;
             }
         };
-        
+
         // Avoid panel animation flickering when the control is re-rerendered after a filter is selected
         if (this.props.disableAnimation) {
-            panelProps.styles =  {
+            panelProps.styles = {
                 main: {
-                    transition: 'none', 
+                    transition: 'none',
                     animation: 'none'
                 }
             };
         }
 
-        return  <div>
-                    <Text theme={this.props.themeVariant as ITheme}>
-                        <div 
-                            className={styles.panel__open} 
-                            onClick={this._onTogglePanel} 
-                            dangerouslySetInnerHTML={{__html: DOMPurify.default.sanitize(this.props.openTemplate)}}>
-                        </div>
-                    </Text>
-                    <Panel {...panelProps}/>
-                </div>;
+        return <div>
+            <Text theme={this.props.themeVariant as ITheme}>
+                <div
+                    role={"menubar"}
+                    tabIndex={0}
+                    className={styles.panel__open}
+                    onClick={this._onTogglePanel}
+                    onKeyPress={(e) => {
+                        if (e.charCode === 13) {
+                            this._onTogglePanel();
+                        }
+                    }}
+                    dangerouslySetInnerHTML={{ __html: DOMPurify.default.sanitize(this.props.openTemplate) }}>
+                </div>
+            </Text>
+            <Panel {...panelProps} />
+        </div>;
     }
 
     public componentDidMount() {
 
-        // Get expand state if any
-        const isOpen = this.clientStorage.session.get(this.panelComponentUniqueKey);
+        if (this.props.isOpen !== undefined) {
+            this.setState({ showPanel: this.props.isOpen });
+        } else {
 
-        if (isOpen !== null) {
-            this.setState({ showPanel: isOpen });
+            // Get expand state if any
+            const isOpen = this.clientStorage.session.get(this.panelComponentUniqueKey);
+
+            if (isOpen !== null) {
+                this.setState({ showPanel: isOpen });
+            }
         }
 
         // Reset the state when the page is refreshed or the window location is updated
-        window.onbeforeunload  = () => {
+        window.onbeforeunload = () => {
             this.clientStorage.session.delete(this.panelComponentUniqueKey);
         };
 
@@ -179,7 +191,7 @@ export class PanelComponent extends React.Component<IPanelComponentProps, IPanel
 
     private _onTogglePanel() {
         this.setState({ showPanel: !this.state.showPanel });
-        
+
         // Save the panel open state
         this.clientStorage.session.put(this.panelComponentUniqueKey, !this.state.showPanel);
     }
@@ -195,7 +207,7 @@ export class PanelComponent extends React.Component<IPanelComponentProps, IPanel
             document.addEventListener(ExtensibilityConstants.EVENT_FILTER_UPDATED, this._updateFilter);
         } else {
             document.removeEventListener(ExtensibilityConstants.EVENT_FILTER_UPDATED, this._updateFilter);
-        }        
+        }
     }
 
     /**
@@ -207,7 +219,7 @@ export class PanelComponent extends React.Component<IPanelComponentProps, IPanel
             document.addEventListener(ExtensibilityConstants.EVENT_FILTER_APPLY_ALL, this._applyAllFilters);
         } else {
             document.removeEventListener(ExtensibilityConstants.EVENT_FILTER_APPLY_ALL, this._applyAllFilters);
-        }  
+        }
     }
 
     /**
@@ -219,7 +231,7 @@ export class PanelComponent extends React.Component<IPanelComponentProps, IPanel
             document.addEventListener(ExtensibilityConstants.EVENT_FILTER_CLEAR_ALL, this._clearAllFilters);
         } else {
             document.removeEventListener(ExtensibilityConstants.EVENT_FILTER_CLEAR_ALL, this._clearAllFilters);
-        }  
+        }
     }
 
     private _applyAllFilters(ev: CustomEvent) {
@@ -227,18 +239,18 @@ export class PanelComponent extends React.Component<IPanelComponentProps, IPanel
         ev.stopImmediatePropagation();
 
         // Get the Web Part instance ID from where the event was fired so we can fire again this event but scoped to the Web Part
-        const webPartInstanceId = ev.detail.instanceId; 
+        const webPartInstanceId = ev.detail.instanceId;
         const webPartDomElement = window.document.querySelector(`div[data-instance-id="${webPartInstanceId}"]`);
 
         if (webPartDomElement) {
-            webPartDomElement.dispatchEvent(new CustomEvent(ExtensibilityConstants.EVENT_FILTER_APPLY_ALL, { 
+            webPartDomElement.dispatchEvent(new CustomEvent(ExtensibilityConstants.EVENT_FILTER_APPLY_ALL, {
                 detail: {
                     filterName: ev.detail.filterName,
                 },
                 bubbles: true,
                 cancelable: true
             }));
-        } else { 
+        } else {
             Log.info(PanelComponent_LogSource, `Unable to find the data filter WP. Did you forget to add the 'instance-id' attribute to the 'pnp-filter-multi' component?`);
         }
 
@@ -249,19 +261,19 @@ export class PanelComponent extends React.Component<IPanelComponentProps, IPanel
         ev.stopImmediatePropagation();
 
         // Get the Web Part instance ID from where the event was fired so we can fire again this event but scoped to the Web Part
-        const webPartInstanceId = ev.detail.instanceId; 
+        const webPartInstanceId = ev.detail.instanceId;
         const webPartDomElement = window.document.querySelector(`div[data-instance-id="${webPartInstanceId}"]`);
 
         if (webPartDomElement) {
 
-            webPartDomElement.dispatchEvent(new CustomEvent(ExtensibilityConstants.EVENT_FILTER_CLEAR_ALL, { 
+            webPartDomElement.dispatchEvent(new CustomEvent(ExtensibilityConstants.EVENT_FILTER_CLEAR_ALL, {
                 detail: {
                     filterName: ev.detail.filterName,
                 },
                 bubbles: true,
                 cancelable: true
             }));
-        } else { 
+        } else {
             Log.info(PanelComponent_LogSource, `Unable to find the data filter WP. Did you forget to add the 'instance-id' attribute to the 'pnp-filter-multi' component?`);
         }
     }
@@ -272,36 +284,36 @@ export class PanelComponent extends React.Component<IPanelComponentProps, IPanel
 
         // Get the Web Part instance ID from where the event was fired so we can fire again this event but scoped to the Web Part
         // 'data-instance-id' is a custom managed attribute to uniquely identify the filter Web Part when the panel belongs to
-        const webPartInstanceId = ev.detail.instanceId; 
+        const webPartInstanceId = ev.detail.instanceId;
         const webPartDomElement = window.document.querySelector(`div[data-instance-id="${webPartInstanceId}"]`);
 
         const eventDetails = ev.detail as IDataFilterInfo;
 
         if (webPartDomElement) {
 
-            webPartDomElement.dispatchEvent(new CustomEvent(ExtensibilityConstants.EVENT_FILTER_UPDATED, { 
+            webPartDomElement.dispatchEvent(new CustomEvent(ExtensibilityConstants.EVENT_FILTER_UPDATED, {
                 detail: {
                     filterName: eventDetails.filterName,
                     filterValues: eventDetails.filterValues,
                     instanceId: eventDetails.instanceId,
                     forceUpdate: eventDetails.forceUpdate
-                } as IDataFilterInfo, 
+                } as IDataFilterInfo,
                 bubbles: true,
                 cancelable: true
             }));
 
-        } else { 
+        } else {
             Log.info(PanelComponent_LogSource, `Unable to find the data filter WP. Did you forget to add the 'instance-id' attribute to the 'pnp-filter-multi' component?`);
         }
     }
 }
 
 export class PanelWebComponent extends BaseWebComponent {
-   
+
     public constructor() {
-        super(); 
+        super();
     }
- 
+
     public async connectedCallback() {
 
         const domParser = new DOMParser();
@@ -317,13 +329,13 @@ export class PanelWebComponent extends BaseWebComponent {
         if (contentTemplate) {
             contentTemplateContent = contentTemplate.innerHTML;
         }
-        
+
         if (openTemplate) {
             openTemplateContent = openTemplate.innerHTML;
         }
- 
-       let props = this.resolveAttributes();
-       const fileIcon = <PanelComponent {...props} contentTemplate={contentTemplateContent} openTemplate={openTemplateContent}/>;
-       ReactDOM.render(fileIcon, this);
-    }    
+
+        let props = this.resolveAttributes();
+        const fileIcon = <PanelComponent {...props} contentTemplate={contentTemplateContent} openTemplate={openTemplateContent} />;
+        ReactDOM.render(fileIcon, this);
+    }
 }

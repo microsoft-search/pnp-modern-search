@@ -25,6 +25,7 @@ export class NonReactiveTextField extends React.Component<INonReactiveTextFieldP
 
         return  <>
                     <TextField
+                        key={this.props.key}
                         defaultValue={this.props.defaultValue}
                         label={this.props.label}
                         placeholder={this.props.placeholderText}
