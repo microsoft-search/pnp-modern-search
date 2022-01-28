@@ -36,16 +36,17 @@ The following custom helpers are available in addition to the [handlebars-helper
 
 | Helper | Description | Example |
 | ------ | ----------- | -------- |
-| `{{getGraphPreviewUrl "<absolute_URL>"` | Try to determine the preview URL based on an absolute URL using the unified Microsoft Graph URL syntax. For instance, _https://aequosdev.sharepoint.com/sites/dev/Shared%20Documents/MyDocument.pdf_ becomes _https://aequosdev.sharepoint.com/sites/dev/Shared%20Documents/?id=/sites/dev/Shared%20Documents/MyDocument.pdf&parent=/sites/dev/Shared%20Documents_  | `{{getGraphPreviewUrl 'https://aequosdev.sharepoint.com/sites/dev/Shared%20Documents/MyDocument.pdf'}}`
+| `{{getGraphPreviewUrl "<absolute_URL>"` | Try to determine the preview URL based on an absolute URL using the unified Microsoft Graph URL syntax. For instance, _https://contoso.sharepoint.com/sites/dev/Shared%20Documents/MyDocument.pdf_ becomes _https://contoso.sharepoint.com/sites/dev/Shared%20Documents/?id=/sites/dev/Shared%20Documents/MyDocument.pdf&parent=/sites/dev/Shared%20Documents_  | `{{getGraphPreviewUrl 'https://contoso.sharepoint.com/sites/dev/Shared%20Documents/MyDocument.pdf'}}`
 `{{getCountMessage <total items count> <?keywords>}}` | Display a friendly message displaying the result and the entered keywords. | `{{getCountMessage 5 'contoso'}}` will display _'5 results for 'contoso'_.
 | `{{getSummary "<value>"}}` | _Use with SharePoint Search data source and the HitHighlightedSummary SharePoint search managed property_. Returns the formatted value for rendering. | `{{getSummary HitHighlightedSummary}}`
+| `{{getTagName "<value>"}}` | _Use with tag fields_. Returns the name of the tag, omitting the ID in the tag string (`L0\|#000000000-0000-0000-0000-000000000000\|…`). | `{{getTagName Tag}}`
 | `{{getDate <data_value> "<format>" <time handling>}}` | Format the date with [Moment.js](https://momentjs.com/docs/#/parsing/string-format/) according to the current language. Date in the managed property should be on the form `2018-09-10T06:29:25.0000000Z` for the function to work.<p>&lt;time handling&gt; is optional and takes <ul><li>0 = format to browsers time zone (default)</li><li>1 = ignore Z time and handle as browsers local time zone</li><li>2 = strip time and set to 00:00:00 in browsers local time zone</li><li>3 = display in the time zone for the current web</li><li>4 = display in the time zone from the uers profile</li> | `{{getDate 2018-09-10T06:29:25.0000000Z 'LL'}}`
 | `{{getUrlField <managed_propertyOWSURLH> "URL|Title"}}` | _Use with SharePoint Search data source_. Returns the URL or Title part of a URL autocreated managed property | `{{getUrlField MyPropertyOWSURLH "Title"}}`
 `{{getUniqueCount items "<property>"}}` or  `{{getUniqueCount array}}`| Get the unique count of a property over the result set (or another array) or get the unique count of objects in an array. Example: [1,1,1,2,2,4] would return `3`. | `{{getUniqueCount [1,1,1,2,2,4]}}`
 `{{getUnique items "<property>"}}` | Return the unique values as a new array based on an array or property of an object in the array. | `{{getUnique items "NewsCategory"}}`
 `{{#group items by="<property>"}}` | Group items by a specific results property. See [https://github.com/shannonmoeller/handlebars-group-by](https://github.com/shannonmoeller/handlebars-group-by) for usage.
 | `{{slot item <property_name>}}` | Return the `<property_name>` value for the `item` object. Supports deep property paths. | `{{slot item "property.subproperty"}}`
-| `{{getUserEmail <value>}}` | Extract the user email in a string based on a email regex  (ex: a claim). Returns the first match.| `{{getUserEmail "franck.cornu@aequosdev.onmicrosoft.com | Franck Cornu | 693A30232E667C6D656D626572736869707C6672616E636B2E636F726E7540616571756F736465762E6F6E6D6963726F736F66742E636F6D i:0#.f|membership|franck.cornu@aequosdev.onmicrosoft.com"}}`
+| `{{getUserEmail <value>}}` | Extract the user email in a string based on a email regex  (ex: a claim). Returns the first match.| `{{getUserEmail "franck.cornu@contoso.onmicrosoft.com | Franck Cornu | 693A30232E667C6D656D626572736869707C6672616E636B2E636F726E7540616571756F736465762E6F6E6D6963726F736F66742E636F6D i:0#.f|membership|franck.cornu@contoso.onmicrosoft.com"}}`
 | `{{#times <number>}}` | Iterate the block `<number>` times. | `{{#times 5}} some mark up  {{/times}}`
 | `{{regex <expression> <string>}}` | Run a regular expression and return the match. Return `-` if not match. | `{{regex '\d+' 'digit 15 is a number'}}` will return `15`.
 | `{{getPageContext "<SPFx page property>"}}` | Retrieve a property from the SPFx context object. | `{{getPageContext "user.displayName"}}` or `{{getPageContext "cultureInfo.currentUICultureName"}}`
@@ -64,15 +65,11 @@ Inside an HTML template (or layout field), you can write your own CSS styles usi
 
 ```html
 <content id="data-content">
-
     <style>
-
         .example-themePrimary a {
             color: {{@root.theme.palette.themePrimary}};
         }
-
-        ...
-        
+        ...     
     </style>
 
     <div class="template">
@@ -81,6 +78,24 @@ Inside an HTML template (or layout field), you can write your own CSS styles usi
 ```
 
 However, all CSS rules (including `@media` rules) will be all prefixed automatically by an unique ID (**pnp-template_&lt;Web Part instance ID&gt;**) to make sure styles are isolated from other Web Parts on the page. We do this to avoid conflicts between classes in the global context.
+
+## Hide error message using CSS
+By default the web parts will output an error message if something goes wrong on for example API calls.
+
+If you want to hide the error message you can add the following CSS in your custom template.
+
+```html
+<content id="data-content">
+
+    <style>
+        .pnpSearchResultsErrorMessage { display:none; }
+        ...      
+    </style>
+
+    <div class="template">
+        ...
+    ...
+```
 
 ## Use SharePoint theme in your templates
 
@@ -165,3 +180,49 @@ If no placeholder is present in the template, a default one will be loaded.
 In the solution, you can use Graph Tookit components whitout the need to re-authenticate against Microsoft Graph because the Web Parts already use the [SharePoint provider](https://docs.microsoft.com/en-us/graph/toolkit/providers/sharepoint).
 
 Refer to the official documentation to see [all available components](https://docs.microsoft.com/en-us/graph/toolkit/components/login). For instance, we use the Microsoft Graph Toolkit for the [people layout](../usage/search-results/layouts/people.md) via `<mgt-person>`.
+
+## Build templates with item selection
+
+If your template requires items selection for dynamic filtering, you can follow these guidelines to design your template structure. The item selection feature is based on the Office Fluent UI [**Selection**](https://developer.microsoft.com/en-us/fluentui#/controls/web/selection) component and custom `data` attributes.
+
+The available data attributes you can use in your HTML template are:
+
+- `data-selection-index`: the index of the item being represented. This would go on the root of the tile/row. 
+
+- `data-selection-toggle`: this boolean flag would be set on the element which should handle toggles.This could be a checkbox or a div.
+
+- `data-selection-toggle-all`: this boolean flag indicates that clicking it should toggle all selection.
+
+- `data-selection-disabled`: allows a branch of the DOM to be marked to ignore input events that alter selections.
+
+- `data-selection-select`: allows a branch of the DOM to ensure that the current item is selected upon interaction.
+
+As item key you must use the builtin Handlebars `{{@index}}` property in the `{{#each}}` loop. Also because state managed is internaly managed by the Web Part, we provide you an Handlebars helper `isItemSelected` to help to apply styles depending of the selection (ex: apply a CSS class or not). To use this helper correctly, you must pass the current selected keys and current index to get the selected state for an item:
+
+```
+(isItemSelected @root.selectedKeys @index)
+```
+
+**Template example with item selection**
+
+```
+<style>
+
+    .selected {
+        background-color: {{@root.theme.palette.themeLighter}};
+        border: 1px solid {{@root.theme.palette.themePrimary}};
+        color: {{@root.theme.palette.themePrimary}};
+    }
+    ...
+
+</style>
+...
+{{#each data.items as |item|}}
+    <div class="{{#if (isItemSelected @root.selectedKeys @index)}}selected{{/if}}" data-is-focusable data-selection-index="{{@index}}" data-selection-toggle>
+        <span>{{slot item @root.slots.Title}}</span>
+    </div>
+{{/each}}
+```
+
+!!! note
+    - If you allowed multi items selection, you must use `CTRL` + `Left click` to select multiple elements. You can also select a range of elements using `SHIFT` + `Left click`.

@@ -1,7 +1,13 @@
 define([], function() {
   return {
     General: {
-      WebPartDefaultTitle: "Søgevertikal-webpart"
+      WebPartDefaultTitle: "Søgevertikal-webpart",
+      PlaceHolder: {
+        EditLabel: "Redigere",
+        IconText: "Search Verticals Web Part af @pnp",
+        Description: "Giver mulighed for at gennemse data som vertikaler (dvs. siloer). Denne webdel er beregnet til at blive forbundet med 'Søgeresultater' webdele på siden.",
+        ConfigureBtnLabel: "Konfigurer"
+      }
     },
     PropertyPane: {
       SearchVerticalsGroupName: "Konfiguration af søgevertikaler",
@@ -15,7 +21,9 @@ define([], function() {
           IconName: "Fluent UI ikonnavn",
           IsLink: "Er hyperlink",
           LinkUrl: "Link til URL",
-          OpenBehavior: "Åben adfærd"
+          OpenBehavior: "Åben adfærd",
+          TabValue: "Tab-værdi",
+          ShowLinkIcon: "Vis linkikon",
         }
       }
     }

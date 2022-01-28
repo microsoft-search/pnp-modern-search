@@ -39,6 +39,8 @@ export class PropertyPaneAsyncCombo implements IPropertyPaneField<IPropertyPaneA
             disabled: properties.disabled,
             stateKey: properties.stateKey,
             placeholder: properties.placeholder,
+            useComboBoxAsMenuWidth: properties.useComboBoxAsMenuWidth,
+            clearTextOnFocus: properties.clearTextOnFocus,
             onRender: this.onRender.bind(this),
             onDispose: this.onDispose.bind(this)
           };
@@ -76,8 +78,13 @@ export class PropertyPaneAsyncCombo implements IPropertyPaneField<IPropertyPaneA
                 disabled: this.properties.disabled,
                 placeholder: this.properties.placeholder,
                 searchAsYouType: this.properties.searchAsYouType,
+                useComboBoxAsMenuWidth: this.properties.useComboBoxAsMenuWidth,
+                clearTextOnFocus: this.properties.clearTextOnFocus,
                 onUpdate: ((value: any) => {
-                    this.properties.onPropertyChange(this.targetProperty, value);
+
+                    // Notify the caller something has changed
+                    this.properties.onPropertyChange(this.targetProperty, value, changeCallback);
+
                 }).bind(this),
                 onGetErrorMessage: this.properties.onGetErrorMessage,
                 onLoadOptions: this.properties.onLoadOptions,

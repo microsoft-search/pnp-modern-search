@@ -9,8 +9,6 @@ You can use tokens in the following locations:
         - **SharePoint Search**
             - Query template field.
             - Refinement filters field.
-    - Layouts
-        - In the _'See all'_ link.
 
 - **Search Verticals Web Part**
     - In the link URL when the vertical item is a link.
@@ -39,6 +37,8 @@ Tokens related to connected Web Parts in the Search Results.
 |**Token**|**Definition**|
 |:-----|:-----|
 |**{inputQueryText}**<br/> | The query value entered into a search box on a page. The value depends on the configuration of input text connection of the Search Results Web Part. <br/> |
+|**{filters.&lt;FilterName&gt;.&lt;\|valueAsText\|fromDate\|toDate\&gt;}** | The current selected filters. _'FilterName'_ corresponds to the filter name specified in the Search Filters Web Part (not the display name). The available values for a filter are as follow: <ul><li>`valueAsText`: the filter value as text. For multi values filter, values will be separated by a comma `','`.</li><li>`fromDate`: if the filter is a **date range** template, the 'from' date selected by the user in UTC format.</li><li>`toDate`: if the filter is a **date range** template, the 'to' date selected by the user in UTC format.</li></ul></br>If no filter are selected (i.e. no values), the `{filters}` expression will be resolved as an empty string `''`.
+|**{verticals.&lt;value\|name&gt;}** | If connected, get the current selected vertical tab name or associated value.
 
 ##### Context tokens
 
@@ -97,7 +97,7 @@ To deal with mutli valued properties (like taxonomy multi or choices SharePoint 
 **Examples:**
 
 - Using an user profile multi values taxonomy property: `{|owstaxidmetadataalltagsinfo:{User.SPS-Hashtags}}`
-- Using a page multi values taxonomy property: `{|owstaxidmetadataalltagsinfo:{Page.myTaxonomyMultiColumn.TermID}}` or `{|owstaxidmetadataalltagsinfo:{Page.myTaxonomyMultiColumn.TermLabel}}`
+- Using a page multi values taxonomy property: `{|owstaxidmetadataalltagsinfo:{Page.myTaxonomyMultiColumn.TermID}}` or `{|owstaxidmetadataalltagsinfo:{Page.myTaxonomyMultiColumn.Label}}`
 - Using a page multi values choice property: `{|RefinableStringXX:{Page.myChoiceMultiColumn}}`
 
 At any time, you can see the resolved query using the 'Debug' layout an inspecting the `data.queryModification` property.

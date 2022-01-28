@@ -11,7 +11,7 @@ import * as DOMPurify from 'dompurify';
 import { ITemplateService } from '../services/templateService/ITemplateService';
 import { TemplateService } from '../services/templateService/TemplateService';
 import { DomPurifyHelper } from '../helpers/DomPurifyHelper';
-import { ServiceScope, ServiceKey } from '@microsoft/sp-core-library';
+import { ServiceScope, ServiceKey } from "@microsoft/sp-core-library";
 
 export interface ISliderProps {
     options?: any;
@@ -63,7 +63,7 @@ export default class Slider extends React.Component<ISliderProps, ISliderState> 
         }
     }
 
-    public renderPortal() {
+    private renderPortal() {
 
         if (!this.flickityNode) {
             return null;
@@ -206,13 +206,14 @@ export class SliderComponent extends React.Component<ISliderComponentProps, ISli
 
                             const templateContentValue =    template(
                                                                 { 
-                                                                    item: item 
+                                                                    item: item, 
                                                                 }, 
                                                                 { 
                                                                     data: {
                                                                         root: {
                                                                             ...templateContext
-                                                                        }
+                                                                        },
+                                                                        index: index
                                                                     }
                                                                 }
                                                             ); 
@@ -250,7 +251,7 @@ export class SliderWebComponent extends BaseWebComponent {
         }
 
         const templateService = serviceScope.consume<ITemplateService>(templateServiceKey);
-        
+       
         const sliderComponent = <SliderComponent {...props} template={this.innerHTML} handlebars={templateService.Handlebars}/>;
         ReactDOM.render(sliderComponent, this);
     }    

@@ -17,7 +17,7 @@ define([], function () {
           InvalidtokenFormatErrorMessage: "Vänligen ange ett teckenformat som använder sig av '{' och '}'. (t.ex: {Today})"
         },
         Date: {
-          DateTokensGroupName: "Datum tecken",
+          DateTokensGroupName: "Datumtecken",
           Today: "Idag",
           Yesterday: "Igår",
           Tomorrow: "Imorgon",
@@ -26,13 +26,13 @@ define([], function () {
           OneYearAgo: "Ett år sedan"
         },
         Page: {
-          PageTokensGroupName: "Sidotecken",
+          PageTokensGroupName: "Sidtecken",
           PageId: "Sidans ID",
           PageTitle: "Sidans titel",
           PageCustom: "Annan sidkolumn",
         },
         User: {
-          UserTokensGroupName: "Anvädartecken",
+          UserTokensGroupName: "Användartecken",
           UserName: "Användarnamn",
           Me: "Jag",
           UserDepartment: "Användaravdelning",
@@ -79,34 +79,38 @@ define([], function () {
         },
         DateIntervalStrings: {
           AnyTime: "När som helst",
-          PastDay: "Senaste 24 timmarna",
-          PastWeek: "Senaste veckan",
-          PastMonth: "Senaste månaden",
-          Past3Months: "Senaste 3 månaderna",
-          PastYear: "Senaste året",
-          Older: "Äldre än ett år"
+          PastDay: "Från senaste 24 timmarna till senaste veckan",
+          PastWeek: "Från förra veckan till förra månaden",
+          PastMonth: "Från förra månaden till de senaste tre månaderna",
+          Past3Months: "Från de senaste tre månaderna till det senaste året",
+          PastYear: "Från förra året",
+          Older: "Äldre än ett år" 
         },
         SameTabOpenBehavior: "Använd den aktuella fliken",
         NewTabOpenBehavior: "Öppna i en ny flik",
         PageOpenBehaviorLabel: "Öppningsbeteende",
-        EmptyFieldErrorMessage: "Det här fältet får inte vara tomt"
+        EmptyFieldErrorMessage: "Det här fältet får inte vara tomt",
+        TagPickerStrings: {
+          NoResultsSearchMessage: "Inga resultat funna",
+          SearchPlaceholder: "Sök efter ett värde..."
+        },
+        CurrentVerticalNotSelectedMessage: "Den aktuella valda vertikalen matchar inte de som är kopplade till den här webbdelen ({0}). Den förblir tom i visningsläge."
       },
       DataSources: {
         SharePointSearch: {
-          SourceName: "SharePoint sök",
+          SourceName: "SharePoint-sök",
           SourceConfigurationGroupName: "Källkonfiguration",
           QueryTextFieldLabel: "Sökfrågetext",
           QueryTextFieldInfoMessage: "Använd konfigurationsfliken i webbdelen <strong>Tillgängliga anslutningar</strong> för att ange antingen ett statiskt värde eller ett värde från en dynamisk komponent på sidan, till exempel en sökruta.",
           QueryTemplateFieldLabel: "Sökfrågemall",
           QueryTemplatePlaceHolderText: "ex: Path:{Site}",
           QueryTemplateFieldDescription: "Sökfrågemallen. Du kan också använda {<tokens>} för att skapa en dynamisk fråga.",
-          ResultSourceIdLabel: "ID för sökresultatet",
-          ResultSourceIdDescription: "Använd ett standard SharePoint-ID i sökresultatet, eller skriv in ditt eget GUID-värde och tryck på 'Enter' för att spara.",
-          InvalidResultSourceIdMessage: "Det angivna värdet är inte en giltigt GUID",
+          ResultSourceIdLabel: "ID för sökresultatets ID / Nivå|Namn",
+          ResultSourceIdDescription: "Välj en inbyggd källa, skriv en anpassad käll-GUID eller NIVÅ och NAMN på källan separerade med | (dvs: SPSite|Nyheter). Giltiga nivå är [SPSiteSubscription, SPSite, SPWeb]. Tryck på [Enter] för att spara.",
+          InvalidResultSourceIdMessage: "Det angivna värdet är inte en giltigt GUID eller formaterad som NIVÅ|NAMN",
           EnableQueryRulesLabel: "Aktivera frågeregler",
-          IncludeOneDriveResultsLabel: "Inkludera resultat från OneDrive för Företag",
           RefinementFilters: "Förfiningsfilter",
-          RefinementFiltersDescription: "Inledande förfiningsfilter som kan användas i en fråga. Dessa vissas inte i de valda filtren. Om du vill infoga text använder du citattecken (\") istället för (').",
+          RefinementFiltersDescription: "Inledande förfiningsfilter som kan användas i en fråga. Dessa visas inte i de valda filtren. Om du vill infoga text använder du citattecken (\") istället för (').",
           EnableLocalizationLabel: "Aktivera lokalisering",
           EnableLocalizationOnLabel: "På",
           EnableLocalizationOffLabel: "Av",
@@ -122,8 +126,8 @@ define([], function () {
         MicrosoftSearch: {
           QueryTextFieldLabel: "Sökfrågetext",
           QueryTextFieldInfoMessage: "Använd konfigurationsfliken i webbdelen <strong>Tillgängliga anslutningar</strong> för att ange antingen ett statiskt värde eller ett värde från en dynamisk komponent på sidan, till exempel en sökruta.",
-          SourceName: "Microsoft sök",
-          SourceConfigurationGroupName: "Microsoft sök",
+          SourceName: "Microsoft-sök",
+          SourceConfigurationGroupName: "Microsoft-sök",
           EntityTypesField: "Sökbara enhetstyper",
           SelectedFieldsPropertiesFieldLabel: "Valda fält",
           SelectedFieldsPropertiesFieldDescription: "Anger fälten som ska hämtas från sökresultaten.",
@@ -131,21 +135,28 @@ define([], function () {
           EnableTopResultsLabel: "Aktivera toppresultat",
           ContentSourcesFieldLabel: "Innehållskällor",
           ContentSourcesFieldDescriptionLabel: "Visar ID för de anslutningar som definierats i administrationsportalen för Microsoft Search Connectors",
-          ContentSourcesFieldPlaceholderLabel: "ex: 'MyCustomConnectorId'"
+          ContentSourcesFieldPlaceholderLabel: "ex: 'MyCustomConnectorId'",
+          EnableSuggestionLabel: "Aktivera stavningsförslag",
+          EnableModificationLabel: "Aktivera stavningsändringar",
+          QueryTemplateFieldLabel: "Frågemodifierare",
+          QueryTemplatePlaceHolderText: "ex: {searchTerms} IsDocument:true",
+          QueryTemplateFieldDescription: "Sökmodifieringsmallen. Du kan också använda {<tokens>} och KQL för att bygga en dynamisk fråga. Allt är kopplat till inputQueryText",
+          ApplyQueryTemplateBtnText: "Tillämpa",
+          UseBetaEndpoint: "Använd beta endpoint"
         },
         SearchCommon: {
           Sort: {
             SortPropertyPaneFieldLabel: "Sorteringsordning",
-            SortListDescription: "Ange den första sorteringsordningen för sökresultaten. Du kan antingen välja ett fält i listrutan (endast om datakällan redan har hämtats) eller skriv ditt eget anpassade värde (tryck på 'Enter' för att spara)",
+            SortListDescription: "Ange den första sorteringsordningen för sökresultaten. Du kan antingen välja ett fält i rullistan (endast om datakällan redan har hämtats) eller skriv ditt eget anpassade värde (tryck på 'Enter' för att spara)",
             SortDirectionAscendingLabel: "Stigande",
             SortDirectionDescendingLabel: "Fallande",
             SortErrorMessage: "Ogiltig sökegenskap (Kontrollera om den hanterade egenskapen är sorterbar).",
             SortPanelSortFieldLabel: "Sortera efter fält",
             SortPanelSortFieldAria: "Sortera efter",
             SortPanelSortFieldPlaceHolder: "Sortera efter",
-            SortPanelSortDirectionLabel: "Sortering riktning",
+            SortPanelSortDirectionLabel: "Sorteringsriktning",
             SortDirectionColumnLabel: "Riktning",
-            SortFieldColumnLabel: "Fält namn",
+            SortFieldColumnLabel: "Fältnamn",
             EditSortLabel: "Redigera sorteringsordning",
             SortInvalidSortableFieldMessage: "Den här egenskapen kan inte sorteras",
             SortFieldColumnPlaceholder: "Välj fält..."
@@ -153,8 +164,8 @@ define([], function () {
         }
       },
       Controls: {
-        TextDialogButtonText: "Lägg till Handlebars-uttryck",
-        TextDialogTitle: "Redigera Handlebars-uttryck",
+        TextDialogButtonText: "Lägg till Handlebars",
+        TextDialogTitle: "Redigera Handlebars",
         TextDialogCancelButtonText: "Avbryt",
         TextDialogSaveButtonText: "Spara",
         SelectItemComboPlaceHolder: "Välj egenskap",
@@ -175,16 +186,16 @@ define([], function () {
         },
         DetailsList: {
           Name: "Detaljerad lista",
-          UseHandlebarsExpressionLabel: "Använd Handlebars-uttryck",
-          MinimumWidthColumnLabel: "Minimum bredd (px)",
-          MaximumWidthColumnLabel: "Maximum bredd (px)",
+          UseHandlebarsExpressionLabel: "Använd Handlebars",
+          MinimumWidthColumnLabel: "Minimal bredd (px)",
+          MaximumWidthColumnLabel: "Maximal bredd (px)",
           SortableColumnLabel: "Sorterbar",
           ResizableColumnLabel: "Storleken kan redigeras",
           MultilineColumnLabel: "Flera linjer",
           LinkToItemColumnLabel: "Länk till artikel",
           CompactModeLabel: "Kompakt läge",
           ShowFileIcon: "Visa filikon",
-          ManageDetailsListColumnDescription: "Lägg till, uppdatera eller ta bort kolumner från layouten i detaljlistan. Du kan antingen använda egenskapsvärden i listan direkt utan någon transformation, eller så kan du använda ett styruttryck som fältets värde. HTML stöds för användning i alla fält.",
+          ManageDetailsListColumnDescription: "Lägg till, uppdatera eller ta bort kolumner från layouten i detaljlistan. Du kan antingen använda egenskapsvärden i listan direkt utan någon omvandling, eller så kan du använda ett styruttryck som fältets värde. HTML stöds för användning i alla fält.",
           ManageDetailsListColumnLabel: "Hantera kolumner",
           ValueColumnLabel: "Kolumnvärde",
           ValueSortingColumnLabel: "Kolumnvärde sortering",
@@ -198,13 +209,13 @@ define([], function () {
         Cards: {
           Name: "Kort",
           ManageTilesFieldsLabel: "Hantera kortfält",
-          ManageTilesFieldsPanelDescriptionLabel: "Här kan du mappa varje fältvärde med motsvarande kortplatshållare. Du kan antingen använda en resultategenskap direkt utan någon transformation, eller så kan du använda ett Handlebars-uttryck som fältets värde. När du har angett kan du klistra in din egen HTML-kod i kommenterade fält.",
+          ManageTilesFieldsPanelDescriptionLabel: "Här kan du mappa varje fältvärde med motsvarande kortplatshållare. Du kan antingen använda en resultategenskap direkt utan någon omvandling, eller så kan du använda Handlebars för fältets värde. När du har angett kan du klistra in din egen HTML-kod i kommenterade fält.",
           PlaceholderNameFieldLabel: "Namn",
           SupportHTMLColumnLabel: "Tillåt HTML",
           PlaceholderValueFieldLabel: "Värde",
-          UseHandlebarsExpressionLabel: "Använd Handlebars-uttryck",
+          UseHandlebarsExpressionLabel: "Använd Handlebars",
           EnableItemPreview: "Tillåt förhandsgranskning av resultatet",
-          EnableItemPreviewHoverMessage: "Att aktivera den här funktionen kan påverka prestandan om för många objekt visas samtidigt och du använder fältet 'AutoPreviewUrl'. Vi rekommenderar att du använder det här alternativet med få objekt, eller genom att använda fördefinierade förhandsgranskningar av URL:er från datakällas fält i platser.",
+          EnableItemPreviewHoverMessage: "Att aktivera den här funktionen kan påverka prestandan om för många objekt visas samtidigt och du använder fältet 'AutoPreviewUrl'. Vi rekommenderar att du använder det här alternativet med få objekt, eller genom att använda fördefinierade förhandsgranskningar av URL:er från datakällans fält i platser.",
           ShowFileIcon: "Visa filikon",
           CompactModeLabel: "Kompakt läge",
           PreferedCardNumberPerRow: "Önskat antal kort per rad",
@@ -213,34 +224,34 @@ define([], function () {
             Location: "Plats",
             Tags: "Taggar",
             PreviewImage: "Förhandsgranskning av bild",
-            PreviewUrl: "Förhandsgranskning av Url",
-            Url: "Url",
+            PreviewUrl: "Förhandsgranskning av URL",
+            Url: "URL",
             Date: "Datum",
             Author: "Författare",
-            ProfileImage: "Url för profilbild",
+            ProfileImage: "URL för profilbild",
             FileExtension: "Filändelsen",
             IsContainer: "Är mapp"
           },
           ResetFieldsBtnLabel: "Återställ fält till standardvärden"
         },
         Slider: {
-          Name: "Slider",
+          Name: "Reglage",
           SliderAutoPlay: "Automatisk uppspelning",
           SliderAutoPlayDuration: "Varaktighet för automatisk uppspelning (i sekunder)",
           SliderPauseAutoPlayOnHover: "Pausa genom att föra musen över",
-          SliderGroupCells: "Antalet element som ska grupperas i slides",
+          SliderGroupCells: "Antalet element som ska grupperas inom ett reglage",
           SliderShowPageDots: "Visa sidpunkter",
           SliderWrapAround: "Oändlig scroll",
-          SlideHeight: "Slide höjd (i px)",
-          SlideWidth: "Slide bredd (i px)"
+          SlideHeight: "Reglagehöjd (px)",
+          SlideWidth: "Reglagebredd (px)"
         },
         People: {
           Name: "Person",
           ManagePeopleFieldsLabel: "Hantera fält för personer",
-          ManagePeopleFieldsPanelDescriptionLabel: "Här kan du mappa varje fältvärde med motsvarande person-placeholder. Du kan antingen använda datakällans fältvärde direkt utan någon omvandling, eller så kan du använda ett styruttryck i värdefältet.",
+          ManagePeopleFieldsPanelDescriptionLabel: "Här kan du koppla varje fältvärde med motsvarande person-platshållare. Du kan antingen använda datakällans fältvärde direkt utan någon omvandling, eller så kan du använda ett styruttryck i värdefältet.",
           PlaceholderNameFieldLabel: "Namn",
           PlaceholderValueFieldLabel: "Värde",
-          UseHandlebarsExpressionLabel: "Använd Handlebars-uttryck",
+          UseHandlebarsExpressionLabel: "Använd Handlebars",
           PersonaSizeOptionsLabel: "Komponentstorlek",
           PersonaSizeExtraSmall: "Extra liten",
           PersonaSizeSmall: "Liten",
@@ -293,7 +304,9 @@ define([], function () {
       },
       PropertyPane: {
         ConnectionsPage: {
-          DataConnectionsGroupName: "Tillgängliga anslutningar"
+          DataConnectionsGroupName: "Tillgängliga anslutningar",
+          UseDataVerticalsWebPartLabel: "Anslut till en vertikal webbdel",
+          UseDataVerticalsFromComponentLabel: "Använd vertikaler från denna komponent"
         },
         InformationPage: {
           Extensibility: {
@@ -305,7 +318,8 @@ define([], function () {
               Id: "Manifest GUID",
               Enabled: "Aktiverad/Inaktiverad"
             }
-          }
+          },
+          ImportExport: "Importera/exportera inställningar"
         }
       },
       Filters: {
@@ -314,12 +328,15 @@ define([], function () {
         FilterNoValuesMessage: "Inga värden för detta filter",
         OrOperator: "ELLER",
         AndOperator: "OCH",
-        ComboBoxPlaceHolder: "Välj värde"
+        ComboBoxPlaceHolder: "Välj värde",
+        UseAndOperatorValues: "Använd en AND-operator mellan värden ",
+        UseOrOperatorValues: "Använd en ELLER-operator mellan värden",
+        UseValuesOperators: "Välj operator att använda mellan dessa filtervärden"
       },
       SuggestionProviders: {
         SharePointStatic: {
           ProviderName: "SharePoint statiska sökförslag",
-          ProviderDescription: "Hämta SharePoint statiska användadefinierade sökförslag"
+          ProviderDescription: "Hämta SharePoint statiska användardefinierade sökförslag"
         }
       }
     }

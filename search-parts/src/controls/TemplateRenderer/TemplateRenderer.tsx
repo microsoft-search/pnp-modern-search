@@ -5,7 +5,8 @@ import './TemplateRenderer.scss';
 import { isEqual } from "@microsoft/sp-lodash-subset";
 import * as DOMPurify from 'dompurify';
 import { DomPurifyHelper } from '../../helpers/DomPurifyHelper';
-
+import { TestConstants } from '../../common/Constants';
+import { IDataResultsTemplateContext } from '../../models/common/ITemplateContext';
 
 // Need a root class to do not conflict with PnP Modern Search Styles.
 const rootCssClassName = "pnp-modern-search";
@@ -29,7 +30,7 @@ export class TemplateRenderer extends React.Component<ITemplateRendererProps, IT
             ADD_ATTR: ['target', 'loading'],
             ALLOW_DATA_ATTR: true,
             ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|file|tel|callto|cid|xmpp|xxx|ms-\w+):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
-            WHOLE_DOCUMENT: false,            
+            WHOLE_DOCUMENT: true,
         });
 
         this._domPurify.addHook('uponSanitizeElement', DomPurifyHelper.allowCustomComponentsHook);
@@ -53,7 +54,13 @@ export class TemplateRenderer extends React.Component<ITemplateRendererProps, IT
 
     public async componentDidUpdate(prevProps: ITemplateRendererProps) {
 
-        if (!isEqual(prevProps, this.props)) {
+        if (!isEqual(prevProps.templateContent, this.props.templateContent) || 
+            !isEqual((prevProps.templateContext as IDataResultsTemplateContext).data, (this.props.templateContext as IDataResultsTemplateContext).data) ||
+            !isEqual(prevProps.templateContext.filters, this.props.templateContext.filters) ||
+            !isEqual(prevProps.templateContext.properties, this.props.templateContext.properties) || 
+            !isEqual(prevProps.templateContext.theme, this.props.templateContext.theme) ||
+            !isEqual((prevProps.templateContext as IDataResultsTemplateContext).selectedKeys, (this.props.templateContext as IDataResultsTemplateContext).selectedKeys)) {
+            
             await this.updateTemplate(this.props);
         }
     }
@@ -102,7 +109,12 @@ export class TemplateRenderer extends React.Component<ITemplateRendererProps, IT
                                 prefixedStyles.push(`@media ${cssMediaRule.conditionText} { ${cssPrefixedMediaRules} }`);
 
                             } else {
-                                prefixedStyles.push(`#${elementPrefixId} ${cssRule.cssText}`);
+                                if (cssRule.cssText.indexOf(TestConstants.SearchResultsErrorMessage) !== -1) {
+                                    // Special handling for error message as it's outside the template container to allow user override
+                                    prefixedStyles.push(`${cssRule.cssText}`);
+                                } else {
+                                    prefixedStyles.push(`#${elementPrefixId} ${cssRule.cssText}`);
+                                }
                             }
                         }
                     }

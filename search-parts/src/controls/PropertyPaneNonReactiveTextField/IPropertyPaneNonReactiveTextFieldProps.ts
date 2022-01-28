@@ -1,4 +1,10 @@
 export interface IPropertyPaneNonReactiveTextFieldProps {
+    
+    /**
+     * The unique key for the component
+     */
+    componentKey: string;
+
     /**
      * The default value to display
      */
@@ -14,7 +20,7 @@ export interface IPropertyPaneNonReactiveTextFieldProps {
     multiline?: boolean;
 
     /**
-     * The text field lable
+     * The text field label
      */
     label?: string;
 

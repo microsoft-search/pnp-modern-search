@@ -14,6 +14,8 @@ declare interface ISearchFiltersWebPartStrings {
             UseDataResultsWebPartLabel: string;
             UseDataResultsFromComponentsLabel: string;
             UseDataResultsFromComponentsDescription: string;
+            LinkToVerticalLabel: string;
+            LinkToVerticalLabelHoverMessage: string;
         },
         FiltersSettingsPage: {
             SettingsGroupName: string;
@@ -61,8 +63,7 @@ declare interface ISearchFiltersWebPartStrings {
             ErrorTemplateResolve: string;
             FiltersTemplateFieldLabel: string;
             FiltersTemplatePanelHeader: string;
-        },
-        ImportExport: "Import / Export settings";
+        }
     }
 }
 

@@ -17,12 +17,17 @@ import {
   IDataFilter, 
   FilterComparisonOperator, 
   IDataFilterInfo,
-  ExtensibilityConstants
+  ExtensibilityConstants,
+  FilterConditionOperator
 } from '@pnp/modern-search-extensibility';
 import { ISearchFiltersTemplateContext } from '../../../models/common/ITemplateContext';
 import { flatten } from '@microsoft/sp-lodash-subset';
-import { DisplayMode } from '@microsoft/sp-core-library';
+import { DisplayMode, Log } from '@microsoft/sp-core-library';
 import { DataFilterHelper } from '../../../helpers/DataFilterHelper';
+import { UrlHelper } from '../../../helpers/UrlHelper';
+import { BuiltinFilterTemplates } from '../../../layouts/AvailableTemplates';
+
+const DEEPLINK_QUERYSTRING_PARAM = 'f';
 
 export default class SearchFiltersContainer extends React.Component<ISearchFiltersContainerProps, ISearchFiltersContainerState> {
 
@@ -95,8 +100,17 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
     // Bind events when mutli valued filter value are cleared for a specific filter
     this.bindClearFiltersEvents();
 
+    // Bind events when the values operator is updated for a specific filter
+    // Use case when the opeartor control is used directly in the Handlebars template. Otherwise, for nested component usage (ex: combo box), the operator value will be changed through the IDataFilterInfo interface direcrtly and not trought a JavaScript event.
+    this.bindFilterValueOperatorUpdated();    
+
     // Initial state
     this.getFiltersToDisplay(this.props.availableFilters, [], this.props.filtersConfiguration);
+  
+    // Process deep links
+    this.getFiltersDeepLink();
+
+    this._handleQueryStringChange();
   }
 
   public componentDidUpdate(prevProps: ISearchFiltersContainerProps, prevState: ISearchFiltersContainerState) {
@@ -105,16 +119,12 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
     if (!isEqual(prevProps.selectedLayoutKey, this.props.selectedLayoutKey) 
         || !isEqual(prevProps.properties, this.props.properties)) {
 
-      const updatedfilters = this.state.currentUiFilters.map(selectedFilter => { 
-
-        const updatedFilter = cloneDeep(selectedFilter);
-        updatedFilter.values = [];
-        return updatedFilter;
-      });
-
+      const updatedfilters = this.resetSelectedFilterValues(this.state.currentUiFilters);
       const submittedFilters = this.getSelectedFiltersFromUIFilters(updatedfilters);
 
       this.getFiltersToDisplay(this.props.availableFilters, [], this.props.filtersConfiguration);
+
+      this.resetFiltersDeepLink();
 
       this.props.onUpdateFilters(submittedFilters);
     }
@@ -242,6 +252,8 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
           return value;
         });
 
+        const filterOperator = currentUiFilters[selectedFilterIdx] ? currentUiFilters[selectedFilterIdx].operator : filterConfiguration.operator;
+
         // Merge information with filter configuration and other useful proeprties
         const filterResultInternal: IDataFilterInternal = {
           displayName: filterConfiguration.displayValue ? filterConfiguration.displayValue : availableFilter.filterName,
@@ -253,8 +265,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
           selectedTemplate: filterConfiguration.selectedTemplate,
           hasSelectedValues: hasSelectedValues,
           values: values,
-          operator: filterConfiguration.operator,
-          taxonomyItemIds: filterConfiguration.taxonomyItemIds,
+          operator: filterOperator,
           sortIdx: filterConfiguration.sortIdx,
           canApply: canApply,
           canClear: canClear
@@ -290,6 +301,11 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         if (filterIdx !== -1 ) {
 
           currentUiFilters = cloneDeep(this.state.currentUiFilters);
+
+            // If a control specifies an operator to use between values explictly, we update it in the current collection (ex: the FilterValueOperator component nested in the combo box component)
+            if (filterInfo.operator) {
+              currentUiFilters = update(currentUiFilters, { [filterIdx]: { operator: { $set: filterInfo.operator }}});
+            }
 
           // Addition or merge scenario
           filterInfo.filterValues.map(filterValue => {
@@ -333,7 +349,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             showCount: !filterConfiguration.showCount ? false: filterConfiguration.showCount,
             expandByDefault: !filterConfiguration.expandByDefault ? false : filterConfiguration.expandByDefault,
             values: filterValuesInternal,
-            operator: filterConfiguration.operator,
+            operator: filterInfo.operator ? filterInfo.operator : currentUiFilters[filterIdx].operator,
             selectedTemplate: filterConfiguration.selectedTemplate,
             sortIdx: filterConfiguration.sortIdx
           };
@@ -348,10 +364,19 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
           
           this.setState({
             submittedFilters: submittedFilters
-          });
+          }, () => {
 
-          // Send only selected filters to the data source
-          this.props.onUpdateFilters(submittedFilters);
+            // Send only selected filters to the data source
+            this.props.onUpdateFilters(submittedFilters);
+
+            // Set the filter links in URL
+            this.setFiltersDeepLink(submittedFilters);
+            
+            // Force a UI refresh is the submitted filters come from 'Apply' button to get the correct disabled/active state set
+            if (filterConfiguration.isMulti) {
+              this.forceUpdate();
+            }
+          });
         }
 
         this.getFiltersToDisplay(this.props.availableFilters, currentUiFilters, this.props.filtersConfiguration);
@@ -367,6 +392,11 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
     const selectedFilters: IDataFilter[] = currentUiFilters.map(selectedFilter => { 
 
       const newSelectedFilter = cloneDeep(selectedFilter);
+
+      // Update the operator to 'or' when single value mode is selected and multiple values are submitted
+      if (selectedFilter.values.some(v => v.selected) && !selectedFilter.isMulti && selectedFilter.selectedTemplate !== BuiltinFilterTemplates.DateRange) {
+        newSelectedFilter.operator = FilterConditionOperator.OR;
+      }
 
       const values = newSelectedFilter.values.filter(selectedValue => {
         return selectedValue.selected;
@@ -400,7 +430,6 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         delete newSelectedFilter.canApply;
         delete newSelectedFilter.canClear;
         delete newSelectedFilter.sortIdx;
-        delete newSelectedFilter.taxonomyItemIds;
         delete newSelectedFilter.selectedTemplate;
   
         return newSelectedFilter;
@@ -438,6 +467,9 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
       ev.stopImmediatePropagation();
 
       const submittedFilters = this.getSelectedFiltersFromUIFilters(this.state.currentUiFilters);
+
+      // Set the filter links in URL
+      this.setFiltersDeepLink(submittedFilters);
 
       // Refresh the UI
       this.getFiltersToDisplay(this.props.availableFilters, this.state.currentUiFilters, this.props.filtersConfiguration);
@@ -489,11 +521,46 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
       // Refresh the UI
       this.getFiltersToDisplay(this.props.availableFilters, updatedfilters, this.props.filtersConfiguration);
 
+      this.resetFiltersDeepLink();
+
       // Send selected filters to the data source
       this.props.onUpdateFilters(updateSubmittedFilters);
 
     }).bind(this));
   }
+
+  /**
+   * Binds events fired from the filter operator components
+   */
+  private bindFilterValueOperatorUpdated() {
+
+    this.componentRef.current.addEventListener(ExtensibilityConstants.EVENT_FILTER_VALUE_OPERATOR_UPDATED, ((ev: CustomEvent) => {
+
+      ev.stopImmediatePropagation();
+
+      // Find the filter wit hthis specific name
+      const filters = this.state.currentUiFilters.map(filter => {
+
+        const selectedValues = filter.values.filter(v => v.selected);
+        // Submitted values for the current filter name
+        const submittedValues = this.state.submittedFilters.filter(f => f.filterName === ev.detail.filterName && f.values.filter(v => selectedValues.map(s => s.value).indexOf(v.value) !== -1));
+  
+        if (filter.filterName === ev.detail.filterName) {
+
+          // We let the user apply the new filters only if the operator changes or has at least two selected values      
+          filter.canApply = (!filter.canApply && filter.operator !== ev.detail.operator && selectedValues.length > 1) || (filter.canApply && submittedValues.length === 0); 
+          filter.operator = ev.detail.operator;
+        }
+
+        return filter;
+      });
+
+      this.setState({
+        currentUiFilters: filters
+      });
+
+    }).bind(this));
+  }  
 
   // Build the template context
   private getTemplateContext(): ISearchFiltersTemplateContext {
@@ -509,5 +576,114 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         ...this.props.properties
       },
     };
+  }
+
+  /**
+   * Retrieves the default filters from the URL and set them as initial state
+   */
+   private getFiltersDeepLink() {
+
+    const queryString = UrlHelper.getQueryStringParam(DEEPLINK_QUERYSTRING_PARAM, window.location.href);
+
+    if (queryString) {
+
+        try {
+
+          const dataFilters: IDataFilter[] = JSON.parse(decodeURIComponent(queryString));
+          const currentUiFilters = dataFilters.map(filter => {
+
+            const filterConfiguration = DataFilterHelper.getConfigurationForFilter(filter, this.props.filtersConfiguration);
+
+            return {
+              displayName: filterConfiguration.displayValue ? filterConfiguration.displayValue : filter.filterName,
+              expandByDefault: filterConfiguration.expandByDefault,
+              filterName: filter.filterName,
+              isMulti: filterConfiguration.isMulti,
+              selectedTemplate: filterConfiguration.selectedTemplate,
+              showCount: filterConfiguration.showCount,
+              selectedOnce: true,
+              operator: filter.operator,
+              values: filter.values.map((value: IDataFilterValueInternal )=> {
+                value.selected = true;
+                value.selectedOnce = true;
+                return value;
+              }),
+              canApply: false,
+              canClear: true
+            } as IDataFilterInternal;
+          });
+
+          // Update the connected data source (if applicable)
+          this.props.onUpdateFilters(dataFilters);
+
+          // Update selected filters in the UI
+          this.setState({
+            currentUiFilters: currentUiFilters,
+            submittedFilters: dataFilters
+          });
+          
+        } catch (e) {
+          Log.verbose(`[SearchFiltersContainer.getFiltersDeepLink]`, `Filters format in the query string is invalid.`);
+        }  
+    }
+  }
+
+  /**
+   * Set the current selected filters as query string in the URL for deep linking
+   * @param submittedFilters the current submitted filters
+   */
+  private setFiltersDeepLink(submittedFilters: IDataFilter[]) {
+
+    let filtersDeepLinkUrl: string;
+    if (submittedFilters.length > 0) {
+      filtersDeepLinkUrl = UrlHelper.addOrReplaceQueryStringParam(window.location.href, DEEPLINK_QUERYSTRING_PARAM, JSON.stringify(submittedFilters));              
+    } else {
+      filtersDeepLinkUrl = UrlHelper.removeQueryStringParam(DEEPLINK_QUERYSTRING_PARAM, window.location.href);
+    }
+    
+    window.history.pushState({ path: filtersDeepLinkUrl },'', filtersDeepLinkUrl);
+  }
+
+  private resetFiltersDeepLink() {
+    // Reset filters query string
+    const filtersDeepLinkUrl = UrlHelper.removeQueryStringParam(DEEPLINK_QUERYSTRING_PARAM, window.location.href);
+    window.history.pushState({ path: filtersDeepLinkUrl },'', filtersDeepLinkUrl);
+  }
+
+  /**
+   * Subscribes to URL query string change events using SharePoint page router
+   */
+  private _handleQueryStringChange() {
+
+    // When the browser 'back' or 'forward' button is pressed
+    window.onpopstate = (ev) => {
+
+      const queryString = UrlHelper.getQueryStringParam(DEEPLINK_QUERYSTRING_PARAM, window.location.href);
+
+      // Initial state where no filter are selected
+      if (!queryString) {
+        
+        this.setState({
+          currentUiFilters: this.resetSelectedFilterValues(this.state.currentUiFilters),
+          submittedFilters: []
+        });
+
+        // Notify connected Web Parts
+        this.props.onUpdateFilters([]);
+      }
+
+      this.getFiltersDeepLink();
+    };      
+  }
+
+  private resetSelectedFilterValues(currentUiFilters: IDataFilterInternal[]): IDataFilterInternal[] {
+
+    const updatedfilters = currentUiFilters.map(selectedFilter => { 
+      const updatedFilter = cloneDeep(selectedFilter);
+      updatedFilter.values = [];
+      return updatedFilter;
+    });
+
+    return updatedfilters;
   }
 }
