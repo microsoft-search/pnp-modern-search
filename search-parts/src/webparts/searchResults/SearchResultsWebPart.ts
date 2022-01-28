@@ -855,6 +855,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
             if (this.properties.useDefaultQueryText) {
                 inputQueryText = this.properties.defaultQueryText;
+            } else if (inputQueryFromDataSource !== undefined) {
+                inputQueryText = inputQueryFromDataSource;
             }
 
         } else if (typeof (inputQueryFromDataSource) === 'string') {
