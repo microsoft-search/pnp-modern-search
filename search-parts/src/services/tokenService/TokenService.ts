@@ -165,8 +165,8 @@ export class TokenService implements ITokenService {
             // The 'OR/AND' operator should be called after all tokens are processed (works with comma delimited values potentially coming from resolved)
             inputString = this.replaceAndOrOperator(inputString);                
 
-            // Replace manually escaped characters
-            inputString = inputString.replace(/\\(.)/gi, '$1');
+            // Replace manually escaped curly braces
+            inputString = inputString.replace(/\\({|})/gi, '$1');
         }
 
         return inputString;
@@ -349,38 +349,39 @@ export class TokenService implements ITokenService {
         while (matches !== null) {
 
             let userProperty = matches[1].toLowerCase();
+            let propertyValue = null;
 
-            // {User.Audiences} is resolved server side by SharePoint
-            if (!/^(audiences)$/gi.test(userProperty)) {
+            // Check if other user profile properties have to be retrieved
+            if (!/^(name|email)$/gi.test(userProperty)) {
 
-                let propertyValue = null;
-
-                // Check if other user profile properties have to be retrieved
-                if (!/^(name|email)$/gi.test(userProperty)) {
-
-                    // Check if the user profile api was already called
-                    if (!this.userProperties) {
-                        this.userProperties = await this.getUserProfileProperties();
-                    }
-
-                    propertyValue = this.userProperties[userProperty] ? this.userProperties[userProperty] : '';
-
-                } else {
-
-                    switch (userProperty) {
-
-                        case "email":
-                            propertyValue = this.pageContext.user.email;
-                            break;
-
-                        case "name":
-                            propertyValue = this.pageContext.user.displayName;
-                            break;
-                        default:
-                            propertyValue = this.pageContext.user.displayName;
-                            break;
-                    }
+                // Check if the user profile api was already called
+                if (!this.userProperties) {
+                    this.userProperties = await this.getUserProfileProperties();
                 }
+
+                // Need to enclose with quotes because of dash separated values (ex: "sps-interests")
+                propertyValue = ObjectHelper.byPath(this.userProperties, `"${userProperty}"`);
+
+            } else {
+
+                switch (userProperty) {
+
+                    case "email":
+                        propertyValue = this.pageContext.user.email;
+                        break;
+
+                    case "name":
+                        propertyValue = this.pageContext.user.displayName;
+                        break;
+                    default:
+                        propertyValue = this.pageContext.user.displayName;
+                        break;
+                }
+            }
+
+            // If value not found in the fetched properties, let the value untouched to be resolved server side by a query variable
+            // Ex: {User.Audiences} or {User.PreferredDisplayLanguage}
+            if (propertyValue !== undefined) {
 
                 const tokenExprToReplace = new RegExp(matches[0], 'gi');
 
@@ -500,7 +501,15 @@ export class TokenService implements ITokenService {
 
             while (matches !== null) {
                 const siteProp = matches[1];
-                inputString = inputString.replace(new RegExp(matches[0], "gi"), this.pageContext.site ? ObjectHelper.byPath(this.pageContext.site, siteProp) : '');
+
+                // Ensure the property is in the page context first. 
+                // If not, let the value untouched as it could be a query variable instead processed server side (ex: {Site.URL}
+                const sitePropertyValue = ObjectHelper.byPath(this.pageContext.site, siteProp);
+
+                if (sitePropertyValue) {
+                    inputString = inputString.replace(new RegExp(matches[0], "gi"), this.pageContext.site ? sitePropertyValue : '');
+                }
+
                 matches = siteRegExp.exec(inputString);
             }
         }
