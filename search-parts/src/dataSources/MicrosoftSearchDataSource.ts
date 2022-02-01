@@ -761,8 +761,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
 
                 if (value?.queryAlterationResponse) {
                     response.queryAlterationResponse = value.queryAlterationResponse;
-                }
-        
+                }        
             });
         }
 
