@@ -529,11 +529,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
     private async buildMicrosoftSearchQuery(dataContext: IDataContext): Promise<IMicrosoftSearchQuery> {
         
         let searchQuery: IMicrosoftSearchQuery = {
-            requests: [],
-            queryAlterationOptions: {
-                enableModification: this.properties.queryAlterationOptions.enableModification,
-                enableSuggestion: this.properties.queryAlterationOptions.enableSuggestion
-            }
+            requests: []           
         };
         let aggregations: ISearchRequestAggregation[] = [];
         let aggregationFilters: string[] = [];
@@ -679,8 +675,16 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             searchRequest.contentSources = contentSources;
         }
 
-        searchQuery.requests.push(searchRequest);
+        if(this.properties.useBetaEndpoint )
+        {  
+            searchRequest.queryAlterationOptions = {
+                enableModification: this.properties.queryAlterationOptions.enableModification,
+                enableSuggestion: this.properties.queryAlterationOptions.enableSuggestion
+            };
+        }
 
+        searchQuery.requests.push(searchRequest);
+    
         return searchQuery;
     }
 
@@ -754,13 +758,15 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                          response.filters = aggregationResults;
                     }
                 });
+
+                if (value?.queryAlterationResponse) {
+                    response.queryAlterationResponse = value.queryAlterationResponse;
+                }
+        
             });
         }
 
-        if (jsonResponse?.queryAlterationResponse) {
-            response.queryAlterationResponse = jsonResponse.queryAlterationResponse;
-        }
-
+        
         this._itemsCount = itemsCount;
 
         return response;

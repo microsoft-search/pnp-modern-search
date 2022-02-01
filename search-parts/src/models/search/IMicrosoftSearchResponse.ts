@@ -1,12 +1,12 @@
 // https://docs.microsoft.com/en-us/graph/api/resources/searchresponse?view=graph-rest-beta
 export interface IMicrosoftSearchResponse {
     value: IMicrosoftSearchResultSet;
-    queryAlterationResponse?: IQueryAlterationResponse;
 }
 
 export interface IMicrosoftSearchResultSet {
     hitsContainers: ISearchHitsContainer[];
     searchTerms: string[];
+    queryAlterationResponse?: IQueryAlterationResponse;
 }
 
 export interface ISearchHitsContainer {
