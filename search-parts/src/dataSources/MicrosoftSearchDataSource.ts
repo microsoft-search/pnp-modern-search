@@ -764,7 +764,6 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                 }        
             });
         }
-
         
         this._itemsCount = itemsCount;
 
