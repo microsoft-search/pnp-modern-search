@@ -118,6 +118,8 @@ declare interface ICommonStrings {
         SelectedPropertiesFieldLabel: string;
         SelectedPropertiesFieldDescription: string;
         SelectedPropertiesPlaceholderLabel: string;
+        HitHighlightedPropertiesFieldLabel: string;
+        HitHighlightedPropertiesFieldDescription: string;
         TermNotFound: string;
         ApplyQueryTemplateBtnText: string;
         EnableAudienceTargetingTglLabel: string;
