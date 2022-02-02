@@ -405,16 +405,6 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         }
     }
 
-    public onPropertyUpdate(propertyPath: string, oldValue: any, newVlue: any) {
-
-        if (propertyPath.localeCompare('dataSourceProperties.enableLocalization') === 0 && this.properties.enableLocalization) {
-
-            if (this.properties.selectedProperties.indexOf('UniqueID') === -1) {
-                this.properties.selectedProperties = update(this.properties.selectedProperties, { $push: ['UniqueID'] });
-            }
-        }
-    }
-
     public getPagingBehavior(): PagingBehavior {
         return PagingBehavior.Dynamic;
     }
@@ -1120,7 +1110,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         let localizedTerms = [];
 
         // Step #1: identify all taxonomy like properties and gather corresponding term ids for such properties.
-        rawResults.forEach((result) => {
+        rawResults.forEach((result, index) => {
 
             let properties = [];
 
@@ -1153,10 +1143,9 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                 }
             });
 
-            // We use the 'UniqueID' as an unique identifier since this property is always present in the metadata
             if (properties.length > 0) {
                 resultsToLocalize.push({
-                    uniqueIdentifier: result.UniqueID,
+                    uniqueIdentifier: index,
                     properties: properties
                 });
             }
@@ -1230,10 +1219,10 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
             });
 
             // Step #3: populate corresponding properties with term labels and returns new results
-            updatedResults = rawResults.map((result) => {
+            updatedResults = rawResults.map((result, index) => {
 
                 const existingResults = localizedTerms.filter((e) => {
-                    return e.uniqueIdentifier === result.UniqueID;
+                    return e.uniqueIdentifier === index;
                 });
 
                 if (existingResults.length > 0) {
