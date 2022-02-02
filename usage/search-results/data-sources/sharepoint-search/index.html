@@ -914,8 +914,13 @@
 </tr>
 <tr>
 <td><strong>Enable localization</strong></td>
-<td>If enabled, the Web Part will try to translate the taxonomy term IDs found in result item properties and refinement values to their corresponding label according to the curent UI language. To get it work, you must map a new refinable managed property associated with <code>ows_taxId_</code> crawled property and turn this toggle 'on': <a href="../../../assets/webparts/search-results/localization_crawled_property.png"><img src="../../../assets/webparts/search-results/localization_crawled_property.png"/></a> If enabled and depending on how many items are currently being displayed, this could slightly decrease the loading performance. </br></br><strong>To use translated values in your template, you must use the '<code>Auto + &lt;property_name&gt;</code>' property format instead of the original property name</strong>. For instance, to use translated values of the '<em>owstaxidmetadataalltagsinfo</em>' property, you must use the '<strong>Auto</strong>owstaxidmetadataalltagsinfo' auto created property.</td>
+<td>If enabled, the Web Part will try to translate the taxonomy term IDs found in result item properties and refinement values to their corresponding label according to the curent UI language. To get it work, you must map a new refinable managed property associated with <code>ows_taxId_</code> crawled property and turn this toggle 'on': <a href="../../../../assets/webparts/search-results/localization_crawled_property.png"><img src="../../../../assets/webparts/search-results/localization_crawled_property.png"/></a> If enabled and depending on how many items are currently being displayed, this could slightly decrease the loading performance. </br></br><strong>To use translated values in your template, you must use the '<code>Auto + &lt;property_name&gt;</code>' property format instead of the original property name</strong>. For instance, to use translated values of the '<em>owstaxidmetadataalltagsinfo</em>' property, you must use the '<strong>Auto</strong>owstaxidmetadataalltagsinfo' auto created property.</td>
 <td>False.</td>
+</tr>
+<tr>
+<td><strong>Hit-highlighted properties</strong></td>
+<td>The list of SharePoint managed properties (separated by a comma) to return hit highlighted information (whether the search query match each specified managed property or not).<p><b>Note:</b> <strong>HitHighlightedProperties</strong> will be null if there is a field in <strong>Hit-highlighted properties</strong> doesn't exist in  <strong>Selected properties</strong> </p></td>
+<td>None.</td>
 </tr>
 </tbody>
 </table>
