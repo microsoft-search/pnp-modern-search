@@ -97,6 +97,11 @@ export interface ISharePointSearchDataSourceProperties {
     selectedProperties: string[];
 
     /**
+     * The search managed properties in hit highligted,splited with ","
+     */
+    hitHighlightedProperties: string;
+
+    /**
      * The sort fields configuration
      */
     sortList: ISortFieldConfiguration[];
@@ -383,6 +388,17 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                         label: commonStrings.DataSources.SharePointSearch.EnableLocalizationLabel,
                         onText: commonStrings.DataSources.SharePointSearch.EnableLocalizationOnLabel,
                         offText: commonStrings.DataSources.SharePointSearch.EnableLocalizationOffLabel
+                    }),
+                    new PropertyPaneNonReactiveTextField('dataSourceProperties.hitHighlightedProperties', {
+                        componentKey: `${BuiltinDataSourceProviderKeys.SharePointSearch}-hitHighlightedProperties`,
+                        defaultValue: this.properties.hitHighlightedProperties,
+                        label: commonStrings.DataSources.SharePointSearch.HitHighlightedPropertiesFieldLabel,
+                        placeholderText: `ex: Department,UserName`,
+                        multiline: false,
+                        allowEmptyValue: true,
+                        description: commonStrings.DataSources.SharePointSearch.HitHighlightedPropertiesFieldDescription,
+                        applyBtnText: commonStrings.DataSources.SharePointSearch.ApplyQueryTemplateBtnText,
+                        rows: 1
                     })
                 ]
             }
@@ -506,6 +522,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                 'DefaultEncodingURL',
                 'FileType',
                 'HitHighlightedSummary',
+                'HitHighlightedProperties',
                 'AuthorOWSUSER',
                 'owstaxidmetadataalltagsinfo',
                 'Created',
@@ -527,6 +544,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
             ];
         this.properties.resultSourceId = this.properties.resultSourceId !== undefined ? this.properties.resultSourceId : BuiltinSourceIds.LocalSharePointResults;
         this.properties.sortList = this.properties.sortList !== undefined ? this.properties.sortList : [];
+        this.properties.hitHighlightedProperties = this.properties.hitHighlightedProperties ? this.properties.hitHighlightedProperties : '';
     }
 
     private getBuiltinSourceIdOptions(): IComboBoxOption[] {
@@ -828,6 +846,11 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         // Audience targeting
         if (this.properties.enableAudienceTargeting) {
             searchQuery.QueryTemplate = `${searchQuery.QueryTemplate} (ModernAudienceAadObjectIds:{User.Audiences} OR NOT IsAudienceTargeted:true)`;
+        }
+
+        // HitHighlighted Properties
+        if (this.properties.hitHighlightedProperties.length > 0) {
+            searchQuery.HitHighlightedProperties = this.properties.hitHighlightedProperties.split(",");
         }
 
         return searchQuery;

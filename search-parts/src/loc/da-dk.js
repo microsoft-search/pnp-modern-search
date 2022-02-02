@@ -119,6 +119,8 @@ define([], function() {
                 SelectedPropertiesFieldLabel: "Valgte egenskaber",
                 SelectedPropertiesFieldDescription: "Specificerer egenskaber der hentes fra søgeresultaterne.",
                 SelectedPropertiesPlaceholderLabel: "Vælg egenskaber",
+                HitHighlightedPropertiesFieldLabel: "Resultatfremhævede egenskaber",
+                HitHighlightedPropertiesFieldDescription: "Angiv listen med administrerede egenskaber til fremhævning af resultater.",
                 TermNotFound: "(Term med ID '{0}' blev ikke fundet)",
                 ApplyQueryTemplateBtnText: "Anvend",
                 EnableAudienceTargetingTglLabel: "Aktivér målgruppestyring"

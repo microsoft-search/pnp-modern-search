@@ -119,6 +119,8 @@ define([], function() {
               SelectedPropertiesFieldLabel: "Wybrane właściwości",
               SelectedPropertiesFieldDescription: "Wskaż właściwości do pobrania.",
               SelectedPropertiesPlaceholderLabel: "Wybierz właściwości",
+              HitHighlightedPropertiesFieldLabel: "Właściwości wyróżnionych trafień",
+              HitHighlightedPropertiesFieldDescription: "Podaj listę właściwości zarządzanych w celu wyróżniania trafień.",
               TermNotFound: "(Nie znaleziono terminu o identyfikatorze '{0}')",
               ApplyQueryTemplateBtnText: "Zastosuj",
               EnableAudienceTargetingTglLabel: "Włącz audiencje"
