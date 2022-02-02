@@ -69,17 +69,17 @@ define([], function() {
           DialogButtonText: "Bewerk sjabloon",
           DialogTitle: "Bewerk resultaatsjabloon",
           SaveButtonText: "Bewaar",
-          AllowItemSelection: "Selectie van items toestaan",
-          AllowMultipleItemSelection: "Meerdere selectie toestaan",
-          SelectionModeLabel: "Selectiemodus",
-          AsTokensSelectionMode: "Verwerk geselecteerde waarden als tokens (handmatige modus)",
-          AsDataFiltersSelectionMode: "Verwerk geselecteerde waarden als filters (standaardmodus)",
-          AsDataFiltersDescription: "In deze modus worden geselecteerde waarden als gewone filters naar de gegevensbron verzonden",
-          AsTokensDescription: "In deze modus worden geselecteerde waarden handmatig gebruikt via tokens en beschikbare methoden. Voorbeeld met SharePoint-zoekopdrachtsjabloon: {?Title:{filters.&lt;destination_field_name&gt;.valueAsText}}",
-          FilterValuesOperator: "De logische operator die tussen geselecteerde waarden moet worden gebruikt",
-          FieldToConsumeLabel: "Bronveld om te consumeren",
-          FieldToConsumeDescription: "Gebruik deze veldwaarde voor geselecteerde items"
-        }
+        },
+        AllowItemSelection: "Selectie van items toestaan",
+        AllowMultipleItemSelection: "Meerdere selectie toestaan",
+        SelectionModeLabel: "Selectiemodus",
+        AsTokensSelectionMode: "Verwerk geselecteerde waarden als tokens (handmatige modus)",
+        AsDataFiltersSelectionMode: "Verwerk geselecteerde waarden als filters (standaardmodus)",
+        AsDataFiltersDescription: "In deze modus worden geselecteerde waarden als gewone filters naar de gegevensbron verzonden",
+        AsTokensDescription: "In deze modus worden geselecteerde waarden handmatig gebruikt via tokens en beschikbare methoden. Voorbeeld met SharePoint-zoekopdrachtsjabloon: {?Title:{filters.&lt;destination_field_name&gt;.valueAsText}}",
+        FilterValuesOperator: "De logische operator die tussen geselecteerde waarden moet worden gebruikt",
+        FieldToConsumeLabel: "Bronveld om te consumeren",
+        FieldToConsumeDescription: "Gebruik deze veldwaarde voor geselecteerde items"
       },
       ConnectionsPage: {
         ConnectionsPageGroupName: "Beschikbare verbindingen",

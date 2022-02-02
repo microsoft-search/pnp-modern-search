@@ -131,6 +131,8 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
             <div style={{ position: 'relative' }}>
                 <div
                     className={styles.collapsible__filterPanel__body__group__header}
+                    role={"menubar"}
+                    tabIndex={0}
                     onClick={() => {
                         this._onTogglePanel(props);
                     }}

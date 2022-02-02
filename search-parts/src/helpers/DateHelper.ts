@@ -11,7 +11,7 @@ export class DateHelper {
     private pageContext: PageContext;
 
     public constructor(serviceScope: ServiceScope) {
-        serviceScope.whenFinished(()=> {
+        serviceScope.whenFinished(() => {
             this.pageContext = serviceScope.consume<PageContext>(PageContext.serviceKey);
         });
     }
@@ -26,11 +26,15 @@ export class DateHelper {
                 'moment'
             );
 
+            let culture = this.pageContext.cultureInfo.currentUICultureName.toLowerCase();
             // Moment is by default 'en-us'
-            if (['en-us','en'].indexOf(this.pageContext.cultureInfo.currentUICultureName.toLowerCase()) === -1) {
+            if (['en-us', 'en'].indexOf(culture) === -1) {
+                if (culture.indexOf("zh") === -1) {
+                    culture = culture.split('-')[0];
+                }
                 await import(
                     /* webpackChunkName: 'pnp-modern-search-moment' */
-                    `moment/locale/${this.pageContext.cultureInfo.currentUICultureName.toLowerCase().split('-')[0]}.js`
+                    `moment/locale/${culture}.js`
                 );
             }
 

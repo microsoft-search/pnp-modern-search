@@ -89,9 +89,13 @@
                                     <div>{{getSummary (slot item @root.slots.Summary)}}</div>
                                     <div class="template--listItem--tags example-themePrimary">
                                         {{#if (slot item @root.slots.Tags)}}
-                                        <pnp-icon data-name="Tag" aria-hidden="true" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-icon>
-                                        {{#each (split (slot item @root.slots.Tags) ",") as |tag| }}
-                                        <a href="#{{slot item @root.slots.Tags}}:'{{trim tag}}'">{{tag}}</a>&nbsp;{{/each}} {{/if}}
+                                            <pnp-icon data-name="Tag" aria-hidden="true" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-icon>
+                                            <div>
+                                                {{#each (split (slot item @root.slots.Tags) ",") as |tag| }}
+                                                    <span>{{trim tag}}</span>
+                                                {{/each}}
+                                            </div>
+                                        {{/if}}
                                     </div>
                                 </div>
                             </div>

@@ -68,18 +68,18 @@ define([], function() {
           CancelButtonText: "Annuller",
           DialogButtonText: "Redigér skabelon",
           DialogTitle: "Redigér resultatsskabelon",
-          SaveButtonText: "Gem",
-          AllowItemSelection: "Tillad valg af elementer",
-          AllowMultipleItemSelection: "Tillad flere valg",
-          SelectionModeLabel: "Valgtilstand",
-          AsTokensSelectionMode: "Behandl valgte værdier som tokens (manuel tilstand)",
-          AsDataFiltersSelectionMode: "Behandle valgte værdier som filtre (standardtilstand)",
-          AsDataFiltersDescription: "I denne tilstand sendes valgte værdier til datakilden som almindelige filtre",
-          AsTokensDescription: "I denne tilstand bruges de valgte værdier manuelt gennem tokens og tilgængelige metoder. Eksempel med SharePoint søgeforespørgselsskabelon: {?Title:{filters.&lt;destination_field_name&gt;.valueAsText}}",
-          FilterValuesOperator: "Den logiske operator, der skal bruges mellem valgte værdier",
-          FieldToConsumeLabel: "Kildefelt til at forbruge",
-          FieldToConsumeDescription: "Brug denne feltværdi til udvalgte varer"
-        }
+          SaveButtonText: "Gem"
+        },
+        AllowItemSelection: "Tillad valg af elementer",
+        AllowMultipleItemSelection: "Tillad flere valg",
+        SelectionModeLabel: "Valgtilstand",
+        AsTokensSelectionMode: "Behandl valgte værdier som tokens (manuel tilstand)",
+        AsDataFiltersSelectionMode: "Behandle valgte værdier som filtre (standardtilstand)",
+        AsDataFiltersDescription: "I denne tilstand sendes valgte værdier til datakilden som almindelige filtre",
+        AsTokensDescription: "I denne tilstand bruges de valgte værdier manuelt gennem tokens og tilgængelige metoder. Eksempel med SharePoint søgeforespørgselsskabelon: {?Title:{filters.&lt;destination_field_name&gt;.valueAsText}}",
+        FilterValuesOperator: "Den logiske operator, der skal bruges mellem valgte værdier",
+        FieldToConsumeLabel: "Kildefelt til at forbruge",
+        FieldToConsumeDescription: "Brug denne feltværdi til udvalgte varer"
       },
       ConnectionsPage: {
         ConnectionsPageGroupName: "Tilgængelige forbindelser",

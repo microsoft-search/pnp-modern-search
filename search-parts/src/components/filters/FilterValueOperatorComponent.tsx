@@ -42,7 +42,7 @@ export class FilterValueOperator extends React.Component<IFilterValueOperatorPro
     
     public render() {
 
-        let renderOperators: JSX.Element =  <ChoiceGroup
+        let renderOperators: JSX.Element =  <ChoiceGroup tabIndex={0}
                                                 styles={{
                                                     flexContainer: {
                                                         display: 'flex',
