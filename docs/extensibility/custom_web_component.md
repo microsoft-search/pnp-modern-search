@@ -61,10 +61,10 @@ export interface ICustomComponentProps {
     myObjectParam?: string;
 }
 
-export interface ICustomComponenState {
+export interface ICustomComponentState {
 }
 
-export class CustomComponent extends React.Component<ICustomComponentProps, ICustomComponenState> {
+export class CustomComponent extends React.Component<ICustomComponentProps, ICustomComponentState> {
     
     public render() {
 
