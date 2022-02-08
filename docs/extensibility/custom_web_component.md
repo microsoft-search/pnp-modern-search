@@ -53,12 +53,12 @@ export interface ICustomComponentProps {
     /**
      * A sample string param
      */
-    myStringParam?: IObjectParam;
+    myStringParam?: string;
 
     /***
      * A sample object param
      */
-    myObjectParam?: string;
+    myObjectParam?: IObjectParam;
 }
 
 export interface ICustomComponenState {
