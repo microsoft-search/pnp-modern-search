@@ -3,16 +3,15 @@
 !!! note
     The PnP Modern Search Web Parts must be deployed to your App Catalog and activated on your site. See the [installation documentation](../installation.md) for details.
 
-This scenario describes how to configure multiple Search Verticals on different page and how you can pass the search query to the linked search page. When you use a lot Verticals, it's recommended, to split the Search Results Web Parts to different page.
+This scenario describes how to configure multiple Search Verticals on different pages and how you can pass the search query to the linked search page. When you use a lot Verticals, it's recommended, to split the Search Results Web Parts to different page.
 
-## Create two new sharepoint page
-
+## Create two new SharePoint pages
 For the scenario, to add the Search Web Parts, you must first create two new modern SharePoint pages. We will be configure this new pages as search pages with the PnP Modern Search Web Parts.
 
 ![Create a page](assets/Create-a-search-page-with-verticals-on-different-pages/create-a-page.png)
 
 ## Add PnP Search Web Parts
-On the newly created pages, add the PnP Modern Search Web Part Search Box, Search Verticals and Search Results. You can use the same initial configuration for both pages.![image](https://user-images.githubusercontent.com/65955023/153136962-0ae118d2-07d5-4efd-ab08-2c0fa1142ff1.png)
+On the newly created pages, add the PnP Modern Search Web Part Search Box, Search Verticals and Search Results. You can use the same initial configuration for both pages.
 
 ![add PnP web parts](assets/Create-a-search-page-with-verticals-on-different-pages/add-PnP-web-parts.png)
 
@@ -35,6 +34,8 @@ Insert the tab name and a fluent icon for e better visualization. When the resul
 
 Example URL:
 https://{tenant}/{site}/{page}?{parameter}
+
+Looks like:
 https://{tenant}/sites/ModernSearchCenter/SitePages/Modern-Search-V4-Verticals.aspx?q={SearchBoxQuery}
 
 ![Configure Search Verticals on the first page](assets/Create-a-search-page-with-verticals-on-different-pages/configure-search-verticals-on-first-page.png)
@@ -76,7 +77,7 @@ In the "Available Connections" section, the connection to the Search Box and the
 
 Both pages are configured, the query will be transfered from one page to the other and the results will show us the informations from the result sourcen, what we have configured.
 
-## Testing your configuration
+## Test your configuration
 The query from the Search Box is sent to the Search Results. When you switch to an other Search Page, that are configured in the Vertical, the new page is open in the same tab an the query input will be transferred to the Search Results and Verticals on the second page.
 
-![Configure available connections](assets/Create-a-search-page-with-verticals-on-different-pages/test-your-search-configuration.mp4)
+https://user-images.githubusercontent.com/65955023/153156591-b478154d-23a3-40b4-aad9-6102dd4d41e7.mp4
