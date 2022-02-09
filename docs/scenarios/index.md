@@ -51,6 +51,12 @@ When you have your templates in SharePoint, it is easy to setup a way to edit lo
 Search verticals can be used to selectively search specific content per vertical. Using the SharePoint provider you can use result sources to limit the content returned,
 or you can add the required KQL in the web part itself. This sample shows how to set up multiple search verticals on the same page.
 
+## Scenario 9
+
+[Create a search page with verticals (on different pages)](Create-a-search-page-with-verticals-on-different-pages.md)
+
+Search verticals can be used to selectively search specific content per vertical. Using the SharePoint provider you can use result sources to limit the content returned, or you can add the required KQL in the web part itself. This sample shows how to set up multiple search verticals on different pages.
+
 ---
 
 More to come!
