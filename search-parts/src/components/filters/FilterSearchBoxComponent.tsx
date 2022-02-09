@@ -129,7 +129,12 @@ export class FilterSearchBox extends React.Component<IFilterSearchBoxProps, IFil
                             data-selection-index={props.index} 
                             data-is-focusable="true"
                         >
-                            <Text><span className={styles.tagItemText} aria-label={props.item.name}>{props.item.name}</span></Text>
+                            <Text
+                                className={styles.tagItemText}
+                                aria-label={props.item.name}
+                            >
+                                {props.item.name}
+                            </Text>
                             <IconButton
                                 className={styles.tagRemoveBtn}
                                 iconProps={{ iconName: "Cancel" }}

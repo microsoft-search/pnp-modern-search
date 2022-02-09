@@ -119,6 +119,8 @@ define([], function () {
           SelectedPropertiesFieldLabel: "Valda egenskaper",
           SelectedPropertiesFieldDescription: "Ange egenskaperna som ska hämtas från sökresultaten.",
           SelectedPropertiesPlaceholderLabel: "Välj egenskaper",
+          HitHighlightedPropertiesFieldLabel: "Egenskaper för träffmarkeringar",
+          HitHighlightedPropertiesFieldDescription: "Tillhandahåll lista över hanterade egenskaper till träffmarkeringar. ",
           TermNotFound: "(Term med ID '{0}' hittades inte)",
           ApplyQueryTemplateBtnText: "Tillämpa",
           EnableAudienceTargetingTglLabel: "Aktivera målgruppsanpassning"

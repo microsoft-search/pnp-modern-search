@@ -59,6 +59,8 @@
 
 !!! info "Filtering general behavior"
 
-- `null` ou `empty` filters values **are ignored** in the resulting query.
+- If the source selected item field is `null` ou `empty`:
+    * It will be replaced by the FQL expression `string('')` expression if the mode is **Process values as filters**
+    * It will be resolved as an empty string if the mode is **Process values as tokens**.
 - Duplicate values are trimmed (ex: user select items with the same filter values).
 - Filter values should be 'string' values. All other types will be ignored (ex: 'objects' from JSON response).

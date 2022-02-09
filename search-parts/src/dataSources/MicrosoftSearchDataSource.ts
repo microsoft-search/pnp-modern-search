@@ -1,4 +1,4 @@
-import { BaseDataSource, IDataSourceData, FilterSortType, FilterSortDirection, ITemplateSlot, BuiltinTemplateSlots, IDataContext, ITokenService, FilterBehavior, PagingBehavior, IDataFilterResult, IDataFilterResultValue, FilterComparisonOperator } from "@pnp/modern-search-extensibility";
+import { BaseDataSource, FilterSortType, FilterSortDirection, ITemplateSlot, BuiltinTemplateSlots, IDataContext, ITokenService, FilterBehavior, PagingBehavior, IDataFilterResult, IDataFilterResultValue, FilterComparisonOperator } from "@pnp/modern-search-extensibility";
 import { IPropertyPaneGroup, PropertyPaneLabel, IPropertyPaneField, PropertyPaneToggle, PropertyPaneHorizontalRule } from "@microsoft/sp-property-pane";
 import { cloneDeep, isEmpty } from '@microsoft/sp-lodash-subset';
 import { MSGraphClientFactory } from "@microsoft/sp-http";
@@ -21,7 +21,7 @@ import { IMicrosoftSearchDataSourceData } from "../models/search/IMicrosoftSearc
 
 import * as React from "react";
 import { IMicrosoftSearchResponse } from "../models/search/IMicrosoftSearchResponse";
-import { IPropertyFieldToggleWithCalloutHostProps } from "@pnp/spfx-property-controls/lib/PropertyFieldToggleWithCallout";
+import { BuiltinDataSourceProviderKeys } from "./AvailableDataSources";
 
 export enum EntityType {
     Message = 'message',
@@ -232,6 +232,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                 key: 'queryText'
             }),
             new PropertyPaneNonReactiveTextField('dataSourceProperties.queryTemplate', {
+                componentKey: `${BuiltinDataSourceProviderKeys.MicrosoftSearch}-queryTemplate`,
                 defaultValue: this.properties.queryTemplate,
                 label: commonStrings.DataSources.MicrosoftSearch.QueryTemplateFieldLabel,
                 placeholderText: commonStrings.DataSources.MicrosoftSearch.QueryTemplatePlaceHolderText,

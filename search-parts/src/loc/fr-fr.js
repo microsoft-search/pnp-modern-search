@@ -119,6 +119,8 @@ define([], function() {
                 SelectedPropertiesFieldLabel: "Propriétés sélectionnées",
                 SelectedPropertiesFieldDescription: "Indique les propriétés à extraire des résultats de recherche",
                 SelectedPropertiesPlaceholderLabel: "Propriétés de sélection",
+                HitHighlightedPropertiesFieldLabel: "Propriétés correspondantes",
+                HitHighlightedPropertiesFieldDescription: "Entrez la liste des propriétés gérées pour lesquelles trouver des correspondances.",
                 TermNotFound: "(Le critère contenant l’identifiant « {0} » est introuvable)",
                 ApplyQueryTemplateBtnText: "Appliquer",
                 EnableAudienceTargetingTglLabel: "Permet de cibler l’auditoire"

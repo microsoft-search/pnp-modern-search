@@ -119,6 +119,8 @@ define([], function() {
                 SelectedPropertiesFieldLabel: "Selected properties",
                 SelectedPropertiesFieldDescription: "Specifies the properties to retrieve from the search results.",
                 SelectedPropertiesPlaceholderLabel: "Select properties",
+                HitHighlightedPropertiesFieldLabel: "Hit-highlighted properties",
+                HitHighlightedPropertiesFieldDescription: "Provide the list of managed properties to hit highlight (i.e. Department,UserName).",
                 TermNotFound: "(Term with ID '{0}' not found)",
                 ApplyQueryTemplateBtnText: "Apply",
                 EnableAudienceTargetingTglLabel: "Enable audience targeting"
