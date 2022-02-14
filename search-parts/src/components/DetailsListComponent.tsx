@@ -175,7 +175,7 @@ export class DetailsListComponent extends React.Component<DetailsListComponentPr
                     onRender: (item: ISearchResult) => {
                         let siteLogoFallback = "";
                         let contentclass = (item.contentclass + "").toLowerCase();
-                        if (!isEmpty(item.contentclass) && (contentclass == "sts_site" || contentclass == "sts_site")) {
+                        if (!isEmpty(item.contentclass) && (contentclass == "sts_site" || contentclass == "sts_web")) {
                             siteLogoFallback = item.SiteLogo;
                         }
 
