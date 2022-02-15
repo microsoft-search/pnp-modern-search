@@ -36,6 +36,7 @@ import { ISortFieldConfiguration, SortFieldDirection } from '../models/search/IS
 
 import { EnumHelper } from '../helpers/EnumHelper';
 import { BuiltinDataSourceProviderKeys } from './AvailableDataSources';
+import { StringHelper } from '../helpers/StringHelper';
 const TAXONOMY_REFINER_REGEX = /((L0)\|#.?([0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}))\|?/;
 
 export enum BuiltinSourceIds {
@@ -970,7 +971,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                         const strippedTerm = matches[1];
 
                         // Use FQL expression here to get the correct output. Otherwise a full match is performed
-                        const fqlFilterValue = `"ǂǂ${this._bytesToHex(this._stringToUTF8Bytes(term))}"`;
+                        const fqlFilterValue = `"ǂǂ${StringHelper._bytesToHex(StringHelper._stringToUTF8Bytes(term))}"`;
                         const existingFilterIdx = updatedValues.map(updatedValue => updatedValue.name).indexOf(strippedTerm);
                      
                         if (existingFilterIdx === -1) {
@@ -1094,13 +1095,13 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                             const termId = matches[3];
                             const termPrefix = matches[2]; // 'L0'
                             if (termPrefix.localeCompare("L0") === 0) {
-                                const termFilterWithoutTranslations =  `"ǂǂ${this._bytesToHex(this._stringToUTF8Bytes(`GP0|#${termId.toString()}`))}"`;
+                                const termFilterWithoutTranslations =  `"ǂǂ${StringHelper._bytesToHex(StringHelper._stringToUTF8Bytes(`GP0|#${termId.toString()}`))}"`;
                                 const termTextFilter = `"L0|#${termId.toString()}"`;
 
                                 // value.value: HEX encoded value => original refiner value 
                                 // termFilterWithoutTranslations => language agnostic term value
                                 // termTextFilter => Text value in case the value is a string (ex: a property bag value or a text column)
-                                value.value = `or(string(${value.value}),string(${termFilterWithoutTranslations}),string(${termTextFilter}))`;
+                                value.value = `or(${value.value},${termFilterWithoutTranslations},string(${termTextFilter}))`;
                             }
                         }
 
@@ -1268,16 +1269,6 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         }
     }
 
-    private _bytesToHex(bytes) {
-        return Array.from(
-            bytes,
-            byte => (byte as any).toString(16).padStart(2, "0")
-        ).join("");
-    }
-
-    private _stringToUTF8Bytes(string) {
-        return new TextEncoder().encode(string);
-    }
 
     private parseAndCleanOptions(options: IComboBoxOption[]): IComboBoxOption[] {
         let optionWithComma = options.find(o => (o.key as string).indexOf(",") > 0);
