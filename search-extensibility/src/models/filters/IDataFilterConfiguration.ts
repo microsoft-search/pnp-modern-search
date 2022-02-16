@@ -1,4 +1,5 @@
 import { FilterConditionOperator } from '../..';
+import { IRefinerGroupValue } from './IRefinerGroupValue';
 
 export enum FilterType {
 
@@ -98,4 +99,10 @@ export interface IDataFilterConfiguration {
     * Range definition
     */
     rangeDefinition: number;
+
+    /**
+     * Refiner Filter Values that use kql and are added on top of the
+     * refiner values returned from the datasource
+     */
+     refinerGroups?:IRefinerGroupValue[];
 }

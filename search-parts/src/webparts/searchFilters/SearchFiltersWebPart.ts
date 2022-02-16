@@ -41,6 +41,7 @@ import { BaseWebPart } from '../../common/BaseWebPart';
 import commonStyles from '../../styles/Common.module.scss';
 import { IDataVerticalSourceData } from '../../models/dynamicData/IDataVerticalSourceData';
 import { DynamicPropertyHelper } from '../../helpers/DynamicPropertyHelper';
+import { IRefinerGroupValue } from '@pnp/modern-search-extensibility/lib/models/filters/IRefinerGroupValue';
 
 export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebPartProps> implements IDynamicDataCallables {
 
@@ -60,6 +61,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     private _propertyFieldCodeEditorLanguages: any = null;
     private _customCollectionFieldType: any = null;
     private _propertyPanePropertyEditor = null;
+    private _refinerGroupsDialogComponent: any = null;
 
     /**
      * Properties to avoid to recreate instances every render
@@ -830,6 +832,31 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                                 )
                             );
                         }
+                    },
+                    //TODO: Add local resources, check props
+                    {
+                        id: 'refinerGroups',
+                        title: 'Grouped Values',
+                        type: this._customCollectionFieldType.custom,                                                
+                        onCustomRender: ((field, value, onUpdate, item) => {
+                            return (
+                                React.createElement("div", null,
+                                    React.createElement(this._refinerGroupsDialogComponent.RefinerGroupsDialog, {
+                                        refinerGroupsValue: value ,
+                                        disabled: item.selectedTemplate === BuiltinFilterTemplates.DateRange || item.selectedTemplate === BuiltinFilterTemplates.DateInterval,
+                                        onChanged: (fieldValue:IRefinerGroupValue[]) => {
+                                            onUpdate(field.id, fieldValue);
+                                        },
+                                        strings: {
+                                            cancelButtonText: 'cancel',
+                                            dialogButtonText: 'dial',
+                                            dialogTitle: 'title',
+                                            saveButtonText: 'save'
+                                        }
+                                    })
+                                )
+                            );
+                        }).bind(this)                      
                     }
                 ]
             }),
@@ -1060,6 +1087,11 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
         this._propertyPanePropertyEditor = PropertyPanePropertyEditor;
 
         this.propertyPaneConnectionsFields = await this.getConnectionOptionsFields();
+
+        this._refinerGroupsDialogComponent = await import(
+            /* webpackChunkName: 'pnp-modern-search-property-pane' */ 
+            '../../controls/RefinerGroupsDialog'
+        );
     }
 
     /**
