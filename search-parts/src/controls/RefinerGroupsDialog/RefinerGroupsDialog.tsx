@@ -35,6 +35,8 @@ export default class RefinerGroupsDialog extends React.Component<IRefinerGroupsD
 					key={"FieldCollectionData"}
 					manageBtnLabel={this.props.strings.dialogButtonText}
 					saveAndAddBtnLabel={this.props.strings.addAndSaveButtonText}
+					saveBtnLabel={this.props.strings.saveButtonText}
+					cancelBtnLabel={this.props.strings.cancelButtonText}
 					disabled={this.props.disabled}
 					onChanged={(value) => {
 						// Remove the key property before setting the state as we don't need it
