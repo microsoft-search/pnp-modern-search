@@ -230,58 +230,10 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
           values = values.concat(additionalValues.filter(value => value));
         }
-
-        // Grouped Refiner values stay at top
+        
         if (filterConfiguration.refinerGroups) {
-          let groupValues: IDataFilterValueInternal[] = [];
-
-          filterConfiguration.refinerGroups.forEach(group => {
-
-            const filterVal = selectedFilterIdx !== -1 ? currentUiFilters[selectedFilterIdx].values.find(uiFilterValue => uiFilterValue.name === group.label)
-              : null;
-
-            if (group.advanced) {
-
-              if (filterVal) {
-                groupValues.push(filterVal);
-
-              } else {
-                groupValues.push({
-                  name: group.label,
-                  selected: false,
-                  selectedOnce: false,
-                  disabled: false,
-                  value: group.fql,
-                  count: 0 // for advanced fql it is impossible or to complex to do the count
-                });
-              }
-            }
-            else {
-              const fqlSplit = group.fql.split(',');
-              const countSimpleFilterValues = availableFilter.values.map(val => {
-                return fqlSplit.indexOf(val.name) !== -1 ? val.count : 0;
-              }).reduce((prev, cur) => prev + cur);
-
-              if (filterVal) {
-                filterVal.count = countSimpleFilterValues;
-                groupValues.push(filterVal);
-              } else {
-                //TODO: for simple fql group refiners we could check if we have the filter values in the refiner list from DataSource
-                //then we won't push if no single entry exits.
-                if (countSimpleFilterValues !== 0) {
-                  groupValues.push({
-                    name: group.label,
-                    selected: false,
-                    selectedOnce: false,
-                    disabled: false,
-                    value: `Or(${group.fql})`,
-                    count: countSimpleFilterValues
-                  });
-                }
-              }
-            }
-          });
-
+          // Grouped Refiner values stay at top
+          const groupValues = this.getRefinerGroupValues(availableFilter, currentUiFilters, filterConfiguration, selectedFilterIdx);
           values = groupValues.concat(values);
         }
 
@@ -332,6 +284,60 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
     this.setState({
       currentUiFilters: update(this.state.currentUiFilters, { $set: sortBy(updatedFilters.filter(updatedFilter => updatedFilter), 'sortIdx')})      
     });
+  }
+
+  private getRefinerGroupValues(availableFilter: IDataFilterResult, currentUiFilters: IDataFilterInternal[], filterConfiguration: IDataFilterConfiguration, selectedFilterIdx)
+  :IDataFilterValueInternal[]
+  {
+      let groupValues: IDataFilterValueInternal[] = [];
+
+      filterConfiguration.refinerGroups.forEach(group => {
+
+        const filterVal = selectedFilterIdx !== -1 ? currentUiFilters[selectedFilterIdx].values.find(uiFilterValue => uiFilterValue.name === group.label)
+          : null;
+
+        if (group.advanced) {
+
+          if (filterVal) {
+            groupValues.push(filterVal);
+
+          } else {
+            groupValues.push({
+              name: group.label,
+              selected: false,
+              selectedOnce: false,
+              disabled: false,
+              value: group.fql,
+              count: 0 // for advanced fql it is impossible or to complex to do the count
+            });
+          }
+        }
+        else {
+          const fqlSplit = group.fql.split(',');
+          const countSimpleFilterValues = availableFilter.values.map(val => {
+            return fqlSplit.indexOf(val.name) !== -1 ? val.count : 0;
+          })?.reduce((prev, cur) => prev + cur) ?? 0;
+
+          if (filterVal) {
+            filterVal.count = countSimpleFilterValues;
+            groupValues.push(filterVal);
+          } else {
+            //TODO: for simple fql group refiners we could check if we have the filter values in the refiner list from DataSource
+            //then we won't push if no single entry exits.
+            if (countSimpleFilterValues !== 0) {
+              groupValues.push({
+                name: group.label,
+                selected: false,
+                selectedOnce: false,
+                disabled: false,
+                value: `Or(${group.fql})`,
+                count: countSimpleFilterValues
+              });
+            }
+          }
+        }
+      });     
+      return groupValues;
   }
 
   /**

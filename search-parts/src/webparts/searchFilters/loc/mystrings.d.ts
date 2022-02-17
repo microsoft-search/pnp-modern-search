@@ -53,6 +53,22 @@ declare interface ISearchFiltersWebPartStrings {
             SortByCount: string;
             SortAscending: string;
             SortDescending: string;
+            RefineGroupsDialog: {                
+                DialogTitle: string;                
+                DialogButtonText: string;
+                Panel:{
+                    Header:string;
+                    CancelButtonText: string;                
+                    SaveButtonText: string;
+                    AddAndSaveButtonText: string;
+                },                
+                Fields:{
+                    GroupLabel:string;
+                    AdvancedLabel:string;
+                    ValuesLabel:string;
+                    AdvancedValuesPlaceholder:string;
+                },
+            },
         },
         LayoutPage: {
             AvailableLayoutsGroupName: string;

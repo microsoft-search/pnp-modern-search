@@ -1,9 +1,12 @@
-export interface IRefinerGroupsDialogStrings {
+export interface IRefinerGroupsDialogStrings {    
     dialogTitle: string;
-    dialogSubText?: string;
-    dialogButtonLabel?: string;
     dialogButtonText: string;
-    dialogTextBoxPlaceholder?: string;
-    saveButtonText: string;
+    panelHeader:string;
     cancelButtonText: string;
+    saveButtonText: string;
+    addAndSaveButtonText: string;
+    groupLabel: string;
+    advancedLabel: string;
+    valuesLabel: string;   
+    advancedValuesPlaceholder:string; 
 }

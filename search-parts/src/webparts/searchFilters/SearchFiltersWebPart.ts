@@ -833,7 +833,6 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                             );
                         }
                     },
-                    //TODO: Add local resources, check props
                     {
                         id: 'refinerGroups',
                         title: 'Grouped Values',
@@ -848,10 +847,16 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                                             onUpdate(field.id, fieldValue);
                                         },
                                         strings: {
-                                            cancelButtonText: 'cancel',
-                                            dialogButtonText: 'dial',
-                                            dialogTitle: 'title',
-                                            saveButtonText: 'save'
+                                            dialogTitle: webPartStrings.PropertyPane.DataFilterCollection.RefineGroupsDialog.DialogTitle,
+                                            dialogButtonText: webPartStrings.PropertyPane.DataFilterCollection.RefineGroupsDialog.DialogButtonText,
+                                            panelHeader:webPartStrings.PropertyPane.DataFilterCollection.RefineGroupsDialog.Panel.Header,
+                                            cancelButtonText: webPartStrings.PropertyPane.DataFilterCollection.RefineGroupsDialog.Panel.CancelButtonText,
+                                            saveButtonText:  webPartStrings.PropertyPane.DataFilterCollection.RefineGroupsDialog.Panel.SaveButtonText,
+                                            addAndSaveButtonText: webPartStrings.PropertyPane.DataFilterCollection.RefineGroupsDialog.Panel.AddAndSaveButtonText,
+                                            groupLabel: webPartStrings.PropertyPane.DataFilterCollection.RefineGroupsDialog.Fields.GroupLabel,
+                                            advancedLabel: webPartStrings.PropertyPane.DataFilterCollection.RefineGroupsDialog.Fields.AdvancedLabel,
+                                            valuesLabel: webPartStrings.PropertyPane.DataFilterCollection.RefineGroupsDialog.Fields.ValuesLabel,
+                                            advancedValuesPlaceholder:webPartStrings.PropertyPane.DataFilterCollection.RefineGroupsDialog.Fields.AdvancedValuesPlaceholder
                                         }
                                     })
                                 )

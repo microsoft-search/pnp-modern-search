@@ -53,7 +53,23 @@ define([], function() {
                 SortByName: "By name",
                 SortByCount: "By count",
                 SortAscending: "Ascending",
-                SortDescending: "Descending"
+                SortDescending: "Descending",
+                RefineGroupsDialog: {                    
+                    DialogTitle: "Refiner group values",                
+                    DialogButtonText: "Manage",
+                    Panel:{
+                        Header: "Manage refiner grouped values",
+                        CancelButtonText: "Cancel",                
+                        SaveButtonText: "Save",
+                        AddAndSaveButtonText: "Add and save"
+                    },                
+                    Fields:{
+                        GroupLabel:"Label",
+                        AdvancedLabel:"Advanced",
+                        ValuesLabel:"Values",
+                        AdvancedValuesPlaceholder:"And(fileType:Or(xlsx,doc,docx,pdf),contentclass:STS_ListItem_DocumentLibrary)"
+                    }
+                },
             },
             LayoutPage: {
                 AvailableLayoutsGroupName: "Available layouts",

@@ -5,15 +5,13 @@ export interface IRefinerGroupValue {
      */
     label: string;
     /**
-     * TODO
+     * If advanced = false: A comma seperated list of values belonging to the filter group 
+     * If advanced = true: A fql statement
      */
     fql:string;
     /**
-     * TODO
+     * Advanced = false for simple filter group fql
+     * Advanced = true for advanced filter group fql
      */
     advanced:boolean;
-    /**
-     * TODO
-     */
-    sortIdx:number;
 }
