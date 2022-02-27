@@ -26,7 +26,7 @@ A layout template is always split into two distinct parts:
 
 - A `placeholder` part, containing the HTML markup to display as placeholder **while the data are getting fetched**. This part is optional.
 
-Both can use Handlebars and web components (Microsoft Graph Toolkit included). 
+Both can use Handlebars and web components (Microsoft Graph Toolkit included).
 
 ## Handlebars helpers
 
@@ -41,7 +41,7 @@ The following custom helpers are available in addition to the [handlebars-helper
 | `{{getSummary "<value>"}}` | _Use with SharePoint Search data source and the HitHighlightedSummary SharePoint search managed property_. Returns the formatted value for rendering. | `{{getSummary HitHighlightedSummary}}`
 | `{{getTagName "<value>"}}` | _Use with tag fields_. Returns the name of the tag, omitting the ID in the tag string (`L0\|#000000000-0000-0000-0000-000000000000\|…`). | `{{getTagName Tag}}`
 | `{{getDate <data_value> "<format>" <time handling>}}` | Format the date with [Moment.js](https://momentjs.com/docs/#/parsing/string-format/) according to the current language. Date in the managed property should be on the form `2018-09-10T06:29:25.0000000Z` for the function to work.<p>&lt;time handling&gt; is optional and takes <ul><li>0 = format to browsers time zone (default)</li><li>1 = ignore Z time and handle as browsers local time zone</li><li>2 = strip time and set to 00:00:00 in browsers local time zone</li><li>3 = display in the time zone for the current web</li><li>4 = display in the time zone from the uers profile</li> | `{{getDate 2018-09-10T06:29:25.0000000Z 'LL'}}`
-| `{{getUrlField <managed_propertyOWSURLH> "URL|Title"}}` | _Use with SharePoint Search data source_. Returns the URL or Title part of a URL autocreated managed property | `{{getUrlField MyPropertyOWSURLH "Title"}}`
+| `{{getUrlField <managed_propertyOWSURLH> "URL/Title"}}` | _Use with SharePoint Search data source_. Returns the URL or Title part of a URL autocreated managed property | `{{getUrlField MyPropertyOWSURLH "Title"}}`
 `{{getUniqueCount items "<property>"}}` or  `{{getUniqueCount array}}`| Get the unique count of a property over the result set (or another array) or get the unique count of objects in an array. Example: [1,1,1,2,2,4] would return `3`. | `{{getUniqueCount [1,1,1,2,2,4]}}`
 `{{getUnique items "<property>"}}` | Return the unique values as a new array based on an array or property of an object in the array. | `{{getUnique items "NewsCategory"}}`
 `{{#group items by="<property>"}}` | Group items by a specific results property. See [https://github.com/shannonmoeller/handlebars-group-by](https://github.com/shannonmoeller/handlebars-group-by) for usage.
@@ -51,6 +51,7 @@ The following custom helpers are available in addition to the [handlebars-helper
 | `{{regex <expression> <string>}}` | Run a regular expression and return the match. Return `-` if not match. | `{{regex '\d+' 'digit 15 is a number'}}` will return `15`.
 | `{{getPageContext "<SPFx page property>"}}` | Retrieve a property from the SPFx context object. | `{{getPageContext "user.displayName"}}` or `{{getPageContext "cultureInfo.currentUICultureName"}}`
 | `{{getAttachments}}`| Return object structure for list item attachments. | `{{#getAttachments LinkOfficeChild}}<a href="{{url}}">{{index}} - {{fileName}}</href>{{/getAttachments}}`
+| `{{dayDiff "date1 YYYY-MM-DD" "date2 YYYY-MM-DD"}}`| Return the number of days between two dates, eg. show an icon for files created within the last 30 days. | `{{#compare (dayDiff (getDate Created 'YYYY-MMM-DD' ) (getDate timestamp 'YYYY-MMM-DD' )) "<=" 30 }} <img src='/SiteAssets/New.png' />{{/compare}}`
 
 
 > Need any other helper? Let us know [here](https://github.com/aequos-solutions/modern-search-results/issues)!
@@ -69,7 +70,7 @@ Inside an HTML template (or layout field), you can write your own CSS styles usi
         .example-themePrimary a {
             color: {{@root.theme.palette.themePrimary}};
         }
-        ...     
+        ...
     </style>
 
     <div class="template">
@@ -89,7 +90,7 @@ If you want to hide the error message you can add the following CSS in your cust
 
     <style>
         .pnpSearchResultsErrorMessage { display:none; }
-        ...      
+        ...
     </style>
 
     <div class="template">
@@ -153,15 +154,15 @@ The placeholder is only loaded during first data load. For subsequent requests, 
             align-items: center;
             padding: 8px;
         }
-            
+
     </style>
 
     <div class="placeholder">
         <ul>
-            {{#times 5}}   
+            {{#times 5}}
                 <li>
                     <div class="icon placeholder--shimmer"></div>
-                    <span class="placeholder--shimmer placeholder--line" style="width: 60%"></span>                
+                    <span class="placeholder--shimmer placeholder--line" style="width: 60%"></span>
                 </li>
             {{/times}}
         </ul>
@@ -187,7 +188,7 @@ If your template requires items selection for dynamic filtering, you can follow 
 
 The available data attributes you can use in your HTML template are:
 
-- `data-selection-index`: the index of the item being represented. This would go on the root of the tile/row. 
+- `data-selection-index`: the index of the item being represented. This would go on the root of the tile/row.
 
 - `data-selection-toggle`: this boolean flag would be set on the element which should handle toggles.This could be a checkbox or a div.
 
