@@ -733,11 +733,11 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             (propertyPath.localeCompare('queryTextSource') === 0 && oldValue === QueryTextSource.StaticValue && newValue === QueryTextSource.DynamicValue) ||
             (propertyPath.localeCompare('useInputQueryText') === 0 && !this.properties.useInputQueryText)) {
 
-            if (this.properties.queryText.tryGetSource()) {
-                this.properties.queryText.unregister(this.render);
-            }
-
-            this.properties.queryText.setValue('');
+            const queryText = DynamicPropertyHelper.tryGetSourceSafe(this.properties.queryText);
+            if (queryText) {
+                queryText.unregister(this.render);
+                queryText.queryText.setValue('');
+            }            
         }
 
         // Update template slots when default slots from data source change (ex: OData client type)
@@ -2374,11 +2374,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     private pushStateHandler(state, key, path) {
 
         this._pushStateCallback.apply(history, [state, key, path]);
-        if (this.properties.queryText.isDisposed) {
-            return;
-        }
 
-        const source = this.properties.queryText.tryGetSource();
+        const source = DynamicPropertyHelper.tryGetSourceSafe(this.properties.queryText);
 
         if (source && source.id === ComponentType.PageEnvironment) {
             this.render();

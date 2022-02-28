@@ -31,7 +31,7 @@
         "@types/react-dom": "16.8.3",
         "@webcomponents/custom-elements": "1.4.1",
         "@webcomponents/webcomponentsjs": "2.4.3",
-        "handlebars": "4.7.6",
+        "handlebars": "4.7.7",
         "react-dom": "16.9.0",
         "tslib": "^1.11.0"
     },
