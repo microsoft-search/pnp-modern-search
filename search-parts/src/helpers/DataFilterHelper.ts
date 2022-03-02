@@ -1,6 +1,7 @@
 import { isEmpty } from "@microsoft/sp-lodash-subset";
 import { IDataFilter, IDataFilterConfiguration, FilterType, IDataFilterResult, FilterComparisonOperator } from "@pnp/modern-search-extensibility";
 import { BuiltinTokenNames } from "../services/tokenService/TokenService";
+import { StringHelper } from "./StringHelper";
 
 export class DataFilterHelper {
 
@@ -123,7 +124,7 @@ export class DataFilterHelper {
                     }
 
                     // Enclose the expression with quotes if the value contains spaces
-                    if (/\s/.test(value)) {
+                    if (/\s/.test(value) && value.indexOf('range') === -1) {
                       value = `"${value}"`;
                     }
 
@@ -167,7 +168,7 @@ export class DataFilterHelper {
                 }
 
                 // Enclose the expression with quotes if the value contains spaces
-                if (/\s/.test(refinementToken)) {
+                if (/\s/.test(refinementToken) && refinementToken.indexOf('range') === -1) {
                   refinementToken = `"${refinementToken}"`;
                 }
                 
@@ -177,5 +178,5 @@ export class DataFilterHelper {
     });
 
     return refinementQueryConditions;
-  } 
+  }
 }

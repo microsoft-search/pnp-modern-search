@@ -3,7 +3,7 @@ export interface ILocalizableSearchResult {
     /**
      * The unique identifier of the search result
      */
-    uniqueIdentifier: string;
+    uniqueIdentifier: number;
 
     /**
      * All localizable properties for this result

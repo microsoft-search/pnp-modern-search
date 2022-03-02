@@ -55,9 +55,22 @@
                     display: flex;
                     align-items: center;
                     margin-top: 5px;
+                    
                     i {
                         margin-right: 5px;
                     }
+
+                    div {
+                        display: flex;
+                        flex-wrap: wrap;
+                        justify-content: flex-end;
+    
+                        span {
+                            text-decoration: underline;
+                            margin-right: auto;   
+                        }
+                    }
+                   
                 }
                 &--thumbnailContainer {
                     align-items: flex-start;

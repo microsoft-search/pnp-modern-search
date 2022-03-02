@@ -36,6 +36,7 @@ import { ISortFieldConfiguration, SortFieldDirection } from '../models/search/IS
 
 import { EnumHelper } from '../helpers/EnumHelper';
 import { BuiltinDataSourceProviderKeys } from './AvailableDataSources';
+import { StringHelper } from '../helpers/StringHelper';
 const TAXONOMY_REFINER_REGEX = /((L0)\|#.?([0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}))\|?/;
 
 export enum BuiltinSourceIds {
@@ -95,6 +96,11 @@ export interface ISharePointSearchDataSourceProperties {
      * The search managed properties to retrieve
      */
     selectedProperties: string[];
+
+    /**
+     * The search managed properties in hit highligted,splited with ","
+     */
+    hitHighlightedProperties: string;
 
     /**
      * The sort fields configuration
@@ -383,6 +389,17 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                         label: commonStrings.DataSources.SharePointSearch.EnableLocalizationLabel,
                         onText: commonStrings.DataSources.SharePointSearch.EnableLocalizationOnLabel,
                         offText: commonStrings.DataSources.SharePointSearch.EnableLocalizationOffLabel
+                    }),
+                    new PropertyPaneNonReactiveTextField('dataSourceProperties.hitHighlightedProperties', {
+                        componentKey: `${BuiltinDataSourceProviderKeys.SharePointSearch}-hitHighlightedProperties`,
+                        defaultValue: this.properties.hitHighlightedProperties,
+                        label: commonStrings.DataSources.SharePointSearch.HitHighlightedPropertiesFieldLabel,
+                        placeholderText: `ex: Department,UserName`,
+                        multiline: false,
+                        allowEmptyValue: true,
+                        description: commonStrings.DataSources.SharePointSearch.HitHighlightedPropertiesFieldDescription,
+                        applyBtnText: commonStrings.DataSources.SharePointSearch.ApplyQueryTemplateBtnText,
+                        rows: 1
                     })
                 ]
             }
@@ -402,16 +419,6 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
             this.properties.resultSourceId = (newValue as IComboBoxOption).key as string;
             this.context.propertyPane.refresh();
             this.render();
-        }
-    }
-
-    public onPropertyUpdate(propertyPath: string, oldValue: any, newVlue: any) {
-
-        if (propertyPath.localeCompare('dataSourceProperties.enableLocalization') === 0 && this.properties.enableLocalization) {
-
-            if (this.properties.selectedProperties.indexOf('UniqueID') === -1) {
-                this.properties.selectedProperties = update(this.properties.selectedProperties, { $push: ['UniqueID'] });
-            }
         }
     }
 
@@ -516,6 +523,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                 'DefaultEncodingURL',
                 'FileType',
                 'HitHighlightedSummary',
+                'HitHighlightedProperties',
                 'AuthorOWSUSER',
                 'owstaxidmetadataalltagsinfo',
                 'Created',
@@ -537,6 +545,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
             ];
         this.properties.resultSourceId = this.properties.resultSourceId !== undefined ? this.properties.resultSourceId : BuiltinSourceIds.LocalSharePointResults;
         this.properties.sortList = this.properties.sortList !== undefined ? this.properties.sortList : [];
+        this.properties.hitHighlightedProperties = this.properties.hitHighlightedProperties ? this.properties.hitHighlightedProperties : '';
     }
 
     private getBuiltinSourceIdOptions(): IComboBoxOption[] {
@@ -840,6 +849,11 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
             searchQuery.QueryTemplate = `${searchQuery.QueryTemplate} (ModernAudienceAadObjectIds:{User.Audiences} OR NOT IsAudienceTargeted:true)`;
         }
 
+        // HitHighlighted Properties
+        if (this.properties.hitHighlightedProperties.length > 0) {
+            searchQuery.HitHighlightedProperties = this.properties.hitHighlightedProperties.split(",");
+        }
+
         return searchQuery;
     }
 
@@ -957,7 +971,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                         const strippedTerm = matches[1];
 
                         // Use FQL expression here to get the correct output. Otherwise a full match is performed
-                        const fqlFilterValue = `"ǂǂ${this._bytesToHex(this._stringToUTF8Bytes(term))}"`;
+                        const fqlFilterValue = `"ǂǂ${StringHelper._bytesToHex(StringHelper._stringToUTF8Bytes(term))}"`;
                         const existingFilterIdx = updatedValues.map(updatedValue => updatedValue.name).indexOf(strippedTerm);
                      
                         if (existingFilterIdx === -1) {
@@ -1081,8 +1095,8 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                             const termId = matches[3];
                             const termPrefix = matches[2]; // 'L0'
                             if (termPrefix.localeCompare("L0") === 0) {
-                                const termFilterWithoutTranslations =  `"ǂǂ${this._bytesToHex(this._stringToUTF8Bytes(`GP0|#${termId.toString()}`))}"`;
-                                const termTextFilter = `L0|#${termId.toString()}`;
+                                const termFilterWithoutTranslations =  `"ǂǂ${StringHelper._bytesToHex(StringHelper._stringToUTF8Bytes(`GP0|#${termId.toString()}`))}"`;
+                                const termTextFilter = `string("L0|#${termId.toString()}")`
 
                                 // value.value: HEX encoded value => original refiner value 
                                 // termFilterWithoutTranslations => language agnostic term value
@@ -1120,7 +1134,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         let localizedTerms = [];
 
         // Step #1: identify all taxonomy like properties and gather corresponding term ids for such properties.
-        rawResults.forEach((result) => {
+        rawResults.forEach((result, index) => {
 
             let properties = [];
 
@@ -1153,10 +1167,9 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                 }
             });
 
-            // We use the 'UniqueID' as an unique identifier since this property is always present in the metadata
             if (properties.length > 0) {
                 resultsToLocalize.push({
-                    uniqueIdentifier: result.UniqueID,
+                    uniqueIdentifier: index,
                     properties: properties
                 });
             }
@@ -1230,10 +1243,10 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
             });
 
             // Step #3: populate corresponding properties with term labels and returns new results
-            updatedResults = rawResults.map((result) => {
+            updatedResults = rawResults.map((result, index) => {
 
                 const existingResults = localizedTerms.filter((e) => {
-                    return e.uniqueIdentifier === result.UniqueID;
+                    return e.uniqueIdentifier === index;
                 });
 
                 if (existingResults.length > 0) {
@@ -1256,16 +1269,6 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         }
     }
 
-    private _bytesToHex(bytes) {
-        return Array.from(
-            bytes,
-            byte => (byte as any).toString(16).padStart(2, "0")
-        ).join("");
-    }
-
-    private _stringToUTF8Bytes(string) {
-        return new TextEncoder().encode(string);
-    }
 
     private parseAndCleanOptions(options: IComboBoxOption[]): IComboBoxOption[] {
         let optionWithComma = options.find(o => (o.key as string).indexOf(",") > 0);
