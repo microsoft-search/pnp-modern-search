@@ -370,8 +370,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         } 
 
         // https://docs.microsoft.com/en-us/graph/search-concept-speller#known-limitations
-        if (this.properties.useBetaEndpoint &&
-            (this.properties.entityTypes.indexOf(EntityType.Message) !== -1 ||
+        if ((this.properties.entityTypes.indexOf(EntityType.Message) !== -1 ||
             this.properties.entityTypes.indexOf(EntityType.Event) !== -1 ||
             this.properties.entityTypes.indexOf(EntityType.Site) !== -1 ||
             this.properties.entityTypes.indexOf(EntityType.Drive) !== -1 ||
@@ -415,10 +414,6 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
 
             if (newValue) {
                 this._microsoftSearchUrl = "https://graph.microsoft.com/beta/search/query";
-
-                // Reset beta options
-                this.properties.queryAlterationOptions.enableSuggestion = false;
-                this.properties.queryAlterationOptions.enableModification = false;
 
             } else {
                 this._microsoftSearchUrl = "https://graph.microsoft.com/v1.0/search/query";
@@ -674,15 +669,12 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         if (contentSources.length > 0) {
             searchRequest.contentSources = contentSources;
         }
-
-        if(this.properties.useBetaEndpoint )
-        {  
-            searchRequest.queryAlterationOptions = {
-                enableModification: this.properties.queryAlterationOptions.enableModification,
-                enableSuggestion: this.properties.queryAlterationOptions.enableSuggestion
-            };
-        }
-
+          
+        searchRequest.queryAlterationOptions = {
+            enableModification: this.properties.queryAlterationOptions.enableModification,
+            enableSuggestion: this.properties.queryAlterationOptions.enableSuggestion
+        };
+        
         searchQuery.requests.push(searchRequest);
     
         return searchQuery;

@@ -44,7 +44,7 @@ export interface ISearchResponseResource {
 }
 
 // Query alteration response
-// https://docs.microsoft.com/en-us/graph/api/resources/alterationresponse?view=graph-rest-beta 
+// https://docs.microsoft.com/en-us/graph/api/resources/alterationresponse 
 export interface IQueryAlterationResponse {
     originalQueryString:string;
     queryAlteration:ISearchAlteration;
