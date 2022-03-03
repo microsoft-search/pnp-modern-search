@@ -110,7 +110,7 @@ export class TemplateService implements ITemplateService {
 
             // Register icons and pull the fonts from the default SharePoint cdn.
             // Do not load icons twice as it may generate warnings
-            if  (!GlobalSettings.getValue('fileTypeIconsInitialized')) {
+            if (!GlobalSettings.getValue('fileTypeIconsInitialized')) {
                 initializeFileTypeIcons();
                 GlobalSettings.setValue('fileTypeIconsInitialized', true);
             }
@@ -128,7 +128,7 @@ export class TemplateService implements ITemplateService {
 
         let templates: any = htmlContent.getElementById(Template_Content_Id);
         if (templates && templates.innerHTML) {
-            // Need to unescape '&gt;' for handlebars partials 
+            // Need to unescape '&gt;' for handlebars partials
             return templates.innerHTML.replace(/\&gt;/g, '>');
         } else {
             return templateContent;
@@ -145,7 +145,7 @@ export class TemplateService implements ITemplateService {
 
         const placeHolders = htmlContent.getElementById(Template_PlaceHolder_Id);
         if (placeHolders && placeHolders.innerHTML) {
-            // Need to unescape '&gt;' for handlebars partials 
+            // Need to unescape '&gt;' for handlebars partials
             return placeHolders.innerHTML.replace(/\&gt;/g, '>');
         } else {
             return null;
@@ -210,7 +210,7 @@ export class TemplateService implements ITemplateService {
 
     /**
      * Compile the specified Handlebars template with the associated context object¸
-     * @returns the compiled HTML template string 
+     * @returns the compiled HTML template string
      */
     public async processTemplate(templateContext: any, templateContent: string): Promise<string> {
 
@@ -246,7 +246,7 @@ export class TemplateService implements ITemplateService {
                         // Set arbitrary properties to all component instances via prototype
 
                         // To be able to get the right service scope and service keys for a particular web component corresponding to its parent Web Part (i.e. the Web Part currently rendering it), we need to an array of Web Part instance Ids references.
-                        // This implies this instance ID has to be passed in the web component HTML attribute to retrieve the correct context for the current Web Part (ex: data-instance-id="{{@root.instanceId}}") 
+                        // This implies this instance ID has to be passed in the web component HTML attribute to retrieve the correct context for the current Web Part (ex: data-instance-id="{{@root.instanceId}}")
                         wc.componentClass.prototype._webPartServiceScopes = new Map<string, ServiceScope>();
                         wc.componentClass.prototype._webPartServiceScopes.set(instanceId, this.serviceScope);
 
@@ -330,7 +330,7 @@ export class TemplateService implements ITemplateService {
     }
 
     /**
-     * Builds and registers the result types as this.Handlebars partials 
+     * Builds and registers the result types as this.Handlebars partials
      * Based on https://github.com/helpers/handlebars-helpers/ operators
      * @param resultTypes the configured result types from the property pane
      */
@@ -352,7 +352,7 @@ export class TemplateService implements ITemplateService {
 
     /**
      * Builds the Handlebars nested conditions recursively to reflect the result types configuration
-     * @param resultTypes the configured result types from the property pane 
+     * @param resultTypes the configured result types from the property pane
      * @param currentResultType the current processed result type
      * @param currentIdx current index
      */
@@ -386,7 +386,7 @@ export class TemplateService implements ITemplateService {
                 param2 = null;
             }
 
-            const baseCondition = `{{#${operator} ${param1} ${param2 || ""}}} 
+            const baseCondition = `{{#${operator} ${param1} ${param2 || ""}}}
                                         ${templateContent}`;
 
             if (currentIdx === resultTypes.length - 1) {
@@ -396,8 +396,8 @@ export class TemplateService implements ITemplateService {
                 conditionBlockContent = await this._buildCondition(resultTypes, resultTypes[currentIdx + 1], currentIdx + 1);
             }
 
-            return `${baseCondition}   
-                    {{else}} 
+            return `${baseCondition}
+                    {{else}}
                         ${conditionBlockContent}
                     {{/${operator}}}`;
         } else {
@@ -428,7 +428,7 @@ export class TemplateService implements ITemplateService {
         // <p>{{getSummary HitHighlightedSummary}}</p>
         this.Handlebars.registerHelper("getSummary", (hitHighlightedSummary: string) => {
             if (!isEmpty(hitHighlightedSummary)) {
-                return new this.Handlebars.SafeString(hitHighlightedSummary.replace(/<c0\>/g, "<strong>").replace(/<\/c0\>/g, "</strong>").replace(/<ddd\/>/g, "&#8230;").replace(/\w+-\w+-\w+-\w+-\w+/g,""));
+                return new this.Handlebars.SafeString(hitHighlightedSummary.replace(/<c0\>/g, "<strong>").replace(/<\/c0\>/g, "</strong>").replace(/<ddd\/>/g, "&#8230;").replace(/\w+-\w+-\w+-\w+-\w+/g, ""));
             }
         });
 
@@ -438,7 +438,7 @@ export class TemplateService implements ITemplateService {
                 return new Handlebars.SafeString(tag.split("|").pop());
             }
         });
-        
+
         // Return the formatted date according to current locale using moment.js
         // <p>{{getDate Created "LL"}}</p>
         this.Handlebars.registerHelper("getDate", ((date: string, format: string, timeHandling?: number, isZ?: boolean) => {
@@ -617,5 +617,9 @@ export class TemplateService implements ITemplateService {
             }
         });
 
+        this.Handlebars.registerHelper('dayDiff', (date1: string, date2: string) => {
+            let dayCount = this.moment(date1).diff(this.moment(date2), 'days');
+            return Math.abs(dayCount);
+        });
     }
 }
