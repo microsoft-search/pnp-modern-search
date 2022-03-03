@@ -23,6 +23,7 @@ export * from './models/suggestions/BaseSuggestionProvider';
 export * from './models/suggestions/ISuggestion';
 export * from './models/suggestions/ISuggestionProvider';
 export * from './models/suggestions/ISuggestionProviderDefinition';
-export * from './models/ISortFieldConfiguration';
+export * from './models/dataSources/SortFieldDirection';
 export * from './constants/ExtensibilityConstants';
 export * from './models/verticals/IDataVertical';
+export * from './models/dataSources/ISortInfo';

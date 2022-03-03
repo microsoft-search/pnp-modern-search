@@ -1,9 +1,9 @@
+import { SortFieldDirection } from "@pnp/modern-search-extensibility"; 
+
 export interface ISortFieldConfiguration {
     sortField: string;
     sortDirection: SortFieldDirection;
-}
-
-export enum SortFieldDirection {
-    Ascending = 1,
-    Descending= 2    
+    initialSort: boolean;
+    userSort: boolean;
+    sortFieldFriendlyName: string;
 }

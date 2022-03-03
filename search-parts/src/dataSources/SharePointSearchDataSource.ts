@@ -13,6 +13,7 @@ import { ServiceScope, Guid, Text } from '@microsoft/sp-core-library';
 import { sortBy, isEmpty, uniq, cloneDeep } from "@microsoft/sp-lodash-subset";
 import { PagingBehavior } from "@pnp/modern-search-extensibility";
 import { IDataContext } from "@pnp/modern-search-extensibility";
+import { SortFieldDirection } from "@pnp/modern-search-extensibility";
 import { ISharePointSearchService } from "../services/searchService/ISharePointSearchService";
 import { SharePointSearchService } from "../services/searchService/SharePointSearchService";
 import LocalizationHelper from "../helpers/LocalizationHelper";
@@ -23,20 +24,19 @@ import { TaxonomyService } from "../services/taxonomyService/TaxonomyService";
 import { ISharePointSearchResult } from "../models/search/ISharePointSearchResults";
 import { ILocalizableSearchResult, ILocalizableSearchResultProperty } from "../models/search/ILocalizableSearchResult";
 import { PropertyPaneAsyncCombo } from "../controls/PropertyPaneAsyncCombo/PropertyPaneAsyncCombo";
-import { IComboBoxOption } from "office-ui-fabric-react";
+import { Dropdown, IComboBoxOption, IDropdownProps, ITextFieldProps, TextField } from "office-ui-fabric-react";
 import { ISharePointSearchQuery, SortDirection, ISort } from "../models/search/ISharePointSearchQuery";
-import update from 'immutability-helper';
 import { AsyncCombo } from '../controls/PropertyPaneAsyncCombo/components/AsyncCombo';
 import { IAsyncComboProps } from '../controls/PropertyPaneAsyncCombo/components/IAsyncComboProps';
 import { DateHelper } from '../helpers/DateHelper';
 import { PropertyPaneNonReactiveTextField } from '../controls/PropertyPaneNonReactiveTextField/PropertyPaneNonReactiveTextField';
 import { ITerm } from '../services/taxonomyService/ITaxonomyItems';
 import { DataFilterHelper } from '../helpers/DataFilterHelper';
-import { ISortFieldConfiguration, SortFieldDirection } from '../models/search/ISortFieldConfiguration';
-
+import { ISortFieldConfiguration,  } from '../models/search/ISortFieldConfiguration';
 import { EnumHelper } from '../helpers/EnumHelper';
 import { BuiltinDataSourceProviderKeys } from './AvailableDataSources';
 import { StringHelper } from '../helpers/StringHelper';
+
 const TAXONOMY_REFINER_REGEX = /((L0)\|#.?([0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}))\|?/;
 
 export enum BuiltinSourceIds {
@@ -338,21 +338,58 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                                 }).bind(this)
                             },
                             {
+                                id: 'initialSort',
+                                title: 'Initial sort',
+                                type: this._customCollectionFieldType.boolean
+                            },
+                            {
                                 id: 'sortDirection',
                                 title: commonStrings.DataSources.SearchCommon.Sort.SortDirectionColumnLabel,
-                                type: this._customCollectionFieldType.dropdown,
-                                required: true,
-                                options: [
-                                    {
-                                        key: SortFieldDirection.Ascending,
-                                        text: commonStrings.DataSources.SearchCommon.Sort.SortDirectionAscendingLabel
-                                    },
-                                    {
-                                        key: SortFieldDirection.Descending,
-                                        text: commonStrings.DataSources.SearchCommon.Sort.SortDirectionDescendingLabel
-                                    }
-                                ],
-                                defaultValue: SortFieldDirection.Ascending
+                                type: this._customCollectionFieldType.custom,
+                                onCustomRender: (field, value, onUpdate, item) => {
+                                  return (
+                                      React.createElement("div", null,
+                                          React.createElement(Dropdown, {
+                                            options: [
+                                                {
+                                                    key: SortFieldDirection.Ascending,
+                                                    text: commonStrings.DataSources.SearchCommon.Sort.SortDirectionAscendingLabel
+                                                },
+                                                {
+                                                    key: SortFieldDirection.Descending,
+                                                    text: commonStrings.DataSources.SearchCommon.Sort.SortDirectionDescendingLabel
+                                                }
+                                            ],
+                                            disabled: !item.initialSort,
+                                            defaultSelectedKey: SortFieldDirection.Ascending,
+                                            onChange: (ev, option) => onUpdate(field.id, option.key),
+                                          } as IDropdownProps)
+                                      )
+                                  );
+                                }
+                            },
+                            {
+                                id: 'userSort',
+                                title: 'User sort',
+                                type: this._customCollectionFieldType.boolean
+                            },
+                            {
+                                id: 'sortFieldFriendlyName',
+                                title: 'Sort field display name',
+                                type: this._customCollectionFieldType.custom,
+                                onCustomRender: (field, value, onUpdate, item) => {
+                                    return (
+                                        React.createElement("div", null,
+                                            React.createElement(TextField, {
+                                                defaultValue: value,
+                                                disabled: !item.userSort,
+                                                onChange: (ev, newValue) => {
+                                                    onUpdate(field.id, newValue);
+                                                } 
+                                            } as ITextFieldProps)
+                                        )
+                                    );
+                                },
                             }
                         ]
                     }),
@@ -841,7 +878,22 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         }
 
         searchQuery.TrimDuplicates = false;
-        searchQuery.SortList = this._convertToSortList(this.properties.sortList);
+
+        if (dataContext.sorting?.selectedSortFieldName 
+            && dataContext.sorting?.selectedSortDirection) {
+           
+            // Manual user sorting
+            searchQuery.SortList =  [{
+                Property: dataContext.sorting.selectedSortFieldName,
+                Direction: dataContext.sorting.selectedSortDirection === SortFieldDirection.Ascending ? SortDirection.Ascending : SortDirection.Descending
+            }];
+
+        } else {
+
+            // Default sort
+            searchQuery.SortList = this._convertToSortList(this.properties.sortList.filter(sort => sort.initialSort));
+        }
+        
         searchQuery.SelectProperties = this.properties.selectedProperties.filter(a => a); // Fix to remove null values;
 
         // Audience targeting
