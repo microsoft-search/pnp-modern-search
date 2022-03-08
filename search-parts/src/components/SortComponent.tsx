@@ -100,14 +100,14 @@ export class SortComponent extends React.Component<ISortComponentProps, ISortCom
 
         const defaultOptions: IDropdownOption[] = [{
             key: null,
-            text: '--default--'
+            text: '<Default>'
         }];
 
         // Get only fields identified as "userSort"
-        options = this.props.fields.filter(field => field.userSort).map(field => {
+        options = this.props.fields.filter(field => field.isUserSort).map(field => {
             return {
                 key: field.sortField,
-                text: field.sortFieldFriendlyName
+                text: field.sortFieldDisplayName ? field.sortFieldDisplayName : field.sortField
             }
         });
 
@@ -128,7 +128,7 @@ export class SortWebComponent extends BaseWebComponent {
         const fields: ISortFieldConfiguration[] = props.fields;
 
         // Don't show the control if no user sort fields are specified
-        if (fields && fields.some(field => field.userSort)) {
+        if (fields && fields.some(field => field.isUserSort)) {
             const sortComponent = <SortComponent 
                                         fields={fields}
                                         defaultSelectedField={props.defaultSelectedField}

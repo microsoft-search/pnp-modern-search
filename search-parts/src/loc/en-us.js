@@ -148,8 +148,8 @@ define([], function() {
             },
             SearchCommon: {
                 Sort: {
-                    SortPropertyPaneFieldLabel: "Sort order",
-                    SortListDescription: "Specify the initial sort order for the search results. You can either select a field from the dropdown list (only if the data source data have already be fetched) or type your own custom value (press 'Enter' to save your entry)",
+                    SortPropertyPaneFieldLabel: "Sort settings",
+                    SortListDescription: "Specify the sort settings for the search results. You can either select a field from the dropdown list (only if the data source data have already be fetched) or type your own custom value (press 'Enter' to save your entry)",
                     SortDirectionAscendingLabel: "Ascending",
                     SortDirectionDescendingLabel: "Descending",
                     SortErrorMessage: "Invalid search property (Check if the managed property is sortable).",
@@ -159,7 +159,10 @@ define([], function() {
                     SortPanelSortDirectionLabel: "Sort Direction",
                     SortDirectionColumnLabel: "Direction",
                     SortFieldColumnLabel: "Field name",
-                    EditSortLabel: "Edit sort order",
+                    SortFieldDefaultSortLabel: "Default sort",
+                    SortFieldFriendlyNameLabel: "Sort field display name",
+                    SortFieldUserSortLabel: "User sort",
+                    EditSortLabel: "Edit sort settings",
                     SortInvalidSortableFieldMessage: "This property is not sortable",
                     SortFieldColumnPlaceholder: "Select field..."
                 }
@@ -200,7 +203,7 @@ define([], function() {
                 ManageDetailsListColumnDescription: "Add, update or remove columns for the details list layout. You can use either property values in the list directly without any transformation or use an Handlebars expression in the value field. HTML is supported for all fields as well.",
                 ManageDetailsListColumnLabel: "Manage columns",
                 ValueColumnLabel: "Column value",
-                ValueSortingColumnLabel: "Column value sorting",
+                ValueSortingColumnLabel: "Sort field",
                 DisplayNameColumnLabel: "Column display name",
                 FileExtensionFieldLabel: "Field to use for file extension",
                 GroupByFieldLabel: "Group by field",

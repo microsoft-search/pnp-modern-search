@@ -338,8 +338,8 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                                 }).bind(this)
                             },
                             {
-                                id: 'initialSort',
-                                title: 'Initial sort',
+                                id: 'isDefaultSort',
+                                title: commonStrings.DataSources.SearchCommon.Sort.SortFieldDefaultSortLabel,
                                 type: this._customCollectionFieldType.boolean
                             },
                             {
@@ -360,7 +360,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                                                     text: commonStrings.DataSources.SearchCommon.Sort.SortDirectionDescendingLabel
                                                 }
                                             ],
-                                            disabled: !item.initialSort,
+                                            disabled: !item.isDefaultSort,
                                             defaultSelectedKey: SortFieldDirection.Ascending,
                                             onChange: (ev, option) => onUpdate(field.id, option.key),
                                           } as IDropdownProps)
@@ -369,20 +369,20 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                                 }
                             },
                             {
-                                id: 'userSort',
-                                title: 'User sort',
+                                id: 'isUserSort',
+                                title: commonStrings.DataSources.SearchCommon.Sort.SortFieldUserSortLabel,
                                 type: this._customCollectionFieldType.boolean
                             },
                             {
-                                id: 'sortFieldFriendlyName',
-                                title: 'Sort field display name',
+                                id: 'sortFieldDisplayName',
+                                title: commonStrings.DataSources.SearchCommon.Sort.SortFieldFriendlyNameLabel,
                                 type: this._customCollectionFieldType.custom,
                                 onCustomRender: (field, value, onUpdate, item) => {
                                     return (
                                         React.createElement("div", null,
                                             React.createElement(TextField, {
                                                 defaultValue: value,
-                                                disabled: !item.userSort,
+                                                disabled: !item.isUserSort,
                                                 onChange: (ev, newValue) => {
                                                     onUpdate(field.id, newValue);
                                                 } 
@@ -580,9 +580,21 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                 'HtmlFileType',
                 'SiteLogo'
             ];
-        this.properties.resultSourceId = this.properties.resultSourceId !== undefined ? this.properties.resultSourceId : BuiltinSourceIds.LocalSharePointResults;
-        this.properties.sortList = this.properties.sortList !== undefined ? this.properties.sortList : [];
+        this.properties.resultSourceId = this.properties.resultSourceId !== undefined ? this.properties.resultSourceId : BuiltinSourceIds.LocalSharePointResults; 
         this.properties.hitHighlightedProperties = this.properties.hitHighlightedProperties ? this.properties.hitHighlightedProperties : '';
+
+        if (this.properties.sortList !== undefined) {
+            // Convert to new schema 4.5.5
+            this.properties.sortList = this.properties.sortList.map(sortConfiguration => {
+                if (sortConfiguration.isDefaultSort === undefined) {
+                    sortConfiguration.isDefaultSort = true;
+                }
+
+                return sortConfiguration;
+            })
+        } else {
+            this.properties.sortList = [];
+        }
     }
 
     private getBuiltinSourceIdOptions(): IComboBoxOption[] {
@@ -891,7 +903,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         } else {
 
             // Default sort
-            searchQuery.SortList = this._convertToSortList(this.properties.sortList.filter(sort => sort.initialSort));
+            searchQuery.SortList = this._convertToSortList(this.properties.sortList.filter(sort => sort.isDefaultSort));
         }
         
         searchQuery.SelectProperties = this.properties.selectedProperties.filter(a => a); // Fix to remove null values;

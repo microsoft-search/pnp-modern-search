@@ -158,6 +158,9 @@ declare interface ICommonStrings {
           SortPanelSortDirectionLabel:string;
           SortDirectionColumnLabel: string;
           SortFieldColumnLabel: string;
+          SortFieldDefaultSortLabel: string;
+          SortFieldUserSortLabel: string;
+          SortFieldFriendlyNameLabel: string;
           EditSortLabel: string;
           SortInvalidSortableFieldMessage: string;
           SortFieldColumnPlaceholder: string;

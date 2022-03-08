@@ -168,27 +168,6 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
                         }
                     },
                     {
-                        id: 'valueSorting',
-                        title: '',
-                        type: this._customCollectionFieldType.custom,
-                        onCustomRender: (field, _value, onUpdate, item, itemId, onCustomFieldValidation) => {
-                            return item.useHandlebarsExpr && item.enableSorting &&
-                                React.createElement("div", { key: `${field.id}-${itemId}` },
-                                    React.createElement(AsyncCombo, {
-                                        allowFreeform: false,
-                                        availableOptions: availableOptions,
-                                        label: strings.Layouts.DetailsList.ValueSortingColumnLabel,
-                                        placeholder: strings.Layouts.DetailsList.ValueSortingColumnLabel,
-                                        textDisplayValue: item[field.id] ? item[field.id] : '',
-                                        defaultSelectedKey: item[field.id] ? item[field.id] : '',
-                                        onUpdate: (filterValue: IComboBoxOption) => {
-                                            onUpdate(field.id, filterValue.key);
-                                            this._updateRequiredValueSorting(item.useHandlebarsExpr, 'enableSorting', item, onCustomFieldValidation, filterValue.key);
-                                        }
-                                    } as IAsyncComboProps));
-                        }
-                    },
-                    {
                         id: 'useHandlebarsExpr',
                         type: this._customCollectionFieldType.custom,
                         defaultValue: false,
@@ -225,6 +204,26 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
                         required: false,
                         onCustomRender: (field, _value, onUpdate, item, itemId, onCustomFieldValidation) => {
                             return this._renderValueSortingAwareCheckbox(field, item, itemId, onCustomFieldValidation, 'useHandlebarsExpr', onUpdate);
+                        }
+                    },
+                    {
+                        id: 'valueSorting',
+                        title: strings.Layouts.DetailsList.ValueSortingColumnLabel,
+                        type: this._customCollectionFieldType.custom,
+                        onCustomRender: (field, _value, onUpdate, item, itemId, onCustomFieldValidation) => {
+                            return React.createElement("div", { key: `${field.id}-${itemId}` },
+                                    React.createElement(AsyncCombo, {
+                                        allowFreeform: false,
+                                        availableOptions: availableOptions,
+                                        placeholder: strings.Layouts.DetailsList.ValueSortingColumnLabel,
+                                        textDisplayValue: item[field.id] ? item[field.id] : '',
+                                        defaultSelectedKey: item[field.id] ? item[field.id] : '',
+                                        disabled: !(item.useHandlebarsExpr && item.enableSorting),
+                                        onUpdate: (filterValue: IComboBoxOption) => {
+                                            onUpdate(field.id, filterValue.key);
+                                            this._updateRequiredValueSorting(item.useHandlebarsExpr, 'enableSorting', item, onCustomFieldValidation, filterValue.key);
+                                        }
+                                    } as IAsyncComboProps));
                         }
                     },
                     {

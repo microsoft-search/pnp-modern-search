@@ -19,11 +19,22 @@
             </pnp-selectedfilters>
         {{/if}}
 
-        {{#if @root.properties.showResultsCount}}
-            <div class="template--resultCount">
-                <label class="ms-fontWeight-semibold">{{getCountMessage @root.data.totalItemsCount @root.inputQueryText}}</label>
+        <div class="template--header">
+            {{#if @root.properties.showResultsCount}}
+                <div class="template--resultCount">
+                    <label class="ms-fontWeight-semibold">{{getCountMessage @root.data.totalItemsCount @root.inputQueryText}}</label>
+                </div>
+            {{/if}}
+
+            <div class="template--sort">
+                <pnp-sortfield 
+                    data-fields="{{JSONstringify @root.properties.dataSourceProperties.sortList}}" 
+                    data-default-selected-field="{{sort.selectedSortFieldName}}" 
+                    data-default-direction="{{sort.selectedSortDirection}}"
+                    data-theme-variant="{{JSONstringify @root.theme}}">
+                </pnp-sortfield>    
             </div>
-        {{/if}}
+        </div>
 
         <pnp-slider data-items="{{JSONstringify @root.data.items 2}}" data-options="{{JSONstringify @root.properties.layoutProperties.sliderOptions}}" data-context="{{JSONstringify @root}}">
 
