@@ -8,6 +8,7 @@ import { IPropertyPaneField, PropertyPaneToggle, PropertyPaneDropdown, PropertyP
 import { TemplateValueFieldEditor, ITemplateValueFieldEditorProps } from '../../../controls/TemplateValueFieldEditor/TemplateValueFieldEditor';
 import { AsyncCombo } from "../../../controls/PropertyPaneAsyncCombo/components/AsyncCombo";
 import { IAsyncComboProps } from "../../../controls/PropertyPaneAsyncCombo/components/IAsyncComboProps";
+import { SortableFields } from "../../../common/Constants";
 
 /**
  * Details List Builtin Layout
@@ -57,6 +58,13 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
      */
     private _propertyFieldCollectionData: any = null;
     private _customCollectionFieldType: any = null;
+
+    private _sortableFields = SortableFields.map(field => {
+        return {
+            key: field,
+            text: field,
+        } as IComboBoxOption;
+    });
 
     public async onInit(): Promise<void> {
 
@@ -169,18 +177,9 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
                     },
                     {
                         id: 'useHandlebarsExpr',
-                        type: this._customCollectionFieldType.custom,
+                        type: this._customCollectionFieldType.boolean,
                         defaultValue: false,
-                        title: strings.Layouts.DetailsList.UseHandlebarsExpressionLabel,
-                        onCustomRender: (field, _value, onUpdate, item, itemId, onCustomFieldValidation) => {
-                            return this._renderValueSortingAwareCheckbox(field, item, itemId, onCustomFieldValidation, 'enableSorting',
-                                (fieldId, value) => {
-                                    onUpdate(fieldId, value);
-                                    if (!value) {
-                                        onUpdate('valueSorting', null); // Clear value sorting
-                                    }
-                                });
-                        }
+                        title: strings.Layouts.DetailsList.UseHandlebarsExpressionLabel
                     },
                     {
                         id: 'minWidth',
@@ -199,12 +198,9 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
                     {
                         id: 'enableSorting',
                         title: strings.Layouts.DetailsList.SortableColumnLabel,
-                        type: this._customCollectionFieldType.custom,
+                        type: this._customCollectionFieldType.boolean,
                         defaultValue: false,
-                        required: false,
-                        onCustomRender: (field, _value, onUpdate, item, itemId, onCustomFieldValidation) => {
-                            return this._renderValueSortingAwareCheckbox(field, item, itemId, onCustomFieldValidation, 'useHandlebarsExpr', onUpdate);
-                        }
+                        required: false                                
                     },
                     {
                         id: 'valueSorting',
@@ -213,15 +209,17 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
                         onCustomRender: (field, _value, onUpdate, item, itemId, onCustomFieldValidation) => {
                             return React.createElement("div", { key: `${field.id}-${itemId}` },
                                     React.createElement(AsyncCombo, {
-                                        allowFreeform: false,
-                                        availableOptions: availableOptions,
+                                        allowFreeform: true,
+                                        availableOptions: this._sortableFields,
+                                        onUpdateOptions: ((options: IComboBoxOption[]) => {
+                                            this._sortableFields = options;
+                                        }).bind(this),
                                         placeholder: strings.Layouts.DetailsList.ValueSortingColumnLabel,
                                         textDisplayValue: item[field.id] ? item[field.id] : '',
                                         defaultSelectedKey: item[field.id] ? item[field.id] : '',
-                                        disabled: !(item.useHandlebarsExpr && item.enableSorting),
+                                        disabled: !item.enableSorting,
                                         onUpdate: (filterValue: IComboBoxOption) => {
                                             onUpdate(field.id, filterValue.key);
-                                            this._updateRequiredValueSorting(item.useHandlebarsExpr, 'enableSorting', item, onCustomFieldValidation, filterValue.key);
                                         }
                                     } as IAsyncComboProps));
                         }

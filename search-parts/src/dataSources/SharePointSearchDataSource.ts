@@ -36,6 +36,7 @@ import { ISortFieldConfiguration,  } from '../models/search/ISortFieldConfigurat
 import { EnumHelper } from '../helpers/EnumHelper';
 import { BuiltinDataSourceProviderKeys } from './AvailableDataSources';
 import { StringHelper } from '../helpers/StringHelper';
+import { SortableFields } from '../common/Constants';
 
 const TAXONOMY_REFINER_REGEX = /((L0)\|#.?([0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}))\|?/;
 
@@ -117,6 +118,13 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
 
     private _availableLanguages: IPropertyPaneDropdownOption[] = [];
     private _availableManagedProperties: IComboBoxOption[] = [];
+    private _sortableFields: IComboBoxOption[] = SortableFields.map(field => {
+        return {
+            key: field,
+            text: field,
+        } as IComboBoxOption;
+    });
+
     private _resultSourcesOptions: IComboBoxOption[] = [];
     private _sharePointSearchService: ISharePointSearchService;
     private _pageContext: PageContext;
@@ -310,31 +318,19 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                                 required: true,
                                 onCustomRender: ((field, value, onUpdate, item, itemId, onError) => {
 
-                                    return React.createElement("div", { key: `${field.id}-${itemId}` },
-                                        React.createElement(AsyncCombo, {
-                                            defaultSelectedKey: item[field.id] ? item[field.id] : '',
-                                            onUpdate: (option: IComboBoxOption) => {
-
-                                                this._sharePointSearchService.validateSortableProperty(option.key as string).then((sortable: boolean) => {
-                                                    if (!sortable) {
-                                                        onError(field.id, commonStrings.DataSources.SearchCommon.Sort.SortInvalidSortableFieldMessage);
-                                                    } else {
-                                                        onUpdate(field.id, option.key as string);
-                                                        onError(field.id, '');
-                                                    }
-                                                });
-                                            },
-                                            allowMultiSelect: false,
-                                            allowFreeform: true,
-                                            availableOptions: this._availableManagedProperties,
-                                            onLoadOptions: this.getAvailableProperties.bind(this),
-                                            onUpdateOptions: ((options: IComboBoxOption[]) => {
-                                                this._availableManagedProperties = options;
-                                            }).bind(this),
-                                            clearTextOnFocus: true,
-                                            placeholder: commonStrings.DataSources.SearchCommon.Sort.SortFieldColumnPlaceholder,
-                                            useComboBoxAsMenuWidth: false // Used when screen resolution is too small to display the complete value  
-                                        } as IAsyncComboProps));
+                                return React.createElement("div", { key: `${field.id}-${itemId}` },
+                                    React.createElement(AsyncCombo, {
+                                        defaultSelectedKey: item[field.id] ? item[field.id] : '',
+                                        allowMultiSelect: false,
+                                        allowFreeform: true,
+                                        availableOptions: this._sortableFields,
+                                        onUpdateOptions: ((options: IComboBoxOption[]) => {
+                                            this._sortableFields = options;
+                                        }).bind(this),
+                                        clearTextOnFocus: true,
+                                        placeholder: commonStrings.DataSources.SearchCommon.Sort.SortFieldColumnPlaceholder,
+                                        useComboBoxAsMenuWidth: false // Used when screen resolution is too small to display the complete value  
+                                    } as IAsyncComboProps));
                                 }).bind(this)
                             },
                             {

@@ -285,7 +285,7 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
     if (this.props.columnsConfiguration) {
 
       this.props.columnsConfiguration.forEach((column: IDetailsListColumnConfiguration) => {
-        const allowSorting = column.enableSorting && (column.useHandlebarsExpr !== true || (column.valueSorting && column.valueSorting.length > 0));
+        const allowSorting = column.enableSorting && !!column.valueSorting;
 
         columns.push(
           {
@@ -307,7 +307,7 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
               useHandlebarsExpr: column.useHandlebarsExpr,
 
               // Set the column value for sorting (i.e field to use)
-              value: column.valueSorting || column.value
+              value: column.valueSorting
             },
             isPadded: true,
             onRender: (item: any) => {
@@ -345,7 +345,6 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
       groups: []
     };
 
-    this._copyAndSort = this._copyAndSort.bind(this);
     this._onRenderCustomPlaceholder = this._onRenderCustomPlaceholder.bind(this);
     this._onRenderDetailsHeader = this._onRenderDetailsHeader.bind(this);
     this._onRenderRow = this._onRenderRow.bind(this);
@@ -611,18 +610,6 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
     exprValue = exprValue ? exprValue.trim() : null;
 
     return exprValue;
-  }
-
-  private _copyAndSort<T>(items: T[], columnKey: string, isSortedDescending: boolean): T[] {
-
-    return items.slice(0).sort((a: T, b: T) => {
-  
-      let aValue: any = ObjectHelper.byPath(a, columnKey);
-      let bValue: any = ObjectHelper.byPath(b, columnKey);
-    
-      return ((isSortedDescending ? aValue < bValue : aValue > bValue) ? 1 : -1);
-  
-    });
   }
 }
 
