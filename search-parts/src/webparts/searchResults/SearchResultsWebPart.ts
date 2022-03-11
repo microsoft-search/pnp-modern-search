@@ -1453,7 +1453,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     private getLayoutTemplateOptions(): IPropertyPaneField<any>[] {
 
         if (this.layout && !this.errorMessage) {
-            return this.layout.getPropertyPaneFieldsConfiguration(this._currentDataResultsSourceData.availableFieldsFromResults);
+            const dataContext = this.getDataContext();
+            return this.layout.getPropertyPaneFieldsConfiguration(this._currentDataResultsSourceData.availableFieldsFromResults, dataContext);
         } else {
             return [];
         }
@@ -2242,6 +2243,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             inputQueryText: inputQueryText,
             queryStringParameters: UrlHelper.getQueryStringParams(),
             sorting: {
+                selectedSortableFields: this.dataSource.getSortableFields(),
                 selectedSortFieldName: this._currentSelectedSortFieldName,
                 selectedSortDirection: this._currentSelectedSortDirection
             }

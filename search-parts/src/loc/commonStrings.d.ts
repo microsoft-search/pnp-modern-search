@@ -204,6 +204,7 @@ declare interface ICommonStrings {
         DisplayNameColumnLabel: string;
         ValueColumnLabel: string;
         ValueSortingColumnLabel: string;
+        ValueSortingColumnNoFieldsLabel: string;
         FileExtensionFieldLabel: string;
         GroupByFieldLabel: string;
         EnableGrouping: string;

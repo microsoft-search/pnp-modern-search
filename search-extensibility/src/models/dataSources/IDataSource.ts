@@ -93,4 +93,9 @@ export interface IDataSource {
      * @param newValue the new value.
      */
     onPropertyUpdate(propertyPath: string, oldValue: any, newValue: any): void;
+
+    /**
+     * Get the list of sortable fields for the data source is applicable
+     */
+    getSortableFields(): string[];
 }

@@ -70,6 +70,11 @@ export interface IDataContext {
      * The sorting options
      */
     sorting?: {
+
+        /**
+         * The selected sortable fields configured by the user
+         */
+        selectedSortableFields?: string[];
  
         /**
          * The selected sort field name

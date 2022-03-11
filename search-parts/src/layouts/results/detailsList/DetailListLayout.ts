@@ -1,5 +1,5 @@
 import * as React from "react";
-import { BaseLayout } from "@pnp/modern-search-extensibility";
+import { BaseLayout, IDataContext } from "@pnp/modern-search-extensibility";
 import * as strings from 'CommonStrings';
 import * as propertyControlStrings from 'PropertyControlStrings';
 import { Checkbox, ICheckboxProps, IComboBoxOption } from 'office-ui-fabric-react';
@@ -59,13 +59,6 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
     private _propertyFieldCollectionData: any = null;
     private _customCollectionFieldType: any = null;
 
-    private _sortableFields = SortableFields.map(field => {
-        return {
-            key: field,
-            text: field,
-        } as IComboBoxOption;
-    });
-
     public async onInit(): Promise<void> {
 
         // Setup default values
@@ -74,18 +67,16 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
                 {
                     name: 'Title',
                     value: '<a href="{{slot item @root.slots.PreviewUrl}}" target="_blank" style="color: {{@root.theme.semanticColors.link}}">\n\t{{slot item @root.slots.Title}}\n</a>',
-                    valueSorting: 'Title',
                     useHandlebarsExpr: true,
                     minWidth: '80',
                     maxWidth: '300',
-                    enableSorting: true,
+                    enableSorting: false,
                     isMultiline: false,
                     isResizable: true
                 },
                 {
                     name: 'Created',
                     value: "{{getDate (slot item @root.slots.Date) 'LL'}}",
-                    valueSorting: 'Created',
                     useHandlebarsExpr: true,
                     minWidth: '80',
                     maxWidth: '120',
@@ -121,9 +112,18 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
         this._customCollectionFieldType = CustomCollectionFieldType;
     }
 
-    public getPropertyPaneFieldsConfiguration(availableFields: string[]): IPropertyPaneField<any>[] {
+    public getPropertyPaneFieldsConfiguration(availableFields: string[], dataContext?: IDataContext): IPropertyPaneField<any>[] {
 
         let availableOptions: IComboBoxOption[] = availableFields.map((fieldName) => { return { key: fieldName, text: fieldName } as IComboBoxOption; });
+        let sortableFields = [];
+        if (dataContext) {
+            sortableFields = dataContext.sorting.selectedSortableFields.map(field => {
+                return {
+                    key: field,
+                    text: field,
+                } as IComboBoxOption;
+            });
+        }
 
         // Sort ascending
         availableOptions = availableOptions.sort((a, b) => {
@@ -209,12 +209,9 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
                         onCustomRender: (field, _value, onUpdate, item, itemId, onCustomFieldValidation) => {
                             return React.createElement("div", { key: `${field.id}-${itemId}` },
                                     React.createElement(AsyncCombo, {
-                                        allowFreeform: true,
-                                        availableOptions: this._sortableFields,
-                                        onUpdateOptions: ((options: IComboBoxOption[]) => {
-                                            this._sortableFields = options;
-                                        }).bind(this),
-                                        placeholder: strings.Layouts.DetailsList.ValueSortingColumnLabel,
+                                        allowFreeform: false,
+                                        availableOptions: sortableFields,
+                                        placeholder: !item.valueSorting && sortableFields.length > 0 ? strings.Layouts.DetailsList.ValueSortingColumnLabel : strings.Layouts.DetailsList.ValueSortingColumnNoFieldsLabel,
                                         textDisplayValue: item[field.id] ? item[field.id] : '',
                                         defaultSelectedKey: item[field.id] ? item[field.id] : '',
                                         disabled: !item.enableSorting,
@@ -303,28 +300,6 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
 
         if (propertyPath.localeCompare('layoutProperties.enableGrouping') === 0) {
             this.properties.groupByField = '';
-        }
-    }
-
-    private _renderValueSortingAwareCheckbox(field: any, item: IDetailsListColumnConfiguration, itemId: string, onCustomFieldValidation: (fieldId: string, errorMessage: string) => void, otherDependentField: string, onChange: (fieldId: string, value: any) => void): JSX.Element {
-        return React.createElement(Checkbox, {
-            key: `${field.id}-${itemId}`,
-            checked: item[field.id] ? item[field.id] : false,
-            onChange: (ev, value) => {
-                onChange(field.id, value);
-                this._updateRequiredValueSorting(value, otherDependentField, item, onCustomFieldValidation);
-            },
-            disabled: field.disableEdit,
-            className: "PropertyFieldCollectionData__panel__boolean-field"
-        } as ICheckboxProps);
-    }
-
-    private _updateRequiredValueSorting(value: boolean, otherDependentField: string, item: IDetailsListColumnConfiguration, onCustomFieldValidation: (fieldId: string, errorMessage: string) => void, newValueSorting?: string | number) {
-        if (!value || item.valueSorting || newValueSorting) {
-            onCustomFieldValidation('enableSorting', '');
-        }
-        else if (item[otherDependentField]) {
-            onCustomFieldValidation('enableSorting', `${strings.Layouts.DetailsList.ValueSortingColumnLabel} - ${propertyControlStrings.CollectionDataItemFieldRequiredLabel}`);
         }
     }
 }

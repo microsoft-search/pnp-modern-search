@@ -4,7 +4,7 @@ import { cloneDeep, isEmpty } from '@microsoft/sp-lodash-subset';
 import { MSGraphClientFactory } from "@microsoft/sp-http";
 import { TokenService } from "../services/tokenService/TokenService";
 import { ServiceScope } from '@microsoft/sp-core-library';
-import { IComboBoxOption } from 'office-ui-fabric-react';
+import { Dropdown, IComboBoxOption, IDropdownProps, ITextFieldProps, TextField } from 'office-ui-fabric-react';
 import { PropertyPaneAsyncCombo } from "../controls/PropertyPaneAsyncCombo/PropertyPaneAsyncCombo";
 import * as commonStrings from 'CommonStrings';
 import { IMicrosoftSearchRequest, ISearchRequestAggregation, SearchAggregationSortBy, ISearchSortProperty, IMicrosoftSearchQuery, IQueryAlterationOptions } from '../models/search/IMicrosoftSearchRequest';
@@ -22,6 +22,7 @@ import { SortFieldDirection } from "@pnp/modern-search-extensibility";
 import * as React from "react";
 import { IMicrosoftSearchResponse } from "../models/search/IMicrosoftSearchResponse";
 import { BuiltinDataSourceProviderKeys } from "./AvailableDataSources";
+import { SortableFields } from "../common/Constants";
 
 export enum EntityType {
     Message = 'message',
@@ -52,6 +53,11 @@ export interface IMicrosoftSearchDataSourceProperties {
      * The sort fields configuration
      */
     sortProperties: ISortFieldConfiguration[];
+
+    /**
+     * The sort fields configuration (for the user sort control)
+     */
+    sortList: ISortFieldConfiguration[];
 
     /**
      * This triggers hybrid sort for messages : the first 3 messages are the most relevant. This property is only applicable to entityType=message
@@ -88,6 +94,12 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
     private _availableFields: IComboBoxOption[] = [];
     private _microsoftSearchUrl: string;
     private _availableManagedProperties: IComboBoxOption[] = [];
+    private _sortableFields: IComboBoxOption[] = SortableFields.map(field => {
+        return {
+            key: field,
+            text: field,
+        } as IComboBoxOption;
+    });
 
     private _availableEntityTypeOptions: IComboBoxOption[] = [
         {
@@ -298,49 +310,78 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                             type: this._customCollectionFieldType.custom,
                             required: true,
                             onCustomRender: ((field, value, onUpdate, item, itemId, onError) => {
-    
+
                                 return React.createElement("div", { key: `${field.id}-${itemId}` },
                                     React.createElement(AsyncCombo, {
                                         defaultSelectedKey: item[field.id] ? item[field.id] : '',
-                                        onUpdate: (option: IComboBoxOption) => {
-
-                                            this._sharePointSearchService.validateSortableProperty(option.key as string).then((sortable: boolean) => {
-                                                if (!sortable) {
-                                                    onError(field.id, commonStrings.DataSources.SearchCommon.Sort.SortInvalidSortableFieldMessage);
-                                                } else {
-                                                    onUpdate(field.id, option.key as string);
-                                                    onError(field.id, '');
-                                                }
-                                            });
-                                        },
                                         allowMultiSelect: false,
                                         allowFreeform: true,
-                                        availableOptions: this._availableManagedProperties,
-                                        onLoadOptions: this.getAvailableProperties.bind(this),
+                                        availableOptions: this._sortableFields,
                                         onUpdateOptions: ((options: IComboBoxOption[]) => {
-                                            this._availableManagedProperties = options;
+                                            this._sortableFields = options;
                                         }).bind(this),
+                                        clearTextOnFocus: true,
+                                        onUpdate: (option: IComboBoxOption) => {
+                                            onUpdate(field.id, option.key as string);
+                                        },
                                         placeholder: commonStrings.DataSources.SearchCommon.Sort.SortFieldColumnPlaceholder,
                                         useComboBoxAsMenuWidth: false // Used when screen resolution is too small to display the complete value  
                                     } as IAsyncComboProps));
                             }).bind(this)
                         },
                         {
+                            id: 'isDefaultSort',
+                            title: commonStrings.DataSources.SearchCommon.Sort.SortFieldDefaultSortLabel,
+                            type: this._customCollectionFieldType.boolean
+                        },
+                        {
                             id: 'sortDirection',
                             title: commonStrings.DataSources.SearchCommon.Sort.SortDirectionColumnLabel,
-                            type: this._customCollectionFieldType.dropdown,
-                            required: false,
-                            options: [
-                                {
-                                    key: SortFieldDirection.Ascending,
-                                    text: commonStrings.DataSources.SearchCommon.Sort.SortDirectionAscendingLabel
-                                },
-                                {
-                                    key: SortFieldDirection.Descending,
-                                    text: commonStrings.DataSources.SearchCommon.Sort.SortDirectionDescendingLabel
-                                }
-                            ],
-                            defaultValue: SortFieldDirection.Ascending                                
+                            type: this._customCollectionFieldType.custom,
+                            onCustomRender: (field, value, onUpdate, item) => {
+                              return (
+                                  React.createElement("div", null,
+                                      React.createElement(Dropdown, {
+                                        options: [
+                                            {
+                                                key: SortFieldDirection.Ascending,
+                                                text: commonStrings.DataSources.SearchCommon.Sort.SortDirectionAscendingLabel
+                                            },
+                                            {
+                                                key: SortFieldDirection.Descending,
+                                                text: commonStrings.DataSources.SearchCommon.Sort.SortDirectionDescendingLabel
+                                            }
+                                        ],
+                                        disabled: !item.isDefaultSort,
+                                        defaultSelectedKey: item.sortDirection ? item.sortDirection : SortFieldDirection.Ascending,
+                                        onChange: (ev, option) => onUpdate(field.id, option.key),
+                                      } as IDropdownProps)
+                                  )
+                              );
+                            }
+                        },
+                        {
+                            id: 'isUserSort',
+                            title: commonStrings.DataSources.SearchCommon.Sort.SortFieldUserSortLabel,
+                            type: this._customCollectionFieldType.boolean
+                        },
+                        {
+                            id: 'sortFieldDisplayName',
+                            title: commonStrings.DataSources.SearchCommon.Sort.SortFieldFriendlyNameLabel,
+                            type: this._customCollectionFieldType.custom,
+                            onCustomRender: (field, value, onUpdate, item) => {
+                                return (
+                                    React.createElement("div", null,
+                                        React.createElement(TextField, {
+                                            defaultValue: value,
+                                            disabled: !item.isUserSort,
+                                            onChange: (ev, newValue) => {
+                                                onUpdate(field.id, newValue);
+                                            } 
+                                        } as ITextFieldProps)
+                                    )
+                                );
+                            },
                         }
                     ]
                 })
@@ -425,6 +466,9 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             } 
         }
 
+        if (propertyPath.localeCompare('dataSourceProperties.sortProperties') === 0) {
+            this.properties.sortList = newValue;
+        }
     }
 
     public onCustomPropertyUpdate(propertyPath: string, newValue: any, changeCallback?: (targetProperty?: string, newValue?: any) => void): void {
@@ -506,6 +550,10 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         ];
     }
 
+    public getSortableFields(): string[] {
+        return this.properties.sortProperties.filter(sort => sort.isUserSort).map(field => field.sortField);
+    }
+
     private initProperties(): void {
         this.properties.entityTypes = this.properties.entityTypes !== undefined ? this.properties.entityTypes : [EntityType.DriveItem];
 
@@ -513,6 +561,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
 
         this.properties.fields = this.properties.fields !== undefined ? this.properties.fields : CommonFields;
         this.properties.sortProperties = this.properties.sortProperties !== undefined ? this.properties.sortProperties : [];
+        this.properties.sortList = this.properties.sortProperties;
         this.properties.contentSourceConnectionIds = this.properties.contentSourceConnectionIds !== undefined ? this.properties.contentSourceConnectionIds : [];
 
         this.properties.queryAlterationOptions = this.properties.queryAlterationOptions ?? { enableModification: false, enableSuggestion: false };
@@ -637,16 +686,28 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             });
         }
 
+        // Sort is only available for 'ListItem'
         if (this.properties.entityTypes.indexOf(EntityType.ListItem) !== -1) {
 
-            // Build sort properties (only relevant for SharePoint manged properties)
-            this.properties.sortProperties.filter(s => s.sortField).forEach(sortProperty => {
-
+            if (dataContext.sorting?.selectedSortFieldName 
+                && dataContext.sorting?.selectedSortDirection) {
+               
+                // Manual user sorting
                 sortProperties.push({
-                    name: sortProperty.sortField,
-                    isDescending: sortProperty.sortDirection === SortFieldDirection.Descending ? true : false
+                    name: dataContext.sorting.selectedSortFieldName,
+                    isDescending: dataContext.sorting.selectedSortDirection === SortFieldDirection.Descending ? true : false
                 });
-            });
+
+            } else {
+    
+                // Default sort
+                this.properties.sortProperties.filter(s => s.sortField).forEach(sortProperty => {
+                    sortProperties.push({
+                        name: sortProperty.sortField,
+                        isDescending: sortProperty.sortDirection === SortFieldDirection.Descending ? true : false
+                    });
+                });
+            }
         }
         
         // Build search request
@@ -772,19 +833,5 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             return (optionWithComma.key as string).split(",").map(k => { return { key: k.trim(), text: k.trim(), selected: true }; });
         }
         return options;
-    }
-
-    private async getAvailableProperties(): Promise<IComboBoxOption[]> {
-
-        const searchManagedProperties = await this._sharePointSearchService.getAvailableManagedProperties();
-
-        this._availableManagedProperties = searchManagedProperties.map(managedProperty => {
-            return {
-                key: managedProperty.name,
-                text: managedProperty.name,
-            } as IComboBoxOption;
-        });
-
-        return this._availableManagedProperties;
-    }    
+    } 
 }

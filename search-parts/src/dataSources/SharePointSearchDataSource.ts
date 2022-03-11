@@ -328,6 +328,9 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                                             this._sortableFields = options;
                                         }).bind(this),
                                         clearTextOnFocus: true,
+                                        onUpdate: (option: IComboBoxOption) => {
+                                            onUpdate(field.id, option.key as string);
+                                        },
                                         placeholder: commonStrings.DataSources.SearchCommon.Sort.SortFieldColumnPlaceholder,
                                         useComboBoxAsMenuWidth: false // Used when screen resolution is too small to display the complete value  
                                     } as IAsyncComboProps));
@@ -357,7 +360,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                                                 }
                                             ],
                                             disabled: !item.isDefaultSort,
-                                            defaultSelectedKey: SortFieldDirection.Ascending,
+                                            defaultSelectedKey: item.sortDirection ? item.sortDirection : SortFieldDirection.Ascending,
                                             onChange: (ev, option) => onUpdate(field.id, option.key),
                                           } as IDropdownProps)
                                       )
@@ -542,6 +545,10 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                 slotField: 'UserName'
             }
         ];
+    }
+
+    public getSortableFields(): string[] {
+        return this.properties.sortList.filter(sort => sort.isUserSort).map(field => field.sortField);
     }
 
     private initProperties(): void {

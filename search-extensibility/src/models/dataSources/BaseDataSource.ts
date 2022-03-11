@@ -101,4 +101,9 @@ export abstract class BaseDataSource<T> implements IDataSource {
     public onPropertyUpdate(propertyPath: string, oldValue: any, newValue: any): void {
         // Do nothing by default      
     }
+
+    public getSortableFields(): string[] {
+        // No sortable fields by default
+        return [];
+    }
 }

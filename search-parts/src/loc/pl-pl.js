@@ -200,6 +200,8 @@ define([], function() {
               ManageDetailsListColumnDescription: "Dodawaj, usuwaj i aktualizuj kolumny układu listy ze szczegółami. Możesz używać wartości pól bezpośrednio bez żadnych przekształceń lub użyć wyrażeń Handlebars. HTML jest wspierany przez wszystkie pola.",
               ManageDetailsListColumnLabel: "Zarządzaj kolumnami",
               ValueColumnLabel: "Wartość kolumny",
+              ValueSortingColumnLabel: "Wybierz pole sortowania...",
+              ValueSortingColumnNoFieldsLabel: "Brak dostępnych pól",
               DisplayNameColumnLabel: "Nazwa wyświetlana kolumny",
               FileExtensionFieldLabel: "Pole używane dla rozszerzenia pliku",
               GroupByFieldLabel: "Grupuj po polu",
