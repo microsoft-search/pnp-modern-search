@@ -159,6 +159,9 @@ define([], function() {
                     SortPanelSortDirectionLabel: "Sorteervolgorde",
                     SortDirectionColumnLabel: "Volgorde",
                     SortFieldColumnLabel: "Veldnaam",
+                    SortFieldDefaultSortLabel: "Standaard sortering",
+                    SortFieldFriendlyNameLabel: "Weergavenaam veld sorteren",
+                    SortFieldUserSortLabel: "Gebruiker sorteren",
                     EditSortLabel: "Bewerk sorteervolgorde",
                     SortInvalidSortableFieldMessage: "Deze eigenschap kan niet worden gesorteerd",
                     SortFieldColumnPlaceholder: "Selecteer veld..."

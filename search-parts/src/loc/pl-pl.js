@@ -159,6 +159,9 @@ define([], function() {
                   SortPanelSortDirectionLabel: "Kierunek sortowania",
                   SortDirectionColumnLabel: "Kierunek",
                   SortFieldColumnLabel: "Nazwa pola",
+                  SortFieldDefaultSortLabel: "Sortowanie domyślne",
+                  SortFieldFriendlyNameLabel: "Wyświetlana nazwa pola sortowania",
+                  SortFieldUserSortLabel: "Sortowanie użytkowników",
                   EditSortLabel: "Edytuj porządek sortowania",
                   SortInvalidSortableFieldMessage: "Ta właściwość nie jest sortowalna",
                   SortFieldColumnPlaceholder: "Wybierz pole..."

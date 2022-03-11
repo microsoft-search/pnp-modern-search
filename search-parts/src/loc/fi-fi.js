@@ -157,6 +157,9 @@ define([], function() {
                     SortPanelSortDirectionLabel: "Lajittelusuunta",
                     SortDirectionColumnLabel: "Suunta",
                     SortFieldColumnLabel: "Kentän nimi",
+                    SortFieldDefaultSortLabel: "Oletuslajittelu",
+                    SortFieldFriendlyNameLabel: "Lajittele kentän näyttönimi",
+                    SortFieldUserSortLabel: "Käyttäjälajittelu",
                     EditSortLabel: "Muokkaa lajittelujärjestystä",
                     SortInvalidSortableFieldMessage: "Tämä ominaisuus ei ole lajiteltava",
                     SortFieldColumnPlaceholder: "Valitse kenttä..."

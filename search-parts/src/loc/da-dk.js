@@ -159,6 +159,9 @@ define([], function() {
                     SortPanelSortDirectionLabel: "Sortér retning",
                     SortDirectionColumnLabel: "Retning",
                     SortFieldColumnLabel: "Feltnavn",
+                    SortFieldDefaultSortLabel: "Standard sortering",
+                    SortFieldFriendlyNameLabel: "Visningsnavn for sortering",
+                    SortFieldUserSortLabel: "Bruger sortering",
                     EditSortLabel: "Redigér sorteringsrækkefølge",
                     SortInvalidSortableFieldMessage: "Denne egenskab er ikke sorterbar",
                     SortFieldColumnPlaceholder: "Vælg felt..."

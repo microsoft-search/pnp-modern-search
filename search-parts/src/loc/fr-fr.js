@@ -159,6 +159,9 @@ define([], function() {
                     SortPanelSortDirectionLabel: "Sens de tri",
                     SortDirectionColumnLabel: "Sens",
                     SortFieldColumnLabel: "Nom du champ",
+                    SortFieldDefaultSortLabel: "Tri par défaut",
+                    SortFieldFriendlyNameLabel: "Nom d'afficahge du champ",
+                    SortFieldUserSortLabel: "Tri par l'utilisateur",
                     EditSortLabel: "Modifier l’ordre de tri",
                     SortInvalidSortableFieldMessage: "Cette propriété n’est pas triable",
                     SortFieldColumnPlaceholder: "Sélectionner le champ..."
