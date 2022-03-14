@@ -36,7 +36,10 @@
             </div>
         </div>
 
-        <pnp-slider data-items="{{JSONstringify @root.data.items 2}}" data-options="{{JSONstringify @root.properties.layoutProperties.sliderOptions}}" data-context="{{JSONstringify @root}}">
+        <pnp-slider data-items="{{JSONstringify @root.data.items 2}}" 
+            data-options="{{JSONstringify @root.properties.layoutProperties.sliderOptions}}" 
+            data-context="{{JSONstringify @root}}" 
+            data-instance-id="{{@root.instanceId}}">
 
             <div class="template--slide" style="height: {{@root.properties.layoutProperties.slideHeight}}px;width: {{@root.properties.layoutProperties.slideWidth}}px;margin: 5px;">
 
@@ -46,7 +49,7 @@
                     -->
                     <pnp-documentcard 
                         data-ui-test-id="resultCard"	
-                        data-title="\{{slot item @root.slots.Title}}" 
+                        data-title="\{{slot item @root.slots.Title}}"
                         data-location="\{{SiteTitle}}"
                         data-preview-image="\{{slot item @root.slots.PreviewImageUrl}}" 
                         data-preview-url="\{{slot item @root.slots.PreviewUrl}}" 
