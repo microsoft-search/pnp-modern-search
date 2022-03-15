@@ -4,7 +4,7 @@ import { Fabric, ShimmeredDetailsList, IShimmeredDetailsListProps } from 'office
 import { ITooltipHostProps, TooltipHost, ITooltipStyles, Shimmer, ShimmerElementsGroup, ShimmerElementType, IShimmerElement, mergeStyleSets, ITheme, Selection } from 'office-ui-fabric-react';
 import * as Handlebars from 'handlebars';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
-import { BaseWebComponent, BuiltinTemplateSlots } from '@pnp/modern-search-extensibility';
+import { BaseWebComponent, BuiltinTemplateSlots, ExtensibilityConstants, ISortInfo, SortFieldDirection } from '@pnp/modern-search-extensibility';
 import { groupBy, sortBy, findIndex, isEmpty, cloneDeep } from "@microsoft/sp-lodash-subset";
 import { FileIcon } from '../components/FileIconComponent';
 import { DetailsListLayoutMode, SelectionMode, IColumn, IGroup, IDetailsRowProps, DetailsRow, IDetailsHeaderProps, DetailsHeader, CheckboxVisibility, DetailsRowCheck, IDetailsListCheckboxProps } from 'office-ui-fabric-react/lib/DetailsList';
@@ -16,6 +16,7 @@ import { DomPurifyHelper } from '../helpers/DomPurifyHelper';
 import { ITemplateService } from '../services/templateService/ITemplateService';
 import { TemplateService } from '../services/templateService/TemplateService';
 import { ServiceScope, ServiceKey } from "@microsoft/sp-core-library";
+import { ISortFieldConfiguration } from '../models/search/ISortFieldConfiguration';
 
 const DEFAULT_SHIMMER_HEIGHT = 7;
 const SHIMMER_LINE_VS_CELL_WIDTH_RATIO = 0.95;
@@ -95,6 +96,11 @@ export interface IDetailsListColumnConfiguration {
    * Enable multiline column
    */
   isMultiline: boolean;
+
+  /**
+   * Callback handler when a sort field and direction are selected
+   */
+  onSort: (sortFieldName: string, sortFieldDirection: SortFieldDirection) => void;
 }
 
 export interface IDetailsListComponentProps {
@@ -178,6 +184,26 @@ export interface IDetailsListComponentProps {
     * Allow multiple values to be select=ed
     */
     allowMulti?: boolean;
+
+    /**
+     * The sortable fields
+     */
+    fields?: ISortFieldConfiguration[];
+
+    /**
+    * The default selected field
+    */
+    defaultSelectedField?: string;
+
+    /**
+    * The default sort direction
+    */
+    defaultDirection?: SortFieldDirection;
+
+    /**
+     * Callback handler when a sort field and direction are selected
+     */
+    onSort: (sortFieldName: string, sortFieldDirection: SortFieldDirection) => void;
 }
 
 export interface IDetailsListComponentState {
@@ -259,7 +285,7 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
     if (this.props.columnsConfiguration) {
 
       this.props.columnsConfiguration.forEach((column: IDetailsListColumnConfiguration) => {
-        const allowSorting = column.enableSorting && (column.useHandlebarsExpr !== true || (column.valueSorting && column.valueSorting.length > 0));
+        const allowSorting = column.enableSorting && !!column.valueSorting;
 
         columns.push(
           {
@@ -272,7 +298,7 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
             isResizable: column.isResizable === true,
             isMultiline: column.isMultiline === true,
             isSorted: allowSorting,
-            isSortedDescending: false,
+            isSortedDescending: this.props.defaultDirection === SortFieldDirection.Descending,
             sortAscendingAriaLabel: 'Sorted A to Z',
             sortDescendingAriaLabel: 'Sorted Z to A',
             onColumnClick: allowSorting ? this._onColumnClick : null,
@@ -281,7 +307,7 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
               useHandlebarsExpr: column.useHandlebarsExpr,
 
               // Set the column value for sorting (i.e field to use)
-              value: column.valueSorting || column.value
+              value: column.valueSorting
             },
             isPadded: true,
             onRender: (item: any) => {
@@ -319,7 +345,6 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
       groups: []
     };
 
-    this._copyAndSort = this._copyAndSort.bind(this);
     this._onRenderCustomPlaceholder = this._onRenderCustomPlaceholder.bind(this);
     this._onRenderDetailsHeader = this._onRenderDetailsHeader.bind(this);
     this._onRenderRow = this._onRenderRow.bind(this);
@@ -501,9 +526,7 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
 
   private _onColumnClick = (ev: React.MouseEvent<HTMLElement>, column: IColumn): void => {
 
-    const { columns, items } = this.state;
-
-    let newItems = [];
+    const { columns } = this.state;
 
     const newColumns: IColumn[] = columns.slice();
     const currColumn: IColumn = newColumns.filter(currCol => column.key === currCol.key)[0];
@@ -516,26 +539,14 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
         newCol.isSortedDescending = true;
       }
     });
-
-    if (!this.props.groupBy) {
-      newItems = this._copyAndSort(items, currColumn.data.value, currColumn.isSortedDescending);
-    } else {
-
-      // Sort items for each group individually. Group indexes don't change here, only items order.
-      const groupedItems = groupBy(items, (i) => {
-        return ObjectHelper.byPath(i, this.props.groupBy);
-      });
-
-      for (const group in groupedItems) {
-        const sortedItemsByGroup = this._copyAndSort(groupedItems[group], currColumn.data.value, currColumn.isSortedDescending);
-        newItems = newItems.concat(sortedItemsByGroup);
-      }
-    }
     
     this.setState({
-      columns: newColumns,
-      items: newItems
+      columns: newColumns
+    }, () => {
+      const sortDirection = column.isSortedDescending ? SortFieldDirection.Ascending : SortFieldDirection.Descending;
+      this.props.onSort(column.data.value, sortDirection);
     });
+
   }
 
   private _buildGroups(items: any[], groupByField: string): IGroup[] {
@@ -600,18 +611,6 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
 
     return exprValue;
   }
-
-  private _copyAndSort<T>(items: T[], columnKey: string, isSortedDescending: boolean): T[] {
-
-    return items.slice(0).sort((a: T, b: T) => {
-  
-      let aValue: any = ObjectHelper.byPath(a, columnKey);
-      let bValue: any = ObjectHelper.byPath(b, columnKey);
-    
-      return ((isSortedDescending ? aValue < bValue : aValue > bValue) ? 1 : -1);
-  
-    });
-  }
 }
 
 export class DetailsListWebComponent extends BaseWebComponent {
@@ -634,8 +633,27 @@ export class DetailsListWebComponent extends BaseWebComponent {
         }
 
         const templateService = serviceScope.consume<ITemplateService>(templateServiceKey);
+
+        const fields: ISortFieldConfiguration[] = props.fields;
         
-        const detailsListComponent = <DetailsListComponent {...props} handlebars={templateService.Handlebars}/>;
+        const detailsListComponent =  <DetailsListComponent {...props}
+                                                            handlebars={templateService.Handlebars}
+                                                            fields={fields}
+                                                            defaultSelectedField={props.defaultSelectedField}
+                                                            defaultDirection={props.defaultDirection}
+                                                            onSort={(sortFieldName, sortFieldDirection) => {
+
+                                                              // Send the event to the main Web Part
+                                                              this.dispatchEvent(new CustomEvent(ExtensibilityConstants.EVENT_SORT_BY, { 
+                                                                  detail: {                                       
+                                                                      sortFieldName: sortFieldName,
+                                                                      sortFieldDirection: sortFieldDirection
+                                                                  } as ISortInfo, 
+                                                                  bubbles: true,
+                                                                  cancelable: true
+                                                              }));
+                                                          }}
+                                      />;
         ReactDOM.render(detailsListComponent, this);
     }
 }

@@ -1,6 +1,6 @@
 import { IDataFilterConfiguration } from '../filters/IDataFilterConfiguration';
 import { IDataFilter, FilterConditionOperator } from '../filters/IDataFilter';
-import { ISortFieldConfiguration } from '../ISortFieldConfiguration';
+import { SortFieldDirection } from './SortFieldDirection';
 import { IDataVertical } from '../verticals/IDataVertical';
 
 /**
@@ -67,15 +67,25 @@ export interface IDataContext {
     };
 
     /**
-     * Data source sorting information
+     * The sorting options
      */
     sorting?: {
 
         /**
-         * The current selected sorting for this data source
+         * The selected sortable fields configured by the user
          */
-        selectedSorting?: ISortFieldConfiguration[];
-    };
+        selectedSortableFields?: string[];
+ 
+        /**
+         * The selected sort field name
+         */
+        selectedSortFieldName?: string;
+
+        /**
+         * The selected sort direction
+         */
+        selectedSortDirection?: SortFieldDirection;
+    }
 
     /**
      * Information about connected verticals
