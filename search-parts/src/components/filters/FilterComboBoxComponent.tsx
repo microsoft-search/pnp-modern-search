@@ -136,11 +136,11 @@ export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilte
             
             options = this.state.options.filter(option => {
 
-                if (option.text && option.text.indexOf(this.state.searchValue) !== -1) {
+                if (option.text && option.text.toLocaleLowerCase().indexOf(this.state.searchValue.toLocaleLowerCase()) !== -1) {
                     return true;
                 }
     
-                if (option.key && (option.key as string).indexOf(this.state.searchValue) !== -1) {
+                if (option.key && (option.key as string).toLocaleLowerCase().indexOf(this.state.searchValue.toLocaleLowerCase()) !== -1) {
                     return true;
                 }
             });
