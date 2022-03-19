@@ -1040,7 +1040,7 @@
 <p>A <code>placeholder</code> part, containing the HTML markup to display as placeholder <strong>while the data are getting fetched</strong>. This part is optional.</p>
 </li>
 </ul>
-<p>Both can use Handlebars and web components (Microsoft Graph Toolkit included). </p>
+<p>Both can use Handlebars and web components (Microsoft Graph Toolkit included).</p>
 <h2 id="handlebars-helpers">Handlebars helpers<a class="headerlink" href="#handlebars-helpers" title="Permanent link">&para;</a></h2>
 <p>The following custom helpers are available in addition to the <a href="https://github.com/helpers/handlebars-helpers">handlebars-helpers</a>. If those don't do the job for you, you can still write your own using the <a href="../handlebars_customizations/">extensibility library</a>.</p>
 <blockquote>
@@ -1130,6 +1130,11 @@
 <td>Return object structure for list item attachments.</td>
 <td><code>{{#getAttachments LinkOfficeChild}}&lt;a href="{{url}}"&gt;{{index}} - {{fileName}}&lt;/href&gt;{{/getAttachments}}</code></td>
 </tr>
+<tr>
+<td><code>{{dayDiff &lt;date1&gt; &lt;date2&gt;}}</code></td>
+<td>Return the number of days between two dates, eg. show an icon for files created within the last 30 days.</td>
+<td><code>{{#compare (dayDiff (getDate Created 'YYYY-MMM-DD' ) (getDate timestamp 'YYYY-MMM-DD' )) "&lt;=" 30 }} &lt;img src='/SiteAssets/New.png' /&gt;{{/compare}}</code></td>
+</tr>
 </tbody>
 </table>
 <blockquote>
@@ -1144,7 +1149,7 @@
         <span class="p">.</span><span class="nc">example-themePrimary</span> <span class="nt">a</span> <span class="p">{</span>
             <span class="k">color</span><span class="p">:</span> <span class="err">{{</span><span class="o">@</span><span class="n">root</span><span class="o">.</span><span class="n">theme</span><span class="o">.</span><span class="n">palette</span><span class="o">.</span><span class="n">themePrimary</span><span class="p">}</span><span class="err">}</span><span class="o">;</span>
         <span class="err">}</span>
-        <span class="o">...</span>     
+        <span class="o">...</span>
     <span class="p">&lt;/</span><span class="nt">style</span><span class="p">&gt;</span>
 
     <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;template&quot;</span><span class="p">&gt;</span>
@@ -1161,7 +1166,7 @@
 
     <span class="p">&lt;</span><span class="nt">style</span><span class="p">&gt;</span>
         <span class="p">.</span><span class="nc">pnpSearchResultsErrorMessage</span> <span class="p">{</span> <span class="k">display</span><span class="p">:</span><span class="kc">none</span><span class="p">;</span> <span class="p">}</span>
-        <span class="o">...</span>      
+        <span class="o">...</span>
     <span class="p">&lt;/</span><span class="nt">style</span><span class="p">&gt;</span>
 
     <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;template&quot;</span><span class="p">&gt;</span>
@@ -1224,10 +1229,10 @@ The placeholder is only loaded during first data load. For subsequent requests, 
 
     &lt;div class=&quot;placeholder&quot;&gt;
         &lt;ul&gt;
-            {{#times 5}}   
+            {{#times 5}}
                 &lt;li&gt;
                     &lt;div class=&quot;icon placeholder--shimmer&quot;&gt;&lt;/div&gt;
-                    &lt;span class=&quot;placeholder--shimmer placeholder--line&quot; style=&quot;width: 60%&quot;&gt;&lt;/span&gt;                
+                    &lt;span class=&quot;placeholder--shimmer placeholder--line&quot; style=&quot;width: 60%&quot;&gt;&lt;/span&gt;
                 &lt;/li&gt;
             {{/times}}
         &lt;/ul&gt;
@@ -1249,7 +1254,7 @@ The placeholder is only loaded during first data load. For subsequent requests, 
 <p>The available data attributes you can use in your HTML template are:</p>
 <ul>
 <li>
-<p><code>data-selection-index</code>: the index of the item being represented. This would go on the root of the tile/row. </p>
+<p><code>data-selection-index</code>: the index of the item being represented. This would go on the root of the tile/row.</p>
 </li>
 <li>
 <p><code>data-selection-toggle</code>: this boolean flag would be set on the element which should handle toggles.This could be a checkbox or a div.</p>

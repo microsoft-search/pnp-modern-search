@@ -998,18 +998,18 @@
     <span class="cm">/**</span>
 <span class="cm">     * A sample string param</span>
 <span class="cm">     */</span>
-    <span class="nx">myStringParam?</span>: <span class="kt">IObjectParam</span><span class="p">;</span>
+    <span class="nx">myStringParam?</span>: <span class="kt">string</span><span class="p">;</span>
 
     <span class="cm">/***</span>
 <span class="cm">     * A sample object param</span>
 <span class="cm">     */</span>
-    <span class="nx">myObjectParam?</span>: <span class="kt">string</span><span class="p">;</span>
+    <span class="nx">myObjectParam?</span>: <span class="kt">IObjectParam</span><span class="p">;</span>
 <span class="p">}</span>
 
-<span class="kr">export</span> <span class="kr">interface</span> <span class="nx">ICustomComponenState</span> <span class="p">{</span>
+<span class="kr">export</span> <span class="kr">interface</span> <span class="nx">ICustomComponentState</span> <span class="p">{</span>
 <span class="p">}</span>
 
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">CustomComponent</span> <span class="kr">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span><span class="o">&lt;</span><span class="nx">ICustomComponentProps</span><span class="p">,</span> <span class="nx">ICustomComponenState</span><span class="o">&gt;</span> <span class="p">{</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">CustomComponent</span> <span class="kr">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span><span class="o">&lt;</span><span class="nx">ICustomComponentProps</span><span class="p">,</span> <span class="nx">ICustomComponentState</span><span class="o">&gt;</span> <span class="p">{</span>
 
     <span class="kr">public</span> <span class="nx">render() {</span>
 
