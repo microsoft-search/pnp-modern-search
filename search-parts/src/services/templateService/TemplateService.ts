@@ -310,7 +310,9 @@ export class TemplateService implements ITemplateService {
                                 slots: templateContext.slots,
                                 theme: templateContext.theme,
                                 context: templateContext.context,
-                                instanceId: templateContext.instanceId
+                                instanceId: templateContext.instanceId,
+                                properties: templateContext.properties,
+                                utils: templateContext.utils
                             }
                         }
                     });
