@@ -1,7 +1,7 @@
 define([], function() {
     return {
         Tokens: {
-            SelectTokenLabel: "Wähle token...",
+            SelectTokenLabel: "Wähle ein Token...",
             Context: {
                 ContextTokensGroupName: "Kontext Token",
                 SiteAbsoluteUrl: "Absolute Seiten URL",
@@ -12,12 +12,12 @@ define([], function() {
                 InputQueryText: "Eingabe Query Text"
             },
             Custom: {
-                CustomTokensGroupName: "Beliebiger Wert",
+                CustomTokensGroupName: "Benutzerdefinerter Wert",
                 CustomValuePlaceholder: "Wert eingeben...",
-                InvalidtokenFormatErrorMessage: "Bitte gebe den Token im unterstützten Format ein: {' und '}'. (ex: {Today})"
+                InvalidtokenFormatErrorMessage: "Bitte gebe den Token im unterstützten Format ein: {' und '}'. (z.B.: {Today})"
             },
             Date: {
-                DateTokensGroupName: "Datum Token",
+                DateTokensGroupName: "Datums Token",
                 Today: "Heute",
                 Yesterday: "Gestern",
                 Tomorrow: "Morgen",
@@ -36,7 +36,7 @@ define([], function() {
                 UserName: "Benutzer Name",
                 Me: "Ich",
                 UserDepartment: "Benutzer Abteilung",
-                UserCustom: "Benutzer angepasste Eigenschaft"
+                UserCustom: "Benutzerdefinerte Eigenschaft"
             }
         },
         General: {
@@ -44,9 +44,9 @@ define([], function() {
             OffTextLabel: "Aus",
             StaticArrayFieldName: "Array ähnliches Feld",
             About: "Über",
-            Authors: "Author(en)",
+            Authors: "Autor(en)",
             Version: "Version",
-            InstanceId: "Web Part Instanz ID",
+            InstanceId: "Web Part Instanz-ID",
             Resources: {
                 GroupName: "Ressourcen",
                 Documentation: "Dokumentation",
@@ -59,7 +59,7 @@ define([], function() {
                 InvalidLayoutInstance: "Das ausgewählte Layout '{0}' implementiert die abstrakte Klasse 'BaseLayout' nicht korrekt. Es fehlen einige Methoden.",
                 DefaultExtensibilityLibraryName: "Standard-Erweiterungsbibliothek",
                 InvalidProviderInstance: "Der ausgewählte Vorschlagsprovider '{0}' implementiert die abstrakte Klasse 'BaseSuggestionProvider' nicht korrekt. Es fehlen einige Methoden.",
-                ProviderDefinitionNotFound: "Der Anbieter von benutzerdefinierten Vorschlägen mit dem Schlüssel '{0}' wurde nicht gefunden. Stellen Sie sicher, dass die Lösung korrekt für den App-Katalog bereitgestellt und die Manifest-ID für dieses Webpart registriert ist.",
+                ProviderDefinitionNotFound: "Der benutzerdefinierte Vorschlagsprovider mit dem Schlüssel '{0}' wurde nicht gefunden. Stellen Sie sicher, dass die Lösung korrekt für den App-Katalog bereitgestellt und die Manifest-ID für dieses Webpart registriert ist.",
             },
             DateFromLabel: "Von",
             DateTolabel: "Bis",
@@ -80,7 +80,7 @@ define([], function() {
             DateIntervalStrings: {
                 AnyTime: "Beliebige Zeit",
                 PastDay: "Von den letzten 24 Stunden bis zur letzten Woche",
-                PastWeek: "Von letzter Woche bis letzter Monat",
+                PastWeek: "Von letzter Woche bis letzten Monat",
                 PastMonth: "Vom letzten Monat bis zu den letzten 3 Monaten",
                 Past3Months: "Von den letzten 3 Monaten bis zum letzten Jahr",
                 PastYear: "Aus dem vergangenen Jahr",
@@ -89,7 +89,12 @@ define([], function() {
             SameTabOpenBehavior: "Die aktuelle Registerkarte verwenden",
             NewTabOpenBehavior: "In einer neuen Registerkarte öffnen",
             PageOpenBehaviorLabel: "Öffnungsverhalten",
-            EmptyFieldErrorMessage: "Dieses Feld darf nicht leer bleiben."
+            EmptyFieldErrorMessage: "Dieses Feld darf nicht leer bleiben.",
+            TagPickerStrings: {
+                NoResultsSearchMessage: "Keine Ergebnisse gefunden",
+                SearchPlaceholder: "Suche einen Wert..."
+            },
+            CurrentVerticalNotSelectedMessage: "Das derzeit ausgewählte Vertikal passt nicht zu den zu diesem Web Part ({0}) zugeordneten Vertikalen. Es wird im Anzeige Modus als leer angezeigt."            
         },
         DataSources: {
             SharePointSearch: {
@@ -98,26 +103,27 @@ define([], function() {
                 QueryTextFieldLabel: "Query Text",
                 QueryTextFieldInfoMessage: "Verwenden Sie die Registerkarte <strong>Verfügbare Verbindungen</strong> für die Konfiguration des Webparts, um entweder einen statischen Wert oder einen Wert aus einer dynamischen Komponente auf der Seite wie einem Suchfeld anzugeben",
                 QueryTemplateFieldLabel: "Query Vorlage",
-                QueryTemplatePlaceHolderText: "ex: Path:{Seite}",
+                QueryTemplatePlaceHolderText: "z.B.: Path:{Site}",
                 QueryTemplateFieldDescription: "Die Vorlage für die Suchanfrage. Sie können auch {<Tokens>} verwenden, um eine dynamische Abfrage zu erstellen.",
-                ResultSourceIdLabel: "ID der Ergebnisquelle",
-                ResultSourceIdDescription: "Verwenden Sie eine standardmäßige SharePoint-Ergebnisquellen-ID oder geben Sie Ihren eigenen GUID-Wert ein und drücken Sie zum Speichern die Eingabetaste.",
-                InvalidResultSourceIdMessage: "Der angegebene Wert ist keine gültige GUID",
-                EnableQueryRulesLabel: "Abfrageregeln aktivieren",
-                IncludeOneDriveResultsLabel: "OneDrive for Business-Ergebnisse einbeziehen",
+                ResultSourceIdLabel: "ID der Ergebnisquelle / Scope|Name",
+                ResultSourceIdDescription: "Verwenden Sie eine standardmäßige SharePoint-Ergebnisquellen-ID, geben Sie Ihren eigenen GUID-Wert ein oder den SCOPE und NAMEN der Quelle getrennt durch '|' (z.B.: SPSite|News). Erlaubte Scopes sind [SPSiteSubscription, SPSite, SPWeb]. Drücken Sie zum Speichern die [Eingabetaste].",
+                InvalidResultSourceIdMessage: "Der angegebene Wert ist keine gültige GUID oder nicht als SCOPE|NAME formattiert.",
+                EnableQueryRulesLabel: "Abfrageregeln aktivieren",                
                 RefinementFilters: "Verfeinerungsfilter",
-                RefinementFiltersDescription: "Erste Verfeinerungsfilter, die auf die Abfrage angewendet werden sollen. Diese werden nicht in den ausgewählten Filtern angezeigt. Verwenden Sie für String-Ausdrücke doppelte Anführungszeichen (\") anstelle von einfachen Anführungszeichen (').",
+                RefinementFiltersDescription: "Initiale Verfeinerungsfilter, die auf die Abfrage angewendet werden sollen. Diese werden nicht in den ausgewählten Filtern angezeigt. Verwenden Sie für String-Ausdrücke doppelte Anführungszeichen (\") anstelle von einfachen Anführungszeichen (').",
                 EnableLocalizationLabel: "Lokalisierung einschalten",
                 EnableLocalizationOnLabel: "An",
                 EnableLocalizationOffLabel: "Aus",
                 QueryCultureLabel: "Sprache der Suchanfrage",
-                QueryCultureUseUiLanguageLabel: "Schnittstellensprache verwenden",
+                QueryCultureUseUiLanguageLabel: "Sprache der Benutzeroberfläche verwenden",
                 SelectedPropertiesFieldLabel: "Ausgewählte Eigenschaften",
                 SelectedPropertiesFieldDescription: "Gibt die Eigenschaften an, die aus den Suchergebnissen abgerufen werden sollen.",
                 SelectedPropertiesPlaceholderLabel: "Eigenschaften auswählen",
+                HitHighlightedPropertiesFieldLabel: "Hervorgehobene Eigenschaften",
+                HitHighlightedPropertiesFieldDescription: "Liste der verwalteten Eigenschaften zum hervorheben (i.e. Department,UserName).",
                 TermNotFound: "(Begriff mit ID '{0}' nicht gefunden)",
                 ApplyQueryTemplateBtnText: "Übernehmen",
-                EnableAudienceTargetingTglLabel: "Zielgruppenansprache ermöglichen"
+                EnableAudienceTargetingTglLabel: "Zielgruppen Adressierung aktivieren"
             },
             MicrosoftSearch: {
                 QueryTextFieldLabel: "Abfragetext",
@@ -131,12 +137,19 @@ define([], function() {
                 EnableTopResultsLabel: "Top-Ergebnisse aktivieren",
                 ContentSourcesFieldLabel: "Inhaltsquellen",
                 ContentSourcesFieldDescriptionLabel: "IDs von Verbindungen, die im Verwaltungsportal von Microsoft Search Connectors definiert sind.",
-                ContentSourcesFieldPlaceholderLabel: "Bspw.: 'MeineAngepassteVerbindungsId'"
+                ContentSourcesFieldPlaceholderLabel: "Bspw.: 'MeineAngepassteVerbindungsId'",
+                EnableSuggestionLabel: "Rechtschreibevorschläge aktivieren",
+                EnableModificationLabel: "Rechtschreibemodifikationen aktivieren",
+                QueryTemplateFieldLabel: "Query Vorlage",
+                QueryTemplatePlaceHolderText: "z.B.: {searchTerms} IsDocument:true",
+                QueryTemplateFieldDescription: "Die Suchvorlage. Es können auch {<tokens>} und KQL für die Erstellung einer dynamischen Query benutzt werden.",
+                ApplyQueryTemplateBtnText: "Anwenden",
+                UseBetaEndpoint: "Benutze den Beta-Endpunkt"
             },
             SearchCommon: {
                 Sort: {
                     SortPropertyPaneFieldLabel: "Sortierreihenfolge",
-                    SortListDescription: "Geben Sie die anfängliche Sortierreihenfolge für die Suchergebnisse an. Sie können entweder ein Feld aus der Dropdown-Liste auswählen (nur wenn die Daten der Datenquelle bereits abgerufen wurden) oder einen eigenen Wert eingeben (drücken Sie 'Enter', um Ihre Eingabe zu speichern).",
+                    SortListDescription: "Geben Sie die initiale Sortierreihenfolge für die Suchergebnisse an. Sie können entweder ein Feld aus der Dropdown-Liste auswählen (nur wenn die Daten der Datenquelle bereits abgerufen wurden) oder einen eigenen Wert eingeben (drücken Sie 'Enter', um Ihre Eingabe zu speichern).",
                     SortDirectionAscendingLabel: "Aufsteigend",
                     SortDirectionDescendingLabel: "Absteigend",
                     SortErrorMessage: "Ungültige Sucheigenschaft (Prüfen Sie, ob die verwaltete Eigenschaft sortierbar ist).",
@@ -166,7 +179,7 @@ define([], function() {
                 Name: "Debug"
             },
             Custom: {
-                Name: "Angepasst"
+                Name: "Benutzerdefiniert"
             },
             SimpleList: {
                 Name: "Liste",
@@ -216,7 +229,7 @@ define([], function() {
                     PreviewUrl: "Vorschau Url",
                     Url: "Url",
                     Date: "Datum",
-                    Author: "Author",
+                    Author: "Autor",
                     ProfileImage: "Profil Bild Url",
                     FileExtension: "Dateiendung",
                     IsContainer: "Ist-Ordner"
@@ -224,7 +237,7 @@ define([], function() {
                 ResetFieldsBtnLabel: "Felder auf Standardwerte zurücksetzen"
             },
             Slider: {
-                Name: "Schieberegler",
+                Name: "Slideshow",
                 SliderAutoPlay: "Automatische Wiedergabe",
                 SliderAutoPlayDuration: "Automatische Wiedergabe Dauer (in Sekunden)",
                 SliderPauseAutoPlayOnHover: "Pause beim Hovern",
@@ -236,7 +249,7 @@ define([], function() {
             },
             People: {
                 Name: "People",
-                ManagePeopleFieldsLabel: "Manage people fields",
+                ManagePeopleFieldsLabel: "Personenfelder verwalten",
                 ManagePeopleFieldsPanelDescriptionLabel: "Hier können Sie jeden Feldwert mit den entsprechenden Persona-Platzhaltern abbilden. Sie können entweder den Wert des Feldes der Datenquelle direkt ohne Transformation verwenden oder einen Handlebar-Ausdruck im Wertfeld verwenden.",
                 PlaceholderNameFieldLabel: "Name",
                 PlaceholderValueFieldLabel: "Wert",
@@ -293,7 +306,9 @@ define([], function() {
         },
         PropertyPane: {
             ConnectionsPage: {
-                DataConnectionsGroupName: "Verfügbare Verbindungen"
+                DataConnectionsGroupName: "Verfügbare Verbindungen",
+                UseDataVerticalsWebPartLabel: "Verbinde ein Vertikal Web Part.",
+                UseDataVerticalsFromComponentLabel: "Benutze Vertikale von dieser Komponente."
             },
             InformationPage: {
                 Extensibility: {
@@ -305,16 +320,20 @@ define([], function() {
                         Id: "Manifest GUID",
                         Enabled: "Eingeschalten/Ausgeschalten"
                     }
-                }
+                },
+                ImportExport: "Einstellungen importieren/exportieren"
             }
         },
         Filters: {
-            ApplyAllFiltersButtonLabel: "Übernehmen",
+            ApplyAllFiltersButtonLabel: "Anwenden",
             ClearAllFiltersButtonLabel: "Zurücksetzen",
             FilterNoValuesMessage: "Keine Werte für diesen Filter",
             OrOperator: "OR",
             AndOperator: "AND",
-            ComboBoxPlaceHolder: "Wert auswählen"
+            ComboBoxPlaceHolder: "Wert auswählen",
+            UseAndOperatorValues: "Benutze ein AND Operator zwischen den Werten.",
+            UseOrOperatorValues: "Benutze ein OR Operator zwischen den Werten.",
+            UseValuesOperators: "Wähle einen Operator der zwischen den Filter Werten angewandt werden soll."
         },
         SuggestionProviders: {
             SharePointStatic: {
