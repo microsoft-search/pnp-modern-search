@@ -89,7 +89,12 @@ define([], function () {
         SameTabOpenBehavior: "Bruk den aktuelle fanen",
         NewTabOpenBehavior: "Åpne i ny fane",
         PageOpenBehaviorLabel: "Sideåpningsmodus",
-        EmptyFieldErrorMessage: "Dette feltet kan ikke være tomt"
+        EmptyFieldErrorMessage: "Dette feltet kan ikke være tomt",
+        TagPickerStrings: {
+          NoResultsSearchMessage: "Ingen resultater",
+          SearchPlaceholder: "Søk etter en verdi..."
+        },
+        CurrentVerticalNotSelectedMessage: "Den gjeldende valgte vertikalen samsvarer ikke med de som er knyttet til denne nettdelen ({0}). Det vil forbli tomt i visningsmodus."
       },
       DataSources: {
         SharePointSearch: {
@@ -100,11 +105,10 @@ define([], function () {
           QueryTemplateFieldLabel: "Søkemal",
           QueryTemplatePlaceHolderText: "f.eks.: Path:{Site}",
           QueryTemplateFieldDescription: "Søkemalen. Du kan også bruke {<tokens>} for å lage et dynamisk søk.",
-          ResultSourceIdLabel: "ID for resultatetkilden",
-          ResultSourceIdDescription: "Bruk en standard SharePoint-ID i søkeresultatet, eller skriv inn din egen GUID-verdi och trykk 'Enter' for å lagre.",
-          InvalidResultSourceIdMessage: "Den oppgitte verdien er ikke en gyldig GUID",
+          ResultSourceIdLabel: "Søkekildens Id / Scope|Navn",
+          ResultSourceIdDescription: "Velg en standard kilde, skriv en brukerdefiner kilde-GUID eller SCOPE og NAVN på kilden adskilt av | (dvs.: SPSite|Nyheder). Gyldige scopes er [SPSiteSubscription, SPSite, SPWeb]. Trykk [Enter] for å lagre.",
+          InvalidResultSourceIdMessage: "Verdien er ikke en gyldig GUID eller formatert som SCOPE|NAVN",
           EnableQueryRulesLabel: "Aktiver søkeregler",
-          IncludeOneDriveResultsLabel: "Inkluder resultater fra OneDrive for Business",
           RefinementFilters: "Søkefilter",
           RefinementFiltersDescription: "Filter som legges på spørringen. Disse dukker ikke opp i de valgte filterene. For tekst-strenger: bruk bruk (\") istedenfor (').",
           EnableLocalizationLabel: "Aktiver lokalisering",
@@ -115,6 +119,8 @@ define([], function () {
           SelectedPropertiesFieldLabel: "Valgte egenskaper",
           SelectedPropertiesFieldDescription: "Angi egenskapene som skal hentes søkeresultatene.",
           SelectedPropertiesPlaceholderLabel: "Velg egenskaper",
+          HitHighlightedPropertiesFieldLabel: "Treffuthevede egenskaper",
+          HitHighlightedPropertiesFieldDescription: "Angi listen over forvaltede egenskaper som skal utheves etter treff.",
           TermNotFound: "(Term med ID '{0}' ble ikke funnet)",
           ApplyQueryTemplateBtnText: "Lagre",
           EnableAudienceTargetingTglLabel: "Aktiver målgruppetilpasning"
@@ -131,7 +137,14 @@ define([], function () {
           EnableTopResultsLabel: "Aktiver toppresultater",
           ContentSourcesFieldLabel: "Innholdskilder",
           ContentSourcesFieldDescriptionLabel: "Viser ID for de tilkoblinger som er definert i admin-portalen for Microsoft Search Connectors",
-          ContentSourcesFieldPlaceholderLabel: "f.eks.: 'MyCustomConnectorId'"
+          ContentSourcesFieldPlaceholderLabel: "f.eks.: 'MyCustomConnectorId'",
+          EnableSuggestionLabel: "Aktiver staveforslag",
+          EnableModificationLabel: "Aktiver stavemåtendringer",
+          QueryTemplateFieldLabel: "Forespørselsmal",
+          QueryTemplatePlaceHolderText: "ex: {searchTerms} IsDocument:true",
+          QueryTemplateFieldDescription: "Søkemalen. Du kan også bruke {<tokens>} og KQL for å bygge en dynamisk spørring.",
+          ApplyQueryTemplateBtnText: "Søke om",
+          UseBetaEndpoint: "Bruk betaendepunkt"
         },
         SearchCommon: {
           Sort: {
@@ -293,7 +306,9 @@ define([], function () {
       },
       PropertyPane: {
         ConnectionsPage: {
-          DataConnectionsGroupName: "Tilgjengelige tilkoblinger"
+          DataConnectionsGroupName: "Tilgjengelige tilkoblinger",
+          UseDataVerticalsWebPartLabel: "Koble til en vertikal webdel",
+          UseDataVerticalsFromComponentLabel: "Bruk vertikaler fra denne komponenten"
         },
         InformationPage: {
           Extensibility: {
@@ -305,7 +320,8 @@ define([], function () {
               Id: "Manifest-GUID",
               Enabled: "Aktivert/Deaktivert"
             }
-          }
+          },
+          ImportExport: "Importer/eksporter innstillinger"
         }
       },
       Filters: {
@@ -314,7 +330,10 @@ define([], function () {
         FilterNoValuesMessage: "Ingen verdier for dette filteret",
         OrOperator: "ELLER",
         AndOperator: "OG",
-        ComboBoxPlaceHolder: "Velg verdi"
+        ComboBoxPlaceHolder: "Velg verdi",
+        UseAndOperatorValues: "Use an AND operator between values",
+        UseOrOperatorValues: "Use an OR operator between values",
+        UseValuesOperators: "Select operator to use between this filter values"
       },
       SuggestionProviders: {
         SharePointStatic: {

@@ -6,6 +6,7 @@ import { DateHelper } from "../../helpers/DateHelper";
 import { Constants } from "../../common/Constants";
 import { ObjectHelper } from "../../helpers/ObjectHelper";
 import { StringHelper } from "../../helpers/StringHelper";
+import { isEmpty, uniq } from "@microsoft/sp-lodash-subset";
 
 const TokenService_ServiceKey = 'ModernSearchTokenService';
 
@@ -17,9 +18,19 @@ export enum BuiltinTokenNames {
     inputQueryText = 'inputQueryText',
 
     /**
+     * Similar as 'inputQueryText' to match the SharePoint search token
+     */
+    searchTerms = 'searchTerms',
+
+    /**
      * The current selected filters if any
      */
-    filters = 'filters'
+    filters = 'filters',
+
+    /**
+     * The current selected verticals if any
+     */
+    verticals = 'verticals'
 }
 
 export class TokenService implements ITokenService {
@@ -59,7 +70,9 @@ export class TokenService implements ITokenService {
      */
     private tokenValuesList: { [key: string]: any } = {
         [BuiltinTokenNames.inputQueryText]: undefined,
-        [BuiltinTokenNames.filters]: {}
+        [BuiltinTokenNames.searchTerms]: undefined,
+        [BuiltinTokenNames.filters]: undefined,
+        [BuiltinTokenNames.verticals]: undefined
     };
 
     /**
@@ -94,6 +107,10 @@ export class TokenService implements ITokenService {
         } else {
             Log.warn(TokenService_ServiceKey, `The token '${token}' not allowed.`);
         }
+    }
+
+    public getTokenValue(token: string): any {
+        return this.tokenValuesList[token];
     }
 
     public async resolveTokens(inputString: string): Promise<string> {
@@ -148,8 +165,8 @@ export class TokenService implements ITokenService {
             // The 'OR/AND' operator should be called after all tokens are processed (works with comma delimited values potentially coming from resolved)
             inputString = this.replaceAndOrOperator(inputString);                
 
-            // Replace manually escaped characters
-            inputString = inputString.replace(/\\(.)/gi, '$1');
+            // Replace manually escaped curly braces
+            inputString = inputString.replace(/\\({|})/gi, '$1');
         }
 
         return inputString;
@@ -275,7 +292,7 @@ export class TokenService implements ITokenService {
                     if (Array.isArray(item[columnName]) && item[columnName].length > 0) {
 
                         // By convention, multi values should be separated by a comma, which is the default array delimiter for the array toString() method
-                        // This value could be processed in the replaceOrOperator() method so we need to keep the same delimiter convention
+                        // This value could be processed in the replaceAndOrOperator() method so we need to keep the same delimiter convention
                         itemProp = item[columnName].map(taxonomyValue => {
                             return taxonomyValue[labelOrTermId]; // Use the 'TermId' or 'Label' properties
                         }).join(',');
@@ -342,7 +359,8 @@ export class TokenService implements ITokenService {
                     this.userProperties = await this.getUserProfileProperties();
                 }
 
-                propertyValue = this.userProperties[userProperty] ? this.userProperties[userProperty] : '';
+                // Need to enclose with quotes because of dash separated values (ex: "sps-interests")
+                propertyValue = ObjectHelper.byPath(this.userProperties, `"${userProperty}"`);
 
             } else {
 
@@ -361,10 +379,15 @@ export class TokenService implements ITokenService {
                 }
             }
 
-            const tokenExprToReplace = new RegExp(matches[0], 'gi');
+            // If value not found in the fetched properties, let the value untouched to be resolved server side by a query variable
+            // Ex: {User.Audiences} or {User.PreferredDisplayLanguage}
+            if (propertyValue !== undefined) {
 
-            // Replace the match with the property value
-            inputString = inputString.replace(tokenExprToReplace, propertyValue);
+                const tokenExprToReplace = new RegExp(matches[0], 'gi');
+
+                // Replace the match with the property value
+                inputString = inputString.replace(tokenExprToReplace, propertyValue);
+            }
 
             // Look for other tokens
             matches = userTokenRegExp.exec(inputString);
@@ -424,11 +447,12 @@ export class TokenService implements ITokenService {
         let matches = webRegExp.exec(inputString);
 
         if (matches != null) {
-            const queryParameters = new UrlQueryParameterCollection(window.location.href);
+            const url = new URL(window.location.href);
+            const queryParameters = new URLSearchParams(url.search);
 
             while (matches !== null) {
                 const qsProp = matches[1];
-                const itemProp = decodeURIComponent(queryParameters.getValue(qsProp) || "");
+                const itemProp = decodeURIComponent(queryParameters.get(qsProp) || "");
                 if (itemProp) {
                     modifiedString = modifiedString.replace(matches[0], itemProp);
                 }
@@ -477,7 +501,15 @@ export class TokenService implements ITokenService {
 
             while (matches !== null) {
                 const siteProp = matches[1];
-                inputString = inputString.replace(new RegExp(matches[0], "gi"), this.pageContext.site ? ObjectHelper.byPath(this.pageContext.site, siteProp) : '');
+
+                // Ensure the property is in the page context first. 
+                // If not, let the value untouched as it could be a query variable instead processed server side (ex: {Site.URL}
+                const sitePropertyValue = ObjectHelper.byPath(this.pageContext.site, siteProp);
+
+                if (sitePropertyValue) {
+                    inputString = inputString.replace(new RegExp(matches[0], "gi"), this.pageContext.site ? sitePropertyValue : '');
+                }
+
                 matches = siteRegExp.exec(inputString);
             }
         }
@@ -595,13 +627,20 @@ export class TokenService implements ITokenService {
                 if (!/\{(?:User)\.(.*?)\}/gi.test(tokenValue)) {
                     const allValues = tokenValue.split(','); // Works with taxonomy multi values (TermID, Label) + multi choices fields + {filters.<value>.valueAsText} token. By convention, all multi values for this operator should be sparated by a comma
 
-                    // If the token value contains a whitespace or is an OData query, we enclose the value with quotes
                     if (allValues.length > 0) {
-                        allValues.forEach(value => {
-                            conditions.push(`(${property}${operator}${/\s/g.test(value) ? `${quotes}${value}${quotes}` : value})`);
+                        // Remove duplicates before processing
+                        uniq(allValues).forEach(value => {
+
+                            if (!isEmpty(value)) {
+                                // If the token value contains a whitespace, we enclose the value with quotes
+                                conditions.push(`(${property}${operator}${/\s/g.test(value) ? `${quotes}${value}${quotes}` : value})`);
+                            }
                         });
                     } else {
-                        conditions.push(`(${property}${operator}${/\s/g.test(tokenValue) ? `${quotes}${tokenValue}${quotes}` : tokenValue})`);
+
+                        if (!isEmpty(tokenValue)) {
+                            conditions.push(`(${property}${operator}${/\s/g.test(tokenValue) ? `${quotes}${tokenValue}${quotes}` : tokenValue})`);
+                        }
                     }
 
                     let condition = `${conditions.join(` ${orAndOperator} `)}`;

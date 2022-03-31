@@ -1,6 +1,11 @@
 export interface INonReactiveTextFieldProps {
 
     /**
+     * Unique key for the component
+     */
+    key?: string;
+
+    /**
      * The default value to display
      */
     defaultValue?: string;

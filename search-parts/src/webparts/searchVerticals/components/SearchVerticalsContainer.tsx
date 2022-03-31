@@ -41,23 +41,27 @@ export default class SearchVerticalsContainer extends React.Component<ISearchVer
     const renderPivotItems = this.props.verticals.map(vertical => {
 
       let pivotItemProps: IPivotItemProps = {};
+      let renderLinkIcon: JSX.Element = null;
 
       if (vertical.iconName && vertical.iconName.trim() !== "") {
         pivotItemProps.itemIcon = vertical.iconName;
       }
 
+      if (vertical.showLinkIcon) {
+        renderLinkIcon = vertical.openBehavior === PageOpenBehavior.NewTab ?
+                        <Icon styles={{ root: { fontSize: 10, paddingLeft: 3 }}} iconName='NavigateExternalInline'></Icon>:
+                        <Icon styles={{ root: { fontSize: 10, paddingLeft: 3 }}} iconName='Link'></Icon>;
+      }
+
       return  <PivotItem
                 headerText={vertical.tabName}
-                itemKey={vertical.key}
+                itemKey={vertical.key}                
                 onRenderItemLink={(props, defaultRender) => {
 
                   if (vertical.isLink) {
                     return  <div className={styles.isLink}>
                               {defaultRender(props)}
-                              {vertical.openBehavior === PageOpenBehavior.NewTab ?
-                                <Icon styles={{ root: { fontSize: 10, paddingLeft: 3 }}} iconName='NavigateExternalInline'></Icon>:
-                                <Icon styles={{ root: { fontSize: 10, paddingLeft: 3 }}} iconName='Link'></Icon>
-                              }      
+                              {renderLinkIcon}
                             </div>;
                   } else {
                     return defaultRender(props);
@@ -69,7 +73,8 @@ export default class SearchVerticalsContainer extends React.Component<ISearchVer
 
     return  <>
               {renderTitle}
-              <Pivot className={styles.dataVerticals}
+              <Pivot                
+                className={styles.dataVerticals}
                 onLinkClick={this.onVerticalSelected}
                 selectedKey={this.state.selectedKey}
                 theme={this.props.themeVariant as ITheme}>
@@ -106,7 +111,16 @@ export default class SearchVerticalsContainer extends React.Component<ISearchVer
 
   public componentDidMount() {
 
-    const defaultSelectedKey = this.props.verticals.length > 0 ? this.props.verticals[0].key :undefined;
+    let defaultSelectedKey = undefined;
+
+    if (this.props.verticals.length > 0) {
+      if (this.props.defaultSelectedKey) {
+        defaultSelectedKey = this.props.defaultSelectedKey;
+      } else {
+        // By default, we select the first one
+        defaultSelectedKey = this.props.verticals[0].key;
+      }
+    }
 
     this.setState({
       selectedKey: defaultSelectedKey

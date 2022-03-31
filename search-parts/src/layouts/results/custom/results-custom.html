@@ -2,8 +2,8 @@
 
     <style>
 
-        /* Insert your CSS overrides here */
-        .example-themePrimary a {
+       /* Insert your CSS overrides here */
+       .example-themePrimary a {
             color: {{@root.theme.palette.themePrimary}};
         }
 
@@ -12,14 +12,16 @@
             height: 16px;
         }
 
-        ul {
+        ul.template--custom {
             list-style: none;
+            padding-left: 5px;
         }
 
-        ul li {
+        ul.template--custom li {
             display: flex;
             padding: 8px;
         }
+        
         
     </style>
 
@@ -44,13 +46,23 @@
         <ul class="template--custom">
             {{#each data.items as |item|}}
 
-                {{#> resultTypes item=item}}
-                    {{!-- The block below will be used as default item template if no result types matched --}}
-                    <li>
-                        <pnp-iconfile class="icon" data-extension="{{slot item @root.slots.FileType}}" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-iconfile>
-                        <span class="example-themePrimary"><a href="{{slot item @root.slots.Path}}">{{slot item @root.slots.Title}}</a></span>
-                    </li>
-                {{/resultTypes}}
+                <pnp-select 
+                    data-enabled="{{@root.properties.itemSelectionProps.allowItemSelection}}" 
+                    data-index="{{@index}}" 
+                    data-is-selected="{{isItemSelected @root.selectedKeys @index}}">
+                
+                    <template id="content">
+
+                        {{#> resultTypes item=item}}
+                            {{!-- The block below will be used as default item template if no result types matched --}}
+                            <li>
+                                <pnp-iconfile class="icon" data-extension="{{slot item @root.slots.FileType}}" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-iconfile>
+                                <span class="example-themePrimary"><a href="{{slot item @root.slots.Path}}">{{slot item @root.slots.Title}}</a></span>
+                            </li>
+                        {{/resultTypes}}
+                    </template>
+
+                </pnp-select>
 
             {{/each}}
         </ul>

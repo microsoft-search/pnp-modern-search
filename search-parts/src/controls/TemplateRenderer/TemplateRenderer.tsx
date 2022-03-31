@@ -6,6 +6,7 @@ import { isEqual } from "@microsoft/sp-lodash-subset";
 import * as DOMPurify from 'dompurify';
 import { DomPurifyHelper } from '../../helpers/DomPurifyHelper';
 import { TestConstants } from '../../common/Constants';
+import { IDataResultsTemplateContext } from '../../models/common/ITemplateContext';
 
 // Need a root class to do not conflict with PnP Modern Search Styles.
 const rootCssClassName = "pnp-modern-search";
@@ -53,7 +54,13 @@ export class TemplateRenderer extends React.Component<ITemplateRendererProps, IT
 
     public async componentDidUpdate(prevProps: ITemplateRendererProps) {
 
-        if (!isEqual(prevProps, this.props)) {
+        if (!isEqual(prevProps.templateContent, this.props.templateContent) || 
+            !isEqual((prevProps.templateContext as IDataResultsTemplateContext).data, (this.props.templateContext as IDataResultsTemplateContext).data) ||
+            !isEqual(prevProps.templateContext.filters, this.props.templateContext.filters) ||
+            !isEqual(prevProps.templateContext.properties, this.props.templateContext.properties) || 
+            !isEqual(prevProps.templateContext.theme, this.props.templateContext.theme) ||
+            !isEqual((prevProps.templateContext as IDataResultsTemplateContext).selectedKeys, (this.props.templateContext as IDataResultsTemplateContext).selectedKeys)) {
+            
             await this.updateTemplate(this.props);
         }
     }

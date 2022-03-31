@@ -89,7 +89,12 @@ define([], function() {
             SameTabOpenBehavior: "Gebruik de huidige tab",
             NewTabOpenBehavior: "Open in een nieuwe tab",
             PageOpenBehaviorLabel: "Gedrag voor openen",
-            EmptyFieldErrorMessage: "Dit veld mag niet leeg zijn"
+            EmptyFieldErrorMessage: "Dit veld mag niet leeg zijn",
+            TagPickerStrings: {
+                NoResultsSearchMessage: "Geen resultaten gevonden",
+                SearchPlaceholder: "Zoek een waarde..."
+            },
+            CurrentVerticalNotSelectedMessage: "De huidige geselecteerde branche komt niet overeen met die welke zijn gekoppeld aan dit webonderdeel ({0}). Het blijft leeg in de weergavemodus."
         },
         DataSources: {
             SharePointSearch: {
@@ -100,11 +105,10 @@ define([], function() {
                 QueryTemplateFieldLabel: "Zoekopdracht template",
                 QueryTemplatePlaceHolderText: "bijv: Path:{Site}",
                 QueryTemplateFieldDescription: "Het zoekopdracht template. Je kan ook {<tokens>} gebruiken om een dynamische zoekopdracht op te bouwen.",
-                ResultSourceIdLabel: "Resultaatbron ID",
-                ResultSourceIdDescription: "Gebruik een standaard resultaatbron ID of geef je eigen GUID waarde in en druk op 'Enter' om op te slaan.",
-                InvalidResultSourceIdMessage: "De opgegeven waarde is geen valide GUID",
+                ResultSourceIdLabel: "Resultaatbron Id / Niveau|Naam",
+                ResultSourceIdDescription: "Selecteer een ingebouwde bron, typ een aangepaste bron-GUID of NIVEAU en NAAM van de bron gescheiden door | (d.w.z. SPSite|Nieuws). Geldige niveaus zijn [SPSiteSubscription, SPSite, SPWeb]. Druk op [Enter] om op te slaan.",
+                InvalidResultSourceIdMessage: "De opgegeven waarde is geen valide GUID of is opgemaakt als NIVEAU|NAAM",
                 EnableQueryRulesLabel: "Zoekregels inschakelen",
-                IncludeOneDriveResultsLabel: "Resultaten van OneDrive voor Bedrijven opnemen",
                 RefinementFilters: "Refinement filters",
                 RefinementFiltersDescription: "Initiële verfijningen om toe te passen op de zoekopdracht. Deze verschijnen niet in de geselecteerde filters. Voor tekenreeksuitdrukkingen gebruik je dubbele aanhalingstekens (\") in plaats van enkele (').",
                 EnableLocalizationLabel: "Lokalisatie inschakelen",
@@ -115,6 +119,8 @@ define([], function() {
                 SelectedPropertiesFieldLabel: "Geselecteerde eigenschappen",
                 SelectedPropertiesFieldDescription: "Specificeert de uit de zoekresultaten op te halen eigenschappen.",
                 SelectedPropertiesPlaceholderLabel: "Selecteer eigenschappen",
+                HitHighlightedPropertiesFieldLabel: "Hit-gemarkeerde eigenschappen",
+                HitHighlightedPropertiesFieldDescription: "De lijst van beheerde eigenschappen opgeven om markeren in te schakelen. ",
                 TermNotFound: "(Term met ID '{0}' niet gevonden)",
                 ApplyQueryTemplateBtnText: "Toepassen",
                 EnableAudienceTargetingTglLabel: "Schakel doelgroepen in"
@@ -131,7 +137,14 @@ define([], function() {
                 EnableTopResultsLabel: "Topresultaten inschakelen",
                 ContentSourcesFieldLabel: "Inhoudsbronnen",
                 ContentSourcesFieldDescriptionLabel: "IDs van verbingingen gedefinieerd in de Microsoft Search connectors administratie portaal.",
-                ContentSourcesFieldPlaceholderLabel: "bijv: 'MyCustomConnectorId'"
+                ContentSourcesFieldPlaceholderLabel: "bijv: 'MyCustomConnectorId'",
+                EnableSuggestionLabel: "Spellingsuggesties inschakelen",
+                EnableModificationLabel: "Spellingaanpassingen inschakelen",
+                QueryTemplateFieldLabel: "Query-modifier",
+                QueryTemplatePlaceHolderText: "ex: {searchTerms} IsDocument:true",
+                QueryTemplateFieldDescription: "De sjabloon voor zoekmodificatie. U kunt ook {<tokens>} en KQL gebruiken om een ​​dynamische query te maken. Alles is aaneengeschakeld naar de inputQueryText",
+                ApplyQueryTemplateBtnText: "Toepassen",
+                UseBetaEndpoint: "Bèta-eindpunt gebruiken"
             },
             SearchCommon: {
                 Sort: {
@@ -293,7 +306,9 @@ define([], function() {
         },
         PropertyPane: {
             ConnectionsPage: {
-                DataConnectionsGroupName: "Beschikbare verbindingen"
+                DataConnectionsGroupName: "Beschikbare verbindingen",
+                UseDataVerticalsWebPartLabel: "Verbinding maken met een verticaal webonderdeel",
+                UseDataVerticalsFromComponentLabel: "Gebruik verticalen van dit onderdeel"
             },
             InformationPage: {
                 Extensibility: {
@@ -305,7 +320,8 @@ define([], function() {
                         Id: "Manifest GUID",
                         Enabled: "Aan/Uit"
                     }
-                }
+                },
+                ImportExport: "Importeer/Exporteer instellingen"
             }
         },
         Filters: {
@@ -314,7 +330,10 @@ define([], function() {
             FilterNoValuesMessage: "Geen waarden voor deze filter",
             OrOperator: "OR",
             AndOperator: "AND",
-            ComboBoxPlaceHolder: "Selecteer waarde"
+            ComboBoxPlaceHolder: "Selecteer waarde",
+            UseAndOperatorValues: "Use an AND operator between values",
+            UseOrOperatorValues: "Use an OR operator between values",
+            UseValuesOperators: "Select operator to use between this filter values"
         },
         SuggestionProviders: {
             SharePointStatic: {

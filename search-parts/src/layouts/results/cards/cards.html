@@ -43,6 +43,10 @@
                         data-context="{{JSONstringify @root}}"
                         data-instance-id="{{@root.instanceId}}"
                         data-theme-variant="{{JSONstringify @root.theme}}"
+                        data-allow-item-selection="{{@root.properties.itemSelectionProps.allowItemSelection}}"
+                        data-item-key="{{@root.paging.currentPageNumber}}{{@index}}"                     
+                        data-selected-keys="{{JSONstringify @root.selectedKeys}}"
+                        data-index="{{@index}}"
                         >
                     </pnp-documentcard>
                 {{/resultTypes}}
