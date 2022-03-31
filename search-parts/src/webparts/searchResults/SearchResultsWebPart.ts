@@ -6,7 +6,7 @@ import { IWebPartPropertiesMetadata } from '@microsoft/sp-webpart-base';
 import * as webPartStrings from 'SearchResultsWebPartStrings';
 import * as commonStrings from 'CommonStrings';
 import { ISearchResultsContainerProps } from './components/ISearchResultsContainerProps';
-import { IDataSource, IDataSourceDefinition, IComponentDefinition, ILayoutDefinition, ILayout, IDataFilter, LayoutType, FilterType, FilterComparisonOperator, BaseDataSource, IDataFilterValue, IDataFilterResult, FilterConditionOperator, IDataVertical } from '@pnp/modern-search-extensibility';
+import { IDataSource, IDataSourceDefinition, IComponentDefinition, ILayoutDefinition, ILayout, IDataFilter, LayoutType, FilterType, FilterComparisonOperator, BaseDataSource, IDataFilterValue, IDataFilterResult, FilterConditionOperator, IDataVertical, ExtensibilityConstants, ISortInfo } from '@pnp/modern-search-extensibility';
 import {
     IPropertyPaneConfiguration,
     IPropertyPaneChoiceGroupOption,
@@ -35,7 +35,7 @@ import { ServiceScopeHelper } from '../../helpers/ServiceScopeHelper';
 import { cloneDeep, flatten, isEmpty, isEqual, uniq, uniqBy } from "@microsoft/sp-lodash-subset";
 import { AvailableComponents } from '../../components/AvailableComponents';
 import { DynamicProperty } from '@microsoft/sp-component-base';
-import { ITemplateSlot, IDataFilterToken, IDataFilterTokenValue, IDataContext, ITokenService } from '@pnp/modern-search-extensibility';
+import { ITemplateSlot, IDataFilterToken, IDataFilterTokenValue, IDataContext, ITokenService, SortFieldDirection } from '@pnp/modern-search-extensibility';
 import { ResultTypeOperator } from '../../models/common/IDataResultType';
 import { TokenService, BuiltinTokenNames } from '../../services/tokenService/TokenService';
 import { TaxonomyService } from '../../services/taxonomyService/TaxonomyService';
@@ -179,6 +179,12 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
      * The default template slots when the data source is instanciated for the first time
      */
     private _defaultTemplateSlots: ITemplateSlot[];
+
+    /**
+     * Sort related properties
+     */
+    private _currentSelectedSortFieldName: string = null;
+    private _currentSelectedSortDirection: SortFieldDirection = SortFieldDirection.Ascending;
 
     private _pushStateCallback = null;
 
@@ -452,6 +458,9 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         // Bind web component events
         this.bindPagingEvents();
+
+        // Bind worting events
+        this.bindSortingEvents();
 
         this._bindHashChange();
         this._handleQueryStringChange();
@@ -995,6 +1004,27 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     }
 
     /**
+     * Binds events fired from sorting web components
+     */
+    private bindSortingEvents() {
+
+        this.domElement.addEventListener(ExtensibilityConstants.EVENT_SORT_BY, ((ev: CustomEvent) => {
+
+        // We ensure the event if not propagated outside the component (i.e. other Web Part instances)
+        ev.stopImmediatePropagation();
+
+        const eventDetails: ISortInfo = ev.detail;
+
+        // These information comes from the SortWebComponent class
+        this._currentSelectedSortFieldName = eventDetails.sortFieldName;
+        this._currentSelectedSortDirection = eventDetails.sortFieldDirection;
+
+        this.render();
+    
+        }).bind(this));
+    }
+
+    /**
      * Initializes required Web Part properties
      */
     private initializeProperties() {
@@ -1423,7 +1453,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     private getLayoutTemplateOptions(): IPropertyPaneField<any>[] {
 
         if (this.layout && !this.errorMessage) {
-            return this.layout.getPropertyPaneFieldsConfiguration(this._currentDataResultsSourceData.availableFieldsFromResults);
+            const dataContext = this.getDataContext();
+            return this.layout.getPropertyPaneFieldsConfiguration(this._currentDataResultsSourceData.availableFieldsFromResults, dataContext);
         } else {
             return [];
         }
@@ -2210,7 +2241,12 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 selectedVertical: undefined
             },
             inputQueryText: inputQueryText,
-            queryStringParameters: UrlHelper.getQueryStringParams()
+            queryStringParameters: UrlHelper.getQueryStringParams(),
+            sorting: {
+                selectedSortableFields: this.dataSource.getSortableFields(),
+                selectedSortFieldName: this._currentSelectedSortFieldName,
+                selectedSortDirection: this._currentSelectedSortDirection
+            }
         };
 
         // Connected Search Results or SharePoint List Web Part
