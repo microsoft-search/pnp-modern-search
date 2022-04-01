@@ -76,10 +76,12 @@ const envCheck = build.subTask('environmentCheck', (gulp, config, done) => {
                 }
             });
 
-            // Exclude moment.js locale for performance purpose
-            generatedConfiguration.plugins.push(
-                new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
-            );
+            // Exclude moment.js locale for performance purpose during development
+            if (!config.production) {
+                generatedConfiguration.plugins.push(
+                    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
+                );
+            }
 
             if (config.production) {
                 const lastDirName = path.basename(__dirname);
