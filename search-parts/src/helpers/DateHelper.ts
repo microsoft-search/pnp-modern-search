@@ -32,10 +32,10 @@ export class DateHelper {
             let momentTwoLetterLanguageName = [
                 "af", "az", "be", "bg", "bm", "bo", "br", "bs", "ca", "cs", "cv",
                 "cy", "da", "dv", "el", "eo", "es-es", "et", "eu", "fa", "fi", "fil",
-                "fo", "fy", "ga", "gd", "gl", "gu", "he", "hi", "hr", "hu", "id", "is",
+                "fo", "fy", "fr-fr", "ga", "gd", "gl", "gu", "he", "hi", "hr", "hu", "id", "is",
                 "ja", "jv", "ka", "kk", "km", "kn", "ko", "ku", "ky", "lb", "lo", "lt",
                 "lv", "me", "mi", "mk", "ml", "mn", "mr", "mt", "my", "nb", "ne",
-                "nn", "pl", "ro", "ru", "sd", "se", "si", "sk", "sl", "sq",
+                "nn", "nl-nl", "pl", "ro", "ru", "sd", "se", "si", "sk", "sl", "sq",
                 "ss", "sv", "sw", "ta", "te", "tet", "tg", "th", "tk", "tlh",
                 "tr", "tzl", "uk", "ur", "vi", "yo"
             ];
