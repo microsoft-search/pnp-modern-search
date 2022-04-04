@@ -25,7 +25,7 @@
       "name": "Hosted workbench",
       "type": "chrome",
       "request": "launch",
-      "url": "https://collaborationcorner.sharepoint.com/teams/PnPIntranet/_layouts/workbench.aspx",
+      "url": "https://sonbaedev.sharepoint.com/sites/ThePerspective/_layouts/workbench.aspx",
       "webRoot": "${workspaceRoot}",
       "sourceMaps": true,
       "sourceMapPathOverrides": {

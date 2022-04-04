@@ -26,7 +26,7 @@ A layout template is always split into two distinct parts:
 
 - A `placeholder` part, containing the HTML markup to display as placeholder **while the data are getting fetched**. This part is optional.
 
-Both can use Handlebars and web components (Microsoft Graph Toolkit included). 
+Both can use Handlebars and web components (Microsoft Graph Toolkit included).
 
 ## Handlebars helpers
 
@@ -51,6 +51,7 @@ The following custom helpers are available in addition to the [handlebars-helper
 | `{{regex <expression> <string>}}` | Run a regular expression and return the match. Return `-` if not match. | `{{regex '\d+' 'digit 15 is a number'}}` will return `15`.
 | `{{getPageContext "<SPFx page property>"}}` | Retrieve a property from the SPFx context object. | `{{getPageContext "user.displayName"}}` or `{{getPageContext "cultureInfo.currentUICultureName"}}`
 | `{{getAttachments}}`| Return object structure for list item attachments. | `{{#getAttachments LinkOfficeChild}}<a href="{{url}}">{{index}} - {{fileName}}</href>{{/getAttachments}}`
+| `{{dayDiff <date1> <date2>}}`| Return the number of days between two dates, eg. show an icon for files created within the last 30 days. | `{{#compare (dayDiff (getDate Created 'YYYY-MMM-DD' ) (getDate timestamp 'YYYY-MMM-DD' )) "<=" 30 }} <img src='/SiteAssets/New.png' />{{/compare}}`
 
 
 > Need any other helper? Let us know [here](https://github.com/aequos-solutions/modern-search-results/issues)!
@@ -69,7 +70,7 @@ Inside an HTML template (or layout field), you can write your own CSS styles usi
         .example-themePrimary a {
             color: {{@root.theme.palette.themePrimary}};
         }
-        ...     
+        ...
     </style>
 
     <div class="template">
@@ -89,7 +90,7 @@ If you want to hide the error message you can add the following CSS in your cust
 
     <style>
         .pnpSearchResultsErrorMessage { display:none; }
-        ...      
+        ...
     </style>
 
     <div class="template">
@@ -153,15 +154,15 @@ The placeholder is only loaded during first data load. For subsequent requests, 
             align-items: center;
             padding: 8px;
         }
-            
+
     </style>
 
     <div class="placeholder">
         <ul>
-            {{#times 5}}   
+            {{#times 5}}
                 <li>
                     <div class="icon placeholder--shimmer"></div>
-                    <span class="placeholder--shimmer placeholder--line" style="width: 60%"></span>                
+                    <span class="placeholder--shimmer placeholder--line" style="width: 60%"></span>
                 </li>
             {{/times}}
         </ul>
@@ -187,7 +188,7 @@ If your template requires items selection for dynamic filtering, you can follow 
 
 The available data attributes you can use in your HTML template are:
 
-- `data-selection-index`: the index of the item being represented. This would go on the root of the tile/row. 
+- `data-selection-index`: the index of the item being represented. This would go on the root of the tile/row.
 
 - `data-selection-toggle`: this boolean flag would be set on the element which should handle toggles.This could be a checkbox or a div.
 
