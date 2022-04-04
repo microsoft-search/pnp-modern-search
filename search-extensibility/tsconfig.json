@@ -11,7 +11,8 @@
     ],
     "lib": [
       "es5",
-      "dom"
+      "dom",
+      "es2015.promise"
     ],
     "experimentalDecorators": true,
     "esModuleInterop": true,

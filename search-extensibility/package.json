@@ -6,11 +6,11 @@
     "main": "lib/index.js",
     "types": "lib/index.d.ts",
     "files": [
-      "lib/**/*"
+        "lib/**/*"
     ],
     "scripts": {
-      "test": "echo \"Error: no test specified\" && exit 1",
-      "build": "tsc"
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build": "tsc"
     },
     "devDependencies": {
         "@microsoft/rush-stack-compiler-3.7": "0.2.3",
@@ -20,8 +20,8 @@
         "@microsoft/sp-webpart-workbench": "1.12.1",
         "gulp": "4.0.2",
         "typescript": "~3.3.0"
-      },
-      "dependencies": {
+    },
+    "dependencies": {
         "@microsoft/sp-component-base": "1.12.1",
         "@microsoft/sp-core-library": "1.12.1",
         "@microsoft/sp-lodash-subset": "1.12.1",

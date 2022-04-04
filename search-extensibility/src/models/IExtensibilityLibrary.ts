@@ -2,6 +2,7 @@ import { IComponentDefinition } from './layouts/IComponentDefinition';
 import { ILayoutDefinition } from './layouts/ILayoutDefinition';
 import { ISuggestionProviderDefinition } from './suggestions/ISuggestionProviderDefinition';
 import * as Handlebars from 'handlebars';
+import { IQueryModifierDefinition } from './queryModifier/IQueryModifierDefinition';
 
 export interface IExtensibilityLibrary {
 
@@ -25,4 +26,9 @@ export interface IExtensibilityLibrary {
      * @param namespace the current Web Part Handlebars namespace
      */
     registerHandlebarsCustomizations?(handlebarsNamespace: typeof Handlebars): void;
+
+    /**
+     * Returns custom query modifiers
+     */
+     getCustomQueryModifiers(): IQueryModifierDefinition[];
 }

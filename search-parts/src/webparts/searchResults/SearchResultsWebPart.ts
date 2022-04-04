@@ -6,7 +6,7 @@ import { IWebPartPropertiesMetadata } from '@microsoft/sp-webpart-base';
 import * as webPartStrings from 'SearchResultsWebPartStrings';
 import * as commonStrings from 'CommonStrings';
 import { ISearchResultsContainerProps } from './components/ISearchResultsContainerProps';
-import { IDataSource, IDataSourceDefinition, IComponentDefinition, ILayoutDefinition, ILayout, IDataFilter, LayoutType, FilterType, FilterComparisonOperator, BaseDataSource, IDataFilterValue, IDataFilterResult, FilterConditionOperator, IDataVertical } from '@pnp/modern-search-extensibility';
+import { IExtensibilityLibrary, IDataSource, IDataSourceDefinition, IComponentDefinition, ILayoutDefinition, ILayout, IDataFilter, LayoutType, FilterType, FilterComparisonOperator, BaseDataSource, IDataFilterValue, IDataFilterResult, FilterConditionOperator, IDataVertical, IQueryModifierDefinition, IQueryModifier } from '@pnp/modern-search-extensibility';
 import {
     IPropertyPaneConfiguration,
     IPropertyPaneChoiceGroupOption,
@@ -64,6 +64,7 @@ import { ObjectHelper } from '../../helpers/ObjectHelper';
 import { ItemSelectionMode } from '../../models/common/IItemSelectionProps';
 import { PropertyPaneAsyncCombo } from '../../controls/PropertyPaneAsyncCombo/PropertyPaneAsyncCombo';
 import { DynamicPropertyHelper } from '../../helpers/DynamicPropertyHelper';
+
 
 const LogSource = "SearchResultsWebPart";
 
@@ -141,6 +142,16 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
      * The available web component definitions (not registered yet)
      */
     private availableWebComponentDefinitions: IComponentDefinition<any>[] = AvailableComponents.BuiltinComponents;
+
+    /**
+     * The available custom QueryModifier definitions (not registered yet)
+     */
+     private availableCustomQueryModifierDefinitions: IQueryModifierDefinition[] = [];
+
+     /**
+     * The current selected custom query modifiers
+     */
+    private _selectedCustomQueryModifier:IQueryModifier[] = [];
 
     /**
      * The current page number
@@ -583,12 +594,17 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 }];
             }
 
+              //TODO TODO Add template options if any
+        const customQueryModifierOptions = this._selectedCustomQueryModifier.map(_=>_.getPropertyPaneGroupsConfiguration()).reduce((x,y)=>x.concat(y));
+
+
             // Add data source options to the first page
             propertyPanePages[0].groups = propertyPanePages[0].groups.concat([
                 ...layoutSlotsGroup,
                 // Load data source specific properties
                 ...dataSourceProperties,
                 ...commonDataSourceProperties,
+                ...customQueryModifierOptions,
                 {
                     groupName: webPartStrings.PropertyPane.DataSourcePage.PagingOptionsGroupName,
                     groupFields: this.getPagingGroupFields()
@@ -759,7 +775,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             this.availableDataSourceDefinitions = AvailableDataSources.BuiltinDataSources;
             this.availableLayoutDefinitions = AvailableLayouts.BuiltinLayouts.filter(layout => { return layout.type === LayoutType.Results; });
             this.availableWebComponentDefinitions = AvailableComponents.BuiltinComponents;
-
+            this.availableCustomQueryModifierDefinitions = [];
             await this.loadExtensions(cleanConfiguration);
         }
 
@@ -894,7 +910,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         if (extensibilityLibraries.length > 0) {
 
             // Load customizations from extensibility libraries
-            extensibilityLibraries.forEach(extensibilityLibrary => {
+            extensibilityLibraries.forEach((extensibilityLibrary:IExtensibilityLibrary) => {
 
                 // Add custom layouts if any
                 if (extensibilityLibrary.getCustomLayouts)
@@ -907,6 +923,11 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 // Registers Handlebars customizations in the local namespace
                 if (extensibilityLibrary.registerHandlebarsCustomizations)
                     extensibilityLibrary.registerHandlebarsCustomizations(this.templateService.Handlebars);
+
+                if(extensibilityLibrary.getCustomQueryModifiers)
+                {
+                    this.availableCustomQueryModifierDefinitions  = this.availableCustomQueryModifierDefinitions.concat(extensibilityLibrary.getCustomQueryModifiers());                    
+                }
 
             });
         }
