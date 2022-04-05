@@ -85,7 +85,7 @@
                                                 data-show-count="{{filter.showCount}}"
                                                 data-operator="{{filter.operator}}"
                                                 data-theme-variant="{{JSONstringify @root.theme}}"
-                                            >
+                                                >
                                                     {{#each filter.values}}
                                                         <option value="{{value}}" data-selected="{{selected}}" data-disabled="{{disabled}}" data-count="{{count}}">{{name}}</option>
                                                     {{/each}}
@@ -111,6 +111,7 @@
                                                     {{#if filter.isMulti}}
                                                         <div class="filter--option">
                                                             <pnp-filteroperator 
+                                                                data-instance-id="{{@root.instanceId}}" 
                                                                 data-filter-name="{{filter.filterName}}" 
                                                                 data-operator="{{filter.operator}}" 
                                                                 data-theme-variant="{{JSONstringify @root.theme}}"

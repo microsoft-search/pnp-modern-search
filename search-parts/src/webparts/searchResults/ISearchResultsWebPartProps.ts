@@ -165,6 +165,6 @@ export default interface ISearchResultsWebPartProps extends IBaseWebPartProps {
     /**
      * Flag indicating if telemetry are enabled
      */
-     enableTelemetry: boolean;
+    enableTelemetry: boolean;
 }
 

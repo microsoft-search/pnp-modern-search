@@ -38,6 +38,9 @@
             data-allow-item-selection="{{properties.itemSelectionProps.allowItemSelection}}"
             data-allow-multi={{properties.itemSelectionProps.allowMulti}}
             data-selected-keys="{{JSONstringify @root.selectedKeys}}"
+            data-fields="{{JSONstringify @root.properties.dataSourceProperties.sortList}}" 
+            data-default-selected-field="{{sort.selectedSortFieldName}}" 
+            data-default-direction="{{sort.selectedSortDirection}}"
         >
         </pnp-detailslist>
 

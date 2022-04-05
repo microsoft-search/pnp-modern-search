@@ -1,27 +1,28 @@
 {
     "name": "@pnp/modern-search-extensibility",
     "description": "Base library for creating PnP Modern Search extensions",
-    "version": "1.0.9",
+    "version": "1.1.0",
     "private": false,
     "main": "lib/index.js",
     "types": "lib/index.d.ts",
     "files": [
-      "lib/**/*"
+        "lib/**/*"
     ],
     "scripts": {
-      "test": "echo \"Error: no test specified\" && exit 1",
-      "build": "tsc"
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build": "tsc"
     },
     "devDependencies": {
-        "@microsoft/rush-stack-compiler-3.7": "0.2.3",
+        "@microsoft/rush-stack-compiler-3.9": "0.4.37",
+        "@microsoft/rush-stack-compiler-3.2": "0.10.47",
         "@microsoft/sp-build-web": "1.12.1",
         "@microsoft/sp-module-interfaces": "1.12.1",
         "@microsoft/sp-tslint-rules": "1.12.1",
         "@microsoft/sp-webpart-workbench": "1.12.1",
         "gulp": "4.0.2",
         "typescript": "~3.3.0"
-      },
-      "dependencies": {
+    },
+    "dependencies": {
         "@microsoft/sp-component-base": "1.12.1",
         "@microsoft/sp-core-library": "1.12.1",
         "@microsoft/sp-lodash-subset": "1.12.1",
@@ -31,7 +32,7 @@
         "@types/react-dom": "16.8.3",
         "@webcomponents/custom-elements": "1.4.1",
         "@webcomponents/webcomponentsjs": "2.4.3",
-        "handlebars": "4.7.6",
+        "handlebars": "4.7.7",
         "react-dom": "16.9.0",
         "tslib": "^1.11.0"
     },
