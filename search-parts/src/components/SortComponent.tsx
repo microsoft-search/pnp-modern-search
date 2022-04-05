@@ -108,7 +108,7 @@ export class SortComponent extends React.Component<ISortComponentProps, ISortCom
             return {
                 key: field.sortField,
                 text: field.sortFieldDisplayName ? field.sortFieldDisplayName : field.sortField
-            }
+            };
         });
 
         return defaultOptions.concat(options);

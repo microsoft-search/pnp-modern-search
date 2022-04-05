@@ -594,7 +594,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                 }
 
                 return sortConfiguration;
-            })
+            });
         } else {
             this.properties.sortList = [];
         }
@@ -1163,7 +1163,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                             const termPrefix = matches[2]; // 'L0'
                             if (termPrefix.localeCompare("L0") === 0) {
                                 const termFilterWithoutTranslations =  `"ǂǂ${StringHelper._bytesToHex(StringHelper._stringToUTF8Bytes(`GP0|#${termId.toString()}`))}"`;
-                                const termTextFilter = `string("L0|#${termId.toString()}")`
+                                const termTextFilter = `string("L0|#${termId.toString()}")`;
 
                                 // value.value: HEX encoded value => original refiner value 
                                 // termFilterWithoutTranslations => language agnostic term value
