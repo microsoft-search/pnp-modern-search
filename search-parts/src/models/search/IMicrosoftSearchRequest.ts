@@ -2,7 +2,6 @@ import { EntityType } from "../../dataSources/MicrosoftSearchDataSource";
 
 export interface IMicrosoftSearchQuery {
     requests: IMicrosoftSearchRequest[];
-    queryAlterationOptions?: IQueryAlterationOptions;
 }
 
 /**
@@ -21,6 +20,7 @@ export interface IMicrosoftSearchRequest {
     enableTopResults?: boolean;
     sortProperties?: ISearchSortProperty[];
     contentSources?: string[];
+    queryAlterationOptions?: IQueryAlterationOptions;
 }
 
 export interface ISearchSortProperty {
