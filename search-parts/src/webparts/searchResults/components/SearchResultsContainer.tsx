@@ -243,7 +243,8 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             const localDataContext = cloneDeep(this.props.dataContext);
 
             // Fetch live data
-            data = await this.props.dataSource.getData(localDataContext);
+            //TODO marked
+            data = await this.props.dataSource.getData(localDataContext, this.props.selectedCustomQueryModifier);
 
             // Compute preview information for items ('AutoXX' properties)
             data = await this.getItemsPreview(data, this.convertTemplateSlotsToHashtable(this.props.properties.templateSlots));

@@ -1,6 +1,7 @@
 import { ServiceScope } from '@microsoft/sp-core-library';
 import { IPropertyPaneGroup } from '@microsoft/sp-property-pane';
 import { WebPartContext } from '@microsoft/sp-webpart-base';
+import { IDataContext } from '../dataSources/IDataContext';
 import { IQueryModification } from './IQueryModification';
 import { IQueryModifier } from './IQueryModifier';
 import { IQueryModifierInput } from './IQueryModifierInput';
@@ -44,7 +45,7 @@ export abstract class BaseQueryModifier<T> implements IQueryModifier {
         // Do nothing by default      
     }
 
-    public modifyQuery(searchQuery: IQueryModifierInput): Promise<IQueryModification> {
+    public modifyQuery(searchQuery: IQueryModifierInput, dataContext:IDataContext): Promise<IQueryModification> {
         throw 'Not implemented';
     }
 }

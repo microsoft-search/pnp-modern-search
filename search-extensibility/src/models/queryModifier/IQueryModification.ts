@@ -1,4 +1,5 @@
 export interface IQueryModification {
     queryText: string;
-    queryTemplate: string;
+    //TODO: can this be null?
+    queryTemplate?: string;
 }

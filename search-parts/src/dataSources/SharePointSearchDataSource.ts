@@ -1,5 +1,5 @@
 ﻿import * as React from 'react';
-import { IDataSourceData, BaseDataSource, ITokenService, ITemplateSlot, IDataFilterResult, IDataFilterResultValue, BuiltinTemplateSlots, FilterBehavior, FilterSortType, FilterSortDirection } from "@pnp/modern-search-extensibility";
+import { IDataSourceData, BaseDataSource, ITokenService, ITemplateSlot, IDataFilterResult, IDataFilterResultValue, BuiltinTemplateSlots, FilterBehavior, FilterSortType, FilterSortDirection, IQueryModifier } from "@pnp/modern-search-extensibility";
 import {
     IPropertyPaneGroup,
     IPropertyPaneDropdownOption,
@@ -218,9 +218,9 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         return null;
     }
 
-    public async getData(dataContext: IDataContext): Promise<IDataSourceData> {
+    public async getData(dataContext: IDataContext, selectedCustomQueryModifier?:IQueryModifier[]): Promise<IDataSourceData> {
 
-        const searchQuery = await this.buildSharePointSearchQuery(dataContext);
+        const searchQuery = await this.buildSharePointSearchQuery(dataContext,selectedCustomQueryModifier);
         const results = await this._sharePointSearchService.search(searchQuery);
 
         let data: IDataSourceData = {
@@ -708,7 +708,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         });
     }
 
-    private async buildSharePointSearchQuery(dataContext: IDataContext): Promise<ISharePointSearchQuery> {
+    private async buildSharePointSearchQuery(dataContext: IDataContext, selectedCustomQueryModifier?:IQueryModifier[]): Promise<ISharePointSearchQuery> {
 
         // Build the search query according to options
         let searchQuery: ISharePointSearchQuery = {};
@@ -764,10 +764,22 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
             });
         }
 
+        //TODO here?
         searchQuery.Querytext = dataContext.inputQueryText;
 
         searchQuery.EnableQueryRules = this.properties.enableQueryRules;
+        //TODO here change before?
         searchQuery.QueryTemplate = await this._tokenService.resolveTokens(this.properties.queryTemplate);
+
+        //TODO sorted?
+        for (const modifier of selectedCustomQueryModifier) {
+        
+            const resp = await modifier.modifyQuery({queryTemplate:searchQuery.QueryTemplate, queryText: searchQuery.Querytext, resultSourceId:"TODO"});
+            searchQuery.Querytext = resp.queryText;
+            searchQuery.QueryTemplate = resp.queryTemplate;
+        }
+        
+        
 
         if (this.properties.resultSourceId) {
 

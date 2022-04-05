@@ -360,7 +360,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                     },
                     themeVariant: this._themeVariant,
                     className: commonStyles.wpTitle
-                }
+                },
+                selectedCustomQueryModifier: this._selectedCustomQueryModifier
             } as ISearchResultsContainerProps);
 
             renderRootElement = renderDataContainer;
@@ -785,6 +786,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             this.availableLayoutDefinitions = AvailableLayouts.BuiltinLayouts.filter(layout => { return layout.type === LayoutType.Results; });
             this.availableWebComponentDefinitions = AvailableComponents.BuiltinComponents;
             this.availableCustomQueryModifierDefinitions = [];
+            //TODO set selected mods to null?
+
             await this.loadExtensions(cleanConfiguration);
         }
 
