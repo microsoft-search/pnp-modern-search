@@ -166,5 +166,10 @@ export default interface ISearchResultsWebPartProps extends IBaseWebPartProps {
      * Flag indicating if telemetry are enabled
      */
     enableTelemetry: boolean;
+
+    /**
+     * Enables/Disables custom query transformation
+     */
+     enableCustomQueryTransformation: boolean;
 }
 

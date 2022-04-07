@@ -244,8 +244,9 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
 
             // Fetch live data
             //TODO marked
+            //TODO also possible? this.props.selectedCustomQueryModifier[0].modifyQuery()
             data = await this.props.dataSource.getData(localDataContext, this.props.selectedCustomQueryModifier);
-
+            
             // Compute preview information for items ('AutoXX' properties)
             data = await this.getItemsPreview(data, this.convertTemplateSlotsToHashtable(this.props.properties.templateSlots));
 

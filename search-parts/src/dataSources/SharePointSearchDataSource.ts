@@ -771,10 +771,10 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         //TODO here change before?
         searchQuery.QueryTemplate = await this._tokenService.resolveTokens(this.properties.queryTemplate);
 
-        //TODO sorted?
+        //TODO sorted? Clone datacontext?
         for (const modifier of selectedCustomQueryModifier) {
         
-            const resp = await modifier.modifyQuery({queryTemplate:searchQuery.QueryTemplate, queryText: searchQuery.Querytext, resultSourceId:"TODO"});
+            const resp = await modifier.modifyQuery({queryTemplate:searchQuery.QueryTemplate, queryText: searchQuery.Querytext, resultSourceId:"TODO"}, dataContext);
             searchQuery.Querytext = resp.queryText;
             searchQuery.QueryTemplate = resp.queryTemplate;
         }

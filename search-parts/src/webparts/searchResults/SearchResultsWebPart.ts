@@ -604,8 +604,9 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 }];
             }
 
+            console.log("this._selectedCustomQueryModifier",this._selectedCustomQueryModifier);
               //TODO TODO Add template options if any
-        const customQueryModifierOptions = this._selectedCustomQueryModifier.map(_=>_.getPropertyPaneGroupsConfiguration()).reduce((x,y)=>x.concat(y));
+        const customQueryModifierOptions = this._selectedCustomQueryModifier?.length !== 0 ? this._selectedCustomQueryModifier.map(_=>_.getPropertyPaneGroupsConfiguration()).reduce((x,y)=>x.concat(y)) : null;
 
 
             // Add data source options to the first page
@@ -614,12 +615,16 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 // Load data source specific properties
                 ...dataSourceProperties,
                 ...commonDataSourceProperties,
-                ...customQueryModifierOptions,
                 {
                     groupName: webPartStrings.PropertyPane.DataSourcePage.PagingOptionsGroupName,
                     groupFields: this.getPagingGroupFields()
                 }
             ]);
+
+            if(customQueryModifierOptions)
+            {
+                propertyPanePages[0].groups.concat(customQueryModifierOptions);
+            }
 
             // Other pages
             propertyPanePages.push(
@@ -938,7 +943,25 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
                 if(extensibilityLibrary.getCustomQueryModifiers)
                 {
-                    this.availableCustomQueryModifierDefinitions  = this.availableCustomQueryModifierDefinitions.concat(extensibilityLibrary.getCustomQueryModifiers());                    
+                    this.availableCustomQueryModifierDefinitions  = this.availableCustomQueryModifierDefinitions.concat(extensibilityLibrary.getCustomQueryModifiers());         
+              /*      
+                    this.availableCustomQueryModifierDefinitions.forEach(provider => {
+
+                        if (!this.properties.suggestionProviderConfiguration.some(p => p.key === provider.key)) {
+            
+                            customSuggestionProviderConfiguration.push({
+                                key: provider.key,
+                                description: provider.description,
+                                enabled: false,
+                                name: provider.name
+                            });
+            
+                        }
+                    });
+            
+                    // Add custom providers to the available providers
+                    this.properties.suggestionProviderConfiguration = this.properties.suggestionProviderConfiguration.concat(customSuggestionProviderConfiguration);
+                    */
                 }
 
             });
@@ -2441,4 +2464,100 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             this.render();
         }
     }
+/*
+    private async initializeSuggestionProviders(suggestionProviderConfiguration: ISuggestionProviderConfiguration[]): Promise<ISuggestionProvider[]> {
+
+        const promises: Promise<ISuggestionProvider>[] = [];
+        let selectedProviders: ISuggestionProvider[] = [];
+
+        suggestionProviderConfiguration.forEach(configuration => {
+            if (configuration.enabled) {
+                promises.push(this.getSuggestionProviderInstance(configuration.key, this.availableCustomProviders));
+            }
+        });
+
+        if (promises.length > 0) {
+            selectedProviders = await Promise.all(promises);
+        } else {
+            selectedProviders = [];
+        }
+
+        return selectedProviders;
+    }
+
+    private _getSearchQuerySuggestionsFields(): IPropertyPaneField<any>[] {
+
+        let searchQuerySuggestionsFields: IPropertyPaneField<any>[] = [
+            PropertyPaneToggle("enableCustomQueryTransformation", {
+                label: "Label enableCustomQueryTransformation"
+            })
+        ];
+
+        if (this.properties.enableCustomQueryTransformation) {
+
+            searchQuerySuggestionsFields.push(
+                this._propertyFieldCollectionData('suggestionProviderConfiguration', {
+                    manageBtnLabel: "edit",
+                    key: 'suggestionProviderConfiguration',
+                    panelHeader: "EditSuggestionProvidersLabel",
+                    panelDescription: "SuggestionProvidersDescription",
+                    disableItemCreation: true,
+                    disableItemDeletion: true,
+                    disabled: !this.properties.enableCustomQueryTransformation,
+                    label: "SuggestionProvidersLabel",
+                    value: this.properties.suggestionProviderConfiguration,
+                    fields: [
+                        {
+                            id: 'enabled',
+                            title: webPartStrings.PropertyPane.QuerySuggestionsGroup.EnabledPropertyLabel,
+                            type: this._customCollectionFieldType.custom,
+                            onCustomRender: (field, value, onUpdate, item, itemId) => {
+                                return (
+                                    React.createElement("div", null,
+                                        React.createElement(Toggle, {
+                                            key: itemId, checked: value, onChange: (evt, checked) => {
+                                                onUpdate(field.id, checked);
+                                            },
+                                            offText: commonStrings.General.OffTextLabel,
+                                            onText: commonStrings.General.OnTextLabel
+                                        })
+                                    )
+                                );
+                            }
+                        },
+                        {
+                            id: 'name',
+                            title: webPartStrings.PropertyPane.QuerySuggestionsGroup.ProviderNamePropertyLabel,
+                            type: this._customCollectionFieldType.custom,
+                            onCustomRender: (field, value) => {
+                                return (
+                                    React.createElement("div", { style: { 'fontWeight': 600 } }, value)
+                                );
+                            }
+                        },
+                        {
+                            id: 'description',
+                            title: webPartStrings.PropertyPane.QuerySuggestionsGroup.ProviderDescriptionPropertyLabel,
+                            type: this._customCollectionFieldType.custom,
+                            onCustomRender: (field, value) => {
+                                return (
+                                    React.createElement("div", null, value)
+                                );
+                            }
+                        }
+                    ]
+                }),
+                PropertyPaneSlider('numberOfSuggestionsPerGroup', {
+                    min: 1,
+                    max: 20,
+                    showValue: true,
+                    step: 1,
+                    label: webPartStrings.PropertyPane.QuerySuggestionsGroup.NumberOfSuggestionsToShow
+                })
+            );
+        }
+
+        return searchQuerySuggestionsFields;
+    }
+    */
 }

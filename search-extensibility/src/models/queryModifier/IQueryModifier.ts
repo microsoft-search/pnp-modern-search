@@ -25,7 +25,7 @@ export interface IQueryModifier {
       * Modify the query and retrieve it
       * @param searchQuery the query % the query template
       */               
-     modifyQuery(searchQuery: IQueryModifierInput, dataContext:IDataContext): Promise<IQueryModification> 
+     modifyQuery(searchQuery: IQueryModifierInput, dataContext:IDataContext): Promise<IQueryModification>;
 
      /**
       * Returns the data source property pane option fields if any.
