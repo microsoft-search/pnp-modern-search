@@ -31,7 +31,7 @@ export class DateHelper {
             // if culture starts with or is any of this, two letter locale must be used in momentjs (culture es-es must load es.js file)
             let momentTwoLetterLanguageName = [
                 "af", "az", "be", "bg", "bm", "bo", "br", "bs", "ca", "cs", "cv",
-                "cy", "da", "dv", "el", "eo", "es-es", "et", "eu", "fa", "fi", "fil",
+                "cy", "da", "de-de", "dv", "el", "eo", "es-es", "et", "eu", "fa", "fi", "fil",
                 "fo", "fy", "fr-fr", "ga", "gd", "gl", "gu", "he", "hi", "hr", "hu", "id", "is",
                 "ja", "jv", "ka", "kk", "km", "kn", "ko", "ku", "ky", "lb", "lo", "lt",
                 "lv", "me", "mi", "mk", "ml", "mn", "mr", "mt", "my", "nb", "ne",
