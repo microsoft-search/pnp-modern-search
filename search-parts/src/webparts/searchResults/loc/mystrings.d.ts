@@ -30,7 +30,17 @@ declare interface ISearchResultsWebPartStrings {
                 SlotNameFieldName: string;
                 SlotFieldFieldName: string;
                 SlotFieldPlaceholderName: string;
-            }
+            },
+            QueryModifierGroup: {
+                GroupName: string;
+                EnableQueryModifiers: string;
+                EditQueryModifiersLabel: string;
+                QueryModifiersLabel: string;
+                QueryModifiersDescription: string;
+                EnabledPropertyLabel: string;
+                ModifierNamePropertyLabel: string;
+                ModifierDescriptionPropertyLabel: string;
+            },
         },
         LayoutPage: {
             LayoutSelectionGroupName: string;

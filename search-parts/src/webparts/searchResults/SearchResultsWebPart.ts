@@ -6,7 +6,7 @@ import { IWebPartPropertiesMetadata } from '@microsoft/sp-webpart-base';
 import * as webPartStrings from 'SearchResultsWebPartStrings';
 import * as commonStrings from 'CommonStrings';
 import { ISearchResultsContainerProps } from './components/ISearchResultsContainerProps';
-import { IExtensibilityLibrary,IDataSource, IDataSourceDefinition, IComponentDefinition, ILayoutDefinition, ILayout, IDataFilter, LayoutType, FilterType, FilterComparisonOperator, BaseDataSource, IDataFilterValue, IDataFilterResult, FilterConditionOperator, IDataVertical, ExtensibilityConstants, ISortInfo, IQueryModifierDefinition, IQueryModifier } from '@pnp/modern-search-extensibility';
+import { IExtensibilityLibrary,IDataSource, IDataSourceDefinition, IComponentDefinition, ILayoutDefinition, ILayout, IDataFilter, LayoutType, FilterType, FilterComparisonOperator, BaseDataSource, IDataFilterValue, IDataFilterResult, FilterConditionOperator, IDataVertical, ExtensibilityConstants, ISortInfo, IQueryModifierDefinition, IQueryModifier, BaseQueryModifier } from '@pnp/modern-search-extensibility';
 import {
     IPropertyPaneConfiguration,
     IPropertyPaneChoiceGroupOption,
@@ -64,6 +64,8 @@ import { ObjectHelper } from '../../helpers/ObjectHelper';
 import { ItemSelectionMode } from '../../models/common/IItemSelectionProps';
 import { PropertyPaneAsyncCombo } from '../../controls/PropertyPaneAsyncCombo/PropertyPaneAsyncCombo';
 import { DynamicPropertyHelper } from '../../helpers/DynamicPropertyHelper';
+import { IQueryModifierConfiguration } from '../../queryModifier/IQueryModifierConfiguration';
+import { AvailableQueryModifier, BuiltinQueryModifierKeys } from '../../queryModifier/AvailableQueryModifier';
 
 
 const LogSource = "SearchResultsWebPart";
@@ -146,7 +148,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     /**
      * The available custom QueryModifier definitions (not registered yet)
      */
-     private availableCustomQueryModifierDefinitions: IQueryModifierDefinition[] = [];
+     private availableCustomQueryModifierDefinitions: IQueryModifierDefinition[] = AvailableQueryModifier.BuiltinQueryModifier;
 
      /**
      * The current selected custom query modifiers
@@ -240,6 +242,9 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 this.layout = await LayoutHelper.getLayoutInstance(this.webPartInstanceServiceScope, this.context, this.properties, this.properties.selectedLayoutKey, this.availableLayoutDefinitions);
                 this.lastLayoutKey = this.properties.selectedLayoutKey;
             }
+
+            // Initialize provider instances
+            this._selectedCustomQueryModifier = await this.initializeQueryModifiers(this.properties.queryModifierConfiguration);
 
         } catch (error) {
             // Catch instanciation or wrong definition errors for extensibility scenarios
@@ -570,6 +575,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         let layoutSlotsGroup: IPropertyPaneGroup[] = [];
         let commonDataSourceProperties: IPropertyPaneGroup[] = [];
         let extensibilityConfigurationGroups: IPropertyPaneGroup[] = [];
+        let queryModifierOptionGroups: IPropertyPaneGroup[] = [];
 
         // Retrieve the property settings for the data source provider
         let dataSourceProperties: IPropertyPaneGroup[] = [];
@@ -604,10 +610,12 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 }];
             }
 
-            console.log("this._selectedCustomQueryModifier",this._selectedCustomQueryModifier);
-              //TODO TODO Add template options if any
-        const customQueryModifierOptions = this._selectedCustomQueryModifier?.length !== 0 ? this._selectedCustomQueryModifier.map(_=>_.getPropertyPaneGroupsConfiguration()).reduce((x,y)=>x.concat(y)) : null;
 
+        if (this._selectedCustomQueryModifier.length > 0 && !this.errorMessage) {
+            this._selectedCustomQueryModifier.forEach(modifier => {
+                queryModifierOptionGroups = queryModifierOptionGroups.concat(modifier.getPropertyPaneGroupsConfiguration());
+            });            
+        }
 
             // Add data source options to the first page
             propertyPanePages[0].groups = propertyPanePages[0].groups.concat([
@@ -621,17 +629,22 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 }
             ]);
 
-            if(customQueryModifierOptions)
-            {
-                propertyPanePages[0].groups.concat(customQueryModifierOptions);
-            }
-
             // Other pages
             propertyPanePages.push(
                 {
                     displayGroupsAsAccordion: true,
                     groups: this.getStylingPageGroups()
                 },
+                {
+                    groups: [
+                        {
+                            groupName: webPartStrings.PropertyPane.DataSourcePage.QueryModifierGroup.GroupName,
+                            groupFields: this._getQueryModifierFields()
+                        },
+                        ...queryModifierOptionGroups
+                    ],
+                    displayGroupsAsAccordion: true
+                },                
                 {
                     groups: [
                         ...this.propertyPaneConnectionsGroup
@@ -789,9 +802,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             // Reset existing definitions to default
             this.availableDataSourceDefinitions = AvailableDataSources.BuiltinDataSources;
             this.availableLayoutDefinitions = AvailableLayouts.BuiltinLayouts.filter(layout => { return layout.type === LayoutType.Results; });
-            this.availableWebComponentDefinitions = AvailableComponents.BuiltinComponents;
-            this.availableCustomQueryModifierDefinitions = [];
-            //TODO set selected mods to null?
+            this.availableWebComponentDefinitions = AvailableComponents.BuiltinComponents;            
+            this.availableCustomQueryModifierDefinitions = AvailableQueryModifier.BuiltinQueryModifier;            
 
             await this.loadExtensions(cleanConfiguration);
         }
@@ -830,8 +842,24 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 // Reset previous token value 
                 delete filterToken[oldValue];
             }
-
         }
+        
+        // TODO Check necessary
+     /*   if (propertyPath.localeCompare('queryModifierProperties') >= 0 &&  !isEqual(oldValue, newValue)) {            
+            this._selectedCustomQueryModifier.forEach(modifier=> { modifier.onPropertyUpdate(propertyPath, oldValue,newValue);});            
+            this.context.propertyPane.refresh();
+        }*/
+
+        if (propertyPath.localeCompare('enableCustomQueryTransformation') === 0 && !newValue) {
+
+            // Disable all providers
+            this.properties.queryModifierConfiguration.forEach(modifier => {
+                modifier.enabled = false;
+            });
+
+            //this.properties.queryModifierProperties = {};
+        }
+
 
         // Refresh list of available connections
         this.propertyPaneConnectionsGroup = await this.getConnectionOptionsGroup();
@@ -842,7 +870,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     }
 
     public onCustomPropertyUpdate(propertyPath: string, newValue: any, changeCallback?: (targetProperty?: string, newValue?: any) => void): void {
-
+        
         if (propertyPath.localeCompare('selectedVerticalKeys') === 0) {
             changeCallback(propertyPath, (cloneDeep(newValue) as IComboBoxOption[]).map(v => { return v.key as string; }));
             this.context.propertyPane.refresh();
@@ -922,6 +950,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         // Load extensibility library if present
         const extensibilityLibraries = await this.extensibilityService.loadExtensibilityLibraries(librariesConfiguration);
+        const customQueryModifierConfiguration: IQueryModifierConfiguration[] = [];
 
         // Load extensibility additions
         if (extensibilityLibraries.length > 0) {
@@ -943,29 +972,28 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
                 if(extensibilityLibrary.getCustomQueryModifiers)
                 {
-                    this.availableCustomQueryModifierDefinitions  = this.availableCustomQueryModifierDefinitions.concat(extensibilityLibrary.getCustomQueryModifiers());         
-              /*      
-                    this.availableCustomQueryModifierDefinitions.forEach(provider => {
-
-                        if (!this.properties.suggestionProviderConfiguration.some(p => p.key === provider.key)) {
-            
-                            customSuggestionProviderConfiguration.push({
-                                key: provider.key,
-                                description: provider.description,
-                                enabled: false,
-                                name: provider.name
-                            });
-            
-                        }
-                    });
-            
-                    // Add custom providers to the available providers
-                    this.properties.suggestionProviderConfiguration = this.properties.suggestionProviderConfiguration.concat(customSuggestionProviderConfiguration);
-                    */
+                    this.availableCustomQueryModifierDefinitions  = this.availableCustomQueryModifierDefinitions.concat(extensibilityLibrary.getCustomQueryModifiers());                                                 
                 }
 
-            });
+            });                
         }
+
+        //TODO in copied source suggestions its's outside of if libraries. CHECK BEHAVIOUR
+        this.availableCustomQueryModifierDefinitions.forEach(provider => {
+
+            if (!this.properties.queryModifierConfiguration.some(p => p.key === provider.key)) {
+
+                customQueryModifierConfiguration.push({
+                    key: provider.key,
+                    description: provider.description,
+                    enabled: false,
+                    name: provider.name
+                });                
+            }
+        });
+
+        // Add custom providers to the available providers
+        this.properties.queryModifierConfiguration = this.properties.queryModifierConfiguration.concat(customQueryModifierConfiguration);
     }
 
     public async loadPropertyPaneResources(): Promise<void> {
@@ -1113,6 +1141,10 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             enabled: true,
             id: Constants.DEFAULT_EXTENSIBILITY_LIBRARY_COMPONENT_ID
         }];
+
+        // Custom Query Modifier
+        this.properties.queryModifierConfiguration = this.properties.queryModifierConfiguration ? this.properties.queryModifierConfiguration : [];
+        this.properties.queryModifierProperties = this.properties.queryModifierProperties ? this.properties.queryModifierProperties : {};
 
         if (this.properties.selectedVerticalKeys === undefined) {
             this.properties.selectedVerticalKeys = [];
@@ -2464,52 +2496,137 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             this.render();
         }
     }
-/*
-    private async initializeSuggestionProviders(suggestionProviderConfiguration: ISuggestionProviderConfiguration[]): Promise<ISuggestionProvider[]> {
 
-        const promises: Promise<ISuggestionProvider>[] = [];
-        let selectedProviders: ISuggestionProvider[] = [];
+    private async initializeQueryModifiers(queryModifierConfiguration: IQueryModifierConfiguration[]): Promise<IQueryModifier[]> {
 
-        suggestionProviderConfiguration.forEach(configuration => {
+        const promises: Promise<IQueryModifier>[] = [];
+        let selectedQueryModifier: IQueryModifier[] = [];
+
+        queryModifierConfiguration.forEach(configuration => {
             if (configuration.enabled) {
-                promises.push(this.getSuggestionProviderInstance(configuration.key, this.availableCustomProviders));
+                promises.push(this.getQueryModifierInstance(configuration.key, this.availableCustomQueryModifierDefinitions));
             }
         });
 
         if (promises.length > 0) {
-            selectedProviders = await Promise.all(promises);
+            selectedQueryModifier = await Promise.all(promises);
         } else {
-            selectedProviders = [];
+            selectedQueryModifier = [];
         }
 
-        return selectedProviders;
+        return selectedQueryModifier;
     }
 
-    private _getSearchQuerySuggestionsFields(): IPropertyPaneField<any>[] {
 
-        let searchQuerySuggestionsFields: IPropertyPaneField<any>[] = [
+    //TODO check everything and method description
+    /**
+     * Gets the suggestion provider instance according to the selected one
+     * @param providerKey the selected suggestion provider provider key
+     * @param queryModifierDefinitions the available source definitions
+     * @returns the data source provider instance
+     */
+     private async getQueryModifierInstance(providerKey: string, queryModifierDefinitions: IQueryModifierDefinition[]): Promise<IQueryModifier> {
+
+        let queryModifier: IQueryModifier = undefined;
+        let serviceKey: ServiceKey<IQueryModifier> = undefined;
+
+        if (providerKey) {
+
+            switch (providerKey) {
+
+                case BuiltinQueryModifierKeys.WordPrefixModifier:
+
+                    const { WordPrefixModifier } = await import(
+                        /* webpackChunkName: 'pnp-modern-search-word-prefix-modifier' */
+                        '../../queryModifier/WordPrefixModifier'
+                    );
+
+                    serviceKey = ServiceKey.create<IQueryModifier>('ModernSearchWordPrefixModifier', WordPrefixModifier);
+                    break;
+
+                // Custom provider
+                default:
+
+                    // Gets the registered service key according to the selected provider definition 
+                    const matchingDefinitions = queryModifierDefinitions.filter((provider) => { return provider.key === providerKey; });
+
+                    // Can only have one data source instance per key
+                    if (matchingDefinitions.length > 0) {
+                        serviceKey = matchingDefinitions[0].serviceKey;
+                    } else {
+                        // Case when the extensibility library is removed from the catalog or the configuration
+                        throw new Error(Text.format(commonStrings.General.Extensibility.QueryModifierDefinitionNotFound, providerKey));
+                    }
+
+                    break;
+            }
+
+            return new Promise<IQueryModifier>((resolve, reject) => {
+
+                const childServiceScope = ServiceScopeHelper.registerChildServices(this.webPartInstanceServiceScope, [
+                    serviceKey
+                ]);
+
+                childServiceScope.whenFinished(async () => {
+
+                    queryModifier = childServiceScope.consume<IQueryModifier>(serviceKey);
+
+                    // Verify a queryModifier is a valid QueryModifier
+                    const isValidProvider = (providerInstance: IQueryModifier): providerInstance is BaseQueryModifier<any> => {
+                        return (
+                            (providerInstance as BaseQueryModifier<any>).getPropertyPaneGroupsConfiguration !== undefined &&
+                            (providerInstance as BaseQueryModifier<any>).modifyQuery !== undefined &&
+                            (providerInstance as BaseQueryModifier<any>).onPropertyUpdate !== undefined &&
+                            (providerInstance as BaseQueryModifier<any>).onInit !== undefined
+                        );
+                    };
+
+                    
+                    if (!isValidProvider(queryModifier)) {
+                        reject(new Error(Text.format(commonStrings.General.Extensibility.InvalidQueryModifierInstance, providerKey)));
+                    }
+
+                    // Initialize the queryModifier
+                    if (queryModifier) {
+
+                        queryModifier.properties = this.properties.queryModifierProperties;
+                        queryModifier.context = this.context;
+                        await queryModifier.onInit();
+
+                        resolve(queryModifier);
+                    }
+                });
+            });
+        }
+    }
+
+    //TODO CHECK LANGUAGEERSOURCES
+    private _getQueryModifierFields(): IPropertyPaneField<any>[] {
+
+        let queryTransformationFields: IPropertyPaneField<any>[] = [
             PropertyPaneToggle("enableCustomQueryTransformation", {
-                label: "Label enableCustomQueryTransformation"
+                label: webPartStrings.PropertyPane.DataSourcePage.QueryModifierGroup.EnableQueryModifiers
             })
         ];
 
         if (this.properties.enableCustomQueryTransformation) {
 
-            searchQuerySuggestionsFields.push(
-                this._propertyFieldCollectionData('suggestionProviderConfiguration', {
-                    manageBtnLabel: "edit",
-                    key: 'suggestionProviderConfiguration',
-                    panelHeader: "EditSuggestionProvidersLabel",
-                    panelDescription: "SuggestionProvidersDescription",
+            queryTransformationFields.push(
+                this._propertyFieldCollectionData('queryModifierConfiguration', {
+                    manageBtnLabel: webPartStrings.PropertyPane.DataSourcePage.QueryModifierGroup.EditQueryModifiersLabel,
+                    key: 'queryModifierConfiguration',
+                    panelHeader: webPartStrings.PropertyPane.DataSourcePage.QueryModifierGroup.EditQueryModifiersLabel,
+                    panelDescription:  webPartStrings.PropertyPane.DataSourcePage.QueryModifierGroup.QueryModifiersDescription,
                     disableItemCreation: true,
                     disableItemDeletion: true,
+                    enableSorting: true,
                     disabled: !this.properties.enableCustomQueryTransformation,
-                    label: "SuggestionProvidersLabel",
-                    value: this.properties.suggestionProviderConfiguration,
+                    label: webPartStrings.PropertyPane.DataSourcePage.QueryModifierGroup.QueryModifiersLabel,
+                    value: this.properties.queryModifierConfiguration,
                     fields: [
                         {
                             id: 'enabled',
-                            title: webPartStrings.PropertyPane.QuerySuggestionsGroup.EnabledPropertyLabel,
+                            title: webPartStrings.PropertyPane.DataSourcePage.QueryModifierGroup.EnabledPropertyLabel,
                             type: this._customCollectionFieldType.custom,
                             onCustomRender: (field, value, onUpdate, item, itemId) => {
                                 return (
@@ -2527,7 +2644,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                         },
                         {
                             id: 'name',
-                            title: webPartStrings.PropertyPane.QuerySuggestionsGroup.ProviderNamePropertyLabel,
+                            title: webPartStrings.PropertyPane.DataSourcePage.QueryModifierGroup.ModifierNamePropertyLabel,
                             type: this._customCollectionFieldType.custom,
                             onCustomRender: (field, value) => {
                                 return (
@@ -2537,7 +2654,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                         },
                         {
                             id: 'description',
-                            title: webPartStrings.PropertyPane.QuerySuggestionsGroup.ProviderDescriptionPropertyLabel,
+                            title: webPartStrings.PropertyPane.DataSourcePage.QueryModifierGroup.ModifierDescriptionPropertyLabel,
                             type: this._customCollectionFieldType.custom,
                             onCustomRender: (field, value) => {
                                 return (
@@ -2546,18 +2663,10 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                             }
                         }
                     ]
-                }),
-                PropertyPaneSlider('numberOfSuggestionsPerGroup', {
-                    min: 1,
-                    max: 20,
-                    showValue: true,
-                    step: 1,
-                    label: webPartStrings.PropertyPane.QuerySuggestionsGroup.NumberOfSuggestionsToShow
                 })
             );
         }
 
-        return searchQuerySuggestionsFields;
-    }
-    */
+        return queryTransformationFields;
+    }    
 }

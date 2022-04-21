@@ -340,6 +340,16 @@ define([], function() {
                 ProviderName: "SharePoint Statische Suchvorschläge",
                 ProviderDescription: "Abrufen von statischen benutzerdefinierten SharePoint-Suchvorschlägen"
             }
+        },    
+        BuiltInQueryModifiers: {
+            WordPrefixModifier: {
+                ModifierName: "WordPrefix",
+                ModifierDescription: "All words will be extended by the configured text modifier. e.g. 'hel wor' will become hel* wor*",
+                GroupName:"WordPrefix Modifier Settings",
+                ModifierTextLabel:"Modifier Text",
+                ModifierTextDescription:"A string to append to each word found in the input query text.",
+                ModifierTextPlaceholder:"*",
+            }
         }
     }
 })

@@ -31,5 +31,3 @@ export * from './models/queryModifier/BaseQueryModifier';
 export * from './models/queryModifier/IQueryModification';
 export * from './models/queryModifier/IQueryModifier';
 export * from './models/queryModifier/IQueryModifierDefinition';
-
-

@@ -53,9 +53,11 @@ declare interface ICommonStrings {
         DataSourceDefinitionNotFound: string;
         LayoutDefinitionNotFound: string;
         ProviderDefinitionNotFound: string;
+        QueryModifierDefinitionNotFound: string;
         InvalidProviderInstance: string;
         InvalidLayoutInstance: string;
-        DefaultExtensibilityLibraryName: string;
+        InvalidQueryModifierInstance: string;
+        DefaultExtensibilityLibraryName: string;        
       },
       OnTextLabel: string;
       OffTextLabel: string;
@@ -342,6 +344,16 @@ declare interface ICommonStrings {
       SharePointStatic: {
         ProviderName: string;
         ProviderDescription: string;
+      }
+    },    
+    BuiltInQueryModifiers: {
+      WordPrefixModifier: {
+        ModifierName: string;
+        ModifierDescription: string;
+        GroupName:string;
+        ModifierTextLabel:string;
+        ModifierTextDescription:string;
+        ModifierTextPlaceholder:string;
       }
     }
 }

@@ -31,7 +31,17 @@ define([], function() {
                     SlotNameFieldName: "Slot Name",
                     SlotFieldFieldName: "Slot Feld",
                     SlotFieldPlaceholderName: "Wähle ein Feld"
-                }
+                },
+                QueryModifierGroup: {
+                    GroupName: "Custom Query modifiers",
+                    EnableQueryModifiers: "Enable custom query modifiers",
+                    EditQueryModifiersLabel: "Configure available custom query modifiers",
+                    QueryModifiersLabel: "Custom Query modifiers",
+                    QueryModifiersDescription: "Enable or disable individual custom query modifiers",
+                    EnabledPropertyLabel: "Enabled",
+                    ModifierNamePropertyLabel: "Name",
+                    ModifierDescriptionPropertyLabel: "Description"
+                },
             },
             LayoutPage: {
                 LayoutSelectionGroupName: "Verfügbare Layouts",

@@ -59,7 +59,9 @@ define([], function() {
                 InvalidLayoutInstance: "The selected layout '{0}' does not implement the 'BaseLayout' abstract class correctly. Some methods are missing.",
                 DefaultExtensibilityLibraryName: "Default extensibility library",
                 InvalidProviderInstance: "The selected suggestions provider '{0}' does not implement the 'BaseSuggestionProvider' abstract class correctly. Some methods are missing.",
-                ProviderDefinitionNotFound: "The custom suggestions provider with key '{0}' was not found. Make sure the solution is correctly deployed to the app caltog and the manifest ID registered for this Web Part.",
+                ProviderDefinitionNotFound: "The custom suggestions provider with key '{0}' was not found. Make sure the solution is correctly deployed to the app catalog and the manifest ID registered for this Web Part.",
+                QueryModifierDefinitionNotFound: "The custom queryModifier with key '{0}' was not found. Make sure the solution is correctly deployed to the app catalog and the manifest ID registered for this Web Part.",
+                InvalidQueryModifierInstance: "The selected custom queryModifier '{0}' does not implement the 'BaseQueryModifier' abstract class correctly. Some methods are missing.",
             },
             DateFromLabel: "From",
             DateTolabel: "To",
@@ -343,6 +345,16 @@ define([], function() {
             SharePointStatic: {
                 ProviderName: "SharePoint Static search suggestions",
                 ProviderDescription: "Retrieve SharePoint static user defined search suggestions"
+            }
+        },    
+        BuiltInQueryModifiers: {
+            WordPrefixModifier: {
+                ModifierName: "WordPrefix",
+                ModifierDescription: "All words will be extended by the configured text modifier. e.g. 'hel wor' will become hel* wor*",
+                GroupName:"WordPrefix Modifier Settings",
+                ModifierTextLabel:"Modifier Text",
+                ModifierTextDescription:"A string to append to each word found in the input query text.",
+                ModifierTextPlaceholder:"*",
             }
         }
     }

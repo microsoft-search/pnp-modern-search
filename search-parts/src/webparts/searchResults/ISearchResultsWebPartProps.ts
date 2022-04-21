@@ -5,6 +5,7 @@ import { IBaseWebPartProps } from "../../models/common/IBaseWebPartProps";
 import { DynamicProperty } from "@microsoft/sp-component-base";
 import { IExtensibilityConfiguration } from "../../models/common/IExtensibilityConfiguration";
 import { IItemSelectionProps } from "../../models/common/IItemSelectionProps";
+import { IQueryModifierConfiguration } from "../../queryModifier/IQueryModifierConfiguration";
 
 export enum QueryTextSource {
     StaticValue,
@@ -171,5 +172,17 @@ export default interface ISearchResultsWebPartProps extends IBaseWebPartProps {
      * Enables/Disables custom query transformation
      */
      enableCustomQueryTransformation: boolean;
+
+    /**
+     * The queryModifier properties
+     */
+    queryModifierProperties: {
+        [key: string]: any;
+    };
+
+     /**
+     * Selected query modifier definition
+     */
+      queryModifierConfiguration:IQueryModifierConfiguration[];
 }
 
