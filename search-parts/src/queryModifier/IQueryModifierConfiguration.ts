@@ -3,4 +3,5 @@ export interface IQueryModifierConfiguration {
     key: string;
     enabled: boolean;
     description:string;
+    endWhenSuccessfull:boolean;
 }

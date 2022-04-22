@@ -15,9 +15,7 @@ export class AvailableQueryModifier {
             name: strings.BuiltInQueryModifiers.WordPrefixModifier.ModifierName,
             key: BuiltinQueryModifierKeys.WordPrefixModifier.toString(),
             description: strings.BuiltInQueryModifiers.WordPrefixModifier.ModifierDescription,
-            serviceKey: null, // ServiceKey will be created dynamically for builtin source
-            sortIdx:0,
-            endWhenSuccessfull:false
+            serviceKey: null // ServiceKey will be created dynamically for builtin source            
         }
     ];
 }

@@ -40,7 +40,8 @@ define([], function() {
                     QueryModifiersDescription: "Enable or disable individual custom query modifiers",
                     EnabledPropertyLabel: "Enabled",
                     ModifierNamePropertyLabel: "Name",
-                    ModifierDescriptionPropertyLabel: "Description"
+                    ModifierDescriptionPropertyLabel: "Description",
+                    EndWhenSuccessfullPropertyLabel:"End when successfull"
                 },
             },
             LayoutPage: {

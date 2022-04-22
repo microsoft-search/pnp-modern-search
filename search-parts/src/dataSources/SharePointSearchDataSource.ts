@@ -10,7 +10,7 @@ import {
 } from "@microsoft/sp-property-pane";
 import * as commonStrings from 'CommonStrings';
 import { ServiceScope, Guid, Text } from '@microsoft/sp-core-library';
-import { sortBy, isEmpty, uniq, cloneDeep } from "@microsoft/sp-lodash-subset";
+import { sortBy, isEmpty, uniq, cloneDeep, isEqual } from "@microsoft/sp-lodash-subset";
 import { PagingBehavior } from "@pnp/modern-search-extensibility";
 import { IDataContext } from "@pnp/modern-search-extensibility";
 import { SortFieldDirection } from "@pnp/modern-search-extensibility";
@@ -775,12 +775,15 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         for (const modifier of selectedCustomQueryModifier) {
         
             const resp = await modifier.modifyQuery({queryTemplate:searchQuery.QueryTemplate, queryText: searchQuery.Querytext}, dataContext);
-            console.log("resp",resp);
+            console.log("resp",resp);            
+            let doBreak = (!isEqual(searchQuery.Querytext, resp.queryText) || !isEqual(searchQuery.QueryTemplate, resp.queryTemplate)) && modifier.endWhenSuccessfull;
             searchQuery.Querytext = resp.queryText;
             searchQuery.QueryTemplate = resp.queryTemplate;
-        }
-        
-        
+            if(doBreak)
+            {
+                break;
+            }
+        }            
 
         if (this.properties.resultSourceId) {
 

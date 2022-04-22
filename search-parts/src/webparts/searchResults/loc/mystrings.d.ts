@@ -40,6 +40,7 @@ declare interface ISearchResultsWebPartStrings {
                 EnabledPropertyLabel: string;
                 ModifierNamePropertyLabel: string;
                 ModifierDescriptionPropertyLabel: string;
+                EndWhenSuccessfullPropertyLabel: string;
             },
         },
         LayoutPage: {

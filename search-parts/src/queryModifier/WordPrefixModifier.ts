@@ -1,5 +1,5 @@
 import { BaseQueryModifier, IDataContext, IQueryModification } from "@pnp/modern-search-extensibility";
-import { IPropertyPaneGroup, PropertyPaneTextField } from '@microsoft/sp-property-pane';
+import { IPropertyPaneGroup, PropertyPaneTextField, PropertyPaneToggle } from '@microsoft/sp-property-pane';
 // todo
 import * as commonStrings from 'CommonStrings';
 
@@ -20,12 +20,7 @@ export class WordPrefixModifier extends BaseQueryModifier<IWordPrefixModifierPro
     this._regex.lastIndex = 0;
 
     const s = searchQuery?.queryText.replace(this._regex, (match => {
-      if (['OR', 'AND'].some(_ => _ === match)) {
-        return match;
-      }
-      else {
-        return `${match}${this.properties.modifierText}`;
-      }
+      return  ['OR', 'AND'].some(_ => _ === match) ? match : `${match}${this.properties.modifierText}`;      
     }));
 
     
@@ -46,7 +41,7 @@ export class WordPrefixModifier extends BaseQueryModifier<IWordPrefixModifierPro
             label: commonStrings.BuiltInQueryModifiers.WordPrefixModifier.ModifierTextLabel,
             description: commonStrings.BuiltInQueryModifiers.WordPrefixModifier.ModifierTextDescription,
             placeholder: commonStrings.BuiltInQueryModifiers.WordPrefixModifier.ModifierTextPlaceholder,            
-          }),
+          })
         ],
       },
     ];

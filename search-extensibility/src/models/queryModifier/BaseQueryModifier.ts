@@ -11,6 +11,7 @@ export abstract class BaseQueryModifier<T> implements IQueryModifier {
     protected _properties!: T;
     private _context: WebPartContext;
     protected serviceScope: ServiceScope;
+    protected _endWhenSuccessfull: boolean;
 
     get properties(): T {
         return this._properties;
@@ -28,6 +29,14 @@ export abstract class BaseQueryModifier<T> implements IQueryModifier {
         this._context = context;
     }
 
+    get endWhenSuccessfull(): boolean {
+        return this._endWhenSuccessfull;
+    }
+
+    set endWhenSuccessfull(endWhenSuccessfull: boolean) {
+        this._endWhenSuccessfull = endWhenSuccessfull;
+    }
+    
     public constructor(serviceScope: ServiceScope) {
         this.serviceScope = serviceScope;
     }
