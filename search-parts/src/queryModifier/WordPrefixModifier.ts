@@ -19,7 +19,7 @@ export class WordPrefixModifier extends BaseQueryModifier<IWordPrefixModifierPro
 
     this._regex.lastIndex = 0;
 
-    const s = searchQuery?.queryText.replace(this._regex, (match => {
+    const s = searchQuery?.queryText?.replace(this._regex, (match => {
       return  ['OR', 'AND'].some(_ => _ === match) ? match : `${match}${this.properties.modifierText}`;      
     }));
 
