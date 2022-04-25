@@ -1,6 +1,6 @@
-import { BaseDataSource, FilterSortType, FilterSortDirection, ITemplateSlot, BuiltinTemplateSlots, IDataContext, ITokenService, FilterBehavior, PagingBehavior, IDataFilterResult, IDataFilterResultValue, FilterComparisonOperator } from "@pnp/modern-search-extensibility";
+import { BaseDataSource, FilterSortType, FilterSortDirection, ITemplateSlot, BuiltinTemplateSlots, IDataContext, ITokenService, FilterBehavior, PagingBehavior, IDataFilterResult, IDataFilterResultValue, FilterComparisonOperator, IQueryModifier } from "@pnp/modern-search-extensibility";
 import { IPropertyPaneGroup, PropertyPaneLabel, IPropertyPaneField, PropertyPaneToggle, PropertyPaneHorizontalRule } from "@microsoft/sp-property-pane";
-import { cloneDeep, isEmpty } from '@microsoft/sp-lodash-subset';
+import { cloneDeep, isEmpty, isEqual } from '@microsoft/sp-lodash-subset';
 import { MSGraphClientFactory } from "@microsoft/sp-http";
 import { TokenService } from "../services/tokenService/TokenService";
 import { ServiceScope } from '@microsoft/sp-core-library';
@@ -204,7 +204,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         return PagingBehavior.Dynamic;
     }
 
-    public async getData(dataContext: IDataContext): Promise<IMicrosoftSearchDataSourceData> {
+    public async getData(dataContext: IDataContext, selectedCustomQueryModifier?:IQueryModifier[]): Promise<IMicrosoftSearchDataSourceData> {
 
         let results: IMicrosoftSearchDataSourceData = {
             items: []
@@ -212,7 +212,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
 
         // Ensuring at least one entity type is selected before launching a search
         if (this._properties.entityTypes.length > 0) {
-            const searchQuery = await this.buildMicrosoftSearchQuery(dataContext);
+            const searchQuery = await this.buildMicrosoftSearchQuery(dataContext,selectedCustomQueryModifier);
             results = await this.search(searchQuery);
         } else {
             // If no entity is selected, manually set the results to prevent
@@ -570,7 +570,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         }
     }
 
-    private async buildMicrosoftSearchQuery(dataContext: IDataContext): Promise<IMicrosoftSearchQuery> {
+    private async buildMicrosoftSearchQuery(dataContext: IDataContext, selectedCustomQueryModifier?:IQueryModifier[]): Promise<IMicrosoftSearchQuery> {
         
         let searchQuery: IMicrosoftSearchQuery = {
             requests: []           
@@ -594,6 +594,23 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             // Use {searchTerms} or {inputQueryText} to use orginal value
             queryText = queryTemplate.trim();
         }
+
+         
+         //TODO sorted? Clone datacontext?
+         // QUerytemplate will be supported in the future directly by ms search graph api, then we need to introduce it here again
+         for (const modifier of selectedCustomQueryModifier) {
+         
+             const resp = await modifier.modifyQuery({queryTemplate:queryTemplate, queryText: queryText}, dataContext);
+             console.log("resp",resp);            
+             let doBreak = (!isEqual(queryText, resp.queryText) ) && modifier.endWhenSuccessfull;
+             queryText = resp.queryText;
+             //queryTemplate = resp.queryTemplate;
+             if(doBreak)
+             {
+                 break;
+             }
+         }
+
 
         // Paging
         if (dataContext.pageNumber > 1) {
