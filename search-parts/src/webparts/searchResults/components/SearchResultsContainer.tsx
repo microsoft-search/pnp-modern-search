@@ -491,6 +491,11 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 instanceId: this.props.dataContext.filters.instanceId,
                 filtersConfiguration: this.props.dataContext.filters.filtersConfiguration
             },
+            // Sorting information
+            sort: {
+                selectedSortFieldName: this.props.dataContext.sorting.selectedSortFieldName,
+                selectedSortDirection: this.props.dataContext.sorting.selectedSortDirection
+            },
             // The connected verticals information
             verticals: {
                 selectedVertical: this.props.dataContext.verticals.selectedVertical

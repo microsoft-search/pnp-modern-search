@@ -18,4 +18,9 @@ export class ExtensibilityConstants {
      * Event name to use when the operator between filter values changes
      */
     public static readonly EVENT_FILTER_VALUE_OPERATOR_UPDATED = 'filterOperatorUpdated';
+
+    /**
+     * Event name to use when a sort field an direction are applied
+     */
+    public static readonly EVENT_SORT_BY = 'sortBy';
 }

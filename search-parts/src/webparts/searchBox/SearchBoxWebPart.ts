@@ -680,7 +680,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
      */
     private _bindHashChange() {
         const queryText = DynamicPropertyHelper.tryGetSourceSafe(this.properties.queryText);
-        if (queryText && queryText.reference.localeCompare('PageContext:UrlData:fragment') === 0) {
+        if (queryText?.reference?.localeCompare('PageContext:UrlData:fragment') === 0) {
             // Manually subscribe to hash change since the default property doesn't
             window.addEventListener('hashchange', this.render);
         } else {

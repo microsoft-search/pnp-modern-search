@@ -13,6 +13,7 @@ import { ServiceScope, Guid, Text } from '@microsoft/sp-core-library';
 import { sortBy, isEmpty, uniq, cloneDeep } from "@microsoft/sp-lodash-subset";
 import { PagingBehavior } from "@pnp/modern-search-extensibility";
 import { IDataContext } from "@pnp/modern-search-extensibility";
+import { SortFieldDirection } from "@pnp/modern-search-extensibility";
 import { ISharePointSearchService } from "../services/searchService/ISharePointSearchService";
 import { SharePointSearchService } from "../services/searchService/SharePointSearchService";
 import LocalizationHelper from "../helpers/LocalizationHelper";
@@ -23,19 +24,20 @@ import { TaxonomyService } from "../services/taxonomyService/TaxonomyService";
 import { ISharePointSearchResult } from "../models/search/ISharePointSearchResults";
 import { ILocalizableSearchResult, ILocalizableSearchResultProperty } from "../models/search/ILocalizableSearchResult";
 import { PropertyPaneAsyncCombo } from "../controls/PropertyPaneAsyncCombo/PropertyPaneAsyncCombo";
-import { IComboBoxOption } from "office-ui-fabric-react";
+import { Dropdown, IComboBoxOption, IDropdownProps, ITextFieldProps, TextField } from "office-ui-fabric-react";
 import { ISharePointSearchQuery, SortDirection, ISort } from "../models/search/ISharePointSearchQuery";
-import update from 'immutability-helper';
 import { AsyncCombo } from '../controls/PropertyPaneAsyncCombo/components/AsyncCombo';
 import { IAsyncComboProps } from '../controls/PropertyPaneAsyncCombo/components/IAsyncComboProps';
 import { DateHelper } from '../helpers/DateHelper';
 import { PropertyPaneNonReactiveTextField } from '../controls/PropertyPaneNonReactiveTextField/PropertyPaneNonReactiveTextField';
 import { ITerm } from '../services/taxonomyService/ITaxonomyItems';
 import { DataFilterHelper } from '../helpers/DataFilterHelper';
-import { ISortFieldConfiguration, SortFieldDirection } from '../models/search/ISortFieldConfiguration';
-
+import { ISortFieldConfiguration,  } from '../models/search/ISortFieldConfiguration';
 import { EnumHelper } from '../helpers/EnumHelper';
 import { BuiltinDataSourceProviderKeys } from './AvailableDataSources';
+import { StringHelper } from '../helpers/StringHelper';
+import { SortableFields } from '../common/Constants';
+
 const TAXONOMY_REFINER_REGEX = /((L0)\|#.?([0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}))\|?/;
 
 export enum BuiltinSourceIds {
@@ -116,6 +118,13 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
 
     private _availableLanguages: IPropertyPaneDropdownOption[] = [];
     private _availableManagedProperties: IComboBoxOption[] = [];
+    private _sortableFields: IComboBoxOption[] = SortableFields.map(field => {
+        return {
+            key: field,
+            text: field,
+        } as IComboBoxOption;
+    });
+
     private _resultSourcesOptions: IComboBoxOption[] = [];
     private _sharePointSearchService: ISharePointSearchService;
     private _pageContext: PageContext;
@@ -309,49 +318,77 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                                 required: true,
                                 onCustomRender: ((field, value, onUpdate, item, itemId, onError) => {
 
-                                    return React.createElement("div", { key: `${field.id}-${itemId}` },
-                                        React.createElement(AsyncCombo, {
-                                            defaultSelectedKey: item[field.id] ? item[field.id] : '',
-                                            onUpdate: (option: IComboBoxOption) => {
-
-                                                this._sharePointSearchService.validateSortableProperty(option.key as string).then((sortable: boolean) => {
-                                                    if (!sortable) {
-                                                        onError(field.id, commonStrings.DataSources.SearchCommon.Sort.SortInvalidSortableFieldMessage);
-                                                    } else {
-                                                        onUpdate(field.id, option.key as string);
-                                                        onError(field.id, '');
-                                                    }
-                                                });
-                                            },
-                                            allowMultiSelect: false,
-                                            allowFreeform: true,
-                                            availableOptions: this._availableManagedProperties,
-                                            onLoadOptions: this.getAvailableProperties.bind(this),
-                                            onUpdateOptions: ((options: IComboBoxOption[]) => {
-                                                this._availableManagedProperties = options;
-                                            }).bind(this),
-                                            clearTextOnFocus: true,
-                                            placeholder: commonStrings.DataSources.SearchCommon.Sort.SortFieldColumnPlaceholder,
-                                            useComboBoxAsMenuWidth: false // Used when screen resolution is too small to display the complete value  
-                                        } as IAsyncComboProps));
+                                return React.createElement("div", { key: `${field.id}-${itemId}` },
+                                    React.createElement(AsyncCombo, {
+                                        defaultSelectedKey: item[field.id] ? item[field.id] : '',
+                                        allowMultiSelect: false,
+                                        allowFreeform: true,
+                                        availableOptions: this._sortableFields,
+                                        onUpdateOptions: ((options: IComboBoxOption[]) => {
+                                            this._sortableFields = options;
+                                        }).bind(this),
+                                        clearTextOnFocus: true,
+                                        onUpdate: (option: IComboBoxOption) => {
+                                            onUpdate(field.id, option.key as string);
+                                        },
+                                        placeholder: commonStrings.DataSources.SearchCommon.Sort.SortFieldColumnPlaceholder,
+                                        useComboBoxAsMenuWidth: false // Used when screen resolution is too small to display the complete value  
+                                    } as IAsyncComboProps));
                                 }).bind(this)
+                            },
+                            {
+                                id: 'isDefaultSort',
+                                title: commonStrings.DataSources.SearchCommon.Sort.SortFieldDefaultSortLabel,
+                                type: this._customCollectionFieldType.boolean
                             },
                             {
                                 id: 'sortDirection',
                                 title: commonStrings.DataSources.SearchCommon.Sort.SortDirectionColumnLabel,
-                                type: this._customCollectionFieldType.dropdown,
-                                required: true,
-                                options: [
-                                    {
-                                        key: SortFieldDirection.Ascending,
-                                        text: commonStrings.DataSources.SearchCommon.Sort.SortDirectionAscendingLabel
-                                    },
-                                    {
-                                        key: SortFieldDirection.Descending,
-                                        text: commonStrings.DataSources.SearchCommon.Sort.SortDirectionDescendingLabel
-                                    }
-                                ],
-                                defaultValue: SortFieldDirection.Ascending
+                                type: this._customCollectionFieldType.custom,
+                                onCustomRender: (field, value, onUpdate, item) => {
+                                  return (
+                                      React.createElement("div", null,
+                                          React.createElement(Dropdown, {
+                                            options: [
+                                                {
+                                                    key: SortFieldDirection.Ascending,
+                                                    text: commonStrings.DataSources.SearchCommon.Sort.SortDirectionAscendingLabel
+                                                },
+                                                {
+                                                    key: SortFieldDirection.Descending,
+                                                    text: commonStrings.DataSources.SearchCommon.Sort.SortDirectionDescendingLabel
+                                                }
+                                            ],
+                                            disabled: !item.isDefaultSort,
+                                            defaultSelectedKey: item.sortDirection ? item.sortDirection : SortFieldDirection.Ascending,
+                                            onChange: (ev, option) => onUpdate(field.id, option.key),
+                                          } as IDropdownProps)
+                                      )
+                                  );
+                                }
+                            },
+                            {
+                                id: 'isUserSort',
+                                title: commonStrings.DataSources.SearchCommon.Sort.SortFieldUserSortLabel,
+                                type: this._customCollectionFieldType.boolean
+                            },
+                            {
+                                id: 'sortFieldDisplayName',
+                                title: commonStrings.DataSources.SearchCommon.Sort.SortFieldFriendlyNameLabel,
+                                type: this._customCollectionFieldType.custom,
+                                onCustomRender: (field, value, onUpdate, item) => {
+                                    return (
+                                        React.createElement("div", null,
+                                            React.createElement(TextField, {
+                                                defaultValue: value,
+                                                disabled: !item.isUserSort,
+                                                onChange: (ev, newValue) => {
+                                                    onUpdate(field.id, newValue);
+                                                } 
+                                            } as ITextFieldProps)
+                                        )
+                                    );
+                                },
                             }
                         ]
                     }),
@@ -510,6 +547,10 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         ];
     }
 
+    public getSortableFields(): string[] {
+        return this.properties.sortList.filter(sort => sort.isUserSort).map(field => field.sortField);
+    }
+
     private initProperties(): void {
         this.properties.queryTemplate = this.properties.queryTemplate ? this.properties.queryTemplate : "{searchTerms}";
         this.properties.enableQueryRules = this.properties.enableQueryRules !== undefined ? this.properties.enableQueryRules : false;
@@ -542,9 +583,21 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                 'HtmlFileType',
                 'SiteLogo'
             ];
-        this.properties.resultSourceId = this.properties.resultSourceId !== undefined ? this.properties.resultSourceId : BuiltinSourceIds.LocalSharePointResults;
-        this.properties.sortList = this.properties.sortList !== undefined ? this.properties.sortList : [];
+        this.properties.resultSourceId = this.properties.resultSourceId !== undefined ? this.properties.resultSourceId : BuiltinSourceIds.LocalSharePointResults; 
         this.properties.hitHighlightedProperties = this.properties.hitHighlightedProperties ? this.properties.hitHighlightedProperties : '';
+
+        if (this.properties.sortList !== undefined) {
+            // Convert to new schema 4.5.5
+            this.properties.sortList = this.properties.sortList.map(sortConfiguration => {
+                if (sortConfiguration.isDefaultSort === undefined) {
+                    sortConfiguration.isDefaultSort = true;
+                }
+
+                return sortConfiguration;
+            });
+        } else {
+            this.properties.sortList = [];
+        }
     }
 
     private getBuiltinSourceIdOptions(): IComboBoxOption[] {
@@ -840,7 +893,22 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         }
 
         searchQuery.TrimDuplicates = false;
-        searchQuery.SortList = this._convertToSortList(this.properties.sortList);
+
+        if (dataContext.sorting?.selectedSortFieldName 
+            && dataContext.sorting?.selectedSortDirection) {
+           
+            // Manual user sorting
+            searchQuery.SortList =  [{
+                Property: dataContext.sorting.selectedSortFieldName,
+                Direction: dataContext.sorting.selectedSortDirection === SortFieldDirection.Ascending ? SortDirection.Ascending : SortDirection.Descending
+            }];
+
+        } else {
+
+            // Default sort
+            searchQuery.SortList = this._convertToSortList(this.properties.sortList.filter(sort => sort.isDefaultSort));
+        }
+        
         searchQuery.SelectProperties = this.properties.selectedProperties.filter(a => a); // Fix to remove null values;
 
         // Audience targeting
@@ -970,7 +1038,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                         const strippedTerm = matches[1];
 
                         // Use FQL expression here to get the correct output. Otherwise a full match is performed
-                        const fqlFilterValue = `"ǂǂ${this._bytesToHex(this._stringToUTF8Bytes(term))}"`;
+                        const fqlFilterValue = `"ǂǂ${StringHelper._bytesToHex(StringHelper._stringToUTF8Bytes(term))}"`;
                         const existingFilterIdx = updatedValues.map(updatedValue => updatedValue.name).indexOf(strippedTerm);
                      
                         if (existingFilterIdx === -1) {
@@ -1094,13 +1162,13 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                             const termId = matches[3];
                             const termPrefix = matches[2]; // 'L0'
                             if (termPrefix.localeCompare("L0") === 0) {
-                                const termFilterWithoutTranslations =  `"ǂǂ${this._bytesToHex(this._stringToUTF8Bytes(`GP0|#${termId.toString()}`))}"`;
-                                const termTextFilter = `"L0|#${termId.toString()}"`;
+                                const termFilterWithoutTranslations =  `"ǂǂ${StringHelper._bytesToHex(StringHelper._stringToUTF8Bytes(`GP0|#${termId.toString()}`))}"`;
+                                const termTextFilter = `string("L0|#${termId.toString()}")`;
 
                                 // value.value: HEX encoded value => original refiner value 
                                 // termFilterWithoutTranslations => language agnostic term value
                                 // termTextFilter => Text value in case the value is a string (ex: a property bag value or a text column)
-                                value.value = `or(string(${value.value}),string(${termFilterWithoutTranslations}),string(${termTextFilter}))`;
+                                value.value = `or(${value.value},${termFilterWithoutTranslations},${termTextFilter})`;
                             }
                         }
 
@@ -1268,16 +1336,6 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         }
     }
 
-    private _bytesToHex(bytes) {
-        return Array.from(
-            bytes,
-            byte => (byte as any).toString(16).padStart(2, "0")
-        ).join("");
-    }
-
-    private _stringToUTF8Bytes(string) {
-        return new TextEncoder().encode(string);
-    }
 
     private parseAndCleanOptions(options: IComboBoxOption[]): IComboBoxOption[] {
         let optionWithComma = options.find(o => (o.key as string).indexOf(",") > 0);
