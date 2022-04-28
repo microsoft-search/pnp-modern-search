@@ -79,5 +79,3 @@ Both pages are configured, the query will be transfered from one page to the oth
 
 ## Test your configuration
 The query from the Search Box is sent to the Search Results. When you switch to an other Search Page, that are configured in the Vertical, the new page is open in the same tab an the query input will be transferred to the Search Results and Verticals on the second page.
-
-https://user-images.githubusercontent.com/65955023/153156591-b478154d-23a3-40b4-aad9-6102dd4d41e7.mp4
