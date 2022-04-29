@@ -9,7 +9,7 @@
     {{/if}}
     <div class="template--listItem--contentContainer">
         <span class="template--listItem--title example-themePrimary">
-            <a href="{{slot item @root.slots.PreviewUrl}}" target="_blank" data-interception="off">{{slot item @root.slots.Title}}</a>
+            <a href="{{slot item @root.slots.PreviewUrl}}" target="_blank" data-interception="off" rel="noopener noreferrer">{{slot item @root.slots.Title}}</a>
         </span>
         <span>
             <div>{{getSummary (slot item @root.slots.Summary)}}</div>

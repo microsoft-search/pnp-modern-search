@@ -300,7 +300,7 @@ export class TemplateService implements ITemplateService {
                     // Create a temp context with the current so we can use global registered helpers on the current item
                     const tempTemplateContent = `{{#with item as |item|}}${configuration.value}{{/with}}`;
                     let template = this.Handlebars.compile(tempTemplateContent, {
-                        noEscape: true
+                        noEscape: true // Need to disable escaping to allow markup - which is later sanitized. XSS not possible
                     });
 
                     // Pass the current item as context
