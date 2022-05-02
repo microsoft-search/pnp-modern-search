@@ -9,7 +9,7 @@ import { TemplateService } from '../../../services/templateService/TemplateServi
 import { Log, DisplayMode } from "@microsoft/sp-core-library";
 import { MessageBar, MessageBarType, Overlay, Spinner, SpinnerSize } from 'office-ui-fabric-react';
 import { IDataSourceData, IDataFilterResult, BuiltinTemplateSlots } from '@pnp/modern-search-extensibility';
-import { IDataResultsTemplateContext } from '../../../models/common/ITemplateContext';
+import { ISearchResultsTemplateContext } from '../../../models/common/ITemplateContext';
 import styles from './SearchResultsContainer.module.scss';
 import { Constants, AutoCalculatedDataSourceFields, TestConstants } from '../../../common/Constants';
 import { ITemplateSlot } from '@pnp/modern-search-extensibility';
@@ -116,6 +116,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                                 templateContext={templateContext}
                                 templateService={this.templateService}
                                 instanceId={this.props.instanceId}
+                                renderType={this.props.renderType}
                                 />
                             </SelectionZone>;
 
@@ -164,6 +165,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                         templateContext={this.getTemplateContext()}
                         templateService={this.templateService}
                         instanceId={this.props.instanceId}
+                        renderType={this.props.renderType}
                     />;
                 } else {
                     renderShimmerElements = this.getDefaultShimmerElements();
@@ -456,7 +458,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
     }
 
     // Build the template context
-    private getTemplateContext(): IDataResultsTemplateContext {
+    private getTemplateContext(): ISearchResultsTemplateContext {
 
         // Gets information about current page context
         const { site, web, list, listItem, user, cultureInfo } = this.props.pageContext;

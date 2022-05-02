@@ -1,0 +1,93 @@
+{
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+        {
+			"type": "Container",
+			"$data": "${data.items}",
+			"items": [
+                {
+                    "type": "ColumnSet",
+                    "columns": [
+                        {
+                            "type": "Column",
+                            "width": "35px",
+                            "items": [
+								{
+									"type": "TextBlock",
+									"wrap": true,
+									"text": "<pnp-iconfile size='32' class='icon' data-extension='${if(empty($root.slots['FileType']),'',string(jPath($data, concat('.',$root.slots['FileType']))[0]))}'></pnp-iconfile>",
+                                    "horizontalAlignment": "left"
+								}
+                            ],
+                            "height": "stretch",
+                            "verticalContentAlignment": "top"
+                        },
+                        {
+                            "type": "Column",
+                            "width": 2,
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "[${string(jPath($data, concat('.',$root.slots['Title']))[0])}](${string(jPath($data, concat('.',$root.slots['Path']))[0])})",
+                                    "color": "Accent",
+                                    "size": "Medium",
+                                    "weight": "Bolder",
+                                    "maxLines": 3
+                                },
+                                {
+                                    "type": "TextBlock",
+                                    "text": "**${string(jPath($data, concat('.',$root.slots['Author']))[0])}**",
+                                    "spacing": "Small"
+                                },
+                                {
+                                    "type": "TextBlock",
+                                    "text": "Modified on {{DATE(${modifiedTime})}}",
+                                    "spacing": "Small",
+                                    "$when": "${modifiedBy=='' && modifiedTime!=''}"
+                                },
+                                {
+                                    "type": "TextBlock",
+                                    "text": "Modified by __${modifiedBy}__",
+                                    "spacing": "Small",
+                                    "$when": "${modifiedBy!='' && modifiedTime==''}"
+                                },
+                                {
+                                    "type": "TextBlock",
+                                    "text": "${string(jPath($data, concat('.',$root.slots['Summary']))[0])}",
+                                    "wrap": true,
+                                    "maxLines": 3
+                                }
+                            ],
+                            "horizontalAlignment": "left",
+                            "spacing": "Medium",
+                            "verticalContentAlignment": "top"
+                        },
+                        {
+                            "type": "Column",
+                            "width": 1,
+                            "items": [
+                                {
+                                    
+                                    "type": "TextBlock",
+                                    "wrap": true,
+                                    "text": "<pnp-filepreview data-preview-url='${string(jPath($data, concat('.',$root.slots['PreviewUrl']))[0])}' data-preview-image-url='${string(jPath($data, concat('.',$root.slots['PreviewImageUrl']))[0])}'><pnp-img alt='preview-image' width='120' src='${string(jPath($data, concat('.',$root.slots['PreviewImageUrl']))[0])}' loading='lazy'  data-error-image='' /> </pnp-filepreview>",
+                                    "horizontalAlignment": "right"
+                                }
+                            ],
+                            "$when": "${$root.slots['PreviewImageUrl'] != ''}"
+                        }
+                    ]
+                },
+                {
+                    "type": "TextBlock",
+                    "wrap": true,
+                    "text": "**${count($root.data.items)}** ${$index}",
+                    "horizontalAlignment": "center",
+                    "$when": "${$index == (count($root.data.items) - 1)}"
+                }
+            ]
+        }
+    ],
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json"
+}

@@ -1,3 +1,4 @@
+import { LayoutRenderType } from "@pnp/modern-search-extensibility";
 import { ITemplateService } from "../../services/templateService/ITemplateService";
 
 interface ITemplateRendererProps {
@@ -18,6 +19,11 @@ interface ITemplateRendererProps {
      * A template service instance
      */
     templateService: ITemplateService;
+
+    /**
+     * The layout render type (Handlebars, Adaptive Cards, etc.)
+     */
+    renderType: LayoutRenderType;
 }
 
 export default ITemplateRendererProps;

@@ -1,4 +1,4 @@
-import { ITemplateService } from "./ITemplateService";
+import { FileFormat, ITemplateService } from "./ITemplateService";
 import { ServiceKey, ServiceScope, Text } from "@microsoft/sp-core-library";
 import { SPHttpClient, SPHttpClientResponse } from '@microsoft/sp-http';
 import * as Handlebars from 'handlebars';
@@ -6,18 +6,20 @@ import { uniqBy, uniq, isEmpty, trimEnd, get } from "@microsoft/sp-lodash-subset
 import * as strings from 'CommonStrings';
 import { DateHelper } from "../../helpers/DateHelper";
 import { PageContext } from "@microsoft/sp-page-context";
-import { IComponentDefinition } from "@pnp/modern-search-extensibility";
+import { IComponentDefinition, LayoutRenderType } from "@pnp/modern-search-extensibility";
 import groupBy from 'handlebars-group-by';
 import { IComponentFieldsConfiguration } from "../../models/common/IComponentFieldsConfiguration";
 import { initializeFileTypeIcons } from '@uifabric/file-type-icons';
 import { GlobalSettings } from 'office-ui-fabric-react';
 import { IDataResultType, ResultTypeOperator } from "../../models/common/IDataResultType";
-import { IDataResultsTemplateContext } from "../../models/common/ITemplateContext";
+import { ISearchResultsTemplateContext, ISearchFiltersTemplateContext } from "../../models/common/ITemplateContext";
 import { UrlHelper } from "../../helpers/UrlHelper";
 import { ObjectHelper } from "../../helpers/ObjectHelper";
 import { Constants } from "../../common/Constants";
 import * as handlebarsHelpers from 'handlebars-helpers';
 import { ServiceScopeHelper } from "../../helpers/ServiceScopeHelper";
+import { DomPurifyHelper } from "../../helpers/DomPurifyHelper";
+import * as DOMPurify from 'dompurify';
 
 const TemplateService_ServiceKey = 'PnPModernSearchTemplateService';
 
@@ -37,6 +39,11 @@ export class TemplateService implements ITemplateService {
     private pageContext: PageContext;
     private dateHelper: DateHelper;
     private serviceScope: ServiceScope;
+
+    private _adaptiveCardsNS;
+    private _adaptiveCards;
+    private _markdownIt;
+    private _adaptiveCardsTemplating;
 
     /**
      * The moment.js library reference
@@ -153,21 +160,50 @@ export class TemplateService implements ITemplateService {
     }
 
     /**
- * Gets the external file content from the specified URL
- * @param fileUrl the file URL
- */
-    public async getFileContent(fileUrl: string): Promise<string> {
+     * Gets the external file content from the specified URL
+     * @param fileUrl the file URL
+     * @param fileFormat the file format to retrieve
+     */
+    public async getFileContent(fileUrl: string, fileFormat: FileFormat): Promise<string> {
+
+        let headers: HeadersInit = {
+            'X-ClientService-ClientTag': Constants.X_CLIENTSERVICE_CLIENTTAG,
+            'UserAgent': Constants.X_CLIENTSERVICE_CLIENTTAG
+        };
+
+        if (fileFormat === FileFormat.Json) {
+            headers['Content-Type'] = 'application/json';
+            headers['Accept'] = 'application/json';
+        }
 
         const response: SPHttpClientResponse = await this.spHttpClient.get(fileUrl, SPHttpClient.configurations.v1, {
-            headers: {
-                'X-ClientService-ClientTag': Constants.X_CLIENTSERVICE_CLIENTTAG,
-                'UserAgent': Constants.X_CLIENTSERVICE_CLIENTTAG
-            }
+            headers
         });
+
         if (response.ok) {
-            return await response.text();
-        }
-        else {
+
+            let content;
+
+            switch (fileFormat) {
+
+                // Get file content as JSON
+                case FileFormat.Json:
+                    content = await response.json();
+                    content = JSON.stringify(content);
+                    break;
+
+                // Get file content as raw text
+                case FileFormat.Text:
+                    content = await response.text();
+                    break;
+
+                default:
+                    break;
+            }
+
+            return content;
+
+        } else {
             throw response.statusText;
         }
     }
@@ -212,12 +248,24 @@ export class TemplateService implements ITemplateService {
      * Compile the specified Handlebars template with the associated context object¸
      * @returns the compiled HTML template string
      */
-    public async processTemplate(templateContext: any, templateContent: string): Promise<string> {
+    public async processTemplate(templateContext: ISearchResultsTemplateContext | ISearchFiltersTemplateContext, templateContent: string, renderType: LayoutRenderType): Promise<string> {
+        let processedTemplate: string = undefined;
 
-        let template = this.Handlebars.compile(templateContent);
-        let result = template(templateContext);
+        switch (renderType) {
+            case LayoutRenderType.Handlebars:
+                processedTemplate = this._renderHandlebarsTemplate(templateContext, templateContent);
 
-        return result;
+                break;
+
+            case LayoutRenderType.AdaptiveCards:
+                processedTemplate = await this._renderAdaptiveCardsTemplate(templateContext, templateContent);
+                break;
+
+            default:
+                break;
+        }
+
+        return processedTemplate;
     }
 
     /**
@@ -283,7 +331,7 @@ export class TemplateService implements ITemplateService {
      * @param itemAsString the item context as stringified object
      * @param themeVariant the current theme variant
      */
-    public processFieldsConfiguration<T>(fieldsConfiguration: IComponentFieldsConfiguration[], item: { [key: string]: any }, context?: IDataResultsTemplateContext | any): T {
+    public processFieldsConfiguration<T>(fieldsConfiguration: IComponentFieldsConfiguration[], item: { [key: string]: any }, context?: ISearchResultsTemplateContext | any): T {
 
         let processedProps = {};
 
@@ -296,7 +344,7 @@ export class TemplateService implements ITemplateService {
 
                 try {
 
-                    let templateContext: IDataResultsTemplateContext | any = context ? context : {};
+                    let templateContext: ISearchResultsTemplateContext | any = context ? context : {};
                     // Create a temp context with the current so we can use global registered helpers on the current item
                     const tempTemplateContent = `{{#with item as |item|}}${configuration.value}{{/with}}`;
                     let template = this.Handlebars.compile(tempTemplateContent, {
@@ -352,6 +400,40 @@ export class TemplateService implements ITemplateService {
         return;
     }
 
+    private _renderHandlebarsTemplate(templateContext: ISearchResultsTemplateContext | ISearchFiltersTemplateContext, templateContent: string): string {
+        const template = this.Handlebars.compile(templateContent);
+        return template(templateContext);
+    }
+
+    private async _renderAdaptiveCardsTemplate(templateContext: ISearchResultsTemplateContext | ISearchFiltersTemplateContext, templateContent: string): Promise<string> {
+
+        // Load dynamic resources
+        await this._initAdaptiveCardsResources();
+        
+        let hostConfiguration: {[key: string]: any} = {
+            fontFamily: "Segoe UI, Helvetica Neue, sans-serif"
+        };
+
+        if ((templateContext as ISearchResultsTemplateContext).utils.adaptiveCardsHostConfig) {
+            hostConfiguration = (templateContext as ISearchResultsTemplateContext).utils.adaptiveCardsHostConfig;          
+        }
+
+        this._adaptiveCards.hostConfig = this._adaptiveCardsNS.HostConfig(hostConfiguration);
+
+        const template = new this._adaptiveCardsTemplating.Template(JSON.parse(templateContent));
+
+        // The root context will be available in the the card implicitly
+        let context = {
+            $root: templateContext
+        };
+
+        const card = template.expand(context);
+        this._adaptiveCards.parse(card);
+
+        const htmlTemplateElement: HTMLElement = this._adaptiveCards.render();
+        return htmlTemplateElement.outerHTML;
+    }
+
     /**
      * Builds the Handlebars nested conditions recursively to reflect the result types configuration
      * @param resultTypes the configured result types from the property pane
@@ -364,7 +446,7 @@ export class TemplateService implements ITemplateService {
         let templateContent = currentResultType.inlineTemplateContent;
 
         if (currentResultType.externalTemplateUrl) {
-            templateContent = await this.getFileContent(currentResultType.externalTemplateUrl);
+            templateContent = await this.getFileContent(currentResultType.externalTemplateUrl, FileFormat.Text);
         }
 
         if (currentResultType.value) {
@@ -623,5 +705,53 @@ export class TemplateService implements ITemplateService {
             let dayCount = this.moment(date1).diff(this.moment(date2), 'days');
             return Math.abs(dayCount);
         });
+    }
+
+    private async _initAdaptiveCardsResources(): Promise<void> {
+
+        if (!this._adaptiveCardsNS) {
+
+            const domPurify = DOMPurify.default;
+
+            domPurify.setConfig({
+                WHOLE_DOCUMENT: false
+            });
+    
+            domPurify.addHook('uponSanitizeElement', DomPurifyHelper.allowCustomComponentsHook);
+            domPurify.addHook('uponSanitizeAttribute', DomPurifyHelper.allowCustomAttributesHook); 
+
+            // Load dynamic resources
+            this._adaptiveCardsNS = await import(
+                /* webpackChunkName: 'pnp-modern-search-adaptive-cards-bundle' */
+                'adaptivecards'
+            );
+
+            this._adaptiveCardsNS.AdaptiveCard.onProcessMarkdown =  (text: string, result) => { 
+
+                // We use Markdown here to render HTML and use web components
+                const rawHtml = this._markdownIt.render(text).replace(/\&lt;/g, '<').replace(/\&gt;/g,'>');
+                result.outputHtml = domPurify.sanitize(rawHtml);
+                result.didProcess = true;
+            };
+
+            this._adaptiveCards = new this._adaptiveCardsNS.AdaptiveCard();
+
+            await import(
+                /* webpackChunkName: 'pnp-modern-search-adaptive-cards-bundle' */
+                'adaptive-expressions'
+            );
+            
+            this._adaptiveCardsTemplating = await import(
+                /* webpackChunkName: 'pnp-modern-search-adaptive-cards-bundle' */
+                'adaptivecards-templating'
+            );
+
+            const MarkdownIt = await import(
+                /* webpackChunkName: 'pnp-modern-search-adaptive-cards-bundle' */
+                'markdown-it'
+            );
+
+            this._markdownIt = new MarkdownIt.default();
+        }
     }
 }

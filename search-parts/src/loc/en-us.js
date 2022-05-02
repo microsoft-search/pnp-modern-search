@@ -181,7 +181,10 @@ define([], function() {
             Debug: {
                 Name: "Debug"
             },
-            Custom: {
+            CustomHandlebars: {
+                Name: "Custom"
+            },
+            CustomAdaptiveCards: {
                 Name: "Custom"
             },
             SimpleList: {

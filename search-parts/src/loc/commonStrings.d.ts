@@ -180,9 +180,12 @@ declare interface ICommonStrings {
       Debug: {
         Name: string;
       };
-      Custom: {
+      CustomHandlebars: {
         Name: string;
       };
+      CustomAdaptiveCards: {
+        Name: string;
+      },
       SimpleList: {
         Name: string;
         ShowFileIconLabel: string;

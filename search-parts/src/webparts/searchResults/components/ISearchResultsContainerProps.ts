@@ -1,4 +1,4 @@
-import { IDataSource, IDataFilterResult } from "@pnp/modern-search-extensibility";
+import { IDataSource, IDataFilterResult, LayoutRenderType } from "@pnp/modern-search-extensibility";
 import ISearchResultsWebPartProps from "../ISearchResultsWebPartProps";
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import { IDataContext } from "@pnp/modern-search-extensibility";
@@ -67,4 +67,9 @@ export interface ISearchResultsContainerProps {
    * The Web Part Title props
    */
   webPartTitleProps: IWebPartTitleProps;
+
+  /**
+   * The layout render type (Handlebars, Adaptive Cards, etc.)
+   */
+  renderType: LayoutRenderType;
 }
