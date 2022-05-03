@@ -1,7 +1,8 @@
 import { IComponentDefinition, LayoutRenderType } from "@pnp/modern-search-extensibility";
 import { IDataResultType } from "../../models/common/IDataResultType";
 import { IComponentFieldsConfiguration } from "../../models/common/IComponentFieldsConfiguration";
-import { ISearchResultsTemplateContext } from "../../models/common/ITemplateContext";
+import { ISearchFiltersTemplateContext, ISearchResultsTemplateContext } from "../../models/common/ITemplateContext";
+import { IResultTemplates } from "../../models/search/IMicrosoftSearchResponse";
 
 export enum FileFormat {
     Text,
@@ -19,4 +20,5 @@ export interface ITemplateService {
     registerWebComponents(webComponents: IComponentDefinition<any>[], instanceId: string): Promise<void>;
     processFieldsConfiguration<T>(fieldsConfiguration: IComponentFieldsConfiguration[], item: {[key:string]: any}, context?: ISearchResultsTemplateContext | any): T;
     registerResultTypes(resultTypes: IDataResultType[]): Promise<void>;
+    buildAdaptiveCardsResultTypes(templateContent: string, templateContext: ISearchResultsTemplateContext | ISearchFiltersTemplateContext, items: any[], resultTemplates: IResultTemplates): string;
 }

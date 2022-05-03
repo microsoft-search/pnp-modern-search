@@ -8,7 +8,7 @@ import { ITemplateService } from '../../../services/templateService/ITemplateSer
 import { TemplateService } from '../../../services/templateService/TemplateService';
 import { Log, DisplayMode } from "@microsoft/sp-core-library";
 import { MessageBar, MessageBarType, Overlay, Spinner, SpinnerSize } from 'office-ui-fabric-react';
-import { IDataSourceData, IDataFilterResult, BuiltinTemplateSlots } from '@pnp/modern-search-extensibility';
+import { IDataSourceData, IDataFilterResult, BuiltinTemplateSlots, LayoutRenderType } from '@pnp/modern-search-extensibility';
 import { ISearchResultsTemplateContext } from '../../../models/common/ITemplateContext';
 import styles from './SearchResultsContainer.module.scss';
 import { Constants, AutoCalculatedDataSourceFields, TestConstants } from '../../../common/Constants';
@@ -17,6 +17,7 @@ import { ObjectHelper } from '../../../helpers/ObjectHelper';
 import { BuiltinLayoutsKeys } from '../../../layouts/AvailableLayouts';
 import { WebPartTitle } from '@pnp/spfx-controls-react/lib/WebPartTitle';
 import * as webPartStrings from 'SearchResultsWebPartStrings';
+import { IMicrosoftSearchDataSourceData } from '../../../models/search/IMicrosoftSearchDataSourceData';
 
 const LogSource = "SearchResultsContainer";
 
@@ -102,6 +103,14 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
         // Content loading
         templateContent = this.templateService.getTemplateMarkup(this.props.templateContent);
         const templateContext = this.getTemplateContext();
+        let renderType = this.props.renderType;
+                
+        // Process result types if any (adaptive cards only)
+        if (this.state.data && (this.state.data as IMicrosoftSearchDataSourceData).resultTemplates && renderType === LayoutRenderType.AdaptiveCards) {
+            templateContent = this.templateService.buildAdaptiveCardsResultTypes(templateContent, templateContext, this.state.data.items, (this.state.data as IMicrosoftSearchDataSourceData).resultTemplates)
+            renderType = LayoutRenderType.Html // Process content a HTML
+        }
+        
 
         let selectionMode = SelectionMode.none;
         if (this.props.properties.itemSelectionProps && this.props.properties.itemSelectionProps.allowItemSelection) {
@@ -112,11 +121,11 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                             selection={this._selection} 
                             selectionMode={selectionMode}>
                                 <TemplateRenderer
-                                templateContent={templateContent} 
-                                templateContext={templateContext}
-                                templateService={this.templateService}
-                                instanceId={this.props.instanceId}
-                                renderType={this.props.renderType}
+                                    templateContent={templateContent} 
+                                    templateContext={templateContext}
+                                    templateService={this.templateService}
+                                    instanceId={this.props.instanceId}
+                                    renderType={renderType}
                                 />
                             </SelectionZone>;
 

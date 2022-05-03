@@ -20,6 +20,9 @@ import * as handlebarsHelpers from 'handlebars-helpers';
 import { ServiceScopeHelper } from "../../helpers/ServiceScopeHelper";
 import { DomPurifyHelper } from "../../helpers/DomPurifyHelper";
 import * as DOMPurify from 'dompurify';
+import { IResultTemplates } from "../../models/search/IMicrosoftSearchResponse";
+import { AdaptiveCard, CardElement, Container, TextBlock } from "adaptivecards"; 
+import { Template } from "adaptivecards-templating";
 
 const TemplateService_ServiceKey = 'PnPModernSearchTemplateService';
 
@@ -249,7 +252,7 @@ export class TemplateService implements ITemplateService {
      * @returns the compiled HTML template string
      */
     public async processTemplate(templateContext: ISearchResultsTemplateContext | ISearchFiltersTemplateContext, templateContent: string, renderType: LayoutRenderType): Promise<string> {
-        let processedTemplate: string = undefined;
+        let processedTemplate: string = templateContent;
 
         switch (renderType) {
             case LayoutRenderType.Handlebars:
@@ -259,6 +262,10 @@ export class TemplateService implements ITemplateService {
 
             case LayoutRenderType.AdaptiveCards:
                 processedTemplate = await this._renderAdaptiveCardsTemplate(templateContext, templateContent);
+                break;
+
+            case LayoutRenderType.Html:
+                // Return the content without any modifications
                 break;
 
             default:
@@ -753,5 +760,54 @@ export class TemplateService implements ITemplateService {
 
             this._markdownIt = new MarkdownIt.default();
         }
+    }
+
+    public buildAdaptiveCardsResultTypes(templateContent: string, templateContext: ISearchResultsTemplateContext | ISearchFiltersTemplateContext, items: any[], resultTemplates: IResultTemplates): string {
+
+        // Parse and render the main card template
+        const mainCard = new AdaptiveCard();
+        const template = new Template(JSON.parse(templateContent));
+
+        const context = {
+            $root: templateContext
+        };
+
+        const card = template.expand(context);
+        mainCard.parse(card);
+        const mainHtml = mainCard.render();
+       
+        // Build dictionary of available result template
+        const templateDictionary = new Map(Object.entries(resultTemplates));
+
+        for (let item of items) {
+
+            const templateId = item.resultTemplateId;
+            const templatePayload = templateDictionary.get(templateId).body;
+
+            // Check if item should use a result template
+            if (templatePayload) {
+
+                const template = new Template(templatePayload);
+
+                const context = {
+                    $root: item.resource.properties
+                };
+
+                const card = template.expand(context);
+    
+                const itemAdaptiveCard = new AdaptiveCard();
+                itemAdaptiveCard.parse(card);
+    
+                // Partial match as we can't use the complete ID due to special characters "/" and "==""
+                const defaultItem = mainHtml.querySelector(`[id^="${item.hitId.substring(0,15)}"]`); 
+                
+                // Replace the HTML element corresponding to the item by its result type
+                if (defaultItem) {
+                    defaultItem.replaceWith(itemAdaptiveCard.render().firstChild);
+                }
+            }
+        }
+
+        return mainHtml.outerHTML;
     }
 }

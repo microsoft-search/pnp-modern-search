@@ -7,6 +7,7 @@
 			"$data": "${data.items}",
 			"items": [
                 {
+                    "id": "${hitId}",
                     "type": "ColumnSet",
                     "columns": [
                         {
@@ -78,7 +79,7 @@
                             "$when": "${$root.slots['PreviewImageUrl'] != ''}"
                         }
                     ]
-                },
+                },          
                 {
                     "type": "TextBlock",
                     "wrap": true,

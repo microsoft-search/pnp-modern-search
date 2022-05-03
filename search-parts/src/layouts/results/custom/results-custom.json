@@ -15,6 +15,7 @@
 			"items": [
 				{
 					"type": "ColumnSet",
+					"id": "${hitId}",
 					"columns": [
 						{
 							"type": "Column",

@@ -47,5 +47,6 @@ export enum LayoutType {
 
 export enum LayoutRenderType {
     Handlebars = 'Handlebars',
-    AdaptiveCards = 'AdaptiveCards'
+    AdaptiveCards = 'AdaptiveCards',
+    Html = 'Html'
 }
