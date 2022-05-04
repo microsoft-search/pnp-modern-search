@@ -6,7 +6,7 @@ import { uniqBy, uniq, isEmpty, trimEnd, get } from "@microsoft/sp-lodash-subset
 import * as strings from 'CommonStrings';
 import { DateHelper } from "../../helpers/DateHelper";
 import { PageContext } from "@microsoft/sp-page-context";
-import { IComponentDefinition, LayoutRenderType } from "@pnp/modern-search-extensibility";
+import { IComponentDefinition, IResultTemplates, LayoutRenderType } from "@pnp/modern-search-extensibility";
 import groupBy from 'handlebars-group-by';
 import { IComponentFieldsConfiguration } from "../../models/common/IComponentFieldsConfiguration";
 import { initializeFileTypeIcons } from '@uifabric/file-type-icons';
@@ -20,7 +20,6 @@ import * as handlebarsHelpers from 'handlebars-helpers';
 import { ServiceScopeHelper } from "../../helpers/ServiceScopeHelper";
 import { DomPurifyHelper } from "../../helpers/DomPurifyHelper";
 import * as DOMPurify from 'dompurify';
-import { IResultTemplates } from "../../models/search/IMicrosoftSearchResponse";
 import { AdaptiveCard, CardElement, Container, TextBlock } from "adaptivecards"; 
 import { Template } from "adaptivecards-templating";
 
@@ -264,10 +263,6 @@ export class TemplateService implements ITemplateService {
                 processedTemplate = await this._renderAdaptiveCardsTemplate(templateContext, templateContent);
                 break;
 
-            case LayoutRenderType.Html:
-                // Return the content without any modifications
-                break;
-
             default:
                 break;
         }
@@ -414,9 +409,11 @@ export class TemplateService implements ITemplateService {
 
     private async _renderAdaptiveCardsTemplate(templateContext: ISearchResultsTemplateContext | ISearchFiltersTemplateContext, templateContent: string): Promise<string> {
 
+        let renderTemplateContent = null;
+
         // Load dynamic resources
         await this._initAdaptiveCardsResources();
-        
+
         let hostConfiguration: {[key: string]: any} = {
             fontFamily: "Segoe UI, Helvetica Neue, sans-serif"
         };
@@ -425,20 +422,34 @@ export class TemplateService implements ITemplateService {
             hostConfiguration = (templateContext as ISearchResultsTemplateContext).utils.adaptiveCardsHostConfig;          
         }
 
-        this._adaptiveCards.hostConfig = this._adaptiveCardsNS.HostConfig(hostConfiguration);
+        hostConfiguration = this._adaptiveCardsNS.HostConfig(hostConfiguration);
 
-        const template = new this._adaptiveCardsTemplating.Template(JSON.parse(templateContent));
-
-        // The root context will be available in the the card implicitly
-        let context = {
-            $root: templateContext
-        };
-
-        const card = template.expand(context);
-        this._adaptiveCards.parse(card);
-
-        const htmlTemplateElement: HTMLElement = this._adaptiveCards.render();
-        return htmlTemplateElement.outerHTML;
+        // If result templates are present, process each individual item and return the HTML output
+        if ((templateContext as ISearchResultsTemplateContext).data?.resultTemplates) {
+            renderTemplateContent = this._buildAdaptiveCardsResultTypes(
+                                        templateContent, 
+                                        templateContext as ISearchResultsTemplateContext, 
+                                        (templateContext as ISearchResultsTemplateContext).data?.resultTemplates, 
+                                        hostConfiguration);
+        } else {
+                
+            const template = new this._adaptiveCardsTemplating.Template(JSON.parse(templateContent));
+    
+            // The root context will be available in the the card implicitly
+            const context = {
+                $root: templateContext
+            };
+    
+            const card = template.expand(context);
+            const adaptiveCard = new this._adaptiveCardsNS.AdaptiveCard();
+            adaptiveCard.hostConfig = 
+            adaptiveCard.parse(card);
+    
+            const htmlTemplateElement: HTMLElement = adaptiveCard.render();
+            renderTemplateContent = htmlTemplateElement.outerHTML;
+        }
+        
+        return renderTemplateContent;
     }
 
     /**
@@ -741,8 +752,6 @@ export class TemplateService implements ITemplateService {
                 result.didProcess = true;
             };
 
-            this._adaptiveCards = new this._adaptiveCardsNS.AdaptiveCard();
-
             await import(
                 /* webpackChunkName: 'pnp-modern-search-adaptive-cards-bundle' */
                 'adaptive-expressions'
@@ -762,11 +771,12 @@ export class TemplateService implements ITemplateService {
         }
     }
 
-    public buildAdaptiveCardsResultTypes(templateContent: string, templateContext: ISearchResultsTemplateContext | ISearchFiltersTemplateContext, items: any[], resultTemplates: IResultTemplates): string {
+    private _buildAdaptiveCardsResultTypes(templateContent: string, templateContext: ISearchResultsTemplateContext, resultTemplates: IResultTemplates, hostConfiguration): string {
 
         // Parse and render the main card template
-        const mainCard = new AdaptiveCard();
-        const template = new Template(JSON.parse(templateContent));
+        const mainCard = new this._adaptiveCardsNS.AdaptiveCard();
+        mainCard.hostConfig = hostConfiguration;
+        const template = new this._adaptiveCardsTemplating.Template(JSON.parse(templateContent));
 
         const context = {
             $root: templateContext
@@ -779,7 +789,7 @@ export class TemplateService implements ITemplateService {
         // Build dictionary of available result template
         const templateDictionary = new Map(Object.entries(resultTemplates));
 
-        for (let item of items) {
+        for (let item of templateContext.data.items) {
 
             const templateId = item.resultTemplateId;
             const templatePayload = templateDictionary.get(templateId).body;
@@ -787,7 +797,7 @@ export class TemplateService implements ITemplateService {
             // Check if item should use a result template
             if (templatePayload) {
 
-                const template = new Template(templatePayload);
+                const template = new this._adaptiveCardsTemplating.Template(templatePayload);
 
                 const context = {
                     $root: item.resource.properties
@@ -795,15 +805,17 @@ export class TemplateService implements ITemplateService {
 
                 const card = template.expand(context);
     
-                const itemAdaptiveCard = new AdaptiveCard();
+                const itemAdaptiveCard = new this._adaptiveCardsNS.AdaptiveCard();
+                itemAdaptiveCard.hostConfig = hostConfiguration;
                 itemAdaptiveCard.parse(card);
     
                 // Partial match as we can't use the complete ID due to special characters "/" and "==""
-                const defaultItem = mainHtml.querySelector(`[id^="${item.hitId.substring(0,15)}"]`); 
+                const defaultItem: HTMLElement = mainHtml.querySelector(`[id^="${item.hitId.substring(0,15)}"]`); 
                 
                 // Replace the HTML element corresponding to the item by its result type
                 if (defaultItem) {
-                    defaultItem.replaceWith(itemAdaptiveCard.render().firstChild);
+                    const itemHtml = itemAdaptiveCard.render().firstChild;
+                    defaultItem.replaceWith(itemHtml);
                 }
             }
         }

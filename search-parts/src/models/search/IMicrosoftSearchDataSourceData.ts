@@ -1,5 +1,5 @@
 import { IDataSourceData } from "@pnp/modern-search-extensibility";
-import { IQueryAlterationResponse, IResultTemplates } from "./IMicrosoftSearchResponse";
+import { IQueryAlterationResponse } from "./IMicrosoftSearchResponse";
 
 export interface IMicrosoftSearchDataSourceData extends IDataSourceData {
     
@@ -9,10 +9,4 @@ export interface IMicrosoftSearchDataSourceData extends IDataSourceData {
      * Spelling correction is only supported for the following resources: message, event, site, drive, driveItem, list, listItem and externalItem.
      */
     queryAlterationResponse?: IQueryAlterationResponse;
-
-    /**
-     * Result types
-     */
-    resultTemplates?: IResultTemplates;
-
 }

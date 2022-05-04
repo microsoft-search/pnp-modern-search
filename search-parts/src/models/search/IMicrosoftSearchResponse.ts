@@ -1,3 +1,5 @@
+import { IResultTemplates } from "@pnp/modern-search-extensibility";
+
 // https://docs.microsoft.com/en-us/graph/api/resources/searchresponse?view=graph-rest-beta
 export interface IMicrosoftSearchResponse {
     value: IMicrosoftSearchResultSet;
@@ -63,11 +65,4 @@ export interface IAlteredQueryTokens {
     offset:number;
     length:number;
     suggestion:string;
-}
-
-export interface IResultTemplates {
-    [resultTemplateId: string]: {
-        body: string;
-        displayName: string;
-    }
 }

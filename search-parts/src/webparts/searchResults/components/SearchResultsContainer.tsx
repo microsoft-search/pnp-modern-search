@@ -104,14 +104,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
         templateContent = this.templateService.getTemplateMarkup(this.props.templateContent);
         const templateContext = this.getTemplateContext();
         let renderType = this.props.renderType;
-                
-        // Process result types if any (adaptive cards only)
-        if (this.state.data && (this.state.data as IMicrosoftSearchDataSourceData).resultTemplates && renderType === LayoutRenderType.AdaptiveCards) {
-            templateContent = this.templateService.buildAdaptiveCardsResultTypes(templateContent, templateContext, this.state.data.items, (this.state.data as IMicrosoftSearchDataSourceData).resultTemplates)
-            renderType = LayoutRenderType.Html // Process content a HTML
-        }
-        
-
+    
         let selectionMode = SelectionMode.none;
         if (this.props.properties.itemSelectionProps && this.props.properties.itemSelectionProps.allowItemSelection) {
           selectionMode = this.props.properties.itemSelectionProps.allowMulti ? SelectionMode.multiple : SelectionMode.single;

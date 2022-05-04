@@ -26,3 +26,4 @@ export * from './models/suggestions/ISuggestionProviderDefinition';
 export * from './models/dataSources/SortFieldDirection';
 export * from './models/verticals/IDataVertical';
 export * from './models/dataSources/ISortInfo';
+export * from './models/dataSources/IResultTemplates';
