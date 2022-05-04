@@ -95,7 +95,17 @@ export default class SearchVerticalsContainer extends React.Component<ISearchVer
           const behavior = vertical.openBehavior === PageOpenBehavior.NewTab ? '_blank' : '_self';
           this.props.tokenService.resolveTokens(vertical.linkUrl).then((resolvedUrl: string) => {           
             resolvedUrl = resolvedUrl.replace(/\{searchTerms\}|\{SearchBoxQuery\}/gi, GlobalSettings.getValue(BuiltinTokenNames.inputQueryText));
-            window.open(resolvedUrl, behavior);
+
+            if(behavior === "_blank"){
+              window.open(resolvedUrl, behavior);
+            }else{
+              // Allow SharePoint to intercept the click and do a soft navigation
+              document.body.insertAdjacentHTML('beforeend', `<a target="${behavior}" href="${resolvedUrl}" style="display:none;"></a>`);
+              const anchor = document.body.lastElementChild as HTMLElement; 
+              anchor.click();
+              document.body.removeChild(anchor);
+            }
+
           });
           
       } else {
