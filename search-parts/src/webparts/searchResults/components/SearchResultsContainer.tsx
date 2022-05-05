@@ -241,9 +241,6 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             let availableFilters: IDataFilterResult[] = [];
             let totalItemsCount = 0;
 
-            let pageLinks: string[] = this.props.dataContext.paging.pageLinks;
-            let nextLinkUrl: string = this.props.dataContext.paging.nextLinkUrl;
-
             const localDataContext = cloneDeep(this.props.dataContext);
 
             // Fetch live data
@@ -254,11 +251,6 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
 
             // Determine total items count and page number
             totalItemsCount = this.props.dataSource.getItemCount();
-
-            // Reset the links if no item. In theory, data sources should do the same internally but if it is not the case, we double check and reset the count for them
-            if (totalItemsCount === 0 && data.paging && data.paging.links) {
-                data.paging.links = [];
-            }
 
             if (data.filters) {
                 if (data.filters.length === 0) {
@@ -276,7 +268,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 }
             }
 
-            this.props.onDataRetrieved(this.getAvailableFieldsFromResults(data), availableFilters, pageNumber, nextLinkUrl, pageLinks);
+            this.props.onDataRetrieved(this.getAvailableFieldsFromResults(data), availableFilters, pageNumber);
 
             // Persist the total items count
             this._totalItemsCount = totalItemsCount;

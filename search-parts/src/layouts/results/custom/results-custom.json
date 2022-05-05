@@ -3,11 +3,12 @@
 	"type": "AdaptiveCard",
 	"version": "1.3",
 	"body": [
-		{
+        {
 			"type": "TextBlock",
-			"text": "${if($root.properties.showResultsCount,concat('**',$root.data.totalItemsCount,'** results'),'')}",
+			"text": "**${$root.data.totalItemsCount}** results",
 			"size": "Medium",
-			"wrap": true
+			"wrap": true,
+            "$when": "${$root.properties.showResultsCount == true}"
 		},
 		{
 			"type": "Container",

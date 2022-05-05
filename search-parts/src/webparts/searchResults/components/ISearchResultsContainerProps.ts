@@ -51,7 +51,7 @@ export interface ISearchResultsContainerProps {
   /**
    * Handler when the data have been retrieved from the source. Useful to list all available fields from the source.
    */
-  onDataRetrieved: (availableDataSourceFields: string[], filters?: IDataFilterResult[], pageNumber?: number, nextLinkUrl?: string, pageLinks?: string[]) => void;
+  onDataRetrieved: (availableDataSourceFields: string[], filters?: IDataFilterResult[], pageNumber?: number) => void;
 
   /**
    * Handler when a item has been selected from results

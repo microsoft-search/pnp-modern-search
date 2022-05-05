@@ -284,6 +284,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             }),
             PropertyPaneToggle('dataSourceProperties.enableResultTypes', {
                 label: "Enable result types",
+                disabled: this.properties.entityTypes.indexOf(EntityType.ExternalItem) === -1
             })
         ];
         let useBetaEndpointFields: IPropertyPaneField<any>[] = [
@@ -475,6 +476,12 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
     
         if (propertyPath.localeCompare('dataSourceProperties.entityTypes') === 0) {
             this.properties.entityTypes = (cloneDeep(newValue) as IComboBoxOption[]).map(v => { return v.key as EntityType; });
+
+            if (this.properties.entityTypes.indexOf(EntityType.ExternalItem) === -1) {
+                // Reset result types
+                this.properties.enableResultTypes = false;
+            }
+
             this.context.propertyPane.refresh();
             this.render();
         }

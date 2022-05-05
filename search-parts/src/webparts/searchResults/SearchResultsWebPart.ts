@@ -2344,10 +2344,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         let dataContext: IDataContext = {
             pageNumber: this.currentPageNumber,
             itemsCountPerPage: this.properties.paging.itemsCountPerPage,
-            paging: {
-                nextLinkUrl: this.currentPageLinkUrl,
-                pageLinks: this.availablePageLinks
-            },
             filters: {
                 selectedFilters: [],
                 filtersConfiguration: [],
@@ -2454,8 +2450,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
      * @param availableFields the available fields
      * @param filters the available filters from the data source
      * @param pageNumber the current page number
-     * @param nextLinkUrl the next link URL if any
-     * @param pageLinks the page links
      */
     private _onDataRetrieved(availableDataSourceFields: string[], filters?: IDataFilterResult[], pageNumber?: number, nextLinkUrl?: string, pageLinks?: string[]) {
 
