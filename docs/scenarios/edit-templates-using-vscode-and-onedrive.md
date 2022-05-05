@@ -1,8 +1,8 @@
 # Edit custom templates using Visual Studio Code and OneDrive
 
-If you want to achieve the following list, dont't stop reading.
+If you want to achieve the following list, don't stop reading.
 
-- You have a local development environment for editing you templates.
+- You have a local development environment for editing your templates.
 - You can see your changes as fast as you can hit the refresh button in your browser.
 - You can see how the template looks in your SharePoint environment.
 - You can use real search results as data.
@@ -24,7 +24,7 @@ I guess you already have OneDrive, if not, here is the instructions to get start
 
 ### Create the SharePoint environment for developing templates.
 
-1. Setup a SharePoint site, where you want to store your templates. [Store custom templates in SahrePoint](howto-store-custom-templates-in-sharepoint.md)
+1. Setup a SharePoint site, where you want to store your templates. [Store custom templates in SharePoint](howto-store-custom-templates-in-sharepoint.md)
 2. Create a page using PnP Search Results. [Create a simple search page](create-simple-search-page.md)
 3. Create a custom template and store it in SharePoint. [Create your first custom template](create-your-first-custom-template.md)
 4. Configure your search web part to use the new template. (See article in step 3)
@@ -34,7 +34,7 @@ I guess you already have OneDrive, if not, here is the instructions to get start
 5. Open the SharePoint site and library where you have stored your template.
 6. Choose "Sync" or "Add Shortcut to OneDrive", whatever you prefer.
    ![Sync or add Shortcut to OneDrive](assets/edit-templates-using-vscode-and-onedrive/sync-or-addshortcut-to-onedrive.png)
-7. Open VSCode (or any other editor you prefer)
+7. Open VSCode (or any other editor you prefer).
 8. Open the synced folder in your OneDrive.
    1. File - Open Folder
    1. Select the folder you just synced
@@ -49,8 +49,7 @@ I guess you already have OneDrive, if not, here is the instructions to get start
 
 ![Refresh the page and see the result of your changes](assets/edit-templates-using-vscode-and-onedrive/refresh-search-page-and-see-result-of-changes.png)
 
-13. You should now see the change you made
-
+13. You should now see the change you made.
 14. Repeat 9 - 12, until you are happy with your awesome custom template.
 
 ### Troubleshoot
