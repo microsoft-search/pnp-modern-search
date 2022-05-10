@@ -553,6 +553,10 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             {
                 slotName: BuiltinTemplateSlots.IsFolder,
                 slotField: 'resource.fields.contentTypeId'
+            },
+            {
+                slotName: BuiltinTemplateSlots.Id,
+                slotField: 'hitId'
             }
         ];
     }

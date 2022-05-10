@@ -48,7 +48,7 @@
 			"$data": "${data.items}",
 			"items": [
                 {
-                    "id": "${hitId}",
+                    "id": "${jPath($data, concat('.',$root.slots['Id']))[0]}",
                     "type": "ColumnSet",
                     "columns": [
                         {
@@ -71,7 +71,7 @@
                             "items": [
                                 {
                                     "type": "TextBlock",
-                                    "text": "[${string(jPath($data, concat('.',$root.slots['Title']))[0])}](${string(jPath($data, concat('.',$root.slots['Path']))[0])})",
+                                    "text": "<a href='${string(jPath($data, concat('.',$root.slots['Path']))[0])}'>${jPath($data, concat('.',$root.slots['Title']))[0]}</a>",
                                     "color": "Accent",
                                     "size": "Medium",
                                     "weight": "Bolder",
