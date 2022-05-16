@@ -388,7 +388,7 @@ export class TemplateService implements ITemplateService {
                 param2 = null;
             }
 
-            const baseCondition = `{{#${operator} ${param1} ${param2 || ""}}}
+            const baseCondition = `{{#${operator} (slot item '${param1}') ${param2 || ""}}}
                                         ${templateContent}`;
 
             if (currentIdx === resultTypes.length - 1) {
