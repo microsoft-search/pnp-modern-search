@@ -35,7 +35,7 @@ export class DateHelper {
                 "fo", "fy", "fr-fr", "ga", "gd", "gl", "gu", "he", "hi", "hr", "hu", "id", "is",
                 "it-it", "ja", "jv", "ka", "kk", "km", "kn", "ko", "ku", "ky", "lb", "lo", "lt",
                 "lv", "me", "mi", "mk", "ml", "mn", "mr", "mt", "my", "nb", "ne",
-                "nn", "nl-nl", "pl", "ro", "ru", "sd", "se", "si", "sk", "sl", "sq",
+                "nn", "nl-nl", "pl", "pt-pt", "ro", "ru", "sd", "se", "si", "sk", "sl", "sq",
                 "ss", "sv", "sw", "ta", "te", "tet", "tg", "th", "tk", "tlh",
                 "tr", "tzl", "uk", "ur", "vi", "yo"
             ];
