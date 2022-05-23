@@ -60,6 +60,8 @@ define([], function() {
               DefaultExtensibilityLibraryName: "Domyślna biblioteka rozszerzalności",
               InvalidProviderInstance: "Wybrany dostawca sugestii '{0}' nie implementuje poprawnie abstrakcyjnej klasy 'BaseSuggestionProvider'. Brakuje niektórych metod.",
               ProviderDefinitionNotFound: "Nie znaleziono niestandardowego dostawcy sugestii o kluczu '{0}'. Upewnij się, że rozwiązanie jest poprawnie wdrożone do katalogu aplikacji oraz ID manifetu jest zarejetrowany dla tego składnika Web Part.",
+              QueryModifierDefinitionNotFound: "",
+              InvalidQueryModifierInstance: "",
           },
           DateFromLabel: "Od",
           DateTolabel: "Do",
@@ -343,6 +345,16 @@ define([], function() {
           SharePointStatic: {
               ProviderName: "SharePoint Static search suggestions",
               ProviderDescription: "Pobieranie sugestii wyszukiwania SharePoint zdefiniowanych przez użytkownika"
+          }
+      },
+      BuiltInQueryModifiers: {
+        WordModifier: {
+              ModifierName: "WordModifier",
+              ModifierDescription: "",
+              GroupName:"",
+              ModifierTextLabel:"",
+              ModifierTextDescription:"",
+              ModifierTextPlaceholder:"*",
           }
       }
   }

@@ -60,6 +60,8 @@ define([], function() {
                 DefaultExtensibilityLibraryName: "Standaard uitbreidingsbibliotheek",
                 InvalidProviderInstance: "Geselecteerde zoeksuggestiebron '{0}' implemententeert de abstracte class 'BaseSuggestionProvider' niet op correcte wijze. Sommige methodes missen.",
                 ProviderDefinitionNotFound: "De aangepaste zoeksuggestiebron met sleutel '{0}' kon niet worden gevonden. Zorg er voor dat het pakket correct geinstalleerd is in de app catalogus en dat het manifest ID dat geregistreerd is voor dit webonderdeel de juiste is.",
+                QueryModifierDefinitionNotFound: "",
+                InvalidQueryModifierInstance: "",
             },
             DateFromLabel: "Van",
             DateTolabel: "Tot",
@@ -342,6 +344,16 @@ define([], function() {
             SharePointStatic: {
                 ProviderName: "SharePoint statische zoeksuggesties",
                 ProviderDescription: "Haal statische door gebruiker gedefinieerde SharePoint zoeksuggesties op"
+            }
+        },
+        BuiltInQueryModifiers: {
+            WordModifier: {
+                ModifierName: "WordModifier",
+                ModifierDescription: "",
+                GroupName:"",
+                ModifierTextLabel:"",
+                ModifierTextDescription:"",
+                ModifierTextPlaceholder:"*",
             }
         }
     }

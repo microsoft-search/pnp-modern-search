@@ -5,7 +5,6 @@ import { IDataContext } from '../dataSources/IDataContext';
 import { IQueryModification } from './IQueryModification';
 import { IQueryModifier } from './IQueryModifier';
 
-
 export abstract class BaseQueryModifier<T> implements IQueryModifier {
         
     protected _properties!: T;
@@ -54,7 +53,7 @@ export abstract class BaseQueryModifier<T> implements IQueryModifier {
         // Do nothing by default      
     }
 
-    public modifyQuery(searchQuery: IQueryModification, dataContext:IDataContext): Promise<IQueryModification> {
+    public modifyQuery(searchQuery: IQueryModification, dataContext:IDataContext,  resolveTokens:(string: string) => Promise<string>): Promise<IQueryModification> {
         throw 'Not implemented';
     }
 }

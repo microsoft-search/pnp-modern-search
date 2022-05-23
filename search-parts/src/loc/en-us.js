@@ -348,13 +348,18 @@ define([], function() {
             }
         },    
         BuiltInQueryModifiers: {
-            WordPrefixModifier: {
-                ModifierName: "WordPrefix",
-                ModifierDescription: "All words will be extended by the configured text modifier. e.g. 'hel wor' will become hel* wor*",
-                GroupName:"WordPrefix Modifier Settings",
-                ModifierTextLabel:"Modifier Text",
-                ModifierTextDescription:"A string to append to each word found in the input query text.",
-                ModifierTextPlaceholder:"*",
+            WordModifier: {
+                ModifierName: "WordModifier",
+                ModifierDescription: "All words will be extended by the configured prefix/suffix modifier. e.g. 'hel wor' will become xxxhel* xxxwor*",
+                GroupName:"WordModifier Settings",
+                PrefixLabel:"Prefix Text",
+                PrefixDescription:"A string to prepend to each word found in the input query text.",
+                PrefixPlaceholder:"*",
+                SuffixLabel:"Suffix Text",
+                SuffixDescription:"A string to append to each word found in the input query text.",
+                SuffixPlaceholder:"*",
+                IgnoreListLabel:"Ignore List",
+                IgnoreListDescription:"Choice of Words where we won't add a suffix/prefix (ignoring case)",
             }
         }
     }

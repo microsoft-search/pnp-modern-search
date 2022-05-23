@@ -31,17 +31,6 @@ declare interface ISearchResultsWebPartStrings {
                 SlotFieldFieldName: string;
                 SlotFieldPlaceholderName: string;
             },
-            QueryModifierGroup: {
-                GroupName: string;
-                EnableQueryModifiers: string;
-                EditQueryModifiersLabel: string;
-                QueryModifiersLabel: string;
-                QueryModifiersDescription: string;
-                EnabledPropertyLabel: string;
-                ModifierNamePropertyLabel: string;
-                ModifierDescriptionPropertyLabel: string;
-                EndWhenSuccessfullPropertyLabel: string;
-            },
         },
         LayoutPage: {
             LayoutSelectionGroupName: string;
@@ -123,6 +112,19 @@ declare interface ISearchResultsWebPartStrings {
             EnableTelemetryLabel: string;
             EnableTelemetryOn: string;
             EnableTelemetryOff: string;
+        },
+        CustomQueryModifierPage:{
+            QueryModifierGroup: {
+                GroupName: string;
+                EnableQueryModifiers: string;
+                EditQueryModifiersLabel: string;
+                QueryModifiersLabel: string;
+                QueryModifiersDescription: string;
+                EnabledPropertyLabel: string;
+                ModifierNamePropertyLabel: string;
+                ModifierDescriptionPropertyLabel: string;
+                EndWhenSuccessfullPropertyLabel: string;
+            },
         }
     }
 }

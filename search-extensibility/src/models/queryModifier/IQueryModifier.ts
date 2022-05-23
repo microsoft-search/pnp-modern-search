@@ -29,8 +29,9 @@ export interface IQueryModifier {
      * Modify the query and retrieve it
      * @param searchQuery the query and the query template
      * @param dataContext the current dataContext
+     * @param resolveTokens the resolve tokens function from TokenService
      */
-    modifyQuery(searchQuery: IQueryModification, dataContext: IDataContext): Promise<IQueryModification>;
+    modifyQuery(searchQuery: IQueryModification, dataContext: IDataContext, resolveTokens:(string: string) => Promise<string> ): Promise<IQueryModification>;
 
     /**
      * Returns the data source property pane option fields if any.

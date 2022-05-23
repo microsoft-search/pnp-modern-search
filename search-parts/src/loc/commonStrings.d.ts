@@ -347,13 +347,18 @@ declare interface ICommonStrings {
       }
     },    
     BuiltInQueryModifiers: {
-      WordPrefixModifier: {
+      WordModifier: {
         ModifierName: string;
         ModifierDescription: string;
         GroupName:string;
-        ModifierTextLabel:string;
-        ModifierTextDescription:string;
-        ModifierTextPlaceholder:string;
+        PrefixLabel:string;
+        PrefixDescription:string;
+        PrefixPlaceholder:string;
+        SuffixLabel:string;
+        SuffixDescription:string;
+        SuffixPlaceholder:string;
+        IgnoreListLabel:string;
+        IgnoreListDescription:string;
       }
     }
 }

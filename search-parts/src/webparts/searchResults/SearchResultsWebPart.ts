@@ -638,7 +638,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 {
                     groups: [
                         {
-                            groupName: webPartStrings.PropertyPane.DataSourcePage.QueryModifierGroup.GroupName,
+                            groupName: webPartStrings.PropertyPane.CustomQueryModifierPage.QueryModifierGroup.GroupName,
                             groupFields: this._getQueryModifierFields()
                         },
                         ...queryModifierOptionGroups
@@ -972,7 +972,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             });                
         }
 
-        //TODO in copied source suggestions its's outside of if libraries. CHECK BEHAVIOUR
         this.availableCustomQueryModifierDefinitions.forEach(provider => {
 
             if (!this.properties.queryModifierConfiguration.some(p => p.key === provider.key)) {
@@ -2512,13 +2511,11 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         return selectedQueryModifier;
     }
 
-
-    //TODO check everything and method description
     /**
-     * Gets the suggestion provider instance according to the selected one
-     * @param providerKey the selected suggestion provider provider key
+     * Gets the queryModifier provider instance according to the selected one
+     * @param providerKey the selected queryModifier provider key
      * @param queryModifierDefinitions the available source definitions
-     * @returns the data source provider instance
+     * @returns the queryModifier instance
      */
      private async getQueryModifierInstance(providerKey: string,endWhenSuccessfull:boolean, queryModifierDefinitions: IQueryModifierDefinition[]): Promise<IQueryModifier> {
 
@@ -2529,14 +2526,14 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
             switch (providerKey) {
 
-                case BuiltinQueryModifierKeys.WordPrefixModifier:
+                case BuiltinQueryModifierKeys.WordModifier:
 
-                    const { WordPrefixModifier } = await import(
+                    const { WordModifier: WordModifier } = await import(
                         /* webpackChunkName: 'pnp-modern-search-word-prefix-modifier' */
-                        '../../queryModifier/WordPrefixModifier'
+                        '../../queryModifier/WordModifier'
                     );
 
-                    serviceKey = ServiceKey.create<IQueryModifier>('ModernSearchWordPrefixModifier', WordPrefixModifier);
+                    serviceKey = ServiceKey.create<IQueryModifier>('ModernSearchWordModifier', WordModifier);
                     break;
 
                 // Custom provider
@@ -2600,7 +2597,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         let queryTransformationFields: IPropertyPaneField<any>[] = [
             PropertyPaneToggle("enableCustomQueryTransformation", {
-                label: webPartStrings.PropertyPane.DataSourcePage.QueryModifierGroup.EnableQueryModifiers
+                label: webPartStrings.PropertyPane.CustomQueryModifierPage.QueryModifierGroup.EnableQueryModifiers
             })
         ];
 
@@ -2608,20 +2605,20 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
             queryTransformationFields.push(
                 this._propertyFieldCollectionData('queryModifierConfiguration', {
-                    manageBtnLabel: webPartStrings.PropertyPane.DataSourcePage.QueryModifierGroup.EditQueryModifiersLabel,
+                    manageBtnLabel: webPartStrings.PropertyPane.CustomQueryModifierPage.QueryModifierGroup.EditQueryModifiersLabel,
                     key: 'queryModifierConfiguration',
-                    panelHeader: webPartStrings.PropertyPane.DataSourcePage.QueryModifierGroup.EditQueryModifiersLabel,
-                    panelDescription:  webPartStrings.PropertyPane.DataSourcePage.QueryModifierGroup.QueryModifiersDescription,
+                    panelHeader: webPartStrings.PropertyPane.CustomQueryModifierPage.QueryModifierGroup.EditQueryModifiersLabel,
+                    panelDescription:  webPartStrings.PropertyPane.CustomQueryModifierPage.QueryModifierGroup.QueryModifiersDescription,
                     disableItemCreation: true,
                     disableItemDeletion: true,
                     enableSorting: true,
                     disabled: !this.properties.enableCustomQueryTransformation,
-                    label: webPartStrings.PropertyPane.DataSourcePage.QueryModifierGroup.QueryModifiersLabel,
+                    label: webPartStrings.PropertyPane.CustomQueryModifierPage.QueryModifierGroup.QueryModifiersLabel,
                     value: this.properties.queryModifierConfiguration,
                     fields: [
                         {
                             id: 'enabled',
-                            title: webPartStrings.PropertyPane.DataSourcePage.QueryModifierGroup.EnabledPropertyLabel,
+                            title: webPartStrings.PropertyPane.CustomQueryModifierPage.QueryModifierGroup.EnabledPropertyLabel,
                             type: this._customCollectionFieldType.custom,
                             onCustomRender: (field, value, onUpdate, item, itemId) => {
                                 return (
@@ -2639,7 +2636,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                         },
                         {
                             id: 'endWhenSuccessfull',
-                            title: webPartStrings.PropertyPane.DataSourcePage.QueryModifierGroup.EndWhenSuccessfullPropertyLabel,
+                            title: webPartStrings.PropertyPane.CustomQueryModifierPage.QueryModifierGroup.EndWhenSuccessfullPropertyLabel,
                             type: this._customCollectionFieldType.custom,
                             onCustomRender: (field, value, onUpdate, item, itemId) => {
                                 return (
@@ -2657,7 +2654,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                         },
                         {
                             id: 'name',
-                            title: webPartStrings.PropertyPane.DataSourcePage.QueryModifierGroup.ModifierNamePropertyLabel,
+                            title: webPartStrings.PropertyPane.CustomQueryModifierPage.QueryModifierGroup.ModifierNamePropertyLabel,
                             type: this._customCollectionFieldType.custom,
                             onCustomRender: (field, value) => {
                                 return (
@@ -2667,7 +2664,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                         },
                         {
                             id: 'description',
-                            title: webPartStrings.PropertyPane.DataSourcePage.QueryModifierGroup.ModifierDescriptionPropertyLabel,
+                            title: webPartStrings.PropertyPane.CustomQueryModifierPage.QueryModifierGroup.ModifierDescriptionPropertyLabel,
                             type: this._customCollectionFieldType.custom,
                             onCustomRender: (field, value) => {
                                 return (

@@ -764,19 +764,16 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
             });
         }
 
-        //TODO here?
         searchQuery.Querytext = dataContext.inputQueryText;
 
         searchQuery.EnableQueryRules = this.properties.enableQueryRules;
-        //TODO here change before?
         searchQuery.QueryTemplate = await this._tokenService.resolveTokens(this.properties.queryTemplate);
         
-        //TODO sorted? Clone datacontext?
+        const clonedContext = cloneDeep(dataContext);
         for (const modifier of selectedCustomQueryModifier) {
         
-            const resp = await modifier.modifyQuery({queryTemplate:searchQuery.QueryTemplate, queryText: searchQuery.Querytext}, dataContext);
-            console.log("resp",resp);            
-            let doBreak = (!isEqual(searchQuery.Querytext, resp.queryText) || !isEqual(searchQuery.QueryTemplate, resp.queryTemplate)) && modifier.endWhenSuccessfull;
+            const resp = await modifier.modifyQuery({queryTemplate:cloneDeep(searchQuery.QueryTemplate), queryText: cloneDeep(searchQuery.Querytext)}, clonedContext, this._tokenService.resolveTokens);            
+            let doBreak =  modifier.endWhenSuccessfull  && (!isEqual(searchQuery.Querytext, resp.queryText) || !isEqual(searchQuery.QueryTemplate, resp.queryTemplate));
             searchQuery.Querytext = resp.queryText;
             searchQuery.QueryTemplate = resp.queryTemplate;
             if(doBreak)

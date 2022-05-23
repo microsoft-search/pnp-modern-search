@@ -60,6 +60,8 @@ define([], function() {
                 DefaultExtensibilityLibraryName: "Standard extensibility-bibliotek",
                 InvalidProviderInstance: "Den valgte udbyder af forslag '{0}' kan ikke implementere den abstrakte klasse 'BaseForslagsUdbyder' korrekt. Der mangler metoder.",
                 ProviderDefinitionNotFound: "Den brugerdefinerede udbyder af forslag med nøglen '{0}' blev ikke fundet. Husk at sikre at løsningen er korrekt implementeret til app-kataloget, og at manifest-ID'et er forbundet til webparten.",
+                QueryModifierDefinitionNotFound: "",
+                InvalidQueryModifierInstance: "",
             },
             DateFromLabel: "Fra",
             DateTolabel: "Til",
@@ -343,6 +345,16 @@ define([], function() {
             SharePointStatic: {
                 ProviderName: "SharePoint-statiske søgeforslag",
                 ProviderDescription: "Hent SharePoint-statiske brugerdefinerede søgeforslag"
+            }
+        },    
+        BuiltInQueryModifiers: {
+            WordModifier: {
+                ModifierName: "WordModifier",
+                ModifierDescription: "",
+                GroupName:"",
+                ModifierTextLabel:"",
+                ModifierTextDescription:"",
+                ModifierTextPlaceholder:"*",
             }
         }
     }

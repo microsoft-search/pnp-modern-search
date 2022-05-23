@@ -69,6 +69,7 @@ To create an extensibility library, you have the choice to reuse the one provide
     - [Web component](./custom_web_component.md)
     - [Suggestions providers](./custom_suggestions_provider.md)
     - [Handlebars customizations](./handlebars_customizations.md)
+    - [Query modifier](./custom_query_modifications.md)
 
     Creation process always follows more or less the same pattern:
 

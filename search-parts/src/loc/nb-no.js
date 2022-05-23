@@ -60,6 +60,8 @@ define([], function () {
           DefaultExtensibilityLibraryName: "Standardutbyggnadsbiblioteke",
           InvalidProviderInstance: "Den valgte forslagsleverandøren '{0}' implementerer ikke den abstakte klassen 'BaseSuggestionProvider' korrekt. Noen metoder mangler.",
           ProviderDefinitionNotFound: "Den tilpassede forslagsleverandøren med nøkkelen '{0}' ble ikke funnet. Se til att løsningen är korrekt deployert i appkatalogen og at manifest-ID er registrert for denne nettdelen.",
+          QueryModifierDefinitionNotFound: "",
+          InvalidQueryModifierInstance: "",
         },
         DateFromLabel: "Fra",
         DateTolabel: "Til",
@@ -343,6 +345,16 @@ define([], function () {
           ProviderName: "SharePoint statiske søkeforslag",
           ProviderDescription: "Hent SharePoint statiske brukerdefinerte søkeforslag"
         }
+      },
+      BuiltInQueryModifiers: {
+        WordModifier: {
+              ModifierName: "WordModifier",
+              ModifierDescription: "",
+              GroupName:"",
+              ModifierTextLabel:"",
+              ModifierTextDescription:"",
+              ModifierTextPlaceholder:"*",
+          }
       }
     }
   })

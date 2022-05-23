@@ -60,6 +60,8 @@ define([], function() {
                 DefaultExtensibilityLibraryName: "Bibliothèque d’extensibilité par défaut",
                 InvalidProviderInstance: "Le fournisseur de suggestions sélectionné « {0} » n’applique pas correctement la classe abstraite « BaseSuggestionProvider ». Certaines méthodes sont manquantes.",
                 ProviderDefinitionNotFound: "Le fournisseur de suggestions personnalisées contenant la clé « {0} » est introuvable Assurez-vous que la solution est correctement déployée dans le catalogue de l’application et que l’identifiant de manifeste est enregistré pour ce composant Web",
+                QueryModifierDefinitionNotFound: "",
+                InvalidQueryModifierInstance: "",
             },
             DateFromLabel: "De",
             DateTolabel: "À",
@@ -343,6 +345,16 @@ define([], function() {
             SharePointStatic: {
                 ProviderName: "Suggestions de recherche statique dans SharePoint",
                 ProviderDescription: "Récupération des suggestions de recherche définies par l’utilisateur dans SharePoint"
+            }
+        },
+        BuiltInQueryModifiers: {
+            WordModifier: {
+                ModifierName: "WordModifier",
+                ModifierDescription: "",
+                GroupName:"",
+                ModifierTextLabel:"",
+                ModifierTextDescription:"",
+                ModifierTextPlaceholder:"*",
             }
         }
     }

@@ -113,6 +113,19 @@ define([], function() {
         EnableTelemetryLabel: "PnP-telemetrie",
         EnableTelemetryOn: "Telemetrie inschakelen",
         EnableTelemetryOff: "Telemetrie uitschakelen"
+      },
+      CustomQueryModifierPage:{
+        QueryModifierGroup: {
+            GroupName: "",
+            EnableQueryModifiers: "",
+            EditQueryModifiersLabel: "",
+            QueryModifiersLabel: "",
+            QueryModifiersDescription: "",
+            EnabledPropertyLabel: "",
+            ModifierNamePropertyLabel: "",
+            ModifierDescriptionPropertyLabel: "",
+            EndWhenSuccessfullPropertyLabel:""
+        }
       }
     }
   }

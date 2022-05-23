@@ -113,6 +113,19 @@ define([], function() {
         EnableTelemetryLabel: "PnP telemetri",
         EnableTelemetryOn: "Slå telemetri til",
         EnableTelemetryOff: "Slå telemetri fra"
+      },
+      CustomQueryModifierPage:{
+        QueryModifierGroup: {
+            GroupName: "",
+            EnableQueryModifiers: "",
+            EditQueryModifiersLabel: "",
+            QueryModifiersLabel: "",
+            QueryModifiersDescription: "",
+            EnabledPropertyLabel: "",
+            ModifierNamePropertyLabel: "",
+            ModifierDescriptionPropertyLabel: "",
+            EndWhenSuccessfullPropertyLabel:""
+        }
       }
     }
   }

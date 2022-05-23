@@ -31,18 +31,7 @@ define([], function() {
                     SlotNameFieldName: "Slot name",
                     SlotFieldFieldName: "Slot field",
                     SlotFieldPlaceholderName: "Choose a field"
-                },
-                QueryModifierGroup: {
-                    GroupName: "Custom Query modifiers",
-                    EnableQueryModifiers: "Enable custom query modifiers",
-                    EditQueryModifiersLabel: "Configure available custom query modifiers",
-                    QueryModifiersLabel: "Custom Query modifiers",
-                    QueryModifiersDescription: "Enable or disable individual custom query modifiers",
-                    EnabledPropertyLabel: "Enabled",
-                    ModifierNamePropertyLabel: "Name",
-                    ModifierDescriptionPropertyLabel: "Description",
-                    EndWhenSuccessfullPropertyLabel:"End when successfull"
-                },
+                },                
             },
             LayoutPage: {
                 LayoutSelectionGroupName: "Available layouts",
@@ -124,6 +113,19 @@ define([], function() {
                 EnableTelemetryLabel: "PnP telemetry",
                 EnableTelemetryOn: "Turn on telemetry",
                 EnableTelemetryOff: "Turn off telemetry"
+            },
+            CustomQueryModifierPage:{
+                QueryModifierGroup: {
+                    GroupName: "Custom Query modifiers",
+                    EnableQueryModifiers: "Enable custom query modifiers",
+                    EditQueryModifiersLabel: "Configure available custom query modifiers",
+                    QueryModifiersLabel: "Custom Query modifiers",
+                    QueryModifiersDescription: "Enable or disable individual custom query modifiers",
+                    EnabledPropertyLabel: "Enabled",
+                    ModifierNamePropertyLabel: "Name",
+                    ModifierDescriptionPropertyLabel: "Description",
+                    EndWhenSuccessfullPropertyLabel:"End when successfull"
+                }
             }
         }
     }

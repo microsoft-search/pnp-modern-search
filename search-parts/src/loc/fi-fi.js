@@ -60,6 +60,8 @@ define([], function() {
                 DefaultExtensibilityLibraryName: "Oletuksena käytettävä laajennuskirjasto",
                 InvalidProviderInstance: "Valittu kyselyehdotusten tarjoaja '{0}' ei toteuta 'BaseSuggestionProvider' luokkaa oikein. Jotkut metodit puuttuvat.",
                 ProviderDefinitionNotFound: "Mukautettua kyselyehdotusten tarjoajaa avaimella '{0}' ei löydy. Varmista että sovellus on asennettu sovellusluetteloon ja manifest ID on rekisteröity webosalle.",
+                QueryModifierDefinitionNotFound: "",
+                InvalidQueryModifierInstance: "",
             },
             DateFromLabel: "Alkaa",
             DateTolabel: "Päättyy",
@@ -341,6 +343,16 @@ define([], function() {
             SharePointStatic: {
                 ProviderName: "SharePoint staattiset kyselyehdotukset",
                 ProviderDescription: "Palauta SharePoint staattiset käyttäjän määrittämät kyselyehdotukset"
+            }
+        },
+        BuiltInQueryModifiers: {
+            WordModifier: {
+                ModifierName: "WordModifier",
+                ModifierDescription: "",
+                GroupName:"",
+                ModifierTextLabel:"",
+                ModifierTextDescription:"",
+                ModifierTextPlaceholder:"*",
             }
         }
     }

@@ -60,6 +60,8 @@ define([], function() {
                 DefaultExtensibilityLibraryName: "Standard-Erweiterungsbibliothek",
                 InvalidProviderInstance: "Der ausgewählte Vorschlagsprovider '{0}' implementiert die abstrakte Klasse 'BaseSuggestionProvider' nicht korrekt. Es fehlen einige Methoden.",
                 ProviderDefinitionNotFound: "Der benutzerdefinierte Vorschlagsprovider mit dem Schlüssel '{0}' wurde nicht gefunden. Stellen Sie sicher, dass die Lösung korrekt für den App-Katalog bereitgestellt und die Manifest-ID für dieses Webpart registriert ist.",
+                QueryModifierDefinitionNotFound: "",
+                InvalidQueryModifierInstance: "",
             },
             DateFromLabel: "Von",
             DateTolabel: "Bis",
@@ -342,12 +344,12 @@ define([], function() {
             }
         },    
         BuiltInQueryModifiers: {
-            WordPrefixModifier: {
-                ModifierName: "WordPrefix",
-                ModifierDescription: "All words will be extended by the configured text modifier. e.g. 'hel wor' will become hel* wor*",
-                GroupName:"WordPrefix Modifier Settings",
-                ModifierTextLabel:"Modifier Text",
-                ModifierTextDescription:"A string to append to each word found in the input query text.",
+            WordModifier: {
+                ModifierName: "WordModifier",
+                ModifierDescription: "",
+                GroupName:"",
+                ModifierTextLabel:"",
+                ModifierTextDescription:"",
                 ModifierTextPlaceholder:"*",
             }
         }
