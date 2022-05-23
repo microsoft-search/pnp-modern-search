@@ -123,6 +123,15 @@ export class AvailableLayouts {
             renderType: LayoutRenderType.Handlebars,
             serviceKey: null // ServiceKey will be created dynamically for builtin layout
         },
+                {
+            name: 'List',
+            key: BuiltinLayoutsKeys.ListAdaptiveCards.toString(),
+            iconName: 'List',
+            type: LayoutType.Results,
+            templateContent: JSON.stringify(require('./results/simpleList/simple-list.json'), null, "\t"),
+            renderType: LayoutRenderType.AdaptiveCards,
+            serviceKey: null // ServiceKey will be created dynamically for builtin layout
+        },
         {
             name: strings.Layouts.CustomAdaptiveCards.Name,
             key: BuiltinLayoutsKeys.ResultsCustomAdaptiveCards.toString(),
@@ -140,15 +149,6 @@ export class AvailableLayouts {
             templateContent: require('./results/people/people.html'),
             renderType: LayoutRenderType.Handlebars,
             serviceKey: null // ServiceKey will be created dynamically for builtin layout
-        },
-        {
-            name: 'List',
-            key: BuiltinLayoutsKeys.ListAdaptiveCards.toString(),
-            iconName: 'List',
-            type: LayoutType.Results,
-            templateContent: JSON.stringify(require('./results/simpleList/simple-list.json'), null, "\t"),
-            renderType: LayoutRenderType.AdaptiveCards,
-            serviceKey: null // ServiceKey will be created dynamically for builtin layout
-        },
+        }
     ];
 }

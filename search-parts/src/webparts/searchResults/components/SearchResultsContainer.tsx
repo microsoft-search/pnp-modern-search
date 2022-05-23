@@ -454,6 +454,8 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
     // Build the template context
     private getTemplateContext(): ISearchResultsTemplateContext {
 
+        let adaptiveCardsHostConfig = null;
+
         // Gets information about current page context
         const { site, web, list, listItem, user, cultureInfo } = this.props.pageContext;
 
@@ -464,6 +466,12 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
         delete trimmedProperties.inlineTemplateContent;
         delete trimmedProperties.documentationLink;
         delete trimmedProperties.externalTemplateUrl;
+
+        try {
+            adaptiveCardsHostConfig = JSON.parse(this.props.properties.adaptiveCardsHostConfig);
+        } catch (error) {
+            Log.warn(LogSource, `Invalid host config provided. Refer to https://docs.microsoft.com/en-us/adaptive-cards/rendering-cards/host-config for more details`, this.props.serviceScope);
+        }
 
         return {
             // The data source data
@@ -512,7 +520,8 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             instanceId: this.props.instanceId,
             // Any other useful informations
             utils: {
-                defaultImage: Constants.DEFAULT_IMAGE_CONTENT
+                defaultImage: Constants.DEFAULT_IMAGE_CONTENT,
+                adaptiveCardsHostConfig: adaptiveCardsHostConfig
             },
             selectedKeys: this.state.selectedItemKeys
         };

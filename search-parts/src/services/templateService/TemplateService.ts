@@ -43,7 +43,6 @@ export class TemplateService implements ITemplateService {
     private serviceScope: ServiceScope;
 
     private _adaptiveCardsNS;
-    private _adaptiveCards;
     private _markdownIt;
     private _adaptiveCardsTemplating;
 
@@ -422,7 +421,7 @@ export class TemplateService implements ITemplateService {
             hostConfiguration = (templateContext as ISearchResultsTemplateContext).utils.adaptiveCardsHostConfig;          
         }
 
-        hostConfiguration = this._adaptiveCardsNS.HostConfig(hostConfiguration);
+        hostConfiguration = new this._adaptiveCardsNS.HostConfig(hostConfiguration);
 
         // If result templates are present, process each individual item and return the HTML output
         if ((templateContext as ISearchResultsTemplateContext).data?.resultTemplates) {
@@ -442,7 +441,7 @@ export class TemplateService implements ITemplateService {
     
             const card = template.expand(context);
             const adaptiveCard = new this._adaptiveCardsNS.AdaptiveCard();
-            adaptiveCard.hostConfig = 
+            adaptiveCard.hostConfig = hostConfiguration;
             adaptiveCard.parse(card);
     
             const htmlTemplateElement: HTMLElement = adaptiveCard.render();
@@ -744,7 +743,10 @@ export class TemplateService implements ITemplateService {
                 'adaptivecards'
             );
 
-            this._adaptiveCardsNS.AdaptiveCard.onProcessMarkdown =  (text: string, result) => { 
+            this._adaptiveCardsNS.AdaptiveCard.onProcessMarkdown =  (text: string, result) => {
+
+                // Special case with HitHighlightedSummary field
+                text = text.replace(/<c0\>/g, "<strong>").replace(/<\/c0\>/g, "</strong>").replace(/<ddd\/>/g, "&#8230;");
 
                 // We use Markdown here to render HTML and use web components
                 const rawHtml = this._markdownIt.render(text).replace(/\&lt;/g, '<').replace(/\&gt;/g,'>');

@@ -34,6 +34,10 @@
         "webpack:///../../../../src/*": "${webRoot}/src/*",
         "webpack:///../../../../../src/*": "${webRoot}/src/*"
       },
+      "outFiles": [
+        "${workspaceFolder}/**/*.js",
+        "!**/node_modules/**"
+      ],
       "runtimeArgs": [
         "--remote-debugging-port=9222",
         "--incognito"

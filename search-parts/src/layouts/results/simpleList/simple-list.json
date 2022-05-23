@@ -63,7 +63,8 @@
 								}
                             ],
                             "height": "stretch",
-                            "verticalContentAlignment": "top"
+                            "verticalContentAlignment": "top",
+                            "$when": "${$root.properties.layoutProperties.showFileIcon == true}"
                         },
                         {
                             "type": "Column",
@@ -79,24 +80,18 @@
                                 },
                                 {
                                     "type": "TextBlock",
-                                    "text": "**${string(jPath($data, concat('.',$root.slots['Author']))[0])}**",
+                                    "text": "<strong>${split(string(jPath($data, concat('.',$root.slots['Author']))[0]),'|')[1]}</strong>",
                                     "spacing": "Small"
                                 },
                                 {
                                     "type": "TextBlock",
-                                    "text": "Modified on {{DATE(${modifiedTime})}}",
+                                    "text": "{{DATE(${formatDateTime(string(jPath($data, concat('.',$root.slots['Date']))[0]),'yyyy-MM-ddTHH:mm:ssZ')},LONG)}}",
                                     "spacing": "Small",
-                                    "$when": "${modifiedBy=='' && modifiedTime!=''}"
+                                    "$when": "${$root.slots['Date'] != ''}"
                                 },
                                 {
                                     "type": "TextBlock",
-                                    "text": "Modified by __${modifiedBy}__",
-                                    "spacing": "Small",
-                                    "$when": "${modifiedBy!='' && modifiedTime==''}"
-                                },
-                                {
-                                    "type": "TextBlock",
-                                    "text": "${string(jPath($data, concat('.',$root.slots['Summary']))[0])}",
+                                    "text": "${string($data.HitHighlightedSummary)}",
                                     "wrap": true,
                                     "maxLines": 3
                                 }
@@ -117,7 +112,7 @@
                                     "horizontalAlignment": "right"
                                 }
                             ],
-                            "$when": "${$root.slots['PreviewImageUrl'] != ''}"
+                            "$when": "${$root.slots['PreviewImageUrl'] != '' && $root.properties.layoutProperties.showItemThumbnail == true}"
                         }
                     ]
                 },          
