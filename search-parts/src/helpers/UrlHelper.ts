@@ -56,7 +56,8 @@ export class UrlHelper {
      * @param value The new value
      */
     public static addOrReplaceQueryStringParam(url: string, param: string, value: string): string {
-        const re = new RegExp("[\\?&]" + param + "=([^&#]*)");
+        param = param.replace(/[.~*()]/g,''); // // Ensure param is safe from DOS attacks - so we strip away RegEx special characters
+        const re = new RegExp("[\\?&]" + param + "=([^&#]*)"); 
         const match = re.exec(url);
         let delimiter;
         let newString;
