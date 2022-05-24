@@ -350,7 +350,7 @@ define([], function() {
         BuiltInQueryModifiers: {
             WordModifier: {
                 ModifierName: "WordModifier",
-                ModifierDescription: "All words will be extended by the configured prefix/suffix modifier. e.g. 'hel wor' will become xxxhel* xxxwor*",
+                ModifierDescription: "All words will be modified by the configured prefix/suffix modifier. e.g. 'hel wor' will become xxxhel* xxxwor*",
                 GroupName:"WordModifier Settings",
                 PrefixLabel:"Prefix Text",
                 PrefixDescription:"A string to prepend to each word found in the input query text.",

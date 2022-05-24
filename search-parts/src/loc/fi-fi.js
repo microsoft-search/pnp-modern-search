@@ -348,11 +348,16 @@ define([], function() {
         BuiltInQueryModifiers: {
             WordModifier: {
                 ModifierName: "WordModifier",
-                ModifierDescription: "",
-                GroupName:"",
-                ModifierTextLabel:"",
-                ModifierTextDescription:"",
-                ModifierTextPlaceholder:"*",
+                ModifierDescription: "Kaikkia sanoja muutetaan määritetyllä etuliitteen/suffiksimuunnoksella. esim. 'hel wor' muuttuu xxxhel* xxxwor*.",
+                GroupName:"WordModifier asetukset",
+                PrefixLabel:"Etuliiteteksti",
+                PrefixDescription:"Merkkijono, joka liitetään jokaisen syötetyssä kyselytekstissä olevan sanan eteen.",
+                PrefixPlaceholder:"*",
+                SuffixLabel:"Pääteteksti",
+                SuffixDescription:"Merkkijono, joka liitetään jokaiseen syötetyssä kyselytekstissä olevaan sanaan.",
+                SuffixPlaceholder:"*",
+                IgnoreListLabel:"Ohita lista",
+                IgnoreListDescription:"Sanojen valinta, joihin emme lisää suffiksia/prefiksiä (huomioimatta isoja ja pieniä kirjaimia).",
             }
         }
     }

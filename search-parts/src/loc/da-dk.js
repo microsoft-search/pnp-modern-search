@@ -350,11 +350,16 @@ define([], function() {
         BuiltInQueryModifiers: {
             WordModifier: {
                 ModifierName: "WordModifier",
-                ModifierDescription: "",
-                GroupName:"",
-                ModifierTextLabel:"",
-                ModifierTextDescription:"",
-                ModifierTextPlaceholder:"*",
+                ModifierDescription: "Alle ord vil blive ændret med det konfigurerede præfiks/suffiks-modifikator. f.eks. vil 'hel wor' blive xxxhel* xxxwor*",
+                GroupName:"WordModifier Indstillinger",
+                PrefixLabel:"Præfiks Tekst",
+                PrefixDescription:"En streng, der tilføjes til hvert ord, der findes i den indtastede forespørgselstekst.",
+                PrefixPlaceholder:"*",
+                SuffixLabel:"Suffikstekst",
+                SuffixDescription:"En streng, der skal tilføjes til hvert ord, der findes i den indtastede forespørgselstekst.",
+                SuffixPlaceholder:"*",
+                IgnoreListLabel:"Ignorer listen",
+                IgnoreListDescription:"Valg af ord, hvor vi ikke vil tilføje et suffiks/præfiks (uden hensyn til kasus)",
             }
         }
     }

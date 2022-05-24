@@ -346,11 +346,16 @@ define([], function() {
         BuiltInQueryModifiers: {
             WordModifier: {
                 ModifierName: "WordModifier",
-                ModifierDescription: "",
-                GroupName:"",
-                ModifierTextLabel:"",
-                ModifierTextDescription:"",
-                ModifierTextPlaceholder:"*",
+                ModifierDescription: "Alle Wörter werden durch den konfigurierten Präfix/Suffix-Modifikator geändert. z.B. wird aus 'hel wor' xxxhel* xxxwor*",
+                GroupName:"WordModifier Einstellungen",
+                PrefixLabel:"Prefix Text",
+                PrefixDescription:"Ein Text welches vor jedem Wort im Eingabetext angehangen wird.",
+                PrefixPlaceholder:"*",
+                SuffixLabel:"Suffix Text",
+                SuffixDescription:"Ein Text welches nach jedem Wort im Eingabetext angehangen wird.",
+                SuffixPlaceholder:"*",
+                IgnoreListLabel:"Ignorier Liste",
+                IgnoreListDescription:"Auswahl der Wörter die nicht mit einem Prefix/Suffix erweitert werden (ignoriert groß/kleinschreibung).",
             }
         }
     }

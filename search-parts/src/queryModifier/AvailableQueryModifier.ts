@@ -15,7 +15,7 @@ export class AvailableQueryModifier {
             name: strings.BuiltInQueryModifiers.WordModifier.ModifierName,
             key: BuiltinQueryModifierKeys.WordModifier.toString(),
             description: strings.BuiltInQueryModifiers.WordModifier.ModifierDescription,
-            serviceKey: null // ServiceKey will be created dynamically for builtin source            
+            serviceKey: null // ServiceKey will be created dynamically for builtin modifier            
         }
     ];
 }

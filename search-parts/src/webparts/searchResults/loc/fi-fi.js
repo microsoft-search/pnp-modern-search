@@ -116,15 +116,15 @@ define([], function() {
             },
             CustomQueryModifierPage:{
               QueryModifierGroup: {
-                  GroupName: "",
-                  EnableQueryModifiers: "",
-                  EditQueryModifiersLabel: "",
-                  QueryModifiersLabel: "",
-                  QueryModifiersDescription: "",
-                  EnabledPropertyLabel: "",
-                  ModifierNamePropertyLabel: "",
-                  ModifierDescriptionPropertyLabel: "",
-                  EndWhenSuccessfullPropertyLabel:""
+                  GroupName: "Mukautetut kyselyn muokkaajat",
+                  EnableQueryModifiers: "Ota käyttöön mukautetut kyselyn muokkaajat",
+                  EditQueryModifiersLabel: "Käytettävissä olevien mukautettujen kyselyn muokkaimien määrittäminen",
+                  QueryModifiersLabel: "Mukautetut kyselyn muokkaajat",
+                  QueryModifiersDescription: "Ota käyttöön tai poista käytöstä yksittäisiä mukautettuja kyselyn muokkaajia.",
+                  EnabledPropertyLabel: "Enabled",
+                  ModifierNamePropertyLabel: "Nimi",
+                  ModifierDescriptionPropertyLabel: "Kuvaus",
+                  EndWhenSuccessfullPropertyLabel:"Loppuu, kun onnistuu"
               }
             }
         }

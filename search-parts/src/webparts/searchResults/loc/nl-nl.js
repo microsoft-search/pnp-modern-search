@@ -116,15 +116,15 @@ define([], function() {
       },
       CustomQueryModifierPage:{
         QueryModifierGroup: {
-            GroupName: "",
-            EnableQueryModifiers: "",
-            EditQueryModifiersLabel: "",
-            QueryModifiersLabel: "",
-            QueryModifiersDescription: "",
-            EnabledPropertyLabel: "",
-            ModifierNamePropertyLabel: "",
-            ModifierDescriptionPropertyLabel: "",
-            EndWhenSuccessfullPropertyLabel:""
+            GroupName: "Aangepaste query-aanpassingen",
+            EnableQueryModifiers: "Aangepaste query-aanpassingen inschakelen",
+            EditQueryModifiersLabel: "Beschikbare aangepaste query-aanpassingen configureren",
+            QueryModifiersLabel: "Aangepaste query-aanpassingen",
+            QueryModifiersDescription: "Individuele aangepaste query-aanpassingen in- of uitschakelen",
+            EnabledPropertyLabel: "Ingeschakeld",
+            ModifierNamePropertyLabel: "Naam",
+            ModifierDescriptionPropertyLabel: "Beschrijving",
+            EndWhenSuccessfullPropertyLabel:"Beëindig bij succes"
         }
       }
     }

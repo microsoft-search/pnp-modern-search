@@ -115,18 +115,19 @@ define([], function() {
                 EnableTelemetryOff: "Telemetrie ausschalten"
             },
             CustomQueryModifierPage:{
-              QueryModifierGroup: {
-                  GroupName: "",
-                  EnableQueryModifiers: "",
-                  EditQueryModifiersLabel: "",
-                  QueryModifiersLabel: "",
-                  QueryModifiersDescription: "",
-                  EnabledPropertyLabel: "",
-                  ModifierNamePropertyLabel: "",
-                  ModifierDescriptionPropertyLabel: "",
-                  EndWhenSuccessfullPropertyLabel:""
-              }
+                QueryModifierGroup: {
+                    GroupName: "Benutzerdefinierte Abfragemodifikatoren",
+                    EnableQueryModifiers: "Benutzerdefinierte Abfragemodifikatoren aktivieren",
+                    EditQueryModifiersLabel: "Verfügbare benutzerdefinierte Abfragemodifikatoren konfigurieren",
+                    QueryModifiersLabel: "Benutzerdefinierte Abfragemodifikatoren",
+                    QueryModifiersDescription: "Aktivieren oder deaktivieren Sie einzelne benutzerdefinierte Abfragemodifikatoren",
+                    EnabledPropertyLabel: "Aktiviert",
+                    ModifierNamePropertyLabel: "Name",
+                    ModifierDescriptionPropertyLabel: "Beschreibung",
+                    EndWhenSuccessfullPropertyLabel:"Bei Erfolg beenden"
+                }
             }
         }
     }
 });
+

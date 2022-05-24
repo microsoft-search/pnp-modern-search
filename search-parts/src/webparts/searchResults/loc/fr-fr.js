@@ -117,15 +117,15 @@ define([], function() {
       },
       CustomQueryModifierPage:{
         QueryModifierGroup: {
-            GroupName: "",
-            EnableQueryModifiers: "",
-            EditQueryModifiersLabel: "",
-            QueryModifiersLabel: "",
-            QueryModifiersDescription: "",
-            EnabledPropertyLabel: "",
-            ModifierNamePropertyLabel: "",
-            ModifierDescriptionPropertyLabel: "",
-            EndWhenSuccessfullPropertyLabel:""
+            GroupName: "Modificateurs de requête personnalisés",
+            EnableQueryModifiers: "Activer les modificateurs de requête personnalisés",
+            EditQueryModifiersLabel: "Configurer les modificateurs de requête personnalisés disponibles",
+            QueryModifiersLabel: "Modificateurs de requête personnalisés",
+            QueryModifiersDescription: "Activez ou désactivez les modificateurs de requête personnalisés individuels.",
+            EnabledPropertyLabel: "Activé",
+            ModifierNamePropertyLabel: "Nom",
+            ModifierDescriptionPropertyLabel: "Description",
+            EndWhenSuccessfullPropertyLabel:"Fin en cas de succès"
         }
       }
     }

@@ -350,11 +350,16 @@ define([], function() {
         BuiltInQueryModifiers: {
             WordModifier: {
                 ModifierName: "WordModifier",
-                ModifierDescription: "",
-                GroupName:"",
-                ModifierTextLabel:"",
-                ModifierTextDescription:"",
-                ModifierTextPlaceholder:"*",
+                ModifierDescription: "Todas las palabras serán modificadas por el modificador prefijo/sufijo configurado. Por ejemplo, 'hel wor' se convertirá en xxxhel* xxxwor*",
+                GroupName:"WordModifier Configuración",
+                PrefixLabel:"Texto de prefijo",
+                PrefixDescription:"Una cadena que se añade a cada palabra encontrada en el texto de la consulta.",
+                PrefixPlaceholder:"*",
+                SuffixLabel:"Texto de sufijo",
+                SuffixDescription:"Una cadena para añadir a cada palabra encontrada en el texto de la consulta de entrada.",
+                SuffixPlaceholder:"*",
+                IgnoreListLabel:"Lista de ignorados",
+                IgnoreListDescription:"Elección de palabras a las que no añadiremos un sufijo/prefijo (ignorando el caso)",
             }
         }
     }

@@ -116,15 +116,15 @@ define([], function() {
             },
             CustomQueryModifierPage:{
               QueryModifierGroup: {
-                  GroupName: "",
-                  EnableQueryModifiers: "",
-                  EditQueryModifiersLabel: "",
-                  QueryModifiersLabel: "",
-                  QueryModifiersDescription: "",
-                  EnabledPropertyLabel: "",
-                  ModifierNamePropertyLabel: "",
-                  ModifierDescriptionPropertyLabel: "",
-                  EndWhenSuccessfullPropertyLabel:""
+                  GroupName: "Niestandardowe modyfikatory zapytań",
+                  EnableQueryModifiers: "Włączanie niestandardowych modyfikatorów zapytań",
+                  EditQueryModifiersLabel: "Konfiguracja dostępnych niestandardowych modyfikatorów zapytań",
+                  QueryModifiersLabel: "Własne modyfikatory zapytań",
+                  QueryModifiersDescription: "Włączanie lub wyłączanie poszczególnych własnych modyfikatorów zapytań",
+                  EnabledPropertyLabel: "Włączone",
+                  ModifierNamePropertyLabel: "Nazwa",
+                  ModifierDescriptionPropertyLabel: "Opis",
+                  EndWhenSuccessfullPropertyLabel:"Zakończ po pomyślnym zakończeniu"
               }
             }
         }

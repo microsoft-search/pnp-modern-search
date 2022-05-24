@@ -349,13 +349,18 @@ define([], function() {
       },
       BuiltInQueryModifiers: {
         WordModifier: {
-              ModifierName: "WordModifier",
-              ModifierDescription: "",
-              GroupName:"",
-              ModifierTextLabel:"",
-              ModifierTextDescription:"",
-              ModifierTextPlaceholder:"*",
-          }
-      }
+            ModifierName: "WordModifier",
+            ModifierDescription: "Wszystkie słowa zostaną zmodyfikowane za pomocą skonfigurowanego modyfikatora przedrostka/sufiksu. np. 'hel wor' stanie się xxxhel* xxxwor*",
+            GroupName:"WordModifier Ustawienia",
+            PrefixLabel:"Tekst przedrostka",
+            PrefixDescription:"Ciąg znaków dodawany do każdego słowa znalezionego w tekście zapytania.",
+            PrefixPlaceholder:"*",
+            SuffixLabel:"Tekst sufiksu",
+            SuffixDescription:"Ciąg znaków dołączany do każdego słowa znalezionego w tekście zapytania.",
+            SuffixPlaceholder:"*",
+            IgnoreListLabel:"Lista ignorowanych",
+            IgnoreListDescription:"Wybór słów, do których nie będziemy dodawać przyrostka/przedrostka (pomijając przypadki)",
+        }
+    }
   }
 })

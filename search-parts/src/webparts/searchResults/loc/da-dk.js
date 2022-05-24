@@ -116,15 +116,15 @@ define([], function() {
       },
       CustomQueryModifierPage:{
         QueryModifierGroup: {
-            GroupName: "",
-            EnableQueryModifiers: "",
-            EditQueryModifiersLabel: "",
-            QueryModifiersLabel: "",
-            QueryModifiersDescription: "",
-            EnabledPropertyLabel: "",
-            ModifierNamePropertyLabel: "",
-            ModifierDescriptionPropertyLabel: "",
-            EndWhenSuccessfullPropertyLabel:""
+            GroupName: "Brugerdefinerede forespørgselsmodifikatorer",
+            EnableQueryModifiers: "Aktivering af brugerdefinerede forespørgselsmodifikatorer",
+            EditQueryModifiersLabel: "Konfigurere tilgængelige brugerdefinerede forespørgselsmodifikatorer",
+            QueryModifiersLabel: "Tilpassede forespørgselsmodifikatorer",
+            QueryModifiersDescription: "Aktivere eller deaktivere individuelle brugerdefinerede forespørgselsmodifikatorer",
+            EnabledPropertyLabel: "Aktiveret",
+            ModifierNamePropertyLabel: "Navn",
+            ModifierDescriptionPropertyLabel: "Beskrivelse",
+            EndWhenSuccessfullPropertyLabel:"Afslutter, når det lykkes"
         }
       }
     }

@@ -116,18 +116,17 @@ define([], function() {
         },
         CustomQueryModifierPage:{
           QueryModifierGroup: {
-              GroupName: "",
-              EnableQueryModifiers: "",
-              EditQueryModifiersLabel: "",
-              QueryModifiersLabel: "",
-              QueryModifiersDescription: "",
-              EnabledPropertyLabel: "",
-              ModifierNamePropertyLabel: "",
-              ModifierDescriptionPropertyLabel: "",
-              EndWhenSuccessfullPropertyLabel:""
+              GroupName: "Tilpassede spørringsmodifikatorer",
+              EnableQueryModifiers: "Aktiver tilpassede søkemodifikatorer",
+              EditQueryModifiersLabel: "Konfigurer tilgjengelige tilpassede spørringsmodifikatorer",
+              QueryModifiersLabel: "Tilpassede spørringsmodifikatorer",
+              QueryModifiersDescription: "Aktiver eller deaktiver individuelle tilpassede søkemodifikatorer",
+              EnabledPropertyLabel: "Aktivert",
+              ModifierNamePropertyLabel: "Navn",
+              ModifierDescriptionPropertyLabel: "Beskrivelse",
+              EndWhenSuccessfullPropertyLabel:"Avslutt når det er vellykket"
           }
         }
       }
     }
   });
-  

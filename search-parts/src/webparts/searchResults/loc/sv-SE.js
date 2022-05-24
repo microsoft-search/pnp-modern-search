@@ -116,15 +116,15 @@ define([], function() {
       },
       CustomQueryModifierPage:{
         QueryModifierGroup: {
-            GroupName: "",
-            EnableQueryModifiers: "",
-            EditQueryModifiersLabel: "",
-            QueryModifiersLabel: "",
-            QueryModifiersDescription: "",
-            EnabledPropertyLabel: "",
-            ModifierNamePropertyLabel: "",
-            ModifierDescriptionPropertyLabel: "",
-            EndWhenSuccessfullPropertyLabel:""
+            GroupName: "Modifierare för anpassade frågor",
+            EnableQueryModifiers: "Aktivera anpassade frågebyteformer",
+            EditQueryModifiersLabel: "Konfigurera tillgängliga modifieringar för anpassade frågor",
+            QueryModifiersLabel: "Modifiering av anpassade frågor",
+            QueryModifiersDescription: "Aktivera eller inaktivera enskilda anpassade frågeändringar.",
+            EnabledPropertyLabel: "Aktiverad",
+            ModifierNamePropertyLabel: "Namn",
+            ModifierDescriptionPropertyLabel: "Beskrivning",
+            EndWhenSuccessfullPropertyLabel:"Avsluta när det är lyckat"
         }
       }
     }

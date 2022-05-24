@@ -116,15 +116,15 @@ define([], function() {
             },
             CustomQueryModifierPage:{
               QueryModifierGroup: {
-                  GroupName: "",
-                  EnableQueryModifiers: "",
-                  EditQueryModifiersLabel: "",
-                  QueryModifiersLabel: "",
-                  QueryModifiersDescription: "",
-                  EnabledPropertyLabel: "",
-                  ModifierNamePropertyLabel: "",
-                  ModifierDescriptionPropertyLabel: "",
-                  EndWhenSuccessfullPropertyLabel:""
+                  GroupName: "Modificadores de consulta personalizados",
+                  EnableQueryModifiers: "Habilitar los modificadores de consulta personalizados",
+                  EditQueryModifiersLabel: "Configurar los modificadores de consulta personalizados disponibles",
+                  QueryModifiersLabel: "Modificadores de consulta personalizados",
+                  QueryModifiersDescription: "Habilitar o deshabilitar modificadores de consulta personalizados individuales",
+                  EnabledPropertyLabel: "Habilitado",
+                  ModifierNamePropertyLabel: "Nombre",
+                  ModifierDescriptionPropertyLabel: "Descripción",
+                  EndWhenSuccessfullPropertyLabel:"Finalizar cuando se ha realizado con éxito"
               }
             }
         }
