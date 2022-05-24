@@ -797,7 +797,7 @@ export class TemplateService implements ITemplateService {
             const templatePayload = templateDictionary.get(templateId).body;
 
             // Check if item should use a result template
-            if (templatePayload) {
+            if (templatePayload && templateId !== 'connectordefault') {
 
                 const template = new this._adaptiveCardsTemplating.Template(templatePayload);
 
