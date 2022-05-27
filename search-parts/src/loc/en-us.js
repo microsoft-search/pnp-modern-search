@@ -101,7 +101,7 @@ define([], function() {
                 SourceName: "SharePoint Search",
                 SourceConfigurationGroupName: "Source configuration",
                 QueryTextFieldLabel: "Query text",
-                QueryTextFieldInfoMessage: "Use the <strong>Available connections</strong> Web Part configuration tab to specifiy either a static value or a value from a dynamic component on the page like a searchbox",
+                QueryTextFieldInfoMessage: "Use the <strong>Available connections</strong> Web Part configuration tab to specify either a static value or a value from a dynamic component on the page like a searchbox",
                 QueryTemplateFieldLabel: "Query template",
                 QueryTemplatePlaceHolderText: "ex: Path:{Site}",
                 QueryTemplateFieldDescription: "The search query template. You can also use {<tokens>} to build a dynamic query.",
