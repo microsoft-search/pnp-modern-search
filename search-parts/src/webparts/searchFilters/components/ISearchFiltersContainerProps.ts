@@ -1,4 +1,4 @@
-import { IDataFilterConfiguration, IDataFilter, IDataFilterResult } from "@pnp/modern-search-extensibility";
+import { IDataFilterConfiguration, IDataFilter, IDataFilterResult, LayoutRenderType } from "@pnp/modern-search-extensibility";
 import ISearchFiltersWebPartProps from "../ISearchFiltersWebPartProps";
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import { ITemplateService } from "../../../services/templateService/ITemplateService";
@@ -35,6 +35,11 @@ export interface ISearchFiltersContainerProps {
    * The selected layout key
    */
   selectedLayoutKey: string;
+
+  /**
+   * The layout render type (Handlebars, Adaptive Cards, etc.)
+   */
+  renderType: LayoutRenderType;
 
   /**
    * The Web Part properties so they can be used in Handlebars template

@@ -51,6 +51,11 @@ markdown_extensions:
       guess_lang: false
   - toc:
       permalink: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
   - markdown_include.include:
           base_path: docs
 extra:

@@ -1,3 +1,5 @@
+import { IResultTemplates } from "@pnp/modern-search-extensibility";
+
 // https://docs.microsoft.com/en-us/graph/api/resources/searchresponse?view=graph-rest-beta
 export interface IMicrosoftSearchResponse {
     value: IMicrosoftSearchResultSet;
@@ -7,6 +9,7 @@ export interface IMicrosoftSearchResultSet {
     hitsContainers: ISearchHitsContainer[];
     searchTerms: string[];
     queryAlterationResponse?: IQueryAlterationResponse;
+    resultTemplates?: IResultTemplates;
 }
 
 export interface ISearchHitsContainer {
@@ -22,6 +25,7 @@ export interface ISearchHit {
     summary: string;
     contentSource: string;
     resource: ISearchResponseResource;
+    resultTemplateId?: string;
 }
 
 export interface ISearchResponseAggregation {

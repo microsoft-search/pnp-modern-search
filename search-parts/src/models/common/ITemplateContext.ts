@@ -7,7 +7,7 @@ import ISearchFiltersWebPartProps from "../../webparts/searchFilters/ISearchFilt
 /**
  * Represents the context passed to the Handlebars template (Search Results)
  */
-export interface IDataResultsTemplateContext {
+export interface ISearchResultsTemplateContext {
 
     /**
      * Paging informations
@@ -150,6 +150,11 @@ export interface IDataResultsTemplateContext {
          * The default image content to display when no thummbnail is available.
          */
         defaultImage: string;
+
+        /**
+         * The adaptive cards host config if specified
+         */
+        adaptiveCardsHostConfig?: {[key: string]: string};
     };
 
     /**
