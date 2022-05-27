@@ -1,4 +1,4 @@
-import { ITemplateSlot } from "@pnp/modern-search-extensibility";
+import { ITemplateSlot, LayoutRenderType } from "@pnp/modern-search-extensibility";
 import { IDataResultType } from "../../models/common/IDataResultType";
 import { IPagingSettings } from "../../models/common/IPagingSettings";
 import { IBaseWebPartProps } from "../../models/common/IBaseWebPartProps";
@@ -65,6 +65,16 @@ export default interface ISearchResultsWebPartProps extends IBaseWebPartProps {
          */
         [key:string]: any;
     };
+
+    /**
+     * The layout type
+     */
+    layoutRenderType: LayoutRenderType;
+
+    /**
+     * Adaptive cards host config
+     */
+    adaptiveCardsHostConfig: string;
 
     /**
      * Current version of the Web Part (set by CI)

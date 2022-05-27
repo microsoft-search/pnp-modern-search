@@ -80,6 +80,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                             templateContext={templateContext}
                             templateService={this.props.templateService}
                             instanceId={this.props.instanceId}
+                            renderType={this.props.renderType}
                           />;
     }
     
