@@ -1162,14 +1162,15 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                             const termId = matches[3];
                             const termPrefix = matches[2]; // 'L0'
                             if (termPrefix.localeCompare("L0") === 0) {
-                                const termFilterWithoutTranslations =  `"ǂǂ${StringHelper._bytesToHex(StringHelper._stringToUTF8Bytes(`GP0|#${termId.toString()}`))}"`;
-                                const termTextFilter = `string("L0|#${termId.toString()}")`;
+                                const termFilterWithoutTranslations = `GP0|#${termId.toString()}`;
+                                const termTextFilter = `L0|#${termId.toString()}`;
 
-                                // value.value: HEX encoded value => original refiner value 
+                                // https://docs.microsoft.com/en-us/sharepoint/technical-reference/automatically-created-managed-properties-in-sharepoint
+
                                 // termFilterWithoutTranslations => language agnostic term value
-                                // termTextFilter => Text value in case the value is a string (ex: a property bag value or a text column)
-                                value.value = `or(${value.value},${termFilterWithoutTranslations},${termTextFilter})`;
-                            }
+                                // termTextFilter => Text value in case the value is a litteral string (ex: a property bag value or a text column https://microsoft-search.github.io/pnp-modern-search/usage/search-filters/#use-indexed-property-bag-properties-with-taxonomy-values)
+                                value.value = `or(${termFilterWithoutTranslations},${termTextFilter})`;
+                            } 
                         }
 
                         value.name = existingFilters[0].localizedTermLabel;
