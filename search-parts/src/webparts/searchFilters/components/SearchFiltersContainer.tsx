@@ -18,7 +18,8 @@ import {
   FilterComparisonOperator, 
   IDataFilterInfo,
   ExtensibilityConstants,
-  FilterConditionOperator
+  FilterConditionOperator,
+  LayoutRenderType
 } from '@pnp/modern-search-extensibility';
 import { ISearchFiltersTemplateContext } from '../../../models/common/ITemplateContext';
 import { flatten } from '@microsoft/sp-lodash-subset';
@@ -80,7 +81,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                             templateContext={templateContext}
                             templateService={this.props.templateService}
                             instanceId={this.props.instanceId}
-                            renderType={this.props.renderType}
+                            renderType={LayoutRenderType.Handlebars} // Only allow Handlebars for filters
                           />;
     }
     

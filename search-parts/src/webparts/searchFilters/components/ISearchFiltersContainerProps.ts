@@ -37,11 +37,6 @@ export interface ISearchFiltersContainerProps {
   selectedLayoutKey: string;
 
   /**
-   * The layout render type (Handlebars, Adaptive Cards, etc.)
-   */
-  renderType: LayoutRenderType;
-
-  /**
    * The Web Part properties so they can be used in Handlebars template
    */
   properties: ISearchFiltersWebPartProps;
