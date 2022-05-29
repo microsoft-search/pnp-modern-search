@@ -598,7 +598,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         const clonedContext = cloneDeep(dataContext);
          
         for (const modifier of selectedCustomQueryModifier) {
-             const resp = await modifier.modifyQuery({queryTemplate:cloneDeep(queryTemplate), queryText: cloneDeep(queryText)}, clonedContext, this._tokenService.resolveTokens);            
+             const resp = await modifier.modifyQuery({queryTemplate:queryTemplate, queryText:queryText}, clonedContext, this._tokenService.resolveTokens);            
              let doBreak = modifier.endWhenSuccessfull && (!isEqual(queryText, resp.queryText ) ) ;
              queryText = resp.queryText;
              // TODO: When Querytemplate will be supported in the future directly by ms search graph api, then we need to add the following line
