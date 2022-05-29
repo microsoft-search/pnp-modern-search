@@ -36,7 +36,7 @@ import { ServiceScopeHelper } from '../../helpers/ServiceScopeHelper';
 import { cloneDeep, flatten, isEmpty, isEqual, uniq, uniqBy } from "@microsoft/sp-lodash-subset";
 import { AvailableComponents } from '../../components/AvailableComponents';
 import { DynamicProperty } from '@microsoft/sp-component-base';
-import { ITemplateSlot, IDataFilterToken, IDataFilterTokenValue, IDataContext, ITokenService, SortFieldDirection } from '@pnp/modern-search-extensibility';
+import { ITemplateSlot, IDataFilterToken, IDataFilterTokenValue, IDataContext, ITokenService, SortFieldDirection,IExtensibilityLibrary } from '@pnp/modern-search-extensibility';
 import { ResultTypeOperator } from '../../models/common/IDataResultType';
 import { TokenService, BuiltinTokenNames } from '../../services/tokenService/TokenService';
 import { TaxonomyService } from '../../services/taxonomyService/TaxonomyService';

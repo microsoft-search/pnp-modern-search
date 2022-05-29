@@ -772,7 +772,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         const clonedContext = cloneDeep(dataContext);
         for (const modifier of selectedCustomQueryModifier) {
         
-            const resp = await modifier.modifyQuery({queryTemplate:searchQuery.QueryTemplate, queryText: searchQuery.Querytext}, clonedContext, this._tokenService.resolveTokens);            
+            const resp = await modifier.modifyQuery({queryTemplate:searchQuery.QueryTemplate, queryText: searchQuery.Querytext}, clonedContext, this._tokenService.resolveTokens.bind(this._tokenService));            
             let doBreak =  modifier.endWhenSuccessfull  && (!isEqual(searchQuery.Querytext, resp.queryText) || !isEqual(searchQuery.QueryTemplate, resp.queryTemplate));
             searchQuery.Querytext = resp.queryText;
             searchQuery.QueryTemplate = resp.queryTemplate;

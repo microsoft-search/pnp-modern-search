@@ -30,7 +30,7 @@ export class WordModifier extends BaseQueryModifier<IWordModifierProperties> {
     this._regex.lastIndex = 0;
 
     const s = searchQuery?.queryText?.replace(this._regex, (match => {
-      return  this.properties.ignoreList.some(_ => _.toLocaleLowerCase() === match.toLocaleLowerCase()) ? match : `${this.properties.prefix}${match}${this.properties.suffix}`;      
+      return  this.properties.ignoreList && this.properties.ignoreList.some(_ => _.toLocaleLowerCase() === match.toLocaleLowerCase()) ? match : `${this.properties.prefix}${match}${this.properties.suffix}`;      
     }));
 
     
@@ -44,7 +44,7 @@ export class WordModifier extends BaseQueryModifier<IWordModifierProperties> {
   
   private _onCustomPropertyUpdate(propertyPath: string, newValue: any): void {
 
-       this.properties.ignoreList = newValue.map(v => { return v.key as string; });
+       this.properties.ignoreList = newValue?.map(v => { return v.key as string; }) ?? [];
         
 }
 
