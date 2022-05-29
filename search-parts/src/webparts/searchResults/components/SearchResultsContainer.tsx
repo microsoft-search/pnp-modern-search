@@ -8,8 +8,8 @@ import { ITemplateService } from '../../../services/templateService/ITemplateSer
 import { TemplateService } from '../../../services/templateService/TemplateService';
 import { Log, DisplayMode } from "@microsoft/sp-core-library";
 import { MessageBar, MessageBarType, Overlay, Spinner, SpinnerSize } from 'office-ui-fabric-react';
-import { IDataSourceData, IDataFilterResult, BuiltinTemplateSlots } from '@pnp/modern-search-extensibility';
-import { IDataResultsTemplateContext } from '../../../models/common/ITemplateContext';
+import { IDataSourceData, IDataFilterResult, BuiltinTemplateSlots, LayoutRenderType } from '@pnp/modern-search-extensibility';
+import { ISearchResultsTemplateContext } from '../../../models/common/ITemplateContext';
 import styles from './SearchResultsContainer.module.scss';
 import { Constants, AutoCalculatedDataSourceFields, TestConstants } from '../../../common/Constants';
 import { ITemplateSlot } from '@pnp/modern-search-extensibility';
@@ -17,6 +17,7 @@ import { ObjectHelper } from '../../../helpers/ObjectHelper';
 import { BuiltinLayoutsKeys } from '../../../layouts/AvailableLayouts';
 import { WebPartTitle } from '@pnp/spfx-controls-react/lib/WebPartTitle';
 import * as webPartStrings from 'SearchResultsWebPartStrings';
+import { IMicrosoftSearchDataSourceData } from '../../../models/search/IMicrosoftSearchDataSourceData';
 
 const LogSource = "SearchResultsContainer";
 
@@ -102,7 +103,8 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
         // Content loading
         templateContent = this.templateService.getTemplateMarkup(this.props.templateContent);
         const templateContext = this.getTemplateContext();
-
+        let renderType = this.props.renderType;
+    
         let selectionMode = SelectionMode.none;
         if (this.props.properties.itemSelectionProps && this.props.properties.itemSelectionProps.allowItemSelection) {
           selectionMode = this.props.properties.itemSelectionProps.allowMulti ? SelectionMode.multiple : SelectionMode.single;
@@ -112,10 +114,11 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                             selection={this._selection} 
                             selectionMode={selectionMode}>
                                 <TemplateRenderer
-                                templateContent={templateContent} 
-                                templateContext={templateContext}
-                                templateService={this.templateService}
-                                instanceId={this.props.instanceId}
+                                    templateContent={templateContent} 
+                                    templateContext={templateContext}
+                                    templateService={this.templateService}
+                                    instanceId={this.props.instanceId}
+                                    renderType={renderType}
                                 />
                             </SelectionZone>;
 
@@ -164,6 +167,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                         templateContext={this.getTemplateContext()}
                         templateService={this.templateService}
                         instanceId={this.props.instanceId}
+                        renderType={this.props.renderType}
                     />;
                 } else {
                     renderShimmerElements = this.getDefaultShimmerElements();
@@ -237,9 +241,6 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             let availableFilters: IDataFilterResult[] = [];
             let totalItemsCount = 0;
 
-            let pageLinks: string[] = this.props.dataContext.paging.pageLinks;
-            let nextLinkUrl: string = this.props.dataContext.paging.nextLinkUrl;
-
             const localDataContext = cloneDeep(this.props.dataContext);
 
             // Fetch live data
@@ -250,11 +251,6 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
 
             // Determine total items count and page number
             totalItemsCount = this.props.dataSource.getItemCount();
-
-            // Reset the links if no item. In theory, data sources should do the same internally but if it is not the case, we double check and reset the count for them
-            if (totalItemsCount === 0 && data.paging && data.paging.links) {
-                data.paging.links = [];
-            }
 
             if (data.filters) {
                 if (data.filters.length === 0) {
@@ -272,7 +268,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 }
             }
 
-            this.props.onDataRetrieved(this.getAvailableFieldsFromResults(data), availableFilters, pageNumber, nextLinkUrl, pageLinks);
+            this.props.onDataRetrieved(this.getAvailableFieldsFromResults(data), availableFilters, pageNumber);
 
             // Persist the total items count
             this._totalItemsCount = totalItemsCount;
@@ -456,7 +452,9 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
     }
 
     // Build the template context
-    private getTemplateContext(): IDataResultsTemplateContext {
+    private getTemplateContext(): ISearchResultsTemplateContext {
+
+        let adaptiveCardsHostConfig = null;
 
         // Gets information about current page context
         const { site, web, list, listItem, user, cultureInfo } = this.props.pageContext;
@@ -468,6 +466,12 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
         delete trimmedProperties.inlineTemplateContent;
         delete trimmedProperties.documentationLink;
         delete trimmedProperties.externalTemplateUrl;
+
+        try {
+            adaptiveCardsHostConfig = JSON.parse(this.props.properties.adaptiveCardsHostConfig);
+        } catch (error) {
+            Log.warn(LogSource, `Invalid host config provided. Refer to https://docs.microsoft.com/en-us/adaptive-cards/rendering-cards/host-config for more details`, this.props.serviceScope);
+        }
 
         return {
             // The data source data
@@ -516,7 +520,8 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             instanceId: this.props.instanceId,
             // Any other useful informations
             utils: {
-                defaultImage: Constants.DEFAULT_IMAGE_CONTENT
+                defaultImage: Constants.DEFAULT_IMAGE_CONTENT,
+                adaptiveCardsHostConfig: adaptiveCardsHostConfig
             },
             selectedKeys: this.state.selectedItemKeys
         };

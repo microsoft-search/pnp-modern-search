@@ -21,6 +21,9 @@ export interface IMicrosoftSearchRequest {
     sortProperties?: ISearchSortProperty[];
     contentSources?: string[];
     queryAlterationOptions?: IQueryAlterationOptions;
+    resultTemplateOptions?:  {
+        enableResultTemplate: boolean
+    }
 }
 
 export interface ISearchSortProperty {

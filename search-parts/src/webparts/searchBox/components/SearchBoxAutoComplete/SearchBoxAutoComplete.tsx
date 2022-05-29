@@ -409,9 +409,9 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
                                         this._updateQuerySuggestions(newValue);
                                     }, SUGGESTION_UPDATE_DEBOUNCE_DELAY);
                                 }
-                                this._onChangeDebounced(event.currentTarget.value);
+                                this._onChangeDebounced(event && event.currentTarget ? event.currentTarget.value : "");
                                 this.setState({
-                                    searchInputValue: event.currentTarget.value,
+                                    searchInputValue: event && event.currentTarget ? event.currentTarget.value : "",
                                     isRetrievingSuggestions: true,
                                     isSearchExecuted: false,
                                 });
