@@ -88,10 +88,11 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
 
                 this.props.tokenService.setTokenValue(BuiltinTokenNames.inputQueryText, queryText);
                 queryText = await this.props.tokenService.resolveTokens(this.props.inputTemplate);
-
                 const urlEncodedQueryText = encodeURIComponent(queryText);
 
-                const searchUrl = new URL(this.props.pageUrl);
+                const tokenizedPageUrl = await this.props.tokenService.resolveTokens(this.props.pageUrl);
+                const searchUrl = new URL(tokenizedPageUrl);
+                
                 let newUrl;
 
                 if (this.props.queryPathBehavior === QueryPathBehavior.URLFragment) {
