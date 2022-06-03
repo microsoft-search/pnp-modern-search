@@ -77,13 +77,13 @@ define([], function() {
                 isRequiredErrorMessage: 'Se requiere una fecha de inicio.',
                 invalidInputErrorMessage: 'Formato de fecha no válido.'
             },
-            DateIntervalStrings: {
+            DateIntervalStrings:  {
                 AnyTime: "En cualquier momento",
-                PastDay: "De las últimas 24 horas a la última semana",
-                PastWeek: "De la semana pasada al mes pasado",
-                PastMonth: "Del último mes a los últimos 3 meses",
-                Past3Months: "De los últimos 3 meses al último año",
-                PastYear: "Desde el año pasado",
+                PastDay: "Últimas 24 horas",
+                PastWeek: "De las últimas 24 horas a la semana pasada",
+                PastMonth: "De la semana pasada al mes pasado",
+                Past3Months: "Del mes pasado a los últimos 3 meses",
+                PastYear: "De los últimos 3 meses al año pasado",
                 Older: "Más de un año"
             },
             SameTabOpenBehavior: "Utilizar la pestaña actual",
