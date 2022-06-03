@@ -6,6 +6,7 @@ import { WebPartTitle } from '@pnp/spfx-controls-react/lib/WebPartTitle';
 import { PageOpenBehavior } from '../../../helpers/UrlHelper';
 import { ISearchVerticalsContainerState } from './ISearchVerticalsContainerState';
 import { BuiltinTokenNames } from '../../../services/tokenService/TokenService';
+import { isEmpty } from '@microsoft/sp-lodash-subset';
 
 export default class SearchVerticalsContainer extends React.Component<ISearchVerticalsContainerProps, ISearchVerticalsContainerState> {
 
@@ -90,10 +91,11 @@ export default class SearchVerticalsContainer extends React.Component<ISearchVer
     if (verticalIdx !== -1) {
 
       const vertical = this.props.verticals[verticalIdx];
-      if (vertical.isLink) {
+      if (vertical.isLink && vertical.linkUrl) {
           // Send the query to the new page
-          this.props.tokenService.resolveTokens(vertical.linkUrl).then((resolvedUrl: string) => {           
-            resolvedUrl = resolvedUrl.replace(/\{searchTerms\}|\{SearchBoxQuery\}/gi, GlobalSettings.getValue(BuiltinTokenNames.inputQueryText));
+          this.props.tokenService.resolveTokens(vertical.linkUrl).then((resolvedUrl: string) => {      
+            const inputQueryText: string = !isEmpty(GlobalSettings.getValue(BuiltinTokenNames.inputQueryText)) ?  GlobalSettings.getValue(BuiltinTokenNames.inputQueryText) : "";    
+            resolvedUrl = resolvedUrl.replace(/\{inputQueryText\}|\{searchTerms\}|\{SearchBoxQuery\}/gi, inputQueryText);
 
             if(vertical.openBehavior === PageOpenBehavior.NewTab){
               window.open(resolvedUrl, "_blank");
