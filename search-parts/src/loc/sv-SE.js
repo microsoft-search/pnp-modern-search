@@ -79,11 +79,11 @@ define([], function () {
         },
         DateIntervalStrings: {
           AnyTime: "När som helst",
-          PastDay: "Från senaste 24 timmarna till senaste veckan",
-          PastWeek: "Från förra veckan till förra månaden",
-          PastMonth: "Från förra månaden till de senaste tre månaderna",
-          Past3Months: "Från de senaste tre månaderna till det senaste året",
-          PastYear: "Från förra året",
+          PastDay: "Senaste 24 timmarna",
+          PastWeek: "Från senaste 24 timmarna till senaste veckan",
+          PastMonth: "Från senaste veckan till senaste månaden",
+          Past3Months: "Från senaste månaden till senaste 3 månaderna",
+          PastYear: "Från de senaste 3 månaderna till det senaste året",
           Older: "Äldre än ett år" 
         },
         SameTabOpenBehavior: "Använd den aktuella fliken",

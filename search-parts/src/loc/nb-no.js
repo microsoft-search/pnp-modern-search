@@ -79,12 +79,12 @@ define([], function () {
         },
         DateIntervalStrings: {
           AnyTime: "Når som helst",
-          PastDay: "Fra de siste 24 timene til siste uke",
-          PastWeek: "Fra forrige uke til forrige måned",
-          PastMonth: "Fra forrige måned til de siste tre månedene",
-          Past3Months: "Fra de siste tre månedene til det siste året",
-          PastYear: "Fra forrige år",
-          Older: "Eldre enn ett år" 
+          PastDay: "Siste 24 timer",
+          PastWeek: "Fra siste 24 timer til forrige uke",
+          PastMonth: "Fra forrige uke til forrige måned",
+          Past3Months: "Fra siste måned til siste 3 måneder",
+          PastYear: "Fra siste 3 måneder til siste år",
+          Older: "Eldre enn ett år"
         },
         SameTabOpenBehavior: "Bruk den aktuelle fanen",
         NewTabOpenBehavior: "Åpne i ny fane",

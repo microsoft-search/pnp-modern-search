@@ -78,13 +78,13 @@ define([], function() {
               invalidInputErrorMessage: 'Nieprawidłowy format daty.'
           },
           DateIntervalStrings: {
-              AnyTime: "Dowolny czas",
-              PastDay: "Ostatnie 24 godziny",
-              PastWeek: "Ostatni tydzień",
-              PastMonth: "Ostatni miesiąc",
-              Past3Months: "Ostatie 3 miesiące",
-              PastYear: "Ostatni rok",
-              Older: "Starsze niż rok"
+            AnyTime: "Kiedykolwiek",
+            PastDay: "Ostatnie 24 godziny",
+            PastWeek: "Od ostatnich 24 godzin do zeszłego tygodnia",
+            PastMonth: "Od ostatniego tygodnia do ostatniego miesiąca",
+            Past3Months: "Od ostatniego miesiąca do ostatnich 3 miesięcy",
+            PastYear: "Od ostatnich 3 miesięcy do zeszłego roku",
+            Older: "Starsze niż rok"
           },
           SameTabOpenBehavior: "Użyj bieżącej karty",
           NewTabOpenBehavior: "Otwórz w nowej karcie",
