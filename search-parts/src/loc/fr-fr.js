@@ -123,7 +123,8 @@ define([], function() {
                 HitHighlightedPropertiesFieldDescription: "Entrez la liste des propriétés gérées pour lesquelles trouver des correspondances.",
                 TermNotFound: "(Le critère contenant l’identifiant « {0} » est introuvable)",
                 ApplyQueryTemplateBtnText: "Appliquer",
-                EnableAudienceTargetingTglLabel: "Permet de cibler l’auditoire"
+                EnableAudienceTargetingTglLabel: "Permet de cibler l’auditoire",
+                TrimDuplicates: "Supprimer les doublons"
             },
             MicrosoftSearch: {
                 QueryTextFieldLabel: "Texte de la requête",
@@ -144,7 +145,8 @@ define([], function() {
                 QueryTemplatePlaceHolderText: "ex: {searchTerms} IsDocument:true",
                 QueryTemplateFieldDescription: "Vous pouvez également utiliser {<tokens>} et KQL pour créer une requête dynamique.",
                 ApplyQueryTemplateBtnText: "Appliquer",
-                UseBetaEndpoint: "Utiliser le point de terminaison beta"
+                UseBetaEndpoint: "Utiliser le point de terminaison beta",
+                TrimDuplicates: "Supprimer les doublons"
             },
             SearchCommon: {
                 Sort: {

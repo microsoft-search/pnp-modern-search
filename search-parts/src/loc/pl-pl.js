@@ -123,7 +123,8 @@ define([], function() {
               HitHighlightedPropertiesFieldDescription: "Podaj listę właściwości zarządzanych w celu wyróżniania trafień.",
               TermNotFound: "(Nie znaleziono terminu o identyfikatorze '{0}')",
               ApplyQueryTemplateBtnText: "Zastosuj",
-              EnableAudienceTargetingTglLabel: "Włącz audiencje"
+              EnableAudienceTargetingTglLabel: "Włącz audiencje",
+              TrimDuplicates: "Przytnij duplikaty"
           },
           MicrosoftSearch: {
               QueryTextFieldLabel: "Tekst zapytania",
@@ -144,7 +145,8 @@ define([], function() {
               QueryTemplatePlaceHolderText: "ex: {searchTerms} IsDocument:true",
               QueryTemplateFieldDescription: "Szablon modyfikatora wyszukiwania. Możesz również użyć {<tokenów>} i KQL do zbudowania dynamicznego zapytania. Wszystko jest połączone z inputQueryText",
               ApplyQueryTemplateBtnText: "Zastosuj",
-              UseBetaEndpoint: "Użyj punktu końcowego wersji beta"
+              UseBetaEndpoint: "Użyj punktu końcowego wersji beta",
+              TrimDuplicates: "Przytnij duplikaty"
           },
           SearchCommon: {
               Sort: {

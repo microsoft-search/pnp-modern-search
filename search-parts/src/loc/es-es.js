@@ -123,7 +123,8 @@ define([], function() {
                 HitHighlightedPropertiesFieldDescription: "Proporcionar la lista de propiedades gestionadas para contenido resaltado (es decir, Departamento, UserName).",
                 TermNotFound: "(Término con ID '{0}' no encontrado)",
                 ApplyQueryTemplateBtnText: "Aplicar",
-                EnableAudienceTargetingTglLabel: "Permitir la segmentación de la audiencia"
+                EnableAudienceTargetingTglLabel: "Permitir la segmentación de la audiencia",
+                TrimDuplicates: "Recortar duplicados"
             },
             MicrosoftSearch: {
                 QueryTextFieldLabel: "Texto de la consulta",
@@ -144,7 +145,8 @@ define([], function() {
                 QueryTemplatePlaceHolderText: "ex: {searchTerms} IsDocument:true",
                 QueryTemplateFieldDescription: "La plantilla de consulta de búsqueda. También puede utilizar {<tokens>} y KQL para construir una consulta dinámica.",
                 ApplyQueryTemplateBtnText: "Aplicar",
-                UseBetaEndpoint: "Utilizar endpoint beta"
+                UseBetaEndpoint: "Utilizar endpoint beta",
+                TrimDuplicates: "Recortar duplicados"
             },
             SearchCommon: {
                 Sort: {

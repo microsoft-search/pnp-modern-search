@@ -123,7 +123,8 @@ define([], function() {
                 HitHighlightedPropertiesFieldDescription: "De lijst van beheerde eigenschappen opgeven om markeren in te schakelen. ",
                 TermNotFound: "(Term met ID '{0}' niet gevonden)",
                 ApplyQueryTemplateBtnText: "Toepassen",
-                EnableAudienceTargetingTglLabel: "Schakel doelgroepen in"
+                EnableAudienceTargetingTglLabel: "Schakel doelgroepen in",
+                TrimDuplicates: "Duplicaten bijsnijden"
             },
             MicrosoftSearch: {
                 QueryTextFieldLabel: "Zoekopdracht",
@@ -144,7 +145,8 @@ define([], function() {
                 QueryTemplatePlaceHolderText: "ex: {searchTerms} IsDocument:true",
                 QueryTemplateFieldDescription: "De sjabloon voor zoekmodificatie. U kunt ook {<tokens>} en KQL gebruiken om een ​​dynamische query te maken. Alles is aaneengeschakeld naar de inputQueryText",
                 ApplyQueryTemplateBtnText: "Toepassen",
-                UseBetaEndpoint: "Bèta-eindpunt gebruiken"
+                UseBetaEndpoint: "Bèta-eindpunt gebruiken",
+                TrimDuplicates: "Duplicaten bijsnijden"
             },
             SearchCommon: {
                 Sort: {
