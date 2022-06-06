@@ -123,7 +123,8 @@ define([], function () {
           HitHighlightedPropertiesFieldDescription: "Tillhandahåll lista över hanterade egenskaper till träffmarkeringar. ",
           TermNotFound: "(Term med ID '{0}' hittades inte)",
           ApplyQueryTemplateBtnText: "Tillämpa",
-          EnableAudienceTargetingTglLabel: "Aktivera målgruppsanpassning"
+          EnableAudienceTargetingTglLabel: "Aktivera målgruppsanpassning",
+          TrimDuplicates: "Trimma dubbletter"
         },
         MicrosoftSearch: {
           QueryTextFieldLabel: "Sökfrågetext",
@@ -144,7 +145,8 @@ define([], function () {
           QueryTemplatePlaceHolderText: "ex: {searchTerms} IsDocument:true",
           QueryTemplateFieldDescription: "Sökmodifieringsmallen. Du kan också använda {<tokens>} och KQL för att bygga en dynamisk fråga. Allt är kopplat till inputQueryText",
           ApplyQueryTemplateBtnText: "Tillämpa",
-          UseBetaEndpoint: "Använd beta endpoint"
+          UseBetaEndpoint: "Använd beta endpoint",
+          TrimDuplicates: "Trimma dubbletter"
         },
         SearchCommon: {
           Sort: {

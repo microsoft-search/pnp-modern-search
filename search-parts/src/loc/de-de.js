@@ -123,7 +123,8 @@ define([], function() {
                 HitHighlightedPropertiesFieldDescription: "Liste der verwalteten Eigenschaften zum hervorheben (i.e. Department,UserName).",
                 TermNotFound: "(Begriff mit ID '{0}' nicht gefunden)",
                 ApplyQueryTemplateBtnText: "Übernehmen",
-                EnableAudienceTargetingTglLabel: "Zielgruppen Adressierung aktivieren"
+                EnableAudienceTargetingTglLabel: "Zielgruppen Adressierung aktivieren",
+                TrimDuplicates: "Duplikate kürzen"
             },
             MicrosoftSearch: {
                 QueryTextFieldLabel: "Abfragetext",
@@ -144,7 +145,8 @@ define([], function() {
                 QueryTemplatePlaceHolderText: "z.B.: {searchTerms} IsDocument:true",
                 QueryTemplateFieldDescription: "Die Suchvorlage. Es können auch {<tokens>} und KQL für die Erstellung einer dynamischen Query benutzt werden.",
                 ApplyQueryTemplateBtnText: "Anwenden",
-                UseBetaEndpoint: "Benutze den Beta-Endpunkt"
+                UseBetaEndpoint: "Benutze den Beta-Endpunkt",
+                TrimDuplicates: "Duplikate kürzen"
             },
             SearchCommon: {
                 Sort: {

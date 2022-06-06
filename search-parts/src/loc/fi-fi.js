@@ -121,7 +121,8 @@ define([], function() {
                 SelectedPropertiesPlaceholderLabel: "Valitse ominaisuudet",
                 TermNotFound: "(Termiä ID:llä '{0}' ei löydy)",
                 ApplyQueryTemplateBtnText: "Ota käyttöön",
-                EnableAudienceTargetingTglLabel: "Salli käyttäjäryhmäkohdennus"
+                EnableAudienceTargetingTglLabel: "Salli käyttäjäryhmäkohdennus",
+                TrimDuplicates: "Leikkaa kaksoiskappaleet"
             },
             MicrosoftSearch: {
                 QueryTextFieldLabel: "Hakukysely",
@@ -142,7 +143,8 @@ define([], function() {
                 QueryTemplatePlaceHolderText: "esimerkki: {searchTerms} IsDocument:true",
                 QueryTemplateFieldDescription: "Hakukyselyn templaatti. Voit myös käyttää {<tokens>} muotoilua ja KQL-määreitä rakentaaksesi dynaamisen kyselyn.",
                 ApplyQueryTemplateBtnText: "Ota käyttöön",
-                UseBetaEndpoint: "Käytä beta endpointtia"
+                UseBetaEndpoint: "Käytä beta endpointtia",
+                TrimDuplicates: "Leikkaa kaksoiskappaleet"
             },
             SearchCommon: {
                 Sort: {

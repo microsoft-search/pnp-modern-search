@@ -123,7 +123,8 @@ define([], function() {
                 HitHighlightedPropertiesFieldDescription: "Provide the list of managed properties to hit highlight (i.e. Department,UserName).",
                 TermNotFound: "(Term with ID '{0}' not found)",
                 ApplyQueryTemplateBtnText: "Apply",
-                EnableAudienceTargetingTglLabel: "Enable audience targeting"
+                EnableAudienceTargetingTglLabel: "Enable audience targeting",
+                TrimDuplicates: "Trim duplicates"
             },
             MicrosoftSearch: {
                 QueryTextFieldLabel: "Query text",
@@ -144,7 +145,8 @@ define([], function() {
                 QueryTemplatePlaceHolderText: "ex: {searchTerms} IsDocument:true",
                 QueryTemplateFieldDescription: "The search query template. You can also use {<tokens>} and KQL to build a dynamic query.",
                 ApplyQueryTemplateBtnText: "Apply",
-                UseBetaEndpoint: "Use beta endpoint"
+                UseBetaEndpoint: "Use beta endpoint",
+                TrimDuplicates: "Trim duplicates"
             },
             SearchCommon: {
                 Sort: {
