@@ -23,8 +23,8 @@ export interface IMicrosoftSearchRequest {
     contentSources?: string[];
     queryAlterationOptions?: IQueryAlterationOptions;
     resultTemplateOptions?:  {
-        enableResultTemplate: boolean
-    }
+        enableResultTemplate: boolean;
+    };
     trimDuplicates?: boolean;
 }
 

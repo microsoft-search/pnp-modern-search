@@ -620,7 +620,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         }
 
         // Query modification
-        let queryTemplate = this.properties.queryTemplate//await this._tokenService.resolveTokens(this.properties.queryTemplate);
+        let queryTemplate = await this._tokenService.resolveTokens(this.properties.queryTemplate);
         if (!isEmpty(queryTemplate.trim()) && !this.properties.useBetaEndpoint) {
 
             // Use {searchTerms} or {inputQueryText} to use orginal value

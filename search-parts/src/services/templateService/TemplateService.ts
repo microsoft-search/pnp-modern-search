@@ -799,17 +799,17 @@ export class TemplateService implements ITemplateService {
             // Check if item should use a result template
             if (templatePayload && templateId !== 'connectordefault') {
 
-                const template = new this._adaptiveCardsTemplating.Template(templatePayload);
+                const itemTemplate = new this._adaptiveCardsTemplating.Template(templatePayload);
 
-                const context = {
+                const itemContext = {
                     $root: item.resource.properties
                 };
 
-                const card = template.expand(context);
+                const itemCard = itemTemplate.expand(itemContext);
     
                 const itemAdaptiveCard = new this._adaptiveCardsNS.AdaptiveCard();
                 itemAdaptiveCard.hostConfig = hostConfiguration;
-                itemAdaptiveCard.parse(card);
+                itemAdaptiveCard.parse(itemCard);
     
                 // Partial match as we can't use the complete ID due to special characters "/" and "==""
                 const defaultItem: HTMLElement = mainHtml.querySelector(`[id^="${item.hitId.substring(0,15)}"]`); 
