@@ -30,6 +30,7 @@ export class UrlHelper {
         let rtn = sourceURL.split("?")[0];
         let param = null;
         let paramsArr = [];
+        const hash = window.location.hash;
         const queryString = (sourceURL.indexOf("?") !== -1) ? sourceURL.split("?")[1] : "";
 
         if (queryString !== "") {
@@ -42,7 +43,7 @@ export class UrlHelper {
             }
 
             if (paramsArr.length > 0) {
-                rtn = rtn + "?" + paramsArr.join("&");
+                rtn = rtn + "?" + paramsArr.join("&").replace(hash, '') + hash;
             }
         }
         return rtn;
@@ -55,16 +56,18 @@ export class UrlHelper {
      * @param value The new value
      */
     public static addOrReplaceQueryStringParam(url: string, param: string, value: string): string {
-        const re = new RegExp("[\\?&]" + param + "=([^&#]*)");
+        param = param.replace(/[.~*()]/g,''); // // Ensure param is safe from DOS attacks - so we strip away RegEx special characters
+        const re = new RegExp("[\\?&]" + param + "=([^&#]*)"); 
         const match = re.exec(url);
         let delimiter;
         let newString;
 
         if (match === null) {
             // Append new param
+            const hash = window.location.hash && window.location.hash !== '' ? window.location.hash : '#';
             const hasQuestionMark = /\?/.test(url);
             delimiter = hasQuestionMark ? "&" : "?";
-            newString = url + delimiter + param + "=" + encodeURIComponent(value);
+            newString = url.replace(hash, '') + delimiter + param + "=" + encodeURIComponent(value) + hash;
         } else {
             delimiter = match[0].charAt(0);
             newString = url.replace(re, delimiter + param + "=" + encodeURIComponent(value));

@@ -1,9 +1,10 @@
-import { ITemplateSlot } from "@pnp/modern-search-extensibility";
+import { ITemplateSlot, LayoutRenderType } from "@pnp/modern-search-extensibility";
 import { IDataResultType } from "../../models/common/IDataResultType";
 import { IPagingSettings } from "../../models/common/IPagingSettings";
 import { IBaseWebPartProps } from "../../models/common/IBaseWebPartProps";
 import { DynamicProperty } from "@microsoft/sp-component-base";
 import { IExtensibilityConfiguration } from "../../models/common/IExtensibilityConfiguration";
+import { IItemSelectionProps } from "../../models/common/IItemSelectionProps";
 
 export enum QueryTextSource {
     StaticValue,
@@ -66,6 +67,16 @@ export default interface ISearchResultsWebPartProps extends IBaseWebPartProps {
     };
 
     /**
+     * The layout type
+     */
+    layoutRenderType: LayoutRenderType;
+
+    /**
+     * Adaptive cards host config
+     */
+    adaptiveCardsHostConfig: string;
+
+    /**
      * Current version of the Web Part (set by CI)
      */
     version: string;
@@ -91,9 +102,14 @@ export default interface ISearchResultsWebPartProps extends IBaseWebPartProps {
     useInputQueryText: boolean;
 
     /**
-     * Determines if the Web Part shoul use verticals from an other Web Part
+     * Determines if the Web Part should use search verticals from an other Web Part
      */
     useVerticals: boolean;
+
+    /**
+     * Determines if the Web Part should use data from other Search Results Web Parts on the page. 
+     */
+    useDynamicFiltering: boolean;
 
     /**
      * Dynamic data connection references for filters
@@ -108,7 +124,7 @@ export default interface ISearchResultsWebPartProps extends IBaseWebPartProps {
     /**
      * The selected vertical fro the Web Part
      */
-    selectedVerticalKey: string;
+    selectedVerticalKeys: string[];
 
     /**
      * Configured slots for the current data source
@@ -136,11 +152,6 @@ export default interface ISearchResultsWebPartProps extends IBaseWebPartProps {
     defaultQueryText: string;
 
     /**
-     * The Web Part title
-     */
-    title: string;
-
-    /**
      * Flag indicating if the component should show nothing
      */
     showBlankIfNoResult: boolean;
@@ -149,5 +160,21 @@ export default interface ISearchResultsWebPartProps extends IBaseWebPartProps {
      * The extensibility configuraion to load
      */
     extensibilityLibraryConfiguration: IExtensibilityConfiguration[];
+
+    /**
+     * The item selection settings
+     */
+    itemSelectionProps: IItemSelectionProps;
+
+    /**
+     * The data source field values when an item is selected
+     * Can't be a nested property to be able to use with OOTB Dynamic Data property pane fields  
+     */
+    selectedItemFieldValue: DynamicProperty<string>;
+
+    /**
+     * Flag indicating if telemetry are enabled
+     */
+    enableTelemetry: boolean;
 }
 

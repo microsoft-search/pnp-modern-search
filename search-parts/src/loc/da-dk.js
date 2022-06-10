@@ -79,17 +79,22 @@ define([], function() {
             },
             DateIntervalStrings: {
                 AnyTime: "Når som helst",
-                PastDay: "Fra sidste 24 timer til sidste uge",
-                PastWeek: "Fra sidste uge til sidste måned",
-                PastMonth: "Fra sidste måned til sidste 3 måneder",
-                Past3Months: "Fra sidste 3 måneder til sidste år",
-                PastYear: "Fra sidste år",
+                PastDay: "Sidste 24 timer",
+                PastWeek: "Fra sidste 24 timer til sidste uge",
+                PastMonth: "Fra sidste uge til sidste måned",
+                Past3Months: "Fra sidste måned til seneste 3 måneder",
+                PastYear: "Fra sidste 3 måneder til sidste år",
                 Older: "Ældre end et år"
             },
             SameTabOpenBehavior: "Brug det nuværende faneblad",
             NewTabOpenBehavior: "Åben i et nyt faneblad",
             PageOpenBehaviorLabel: "Opening-egenskaber",
-            EmptyFieldErrorMessage: "Dette felt må ikke stå tomt"
+            EmptyFieldErrorMessage: "Dette felt må ikke stå tomt",
+            TagPickerStrings: {
+                NoResultsSearchMessage: "Ingen resultater fundet",
+                SearchPlaceholder: "Søg efter en værdi..."
+            },
+            CurrentVerticalNotSelectedMessage: "Den aktuelle valgte vertikal stemmer ikke overens med dem, der er knyttet til denne webdel ({0}). Den forbliver tom i visningstilstand."
         },
         DataSources: {
             SharePointSearch: {
@@ -100,11 +105,10 @@ define([], function() {
                 QueryTemplateFieldLabel: "Søgeforespørgsselsskabelon",
                 QueryTemplatePlaceHolderText: "Fx: Sti:{Site}",
                 QueryTemplateFieldDescription: "Søgeforespørgselsskabelonen. Du kan også anvende {<tokens>} for at bygge en dynamisk forespørgsel.",
-                ResultSourceIdLabel: "ID på søgeresultatet",
-                ResultSourceIdDescription: "Anvend et standard SharePoint ID på søgeresultatet, eller indsæt din egen GUID-værdi eller tryk 'Enter' for at gemme.",
-                InvalidResultSourceIdMessage: "Værdien er ikke en gyldig GUID",
+                ResultSourceIdLabel: "Søgekildens Id / Niveau|Navn",
+                ResultSourceIdDescription: "Vælg en indbygget kilde, skriv en brugerdefineret kilde-GUID eller NIVEAU og NAVN på kilden adskilt af | (dvs.: SPSite|Nyheder). Gyldige niveauer er [SPSiteSubscription, SPSite, SPWeb]. Tryk på [Enter] for at gemme.",
+                InvalidResultSourceIdMessage: "Værdien er ikke en gyldig GUID eller formateret som NIVEAU|NAVN",
                 EnableQueryRulesLabel: "Aktivér forespørgselsregler",
-                IncludeOneDriveResultsLabel: "Inkludér resultater fra OneDrive for Business",
                 RefinementFilters: "Refinement-filtre",
                 RefinementFiltersDescription: "Initiale refinement-filtre der kan bruges i en forespørgsel. Disse vil ikke fremgå i de valgte filtre. Hvis du ønsker at indsætte tekst, anvend da sitationstegn (\") frem for (').",
                 EnableLocalizationLabel: "Aktivér lokalisering",
@@ -115,9 +119,12 @@ define([], function() {
                 SelectedPropertiesFieldLabel: "Valgte egenskaber",
                 SelectedPropertiesFieldDescription: "Specificerer egenskaber der hentes fra søgeresultaterne.",
                 SelectedPropertiesPlaceholderLabel: "Vælg egenskaber",
+                HitHighlightedPropertiesFieldLabel: "Resultatfremhævede egenskaber",
+                HitHighlightedPropertiesFieldDescription: "Angiv listen med administrerede egenskaber til fremhævning af resultater.",
                 TermNotFound: "(Term med ID '{0}' blev ikke fundet)",
                 ApplyQueryTemplateBtnText: "Anvend",
-                EnableAudienceTargetingTglLabel: "Aktivér målgruppestyring"
+                EnableAudienceTargetingTglLabel: "Aktivér målgruppestyring",
+                TrimDuplicates: "Trim dubletter"
             },
             MicrosoftSearch: {
                 QueryTextFieldLabel: "Forespørgselstekst",
@@ -131,7 +138,15 @@ define([], function() {
                 EnableTopResultsLabel: "Aktivér topresultater",
                 ContentSourcesFieldLabel: "Indholdskilder",
                 ContentSourcesFieldDescriptionLabel: "Viser ID af de forbindelser der er defineret i administrationsportalen for Microsoft Search-connectors.",
-                ContentSourcesFieldPlaceholderLabel: "Fx: 'MyCustomConnectorId'"
+                ContentSourcesFieldPlaceholderLabel: "Fx: 'MyCustomConnectorId'",
+                EnableSuggestionLabel: "Aktiver staveforslag",
+                EnableModificationLabel: "Aktiver staveændringer",
+                QueryTemplateFieldLabel: "Forespørgselsmodifikator",
+                QueryTemplatePlaceHolderText: "ex: {searchTerms} IsDocument:true",
+                QueryTemplateFieldDescription: "Søgemodifikator-skabelonen. Du kan også bruge {<tokens>} og KQL til at bygge en dynamisk forespørgsel. Alt sammenkædes til inputQueryText",
+                ApplyQueryTemplateBtnText: "Anvend",
+                UseBetaEndpoint: "Brug beta-endepunkt",
+                TrimDuplicates: "Trim dubletter"
             },
             SearchCommon: {
                 Sort: {
@@ -146,6 +161,9 @@ define([], function() {
                     SortPanelSortDirectionLabel: "Sortér retning",
                     SortDirectionColumnLabel: "Retning",
                     SortFieldColumnLabel: "Feltnavn",
+                    SortFieldDefaultSortLabel: "Standard sortering",
+                    SortFieldFriendlyNameLabel: "Visningsnavn for sortering",
+                    SortFieldUserSortLabel: "Bruger sortering",
                     EditSortLabel: "Redigér sorteringsrækkefølge",
                     SortInvalidSortableFieldMessage: "Denne egenskab er ikke sorterbar",
                     SortFieldColumnPlaceholder: "Vælg felt..."
@@ -187,7 +205,8 @@ define([], function() {
                 ManageDetailsListColumnDescription: "Tilføj, opdatér eller fjern kolonner fra layoutet på detaljelisten. Du kan enten bruge egenskabsværdier i listen direkte uden nogen transformation, eller du kan bruge et Handlebars-udtryk som feltets værdi. HTML er supporteret til brug i alle felter.",
                 ManageDetailsListColumnLabel: "Administrér kolonner",
                 ValueColumnLabel: "Kolonnes værdi",
-                ValueSortingColumnLabel: "Kolonne værdi sortering",
+                ValueSortingColumnLabel: "Vælg sorteringsfelt...",
+                ValueSortingColumnNoFieldsLabel: "Ingen tilgængelige felter",
                 DisplayNameColumnLabel: "Kolonnens visningsnavn",
                 FileExtensionFieldLabel: "Felt til brug af file extension",
                 GroupByFieldLabel: "Gruppér efter felt",
@@ -293,7 +312,9 @@ define([], function() {
         },
         PropertyPane: {
             ConnectionsPage: {
-                DataConnectionsGroupName: "Tilgængelige forbindelser"
+                DataConnectionsGroupName: "Tilgængelige forbindelser",
+                UseDataVerticalsWebPartLabel: "Anslut till en vertikal webbdel",
+                UseDataVerticalsFromComponentLabel: "Använd vertikaler från denna komponent"
             },
             InformationPage: {
                 Extensibility: {
@@ -305,7 +326,8 @@ define([], function() {
                         Id: "Manifest GUID",
                         Enabled: "Enabled/Disabled"
                     }
-                }
+                },
+                ImportExport: "Indstillinger for import/eksport"
             }
         },
         Filters: {
@@ -314,7 +336,10 @@ define([], function() {
             FilterNoValuesMessage: "Ingen værdier for dette filter",
             OrOperator: "ELLER",
             AndOperator: "OG",
-            ComboBoxPlaceHolder: "Vælg værdi"
+            ComboBoxPlaceHolder: "Vælg værdi",
+            UseAndOperatorValues: "Use an AND operator between values",
+            UseOrOperatorValues: "Use an OR operator between values",
+            UseValuesOperators: "Select operator to use between this filter values"
         },
         SuggestionProviders: {
             SharePointStatic: {

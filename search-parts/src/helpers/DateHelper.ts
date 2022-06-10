@@ -11,7 +11,7 @@ export class DateHelper {
     private pageContext: PageContext;
 
     public constructor(serviceScope: ServiceScope) {
-        serviceScope.whenFinished(()=> {
+        serviceScope.whenFinished(() => {
             this.pageContext = serviceScope.consume<PageContext>(PageContext.serviceKey);
         });
     }
@@ -26,11 +26,33 @@ export class DateHelper {
                 'moment'
             );
 
+            let culture = this.pageContext.cultureInfo.currentUICultureName.toLowerCase();
+
+            // if culture starts with or is any of this, two letter locale must be used in momentjs (culture es-es must load es.js file)
+            let momentTwoLetterLanguageName = [
+                "af", "az", "be", "bg", "bm", "bo", "br", "bs", "ca", "cs", "cv",
+                "cy", "da", "de-de", "dv", "el", "eo", "es-es", "et", "eu", "fa", "fi", "fil",
+                "fo", "fy", "fr-fr", "ga", "gd", "gl", "gu", "he", "hi", "hr", "hu", "id", "is",
+                "it-it", "ja", "jv", "ka", "kk", "km", "kn", "ko", "ku", "ky", "lb", "lo", "lt",
+                "lv", "me", "mi", "mk", "ml", "mn", "mr", "mt", "my", "nb", "ne",
+                "nn", "nl-nl", "pl", "pt-pt", "ro", "ru", "sd", "se", "si", "sk", "sl", "sq",
+                "ss", "sv", "sw", "ta", "te", "tet", "tg", "th", "tk", "tlh",
+                "tr", "tzl", "uk", "ur", "vi", "yo"
+            ];
+
             // Moment is by default 'en-us'
-            if (['en-us','en'].indexOf(this.pageContext.cultureInfo.currentUICultureName.toLowerCase()) === -1) {
+            if (!culture.startsWith('en-us')) {
+                // check if culture must be used with two letter name in momentjs  
+                for (let i = 0; i < momentTwoLetterLanguageName.length; i++)
+                    if (culture.startsWith(momentTwoLetterLanguageName[i])) {
+                        culture = culture.split('-')[0];
+                        break;
+                    }
+
+
                 await import(
                     /* webpackChunkName: 'pnp-modern-search-moment' */
-                    `moment/locale/${this.pageContext.cultureInfo.currentUICultureName.toLowerCase().split('-')[0]}.js`
+                    `moment/locale/${culture}.js`
                 );
             }
 
@@ -38,7 +60,7 @@ export class DateHelper {
             this.momentLibrary = moment.default;
 
             // Set default locale
-            this.momentLibrary.locale(this.pageContext.cultureInfo.currentUICultureName ? this.pageContext.cultureInfo.currentUICultureName : 'en');
+            this.momentLibrary.locale(culture);
             return this.momentLibrary;
         }
     }

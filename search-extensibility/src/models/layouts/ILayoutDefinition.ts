@@ -30,6 +30,11 @@ export interface ILayoutDefinition {
     templateContent: string;
 
     /**
+     * The renderer used for this layout (Handlebars or Adaptive cards). Default is "Handlebars"
+     */
+    renderType?: LayoutRenderType;
+
+    /**
      * The layout service key
      */
     serviceKey: ServiceKey<ILayout>;
@@ -38,4 +43,9 @@ export interface ILayoutDefinition {
 export enum LayoutType {
     Results = 'ResultsLayout',
     Filter = 'FiltersLayout'
+}
+
+export enum LayoutRenderType {
+    Handlebars = 'Handlebars',
+    AdaptiveCards = 'AdaptiveCards'
 }

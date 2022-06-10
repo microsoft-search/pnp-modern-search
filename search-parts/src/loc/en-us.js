@@ -79,32 +79,36 @@ define([], function() {
             },
             DateIntervalStrings: {
                 AnyTime: "Any time",
-                PastDay: "From past 24 hours to past week",
-                PastWeek: "From past week to past month",
-                PastMonth: "From past month to past 3 months",
-                Past3Months: "From past 3 months to past year",
-                PastYear: "From past year",
+                PastDay: "Past 24 hours",
+                PastWeek: "From past 24 hours to past week",
+                PastMonth: "From past week to past month",
+                Past3Months: "From past month to past 3 months",
+                PastYear: "From past 3 months to past year",
                 Older: "Older than a year"
             },
             SameTabOpenBehavior: "Use the current tab",
             NewTabOpenBehavior: "Open in a new tab",
             PageOpenBehaviorLabel: "Opening behavior",
-            EmptyFieldErrorMessage: "This field cannot be empty"
+            EmptyFieldErrorMessage: "This field cannot be empty",
+            TagPickerStrings: {
+                NoResultsSearchMessage: "No results found",
+                SearchPlaceholder: "Search a value..."
+            },
+            CurrentVerticalNotSelectedMessage: "The current selected vertical does not match with the ones associated for this Web Part ({0}). It will remains blank in display mode."
         },
         DataSources: {
             SharePointSearch: {
                 SourceName: "SharePoint Search",
                 SourceConfigurationGroupName: "Source configuration",
                 QueryTextFieldLabel: "Query text",
-                QueryTextFieldInfoMessage: "Use the <strong>Available connections</strong> Web Part configuration tab to specifiy either a static value or a value from a dynamic component on the page like a searchbox",
+                QueryTextFieldInfoMessage: "Use the <strong>Available connections</strong> Web Part configuration tab to specify either a static value or a value from a dynamic component on the page like a searchbox",
                 QueryTemplateFieldLabel: "Query template",
                 QueryTemplatePlaceHolderText: "ex: Path:{Site}",
                 QueryTemplateFieldDescription: "The search query template. You can also use {<tokens>} to build a dynamic query.",
-                ResultSourceIdLabel: "Result source ID",
-                ResultSourceIdDescription: "Use a default SharePoint result source ID or type your own GUID value and press 'Enter' to save.",
-                InvalidResultSourceIdMessage: "The provided value is not a valid GUID",
+                ResultSourceIdLabel: "Result Source Id / Scope|Name",
+                ResultSourceIdDescription: "Select a built-in source, type a custom source GUID, or SCOPE and NAME of the source separated by | (i.e: SPSite|News). Valid scopes are [SPSiteSubscription, SPSite, SPWeb]. Press [Enter] to save.",
+                InvalidResultSourceIdMessage: "The provided value is not a valid GUID, or formatted as SCOPE|NAME",
                 EnableQueryRulesLabel: "Enable query rules",
-                IncludeOneDriveResultsLabel: "Include OneDrive for Business results",
                 RefinementFilters: "Refinement filters",
                 RefinementFiltersDescription: "Initial refinement filters to apply to the query. These won't appear in the selected filters. For string expressions, use double quotes (\") instead of single quote (').",
                 EnableLocalizationLabel: "Enable localization",
@@ -115,9 +119,12 @@ define([], function() {
                 SelectedPropertiesFieldLabel: "Selected properties",
                 SelectedPropertiesFieldDescription: "Specifies the properties to retrieve from the search results.",
                 SelectedPropertiesPlaceholderLabel: "Select properties",
+                HitHighlightedPropertiesFieldLabel: "Hit-highlighted properties",
+                HitHighlightedPropertiesFieldDescription: "Provide the list of managed properties to hit highlight (i.e. Department,UserName).",
                 TermNotFound: "(Term with ID '{0}' not found)",
                 ApplyQueryTemplateBtnText: "Apply",
-                EnableAudienceTargetingTglLabel: "Enable audience targeting"
+                EnableAudienceTargetingTglLabel: "Enable audience targeting",
+                TrimDuplicates: "Trim duplicates"
             },
             MicrosoftSearch: {
                 QueryTextFieldLabel: "Query text",
@@ -131,12 +138,20 @@ define([], function() {
                 EnableTopResultsLabel: "Enable top results",
                 ContentSourcesFieldLabel: "Content sources",
                 ContentSourcesFieldDescriptionLabel: "IDs of connections defined in the Microsoft Search connectors administration portal.",
-                ContentSourcesFieldPlaceholderLabel: "ex: 'MyCustomConnectorId'"
+                ContentSourcesFieldPlaceholderLabel: "ex: 'MyCustomConnectorId'",
+                EnableSuggestionLabel: "Enable spelling suggestions",
+                EnableModificationLabel: "Enable spelling modifications",
+                QueryTemplateFieldLabel: "Query template",
+                QueryTemplatePlaceHolderText: "ex: {searchTerms} IsDocument:true",
+                QueryTemplateFieldDescription: "The search query template. You can also use {<tokens>} and KQL to build a dynamic query.",
+                ApplyQueryTemplateBtnText: "Apply",
+                UseBetaEndpoint: "Use beta endpoint",
+                TrimDuplicates: "Trim duplicates"
             },
             SearchCommon: {
                 Sort: {
-                    SortPropertyPaneFieldLabel: "Sort order",
-                    SortListDescription: "Specify the initial sort order for the search results. You can either select a field from the dropdown list (only if the data source data have already be fetched) or type your own custom value (press 'Enter' to save your entry)",
+                    SortPropertyPaneFieldLabel: "Sort settings",
+                    SortListDescription: "Specify the sort settings for the search results. You can either select a field from the dropdown list (only if the data source data have already be fetched) or type your own custom value (press 'Enter' to save your entry)",
                     SortDirectionAscendingLabel: "Ascending",
                     SortDirectionDescendingLabel: "Descending",
                     SortErrorMessage: "Invalid search property (Check if the managed property is sortable).",
@@ -146,7 +161,10 @@ define([], function() {
                     SortPanelSortDirectionLabel: "Sort Direction",
                     SortDirectionColumnLabel: "Direction",
                     SortFieldColumnLabel: "Field name",
-                    EditSortLabel: "Edit sort order",
+                    SortFieldDefaultSortLabel: "Default sort",
+                    SortFieldFriendlyNameLabel: "Sort field display name",
+                    SortFieldUserSortLabel: "User sort",
+                    EditSortLabel: "Edit sort settings",
                     SortInvalidSortableFieldMessage: "This property is not sortable",
                     SortFieldColumnPlaceholder: "Select field..."
                 }
@@ -165,7 +183,10 @@ define([], function() {
             Debug: {
                 Name: "Debug"
             },
-            Custom: {
+            CustomHandlebars: {
+                Name: "Custom"
+            },
+            CustomAdaptiveCards: {
                 Name: "Custom"
             },
             SimpleList: {
@@ -187,7 +208,8 @@ define([], function() {
                 ManageDetailsListColumnDescription: "Add, update or remove columns for the details list layout. You can use either property values in the list directly without any transformation or use an Handlebars expression in the value field. HTML is supported for all fields as well.",
                 ManageDetailsListColumnLabel: "Manage columns",
                 ValueColumnLabel: "Column value",
-                ValueSortingColumnLabel: "Column value sorting",
+                ValueSortingColumnLabel: "Select sort field...",
+                ValueSortingColumnNoFieldsLabel: "No fields available",
                 DisplayNameColumnLabel: "Column display name",
                 FileExtensionFieldLabel: "Field to use for file extension",
                 GroupByFieldLabel: "Group by field",
@@ -293,7 +315,9 @@ define([], function() {
         },
         PropertyPane: {
             ConnectionsPage: {
-                DataConnectionsGroupName: "Available connections"
+                DataConnectionsGroupName: "Available connections",
+                UseDataVerticalsWebPartLabel: "Connect to a verticals Web Part",
+                UseDataVerticalsFromComponentLabel: "Use verticals from this component"
             },
             InformationPage: {
                 Extensibility: {
@@ -305,7 +329,8 @@ define([], function() {
                         Id: "Manifest GUID",
                         Enabled: "Enabled/Disabled"
                     }
-                }
+                },
+                ImportExport: "Import/Export settings"
             }
         },
         Filters: {
@@ -314,7 +339,10 @@ define([], function() {
             FilterNoValuesMessage: "No values for this filter",
             OrOperator: "OR",
             AndOperator: "AND",
-            ComboBoxPlaceHolder: "Select value"
+            ComboBoxPlaceHolder: "Select value",
+            UseAndOperatorValues: "Use an AND operator between values",
+            UseOrOperatorValues: "Use an OR operator between values",
+            UseValuesOperators: "Select operator to use between this filter values"
         },
         SuggestionProviders: {
             SharePointStatic: {

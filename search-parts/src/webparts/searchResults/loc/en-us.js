@@ -46,35 +46,57 @@ define([], function() {
                 ShowSelectedFilters: "Show selected filters",
                 ShowBlankIfNoResult: "Hide this web part if there's nothing to show",
                 ShowResultsCount: "Show results count",
-                UseMicrosoftGraphToolkit: "Use Microsoft Graph Toolkit",
-                ResultTypes: {
-                    ResultTypeslabel: "Result Types",
-                    ResultTypesDescription: "Add here the templates to use for result items according to one ore more conditions. Conditions are evaluated in the configured order and external templates take precedence over inline templates. Also make sure the data source fields you use are present in data response.",
-                    InlineTemplateContentLabel: "Inline template",
-                    EditResultTypesLabel: "Edit result types",
-                    ConditionPropertyLabel: "Data source field",
-                    ConditionValueLabel: "Condition Value",
-                    CondtionOperatorValue: "Operator",
-                    ExternalUrlLabel: "External template URL",
-                    EqualOperator: "Equals",
-                    NotEqualOperator: "Not equals",
-                    ContainsOperator: "Contains",
-                    StartsWithOperator: "Starts with",
-                    NotNullOperator: "Is not null",
-                    GreaterOrEqualOperator: "Greater or equal",
-                    GreaterThanOperator: "Greater than",
-                    LessOrEqualOperator: "Less or equal",
-                    LessThanOperator: "Less than",
-                    CancelButtonText: "Cancel",
-                    DialogButtonText: "Edit template",
-                    DialogTitle: "Edit results template",
-                    SaveButtonText: "Save"
+                HandlebarsRenderTypeLabel: "Handlebars/HTML",
+                HandlebarsRenderTypeDesc: "Select layouts based on HTML, CSS and Handlebars",
+                AdaptiveCardsRenderTypeLabel: "Adaptive Cards",
+                AdaptiveCardsRenderTypeDesc: "Select layouts based on JSON adaptive cards",
+                Handlebars: {
+                    UseMicrosoftGraphToolkit: "Use Microsoft Graph Toolkit",
+                    ResultTypes: {
+                        ResultTypeslabel: "Result Types",
+                        ResultTypesDescription: "Add here the templates to use for result items according to one ore more conditions. Conditions are evaluated in the configured order and external templates take precedence over inline templates. Also make sure the data source fields you use are present in data response.",
+                        InlineTemplateContentLabel: "Inline template",
+                        EditResultTypesLabel: "Edit result types",
+                        ConditionPropertyLabel: "Data source field",
+                        ConditionValueLabel: "Condition Value",
+                        CondtionOperatorValue: "Operator",
+                        ExternalUrlLabel: "External template URL",
+                        EqualOperator: "Equals",
+                        NotEqualOperator: "Not equals",
+                        ContainsOperator: "Contains",
+                        StartsWithOperator: "Starts with",
+                        NotNullOperator: "Is not null",
+                        GreaterOrEqualOperator: "Greater or equal",
+                        GreaterThanOperator: "Greater than",
+                        LessOrEqualOperator: "Less or equal",
+                        LessThanOperator: "Less than",
+                        CancelButtonText: "Cancel",
+                        DialogButtonText: "Edit template",
+                        DialogTitle: "Edit results template",
+                        SaveButtonText: "Save"
+                    },
+                    AllowItemSelection: "Allow items selection",
+                    AllowMultipleItemSelection: "Allow multiple selection",
+                    SelectionModeLabel: "Selection mode",
+                    AsTokensSelectionMode: "Process selected values as tokens (manual mode)",
+                    AsDataFiltersSelectionMode: "Process selected values as filters (default mode)",
+                    AsDataFiltersDescription: "In this mode, selected values are sent to the data source as regular search refiners. In this case, the chosen destination property must be refinable in the search schema.",
+                    AsTokensDescription: "In this mode, selected values are manually used through tokens and available methods. Example with SharePoint search query template: {?Title:{filters.&lt;destination_field_name&gt;.valueAsText}}",
+                    FilterValuesOperator: "The logical operator to use between selected values",
+                    FieldToConsumeLabel: "Source field to consume",
+                    FieldToConsumeDescription: "Use this field value for selected items",
+                },
+                AdaptiveCards: {
+                    HostConfigFieldLabel: "Host configuration"
                 }
             },
             ConnectionsPage: {
                 ConnectionsPageGroupName: "Available connections",
                 UseFiltersWebPartLabel: "Connect to a filters Web Part",
                 UseFiltersFromComponentLabel: "Use filters from this component",
+                UseDynamicFilteringsWebPartLabel: "Connect to a search results Web Part",
+                UseDataResultsFromComponentsLabel: "Use data from this Web Part",
+                UseDataResultsFromComponentsDescription: "Use data from selected items in these Web Parts",                
                 UseSearchVerticalsWebPartLabel: "Connect to a verticals Web Part",
                 UseSearchVerticalsFromComponentLabel: "Use verticals from this component",
                 LinkToVerticalLabel: "Display data only when the following vertical is selected",
@@ -87,15 +109,20 @@ define([], function() {
                 InputQueryTextStaticValue: "Static value",
                 InputQueryTextDynamicValue: "Dynamic value",
                 SearchQueryTextUseDefaultQuery: "Use a default value",
-                SearchQueryTextDefaultValue: "Default value"
+                SearchQueryTextDefaultValue: "Default value",
+                SourceDestinationFieldLabel: "Destination field name",
+                SourceDestinationFieldDescription: "Destination field to use in this Web Part to match the selected values",
+                AvailableFieldValuesFromResults: "Field containing the filter value"
             },
             InformationPage: {
                 Extensibility: {
                     PanelHeader: "Configure extensibility libraries to load at startup.",
                     PanelDescription: "Add/Remove your custom extensibility library IDs here. You can specify a display name and decide if the library should be loaded or not at startup. Only custom data sources, layouts, web components and Handlebars helpers will be loaded here.",
-                }
-            },
-            ImportExport: "Import / Export settings"
+                },
+                EnableTelemetryLabel: "PnP telemetry",
+                EnableTelemetryOn: "Turn on telemetry",
+                EnableTelemetryOff: "Turn off telemetry"
+            }
         }
     }
 });

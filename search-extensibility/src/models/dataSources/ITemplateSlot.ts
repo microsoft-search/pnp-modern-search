@@ -21,6 +21,7 @@ export enum BuiltinTemplateSlots {
     UserEmail = 'UserEmail',
     ContentClass = 'contentclass',
     DriveId = "DriveId",
+    Id = "Id"
 }
 
 export interface ITemplateSlot {

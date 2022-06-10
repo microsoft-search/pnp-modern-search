@@ -89,6 +89,11 @@ declare interface ICommonStrings {
       NewTabOpenBehavior: string;
       PageOpenBehaviorLabel: string;
       EmptyFieldErrorMessage: string;
+      TagPickerStrings: {
+        NoResultsSearchMessage: string;
+        SearchPlaceholder: string;
+      }
+      CurrentVerticalNotSelectedMessage: string;
     },
     DataSources: {
       SharePointSearch: {
@@ -103,7 +108,7 @@ declare interface ICommonStrings {
         ResultSourceIdDescription: string;
         InvalidResultSourceIdMessage: string;
         EnableQueryRulesLabel: string;
-        IncludeOneDriveResultsLabel: string;
+        TrimDuplicates: string;
         RefinementFilters: string;
         RefinementFiltersDescription: string;
         EnableLocalizationLabel: string;
@@ -114,6 +119,8 @@ declare interface ICommonStrings {
         SelectedPropertiesFieldLabel: string;
         SelectedPropertiesFieldDescription: string;
         SelectedPropertiesPlaceholderLabel: string;
+        HitHighlightedPropertiesFieldLabel: string;
+        HitHighlightedPropertiesFieldDescription: string;
         TermNotFound: string;
         ApplyQueryTemplateBtnText: string;
         EnableAudienceTargetingTglLabel: string;
@@ -131,6 +138,14 @@ declare interface ICommonStrings {
         ContentSourcesFieldDescriptionLabel: string;
         ContentSourcesFieldPlaceholderLabel: string;
         EnableTopResultsLabel: string;
+        EnableSuggestionLabel: string;
+        EnableModificationLabel: string;
+        QueryTemplateFieldLabel: string;
+        QueryTemplatePlaceHolderText: string;
+        QueryTemplateFieldDescription: string;
+        ApplyQueryTemplateBtnText: string;
+        UseBetaEndpoint: string;
+        TrimDuplicates: string;
       },
       SearchCommon: {
         Sort: {
@@ -145,6 +160,9 @@ declare interface ICommonStrings {
           SortPanelSortDirectionLabel:string;
           SortDirectionColumnLabel: string;
           SortFieldColumnLabel: string;
+          SortFieldDefaultSortLabel: string;
+          SortFieldUserSortLabel: string;
+          SortFieldFriendlyNameLabel: string;
           EditSortLabel: string;
           SortInvalidSortableFieldMessage: string;
           SortFieldColumnPlaceholder: string;
@@ -164,9 +182,12 @@ declare interface ICommonStrings {
       Debug: {
         Name: string;
       };
-      Custom: {
+      CustomHandlebars: {
         Name: string;
       };
+      CustomAdaptiveCards: {
+        Name: string;
+      },
       SimpleList: {
         Name: string;
         ShowFileIconLabel: string;
@@ -188,6 +209,7 @@ declare interface ICommonStrings {
         DisplayNameColumnLabel: string;
         ValueColumnLabel: string;
         ValueSortingColumnLabel: string;
+        ValueSortingColumnNoFieldsLabel: string;
         FileExtensionFieldLabel: string;
         GroupByFieldLabel: string;
         EnableGrouping: string;
@@ -293,6 +315,8 @@ declare interface ICommonStrings {
     PropertyPane: {
       ConnectionsPage: {
         DataConnectionsGroupName: string;
+        UseDataVerticalsWebPartLabel: string;
+        UseDataVerticalsFromComponentLabel: string;
       },
       InformationPage: {
         Extensibility: {
@@ -304,7 +328,8 @@ declare interface ICommonStrings {
             Id: string;
             Enabled: string;
           }
-        }
+        },
+        ImportExport: string;
       }
     },
     Filters: {
@@ -314,6 +339,9 @@ declare interface ICommonStrings {
       OrOperator: string;
       AndOperator: string;
       ComboBoxPlaceHolder: string;
+      UseAndOperatorValues: string;
+      UseOrOperatorValues: string;
+      UseValuesOperators: string;
     },
     SuggestionProviders: {
       SharePointStatic: {

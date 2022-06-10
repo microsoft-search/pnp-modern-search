@@ -16,14 +16,12 @@
 
             &__group {
 
+                display: block;
+
                 &__header {
                     display: flex;
                     align-items: center;
                     margin-bottom: 10px;
-                }
-
-                button {
-                    padding: 10px;
                 }
 
                 &__item {

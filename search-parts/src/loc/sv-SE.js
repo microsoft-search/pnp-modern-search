@@ -79,17 +79,22 @@ define([], function () {
         },
         DateIntervalStrings: {
           AnyTime: "När som helst",
-          PastDay: "Från senaste 24 timmarna till senaste veckan",
-          PastWeek: "Från förra veckan till förra månaden",
-          PastMonth: "Från förra månaden till de senaste tre månaderna",
-          Past3Months: "Från de senaste tre månaderna till det senaste året",
-          PastYear: "Från förra året",
+          PastDay: "Senaste 24 timmarna",
+          PastWeek: "Från senaste 24 timmarna till senaste veckan",
+          PastMonth: "Från senaste veckan till senaste månaden",
+          Past3Months: "Från senaste månaden till senaste 3 månaderna",
+          PastYear: "Från de senaste 3 månaderna till det senaste året",
           Older: "Äldre än ett år" 
         },
         SameTabOpenBehavior: "Använd den aktuella fliken",
         NewTabOpenBehavior: "Öppna i en ny flik",
         PageOpenBehaviorLabel: "Öppningsbeteende",
-        EmptyFieldErrorMessage: "Det här fältet får inte vara tomt"
+        EmptyFieldErrorMessage: "Det här fältet får inte vara tomt",
+        TagPickerStrings: {
+          NoResultsSearchMessage: "Inga resultat funna",
+          SearchPlaceholder: "Sök efter ett värde..."
+        },
+        CurrentVerticalNotSelectedMessage: "Den aktuella valda vertikalen matchar inte de som är kopplade till den här webbdelen ({0}). Den förblir tom i visningsläge."
       },
       DataSources: {
         SharePointSearch: {
@@ -100,11 +105,10 @@ define([], function () {
           QueryTemplateFieldLabel: "Sökfrågemall",
           QueryTemplatePlaceHolderText: "ex: Path:{Site}",
           QueryTemplateFieldDescription: "Sökfrågemallen. Du kan också använda {<tokens>} för att skapa en dynamisk fråga.",
-          ResultSourceIdLabel: "ID för sökresultatet",
-          ResultSourceIdDescription: "Använd ett standard SharePoint-ID i sökresultatet, eller skriv in ditt eget GUID-värde och tryck på 'Enter' för att spara.",
-          InvalidResultSourceIdMessage: "Det angivna värdet är inte en giltigt GUID",
+          ResultSourceIdLabel: "ID för sökresultatets ID / Nivå|Namn",
+          ResultSourceIdDescription: "Välj en inbyggd källa, skriv en anpassad käll-GUID eller NIVÅ och NAMN på källan separerade med | (dvs: SPSite|Nyheter). Giltiga nivå är [SPSiteSubscription, SPSite, SPWeb]. Tryck på [Enter] för att spara.",
+          InvalidResultSourceIdMessage: "Det angivna värdet är inte en giltigt GUID eller formaterad som NIVÅ|NAMN",
           EnableQueryRulesLabel: "Aktivera frågeregler",
-          IncludeOneDriveResultsLabel: "Inkludera resultat från OneDrive för Företag",
           RefinementFilters: "Förfiningsfilter",
           RefinementFiltersDescription: "Inledande förfiningsfilter som kan användas i en fråga. Dessa visas inte i de valda filtren. Om du vill infoga text använder du citattecken (\") istället för (').",
           EnableLocalizationLabel: "Aktivera lokalisering",
@@ -115,9 +119,12 @@ define([], function () {
           SelectedPropertiesFieldLabel: "Valda egenskaper",
           SelectedPropertiesFieldDescription: "Ange egenskaperna som ska hämtas från sökresultaten.",
           SelectedPropertiesPlaceholderLabel: "Välj egenskaper",
+          HitHighlightedPropertiesFieldLabel: "Egenskaper för träffmarkeringar",
+          HitHighlightedPropertiesFieldDescription: "Tillhandahåll lista över hanterade egenskaper till träffmarkeringar. ",
           TermNotFound: "(Term med ID '{0}' hittades inte)",
           ApplyQueryTemplateBtnText: "Tillämpa",
-          EnableAudienceTargetingTglLabel: "Aktivera målgruppsanpassning"
+          EnableAudienceTargetingTglLabel: "Aktivera målgruppsanpassning",
+          TrimDuplicates: "Trimma dubbletter"
         },
         MicrosoftSearch: {
           QueryTextFieldLabel: "Sökfrågetext",
@@ -131,7 +138,15 @@ define([], function () {
           EnableTopResultsLabel: "Aktivera toppresultat",
           ContentSourcesFieldLabel: "Innehållskällor",
           ContentSourcesFieldDescriptionLabel: "Visar ID för de anslutningar som definierats i administrationsportalen för Microsoft Search Connectors",
-          ContentSourcesFieldPlaceholderLabel: "ex: 'MyCustomConnectorId'"
+          ContentSourcesFieldPlaceholderLabel: "ex: 'MyCustomConnectorId'",
+          EnableSuggestionLabel: "Aktivera stavningsförslag",
+          EnableModificationLabel: "Aktivera stavningsändringar",
+          QueryTemplateFieldLabel: "Frågemodifierare",
+          QueryTemplatePlaceHolderText: "ex: {searchTerms} IsDocument:true",
+          QueryTemplateFieldDescription: "Sökmodifieringsmallen. Du kan också använda {<tokens>} och KQL för att bygga en dynamisk fråga. Allt är kopplat till inputQueryText",
+          ApplyQueryTemplateBtnText: "Tillämpa",
+          UseBetaEndpoint: "Använd beta endpoint",
+          TrimDuplicates: "Trimma dubbletter"
         },
         SearchCommon: {
           Sort: {
@@ -146,6 +161,9 @@ define([], function () {
             SortPanelSortDirectionLabel: "Sorteringsriktning",
             SortDirectionColumnLabel: "Riktning",
             SortFieldColumnLabel: "Fältnamn",
+            SortFieldDefaultSortLabel: "Standardsortering",
+            SortFieldFriendlyNameLabel: "Sorteringsfältets visningsnamn",
+            SortFieldUserSortLabel: "Användarsortering",
             EditSortLabel: "Redigera sorteringsordning",
             SortInvalidSortableFieldMessage: "Den här egenskapen kan inte sorteras",
             SortFieldColumnPlaceholder: "Välj fält..."
@@ -187,7 +205,8 @@ define([], function () {
           ManageDetailsListColumnDescription: "Lägg till, uppdatera eller ta bort kolumner från layouten i detaljlistan. Du kan antingen använda egenskapsvärden i listan direkt utan någon omvandling, eller så kan du använda ett styruttryck som fältets värde. HTML stöds för användning i alla fält.",
           ManageDetailsListColumnLabel: "Hantera kolumner",
           ValueColumnLabel: "Kolumnvärde",
-          ValueSortingColumnLabel: "Kolumnvärde sortering",
+          ValueSortingColumnLabel: "Välj sorteringsfält...",
+          ValueSortingColumnNoFieldsLabel: "Inga fält tillgängliga",
           DisplayNameColumnLabel: "Kolumnens visningsnamn",
           FileExtensionFieldLabel: "Fält för användning av filtillägg",
           GroupByFieldLabel: "Gruppera efter fält",
@@ -293,7 +312,9 @@ define([], function () {
       },
       PropertyPane: {
         ConnectionsPage: {
-          DataConnectionsGroupName: "Tillgängliga anslutningar"
+          DataConnectionsGroupName: "Tillgängliga anslutningar",
+          UseDataVerticalsWebPartLabel: "Anslut till en vertikal webbdel",
+          UseDataVerticalsFromComponentLabel: "Använd vertikaler från denna komponent"
         },
         InformationPage: {
           Extensibility: {
@@ -305,7 +326,8 @@ define([], function () {
               Id: "Manifest GUID",
               Enabled: "Aktiverad/Inaktiverad"
             }
-          }
+          },
+          ImportExport: "Importera/exportera inställningar"
         }
       },
       Filters: {
@@ -314,7 +336,10 @@ define([], function () {
         FilterNoValuesMessage: "Inga värden för detta filter",
         OrOperator: "ELLER",
         AndOperator: "OCH",
-        ComboBoxPlaceHolder: "Välj värde"
+        ComboBoxPlaceHolder: "Välj värde",
+        UseAndOperatorValues: "Använd en AND-operator mellan värden ",
+        UseOrOperatorValues: "Använd en ELLER-operator mellan värden",
+        UseValuesOperators: "Välj operator att använda mellan dessa filtervärden"
       },
       SuggestionProviders: {
         SharePointStatic: {

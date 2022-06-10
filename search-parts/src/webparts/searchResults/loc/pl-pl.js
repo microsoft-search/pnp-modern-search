@@ -46,35 +46,57 @@ define([], function() {
                 ShowSelectedFilters: "Pokaż wybrane filtry",
                 ShowBlankIfNoResult: "Ukryj ten składnik Web Part jeśli nie ma wyników",
                 ShowResultsCount: "Pokaż liczbę wyników",
-                UseMicrosoftGraphToolkit: "Użyj Microsoft Graph Toolkit",
-                ResultTypes: {
-                    ResultTypeslabel: "Rodzaje wyników",
-                    ResultTypesDescription: "Dodaj tutaj szablony dla znalezionych elementów stosowanych pod jednym lub wieloma warunkami. Warunki są obliczane w zadanej kolejności a zewnętrzne szablony mają pierwszeństwo przez szablonami inline. Upewnij się, że pola źródła wyników są widoczne w odpowiedzi.",
-                    InlineTemplateContentLabel: "Szablon inline",
-                    EditResultTypesLabel: "Edytuje typy wyników",
-                    ConditionPropertyLabel: "Pole źródła danych",
-                    ConditionValueLabel: "Wartość warunku",
-                    CondtionOperatorValue: "Operator",
-                    ExternalUrlLabel: "Adres URL zewnętrznego szablonu",
-                    EqualOperator: "Równe",
-                    NotEqualOperator: "Różne",
-                    ContainsOperator: "Zawiera",
-                    StartsWithOperator: "Zaczyna się od",
-                    NotNullOperator: "Nie puste",
-                    GreaterOrEqualOperator: "Większe lub równe",
-                    GreaterThanOperator: "Większe niż",
-                    LessOrEqualOperator: "Mniejsze lub równe",
-                    LessThanOperator: "Mniejsze niż",
-                    CancelButtonText: "Anuluj",
-                    DialogButtonText: "Edytuj szablon",
-                    DialogTitle: "Edytuj szablon wyników",
-                    SaveButtonText: "Zapisz"
-                }
+                HandlebarsRenderTypeLabel: "Handlebars/HTML",
+                HandlebarsRenderTypeDesc: "Wybierz układy oparte na HTML, CSS i Handlebars",
+                AdaptiveCardsRenderTypeLabel: "Adaptive Cards",
+                AdaptiveCardsRenderTypeDesc: "Wybierz układy na podstawie kart adaptacyjnych JSON",
+                Handlebars: {
+                    UseMicrosoftGraphToolkit: "Użyj Microsoft Graph Toolkit",
+                    ResultTypes: {
+                        ResultTypeslabel: "Rodzaje wyników",
+                        ResultTypesDescription: "Dodaj tutaj szablony dla znalezionych elementów stosowanych pod jednym lub wieloma warunkami. Warunki są obliczane w zadanej kolejności a zewnętrzne szablony mają pierwszeństwo przez szablonami inline. Upewnij się, że pola źródła wyników są widoczne w odpowiedzi.",
+                        InlineTemplateContentLabel: "Szablon inline",
+                        EditResultTypesLabel: "Edytuje typy wyników",
+                        ConditionPropertyLabel: "Pole źródła danych",
+                        ConditionValueLabel: "Wartość warunku",
+                        CondtionOperatorValue: "Operator",
+                        ExternalUrlLabel: "Adres URL zewnętrznego szablonu",
+                        EqualOperator: "Równe",
+                        NotEqualOperator: "Różne",
+                        ContainsOperator: "Zawiera",
+                        StartsWithOperator: "Zaczyna się od",
+                        NotNullOperator: "Nie puste",
+                        GreaterOrEqualOperator: "Większe lub równe",
+                        GreaterThanOperator: "Większe niż",
+                        LessOrEqualOperator: "Mniejsze lub równe",
+                        LessThanOperator: "Mniejsze niż",
+                        CancelButtonText: "Anuluj",
+                        DialogButtonText: "Edytuj szablon",
+                        DialogTitle: "Edytuj szablon wyników",
+                        SaveButtonText: "Zapisz"
+                    },
+                    AllowItemSelection: "Zezwalaj na wybór przedmiotów",
+                    AllowMultipleItemSelection: "Zezwalaj na wielokrotny wybór",
+                    SelectionModeLabel: "Tryb wyboru",
+                    AsTokensSelectionMode: "Przetwarzaj wybrane wartości jako tokeny (tryb ręczny)",
+                    AsDataFiltersSelectionMode: "Przetwarzaj wybrane wartości jako filtry (tryb domyślny)",
+                    AsDataFiltersDescription: "W tym trybie wybrane wartości są wysyłane do źródła danych jako zwykłe filtry",
+                    AsTokensDescription: "W tym trybie wybrane wartości są używane ręcznie za pomocą tokenów i dostępnych metod. Przykład z szablonem zapytania wyszukiwania SharePoint: {?Title:{filters.&lt;destination_field_name&gt;.valueAsText}}",
+                    FilterValuesOperator: "Operator logiczny do użycia między wybranymi wartościami",
+                    FieldToConsumeLabel: "Pole źródłowe do wykorzystania",
+                    FieldToConsumeDescription: "Użyj tej wartości pola dla wybranych elementów"
+                },
+                AdaptiveCards: {
+                    HostConfigFieldLabel: "Konfiguracja hosta"
+                }                
             },
             ConnectionsPage: {
                 ConnectionsPageGroupName: "Dostępne połączenia",
                 UseFiltersWebPartLabel: "Połącz ze składnikiem Web Part filtrowania",
                 UseFiltersFromComponentLabel: "Użyj filtrów z tego komponentu",
+                UseDynamicFilteringsWebPartLabel: "Connect to a search results Web Part",
+                UseDataResultsFromComponentsLabel: "Use data from this Web Part",
+                UseDataResultsFromComponentsDescription: "Use data from selected items in these Web Parts",
                 UseSearchVerticalsWebPartLabel: "Połącz ze składnikiem Web Part Wertykały",
                 UseSearchVerticalsFromComponentLabel: "Użyj wertykałów z tego komponentu",
                 LinkToVerticalLabel: "Pokaż dane tylko jeśli następujący wertykał jest wybrany",
@@ -87,15 +109,20 @@ define([], function() {
                 InputQueryTextStaticValue: "Wartość statyczna",
                 InputQueryTextDynamicValue: "Wartość dynamiczna",
                 SearchQueryTextUseDefaultQuery: "Użyj wartości domyślnej",
-                SearchQueryTextDefaultValue: "Wartość domyślna"
+                SearchQueryTextDefaultValue: "Wartość domyślna",
+                SourceDestinationFieldLabel: "Nazwa pola docelowego",
+                SourceDestinationFieldDescription: "Pole docelowe do użycia w tym składniku Web Part w celu dopasowania wybranych wartości",
+                AvailableFieldValuesFromResults: "Pole zawierające wartość filtra"
             },
             InformationPage: {
                 Extensibility: {
                     PanelHeader: "Konfiguruj biblioteki rozszerzalności ładowane przy starcie.",
                     PanelDescription: "Dodaj/Usuń identyfikatory niestandardowych bibliotek rozszerzalności. Wybierz nazwę i zdecyduj czy mają być ładowane przy starcie. Tylko niestandardowe źródł danych, układy, komponenty web i Handlebars będą tutaj ładowani.",
-                }
-            },
-            ImportExport: "Importuj / Eksportuj ustwienia"
+                },
+                EnableTelemetryLabel: "Telemetria PnP",
+                EnableTelemetryOn: "Włącz telemetrię",
+                EnableTelemetryOff: "Wyłącz telemetrię"
+            }
         }
     }
 });

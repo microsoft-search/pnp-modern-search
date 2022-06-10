@@ -1,13 +1,17 @@
 import { EntityType } from "../../dataSources/MicrosoftSearchDataSource";
 
+export interface IMicrosoftSearchQuery {
+    requests: IMicrosoftSearchRequest[];
+}
+
 /**
  * https://docs.microsoft.com/en-us/graph/api/resources/searchrequest?view=graph-rest-beta
  */
 export interface IMicrosoftSearchRequest {
-
     entityTypes: EntityType[];
     query: {
         queryString: string;
+        queryTemplate?: string;
     };
     fields?: string[];
     aggregations?: ISearchRequestAggregation[];
@@ -17,6 +21,11 @@ export interface IMicrosoftSearchRequest {
     enableTopResults?: boolean;
     sortProperties?: ISearchSortProperty[];
     contentSources?: string[];
+    queryAlterationOptions?: IQueryAlterationOptions;
+    resultTemplateOptions?:  {
+        enableResultTemplate: boolean;
+    };
+    trimDuplicates?: boolean;
 }
 
 export interface ISearchSortProperty {
@@ -46,4 +55,9 @@ export enum SearchAggregationSortBy {
 export interface IBucketRangeDefinition {
     from?: number | string;
     to?: number | string;
+}
+
+export interface IQueryAlterationOptions {
+    enableSuggestion: boolean;
+    enableModification: boolean;
 }

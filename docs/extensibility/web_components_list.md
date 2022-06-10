@@ -149,6 +149,12 @@ Here are the list of all **reusable** web components you can use to customize yo
     data-group-name="Collapsible content" 
     data-default-collapsed="true">
 
+    <template id="collapsible-header">
+        <div>
+            My Header!
+        </div>
+    </template> 
+
     <template id="collapsible-content">
         <div>
             My Content!

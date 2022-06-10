@@ -19,6 +19,10 @@ import { FilterDateIntervalWebComponent } from './filters/FilterDateIntervalComp
 import { PersonaWebComponent } from './PersonaComponent';
 import { PersonaShimmersWebComponent } from './PersonaShimmersComponent';
 import { ImageWebComponent} from './ImageComponent';
+import { ItemSelectionWebComponent } from './ItemSelectionComponent';
+import { FilterSearchBoxWebComponent } from './filters/FilterSearchBoxComponent';
+import { FilterValueOperatorWebComponent } from './filters/FilterValueOperatorComponent';
+import { SortWebComponent } from './SortComponent';
 
 export class AvailableComponents {
 
@@ -105,6 +109,22 @@ export class AvailableComponents {
         {
             componentName: 'pnp-img',
             componentClass: ImageWebComponent
+        },
+        {
+            componentName: "pnp-select",
+            componentClass: ItemSelectionWebComponent
+        },
+        {
+            componentName: "pnp-filtersearchbox",
+            componentClass: FilterSearchBoxWebComponent
+        },
+        {
+            componentName: "pnp-filteroperator",
+            componentClass: FilterValueOperatorWebComponent
+        },
+        {
+            componentName: 'pnp-sortfield',
+            componentClass: SortWebComponent
         }
     ];
 }

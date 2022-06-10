@@ -1,4 +1,4 @@
-import { ITemplateService } from "./ITemplateService";
+import { FileFormat, ITemplateService } from "./ITemplateService";
 import { ServiceKey, ServiceScope, Text } from "@microsoft/sp-core-library";
 import { SPHttpClient, SPHttpClientResponse } from '@microsoft/sp-http';
 import * as Handlebars from 'handlebars';
@@ -6,18 +6,22 @@ import { uniqBy, uniq, isEmpty, trimEnd, get } from "@microsoft/sp-lodash-subset
 import * as strings from 'CommonStrings';
 import { DateHelper } from "../../helpers/DateHelper";
 import { PageContext } from "@microsoft/sp-page-context";
-import { IComponentDefinition } from "@pnp/modern-search-extensibility";
+import { IComponentDefinition, IResultTemplates, LayoutRenderType } from "@pnp/modern-search-extensibility";
 import groupBy from 'handlebars-group-by';
 import { IComponentFieldsConfiguration } from "../../models/common/IComponentFieldsConfiguration";
 import { initializeFileTypeIcons } from '@uifabric/file-type-icons';
 import { GlobalSettings } from 'office-ui-fabric-react';
 import { IDataResultType, ResultTypeOperator } from "../../models/common/IDataResultType";
-import { IDataResultsTemplateContext } from "../../models/common/ITemplateContext";
+import { ISearchResultsTemplateContext, ISearchFiltersTemplateContext } from "../../models/common/ITemplateContext";
 import { UrlHelper } from "../../helpers/UrlHelper";
 import { ObjectHelper } from "../../helpers/ObjectHelper";
 import { Constants } from "../../common/Constants";
 import * as handlebarsHelpers from 'handlebars-helpers';
 import { ServiceScopeHelper } from "../../helpers/ServiceScopeHelper";
+import { DomPurifyHelper } from "../../helpers/DomPurifyHelper";
+import * as DOMPurify from 'dompurify';
+import { AdaptiveCard, CardElement, Container, TextBlock } from "adaptivecards"; 
+import { Template } from "adaptivecards-templating";
 
 const TemplateService_ServiceKey = 'PnPModernSearchTemplateService';
 
@@ -37,6 +41,10 @@ export class TemplateService implements ITemplateService {
     private pageContext: PageContext;
     private dateHelper: DateHelper;
     private serviceScope: ServiceScope;
+
+    private _adaptiveCardsNS;
+    private _markdownIt;
+    private _adaptiveCardsTemplating;
 
     /**
      * The moment.js library reference
@@ -110,7 +118,7 @@ export class TemplateService implements ITemplateService {
 
             // Register icons and pull the fonts from the default SharePoint cdn.
             // Do not load icons twice as it may generate warnings
-            if  (!GlobalSettings.getValue('fileTypeIconsInitialized')) {
+            if (!GlobalSettings.getValue('fileTypeIconsInitialized')) {
                 initializeFileTypeIcons();
                 GlobalSettings.setValue('fileTypeIconsInitialized', true);
             }
@@ -128,7 +136,7 @@ export class TemplateService implements ITemplateService {
 
         let templates: any = htmlContent.getElementById(Template_Content_Id);
         if (templates && templates.innerHTML) {
-            // Need to unescape '&gt;' for handlebars partials 
+            // Need to unescape '&gt;' for handlebars partials
             return templates.innerHTML.replace(/\&gt;/g, '>');
         } else {
             return templateContent;
@@ -145,7 +153,7 @@ export class TemplateService implements ITemplateService {
 
         const placeHolders = htmlContent.getElementById(Template_PlaceHolder_Id);
         if (placeHolders && placeHolders.innerHTML) {
-            // Need to unescape '&gt;' for handlebars partials 
+            // Need to unescape '&gt;' for handlebars partials
             return placeHolders.innerHTML.replace(/\&gt;/g, '>');
         } else {
             return null;
@@ -153,21 +161,50 @@ export class TemplateService implements ITemplateService {
     }
 
     /**
- * Gets the external file content from the specified URL
- * @param fileUrl the file URL
- */
-    public async getFileContent(fileUrl: string): Promise<string> {
+     * Gets the external file content from the specified URL
+     * @param fileUrl the file URL
+     * @param fileFormat the file format to retrieve
+     */
+    public async getFileContent(fileUrl: string, fileFormat: FileFormat): Promise<string> {
+
+        let headers: HeadersInit = {
+            'X-ClientService-ClientTag': Constants.X_CLIENTSERVICE_CLIENTTAG,
+            'UserAgent': Constants.X_CLIENTSERVICE_CLIENTTAG
+        };
+
+        if (fileFormat === FileFormat.Json) {
+            headers['Content-Type'] = 'application/json';
+            headers['Accept'] = 'application/json';
+        }
 
         const response: SPHttpClientResponse = await this.spHttpClient.get(fileUrl, SPHttpClient.configurations.v1, {
-            headers: {
-                'X-ClientService-ClientTag': Constants.X_CLIENTSERVICE_CLIENTTAG,
-                'UserAgent': Constants.X_CLIENTSERVICE_CLIENTTAG
-            }
+            headers
         });
+
         if (response.ok) {
-            return await response.text();
-        }
-        else {
+
+            let content;
+
+            switch (fileFormat) {
+
+                // Get file content as JSON
+                case FileFormat.Json:
+                    content = await response.json();
+                    content = JSON.stringify(content);
+                    break;
+
+                // Get file content as raw text
+                case FileFormat.Text:
+                    content = await response.text();
+                    break;
+
+                default:
+                    break;
+            }
+
+            return content;
+
+        } else {
             throw response.statusText;
         }
     }
@@ -210,14 +247,26 @@ export class TemplateService implements ITemplateService {
 
     /**
      * Compile the specified Handlebars template with the associated context object¸
-     * @returns the compiled HTML template string 
+     * @returns the compiled HTML template string
      */
-    public async processTemplate(templateContext: any, templateContent: string): Promise<string> {
+    public async processTemplate(templateContext: ISearchResultsTemplateContext | ISearchFiltersTemplateContext, templateContent: string, renderType: LayoutRenderType): Promise<string> {
+        let processedTemplate: string = templateContent;
 
-        let template = this.Handlebars.compile(templateContent);
-        let result = template(templateContext);
+        switch (renderType) {
+            case LayoutRenderType.Handlebars:
+                processedTemplate = this._renderHandlebarsTemplate(templateContext, templateContent);
 
-        return result;
+                break;
+
+            case LayoutRenderType.AdaptiveCards:
+                processedTemplate = await this._renderAdaptiveCardsTemplate(templateContext, templateContent);
+                break;
+
+            default:
+                break;
+        }
+
+        return processedTemplate;
     }
 
     /**
@@ -246,7 +295,7 @@ export class TemplateService implements ITemplateService {
                         // Set arbitrary properties to all component instances via prototype
 
                         // To be able to get the right service scope and service keys for a particular web component corresponding to its parent Web Part (i.e. the Web Part currently rendering it), we need to an array of Web Part instance Ids references.
-                        // This implies this instance ID has to be passed in the web component HTML attribute to retrieve the correct context for the current Web Part (ex: data-instance-id="{{@root.instanceId}}") 
+                        // This implies this instance ID has to be passed in the web component HTML attribute to retrieve the correct context for the current Web Part (ex: data-instance-id="{{@root.instanceId}}")
                         wc.componentClass.prototype._webPartServiceScopes = new Map<string, ServiceScope>();
                         wc.componentClass.prototype._webPartServiceScopes.set(instanceId, this.serviceScope);
 
@@ -283,7 +332,7 @@ export class TemplateService implements ITemplateService {
      * @param itemAsString the item context as stringified object
      * @param themeVariant the current theme variant
      */
-    public processFieldsConfiguration<T>(fieldsConfiguration: IComponentFieldsConfiguration[], item: { [key: string]: any }, context?: IDataResultsTemplateContext | any): T {
+    public processFieldsConfiguration<T>(fieldsConfiguration: IComponentFieldsConfiguration[], item: { [key: string]: any }, context?: ISearchResultsTemplateContext | any): T {
 
         let processedProps = {};
 
@@ -296,11 +345,11 @@ export class TemplateService implements ITemplateService {
 
                 try {
 
-                    let templateContext: IDataResultsTemplateContext | any = context ? context : {};
+                    let templateContext: ISearchResultsTemplateContext | any = context ? context : {};
                     // Create a temp context with the current so we can use global registered helpers on the current item
                     const tempTemplateContent = `{{#with item as |item|}}${configuration.value}{{/with}}`;
                     let template = this.Handlebars.compile(tempTemplateContent, {
-                        noEscape: true
+                        noEscape: true // Need to disable escaping to allow markup - which is later sanitized. XSS not possible
                     });
 
                     // Pass the current item as context
@@ -310,7 +359,9 @@ export class TemplateService implements ITemplateService {
                                 slots: templateContext.slots,
                                 theme: templateContext.theme,
                                 context: templateContext.context,
-                                instanceId: templateContext.instanceId
+                                instanceId: templateContext.instanceId,
+                                properties: templateContext.properties,
+                                utils: templateContext.utils
                             }
                         }
                     });
@@ -330,7 +381,7 @@ export class TemplateService implements ITemplateService {
     }
 
     /**
-     * Builds and registers the result types as this.Handlebars partials 
+     * Builds and registers the result types as this.Handlebars partials
      * Based on https://github.com/helpers/handlebars-helpers/ operators
      * @param resultTypes the configured result types from the property pane
      */
@@ -350,9 +401,59 @@ export class TemplateService implements ITemplateService {
         return;
     }
 
+    private _renderHandlebarsTemplate(templateContext: ISearchResultsTemplateContext | ISearchFiltersTemplateContext, templateContent: string): string {
+        const template = this.Handlebars.compile(templateContent);
+        return template(templateContext);
+    }
+
+    private async _renderAdaptiveCardsTemplate(templateContext: ISearchResultsTemplateContext | ISearchFiltersTemplateContext, templateContent: string): Promise<string> {
+
+        let renderTemplateContent = null;
+
+        // Load dynamic resources
+        await this._initAdaptiveCardsResources();
+
+        let hostConfiguration: {[key: string]: any} = {
+            fontFamily: "Segoe UI, Helvetica Neue, sans-serif"
+        };
+
+        if ((templateContext as ISearchResultsTemplateContext).utils.adaptiveCardsHostConfig) {
+            hostConfiguration = (templateContext as ISearchResultsTemplateContext).utils.adaptiveCardsHostConfig;          
+        }
+
+        hostConfiguration = new this._adaptiveCardsNS.HostConfig(hostConfiguration);
+
+        // If result templates are present, process each individual item and return the HTML output
+        if ((templateContext as ISearchResultsTemplateContext).data?.resultTemplates) {
+            renderTemplateContent = this._buildAdaptiveCardsResultTypes(
+                                        templateContent, 
+                                        templateContext as ISearchResultsTemplateContext, 
+                                        (templateContext as ISearchResultsTemplateContext).data?.resultTemplates, 
+                                        hostConfiguration);
+        } else {
+                
+            const template = new this._adaptiveCardsTemplating.Template(JSON.parse(templateContent));
+    
+            // The root context will be available in the the card implicitly
+            const context = {
+                $root: templateContext
+            };
+    
+            const card = template.expand(context);
+            const adaptiveCard = new this._adaptiveCardsNS.AdaptiveCard();
+            adaptiveCard.hostConfig = hostConfiguration;
+            adaptiveCard.parse(card);
+    
+            const htmlTemplateElement: HTMLElement = adaptiveCard.render();
+            renderTemplateContent = htmlTemplateElement.outerHTML;
+        }
+        
+        return renderTemplateContent;
+    }
+
     /**
      * Builds the Handlebars nested conditions recursively to reflect the result types configuration
-     * @param resultTypes the configured result types from the property pane 
+     * @param resultTypes the configured result types from the property pane
      * @param currentResultType the current processed result type
      * @param currentIdx current index
      */
@@ -362,7 +463,7 @@ export class TemplateService implements ITemplateService {
         let templateContent = currentResultType.inlineTemplateContent;
 
         if (currentResultType.externalTemplateUrl) {
-            templateContent = await this.getFileContent(currentResultType.externalTemplateUrl);
+            templateContent = await this.getFileContent(currentResultType.externalTemplateUrl, FileFormat.Text);
         }
 
         if (currentResultType.value) {
@@ -386,7 +487,7 @@ export class TemplateService implements ITemplateService {
                 param2 = null;
             }
 
-            const baseCondition = `{{#${operator} ${param1} ${param2 || ""}}} 
+            const baseCondition = `{{#${operator} (slot item '${param1}') ${param2 || ""}}}
                                         ${templateContent}`;
 
             if (currentIdx === resultTypes.length - 1) {
@@ -396,8 +497,8 @@ export class TemplateService implements ITemplateService {
                 conditionBlockContent = await this._buildCondition(resultTypes, resultTypes[currentIdx + 1], currentIdx + 1);
             }
 
-            return `${baseCondition}   
-                    {{else}} 
+            return `${baseCondition}
+                    {{else}}
                         ${conditionBlockContent}
                     {{/${operator}}}`;
         } else {
@@ -428,7 +529,14 @@ export class TemplateService implements ITemplateService {
         // <p>{{getSummary HitHighlightedSummary}}</p>
         this.Handlebars.registerHelper("getSummary", (hitHighlightedSummary: string) => {
             if (!isEmpty(hitHighlightedSummary)) {
-                return new this.Handlebars.SafeString(hitHighlightedSummary.replace(/<c0\>/g, "<strong>").replace(/<\/c0\>/g, "</strong>").replace(/<ddd\/>/g, "&#8230;"));
+                return new this.Handlebars.SafeString(hitHighlightedSummary.replace(/<c0\>/g, "<strong>").replace(/<\/c0\>/g, "</strong>").replace(/<ddd\/>/g, "&#8230;").replace(/\w+-\w+-\w+-\w+-\w+/g, ""));
+            }
+        });
+
+        // Return tag name from a tag string
+        this.Handlebars.registerHelper("getTagName", (tag: string) => {
+            if (!isEmpty(tag)) {
+                return new Handlebars.SafeString(tag.split("|").pop());
             }
         });
 
@@ -598,5 +706,122 @@ export class TemplateService implements ITemplateService {
             return out;
         });
 
+        // Parse a JSON object
+        // <p>{{JSONparse jsonObject}}</p>
+        this.Handlebars.registerHelper("JSONparse", (str: string, options: any) => {
+            return JSON.parse(str);
+        });
+
+        this.Handlebars.registerHelper("isItemSelected", (selectedKeys: any[], itemIndex: any, options: any) => {
+            if (Array.isArray(selectedKeys) && selectedKeys.length > 0) {
+                return selectedKeys.indexOf(`${options.data.root.paging.currentPageNumber}${itemIndex}`) !== -1;
+            }
+        });
+
+        this.Handlebars.registerHelper('dayDiff', (date1: string, date2: string) => {
+            let dayCount = this.moment(date1).diff(this.moment(date2), 'days');
+            return Math.abs(dayCount);
+        });
+    }
+
+    private async _initAdaptiveCardsResources(): Promise<void> {
+
+        if (!this._adaptiveCardsNS) {
+
+            const domPurify = DOMPurify.default;
+
+            domPurify.setConfig({
+                WHOLE_DOCUMENT: false
+            });
+    
+            domPurify.addHook('uponSanitizeElement', DomPurifyHelper.allowCustomComponentsHook);
+            domPurify.addHook('uponSanitizeAttribute', DomPurifyHelper.allowCustomAttributesHook); 
+
+            // Load dynamic resources
+            this._adaptiveCardsNS = await import(
+                /* webpackChunkName: 'pnp-modern-search-adaptive-cards-bundle' */
+                'adaptivecards'
+            );
+
+            this._adaptiveCardsNS.AdaptiveCard.onProcessMarkdown =  (text: string, result) => {
+
+                // Special case with HitHighlightedSummary field
+                text = text.replace(/<c0\>/g, "<strong>").replace(/<\/c0\>/g, "</strong>").replace(/<ddd\/>/g, "&#8230;");
+
+                // We use Markdown here to render HTML and use web components
+                const rawHtml = this._markdownIt.render(text).replace(/\&lt;/g, '<').replace(/\&gt;/g,'>');
+                result.outputHtml = domPurify.sanitize(rawHtml);
+                result.didProcess = true;
+            };
+
+            await import(
+                /* webpackChunkName: 'pnp-modern-search-adaptive-cards-bundle' */
+                'adaptive-expressions'
+            );
+            
+            this._adaptiveCardsTemplating = await import(
+                /* webpackChunkName: 'pnp-modern-search-adaptive-cards-bundle' */
+                'adaptivecards-templating'
+            );
+
+            const MarkdownIt = await import(
+                /* webpackChunkName: 'pnp-modern-search-adaptive-cards-bundle' */
+                'markdown-it'
+            );
+
+            this._markdownIt = new MarkdownIt.default();
+        }
+    }
+
+    private _buildAdaptiveCardsResultTypes(templateContent: string, templateContext: ISearchResultsTemplateContext, resultTemplates: IResultTemplates, hostConfiguration): string {
+
+        // Parse and render the main card template
+        const mainCard = new this._adaptiveCardsNS.AdaptiveCard();
+        mainCard.hostConfig = hostConfiguration;
+        const template = new this._adaptiveCardsTemplating.Template(JSON.parse(templateContent));
+
+        const context = {
+            $root: templateContext
+        };
+
+        const card = template.expand(context);
+        mainCard.parse(card);
+        const mainHtml = mainCard.render();
+       
+        // Build dictionary of available result template
+        const templateDictionary = new Map(Object.entries(resultTemplates));
+
+        for (let item of templateContext.data.items) {
+
+            const templateId = item.resultTemplateId;
+            const templatePayload = templateDictionary.get(templateId).body;
+
+            // Check if item should use a result template
+            if (templatePayload && templateId !== 'connectordefault') {
+
+                const itemTemplate = new this._adaptiveCardsTemplating.Template(templatePayload);
+
+                const itemContext = {
+                    $root: item.resource.properties
+                };
+
+                const itemCard = itemTemplate.expand(itemContext);
+    
+                const itemAdaptiveCard = new this._adaptiveCardsNS.AdaptiveCard();
+                itemAdaptiveCard.hostConfig = hostConfiguration;
+                itemAdaptiveCard.parse(itemCard);
+    
+                // Partial match as we can't use the complete ID due to special characters "/" and "==""
+                const defaultItem: HTMLElement = mainHtml.querySelector(`[id^="${item.hitId.substring(0,15)}"]`); 
+                
+                // Replace the HTML element corresponding to the item by its result type
+                if (defaultItem) {
+                    const itemHtml = itemAdaptiveCard.render().firstChild;
+                    defaultItem.replaceWith(itemHtml);
+                }
+            }
+        }
+
+        return mainHtml.outerHTML;
     }
 }

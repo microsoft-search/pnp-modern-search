@@ -45,35 +45,57 @@ declare interface ISearchResultsWebPartStrings {
             ShowSelectedFilters: string;
             ShowBlankIfNoResult: string;
             ShowResultsCount: string;
-            UseMicrosoftGraphToolkit: string;
-            ResultTypes: {
-                ResultTypeslabel: string;
-                ResultTypesDescription: string;
-                InlineTemplateContentLabel: string;
-                EditResultTypesLabel: string;
-                ConditionPropertyLabel: string;
-                ConditionValueLabel: string;
-                CondtionOperatorValue: string;
-                ExternalUrlLabel: string;
-                EqualOperator: string;
-                NotEqualOperator: string;
-                ContainsOperator: string;
-                StartsWithOperator: string;
-                NotNullOperator: string;
-                GreaterOrEqualOperator: string;
-                GreaterThanOperator: string;
-                LessOrEqualOperator: string;
-                LessThanOperator: string;
-                CancelButtonText: string;
-                DialogButtonText: string;
-                DialogTitle: string;
-                SaveButtonText: string;
+            HandlebarsRenderTypeLabel: string;
+            HandlebarsRenderTypeDesc: string;
+            AdaptiveCardsRenderTypeLabel: string;
+            AdaptiveCardsRenderTypeDesc: string;
+            Handlebars: {
+                UseMicrosoftGraphToolkit: string;
+                ResultTypes: {
+                    ResultTypeslabel: string;
+                    ResultTypesDescription: string;
+                    InlineTemplateContentLabel: string;
+                    EditResultTypesLabel: string;
+                    ConditionPropertyLabel: string;
+                    ConditionValueLabel: string;
+                    CondtionOperatorValue: string;
+                    ExternalUrlLabel: string;
+                    EqualOperator: string;
+                    NotEqualOperator: string;
+                    ContainsOperator: string;
+                    StartsWithOperator: string;
+                    NotNullOperator: string;
+                    GreaterOrEqualOperator: string;
+                    GreaterThanOperator: string;
+                    LessOrEqualOperator: string;
+                    LessThanOperator: string;
+                    CancelButtonText: string;
+                    DialogButtonText: string;
+                    DialogTitle: string;
+                    SaveButtonText: string;
+                },
+                AllowItemSelection: string;
+                AllowMultipleItemSelection: string;
+                SelectionModeLabel: string;
+                AsTokensSelectionMode: string;
+                AsDataFiltersSelectionMode: string;
+                AsDataFiltersDescription: string;
+                AsTokensDescription: string;
+                FilterValuesOperator: string;
+                FieldToConsumeLabel: string;
+                FieldToConsumeDescription: string;
+            },
+            AdaptiveCards: {
+                HostConfigFieldLabel: string;
             }
         },
         ConnectionsPage: {
             ConnectionsPageGroupName: string;
             UseFiltersWebPartLabel: string;
             UseFiltersFromComponentLabel: string;
+            UseDynamicFilteringsWebPartLabel: string;
+            UseDataResultsFromComponentsLabel: string;
+            UseDataResultsFromComponentsDescription: string;
             UseSearchVerticalsWebPartLabel: string;
             UseSearchVerticalsFromComponentLabel: string;
             LinkToVerticalLabel: string;
@@ -87,14 +109,19 @@ declare interface ISearchResultsWebPartStrings {
             InputQueryTextDynamicValue: string;
             SearchQueryTextUseDefaultQuery: string;
             SearchQueryTextDefaultValue: string;
+            SourceDestinationFieldLabel: string;
+            SourceDestinationFieldDescription: string;
+            AvailableFieldValuesFromResults: string;
         },
         InformationPage: {
             Extensibility: {
                 PanelHeader: string;
                 PanelDescription: string;
-            }
-        },
-        ImportExport: string;
+            },
+            EnableTelemetryLabel: string;
+            EnableTelemetryOn: string;
+            EnableTelemetryOff: string;
+        }
     }
 }
 

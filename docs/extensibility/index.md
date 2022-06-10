@@ -28,6 +28,9 @@ For your project to be a valid extensibility library, you must have the followin
 - The main entry point of your library must implement the `IExtensibilityLibrary` interface from the `@pnp/modern-search-extensibility` library.
 - You library **manifest ID** must be registered in the Web Part where you want to use the extension.
 
+!!! important "SPFx version"
+    The SPFx library project must use the same SPFx version as the main solution (currently `1.12.1`). Owherwise you may face issues at build time. See [GitHub issue #1893](https://github.com/microsoft-search/pnp-modern-search/issues/1893)
+
 ### Supported extensions
 
 Each Web Part type in the solution supports several extensions or no extension at all. It means even your extensibility library contains all possible extensions, they won't be loaded if the Web Part does not support them.
@@ -62,6 +65,7 @@ To create an extensibility library, you have the choice to reuse the one provide
 3. In the main entry point, implement the `IExtensibilityLibrary` interface. Provide all method implementations (return empty arrays if you don't implement specific extensions).
     !["Extensibility interface implementation"](../assets/extensibility/implement_interface.png){: .center}
 5. Implement your extension(s) depending of the type:
+    - [Layout](./custom_layout.md)
     - [Web component](./custom_web_component.md)
     - [Suggestions providers](./custom_suggestions_provider.md)
     - [Handlebars customizations](./handlebars_customizations.md)

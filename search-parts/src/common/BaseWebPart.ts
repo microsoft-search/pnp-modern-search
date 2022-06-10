@@ -11,6 +11,7 @@ import * as commonStrings from 'CommonStrings';
 import { ThemeProvider, IReadonlyTheme, ThemeChangedEventArgs } from '@microsoft/sp-component-base';
 import { isEqual } from '@microsoft/sp-lodash-subset';
 import { PropertyPaneWebPartInformation } from '@pnp/spfx-property-controls/lib/PropertyPaneWebPartInformation';
+import { Log } from '@microsoft/sp-core-library';
 
 /**
  * Generic abstract class for all Web Parts in the solution
@@ -85,6 +86,32 @@ export abstract class BaseWebPart<T extends IBaseWebPartProps> extends BaseClien
         ];
     }
 
+    /*
+    * Get the parent control zone for the current Web Part instance
+    */
+    protected getParentControlZone(): HTMLElement {
+
+      // 1st attempt: use the DOM element with the Web Part instance id     
+      let parentControlZone =  document.getElementById(this.instanceId);
+
+      if (!parentControlZone) {
+
+          // 2nd attempt: Try the data-automation-id attribute as we suppose MS tests won't change this name for a while for convenience.
+          parentControlZone = this.domElement.closest(`div[data-automation-id='CanvasControl'], .CanvasControl`);
+
+          if (!parentControlZone) {
+
+            // 3rd attempt: try the Control zone with ID
+            parentControlZone = this.domElement.closest(`div[data-sp-a11y-id="ControlZone_${this.instanceId}"]`);
+
+            if (!parentControlZone) {
+                Log.warn(this.manifest.alias,`Parent control zone DOM element was not found in the DOM.`, this.context.serviceScope);
+            }
+          }
+      }
+
+      return parentControlZone;
+    }
 
     /**
      * Initializes theme variant properties

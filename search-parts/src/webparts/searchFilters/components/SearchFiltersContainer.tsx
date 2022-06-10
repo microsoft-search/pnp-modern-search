@@ -17,13 +17,16 @@ import {
   IDataFilter, 
   FilterComparisonOperator, 
   IDataFilterInfo,
-  ExtensibilityConstants
+  ExtensibilityConstants,
+  FilterConditionOperator,
+  LayoutRenderType
 } from '@pnp/modern-search-extensibility';
 import { ISearchFiltersTemplateContext } from '../../../models/common/ITemplateContext';
 import { flatten } from '@microsoft/sp-lodash-subset';
 import { DisplayMode, Log } from '@microsoft/sp-core-library';
 import { DataFilterHelper } from '../../../helpers/DataFilterHelper';
 import { UrlHelper } from '../../../helpers/UrlHelper';
+import { BuiltinFilterTemplates } from '../../../layouts/AvailableTemplates';
 
 const DEEPLINK_QUERYSTRING_PARAM = 'f';
 
@@ -78,6 +81,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                             templateContext={templateContext}
                             templateService={this.props.templateService}
                             instanceId={this.props.instanceId}
+                            renderType={LayoutRenderType.Handlebars} // Only allow Handlebars for filters
                           />;
     }
     
@@ -97,6 +101,10 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
     // Bind events when mutli valued filter value are cleared for a specific filter
     this.bindClearFiltersEvents();
+
+    // Bind events when the values operator is updated for a specific filter
+    // Use case when the opeartor control is used directly in the Handlebars template. Otherwise, for nested component usage (ex: combo box), the operator value will be changed through the IDataFilterInfo interface direcrtly and not trought a JavaScript event.
+    this.bindFilterValueOperatorUpdated();    
 
     // Initial state
     this.getFiltersToDisplay(this.props.availableFilters, [], this.props.filtersConfiguration);
@@ -246,6 +254,8 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
           return value;
         });
 
+        const filterOperator = currentUiFilters[selectedFilterIdx] ? currentUiFilters[selectedFilterIdx].operator : filterConfiguration.operator;
+
         // Merge information with filter configuration and other useful proeprties
         const filterResultInternal: IDataFilterInternal = {
           displayName: filterConfiguration.displayValue ? filterConfiguration.displayValue : availableFilter.filterName,
@@ -257,8 +267,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
           selectedTemplate: filterConfiguration.selectedTemplate,
           hasSelectedValues: hasSelectedValues,
           values: values,
-          operator: filterConfiguration.operator,
-          taxonomyItemIds: filterConfiguration.taxonomyItemIds,
+          operator: filterOperator,
           sortIdx: filterConfiguration.sortIdx,
           canApply: canApply,
           canClear: canClear
@@ -294,6 +303,11 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         if (filterIdx !== -1 ) {
 
           currentUiFilters = cloneDeep(this.state.currentUiFilters);
+
+            // If a control specifies an operator to use between values explictly, we update it in the current collection (ex: the FilterValueOperator component nested in the combo box component)
+            if (filterInfo.operator) {
+              currentUiFilters = update(currentUiFilters, { [filterIdx]: { operator: { $set: filterInfo.operator }}});
+            }
 
           // Addition or merge scenario
           filterInfo.filterValues.map(filterValue => {
@@ -337,7 +351,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             showCount: !filterConfiguration.showCount ? false: filterConfiguration.showCount,
             expandByDefault: !filterConfiguration.expandByDefault ? false : filterConfiguration.expandByDefault,
             values: filterValuesInternal,
-            operator: filterConfiguration.operator,
+            operator: filterInfo.operator ? filterInfo.operator : currentUiFilters[filterIdx].operator,
             selectedTemplate: filterConfiguration.selectedTemplate,
             sortIdx: filterConfiguration.sortIdx
           };
@@ -381,6 +395,11 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
       const newSelectedFilter = cloneDeep(selectedFilter);
 
+      // Update the operator to 'or' when single value mode is selected and multiple values are submitted
+      if (selectedFilter.values.some(v => v.selected) && !selectedFilter.isMulti && selectedFilter.selectedTemplate !== BuiltinFilterTemplates.DateRange) {
+        newSelectedFilter.operator = FilterConditionOperator.OR;
+      }
+
       const values = newSelectedFilter.values.filter(selectedValue => {
         return selectedValue.selected;
       });
@@ -413,7 +432,6 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         delete newSelectedFilter.canApply;
         delete newSelectedFilter.canClear;
         delete newSelectedFilter.sortIdx;
-        delete newSelectedFilter.taxonomyItemIds;
         delete newSelectedFilter.selectedTemplate;
   
         return newSelectedFilter;
@@ -512,6 +530,39 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
     }).bind(this));
   }
+
+  /**
+   * Binds events fired from the filter operator components
+   */
+  private bindFilterValueOperatorUpdated() {
+
+    this.componentRef.current.addEventListener(ExtensibilityConstants.EVENT_FILTER_VALUE_OPERATOR_UPDATED, ((ev: CustomEvent) => {
+
+      ev.stopImmediatePropagation();
+
+      // Find the filter wit hthis specific name
+      const filters = this.state.currentUiFilters.map(filter => {
+
+        const selectedValues = filter.values.filter(v => v.selected);
+        // Submitted values for the current filter name
+        const submittedValues = this.state.submittedFilters.filter(f => f.filterName === ev.detail.filterName && f.values.filter(v => selectedValues.map(s => s.value).indexOf(v.value) !== -1));
+  
+        if (filter.filterName === ev.detail.filterName) {
+
+          // We let the user apply the new filters only if the operator changes or has at least two selected values      
+          filter.canApply = (!filter.canApply && filter.operator !== ev.detail.operator && selectedValues.length > 1) || (filter.canApply && submittedValues.length === 0); 
+          filter.operator = ev.detail.operator;
+        }
+
+        return filter;
+      });
+
+      this.setState({
+        currentUiFilters: filters
+      });
+
+    }).bind(this));
+  }  
 
   // Build the template context
   private getTemplateContext(): ISearchFiltersTemplateContext {

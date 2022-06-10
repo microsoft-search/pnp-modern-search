@@ -50,7 +50,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                     className={styles.searchTextField}
                     value={this.state.searchInputValue}
                     autoComplete="off"
-                    onChange={(event) => this.setState({ searchInputValue: event.currentTarget.value })}
+                    onChange={(event) => this.setState({ searchInputValue: event && event.currentTarget ? event.currentTarget.value : "" })}
                     onSearch={() => this._onSearch(this.state.searchInputValue)}
                     onClear={() => {
                         this._onSearch('', true);
@@ -88,10 +88,11 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
 
                 this.props.tokenService.setTokenValue(BuiltinTokenNames.inputQueryText, queryText);
                 queryText = await this.props.tokenService.resolveTokens(this.props.inputTemplate);
-
                 const urlEncodedQueryText = encodeURIComponent(queryText);
 
-                const searchUrl = new URL(this.props.pageUrl);
+                const tokenizedPageUrl = await this.props.tokenService.resolveTokens(this.props.pageUrl);
+                const searchUrl = new URL(tokenizedPageUrl);
+                
                 let newUrl;
 
                 if (this.props.queryPathBehavior === QueryPathBehavior.URLFragment) {

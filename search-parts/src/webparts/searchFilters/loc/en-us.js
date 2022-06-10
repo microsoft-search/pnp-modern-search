@@ -12,9 +12,11 @@ define([], function() {
         },
         PropertyPane: {
             ConnectionsPage: {
-                UseDataResultsWebPartLabel: "Connect to a data results Web Part",
+                UseDataResultsWebPartLabel: "Connect to a search results Web Part",
                 UseDataResultsFromComponentsLabel: "Use data from these Web Parts",
                 UseDataResultsFromComponentsDescription: "If you connect more than one Web Part, the filter values and counts will be merged for similar filter names.",
+                LinkToVerticalLabel: "Display filters only when the following verticals are selected",
+                LinkToVerticalLabelHoverMessage: "The filters will be displayed only if the selected vertical matches with the ones configured for this Web Part. Otherwise, the Web part will be blank (no margin and no padding) in display mode."
             },
             FiltersSettingsPage: {
                 SettingsGroupName: "Filters settings",
@@ -62,8 +64,7 @@ define([], function() {
                 ErrorTemplateResolve: "Unable to resolve the specified template. Error details: '{0}'",
                 FiltersTemplateFieldLabel: "Edit filters template",
                 FiltersTemplatePanelHeader: "Edit filters template"
-            },
-            ImportExport: "Import / Export settings"
+            }
         }
     }
 });

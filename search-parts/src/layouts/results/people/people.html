@@ -20,49 +20,69 @@
             </pnp-selectedfilters>
         {{/if}}
        
-        {{#if @root.properties.showResultsCount}}
-            <div class="template--resultCount">
-                <label class="ms-fontWeight-semibold">{{getCountMessage @root.data.totalItemsCount @root.inputQueryText}}</label>
+        <div class="template--header">
+            {{#if @root.properties.showResultsCount}}
+                <div class="template--resultCount">
+                    <label class="ms-fontWeight-semibold">{{getCountMessage @root.data.totalItemsCount @root.inputQueryText}}</label>
+                </div>
+            {{/if}}
+
+            <div class="template--sort">
+                <pnp-sortfield 
+                    data-fields="{{JSONstringify @root.properties.dataSourceProperties.sortList}}" 
+                    data-default-selected-field="{{sort.selectedSortFieldName}}" 
+                    data-default-direction="{{sort.selectedSortDirection}}"
+                    data-theme-variant="{{JSONstringify @root.theme}}">
+                </pnp-sortfield>    
             </div>
-        {{/if}}
+        </div>
         
         <div>
             <ul class="template--defaultList">
                 {{#each data.items as |item|}}
-                    <li class="template--peopleListItem" tabindex="0">
-                        {{#> resultTypes item=item}}
+                    <pnp-select 
+                        data-enabled="{{@root.properties.itemSelectionProps.allowItemSelection}}" 
+                        data-index="{{@index}}" 
+                        data-is-selected="{{isItemSelected @root.selectedKeys @index}}">
 
-                            {{#if @root.properties.layoutProperties.showPersonaCard}}
-                                <mgt-person user-id="{{getUserEmail (slot item @root.slots.PersonQuery)}}" person-card="hover">
-                                    <template>
+                        <template id="content">
+                            <li class="template--peopleListItem" tabindex="0">
+                                {{#> resultTypes item=item}}
+
+                                    {{#and @root.properties.layoutProperties.showPersonaCard (slot item @root.slots.PersonQuery)}}
+                                        <mgt-person user-id="{{getUserEmail (slot item @root.slots.PersonQuery)}}" person-card="hover">
+                                            <template>
+                                                <pnp-persona 
+                                                    data-image-url="\{{personImage}}" 
+                                                    data-fields-configuration="{{JSONstringify @root.properties.layoutProperties.peopleFields}}" 
+                                                    data-item="{{JSONstringify item}}" 
+                                                    data-persona-size="{{@root.properties.layoutProperties.personaSize}}"
+                                                    data-theme-variant="{{JSONstringify @root.theme}}"
+                                                    data-instance-id="{{@root.instanceId}}"
+                                                    data-context="{{JSONstringify @root}}">
+                                                </pnp-persona>
+                                            </template>
+                                            <template data-type="person-card">
+                                                <mgt-person-card inherit-details>
+                                                </mgt-person-card>
+                                            </template>
+                                        </mgt-person>
+                                    {{else}}
                                         <pnp-persona 
-                                            data-image-url="\{{personImage}}" 
-                                            data-fields-configuration="{{JSONstringify @root.properties.layoutProperties.peopleFields}}" 
+                                            data-fields-configuration="{{JSONstringify @root.properties.layoutProperties.peopleFields}}"
                                             data-item="{{JSONstringify item}}" 
-                                            data-persona-size="{{@root.properties.layoutProperties.personaSize}}"
-                                            data-theme-variant="{{JSONstringify @root.theme}}"
+                                            data-persona-size="{{@root.properties.layoutProperties.personaSize}}" 
+                                            data-context="{{JSONstringify @root}}"
                                             data-instance-id="{{@root.instanceId}}"
-                                            data-context="{{JSONstringify @root}}">
-                                        </pnp-persona>
-                                    </template>
-                                    <template data-type="person-card">
-                                        <mgt-person-card inherit-details>
-                                        </mgt-person-card>
-                                    </template>
-                                </mgt-person>
-                            {{else}}
-                                <pnp-persona 
-                                    data-fields-configuration="{{JSONstringify @root.properties.layoutProperties.peopleFields}}"
-                                    data-item="{{JSONstringify item}}" 
-                                    data-persona-size="{{@root.properties.layoutProperties.personaSize}}" 
-                                    data-context="{{JSONstringify @root}}"
-                                    data-instance-id="{{@root.instanceId}}"
-                                    data-theme-variant="{{JSONstringify @root.theme}}"
-                                ></pnp-persona>
-                            {{/if}}
+                                            data-theme-variant="{{JSONstringify @root.theme}}"
+                                        ></pnp-persona>
+                                    {{/and}}
+                                    
+                                {{/resultTypes}}
+                            </li>
+                        </template>
                             
-                        {{/resultTypes}}
-                    </li>
+                    </pnp-select>
                 {{/each}}
             </ul>
         </div>
@@ -78,7 +98,6 @@
                     data-range="{{@root.properties.paging.pagingRange}}" 
                     data-items-count-per-page="{{@root.properties.paging.itemsCountPerPage}}" 
                     data-current-page-number="{{@root.paging.currentPageNumber}}"
-                    data-page-links="{{JSONstringify @root.data.paging.links}}"
                     data-theme-variant="{{JSONstringify @root.theme}}"
                 >
                 </pnp-pagination>

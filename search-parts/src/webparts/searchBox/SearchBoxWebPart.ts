@@ -40,6 +40,7 @@ import { Constants } from '../../common/Constants';
 import { ITokenService } from '@pnp/modern-search-extensibility';
 import { BuiltinTokenNames, TokenService } from '../../services/tokenService/TokenService';
 import { BaseWebPart } from '../../common/BaseWebPart';
+import { DynamicPropertyHelper } from '../../helpers/DynamicPropertyHelper';
 
 export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps> implements IDynamicDataCallables {
 
@@ -138,13 +139,16 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
 
     protected renderCompleted(): void {
 
+        if (!this.domElement) {
+            return;
+        }
         let renderRootElement: JSX.Element = null;
 
         let inputValue = "";
-        if (this.properties.queryText && !this.properties.queryText.isDisposed) {
+        if (this.properties.queryText) {
             try {
-                inputValue = this.properties.queryText.tryGetValue();
-                if (inputValue !== undefined) {
+                inputValue = DynamicPropertyHelper.tryGetValueSafe(this.properties.queryText);
+                if (inputValue !== undefined && typeof (inputValue) === 'string') {
                     inputValue = decodeURIComponent(inputValue);
                 }
 
@@ -272,7 +276,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
                     ...this.getPropertyPaneWebPartInfoGroups(),
                     ...extensibilityConfigurationGroups,
                     {
-                        groupName: webPartStrings.PropertyPane.ImportExport,
+                        groupName: commonStrings.PropertyPane.InformationPage.ImportExport,
                         groupFields: [this._propertyPanePropertyEditor({
                             webpart: this,
                             key: 'propertyEditor'
@@ -675,8 +679,8 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
      * Subscribes to URL hash change if the dynamic property is set to the default 'URL Fragment' property
      */
     private _bindHashChange() {
-
-        if (this.properties.queryText.tryGetSource() && this.properties.queryText.reference.localeCompare('PageContext:UrlData:fragment') === 0) {
+        const queryText = DynamicPropertyHelper.tryGetSourceSafe(this.properties.queryText);
+        if (queryText?.reference?.localeCompare('PageContext:UrlData:fragment') === 0) {
             // Manually subscribe to hash change since the default property doesn't
             window.addEventListener('hashchange', this.render);
         } else {
@@ -841,16 +845,26 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
      * Subscribes to URL query string change events using SharePoint page router
      */
     private _handleQueryStringChange() {
-        ((h) => {
-            this._pushStateCallback = history.pushState;
-            h.pushState = this.pushStateHandler.bind(this);
-        })(window.history);
+
+        // To avoid pushState modification from many components on the page (ex: search box, etc.), 
+        // only subscribe to query string changes if the connected source is either the searc queyr or explicit query string parameter
+        if (/^(PageContext:SearchData:searchQuery)|(PageContext:UrlData:queryParameters)/.test(this.properties.queryText.reference)) {
+
+            ((h) => {
+                this._pushStateCallback = history.pushState;
+                h.pushState = this.pushStateHandler.bind(this);
+            })(window.history);
+        }
     }
 
     private pushStateHandler(state, key, path) {
+
         this._pushStateCallback.apply(history, [state, key, path]);
-        if (this.properties.queryText.isDisposed) return;
-        const source = this.properties.queryText.tryGetSource();
-        if (source && source.id === ComponentType.PageEnvironment) this.render();
+
+        const source = DynamicPropertyHelper.tryGetSourceSafe(this.properties.queryText);
+
+        if (source && source.id === ComponentType.PageEnvironment) {
+            this.render();
+        }
     }
 }

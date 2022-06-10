@@ -9,3 +9,7 @@ export enum ComponentType {
     SearchVerticals = 'pnpSearchVerticalsWebPart',
     PageEnvironment = 'PageContext'
 }
+
+export enum DynamicDataProperties {
+    AvailableFieldValuesFromResults = 'AvailableFieldValuesFromResults'
+}

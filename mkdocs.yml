@@ -26,6 +26,7 @@ nav:
   - Extensibility:
     - Introduction: extensibility/index.md
     - Templating: extensibility/templating.md
+    - Custom layout: extensibility/custom_layout.md
     - Custom web component: extensibility/custom_web_component.md
     - Custom suggestions provider: extensibility/custom_suggestions_provider.md
     - Custom Handlebars customizations: extensibility/handlebars_customizations.md
@@ -50,6 +51,11 @@ markdown_extensions:
       guess_lang: false
   - toc:
       permalink: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
   - markdown_include.include:
           base_path: docs
 extra:

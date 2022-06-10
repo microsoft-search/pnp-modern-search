@@ -1,0 +1,78 @@
+.tagItem {
+    position: relative;
+    box-sizing: content-box;
+    flex-shrink: 1;
+    margin: 2px;
+    height: 26px;
+    line-height: 26px;
+    cursor: default;
+    display: flex;
+    flex-wrap: nowrap;
+    user-select: none;
+    background-color: "[theme: themePrimary, default: #0078d7]";
+    color: #fff;
+    padding-left: 5px;
+    border-radius: 12px;
+    margin-bottom: 6px;
+    max-width: 100%;
+
+    .tagItemText {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        min-width: 30px;
+        margin: 0px 8px;
+    }
+
+    i {
+        padding-left: 5px;
+    }
+
+    button {
+        color: #fff;
+    }
+
+    .tagRemoveBtn {
+
+        &:hover {
+            color: #fff;
+            background-color: "[theme: themePrimary, default: #0078d7]";
+            border-radius: 12px;
+        }
+    }
+}
+
+.tagSuggestionItem {
+
+    display: flex;
+    padding: 10px;
+    max-width: 400px;
+    text-align: left;
+
+    .tagItemPath {
+        font-style: italic;
+        display: flex;
+        align-items: center;
+        text-align: left;
+        flex-wrap: wrap;
+
+        i {
+            font-size: 9px;
+            padding: 5px;
+        }
+    }
+
+    .tagItemName {
+
+        display: flex;
+        align-items: center;
+
+        i {
+            padding: 5px;
+        }
+    }
+
+    .leafItem {
+        color: "[theme: themePrimary, default: #0078d7]"
+    }
+}

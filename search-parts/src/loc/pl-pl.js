@@ -78,18 +78,23 @@ define([], function() {
               invalidInputErrorMessage: 'Nieprawidłowy format daty.'
           },
           DateIntervalStrings: {
-              AnyTime: "Dowolny czas",
-              PastDay: "Ostatnie 24 godziny",
-              PastWeek: "Ostatni tydzień",
-              PastMonth: "Ostatni miesiąc",
-              Past3Months: "Ostatie 3 miesiące",
-              PastYear: "Ostatni rok",
-              Older: "Starsze niż rok"
+            AnyTime: "Kiedykolwiek",
+            PastDay: "Ostatnie 24 godziny",
+            PastWeek: "Od ostatnich 24 godzin do zeszłego tygodnia",
+            PastMonth: "Od ostatniego tygodnia do ostatniego miesiąca",
+            Past3Months: "Od ostatniego miesiąca do ostatnich 3 miesięcy",
+            PastYear: "Od ostatnich 3 miesięcy do zeszłego roku",
+            Older: "Starsze niż rok"
           },
           SameTabOpenBehavior: "Użyj bieżącej karty",
           NewTabOpenBehavior: "Otwórz w nowej karcie",
           PageOpenBehaviorLabel: "Sposób otwierania",
-          EmptyFieldErrorMessage: "To pole nie może być puste"
+          EmptyFieldErrorMessage: "To pole nie może być puste",
+          TagPickerStrings: {
+            NoResultsSearchMessage: "Nie znaleziono wyników",
+            SearchPlaceholder: "Wyszukaj wartość..."
+          },
+          CurrentVerticalNotSelectedMessage: "Aktualnie wybrana branża nie odpowiada branżom powiązanym z tym składnikiem Web Part ({0}). W trybie wyświetlania pozostanie puste."
       },
       DataSources: {
           SharePointSearch: {
@@ -100,11 +105,10 @@ define([], function() {
               QueryTemplateFieldLabel: "Szablon zapytania",
               QueryTemplatePlaceHolderText: "przykładowo: Path:{Site}",
               QueryTemplateFieldDescription: "Szablon zapytania. Możesz używać {<tokeny>} aby zbudować dynamiczne zapytanie.",
-              ResultSourceIdLabel: "Identyfikator źródła wyników",
-              ResultSourceIdDescription: "Użyj domyślnego źródła wyników lub wpisz własny GUID i naciśnij 'Enter' aby zapisać.",
-              InvalidResultSourceIdMessage: "Wprowadzona wartość nie jest poprawnym GUID",
+              ResultSourceIdLabel: "Źródła wyników  Id / Poziom|Nazwa",
+              ResultSourceIdDescription: "Wybierz wbudowane źródło, wpisz niestandardowy GUID źródła lub POZIOM i NAZWA źródła oddzielone znakiem | (np. SPSite|News). Prawidłowe zakresy to [SPSiteSubscription, SPSite, SPWeb]. Naciśnij [Enter], aby zapisać.",
+              InvalidResultSourceIdMessage: "Wprowadzona wartość nie jest poprawnym GUID lub jest sformatowana jako Poziom|Nazwa",
               EnableQueryRulesLabel: "Włącz reguły zapytania",
-              IncludeOneDriveResultsLabel: "Dołączaj wyniki z OneDrive for Business",
               RefinementFilters: "Filtry zawężające",
               RefinementFiltersDescription: "Początkowe filtry zawężające stosowane do zapytania. Nie pojawią się one w wybranych filtrach. Dla wyrażeń tekstowych, używaj cudzysłowów (\") zamiast apostrofów (').",
               EnableLocalizationLabel: "Włącz lokalizację",
@@ -115,9 +119,12 @@ define([], function() {
               SelectedPropertiesFieldLabel: "Wybrane właściwości",
               SelectedPropertiesFieldDescription: "Wskaż właściwości do pobrania.",
               SelectedPropertiesPlaceholderLabel: "Wybierz właściwości",
+              HitHighlightedPropertiesFieldLabel: "Właściwości wyróżnionych trafień",
+              HitHighlightedPropertiesFieldDescription: "Podaj listę właściwości zarządzanych w celu wyróżniania trafień.",
               TermNotFound: "(Nie znaleziono terminu o identyfikatorze '{0}')",
               ApplyQueryTemplateBtnText: "Zastosuj",
-              EnableAudienceTargetingTglLabel: "Włącz audiencje"
+              EnableAudienceTargetingTglLabel: "Włącz audiencje",
+              TrimDuplicates: "Przytnij duplikaty"
           },
           MicrosoftSearch: {
               QueryTextFieldLabel: "Tekst zapytania",
@@ -131,7 +138,15 @@ define([], function() {
               EnableTopResultsLabel: "Włącz najlepsze wyniki",
               ContentSourcesFieldLabel: "Źródła zawartości",
               ContentSourcesFieldDescriptionLabel: "Identyfikatory połączeń zdefiniowanych w portalu administracyjnym Microsoft Search.",
-              ContentSourcesFieldPlaceholderLabel: "przykładowo: 'MyCustomConnectorId'"
+              ContentSourcesFieldPlaceholderLabel: "przykładowo: 'MyCustomConnectorId'",
+              EnableSuggestionLabel: "Włącz sugestie pisowni",
+              EnableModificationLabel: "Włącz modyfikacje pisowni",
+              QueryTemplateFieldLabel: "Modyfikator zapytania",
+              QueryTemplatePlaceHolderText: "ex: {searchTerms} IsDocument:true",
+              QueryTemplateFieldDescription: "Szablon modyfikatora wyszukiwania. Możesz również użyć {<tokenów>} i KQL do zbudowania dynamicznego zapytania. Wszystko jest połączone z inputQueryText",
+              ApplyQueryTemplateBtnText: "Zastosuj",
+              UseBetaEndpoint: "Użyj punktu końcowego wersji beta",
+              TrimDuplicates: "Przytnij duplikaty"
           },
           SearchCommon: {
               Sort: {
@@ -146,6 +161,9 @@ define([], function() {
                   SortPanelSortDirectionLabel: "Kierunek sortowania",
                   SortDirectionColumnLabel: "Kierunek",
                   SortFieldColumnLabel: "Nazwa pola",
+                  SortFieldDefaultSortLabel: "Sortowanie domyślne",
+                  SortFieldFriendlyNameLabel: "Wyświetlana nazwa pola sortowania",
+                  SortFieldUserSortLabel: "Sortowanie użytkowników",
                   EditSortLabel: "Edytuj porządek sortowania",
                   SortInvalidSortableFieldMessage: "Ta właściwość nie jest sortowalna",
                   SortFieldColumnPlaceholder: "Wybierz pole..."
@@ -187,6 +205,8 @@ define([], function() {
               ManageDetailsListColumnDescription: "Dodawaj, usuwaj i aktualizuj kolumny układu listy ze szczegółami. Możesz używać wartości pól bezpośrednio bez żadnych przekształceń lub użyć wyrażeń Handlebars. HTML jest wspierany przez wszystkie pola.",
               ManageDetailsListColumnLabel: "Zarządzaj kolumnami",
               ValueColumnLabel: "Wartość kolumny",
+              ValueSortingColumnLabel: "Wybierz pole sortowania...",
+              ValueSortingColumnNoFieldsLabel: "Brak dostępnych pól",
               DisplayNameColumnLabel: "Nazwa wyświetlana kolumny",
               FileExtensionFieldLabel: "Pole używane dla rozszerzenia pliku",
               GroupByFieldLabel: "Grupuj po polu",
@@ -292,7 +312,9 @@ define([], function() {
       },
       PropertyPane: {
           ConnectionsPage: {
-              DataConnectionsGroupName: "Dostępne połączenia"
+              DataConnectionsGroupName: "Dostępne połączenia",
+              UseDataVerticalsWebPartLabel: "Użyj pionów z tego komponentu",
+              UseDataVerticalsFromComponentLabel: "Użyj pionów z tego komponentu"
           },
           InformationPage: {
               Extensibility: {
@@ -304,7 +326,8 @@ define([], function() {
                       Id: "GUID manifestu",
                       Enabled: "Włączone/Wyłączone"
                   }
-              }
+              },
+              ImportExport: "Importuj / Eksportuj ustawienia"
           }
       },
       Filters: {
@@ -313,7 +336,10 @@ define([], function() {
           FilterNoValuesMessage: "Brak wartości dla tego filtra",
           OrOperator: "LUB",
           AndOperator: "ORAZ",
-          ComboBoxPlaceHolder: "Wybierz wartość"
+          ComboBoxPlaceHolder: "Wybierz wartość",
+          UseAndOperatorValues: "Använd en AND-operator mellan värden",
+          UseOrOperatorValues: "Använd en ELLER-operator mellan värden",
+          UseValuesOperators: "Välj operator att använda mellan dessa filtervärden"
       },
       SuggestionProviders: {
           SharePointStatic: {
