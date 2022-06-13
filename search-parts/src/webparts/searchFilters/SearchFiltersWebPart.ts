@@ -30,7 +30,7 @@ import { IAsyncComboProps } from '../../controls/PropertyPaneAsyncCombo/componen
 import { AvailableLayouts, BuiltinLayoutsKeys } from '../../layouts/AvailableLayouts';
 import { LayoutHelper } from '../../helpers/LayoutHelper';
 import { TemplateService } from '../../services/templateService/TemplateService';
-import { ITemplateService } from '../../services/templateService/ITemplateService';
+import { FileFormat, ITemplateService } from '../../services/templateService/ITemplateService';
 import { isEmpty, isEqual, uniqBy, cloneDeep, uniq, sortBy } from '@microsoft/sp-lodash-subset';
 import { Dropdown, IDropdownProps, IDropdownOption, Checkbox, Icon, IComboBoxOption, MessageBar, MessageBarType } from 'office-ui-fabric-react';
 import { BuiltinFilterTemplates, BuiltinFilterTypes } from '../../layouts/AvailableTemplates';
@@ -948,7 +948,8 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
         if (this.properties.selectedLayoutKey === BuiltinLayoutsKeys.FiltersCustom) {
 
             if (this.properties.externalTemplateUrl) {
-                this.templateContentToDisplay = await this.templateService.getFileContent(this.properties.externalTemplateUrl);
+                // We do not support filters as adaptive cards
+                this.templateContentToDisplay = await this.templateService.getFileContent(this.properties.externalTemplateUrl, FileFormat.Text);
             } else {
                 this.templateContentToDisplay = this.properties.inlineTemplateContent ? this.properties.inlineTemplateContent : selectedLayoutTemplateContent;
             }
@@ -1039,7 +1040,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     public async loadPropertyPaneResources(): Promise<void> {
 
         const { PropertyFieldCodeEditor, PropertyFieldCodeEditorLanguages } = await import(
-            /* webpackChunkName: 'pnp-modern-search-property-pane' */
+            /* webpackChunkName: 'pnp-modern-search-code-editor' */
             '@pnp/spfx-property-controls/lib/propertyFields/codeEditor'
         );
 

@@ -9,7 +9,7 @@ import { groupBy, sortBy, findIndex, isEmpty, cloneDeep } from "@microsoft/sp-lo
 import { FileIcon } from '../components/FileIconComponent';
 import { DetailsListLayoutMode, SelectionMode, IColumn, IGroup, IDetailsRowProps, DetailsRow, IDetailsHeaderProps, DetailsHeader, CheckboxVisibility, DetailsRowCheck, IDetailsListCheckboxProps } from 'office-ui-fabric-react/lib/DetailsList';
 import { DEFAULT_CELL_STYLE_PROPS, DEFAULT_ROW_HEIGHTS } from 'office-ui-fabric-react/lib/components/DetailsList/DetailsRow.styles';
-import { IDataResultsTemplateContext } from '../models/common/ITemplateContext';
+import { ISearchResultsTemplateContext } from '../models/common/ITemplateContext';
 import { ObjectHelper } from '../helpers/ObjectHelper';
 import * as DOMPurify from 'dompurify';
 import { DomPurifyHelper } from '../helpers/DomPurifyHelper';
@@ -163,7 +163,7 @@ export interface IDetailsListComponentProps {
     /**
      * The Handlebars context to inject in columns content (ex: @root)
      */
-    context?: IDataResultsTemplateContext;
+    context?: ISearchResultsTemplateContext;
 
     /**
      * The isolated Handlebars namespace 
@@ -215,7 +215,7 @@ export interface IDetailsListComponentState {
 export class DetailsListComponent extends React.Component<IDetailsListComponentProps, IDetailsListComponentState> {
 
   private _allItems: any[];
-  private _templateContext: IDataResultsTemplateContext;
+  private _templateContext: ISearchResultsTemplateContext;
   private _domPurify: any;
   private _selection: Selection;
   private _selectionMode: SelectionMode = SelectionMode.none;

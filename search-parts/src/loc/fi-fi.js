@@ -79,12 +79,12 @@ define([], function() {
             },
             DateIntervalStrings: {
                 AnyTime: "Milloin tahansa",
-                PastDay: "Edellisestä 24 tunnista edelliseen viikkoon",
-                PastWeek: "Edellisestä viikosta edelliseen kuukauteen",
-                PastMonth: "Edellisestä kuukaudesta edelliseen 3 kuukauteen",
-                Past3Months: "Edellisestä 3 kuukaudesta edelliseen vuoteen",
-                PastYear: "Edellinen vuosi",
-                Older: "Yli vuosi sitten"
+                PastDay: "Viimeiset 24 tuntia",
+                PastWeek: "Viimeisestä 24 tunnista viime viikkoon",
+                PastMonth: "Edellisestä viikosta viime kuukauteen",
+                Past3Months: "Viime kuukaudesta viimeiseen kolmeen kuukauteen",
+                PastYear: "Viimeisen 3 kuukauden ajalta viime vuoteen",
+                Older: "Vuotta vanhempi"
             },
             SameTabOpenBehavior: "Avaa samaan välilehteen",
             NewTabOpenBehavior: "Avaa uuteen välilehteen",
@@ -121,7 +121,8 @@ define([], function() {
                 SelectedPropertiesPlaceholderLabel: "Valitse ominaisuudet",
                 TermNotFound: "(Termiä ID:llä '{0}' ei löydy)",
                 ApplyQueryTemplateBtnText: "Ota käyttöön",
-                EnableAudienceTargetingTglLabel: "Salli käyttäjäryhmäkohdennus"
+                EnableAudienceTargetingTglLabel: "Salli käyttäjäryhmäkohdennus",
+                TrimDuplicates: "Leikkaa kaksoiskappaleet"
             },
             MicrosoftSearch: {
                 QueryTextFieldLabel: "Hakukysely",
@@ -142,7 +143,8 @@ define([], function() {
                 QueryTemplatePlaceHolderText: "esimerkki: {searchTerms} IsDocument:true",
                 QueryTemplateFieldDescription: "Hakukyselyn templaatti. Voit myös käyttää {<tokens>} muotoilua ja KQL-määreitä rakentaaksesi dynaamisen kyselyn.",
                 ApplyQueryTemplateBtnText: "Ota käyttöön",
-                UseBetaEndpoint: "Käytä beta endpointtia"
+                UseBetaEndpoint: "Käytä beta endpointtia",
+                TrimDuplicates: "Leikkaa kaksoiskappaleet"
             },
             SearchCommon: {
                 Sort: {

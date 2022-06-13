@@ -83,17 +83,24 @@ export interface IMicrosoftSearchDataSourceProperties {
     * Flag indicating if the Microsoft Search beta endpoint should be used
      */
     useBetaEndpoint: boolean;
+
+    /**
+     * Enable Microsoft Search result types
+     */
+    enableResultTypes: boolean;
+
+    /**
+     * Indicates whether to trim away the duplicate SharePoint files from search results. Default value is false.
+     */
+    trimDuplicates: boolean;
 }
 
 export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDataSourceProperties> {
 
     private _tokenService: ITokenService;
-    private _sharePointSearchService: ISharePointSearchService;
-
     private _propertyPaneWebPartInformation: any = null;
     private _availableFields: IComboBoxOption[] = [];
     private _microsoftSearchUrl: string;
-    private _availableManagedProperties: IComboBoxOption[] = [];
     private _sortableFields: IComboBoxOption[] = SortableFields.map(field => {
         return {
             key: field,
@@ -163,7 +170,6 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
 
         serviceScope.whenFinished(() => {
             this._tokenService = serviceScope.consume<ITokenService>(TokenService.ServiceKey);
-            this._sharePointSearchService = serviceScope.consume<ISharePointSearchService>(SharePointSearchService.ServiceKey);
         });
     }
 
@@ -213,6 +219,18 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         // Ensuring at least one entity type is selected before launching a search
         if (this._properties.entityTypes.length > 0) {
             const searchQuery = await this.buildMicrosoftSearchQuery(dataContext);
+
+            if (searchQuery.requests && searchQuery.requests.length > 0 && 
+                dataContext.sorting && dataContext.sorting.selectedSortFieldName && dataContext.sorting.selectedSortFieldName.length > 0) {
+                    searchQuery.requests = searchQuery.requests.map((req) => {
+                    req.sortProperties = [{ 
+                        "name": dataContext.sorting.selectedSortFieldName, 
+                        "isDescending": dataContext.sorting.selectedSortDirection == SortFieldDirection.Descending 
+                    }];
+                    return req;
+                });
+            }
+
             results = await this.search(searchQuery);
         } else {
             // If no entity is selected, manually set the results to prevent
@@ -279,14 +297,29 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                 onUpdateOptions: ((options: IComboBoxOption[]) => {
                     this._availableFields = options;
                 }).bind(this)
+            }),
+            PropertyPaneToggle('dataSourceProperties.enableResultTypes', {
+                label: "Enable result types",
+                disabled: this.properties.entityTypes.indexOf(EntityType.ExternalItem) === -1
             })
         ];
+
         let useBetaEndpointFields: IPropertyPaneField<any>[] = [
             PropertyPaneHorizontalRule(),
             PropertyPaneToggle('dataSourceProperties.useBetaEndpoint', {
                 label: commonStrings.DataSources.MicrosoftSearch.UseBetaEndpoint
             })
         ];
+
+        // Add beta options
+        if (this.properties.useBetaEndpoint) {
+            useBetaEndpointFields.push(
+                PropertyPaneToggle('dataSourceProperties.trimDuplicates', {
+                    label: commonStrings.DataSources.MicrosoftSearch.TrimDuplicates
+                }),
+                PropertyPaneHorizontalRule() 
+            );
+        }
 
         // Sorting results is currently only supported on the following SharePoint and OneDrive types: driveItem, listItem, list, site.
         if (this.properties.entityTypes.indexOf(EntityType.DriveItem) !== -1  ||
@@ -455,7 +488,6 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
 
             if (newValue) {
                 this._microsoftSearchUrl = "https://graph.microsoft.com/beta/search/query";
-
             } else {
                 this._microsoftSearchUrl = "https://graph.microsoft.com/v1.0/search/query";
             } 
@@ -470,6 +502,12 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
     
         if (propertyPath.localeCompare('dataSourceProperties.entityTypes') === 0) {
             this.properties.entityTypes = (cloneDeep(newValue) as IComboBoxOption[]).map(v => { return v.key as EntityType; });
+
+            if (this.properties.entityTypes.indexOf(EntityType.ExternalItem) === -1) {
+                // Reset result types
+                this.properties.enableResultTypes = false;
+            }
+
             this.context.propertyPane.refresh();
             this.render();
         }
@@ -541,6 +579,10 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             {
                 slotName: BuiltinTemplateSlots.IsFolder,
                 slotField: 'resource.fields.contentTypeId'
+            },
+            {
+                slotName: BuiltinTemplateSlots.Id,
+                slotField: 'hitId'
             }
         ];
     }
@@ -562,6 +604,8 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         this.properties.queryAlterationOptions = this.properties.queryAlterationOptions ?? { enableModification: false, enableSuggestion: false };
         this.properties.queryTemplate = this.properties.queryTemplate ? this.properties.queryTemplate : "{searchTerms}";
         this.properties.useBetaEndpoint = this.properties.useBetaEndpoint !== undefined ? this.properties.useBetaEndpoint : false;
+        this.properties.enableResultTypes = this.properties.enableResultTypes !== undefined ? this.properties.enableResultTypes : false;
+        this.properties.trimDuplicates =  this.properties.trimDuplicates !== undefined ? this.properties.trimDuplicates : false;
 
         if (this.properties.useBetaEndpoint) {
             this._microsoftSearchUrl = "https://graph.microsoft.com/beta/search/query";
@@ -588,10 +632,11 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         }
 
         // Query modification
-        const queryTemplate = await this._tokenService.resolveTokens(this.properties.queryTemplate);
-        if (!isEmpty(queryTemplate.trim())) {
+        let queryTemplate = await this._tokenService.resolveTokens(this.properties.queryTemplate);
+        if (!isEmpty(queryTemplate.trim()) && !this.properties.useBetaEndpoint) {
 
             // Use {searchTerms} or {inputQueryText} to use orginal value
+            // As of 06/06/2022 the query template is still in beta so we use the query text instead
             queryText = queryTemplate.trim();
         }
 
@@ -705,7 +750,8 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         let searchRequest: IMicrosoftSearchRequest = {
             entityTypes: this.properties.entityTypes,
             query: {
-                queryString: queryText
+                queryString: queryText,
+                queryTemplate: queryTemplate 
             },
             from: from,
             size: dataContext.itemsCountPerPage
@@ -730,12 +776,24 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         if (contentSources.length > 0) {
             searchRequest.contentSources = contentSources;
         }
+
+        if (this.properties.trimDuplicates) {
+            // Default value is always 'false'
+            searchRequest.trimDuplicates = this.properties.trimDuplicates;
+        }
           
         searchRequest.queryAlterationOptions = {
             enableModification: this.properties.queryAlterationOptions.enableModification,
             enableSuggestion: this.properties.queryAlterationOptions.enableSuggestion
         };
-        
+
+        // Result types
+        if (this.properties.enableResultTypes) {
+            searchRequest.resultTemplateOptions = {
+                enableResultTemplate: true
+            };
+        }
+
         searchQuery.requests.push(searchRequest);
     
         return searchQuery;
@@ -814,7 +872,11 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
 
                 if (value?.queryAlterationResponse) {
                     response.queryAlterationResponse = value.queryAlterationResponse;
-                }        
+                }    
+                
+                if (value?.resultTemplates) {
+                    response.resultTemplates = value.resultTemplates;
+                }
             });
         }
         

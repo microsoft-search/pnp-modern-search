@@ -8,8 +8,8 @@ import { ITemplateService } from '../../../services/templateService/ITemplateSer
 import { TemplateService } from '../../../services/templateService/TemplateService';
 import { Log, DisplayMode } from "@microsoft/sp-core-library";
 import { MessageBar, MessageBarType, Overlay, Spinner, SpinnerSize } from 'office-ui-fabric-react';
-import { IDataSourceData, IDataFilterResult, BuiltinTemplateSlots } from '@pnp/modern-search-extensibility';
-import { IDataResultsTemplateContext } from '../../../models/common/ITemplateContext';
+import { IDataSourceData, IDataFilterResult, BuiltinTemplateSlots, LayoutRenderType, SortFieldDirection } from '@pnp/modern-search-extensibility';
+import { ISearchResultsTemplateContext } from '../../../models/common/ITemplateContext';
 import styles from './SearchResultsContainer.module.scss';
 import { Constants, AutoCalculatedDataSourceFields, TestConstants } from '../../../common/Constants';
 import { ITemplateSlot } from '@pnp/modern-search-extensibility';
@@ -17,6 +17,7 @@ import { ObjectHelper } from '../../../helpers/ObjectHelper';
 import { BuiltinLayoutsKeys } from '../../../layouts/AvailableLayouts';
 import { WebPartTitle } from '@pnp/spfx-controls-react/lib/WebPartTitle';
 import * as webPartStrings from 'SearchResultsWebPartStrings';
+import { IMicrosoftSearchDataSourceData } from '../../../models/search/IMicrosoftSearchDataSourceData';
 
 const LogSource = "SearchResultsContainer";
 
@@ -53,6 +54,10 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
     private _lastPageNumber: number;
     private _lastPageSelectedKeys: string[] = [];
 
+    private _dataSourceProperties: {
+        [key: string]: any
+    };
+
     public constructor(props: ISearchResultsContainerProps) {
 
         super(props);
@@ -65,16 +70,18 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             selectedItemKeys: []
         };
 
+        this._dataSourceProperties = props.properties.dataSourceProperties;
+
         this.templateService = this.props.serviceScope.consume<ITemplateService>(TemplateService.ServiceKey);
-    
+
         this._onSelectionChanged = this._onSelectionChanged.bind(this);
 
         this._selection = new Selection({
             onSelectionChanged: this._onSelectionChanged,
             getKey: (item, index) => {
-              // Not suitable as keys
-              // - Stringified object as we can't rely on field values. Ex they can diverge from calls with SharePoint (ex: piSearchResultId with SharePoint)
-              return item.key = `${this.props.dataContext.pageNumber}${index}`;
+                // Not suitable as keys
+                // - Stringified object as we can't rely on field values. Ex they can diverge from calls with SharePoint (ex: piSearchResultId with SharePoint)
+                return item.key = `${this.props.dataContext.pageNumber}${index}`;
             },
         });
     }
@@ -102,22 +109,24 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
         // Content loading
         templateContent = this.templateService.getTemplateMarkup(this.props.templateContent);
         const templateContext = this.getTemplateContext();
+        let renderType = this.props.renderType;
 
         let selectionMode = SelectionMode.none;
         if (this.props.properties.itemSelectionProps && this.props.properties.itemSelectionProps.allowItemSelection) {
-          selectionMode = this.props.properties.itemSelectionProps.allowMulti ? SelectionMode.multiple : SelectionMode.single;
+            selectionMode = this.props.properties.itemSelectionProps.allowMulti ? SelectionMode.multiple : SelectionMode.single;
         }
-    
-        renderTemplate =    <SelectionZone 
-                            selection={this._selection} 
-                            selectionMode={selectionMode}>
-                                <TemplateRenderer
-                                templateContent={templateContent} 
-                                templateContext={templateContext}
-                                templateService={this.templateService}
-                                instanceId={this.props.instanceId}
-                                />
-                            </SelectionZone>;
+
+        renderTemplate = <SelectionZone
+            selection={this._selection}
+            selectionMode={selectionMode}>
+            <TemplateRenderer
+                templateContent={templateContent}
+                templateContext={templateContext}
+                templateService={this.templateService}
+                instanceId={this.props.instanceId}
+                renderType={renderType}
+            />
+        </SelectionZone>;
 
         // Determine if the component should show content according to Web Part parameters  
         if (this.state.data && this.state.data.items.length === 0) {
@@ -164,6 +173,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                         templateContext={this.getTemplateContext()}
                         templateService={this.templateService}
                         instanceId={this.props.instanceId}
+                        renderType={this.props.renderType}
                     />;
                 } else {
                     renderShimmerElements = this.getDefaultShimmerElements();
@@ -202,7 +212,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
 
             if (!isEqual(prevProps.dataContext.pageNumber, this.props.dataContext.pageNumber)) {
                 // Save the last selected keys for the current selection to be able to track items across pages
-                this._lastPageSelectedKeys =  this._selection.getSelection().map(item => item.key as string);
+                this._lastPageSelectedKeys = this._selection.getSelection().map(item => item.key as string);
             }
 
             await this.getDataFromDataSource(this.props.dataContext.pageNumber);
@@ -212,7 +222,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             // Reset already selected items
             this._selection.setItems(this.state.data.items, true);
         }
-        
+
     }
 
     /**
@@ -237,10 +247,20 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             let availableFilters: IDataFilterResult[] = [];
             let totalItemsCount = 0;
 
-            let pageLinks: string[] = this.props.dataContext.paging.pageLinks;
-            let nextLinkUrl: string = this.props.dataContext.paging.nextLinkUrl;
-
             const localDataContext = cloneDeep(this.props.dataContext);
+
+
+            if (this._dataSourceProperties?.sortProperties != undefined && this._dataSourceProperties?.sortProperties.length != undefined &&
+                this._dataSourceProperties?.sortProperties.length > 0) {
+                const sortFieldName = this._dataSourceProperties?.sortProperties[0].name;
+                const isDescending = this._dataSourceProperties?.sortProperties[0].isDescending;
+
+                localDataContext.sorting = {
+                    selectedSortableFields: [sortFieldName],
+                    selectedSortFieldName: sortFieldName,
+                    selectedSortDirection: isDescending ? SortFieldDirection.Descending : SortFieldDirection.Ascending
+                };
+            }
 
             // Fetch live data
             data = await this.props.dataSource.getData(localDataContext);
@@ -250,11 +270,6 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
 
             // Determine total items count and page number
             totalItemsCount = this.props.dataSource.getItemCount();
-
-            // Reset the links if no item. In theory, data sources should do the same internally but if it is not the case, we double check and reset the count for them
-            if (totalItemsCount === 0 && data.paging && data.paging.links) {
-                data.paging.links = [];
-            }
 
             if (data.filters) {
                 if (data.filters.length === 0) {
@@ -272,7 +287,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 }
             }
 
-            this.props.onDataRetrieved(this.getAvailableFieldsFromResults(data), availableFilters, pageNumber, nextLinkUrl, pageLinks);
+            this.props.onDataRetrieved(this.getAvailableFieldsFromResults(data), availableFilters, pageNumber);
 
             // Persist the total items count
             this._totalItemsCount = totalItemsCount;
@@ -343,9 +358,9 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             data.items = data.items.map(item => {
 
                 let contentClass = ObjectHelper.byPath(item, BuiltinTemplateSlots.ContentClass);
-                
+
                 if (!isEmpty(contentClass) && (contentClass.toLocaleLowerCase() == "sts_site" || contentClass.toLocaleLowerCase() == "sts_web")) {
-                    item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] =  ObjectHelper.byPath(item, "SiteLogo");
+                    item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = ObjectHelper.byPath(item, "SiteLogo");
                 }
                 else {
                     let siteId = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.SiteId]);
@@ -456,7 +471,9 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
     }
 
     // Build the template context
-    private getTemplateContext(): IDataResultsTemplateContext {
+    private getTemplateContext(): ISearchResultsTemplateContext {
+
+        let adaptiveCardsHostConfig = null;
 
         // Gets information about current page context
         const { site, web, list, listItem, user, cultureInfo } = this.props.pageContext;
@@ -468,6 +485,12 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
         delete trimmedProperties.inlineTemplateContent;
         delete trimmedProperties.documentationLink;
         delete trimmedProperties.externalTemplateUrl;
+
+        try {
+            adaptiveCardsHostConfig = JSON.parse(this.props.properties.adaptiveCardsHostConfig);
+        } catch (error) {
+            Log.warn(LogSource, `Invalid host config provided. Refer to https://docs.microsoft.com/en-us/adaptive-cards/rendering-cards/host-config for more details`, this.props.serviceScope);
+        }
 
         return {
             // The data source data
@@ -516,7 +539,8 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             instanceId: this.props.instanceId,
             // Any other useful informations
             utils: {
-                defaultImage: Constants.DEFAULT_IMAGE_CONTENT
+                defaultImage: Constants.DEFAULT_IMAGE_CONTENT,
+                adaptiveCardsHostConfig: adaptiveCardsHostConfig
             },
             selectedKeys: this.state.selectedItemKeys
         };
@@ -572,20 +596,20 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
         // When page is updated, the selection changed is fired clearing all previous selection
         // We need to ensure the state is not updated during this phase 
         if (this.props.dataContext.pageNumber === this._lastPageNumber) {
-    
-          const currentSelectedItems = this._selection.getSelection();
-    
-          const currentPageSelectionKeys =  currentSelectedItems.map(item => item.key as string);
-    
-          this.props.onItemSelected(currentSelectedItems);
-    
-          // Update curent selected keys and values
-          this.setState({
-            selectedItemKeys: [...this._lastPageSelectedKeys,...currentPageSelectionKeys]
-          }, () => {
-            this.forceUpdate();
-          });
+
+            const currentSelectedItems = this._selection.getSelection();
+
+            const currentPageSelectionKeys = currentSelectedItems.map(item => item.key as string);
+
+            this.props.onItemSelected(currentSelectedItems);
+
+            // Update curent selected keys and values
+            this.setState({
+                selectedItemKeys: [...this._lastPageSelectedKeys, ...currentPageSelectionKeys]
+            }, () => {
+                this.forceUpdate();
+            });
         }
-        
-      }
+
+    }
 }

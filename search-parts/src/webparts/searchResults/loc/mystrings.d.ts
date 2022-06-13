@@ -45,40 +45,49 @@ declare interface ISearchResultsWebPartStrings {
             ShowSelectedFilters: string;
             ShowBlankIfNoResult: string;
             ShowResultsCount: string;
-            UseMicrosoftGraphToolkit: string;
-            ResultTypes: {
-                ResultTypeslabel: string;
-                ResultTypesDescription: string;
-                InlineTemplateContentLabel: string;
-                EditResultTypesLabel: string;
-                ConditionPropertyLabel: string;
-                ConditionValueLabel: string;
-                CondtionOperatorValue: string;
-                ExternalUrlLabel: string;
-                EqualOperator: string;
-                NotEqualOperator: string;
-                ContainsOperator: string;
-                StartsWithOperator: string;
-                NotNullOperator: string;
-                GreaterOrEqualOperator: string;
-                GreaterThanOperator: string;
-                LessOrEqualOperator: string;
-                LessThanOperator: string;
-                CancelButtonText: string;
-                DialogButtonText: string;
-                DialogTitle: string;
-                SaveButtonText: string;
+            HandlebarsRenderTypeLabel: string;
+            HandlebarsRenderTypeDesc: string;
+            AdaptiveCardsRenderTypeLabel: string;
+            AdaptiveCardsRenderTypeDesc: string;
+            Handlebars: {
+                UseMicrosoftGraphToolkit: string;
+                ResultTypes: {
+                    ResultTypeslabel: string;
+                    ResultTypesDescription: string;
+                    InlineTemplateContentLabel: string;
+                    EditResultTypesLabel: string;
+                    ConditionPropertyLabel: string;
+                    ConditionValueLabel: string;
+                    CondtionOperatorValue: string;
+                    ExternalUrlLabel: string;
+                    EqualOperator: string;
+                    NotEqualOperator: string;
+                    ContainsOperator: string;
+                    StartsWithOperator: string;
+                    NotNullOperator: string;
+                    GreaterOrEqualOperator: string;
+                    GreaterThanOperator: string;
+                    LessOrEqualOperator: string;
+                    LessThanOperator: string;
+                    CancelButtonText: string;
+                    DialogButtonText: string;
+                    DialogTitle: string;
+                    SaveButtonText: string;
+                },
+                AllowItemSelection: string;
+                AllowMultipleItemSelection: string;
+                SelectionModeLabel: string;
+                AsTokensSelectionMode: string;
+                AsDataFiltersSelectionMode: string;
+                AsDataFiltersDescription: string;
+                AsTokensDescription: string;
+                FilterValuesOperator: string;
+                FieldToConsumeLabel: string;
+                FieldToConsumeDescription: string;
+            },
+            AdaptiveCards: {
+                HostConfigFieldLabel: string;
             }
-            AllowItemSelection: string;
-            AllowMultipleItemSelection: string;
-            SelectionModeLabel: string;
-            AsTokensSelectionMode: string;
-            AsDataFiltersSelectionMode: string;
-            AsDataFiltersDescription: string;
-            AsTokensDescription: string;
-            FilterValuesOperator: string;
-            FieldToConsumeLabel: string;
-            FieldToConsumeDescription: string;
         },
         ConnectionsPage: {
             ConnectionsPageGroupName: string;

@@ -71,6 +71,7 @@ export class FilterCheckBoxComponent extends React.Component<IFilterCheckBoxProp
         };
 
         let renderInput: JSX.Element = null;
+        let textColor: string = this.props.themeVariant && this.props.themeVariant.isInverted ? (this.props.themeVariant ? this.props.themeVariant.semanticColors.bodyText : '#323130') : this.props.themeVariant.semanticColors.inputText;
 
         if (this.props.isMulti) {
             renderInput =   <Checkbox
@@ -82,7 +83,7 @@ export class FilterCheckBoxComponent extends React.Component<IFilterCheckBoxProp
                                         width: '100%'
                                     },
                                     text: {
-                                        color: this.props.count && this.props.count === 0 ? this.props.themeVariant.semanticColors.disabledText : this.props.themeVariant.semanticColors.bodyText
+                                        color: this.props.count && this.props.count === 0 ? this.props.themeVariant.semanticColors.disabledText : textColor
                                     }
                                 }}
                                 theme={this.props.themeVariant as ITheme}
@@ -121,8 +122,12 @@ export class FilterCheckBoxComponent extends React.Component<IFilterCheckBoxProp
                                         key: filterValue.value, 
                                         text: filterValue.name,
                                         disabled: this.props.disabled,
-
-                                        checked: this.props.selected
+                                        checked: this.props.selected,
+                                        styles: {
+                                            field: {
+                                                color: this.props.count && this.props.count === 0 ? this.props.themeVariant.semanticColors.disabledText : textColor
+                                            }
+                                        }
                                     }
                                 ]}
                                 onChange={(ev?: React.FormEvent<HTMLInputElement>, option?: IChoiceGroupOption) => {

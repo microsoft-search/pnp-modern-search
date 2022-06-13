@@ -117,7 +117,7 @@ export class TokenService implements ITokenService {
 
         if (inputString) {
 
-            this.moment  = await this.dateHelper.moment();
+            this.moment = await this.dateHelper.moment();
 
             // Resolves dynamic tokens (i.e. tokens resolved asynchronously versus static ones set by the Web Part context)
             inputString = await this.replacePageTokens(inputString);
@@ -131,7 +131,7 @@ export class TokenService implements ITokenService {
             inputString = this.replaceGroupTokens(inputString);
             inputString = this.replaceLegacyPageContextTokens(inputString);
             inputString = await this.replaceHubTokens(inputString);
-            
+
             inputString = inputString.replace(/\{TenantUrl\}/gi, `https://` + window.location.host);
 
             // Look for static tokens in the specified string
@@ -151,7 +151,7 @@ export class TokenService implements ITokenService {
                     const tokenValue = ObjectHelper.byPath(this.tokenValuesList, tokenName);
 
                     if (tokenValue !== undefined) {
-                        
+
                         if (tokenValue !== null) {
                             inputString = inputString.replace(new RegExp(StringHelper.escapeRegExp(token), 'gi'), tokenValue);
                         } else {
@@ -163,7 +163,7 @@ export class TokenService implements ITokenService {
             }
 
             // The 'OR/AND' operator should be called after all tokens are processed (works with comma delimited values potentially coming from resolved)
-            inputString = this.replaceAndOrOperator(inputString);                
+            inputString = this.replaceAndOrOperator(inputString);
 
             // Replace manually escaped curly braces
             inputString = inputString.replace(/\\({|})/gi, '$1');
@@ -393,7 +393,7 @@ export class TokenService implements ITokenService {
             matches = userTokenRegExp.exec(inputString);
         }
 
-        inputString = inputString.replace(new RegExp("\{Me\}", 'gi'), this.pageContext.user.displayName);
+        inputString = inputString.replace(/\{Me\}/gi, this.pageContext.user.displayName);
 
         return inputString;
     }
@@ -608,7 +608,7 @@ export class TokenService implements ITokenService {
         // Example match: {|owstaxidmetadataalltagsinfo:{Page.<TaxnomyProperty>.TermID}}
         const orAndConditionTokens = /\{(?:(\||\&)(.+?)(>=|=|<=|:|<>|<|>))(\{?.*?\}?\s*)\}/gi;
         let reQueryTemplate = inputString;
-        let match = orAndConditionTokens.exec(inputString);        
+        let match = orAndConditionTokens.exec(inputString);
 
         if (match != null) {
             while (match !== null) {
@@ -616,12 +616,12 @@ export class TokenService implements ITokenService {
                 let conditions = [];
                 const conditionOperator = match[1];
                 const property = match[2];
-                const operator = match[3];                
+                const operator = match[3];
                 const tokenValue = match[4];
 
 
                 let quotes = '"';
-                let orAndOperator = conditionOperator === '|' ? 'OR': 'AND';
+                let orAndOperator = conditionOperator === '|' ? 'OR' : 'AND';
 
                 // {User} tokens are resolved server-side by SharePoint so we exclude them
                 if (!/\{(?:User)\.(.*?)\}/gi.test(tokenValue)) {
@@ -651,7 +651,7 @@ export class TokenService implements ITokenService {
                 match = orAndConditionTokens.exec(reQueryTemplate);
             }
         }
-        
+
         return inputString;
     }
 

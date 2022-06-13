@@ -112,6 +112,12 @@ export interface ISharePointSearchDataSourceProperties {
      * Flag indicating if the audience targeting should be enabled
      */
     enableAudienceTargeting: boolean;
+
+    /**
+     * A Boolean value that specifies whether duplicate items are removed from the results. 
+     * "true" to remove the duplicate items; otherwise, false. The default value is true.
+     */
+    trimDuplicates: boolean;
 }
 
 export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearchDataSourceProperties> {
@@ -416,6 +422,9 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                         label: commonStrings.DataSources.SharePointSearch.EnableQueryRulesLabel,
                         checked: this.properties.enableQueryRules,
                     }),
+                    PropertyPaneToggle('dataSourceProperties.trimDuplicates', {
+                        label: commonStrings.DataSources.SharePointSearch.TrimDuplicates
+                    }),
                     PropertyPaneToggle('dataSourceProperties.enableAudienceTargeting', {
                         label: commonStrings.DataSources.SharePointSearch.EnableAudienceTargetingTglLabel,
                         checked: this.properties.enableAudienceTargeting,
@@ -585,7 +594,8 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
             ];
         this.properties.resultSourceId = this.properties.resultSourceId !== undefined ? this.properties.resultSourceId : BuiltinSourceIds.LocalSharePointResults; 
         this.properties.hitHighlightedProperties = this.properties.hitHighlightedProperties ? this.properties.hitHighlightedProperties : '';
-
+        this.properties.trimDuplicates =  this.properties.trimDuplicates !== undefined ? this.properties.trimDuplicates : false;
+        
         if (this.properties.sortList !== undefined) {
             // Convert to new schema 4.5.5
             this.properties.sortList = this.properties.sortList.map(sortConfiguration => {
@@ -892,7 +902,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
             searchQuery.StartRow = (dataContext.pageNumber - 1) * searchQuery.RowLimit;
         }
 
-        searchQuery.TrimDuplicates = false;
+        searchQuery.TrimDuplicates = this.properties.trimDuplicates;
 
         if (dataContext.sorting?.selectedSortFieldName 
             && dataContext.sorting?.selectedSortDirection) {
@@ -1162,14 +1172,15 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                             const termId = matches[3];
                             const termPrefix = matches[2]; // 'L0'
                             if (termPrefix.localeCompare("L0") === 0) {
-                                const termFilterWithoutTranslations =  `"ǂǂ${StringHelper._bytesToHex(StringHelper._stringToUTF8Bytes(`GP0|#${termId.toString()}`))}"`;
-                                const termTextFilter = `string("L0|#${termId.toString()}")`;
+                                const termFilterWithoutTranslations = `GP0|#${termId.toString()}`;
+                                const termTextFilter = `L0|#${termId.toString()}`;
 
-                                // value.value: HEX encoded value => original refiner value 
+                                // https://docs.microsoft.com/en-us/sharepoint/technical-reference/automatically-created-managed-properties-in-sharepoint
+
                                 // termFilterWithoutTranslations => language agnostic term value
-                                // termTextFilter => Text value in case the value is a string (ex: a property bag value or a text column)
-                                value.value = `or(${value.value},${termFilterWithoutTranslations},${termTextFilter})`;
-                            }
+                                // termTextFilter => Text value in case the value is a litteral string (ex: a property bag value or a text column https://microsoft-search.github.io/pnp-modern-search/usage/search-filters/#use-indexed-property-bag-properties-with-taxonomy-values)
+                                value.value = `or(${termFilterWithoutTranslations},${termTextFilter})`;
+                            } 
                         }
 
                         value.name = existingFilters[0].localizedTermLabel;

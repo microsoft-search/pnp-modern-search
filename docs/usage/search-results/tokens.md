@@ -14,7 +14,8 @@ You can use tokens in the following locations:
     - In the link URL when the vertical item is a link.
 
 - **Search Box Web Part**
-    - In the Query input transformation template when sending the query to a new page.
+    - In the _Query input transformation template_ when sending the query to a new page.
+    - In the _Page URL_ field.
 
 #### Supported tokens (all data sources)
 

@@ -79,11 +79,11 @@ define([], function() {
             },
             DateIntervalStrings: {
                 AnyTime: "Any time",
-                PastDay: "From past 24 hours to past week",
-                PastWeek: "From past week to past month",
-                PastMonth: "From past month to past 3 months",
-                Past3Months: "From past 3 months to past year",
-                PastYear: "From past year",
+                PastDay: "Past 24 hours",
+                PastWeek: "From past 24 hours to past week",
+                PastMonth: "From past week to past month",
+                Past3Months: "From past month to past 3 months",
+                PastYear: "From past 3 months to past year",
                 Older: "Older than a year"
             },
             SameTabOpenBehavior: "Use the current tab",
@@ -101,7 +101,7 @@ define([], function() {
                 SourceName: "SharePoint Search",
                 SourceConfigurationGroupName: "Source configuration",
                 QueryTextFieldLabel: "Query text",
-                QueryTextFieldInfoMessage: "Use the <strong>Available connections</strong> Web Part configuration tab to specifiy either a static value or a value from a dynamic component on the page like a searchbox",
+                QueryTextFieldInfoMessage: "Use the <strong>Available connections</strong> Web Part configuration tab to specify either a static value or a value from a dynamic component on the page like a searchbox",
                 QueryTemplateFieldLabel: "Query template",
                 QueryTemplatePlaceHolderText: "ex: Path:{Site}",
                 QueryTemplateFieldDescription: "The search query template. You can also use {<tokens>} to build a dynamic query.",
@@ -123,7 +123,8 @@ define([], function() {
                 HitHighlightedPropertiesFieldDescription: "Provide the list of managed properties to hit highlight (i.e. Department,UserName).",
                 TermNotFound: "(Term with ID '{0}' not found)",
                 ApplyQueryTemplateBtnText: "Apply",
-                EnableAudienceTargetingTglLabel: "Enable audience targeting"
+                EnableAudienceTargetingTglLabel: "Enable audience targeting",
+                TrimDuplicates: "Trim duplicates"
             },
             MicrosoftSearch: {
                 QueryTextFieldLabel: "Query text",
@@ -144,7 +145,8 @@ define([], function() {
                 QueryTemplatePlaceHolderText: "ex: {searchTerms} IsDocument:true",
                 QueryTemplateFieldDescription: "The search query template. You can also use {<tokens>} and KQL to build a dynamic query.",
                 ApplyQueryTemplateBtnText: "Apply",
-                UseBetaEndpoint: "Use beta endpoint"
+                UseBetaEndpoint: "Use beta endpoint",
+                TrimDuplicates: "Trim duplicates"
             },
             SearchCommon: {
                 Sort: {
@@ -181,7 +183,10 @@ define([], function() {
             Debug: {
                 Name: "Debug"
             },
-            Custom: {
+            CustomHandlebars: {
+                Name: "Custom"
+            },
+            CustomAdaptiveCards: {
                 Name: "Custom"
             },
             SimpleList: {

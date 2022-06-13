@@ -39,6 +39,9 @@ When you have your templates in SharePoint, it is easy to setup a way to edit lo
 Search verticals can be used to selectively search specific content per vertical. Using the SharePoint provider you can use result sources to limit the content returned,
 or you can add the required KQL in the web part itself. This sample shows how to set up multiple search verticals on the same page.
 
+## [Create a useful People Search](Create-a-useful-People-Search.md)
+With the Modern Search Web Parts you can create a simple and useful People Search. You can search or filter people and you can show informations on the People Card when you hover.
+
 ---
 
 More to come!

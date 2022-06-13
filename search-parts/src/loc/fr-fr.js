@@ -79,11 +79,11 @@ define([], function() {
             },
             DateIntervalStrings: {
                 AnyTime: "N’importe quand",
-                PastDay: "Entre 24 heures et 1 semaine",
-                PastWeek: "Entre 1 semaine et 1 mois",
-                PastMonth: "Entre 1 et 3 mois",
-                Past3Months: "Entre 3 mois et 1 an",
-                PastYear: "Depuis l'année dernière",
+                PastDay: "Derniière 24 heures",
+                PastWeek: "Entre 24 heures et 1 semaine",
+                PastMonth: "Entre 1 semaine et 1 mois",
+                Past3Months: "Entre 1 mois et 3 mois",
+                PastYear: "Entre 3 mois et un an",
                 Older: "Il y a plus d'un an"
             },
             SameTabOpenBehavior: "Utiliser l’onglet actuel",
@@ -123,7 +123,8 @@ define([], function() {
                 HitHighlightedPropertiesFieldDescription: "Entrez la liste des propriétés gérées pour lesquelles trouver des correspondances.",
                 TermNotFound: "(Le critère contenant l’identifiant « {0} » est introuvable)",
                 ApplyQueryTemplateBtnText: "Appliquer",
-                EnableAudienceTargetingTglLabel: "Permet de cibler l’auditoire"
+                EnableAudienceTargetingTglLabel: "Permet de cibler l’auditoire",
+                TrimDuplicates: "Supprimer les doublons"
             },
             MicrosoftSearch: {
                 QueryTextFieldLabel: "Texte de la requête",
@@ -144,7 +145,8 @@ define([], function() {
                 QueryTemplatePlaceHolderText: "ex: {searchTerms} IsDocument:true",
                 QueryTemplateFieldDescription: "Vous pouvez également utiliser {<tokens>} et KQL pour créer une requête dynamique.",
                 ApplyQueryTemplateBtnText: "Appliquer",
-                UseBetaEndpoint: "Utiliser le point de terminaison beta"
+                UseBetaEndpoint: "Utiliser le point de terminaison beta",
+                TrimDuplicates: "Supprimer les doublons"
             },
             SearchCommon: {
                 Sort: {
@@ -181,7 +183,10 @@ define([], function() {
             Debug: {
                 Name: "Déboguer"
             },
-            Custom: {
+            CustomHandlebars: {
+                Name: "Personnalisé"
+            },
+            CustomAdaptiveCards: {
                 Name: "Personnalisé"
             },
             SimpleList: {

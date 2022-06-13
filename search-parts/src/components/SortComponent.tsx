@@ -55,7 +55,12 @@ export class SortComponent extends React.Component<ISortComponentProps, ISortCom
 
         const options = this._buildOptions();
         let renderSortButton: JSX.Element = null;
-        const dropdownStyles = { dropdown: { minWidth: 200 } };
+        const dropdownStyles = { 
+            dropdown: { 
+                minWidth: 200,
+                textAlign: "left" 
+            }, 
+        };
 
         if (this.props.defaultSelectedField && this.props.defaultDirection || this.state.selectedFieldName) {
 
