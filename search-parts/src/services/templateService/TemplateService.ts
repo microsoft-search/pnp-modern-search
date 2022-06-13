@@ -20,7 +20,7 @@ import * as handlebarsHelpers from 'handlebars-helpers';
 import { ServiceScopeHelper } from "../../helpers/ServiceScopeHelper";
 import { DomPurifyHelper } from "../../helpers/DomPurifyHelper";
 import * as DOMPurify from 'dompurify';
-import { AdaptiveCard, CardElement, Container, TextBlock } from "adaptivecards"; 
+import { AdaptiveCard, CardElement, Container, TextBlock } from "adaptivecards";
 import { Template } from "adaptivecards-templating";
 
 const TemplateService_ServiceKey = 'PnPModernSearchTemplateService';
@@ -413,12 +413,12 @@ export class TemplateService implements ITemplateService {
         // Load dynamic resources
         await this._initAdaptiveCardsResources();
 
-        let hostConfiguration: {[key: string]: any} = {
+        let hostConfiguration: { [key: string]: any } = {
             fontFamily: "Segoe UI, Helvetica Neue, sans-serif"
         };
 
         if ((templateContext as ISearchResultsTemplateContext).utils.adaptiveCardsHostConfig) {
-            hostConfiguration = (templateContext as ISearchResultsTemplateContext).utils.adaptiveCardsHostConfig;          
+            hostConfiguration = (templateContext as ISearchResultsTemplateContext).utils.adaptiveCardsHostConfig;
         }
 
         hostConfiguration = new this._adaptiveCardsNS.HostConfig(hostConfiguration);
@@ -426,28 +426,28 @@ export class TemplateService implements ITemplateService {
         // If result templates are present, process each individual item and return the HTML output
         if ((templateContext as ISearchResultsTemplateContext).data?.resultTemplates) {
             renderTemplateContent = this._buildAdaptiveCardsResultTypes(
-                                        templateContent, 
-                                        templateContext as ISearchResultsTemplateContext, 
-                                        (templateContext as ISearchResultsTemplateContext).data?.resultTemplates, 
-                                        hostConfiguration);
+                templateContent,
+                templateContext as ISearchResultsTemplateContext,
+                (templateContext as ISearchResultsTemplateContext).data?.resultTemplates,
+                hostConfiguration);
         } else {
-                
+
             const template = new this._adaptiveCardsTemplating.Template(JSON.parse(templateContent));
-    
+
             // The root context will be available in the the card implicitly
             const context = {
                 $root: templateContext
             };
-    
+
             const card = template.expand(context);
             const adaptiveCard = new this._adaptiveCardsNS.AdaptiveCard();
             adaptiveCard.hostConfig = hostConfiguration;
             adaptiveCard.parse(card);
-    
+
             const htmlTemplateElement: HTMLElement = adaptiveCard.render();
             renderTemplateContent = htmlTemplateElement.outerHTML;
         }
-        
+
         return renderTemplateContent;
     }
 
@@ -520,8 +520,14 @@ export class TemplateService implements ITemplateService {
         // Return the search result count message
         // Usage: {{getCountMessage totalRows keywords}} or {{getCountMessage totalRows null}}
         this.Handlebars.registerHelper("getCountMessage", (totalRows: string, inputQuery?: string) => {
+            let countResultMessage;
+            if (inputQuery) {
+                const safeQuery = this.Handlebars.escapeExpression(inputQuery);
+                countResultMessage = Text.format(strings.HandlebarsHelpers.CountMessageLong, totalRows, safeQuery)
+            } else {
+                countResultMessage = Text.format(strings.HandlebarsHelpers.CountMessageShort, totalRows);
+            }
 
-            const countResultMessage = inputQuery ? Text.format(strings.HandlebarsHelpers.CountMessageLong, totalRows, inputQuery) : Text.format(strings.HandlebarsHelpers.CountMessageShort, totalRows);
             return new this.Handlebars.SafeString(countResultMessage);
         });
 
@@ -733,9 +739,9 @@ export class TemplateService implements ITemplateService {
             domPurify.setConfig({
                 WHOLE_DOCUMENT: false
             });
-    
+
             domPurify.addHook('uponSanitizeElement', DomPurifyHelper.allowCustomComponentsHook);
-            domPurify.addHook('uponSanitizeAttribute', DomPurifyHelper.allowCustomAttributesHook); 
+            domPurify.addHook('uponSanitizeAttribute', DomPurifyHelper.allowCustomAttributesHook);
 
             // Load dynamic resources
             this._adaptiveCardsNS = await import(
@@ -743,13 +749,13 @@ export class TemplateService implements ITemplateService {
                 'adaptivecards'
             );
 
-            this._adaptiveCardsNS.AdaptiveCard.onProcessMarkdown =  (text: string, result) => {
+            this._adaptiveCardsNS.AdaptiveCard.onProcessMarkdown = (text: string, result) => {
 
                 // Special case with HitHighlightedSummary field
                 text = text.replace(/<c0\>/g, "<strong>").replace(/<\/c0\>/g, "</strong>").replace(/<ddd\/>/g, "&#8230;");
 
                 // We use Markdown here to render HTML and use web components
-                const rawHtml = this._markdownIt.render(text).replace(/\&lt;/g, '<').replace(/\&gt;/g,'>');
+                const rawHtml = this._markdownIt.render(text).replace(/\&lt;/g, '<').replace(/\&gt;/g, '>');
                 result.outputHtml = domPurify.sanitize(rawHtml);
                 result.didProcess = true;
             };
@@ -758,7 +764,7 @@ export class TemplateService implements ITemplateService {
                 /* webpackChunkName: 'pnp-modern-search-adaptive-cards-bundle' */
                 'adaptive-expressions'
             );
-            
+
             this._adaptiveCardsTemplating = await import(
                 /* webpackChunkName: 'pnp-modern-search-adaptive-cards-bundle' */
                 'adaptivecards-templating'
@@ -787,7 +793,7 @@ export class TemplateService implements ITemplateService {
         const card = template.expand(context);
         mainCard.parse(card);
         const mainHtml = mainCard.render();
-       
+
         // Build dictionary of available result template
         const templateDictionary = new Map(Object.entries(resultTemplates));
 
@@ -806,14 +812,14 @@ export class TemplateService implements ITemplateService {
                 };
 
                 const itemCard = itemTemplate.expand(itemContext);
-    
+
                 const itemAdaptiveCard = new this._adaptiveCardsNS.AdaptiveCard();
                 itemAdaptiveCard.hostConfig = hostConfiguration;
                 itemAdaptiveCard.parse(itemCard);
-    
+
                 // Partial match as we can't use the complete ID due to special characters "/" and "==""
-                const defaultItem: HTMLElement = mainHtml.querySelector(`[id^="${item.hitId.substring(0,15)}"]`); 
-                
+                const defaultItem: HTMLElement = mainHtml.querySelector(`[id^="${item.hitId.substring(0, 15)}"]`);
+
                 // Replace the HTML element corresponding to the item by its result type
                 if (defaultItem) {
                     const itemHtml = itemAdaptiveCard.render().firstChild;
