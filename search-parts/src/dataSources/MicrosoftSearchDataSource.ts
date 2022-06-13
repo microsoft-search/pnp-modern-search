@@ -219,6 +219,18 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         // Ensuring at least one entity type is selected before launching a search
         if (this._properties.entityTypes.length > 0) {
             const searchQuery = await this.buildMicrosoftSearchQuery(dataContext);
+
+            if (searchQuery.requests && searchQuery.requests.length > 0 && 
+                dataContext.sorting && dataContext.sorting.selectedSortFieldName && dataContext.sorting.selectedSortFieldName.length > 0) {
+                    searchQuery.requests = searchQuery.requests.map((req) => {
+                    req.sortProperties = [{ 
+                        "name": dataContext.sorting.selectedSortFieldName, 
+                        "isDescending": dataContext.sorting.selectedSortDirection == SortFieldDirection.Descending 
+                    }];
+                    return req;
+                });
+            }
+
             results = await this.search(searchQuery);
         } else {
             // If no entity is selected, manually set the results to prevent
