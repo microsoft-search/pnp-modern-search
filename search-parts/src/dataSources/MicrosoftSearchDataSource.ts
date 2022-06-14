@@ -710,9 +710,10 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             });
         }
 
-        // Sort is only available for 'ListItem' and 'ExternalItem'
+        // Sort is only available for 'ListItem' (and 'ExternalItem' if sortProperties are set)
         if (this.properties.entityTypes.indexOf(EntityType.ListItem) !== -1 ||
-            this.properties.entityTypes.indexOf(EntityType.ExternalItem) !== -1) {
+            (this.properties.entityTypes.indexOf(EntityType.ExternalItem) !== -1 &&
+                dataContext.sorting?.selectedSortFieldName)) {
 
             if (dataContext.sorting?.selectedSortFieldName
                 && dataContext.sorting?.selectedSortDirection) {
