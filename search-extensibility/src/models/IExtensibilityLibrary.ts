@@ -30,5 +30,5 @@ export interface IExtensibilityLibrary {
     /**
      * Returns custom query modifiers
      */
-     getCustomQueryModifiers(): IQueryModifierDefinition[];
+     getCustomQueryModifiers?(): IQueryModifierDefinition[];
 }
