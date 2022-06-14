@@ -1,6 +1,6 @@
 
 import * as React from 'react';
-import { IChoiceGroupTabsProps } from "./IChoiceGroupTabsProps"
+import { IChoiceGroupTabsProps } from "./IChoiceGroupTabsProps";
 import { ChoiceGroup, DefaultButton, IButtonStyles, IChoiceGroupOption, PrimaryButton } from 'office-ui-fabric-react';
 
 export interface IChoiceGroupTabsState {
@@ -26,7 +26,7 @@ export class ChoiceGroupTabs extends React.Component<IChoiceGroupTabsProps,IChoi
                 borderRadius: 0,
                 selectors: {    
                     '.ms-Button': { width: '100%', borderRadius: 0 }
-                }, 
+                }
             }
         };
 
@@ -46,7 +46,7 @@ export class ChoiceGroupTabs extends React.Component<IChoiceGroupTabsProps,IChoi
                 return <DefaultButton styles={styles} ariaLabel={option.text} onClick={onClick} title={option.title}>{option.text} </DefaultButton>;
             }
             
-        }
+        };
 
         // Add custon render method for each provided options
         const options: IChoiceGroupOption[] = this.props.options.map(option => {

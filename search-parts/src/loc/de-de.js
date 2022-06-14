@@ -80,12 +80,12 @@ define([], function() {
                 invalidInputErrorMessage: 'Ungültiges Datumsformat.'
             },
             DateIntervalStrings: {
-                AnyTime: "Beliebige Zeit",
-                PastDay: "Von den letzten 24 Stunden bis zur letzten Woche",
-                PastWeek: "Von letzter Woche bis letzten Monat",
-                PastMonth: "Vom letzten Monat bis zu den letzten 3 Monaten",
-                Past3Months: "Von den letzten 3 Monaten bis zum letzten Jahr",
-                PastYear: "Aus dem vergangenen Jahr",
+                AnyTime: "Jederzeit",
+                PastDay: "Letzte 24 Stunden",
+                PastWeek: "Von den letzten 24 Stunden bis zur vergangenen Woche",
+                PastMonth: "Von der vergangenen Woche zum vergangenen Monat",
+                Past3Months: "Vom letzten Monat bis zu den letzten 3 Monaten",
+                PastYear: "Von den letzten 3 Monaten bis zum vergangenen Jahr",
                 Older: "Älter als ein Jahr"
             },
             SameTabOpenBehavior: "Die aktuelle Registerkarte verwenden",
@@ -125,7 +125,8 @@ define([], function() {
                 HitHighlightedPropertiesFieldDescription: "Liste der verwalteten Eigenschaften zum hervorheben (i.e. Department,UserName).",
                 TermNotFound: "(Begriff mit ID '{0}' nicht gefunden)",
                 ApplyQueryTemplateBtnText: "Übernehmen",
-                EnableAudienceTargetingTglLabel: "Zielgruppen Adressierung aktivieren"
+                EnableAudienceTargetingTglLabel: "Zielgruppen Adressierung aktivieren",
+                TrimDuplicates: "Duplikate kürzen"
             },
             MicrosoftSearch: {
                 QueryTextFieldLabel: "Abfragetext",
@@ -146,7 +147,8 @@ define([], function() {
                 QueryTemplatePlaceHolderText: "z.B.: {searchTerms} IsDocument:true",
                 QueryTemplateFieldDescription: "Die Suchvorlage. Es können auch {<tokens>} und KQL für die Erstellung einer dynamischen Query benutzt werden.",
                 ApplyQueryTemplateBtnText: "Anwenden",
-                UseBetaEndpoint: "Benutze den Beta-Endpunkt"
+                UseBetaEndpoint: "Benutze den Beta-Endpunkt",
+                TrimDuplicates: "Duplikate kürzen"
             },
             SearchCommon: {
                 Sort: {

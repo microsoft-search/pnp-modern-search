@@ -77,10 +77,12 @@ export class LayoutHelper {
                 // Results Custom (Adaptive Cards)
                 case BuiltinLayoutsKeys.ResultsCustomAdaptiveCards: {
 
+                    /* tslint:disable:no-shadowed-variable */
                     const { ResultsCustomLayout } = await import(
                         /* webpackChunkName: 'pnp-modern-search-results-custom-layout' */
                         '../layouts/results/custom/ResultsCustomLayout'
                     );
+                    /* tslint:enable:no-shadowed-variable */
 
                     serviceKey = ServiceKey.create<ILayout>('PnPModernSearchResultsCustomLayout', ResultsCustomLayout);
                     break;
@@ -133,10 +135,12 @@ export class LayoutHelper {
                 // Simple List (Adaptive cards)
                 case BuiltinLayoutsKeys.ListAdaptiveCards: {
 
+                    /* tslint:disable:no-shadowed-variable */
                     const { SimpleListLayout } = await import(
                         /* webpackChunkName: 'pnp-modern-search-results-simple-list-layout' */
                         '../layouts/results/simpleList/SimpleListLayout'
                     );
+                    /* tslint:enable:no-shadowed-variable */
 
                     serviceKey = ServiceKey.create<ILayout>('PnPModernSearchSimpleListLayout', SimpleListLayout);
                     break;

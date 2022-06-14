@@ -11,6 +11,7 @@ export interface IMicrosoftSearchRequest {
     entityTypes: EntityType[];
     query: {
         queryString: string;
+        queryTemplate?: string;
     };
     fields?: string[];
     aggregations?: ISearchRequestAggregation[];
@@ -22,8 +23,9 @@ export interface IMicrosoftSearchRequest {
     contentSources?: string[];
     queryAlterationOptions?: IQueryAlterationOptions;
     resultTemplateOptions?:  {
-        enableResultTemplate: boolean
-    }
+        enableResultTemplate: boolean;
+    };
+    trimDuplicates?: boolean;
 }
 
 export interface ISearchSortProperty {
