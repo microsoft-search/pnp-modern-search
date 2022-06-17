@@ -523,7 +523,7 @@ export class TemplateService implements ITemplateService {
             let countResultMessage;
             if (inputQuery) {
                 const safeQuery = this.Handlebars.escapeExpression(inputQuery);
-                countResultMessage = Text.format(strings.HandlebarsHelpers.CountMessageLong, totalRows, safeQuery)
+                countResultMessage = Text.format(strings.HandlebarsHelpers.CountMessageLong, totalRows, safeQuery);
             } else {
                 countResultMessage = Text.format(strings.HandlebarsHelpers.CountMessageShort, totalRows);
             }
