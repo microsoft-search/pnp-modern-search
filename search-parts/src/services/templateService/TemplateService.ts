@@ -20,8 +20,6 @@ import * as handlebarsHelpers from 'handlebars-helpers';
 import { ServiceScopeHelper } from "../../helpers/ServiceScopeHelper";
 import { DomPurifyHelper } from "../../helpers/DomPurifyHelper";
 import * as DOMPurify from 'dompurify';
-import { AdaptiveCard, CardElement, Container, TextBlock } from "adaptivecards";
-import { Template } from "adaptivecards-templating";
 
 const TemplateService_ServiceKey = 'PnPModernSearchTemplateService';
 
