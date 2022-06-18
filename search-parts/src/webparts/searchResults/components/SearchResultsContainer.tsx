@@ -8,7 +8,7 @@ import { ITemplateService } from '../../../services/templateService/ITemplateSer
 import { TemplateService } from '../../../services/templateService/TemplateService';
 import { Log, DisplayMode } from "@microsoft/sp-core-library";
 import { MessageBar, MessageBarType, Overlay, Spinner, SpinnerSize } from 'office-ui-fabric-react';
-import { IDataSourceData, IDataFilterResult, BuiltinTemplateSlots, LayoutRenderType } from '@pnp/modern-search-extensibility';
+import { IDataSourceData, IDataFilterResult, BuiltinTemplateSlots } from '@pnp/modern-search-extensibility';
 import { ISearchResultsTemplateContext } from '../../../models/common/ITemplateContext';
 import styles from './SearchResultsContainer.module.scss';
 import { Constants, AutoCalculatedDataSourceFields, TestConstants } from '../../../common/Constants';
@@ -17,7 +17,6 @@ import { ObjectHelper } from '../../../helpers/ObjectHelper';
 import { BuiltinLayoutsKeys } from '../../../layouts/AvailableLayouts';
 import { WebPartTitle } from '@pnp/spfx-controls-react/lib/WebPartTitle';
 import * as webPartStrings from 'SearchResultsWebPartStrings';
-import { IMicrosoftSearchDataSourceData } from '../../../models/search/IMicrosoftSearchDataSourceData';
 
 const LogSource = "SearchResultsContainer";
 
