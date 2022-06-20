@@ -20,8 +20,6 @@ import * as handlebarsHelpers from 'handlebars-helpers';
 import { ServiceScopeHelper } from "../../helpers/ServiceScopeHelper";
 import { DomPurifyHelper } from "../../helpers/DomPurifyHelper";
 import * as DOMPurify from 'dompurify';
-import { AdaptiveCard, CardElement, Container, TextBlock } from "adaptivecards";
-import { Template } from "adaptivecards-templating";
 
 const TemplateService_ServiceKey = 'PnPModernSearchTemplateService';
 
@@ -523,7 +521,7 @@ export class TemplateService implements ITemplateService {
             let countResultMessage;
             if (inputQuery) {
                 const safeQuery = this.Handlebars.escapeExpression(inputQuery);
-                countResultMessage = Text.format(strings.HandlebarsHelpers.CountMessageLong, totalRows, safeQuery)
+                countResultMessage = Text.format(strings.HandlebarsHelpers.CountMessageLong, totalRows, safeQuery);
             } else {
                 countResultMessage = Text.format(strings.HandlebarsHelpers.CountMessageShort, totalRows);
             }
