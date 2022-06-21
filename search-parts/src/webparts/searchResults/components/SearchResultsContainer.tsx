@@ -17,7 +17,6 @@ import { ObjectHelper } from '../../../helpers/ObjectHelper';
 import { BuiltinLayoutsKeys } from '../../../layouts/AvailableLayouts';
 import { WebPartTitle } from '@pnp/spfx-controls-react/lib/WebPartTitle';
 import * as webPartStrings from 'SearchResultsWebPartStrings';
-import { EntityType } from '../../../dataSources/MicrosoftSearchDataSource';
 
 const LogSource = "SearchResultsContainer";
 
