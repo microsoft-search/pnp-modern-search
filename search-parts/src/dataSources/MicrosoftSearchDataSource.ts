@@ -713,19 +713,25 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         // Sort is only available for 'ListItem' (and 'ExternalItem' if sortProperties are set)
         if (this.properties.entityTypes.indexOf(EntityType.ListItem) !== -1 ||
             (this.properties.entityTypes.indexOf(EntityType.ExternalItem) !== -1 &&
-                dataContext.sorting?.selectedSortFieldName)) {
+                this.properties.sortProperties.length > 0)) {
 
-            if (dataContext.sorting?.selectedSortFieldName
-                && dataContext.sorting?.selectedSortDirection) {
-
+            if (this.properties.entityTypes.indexOf(EntityType.ExternalItem) !== -1) {
                 // Manual user sorting
-                sortProperties.push({
-                    name: dataContext.sorting.selectedSortFieldName,
-                    isDescending: dataContext.sorting.selectedSortDirection === SortFieldDirection.Descending ? true : false
+                this.properties.sortProperties.forEach(sortProperty => {
+                    const name = sortProperty.sortField == undefined
+                        ? ((sortProperty as any) as ISearchSortProperty).name
+                        : sortProperty.sortField;
+                    const isDescending = sortProperty.sortDirection == undefined
+                        ? ((sortProperty as any) as ISearchSortProperty).isDescending
+                        : sortProperty.sortDirection === SortFieldDirection.Descending ? true : false;
+
+                    sortProperties.push({
+                        name: name,
+                        isDescending: isDescending
+                    });
                 });
 
             } else {
-
                 // Default sort
                 this.properties.sortProperties.filter(s => s.sortField).forEach(sortProperty => {
                     sortProperties.push({

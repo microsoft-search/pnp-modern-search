@@ -249,21 +249,6 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
 
             const localDataContext = cloneDeep(this.props.dataContext);
 
-            // Enable sorting for 'ExternalItem' if sortProperties are set
-            if(this._dataSourceProperties.entityTypes.indexOf(EntityType.ExternalItem) !== -1){
-                if (this._dataSourceProperties?.sortProperties != undefined && 
-                    this._dataSourceProperties?.sortProperties.length != undefined &&
-                    this._dataSourceProperties?.sortProperties.length > 0) {
-                    const sortFieldName = this._dataSourceProperties?.sortProperties[0].name;
-                    const isDescending = this._dataSourceProperties?.sortProperties[0].isDescending;
-                    localDataContext.sorting = {
-                        selectedSortableFields: [],
-                        selectedSortFieldName: sortFieldName,
-                        selectedSortDirection: isDescending ? SortFieldDirection.Descending : SortFieldDirection.Ascending
-                    };
-                }
-            }
-
             // Fetch live data
             data = await this.props.dataSource.getData(localDataContext);
 
