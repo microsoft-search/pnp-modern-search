@@ -186,6 +186,9 @@ define([], function() {
             Custom: {
                 Name: "Brugerdefineret"
             },
+            CustomAdaptiveCards: {
+                Name: "Brugerdefineret"
+            },
             SimpleList: {
                 Name: "Liste",
                 ShowFileIconLabel: "Vis filikon",

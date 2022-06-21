@@ -186,6 +186,9 @@ define([], function () {
         Custom: {
           Name: "Anpassad"
         },
+        CustomAdaptiveCards: {
+          Name: "Anpassad"
+        },
         SimpleList: {
           Name: "Lista",
           ShowFileIconLabel: "Visa filikon",

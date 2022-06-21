@@ -184,6 +184,9 @@ define([], function() {
             Custom: {
                 Name: "Mukautettu"
             },
+            CustomAdaptiveCards: {
+                Name: "Mukautettu"
+            },
             SimpleList: {
                 Name: "Lista",
                 ShowFileIconLabel: "Näytä tiedostotyypin ikoni",

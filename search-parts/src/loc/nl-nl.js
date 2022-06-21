@@ -186,6 +186,9 @@ define([], function() {
             Custom: {
                 Name: "Aangepast"
             },
+            CustomAdaptiveCards: {
+                Name: "Aangepast"
+            },
             SimpleList: {
                 Name: "Lijst",
                 ShowFileIconLabel: "Toon bestandspictogram",

@@ -183,6 +183,9 @@ define([], function() {
             Custom: {
                 Name: "Benutzerdefiniert"
             },
+            CustomAdaptiveCards: {
+                Name: "Benutzerdefiniert"
+            },
             SimpleList: {
                 Name: "Liste",
                 ShowFileIconLabel: "Dateisymbol anzeigen",

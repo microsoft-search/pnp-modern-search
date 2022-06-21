@@ -184,7 +184,10 @@ define([], function() {
               Name: "Diagnostyczny"
           },
           Custom: {
-              Name: "Niestandardowy"
+            Name: "Niestandardowy"
+          },
+          CustomAdaptiveCards: {
+            Name: "Niestandardowy"
           },
           SimpleList: {
               Name: "Lista",

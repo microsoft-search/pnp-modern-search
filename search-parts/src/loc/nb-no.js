@@ -186,6 +186,9 @@ define([], function () {
         Custom: {
           Name: "Tilpasset"
         },
+        CustomAdaptiveCards: {
+          Name: "Tilpasset"
+        },
         SimpleList: {
           Name: "Liste",
           ShowFileIconLabel: "Vis fil-ikon",
