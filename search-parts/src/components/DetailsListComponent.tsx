@@ -294,7 +294,7 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
             fieldName: column.name,
             minWidth: parseInt(column.minWidth),
             maxWidth: parseInt(column.maxWidth),
-            isRowHeader: true,
+            isRowHeader: false,
             isResizable: column.isResizable === true,
             isMultiline: column.isMultiline === true,
             isSorted: allowSorting,
