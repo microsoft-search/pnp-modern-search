@@ -55,7 +55,7 @@ define([], function() {
             Extensibility: {
                 InvalidDataSourceInstance: "Die ausgewählte Datenquelle '{0}' implementiert die abstrakte Klasse 'BaseDataSource' nicht korrekt. Es fehlen einige Methoden.",
                 DataSourceDefinitionNotFound: "Die benutzerdefinierte Datenquelle mit dem Schlüssel '{0}' wurde nicht gefunden. Stellen Sie sicher, dass die Lösung korrekt für den App-Katalog bereitgestellt und die Manifest-ID für dieses Web Part registriert ist.",
-                LayoutDefinitionNotFound: "Das benutzerdefinierte Layout mit dem Schlüssel '{0}' wurde nicht gefunden. Stellen Sie sicher, dass die Lösung korrekt für das App-Caltog bereitgestellt und die Manifest-ID für dieses Webpart registriert ist.",
+                LayoutDefinitionNotFound: "Das benutzerdefinierte Layout mit dem Schlüssel '{0}' wurde nicht gefunden. Stellen Sie sicher, dass die Lösung korrekt für das App-Katalog bereitgestellt und die Manifest-ID für dieses Webpart registriert ist.",
                 InvalidLayoutInstance: "Das ausgewählte Layout '{0}' implementiert die abstrakte Klasse 'BaseLayout' nicht korrekt. Es fehlen einige Methoden.",
                 DefaultExtensibilityLibraryName: "Standard-Erweiterungsbibliothek",
                 InvalidProviderInstance: "Der ausgewählte Vorschlagsprovider '{0}' implementiert die abstrakte Klasse 'BaseSuggestionProvider' nicht korrekt. Es fehlen einige Methoden.",

@@ -654,8 +654,17 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
   /**
    * Subscribes to URL query string change events using SharePoint page router
+   * https://docs.microsoft.com/en-us/sharepoint/dev/spfx/web-parts/guidance/intercepting-query-changes-in-webparts
    */
   private _handleQueryStringChange() {
+
+    ((history) => {
+      var pushState = history.pushState;
+      history.pushState = (state, key, path) => {
+          pushState.apply(history, [state, key, path]);
+          this.getFiltersDeepLink();
+      };
+    })(window.history);
 
     // When the browser 'back' or 'forward' button is pressed
     window.onpopstate = (ev) => {
