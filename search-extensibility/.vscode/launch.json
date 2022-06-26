@@ -6,7 +6,7 @@
   "version": "0.2.0",
   "configurations": [{
       "name": "Local workbench",
-      "type": "chrome",
+      "type": "pwa-chrome",
       "request": "launch",
       "url": "https://localhost:4321/temp/workbench.html",
       "webRoot": "${workspaceRoot}",
