@@ -44,7 +44,7 @@ define([], function() {
             OffTextLabel: "Pois käytöstä",
             StaticArrayFieldName: "Taulukkotyyppinen kenttä",
             About: "Lisätietoa",
-            Authors: "Tekijö(t)",
+            Authors: "Tekijä(t)",
             Version: "Versio",
             InstanceId: "Webosainstanssin ID",
             Resources: {
@@ -108,7 +108,7 @@ define([], function() {
                 ResultSourceIdLabel: "Haun tuloslähteen Id / Scope|Nimi",
                 ResultSourceIdDescription: "Valitse tarjolla oleva tuloslähde, syötä mukautetun tuloslähteen GUID, tai SCOPE ja NIMI erotettuna pystyviivalla | (i.e: SPSite|News). Mahdolliset tuloslähteet ovat [SPSiteSubscription, SPSite, SPWeb]. Paina [Enter] tallentaaksesi.",
                 InvalidResultSourceIdMessage: "Syötetty arvo ei ole toimiva GUID, tai muotoiltu muodossa SCOPE|NIMI",
-                EnableQueryRulesLabel: "Selli kyselysäännöt",
+                EnableQueryRulesLabel: "Salli kyselysäännöt",
                 RefinementFilters: "Suodattimet",
                 RefinementFiltersDescription: "Suoraan hakukyselyyn liitettävät suodattimet. Nämä eivät näy valituissa suodattimissa. Tekstimuotoisissa suodattimissa käytä tuplalainausmerkkejä (\") yksittäisen hipsun sijasta (').",
                 EnableLocalizationLabel: "Salli lokalisointi",

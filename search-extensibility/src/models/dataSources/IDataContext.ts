@@ -68,7 +68,7 @@ export interface IDataContext {
          * The selected sort direction
          */
         selectedSortDirection?: SortFieldDirection;
-    }
+    };
 
     /**
      * Information about connected verticals

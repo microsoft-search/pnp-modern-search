@@ -631,10 +631,31 @@ export class TemplateService implements ITemplateService {
         // <p>{{#times 10}}</p>
         this.Handlebars.unregisterHelper('times'); // unregister times alias for multiply from helpers
         this.Handlebars.registerHelper('times', (n, block) => {
-            var accum = '';
+            let accum = '';
             for (var i = 0; i < n; ++i)
                 accum += block.fn(i);
             return accum;
+        });
+
+        // Get url parameter from current URL or a provided URL
+        // <p>{{getUrlParameter "q"}}</p>
+        this.Handlebars.registerHelper('getUrlParameter', (name: string, url?: string,): string => {
+            if (url && typeof url === "object") {
+                url = window.location.href;
+            }
+            const search = new URL(url).search;
+            const queryParameters = new URLSearchParams(search);
+            return this.Handlebars.escapeExpression(queryParameters.get(name));
+        });
+
+        // Support urlParse with an empty string to use current URL
+        const origParse = this.Handlebars.helpers["urlParse"];
+        this.Handlebars.unregisterHelper('urlParse');
+        this.Handlebars.registerHelper('urlParse', (url: string) => {
+            if (url && typeof url === "object") {
+                url = window.location.href;
+            }
+            return origParse(url);
         });
 
         //
