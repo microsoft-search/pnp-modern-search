@@ -183,7 +183,7 @@ define([], function() {
             Debug: {
                 Name: "Depuración"
             },
-            Custom: {
+            CustomHandlebars: {
                 Name: "Personalizado"
             },
             CustomAdaptiveCards: {

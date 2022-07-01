@@ -183,7 +183,7 @@ define([], function() {
             Debug: {
                 Name: "Fejlfind"
             },
-            Custom: {
+            CustomHandlebars: {
                 Name: "Brugerdefineret"
             },
             CustomAdaptiveCards: {
