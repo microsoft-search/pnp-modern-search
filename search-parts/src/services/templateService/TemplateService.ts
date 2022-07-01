@@ -233,14 +233,15 @@ export class TemplateService implements ITemplateService {
     }
 
     /**
-     * Verifies if the template fiel path is correct
+     * Verifies if the template file path is correct
      * @param filePath the file path string
+     * @param validExtensions the file extensions considered as valid
      */
-    public isValidTemplateFile(filePath: string): boolean {
+    public isValidTemplateFile(filePath: string, validExtensions: string[]): boolean {
 
         let path = filePath.toLowerCase().trim();
         let pathExtension = path.substring(path.lastIndexOf('.'));
-        return (pathExtension == '.htm' || pathExtension == '.html');
+        return (validExtensions.indexOf(pathExtension) !== -1);
     }
 
     /**

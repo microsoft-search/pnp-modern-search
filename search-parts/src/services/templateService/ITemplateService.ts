@@ -14,7 +14,7 @@ export interface ITemplateService {
     getPlaceholderMarkup(templateContent: string): string;
     getFileContent(fileUrl: string, fileFormat: FileFormat): Promise<string>;
     ensureFileResolves(fileUrl: string): Promise<void>;
-    isValidTemplateFile(filePath: string): boolean;
+    isValidTemplateFile(filePath: string, validExtensions: string[]): boolean;
     processTemplate(templateContext: any, templateContent: string, renderType: LayoutRenderType): Promise<string>;
     registerWebComponents(webComponents: IComponentDefinition<any>[], instanceId: string): Promise<void>;
     processFieldsConfiguration<T>(fieldsConfiguration: IComponentFieldsConfiguration[], item: {[key:string]: any}, context?: ISearchResultsTemplateContext | any): T;

@@ -2054,30 +2054,48 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         }
     }
 
-    /**
-      * Custom handler when the external template file URL
-      * @param value the template file URL value
-      */
-    private async onTemplateUrlChange(value: string): Promise<string> {
+  /**
+   * Custom handler when the external template file URL
+   * @param value the template file URL value
+   */
+   private async onTemplateUrlChange(value: string): Promise<string> {
 
-        try {
-            // Doesn't raise any error if file is empty (otherwise error message will show on initial load...)
-            if (isEmpty(value)) {
-                return Promise.resolve('');
+    try {
+        // Doesn't raise any error if file is empty (otherwise error message will show on initial load...)
+        if (isEmpty(value)) {
+            return Promise.resolve('');
+        } else {
+
+            // Resolves an error if the file isn't a valid .json, .htm or .html file
+            let extensions: string[] = [];
+
+            switch (this.properties.layoutRenderType) {
+                case LayoutRenderType.Handlebars:
+                    extensions= [".htm",".html"];
+                    break;
+
+                case LayoutRenderType.AdaptiveCards:
+                    // Because of SharePoint restrictions, JSON files should be read as TXT files
+                    extensions = [".txt",".json"];
+                    break;
+
+                default: 
+                    break;
             }
-            // Resolves an error if the file isn't a valid .htm or .html file
-            else if (!this.templateService.isValidTemplateFile(value)) {
-                return Promise.resolve(webPartStrings.PropertyPane.LayoutPage.ErrorTemplateExtension);
-            }
-            // Resolves an error if the file doesn't answer a simple head request
-            else {
+
+            if (!this.templateService.isValidTemplateFile(value, extensions)) {
+                return Promise.resolve(Text.format(webPartStrings.PropertyPane.LayoutPage.ErrorTemplateExtension, extensions.join(' or ')));
+            } else {
+
+                // Resolves an error if the file doesn't answer a simple head request
                 await this.templateService.ensureFileResolves(value);
                 return Promise.resolve('');
             }
-        } catch (error) {
-            return Promise.resolve(Text.format(webPartStrings.PropertyPane.LayoutPage.ErrorTemplateResolve, error));
         }
+    } catch (error) {
+        return Promise.resolve(Text.format(webPartStrings.PropertyPane.LayoutPage.ErrorTemplateResolve, error));
     }
+  } 
 
     /**
      * Initializes the template according to the property pane current configuration
