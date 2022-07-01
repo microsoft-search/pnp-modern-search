@@ -180,7 +180,10 @@ define([], function() {
             Debug: {
                 Name: "Debug"
             },
-            Custom: {
+            CustomHandlebars: {
+                Name: "Benutzerdefiniert"
+            },
+            CustomAdaptiveCards: {
                 Name: "Benutzerdefiniert"
             },
             SimpleList: {

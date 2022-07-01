@@ -183,7 +183,10 @@ define([], function () {
         Debug: {
           Name: "Feilsøk"
         },
-        Custom: {
+        CustomHandlebars: {
+          Name: "Tilpasset"
+        },
+        CustomAdaptiveCards: {
           Name: "Tilpasset"
         },
         SimpleList: {
