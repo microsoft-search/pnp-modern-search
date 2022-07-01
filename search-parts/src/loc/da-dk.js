@@ -79,11 +79,11 @@ define([], function() {
             },
             DateIntervalStrings: {
                 AnyTime: "Når som helst",
-                PastDay: "Fra sidste 24 timer til sidste uge",
-                PastWeek: "Fra sidste uge til sidste måned",
-                PastMonth: "Fra sidste måned til sidste 3 måneder",
-                Past3Months: "Fra sidste 3 måneder til sidste år",
-                PastYear: "Fra sidste år",
+                PastDay: "Sidste 24 timer",
+                PastWeek: "Fra sidste 24 timer til sidste uge",
+                PastMonth: "Fra sidste uge til sidste måned",
+                Past3Months: "Fra sidste måned til seneste 3 måneder",
+                PastYear: "Fra sidste 3 måneder til sidste år",
                 Older: "Ældre end et år"
             },
             SameTabOpenBehavior: "Brug det nuværende faneblad",
@@ -123,7 +123,8 @@ define([], function() {
                 HitHighlightedPropertiesFieldDescription: "Angiv listen med administrerede egenskaber til fremhævning af resultater.",
                 TermNotFound: "(Term med ID '{0}' blev ikke fundet)",
                 ApplyQueryTemplateBtnText: "Anvend",
-                EnableAudienceTargetingTglLabel: "Aktivér målgruppestyring"
+                EnableAudienceTargetingTglLabel: "Aktivér målgruppestyring",
+                TrimDuplicates: "Trim dubletter"
             },
             MicrosoftSearch: {
                 QueryTextFieldLabel: "Forespørgselstekst",
@@ -144,7 +145,8 @@ define([], function() {
                 QueryTemplatePlaceHolderText: "ex: {searchTerms} IsDocument:true",
                 QueryTemplateFieldDescription: "Søgemodifikator-skabelonen. Du kan også bruge {<tokens>} og KQL til at bygge en dynamisk forespørgsel. Alt sammenkædes til inputQueryText",
                 ApplyQueryTemplateBtnText: "Anvend",
-                UseBetaEndpoint: "Brug beta-endepunkt"
+                UseBetaEndpoint: "Brug beta-endepunkt",
+                TrimDuplicates: "Trim dubletter"
             },
             SearchCommon: {
                 Sort: {
@@ -181,7 +183,10 @@ define([], function() {
             Debug: {
                 Name: "Fejlfind"
             },
-            Custom: {
+            CustomHandlebars: {
+                Name: "Brugerdefineret"
+            },
+            CustomAdaptiveCards: {
                 Name: "Brugerdefineret"
             },
             SimpleList: {

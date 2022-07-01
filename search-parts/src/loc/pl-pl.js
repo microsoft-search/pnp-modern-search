@@ -78,13 +78,13 @@ define([], function() {
               invalidInputErrorMessage: 'Nieprawidłowy format daty.'
           },
           DateIntervalStrings: {
-              AnyTime: "Dowolny czas",
-              PastDay: "Ostatnie 24 godziny",
-              PastWeek: "Ostatni tydzień",
-              PastMonth: "Ostatni miesiąc",
-              Past3Months: "Ostatie 3 miesiące",
-              PastYear: "Ostatni rok",
-              Older: "Starsze niż rok"
+            AnyTime: "Kiedykolwiek",
+            PastDay: "Ostatnie 24 godziny",
+            PastWeek: "Od ostatnich 24 godzin do zeszłego tygodnia",
+            PastMonth: "Od ostatniego tygodnia do ostatniego miesiąca",
+            Past3Months: "Od ostatniego miesiąca do ostatnich 3 miesięcy",
+            PastYear: "Od ostatnich 3 miesięcy do zeszłego roku",
+            Older: "Starsze niż rok"
           },
           SameTabOpenBehavior: "Użyj bieżącej karty",
           NewTabOpenBehavior: "Otwórz w nowej karcie",
@@ -123,7 +123,8 @@ define([], function() {
               HitHighlightedPropertiesFieldDescription: "Podaj listę właściwości zarządzanych w celu wyróżniania trafień.",
               TermNotFound: "(Nie znaleziono terminu o identyfikatorze '{0}')",
               ApplyQueryTemplateBtnText: "Zastosuj",
-              EnableAudienceTargetingTglLabel: "Włącz audiencje"
+              EnableAudienceTargetingTglLabel: "Włącz audiencje",
+              TrimDuplicates: "Przytnij duplikaty"
           },
           MicrosoftSearch: {
               QueryTextFieldLabel: "Tekst zapytania",
@@ -144,7 +145,8 @@ define([], function() {
               QueryTemplatePlaceHolderText: "ex: {searchTerms} IsDocument:true",
               QueryTemplateFieldDescription: "Szablon modyfikatora wyszukiwania. Możesz również użyć {<tokenów>} i KQL do zbudowania dynamicznego zapytania. Wszystko jest połączone z inputQueryText",
               ApplyQueryTemplateBtnText: "Zastosuj",
-              UseBetaEndpoint: "Użyj punktu końcowego wersji beta"
+              UseBetaEndpoint: "Użyj punktu końcowego wersji beta",
+              TrimDuplicates: "Przytnij duplikaty"
           },
           SearchCommon: {
               Sort: {
@@ -181,8 +183,11 @@ define([], function() {
           Debug: {
               Name: "Diagnostyczny"
           },
-          Custom: {
-              Name: "Niestandardowy"
+          CustomHandlebars: {
+            Name: "Niestandardowy"
+          },
+          CustomAdaptiveCards: {
+            Name: "Niestandardowy"
           },
           SimpleList: {
               Name: "Lista",

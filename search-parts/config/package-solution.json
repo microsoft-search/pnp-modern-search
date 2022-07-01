@@ -3,7 +3,7 @@
     "solution": {
         "name": "PnP Modern Search - Search Web Parts - v4",
         "id": "59903278-dd5d-4e9e-bef6-562aae716b8b",
-        "version": "4.6.1.0",
+        "version": "4.7.0.0",
         "includeClientSideAssets": true,
         "skipFeatureDeployment": true,
         "isDomainIsolated": false,
@@ -44,6 +44,23 @@
                 "scope": "ExternalItem.Read.All"
             }
         ],
+        "metadata": {
+            "shortDescription": {
+                "default": "Modern search web parts"
+            },
+            "longDescription": {
+                "default": "Modern search web parts"
+            },
+            "screenshotPaths": [],
+            "videoUrl": "",
+            "categories": []
+        },
+        "features": [{
+            "title": "PnP Modern Search - Search Web Parts - v4",
+            "description": "Modern search web parts",
+            "id": "a69a8d49-63d4-49a5-becf-5d383c16bcad",
+            "version": "4.6.1.0"
+        }],
         "developer": {
             "mpnId": "",
             "name": "PnP Team",

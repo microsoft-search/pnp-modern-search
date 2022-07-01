@@ -25,7 +25,7 @@
       "name": "Hosted workbench",
       "type": "chrome",
       "request": "launch",
-      "url": "https://sonbaedev.sharepoint.com/sites/ThePerspective/_layouts/workbench.aspx",
+      "url": "https://sonbaedev.sharepoint.com/sites/SPOCC-TestTeam1/_layouts/15/workbench.aspx",
       "webRoot": "${workspaceRoot}",
       "sourceMaps": true,
       "sourceMapPathOverrides": {
@@ -34,6 +34,10 @@
         "webpack:///../../../../src/*": "${webRoot}/src/*",
         "webpack:///../../../../../src/*": "${webRoot}/src/*"
       },
+      "outFiles": [
+        "${workspaceFolder}/**/*.js",
+        "!**/node_modules/**"
+      ],
       "runtimeArgs": [
         "--remote-debugging-port=9222",
         "--incognito"

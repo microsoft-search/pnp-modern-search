@@ -1,4 +1,5 @@
 import { IDataFilterResult } from '../filters/IDataFilter';
+import { IResultTemplates } from './IResultTemplates';
 
 export interface IDataSourceData {
 
@@ -16,4 +17,9 @@ export interface IDataSourceData {
      * The available filters provided by the data source according to the filters configuration provided from the data context (if applicable).
      */
     filters?: IDataFilterResult[];
+
+    /**
+     * Result templates available for items provided by the data source
+     */
+    resultTemplates?: IResultTemplates;
 }

@@ -79,11 +79,11 @@ define([], function () {
         },
         DateIntervalStrings: {
           AnyTime: "När som helst",
-          PastDay: "Från senaste 24 timmarna till senaste veckan",
-          PastWeek: "Från förra veckan till förra månaden",
-          PastMonth: "Från förra månaden till de senaste tre månaderna",
-          Past3Months: "Från de senaste tre månaderna till det senaste året",
-          PastYear: "Från förra året",
+          PastDay: "Senaste 24 timmarna",
+          PastWeek: "Från senaste 24 timmarna till senaste veckan",
+          PastMonth: "Från senaste veckan till senaste månaden",
+          Past3Months: "Från senaste månaden till senaste 3 månaderna",
+          PastYear: "Från de senaste 3 månaderna till det senaste året",
           Older: "Äldre än ett år" 
         },
         SameTabOpenBehavior: "Använd den aktuella fliken",
@@ -123,7 +123,8 @@ define([], function () {
           HitHighlightedPropertiesFieldDescription: "Tillhandahåll lista över hanterade egenskaper till träffmarkeringar. ",
           TermNotFound: "(Term med ID '{0}' hittades inte)",
           ApplyQueryTemplateBtnText: "Tillämpa",
-          EnableAudienceTargetingTglLabel: "Aktivera målgruppsanpassning"
+          EnableAudienceTargetingTglLabel: "Aktivera målgruppsanpassning",
+          TrimDuplicates: "Trimma dubbletter"
         },
         MicrosoftSearch: {
           QueryTextFieldLabel: "Sökfrågetext",
@@ -144,7 +145,8 @@ define([], function () {
           QueryTemplatePlaceHolderText: "ex: {searchTerms} IsDocument:true",
           QueryTemplateFieldDescription: "Sökmodifieringsmallen. Du kan också använda {<tokens>} och KQL för att bygga en dynamisk fråga. Allt är kopplat till inputQueryText",
           ApplyQueryTemplateBtnText: "Tillämpa",
-          UseBetaEndpoint: "Använd beta endpoint"
+          UseBetaEndpoint: "Använd beta endpoint",
+          TrimDuplicates: "Trimma dubbletter"
         },
         SearchCommon: {
           Sort: {
@@ -181,7 +183,10 @@ define([], function () {
         Debug: {
           Name: "Debug"
         },
-        Custom: {
+        CustomHandlebars: {
+          Name: "Anpassad"
+        },
+        CustomAdaptiveCards: {
           Name: "Anpassad"
         },
         SimpleList: {

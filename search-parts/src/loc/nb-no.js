@@ -79,12 +79,12 @@ define([], function () {
         },
         DateIntervalStrings: {
           AnyTime: "Når som helst",
-          PastDay: "Fra de siste 24 timene til siste uke",
-          PastWeek: "Fra forrige uke til forrige måned",
-          PastMonth: "Fra forrige måned til de siste tre månedene",
-          Past3Months: "Fra de siste tre månedene til det siste året",
-          PastYear: "Fra forrige år",
-          Older: "Eldre enn ett år" 
+          PastDay: "Siste 24 timer",
+          PastWeek: "Fra siste 24 timer til forrige uke",
+          PastMonth: "Fra forrige uke til forrige måned",
+          Past3Months: "Fra siste måned til siste 3 måneder",
+          PastYear: "Fra siste 3 måneder til siste år",
+          Older: "Eldre enn ett år"
         },
         SameTabOpenBehavior: "Bruk den aktuelle fanen",
         NewTabOpenBehavior: "Åpne i ny fane",
@@ -123,7 +123,8 @@ define([], function () {
           HitHighlightedPropertiesFieldDescription: "Angi listen over forvaltede egenskaper som skal utheves etter treff.",
           TermNotFound: "(Term med ID '{0}' ble ikke funnet)",
           ApplyQueryTemplateBtnText: "Lagre",
-          EnableAudienceTargetingTglLabel: "Aktiver målgruppetilpasning"
+          EnableAudienceTargetingTglLabel: "Aktiver målgruppetilpasning",
+          TrimDuplicates: "Trim duplikater"
         },
         MicrosoftSearch: {
           QueryTextFieldLabel: "Søketekst",
@@ -144,7 +145,8 @@ define([], function () {
           QueryTemplatePlaceHolderText: "ex: {searchTerms} IsDocument:true",
           QueryTemplateFieldDescription: "Søkemalen. Du kan også bruke {<tokens>} og KQL for å bygge en dynamisk spørring.",
           ApplyQueryTemplateBtnText: "Søke om",
-          UseBetaEndpoint: "Bruk betaendepunkt"
+          UseBetaEndpoint: "Bruk betaendepunkt",
+          TrimDuplicates: "Trim duplikater"
         },
         SearchCommon: {
           Sort: {
@@ -181,7 +183,10 @@ define([], function () {
         Debug: {
           Name: "Feilsøk"
         },
-        Custom: {
+        CustomHandlebars: {
+          Name: "Tilpasset"
+        },
+        CustomAdaptiveCards: {
           Name: "Tilpasset"
         },
         SimpleList: {
