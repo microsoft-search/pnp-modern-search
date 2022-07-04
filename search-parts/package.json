@@ -30,7 +30,6 @@
         "@pnp/spfx-property-controls": "3.7.0",
         "@pnp/telemetry-js": "2.0.0",
         "@types/es6-promise": "0.0.33",
-        "@types/react-dom": "16.8.3",
         "@uifabric/file-type-icons": "^7.8.9",
         "@uifabric/icons": "7.7.2",
         "@webcomponents/webcomponentsjs": "2.6.0",
@@ -58,7 +57,8 @@
         "webpack": "4.42.0"
     },
     "resolutions": {
-        "@types/react": "16.9.36"
+        "@types/react": "^16.9.51",
+        "@types/react-dom": "^16.8.3"
     },
     "devDependencies": {
         "@microsoft/gulp-core-build-serve": "3.5.5",
@@ -67,7 +67,7 @@
         "@microsoft/sp-module-interfaces": "1.14.0",
         "@microsoft/sp-tslint-rules": "1.14.0",
         "@types/react": "16.9.51",
-        "@types/react-dom": "16.9.8",
+        "@types/react-dom": "16.8.3",
         "@types/webpack-env": "1.13.1",
         "ajv": "~5.2.2",
         "colors": "1.4.0",
