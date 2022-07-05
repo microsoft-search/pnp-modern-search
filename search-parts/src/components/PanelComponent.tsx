@@ -8,7 +8,7 @@ import styles from "./PanelComponent.module.scss";
 import * as DOMPurify from 'dompurify';
 import { PnPClientStorage } from "@pnp/common/storage";
 
-const PanelComponent_LogSource = "ModernDataVisualizer:PanelComponent";
+const PanelComponent_LogSource = "PnPModernSearch:PanelComponent";
 
 export interface IPanelComponentProps {
 
@@ -77,7 +77,7 @@ export class PanelComponent extends React.Component<IPanelComponentProps, IPanel
      * The client storage instance
      */
     private clientStorage: PnPClientStorage;
-    private panelComponentUniqueKey: string = "ModernDataVisualizer:PanelComponent";
+    private panelComponentUniqueKey: string = "PnPModernSearch:PanelComponent";
 
     constructor(props: IPanelComponentProps) {
         super(props);

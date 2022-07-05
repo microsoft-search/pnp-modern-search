@@ -802,7 +802,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
 
         // Get an instance to the MSGraphClient
         const msGraphClientFactory = this.serviceScope.consume<MSGraphClientFactory>(MSGraphClientFactory.serviceKey);
-        const msGraphClient = await msGraphClientFactory.getClient();
+        const msGraphClient = await msGraphClientFactory.getClient('3');
         const request = await msGraphClient.api(this._microsoftSearchUrl);
         const jsonResponse: IMicrosoftSearchResponse = await request.headers({ 'SdkVersion': 'pnpmodernsearch/' + this.context.manifest.version }).post(searchQuery);
 
