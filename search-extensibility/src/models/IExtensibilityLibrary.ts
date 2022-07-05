@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { IComponentDefinition } from './layouts/IComponentDefinition';
 import { ILayoutDefinition } from './layouts/ILayoutDefinition';
 import { ISuggestionProviderDefinition } from './suggestions/ISuggestionProviderDefinition';

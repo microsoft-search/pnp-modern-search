@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/typedef */
 export class ExtensibilityConstants {
     /**
      * Event name to use when a filter value is selected or unselected
