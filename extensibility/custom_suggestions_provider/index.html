@@ -994,25 +994,23 @@
 <h3 id="create-the-provider-logic">Create the provider logic<a class="headerlink" href="#create-the-provider-logic" title="Permanent link">&para;</a></h3>
 <ul>
 <li>In your extensibility library project, create a new <code>MyProvider.ts</code> TypeScript file.</li>
-<li>Create an interface for your provider properties, typically the ones you want to persist in the Web Part property bag. Providers properties are isolated from the other general Web Part properties under the property <code>providerProperties</code> in the property bag object.</li>
-</ul>
-<div class="codehilite"><pre><span></span><code>    <span class="kr">export</span> <span class="kr">interface</span> <span class="nx">ICustomSuggestionProviderProperties</span> <span class="p">{</span>
-        <span class="nx">myProperty</span>: <span class="kt">string</span><span class="p">;</span>
-    <span class="p">}</span>
-</code></pre></div>
-
-
-<ul>
-<li>Implement the <code>BaseSuggestionProvider</code> abstract class using your properties interface:</li>
-</ul>
-<div class="codehilite"><pre><span></span><code>    <span class="kr">export</span> <span class="kr">class</span> <span class="nx">CustomSuggestionProvider</span> <span class="kr">extends</span> <span class="nx">BaseSuggestionProvider</span><span class="o">&lt;</span><span class="nx">ICustomSuggestionProviderProperties</span><span class="o">&gt;</span> <span class="p">{</span>
-        <span class="p">...</span>
-    <span class="p">}</span>
-</code></pre></div>
-
-
-<ul>
-<li>Implement your provider logic according to the available methods and properties.</li>
+<li>
+<p>Create an interface for your provider properties, typically the ones you want to persist in the Web Part property bag. Providers properties are isolated from the other general Web Part properties under the property <code>providerProperties</code> in the property bag object.
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>    <span class="k">export</span> <span class="kd">interface</span> <span class="nx">ICustomSuggestionProviderProperties</span> <span class="p">{</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>        <span class="nx">myProperty</span>: <span class="kt">string</span><span class="p">;</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="p">}</span>
+</code></pre></div></p>
+</li>
+<li>
+<p>Implement the <code>BaseSuggestionProvider</code> abstract class using your properties interface:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>    <span class="k">export</span> <span class="kd">class</span> <span class="nx">CustomSuggestionProvider</span> <span class="k">extends</span> <span class="nx">BaseSuggestionProvider</span><span class="o">&lt;</span><span class="nx">ICustomSuggestionProviderProperties</span><span class="o">&gt;</span> <span class="p">{</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>        <span class="p">...</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="p">}</span>
+</code></pre></div></p>
+</li>
+<li>
+<p>Implement your provider logic according to the available methods and properties.</p>
+</li>
 </ul>
 <h4 id="basesuggestionprovider-methods">BaseSuggestionProvider - Methods<a class="headerlink" href="#basesuggestionprovider-methods" title="Permanent link">&para;</a></h4>
 <table>
@@ -1092,16 +1090,16 @@
 </tr>
 </tbody>
 </table>
-<div class="codehilite"><pre><span></span><code>  <span class="kr">public</span> <span class="nx">getCustomSuggestionProviders</span><span class="p">()</span><span class="o">:</span> <span class="nx">ISuggestionProviderDefinition</span><span class="p">[]</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="p">[</span>
-        <span class="p">{</span>
-          <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;Custom Suggestions Provider&#39;</span><span class="p">,</span>
-          <span class="nx">key</span><span class="o">:</span> <span class="s1">&#39;CustomSuggestionsProvider&#39;</span><span class="p">,</span>
-          <span class="nx">description</span><span class="o">:</span> <span class="s1">&#39;A demo custom suggestions provider from the extensibility library&#39;</span><span class="p">,</span>
-          <span class="nx">serviceKey</span>: <span class="kt">ServiceKey.create</span><span class="o">&lt;</span><span class="nx">ISuggestionProvider</span><span class="o">&gt;</span><span class="p">(</span><span class="s1">&#39;MyCompany:CustomSuggestionsProvider&#39;</span><span class="p">,</span> <span class="nx">CustomSuggestionProvider</span><span class="p">)</span>
-      <span class="p">}</span>
-    <span class="p">];</span>
-  <span class="p">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>  <span class="k">public</span> <span class="nx">getCustomSuggestionProviders</span><span class="p">()</span><span class="o">:</span> <span class="nx">ISuggestionProviderDefinition</span><span class="p">[]</span> <span class="p">{</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="k">return</span> <span class="p">[</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>        <span class="p">{</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>          <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;Custom Suggestions Provider&#39;</span><span class="p">,</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>          <span class="nx">key</span><span class="o">:</span> <span class="s1">&#39;CustomSuggestionsProvider&#39;</span><span class="p">,</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>          <span class="nx">description</span><span class="o">:</span> <span class="s1">&#39;A demo custom suggestions provider from the extensibility library&#39;</span><span class="p">,</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>          <span class="nx">serviceKey</span>: <span class="kt">ServiceKey.create</span><span class="o">&lt;</span><span class="nx">ISuggestionProvider</span><span class="o">&gt;</span><span class="p">(</span><span class="s1">&#39;MyCompany:CustomSuggestionsProvider&#39;</span><span class="p">,</span> <span class="nx">CustomSuggestionProvider</span><span class="p">)</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>      <span class="p">}</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>    <span class="p">];</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>  <span class="p">}</span>
 </code></pre></div>
                 
               

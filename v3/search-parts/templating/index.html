@@ -1089,14 +1089,12 @@
 <p>Displays search results as cards view using the associated Office UI Fabric <a href="https://developer.microsoft.com/en-us/fabric#/controls/web/documentcard">DocumentCard control</a>:</p>
 <p><img alt="Document Card" src="../../images/documentcards_layout.png" /></p>
 <p><strong>Note</strong>: you can still manage the number of cards displayed by row by changing the grid CSS classes directly in the template:</p>
-<div class="codehilite"><pre><span></span><code>{{#each items as |item|}}
-  &lt;div class=&quot;ms-Grid-col ms-sm12 ms-md6 ms-lg4&quot;&gt; &lt;!-- 3 cards by row here for large screen resolution --&gt;
-    ...
-  &lt;/div&gt;
-{{/each}}
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>{{#each items as |item|}}
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  &lt;div class=&quot;ms-Grid-col ms-sm12 ms-md6 ms-lg4&quot;&gt; &lt;!-- 3 cards by row here for large screen resolution --&gt;
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    ...
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>  &lt;/div&gt;
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>{{/each}}
 </code></pre></div>
-
-
 <h4 id="template-options_1">Template options<a class="headerlink" href="#template-options_1" title="Permanent link">&para;</a></h4>
 <table>
 <thead>
@@ -1122,42 +1120,36 @@
 <p><img alt="Slider" src="../../images/slider_layout.png" /></p>
 <h3 id="customize-slide-content">Customize slide content<a class="headerlink" href="#customize-slide-content" title="Permanent link">&para;</a></h3>
 <p>By default, documents card are displayed in the slider but you can add your own HTML markup for each slide inside the <code>{{#&gt;slider}}</code> Handlebars partial:</p>
-<div class="codehilite"><pre><span></span><code>{{#&gt;slider items=(JSONstringify @root.items 2) options=(JSONstringify @root.sliderOptions)}}
-    &lt;!-- Slide content goes here --&gt;
-    &lt;div class=&quot;slide&quot;&gt;
-        &lt;!-- Your HTML markup --&gt;
-    &lt;/div&gt;                
-{{/slider}}
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>{{#&gt;slider items=(JSONstringify @root.items 2) options=(JSONstringify @root.sliderOptions)}}
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    &lt;!-- Slide content goes here --&gt;
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    &lt;div class=&quot;slide&quot;&gt;
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>        &lt;!-- Your HTML markup --&gt;
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    &lt;/div&gt;                
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>{{/slider}}
 </code></pre></div>
-
-
-<p>Item properties and all Handlebars helpers are available inside the partial block (Ex: <code>{{Title}}</code>). However, to use them you must escape every Handlebars expression with the <code>'\'</code> character (ex: <code>{{Title}}</code> becomes <code>\{{Title}}</code>).</p>
+Item properties and all Handlebars helpers are available inside the partial block (Ex: <code>{{Title}}</code>). However, to use them you must escape every Handlebars expression with the <code>'\'</code> character (ex: <code>{{Title}}</code> becomes <code>\{{Title}}</code>).</p>
 <p>This is because we don't want these expressions to be interpreted by the global Handlebars context. Actually, we use an internal compilation process with the item context so we need the raw expression to output the item properties and helpers correctly. For instance if you want an image carousel only, your HTML markup would be:</p>
-<div class="codehilite"><pre><span></span><code>{{#&gt;slider items=(JSONstringify @root.items 2) options=(JSONstringify @root.sliderOptions)}}
-    &lt;img src=&quot;\{{getPreviewSrc item}}&quot;/&gt;              
-{{/slider}}
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>{{#&gt;slider items=(JSONstringify @root.items 2) options=(JSONstringify @root.sliderOptions)}}
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    &lt;img src=&quot;\{{getPreviewSrc item}}&quot;/&gt;              
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>{{/slider}}
 </code></pre></div>
-
-
 <p>Or only person cards:</p>
-<div class="codehilite"><pre><span></span><code>{{#&gt;slider items=(JSONstringify @root.items 2) options=(JSONstringify @root.sliderOptions)}}
-    &lt;div class=&quot;slide&quot;&gt;
-      \{{#with (split AccountName &#39;|&#39;)}}
-            &lt;pnp-persona-card 
-                data-image-url=&quot;/_layouts/15/userphoto.aspx?size=L&amp;username=\{{[2]}}&quot;
-                data-text=&quot;\{{../FirstName}} \{{../LastName}}&quot;
-                data-secondary-text=&quot;\{{../JobTitle}}&quot;
-                data-tertiary-text=&quot;\{{[2]}}&quot;
-                data-optional-text=&quot;\{{../WorkPhone}}&quot;
-                data-persona-size=&quot;14&quot;
-                &gt;
-            &lt;/pnp-persona-card&gt;
-        \{{/with}}
-    &lt;/div&gt;                
-{{/slider}}
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>{{#&gt;slider items=(JSONstringify @root.items 2) options=(JSONstringify @root.sliderOptions)}}
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    &lt;div class=&quot;slide&quot;&gt;
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>      \{{#with (split AccountName &#39;|&#39;)}}
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>            &lt;pnp-persona-card 
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>                data-image-url=&quot;/_layouts/15/userphoto.aspx?size=L&amp;username=\{{[2]}}&quot;
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>                data-text=&quot;\{{../FirstName}} \{{../LastName}}&quot;
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>                data-secondary-text=&quot;\{{../JobTitle}}&quot;
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>                data-tertiary-text=&quot;\{{[2]}}&quot;
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>                data-optional-text=&quot;\{{../WorkPhone}}&quot;
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>                data-persona-size=&quot;14&quot;
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>                &gt;
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>            &lt;/pnp-persona-card&gt;
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>        \{{/with}}
+<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>    &lt;/div&gt;                
+<a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>{{/slider}}
 </code></pre></div>
-
-
 <p>In the case of images, the slider is smart enough to adjsut the height automatically so you don't need to specify explicit values. However, you can set an arbitrary size for the slides updating the CSS <code>slide</code> class.</p>
 <h4 id="template-options_2">Template options<a class="headerlink" href="#template-options_2" title="Permanent link">&para;</a></h4>
 <table>
@@ -1228,35 +1220,29 @@
 <p><img alt="Edit Template" src="../../images/edit_template.png" /></p>
 <h3 id="accessing-items">Accessing items<a class="headerlink" href="#accessing-items" title="Permanent link">&para;</a></h3>
 <p>To iterate the regular result set use:</p>
-<div class="codehilite"><pre><span></span><code>{{#each items as |item|}}
-  <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
-    {{Title}}
-    ...
-  <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
-{{/each}}
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>{{#each items as |item|}}
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>  <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>    {{Title}}
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>    ...
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>  <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>{{/each}}
 </code></pre></div>
-
-
 <p>To iterate promoted results use:</p>
-<div class="codehilite"><pre><span></span><code>{{#each promotedResults as |promotedResult|}}
-  <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
-    {{Title}}
-    ...
-  <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
-{{/each}}
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>{{#each promotedResults as |promotedResult|}}
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>  <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>    {{Title}}
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>    ...
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>  <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>{{/each}}
 </code></pre></div>
-
-
 <p>To iterate result block results use:</p>
-<div class="codehilite"><pre><span></span><code>{{#each secondaryResults as |secondaryResult|}}
-  <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
-    {{Title}}
-    ...
-  <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
-{{/each}}
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>{{#each secondaryResults as |secondaryResult|}}
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>  <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>    {{Title}}
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>    ...
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>  <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>{{/each}}
 </code></pre></div>
-
-
 <h3 id="styling">Styling<a class="headerlink" href="#styling" title="Permanent link">&para;</a></h3>
 <p>You can write your own CSS styles inside templates. However, all CSS rules (including <code>@media</code> rules) will be prefixed automatically by an unique ID according to the follwoing pattern (<strong>pnp-modern-search-template_\&lt;Web Part instance ID></strong>) to make sure styles are isolated from other Web Parts on the page.</p>
 <h4 id="sanitized-html">Sanitized HTML<a class="headerlink" href="#sanitized-html" title="Permanent link">&para;</a></h4>
@@ -1383,50 +1369,42 @@
 <li>persona-card-shimmers</li>
 <li>fabric-icon - You only need to set one property, which are evaluated in order if multiple ones are set. The data-error-image, used to set a fallback image on error, is used only when the data-image-url fails to load, it will not load a fallback for data-icon-name usage.</li>
 </ul>
-<div class="codehilite"><pre><span></span><code><span class="p">&lt;</span><span class="nt">pnp-fabric-icon</span>
-    <span class="na">data-image-url</span><span class="o">=</span><span class="s">&#39;[url to icon - pri 1]&#39;</span>
-    <span class="na">data-file-extension</span><span class="o">=</span><span class="s">&#39;[file extension - pri 2]&#39;</span>
-    <span class="na">data-icon-name</span><span class="o">=</span><span class="s">&#39;[office ui fabric icon name - pri 3]&#39;</span>
-    <span class="na">data-size</span><span class="o">=</span><span class="s">&#39;16 | 20 | 32 (default) | 40 | 48 | 64 | 96&#39;</span>
-    <span class="na">data-error-image</span><span class="o">=</span><span class="s">&#39;[url to image]&#39;</span>
-<span class="p">&gt;</span>
-<span class="p">&lt;/</span><span class="nt">pnp-fabric-icon</span><span class="p">&gt;</span>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="p">&lt;</span><span class="nt">pnp-fabric-icon</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>    <span class="na">data-image-url</span><span class="o">=</span><span class="s">&#39;[url to icon - pri 1]&#39;</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>    <span class="na">data-file-extension</span><span class="o">=</span><span class="s">&#39;[file extension - pri 2]&#39;</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>    <span class="na">data-icon-name</span><span class="o">=</span><span class="s">&#39;[office ui fabric icon name - pri 3]&#39;</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>    <span class="na">data-size</span><span class="o">=</span><span class="s">&#39;16 | 20 | 32 (default) | 40 | 48 | 64 | 96&#39;</span>
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>    <span class="na">data-error-image</span><span class="o">=</span><span class="s">&#39;[url to image]&#39;</span>
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="p">&gt;</span>
+<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="p">&lt;/</span><span class="nt">pnp-fabric-icon</span><span class="p">&gt;</span>
 </code></pre></div>
-
-
-<ul>
-<li>accordion - provides the ability to collaspe content in search result in an accordion fashion</li>
-</ul>
-<div class="codehilite"><pre><span></span><code><span class="p">&lt;</span><span class="nt">pnp-accordion</span> 
-    <span class="na">data-accordion-header-text</span><span class="o">=</span><span class="s">&quot;Accordion Example&quot;</span> 
-    <span class="na">data-theme</span><span class="o">=</span><span class="s">&quot;Default (default) | Neutral&quot;</span> 
-    <span class="na">data-size</span><span class="o">=</span><span class="s">&quot;# | 12 (default)&quot;</span> 
-    <span class="na">data-start-open</span><span class="o">=</span><span class="s">&quot;true | false (default)&quot;</span> 
-    <span class="na">data-rounded-corners</span><span class="o">=</span><span class="s">&quot;true | false (default)&quot;</span><span class="p">&gt;</span>
-    <span class="p">&lt;</span><span class="nt">h4</span><span class="p">&gt;</span>Title: {{Title}}<span class="p">&lt;/</span><span class="nt">h4</span><span class="p">&gt;</span>
-<span class="p">&lt;/</span><span class="nt">pnp-accordion</span><span class="p">&gt;</span>
+- accordion - provides the ability to collaspe content in search result in an accordion fashion</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="p">&lt;</span><span class="nt">pnp-accordion</span> 
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>    <span class="na">data-accordion-header-text</span><span class="o">=</span><span class="s">&quot;Accordion Example&quot;</span> 
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>    <span class="na">data-theme</span><span class="o">=</span><span class="s">&quot;Default (default) | Neutral&quot;</span> 
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>    <span class="na">data-size</span><span class="o">=</span><span class="s">&quot;# | 12 (default)&quot;</span> 
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>    <span class="na">data-start-open</span><span class="o">=</span><span class="s">&quot;true | false (default)&quot;</span> 
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>    <span class="na">data-rounded-corners</span><span class="o">=</span><span class="s">&quot;true | false (default)&quot;</span><span class="p">&gt;</span>
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>    <span class="p">&lt;</span><span class="nt">h4</span><span class="p">&gt;</span>Title: {{Title}}<span class="p">&lt;/</span><span class="nt">h4</span><span class="p">&gt;</span>
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="p">&lt;/</span><span class="nt">pnp-accordion</span><span class="p">&gt;</span>
 </code></pre></div>
-
-
 <p>Example:</p>
 <p><img alt="Accordion Example" src="../../images/WebComponent_Accordion_PopupExample.png" /></p>
 <ul>
 <li>popup - provides the ability to popup content in a modal window within the search result</li>
 </ul>
-<div class="codehilite"><pre><span></span><code><span class="p">&lt;</span><span class="nt">pnp-popup</span><span class="p">&gt;</span>
-    <span class="p">&lt;</span><span class="nt">template</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;popupclick&quot;</span><span class="p">&gt;</span>
-        <span class="p">&lt;</span><span class="nt">span</span><span class="p">&gt;</span>Popup Example - Click Me<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
-    <span class="p">&lt;/</span><span class="nt">template</span><span class="p">&gt;</span>
-    <span class="p">&lt;</span><span class="nt">template</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;popupheader&quot;</span><span class="p">&gt;</span>
-        <span class="p">&lt;</span><span class="nt">span</span><span class="p">&gt;</span>Title: {{Title}}<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;&lt;</span><span class="nt">br</span> <span class="p">/&gt;&lt;</span><span class="nt">span</span><span class="p">&gt;</span>Header HTML here<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
-    <span class="p">&lt;/</span><span class="nt">template</span><span class="p">&gt;</span>
-    <span class="p">&lt;</span><span class="nt">template</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;popupbody&quot;</span><span class="p">&gt;</span>
-        <span class="p">&lt;</span><span class="nt">span</span><span class="p">&gt;</span>Title: {{Title}}<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;&lt;</span><span class="nt">br</span> <span class="p">/&gt;&lt;</span><span class="nt">span</span><span class="p">&gt;</span>Body HTML here<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
-    <span class="p">&lt;/</span><span class="nt">template</span><span class="p">&gt;</span>
-<span class="p">&lt;/</span><span class="nt">pnp-popup</span><span class="p">&gt;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="p">&lt;</span><span class="nt">pnp-popup</span><span class="p">&gt;</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>    <span class="p">&lt;</span><span class="nt">template</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;popupclick&quot;</span><span class="p">&gt;</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>        <span class="p">&lt;</span><span class="nt">span</span><span class="p">&gt;</span>Popup Example - Click Me<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>    <span class="p">&lt;/</span><span class="nt">template</span><span class="p">&gt;</span>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>    <span class="p">&lt;</span><span class="nt">template</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;popupheader&quot;</span><span class="p">&gt;</span>
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>        <span class="p">&lt;</span><span class="nt">span</span><span class="p">&gt;</span>Title: {{Title}}<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;&lt;</span><span class="nt">br</span> <span class="p">/&gt;&lt;</span><span class="nt">span</span><span class="p">&gt;</span>Header HTML here<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>    <span class="p">&lt;/</span><span class="nt">template</span><span class="p">&gt;</span>
+<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>    <span class="p">&lt;</span><span class="nt">template</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;popupbody&quot;</span><span class="p">&gt;</span>
+<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>        <span class="p">&lt;</span><span class="nt">span</span><span class="p">&gt;</span>Title: {{Title}}<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;&lt;</span><span class="nt">br</span> <span class="p">/&gt;&lt;</span><span class="nt">span</span><span class="p">&gt;</span>Body HTML here<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>    <span class="p">&lt;/</span><span class="nt">template</span><span class="p">&gt;</span>
+<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="p">&lt;/</span><span class="nt">pnp-popup</span><span class="p">&gt;</span>
 </code></pre></div>
-
-
 <p>Example:</p>
 <p><img alt="Popup Example" src="../../images/WebComponent_Accordion_PopupExample.png" />
 <img alt="Popup Modal Example" src="../../images/WebComponent_Popup_Modal_Example.png" /></p>
@@ -1437,29 +1415,27 @@
 <p>Remember for the inner template to be executed inside of the component the handlebar expressions must be escaped with <code>'\'</code> character (ex: <code>{{Title}}</code> becomes <code>\{{Title}}</code>).</p>
 </li>
 </ul>
-<div class="codehilite"><pre><span></span><code><span class="p">&lt;</span><span class="nt">pnp-lookup-list-expander</span> 
-    <span class="na">data-list-url</span><span class="o">=</span><span class="s">&quot;https://&lt;tenant&gt;/sites/&lt;sitename&gt;&quot;</span> 
-    <span class="na">data-list-id</span><span class="o">=</span><span class="s">&quot;{{ListID}}&quot;</span> 
-    <span class="na">data-list-item-id</span><span class="o">=</span><span class="s">&quot;{{ListItemID}}&quot;</span>
-    <span class="na">data-column-name</span><span class="o">=</span><span class="s">&quot;RelatedDocuments&quot;</span>
-    <span class="na">data-lookup-list-fields</span><span class="o">=</span><span class="s">&quot;Id,Title,FileRef,FileLeafRef,DocumentType,BusinessUnit/Title&quot;</span><span class="p">&gt;</span>
-    <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
-        <span class="p">&lt;</span><span class="nt">pnp-fabric-icon</span> <span class="na">data-file-extension</span><span class="o">=</span><span class="s">&quot;\{{FileExtension}}&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">pnp-fabric-icon</span><span class="p">&gt;</span>
-        <span class="p">&lt;</span><span class="nt">span</span><span class="p">&gt;&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;\{{FileRef}}?web=1&quot;</span><span class="p">&gt;</span>\{{{Title}}}<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
-        <span class="p">&lt;</span><span class="nt">span</span><span class="p">&gt;</span>
-            <span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;\{{FileRef}}&quot;</span><span class="p">&gt;</span>
-                <span class="p">&lt;</span><span class="nt">pnp-fabric-icon</span> <span class="na">data-icon-name</span><span class="o">=</span><span class="s">&quot;Download&quot;</span> <span class="na">data-size</span><span class="o">=</span><span class="s">&quot;16&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">pnp-fabric-icon</span><span class="p">&gt;</span>
-            <span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
-        <span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
-        <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
-            <span class="p">&lt;</span><span class="nt">span</span><span class="p">&gt;</span>\{{{DocumentType}}}<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
-            <span class="p">&lt;</span><span class="nt">span</span><span class="p">&gt;</span>\{{{BusinessUnit.Title}}}<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
-        <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
-    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
-<span class="p">&lt;/</span><span class="nt">pnp-lookup-list-expander</span><span class="p">&gt;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="p">&lt;</span><span class="nt">pnp-lookup-list-expander</span> 
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>    <span class="na">data-list-url</span><span class="o">=</span><span class="s">&quot;https://&lt;tenant&gt;/sites/&lt;sitename&gt;&quot;</span> 
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>    <span class="na">data-list-id</span><span class="o">=</span><span class="s">&quot;{{ListID}}&quot;</span> 
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>    <span class="na">data-list-item-id</span><span class="o">=</span><span class="s">&quot;{{ListItemID}}&quot;</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>    <span class="na">data-column-name</span><span class="o">=</span><span class="s">&quot;RelatedDocuments&quot;</span>
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>    <span class="na">data-lookup-list-fields</span><span class="o">=</span><span class="s">&quot;Id,Title,FileRef,FileLeafRef,DocumentType,BusinessUnit/Title&quot;</span><span class="p">&gt;</span>
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>    <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>        <span class="p">&lt;</span><span class="nt">pnp-fabric-icon</span> <span class="na">data-file-extension</span><span class="o">=</span><span class="s">&quot;\{{FileExtension}}&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">pnp-fabric-icon</span><span class="p">&gt;</span>
+<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a>        <span class="p">&lt;</span><span class="nt">span</span><span class="p">&gt;&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;\{{FileRef}}?web=1&quot;</span><span class="p">&gt;</span>\{{{Title}}}<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a>        <span class="p">&lt;</span><span class="nt">span</span><span class="p">&gt;</span>
+<a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a>            <span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;\{{FileRef}}&quot;</span><span class="p">&gt;</span>
+<a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a>                <span class="p">&lt;</span><span class="nt">pnp-fabric-icon</span> <span class="na">data-icon-name</span><span class="o">=</span><span class="s">&quot;Download&quot;</span> <span class="na">data-size</span><span class="o">=</span><span class="s">&quot;16&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">pnp-fabric-icon</span><span class="p">&gt;</span>
+<a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a>            <span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+<a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a>        <span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+<a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a>        <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+<a id="__codelineno-10-16" name="__codelineno-10-16" href="#__codelineno-10-16"></a>            <span class="p">&lt;</span><span class="nt">span</span><span class="p">&gt;</span>\{{{DocumentType}}}<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+<a id="__codelineno-10-17" name="__codelineno-10-17" href="#__codelineno-10-17"></a>            <span class="p">&lt;</span><span class="nt">span</span><span class="p">&gt;</span>\{{{BusinessUnit.Title}}}<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+<a id="__codelineno-10-18" name="__codelineno-10-18" href="#__codelineno-10-18"></a>        <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<a id="__codelineno-10-19" name="__codelineno-10-19" href="#__codelineno-10-19"></a>    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<a id="__codelineno-10-20" name="__codelineno-10-20" href="#__codelineno-10-20"></a><span class="p">&lt;/</span><span class="nt">pnp-lookup-list-expander</span><span class="p">&gt;</span>
 </code></pre></div>
-
-
 <p>The above example would display inside of the accordion like:
 <img alt="LookupListExtender Example" src="../../images/WebComponent_LookupListExtender_Example.png" /></p>
 <h3 id="use-result-types">Use result types<a class="headerlink" href="#use-result-types" title="Permanent link">&para;</a></h3>
@@ -1476,15 +1452,13 @@
 - Greater than
 - Is not null</p>
 <p>To use it in your main template, just follow this pattern. This block is not mandatory.</p>
-<div class="codehilite"><pre><span></span><code>{{#&gt; resultTypes}}
-  {{!-- The block below will be used as default item template if no result types matched --}}
-  &lt;div class=&quot;template_result&quot;&gt;
-      &lt;!-- Your default template markup --&gt;
-  &lt;/div&gt;
-{{/resultTypes}}
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>{{#&gt; resultTypes}}
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>  {{!-- The block below will be used as default item template if no result types matched --}}
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>  &lt;div class=&quot;template_result&quot;&gt;
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>      &lt;!-- Your default template markup --&gt;
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>  &lt;/div&gt;
+<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>{{/resultTypes}}
 </code></pre></div>
-
-
 <p>Handlebars <a href="https://handlebarsjs.com/guide/partials.html">partials</a> are used behind the scenes and conditions are built dynamically using a recursive if/else structure.</p>
 <h3 id="elements-previews">Elements previews<a class="headerlink" href="#elements-previews" title="Permanent link">&para;</a></h3>
 <p>Previews are available by default for the simple list layout, for Office documents and Office 365 videos (not Microsoft Stream). The embed URL is directly taken from the <code>ServerRedirectedEmbedURL</code> managed property retrieved from the search results.</p>
@@ -1501,44 +1475,36 @@
 <li><code>data-url</code>: the URL of the iframe source or the video.</li>
 <li><code>data-fileext</code>: the file extension for the video (for video only).</li>
 </ul>
-<p><strong>Preview on documents</strong></p>
-<div class="codehilite"><pre><span></span><code>&lt;img class=&quot;document-preview-item&quot; data-src=&quot;{{ServerRedirectedPreviewURL}}&quot; data-url=&quot;{{Path}}&quot;/&gt;
-</code></pre></div>
-
-
-<p><strong>Preview on videos</strong></p>
-<div class="codehilite"><pre><span></span><code>&lt;img class=&quot;video-preview-item&quot; src=&quot;{{PictureThumbnailURL}}&quot; data-src=&quot;{{PictureThumbnailURL}}&quot; data-url=&quot;{{DefaultEncodingURL}}&quot; data-fileext=&quot;{{FileType}}&quot;/&gt;
-</code></pre></div>
-
-
+<p><strong>Preview on documents</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>&lt;img class=&quot;document-preview-item&quot; data-src=&quot;{{ServerRedirectedPreviewURL}}&quot; data-url=&quot;{{Path}}&quot;/&gt;
+</code></pre></div></p>
+<p><strong>Preview on videos</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>&lt;img class=&quot;video-preview-item&quot; src=&quot;{{PictureThumbnailURL}}&quot; data-src=&quot;{{PictureThumbnailURL}}&quot; data-url=&quot;{{DefaultEncodingURL}}&quot; data-fileext=&quot;{{FileType}}&quot;/&gt;
+</code></pre></div></p>
 <h3 id="custom-placeholders-ie-shimmers">Custom placeholders (i.e. shimmers)<a class="headerlink" href="#custom-placeholders-ie-shimmers" title="Permanent link">&para;</a></h3>
 <p>You can define your own placeholders according your template markup. They will be loaded automatically before the results are loaded.</p>
 <p><img alt="Placeholders" src="../../images/placeholders.png" /></p>
 <p>To do this, insert your HTML markup as follow in your template content:</p>
-<div class="codehilite"><pre><span></span><code>&lt;content id=&quot;placeholder&quot;&gt;
-    &lt;style&gt;
-        /* Insert your CSS overrides here */
-    &lt;/style&gt;
-
-    &lt;div class=&quot;placeholder_root&quot;&gt;
-      &lt;!-- Your placeholder content --&gt;
-    &lt;/div&gt;
-
-&lt;/content&gt;
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>&lt;content id=&quot;placeholder&quot;&gt;
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>    &lt;style&gt;
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>        /* Insert your CSS overrides here */
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>    &lt;/style&gt;
+<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>
+<a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a>    &lt;div class=&quot;placeholder_root&quot;&gt;
+<a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a>      &lt;!-- Your placeholder content --&gt;
+<a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a>    &lt;/div&gt;
+<a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a>
+<a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a>&lt;/content&gt;
 </code></pre></div>
-
-
 <p>Notice your template content must be enclosed in a <code>&lt;content id="template"&gt;</code> tag if you define placeholders.</p>
 <h3 id="work-with-sharepoint-theme">Work with SharePoint theme<a class="headerlink" href="#work-with-sharepoint-theme" title="Permanent link">&para;</a></h3>
 <p>A <code>themeVariant</code> variable is available in the root Handlebars context. It contains all current theme information that can use in your CSS classes or inline styles. Example:</p>
-<div class="codehilite"><pre><span></span><code>&lt;style&gt;
-    .example-themePrimary a {
-        color: {{@root.themeVariant.palette.themePrimary}};
-    }
-&lt;/style&gt;
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>&lt;style&gt;
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>    .example-themePrimary a {
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>        color: {{@root.themeVariant.palette.themePrimary}};
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>    }
+<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>&lt;/style&gt;
 </code></pre></div>
-
-
 <p>To see all available values, you can inspect the <code>themeVariant</code> objetc using the 'Debug View' layout. Notice the values are udpated dynamically every time you udpate the theme through the UI.</p>
 <h3 id="custom-code-renderers">Custom code renderers<a class="headerlink" href="#custom-code-renderers" title="Permanent link">&para;</a></h3>
 <p>You may also define your own renderers, which most often should be SPFx application customizers. These should use the resultservice to register themselves as renderers, and will upon registration be available as a rendering choice in the "Result Layouts" Section.</p>

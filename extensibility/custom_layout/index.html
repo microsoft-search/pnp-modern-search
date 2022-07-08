@@ -1006,26 +1006,24 @@
 <h3 id="create-the-layout">Create the layout<a class="headerlink" href="#create-the-layout" title="Permanent link">&para;</a></h3>
 <ul>
 <li>In your extensibility library project, create a new <code>MyLayout.ts</code> TypeScript file.</li>
-<li>Create an interface for your layout properties, typically the ones you want to persist in the Web Part property bag. Layout properties are isolated from the other general Web Part properties under the property <code>layoutProperties</code> in the property bag object.</li>
+<li>Create an interface for your layout properties, typically the ones you want to persist in the Web Part property bag. Layout properties are isolated from the other general Web Part properties under the property <code>layoutProperties</code> in the property bag object.
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>    <span class="k">export</span> <span class="kd">interface</span> <span class="nx">ICustomLayoutProperties</span> <span class="p">{</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>        <span class="nx">myTextProperty</span>: <span class="kt">string</span><span class="p">;</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="p">}</span>
+</code></pre></div></li>
 </ul>
-<div class="codehilite"><pre><span></span><code>    <span class="kr">export</span> <span class="kr">interface</span> <span class="nx">ICustomLayoutProperties</span> <span class="p">{</span>
-        <span class="nx">myTextProperty</span>: <span class="kt">string</span><span class="p">;</span>
-    <span class="p">}</span>
-</code></pre></div>
-
-
 <p><img alt="&quot;Custom layout properties&quot;" class="center" src="../../assets/extensibility/layout/layout_properties.png" /></p>
 <ul>
-<li>Implement the <code>BaseLayout</code> abstract class using your properties interface:</li>
-</ul>
-<div class="codehilite"><pre><span></span><code>    <span class="kr">export</span> <span class="kr">class</span> <span class="nx">Customlayout</span> <span class="kr">extends</span> <span class="nx">BaseLayout</span><span class="o">&lt;</span><span class="nx">ICustomLayoutProperties</span><span class="o">&gt;</span> <span class="p">{</span>
-        <span class="p">...</span>
-    <span class="p">}</span>
-</code></pre></div>
-
-
-<ul>
-<li>Implement your layout logic according to the available methods and properties.</li>
+<li>
+<p>Implement the <code>BaseLayout</code> abstract class using your properties interface:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>    <span class="k">export</span> <span class="kd">class</span> <span class="nx">Customlayout</span> <span class="k">extends</span> <span class="nx">BaseLayout</span><span class="o">&lt;</span><span class="nx">ICustomLayoutProperties</span><span class="o">&gt;</span> <span class="p">{</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>        <span class="p">...</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="p">}</span>
+</code></pre></div></p>
+</li>
+<li>
+<p>Implement your layout logic according to the available methods and properties.</p>
+</li>
 </ul>
 <h4 id="baselayout-methods">BaseLayout - Methods<a class="headerlink" href="#baselayout-methods" title="Permanent link">&para;</a></h4>
 <table>
@@ -1068,29 +1066,23 @@
 <h3 id="create-the-html-template-file-handlebars">Create the HTML template file (Handlebars)<a class="headerlink" href="#create-the-html-template-file-handlebars" title="Permanent link">&para;</a></h3>
 <p>In your extensibility library project, create a new <code>custom-layout.html</code> HTML file. A layout template is split into two distinct parts:</p>
 <p>A <code>template</code> part, containing the HTML markup to display your data <strong>once fetched</strong>. This part is mandatory to display your data.</p>
-<div class="codehilite"><pre><span></span><code>    <span class="p">&lt;</span><span class="nt">content</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;template&quot;</span><span class="p">&gt;</span>
-        <span class="c">&lt;!-- Your template content here --&gt;</span>
-    <span class="p">&lt;/</span><span class="nt">content</span><span class="p">&gt;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>    <span class="p">&lt;</span><span class="nt">content</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;template&quot;</span><span class="p">&gt;</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>        <span class="cm">&lt;!-- Your template content here --&gt;</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="p">&lt;/</span><span class="nt">content</span><span class="p">&gt;</span>
 </code></pre></div>
-
-
 <p>A <code>placeholder</code> part, containing the HTML markup to display as placeholder <strong>while the data are getting fetched</strong>. This part is optional.</p>
-<div class="codehilite"><pre><span></span><code>    <span class="p">&lt;</span><span class="nt">content</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;placeholder&quot;</span><span class="p">&gt;</span>
-        <span class="c">&lt;!-- Your placeholder content here --&gt;</span>
-    <span class="p">&lt;/</span><span class="nt">content</span><span class="p">&gt;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>    <span class="p">&lt;</span><span class="nt">content</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;placeholder&quot;</span><span class="p">&gt;</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>        <span class="cm">&lt;!-- Your placeholder content here --&gt;</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    <span class="p">&lt;/</span><span class="nt">content</span><span class="p">&gt;</span>
 </code></pre></div>
-
-
 <blockquote>
 <p>In a template, you must use Handlebars expressions to access and display your data.</p>
 </blockquote>
 <p><strong>Example: iterating through all items</strong></p>
-<div class="codehilite"><pre><span></span><code><span class="cp">{{</span><span class="m m-Attribute">#each</span> <span class="nv">data.items</span> <span class="nv">as</span> <span class="err">|</span><span class="nv">item</span><span class="err">|</span><span class="cp">}}</span><span class="x"></span>
-<span class="x">    &lt;!-- Access &#39;item&#39; data source fields from here (ex: item.Title)--&gt;</span>
-<span class="cp">{{</span><span class="m m-Attribute">/each</span><span class="cp">}}</span><span class="x"></span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="cp">{{</span><span class="m m-Attribute">#each</span> <span class="nv">data.items</span> <span class="nv">as</span> <span class="err">|</span><span class="nv">item</span><span class="err">|</span><span class="cp">}}</span><span class="x"></span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="x">    &lt;!-- Access &#39;item&#39; data source fields from here (ex: item.Title)--&gt;</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="cp">{{</span><span class="m m-Attribute">/each</span><span class="cp">}}</span><span class="x"></span>
 </code></pre></div>
-
-
 <h3 id="register-layout-information">Register layout information<a class="headerlink" href="#register-layout-information" title="Permanent link">&para;</a></h3>
 <p>The next step is to fill information about your new layout. In the library main entry point (i.e. the class implementing the <code>IExtensibilityLibrary</code> in interface) return a new <code>ILayoutDefinition</code> object in the <code>getCustomLayouts()</code> method using these properties: </p>
 <table>
@@ -1127,18 +1119,18 @@
 </tr>
 </tbody>
 </table>
-<div class="codehilite"><pre><span></span><code><span class="kr">public</span> <span class="nx">getCustomLayouts</span><span class="p">()</span><span class="o">:</span> <span class="nx">ILayoutDefinition</span><span class="p">[]</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="p">[</span>
-        <span class="p">{</span>
-            <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;My custom layout&#39;</span><span class="p">,</span>
-            <span class="nx">iconName</span><span class="o">:</span> <span class="s1">&#39;Color&#39;</span><span class="p">,</span>
-            <span class="nx">key</span><span class="o">:</span> <span class="s1">&#39;CustomLayout&#39;</span><span class="p">,</span>
-            <span class="nx">type</span>: <span class="kt">LayoutType.Results</span><span class="p">,</span>
-            <span class="nx">templateContent</span>: <span class="kt">require</span><span class="p">(</span><span class="s1">&#39;../custom-layout.html&#39;</span><span class="p">),</span>
-            <span class="nx">serviceKey</span>: <span class="kt">ServiceKey.create</span><span class="o">&lt;</span><span class="nx">ILayout</span><span class="o">&gt;</span><span class="p">(</span><span class="s1">&#39;MyCompany:CustomLayout&#39;</span><span class="p">,</span> <span class="nx">Customlayout</span><span class="p">)</span>
-        <span class="p">}</span>
-    <span class="p">];</span>
-<span class="p">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">public</span> <span class="nx">getCustomLayouts</span><span class="p">()</span><span class="o">:</span> <span class="nx">ILayoutDefinition</span><span class="p">[]</span> <span class="p">{</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>    <span class="k">return</span> <span class="p">[</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>        <span class="p">{</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>            <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;My custom layout&#39;</span><span class="p">,</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>            <span class="nx">iconName</span><span class="o">:</span> <span class="s1">&#39;Color&#39;</span><span class="p">,</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>            <span class="nx">key</span><span class="o">:</span> <span class="s1">&#39;CustomLayout&#39;</span><span class="p">,</span>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>            <span class="kr">type</span><span class="o">:</span> <span class="nx">LayoutType</span><span class="p">.</span><span class="nx">Results</span><span class="p">,</span>
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>            <span class="nx">templateContent</span>: <span class="kt">require</span><span class="p">(</span><span class="s1">&#39;../custom-layout.html&#39;</span><span class="p">),</span>
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>            <span class="nx">serviceKey</span>: <span class="kt">ServiceKey.create</span><span class="o">&lt;</span><span class="nx">ILayout</span><span class="o">&gt;</span><span class="p">(</span><span class="s1">&#39;MyCompany:CustomLayout&#39;</span><span class="p">,</span> <span class="nx">Customlayout</span><span class="p">)</span>
+<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>        <span class="p">}</span>
+<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>    <span class="p">];</span>
+<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="p">}</span>
 </code></pre></div>
                 
               

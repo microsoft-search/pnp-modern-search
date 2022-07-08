@@ -866,14 +866,14 @@
 <p>From here, use the Handlebars API to add your customizations to this specific namespace. They will be availabe in templates for registered Web Part instances:</p>
 </li>
 </ol>
-<div class="codehilite"><pre><span></span><code><span class="kr">public</span> <span class="nx">registerHandlebarsCustomizations</span><span class="p">(</span><span class="nx">namespace</span>: <span class="kt">typeof</span> <span class="nx">Handlebars</span><span class="p">)</span> <span class="p">{</span>
-
-    <span class="c1">// Register custom Handlebars helpers</span>
-    <span class="c1">// Usage {{myHelper &#39;value&#39;}}</span>
-    <span class="nx">namespace</span><span class="p">.</span><span class="nx">registerHelper</span><span class="p">(</span><span class="s1">&#39;myHelper&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nx">value</span>: <span class="kt">string</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="k">new</span> <span class="nx">namespace</span><span class="p">.</span><span class="nx">SafeString</span><span class="p">(</span><span class="nx">value</span><span class="p">.</span><span class="nx">toUpperCase</span><span class="p">());</span>
-    <span class="p">});</span>
-<span class="p">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">public</span> <span class="nx">registerHandlebarsCustomizations</span><span class="p">(</span><span class="nx">namespace</span>: <span class="kt">typeof</span> <span class="nx">Handlebars</span><span class="p">)</span> <span class="p">{</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="c1">// Register custom Handlebars helpers</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="c1">// Usage {{myHelper &#39;value&#39;}}</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="nx">namespace</span><span class="p">.</span><span class="nx">registerHelper</span><span class="p">(</span><span class="s1">&#39;myHelper&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nx">value</span>: <span class="kt">string</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>        <span class="k">return</span> <span class="ow">new</span> <span class="nx">namespace</span><span class="p">.</span><span class="nx">SafeString</span><span class="p">(</span><span class="nx">value</span><span class="p">.</span><span class="nx">toUpperCase</span><span class="p">());</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="p">});</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="p">}</span>
 </code></pre></div>
                 
               

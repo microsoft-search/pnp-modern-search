@@ -1032,7 +1032,7 @@
 </tr>
 <tr>
 <td><strong>Query template</strong></td>
-<td>The search query template to use. It allows you to use dynamic tokens according to the context or specifiy conditions that should always apply to the query.</td>
+<td>The search query template to use. It allows you to use dynamic tokens according to the context or specify conditions that should always apply to the query.</td>
 <td><code>{searchTerms}</code></td>
 </tr>
 <tr>
@@ -1066,6 +1066,11 @@
 <td>False.</td>
 </tr>
 <tr>
+<td><strong>Trim duplicates</strong></td>
+<td>A Boolean value that specifies whether duplicate items are removed from the results.</td>
+<td>False.</td>
+</tr>
+<tr>
 <td><strong>Enable audience targeting</strong></td>
 <td>Whether or not results should be targeted according to the audiences that the current user belongs to. <a href="https://support.microsoft.com/office/target-navigation-news-and-files-to-specific-audiences-33d84cb6-14ed-4e53-a426-74c38ea32293">More information about modern audiences and how to configure them</a>.</td>
 <td>False.</td>
@@ -1085,7 +1090,7 @@
 <h3 id="microsoft-search">Microsoft Search<a class="headerlink" href="#microsoft-search" title="Permanent link">&para;</a></h3>
 <p>The <em>'Microsoft Search'</em> data source retrieve items from the Microsoft search engine.</p>
 <blockquote>
-<p>This data source uses the Microsoft Search beta API that is not suitable for a production use. An enhanced version of this data source will follow when the GA version will be released.</p>
+<p>This data source can use the Microsoft Search beta API that is not suitable for a production use. Use the normal version for production use.</p>
 </blockquote>
 <h4 id="source-configuration_1">Source configuration<a class="headerlink" href="#source-configuration_1" title="Permanent link">&para;</a></h4>
 <table>
@@ -1113,9 +1118,24 @@
 <td><strong>false</strong></td>
 </tr>
 <tr>
+<td><strong>Enable spelling suggestions</strong></td>
+<td>Flag to enable spelling suggestions. If enabled, the user will get the search results for the original search query and suggestions for spelling correction in the <strong>queryAlterationResponse</strong> property of the response for the typos in the query.</td>
+<td><strong>false</strong></td>
+</tr>
+<tr>
+<td><strong>Enable spelling modifications</strong></td>
+<td>Flag to enable spelling modifications. If enabled, the user will get the search results for the corrected query in case of no results for the original query with typos. The response will also include the spelling modification information in the <strong>queryAlterationResponse</strong> property.</td>
+<td><strong>false</strong></td>
+</tr>
+<tr>
 <td><strong>Sort settings</strong></td>
 <td>Configure the sort settings of the data source. Properties listed in the dropdown are all static properties marked as <em>'Sortable'</em> in the <a href="https://docs.microsoft.com/sharepoint/technical-reference/">SharePoint search schema</a>. However, it does not list all possible <em>RefinableXXX</em> or aliases fields. To use them, you must enter the value manually and press 'Enter' to validate. For a particular field, you can define if it should be used for initial sort (i.e. when the results are loaded for the first time) or be only available for users in the sort control (i.e. after the results are loaded). <strong>The sort control does not consider default sort fields (i.e. select them by default) and you can only sort on a single field at a time according the fields you defined</strong>. If no user sort fields are defined in the configuration, the sort control won't be displayed.</td>
-<td>None</td>
+<td>None.</td>
+</tr>
+<tr>
+<td><strong>Enable result Types</strong></td>
+<td>Display results according to the result types defined in the Microsoft Search admin center. <strong>This option can only be used if <code>External Items</code> entity type is selected and the layout type is "Adaptive Cards</strong></td>
+<td>None.</td>
 </tr>
 </tbody>
 </table>
@@ -1157,7 +1177,7 @@
 </tr>
 <tr>
 <td><strong>Hide navigation buttons (prev, next, first, last) if they are disabled.</strong></td>
-<td>Self explicit</td>
+<td>Self explicit.</td>
 <td></td>
 </tr>
 </tbody>

@@ -932,7 +932,6 @@
         }
 </code></pre></div>
 
-
 <h2 id="create-a-custom-web-component">Create a custom web component<a class="headerlink" href="#create-a-custom-web-component" title="Permanent link">&para;</a></h2>
 <p>A web component is a custom HTML element that can be used in your templates to implement complex behaviors. We used them here as <em>"wrappers"</em> for React components to be able to use them with Handlebars. In this solution, web components are considered <strong>stateless</strong>, meaning they will be entirely recreated when an attribute is changed (coming from the property pane). It means you can still use an inner state in your React components but not rely on the parent context (props) since it will be recreated every time by the Handlebars template.</p>
 <p>To create a custom component, follow this procedure:</p>
@@ -986,7 +985,6 @@ export class CustomComponent extends React.Component&lt;ICustomComponentProps, I
 }
 </code></pre></div>
 
-
 <p>Because <code>props</code> will be passed from an HTML template, they must to use always a <code>string</code> type. For complex objects, you will need to pass them as 'stringified' then use the <code>JSON.parse()</code> method to use them in your component logic.</p>
 </li>
 <li>
@@ -1005,7 +1003,6 @@ export class CustomComponent extends React.Component&lt;ICustomComponentProps, I
     }    
 }
 </code></pre></div>
-
 
 <p>The <code>resolveAttributes</code> method will transform custom element HTML attributes to React component props. By convention, web component attributes have to be passed using <strong>camel case</strong> to be tranformed into React component props.</p>
 <blockquote>
@@ -1034,7 +1031,6 @@ export class MyCompanyLibraryLibrary implements IExtensibilityLibrary {
 }
 </code></pre></div>
 
-
 <blockquote>
 <p><strong>Custom web component tag names must be lowercase with at least one dash separator <code>-</code> (ex: <code>my-custom-component</code>.</strong></p>
 </blockquote>
@@ -1043,7 +1039,6 @@ export class MyCompanyLibraryLibrary implements IExtensibilityLibrary {
 <p>In a custom Handlebars layout, reference your component like this, leveraging the Handlebars context values:</p>
 <div class="codehilite"><pre><span></span><code>&lt;my-custom-component data-my-string-param=&quot;{{MyStringProperty}}&quot; data-my-object-param=&quot;{{JSONstringify MyObjectProperty 2}}&quot;&gt;&lt;/my-custom-component&gt;
 </code></pre></div>
-
 
 </li>
 <li>
@@ -1088,7 +1083,6 @@ export class CustomSuggestionProvider extends BaseSuggestionProvider  {
 }
 </code></pre></div>
 
-
 </li>
 <li>
 <p>In the main entry point class (ex: MyCompanyLibraryLibrary.ts), register your custom query suggestion provider like the example below.</p>
@@ -1112,7 +1106,6 @@ export class MyCompanyLibraryLibrary implements IExtensibilityLibrary {
     }
 }
 </code></pre></div>
-
 
 </li>
 </ol>
@@ -1154,7 +1147,6 @@ export class CustomQueryModifier extends BaseQueryModifier  {
 }
 </code></pre></div>
 
-
 </li>
 <li>
 <p>In the main entry point class (ex: MyCompanyLibraryLibrary.ts), register your custom query modifier like the example below.</p>
@@ -1175,7 +1167,6 @@ export class MyCompanyLibraryLibrary implements IExtensibilityLibrary {
     }
 }
 </code></pre></div>
-
 
 </li>
 </ol>

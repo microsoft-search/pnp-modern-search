@@ -1021,7 +1021,7 @@
 <tbody>
 <tr>
 <td>Query template</td>
-<td Site="Site">The search query template in KQL format. You can use search variables here (like Path:</td>
+<td>The search query template in KQL format. You can use search variables here (like Path:{Site}).</td>
 </tr>
 <tr>
 <td>Result Source Identifier</td>
@@ -1210,11 +1210,11 @@
 <tbody>
 <tr>
 <td align="left"><strong>{URLToken.&lt;integer&gt;}</strong>  <br/></td>
-<td URLToken.1="URLToken.1" align="left">A value from the URL of a page. The integer represents the position of the value in the URL as counted from right to left. For example, for the page http://www.contoso/audio/mp3/1010101, the query variable </td>
+<td align="left">A value from the URL of a page. The integer represents the position of the value in the URL as counted from right to left. For example, for the page http://www.contoso/audio/mp3/1010101, the query variable {URLToken.1} will query for the last value in the URL, 1010101. The query variable {URLToken.3} will query for the third last property in the URL, audio. You can query for values up to the ninth last position in a URL.  <br/></td>
 </tr>
 <tr>
 <td align="left"><strong>{Request.&lt;PropertyName&gt;}</strong>  <br/></td>
-<td Request.Url="Request.Url" align="left">A value from the current http request - for example, </td>
+<td align="left">A value from the current http request - for example, {Request.Url}.  <br/></td>
 </tr>
 </tbody>
 </table>
@@ -1304,15 +1304,15 @@
 </tr>
 <tr>
 <td align="left"><strong>{QueryString.&lt;ParameterName&gt;}</strong> <br/></td>
-<td QueryString.ItemNumber="QueryString.ItemNumber" align="left">A value from a query string in the URL of the current page. For example, if the URL of the current page contains a query string such as ItemNumber=567, you could obtain the value 567 by specifying </td>
+<td align="left">A value from a query string in the URL of the current page. For example, if the URL of the current page contains a query string such as ItemNumber=567, you could obtain the value 567 by specifying {QueryString.ItemNumber}. <br/></td>
 </tr>
 <tr>
 <td align="left"><strong>{QueryString.&lt;ParameterName&gt;}</strong> <br/></td>
-<td QueryString.ItemNumber="QueryString.ItemNumber" align="left">A value from a query string in the URL of the current page. For example, if the URL of the current page contains a query string such as ItemNumber=567, you could obtain the value 567 by specifying </td>
+<td align="left">A value from a query string in the URL of the current page. For example, if the URL of the current page contains a query string such as ItemNumber=567, you could obtain the value 567 by specifying {QueryString.ItemNumber}. <br/></td>
 </tr>
 <tr>
 <td align="left"><strong>{PageContext.&lt;ParameterName&gt;}</strong> <br/></td>
-<td PageContext.hubSiteId="PageContext.hubSiteId" align="left">A value from the legacyPageContext object on the page. For example, if the legacyPageContext object of the current page contains a property "hubSiteId": "166aa115-7ae7-4c21-9e02-9e0c8872be28", you could obtain the value 166aa115-7ae7-4c21-9e02-9e0c8872be28 by specifying </td>
+<td align="left">A value from the legacyPageContext object on the page. For example, if the legacyPageContext object of the current page contains a property "hubSiteId": "166aa115-7ae7-4c21-9e02-9e0c8872be28", you could obtain the value 166aa115-7ae7-4c21-9e02-9e0c8872be28 by specifying {PageContext.hubSiteId}. The property name is case sensitive!<br/></td>
 </tr>
 <tr>
 <td align="left"><strong>{TenantUrl}</strong>  <br/></td>
@@ -1324,7 +1324,6 @@
 <p>To deal with mutli valued properties (like taxonomy multi or choices), you can use the 'OR' operator syntax <code>{|&lt;property&gt;&lt;operator&gt;&lt;multi_valuesporperty&gt;}</code>. The search query will be expanded like this:</p>
 <div class="codehilite"><pre><span></span><code>((&lt;property&gt;&lt;operator&gt;&lt;value_1&gt;) OR (&lt;property&gt;&lt;operator&gt;&lt;value_2&gt;) OR (&lt;property&gt;&lt;operator&gt;&lt;value_3&gt;) ...)
 </code></pre></div>
-
 
 <p><strong>Examples:</strong></p>
 <ul>
@@ -1352,56 +1351,40 @@
 <p>URL params refinement filters take priority over default refinement filters set in the search results Web Part options. </p>
 </blockquote>
 <h5 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h5>
-<p><strong>Use free text values</strong></p>
-<div class="codehilite"><pre><span></span><code>?filters=[{&quot;n&quot;:&quot;FileType&quot;,&quot;t&quot;:[&quot;docx&quot;]}]
-</code></pre></div>
-
-
-<p><strong>FQL expressions with multiple values</strong></p>
-<div class="codehilite"><pre><span></span><code>?filters=[{&quot;n&quot;:&quot;FileType&quot;,&quot;t&quot;:[&quot;equals(&#39;docx&#39;)&quot;,&quot;equals(&#39;pptx&#39;)&quot;],&quot;o&quot;:&quot;or&quot;}]
-</code></pre></div>
-
-
+<p><strong>Use free text values</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>?filters=[{&quot;n&quot;:&quot;FileType&quot;,&quot;t&quot;:[&quot;docx&quot;]}]
+</code></pre></div></p>
+<p><strong>FQL expressions with multiple values</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>?filters=[{&quot;n&quot;:&quot;FileType&quot;,&quot;t&quot;:[&quot;equals(&#39;docx&#39;)&quot;,&quot;equals(&#39;pptx&#39;)&quot;],&quot;o&quot;:&quot;or&quot;}]
+</code></pre></div></p>
 <blockquote>
 <p>If the targeted refiner template doesn't support multi values, only the first matching value will be selected by default.</p>
 </blockquote>
-<p><strong>Date intervals</strong></p>
-<div class="codehilite"><pre><span></span><code>?filters=[{&quot;n&quot;:&quot;Created&quot;,&quot;t&quot;:[&quot;yearAgo&quot;]}]
-</code></pre></div>
-
-
+<p><strong>Date intervals</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>?filters=[{&quot;n&quot;:&quot;Created&quot;,&quot;t&quot;:[&quot;yearAgo&quot;]}]
+</code></pre></div></p>
 <p>Valid values are <code>yesterday</code>, <code>weekAgo</code>, <code>monthAgo</code>, <code>threeMonthsAgo</code>, <code>yearAgo</code>, <code>olderThanYear</code>.</p>
-<p><strong>Date range</strong></p>
-<div class="codehilite"><pre><span></span><code>?filters=[{&quot;n&quot;:&quot;Created&quot;,&quot;t&quot;:[&quot;range(2019-09-01T04:00:00.000Z,max)&quot;],&quot;o&quot;:&quot;or&quot;}]
-</code></pre></div>
-
-
-<p><strong>Taxonomy values</strong></p>
-<div class="codehilite"><pre><span></span><code>?filters=[{&quot;n&quot;:&quot;owstaxidmetadataalltagsinfo&quot;,&quot;t&quot;:[&quot;IT&quot;,&quot;string(&#39;Governance&#39;)&quot;],&quot;o&quot;:&quot;or&quot;}] // Only the &#39;Governance&#39; results will show up since &#39;IT&#39; is tokenized to HEX
-
-?filters=[{&quot;n&quot;:&quot;owstaxidmetadataalltagsinfo&quot;,&quot;t&quot;:[&quot;string(&#39;IT&#39;)&quot;,&quot;string(&#39;Governance&#39;)&quot;],&quot;o&quot;:&quot;or&quot;}] // &#39;IT&#39; and &#39;Governance&#39; results will show up
-</code></pre></div>
-
-
-<p><strong>Persona</strong></p>
-<div class="codehilite"><pre><span></span><code>?filters=[{&quot;n&quot;:&quot;RefinableString05&quot;,&quot;t&quot;:[&quot;string(&#39;Franck&#39;)&quot;],&quot;o&quot;:&quot;or&quot;}]
-</code></pre></div>
-
-
-<p><strong>Filter containing substring value</strong></p>
-<div class="codehilite"><pre><span></span><code>?filters=[{&quot;n&quot;:&quot;FileType&quot;,&quot;t&quot;:[&quot;ppt*&quot;]}]
-
-OR 
-
-?filters=[{&quot;n&quot;:&quot;FileType&quot;,&quot;t&quot;:[&quot;string(&#39;ppt*&#39;)&quot;]}]
-</code></pre></div>
-
-
-<p><strong>Use multiple refiner properties</strong></p>
-<div class="codehilite"><pre><span></span><code>?filters=[{&quot;n&quot;:&quot;Created&quot;,&quot;t&quot;:[&quot;yearAgo&quot;],&quot;o&quot;:&quot;or&quot;},{&quot;n&quot;:&quot;FileType&quot;,&quot;t&quot;:[&quot;equals(&#39;docx&#39;)&quot;,&quot;equals(&#39;pptx&#39;)&quot;],&quot;o&quot;:&quot;or&quot;}]
-</code></pre></div>
-
-
+<p><strong>Date range</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>?filters=[{&quot;n&quot;:&quot;Created&quot;,&quot;t&quot;:[&quot;range(2019-09-01T04:00:00.000Z,max)&quot;],&quot;o&quot;:&quot;or&quot;}]
+</code></pre></div></p>
+<p><strong>Taxonomy values</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>?filters=[{&quot;n&quot;:&quot;owstaxidmetadataalltagsinfo&quot;,&quot;t&quot;:[&quot;IT&quot;,&quot;string(&#39;Governance&#39;)&quot;],&quot;o&quot;:&quot;or&quot;}] // Only the &#39;Governance&#39; results will show up since &#39;IT&#39; is tokenized to HEX
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>?filters=[{&quot;n&quot;:&quot;owstaxidmetadataalltagsinfo&quot;,&quot;t&quot;:[&quot;string(&#39;IT&#39;)&quot;,&quot;string(&#39;Governance&#39;)&quot;],&quot;o&quot;:&quot;or&quot;}] // &#39;IT&#39; and &#39;Governance&#39; results will show up
+</code></pre></div></p>
+<p><strong>Persona</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>?filters=[{&quot;n&quot;:&quot;RefinableString05&quot;,&quot;t&quot;:[&quot;string(&#39;Franck&#39;)&quot;],&quot;o&quot;:&quot;or&quot;}]
+</code></pre></div></p>
+<p><strong>Filter containing substring value</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>?filters=[{&quot;n&quot;:&quot;FileType&quot;,&quot;t&quot;:[&quot;ppt*&quot;]}]
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>OR 
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>?filters=[{&quot;n&quot;:&quot;FileType&quot;,&quot;t&quot;:[&quot;string(&#39;ppt*&#39;)&quot;]}]
+</code></pre></div></p>
+<p><strong>Use multiple refiner properties</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>?filters=[{&quot;n&quot;:&quot;Created&quot;,&quot;t&quot;:[&quot;yearAgo&quot;],&quot;o&quot;:&quot;or&quot;},{&quot;n&quot;:&quot;FileType&quot;,&quot;t&quot;:[&quot;equals(&#39;docx&#39;)&quot;,&quot;equals(&#39;pptx&#39;)&quot;],&quot;o&quot;:&quot;or&quot;}]
+</code></pre></div></p>
 <h5 id="how-default-selected-values-are-set-in-the-search-filters-wp">How default selected values are set in the search filters WP?<a class="headerlink" href="#how-default-selected-values-are-set-in-the-search-filters-wp" title="Permanent link">&para;</a></h5>
 <p>If a search filters Web Part is connected to a search results WP, the refinement values will be automatically selected at page load according to this mechanism:</p>
 <p><img alt="Default Selected Filters" src="../../images/default_selected_filters.png" /></p>

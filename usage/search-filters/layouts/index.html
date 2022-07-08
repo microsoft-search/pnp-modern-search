@@ -1032,7 +1032,7 @@
 <p><img alt="&quot;Available layouts&quot;" class="center" src="../../../assets/webparts/search-filters/layouts/available_layouts.png" /></p>
 <h3 id="vertical">Vertical<a class="headerlink" href="#vertical" title="Permanent link">&para;</a></h3>
 <p>Display filters as a vertical bar:</p>
-<p><img alt="&quot;Vertical&quot;" src="../../../assets/webparts/search-filters/layouts/vertical_layout.png" />{: .center</p>
+<p><img alt="&quot;Vertical&quot;" class="center" src="../../../assets/webparts/search-filters/layouts/vertical_layout.png" /></p>
 <h3 id="horizontal">Horizontal<a class="headerlink" href="#horizontal" title="Permanent link">&para;</a></h3>
 <p>Display filters as an horizontal bar. For instance, it fits nicely with 'Combo' filter templates.</p>
 <p><img alt="&quot;Horizontal&quot;" class="center" src="../../../assets/webparts/search-filters/layouts/horizontal_layout.png" /></p>
@@ -1049,8 +1049,8 @@
 <tbody>
 <tr>
 <td><strong>Preferred number of cards per row</strong></td>
-<td>Specifiy the <strong>preferred</strong> number of filters to display per row <strong>when the required width space is available</strong>. The Web Part will always adjust the number of possible filters to display depending the available width. It means that if you set this value to '3' but you display the Web Part in small column, only 1 filter will be displayed.</td>
-<td>3</td>
+<td>Specify the <strong>preferred</strong> number of filters to display per row <strong>when the required width space is available</strong>. The Web Part will always adjust the number of possible filters to display depending the available width. It means that if you set this value to '3' but you display the Web Part in small column, only 1 filter will be displayed.</td>
+<td>3.</td>
 </tr>
 </tbody>
 </table>
@@ -1091,7 +1091,7 @@
 <tr>
 <td><strong>Panel size</strong></td>
 <td>The filter panel size to display.</td>
-<td>Small (right)</td>
+<td>Small (right).</td>
 </tr>
 </tbody>
 </table>
@@ -1099,18 +1099,16 @@
 <p>The 'debug' layout allows you to see all relevant data used by filter templates during render.</p>
 <p><img alt="&quot;Debug&quot;" class="center" src="../../../assets/webparts/search-filters/layouts/debug_layout.png" /></p>
 <p>The template context object exposes the following properties:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span>
-    <span class="nt">&quot;filters&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;Current filters to display in the UI (selected/unseslected)&gt;&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;selectedFilters&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;The current submitted filters&gt;&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;instanceId&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;The Web Part instance ID&gt;&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;theme&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;Current theme variables&gt;&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;strings&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;Localized strings that can be used in the Web Part&gt;&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;selectedOnce&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;Flag indicating if a filter value has been selected at least once by the use&gt;&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;properties&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;The filter Web Part properties&gt;&quot;</span>
-<span class="p">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span><span class="w"></span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="nt">&quot;filters&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;Current filters to display in the UI (selected/unseslected)&gt;&quot;</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="nt">&quot;selectedFilters&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;The current submitted filters&gt;&quot;</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="nt">&quot;instanceId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;The Web Part instance ID&gt;&quot;</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span><span class="nt">&quot;theme&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;Current theme variables&gt;&quot;</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span><span class="nt">&quot;strings&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;Localized strings that can be used in the Web Part&gt;&quot;</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span><span class="nt">&quot;selectedOnce&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;Flag indicating if a filter value has been selected at least once by the use&gt;&quot;</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">    </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;The filter Web Part properties&gt;&quot;</span><span class="w"></span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="p">}</span><span class="w"></span>
 </code></pre></div>
-
-
 <h3 id="custom">Custom<a class="headerlink" href="#custom" title="Permanent link">&para;</a></h3>
 <p>The 'custom' layout is the minimal layout to start with if you want to create your own customized UI from scratch. You can also start from an existing layout.</p>
 <p><img alt="&quot;Custom&quot;" class="center" src="../../../assets/webparts/search-filters/layouts/custom_layout.png" /></p>
@@ -1123,7 +1121,7 @@
 <blockquote>
 <p>Unless you specify an external file, the template content is stored in the Web Part property bag.</p>
 </blockquote>
-<p>Updating the layout HTML template is a good option for minor UI updates (Ex: add a link, update colors, etc.). For more control over the UI, you may want to use the extensibility library feature</p>
+<p>Updating the layout HTML template is a good option for minor UI updates (Ex: add a link, update colors, etc.). For more control over the UI, you may want to use the extensibility library feature.</p>
                 
               
               
