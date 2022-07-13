@@ -7,7 +7,12 @@
         "includeClientSideAssets": true,
         "skipFeatureDeployment": true,
         "isDomainIsolated": false,
-        "webApiPermissionRequests": [{
+        "webApiPermissionRequests": [
+            {
+                "resource": "Microsoft Graph",
+                "scope": "Presence.Read.All"
+            },            
+            {
                 "resource": "Microsoft Graph",
                 "scope": "User.Read"
             },
