@@ -37,7 +37,7 @@ Each Web Part type in the solution supports several extensions or no extension a
 
 | Web Part type | Supported extensions |
 | ------------- | -------------------- |
-| **Search Results** | <ul><li>Custom web components.</li><li>Custom Handlebars [customizations](https://handlebarsjs.com/api-reference/runtime.html) (ex: helpers, partials ,etc.).</li></ul>
+| **Search Results** | <ul><li>Custom web components.</li><li>Custom Handlebars [customizations](https://handlebarsjs.com/api-reference/runtime.html) (ex: helpers, partials ,etc.).</li><li>Custom event handlers for adaptive cards actions</li></ul>
 | **Search Filters** |  <ul><li>Custom web components (_not directly but via the 'Search Results' Web Part extensibility library registration_).</li></ul>
 | **Search box** | <ul><li>Custom suggestions providers.</li></ul>
 | **Search Verticals** | None.
@@ -61,7 +61,7 @@ From here, you can add the manifest IDs of your libraries and decide to enable o
 To create an extensibility library, you have the choice to reuse the one provided in the GitHub repository or start from scratch. In this case:
 
 1. Create a new SharePoint Framework project of type 'Library' with `yo @microsoft/sharepoint`.
-2. Add an npm reference to `@pnp/modern-search-extensibility` library using `npm i @pnp/modern-search-extensibility` cmd.
+2. Add an npm reference to `@pnp/modern-search-extensibility` library using `npm i @pnp/modern-search-extensibility --save` cmd.
 3. In the main entry point, implement the `IExtensibilityLibrary` interface. Provide all method implementations (return empty arrays if you don't implement specific extensions).
     !["Extensibility interface implementation"](../assets/extensibility/implement_interface.png){: .center}
 5. Implement your extension(s) depending of the type:

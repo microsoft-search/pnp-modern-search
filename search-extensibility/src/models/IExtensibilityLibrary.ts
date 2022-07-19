@@ -25,4 +25,10 @@ export interface IExtensibilityLibrary {
      * @param namespace the current Web Part Handlebars namespace
      */
     registerHandlebarsCustomizations?(handlebarsNamespace: typeof Handlebars): void;
+
+    /**
+     * Allows to handle an action for an actionable adaptive card
+     * @param action the information about the action activated by the user
+     */
+    invokeCardAction(action: any): void;
 }

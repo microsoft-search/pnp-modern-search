@@ -971,6 +971,9 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 if (extensibilityLibrary.registerHandlebarsCustomizations)
                     extensibilityLibrary.registerHandlebarsCustomizations(this.templateService.Handlebars);
 
+                // Registers event handler for custom action in Adaptive Cards
+                if (extensibilityLibrary.invokeCardAction)
+                    this.templateService.InvokeCardActionHandlers = this.templateService.InvokeCardActionHandlers.concat(extensibilityLibrary.invokeCardAction); 
             });
         }
     }

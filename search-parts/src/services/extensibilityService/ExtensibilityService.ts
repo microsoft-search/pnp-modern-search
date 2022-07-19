@@ -44,7 +44,8 @@ export class ExtensibilityService {
                                 extensibilityLibraryPrototype.getCustomSuggestionProviders ||
                                 extensibilityLibraryPrototype.getCustomWebComponents ||
                                 extensibilityLibraryPrototype.getCustomLayouts ||
-                                extensibilityLibraryPrototype.registerHandlebarsCustomizations);
+                                extensibilityLibraryPrototype.registerHandlebarsCustomizations ||
+                                extensibilityLibraryPrototype.invokeCardAction);
                         });
             
                         // Load the library once

@@ -1,5 +1,5 @@
 import { FileFormat, ITemplateService } from "./ITemplateService";
-import { ServiceKey, ServiceScope, Text } from "@microsoft/sp-core-library";
+import { Log, ServiceKey, ServiceScope, Text } from "@microsoft/sp-core-library";
 import { SPHttpClient, SPHttpClientResponse } from '@microsoft/sp-http';
 import * as Handlebars from 'handlebars';
 import { uniqBy, uniq, isEmpty, trimEnd, get } from "@microsoft/sp-lodash-subset";
@@ -22,6 +22,7 @@ import { DomPurifyHelper } from "../../helpers/DomPurifyHelper";
 import * as DOMPurify from 'dompurify';
 
 const TemplateService_ServiceKey = 'PnPModernSearchTemplateService';
+const TemplateService_LogSource = "PnPModernSearch:TemplateService";
 
 /**
  * The CSS identifer to load the template markup from a layout html file
@@ -65,6 +66,19 @@ export class TemplateService implements ITemplateService {
 
     get Handlebars(): typeof Handlebars {
         return this._handlebars;
+    }
+
+    /**
+     * Collection of event handlers for adaptive cards, if any
+     */
+    private _invokeCardActionHandlers: { (action: any): void; } [] = [];
+
+    get InvokeCardActionHandlers(): { (action: any): void; } [] {
+        return this._invokeCardActionHandlers;
+    }
+
+    set InvokeCardActionHandlers(value: { (action: any): void; } []) {
+        this._invokeCardActionHandlers = value;
     }
 
     public static ServiceKey: ServiceKey<ITemplateService> = ServiceKey.create(TemplateService_ServiceKey, TemplateService);
@@ -247,8 +261,8 @@ export class TemplateService implements ITemplateService {
      * Compile the specified Handlebars template with the associated context object¸
      * @returns the compiled HTML template string
      */
-    public async processTemplate(templateContext: ISearchResultsTemplateContext | ISearchFiltersTemplateContext, templateContent: string, renderType: LayoutRenderType): Promise<string> {
-        let processedTemplate: string = templateContent;
+    public async processTemplate(templateContext: ISearchResultsTemplateContext | ISearchFiltersTemplateContext, templateContent: string, renderType: LayoutRenderType): Promise<string | HTMLElement> {
+        let processedTemplate: string | HTMLElement = templateContent;
 
         switch (renderType) {
             case LayoutRenderType.Handlebars:
@@ -404,9 +418,9 @@ export class TemplateService implements ITemplateService {
         return template(templateContext);
     }
 
-    private async _renderAdaptiveCardsTemplate(templateContext: ISearchResultsTemplateContext | ISearchFiltersTemplateContext, templateContent: string): Promise<string> {
+    private async _renderAdaptiveCardsTemplate(templateContext: ISearchResultsTemplateContext | ISearchFiltersTemplateContext, templateContent: string): Promise<HTMLElement> {
 
-        let renderTemplateContent = null;
+        let renderTemplateContent: HTMLElement = null;
 
         // Load dynamic resources
         await this._initAdaptiveCardsResources();
@@ -440,10 +454,21 @@ export class TemplateService implements ITemplateService {
             const card = template.expand(context);
             const adaptiveCard = new this._adaptiveCardsNS.AdaptiveCard();
             adaptiveCard.hostConfig = hostConfiguration;
+            
+            // Register the dynamic list of event handlers for Adaptive Cards actions, if any
+            if (this.InvokeCardActionHandlers != null && this.InvokeCardActionHandlers.length > 0) {
+                adaptiveCard.onExecuteAction = (action) => { 
+                    this.InvokeCardActionHandlers.forEach(f => f(action));
+                };                
+            } else {
+                adaptiveCard.onExecuteAction = (action) => {
+                    Log.info(TemplateService_LogSource, `Triggered an event from an Adaptive Card, with action: ${action}. Please, register a custom Extension Library in order to handle it.`);
+                };
+            }
+
             adaptiveCard.parse(card);
 
-            const htmlTemplateElement: HTMLElement = adaptiveCard.render();
-            renderTemplateContent = htmlTemplateElement.outerHTML;
+            renderTemplateContent = adaptiveCard.render();
         }
 
         return renderTemplateContent;
@@ -777,7 +802,7 @@ export class TemplateService implements ITemplateService {
         }
     }
 
-    private _buildAdaptiveCardsResultTypes(templateContent: string, templateContext: ISearchResultsTemplateContext, resultTemplates: IResultTemplates, hostConfiguration): string {
+    private _buildAdaptiveCardsResultTypes(templateContent: string, templateContext: ISearchResultsTemplateContext, resultTemplates: IResultTemplates, hostConfiguration): HTMLElement {
 
         // Parse and render the main card template
         const mainCard = new this._adaptiveCardsNS.AdaptiveCard();
@@ -790,6 +815,7 @@ export class TemplateService implements ITemplateService {
 
         const card = template.expand(context);
         mainCard.parse(card);
+
         const mainHtml = mainCard.render();
 
         // Build dictionary of available result template
@@ -813,6 +839,7 @@ export class TemplateService implements ITemplateService {
 
                 const itemAdaptiveCard = new this._adaptiveCardsNS.AdaptiveCard();
                 itemAdaptiveCard.hostConfig = hostConfiguration;
+
                 itemAdaptiveCard.parse(itemCard);
 
                 // Partial match as we can't use the complete ID due to special characters "/" and "==""
@@ -826,6 +853,6 @@ export class TemplateService implements ITemplateService {
             }
         }
 
-        return mainHtml.outerHTML;
+        return mainHtml;
     }
 }
