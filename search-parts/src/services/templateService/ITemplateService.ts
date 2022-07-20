@@ -10,7 +10,7 @@ export enum FileFormat {
 
 export interface ITemplateService {
     Handlebars: typeof Handlebars;
-    InvokeCardActionHandlers: { (action: any): void; } [];
+    ExtensibilityLibraries: { (action: any): void; } [];
     getTemplateMarkup(templateContent: string): string;
     getPlaceholderMarkup(templateContent: string): string;
     getFileContent(fileUrl: string, fileFormat: FileFormat): Promise<string>;

@@ -20,6 +20,8 @@ import * as handlebarsHelpers from 'handlebars-helpers';
 import { ServiceScopeHelper } from "../../helpers/ServiceScopeHelper";
 import { DomPurifyHelper } from "../../helpers/DomPurifyHelper";
 import * as DOMPurify from 'dompurify';
+import { Action, ExecuteAction, OpenUrlAction, SubmitAction } from 'adaptivecards';
+import { IAdaptiveCardAction } from '@pnp/modern-search-extensibility';
 
 const TemplateService_ServiceKey = 'PnPModernSearchTemplateService';
 const TemplateService_LogSource = "PnPModernSearch:TemplateService";
@@ -71,13 +73,13 @@ export class TemplateService implements ITemplateService {
     /**
      * Collection of event handlers for adaptive cards, if any
      */
-    private _invokeCardActionHandlers: { (action: any): void; } [] = [];
+    private _invokeCardActionHandlers: { (action: IAdaptiveCardAction): void; } [] = [];
 
-    get InvokeCardActionHandlers(): { (action: any): void; } [] {
+    get InvokeCardActionHandlers(): { (action: IAdaptiveCardAction): void; } [] {
         return this._invokeCardActionHandlers;
     }
 
-    set InvokeCardActionHandlers(value: { (action: any): void; } []) {
+    set InvokeCardActionHandlers(value: { (action: IAdaptiveCardAction): void; } []) {
         this._invokeCardActionHandlers = value;
     }
 
@@ -457,12 +459,47 @@ export class TemplateService implements ITemplateService {
             
             // Register the dynamic list of event handlers for Adaptive Cards actions, if any
             if (this.InvokeCardActionHandlers != null && this.InvokeCardActionHandlers.length > 0) {
-                adaptiveCard.onExecuteAction = (action) => { 
-                    this.InvokeCardActionHandlers.forEach(f => f(action));
+                adaptiveCard.onExecuteAction = (action: Action) => {
+
+                    let actionResult: IAdaptiveCardAction;
+                    const type = action.getJsonTypeName();
+                    switch (type) {
+                        case OpenUrlAction.JsonTypeName: {
+                            let typedAction = action as OpenUrlAction;
+                            actionResult = {
+                                type: type,
+                                title: typedAction.title,
+                                url: typedAction.url
+                            };
+                        }
+                            break;
+        
+                        case SubmitAction.JsonTypeName: {
+                            let typedAction = action as SubmitAction;
+                            actionResult = {
+                                type: type,
+                                title: typedAction.title,
+                                data: typedAction.data
+                            };
+                        }
+                            break;
+                        case ExecuteAction.JsonTypeName: {
+                            let typedAction = action as ExecuteAction;
+                            actionResult = {
+                                type: type,
+                                title: typedAction.title,
+                                data: typedAction.data,
+                                verb: typedAction.verb
+                            };
+                        }
+                            break;
+                    }
+
+                    this.InvokeCardActionHandlers.forEach(f => f(actionResult));
                 };                
             } else {
-                adaptiveCard.onExecuteAction = (action) => {
-                    Log.info(TemplateService_LogSource, `Triggered an event from an Adaptive Card, with action: ${action}. Please, register a custom Extension Library in order to handle it.`);
+                adaptiveCard.onExecuteAction = (action: Action) => {
+                    Log.info(TemplateService_LogSource, `Triggered an event from an Adaptive Card, with action: '${action.title}'. Please, register a custom Extension Library in order to handle it.`, this.serviceScope);
                 };
             }
 

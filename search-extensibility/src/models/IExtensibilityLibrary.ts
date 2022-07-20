@@ -2,6 +2,7 @@ import { IComponentDefinition } from './layouts/IComponentDefinition';
 import { ILayoutDefinition } from './layouts/ILayoutDefinition';
 import { ISuggestionProviderDefinition } from './suggestions/ISuggestionProviderDefinition';
 import * as Handlebars from 'handlebars';
+import { IAdaptiveCardAction } from './IAdaptiveCardAction';
 
 export interface IExtensibilityLibrary {
 
@@ -30,5 +31,5 @@ export interface IExtensibilityLibrary {
      * Allows to handle an action for an actionable adaptive card
      * @param action the information about the action activated by the user
      */
-    invokeCardAction(action: any): void;
+    invokeCardAction(action: IAdaptiveCardAction): void;
 }
