@@ -98,3 +98,5 @@ Here is the list of main contributors of the PnP Modern Search (all versions inc
 - Brad Schlintz (Microsoft) - [@bschlintz](https://twitter.com/bschlintz)
 - Richard Gigan - [@PooLP](https://twitter.com/PooLP)
 - Matthew Stark
+- Fabio Franzini (Apvee) - [@PaoloPia](https://twitter.com/paolopia)
+- Paolo Pialorsi (PiaSys.com) - [@PaoloPia](https://twitter.com/franzinifabio)
