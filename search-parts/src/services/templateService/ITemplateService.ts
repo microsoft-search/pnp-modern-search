@@ -16,7 +16,7 @@ export interface ITemplateService {
     getFileContent(fileUrl: string, fileFormat: FileFormat): Promise<string>;
     ensureFileResolves(fileUrl: string): Promise<void>;
     isValidTemplateFile(filePath: string, validExtensions: string[]): boolean;
-    processTemplate(templateContext: any, templateContent: string, renderType: LayoutRenderType): Promise<string>;
+    processTemplate(templateContext: any, templateContent: string, renderType: LayoutRenderType): Promise<string | HTMLElement>;
     registerWebComponents(webComponents: IComponentDefinition<any>[], instanceId: string): Promise<void>;
     processFieldsConfiguration<T>(fieldsConfiguration: IComponentFieldsConfiguration[], item: {[key:string]: any}, context?: ISearchResultsTemplateContext | any): T;
     registerResultTypes(resultTypes: IDataResultType[]): Promise<void>;
