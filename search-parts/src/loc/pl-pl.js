@@ -183,8 +183,11 @@ define([], function() {
           Debug: {
               Name: "Diagnostyczny"
           },
-          Custom: {
-              Name: "Niestandardowy"
+          CustomHandlebars: {
+            Name: "Niestandardowy"
+          },
+          CustomAdaptiveCards: {
+            Name: "Niestandardowy"
           },
           SimpleList: {
               Name: "Lista",

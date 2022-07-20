@@ -476,6 +476,9 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         // Load extensibility libaries extensions
         await this.loadExtensions(this.properties.extensibilityLibraryConfiguration);
 
+        // Filter the layouts to be displayed in the property pane according to current render type
+        this.availableLayoutsInPropertyPane = this.availableLayoutDefinitions.filter(layout => layout.renderType === this.properties.layoutRenderType);
+
         // Register Web Components in the global page context. We need to do this BEFORE the template processing to avoid race condition.
         // Web components are only defined once.
         await this.templateService.registerWebComponents(this.availableWebComponentDefinitions, this.instanceId);
@@ -981,7 +984,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     public async loadPropertyPaneResources(): Promise<void> {
 
         const { PropertyFieldCodeEditor, PropertyFieldCodeEditorLanguages } = await import(
-            /* webpackChunkName: 'pnp-modern-search-property-pane' */
+            /* webpackChunkName: 'pnp-modern-search-code-editor' */
             '@pnp/spfx-property-controls/lib/propertyFields/codeEditor'
         );
 
@@ -1156,9 +1159,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         }
     
         this.properties.layoutRenderType = this.properties.layoutRenderType !== undefined ? this.properties.layoutRenderType : LayoutRenderType.Handlebars;
-        
-        // Filter the layouts to be displayed
-        this.availableLayoutsInPropertyPane = this.availableLayoutDefinitions.filter(layout => layout.renderType === this.properties.layoutRenderType);
     }
 
     /**
@@ -2057,30 +2057,48 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         }
     }
 
-    /**
-      * Custom handler when the external template file URL
-      * @param value the template file URL value
-      */
-    private async onTemplateUrlChange(value: string): Promise<string> {
+  /**
+   * Custom handler when the external template file URL
+   * @param value the template file URL value
+   */
+   private async onTemplateUrlChange(value: string): Promise<string> {
 
-        try {
-            // Doesn't raise any error if file is empty (otherwise error message will show on initial load...)
-            if (isEmpty(value)) {
-                return Promise.resolve('');
+    try {
+        // Doesn't raise any error if file is empty (otherwise error message will show on initial load...)
+        if (isEmpty(value)) {
+            return Promise.resolve('');
+        } else {
+
+            // Resolves an error if the file isn't a valid .json, .htm or .html file
+            let extensions: string[] = [];
+
+            switch (this.properties.layoutRenderType) {
+                case LayoutRenderType.Handlebars:
+                    extensions= [".htm",".html"];
+                    break;
+
+                case LayoutRenderType.AdaptiveCards:
+                    // Because of SharePoint restrictions, JSON files should be read as TXT files
+                    extensions = [".txt",".json"];
+                    break;
+
+                default: 
+                    break;
             }
-            // Resolves an error if the file isn't a valid .htm or .html file
-            else if (!this.templateService.isValidTemplateFile(value)) {
-                return Promise.resolve(webPartStrings.PropertyPane.LayoutPage.ErrorTemplateExtension);
-            }
-            // Resolves an error if the file doesn't answer a simple head request
-            else {
+
+            if (!this.templateService.isValidTemplateFile(value, extensions)) {
+                return Promise.resolve(Text.format(webPartStrings.PropertyPane.LayoutPage.ErrorTemplateExtension, extensions.join(' or ')));
+            } else {
+
+                // Resolves an error if the file doesn't answer a simple head request
                 await this.templateService.ensureFileResolves(value);
                 return Promise.resolve('');
             }
-        } catch (error) {
-            return Promise.resolve(Text.format(webPartStrings.PropertyPane.LayoutPage.ErrorTemplateResolve, error));
         }
+    } catch (error) {
+        return Promise.resolve(Text.format(webPartStrings.PropertyPane.LayoutPage.ErrorTemplateResolve, error));
     }
+  } 
 
     /**
      * Initializes the template according to the property pane current configuration
