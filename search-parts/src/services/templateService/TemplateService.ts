@@ -6,7 +6,7 @@ import { uniqBy, uniq, isEmpty, trimEnd, get } from "@microsoft/sp-lodash-subset
 import * as strings from 'CommonStrings';
 import { DateHelper } from "../../helpers/DateHelper";
 import { PageContext } from "@microsoft/sp-page-context";
-import { IComponentDefinition, IResultTemplates, LayoutRenderType } from "@pnp/modern-search-extensibility";
+import { IComponentDefinition, IExtensibilityLibrary, IResultTemplates, LayoutRenderType } from "@pnp/modern-search-extensibility";
 import groupBy from 'handlebars-group-by';
 import { IComponentFieldsConfiguration } from "../../models/common/IComponentFieldsConfiguration";
 import { initializeFileTypeIcons } from '@uifabric/file-type-icons';
@@ -73,14 +73,14 @@ export class TemplateService implements ITemplateService {
     /**
      * Collection of event handlers for adaptive cards, if any
      */
-    private _invokeCardActionHandlers: { (action: IAdaptiveCardAction): void; } [] = [];
+    private _adaptiveCardsExtensibilityLibraries: IExtensibilityLibrary[] = [];
 
-    get InvokeCardActionHandlers(): { (action: IAdaptiveCardAction): void; } [] {
-        return this._invokeCardActionHandlers;
+    get AdaptiveCardsExtensibilityLibraries(): IExtensibilityLibrary[] {
+        return this._adaptiveCardsExtensibilityLibraries;
     }
 
-    set InvokeCardActionHandlers(value: { (action: IAdaptiveCardAction): void; } []) {
-        this._invokeCardActionHandlers = value;
+    set AdaptiveCardsExtensibilityLibraries(value: IExtensibilityLibrary[]) {
+        this._adaptiveCardsExtensibilityLibraries = value;
     }
 
     public static ServiceKey: ServiceKey<ITemplateService> = ServiceKey.create(TemplateService_ServiceKey, TemplateService);
@@ -458,7 +458,7 @@ export class TemplateService implements ITemplateService {
             adaptiveCard.hostConfig = hostConfiguration;
             
             // Register the dynamic list of event handlers for Adaptive Cards actions, if any
-            if (this.InvokeCardActionHandlers != null && this.InvokeCardActionHandlers.length > 0) {
+            if (this.AdaptiveCardsExtensibilityLibraries != null && this.AdaptiveCardsExtensibilityLibraries.length > 0) {
                 adaptiveCard.onExecuteAction = (action: Action) => {
 
                     let actionResult: IAdaptiveCardAction;
@@ -495,7 +495,7 @@ export class TemplateService implements ITemplateService {
                             break;
                     }
 
-                    this.InvokeCardActionHandlers.forEach(f => f(actionResult));
+                    this.AdaptiveCardsExtensibilityLibraries.forEach(l => l.invokeCardAction(actionResult));
                 };                
             } else {
                 adaptiveCard.onExecuteAction = (action: Action) => {

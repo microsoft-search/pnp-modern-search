@@ -973,7 +973,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
                 // Registers event handler for custom action in Adaptive Cards
                 if (extensibilityLibrary.invokeCardAction)
-                    this.templateService.InvokeCardActionHandlers = this.templateService.InvokeCardActionHandlers.concat(extensibilityLibrary.invokeCardAction); 
+                    this.templateService.AdaptiveCardsExtensibilityLibraries = this.templateService.AdaptiveCardsExtensibilityLibraries.concat(extensibilityLibrary); 
             });
         }
     }

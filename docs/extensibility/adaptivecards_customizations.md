@@ -11,17 +11,22 @@ To register a new Adaptive Cards Actions handler customization for the targeted 
 ```typescript
 public invokeCardAction(action: any): void {
 
-    // Process the action based on title
-    switch (action.title) {
-      case 'Click on item':
-        console.log(action.data);
-        break;
-      case 'Global click':
-        alert(action);
-        break;
-      default:
-        console.log('Action not supported!');
-        break;
+    // Process the action based on type
+    if (action.type == "Action.OpenUrl") {
+      window.open(action.url, "_blank");
+    } else if (action.type == "Action.Submit") {
+      // Process the action based on title
+      switch (action.title) {
+        case 'Click on item':
+          console.log(action.data);
+          break;
+        case 'Global click':
+          alert(action);
+          break;
+        default:
+          console.log('Action not supported!');
+          break;
+      }
     }
 }
 ```
@@ -103,6 +108,11 @@ public invokeCardAction(action: any): void {
       "data": {
         "id": "456"
       }
+    },
+    {
+      "type": "Action.OpenUrl",
+      "title": "Open URL",
+      "url": "https://pnp.github.io/"
     }
   ]
 }

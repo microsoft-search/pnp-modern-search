@@ -69,6 +69,7 @@ To create an extensibility library, you have the choice to reuse the one provide
     - [Web component](./custom_web_component.md)
     - [Suggestions providers](./custom_suggestions_provider.md)
     - [Handlebars customizations](./handlebars_customizations.md)
+    - [Adaptive Cards Actions handlers](./adaptivecards_customizations.md)
 
     Creation process always follows more or less the same pattern:
 
@@ -83,3 +84,81 @@ To create an extensibility library, you have the choice to reuse the one provide
 
 Debugging a library component is exactly the same as debugging an SPFx Web Part. Run `gulp serve` in the hosted workbench and put a _'Search Results'_,_'Search Filters'_ or _'Search Box'_ Web Part depending the extension you want to test. If registered correctly, your breakpoints will be triggerred by the main Web Part loading your extension.
 
+#### Accessing the SharePoint Framework context and services in a library component
+
+In case you need to access the SharePoint Framework context and services, within your custom library component, you can easily do that by relying on the Service Locator pattern available in SPFx.
+You simply need to declare a public static property with name `serviceKey` in your library component and provide a constructor that accepts a [`ServiceScope`](https://docs.microsoft.com/en-us/javascript/api/sp-core-library/servicescope?view=sp-typescript-latest) instance as input argument.
+For example, here you can see a code excerpt of such a library component that handles custom actions for Adaptive Cards rendering:
+
+```typescript
+import { IAdaptiveCardAction, IComponentDefinition, IExtensibilityLibrary, ILayoutDefinition, ISuggestionProviderDefinition } from '@pnp/modern-search-extensibility';
+import { ServiceKey, ServiceScope } from '@microsoft/sp-core-library';
+import { SPHttpClient, SPHttpClientResponse } from '@microsoft/sp-http';
+import { PageContext } from '@microsoft/sp-page-context';
+
+export class MyCustomLibraryComponent implements IExtensibilityLibrary {
+
+  public static readonly serviceKey: ServiceKey<MyCustomLibraryComponent> =
+    ServiceKey.create<MyCustomLibraryComponent>('SPFx:MyCustomLibraryComponent', MyCustomLibraryComponent);
+
+  private _spHttpClient: SPHttpClient;
+  private _pageContext: PageContext;
+  private _currentWebUrl: string;
+
+  constructor(serviceScope: ServiceScope) {
+    this._serviceScope.whenFinished(() => {
+      this._spHttpClient = serviceScope.consume(SPHttpClient.serviceKey);
+
+      this._pageContext = serviceScope.consume(PageContext.serviceKey);
+      this._currentWebUrl = this._pageContext.web.absoluteUrl;
+    });
+  }
+
+  public getCustomLayouts(): ILayoutDefinition[] {
+    return [];
+  }
+
+  public getCustomWebComponents(): IComponentDefinition<any>[] {
+    return [];
+  }
+
+  public getCustomSuggestionProviders(): ISuggestionProviderDefinition[] {
+    return [];
+  }
+
+  public registerHandlebarsCustomizations?(handlebarsNamespace: typeof Handlebars): void {
+  }
+
+  public invokeCardAction(action: IAdaptiveCardAction): void {
+    
+    // Process the action based on type
+    if (action.type == "Action.OpenUrl") {
+      window.open(action.url, "_blank");
+    } else if (action.type == "Action.Submit") {
+      // Process the Submit action based on title
+      switch (action.title.toLowerCase()) {
+        case "user":
+
+          // Invoke the currentUser endpoing
+          this._spHttpClient.get(
+            `${this._currentWebUrl}/_api/web/currentUser`,
+            SPHttpClient.configurations.v1, 
+            null).then((response: SPHttpClientResponse) => {
+              return response.json();
+            });
+
+          break;
+        default:
+          console.log('Action not supported!');
+          break;
+      }
+    }
+  }
+
+  public name(): string {
+    return 'MyCustomLibraryComponent';
+  }
+}
+```
+
+In order to run the above sample code, you will need to import in your library the following npm packages: `@microsoft/sp-component-base`, `@microsoft/sp-core-library`, and `@microsoft/sp-webpart-base`.  

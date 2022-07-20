@@ -1,4 +1,4 @@
-import { IComponentDefinition, LayoutRenderType } from "@pnp/modern-search-extensibility";
+import { IComponentDefinition, IExtensibilityLibrary, LayoutRenderType } from "@pnp/modern-search-extensibility";
 import { IDataResultType } from "../../models/common/IDataResultType";
 import { IComponentFieldsConfiguration } from "../../models/common/IComponentFieldsConfiguration";
 import { ISearchResultsTemplateContext } from "../../models/common/ITemplateContext";
@@ -10,7 +10,7 @@ export enum FileFormat {
 
 export interface ITemplateService {
     Handlebars: typeof Handlebars;
-    ExtensibilityLibraries: { (action: any): void; } [];
+    AdaptiveCardsExtensibilityLibraries: IExtensibilityLibrary[];
     getTemplateMarkup(templateContent: string): string;
     getPlaceholderMarkup(templateContent: string): string;
     getFileContent(fileUrl: string, fileFormat: FileFormat): Promise<string>;
