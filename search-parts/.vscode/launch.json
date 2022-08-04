@@ -25,7 +25,7 @@
       "name": "Hosted workbench",
       "type": "chrome",
       "request": "launch",
-      "url": "https://sonbaedev.sharepoint.com/sites/SPOCC-TestTeam1/_layouts/15/workbench.aspx",
+      "url": "https://sonbaedev.sharepoint.com/sites/ThePerspective/_layouts/15/workbench.aspx",
       "webRoot": "${workspaceRoot}",
       "sourceMaps": true,
       "sourceMapPathOverrides": {

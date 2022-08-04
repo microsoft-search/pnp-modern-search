@@ -1173,7 +1173,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                             const termPrefix = matches[2]; // 'L0'
                             if (termPrefix.localeCompare("L0") === 0) {
                                 const termFilterWithoutTranslations = `GP0|#${termId.toString()}`;
-                                const termTextFilter = `L0|#${termId.toString()}`;
+                                const termTextFilter = `L0|#0${termId.toString()}`;
 
                                 // https://docs.microsoft.com/en-us/sharepoint/technical-reference/automatically-created-managed-properties-in-sharepoint
 
