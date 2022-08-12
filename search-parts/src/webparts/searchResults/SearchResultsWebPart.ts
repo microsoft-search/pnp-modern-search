@@ -154,15 +154,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
      */
     private currentPageNumber: number = 1;
 
-    /**
-     * The page URL link if provided by the data source
-     */
-    private currentPageLinkUrl: string = null;
-
-    /**
-     * The available page links available in the pagination control
-     */
-    private availablePageLinks: string[] = [];
 
     /**
      * The token service instance
@@ -735,7 +726,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             // Reset paging information
             this.currentPageNumber = 1;
 
-            this._resetPagingData();
+            
         }
 
         // Reset layout properties
@@ -796,10 +787,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         if (propertyPath.indexOf('dataSourceProperties') !== -1 && this.dataSource && this._defaultTemplateSlots && !isEqual(this._defaultTemplateSlots, this.dataSource.getTemplateSlots())) {
             this.properties.templateSlots = this.dataSource.getTemplateSlots();
             this._defaultTemplateSlots = this.dataSource.getTemplateSlots();
-        }
-
-        if (propertyPath.localeCompare('paging.itemsCountPerPage') === 0) {
-            this._resetPagingData();
         }
 
         if (propertyPath.localeCompare('extensibilityLibraryConfiguration') === 0) {
@@ -884,8 +871,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             this.render();
             this.context.propertyPane.refresh();              
         }
-    }
-    
+    }    
 
     protected get isRenderAsync(): boolean {
         return true;
@@ -1052,9 +1038,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
             // These information comes from the PaginationWebComponent class
             this.currentPageNumber = eventDetails.pageNumber;
-            this.currentPageLinkUrl = eventDetails.pageLink;
-            this.availablePageLinks = eventDetails.pageLinks;
-
+ 
             this.render();
 
         }).bind(this));
@@ -1408,7 +1392,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 })
             );
         }
-
 
         // Add template options if any
         const layoutOptions = this.getLayoutTemplateOptions();
@@ -2342,13 +2325,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         return '';
     }
 
-    /**
-     * Reset the paging information for PagingBehavior.Dynamic data sources
-     */
-    private _resetPagingData() {
-        this.availablePageLinks = [];
-        this.currentPageLinkUrl = null;
-    }
 
     /**
    * Get the data context to be passed to the data source according to current connections/configurations
@@ -2418,6 +2394,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 // Reset the page number if filters have been updated by the user
                 if (!isEqual(filtersSourceData.selectedFilters, this._lastSelectedFilters)) {
                     dataContext.pageNumber = 1;
+                    this.currentPageNumber = 1;
                 }
 
                 // Use the filter confiugration and then get the corresponding values 
@@ -2442,7 +2419,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         if (!isEqual(inputQueryText, this._lastInputQueryText)) {
             dataContext.pageNumber = 1;
             this.currentPageNumber = 1;
-            this._resetPagingData();
         }
 
         this._lastInputQueryText = inputQueryText;
@@ -2473,8 +2449,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         this._currentDataResultsSourceData.availableFieldsFromResults = availableDataSourceFields;
         this.currentPageNumber = pageNumber;
-        this.availablePageLinks = pageLinks;
-        this.currentPageLinkUrl = nextLinkUrl;
 
         // Set the available filters from the data source 
         if (filters) {
