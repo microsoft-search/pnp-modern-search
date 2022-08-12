@@ -679,8 +679,8 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
      * Subscribes to URL hash change if the dynamic property is set to the default 'URL Fragment' property
      */
     private _bindHashChange() {
-        const queryText = DynamicPropertyHelper.tryGetSourceSafe(this.properties.queryText);
-        if (queryText?.reference?.localeCompare('PageContext:UrlData:fragment') === 0) {
+        const queryTextSource = DynamicPropertyHelper.tryGetSourceSafe(this.properties.queryText);
+        if (queryTextSource && this.properties.queryText?.reference?.localeCompare('PageContext:UrlData:fragment') === 0) {
             // Manually subscribe to hash change since the default property doesn't
             window.addEventListener('hashchange', this.render);
         } else {
