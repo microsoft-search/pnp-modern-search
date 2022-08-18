@@ -175,7 +175,9 @@ define([], function() {
             TextDialogSaveButtonText: "Tallenna",
             SelectItemComboPlaceHolder: "Valitse ominaisuus",
             AddStaticDataLabel: "Lisää staattinen arvo",
-            TextFieldApplyButtonText: "Ota käyttöön"
+            TextFieldApplyButtonText: "Ota käyttöön",
+            SortByPlaceholderText: "Järjestä...",
+            SortByDefaultOptionText: "Oletus"
         },
         Layouts: {
             Debug: {

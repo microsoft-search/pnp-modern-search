@@ -4,6 +4,7 @@ import { BaseWebComponent, SortFieldDirection, ISortInfo, ExtensibilityConstants
 import { Dropdown, IDropdownOption, IconButton } from 'office-ui-fabric-react';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import { ISortFieldConfiguration } from '../models/search/ISortFieldConfiguration';
+import * as strings from 'CommonStrings';
 
 export interface ISortComponentProps {
 
@@ -78,7 +79,7 @@ export class SortComponent extends React.Component<ISortComponentProps, ISortCom
 
         return  <div style={{ display: 'flex'}}>
                     <Dropdown
-                        placeholder="Sort by..."
+                        placeholder={strings.Controls.SortByPlaceholderText}
                         styles={dropdownStyles}
                         defaultSelectedKey={this.props.defaultSelectedField ? this.props.defaultSelectedField : null}
                         options={options}
@@ -105,7 +106,7 @@ export class SortComponent extends React.Component<ISortComponentProps, ISortCom
 
         const defaultOptions: IDropdownOption[] = [{
             key: null,
-            text: '<Default>'
+            text: `<${strings.Controls.SortByDefaultOptionText}>`
         }];
 
         // Get only fields identified as "userSort"
