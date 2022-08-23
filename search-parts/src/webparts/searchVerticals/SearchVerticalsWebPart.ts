@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
-import { Version, Guid, UrlQueryParameterCollection, DisplayMode } from '@microsoft/sp-core-library';
+import { Version, Guid, UrlQueryParameterCollection, DisplayMode, Log } from '@microsoft/sp-core-library';
 import {
   IPropertyPaneConfiguration,
   IPropertyPanePage,
@@ -22,6 +22,9 @@ import { BaseWebPart } from '../../common/BaseWebPart';
 import { PageOpenBehavior } from '../../helpers/UrlHelper';
 import { IDataVerticalConfiguration } from '../../models/common/IDataVerticalConfiguration';
 import commonStyles from '../../styles/Common.module.scss';
+import PnPTelemetry from '@pnp/telemetry-js';
+
+const LogSource = "SearchVerticalsWebPart";
 
 export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWebPartProps> implements IDynamicDataCallables {
 
@@ -50,6 +53,13 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
   }
 
   protected async onInit(): Promise<void> {
+    try {
+        // Disable PnP Telemetry
+        const telemetry = PnPTelemetry.getInstance();
+        telemetry.optOut();
+    } catch (error) {
+        Log.warn(LogSource, `Opt out for PnP Telemetry failed. Details: ${error}`, this.context.serviceScope);
+    }
 
     // Initializes Web Part properties
     this.initializeProperties();
