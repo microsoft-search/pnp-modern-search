@@ -363,7 +363,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                         iconText: webPartStrings.General.PlaceHolder.IconText,
                         description: webPartStrings.General.PlaceHolder.Description,
                         buttonLabel: webPartStrings.General.PlaceHolder.ConfigureBtnLabel,
-                        onConfigure: () => { this.context.propertyPane.openDetails(); }
+                        onConfigure: () => { this.context.propertyPane.open(); }
                     }
                 );
                 renderRootElement = placeholder;
