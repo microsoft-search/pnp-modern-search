@@ -166,7 +166,8 @@ define([], function () {
             SortFieldUserSortLabel: "Användarsortering",
             EditSortLabel: "Redigera sorteringsordning",
             SortInvalidSortableFieldMessage: "Den här egenskapen kan inte sorteras",
-            SortFieldColumnPlaceholder: "Välj fält..."
+            SortFieldColumnPlaceholder: "Välj fält...",
+            SortByDefaultOptionText: "Standard"
           }
         }
       },
@@ -177,7 +178,8 @@ define([], function () {
         TextDialogSaveButtonText: "Spara",
         SelectItemComboPlaceHolder: "Välj egenskap",
         AddStaticDataLabel: "Lägg till statisk data",
-        TextFieldApplyButtonText: "Tillämpa"
+        TextFieldApplyButtonText: "Tillämpa",
+        SortByPlaceholderText: "Sortera efter..."
       },
       Layouts: {
         Debug: {

@@ -177,6 +177,8 @@ declare interface ICommonStrings {
       SelectItemComboPlaceHolder: string;
       AddStaticDataLabel: string;
       TextFieldApplyButtonText: string;
+      SortByPlaceholderText: string;
+      SortByDefaultOptionText: string;
     },
     Layouts: {
       Debug: {

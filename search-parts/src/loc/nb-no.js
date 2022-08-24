@@ -177,7 +177,9 @@ define([], function () {
         TextDialogSaveButtonText: "Lagre",
         SelectItemComboPlaceHolder: "Velg egenskap",
         AddStaticDataLabel: "Legg til statisk data",
-        TextFieldApplyButtonText: "Lagre"
+        TextFieldApplyButtonText: "Lagre",
+        SortByPlaceholderText: "Sorter etter",
+        SortByDefaultOptionText: "Misligholde"
       },
       Layouts: {
         Debug: {
