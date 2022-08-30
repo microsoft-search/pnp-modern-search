@@ -87,7 +87,7 @@
                                 {{/if}}
                                 <div class="template--listItem--contentContainer">
                                     <span class="template--listItem--title example-themePrimary">
-                                        <a href="{{slot item @root.slots.PreviewUrl}}" target="_blank" style="color:{{@root.theme.semanticColors.link}}" data-interception="off">{{slot item @root.slots.Title}}</a>
+                                        <a href="{{slot item @root.slots.PreviewUrl}}" target="_blank" style="color:{{@root.theme.semanticColors.link}}" data-interception="off" rel="noopener noreferrer">{{slot item @root.slots.Title}}</a>
                                     </span>
                                     <span>                            
                                         <span class="template--listItem--author">
@@ -111,7 +111,7 @@
                                 </div>
                             </div>
                             {{#if @root.properties.layoutProperties.showItemThumbnail}}
-                            <div class="template--listItem--thumbnailContainer">
+                            <div class="template--listItem--thumbnailContainer" data-selection-disabled="true">
                                 <div class="thumbnail--image">
                                     <pnp-filepreview data-preview-url="{{slot item @root.slots.PreviewUrl}}" data-preview-image-url="{{slot item @root.slots.PreviewImageUrl}}" data-theme-variant="{{JSONstringify @root.theme}}">
                                         <pnp-img alt='preview-image' width="120" src="{{slot item @root.slots.PreviewImageUrl}}" loading="lazy" data-error-image="{{@root.utils.defaultImage}}" />
@@ -133,7 +133,7 @@
 
         {{#if @root.properties.paging.showPaging}} {{#gt @root.data.totalItemsCount @root.properties.paging.itemsCountPerPage}}
         <pnp-pagination data-total-items="{{@root.data.totalItemsCount}}" data-hide-first-last-pages="{{@root.properties.paging.hideFirstLastPages}}" data-hide-disabled="{{@root.properties.paging.hideDisabled}}" data-hide-navigation="{{@root.properties.paging.hideNavigation}}"
-            data-range="{{@root.properties.paging.pagingRange}}" data-items-count-per-page="{{@root.properties.paging.itemsCountPerPage}}" data-current-page-number="{{@root.paging.currentPageNumber}}" data-page-links="{{JSONstringify @root.data.paging.links}}"
+            data-range="{{@root.properties.paging.pagingRange}}" data-items-count-per-page="{{@root.properties.paging.itemsCountPerPage}}" data-current-page-number="{{@root.paging.currentPageNumber}}"
             data-theme-variant="{{JSONstringify @root.theme}}">
         </pnp-pagination>
         {{/gt}} {{/if}}

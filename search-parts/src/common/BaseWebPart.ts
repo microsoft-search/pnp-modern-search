@@ -27,6 +27,7 @@ export abstract class BaseWebPart<T extends IBaseWebPartProps> extends BaseClien
     /**
      * The Web Part properties
      */
+    // @ts-ignore: redefinition
     protected properties: T;
 
     /**
