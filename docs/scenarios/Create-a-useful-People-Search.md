@@ -50,7 +50,7 @@ In the section layout options you can manage the people fields, that will be sho
 ![search results layout options](assets/create-a-useful-people-search/search-results-layout-options.png)
 
 ### Web Part Connections
-As the last step, activate the connections. Use the query from your configured Search Box, you can also configure a default value. Conntect your Search Results also to the Filters Web Part.
+As the last step, activate the connections. Use the query from your configured Search Box, you can also configure a default value. Connect your Search Results also to the Filters Web Part.
 
 ![search results connections](assets/create-a-useful-people-search/search-results-connections.png)
 
