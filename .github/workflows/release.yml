@@ -43,5 +43,3 @@ jobs:
         gulp update-version --value $GITVERSION_MAJORMINORPATCH
         gulp bundle --ship
         gulp package-solution --ship
-        
-        
