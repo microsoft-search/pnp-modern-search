@@ -1,14 +1,17 @@
-name: Build WebParts SPFx package
+name: Release Modern Search WebParts SPFx package
 
 on: workflow_dispatch
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: search-parts
 
     strategy:
       matrix:
-        node-version: [12.x, 14.x, 16.x]
+        node-version: [14.x]
     
     steps:
     - uses: actions/checkout@v3
