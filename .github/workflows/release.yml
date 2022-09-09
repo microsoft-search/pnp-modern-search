@@ -1,6 +1,8 @@
 name: Release Modern Search WebParts SPFx package
 
-on: workflow_dispatch
+push:
+    tags:
+    - '*'
 
 jobs:
   build:
@@ -45,10 +47,11 @@ jobs:
         gulp bundle --ship
         gulp package-solution --ship
 
-    - uses: ncipollo/release-action@v1
+    - name: Create release
+      uses: ncipollo/release-action@v1
       with:
-        name: PnP Modern Search - ${GITVERSION_MAJORMINORPATCH}
+        name: PnP Modern Search - ${{ steps.gitversion.outputs.majorMinorPatch }}
         artifacts: "*.sppkg"
         bodyFile: ".github/workflows/release-template.md"
-        tag: ${GITVERSION_MAJORMINORPATCH}
-        commit: ${GITHUB_REF##*/}
+        tag: ${{ steps.gitversion.outputs.majorMinorPatch }}
+        commit: ${{ github.ref_name }}
