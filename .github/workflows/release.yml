@@ -45,30 +45,22 @@ jobs:
         gulp bundle --ship
         gulp package-solution --ship
 
-    - uses: actions/upload-artifact@v3
-      with:
-        name: spfx-package
-        path: ${{ github.workspace }}/**/*.sppkg
-
-  release:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-
-    - uses: actions/download-artifact@v3
-      with:
-        name: spfx-package
-        path: ~/artifacts
-
     - name: Create release
       uses: ncipollo/release-action@v1
       with:
         name: PnP Modern Search - ${{ steps.gitversion.outputs.majorMinorPatch }}
-        artifacts: "~/artifacts/*.sppkg"
-        bodyFile: ".github/workflows/release-template.md"
+        artifacts: ${{ github.workspace }}/**/*.sppkg
+        bodyFile: .github/workflows/release-template.md
         draft: true
         generateReleaseNotes: true
         allowUpdates: true
         replacesArtifacts: true
         tag: ${{ steps.gitversion.outputs.majorMinorPatch }}
         commit: ${{ github.ref_name }}
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: spfx-package
+        path: ${{ github.workspace }}/**/*.sppkg
+   
