@@ -1,7 +1,12 @@
-name: Release Modern Search WebParts SPFx package
+name: Release Modern Search Web Parts SPFx package
 
-on: workflow_dispatch
-
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - 'release/**'
+  
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -55,13 +60,12 @@ jobs:
         generateReleaseNotes: true
         allowUpdates: true
         replacesArtifacts: true
-        prerelease: ${{ startsWith(github.ref_name, 'develop') }}
+        prerelease: ${{ startsWith(github.ref_name, 'release') }}
         tag: ${{ steps.gitversion.outputs.majorMinorPatch }}
         commit: ${{ github.ref_name }}
 
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
-        name: pnp-modern-search-parts-$GITVERSION_SEMVER
+        name: pnp-modern-search-parts-${{ steps.gitversion.outputs.semVer }}
         path: ${{ github.workspace }}/**/*.sppkg
-   
