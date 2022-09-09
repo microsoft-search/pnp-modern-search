@@ -47,8 +47,8 @@ jobs:
 
     - uses: ncipollo/release-action@v1
       with:
-        name: PnP Modern Search - $GITVERSION_MAJORMINORPATCH
+        name: PnP Modern Search - ${GITVERSION_MAJORMINORPATCH}
         artifacts: "*.sppkg"
         bodyFile: ".github/workflows/release-template.md"
-        tag: $GITVERSION_MAJORMINORPATCH
+        tag: ${GITVERSION_MAJORMINORPATCH}
         commit: ${GITHUB_REF##*/}
