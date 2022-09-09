@@ -48,14 +48,11 @@ jobs:
     - uses: actions/upload-artifact@v3
       with:
         name: spfx-package
-        path: $GITHUB_WORKSPACE/**/*.sppkg
+        path: ${{ github.workspace }}/**/*.sppkg
 
   release:
     needs: build
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: search-parts
     steps:
 
     - uses: actions/download-artifact@v3
