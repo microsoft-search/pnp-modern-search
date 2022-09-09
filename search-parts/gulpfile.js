@@ -178,3 +178,22 @@ gulp.task('update-version', async () => {
       log.error(`The provided version ${process.argv[versionArgIdx+1]} is not a valid SemVer version`);
   }
 });
+
+gulp.task('update-package-name', async () => {
+
+    const pkgSolutionFilePath = './config/package-solution.json';
+
+    const fileNameArg = process.argv.indexOf('--name');
+    const fileName = process.argv[fileNameArg+1];
+
+    if (fileNameArg !== -1 && fileName) {
+        readJson(pkgSolutionFilePath, (err, pkgSolution) => {
+            const currentPackageName = path.basename(pkgSolution.paths.zippedPackage,'.sppkg');
+            log.info(`Rename ${currentPackageName}.sppkg to ${fileName}.sppkg`);
+            pkgSolution.paths.zippedPackage = pkgSolution.paths.zippedPackage.replace(path.basename(pkgSolution.paths.zippedPackage,'.sppkg'),fileName);
+            fs.writeFile(pkgSolutionFilePath, JSON.stringify(pkgSolution, null, 4), (error) => {});  
+        });
+    } else {
+        log.error(`Error: wrong parameters`);
+    }
+});

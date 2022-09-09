@@ -41,5 +41,6 @@ jobs:
       run: |
         pnpm install
         gulp update-version --value $GITVERSION_MAJORMINORPATCH
+        gulp update-package-name --name pnp-modern-search-parts-v4-$GITVERSION_SEMVER
         gulp bundle --ship
         gulp package-solution --ship
