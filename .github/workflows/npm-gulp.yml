@@ -1,10 +1,6 @@
-name: NodeJS with Gulp
+name: Build WebParts SPFx package
 
-on:
-  push:
-    branches: [ "develop" ]
-  pull_request:
-    branches: [ "develop" ]
+on: workflow_dispatch
 
 jobs:
   build:
