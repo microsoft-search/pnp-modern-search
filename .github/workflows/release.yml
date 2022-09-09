@@ -45,20 +45,23 @@ jobs:
         gulp bundle --ship
         gulp package-solution --ship
 
-    - uses: actions/upload-artifact@v3
-      with:
-        name: pnp-modern-search-parts-$GITVERSION_SEMVER
-        path: /**/*.sppkg
-
-    - name: Create release
+    - name: Create GitHub release
       uses: ncipollo/release-action@v1
       with:
         name: PnP Modern Search - ${{ steps.gitversion.outputs.majorMinorPatch }}
-        artifacts: "/**/*.sppkg"
+        artifacts: ${{ github.workspace }}/**/*.sppkg
         bodyFile: ".github/workflows/release-template.md"
         draft: true
         generateReleaseNotes: true
         allowUpdates: true
         replacesArtifacts: true
+        prerelease: ${{ startsWith(github.ref_name, 'develop') }}
         tag: ${{ steps.gitversion.outputs.majorMinorPatch }}
         commit: ${{ github.ref_name }}
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: pnp-modern-search-parts-$GITVERSION_SEMVER
+        path: ${{ github.workspace }}/**/*.sppkg
+   
