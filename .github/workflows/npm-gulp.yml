@@ -1,0 +1,48 @@
+name: NodeJS with Gulp
+
+on:
+  push:
+    branches: [ "develop" ]
+  pull_request:
+    branches: [ "develop" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [12.x, 14.x, 16.x]
+    
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    
+    - name: Setup GitVersion
+      uses: gittools/actions/gitversion/setup@v0.9.7
+      with:
+        versionSpec: '5.x'
+    
+    - name: Setup pnpm
+    - uses: pnpm/action-setup@v2.2.2
+      with:
+        version: 7
+      
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        
+    - name: Determine Version
+      id:   gitversion
+      uses: gittools/actions/gitversion/execute@v0.9.7
+    
+    - name: Build
+      run: |
+        pnpm install
+        gulp update-version --value $GITVERSION_MAJORMINORPATCH
+        gulp bundle --ship
+        gulp package-solution --ship
+        
+        
