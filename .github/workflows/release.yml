@@ -47,14 +47,26 @@ jobs:
 
     - uses: actions/upload-artifact@v3
       with:
-        name: pnp-modern-search-parts-$GITVERSION_SEMVER
+        name: spfx-package
         path: /**/*.sppkg
+
+  release:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: search-parts
+    steps:
+
+    - uses: actions/download-artifact@v3
+      with:
+        name: spfx-package
+        path: ~/artifacts
 
     - name: Create release
       uses: ncipollo/release-action@v1
       with:
         name: PnP Modern Search - ${{ steps.gitversion.outputs.majorMinorPatch }}
-        artifacts: "/**/*.sppkg"
+        artifacts: "~/artifacts/*.sppkg"
         bodyFile: ".github/workflows/release-template.md"
         draft: true
         generateReleaseNotes: true
