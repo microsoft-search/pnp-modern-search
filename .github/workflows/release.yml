@@ -48,7 +48,7 @@ jobs:
     - uses: actions/upload-artifact@v3
       with:
         name: spfx-package
-        path: /**/*.sppkg
+        path: $GITHUB_WORKSPACE/**/*.sppkg
 
   release:
     needs: build
