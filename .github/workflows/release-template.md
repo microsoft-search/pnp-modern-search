@@ -4,32 +4,3 @@
 **Getting started documentation here:** [https://microsoft-search.github.io/pnp-modern-search/](https://microsoft-search.github.io/pnp-modern-search/)
 
 [Feedback and comments](https://github.com/microsoft-search/pnp-modern-search/issues) are welcomed!
-
-## Search Results Web Part
-
-### New features
-
-### Fixes
-
-## Search filters
-
-### New features
-
-### Fixes
-
-## Search Verticals
-
-### New features
-
-### Fixes
-
-## Search Box
-
-### New features
-
-### Fixes
-
-## Key contributors
-
-- @wobba 
-- @FranckyC 
