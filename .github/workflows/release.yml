@@ -41,6 +41,14 @@ jobs:
       run: |
         pnpm install
         gulp update-version --value $GITVERSION_MAJORMINORPATCH
-        gulp update-package-name --name pnp-modern-search-parts-v4-$GITVERSION_SEMVER
+        gulp update-package-name --name pnp-modern-search-parts-$GITVERSION_SEMVER
         gulp bundle --ship
         gulp package-solution --ship
+
+    - uses: ncipollo/release-action@v1
+      with:
+        name: PnP Modern Search - $GITVERSION_MAJORMINORPATCH
+        artifacts: "*.sppkg"
+        bodyFile: ".github/workflows/release-template.md"
+        tag: $GITVERSION_MAJORMINORPATCH
+        commit: ${GITHUB_REF##*/}
