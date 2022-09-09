@@ -8,6 +8,7 @@ import * as webPartStrings from 'SearchBoxWebPartStrings';
 import SearchBoxAutoComplete from './SearchBoxAutoComplete/SearchBoxAutoComplete';
 import styles from './SearchBoxContainer.module.scss';
 import { BuiltinTokenNames } from '../../../services/tokenService/TokenService';
+import { isEmpty } from '@microsoft/sp-lodash-subset';
 
 export default class SearchBoxContainer extends React.Component<ISearchBoxContainerProps, ISearchBoxContainerState> {
 
@@ -50,7 +51,16 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                     className={styles.searchTextField}
                     value={this.state.searchInputValue}
                     autoComplete="off"
-                    onChange={(event) => this.setState({ searchInputValue: event && event.currentTarget ? event.currentTarget.value : "" })}
+                    onChange={(event) => {
+                        const newInputValue = event && event.currentTarget ? event.currentTarget.value : "";
+
+                        if (!isEmpty(this.state.searchInputValue) && isEmpty(newInputValue)) {
+                            this._onSearch('', true);
+                            searchBoxRef.current.focus();
+                        } else {
+                            this.setState({ searchInputValue: newInputValue });
+                        }
+                    }}
                     onSearch={() => this._onSearch(this.state.searchInputValue)}
                     onClear={() => {
                         this._onSearch('', true);
