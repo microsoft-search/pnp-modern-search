@@ -8,9 +8,9 @@ import { DomPurifyHelper } from '../../helpers/DomPurifyHelper';
 import { TestConstants } from '../../common/Constants';
 import { ISearchResultsTemplateContext } from '../../models/common/ITemplateContext';
 
-import { Action, CardElement, CardObjectRegistry, GlobalRegistry, SerializationContext } from 'adaptivecards';
 import { useLocalFluentUI } from './fluentUI';
 import { LayoutRenderType } from '@pnp/modern-search-extensibility';
+import { Action, CardElement } from 'adaptivecards';
 
 // Need a root class to do not conflict with PnP Modern Search Styles.
 const rootCssClassName = "pnp-modern-search";
@@ -134,6 +134,10 @@ export class TemplateRenderer extends React.Component<ITemplateRendererProps, IT
             // Initialize the serialization context for the Adaptive Cards, if needed
             if (!this._serializationContext) {
 
+                const { Action, CardElement, CardObjectRegistry, GlobalRegistry, SerializationContext } = await import(
+                    'adaptivecards'
+                );
+    
                 this._serializationContext = new SerializationContext();
 
                 let elementRegistry = new CardObjectRegistry<CardElement>();

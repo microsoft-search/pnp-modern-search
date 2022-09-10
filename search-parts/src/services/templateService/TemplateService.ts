@@ -20,7 +20,6 @@ import * as handlebarsHelpers from 'handlebars-helpers';
 import { ServiceScopeHelper } from "../../helpers/ServiceScopeHelper";
 import { DomPurifyHelper } from "../../helpers/DomPurifyHelper";
 import * as DOMPurify from 'dompurify';
-import { Action, ExecuteAction, OpenUrlAction, SubmitAction } from 'adaptivecards';
 import { IAdaptiveCardAction } from '@pnp/modern-search-extensibility';
 
 const TemplateService_ServiceKey = 'PnPModernSearchTemplateService';
@@ -457,40 +456,37 @@ export class TemplateService implements ITemplateService {
             const card = template.expand(context);
             const adaptiveCard = new this._adaptiveCardsNS.AdaptiveCard();
             adaptiveCard.hostConfig = hostConfiguration;
-            
+
             // Register the dynamic list of event handlers for Adaptive Cards actions, if any
             if (this.AdaptiveCardsExtensibilityLibraries != null && this.AdaptiveCardsExtensibilityLibraries.length > 0) {
-                adaptiveCard.onExecuteAction = (action: Action) => {
+                adaptiveCard.onExecuteAction = (action: any) => {
 
                     let actionResult: IAdaptiveCardAction;
                     const type = action.getJsonTypeName();
                     switch (type) {
-                        case OpenUrlAction.JsonTypeName: {
-                            let typedAction = action as OpenUrlAction;
+                        case this._adaptiveCardsNS.OpenUrlAction.JsonTypeName: {
                             actionResult = {
                                 type: type,
-                                title: typedAction.title,
-                                url: typedAction.url
+                                title: action.title,
+                                url: action.url
                             };
                         }
                             break;
         
-                        case SubmitAction.JsonTypeName: {
-                            let typedAction = action as SubmitAction;
+                        case this._adaptiveCardsNS.SubmitAction.JsonTypeName: {
                             actionResult = {
                                 type: type,
-                                title: typedAction.title,
-                                data: typedAction.data
+                                title: action.title,
+                                data: action.data
                             };
                         }
                             break;
-                        case ExecuteAction.JsonTypeName: {
-                            let typedAction = action as ExecuteAction;
+                        case this._adaptiveCardsNS.ExecuteAction.JsonTypeName: {
                             actionResult = {
                                 type: type,
-                                title: typedAction.title,
-                                data: typedAction.data,
-                                verb: typedAction.verb
+                                title: action.title,
+                                data: action.data,
+                                verb: action.verb
                             };
                         }
                             break;
@@ -499,7 +495,7 @@ export class TemplateService implements ITemplateService {
                     this.AdaptiveCardsExtensibilityLibraries.forEach(l => l.invokeCardAction(actionResult));
                 };                
             } else {
-                adaptiveCard.onExecuteAction = (action: Action) => {
+                adaptiveCard.onExecuteAction = (action: any) => {
                     Log.info(TemplateService_LogSource, `Triggered an event from an Adaptive Card, with action: '${action.title}'. Please, register a custom Extension Library in order to handle it.`, this.serviceScope);
                 };
             }
