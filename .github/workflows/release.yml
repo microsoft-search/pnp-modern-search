@@ -17,7 +17,11 @@ jobs:
     strategy:
       matrix:
         node-version: [14.x]
-    
+        
+    outputs: 
+      majorMinorPatch: ${{ steps.setoutputs.outputs.majorMinorPatch }}
+      semver: ${{ steps.setoutputs.outputs.semver }}
+      
     steps:
     - uses: actions/checkout@v3
       with:
@@ -41,6 +45,12 @@ jobs:
     - name: Determine Version
       id:   gitversion
       uses: gittools/actions/gitversion/execute@v0.9.7
+      
+    - name: Set outputs
+      id: setoutputs
+      run: |
+        echo "::set-output name=majorMinorPatch::$GITVERSION_MAJORMINORPATCH"
+        echo "::set-output name=semver::$GITVERSION_SEMVER"
     
     - name: Build SPFx
       run: |
@@ -50,22 +60,33 @@ jobs:
         gulp bundle --ship
         gulp package-solution --ship
 
-    - name: Create GitHub release
-      uses: ncipollo/release-action@v1
-      with:
-        name: PnP Modern Search - ${{ steps.gitversion.outputs.majorMinorPatch }}
-        artifacts: ${{ github.workspace }}/**/*.sppkg
-        bodyFile: ".github/workflows/release-template.md"
-        draft: true
-        generateReleaseNotes: true
-        allowUpdates: true
-        replacesArtifacts: true
-        prerelease: ${{ startsWith(github.ref_name, 'release') }}
-        tag: ${{ steps.gitversion.outputs.majorMinorPatch }}
-        commit: ${{ github.ref_name }}
-
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
         name: pnp-modern-search-parts-${{ steps.gitversion.outputs.semVer }}
         path: ${{ github.workspace }}/**/*.sppkg
+        
+  release:
+    runs-on: ubuntu-latest
+    environment: production
+    needs: build
+    steps:
+      
+      - uses: actions/download-artifact@v3
+        with:
+          name: pnp-modern-search-parts-${{ needs.build.outputs.semver }}
+    
+      - name: Create GitHub release
+        uses: ncipollo/release-action@v1
+        with:
+          name: PnP Modern Search - ${{ needs.build.outputs.majorMinorPatch }}
+          artifacts: ${{ github.workspace }}/**/*.sppkg
+          bodyFile: ".github/workflows/release-template.md"
+          draft: true
+          generateReleaseNotes: true
+          allowUpdates: true
+          replacesArtifacts: true
+          prerelease: ${{ startsWith(github.ref_name, 'release') }}
+          tag: ${{ needs.build.outputs.majorMinorPatch }}
+          commit: ${{ github.ref_name }}
+    
