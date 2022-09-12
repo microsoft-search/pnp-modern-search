@@ -8,9 +8,7 @@ import { DomPurifyHelper } from '../../helpers/DomPurifyHelper';
 import { TestConstants } from '../../common/Constants';
 import { ISearchResultsTemplateContext } from '../../models/common/ITemplateContext';
 
-import { useLocalFluentUI } from './fluentUI';
 import { LayoutRenderType } from '@pnp/modern-search-extensibility';
-import { Action, CardElement } from 'adaptivecards';
 
 // Need a root class to do not conflict with PnP Modern Search Styles.
 const rootCssClassName = "pnp-modern-search";
@@ -20,7 +18,6 @@ export class TemplateRenderer extends React.Component<ITemplateRendererProps, IT
 
     private _domPurify: any;
     private _divTemplateRenderer: React.RefObject<HTMLDivElement>;
-    private _serializationContext;
 
     constructor(props: ITemplateRendererProps) {
         super(props);
@@ -130,26 +127,6 @@ export class TemplateRenderer extends React.Component<ITemplateRendererProps, IT
             this._divTemplateRenderer.current.innerHTML = template;
 
         } else if (props.renderType == LayoutRenderType.AdaptiveCards && template instanceof HTMLElement) {
-
-            // Initialize the serialization context for the Adaptive Cards, if needed
-            if (!this._serializationContext) {
-
-                const { Action, CardElement, CardObjectRegistry, GlobalRegistry, SerializationContext } = await import(
-                    'adaptivecards'
-                );
-    
-                this._serializationContext = new SerializationContext();
-
-                let elementRegistry = new CardObjectRegistry<CardElement>();
-                let actionRegistry = new CardObjectRegistry<Action>();
-            
-                GlobalRegistry.populateWithDefaultElements(elementRegistry);
-                GlobalRegistry.populateWithDefaultActions(actionRegistry);
-            
-                useLocalFluentUI(elementRegistry, actionRegistry);
-                this._serializationContext.setElementRegistry(elementRegistry);
-                this._serializationContext.setActionRegistry(actionRegistry);
-            }
 
             this._divTemplateRenderer.current.innerHTML = "";
             this._divTemplateRenderer.current.appendChild(template as HTMLElement);

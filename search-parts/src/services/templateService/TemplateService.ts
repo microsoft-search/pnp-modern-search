@@ -21,6 +21,8 @@ import { ServiceScopeHelper } from "../../helpers/ServiceScopeHelper";
 import { DomPurifyHelper } from "../../helpers/DomPurifyHelper";
 import * as DOMPurify from 'dompurify';
 import { IAdaptiveCardAction } from '@pnp/modern-search-extensibility';
+import { useLocalFluentUI } from '../../controls/TemplateRenderer/fluentUI';   
+import { Action, CardElement } from "adaptivecards";
 
 const TemplateService_ServiceKey = 'PnPModernSearchTemplateService';
 const TemplateService_LogSource = "PnPModernSearch:TemplateService";
@@ -45,6 +47,7 @@ export class TemplateService implements ITemplateService {
     private _adaptiveCardsNS;
     private _markdownIt;
     private _adaptiveCardsTemplating;
+    private _serializationContext;
 
     /**
      * The moment.js library reference
@@ -500,8 +503,7 @@ export class TemplateService implements ITemplateService {
                 };
             }
 
-            adaptiveCard.parse(card);
-
+            adaptiveCard.parse(card, this._serializationContext);
             renderTemplateContent = adaptiveCard.render();
         }
 
@@ -810,6 +812,26 @@ export class TemplateService implements ITemplateService {
 
     private async _initAdaptiveCardsResources(): Promise<void> {
 
+        // Initialize the serialization context for the Adaptive Cards, if needed
+        if (!this._serializationContext) {
+
+            const { Action, CardElement, CardObjectRegistry, GlobalRegistry, SerializationContext } = await import(
+                'adaptivecards'
+            );
+
+            this._serializationContext = new SerializationContext();
+
+            let elementRegistry = new CardObjectRegistry<CardElement>();
+            let actionRegistry = new CardObjectRegistry<Action>();
+        
+            GlobalRegistry.populateWithDefaultElements(elementRegistry);
+            GlobalRegistry.populateWithDefaultActions(actionRegistry);
+        
+            useLocalFluentUI(elementRegistry, actionRegistry);
+            this._serializationContext.setElementRegistry(elementRegistry);
+            this._serializationContext.setActionRegistry(actionRegistry);
+        }
+
         if (!this._adaptiveCardsNS) {
 
             const domPurify = DOMPurify.default;
@@ -869,7 +891,7 @@ export class TemplateService implements ITemplateService {
         };
 
         const card = template.expand(context);
-        mainCard.parse(card);
+        mainCard.parse(card, this._serializationContext);
 
         const mainHtml = mainCard.render();
 
@@ -895,7 +917,7 @@ export class TemplateService implements ITemplateService {
                 const itemAdaptiveCard = new this._adaptiveCardsNS.AdaptiveCard();
                 itemAdaptiveCard.hostConfig = hostConfiguration;
 
-                itemAdaptiveCard.parse(itemCard);
+                itemAdaptiveCard.parse(itemCard, this._serializationContext);
 
                 // Partial match as we can't use the complete ID due to special characters "/" and "==""
                 const defaultItem: HTMLElement = mainHtml.querySelector(`[id^="${item.hitId.substring(0, 15)}"]`);
