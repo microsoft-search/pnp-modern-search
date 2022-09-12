@@ -73,7 +73,7 @@ jobs:
   release:
     runs-on: ubuntu-latest
     environment: production
-    if: ${{ github.ref_name == 'main' || startsWith(github.ref_name, 'release') || github.event.inputs.create_release "}}
+    if: ${{ github.ref_name == 'main' || startsWith(github.ref_name, 'release') || github.event.inputs.create_release }}
     needs: build
     steps:
       
