@@ -2,9 +2,14 @@ name: Release Modern Search Web Parts SPFx package
 
 on:
   workflow_dispatch:
+    inputs:
+      manual:
+        default: true
+        description: 'Manual deploymen flag' 
   push:
     branches:
-      - '*'
+      - main
+      - 'release/**'
       
 jobs:
   build:
@@ -68,7 +73,7 @@ jobs:
   release:
     runs-on: ubuntu-latest
     environment: production
-    if: ${{ github.ref_name == 'main' || startsWith(github.ref_name, 'release') || github.ref_name == 'develop'}}
+    if: ${{ github.ref_name == 'main' || startsWith(github.ref_name, 'release') || github.event.inputs.manual "}}
     needs: build
     steps:
       
