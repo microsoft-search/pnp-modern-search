@@ -5,7 +5,7 @@ on:
     inputs:
       create_release:
         default: true
-        description: 'Manual release flag' 
+        description: 'Create GiHub release?' 
   push:
     branches:
       - main
