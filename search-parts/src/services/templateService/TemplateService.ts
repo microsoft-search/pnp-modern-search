@@ -815,7 +815,7 @@ export class TemplateService implements ITemplateService {
         // Initialize the serialization context for the Adaptive Cards, if needed
         if (!this._serializationContext) {
 
-            const { Action, CardElement, CardObjectRegistry, GlobalRegistry, SerializationContext } = await import(
+            const { CardObjectRegistry, GlobalRegistry, SerializationContext } = await import(
                 'adaptivecards'
             );
 
