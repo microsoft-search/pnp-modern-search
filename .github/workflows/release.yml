@@ -100,10 +100,13 @@ jobs:
           tag: ${{ needs.build.outputs.majorMinorPatch }}
           commit: ${{ github.ref_name }}
           
-      - name: Deploy documentation
+      - name: Setup python
         uses: actions/setup-python@v2
         with:
           python-version: 3.x
-      - run: pip install markdown-include
-      - run: pip install mkdocs-material==7.2.4
-      - run: mkdocs gh-deploy --force
+          
+      - name: Deploy documentation
+        run: |
+          pip install markdown-include
+          pip install mkdocs-material==7.2.4
+          mkdocs gh-deploy --force
