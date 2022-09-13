@@ -99,4 +99,10 @@ jobs:
           prerelease: ${{ startsWith(github.ref_name, 'release') }}
           tag: ${{ needs.build.outputs.majorMinorPatch }}
           commit: ${{ github.ref_name }}
-    
+          
+      - name: Deploy documentation
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+      - run: pip install mkdocs-material 
+      - run: mkdocs gh-deploy --force
