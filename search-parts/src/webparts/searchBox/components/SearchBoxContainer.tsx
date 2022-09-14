@@ -53,8 +53,9 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                     autoComplete="off"
                     onChange={(event) => {
                         const newInputValue = event && event.currentTarget ? event.currentTarget.value : "";
+                        const inputChanged = !isEmpty(this.state.searchInputValue) && isEmpty(newInputValue);
 
-                        if (!isEmpty(this.state.searchInputValue) && isEmpty(newInputValue)) {
+                        if (this.props.reQueryOnClear && inputChanged) {
                             this._onSearch('', true);
                             searchBoxRef.current.focus();
                         } else {
