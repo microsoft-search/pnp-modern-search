@@ -97,7 +97,7 @@ jobs:
           allowUpdates: true
           replacesArtifacts: true
           prerelease: ${{ startsWith(github.ref_name, 'release') }}
-          tag: ${{ needs.build.outputs.semVer }}
+          tag: ${{ needs.build.outputs.majorMinorPatch }}
           commit: ${{ github.ref_name }}
           
       - name: Setup python
