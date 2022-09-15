@@ -106,7 +106,7 @@ export class MyCustomLibraryComponent implements IExtensibilityLibrary {
   private _currentWebUrl: string;
 
   constructor(serviceScope: ServiceScope) {
-    this._serviceScope.whenFinished(() => {
+    serviceScope.whenFinished(() => {
       this._spHttpClient = serviceScope.consume(SPHttpClient.serviceKey);
 
       this._pageContext = serviceScope.consume(PageContext.serviceKey);
@@ -139,7 +139,7 @@ export class MyCustomLibraryComponent implements IExtensibilityLibrary {
       switch (action.title.toLowerCase()) {
         case "user":
 
-          // Invoke the currentUser endpoing
+          // Invoke the currentUser endpoint
           this._spHttpClient.get(
             `${this._currentWebUrl}/_api/web/currentUser`,
             SPHttpClient.configurations.v1, 
