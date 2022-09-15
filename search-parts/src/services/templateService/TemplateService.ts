@@ -21,8 +21,7 @@ import { ServiceScopeHelper } from "../../helpers/ServiceScopeHelper";
 import { DomPurifyHelper } from "../../helpers/DomPurifyHelper";
 import * as DOMPurify from 'dompurify';
 import { IAdaptiveCardAction } from '@pnp/modern-search-extensibility';
-import { useLocalFluentUI } from '../../controls/TemplateRenderer/fluentUI';   
-import { Action, CardElement } from "adaptivecards";
+
 
 const TemplateService_ServiceKey = 'PnPModernSearchTemplateService';
 const TemplateService_LogSource = "PnPModernSearch:TemplateService";
@@ -812,26 +811,6 @@ export class TemplateService implements ITemplateService {
 
     private async _initAdaptiveCardsResources(): Promise<void> {
 
-        // Initialize the serialization context for the Adaptive Cards, if needed
-        if (!this._serializationContext) {
-
-            const { CardObjectRegistry, GlobalRegistry, SerializationContext } = await import(
-                'adaptivecards'
-            );
-
-            this._serializationContext = new SerializationContext();
-
-            let elementRegistry = new CardObjectRegistry<CardElement>();
-            let actionRegistry = new CardObjectRegistry<Action>();
-        
-            GlobalRegistry.populateWithDefaultElements(elementRegistry);
-            GlobalRegistry.populateWithDefaultActions(actionRegistry);
-        
-            useLocalFluentUI(elementRegistry, actionRegistry);
-            this._serializationContext.setElementRegistry(elementRegistry);
-            this._serializationContext.setActionRegistry(actionRegistry);
-        }
-
         if (!this._adaptiveCardsNS) {
 
             const domPurify = DOMPurify.default;
@@ -849,6 +828,35 @@ export class TemplateService implements ITemplateService {
                 'adaptivecards'
             );
 
+             // Initialize the serialization context for the Adaptive Cards, if needed
+            if (!this._serializationContext) {
+
+                const { CardObjectRegistry, GlobalRegistry, SerializationContext } = await import(
+                    /* webpackChunkName: 'pnp-modern-search-adaptive-cards-bundle' */
+                    'adaptivecards'
+                );
+
+                const { useLocalFluentUI } = await import(
+                    /* webpackChunkName: 'pnp-modern-search-fluentui-bundle' */
+                    '../../controls/TemplateRenderer/fluentUI'
+                );
+
+                this._serializationContext = new SerializationContext();
+
+                const CardElementType =  this._adaptiveCardsNS.CardElement;
+                const ActionElementType =  this._adaptiveCardsNS.Action;
+
+                let elementRegistry = new CardObjectRegistry<InstanceType<typeof CardElementType>>();
+                let actionRegistry = new CardObjectRegistry<InstanceType<typeof ActionElementType>>();
+            
+                GlobalRegistry.populateWithDefaultElements(elementRegistry);
+                GlobalRegistry.populateWithDefaultActions(actionRegistry);
+            
+                useLocalFluentUI(elementRegistry, actionRegistry);
+                this._serializationContext.setElementRegistry(elementRegistry);
+                this._serializationContext.setActionRegistry(actionRegistry);
+            }
+  
             this._adaptiveCardsNS.AdaptiveCard.onProcessMarkdown = (text: string, result) => {
 
                 // Special case with HitHighlightedSummary field
