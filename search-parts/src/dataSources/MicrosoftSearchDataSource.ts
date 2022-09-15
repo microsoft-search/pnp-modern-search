@@ -33,7 +33,8 @@ export enum EntityType {
     List = 'list',
     ListItem = 'listItem',
     Site = 'site',
-    Person = 'person'
+    Person = 'person',
+    TeamsMessage = 'chatMessage'
 }
 
 export interface IMicrosoftSearchDataSourceProperties {
@@ -144,6 +145,10 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         {
             key: EntityType.Person,
             text: "People"
+        },
+        {
+            key: EntityType.TeamsMessage,
+            text: "Teams messages"
         }
     ];
 
@@ -229,7 +234,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         return results;
     }
 
-    public getPropertyPaneGroupsConfiguration(): IPropertyPaneGroup[] {
+    public getPropertyPaneGroupsConfiguration(): IPropertyPaneGroup[] {      
 
         const entityTypesDisplayValue = this._availableEntityTypeOptions.map((option) => {
             if (this.properties.entityTypes.indexOf(option.key as EntityType) !== -1) {
