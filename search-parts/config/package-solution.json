@@ -47,6 +47,14 @@
             {
                 "resource": "Microsoft Graph",
                 "scope": "ExternalItem.Read.All"
+            },
+            {
+                "resource": "Microsoft Graph",
+                "scope": "Chat.Read"
+            },
+            {
+                "resource": "Microsoft Graph",
+                "scope": "ChannelMessage.Read.All"
             }
         ],
         "metadata": {
