@@ -8,6 +8,7 @@ define([], function() {
                 GroupName: "Hakukentän asetukset",
                 PlaceholderTextLabel: "Hakukentässä näkyvä teksti",
                 SearchInNewPageLabel: "Lähetä haku uudelle sivulle",
+                ReQueryOnClearLabel: "Tyhjennä kysely",
                 PageUrlLabel: "Sivun URL",
                 UrlErrorMessage: "Syötä validi URL.",
                 QueryPathBehaviorLabel: "Toimintatapa",

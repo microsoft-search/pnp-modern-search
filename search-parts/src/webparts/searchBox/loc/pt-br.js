@@ -8,6 +8,7 @@ define([], function() {
                 GroupName: "Configurações da caixa de pesquisa",
                 PlaceholderTextLabel: "Texto para exibir no <i>placeholder</i> da caixa de pesquisa",
                 SearchInNewPageLabel: "Enviar a consulta para uma nova página",
+                ReQueryOnClearLabel: "Redefinir consulta em limpar",
                 PageUrlLabel: "URL da página",
                 UrlErrorMessage: "Por favor, forneça uma URL válida.",
                 QueryPathBehaviorLabel: "Método",
