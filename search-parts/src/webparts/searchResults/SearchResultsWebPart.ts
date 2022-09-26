@@ -962,6 +962,10 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 // Registers event handler for custom action in Adaptive Cards
                 if (extensibilityLibrary.invokeCardAction)
                     this.templateService.AdaptiveCardsExtensibilityLibraries = this.templateService.AdaptiveCardsExtensibilityLibraries.concat(extensibilityLibrary); 
+
+                // Add custom data sources if any
+                if (extensibilityLibrary.getCustomDataSources)
+                    this.availableDataSourceDefinitions = this.availableDataSourceDefinitions.concat(extensibilityLibrary.getCustomDataSources());
             });
         }
     }
@@ -1968,7 +1972,9 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                     break;
 
                 default:
-                    break;
+                  const source = this.availableDataSourceDefinitions.find(definition => definition.key === dataSourceKey);
+                  serviceKey = source.serviceKey;
+                  break;
             }
 
             return new Promise<IDataSource>((resolve, reject) => {

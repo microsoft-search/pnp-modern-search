@@ -3,6 +3,7 @@ import { ILayoutDefinition } from './layouts/ILayoutDefinition';
 import { ISuggestionProviderDefinition } from './suggestions/ISuggestionProviderDefinition';
 import * as Handlebars from 'handlebars';
 import { IAdaptiveCardAction } from './IAdaptiveCardAction';
+import { IDataSourceDefinition } from './dataSources/IDataSourceDefinition';
 
 export interface IExtensibilityLibrary {
 
@@ -32,4 +33,9 @@ export interface IExtensibilityLibrary {
      * @param action the information about the action activated by the user
      */
     invokeCardAction(action: IAdaptiveCardAction): void;
+
+    /**
+     * Returns custom data sources
+     */
+     getCustomDataSources?(): IDataSourceDefinition[];
 }
