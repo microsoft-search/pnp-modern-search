@@ -890,7 +890,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         // tryGetValue() will resolve to '' if no Web Part is connected or if the connection is removed
         // The value can be also 'undefined' if the data source is not already loaded on the page.
         let inputQueryFromDataSource = "";
-        if (this.properties.queryText) {
+        if (this.properties.queryText && this.properties.useInputQueryText) {
             try {
                 inputQueryFromDataSource = DynamicPropertyHelper.tryGetValueSafe(this.properties.queryText);
                 if (inputQueryFromDataSource !== undefined && typeof (inputQueryFromDataSource) === 'string') {
