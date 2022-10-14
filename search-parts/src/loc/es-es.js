@@ -179,13 +179,18 @@ define([], function() {
             TextDialogSaveButtonText: "Guardar",
             SelectItemComboPlaceHolder: "Seleccione la propiedad",
             AddStaticDataLabel: "Añadir datos estáticos",
-            TextFieldApplyButtonText: "Aplicar"
+            TextFieldApplyButtonText: "Aplicar",
+            SortByPlaceholderText: "Ordenar por...",
+            SortByDefaultOptionText: "Defecto"
         },
         Layouts: {
             Debug: {
                 Name: "Depuración"
             },
-            Custom: {
+            CustomHandlebars: {
+                Name: "Personalizado"
+            },
+            CustomAdaptiveCards: {
                 Name: "Personalizado"
             },
             SimpleList: {

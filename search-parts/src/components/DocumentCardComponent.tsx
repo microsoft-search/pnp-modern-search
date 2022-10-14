@@ -217,7 +217,7 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
                         styles={documentCardStyles}
                         type={this.props.isCompact ? DocumentCardType.compact : DocumentCardType.normal}
                     >
-                        <div ref={this.documentCardPreviewRef} style={{ position: 'relative', height: '100%' }}>
+                        <div ref={this.documentCardPreviewRef} style={{ position: 'relative', height: '100%' }} data-selection-disabled="true">
                             {renderItemCheck}
                             <DocumentCardPreview {...previewProps} />
                             {this.props.showFileIcon ?

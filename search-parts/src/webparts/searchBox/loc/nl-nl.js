@@ -8,6 +8,7 @@ define([], function() {
                 GroupName: "Zoekvak instellingen",
                 PlaceholderTextLabel: "Tekst om als placeholder te tonen in het zoekvak",
                 SearchInNewPageLabel: "Zend de zoekopdracht naar nieuwe pagina",
+                ReQueryOnClearLabel: "Vraag resetten op wissen",
                 PageUrlLabel: "Pagina URL",
                 UrlErrorMessage: "Geef een valide URL op.",
                 QueryPathBehaviorLabel: "Methode",

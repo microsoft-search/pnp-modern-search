@@ -8,6 +8,7 @@ define([], function() {
                 GroupName: "Ustawienia pola wyszukiwania",
                 PlaceholderTextLabel: "Tekst zastępny wyświetlany w polu wyszukiwania",
                 SearchInNewPageLabel: "Wyślij zapytanie do nowego okna",
+                ReQueryOnClearLabel: "Zresetuj zapytanie po wyczyszczeniu",
                 PageUrlLabel: "Adres URL strony",
                 UrlErrorMessage: "Proszę podać poprawny URL.",
                 QueryPathBehaviorLabel: "Metoda",

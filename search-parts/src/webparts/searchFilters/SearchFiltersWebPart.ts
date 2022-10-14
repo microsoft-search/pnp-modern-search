@@ -41,6 +41,9 @@ import { BaseWebPart } from '../../common/BaseWebPart';
 import commonStyles from '../../styles/Common.module.scss';
 import { IDataVerticalSourceData } from '../../models/dynamicData/IDataVerticalSourceData';
 import { DynamicPropertyHelper } from '../../helpers/DynamicPropertyHelper';
+import PnPTelemetry from '@pnp/telemetry-js';
+
+const LogSource = "SearchFiltersWebPart";
 
 export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebPartProps> implements IDynamicDataCallables {
 
@@ -107,6 +110,13 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     private propertyPaneConnectionsFields: IPropertyPaneField<any>[] = [];
 
     protected async onInit() {
+        try {
+            // Disable PnP Telemetry
+            const telemetry = PnPTelemetry.getInstance();
+            telemetry.optOut();
+        } catch (error) {
+            Log.warn(LogSource, `Opt out for PnP Telemetry failed. Details: ${error}`, this.context.serviceScope);
+        }
 
         this.initializeProperties();
 
@@ -923,7 +933,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                 return '';
             }
             // Resolves an error if the file isn't a valid .htm or .html file
-            else if (!this.templateService.isValidTemplateFile(value)) {
+            else if (!this.templateService.isValidTemplateFile(value, [".html",".htm"])) {
                 return webPartStrings.PropertyPane.LayoutPage.ErrorTemplateExtension;
             }
             // Resolves an error if the file doesn't answer a simple head request
@@ -1040,7 +1050,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     public async loadPropertyPaneResources(): Promise<void> {
 
         const { PropertyFieldCodeEditor, PropertyFieldCodeEditorLanguages } = await import(
-            /* webpackChunkName: 'pnp-modern-search-property-pane' */
+            /* webpackChunkName: 'pnp-modern-search-code-editor' */
             '@pnp/spfx-property-controls/lib/propertyFields/codeEditor'
         );
 

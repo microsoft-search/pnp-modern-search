@@ -179,13 +179,18 @@ define([], function() {
             TextDialogSaveButtonText: "Bewaar",
             SelectItemComboPlaceHolder: "Selecteer eigenschap",
             AddStaticDataLabel: "Voeg statische data toe",
-            TextFieldApplyButtonText: "Toepassen"
+            TextFieldApplyButtonText: "Toepassen",
+            SortByPlaceholderText: "Sorteer op...",
+            SortByDefaultOptionText: "Standaard"
         },
         Layouts: {
             Debug: {
                 Name: "Debug"
             },
-            Custom: {
+            CustomHandlebars: {
+                Name: "Aangepast"
+            },
+            CustomAdaptiveCards: {
                 Name: "Aangepast"
             },
             SimpleList: {

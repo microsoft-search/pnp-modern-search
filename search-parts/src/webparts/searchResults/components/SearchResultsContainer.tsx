@@ -8,7 +8,7 @@ import { ITemplateService } from '../../../services/templateService/ITemplateSer
 import { TemplateService } from '../../../services/templateService/TemplateService';
 import { Log, DisplayMode } from "@microsoft/sp-core-library";
 import { MessageBar, MessageBarType, Overlay, Spinner, SpinnerSize } from 'office-ui-fabric-react';
-import { IDataSourceData, IDataFilterResult, BuiltinTemplateSlots, LayoutRenderType } from '@pnp/modern-search-extensibility';
+import { IDataSourceData, IDataFilterResult, BuiltinTemplateSlots } from '@pnp/modern-search-extensibility';
 import { ISearchResultsTemplateContext } from '../../../models/common/ITemplateContext';
 import styles from './SearchResultsContainer.module.scss';
 import { Constants, AutoCalculatedDataSourceFields, TestConstants } from '../../../common/Constants';
@@ -17,7 +17,6 @@ import { ObjectHelper } from '../../../helpers/ObjectHelper';
 import { BuiltinLayoutsKeys } from '../../../layouts/AvailableLayouts';
 import { WebPartTitle } from '@pnp/spfx-controls-react/lib/WebPartTitle';
 import * as webPartStrings from 'SearchResultsWebPartStrings';
-import { IMicrosoftSearchDataSourceData } from '../../../models/search/IMicrosoftSearchDataSourceData';
 
 const LogSource = "SearchResultsContainer";
 
@@ -53,6 +52,8 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
 
     private _lastPageNumber: number;
     private _lastPageSelectedKeys: string[] = [];
+
+    private _searchWebPartRef: HTMLElement;
 
     public constructor(props: ISearchResultsContainerProps) {
 
@@ -185,6 +186,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
 
         return <main><div data-instance-id={this.props.instanceId}
             data-ui-test-id={TestConstants.SearchResultsWebPart}>
+            <div tabIndex={-1} ref={(ref) => { this._searchWebPartRef = ref; }}></div>
             {renderOverlay}
             {renderInfoMessage}
             {renderTitle}
@@ -207,6 +209,14 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             if (!isEqual(prevProps.dataContext.pageNumber, this.props.dataContext.pageNumber)) {
                 // Save the last selected keys for the current selection to be able to track items across pages
                 this._lastPageSelectedKeys =  this._selection.getSelection().map(item => item.key as string);
+
+                // This is WebKit only, so defensively code and fallback to "scrollIntoView"
+                if ((this._searchWebPartRef as any).scrollIntoViewIfNeeded) {                          
+                    (this._searchWebPartRef as any).scrollIntoViewIfNeeded(false);
+                  } else {
+                    // Scroll to the top of the component
+                    this._searchWebPartRef.scrollIntoView(true);
+                  }
             }
 
             await this.getDataFromDataSource(this.props.dataContext.pageNumber);

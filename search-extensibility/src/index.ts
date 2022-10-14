@@ -3,6 +3,7 @@ export * from './models/dataSources/IDataSourceData';
 export * from './models/dataSources/BaseDataSource';
 export * from './models/dataSources/IDataSourceDefinition';
 export * from './models/IExtensibilityLibrary';
+export * from './models/IAdaptiveCardAction';
 export * from './models/layouts/IComponentDefinition';
 export * from './models/layouts/BaseWebComponent';
 export * from './models/layouts/ILayout';

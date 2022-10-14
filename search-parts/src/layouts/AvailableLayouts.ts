@@ -124,7 +124,7 @@ export class AvailableLayouts {
             serviceKey: null // ServiceKey will be created dynamically for builtin layout
         },
                 {
-            name: 'List',
+            name: strings.Layouts.SimpleList.Name,
             key: BuiltinLayoutsKeys.ListAdaptiveCards.toString(),
             iconName: 'List',
             type: LayoutType.Results,
