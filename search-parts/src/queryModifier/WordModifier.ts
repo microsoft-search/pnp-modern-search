@@ -27,11 +27,11 @@ export class WordModifier extends BaseQueryModifier<IWordModifierProperties> {
     this._regex.lastIndex = 0;
 
     const alteredQueryText = searchQuery?.queryText?.replace(this._regex, (match => {
-      return this.properties.ignoreList && this.properties.ignoreList.some(_ => _ === match) ? match : `${this.properties.prefix}${match}${this.properties.suffix}`;
+      return this.properties.ignoreList && this.properties.ignoreList.some(_ => _.toLocaleLowerCase() === match.toLocaleLowerCase()) ? match : `${this.properties.prefix}${match}${this.properties.suffix}`;
     }));
 
     const alteredQueryTemplate = searchQuery?.queryTemplate?.replace(this._regex, (match => {
-      return this.properties.ignoreList && this.properties.ignoreList.some(_ => _ === match) ? match : `${this.properties.prefix}${match}${this.properties.suffix}`;
+      return this.properties.ignoreList && this.properties.ignoreList.some(_ => _.toLocaleLowerCase() === match.toLocaleLowerCase()) ? match : `${this.properties.prefix}${match}${this.properties.suffix}`;
     }));
 
     return {
