@@ -639,8 +639,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             const resp = await modifier.modifyQuery({ queryTemplate: queryTemplate, queryText: queryText }, clonedContext, this._tokenService.resolveTokens.bind(this._tokenService));
             let doBreak = modifier.endWhenSuccessfull && (!isEqual(queryText, resp.queryText));
             queryText = resp.queryText;
-            // TODO: When Querytemplate will be supported in the future directly by ms search graph api, then we need to add the following line
-            //queryTemplate = resp.queryTemplate;
+            queryTemplate = resp.queryTemplate;
             if (doBreak) {
                 break;
             }

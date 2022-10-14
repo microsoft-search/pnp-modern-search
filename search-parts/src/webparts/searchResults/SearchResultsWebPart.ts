@@ -158,24 +158,14 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     private availableCustomQueryModifierDefinitions: IQueryModifierDefinition[] = AvailableQueryModifier.BuiltinQueryModifier;
 
     /**
+     * The current page number
+     */
+    private currentPageNumber: number = 1;
+
+    /**
     * The current selected custom query modifiers
     */
     private _selectedCustomQueryModifier: IQueryModifier[] = [];
-
-    /**
-     * The available custom QueryModifier definitions (not registered yet)
-     */
-    private availableCustomQueryModifierDefinitions: IQueryModifierDefinition[] = AvailableQueryModifier.BuiltinQueryModifier;
-
-    /**
-     * The page URL link if provided by the data source
-     */
-    private currentPageLinkUrl: string = null;
-
-    /**
-     * The available page links available in the pagination control
-     */
-    private availablePageLinks: string[] = [];
 
     /**
      * The token service instance
