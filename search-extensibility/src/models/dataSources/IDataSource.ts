@@ -7,7 +7,6 @@ import { FilterBehavior } from '../filters/FilterBehavior';
 import { ITemplateSlot } from './ITemplateSlot';
 import { WebPartContext } from '@microsoft/sp-webpart-base';
 import { IDataFilter } from '../filters/IDataFilter';
-import { IQueryModifier } from "../queryModifier/IQueryModifier";
 
 export interface IServiceKeysConfiguration {
 
@@ -53,7 +52,7 @@ export interface IDataSource {
      * Retrieves the data from this data source.
      * @param dataContext useful information about the current Web Part context (for instance, current page number, etc.).
      */
-    getData(dataContext?: IDataContext, queryModifier?:IQueryModifier[]): Promise<IDataSourceData>;
+    getData(dataContext?: IDataContext): Promise<IDataSourceData>;
 
     /**
      * Returns the data source property pane option fields if any.
