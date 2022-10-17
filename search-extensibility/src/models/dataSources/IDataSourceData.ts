@@ -25,8 +25,8 @@ export interface IDataSourceData {
     resultTemplates?: IResultTemplates;
 
     /**
-     * get queryModifications for dataSources which support custom query modifier
+     * shows the final, requested query
      * can be used in the layout to show that how a query request was modified by a custom query modifier
      */
-    queryModification?: IQueryModification;
+    requestedQuery?: IQueryModification;
 }
