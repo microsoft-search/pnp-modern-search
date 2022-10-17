@@ -352,21 +352,6 @@ define([], function() {
                 ProviderName: "SharePoint statische zoeksuggesties",
                 ProviderDescription: "Haal statische door gebruiker gedefinieerde SharePoint zoeksuggesties op"
             }
-        },
-        BuiltInQueryModifiers: {
-            WordModifier: {
-                ModifierName: "WordModifier",
-                ModifierDescription: "Alle woorden worden gewijzigd met de ingestelde prefix/suffix modifier. b.v. 'hel wor' wordt xxxhel* xxxwor*",
-                GroupName:"WordModifier instellingen",
-                PrefixLabel:"Voorvoegsel tekst",
-                PrefixDescription:"Een string om aan elk gevonden woord in de ingevoerde querytekst te plakken.",
-                PrefixPlaceholder:"*",
-                SuffixLabel:"Achtervoegseltekst",
-                SuffixDescription:"Een string om toe te voegen aan elk gevonden woord in de ingevoerde querytekst.",
-                SuffixPlaceholder:"*",
-                IgnoreListLabel:"Negeer lijst",
-                IgnoreListDescription:"Keuze van woorden waar we geen achtervoegsel/prefix aan toevoegen (geval negeren)",
-            }
         }
     }
 })

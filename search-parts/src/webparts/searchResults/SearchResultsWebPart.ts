@@ -66,7 +66,6 @@ import { ItemSelectionMode } from '../../models/common/IItemSelectionProps';
 import { PropertyPaneAsyncCombo } from '../../controls/PropertyPaneAsyncCombo/PropertyPaneAsyncCombo';
 import { DynamicPropertyHelper } from '../../helpers/DynamicPropertyHelper';
 import { IQueryModifierConfiguration } from '../../queryModifier/IQueryModifierConfiguration';
-import { AvailableQueryModifier, BuiltinQueryModifierKeys } from '../../queryModifier/AvailableQueryModifier';
 import { PropertyPaneTabsField } from '../../controls/PropertyPaneTabsField/PropertyPaneTabsField';
 import * as strings from 'CommonStrings';
 
@@ -155,7 +154,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     /**
      * The available custom QueryModifier definitions (not registered yet)
      */
-    private availableCustomQueryModifierDefinitions: IQueryModifierDefinition[] = AvailableQueryModifier.BuiltinQueryModifier;
+    private availableCustomQueryModifierDefinitions: IQueryModifierDefinition[] = [];
 
     /**
      * The current page number
@@ -831,7 +830,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             this.availableDataSourceDefinitions = AvailableDataSources.BuiltinDataSources;
             this.availableLayoutDefinitions = AvailableLayouts.BuiltinLayouts.filter(layout => { return layout.type === LayoutType.Results; });
             this.availableWebComponentDefinitions = AvailableComponents.BuiltinComponents;
-            this.availableCustomQueryModifierDefinitions = AvailableQueryModifier.BuiltinQueryModifier;
+            this.availableCustomQueryModifierDefinitions = [];
 
             await this.loadExtensions(cleanConfiguration);
         }
@@ -2626,34 +2625,17 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         if (providerKey) {
 
-            switch (providerKey) {
+            // Gets the registered service key according to the selected provider definition 
+            const matchingDefinitions = queryModifierDefinitions.filter((provider) => { return provider.key === providerKey; });
 
-                case BuiltinQueryModifierKeys.WordModifier:
-
-                    const { WordModifier: WordModifier } = await import(
-                        /* webpackChunkName: 'pnp-modern-search-word-prefix-modifier' */
-                        '../../queryModifier/WordModifier'
-                    );
-
-                    serviceKey = ServiceKey.create<IQueryModifier>('ModernSearchWordModifier', WordModifier);
-                    break;
-
-                // Custom provider
-                default:
-
-                    // Gets the registered service key according to the selected provider definition 
-                    const matchingDefinitions = queryModifierDefinitions.filter((provider) => { return provider.key === providerKey; });
-
-                    // Can only have one data source instance per key
-                    if (matchingDefinitions.length > 0) {
-                        serviceKey = matchingDefinitions[0].serviceKey;
-                    } else {
-                        // Case when the extensibility library is removed from the catalog or the configuration
-                        throw new Error(Text.format(commonStrings.General.Extensibility.QueryModifierDefinitionNotFound, providerKey));
-                    }
-
-                    break;
+            // Can only have one data source instance per key
+            if (matchingDefinitions.length > 0) {
+                serviceKey = matchingDefinitions[0].serviceKey;
+            } else {
+                // Case when the extensibility library is removed from the catalog or the configuration
+                throw new Error(Text.format(commonStrings.General.Extensibility.QueryModifierDefinitionNotFound, providerKey));
             }
+
 
             return new Promise<IQueryModifier>((resolve, reject) => {
 

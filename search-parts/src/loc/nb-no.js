@@ -352,21 +352,6 @@ define([], function () {
           ProviderName: "SharePoint statiske søkeforslag",
           ProviderDescription: "Hent SharePoint statiske brukerdefinerte søkeforslag"
         }
-      },
-      BuiltInQueryModifiers: {
-        WordModifier: {
-            ModifierName: "WordModifier",
-            ModifierDescription: "Alle ord vil bli modifisert av den konfigurerte prefiks-/suffiksmodifikatoren. f.eks. 'hel wor' vil bli xxxhel* xxxwor*",
-            GroupName:"WordModifier innstillinger",
-            PrefixLabel:"Prefiks Tekst",
-            PrefixDescription:"En streng som skal settes foran hvert ord som finnes i inndataspørreteksten.",
-            PrefixPlaceholder:"*",
-            SuffixLabel:"Suffikstekst",
-            SuffixDescription:"En streng som skal legges til hvert ord som finnes i inndataspørreteksten.",
-            SuffixPlaceholder:"*",
-            IgnoreListLabel:"Ignorer listen",
-            IgnoreListDescription:"Valg av ord der vi ikke legger til et suffiks/prefiks (ignorerer store og små bokstaver)",
-        }
       }
     }
   })

@@ -353,21 +353,6 @@ define([], function() {
                 ProviderName: "SharePoint Static search suggestions",
                 ProviderDescription: "Retrieve SharePoint static user defined search suggestions"
             }
-        },    
-        BuiltInQueryModifiers: {
-            WordModifier: {
-                ModifierName: "WordModifier",
-                ModifierDescription: "All words will be modified by the configured prefix/suffix modifier. e.g. 'hel wor' will become xxxhel* xxxwor*",
-                GroupName:"WordModifier Settings",
-                PrefixLabel:"Prefix Text",
-                PrefixDescription:"A string to prepend to each word found in the input query text.",
-                PrefixPlaceholder:"*",
-                SuffixLabel:"Suffix Text",
-                SuffixDescription:"A string to append to each word found in the input query text.",
-                SuffixPlaceholder:"*",
-                IgnoreListLabel:"Ignore List",
-                IgnoreListDescription:"Choice of Words where we won't add a suffix/prefix (ignoring case)",
-            }
         }
     }
 })

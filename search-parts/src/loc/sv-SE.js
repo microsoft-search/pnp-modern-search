@@ -353,21 +353,6 @@ define([], function () {
           ProviderName: "SharePoint statiska sökförslag",
           ProviderDescription: "Hämta SharePoint statiska användardefinierade sökförslag"
         }
-      },
-      BuiltInQueryModifiers: {
-        WordModifier: {
-            ModifierName: "WordModifier",
-            ModifierDescription: "Alla ord kommer att ändras med det konfigurerade prefixet/suffixet. t.ex. 'hel wor' kommer att bli xxxhel* xxxwor*.",
-            GroupName:"WordModifier inställningar",
-            PrefixLabel:"Prefix Text",
-            PrefixDescription:"En sträng som ska läggas till varje ord som hittas i den inmatade frågetexten.",
-            PrefixPlaceholder:"*",
-            SuffixLabel:"Suffix Text",
-            SuffixDescription:"En sträng som ska läggas till varje ord som hittas i den inmatade frågetexten.",
-            SuffixPlaceholder:"*",
-            IgnoreListLabel:"Ignorera lista",
-            IgnoreListDescription:"Val av ord där vi inte lägger till ett suffix/prefix (ignorerar fall)",
-        }
-    }
+      }
     }
   })
