@@ -29,6 +29,5 @@ export * from './models/verticals/IDataVertical';
 export * from './models/dataSources/ISortInfo';
 export * from './models/dataSources/IResultTemplates';
 export * from './models/queryModifier/BaseQueryModifier';
-export * from './models/queryModifier/IQueryModification';
 export * from './models/queryModifier/IQueryModifier';
 export * from './models/queryModifier/IQueryModifierDefinition';
