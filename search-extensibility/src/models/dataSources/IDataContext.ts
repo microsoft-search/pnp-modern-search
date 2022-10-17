@@ -14,9 +14,8 @@ export interface IDataContext {
     inputQueryText: string;
 
     /**
-     * TODO: ok?
+     * The originalInputQueryText. Provided for instances where a query modificator modifies the inputQueryText
      */
-
     originalInputQueryText: string;
 
     /**
