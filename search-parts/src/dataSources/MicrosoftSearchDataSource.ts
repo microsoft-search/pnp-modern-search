@@ -1,6 +1,6 @@
-import { BaseDataSource, FilterSortType, FilterSortDirection, ITemplateSlot, BuiltinTemplateSlots, IDataContext, ITokenService, FilterBehavior, PagingBehavior, IDataFilterResult, IDataFilterResultValue, FilterComparisonOperator, IQueryModifier } from "@pnp/modern-search-extensibility";
+import { BaseDataSource, FilterSortType, FilterSortDirection, ITemplateSlot, BuiltinTemplateSlots, IDataContext, ITokenService, FilterBehavior, PagingBehavior, IDataFilterResult, IDataFilterResultValue, FilterComparisonOperator } from "@pnp/modern-search-extensibility";
 import { IPropertyPaneGroup, PropertyPaneLabel, IPropertyPaneField, PropertyPaneToggle, PropertyPaneHorizontalRule } from "@microsoft/sp-property-pane";
-import { cloneDeep, isEmpty, isEqual } from '@microsoft/sp-lodash-subset';
+import { cloneDeep, isEmpty } from '@microsoft/sp-lodash-subset';
 import { MSGraphClientFactory } from "@microsoft/sp-http";
 import { TokenService } from "../services/tokenService/TokenService";
 import { ServiceScope } from '@microsoft/sp-core-library';
@@ -15,8 +15,6 @@ import { ISortFieldConfiguration } from '../models/search/ISortFieldConfiguratio
 import { AsyncCombo } from "../controls/PropertyPaneAsyncCombo/components/AsyncCombo";
 import { IAsyncComboProps } from "../controls/PropertyPaneAsyncCombo/components/IAsyncComboProps";
 import { PropertyPaneNonReactiveTextField } from "../controls/PropertyPaneNonReactiveTextField/PropertyPaneNonReactiveTextField";
-import { ISharePointSearchService } from "../services/searchService/ISharePointSearchService";
-import { SharePointSearchService } from "../services/searchService/SharePointSearchService";
 import { IMicrosoftSearchDataSourceData } from "../models/search/IMicrosoftSearchDataSourceData";
 import { SortFieldDirection } from "@pnp/modern-search-extensibility";
 import * as React from "react";
@@ -215,7 +213,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         return PagingBehavior.Dynamic;
     }
 
-    public async getData(dataContext: IDataContext, selectedCustomQueryModifier?: IQueryModifier[]): Promise<IMicrosoftSearchDataSourceData> {
+    public async getData(dataContext: IDataContext): Promise<IMicrosoftSearchDataSourceData> {
 
         let results: IMicrosoftSearchDataSourceData = {
             items: []
@@ -223,7 +221,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
 
         // Ensuring at least one entity type is selected before launching a search
         if (this._properties.entityTypes.length > 0) {
-            const searchQuery = await this.buildMicrosoftSearchQuery(dataContext, selectedCustomQueryModifier);
+            const searchQuery = await this.buildMicrosoftSearchQuery(dataContext);
             results = await this.search(searchQuery);
         } else {
             // If no entity is selected, manually set the results to prevent
@@ -607,7 +605,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         }
     }
 
-    private async buildMicrosoftSearchQuery(dataContext: IDataContext, selectedCustomQueryModifier?: IQueryModifier[]): Promise<IMicrosoftSearchQuery> {
+    private async buildMicrosoftSearchQuery(dataContext: IDataContext): Promise<IMicrosoftSearchQuery> {
 
         let searchQuery: IMicrosoftSearchQuery = {
             requests: []
@@ -631,21 +629,6 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             // Use {searchTerms} or {inputQueryText} to use orginal value
             // As of 06/06/2022 the query template is still in beta so we use the query text instead
             queryText = queryTemplate.trim();
-        }
-
-        if (selectedCustomQueryModifier && selectedCustomQueryModifier.length > 0) {
-            const clonedContext = cloneDeep(dataContext);
-
-            for (const modifier of selectedCustomQueryModifier) {
-                const resp = await modifier.modifyQuery({ queryTemplate: queryTemplate, queryText: queryText }, clonedContext, this._tokenService.resolveTokens.bind(this._tokenService));
-                let doBreak = modifier.endWhenSuccessfull && (!isEqual(queryText, resp.queryText) || !isEqual(queryTemplate, resp.queryTemplate));
-                queryText = resp.queryText;
-                queryTemplate = resp.queryTemplate;
-
-                if (doBreak) {
-                    break;
-                }
-            }
         }
 
         // Paging
@@ -816,11 +799,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         let itemsCount = 0;
         let response: IMicrosoftSearchDataSourceData = {
             items: [],
-            filters: [],
-            requestedQuery: {
-                queryText: searchQuery.requests[0].query.queryString,
-                queryTemplate: searchQuery.requests[0].query.queryTemplate,
-            }
+            filters: []
         };
         let aggregationResults: IDataFilterResult[] = [];
 

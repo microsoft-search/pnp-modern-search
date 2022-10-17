@@ -362,8 +362,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                     },
                     themeVariant: this._themeVariant,
                     className: commonStyles.wpTitle
-                },
-                selectedCustomQueryModifier: this._selectedCustomQueryModifier
+                }
             } as ISearchResultsContainerProps);
 
             renderRootElement = renderDataContainer;
@@ -2405,6 +2404,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         // Input query text
         const inputQueryText = this._getInputQueryTextValue();
 
+
         // Build the data context to pass to the data source
         let dataContext: IDataContext = {
             pageNumber: this.currentPageNumber,
@@ -2419,6 +2419,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 selectedVertical: undefined
             },
             inputQueryText: inputQueryText,
+            originalInputQueryText: inputQueryText,
             queryStringParameters: UrlHelper.getQueryStringParams(),
             sorting: {
                 selectedSortableFields: this.dataSource.getSortableFields(),
@@ -2486,14 +2487,34 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             }
         }
 
+        if (this._selectedCustomQueryModifier && this._selectedCustomQueryModifier.length > 0) {
+            const clonedContext = cloneDeep(dataContext);
+
+            for (const modifier of this._selectedCustomQueryModifier) {
+                let queryText = dataContext.inputQueryText;
+                let doBreak = false;
+
+                //Cloned context won't be correct for inputQueryText after first modification!
+                modifier.modifyQuery(queryText, clonedContext, this.tokenService.resolveTokens.bind(this.tokenService)).then((value: string) => {
+
+                    doBreak = modifier.endWhenSuccessfull && (!isEqual(dataContext.inputQueryText, value));
+                    dataContext.inputQueryText = value;
+                });
+
+
+                if (doBreak) {
+                    break;
+                }
+            }
+        }
+
         // If input query text changes, then we need to reset the paging
-        if (!isEqual(inputQueryText, this._lastInputQueryText)) {
+        if (!isEqual(dataContext.inputQueryText, this._lastInputQueryText)) {
             dataContext.pageNumber = 1;
             this.currentPageNumber = 1;
         }
 
-        this._lastInputQueryText = inputQueryText;
-
+        this._lastInputQueryText = dataContext.inputQueryText;
         return dataContext;
     }
 

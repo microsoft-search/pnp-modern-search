@@ -58,7 +58,7 @@ export interface IDataContext {
          * The selected sortable fields configured by the user
          */
         selectedSortableFields?: string[];
- 
+
         /**
          * The selected sort field name
          */
@@ -73,7 +73,7 @@ export interface IDataContext {
     /**
      * Information about connected verticals
      */
-     verticals?: {
+    verticals?: {
         /**
          * The current selected vertical information
          */
@@ -88,5 +88,5 @@ export interface IDataContext {
     /**
      * Information about current query string parameters
      */
-    queryStringParameters?: {[name: string]: string };
+    queryStringParameters?: { [name: string]: string };
 }

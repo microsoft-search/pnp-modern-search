@@ -1,5 +1,5 @@
 ﻿import * as React from 'react';
-import { IDataSourceData, BaseDataSource, ITokenService, ITemplateSlot, IDataFilterResult, IDataFilterResultValue, BuiltinTemplateSlots, FilterBehavior, FilterSortType, FilterSortDirection, IQueryModifier } from "@pnp/modern-search-extensibility";
+import { IDataSourceData, BaseDataSource, ITokenService, ITemplateSlot, IDataFilterResult, IDataFilterResultValue, BuiltinTemplateSlots, FilterBehavior, FilterSortType, FilterSortDirection } from "@pnp/modern-search-extensibility";
 import {
     IPropertyPaneGroup,
     IPropertyPaneDropdownOption,
@@ -224,9 +224,9 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         return null;
     }
 
-    public async getData(dataContext: IDataContext, selectedCustomQueryModifier?: IQueryModifier[]): Promise<IDataSourceData> {
+    public async getData(dataContext: IDataContext): Promise<IDataSourceData> {
 
-        const searchQuery = await this.buildSharePointSearchQuery(dataContext, selectedCustomQueryModifier);
+        const searchQuery = await this.buildSharePointSearchQuery(dataContext);
         const results = await this._sharePointSearchService.search(searchQuery);
 
         let data: IDataSourceData = {
@@ -235,11 +235,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
             queryModification: results.queryModification,
             secondaryResults: results.secondaryResults,
             spellingSuggestion: results.spellingSuggestion,
-            promotedResults: results.promotedResults,
-            requestedQuery: {
-                queryText: searchQuery.Querytext,
-                queryTemplate: searchQuery.QueryTemplate,
-            }
+            promotedResults: results.promotedResults
         };
 
         // Translates taxonomy refiners and result values by using terms ID if applicable
@@ -722,7 +718,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         });
     }
 
-    private async buildSharePointSearchQuery(dataContext: IDataContext, selectedCustomQueryModifier?: IQueryModifier[]): Promise<ISharePointSearchQuery> {
+    private async buildSharePointSearchQuery(dataContext: IDataContext): Promise<ISharePointSearchQuery> {
 
         // Build the search query according to options
         let searchQuery: ISharePointSearchQuery = {};
@@ -782,20 +778,6 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
 
         searchQuery.EnableQueryRules = this.properties.enableQueryRules;
         searchQuery.QueryTemplate = await this._tokenService.resolveTokens(this.properties.queryTemplate);
-
-        if (selectedCustomQueryModifier && selectedCustomQueryModifier.length > 0) {
-            const clonedContext = cloneDeep(dataContext);
-            for (const modifier of selectedCustomQueryModifier) {
-
-                const resp = await modifier.modifyQuery({ queryTemplate: searchQuery.QueryTemplate, queryText: searchQuery.Querytext }, clonedContext, this._tokenService.resolveTokens.bind(this._tokenService));
-                let doBreak = modifier.endWhenSuccessfull && (!isEqual(searchQuery.Querytext, resp.queryText) || !isEqual(searchQuery.QueryTemplate, resp.queryTemplate));
-                searchQuery.Querytext = resp.queryText;
-                searchQuery.QueryTemplate = resp.queryTemplate;
-                if (doBreak) {
-                    break;
-                }
-            }
-        }
 
         if (this.properties.resultSourceId) {
 
