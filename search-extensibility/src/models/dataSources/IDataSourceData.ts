@@ -1,4 +1,5 @@
 import { IDataFilterResult } from '../filters/IDataFilter';
+import { IQueryModification } from '../queryModifier/IQueryModification';
 import { IResultTemplates } from './IResultTemplates';
 
 export interface IDataSourceData {
@@ -22,4 +23,10 @@ export interface IDataSourceData {
      * Result templates available for items provided by the data source
      */
     resultTemplates?: IResultTemplates;
+
+    /**
+     * get queryModifications for dataSources which support custom query modifier
+     * can be used in the layout to show that how a query request was modified by a custom query modifier
+     */
+    queryModification?: IQueryModification;
 }
