@@ -633,18 +633,20 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             queryText = queryTemplate.trim();
         }
 
-        const clonedContext = cloneDeep(dataContext);
+        if (selectedCustomQueryModifier && selectedCustomQueryModifier.length > 0) {
+            const clonedContext = cloneDeep(dataContext);
 
-        for (const modifier of selectedCustomQueryModifier) {
-            const resp = await modifier.modifyQuery({ queryTemplate: queryTemplate, queryText: queryText }, clonedContext, this._tokenService.resolveTokens.bind(this._tokenService));
-            let doBreak = modifier.endWhenSuccessfull && (!isEqual(queryText, resp.queryText));
-            queryText = resp.queryText;
-            queryTemplate = resp.queryTemplate;
-            if (doBreak) {
-                break;
+            for (const modifier of selectedCustomQueryModifier) {
+                const resp = await modifier.modifyQuery({ queryTemplate: queryTemplate, queryText: queryText }, clonedContext, this._tokenService.resolveTokens.bind(this._tokenService));
+                let doBreak = modifier.endWhenSuccessfull && (!isEqual(queryText, resp.queryText) || !isEqual(queryTemplate, resp.queryTemplate));
+                queryText = resp.queryText;
+                queryTemplate = resp.queryTemplate;
+
+                if (doBreak) {
+                    break;
+                }
             }
         }
-
 
         // Paging
         if (dataContext.pageNumber > 1) {
@@ -814,7 +816,11 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         let itemsCount = 0;
         let response: IMicrosoftSearchDataSourceData = {
             items: [],
-            filters: []
+            filters: [],
+            requestedQuery: {
+                queryText: searchQuery.requests[0].query.queryString,
+                queryTemplate: searchQuery.requests[0].query.queryTemplate,
+            }
         };
         let aggregationResults: IDataFilterResult[] = [];
 

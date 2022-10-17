@@ -14,13 +14,12 @@ export class WordModifier extends BaseQueryModifier<IWordModifierProperties> {
 
   private _regex: RegExp;
 
-  private _availableOptions = [];
+  private _availableOptions: IComboBoxOption[] = [];
 
   public async onInit(): Promise<void> {
     this._regex = new RegExp('\\b(?!OR|NEAR|ONEAR|WORDS|XRANK\\b)\\w+(?!(\\s)*[:,=,<,>]|\\.\\.)\\b', 'gm');
+    this.properties.ignoreList = this.properties.ignoreList ?? [];
   }
-
-
 
   public async modifyQuery(searchQuery: IQueryModification, dataContext: IDataContext, resolveTokens: (string: string) => Promise<string>): Promise<IQueryModification> {
 
@@ -38,14 +37,12 @@ export class WordModifier extends BaseQueryModifier<IWordModifierProperties> {
       queryText: alteredQueryText,
       queryTemplate: alteredQueryTemplate
     };
-
   }
 
 
   private _onCustomPropertyUpdate(propertyPath: string, newValue: any): void {
 
     this.properties.ignoreList = newValue?.map(v => { return v.key as string; }) ?? [];
-
   }
 
   public getPropertyPaneGroupsConfiguration(): IPropertyPaneGroup[] {

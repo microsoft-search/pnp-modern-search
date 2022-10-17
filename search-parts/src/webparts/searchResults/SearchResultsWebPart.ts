@@ -879,7 +879,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 modifier.enabled = false;
             });
 
-            //this.properties.queryModifierProperties = {};
+            this.properties.queryModifierProperties = {};
         }
 
 

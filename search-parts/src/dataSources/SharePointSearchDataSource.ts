@@ -32,7 +32,7 @@ import { DateHelper } from '../helpers/DateHelper';
 import { PropertyPaneNonReactiveTextField } from '../controls/PropertyPaneNonReactiveTextField/PropertyPaneNonReactiveTextField';
 import { ITerm } from '../services/taxonomyService/ITaxonomyItems';
 import { DataFilterHelper } from '../helpers/DataFilterHelper';
-import { ISortFieldConfiguration,  } from '../models/search/ISortFieldConfiguration';
+import { ISortFieldConfiguration, } from '../models/search/ISortFieldConfiguration';
 import { EnumHelper } from '../helpers/EnumHelper';
 import { BuiltinDataSourceProviderKeys } from './AvailableDataSources';
 import { StringHelper } from '../helpers/StringHelper';
@@ -224,9 +224,9 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         return null;
     }
 
-    public async getData(dataContext: IDataContext, selectedCustomQueryModifier?:IQueryModifier[]): Promise<IDataSourceData> {
+    public async getData(dataContext: IDataContext, selectedCustomQueryModifier?: IQueryModifier[]): Promise<IDataSourceData> {
 
-        const searchQuery = await this.buildSharePointSearchQuery(dataContext,selectedCustomQueryModifier);
+        const searchQuery = await this.buildSharePointSearchQuery(dataContext, selectedCustomQueryModifier);
         const results = await this._sharePointSearchService.search(searchQuery);
 
         let data: IDataSourceData = {
@@ -235,7 +235,11 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
             queryModification: results.queryModification,
             secondaryResults: results.secondaryResults,
             spellingSuggestion: results.spellingSuggestion,
-            promotedResults: results.promotedResults
+            promotedResults: results.promotedResults,
+            requestedQuery: {
+                queryText: searchQuery.Querytext,
+                queryTemplate: searchQuery.QueryTemplate,
+            }
         };
 
         // Translates taxonomy refiners and result values by using terms ID if applicable
@@ -324,22 +328,22 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                                 required: true,
                                 onCustomRender: ((field, value, onUpdate, item, itemId, onError) => {
 
-                                return React.createElement("div", { key: `${field.id}-${itemId}` },
-                                    React.createElement(AsyncCombo, {
-                                        defaultSelectedKey: item[field.id] ? item[field.id] : '',
-                                        allowMultiSelect: false,
-                                        allowFreeform: true,
-                                        availableOptions: this._sortableFields,
-                                        onUpdateOptions: ((options: IComboBoxOption[]) => {
-                                            this._sortableFields = options;
-                                        }).bind(this),
-                                        clearTextOnFocus: true,
-                                        onUpdate: (option: IComboBoxOption) => {
-                                            onUpdate(field.id, option.key as string);
-                                        },
-                                        placeholder: commonStrings.DataSources.SearchCommon.Sort.SortFieldColumnPlaceholder,
-                                        useComboBoxAsMenuWidth: false // Used when screen resolution is too small to display the complete value  
-                                    } as IAsyncComboProps));
+                                    return React.createElement("div", { key: `${field.id}-${itemId}` },
+                                        React.createElement(AsyncCombo, {
+                                            defaultSelectedKey: item[field.id] ? item[field.id] : '',
+                                            allowMultiSelect: false,
+                                            allowFreeform: true,
+                                            availableOptions: this._sortableFields,
+                                            onUpdateOptions: ((options: IComboBoxOption[]) => {
+                                                this._sortableFields = options;
+                                            }).bind(this),
+                                            clearTextOnFocus: true,
+                                            onUpdate: (option: IComboBoxOption) => {
+                                                onUpdate(field.id, option.key as string);
+                                            },
+                                            placeholder: commonStrings.DataSources.SearchCommon.Sort.SortFieldColumnPlaceholder,
+                                            useComboBoxAsMenuWidth: false // Used when screen resolution is too small to display the complete value  
+                                        } as IAsyncComboProps));
                                 }).bind(this)
                             },
                             {
@@ -352,25 +356,25 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                                 title: commonStrings.DataSources.SearchCommon.Sort.SortDirectionColumnLabel,
                                 type: this._customCollectionFieldType.custom,
                                 onCustomRender: (field, value, onUpdate, item) => {
-                                  return (
-                                      React.createElement("div", null,
-                                          React.createElement(Dropdown, {
-                                            options: [
-                                                {
-                                                    key: SortFieldDirection.Ascending,
-                                                    text: commonStrings.DataSources.SearchCommon.Sort.SortDirectionAscendingLabel
-                                                },
-                                                {
-                                                    key: SortFieldDirection.Descending,
-                                                    text: commonStrings.DataSources.SearchCommon.Sort.SortDirectionDescendingLabel
-                                                }
-                                            ],
-                                            disabled: !item.isDefaultSort,
-                                            defaultSelectedKey: item.sortDirection ? item.sortDirection : SortFieldDirection.Ascending,
-                                            onChange: (ev, option) => onUpdate(field.id, option.key),
-                                          } as IDropdownProps)
-                                      )
-                                  );
+                                    return (
+                                        React.createElement("div", null,
+                                            React.createElement(Dropdown, {
+                                                options: [
+                                                    {
+                                                        key: SortFieldDirection.Ascending,
+                                                        text: commonStrings.DataSources.SearchCommon.Sort.SortDirectionAscendingLabel
+                                                    },
+                                                    {
+                                                        key: SortFieldDirection.Descending,
+                                                        text: commonStrings.DataSources.SearchCommon.Sort.SortDirectionDescendingLabel
+                                                    }
+                                                ],
+                                                disabled: !item.isDefaultSort,
+                                                defaultSelectedKey: item.sortDirection ? item.sortDirection : SortFieldDirection.Ascending,
+                                                onChange: (ev, option) => onUpdate(field.id, option.key),
+                                            } as IDropdownProps)
+                                        )
+                                    );
                                 }
                             },
                             {
@@ -390,7 +394,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                                                 disabled: !item.isUserSort,
                                                 onChange: (ev, newValue) => {
                                                     onUpdate(field.id, newValue);
-                                                } 
+                                                }
                                             } as ITextFieldProps)
                                         )
                                     );
@@ -592,10 +596,10 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                 'HtmlFileType',
                 'SiteLogo'
             ];
-        this.properties.resultSourceId = this.properties.resultSourceId !== undefined ? this.properties.resultSourceId : BuiltinSourceIds.LocalSharePointResults; 
+        this.properties.resultSourceId = this.properties.resultSourceId !== undefined ? this.properties.resultSourceId : BuiltinSourceIds.LocalSharePointResults;
         this.properties.hitHighlightedProperties = this.properties.hitHighlightedProperties ? this.properties.hitHighlightedProperties : '';
-        this.properties.trimDuplicates =  this.properties.trimDuplicates !== undefined ? this.properties.trimDuplicates : false;
-        
+        this.properties.trimDuplicates = this.properties.trimDuplicates !== undefined ? this.properties.trimDuplicates : false;
+
         if (this.properties.sortList !== undefined) {
             // Convert to new schema 4.5.5
             this.properties.sortList = this.properties.sortList.map(sortConfiguration => {
@@ -718,7 +722,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         });
     }
 
-    private async buildSharePointSearchQuery(dataContext: IDataContext, selectedCustomQueryModifier?:IQueryModifier[]): Promise<ISharePointSearchQuery> {
+    private async buildSharePointSearchQuery(dataContext: IDataContext, selectedCustomQueryModifier?: IQueryModifier[]): Promise<ISharePointSearchQuery> {
 
         // Build the search query according to options
         let searchQuery: ISharePointSearchQuery = {};
@@ -778,25 +782,26 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
 
         searchQuery.EnableQueryRules = this.properties.enableQueryRules;
         searchQuery.QueryTemplate = await this._tokenService.resolveTokens(this.properties.queryTemplate);
-        
-        const clonedContext = cloneDeep(dataContext);
-        for (const modifier of selectedCustomQueryModifier) {
-        
-            const resp = await modifier.modifyQuery({queryTemplate:searchQuery.QueryTemplate, queryText: searchQuery.Querytext}, clonedContext, this._tokenService.resolveTokens.bind(this._tokenService));            
-            let doBreak =  modifier.endWhenSuccessfull  && (!isEqual(searchQuery.Querytext, resp.queryText) || !isEqual(searchQuery.QueryTemplate, resp.queryTemplate));
-            searchQuery.Querytext = resp.queryText;
-            searchQuery.QueryTemplate = resp.queryTemplate;
-            if(doBreak)
-            {
-                break;
+
+        if (selectedCustomQueryModifier && selectedCustomQueryModifier.length > 0) {
+            const clonedContext = cloneDeep(dataContext);
+            for (const modifier of selectedCustomQueryModifier) {
+
+                const resp = await modifier.modifyQuery({ queryTemplate: searchQuery.QueryTemplate, queryText: searchQuery.Querytext }, clonedContext, this._tokenService.resolveTokens.bind(this._tokenService));
+                let doBreak = modifier.endWhenSuccessfull && (!isEqual(searchQuery.Querytext, resp.queryText) || !isEqual(searchQuery.QueryTemplate, resp.queryTemplate));
+                searchQuery.Querytext = resp.queryText;
+                searchQuery.QueryTemplate = resp.queryTemplate;
+                if (doBreak) {
+                    break;
+                }
             }
-        }            
+        }
 
         if (this.properties.resultSourceId) {
 
             if (Guid.isValid(this.properties.resultSourceId)) {
                 searchQuery.SourceId = this.properties.resultSourceId;
-                
+
                 // enable phoenetic search for people result source
                 if (searchQuery.SourceId && searchQuery.SourceId.toLocaleLowerCase() === BuiltinSourceIds.LocalPeopleResults) {
                     searchQuery.EnableNicknames = true;
@@ -809,7 +814,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
             } else { // result source specified by name: Level|Result source name (i.e: SPSiteSubscription|News in Spain)
                 searchQuery = this._setResultSourceByName(this.properties.resultSourceId, searchQuery);
             }
-        }        
+        }
 
         searchQuery.Culture = this.properties.searchQueryLanguage !== undefined && this.properties.searchQueryLanguage !== null ? this.properties.searchQueryLanguage : this._currentLocaleId;
 
@@ -896,7 +901,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                     if (!isEmpty(refinementString)) {
                         refinementFilters = refinementFilters.concat([`${dataContext.filters.filterOperator}(${refinementString})`]);
                     }
-                    
+
                 } else {
                     refinementFilters = refinementFilters.concat(DataFilterHelper.buildFqlRefinementString(dataContext.filters.selectedFilters, dataContext.filters.filtersConfiguration, this.moment));
                 }
@@ -917,11 +922,11 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
 
         searchQuery.TrimDuplicates = this.properties.trimDuplicates;
 
-        if (dataContext.sorting?.selectedSortFieldName 
+        if (dataContext.sorting?.selectedSortFieldName
             && dataContext.sorting?.selectedSortDirection) {
-           
+
             // Manual user sorting
-            searchQuery.SortList =  [{
+            searchQuery.SortList = [{
                 Property: dataContext.sorting.selectedSortFieldName,
                 Direction: dataContext.sorting.selectedSortDirection === SortFieldDirection.Ascending ? SortDirection.Ascending : SortDirection.Descending
             }];
@@ -931,7 +936,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
             // Default sort
             searchQuery.SortList = this._convertToSortList(this.properties.sortList.filter(sort => sort.isDefaultSort));
         }
-        
+
         searchQuery.SelectProperties = this.properties.selectedProperties.filter(a => a); // Fix to remove null values;
 
         // Audience targeting
@@ -952,7 +957,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
      * @param value the result source id
      */
     private validateSourceId(value: string): string {
-        if (value.length > 0) {            
+        if (value.length > 0) {
             if (!(/^(\{){0,1}[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}(\}){0,1}$/).test(value)) {
                 return this._validateSourceName(value);
             }
@@ -1063,7 +1068,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                         // Use FQL expression here to get the correct output. Otherwise a full match is performed
                         const fqlFilterValue = `"ǂǂ${StringHelper._bytesToHex(StringHelper._stringToUTF8Bytes(term))}"`;
                         const existingFilterIdx = updatedValues.map(updatedValue => updatedValue.name).indexOf(strippedTerm);
-                     
+
                         if (existingFilterIdx === -1) {
                             // Create a dedicated filter value entry
                             updatedValues.push({
@@ -1193,7 +1198,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                                 // termFilterWithoutTranslations => language agnostic term value
                                 // termTextFilter => Text value in case the value is a litteral string (ex: a property bag value or a text column https://microsoft-search.github.io/pnp-modern-search/usage/search-filters/#use-indexed-property-bag-properties-with-taxonomy-values)
                                 value.value = `or(${termFilterWithoutTranslations},${termTextFilter})`;
-                            } 
+                            }
                         }
 
                         value.name = existingFilters[0].localizedTermLabel;
