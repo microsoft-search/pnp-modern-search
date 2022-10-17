@@ -202,6 +202,12 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
      */
     private propertyPaneConnectionsGroup: IPropertyPaneGroup[] = [];
 
+
+    /**
+     * The current DataContext - is updated in render method
+     */
+    private _currentDataContext: IDataContext;
+
     constructor() {
         super();
 
@@ -255,6 +261,9 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             this.context.propertyPane.refresh();
         }
 
+        if (this.dataSource) {
+            this._currentDataContext = await this.getDataContext();
+        }
         return this.renderCompleted();
     }
 
@@ -338,8 +347,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         if (this.dataSource) {
 
-            const dataContext = this.getDataContext();
-
             // The main content WP logic
             renderDataContainer = React.createElement(SearchResultsContainer, {
                 dataSource: this.dataSource,
@@ -351,7 +358,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 onItemSelected: this._onItemSelected,
                 pageContext: this.context.pageContext,
                 renderType: this.properties.layoutRenderType,
-                dataContext: dataContext,
+                dataContext: this._currentDataContext,
                 themeVariant: this._themeVariant,
                 serviceScope: this.webPartInstanceServiceScope,
                 webPartTitleProps: {
@@ -1619,8 +1626,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     private getLayoutTemplateOptions(): IPropertyPaneField<any>[] {
 
         if (this.layout && !this.errorMessage) {
-            const dataContext = this.getDataContext();
-            return this.layout.getPropertyPaneFieldsConfiguration(this._currentDataResultsSourceData.availableFieldsFromResults, dataContext);
+            return this.layout.getPropertyPaneFieldsConfiguration(this._currentDataResultsSourceData.availableFieldsFromResults, this._currentDataContext);
         } else {
             return [];
         }
@@ -2216,10 +2222,11 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
             // Input query text
             const inputQueryText = this._getInputQueryTextValue();
-            this.tokenService.setTokenValue(BuiltinTokenNames.inputQueryText, inputQueryText);
+            const modifiedQueryText = await this.getModifiedInputQueryText(inputQueryText, this._currentDataContext);
+            this.tokenService.setTokenValue(BuiltinTokenNames.inputQueryText, modifiedQueryText);
 
             // Legacy token for SharePoint and Microsoft Search data sources
-            this.tokenService.setTokenValue(BuiltinTokenNames.searchTerms, inputQueryText);
+            this.tokenService.setTokenValue(BuiltinTokenNames.searchTerms, modifiedQueryText);
 
             // Selected filters
             if (this._filtersConnectionSourceData) {
@@ -2399,11 +2406,10 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     /**
    * Get the data context to be passed to the data source according to current connections/configurations
    */
-    private getDataContext(): IDataContext {
+    private async getDataContext(): Promise<IDataContext> {
 
         // Input query text
         const inputQueryText = this._getInputQueryTextValue();
-
 
         // Build the data context to pass to the data source
         let dataContext: IDataContext = {
@@ -2487,26 +2493,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             }
         }
 
-        if (this._selectedCustomQueryModifier && this._selectedCustomQueryModifier.length > 0) {
-            const clonedContext = cloneDeep(dataContext);
-
-            for (const modifier of this._selectedCustomQueryModifier) {
-                let queryText = dataContext.inputQueryText;
-                let doBreak = false;
-
-                //Cloned context won't be correct for inputQueryText after first modification!
-                modifier.modifyQuery(queryText, clonedContext, this.tokenService.resolveTokens.bind(this.tokenService)).then((value: string) => {
-
-                    doBreak = modifier.endWhenSuccessfull && (!isEqual(dataContext.inputQueryText, value));
-                    dataContext.inputQueryText = value;
-                });
-
-
-                if (doBreak) {
-                    break;
-                }
-            }
-        }
+        dataContext.inputQueryText = await this.getModifiedInputQueryText(dataContext.inputQueryText, dataContext);
 
         // If input query text changes, then we need to reset the paging
         if (!isEqual(dataContext.inputQueryText, this._lastInputQueryText)) {
@@ -2516,6 +2503,29 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         this._lastInputQueryText = dataContext.inputQueryText;
         return dataContext;
+    }
+
+
+    private async getModifiedInputQueryText(inputQueryText: string, dataContext: IDataContext): Promise<string> {
+        let queryText = inputQueryText;
+
+        if (this._selectedCustomQueryModifier && this._selectedCustomQueryModifier.length > 0) {
+            const clonedContext = cloneDeep(dataContext);
+
+            for (const modifier of this._selectedCustomQueryModifier) {
+
+                //Cloned context won't be correct for inputQueryText after first modification!
+                const modifiedQueryText = await modifier.modifyQuery(queryText, clonedContext, this.tokenService.resolveTokens.bind(this.tokenService));
+                const doBreak = modifier.endWhenSuccessfull && (!isEqual(queryText, modifiedQueryText));
+                queryText = modifiedQueryText;
+
+                if (doBreak) {
+                    break;
+                }
+            }
+        }
+
+        return queryText;
     }
 
     /**
