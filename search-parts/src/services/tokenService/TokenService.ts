@@ -18,6 +18,12 @@ export enum BuiltinTokenNames {
     inputQueryText = 'inputQueryText',
 
     /**
+     * The original inputQueryText before any custom query modification
+     */
+    originalInputQueryText = 'originalInputQueryText',
+
+
+    /**
      * Similar as 'inputQueryText' to match the SharePoint search token
      */
     searchTerms = 'searchTerms',
@@ -70,6 +76,7 @@ export class TokenService implements ITokenService {
      */
     private tokenValuesList: { [key: string]: any } = {
         [BuiltinTokenNames.inputQueryText]: undefined,
+        [BuiltinTokenNames.originalInputQueryText]: undefined,
         [BuiltinTokenNames.searchTerms]: undefined,
         [BuiltinTokenNames.filters]: undefined,
         [BuiltinTokenNames.verticals]: undefined

@@ -115,6 +115,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
      */
     private lastDataSourceKey: string;
     private lastLayoutKey: string;
+    private lastQueryModifierKeys: string[] = [];
 
     /**
      * The selected layout for the Web Part
@@ -245,8 +246,14 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 this.lastLayoutKey = this.properties.selectedLayoutKey;
             }
 
-            // Initialize custom query modifier instances
-            this._selectedCustomQueryModifier = await this.initializeQueryModifiers(this.properties.queryModifierConfiguration);
+
+            const queryModifierKeys = this.properties.queryModifierConfiguration.filter(c => c.enabled).map(c => c.key);
+            // Initialize custom query modifier instances if changed
+            if (!isEqual(this.lastQueryModifierKeys, queryModifierKeys)) {
+                this._selectedCustomQueryModifier = await this.initializeQueryModifiers(this.properties.queryModifierConfiguration);
+                this.lastQueryModifierKeys = queryModifierKeys;
+
+            }
 
         } catch (error) {
             // Catch instanciation or wrong definition errors for extensibility scenarios
@@ -262,7 +269,14 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         }
 
         if (this.dataSource) {
-            this._currentDataContext = await this.getDataContext();
+            this._currentDataContext = this.getDataContext();
+
+            //Check if any custom query modifier is active and modify the inputQueryText
+            if (this._selectedCustomQueryModifier && this._selectedCustomQueryModifier.length > 0) {
+                this._currentDataContext.inputQueryText = await this.getModifiedInputQueryText(this._currentDataContext.inputQueryText, this._currentDataContext);
+                this.tokenService.setTokenValue(BuiltinTokenNames.inputQueryText, this._currentDataContext.inputQueryText);
+                this.tokenService.setTokenValue(BuiltinTokenNames.searchTerms, this._currentDataContext.inputQueryText);
+            }
         }
         return this.renderCompleted();
     }
@@ -2230,11 +2244,11 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
             // Input query text
             const inputQueryText = this._getInputQueryTextValue();
-            const modifiedQueryText = await this.getModifiedInputQueryText(inputQueryText, this._currentDataContext);
-            this.tokenService.setTokenValue(BuiltinTokenNames.inputQueryText, modifiedQueryText);
+            this.tokenService.setTokenValue(BuiltinTokenNames.inputQueryText, inputQueryText);
+            this.tokenService.setTokenValue(BuiltinTokenNames.originalInputQueryText, inputQueryText);
 
             // Legacy token for SharePoint and Microsoft Search data sources
-            this.tokenService.setTokenValue(BuiltinTokenNames.searchTerms, modifiedQueryText);
+            this.tokenService.setTokenValue(BuiltinTokenNames.searchTerms, inputQueryText);
 
             // Selected filters
             if (this._filtersConnectionSourceData) {
@@ -2414,7 +2428,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     /**
    * Get the data context to be passed to the data source according to current connections/configurations
    */
-    private async getDataContext(): Promise<IDataContext> {
+    private getDataContext(): IDataContext {
 
         // Input query text
         const inputQueryText = this._getInputQueryTextValue();
@@ -2501,7 +2515,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             }
         }
 
-        dataContext.inputQueryText = await this.getModifiedInputQueryText(dataContext.inputQueryText, dataContext);
 
         // If input query text changes, then we need to reset the paging
         if (!isEqual(dataContext.inputQueryText, this._lastInputQueryText)) {
@@ -2516,20 +2529,17 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
     private async getModifiedInputQueryText(inputQueryText: string, dataContext: IDataContext): Promise<string> {
         let queryText = inputQueryText;
+        const clonedContext = cloneDeep(dataContext);
 
-        if (this._selectedCustomQueryModifier && this._selectedCustomQueryModifier.length > 0) {
-            const clonedContext = cloneDeep(dataContext);
+        for (const modifier of this._selectedCustomQueryModifier) {
 
-            for (const modifier of this._selectedCustomQueryModifier) {
+            //Cloned context won't be correct for inputQueryText after first modification!
+            const modifiedQueryText = await modifier.modifyQuery(queryText, clonedContext, this.tokenService.resolveTokens.bind(this.tokenService));
+            const doBreak = modifier.endWhenSuccessfull && (!isEqual(queryText, modifiedQueryText));
+            queryText = modifiedQueryText;
 
-                //Cloned context won't be correct for inputQueryText after first modification!
-                const modifiedQueryText = await modifier.modifyQuery(queryText, clonedContext, this.tokenService.resolveTokens.bind(this.tokenService));
-                const doBreak = modifier.endWhenSuccessfull && (!isEqual(queryText, modifiedQueryText));
-                queryText = modifiedQueryText;
-
-                if (doBreak) {
-                    break;
-                }
+            if (doBreak) {
+                break;
             }
         }
 
