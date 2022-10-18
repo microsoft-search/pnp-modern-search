@@ -1,4 +1,4 @@
-import { IDataSource, IDataFilterResult, IQueryModifier, LayoutRenderType } from "@pnp/modern-search-extensibility";
+import { IDataSource, IDataFilterResult, LayoutRenderType } from "@pnp/modern-search-extensibility";
 import ISearchResultsWebPartProps from "../ISearchResultsWebPartProps";
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import { IDataContext } from "@pnp/modern-search-extensibility";
@@ -56,7 +56,7 @@ export interface ISearchResultsContainerProps {
   /**
    * Handler when a item has been selected from results
    */
-  onItemSelected: (currentSelectedItems: { [key: string]: any }[]) => void;
+  onItemSelected: (currentSelectedItems: {[key: string]: any}[]) => void;  
 
   /**
    * The current service scope
