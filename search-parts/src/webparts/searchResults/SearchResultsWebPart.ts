@@ -245,7 +245,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 this.lastLayoutKey = this.properties.selectedLayoutKey;
             }
 
-            // Initialize provider instances
+            // Initialize custom query modifier instances
             this._selectedCustomQueryModifier = await this.initializeQueryModifiers(this.properties.queryModifierConfiguration);
 
         } catch (error) {
@@ -615,13 +615,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 }];
             }
 
-
-            if (this._selectedCustomQueryModifier.length > 0 && !this.errorMessage) {
-                this._selectedCustomQueryModifier.forEach(modifier => {
-                    queryModifierOptionGroups = queryModifierOptionGroups.concat(modifier.getPropertyPaneGroupsConfiguration());
-                });
-            }
-
             // Add data source options to the first page
             propertyPanePages[0].groups = propertyPanePages[0].groups.concat([
                 ...layoutSlotsGroup,
@@ -642,6 +635,21 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 },
                 {
                     groups: [
+                        ...this.propertyPaneConnectionsGroup
+                    ],
+                    displayGroupsAsAccordion: true
+                }
+            );
+
+            if (this.availableCustomQueryModifierDefinitions.length > 0) {
+                if (this._selectedCustomQueryModifier.length > 0 && !this.errorMessage) {
+                    this._selectedCustomQueryModifier.forEach(modifier => {
+                        queryModifierOptionGroups = queryModifierOptionGroups.concat(modifier.getPropertyPaneGroupsConfiguration());
+                    });
+                }
+
+                propertyPanePages.push({
+                    groups: [
                         {
                             groupName: webPartStrings.PropertyPane.CustomQueryModifierPage.QueryModifierGroup.GroupName,
                             groupFields: this._getQueryModifierFields()
@@ -649,14 +657,10 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                         ...queryModifierOptionGroups
                     ],
                     displayGroupsAsAccordion: true
-                },
-                {
-                    groups: [
-                        ...this.propertyPaneConnectionsGroup
-                    ],
-                    displayGroupsAsAccordion: true
-                }
-            );
+                })
+            }
+
+
         }
 
         // Extensibility configuration
@@ -837,6 +841,10 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             this.availableLayoutDefinitions = AvailableLayouts.BuiltinLayouts.filter(layout => { return layout.type === LayoutType.Results; });
             this.availableWebComponentDefinitions = AvailableComponents.BuiltinComponents;
             this.availableCustomQueryModifierDefinitions = [];
+            this._selectedCustomQueryModifier = [];
+            this.properties.enableCustomQueryTransformation = false;
+            this.properties.queryModifierProperties = {};
+            this.properties.queryModifierConfiguration = [];
 
             await this.loadExtensions(cleanConfiguration);
         }
