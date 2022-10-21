@@ -777,6 +777,10 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         searchQuery.Querytext = dataContext.inputQueryText;
 
         searchQuery.EnableQueryRules = this.properties.enableQueryRules;
+        if(searchQuery.EnableQueryRules == true || searchQuery.EnableQueryRules == null)  {
+            searchQuery.EnableInterleaving = false;
+        }
+
         searchQuery.QueryTemplate = await this._tokenService.resolveTokens(this.properties.queryTemplate);
 
         if (this.properties.resultSourceId) {
