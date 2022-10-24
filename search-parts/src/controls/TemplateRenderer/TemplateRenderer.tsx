@@ -52,13 +52,14 @@ export class TemplateRenderer extends React.Component<ITemplateRendererProps, IT
 
     public async componentDidUpdate(prevProps: ITemplateRendererProps) {
 
-        if (!isEqual(prevProps.templateContent, this.props.templateContent) || 
+        if (!isEqual(prevProps.templateContent, this.props.templateContent) ||
+            !isEqual((prevProps.templateContext as ISearchResultsTemplateContext).inputQueryText, (this.props.templateContext as ISearchResultsTemplateContext).inputQueryText) ||
             !isEqual((prevProps.templateContext as ISearchResultsTemplateContext).data, (this.props.templateContext as ISearchResultsTemplateContext).data) ||
             !isEqual(prevProps.templateContext.filters, this.props.templateContext.filters) ||
-            !isEqual(prevProps.templateContext.properties, this.props.templateContext.properties) || 
+            !isEqual(prevProps.templateContext.properties, this.props.templateContext.properties) ||
             !isEqual(prevProps.templateContext.theme, this.props.templateContext.theme) ||
             !isEqual((prevProps.templateContext as ISearchResultsTemplateContext).selectedKeys, (this.props.templateContext as ISearchResultsTemplateContext).selectedKeys)) {
-            
+
             await this.updateTemplate(this.props);
         }
     }
