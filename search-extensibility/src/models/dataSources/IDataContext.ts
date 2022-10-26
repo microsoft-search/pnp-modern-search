@@ -14,6 +14,11 @@ export interface IDataContext {
     inputQueryText: string;
 
     /**
+     * The originalInputQueryText. Provided for instances where a query modificator modifies the inputQueryText
+     */
+    originalInputQueryText: string;
+
+    /**
      * The current selected page number
      */
     pageNumber: number;
