@@ -53,6 +53,6 @@ export abstract class BaseQueryModifier<T> implements IQueryModifier {
     }
 
     public modifyQuery(queryText: string, dataContext: IDataContext, resolveTokens: (string: string) => Promise<string>): Promise<string> {
-        throw 'Not implemented';
+        throw new Error('Not implemented: modifyQuery');
     }
 }
