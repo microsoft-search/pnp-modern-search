@@ -8,6 +8,7 @@ define([], function() {
                 GroupName: "Inställningar för sökruta",
                 PlaceholderTextLabel: "Platshållartext som ska visas i sökrutan",
                 SearchInNewPageLabel: "Skicka frågan till en ny sida",
+                ReQueryOnClearLabel: "Återställ frågan på rensa",
                 PageUrlLabel: "Sidans URL",
                 UrlErrorMessage: "Ange en giltig URL.",
                 QueryPathBehaviorLabel: "Metod",

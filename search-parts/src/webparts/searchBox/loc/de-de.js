@@ -8,6 +8,7 @@ define([], function() {
                 GroupName: "Suchbox Einstellungen",
                 PlaceholderTextLabel: "Platzhalter zum Anzeigen in der Suchbox",
                 SearchInNewPageLabel: "Query an eine neue Seite senden",
+                ReQueryOnClearLabel: "Abfrage bei Löschen zurücksetzen",
                 PageUrlLabel: "Seiten URL",
                 UrlErrorMessage: "Bitte eine valide URL angeben.",
                 QueryPathBehaviorLabel: "Methode",

@@ -8,6 +8,8 @@ import { DomPurifyHelper } from '../../helpers/DomPurifyHelper';
 import { TestConstants } from '../../common/Constants';
 import { ISearchResultsTemplateContext } from '../../models/common/ITemplateContext';
 
+import { LayoutRenderType } from '@pnp/modern-search-extensibility';
+
 // Need a root class to do not conflict with PnP Modern Search Styles.
 const rootCssClassName = "pnp-modern-search";
 const TEMPLATE_ID_PREFIX = "pnp-template_";
@@ -15,12 +17,12 @@ const TEMPLATE_ID_PREFIX = "pnp-template_";
 export class TemplateRenderer extends React.Component<ITemplateRendererProps, ITemplateRendererState> {
 
     private _domPurify: any;
+    private _divTemplateRenderer: React.RefObject<HTMLDivElement>;
 
     constructor(props: ITemplateRendererProps) {
         super(props);
 
         this.state = {
-            processedTemplate: null
         };
 
         this._domPurify = DOMPurify.default;
@@ -35,17 +37,13 @@ export class TemplateRenderer extends React.Component<ITemplateRendererProps, IT
 
         this._domPurify.addHook('uponSanitizeElement', DomPurifyHelper.allowCustomComponentsHook);
         this._domPurify.addHook('uponSanitizeAttribute', DomPurifyHelper.allowCustomAttributesHook);
+
+        // Create an instance of the div ref container 
+        this._divTemplateRenderer = React.createRef<HTMLDivElement>();
     }
 
     public render() {
-
-
-        if (this.state.processedTemplate) {
-            // We need to set a key to force an update if Wthe template context changes
-            return <div className={rootCssClassName} dangerouslySetInnerHTML={{ __html: this.state.processedTemplate }}></div>;
-        } else {
-            return null;
-        }
+        return <div className={rootCssClassName} ref={this._divTemplateRenderer} />;
     }
 
     public async componentDidMount() {
@@ -54,13 +52,14 @@ export class TemplateRenderer extends React.Component<ITemplateRendererProps, IT
 
     public async componentDidUpdate(prevProps: ITemplateRendererProps) {
 
-        if (!isEqual(prevProps.templateContent, this.props.templateContent) || 
+        if (!isEqual(prevProps.templateContent, this.props.templateContent) ||
+            !isEqual((prevProps.templateContext as ISearchResultsTemplateContext).inputQueryText, (this.props.templateContext as ISearchResultsTemplateContext).inputQueryText) ||
             !isEqual((prevProps.templateContext as ISearchResultsTemplateContext).data, (this.props.templateContext as ISearchResultsTemplateContext).data) ||
             !isEqual(prevProps.templateContext.filters, this.props.templateContext.filters) ||
-            !isEqual(prevProps.templateContext.properties, this.props.templateContext.properties) || 
+            !isEqual(prevProps.templateContext.properties, this.props.templateContext.properties) ||
             !isEqual(prevProps.templateContext.theme, this.props.templateContext.theme) ||
             !isEqual((prevProps.templateContext as ISearchResultsTemplateContext).selectedKeys, (this.props.templateContext as ISearchResultsTemplateContext).selectedKeys)) {
-            
+
             await this.updateTemplate(this.props);
         }
     }
@@ -71,11 +70,11 @@ export class TemplateRenderer extends React.Component<ITemplateRendererProps, IT
         // Process the Handlebars template
         let template = await this.props.templateService.processTemplate(props.templateContext, templateContent, props.renderType);
 
-        if (template) {
+        if (props.renderType == LayoutRenderType.Handlebars && typeof template === 'string') {
 
             // Sanitize the template HTML
             template = template ? this._domPurify.sanitize(`${template}`) : template;
-            const templateAsHtml = new DOMParser().parseFromString(template, "text/html");
+            const templateAsHtml = new DOMParser().parseFromString(template as string, "text/html");
 
             // Get <style> tags from Handlebars template content and prefix all CSS rules by the Web Part instance ID to isolate styles
             const styleElements = templateAsHtml.getElementsByTagName("style");
@@ -125,10 +124,13 @@ export class TemplateRenderer extends React.Component<ITemplateRendererProps, IT
             }
 
             template = `<style>${prefixedStyles.join(' ')}</style><div id="${TEMPLATE_ID_PREFIX}${this.props.instanceId}">${templateAsHtml.body.innerHTML}</div>`;
-        }
 
-        this.setState({
-            processedTemplate: template
-        });
+            this._divTemplateRenderer.current.innerHTML = template;
+
+        } else if (props.renderType == LayoutRenderType.AdaptiveCards && template instanceof HTMLElement) {
+
+            this._divTemplateRenderer.current.innerHTML = "";
+            this._divTemplateRenderer.current.appendChild(template as HTMLElement);
+        }
     }
 }

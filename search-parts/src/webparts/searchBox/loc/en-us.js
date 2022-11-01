@@ -8,6 +8,7 @@ define([], function() {
                 GroupName: "Search box settings",
                 PlaceholderTextLabel: "Placeholder text to display in the search box",
                 SearchInNewPageLabel: "Send the query to a new page",
+                ReQueryOnClearLabel: "Reset query on clear",
                 PageUrlLabel: "Page URL",
                 UrlErrorMessage: "Please provide a valid URL.",
                 QueryPathBehaviorLabel: "Method",

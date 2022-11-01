@@ -177,7 +177,9 @@ define([], function() {
             TextDialogSaveButtonText: "Save",
             SelectItemComboPlaceHolder: "Select property",
             AddStaticDataLabel: "Add static data",
-            TextFieldApplyButtonText: "Apply"
+            TextFieldApplyButtonText: "Apply",
+            SortByPlaceholderText: "Sort by...",
+            SortByDefaultOptionText: "Default"
         },
         Layouts: {
             Debug: {

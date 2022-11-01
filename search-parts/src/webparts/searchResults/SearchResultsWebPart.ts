@@ -154,15 +154,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
      */
     private currentPageNumber: number = 1;
 
-    /**
-     * The page URL link if provided by the data source
-     */
-    private currentPageLinkUrl: string = null;
-
-    /**
-     * The available page links available in the pagination control
-     */
-    private availablePageLinks: string[] = [];
 
     /**
      * The token service instance
@@ -372,7 +363,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                         iconText: webPartStrings.General.PlaceHolder.IconText,
                         description: webPartStrings.General.PlaceHolder.Description,
                         buttonLabel: webPartStrings.General.PlaceHolder.ConfigureBtnLabel,
-                        onConfigure: () => { this.context.propertyPane.openDetails(); }
+                        onConfigure: () => { this.context.propertyPane.open(); }
                     }
                 );
                 renderRootElement = placeholder;
@@ -454,6 +445,13 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     }
 
     protected async onInit(): Promise<void> {
+        try {
+            // Disable PnP Telemetry
+            const telemetry = PnPTelemetry.getInstance();
+            telemetry.optOut();
+        } catch (error) {
+            Log.warn(LogSource, `Opt out for PnP Telemetry failed. Details: ${error}`, this.context.serviceScope);
+        }
 
         // Initializes Web Part properties
         this.initializeProperties();
@@ -476,17 +474,12 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         // Load extensibility libaries extensions
         await this.loadExtensions(this.properties.extensibilityLibraryConfiguration);
 
+        // Filter the layouts to be displayed in the property pane according to current render type
+        this.availableLayoutsInPropertyPane = this.availableLayoutDefinitions.filter(layout => layout.renderType === this.properties.layoutRenderType);
+
         // Register Web Components in the global page context. We need to do this BEFORE the template processing to avoid race condition.
         // Web components are only defined once.
-        await this.templateService.registerWebComponents(this.availableWebComponentDefinitions, this.instanceId);
-
-        try {
-            // Disable PnP Telemetry
-            const telemetry = PnPTelemetry.getInstance();
-            telemetry.optOut();
-        } catch (error) {
-            Log.warn(LogSource, `Opt out for PnP Telemetry failed. Details: ${error}`, this.context.serviceScope);
-        }
+        await this.templateService.registerWebComponents(this.availableWebComponentDefinitions, this.instanceId);        
 
         if (this.properties.dataSourceKey && this.properties.selectedLayoutKey && this.properties.enableTelemetry) {
 
@@ -732,7 +725,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             // Reset paging information
             this.currentPageNumber = 1;
 
-            this._resetPagingData();
+            
         }
 
         // Reset layout properties
@@ -793,10 +786,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         if (propertyPath.indexOf('dataSourceProperties') !== -1 && this.dataSource && this._defaultTemplateSlots && !isEqual(this._defaultTemplateSlots, this.dataSource.getTemplateSlots())) {
             this.properties.templateSlots = this.dataSource.getTemplateSlots();
             this._defaultTemplateSlots = this.dataSource.getTemplateSlots();
-        }
-
-        if (propertyPath.localeCompare('paging.itemsCountPerPage') === 0) {
-            this._resetPagingData();
         }
 
         if (propertyPath.localeCompare('extensibilityLibraryConfiguration') === 0) {
@@ -881,8 +870,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             this.render();
             this.context.propertyPane.refresh();              
         }
-    }
-    
+    }    
 
     protected get isRenderAsync(): boolean {
         return true;
@@ -902,7 +890,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         // tryGetValue() will resolve to '' if no Web Part is connected or if the connection is removed
         // The value can be also 'undefined' if the data source is not already loaded on the page.
         let inputQueryFromDataSource = "";
-        if (this.properties.queryText) {
+        if (this.properties.queryText && this.properties.useInputQueryText) {
             try {
                 inputQueryFromDataSource = DynamicPropertyHelper.tryGetValueSafe(this.properties.queryText);
                 if (inputQueryFromDataSource !== undefined && typeof (inputQueryFromDataSource) === 'string') {
@@ -971,6 +959,9 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 if (extensibilityLibrary.registerHandlebarsCustomizations)
                     extensibilityLibrary.registerHandlebarsCustomizations(this.templateService.Handlebars);
 
+                // Registers event handler for custom action in Adaptive Cards
+                if (extensibilityLibrary.invokeCardAction)
+                    this.templateService.AdaptiveCardsExtensibilityLibraries = this.templateService.AdaptiveCardsExtensibilityLibraries.concat(extensibilityLibrary); 
             });
         }
     }
@@ -1049,9 +1040,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
             // These information comes from the PaginationWebComponent class
             this.currentPageNumber = eventDetails.pageNumber;
-            this.currentPageLinkUrl = eventDetails.pageLink;
-            this.availablePageLinks = eventDetails.pageLinks;
-
+ 
             this.render();
 
         }).bind(this));
@@ -1153,9 +1142,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         }
     
         this.properties.layoutRenderType = this.properties.layoutRenderType !== undefined ? this.properties.layoutRenderType : LayoutRenderType.Handlebars;
-        
-        // Filter the layouts to be displayed
-        this.availableLayoutsInPropertyPane = this.availableLayoutDefinitions.filter(layout => layout.renderType === this.properties.layoutRenderType);
     }
 
     /**
@@ -1408,7 +1394,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 })
             );
         }
-
 
         // Add template options if any
         const layoutOptions = this.getLayoutTemplateOptions();
@@ -2342,13 +2327,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         return '';
     }
 
-    /**
-     * Reset the paging information for PagingBehavior.Dynamic data sources
-     */
-    private _resetPagingData() {
-        this.availablePageLinks = [];
-        this.currentPageLinkUrl = null;
-    }
 
     /**
    * Get the data context to be passed to the data source according to current connections/configurations
@@ -2418,6 +2396,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 // Reset the page number if filters have been updated by the user
                 if (!isEqual(filtersSourceData.selectedFilters, this._lastSelectedFilters)) {
                     dataContext.pageNumber = 1;
+                    this.currentPageNumber = 1;
                 }
 
                 // Use the filter confiugration and then get the corresponding values 
@@ -2442,7 +2421,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         if (!isEqual(inputQueryText, this._lastInputQueryText)) {
             dataContext.pageNumber = 1;
             this.currentPageNumber = 1;
-            this._resetPagingData();
         }
 
         this._lastInputQueryText = inputQueryText;
@@ -2473,8 +2451,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         this._currentDataResultsSourceData.availableFieldsFromResults = availableDataSourceFields;
         this.currentPageNumber = pageNumber;
-        this.availablePageLinks = pageLinks;
-        this.currentPageLinkUrl = nextLinkUrl;
 
         // Set the available filters from the data source 
         if (filters) {
