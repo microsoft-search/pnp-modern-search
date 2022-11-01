@@ -1,4 +1,4 @@
-import { IDataSourceData, IDataFilterInternal, IDataFilter, FilterConditionOperator, IDataFilterConfiguration, IDataVertical } from "@pnp/modern-search-extensibility";
+import { IDataSourceData, IDataFilterInternal, IDataFilter, FilterConditionOperator, IDataFilterConfiguration, IDataVertical, SortFieldDirection } from "@pnp/modern-search-extensibility";
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import ISearchResultsWebPartProps from "../../webparts/searchResults/ISearchResultsWebPartProps";
 import { SPSite, SPWeb, SPUser, SPList, SPListItem, CultureInfo } from "@microsoft/sp-page-context";
@@ -7,7 +7,7 @@ import ISearchFiltersWebPartProps from "../../webparts/searchFilters/ISearchFilt
 /**
  * Represents the context passed to the Handlebars template (Search Results)
  */
-export interface IDataResultsTemplateContext {
+export interface ISearchResultsTemplateContext {
 
     /**
      * Paging informations
@@ -42,7 +42,23 @@ export interface IDataResultsTemplateContext {
         /**
          * The current filters configuration
          */
-        filtersConfiguration:IDataFilterConfiguration[];
+        filtersConfiguration: IDataFilterConfiguration[];
+    };
+
+    /**
+     * Sorting information
+     */
+    sort: {
+
+        /**
+         * Current selected sort field
+         */
+        selectedSortFieldName: string; 
+
+        /**
+         * Current selected sort direction
+         */
+        selectedSortDirection: SortFieldDirection;
     };
 
     /**
@@ -134,6 +150,11 @@ export interface IDataResultsTemplateContext {
          * The default image content to display when no thummbnail is available.
          */
         defaultImage: string;
+
+        /**
+         * The adaptive cards host config if specified
+         */
+        adaptiveCardsHostConfig?: {[key: string]: string};
     };
 
     /**

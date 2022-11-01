@@ -79,11 +79,11 @@ define([], function() {
             },
             DateIntervalStrings: {
                 AnyTime: "Når som helst",
-                PastDay: "Fra sidste 24 timer til sidste uge",
-                PastWeek: "Fra sidste uge til sidste måned",
-                PastMonth: "Fra sidste måned til sidste 3 måneder",
-                Past3Months: "Fra sidste 3 måneder til sidste år",
-                PastYear: "Fra sidste år",
+                PastDay: "Sidste 24 timer",
+                PastWeek: "Fra sidste 24 timer til sidste uge",
+                PastMonth: "Fra sidste uge til sidste måned",
+                Past3Months: "Fra sidste måned til seneste 3 måneder",
+                PastYear: "Fra sidste 3 måneder til sidste år",
                 Older: "Ældre end et år"
             },
             SameTabOpenBehavior: "Brug det nuværende faneblad",
@@ -123,7 +123,8 @@ define([], function() {
                 HitHighlightedPropertiesFieldDescription: "Angiv listen med administrerede egenskaber til fremhævning af resultater.",
                 TermNotFound: "(Term med ID '{0}' blev ikke fundet)",
                 ApplyQueryTemplateBtnText: "Anvend",
-                EnableAudienceTargetingTglLabel: "Aktivér målgruppestyring"
+                EnableAudienceTargetingTglLabel: "Aktivér målgruppestyring",
+                TrimDuplicates: "Trim dubletter"
             },
             MicrosoftSearch: {
                 QueryTextFieldLabel: "Forespørgselstekst",
@@ -144,7 +145,8 @@ define([], function() {
                 QueryTemplatePlaceHolderText: "ex: {searchTerms} IsDocument:true",
                 QueryTemplateFieldDescription: "Søgemodifikator-skabelonen. Du kan også bruge {<tokens>} og KQL til at bygge en dynamisk forespørgsel. Alt sammenkædes til inputQueryText",
                 ApplyQueryTemplateBtnText: "Anvend",
-                UseBetaEndpoint: "Brug beta-endepunkt"
+                UseBetaEndpoint: "Brug beta-endepunkt",
+                TrimDuplicates: "Trim dubletter"
             },
             SearchCommon: {
                 Sort: {
@@ -159,6 +161,9 @@ define([], function() {
                     SortPanelSortDirectionLabel: "Sortér retning",
                     SortDirectionColumnLabel: "Retning",
                     SortFieldColumnLabel: "Feltnavn",
+                    SortFieldDefaultSortLabel: "Standard sortering",
+                    SortFieldFriendlyNameLabel: "Visningsnavn for sortering",
+                    SortFieldUserSortLabel: "Bruger sortering",
                     EditSortLabel: "Redigér sorteringsrækkefølge",
                     SortInvalidSortableFieldMessage: "Denne egenskab er ikke sorterbar",
                     SortFieldColumnPlaceholder: "Vælg felt..."
@@ -178,7 +183,10 @@ define([], function() {
             Debug: {
                 Name: "Fejlfind"
             },
-            Custom: {
+            CustomHandlebars: {
+                Name: "Brugerdefineret"
+            },
+            CustomAdaptiveCards: {
                 Name: "Brugerdefineret"
             },
             SimpleList: {
@@ -200,7 +208,8 @@ define([], function() {
                 ManageDetailsListColumnDescription: "Tilføj, opdatér eller fjern kolonner fra layoutet på detaljelisten. Du kan enten bruge egenskabsværdier i listen direkte uden nogen transformation, eller du kan bruge et Handlebars-udtryk som feltets værdi. HTML er supporteret til brug i alle felter.",
                 ManageDetailsListColumnLabel: "Administrér kolonner",
                 ValueColumnLabel: "Kolonnes værdi",
-                ValueSortingColumnLabel: "Kolonne værdi sortering",
+                ValueSortingColumnLabel: "Vælg sorteringsfelt...",
+                ValueSortingColumnNoFieldsLabel: "Ingen tilgængelige felter",
                 DisplayNameColumnLabel: "Kolonnens visningsnavn",
                 FileExtensionFieldLabel: "Felt til brug af file extension",
                 GroupByFieldLabel: "Gruppér efter felt",

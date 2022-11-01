@@ -175,7 +175,7 @@ export class FilterDateIntervalComponent extends React.Component<IFilterDateInte
                 updatedValues.push(
                     {
                         name: strings.General.DateIntervalStrings.Older,
-                        value: this.props.moment(new Date()).subtract(1, 'years').subtract('minutes', 1).toISOString(), // Needed to distinguish past yeart VS older than a year
+                        value: this.props.moment(new Date()).subtract(1, 'years').subtract('minutes', 1).toISOString(), // Needed to distinguish past year VS older than a year
                         selected: true,
                         operator: FilterComparisonOperator.Lt
                     }

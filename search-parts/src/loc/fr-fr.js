@@ -79,11 +79,11 @@ define([], function() {
             },
             DateIntervalStrings: {
                 AnyTime: "N’importe quand",
-                PastDay: "Entre 24 heures et 1 semaine",
-                PastWeek: "Entre 1 semaine et 1 mois",
-                PastMonth: "Entre 1 et 3 mois",
-                Past3Months: "Entre 3 mois et 1 an",
-                PastYear: "Depuis l'année dernière",
+                PastDay: "Derniière 24 heures",
+                PastWeek: "Entre 24 heures et 1 semaine",
+                PastMonth: "Entre 1 semaine et 1 mois",
+                Past3Months: "Entre 1 mois et 3 mois",
+                PastYear: "Entre 3 mois et un an",
                 Older: "Il y a plus d'un an"
             },
             SameTabOpenBehavior: "Utiliser l’onglet actuel",
@@ -123,7 +123,8 @@ define([], function() {
                 HitHighlightedPropertiesFieldDescription: "Entrez la liste des propriétés gérées pour lesquelles trouver des correspondances.",
                 TermNotFound: "(Le critère contenant l’identifiant « {0} » est introuvable)",
                 ApplyQueryTemplateBtnText: "Appliquer",
-                EnableAudienceTargetingTglLabel: "Permet de cibler l’auditoire"
+                EnableAudienceTargetingTglLabel: "Permet de cibler l’auditoire",
+                TrimDuplicates: "Supprimer les doublons"
             },
             MicrosoftSearch: {
                 QueryTextFieldLabel: "Texte de la requête",
@@ -144,7 +145,8 @@ define([], function() {
                 QueryTemplatePlaceHolderText: "ex: {searchTerms} IsDocument:true",
                 QueryTemplateFieldDescription: "Vous pouvez également utiliser {<tokens>} et KQL pour créer une requête dynamique.",
                 ApplyQueryTemplateBtnText: "Appliquer",
-                UseBetaEndpoint: "Utiliser le point de terminaison beta"
+                UseBetaEndpoint: "Utiliser le point de terminaison beta",
+                TrimDuplicates: "Supprimer les doublons"
             },
             SearchCommon: {
                 Sort: {
@@ -159,6 +161,9 @@ define([], function() {
                     SortPanelSortDirectionLabel: "Sens de tri",
                     SortDirectionColumnLabel: "Sens",
                     SortFieldColumnLabel: "Nom du champ",
+                    SortFieldDefaultSortLabel: "Tri par défaut",
+                    SortFieldFriendlyNameLabel: "Nom d'afficahge du champ",
+                    SortFieldUserSortLabel: "Tri par l'utilisateur",
                     EditSortLabel: "Modifier l’ordre de tri",
                     SortInvalidSortableFieldMessage: "Cette propriété n’est pas triable",
                     SortFieldColumnPlaceholder: "Sélectionner le champ..."
@@ -178,7 +183,10 @@ define([], function() {
             Debug: {
                 Name: "Déboguer"
             },
-            Custom: {
+            CustomHandlebars: {
+                Name: "Personnalisé"
+            },
+            CustomAdaptiveCards: {
                 Name: "Personnalisé"
             },
             SimpleList: {
@@ -201,8 +209,8 @@ define([], function() {
                 ManageDetailsListColumnDescription: "Ajouter, modifier ou supprimer des colonnes dans la présentation de la liste de détails. Vous pouvez utiliser la valeur des propriétés directement dans la liste, sans modification, ou utiliser une expression entre accolades dans le champ de valeur Le format HTML est également pris en charge dans tous les champs",
                 ManageDetailsListColumnLabel: "Gérer les colonnes",
                 ValueColumnLabel: "Valeur de la colonne",
-                ValueSortingColumnLabel: "Tri par valeur de colonne",
-                DisplayNameColumnLabel: "Nom d’affichage de la colonne",
+                ValueSortingColumnLabel: "Sélectionnez la propriété...",
+                ValueSortingColumnNoFieldsLabel: "Aucune propriété disponible",
                 FileExtensionFieldLabel: "Champ à utiliser pour l’extension de fichier",
                 GroupByFieldLabel: "Regrouper par champ",
                 EnableGrouping: "Permettre le regroupement",

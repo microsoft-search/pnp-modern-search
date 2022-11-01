@@ -78,12 +78,12 @@ define([], function() {
                 invalidInputErrorMessage: 'Verkeerde datumnotatie.'
             },
             DateIntervalStrings: {
-                AnyTime: "Altijd",
-                PastDay: "Van afgelopen 24 uur tot afgelopen week",
-                PastWeek: "Van afgelopen week tot afgelopen maand",
-                PastMonth: "Van afgelopen maand tot afgelopen 3 maanden",
-                Past3Months: "Van de afgelopen 3 maanden tot het afgelopen jaar",
-                PastYear: "Van vorig jaar",
+                AnyTime: "Elk moment",
+                PastDay: "Afgelopen 24 uur",
+                PastWeek: "Van afgelopen 24 uur tot afgelopen week",
+                PastMonth: "Van afgelopen week tot afgelopen maand",
+                Past3Months: "Van afgelopen maand tot afgelopen 3 maanden",
+                PastYear: "Van de afgelopen 3 maanden tot het afgelopen jaar",
                 Older: "Ouder dan een jaar"
             },
             SameTabOpenBehavior: "Gebruik de huidige tab",
@@ -123,7 +123,8 @@ define([], function() {
                 HitHighlightedPropertiesFieldDescription: "De lijst van beheerde eigenschappen opgeven om markeren in te schakelen. ",
                 TermNotFound: "(Term met ID '{0}' niet gevonden)",
                 ApplyQueryTemplateBtnText: "Toepassen",
-                EnableAudienceTargetingTglLabel: "Schakel doelgroepen in"
+                EnableAudienceTargetingTglLabel: "Schakel doelgroepen in",
+                TrimDuplicates: "Duplicaten bijsnijden"
             },
             MicrosoftSearch: {
                 QueryTextFieldLabel: "Zoekopdracht",
@@ -144,7 +145,8 @@ define([], function() {
                 QueryTemplatePlaceHolderText: "ex: {searchTerms} IsDocument:true",
                 QueryTemplateFieldDescription: "De sjabloon voor zoekmodificatie. U kunt ook {<tokens>} en KQL gebruiken om een ​​dynamische query te maken. Alles is aaneengeschakeld naar de inputQueryText",
                 ApplyQueryTemplateBtnText: "Toepassen",
-                UseBetaEndpoint: "Bèta-eindpunt gebruiken"
+                UseBetaEndpoint: "Bèta-eindpunt gebruiken",
+                TrimDuplicates: "Duplicaten bijsnijden"
             },
             SearchCommon: {
                 Sort: {
@@ -159,6 +161,9 @@ define([], function() {
                     SortPanelSortDirectionLabel: "Sorteervolgorde",
                     SortDirectionColumnLabel: "Volgorde",
                     SortFieldColumnLabel: "Veldnaam",
+                    SortFieldDefaultSortLabel: "Standaard sortering",
+                    SortFieldFriendlyNameLabel: "Weergavenaam veld sorteren",
+                    SortFieldUserSortLabel: "Gebruiker sorteren",
                     EditSortLabel: "Bewerk sorteervolgorde",
                     SortInvalidSortableFieldMessage: "Deze eigenschap kan niet worden gesorteerd",
                     SortFieldColumnPlaceholder: "Selecteer veld..."
@@ -178,7 +183,10 @@ define([], function() {
             Debug: {
                 Name: "Debug"
             },
-            Custom: {
+            CustomHandlebars: {
+                Name: "Aangepast"
+            },
+            CustomAdaptiveCards: {
                 Name: "Aangepast"
             },
             SimpleList: {
@@ -200,8 +208,8 @@ define([], function() {
                 ManageDetailsListColumnDescription: "Kolommen toevoegen, bewerken of verwijderen voor de detailslijst indeling. Je kan eigenschapswaarden direct in de lijst gebruiken zonder transformaties toe te passen, of een Handlebars-uitdrukking gebruiken als veldwaarde. HTML wordt ook ondersteund voor alle velden.",
                 ManageDetailsListColumnLabel: "Beheer kolommen",
                 ValueColumnLabel: "Kolomwaarde",
-                ValueSortingColumnLabel: "Kolomwaarde sorteren",
-                DisplayNameColumnLabel: "Kolom weergavenaam",
+                ValueSortingColumnLabel: "Selecteer sorteerveld...",
+                ValueSortingColumnNoFieldsLabel: "Geen velden beschikbaar",
                 FileExtensionFieldLabel: "Te gebruiken veld voor bestandsextensie",
                 GroupByFieldLabel: "Groepeer op veld",
                 EnableGrouping: "Groeperen inschakelen",

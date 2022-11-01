@@ -63,8 +63,8 @@ export class LayoutHelper {
                     serviceKey = ServiceKey.create<ILayout>('PnPModernSearchFiltersDebugLayout', DebugFilterLayout);
                     break;
 
-                // Results Custom
-                case BuiltinLayoutsKeys.ResultsCustom:
+                // Results Custom (Handlebars)
+                case BuiltinLayoutsKeys.ResultsCustomHandlebars :
 
                     const { ResultsCustomLayout } = await import(
                         /* webpackChunkName: 'pnp-modern-search-results-custom-layout' */
@@ -73,6 +73,20 @@ export class LayoutHelper {
 
                     serviceKey = ServiceKey.create<ILayout>('PnPModernSearchResultsCustomLayout', ResultsCustomLayout);
                     break;
+
+                // Results Custom (Adaptive Cards)
+                case BuiltinLayoutsKeys.ResultsCustomAdaptiveCards: {
+
+                    /* tslint:disable:no-shadowed-variable */
+                    const { ResultsCustomLayout } = await import(
+                        /* webpackChunkName: 'pnp-modern-search-results-custom-layout' */
+                        '../layouts/results/custom/ResultsCustomLayout'
+                    );
+                    /* tslint:enable:no-shadowed-variable */
+
+                    serviceKey = ServiceKey.create<ILayout>('PnPModernSearchResultsCustomLayout', ResultsCustomLayout);
+                    break;
+                }
 
                 // Filters Custom
                 case BuiltinLayoutsKeys.FiltersCustom:
@@ -107,7 +121,7 @@ export class LayoutHelper {
                     serviceKey = ServiceKey.create<ILayout>('PnPModernSearchSliderLayout', SliderLayout);
                     break;
 
-                // Simple List
+                // Simple List (Handlebars)
                 case BuiltinLayoutsKeys.SimpleList:
 
                     const { SimpleListLayout } = await import(
@@ -117,6 +131,20 @@ export class LayoutHelper {
 
                     serviceKey = ServiceKey.create<ILayout>('PnPModernSearchSimpleListLayout', SimpleListLayout);
                     break;
+
+                // Simple List (Adaptive cards)
+                case BuiltinLayoutsKeys.ListAdaptiveCards: {
+
+                    /* tslint:disable:no-shadowed-variable */
+                    const { SimpleListLayout } = await import(
+                        /* webpackChunkName: 'pnp-modern-search-results-simple-list-layout' */
+                        '../layouts/results/simpleList/SimpleListLayout'
+                    );
+                    /* tslint:enable:no-shadowed-variable */
+
+                    serviceKey = ServiceKey.create<ILayout>('PnPModernSearchSimpleListLayout', SimpleListLayout);
+                    break;
+                }
                 
                 // People
                 case BuiltinLayoutsKeys.People:
@@ -220,17 +248,17 @@ export class LayoutHelper {
 
         let layoutOptions: IPropertyPaneChoiceGroupOption[] = [];
         
-        availableLayoutDefinitions.forEach((source) => {
+        availableLayoutDefinitions.forEach((layout) => {
             layoutOptions.push({
                 iconProps: {
-                    officeFabricIconFontName: source.iconName
+                    officeFabricIconFontName: layout.iconName
                 },
                 imageSize: {
                     width: 200,
                     height: 100
                 },
-                key: source.key,
-                text: source.name,
+                key: layout.key,
+                text: layout.name,
             });
         });
 

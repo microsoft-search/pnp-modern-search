@@ -1,0 +1,130 @@
+{
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+        {
+            "type": "Container",
+            "items": [
+                {
+                    "type": "ColumnSet",
+                    "height": "auto",
+                    "columns": [
+                        {
+                            "type": "Column",
+                            "width": 3,
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "**${$root.data.totalItemsCount}** results",
+                                    "size": "Medium",
+                                    "wrap": true,
+                                    "$when": "${$root.properties.showResultsCount == true}"
+                                }
+                            ],
+                            "height": "stretch",
+                            "verticalContentAlignment": "top"
+                        },                     
+                        {
+                            "type": "",
+                            "width": 2 ,
+                            "items": [
+                                {
+                                    
+                                    "type": "TextBlock",
+                                    "wrap": true,
+                                    "text": "<pnp-sortfield data-fields='${jsonStringify($root.properties.dataSourceProperties.sortList)}' data-default-selected-field='${if(empty($root.sort.selectedSortFieldName),'',$root.sort.selectedSortFieldName)}' data-default-direction='${if(empty($root.sort.selectedSortDirection),'',$root.sort.selectedSortDirection)}' data-theme-variant='${jsonStringify($root.theme)}'></pnp-sortfield>",
+                                    "horizontalAlignment": "right",
+                                    "size":"default",
+                                    "$when": "${$root.properties.dataSourceProperties.sortList != null}"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+			"type": "Container",
+			"$data": "${data.items}",
+			"items": [
+                {
+                    "id": "${jPath($data, concat('.',$root.slots['Id']))[0]}",
+                    "type": "ColumnSet",
+                    "columns": [
+                        {
+                            "type": "Column",
+                            "width": "35px",
+                            "items": [
+								{
+									"type": "TextBlock",
+									"wrap": true,
+									"text": "<pnp-iconfile size='32' class='icon' data-extension='${if(empty($root.slots['FileType']),'',string(jPath($data, concat('.',$root.slots['FileType']))[0]))}'></pnp-iconfile>",
+                                    "horizontalAlignment": "left"
+								}
+                            ],
+                            "height": "stretch",
+                            "verticalContentAlignment": "top",
+                            "$when": "${$root.properties.layoutProperties.showFileIcon == true}"
+                        },
+                        {
+                            "type": "Column",
+                            "width": 2,
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "<a href='${string(jPath($data, concat('.',$root.slots['Path']))[0])}'>${jPath($data, concat('.',$root.slots['Title']))[0]}</a>",
+                                    "color": "Accent",
+                                    "size": "Medium",
+                                    "weight": "Bolder",
+                                    "maxLines": 3
+                                },
+                                {
+                                    "type": "TextBlock",
+                                    "text": "<strong>${split(string(jPath($data, concat('.',$root.slots['Author']))[0]),'|')[1]}</strong>",
+                                    "spacing": "Small"
+                                },
+                                {
+                                    "type": "TextBlock",
+                                    "text": "{{DATE(${formatDateTime(string(jPath($data, concat('.',$root.slots['Date']))[0]),'yyyy-MM-ddTHH:mm:ssZ')},LONG)}}",
+                                    "spacing": "Small",
+                                    "$when": "${$root.slots['Date'] != ''}"
+                                },
+                                {
+                                    "type": "TextBlock",
+                                    "text": "${string($data.HitHighlightedSummary)}",
+                                    "wrap": true,
+                                    "maxLines": 3
+                                }
+                            ],
+                            "horizontalAlignment": "left",
+                            "spacing": "Medium",
+                            "verticalContentAlignment": "top"
+                        },
+                        {
+                            "type": "Column",
+                            "width": 1,
+                            "items": [
+                                {
+                                    
+                                    "type": "TextBlock",
+                                    "wrap": true,
+                                    "text": "<pnp-filepreview data-preview-url='${string(jPath($data, concat('.',$root.slots['PreviewUrl']))[0])}' data-preview-image-url='${string(jPath($data, concat('.',$root.slots['PreviewImageUrl']))[0])}'><pnp-img alt='preview-image' width='120' src='${string(jPath($data, concat('.',$root.slots['PreviewImageUrl']))[0])}' loading='lazy'  data-error-image='' /> </pnp-filepreview>",
+                                    "horizontalAlignment": "right"
+                                }
+                            ],
+                            "$when": "${$root.slots['PreviewImageUrl'] != '' && $root.properties.layoutProperties.showItemThumbnail == true}"
+                        }
+                    ]
+                },          
+                {
+                    "type": "TextBlock",
+                    "wrap": true,
+                    "text": "<pnp-pagination data-total-items='${$root.data.totalItemsCount}' data-hide-first-last-pages='${$root.properties.paging.hideFirstLastPages}' data-hide-disabled='${$root.properties.paging.hideDisabled}' data-hide-navigation='${$root.properties.paging.hideNavigation}' data-range='${$root.properties.paging.pagingRange}' data-items-count-per-page='${$root.properties.paging.itemsCountPerPage}' data-current-page-number='${$root.paging.currentPageNumber}'></pnp-pagination>",
+                    "horizontalAlignment": "center",
+                    "$when": "${$index == (count($root.data.items) - 1)}"
+                }
+            ]
+        }
+    ],
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json"
+}

@@ -115,6 +115,14 @@
             align-items: stretch;
             padding: 10px;
         }
+        &--header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        &--sort {
+            padding: 18px;
+        }
         &--card {
             box-sizing: border-box;
             padding: 8px 8px 8px 0px; // Same as default SharePoint Highlighted Content card

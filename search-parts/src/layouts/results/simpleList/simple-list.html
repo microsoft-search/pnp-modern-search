@@ -35,11 +35,22 @@
         <pnp-selectedfilters data-filters="{{JSONstringify filters.selectedFilters 2}}" data-filters-configuration="{{JSONstringify filters.filtersConfiguration 2}}" data-instance-id="{{filters.instanceId}}" data-operator="{{filters.filterOperator}}" data-theme-variant="{{JSONstringify @root.theme}}">
         </pnp-selectedfilters>
         {{/if}}
-        {{#if @root.properties.showResultsCount}}
-        <div class="template--resultCount">
-            <label class="ms-fontWeight-semibold">{{getCountMessage @root.data.totalItemsCount @root.inputQueryText}}</label>
+        <div class="template--header">
+            {{#if @root.properties.showResultsCount}}
+                <div class="template--resultCount">
+                    <label class="ms-fontWeight-semibold">{{getCountMessage @root.data.totalItemsCount @root.inputQueryText}}</label>
+                </div>
+            {{/if}}
+
+            <div class="template--sort">
+                <pnp-sortfield 
+                    data-fields="{{JSONstringify @root.properties.dataSourceProperties.sortList}}" 
+                    data-default-selected-field="{{sort.selectedSortFieldName}}" 
+                    data-default-direction="{{sort.selectedSortDirection}}"
+                    data-theme-variant="{{JSONstringify @root.theme}}">
+                </pnp-sortfield>    
+            </div>
         </div>
-        {{/if}}
         {{#if @root.data.promotedResults}}
         <ul class="template--defaultList template--promotedResults">
             {{#each @root.data.promotedResults as |promotedResult|}}
@@ -76,7 +87,7 @@
                                 {{/if}}
                                 <div class="template--listItem--contentContainer">
                                     <span class="template--listItem--title example-themePrimary">
-                                        <a href="{{slot item @root.slots.PreviewUrl}}" target="_blank" style="color:{{@root.theme.semanticColors.link}}" data-interception="off">{{slot item @root.slots.Title}}</a>
+                                        <a href="{{slot item @root.slots.PreviewUrl}}" target="_blank" style="color:{{@root.theme.semanticColors.link}}" data-interception="off" rel="noopener noreferrer">{{slot item @root.slots.Title}}</a>
                                     </span>
                                     <span>                            
                                         <span class="template--listItem--author">
@@ -100,7 +111,7 @@
                                 </div>
                             </div>
                             {{#if @root.properties.layoutProperties.showItemThumbnail}}
-                            <div class="template--listItem--thumbnailContainer">
+                            <div class="template--listItem--thumbnailContainer" data-selection-disabled="true">
                                 <div class="thumbnail--image">
                                     <pnp-filepreview data-preview-url="{{slot item @root.slots.PreviewUrl}}" data-preview-image-url="{{slot item @root.slots.PreviewImageUrl}}" data-theme-variant="{{JSONstringify @root.theme}}">
                                         <pnp-img alt='preview-image' width="120" src="{{slot item @root.slots.PreviewImageUrl}}" loading="lazy" data-error-image="{{@root.utils.defaultImage}}" />
@@ -122,7 +133,7 @@
 
         {{#if @root.properties.paging.showPaging}} {{#gt @root.data.totalItemsCount @root.properties.paging.itemsCountPerPage}}
         <pnp-pagination data-total-items="{{@root.data.totalItemsCount}}" data-hide-first-last-pages="{{@root.properties.paging.hideFirstLastPages}}" data-hide-disabled="{{@root.properties.paging.hideDisabled}}" data-hide-navigation="{{@root.properties.paging.hideNavigation}}"
-            data-range="{{@root.properties.paging.pagingRange}}" data-items-count-per-page="{{@root.properties.paging.itemsCountPerPage}}" data-current-page-number="{{@root.paging.currentPageNumber}}" data-page-links="{{JSONstringify @root.data.paging.links}}"
+            data-range="{{@root.properties.paging.pagingRange}}" data-items-count-per-page="{{@root.properties.paging.itemsCountPerPage}}" data-current-page-number="{{@root.paging.currentPageNumber}}"
             data-theme-variant="{{JSONstringify @root.theme}}">
         </pnp-pagination>
         {{/gt}} {{/if}}

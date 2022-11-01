@@ -108,6 +108,7 @@ declare interface ICommonStrings {
         ResultSourceIdDescription: string;
         InvalidResultSourceIdMessage: string;
         EnableQueryRulesLabel: string;
+        TrimDuplicates: string;
         RefinementFilters: string;
         RefinementFiltersDescription: string;
         EnableLocalizationLabel: string;
@@ -144,6 +145,7 @@ declare interface ICommonStrings {
         QueryTemplateFieldDescription: string;
         ApplyQueryTemplateBtnText: string;
         UseBetaEndpoint: string;
+        TrimDuplicates: string;
       },
       SearchCommon: {
         Sort: {
@@ -158,6 +160,9 @@ declare interface ICommonStrings {
           SortPanelSortDirectionLabel:string;
           SortDirectionColumnLabel: string;
           SortFieldColumnLabel: string;
+          SortFieldDefaultSortLabel: string;
+          SortFieldUserSortLabel: string;
+          SortFieldFriendlyNameLabel: string;
           EditSortLabel: string;
           SortInvalidSortableFieldMessage: string;
           SortFieldColumnPlaceholder: string;
@@ -177,9 +182,12 @@ declare interface ICommonStrings {
       Debug: {
         Name: string;
       };
-      Custom: {
+      CustomHandlebars: {
         Name: string;
       };
+      CustomAdaptiveCards: {
+        Name: string;
+      },
       SimpleList: {
         Name: string;
         ShowFileIconLabel: string;
@@ -201,6 +209,7 @@ declare interface ICommonStrings {
         DisplayNameColumnLabel: string;
         ValueColumnLabel: string;
         ValueSortingColumnLabel: string;
+        ValueSortingColumnNoFieldsLabel: string;
         FileExtensionFieldLabel: string;
         GroupByFieldLabel: string;
         EnableGrouping: string;
