@@ -32,7 +32,9 @@ export enum EntityType {
     ListItem = 'listItem',
     Site = 'site',
     Person = 'person',
-    TeamsMessage = 'chatMessage'
+    TeamsMessage = 'chatMessage',
+    Bookmark = 'bookmark',
+    Acronym = 'acronym'
 }
 
 export interface IMicrosoftSearchDataSourceProperties {
@@ -147,6 +149,14 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         {
             key: EntityType.TeamsMessage,
             text: "Teams messages"
+        },
+        {
+            key: EntityType.Bookmark,
+            text: "Bookmarks"
+        },
+        {
+            key: EntityType.Acronym,
+            text: "Acronyms"
         }
     ];
 
@@ -744,9 +754,13 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                 queryString: queryText,
                 queryTemplate: queryTemplate
             },
-            from: from,
             size: dataContext.itemsCountPerPage
         };
+
+        //If bookmark or Acronym, paging is not supported
+        if (this.properties.entityTypes.indexOf(EntityType.Bookmark) === -1 && this.properties.entityTypes.indexOf(EntityType.Acronym) === -1) {
+            searchRequest.from = from;
+        }
 
         if (this.properties.fields.length > 0) {
             searchRequest.fields = this.properties.fields.filter(a => a); // Fix to remove null values
