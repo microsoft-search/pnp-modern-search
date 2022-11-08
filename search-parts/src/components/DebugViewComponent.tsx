@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Suspense } from 'react';
 import { BaseWebComponent } from '@pnp/modern-search-extensibility';
 import * as ReactDOM from 'react-dom';
-const AceEditor = React.lazy(() => import(/* webpackChunkName: 'pnp-modern-search-react-ace' */ 'react-ace'));
+const AceEditor = React.lazy(() => import(/* webpackChunkName: 'pnp-modern-search-code-editor' */ 'react-ace'));
 
 export interface IDebugViewProps {
 

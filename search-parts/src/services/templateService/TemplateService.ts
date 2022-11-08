@@ -22,8 +22,8 @@ import { ServiceScopeHelper } from "../../helpers/ServiceScopeHelper";
 import { DomPurifyHelper } from "../../helpers/DomPurifyHelper";
 import * as DOMPurify from 'dompurify';
 import { IAdaptiveCardAction } from '@pnp/modern-search-extensibility';
-import { useLocalFluentUI } from '../../controls/TemplateRenderer/fluentUI';   
-import { Action, CardElement } from "adaptivecards";
+//import { useLocalFluentUI } from '../../controls/TemplateRenderer/fluentUI';   
+//import { Action, CardElement } from "adaptivecards";
 
 const TemplateService_ServiceKey = 'PnPModernSearchTemplateService';
 const TemplateService_LogSource = "PnPModernSearch:TemplateService";
@@ -477,7 +477,7 @@ export class TemplateService implements ITemplateService {
                             };
                         }
                             break;
-        
+
                         case this._adaptiveCardsNS.SubmitAction.JsonTypeName: {
                             actionResult = {
                                 type: type,
@@ -498,7 +498,7 @@ export class TemplateService implements ITemplateService {
                     }
 
                     this.AdaptiveCardsExtensibilityLibraries.forEach(l => l.invokeCardAction(actionResult));
-                };                
+                };
             } else {
                 adaptiveCard.onExecuteAction = (action: any) => {
                     Log.info(TemplateService_LogSource, `Triggered an event from an Adaptive Card, with action: '${action.title}'. Please, register a custom Extension Library in order to handle it.`, this.serviceScope);
@@ -816,20 +816,28 @@ export class TemplateService implements ITemplateService {
 
         // Initialize the serialization context for the Adaptive Cards, if needed
         if (!this._serializationContext) {
-
-            const { CardObjectRegistry, GlobalRegistry, SerializationContext } = await import(
+            const { Action, CardElement, CardObjectRegistry, GlobalRegistry, SerializationContext } = await import(
                 /* webpackChunkName: 'pnp-modern-search-adaptive-cards-bundle' */
                 'adaptivecards'
             );
 
+
+            const { useLocalFluentUI } = await import(
+                /* webpackChunkName: 'pnp-modern-search-adaptive-cards-bundle' */
+                '../../controls/TemplateRenderer/fluentUI'
+            );
+
             this._serializationContext = new SerializationContext();
 
-            let elementRegistry = new CardObjectRegistry<CardElement>();
-            let actionRegistry = new CardObjectRegistry<Action>();
-        
+            let actionType: InstanceType<typeof Action>
+            let cardElementType: InstanceType<typeof CardElement>;
+
+            let elementRegistry = new CardObjectRegistry<typeof cardElementType>();
+            let actionRegistry = new CardObjectRegistry<typeof actionType>();
+
             GlobalRegistry.populateWithDefaultElements(elementRegistry);
             GlobalRegistry.populateWithDefaultActions(actionRegistry);
-        
+
             useLocalFluentUI(elementRegistry, actionRegistry);
             this._serializationContext.setElementRegistry(elementRegistry);
             this._serializationContext.setActionRegistry(actionRegistry);
