@@ -1,5 +1,6 @@
+/* eslint-disable require-atomic-updates */
 import { ITokenService, IProfileProperties } from "@pnp/modern-search-extensibility";
-import { ServiceKey, ServiceScope, Log, UrlQueryParameterCollection } from "@microsoft/sp-core-library";
+import { ServiceKey, ServiceScope, Log } from "@microsoft/sp-core-library";
 import { PageContext } from '@microsoft/sp-page-context';
 import { SPHttpClient } from '@microsoft/sp-http';
 import { DateHelper } from "../../helpers/DateHelper";
@@ -197,6 +198,7 @@ export class TokenService implements ITokenService {
                     let itemRow = JSON.parse(result.value);
                     // Lower case all properties
                     // https://codereview.stackexchange.com/questions/162416/object-keys-to-lowercase
+                    // eslint-disable-next-line no-sequences
                     item = Object.keys(itemRow.Data.Row[0]).reduce((c, k) => (c[k] = itemRow.Data.Row[0][k], c), {});
                 }
                 else {
@@ -277,6 +279,7 @@ export class TokenService implements ITokenService {
 
             item = this.recursivelyLowercaseJSONKeys(item);
 
+            // eslint-disable-next-line no-unmodified-loop-condition
             while (matches !== null && item != null) {
 
                 const pageProperty = matches[1];

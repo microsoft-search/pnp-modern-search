@@ -25,7 +25,7 @@ export class ImageComponent extends React.Component<IImageProps, IImageState> {
     }
 
     public render() {
-        const { errorImage, ...imgProps } = this.props;
+        const { ...imgProps } = this.props;
         if(isEmpty(imgProps.src)) return null;
         return <img {...imgProps} onError={this.addDefaultSrc} />;
     }
@@ -54,5 +54,9 @@ export class ImageWebComponent extends BaseWebComponent {
         let props = this.resolveAttributes();
         const iconComponent = <ImageComponent {...props} />;
         ReactDOM.render(iconComponent, this);
+    }
+
+    protected onDispose(): void {
+        ReactDOM.unmountComponentAtNode(this);
     }
 }

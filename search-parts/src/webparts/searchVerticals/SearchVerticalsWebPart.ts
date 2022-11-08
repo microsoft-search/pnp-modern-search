@@ -94,7 +94,7 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
             const defaultQueryVal: string = queryParms.getValue(this.properties.defaultVerticalQueryStringParam.toLowerCase());
 
             if (defaultQueryVal) {
-                const defaultSelected: IDataVerticalConfiguration[] = this.properties.verticals.filter(v => v.tabName.toLowerCase() == decodeURIComponent(defaultQueryVal));
+                const defaultSelected: IDataVerticalConfiguration[] = this.properties.verticals.filter(v => v.tabName.toLowerCase() === decodeURIComponent(defaultQueryVal));
                 if (defaultSelected.length === 1) {
                     defaultSelectedKey = defaultSelected[0].key;
                 }

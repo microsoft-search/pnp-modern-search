@@ -39,3 +39,5 @@ pnpm-lock.yaml
 
 #npm lock file
 package-lock.json
+
+.heft

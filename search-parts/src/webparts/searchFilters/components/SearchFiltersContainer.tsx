@@ -659,7 +659,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
   private _handleQueryStringChange() {
 
     ((history) => {
-      var pushState = history.pushState;
+      let pushState = history.pushState;
       history.pushState = (state, key, path) => {
           pushState.apply(history, [state, key, path]);
           this.getFiltersDeepLink();
