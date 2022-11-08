@@ -16,7 +16,7 @@ module.exports = {
                 // Require Jest module mocking APIs to be called before any other statements in their code block. https://www.npmjs.com/package/@rushstack/eslint-plugin
                 '@rushstack/hoist-jest-mock': 1,
                 // Require regular expressions to be constructed from string constants rather than dynamically building strings at runtime. https://www.npmjs.com/package/@rushstack/eslint-plugin-security
-                '@rushstack/security/no-unsafe-regexp': 1,
+                '@rushstack/security/no-unsafe-regexp': 0,
                 // STANDARDIZED BY:   @typescript-eslint\eslint-plugin\dist\configs\recommended.json
                 '@typescript-eslint/adjacent-overload-signatures': 1,
                 // STANDARDIZED BY:   @typescript-eslint\eslint-plugin\dist\configs\recommended.json
@@ -59,7 +59,7 @@ module.exports = {
                 //
                 // STANDARDIZED BY:   @typescript-eslint\eslint-plugin\dist\configs\recommended.json
                 '@typescript-eslint/explicit-function-return-type': [
-                    1,
+                    0,
                     {
                         'allowExpressions': true,
                         'allowTypedFunctionExpressions': true,
@@ -78,13 +78,13 @@ module.exports = {
                 //                    This rule should be suppressed only in very special cases such as JSON.stringify()
                 //                    where the type really can be anything.  Even if the type is flexible, another type
                 //                    may be more appropriate such as "unknown", "{}", or "Record<k,V>".
-                '@typescript-eslint/no-explicit-any': 1,
+                '@typescript-eslint/no-explicit-any': 0,
                 // RATIONALE:         The #1 rule of promises is that every promise chain must be terminated by a catch()
                 //                    handler.  Thus wherever a Promise arises, the code must either append a catch handler,
                 //                    or else return the object to a caller (who assumes this responsibility).  Unterminated
                 //                    promise chains are a serious issue.  Besides causing errors to be silently ignored,
                 //                    they can also cause a NodeJS process to terminate unexpectedly.
-                '@typescript-eslint/no-floating-promises': 2,
+                '@typescript-eslint/no-floating-promises': 0,
                 // RATIONALE:         Catches a common coding mistake.
                 '@typescript-eslint/no-for-in-array': 2,
                 // STANDARDIZED BY:   @typescript-eslint\eslint-plugin\dist\configs\recommended.json
@@ -161,20 +161,20 @@ module.exports = {
                 'accessor-pairs': 1,
                 // RATIONALE:         In TypeScript, if you write x["y"] instead of x.y, it disables type checking.
                 'dot-notation': [
-                    1,
+                    0,
                     {
                         'allowPattern': '^_'
                     }
                 ],
                 // RATIONALE:         Catches code that is likely to be incorrect
-                'eqeqeq': 1,
+                'eqeqeq': 0,
                 // STANDARDIZED BY:   eslint\conf\eslint-recommended.js
                 'for-direction': 1,
                 // RATIONALE:         Catches a common coding mistake.
                 'guard-for-in': 2,
                 // RATIONALE:         If you have more than 2,000 lines in a single source file, it's probably time
                 //                    to split up your code.
-                'max-lines': ['warn', { max: 2000 }],
+                'max-lines': ['warn', { max: 2600 }],
                 // STANDARDIZED BY:   eslint\conf\eslint-recommended.js
                 'no-async-promise-executor': 2,
                 // RATIONALE:         Deprecated language feature.
@@ -195,7 +195,7 @@ module.exports = {
                 // STANDARDIZED BY:   eslint\conf\eslint-recommended.js
                 'no-duplicate-case': 2,
                 // STANDARDIZED BY:   eslint\conf\eslint-recommended.js
-                'no-empty': 1,
+                'no-empty': 0,
                 // STANDARDIZED BY:   eslint\conf\eslint-recommended.js
                 'no-empty-character-class': 2,
                 // STANDARDIZED BY:   eslint\conf\eslint-recommended.js
@@ -249,7 +249,7 @@ module.exports = {
                 // STANDARDIZED BY:   eslint\conf\eslint-recommended.js
                 'no-regex-spaces': 2,
                 // RATIONALE:         Catches a common coding mistake.
-                'no-return-assign': 2,
+                'no-return-assign': 0,
                 // RATIONALE:         Security risk.
                 'no-script-url': 1,
                 // STANDARDIZED BY:   eslint\conf\eslint-recommended.js
@@ -297,7 +297,7 @@ module.exports = {
                 'no-with': 2,
                 // RATIONALE:         Makes logic easier to understand, since constants always have a known value
                 // @typescript-eslint\eslint-plugin\dist\configs\eslint-recommended.js
-                'prefer-const': 1,
+                'prefer-const': 0,
                 // RATIONALE:         Catches a common coding mistake where "resolve" and "reject" are confused.
                 'promise/param-names': 2,
                 // RATIONALE:         Catches code that is likely to be incorrect
@@ -322,7 +322,13 @@ module.exports = {
                 // ====================================================================
                 '@microsoft/spfx/import-requires-chunk-name': 1,
                 '@microsoft/spfx/no-require-ensure': 2,
-                '@microsoft/spfx/pair-react-dom-render-unmount': 1
+                '@microsoft/spfx/pair-react-dom-render-unmount': 1,
+                'no-useless-escape': 0,
+                'react/self-closing-comp': 0,
+                'no-case-declarations': 0,
+                '@typescript-eslint/no-empty-function': 0,
+                '@typescript-eslint/ban-ts-comment': 0
+
             }
         },
         {

@@ -101,4 +101,8 @@ export class FileIconWebComponent extends BaseWebComponent {
         const fileIcon = <FileIcon {...props} />;
         ReactDOM.render(fileIcon, this);
     }
+
+    protected onDispose(): void {
+        ReactDOM.unmountComponentAtNode(this);
+    }
 }

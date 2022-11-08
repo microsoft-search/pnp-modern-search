@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { BaseWebComponent, FilterComparisonOperator,IDataFilterInfo, IDataFilterValueInfo, IDataFilterInternal, ExtensibilityConstants  } from '@pnp/modern-search-extensibility';
+import { BaseWebComponent, FilterComparisonOperator, IDataFilterInfo, IDataFilterValueInfo, IDataFilterInternal, ExtensibilityConstants } from '@pnp/modern-search-extensibility';
 import * as ReactDOM from 'react-dom';
 import { ITheme } from 'office-ui-fabric-react';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
@@ -59,7 +59,7 @@ export class FilterDateRangeComponent extends React.Component<IFilterDateRangeCo
         this._clearFilters = this._clearFilters.bind(this);
         this._onFormatDate = this._onFormatDate.bind(this);
     }
-    
+
     public render() {
 
         const datePickerStyles = (props: IDatePickerStyleProps) => {
@@ -76,7 +76,7 @@ export class FilterDateRangeComponent extends React.Component<IFilterDateRangeCo
                     }
                 }
             };
-            
+
             return customStyles;
         };
 
@@ -104,7 +104,7 @@ export class FilterDateRangeComponent extends React.Component<IFilterDateRangeCo
             strings: strings.General.DatePickerStrings,
             formatDate: this._onFormatDate,
             allowTextInput: true
-        };        
+        };
 
         if (this.state.selectedFromDate) {
             const minDdate = new Date(this.state.selectedFromDate.getTime());
@@ -118,11 +118,11 @@ export class FilterDateRangeComponent extends React.Component<IFilterDateRangeCo
             fromProps.maxDate = maxDate;
         }
 
-        return  <div>
-                    <DatePicker {...fromProps} />
-                    <DatePicker {...toProps} />
-                    <Link theme={this.props.themeVariant as ITheme} onClick={this._clearFilters} disabled={!this.state.selectedToDate && !this.state.selectedFromDate}>{strings.Filters.ClearAllFiltersButtonLabel}</Link>
-                </div>;
+        return <div>
+            <DatePicker {...fromProps} />
+            <DatePicker {...toProps} />
+            <Link theme={this.props.themeVariant as ITheme} onClick={this._clearFilters} disabled={!this.state.selectedToDate && !this.state.selectedFromDate}>{strings.Filters.ClearAllFiltersButtonLabel}</Link>
+        </div>;
     }
 
     public componentDidMount() {
@@ -135,7 +135,7 @@ export class FilterDateRangeComponent extends React.Component<IFilterDateRangeCo
             // Determine 'from' and 'to' dates by lokking at the operator for currently selected values
             this.props.filter.values.filter(value => value.selected).forEach(filterValue => {
                 if (filterValue.operator === FilterComparisonOperator.Geq && !selectedFromDate) {
-                    selectedFromDate =  new Date(filterValue.value);
+                    selectedFromDate = new Date(filterValue.value);
                 }
 
                 if (filterValue.operator === FilterComparisonOperator.Lt && !selectedToDate) {
@@ -147,7 +147,7 @@ export class FilterDateRangeComponent extends React.Component<IFilterDateRangeCo
                 selectedFromDate: selectedFromDate,
                 selectedToDate: selectedToDate
             });
-        }  
+        }
     }
 
     private _updateFromDate(fromDate: Date) {
@@ -213,58 +213,62 @@ export class FilterDateRangeComponent extends React.Component<IFilterDateRangeCo
 }
 
 export class FilterDateRangeWebComponent extends BaseWebComponent {
-   
+
     public constructor() {
-        super(); 
+        super();
     }
- 
+
     public async connectedCallback() {
 
         const dateHelper = this._serviceScope.consume<DateHelper>(DateHelper.ServiceKey);
         const moment = await dateHelper.moment();
- 
+
         let props = this.resolveAttributes();
         let renderDateRange: JSX.Element = null;
 
         if (props.filter) {
- 
+
             const filter = props.filter as IDataFilterInternal;
             renderDateRange = <FilterDateRangeComponent {...props} moment={moment} filter={filter} onUpdate={((filterValues: IDataFilterValueInfo[]) => {
 
-                                    // Unselect all previous values
-                                    const updatedValues = filter.values.map(value => {
+                // Unselect all previous values
+                const updatedValues = filter.values.map(value => {
 
-                                        // Exclude current selected values
-                                        if (filterValues.filter(filterValue => { return filterValue.value === value.value; }).length === 0) {
-                                            return {
-                                                name: value.name,
-                                                selected: false,
-                                                value: value.value,
-                                                operator: value.operator
-                                            } as IDataFilterValueInfo;
-                                        }
-                                    });
+                    // Exclude current selected values
+                    if (filterValues.filter(filterValue => { return filterValue.value === value.value; }).length === 0) {
+                        return {
+                            name: value.name,
+                            selected: false,
+                            value: value.value,
+                            operator: value.operator
+                        } as IDataFilterValueInfo;
+                    }
+                });
 
-                                    // Bubble event through the DOM
-                                    this.dispatchEvent(new CustomEvent(ExtensibilityConstants.EVENT_FILTER_UPDATED, { 
-                                        detail: {                                       
-                                            filterName: filter.filterName,
-                                            filterValues: filterValues.concat(updatedValues.filter(v => v)),
-                                            instanceId: props.instanceId
-                                        } as IDataFilterInfo, 
-                                        bubbles: true,
-                                        cancelable: true
-                                    }));
-                                }).bind(this)}
-                            />;
+                // Bubble event through the DOM
+                this.dispatchEvent(new CustomEvent(ExtensibilityConstants.EVENT_FILTER_UPDATED, {
+                    detail: {
+                        filterName: filter.filterName,
+                        filterValues: filterValues.concat(updatedValues.filter(v => v)),
+                        instanceId: props.instanceId
+                    } as IDataFilterInfo,
+                    bubbles: true,
+                    cancelable: true
+                }));
+            }).bind(this)}
+            />;
         } else {
-            renderDateRange =   <MessageBar
-                                    messageBarType={MessageBarType.warning}
-                                    isMultiline={false}>
-                                    {`Component <pnp-date-range> misconfigured. The HTML attribute 'filter' is missing.`}
-                                </MessageBar>;
+            renderDateRange = <MessageBar
+                messageBarType={MessageBarType.warning}
+                isMultiline={false}>
+                {`Component <pnp-date-range> misconfigured. The HTML attribute 'filter' is missing.`}
+            </MessageBar>;
         }
 
         ReactDOM.render(renderDateRange, this);
-    }    
+    }
+
+    protected onDispose(): void {
+        ReactDOM.unmountComponentAtNode(this);
+    }
 }

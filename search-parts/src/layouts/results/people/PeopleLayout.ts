@@ -197,7 +197,7 @@ export class PeopleLayout extends BaseLayout<IPeopleLayoutProperties> {
     private async loadMsGraphToolkit() {
 
         // Load Microsoft Graph Toolkit dynamically
-        const { Providers, } = await import(
+        const { Providers } = await import(
             /* webpackChunkName: 'microsoft-graph-toolkit' */
             '@microsoft/mgt-react/dist/es6'
         );

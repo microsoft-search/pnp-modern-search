@@ -1,3 +1,4 @@
+/* eslint-disable no-lone-blocks */
 import { FileFormat, ITemplateService } from "./ITemplateService";
 import { Log, ServiceKey, ServiceScope, Text } from "@microsoft/sp-core-library";
 import { SPHttpClient, SPHttpClientResponse } from '@microsoft/sp-http';
@@ -240,6 +241,7 @@ export class TemplateService implements ITemplateService {
         if (response.ok) {
 
             if (response.url.indexOf('AccessDenied.aspx') > -1) {
+                // eslint-disable-next-line no-throw-literal
                 throw 'Access Denied';
             }
 
@@ -692,10 +694,10 @@ export class TemplateService implements ITemplateService {
         // <p>{{#times 10}}</p>
         this.Handlebars.unregisterHelper('times'); // unregister times alias for multiply from helpers
         this.Handlebars.registerHelper('times', (n, block) => {
-            let accum = '';
-            for (var i = 0; i < n; ++i)
-                accum += block.fn(i);
-            return accum;
+            let accumulator = '';
+            for (let i = 0; i < n; ++i)
+                accumulator += block.fn(i);
+            return accumulator;
         });
 
         // Get url parameter from current URL or a provided URL
@@ -816,6 +818,7 @@ export class TemplateService implements ITemplateService {
         if (!this._serializationContext) {
 
             const { CardObjectRegistry, GlobalRegistry, SerializationContext } = await import(
+                /* webpackChunkName: 'pnp-modern-search-adaptive-cards-bundle' */
                 'adaptivecards'
             );
 

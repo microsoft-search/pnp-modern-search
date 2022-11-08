@@ -74,67 +74,67 @@ export class FilterCheckBoxComponent extends React.Component<IFilterCheckBoxProp
         let textColor: string = this.props.themeVariant && this.props.themeVariant.isInverted ? (this.props.themeVariant ? this.props.themeVariant.semanticColors.bodyText : '#323130') : this.props.themeVariant.semanticColors.inputText;
 
         if (this.props.isMulti) {
-            renderInput =   <Checkbox
-                                styles={{
-                                    root: {
-                                        padding: 10,
-                                    },
-                                    label: {
-                                        width: '100%'
-                                    },
-                                    text: {
-                                        color: this.props.count && this.props.count === 0 ? this.props.themeVariant.semanticColors.disabledText : textColor
-                                    }
-                                }}
-                                theme={this.props.themeVariant as ITheme}
-                                defaultChecked={this.props.selected}
-                                disabled={this.props.disabled}
-                                title={filterValue.name}
-                                label={filterValue.name}
-                                onChange={(ev, checked: boolean) => {
-                                    filterValue.selected = checked;
-                                    this.props.onChecked(this.props.filterName, filterValue);
-                                }}
-                                onRenderLabel={(props, defaultRender) => {
-                                    return <Text block nowrap title={props.label}>{props.label}</Text>;
-                                }}
-                            />;
+            renderInput = <Checkbox
+                styles={{
+                    root: {
+                        padding: 10,
+                    },
+                    label: {
+                        width: '100%'
+                    },
+                    text: {
+                        color: this.props.count && this.props.count === 0 ? this.props.themeVariant.semanticColors.disabledText : textColor
+                    }
+                }}
+                theme={this.props.themeVariant as ITheme}
+                defaultChecked={this.props.selected}
+                disabled={this.props.disabled}
+                title={filterValue.name}
+                label={filterValue.name}
+                onChange={(ev, checked: boolean) => {
+                    filterValue.selected = checked;
+                    this.props.onChecked(this.props.filterName, filterValue);
+                }}
+                onRenderLabel={(props, defaultRender) => {
+                    return <Text block nowrap title={props.label}>{props.label}</Text>;
+                }}
+            />;
         } else {
-            renderInput =   <ChoiceGroup
-                                styles={{
-                                    root: {
-                                        position: 'relative',
-                                        display: 'flex',
-                                        paddingRight: 10,
-                                        paddingLeft: 10,
-                                        paddingBottom:7,
-                                        paddingTop: 7,
-                                        selectors: {
-                                            '.ms-ChoiceField': {
-                                                marginTop: 0
-                                            }
-                                        }
-                                    }
-                                }}
-                                key={this.props.filterName}
-                                options={[
-                                    {
-                                        key: filterValue.value, 
-                                        text: filterValue.name,
-                                        disabled: this.props.disabled,
-                                        checked: this.props.selected,
-                                        styles: {
-                                            field: {
-                                                color: this.props.count && this.props.count === 0 ? this.props.themeVariant.semanticColors.disabledText : textColor
-                                            }
-                                        }
-                                    }
-                                ]}
-                                onChange={(ev?: React.FormEvent<HTMLInputElement>, option?: IChoiceGroupOption) => {
-                                    filterValue.selected = ev.currentTarget.checked;
-                                    this.props.onChecked(this.props.filterName, filterValue);
-                                }}
-                            />;
+            renderInput = <ChoiceGroup
+                styles={{
+                    root: {
+                        position: 'relative',
+                        display: 'flex',
+                        paddingRight: 10,
+                        paddingLeft: 10,
+                        paddingBottom: 7,
+                        paddingTop: 7,
+                        selectors: {
+                            '.ms-ChoiceField': {
+                                marginTop: 0
+                            }
+                        }
+                    }
+                }}
+                key={this.props.filterName}
+                options={[
+                    {
+                        key: filterValue.value,
+                        text: filterValue.name,
+                        disabled: this.props.disabled,
+                        checked: this.props.selected,
+                        styles: {
+                            field: {
+                                color: this.props.count && this.props.count === 0 ? this.props.themeVariant.semanticColors.disabledText : textColor
+                            }
+                        }
+                    }
+                ]}
+                onChange={(ev?: React.FormEvent<HTMLInputElement>, option?: IChoiceGroupOption) => {
+                    filterValue.selected = ev.currentTarget.checked;
+                    this.props.onChecked(this.props.filterName, filterValue);
+                }}
+            />;
         }
 
         return renderInput;
@@ -142,28 +142,32 @@ export class FilterCheckBoxComponent extends React.Component<IFilterCheckBoxProp
 }
 
 export class FilterCheckBoxWebComponent extends BaseWebComponent {
-   
-    public constructor() {
-        super(); 
-    }
- 
-    public async connectedCallback() {
- 
-       let props = this.resolveAttributes();
-       const checkBox = <FilterCheckBoxComponent {...props} onChecked={((filterName: string, filterValue: IDataFilterValueInfo) => {
-                                // Bubble event through the DOM
-                                this.dispatchEvent(new CustomEvent(ExtensibilityConstants.EVENT_FILTER_UPDATED, { 
-                                    detail: {                                       
-                                        filterName: filterName,
-                                        filterValues: [filterValue],
-                                        instanceId: props.instanceId
-                                    } as IDataFilterInfo, 
-                                    bubbles: true,
-                                    cancelable: true
-                                }));
-                            }).bind(this)}
-                        />;
 
-       ReactDOM.render(checkBox, this);
-    }    
+    public constructor() {
+        super();
+    }
+
+    public async connectedCallback() {
+
+        let props = this.resolveAttributes();
+        const checkBox = <FilterCheckBoxComponent {...props} onChecked={((filterName: string, filterValue: IDataFilterValueInfo) => {
+            // Bubble event through the DOM
+            this.dispatchEvent(new CustomEvent(ExtensibilityConstants.EVENT_FILTER_UPDATED, {
+                detail: {
+                    filterName: filterName,
+                    filterValues: [filterValue],
+                    instanceId: props.instanceId
+                } as IDataFilterInfo,
+                bubbles: true,
+                cancelable: true
+            }));
+        }).bind(this)}
+        />;
+
+        ReactDOM.render(checkBox, this);
+    }
+
+    protected onDispose(): void {
+        ReactDOM.unmountComponentAtNode(this);
+    }
 }

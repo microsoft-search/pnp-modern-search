@@ -8,7 +8,7 @@ import styles                                   from './TextDialog.module.scss';
 import './AceEditor.module.scss';
 import { TextField } from 'office-ui-fabric-react';
 import { Icon } from 'office-ui-fabric-react';
-const AceEditor = React.lazy(() => import('react-ace'));
+const AceEditor = React.lazy(() => import(/* webpackChunkName: 'pnp-modern-search-react-ace' */ 'react-ace'));
 
 export default class TextDialog extends React.Component<ITextDialogProps, ITextDialogState> {
 

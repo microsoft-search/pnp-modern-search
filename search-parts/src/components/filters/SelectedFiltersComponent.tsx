@@ -230,5 +230,9 @@ export class SelectedFiltersWebComponent extends BaseWebComponent {
 
         const filtersComponent = <SelectedFiltersComponent {...props} moment={moment} filters={filters} filtersConfiguration={filtersConfiguration}/>;
         ReactDOM.render(filtersComponent, this);
-    }    
+    }
+    
+    protected onDispose(): void {
+        ReactDOM.unmountComponentAtNode(this);
+    }
 }
