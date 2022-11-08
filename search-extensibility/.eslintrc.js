@@ -7,6 +7,8 @@ module.exports = {
         "@typescript-eslint/explicit-member-accessibility": 0,
         "@typescript-eslint/explicit-function-return-type": 0,
         "@typescript-eslint/typedef": 0,
-        "no-throw-literal": 0
+        "no-throw-literal": 0,
+        "@typescript-eslint/no-empty-function": 0,
+        "@typescript-eslint/no-unused-vars": 0,
     },
 };
