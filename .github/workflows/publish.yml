@@ -16,7 +16,7 @@ jobs:
             # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
             - uses: actions/checkout@v2
               with:
-                  ref: upgrade-spfx-115
+                  ref: develop
             # setup nodejs
             - name: Use Node.js 14
               uses: actions/setup-node@v2
