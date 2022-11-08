@@ -189,6 +189,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
             queryStringParameter: this.properties.queryStringParameter,
             inputTemplate: this.properties.inputTemplate,
             searchInNewPage: this.properties.searchInNewPage,
+            reQueryOnClear: this.properties.reQueryOnClear,
             themeVariant: this._themeVariant,
             onSearch: this._onSearch,
             suggestionProviders: this._selectedCustomProviders,
@@ -491,6 +492,9 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
             }),
             PropertyPaneToggle("searchInNewPage", {
                 label: webPartStrings.PropertyPane.SearchBoxSettingsGroup.SearchInNewPageLabel
+            }),
+            PropertyPaneToggle("reQueryOnClear", {
+                label: webPartStrings.PropertyPane.SearchBoxSettingsGroup.ReQueryOnClearLabel
             })
         ];
 

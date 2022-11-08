@@ -14,7 +14,7 @@ define([], function() {
         Verticals: {
           PropertyLabel: "Search Verticals",
           PanelHeader: "Configure search verticals",
-          PanelDescription: "Add a new vertical to allow users to search in a predefined scope or data source. To use it, you must connect this Web Part to one or more 'Search Results' Web Parts as verticals control visiblity over connected components.",
+          PanelDescription: "Add a new vertical to allow users to search in a predefined scope or data source. To use it, you must connect this Web Part to one or more 'Search Results' Web Parts as verticals control visibility over connected components.",
           ButtonLabel: "Configure verticals",
           DefaultVerticalQueryStringParamLabel: "Query string parameter to use to select a vertical tab by default",
           DefaultVerticalQueryStringParamDescription: "The match will be done against the tab name or the current page URL (if the tab is an hyperlink)",

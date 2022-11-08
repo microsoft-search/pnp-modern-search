@@ -890,7 +890,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         // tryGetValue() will resolve to '' if no Web Part is connected or if the connection is removed
         // The value can be also 'undefined' if the data source is not already loaded on the page.
         let inputQueryFromDataSource = "";
-        if (this.properties.queryText) {
+        if (this.properties.queryText && this.properties.useInputQueryText) {
             try {
                 inputQueryFromDataSource = DynamicPropertyHelper.tryGetValueSafe(this.properties.queryText);
                 if (inputQueryFromDataSource !== undefined && typeof (inputQueryFromDataSource) === 'string') {
@@ -923,9 +923,14 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     private async loadMsGraphToolkit() {
 
         // Load Microsoft Graph Toolkit dynamically
-        const { Providers, SharePointProvider } = await import(
+        const { Providers } = await import(
             /* webpackChunkName: 'microsoft-graph-toolkit' */
-            '@microsoft/mgt/dist/es6'
+            '@microsoft/mgt-react/dist/es6'
+        );
+
+        const { SharePointProvider } = await import(
+            /* webpackChunkName: 'microsoft-graph-toolkit' */
+            '@microsoft/mgt-sharepoint-provider/dist/es6'
         );
 
         if (!Providers.globalProvider) {
@@ -959,6 +964,9 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 if (extensibilityLibrary.registerHandlebarsCustomizations)
                     extensibilityLibrary.registerHandlebarsCustomizations(this.templateService.Handlebars);
 
+                // Registers event handler for custom action in Adaptive Cards
+                if (extensibilityLibrary.invokeCardAction)
+                    this.templateService.AdaptiveCardsExtensibilityLibraries = this.templateService.AdaptiveCardsExtensibilityLibraries.concat(extensibilityLibrary); 
             });
         }
     }

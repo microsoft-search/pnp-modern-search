@@ -1,9 +1,4 @@
-interface ITemplateRendererState {
-    
-    /**
-     * The handlebar compiled template
-     */
-    processedTemplate: string;
+interface ITemplateRendererState {   
 }
 
 export default ITemplateRendererState;

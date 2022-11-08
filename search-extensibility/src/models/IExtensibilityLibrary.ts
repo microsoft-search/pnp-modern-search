@@ -3,6 +3,7 @@ import { IComponentDefinition } from './layouts/IComponentDefinition';
 import { ILayoutDefinition } from './layouts/ILayoutDefinition';
 import { ISuggestionProviderDefinition } from './suggestions/ISuggestionProviderDefinition';
 import * as Handlebars from 'handlebars';
+import { IAdaptiveCardAction } from './IAdaptiveCardAction';
 
 export interface IExtensibilityLibrary {
 
@@ -26,4 +27,10 @@ export interface IExtensibilityLibrary {
      * @param namespace the current Web Part Handlebars namespace
      */
     registerHandlebarsCustomizations?(handlebarsNamespace: typeof Handlebars): void;
+
+    /**
+     * Allows to handle an action for an actionable adaptive card
+     * @param action the information about the action activated by the user
+     */
+    invokeCardAction(action: IAdaptiveCardAction): void;
 }

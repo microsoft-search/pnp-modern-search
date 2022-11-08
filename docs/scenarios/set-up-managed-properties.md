@@ -7,6 +7,9 @@ If you've followed [Scenario 1: Create a simple search page](create-simple-searc
 
 One of the big benefits of the PnP Modern Search Web Parts is the ability to add filters, also known as refiners.
 
+## Set up list/library columns and Managed Properties
+When creating a list column named `Foo`, this will yield a crawled property of `ows_Foo` when an item is indexed. In turn the crawled property `ows_Foo` can be mapped to e.g. the managed property `RefinableString10`, and used in search results or as a filter property.
+
 ## Set up Site Columns and Managed Properties
 
 !!! note

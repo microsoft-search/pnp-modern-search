@@ -1,4 +1,4 @@
-name: Extensibility release
+name: Release Modern Search Extensibility package
 
 on:
     workflow_dispatch:
