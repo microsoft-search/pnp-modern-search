@@ -7,6 +7,9 @@ import { PageOpenBehavior } from '../../../helpers/UrlHelper';
 import { ISearchVerticalsContainerState } from './ISearchVerticalsContainerState';
 import { BuiltinTokenNames } from '../../../services/tokenService/TokenService';
 import { isEmpty } from '@microsoft/sp-lodash-subset';
+import { Log } from '@microsoft/sp-core-library';
+
+const VerticalContainer_LogSource = "PnPModernSearch:PanelComponent";
 
 export default class SearchVerticalsContainer extends React.Component<ISearchVerticalsContainerProps, ISearchVerticalsContainerState> {
 
@@ -41,7 +44,7 @@ export default class SearchVerticalsContainer extends React.Component<ISearchVer
 
     const renderPivotItems = this.props.verticals.map(vertical => {
 
-      let pivotItemProps: IPivotItemProps = {};
+      const pivotItemProps: IPivotItemProps = {};
       let renderLinkIcon: JSX.Element = null;
 
       if (vertical.iconName && vertical.iconName.trim() !== "") {
@@ -50,12 +53,13 @@ export default class SearchVerticalsContainer extends React.Component<ISearchVer
 
       if (vertical.showLinkIcon) {
         renderLinkIcon = vertical.openBehavior === PageOpenBehavior.NewTab ?
-                        <Icon styles={{ root: { fontSize: 10, paddingLeft: 3 }}} iconName='NavigateExternalInline'></Icon>:
-                        <Icon styles={{ root: { fontSize: 10, paddingLeft: 3 }}} iconName='Link'></Icon>;
+                        <Icon styles={{ root: { fontSize: 10, paddingLeft: 3 }}} iconName='NavigateExternalInline' />:
+                        <Icon styles={{ root: { fontSize: 10, paddingLeft: 3 }}} iconName='Link' />;
       }
 
       return  <PivotItem
                 headerText={vertical.tabName}
+                key={vertical.key}
                 itemKey={vertical.key}                
                 onRenderItemLink={(props, defaultRender) => {
 
@@ -68,8 +72,7 @@ export default class SearchVerticalsContainer extends React.Component<ISearchVer
                     return defaultRender(props);
                   }              
                 }}
-                {...pivotItemProps}>
-              </PivotItem>;
+                {...pivotItemProps} />;
     });
 
     return  <>
@@ -107,7 +110,9 @@ export default class SearchVerticalsContainer extends React.Component<ISearchVer
               document.body.removeChild(anchor);
             }
 
-          });
+          }).catch(error => {
+            Log.warn(VerticalContainer_LogSource, `Error navigating to vertical '${vertical.tabValue}' ${error}`);
+        });
           
       } else {
 

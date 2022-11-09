@@ -162,4 +162,8 @@ export class PersonaWebComponent extends BaseWebComponent {
         const personaItem = <PersonaComponent {...props} templateService={templateService} />;
         ReactDOM.render(personaItem, this);
     }
+
+    protected onDispose(): void {
+        ReactDOM.unmountComponentAtNode(this);
+    }
 }

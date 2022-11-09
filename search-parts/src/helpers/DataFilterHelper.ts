@@ -1,7 +1,6 @@
 import { isEmpty } from "@microsoft/sp-lodash-subset";
 import { IDataFilter, IDataFilterConfiguration, FilterType, IDataFilterResult, FilterComparisonOperator } from "@pnp/modern-search-extensibility";
 import { BuiltinTokenNames } from "../services/tokenService/TokenService";
-import { StringHelper } from "./StringHelper";
 
 export class DataFilterHelper {
 

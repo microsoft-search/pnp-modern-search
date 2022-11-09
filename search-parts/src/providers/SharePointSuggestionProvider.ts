@@ -18,7 +18,6 @@ export class SharePointSuggestionProvider extends BaseSuggestionProvider<IShareP
         });
     }
   
-     // @ts-ignore: overridden accessor
     public get isZeroTermSuggestionsEnabled(): boolean {
         return false;
     }

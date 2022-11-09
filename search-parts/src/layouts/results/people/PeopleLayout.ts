@@ -197,9 +197,14 @@ export class PeopleLayout extends BaseLayout<IPeopleLayoutProperties> {
     private async loadMsGraphToolkit() {
 
         // Load Microsoft Graph Toolkit dynamically
-        const { Providers, SharePointProvider } = await import(
+        const { Providers } = await import(
             /* webpackChunkName: 'microsoft-graph-toolkit' */
-            '@microsoft/mgt/dist/es6'
+            '@microsoft/mgt-react/dist/es6'
+        );
+
+        const { SharePointProvider } = await import(
+            /* webpackChunkName: 'microsoft-graph-toolkit' */
+            '@microsoft/mgt-sharepoint-provider/dist/es6'
         );
 
         if (!Providers.globalProvider) {

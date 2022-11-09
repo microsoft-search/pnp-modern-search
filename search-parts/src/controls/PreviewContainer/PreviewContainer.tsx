@@ -73,7 +73,7 @@ export default class PreviewContainer extends React.Component<IPreviewContainerP
         });
     }   
 
-    public componentWillReceiveProps(nextProps: IPreviewContainerProps) {
+    public UNSAFE_componentWillReceiveProps(nextProps: IPreviewContainerProps) {
         this.setState({
             showCallout: nextProps.showPreview
         });
