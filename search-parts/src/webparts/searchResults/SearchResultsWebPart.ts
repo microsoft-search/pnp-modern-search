@@ -2720,8 +2720,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
                         queryModifier.properties = this.properties.queryModifierProperties;
                         queryModifier.context = this.context;
-                        await queryModifier.onInit();
                         queryModifier.endWhenSuccessfull = endWhenSuccessfull;
+                        await queryModifier.onInit();
 
                         resolve(queryModifier);
                     }

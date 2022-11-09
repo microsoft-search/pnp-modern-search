@@ -10,7 +10,7 @@ import {
 } from "@microsoft/sp-property-pane";
 import * as commonStrings from 'CommonStrings';
 import { ServiceScope, Guid, Text } from '@microsoft/sp-core-library';
-import { sortBy, isEmpty, uniq, cloneDeep, isEqual } from "@microsoft/sp-lodash-subset";
+import { sortBy, isEmpty, uniq, cloneDeep } from "@microsoft/sp-lodash-subset";
 import { PagingBehavior } from "@pnp/modern-search-extensibility";
 import { IDataContext } from "@pnp/modern-search-extensibility";
 import { SortFieldDirection } from "@pnp/modern-search-extensibility";
@@ -777,7 +777,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         searchQuery.Querytext = dataContext.inputQueryText;
 
         searchQuery.EnableQueryRules = this.properties.enableQueryRules;
-        if(searchQuery.EnableQueryRules == true || searchQuery.EnableQueryRules == null)  {
+        if (searchQuery.EnableQueryRules == true || searchQuery.EnableQueryRules == null) {
             searchQuery.EnableInterleaving = false;
         }
 
