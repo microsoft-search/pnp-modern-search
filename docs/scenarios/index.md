@@ -8,7 +8,7 @@ We can create a search-driven experience simply by adding the PnP Modern Search 
 
 ## [Set up Managed Properties](set-up-managed-properties.md)
 
-In order to use your custom column values as filters in your PnP Modern Search search solutions, those columns must be Site Columns (usually included in Content Types) and they must be mapped to Managed Properties.
+In order to use your custom column values as filters in your PnP Modern Search search solutions, those columns must be mapped to refinable manage properties and they must be mapped to Managed Properties.
 
 ## [Build a page with filters](page-with-filters.md)
 

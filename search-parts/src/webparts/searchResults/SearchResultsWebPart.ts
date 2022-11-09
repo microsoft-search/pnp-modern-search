@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
-import { Version, Text, DisplayMode, ServiceScope, Log, Guid } from '@microsoft/sp-core-library';
+import { Version, Text, DisplayMode, ServiceScope, Log } from '@microsoft/sp-core-library';
 import { IComboBoxOption, Toggle, IToggleProps, MessageBarType, MessageBar, Link } from 'office-ui-fabric-react';
 import { IWebPartPropertiesMetadata } from '@microsoft/sp-webpart-base';
 import * as webPartStrings from 'SearchResultsWebPartStrings';
@@ -67,7 +67,6 @@ import { PropertyPaneAsyncCombo } from '../../controls/PropertyPaneAsyncCombo/Pr
 import { DynamicPropertyHelper } from '../../helpers/DynamicPropertyHelper';
 import { IQueryModifierConfiguration } from '../../queryModifier/IQueryModifierConfiguration';
 import { PropertyPaneTabsField } from '../../controls/PropertyPaneTabsField/PropertyPaneTabsField';
-import * as strings from 'CommonStrings';
 
 const LogSource = "SearchResultsWebPart";
 
@@ -995,9 +994,14 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     private async loadMsGraphToolkit() {
 
         // Load Microsoft Graph Toolkit dynamically
-        const { Providers, SharePointProvider } = await import(
+        const { Providers } = await import(
             /* webpackChunkName: 'microsoft-graph-toolkit' */
-            '@microsoft/mgt/dist/es6'
+            '@microsoft/mgt-react/dist/es6'
+        );
+
+        const { SharePointProvider } = await import(
+            /* webpackChunkName: 'microsoft-graph-toolkit' */
+            '@microsoft/mgt-sharepoint-provider/dist/es6'
         );
 
         if (!Providers.globalProvider) {

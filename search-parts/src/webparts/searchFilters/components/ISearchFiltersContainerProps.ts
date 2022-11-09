@@ -1,4 +1,4 @@
-import { IDataFilterConfiguration, IDataFilter, IDataFilterResult, LayoutRenderType } from "@pnp/modern-search-extensibility";
+import { IDataFilterConfiguration, IDataFilter, IDataFilterResult } from "@pnp/modern-search-extensibility";
 import ISearchFiltersWebPartProps from "../ISearchFiltersWebPartProps";
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import { ITemplateService } from "../../../services/templateService/ITemplateService";

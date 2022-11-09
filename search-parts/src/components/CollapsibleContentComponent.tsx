@@ -84,7 +84,7 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
 
         const groupedList = <GroupedList
             items={[
-                <div dangerouslySetInnerHTML={{ __html: this._domPurify.sanitize(this.props.contentTemplate) }}></div>
+                <div key={'template'} dangerouslySetInnerHTML={{ __html: this._domPurify.sanitize(this.props.contentTemplate) }}></div>
             ]}
             styles={{
                 root: {
@@ -210,5 +210,9 @@ export class CollapsibleContentWebComponent extends BaseWebComponent {
         />;
 
         ReactDOM.render(collapsibleContent, this);
+    }
+
+    protected onDispose(): void {
+        ReactDOM.unmountComponentAtNode(this);
     }
 }

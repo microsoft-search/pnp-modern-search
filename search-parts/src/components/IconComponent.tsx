@@ -1,4 +1,4 @@
- import * as React from 'react';
+import * as React from 'react';
 import { BaseWebComponent } from '@pnp/modern-search-extensibility';
 import * as ReactDOM from 'react-dom';
 import { Icon, ITheme } from 'office-ui-fabric-react';
@@ -26,22 +26,25 @@ export interface IIconState {
 }
 
 export class FileIcon extends React.Component<IIconProps, IIconState> {
-    
+
     public render() {
         return <Icon iconName={this.props.name} theme={this.props.themeVariant as ITheme} />;
     }
 }
 
 export class IconWebComponent extends BaseWebComponent {
-   
+
     public constructor() {
-        super(); 
+        super();
     }
- 
+
     public async connectedCallback() {
- 
-       let props = this.resolveAttributes();
-       const fileIcon = <div style={{ display: 'flex' }}><FileIcon {...props}/></div>;
-       ReactDOM.render(fileIcon, this);
-    }    
+        let props = this.resolveAttributes();
+        const fileIcon = <div style={{ display: 'flex' }}><FileIcon {...props} /></div>;
+        ReactDOM.render(fileIcon, this);
+    }
+
+    protected onDispose(): void {
+        ReactDOM.unmountComponentAtNode(this);
+    }
 }

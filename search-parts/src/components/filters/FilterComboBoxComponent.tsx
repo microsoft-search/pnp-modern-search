@@ -494,6 +494,10 @@ export class FilterComboBoxWebComponent extends BaseWebComponent {
         ReactDOM.render(filterComboBox, this);
     }
 
+    protected onDispose(): void {
+        ReactDOM.unmountComponentAtNode(this);
+    }
+
     private toBoolean(value: string): boolean {
         if (/^(true|false)$/.test(value)) {
             return (value === 'true');
