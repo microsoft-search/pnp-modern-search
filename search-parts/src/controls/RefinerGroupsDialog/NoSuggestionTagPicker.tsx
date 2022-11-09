@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { TagPicker, ITag } from 'office-ui-fabric-react';
-import { equals } from '@microsoft/mgt';
+import { equals } from '@microsoft/mgt-react';
 
 export interface INoSuggestionTagPickerProps {
-	onChanged: (text: string) => void;		
+	onChanged: (text: string) => void;
 	value: string;
 }
 
@@ -37,7 +37,7 @@ export default class NoSuggestionTagPicker extends React.Component<INoSuggestion
 			this.setState({ options: this.getDialogOptions() ?? [] });
 		}
 
-		if (!equals(prevState.options,this.state.options)) {
+		if (!equals(prevState.options, this.state.options)) {
 			this.props.onChanged(this.state.options.map(_ => _.name).join(','));
 		}
 	}
