@@ -21,7 +21,7 @@ As a result, we accept pull requests from the community. You can refer to [this 
     
     **Your PR will be automatically rejected if**
 
-    - It alters too much of the solution core architecture or the amount of code is too substantial to be reviewed properly
+    - It alters too much of the solution core architecture or the amount of code is too substantial to be reviewed properly.
     - You don't provide any detailled steps to test it.
     - It contains a new feature that was not discussed previously with the maintainers.
 
