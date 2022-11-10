@@ -65,6 +65,13 @@ export class TemplateRenderer extends React.Component<ITemplateRendererProps, IT
     }
 
     private async updateTemplate(props: ITemplateRendererProps): Promise<void> {
+
+        // If the template renderer current is empty, we don't need to do anything, this will be called again when the template is ready
+        // due to having no control on the ref we have to check this here and each time we want to acccess the prop?! 
+        if (!this._divTemplateRenderer.current) {
+            return;
+        }
+
         let templateContent = props.templateContent;
 
         // Process the Handlebars template
@@ -125,10 +132,17 @@ export class TemplateRenderer extends React.Component<ITemplateRendererProps, IT
 
             template = `<style>${prefixedStyles.join(' ')}</style><div id="${TEMPLATE_ID_PREFIX}${this.props.instanceId}">${templateAsHtml.body.innerHTML}</div>`;
 
+            if (!this._divTemplateRenderer.current) {
+                return;
+            }
+
             this._divTemplateRenderer.current.innerHTML = template;
 
         } else if (props.renderType == LayoutRenderType.AdaptiveCards && template instanceof HTMLElement) {
 
+            if (!this._divTemplateRenderer.current) {
+                return;
+            }
             this._divTemplateRenderer.current.innerHTML = "";
             this._divTemplateRenderer.current.appendChild(template as HTMLElement);
         }

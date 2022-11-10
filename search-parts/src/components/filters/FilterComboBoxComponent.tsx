@@ -10,6 +10,7 @@ import * as strings from 'CommonStrings';
 import { cloneDeep, isEqual, sortBy } from '@microsoft/sp-lodash-subset';
 import 'core-js/features/dom-collections';
 import { FilterValueOperator } from './FilterValueOperatorComponent';
+import { Constants } from '../../common/Constants';
 
 type FilterMultiEventCallback = () => void;
 
@@ -31,7 +32,7 @@ export interface IFilterComboBoxProps {
     /**
      * The operator to use between filter values
      */
-    operator?: FilterConditionOperator;    
+    operator?: FilterConditionOperator;
 
     /**
      * The options to display in the combo box
@@ -102,9 +103,9 @@ export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilte
     private _initialSelectedValues: IDataFilterValueInfo[] = [];
 
     public constructor(props: IFilterComboBoxProps) {
-        
+
         super(props);
-        
+
         this.state = {
             selectedOptionKeys: [],
             options: cloneDeep(props.defaultOptions),
@@ -120,12 +121,12 @@ export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilte
         this._updatedOperator = this._updatedOperator.bind(this);
         this._onChange = this._onChange.bind(this);
     }
-    
+
     public render() {
 
         const wrapperClassName = mergeStyles({
             selectors: {
-              '& .ms-ComboBox': { maxWidth: '250px' }
+                '& .ms-ComboBox': { maxWidth: '250px' }
             }
         });
 
@@ -134,14 +135,14 @@ export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilte
         let foundValuesCount = 0;
         // Filter the current collection by the search value
         if (this.state.searchValue) {
-            
+
             options = this.state.options.filter(option => {
 
                 if (option.text && option.text.toLocaleLowerCase().indexOf(this.state.searchValue.toLocaleLowerCase()) !== -1) {
                     foundValuesCount++;
                     return true;
                 }
-    
+
                 if (option.key && (option.key as string).toLocaleLowerCase().indexOf(this.state.searchValue.toLocaleLowerCase()) !== -1) {
                     foundValuesCount++;
                     return true;
@@ -159,77 +160,77 @@ export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilte
         }
 
         let renderIcon: JSX.Element = null;
-        let renderCombo: JSX.Element =  <Fabric className={wrapperClassName}>
-                                            <ComboBox 
-                                                allowFreeform={true}
-                                                text={this.state.searchValue ? this.state.searchValue : this.props.defaultOptions.filter(option => option.selected).map(option => option.text).join(',')}
-                                                componentRef={this.comboRef}
-                                                disabled={this.props.defaultOptions.length === 0}     
-                                                selectedKey={this.state.selectedOptionKeys}                                         
-                                                options={options} // This will be mutated by the combo box when values are selected/unselected
-                                                placeholder={this.props.defaultOptions.length === 0 ? strings.Filters.FilterNoValuesMessage : strings.Filters.ComboBoxPlaceHolder}
-                                                onRenderOption={this._onRenderOption}
-                                                useComboBoxAsMenuWidth={!this.props.isMulti}
-                                                onPendingValueChanged={(option?: IComboBoxOption, index?: number, value?: string)=> {
-                                                    // Open the combo box
-                                                    this.comboRef.current.focus(true);
+        let renderCombo: JSX.Element = <Fabric className={wrapperClassName}>
+            <ComboBox
+                allowFreeform={true}
+                text={this.state.searchValue ? this.state.searchValue.replace(Constants.PNP_MODERN_SEARCH_FILTER_GROUP_PREFIX, '') : this.props.defaultOptions.filter(option => option.selected).map(option => option.text.replace(Constants.PNP_MODERN_SEARCH_FILTER_GROUP_PREFIX, '')).join(',')}
+                componentRef={this.comboRef}
+                disabled={this.props.defaultOptions.length === 0}
+                selectedKey={this.state.selectedOptionKeys}
+                options={options} // This will be mutated by the combo box when values are selected/unselected
+                placeholder={this.props.defaultOptions.length === 0 ? strings.Filters.FilterNoValuesMessage : strings.Filters.ComboBoxPlaceHolder}
+                onRenderOption={this._onRenderOption}
+                useComboBoxAsMenuWidth={!this.props.isMulti}
+                onPendingValueChanged={(option?: IComboBoxOption, index?: number, value?: string) => {
+                    // Open the combo box
+                    this.comboRef.current.focus(true);
 
-                                                    // A new value has been entered
-                                                    if (value !== undefined) {
-                                                        this.setState({
-                                                            searchValue: value
-                                                        });
-                                                    }
-                                                }}
-                                                autoComplete='off'
-                                                styles={{
-                                                    optionsContainerWrapper: {
-                                                        overflow: 'hidden'
-                                                    },
-                                                    input: {
-                                                        backgroundColor: 'inherit'
-                                                    },
-                                                    header:{
-                                                        height: '100%'
-                                                    }
-                                                }}
-                                                multiSelect={this.props.isMulti}
-                                                onChange={this._onChange}            
-                                            />
-                                        </Fabric>;
+                    // A new value has been entered
+                    if (value !== undefined) {
+                        this.setState({
+                            searchValue: value
+                        });
+                    }
+                }}
+                autoComplete='off'
+                styles={{
+                    optionsContainerWrapper: {
+                        overflow: 'hidden'
+                    },
+                    input: {
+                        backgroundColor: 'inherit'
+                    },
+                    header: {
+                        height: '100%'
+                    }
+                }}
+                multiSelect={this.props.isMulti}
+                onChange={this._onChange}
+            />
+        </Fabric>;
 
         if ((!this.props.isMulti && this.state.selectedOptionKeys.length > 0) ||
             this.props.isMulti && this._initialOptions.filter(option => option.selected).length > 0) {
 
-            renderIcon =    <Label>
-                                <Icon
-                                    iconName='ClearFilter' 
-                                    onClick={() => {
-                                        
-                                        if (!this.props.isMulti) {
-                                            const selectedValueIdx = this.state.selectedValues.map(value => { return value.value; }).indexOf(this.comboRef.current.selectedOptions[0].key as string);
+            renderIcon = <Label>
+                <Icon
+                    iconName='ClearFilter'
+                    onClick={() => {
 
-                                            if (selectedValueIdx !== -1) {
-                                                const updatedSelectedValues = update(this.state.selectedValues, { [selectedValueIdx]: { selected: { $set: false }}});
-    
-                                                this.setState({
-                                                    selectedValues: updatedSelectedValues
-                                                });
-                                           
-                                                this.props.onChange(updatedSelectedValues);
-                                            }
-                                        } else {
-                                            this._clearFilters();
-                                        }
-                                    }}>
-                                </Icon>
-                            </Label>;
+                        if (!this.props.isMulti) {
+                            const selectedValueIdx = this.state.selectedValues.map(value => { return value.value; }).indexOf(this.comboRef.current.selectedOptions[0].key as string);
+
+                            if (selectedValueIdx !== -1) {
+                                const updatedSelectedValues = update(this.state.selectedValues, { [selectedValueIdx]: { selected: { $set: false } } });
+
+                                this.setState({
+                                    selectedValues: updatedSelectedValues
+                                });
+
+                                this.props.onChange(updatedSelectedValues);
+                            }
+                        } else {
+                            this._clearFilters();
+                        }
+                    }}>
+                </Icon>
+            </Label>;
         }
-        
-        return  <div className={styles.filterComboBox}>
-                    {renderCombo}
-                    {renderIcon}
-                </div>;
+
+        return <div className={styles.filterComboBox}>
+            {renderCombo}
+            {renderIcon}
+        </div>;
     }
 
     public componentDidMount() {
@@ -259,7 +260,6 @@ export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilte
     }
 
     public async _onChange(event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) {
-
         let selectedKeys = this.state.selectedOptionKeys;
 
         if (option) {
@@ -269,7 +269,7 @@ export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilte
             const selectedKeyIdx = this.state.selectedOptionKeys.indexOf(option.key as string);
 
             if (option.selected && selectedKeyIdx === -1) {
-                selectedKeys = update(this.state.selectedOptionKeys, {$push: [option.key as string] });
+                selectedKeys = update(this.state.selectedOptionKeys, { $push: [option.key as string] });
             } else {
                 selectedKeys = update(this.state.selectedOptionKeys, { $splice: [[selectedKeyIdx, 1]] });
             }
@@ -283,27 +283,27 @@ export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilte
 
             // Get the corresponding value in selected values and change the selected flag
             const selectedValueIdx = this.state.selectedValues.map(selectedValue => { return selectedValue.value; }).indexOf(option.key as string);
-    
+
             // The 'selected' flag is not updated when not multi so we use the opposite as the previous value
             const isSelected = this.props.isMulti ? option.selected : !option.selected;
-    
+
             if (selectedValueIdx !== -1) {
-    
+
                 if (!option.selected && this.props.isMulti) {
                     // Don't remove the value from the selected filter values but set it as unselected
-                    updatedSelectedValues = update(this.state.selectedValues, { [selectedValueIdx]: { selected: { $set: false } }});
+                    updatedSelectedValues = update(this.state.selectedValues, { [selectedValueIdx]: { selected: { $set: false } } });
                 } else {
-                    updatedSelectedValues = update(this.state.selectedValues, { [selectedValueIdx]: { selected: { $set: isSelected }, name: {$set: option.data.textWithoutCount } }});
+                    updatedSelectedValues = update(this.state.selectedValues, { [selectedValueIdx]: { selected: { $set: isSelected }, name: { $set: option.data.textWithoutCount } } });
                 }
-    
+
             } else {
-    
+
                 const dataFilterValues: IDataFilterValueInfo = {
                     name: option.data.textWithoutCount,
                     value: option.key as string,
                     selected: isSelected
                 };
-    
+
                 updatedSelectedValues = update(this.state.selectedValues, { $push: [dataFilterValues] });
             }
 
@@ -316,7 +316,7 @@ export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilte
             if (!this.props.isMulti) {
                 this.props.onChange(updatedSelectedValues);
             }
-        } 
+        }
     }
 
     /**
@@ -346,10 +346,9 @@ export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilte
 
     private _onRenderOption(option: IComboBoxOption, defaultRender?: (renderProps?: IComboBoxOption) => JSX.Element) {
 
-        switch(option.key) {
+        switch (option.key) {
 
             case FILTER_MULTI_KEY:
-
                 return (
                     <div style={{
                         fontWeight: 'normal',
@@ -379,24 +378,26 @@ export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilte
                     }}>
                         <FilterValueOperator
                             onFilterOperatorUpdated={this._updatedOperator}
-                            operator={this.props.operator} 
+                            operator={this.props.operator}
                             themeVariant={this.props.themeVariant}
                         />
                     </div>
                 );
-            
+
             default:
-                return defaultRender(option);
+                const copy = cloneDeep(option);
+                copy.text = option.text.replace(Constants.PNP_MODERN_SEARCH_FILTER_GROUP_PREFIX, '');
+                return defaultRender(copy);
         }
     }
 }
 
 export class FilterComboBoxWebComponent extends BaseWebComponent {
-   
+
     public constructor() {
-        super(); 
+        super();
     }
- 
+
     public async connectedCallback() {
 
         let props = this.resolveAttributes();
@@ -414,7 +415,7 @@ export class FilterComboBoxWebComponent extends BaseWebComponent {
                     text: props.showCount ? `${htmlOption.text} (${Number(htmlOption.getAttribute('data-count'))})` : htmlOption.text,
                     itemType: SelectableOptionMenuItemType.Normal,
                     disabled: this.toBoolean(htmlOption.getAttribute('data-disabled')),
-                    selected:  this.toBoolean(htmlOption.getAttribute('data-selected')),
+                    selected: this.toBoolean(htmlOption.getAttribute('data-selected')),
                     data: {
                         textWithoutCount: htmlOption.text
                     },
@@ -460,37 +461,37 @@ export class FilterComboBoxWebComponent extends BaseWebComponent {
                 );
             }
         }
-        
-        filterComboBox =  <FilterComboBox
-                                {...props} 
-                                defaultOptions={options}  
-                                onChange={((filterValues: IDataFilterValueInfo[], forceUpdate?: boolean, operator?: FilterConditionOperator) => {
-                                    // Bubble event through the DOM
-                                    this.dispatchEvent(new CustomEvent(ExtensibilityConstants.EVENT_FILTER_UPDATED, { 
-                                        detail: {                                       
-                                            filterName: props.filterName,
-                                            filterValues: filterValues,
-                                            instanceId: props.instanceId,
-                                            forceUpdate: forceUpdate,
-                                            operator: operator // Specific the operator explicitly
-                                        } as IDataFilterInfo, 
-                                        bubbles: true,
-                                        cancelable: true
-                                    }));
-                                }).bind(this)}
-                                onClear={(() => {
-                                    // Bubble event through the DOM
-                                    this.dispatchEvent(new CustomEvent(ExtensibilityConstants.EVENT_FILTER_CLEAR_ALL, { 
-                                        detail: {
-                                            filterName: props.filterName,
-                                            instanceId: props.instanceId
-                                        },
-                                        bubbles: true,
-                                        cancelable: true
-                                    }));
-                                }).bind(this)}
-                            />;
-        
+
+        filterComboBox = <FilterComboBox
+            {...props}
+            defaultOptions={options}
+            onChange={((filterValues: IDataFilterValueInfo[], forceUpdate?: boolean, operator?: FilterConditionOperator) => {
+                // Bubble event through the DOM
+                this.dispatchEvent(new CustomEvent(ExtensibilityConstants.EVENT_FILTER_UPDATED, {
+                    detail: {
+                        filterName: props.filterName,
+                        filterValues: filterValues,
+                        instanceId: props.instanceId,
+                        forceUpdate: forceUpdate,
+                        operator: operator // Specific the operator explicitly
+                    } as IDataFilterInfo,
+                    bubbles: true,
+                    cancelable: true
+                }));
+            }).bind(this)}
+            onClear={(() => {
+                // Bubble event through the DOM
+                this.dispatchEvent(new CustomEvent(ExtensibilityConstants.EVENT_FILTER_CLEAR_ALL, {
+                    detail: {
+                        filterName: props.filterName,
+                        instanceId: props.instanceId
+                    },
+                    bubbles: true,
+                    cancelable: true
+                }));
+            }).bind(this)}
+        />;
+
         ReactDOM.render(filterComboBox, this);
     }
 

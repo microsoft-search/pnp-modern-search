@@ -1,5 +1,5 @@
 export class Constants {
-    
+
     /**
      * Unique ID for the default extensibility SPFx library component
      */
@@ -20,6 +20,11 @@ export class Constants {
      */
     public static readonly PNP_APP_INSIGHTS_INSTRUMENTATION_KEY = '0f0b9db6-680c-480c-804d-f75830e2c383';
     public static readonly PNP_MODERN_SEARCH_EVENT_NAME = 'pnpModernSearchV4';
+
+    /**
+     * This is used for grouped filter labels to distinguish them from other labels
+     */
+    public static readonly PNP_MODERN_SEARCH_FILTER_GROUP_PREFIX = 'pnpModernSearchFilterGroup-';
 }
 
 export enum AutoCalculatedDataSourceFields {
