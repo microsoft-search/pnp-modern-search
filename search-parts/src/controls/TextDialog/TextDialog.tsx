@@ -7,7 +7,7 @@ import { ITextDialogState }                  	from './ITextDialogState';
 import styles                                   from './TextDialog.module.scss';
 import './AceEditor.module.scss';
 import { TextField } from 'office-ui-fabric-react';
-import { Icon } from 'office-ui-fabric-react';
+import { Icon } from '@fluentui/react/lib/Icon'
 const AceEditor = React.lazy(() => import(/* webpackChunkName: 'pnp-modern-search-code-editor' */ 'react-ace'));
 
 export default class TextDialog extends React.Component<ITextDialogProps, ITextDialogState> {
