@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { BaseWebComponent } from '@pnp/modern-search-extensibility';
 import * as ReactDOM from 'react-dom';
-import { Icon, ITheme } from 'office-ui-fabric-react';
+import { ITheme } from '@fluentui/react';
+import { Icon } from '@fluentui/react/lib/Icon'
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 
 export interface IIconProps {

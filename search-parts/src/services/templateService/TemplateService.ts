@@ -10,7 +10,7 @@ import { PageContext } from "@microsoft/sp-page-context";
 import { IComponentDefinition, IExtensibilityLibrary, IResultTemplates, LayoutRenderType } from "@pnp/modern-search-extensibility";
 import groupBy from 'handlebars-group-by';
 import { IComponentFieldsConfiguration } from "../../models/common/IComponentFieldsConfiguration";
-import { initializeFileTypeIcons } from '@uifabric/file-type-icons';
+import { initializeFileTypeIcons } from '@fluentui/react-file-type-icons';
 import { GlobalSettings } from 'office-ui-fabric-react';
 import { IDataResultType, ResultTypeOperator } from "../../models/common/IDataResultType";
 import { ISearchResultsTemplateContext, ISearchFiltersTemplateContext } from "../../models/common/ITemplateContext";
@@ -22,8 +22,6 @@ import { ServiceScopeHelper } from "../../helpers/ServiceScopeHelper";
 import { DomPurifyHelper } from "../../helpers/DomPurifyHelper";
 import * as DOMPurify from 'dompurify';
 import { IAdaptiveCardAction } from '@pnp/modern-search-extensibility';
-//import { useLocalFluentUI } from '../../controls/TemplateRenderer/fluentUI';   
-//import { Action, CardElement } from "adaptivecards";
 
 const TemplateService_ServiceKey = 'PnPModernSearchTemplateService';
 const TemplateService_LogSource = "PnPModernSearch:TemplateService";

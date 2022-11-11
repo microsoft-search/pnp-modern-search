@@ -1,6 +1,6 @@
 import { Action, CardElement, CardObjectRegistry, HostConfig } from "adaptivecards";
-import { initializeIcons } from "office-ui-fabric-react/lib/Icons";
-import { createTheme, getTheme, ITheme } from "office-ui-fabric-react/lib/Styling";
+import { initializeIcons } from '@fluentui/font-icons-mdl2';
+import { createTheme, getTheme, ITheme } from "@fluentui/react/lib/Styling";
 import { FluentUIExecuteAction, FluentUIOpenUrlAction, FluentUIShowCardAction, FluentUISubmitAction, FluentUIToggleVisibilityAction } from "./Actions";
 import { FluentUIChoiceSetInput, FluentUIDateInput, FluentUINumberInput, FluentUITextInput, FluentUITimeInput, FluentUIToggleInput } from "./Elements";
 
