@@ -123,18 +123,14 @@ define([], function() {
                 EnableTelemetryOn: "Włącz telemetrię",
                 EnableTelemetryOff: "Wyłącz telemetrię"
             },
-            CustomQueryModifierPage:{
-              QueryModifierGroup: {
-                  GroupName: "Niestandardowe modyfikatory zapytań",
-                  EnableQueryModifiers: "Włączanie niestandardowych modyfikatorów zapytań",
+            CustomQueryModifier: {
                   EditQueryModifiersLabel: "Konfiguracja dostępnych niestandardowych modyfikatorów zapytań",
                   QueryModifiersLabel: "Własne modyfikatory zapytań",
                   QueryModifiersDescription: "Włączanie lub wyłączanie poszczególnych własnych modyfikatorów zapytań",
                   EnabledPropertyLabel: "Włączone",
                   ModifierNamePropertyLabel: "Nazwa",
                   ModifierDescriptionPropertyLabel: "Opis",
-                  EndWhenSuccessfullPropertyLabel:"Zakończ po pomyślnym zakończeniu"
-              }
+                  EndWhenSuccessfullPropertyLabel:"Zakończ po pomyślnym zakończeniu"              
             }
         }
     }

@@ -123,18 +123,14 @@ define([], function() {
           EnableTelemetryOn: "Slå på telemetri",
           EnableTelemetryOff: "Slå av telemetri"
         },
-        CustomQueryModifierPage:{
-          QueryModifierGroup: {
-              GroupName: "Tilpassede spørringsmodifikatorer",
-              EnableQueryModifiers: "Aktiver tilpassede søkemodifikatorer",
+        CustomQueryModifier: {
               EditQueryModifiersLabel: "Konfigurer tilgjengelige tilpassede spørringsmodifikatorer",
               QueryModifiersLabel: "Tilpassede spørringsmodifikatorer",
               QueryModifiersDescription: "Aktiver eller deaktiver individuelle tilpassede søkemodifikatorer",
               EnabledPropertyLabel: "Aktivert",
               ModifierNamePropertyLabel: "Navn",
               ModifierDescriptionPropertyLabel: "Beskrivelse",
-              EndWhenSuccessfullPropertyLabel:"Avslutt når det er vellykket"
-          }
+              EndWhenSuccessfullPropertyLabel:"Avslutt når det er vellykket"          
         }
       }
     }

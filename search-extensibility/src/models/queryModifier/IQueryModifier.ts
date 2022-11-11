@@ -1,6 +1,5 @@
 import { IPropertyPaneGroup } from "@microsoft/sp-property-pane";
 import { WebPartContext } from '@microsoft/sp-webpart-base';
-import { IDataContext } from "../dataSources/IDataContext";
 
 export interface IQueryModifier {
   /**
@@ -26,11 +25,9 @@ export interface IQueryModifier {
 
   /**
    * Modify the querytext and retrieve it
-   * @param searchQuery the querytext
-   * @param dataContext the current dataContext
-   * @param resolveTokens the resolve tokens function from TokenService
+   * @param queryText the querytext   
    */
-  modifyQuery(queryText: string, dataContext: IDataContext, resolveTokens: (string: string) => Promise<string>): Promise<string>;
+  modifyQuery(queryText: string): Promise<string>;
 
   /**
    * Returns the data source property pane option fields if any.

@@ -1,7 +1,6 @@
 import { ServiceScope } from '@microsoft/sp-core-library';
 import { IPropertyPaneGroup } from '@microsoft/sp-property-pane';
 import { WebPartContext } from '@microsoft/sp-webpart-base';
-import { IDataContext } from '../dataSources/IDataContext';
 import { IQueryModifier } from './IQueryModifier';
 
 export abstract class BaseQueryModifier<T> implements IQueryModifier {
@@ -52,7 +51,7 @@ export abstract class BaseQueryModifier<T> implements IQueryModifier {
         // Do nothing by default      
     }
 
-    public modifyQuery(queryText: string, dataContext: IDataContext, resolveTokens: (string: string) => Promise<string>): Promise<string> {
+    public modifyQuery(queryText: string): Promise<string> {
         throw new Error('Not implemented: modifyQuery');
     }
 }

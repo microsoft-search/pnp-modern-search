@@ -125,18 +125,14 @@ define([], function() {
         EnableTelemetryOn: "Activer la télémétrie",
         EnableTelemetryOff: "Désactiver la télémétrie"
       },
-      CustomQueryModifierPage:{
-        QueryModifierGroup: {
-            GroupName: "Modificateurs de requête personnalisés",
-            EnableQueryModifiers: "Activer les modificateurs de requête personnalisés",
+      CustomQueryModifier: {
             EditQueryModifiersLabel: "Configurer les modificateurs de requête personnalisés disponibles",
             QueryModifiersLabel: "Modificateurs de requête personnalisés",
             QueryModifiersDescription: "Activez ou désactivez les modificateurs de requête personnalisés individuels.",
             EnabledPropertyLabel: "Activé",
             ModifierNamePropertyLabel: "Nom",
             ModifierDescriptionPropertyLabel: "Description",
-            EndWhenSuccessfullPropertyLabel:"Fin en cas de succès"
-        }
+            EndWhenSuccessfullPropertyLabel:"Fin en cas de succès"        
       }
     }
   }

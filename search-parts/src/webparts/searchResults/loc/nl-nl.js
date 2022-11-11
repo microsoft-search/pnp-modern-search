@@ -123,18 +123,14 @@ define([], function() {
         EnableTelemetryOn: "Telemetrie inschakelen",
         EnableTelemetryOff: "Telemetrie uitschakelen"
       },
-      CustomQueryModifierPage:{
-        QueryModifierGroup: {
-            GroupName: "Aangepaste query-aanpassingen",
-            EnableQueryModifiers: "Aangepaste query-aanpassingen inschakelen",
+      CustomQueryModifier: {
             EditQueryModifiersLabel: "Beschikbare aangepaste query-aanpassingen configureren",
             QueryModifiersLabel: "Aangepaste query-aanpassingen",
             QueryModifiersDescription: "Individuele aangepaste query-aanpassingen in- of uitschakelen",
             EnabledPropertyLabel: "Ingeschakeld",
             ModifierNamePropertyLabel: "Naam",
             ModifierDescriptionPropertyLabel: "Beschrijving",
-            EndWhenSuccessfullPropertyLabel:"Beëindig bij succes"
-        }
+            EndWhenSuccessfullPropertyLabel:"Beëindig bij succes"        
       }
     }
   }

@@ -9,7 +9,7 @@ import { IQueryModifierConfiguration } from "../../queryModifier/IQueryModifierC
 
 export enum QueryTextSource {
     StaticValue,
-    DynamicValue 
+    DynamicValue
 }
 
 export default interface ISearchResultsWebPartProps extends IBaseWebPartProps {
@@ -23,7 +23,7 @@ export default interface ISearchResultsWebPartProps extends IBaseWebPartProps {
      * The data source properties. We need a weel identified property to isolate data sources (avoid playing in the root property bag values)
      */
     dataSourceProperties: {
-        [key:string]: any 
+        [key: string]: any
     };
 
     /**
@@ -64,7 +64,7 @@ export default interface ISearchResultsWebPartProps extends IBaseWebPartProps {
         /**
          * Any other property from layouts (builtin + custom)
          */
-        [key:string]: any;
+        [key: string]: any;
     };
 
     /**
@@ -179,20 +179,15 @@ export default interface ISearchResultsWebPartProps extends IBaseWebPartProps {
     enableTelemetry: boolean;
 
     /**
-     * Enables/Disables custom query transformation
-     */
-     enableCustomQueryTransformation: boolean;
-
-    /**
      * The queryModifier properties
      */
     queryModifierProperties: {
         [key: string]: any;
     };
 
-     /**
-     * Selected query modifier definition
-     */
-      queryModifierConfiguration:IQueryModifierConfiguration[];
+    /**
+    * Selected query modifier definition
+    */
+    queryModifierConfiguration: IQueryModifierConfiguration[];
 }
 

@@ -123,18 +123,14 @@ define([], function() {
         EnableTelemetryOn: "Slå på telemetri",
         EnableTelemetryOff: "Stäng av telemetri"
       },
-      CustomQueryModifierPage:{
-        QueryModifierGroup: {
-            GroupName: "Modifierare för anpassade frågor",
-            EnableQueryModifiers: "Aktivera anpassade frågebyteformer",
+      CustomQueryModifier: {
             EditQueryModifiersLabel: "Konfigurera tillgängliga modifieringar för anpassade frågor",
             QueryModifiersLabel: "Modifiering av anpassade frågor",
             QueryModifiersDescription: "Aktivera eller inaktivera enskilda anpassade frågeändringar.",
             EnabledPropertyLabel: "Aktiverad",
             ModifierNamePropertyLabel: "Namn",
             ModifierDescriptionPropertyLabel: "Beskrivning",
-            EndWhenSuccessfullPropertyLabel:"Avsluta när det är lyckat"
-        }
+            EndWhenSuccessfullPropertyLabel:"Avsluta när det är lyckat"        
       }
     }
   }

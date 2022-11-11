@@ -268,14 +268,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         }
 
         if (this.dataSource) {
-            this._currentDataContext = this.getDataContext();
-
-            //Check if any custom query modifier is active and modify the inputQueryText
-            if (this._selectedCustomQueryModifier && this._selectedCustomQueryModifier.length > 0) {
-                this._currentDataContext.inputQueryText = await this.getModifiedInputQueryText(this._currentDataContext.inputQueryText, this._currentDataContext);
-                this.tokenService.setTokenValue(BuiltinTokenNames.inputQueryText, this._currentDataContext.inputQueryText);
-                this.tokenService.setTokenValue(BuiltinTokenNames.searchTerms, this._currentDataContext.inputQueryText);
-            }
+            this._currentDataContext = await this.getDataContext();
         }
         return this.renderCompleted();
     }
@@ -593,7 +586,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         let layoutSlotsGroup: IPropertyPaneGroup[] = [];
         let commonDataSourceProperties: IPropertyPaneGroup[] = [];
         let extensibilityConfigurationGroups: IPropertyPaneGroup[] = [];
-        let queryModifierOptionGroups: IPropertyPaneGroup[] = [];
 
         // Retrieve the property settings for the data source provider
         let dataSourceProperties: IPropertyPaneGroup[] = [];
@@ -640,6 +632,14 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 }
             ]);
 
+
+            let queryTransformationGroups: IPropertyPaneGroup[] = [];
+            if (this._selectedCustomQueryModifier.length > 0 && !this.errorMessage) {
+                this._selectedCustomQueryModifier.forEach(modifier => {
+                    queryTransformationGroups = queryTransformationGroups.concat(modifier.getPropertyPaneGroupsConfiguration());
+                });
+            }
+
             // Other pages
             propertyPanePages.push(
                 {
@@ -648,32 +648,12 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 },
                 {
                     groups: [
-                        ...this.propertyPaneConnectionsGroup
+                        ...this.propertyPaneConnectionsGroup,
+                        ...queryTransformationGroups
                     ],
                     displayGroupsAsAccordion: true
                 }
             );
-
-            if (this.availableCustomQueryModifierDefinitions.length > 0) {
-                if (this._selectedCustomQueryModifier.length > 0 && !this.errorMessage) {
-                    this._selectedCustomQueryModifier.forEach(modifier => {
-                        queryModifierOptionGroups = queryModifierOptionGroups.concat(modifier.getPropertyPaneGroupsConfiguration());
-                    });
-                }
-
-                propertyPanePages.push({
-                    groups: [
-                        {
-                            groupName: webPartStrings.PropertyPane.CustomQueryModifierPage.QueryModifierGroup.GroupName,
-                            groupFields: this._getQueryModifierFields()
-                        },
-                        ...queryModifierOptionGroups
-                    ],
-                    displayGroupsAsAccordion: true
-                })
-            }
-
-
         }
 
         // Extensibility configuration
@@ -832,7 +812,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             (propertyPath.localeCompare('useInputQueryText') === 0 && !this.properties.useInputQueryText)) {
 
             const queryText = DynamicPropertyHelper.tryGetSourceSafe(this.properties.queryText);
-            if (queryText) {
+            if (queryText && queryText.unregister) {
                 queryText.unregister(this.render);
                 queryText.queryText.setValue('');
             }
@@ -855,7 +835,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             this.availableWebComponentDefinitions = AvailableComponents.BuiltinComponents;
             this.availableCustomQueryModifierDefinitions = [];
             this._selectedCustomQueryModifier = [];
-            this.properties.enableCustomQueryTransformation = false;
             this.properties.queryModifierProperties = {};
             this.properties.queryModifierConfiguration = [];
 
@@ -954,7 +933,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     /**
      * Determines the input query text value based on Dynamic Data
      */
-    private _getInputQueryTextValue(): string {
+    private async _getInputQueryTextValue(): Promise<string> {
 
         let inputQueryText: string = undefined; // {inputQueryText} token should always resolve as '' by default
 
@@ -983,6 +962,11 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         } else if (typeof (inputQueryFromDataSource) === 'string') {
             inputQueryText = decodeURIComponent(inputQueryFromDataSource);
+        }
+
+        //Check if any custom query modifier is active and modify the inputQueryText
+        if (this._selectedCustomQueryModifier && this._selectedCustomQueryModifier.length > 0) {
+            inputQueryText = await this.getModifiedInputQueryText(inputQueryText);
         }
 
         return inputQueryText;
@@ -1801,6 +1785,12 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 default:
                     break;
             }
+
+            if (this.availableCustomQueryModifierDefinitions.length > 0) {
+
+                searchQueryTextFields = searchQueryTextFields.concat(this.getQueryModifierFields());
+            }
+
         }
 
         return searchQueryTextFields;
@@ -2247,7 +2237,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         if (this.tokenService) {
 
             // Input query text
-            const inputQueryText = this._getInputQueryTextValue();
+            const inputQueryText = await this._getInputQueryTextValue();
             this.tokenService.setTokenValue(BuiltinTokenNames.inputQueryText, inputQueryText);
             this.tokenService.setTokenValue(BuiltinTokenNames.originalInputQueryText, inputQueryText);
 
@@ -2432,10 +2422,10 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     /**
    * Get the data context to be passed to the data source according to current connections/configurations
    */
-    private getDataContext(): IDataContext {
+    private async getDataContext(): Promise<IDataContext> {
 
         // Input query text
-        const inputQueryText = this._getInputQueryTextValue();
+        const inputQueryText = await this._getInputQueryTextValue();
 
         // Build the data context to pass to the data source
         let dataContext: IDataContext = {
@@ -2531,14 +2521,12 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     }
 
 
-    private async getModifiedInputQueryText(inputQueryText: string, dataContext: IDataContext): Promise<string> {
+    private async getModifiedInputQueryText(inputQueryText: string): Promise<string> {
         let queryText = inputQueryText;
-        const clonedContext = cloneDeep(dataContext);
-
         for (const modifier of this._selectedCustomQueryModifier) {
 
             //Cloned context won't be correct for inputQueryText after first modification!
-            const modifiedQueryText = await modifier.modifyQuery(queryText, clonedContext, this.tokenService.resolveTokens.bind(this.tokenService));
+            const modifiedQueryText = await modifier.modifyQuery(queryText);
             const doBreak = modifier.endWhenSuccessfull && (!isEqual(queryText, modifiedQueryText));
             queryText = modifiedQueryText;
 
@@ -2730,89 +2718,81 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         }
     }
 
-    private _getQueryModifierFields(): IPropertyPaneField<any>[] {
+    private getQueryModifierFields(): IPropertyPaneField<any>[] {
 
-        let queryTransformationFields: IPropertyPaneField<any>[] = [
-            PropertyPaneToggle("enableCustomQueryTransformation", {
-                label: webPartStrings.PropertyPane.CustomQueryModifierPage.QueryModifierGroup.EnableQueryModifiers
-            })
-        ];
+        let queryTransformationFields: IPropertyPaneField<any>[] = [];
 
-        if (this.properties.enableCustomQueryTransformation) {
-
-            queryTransformationFields.push(
-                this._propertyFieldCollectionData('queryModifierConfiguration', {
-                    manageBtnLabel: webPartStrings.PropertyPane.CustomQueryModifierPage.QueryModifierGroup.EditQueryModifiersLabel,
-                    key: 'queryModifierConfiguration',
-                    panelHeader: webPartStrings.PropertyPane.CustomQueryModifierPage.QueryModifierGroup.EditQueryModifiersLabel,
-                    panelDescription: webPartStrings.PropertyPane.CustomQueryModifierPage.QueryModifierGroup.QueryModifiersDescription,
-                    disableItemCreation: true,
-                    disableItemDeletion: true,
-                    enableSorting: true,
-                    disabled: !this.properties.enableCustomQueryTransformation,
-                    label: webPartStrings.PropertyPane.CustomQueryModifierPage.QueryModifierGroup.QueryModifiersLabel,
-                    value: this.properties.queryModifierConfiguration,
-                    fields: [
-                        {
-                            id: 'enabled',
-                            title: webPartStrings.PropertyPane.CustomQueryModifierPage.QueryModifierGroup.EnabledPropertyLabel,
-                            type: this._customCollectionFieldType.custom,
-                            onCustomRender: (field, value, onUpdate, item, itemId) => {
-                                return (
-                                    React.createElement("div", null,
-                                        React.createElement(Toggle, {
-                                            key: itemId, checked: value, onChange: (evt, checked) => {
-                                                onUpdate(field.id, checked);
-                                            },
-                                            offText: commonStrings.General.OffTextLabel,
-                                            onText: commonStrings.General.OnTextLabel
-                                        })
-                                    )
-                                );
-                            }
-                        },
-                        {
-                            id: 'endWhenSuccessfull',
-                            title: webPartStrings.PropertyPane.CustomQueryModifierPage.QueryModifierGroup.EndWhenSuccessfullPropertyLabel,
-                            type: this._customCollectionFieldType.custom,
-                            onCustomRender: (field, value, onUpdate, item, itemId) => {
-                                return (
-                                    React.createElement("div", null,
-                                        React.createElement(Toggle, {
-                                            key: itemId, checked: value, onChange: (evt, checked) => {
-                                                onUpdate(field.id, checked);
-                                            },
-                                            offText: commonStrings.General.OffTextLabel,
-                                            onText: commonStrings.General.OnTextLabel
-                                        })
-                                    )
-                                );
-                            }
-                        },
-                        {
-                            id: 'name',
-                            title: webPartStrings.PropertyPane.CustomQueryModifierPage.QueryModifierGroup.ModifierNamePropertyLabel,
-                            type: this._customCollectionFieldType.custom,
-                            onCustomRender: (field, value) => {
-                                return (
-                                    React.createElement("div", { style: { 'fontWeight': 600 } }, value)
-                                );
-                            }
-                        },
-                        {
-                            id: 'description',
-                            title: webPartStrings.PropertyPane.CustomQueryModifierPage.QueryModifierGroup.ModifierDescriptionPropertyLabel,
-                            type: this._customCollectionFieldType.custom,
-                            onCustomRender: (field, value) => {
-                                return (
-                                    React.createElement("div", null, value)
-                                );
-                            }
+        queryTransformationFields.push(
+            this._propertyFieldCollectionData('queryModifierConfiguration', {
+                manageBtnLabel: webPartStrings.PropertyPane.CustomQueryModifier.EditQueryModifiersLabel,
+                key: 'queryModifierConfiguration',
+                panelHeader: webPartStrings.PropertyPane.CustomQueryModifier.EditQueryModifiersLabel,
+                panelDescription: webPartStrings.PropertyPane.CustomQueryModifier.QueryModifiersDescription,
+                disableItemCreation: true,
+                disableItemDeletion: true,
+                enableSorting: true,
+                label: webPartStrings.PropertyPane.CustomQueryModifier.QueryModifiersLabel,
+                value: this.properties.queryModifierConfiguration,
+                fields: [
+                    {
+                        id: 'enabled',
+                        title: webPartStrings.PropertyPane.CustomQueryModifier.EnabledPropertyLabel,
+                        type: this._customCollectionFieldType.custom,
+                        onCustomRender: (field, value, onUpdate, item, itemId) => {
+                            return (
+                                React.createElement("div", null,
+                                    React.createElement(Toggle, {
+                                        key: itemId, checked: value, onChange: (evt, checked) => {
+                                            onUpdate(field.id, checked);
+                                        },
+                                        offText: commonStrings.General.OffTextLabel,
+                                        onText: commonStrings.General.OnTextLabel
+                                    })
+                                )
+                            );
                         }
-                    ]
-                })
-            );
-        }
+                    },
+                    {
+                        id: 'endWhenSuccessfull',
+                        title: webPartStrings.PropertyPane.CustomQueryModifier.EndWhenSuccessfullPropertyLabel,
+                        type: this._customCollectionFieldType.custom,
+                        onCustomRender: (field, value, onUpdate, item, itemId) => {
+                            return (
+                                React.createElement("div", null,
+                                    React.createElement(Toggle, {
+                                        key: itemId, checked: value, onChange: (evt, checked) => {
+                                            onUpdate(field.id, checked);
+                                        },
+                                        offText: commonStrings.General.OffTextLabel,
+                                        onText: commonStrings.General.OnTextLabel
+                                    })
+                                )
+                            );
+                        }
+                    },
+                    {
+                        id: 'name',
+                        title: webPartStrings.PropertyPane.CustomQueryModifier.ModifierNamePropertyLabel,
+                        type: this._customCollectionFieldType.custom,
+                        onCustomRender: (field, value) => {
+                            return (
+                                React.createElement("div", { style: { 'fontWeight': 600 } }, value)
+                            );
+                        }
+                    },
+                    {
+                        id: 'description',
+                        title: webPartStrings.PropertyPane.CustomQueryModifier.ModifierDescriptionPropertyLabel,
+                        type: this._customCollectionFieldType.custom,
+                        onCustomRender: (field, value) => {
+                            return (
+                                React.createElement("div", null, value)
+                            );
+                        }
+                    }
+                ]
+            })
+        );
 
         return queryTransformationFields;
     }

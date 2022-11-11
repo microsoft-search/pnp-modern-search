@@ -123,18 +123,14 @@ define([], function() {
                 EnableTelemetryOn: "Aseta telemetria käyttöön",
                 EnableTelemetryOff: "Poista telemetria käytöstä"
             },
-            CustomQueryModifierPage:{
-              QueryModifierGroup: {
-                  GroupName: "Mukautetut kyselyn muokkaajat",
-                  EnableQueryModifiers: "Ota käyttöön mukautetut kyselyn muokkaajat",
+            CustomQueryModifier: {
                   EditQueryModifiersLabel: "Käytettävissä olevien mukautettujen kyselyn muokkaimien määrittäminen",
                   QueryModifiersLabel: "Mukautetut kyselyn muokkaajat",
                   QueryModifiersDescription: "Ota käyttöön tai poista käytöstä yksittäisiä mukautettuja kyselyn muokkaajia.",
                   EnabledPropertyLabel: "Enabled",
                   ModifierNamePropertyLabel: "Nimi",
                   ModifierDescriptionPropertyLabel: "Kuvaus",
-                  EndWhenSuccessfullPropertyLabel:"Loppuu, kun onnistuu"
-              }
+                  EndWhenSuccessfullPropertyLabel:"Loppuu, kun onnistuu"              
             }
         }
     }
