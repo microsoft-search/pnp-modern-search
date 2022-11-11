@@ -53,8 +53,10 @@ declare interface ICommonStrings {
         DataSourceDefinitionNotFound: string;
         LayoutDefinitionNotFound: string;
         ProviderDefinitionNotFound: string;
+		QueryModifierDefinitionNotFound: string;
         InvalidProviderInstance: string;
         InvalidLayoutInstance: string;
+		InvalidQueryModifierInstance: string;
         DefaultExtensibilityLibraryName: string;
       },
       OnTextLabel: string;

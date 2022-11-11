@@ -122,6 +122,15 @@ define([], function() {
                 EnableTelemetryLabel: "Telemetria PnP",
                 EnableTelemetryOn: "Włącz telemetrię",
                 EnableTelemetryOff: "Wyłącz telemetrię"
+            },
+            CustomQueryModifier: {
+                  EditQueryModifiersLabel: "Konfiguracja dostępnych niestandardowych modyfikatorów zapytań",
+                  QueryModifiersLabel: "Własne modyfikatory zapytań",
+                  QueryModifiersDescription: "Włączanie lub wyłączanie poszczególnych własnych modyfikatorów zapytań",
+                  EnabledPropertyLabel: "Włączone",
+                  ModifierNamePropertyLabel: "Nazwa",
+                  ModifierDescriptionPropertyLabel: "Opis",
+                  EndWhenSuccessfullPropertyLabel:"Zakończ po pomyślnym zakończeniu"              
             }
         }
     }

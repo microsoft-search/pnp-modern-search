@@ -68,8 +68,9 @@ To create an extensibility library, you have the choice to reuse the one provide
     - [Layout](./custom_layout.md)
     - [Web component](./custom_web_component.md)
     - [Suggestions providers](./custom_suggestions_provider.md)
-    - [Handlebars customizations](./handlebars_customizations.md)
+    - [Handlebars customizations](./handlebars_customizations.md)    
     - [Adaptive Cards Actions handlers](./adaptivecards_customizations.md)
+    - [Query modifier](./custom_query_modifications.md)
 
     Creation process always follows more or less the same pattern:
 
@@ -91,7 +92,7 @@ You simply need to declare a public static property with name `serviceKey` in yo
 For example, here you can see a code excerpt of such a library component that handles custom actions for Adaptive Cards rendering:
 
 ```typescript
-import { IAdaptiveCardAction, IComponentDefinition, IExtensibilityLibrary, ILayoutDefinition, ISuggestionProviderDefinition } from '@pnp/modern-search-extensibility';
+import { IAdaptiveCardAction, IComponentDefinition, IExtensibilityLibrary, ILayoutDefinition, ISuggestionProviderDefinition, IQueryModifierDefinition } from '@pnp/modern-search-extensibility';
 import { ServiceKey, ServiceScope } from '@microsoft/sp-core-library';
 import { SPHttpClient, SPHttpClientResponse } from '@microsoft/sp-http';
 import { PageContext } from '@microsoft/sp-page-context';
@@ -127,6 +128,10 @@ export class MyCustomLibraryComponent implements IExtensibilityLibrary {
   }
 
   public registerHandlebarsCustomizations?(handlebarsNamespace: typeof Handlebars): void {
+  }
+
+  public getCustomQueryModifiers?(): IQueryModifierDefinition[]{
+
   }
 
   public invokeCardAction(action: IAdaptiveCardAction): void {

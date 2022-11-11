@@ -60,6 +60,8 @@ define([], function() {
                 DefaultExtensibilityLibraryName: "Default extensibility library",
                 InvalidProviderInstance: "The selected suggestions provider '{0}' does not implement the 'BaseSuggestionProvider' abstract class correctly. Some methods are missing.",
                 ProviderDefinitionNotFound: "The custom suggestions provider with key '{0}' was not found. Make sure the solution is correctly deployed to the app catalog and the manifest ID registered for this Web Part.",
+                QueryModifierDefinitionNotFound: "The custom queryModifier with key '{0}' was not found. Make sure the solution is correctly deployed to the app catalog and the manifest ID registered for this Web Part.",
+                InvalidQueryModifierInstance: "The selected custom queryModifier '{0}' does not implement the 'BaseQueryModifier' abstract class correctly. Some methods are missing."
             },
             DateFromLabel: "From",
             DateTolabel: "To",

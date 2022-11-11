@@ -64,6 +64,8 @@ By getting this solution, you also benefit from an advanced [extensibility model
 - [Custom suggestions providers](./extensibility/custom_suggestions_provider.md).
 - [Custom Handlebars customization (helpers, partials, etc.)](./extensibility/handlebars_customizations.md).
 - [Custom event handlers for adaptive cards actions](./extensibility/adaptivecards_customizations.md).
+- [Custom query modifier](./extensibility/custom_query_modifications.md).
+
 
 With these available customizations options, you can do pretty much anything!
 
