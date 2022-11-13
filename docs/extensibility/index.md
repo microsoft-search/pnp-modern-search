@@ -37,7 +37,7 @@ Each Web Part type in the solution supports several extensions or no extension a
 
 | Web Part type | Supported extensions |
 | ------------- | -------------------- |
-| **Search Results** | <ul><li>Custom web components.</li><li>Custom Handlebars [customizations](https://handlebarsjs.com/api-reference/runtime.html) (ex: helpers, partials ,etc.).</li><li>Custom event handlers for adaptive cards actions</li></ul>
+| **Search Results** | <ul><li>Custom web components.</li><li>Custom Handlebars [customizations](https://handlebarsjs.com/api-reference/runtime.html) (ex: helpers, partials ,etc.).</li><li>Custom event handlers for adaptive cards actions</li><li>Custom Data Sources</li></ul>
 | **Search Filters** |  <ul><li>Custom web components (_not directly but via the 'Search Results' Web Part extensibility library registration_).</li></ul>
 | **Search box** | <ul><li>Custom suggestions providers.</li></ul>
 | **Search Verticals** | None.
@@ -71,6 +71,7 @@ To create an extensibility library, you have the choice to reuse the one provide
     - [Handlebars customizations](./handlebars_customizations.md)    
     - [Adaptive Cards Actions handlers](./adaptivecards_customizations.md)
     - [Query modifier](./custom_query_modifications.md)
+    - [Data Sources](./custom_data_sources.md)
 
     Creation process always follows more or less the same pattern:
 
@@ -158,6 +159,18 @@ export class MyCustomLibraryComponent implements IExtensibilityLibrary {
           break;
       }
     }
+  }
+
+  public getCustomDataSources(): IDataSourceDefinition[]
+  {
+    return [
+      {
+          name: 'Custom Data Source',
+          iconName: 'Database',
+          key: 'CustomDataSource',
+          serviceKey: ServiceKey.create<IDataSource>('CustomDataSource', CustomDataSource)
+      }
+    ];
   }
 
   public name(): string {

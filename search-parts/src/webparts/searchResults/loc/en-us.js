@@ -124,7 +124,7 @@ define([], function() {
                 EnableTelemetryOff: "Turn off telemetry"
             },
             CustomQueryModifier: {
-                EditQueryModifiersLabel: "Configure available custom query modifiers",
+                EditQueryModifiersLabel: "Configure query modifiers",
                 QueryModifiersLabel: "Custom Query modifiers",
                 QueryModifiersDescription: "Enable or disable individual custom query modifiers",
                 EnabledPropertyLabel: "Enabled",

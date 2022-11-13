@@ -5,6 +5,7 @@ import { ISuggestionProviderDefinition } from './suggestions/ISuggestionProvider
 import * as Handlebars from 'handlebars';
 import { IAdaptiveCardAction } from './IAdaptiveCardAction';
 import { IQueryModifierDefinition } from './queryModifier/IQueryModifierDefinition';
+import { IDataSourceDefinition } from './dataSources/IDataSourceDefinition';
 
 export interface IExtensibilityLibrary {
 
@@ -39,4 +40,9 @@ export interface IExtensibilityLibrary {
      * Returns custom query modifiers
      */
     getCustomQueryModifiers?(): IQueryModifierDefinition[];
+
+    /**
+     * Returns custom data sources
+     */
+    getCustomDataSources?(): IDataSourceDefinition[];
 }

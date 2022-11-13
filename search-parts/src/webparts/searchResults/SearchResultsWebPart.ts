@@ -1024,6 +1024,11 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 if (extensibilityLibrary.invokeCardAction)
                     this.templateService.AdaptiveCardsExtensibilityLibraries = this.templateService.AdaptiveCardsExtensibilityLibraries.concat(extensibilityLibrary);
 
+                // Add custom data sources if any
+                if (extensibilityLibrary.getCustomDataSources)
+                    this.availableDataSourceDefinitions = this.availableDataSourceDefinitions.concat(extensibilityLibrary.getCustomDataSources());
+
+                // Add custom query modifiers if any
                 if (extensibilityLibrary.getCustomQueryModifiers)
                     this.availableCustomQueryModifierDefinitions = this.availableCustomQueryModifierDefinitions.concat(extensibilityLibrary.getCustomQueryModifiers());
             });
@@ -2058,7 +2063,9 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                     break;
 
                 default:
-                    break;
+                  const source = this.availableDataSourceDefinitions.find(definition => definition.key === dataSourceKey);
+                  serviceKey = source.serviceKey;
+                  break;
             }
 
             return new Promise<IDataSource>((resolve, reject) => {
