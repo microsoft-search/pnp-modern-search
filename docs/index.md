@@ -60,12 +60,13 @@ By getting this solution, you also benefit from an advanced [extensibility model
 
 **The supported extensions are:**
 
+- [Custom layouts](./extensibility/custom_layout.md).
 - [Custom web components](./extensibility/custom_web_component.md).
-- [Custom suggestions providers](./extensibility/custom_suggestions_provider.md).
 - [Custom Handlebars customization (helpers, partials, etc.)](./extensibility/handlebars_customizations.md).
 - [Custom event handlers for adaptive cards actions](./extensibility/adaptivecards_customizations.md).
-- [Custom query modifier](./extensibility/custom_query_modifications.md).
-- [Custom Data Sources](./extensibility/custom_data_sources.md).
+- [Custom query modifiers](./extensibility/custom_query_modifications.md).
+- [Custom data sources](./extensibility/custom_data_sources.md).
+- [Custom suggestions providers](./extensibility/custom_suggestions_provider.md).
 
 With these available customizations options, you can do pretty much anything!
 
@@ -102,3 +103,5 @@ Here is the list of main contributors of the PnP Modern Search (all versions inc
 - Matthew Stark
 - Fabio Franzini (Apvee) - [@franzinifabio](https://twitter.com/franzinifabio)
 - Paolo Pialorsi (PiaSys.com) - [@PaoloPia](https://twitter.com/paolopia)
+- Patrtik Hellgren (SherparsGroupAB) - [@PatrikHellgren](https://twitter.com/patrikhellgren)
+- Erfan Darroudi (https://github.com/edarroudi)
