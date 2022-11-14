@@ -808,6 +808,10 @@ export class TemplateService implements ITemplateService {
             let dayCount = this.moment(date1).diff(this.moment(date2), 'days');
             return Math.abs(dayCount);
         });
+
+        this.Handlebars.registerHelper("cleanedFilterGroupname", (name: string) => {
+            return name?.replace(Constants.PNP_MODERN_SEARCH_FILTER_GROUP_PREFIX, '');
+        });
     }
 
     private async _initAdaptiveCardsResources(): Promise<void> {

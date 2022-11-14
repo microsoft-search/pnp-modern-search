@@ -3,6 +3,7 @@ import { BaseWebComponent, IDataFilterInfo, IDataFilterValueInfo, ExtensibilityC
 import * as ReactDOM from 'react-dom';
 import { Checkbox, ChoiceGroup, IChoiceGroupOption, ITheme, Text } from 'office-ui-fabric-react';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
+import { Constants } from '../../common/Constants';
 
 export interface IFilterCheckBoxProps {
 
@@ -74,6 +75,8 @@ export class FilterCheckBoxComponent extends React.Component<IFilterCheckBoxProp
         let textColor: string = this.props.themeVariant && this.props.themeVariant.isInverted ? (this.props.themeVariant ? this.props.themeVariant.semanticColors.bodyText : '#323130') : this.props.themeVariant.semanticColors.inputText;
 
         if (this.props.isMulti) {
+            const label = filterValue.name?.replace(Constants.PNP_MODERN_SEARCH_FILTER_GROUP_PREFIX, '');
+
             renderInput = <Checkbox
                 styles={{
                     root: {
@@ -89,8 +92,8 @@ export class FilterCheckBoxComponent extends React.Component<IFilterCheckBoxProp
                 theme={this.props.themeVariant as ITheme}
                 defaultChecked={this.props.selected}
                 disabled={this.props.disabled}
-                title={filterValue.name}
-                label={filterValue.name}
+                title={label}
+                label={label}
                 onChange={(ev, checked: boolean) => {
                     filterValue.selected = checked;
                     this.props.onChecked(this.props.filterName, filterValue);
@@ -98,6 +101,7 @@ export class FilterCheckBoxComponent extends React.Component<IFilterCheckBoxProp
                 onRenderLabel={(props, defaultRender) => {
                     return <Text block nowrap title={props.label}>{props.label}</Text>;
                 }}
+
             />;
         } else {
             renderInput = <ChoiceGroup
@@ -120,7 +124,7 @@ export class FilterCheckBoxComponent extends React.Component<IFilterCheckBoxProp
                 options={[
                     {
                         key: filterValue.value,
-                        text: filterValue.name,
+                        text: filterValue.name?.replace(Constants.PNP_MODERN_SEARCH_FILTER_GROUP_PREFIX, ''),
                         disabled: this.props.disabled,
                         checked: this.props.selected,
                         styles: {

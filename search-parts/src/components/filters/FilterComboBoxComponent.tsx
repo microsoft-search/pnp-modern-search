@@ -385,9 +385,7 @@ export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilte
                 );
 
             default:
-                const copy = cloneDeep(option);
-                copy.text = option.text.replace(Constants.PNP_MODERN_SEARCH_FILTER_GROUP_PREFIX, '');
-                return defaultRender(copy);
+                return defaultRender(option);
         }
     }
 }
@@ -412,7 +410,7 @@ export class FilterComboBoxWebComponent extends BaseWebComponent {
                 options.push({
                     index: key,
                     key: htmlOption.value,
-                    text: props.showCount ? `${htmlOption.text} (${Number(htmlOption.getAttribute('data-count'))})` : htmlOption.text,
+                    text: (props.showCount ? `${htmlOption.text} (${Number(htmlOption.getAttribute('data-count'))})` : htmlOption.text)?.replace(Constants.PNP_MODERN_SEARCH_FILTER_GROUP_PREFIX, ''),
                     itemType: SelectableOptionMenuItemType.Normal,
                     disabled: this.toBoolean(htmlOption.getAttribute('data-disabled')),
                     selected: this.toBoolean(htmlOption.getAttribute('data-selected')),

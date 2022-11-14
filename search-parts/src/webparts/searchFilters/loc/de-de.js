@@ -53,7 +53,24 @@ define([], function() {
                 SortByName: "Nach Name",
                 SortByCount: "Nach Anzahl",
                 SortAscending: "Aufsteigend",
-                SortDescending: "Absteigend"
+                SortDescending: "Absteigend",
+                RefinerGroupsTitle: "Filter Gruppen",
+                RefineGroupsDialog: {                    
+                    DialogTitle: "Filter Gruppen Werte",                
+                    DialogButtonText: "Anpassen",
+                    Panel:{
+                        Header: "Anpassen der Filter Gruppen Werte",
+                        CancelButtonText: "Abbrechen",                
+                        SaveButtonText: "Speichern",
+                        AddAndSaveButtonText: "Hinzufügen und speichern",
+                    },                
+                    Fields:{
+                        GroupLabel:"Name",
+                        AdvancedLabel:"Fortgeschritten",
+                        ValuesLabel:"Werte",
+                        AdvancedValuesPlaceholder:"And(fileType:Or(xlsx,doc,docx,pdf),contentclass:STS_ListItem_DocumentLibrary)"
+                    }
+                },
             },
             LayoutPage: {
                 AvailableLayoutsGroupName: "Verfügbare Layouts",

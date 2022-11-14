@@ -54,6 +54,7 @@ define([], function() {
                 SortByCount: "By count",
                 SortAscending: "Ascending",
                 SortDescending: "Descending",
+                RefinerGroupsTitle: "Refiner groups",
                 RefineGroupsDialog: {                    
                     DialogTitle: "Refiner group values",                
                     DialogButtonText: "Manage",

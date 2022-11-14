@@ -108,7 +108,7 @@
 
 									<div class="filter--values-list">
 										{{#each filter.values}}
-											<div title="{{name}} {{#if ../showCount}}({{count}}){{/if}}" class="filter--value">
+											<div title="{{cleanedFilterGroupname name}} {{#if ../showCount}}({{count}}){{/if}}" class="filter--value">
 												<pnp-filtercheckbox 
 													data-instance-id="{{@root.instanceId}}" 
 													data-filter-name="{{filter.filterName}}" 

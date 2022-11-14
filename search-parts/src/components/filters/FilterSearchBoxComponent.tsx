@@ -3,9 +3,10 @@ import { BaseWebComponent, ExtensibilityConstants, IDataFilterInfo, IDataFilterI
 import * as ReactDOM from "react-dom";
 import { IconButton, ITag, ITagPickerProps, TagPicker, Text, ITheme } from "office-ui-fabric-react";
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
-import { sortBy } from "@microsoft/sp-lodash-subset";
+import { cloneDeep, sortBy } from "@microsoft/sp-lodash-subset";
 import styles from './FilterSearchBoxComponent.module.scss';
 import * as commonStrings from 'CommonStrings';
+import { Constants } from "../../common/Constants";
 
 type FilterSearchBoxEventCallback = (filterName: string, filterValue: IDataFilterValueInfo) => void;
 
@@ -89,9 +90,11 @@ export class FilterSearchBox extends React.Component<IFilterSearchBoxProps, IFil
             onResolveSuggestions: (filter: string, selectedItems?: ITag[]) => {
 
                 const foundValues = availableValues.filter(s => s.name.toLocaleLowerCase().indexOf(filter.toLocaleLowerCase()) !== -1);
+                const clonedValues = cloneDeep(foundValues);
+                clonedValues.forEach(f => { f.name = f.name?.replace(Constants.PNP_MODERN_SEARCH_FILTER_GROUP_PREFIX, ''); });
 
                 // Make sure the matching values are not already selected
-                return foundValues.filter(foundValue => {
+                return clonedValues.filter(foundValue => {
                     return !selectedValues.some(selectedValue => selectedValue.key === foundValue.key);
                 });
             },
@@ -99,7 +102,6 @@ export class FilterSearchBox extends React.Component<IFilterSearchBoxProps, IFil
                 noResultsFoundText: commonStrings.General.TagPickerStrings.NoResultsSearchMessage
             },
             onChange: (selectedTagItems: ITag[]) => {
-
                 // Determine the removed item according to current selected tags
                 const removedItems = this.props.filter.values.filter((selectedValue: IDataFilterValueInternal) => {
                     return selectedValue.selected && !selectedTagItems.some(tag => tag.key === selectedValue.value);
@@ -118,6 +120,8 @@ export class FilterSearchBox extends React.Component<IFilterSearchBoxProps, IFil
             },
             onRenderItem: (props) => {
 
+                const name = props.item.name?.replace(Constants.PNP_MODERN_SEARCH_FILTER_GROUP_PREFIX, '');
+
                 return <div
                     className={styles.tagItem}
                     style={
@@ -131,9 +135,9 @@ export class FilterSearchBox extends React.Component<IFilterSearchBoxProps, IFil
                 >
                     <Text
                         className={styles.tagItemText}
-                        aria-label={props.item.name}
+                        aria-label={name}
                     >
-                        {props.item.name}
+                        {name}
                     </Text>
                     <IconButton
                         className={styles.tagRemoveBtn}
@@ -158,7 +162,7 @@ export class FilterSearchBox extends React.Component<IFilterSearchBoxProps, IFil
 
                 // Find the filter value 
                 const filterValue: IDataFilterValueInfo = {
-                    name: selectedItem.name,
+                    name: availableValues.find(v => v.key === selectedItem.key)?.name ?? selectedItem.name,
                     value: selectedItem.key.toString(),
                     selected: true
                 };

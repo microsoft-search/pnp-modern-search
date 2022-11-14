@@ -845,33 +845,33 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                     },
                     {
                         id: 'refinerGroups',
-                        title: 'Grouped Values',
-                        type: this._customCollectionFieldType.custom,                                                
+                        title: webPartStrings.PropertyPane.DataFilterCollection.RefinerGroupsTitle,
+                        type: this._customCollectionFieldType.custom,
                         onCustomRender: ((field, value, onUpdate, item) => {
                             return (
                                 React.createElement("div", null,
                                     React.createElement(this._refinerGroupsDialogComponent.RefinerGroupsDialog, {
-                                        refinerGroupsValue: value ,
+                                        refinerGroupsValue: value,
                                         disabled: item.selectedTemplate === BuiltinFilterTemplates.DateRange || item.selectedTemplate === BuiltinFilterTemplates.DateInterval,
-                                        onChanged: (fieldValue:IRefinerGroupValue[]) => {
+                                        onChanged: (fieldValue: IRefinerGroupValue[]) => {
                                             onUpdate(field.id, fieldValue);
                                         },
                                         strings: {
                                             dialogTitle: webPartStrings.PropertyPane.DataFilterCollection.RefineGroupsDialog.DialogTitle,
                                             dialogButtonText: webPartStrings.PropertyPane.DataFilterCollection.RefineGroupsDialog.DialogButtonText,
-                                            panelHeader:webPartStrings.PropertyPane.DataFilterCollection.RefineGroupsDialog.Panel.Header,
+                                            panelHeader: webPartStrings.PropertyPane.DataFilterCollection.RefineGroupsDialog.Panel.Header,
                                             cancelButtonText: webPartStrings.PropertyPane.DataFilterCollection.RefineGroupsDialog.Panel.CancelButtonText,
-                                            saveButtonText:  webPartStrings.PropertyPane.DataFilterCollection.RefineGroupsDialog.Panel.SaveButtonText,
+                                            saveButtonText: webPartStrings.PropertyPane.DataFilterCollection.RefineGroupsDialog.Panel.SaveButtonText,
                                             addAndSaveButtonText: webPartStrings.PropertyPane.DataFilterCollection.RefineGroupsDialog.Panel.AddAndSaveButtonText,
                                             groupLabel: webPartStrings.PropertyPane.DataFilterCollection.RefineGroupsDialog.Fields.GroupLabel,
                                             advancedLabel: webPartStrings.PropertyPane.DataFilterCollection.RefineGroupsDialog.Fields.AdvancedLabel,
                                             valuesLabel: webPartStrings.PropertyPane.DataFilterCollection.RefineGroupsDialog.Fields.ValuesLabel,
-                                            advancedValuesPlaceholder:webPartStrings.PropertyPane.DataFilterCollection.RefineGroupsDialog.Fields.AdvancedValuesPlaceholder
+                                            advancedValuesPlaceholder: webPartStrings.PropertyPane.DataFilterCollection.RefineGroupsDialog.Fields.AdvancedValuesPlaceholder
                                         }
                                     })
                                 )
                             );
-                        }).bind(this)                      
+                        }).bind(this)
                     }
                 ]
             }),
@@ -965,7 +965,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                 return '';
             }
             // Resolves an error if the file isn't a valid .htm or .html file
-            else if (!this.templateService.isValidTemplateFile(value, [".html",".htm"])) {
+            else if (!this.templateService.isValidTemplateFile(value, [".html", ".htm"])) {
                 return webPartStrings.PropertyPane.LayoutPage.ErrorTemplateExtension;
             }
             // Resolves an error if the file doesn't answer a simple head request
@@ -1105,7 +1105,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
         this.propertyPaneConnectionsFields = await this.getConnectionOptionsFields();
 
         this._refinerGroupsDialogComponent = await import(
-            /* webpackChunkName: 'pnp-modern-search-property-pane' */ 
+            /* webpackChunkName: 'pnp-modern-search-property-pane' */
             '../../controls/RefinerGroupsDialog'
         );
     }

@@ -24,7 +24,7 @@ export class Constants {
     /**
      * This is used for grouped filter labels to distinguish them from other labels
      */
-    public static readonly PNP_MODERN_SEARCH_FILTER_GROUP_PREFIX = 'pnpModernSearchFilterGroup-';
+    public static readonly PNP_MODERN_SEARCH_FILTER_GROUP_PREFIX = 'pnpFilterGroup_';
 }
 
 export enum AutoCalculatedDataSourceFields {

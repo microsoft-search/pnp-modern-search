@@ -235,10 +235,11 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
           values = values.concat(additionalValues.filter(value => value));
         }
 
-        if (filterConfiguration.refinerGroups) {
-          // Grouped Refiner values stay at top
-          const groupValues = this.getRefinerGroupValues(availableFilter, currentUiFilters, filterConfiguration, selectedFilterIdx);
-          values = groupValues.concat(values);
+        if (filterConfiguration.refinerGroups
+          && filterConfiguration.selectedTemplate !== BuiltinFilterTemplates.DateRange
+          && filterConfiguration.selectedTemplate !== BuiltinFilterTemplates.DateInterval
+        ) {
+          this.updateRefinerGroupValues(availableFilter, values, filterConfiguration);
         }
 
         const selectedOnce = selectedFilterIdx !== -1 && currentUiFilters[selectedFilterIdx].selectedOnce ? currentUiFilters[selectedFilterIdx].selectedOnce : values.filter(value => { return value.selectedOnce; }).length > 0;
@@ -262,20 +263,6 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
           return value;
         });
 
-        // sort values beginning with Constants.PNP_MODERN_SEARCH_FILTER_GROUP_PREFIX
-        values = values.sort((a, b) => {
-          const isAGroup = a.name.startsWith(Constants.PNP_MODERN_SEARCH_FILTER_GROUP_PREFIX);
-          const isBGroup = b.name.startsWith(Constants.PNP_MODERN_SEARCH_FILTER_GROUP_PREFIX);
-
-          if (isAGroup && !isBGroup) {
-            return -1;
-          } else if (!isAGroup && isBGroup) {
-            return 1;
-          } else {
-            return 0;
-          }
-        });
-
         const filterOperator = currentUiFilters[selectedFilterIdx] ? currentUiFilters[selectedFilterIdx].operator : filterConfiguration.operator;
 
         // Merge information with filter configuration and other useful proeprties
@@ -297,7 +284,9 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
         return filterResultInternal;
       }
+
     });
+
 
     this.setState({
       currentUiFilters: update(this.state.currentUiFilters, { $set: sortBy(updatedFilters.filter(updatedFilter => updatedFilter), 'sortIdx') })
@@ -312,28 +301,36 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
  * @param selectedFilterIdx 
  * @returns the filter values for the refiner groups
  */
-  private getRefinerGroupValues(availableFilter: IDataFilterResult, currentUiFilters: IDataFilterInternal[], filterConfiguration: IDataFilterConfiguration, selectedFilterIdx: number)
+  private updateRefinerGroupValues(availableFilter: IDataFilterResult, values: IDataFilterValueInternal[], filterConfiguration: IDataFilterConfiguration)
     : IDataFilterValueInternal[] {
     let groupValues: IDataFilterValueInternal[] = [];
+
+    let indexInsert = 0;
 
     filterConfiguration.refinerGroups.forEach(group => {
 
       const groupName = `${Constants.PNP_MODERN_SEARCH_FILTER_GROUP_PREFIX}${group.label}`;
 
-      const filterVal = selectedFilterIdx !== -1 ? currentUiFilters[selectedFilterIdx].values.find(uiFilterValue => uiFilterValue.name === groupName)
-        : null;
+      const filterValIndex: number = values.findIndex(uiFilterValue => uiFilterValue.name === groupName);
 
       if (group.advanced) {
 
-        if (!filterVal) {
-          groupValues.push({
+        if (filterValIndex === -1) {
+          values.splice(indexInsert++, 0, {
             name: groupName,
             selected: false,
             selectedOnce: false,
             disabled: false,
             value: group.fql,
-            count: 0 // for advanced fql it is impossible or to complex to do the count
+            //count: 0 // for advanced fql it is impossible or to complex to do the count
           });
+        }
+        else {
+          //add it at the correct position
+          if (filterValIndex !== indexInsert) {
+            const filterVal = values.splice(filterValIndex, 1)[0];
+            values.splice(indexInsert++, 0, filterVal);
+          }
         }
       }
       else {
@@ -344,13 +341,21 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
         const sumCountSimpleFilterValues = simpleFilterValueSingleCount && simpleFilterValueSingleCount.length > 0 ? simpleFilterValueSingleCount.reduce((prev, cur) => prev + cur) : 0;
 
-        //if the filterVal is already in the currentUiFilters, we only need to update the count
-        if (filterVal) {
-          filterVal.count = sumCountSimpleFilterValues;
+        //if the filterVal is already in the currentUiFilters, we only need to update the count and move it to the correct position (if necessary)
+        if (filterValIndex > -1) {
+          if (filterValIndex !== indexInsert) {
+            const filterVal = values.splice(filterValIndex, 1)[0];
+            filterVal.count = sumCountSimpleFilterValues;
+            values.splice(indexInsert++, 0, filterVal);
+          }
+          else {
+            values[filterValIndex].count = sumCountSimpleFilterValues;
+          }
+
         } else {
           // For simple fql group refiners we  check if we have the filter values in the refiner list from DataSource (count > 0) - if none we won't add the grouped refiner!
           if (sumCountSimpleFilterValues !== 0) {
-            groupValues.push({
+            values.splice(indexInsert++, 0, {
               name: groupName,
               selected: false,
               selectedOnce: false,
