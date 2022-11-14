@@ -21,7 +21,7 @@ export class ExtensibilityService {
      */
     public async loadExtensibilityLibraries(librairiesConfiguration: IExtensibilityConfiguration[]): Promise<IExtensibilityLibrary[]> {
 
-        let extensibilityLibraries: IExtensibilityLibrary[] = []; 
+        let extensibilityLibraries: IExtensibilityLibrary[] = [];
 
         try {
 
@@ -31,7 +31,6 @@ export class ExtensibilityService {
                 return new Promise<any>((resolve, reject) => {
 
                     return SPComponentLoader.loadComponentById(configuration.id).then((extensibilityLibraryComponent: any) => {
-
                         let extensibilityLibrary: any = undefined;
 
                         // Parse the library component properties to instanciate the library itself. 
@@ -45,9 +44,10 @@ export class ExtensibilityService {
                                 extensibilityLibraryPrototype.getCustomWebComponents ||
                                 extensibilityLibraryPrototype.getCustomLayouts ||
                                 extensibilityLibraryPrototype.registerHandlebarsCustomizations ||
+                                extensibilityLibraryPrototype.getCustomQueryModifiers ||
                                 extensibilityLibraryPrototype.invokeCardAction);
                         });
-            
+
                         // Load the library once
                         if (libraryMainEntryPoints.length === 1) {
 
@@ -60,9 +60,9 @@ export class ExtensibilityService {
                                 extensibilityLibrary = new extensibilityLibraryComponent[libraryMainEntryPoints[0]]();
                             }
                         }
-            
+
                         Log.verbose(ExtensibilityService_ServiceKey, `Extensibility library component with id '${configuration.id}' and name '${libraryMainEntryPoints[0]}' loaded.`, this.serviceScope);
-                        resolve(extensibilityLibrary as IExtensibilityLibrary);   
+                        resolve(extensibilityLibrary as IExtensibilityLibrary);
 
                     }).catch(error => {
                         Log.warn(ExtensibilityService_ServiceKey, `No extensibility library component found with id '${configuration.id}'`, this.serviceScope);
@@ -72,7 +72,6 @@ export class ExtensibilityService {
             });
 
             const responses = await Promise.all(promises);
-
             // Filter only on resolved libraries
             responses.filter(response => response).forEach(response => {
                 extensibilityLibraries.push(response);

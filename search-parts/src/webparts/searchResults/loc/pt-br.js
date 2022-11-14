@@ -122,6 +122,15 @@ define([], function() {
                 EnableTelemetryLabel: "Telemetria PnP",
                 EnableTelemetryOn: "Ligar telemetria",
                 EnableTelemetryOff: "Desligar telemetria"
+            },
+            CustomQueryModifier: {
+                EditQueryModifiersLabel: "Configurar modificadores de consulta personalizados disponíveis",
+                QueryModifiersLabel: "Modificadores de consulta personalizados",
+                QueryModifiersDescription: "Ativar ou desativar modificadores de consulta personalizados individuais",
+                EnabledPropertyLabel: "Ativado",
+                ModifierNamePropertyLabel: "Nome",
+                ModifierDescriptionPropertyLabel: "Descrição",
+                EndWhenSuccessfullPropertyLabel:"Terminar quando bem sucedido!"                
             }
         }
     }
