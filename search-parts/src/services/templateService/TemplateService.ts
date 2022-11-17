@@ -921,20 +921,20 @@ export class TemplateService implements ITemplateService {
                     $root: item.resource.properties
                 };
 
-                const itemCard = itemTemplate.expand(itemContext);
+                const itemCardPayload = itemTemplate.expand(itemContext);
 
                 const itemAdaptiveCard = new this._adaptiveCardsNS.AdaptiveCard();
                 itemAdaptiveCard.hostConfig = hostConfiguration;
 
-                itemAdaptiveCard.parse(itemCard, this._serializationContext);
+                itemAdaptiveCard.parse(itemCardPayload, this._serializationContext);
 
                 // Partial match as we can't use the complete ID due to special characters "/" and "==""
                 const defaultItem: HTMLElement = mainHtml.querySelector(`[id^="${item.hitId.substring(0, 15)}"]`);
 
                 // Replace the HTML element corresponding to the item by its result type
                 if (defaultItem) {
-                    const itemHtml = itemAdaptiveCard.render().firstChild;
-                    defaultItem.replaceWith(itemHtml);
+                    const itemHtml: HTMLElement = itemAdaptiveCard.render()
+                    defaultItem.parentElement.replaceWith(itemHtml);
                 }
             }
         }
