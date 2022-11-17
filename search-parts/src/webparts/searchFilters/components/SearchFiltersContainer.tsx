@@ -134,6 +134,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
     // When new filters are received from the data source
     if (!isEqual(prevProps.availableFilters, this.props.availableFilters)) {
 
+      this.getFiltersDeepLink();
       this.getFiltersToDisplay(this.props.availableFilters, this.state.currentUiFilters, this.props.filtersConfiguration);
 
       const submittedFilters = this.getSelectedFiltersFromUIFilters(this.state.currentUiFilters);
@@ -141,8 +142,6 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
       this.setState({
         submittedFilters: submittedFilters
       });
-
-      this.getFiltersDeepLink();
     }
   }
 
