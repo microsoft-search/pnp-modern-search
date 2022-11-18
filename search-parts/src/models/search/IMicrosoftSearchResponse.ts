@@ -42,9 +42,14 @@ export interface IBucket {
 
 export interface ISearchResponseResource {
     "@odata.type": string;
+    /* listItem */
     fields?: {
         [fieldName: string]: string;
     };
+    /* properties */
+    properties?: {
+        [fieldName: string]: string;
+    }
 }
 
 // Query alteration response

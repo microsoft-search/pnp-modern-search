@@ -835,16 +835,19 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
 
                         const hits = hitContainer.hits.map(hit => {
 
-                            if (hit.resource.fields) {
+                            // 'externalItem' will contain resource.properties but 'listItem' will be resource.fields
+                            const propertiesFieldName = hit.resource.properties ? 'properties' : (hit.resource.properties ? 'fields' : null)
+
+                            if (propertiesFieldName) {
 
                                 // Flatten 'fields' to be usable with the Search Fitler WP as refiners
-                                Object.keys(hit.resource.fields).forEach(field => {
-                                    hit[field] = hit.resource.fields[field];
+                                Object.keys(hit.resource[propertiesFieldName]).forEach(field => {
+                                    hit[field] = hit.resource[propertiesFieldName][field];
                                 });
                             }
 
                             return hit;
-                        });
+                            });
 
                         response.items = response.items.concat(hits);
                     }
