@@ -457,57 +457,64 @@ export class TemplateService implements ITemplateService {
             };
 
             const card = template.expand(context);
-            const adaptiveCard = new this._adaptiveCardsNS.AdaptiveCard();
+            let adaptiveCard = new this._adaptiveCardsNS.AdaptiveCard();
             adaptiveCard.hostConfig = hostConfiguration;
 
-            // Register the dynamic list of event handlers for Adaptive Cards actions, if any
-            if (this.AdaptiveCardsExtensibilityLibraries != null && this.AdaptiveCardsExtensibilityLibraries.length > 0) {
-                adaptiveCard.onExecuteAction = (action: any) => {
-
-                    let actionResult: IAdaptiveCardAction;
-                    const type = action.getJsonTypeName();
-                    switch (type) {
-                        case this._adaptiveCardsNS.OpenUrlAction.JsonTypeName: {
-                            actionResult = {
-                                type: type,
-                                title: action.title,
-                                url: action.url
-                            };
-                        }
-                            break;
-
-                        case this._adaptiveCardsNS.SubmitAction.JsonTypeName: {
-                            actionResult = {
-                                type: type,
-                                title: action.title,
-                                data: action.data
-                            };
-                        }
-                            break;
-                        case this._adaptiveCardsNS.ExecuteAction.JsonTypeName: {
-                            actionResult = {
-                                type: type,
-                                title: action.title,
-                                data: action.data,
-                                verb: action.verb
-                            };
-                        }
-                            break;
-                    }
-
-                    this.AdaptiveCardsExtensibilityLibraries.forEach(l => l.invokeCardAction(actionResult));
-                };
-            } else {
-                adaptiveCard.onExecuteAction = (action: any) => {
-                    Log.info(TemplateService_LogSource, `Triggered an event from an Adaptive Card, with action: '${action.title}'. Please, register a custom Extension Library in order to handle it.`, this.serviceScope);
-                };
-            }
+            adaptiveCard = this.registerActionHandler(adaptiveCard);
 
             adaptiveCard.parse(card, this._serializationContext);
             renderTemplateContent = adaptiveCard.render();
         }
 
         return renderTemplateContent;
+    }
+
+    private registerActionHandler(adaptiveCard) {
+
+        // Register the dynamic list of event handlers for Adaptive Cards actions, if any
+        if (this.AdaptiveCardsExtensibilityLibraries != null && this.AdaptiveCardsExtensibilityLibraries.length > 0) {
+            adaptiveCard.onExecuteAction = (action: any) => {
+
+                let actionResult: IAdaptiveCardAction;
+                const type = action.getJsonTypeName();
+                switch (type) {
+                    case this._adaptiveCardsNS.OpenUrlAction.JsonTypeName: {
+                        actionResult = {
+                            type: type,
+                            title: action.title,
+                            url: action.url
+                        };
+                    }
+                        break;
+
+                    case this._adaptiveCardsNS.SubmitAction.JsonTypeName: {
+                        actionResult = {
+                            type: type,
+                            title: action.title,
+                            data: action.data
+                        };
+                    }
+                        break;
+                    case this._adaptiveCardsNS.ExecuteAction.JsonTypeName: {
+                        actionResult = {
+                            type: type,
+                            title: action.title,
+                            data: action.data,
+                            verb: action.verb
+                        };
+                    }
+                        break;
+                }
+
+                this.AdaptiveCardsExtensibilityLibraries.forEach(l => l.invokeCardAction(actionResult));
+            };
+        } else {
+            adaptiveCard.onExecuteAction = (action: any) => {
+                Log.info(TemplateService_LogSource, `Triggered an event from an Adaptive Card, with action: '${action.title}'. Please, register a custom Extension Library in order to handle it.`, this.serviceScope);
+            };
+        }
+
+        return adaptiveCard;
     }
 
     /**
@@ -921,19 +928,20 @@ export class TemplateService implements ITemplateService {
                     $root: item.resource.properties
                 };
 
-                const itemCard = itemTemplate.expand(itemContext);
+                const itemCardPayload = itemTemplate.expand(itemContext);
 
-                const itemAdaptiveCard = new this._adaptiveCardsNS.AdaptiveCard();
+                let itemAdaptiveCard = new this._adaptiveCardsNS.AdaptiveCard();
                 itemAdaptiveCard.hostConfig = hostConfiguration;
 
-                itemAdaptiveCard.parse(itemCard, this._serializationContext);
+                itemAdaptiveCard.parse(itemCardPayload, this._serializationContext);
+                itemAdaptiveCard = this.registerActionHandler(itemAdaptiveCard);
 
                 // Partial match as we can't use the complete ID due to special characters "/" and "==""
                 const defaultItem: HTMLElement = mainHtml.querySelector(`[id^="${item.hitId.substring(0, 15)}"]`);
 
                 // Replace the HTML element corresponding to the item by its result type
                 if (defaultItem) {
-                    const itemHtml = itemAdaptiveCard.render().firstChild;
+                    const itemHtml: HTMLElement = itemAdaptiveCard.render()
                     defaultItem.replaceWith(itemHtml);
                 }
             }
