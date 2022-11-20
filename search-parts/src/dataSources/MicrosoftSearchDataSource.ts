@@ -805,6 +805,16 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
     }
 
     /**
+    * Pick culture from url in translated pages as they are folder names like: "en", "no", "de"
+    */
+     private getTranslatedCultureFromUrl(): string {
+        const pathParts = window.location.pathname.toLocaleLowerCase().split('/');
+        const cultureFolderCandidate = pathParts[pathParts.length - 2];
+        if (cultureFolderCandidate.length == 2) return cultureFolderCandidate; //ISO-639-1 uses two letter codes
+        return null;
+    }
+
+    /**
      * Retrieves data from Microsoft Graph API
      * @param searchRequest the Microsoft Search search request
      */
@@ -821,7 +831,13 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         const msGraphClientFactory = this.serviceScope.consume<MSGraphClientFactory>(MSGraphClientFactory.serviceKey);
         const msGraphClient = await msGraphClientFactory.getClient('3');
         const request = await msGraphClient.api(this._microsoftSearchUrl);
-        const jsonResponse: IMicrosoftSearchResponse = await request.headers({ 'SdkVersion': 'pnpmodernsearch/' + this.context.manifest.version }).post(searchQuery);
+
+        let culture = this.getTranslatedCultureFromUrl();
+        if (!culture ) {            
+            culture = this.context.pageContext.cultureInfo.currentUICultureName;
+        }
+
+        const jsonResponse: IMicrosoftSearchResponse = await request.headers({ 'SdkVersion': 'pnpmodernsearch/' + this.context.manifest.version, 'accept-language': culture }).post(searchQuery);
 
         if (jsonResponse.value && Array.isArray(jsonResponse.value)) {
 
