@@ -821,7 +821,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
 
         searchQuery['TimeZoneId'] = timeZoneBias.Id;
 
-        let refinementFilters: string[] = !isEmpty(this.properties.refinementFilters) ? [this.properties.refinementFilters] : [];
+        let refinementFilters: string[] = !isEmpty(this.properties.refinementFilters) ? [await this._tokenService.resolveTokens(this.properties.refinementFilters)] : [];
 
         if (!isEmpty(dataContext.filters)) {
 
