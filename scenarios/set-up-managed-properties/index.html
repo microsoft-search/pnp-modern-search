@@ -12,7 +12,7 @@
         <link rel="canonical" href="http://127.0.0.1:8000/scenarios/set-up-managed-properties/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-7.2.4">
+      <meta name="generator" content="mkdocs-1.2.2, mkdocs-material-7.2.4">
     
     
       
@@ -756,6 +756,42 @@
   
 
           
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../extensibility/adaptivecards_customizations/" class="md-nav__link">
+        Custom event handlers for adaptive cards actions
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../extensibility/custom_data_source.md" class="md-nav__link">
+        Custom data sources
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../extensibility/custom_query_modifications/" class="md-nav__link">
+        Custom query modifier
+      </a>
+    </li>
+  
+
+          
         </ul>
       </nav>
     </li>
@@ -830,6 +866,13 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#set-up-listlibrary-columns-and-managed-properties" class="md-nav__link">
+    Set up list/library columns and Managed Properties
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#set-up-site-columns-and-managed-properties" class="md-nav__link">
     Set up Site Columns and Managed Properties
   </a>
@@ -860,6 +903,8 @@
 </div>
 <p>If you've followed <a href="../create-simple-search-page/">Scenario 1: Create a simple search page</a>, you already have a functioning search experience.</p>
 <p>One of the big benefits of the PnP Modern Search Web Parts is the ability to add filters, also known as refiners.</p>
+<h2 id="set-up-listlibrary-columns-and-managed-properties">Set up list/library columns and Managed Properties<a class="headerlink" href="#set-up-listlibrary-columns-and-managed-properties" title="Permanent link">&para;</a></h2>
+<p>When creating a list column named <code>Foo</code>, this will yield a crawled property of <code>ows_Foo</code> when an item is indexed. In turn the crawled property <code>ows_Foo</code> can be mapped to e.g. the managed property <code>RefinableString10</code>, and used in search results or as a filter property.</p>
 <h2 id="set-up-site-columns-and-managed-properties">Set up Site Columns and Managed Properties<a class="headerlink" href="#set-up-site-columns-and-managed-properties" title="Permanent link">&para;</a></h2>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -923,7 +968,7 @@
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "instant"], "search": "../../assets/javascripts/workers/search.709b4209.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": null}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "instant"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.709b4209.min.js", "version": null}</script>
     
     
       <script src="../../assets/javascripts/bundle.febc23d1.min.js"></script>
