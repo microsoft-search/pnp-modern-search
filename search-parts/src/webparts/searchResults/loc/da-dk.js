@@ -122,6 +122,15 @@ define([], function() {
         EnableTelemetryLabel: "PnP telemetri",
         EnableTelemetryOn: "Slå telemetri til",
         EnableTelemetryOff: "Slå telemetri fra"
+      },
+      CustomQueryModifier: {          
+          EditQueryModifiersLabel: "Konfigurere tilgængelige brugerdefinerede forespørgselsmodifikatorer",
+          QueryModifiersLabel: "Tilpassede forespørgselsmodifikatorer",
+          QueryModifiersDescription: "Aktivere eller deaktivere individuelle brugerdefinerede forespørgselsmodifikatorer",
+          EnabledPropertyLabel: "Aktiveret",
+          ModifierNamePropertyLabel: "Navn",
+          ModifierDescriptionPropertyLabel: "Beskrivelse",
+          EndWhenSuccessfullPropertyLabel:"Afslutter, når det lykkes"        
       }
     }
   }

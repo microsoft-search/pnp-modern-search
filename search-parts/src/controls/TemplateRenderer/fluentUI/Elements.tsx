@@ -73,6 +73,7 @@ export class FluentUIChoiceSetInput extends Input {
 
     private updateSelectedValues = (key: any, isMultiSelect: boolean, selected: boolean): void => {
         if (isMultiSelect) {
+            // eslint-disable-next-line no-unused-expressions
             selected ? this.selectedValues.push(key) : this.removeItemFromArray(this.selectedValues, key);
         }
         else {
@@ -127,7 +128,7 @@ export class FluentUIChoiceSetInput extends Input {
                     <Stack tokens={{ childrenGap: this.hostConfig.spacing.default }}>
                         {this.choices.map((x, index) => {
                             let defaultChecked = this.defaultSelectedValues.indexOf(x.value) > -1;
-                            return <ThemeProvider theme={theme} style={{ backgroundColor: "transparent" }}>
+                            return <ThemeProvider theme={theme} key={'t' + x.value} style={{ backgroundColor: "transparent" }}>
                                 <Checkbox title={x.title}
                                     key={x.value}
                                     defaultChecked={defaultChecked}

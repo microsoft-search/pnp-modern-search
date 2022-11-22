@@ -35,7 +35,7 @@ export interface ISortComponentProps {
 }
 
 export interface ISortComponentState {
-    
+
     /**
      * The current selected field name in the dropdown list
      */
@@ -56,43 +56,43 @@ export class SortComponent extends React.Component<ISortComponentProps, ISortCom
 
         const options = this._buildOptions();
         let renderSortButton: JSX.Element = null;
-        const dropdownStyles = { 
-            dropdown: { 
+        const dropdownStyles = {
+            dropdown: {
                 minWidth: 200,
-                textAlign: "left" 
-            }, 
+                textAlign: "left"
+            },
         };
 
         if (this.props.defaultSelectedField && this.props.defaultDirection || this.state.selectedFieldName) {
 
-            renderSortButton =  <IconButton 
-                                    iconProps={{
-                                        iconName: this.props.defaultDirection === SortFieldDirection.Ascending ? "SortUp" : "SortDown"
-                                    }}
-                                    onClick={() => {
-                                        const sortDirection = this.props.defaultDirection === SortFieldDirection.Ascending ? SortFieldDirection.Descending : SortFieldDirection.Ascending;
-                                        this.props.onSort(this.state.selectedFieldName, sortDirection);
-                                    }}
-                                >
-                                </IconButton>;
+            renderSortButton = <IconButton
+                iconProps={{
+                    iconName: this.props.defaultDirection === SortFieldDirection.Ascending ? "SortUp" : "SortDown"
+                }}
+                onClick={() => {
+                    const sortDirection = this.props.defaultDirection === SortFieldDirection.Ascending ? SortFieldDirection.Descending : SortFieldDirection.Ascending;
+                    this.props.onSort(this.state.selectedFieldName, sortDirection);
+                }}
+            >
+            </IconButton>;
         }
 
-        return  <div style={{ display: 'flex'}}>
-                    <Dropdown
-                        placeholder={strings.Controls.SortByPlaceholderText}
-                        styles={dropdownStyles}
-                        defaultSelectedKey={this.props.defaultSelectedField ? this.props.defaultSelectedField : null}
-                        options={options}
-                        onChange={(ev, option: IDropdownOption, index: number) => {
-                           this.setState({
-                                selectedFieldName: option.key as string
-                            }, () => {                            
-                                this.props.onSort(option.key as string, this.props.defaultDirection);
-                            });
-                        }}
-                    />
-                    {renderSortButton}
-                </div>;
+        return <div style={{ display: 'flex' }}>
+            <Dropdown
+                placeholder={strings.Controls.SortByPlaceholderText}
+                styles={dropdownStyles}
+                defaultSelectedKey={this.props.defaultSelectedField ? this.props.defaultSelectedField : null}
+                options={options}
+                onChange={(ev, option: IDropdownOption, index: number) => {
+                    this.setState({
+                        selectedFieldName: option.key as string
+                    }, () => {
+                        this.props.onSort(option.key as string, this.props.defaultDirection);
+                    });
+                }}
+            />
+            {renderSortButton}
+        </div>;
     }
 
     /**
@@ -124,36 +124,40 @@ export class SortComponent extends React.Component<ISortComponentProps, ISortCom
 export class SortWebComponent extends BaseWebComponent {
 
     public constructor() {
-        super(); 
+        super();
     }
- 
+
     public connectedCallback() {
- 
+
         let props = this.resolveAttributes();
 
         const fields: ISortFieldConfiguration[] = props.fields;
 
         // Don't show the control if no user sort fields are specified
         if (fields && fields.some(field => field.isUserSort)) {
-            const sortComponent = <SortComponent 
-                                        fields={fields}
-                                        defaultSelectedField={props.defaultSelectedField}
-                                        defaultDirection={props.defaultDirection}
-                                        onSort={(sortFieldName, sortFieldDirection) => {
+            const sortComponent = <SortComponent
+                fields={fields}
+                defaultSelectedField={props.defaultSelectedField}
+                defaultDirection={props.defaultDirection}
+                onSort={(sortFieldName, sortFieldDirection) => {
 
-                                            // Send the event to the main Web Part
-                                            this.dispatchEvent(new CustomEvent(ExtensibilityConstants.EVENT_SORT_BY, { 
-                                                detail: {                                       
-                                                    sortFieldName: sortFieldName,
-                                                    sortFieldDirection: sortFieldDirection
-                                                } as ISortInfo, 
-                                                bubbles: true,
-                                                cancelable: true
-                                            }));
-                                        }}
-                                    />;
-                                    
+                    // Send the event to the main Web Part
+                    this.dispatchEvent(new CustomEvent(ExtensibilityConstants.EVENT_SORT_BY, {
+                        detail: {
+                            sortFieldName: sortFieldName,
+                            sortFieldDirection: sortFieldDirection
+                        } as ISortInfo,
+                        bubbles: true,
+                        cancelable: true
+                    }));
+                }}
+            />;
+
             ReactDOM.render(sortComponent, this);
         }
-    }    
+    }
+
+    protected onDispose(): void {
+        ReactDOM.unmountComponentAtNode(this);
+    }
 }

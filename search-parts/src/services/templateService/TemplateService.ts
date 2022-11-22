@@ -1,3 +1,4 @@
+/* eslint-disable no-lone-blocks */
 import { FileFormat, ITemplateService } from "./ITemplateService";
 import { Log, ServiceKey, ServiceScope, Text } from "@microsoft/sp-core-library";
 import { SPHttpClient, SPHttpClientResponse } from '@microsoft/sp-http';
@@ -9,7 +10,7 @@ import { PageContext } from "@microsoft/sp-page-context";
 import { IComponentDefinition, IExtensibilityLibrary, IResultTemplates, LayoutRenderType } from "@pnp/modern-search-extensibility";
 import groupBy from 'handlebars-group-by';
 import { IComponentFieldsConfiguration } from "../../models/common/IComponentFieldsConfiguration";
-import { initializeFileTypeIcons } from '@uifabric/file-type-icons';
+import { initializeFileTypeIcons } from '@fluentui/react-file-type-icons';
 import { GlobalSettings } from 'office-ui-fabric-react';
 import { IDataResultType, ResultTypeOperator } from "../../models/common/IDataResultType";
 import { ISearchResultsTemplateContext, ISearchFiltersTemplateContext } from "../../models/common/ITemplateContext";
@@ -21,7 +22,6 @@ import { ServiceScopeHelper } from "../../helpers/ServiceScopeHelper";
 import { DomPurifyHelper } from "../../helpers/DomPurifyHelper";
 import * as DOMPurify from 'dompurify';
 import { IAdaptiveCardAction } from '@pnp/modern-search-extensibility';
-
 
 const TemplateService_ServiceKey = 'PnPModernSearchTemplateService';
 const TemplateService_LogSource = "PnPModernSearch:TemplateService";
@@ -239,6 +239,7 @@ export class TemplateService implements ITemplateService {
         if (response.ok) {
 
             if (response.url.indexOf('AccessDenied.aspx') > -1) {
+                // eslint-disable-next-line no-throw-literal
                 throw 'Access Denied';
             }
 
@@ -456,57 +457,64 @@ export class TemplateService implements ITemplateService {
             };
 
             const card = template.expand(context);
-            const adaptiveCard = new this._adaptiveCardsNS.AdaptiveCard();
+            let adaptiveCard = new this._adaptiveCardsNS.AdaptiveCard();
             adaptiveCard.hostConfig = hostConfiguration;
 
-            // Register the dynamic list of event handlers for Adaptive Cards actions, if any
-            if (this.AdaptiveCardsExtensibilityLibraries != null && this.AdaptiveCardsExtensibilityLibraries.length > 0) {
-                adaptiveCard.onExecuteAction = (action: any) => {
-
-                    let actionResult: IAdaptiveCardAction;
-                    const type = action.getJsonTypeName();
-                    switch (type) {
-                        case this._adaptiveCardsNS.OpenUrlAction.JsonTypeName: {
-                            actionResult = {
-                                type: type,
-                                title: action.title,
-                                url: action.url
-                            };
-                        }
-                            break;
-        
-                        case this._adaptiveCardsNS.SubmitAction.JsonTypeName: {
-                            actionResult = {
-                                type: type,
-                                title: action.title,
-                                data: action.data
-                            };
-                        }
-                            break;
-                        case this._adaptiveCardsNS.ExecuteAction.JsonTypeName: {
-                            actionResult = {
-                                type: type,
-                                title: action.title,
-                                data: action.data,
-                                verb: action.verb
-                            };
-                        }
-                            break;
-                    }
-
-                    this.AdaptiveCardsExtensibilityLibraries.forEach(l => l.invokeCardAction(actionResult));
-                };                
-            } else {
-                adaptiveCard.onExecuteAction = (action: any) => {
-                    Log.info(TemplateService_LogSource, `Triggered an event from an Adaptive Card, with action: '${action.title}'. Please, register a custom Extension Library in order to handle it.`, this.serviceScope);
-                };
-            }
+            adaptiveCard = this.registerActionHandler(adaptiveCard);
 
             adaptiveCard.parse(card, this._serializationContext);
             renderTemplateContent = adaptiveCard.render();
         }
 
         return renderTemplateContent;
+    }
+
+    private registerActionHandler(adaptiveCard) {
+
+        // Register the dynamic list of event handlers for Adaptive Cards actions, if any
+        if (this.AdaptiveCardsExtensibilityLibraries != null && this.AdaptiveCardsExtensibilityLibraries.length > 0) {
+            adaptiveCard.onExecuteAction = (action: any) => {
+
+                let actionResult: IAdaptiveCardAction;
+                const type = action.getJsonTypeName();
+                switch (type) {
+                    case this._adaptiveCardsNS.OpenUrlAction.JsonTypeName: {
+                        actionResult = {
+                            type: type,
+                            title: action.title,
+                            url: action.url
+                        };
+                    }
+                        break;
+
+                    case this._adaptiveCardsNS.SubmitAction.JsonTypeName: {
+                        actionResult = {
+                            type: type,
+                            title: action.title,
+                            data: action.data
+                        };
+                    }
+                        break;
+                    case this._adaptiveCardsNS.ExecuteAction.JsonTypeName: {
+                        actionResult = {
+                            type: type,
+                            title: action.title,
+                            data: action.data,
+                            verb: action.verb
+                        };
+                    }
+                        break;
+                }
+
+                this.AdaptiveCardsExtensibilityLibraries.forEach(l => l.invokeCardAction(actionResult));
+            };
+        } else {
+            adaptiveCard.onExecuteAction = (action: any) => {
+                Log.info(TemplateService_LogSource, `Triggered an event from an Adaptive Card, with action: '${action.title}'. Please, register a custom Extension Library in order to handle it.`, this.serviceScope);
+            };
+        }
+
+        return adaptiveCard;
     }
 
     /**
@@ -691,10 +699,10 @@ export class TemplateService implements ITemplateService {
         // <p>{{#times 10}}</p>
         this.Handlebars.unregisterHelper('times'); // unregister times alias for multiply from helpers
         this.Handlebars.registerHelper('times', (n, block) => {
-            let accum = '';
-            for (var i = 0; i < n; ++i)
-                accum += block.fn(i);
-            return accum;
+            let accumulator = '';
+            for (let i = 0; i < n; ++i)
+                accumulator += block.fn(i);
+            return accumulator;
         });
 
         // Get url parameter from current URL or a provided URL
@@ -811,6 +819,35 @@ export class TemplateService implements ITemplateService {
 
     private async _initAdaptiveCardsResources(): Promise<void> {
 
+        // Initialize the serialization context for the Adaptive Cards, if needed
+        if (!this._serializationContext) {
+            const { Action, CardElement, CardObjectRegistry, GlobalRegistry, SerializationContext } = await import(
+                /* webpackChunkName: 'pnp-modern-search-adaptive-cards-bundle' */
+                'adaptivecards'
+            );
+
+
+            const { useLocalFluentUI } = await import(
+                /* webpackChunkName: 'pnp-modern-search-adaptive-cards-bundle' */
+                '../../controls/TemplateRenderer/fluentUI'
+            );
+
+            this._serializationContext = new SerializationContext();
+
+            let actionType: InstanceType<typeof Action>
+            let cardElementType: InstanceType<typeof CardElement>;
+
+            let elementRegistry = new CardObjectRegistry<typeof cardElementType>();
+            let actionRegistry = new CardObjectRegistry<typeof actionType>();
+
+            GlobalRegistry.populateWithDefaultElements(elementRegistry);
+            GlobalRegistry.populateWithDefaultActions(actionRegistry);
+
+            useLocalFluentUI(elementRegistry, actionRegistry);
+            this._serializationContext.setElementRegistry(elementRegistry);
+            this._serializationContext.setActionRegistry(actionRegistry);
+        }
+
         if (!this._adaptiveCardsNS) {
 
             const domPurify = DOMPurify.default;
@@ -920,19 +957,20 @@ export class TemplateService implements ITemplateService {
                     $root: item.resource.properties
                 };
 
-                const itemCard = itemTemplate.expand(itemContext);
+                const itemCardPayload = itemTemplate.expand(itemContext);
 
-                const itemAdaptiveCard = new this._adaptiveCardsNS.AdaptiveCard();
+                let itemAdaptiveCard = new this._adaptiveCardsNS.AdaptiveCard();
                 itemAdaptiveCard.hostConfig = hostConfiguration;
 
-                itemAdaptiveCard.parse(itemCard, this._serializationContext);
+                itemAdaptiveCard.parse(itemCardPayload, this._serializationContext);
+                itemAdaptiveCard = this.registerActionHandler(itemAdaptiveCard);
 
                 // Partial match as we can't use the complete ID due to special characters "/" and "==""
                 const defaultItem: HTMLElement = mainHtml.querySelector(`[id^="${item.hitId.substring(0, 15)}"]`);
 
                 // Replace the HTML element corresponding to the item by its result type
                 if (defaultItem) {
-                    const itemHtml = itemAdaptiveCard.render().firstChild;
+                    const itemHtml: HTMLElement = itemAdaptiveCard.render()
                     defaultItem.replaceWith(itemHtml);
                 }
             }

@@ -1,14 +1,12 @@
 import * as React from "react";
 import { BaseLayout, IDataContext } from "@pnp/modern-search-extensibility";
 import * as strings from 'CommonStrings';
-import * as propertyControlStrings from 'PropertyControlStrings';
-import { Checkbox, ICheckboxProps, IComboBoxOption } from 'office-ui-fabric-react';
+import { IComboBoxOption } from 'office-ui-fabric-react';
 import { IDetailsListColumnConfiguration } from '../../../components/DetailsListComponent';
 import { IPropertyPaneField, PropertyPaneToggle, PropertyPaneDropdown, PropertyPaneHorizontalRule, PropertyPaneButton, PropertyPaneButtonType } from '@microsoft/sp-property-pane';
 import { TemplateValueFieldEditor, ITemplateValueFieldEditorProps } from '../../../controls/TemplateValueFieldEditor/TemplateValueFieldEditor';
 import { AsyncCombo } from "../../../controls/PropertyPaneAsyncCombo/components/AsyncCombo";
 import { IAsyncComboProps } from "../../../controls/PropertyPaneAsyncCombo/components/IAsyncComboProps";
-import { SortableFields } from "../../../common/Constants";
 
 /**
  * Details List Builtin Layout

@@ -122,7 +122,17 @@ define([], function() {
                 EnableTelemetryLabel: "PnP Telemetrie",
                 EnableTelemetryOn: "Telemetrie einschalten",
                 EnableTelemetryOff: "Telemetrie ausschalten"
+            },
+            CustomQueryModifier: {
+                EditQueryModifiersLabel: "Verfügbare benutzerdefinierte Abfragemodifikatoren konfigurieren",
+                QueryModifiersLabel: "Benutzerdefinierte Abfragemodifikatoren",
+                QueryModifiersDescription: "Aktivieren oder deaktivieren Sie einzelne benutzerdefinierte Abfragemodifikatoren",
+                EnabledPropertyLabel: "Aktiviert",
+                ModifierNamePropertyLabel: "Name",
+                ModifierDescriptionPropertyLabel: "Beschreibung",
+                EndWhenSuccessfullPropertyLabel:"Bei Erfolg beenden"                
             }
         }
     }
 });
+

@@ -32,6 +32,7 @@ export abstract class BaseWebComponent extends HTMLElement {
     protected abstract connectedCallback(): void;
         
     protected disconnectedCallback() {
+        // eslint-disable-next-line @microsoft/spfx/pair-react-dom-render-unmount
         ReactDOM.unmountComponentAtNode(this);
     }
     
@@ -42,13 +43,13 @@ export abstract class BaseWebComponent extends HTMLElement {
      */
     protected resolveAttributes(): { [key:string] : any } {
         
-        let props = {} as any;
+        const props = {} as any;
 
         for (let i =0;i < this.attributes.length;i++) {
 
             if (this.attributes.item(i)) {
 
-                let value = this.attributes.item(i).value; 
+                const value = this.attributes.item(i).value; 
                 let attr = this.attributes.item(i).name;
 
                 // Resolve 'data-*' attribute name

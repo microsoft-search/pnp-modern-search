@@ -9,7 +9,8 @@ You can contribute to this project at multiple levels:
     - Correcting typos
     - Clarify configuration and examples
     - Add business scenario tutorials
-- Add new reusable [components](./extensibility/custom_web_component.md) or [suggestions providers](./extensibility/custom_suggestions_provider.md) to the extensibility library.
+- Add new reusable [components](./extensibility/custom_web_component.md), [suggestions providers](./extensibility/custom_suggestions_provider.md) or [Query modifier](./extensibility/custom_query_modifications.md)
+ to the extensibility library.
 - Add Web Part translations
 
 As a result, we accept pull requests from the community. You can refer to [this post](https://pnp.github.io/script-samples/contributing/submitting-pull-requests.html) to learn how to make a PR on a GitHub repository.
@@ -21,7 +22,7 @@ As a result, we accept pull requests from the community. You can refer to [this 
     
     **Your PR will be automatically rejected if**
 
-    - It alters too much the core architecture of the solution or the amount of code is to important to be reviewed properly.
+    - It alters too much of the solution core architecture or the amount of code is too substantial to be reviewed properly.
     - You don't provide any detailled steps to test it.
     - It contains a new feature that was not discussed previously with the maintainers.
 

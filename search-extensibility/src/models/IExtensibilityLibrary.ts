@@ -1,8 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { IComponentDefinition } from './layouts/IComponentDefinition';
 import { ILayoutDefinition } from './layouts/ILayoutDefinition';
 import { ISuggestionProviderDefinition } from './suggestions/ISuggestionProviderDefinition';
 import * as Handlebars from 'handlebars';
 import { IAdaptiveCardAction } from './IAdaptiveCardAction';
+import { IQueryModifierDefinition } from './queryModifier/IQueryModifierDefinition';
+import { IDataSourceDefinition } from './dataSources/IDataSourceDefinition';
 
 export interface IExtensibilityLibrary {
 
@@ -10,7 +13,7 @@ export interface IExtensibilityLibrary {
      * Returns custom layouts
      */
     getCustomLayouts(): ILayoutDefinition[];
-    
+
     /**
      * Returns custom web components
      */
@@ -32,4 +35,14 @@ export interface IExtensibilityLibrary {
      * @param action the information about the action activated by the user
      */
     invokeCardAction(action: IAdaptiveCardAction): void;
+
+    /**
+     * Returns custom query modifiers
+     */
+    getCustomQueryModifiers?(): IQueryModifierDefinition[];
+
+    /**
+     * Returns custom data sources
+     */
+    getCustomDataSources?(): IDataSourceDefinition[];
 }

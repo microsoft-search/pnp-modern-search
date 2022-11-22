@@ -7,11 +7,10 @@
         "includeClientSideAssets": true,
         "skipFeatureDeployment": true,
         "isDomainIsolated": false,
-        "webApiPermissionRequests": [
-            {
+        "webApiPermissionRequests": [{
                 "resource": "Microsoft Graph",
                 "scope": "Presence.Read.All"
-            },            
+            },
             {
                 "resource": "Microsoft Graph",
                 "scope": "User.Read"
@@ -55,6 +54,14 @@
             {
                 "resource": "Microsoft Graph",
                 "scope": "ChannelMessage.Read.All"
+            },
+            {
+                "resource": "Microsoft Graph",
+                "scope": "Bookmark.Read.All"
+            },
+            {
+                "resource": "Microsoft Graph",
+                "scope": "Acronym.Read.All"
             }
         ],
         "metadata": {
@@ -68,12 +75,6 @@
             "videoUrl": "",
             "categories": []
         },
-        "features": [{
-            "title": "PnP Modern Search - Search Web Parts - v4",
-            "description": "Modern search web parts",
-            "id": "a69a8d49-63d4-49a5-becf-5d383c16bcad",
-            "version": "4.6.1.0"
-        }],
         "developer": {
             "mpnId": "",
             "name": "PnP Team",

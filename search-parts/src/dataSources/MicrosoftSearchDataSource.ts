@@ -15,8 +15,6 @@ import { ISortFieldConfiguration } from '../models/search/ISortFieldConfiguratio
 import { AsyncCombo } from "../controls/PropertyPaneAsyncCombo/components/AsyncCombo";
 import { IAsyncComboProps } from "../controls/PropertyPaneAsyncCombo/components/IAsyncComboProps";
 import { PropertyPaneNonReactiveTextField } from "../controls/PropertyPaneNonReactiveTextField/PropertyPaneNonReactiveTextField";
-import { ISharePointSearchService } from "../services/searchService/ISharePointSearchService";
-import { SharePointSearchService } from "../services/searchService/SharePointSearchService";
 import { IMicrosoftSearchDataSourceData } from "../models/search/IMicrosoftSearchDataSourceData";
 import { SortFieldDirection } from "@pnp/modern-search-extensibility";
 import * as React from "react";
@@ -34,7 +32,9 @@ export enum EntityType {
     ListItem = 'listItem',
     Site = 'site',
     Person = 'person',
-    TeamsMessage = 'chatMessage'
+    TeamsMessage = 'chatMessage',
+    Bookmark = 'bookmark',
+    Acronym = 'acronym'
 }
 
 export interface IMicrosoftSearchDataSourceProperties {
@@ -149,6 +149,14 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         {
             key: EntityType.TeamsMessage,
             text: "Teams messages"
+        },
+        {
+            key: EntityType.Bookmark,
+            text: "Bookmarks"
+        },
+        {
+            key: EntityType.Acronym,
+            text: "Acronyms"
         }
     ];
 
@@ -234,7 +242,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         return results;
     }
 
-    public getPropertyPaneGroupsConfiguration(): IPropertyPaneGroup[] {      
+    public getPropertyPaneGroupsConfiguration(): IPropertyPaneGroup[] {
 
         const entityTypesDisplayValue = this._availableEntityTypeOptions.map((option) => {
             if (this.properties.entityTypes.indexOf(option.key as EntityType) !== -1) {
@@ -746,9 +754,13 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                 queryString: queryText,
                 queryTemplate: queryTemplate
             },
-            from: from,
             size: dataContext.itemsCountPerPage
         };
+
+        //If bookmark or Acronym, paging is not supported
+        if (this.properties.entityTypes.indexOf(EntityType.Bookmark) === -1 && this.properties.entityTypes.indexOf(EntityType.Acronym) === -1) {
+            searchRequest.from = from;
+        }
 
         if (this.properties.fields.length > 0) {
             searchRequest.fields = this.properties.fields.filter(a => a); // Fix to remove null values
@@ -793,6 +805,16 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
     }
 
     /**
+    * Pick culture from url in translated pages as they are folder names like: "en", "no", "de"
+    */
+     private getTranslatedCultureFromUrl(): string {
+        const pathParts = window.location.pathname.toLocaleLowerCase().split('/');
+        const cultureFolderCandidate = pathParts[pathParts.length - 2];
+        if (cultureFolderCandidate.length == 2) return cultureFolderCandidate; //ISO-639-1 uses two letter codes
+        return null;
+    }
+
+    /**
      * Retrieves data from Microsoft Graph API
      * @param searchRequest the Microsoft Search search request
      */
@@ -807,9 +829,15 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
 
         // Get an instance to the MSGraphClient
         const msGraphClientFactory = this.serviceScope.consume<MSGraphClientFactory>(MSGraphClientFactory.serviceKey);
-        const msGraphClient = await msGraphClientFactory.getClient();
+        const msGraphClient = await msGraphClientFactory.getClient('3');
         const request = await msGraphClient.api(this._microsoftSearchUrl);
-        const jsonResponse: IMicrosoftSearchResponse = await request.headers({ 'SdkVersion': 'pnpmodernsearch/' + this.context.manifest.version }).post(searchQuery);
+
+        let culture = this.getTranslatedCultureFromUrl();
+        if (!culture ) {            
+            culture = this.context.pageContext.cultureInfo.currentUICultureName;
+        }
+
+        const jsonResponse: IMicrosoftSearchResponse = await request.headers({ 'SdkVersion': 'pnpmodernsearch/' + this.context.manifest.version, 'accept-language': culture }).post(searchQuery);
 
         if (jsonResponse.value && Array.isArray(jsonResponse.value)) {
 
@@ -823,16 +851,19 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
 
                         const hits = hitContainer.hits.map(hit => {
 
-                            if (hit.resource.fields) {
+                            // 'externalItem' will contain resource.properties but 'listItem' will be resource.fields
+                            const propertiesFieldName = hit.resource.properties ? 'properties' : (hit.resource.properties ? 'fields' : null)
+
+                            if (propertiesFieldName) {
 
                                 // Flatten 'fields' to be usable with the Search Fitler WP as refiners
-                                Object.keys(hit.resource.fields).forEach(field => {
-                                    hit[field] = hit.resource.fields[field];
+                                Object.keys(hit.resource[propertiesFieldName]).forEach(field => {
+                                    hit[field] = hit.resource[propertiesFieldName][field];
                                 });
                             }
 
                             return hit;
-                        });
+                            });
 
                         response.items = response.items.concat(hits);
                     }

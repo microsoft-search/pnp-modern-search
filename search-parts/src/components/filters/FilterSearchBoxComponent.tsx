@@ -29,7 +29,7 @@ export interface IFilterSearchBoxProps {
     /**
      * Callback handlers for search
      */
-     onFilterValueUpdated: FilterSearchBoxEventCallback;
+    onFilterValueUpdated: FilterSearchBoxEventCallback;
 }
 
 export interface IFilterSearchBoxState {
@@ -38,9 +38,9 @@ export interface IFilterSearchBoxState {
 export class FilterSearchBox extends React.Component<IFilterSearchBoxProps, IFilterSearchBoxState> {
 
     public constructor(props: IFilterSearchBoxProps) {
-        super(props);  
+        super(props);
     }
-    
+
     public render() {
 
         let textColor: string = this.props.themeVariant && this.props.themeVariant.isInverted ? (this.props.themeVariant ? this.props.themeVariant.semanticColors.bodyText : '#323130') : this.props.themeVariant.semanticColors.inputText;
@@ -59,7 +59,7 @@ export class FilterSearchBox extends React.Component<IFilterSearchBoxProps, IFil
             };
         });
 
-        let pickerProps: ITagPickerProps = {       
+        let pickerProps: ITagPickerProps = {
             removeButtonAriaLabel: "Remove",
             itemLimit: availableValues.length,
             inputProps: {
@@ -77,7 +77,7 @@ export class FilterSearchBox extends React.Component<IFilterSearchBoxProps, IFil
                     color: textColor,
                     selectors: {
                         '::placeholder': {
-                            color:textColor
+                            color: textColor
                         },
                         '::-ms-input-placeholder': {
                             color: textColor
@@ -86,7 +86,7 @@ export class FilterSearchBox extends React.Component<IFilterSearchBoxProps, IFil
                 }
             },
             selectedItems: sortBy(selectedValues, 'name'), // Sort items alphabetically by their label every time. Otherwise, when submitting multiple filters, the order could change unexpectedly
-            onResolveSuggestions: (filter: string, selectedItems?: ITag[]) => { 
+            onResolveSuggestions: (filter: string, selectedItems?: ITag[]) => {
 
                 const foundValues = availableValues.filter(s => s.name.toLocaleLowerCase().indexOf(filter.toLocaleLowerCase()) !== -1);
 
@@ -94,7 +94,7 @@ export class FilterSearchBox extends React.Component<IFilterSearchBoxProps, IFil
                 return foundValues.filter(foundValue => {
                     return !selectedValues.some(selectedValue => selectedValue.key === foundValue.key);
                 });
-            } ,
+            },
             pickerSuggestionsProps: {
                 noResultsFoundText: commonStrings.General.TagPickerStrings.NoResultsSearchMessage
             },
@@ -112,46 +112,46 @@ export class FilterSearchBox extends React.Component<IFilterSearchBoxProps, IFil
                         value: removedItems[0].value,
                         selected: false
                     };
-    
+
                     this.props.onFilterValueUpdated(this.props.filter.filterName, filterValue);
                 }
             },
             onRenderItem: (props) => {
 
-                return  <div 
-                            className={styles.tagItem}
-                            style={
-                                {
-                                    border: this.props.themeVariant && this.props.themeVariant.isInverted ? '1px solid #fff' : 'inherit'
-                                }
-                            }
-                            role="listitem" 
-                            data-selection-index={props.index} 
-                            data-is-focusable="true"
-                        >
-                            <Text
-                                className={styles.tagItemText}
-                                aria-label={props.item.name}
-                            >
-                                {props.item.name}
-                            </Text>
-                            <IconButton
-                                className={styles.tagRemoveBtn}
-                                iconProps={{ iconName: "Cancel" }}
-                                styles={{ root: { height: '26px' } }}
-                                onClick={() => {
+                return <div
+                    className={styles.tagItem}
+                    style={
+                        {
+                            border: this.props.themeVariant && this.props.themeVariant.isInverted ? '1px solid #fff' : 'inherit'
+                        }
+                    }
+                    role="listitem"
+                    data-selection-index={props.index}
+                    data-is-focusable="true"
+                >
+                    <Text
+                        className={styles.tagItemText}
+                        aria-label={props.item.name}
+                    >
+                        {props.item.name}
+                    </Text>
+                    <IconButton
+                        className={styles.tagRemoveBtn}
+                        iconProps={{ iconName: "Cancel" }}
+                        styles={{ root: { height: '26px' } }}
+                        onClick={() => {
 
-                                    const filterValue: IDataFilterValueInfo = {
-                                        name: props.item.name,
-                                        value: props.item.key.toString(),
-                                        selected: false
-                                    };
-                    
-                                    this.props.onFilterValueUpdated(this.props.filter.filterName, filterValue);
-                                }}
-                            >
-                            </IconButton>
-                        </div>;
+                            const filterValue: IDataFilterValueInfo = {
+                                name: props.item.name,
+                                value: props.item.key.toString(),
+                                selected: false
+                            };
+
+                            this.props.onFilterValueUpdated(this.props.filter.filterName, filterValue);
+                        }}
+                    >
+                    </IconButton>
+                </div>;
             },
             resolveDelay: 200,
             onItemSelected: (selectedItem: ITag) => {
@@ -178,28 +178,32 @@ export class FilterSearchBox extends React.Component<IFilterSearchBoxProps, IFil
 }
 
 export class FilterSearchBoxWebComponent extends BaseWebComponent {
-   
+
     public constructor() {
-        super(); 
+        super();
     }
- 
+
     public async connectedCallback() {
- 
-       let props = this.resolveAttributes();
-       const renderFilterSearchBox = <FilterSearchBox {...props}
-                                        onFilterValueUpdated={((filterName: string, filterValue: IDataFilterValueInfo) => {
-                                        // Bubble event through the DOM
-                                        this.dispatchEvent(new CustomEvent(ExtensibilityConstants.EVENT_FILTER_UPDATED, { 
-                                            detail: {                                       
-                                                filterName: filterName,
-                                                filterValues: [filterValue],
-                                                instanceId: props.instanceId
-                                            } as IDataFilterInfo, 
-                                            bubbles: true,
-                                            cancelable: true
-                                        }));
-                                    }).bind(this)}
-                            />;
-       ReactDOM.render(renderFilterSearchBox, this);
-    }    
+
+        let props = this.resolveAttributes();
+        const renderFilterSearchBox = <FilterSearchBox {...props}
+            onFilterValueUpdated={((filterName: string, filterValue: IDataFilterValueInfo) => {
+                // Bubble event through the DOM
+                this.dispatchEvent(new CustomEvent(ExtensibilityConstants.EVENT_FILTER_UPDATED, {
+                    detail: {
+                        filterName: filterName,
+                        filterValues: [filterValue],
+                        instanceId: props.instanceId
+                    } as IDataFilterInfo,
+                    bubbles: true,
+                    cancelable: true
+                }));
+            }).bind(this)}
+        />;
+        ReactDOM.render(renderFilterSearchBox, this);
+    }
+
+    protected onDispose(): void {
+        ReactDOM.unmountComponentAtNode(this);
+    }
 }

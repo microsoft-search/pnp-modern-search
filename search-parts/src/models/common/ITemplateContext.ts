@@ -23,7 +23,7 @@ export interface ISearchResultsTemplateContext {
      * Connected filters informations
      */
     filters: {
-        
+
         /**
          * Current selected filters for the data source
          */
@@ -53,7 +53,7 @@ export interface ISearchResultsTemplateContext {
         /**
          * Current selected sort field
          */
-        selectedSortFieldName: string; 
+        selectedSortFieldName: string;
 
         /**
          * Current selected sort direction
@@ -73,15 +73,20 @@ export interface ISearchResultsTemplateContext {
     };
 
     /**
-     * The current input query text
+     * The current input query text (maybe modified by queryModifier)
      */
     inputQueryText: string;
+
+    /**
+     * The originalInputQueryText input query text
+     */
+    originalInputQueryText: string;
 
     /**
      * Hashtable of configured slots for the current data source.
      * Usage: {{slot item @root.slots}} 
      */
-    slots: {[key: string]: string};
+    slots: { [key: string]: string };
 
     /**
      * Current theme variables
@@ -128,9 +133,9 @@ export interface ISearchResultsTemplateContext {
         /**
          * It provides contextual information for the SharePoint user that is accessing the page.
          */
-        user: SPUser; 
+        user: SPUser;
     };
-    
+
     /**
      * The data source data
      */
@@ -154,7 +159,7 @@ export interface ISearchResultsTemplateContext {
         /**
          * The adaptive cards host config if specified
          */
-        adaptiveCardsHostConfig?: {[key: string]: string};
+        adaptiveCardsHostConfig?: { [key: string]: string };
     };
 
     /**
@@ -172,7 +177,7 @@ export interface ISearchFiltersTemplateContext {
      * Current filters to display in the UI (selected/unseslected)
      */
     filters: IDataFilterInternal[];
-    
+
     /**
      * The current submitted filters
      */

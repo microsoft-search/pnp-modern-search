@@ -60,6 +60,8 @@ define([], function() {
                 DefaultExtensibilityLibraryName: "Biblioteca de extensibilidad por defecto",
                 InvalidProviderInstance: "El proveedor de sugerencias seleccionado '{0}' no implementa correctamente la clase abstracta 'BaseSuggestionProvider'. Faltan algunos métodos.",
                 ProviderDefinitionNotFound: "No se ha encontrado el proveedor de sugerencias personalizado con la clave '{0}'. Asegúrese de que la solución se ha desplegado correctamente en el catálogo de aplicaciones y de que el ID del manifiesto se ha registrado para este Web Part.",
+                QueryModifierDefinitionNotFound: "No se ha encontrado el queryModifier personalizado con la clave '{0}'. Asegúrese de que la solución se ha desplegado correctamente en el catálogo de aplicaciones y el ID del manifiesto se ha registrado para esta Web Part.",
+                InvalidQueryModifierInstance: "El queryModifier personalizado seleccionado '{0}' no implementa correctamente la clase abstracta 'BaseQueryModifier'. Faltan algunos métodos.",
             },
             DateFromLabel: "Desde",
             DateTolabel: "Hasta",

@@ -122,6 +122,15 @@ define([], function() {
                 EnableTelemetryLabel: "PnP telemetria",
                 EnableTelemetryOn: "Aseta telemetria käyttöön",
                 EnableTelemetryOff: "Poista telemetria käytöstä"
+            },
+            CustomQueryModifier: {
+                  EditQueryModifiersLabel: "Käytettävissä olevien mukautettujen kyselyn muokkaimien määrittäminen",
+                  QueryModifiersLabel: "Mukautetut kyselyn muokkaajat",
+                  QueryModifiersDescription: "Ota käyttöön tai poista käytöstä yksittäisiä mukautettuja kyselyn muokkaajia.",
+                  EnabledPropertyLabel: "Enabled",
+                  ModifierNamePropertyLabel: "Nimi",
+                  ModifierDescriptionPropertyLabel: "Kuvaus",
+                  EndWhenSuccessfullPropertyLabel:"Loppuu, kun onnistuu"              
             }
         }
     }

@@ -515,6 +515,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 selectedVertical: this.props.dataContext.verticals.selectedVertical
             },
             inputQueryText: this.props.dataContext.inputQueryText,
+			originalInputQueryText: this.props.dataContext.originalInputQueryText,
             // The available template slots 
             slots: this.convertTemplateSlotsToHashtable(this.props.properties.templateSlots),
             // The current page context

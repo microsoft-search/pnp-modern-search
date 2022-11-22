@@ -60,6 +60,8 @@ define([], function () {
           DefaultExtensibilityLibraryName: "Standardutbyggnadsbibliotek",
           InvalidProviderInstance: "Den valda förslagsleverantören '{0}' implementerar inte abstraktklassen 'BaseSuggestionProvider' korrekt. Vissa metoder saknas.",
           ProviderDefinitionNotFound: "Den anpassade förslagsleverantören med nyckeln '{0}' hittades inte. Se till att lösningen är korrekt implementerad för appkatalogen och att manifest-ID:t är registrerat för denna webbdel.",
+          QueryModifierDefinitionNotFound: "Den anpassade queryModifier med nyckeln '{0}' hittades inte. Kontrollera att lösningen är korrekt distribuerad till appkatalogen och att manifest-ID:et har registrerats för den här webbdelen.",
+          InvalidQueryModifierInstance: "Den valda anpassade queryModifier '{0}' implementerar inte den abstrakta klassen 'BaseQueryModifier' korrekt. Vissa metoder saknas.",
         },
         DateFromLabel: "Från",
         DateTolabel: "Till",

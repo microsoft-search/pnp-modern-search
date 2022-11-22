@@ -2,7 +2,7 @@
     "@microsoft/generator-sharepoint": {
         "isCreatingSolution": true,
         "environment": "spo",
-        "version": "1.14.0",
+        "version": "1.15.2",
         "libraryName": "pnp-search-extensibility",
         "libraryId": "f13a5866-004f-4219-b078-69731f848bd1",
         "packageManager": "npm",

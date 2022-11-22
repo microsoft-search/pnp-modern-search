@@ -9,6 +9,8 @@ You can use tokens in the following locations:
         - **SharePoint Search**
             - Query template field.
             - Refinement filters field.
+        - **Microsoft Search**
+            - Query template field.
 
 - **Search Verticals Web Part**
     - In the link URL when the vertical item is a link.

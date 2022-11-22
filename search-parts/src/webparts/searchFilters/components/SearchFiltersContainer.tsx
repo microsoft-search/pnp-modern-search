@@ -8,14 +8,14 @@ import * as webPartStrings from 'SearchFiltersWebPartStrings';
 import * as commonStrings from 'CommonStrings';
 import update from 'immutability-helper';
 import { MessageBar, MessageBarType } from 'office-ui-fabric-react';
-import { 
-  IDataFilterInternal, 
-  IDataFilterValueInternal, 
-  IDataFilterConfiguration, 
-  IDataFilterResult, 
-  IDataFilterResultValue, 
-  IDataFilter, 
-  FilterComparisonOperator, 
+import {
+  IDataFilterInternal,
+  IDataFilterValueInternal,
+  IDataFilterConfiguration,
+  IDataFilterResult,
+  IDataFilterResultValue,
+  IDataFilter,
+  FilterComparisonOperator,
   IDataFilterInfo,
   ExtensibilityConstants,
   FilterConditionOperator,
@@ -35,7 +35,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
   private componentRef: React.RefObject<any>;
 
   public constructor(props: ISearchFiltersContainerProps) {
-    
+
     super(props);
 
     this.state = {
@@ -54,41 +54,41 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
     let templateContent: string = null;
     let renderTitle: JSX.Element = null;
 
-     // WP title
-     renderTitle =  <WebPartTitle 
-                      displayMode={this.props.webPartTitleProps.displayMode} 
-                      title={this.props.webPartTitleProps.title} 
-                      updateProperty={this.props.webPartTitleProps.updateProperty}
-                      className={this.props.webPartTitleProps.className}
-                    />;
-    
+    // WP title
+    renderTitle = <WebPartTitle
+      displayMode={this.props.webPartTitleProps.displayMode}
+      title={this.props.webPartTitleProps.title}
+      updateProperty={this.props.webPartTitleProps.updateProperty}
+      className={this.props.webPartTitleProps.className}
+    />;
+
     // If no filter 
     if (this.state.currentUiFilters.length === 0) {
 
       if (this.props.webPartTitleProps.displayMode === DisplayMode.Edit) {
         renderWpContent = <MessageBar messageBarType={MessageBarType.info}>{webPartStrings.General.NoAvailableFilterMessage}</MessageBar>;
       }
-      
+
     } else {
 
       // Content loading
       templateContent = this.props.templateService.getTemplateMarkup(this.props.templateContent);
       const templateContext = this.getTemplateContext();
-    
-      renderWpContent =   <TemplateRenderer
-                            key={JSON.stringify(templateContext)}
-                            templateContent={templateContent} 
-                            templateContext={templateContext}
-                            templateService={this.props.templateService}
-                            instanceId={this.props.instanceId}
-                            renderType={LayoutRenderType.Handlebars} // Only allow Handlebars for filters
-                          />;
+
+      renderWpContent = <TemplateRenderer
+        key={JSON.stringify(templateContext)}
+        templateContent={templateContent}
+        templateContext={templateContext}
+        templateService={this.props.templateService}
+        instanceId={this.props.instanceId}
+        renderType={LayoutRenderType.Handlebars} // Only allow Handlebars for filters
+      />;
     }
-    
-    return  <div ref={this.componentRef} data-instance-id={this.props.instanceId}>
-                {renderTitle}
-                {renderWpContent}
-            </div>;
+
+    return <div ref={this.componentRef} data-instance-id={this.props.instanceId}>
+      {renderTitle}
+      {renderWpContent}
+    </div>;
   }
 
   public componentDidMount() {
@@ -104,11 +104,11 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
     // Bind events when the values operator is updated for a specific filter
     // Use case when the opeartor control is used directly in the Handlebars template. Otherwise, for nested component usage (ex: combo box), the operator value will be changed through the IDataFilterInfo interface direcrtly and not trought a JavaScript event.
-    this.bindFilterValueOperatorUpdated();    
+    this.bindFilterValueOperatorUpdated();
 
     // Initial state
     this.getFiltersToDisplay(this.props.availableFilters, [], this.props.filtersConfiguration);
-  
+
     // Process deep links
     this.getFiltersDeepLink();
 
@@ -116,10 +116,10 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
   }
 
   public componentDidUpdate(prevProps: ISearchFiltersContainerProps, prevState: ISearchFiltersContainerState) {
-    
+
     // When filters configuration is updated or the layout is changed 
-    if (!isEqual(prevProps.selectedLayoutKey, this.props.selectedLayoutKey) 
-        || !isEqual(prevProps.properties, this.props.properties)) {
+    if (!isEqual(prevProps.selectedLayoutKey, this.props.selectedLayoutKey)
+      || !isEqual(prevProps.properties, this.props.properties)) {
 
       const updatedfilters = this.resetSelectedFilterValues(this.state.currentUiFilters);
       const submittedFilters = this.getSelectedFiltersFromUIFilters(updatedfilters);
@@ -134,13 +134,14 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
     // When new filters are received from the data source
     if (!isEqual(prevProps.availableFilters, this.props.availableFilters)) {
 
-        this.getFiltersToDisplay(this.props.availableFilters, this.state.currentUiFilters, this.props.filtersConfiguration);
+      this.getFiltersDeepLink();
+      this.getFiltersToDisplay(this.props.availableFilters, this.state.currentUiFilters, this.props.filtersConfiguration);
 
-        const submittedFilters = this.getSelectedFiltersFromUIFilters(this.state.currentUiFilters);
-          
-        this.setState({
-          submittedFilters: submittedFilters
-        });
+      const submittedFilters = this.getSelectedFiltersFromUIFilters(this.state.currentUiFilters);
+
+      this.setState({
+        submittedFilters: submittedFilters
+      });
     }
   }
 
@@ -152,43 +153,43 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
    */
   private getFiltersToDisplay(availableFilters: IDataFilterResult[], currentUiFilters: IDataFilterInternal[], filtersConfiguration: IDataFilterConfiguration[]): void {
 
-    const updatedFilters: IDataFilterInternal[] = availableFilters.map(availableFilter=> {
+    const updatedFilters: IDataFilterInternal[] = availableFilters.map(availableFilter => {
 
       let values: IDataFilterValueInternal[] = [];
-  
+
       // Get the corresponding configuration for this filter
       const filterConfiguration = DataFilterHelper.getConfigurationForFilter(availableFilter, filtersConfiguration);
 
-      if(filterConfiguration) {
-        
+      if (filterConfiguration) {
+
         // Determine if the filter is already selected in the current UI filters 
         const selectedFilterIdx = currentUiFilters.map(selectedFilter => { return selectedFilter.filterName; }).indexOf(availableFilter.filterName);
 
         // When the selected filters combination have no results, we set the selected value counts for the current filter to 0 to be able to reset it in the UI.
         if (availableFilter.values.length === 0) {
-          
+
           if (selectedFilterIdx !== -1) {
 
             // Set count to 0
             values = currentUiFilters[selectedFilterIdx].values.map(value => {
 
-                // Reset the count for already selected refiners
-                if (((value.selected || value.selectedOnce) && filterConfiguration.isMulti) || (value.selected && !filterConfiguration.isMulti)) {
-                  value.count = 0;
-                } else {
-                  return null;
-                }
-                
-                return value;
+              // Reset the count for already selected refiners
+              if (((value.selected || value.selectedOnce) && filterConfiguration.isMulti) || (value.selected && !filterConfiguration.isMulti)) {
+                value.count = 0;
+              } else {
+                return null;
+              }
+
+              return value;
             }).filter(value => value);
           }
-          
+
         } else {
 
           // Merge available filters with currently selected filters to ajust the count information
           values = availableFilter.values.map((availableValue: IDataFilterResultValue) => {
 
-            const filterValueInternal: IDataFilterValueInternal = {          
+            const filterValueInternal: IDataFilterValueInternal = {
               name: availableValue.name,
               selected: false,
               selectedOnce: false,
@@ -196,7 +197,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
               value: availableValue.value,
               count: availableValue.count
             };
- 
+
             if (selectedFilterIdx !== -1) {
 
               const valueIdx = currentUiFilters[selectedFilterIdx].values.map(value => { return value.value; }).indexOf(availableValue.value);
@@ -261,7 +262,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
           displayName: filterConfiguration.displayValue ? filterConfiguration.displayValue : availableFilter.filterName,
           filterName: availableFilter.filterName,
           isMulti: !filterConfiguration.isMulti ? false : filterConfiguration.isMulti,
-          showCount: !filterConfiguration.showCount ? false: filterConfiguration.showCount,
+          showCount: !filterConfiguration.showCount ? false : filterConfiguration.showCount,
           expandByDefault: !filterConfiguration.expandByDefault ? false : filterConfiguration.expandByDefault,
           selectedOnce: selectedOnce,
           selectedTemplate: filterConfiguration.selectedTemplate,
@@ -272,13 +273,13 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
           canApply: canApply,
           canClear: canClear
         };
-        
+
         return filterResultInternal;
       }
     });
 
     this.setState({
-      currentUiFilters: update(this.state.currentUiFilters, { $set: sortBy(updatedFilters.filter(updatedFilter => updatedFilter), 'sortIdx')})      
+      currentUiFilters: update(this.state.currentUiFilters, { $set: sortBy(updatedFilters.filter(updatedFilter => updatedFilter), 'sortIdx') })
     });
   }
 
@@ -288,101 +289,101 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
    */
   private onFilterValuesUpdated(filterInfo: IDataFilterInfo) {
 
-      let currentUiFilters: IDataFilterInternal[] = [];
+    let currentUiFilters: IDataFilterInternal[] = [];
 
-      // Get the configuration for this filter
-      const filterConfigIdx = this.props.filtersConfiguration.map(filter => { return filter.filterName; }).indexOf(filterInfo.filterName);
-      
-      if (filterConfigIdx !== -1) {
+    // Get the configuration for this filter
+    const filterConfigIdx = this.props.filtersConfiguration.map(filter => { return filter.filterName; }).indexOf(filterInfo.filterName);
 
-        const filterConfiguration = this.props.filtersConfiguration[filterConfigIdx];
-      
-        // Get the index of the filter in the current selected filters collection
-        const filterIdx = this.state.currentUiFilters.map(filter => { return filter.filterName; }).indexOf(filterInfo.filterName);
+    if (filterConfigIdx !== -1) {
 
-        if (filterIdx !== -1 ) {
+      const filterConfiguration = this.props.filtersConfiguration[filterConfigIdx];
 
-          currentUiFilters = cloneDeep(this.state.currentUiFilters);
+      // Get the index of the filter in the current selected filters collection
+      const filterIdx = this.state.currentUiFilters.map(filter => { return filter.filterName; }).indexOf(filterInfo.filterName);
 
-            // If a control specifies an operator to use between values explictly, we update it in the current collection (ex: the FilterValueOperator component nested in the combo box component)
-            if (filterInfo.operator) {
-              currentUiFilters = update(currentUiFilters, { [filterIdx]: { operator: { $set: filterInfo.operator }}});
-            }
+      if (filterIdx !== -1) {
 
-          // Addition or merge scenario
-          filterInfo.filterValues.map(filterValue => {
+        currentUiFilters = cloneDeep(this.state.currentUiFilters);
 
-            const filterValueInternal: IDataFilterValueInternal = {
-              selected: filterValue.selected,
-              name: filterValue.name,
-              value: filterValue.value,
-              operator: filterValue.operator,
-              selectedOnce: true
-            };
+        // If a control specifies an operator to use between values explictly, we update it in the current collection (ex: the FilterValueOperator component nested in the combo box component)
+        if (filterInfo.operator) {
+          currentUiFilters = update(currentUiFilters, { [filterIdx]: { operator: { $set: filterInfo.operator } } });
+        }
 
-            const valueIdx = currentUiFilters[filterIdx].values.map(value => { return value.value; }).indexOf(filterValue.value);
-        
-            if (valueIdx === -1) {
-              // If the value does not exist yet, we add it to the selected values
-              currentUiFilters = update(currentUiFilters, { [filterIdx]: { values: { $push: [filterValueInternal] }}});
-            } else {
-              // Otherwise, we update the value in selected values
-              currentUiFilters =  update(currentUiFilters, { [filterIdx]: { values: { [valueIdx]: { $set: filterValueInternal }}}});
-            }
-          });
+        // Addition or merge scenario
+        filterInfo.filterValues.map(filterValue => {
 
-        } else {
-
-          const filterValuesInternal: IDataFilterValueInternal[] = filterInfo.filterValues.map(filterValue => {
-            return {
-              selected: filterValue.selected,
-              name: filterValue.name,
-              value: filterValue.value,
-              selectedOnce: true
-            };
-          });
-
-          const filterResultInternal: IDataFilterInternal = {
-            displayName: filterConfiguration.displayValue ? filterConfiguration.displayValue : filterInfo.filterName,
-            filterName: filterInfo.filterName,
-            hasSelectedValues: filterInfo.filterValues.filter(value => value.selected).length > 0,
-            selectedOnce: true,
-            isMulti: !filterConfiguration.isMulti ? false : filterConfiguration.isMulti,
-            showCount: !filterConfiguration.showCount ? false: filterConfiguration.showCount,
-            expandByDefault: !filterConfiguration.expandByDefault ? false : filterConfiguration.expandByDefault,
-            values: filterValuesInternal,
-            operator: filterInfo.operator ? filterInfo.operator : currentUiFilters[filterIdx].operator,
-            selectedTemplate: filterConfiguration.selectedTemplate,
-            sortIdx: filterConfiguration.sortIdx
+          const filterValueInternal: IDataFilterValueInternal = {
+            selected: filterValue.selected,
+            name: filterValue.name,
+            value: filterValue.value,
+            operator: filterValue.operator,
+            selectedOnce: true
           };
 
-          // If does not exist, add to selected filters collection
-          currentUiFilters = update(this.state.currentUiFilters, { $push: [filterResultInternal] });
-        }
-            
-        if (!filterConfiguration.isMulti || filterInfo.forceUpdate) {
+          const valueIdx = currentUiFilters[filterIdx].values.map(value => { return value.value; }).indexOf(filterValue.value);
 
-          const submittedFilters = this.getSelectedFiltersFromUIFilters(currentUiFilters);
-          
-          this.setState({
-            submittedFilters: submittedFilters
-          }, () => {
+          if (valueIdx === -1) {
+            // If the value does not exist yet, we add it to the selected values
+            currentUiFilters = update(currentUiFilters, { [filterIdx]: { values: { $push: [filterValueInternal] } } });
+          } else {
+            // Otherwise, we update the value in selected values
+            currentUiFilters = update(currentUiFilters, { [filterIdx]: { values: { [valueIdx]: { $set: filterValueInternal } } } });
+          }
+        });
 
-            // Send only selected filters to the data source
-            this.props.onUpdateFilters(submittedFilters);
+      } else {
 
-            // Set the filter links in URL
-            this.setFiltersDeepLink(submittedFilters);
-            
-            // Force a UI refresh is the submitted filters come from 'Apply' button to get the correct disabled/active state set
-            if (filterConfiguration.isMulti) {
-              this.forceUpdate();
-            }
-          });
-        }
+        const filterValuesInternal: IDataFilterValueInternal[] = filterInfo.filterValues.map(filterValue => {
+          return {
+            selected: filterValue.selected,
+            name: filterValue.name,
+            value: filterValue.value,
+            selectedOnce: true
+          };
+        });
 
-        this.getFiltersToDisplay(this.props.availableFilters, currentUiFilters, this.props.filtersConfiguration);
+        const filterResultInternal: IDataFilterInternal = {
+          displayName: filterConfiguration.displayValue ? filterConfiguration.displayValue : filterInfo.filterName,
+          filterName: filterInfo.filterName,
+          hasSelectedValues: filterInfo.filterValues.filter(value => value.selected).length > 0,
+          selectedOnce: true,
+          isMulti: !filterConfiguration.isMulti ? false : filterConfiguration.isMulti,
+          showCount: !filterConfiguration.showCount ? false : filterConfiguration.showCount,
+          expandByDefault: !filterConfiguration.expandByDefault ? false : filterConfiguration.expandByDefault,
+          values: filterValuesInternal,
+          operator: filterInfo.operator ? filterInfo.operator : currentUiFilters[filterIdx].operator,
+          selectedTemplate: filterConfiguration.selectedTemplate,
+          sortIdx: filterConfiguration.sortIdx
+        };
+
+        // If does not exist, add to selected filters collection
+        currentUiFilters = update(this.state.currentUiFilters, { $push: [filterResultInternal] });
       }
+
+      if (!filterConfiguration.isMulti || filterInfo.forceUpdate) {
+
+        const submittedFilters = this.getSelectedFiltersFromUIFilters(currentUiFilters);
+
+        this.setState({
+          submittedFilters: submittedFilters
+        }, () => {
+
+          // Send only selected filters to the data source
+          this.props.onUpdateFilters(submittedFilters);
+
+          // Set the filter links in URL
+          this.setFiltersDeepLink(submittedFilters);
+
+          // Force a UI refresh is the submitted filters come from 'Apply' button to get the correct disabled/active state set
+          if (filterConfiguration.isMulti) {
+            this.forceUpdate();
+          }
+        });
+      }
+
+      this.getFiltersToDisplay(this.props.availableFilters, currentUiFilters, this.props.filtersConfiguration);
+    }
   }
 
   /**
@@ -391,7 +392,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
    */
   private getSelectedFiltersFromUIFilters(currentUiFilters: IDataFilterInternal[]): IDataFilter[] {
 
-    const selectedFilters: IDataFilter[] = currentUiFilters.map(selectedFilter => { 
+    const selectedFilters: IDataFilter[] = currentUiFilters.map(selectedFilter => {
 
       const newSelectedFilter = cloneDeep(selectedFilter);
 
@@ -405,11 +406,11 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
       });
 
       if (values.length > 0) {
-        
+
         newSelectedFilter.values = values.map(value => {
 
           let newValue = cloneDeep(value);
-  
+
           // Remove useless properties since we don't want to expose them in the data source, especially for consumers
           delete newValue.selected;
           delete newValue.selectedOnce;
@@ -417,10 +418,10 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
           // 'Equals' by default
           if (!newValue.operator) newValue.operator = FilterComparisonOperator.Eq;
-  
+
           return newValue;
         });
-        
+
         // Remove useless properties since we don't want to expose them in the data source, especially for consumers
         // We need to return only proeprties used for IDataFilter to avoid confusion
         delete newSelectedFilter.expandByDefault;
@@ -433,7 +434,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         delete newSelectedFilter.canClear;
         delete newSelectedFilter.sortIdx;
         delete newSelectedFilter.selectedTemplate;
-  
+
         return newSelectedFilter;
       }
     });
@@ -546,11 +547,11 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         const selectedValues = filter.values.filter(v => v.selected);
         // Submitted values for the current filter name
         const submittedValues = this.state.submittedFilters.filter(f => f.filterName === ev.detail.filterName && f.values.filter(v => selectedValues.map(s => s.value).indexOf(v.value) !== -1));
-  
+
         if (filter.filterName === ev.detail.filterName) {
 
           // We let the user apply the new filters only if the operator changes or has at least two selected values      
-          filter.canApply = (!filter.canApply && filter.operator !== ev.detail.operator && selectedValues.length > 1) || (filter.canApply && submittedValues.length === 0); 
+          filter.canApply = (!filter.canApply && filter.operator !== ev.detail.operator && selectedValues.length > 1) || (filter.canApply && submittedValues.length === 0);
           filter.operator = ev.detail.operator;
         }
 
@@ -562,7 +563,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
       });
 
     }).bind(this));
-  }  
+  }
 
   // Build the template context
   private getTemplateContext(): ISearchFiltersTemplateContext {
@@ -583,50 +584,50 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
   /**
    * Retrieves the default filters from the URL and set them as initial state
    */
-   private getFiltersDeepLink() {
+  private getFiltersDeepLink() {
 
     const queryString = UrlHelper.getQueryStringParam(DEEPLINK_QUERYSTRING_PARAM, window.location.href);
 
     if (queryString) {
 
-        try {
+      try {
 
-          const dataFilters: IDataFilter[] = JSON.parse(decodeURIComponent(queryString));
-          const currentUiFilters = dataFilters.map(filter => {
+        const dataFilters: IDataFilter[] = JSON.parse(decodeURIComponent(queryString));
+        const currentUiFilters = dataFilters.map(filter => {
 
-            const filterConfiguration = DataFilterHelper.getConfigurationForFilter(filter, this.props.filtersConfiguration);
+          const filterConfiguration = DataFilterHelper.getConfigurationForFilter(filter, this.props.filtersConfiguration);
 
-            return {
-              displayName: filterConfiguration.displayValue ? filterConfiguration.displayValue : filter.filterName,
-              expandByDefault: filterConfiguration.expandByDefault,
-              filterName: filter.filterName,
-              isMulti: filterConfiguration.isMulti,
-              selectedTemplate: filterConfiguration.selectedTemplate,
-              showCount: filterConfiguration.showCount,
-              selectedOnce: true,
-              operator: filter.operator,
-              values: filter.values.map((value: IDataFilterValueInternal )=> {
-                value.selected = true;
-                value.selectedOnce = true;
-                return value;
-              }),
-              canApply: false,
-              canClear: true
-            } as IDataFilterInternal;
-          });
+          return {
+            displayName: filterConfiguration.displayValue ? filterConfiguration.displayValue : filter.filterName,
+            expandByDefault: filterConfiguration.expandByDefault,
+            filterName: filter.filterName,
+            isMulti: filterConfiguration.isMulti,
+            selectedTemplate: filterConfiguration.selectedTemplate,
+            showCount: filterConfiguration.showCount,
+            selectedOnce: true,
+            operator: filter.operator,
+            values: filter.values.map((value: IDataFilterValueInternal) => {
+              value.selected = true;
+              value.selectedOnce = true;
+              return value;
+            }),
+            canApply: false,
+            canClear: true
+          } as IDataFilterInternal;
+        });
 
-          // Update the connected data source (if applicable)
-          this.props.onUpdateFilters(dataFilters);
+        // Update the connected data source (if applicable)
+        this.props.onUpdateFilters(dataFilters);
 
-          // Update selected filters in the UI
-          this.setState({
-            currentUiFilters: currentUiFilters,
-            submittedFilters: dataFilters
-          });
-          
-        } catch (e) {
-          Log.verbose(`[SearchFiltersContainer.getFiltersDeepLink]`, `Filters format in the query string is invalid.`);
-        }  
+        // Update selected filters in the UI
+        this.setState({
+          currentUiFilters: currentUiFilters,
+          submittedFilters: dataFilters
+        });
+
+      } catch (e) {
+        Log.verbose(`[SearchFiltersContainer.getFiltersDeepLink]`, `Filters format in the query string is invalid.`);
+      }
     }
   }
 
@@ -638,18 +639,18 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
     let filtersDeepLinkUrl: string;
     if (submittedFilters.length > 0) {
-      filtersDeepLinkUrl = UrlHelper.addOrReplaceQueryStringParam(window.location.href, DEEPLINK_QUERYSTRING_PARAM, JSON.stringify(submittedFilters));              
+      filtersDeepLinkUrl = UrlHelper.addOrReplaceQueryStringParam(window.location.href, DEEPLINK_QUERYSTRING_PARAM, JSON.stringify(submittedFilters));
     } else {
       filtersDeepLinkUrl = UrlHelper.removeQueryStringParam(DEEPLINK_QUERYSTRING_PARAM, window.location.href);
     }
-    
-    window.history.pushState({ path: filtersDeepLinkUrl },'', filtersDeepLinkUrl);
+
+    window.history.pushState({ path: filtersDeepLinkUrl }, '', filtersDeepLinkUrl);
   }
 
   private resetFiltersDeepLink() {
     // Reset filters query string
     const filtersDeepLinkUrl = UrlHelper.removeQueryStringParam(DEEPLINK_QUERYSTRING_PARAM, window.location.href);
-    window.history.pushState({ path: filtersDeepLinkUrl },'', filtersDeepLinkUrl);
+    window.history.pushState({ path: filtersDeepLinkUrl }, '', filtersDeepLinkUrl);
   }
 
   /**
@@ -659,10 +660,10 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
   private _handleQueryStringChange() {
 
     ((history) => {
-      var pushState = history.pushState;
+      let pushState = history.pushState;
       history.pushState = (state, key, path) => {
-          pushState.apply(history, [state, key, path]);
-          this.getFiltersDeepLink();
+        pushState.apply(history, [state, key, path]);
+        this.getFiltersDeepLink();
       };
     })(window.history);
 
@@ -673,7 +674,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
       // Initial state where no filter are selected
       if (!queryString) {
-        
+
         this.setState({
           currentUiFilters: this.resetSelectedFilterValues(this.state.currentUiFilters),
           submittedFilters: []
@@ -684,12 +685,12 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
       }
 
       this.getFiltersDeepLink();
-    };      
+    };
   }
 
   private resetSelectedFilterValues(currentUiFilters: IDataFilterInternal[]): IDataFilterInternal[] {
 
-    const updatedfilters = currentUiFilters.map(selectedFilter => { 
+    const updatedfilters = currentUiFilters.map(selectedFilter => {
       const updatedFilter = cloneDeep(selectedFilter);
       updatedFilter.values = [];
       return updatedFilter;

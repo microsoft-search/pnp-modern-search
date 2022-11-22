@@ -66,10 +66,10 @@ export class DateHelper {
     }
 
     public isDST() {
-        let today = new Date();
-        var jan = new Date(today.getFullYear(), 0, 1);
-        var jul = new Date(today.getFullYear(), 6, 1);
-        let stdTimeZoneOffset = Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
+        const today = new Date();
+        const jan = new Date(today.getFullYear(), 0, 1);
+        const jul = new Date(today.getFullYear(), 6, 1);
+        const stdTimeZoneOffset = Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
         return today.getTimezoneOffset() < stdTimeZoneOffset;
     }
 
