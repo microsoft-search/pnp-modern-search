@@ -89,7 +89,7 @@ jobs:
       - name: Create GitHub release
         uses: ncipollo/release-action@v1
         with:
-          name: PnP Modern Search - ${{ needs.build.outputs.majorMinorPatch }}
+          name: PnP Modern Search - ${{ needs.build.outputs.semVer }}
           artifacts: ${{ github.workspace }}/**/*.sppkg
           bodyFile: ".github/workflows/release-template.md"
           draft: true
