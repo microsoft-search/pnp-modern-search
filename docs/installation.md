@@ -24,6 +24,10 @@
     | _Calendars.Read_ | Allow search for user's calendar appointments using Graph API (Events).
     | _Sites.Read.All_ | Allow search for sites using Graph API (Sites / List Items).
     | _ExternalItem.Read.All_ | Allow search for connector items using Graph API (External Items).
+    | _Bookmark.Read.All_ | Allow search for Bookmarks in Microsoft Search in your organization.
+    | _Acronym.Read.All_ | Allow search for Acronyms in Microsoft Search in your organization.
+    | _Chat.Read_ | Allow search for Teams messages.
+    | _ChannelMessage.Read.All_ | Same as above.
 
 3. Add the Web Parts to a SharePoint and start building!
 

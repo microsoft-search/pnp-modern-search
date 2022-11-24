@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
-import { Version, ServiceKey, Text } from '@microsoft/sp-core-library';
+import { Version, ServiceKey, Text, Log } from '@microsoft/sp-core-library';
 import { GlobalSettings } from 'office-ui-fabric-react';
 import { IWebPartPropertiesMetadata } from '@microsoft/sp-webpart-base';
 import { uniqBy } from '@microsoft/sp-lodash-subset';
@@ -41,6 +41,9 @@ import { ITokenService } from '@pnp/modern-search-extensibility';
 import { BuiltinTokenNames, TokenService } from '../../services/tokenService/TokenService';
 import { BaseWebPart } from '../../common/BaseWebPart';
 import { DynamicPropertyHelper } from '../../helpers/DynamicPropertyHelper';
+import PnPTelemetry from '@pnp/telemetry-js';
+
+const LogSource = "SearchBoxWebPart";
 
 export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps> implements IDynamicDataCallables {
 
@@ -95,6 +98,13 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
     }
 
     protected async onInit() {
+        try {
+            // Disable PnP Telemetry
+            const telemetry = PnPTelemetry.getInstance();
+            telemetry.optOut();
+        } catch (error) {
+            Log.warn(LogSource, `Opt out for PnP Telemetry failed. Details: ${error}`, this.context.serviceScope);
+        }
 
         this.initializeProperties();
 
@@ -179,6 +189,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
             queryStringParameter: this.properties.queryStringParameter,
             inputTemplate: this.properties.inputTemplate,
             searchInNewPage: this.properties.searchInNewPage,
+            reQueryOnClear: this.properties.reQueryOnClear,
             themeVariant: this._themeVariant,
             onSearch: this._onSearch,
             suggestionProviders: this._selectedCustomProviders,
@@ -481,6 +492,9 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
             }),
             PropertyPaneToggle("searchInNewPage", {
                 label: webPartStrings.PropertyPane.SearchBoxSettingsGroup.SearchInNewPageLabel
+            }),
+            PropertyPaneToggle("reQueryOnClear", {
+                label: webPartStrings.PropertyPane.SearchBoxSettingsGroup.ReQueryOnClearLabel
             })
         ];
 
@@ -679,8 +693,8 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
      * Subscribes to URL hash change if the dynamic property is set to the default 'URL Fragment' property
      */
     private _bindHashChange() {
-        const queryText = DynamicPropertyHelper.tryGetSourceSafe(this.properties.queryText);
-        if (queryText?.reference?.localeCompare('PageContext:UrlData:fragment') === 0) {
+        const queryTextSource = DynamicPropertyHelper.tryGetSourceSafe(this.properties.queryText);
+        if (queryTextSource && this.properties.queryText?.reference?.localeCompare('PageContext:UrlData:fragment') === 0) {
             // Manually subscribe to hash change since the default property doesn't
             window.addEventListener('hashchange', this.render);
         } else {

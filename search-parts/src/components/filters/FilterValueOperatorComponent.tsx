@@ -128,4 +128,8 @@ export class FilterValueOperatorWebComponent extends BaseWebComponent {
 
        ReactDOM.render(renderFilterValueOperator, this);
     }    
+
+    protected onDispose(): void {
+        ReactDOM.unmountComponentAtNode(this);
+    }
 }

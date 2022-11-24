@@ -64,4 +64,8 @@ export class ItemSelectionWebComponent extends BaseWebComponent {
 
         ReactDOM.render(renderItemSelection, this);
     }
+
+    protected onDispose(): void {
+        ReactDOM.unmountComponentAtNode(this);
+    }
 }

@@ -104,4 +104,8 @@ export class FilePreviewWebComponent extends BaseWebComponent {
         const filePreview = <FilePreview {...props} template={this.innerHTML} />;
         ReactDOM.render(filePreview, this);
     }
+
+    protected onDispose(): void {
+        ReactDOM.unmountComponentAtNode(this);
+    }
 }

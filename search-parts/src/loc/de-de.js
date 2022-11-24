@@ -60,6 +60,8 @@ define([], function() {
                 DefaultExtensibilityLibraryName: "Standard-Erweiterungsbibliothek",
                 InvalidProviderInstance: "Der ausgewählte Vorschlagsprovider '{0}' implementiert die abstrakte Klasse 'BaseSuggestionProvider' nicht korrekt. Es fehlen einige Methoden.",
                 ProviderDefinitionNotFound: "Der benutzerdefinierte Vorschlagsprovider mit dem Schlüssel '{0}' wurde nicht gefunden. Stellen Sie sicher, dass die Lösung korrekt für den App-Katalog bereitgestellt und die Manifest-ID für dieses Webpart registriert ist.",
+                QueryModifierDefinitionNotFound: "Der benutzerdefinierte Benutzer-Anfragen-Modifizierer mit dem Schlüssel '{0}' wurde nicht gefunden. Stellen Sie sicher, dass die Lösung korrekt für den App-Katalog bereitgestellt und die Manifest-ID für dieses Webpart registriert ist.",
+                InvalidQueryModifierInstance: "Der ausgewählte Benutzer-Anfragen-Modifizierer '{0}'  implementiert  die abstrakte Klasse 'BaseQueryModifier' nicht korrekt. Es fehlen einige Methoden.",
             },
             DateFromLabel: "Von",
             DateTolabel: "Bis",
@@ -174,7 +176,9 @@ define([], function() {
             TextDialogSaveButtonText: "Speichern",
             SelectItemComboPlaceHolder: "Eigenschaft auswählen",
             AddStaticDataLabel: "Statische Daten hinzufügen",
-            TextFieldApplyButtonText: "Übernehmen"
+            TextFieldApplyButtonText: "Übernehmen",
+            SortByPlaceholderText: "Sortieren nach",
+            SortByDefaultOptionText: "Standard"
         },
         Layouts: {
             Debug: {
