@@ -4,7 +4,7 @@ Custom query modifier can be added to a search result Web Part to modify search 
 
 A query modifier supports:
 
-- **Modification of query text and query template**: a query modifier can alter the query text and/or the query template.
+- **Modification of query text**: a query modifier can alter the query text.
 - **Sorted modifications**: modifier can be sorted and are executed in order - but you can set a modifier to stop further modifications.
 
 ## Custom modifier creation process
@@ -38,9 +38,9 @@ Custom modifier creation process comes in two distinct steps:
 | Method | Description |
 | --------- | ---------- |
 | `onInit()`| The initialization method of your query modifier (ex: initialize your properties, etc.). You can perform asynchronous calls here. This method will be called when the provider is instanciated by the main Web Part. This is a good place to initialize any consumed services if any.
-| `modifyQuery()` | Method called to get a query modification when a search is requested(in paramter).
+| `modifyQuery()` | Method called to get a query modification when a search is requested.
 | `getPropertyPaneGroupsConfiguration()` | Returns the property pane fields to display when your query modifier is selected. These are regular SPFx property fields and groups. Query modifier properties are isolated from the other general Web Part properties under the property `queryModifierProperties`. It means you must include that path in your property pane controls get the value persisted. Defining fields or groups is not mandatory for a provider. If you don't want to expose any option, just return an empty array.
-| `onPropertyUpdate()` | The method will be called when a property pane value is updated. The main Web Part in `Reactive` mode for property pane fields.
+| `onPropertyUpdate()` | The method will be called when a property pane value is updated. The main Web Part is in `Reactive` mode for property pane fields.
 
 #### BaseQueryModifier - Properties
 
@@ -67,7 +67,7 @@ The next step is to fill information about your new query modifier. In the libra
           name: 'Custom Query Modifier',
           key: 'CustomQueryModifier',
           description: 'A demo custom query modifier from the extensibility library',
-          serviceKey: ServiceKey.create<ISuggestionProvider>('MyCompany:CustomQueryModifier', CustomQueryModifier)
+          serviceKey: ServiceKey.create<IQueryModifier>('MyCompany:CustomQueryModifier', CustomQueryModifier)
       }
     ];
   }

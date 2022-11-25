@@ -31,7 +31,7 @@ nav:
     - Custom suggestions provider: extensibility/custom_suggestions_provider.md
     - Custom Handlebars customizations: extensibility/handlebars_customizations.md
     - Custom event handlers for adaptive cards actions: extensibility/adaptivecards_customizations.md
-    - Custom data sources: extensibility/custom_data_source.md
+    - Custom data sources: extensibility/custom_data_sources.md
     - Custom query modifier: extensibility/custom_query_modifications.md
   - Version 3:
     - Documentation: v3/index.md
