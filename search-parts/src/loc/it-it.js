@@ -75,9 +75,9 @@ define([], function() {
                 nextMonthAriaLabel: 'Vai al prossimo mese',
                 prevYearAriaLabel: 'Vai all\'anno precedente',
                 nextYearAriaLabel: 'Vai al prossimo anno',
-                closeButtonAriaLabel: 'Close date picker',
-                isRequiredErrorMessage: 'Start date is required.',
-                invalidInputErrorMessage: 'Invalid date format.'
+                closeButtonAriaLabel: 'Chiudi il selettore',
+                isRequiredErrorMessage: 'La data di inizio è obbligatoria.',
+                invalidInputErrorMessage: 'Formato data non valido.'
             },
             DateIntervalStrings: {
                 AnyTime: "Qualsiasi intervallo",
