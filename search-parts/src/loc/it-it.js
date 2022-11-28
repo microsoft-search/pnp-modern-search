@@ -117,16 +117,16 @@ define([], function() {
                 EnableLocalizationOnLabel: "On",
                 EnableLocalizationOffLabel: "Off",
                 QueryCultureLabel: "Language of search request",
-                QueryCultureUseUiLanguageLabel: "Use interface language",
-                SelectedPropertiesFieldLabel: "Selected properties",
-                SelectedPropertiesFieldDescription: "Specifies the properties to retrieve from the search results.",
-                SelectedPropertiesPlaceholderLabel: "Select properties",
+                QueryCultureUseUiLanguageLabel: "Usa lingua dell'interfaccia",
+                SelectedPropertiesFieldLabel: "Proprietà selezionate",
+                SelectedPropertiesFieldDescription: "SPecificare le prprità da recuperare dai risultati della ricerca.",
+                SelectedPropertiesPlaceholderLabel: "Sleziona proprietà",
                 HitHighlightedPropertiesFieldLabel: "Hit-highlighted properties",
                 HitHighlightedPropertiesFieldDescription: "Provide the list of managed properties to hit highlight (i.e. Department,UserName).",
                 TermNotFound: "(Term with ID '{0}' not found)",
-                ApplyQueryTemplateBtnText: "Apply",
+                ApplyQueryTemplateBtnText: "Applica",
                 EnableAudienceTargetingTglLabel: "Enable audience targeting",
-                TrimDuplicates: "Trim duplicates"
+                TrimDuplicates: "Rimuovi duplicati"
             },
             MicrosoftSearch: {
                 QueryTextFieldLabel: "Query text",
@@ -148,7 +148,7 @@ define([], function() {
                 QueryTemplateFieldDescription: "The search query template. You can also use {<tokens>} and KQL to build a dynamic query.",
                 ApplyQueryTemplateBtnText: "Apply",
                 UseBetaEndpoint: "Use beta endpoint",
-                TrimDuplicates: "Trim duplicates"
+                TrimDuplicates: "Rimuovi duplicati"
             },
             SearchCommon: {
                 Sort: {
@@ -173,14 +173,14 @@ define([], function() {
             }
         },
         Controls: {
-            TextDialogButtonText: "Add Handlebars expression",
-            TextDialogTitle: "Edit Handlebars expression",
-            TextDialogCancelButtonText: "Cancel",
-            TextDialogSaveButtonText: "Save",
-            SelectItemComboPlaceHolder: "Select property",
-            AddStaticDataLabel: "Add static data",
-            TextFieldApplyButtonText: "Apply",
-            SortByPlaceholderText: "Sort by...",
+            TextDialogButtonText: "Aggiungi Handlebars expression",
+            TextDialogTitle: "Modifica Handlebars expression",
+            TextDialogCancelButtonText: "Cancella",
+            TextDialogSaveButtonText: "Salva",
+            SelectItemComboPlaceHolder: "Seleziona Proprietà",
+            AddStaticDataLabel: "Aggiungi dati statici",
+            TextFieldApplyButtonText: "Applica",
+            SortByPlaceholderText: "Ordina per...",
             SortByDefaultOptionText: "Default"
         },
         Layouts: {
@@ -194,9 +194,9 @@ define([], function() {
                 Name: "Custom"
             },
             SimpleList: {
-                Name: "List",
-                ShowFileIconLabel: "Show file icon",
-                ShowItemThumbnailLabel: "Show thumbnail"
+                Name: "Lista",
+                ShowFileIconLabel: "Mostra icona del file",
+                ShowItemThumbnailLabel: "Mostra anteprima"
             },
             DetailsList: {
                 Name: "Details List",
@@ -226,28 +226,28 @@ define([], function() {
                 ManageTilesFieldsLabel: "Managed card fields",
                 ManageTilesFieldsPanelDescriptionLabel: "Here you can map each field values with the corresponding card placeholders. You can use either a result property directly without any transformation or use an Handlebars expression as field value. Also, when specified, you can also inject your own HTML code in annotated fields.",
                 PlaceholderNameFieldLabel: "Name",
-                SupportHTMLColumnLabel: "Allow HTML",
+                SupportHTMLColumnLabel: "Consenti HTML",
                 PlaceholderValueFieldLabel: "Value",
                 UseHandlebarsExpressionLabel: "Use Handlebars expression",
-                EnableItemPreview: "Enable result preview",
+                EnableItemPreview: "Abilita preview dei risultati",
                 EnableItemPreviewHoverMessage: "Turning on this option may have an impact on performances if too many items are displayed at once and you use the 'AutoPreviewUrl' slot field. We recommend you to use this option with a small amount of items or use predefined preview URLs from your data source fields in slots.",
                 ShowFileIcon: "Show file icon",
                 CompactModeLabel: "Compact mode",
                 PreferedCardNumberPerRow: "Preferred number of cards per row",
                 Fields: {
-                    Title: "Title",
-                    Location: "Location",
+                    Title: "Titolo",
+                    Location: "Posizione",
                     Tags: "Tags",
-                    PreviewImage: "Preview Image",
-                    PreviewUrl: "Preview Url",
+                    PreviewImage: "Immagine Anteprima",
+                    PreviewUrl: "Url Anteprima",
                     Url: "Url",
-                    Date: "Date",
-                    Author: "Author",
-                    ProfileImage: "Profile Image Url",
-                    FileExtension: "File Extension",
+                    Date: "Data",
+                    Author: "Autore",
+                    ProfileImage: "Url Immagine profilo",
+                    FileExtension: "Estensione del file",
                     IsContainer: "Is Folder"
                 },
-                ResetFieldsBtnLabel: "Reset fields to default values"
+                ResetFieldsBtnLabel: "Resetta i campi ai valore di default"
             },
             Slider: {
                 Name: "Slider",
