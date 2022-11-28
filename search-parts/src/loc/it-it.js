@@ -83,18 +83,18 @@ define([], function() {
                 AnyTime: "Qualsiasi intervallo",
                 PastDay: "Ultime 24 ore",
                 PastWeek: "Dalle ultime 24 ore alla scorsa settimana",
-                PastMonth: "From past week to past month",
+                PastMonth: "Dalla scorsa settimana al mese scorso",
                 Past3Months: "From past month to past 3 months",
-                PastYear: "From past 3 months to past year",
-                Older: "Older than a year"
+                PastYear: "Dall'ultimo mese agli ultimi 3 mesi",
+                Older: "Più vecchio di un anno"
             },
-            SameTabOpenBehavior: "Use the current tab",
-            NewTabOpenBehavior: "Open in a new tab",
-            PageOpenBehaviorLabel: "Opening behavior",
-            EmptyFieldErrorMessage: "This field cannot be empty",
+            SameTabOpenBehavior: "Apri nel Tab corrente",
+            NewTabOpenBehavior: "Apri in nuovo Tab",
+            PageOpenBehaviorLabel: "Comportamento in apertura",
+            EmptyFieldErrorMessage: "Questo campo non può essere vuot",
             TagPickerStrings: {
-                NoResultsSearchMessage: "No results found",
-                SearchPlaceholder: "Search a value..."
+                NoResultsSearchMessage: "Nessun risultato",
+                SearchPlaceholder: "Cerca un valore..."
             },
             CurrentVerticalNotSelectedMessage: "The current selected vertical does not match with the ones associated for this Web Part ({0}). It will remains blank in display mode."
         },
