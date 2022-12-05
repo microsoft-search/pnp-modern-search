@@ -1437,12 +1437,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                     PropertyPaneHorizontalRule()
                 );
             }
-
-            stylingFields.push(
-                PropertyPaneToggle('useMicrosoftGraphToolkit', {
-                    label: webPartStrings.PropertyPane.LayoutPage.Handlebars.UseMicrosoftGraphToolkit,
-                })
-            );
         }
 
         // Adaptive cards fields
@@ -1460,6 +1454,12 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 })
             );
         }
+
+        stylingFields.push(
+            PropertyPaneToggle('useMicrosoftGraphToolkit', {
+                label: webPartStrings.PropertyPane.LayoutPage.Handlebars.UseMicrosoftGraphToolkit,
+            })
+        );
 
         let groups: IPropertyPaneGroup[] = [
             {

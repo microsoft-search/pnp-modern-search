@@ -104,4 +104,4 @@ Here is the list of main contributors of the PnP Modern Search (all versions inc
 - Fabio Franzini (Apvee) - [@franzinifabio](https://twitter.com/franzinifabio)
 - Paolo Pialorsi (PiaSys.com) - [@PaoloPia](https://twitter.com/paolopia)
 - Patrtik Hellgren (SherparsGroupAB) - [@PatrikHellgren](https://twitter.com/patrikhellgren)
-- Erfan Darroudi (https://github.com/edarroudi)
+- Erfan Darroudi [@edarroudi](https://github.com/edarroudi)
