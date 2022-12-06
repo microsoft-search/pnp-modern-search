@@ -12,7 +12,7 @@
         <link rel="canonical" href="http://127.0.0.1:8000/extensibility/custom_query_modifications/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-7.2.4">
+      <meta name="generator" content="mkdocs-1.2.2, mkdocs-material-7.2.4">
     
     
       
@@ -777,7 +777,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../custom_data_source.md" class="md-nav__link">
+      <a href="../custom_data_sources/" class="md-nav__link">
         Custom data sources
       </a>
     </li>
@@ -1017,7 +1017,7 @@
 <p>Custom query modifier can be added to a search result Web Part to modify search requests before they are sent to the server.</p>
 <p>A query modifier supports:</p>
 <ul>
-<li><strong>Modification of query text and query template</strong>: a query modifier can alter the query text and/or the query template.</li>
+<li><strong>Modification of query text</strong>: a query modifier can alter the query text.</li>
 <li><strong>Sorted modifications</strong>: modifier can be sorted and are executed in order - but you can set a modifier to stop further modifications.</li>
 </ul>
 <h2 id="custom-modifier-creation-process">Custom modifier creation process<a class="headerlink" href="#custom-modifier-creation-process" title="Permanent link">&para;</a></h2>
@@ -1031,16 +1031,16 @@
 <li>In your extensibility library project, create a new <code>CustomQueryModifier.ts</code> TypeScript file.</li>
 <li>
 <p>Create an interface for your modifier properties, typically the ones you want to persist in the Web Part property bag. Modifier properties are isolated from the other general Web Part properties under the property <code>queryModifierProperties</code> in the property bag object.
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="w">    </span><span class="k">export</span><span class="w"> </span><span class="kd">interface</span><span class="w"> </span><span class="nx">ICustomQueryModifierProperties</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">        </span><span class="nx">myProperty</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span><span class="w"></span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="p">}</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>    <span class="k">export</span> <span class="kd">interface</span> <span class="nx">ICustomQueryModifierProperties</span> <span class="p">{</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>        <span class="nx">myProperty</span>: <span class="kt">string</span><span class="p">;</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="p">}</span>
 </code></pre></div></p>
 </li>
 <li>
 <p>Implement the <code>BaseQueryModifier</code> abstract class using your properties interface:
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="w">    </span><span class="k">export</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">CustomQueryModifier</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nx">BaseQueryModifier</span><span class="o">&lt;</span><span class="nx">ICustomQueryModifierProperties</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">        </span><span class="p">...</span><span class="w"></span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="p">}</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>    <span class="k">export</span> <span class="kd">class</span> <span class="nx">CustomQueryModifier</span> <span class="k">extends</span> <span class="nx">BaseQueryModifier</span><span class="o">&lt;</span><span class="nx">ICustomQueryModifierProperties</span><span class="o">&gt;</span> <span class="p">{</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>        <span class="p">...</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="p">}</span>
 </code></pre></div></p>
 </li>
 <li>
@@ -1062,7 +1062,7 @@
 </tr>
 <tr>
 <td><code>modifyQuery()</code></td>
-<td>Method called to get a query modification when a search is requested(in paramter).</td>
+<td>Method called to get a query modification when a search is requested.</td>
 </tr>
 <tr>
 <td><code>getPropertyPaneGroupsConfiguration()</code></td>
@@ -1070,7 +1070,7 @@
 </tr>
 <tr>
 <td><code>onPropertyUpdate()</code></td>
-<td>The method will be called when a property pane value is updated. The main Web Part in <code>Reactive</code> mode for property pane fields.</td>
+<td>The method will be called when a property pane value is updated. The main Web Part is in <code>Reactive</code> mode for property pane fields.</td>
 </tr>
 </tbody>
 </table>
@@ -1121,16 +1121,16 @@
 </tr>
 </tbody>
 </table>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="w">  </span><span class="k">public</span><span class="w"> </span><span class="nx">getCustomQueryModifiers</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="nx">IQueryModifierDefinition</span><span class="p">[]</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">[</span><span class="w"></span>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">        </span><span class="p">{</span><span class="w"></span>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">          </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;Custom Query Modifier&#39;</span><span class="p">,</span><span class="w"></span>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">          </span><span class="nx">key</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;CustomQueryModifier&#39;</span><span class="p">,</span><span class="w"></span>
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">          </span><span class="nx">description</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;A demo custom query modifier from the extensibility library&#39;</span><span class="p">,</span><span class="w"></span>
-<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">          </span><span class="nx">serviceKey</span><span class="o">:</span><span class="w"> </span><span class="kt">ServiceKey.create</span><span class="o">&lt;</span><span class="nx">ISuggestionProvider</span><span class="o">&gt;</span><span class="p">(</span><span class="s1">&#39;MyCompany:CustomQueryModifier&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">CustomQueryModifier</span><span class="p">)</span><span class="w"></span>
-<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">      </span><span class="p">}</span><span class="w"></span>
-<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">    </span><span class="p">];</span><span class="w"></span>
-<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">  </span><span class="p">}</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>  <span class="k">public</span> <span class="nx">getCustomQueryModifiers</span><span class="p">()</span><span class="o">:</span> <span class="nx">IQueryModifierDefinition</span><span class="p">[]</span> <span class="p">{</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="k">return</span> <span class="p">[</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>        <span class="p">{</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>          <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;Custom Query Modifier&#39;</span><span class="p">,</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>          <span class="nx">key</span><span class="o">:</span> <span class="s1">&#39;CustomQueryModifier&#39;</span><span class="p">,</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>          <span class="nx">description</span><span class="o">:</span> <span class="s1">&#39;A demo custom query modifier from the extensibility library&#39;</span><span class="p">,</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>          <span class="nx">serviceKey</span>: <span class="kt">ServiceKey.create</span><span class="o">&lt;</span><span class="nx">IQueryModifier</span><span class="o">&gt;</span><span class="p">(</span><span class="s1">&#39;MyCompany:CustomQueryModifier&#39;</span><span class="p">,</span> <span class="nx">CustomQueryModifier</span><span class="p">)</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>      <span class="p">}</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>    <span class="p">];</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>  <span class="p">}</span>
 </code></pre></div>
                 
               
@@ -1151,7 +1151,7 @@
     <nav class="md-footer__inner md-grid" aria-label="Footer">
       
         
-        <a href="../adaptivecards_customizations/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Custom event handlers for adaptive cards actions" rel="prev">
+        <a href="../custom_data_sources/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Custom data sources" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
           </div>
@@ -1160,7 +1160,7 @@
               <span class="md-footer__direction">
                 Previous
               </span>
-              Custom event handlers for adaptive cards actions
+              Custom data sources
             </div>
           </div>
         </a>
@@ -1224,7 +1224,7 @@
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "instant"], "search": "../../assets/javascripts/workers/search.709b4209.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": null}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "instant"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.709b4209.min.js", "version": null}</script>
     
     
       <script src="../../assets/javascripts/bundle.febc23d1.min.js"></script>
