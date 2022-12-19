@@ -86,7 +86,6 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
      * @param queryText The query text entered by the user
      */
     public async _onSearch(queryText: string, isReset: boolean = false) {
-
         this.setState({
             searchInputValue: queryText,
             showClearButton: !isReset
@@ -120,7 +119,6 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
             // Notify the dynamic data controller
             this.props.onSearch(queryText);
         }
-        
     }
 
 
