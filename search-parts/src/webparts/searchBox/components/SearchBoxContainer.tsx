@@ -87,43 +87,40 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
      */
     public async _onSearch(queryText: string, isReset: boolean = false) {
 
-        // Don't send empty value
-        if (queryText || isReset) {
+        this.setState({
+            searchInputValue: queryText,
+            showClearButton: !isReset
+        });
 
-            this.setState({
-                searchInputValue: queryText,
-                showClearButton: !isReset
-            });
+        if (this.props.searchInNewPage && !isReset && this.props.pageUrl) {
 
-            if (this.props.searchInNewPage && !isReset && this.props.pageUrl) {
+            this.props.tokenService.setTokenValue(BuiltinTokenNames.inputQueryText, queryText);
+            queryText = await this.props.tokenService.resolveTokens(this.props.inputTemplate);
+            const urlEncodedQueryText = encodeURIComponent(queryText);
 
-                this.props.tokenService.setTokenValue(BuiltinTokenNames.inputQueryText, queryText);
-                queryText = await this.props.tokenService.resolveTokens(this.props.inputTemplate);
-                const urlEncodedQueryText = encodeURIComponent(queryText);
+            const tokenizedPageUrl = await this.props.tokenService.resolveTokens(this.props.pageUrl);
+            const searchUrl = new URL(tokenizedPageUrl);
+            
+            let newUrl;
 
-                const tokenizedPageUrl = await this.props.tokenService.resolveTokens(this.props.pageUrl);
-                const searchUrl = new URL(tokenizedPageUrl);
-                
-                let newUrl;
-
-                if (this.props.queryPathBehavior === QueryPathBehavior.URLFragment) {
-                    searchUrl.hash = urlEncodedQueryText;
-                    newUrl = searchUrl.href;
-                }
-                else {
-                    newUrl = UrlHelper.addOrReplaceQueryStringParam(searchUrl.href, this.props.queryStringParameter, queryText);
-                }
-
-                // Send the query to the new page
-                const behavior = this.props.openBehavior === PageOpenBehavior.NewTab ? '_blank' : '_self';
-                window.open(newUrl, behavior);
-
-            } else {
-
-                // Notify the dynamic data controller
-                this.props.onSearch(queryText);
+            if (this.props.queryPathBehavior === QueryPathBehavior.URLFragment) {
+                searchUrl.hash = urlEncodedQueryText;
+                newUrl = searchUrl.href;
             }
+            else {
+                newUrl = UrlHelper.addOrReplaceQueryStringParam(searchUrl.href, this.props.queryStringParameter, queryText);
+            }
+
+            // Send the query to the new page
+            const behavior = this.props.openBehavior === PageOpenBehavior.NewTab ? '_blank' : '_self';
+            window.open(newUrl, behavior);
+
+        } else {
+
+            // Notify the dynamic data controller
+            this.props.onSearch(queryText);
         }
+        
     }
 
 
