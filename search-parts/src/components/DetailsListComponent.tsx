@@ -519,6 +519,12 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
                 }
             };
 
+            //Add data-selection-all-toggle = true to "Select all" radio button div to have the results container Selection object update on clicking the radio button
+            const child: any = React.Children.only(tooltipHostProps.children);
+            if (child.props.id?.endsWith("-check")) {
+              tooltipHostProps.children = React.cloneElement(child, {"data-selection-all-toggle": true});
+            }
+
             return <TooltipHost {...tooltipHostProps} theme={this.props.themeVariant as ITheme} styles={customStyles} />;
         };
 
