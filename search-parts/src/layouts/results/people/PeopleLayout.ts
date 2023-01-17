@@ -5,6 +5,7 @@ import { TemplateValueFieldEditor, ITemplateValueFieldEditorProps } from "../../
 import { IComboBoxOption, Icon, IIconProps } from "office-ui-fabric-react";
 import { IComponentFieldsConfiguration } from "../../../models/common/IComponentFieldsConfiguration";
 import * as strings from 'CommonStrings';
+import { loadMsGraphToolkit } from "../../../helpers/GraphToolKitHelper";
 
 export interface IPeopleLayoutProperties {
 
@@ -74,7 +75,7 @@ export class PeopleLayout extends BaseLayout<IPeopleLayoutProperties> {
 
         if (this.properties.showPersonaCard) {
             // Load Microsoft Graph Toolkit to get the persona card
-            await this.loadMsGraphToolkit();
+            await loadMsGraphToolkit(this.context);
         }
     }
 
@@ -187,28 +188,7 @@ export class PeopleLayout extends BaseLayout<IPeopleLayoutProperties> {
 
         if (propertyPath.localeCompare('layoutProperties.showPersonaCard') === 0 && this.properties.showPersonaCard) {
             // Load Microsoft Graph Toolkit to get the persona card
-            await this.loadMsGraphToolkit();
+            await loadMsGraphToolkit(this.context);
         }
-    }
-
-    /**
-     * Loads the Microsoft Graph Toolkit library dynamically
-     */
-    private async loadMsGraphToolkit() {
-
-        // Load Microsoft Graph Toolkit dynamically
-        const { Providers } = await import(
-            /* webpackChunkName: 'microsoft-graph-toolkit' */
-            '@microsoft/mgt-react/dist/es6'
-        );
-
-        const { SharePointProvider } = await import(
-            /* webpackChunkName: 'microsoft-graph-toolkit' */
-            '@microsoft/mgt-sharepoint-provider/dist/es6'
-        );
-
-        if (!Providers.globalProvider) {
-            Providers.globalProvider = new SharePointProvider(this.context);
-        }
-    }
+    }    
 }

@@ -67,6 +67,7 @@ import { PropertyPaneAsyncCombo } from '../../controls/PropertyPaneAsyncCombo/Pr
 import { DynamicPropertyHelper } from '../../helpers/DynamicPropertyHelper';
 import { IQueryModifierConfiguration } from '../../queryModifier/IQueryModifierConfiguration';
 import { PropertyPaneTabsField } from '../../controls/PropertyPaneTabsField/PropertyPaneTabsField';
+import { loadMsGraphToolkit } from '../../helpers/GraphToolKitHelper';
 
 const LogSource = "SearchResultsWebPart";
 
@@ -538,7 +539,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         // Initializes MS Graph Toolkit
         if (this.properties.useMicrosoftGraphToolkit) {
-            await this.loadMsGraphToolkit();
+            await loadMsGraphToolkit(this.context);
         }
 
         // Initializes this component as a discoverable dynamic data source
@@ -849,7 +850,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         if (propertyPath.localeCompare("useMicrosoftGraphToolkit") === 0 && this.properties.useMicrosoftGraphToolkit) {
 
             // We load this dynamically to avoid tokens renewal failure at page load and decrease the bundle size. Most of the time, MGT won't be used in templates.
-            await this.loadMsGraphToolkit();
+            await loadMsGraphToolkit(this.context);
         }
 
         if (propertyPath.localeCompare('selectedItemFieldValue') === 0) {
@@ -970,27 +971,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         }
 
         return inputQueryText;
-    }
-
-    /**
-     * Loads the Microsoft Graph Toolkit library dynamically
-     */
-    private async loadMsGraphToolkit() {
-
-        // Load Microsoft Graph Toolkit dynamically
-        const { Providers } = await import(
-            /* webpackChunkName: 'microsoft-graph-toolkit' */
-            '@microsoft/mgt-react/dist/es6'
-        );
-
-        const { SharePointProvider } = await import(
-            /* webpackChunkName: 'microsoft-graph-toolkit' */
-            '@microsoft/mgt-sharepoint-provider/dist/es6'
-        );
-
-        if (!Providers.globalProvider) {
-            Providers.globalProvider = new SharePointProvider(this.context);
-        }
     }
 
     /**
