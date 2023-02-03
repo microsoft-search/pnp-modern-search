@@ -45,10 +45,12 @@ With the Modern Search Web Parts you can create a simple and useful People Searc
 ## [Use PnP Results web part as a Department Web Part](use-search-as-a-department-webpart.md)
 With the Modern Search Web Parts you can create a simple and useful Department Web part.
 
-
 ## [Use query rules for promoted links](Use-query-rules-for-promoted-links.md)
-
 With the Modern Search Web Parts you can show promoted links for important results. They will be configured with query rules in the SharePoint Search Admin Center. Promoted results will show users more informations and direct links about specific, predefined, terms they searching for.
+
+## [Use query string from URL for dynamic search](use-query-string-in-url.md)
+This scenario describes how to use query string as value in the URL from the current page. You can use URL query string parameters to build dynamic search pages.
+Use a library with metadata that you can use the query string parameter in the URL.
 
 ---
 
