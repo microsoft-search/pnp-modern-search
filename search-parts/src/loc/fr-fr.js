@@ -60,6 +60,8 @@ define([], function() {
                 DefaultExtensibilityLibraryName: "Bibliothèque d’extensibilité par défaut",
                 InvalidProviderInstance: "Le fournisseur de suggestions sélectionné « {0} » n’applique pas correctement la classe abstraite « BaseSuggestionProvider ». Certaines méthodes sont manquantes.",
                 ProviderDefinitionNotFound: "Le fournisseur de suggestions personnalisées contenant la clé « {0} » est introuvable Assurez-vous que la solution est correctement déployée dans le catalogue de l’application et que l’identifiant de manifeste est enregistré pour ce composant Web",
+                QueryModifierDefinitionNotFound: "Le queryModifier personnalisé avec la clé '{0}' n'a pas été trouvé. Vérifiez que la solution est correctement déployée dans le catalogue d'applications et que l'ID du manifeste est enregistré pour ce composant WebPart.",
+                InvalidQueryModifierInstance: "Le queryModifier personnalisé sélectionné '{0}' n'implémente pas correctement la classe abstraite 'BaseQueryModifier'. Certaines méthodes sont manquantes.",
             },
             DateFromLabel: "De",
             DateTolabel: "À",
@@ -177,7 +179,9 @@ define([], function() {
             TextDialogSaveButtonText: "Enregistrer",
             SelectItemComboPlaceHolder: "Sélectionnez la propriété",
             AddStaticDataLabel: "Ajouter des données statiques",
-            TextFieldApplyButtonText: "Appliquer"
+            TextFieldApplyButtonText: "Appliquer",
+            SortByPlaceholderText: "Trier par...",
+            SortByDefaultOptionText: "Défaut"
         },
         Layouts: {
             Debug: {

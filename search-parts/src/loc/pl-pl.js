@@ -60,6 +60,8 @@ define([], function() {
               DefaultExtensibilityLibraryName: "Domyślna biblioteka rozszerzalności",
               InvalidProviderInstance: "Wybrany dostawca sugestii '{0}' nie implementuje poprawnie abstrakcyjnej klasy 'BaseSuggestionProvider'. Brakuje niektórych metod.",
               ProviderDefinitionNotFound: "Nie znaleziono niestandardowego dostawcy sugestii o kluczu '{0}'. Upewnij się, że rozwiązanie jest poprawnie wdrożone do katalogu aplikacji oraz ID manifetu jest zarejetrowany dla tego składnika Web Part.",
+              QueryModifierDefinitionNotFound: "Nie znaleziono niestandardowego modyfikatora zapytania z kluczem '{0}'. Upewnij się, że rozwiązanie jest poprawnie wdrożone do katalogu aplikacji i identyfikatora manifestu zarejestrowanego dla tej części Web Part.",
+              InvalidQueryModifierInstance: "Wybrany niestandardowy queryModifier '{0}' nie implementuje poprawnie klasy abstrakcyjnej 'BaseQueryModifier'. Brakuje niektórych metod."
           },
           DateFromLabel: "Od",
           DateTolabel: "Do",
@@ -177,7 +179,9 @@ define([], function() {
           TextDialogSaveButtonText: "Zapisz",
           SelectItemComboPlaceHolder: "Wybierz właściwość",
           AddStaticDataLabel: "Dodaj dane statyczne",
-          TextFieldApplyButtonText: "Zastosuj"
+          TextFieldApplyButtonText: "Zastosuj",
+          SortByPlaceholderText: "Sortuj według...",
+          SortByDefaultOptionText: "Domyślna"
       },
       Layouts: {
           Debug: {

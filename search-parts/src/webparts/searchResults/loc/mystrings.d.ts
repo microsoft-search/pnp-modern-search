@@ -30,7 +30,7 @@ declare interface ISearchResultsWebPartStrings {
                 SlotNameFieldName: string;
                 SlotFieldFieldName: string;
                 SlotFieldPlaceholderName: string;
-            }
+            },
         },
         LayoutPage: {
             LayoutSelectionGroupName: string;
@@ -121,6 +121,15 @@ declare interface ISearchResultsWebPartStrings {
             EnableTelemetryLabel: string;
             EnableTelemetryOn: string;
             EnableTelemetryOff: string;
+        },
+        CustomQueryModifier: {
+            EditQueryModifiersLabel: string;
+            QueryModifiersLabel: string;
+            QueryModifiersDescription: string;
+            EnabledPropertyLabel: string;
+            ModifierNamePropertyLabel: string;
+            ModifierDescriptionPropertyLabel: string;
+            EndWhenSuccessfullPropertyLabel: string;
         }
     }
 }

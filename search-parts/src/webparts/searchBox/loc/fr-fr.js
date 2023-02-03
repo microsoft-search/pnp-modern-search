@@ -8,6 +8,7 @@ define([], function() {
                 GroupName: "Recherche des paramètres de la zone",
                 PlaceholderTextLabel: "Texte de l’espace réservé à afficher dans la zone de recherche",
                 SearchInNewPageLabel: "Envoyer la requête vers une nouvelle page",
+                ReQueryOnClearLabel: "Réinitialiser la requête en cas d'effacement",
                 PageUrlLabel: "Adresse URL de la page",
                 UrlErrorMessage: "Entrez une adresse URL valide",
                 QueryPathBehaviorLabel: "Méthode",

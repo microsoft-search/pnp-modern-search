@@ -122,8 +122,16 @@ define([], function() {
           EnableTelemetryLabel: "PnP-telemetri",
           EnableTelemetryOn: "Slå på telemetri",
           EnableTelemetryOff: "Slå av telemetri"
+        },
+        CustomQueryModifier: {
+              EditQueryModifiersLabel: "Konfigurer tilgjengelige tilpassede spørringsmodifikatorer",
+              QueryModifiersLabel: "Tilpassede spørringsmodifikatorer",
+              QueryModifiersDescription: "Aktiver eller deaktiver individuelle tilpassede søkemodifikatorer",
+              EnabledPropertyLabel: "Aktivert",
+              ModifierNamePropertyLabel: "Navn",
+              ModifierDescriptionPropertyLabel: "Beskrivelse",
+              EndWhenSuccessfullPropertyLabel:"Avslutt når det er vellykket"          
         }
       }
     }
   });
-  

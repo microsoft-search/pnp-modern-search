@@ -8,7 +8,7 @@ We can create a search-driven experience simply by adding the PnP Modern Search 
 
 ## [Set up Managed Properties](set-up-managed-properties.md)
 
-In order to use your custom column values as filters in your PnP Modern Search search solutions, those columns must be Site Columns (usually included in Content Types) and they must be mapped to Managed Properties.
+In order to use your custom column values as filters in your PnP Modern Search search solutions, those columns must be mapped to refinable manage properties and they must be mapped to Managed Properties.
 
 ## [Build a page with filters](page-with-filters.md)
 
@@ -41,6 +41,10 @@ or you can add the required KQL in the web part itself. This sample shows how to
 
 ## [Create a useful People Search](Create-a-useful-People-Search.md)
 With the Modern Search Web Parts you can create a simple and useful People Search. You can search or filter people and you can show informations on the People Card when you hover.
+
+## [Use query rules for promoted links](Use-query-rules-for-promoted-links.md)
+
+With the Modern Search Web Parts you can show promoted links for important results. They will be configured with query rules in the SharePoint Search Admin Center. Promoted results will show users more informations and direct links about specific, predefined, terms they searching for.
 
 ---
 

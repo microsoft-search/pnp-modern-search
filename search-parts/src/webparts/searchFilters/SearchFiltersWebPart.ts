@@ -41,6 +41,9 @@ import { BaseWebPart } from '../../common/BaseWebPart';
 import commonStyles from '../../styles/Common.module.scss';
 import { IDataVerticalSourceData } from '../../models/dynamicData/IDataVerticalSourceData';
 import { DynamicPropertyHelper } from '../../helpers/DynamicPropertyHelper';
+import PnPTelemetry from '@pnp/telemetry-js';
+
+const LogSource = "SearchFiltersWebPart";
 
 export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebPartProps> implements IDynamicDataCallables {
 
@@ -107,6 +110,13 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     private propertyPaneConnectionsFields: IPropertyPaneField<any>[] = [];
 
     protected async onInit() {
+        try {
+            // Disable PnP Telemetry
+            const telemetry = PnPTelemetry.getInstance();
+            telemetry.optOut();
+        } catch (error) {
+            Log.warn(LogSource, `Opt out for PnP Telemetry failed. Details: ${error}`, this.context.serviceScope);
+        }
 
         this.initializeProperties();
 

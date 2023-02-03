@@ -8,6 +8,7 @@ define([], function() {
                 GroupName: "Configuración del cuadro de búsqueda",
                 PlaceholderTextLabel: "Texto del marcador de posición que se mostrará en el cuadro de búsqueda",
                 SearchInNewPageLabel: "Enviar la consulta a una nueva página",
+                ReQueryOnClearLabel: "Restablecer consulta en claro",
                 PageUrlLabel: "URL de la página",
                 UrlErrorMessage: "Por favor, proporcione una URL válida.",
                 QueryPathBehaviorLabel: "Método",

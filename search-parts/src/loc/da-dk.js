@@ -60,6 +60,8 @@ define([], function() {
                 DefaultExtensibilityLibraryName: "Standard extensibility-bibliotek",
                 InvalidProviderInstance: "Den valgte udbyder af forslag '{0}' kan ikke implementere den abstrakte klasse 'BaseForslagsUdbyder' korrekt. Der mangler metoder.",
                 ProviderDefinitionNotFound: "Den brugerdefinerede udbyder af forslag med nøglen '{0}' blev ikke fundet. Husk at sikre at løsningen er korrekt implementeret til app-kataloget, og at manifest-ID'et er forbundet til webparten.",
+                QueryModifierDefinitionNotFound: "Den brugerdefinerede queryModifier med nøglen '{0}' blev ikke fundet. Sørg for, at løsningen er korrekt implementeret i app-kataloget, og at manifest-ID'et er registreret for denne webpart.",
+                InvalidQueryModifierInstance: "Den valgte brugerdefinerede queryModifier '{0}' implementerer ikke den abstrakte klasse 'BaseQueryModifier' korrekt. Der mangler nogle metoder.",
             },
             DateFromLabel: "Fra",
             DateTolabel: "Til",
@@ -177,7 +179,9 @@ define([], function() {
             TextDialogSaveButtonText: "Gem",
             SelectItemComboPlaceHolder: "Vælg egenskab",
             AddStaticDataLabel: "Tilføj statisk data",
-            TextFieldApplyButtonText: "Anvend"
+            TextFieldApplyButtonText: "Anvend",
+            SortByPlaceholderText: "Sorter efter...",
+            SortByDefaultOptionText: "Standard"
         },
         Layouts: {
             Debug: {

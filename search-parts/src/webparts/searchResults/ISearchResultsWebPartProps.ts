@@ -5,10 +5,11 @@ import { IBaseWebPartProps } from "../../models/common/IBaseWebPartProps";
 import { DynamicProperty } from "@microsoft/sp-component-base";
 import { IExtensibilityConfiguration } from "../../models/common/IExtensibilityConfiguration";
 import { IItemSelectionProps } from "../../models/common/IItemSelectionProps";
+import { IQueryModifierConfiguration } from "../../queryModifier/IQueryModifierConfiguration";
 
 export enum QueryTextSource {
     StaticValue,
-    DynamicValue 
+    DynamicValue
 }
 
 export default interface ISearchResultsWebPartProps extends IBaseWebPartProps {
@@ -22,7 +23,7 @@ export default interface ISearchResultsWebPartProps extends IBaseWebPartProps {
      * The data source properties. We need a weel identified property to isolate data sources (avoid playing in the root property bag values)
      */
     dataSourceProperties: {
-        [key:string]: any 
+        [key: string]: any
     };
 
     /**
@@ -63,7 +64,7 @@ export default interface ISearchResultsWebPartProps extends IBaseWebPartProps {
         /**
          * Any other property from layouts (builtin + custom)
          */
-        [key:string]: any;
+        [key: string]: any;
     };
 
     /**
@@ -176,5 +177,17 @@ export default interface ISearchResultsWebPartProps extends IBaseWebPartProps {
      * Flag indicating if telemetry are enabled
      */
     enableTelemetry: boolean;
+
+    /**
+     * The queryModifier properties
+     */
+    queryModifierProperties: {
+        [key: string]: any;
+    };
+
+    /**
+    * Selected query modifier definition
+    */
+    queryModifierConfiguration: IQueryModifierConfiguration[];
 }
 
