@@ -75,7 +75,11 @@ With these available customizations options, you can do pretty much anything!
 
 ## Troubleshooting
 
-If you encounter an issue, please use the GitHub issues list of [this repository](https://github.com/microsoft-search/pnp-modern-search/issues). Also, to help us to resolve your issue, you can include screenshots or error messages coming from:
+If you encounter an issue, please use the GitHub issues list of [this repository](https://github.com/microsoft-search/pnp-modern-search/issues). 
+
+However, we will ask you to verify your issue as descripted here: [Using Query tools to verify issues](/using-query-tools-to-verify-issues/)
+
+Also, to help us to resolve your issue, you can include screenshots or error messages coming from:
 
 - The faulty Web Part itself.
 - Errors displayed in the browser console (typically pressing F12).
@@ -84,6 +88,7 @@ If you encounter an issue, please use the GitHub issues list of [this repository
 ## Issues, questions, feedback?
 
 For any issue, question or feedback, please the [official GitHub repository](https://github.com/microsoft-search/pnp-modern-search/issues). We will be happy to help you!
+
 
 ## About
 
