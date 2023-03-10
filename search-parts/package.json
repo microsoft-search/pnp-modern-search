@@ -83,5 +83,18 @@
         "typescript": "4.5.5",
         "unlazy-loader": "0.1.3",
         "webpack-bundle-analyzer": "^4.7.0"
+    },
+    "overrides": {
+        "@xmldom/xmldom": "0.8.4",
+        "validator": "13.7.0",
+        "loader-utils": "2.0.4",
+        "node-fetch": "2.6.7",
+        "autolinker": "3.14.0",
+        "tar": "4.4.18",
+        "glob-parent": "5.1.2",
+        "highlight.js": "10.4.1",
+        "decode-uri-component": "0.2.2",
+        "json5": "2.2.2",
+        "set-value": "4.0.1"
     }
 }
