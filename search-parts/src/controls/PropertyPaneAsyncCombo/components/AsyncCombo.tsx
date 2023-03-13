@@ -180,7 +180,10 @@ export class AsyncCombo extends React.Component<IAsyncComboProps, IAsyncComboSta
     }
 
     public componentDidUpdate(prevProps: IAsyncComboProps, prevState: IAsyncComboState) {
-
+        if (!isEqual(this.props.textDisplayValue, prevProps.textDisplayValue) && !isEqual(this.props.textDisplayValue, this.state.textDisplayValue)) {
+          this.setState({textDisplayValue: this.getTextDisplayValue()});
+        }
+        
         if (this.props.availableOptions && !isEqual(this.props.availableOptions, prevProps.availableOptions) 
             || !isEqual(this.props.stateKey, prevProps.stateKey)) {
 
