@@ -16,7 +16,7 @@ define([], function() {
         DataSourceConnectionGroupName: "Tillgängliga datakällor",
         PagingOptionsGroupName: "Inställningar för sidindelning",
         ItemsCountPerPageFieldName: "Antal objekt per sida",
-        PagingRangeFieldName: "Antal sidor som ska visas i sidnavigation",
+        PagingRangeFieldName: "Antal sidor att visa i sidnavigation",
         ShowPagingFieldName: "Visa sidnavigation",
         HidePageNumbersFieldName: "Dölj sidnummer",
         HideNavigationFieldName: "Dölj navigeringsval (föregående sida, nästa sida)",
