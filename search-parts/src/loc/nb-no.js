@@ -181,7 +181,7 @@ define([], function () {
         AddStaticDataLabel: "Legg til statisk data",
         TextFieldApplyButtonText: "Lagre",
         SortByPlaceholderText: "Sorter etter",
-        SortByDefaultOptionText: "Default"
+        SortByDefaultOptionText: "Standard"
       },
       Layouts: {
         Debug: {
