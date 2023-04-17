@@ -81,6 +81,8 @@ export class TemplateRenderer extends React.Component<ITemplateRendererProps, IT
             let prefixedStyles: string[] = [];
             let i, j, k = 0;
 
+            let hups = false;
+
             if (styleElements.length > 0) {
 
                 // The prefix for all CSS selectors
@@ -88,44 +90,65 @@ export class TemplateRenderer extends React.Component<ITemplateRendererProps, IT
 
                 for (i = 0; i < styleElements.length; i++) {
                     const style = styleElements.item(i);
-                    const sheet: any = style.sheet;
-                    if ((sheet as CSSStyleSheet).cssRules) {
-                        const cssRules = (sheet as CSSStyleSheet).cssRules;
 
-                        for (j = 0; j < cssRules.length; j++) {
-                            const cssRule: CSSRule = cssRules.item(j);
+                    debugger;
 
-                            // CSS Media rule
-                            if ((cssRule as CSSMediaRule).media) {
-                                const cssMediaRule = cssRule as CSSMediaRule;
+                    let cssscope = style.dataset.cssscope;
 
-                                let cssPrefixedMediaRules = '';
-                                for (k = 0; k < cssMediaRule.cssRules.length; k++) {
-                                    const cssRuleMedia = cssMediaRule.cssRules.item(k);
-                                    cssPrefixedMediaRules += `#${elementPrefixId} ${cssRuleMedia.cssText}`;
-                                }
+                    if (cssscope !== undefined) {
 
-                                prefixedStyles.push(`@media ${cssMediaRule.conditionText} { ${cssPrefixedMediaRules} }`);
+                        hups = true;
+                        console.debug('-------- cssscope', cssscope);
 
-                            } else {
-                                if (cssRule.cssText.indexOf(TestConstants.SearchResultsErrorMessage) !== -1) {
-                                    // Special handling for error message as it's outside the template container to allow user override
-                                    prefixedStyles.push(`${cssRule.cssText}`);
+                        template = `<style data-cssscope="${cssscope}">@layer { ${ style.innerText } }</style>`;
+
+                    } else {
+                        // debugger;
+
+                        const sheet: any = style.sheet;
+                        if ((sheet as CSSStyleSheet).cssRules) {
+                            const cssRules = (sheet as CSSStyleSheet).cssRules;
+
+                            for (j = 0; j < cssRules.length; j++) {
+                                const cssRule: CSSRule = cssRules.item(j);
+
+                                // CSS Media rule
+                                if ((cssRule as CSSMediaRule).media) {
+                                    const cssMediaRule = cssRule as CSSMediaRule;
+
+                                    let cssPrefixedMediaRules = '';
+                                    for (k = 0; k < cssMediaRule.cssRules.length; k++) {
+                                        const cssRuleMedia = cssMediaRule.cssRules.item(k);
+                                        cssPrefixedMediaRules += `#${elementPrefixId} ${cssRuleMedia.cssText}`;
+                                    }
+
+                                    prefixedStyles.push(`@media ${cssMediaRule.conditionText} { ${cssPrefixedMediaRules} }`);
+
                                 } else {
-                                    prefixedStyles.push(`#${elementPrefixId} ${cssRule.cssText}`);
+                                    if (cssRule.cssText.indexOf(TestConstants.SearchResultsErrorMessage) !== -1) {
+                                        // Special handling for error message as it's outside the template container to allow user override
+                                        prefixedStyles.push(`${cssRule.cssText}`);
+                                    } else {
+                                        prefixedStyles.push(`#${elementPrefixId} ${cssRule.cssText}`);
+                                    }
                                 }
                             }
                         }
-                    }
 
-                    // Remove the element from DOM
-                    style.remove();
+                        // Remove the element from DOM
+                        style.remove();
+                    }
                 }
+
             }
 
-            template = `<style>${prefixedStyles.join(' ')}</style><div id="${TEMPLATE_ID_PREFIX}${this.props.instanceId}">${templateAsHtml.body.innerHTML}</div>`;
+            if(!hups){
+                template = `<style>${prefixedStyles.join(' ')}</style><div id="${TEMPLATE_ID_PREFIX}${this.props.instanceId}">${templateAsHtml.body.innerHTML}</div>`;
+            } else {
+                template += `${template}<div id="${TEMPLATE_ID_PREFIX}${this.props.instanceId}">${templateAsHtml.body.innerHTML}</div>`;
+            }
 
-            this._divTemplateRenderer.current.innerHTML = template;
+            this._divTemplateRenderer.current.innerHTML = template.toString();
 
         } else if (props.renderType == LayoutRenderType.AdaptiveCards && template instanceof HTMLElement) {
 
