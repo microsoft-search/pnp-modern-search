@@ -145,7 +145,7 @@ export class TemplateRenderer extends React.Component<ITemplateRendererProps, IT
             if(!hups){
                 template = `<style>${prefixedStyles.join(' ')}</style><div id="${TEMPLATE_ID_PREFIX}${this.props.instanceId}">${templateAsHtml.body.innerHTML}</div>`;
             } else {
-                template += `${template}<div id="${TEMPLATE_ID_PREFIX}${this.props.instanceId}">${templateAsHtml.body.innerHTML}</div>`;
+                template = `${template}<div id="${TEMPLATE_ID_PREFIX}${this.props.instanceId}">${templateAsHtml.body.innerHTML}</div>`;
             }
 
             this._divTemplateRenderer.current.innerHTML = template.toString();
