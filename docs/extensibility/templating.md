@@ -72,6 +72,8 @@ By default, several components are available ([see the complete list](./web_comp
 
 ### Custom CSS styles
 
+#### Default Behaviour
+
 Inside an HTML template (or layout field), you can write your own CSS styles using a &lt;style&gt; tag. Even better, you can inject Handlebars variables, helpers, conditional blocks, etc. right inside it and get dynamic classes or attributes
 
 ```html
@@ -89,6 +91,44 @@ Inside an HTML template (or layout field), you can write your own CSS styles usi
 ```
 
 However, all CSS rules (including `@media` rules) will be all prefixed automatically by an unique ID (**pnp-template_&lt;Web Part instance ID&gt;**) to make sure styles are isolated from other Web Parts on the page. We do this to avoid conflicts between classes in the global context.
+
+#### Use of CSS Layers
+
+In contrast to the automatically prefixing all styles with the web part instance id's, the style can live in its own so called layer. This way the style bleeding to the rest of the page can get avoided.
+
+Layered style in contrast to the default behavior allows mechanisms such as [container queryies](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Container_Queries) and other future improvements such as [CSS Nesting](https://developer.chrome.com/articles/css-nesting/).
+
+CSS support a mechanism for isolation CSS declarations in layers. To use this mechanism specify on the style tag the data property `data-cssscope` as layer.
+
+```html
+<content id="data-content">
+    <style data-cssscope="layer">
+        .example-themePrimary a {
+            color: {{@root.theme.palette.themePrimary}};
+        }
+        ...
+    </style>
+
+    <div class="template">
+        ...
+    ...
+```
+
+This convert the CSS into the following form:
+
+```css
+    <style data-cssscope="layer">
+    @layer {
+        .example-themePrimary a {
+            color: {{@root.theme.palette.themePrimary}};
+        }
+
+        ...
+    }
+    </style>
+```
+
+Browser support for [CSS Layer](https://caniuse.com/css-cascade-layers) on can-i-use.
 
 ### Hide error message using CSS
 By default the web parts will output an error message if something goes wrong on for example API calls.
