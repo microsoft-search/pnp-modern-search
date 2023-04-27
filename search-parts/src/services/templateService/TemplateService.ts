@@ -751,7 +751,7 @@ export class TemplateService implements ITemplateService {
 
             if (!isEmpty(expr)) {
 
-                const matches = expr.match(/([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,62})/gi);
+                const matches = expr.match(/([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,63})/gi);
                 if (matches) {
                     return matches[0]; // Return the full match
                 } else {
