@@ -577,6 +577,19 @@ export class TemplateService implements ITemplateService {
      */
     private registerCustomHelpers() {
 
+        // Truncate items from context that are not usually used
+        this.Handlebars.registerHelper("truncateContext", (context: any) => {
+            return {
+                slots: context.slots,
+                paging: context.paging,
+                theme: context.theme,
+                context: context.context,
+                instanceId: context.instanceId,
+                properties: context.properties,
+                utils: context.utils
+            }
+        })
+
         // Return the URL of the search result item
         // Usage: <a href="{{getGraphPreviewUrl url}}">
         this.Handlebars.registerHelper("getGraphPreviewUrl", (url: any, context?: any) => {
