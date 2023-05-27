@@ -98,6 +98,8 @@ export class DataFilterHelper {
 
             let startDate = null;
             let endDate = null;
+            let startBehaviour = "GE";
+            let endBehavior = "LE";
 
             // A refiner can have multiple values selected in a multi or mon multi selection scenario
             // The correct operator is determined by the refiner display template according to its behavior
@@ -109,10 +111,12 @@ export class DataFilterHelper {
 
                         if (!startDate && (filterValue.operator === FilterComparisonOperator.Geq || filterValue.operator === FilterComparisonOperator.Gt)) {
                             startDate = value;
+                            startBehaviour = filterValue.operator === FilterComparisonOperator.Gt ? "GT" : "GE";
                         }
 
                         if (!endDate && (filterValue.operator === FilterComparisonOperator.Lt || filterValue.operator === FilterComparisonOperator.Leq)) {
                             endDate = value;
+                            endBehavior = filterValue.operator === FilterComparisonOperator.Lt ? "LT" : "LE";
                         }
                     }
 
@@ -132,7 +136,7 @@ export class DataFilterHelper {
             }).filter(c => c);
 
             if (startDate && endDate) {
-                refinementQueryConditions.push(`${filter.filterName}:range(${startDate},${endDate})`);
+                refinementQueryConditions.push(`${filter.filterName}:range(${startDate},${endDate},from="${startBehaviour}",to="${endBehavior}")`);
             } else {
                 refinementQueryConditions.push(`${filter.filterName}:${operator}(${conditions.join(',')})`);
             }
