@@ -2042,9 +2042,9 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                     break;
 
                 default:
-                  const source = this.availableDataSourceDefinitions.find(definition => definition.key === dataSourceKey);
-                  serviceKey = source.serviceKey;
-                  break;
+                    const source = this.availableDataSourceDefinitions.find(definition => definition.key === dataSourceKey);
+                    serviceKey = source.serviceKey;
+                    break;
             }
 
             return new Promise<IDataSource>((resolve, reject) => {
@@ -2225,10 +2225,12 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             // Input query text
             const inputQueryText = await this._getInputQueryTextValue();
             this.tokenService.setTokenValue(BuiltinTokenNames.inputQueryText, inputQueryText);
-            this.tokenService.setTokenValue(BuiltinTokenNames.originalInputQueryText, inputQueryText);
+            this.tokenService.setTokenValue(BuiltinTokenNames.originalInputQueryText, inputQueryText);   
 
-            // Legacy token for SharePoint and Microsoft Search data sources
-            this.tokenService.setTokenValue(BuiltinTokenNames.searchTerms, inputQueryText);
+            if (inputQueryText) {
+                // Legacy token for SharePoint and Microsoft Search data sources
+                this.tokenService.setTokenValue(BuiltinTokenNames.searchTerms, inputQueryText);
+            }
 
             // Selected filters
             if (this._filtersConnectionSourceData) {
