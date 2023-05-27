@@ -39,7 +39,7 @@ define([], function() {
                 CommonOptionsGroupName: "Común",
                 TemplateUrlFieldLabel: "Utilizar una URL de plantilla externa",
                 TemplateUrlPlaceholder: "https://myfile.html",
-                ErrorTemplateExtension: "La plantilla debe ser un archivo .htm o .html válido",
+                ErrorTemplateExtension: "La plantilla debe ser un archivo .txt, .htm o .html válido",
                 ErrorTemplateResolve: "No se ha podido resolver la plantilla especificada. Detalles del error: '{0}'",
                 DialogButtonLabel: "Editar la plantilla de resultados",
                 DialogTitle: "Editar la plantilla de resultados",

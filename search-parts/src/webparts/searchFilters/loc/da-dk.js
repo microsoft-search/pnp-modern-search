@@ -60,7 +60,7 @@ define([], function() {
                 LayoutTemplateOptionsGroupName: "Layout-muligheder",
                 TemplateUrlFieldLabel: "Anvend en ekstern URL til skabelonen",
                 TemplateUrlPlaceholder: "https://myfile.html",
-                ErrorTemplateExtension: "Skabelonen skal være en valid .htm eller .html fil",
+                ErrorTemplateExtension: "Skabelonen skal være en valid .txt, .htm eller .html fil",
                 ErrorTemplateResolve: "Ude af stand til at vise den specifikke skabelon. Fejloplysninger: '{0}'",
                 FiltersTemplateFieldLabel: "Redigér skabelon til filtre",
                 FiltersTemplatePanelHeader: "Redigér skabelon til filtre"

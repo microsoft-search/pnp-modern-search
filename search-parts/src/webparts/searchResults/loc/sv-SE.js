@@ -39,7 +39,7 @@ define([], function() {
         CommonOptionsGroupName: "Vanlig",
         TemplateUrlFieldLabel: "Använd en extern URL för mall",
         TemplateUrlPlaceholder: "https://myfile.html",
-        ErrorTemplateExtension: "Mallen måste vara en giltig .htm- eller .html-fil",
+        ErrorTemplateExtension: "Mallen måste vara en giltig .txt-, .htm- eller .html-fil",
         ErrorTemplateResolve: "Det går inte att läsa den angivna mallen. Felbeskrivning: '{0}'",
         DialogButtonLabel: "Redigera resultatmallen",
         DialogTitle: "Redigera resultatmallen",

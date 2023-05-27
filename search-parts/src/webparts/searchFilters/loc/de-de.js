@@ -60,7 +60,7 @@ define([], function() {
                 LayoutTemplateOptionsGroupName: "Layout Optionen",
                 TemplateUrlFieldLabel: "Benutze ein externe Vorlagen URL.",
                 TemplateUrlPlaceholder: "https://meinedatei.html",
-                ErrorTemplateExtension: "Die Vorlage muss eine valide .htm oder .html Datei sein",
+                ErrorTemplateExtension: "Die Vorlage muss eine valide .txt, .htm oder .html Datei sein",
                 ErrorTemplateResolve: "Kann die angegebene Vorlage nicht auflösen. Fehler Details: '{0}'",
                 FiltersTemplateFieldLabel: "Filter Vorlage bearbeiten",
                 FiltersTemplatePanelHeader: "Filter Vorlage bearbeiten"
