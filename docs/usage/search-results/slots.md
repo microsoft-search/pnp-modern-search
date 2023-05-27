@@ -45,7 +45,7 @@ Here are all the builtin slots the solution provides.
 
 #### Define your custom slots
 
-In addition to builtin ones, you can add your own slots and use them in layouts. To do so, first add your slot in the list:
+In addition to builtin ones, you can add your own slots and use them in layouts. To do so, first add your slot in the list. The slot name is any name you want to use, and the slot field is a managed property name from the selected properties list configured in the web part. Meaning, if you want to use `RefinableString100` as a slot, you need to add it to the selected properties list first.
 
 !["Create custom slot"](../../assets/webparts/search-results/page1/custom_slot.png)
 
