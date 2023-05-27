@@ -148,7 +148,7 @@ If you want to hide the error message you can add the following CSS in your cust
     ...
 ```
 
-### Use SharePoint theme in your templates
+### Use SharePoint contexts and theme in your templates
 
 If you need to use current site theme colors, fonts and so on you can use the `theme` property available in the `@root` Handlebars context like this:
 
@@ -171,11 +171,20 @@ If you need to use current site theme colors, fonts and so on you can use the `t
 </content>
 ```
 
+If you want to reference the current user, you can get that from a context variable like this:
+
+```html
+<div>
+Login: {{@root.context.user.loginName}}
+</div>
+```
+
+
 > You can also use this variable in the 'Details List' and 'Cards' layouts in field expresions.
 
 ![Theme usage in fields](../assets/theme_field.png)
 
-A good way to see all available values for the current theme is to switch to the debug layout and inspect these values:
+A good way to see all available context values is to switch to the debug layout and inspect the values:
 
 ![Theme properties](../assets/theme_debug.png)
 
