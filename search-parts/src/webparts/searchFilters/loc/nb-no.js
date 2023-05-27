@@ -60,7 +60,7 @@ define([], function() {
                 LayoutTemplateOptionsGroupName: "Malvalg",
                 TemplateUrlFieldLabel: "Bruk URL for mal",
                 TemplateUrlPlaceholder: "https://myfile.html",
-                ErrorTemplateExtension: "Malen må være en gyldig .htm- eller .html-fil",
+                ErrorTemplateExtension: "Malen må være en gyldig .txt, .htm eller .html-fil",
                 ErrorTemplateResolve: "Det går ikke å vise denne malen. Feil: '{0}'",
                 FiltersTemplateFieldLabel: "Rediger filtermal",
                 FiltersTemplatePanelHeader: "Rediger filtermal"

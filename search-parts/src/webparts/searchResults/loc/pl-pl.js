@@ -39,7 +39,7 @@ define([], function() {
                 CommonOptionsGroupName: "Ogólne",
                 TemplateUrlFieldLabel: "Użyj adresu URL zewnętrznego szablonu",
                 TemplateUrlPlaceholder: "https://myfile.html",
-                ErrorTemplateExtension: "Szablon musi by poprawnym plikiem .htm lub .html",
+                ErrorTemplateExtension: "Szablon musi by poprawnym plikiem .txt, .htm lub .html",
                 ErrorTemplateResolve: "Nie można rozwiązać wskazanego szablonu. Szczegóły błędu: '{0}'",
                 DialogButtonLabel: "Edytuj szablon wyników",
                 DialogTitle: "Edytuj szablon wyników",

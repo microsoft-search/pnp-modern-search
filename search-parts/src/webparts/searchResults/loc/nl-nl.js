@@ -39,7 +39,7 @@ define([], function() {
         CommonOptionsGroupName: "Algemeen",
         TemplateUrlFieldLabel: "Gebruik een externe sjabloon URL",
         TemplateUrlPlaceholder: "https://mijnbestand.html",
-        ErrorTemplateExtension: "Het sjabloon moet een geldig .htm of .html bestand zijn",
+        ErrorTemplateExtension: "Het sjabloon moet een geldig .txt, .htm of .html bestand zijn",
         ErrorTemplateResolve: "Kan het opgegeven template niet inladen. Foutmelding: '{0}'",
         DialogButtonLabel: "Bewerk resulaten sjabloon",
         DialogTitle: "Bewerk resultaten sjabloon",

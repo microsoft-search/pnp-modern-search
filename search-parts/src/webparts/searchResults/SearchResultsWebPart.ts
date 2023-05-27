@@ -2132,7 +2132,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
                 switch (this.properties.layoutRenderType) {
                     case LayoutRenderType.Handlebars:
-                        extensions = [".htm", ".html"];
+                        extensions = [".htm", ".html", ".txt"];
                         break;
 
                     case LayoutRenderType.AdaptiveCards:

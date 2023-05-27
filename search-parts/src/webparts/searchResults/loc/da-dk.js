@@ -39,7 +39,7 @@ define([], function() {
         CommonOptionsGroupName: "Almindelig",
         TemplateUrlFieldLabel: "Anvend en URL fra en ekstern skabelon",
         TemplateUrlPlaceholder: "https://myfile.html",
-        ErrorTemplateExtension: "Skabelonen skal være en valid .htm or .html fil",
+        ErrorTemplateExtension: "Skabelonen skal være en valid .txt, .htm or .html fil",
         ErrorTemplateResolve: "Kan ikke læse the specificerede skabelon. Fejlbeskrivelse: '{0}'",
         DialogButtonLabel: "Redigér resultatsskabelonen",
         DialogTitle: "Redigér resultatsskabelonen",
