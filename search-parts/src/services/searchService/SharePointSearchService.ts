@@ -206,7 +206,7 @@ export class SharePointSearchService implements ISharePointSearchService {
         let searchQuery: ISharePointSearchQuery = {};
 
         searchQuery.Querytext = '*';
-        searchQuery.Refiners = 'ManagedProperties(filter=50000/0/*,sort=name/ascending)';
+        searchQuery.Refiners = 'ManagedProperties(filter=50000/0/*,deephits=50000,sort=name/ascending)';
         searchQuery.RowLimit = 1;
         searchQuery.SortList = [{
             Property: "[DocId]",

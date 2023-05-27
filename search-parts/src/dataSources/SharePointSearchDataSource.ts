@@ -871,10 +871,10 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                 } else if (filterConfig.maxBuckets) {
                     const sort = filterConfig.sortBy == FilterSortType.ByName ? "name" : "frequency";
                     const direction = filterConfig.sortDirection == FilterSortDirection.Ascending ? "ascending" : "descending";
-                    return `${filterConfig.filterName}(filter=${filterConfig.maxBuckets}/0/*,sort=${sort}/${direction})`;
+                    return `${filterConfig.filterName}(filter=${filterConfig.maxBuckets}/0/*,sort=${sort}/${direction},deephits=1000000)`;
                 }
                 else {
-                    return filterConfig.filterName;
+                    return filterConfig.filterName+"(deephits=1000000)";
                 }
 
             }).join(',');

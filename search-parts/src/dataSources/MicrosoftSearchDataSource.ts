@@ -653,7 +653,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                 field: filterConfig.filterName,
                 bucketDefinition: {
                     isDescending: filterConfig.sortDirection === FilterSortDirection.Ascending ? false : true,
-                    minimumCount: 0,
+                    minimumCount: 1,
                     sortBy: filterConfig.sortBy === FilterSortType.ByCount ? SearchAggregationSortBy.Count : SearchAggregationSortBy.KeyAsString
                 },
                 size: filterConfig && filterConfig.maxBuckets ? filterConfig.maxBuckets : 10
