@@ -333,7 +333,12 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 if (!pathProperty || (hasContentClass && !isLibItem)) {
                     pathProperty = ObjectHelper.byPath(item, BuiltinTemplateSlots.Path); // Fallback to using Path for if DefaultEncodingURL is missing
                 }
-                if (pathProperty && pathProperty.indexOf("?") === -1 && !isContainer) {
+
+                let webUrl = ObjectHelper.byPath(item, "SPWebUrl");
+                let uniqueId = ObjectHelper.byPath(item, "NormUniqueID");
+                if( webUrl && uniqueId) {
+                    item.AutoPreviewUrl = `${webUrl}/_layouts/15/viewer.aspx?sourcedoc={${uniqueId}}`;
+                } else if (pathProperty && pathProperty.indexOf("?") === -1 && !isContainer) {
                     item.AutoPreviewUrl = pathProperty + "?web=1";
                 } else {
                     item.AutoPreviewUrl = pathProperty;
