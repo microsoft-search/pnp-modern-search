@@ -243,7 +243,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         const alreadySubmittedValuesForFilter = flatten(this.state.submittedFilters.filter(s => s.filterName === availableFilter.filterName).map(v => v.values)).map(t => t.value).sort();
 
         const canApply = !isEqual(currentSelectedValuesInUiForFilter, alreadySubmittedValuesForFilter);
-        const canClear = alreadySubmittedValuesForFilter.length > 0;
+        const canClear = alreadySubmittedValuesForFilter.length > 0 || hasSelectedValues;
 
         // Disabled all unselected values if the configuration is not multi to prevent multiple selection at once
         values = values.map(value => {
