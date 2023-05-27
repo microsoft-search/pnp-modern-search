@@ -136,6 +136,8 @@ export interface ISearchResultsTemplateContext {
         user: SPUser;
     };
 
+    teamsContext:any;
+
     /**
      * The data source data
      */
