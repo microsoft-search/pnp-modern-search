@@ -364,6 +364,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 onDataRetrieved: this._onDataRetrieved,
                 onItemSelected: this._onItemSelected,
                 pageContext: this.context.pageContext,
+                teamsContext: this.context.sdks.microsoftTeams ? this.context.sdks.microsoftTeams.context : null,
                 renderType: this.properties.layoutRenderType,
                 dataContext: this._currentDataContext,
                 themeVariant: this._themeVariant,
@@ -761,8 +762,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
             // Reset paging information
             this.currentPageNumber = 1;
-
-
         }
 
         // Reset layout properties

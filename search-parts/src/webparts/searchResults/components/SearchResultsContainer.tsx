@@ -483,6 +483,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             Log.warn(LogSource, `Invalid host config provided. Refer to https://docs.microsoft.com/en-us/adaptive-cards/rendering-cards/host-config for more details`, this.props.serviceScope);
         }
 
+
         return {
             // The data source data
             data: {
@@ -527,6 +528,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 cultureInfo: cultureInfo,
                 listItem: listItem
             },
+            teamsContext: this.props.teamsContext,
             // The Web Part instance ID for scoped CSS styles
             instanceId: this.props.instanceId,
             // Any other useful informations
