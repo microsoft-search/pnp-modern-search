@@ -215,7 +215,7 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
                 theme={this.props.themeVariant as ITheme}
                 onClick={previewFunc}
                 styles={documentCardStyles}
-                type={this.props.isCompact ? DocumentCardType.compact : DocumentCardType.normal}                
+                type={this.props.isCompact ? DocumentCardType.compact : DocumentCardType.normal}
             >
                 <div ref={this.documentCardPreviewRef} style={{ position: 'relative', height: '100%' }} data-selection-disabled={!this.props.allowItemSelection}>
                     {renderItemCheck}
