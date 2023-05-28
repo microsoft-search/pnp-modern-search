@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Fabric, ShimmeredDetailsList, IShimmeredDetailsListProps, IDetailsList } from 'office-ui-fabric-react';
+import { Fabric, ShimmeredDetailsList, IShimmeredDetailsListProps } from 'office-ui-fabric-react';
 import { ITooltipHostProps, TooltipHost, ITooltipStyles, Shimmer, ShimmerElementsGroup, ShimmerElementType, IShimmerElement, mergeStyleSets, ITheme, Selection } from 'office-ui-fabric-react';
 import * as Handlebars from 'handlebars';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
