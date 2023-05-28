@@ -352,7 +352,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         let renderRootElement: JSX.Element = null;
         let renderDataContainer: JSX.Element = null;
 
-        if (this.dataSource) {
+        if (this.dataSource && this.instanceId) {
 
             // The main content WP logic
             renderDataContainer = React.createElement(SearchResultsContainer, {
@@ -468,6 +468,22 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         }
 
         ReactDom.render(renderRootElement, this.domElement);
+
+        if(this.properties.showBlankIfNoResult){
+            let element = this.domElement.parentElement;
+                // check up to 3 levels up for padding and exit once found
+                for (let i = 0; i < 3; i++) {
+                    const style = window.getComputedStyle(element);
+                    const hasPadding = style.paddingTop !== "0px";
+                    if (hasPadding) {
+                        element.style.paddingTop = "0px";
+                        element.style.paddingBottom = "0px";
+                        element.style.marginTop = "0px";
+                        element.style.marginBottom = "0px";
+                    }
+                    element = element.parentElement;
+                }
+        }
 
         // This call set this.renderedOnce to 'true' so we need to execute it at the very end
         super.renderCompleted();
