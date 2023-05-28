@@ -336,7 +336,8 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
 
                 let webUrl = ObjectHelper.byPath(item, "SPWebUrl");
                 let uniqueId = ObjectHelper.byPath(item, "NormUniqueID");
-                if( webUrl && uniqueId) {
+                const itemFileType = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.FileType]);
+                if( webUrl && uniqueId && itemFileType.toUpperCase() !== "ASPX") {
                     item.AutoPreviewUrl = `${webUrl}/_layouts/15/viewer.aspx?sourcedoc={${uniqueId}}`;
                 } else if (pathProperty && pathProperty.indexOf("?") === -1 && !isContainer) {
                     item.AutoPreviewUrl = pathProperty + "?web=1";
