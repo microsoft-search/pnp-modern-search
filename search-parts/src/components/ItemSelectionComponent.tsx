@@ -49,7 +49,7 @@ export class ItemSelectionWebComponent extends BaseWebComponent {
 
             renderItemSelection =   <div    
                                         className={`${styles.root} ${props.isSelected ? styles.selected: null}`}
-                                        data-is-focusable 
+                                        data-is-focusable                                         
                                         data-selection-index={props.index}>
 
                                         <div className={`item-selection ${styles.itemRow}`} data-selection-toggle>
@@ -61,8 +61,10 @@ export class ItemSelectionWebComponent extends BaseWebComponent {
 
                                     </div>;
         }
-
-        ReactDOM.render(renderItemSelection, this);
+        ReactDOM.render(renderItemSelection, this);        
+        if(props.isSelected) {
+            this.scrollIntoView();
+        }
     }
 
     protected onDispose(): void {

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Fabric, ShimmeredDetailsList, IShimmeredDetailsListProps } from 'office-ui-fabric-react';
+import { Fabric, ShimmeredDetailsList, IShimmeredDetailsListProps, IDetailsList } from 'office-ui-fabric-react';
 import { ITooltipHostProps, TooltipHost, ITooltipStyles, Shimmer, ShimmerElementsGroup, ShimmerElementType, IShimmerElement, mergeStyleSets, ITheme, Selection } from 'office-ui-fabric-react';
 import * as Handlebars from 'handlebars';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
@@ -355,6 +355,13 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
 
         const { columns, items } = this.state;
 
+        let focusIndex = 0;
+        if(this.props.selectedKeys && this.props.selectedKeys.length >0){
+            const key = this.props.selectedKeys[0];
+            focusIndex = items.findIndex( item => item.key == key);
+        }
+
+
         let shimmeredDetailsListProps: IShimmeredDetailsListProps = {
             theme: this.props.themeVariant as ITheme,
             items: items,
@@ -364,6 +371,7 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
             selection: this._selection,
             layoutMode: DetailsListLayoutMode.justified,
             isHeaderVisible: true,
+            initialFocusedIndex: focusIndex,
             enableShimmer: this.props.showShimmers,
             selectionPreservedOnEmptyClick: true,
             enterModalSelectionOnTouch: true,
