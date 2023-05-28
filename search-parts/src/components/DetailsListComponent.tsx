@@ -355,6 +355,13 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
 
         const { columns, items } = this.state;
 
+        let focusIndex = 0;
+        if (this.props.selectedKeys && this.props.selectedKeys.length > 0) {
+            const key = this.props.selectedKeys[0];
+            focusIndex = items.findIndex(item => item.key == key);
+        }
+
+
         let shimmeredDetailsListProps: IShimmeredDetailsListProps = {
             theme: this.props.themeVariant as ITheme,
             items: items,
@@ -364,6 +371,7 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
             selection: this._selection,
             layoutMode: DetailsListLayoutMode.justified,
             isHeaderVisible: true,
+            initialFocusedIndex: focusIndex,
             enableShimmer: this.props.showShimmers,
             selectionPreservedOnEmptyClick: true,
             enterModalSelectionOnTouch: true,
@@ -522,7 +530,7 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
             //Add data-selection-all-toggle = true to "Select all" radio button div to have the results container Selection object update on clicking the radio button
             const child: any = React.Children.only(tooltipHostProps.children);
             if (child.props.id?.endsWith("-check")) {
-              tooltipHostProps.children = React.cloneElement(child, {"data-selection-all-toggle": true});
+                tooltipHostProps.children = React.cloneElement(child, { "data-selection-all-toggle": true });
             }
 
             return <TooltipHost {...tooltipHostProps} theme={this.props.themeVariant as ITheme} styles={customStyles} />;

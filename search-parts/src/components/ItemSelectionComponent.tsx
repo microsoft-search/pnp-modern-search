@@ -11,16 +11,16 @@ export interface IItemSelectionComponentProps {
      * The current index of item. Needed for the the SelectionZone to lookup the correct item im the collection.
      */
     index?: string;
-    
+
     /**
      * Flag indicating if the item is selected or not
      */
     isSelected?: boolean;
-    
+
     /**
      * If selection is enabled or not. Needed to determine if the component should allow selection or not
      */
-    enabled?: boolean; 
+    enabled?: boolean;
 
     /**
      * The current theme settings
@@ -41,28 +41,30 @@ export class ItemSelectionWebComponent extends BaseWebComponent {
         const domParser = new DOMParser();
         const htmlContent: Document = domParser.parseFromString(this.innerHTML, 'text/html');
         const contentTemplate = htmlContent.getElementById('content');
-        
-        const renderTemplateContent = <div style={{width: '100%'}} dangerouslySetInnerHTML={{__html: contentTemplate.innerHTML}}></div>;
+
+        const renderTemplateContent = <div style={{ width: '100%' }} dangerouslySetInnerHTML={{ __html: contentTemplate.innerHTML }}></div>;
         let renderItemSelection = renderTemplateContent;
 
         if (props.enabled) {
 
-            renderItemSelection =   <div    
-                                        className={`${styles.root} ${props.isSelected ? styles.selected: null}`}
-                                        data-is-focusable 
-                                        data-selection-index={props.index}>
+            renderItemSelection = <div
+                className={`${styles.root} ${props.isSelected ? styles.selected : null}`}
+                data-is-focusable
+                data-selection-index={props.index}>
 
-                                        <div className={`item-selection ${styles.itemRow}`} data-selection-toggle>
-                                            <div className="item-selection-checkbox" data-is-focusable data-selection-toggle>
-                                                <Check checked={props.isSelected} />      
-                                            </div>
-                                            {renderTemplateContent}
-                                        </div>
+                <div className={`item-selection ${styles.itemRow}`} data-selection-toggle>
+                    <div className="item-selection-checkbox" data-is-focusable data-selection-toggle>
+                        <Check checked={props.isSelected} />
+                    </div>
+                    {renderTemplateContent}
+                </div>
 
-                                    </div>;
+            </div>;
         }
-
         ReactDOM.render(renderItemSelection, this);
+        if (props.isSelected) {
+            this.scrollIntoView();
+        }
     }
 
     protected onDispose(): void {
