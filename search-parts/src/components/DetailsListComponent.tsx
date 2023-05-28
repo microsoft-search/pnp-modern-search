@@ -355,7 +355,7 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
 
         const { columns, items } = this.state;
 
-        let focusIndex = 0;
+        let focusIndex = -1;
         if (this.props.selectedKeys && this.props.selectedKeys.length > 0) {
             const key = this.props.selectedKeys[0];
             focusIndex = items.findIndex(item => item.key == key);
