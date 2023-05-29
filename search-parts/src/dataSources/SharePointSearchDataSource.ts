@@ -591,7 +591,8 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                 'SiteTitle',
                 'CreatedBy',
                 'HtmlFileType',
-                'SiteLogo'
+                'SiteLogo',
+                'PictureThumbnailURL'
             ];
         this.properties.resultSourceId = this.properties.resultSourceId !== undefined ? this.properties.resultSourceId : BuiltinSourceIds.LocalSharePointResults; 
         this.properties.hitHighlightedProperties = this.properties.hitHighlightedProperties ? this.properties.hitHighlightedProperties : '';
