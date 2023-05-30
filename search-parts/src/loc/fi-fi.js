@@ -216,6 +216,7 @@ define([], function() {
                 FileExtensionFieldLabel: "Kenttä tiedostotyypin määrittämiseen",
                 GroupByFieldLabel: "Ryhmittele kentän mukaan",
                 EnableGrouping: "Salli ryhmittely",
+                GroupingDescription: "Varmista, että tulosten verkko-osassa on tietoja, jotta voit näyttää ominaisuusluettelon.",
                 CollapsedGroupsByDefault: "Näytä ryhmät tiivistettynä",
                 ResetFieldsBtnLabel: "Palauta kentät templaatin oletusarvoihin"
             },

@@ -218,6 +218,7 @@ define([], function() {
                 FileExtensionFieldLabel: "Felt til brug af file extension",
                 GroupByFieldLabel: "Gruppér efter felt",
                 EnableGrouping: "Aktivér gruppering",
+                GroupingDescription: "Sørg for, at du har data vist i resultatwebdelen for at få vist en liste over egenskaber.",
                 CollapsedGroupsByDefault: "Vis collapsed",
                 ResetFieldsBtnLabel: "Nulstil felter til standardværdier"
             },

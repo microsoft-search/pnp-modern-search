@@ -218,6 +218,7 @@ define([], function() {
               FileExtensionFieldLabel: "Pole używane dla rozszerzenia pliku",
               GroupByFieldLabel: "Grupuj po polu",
               EnableGrouping: "Grupowanie włączone",
+              GroupingDescription: "Upewnij się, że dane są wyświetlane w wynikowym składniku Web Part, aby wyświetlić listę właściwości.",
               CollapsedGroupsByDefault: "Pokaż zapadnięte",
               ResetFieldsBtnLabel: "Resetuj pola do wartości domyślnych"
           },

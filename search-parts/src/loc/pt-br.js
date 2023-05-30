@@ -216,6 +216,7 @@ define([], function() {
                 FileExtensionFieldLabel: "Campo usado para a extensão do arquivo",
                 GroupByFieldLabel: "Agrupar pelo campo",
                 EnableGrouping: "Ativar agrupamento",
+                GroupingDescription: "Certifique-se de que os dados sejam exibidos na Web Part de resultado para uma lista de propriedades a serem exibidas.",
                 CollapsedGroupsByDefault: "Mostrar recolhido",
                 ResetFieldsBtnLabel: "Redefinir campos para os valores padrão"
             },

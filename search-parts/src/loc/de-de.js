@@ -214,6 +214,7 @@ define([], function() {
                 FileExtensionFieldLabel: "Zu verwendendes Feld für die Dateierweiterung",
                 GroupByFieldLabel: "Gruppierung nach Feld",
                 EnableGrouping: "Gruppierung aktivieren",
+                GroupingDescription: "Stellen Sie sicher, dass im Ergebnis-Webpart Daten angezeigt werden, damit eine Liste der anzuzeigenden Eigenschaften angezeigt wird.",
                 CollapsedGroupsByDefault: "Eingeklappt anzeigen",
                 ResetFieldsBtnLabel: "Felder auf Standardwerte zurücksetzen"
             },

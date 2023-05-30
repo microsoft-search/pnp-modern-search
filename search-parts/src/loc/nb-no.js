@@ -217,6 +217,7 @@ define([], function () {
           FileExtensionFieldLabel: "Felt för filendelse",
           GroupByFieldLabel: "Grupper etter felt",
           EnableGrouping: "Aktiver gruppering",
+          GroupingDescription: "Sørg for at du har data som vises i resultatwebdelen for å vise en liste over egenskaper.",
           CollapsedGroupsByDefault: "Vis kollapsede",
           ResetFieldsBtnLabel: "Bruk standardverdiene"
         },

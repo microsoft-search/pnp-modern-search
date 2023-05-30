@@ -217,6 +217,7 @@ define([], function() {
                 FileExtensionFieldLabel: "Te gebruiken veld voor bestandsextensie",
                 GroupByFieldLabel: "Groepeer op veld",
                 EnableGrouping: "Groeperen inschakelen",
+                GroupingDescription: "Zorg ervoor dat er gegevens worden weergegeven in het resultaatwebonderdeel voor een lijst met eigenschappen die moeten worden weergegeven.",
                 CollapsedGroupsByDefault: "Toon ingeklapt",
                 ResetFieldsBtnLabel: "Reset velden naar standaard waarden"
             },

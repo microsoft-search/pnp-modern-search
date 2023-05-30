@@ -218,6 +218,7 @@ define([], function () {
           FileExtensionFieldLabel: "Fält för användning av filtillägg",
           GroupByFieldLabel: "Gruppera efter fält",
           EnableGrouping: "Aktivera gruppering",
+          GroupingDescription: "Se till att du har data som visas i resultatwebbdelen för en lista över egenskaper att visa.",
           CollapsedGroupsByDefault: "Visa kollapsade",
           ResetFieldsBtnLabel: "Återställ fält till standardvärden"
         },

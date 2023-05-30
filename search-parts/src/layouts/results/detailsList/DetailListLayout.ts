@@ -55,6 +55,7 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
      * Dynamically loaded components for property pane
      */
     private _propertyFieldCollectionData: any = null;
+    private _propertyPaneWebPartInformation: any = null;
     private _customCollectionFieldType: any = null;
 
     public async onInit(): Promise<void> {
@@ -105,8 +106,16 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
             /* webpackChunkName: 'pnp-modern-search-results-detailslist-layout' */
             '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData'
         );
-
         this._propertyFieldCollectionData = PropertyFieldCollectionData;
+
+        if (this.properties.enableGrouping) {
+            const { PropertyPaneWebPartInformation } = await import(
+                /* webpackChunkName: 'pnp-modern-search-property-pane' */
+                '@pnp/spfx-property-controls/lib/PropertyPaneWebPartInformation'
+            );
+            this._propertyPaneWebPartInformation = PropertyPaneWebPartInformation;
+        }
+
         this._customCollectionFieldType = CustomCollectionFieldType;
     }
 
@@ -198,7 +207,7 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
                         title: strings.Layouts.DetailsList.SortableColumnLabel,
                         type: this._customCollectionFieldType.boolean,
                         defaultValue: false,
-                        required: false                                
+                        required: false
                     },
                     {
                         id: 'valueSorting',
@@ -206,17 +215,17 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
                         type: this._customCollectionFieldType.custom,
                         onCustomRender: (field, _value, onUpdate, item, itemId, onCustomFieldValidation) => {
                             return React.createElement("div", { key: `${field.id}-${itemId}` },
-                                    React.createElement(AsyncCombo, {
-                                        allowFreeform: false,
-                                        availableOptions: sortableFields,
-                                        placeholder: !item.valueSorting && sortableFields.length > 0 ? strings.Layouts.DetailsList.ValueSortingColumnLabel : strings.Layouts.DetailsList.ValueSortingColumnNoFieldsLabel,
-                                        textDisplayValue: item[field.id] ? item[field.id] : '',
-                                        defaultSelectedKey: item[field.id] ? item[field.id] : '',
-                                        disabled: !item.enableSorting,
-                                        onUpdate: (filterValue: IComboBoxOption) => {
-                                            onUpdate(field.id, filterValue.key);
-                                        }
-                                    } as IAsyncComboProps));
+                                React.createElement(AsyncCombo, {
+                                    allowFreeform: false,
+                                    availableOptions: sortableFields,
+                                    placeholder: !item.valueSorting && sortableFields.length > 0 ? strings.Layouts.DetailsList.ValueSortingColumnLabel : strings.Layouts.DetailsList.ValueSortingColumnNoFieldsLabel,
+                                    textDisplayValue: item[field.id] ? item[field.id] : '',
+                                    defaultSelectedKey: item[field.id] ? item[field.id] : '',
+                                    disabled: !item.enableSorting,
+                                    onUpdate: (filterValue: IComboBoxOption) => {
+                                        onUpdate(field.id, filterValue.key);
+                                    }
+                                } as IAsyncComboProps));
                         }
                     },
                     {
@@ -277,12 +286,15 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
 
         // Grouping options
         if (this.properties.enableGrouping) {
-
             propertyPaneFields.push(
                 PropertyPaneDropdown('layoutProperties.groupByField', {
                     label: strings.Layouts.DetailsList.GroupByFieldLabel,
                     options: availableOptions,
-                    selectedKey: this.properties.groupByField
+                    selectedKey: this.properties.groupByField,
+                }),
+                this._propertyPaneWebPartInformation({
+                    description: `<small>${strings.Layouts.DetailsList.GroupingDescription}</small>`,
+                    key: 'queryText'
                 }),
                 PropertyPaneToggle('layoutProperties.groupsCollapsed', {
                     label: strings.Layouts.DetailsList.CollapsedGroupsByDefault,
