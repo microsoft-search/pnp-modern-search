@@ -126,6 +126,7 @@ declare interface ICommonStrings {
         TermNotFound: string;
         ApplyQueryTemplateBtnText: string;
         EnableAudienceTargetingTglLabel: string;
+        CollapseSpecificationLabel: string;
       },
       MicrosoftSearch: {
         QueryTextFieldLabel: string;

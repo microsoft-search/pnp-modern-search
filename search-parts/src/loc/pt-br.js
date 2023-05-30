@@ -1,4 +1,4 @@
-define([], function() {
+define([], function () {
     return {
         Tokens: {
             SelectTokenLabel: "Escolha uma marcação...",
@@ -148,7 +148,8 @@ define([], function() {
                 QueryTemplateFieldDescription: "O modelo da consulta. Você também pode usar {<tokens>} e KQL para construir uma consulta dinâmica.",
                 ApplyQueryTemplateBtnText: "Aplicar",
                 UseBetaEndpoint: "Usar endpoint <i>beta</i>",
-                TrimDuplicates: "Limpar duplicados"
+                TrimDuplicates: "Limpar duplicados",
+                CollapseSpecificationLabel: "Recolher especificação"
             },
             SearchCommon: {
                 Sort: {

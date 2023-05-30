@@ -1,4 +1,4 @@
-define([], function() {
+define([], function () {
     return {
         Tokens: {
             SelectTokenLabel: "Selecteer een token...",
@@ -67,8 +67,8 @@ define([], function() {
             DateTolabel: "Tot",
             DatePickerStrings: {
                 months: ['januari', 'februari', 'maart', 'april', 'mei', 'juni', 'juli', 'augustus', 'september', 'oktober', 'november', 'december'],
-                shortMonths: ['jan','feb','maa','apr','mei','jun','jul','aug', 'sep','okt','nov','dec'],
-                days: ['Zondag','maandag','dinsdag','woensdag','donderdag','vrijdag','zaterdag'],
+                shortMonths: ['jan', 'feb', 'maa', 'apr', 'mei', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec'],
+                days: ['Zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag'],
                 shortDays: ['Z', 'M', 'D', 'W', 'D', 'V', 'Z'],
                 goToToday: 'Ga naar vandaag',
                 prevMonthAriaLabel: 'Ga naar vorige maand',
@@ -126,7 +126,8 @@ define([], function() {
                 TermNotFound: "(Term met ID '{0}' niet gevonden)",
                 ApplyQueryTemplateBtnText: "Toepassen",
                 EnableAudienceTargetingTglLabel: "Schakel doelgroepen in",
-                TrimDuplicates: "Duplicaten bijsnijden"
+                TrimDuplicates: "Duplicaten bijsnijden",
+                CollapseSpecificationLabel: "Specificatie samenvouwen"
             },
             MicrosoftSearch: {
                 QueryTextFieldLabel: "Zoekopdracht",

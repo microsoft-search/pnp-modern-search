@@ -1,4 +1,4 @@
-define([], function() {
+define([], function () {
     return {
         Tokens: {
             SelectTokenLabel: "Valitse token...",
@@ -124,7 +124,8 @@ define([], function() {
                 TermNotFound: "(Termiä ID:llä '{0}' ei löydy)",
                 ApplyQueryTemplateBtnText: "Ota käyttöön",
                 EnableAudienceTargetingTglLabel: "Salli käyttäjäryhmäkohdennus",
-                TrimDuplicates: "Leikkaa kaksoiskappaleet"
+                TrimDuplicates: "Leikkaa kaksoiskappaleet",
+                CollapseSpecificationLabel: "Kutista määritys"
             },
             MicrosoftSearch: {
                 QueryTextFieldLabel: "Hakukysely",

@@ -1,4 +1,4 @@
-define([], function() {
+define([], function () {
     return {
         Tokens: {
             SelectTokenLabel: "Seleccione un token...",
@@ -79,7 +79,7 @@ define([], function() {
                 isRequiredErrorMessage: 'Se requiere una fecha de inicio.',
                 invalidInputErrorMessage: 'Formato de fecha no válido.'
             },
-            DateIntervalStrings:  {
+            DateIntervalStrings: {
                 AnyTime: "En cualquier momento",
                 PastDay: "Últimas 24 horas",
                 PastWeek: "De las últimas 24 horas a la semana pasada",
@@ -126,7 +126,8 @@ define([], function() {
                 TermNotFound: "(Término con ID '{0}' no encontrado)",
                 ApplyQueryTemplateBtnText: "Aplicar",
                 EnableAudienceTargetingTglLabel: "Permitir la segmentación de la audiencia",
-                TrimDuplicates: "Recortar duplicados"
+                TrimDuplicates: "Recortar duplicados",
+                CollapseSpecificationLabel: "Ocultar especificación"
             },
             MicrosoftSearch: {
                 QueryTextFieldLabel: "Texto de la consulta",

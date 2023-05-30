@@ -1,4 +1,4 @@
-define([], function() {
+define([], function () {
     return {
         Tokens: {
             SelectTokenLabel: "Vælg token...",
@@ -126,7 +126,8 @@ define([], function() {
                 TermNotFound: "(Term med ID '{0}' blev ikke fundet)",
                 ApplyQueryTemplateBtnText: "Anvend",
                 EnableAudienceTargetingTglLabel: "Aktivér målgruppestyring",
-                TrimDuplicates: "Trim dubletter"
+                TrimDuplicates: "Trim dubletter",
+                CollapseSpecificationLabel: "Skjul specifikation"
             },
             MicrosoftSearch: {
                 QueryTextFieldLabel: "Forespørgselstekst",

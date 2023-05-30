@@ -1,4 +1,4 @@
-define([], function() {
+define([], function () {
     return {
         Tokens: {
             SelectTokenLabel: "Select a token...",
@@ -126,7 +126,8 @@ define([], function() {
                 TermNotFound: "(Term with ID '{0}' not found)",
                 ApplyQueryTemplateBtnText: "Apply",
                 EnableAudienceTargetingTglLabel: "Enable audience targeting",
-                TrimDuplicates: "Trim duplicates"
+                TrimDuplicates: "Trim duplicates",
+                CollapseSpecificationLabel: "Collapse specification"
             },
             MicrosoftSearch: {
                 QueryTextFieldLabel: "Query text",

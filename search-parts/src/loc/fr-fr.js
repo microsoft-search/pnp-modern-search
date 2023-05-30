@@ -1,4 +1,4 @@
-define([], function() {
+define([], function () {
     return {
         Tokens: {
             SelectTokenLabel: "Sélectionnez un jeton...",
@@ -126,7 +126,8 @@ define([], function() {
                 TermNotFound: "(Le critère contenant l’identifiant « {0} » est introuvable)",
                 ApplyQueryTemplateBtnText: "Appliquer",
                 EnableAudienceTargetingTglLabel: "Permet de cibler l’auditoire",
-                TrimDuplicates: "Supprimer les doublons"
+                TrimDuplicates: "Supprimer les doublons",
+                CollapseSpecificationLabel: "Réduire la spécification"
             },
             MicrosoftSearch: {
                 QueryTextFieldLabel: "Texte de la requête",
