@@ -269,7 +269,6 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
                     isIconOnly: true,
                     minWidth: 16,
                     maxWidth: 16,
-                    onColumnClick: this._onColumnClick,
                     onRender: (item: any) => {
 
                         const contentclass = (ObjectHelper.byPath(item, BuiltinTemplateSlots.ContentClass) + "").toLowerCase();
