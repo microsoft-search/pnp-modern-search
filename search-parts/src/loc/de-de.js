@@ -177,7 +177,7 @@ define([], function() {
             SelectItemComboPlaceHolder: "Eigenschaft auswählen",
             AddStaticDataLabel: "Statische Daten hinzufügen",
             TextFieldApplyButtonText: "Übernehmen",
-            SortByPlaceholderText: "Sortieren nach",
+            SortByPlaceholderText: "Standardsortierung",
             SortByDefaultOptionText: "Standard"
         },
         Layouts: {
