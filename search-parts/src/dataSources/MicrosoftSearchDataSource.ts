@@ -834,13 +834,15 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             searchRequest.contentSources = contentSources;
         }
 
-        if (this.properties.trimDuplicates) {
-            // Default value is always 'false'
-            searchRequest.trimDuplicates = this.properties.trimDuplicates;
-        }
+        if (this.properties.useBetaEndpoint) {
+            if (this.properties.trimDuplicates) {
+                // Default value is always 'false'
+                searchRequest.trimDuplicates = this.properties.trimDuplicates;
+            }
 
-        if (this.properties.collapseProperties.length > 0) {
-            searchRequest.collapseProperties = this.properties.collapseProperties;
+            if (this.properties.collapseProperties.length > 0) {
+                searchRequest.collapseProperties = this.properties.collapseProperties;
+            }
         }
 
         searchRequest.queryAlterationOptions = {
