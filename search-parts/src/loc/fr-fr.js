@@ -149,7 +149,14 @@ define([], function () {
                 QueryTemplateFieldDescription: "Vous pouvez également utiliser {<tokens>} et KQL pour créer une requête dynamique.",
                 ApplyQueryTemplateBtnText: "Appliquer",
                 UseBetaEndpoint: "Utiliser le point de terminaison beta",
-                TrimDuplicates: "Supprimer les doublons"
+                TrimDuplicates: "Supprimer les doublons",
+                CollapseProperties: {
+                    EditCollapsePropertiesLabel: "Modifier les paramètres de repli",
+                    CollapsePropertiesDescription: "Spécifiez les paramètres de réduction des résultats de la recherche. Vous pouvez soit sélectionner un champ dans la liste déroulante (uniquement si les données de la source de données ont déjà été récupérées) ou saisir votre propre valeur personnalisée (appuyez sur 'Entrée' pour enregistrer votre entrée)",
+                    CollapsePropertiesPropertyPaneFieldLabel: "Les paramètres de repli",
+                    CollapseLimitFieldLabel: "Limite",
+                    CollapsePropertiesFieldColumnPlaceholder: "Réduire par champ"
+                }
             },
             SearchCommon: {
                 Sort: {

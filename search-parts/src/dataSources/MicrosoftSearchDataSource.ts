@@ -7,7 +7,7 @@ import { ServiceScope } from '@microsoft/sp-core-library';
 import { Dropdown, IComboBoxOption, IDropdownProps, ITextFieldProps, TextField } from 'office-ui-fabric-react';
 import { PropertyPaneAsyncCombo } from "../controls/PropertyPaneAsyncCombo/PropertyPaneAsyncCombo";
 import * as commonStrings from 'CommonStrings';
-import { IMicrosoftSearchRequest, ISearchRequestAggregation, SearchAggregationSortBy, ISearchSortProperty, IMicrosoftSearchQuery, IQueryAlterationOptions } from '../models/search/IMicrosoftSearchRequest';
+import { IMicrosoftSearchRequest, ISearchRequestAggregation, SearchAggregationSortBy, ISearchSortProperty, IMicrosoftSearchQuery, IQueryAlterationOptions, ICollapseProperty } from '../models/search/IMicrosoftSearchRequest';
 import { DateHelper } from '../helpers/DateHelper';
 import { DataFilterHelper } from "../helpers/DataFilterHelper";
 import { IMicrosoftSearchResultSet } from "../models/search/IMicrosoftSearchResponse";
@@ -94,6 +94,12 @@ export interface IMicrosoftSearchDataSourceProperties {
      * Indicates whether to trim away the duplicate SharePoint files from search results. Default value is false.
      */
     trimDuplicates: boolean;
+
+    /**
+     * Specifies the criteria used for collapsing search results. Applies only to sortable/refinable properties.
+     * More information: https://learn.microsoft.com/en-us/graph/search-concept-collapse
+     */
+    collapseProperties: ICollapseProperty[];
 }
 
 export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDataSourceProperties> {
@@ -108,6 +114,8 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             text: field,
         } as IComboBoxOption;
     });
+
+    private  _collapsibaleFields: IComboBoxOption[] = this._sortableFields;
 
     private _availableEntityTypeOptions: IComboBoxOption[] = [
         {
@@ -317,6 +325,49 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             useBetaEndpointFields.push(
                 PropertyPaneToggle('dataSourceProperties.trimDuplicates', {
                     label: commonStrings.DataSources.MicrosoftSearch.TrimDuplicates
+                }),
+                this._propertyFieldCollectionData('dataSourceProperties.collapseProperties', {
+                    manageBtnLabel: commonStrings.DataSources.MicrosoftSearch.CollapseProperties.EditCollapsePropertiesLabel,
+                    key: 'collapseProperties',
+                    enableSorting: true,
+                    panelHeader: commonStrings.DataSources.MicrosoftSearch.CollapseProperties.EditCollapsePropertiesLabel,
+                    panelDescription: commonStrings.DataSources.MicrosoftSearch.CollapseProperties.CollapsePropertiesDescription,
+                    label: commonStrings.DataSources.MicrosoftSearch.CollapseProperties.CollapsePropertiesPropertyPaneFieldLabel,
+                    value: this.properties.collapseProperties,
+                    fields: [
+                        {
+                            id: 'fields',
+                            title: commonStrings.DataSources.SearchCommon.Sort.SortFieldColumnLabel,
+                            type: this._customCollectionFieldType.custom,
+                            required: true,
+                            onCustomRender: ((field, value, onUpdate, item, itemId, onError) => {
+
+                                return React.createElement("div", { key: `${field.id}-${itemId}` },
+                                    React.createElement(AsyncCombo, {
+                                        defaultSelectedKeys: item[field.id] ? item[field.id] : '',
+                                        allowMultiSelect: true,
+                                        allowFreeform: true,
+                                        availableOptions: this._collapsibaleFields,
+                                        onUpdateOptions: ((options: IComboBoxOption[]) => {
+                                            this._collapsibaleFields = options;
+                                        }).bind(this),
+                                        clearTextOnFocus: true,
+                                        onUpdate: (options: IComboBoxOption[]) => {
+                                            const updateOptions = options?.length == 0 ? undefined : options.map(o => o.key as string);
+                                            onUpdate(field.id, updateOptions);
+                                        },
+                                        placeholder: commonStrings.DataSources.MicrosoftSearch.CollapseProperties.CollapsePropertiesFieldColumnPlaceholder,
+                                        useComboBoxAsMenuWidth: false // Used when screen resolution is too small to display the complete value  
+                                    } as IAsyncComboProps));
+                            }).bind(this)
+                        },
+                        {
+                            id: 'limit',
+                            title: commonStrings.DataSources.MicrosoftSearch.CollapseProperties.CollapseLimitFieldLabel,
+                            type: this._customCollectionFieldType.number,
+                            required: true
+                        }
+                    ]
                 }),
                 PropertyPaneHorizontalRule()
             );
@@ -607,6 +658,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         this.properties.useBetaEndpoint = this.properties.useBetaEndpoint !== undefined ? this.properties.useBetaEndpoint : false;
         this.properties.enableResultTypes = this.properties.enableResultTypes !== undefined ? this.properties.enableResultTypes : false;
         this.properties.trimDuplicates = this.properties.trimDuplicates !== undefined ? this.properties.trimDuplicates : false;
+        this.properties.collapseProperties = this.properties.collapseProperties !== undefined ? this.properties.collapseProperties : [];
 
         if (this.properties.useBetaEndpoint) {
             this._microsoftSearchUrl = "https://graph.microsoft.com/beta/search/query";
@@ -785,6 +837,10 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         if (this.properties.trimDuplicates) {
             // Default value is always 'false'
             searchRequest.trimDuplicates = this.properties.trimDuplicates;
+        }
+
+        if (this.properties.collapseProperties.length > 0) {
+            searchRequest.collapseProperties = this.properties.collapseProperties;
         }
 
         searchRequest.queryAlterationOptions = {

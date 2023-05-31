@@ -149,7 +149,14 @@ define([], function () {
                 QueryTemplateFieldDescription: "Søgemodifikator-skabelonen. Du kan også bruge {<tokens>} og KQL til at bygge en dynamisk forespørgsel. Alt sammenkædes til inputQueryText",
                 ApplyQueryTemplateBtnText: "Anvend",
                 UseBetaEndpoint: "Brug beta-endepunkt",
-                TrimDuplicates: "Trim dubletter"
+                TrimDuplicates: "Trim dubletter",
+                CollapseProperties: {
+                    EditCollapsePropertiesLabel: "Rediger indstillinger for skjul",
+                    CollapsePropertiesDescription: "Angiv indstillingerne for sammenbrud for søgeresultaterne. Du kan enten vælge et felt fra rullelisten (kun hvis datakildedataene allerede er hentet) eller indtaste din egen tilpassede værdi (tryk på 'Enter' for at gemme din indtastning)",
+                    CollapsePropertiesPropertyPaneFieldLabel: "Indstillingerne for sammenbrud",
+                    CollapseLimitFieldLabel: "Begrænse",
+                    CollapsePropertiesFieldColumnPlaceholder: "Kollaps efter felt"
+                }
             },
             SearchCommon: {
                 Sort: {

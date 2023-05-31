@@ -149,7 +149,14 @@ define([], function () {
                 QueryTemplateFieldDescription: "De sjabloon voor zoekmodificatie. U kunt ook {<tokens>} en KQL gebruiken om een ​​dynamische query te maken. Alles is aaneengeschakeld naar de inputQueryText",
                 ApplyQueryTemplateBtnText: "Toepassen",
                 UseBetaEndpoint: "Bèta-eindpunt gebruiken",
-                TrimDuplicates: "Duplicaten bijsnijden"
+                TrimDuplicates: "Duplicaten bijsnijden",
+                CollapseProperties: {
+                    EditCollapsePropertiesLabel: "Instellingen voor samenvouwen bewerken",
+                    CollapsePropertiesDescription: "Geef de samenvouwinstellingen op voor de zoekresultaten. U kunt een veld selecteren uit de vervolgkeuzelijst (alleen als de gegevensbrongegevens al zijn opgehaald) of uw eigen aangepaste waarde typen (druk op 'Enter' om uw invoer op te slaan)",
+                    CollapsePropertiesPropertyPaneFieldLabel: "Samenvouwinstellingen",
+                    CollapseLimitFieldLabel: "Begrenzing",
+                    CollapsePropertiesFieldColumnPlaceholder: "Samenvouwen op veld"
+                }
             },
             SearchCommon: {
                 Sort: {

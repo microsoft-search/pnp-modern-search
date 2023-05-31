@@ -149,6 +149,13 @@ declare interface ICommonStrings {
         ApplyQueryTemplateBtnText: string;
         UseBetaEndpoint: string;
         TrimDuplicates: string;
+        CollapseProperties: {
+          EditCollapsePropertiesLabel: string;
+          CollapsePropertiesDescription: string;
+          CollapsePropertiesPropertyPaneFieldLabel: string;
+          CollapseLimitFieldLabel: string;
+          CollapsePropertiesFieldColumnPlaceholder: string;
+        }
       },
       SearchCommon: {
         Sort: {

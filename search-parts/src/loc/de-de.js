@@ -126,7 +126,8 @@ define([], function () {
                 TermNotFound: "(Begriff mit ID '{0}' nicht gefunden)",
                 ApplyQueryTemplateBtnText: "Übernehmen",
                 EnableAudienceTargetingTglLabel: "Zielgruppen Adressierung aktivieren",
-                TrimDuplicates: "Duplikate kürzen"
+                TrimDuplicates: "Duplikate kürzen",
+                CollapseSpecificationLabel: "Spezifikation einklappen"
             },
             MicrosoftSearch: {
                 QueryTextFieldLabel: "Abfragetext",
@@ -149,7 +150,13 @@ define([], function () {
                 ApplyQueryTemplateBtnText: "Anwenden",
                 UseBetaEndpoint: "Benutze den Beta-Endpunkt",
                 TrimDuplicates: "Duplikate kürzen",
-                CollapseSpecificationLabel: "Spezifikation einklappen"
+                CollapseProperties: {
+                    EditCollapsePropertiesLabel: "Bearbeiten Sie die Minimierungseinstellungen",
+                    CollapsePropertiesDescription: "Angiv indstillingerne for sammenbrud for søgeresultaterne. Du kan enten vælge et felt fra rullelisten (kun hvis datakildedataene allerede er hentet) eller indtaste din egen tilpassede værdi (tryk på 'Enter' for at gemme din indtastning)",
+                    CollapsePropertiesPropertyPaneFieldLabel: "Minimierungseinstellungen",
+                    CollapseLimitFieldLabel: "Grenze",
+                    CollapsePropertiesFieldColumnPlaceholder: "Nach Feld reduzieren"
+                }
             },
             SearchCommon: {
                 Sort: {

@@ -126,7 +126,8 @@ define([], function () {
         TermNotFound: "(Term med ID '{0}' hittades inte)",
         ApplyQueryTemplateBtnText: "Tillämpa",
         EnableAudienceTargetingTglLabel: "Aktivera målgruppsanpassning",
-        TrimDuplicates: "Trimma dubbletter"
+        TrimDuplicates: "Trimma dubbletter",
+        CollapseSpecificationLabel: "Komprimera specifikationen"
       },
       MicrosoftSearch: {
         QueryTextFieldLabel: "Sökfrågetext",
@@ -149,7 +150,13 @@ define([], function () {
         ApplyQueryTemplateBtnText: "Tillämpa",
         UseBetaEndpoint: "Använd beta endpoint",
         TrimDuplicates: "Trimma dubbletter",
-        CollapseSpecificationLabel: "Komprimera specifikationen"
+        CollapseProperties: {
+            EditCollapsePropertiesLabel: "Redigera komprimeringsinställningar",
+            CollapsePropertiesDescription: "Ange komprimeringsinställningarna för sökresultaten. Du kan antingen välja ett fält från rullgardinsmenyn (endast om datakällans data redan har hämtats) eller ange ditt eget anpassade värde (tryck på 'Enter' för att spara din post)",
+            CollapsePropertiesPropertyPaneFieldLabel: "Kollapsinställningarna",
+            CollapseLimitFieldLabel: "Begränsa",
+            CollapsePropertiesFieldColumnPlaceholder: "Komprimera efter fält"
+        }
       },
       SearchCommon: {
         Sort: {

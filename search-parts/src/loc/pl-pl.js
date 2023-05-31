@@ -126,7 +126,8 @@ define([], function () {
                 TermNotFound: "(Nie znaleziono terminu o identyfikatorze '{0}')",
                 ApplyQueryTemplateBtnText: "Zastosuj",
                 EnableAudienceTargetingTglLabel: "Włącz audiencje",
-                TrimDuplicates: "Przytnij duplikaty"
+                TrimDuplicates: "Przytnij duplikaty",
+                CollapseSpecificationLabel: "Zwiń specyfikację"
             },
             MicrosoftSearch: {
                 QueryTextFieldLabel: "Tekst zapytania",
@@ -149,7 +150,13 @@ define([], function () {
                 ApplyQueryTemplateBtnText: "Zastosuj",
                 UseBetaEndpoint: "Użyj punktu końcowego wersji beta",
                 TrimDuplicates: "Przytnij duplikaty",
-                CollapseSpecificationLabel: "Zwiń specyfikację"
+                CollapseProperties: {
+                    EditCollapsePropertiesLabel: "Edytuj ustawienia zwijania",
+                    CollapsePropertiesDescription: "Określ ustawienia zwijania wyników wyszukiwania. Możesz wybrać pole z listy rozwijanej (tylko jeśli dane ze źródła danych zostały już pobrane) lub wpisać własną wartość niestandardową (naciśnij „Enter”, aby zapisać wpis)",
+                    CollapsePropertiesPropertyPaneFieldLabel: "Ustawienia zwinięcia",
+                    CollapseLimitFieldLabel: "Limit",
+                    CollapsePropertiesFieldColumnPlaceholder: "Zwiń według pola"
+                }
             },
             SearchCommon: {
                 Sort: {
