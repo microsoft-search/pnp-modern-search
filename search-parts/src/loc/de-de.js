@@ -1,4 +1,4 @@
-define([], function () {
+define([], function() {
     return {
         Tokens: {
             SelectTokenLabel: "Wähle ein Token...",
@@ -96,7 +96,7 @@ define([], function () {
                 NoResultsSearchMessage: "Keine Ergebnisse gefunden",
                 SearchPlaceholder: "Suche einen Wert..."
             },
-            CurrentVerticalNotSelectedMessage: "Das derzeit ausgewählte Vertikal passt nicht zu den zu diesem Web Part ({0}) zugeordneten Vertikalen. Es wird im Anzeige Modus als leer angezeigt."
+            CurrentVerticalNotSelectedMessage: "Das derzeit ausgewählte Vertikal passt nicht zu den zu diesem Web Part ({0}) zugeordneten Vertikalen. Es wird im Anzeige Modus als leer angezeigt."            
         },
         DataSources: {
             SharePointSearch: {
@@ -110,7 +110,7 @@ define([], function () {
                 ResultSourceIdLabel: "ID der Ergebnisquelle / Scope|Name",
                 ResultSourceIdDescription: "Verwenden Sie eine standardmäßige SharePoint-Ergebnisquellen-ID, geben Sie Ihren eigenen GUID-Wert ein oder den SCOPE und NAMEN der Quelle getrennt durch '|' (z.B.: SPSite|News). Erlaubte Scopes sind [SPSiteSubscription, SPSite, SPWeb]. Drücken Sie zum Speichern die [Eingabetaste].",
                 InvalidResultSourceIdMessage: "Der angegebene Wert ist keine gültige GUID oder nicht als SCOPE|NAME formattiert.",
-                EnableQueryRulesLabel: "Abfrageregeln aktivieren",
+                EnableQueryRulesLabel: "Abfrageregeln aktivieren",                
                 RefinementFilters: "Verfeinerungsfilter",
                 RefinementFiltersDescription: "Initiale Verfeinerungsfilter, die auf die Abfrage angewendet werden sollen. Diese werden nicht in den ausgewählten Filtern angezeigt. Verwenden Sie für String-Ausdrücke doppelte Anführungszeichen (\") anstelle von einfachen Anführungszeichen (').",
                 EnableLocalizationLabel: "Lokalisierung einschalten",

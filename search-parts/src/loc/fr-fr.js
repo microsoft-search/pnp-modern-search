@@ -1,4 +1,4 @@
-define([], function () {
+define([], function() {
     return {
         Tokens: {
             SelectTokenLabel: "Sélectionnez un jeton...",
