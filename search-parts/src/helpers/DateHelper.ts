@@ -1,5 +1,6 @@
 import { ServiceKey, ServiceScope } from "@microsoft/sp-core-library";
 import { PageContext } from "@microsoft/sp-page-context";
+import LocalizationHelper from "./LocalizationHelper";
 const DateHelper_ServiceKey = 'PnPModernSearchDateHelper';
 
 export class DateHelper {
@@ -22,11 +23,14 @@ export class DateHelper {
             return Promise.resolve(this.momentLibrary);
         } else {
             let moment: any = await import(
-                /* webpackChunkName: 'pnp-modern-search-moment' */
+                /* webpackMode: 'lazy', webpackChunkName: 'pnp-modern-search-moment-base' */
                 'moment'
             );
 
-            let culture = this.pageContext.cultureInfo.currentUICultureName.toLowerCase();
+            let culture = LocalizationHelper.getTranslatedCultureFromUrl();
+            if (!culture) {
+                culture = this.pageContext.cultureInfo.currentUICultureName.toLowerCase();
+            }
 
             // if culture starts with or is any of this, two letter locale must be used in momentjs (culture es-es must load es.js file)
             let momentTwoLetterLanguageName = [
@@ -51,7 +55,7 @@ export class DateHelper {
 
 
                 await import(
-                    /* webpackChunkName: 'pnp-modern-search-moment' */
+                    /* webpackMode: 'lazy', webpackChunkName: 'pnp-modern-search-moment-locale' */
                     `moment/locale/${culture}.js`
                 );
             }
