@@ -77,7 +77,7 @@ With these available customizations options, you can do pretty much anything!
 
 If you encounter an issue, please use the GitHub issues list of [this repository](https://github.com/microsoft-search/pnp-modern-search/issues). 
 
-However, we will ask you to verify your issue as descripted here: [Using Query tools to verify issues](/using-query-tools-to-verify-issues/)
+However, we will ask you to verify your issue as described here: [Using Query tools to verify issues](using-query-tools-to-verify-issues.md)
 
 Also, to help us to resolve your issue, you can include screenshots or error messages coming from:
 
