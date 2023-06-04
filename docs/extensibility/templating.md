@@ -8,7 +8,7 @@ In a basic customization scenario, super users and webmasters can customize exis
 - **Adaptive cards**
     - Use declarative [Adaptive Cards](#adaptive-cards-customizations) JSON templates with data.
 - **Both techniques**
-    - Use data sources [slots](../usage/data-visualizer/slots.md) 
+    - Use data sources [slots](../usage/search-results/slots.md) 
     - Use default [web components](#using-builtin-web-components) provided by the solution.
     - Use [Microsoft Graph Toolkit components](#microsoft-graph-toolkit).
 
