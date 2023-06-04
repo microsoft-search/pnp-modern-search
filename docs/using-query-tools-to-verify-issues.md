@@ -13,23 +13,33 @@ We DO value your questions and loves to see more and more people starting using 
 We would therefore ask you to verify that the API delivers the results you are expecting before we starting looking for bugs in PnP Modern Search.
 
 
-##Suggested tools
-<br>
-<h3><a href = "https://github.com/pnp/PnP-Tools/tree/master/Solutions/SharePoint.Search.QueryTool">SharePoint Search Query Tool</a>
+
+<h2>Suggested tools</h2>
+
+<h3><a href = "https://github.com/pnp/PnP-Tools/blob/master/Solutions/SharePoint.Search.QueryTool/README.md">SharePoint Search Query Tool</a>
   (stand alone application) </h3>
   
   Guides for how to use the Query tool are available on the net, see for instance<br><br>
   <a href = "https://petri.com/the-must-have-tool-while-working-with-search-and-sharepoint-online/"> The Must Have Tool While Working with Search and SharePoint Online</a> (Jasper Oosterveld) <br>or<br> <a href = "https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwie3Ozbo4z9AhUNwAIHHV3PAhAQFnoECDcQAQ&url=https%3A%2F%2Fwww.koskila.net%2Fusing-sharepoint-search-query-tool-investigate-search-index-issues-sharepoint-online%2F&usg=AOvVaw2huXW4dSemLPbsduasUNXZ">Using SharePoint Search Query Tool</a> (Antti Koskela)<br><br>
+  
+  Video:
+  <a href = " https://www.youtube.com/watch?v=SgjweKQ3PeQ&t=60s&pp=ygUNc3AgcXVlcnkgdG9vbA%3D%3D">Useful tools when working with Search Episode 2 Using the SP Query Tool</a>(Kasper Larsen)
+
+
   An older video is also availble: <a href = "https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=video&cd=&cad=rja&uact=8&ved=2ahUKEwiQ_4fypIz9AhVRM-wKHe8_AuIQtwJ6BAgJEAI&url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DBykEEMKNhHs&usg=AOvVaw2KsKUkKWLUOIBLLyFHE4AT">SharePoint Power Hour: Search Query Tool - YouTube</a>(Laura Rogers)
   
   
-  <h3><a href = "https://chrome.google.com/webstore/detail/sp-editor/ecblfcmjnbbgaojblcpmjoamegpbodhd">Chrome extention SP Editor</a>.</h3>
+  <h3><a href = "https://chrome.google.com/webstore/detail/sp-editor/ecblfcmjnbbgaojblcpmjoamegpbodhd">Chrome extention SP Editor.</a>(Chrome extention)</h3> 
 
 Guide:  <a href = "https://www.koskila.net/sharepoint-search-console-now-available-inside-chrome-sp-editor/">SharePoint Search Console – Now available inside Chrome SP Editor!</a>(Antti Koskela)
 
 
 
-Video: <a href ="https://www.youtube.com/watch?v=KaIL4ZWDRsk">SP Editor Chrome Extension for SharePoint Administrators and Developers</a>(Denis Molodtsov)
+Video: 
+<a href ="https://www.youtube.com/watch?v=c-iwGklLhZ0&t=14s">Useful tools when working with Search - Episode 1: Using the SP Editor</a>(Kasper Larsen)
+
+
+<a href ="https://www.youtube.com/watch?v=KaIL4ZWDRsk">SP Editor Chrome Extension for SharePoint Administrators and Developers</a>(Denis Molodtsov)
 
 
 
