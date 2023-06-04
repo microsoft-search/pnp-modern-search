@@ -126,7 +126,8 @@ define([], function() {
                 TermNotFound: "(Término con ID '{0}' no encontrado)",
                 ApplyQueryTemplateBtnText: "Aplicar",
                 EnableAudienceTargetingTglLabel: "Permitir la segmentación de la audiencia",
-                TrimDuplicates: "Recortar duplicados"
+                TrimDuplicates: "Recortar duplicados",
+                CollapseSpecificationLabel: "Ocultar especificación"
             },
             MicrosoftSearch: {
                 QueryTextFieldLabel: "Texto de la consulta",
@@ -148,7 +149,14 @@ define([], function() {
                 QueryTemplateFieldDescription: "La plantilla de consulta de búsqueda. También puede utilizar {<tokens>} y KQL para construir una consulta dinámica.",
                 ApplyQueryTemplateBtnText: "Aplicar",
                 UseBetaEndpoint: "Utilizar endpoint beta",
-                TrimDuplicates: "Recortar duplicados"
+                TrimDuplicates: "Recortar duplicados",
+                CollapseProperties: {
+                    EditCollapsePropertiesLabel: "Editar configuración de contracción",
+                    CollapsePropertiesDescription: "Especifique la configuración de contracción para los resultados de búsqueda. Puede seleccionar un campo de la lista desplegable (solo si los datos de la fuente de datos ya se han obtenido) o escribir su propio valor personalizado (presione 'Entrar' para guardar su entrada)",
+                    CollapsePropertiesPropertyPaneFieldLabel: "Configuración de colapso",
+                    CollapseLimitFieldLabel: "Límite",
+                    CollapsePropertiesFieldColumnPlaceholder: "Contraer por campo"
+                }
             },
             SearchCommon: {
                 Sort: {

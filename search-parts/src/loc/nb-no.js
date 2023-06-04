@@ -126,7 +126,8 @@ define([], function () {
           TermNotFound: "(Term med ID '{0}' ble ikke funnet)",
           ApplyQueryTemplateBtnText: "Lagre",
           EnableAudienceTargetingTglLabel: "Aktiver målgruppetilpasning",
-          TrimDuplicates: "Trim duplikater"
+          TrimDuplicates: "Trim duplikater",
+          CollapseSpecificationLabel: "Skjul spesifikasjonen"
         },
         MicrosoftSearch: {
           QueryTextFieldLabel: "Søketekst",
@@ -148,7 +149,14 @@ define([], function () {
           QueryTemplateFieldDescription: "Søkemalen. Du kan også bruke {<tokens>} og KQL for å bygge en dynamisk spørring.",
           ApplyQueryTemplateBtnText: "Søke om",
           UseBetaEndpoint: "Bruk betaendepunkt",
-          TrimDuplicates: "Trim duplikater"
+          TrimDuplicates: "Trim duplikater",
+          CollapseProperties: {
+              EditCollapsePropertiesLabel: "Rediger innstillinger for sammenbrudd",
+              CollapsePropertiesDescription: "Spesifiser sammenbruddsinnstillingene for søkeresultatene. Du kan enten velge et felt fra rullegardinlisten (bare hvis datakildedataene allerede er hentet) eller skrive inn din egen tilpassede verdi (trykk 'Enter' for å lagre oppføringen din)",
+              CollapsePropertiesPropertyPaneFieldLabel: "Kollapsinnstillingene",
+              CollapseLimitFieldLabel: "Grense",
+              CollapsePropertiesFieldColumnPlaceholder: "Skjul etter felt"
+          }
         },
         SearchCommon: {
           Sort: {
@@ -181,7 +189,7 @@ define([], function () {
         AddStaticDataLabel: "Legg til statisk data",
         TextFieldApplyButtonText: "Lagre",
         SortByPlaceholderText: "Sorter etter",
-        SortByDefaultOptionText: "Standard"
+        SortByDefaultOptionText: "Misligholde"
       },
       Layouts: {
         Debug: {

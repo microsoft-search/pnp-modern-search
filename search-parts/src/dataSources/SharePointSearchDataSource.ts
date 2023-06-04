@@ -118,6 +118,13 @@ export interface ISharePointSearchDataSourceProperties {
      * "true" to remove the duplicate items; otherwise, false. The default value is true.
      */
     trimDuplicates: boolean;
+
+    /**
+     * The CollapseSpecification property takes a Spec parameter that can contain multiple fields separated either by a comma or a space, 
+     * which evaluated together specify a set of criteria used for collapsing. 
+     * More information: https://learn.microsoft.com/en-us/sharepoint/dev/general-development/customizing-search-results-in-sharepoint#collapse-similar-search-results-using-the-collapsespecification-property
+     */
+    collapseSpecification: string;
 }
 
 export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearchDataSourceProperties> {
@@ -414,6 +421,16 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                     }),
                     PropertyPaneToggle('dataSourceProperties.trimDuplicates', {
                         label: commonStrings.DataSources.SharePointSearch.TrimDuplicates
+                    }),
+                    new PropertyPaneNonReactiveTextField('dataSourceProperties.collapseSpecification', {
+                        componentKey: `${BuiltinDataSourceProviderKeys.SharePointSearch}-collapseSpecification`,
+                        defaultValue: this.properties.collapseSpecification,
+                        label: commonStrings.DataSources.SharePointSearch.CollapseSpecificationLabel,
+                        placeholderText: `ex: Author:1 ContentType:2`,
+                        multiline: false,
+                        allowEmptyValue: true,
+                        applyBtnText: commonStrings.DataSources.SharePointSearch.ApplyQueryTemplateBtnText,
+                        rows: 2
                     }),
                     PropertyPaneToggle('dataSourceProperties.enableAudienceTargeting', {
                         label: commonStrings.DataSources.SharePointSearch.EnableAudienceTargetingTglLabel,
@@ -899,6 +916,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         }
 
         searchQuery.TrimDuplicates = this.properties.trimDuplicates;
+        searchQuery.CollapseSpecification = this.properties.collapseSpecification;
 
         if (dataContext.sorting?.selectedSortFieldName
             && dataContext.sorting?.selectedSortDirection) {

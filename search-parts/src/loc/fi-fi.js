@@ -124,7 +124,8 @@ define([], function() {
                 TermNotFound: "(Termiä ID:llä '{0}' ei löydy)",
                 ApplyQueryTemplateBtnText: "Ota käyttöön",
                 EnableAudienceTargetingTglLabel: "Salli käyttäjäryhmäkohdennus",
-                TrimDuplicates: "Leikkaa kaksoiskappaleet"
+                TrimDuplicates: "Leikkaa kaksoiskappaleet",
+                CollapseSpecificationLabel: "Kutista määritys"
             },
             MicrosoftSearch: {
                 QueryTextFieldLabel: "Hakukysely",
@@ -146,7 +147,14 @@ define([], function() {
                 QueryTemplateFieldDescription: "Hakukyselyn templaatti. Voit myös käyttää {<tokens>} muotoilua ja KQL-määreitä rakentaaksesi dynaamisen kyselyn.",
                 ApplyQueryTemplateBtnText: "Ota käyttöön",
                 UseBetaEndpoint: "Käytä beta endpointtia",
-                TrimDuplicates: "Leikkaa kaksoiskappaleet"
+                TrimDuplicates: "Leikkaa kaksoiskappaleet",
+                CollapseProperties: {
+                    EditCollapsePropertiesLabel: "Muokkaa tiivistysasetuksia",
+                    CollapsePropertiesDescription: "Especifique la configuración de contracción para los resultados de búsqueda. Puede seleccionar un campo de la lista desplegable (solo si los datos de la fuente de datos ya se han obtenido) o escribir su propio valor personalizado (presione 'Entrar' para guardar su entrada)",
+                    CollapsePropertiesPropertyPaneFieldLabel: "Tiivistysasetukset",
+                    CollapseLimitFieldLabel: "Raja",
+                    CollapsePropertiesFieldColumnPlaceholder: "Tiivistä kentän mukaan"
+                }
             },
             SearchCommon: {
                 Sort: {
