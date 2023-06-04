@@ -76,12 +76,12 @@ const envCheck = build.subTask('environmentCheck', (gulp, config, done) => {
                 }
             });
 
-            // Exclude moment.js locale for performance purpose during development
-            if (!config.production) {
-                generatedConfiguration.plugins.push(
-                    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
-                );
-            }
+            generatedConfiguration.optimization.splitChunks.cacheGroups = { vendors: false };
+
+            // pack each moment.js locale individually to optimize bundle
+            generatedConfiguration.plugins.push(
+                new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
+            );            
 
             if (config.production) {
                 const lastDirName = path.basename(__dirname);
@@ -110,7 +110,7 @@ addFastServe(build);
 /* end of fast-serve */
 
 var getTasks = build.rig.getTasks;
-build.rig.getTasks = function() {
+build.rig.getTasks = function () {
     var result = getTasks.call(build.rig);
 
     result.set('serve', result.get('serve-deprecated'));
@@ -121,18 +121,18 @@ build.rig.getTasks = function() {
 build.initialize(require('gulp'));
 
 const findFilesByExt = (base, ext, files, result) => {
-    files = files || fs.readdirSync(base) 
-    result = result || [] 
+    files = files || fs.readdirSync(base)
+    result = result || []
 
-    files.forEach( 
+    files.forEach(
         function (file) {
-            var newbase = path.join(base,file)
+            var newbase = path.join(base, file)
             if (fs.statSync(newbase).isDirectory()) {
-                result = findFilesByExt(newbase,ext,fs.readdirSync(newbase),result)
+                result = findFilesByExt(newbase, ext, fs.readdirSync(newbase), result)
             } else {
-                if ( file.substr(-1*(ext.length+1)) == '.' + ext ) {
+                if (file.substr(-1 * (ext.length + 1)) == '.' + ext) {
                     result.push(newbase)
-                } 
+                }
             }
         }
     );
@@ -141,42 +141,42 @@ const findFilesByExt = (base, ext, files, result) => {
 
 gulp.task('update-version', async () => {
 
-  // List all manifest files
-  const manifestFiles = findFilesByExt('./src','manifest.json');
+    // List all manifest files
+    const manifestFiles = findFilesByExt('./src', 'manifest.json');
 
-  const semver = require('semver')
-  const versionArgIdx = process.argv.indexOf('--value');
-  const newVersionNumber = semver.valid(process.argv[versionArgIdx+1]);
+    const semver = require('semver')
+    const versionArgIdx = process.argv.indexOf('--value');
+    const newVersionNumber = semver.valid(process.argv[versionArgIdx + 1]);
 
-  if (versionArgIdx !== -1 && newVersionNumber) {
-      
-      // Update version in the package-solution
-      const pkgSolutionFilePath = './config/package-solution.json';
-      
-      readJson(pkgSolutionFilePath, (err, pkgSolution) => {
-        log.info('Old package-solution.json version:\t' + pkgSolution.solution.version);
-        const pkgVersion = `${semver.major(newVersionNumber)}.${semver.minor(newVersionNumber)}.${semver.patch(newVersionNumber)}.0`;
-        pkgSolution.solution.version = pkgVersion
-        log.info('New package-solution.json version:\t' + pkgVersion);
-        fs.writeFile(pkgSolutionFilePath, JSON.stringify(pkgSolution, null, 4), (error) => {});  
-      });
+    if (versionArgIdx !== -1 && newVersionNumber) {
 
-      // Updated version in Web Part manifests
-      manifestFiles.forEach((manifestFile) => {
-        readJson(`./${manifestFile}`, (err, manifest) => {
+        // Update version in the package-solution
+        const pkgSolutionFilePath = './config/package-solution.json';
 
-          log.info(`Updating manifest file: "./${manifestFile}"`);
-
-          log.info('Old manifestFile version:\t' + manifest.version);
-          const wpVersion = `${semver.major(newVersionNumber)}.${semver.minor(newVersionNumber)}.${semver.patch(newVersionNumber)}`;
-          manifest.version = wpVersion;
-          log.info('New manifestFile version:\t' + wpVersion);
-          fs.writeFile(manifestFile, JSON.stringify(manifest, null, 4), (error) => {});  
+        readJson(pkgSolutionFilePath, (err, pkgSolution) => {
+            log.info('Old package-solution.json version:\t' + pkgSolution.solution.version);
+            const pkgVersion = `${semver.major(newVersionNumber)}.${semver.minor(newVersionNumber)}.${semver.patch(newVersionNumber)}.0`;
+            pkgSolution.solution.version = pkgVersion
+            log.info('New package-solution.json version:\t' + pkgVersion);
+            fs.writeFile(pkgSolutionFilePath, JSON.stringify(pkgSolution, null, 4), (error) => { });
         });
-      });
-  } else {
-      log.error(`The provided version ${process.argv[versionArgIdx+1]} is not a valid SemVer version`);
-  }
+
+        // Updated version in Web Part manifests
+        manifestFiles.forEach((manifestFile) => {
+            readJson(`./${manifestFile}`, (err, manifest) => {
+
+                log.info(`Updating manifest file: "./${manifestFile}"`);
+
+                log.info('Old manifestFile version:\t' + manifest.version);
+                const wpVersion = `${semver.major(newVersionNumber)}.${semver.minor(newVersionNumber)}.${semver.patch(newVersionNumber)}`;
+                manifest.version = wpVersion;
+                log.info('New manifestFile version:\t' + wpVersion);
+                fs.writeFile(manifestFile, JSON.stringify(manifest, null, 4), (error) => { });
+            });
+        });
+    } else {
+        log.error(`The provided version ${process.argv[versionArgIdx + 1]} is not a valid SemVer version`);
+    }
 });
 
 gulp.task('update-package-name', async () => {
@@ -184,14 +184,14 @@ gulp.task('update-package-name', async () => {
     const pkgSolutionFilePath = './config/package-solution.json';
 
     const fileNameArg = process.argv.indexOf('--name');
-    const fileName = process.argv[fileNameArg+1];
+    const fileName = process.argv[fileNameArg + 1];
 
     if (fileNameArg !== -1 && fileName) {
         readJson(pkgSolutionFilePath, (err, pkgSolution) => {
-            const currentPackageName = path.basename(pkgSolution.paths.zippedPackage,'.sppkg');
+            const currentPackageName = path.basename(pkgSolution.paths.zippedPackage, '.sppkg');
             log.info(`Rename ${currentPackageName}.sppkg to ${fileName}.sppkg`);
-            pkgSolution.paths.zippedPackage = pkgSolution.paths.zippedPackage.replace(path.basename(pkgSolution.paths.zippedPackage,'.sppkg'),fileName);
-            fs.writeFile(pkgSolutionFilePath, JSON.stringify(pkgSolution, null, 4), (error) => {});  
+            pkgSolution.paths.zippedPackage = pkgSolution.paths.zippedPackage.replace(path.basename(pkgSolution.paths.zippedPackage, '.sppkg'), fileName);
+            fs.writeFile(pkgSolutionFilePath, JSON.stringify(pkgSolution, null, 4), (error) => { });
         });
     } else {
         log.error(`Error: wrong parameters`);

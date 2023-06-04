@@ -333,13 +333,22 @@ export class SharePointSearchService implements ISharePointSearchService {
 
         let suggestions: string[] = [];
 
+        let localeId = 0;
+        let culture = LocalizationHelper.getTranslatedCultureFromUrl();        
+        if (culture) {
+            localeId = LocalizationHelper.getLocaleId(culture);
+        }
+        if (!culture || localeId === 0) {
+            localeId = LocalizationHelper.getLocaleId(this.pageContext.cultureInfo.currentUICultureName);
+        }
+
         const searchSuggestQuery: ISuggestQuery = {
             preQuery: true,
             queryText: encodeURIComponent(query.replace(/'/g, '\'\'')),
             count: 10,
             hitHighlighting: true,
             prefixMatch: true,
-            culture: LocalizationHelper.getLocaleId(this.pageContext.cultureInfo.currentUICultureName).toString(),
+            culture: localeId.toString(),
             numberOfQuerySuggestions: 10,
             capitalize: false
         };
