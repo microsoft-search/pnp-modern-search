@@ -12,7 +12,7 @@
         <link rel="canonical" href="http://127.0.0.1:8000/usage/search-results/slots/">
       
       <link rel="icon" href="../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.2.2, mkdocs-material-7.2.4">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-7.2.4">
     
     
       
@@ -1065,7 +1065,7 @@
 <p>A slot can be empty.</p>
 </blockquote>
 <h4 id="define-your-custom-slots">Define your custom slots<a class="headerlink" href="#define-your-custom-slots" title="Permanent link">&para;</a></h4>
-<p>In addition to builtin ones, you can add your own slots and use them in layouts. To do so, first add your slot in the list:</p>
+<p>In addition to builtin ones, you can add your own slots and use them in layouts. To do so, first add your slot in the list. The slot name is any name you want to use, and the slot field is a managed property name from the selected properties list configured in the web part. Meaning, if you want to use <code>RefinableString100</code> as a slot, you need to add it to the selected properties list first.</p>
 <p><img alt="&quot;Create custom slot&quot;" src="../../../assets/webparts/search-results/page1/custom_slot.png" /></p>
 <p>And then use it in your templates using the following Handlebars expression:</p>
 <div class="codehilite"><pre><span></span><code>{{slot item @root.slots.&lt;SlotName&gt;}}
@@ -1169,7 +1169,7 @@
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.tabs", "instant"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../../assets/javascripts/workers/search.709b4209.min.js", "version": null}</script>
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.tabs", "instant"], "search": "../../../assets/javascripts/workers/search.709b4209.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": null}</script>
     
     
       <script src="../../../assets/javascripts/bundle.febc23d1.min.js"></script>
