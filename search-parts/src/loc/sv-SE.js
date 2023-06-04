@@ -126,7 +126,8 @@ define([], function () {
           TermNotFound: "(Term med ID '{0}' hittades inte)",
           ApplyQueryTemplateBtnText: "Tillämpa",
           EnableAudienceTargetingTglLabel: "Aktivera målgruppsanpassning",
-          TrimDuplicates: "Trimma dubbletter"
+          TrimDuplicates: "Trimma dubbletter",
+          CollapseSpecificationLabel: "Komprimera specifikationen"
         },
         MicrosoftSearch: {
           QueryTextFieldLabel: "Sökfrågetext",
@@ -148,7 +149,14 @@ define([], function () {
           QueryTemplateFieldDescription: "Sökmodifieringsmallen. Du kan också använda {<tokens>} och KQL för att bygga en dynamisk fråga. Allt är kopplat till inputQueryText",
           ApplyQueryTemplateBtnText: "Tillämpa",
           UseBetaEndpoint: "Använd beta endpoint",
-          TrimDuplicates: "Trimma dubbletter"
+          TrimDuplicates: "Trimma dubbletter",
+          CollapseProperties: {
+              EditCollapsePropertiesLabel: "Redigera komprimeringsinställningar",
+              CollapsePropertiesDescription: "Ange komprimeringsinställningarna för sökresultaten. Du kan antingen välja ett fält från rullgardinsmenyn (endast om datakällans data redan har hämtats) eller ange ditt eget anpassade värde (tryck på 'Enter' för att spara din post)",
+              CollapsePropertiesPropertyPaneFieldLabel: "Kollapsinställningarna",
+              CollapseLimitFieldLabel: "Begränsa",
+              CollapsePropertiesFieldColumnPlaceholder: "Komprimera efter fält"
+          }
         },
         SearchCommon: {
           Sort: {
@@ -218,6 +226,7 @@ define([], function () {
           FileExtensionFieldLabel: "Fält för användning av filtillägg",
           GroupByFieldLabel: "Gruppera efter fält",
           EnableGrouping: "Aktivera gruppering",
+          GroupingDescription: "Se till att du har data som visas i resultatwebbdelen för en lista över egenskaper att visa.",
           CollapsedGroupsByDefault: "Visa kollapsade",
           ResetFieldsBtnLabel: "Återställ fält till standardvärden"
         },

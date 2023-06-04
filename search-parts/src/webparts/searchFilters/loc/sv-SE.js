@@ -60,7 +60,7 @@ define([], function() {
                 LayoutTemplateOptionsGroupName: "Layoutalternativ",
                 TemplateUrlFieldLabel: "Använd en extern URL för mall",
                 TemplateUrlPlaceholder: "https://myfile.html",
-                ErrorTemplateExtension: "Mallen måste vara en giltig .htm- eller .html-fil",
+                ErrorTemplateExtension: "Mallen måste vara en giltig .txt, .htm eller .html-fil",
                 ErrorTemplateResolve: "Det går inte att visa den angivna mallen. Felinformation: '{0}'",
                 FiltersTemplateFieldLabel: "Redigera filtermall",
                 FiltersTemplatePanelHeader: "Redigera filtermall"

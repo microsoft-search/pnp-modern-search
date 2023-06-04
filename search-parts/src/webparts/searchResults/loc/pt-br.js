@@ -39,7 +39,7 @@ define([], function() {
                 CommonOptionsGroupName: "Comum",
                 TemplateUrlFieldLabel: "Usar um URL de modelo externo",
                 TemplateUrlPlaceholder: "https://meu-site/meu-arquivo.html",
-                ErrorTemplateExtension: "O modelo precisa ser um arquivo .htm ou .html válido",
+                ErrorTemplateExtension: "O modelo precisa ser um arquivo .txt, .htm ou .html válido",
                 ErrorTemplateResolve: "Não foi possível resolver o modelo especificado. Detalhes do erro: '{0}'",
                 DialogButtonLabel: "Editar modelo de resultados",
                 DialogTitle: "Editar modelo de resultados",

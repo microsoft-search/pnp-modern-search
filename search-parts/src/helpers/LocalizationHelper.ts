@@ -60,7 +60,7 @@ class LocalizationHelper {
     };
 
     public static getLocaleId(localeName: string): number {
-        if(this.isInt(localeName)) {
+        if (this.isInt(localeName)) {
             return parseInt(localeName);
         }
 
@@ -76,10 +76,20 @@ class LocalizationHelper {
         }
     }
 
-    private static isInt(value: any) :boolean {
+    private static isInt(value: any): boolean {
         const x = parseFloat(value);
         return !isNaN(value) && (x | 0) === x;
-      }
+    }
+
+    /**
+    * Pick culture from url in translated pages as they are folder names like: "en", "no", "de"
+    */
+    public static getTranslatedCultureFromUrl(): string {
+        const pathParts = window.location.pathname.toLocaleLowerCase().split('/');
+        const cultureFolderCandidate = pathParts[pathParts.length - 2];
+        if (cultureFolderCandidate.length == 2) return cultureFolderCandidate; //ISO-639-1 uses two letter codes
+        return null;
+    }
 }
 
 export default LocalizationHelper;

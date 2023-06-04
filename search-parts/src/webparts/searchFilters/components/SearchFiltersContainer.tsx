@@ -132,7 +132,8 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
     }
 
     // When new filters are received from the data source
-    if (!isEqual(prevProps.availableFilters, this.props.availableFilters)) {
+    if (!isEqual(prevProps.availableFilters, this.props.availableFilters)
+       || !isEqual(prevState.currentUiFilters, this.state.currentUiFilters)) {
 
       this.getFiltersDeepLink();
       this.getFiltersToDisplay(this.props.availableFilters, this.state.currentUiFilters, this.props.filtersConfiguration);
@@ -242,7 +243,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         const alreadySubmittedValuesForFilter = flatten(this.state.submittedFilters.filter(s => s.filterName === availableFilter.filterName).map(v => v.values)).map(t => t.value).sort();
 
         const canApply = !isEqual(currentSelectedValuesInUiForFilter, alreadySubmittedValuesForFilter);
-        const canClear = alreadySubmittedValuesForFilter.length > 0;
+        const canClear = alreadySubmittedValuesForFilter.length > 0 || hasSelectedValues;
 
         // Disabled all unselected values if the configuration is not multi to prevent multiple selection at once
         values = values.map(value => {

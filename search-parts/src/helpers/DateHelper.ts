@@ -1,5 +1,6 @@
 import { ServiceKey, ServiceScope } from "@microsoft/sp-core-library";
 import { PageContext } from "@microsoft/sp-page-context";
+import LocalizationHelper from "./LocalizationHelper";
 const DateHelper_ServiceKey = 'PnPModernSearchDateHelper';
 
 export class DateHelper {
@@ -10,6 +11,8 @@ export class DateHelper {
 
     private pageContext: PageContext;
 
+    private lastCulture: string;
+
     public constructor(serviceScope: ServiceScope) {
         serviceScope.whenFinished(() => {
             this.pageContext = serviceScope.consume<PageContext>(PageContext.serviceKey);
@@ -18,16 +21,12 @@ export class DateHelper {
 
     public async moment(): Promise<any> {
 
-        if (this.momentLibrary) {
-            return Promise.resolve(this.momentLibrary);
-        } else {
-            let moment: any = await import(
-                /* webpackChunkName: 'pnp-modern-search-moment' */
-                'moment'
-            );
+        let culture = LocalizationHelper.getTranslatedCultureFromUrl();
+        if (!culture) {
+            culture = this.pageContext.cultureInfo.currentUICultureName.toLowerCase();
+        }
 
-            let culture = this.pageContext.cultureInfo.currentUICultureName.toLowerCase();
-
+        if (!this.lastCulture || this.lastCulture !== culture) {
             // if culture starts with or is any of this, two letter locale must be used in momentjs (culture es-es must load es.js file)
             let momentTwoLetterLanguageName = [
                 "af", "az", "be", "bg", "bm", "bo", "br", "bs", "ca", "cs", "cv",
@@ -51,10 +50,22 @@ export class DateHelper {
 
 
                 await import(
-                    /* webpackChunkName: 'pnp-modern-search-moment' */
+                    /* webpackMode: 'lazy', webpackChunkName: 'pnp-modern-search-moment-locale' */
                     `moment/locale/${culture}.js`
                 );
             }
+            this.lastCulture = culture;
+        }
+
+
+        if (this.momentLibrary) {
+            this.momentLibrary.locale(culture);
+            return Promise.resolve(this.momentLibrary);
+        } else {
+            let moment: any = await import(
+                /* webpackMode: 'lazy', webpackChunkName: 'pnp-modern-search-moment-base' */
+                'moment'
+            );
 
             // Needs to use 'default' due to webpack 4.
             this.momentLibrary = moment.default;

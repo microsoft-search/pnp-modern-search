@@ -126,6 +126,7 @@ declare interface ICommonStrings {
         TermNotFound: string;
         ApplyQueryTemplateBtnText: string;
         EnableAudienceTargetingTglLabel: string;
+        CollapseSpecificationLabel: string;
       },
       MicrosoftSearch: {
         QueryTextFieldLabel: string;
@@ -148,6 +149,13 @@ declare interface ICommonStrings {
         ApplyQueryTemplateBtnText: string;
         UseBetaEndpoint: string;
         TrimDuplicates: string;
+        CollapseProperties: {
+          EditCollapsePropertiesLabel: string;
+          CollapsePropertiesDescription: string;
+          CollapsePropertiesPropertyPaneFieldLabel: string;
+          CollapseLimitFieldLabel: string;
+          CollapsePropertiesFieldColumnPlaceholder: string;
+        }
       },
       SearchCommon: {
         Sort: {
@@ -216,6 +224,7 @@ declare interface ICommonStrings {
         ValueSortingColumnNoFieldsLabel: string;
         FileExtensionFieldLabel: string;
         GroupByFieldLabel: string;
+        GroupingDescription: string;
         EnableGrouping: string;
         CollapsedGroupsByDefault: string;
         ResetFieldsBtnLabel: string;

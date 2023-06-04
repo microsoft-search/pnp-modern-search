@@ -39,7 +39,7 @@ define([], function() {
         CommonOptionsGroupName: "Courantes",
         TemplateUrlFieldLabel: "Utiliser une adresse URL de modèle externe",
         TemplateUrlPlaceholder: "https://myfile.html",
-        ErrorTemplateExtension: "Le modèle doit être un fichier .htm ou .html valide",
+        ErrorTemplateExtension: "Le modèle doit être un fichier .txt, .htm ou .html valide",
         ErrorTemplateResolve: "Impossible de résoudre le modèle indiqué. Renseignements sur l’erreur '{0}'",
         DialogButtonLabel: "Modifier le modèle de résultats",
         DialogTitle: "Modifier le modèle de résultats",

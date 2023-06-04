@@ -138,7 +138,7 @@ export class FilterDateRangeComponent extends React.Component<IFilterDateRangeCo
                     selectedFromDate = new Date(filterValue.value);
                 }
 
-                if (filterValue.operator === FilterComparisonOperator.Lt && !selectedToDate) {
+                if (filterValue.operator === FilterComparisonOperator.Leq && !selectedToDate) {
                     selectedToDate = new Date(filterValue.value);
                 }
             });
@@ -189,7 +189,7 @@ export class FilterDateRangeComponent extends React.Component<IFilterDateRangeCo
             updatedValues.push({
                 name: endDate,
                 value: endDate,
-                operator: FilterComparisonOperator.Lt,
+                operator: FilterComparisonOperator.Leq,
                 selected: selected
             });
         }

@@ -126,3 +126,10 @@ public getCustomWebComponents(): IComponentDefinition<any>[] {
     ];
 }
 ```
+
+### Consume services from BaseWebComponent
+
+```typescript
+const msGraphClientFactory = this._serviceScope.consume<MSGraphClientFactory>(MSGraphClientFactory.serviceKey);
+const msGraphClient = await msGraphClientFactory.getClient();
+```

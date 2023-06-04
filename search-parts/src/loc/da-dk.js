@@ -126,7 +126,8 @@ define([], function() {
                 TermNotFound: "(Term med ID '{0}' blev ikke fundet)",
                 ApplyQueryTemplateBtnText: "Anvend",
                 EnableAudienceTargetingTglLabel: "Aktivér målgruppestyring",
-                TrimDuplicates: "Trim dubletter"
+                TrimDuplicates: "Trim dubletter",
+                CollapseSpecificationLabel: "Skjul specifikation"
             },
             MicrosoftSearch: {
                 QueryTextFieldLabel: "Forespørgselstekst",
@@ -148,7 +149,14 @@ define([], function() {
                 QueryTemplateFieldDescription: "Søgemodifikator-skabelonen. Du kan også bruge {<tokens>} og KQL til at bygge en dynamisk forespørgsel. Alt sammenkædes til inputQueryText",
                 ApplyQueryTemplateBtnText: "Anvend",
                 UseBetaEndpoint: "Brug beta-endepunkt",
-                TrimDuplicates: "Trim dubletter"
+                TrimDuplicates: "Trim dubletter",
+                CollapseProperties: {
+                    EditCollapsePropertiesLabel: "Rediger indstillinger for skjul",
+                    CollapsePropertiesDescription: "Angiv indstillingerne for sammenbrud for søgeresultaterne. Du kan enten vælge et felt fra rullelisten (kun hvis datakildedataene allerede er hentet) eller indtaste din egen tilpassede værdi (tryk på 'Enter' for at gemme din indtastning)",
+                    CollapsePropertiesPropertyPaneFieldLabel: "Indstillingerne for sammenbrud",
+                    CollapseLimitFieldLabel: "Begrænse",
+                    CollapsePropertiesFieldColumnPlaceholder: "Kollaps efter felt"
+                }
             },
             SearchCommon: {
                 Sort: {
@@ -218,6 +226,7 @@ define([], function() {
                 FileExtensionFieldLabel: "Felt til brug af file extension",
                 GroupByFieldLabel: "Gruppér efter felt",
                 EnableGrouping: "Aktivér gruppering",
+                GroupingDescription: "Sørg for, at du har data vist i resultatwebdelen for at få vist en liste over egenskaber.",
                 CollapsedGroupsByDefault: "Vis collapsed",
                 ResetFieldsBtnLabel: "Nulstil felter til standardværdier"
             },

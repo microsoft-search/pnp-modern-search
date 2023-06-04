@@ -60,7 +60,7 @@ define([], function() {
                 LayoutTemplateOptionsGroupName: "Ustawienia układu",
                 TemplateUrlFieldLabel: "Użyj adresu URL zewnętrznego szablonu",
                 TemplateUrlPlaceholder: "https://myfile.html",
-                ErrorTemplateExtension: "Szablon musi by poprawnym plikiem .htm lub .html",
+                ErrorTemplateExtension: "Szablon musi by poprawnym plikiem .txt, .htm lub .html",
                 ErrorTemplateResolve: "Nie można rozwiązać wskazanego szablonu. Szczegóły błędu: '{0}'",
                 FiltersTemplateFieldLabel: "Edytuj filtry szablonu",
                 FiltersTemplatePanelHeader: "Edytuj filtry szablonu"

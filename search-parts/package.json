@@ -1,6 +1,6 @@
 {
     "name": "@pnp/modern-search-web-parts",
-    "version": "4.8.0",
+    "version": "4.9.0",
     "private": true,
     "main": "lib/index.js",
     "engines": {
@@ -12,13 +12,13 @@
         "serve": "gulp bundle --custom-serve --max_old_space_size=4096 && fast-serve"
     },
     "dependencies": {
-        "@fluentui/font-icons-mdl2": "8.5.3",
-        "@fluentui/react": "^8.101.0",
-        "@fluentui/react-file-type-icons": "8.8.1",
+        "@fluentui/font-icons-mdl2": "8.5.18",
+        "@fluentui/react": "^8.109.7",
+        "@fluentui/react-file-type-icons": "8.8.18",
         "@fluentui/react-theme-provider": "0.19.16",
         "@microsoft/applicationinsights-web": "^2.8.9",
-        "@microsoft/mgt-react": "^2.7.1",
-        "@microsoft/mgt-sharepoint-provider": "^2.7.1",
+        "@microsoft/mgt-react": "^2.10.1",
+        "@microsoft/mgt-sharepoint-provider": "^2.10.1",
         "@microsoft/sp-component-base": "1.15.2",
         "@microsoft/sp-core-library": "1.15.2",
         "@microsoft/sp-dynamic-data": "1.15.2",
@@ -30,15 +30,15 @@
         "@microsoft/sp-webpart-base": "1.15.2",
         "@pnp/common": "2.0.13",
         "@pnp/modern-search-extensibility": "^1.5.0",
-        "@pnp/spfx-controls-react": "3.11.0",
-        "@pnp/spfx-property-controls": "3.10.0",
+        "@pnp/spfx-controls-react": "3.14.0",
+        "@pnp/spfx-property-controls": "3.13.0",
         "@pnp/telemetry-js": "2.0.0",
-        "adaptive-expressions": "4.18.0",
-        "adaptivecards": "2.11.1",
+        "adaptive-expressions": "4.19.3",
+        "adaptivecards": "2.11.3",
         "adaptivecards-templating": "2.3.1",
         "core-js": "3.26.0",
-        "dompurify": "2.3.8",
-        "flickity": "2.2.2",
+        "dompurify": "3.0.3",
+        "flickity": "2.3.0",
         "flickity-imagesloaded": "2.0.0",
         "handlebars": "4.7.7",
         "handlebars-group-by": "1.0.1",
@@ -47,13 +47,12 @@
         "jspath": "^0.4.0",
         "markdown-it": "12.3.2",
         "moment": "2.29.4",
-        "office-ui-fabric-react": "7.185.7",
+        "office-ui-fabric-react": "7.204.0",
         "react": "16.13.1",
-        "react-ace": "5.8.0",
+        "react-ace": "10.1.0",
         "react-dom": "16.13.1",
         "react-js-pagination": "3.0.3",
-        "tslib": "2.3.1",
-        "webpack": "4.42.0"
+        "tslib": "2.3.1"
     },
     "resolutions": {
         "@types/react": "^16.9.51",
@@ -62,7 +61,6 @@
     "devDependencies": {
         "@microsoft/eslint-config-spfx": "1.15.2",
         "@microsoft/eslint-plugin-spfx": "1.15.2",
-        "@microsoft/gulp-core-build-serve": "3.5.5",
         "@microsoft/rush-stack-compiler-4.5": "0.2.2",
         "@microsoft/sp-build-web": "1.15.2",
         "@microsoft/sp-module-interfaces": "1.15.2",
@@ -82,6 +80,37 @@
         "string-replace-loader": "2.3.0",
         "typescript": "4.5.5",
         "unlazy-loader": "0.1.3",
-        "webpack-bundle-analyzer": "^4.7.0"
+        "webpack": "^4.42.0",
+        "webpack-bundle-analyzer": "^4.8.0"
+    },
+    "overrides": {
+        "@xmldom/xmldom": "0.8.4",
+        "validator": "13.7.0",
+        "loader-utils": "2.0.4",
+        "node-fetch": "2.6.7",
+        "autolinker": "3.14.0",
+        "tar": "4.4.18",
+        "glob-parent": "5.1.2",
+        "highlight.js": "10.4.1",
+        "decode-uri-component": "0.2.2",
+        "json5": "2.2.2",
+        "set-value": "4.0.1",
+        "unset-value": "2.0.1"
+    },
+    "pnpm": {
+        "overrides": {
+            "@xmldom/xmldom": "0.8.4",
+            "validator": "13.7.0",
+            "loader-utils": "2.0.4",
+            "node-fetch": "2.6.7",
+            "autolinker": "3.14.0",
+            "tar": "4.4.18",
+            "glob-parent": "5.1.2",
+            "highlight.js": "10.4.1",
+            "decode-uri-component": "0.2.2",
+            "json5": "2.2.2",
+            "set-value": "4.0.1",
+            "unset-value": "2.0.1"
+        }
     }
 }

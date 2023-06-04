@@ -67,6 +67,7 @@ import { PropertyPaneAsyncCombo } from '../../controls/PropertyPaneAsyncCombo/Pr
 import { DynamicPropertyHelper } from '../../helpers/DynamicPropertyHelper';
 import { IQueryModifierConfiguration } from '../../queryModifier/IQueryModifierConfiguration';
 import { PropertyPaneTabsField } from '../../controls/PropertyPaneTabsField/PropertyPaneTabsField';
+import { loadMsGraphToolkit } from '../../helpers/GraphToolKitHelper';
 
 const LogSource = "SearchResultsWebPart";
 
@@ -351,7 +352,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         let renderRootElement: JSX.Element = null;
         let renderDataContainer: JSX.Element = null;
 
-        if (this.dataSource) {
+        if (this.dataSource && this.instanceId) {
 
             // The main content WP logic
             renderDataContainer = React.createElement(SearchResultsContainer, {
@@ -363,6 +364,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 onDataRetrieved: this._onDataRetrieved,
                 onItemSelected: this._onItemSelected,
                 pageContext: this.context.pageContext,
+                teamsContext: this.context.sdks.microsoftTeams ? this.context.sdks.microsoftTeams.context : null,
                 renderType: this.properties.layoutRenderType,
                 dataContext: this._currentDataContext,
                 themeVariant: this._themeVariant,
@@ -467,6 +469,22 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         ReactDom.render(renderRootElement, this.domElement);
 
+        if(this.properties.showBlankIfNoResult){
+            let element = this.domElement.parentElement;
+                // check up to 3 levels up for padding and exit once found
+                for (let i = 0; i < 3; i++) {
+                    const style = window.getComputedStyle(element);
+                    const hasPadding = style.paddingTop !== "0px";
+                    if (hasPadding) {
+                        element.style.paddingTop = "0px";
+                        element.style.paddingBottom = "0px";
+                        element.style.marginTop = "0px";
+                        element.style.marginBottom = "0px";
+                    }
+                    element = element.parentElement;
+                }
+        }
+
         // This call set this.renderedOnce to 'true' so we need to execute it at the very end
         super.renderCompleted();
     }
@@ -538,7 +556,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         // Initializes MS Graph Toolkit
         if (this.properties.useMicrosoftGraphToolkit) {
-            await this.loadMsGraphToolkit();
+            await loadMsGraphToolkit(this.context);
         }
 
         // Initializes this component as a discoverable dynamic data source
@@ -760,8 +778,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
             // Reset paging information
             this.currentPageNumber = 1;
-
-
         }
 
         // Reset layout properties
@@ -849,7 +865,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         if (propertyPath.localeCompare("useMicrosoftGraphToolkit") === 0 && this.properties.useMicrosoftGraphToolkit) {
 
             // We load this dynamically to avoid tokens renewal failure at page load and decrease the bundle size. Most of the time, MGT won't be used in templates.
-            await this.loadMsGraphToolkit();
+            await loadMsGraphToolkit(this.context);
         }
 
         if (propertyPath.localeCompare('selectedItemFieldValue') === 0) {
@@ -970,27 +986,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         }
 
         return inputQueryText;
-    }
-
-    /**
-     * Loads the Microsoft Graph Toolkit library dynamically
-     */
-    private async loadMsGraphToolkit() {
-
-        // Load Microsoft Graph Toolkit dynamically
-        const { Providers } = await import(
-            /* webpackChunkName: 'microsoft-graph-toolkit' */
-            '@microsoft/mgt-react/dist/es6'
-        );
-
-        const { SharePointProvider } = await import(
-            /* webpackChunkName: 'microsoft-graph-toolkit' */
-            '@microsoft/mgt-sharepoint-provider/dist/es6'
-        );
-
-        if (!Providers.globalProvider) {
-            Providers.globalProvider = new SharePointProvider(this.context);
-        }
     }
 
     /**
@@ -2063,9 +2058,9 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                     break;
 
                 default:
-                  const source = this.availableDataSourceDefinitions.find(definition => definition.key === dataSourceKey);
-                  serviceKey = source.serviceKey;
-                  break;
+                    const source = this.availableDataSourceDefinitions.find(definition => definition.key === dataSourceKey);
+                    serviceKey = source.serviceKey;
+                    break;
             }
 
             return new Promise<IDataSource>((resolve, reject) => {
@@ -2153,7 +2148,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
                 switch (this.properties.layoutRenderType) {
                     case LayoutRenderType.Handlebars:
-                        extensions = [".htm", ".html"];
+                        extensions = [".htm", ".html", ".txt"];
                         break;
 
                     case LayoutRenderType.AdaptiveCards:
@@ -2246,10 +2241,12 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             // Input query text
             const inputQueryText = await this._getInputQueryTextValue();
             this.tokenService.setTokenValue(BuiltinTokenNames.inputQueryText, inputQueryText);
-            this.tokenService.setTokenValue(BuiltinTokenNames.originalInputQueryText, inputQueryText);
+            this.tokenService.setTokenValue(BuiltinTokenNames.originalInputQueryText, inputQueryText);   
 
-            // Legacy token for SharePoint and Microsoft Search data sources
-            this.tokenService.setTokenValue(BuiltinTokenNames.searchTerms, inputQueryText);
+            if (inputQueryText) {
+                // Legacy token for SharePoint and Microsoft Search data sources
+                this.tokenService.setTokenValue(BuiltinTokenNames.searchTerms, inputQueryText);
+            }
 
             // Selected filters
             if (this._filtersConnectionSourceData) {

@@ -28,7 +28,7 @@ export class TemplateRenderer extends React.Component<ITemplateRendererProps, IT
         this._domPurify = DOMPurify.default;
 
         this._domPurify.setConfig({
-            ADD_TAGS: ['style'],
+            ADD_TAGS: ['style','#comment'],
             ADD_ATTR: ['target', 'loading'],
             ALLOW_DATA_ATTR: true,
             ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|file|tel|callto|cid|xmpp|xxx|ms-\w+):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
@@ -64,6 +64,45 @@ export class TemplateRenderer extends React.Component<ITemplateRendererProps, IT
         }
     }
 
+    private legacyStyleParser(style: HTMLStyleElement, elementPrefixId: string): string {
+
+        let prefixedStyles: string[] = [];
+
+        const sheet: any = style.sheet;
+
+        if ((sheet as CSSStyleSheet).cssRules) {
+            const cssRules = (sheet as CSSStyleSheet).cssRules;
+
+            for (let j = 0; j < cssRules.length; j++) {
+                const cssRule: CSSRule = cssRules.item(j);
+
+                // CSS Media rule
+                if ((cssRule as CSSMediaRule).media) {
+                    const cssMediaRule = cssRule as CSSMediaRule;
+
+                    let cssPrefixedMediaRules = '';
+                    for (let k = 0; k < cssMediaRule.cssRules.length; k++) {
+                        const cssRuleMedia = cssMediaRule.cssRules.item(k);
+                        cssPrefixedMediaRules += `#${elementPrefixId} ${cssRuleMedia.cssText}`;
+                    }
+
+                    prefixedStyles.push(`@media ${cssMediaRule.conditionText} { ${cssPrefixedMediaRules} }`);
+
+                } else {
+                    if (cssRule.cssText.indexOf(TestConstants.SearchResultsErrorMessage) !== -1) {
+                        // Special handling for error message as it's outside the template container to allow user override
+                        prefixedStyles.push(`${cssRule.cssText}`);
+                    } else {
+                        prefixedStyles.push(`#${elementPrefixId} ${cssRule.cssText}`);
+                    }
+                }
+            }
+        }
+
+        return prefixedStyles.join(' ');
+
+    }
+
     private async updateTemplate(props: ITemplateRendererProps): Promise<void> {
         let templateContent = props.templateContent;
 
@@ -78,54 +117,35 @@ export class TemplateRenderer extends React.Component<ITemplateRendererProps, IT
 
             // Get <style> tags from Handlebars template content and prefix all CSS rules by the Web Part instance ID to isolate styles
             const styleElements = templateAsHtml.getElementsByTagName("style");
-            let prefixedStyles: string[] = [];
-            let i, j, k = 0;
+            // let styles: string[] = [];
+            // debugger;
+            const allStyles = [];
 
             if (styleElements.length > 0) {
 
                 // The prefix for all CSS selectors
                 const elementPrefixId = `${TEMPLATE_ID_PREFIX}${this.props.instanceId}`;
 
-                for (i = 0; i < styleElements.length; i++) {
+
+                for (let i = 0; i < styleElements.length; i++) {
                     const style = styleElements.item(i);
-                    const sheet: any = style.sheet;
-                    if ((sheet as CSSStyleSheet).cssRules) {
-                        const cssRules = (sheet as CSSStyleSheet).cssRules;
 
-                        for (j = 0; j < cssRules.length; j++) {
-                            const cssRule: CSSRule = cssRules.item(j);
+                    let cssscope = style.dataset.cssscope as string;
 
-                            // CSS Media rule
-                            if ((cssRule as CSSMediaRule).media) {
-                                const cssMediaRule = cssRule as CSSMediaRule;
+                    if (cssscope !== undefined && cssscope === "layer") {
 
-                                let cssPrefixedMediaRules = '';
-                                for (k = 0; k < cssMediaRule.cssRules.length; k++) {
-                                    const cssRuleMedia = cssMediaRule.cssRules.item(k);
-                                    cssPrefixedMediaRules += `#${elementPrefixId} ${cssRuleMedia.cssText}`;
-                                }
+                        allStyles.push(`@layer { ${style.innerText} }`);
 
-                                prefixedStyles.push(`@media ${cssMediaRule.conditionText} { ${cssPrefixedMediaRules} }`);
+                    } else {
 
-                            } else {
-                                if (cssRule.cssText.indexOf(TestConstants.SearchResultsErrorMessage) !== -1) {
-                                    // Special handling for error message as it's outside the template container to allow user override
-                                    prefixedStyles.push(`${cssRule.cssText}`);
-                                } else {
-                                    prefixedStyles.push(`#${elementPrefixId} ${cssRule.cssText}`);
-                                }
-                            }
-                        }
+                        allStyles.push(this.legacyStyleParser(style, elementPrefixId));
+
                     }
-
-                    // Remove the element from DOM
-                    style.remove();
                 }
+
             }
 
-            template = `<style>${prefixedStyles.join(' ')}</style><div id="${TEMPLATE_ID_PREFIX}${this.props.instanceId}">${templateAsHtml.body.innerHTML}</div>`;
-
-            this._divTemplateRenderer.current.innerHTML = template;
+            this._divTemplateRenderer.current.innerHTML = `<style>${allStyles.join(' ')}</style><div id="${TEMPLATE_ID_PREFIX}${this.props.instanceId}">${templateAsHtml.body.innerHTML}</div>`
 
         } else if (props.renderType == LayoutRenderType.AdaptiveCards && template instanceof HTMLElement) {
 

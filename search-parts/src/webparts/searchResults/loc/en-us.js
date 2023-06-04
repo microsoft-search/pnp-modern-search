@@ -39,7 +39,7 @@ define([], function() {
                 CommonOptionsGroupName: "Common",
                 TemplateUrlFieldLabel: "Use an external template URL",
                 TemplateUrlPlaceholder: "https://myfile.html",
-                ErrorTemplateExtension: "The template must be a valid .htm or .html file",
+                ErrorTemplateExtension: "The template must be a valid .txt, .htm or .html file",
                 ErrorTemplateResolve: "Unable to resolve the specified template. Error details: '{0}'",
                 DialogButtonLabel: "Edit results template",
                 DialogTitle: "Edit results template",

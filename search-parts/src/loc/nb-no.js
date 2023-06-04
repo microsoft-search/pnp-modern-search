@@ -126,7 +126,8 @@ define([], function () {
           TermNotFound: "(Term med ID '{0}' ble ikke funnet)",
           ApplyQueryTemplateBtnText: "Lagre",
           EnableAudienceTargetingTglLabel: "Aktiver målgruppetilpasning",
-          TrimDuplicates: "Trim duplikater"
+          TrimDuplicates: "Trim duplikater",
+          CollapseSpecificationLabel: "Skjul spesifikasjonen"
         },
         MicrosoftSearch: {
           QueryTextFieldLabel: "Søketekst",
@@ -148,7 +149,14 @@ define([], function () {
           QueryTemplateFieldDescription: "Søkemalen. Du kan også bruke {<tokens>} og KQL for å bygge en dynamisk spørring.",
           ApplyQueryTemplateBtnText: "Søke om",
           UseBetaEndpoint: "Bruk betaendepunkt",
-          TrimDuplicates: "Trim duplikater"
+          TrimDuplicates: "Trim duplikater",
+          CollapseProperties: {
+              EditCollapsePropertiesLabel: "Rediger innstillinger for sammenbrudd",
+              CollapsePropertiesDescription: "Spesifiser sammenbruddsinnstillingene for søkeresultatene. Du kan enten velge et felt fra rullegardinlisten (bare hvis datakildedataene allerede er hentet) eller skrive inn din egen tilpassede verdi (trykk 'Enter' for å lagre oppføringen din)",
+              CollapsePropertiesPropertyPaneFieldLabel: "Kollapsinnstillingene",
+              CollapseLimitFieldLabel: "Grense",
+              CollapsePropertiesFieldColumnPlaceholder: "Skjul etter felt"
+          }
         },
         SearchCommon: {
           Sort: {
@@ -217,6 +225,7 @@ define([], function () {
           FileExtensionFieldLabel: "Felt för filendelse",
           GroupByFieldLabel: "Grupper etter felt",
           EnableGrouping: "Aktiver gruppering",
+          GroupingDescription: "Sørg for at du har data som vises i resultatwebdelen for å vise en liste over egenskaper.",
           CollapsedGroupsByDefault: "Vis kollapsede",
           ResetFieldsBtnLabel: "Bruk standardverdiene"
         },

@@ -126,7 +126,8 @@ define([], function() {
                 TermNotFound: "(Term with ID '{0}' not found)",
                 ApplyQueryTemplateBtnText: "Apply",
                 EnableAudienceTargetingTglLabel: "Enable audience targeting",
-                TrimDuplicates: "Trim duplicates"
+                TrimDuplicates: "Trim duplicates",
+                CollapseSpecificationLabel: "Collapse specification"
             },
             MicrosoftSearch: {
                 QueryTextFieldLabel: "Query text",
@@ -148,7 +149,14 @@ define([], function() {
                 QueryTemplateFieldDescription: "The search query template. You can also use {<tokens>} and KQL to build a dynamic query.",
                 ApplyQueryTemplateBtnText: "Apply",
                 UseBetaEndpoint: "Use beta endpoint",
-                TrimDuplicates: "Trim duplicates"
+                TrimDuplicates: "Trim duplicates",
+                CollapseProperties: {
+                    EditCollapsePropertiesLabel: "Edit collapse settings",
+                    CollapsePropertiesDescription: "Specify the collapse settings for the search results. You can either select a field from the dropdown list (only if the data source data have already be fetched) or type your own custom value (press 'Enter' to save your entry)",
+                    CollapsePropertiesPropertyPaneFieldLabel: "Collapse settings",
+                    CollapseLimitFieldLabel: "Limit",
+                    CollapsePropertiesFieldColumnPlaceholder: "Collapse on field"
+                }
             },
             SearchCommon: {
                 Sort: {
@@ -218,6 +226,7 @@ define([], function() {
                 FileExtensionFieldLabel: "Field to use for file extension",
                 GroupByFieldLabel: "Group by field",
                 EnableGrouping: "Enable grouping",
+                GroupingDescription: "Ensure you have data showing in the result web part for a list of properties to show.",
                 CollapsedGroupsByDefault: "Show collapsed",
                 ResetFieldsBtnLabel: "Reset fields to default values"
             },

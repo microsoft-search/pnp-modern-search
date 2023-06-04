@@ -39,7 +39,7 @@ define([], function() {
                 CommonOptionsGroupName: "Allgemein",
                 TemplateUrlFieldLabel: "Benutze eine externe Vorlagen URL",
                 TemplateUrlPlaceholder: "https://meineDatei.html",
-                ErrorTemplateExtension: "Die Vorlage muss eine gültige .html oder .html Datei sein",
+                ErrorTemplateExtension: "Die Vorlage muss eine gültige .txt, .html oder .html Datei sein",
                 ErrorTemplateResolve: "Kann die angegebene Vorlage nicht auflösen. Fehler Details: '{0}'",
                 DialogButtonLabel: "Ergebnisvorlage bearbeiten",
                 DialogTitle: "Ergebnisvorlage bearbeiten",
