@@ -33,7 +33,7 @@
         "@pnp/spfx-controls-react": "3.14.0",
         "@pnp/spfx-property-controls": "3.13.0",
         "@pnp/telemetry-js": "2.0.0",
-        "adaptive-expressions": "4.19.3",
+        "adaptive-expressions": "4.20.0",
         "adaptivecards": "2.11.3",
         "adaptivecards-templating": "2.3.1",
         "core-js": "3.26.0",
