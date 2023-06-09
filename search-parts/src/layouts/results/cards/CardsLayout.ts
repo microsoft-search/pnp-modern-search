@@ -62,7 +62,7 @@ export class CardsLayout extends BaseLayout<ICardsLayoutProperties> {
                                                     { name: strings.Layouts.Cards.Fields.Date, field: 'date', value: "{{getDate (slot item @root.slots.Date) 'LL'}}", useHandlebarsExpr: true, supportHtml: false },
                                                     { name: strings.Layouts.Cards.Fields.Url, field: 'href', value: '{{slot item @root.slots.PreviewUrl}}', useHandlebarsExpr: true, supportHtml: false },
                                                     { name: strings.Layouts.Cards.Fields.Author, field: 'author', value: "{{slot item @root.slots.Author}}", useHandlebarsExpr: true, supportHtml: false },
-                                                    { name: strings.Layouts.Cards.Fields.ProfileImage, field: 'profileImage', value: "/_layouts/15/userphoto.aspx?size=L&username={{getUserEmail (slot item @root.slots.UserEmail)}}", useHandlebarsExpr: true, supportHtml: false  },
+                                                    { name: strings.Layouts.Cards.Fields.ProfileImage, field: 'profileImage', value: "/_layouts/15/userphoto.aspx?size=L&username={{getUserEmail (slot item @root.slots.Author)}}", useHandlebarsExpr: true, supportHtml: false  },
                                                     { name: strings.Layouts.Cards.Fields.FileExtension, field: 'fileExtension', value: "{{slot item @root.slots.FileType}}", useHandlebarsExpr: true, supportHtml: false },
                                                     { name: strings.Layouts.Cards.Fields.IsContainer, field: 'isContainer', value: "{{slot item @root.slots.IsFolder}}", useHandlebarsExpr: true, supportHtml: false }
                                                 ] as IComponentFieldsConfiguration[];
