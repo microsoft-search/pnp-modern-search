@@ -80,9 +80,20 @@ Except for `{Hub}`, these a shortands to the `{PageContext}` tokens. They return
 
 |**Token**|**Definition**
 |-----|-----|
-| **{CurrentYear}** |Todays's date four digits, 2018 <br/> 
-| **{CurrentMonth}** |Today's month, 1-12 <br/> 
-| **{CurrentDate}** |Today's date, 1-31 <br/> 
+| **{CurrentYear}** |Local date four digits, 2023 <br/> 
+| **{CurrentMonth}** |Local month, 1-12 <br/> 
+| **{CurrentDate}** |Local date, 1-31 <br/> 
+| **{CurrentHour}** |Local hour, 0-23 <br/> 
+| **{CurrentMinute}** |Local minute, 0-59 <br/> 
+| **{CurrentSecond}** |Local second, 0-59 <br/> 
+| **{CurrentYearUTC}** |UTC date four digits, 2023 <br/> 
+| **{CurrentMonthUTC}** |UTC month, 1-12 <br/> 
+| **{CurrentDateUTC}** |UTC date, 1-31 <br/> 
+| **{CurrentHourUTC}** |UTC, 0-23 <br/> 
+| **{CurrentMinuteUTC}** |UTC minute, 0-59 <br/> 
+| **{CurrentSecondUTC}** |UTC second, 0-59 <br/> 
+
+
 | **{Today+/- \&lt;integer value for number of days&gt;}**  <br/> |A date calculated by adding/subtracting the specified number of days to/from the date when the query is issued. Date format is YYYY-MM-DD (Ex: `{Today+5}`) <br/> 
 
 #### SharePoint search query variables
