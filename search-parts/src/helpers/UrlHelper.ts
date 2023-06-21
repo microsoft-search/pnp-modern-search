@@ -55,7 +55,7 @@ export class UrlHelper {
      * @param param The query string parameter to add or replace
      * @param value The new value
      */
-    public static addOrReplaceQueryStringParam(url: string, param: string, value: string): string {
+    public static addOrReplaceQueryStringParam(url: string, param: string, value: string, skipEmptyHash?: boolean): string {
         param = param.replace(/[.~*()]/g,''); // // Ensure param is safe from DOS attacks - so we strip away RegEx special characters
         const re = new RegExp("[\\?&]" + param + "=([^&#]*)"); 
         const match = re.exec(url);
@@ -64,7 +64,7 @@ export class UrlHelper {
 
         if (match === null) {
             // Append new param
-            const hash = window.location.hash && window.location.hash !== '' ? window.location.hash : '#';
+            const hash = window.location.hash && window.location.hash !== '' ? window.location.hash : (skipEmptyHash ? '' : '#');
             const hasQuestionMark = /\?/.test(url);
             delimiter = hasQuestionMark ? "&" : "?";
             newString = url.replace(hash, '') + delimiter + param + "=" + encodeURIComponent(value) + hash;
