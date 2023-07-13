@@ -75,7 +75,7 @@
         "fancy-log": "1.3.3",
         "gulp": "4.0.2",
         "html-loader": "^1.1.0",
-        "semver": "7.3.5",
+        "semver": "7.5.2",
         "spfx-fast-serve-helpers": "1.15.3",
         "string-replace-loader": "2.3.0",
         "typescript": "4.5.5",
