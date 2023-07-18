@@ -1284,22 +1284,55 @@
 <tbody>
 <tr>
 <td><strong>{CurrentYear}</strong></td>
-<td>Todays's date four digits, 2018 <br/></td>
+<td>Local date four digits, 2023 <br/></td>
 </tr>
 <tr>
 <td><strong>{CurrentMonth}</strong></td>
-<td>Today's month, 1-12 <br/></td>
+<td>Local month, 1-12 <br/></td>
 </tr>
 <tr>
 <td><strong>{CurrentDate}</strong></td>
-<td>Today's date, 1-31 <br/></td>
+<td>Local date, 1-31 <br/></td>
 </tr>
 <tr>
-<td><strong>{Today+/- \&lt;integer value for number of days&gt;}</strong>  <br/></td>
-<td>A date calculated by adding/subtracting the specified number of days to/from the date when the query is issued. Date format is YYYY-MM-DD (Ex: <code>{Today+5}</code>) <br/></td>
+<td><strong>{CurrentHour}</strong></td>
+<td>Local hour, 0-23 <br/></td>
+</tr>
+<tr>
+<td><strong>{CurrentMinute}</strong></td>
+<td>Local minute, 0-59 <br/></td>
+</tr>
+<tr>
+<td><strong>{CurrentSecond}</strong></td>
+<td>Local second, 0-59 <br/></td>
+</tr>
+<tr>
+<td><strong>{CurrentYearUTC}</strong></td>
+<td>UTC date four digits, 2023 <br/></td>
+</tr>
+<tr>
+<td><strong>{CurrentMonthUTC}</strong></td>
+<td>UTC month, 1-12 <br/></td>
+</tr>
+<tr>
+<td><strong>{CurrentDateUTC}</strong></td>
+<td>UTC date, 1-31 <br/></td>
+</tr>
+<tr>
+<td><strong>{CurrentHourUTC}</strong></td>
+<td>UTC, 0-23 <br/></td>
+</tr>
+<tr>
+<td><strong>{CurrentMinuteUTC}</strong></td>
+<td>UTC minute, 0-59 <br/></td>
+</tr>
+<tr>
+<td><strong>{CurrentSecondUTC}</strong></td>
+<td>UTC second, 0-59 <br/></td>
 </tr>
 </tbody>
 </table>
+<p>| <strong>{Today+/- \&lt;integer value for number of days&gt;}</strong>  <br/> |A date calculated by adding/subtracting the specified number of days to/from the date when the query is issued. Date format is YYYY-MM-DD (Ex: <code>{Today+5}</code>) <br/> </p>
 <h4 id="sharepoint-search-query-variables">SharePoint search query variables<a class="headerlink" href="#sharepoint-search-query-variables" title="Permanent link">&para;</a></h4>
 <h5 id="supported-variables">Supported variables<a class="headerlink" href="#supported-variables" title="Permanent link">&para;</a></h5>
 <p>The SharePoint Search engine already supports tokens by default (i.e query variables, ex: <code>{Site.ID}</code>). You can use them in the <strong>Query template</strong> field only. To see the all the supported tokens natively, refer to the <a href="https://docs.microsoft.com/en-us/sharepoint/technical-reference/query-variables">Microsoft documentation</a>.</p>
