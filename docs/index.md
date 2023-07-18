@@ -98,15 +98,15 @@ PnP Modern Search version 4 initially made by [Franck Cornu](https://twitter.com
 
 Here is the list of main contributors of the PnP Modern Search (all versions included)
 
-- Franck Cornu (aequos) - [@FranckCornu](http://www.twitter.com/FranckCornu)
+- Franck Cornu (Ubisoft) - [@FranckCornu](http://www.twitter.com/FranckCornu)
 - Mikael Svenson (Microsoft) - [@mikaelsvenson](http://www.twitter.com/mikaelsvenson)
 - Yannick Reekmans - [@yannickreekmans](https://twitter.com/yannickreekmans)
 - Albert-Jan Schot - [@appieschot](https://twitter.com/appieschot)
-- Tarald Gåsbakk (PuzzlePart) - [@taraldgasbakk](https://twitter.com/Taraldgasbakk)
+- Tarald Gåsbakk (Norwegian Armed Forces) - [@taraldgasbakk](https://twitter.com/Taraldgasbakk)
 - Brad Schlintz (Microsoft) - [@bschlintz](https://twitter.com/bschlintz)
 - Richard Gigan - [@PooLP](https://twitter.com/PooLP)
 - Matthew Stark
-- Fabio Franzini (Apvee) - [@franzinifabio](https://twitter.com/franzinifabio)
+- Fabio Franzini (Apvee Solutions) - [@franzinifabio](https://twitter.com/franzinifabio)
 - Paolo Pialorsi (PiaSys.com) - [@PaoloPia](https://twitter.com/paolopia)
-- Patrtik Hellgren (SherparsGroupAB) - [@PatrikHellgren](https://twitter.com/patrikhellgren)
+- Patrik Hellgren (SherparsGroupAB) - [@PatrikHellgren](https://twitter.com/patrikhellgren)
 - Erfan Darroudi [@edarroudi](https://github.com/edarroudi)

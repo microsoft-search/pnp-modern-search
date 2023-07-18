@@ -213,7 +213,7 @@ define([], function () {
           MaximumWidthColumnLabel: "Maximal bredd (px)",
           SortableColumnLabel: "Sorterbar",
           ResizableColumnLabel: "Storleken kan redigeras",
-          MultilineColumnLabel: "Flera linjer",
+          MultilineColumnLabel: "Flera rader",
           LinkToItemColumnLabel: "Länk till artikel",
           CompactModeLabel: "Kompakt läge",
           ShowFileIcon: "Visa filikon",
