@@ -2,6 +2,8 @@
  * This class help you to translate the current culture name into LCID and vice versa
  * The class logic is directly inspired from the official SPFx documentation https://docs.microsoft.com/en-us/sharepoint/dev/spfx/web-parts/guidance/localize-web-parts
  */
+import ISO6391 from 'iso-639-1';
+
 class LocalizationHelper {
 
     // Locales to match with this.context.pageContext.cultureInfo.currentUICultureName for SPFx
@@ -87,7 +89,8 @@ class LocalizationHelper {
     public static getTranslatedCultureFromUrl(): string {
         const pathParts = window.location.pathname.toLocaleLowerCase().split('/');
         const cultureFolderCandidate = pathParts[pathParts.length - 2];
-        if (cultureFolderCandidate.length == 2) return cultureFolderCandidate; //ISO-639-1 uses two letter codes
+        if (cultureFolderCandidate.length == 2 && ISO6391.validate(cultureFolderCandidate))
+            return cultureFolderCandidate; //ISO-639-1 uses two letter codes
         return null;
     }
 }
