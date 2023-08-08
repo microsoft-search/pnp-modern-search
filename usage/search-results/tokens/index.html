@@ -12,7 +12,7 @@
         <link rel="canonical" href="http://127.0.0.1:8000/usage/search-results/tokens/">
       
       <link rel="icon" href="../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-7.2.4">
+      <meta name="generator" content="mkdocs-1.5.2, mkdocs-material-7.2.4">
     
     
       
@@ -1136,14 +1136,14 @@
 <table>
 <thead>
 <tr>
-<th align="left"><strong>Token</strong></th>
-<th align="left"><strong>Definition</strong></th>
+<th style="text-align: left;"><strong>Token</strong></th>
+<th style="text-align: left;"><strong>Definition</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td align="left"><strong>{Page.&lt;FieldName&gt;}</strong>  <br/></td>
-<td align="left">The value of a field on the page from where the query was issued. For example, if the page from where the query was issued contained a site column named "ContentOwner," specifying {Page.ContentOwner} would allow you to query for the value of "ContentOwner." FieldName is the internal name of the field. When used with taxonomy columns, use <code>{Page.&lt;FieldName&gt;.Label}</code> or <code>{Page.&lt;FieldName&gt;.TermID}</code> <br/></td>
+<td style="text-align: left;"><strong>{Page.&lt;FieldName&gt;}</strong>  <br/></td>
+<td style="text-align: left;">The value of a field on the page from where the query was issued. For example, if the page from where the query was issued contained a site column named "ContentOwner," specifying {Page.ContentOwner} would allow you to query for the value of "ContentOwner." FieldName is the internal name of the field. When used with taxonomy columns, use <code>{Page.&lt;FieldName&gt;.Label}</code> or <code>{Page.&lt;FieldName&gt;.TermID}</code> <br/></td>
 </tr>
 </tbody>
 </table>
@@ -1156,22 +1156,22 @@
 <table>
 <thead>
 <tr>
-<th align="left"><strong>Token</strong></th>
-<th align="left"><strong>Definition</strong></th>
+<th style="text-align: left;"><strong>Token</strong></th>
+<th style="text-align: left;"><strong>Definition</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td align="left"><strong>{inputQueryText}</strong><br/></td>
-<td align="left">The query value entered into a search box on a page. The value depends on the configuration of input text connection of the Search Results Web Part. <br/></td>
+<td style="text-align: left;"><strong>{inputQueryText}</strong><br/></td>
+<td style="text-align: left;">The query value entered into a search box on a page. The value depends on the configuration of input text connection of the Search Results Web Part. <br/></td>
 </tr>
 <tr>
-<td align="left"><strong>{filters.&lt;FilterName&gt;.&lt;|valueAsText|fromDate|toDate\&gt;}</strong></td>
-<td align="left">The current selected filters. <em>'FilterName'</em> corresponds to the filter name specified in the Search Filters Web Part (not the display name). The available values for a filter are as follow: <ul><li><code>valueAsText</code>: the filter value as text. For multi values filter, values will be separated by a comma <code>','</code>.</li><li><code>fromDate</code>: if the filter is a <strong>date range</strong> template, the 'from' date selected by the user in UTC format.</li><li><code>toDate</code>: if the filter is a <strong>date range</strong> template, the 'to' date selected by the user in UTC format.</li></ul></br>If no filter are selected (i.e. no values), the <code>{filters}</code> expression will be resolved as an empty string <code>''</code>.</td>
+<td style="text-align: left;"><strong>{filters.&lt;FilterName&gt;.&lt;|valueAsText|fromDate|toDate\&gt;}</strong></td>
+<td style="text-align: left;">The current selected filters. <em>'FilterName'</em> corresponds to the filter name specified in the Search Filters Web Part (not the display name). The available values for a filter are as follow: <ul><li><code>valueAsText</code>: the filter value as text. For multi values filter, values will be separated by a comma <code>','</code>.</li><li><code>fromDate</code>: if the filter is a <strong>date range</strong> template, the 'from' date selected by the user in UTC format.</li><li><code>toDate</code>: if the filter is a <strong>date range</strong> template, the 'to' date selected by the user in UTC format.</li></ul></br>If no filter are selected (i.e. no values), the <code>{filters}</code> expression will be resolved as an empty string <code>''</code>.</td>
 </tr>
 <tr>
-<td align="left"><strong>{verticals.&lt;value|name&gt;}</strong></td>
-<td align="left">If connected, get the current selected vertical tab name or associated value.</td>
+<td style="text-align: left;"><strong>{verticals.&lt;value|name&gt;}</strong></td>
+<td style="text-align: left;">If connected, get the current selected vertical tab name or associated value.</td>
 </tr>
 </tbody>
 </table>
@@ -1179,34 +1179,34 @@
 <table>
 <thead>
 <tr>
-<th align="left"><strong>Token</strong></th>
-<th align="left"><strong>Definition</strong></th>
+<th style="text-align: left;"><strong>Token</strong></th>
+<th style="text-align: left;"><strong>Definition</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td align="left"><strong>{PageContext.&lt;PropertyName&gt;}</strong></td>
-<td align="left">Resolves current SPFx page context related tokens. You can use deep paths here to access properties. Ex: <code>{PageContext.site.absoluteUrl}</code>. Use the debug template in the web part to see all tokens available under the <code>context</code> node.<br/></td>
+<td style="text-align: left;"><strong>{PageContext.&lt;PropertyName&gt;}</strong></td>
+<td style="text-align: left;">Resolves current SPFx page context related tokens. You can use deep paths here to access properties. Ex: <code>{PageContext.site.absoluteUrl}</code>. Use the debug template in the web part to see all tokens available under the <code>context</code> node.<br/></td>
 </tr>
 <tr>
-<td align="left"><strong>{LegacyPageContext.&lt;PropertyName&gt;}</strong></td>
-<td align="left">Resolves current SPFx legacy page context related tokens. You can use deep paths here to access properties. Ex: <code>{LegacyPageContext.aadTenantId}</code>. <br/></td>
+<td style="text-align: left;"><strong>{LegacyPageContext.&lt;PropertyName&gt;}</strong></td>
+<td style="text-align: left;">Resolves current SPFx legacy page context related tokens. You can use deep paths here to access properties. Ex: <code>{LegacyPageContext.aadTenantId}</code>. <br/></td>
 </tr>
 <tr>
-<td align="left"><strong>{QueryString.&lt;ParameterName&gt;}</strong> <br/></td>
-<td align="left">A value from a query string in the URL of the current page. For example, if the URL of the current page contains a query string such as ItemNumber=567, you could obtain the value 567 by specifying <code>{QueryString.ItemNumber}</code>. <br/> Use <code>{?QueryString.Parameter}</code> if you want the part to be omitted in case the query string parameter is not present.</td>
+<td style="text-align: left;"><strong>{QueryString.&lt;ParameterName&gt;}</strong> <br/></td>
+<td style="text-align: left;">A value from a query string in the URL of the current page. For example, if the URL of the current page contains a query string such as ItemNumber=567, you could obtain the value 567 by specifying <code>{QueryString.ItemNumber}</code>. <br/> Use <code>{?QueryString.Parameter}</code> if you want the part to be omitted in case the query string parameter is not present.</td>
 </tr>
 <tr>
-<td align="left"><strong>{CurrentDisplayLanguage}</strong> <br/></td>
-<td align="left">The current display language based on MUI in <em>ll-cc format</em>.  <br/></td>
+<td style="text-align: left;"><strong>{CurrentDisplayLanguage}</strong> <br/></td>
+<td style="text-align: left;">The current display language based on MUI in <em>ll-cc format</em>.  <br/></td>
 </tr>
 <tr>
-<td align="left"><strong>{CurrentDisplayLCID}</strong>  <br/></td>
-<td align="left">Numeric value of the current display language based on MUI in <em>ll-cc format</em>.  <br/></td>
+<td style="text-align: left;"><strong>{CurrentDisplayLCID}</strong>  <br/></td>
+<td style="text-align: left;">Numeric value of the current display language based on MUI in <em>ll-cc format</em>.  <br/></td>
 </tr>
 <tr>
-<td align="left"><strong>{TenantUrl}</strong>  <br/></td>
-<td align="left">URL of the tenant (root site)<br/></td>
+<td style="text-align: left;"><strong>{TenantUrl}</strong>  <br/></td>
+<td style="text-align: left;">URL of the tenant (root site)<br/></td>
 </tr>
 </tbody>
 </table>
@@ -1215,30 +1215,30 @@
 <table>
 <thead>
 <tr>
-<th align="left"><strong>Token</strong></th>
-<th align="left"><strong>Definition</strong></th>
+<th style="text-align: left;"><strong>Token</strong></th>
+<th style="text-align: left;"><strong>Definition</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td align="left"><strong>{Site.&lt;PropertyName&gt;}</strong></td>
-<td align="left">Resolves current site related tokens. You can use the 'Debug' layout and the <code>context</code> property to see all available values for a site. Ex <code>{Site.id._guid}</code> or <code>{Site.absoluteUrl}</code>.</td>
+<td style="text-align: left;"><strong>{Site.&lt;PropertyName&gt;}</strong></td>
+<td style="text-align: left;">Resolves current site related tokens. You can use the 'Debug' layout and the <code>context</code> property to see all available values for a site. Ex <code>{Site.id._guid}</code> or <code>{Site.absoluteUrl}</code>.</td>
 </tr>
 <tr>
-<td align="left"><strong>{Hub.&lt;PropertyName&gt;}</strong></td>
-<td align="left">Resolves current hub site related tokens. Valid property names are <code>{Hub.HubSiteId}</code>, <code>{Hub.Id}</code> and <code>{Hub.IsHubSite}</code> You can target a hub with the template: <code>DepartmentId:\{{Hub.HubSiteId}\}</code>.</td>
+<td style="text-align: left;"><strong>{Hub.&lt;PropertyName&gt;}</strong></td>
+<td style="text-align: left;">Resolves current hub site related tokens. Valid property names are <code>{Hub.HubSiteId}</code>, <code>{Hub.Id}</code> and <code>{Hub.IsHubSite}</code> You can target a hub with the template: <code>DepartmentId:\{{Hub.HubSiteId}\}</code>.</td>
 </tr>
 <tr>
-<td align="left"><strong>{Group.&lt;PropertyName&gt;}</strong></td>
-<td align="left">Resolves current Office 365 group related tokens. You can use the 'Debug' layout and the <code>context</code> property to see all available values for a site.</td>
+<td style="text-align: left;"><strong>{Group.&lt;PropertyName&gt;}</strong></td>
+<td style="text-align: left;">Resolves current Office 365 group related tokens. You can use the 'Debug' layout and the <code>context</code> property to see all available values for a site.</td>
 </tr>
 <tr>
-<td align="left"><strong>{List.&lt;PropertyName&gt;}</strong></td>
-<td align="left">Resolves current list related tokens. Ex <code>{List.id._guid}</code> or <code>{List.absoluteUrl}</code>.</td>
+<td style="text-align: left;"><strong>{List.&lt;PropertyName&gt;}</strong></td>
+<td style="text-align: left;">Resolves current list related tokens. Ex <code>{List.id._guid}</code> or <code>{List.absoluteUrl}</code>.</td>
 </tr>
 <tr>
-<td align="left"><strong>{Web.&lt;PropertyName&gt;}</strong></td>
-<td align="left">Resolves current web related tokens  You can use the 'Debug' layout and the <code>context</code> property to see all available values for a site. Ex <code>{Web.id._guid}</code> or <code>{Web.absoluteUrl}</code>.</td>
+<td style="text-align: left;"><strong>{Web.&lt;PropertyName&gt;}</strong></td>
+<td style="text-align: left;">Resolves current web related tokens  You can use the 'Debug' layout and the <code>context</code> property to see all available values for a site. Ex <code>{Web.id._guid}</code> or <code>{Web.absoluteUrl}</code>.</td>
 </tr>
 </tbody>
 </table>
@@ -1268,7 +1268,7 @@
 <td>Language as specified as Preferred Display Language in the profile of the user who issued the query.  <br/></td>
 </tr>
 <tr>
-<td><strong>{User.\&lt;property>}</strong></td>
+<td><strong>{User.\&lt;property&gt;}</strong></td>
 <td>Any property from the user profile of the user who issued the query — for example, <code>SPS-Interests</code>, <code>userprofile_guid</code>, <code>accountname</code>, etc. including custom properties.  <br/></td>
 </tr>
 </tbody>
