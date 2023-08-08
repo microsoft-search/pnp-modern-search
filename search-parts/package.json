@@ -1,6 +1,6 @@
 {
     "name": "@pnp/modern-search-web-parts",
-    "version": "4.9.1",
+    "version": "4.9.2",
     "private": true,
     "main": "lib/index.js",
     "engines": {

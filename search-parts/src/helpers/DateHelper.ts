@@ -40,8 +40,8 @@ export class DateHelper {
             ];
 
             // Moment is by default 'en-us'
-            if (!culture.startsWith('en-us') && culture !== "en") {
-                // check if culture must be used with two letter name in momentjs  
+            if (!culture.startsWith('en-us') && momentTwoLetterLanguageName.some((c) => c == culture)) {
+                // check if culture must be used with two letter name in momentjs
                 for (let i = 0; i < momentTwoLetterLanguageName.length; i++)
                     if (culture.startsWith(momentTwoLetterLanguageName[i])) {
                         culture = culture.split('-')[0];
