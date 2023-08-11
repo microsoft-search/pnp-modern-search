@@ -77,7 +77,7 @@ class LocalizationHelper {
     }
 
     private static isInt(value: any): boolean {
-        const x = parseFloat(value);
+        const x = Number(value);
         return Number.isInteger(x);
     }
 
