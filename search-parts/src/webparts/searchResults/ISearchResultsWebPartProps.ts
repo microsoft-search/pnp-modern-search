@@ -174,11 +174,6 @@ export default interface ISearchResultsWebPartProps extends IBaseWebPartProps {
     selectedItemFieldValue: DynamicProperty<string>;
 
     /**
-     * Flag indicating if telemetry are enabled
-     */
-    enableTelemetry: boolean;
-
-    /**
      * The queryModifier properties
      */
     queryModifierProperties: {

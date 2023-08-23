@@ -118,10 +118,7 @@ define([], function() {
         Extensibility: {
           PanelHeader: "Configureer inladen van uitbreidingsbibliotheken bij opstarten",
           PanelDescription:"Beheer hier je aangepaste uitbreidingsbibliotheek ID's. Je kan hier een weergavenaam specificeren en aangeven of de bibliotheek geladen moet worden. Alleen aangepaste databronnen, indelingen, web componenten en Handlebars helpers worden hier geladen.",
-        },
-        EnableTelemetryLabel: "PnP-telemetrie",
-        EnableTelemetryOn: "Telemetrie inschakelen",
-        EnableTelemetryOff: "Telemetrie uitschakelen"
+        }
       },
       CustomQueryModifier: {
             EditQueryModifiersLabel: "Beschikbare aangepaste query-aanpassingen configureren",

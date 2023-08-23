@@ -118,10 +118,7 @@ define([], function() {
                 Extensibility: {
                     PanelHeader: "Konsiguroi laajennuskirjastot ladattavaksi käynnistyksessä.",
                     PanelDescription: "Lisää/poista mukautetun laajennuskirjastosi ID:t tässä. Voit määrittää näyttönimen ja päättää, ladataanko kirjasto käynnistyksessä. Vain mukautetut sisältölähtee, templaatit, komponentit ja Handlebar helperit tarjoajat ladataan tässä.",
-                },
-                EnableTelemetryLabel: "PnP telemetria",
-                EnableTelemetryOn: "Aseta telemetria käyttöön",
-                EnableTelemetryOff: "Poista telemetria käytöstä"
+                }
             },
             CustomQueryModifier: {
                   EditQueryModifiersLabel: "Käytettävissä olevien mukautettujen kyselyn muokkaimien määrittäminen",

@@ -118,10 +118,7 @@ define([], function() {
                 Extensibility: {
                     PanelHeader: "Configure extensibility libraries to load at startup.",
                     PanelDescription: "Add/Remove your custom extensibility library IDs here. You can specify a display name and decide if the library should be loaded or not at startup. Only custom data sources, layouts, web components and Handlebars helpers will be loaded here.",
-                },
-                EnableTelemetryLabel: "PnP telemetry",
-                EnableTelemetryOn: "Turn on telemetry",
-                EnableTelemetryOff: "Turn off telemetry"
+                }
             },
             CustomQueryModifier: {
                 EditQueryModifiersLabel: "Configure query modifiers",
