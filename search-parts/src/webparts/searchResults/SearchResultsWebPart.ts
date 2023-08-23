@@ -58,7 +58,6 @@ import { BuiltinFilterTemplates } from '../../layouts/AvailableTemplates';
 import { IExtensibilityConfiguration } from '../../models/common/IExtensibilityConfiguration';
 import { IDataVerticalSourceData } from '../../models/dynamicData/IDataVerticalSourceData';
 import { BaseWebPart } from '../../common/BaseWebPart';
-import { ApplicationInsights } from '@microsoft/applicationinsights-web';
 import commonStyles from '../../styles/Common.module.scss';
 import { UrlHelper } from '../../helpers/UrlHelper';
 import { ObjectHelper } from '../../helpers/ObjectHelper';
@@ -526,34 +525,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         // Web components are only defined once.
         await this.templateService.registerWebComponents(this.availableWebComponentDefinitions, this.instanceId);
 
-        if (this.properties.dataSourceKey && this.properties.selectedLayoutKey && this.properties.enableTelemetry) {
-
-            const usageEvent = {
-                name: Constants.PNP_MODERN_SEARCH_EVENT_NAME,
-                properties: {
-                    selectedDataSource: this.properties.dataSourceKey,
-                    selectedLayout: this.properties.selectedLayoutKey,
-                    useFilters: this.properties.useFilters,
-                    useVerticals: this.properties.useVerticals
-                }
-            };
-
-            // Track event with application insights (PnP)
-            const appInsights = new ApplicationInsights({
-                config: {
-                    maxBatchInterval: 0,
-                    instrumentationKey: Constants.PNP_APP_INSIGHTS_INSTRUMENTATION_KEY,
-                    namePrefix: LogSource,
-                    disableFetchTracking: true,
-                    disableAjaxTracking: true
-                }
-            });
-
-            appInsights.loadAppInsights();
-            appInsights.context.application.ver = this.manifest.version;
-            appInsights.trackEvent(usageEvent);
-        }
-
         // Initializes MS Graph Toolkit
         if (this.properties.useMicrosoftGraphToolkit) {
             await loadMsGraphToolkit(this.context);
@@ -694,11 +665,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                             this._propertyPanePropertyEditor({
                                 webpart: this,
                                 key: 'propertyEditor'
-                            }),
-                            PropertyPaneToggle('enableTelemetry', {
-                                label: webPartStrings.PropertyPane.InformationPage.EnableTelemetryLabel,
-                                offText: webPartStrings.PropertyPane.InformationPage.EnableTelemetryOn,
-                                onText: webPartStrings.PropertyPane.InformationPage.EnableTelemetryOff,
                             })
                         ]
                     }
@@ -1169,7 +1135,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         this.properties.showResultsCount = this.properties.showResultsCount !== undefined ? this.properties.showResultsCount : true;
         this.properties.showBlankIfNoResult = this.properties.showBlankIfNoResult !== undefined ? this.properties.showBlankIfNoResult : false;
         this.properties.useMicrosoftGraphToolkit = this.properties.useMicrosoftGraphToolkit !== undefined ? this.properties.useMicrosoftGraphToolkit : false;
-        this.properties.enableTelemetry = this.properties.enableTelemetry !== undefined ? this.properties.enableTelemetry : true;
 
         // Item selection properties
         if (!this.properties.selectedItemFieldValue) {

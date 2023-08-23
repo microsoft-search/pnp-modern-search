@@ -77,8 +77,8 @@ class LocalizationHelper {
     }
 
     private static isInt(value: any): boolean {
-        const x = parseFloat(value);
-        return !isNaN(value) && (x | 0) === x;
+        const x = Number(value);
+        return Number.isInteger(x);
     }
 
     /**

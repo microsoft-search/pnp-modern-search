@@ -118,10 +118,7 @@ define([], function() {
                 Extensibility: {
                     PanelHeader: "Erweiterungsbibliotheken die beim Start geladen werden konfigurieren ",
                     PanelDescription: "Hier können Sie die IDs Ihrer benutzerdefinierten Erweiterungsbibliotheken hinzufügen/entfernen. Sie können einen Anzeigenamen angeben und entscheiden, ob die Bibliothek beim Starten geladen werden soll oder nicht. Nur benutzerdefinierte Datenquellen, Layouts, Webkomponenten und Handlebars-Helfer werden hier geladen.",
-                },
-                EnableTelemetryLabel: "PnP Telemetrie",
-                EnableTelemetryOn: "Telemetrie einschalten",
-                EnableTelemetryOff: "Telemetrie ausschalten"
+                }
             },
             CustomQueryModifier: {
                 EditQueryModifiersLabel: "Verfügbare benutzerdefinierte Abfragemodifikatoren konfigurieren",
