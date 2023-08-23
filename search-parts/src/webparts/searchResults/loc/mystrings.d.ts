@@ -117,10 +117,7 @@ declare interface ISearchResultsWebPartStrings {
             Extensibility: {
                 PanelHeader: string;
                 PanelDescription: string;
-            },
-            EnableTelemetryLabel: string;
-            EnableTelemetryOn: string;
-            EnableTelemetryOff: string;
+            }
         },
         CustomQueryModifier: {
             EditQueryModifiersLabel: string;

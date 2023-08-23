@@ -16,7 +16,6 @@
         "@fluentui/react": "^8.109.7",
         "@fluentui/react-file-type-icons": "8.8.18",
         "@fluentui/react-theme-provider": "0.19.16",
-        "@microsoft/applicationinsights-web": "^2.8.9",
         "@microsoft/mgt-react": "^2.10.1",
         "@microsoft/mgt-sharepoint-provider": "^2.10.1",
         "@microsoft/sp-component-base": "1.15.2",

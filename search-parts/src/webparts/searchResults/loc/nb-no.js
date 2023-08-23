@@ -118,10 +118,7 @@ define([], function() {
           Extensibility: {
             PanelHeader: "Konfigurer utvidelsesbibliotek som skal lastes ved oppstart.",
             PanelDescription: "Legg til / fjern ID-en til ditt tilpassede utvidelsesbibliotek her. Du kan angi et visningsnavn og bestemme om biblioteket skal lastes ved oppstart eller ikke. Har lastes kun tilpassede datakilder, maler, web-komponenter og Handlebars-hjelpere.",
-          },
-          EnableTelemetryLabel: "PnP-telemetri",
-          EnableTelemetryOn: "Slå på telemetri",
-          EnableTelemetryOff: "Slå av telemetri"
+          }
         },
         CustomQueryModifier: {
               EditQueryModifiersLabel: "Konfigurer tilgjengelige tilpassede spørringsmodifikatorer",
