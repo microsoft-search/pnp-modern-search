@@ -28,7 +28,7 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 If you are stuck on an issue or just need a peer review of your PnP Modern Search based idea, we have Office Hours.
 
 You can sign up for a 15 min timeslot and a member of the community will set up a Teams call, where you can show and tell about the issue.
-Office hours is every second Thuesday at mid afternoon UTC(0). 
+Office hours is every second Tuesday at mid afternoon UTC(0). 
 
 Sign up [here](https://t.co/A1zudCtqoA), and please note that not all requests might be granted if there are more requests than timeslots.
 
