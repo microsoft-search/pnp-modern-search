@@ -1050,7 +1050,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     public async loadPropertyPaneResources(): Promise<void> {
 
         const { PropertyFieldCodeEditor, PropertyFieldCodeEditorLanguages } = await import(
-            /* webpackChunkName: 'pnp-modern-search-code-editor' */
+            /* webpackChunkName: 'pnp-modern-search-code-editor', webpackMode: 'weak' */
             '@pnp/spfx-property-controls/lib/propertyFields/codeEditor'
         );
 

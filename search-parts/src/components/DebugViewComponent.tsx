@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Suspense } from 'react';
 import { BaseWebComponent } from '@pnp/modern-search-extensibility';
 import * as ReactDOM from 'react-dom';
-const AceEditor = React.lazy(() => import(/* webpackChunkName: 'pnp-modern-search-code-editor' */ 'react-ace'));
+const AceEditor = React.lazy(() => import(/* webpackChunkName: 'pnp-modern-search-code-editor', webpackMode: 'weak' */ 'react-ace'));
 
 export interface IDebugViewProps {
 
@@ -49,7 +49,7 @@ export class DebugViewWebComponent extends BaseWebComponent {
     public async connectedCallback() {
         // Reuse the 'brace' imports from the PnP control instead of reference them explicitly in the debug view
         await import(
-            /* webpackChunkName: 'pnp-modern-search-code-editor' */
+            /* webpackChunkName: 'pnp-modern-search-code-editor', webpackMode: 'weak' */
             '@pnp/spfx-property-controls/lib/propertyFields/codeEditor'
         );
 
