@@ -1,4 +1,4 @@
-import { IComboBoxOption } from '@fluentui/react';
+import { IComboBoxOption } from "office-ui-fabric-react";
 
 export interface IAsyncComboState {
 

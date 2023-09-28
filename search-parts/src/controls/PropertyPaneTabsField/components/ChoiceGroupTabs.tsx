@@ -1,7 +1,7 @@
 
 import * as React from 'react';
 import { IChoiceGroupTabsProps } from "./IChoiceGroupTabsProps";
-import { ChoiceGroup, DefaultButton, IButtonStyles, IChoiceGroupOption, PrimaryButton, IChoiceGroupOptionProps } from '@fluentui/react';
+import { ChoiceGroup, DefaultButton, IButtonStyles, IChoiceGroupOption, PrimaryButton } from 'office-ui-fabric-react';
 
 export interface IChoiceGroupTabsState {
     selectedKey: string;
@@ -50,7 +50,7 @@ export class ChoiceGroupTabs extends React.Component<IChoiceGroupTabsProps,IChoi
 
         // Add custon render method for each provided options
         const options: IChoiceGroupOption[] = this.props.options.map(option => {
-            option.onRenderField =  (props?: IChoiceGroupOption, defaultRender?: (props?: IChoiceGroupOption & IChoiceGroupOptionProps) => JSX.Element | null) => { 
+            option.onRenderField =  (props?: IChoiceGroupOption, defaultRender?: (props?: IChoiceGroupOption) => JSX.Element | null) => { 
                 return onRenderField(option);
             };
             return option;

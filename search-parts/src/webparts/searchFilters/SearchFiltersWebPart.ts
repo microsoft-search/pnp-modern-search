@@ -32,7 +32,7 @@ import { LayoutHelper } from '../../helpers/LayoutHelper';
 import { TemplateService } from '../../services/templateService/TemplateService';
 import { FileFormat, ITemplateService } from '../../services/templateService/ITemplateService';
 import { isEmpty, isEqual, uniqBy, cloneDeep, uniq, sortBy } from '@microsoft/sp-lodash-subset';
-import { Dropdown, IDropdownProps, IDropdownOption, Checkbox, Icon, IComboBoxOption, MessageBar, MessageBarType } from '@fluentui/react';
+import { Dropdown, IDropdownProps, IDropdownOption, Checkbox, Icon, IComboBoxOption, MessageBar, MessageBarType } from 'office-ui-fabric-react';
 import { BuiltinFilterTemplates, BuiltinFilterTypes } from '../../layouts/AvailableTemplates';
 import { ServiceScope } from '@microsoft/sp-core-library';
 import { AvailableComponents } from '../../components/AvailableComponents';

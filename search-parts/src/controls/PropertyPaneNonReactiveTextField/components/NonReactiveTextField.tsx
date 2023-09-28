@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { INonReactiveTextFieldProps } from './INonReactiveTextFieldProps';
 import { INonReactiveTextFieldState } from './INonReactiveTextFieldState';
-import { TextField, PrimaryButton, IButtonProps } from '@fluentui/react';
+import { TextField, PrimaryButton, IButtonProps } from "office-ui-fabric-react";
 import { isEqual } from '@microsoft/sp-lodash-subset';
 
 export class NonReactiveTextField extends React.Component<INonReactiveTextFieldProps, INonReactiveTextFieldState> {

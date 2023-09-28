@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { TextDialog } from "../TextDialog";
 import { ICustomCollectionField } from '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData';
-import { ComboBox, IComboBoxOption } from '@fluentui/react';
+import { ComboBox, IComboBoxOption } from 'office-ui-fabric-react';
 import * as strings from 'CommonStrings';
 
 export interface ITemplateValueFieldEditorState {

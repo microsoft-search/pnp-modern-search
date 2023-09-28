@@ -1,7 +1,7 @@
 import * as React from "react";
 import { BaseWebComponent, ExtensibilityConstants, FilterConditionOperator } from "@pnp/modern-search-extensibility";
 import * as ReactDOM from "react-dom";
-import { ChoiceGroup, Icon } from '@fluentui/react';
+import { ChoiceGroup, Icon } from "office-ui-fabric-react";
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import * as commonStrings from 'CommonStrings';
 import styles from "./FilterValueOperatorComponent.module.scss";

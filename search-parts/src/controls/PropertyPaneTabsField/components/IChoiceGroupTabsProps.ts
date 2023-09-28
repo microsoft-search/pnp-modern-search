@@ -1,4 +1,4 @@
-import { IChoiceGroupOption } from '@fluentui/react';
+import { IChoiceGroupOption } from "office-ui-fabric-react";
 
 export interface IChoiceGroupTabsProps {
     defaultSelectedKey: string;

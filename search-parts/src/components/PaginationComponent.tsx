@@ -2,7 +2,7 @@ import * as React from 'react';
 import { BaseWebComponent } from '@pnp/modern-search-extensibility';
 import * as ReactDOM from 'react-dom';
 import Pagination from 'react-js-pagination';
-import { Icon, ITheme } from '@fluentui/react';
+import { Icon, ITheme } from 'office-ui-fabric-react';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import styles from './PaginationComponent.module.scss';
 

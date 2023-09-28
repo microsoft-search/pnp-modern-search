@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { BaseWebComponent } from '@pnp/modern-search-extensibility';
 import * as ReactDOM from 'react-dom';
-import { IGroup, IGroupDividerProps, Icon, Text, GroupedList } from '@fluentui/react';
+import { IGroup, IGroupDividerProps, Icon, Text, GroupedList } from 'office-ui-fabric-react';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import styles from './CollapsibleContentComponent.module.scss';
 import 'core-js/features/dom-collections';

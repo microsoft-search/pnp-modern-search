@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import { Version, Text, DisplayMode, ServiceScope, Log } from '@microsoft/sp-core-library';
-import { IComboBoxOption, Toggle, IToggleProps, MessageBarType, MessageBar, Link } from '@fluentui/react';
+import { IComboBoxOption, Toggle, IToggleProps, MessageBarType, MessageBar, Link } from 'office-ui-fabric-react';
 import { IWebPartPropertiesMetadata } from '@microsoft/sp-webpart-base';
 import * as webPartStrings from 'SearchResultsWebPartStrings';
 import * as commonStrings from 'CommonStrings';

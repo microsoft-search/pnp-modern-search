@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { BaseWebComponent, IDataFilterValueInfo, ExtensibilityConstants, IDataFilterInfo, FilterConditionOperator } from '@pnp/modern-search-extensibility';
 import * as ReactDOM from 'react-dom';
-import { IComboBoxOption, Label, Icon, SelectableOptionMenuItemType, ComboBox, IComboBox, mergeStyles, Fabric } from '@fluentui/react';
+import { IComboBoxOption, Label, Icon, SelectableOptionMenuItemType, ComboBox, IComboBox, mergeStyles, Fabric } from 'office-ui-fabric-react';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import update from 'immutability-helper';
 import styles from './FilterComboBoxComponent.module.scss';

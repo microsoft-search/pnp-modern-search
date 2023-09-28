@@ -1,7 +1,7 @@
 import * as React from "react";
 import { BaseWebComponent, ExtensibilityConstants, IDataFilterInfo, IDataFilterInternal, IDataFilterValueInfo, IDataFilterValueInternal } from "@pnp/modern-search-extensibility";
 import * as ReactDOM from "react-dom";
-import { IconButton, ITag, ITagPickerProps, TagPicker, Text, ITheme } from '@fluentui/react';
+import { IconButton, ITag, ITagPickerProps, TagPicker, Text, ITheme } from "office-ui-fabric-react";
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import { sortBy } from "@microsoft/sp-lodash-subset";
 import styles from './FilterSearchBoxComponent.module.scss';

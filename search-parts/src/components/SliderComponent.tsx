@@ -4,7 +4,7 @@ const Flickity = require('react-flickity-component');
 import 'flickity/dist/flickity.min.css';
 import * as ReactDOM from 'react-dom';
 import * as Handlebars from 'handlebars';
-import { MessageBar, MessageBarType } from '@fluentui/react/lib/MessageBar';
+import { MessageBar, MessageBarType } from 'office-ui-fabric-react/lib/MessageBar';
 import { BaseWebComponent } from '@pnp/modern-search-extensibility';
 import { isEmpty } from "@microsoft/sp-lodash-subset";
 import * as DOMPurify from 'dompurify';

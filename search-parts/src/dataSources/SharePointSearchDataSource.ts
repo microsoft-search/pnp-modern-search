@@ -24,7 +24,7 @@ import { TaxonomyService } from "../services/taxonomyService/TaxonomyService";
 import { ISharePointSearchResult } from "../models/search/ISharePointSearchResults";
 import { ILocalizableSearchResult, ILocalizableSearchResultProperty } from "../models/search/ILocalizableSearchResult";
 import { PropertyPaneAsyncCombo } from "../controls/PropertyPaneAsyncCombo/PropertyPaneAsyncCombo";
-import { Dropdown, IComboBoxOption, IDropdownProps, ITextFieldProps, TextField } from '@fluentui/react';
+import { Dropdown, IComboBoxOption, IDropdownProps, ITextFieldProps, TextField } from "office-ui-fabric-react";
 import { ISharePointSearchQuery, SortDirection, ISort } from "../models/search/ISharePointSearchQuery";
 import { AsyncCombo } from '../controls/PropertyPaneAsyncCombo/components/AsyncCombo';
 import { IAsyncComboProps } from '../controls/PropertyPaneAsyncCombo/components/IAsyncComboProps';

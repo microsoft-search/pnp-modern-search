@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { BaseWebComponent, FilterComparisonOperator, IDataFilterInfo, IDataFilterValueInfo, IDataFilterInternal, ExtensibilityConstants } from '@pnp/modern-search-extensibility';
 import * as ReactDOM from 'react-dom';
-import { ITheme } from '@fluentui/react';
+import { ITheme } from 'office-ui-fabric-react';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
-import { IDatePickerProps, IDatePickerStyles, IDatePickerStyleProps, DatePicker, Link, MessageBar, MessageBarType } from '@fluentui/react';
+import { IDatePickerProps, IDatePickerStyles, IDatePickerStyleProps, DatePicker, Link, MessageBar, MessageBarType } from "office-ui-fabric-react";
 import * as strings from 'CommonStrings';
 import { DateHelper } from '../../helpers/DateHelper';
 

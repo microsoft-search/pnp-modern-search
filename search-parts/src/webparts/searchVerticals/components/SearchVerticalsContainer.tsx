@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styles from './SearchVerticalsContainer.module.scss';
 import { ISearchVerticalsContainerProps } from './ISearchVerticalsContainerProps';
-import { Pivot, PivotItem, IPivotItemProps, Icon, GlobalSettings, IChangeDescription, ITheme } from '@fluentui/react';
+import { Pivot, PivotItem, IPivotItemProps, Icon, GlobalSettings, IChangeDescription, ITheme } from 'office-ui-fabric-react';
 import { WebPartTitle } from '@pnp/spfx-controls-react/lib/WebPartTitle';
 import { PageOpenBehavior } from '../../../helpers/UrlHelper';
 import { ISearchVerticalsContainerState } from './ISearchVerticalsContainerState';

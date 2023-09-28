@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { BaseWebComponent, IDataFilterInfo, IDataFilterValueInfo, IDataFilterInternal, ExtensibilityConstants, FilterComparisonOperator } from '@pnp/modern-search-extensibility';
 import * as ReactDOM from 'react-dom';
-import { ITheme, ChoiceGroup, IChoiceGroupOption, MessageBar, MessageBarType } from '@fluentui/react';
+import { ITheme, ChoiceGroup, IChoiceGroupOption, MessageBar, MessageBarType } from 'office-ui-fabric-react';
 import * as strings from 'CommonStrings';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import { DateHelper } from '../../helpers/DateHelper';

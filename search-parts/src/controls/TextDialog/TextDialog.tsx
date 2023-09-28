@@ -1,12 +1,12 @@
 import * as React                               from 'react';
 import { Suspense }                             from 'react';
-import { Dialog, DialogType, DialogFooter } 	from '@fluentui/react';
-import { ButtonType, PrimaryButton } 			from '@fluentui/react';
+import { Dialog, DialogType, DialogFooter } 	from 'office-ui-fabric-react';
+import { ButtonType, PrimaryButton } 			from 'office-ui-fabric-react';
 import { ITextDialogProps }                  	from './ITextDialogProps';
 import { ITextDialogState }                  	from './ITextDialogState';
 import styles                                   from './TextDialog.module.scss';
 import './AceEditor.module.scss';
-import { TextField } from '@fluentui/react';
+import { TextField } from 'office-ui-fabric-react';
 import { Icon } from '@fluentui/react/lib/Icon'
 const AceEditor = React.lazy(() => import(/* webpackChunkName: 'pnp-modern-search-code-editor', webpackMode: 'lazy' */ 'react-ace'));
 

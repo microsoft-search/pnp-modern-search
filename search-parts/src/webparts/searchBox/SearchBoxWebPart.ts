@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import { Version, ServiceKey, Text, Log } from '@microsoft/sp-core-library';
-import { GlobalSettings } from '@fluentui/react';
+import { GlobalSettings } from 'office-ui-fabric-react';
 import { IWebPartPropertiesMetadata } from '@microsoft/sp-webpart-base';
 import { uniqBy } from '@microsoft/sp-lodash-subset';
 import { DynamicProperty } from "@microsoft/sp-component-base";
@@ -33,7 +33,7 @@ import { ISuggestionProviderDefinition, BaseSuggestionProvider } from '@pnp/mode
 import { AvailableSuggestionProviders, BuiltinSuggestionProviderKeys } from '../../providers/AvailableSuggestionProviders';
 import { ISuggestionProvider } from '@pnp/modern-search-extensibility';
 import { ServiceScopeHelper } from '../../helpers/ServiceScopeHelper';
-import { Toggle, IToggleProps, MessageBar, MessageBarType, Link } from '@fluentui/react';
+import { Toggle, IToggleProps, MessageBar, MessageBarType, Link } from "office-ui-fabric-react";
 import { ISuggestionProviderConfiguration } from '../../providers/ISuggestionProviderConfiguration';
 import { IExtensibilityConfiguration } from '../../models/common/IExtensibilityConfiguration';
 import { Constants } from '../../common/Constants';

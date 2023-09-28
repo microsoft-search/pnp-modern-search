@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Shimmer, ShimmerElementType as ElemType, ShimmerElementsGroup, ITheme } from '@fluentui/react';
+import { Shimmer, ShimmerElementType as ElemType, ShimmerElementsGroup, ITheme } from 'office-ui-fabric-react';
 import * as ReactDOM from 'react-dom';
 import { BaseWebComponent } from '@pnp/modern-search-extensibility';
 import { IReadonlyTheme } from "@microsoft/sp-component-base";

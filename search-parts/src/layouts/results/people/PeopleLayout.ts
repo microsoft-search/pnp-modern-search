@@ -2,7 +2,7 @@ import * as React from "react";
 import { BaseLayout } from "@pnp/modern-search-extensibility";
 import { IPropertyPaneField, PropertyPaneChoiceGroup, PropertyPaneButtonType, PropertyPaneButton } from "@microsoft/sp-property-pane";
 import { TemplateValueFieldEditor, ITemplateValueFieldEditorProps } from "../../../controls/TemplateValueFieldEditor/TemplateValueFieldEditor";
-import { IComboBoxOption, Icon, IIconProps } from '@fluentui/react';
+import { IComboBoxOption, Icon, IIconProps } from "office-ui-fabric-react";
 import { IComponentFieldsConfiguration } from "../../../models/common/IComponentFieldsConfiguration";
 import * as strings from 'CommonStrings';
 import { loadMsGraphToolkit } from "../../../helpers/GraphToolKitHelper";

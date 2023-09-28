@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { IPreviewContainerProps, PreviewType } from './IPreviewContainerProps';
 import IPreviewContainerState from './IPreviewContainerState';
-import { Callout } from '@fluentui/react';
-import { Spinner, SpinnerSize } from '@fluentui/react';
+import { Callout } from 'office-ui-fabric-react';
+import { Spinner, SpinnerSize } from 'office-ui-fabric-react';
 import previewContainerStyles from './PreviewContainer.module.scss';
-import { IconButton } from '@fluentui/react';
-import { Overlay } from '@fluentui/react';
+import { IconButton } from 'office-ui-fabric-react';
+import { Overlay } from 'office-ui-fabric-react';
 import { TestConstants } from '../../common/Constants';
 
 export default class PreviewContainer extends React.Component<IPreviewContainerProps, IPreviewContainerState> {

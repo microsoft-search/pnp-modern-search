@@ -7,7 +7,7 @@ import { WebPartTitle } from "@pnp/spfx-controls-react/lib/WebPartTitle";
 import * as webPartStrings from 'SearchFiltersWebPartStrings';
 import * as commonStrings from 'CommonStrings';
 import update from 'immutability-helper';
-import { MessageBar, MessageBarType } from '@fluentui/react';
+import { MessageBar, MessageBarType } from 'office-ui-fabric-react';
 import {
   IDataFilterInternal,
   IDataFilterValueInternal,

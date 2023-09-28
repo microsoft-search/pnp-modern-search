@@ -1,7 +1,7 @@
 import { BaseLayout } from "@pnp/modern-search-extensibility";
 import { IPropertyPaneField, PropertyPaneToggle, PropertyPaneDropdown, IPropertyPaneDropdownOption, PropertyPaneTextField } from "@microsoft/sp-property-pane";
 import * as strings from 'CommonStrings';
-import { PanelType } from '@fluentui/react';
+import { PanelType } from 'office-ui-fabric-react';
 
 export interface IPanelFilterLayoutProperties {
 

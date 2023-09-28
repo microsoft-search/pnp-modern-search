@@ -1,9 +1,9 @@
 import * as React from "react";
 import { BaseWebComponent, ExtensibilityConstants } from "@pnp/modern-search-extensibility";
 import * as ReactDOM from "react-dom";
-import { DefaultButton, PrimaryButton } from '@fluentui/react';
+import { DefaultButton, PrimaryButton } from "office-ui-fabric-react";
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
-import { ITheme } from '@fluentui/react';
+import { ITheme } from "office-ui-fabric-react";
 import styles from "./FilterMultiComponent.module.scss";
 import * as strings from 'CommonStrings';
 

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { BaseWebComponent, SortFieldDirection, ISortInfo, ExtensibilityConstants } from '@pnp/modern-search-extensibility';
-import { Dropdown, IDropdownOption, IconButton } from '@fluentui/react';
+import { Dropdown, IDropdownOption, IconButton } from 'office-ui-fabric-react';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import { ISortFieldConfiguration } from '../models/search/ISortFieldConfiguration';
 import * as strings from 'CommonStrings';

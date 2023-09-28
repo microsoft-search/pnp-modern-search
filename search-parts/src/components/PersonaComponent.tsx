@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Persona, IPersonaProps, IPersonaSharedProps, getInitials, Icon, ITheme } from '@fluentui/react';
+import { Persona, IPersonaProps, IPersonaSharedProps, getInitials, Icon, ITheme } from 'office-ui-fabric-react';
 import { TemplateService } from "../services/templateService/TemplateService";
 import * as ReactDOM from 'react-dom';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';

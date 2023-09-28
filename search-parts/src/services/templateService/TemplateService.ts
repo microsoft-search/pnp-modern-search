@@ -11,7 +11,7 @@ import { IComponentDefinition, IExtensibilityLibrary, IResultTemplates, LayoutRe
 import groupBy from 'handlebars-group-by';
 import { IComponentFieldsConfiguration } from "../../models/common/IComponentFieldsConfiguration";
 import { initializeFileTypeIcons } from '@fluentui/react-file-type-icons';
-import { GlobalSettings } from '@fluentui/react';
+import { GlobalSettings } from 'office-ui-fabric-react';
 import { IDataResultType, ResultTypeOperator } from "../../models/common/IDataResultType";
 import { ISearchResultsTemplateContext, ISearchFiltersTemplateContext } from "../../models/common/ITemplateContext";
 import { UrlHelper } from "../../helpers/UrlHelper";

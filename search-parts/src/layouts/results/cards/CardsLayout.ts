@@ -2,7 +2,7 @@ import { BaseLayout } from "@pnp/modern-search-extensibility";
 import { IPropertyPaneField, PropertyPaneToggle, PropertyPaneSlider, PropertyPaneButton, PropertyPaneButtonType } from '@microsoft/sp-property-pane';
 import { IComponentFieldsConfiguration } from '../../../models/common/IComponentFieldsConfiguration';
 import * as strings from 'CommonStrings';
-import { Icon, IIconProps, IComboBoxOption } from '@fluentui/react';
+import { Icon, IIconProps, IComboBoxOption } from 'office-ui-fabric-react';
 import * as React from "react";
 import { TemplateValueFieldEditor, ITemplateValueFieldEditorProps } from "../../../controls/TemplateValueFieldEditor/TemplateValueFieldEditor";
 

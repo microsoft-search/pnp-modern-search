@@ -11,7 +11,7 @@ import * as commonStrings from 'CommonStrings';
 import * as webPartStrings from 'SearchVerticalsWebPartStrings';
 import { ISearchVerticalsContainerProps } from './components/ISearchVerticalsContainerProps';
 import { ISearchVerticalsWebPartProps } from './ISearchVerticalsWebPartProps';
-import { TextField, ITextFieldProps, Dropdown, IDropdownProps, Checkbox } from '@fluentui/react';
+import { TextField, ITextFieldProps, Dropdown, IDropdownProps, Checkbox } from 'office-ui-fabric-react';
 import SearchVerticalsContainer from './components/SearchVerticalsContainer';
 import { ComponentType } from '../../common/ComponentType';
 import { IDynamicDataCallables, IDynamicDataPropertyDefinition } from '@microsoft/sp-dynamic-data';
