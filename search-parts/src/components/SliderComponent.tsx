@@ -1,6 +1,6 @@
 import * as React from 'react';
-import Flickity from 'flickity';
-import 'flickity-imagesloaded';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const Flickity = require('react-flickity-component');
 import 'flickity/dist/flickity.min.css';
 import * as ReactDOM from 'react-dom';
 import * as Handlebars from 'handlebars';
@@ -12,77 +12,6 @@ import { ITemplateService } from '../services/templateService/ITemplateService';
 import { TemplateService } from '../services/templateService/TemplateService';
 import { DomPurifyHelper } from '../helpers/DomPurifyHelper';
 import { ServiceScope, ServiceKey } from "@microsoft/sp-core-library";
-
-export interface ISliderProps {
-    options?: any;
-}
-
-export interface ISliderState {
-    flickityReady: boolean;
-}
-
-// https://medium.com/yemeksepeti-teknoloji/using-flickity-with-react-a906649b11de
-export default class Slider extends React.Component<ISliderProps, ISliderState> {
-
-    private flickityNode: HTMLElement;
-    private flickityInstance: any;
-
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            flickityReady: false,
-        };
-
-        this.refreshFlickity = this.refreshFlickity.bind(this);
-    }
-
-    public async componentDidMount() {
-
-        this.flickityInstance = new Flickity(this.flickityNode, this.props.options || {});
-
-        this.setState({
-            flickityReady: true,
-        });
-    }
-
-    private refreshFlickity() {
-        this.flickityInstance.deactivate();
-        this.flickityInstance.reloadCells();
-        this.flickityInstance.resize();
-        this.flickityInstance.updateDraggable();
-        this.flickityInstance.activate();
-    }
-
-    public componentDidUpdate(prevProps: any, prevState) {
-        const flickityDidBecomeActive = !prevState.flickityReady && this.state.flickityReady;
-        const childrenDidChange = prevProps.children.length !== (this.props.children as any).length;
-
-        if (flickityDidBecomeActive || childrenDidChange) {
-            this.refreshFlickity();
-        }
-    }
-
-    private renderPortal() {
-
-        if (!this.flickityNode) {
-            return null;
-        }
-
-        const mountNode = this.flickityNode.querySelector('.flickity-slider');
-
-        if (mountNode) {
-            return ReactDOM.createPortal(this.props.children, mountNode);
-        }
-    }
-
-    public render() {
-        return [
-            <div className="carousel" key="flickityBase" ref={node => (this.flickityNode = node)} />,
-            this.renderPortal(),
-        ].filter(Boolean);
-    }
-}
 
 export interface ISliderOptions {
 
@@ -166,7 +95,6 @@ export class SliderComponent extends React.Component<ISliderComponentProps, ISli
     }
 
     public render() {
-
         try {
 
             // Get item properties
@@ -185,7 +113,7 @@ export class SliderComponent extends React.Component<ISliderComponentProps, ISli
 
             return <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }} />
-                <Slider
+                <Flickity
                     options={{
                         autoPlay: autoPlayValue,
                         pauseAutoPlayOnHover: sliderOptions.pauseAutoPlayOnHover,
@@ -223,7 +151,7 @@ export class SliderComponent extends React.Component<ISliderComponentProps, ISli
                         </div>;
                     })
                     }
-                </Slider>
+                </Flickity>
             </div>;
         } catch (error) {
             return <MessageBar messageBarType={MessageBarType.error}>{error}</MessageBar>;

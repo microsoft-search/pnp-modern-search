@@ -1,6 +1,6 @@
 import { BaseDataSource, FilterSortType, FilterSortDirection, ITemplateSlot, BuiltinTemplateSlots, IDataContext, ITokenService, FilterBehavior, PagingBehavior, IDataFilterResult, IDataFilterResultValue, FilterComparisonOperator } from "@pnp/modern-search-extensibility";
 import { IPropertyPaneGroup, PropertyPaneLabel, IPropertyPaneField, PropertyPaneToggle, PropertyPaneHorizontalRule } from "@microsoft/sp-property-pane";
-import { cloneDeep, isEmpty } from '@microsoft/sp-lodash-subset';
+import { cloneDeep, isEmpty, find } from '@microsoft/sp-lodash-subset';
 import { MSGraphClientFactory } from "@microsoft/sp-http";
 import { TokenService } from "../services/tokenService/TokenService";
 import { ServiceScope } from '@microsoft/sp-core-library';
@@ -116,7 +116,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         } as IComboBoxOption;
     });
 
-    private  _collapsibaleFields: IComboBoxOption[] = this._sortableFields;
+    private _collapsibaleFields: IComboBoxOption[] = this._sortableFields;
 
     private _availableEntityTypeOptions: IComboBoxOption[] = [
         {
@@ -882,7 +882,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         const request = await msGraphClient.api(this._microsoftSearchUrl);
 
         let culture = LocalizationHelper.getTranslatedCultureFromUrl();
-        if (!culture ) {            
+        if (!culture) {
             culture = this.context.pageContext.cultureInfo.currentUICultureName;
         }
 
@@ -912,7 +912,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                             }
 
                             return hit;
-                            });
+                        });
 
                         response.items = response.items.concat(hits);
                     }
@@ -958,7 +958,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
     }
 
     private parseAndCleanOptions(options: IComboBoxOption[]): IComboBoxOption[] {
-        let optionWithComma = options.find(o => (o.key as string).indexOf(",") > 0);
+        let optionWithComma = find(options, o => (o.key as string).indexOf(",") > 0);
         if (optionWithComma) {
             return (optionWithComma.key as string).split(",").map(k => { return { key: k.trim(), text: k.trim(), selected: true }; });
         }
