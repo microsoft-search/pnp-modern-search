@@ -3,7 +3,7 @@ import { BaseWebComponent } from '@pnp/modern-search-extensibility';
 import * as ReactDOM from 'react-dom';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import styles from './ItemSelectionComponent.module.scss';
-import { Check } from 'office-ui-fabric-react';
+import { Check } from '@fluentui/react';
 
 export interface IItemSelectionComponentProps {
 
