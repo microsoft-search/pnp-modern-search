@@ -95,8 +95,7 @@
         "decode-uri-component": "0.2.2",
         "json5": "2.2.2",
         "set-value": "4.0.1",
-        "unset-value": "2.0.1",
-        "@fluentui/react": "8.106.4"
+        "unset-value": "2.0.1"
     },
     "pnpm": {
         "overrides": {
@@ -111,8 +110,7 @@
             "decode-uri-component": "0.2.2",
             "json5": "2.2.2",
             "set-value": "4.0.1",
-            "unset-value": "2.0.1",
-            "@fluentui/react": "8.106.4"
+            "unset-value": "2.0.1"
         }
     }
 }
