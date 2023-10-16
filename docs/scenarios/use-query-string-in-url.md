@@ -30,14 +30,16 @@ You can use the default configuration.
 There are two options available to use the Query String parameter from the URL. You only need one of the options.
 
 ### Option 1
+
 #### Configure Web Part Connections
 Activate the "use input query text" connection in the existing Results Web Part. Configure "Page environment" as source, "Query string" as page environment property, "Query parameters" as query string property. 
+
 You will miss the "Event" Query String from the URL on this time. Add your query string to the URL manually and your query string is available in the configuration. Use the query string "Event" in the queryParameters properties drop down in the Web Part configuration.
 
 As example:
-Full URL: https://[TENANT]/sites/[SITEURL]/SitePages/[PAGE].aspx?Event=Teams Nation&Mode=Edit
-Query String: Event=
-Value: Teams Nation
+* Full URL: `https://[TENANT]/sites/[SITEURL]/SitePages/[PAGE].aspx?Event=Teams Nation&Mode=Edit`
+* Query String: `Event=`
+* Value: `Teams Nation`
 
 ![configure query string parameter](assets/use-query-string-in-url/query-string-parameter.png)
 
