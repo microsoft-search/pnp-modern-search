@@ -22,6 +22,7 @@ import { ServiceScopeHelper } from "../../helpers/ServiceScopeHelper";
 import { DomPurifyHelper } from "../../helpers/DomPurifyHelper";
 import * as DOMPurify from 'dompurify';
 import { IAdaptiveCardAction } from '@pnp/modern-search-extensibility';
+import { ItemSelectionMode } from "../../models/common/IItemSelectionProps";
 
 const TemplateService_ServiceKey = 'PnPModernSearchTemplateService';
 const TemplateService_LogSource = "PnPModernSearch:TemplateService";
@@ -577,17 +578,15 @@ export class TemplateService implements ITemplateService {
      */
     private registerCustomHelpers() {
 
-        // Truncate items from context that are not usually used
+        // Truncate items from context, as that is not usually used and bloats the HTML
         this.Handlebars.registerHelper("truncateContext", (context: any) => {
-            return {
-                slots: context.slots,
-                paging: context.paging,
-                theme: context.theme,
-                context: context.context,
-                instanceId: context.instanceId,
-                properties: context.properties,
-                utils: context.utils
-            }
+            //Extract data property
+            const { data, ...newContext } = context;
+            //Extract items property
+            const { items, ...newData } = data;
+            //Set data property without items
+            newContext.data = newData;
+            return newContext;
         })
 
         // Return the URL of the search result item
