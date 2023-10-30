@@ -48,9 +48,18 @@ With the Modern Search Web Parts you can create a simple and useful Department W
 ## [Use query rules for promoted links](Use-query-rules-for-promoted-links.md)
 With the Modern Search Web Parts you can show promoted links for important results. They will be configured with query rules in the SharePoint Search Admin Center. Promoted results will show users more informations and direct links about specific, predefined, terms they searching for.
 
-## [Use query string from URL for dynamic search](use-query-string-in-url.md)
 This scenario describes how to use query string as value in the URL from the current page. You can use URL query string parameters to build dynamic search pages.
 Use a library with metadata that you can use the query string parameter in the URL.
+
+
+
+## [Setup Results web part to show birthdays](Setup-Results-web-part-to-show-birthdays.md)
+A common request in any intranet is to show birthdays of employees. This scenario describes how to use stock SharePoint search to show birthdays of employees in the search results. 
+
+
+## [Setup Results web part to show work anniversaries](Setup-Results-web-part-to-show-work-anniversaries.md)
+
+Showing the work anniversaries of employees is a common request in any intranet. This scenario describes one way to achive this using a sleight of hand trick/cheating as the search index does not contains the information we need. 
 
 ---
 
