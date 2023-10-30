@@ -38,7 +38,7 @@
             data-is-compact="{{properties.layoutProperties.isCompact}}"
             data-group-by="{{properties.layoutProperties.groupByField}}"
             data-groups-collapsed="{{properties.layoutProperties.groupsCollapsed}}"
-            data-context="{{JSONstringify @root}}"
+            data-context="{{JSONstringify (truncateContext @root)}}"
             data-instance-id="{{@root.instanceId}}"
             data-theme-variant="{{JSONstringify @root.theme}}"
             data-allow-item-selection="{{properties.itemSelectionProps.allowItemSelection}}"

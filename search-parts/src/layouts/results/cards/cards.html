@@ -51,7 +51,7 @@
                         data-enable-preview="{{@root.properties.layoutProperties.enablePreview}}" 
                         data-show-file-icon="{{@root.properties.layoutProperties.showFileIcon}}" 
                         data-is-compact="{{@root.properties.layoutProperties.isCompact}}" 
-                        data-context="{{JSONstringify @root}}"
+                        data-context="{{JSONstringify (truncateContext @root)}}"
                         data-instance-id="{{@root.instanceId}}"
                         data-theme-variant="{{JSONstringify @root.theme}}"
                         data-allow-item-selection="{{@root.properties.itemSelectionProps.allowItemSelection}}"
