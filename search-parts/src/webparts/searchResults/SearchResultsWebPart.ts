@@ -2208,10 +2208,10 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             this.tokenService.setTokenValue(BuiltinTokenNames.inputQueryText, inputQueryText);
             this.tokenService.setTokenValue(BuiltinTokenNames.originalInputQueryText, inputQueryText);   
 
-            if (inputQueryText) {
-                // Legacy token for SharePoint and Microsoft Search data sources
-                this.tokenService.setTokenValue(BuiltinTokenNames.searchTerms, inputQueryText);
-            }
+            //Set searchTerms value from inputQueryText, but set initial token value, undefined, if empty
+            const searchTerms = inputQueryText ?? undefined;
+            // Legacy token for SharePoint and Microsoft Search data sources
+            this.tokenService.setTokenValue(BuiltinTokenNames.searchTerms, searchTerms);    
 
             // Selected filters
             if (this._filtersConnectionSourceData) {
