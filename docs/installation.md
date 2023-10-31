@@ -44,3 +44,14 @@ You'll need to approve each request one at a time. If you have questions about w
 After you approve each request your view will be as shown in the screenshot below.
 
 !["App Catalog"](./assets/api-access-approved.jpg){: .center}
+
+
+## Note about Guest users
+
+By default guest users do not have access to the App Catalog. So if you are not using the CDN option, any SPFx web part from the App Catalog will show an error message for guest users:
+![No Access Error](../assets/NoAccessError.png)
+
+There are basicly two options to solve this issue,
+give guest users access to the App Catalog (read) or use the CDN option.
+
+see [this](https://web.archive.org/web/20220420021131/https://laurakokkarinen.com/sharepoint-online-guest-user-troubles-and-how-to-get-past-them/) for more information.
