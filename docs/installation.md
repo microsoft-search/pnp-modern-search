@@ -54,4 +54,4 @@ By default guest users do not have access to the App Catalog. So if you are not 
 There are basicly two options to solve this issue,
 give guest users access to the App Catalog (read) or use the CDN option.
 
-see [this](https://web.archive.org/web/20220420021131/https://laurakokkarinen.com/sharepoint-online-guest-user-troubles-and-how-to-get-past-them/) for more information.
+see [this](https://laurakokkarinen.com/sharepoint-online-guest-user-troubles-and-how-to-get-past-them/) for more information.
