@@ -50,7 +50,7 @@ After you approve each request your view will be as shown in the screenshot belo
 ## Note about Guest users
 
 By default guest users do not have access to the App Catalog. So if you are not using the CDN option, any SPFx web part from the App Catalog will show an error message for guest users:
-![No Access Error](../assets/NoAccessError.png)
+![No Access Error](./assets/NoAccessError.png){: .center}
 
 There are basicly two options to solve this issue,
 give guest users access to the App Catalog (read) or use the CDN option.
