@@ -39,7 +39,7 @@ define([], function() {
                 CommonOptionsGroupName: "Yleinen",
                 TemplateUrlFieldLabel: "Käytä ulkoisen templaatin URL-osoitetta",
                 TemplateUrlPlaceholder: "https://myfile.html",
-                ErrorTemplateExtension: "Templaatin pitää olla oikein muotoiltu .htm tai .html tiedosto",
+                ErrorTemplateExtension: "Templaatin pitää olla oikein muotoiltu .txt, .htm tai .html tiedosto",
                 ErrorTemplateResolve: "Templaatin tunnistaminen ei onnistunut. Virhetiedot: '{0}'",
                 DialogButtonLabel: "Muokkaa hakutulosten templaattia",
                 DialogTitle: "Muokkaa hakutulosten templaattia",
@@ -118,10 +118,7 @@ define([], function() {
                 Extensibility: {
                     PanelHeader: "Konsiguroi laajennuskirjastot ladattavaksi käynnistyksessä.",
                     PanelDescription: "Lisää/poista mukautetun laajennuskirjastosi ID:t tässä. Voit määrittää näyttönimen ja päättää, ladataanko kirjasto käynnistyksessä. Vain mukautetut sisältölähtee, templaatit, komponentit ja Handlebar helperit tarjoajat ladataan tässä.",
-                },
-                EnableTelemetryLabel: "PnP telemetria",
-                EnableTelemetryOn: "Aseta telemetria käyttöön",
-                EnableTelemetryOff: "Poista telemetria käytöstä"
+                }
             },
             CustomQueryModifier: {
                   EditQueryModifiersLabel: "Käytettävissä olevien mukautettujen kyselyn muokkaimien määrittäminen",

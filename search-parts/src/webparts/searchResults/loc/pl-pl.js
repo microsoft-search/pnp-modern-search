@@ -39,7 +39,7 @@ define([], function() {
                 CommonOptionsGroupName: "Ogólne",
                 TemplateUrlFieldLabel: "Użyj adresu URL zewnętrznego szablonu",
                 TemplateUrlPlaceholder: "https://myfile.html",
-                ErrorTemplateExtension: "Szablon musi by poprawnym plikiem .htm lub .html",
+                ErrorTemplateExtension: "Szablon musi by poprawnym plikiem .txt, .htm lub .html",
                 ErrorTemplateResolve: "Nie można rozwiązać wskazanego szablonu. Szczegóły błędu: '{0}'",
                 DialogButtonLabel: "Edytuj szablon wyników",
                 DialogTitle: "Edytuj szablon wyników",
@@ -118,10 +118,7 @@ define([], function() {
                 Extensibility: {
                     PanelHeader: "Konfiguruj biblioteki rozszerzalności ładowane przy starcie.",
                     PanelDescription: "Dodaj/Usuń identyfikatory niestandardowych bibliotek rozszerzalności. Wybierz nazwę i zdecyduj czy mają być ładowane przy starcie. Tylko niestandardowe źródł danych, układy, komponenty web i Handlebars będą tutaj ładowani.",
-                },
-                EnableTelemetryLabel: "Telemetria PnP",
-                EnableTelemetryOn: "Włącz telemetrię",
-                EnableTelemetryOff: "Wyłącz telemetrię"
+                }
             },
             CustomQueryModifier: {
                   EditQueryModifiersLabel: "Konfiguracja dostępnych niestandardowych modyfikatorów zapytań",

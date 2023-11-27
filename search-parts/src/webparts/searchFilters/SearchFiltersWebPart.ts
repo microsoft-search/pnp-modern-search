@@ -933,7 +933,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                 return '';
             }
             // Resolves an error if the file isn't a valid .htm or .html file
-            else if (!this.templateService.isValidTemplateFile(value, [".html",".htm"])) {
+            else if (!this.templateService.isValidTemplateFile(value, [".html",".htm",".txt"])) {
                 return webPartStrings.PropertyPane.LayoutPage.ErrorTemplateExtension;
             }
             // Resolves an error if the file doesn't answer a simple head request
@@ -1196,7 +1196,12 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                 }
             }
 
-            filter.values = sortDirection === FilterSortDirection.Ascending ? sortBy(filter.values, sortByField) : sortBy(filter.values, sortByField).reverse();
+            if( sortByField === 'name') {
+                filter.values = sortDirection === FilterSortDirection.Ascending ? sortBy(filter.values, [item => item["name"].toLocaleLowerCase()]) : sortBy(filter.values, [item => item["name"].toLocaleLowerCase()]).reverse();
+            }
+            else{
+                filter.values = sortDirection === FilterSortDirection.Ascending ? sortBy(filter.values, sortByField) : sortBy(filter.values, sortByField).reverse();
+            }
 
             return filter;
         });

@@ -39,7 +39,7 @@ define([], function() {
                 CommonOptionsGroupName: "Común",
                 TemplateUrlFieldLabel: "Utilizar una URL de plantilla externa",
                 TemplateUrlPlaceholder: "https://myfile.html",
-                ErrorTemplateExtension: "La plantilla debe ser un archivo .htm o .html válido",
+                ErrorTemplateExtension: "La plantilla debe ser un archivo .txt, .htm o .html válido",
                 ErrorTemplateResolve: "No se ha podido resolver la plantilla especificada. Detalles del error: '{0}'",
                 DialogButtonLabel: "Editar la plantilla de resultados",
                 DialogTitle: "Editar la plantilla de resultados",
@@ -118,10 +118,7 @@ define([], function() {
                 Extensibility: {
                     PanelHeader: "Configurar las bibliotecas de extensibilidad para que se carguen al inicio.",
                     PanelDescription: "Añada/elimine sus IDs de bibliotecas de extensibilidad personalizadas aquí. Puede especificar un nombre para mostrar y decidir si la biblioteca debe cargarse o no al inicio. Sólo se cargarán aquí las fuentes de datos personalizadas, los diseños, los componentes web y los elementos auxiliares de Handlebars.",
-                },
-                EnableTelemetryLabel: "Telemetría PnP",
-                EnableTelemetryOn: "Activar la telemetría",
-                EnableTelemetryOff: "Desactivar la telemetría"
+                }
             },
             CustomQueryModifier: {
                   EditQueryModifiersLabel: "Configurar los modificadores de consulta personalizados disponibles",

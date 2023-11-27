@@ -7,7 +7,7 @@ import { ServiceScope } from '@microsoft/sp-core-library';
 import { Dropdown, IComboBoxOption, IDropdownProps, ITextFieldProps, TextField } from 'office-ui-fabric-react';
 import { PropertyPaneAsyncCombo } from "../controls/PropertyPaneAsyncCombo/PropertyPaneAsyncCombo";
 import * as commonStrings from 'CommonStrings';
-import { IMicrosoftSearchRequest, ISearchRequestAggregation, SearchAggregationSortBy, ISearchSortProperty, IMicrosoftSearchQuery, IQueryAlterationOptions } from '../models/search/IMicrosoftSearchRequest';
+import { IMicrosoftSearchRequest, ISearchRequestAggregation, SearchAggregationSortBy, ISearchSortProperty, IMicrosoftSearchQuery, IQueryAlterationOptions, ICollapseProperty } from '../models/search/IMicrosoftSearchRequest';
 import { DateHelper } from '../helpers/DateHelper';
 import { DataFilterHelper } from "../helpers/DataFilterHelper";
 import { IMicrosoftSearchResultSet } from "../models/search/IMicrosoftSearchResponse";
@@ -21,6 +21,7 @@ import * as React from "react";
 import { IMicrosoftSearchResponse } from "../models/search/IMicrosoftSearchResponse";
 import { BuiltinDataSourceProviderKeys } from "./AvailableDataSources";
 import { SortableFields } from "../common/Constants";
+import LocalizationHelper from "../helpers/LocalizationHelper";
 
 export enum EntityType {
     Message = 'message',
@@ -94,6 +95,12 @@ export interface IMicrosoftSearchDataSourceProperties {
      * Indicates whether to trim away the duplicate SharePoint files from search results. Default value is false.
      */
     trimDuplicates: boolean;
+
+    /**
+     * Specifies the criteria used for collapsing search results. Applies only to sortable/refinable properties.
+     * More information: https://learn.microsoft.com/en-us/graph/search-concept-collapse
+     */
+    collapseProperties: ICollapseProperty[];
 }
 
 export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDataSourceProperties> {
@@ -108,6 +115,8 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             text: field,
         } as IComboBoxOption;
     });
+
+    private  _collapsibaleFields: IComboBoxOption[] = this._sortableFields;
 
     private _availableEntityTypeOptions: IComboBoxOption[] = [
         {
@@ -317,6 +326,49 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             useBetaEndpointFields.push(
                 PropertyPaneToggle('dataSourceProperties.trimDuplicates', {
                     label: commonStrings.DataSources.MicrosoftSearch.TrimDuplicates
+                }),
+                this._propertyFieldCollectionData('dataSourceProperties.collapseProperties', {
+                    manageBtnLabel: commonStrings.DataSources.MicrosoftSearch.CollapseProperties.EditCollapsePropertiesLabel,
+                    key: 'collapseProperties',
+                    enableSorting: true,
+                    panelHeader: commonStrings.DataSources.MicrosoftSearch.CollapseProperties.EditCollapsePropertiesLabel,
+                    panelDescription: commonStrings.DataSources.MicrosoftSearch.CollapseProperties.CollapsePropertiesDescription,
+                    label: commonStrings.DataSources.MicrosoftSearch.CollapseProperties.CollapsePropertiesPropertyPaneFieldLabel,
+                    value: this.properties.collapseProperties,
+                    fields: [
+                        {
+                            id: 'fields',
+                            title: commonStrings.DataSources.SearchCommon.Sort.SortFieldColumnLabel,
+                            type: this._customCollectionFieldType.custom,
+                            required: true,
+                            onCustomRender: ((field, value, onUpdate, item, itemId, onError) => {
+
+                                return React.createElement("div", { key: `${field.id}-${itemId}` },
+                                    React.createElement(AsyncCombo, {
+                                        defaultSelectedKeys: item[field.id] ? item[field.id] : '',
+                                        allowMultiSelect: true,
+                                        allowFreeform: true,
+                                        availableOptions: this._collapsibaleFields,
+                                        onUpdateOptions: ((options: IComboBoxOption[]) => {
+                                            this._collapsibaleFields = options;
+                                        }).bind(this),
+                                        clearTextOnFocus: true,
+                                        onUpdate: (options: IComboBoxOption[]) => {
+                                            const updateOptions = options?.length == 0 ? undefined : options.map(o => o.key as string);
+                                            onUpdate(field.id, updateOptions);
+                                        },
+                                        placeholder: commonStrings.DataSources.MicrosoftSearch.CollapseProperties.CollapsePropertiesFieldColumnPlaceholder,
+                                        useComboBoxAsMenuWidth: false // Used when screen resolution is too small to display the complete value  
+                                    } as IAsyncComboProps));
+                            }).bind(this)
+                        },
+                        {
+                            id: 'limit',
+                            title: commonStrings.DataSources.MicrosoftSearch.CollapseProperties.CollapseLimitFieldLabel,
+                            type: this._customCollectionFieldType.number,
+                            required: true
+                        }
+                    ]
                 }),
                 PropertyPaneHorizontalRule()
             );
@@ -607,6 +659,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         this.properties.useBetaEndpoint = this.properties.useBetaEndpoint !== undefined ? this.properties.useBetaEndpoint : false;
         this.properties.enableResultTypes = this.properties.enableResultTypes !== undefined ? this.properties.enableResultTypes : false;
         this.properties.trimDuplicates = this.properties.trimDuplicates !== undefined ? this.properties.trimDuplicates : false;
+        this.properties.collapseProperties = this.properties.collapseProperties !== undefined ? this.properties.collapseProperties : [];
 
         if (this.properties.useBetaEndpoint) {
             this._microsoftSearchUrl = "https://graph.microsoft.com/beta/search/query";
@@ -653,7 +706,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                 field: filterConfig.filterName,
                 bucketDefinition: {
                     isDescending: filterConfig.sortDirection === FilterSortDirection.Ascending ? false : true,
-                    minimumCount: 0,
+                    minimumCount: 1,
                     sortBy: filterConfig.sortBy === FilterSortType.ByCount ? SearchAggregationSortBy.Count : SearchAggregationSortBy.KeyAsString
                 },
                 size: filterConfig && filterConfig.maxBuckets ? filterConfig.maxBuckets : 10
@@ -782,9 +835,15 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             searchRequest.contentSources = contentSources;
         }
 
-        if (this.properties.trimDuplicates) {
-            // Default value is always 'false'
-            searchRequest.trimDuplicates = this.properties.trimDuplicates;
+        if (this.properties.useBetaEndpoint) {
+            if (this.properties.trimDuplicates) {
+                // Default value is always 'false'
+                searchRequest.trimDuplicates = this.properties.trimDuplicates;
+            }
+
+            if (this.properties.collapseProperties.length > 0) {
+                searchRequest.collapseProperties = this.properties.collapseProperties;
+            }
         }
 
         searchRequest.queryAlterationOptions = {
@@ -805,16 +864,6 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
     }
 
     /**
-    * Pick culture from url in translated pages as they are folder names like: "en", "no", "de"
-    */
-     private getTranslatedCultureFromUrl(): string {
-        const pathParts = window.location.pathname.toLocaleLowerCase().split('/');
-        const cultureFolderCandidate = pathParts[pathParts.length - 2];
-        if (cultureFolderCandidate.length == 2) return cultureFolderCandidate; //ISO-639-1 uses two letter codes
-        return null;
-    }
-
-    /**
      * Retrieves data from Microsoft Graph API
      * @param searchRequest the Microsoft Search search request
      */
@@ -832,7 +881,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         const msGraphClient = await msGraphClientFactory.getClient('3');
         const request = await msGraphClient.api(this._microsoftSearchUrl);
 
-        let culture = this.getTranslatedCultureFromUrl();
+        let culture = LocalizationHelper.getTranslatedCultureFromUrl();
         if (!culture ) {            
             culture = this.context.pageContext.cultureInfo.currentUICultureName;
         }

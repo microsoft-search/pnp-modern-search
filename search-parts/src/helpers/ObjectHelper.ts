@@ -41,6 +41,10 @@ export class ObjectHelper {
      */
     public static byPath(object: any, path: string, delimiter?: string): string  {
 
+        if(typeof object == "object" && path in object && !delimiter){
+            return object[path];
+        }
+
         let isValidPredicate = true;
         
         // Test if the provided path is a valid predicate https://www.npmjs.com/package/jspath#documentation

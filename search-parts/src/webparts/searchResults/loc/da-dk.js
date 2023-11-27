@@ -39,7 +39,7 @@ define([], function() {
         CommonOptionsGroupName: "Almindelig",
         TemplateUrlFieldLabel: "Anvend en URL fra en ekstern skabelon",
         TemplateUrlPlaceholder: "https://myfile.html",
-        ErrorTemplateExtension: "Skabelonen skal være en valid .htm or .html fil",
+        ErrorTemplateExtension: "Skabelonen skal være en valid .txt, .htm or .html fil",
         ErrorTemplateResolve: "Kan ikke læse the specificerede skabelon. Fejlbeskrivelse: '{0}'",
         DialogButtonLabel: "Redigér resultatsskabelonen",
         DialogTitle: "Redigér resultatsskabelonen",
@@ -118,10 +118,7 @@ define([], function() {
         Extensibility: {
           PanelHeader: "Konfigurér extensibility-biblioteker så de indlæser ved opstart.",
           PanelDescription: "Tilføj/Fjern ID på dit extensibility-bibliotek her. Du kan specificere et visningsnavn og beslutte, om biblioteket skal indlæses eller ej ved opstart. Kun brugerdefinerede datakilder, layouts, web-komponenter og Handlebars-hjælpere vil blive loadet her.",
-        },
-        EnableTelemetryLabel: "PnP telemetri",
-        EnableTelemetryOn: "Slå telemetri til",
-        EnableTelemetryOff: "Slå telemetri fra"
+        }
       },
       CustomQueryModifier: {          
           EditQueryModifiersLabel: "Konfigurere tilgængelige brugerdefinerede forespørgselsmodifikatorer",

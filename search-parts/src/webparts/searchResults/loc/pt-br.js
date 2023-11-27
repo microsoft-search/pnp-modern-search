@@ -39,7 +39,7 @@ define([], function() {
                 CommonOptionsGroupName: "Comum",
                 TemplateUrlFieldLabel: "Usar um URL de modelo externo",
                 TemplateUrlPlaceholder: "https://meu-site/meu-arquivo.html",
-                ErrorTemplateExtension: "O modelo precisa ser um arquivo .htm ou .html válido",
+                ErrorTemplateExtension: "O modelo precisa ser um arquivo .txt, .htm ou .html válido",
                 ErrorTemplateResolve: "Não foi possível resolver o modelo especificado. Detalhes do erro: '{0}'",
                 DialogButtonLabel: "Editar modelo de resultados",
                 DialogTitle: "Editar modelo de resultados",
@@ -118,10 +118,7 @@ define([], function() {
                 Extensibility: {
                     PanelHeader: "Configurar bibliotecas de extensibilidade para carregar no início.",
                     PanelDescription: "Adicione/Remove os IDs de suas bibliotecas de extensibilidade aqui. Você pode especificar um nome de exibição e decidir se a biblioteca dev e ser carregada ou não no início. Apenas fontes de dados customizadas, layouts, componentes web e funções para marcadores entre chaves serão carregados aqui.",
-                },
-                EnableTelemetryLabel: "Telemetria PnP",
-                EnableTelemetryOn: "Ligar telemetria",
-                EnableTelemetryOff: "Desligar telemetria"
+                }
             },
             CustomQueryModifier: {
                 EditQueryModifiersLabel: "Configurar modificadores de consulta personalizados disponíveis",

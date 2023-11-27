@@ -39,7 +39,7 @@ define([], function() {
                 CommonOptionsGroupName: "Common",
                 TemplateUrlFieldLabel: "Use an external template URL",
                 TemplateUrlPlaceholder: "https://myfile.html",
-                ErrorTemplateExtension: "The template must be a valid .htm or .html file",
+                ErrorTemplateExtension: "The template must be a valid .txt, .htm or .html file",
                 ErrorTemplateResolve: "Unable to resolve the specified template. Error details: '{0}'",
                 DialogButtonLabel: "Edit results template",
                 DialogTitle: "Edit results template",
@@ -118,10 +118,7 @@ define([], function() {
                 Extensibility: {
                     PanelHeader: "Configure extensibility libraries to load at startup.",
                     PanelDescription: "Add/Remove your custom extensibility library IDs here. You can specify a display name and decide if the library should be loaded or not at startup. Only custom data sources, layouts, web components and Handlebars helpers will be loaded here.",
-                },
-                EnableTelemetryLabel: "PnP telemetry",
-                EnableTelemetryOn: "Turn on telemetry",
-                EnableTelemetryOff: "Turn off telemetry"
+                }
             },
             CustomQueryModifier: {
                 EditQueryModifiersLabel: "Configure query modifiers",

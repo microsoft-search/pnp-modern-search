@@ -32,12 +32,48 @@ Connect your Search Filters Web Part to the existing Results Web Part under "Use
 ### Customize filters
 Add your own filter properties to the Search Filters. This are the properties from the UPS (= SharePoint User Profile Service), check the propertiy settings in your SharePoint Search Schema.
 
+
+
 ![configure customize filters](assets/create-a-useful-people-search/configure-customize-filters.png)
 
 ## Configure Search Results
 Use the SharePoint Search as source and configure the Search Results Web Part to show only people. Choose the existing default result source LocalPeopleResults. With the query template you can exclude admin oder system accounts. In this example, only show user with an email addess this contains mehr365.
 
 ![configure search results](assets/create-a-useful-people-search/configure-search-results.png)
+
+
+<h2>Additional options to include or exclude User Profiles</h2>
+
+*User Profiles must have a valid Email address":<br>
+<i>(WorkEmail:Mehr365.com OR WorkEmail:thebankoflondon.com)</i><br>
+This will include only those two email domains and thereby exclude everybody else, like guest users and Cloud Only users<br>
+
+*User Profiles that have been marked as "Do not show":<br>
+Try searching for <i>"SPS-HideFromAddressLists":1</i> in a tool like SP Editor or SP Query Tool ( or just use the editor for the Search Result Source )
+<br>If you see any hit then those User Profiles should most like <b>not</b> be shown in the Directory.
+The HideFromAddressLists field is actually set in MSExchange and is used to hide users in the Global Address List.
+
+*Exclude User Profiles based on text based field:<br>
+
+<i>-preferredname:admin*</i><br>
+<i>-preferredname:test*</i><br>
+<i>-preferredname:Foreign Principal*</i><br>
+<i>-accountname:spo*</i><br>
+ 
+
+*Exclude User Profiles that does not have a value is certain properties:<br>
+
+The requirement is that User Profiles should be excluded if the Department field is empty.<br> This can be handled by using 
+<i>owstaxIdSPShDepartment:"#8ed8c9ea-7052-4c1d-a4d7-b9c10bffea6f"</i>  <br>
+This query selects every User Profile where that has a value anywhere in the Termset "Department" in the Global Termstore. Please ensure that the GUID of the root item of the Department Termset in your tenant matches the GUID shown above.
+
+The same approach can be used for the remaining peroperties that are based on a TermSet.<br><br>
+
+*Exclude User Profiles that does have a phonenumber<br>
+
+<i>(MobilPhone:0* OR MobilPhone:1* OR MobilPhone:2* OR MobilPhone:3* OR MobilPhone:4* OR MobilPhone:5* OR MobilPhone:6* OR MobilPhone:7* OR MobilPhone:8* OR MobilPhone:9*)</i> <br>
+
+Unfortunately it is difficult to filter on a text property. The query above works but it is not pretty.
 
 ### Layout configuration
 It is a predefined people layout available for the people search. Use People as Search Results layout.

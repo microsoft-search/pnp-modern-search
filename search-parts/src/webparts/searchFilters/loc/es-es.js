@@ -60,7 +60,7 @@ define([], function() {
                 LayoutTemplateOptionsGroupName: "Opciones de diseño",
                 TemplateUrlFieldLabel: "Utilizar una URL de plantilla externa",
                 TemplateUrlPlaceholder: "https://myfile.html",
-                ErrorTemplateExtension: "La plantilla debe ser un archivo .htm o .html válido",
+                ErrorTemplateExtension: "La plantilla debe ser un archivo .txt, .htm o .html válido",
                 ErrorTemplateResolve: "No se ha podido resolver la plantilla especificada. Detalles del error: '{0}'",
                 FiltersTemplateFieldLabel: "Editar plantilla de filtros",
                 FiltersTemplatePanelHeader: "Editar plantilla de filtros"

@@ -126,7 +126,8 @@ define([], function() {
               TermNotFound: "(Nie znaleziono terminu o identyfikatorze '{0}')",
               ApplyQueryTemplateBtnText: "Zastosuj",
               EnableAudienceTargetingTglLabel: "Włącz audiencje",
-              TrimDuplicates: "Przytnij duplikaty"
+              TrimDuplicates: "Przytnij duplikaty",
+              CollapseSpecificationLabel: "Zwiń specyfikację"
           },
           MicrosoftSearch: {
               QueryTextFieldLabel: "Tekst zapytania",
@@ -148,7 +149,14 @@ define([], function() {
               QueryTemplateFieldDescription: "Szablon modyfikatora wyszukiwania. Możesz również użyć {<tokenów>} i KQL do zbudowania dynamicznego zapytania. Wszystko jest połączone z inputQueryText",
               ApplyQueryTemplateBtnText: "Zastosuj",
               UseBetaEndpoint: "Użyj punktu końcowego wersji beta",
-              TrimDuplicates: "Przytnij duplikaty"
+              TrimDuplicates: "Przytnij duplikaty",
+              CollapseProperties: {
+                  EditCollapsePropertiesLabel: "Edytuj ustawienia zwijania",
+                  CollapsePropertiesDescription: "Określ ustawienia zwijania wyników wyszukiwania. Możesz wybrać pole z listy rozwijanej (tylko jeśli dane ze źródła danych zostały już pobrane) lub wpisać własną wartość niestandardową (naciśnij „Enter”, aby zapisać wpis)",
+                  CollapsePropertiesPropertyPaneFieldLabel: "Ustawienia zwinięcia",
+                  CollapseLimitFieldLabel: "Limit",
+                  CollapsePropertiesFieldColumnPlaceholder: "Zwiń według pola"
+              }
           },
           SearchCommon: {
               Sort: {
@@ -218,6 +226,7 @@ define([], function() {
               FileExtensionFieldLabel: "Pole używane dla rozszerzenia pliku",
               GroupByFieldLabel: "Grupuj po polu",
               EnableGrouping: "Grupowanie włączone",
+              GroupingDescription: "Upewnij się, że dane są wyświetlane w wynikowym składniku Web Part, aby wyświetlić listę właściwości.",
               CollapsedGroupsByDefault: "Pokaż zapadnięte",
               ResetFieldsBtnLabel: "Resetuj pola do wartości domyślnych"
           },

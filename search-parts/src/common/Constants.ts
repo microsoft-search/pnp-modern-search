@@ -14,12 +14,6 @@ export class Constants {
      * The client tag to append to all REST calls to SharePoint
      */
     public static readonly X_CLIENTSERVICE_CLIENTTAG = 'NonISV|PnP|ModernSearch';
-
-    /**
-     * The PnP Application Insights instrumentation key and events for stats tracking
-     */
-    public static readonly PNP_APP_INSIGHTS_INSTRUMENTATION_KEY = '0f0b9db6-680c-480c-804d-f75830e2c383';
-    public static readonly PNP_MODERN_SEARCH_EVENT_NAME = 'pnpModernSearchV4';
 }
 
 export enum AutoCalculatedDataSourceFields {

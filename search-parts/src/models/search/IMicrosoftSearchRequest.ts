@@ -26,6 +26,7 @@ export interface IMicrosoftSearchRequest {
         enableResultTemplate: boolean;
     };
     trimDuplicates?: boolean;
+    collapseProperties?: ICollapseProperty[];
 }
 
 export interface ISearchSortProperty {
@@ -60,4 +61,9 @@ export interface IBucketRangeDefinition {
 export interface IQueryAlterationOptions {
     enableSuggestion: boolean;
     enableModification: boolean;
+}
+
+export interface ICollapseProperty {
+    fields: string[];
+    limit: number;
 }

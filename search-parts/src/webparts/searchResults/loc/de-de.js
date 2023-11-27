@@ -39,7 +39,7 @@ define([], function() {
                 CommonOptionsGroupName: "Allgemein",
                 TemplateUrlFieldLabel: "Benutze eine externe Vorlagen URL",
                 TemplateUrlPlaceholder: "https://meineDatei.html",
-                ErrorTemplateExtension: "Die Vorlage muss eine gültige .html oder .html Datei sein",
+                ErrorTemplateExtension: "Die Vorlage muss eine gültige .txt, .html oder .html Datei sein",
                 ErrorTemplateResolve: "Kann die angegebene Vorlage nicht auflösen. Fehler Details: '{0}'",
                 DialogButtonLabel: "Ergebnisvorlage bearbeiten",
                 DialogTitle: "Ergebnisvorlage bearbeiten",
@@ -118,10 +118,7 @@ define([], function() {
                 Extensibility: {
                     PanelHeader: "Erweiterungsbibliotheken die beim Start geladen werden konfigurieren ",
                     PanelDescription: "Hier können Sie die IDs Ihrer benutzerdefinierten Erweiterungsbibliotheken hinzufügen/entfernen. Sie können einen Anzeigenamen angeben und entscheiden, ob die Bibliothek beim Starten geladen werden soll oder nicht. Nur benutzerdefinierte Datenquellen, Layouts, Webkomponenten und Handlebars-Helfer werden hier geladen.",
-                },
-                EnableTelemetryLabel: "PnP Telemetrie",
-                EnableTelemetryOn: "Telemetrie einschalten",
-                EnableTelemetryOff: "Telemetrie ausschalten"
+                }
             },
             CustomQueryModifier: {
                 EditQueryModifiersLabel: "Verfügbare benutzerdefinierte Abfragemodifikatoren konfigurieren",

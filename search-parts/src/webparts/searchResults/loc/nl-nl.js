@@ -39,7 +39,7 @@ define([], function() {
         CommonOptionsGroupName: "Algemeen",
         TemplateUrlFieldLabel: "Gebruik een externe sjabloon URL",
         TemplateUrlPlaceholder: "https://mijnbestand.html",
-        ErrorTemplateExtension: "Het sjabloon moet een geldig .htm of .html bestand zijn",
+        ErrorTemplateExtension: "Het sjabloon moet een geldig .txt, .htm of .html bestand zijn",
         ErrorTemplateResolve: "Kan het opgegeven template niet inladen. Foutmelding: '{0}'",
         DialogButtonLabel: "Bewerk resulaten sjabloon",
         DialogTitle: "Bewerk resultaten sjabloon",
@@ -118,10 +118,7 @@ define([], function() {
         Extensibility: {
           PanelHeader: "Configureer inladen van uitbreidingsbibliotheken bij opstarten",
           PanelDescription:"Beheer hier je aangepaste uitbreidingsbibliotheek ID's. Je kan hier een weergavenaam specificeren en aangeven of de bibliotheek geladen moet worden. Alleen aangepaste databronnen, indelingen, web componenten en Handlebars helpers worden hier geladen.",
-        },
-        EnableTelemetryLabel: "PnP-telemetrie",
-        EnableTelemetryOn: "Telemetrie inschakelen",
-        EnableTelemetryOff: "Telemetrie uitschakelen"
+        }
       },
       CustomQueryModifier: {
             EditQueryModifiersLabel: "Beschikbare aangepaste query-aanpassingen configureren",

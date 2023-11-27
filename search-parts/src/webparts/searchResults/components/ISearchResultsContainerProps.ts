@@ -19,6 +19,11 @@ export interface ISearchResultsContainerProps {
   pageContext: PageContext;
 
   /**
+   * The current page context
+   */
+  teamsContext: any;
+
+  /**
    * The selected data source instance
    */
   dataSource: IDataSource;

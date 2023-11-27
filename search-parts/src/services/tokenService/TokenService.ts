@@ -417,6 +417,15 @@ export class TokenService implements ITokenService {
         const currentDate = /\{CurrentDate\}/gi;
         const currentMonth = /\{CurrentMonth\}/gi;
         const currentYear = /\{CurrentYear\}/gi;
+        const currentHour = /\{CurrentHour\}/gi;
+        const currentMinute = /\{CurrentMinute\}/gi;
+        const currentSecond = /\{CurrentSecond\}/gi;
+        const currentDateUTC = /\{CurrentDateUTC\}/gi;
+        const currentMonthUTC = /\{CurrentMonthUTC\}/gi;
+        const currentYearUTC = /\{CurrentYearUTC\}/gi;
+        const currentHourUTC = /\{CurrentHourUTC\}/gi;
+        const currentMinuteUTC = /\{CurrentMinuteUTC\}/gi;
+        const currentSecondUTC = /\{CurrentSecondUTC\}/gi;
 
         // Replaces any "{Today} +/- [digit]" expression
         let results = /\{Today\s*[\+-]\s*\[{0,1}\d{1,}\]{0,1}\}/gi;
@@ -442,6 +451,15 @@ export class TokenService implements ITokenService {
         inputString = inputString.replace(currentDate, d.getDate().toString());
         inputString = inputString.replace(currentMonth, (d.getMonth() + 1).toString());
         inputString = inputString.replace(currentYear, d.getFullYear().toString());
+        inputString = inputString.replace(currentHour, d.getHours().toString());
+        inputString = inputString.replace(currentMinute, d.getMinutes().toString());
+        inputString = inputString.replace(currentSecond, d.getSeconds().toString());
+        inputString = inputString.replace(currentDateUTC, d.getUTCDate().toString());
+        inputString = inputString.replace(currentMonthUTC, (d.getUTCMonth() + 1).toString());
+        inputString = inputString.replace(currentYearUTC, d.getUTCFullYear().toString());
+        inputString = inputString.replace(currentHourUTC, d.getUTCHours().toString());
+        inputString = inputString.replace(currentMinuteUTC, d.getUTCMinutes().toString());
+        inputString = inputString.replace(currentSecondUTC, d.getUTCSeconds().toString());
 
         return inputString;
     }

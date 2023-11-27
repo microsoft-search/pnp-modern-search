@@ -29,7 +29,7 @@ For your project to be a valid extensibility library, you must have the followin
 - You library **manifest ID** must be registered in the Web Part where you want to use the extension.
 
 !!! important "SPFx version"
-    The SPFx library project must use the same SPFx version as the main solution (currently `1.12.1`). Owherwise you may face issues at build time. See [GitHub issue #1893](https://github.com/microsoft-search/pnp-modern-search/issues/1893)
+    The SPFx library project must use the same SPFx version as the main solution (currently `1.15.2`). Owherwise you may face issues at build time. See [GitHub issue #1893](https://github.com/microsoft-search/pnp-modern-search/issues/1893)
 
 ### Supported extensions
 
@@ -37,7 +37,7 @@ Each Web Part type in the solution supports several extensions or no extension a
 
 | Web Part type | Supported extensions |
 | ------------- | -------------------- |
-| **Search Results** | <ul><li>Custom web components.</li><li>Custom Handlebars [customizations](https://handlebarsjs.com/api-reference/runtime.html) (ex: helpers, partials ,etc.).</li><li>Custom event handlers for adaptive cards actions</li><li>Custom Data Sources</li></ul>
+| **Search Results** | <ul><li>Custom web components.</li><li>Custom Handlebars [customizations](https://handlebarsjs.com/api-reference/runtime.html) (ex: helpers, partials ,etc.).</li><li>Custom event handlers for adaptive cards actions</li><li>Custom Data Sources</li><li>Custom query modifier</li></ul>
 | **Search Filters** |  <ul><li>Custom web components (_not directly but via the 'Search Results' Web Part extensibility library registration_).</li></ul>
 | **Search box** | <ul><li>Custom suggestions providers.</li></ul>
 | **Search Verticals** | None.

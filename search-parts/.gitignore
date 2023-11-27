@@ -37,7 +37,4 @@ obj
 # Pnpm lock file
 pnpm-lock.yaml
 
-#npm lock file
-package-lock.json
-
 .heft

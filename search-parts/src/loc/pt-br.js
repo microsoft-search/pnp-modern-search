@@ -126,7 +126,8 @@ define([], function() {
                 TermNotFound: "(O termo com o ID '{0}' não foi encontrado)",
                 ApplyQueryTemplateBtnText: "Aplicar",
                 EnableAudienceTargetingTglLabel: "Ativar a segmentação por público-alvo",
-                TrimDuplicates: "Limpar duplicados"
+                TrimDuplicates: "Limpar duplicados",
+                CollapseSpecificationLabel: "Recolher especificação"
             },
             MicrosoftSearch: {
                 QueryTextFieldLabel: "Texto da consulta",
@@ -148,7 +149,14 @@ define([], function() {
                 QueryTemplateFieldDescription: "O modelo da consulta. Você também pode usar {<tokens>} e KQL para construir uma consulta dinâmica.",
                 ApplyQueryTemplateBtnText: "Aplicar",
                 UseBetaEndpoint: "Usar endpoint <i>beta</i>",
-                TrimDuplicates: "Limpar duplicados"
+                TrimDuplicates: "Limpar duplicados",
+                CollapseProperties: {
+                    EditCollapsePropertiesLabel: "Editar configurações de recolhimento",
+                    CollapsePropertiesDescription: "Especifique as configurações de recolhimento para os resultados da pesquisa. Você pode selecionar um campo na lista suspensa (somente se os dados da fonte de dados já tiverem sido buscados) ou digitar seu próprio valor personalizado (pressione 'Enter' para salvar sua entrada)",
+                    CollapsePropertiesPropertyPaneFieldLabel: "As configurações de recolhimento",
+                    CollapseLimitFieldLabel: "Limite",
+                    CollapsePropertiesFieldColumnPlaceholder: "Recolher por campo"
+                }
             },
             SearchCommon: {
                 Sort: {
@@ -216,6 +224,7 @@ define([], function() {
                 FileExtensionFieldLabel: "Campo usado para a extensão do arquivo",
                 GroupByFieldLabel: "Agrupar pelo campo",
                 EnableGrouping: "Ativar agrupamento",
+                GroupingDescription: "Certifique-se de que os dados sejam exibidos na Web Part de resultado para uma lista de propriedades a serem exibidas.",
                 CollapsedGroupsByDefault: "Mostrar recolhido",
                 ResetFieldsBtnLabel: "Redefinir campos para os valores padrão"
             },

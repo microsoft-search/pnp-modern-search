@@ -39,7 +39,7 @@ define([], function() {
         CommonOptionsGroupName: "Courantes",
         TemplateUrlFieldLabel: "Utiliser une adresse URL de modèle externe",
         TemplateUrlPlaceholder: "https://myfile.html",
-        ErrorTemplateExtension: "Le modèle doit être un fichier .htm ou .html valide",
+        ErrorTemplateExtension: "Le modèle doit être un fichier .txt, .htm ou .html valide",
         ErrorTemplateResolve: "Impossible de résoudre le modèle indiqué. Renseignements sur l’erreur '{0}'",
         DialogButtonLabel: "Modifier le modèle de résultats",
         DialogTitle: "Modifier le modèle de résultats",
@@ -120,10 +120,7 @@ define([], function() {
         Extensibility: {
           PanelHeader: "Configurez les bibliothèques d’extensibilité pour qu’elles soient chargées au démarrage.",
           PanelDescription: "Ajoutez ou supprimez vos identifiants personnalisés de la bibliothèque d’extensibilités ici. Vous pouvez préciser un nom d’affichage et décider si la bibliothèque doit être téléchargée ou non au démarrage. Seuls les sources de données, les mises en page, les composants Web et les assistants d’expressions entre accolades personnalisés sont chargés ici.",
-        },
-        EnableTelemetryLabel: "Télémétrie PnP",
-        EnableTelemetryOn: "Activer la télémétrie",
-        EnableTelemetryOff: "Désactiver la télémétrie"
+        }
       },
       CustomQueryModifier: {
             EditQueryModifiersLabel: "Configurer les modificateurs de requête personnalisés disponibles",
