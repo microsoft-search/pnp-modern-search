@@ -1,10 +1,10 @@
-import * as React                               from 'react';
-import { Suspense }                             from 'react';
-import { Dialog, DialogType, DialogFooter } 	from '@fluentui/react';
-import { ButtonType, PrimaryButton } 			from '@fluentui/react';
-import { ITextDialogProps }                  	from './ITextDialogProps';
-import { ITextDialogState }                  	from './ITextDialogState';
-import styles                                   from './TextDialog.module.scss';
+import * as React from 'react';
+import { Suspense } from 'react';
+import { Dialog, DialogType, DialogFooter } from '@fluentui/react';
+import { ButtonType, PrimaryButton } from '@fluentui/react';
+import { ITextDialogProps } from './ITextDialogProps';
+import { ITextDialogState } from './ITextDialogState';
+import styles from './TextDialog.module.scss';
 import './AceEditor.module.scss';
 import { TextField } from '@fluentui/react';
 import { Icon } from '@fluentui/react/lib/Icon'
@@ -19,50 +19,50 @@ export default class TextDialog extends React.Component<ITextDialogProps, ITextD
      *************************************************************************************/
     constructor(props: ITextDialogProps, state: ITextDialogState) {
         super(props);
-		this.state = { 
-			dialogText: this.props.dialogTextFieldValue ? this.props.dialogTextFieldValue : "", 
-			showDialog: false 
-		};
+        this.state = {
+            dialogText: this.props.dialogTextFieldValue ? this.props.dialogTextFieldValue : "",
+            showDialog: false
+        };
     }
 
 
-	/*************************************************************************************
-	 * Shows the dialog
-	 *************************************************************************************/
-	private showDialog() {
-		this.setState({ dialogText: this.state.dialogText ? this.state.dialogText : "", showDialog: true });
-	}
+    /*************************************************************************************
+     * Shows the dialog
+     *************************************************************************************/
+    private showDialog() {
+        this.setState({ dialogText: this.state.dialogText ? this.state.dialogText : "", showDialog: true });
+    }
 
 
-	/*************************************************************************************
-	 * Notifies the parent with the dialog's latest value, then closes the dialog
-	 *************************************************************************************/
-	private saveDialog() {
-		this.setState({ dialogText: this.state.dialogText ? this.state.dialogText : "", showDialog: false });
+    /*************************************************************************************
+     * Notifies the parent with the dialog's latest value, then closes the dialog
+     *************************************************************************************/
+    private saveDialog() {
+        this.setState({ dialogText: this.state.dialogText ? this.state.dialogText : "", showDialog: false });
 
-		if(this.props.onChanged) {
-			this.props.onChanged(this.state.dialogText);
-		}
-	}
-
-
-	/*************************************************************************************
-	 * Closes the dialog without notifying the parent for any changes
-	 *************************************************************************************/
-	private cancelDialog() {
-		this.setState({ dialogText: this.props.dialogTextFieldValue ? this.props.dialogTextFieldValue : "", showDialog: false });
-	}
+        if (this.props.onChanged) {
+            this.props.onChanged(this.state.dialogText);
+        }
+    }
 
 
-	/*************************************************************************************
-	 * Updates the dialog's value each time the textfield changes
-	 *************************************************************************************/
-	private onDialogTextChanged(newValue: string) {
-		this.setState({ dialogText: newValue, showDialog: this.state.showDialog });
-	}
+    /*************************************************************************************
+     * Closes the dialog without notifying the parent for any changes
+     *************************************************************************************/
+    private cancelDialog() {
+        this.setState({ dialogText: this.props.dialogTextFieldValue ? this.props.dialogTextFieldValue : "", showDialog: false });
+    }
 
 
-	/*************************************************************************************
+    /*************************************************************************************
+     * Updates the dialog's value each time the textfield changes
+     *************************************************************************************/
+    private onDialogTextChanged(newValue: string) {
+        this.setState({ dialogText: newValue, showDialog: this.state.showDialog });
+    }
+
+
+    /*************************************************************************************
      * Called immediately after updating occurs
      *************************************************************************************/
     public componentDidUpdate(prevProps: ITextDialogProps, prevState: ITextDialogState): void {
@@ -76,53 +76,53 @@ export default class TextDialog extends React.Component<ITextDialogProps, ITextD
      * Renders the the TextDialog component
      *************************************************************************************/
     public render() {
+
         return (
-            <div>		
+            <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <TextField value={this.state.dialogText} readOnly={true} styles={{ root: { width: '100%', marginRight: 15, fontSize: 'small', fontFamily: 'Courier New' } }} />
+                    <Icon iconName='CodeEdit' onClick={this.showDialog.bind(this)} styles={{ root: { fontSize: 20, cursor: 'pointer' } }} />
+                </div>
 
-				<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-					<TextField value={this.state.dialogText} readOnly={true} styles={{ root: { width: '100%', marginRight: 15, fontSize: 'small', fontFamily: 'Courier New' }}}/>
-					<Icon iconName='CodeEdit' onClick={ this.showDialog.bind(this) } styles={{ root: { fontSize: 20, cursor: 'pointer' }}}/>
-				</div>
-				
-				<Dialog hidden={ !this.state.showDialog }
-						dialogContentProps={{
-							subText: this.props.strings.dialogTitle,
-							type: DialogType.normal
-						}}
-						onDismiss={ this.cancelDialog.bind(this) }
-						title={ this.props.strings.dialogTitle }
+                <Dialog hidden={!this.state.showDialog}
+                    dialogContentProps={{
+                        subText: this.props.strings.dialogTitle,
+                        type: DialogType.normal,
+                        title: this.props.strings.dialogTitle,
+                    }}
+                    onDismiss={this.cancelDialog.bind(this)}
 
-						modalProps={
-							{
-								isBlocking: true,
-								containerClassName: 'ms-dialogMainOverride ' + styles.textDialog,
-							}
-						}>
+                    modalProps={
+                        {
+                            isBlocking: true,
+                            containerClassName: 'ms-dialogMainOverride ' + styles.textDialog,                           
+                        }
+                    }>
                     <Suspense fallback={""}>
                         <AceEditor
                             width="600px"
-                            mode={ this.props.language ? this.props.language: 'html' }
+                            mode={this.props.language ? this.props.language : 'html'}
                             theme="monokai"
-                            enableLiveAutocompletion={ false }
-                            showPrintMargin={ false }
-                            showGutter= { true }
-                            onChange={ this.onDialogTextChanged.bind(this) }
-                            value={ this.state.dialogText }
-                            highlightActiveLine={ true }
+                            enableLiveAutocompletion={false}
+                            showPrintMargin={false}
+                            showGutter={true}
+                            onChange={this.onDialogTextChanged.bind(this)}
+                            value={this.state.dialogText}
+                            highlightActiveLine={true}
                             editorProps={
                                 {
                                     $blockScrolling: Infinity
                                 }
-                            }					
+                            }
                             name="CodeEditor"
                             enableBasicAutocompletion={true}
-                            />
+                        />
                     </Suspense>
-					<DialogFooter>
-						<PrimaryButton buttonType={ ButtonType.primary } onClick={ this.saveDialog.bind(this) }>{ this.props.strings.saveButtonText }</PrimaryButton>
-						<PrimaryButton onClick={ this.cancelDialog.bind(this) }>{ this.props.strings.cancelButtonText }</PrimaryButton>
-					</DialogFooter>
-				</Dialog>
+                    <DialogFooter>
+                        <PrimaryButton buttonType={ButtonType.primary} onClick={this.saveDialog.bind(this)}>{this.props.strings.saveButtonText}</PrimaryButton>
+                        <PrimaryButton onClick={this.cancelDialog.bind(this)}>{this.props.strings.cancelButtonText}</PrimaryButton>
+                    </DialogFooter>
+                </Dialog>
             </div>
         );
     }
