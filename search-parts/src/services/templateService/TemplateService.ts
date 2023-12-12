@@ -22,7 +22,6 @@ import { ServiceScopeHelper } from "../../helpers/ServiceScopeHelper";
 import { DomPurifyHelper } from "../../helpers/DomPurifyHelper";
 import * as DOMPurify from 'dompurify';
 import { IAdaptiveCardAction } from '@pnp/modern-search-extensibility';
-import { ItemSelectionMode } from "../../models/common/IItemSelectionProps";
 
 const TemplateService_ServiceKey = 'PnPModernSearchTemplateService';
 const TemplateService_LogSource = "PnPModernSearch:TemplateService";
