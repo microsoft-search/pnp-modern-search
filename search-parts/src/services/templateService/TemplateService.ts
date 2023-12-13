@@ -585,6 +585,7 @@ export class TemplateService implements ITemplateService {
             //Extract data property
             const { data, ...newContext } = context;
             //Extract items property
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const { items, ...newData } = data;
             //Set data property without items
             newContext.data = newData;
