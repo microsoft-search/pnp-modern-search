@@ -9,7 +9,7 @@
             text-align: center;
 
             .inverted a {
-                color: "[theme: black, default: #ffffff]";
+                color: "[theme: black, default: #000000]";
             }
 
             .standard a {
@@ -44,7 +44,7 @@
 
                     .active__inverted {
                         font-weight: bold;
-                        color: "[theme: black, default: #ffffff]";
+                        color: "[theme: black, default: #000000]";
                     }
 
                     a:visited {
