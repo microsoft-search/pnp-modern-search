@@ -27,34 +27,28 @@ export class DateHelper {
         }
 
         if (!this.lastCulture || this.lastCulture !== culture) {
-            // if culture starts with or is any of this, two letter locale must be used in momentjs (culture es-es must load es.js file)
-            let momentTwoLetterLanguageName = [
-                "af", "az", "be", "bg", "bm", "bo", "br", "bs", "ca", "cs", "cv",
-                "cy", "da", "de-de", "dv", "el", "eo", "es-es", "et", "eu", "fa", "fi", "fil",
-                "fo", "fy", "fr-fr", "ga", "gd", "gl", "gu", "he", "hi", "hr", "hu", "id", "is",
-                "it-it", "ja", "jv", "ka", "kk", "km", "kn", "ko", "ku", "ky", "lb", "lo", "lt",
-                "lv", "me", "mi", "mk", "ml", "mn", "mr", "mt", "my", "nb", "ne",
-                "nn", "nl-nl", "pl", "pt-pt", "ro", "ru", "sd", "se", "si", "sk", "sl", "sq",
-                "ss", "sv", "sw", "ta", "te", "tet", "tg", "th", "tk", "tlh",
-                "tr", "tzl", "uk", "ur", "vi", "yo"
-            ];
+            // All supported locales
+            let momentCultures = ["af", "bo", "en-ca", "fa", "he", "kn", "ms-my", "ro", "te", "uz-latn", "ar-dz", "br", "en-gb", "fi", "hi", "ko", "ms", "ru", "tet", "uz", "ar-kw", "bs", "en-ie", "fil", "hr", "ku", "mt", "sd", "tg", "vi", "ar-ly", "ca", "en-il", "fo", "hu", "ky", "my", "se", "th", "ar-ma", "cs", "en-in", "fr-ca", "hy-am", "lb", "nb", "si", "tk", "yo", "ar-sa", "cv", "en-nz", "fr-ch", "id", "lo", "ne", "sk", "tl-ph", "zh-cn", "ar-tn", "cy", "en-sg", "fr", "is", "lt", "nl-be", "sl", "tlh", "zh-hk", "ar", "da", "eo", "fy", "it-ch", "lv", "nl", "sq", "tr", "zh-mo", "az", "de-at", "es-do", "ga", "it", "me", "nn", "sr-cyrl", "tzl", "zh-tw", "be", "de-ch", "es-mx", "gd", "ja", "mi", "oc-lnc", "sr", "tzm-latn", "bg", "de", "es-us", "gl", "jv", "mk", "pa-in", "ss", "tzm", "bm", "dv", "es", "gom-deva", "ka", "ml", "pl", "sv", "ug-cn", "bn-bd", "el", "et", "gom-latn", "kk", "mn", "pt-br", "sw", "uk", "bn", "en-au", "eu", "gu", "km", "mr", "pt", "ta", "ur"];
 
-            // Moment is by default 'en-us'
-            if (!culture.startsWith('en-us') && momentTwoLetterLanguageName.some((c) => c == culture)) {
-                // check if culture must be used with two letter name in momentjs
-                for (let i = 0; i < momentTwoLetterLanguageName.length; i++)
-                    if (culture.startsWith(momentTwoLetterLanguageName[i])) {
-                        culture = culture.split('-')[0];
-                        break;
-                    }
+            // Check direct match
+            if (momentCultures.some((c) => c == culture)) {
+                this.lastCulture = culture;
+            }
 
+            // Check part match
+            if(!this.lastCulture) {
+                culture = culture.split('-')[0];
+                if (momentCultures.some((c) => c == culture)) {
+                    this.lastCulture = culture;
+                }
+            }
 
+            if (this.lastCulture) {
                 await import(
                     /* webpackMode: 'lazy', webpackChunkName: 'pnp-modern-search-moment-locale' */
-                    `moment/locale/${culture}.js`
+                    `moment/locale/${this.lastCulture}.js`
                 );
             }
-            this.lastCulture = culture;
         }
 
 
