@@ -99,6 +99,7 @@ export default class SearchVerticalsContainer extends React.Component<ISearchVer
           this.props.tokenService.resolveTokens(vertical.linkUrl).then((resolvedUrl: string) => {      
             const inputQueryText: string = !isEmpty(GlobalSettings.getValue(BuiltinTokenNames.inputQueryText)) ?  GlobalSettings.getValue(BuiltinTokenNames.inputQueryText) : "";    
             resolvedUrl = resolvedUrl.replace(/\{inputQueryText\}|\{searchTerms\}|\{SearchBoxQuery\}/gi, inputQueryText);
+            resolvedUrl = resolvedUrl.replace(inputQueryText,encodeURIComponent(inputQueryText));
 
             if(vertical.openBehavior === PageOpenBehavior.NewTab){
               window.open(resolvedUrl, "_blank");
