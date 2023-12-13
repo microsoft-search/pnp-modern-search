@@ -44,7 +44,8 @@ export default class PreviewContainer extends React.Component<IPreviewContainerP
         let renderLoading: JSX.Element = this.state.isLoading ? <Overlay isDarkThemed={false} className={previewContainerStyles.overlay}><Spinner size={ SpinnerSize.large }/></Overlay>: null;
         let backgroundImage = this.state.isLoading ? `url('${this.props.previewImageUrl}')` : 'none';
  
-        return  <Callout 
+
+        return !this.state.showCallout ? null :  <Callout 
                     gapSpace={0} 
                     target={this.props.targetElement} 
                     hidden={false} 
