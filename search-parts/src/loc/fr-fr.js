@@ -63,8 +63,8 @@ define([], function() {
                 QueryModifierDefinitionNotFound: "Le queryModifier personnalisé avec la clé '{0}' n'a pas été trouvé. Vérifiez que la solution est correctement déployée dans le catalogue d'applications et que l'ID du manifeste est enregistré pour ce composant WebPart.",
                 InvalidQueryModifierInstance: "Le queryModifier personnalisé sélectionné '{0}' n'implémente pas correctement la classe abstraite 'BaseQueryModifier'. Certaines méthodes sont manquantes.",
             },
-            DateFromLabel: "De",
-            DateTolabel: "À",
+            DateFromLabel: "Du",
+            DateTolabel: "Au",
             DatePickerStrings: {
                 months: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
                 shortMonths: ['Janv.', 'Févr.', 'Mars', 'Avr.', 'Mai', 'Juin', 'Juill.', 'Août', 'Sept.', 'Oct.', 'Nov.', 'Déc.'],
