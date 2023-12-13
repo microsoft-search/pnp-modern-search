@@ -542,19 +542,22 @@ export class TemplateService implements ITemplateService {
             // Use a token or a string value
             let param2 = handlebarsToken ? handlebarsToken[1] : `"${currentResultType.value}"`;
 
-            // Operator: "Starts With"
-            if (currentResultType.operator === ResultTypeOperator.StartsWith) {
-                param1 = `"${currentResultType.value}"`;
-                param2 = `${currentResultType.property}`;
-            }
-
             // Operator: "Not null"
             if (currentResultType.operator === ResultTypeOperator.NotNull) {
                 param2 = null;
             }
 
-            const baseCondition = `{{#${operator} (slot item '${param1}') ${param2 || ""}}}
-                                        ${templateContent}`;
+            let baseCondition = `{{#${operator} (slot item '${param1}') ${param2 || ""}}}
+                ${templateContent}`;
+
+            // Operator: "Starts With"
+            if (currentResultType.operator === ResultTypeOperator.StartsWith) {
+                param1 = `"${currentResultType.value}"`;
+                param2 = `${currentResultType.property}`;
+
+                baseCondition = `{{#${operator} ${param1 || ""} (slot item '${param2}') }}
+                    ${templateContent}`;
+            }
 
             if (currentIdx === resultTypes.length - 1) {
                 // Renders inner content set in the 'resultTypes' partial
@@ -876,7 +879,7 @@ export class TemplateService implements ITemplateService {
                 'adaptivecards'
             );
 
-             // Initialize the serialization context for the Adaptive Cards, if needed
+            // Initialize the serialization context for the Adaptive Cards, if needed
             if (!this._serializationContext) {
 
                 const { CardObjectRegistry, GlobalRegistry, SerializationContext } = await import(
@@ -891,20 +894,20 @@ export class TemplateService implements ITemplateService {
 
                 this._serializationContext = new SerializationContext();
 
-                const CardElementType =  this._adaptiveCardsNS.CardElement;
-                const ActionElementType =  this._adaptiveCardsNS.Action;
+                const CardElementType = this._adaptiveCardsNS.CardElement;
+                const ActionElementType = this._adaptiveCardsNS.Action;
 
                 let elementRegistry = new CardObjectRegistry<InstanceType<typeof CardElementType>>();
                 let actionRegistry = new CardObjectRegistry<InstanceType<typeof ActionElementType>>();
-            
+
                 GlobalRegistry.populateWithDefaultElements(elementRegistry);
                 GlobalRegistry.populateWithDefaultActions(actionRegistry);
-            
+
                 useLocalFluentUI(elementRegistry, actionRegistry);
                 this._serializationContext.setElementRegistry(elementRegistry);
                 this._serializationContext.setActionRegistry(actionRegistry);
             }
-  
+
             this._adaptiveCardsNS.AdaptiveCard.onProcessMarkdown = (text: string, result) => {
 
                 // Special case with HitHighlightedSummary field
