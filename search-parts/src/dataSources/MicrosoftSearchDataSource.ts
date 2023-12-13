@@ -540,9 +540,9 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         if (propertyPath.localeCompare('dataSourceProperties.useBetaEndpoint') === 0) {
 
             if (newValue) {
-                this._microsoftSearchUrl = "https://graph.microsoft.com/beta/search/query";
+                this._microsoftSearchUrl = `${this.context?.pageContext?.legacyPageContext?.msGraphEndpointUrl}/beta/search/query`;
             } else {
-                this._microsoftSearchUrl = "https://graph.microsoft.com/v1.0/search/query";
+                this._microsoftSearchUrl = `${this.context?.pageContext?.legacyPageContext?.msGraphEndpointUrl}/v1.0/search/query`;
             }
         }
 
@@ -662,9 +662,9 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         this.properties.collapseProperties = this.properties.collapseProperties !== undefined ? this.properties.collapseProperties : [];
 
         if (this.properties.useBetaEndpoint) {
-            this._microsoftSearchUrl = "https://graph.microsoft.com/beta/search/query";
+            this._microsoftSearchUrl = `${this.context?.pageContext?.legacyPageContext?.msGraphEndpointUrl}/beta/search/query`;
         } else {
-            this._microsoftSearchUrl = "https://graph.microsoft.com/v1.0/search/query";
+            this._microsoftSearchUrl = `${this.context?.pageContext?.legacyPageContext?.msGraphEndpointUrl}/v1.0/search/query`;
         }
     }
 
