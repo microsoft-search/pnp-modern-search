@@ -12,7 +12,7 @@
         <link rel="canonical" href="http://127.0.0.1:8000/usage/search-results/layouts/">
       
       <link rel="icon" href="../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.2, mkdocs-material-7.2.4">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-7.2.4">
     
     
       
@@ -1299,6 +1299,11 @@
 <tr>
 <td><strong>Manage people fields</strong></td>
 <td>Allows you to define you own values for people placeholder fields. <br><p align="center"><a href="../../../assets/webparts/search-results/layouts/manage_people_fields.png"><img alt="&quot;Manage people fields&quot;" src="../../../assets/webparts/search-results/layouts/manage_people_fields.png" /></a></p>As a field value, you can choose either a field property value (from the list or as free text) and without any transformation or use an Handlebars expression by clicking on the checkbox next to it. In this case, all helpers from the main template are available. Also, if the field doesn't have the <strong>'Allow HTML'</strong> indication flag enabled, it means the value will be always interpreted as text, regardless if you set an HTML value. Otherwise, your value will be interpreted as HTML for those fields (ex: '<em>Primary text</em>' placeholder field). For HTML fields you can use the special variable <code>@root.theme</code> to use theme colors (ex: <code>@root.theme.palette.themePrimary</code>) or <code>@root.slots.&lt;SlotName&gt;</code> to access slot value. If you don't set a value for those fields (i.e an empty value), they won't appear in the UI.</br></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Show persona card on hover (LPC)</strong></td>
+<td>If enabled, show a person card on hover for the curren item using the native SharePoint implementation.</td>
 <td></td>
 </tr>
 <tr>

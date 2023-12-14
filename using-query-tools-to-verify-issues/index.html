@@ -12,7 +12,7 @@
         <link rel="canonical" href="http://127.0.0.1:8000/using-query-tools-to-verify-issues/">
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.2, mkdocs-material-7.2.4">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-7.2.4">
     
     
       
@@ -915,8 +915,8 @@
 <ul>
 <li>Typos or badly formed KQL queries</li>
 <li>Values not showing up on Managed Properties as expected</li>
-<li>Errors in mapping of Crawled Properties to Managed Properties ( especially for Refiners)</li>
-<li>Custom User Profile Properties are mapped incorrectly. </li>
+<li>Errors in mapping of Crawled Properties to Managed Properties (especially for Refiners)</li>
+<li>Custom User Profile Properties are mapped incorrectly</li>
 </ul>
 <p>We would therefore ask you to verify that the API delivers the results you are expecting before we starting looking for bugs in PnP Modern Search.</p>
 <h2>Suggested tools</h2>
@@ -945,14 +945,15 @@
 <p>You set up a query on a few specific libraries and <b>knows</b> they contains 30 documents, but only 20 shows up, weird.</p>
 <p>There are a number of reasons:<br>
 - One of the libraries is set as not to be searchable<br>
-- Some of the documents have broken permissions and the user account you are using in the Search Tool doesn't have access.<br>
-- and the dreaded: the documents haven't been indexed yet.</p>
-<p>The two first reasons are fairly easy to check and correct, but that last one is a bit tricky. 
-The first step should be to prove or disprove the suspicion that the documents hasn't been indexed yet.<br><br> One option is to use PnP PowerShell to query the CrawlLog, see <a href = "https://pnp.github.io/powershell/cmdlets/Get-PnPSearchCrawlLog.html">Get-PnPSearchCrawlLog</a>. Setting the -Filter to the URL of one of the missing douments should resolve that question.<br><br>
-If the problem IS that the doucments haven't been indexed yet, you can request a reindexing, either on a List/Library level or on a Site level.<br> A forced Full Index as known from On-Premises is not available in SharePoint Online.</p>
+- Some of the documents have broken permissions and the user account you are using in the Search Tool doesn't have access<br>
+- Only checked in and published files will be indexed<br>
+- and the dreaded: the documents haven't been indexed yet</p>
+<p>The three first reasons are fairly easy to check and correct, but that last one is a bit tricky. 
+The first step should be to prove or disprove the suspicion that the documents hasn't been indexed yet.<br><br> One option is to use PnP PowerShell to query the CrawlLog, see <a href = "https://pnp.github.io/powershell/cmdlets/Get-PnPSearchCrawlLog.html">Get-PnPSearchCrawlLog</a>. Setting the -Filter to the URL of one of the missing documents should resolve that question.<br><br>
+If the problem IS that the documents haven't been indexed yet, you can request a reindexing, either on a List/Library level or on a Site level.<br> A forced Full Index as known from On-Premises is not available in SharePoint Online.</p>
 <p><img alt="Reindex Library " src="../assets/using-query-tools/ReindexLibrary.png" /></p>
 <h2 id="people-search">People Search<a class="headerlink" href="#people-search" title="Permanent link">&para;</a></h2>
-<p>Your company has added a new property to the User Properties in SharePoint and you are responsible for implementing it in search. You have found the creawled property and mapped it to a RefinableString in order to use it as a filter. You have waited the required 24 hours but the RefinableString is still not showing up. What is wrong?</p>
+<p>Your company has added a new property to the User Properties in SharePoint and you are responsible for implementing it in search. You have found the crawled property and mapped it to a RefinableString in order to use it as a filter. You have waited the required 24 hours but the RefinableString is still not showing up. What is wrong?</p>
 <p><img alt="People Search " src="../assets/using-query-tools/PeopleSearch.png" /></p>
 <p>Most likely you have either forgotten or didn't knew that you MUST change the full-text-index from <i>Default</i> to <i>PeopleIdx</i> in your custom Managed Property and/or RefinableString otherwise it will show up in the wrong index, and be of no use.</p>
 <p>Follow this <a href = "https://searchexplained.com/how-to-make-sure-your-user-profiles-show-up-in-search/">guide</a>  (SearchExplained) and you shouldn't encounter this problem anymore.</p>

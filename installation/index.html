@@ -12,7 +12,7 @@
         <link rel="canonical" href="http://127.0.0.1:8000/installation/">
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.2, mkdocs-material-7.2.4">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-7.2.4">
     
     
       
@@ -890,17 +890,17 @@
                 
                 <h1 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h1>
 <ol>
-<li>Download the latest SharePoint Framework packages <strong>pnp-modern-search-parts.sppkg</strong> from the <a href="https://github.com/microsoft-search/pnp-modern-search/releases">GitHub repository</a>.</li>
+<li>Download the latest SharePoint Framework packages <strong>pnp-modern-search-parts-v4.sppkg</strong> from the <a href="https://github.com/microsoft-search/pnp-modern-search/releases">GitHub repository</a>.</li>
 <li>
-<p>Add <strong>pnp-modern-search-parts.sppkg</strong> to the global tenant app catalog or a site collection app catalog. If you don't have an app catalog, follow this <a href="https://docs.microsoft.com/en-us/sharepoint/use-app-catalog">procedure</a> to create one. </p>
-<p><img alt="&quot;App Catalog &quot;" class="center" src="../assets/app_catalog.png" /></p>
+<p>Add <strong>pnp-modern-search-parts-v4.sppkg</strong> to the global tenant app catalog or a site collection app catalog. If you don't have an app catalog, follow this <a href="https://docs.microsoft.com/en-us/sharepoint/use-app-catalog">procedure</a> to create one. </p>
+<p><img alt="&quot;App Catalog &quot;" class="center" src="../assets/installation-enable-app.png" /></p>
 <blockquote>
 <ul>
 <li>
 <p>The packages are deployed in the general Office 365 CDN meaning <strong>we don't host any code</strong>.</p>
 </li>
 <li>
-<p>For the <strong>pnp-modern-search-parts.sppkg</strong> package, you can choose to make the solution available in <a href="https://docs.microsoft.com/en-us/sharepoint/dev/spfx/tenant-scoped-deployment">all sites</a> or force to install an app to the site every time.</p>
+<p>For the <strong>pnp-modern-search-parts-v4.sppkg</strong> package, you can choose to make the solution available in <a href="https://docs.microsoft.com/en-us/sharepoint/dev/spfx/tenant-scoped-deployment">all sites</a> or force to install an app to the site every time.</p>
 </li>
 <li>
 <p>The solution asks the following API permissions by default to enhance the experience. These permissions are <strong>not mandatory</strong>. If you don't accept them, you will simply have less available features.</p>
@@ -918,6 +918,10 @@
 </tr>
 </thead>
 <tbody>
+<tr>
+<td><em>Presence.Read.All</em></td>
+<td>Read presence information of all users in your organization.</td>
+</tr>
 <tr>
 <td><em>User.Read</em></td>
 <td>The Microsoft Graph Toolkit <a href="https://docs.microsoft.com/en-us/graph/toolkit/components/person-card#microsoft-graph-permissions">persona card</a> in the people layout.</td>
@@ -968,7 +972,7 @@
 </tr>
 <tr>
 <td><em>ChannelMessage.Read.All</em></td>
-<td>Same as above.</td>
+<td>Read user channel messages.</td>
 </tr>
 </tbody>
 </table>
@@ -984,6 +988,12 @@
 <p>You'll need to approve each request one at a time. If you have questions about what the requested scopes mean and what permissions they provide, check the article <a href="https://docs.microsoft.com/en-us/sharepoint/api-access">Manage access to Azure AD-secured APIs</a>.</p>
 <p>After you approve each request your view will be as shown in the screenshot below.</p>
 <p><img alt="&quot;App Catalog&quot;" class="center" src="../assets/api-access-approved.jpg" /></p>
+<h2 id="note-about-guest-users">Note about Guest users<a class="headerlink" href="#note-about-guest-users" title="Permanent link">&para;</a></h2>
+<p>By default guest users do not have access to the App Catalog. So if you are not using the CDN option, any SPFx web part from the App Catalog will show an error message for guest users:
+<img alt="No Access Error" class="center" src="../assets/NoAccessError.png" /></p>
+<p>There are basicly two options to solve this issue,
+give guest users access to the App Catalog (read) or use the CDN option.</p>
+<p>see <a href="https://laurakokkarinen.com/sharepoint-online-guest-user-troubles-and-how-to-get-past-them/">this</a> for more information.</p>
                 
               
               
