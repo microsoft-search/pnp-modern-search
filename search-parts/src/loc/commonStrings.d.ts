@@ -285,7 +285,9 @@ declare interface ICommonStrings {
         SupportHTMLColumnLabel: string;
         ResetFieldsBtnLabel: string;
         ShowPersonaCardOnHover: string;
+        ShowPersonaCardOnHoverNative: string;
         ShowPersonaCardOnHoverCalloutMsg: string;
+        ShowPersonaCardOnHoverCalloutMsgNative: string;
         Fields: {
           ImageUrl: string;
           PrimaryText: string;
