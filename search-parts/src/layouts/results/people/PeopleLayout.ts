@@ -23,6 +23,11 @@ export interface IPeopleLayoutProperties {
      * Flag indicating if the persona card should be displayed on hover
      */
     showPersonaCard: boolean;
+
+    /**
+     * Flag indicating if the persona card should be displayed on hover using native LPC
+     */
+    showPersonaCardNative: boolean;
 }
 
 export class PeopleLayout extends BaseLayout<IPeopleLayoutProperties> {
@@ -147,6 +152,15 @@ export class PeopleLayout extends BaseLayout<IPeopleLayoutProperties> {
                     this.onInit();
                 }
             }),
+            this._propertyFieldToogleWithCallout('layoutProperties.showPersonaCardNative', {
+                label: strings.Layouts.People.ShowPersonaCardOnHoverNative,
+                calloutTrigger: this._propertyFieldCalloutTriggers.Hover,
+                key: 'layoutProperties.showPersonaCardNative',
+                calloutContent: React.createElement('p', { style: { maxWidth: 250, wordBreak: 'break-word' } }, strings.Layouts.People.ShowPersonaCardOnHoverCalloutMsgNative),
+                onText: strings.General.OnTextLabel,
+                offText: strings.General.OffTextLabel,
+                checked: this.properties.showPersonaCardNative
+            }),
             this._propertyFieldToogleWithCallout('layoutProperties.showPersonaCard', {
                 label: strings.Layouts.People.ShowPersonaCardOnHover,
                 calloutTrigger: this._propertyFieldCalloutTriggers.Hover,
@@ -154,7 +168,7 @@ export class PeopleLayout extends BaseLayout<IPeopleLayoutProperties> {
                 calloutContent: React.createElement('p', { style: { maxWidth: 250, wordBreak: 'break-word' } }, strings.Layouts.People.ShowPersonaCardOnHoverCalloutMsg),
                 onText: strings.General.OnTextLabel,
                 offText: strings.General.OffTextLabel,
-                checked: this.properties.showPersonaCard
+                checked: this.properties.showPersonaCard,
             }),
             PropertyPaneChoiceGroup('layoutProperties.personaSize', {
                 label: strings.Layouts.People.PersonaSizeOptionsLabel,
