@@ -6,8 +6,8 @@ We DO value your questions and loves to see more and more people starting using 
 
 * Typos or badly formed KQL queries
 * Values not showing up on Managed Properties as expected
-* Errors in mapping of Crawled Properties to Managed Properties ( especially for Refiners)
-* Custom User Profile Properties are mapped incorrectly. 
+* Errors in mapping of Crawled Properties to Managed Properties (especially for Refiners)
+* Custom User Profile Properties are mapped incorrectly
 
 
 We would therefore ask you to verify that the API delivers the results you are expecting before we starting looking for bugs in PnP Modern Search.
@@ -65,18 +65,19 @@ You set up a query on a few specific libraries and <b>knows</b> they contains 30
 
 There are a number of reasons:<br>
 - One of the libraries is set as not to be searchable<br>
-- Some of the documents have broken permissions and the user account you are using in the Search Tool doesn't have access.<br>
-- and the dreaded: the documents haven't been indexed yet.
+- Some of the documents have broken permissions and the user account you are using in the Search Tool doesn't have access<br>
+- Only checked in and published files will be indexed<br>
+- and the dreaded: the documents haven't been indexed yet
 
-The two first reasons are fairly easy to check and correct, but that last one is a bit tricky. 
-The first step should be to prove or disprove the suspicion that the documents hasn't been indexed yet.<br><br> One option is to use PnP PowerShell to query the CrawlLog, see <a href = "https://pnp.github.io/powershell/cmdlets/Get-PnPSearchCrawlLog.html">Get-PnPSearchCrawlLog</a>. Setting the -Filter to the URL of one of the missing douments should resolve that question.<br><br>
-If the problem IS that the doucments haven't been indexed yet, you can request a reindexing, either on a List/Library level or on a Site level.<br> A forced Full Index as known from On-Premises is not available in SharePoint Online.
+The three first reasons are fairly easy to check and correct, but that last one is a bit tricky. 
+The first step should be to prove or disprove the suspicion that the documents hasn't been indexed yet.<br><br> One option is to use PnP PowerShell to query the CrawlLog, see <a href = "https://pnp.github.io/powershell/cmdlets/Get-PnPSearchCrawlLog.html">Get-PnPSearchCrawlLog</a>. Setting the -Filter to the URL of one of the missing documents should resolve that question.<br><br>
+If the problem IS that the documents haven't been indexed yet, you can request a reindexing, either on a List/Library level or on a Site level.<br> A forced Full Index as known from On-Premises is not available in SharePoint Online.
 
 ![Reindex Library ](assets/using-query-tools/ReindexLibrary.png)
 
 
 ##People Search
-Your company has added a new property to the User Properties in SharePoint and you are responsible for implementing it in search. You have found the creawled property and mapped it to a RefinableString in order to use it as a filter. You have waited the required 24 hours but the RefinableString is still not showing up. What is wrong?
+Your company has added a new property to the User Properties in SharePoint and you are responsible for implementing it in search. You have found the crawled property and mapped it to a RefinableString in order to use it as a filter. You have waited the required 24 hours but the RefinableString is still not showing up. What is wrong?
 
 ![People Search ](assets/using-query-tools/PeopleSearch.png)
 

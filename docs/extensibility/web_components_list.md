@@ -189,7 +189,8 @@ Here are the list of all **reusable** web components you can use to customize yo
     data-secondary-text="Unknown"
     data-tertiary-text=""
     data-optional-text="514 928 0000"
-    data-persona-size="" >
+    data-persona-size=""
+    data-native-lpc=true >
 </pnp-persona>
 ```
 
@@ -201,6 +202,7 @@ Here are the list of all **reusable** web components you can use to customize yo
 |**data-tertiary-text**|The tertiary text to display (ex: work phone).
 |**data-optional-text**|The optional text to display.
 |**data-persona-size**|The size of the persona **item** to display (no only the picture). Valid values are <ul><li>tiny = 0</li><li>extraExtraSmall = 1</li><li>extraSmall = 2</li><li>small = 3</li><li>regular = 4</li><li>large = 5</li><li>extraLarge = 6</li></ul>
+|**data-native-lpc**|Enable SharePoint native Live Persona Card on hover.
 
 ## `<pnp-img>` 
 - **Description**: Display an image with support for fallback behavior.

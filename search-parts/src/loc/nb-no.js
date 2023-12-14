@@ -285,6 +285,7 @@ define([], function () {
           SupportHTMLColumnLabel: "Tillat HTML",
           ResetFieldsBtnLabel: "Bruk standardverdier",
           ShowPersonaCardOnHover: "Vis personkort når du fører musen over",
+          ShowPersonaCardOnHoverNative: "Vis personkort når du fører musen over (LPC)",
           ShowPersonaCardOnHoverCalloutMsg: "Denne funksjonen bruker Microsoft Graph for å vise informasjon om brukere og må ha følgende API-tilganger i din klient for at det skal virke: ['User.Read','People.Read','Contacts.Read','User.Read.All'].",
           Fields: {
             ImageUrl: "Bilde-URL",

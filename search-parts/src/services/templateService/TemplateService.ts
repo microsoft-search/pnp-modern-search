@@ -11,7 +11,7 @@ import { IComponentDefinition, IExtensibilityLibrary, IResultTemplates, LayoutRe
 import groupBy from 'handlebars-group-by';
 import { IComponentFieldsConfiguration } from "../../models/common/IComponentFieldsConfiguration";
 import { initializeFileTypeIcons } from '@fluentui/react-file-type-icons';
-import { GlobalSettings } from 'office-ui-fabric-react';
+import { GlobalSettings } from '@fluentui/react';
 import { IDataResultType, ResultTypeOperator } from "../../models/common/IDataResultType";
 import { ISearchResultsTemplateContext, ISearchFiltersTemplateContext } from "../../models/common/ITemplateContext";
 import { UrlHelper } from "../../helpers/UrlHelper";
@@ -542,19 +542,22 @@ export class TemplateService implements ITemplateService {
             // Use a token or a string value
             let param2 = handlebarsToken ? handlebarsToken[1] : `"${currentResultType.value}"`;
 
-            // Operator: "Starts With"
-            if (currentResultType.operator === ResultTypeOperator.StartsWith) {
-                param1 = `"${currentResultType.value}"`;
-                param2 = `${currentResultType.property}`;
-            }
-
             // Operator: "Not null"
             if (currentResultType.operator === ResultTypeOperator.NotNull) {
                 param2 = null;
             }
 
-            const baseCondition = `{{#${operator} (slot item '${param1}') ${param2 || ""}}}
-                                        ${templateContent}`;
+            let baseCondition = `{{#${operator} (slot item '${param1}') ${param2 || ""}}}
+                ${templateContent}`;
+
+            // Operator: "Starts With"
+            if (currentResultType.operator === ResultTypeOperator.StartsWith) {
+                param1 = `"${currentResultType.value}"`;
+                param2 = `${currentResultType.property}`;
+
+                baseCondition = `{{#${operator} ${param1 || ""} (slot item '${param2}') }}
+                    ${templateContent}`;
+            }
 
             if (currentIdx === resultTypes.length - 1) {
                 // Renders inner content set in the 'resultTypes' partial
@@ -576,6 +579,18 @@ export class TemplateService implements ITemplateService {
      * Registers custom Handlebars helpers in the global context
      */
     private registerCustomHelpers() {
+
+        // Truncate items from context, as that is not usually used and bloats the HTML
+        this.Handlebars.registerHelper("truncateContext", (context: any) => {
+            //Extract data property
+            const { data, ...newContext } = context;
+            //Extract items property
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const { items, ...newData } = data;
+            //Set data property without items
+            newContext.data = newData;
+            return newContext;
+        })
 
         // Return the URL of the search result item
         // Usage: <a href="{{getGraphPreviewUrl url}}">
@@ -865,7 +880,7 @@ export class TemplateService implements ITemplateService {
                 'adaptivecards'
             );
 
-             // Initialize the serialization context for the Adaptive Cards, if needed
+            // Initialize the serialization context for the Adaptive Cards, if needed
             if (!this._serializationContext) {
 
                 const { CardObjectRegistry, GlobalRegistry, SerializationContext } = await import(
@@ -880,20 +895,20 @@ export class TemplateService implements ITemplateService {
 
                 this._serializationContext = new SerializationContext();
 
-                const CardElementType =  this._adaptiveCardsNS.CardElement;
-                const ActionElementType =  this._adaptiveCardsNS.Action;
+                const CardElementType = this._adaptiveCardsNS.CardElement;
+                const ActionElementType = this._adaptiveCardsNS.Action;
 
                 let elementRegistry = new CardObjectRegistry<InstanceType<typeof CardElementType>>();
                 let actionRegistry = new CardObjectRegistry<InstanceType<typeof ActionElementType>>();
-            
+
                 GlobalRegistry.populateWithDefaultElements(elementRegistry);
                 GlobalRegistry.populateWithDefaultActions(actionRegistry);
-            
+
                 useLocalFluentUI(elementRegistry, actionRegistry);
                 this._serializationContext.setElementRegistry(elementRegistry);
                 this._serializationContext.setActionRegistry(actionRegistry);
             }
-  
+
             this._adaptiveCardsNS.AdaptiveCard.onProcessMarkdown = (text: string, result) => {
 
                 // Special case with HitHighlightedSummary field

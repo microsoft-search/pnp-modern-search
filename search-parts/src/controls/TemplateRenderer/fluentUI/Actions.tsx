@@ -1,6 +1,6 @@
 import { ActionButtonState, ActionIconPlacement, ExecuteAction, OpenUrlAction, ShowCardAction, SubmitAction, ToggleVisibilityAction } from "adaptivecards";
-import { BaseButton, Button, CompoundButton, DefaultButton, PrimaryButton } from "office-ui-fabric-react/lib/Button";
-import { createTheme, ITheme } from "office-ui-fabric-react/lib/Styling";
+import { BaseButton, Button, CompoundButton, DefaultButton, PrimaryButton } from '@fluentui/react/lib/Button';
+import { createTheme, ITheme } from '@fluentui/react/lib/Styling';
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { getDefaultFluentUITheme, hostCapabilitiesFluentUIThemeKey } from "./FluentUI";

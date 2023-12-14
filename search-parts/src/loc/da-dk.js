@@ -286,6 +286,7 @@ define([], function() {
                 SupportHTMLColumnLabel: "Tillad HTML",
                 ResetFieldsBtnLabel: "Nulstil felter til standardværdier",
                 ShowPersonaCardOnHover: "Vis persona-card ved at hover",
+                ShowPersonaCardOnHoverNative: "Vis persona-card ved at hover (LPC)",
                 ShowPersonaCardOnHoverCalloutMsg: "Denne feature bruger Microsoft Graph til at vise information om brugeren og skal bruge de følgende API-tilladelser i din tenant, for at det virker: ['User.Read','People.Read','Contacts.Read','User.Read.All'].",
                 Fields: {
                     ImageUrl: "Billede-URL",
