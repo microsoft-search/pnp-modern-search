@@ -150,7 +150,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
 
         let renderTitle: JSX.Element = null;
 
-        // WP title
+        // WebPart title
         renderTitle = <WebPartTitle
                         displayMode={this.props.webPartTitleProps.displayMode}
                         title={this.props.webPartTitleProps.title}
