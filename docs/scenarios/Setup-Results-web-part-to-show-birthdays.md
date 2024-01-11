@@ -1,19 +1,15 @@
 
-A common requirement for intranets is to show birthdays of employees. 
-And as the SharePoint User Profile Application has a property for birthdays, it is a natural choice to use search to show birthdays of employees.
-
-(as of writing this (2023), the Graph API does not have a property for birthdays, so we can't use the Graph API to get the information)
+A common requirement for intranets is to show birthdays of employees and as the SharePoint User Profile Application has a property for birthdays, it is a natural choice to use search to show birthdays of employees. In addition, at the time of writing (2023), the Graph API does not have a property for birthdays, so we can't use the Graph API to get the information.
 
 
-
-The tricky part is that in the User profile application the birthday value is store is a rather usual datatype "date no year"
+The tricky part is that in the User profile application the birthday value is store is a rather unusual datatype: "date no year"
 
 ![Birthday in the User Provisioning Service](../assets/../scenarios/assets/Setup-Results-web-part-to-show-birthdays/BirthdayUPA.png)
 
 
 In my tenant the SPS-Birthday property was mapped to RefinableDate00 and the actual value in the property is 2000-[the date]:
 
-![Managed Property value](../assets/Setup-Results-web-part-to-show-birthdays/refinabledate00.png)
+![Managed Property value](../assets/../scenarios/assets/Setup-Results-web-part-to-show-birthdays/refinabledate00.png)
 
 (use the magnificent [SP Editor tool](https://chrome.google.com/webstore/detail/sp-editor/ecblfcmjnbbgaojblcpmjoamegpbodhd) or [SP Search Query Tool](https://github.com/pnp/PnP-Tools/blob/master/Solutions/SharePoint.Search.QueryTool/README.md) to inspect the managed properties)
 
