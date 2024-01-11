@@ -101,6 +101,7 @@ export class FilterCheckBoxComponent extends React.Component<IFilterCheckBoxProp
             />;
         } else {
             renderInput = <ChoiceGroup
+                defaultSelectedKey={this.props.selected ? filterValue.value : undefined}
                 styles={{
                     root: {
                         position: 'relative',
@@ -122,7 +123,6 @@ export class FilterCheckBoxComponent extends React.Component<IFilterCheckBoxProp
                         key: filterValue.value,
                         text: filterValue.name,
                         disabled: this.props.disabled,
-                        defaultChecked: this.props.selected,
                         styles: {
                             field: {
                                 color: this.props.count && this.props.count === 0 ? this.props.themeVariant.semanticColors.disabledText : textColor
