@@ -10,14 +10,14 @@
     flex-wrap: nowrap;
     user-select: none;
     background-color: "[theme: themePrimary, default: #0078d7]";
-    color: #fff;
+    color: "[theme: white, default: #ffffff]";
     padding-left: 5px;
     border-radius: 12px;
     margin-bottom: 6px;
     max-width: 100%;
 
     .tagItemText {
-        color: #fff;
+        color: "[theme: white, default: #ffffff]";
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
