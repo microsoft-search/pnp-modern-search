@@ -22,7 +22,7 @@ import { ImageWebComponent} from './ImageComponent';
 import { ItemSelectionWebComponent } from './ItemSelectionComponent';
 import { FilterSearchBoxWebComponent } from './filters/FilterSearchBoxComponent';
 import { FilterValueOperatorWebComponent } from './filters/FilterValueOperatorComponent';
-import { FilePathBreadcrumbWebComponent } from './FilePathBreadcrumbComponent';
+import { SpoPathBreadcrumbWebComponent } from './SpoPathBreadcrumbComponent';
 import { SortWebComponent } from './SortComponent';
 
 export class AvailableComponents {
@@ -125,7 +125,7 @@ export class AvailableComponents {
         },
         {
             componentName: "pnp-breadcrumb",
-            componentClass: FilePathBreadcrumbWebComponent
+            componentClass: SpoPathBreadcrumbWebComponent
         },
         {
             componentName: 'pnp-sortfield',

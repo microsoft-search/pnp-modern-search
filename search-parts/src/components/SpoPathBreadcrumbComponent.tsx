@@ -7,27 +7,27 @@ import { IReadonlyTheme } from '@microsoft/sp-component-base';
 
 export interface IBreadcrumbProps {
     /**
-     * Path from which breadcrumbs are formed from. This should ideally be the OriginalPath property of a SharePoint document, list item, folder, etc.
+     * Path from which breadcrumb items are formed from. Ideally use the OriginalPath property of a SharePoint document, list item, folder, etc.
      */
     path?: string;
 
     /**
-     * Determines whether the site name should be included in the breadcrumbs.
+     * Determines whether the site name should be included in the breadcrumb items.
      */
     includeSiteName?: boolean;
 
     /**
-     * Determines whether the item name should be included in the breadcrumbs.
+     * Determines whether the entity name should be included in the breadcrumb items.
      */
-    includeItemName?: boolean;
+    includeEntityName?: boolean;
 
     /**
-     * Determines whether the breadcrumbs should be clickable links to the path they represent.
+     * Determines whether the breadcrumb items should be clickable links to the path they represent.
      */
     breadcrumbItemsAsLinks?: boolean;
 
     /**
-     * The maximum number of breadcrumbs to display before coalescing. If not specified, all breadcrumbs will be rendered.
+     * The maximum number of breadcrumb items to display before coalescing. If not specified, all breadcrumbs will be rendered.
      */
     maxDisplayedItems?: number;
 
@@ -37,7 +37,7 @@ export interface IBreadcrumbProps {
     overflowIndex?: number;
 
     /**
-     * Font size for breadcrumbs.
+     * Font size of breadcrumb items.
      */
     fontSize?: number;
 
@@ -51,7 +51,7 @@ export interface IBreadcrumbState { }
 
 const SITE_REGEX = /https:\/\/\w+\.sharepoint\.com\/sites\//;
 
-export class FilePathBreadcrumb extends React.Component<IBreadcrumbProps, IBreadcrumbState> {
+export class SpoPathBreadcrumb extends React.Component<IBreadcrumbProps, IBreadcrumbState> {
 
     static defaultProps = {
         includeSiteName: true,
@@ -63,7 +63,7 @@ export class FilePathBreadcrumb extends React.Component<IBreadcrumbProps, IBread
     };
     
     public render() {
-        const { includeSiteName, includeItemName, breadcrumbItemsAsLinks, maxDisplayedItems, overflowIndex, fontSize, path, themeVariant } = this.props;
+        const { includeSiteName, includeEntityName, breadcrumbItemsAsLinks, maxDisplayedItems, overflowIndex, fontSize, path, themeVariant } = this.props;
 
         const breadcrumbStyles = {
             root: {
@@ -88,7 +88,7 @@ export class FilePathBreadcrumb extends React.Component<IBreadcrumbProps, IBread
             <>
             {path !== undefined && this.validateFilePath(path) &&
                 <Breadcrumb
-                    items={this.getBreadcrumbItems(path, includeSiteName, includeItemName, breadcrumbItemsAsLinks)}
+                    items={this.getBreadcrumbItems(path, includeSiteName, includeEntityName, breadcrumbItemsAsLinks)}
                     maxDisplayedItems={maxDisplayedItems}
                     overflowIndex={overflowIndex}
                     styles={breadcrumbStyles}
@@ -101,7 +101,7 @@ export class FilePathBreadcrumb extends React.Component<IBreadcrumbProps, IBread
         )
     }
 
-    // Validate that item path is SharePoint item path and not for example personal OneDrive item path.
+    // Validate that item path is SharePoint entity path and not for example personal OneDrive entity path.
     // For example:
     // SharePoint: https://m365xXYZ.sharepoint.com/sites/dev/SomeFolder/SomeFile.docx
     // OneDrive: https://m365xXYZ-my.sharepoint.com/personal/admin_m365xXYZ_onmicrosoft_com/Documents
@@ -109,12 +109,12 @@ export class FilePathBreadcrumb extends React.Component<IBreadcrumbProps, IBread
         return SITE_REGEX.test(path);
     }
 
-    private getBreadcrumbItems = (path: string, includeSiteName: boolean, includeItemName: boolean, breadcrumbItemsAsLinks: boolean): IBreadcrumbItem[] => {
+    private getBreadcrumbItems = (path: string, includeSiteName: boolean, includeEntityName: boolean, breadcrumbItemsAsLinks: boolean): IBreadcrumbItem[] => {
         const frags = path.split('/');
         const index = frags.indexOf('sites');
         const basePath = frags.slice(0, index + 1).join('/');
         
-        const breadcrumbNodes = this.getBreadcrumbNodes(frags, index, includeSiteName, includeItemName);
+        const breadcrumbNodes = this.getBreadcrumbNodes(frags, index, includeSiteName, includeEntityName);
         
         const breadcrumbItems = breadcrumbNodes.map((frag, index) => {
             const item: IBreadcrumbItem = {
@@ -133,14 +133,14 @@ export class FilePathBreadcrumb extends React.Component<IBreadcrumbProps, IBread
         return breadcrumbItems;
     }
 
-    private getBreadcrumbNodes = (frags: string[], index: number, includeSiteName: boolean, includeItemName: boolean) => {
+    private getBreadcrumbNodes = (frags: string[], index: number, includeSiteName: boolean, includeEntityName: boolean) => {
         const breadcrumbNodes = includeSiteName ? frags.slice(index + 1) : frags.slice(index + 2);
         
-        return includeItemName ? breadcrumbNodes : breadcrumbNodes.slice(0, breadcrumbNodes.length - 1);
+        return includeEntityName ? breadcrumbNodes : breadcrumbNodes.slice(0, breadcrumbNodes.length - 1);
     }
 }
 
-export class FilePathBreadcrumbWebComponent extends BaseWebComponent {
+export class SpoPathBreadcrumbWebComponent extends BaseWebComponent {
 
     public constructor() {
         super();
@@ -148,8 +148,8 @@ export class FilePathBreadcrumbWebComponent extends BaseWebComponent {
 
     public async connectedCallback() {
         let props = this.resolveAttributes();
-        const filePathBreadcrumb = <div style={{ display: 'flex' }}><FilePathBreadcrumb {...props} /></div>;
-        ReactDOM.render(filePathBreadcrumb, this);
+        const spoPathBreadcrumb = <div style={{ display: 'flex' }}><SpoPathBreadcrumb {...props} /></div>;
+        ReactDOM.render(spoPathBreadcrumb, this);
     }
 
     protected onDispose(): void {
