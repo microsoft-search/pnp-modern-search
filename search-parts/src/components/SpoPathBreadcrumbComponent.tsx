@@ -74,21 +74,25 @@ export class SpoPathBreadcrumb extends React.Component<IBreadcrumbProps, IBreadc
     public render() {
         const { originalPath, spWebUrl, includeSiteName, includeEntityName, breadcrumbItemsAsLinks, maxDisplayedItems, overflowIndex, fontSize, themeVariant } = this.props;
 
+        const commonStyles = {
+            fontSize: `${fontSize}px`,
+            padding: '1px',
+            selectors: {
+                // If the entity name is not included in path then reset the formatting of last breadcrumb item.
+                ...( !includeEntityName ? { '&:last-child': { fontWeight: 'unset !important', color: 'unset !important' } } : {} )
+            },
+        };
+
         const breadcrumbStyles = {
             root: {
                 margin: '0',
             },
-            item: {
-                fontSize: `${fontSize}px`,
-                padding: '1px',
-            },
-            itemLink: {
-                fontSize: `${fontSize}px`,
-                padding: '1px',
+            item: { ...commonStyles },
+            itemLink: { 
+                ...commonStyles,
                 selectors: {
-                    ':hover': {
-                        backgroundColor: 'unset'
-                    },
+                    '&:hover': { backgroundColor: 'unset' },
+                    ...commonStyles.selectors
                 },
             },
         };
