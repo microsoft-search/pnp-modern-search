@@ -65,7 +65,7 @@ export class SpoPathBreadcrumb extends React.Component<IBreadcrumbProps, IBreadc
     static defaultProps = {
         includeSiteName: true,
         includeEntityName: true,
-        breadcrumbItemsAsLinks: false,
+        breadcrumbItemsAsLinks: true,
         maxDisplayedItems: 3,
         overflowIndex: 0,
         fontSize: 12
