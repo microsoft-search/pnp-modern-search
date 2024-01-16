@@ -10,6 +10,7 @@ Here are the list of all **reusable** web components you can use to customize yo
 - [&lt;pnp-collapsible&gt;](#ltpnp-collapsiblegt)
 - [&lt;pnp-persona&gt;](#ltpnp-personagt)
 - [&lt;pnp-img&gt;](#ltpnp-imggt)
+- [&lt;pnp-breadcrumb&gt;](#ltpnp-breadcrumbgt)
 
 > All other web components you will see in builtin layout templates are considered **internal** and are not supported for custom use.
 
@@ -217,3 +218,41 @@ Here are the list of all **reusable** web components you can use to customize yo
 | --------- | ----------- |
 |**errorImage**|URL to the fallback image
 |**hideOnError**|Hide image on error
+
+## `<pnp-breadcrumb>` 
+- **Description**: Render a breadcrumb path of a SharePoint entity (file, item, folder, document library etc.). Breadcrumb path is only rendered for items in SharePoint.
+
+!["Breadcrumb component"](../assets/extensibility/web_components/breadcrumb_component.png){: .center}
+
+- **Usage**:
+
+Get started with:
+```html
+<pnp-breadcrumb 
+    data-original-path="{{OriginalPath}}"
+    data-sp-web-url="{{SPWebUrl}}" 
+/>
+```
+Use all properties:
+```html
+<pnp-breadcrumb 
+    data-original-path="{{OriginalPath}}"
+    data-sp-web-url="{{SPWebUrl}}"
+    data-include-site-name="true" 
+    data-include-entity-name="true"
+    data-breadcrumb-items-as-links="true"
+    data-max-displayed-items="5"
+    data-overflow-index="1"
+    data-font-size="12"
+/>
+```
+|Parameter|Description|
+|--|--|
+|data-original-path|Used for creating the breadcrumb path. Component is designed to receive `OriginalPath` property. Property is required for rendering the breadcrumb path. `String`|
+|data-sp-web-url|Used for creating the breadcrumb path. Component is designed to receive `SPWebUrl` property. Property is required for rendering the breadcrumb path. `String`|
+|data-include-site-name|If the site name should be included in the breadcrumb items. Optional, default value `true`. `Boolean`|
+|data-include-entity-name|If the entity name should be included in the breadcrumb items. If the value is set to `false`, not only is the entity name excluded from the breadcrumb path, but also the last item in the breadcrumb path is not highlighted in bold. Optional, default value `true`. `Boolean`|
+|data-breadcrumb-items-as-links|If the breadcrumb items should be clickable links to the path they represent. Optional, default value `true`. `Boolean`|
+|data-max-displayed-items|The maximum number of breadcrumb items to display before coalescing. If not specified, all breadcrumbs will be rendered. Optional, default value `3`. `Int`|
+|data-overflow-index| Index where overflow items will be collapsed. Optional, default value `0`. `Int`|
+|data-font-size|Font size of breadcrumb items. Optional, default value `12`. `Int`|
