@@ -11,7 +11,7 @@ export interface IBreadcrumbProps {
     originalPath?: string;
 
     /**
-     * The SharePoint site URL from which the path originates from. Used for creating links without need to struggle with all possible domain name variations.
+     * The SharePoint site URL from which the entity path originates from.
      */
     spWebUrl?: string;
 
@@ -53,13 +53,6 @@ export interface IBreadcrumbProps {
 
 export interface IBreadcrumbState { }
 
-// This regular expression is used to validate SharePoint paths. The path must include sharepoint.com/sites/ or sharepoint.com/teams/.
-// This method will not recognize OneDrive paths, as they are not compatible with this component.
-// OneDrive paths are excluded because they are not user-friendly and thus, inappropriate for breadcrumb navigation.
-// The usage of domain extensions such as *.mcas.ms, *.mcas-gov.us, or *.mcas-gov.ms does not impact this validation as they are not part of the OriginalPath property.
-// It is recommended to use the OriginalPath property with this validation.
-const SPO_REGEX = /https:\/\/.*\.sharepoint\.com\/(sites|teams)\//;
-
 export class SpoPathBreadcrumb extends React.Component<IBreadcrumbProps, IBreadcrumbState> {
 
     static defaultProps = {
@@ -84,9 +77,7 @@ export class SpoPathBreadcrumb extends React.Component<IBreadcrumbProps, IBreadc
         };
 
         const breadcrumbStyles = {
-            root: {
-                margin: '0',
-            },
+            root: { margin: '0' },
             item: { ...commonStyles },
             itemLink: { 
                 ...commonStyles,
@@ -99,7 +90,7 @@ export class SpoPathBreadcrumb extends React.Component<IBreadcrumbProps, IBreadc
 
         return (
             <>
-            {originalPath !== undefined && spWebUrl !== undefined && this.validateFilePath(originalPath) &&
+            {this.validateFilePath(originalPath, spWebUrl) &&
                 <Breadcrumb
                     items={this.getBreadcrumbItems(spWebUrl, originalPath, includeSiteName, includeEntityName, breadcrumbItemsAsLinks)}
                     maxDisplayedItems={maxDisplayedItems}
@@ -114,8 +105,8 @@ export class SpoPathBreadcrumb extends React.Component<IBreadcrumbProps, IBreadc
         )
     }
 
-    private validateFilePath = (path: string): boolean => {
-        return SPO_REGEX.test(path);
+    private validateFilePath = (originalPath: string, spWebUrl: string): boolean => {
+        return originalPath !== undefined && originalPath !== null && spWebUrl !== undefined && spWebUrl !== null;
     }
 
     private getBreadcrumbItems = (spWebUrl: string, originalPath: string, includeSiteName: boolean, includeEntityName: boolean, breadcrumbItemsAsLinks: boolean): IBreadcrumbItem[] => {
