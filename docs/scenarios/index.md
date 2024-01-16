@@ -18,21 +18,6 @@ Most search solutions require some filters (aka refiners) to allow the user to f
 
 Search verticals can be used to selectively search specific content per vertical. Using the SharePoint provider you can use result sources to limit the content returned, or you can add the required KQL in the web part itself. This sample shows how to set up multiple search verticals on different pages.
 
-## [Scenario Create your first custom template](create-your-first-custom-template.md)
-
-Create your first custom template
-
-## [Store custom templates in SharePoint](howto-store-custom-templates-in-sharepoint.md)
-
-Storing custom templates as files in a SharePoint site, is great when you want to use them across sites and want some control.
-
-## [Edit custom templates in SharePoint](edit-custom-templates-in-sharepoint.md)
-
-Storing custom templates as files in a SharePoint site, is great when you want to use them across sites and want some control.
-
-## [Edit custom templates locally in Visual Studio Code](edit-templates-using-vscode-and-onedrive.md)
-
-When you have your templates in SharePoint, it is easy to setup a way to edit locally on your computer and still get the result in SharePoint almost instantly.
 
 ## [Create a search page with verticals (within the same page)](Create-a-search-page-with-verticals-within-the-same-page.md)
 
