@@ -8,7 +8,12 @@ export interface IBreadcrumbProps {
     /**
      * Path from which breadcrumb items are formed from. Ideally use the OriginalPath property of a SharePoint document, list item, folder, etc.
      */
-    path?: string;
+    originalPath?: string;
+
+    /**
+     * The SharePoint site URL from which the path originates from. Used for creating links without need to struggle with all possible domain name variations.
+     */
+    spWebUrl?: string;
 
     /**
      * Determines whether the site name should be included in the breadcrumb items.
@@ -48,21 +53,26 @@ export interface IBreadcrumbProps {
 
 export interface IBreadcrumbState { }
 
-const SITE_REGEX = /https:\/\/\w+\.sharepoint\.com\/sites\//;
+// This regular expression is used to validate SharePoint paths. The path must include sharepoint.com/sites/ or sharepoint.com/teams/.
+// This method will not recognize OneDrive paths, as they are not compatible with this component.
+// OneDrive paths are excluded because they are not user-friendly and thus, inappropriate for breadcrumb navigation.
+// The usage of domain extensions such as *.mcas.ms, *.mcas-gov.us, or *.mcas-gov.ms does not impact this validation as they are not part of the OriginalPath property.
+// It is recommended to use the OriginalPath property with this validation.
+const SPO_REGEX = /https:\/\/.*\.sharepoint\.com\/(sites|teams)\//;
 
 export class SpoPathBreadcrumb extends React.Component<IBreadcrumbProps, IBreadcrumbState> {
 
     static defaultProps = {
         includeSiteName: true,
-        includeItemName: true,
-        breadcrumbItemsAsLinks: true,
+        includeEntityName: true,
+        breadcrumbItemsAsLinks: false,
         maxDisplayedItems: 3,
         overflowIndex: 0,
         fontSize: 12
     };
     
     public render() {
-        const { includeSiteName, includeEntityName, breadcrumbItemsAsLinks, maxDisplayedItems, overflowIndex, fontSize, path, themeVariant } = this.props;
+        const { originalPath, spWebUrl, includeSiteName, includeEntityName, breadcrumbItemsAsLinks, maxDisplayedItems, overflowIndex, fontSize, themeVariant } = this.props;
 
         const breadcrumbStyles = {
             root: {
@@ -85,9 +95,9 @@ export class SpoPathBreadcrumb extends React.Component<IBreadcrumbProps, IBreadc
 
         return (
             <>
-            {path !== undefined && this.validateFilePath(path) &&
+            {originalPath !== undefined && spWebUrl !== undefined && this.validateFilePath(originalPath) &&
                 <Breadcrumb
-                    items={this.getBreadcrumbItems(path, includeSiteName, includeEntityName, breadcrumbItemsAsLinks)}
+                    items={this.getBreadcrumbItems(spWebUrl, originalPath, includeSiteName, includeEntityName, breadcrumbItemsAsLinks)}
                     maxDisplayedItems={maxDisplayedItems}
                     overflowIndex={overflowIndex}
                     styles={breadcrumbStyles}
@@ -100,42 +110,30 @@ export class SpoPathBreadcrumb extends React.Component<IBreadcrumbProps, IBreadc
         )
     }
 
-    // Validate that item path is SharePoint entity path and not for example personal OneDrive entity path.
-    // For example:
-    // SharePoint: https://m365xXYZ.sharepoint.com/sites/dev/SomeFolder/SomeFile.docx
-    // OneDrive: https://m365xXYZ-my.sharepoint.com/personal/admin_m365xXYZ_onmicrosoft_com/Documents
     private validateFilePath = (path: string): boolean => {
-        return SITE_REGEX.test(path);
+        return SPO_REGEX.test(path);
     }
 
-    private getBreadcrumbItems = (path: string, includeSiteName: boolean, includeEntityName: boolean, breadcrumbItemsAsLinks: boolean): IBreadcrumbItem[] => {
-        const frags = path.split('/');
-        const index = frags.indexOf('sites');
-        const basePath = frags.slice(0, index + 1).join('/');
-        
-        const breadcrumbNodes = this.getBreadcrumbNodes(frags, index, includeSiteName, includeEntityName);
-        
-        const breadcrumbItems = breadcrumbNodes.map((frag, index) => {
+    private getBreadcrumbItems = (spWebUrl: string, originalPath: string, includeSiteName: boolean, includeEntityName: boolean, breadcrumbItemsAsLinks: boolean): IBreadcrumbItem[] => {
+        const frags = spWebUrl.split('/');
+        const basePath = frags.slice(0, 4).join('/');
+      
+        const parts = originalPath.replace(basePath, '').split('/').filter(part => part);
+        if (!includeSiteName) parts.shift();
+        if (!includeEntityName) parts.pop();
+      
+        const breadcrumbItems: IBreadcrumbItem[] = parts.map((part, index) => {
             const item: IBreadcrumbItem = {
-                text: frag,
-                key: `item${index + 1}`,
-                isCurrentItem: false
+                text: part,
+                key: `item${index + 1}`
             };
 
-            if (breadcrumbItemsAsLinks) {
-                item.href = basePath + '/' + breadcrumbNodes.slice(0, index + 1).join('/');
-            }
-
+            if (breadcrumbItemsAsLinks) item.href = `${basePath}/${parts.slice(0, index + 1).join('/')}`
+            
             return item;
-        });
-         
+        }); 
+      
         return breadcrumbItems;
-    }
-
-    private getBreadcrumbNodes = (frags: string[], index: number, includeSiteName: boolean, includeEntityName: boolean) => {
-        const breadcrumbNodes = includeSiteName ? frags.slice(index + 1) : frags.slice(index + 2);
-        
-        return includeEntityName ? breadcrumbNodes : breadcrumbNodes.slice(0, breadcrumbNodes.length - 1);
     }
 }
 
