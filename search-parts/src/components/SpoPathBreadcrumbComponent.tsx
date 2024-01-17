@@ -124,7 +124,7 @@ export class SpoPathBreadcrumb extends React.Component<IBreadcrumbProps, IBreadc
 
     private getBreadcrumbItems = (originalPath: string, spSiteUrl: string, spWebUrl: string, includeSiteName: boolean, includeEntityName: boolean, breadcrumbItemsAsLinks: boolean): IBreadcrumbItem[] => {
         // TODO: remove extensive commenting once tested and working
-
+    
         // Example:
         // spWebUrl: https://contoso.sharepoint.com/sites/sitename/subsite
         // originalPath: https://contoso.sharepoint.com/sites/sitename/subsite/Shared Documents/Document.docx
@@ -143,8 +143,6 @@ export class SpoPathBreadcrumb extends React.Component<IBreadcrumbProps, IBreadc
         // If includeSiteName is false, then remove the whole spWebUrl from the original path so first item of path is "Shared Documents"
         const replacePath = includeSiteName ? basePath : spWebUrl;
         const parts = originalPath.replace(replacePath, '').split('/').filter(part => part);
-
-        console.log('parts', parts);
 
         // If includeEntityName is false, then remove the last part of the path e.g. Document.doxc. Last part is the entity for which the breadcrumb is generated.
         if (!includeEntityName) parts.pop();
@@ -168,7 +166,7 @@ export class SpoPathBreadcrumb extends React.Component<IBreadcrumbProps, IBreadc
         });
 
         // If entity is located on the root site, then add the root site as first breadcrumb item if includeSiteName is true
-        isRootSite && includeSiteName && breadcrumbItems.unshift({ text: 'Home', key: 'home', href: spSiteUrl });
+        if (isRootSite && includeSiteName) breadcrumbItems.unshift({ text: 'Home', key: 'home', href: spSiteUrl });
       
         return breadcrumbItems;
     }
