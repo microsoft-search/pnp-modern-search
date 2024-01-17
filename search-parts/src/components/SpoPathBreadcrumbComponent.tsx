@@ -88,13 +88,15 @@ export class SpoPathBreadcrumb extends React.Component<IBreadcrumbProps, IBreadc
             },
         };
 
+        const items = this.validateFilePath(originalPath, spWebUrl) ? this.getBreadcrumbItems(spWebUrl, originalPath, includeSiteName, includeEntityName, breadcrumbItemsAsLinks) : undefined;
+
         return (
             <>
-            {this.validateFilePath(originalPath, spWebUrl) &&
+            {items !== undefined &&
                 <Breadcrumb
-                    items={this.getBreadcrumbItems(spWebUrl, originalPath, includeSiteName, includeEntityName, breadcrumbItemsAsLinks)}
+                    items={items}
                     maxDisplayedItems={maxDisplayedItems}
-                    overflowIndex={overflowIndex}
+                    overflowIndex={items.length <= overflowIndex ? 0 : overflowIndex}
                     styles={breadcrumbStyles}
                     ariaLabel="Breadcrumb path"
                     overflowAriaLabel="More links"
@@ -122,7 +124,7 @@ export class SpoPathBreadcrumb extends React.Component<IBreadcrumbProps, IBreadc
         // If includeSiteName is true, then only remove the base path from the original path so first items of path are "sitename", "subsite"
         // If includeSiteName is false, then remove the whole spWebUrl from the original path so first item of path is "Shared Documents"
         const parts = includeSiteName ? originalPath.replace(basePath, '').split('/').filter(part => part) : originalPath.replace(spWebUrl, '').split('/').filter(part => part);
-        
+
         // If includeEntityName is false, then remove the last part of the path e.g. Document.doxc. Last part is the entity for which the breadcrumb is generated.
         if (!includeEntityName) parts.pop();
       
