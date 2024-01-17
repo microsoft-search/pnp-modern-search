@@ -230,6 +230,7 @@ Get started with:
 ```html
 <pnp-breadcrumb 
     data-original-path="{{OriginalPath}}"
+    data-sp-site-url="{{SPSiteURL}}"
     data-sp-web-url="{{SPWebUrl}}" 
 />
 ```
@@ -237,6 +238,7 @@ Use all properties:
 ```html
 <pnp-breadcrumb 
     data-original-path="{{OriginalPath}}"
+    data-sp-site-url="{{SPSiteURL}}"
     data-sp-web-url="{{SPWebUrl}}"
     data-include-site-name="true" 
     data-include-entity-name="true"
@@ -249,6 +251,7 @@ Use all properties:
 |Parameter|Description|
 |--|--|
 |data-original-path|Used for creating the breadcrumb path. Component is designed to receive `OriginalPath` property. Property is required for rendering the breadcrumb path. `String`|
+|data-sp-site-url|Used for creating the breadcrumb path. Component is designed to receive `SPSiteURL` property. Property is required for rendering the breadcrumb path. `String`|
 |data-sp-web-url|Used for creating the breadcrumb path. Component is designed to receive `SPWebUrl` property. Property is required for rendering the breadcrumb path. `String`|
 |data-include-site-name|If the site name should be included in the breadcrumb items. Optional, default value `true`. `Boolean`|
 |data-include-entity-name|If the entity name should be included in the breadcrumb items. If the value is set to `false`, not only is the entity name excluded from the breadcrumb path, but also the last item in the breadcrumb path is not highlighted in bold. Optional, default value `true`. `Boolean`|
