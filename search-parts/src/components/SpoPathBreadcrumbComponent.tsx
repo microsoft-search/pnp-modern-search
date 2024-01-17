@@ -72,10 +72,6 @@ export class SpoPathBreadcrumb extends React.Component<IBreadcrumbProps, IBreadc
     public render() {
         const { originalPath, spSiteUrl, spWebUrl, includeSiteName, includeEntityName, breadcrumbItemsAsLinks, maxDisplayedItems, overflowIndex, fontSize, themeVariant } = this.props;
 
-        console.log('originalPath', originalPath);
-        console.log('spSiteUrl', spSiteUrl);
-        console.log('spWebUrl', spWebUrl);
-
         const commonStyles = {
             fontSize: `${fontSize}px`,
             padding: '1px',
