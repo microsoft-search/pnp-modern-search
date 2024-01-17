@@ -110,11 +110,20 @@ export class SpoPathBreadcrumb extends React.Component<IBreadcrumbProps, IBreadc
     }
 
     private getBreadcrumbItems = (spWebUrl: string, originalPath: string, includeSiteName: boolean, includeEntityName: boolean, breadcrumbItemsAsLinks: boolean): IBreadcrumbItem[] => {
+        // spWebUrl: https://contoso.sharepoint.com/sites/sitename/subsite
+        // originalPath: https://contoso.sharepoint.com/sites/sitename/subsite/Shared Documents/Document.docx
+
         const frags = spWebUrl.split('/');
+        // frags: ["https:", "", "contoso.sharepoint.com", "sites", "sitename", "subsite"]
+        
         const basePath = frags.slice(0, 4).join('/');
-      
-        const parts = originalPath.replace(basePath, '').split('/').filter(part => part);
-        if (!includeSiteName) parts.shift();
+        // basePath: https://contoso.sharepoint.com/sites
+
+        // If includeSiteName is true, then only remove the base path from the original path so first items of path are "sitename", "subsite"
+        // If includeSiteName is false, then remove the whole spWebUrl from the original path so first item of path is "Shared Documents"
+        const parts = includeSiteName ? originalPath.replace(basePath, '').split('/').filter(part => part) : originalPath.replace(spWebUrl, '').split('/').filter(part => part);
+        
+        // If includeEntityName is false, then remove the last part of the path e.g. Document.doxc. Last part is the entity for which the breadcrumb is generated.
         if (!includeEntityName) parts.pop();
       
         const breadcrumbItems: IBreadcrumbItem[] = parts.map((part, index) => {
@@ -123,7 +132,10 @@ export class SpoPathBreadcrumb extends React.Component<IBreadcrumbProps, IBreadc
                 key: `item${index + 1}`
             };
 
-            if (breadcrumbItemsAsLinks) item.href = `${basePath}/${parts.slice(0, index + 1).join('/')}`
+            // If breadcrumbItemsAsLinks is true, then add the href property to the breadcrumb item
+            // If includeSiteName is true, then the href is the base path + the current path part because parts contain the site name and possible subsite(s)
+            // If includeSiteName is false, then the href is the spWebUrl + the current path part because parts do not contain the site name and possible subsite(s)
+            if (breadcrumbItemsAsLinks) item.href = includeSiteName ? `${basePath}/${parts.slice(0, index + 1).join('/')}` : `${spWebUrl}/${parts.slice(0, index + 1).join('/')}`;
             
             return item;
         }); 
