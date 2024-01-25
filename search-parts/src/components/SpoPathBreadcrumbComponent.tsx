@@ -6,19 +6,19 @@ import { IReadonlyTheme } from '@microsoft/sp-component-base';
 
 export interface IBreadcrumbProps {
     /**
-     * Path from which breadcrumb items are formed from. Ideally use the OriginalPath property of a SharePoint document, list item, folder, etc.
+     * Path from which breadcrumb items are formed from. Ideally use the path property of a SharePoint document, list item, folder, etc.
      */
-    originalPath?: string;
+    path?: string;
 
     /**
      * The SharePoint site URL from which the entity path originates from.
      */
-    spSiteUrl?: string;
+    siteUrl?: string;
 
     /**
      * The SharePoint web URL from which the entity path originates from.
      */
-    spWebUrl?: string;
+    webUrl?: string;
 
     /**
      * Determines whether the site name should be included in the breadcrumb items.
@@ -70,7 +70,7 @@ export class SpoPathBreadcrumb extends React.Component<IBreadcrumbProps, IBreadc
     };
     
     public render() {
-        const { originalPath, spSiteUrl, spWebUrl, includeSiteName, includeEntityName, breadcrumbItemsAsLinks, maxDisplayedItems, overflowIndex, fontSize, themeVariant } = this.props;
+        const { path, siteUrl, webUrl, includeSiteName, includeEntityName, breadcrumbItemsAsLinks, maxDisplayedItems, overflowIndex, fontSize, themeVariant } = this.props;
 
         const commonStyles = {
             fontSize: `${fontSize}px`,
@@ -87,13 +87,13 @@ export class SpoPathBreadcrumb extends React.Component<IBreadcrumbProps, IBreadc
             itemLink: { 
                 ...commonStyles,
                 selectors: {
-                    '&:hover': { backgroundColor: 'unset' },
+                    '&:hover': { backgroundColor: 'unset', textDecoration: 'underline'},
                     ...commonStyles.selectors
                 },
             },
         };
 
-        const breadcrumbItems = this.validateFilePath(originalPath, spSiteUrl, spWebUrl) ? this.getBreadcrumbItems(originalPath, spSiteUrl, spWebUrl, includeSiteName, includeEntityName, breadcrumbItemsAsLinks) : undefined;
+        const breadcrumbItems = this.validateEntityPath(path, siteUrl, webUrl) ? this.getBreadcrumbItems(path, siteUrl, webUrl, includeSiteName, includeEntityName, breadcrumbItemsAsLinks) : undefined;
 
         return (
             <>
@@ -112,35 +112,33 @@ export class SpoPathBreadcrumb extends React.Component<IBreadcrumbProps, IBreadc
         )
     }
 
-    private validateFilePath = (originalPath: string, spSiteUrl: string, spWebUrl: string): boolean => {
-        return originalPath !== undefined && originalPath !== null 
-               && spSiteUrl !== undefined && spSiteUrl !== null 
-               && spWebUrl !== undefined && spWebUrl !== null;
+    private validateEntityPath = (path: string, siteUrl: string, webUrl: string): boolean => {
+        return path !== undefined && path !== null 
+               && siteUrl !== undefined && siteUrl !== null
+               && webUrl !== undefined && webUrl !== null;
     }
 
-    private getBreadcrumbItems = (originalPath: string, spSiteUrl: string, spWebUrl: string, includeSiteName: boolean, includeEntityName: boolean, breadcrumbItemsAsLinks: boolean): IBreadcrumbItem[] => {
-        // TODO: remove extensive commenting once tested and working
-    
+    private getBreadcrumbItems = (path: string, siteUrl: string, webUrl: string, includeSiteName: boolean, includeEntityName: boolean, breadcrumbItemsAsLinks: boolean): IBreadcrumbItem[] => {    
         // Example:
-        // spWebUrl: https://contoso.sharepoint.com/sites/sitename/subsite
-        // originalPath: https://contoso.sharepoint.com/sites/sitename/subsite/Shared Documents/Document.docx
+        // webUrl: https://contoso.sharepoint.com/sites/sitename/subsite
+        // path: https://contoso.sharepoint.com/sites/sitename/subsite/Shared Documents/Document.docx
 
-        const frags = spWebUrl.split('/');
+        const frags = webUrl.split('/');
         // frags: ["https:", "", "contoso.sharepoint.com", "sites", "sitename", "subsite"]
 
-        const isRootSite = spSiteUrl.split('/').length === 3;
+        const isRootSite = siteUrl.split('/').length === 3;
         // Root site only contains parts: ["https:", "", "contoso.sharepoint.com"]
 
         const basePath = isRootSite ? frags.slice(0, 3).join('/') : frags.slice(0, 4).join('/');
         // basePath: https://contoso.sharepoint.com/sites
         // Root site base path: https://contoso.sharepoint.com
 
-        // If includeSiteName is true, then only remove the base path from the original path so first items of path are "sitename", "subsite"
-        // If includeSiteName is false, then remove the whole spWebUrl from the original path so first item of path is "Shared Documents"
-        const replacePath = includeSiteName ? basePath : spWebUrl;
-        const parts = originalPath.replace(replacePath, '').split('/').filter(part => part);
+        // If includeSiteName is true, then only remove the base path from the original path. In example first items of path are "sitename", "subsite"
+        // If includeSiteName is false, then remove the whole webUrl from the original path. In example first item of path is "Shared Documents"
+        const replacePath = includeSiteName ? basePath : webUrl;
+        const parts = path.replace(replacePath, '').split('/').filter(part => part);
 
-        // If includeEntityName is false, then remove the last part of the path e.g. Document.doxc. Last part is the entity for which the breadcrumb is generated.
+        // If includeEntityName is false, then remove the last part of the path. In example remove Document.doxc. Last part is a title of the entity for which the breadcrumb path is generated
         if (!includeEntityName) parts.pop();
       
         const breadcrumbItems: IBreadcrumbItem[] = parts.map((part, index) => {
@@ -154,15 +152,15 @@ export class SpoPathBreadcrumb extends React.Component<IBreadcrumbProps, IBreadc
                 const relativePath = parts.slice(0, index + 1).join('/');
 
                 // If includeSiteName is true, then the href is the base path + the current path part because parts contain the site name and possible subsite(s)
-                // If includeSiteName is false, then the href is the spWebUrl + the current path part because parts do not contain the site name and possible subsite(s)
-                item.href = includeSiteName ? `${basePath}/${relativePath}` : `${spWebUrl}/${relativePath}`;
+                // If includeSiteName is false, then the href is the webUrl + the current path part because parts do not contain the site name and possible subsite(s)
+                item.href = includeSiteName ? `${basePath}/${relativePath}` : `${webUrl}/${relativePath}`;
             }
             
             return item;
         });
 
         // If entity is located on the root site, then add the root site as first breadcrumb item if includeSiteName is true
-        if (isRootSite && includeSiteName) breadcrumbItems.unshift({ text: 'Home', key: 'home', href: spSiteUrl });
+        if (isRootSite && includeSiteName) breadcrumbItems.unshift({ text: 'Home', key: 'home', href: siteUrl });
       
         return breadcrumbItems;
     }
