@@ -21,6 +21,16 @@ export interface IBreadcrumbProps {
     webUrl?: string;
 
     /**
+     * Title of the entity for which the breadcrumb path is generated.
+     */
+    entityTitle?: string;
+
+    /**
+     * File type of the entity for which the breadcrumb path is generated.
+     */
+    entityFileType?: string;
+
+    /**
      * Determines whether the site name should be included in the breadcrumb items.
      */
     includeSiteName?: boolean;
@@ -58,6 +68,9 @@ export interface IBreadcrumbProps {
 
 export interface IBreadcrumbState { }
 
+// For example list items and images have DispForm.aspx?ID=xxxx in their path. This regex is used to check if the path contains DispForm.aspx?ID=xxxx
+const DISP_FORM_REGEX = /DispForm\.aspx\?ID=\d+/;
+
 export class SpoPathBreadcrumb extends React.Component<IBreadcrumbProps, IBreadcrumbState> {
 
     static defaultProps = {
@@ -70,7 +83,7 @@ export class SpoPathBreadcrumb extends React.Component<IBreadcrumbProps, IBreadc
     };
     
     public render() {
-        const { path, siteUrl, webUrl, includeSiteName, includeEntityName, breadcrumbItemsAsLinks, maxDisplayedItems, overflowIndex, fontSize, themeVariant } = this.props;
+        const { path, siteUrl, webUrl, entityTitle, entityFileType, includeSiteName, includeEntityName, breadcrumbItemsAsLinks, maxDisplayedItems, overflowIndex, fontSize, themeVariant } = this.props;
 
         const commonStyles = {
             fontSize: `${fontSize}px`,
@@ -93,7 +106,7 @@ export class SpoPathBreadcrumb extends React.Component<IBreadcrumbProps, IBreadc
             },
         };
 
-        const breadcrumbItems = this.validateEntityPath(path, siteUrl, webUrl) ? this.getBreadcrumbItems(path, siteUrl, webUrl, includeSiteName, includeEntityName, breadcrumbItemsAsLinks) : undefined;
+        const breadcrumbItems = this.validateEntityProps(path, siteUrl, webUrl, entityTitle) ? this.getBreadcrumbItems(path, siteUrl, webUrl, entityTitle, entityFileType, includeSiteName, includeEntityName, breadcrumbItemsAsLinks) : undefined;
 
         return (
             <>
@@ -112,13 +125,14 @@ export class SpoPathBreadcrumb extends React.Component<IBreadcrumbProps, IBreadc
         )
     }
 
-    private validateEntityPath = (path: string, siteUrl: string, webUrl: string): boolean => {
+    private validateEntityProps = (path: string, siteUrl: string, webUrl: string, entityTitle: string): boolean => {
         return path !== undefined && path !== null 
                && siteUrl !== undefined && siteUrl !== null
-               && webUrl !== undefined && webUrl !== null;
+               && webUrl !== undefined && webUrl !== null
+               && entityTitle !== undefined && entityTitle !== null;
     }
 
-    private getBreadcrumbItems = (path: string, siteUrl: string, webUrl: string, includeSiteName: boolean, includeEntityName: boolean, breadcrumbItemsAsLinks: boolean): IBreadcrumbItem[] => {    
+    private getBreadcrumbItems = (path: string, siteUrl: string, webUrl: string, entityTitle: string, entityFileType: string, includeSiteName: boolean, includeEntityName: boolean, breadcrumbItemsAsLinks: boolean): IBreadcrumbItem[] => {    
         // Example:
         // webUrl: https://contoso.sharepoint.com/sites/sitename/subsite
         // path: https://contoso.sharepoint.com/sites/sitename/subsite/Shared Documents/Document.docx
@@ -142,8 +156,15 @@ export class SpoPathBreadcrumb extends React.Component<IBreadcrumbProps, IBreadc
         if (!includeEntityName) parts.pop();
       
         const breadcrumbItems: IBreadcrumbItem[] = parts.map((part, index) => {
+            // If the current part is the last part of the path and it contains DispForm.aspx?ID=xxxx, then set the breadcrumb item text as entity title + optionally file type
+            const itemText = index+1 === parts.length && includeEntityName && DISP_FORM_REGEX.test(part) ? 
+                                entityFileType !== undefined && entityFileType !== null ?
+                                    `${entityTitle}.${entityFileType}` 
+                                    : entityTitle
+                                : part;
+
             const item: IBreadcrumbItem = {
-                text: part,
+                text: itemText,
                 key: `item${index + 1}`
             };
 
@@ -160,7 +181,16 @@ export class SpoPathBreadcrumb extends React.Component<IBreadcrumbProps, IBreadc
         });
 
         // If entity is located on the root site, then add the root site as first breadcrumb item if includeSiteName is true
-        if (isRootSite && includeSiteName) breadcrumbItems.unshift({ text: 'Home', key: 'home', href: siteUrl });
+        if (isRootSite && includeSiteName) {
+            const item: IBreadcrumbItem = {
+                text: 'Home',
+                key: 'home'
+            };
+            
+            if (breadcrumbItemsAsLinks) item.href = siteUrl; 
+            
+            breadcrumbItems.unshift(item);
+        }
       
         return breadcrumbItems;
     }
