@@ -106,7 +106,7 @@ export class SpoPathBreadcrumb extends React.Component<IBreadcrumbProps, IBreadc
             },
         };
 
-        const breadcrumbItems = this.validateEntityProps(path, siteUrl, webUrl, entityTitle) ? this.getBreadcrumbItems(path, siteUrl, webUrl, entityTitle, entityFileType, includeSiteName, includeEntityName, breadcrumbItemsAsLinks) : undefined;
+        const breadcrumbItems = this.validateEntityProps(path, siteUrl, entityTitle) ? this.getBreadcrumbItems(path, siteUrl, webUrl, entityTitle, entityFileType, includeSiteName, includeEntityName, breadcrumbItemsAsLinks) : undefined;
 
         return (
             <>
@@ -125,10 +125,9 @@ export class SpoPathBreadcrumb extends React.Component<IBreadcrumbProps, IBreadc
         )
     }
 
-    private validateEntityProps = (path: string, siteUrl: string, webUrl: string, entityTitle: string): boolean => {
+    private validateEntityProps = (path: string, siteUrl: string, entityTitle: string): boolean => {
         return path !== undefined && path !== null 
                && siteUrl !== undefined && siteUrl !== null
-               && webUrl !== undefined && webUrl !== null
                && entityTitle !== undefined && entityTitle !== null;
     }
 
@@ -136,6 +135,9 @@ export class SpoPathBreadcrumb extends React.Component<IBreadcrumbProps, IBreadc
         // Example:
         // webUrl: https://contoso.sharepoint.com/sites/sitename/subsite
         // path: https://contoso.sharepoint.com/sites/sitename/subsite/Shared Documents/Document.docx
+
+        // All entities don't have a webUrl property (e.g. list and doc libs). Therefore webUrl is not part of props validation and undefined/null check is needed here.
+        if (webUrl === undefined || webUrl === null) webUrl = siteUrl;
 
         const frags = webUrl.split('/');
         // frags: ["https:", "", "contoso.sharepoint.com", "sites", "sitename", "subsite"]
@@ -191,7 +193,7 @@ export class SpoPathBreadcrumb extends React.Component<IBreadcrumbProps, IBreadc
             
             breadcrumbItems.unshift(item);
         }
-      
+
         return breadcrumbItems;
     }
 }
