@@ -220,7 +220,7 @@ Here are the list of all **reusable** web components you can use to customize yo
 |**hideOnError**|Hide image on error
 
 ## `<pnp-breadcrumb>` 
-- **Description**: Render a breadcrumb path of a SharePoint entity (file, item, folder, document library etc.). Breadcrumb path is only rendered for items in SharePoint.
+- **Description**: Render a breadcrumb path of a SharePoint entity (file, item, folder, document library etc.).
 
 !["Breadcrumb component"](../assets/extensibility/web_components/breadcrumb_component.png){: .center}
 
@@ -229,30 +229,36 @@ Here are the list of all **reusable** web components you can use to customize yo
 Get started with:
 ```html
 <pnp-breadcrumb 
-    data-original-path="{{OriginalPath}}"
-    data-sp-site-url="{{SPSiteURL}}"
-    data-sp-web-url="{{SPWebUrl}}" 
+    data-path="{{OriginalPath}}"
+    data-site-url="{{SPSiteURL}}"
+    data-web-url="{{SPWebUrl}}"
+    data-entity-title="{{Title}}"
+    data-entity-file-type="{{FileType}}"
 />
 ```
 Use all properties:
 ```html
 <pnp-breadcrumb 
-    data-original-path="{{OriginalPath}}"
-    data-sp-site-url="{{SPSiteURL}}"
-    data-sp-web-url="{{SPWebUrl}}"
-    data-include-site-name="true" 
+    data-path="{{OriginalPath}}"
+    data-site-url="{{SPSiteURL}}"
+    data-web-url="{{SPWebUrl}}"
+    data-entity-title="{{Title}}"
+    data-entity-file-type="{{FileType}}"
+    data-include-site-name="false" 
     data-include-entity-name="true"
     data-breadcrumb-items-as-links="true"
-    data-max-displayed-items="5"
-    data-overflow-index="1"
+    data-max-displayed-items="3"
+    data-overflow-index="0"
     data-font-size="12"
 />
 ```
 |Parameter|Description|
 |--|--|
-|data-original-path|Used for creating the breadcrumb path. Component is designed to receive `OriginalPath` property. Property is required for rendering the breadcrumb path. `String`|
-|data-sp-site-url|Used for creating the breadcrumb path. Component is designed to receive `SPSiteURL` property. Property is required for rendering the breadcrumb path. `String`|
-|data-sp-web-url|Used for creating the breadcrumb path. Component is designed to receive `SPWebUrl` property. Property is required for rendering the breadcrumb path. `String`|
+|data-path|Used for creating the breadcrumb path. Component is designed to receive `OriginalPath` or `Path` property. Property is required for rendering the breadcrumb path. `String`|
+|data-site-url|Used for creating the breadcrumb path. Component is designed to receive `SPSiteURL` property. Property is required for rendering the breadcrumb path. `String`|
+|data-web-url|Used for creating the breadcrumb path. Component is designed to receive `SPWebUrl` property. Property is required for rendering the breadcrumb path. `String`|
+|data-entity-title|Used for creating the breadcrumb path. Component is designed to receive `Title` property. Property is required for rendering the breadcrumb path. `String`|
+|data-entity-file-type|Used for creating the breadcrumb path. Component is designed to receive `FileType` property. Property is required for rendering the breadcrumb path. `String`|
 |data-include-site-name|If the site name should be included in the breadcrumb items. Optional, default value `true`. `Boolean`|
 |data-include-entity-name|If the entity name should be included in the breadcrumb items. If the value is set to `false`, not only is the entity name excluded from the breadcrumb path, but also the last item in the breadcrumb path is not highlighted in bold. Optional, default value `true`. `Boolean`|
 |data-breadcrumb-items-as-links|If the breadcrumb items should be clickable links to the path they represent. Optional, default value `true`. `Boolean`|
