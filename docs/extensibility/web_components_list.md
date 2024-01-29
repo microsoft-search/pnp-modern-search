@@ -138,7 +138,7 @@ Here are the list of all **reusable** web components you can use to customize yo
 
 ## `<pnp-collapsible>`
 
-- **Description**: expand/collapse the `collapsible-content` contetn when the text with `data-group-name` is clicked.
+- **Description**: expand/collapse the `collapsible-content` content when the text with `data-group-name` is clicked.
 
 !["Collapsible component"](../assets/extensibility/web_components/collapsible_component.png){: .center}
 
