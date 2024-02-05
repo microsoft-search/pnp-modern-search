@@ -254,22 +254,6 @@
   
 
       
-        
-  
-  
-
-
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../../v3/" class="md-tabs__link">
-        Version 3
-      </a>
-    </li>
-  
-
-      
     </ul>
   </div>
 </nav>
@@ -368,6 +352,18 @@
     <li class="md-nav__item">
       <a href="../" class="md-nav__link">
         Scenario tutorials
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../create-custom-layouts/" class="md-nav__link">
+        Create custom layouts
       </a>
     </li>
   
@@ -793,48 +789,6 @@
   
 
     
-      
-      
-      
-
-  
-  
-  
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_7" type="checkbox" id="__nav_7" >
-      
-      <label class="md-nav__link" for="__nav_7">
-        Version 3
-        <span class="md-nav__icon md-icon"></span>
-      </label>
-      <nav class="md-nav" aria-label="Version 3" data-md-level="1">
-        <label class="md-nav__title" for="__nav_7">
-          <span class="md-nav__icon md-icon"></span>
-          Version 3
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../v3/" class="md-nav__link">
-        Documentation
-      </a>
-    </li>
-  
-
-          
-        </ul>
-      </nav>
-    </li>
-  
-
-    
   </ul>
 </nav>
                   </div>
@@ -854,13 +808,11 @@
                 
                   <h1>Setup Results web part to show birthdays</h1>
                 
-                <p>A common requirement for intranets is to show birthdays of employees. 
-And as the SharePoint User Profile Application has a property for birthdays, it is a natural choice to use search to show birthdays of employees.</p>
-<p>(as of writing this (2023), the Graph API does not have a property for birthdays, so we can't use the Graph API to get the information)</p>
-<p>The tricky part is that in the User profile application the birthday value is store is a rather usual datatype "date no year"</p>
+                <p>A common requirement for intranets is to show birthdays of employees and as the SharePoint User Profile Application has a property for birthdays, it is a natural choice to use search to show birthdays of employees. In addition, at the time of writing (2023), the Graph API does not have a property for birthdays, so we can't use the Graph API to get the information.</p>
+<p>The tricky part is that in the User profile application the birthday value is store is a rather unusual datatype: "date no year"</p>
 <p><img alt="Birthday in the User Provisioning Service" src="../assets/Setup-Results-web-part-to-show-birthdays/BirthdayUPA.png" /></p>
 <p>In my tenant the SPS-Birthday property was mapped to RefinableDate00 and the actual value in the property is 2000-[the date]:</p>
-<p><img alt="Managed Property value" src="../assets/Setup-Results-web-part-to-show-birthdays/refinabledate00.png" /></p>
+<p><img alt="Managed Property value" src="../assets/Setup-Results-web-part-to-show-birthdays/RefinableDate00.png" /></p>
 <p>(use the magnificent <a href="https://chrome.google.com/webstore/detail/sp-editor/ecblfcmjnbbgaojblcpmjoamegpbodhd">SP Editor tool</a> or <a href="https://github.com/pnp/PnP-Tools/blob/master/Solutions/SharePoint.Search.QueryTool/README.md">SP Search Query Tool</a> to inspect the managed properties)</p>
 <p>So, the query had to be something like "those accounts where RefinableDate00 = 2000 + the value of today's date</p>
 <p>In KQL we have the token "today" that will give us today's date, but as far as I know, we can't get the components the date consist of, like Month and Day.</p>

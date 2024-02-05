@@ -9,14 +9,14 @@
       
       
       
-        <link rel="canonical" href="http://127.0.0.1:8000/scenarios/edit-custom-templates-in-sharepoint/">
+        <link rel="canonical" href="http://127.0.0.1:8000/create-custom-layouts/howto-store-custom-templates-in-sharepoint/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-7.2.4">
     
     
       
-        <title>Edit a custom web part in SharePoint - PnP Modern Search (v4)</title>
+        <title>Store custom templates in SharePoint - PnP Modern Search (v4)</title>
       
     
     
@@ -65,7 +65,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#edit-a-custom-web-part-in-sharepoint" class="md-skip">
+        <a href="#store-custom-templates-in-sharepoint" class="md-skip">
           Skip to content
         </a>
       
@@ -94,7 +94,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Edit a custom web part in SharePoint
+              Store custom templates in SharePoint
             
           </span>
         </div>
@@ -259,22 +259,6 @@
   
 
       
-        
-  
-  
-
-
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../../v3/" class="md-tabs__link">
-        Version 3
-      </a>
-    </li>
-  
-
-      
     </ul>
   </div>
 </nav>
@@ -371,8 +355,20 @@
   
   
     <li class="md-nav__item">
-      <a href="../" class="md-nav__link">
+      <a href="../../scenarios/" class="md-nav__link">
         Scenario tutorials
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        Create custom layouts
       </a>
     </li>
   
@@ -798,48 +794,6 @@
   
 
     
-      
-      
-      
-
-  
-  
-  
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_7" type="checkbox" id="__nav_7" >
-      
-      <label class="md-nav__link" for="__nav_7">
-        Version 3
-        <span class="md-nav__icon md-icon"></span>
-      </label>
-      <nav class="md-nav" aria-label="Version 3" data-md-level="1">
-        <label class="md-nav__title" for="__nav_7">
-          <span class="md-nav__icon md-icon"></span>
-          Version 3
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../v3/" class="md-nav__link">
-        Documentation
-      </a>
-    </li>
-  
-
-          
-        </ul>
-      </nav>
-    </li>
-  
-
-    
   </ul>
 </nav>
                   </div>
@@ -866,22 +820,28 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#steps" class="md-nav__link">
-    Steps
+  <a href="#5-steps-to-create-a-central-repository-in-sharepoint" class="md-nav__link">
+    5 steps to create a central repository in SharePoint
   </a>
+  
+    <nav class="md-nav" aria-label="5 steps to create a central repository in SharePoint">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-for-the-a-tenant-named-contoso" class="md-nav__link">
+    Example for the a tenant named Contoso
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#edit-the-template-in-sharepoint" class="md-nav__link">
-    Edit the template in SharePoint
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#check-your-changes" class="md-nav__link">
-    Check your changes
+  <a href="#use-the-links-in-a-pnp-search-results-web-part" class="md-nav__link">
+    Use the links in a PnP Search Results web part
   </a>
   
 </li>
@@ -898,55 +858,71 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/microsoft-search/pnp-modern-search/blob/develop/docs/scenarios/edit-custom-templates-in-sharepoint.md" title="Edit this page" class="md-content__button md-icon">
+                  <a href="https://github.com/microsoft-search/pnp-modern-search/blob/develop/docs/create-custom-layouts/howto-store-custom-templates-in-sharepoint.md" title="Edit this page" class="md-content__button md-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
                   </a>
                 
                 
-                <h1 id="edit-a-custom-web-part-in-sharepoint">Edit a custom web part in SharePoint<a class="headerlink" href="#edit-a-custom-web-part-in-sharepoint" title="Permanent link">&para;</a></h1>
-<p>You can edit a custom template directly in SharePoint.</p>
-<h2 id="steps">Steps<a class="headerlink" href="#steps" title="Permanent link">&para;</a></h2>
+                <h1 id="store-custom-templates-in-sharepoint">Store custom templates in SharePoint<a class="headerlink" href="#store-custom-templates-in-sharepoint" title="Permanent link">&para;</a></h1>
+<p>You can create your own custom templates. If you store them in a central repository, they can be used across PnP Search Result web parts across sites in your tenant.</p>
+<p><img alt="Image of central repository and multiple search sites" src="../assets/store-custom-templates-in-sharepoint/central-repository-multiple-sites.png" /></p>
+<p>Requirements for using a custom template, referenced by URL are:</p>
+<ul>
+<li>All users of the PnP Search Result web part, must be able to read those templates.</li>
+<li>Templates need to have their own URL.</li>
+</ul>
+<p>A SharePoint site within your tenant is perfect for this scenario, because you get some additional features:</p>
+<ul>
+<li>Central repository</li>
+<li>Version control</li>
+<li>No public access</li>
+<li>Secure change access</li>
+<li>Share to others outside of your company</li>
+<li>Use OneDrive for sync</li>
+<li>Approval flows (if you want)</li>
+</ul>
+<h2 id="5-steps-to-create-a-central-repository-in-sharepoint">5 steps to create a central repository in SharePoint<a class="headerlink" href="#5-steps-to-create-a-central-repository-in-sharepoint" title="Permanent link">&para;</a></h2>
 <ol>
-<li>Create a custom template</li>
-<li>Store the template in a SharePoint library</li>
-<li>Edit the template in directly in SharePoint</li>
+<li>Create a SharePoint site</li>
+<li>Give "Everyone except externals" read access to the site</li>
+<li>Create a Library</li>
+<li>Create a Templates Folder</li>
+<li>Add your custom templates to this folder.</li>
 </ol>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Step 1</p>
-<p>The article <a href="../create-your-first-custom-template/">Create your first custom template</a>, explains how you can create a template and upload it to SharePoint.</p>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Step 2</p>
-<p>The article <a href="../howto-store-custom-templates-in-sharepoint/">Store custom templates in SharePoint</a>, explains how you can create a central repository for templates in SharePoint.</p>
-</div>
-<h2 id="edit-the-template-in-sharepoint">Edit the template in SharePoint<a class="headerlink" href="#edit-the-template-in-sharepoint" title="Permanent link">&para;</a></h2>
-<p>Prerequisites: You have created your first template and it is stored in SharePoint. (Step 1 and Step 2)</p>
-<p><img alt="SharePoint Resource Library" src="../assets/store-custom-templates-in-sharepoint/sharepoint-resources-lib.png" /></p>
+<p>Now you can reference these templates using the URL to the file.</p>
+<p><code>https://&lt;tenantname&gt;.sharepoint.com/sites/&lt;sitetitle&gt;/&lt;libraryname&gt;/&lt;foldername&gt;/&lt;templatename&gt;.html</code></p>
+<p><img alt="A sharePoint Library holding some templates" src="../assets/store-custom-templates-in-sharepoint/sharepoint-resources-lib.png" /></p>
+<h3 id="example-for-the-a-tenant-named-contoso">Example for the a tenant named Contoso<a class="headerlink" href="#example-for-the-a-tenant-named-contoso" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Site title</th>
+<th>Library name</th>
+<th>Folder name</th>
+<th>Template names</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">SharePointResources</td>
+<td>PnPSearch</td>
+<td>Templates</td>
+<td>mytemplate.html, mytemplate2.html</td>
+</tr>
+</tbody>
+</table>
+<p>URLs for the templates in this example:</p>
+<p>mytemplate.html: <code>https://contoso.sharepoint.com/sites/SharePointResources/PnPSearch/Templates/mytemplate.html</code></p>
+<p>mytemplate2.html: <code>https://contoso.sharepoint.com/sites/SharePointResources/PnPSearch/Templates/mytemplate2.html</code></p>
+<h2 id="use-the-links-in-a-pnp-search-results-web-part">Use the links in a PnP Search Results web part<a class="headerlink" href="#use-the-links-in-a-pnp-search-results-web-part" title="Permanent link">&para;</a></h2>
 <ol>
-<li>
-<p>Open your SharePoint site and navigate to the SharePoint library and folder where the template is stored.</p>
-</li>
-<li>
-<p>Click the template Title to open it.</p>
-</li>
-<li>
-<p>Open the menu "Open" and select "Open in Text Editor"</p>
-</li>
-<li>
-<p>Do your changes and Click Save.</p>
-</li>
-<li>
-<p>Close the Tab.</p>
-</li>
+<li>Edit the settings for the PnP Search Results web part.</li>
+<li>On page 2, under Available Layouts, choose Custom.</li>
+<li>Type the URL to your custom template in "Use an external template URL.</li>
+<li>Republish the page</li>
 </ol>
-<blockquote>
-<p><img alt="How to click the open in text editor" src="../assets/edit-custom-templates-in-sharepoint/open_htmlfile-in-text-editor.png" /></p>
-</blockquote>
-<p><img alt="How to save the changes" src="../assets/edit-custom-templates-in-sharepoint/save_the-changed-file.png" /></p>
-<h2 id="check-your-changes">Check your changes<a class="headerlink" href="#check-your-changes" title="Permanent link">&para;</a></h2>
-<p>To look at your changes, open a page where you have used the custom template, and refresh the page. The changes you made should now be effective.</p>
+<p>When you edit the custom template, you just have to refresh the page where the web part is embedded to see the changes you made.</p>
+<p><img alt="Screenshot of where you set the URL for a custom template" src="../assets/store-custom-templates-in-sharepoint/custom-template-external-url-edit.png" /></p>
                 
               
               

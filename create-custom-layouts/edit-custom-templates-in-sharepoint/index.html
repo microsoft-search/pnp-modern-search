@@ -9,14 +9,14 @@
       
       
       
-        <link rel="canonical" href="http://127.0.0.1:8000/scenarios/create-your-first-custom-template/">
+        <link rel="canonical" href="http://127.0.0.1:8000/create-custom-layouts/edit-custom-templates-in-sharepoint/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-7.2.4">
     
     
       
-        <title>Create your first custom template - PnP Modern Search (v4)</title>
+        <title>Edit a custom web part in SharePoint - PnP Modern Search (v4)</title>
       
     
     
@@ -65,7 +65,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#create-your-first-custom-template" class="md-skip">
+        <a href="#edit-a-custom-web-part-in-sharepoint" class="md-skip">
           Skip to content
         </a>
       
@@ -94,7 +94,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Create your first custom template
+              Edit a custom web part in SharePoint
             
           </span>
         </div>
@@ -259,22 +259,6 @@
   
 
       
-        
-  
-  
-
-
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../../v3/" class="md-tabs__link">
-        Version 3
-      </a>
-    </li>
-  
-
-      
     </ul>
   </div>
 </nav>
@@ -371,8 +355,20 @@
   
   
     <li class="md-nav__item">
-      <a href="../" class="md-nav__link">
+      <a href="../../scenarios/" class="md-nav__link">
         Scenario tutorials
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        Create custom layouts
       </a>
     </li>
   
@@ -798,48 +794,6 @@
   
 
     
-      
-      
-      
-
-  
-  
-  
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_7" type="checkbox" id="__nav_7" >
-      
-      <label class="md-nav__link" for="__nav_7">
-        Version 3
-        <span class="md-nav__icon md-icon"></span>
-      </label>
-      <nav class="md-nav" aria-label="Version 3" data-md-level="1">
-        <label class="md-nav__title" for="__nav_7">
-          <span class="md-nav__icon md-icon"></span>
-          Version 3
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../v3/" class="md-nav__link">
-        Documentation
-      </a>
-    </li>
-  
-
-          
-        </ul>
-      </nav>
-    </li>
-  
-
-    
   </ul>
 </nav>
                   </div>
@@ -870,58 +824,18 @@
     Steps
   </a>
   
-    <nav class="md-nav" aria-label="Steps">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#create-a-file" class="md-nav__link">
-    Create a file
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
-  <a href="#change-the-content-of-your-new-template-file" class="md-nav__link">
-    Change the content of your new template file
+  <a href="#edit-the-template-in-sharepoint" class="md-nav__link">
+    Edit the template in SharePoint
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#upload-the-custom-template-to-a-sharepoint-library" class="md-nav__link">
-    Upload the custom template to a SharePoint library
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#test-the-custom-template" class="md-nav__link">
-    Test the custom template
-  </a>
-  
-    <nav class="md-nav" aria-label="Test the custom template">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#troubleshooting" class="md-nav__link">
-    Troubleshooting
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#pictures" class="md-nav__link">
-    Pictures
+  <a href="#check-your-changes" class="md-nav__link">
+    Check your changes
   </a>
   
 </li>
@@ -938,151 +852,55 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/microsoft-search/pnp-modern-search/blob/develop/docs/scenarios/create-your-first-custom-template.md" title="Edit this page" class="md-content__button md-icon">
+                  <a href="https://github.com/microsoft-search/pnp-modern-search/blob/develop/docs/create-custom-layouts/edit-custom-templates-in-sharepoint.md" title="Edit this page" class="md-content__button md-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
                   </a>
                 
                 
-                <h1 id="create-your-first-custom-template">Create your first custom template<a class="headerlink" href="#create-your-first-custom-template" title="Permanent link">&para;</a></h1>
-<p>You can make the results from a search, look like you want to by using a custom template.
-This article will get you started by creating a simple custom template.</p>
+                <h1 id="edit-a-custom-web-part-in-sharepoint">Edit a custom web part in SharePoint<a class="headerlink" href="#edit-a-custom-web-part-in-sharepoint" title="Permanent link">&para;</a></h1>
+<p>You can edit a custom template directly in SharePoint.</p>
 <h2 id="steps">Steps<a class="headerlink" href="#steps" title="Permanent link">&para;</a></h2>
 <ol>
-<li>Create a file</li>
-<li>Add content to the file</li>
-<li>Do a small change to the content.</li>
-<li>Store your file in SharePoint</li>
+<li>Create a custom template</li>
+<li>Store the template in a SharePoint library</li>
+<li>Edit the template in directly in SharePoint</li>
 </ol>
-<h3 id="create-a-file">Create a file<a class="headerlink" href="#create-a-file" title="Permanent link">&para;</a></h3>
-<p>On your computer, create a file with the name: mycustomtemplate.html</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Make sure you name the file with the extension html</p>
+<p>Step 1</p>
+<p>The article <a href="../create-your-first-custom-template/">Create your first custom template</a>, explains how you can create a template and upload it to SharePoint.</p>
 </div>
-<p>Open this file in a text editor, like Notepad, VS Code or whatnot.</p>
-<p><img alt="Screenshot of myfirsttemplate.html file." src="../assets/create-your-first-custom-template/myfirsttemplate_file-screenshot.png" /></p>
-<p>The file is empty, so we need to add some basic needed html code.</p>
-<p>Copy the code below and paste it into the file and save.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">&lt;</span><span class="nt">content</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;data-content&quot;</span><span class="p">&gt;</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  <span class="p">&lt;</span><span class="nt">style</span><span class="p">&gt;</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="c">/* Insert your CSS overrides here */</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="p">.</span><span class="nc">example-themePrimary</span><span class="w"> </span><span class="nt">a</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">      </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="err">{</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">         </span><span class="err">{</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">          </span><span class="o">@</span><span class="n">root</span><span class="o">.</span><span class="n">theme</span><span class="o">.</span><span class="n">palette</span><span class="o">.</span><span class="n">themeprimary</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">        </span><span class="p">}</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">      </span><span class="err">}</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">    </span><span class="err">}</span>
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>
-<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">    </span><span class="p">.</span><span class="nc">myfirstcss</span><span class="p">{</span>
-<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">        </span><span class="k">font-size</span><span class="p">:</span><span class="w"> </span><span class="mi">30</span><span class="kt">px</span><span class="p">;</span>
-<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">        </span><span class="k">font-weight</span><span class="p">:</span><span class="w"> </span><span class="mi">600</span><span class="p">;</span>
-<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="w">    </span><span class="p">}</span>
-<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>
-<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="w">    </span><span class="p">.</span><span class="nc">icon</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="w">      </span><span class="k">width</span><span class="p">:</span><span class="w"> </span><span class="mi">20</span><span class="kt">px</span><span class="p">;</span>
-<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="w">      </span><span class="k">height</span><span class="p">:</span><span class="w"> </span><span class="mi">16</span><span class="kt">px</span><span class="p">;</span>
-<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="w">    </span><span class="p">}</span>
-<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>
-<a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a><span class="w">    </span><span class="nt">ul</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a><span class="w">      </span><span class="k">list-style</span><span class="p">:</span><span class="w"> </span><span class="kc">none</span><span class="p">;</span>
-<a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a><span class="w">      </span><span class="k">display</span><span class="p">:</span><span class="w"> </span><span class="kc">flex</span><span class="p">;</span>
-<a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a><span class="w">      </span><span class="k">flex-wrap</span><span class="p">:</span><span class="w"> </span><span class="kc">wrap</span><span class="p">;</span>
-<a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a><span class="w">    </span><span class="p">}</span>
-<a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a>
-<a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a><span class="w">    </span><span class="nt">ul</span><span class="w"> </span><span class="nt">li</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a><span class="w">      </span><span class="k">display</span><span class="p">:</span><span class="w"> </span><span class="kc">flex</span><span class="p">;</span>
-<a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a><span class="w">      </span><span class="k">padding</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="kt">px</span><span class="p">;</span>
-<a id="__codelineno-0-31" name="__codelineno-0-31" href="#__codelineno-0-31"></a>
-<a id="__codelineno-0-32" name="__codelineno-0-32" href="#__codelineno-0-32"></a><span class="w">      </span><span class="k">flex</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="mi">100</span><span class="kt">%</span><span class="p">;</span>
-<a id="__codelineno-0-33" name="__codelineno-0-33" href="#__codelineno-0-33"></a><span class="w">    </span><span class="p">}</span>
-<a id="__codelineno-0-34" name="__codelineno-0-34" href="#__codelineno-0-34"></a><span class="w">  </span><span class="p">&lt;/</span><span class="nt">style</span><span class="p">&gt;</span>
-<a id="__codelineno-0-35" name="__codelineno-0-35" href="#__codelineno-0-35"></a>
-<a id="__codelineno-0-36" name="__codelineno-0-36" href="#__codelineno-0-36"></a>  <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;template&quot;</span><span class="p">&gt;</span>
-<a id="__codelineno-0-37" name="__codelineno-0-37" href="#__codelineno-0-37"></a>    {{#if @root.properties.showSelectedFilters}}
-<a id="__codelineno-0-38" name="__codelineno-0-38" href="#__codelineno-0-38"></a>    <span class="p">&lt;</span><span class="nt">pnp-selectedfilters</span>
-<a id="__codelineno-0-39" name="__codelineno-0-39" href="#__codelineno-0-39"></a>      <span class="na">data-filters</span><span class="o">=</span><span class="s">&quot;{{JSONstringify filters.selectedFilters 2}}&quot;</span>
-<a id="__codelineno-0-40" name="__codelineno-0-40" href="#__codelineno-0-40"></a>      <span class="na">data-filters-configuration</span><span class="o">=</span><span class="s">&quot;{{JSONstringify filters.filtersConfiguration 2}}&quot;</span>
-<a id="__codelineno-0-41" name="__codelineno-0-41" href="#__codelineno-0-41"></a>      <span class="na">data-instance-id</span><span class="o">=</span><span class="s">&quot;{{filters.instanceId}}&quot;</span>
-<a id="__codelineno-0-42" name="__codelineno-0-42" href="#__codelineno-0-42"></a>      <span class="na">data-operator</span><span class="o">=</span><span class="s">&quot;{{filters.filterOperator}}&quot;</span>
-<a id="__codelineno-0-43" name="__codelineno-0-43" href="#__codelineno-0-43"></a>      <span class="na">data-theme-variant</span><span class="o">=</span><span class="s">&quot;{{JSONstringify @root.theme}}&quot;</span>
-<a id="__codelineno-0-44" name="__codelineno-0-44" href="#__codelineno-0-44"></a>    <span class="p">&gt;&lt;/</span><span class="nt">pnp-selectedfilters</span><span class="p">&gt;</span>
-<a id="__codelineno-0-45" name="__codelineno-0-45" href="#__codelineno-0-45"></a>    {{/if}} {{#if @root.properties.showResultsCount}}
-<a id="__codelineno-0-46" name="__codelineno-0-46" href="#__codelineno-0-46"></a>    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;template--resultCount&quot;</span><span class="p">&gt;</span>
-<a id="__codelineno-0-47" name="__codelineno-0-47" href="#__codelineno-0-47"></a>      <span class="p">&lt;</span><span class="nt">label</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;ms-fontWeight-semibold&quot;</span>
-<a id="__codelineno-0-48" name="__codelineno-0-48" href="#__codelineno-0-48"></a>        <span class="p">&gt;</span>{{getCountMessage @root.data.totalItemsCount
-<a id="__codelineno-0-49" name="__codelineno-0-49" href="#__codelineno-0-49"></a>        @root.inputQueryText}}<span class="p">&lt;/</span><span class="nt">label</span>
-<a id="__codelineno-0-50" name="__codelineno-0-50" href="#__codelineno-0-50"></a>      <span class="p">&gt;</span>
-<a id="__codelineno-0-51" name="__codelineno-0-51" href="#__codelineno-0-51"></a>    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
-<a id="__codelineno-0-52" name="__codelineno-0-52" href="#__codelineno-0-52"></a>    {{/if}}
-<a id="__codelineno-0-53" name="__codelineno-0-53" href="#__codelineno-0-53"></a>
-<a id="__codelineno-0-54" name="__codelineno-0-54" href="#__codelineno-0-54"></a>    <span class="p">&lt;</span><span class="nt">ul</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;template--custom&quot;</span><span class="p">&gt;</span>
-<a id="__codelineno-0-55" name="__codelineno-0-55" href="#__codelineno-0-55"></a>      {{!-- This div below can be deleted. it is just for showing that is is
-<a id="__codelineno-0-56" name="__codelineno-0-56" href="#__codelineno-0-56"></a>      your first template.--}}
-<a id="__codelineno-0-57" name="__codelineno-0-57" href="#__codelineno-0-57"></a>      <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;myfirstcss&quot;</span><span class="p">&gt;</span>This is my custom template!!!!<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
-<a id="__codelineno-0-58" name="__codelineno-0-58" href="#__codelineno-0-58"></a>
-<a id="__codelineno-0-59" name="__codelineno-0-59" href="#__codelineno-0-59"></a>      {{#each data.items as |item|}} {{#&gt; resultTypes item=item}} {{!-- The
-<a id="__codelineno-0-60" name="__codelineno-0-60" href="#__codelineno-0-60"></a>      block below will be used as default item template if no result types
-<a id="__codelineno-0-61" name="__codelineno-0-61" href="#__codelineno-0-61"></a>      matched --}}
-<a id="__codelineno-0-62" name="__codelineno-0-62" href="#__codelineno-0-62"></a>
-<a id="__codelineno-0-63" name="__codelineno-0-63" href="#__codelineno-0-63"></a>      <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;</span>
-<a id="__codelineno-0-64" name="__codelineno-0-64" href="#__codelineno-0-64"></a>        <span class="p">&lt;</span><span class="nt">pnp-iconfile</span>
-<a id="__codelineno-0-65" name="__codelineno-0-65" href="#__codelineno-0-65"></a>          <span class="na">class</span><span class="o">=</span><span class="s">&quot;icon&quot;</span>
-<a id="__codelineno-0-66" name="__codelineno-0-66" href="#__codelineno-0-66"></a>          <span class="na">data-extension</span><span class="o">=</span><span class="s">&quot;{{slot item @root.slots.FileType}}&quot;</span>
-<a id="__codelineno-0-67" name="__codelineno-0-67" href="#__codelineno-0-67"></a>          <span class="na">data-theme-variant</span><span class="o">=</span><span class="s">&quot;{{JSONstringify @root.theme}}&quot;</span>
-<a id="__codelineno-0-68" name="__codelineno-0-68" href="#__codelineno-0-68"></a>        <span class="p">&gt;&lt;/</span><span class="nt">pnp-iconfile</span><span class="p">&gt;</span>
-<a id="__codelineno-0-69" name="__codelineno-0-69" href="#__codelineno-0-69"></a>        <span class="p">&lt;</span><span class="nt">span</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;example-themePrimary&quot;</span>
-<a id="__codelineno-0-70" name="__codelineno-0-70" href="#__codelineno-0-70"></a>          <span class="p">&gt;&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;{{slot item @root.slots.Path}}&quot;</span>
-<a id="__codelineno-0-71" name="__codelineno-0-71" href="#__codelineno-0-71"></a>            <span class="p">&gt;</span>{{slot item @root.slots.Title}}<span class="p">&lt;/</span><span class="nt">a</span>
-<a id="__codelineno-0-72" name="__codelineno-0-72" href="#__codelineno-0-72"></a>          <span class="p">&gt;&lt;/</span><span class="nt">span</span>
-<a id="__codelineno-0-73" name="__codelineno-0-73" href="#__codelineno-0-73"></a>        <span class="p">&gt;</span>
-<a id="__codelineno-0-74" name="__codelineno-0-74" href="#__codelineno-0-74"></a>      <span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
-<a id="__codelineno-0-75" name="__codelineno-0-75" href="#__codelineno-0-75"></a>
-<a id="__codelineno-0-76" name="__codelineno-0-76" href="#__codelineno-0-76"></a>      {{/resultTypes}} {{/each}}
-<a id="__codelineno-0-77" name="__codelineno-0-77" href="#__codelineno-0-77"></a>    <span class="p">&lt;/</span><span class="nt">ul</span><span class="p">&gt;</span>
-<a id="__codelineno-0-78" name="__codelineno-0-78" href="#__codelineno-0-78"></a>  <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
-<a id="__codelineno-0-79" name="__codelineno-0-79" href="#__codelineno-0-79"></a><span class="p">&lt;/</span><span class="nt">content</span><span class="p">&gt;</span>
-</code></pre></div>
-<p>You now have your first custom template!!</p>
-<h2 id="change-the-content-of-your-new-template-file">Change the content of your new template file<a class="headerlink" href="#change-the-content-of-your-new-template-file" title="Permanent link">&para;</a></h2>
-<p>You are going to make a small change to your template so you can check if it is working.
-Find the line where the text says: <code>&lt;div class="myfirstcss"&gt;This is my custom template!!!!&lt;/div&gt;</code></p>
-<p>Change the text "This is my custom template!!!!" to "This is my first awesome custom template that rocks!!!!". Maybe you want to add your name to?</p>
-<h2 id="upload-the-custom-template-to-a-sharepoint-library">Upload the custom template to a SharePoint library<a class="headerlink" href="#upload-the-custom-template-to-a-sharepoint-library" title="Permanent link">&para;</a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Step 2</p>
+<p>The article <a href="../howto-store-custom-templates-in-sharepoint/">Store custom templates in SharePoint</a>, explains how you can create a central repository for templates in SharePoint.</p>
+</div>
+<h2 id="edit-the-template-in-sharepoint">Edit the template in SharePoint<a class="headerlink" href="#edit-the-template-in-sharepoint" title="Permanent link">&para;</a></h2>
+<p>Prerequisites: You have created your first template and it is stored in SharePoint. (Step 1 and Step 2)</p>
+<p><img alt="SharePoint Resource Library" src="../assets/store-custom-templates-in-sharepoint/sharepoint-resources-lib.png" /></p>
 <ol>
-<li>Open a SharePoint site you use for development. Or create one.</li>
-<li>Open Shared Documents</li>
-<li>Create a folder called "PnPSearchTemplates"</li>
-<li>Upload the file to this folder.</li>
+<li>
+<p>Open your SharePoint site and navigate to the SharePoint library and folder where the template is stored.</p>
+</li>
+<li>
+<p>Click the template Title to open it.</p>
+</li>
+<li>
+<p>Open the menu "Open" and select "Open in Text Editor"</p>
+</li>
+<li>
+<p>Do your changes and Click Save.</p>
+</li>
+<li>
+<p>Close the Tab.</p>
+</li>
 </ol>
-<p>The URL to this template is:</p>
-<p><code>&lt;siteurl&gt;/Shared Documents/PnPSearchTemplates/mycustomtemplate.html</code></p>
-<p>Change <code>&lt;siteurl&gt;</code> with the URL of the site you created/are using.</p>
-<p>Will be something like this: <code>https://contoso.sharepoint.com/sites/mydevsite</code></p>
-<p>You will need this when you are configuring the PnP Search Template web part.</p>
-<h2 id="test-the-custom-template">Test the custom template<a class="headerlink" href="#test-the-custom-template" title="Permanent link">&para;</a></h2>
-<ol>
-<li>Open a SharePoint site you use for development.</li>
-<li>Create a new page, call it what you want and use whatever template you want (Blank is fine)</li>
-<li>In a section add the <em>"PnP Search Results"</em> web part</li>
-<li>Choose to configure the web part</li>
-<li>Select SharePoint search</li>
-<li>Make sure you get some results by typing in a search term in the Query template, like "{searchTerms} *"</li>
-<li>Go to page 2</li>
-<li>Select "Custom" layout</li>
-<li>Under "Use an external template URL", type in the URL for the custom template file. You cannot type in a URL that does not exist, if so you get an error message.</li>
-<li>Click outside the URL text box.</li>
-<li>Publish the page</li>
-</ol>
-<p>Did the results change layout?</p>
-<p><strong>If so you have succeeded!</strong></p>
-<h3 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h3>
-<p>If not, check if you copied all the text into the file, and that you did not change anything else than the text.</p>
-<h2 id="pictures">Pictures<a class="headerlink" href="#pictures" title="Permanent link">&para;</a></h2>
-<p>Insert the URL in "Use an external template URL"
-<img alt="alt" src="../assets/create-your-first-custom-template/insert_external-url-for-custom-template.png" /></p>
-<p>What the custom search result looks like
-<img alt="alt" src="../assets/create-your-first-custom-template/custom_search-results-example.png" /></p>
+<blockquote>
+<p><img alt="How to click the open in text editor" src="../assets/edit-custom-templates-in-sharepoint/open_htmlfile-in-text-editor.png" /></p>
+</blockquote>
+<p><img alt="How to save the changes" src="../assets/edit-custom-templates-in-sharepoint/save_the-changed-file.png" /></p>
+<h2 id="check-your-changes">Check your changes<a class="headerlink" href="#check-your-changes" title="Permanent link">&para;</a></h2>
+<p>To look at your changes, open a page where you have used the custom template, and refresh the page. The changes you made should now be effective.</p>
                 
               
               

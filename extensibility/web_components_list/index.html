@@ -259,22 +259,6 @@
   
 
       
-        
-  
-  
-
-
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../../v3/" class="md-tabs__link">
-        Version 3
-      </a>
-    </li>
-  
-
-      
     </ul>
   </div>
 </nav>
@@ -373,6 +357,18 @@
     <li class="md-nav__item">
       <a href="../../scenarios/" class="md-nav__link">
         Scenario tutorials
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../create-custom-layouts/" class="md-nav__link">
+        Create custom layouts
       </a>
     </li>
   
@@ -798,48 +794,6 @@
   
 
     
-      
-      
-      
-
-  
-  
-  
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_7" type="checkbox" id="__nav_7" >
-      
-      <label class="md-nav__link" for="__nav_7">
-        Version 3
-        <span class="md-nav__icon md-icon"></span>
-      </label>
-      <nav class="md-nav" aria-label="Version 3" data-md-level="1">
-        <label class="md-nav__title" for="__nav_7">
-          <span class="md-nav__icon md-icon"></span>
-          Version 3
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../v3/" class="md-nav__link">
-        Documentation
-      </a>
-    </li>
-  
-
-          
-        </ul>
-      </nav>
-    </li>
-  
-
-    
   </ul>
 </nav>
                   </div>
@@ -921,6 +875,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#pnp-breadcrumb" class="md-nav__link">
+    &lt;pnp-breadcrumb&gt;
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -949,6 +910,7 @@
 <li><a href="#ltpnp-collapsiblegt">&lt;pnp-collapsible&gt;</a></li>
 <li><a href="#ltpnp-personagt">&lt;pnp-persona&gt;</a></li>
 <li><a href="#ltpnp-imggt">&lt;pnp-img&gt;</a></li>
+<li><a href="#ltpnp-breadcrumbgt">&lt;pnp-breadcrumb&gt;</a></li>
 </ul>
 <blockquote>
 <p>All other web components you will see in builtin layout templates are considered <strong>internal</strong> and are not supported for custom use.</p>
@@ -1286,6 +1248,51 @@
 </tr>
 </tbody>
 </table>
+<h2 id="pnp-breadcrumb"><code>&lt;pnp-breadcrumb&gt;</code><a class="headerlink" href="#pnp-breadcrumb" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Description</strong>: Render a breadcrumb path of a SharePoint entity (file, item, folder, document library etc.).</li>
+</ul>
+<p><img alt="&quot;Breadcrumb component&quot;" class="center" src="../../assets/extensibility/web_components/breadcrumb_component.png" /></p>
+<ul>
+<li><strong>Usage</strong>:</li>
+</ul>
+<p>Get started with:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="p">&lt;</span><span class="nt">pnp-breadcrumb</span> 
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>    <span class="na">data-path</span><span class="o">=</span><span class="s">&quot;{{OriginalPath}}&quot;</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>    <span class="na">data-site-url</span><span class="o">=</span><span class="s">&quot;{{SPSiteURL}}&quot;</span>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>    <span class="na">data-web-url</span><span class="o">=</span><span class="s">&quot;{{SPWebUrl}}&quot;</span>
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>    <span class="na">data-entity-title</span><span class="o">=</span><span class="s">&quot;{{Title}}&quot;</span>
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>    <span class="na">data-entity-file-type</span><span class="o">=</span><span class="s">&quot;{{FileType}}&quot;</span>
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="p">/&gt;</span>
+</code></pre></div>
+Use all properties:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="p">&lt;</span><span class="nt">pnp-breadcrumb</span> 
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>    <span class="na">data-path</span><span class="o">=</span><span class="s">&quot;{{OriginalPath}}&quot;</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>    <span class="na">data-site-url</span><span class="o">=</span><span class="s">&quot;{{SPSiteURL}}&quot;</span>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>    <span class="na">data-web-url</span><span class="o">=</span><span class="s">&quot;{{SPWebUrl}}&quot;</span>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>    <span class="na">data-entity-title</span><span class="o">=</span><span class="s">&quot;{{Title}}&quot;</span>
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>    <span class="na">data-entity-file-type</span><span class="o">=</span><span class="s">&quot;{{FileType}}&quot;</span>
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>    <span class="na">data-include-site-name</span><span class="o">=</span><span class="s">&quot;false&quot;</span> 
+<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>    <span class="na">data-include-entity-name</span><span class="o">=</span><span class="s">&quot;true&quot;</span>
+<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>    <span class="na">data-breadcrumb-items-as-links</span><span class="o">=</span><span class="s">&quot;true&quot;</span>
+<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>    <span class="na">data-max-displayed-items</span><span class="o">=</span><span class="s">&quot;3&quot;</span>
+<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>    <span class="na">data-overflow-index</span><span class="o">=</span><span class="s">&quot;0&quot;</span>
+<a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a>    <span class="na">data-font-size</span><span class="o">=</span><span class="s">&quot;12&quot;</span>
+<a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a><span class="p">/&gt;</span>
+</code></pre></div>
+|Parameter|Description|
+|--|--|
+|data-path|Used for creating the breadcrumb path. Component is designed to receive <code>OriginalPath</code> or <code>Path</code> property. Property is required for rendering the breadcrumb path. <code>String</code>|
+|data-site-url|Used for creating the breadcrumb path. Component is designed to receive <code>SPSiteURL</code> property. Property is required for rendering the breadcrumb path. <code>String</code>|
+|data-web-url|Used for creating the breadcrumb path. Component is designed to receive <code>SPWebUrl</code> property. Property is required for rendering the breadcrumb path. <code>String</code>|
+|data-entity-title|Used for creating the breadcrumb path. Component is designed to receive <code>Title</code> property. Property is required for rendering the breadcrumb path. <code>String</code>|
+|data-entity-file-type|Used for creating the breadcrumb path. Component is designed to receive <code>FileType</code> property. Property is required for rendering the breadcrumb path. <code>String</code>|
+|data-include-site-name|If the site name should be included in the breadcrumb items. Optional, default value <code>true</code>. <code>Boolean</code>|
+|data-include-entity-name|If the entity name should be included in the breadcrumb items. If the value is set to <code>false</code>, not only is the entity name excluded from the breadcrumb path, but also the last item in the breadcrumb path is not highlighted in bold. Optional, default value <code>true</code>. <code>Boolean</code>|
+|data-breadcrumb-items-as-links|If the breadcrumb items should be clickable links to the path they represent. Optional, default value <code>true</code>. <code>Boolean</code>|
+|data-max-displayed-items|The maximum number of breadcrumb items to display before coalescing. If not specified, all breadcrumbs will be rendered. Optional, default value <code>3</code>. <code>Int</code>|
+|data-overflow-index| Index where overflow items will be collapsed. Optional, default value <code>0</code>. <code>Int</code>|
+|data-font-size|Font size of breadcrumb items. Optional, default value <code>12</code>. <code>Int</code>|</p>
                 
               
               
