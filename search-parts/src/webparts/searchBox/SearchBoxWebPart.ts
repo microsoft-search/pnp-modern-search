@@ -42,6 +42,7 @@ import { BuiltinTokenNames, TokenService } from '../../services/tokenService/Tok
 import { BaseWebPart } from '../../common/BaseWebPart';
 import { DynamicPropertyHelper } from '../../helpers/DynamicPropertyHelper';
 import PnPTelemetry from '@pnp/telemetry-js';
+import commonStyles from '../../styles/Common.module.scss';
 
 const LogSource = "SearchBoxWebPart";
 
@@ -194,7 +195,16 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
             onSearch: this._onSearch,
             suggestionProviders: this._selectedCustomProviders,
             numberOfSuggestionsPerGroup: this.properties.numberOfSuggestionsPerGroup,
-            tokenService: this.tokenService
+            tokenService: this.tokenService,
+            webPartTitleProps: {
+                displayMode: this.displayMode,
+                title: this.properties.title,
+                updateProperty: (value: string) => {
+                    this.properties.title = value;
+                },
+                themeVariant: this._themeVariant,
+                className: commonStyles.wpTitle
+            }
         } as ISearchBoxContainerProps);
 
         // Error message
@@ -751,7 +761,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
                 // Custom provider
                 default:
 
-                    // Gets the registered service key according to the selected provider definition 
+                    // Gets the registered service key according to the selected provider definition
                     const matchingDefinitions = suggestionProviderDefinitions.filter((provider) => { return provider.key === providerKey; });
 
                     // Can only have one data source instance per key
@@ -860,7 +870,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
      */
     private _handleQueryStringChange() {
 
-        // To avoid pushState modification from many components on the page (ex: search box, etc.), 
+        // To avoid pushState modification from many components on the page (ex: search box, etc.),
         // only subscribe to query string changes if the connected source is either the searc queyr or explicit query string parameter
         if (/^(PageContext:SearchData:searchQuery)|(PageContext:UrlData:queryParameters)/.test(this.properties.queryText.reference)) {
 
