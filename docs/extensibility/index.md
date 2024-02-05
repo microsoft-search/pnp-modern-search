@@ -54,7 +54,7 @@ From here, you can add the manifest IDs of your libraries and decide to enable o
 
 [!["Extensibility manifests registration"](../assets/extensibility/extensibility_configuration_manifest.png){: .center}](../assets/extensibility/extensibility_configuration_manifest.png)
 
-> Multiple librairies can be registred for a single Web Part instance allowing you to split your extensions into multiple projects (in the end, they will be all concatenated). For instance, this could be convenient when extensions come from different IT providers.
+> Multiple librairies can be registered for a single Web Part instance allowing you to split your extensions into multiple projects (in the end, they will be all concatenated). For instance, this could be convenient when extensions come from different IT providers.
 
 ### Create an extensibility library
 

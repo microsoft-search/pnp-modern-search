@@ -31,7 +31,7 @@ export class TemplateRenderer extends React.Component<ITemplateRendererProps, IT
             ADD_TAGS: ['style','#comment'],
             ADD_ATTR: ['target', 'loading'],
             ALLOW_DATA_ATTR: true,
-            ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|file|tel|callto|cid|xmpp|xxx|ms-\w+):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
+            ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|file|tel|callto|im|cid|xmpp|xxx|ms-\w+):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
             WHOLE_DOCUMENT: true,
         });
 

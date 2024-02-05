@@ -22,6 +22,7 @@ import { ImageWebComponent} from './ImageComponent';
 import { ItemSelectionWebComponent } from './ItemSelectionComponent';
 import { FilterSearchBoxWebComponent } from './filters/FilterSearchBoxComponent';
 import { FilterValueOperatorWebComponent } from './filters/FilterValueOperatorComponent';
+import { SpoPathBreadcrumbWebComponent } from './SpoPathBreadcrumbComponent';
 import { SortWebComponent } from './SortComponent';
 
 export class AvailableComponents {
@@ -121,6 +122,10 @@ export class AvailableComponents {
         {
             componentName: "pnp-filteroperator",
             componentClass: FilterValueOperatorWebComponent
+        },
+        {
+            componentName: "pnp-breadcrumb",
+            componentClass: SpoPathBreadcrumbWebComponent
         },
         {
             componentName: 'pnp-sortfield',

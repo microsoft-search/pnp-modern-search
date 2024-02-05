@@ -18,21 +18,6 @@ Most search solutions require some filters (aka refiners) to allow the user to f
 
 Search verticals can be used to selectively search specific content per vertical. Using the SharePoint provider you can use result sources to limit the content returned, or you can add the required KQL in the web part itself. This sample shows how to set up multiple search verticals on different pages.
 
-## [Scenario Create your first custom template](create-your-first-custom-template.md)
-
-Create your first custom template
-
-## [Store custom templates in SharePoint](howto-store-custom-templates-in-sharepoint.md)
-
-Storing custom templates as files in a SharePoint site, is great when you want to use them across sites and want some control.
-
-## [Edit custom templates in SharePoint](edit-custom-templates-in-sharepoint.md)
-
-Storing custom templates as files in a SharePoint site, is great when you want to use them across sites and want some control.
-
-## [Edit custom templates locally in Visual Studio Code](edit-templates-using-vscode-and-onedrive.md)
-
-When you have your templates in SharePoint, it is easy to setup a way to edit locally on your computer and still get the result in SharePoint almost instantly.
 
 ## [Create a search page with verticals (within the same page)](Create-a-search-page-with-verticals-within-the-same-page.md)
 
@@ -48,17 +33,14 @@ With the Modern Search Web Parts you can create a simple and useful Department W
 ## [Use query rules for promoted links](Use-query-rules-for-promoted-links.md)
 With the Modern Search Web Parts you can show promoted links for important results. They will be configured with query rules in the SharePoint Search Admin Center. Promoted results will show users more informations and direct links about specific, predefined, terms they searching for.
 
+## [Use query string from url for dynamic results](use-query-string-in-url.md)
 This scenario describes how to use query string as value in the URL from the current page. You can use URL query string parameters to build dynamic search pages.
 Use a library with metadata that you can use the query string parameter in the URL.
-
-
 
 ## [Setup Results web part to show birthdays](Setup-Results-web-part-to-show-birthdays.md)
 A common request in any intranet is to show birthdays of employees. This scenario describes how to use stock SharePoint search to show birthdays of employees in the search results. 
 
-
 ## [Setup Results web part to show work anniversaries](Setup-Results-web-part-to-show-work-anniversaries.md)
-
 Showing the work anniversaries of employees is a common request in any intranet. This scenario describes one way to achive this using a sleight of hand trick/cheating as the search index does not contains the information we need. 
 
 ---
