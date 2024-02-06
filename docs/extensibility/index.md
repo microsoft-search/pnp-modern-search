@@ -29,7 +29,7 @@ For your project to be a valid extensibility library, you must have the followin
 - You library **manifest ID** must be registered in the Web Part where you want to use the extension.
 
 !!! important "SPFx version"
-    The SPFx library project must use the same SPFx version as the main solution (currently `1.15.2`). Owherwise you may face issues at build time. See [GitHub issue #1893](https://github.com/microsoft-search/pnp-modern-search/issues/1893)
+    The SPFx library project must use the same SPFx version as the main solution (check source code for current version). Owherwise you may face issues at build time. See [GitHub issue #1893](https://github.com/microsoft-search/pnp-modern-search/issues/1893)
 
 ### Supported extensions
 
