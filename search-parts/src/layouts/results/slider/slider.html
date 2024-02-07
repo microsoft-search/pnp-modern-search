@@ -38,7 +38,7 @@
 
         <pnp-slider data-items="{{JSONstringify @root.data.items 2}}" 
             data-options="{{JSONstringify @root.properties.layoutProperties.sliderOptions}}" 
-            data-context="{{JSONstringify @root}}" 
+            data-context="{{JSONstringify (truncateContext @root)}}"
             data-instance-id="{{@root.instanceId}}">
 
             <div class="template--slide" style="height: {{@root.properties.layoutProperties.slideHeight}}px;width: {{@root.properties.layoutProperties.slideWidth}}px;margin: 5px;">
@@ -62,7 +62,7 @@
                         data-enable-preview="false" 
                         data-show-file-icon="true"
                         data-is-compact="false"
-                        data-context="{{JSONstringify @root 2}}"
+                        data-context="{{JSONstringify (truncateContext @root)}}"
                         data-instance-id="{{@root.instanceId}}"
                         data-theme-variant="{{JSONstringify @root.theme}}"
                         data-allow-item-selection="{{@root.properties.itemSelectionProps.allowItemSelection}}"

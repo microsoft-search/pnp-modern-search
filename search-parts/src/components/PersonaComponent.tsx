@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Persona, IPersonaProps, IPersonaSharedProps, getInitials, Icon, ITheme } from 'office-ui-fabric-react';
+import { Persona, IPersonaProps, IPersonaSharedProps, getInitials, Icon, ITheme } from '@fluentui/react';
 import { TemplateService } from "../services/templateService/TemplateService";
 import * as ReactDOM from 'react-dom';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
@@ -11,6 +11,7 @@ import { isEmpty } from '@microsoft/sp-lodash-subset';
 import { DomPurifyHelper } from '../helpers/DomPurifyHelper';
 import { IComponentFieldsConfiguration } from '../models/common/IComponentFieldsConfiguration';
 import { ServiceScope, ServiceKey } from '@microsoft/sp-core-library';
+import { LivePersona } from "@pnp/spfx-controls-react/lib/LivePersona";
 
 export interface IPersonaComponentProps {
 
@@ -67,9 +68,19 @@ export interface IPersonaComponentProps {
     templateService: ITemplateService;
 
     /**
+     * Current servicescope
+     */
+    serviceScope: ServiceScope;
+
+    /**
      * The Handlebars context to inject in slide content (ex: @root)
      */
     context?: string;
+
+    /**
+     * Enable native LPC from SharePoint
+     */
+    nativeLpc?: boolean;
 }
 
 export interface IPersonaComponentState {
@@ -134,6 +145,17 @@ export class PersonaComponent extends React.Component<IPersonaComponentProps, IP
             }
         };
 
+        if (this.props.nativeLpc) {
+            return <LivePersona upn={processedProps.tertiaryText}
+                template={
+                    <>
+                        <Persona {...persona} size={parseInt(this.props.personaSize)}></Persona>
+                    </>
+                }
+                serviceScope={this.props.serviceScope}
+            />
+        }
+
         return <Persona {...persona} size={parseInt(this.props.personaSize)}></Persona>;
     }
 }
@@ -159,7 +181,7 @@ export class PersonaWebComponent extends BaseWebComponent {
 
         const templateService = serviceScope.consume<ITemplateService>(templateServiceKey);
 
-        const personaItem = <PersonaComponent {...props} templateService={templateService} />;
+        const personaItem = <PersonaComponent {...props} templateService={templateService} serviceScope={serviceScope} />;
         ReactDOM.render(personaItem, this);
     }
 

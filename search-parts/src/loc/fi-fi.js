@@ -284,6 +284,7 @@ define([], function() {
                 SupportHTMLColumnLabel: "Salli HTML",
                 ResetFieldsBtnLabel: "Palauta kentät templaatin oletusarvoihin",
                 ShowPersonaCardOnHover: "Näytä henkilökortti hoverilla",
+                ShowPersonaCardOnHoverNative: "Näytä henkilökortti hoverilla (LPC)",
                 ShowPersonaCardOnHoverCalloutMsg: "Tämä ominaisuus käyttää Microsoft Graphia käyttäjäprofiilin tietojen näyttämiseen, ja tarvitsee seuraavat API oikeudet tenantissa toimiakseen: ['User.Read','People.Read','Contacts.Read','User.Read.All'].",
                 Fields: {
                     ImageUrl: "Kuvan URL",

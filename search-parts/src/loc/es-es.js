@@ -286,6 +286,7 @@ define([], function() {
                 SupportHTMLColumnLabel: "Permitir HTML",
                 ResetFieldsBtnLabel: "Restablecer los valores por defecto de los campos",
                 ShowPersonaCardOnHover: "Mostrar tarjeta de persona al pasar el ratón por encima",
+                ShowPersonaCardOnHoverNative:"Mostrar tarjeta de persona al pasar el ratón por encima (LPC)",
                 ShowPersonaCardOnHoverCalloutMsg: "Esta función utiliza Microsoft Graph para mostrar información sobre el usuario y necesita los siguientes permisos de la API en su inquilino para funcionar: ['User.Read','People.Read','Contacts.Read','User.Read.All'].",
                 Fields: {
                     ImageUrl: "URL de la imagen",

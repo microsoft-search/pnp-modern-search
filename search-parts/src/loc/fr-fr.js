@@ -63,8 +63,8 @@ define([], function() {
                 QueryModifierDefinitionNotFound: "Le queryModifier personnalisé avec la clé '{0}' n'a pas été trouvé. Vérifiez que la solution est correctement déployée dans le catalogue d'applications et que l'ID du manifeste est enregistré pour ce composant WebPart.",
                 InvalidQueryModifierInstance: "Le queryModifier personnalisé sélectionné '{0}' n'implémente pas correctement la classe abstraite 'BaseQueryModifier'. Certaines méthodes sont manquantes.",
             },
-            DateFromLabel: "De",
-            DateTolabel: "À",
+            DateFromLabel: "Du",
+            DateTolabel: "Au",
             DatePickerStrings: {
                 months: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
                 shortMonths: ['Janv.', 'Févr.', 'Mars', 'Avr.', 'Mai', 'Juin', 'Juill.', 'Août', 'Sept.', 'Oct.', 'Nov.', 'Déc.'],
@@ -286,6 +286,7 @@ define([], function() {
                 SupportHTMLColumnLabel: "Autoriser HTML",
                 ResetFieldsBtnLabel: "Rétablir la valeur par défaut dans les champs",
                 ShowPersonaCardOnHover: "Afficher l’image de la carte en pointant le curseur",
+                ShowPersonaCardOnHoverNative: "Afficher l’image de la carte en pointant le curseur (LPC)",
                 ShowPersonaCardOnHoverCalloutMsg: "Cette fonction utilise Microsoft Graph pour afficher des renseignements sur l’utilisateur et nécessite les autorisations API suivantes pour que votre utilisateur puisse travailler : [« User.Read », « People.Read », « Contacts.Read », « User.Read.All »].",
                 Fields: {
                     ImageUrl: "URL de l’image",

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import { Version, ServiceKey, Text, Log } from '@microsoft/sp-core-library';
-import { GlobalSettings } from 'office-ui-fabric-react';
+import { GlobalSettings } from '@fluentui/react';
 import { IWebPartPropertiesMetadata } from '@microsoft/sp-webpart-base';
 import { uniqBy } from '@microsoft/sp-lodash-subset';
 import { DynamicProperty } from "@microsoft/sp-component-base";
@@ -33,7 +33,7 @@ import { ISuggestionProviderDefinition, BaseSuggestionProvider } from '@pnp/mode
 import { AvailableSuggestionProviders, BuiltinSuggestionProviderKeys } from '../../providers/AvailableSuggestionProviders';
 import { ISuggestionProvider } from '@pnp/modern-search-extensibility';
 import { ServiceScopeHelper } from '../../helpers/ServiceScopeHelper';
-import { Toggle, IToggleProps, MessageBar, MessageBarType, Link } from "office-ui-fabric-react";
+import { Toggle, IToggleProps, MessageBar, MessageBarType, Link } from '@fluentui/react';
 import { ISuggestionProviderConfiguration } from '../../providers/ISuggestionProviderConfiguration';
 import { IExtensibilityConfiguration } from '../../models/common/IExtensibilityConfiguration';
 import { Constants } from '../../common/Constants';
@@ -42,6 +42,7 @@ import { BuiltinTokenNames, TokenService } from '../../services/tokenService/Tok
 import { BaseWebPart } from '../../common/BaseWebPart';
 import { DynamicPropertyHelper } from '../../helpers/DynamicPropertyHelper';
 import PnPTelemetry from '@pnp/telemetry-js';
+import commonStyles from '../../styles/Common.module.scss';
 
 const LogSource = "SearchBoxWebPart";
 
@@ -194,7 +195,16 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
             onSearch: this._onSearch,
             suggestionProviders: this._selectedCustomProviders,
             numberOfSuggestionsPerGroup: this.properties.numberOfSuggestionsPerGroup,
-            tokenService: this.tokenService
+            tokenService: this.tokenService,
+            webPartTitleProps: {
+                displayMode: this.displayMode,
+                title: this.properties.title,
+                updateProperty: (value: string) => {
+                    this.properties.title = value;
+                },
+                themeVariant: this._themeVariant,
+                className: commonStyles.wpTitle
+            }
         } as ISearchBoxContainerProps);
 
         // Error message
@@ -751,7 +761,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
                 // Custom provider
                 default:
 
-                    // Gets the registered service key according to the selected provider definition 
+                    // Gets the registered service key according to the selected provider definition
                     const matchingDefinitions = suggestionProviderDefinitions.filter((provider) => { return provider.key === providerKey; });
 
                     // Can only have one data source instance per key
@@ -860,7 +870,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
      */
     private _handleQueryStringChange() {
 
-        // To avoid pushState modification from many components on the page (ex: search box, etc.), 
+        // To avoid pushState modification from many components on the page (ex: search box, etc.),
         // only subscribe to query string changes if the connected source is either the searc queyr or explicit query string parameter
         if (/^(PageContext:SearchData:searchQuery)|(PageContext:UrlData:queryParameters)/.test(this.properties.queryText.reference)) {
 

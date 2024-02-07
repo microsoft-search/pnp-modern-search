@@ -59,7 +59,7 @@
                                                     data-persona-size="{{@root.properties.layoutProperties.personaSize}}"
                                                     data-theme-variant="{{JSONstringify @root.theme}}"
                                                     data-instance-id="{{@root.instanceId}}"
-                                                    data-context="{{JSONstringify @root}}">
+                                                    data-context="{{JSONstringify (truncateContext @root)}}">
                                                 </pnp-persona>
                                             </template>
                                             <template data-type="person-card">
@@ -72,9 +72,10 @@
                                             data-fields-configuration="{{JSONstringify @root.properties.layoutProperties.peopleFields}}"
                                             data-item="{{JSONstringify item}}" 
                                             data-persona-size="{{@root.properties.layoutProperties.personaSize}}" 
-                                            data-context="{{JSONstringify @root}}"
+                                            data-context="{{JSONstringify (truncateContext @root)}}"
                                             data-instance-id="{{@root.instanceId}}"
                                             data-theme-variant="{{JSONstringify @root.theme}}"
+                                            data-native-lpc={{@root.properties.layoutProperties.showPersonaCardNative}}
                                         ></pnp-persona>
                                     {{/and}}
                                     

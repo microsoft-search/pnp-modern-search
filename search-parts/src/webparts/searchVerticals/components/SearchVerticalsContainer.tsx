@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styles from './SearchVerticalsContainer.module.scss';
 import { ISearchVerticalsContainerProps } from './ISearchVerticalsContainerProps';
-import { Pivot, PivotItem, IPivotItemProps, Icon, GlobalSettings, IChangeDescription, ITheme } from 'office-ui-fabric-react';
+import { Pivot, PivotItem, IPivotItemProps, Icon, GlobalSettings, IChangeDescription, ITheme } from '@fluentui/react';
 import { WebPartTitle } from '@pnp/spfx-controls-react/lib/WebPartTitle';
 import { PageOpenBehavior } from '../../../helpers/UrlHelper';
 import { ISearchVerticalsContainerState } from './ISearchVerticalsContainerState';
@@ -99,6 +99,7 @@ export default class SearchVerticalsContainer extends React.Component<ISearchVer
           this.props.tokenService.resolveTokens(vertical.linkUrl).then((resolvedUrl: string) => {      
             const inputQueryText: string = !isEmpty(GlobalSettings.getValue(BuiltinTokenNames.inputQueryText)) ?  GlobalSettings.getValue(BuiltinTokenNames.inputQueryText) : "";    
             resolvedUrl = resolvedUrl.replace(/\{inputQueryText\}|\{searchTerms\}|\{SearchBoxQuery\}/gi, inputQueryText);
+            resolvedUrl = resolvedUrl.replace(inputQueryText,encodeURIComponent(inputQueryText));
 
             if(vertical.openBehavior === PageOpenBehavior.NewTab){
               window.open(resolvedUrl, "_blank");
