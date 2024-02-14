@@ -1,4 +1,4 @@
-define([], function() {
+define([], function () {
     return {
         General: {
             DynamicPropertyDefinition: "Such query"
@@ -8,32 +8,32 @@ define([], function() {
                 GroupName: "Suchbox Einstellungen",
                 PlaceholderTextLabel: "Platzhalter zum Anzeigen in der Suchbox",
                 SearchInNewPageLabel: "Query an eine neue Seite senden",
-                ReQueryOnClearLabel: "Abfrage bei Löschen zurücksetzen",
+                ReQueryOnClearLabel: "Abfrage beim Löschen zurücksetzen",
                 PageUrlLabel: "Seiten URL",
                 UrlErrorMessage: "Bitte eine valide URL angeben.",
                 QueryPathBehaviorLabel: "Methode",
                 QueryInputTransformationLabel: "Query Eingabe Transformations-Vorlage",
                 UrlFragmentQueryPathBehavior: "URL Fragment",
-                QueryStringQueryPathBehavior: "Query string Parameter",
+                QueryStringQueryPathBehavior: "Query-String Parameter",
                 QueryStringParameterName: "Parameter Name",
                 QueryParameterNotEmpty: "Bitte einen Wert für den Parameter angeben."
             },
             AvailableConnectionsGroup: {
                 GroupName: "Verfügbare Verbindungen",
-                UseDynamicDataSourceLabel: "Benutze eine dynamsche Daten Quelle als Standard Eingabe.",
+                UseDynamicDataSourceLabel: "Benutze eine dynamische Datenquelle als Standard-Eingabe.",
                 QueryKeywordsPropertyLabel: ""
             },
             QuerySuggestionsGroup: {
                 GroupName: "Query Vorschläge",
-                EnableQuerySuggestions: "Aktiviere Query Vorschläge",
-                EditSuggestionProvidersLabel: "Configuriere mögliche Provider",
+                EnableQuerySuggestions: "Aktiviere Abfrage Vorschläge",
+                EditSuggestionProvidersLabel: "Konfiguriere mögliche Vorschlags Provider",
                 SuggestionProvidersLabel: "Vorschlags Provider",
-                SuggestionProvidersDescription: "Aktiviere oder deaktivierte individuelle Vorschlag Provider.",
+                SuggestionProvidersDescription: "Aktiviere oder deaktivierte individuelle Vorschlags Provider.",
                 EnabledPropertyLabel: "Aktiviert",
                 ProviderNamePropertyLabel: "Name",
                 ProviderDescriptionPropertyLabel: "Beschreibung",
                 DefaultSuggestionGroupName: "Empfohlen",
-                NumberOfSuggestionsToShow: "Anzahl der Vorschläge pro Gruppe die angezeigt werden sollen."
+                NumberOfSuggestionsToShow: "Anzahl der Vorschläge pro Gruppe, die angezeigt werden sollen."
             },
             InformationPage: {
                 Extensibility: {
@@ -41,7 +41,7 @@ define([], function() {
                     PanelDescription: "Füge hinzu / entferne die IDs der benutzerdefinierten Erweiterungsbibliotheken. Ein Anzeigename kann hinzugefügt werden und ob die Bibliothek beim Start geladen werden soll. Nur benutzerdefinierte Vorschlags Provider werden hier geladen.",
                 }
             },
-            
+
         },
         SearchBox: {
             DefaultPlaceholder: "Suchbegriffe eingeben...",

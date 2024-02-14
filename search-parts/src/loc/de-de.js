@@ -1,4 +1,4 @@
-define([], function() {
+define([], function () {
     return {
         Tokens: {
             SelectTokenLabel: "Wähle ein Token...",
@@ -14,7 +14,7 @@ define([], function() {
             Custom: {
                 CustomTokensGroupName: "Benutzerdefinerter Wert",
                 CustomValuePlaceholder: "Wert eingeben...",
-                InvalidtokenFormatErrorMessage: "Bitte gebe den Token im unterstützten Format ein: {' und '}'. (z.B.: {Today})"
+                InvalidtokenFormatErrorMessage: "Bitte geben Sie den Token im unterstützten Format ein: {' und '}'. (z.B.: {Today})"
             },
             Date: {
                 DateTokensGroupName: "Datums Token",
@@ -54,14 +54,14 @@ define([], function() {
             },
             Extensibility: {
                 InvalidDataSourceInstance: "Die ausgewählte Datenquelle '{0}' implementiert die abstrakte Klasse 'BaseDataSource' nicht korrekt. Es fehlen einige Methoden.",
-                DataSourceDefinitionNotFound: "Die benutzerdefinierte Datenquelle mit dem Schlüssel '{0}' wurde nicht gefunden. Stellen Sie sicher, dass die Lösung korrekt für den App-Katalog bereitgestellt und die Manifest-ID für dieses Web Part registriert ist.",
-                LayoutDefinitionNotFound: "Das benutzerdefinierte Layout mit dem Schlüssel '{0}' wurde nicht gefunden. Stellen Sie sicher, dass die Lösung korrekt für das App-Katalog bereitgestellt und die Manifest-ID für dieses Webpart registriert ist.",
+                DataSourceDefinitionNotFound: "Die benutzerdefinierte Datenquelle mit dem Schlüssel '{0}' wurde nicht gefunden. Stellen Sie sicher, dass die Lösung korrekt für den App-Katalog bereitgestellt und die Manifest-ID für dieses Webpart registriert ist.",
+                LayoutDefinitionNotFound: "Das benutzerdefinierte Layout mit dem Schlüssel '{0}' wurde nicht gefunden. Stellen Sie sicher, dass die Lösung korrekt für den App-Katalog bereitgestellt und die Manifest-ID für dieses Webpart registriert ist.",
                 InvalidLayoutInstance: "Das ausgewählte Layout '{0}' implementiert die abstrakte Klasse 'BaseLayout' nicht korrekt. Es fehlen einige Methoden.",
                 DefaultExtensibilityLibraryName: "Standard-Erweiterungsbibliothek",
                 InvalidProviderInstance: "Der ausgewählte Vorschlagsprovider '{0}' implementiert die abstrakte Klasse 'BaseSuggestionProvider' nicht korrekt. Es fehlen einige Methoden.",
                 ProviderDefinitionNotFound: "Der benutzerdefinierte Vorschlagsprovider mit dem Schlüssel '{0}' wurde nicht gefunden. Stellen Sie sicher, dass die Lösung korrekt für den App-Katalog bereitgestellt und die Manifest-ID für dieses Webpart registriert ist.",
-                QueryModifierDefinitionNotFound: "Der benutzerdefinierte Benutzer-Anfragen-Modifizierer mit dem Schlüssel '{0}' wurde nicht gefunden. Stellen Sie sicher, dass die Lösung korrekt für den App-Katalog bereitgestellt und die Manifest-ID für dieses Webpart registriert ist.",
-                InvalidQueryModifierInstance: "Der ausgewählte Benutzer-Anfragen-Modifizierer '{0}'  implementiert  die abstrakte Klasse 'BaseQueryModifier' nicht korrekt. Es fehlen einige Methoden.",
+                QueryModifierDefinitionNotFound: "Der benutzerdefinierte Abfragemodifikator mit dem Schlüssel '{0}' wurde nicht gefunden. Stellen Sie sicher, dass die Lösung korrekt für den App-Katalog bereitgestellt und die Manifest-ID für dieses Webpart registriert ist.",
+                InvalidQueryModifierInstance: "Der ausgewählte Abfragemodifikator '{0}' implementiert die abstrakte Klasse 'BaseQueryModifier' nicht korrekt. Es fehlen einige Methoden.",
             },
             DateFromLabel: "Von",
             DateTolabel: "Bis",
@@ -96,7 +96,7 @@ define([], function() {
                 NoResultsSearchMessage: "Keine Ergebnisse gefunden",
                 SearchPlaceholder: "Suche einen Wert..."
             },
-            CurrentVerticalNotSelectedMessage: "Das derzeit ausgewählte Vertikal passt nicht zu den zu diesem Web Part ({0}) zugeordneten Vertikalen. Es wird im Anzeige Modus als leer angezeigt."            
+            CurrentVerticalNotSelectedMessage: "Das derzeit ausgewählte Vertikal passt nicht zu den zu diesem Web Part ({0}) zugeordneten Vertikalen. Es wird im Anzeige Modus als leer angezeigt."
         },
         DataSources: {
             SharePointSearch: {
@@ -109,8 +109,8 @@ define([], function() {
                 QueryTemplateFieldDescription: "Die Vorlage für die Suchanfrage. Sie können auch {<Tokens>} verwenden, um eine dynamische Abfrage zu erstellen.",
                 ResultSourceIdLabel: "ID der Ergebnisquelle / Scope|Name",
                 ResultSourceIdDescription: "Verwenden Sie eine standardmäßige SharePoint-Ergebnisquellen-ID, geben Sie Ihren eigenen GUID-Wert ein oder den SCOPE und NAMEN der Quelle getrennt durch '|' (z.B.: SPSite|News). Erlaubte Scopes sind [SPSiteSubscription, SPSite, SPWeb]. Drücken Sie zum Speichern die [Eingabetaste].",
-                InvalidResultSourceIdMessage: "Der angegebene Wert ist keine gültige GUID oder nicht als SCOPE|NAME formattiert.",
-                EnableQueryRulesLabel: "Abfrageregeln aktivieren",                
+                InvalidResultSourceIdMessage: "Der angegebene Wert ist keine gültige GUID oder nicht in der Form 'SCOPE|NAME' formatiert.",
+                EnableQueryRulesLabel: "Abfrageregeln aktivieren",
                 RefinementFilters: "Verfeinerungsfilter",
                 RefinementFiltersDescription: "Initiale Verfeinerungsfilter, die auf die Abfrage angewendet werden sollen. Diese werden nicht in den ausgewählten Filtern angezeigt. Verwenden Sie für String-Ausdrücke doppelte Anführungszeichen (\") anstelle von einfachen Anführungszeichen (').",
                 EnableLocalizationLabel: "Lokalisierung einschalten",
@@ -122,10 +122,10 @@ define([], function() {
                 SelectedPropertiesFieldDescription: "Gibt die Eigenschaften an, die aus den Suchergebnissen abgerufen werden sollen.",
                 SelectedPropertiesPlaceholderLabel: "Eigenschaften auswählen",
                 HitHighlightedPropertiesFieldLabel: "Hervorgehobene Eigenschaften",
-                HitHighlightedPropertiesFieldDescription: "Liste der verwalteten Eigenschaften zum hervorheben (i.e. Department,UserName).",
+                HitHighlightedPropertiesFieldDescription: "Liste der verwalteten Eigenschaften zum Hervorheben (i.e. Department,UserName).",
                 TermNotFound: "(Begriff mit ID '{0}' nicht gefunden)",
                 ApplyQueryTemplateBtnText: "Übernehmen",
-                EnableAudienceTargetingTglLabel: "Zielgruppen Adressierung aktivieren",
+                EnableAudienceTargetingTglLabel: "Zielgruppenadressierung aktivieren",
                 TrimDuplicates: "Duplikate kürzen",
                 CollapseSpecificationLabel: "Spezifikation einklappen"
             },
@@ -152,7 +152,7 @@ define([], function() {
                 TrimDuplicates: "Duplikate kürzen",
                 CollapseProperties: {
                     EditCollapsePropertiesLabel: "Bearbeiten Sie die Minimierungseinstellungen",
-                    CollapsePropertiesDescription: "Angiv indstillingerne for sammenbrud for søgeresultaterne. Du kan enten vælge et felt fra rullelisten (kun hvis datakildedataene allerede er hentet) eller indtaste din egen tilpassede værdi (tryk på 'Enter' for at gemme din indtastning)",
+                    CollapsePropertiesDescription: "Geben Sie die Minimierungseinstellungen für die Suchergebnisse an. Sie können entweder ein Feld aus der Dropdown-Liste auswählen (nur wenn die Daten der Datenquelle bereits abgerufen wurden) oder einen eigenen Wert eingeben (drücken Sie 'Enter', um Ihre Eingabe zu speichern).",
                     CollapsePropertiesPropertyPaneFieldLabel: "Minimierungseinstellungen",
                     CollapseLimitFieldLabel: "Grenze",
                     CollapsePropertiesFieldColumnPlaceholder: "Nach Feld reduzieren"
@@ -164,7 +164,7 @@ define([], function() {
                     SortListDescription: "Geben Sie die initiale Sortierreihenfolge für die Suchergebnisse an. Sie können entweder ein Feld aus der Dropdown-Liste auswählen (nur wenn die Daten der Datenquelle bereits abgerufen wurden) oder einen eigenen Wert eingeben (drücken Sie 'Enter', um Ihre Eingabe zu speichern).",
                     SortDirectionAscendingLabel: "Aufsteigend",
                     SortDirectionDescendingLabel: "Absteigend",
-                    SortErrorMessage: "Ungültige Sucheigenschaft (Prüfen Sie, ob die verwaltete Eigenschaft sortierbar ist).",
+                    SortErrorMessage: "Ungültige Sucheigenschaft (prüfen Sie, ob die verwaltete Eigenschaft sortierbar ist).",
                     SortPanelSortFieldLabel: "Nach Feld sortieren",
                     SortPanelSortFieldAria: "Sortiere nach",
                     SortPanelSortFieldPlaceHolder: "Sortiere nach",
@@ -349,14 +349,14 @@ define([], function() {
             OrOperator: "OR",
             AndOperator: "AND",
             ComboBoxPlaceHolder: "Wert auswählen",
-            UseAndOperatorValues: "Benutze ein AND Operator zwischen den Werten.",
-            UseOrOperatorValues: "Benutze ein OR Operator zwischen den Werten.",
-            UseValuesOperators: "Wähle einen Operator der zwischen den Filter Werten angewandt werden soll."
+            UseAndOperatorValues: "Benutze einen AND Operator zwischen den Werten.",
+            UseOrOperatorValues: "Benutze einen OR Operator zwischen den Werten.",
+            UseValuesOperators: "Wähle einen Operator, der zwischen den Filterwerten angewandt werden soll."
         },
         SuggestionProviders: {
             SharePointStatic: {
                 ProviderName: "SharePoint Statische Suchvorschläge",
-                ProviderDescription: "Abrufen von statischen benutzerdefinierten SharePoint-Suchvorschlägen"
+                ProviderDescription: "Abrufen von statischen, benutzerdefinierten SharePoint-Suchvorschlägen"
             }
         }
     }
