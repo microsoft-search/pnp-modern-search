@@ -15,12 +15,12 @@ define([], function() {
                 UseDataResultsWebPartLabel: "Verbinde einen Suchergebnis Webpart.",
                 UseDataResultsFromComponentsLabel: "Benutze Daten von diesen Webparts",
                 UseDataResultsFromComponentsDescription: "Wenn mehr als ein Webpart verbunden ist, dann werden die Filter Werte und die Anzahl für ähnliche Filter Namen zusammengeführt.",
-                LinkToVerticalLabel: "Zeige Filter nur an wenn folgende Vertikale ausgewählt sind",
-                LinkToVerticalLabelHoverMessage: "Diese Filter werden nur angezeigt wenn das ausgewählte Vertikal mit einem der für diesen Webpart konfigurierten übereinstimmt. Ansonsten bleibt das Webpart im Anzeigemodus blank (kein Rand)."
+                LinkToVerticalLabel: "Zeige Filter nur an, wenn folgende Vertikale ausgewählt sind",
+                LinkToVerticalLabelHoverMessage: "Diese Filter werden nur angezeigt, wenn das ausgewählte Vertikal mit einem der für dieses Webpart konfigurierten übereinstimmt. Ansonsten bleibt das Webpart im Anzeigemodus leer (kein Rand)."
             },
             FiltersSettingsPage: {
                 SettingsGroupName: "Filter Einstellungen",
-                FilterOperator: "Operator zum Nutzen zwischen den Filtern"
+                FilterOperator: "Operator zwischen den Filtern"
             },
             DataFilterCollection: {
                 SelectFilterComboBoxLabel: "Wähle ein Feld",
@@ -31,10 +31,10 @@ define([], function() {
                 FilterExpandByDefault: "Standardmäßig erweitert",
                 FilterType: "Filter Typ",
                 FilterTypeRefiner: "Diese Filter Vorlage agiert als ein Verfeinerer und erhält/sendet verfügbare/ausgewählte Werte von/zu einer verbundenen Datenquelle.",
-                FilterTypeStaticFilter: "Diese Filter Vorlage agiert als ein statischer Filter udn sendet nur willkürlich ausgewählte Werte zu der verbundenen Datenquelle. Einkommende Filter Werte werden nicht beachtet.",
+                FilterTypeStaticFilter: "Diese Filter Vorlage agiert als ein statischer Filter und sendet nur willkürlich ausgewählte Werte zu der verbundenen Datenquelle. Einkommende Filter Werte werden nicht beachtet.",
                 CustomizeFiltersBtnLabel: "Bearbeiten",
                 CustomizeFiltersHeader: "Filter bearbeiten",
-                CustomizeFiltersDescription: "Such Filter durch hinzufügen / entfernen von Zeilen konfigurieren. Für die Filter können Felder von den Datenquellen Ergebnissen oder statische Werte selektiert werden.",
+                CustomizeFiltersDescription: "Filter durch Hinzufügen/Entfernen von Zeilen konfigurieren. Für die Filter können Felder von den Datenquellen-Ergebnissen oder statische Werte selektiert werden.",
                 CustomizeFiltersFieldLabel: "Filter anpassen",
                 ShowCount: "Zeige Anzahl",
                 Operator: "Operator zwichen Werten",
