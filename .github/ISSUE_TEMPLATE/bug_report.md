@@ -7,6 +7,8 @@ assignees: ''
 
 ---
 
+
+
 ### Check existing issues before logging new ones
 If you are not using the latest version, triage your issue with the latest version before logging as we won't provide patches to older versions.
 
@@ -15,6 +17,11 @@ If you are not using the latest version, triage your issue with the latest versi
 **For any question regarding Web Parts usage, please use the ["Discussions"](https://github.com/microsoft-search/pnp-modern-search/discussions) tab instead of creating a new issue.**.
 
 __Remove the above section before submitting, and removal of the below template will result in the issue being closed.__
+
+### Follow the template below or we will have to delete this request!!
+We can assist a lot faster if you provide the following information:
+
+
 
 **Version used**
 Ex: 4.8

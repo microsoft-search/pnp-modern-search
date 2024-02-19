@@ -86,8 +86,14 @@ Also, to help us to resolve your issue, you can include screenshots or error mes
 - Errors displayed in the SharePoint console (pressing CTRL+F12)
 
 ## Issues, questions, feedback?
-
 For any issue, question or feedback, please the [official GitHub repository](https://github.com/microsoft-search/pnp-modern-search/issues). We will be happy to help you!
+
+## Q&A
+We have a list of frequently asked questions available [here](q&a). If you have a question, it might be already answered there.
+
+
+
+
 
 
 ## About
@@ -110,3 +116,4 @@ Here is the list of main contributors of the PnP Modern Search (all versions inc
 - Paolo Pialorsi (PiaSys.com) - [@PaoloPia](https://twitter.com/paolopia)
 - Patrik Hellgren (SherparsGroupAB) - [@PatrikHellgren](https://twitter.com/patrikhellgren)
 - Erfan Darroudi [@edarroudi](https://github.com/edarroudi)
+- Kasper Larsen (Fellowmind) - [@kasperlarsen](https://twitter.com/kasperbolarsen)
