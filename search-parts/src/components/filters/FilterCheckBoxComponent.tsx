@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { BaseWebComponent, IDataFilterInfo, IDataFilterValueInfo, ExtensibilityConstants } from '@pnp/modern-search-extensibility';
 import * as ReactDOM from 'react-dom';
-import { Checkbox, ChoiceGroup, IChoiceGroupOption, ITheme, Text } from '@fluentui/react';
+import { Checkbox, ChoiceGroup, IChoiceGroupOption, IStyleFunctionOrObject, ITextProps, ITextStyles, ITheme, Text } from '@fluentui/react';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 
 export interface IFilterCheckBoxProps {
@@ -72,6 +72,11 @@ export class FilterCheckBoxComponent extends React.Component<IFilterCheckBoxProp
 
         let renderInput: JSX.Element = null;
         let textColor: string = this.props.themeVariant && this.props.themeVariant.isInverted ? (this.props.themeVariant ? this.props.themeVariant.semanticColors.bodyText : '#323130') : this.props.themeVariant.semanticColors.inputText;
+        const textComponentStyles: IStyleFunctionOrObject<ITextProps, ITextStyles> = {
+            root: {
+                color: textColor
+            }
+        };
 
         if (this.props.isMulti) {
             renderInput = <Checkbox
@@ -96,7 +101,7 @@ export class FilterCheckBoxComponent extends React.Component<IFilterCheckBoxProp
                     this.props.onChecked(this.props.filterName, filterValue);
                 }}
                 onRenderLabel={(props, defaultRender) => {
-                    return <Text block nowrap title={props.label}>{props.label}</Text>;
+                    return <Text block nowrap styles={textComponentStyles} title={props.label}>{props.label}</Text>;
                 }}
             />;
         } else {
