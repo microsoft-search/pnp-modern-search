@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { BaseWebComponent } from '@pnp/modern-search-extensibility';
 import * as ReactDOM from 'react-dom';
-import { IGroup, IGroupDividerProps, Icon, Text, GroupedList } from '@fluentui/react';
+import { IGroup, IGroupDividerProps, Icon, Text, GroupedList, ITextProps, ITextTokens, ITextSlots, IStyleFunctionOrObject, ITextStyles } from '@fluentui/react';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import styles from './CollapsibleContentComponent.module.scss';
 import 'core-js/features/dom-collections';
@@ -126,7 +126,12 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
     }
 
     private _onRenderHeader(props: IGroupDividerProps): JSX.Element {
-
+        let textColor: string = this.props.themeVariant && this.props.themeVariant.isInverted ? (this.props.themeVariant ? this.props.themeVariant.semanticColors.bodyText : '#323130') : this.props.themeVariant.semanticColors.inputText;
+        const textComponentStyles: IStyleFunctionOrObject<ITextProps, ITextStyles> = {
+            root: {
+                color: textColor
+            }
+        };
         return (
             <div style={{ position: 'relative' }}>
                 <div
@@ -142,7 +147,7 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
                         }
                     }}
                 >
-                    <Text variant={'large'}>{props.group.name}</Text>
+                    <Text variant={'large'} styles={textComponentStyles}>{props.group.name}</Text>
                     <div className={styles.collapsible__filterPanel__body__headerIcon}>
                         {props.group.isCollapsed ?
                             <Icon iconName='ChevronDown' />
