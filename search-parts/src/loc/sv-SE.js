@@ -288,6 +288,8 @@ define([], function () {
           ShowPersonaCardOnHover: "Visa personakort genom att föra musen över",
           ShowPersonaCardOnHoverNative: "Visa personakort genom att föra musen över (LPC)",
           ShowPersonaCardOnHoverCalloutMsg: "Denna funktion använder Microsoft Graph för att visa information om användaren och måste använda följande API-behörigheter i din klient för att den ska fungera: ['User.Read','People.Read','Contacts.Read','User.Read.All'].",
+          ShowPersonaPresenceInfo: "Visa närvaro",
+          ShowPersonaPresenceInfoCalloutMsg: "Denna funktion kräver följande API-behörigheter i din klient för att fungera: ['Presence.Read.All']",
           Fields: {
             ImageUrl: "Bild URL",
             PrimaryText: "Primärtext",

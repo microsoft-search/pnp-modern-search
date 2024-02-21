@@ -288,6 +288,8 @@ define([], function() {
               ShowPersonaCardOnHover: "Pokaż kartę po wskazaniu",
               ShowPersonaCardOnHoverNative: "Pokaż kartę po wskazaniu (LPC)",
               ShowPersonaCardOnHoverCalloutMsg: "Ta funkcja używa Microsoft Graph aby wyświetlić informacje o użytkowniku i wymaga następujcych uprawnień API: ['User.Read','People.Read','Contacts.Read','User.ReadBasic.All'].",
+              ShowPersonaPresenceInfo: "Pokaż obecność",
+              ShowPersonaPresenceInfoCalloutMsg: "Ta funkcja wymaga następujących uprawnień API w dzierżawie do działania: ['Presence.Read.All'].",
               Fields: {
                   ImageUrl: "URL obrazu",
                   PrimaryText: "Tekst podstawowy",
