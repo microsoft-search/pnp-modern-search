@@ -53,6 +53,8 @@ define([], function() {
         AdaptiveCardsRenderTypeDesc: "Sélectionnez un affichage basé sur des cartes adaptatives JSON",
         Handlebars: {
           UseMicrosoftGraphToolkit: "Use Microsoft Graph Toolkit",
+          MicrosoftGraphToolkitDisambiguation: "Chaîne de désambiguïsation",
+          MicrosoftGraphToolkitDisambiguationDescription: "La chaîne de désambiguïsation est utilisée pour différencier plusieurs instances du même composant WebPart sur la même page.",
           ResultTypes: {
             ResultTypeslabel: "Type de résultat",
             ResultTypesDescription: "Ajoutez ici les modèles à utiliser pour les éléments de résultat selon une ou plusieurs conditions supplémentaires. Les conditions sont évaluées dans l’ordre configuré et les modèles externes ont préséance sur les modèles intégrés. Assurez-vous également que les champs de la source des données que vous utilisez sont présents dans la réponse aux données.",

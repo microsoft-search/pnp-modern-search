@@ -288,6 +288,8 @@ declare interface ICommonStrings {
         ShowPersonaCardOnHoverNative: string;
         ShowPersonaCardOnHoverCalloutMsg: string;
         ShowPersonaCardOnHoverCalloutMsgNative: string;
+        MicrosoftGraphToolkitDisambiguation: string;
+        MicrosoftGraphToolkitDisambiguationDescription: string;
         Fields: {
           ImageUrl: string;
           PrimaryText: string;

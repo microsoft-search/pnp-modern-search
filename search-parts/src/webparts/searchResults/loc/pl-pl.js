@@ -52,6 +52,8 @@ define([], function() {
                 AdaptiveCardsRenderTypeDesc: "Wybierz układy na podstawie kart adaptacyjnych JSON",
                 Handlebars: {
                     UseMicrosoftGraphToolkit: "Użyj Microsoft Graph Toolkit",
+                    MicrosoftGraphToolkitDisambiguation: "Ciąg ujednoznaczniający",
+                    MicrosoftGraphToolkitDisambiguationDescription: "Ciąg ujednoznaczniający służy do rozróżnienia wielu wystąpień tego samego składnika Web Part na tej samej stronie.",
                     ResultTypes: {
                         ResultTypeslabel: "Rodzaje wyników",
                         ResultTypesDescription: "Dodaj tutaj szablony dla znalezionych elementów stosowanych pod jednym lub wieloma warunkami. Warunki są obliczane w zadanej kolejności a zewnętrzne szablony mają pierwszeństwo przez szablonami inline. Upewnij się, że pola źródła wyników są widoczne w odpowiedzi.",

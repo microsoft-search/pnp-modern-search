@@ -57,6 +57,11 @@ export default interface ISearchResultsWebPartProps extends IBaseWebPartProps {
     useMicrosoftGraphToolkit: boolean;
 
     /**
+     * Microsoft Graph Toolkit disambiguation string
+     */
+    microsoftGraphToolkitDisambiguation: string;
+
+    /**
      * The layout properties
      */
     layoutProperties: {

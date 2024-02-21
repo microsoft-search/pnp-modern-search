@@ -1,13 +1,27 @@
 import { WebPartContext } from '@microsoft/sp-webpart-base';
 
-export const loadMsGraphToolkit = async (context: WebPartContext) => {
+export const loadMsGraphToolkit = async (context: WebPartContext, disambiguation: string) => {
 
-    const component = window.customElements.get("mgt-mock-provider");
+    const component = disambiguation !== null && disambiguation !== undefined && disambiguation !== "" ? window.customElements.get(`mgt-${disambiguation}-person`) : window.customElements.get("mgt-person");
     if (!component) {
         // Load Microsoft Graph Toolkit dynamically
-        const { Providers } = await import(
+        const { customElementHelper } = await import(
             /* webpackChunkName: 'microsoft-graph-toolkit' */
-            '@microsoft/mgt-react/dist/es6'
+            '@microsoft/mgt-element/dist/es6/components/customElementHelper'
+        );
+        
+        if (disambiguation !== null && disambiguation !== undefined && disambiguation !== "") {
+            customElementHelper.withDisambiguation(disambiguation);
+        }
+
+        const { Providers } = await import(
+          /* webpackChunkName: 'microsoft-graph-toolkit' */
+          '@microsoft/mgt-element/dist/es6/providers/Providers'
+      );
+
+        const { registerMgtComponents } = await import(
+          /* webpackChunkName: 'microsoft-graph-toolkit' */
+          '@microsoft/mgt-components/dist/es6'
         );
 
         if (!Providers.globalProvider) {
@@ -18,6 +32,6 @@ export const loadMsGraphToolkit = async (context: WebPartContext) => {
 
             Providers.globalProvider = new SharePointProvider(context);
         }
-
+        registerMgtComponents();
     }
 }

@@ -52,6 +52,8 @@ define([], function() {
         AdaptiveCardsRenderTypeDesc: "Selecteer lay-outs op basis van JSON-adaptieve kaarten",        
         Handlebars: {
           UseMicrosoftGraphToolkit: "Gebruik de Microsoft Graph Toolkit",
+          MicrosoftGraphToolkitDisambiguation: "Ondubbelzinnigheidsreeks",
+          MicrosoftGraphToolkitDisambiguationDescription: "De ondubbelzinnigheidsreeks wordt gebruikt om onderscheid te maken tussen meerdere exemplaren van hetzelfde webonderdeel op dezelfde pagina.",
           ResultTypes: {
             ResultTypeslabel: "Resultaattypen",
             ResultTypesDescription: "Voeg hier de sjablonen toe welke gebruikt worden voor zoekresultaten op basis van één of meer voorwaarden. Voorwaarden worden toegepast in de ingestelde volgorde. Externe templates krijgen voorrang op inline sjablonen. Zorg er ook voor dat de gebruikte velden uit de databron aanwezig zijn in de data van het antwoord.",

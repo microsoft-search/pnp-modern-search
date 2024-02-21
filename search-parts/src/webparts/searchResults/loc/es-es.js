@@ -52,6 +52,8 @@ define([], function() {
                 AdaptiveCardsRenderTypeDesc: "Seleccione diseños basados en tarjetas adaptables JSON",                
                 Handlebars: {
                     UseMicrosoftGraphToolkit: "Utilizar Microsoft Graph Toolkit",
+                    MicrosoftGraphToolkitDisambiguation: "Cadena de desambiguación",
+                    MicrosoftGraphToolkitDisambiguationDescription: "La cadena de desambiguación se utiliza para diferenciar entre varias instancias del mismo elemento web en la misma página.",
                     ResultTypes: {
                         ResultTypeslabel: "Tipos de resultados",
                         ResultTypesDescription: "Añada aquí las plantillas que se utilizarán para los elementos de resultado según una o varias condiciones. Las condiciones se evalúan en el orden configurado y las plantillas externas tienen prioridad sobre las plantillas en línea. Asegúrese también de que los campos de la fuente de datos que utiliza están presentes en la respuesta de datos.",

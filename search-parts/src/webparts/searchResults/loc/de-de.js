@@ -52,6 +52,8 @@ define([], function () {
                 AdaptiveCardsRenderTypeDesc: "Wählen Sie Layouts basierend auf adaptiven JSON-Karten aus",
                 Handlebars: {
                     UseMicrosoftGraphToolkit: "Microsoft Graph Toolkit benutzen",
+                    MicrosoftGraphToolkitDisambiguation: "Begriffsklärungszeichenfolge",
+                    MicrosoftGraphToolkitDisambiguationDescription: "Die Begriffsklärungszeichenfolge wird verwendet, um zwischen mehreren Instanzen desselben Webparts auf derselben Seite zu unterscheiden.",
                     ResultTypes: {
                         ResultTypeslabel: "Ergebnistypen",
                         ResultTypesDescription: "Fügen Sie hier die Vorlagen hinzu, die für die Ergebniselemente gemäß einer oder mehrerer Bedingungen verwendet werden sollen. Die Bedingungen werden in der konfigurierten Reihenfolge ausgewertet und externe Vorlagen haben Vorrang vor Inline-Vorlagen. Stellen Sie außerdem sicher, dass die von Ihnen verwendeten Datenquellenfelder in der Datenrückgabe vorhanden sind.",

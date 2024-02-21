@@ -52,6 +52,8 @@ define([], function() {
         AdaptiveCardsRenderTypeDesc: "Välj layouter baserade på adaptiva JSON-kort",        
         Handlebars: {
           UseMicrosoftGraphToolkit: "Använd Microsoft Graph Toolkit",
+          MicrosoftGraphToolkitDisambiguation: "Disambigueringssträng",
+          MicrosoftGraphToolkitDisambiguationDescription: "Disambigueringssträngen används för att skilja mellan flera instanser av samma webbdel på samma sida.",
           ResultTypes: {
             ResultTypeslabel: "Resultattyper",
             ResultTypesDescription: "Här kan du lägga till de mallar som du vill använda i resultaten enligt ett eller flera villkor. Villkoren utvärderas i den konfigurerade ordningen och externa mallar har företräde framför integrerade mallar. Se till att fälten på den datakälla du använder finns i datasvaret.",

@@ -52,6 +52,8 @@ define([], function() {
           AdaptiveCardsRenderTypeDesc: "Velg oppsett basert på adaptive JSON-kort",          
           Handlebars: {
             UseMicrosoftGraphToolkit: "Bruk Microsoft Graph Toolkit",
+            MicrosoftGraphToolkitDisambiguation: "Disambigueringsstreng",
+            MicrosoftGraphToolkitDisambiguationDescription: "Disambigueringsstrengen brukes til å skille mellom flere forekomster av samme webdel på samme side.",
             ResultTypes: {
               ResultTypeslabel: "Resultattyper",
               ResultTypesDescription: "Her kan du legge til de maler som du vil bruke for de ulike resultatobjektene basert på én eller flere betingelser. Betingelsene vurderes i den gitte rekkefølgen, og eksterne maler har forrang over integrerte maler. Pass på at feltene i den datakilden du bruker finnes i dataresponsen.",

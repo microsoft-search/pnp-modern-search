@@ -52,6 +52,8 @@ define([], function() {
                 AdaptiveCardsRenderTypeDesc: "Valitse mukautuviin JSON-kortteihin perustuvat asettelut",
                 Handlebars: {
                     UseMicrosoftGraphToolkit: "Käytä Microsoft Graph Toolkitiä",
+                    MicrosoftGraphToolkitDisambiguation: "Yksiselitteisyysmerkkijono",
+                    MicrosoftGraphToolkitDisambiguationDescription: "Yksiselitteistämismerkkijonoa käytetään erottamaan useita saman web-osan esiintymiä samalla sivulla.",
                     ResultTypes: {
                         ResultTypeslabel: "Tulostyypit",
                         ResultTypesDescription: "Lisää tähän templaatteja käytettäväksi tuloskohteiden ominaisuuksien perusteella. Ominaisuuksia tarkastellaan konfiguroidussa järjestyksessä ja ulkoiset templaatit yliajavat suoraan webosaan määritetyt templaatit. Varmista, että käyttämäsi sisältölähteen kentät ovat mukana tulosjoukossa.",

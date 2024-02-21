@@ -52,6 +52,8 @@ define([], function() {
                 AdaptiveCardsRenderTypeDesc: "Select layouts based on JSON adaptive cards",
                 Handlebars: {
                     UseMicrosoftGraphToolkit: "Use Microsoft Graph Toolkit",
+                    MicrosoftGraphToolkitDisambiguation: "Disambiguation string",
+                    MicrosoftGraphToolkitDisambiguationDescription: "The disambiguation string is used to differentiate between multiple instances of the same web part on the same page.",
                     ResultTypes: {
                         ResultTypeslabel: "Result Types",
                         ResultTypesDescription: "Add here the templates to use for result items according to one ore more conditions. Conditions are evaluated in the configured order and external templates take precedence over inline templates. Also make sure the data source fields you use are present in data response.",
