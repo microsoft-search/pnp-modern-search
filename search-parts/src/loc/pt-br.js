@@ -286,6 +286,8 @@ define([], function() {
                 ShowPersonaCardOnHover: "Mostrar cartão da <i>persona</i> ao passar o mouse",
                 ShowPersonaCardOnHoverNative: "Mostrar cartão da <i>persona</i> ao passar o mouse (LPC)",
                 ShowPersonaCardOnHoverCalloutMsg: "Esse recurso usa o Microsoft Graph para exibir informações sobre o usuário e precisa das seguintes permissões de API em seu locatário para funcionar: ['User.Read','People.Read','Contacts.Read','User.Read.All'].",
+                ShowPersonaPresenceInfo: "Mostrar presença",
+                ShowPersonaPresenceInfoCalloutMsg: "Esse recurso precisa das seguintes permissões de API em seu locatário para funcionar: ['Presence.Read.All']",
                 Fields: {
                     ImageUrl: "URL da imagem",
                     PrimaryText: "Texto primário",

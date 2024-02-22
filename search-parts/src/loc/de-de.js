@@ -289,6 +289,8 @@ define([], function () {
                 ShowPersonaCardOnHoverCalloutMsg: "Diese Funktion verwendet Microsoft Graph, um Informationen über den Benutzer anzuzeigen. Sie benötigt die folgenden API-Berechtigungen in Ihrem Mandanten, um zu funktionieren: ['User.Read','People.Read','Contacts.Read','User.Read.All'].",
                 ShowPersonaCardOnHoverNative: "Persona-Karte bei Hover anzeigen (LPC)",                
                 ShowPersonaCardOnHoverCalloutMsgNative: "Diese Funktion verwendet die Standard-Komponente von SharePoint, um die LivePersona-Karte anzuzeigen. Beachten Sie den Disclaimer unter https://pnp.github.io/sp-dev-fx-controls-react/controls/LivePersona/.",
+                ShowPersonaPresenceInfo: "Präsenz anzeigen",
+                ShowPersonaPresenceInfoCalloutMsg: "Diese Funktion benötigt die folgende API-Berechtigungen in Ihrem Mandanten, um zu funktionieren: ['Presence.Read.All']",
                 Fields: {
                     ImageUrl: "Bild URL",
                     PrimaryText: "Primärer Text",

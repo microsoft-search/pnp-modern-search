@@ -59,7 +59,9 @@
                                                     data-persona-size="{{@root.properties.layoutProperties.personaSize}}"
                                                     data-theme-variant="{{JSONstringify @root.theme}}"
                                                     data-instance-id="{{@root.instanceId}}"
-                                                    data-context="{{JSONstringify (truncateContext @root)}}">
+                                                    data-context="{{JSONstringify (truncateContext @root)}}"
+                                                    data-show-presence={{@root.properties.layoutProperties.showPersonaPresenceInfo}}
+                                                    data-user-object-id="{{slot item @root.slots.PersonQuery}}">
                                                 </pnp-persona>
                                             </template>
                                             <template data-type="person-card">
@@ -76,6 +78,8 @@
                                             data-instance-id="{{@root.instanceId}}"
                                             data-theme-variant="{{JSONstringify @root.theme}}"
                                             data-native-lpc={{@root.properties.layoutProperties.showPersonaCardNative}}
+                                            data-show-presence={{@root.properties.layoutProperties.showPersonaPresenceInfo}}
+                                            data-user-object-id="{{slot item @root.slots.PersonQuery}}"
                                         ></pnp-persona>
                                     {{/and}}
                                     
