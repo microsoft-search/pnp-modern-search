@@ -374,11 +374,12 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             );
         }
 
-        // Sorting results is currently only supported on the following SharePoint and OneDrive types: driveItem, listItem, list, site.
+        // Sorting results is currently only supported on the following SharePoint and OneDrive types: driveItem, listItem, list, site , ExternalItem.
         if (this.properties.entityTypes.indexOf(EntityType.DriveItem) !== -1 ||
             this.properties.entityTypes.indexOf(EntityType.ListItem) !== -1 ||
             this.properties.entityTypes.indexOf(EntityType.Site) !== -1 ||
-            this.properties.entityTypes.indexOf(EntityType.List) !== -1) {
+            this.properties.entityTypes.indexOf(EntityType.List) !== -1 || 
+            this.properties.entityTypes.indexOf(EntityType.ExternalItem) !== -1) {
 
             sortPropertiesFields.push(
                 this._propertyFieldCollectionData('dataSourceProperties.sortProperties', {
@@ -776,8 +777,9 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             });
         }
 
-        // Sort is only available for 'ListItem'
-        if (this.properties.entityTypes.indexOf(EntityType.ListItem) !== -1) {
+        // Sort is only available for 'ListItem' and ExternalItem
+        if (this.properties.entityTypes.indexOf(EntityType.ListItem) !== -1 ||  
+        this.properties.entityTypes.indexOf(EntityType.ExternalItem) !== -1) {
 
             if (dataContext.sorting?.selectedSortFieldName
                 && dataContext.sorting?.selectedSortDirection) {
