@@ -20,7 +20,6 @@
         "@microsoft/mgt-components": "4.0.1",
         "@microsoft/mgt-element": "4.0.1",
         "@microsoft/mgt-sharepoint-provider": "4.0.1",
-        "@microsoft/mgt-spfx-utils": "4.0.1",
         "@microsoft/sp-adaptive-card-extension-base": "1.18.2",
         "@microsoft/sp-component-base": "1.18.2",
         "@microsoft/sp-core-library": "1.18.2",
