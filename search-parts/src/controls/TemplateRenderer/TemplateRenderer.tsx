@@ -5,14 +5,12 @@ import './TemplateRenderer.scss';
 import { isEqual } from "@microsoft/sp-lodash-subset";
 import * as DOMPurify from 'dompurify';
 import { DomPurifyHelper } from '../../helpers/DomPurifyHelper';
-import { TestConstants } from '../../common/Constants';
 import { ISearchResultsTemplateContext } from '../../models/common/ITemplateContext';
 
 import { LayoutRenderType } from '@pnp/modern-search-extensibility';
 
 // Need a root class to do not conflict with PnP Modern Search Styles.
 const rootCssClassName = "pnp-modern-search";
-const TEMPLATE_ID_PREFIX = "pnp-template_";
 
 export class TemplateRenderer extends React.Component<ITemplateRendererProps, ITemplateRendererState> {
 
@@ -64,44 +62,6 @@ export class TemplateRenderer extends React.Component<ITemplateRendererProps, IT
         }
     }
 
-    private legacyStyleParser(style: HTMLStyleElement, elementPrefixId: string): string {
-
-        let prefixedStyles: string[] = [];
-
-        const sheet: any = style.sheet;
-
-        if ((sheet as CSSStyleSheet).cssRules) {
-            const cssRules = (sheet as CSSStyleSheet).cssRules;
-
-            for (let j = 0; j < cssRules.length; j++) {
-                const cssRule: CSSRule = cssRules.item(j);
-
-                // CSS Media rule
-                if ((cssRule as CSSMediaRule).media) {
-                    const cssMediaRule = cssRule as CSSMediaRule;
-
-                    let cssPrefixedMediaRules = '';
-                    for (let k = 0; k < cssMediaRule.cssRules.length; k++) {
-                        const cssRuleMedia = cssMediaRule.cssRules.item(k);
-                        cssPrefixedMediaRules += `#${elementPrefixId} ${cssRuleMedia.cssText}`;
-                    }
-
-                    prefixedStyles.push(`@media ${cssMediaRule.conditionText} { ${cssPrefixedMediaRules} }`);
-
-                } else {
-                    if (cssRule.cssText.indexOf(TestConstants.SearchResultsErrorMessage) !== -1) {
-                        // Special handling for error message as it's outside the template container to allow user override
-                        prefixedStyles.push(`${cssRule.cssText}`);
-                    } else {
-                        prefixedStyles.push(`#${elementPrefixId} ${cssRule.cssText}`);
-                    }
-                }
-            }
-        }
-
-        return prefixedStyles.join(' ');
-
-    }
 
     private async updateTemplate(props: ITemplateRendererProps): Promise<void> {
         let templateContent = props.templateContent;
@@ -115,6 +75,10 @@ export class TemplateRenderer extends React.Component<ITemplateRendererProps, IT
             template = template ? this._domPurify.sanitize(`${template}`) : template;
             const templateAsHtml = new DOMParser().parseFromString(template as string, "text/html");
 
+            if (props.templateContext.properties.useMicrosoftGraphToolkit) {
+              this.props.templateService.replaceDisambiguatedMgtElementNames(templateAsHtml);
+            }
+
             // Get <style> tags from Handlebars template content and prefix all CSS rules by the Web Part instance ID to isolate styles
             const styleElements = templateAsHtml.getElementsByTagName("style");
             // let styles: string[] = [];
@@ -123,29 +87,36 @@ export class TemplateRenderer extends React.Component<ITemplateRendererProps, IT
 
             if (styleElements.length > 0) {
 
-                // The prefix for all CSS selectors
-                const elementPrefixId = `${TEMPLATE_ID_PREFIX}${this.props.instanceId}`;
+              // The prefix for all CSS selectors
+              const elementPrefixId = `${this.props.templateService.TEMPLATE_ID_PREFIX}${this.props.instanceId}`;
 
 
-                for (let i = 0; i < styleElements.length; i++) {
-                    const style = styleElements.item(i);
+              for (let i = 0; i < styleElements.length; i++) {
+                  const style = styleElements.item(i);
 
-                    let cssscope = style.dataset.cssscope as string;
+                  let cssscope = style.dataset.cssscope as string;
 
-                    if (cssscope !== undefined && cssscope === "layer") {
+                  if (cssscope !== undefined && cssscope === "layer") {
 
-                        allStyles.push(`@layer { ${style.innerText} }`);
+                      allStyles.push(`@layer { ${style.innerText} }`);
 
-                    } else {
+                  } else {
 
-                        allStyles.push(this.legacyStyleParser(style, elementPrefixId));
+                      allStyles.push(this.props.templateService.legacyStyleParser(style, elementPrefixId));
 
-                    }
-                }
-
+                  }
+              }
             }
 
-            this._divTemplateRenderer.current.innerHTML = `<style>${allStyles.join(' ')}</style><div id="${TEMPLATE_ID_PREFIX}${this.props.instanceId}">${templateAsHtml.body.innerHTML}</div>`
+            if (this.props.templateContext.properties.useMicrosoftGraphToolkit) {
+              if (this.props.templateService.MgtCustomElementHelper.isDisambiguated) {
+                allStyles.forEach((style, index) => {
+                  allStyles[index] = style.replace(/mgt-/g, `${this.props.templateService.MgtCustomElementHelper.prefix}-`);
+                });
+              }
+            }
+
+            this._divTemplateRenderer.current.innerHTML = `<style>${allStyles.join(' ')}</style><div id="${this.props.templateService.TEMPLATE_ID_PREFIX}${this.props.instanceId}">${templateAsHtml.body.innerHTML}</div>`
 
         } else if (props.renderType == LayoutRenderType.AdaptiveCards && template instanceof HTMLElement) {
 

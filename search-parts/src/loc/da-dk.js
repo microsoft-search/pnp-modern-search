@@ -288,8 +288,6 @@ define([], function() {
                 ShowPersonaCardOnHover: "Vis persona-card ved at hover",
                 ShowPersonaCardOnHoverNative: "Vis persona-card ved at hover (LPC)",
                 ShowPersonaCardOnHoverCalloutMsg: "Denne feature bruger Microsoft Graph til at vise information om brugeren og skal bruge de følgende API-tilladelser i din tenant, for at det virker: ['User.Read','People.Read','Contacts.Read','User.Read.All'].",
-                MicrosoftGraphToolkitDisambiguation: "Disambigueringsstreng",
-                MicrosoftGraphToolkitDisambiguationDescription: "Disambigueringsstrengen bruges til at skelne mellem flere forekomster af den samme webdel på den samme side.",
                 Fields: {
                     ImageUrl: "Billede-URL",
                     PrimaryText: "Primær tekst",

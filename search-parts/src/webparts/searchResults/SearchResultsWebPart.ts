@@ -527,7 +527,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         // Initializes MS Graph Toolkit
         if (this.properties.useMicrosoftGraphToolkit) {
-            await loadMsGraphToolkit(this.context, this.properties.microsoftGraphToolkitDisambiguation);
+            await loadMsGraphToolkit(this.context);
         }
 
         // Initializes this component as a discoverable dynamic data source
@@ -831,7 +831,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         if (propertyPath.localeCompare("useMicrosoftGraphToolkit") === 0 && this.properties.useMicrosoftGraphToolkit) {
 
             // We load this dynamically to avoid tokens renewal failure at page load and decrease the bundle size. Most of the time, MGT won't be used in templates.
-            await loadMsGraphToolkit(this.context, this.properties.microsoftGraphToolkitDisambiguation);
+            await loadMsGraphToolkit(this.context);
         }
 
         if (propertyPath.localeCompare('selectedItemFieldValue') === 0) {
@@ -1135,7 +1135,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         this.properties.showResultsCount = this.properties.showResultsCount !== undefined ? this.properties.showResultsCount : true;
         this.properties.showBlankIfNoResult = this.properties.showBlankIfNoResult !== undefined ? this.properties.showBlankIfNoResult : false;
         this.properties.useMicrosoftGraphToolkit = this.properties.useMicrosoftGraphToolkit !== undefined ? this.properties.useMicrosoftGraphToolkit : false;
-        this.properties.microsoftGraphToolkitDisambiguation = this.properties.microsoftGraphToolkitDisambiguation !== undefined ? this.properties.microsoftGraphToolkitDisambiguation : "";
 
         // Item selection properties
         if (!this.properties.selectedItemFieldValue) {
@@ -1421,15 +1420,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 label: webPartStrings.PropertyPane.LayoutPage.Handlebars.UseMicrosoftGraphToolkit,
             })
         );
-
-        if (this.properties.useMicrosoftGraphToolkit) {
-            stylingFields.push(
-                PropertyPaneTextField('microsoftGraphToolkitDisambiguation', {
-                    label: webPartStrings.PropertyPane.LayoutPage.Handlebars.MicrosoftGraphToolkitDisambiguation,
-                    description: webPartStrings.PropertyPane.LayoutPage.Handlebars.MicrosoftGraphToolkitDisambiguationDescription,
-                })
-            );
-        }
 
         let groups: IPropertyPaneGroup[] = [
             {

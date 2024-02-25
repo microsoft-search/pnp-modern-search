@@ -289,8 +289,6 @@ define([], function() {
                 ShowPersonaCardOnHoverCalloutMsg: "This feature uses Microsoft Graph to display information about the user and needs the following API permissions in your tenant to work: ['User.Read','People.Read','Contacts.Read','User.Read.All'].",
                 ShowPersonaCardOnHoverNative: "Show persona card on hover (LPC)",                
                 ShowPersonaCardOnHoverCalloutMsgNative: "This feature uses the native SharePoint implementation to show the live persona card (LPC). See https://pnp.github.io/sp-dev-fx-controls-react/controls/LivePersona/ for considerations.",
-                MicrosoftGraphToolkitDisambiguation: "Disambiguation string",
-                MicrosoftGraphToolkitDisambiguationDescription: "The disambiguation string is used to differentiate between multiple instances of the same web part on the same page.",
                 Fields: {
                     ImageUrl: "Image URL",
                     PrimaryText: "Primary text",

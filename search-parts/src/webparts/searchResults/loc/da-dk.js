@@ -52,8 +52,6 @@ define([], function() {
         AdaptiveCardsRenderTypeDesc: "Vælg layout baseret på JSON adaptive kort",        
         Handlebars: {
           UseMicrosoftGraphToolkit: "brug Microsoft Graph Toolkit",
-          MicrosoftGraphToolkitDisambiguation: "Disambigueringsstreng",
-          MicrosoftGraphToolkitDisambiguationDescription: "Disambigueringsstrengen bruges til at skelne mellem flere forekomster af den samme webdel på den samme side.",
           ResultTypes: {
             ResultTypeslabel: "Resultattyper",
             ResultTypesDescription: "Her kan du tilføje de templates, du vil bruge til resultaterne, i overensstemmelse med en eller flere tilstande. Tilstande er evalueret i den konfigurerede rækkefølge og eksterne skabeloner har forrang over integrerede skabeloner. Vær sikker på at felterne på datakilden, du bruger, findes i datasvaret.",

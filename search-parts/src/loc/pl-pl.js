@@ -288,8 +288,6 @@ define([], function() {
               ShowPersonaCardOnHover: "Pokaż kartę po wskazaniu",
               ShowPersonaCardOnHoverNative: "Pokaż kartę po wskazaniu (LPC)",
               ShowPersonaCardOnHoverCalloutMsg: "Ta funkcja używa Microsoft Graph aby wyświetlić informacje o użytkowniku i wymaga następujcych uprawnień API: ['User.Read','People.Read','Contacts.Read','User.ReadBasic.All'].",
-              MicrosoftGraphToolkitDisambiguation: "Ciąg ujednoznaczniający",
-              MicrosoftGraphToolkitDisambiguationDescription: "Ciąg ujednoznaczniający służy do rozróżnienia wielu wystąpień tego samego składnika Web Part na tej samej stronie.",
               Fields: {
                   ImageUrl: "URL obrazu",
                   PrimaryText: "Tekst podstawowy",

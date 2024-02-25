@@ -287,8 +287,6 @@ define([], function() {
                 ShowPersonaCardOnHover: "Toon persona card bij 'hover'",
                 ShowPersonaCardOnHoverNative: "Toon persona card bij 'hover' (LPC)",
                 ShowPersonaCardOnHoverCalloutMsg: "Deze feature gebruikt Microsoft Graph om informatie over de gebruiker te tonen en heeft de volgende API rechten nodig in de tenant om te kunnen werken: ['User.Read','People.Read','Contacts.Read','User.Read.All'].",
-                MicrosoftGraphToolkitDisambiguation: "Ondubbelzinnigheidsreeks",
-                MicrosoftGraphToolkitDisambiguationDescription: "De ondubbelzinnigheidsreeks wordt gebruikt om onderscheid te maken tussen meerdere exemplaren van hetzelfde webonderdeel op dezelfde pagina.",
                 Fields: {
                     ImageUrl: "Afbeeldings URL",
                     PrimaryText: "Primaire tekst",

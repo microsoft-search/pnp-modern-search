@@ -1,6 +1,6 @@
 import * as React from "react";
 import { BaseLayout } from "@pnp/modern-search-extensibility";
-import { IPropertyPaneField, PropertyPaneChoiceGroup, PropertyPaneButtonType, PropertyPaneButton, PropertyPaneTextField } from "@microsoft/sp-property-pane";
+import { IPropertyPaneField, PropertyPaneChoiceGroup, PropertyPaneButtonType, PropertyPaneButton } from "@microsoft/sp-property-pane";
 import { TemplateValueFieldEditor, ITemplateValueFieldEditorProps } from "../../../controls/TemplateValueFieldEditor/TemplateValueFieldEditor";
 import { IComboBoxOption, Icon, IIconProps } from '@fluentui/react';
 import { IComponentFieldsConfiguration } from "../../../models/common/IComponentFieldsConfiguration";
@@ -23,11 +23,6 @@ export interface IPeopleLayoutProperties {
      * Flag indicating if the persona card should be displayed on hover
      */
     showPersonaCard: boolean;
-
-    /**
-     * Microsoft Graph Toolkit disambiguation string
-     */
-    microsoftGraphToolkitDisambiguation: string;
 
     /**
      * Flag indicating if the persona card should be displayed on hover using native LPC
@@ -85,7 +80,7 @@ export class PeopleLayout extends BaseLayout<IPeopleLayoutProperties> {
 
         if (this.properties.showPersonaCard) {
             // Load Microsoft Graph Toolkit to get the persona card
-            await loadMsGraphToolkit(this.context, this.properties.microsoftGraphToolkitDisambiguation);
+            await loadMsGraphToolkit(this.context);
         }
     }
 
@@ -175,13 +170,6 @@ export class PeopleLayout extends BaseLayout<IPeopleLayoutProperties> {
                 offText: strings.General.OffTextLabel,
                 checked: this.properties.showPersonaCard,
             }),
-            PropertyPaneTextField('layoutProperties.microsoftGraphToolkitDisambiguation', {
-              label: strings.Layouts.People.MicrosoftGraphToolkitDisambiguation,
-              description: strings.Layouts.People.MicrosoftGraphToolkitDisambiguationDescription,
-              value: this.properties.microsoftGraphToolkitDisambiguation,
-              disabled: !this.properties.showPersonaCard,
-            }),
-
             PropertyPaneChoiceGroup('layoutProperties.personaSize', {
                 label: strings.Layouts.People.PersonaSizeOptionsLabel,
                 options: [
@@ -214,7 +202,7 @@ export class PeopleLayout extends BaseLayout<IPeopleLayoutProperties> {
 
         if (propertyPath.localeCompare('layoutProperties.showPersonaCard') === 0 && this.properties.showPersonaCard) {
             // Load Microsoft Graph Toolkit to get the persona card
-            await loadMsGraphToolkit(this.context, this.properties.microsoftGraphToolkitDisambiguation);
+            await loadMsGraphToolkit(this.context);
         }
     }    
 }

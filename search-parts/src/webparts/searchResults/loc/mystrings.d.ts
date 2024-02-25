@@ -51,8 +51,6 @@ declare interface ISearchResultsWebPartStrings {
             AdaptiveCardsRenderTypeDesc: string;
             Handlebars: {
                 UseMicrosoftGraphToolkit: string;
-                MicrosoftGraphToolkitDisambiguation: string;
-                MicrosoftGraphToolkitDisambiguationDescription: string;
                 ResultTypes: {
                     ResultTypeslabel: string;
                     ResultTypesDescription: string;

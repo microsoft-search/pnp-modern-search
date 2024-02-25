@@ -286,8 +286,6 @@ define([], function() {
                 ShowPersonaCardOnHover: "Näytä henkilökortti hoverilla",
                 ShowPersonaCardOnHoverNative: "Näytä henkilökortti hoverilla (LPC)",
                 ShowPersonaCardOnHoverCalloutMsg: "Tämä ominaisuus käyttää Microsoft Graphia käyttäjäprofiilin tietojen näyttämiseen, ja tarvitsee seuraavat API oikeudet tenantissa toimiakseen: ['User.Read','People.Read','Contacts.Read','User.Read.All'].",
-                MicrosoftGraphToolkitDisambiguation: "Yksiselitteisyysmerkkijono",
-                MicrosoftGraphToolkitDisambiguationDescription: "Yksiselitteistämismerkkijonoa käytetään erottamaan useita saman web-osan esiintymiä samalla sivulla.",
                 Fields: {
                     ImageUrl: "Kuvan URL",
                     PrimaryText: "Ensimmäisen rivin teksti",
