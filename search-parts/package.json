@@ -13,7 +13,7 @@
     },
     "dependencies": {
         "@fluentui/font-icons-mdl2": "^8.5.32",
-        "@fluentui/react": "8.106.4",
+        "@fluentui/react": "8.115.6",
         "@fluentui/react-file-type-icons": "8.11.3",
         "@fluentui/react-theme-provider": "0.19.16",
         "@iconify/react": "^4.1.1",
