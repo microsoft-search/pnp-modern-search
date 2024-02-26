@@ -9,8 +9,10 @@ export enum FileFormat {
 }
 
 export interface ITemplateService {
+    TEMPLATE_ID_PREFIX: string;
     Handlebars: typeof Handlebars;
     AdaptiveCardsExtensibilityLibraries: IExtensibilityLibrary[];
+    MgtCustomElementHelper: any;
     getTemplateMarkup(templateContent: string): string;
     getPlaceholderMarkup(templateContent: string): string;
     getFileContent(fileUrl: string, fileFormat: FileFormat): Promise<string>;
@@ -20,4 +22,6 @@ export interface ITemplateService {
     registerWebComponents(webComponents: IComponentDefinition<any>[], instanceId: string): Promise<void>;
     processFieldsConfiguration<T>(fieldsConfiguration: IComponentFieldsConfiguration[], item: {[key:string]: any}, context?: ISearchResultsTemplateContext | any): T;
     registerResultTypes(resultTypes: IDataResultType[]): Promise<void>;
+    replaceDisambiguatedMgtElementNames(template: Document): void;
+    legacyStyleParser(style: HTMLStyleElement, elementPrefixId: string): string;
 }

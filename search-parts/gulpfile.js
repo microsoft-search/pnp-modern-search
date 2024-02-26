@@ -57,6 +57,23 @@ const envCheck = build.subTask('environmentCheck', (gulp, config, done) => {
             }
 
             generatedConfiguration.module.rules.push({
+              test: /\.js$/,
+              include: [
+                /lit/, 
+                /@lit/, 
+                /lit-html/
+              ],
+              use: {
+                loader: 'babel-loader',
+                options: {
+                  plugins: [
+                    '@babel/plugin-transform-optional-chaining',
+                    '@babel/plugin-transform-nullish-coalescing-operator',
+                    '@babel/plugin-transform-logical-assignment-operators'
+                  ]
+                }
+              }
+            }, {
                 test: /utils\.js$/,
                 loader: 'unlazy-loader',
                 include: [

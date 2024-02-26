@@ -205,6 +205,11 @@ export interface IDetailsListComponentProps {
      * Callback handler when a sort field and direction are selected
      */
     onSort: (sortFieldName: string, sortFieldDirection: SortFieldDirection) => void;
+
+    /**
+     * The template service instance
+     */
+    templateService: ITemplateService;
 }
 
 export interface IDetailsListComponentState {
@@ -330,7 +335,45 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
                                 value = ObjectHelper.byPath(item, column.value);
                             }
 
-                            renderColumnValue = <span title={!hasError ? toolTipText : ''} dangerouslySetInnerHTML={{ __html: this._domPurify.sanitize(value) }}></span>;
+                            const tempColumnValueAsHtml = new DOMParser().parseFromString("<span>" + value as string + "</span>", "text/html");
+
+                            this.props.templateService.replaceDisambiguatedMgtElementNames(tempColumnValueAsHtml);
+
+                            const styleElements = tempColumnValueAsHtml.getElementsByTagName("style");
+
+                            const allStyles = [];
+
+                            if (styleElements.length > 0) {
+                
+                              // The prefix for all CSS selectors
+                              const elementPrefixId = `${this.props.templateService.TEMPLATE_ID_PREFIX}${this._templateContext.instanceId}`;
+                
+                
+                              for (let i = 0; i < styleElements.length; i++) {
+                                  const style = styleElements.item(i);
+                
+                                  let cssscope = style.dataset.cssscope as string;
+                
+                                  if (cssscope !== undefined && cssscope === "layer") {
+                
+                                      allStyles.push(`@layer { ${style.innerText} }`);
+                
+                                  } else {
+                
+                                      allStyles.push(this.props.templateService.legacyStyleParser(style, elementPrefixId));
+                
+                                  }
+                                  styleElements.item(i).remove();
+                              }
+                            }
+                
+                            if (this._templateContext.properties.useMicrosoftGraphToolkit && this.props.templateService.MgtCustomElementHelper.isDisambiguated) {
+                              allStyles.forEach((style, index) => {
+                                allStyles[index] = style.replace(/mgt-/g, `${this.props.templateService.MgtCustomElementHelper.prefix}-`);
+                              });
+                            }
+                
+                            renderColumnValue = <span title={!hasError ? toolTipText : ''} dangerouslySetInnerHTML={{ __html: this._domPurify.sanitize(`<style>${allStyles.join(' ')}</style>${tempColumnValueAsHtml.body.firstElementChild.innerHTML}`) }}></span>;
 
                             return renderColumnValue;
                         },
@@ -654,6 +697,7 @@ export class DetailsListWebComponent extends BaseWebComponent {
         const fields: ISortFieldConfiguration[] = props.fields;
 
         const detailsListComponent = <DetailsListComponent {...props}
+            templateService={templateService}
             handlebars={templateService.Handlebars}
             fields={fields}
             defaultSelectedField={props.defaultSelectedField}
