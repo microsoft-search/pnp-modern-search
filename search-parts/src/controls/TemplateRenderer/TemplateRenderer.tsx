@@ -108,12 +108,10 @@ export class TemplateRenderer extends React.Component<ITemplateRendererProps, IT
               }
             }
 
-            if (this.props.templateContext.properties.useMicrosoftGraphToolkit) {
-              if (this.props.templateService.MgtCustomElementHelper.isDisambiguated) {
-                allStyles.forEach((style, index) => {
-                  allStyles[index] = style.replace(/mgt-/g, `${this.props.templateService.MgtCustomElementHelper.prefix}-`);
-                });
-              }
+            if (this.props.templateContext.properties.useMicrosoftGraphToolkit && this.props.templateService.MgtCustomElementHelper.isDisambiguated) {
+              allStyles.forEach((style, index) => {
+                allStyles[index] = style.replace(/mgt-/g, `${this.props.templateService.MgtCustomElementHelper.prefix}-`);
+              });
             }
 
             this._divTemplateRenderer.current.innerHTML = `<style>${allStyles.join(' ')}</style><div id="${this.props.templateService.TEMPLATE_ID_PREFIX}${this.props.instanceId}">${templateAsHtml.body.innerHTML}</div>`

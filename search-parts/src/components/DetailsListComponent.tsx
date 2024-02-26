@@ -367,12 +367,10 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
                               }
                             }
                 
-                            if (this._templateContext.properties.useMicrosoftGraphToolkit) {
-                              if (this.props.templateService.MgtCustomElementHelper.isDisambiguated) {
-                                allStyles.forEach((style, index) => {
-                                  allStyles[index] = style.replace(/mgt-/g, `${this.props.templateService.MgtCustomElementHelper.prefix}-`);
-                                });
-                              }
+                            if (this._templateContext.properties.useMicrosoftGraphToolkit && this.props.templateService.MgtCustomElementHelper.isDisambiguated) {
+                              allStyles.forEach((style, index) => {
+                                allStyles[index] = style.replace(/mgt-/g, `${this.props.templateService.MgtCustomElementHelper.prefix}-`);
+                              });
                             }
                 
                             renderColumnValue = <span title={!hasError ? toolTipText : ''} dangerouslySetInnerHTML={{ __html: this._domPurify.sanitize(`<style>${allStyles.join(' ')}</style>${tempColumnValueAsHtml.body.firstElementChild.innerHTML}`) }}></span>;
