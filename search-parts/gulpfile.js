@@ -57,22 +57,22 @@ const envCheck = build.subTask('environmentCheck', (gulp, config, done) => {
             }
 
             generatedConfiguration.module.rules.push({
-              test: /\.js$/,
-              include: [
-                /lit/, 
-                /@lit/, 
-                /lit-html/
-              ],
-              use: {
-                loader: 'babel-loader',
-                options: {
-                  plugins: [
-                    '@babel/plugin-transform-optional-chaining',
-                    '@babel/plugin-transform-nullish-coalescing-operator',
-                    '@babel/plugin-transform-logical-assignment-operators'
-                  ]
+                test: /\.js$/,
+                include: [
+                    /lit/,
+                    /@lit/,
+                    /lit-html/
+                ],
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        plugins: [
+                            '@babel/plugin-transform-optional-chaining',
+                            '@babel/plugin-transform-nullish-coalescing-operator',
+                            '@babel/plugin-transform-logical-assignment-operators'
+                        ]
+                    }
                 }
-              }
             }, {
                 test: /utils\.js$/,
                 loader: 'unlazy-loader',
@@ -91,6 +91,11 @@ const envCheck = build.subTask('environmentCheck', (gulp, config, done) => {
                     replace: '',
                     flags: 'g'
                 }
+            }, {
+                // Skip HoverReactionsBar from spfx controls as it's not used and is bundles
+                test: /index\.js$/,
+                include: [/spfx-controls-react\/lib\/controls\/HoverReactionsBar/],
+                loader: 'ignore-loader',
             });
 
             generatedConfiguration.optimization.splitChunks.cacheGroups = { vendors: false };
@@ -98,7 +103,7 @@ const envCheck = build.subTask('environmentCheck', (gulp, config, done) => {
             // pack each moment.js locale individually to optimize bundle
             generatedConfiguration.plugins.push(
                 new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
-            );            
+            );
 
             if (config.production) {
                 const lastDirName = path.basename(__dirname);
