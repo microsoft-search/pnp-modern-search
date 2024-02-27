@@ -227,7 +227,9 @@ define([], function () {
           EnableGrouping: "Aktiver gruppering",
           GroupingDescription: "Sørg for at du har data som vises i resultatwebdelen for å vise en liste over egenskaper.",
           CollapsedGroupsByDefault: "Vis kollapsede",
-          ResetFieldsBtnLabel: "Bruk standardverdiene"
+          ResetFieldsBtnLabel: "Bruk standardverdiene",
+          EnableStickyHeader: "Aktiver klebrig overskrift",
+          StickyHeaderListViewHeight: "Høyde på listevisning med klebrig overskrift (px)"
         },
         Cards: {
           Name: "Kort",

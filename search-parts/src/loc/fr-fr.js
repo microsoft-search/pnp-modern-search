@@ -228,7 +228,9 @@ define([], function() {
                 EnableGrouping: "Permettre le regroupement",
                 GroupingDescription: "Assurez-vous que les données s'affichent dans le composant WebPart de résultat pour obtenir une liste des propriétés à afficher.",
                 CollapsedGroupsByDefault: "Afficher les groupes réduits",
-                ResetFieldsBtnLabel: "Rétablir la valeur par défaut dans les champs"
+                ResetFieldsBtnLabel: "Rétablir la valeur par défaut dans les champs",
+                EnableStickyHeader: "Activer l’en-tête collant",
+                StickyHeaderListViewHeight: "Hauteur de la liste de détails (en pixels)"
             },
             Cards: {
                 Name: "Cartes",

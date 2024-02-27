@@ -228,7 +228,9 @@ define([], function() {
               EnableGrouping: "Grupowanie włączone",
               GroupingDescription: "Upewnij się, że dane są wyświetlane w wynikowym składniku Web Part, aby wyświetlić listę właściwości.",
               CollapsedGroupsByDefault: "Pokaż zapadnięte",
-              ResetFieldsBtnLabel: "Resetuj pola do wartości domyślnych"
+              ResetFieldsBtnLabel: "Resetuj pola do wartości domyślnych",
+              EnableStickyHeader: "Włącz lepką nagłówkę",
+              StickyListViewHeight: "Wysokość listy ze szczegółami (px)"
           },
           Cards: {
               Name: "Karty",

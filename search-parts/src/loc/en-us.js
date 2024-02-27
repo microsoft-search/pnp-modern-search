@@ -228,7 +228,9 @@ define([], function() {
                 EnableGrouping: "Enable grouping",
                 GroupingDescription: "Ensure you have data showing in the result web part for a list of properties to show.",
                 CollapsedGroupsByDefault: "Show collapsed",
-                ResetFieldsBtnLabel: "Reset fields to default values"
+                ResetFieldsBtnLabel: "Reset fields to default values",
+                EnableStickyHeader: "Enable sticky header",
+                StickyHeaderListViewHeight: "List view height (in px)"
             },
             Cards: {
                 Name: "Cards",
