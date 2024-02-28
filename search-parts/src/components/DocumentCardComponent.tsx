@@ -21,6 +21,8 @@ import { IComponentFieldsConfiguration } from "../models/common/IComponentFields
 import { TestConstants } from "../common/Constants";
 import { ServiceScope, ServiceKey } from "@microsoft/sp-core-library";
 import { ISelectableComponentItem } from "../models/common/ISelectableComponentItem";
+import { Constants } from '../common/Constants';
+
 /**
  * Document card props. These properties are retrieved from the web component attributes. They must be camel case.
  * (ex: a 'preview-image' HTML attribute becomes 'previewImage' prop, etc.)
@@ -89,7 +91,7 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
 
         this._domPurify.setConfig({
             WHOLE_DOCUMENT: true,
-            ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|file|tel|callto|im|cid|xmpp|xxx|ms-\w+):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
+            ALLOWED_URI_REGEXP: Constants.ALLOWED_URI_REGEXP,
         });
 
         this._domPurify.addHook('uponSanitizeElement', DomPurifyHelper.allowCustomComponentsHook);

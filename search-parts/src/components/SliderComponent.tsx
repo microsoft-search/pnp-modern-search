@@ -12,6 +12,7 @@ import { ITemplateService } from '../services/templateService/ITemplateService';
 import { TemplateService } from '../services/templateService/TemplateService';
 import { DomPurifyHelper } from '../helpers/DomPurifyHelper';
 import { ServiceScope, ServiceKey } from "@microsoft/sp-core-library";
+import { Constants } from '../common/Constants';
 
 export interface ISliderOptions {
 
@@ -88,7 +89,7 @@ export class SliderComponent extends React.Component<ISliderComponentProps, ISli
 
         this._domPurify.setConfig({
             WHOLE_DOCUMENT: true,
-            ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|file|tel|callto|im|cid|xmpp|xxx|ms-\w+):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
+            ALLOWED_URI_REGEXP: Constants.ALLOWED_URI_REGEXP,
         });
 
         this._domPurify.addHook('uponSanitizeElement', DomPurifyHelper.allowCustomComponentsHook);

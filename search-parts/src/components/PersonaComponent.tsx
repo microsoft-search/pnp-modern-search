@@ -12,6 +12,7 @@ import { DomPurifyHelper } from '../helpers/DomPurifyHelper';
 import { IComponentFieldsConfiguration } from '../models/common/IComponentFieldsConfiguration';
 import { ServiceScope, ServiceKey } from '@microsoft/sp-core-library';
 import { LivePersona } from "@pnp/spfx-controls-react/lib/LivePersona";
+import { Constants } from '../common/Constants';
 
 export interface IPersonaComponentProps {
 
@@ -97,7 +98,7 @@ export class PersonaComponent extends React.Component<IPersonaComponentProps, IP
 
         this._domPurify.setConfig({
             WHOLE_DOCUMENT: true,
-            ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|file|tel|callto|im|cid|xmpp|xxx|ms-\w+):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
+            ALLOWED_URI_REGEXP: Constants.ALLOWED_URI_REGEXP,
         });
 
         this._domPurify.addHook('uponSanitizeElement', DomPurifyHelper.allowCustomComponentsHook);

@@ -18,6 +18,7 @@ import { ITemplateService } from '../services/templateService/ITemplateService';
 import { TemplateService } from '../services/templateService/TemplateService';
 import { ServiceScope, ServiceKey } from "@microsoft/sp-core-library";
 import { ISortFieldConfiguration } from '../models/search/ISortFieldConfiguration';
+import { Constants } from '../common/Constants';
 
 const DEFAULT_SHIMMER_HEIGHT = 7;
 const SHIMMER_LINE_VS_CELL_WIDTH_RATIO = 0.95;
@@ -228,7 +229,7 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
 
         this._domPurify.setConfig({
             WHOLE_DOCUMENT: true,
-            ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|file|tel|callto|im|cid|xmpp|xxx|ms-\w+):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
+            ALLOWED_URI_REGEXP: Constants.ALLOWED_URI_REGEXP,
         });
 
         this._domPurify.addHook('uponSanitizeElement', DomPurifyHelper.allowCustomComponentsHook);
