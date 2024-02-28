@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Fabric, ShimmeredDetailsList, IShimmeredDetailsListProps } from '@fluentui/react';
+import { Fabric, ShimmeredDetailsList, IShimmeredDetailsListProps, Checkbox } from '@fluentui/react';
 import { ITooltipHostProps, TooltipHost, ITooltipStyles, Shimmer, ShimmerElementsGroup, ShimmerElementType, IShimmerElement, mergeStyleSets, ITheme, Selection } from '@fluentui/react';
 import * as Handlebars from 'handlebars';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import { BaseWebComponent, BuiltinTemplateSlots, ExtensibilityConstants, ISortInfo, SortFieldDirection } from '@pnp/modern-search-extensibility';
 import { groupBy, sortBy, findIndex, isEmpty } from "@microsoft/sp-lodash-subset";
 import { FileIcon } from '../components/FileIconComponent';
-import { DetailsListLayoutMode, SelectionMode, IColumn, IGroup, IDetailsRowProps, DetailsRow, IDetailsHeaderProps, DetailsHeader, CheckboxVisibility } from '@fluentui/react/lib/DetailsList';
+import { DetailsListLayoutMode, SelectionMode, IColumn, IGroup, IDetailsRowProps, DetailsRow, IDetailsHeaderProps, DetailsHeader, CheckboxVisibility, IDetailsRowCheckProps, DetailsRowCheck, IDetailsCheckboxProps } from '@fluentui/react/lib/DetailsList';
 import { DEFAULT_CELL_STYLE_PROPS, DEFAULT_ROW_HEIGHTS } from '@fluentui/react/lib/components/DetailsList/DetailsRow.styles';
 import { ISearchResultsTemplateContext } from '../models/common/ITemplateContext';
 import { ObjectHelper } from '../helpers/ObjectHelper';
@@ -254,6 +254,7 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
 
             if (this.props.allowItemSelection) {
                 this._selectionMode = this.props.allowMulti ? SelectionMode.multiple : SelectionMode.single;
+                this._selection.setItems(this._allItems, false);
             }
 
             this._templateContext = this.props.context;
@@ -391,6 +392,7 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
         this._onRenderCustomPlaceholder = this._onRenderCustomPlaceholder.bind(this);
         this._onRenderDetailsHeader = this._onRenderDetailsHeader.bind(this);
         this._onRenderRow = this._onRenderRow.bind(this);
+        this._onColumnClick = this._onColumnClick.bind(this);
     }
 
     public render() {
@@ -417,6 +419,7 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
             enableShimmer: this.props.showShimmers,
             selectionPreservedOnEmptyClick: true,
             enterModalSelectionOnTouch: true,
+            disableSelectionZone: true,
             onRenderCustomPlaceholder: this._onRenderCustomPlaceholder,
             onRenderRow: this._onRenderRow,
             onRenderDetailsHeader: this._onRenderDetailsHeader,
@@ -548,7 +551,22 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
     }
 
     private _onRenderRow(rowProps: IDetailsRowProps): JSX.Element {
-        return <DetailsRow {...rowProps} theme={this.props.themeVariant as ITheme} />;
+
+      rowProps.onRenderCheck = (props: IDetailsRowCheckProps) => {
+        if (this._selectionMode === SelectionMode.multiple) {
+          props.onRenderDetailsCheckbox = (detailsCheckboxProps: IDetailsCheckboxProps) => {
+            return (
+              <Checkbox
+                {...detailsCheckboxProps}
+              />
+            );
+          }
+        }
+
+        return (<DetailsRowCheck {...props} theme={this.props.themeVariant as ITheme} />);
+      };
+
+      return <DetailsRow {...rowProps} theme={this.props.themeVariant as ITheme} />;
     }
 
     private _onRenderDetailsHeader(props: IDetailsHeaderProps): JSX.Element {
