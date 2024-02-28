@@ -87,7 +87,7 @@ const envCheck = build.subTask('environmentCheck', (gulp, config, done) => {
             }, {
                 // Skip HoverReactionsBar from spfx controls as it's not used and is bundles
                 test: /index\.js$/,
-                include: [/spfx-controls-react(\/|\\)lib(\/|\\)controls(\/|\\)HoverReactionsBar/],
+                include: [/spfx-controls-react[/\\]lib[/\\]controls[/\\]HoverReactionsBar/],
                 loader: 'ignore-loader',
             });
 
