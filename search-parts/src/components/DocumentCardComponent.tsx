@@ -88,7 +88,8 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
         this._domPurify = DOMPurify.default;
 
         this._domPurify.setConfig({
-            WHOLE_DOCUMENT: true
+            WHOLE_DOCUMENT: true,
+            ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|file|tel|callto|im|cid|xmpp|xxx|ms-\w+):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
         });
 
         this._domPurify.addHook('uponSanitizeElement', DomPurifyHelper.allowCustomComponentsHook);
