@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Fabric, ShimmeredDetailsList, IShimmeredDetailsListProps, Checkbox } from '@fluentui/react';
+import { Fabric, ShimmeredDetailsList, IShimmeredDetailsListProps, Sticky, StickyPositionType, Stack, ScrollablePane, ScrollbarVisibility } from '@fluentui/react';
 import { ITooltipHostProps, TooltipHost, ITooltipStyles, Shimmer, ShimmerElementsGroup, ShimmerElementType, IShimmerElement, mergeStyleSets, ITheme, Selection } from '@fluentui/react';
 import * as Handlebars from 'handlebars';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
@@ -210,6 +210,16 @@ export interface IDetailsListComponentProps {
      * The template service instance
      */
     templateService: ITemplateService;
+
+    /**
+     * If the header should be sticky
+     */
+    enableStickyHeader?: boolean;
+
+    /**
+     * The height of the list view when sticky header is enabled
+     */
+    stickyHeaderListViewHeight?: number;
 }
 
 export interface IDetailsListComponentState {
@@ -225,6 +235,16 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
     private _domPurify: any;
     private _selection: Selection;
     private _selectionMode: SelectionMode = SelectionMode.none;
+
+    private _scrollClass = mergeStyleSets({
+      detailsListWrapper: {
+          height: this.props.stickyHeaderListViewHeight,
+          maxHeight: 'inherit',
+          width: '100%',
+          position: 'relative'
+      },
+    });
+    
 
     constructor(props: IDetailsListComponentProps) {
         super(props);
@@ -432,10 +452,24 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
             };
         }
 
-        return (
+        if (this.props.enableStickyHeader) {
+          return (
             <Fabric>
-                <ShimmeredDetailsList {...shimmeredDetailsListProps} />
+              <Stack horizontal className={this._scrollClass.detailsListWrapper}>
+                <Stack.Item>
+                  <ScrollablePane scrollbarVisibility={ScrollbarVisibility.auto} >
+                    <ShimmeredDetailsList {...shimmeredDetailsListProps} />
+                  </ScrollablePane>
+                </Stack.Item>
+              </Stack >
             </Fabric>
+          );
+        }
+
+        return (
+          <Fabric>
+            <ShimmeredDetailsList {...shimmeredDetailsListProps} />
+          </Fabric>
         );
     }
 
@@ -569,7 +603,7 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
       return <DetailsRow {...rowProps} theme={this.props.themeVariant as ITheme} />;
     }
 
-    private _onRenderDetailsHeader(props: IDetailsHeaderProps): JSX.Element {
+    private _onRenderDetailsHeader(props: IDetailsHeaderProps, defaultRender): JSX.Element {
 
         props.onRenderColumnHeaderTooltip = (tooltipHostProps: ITooltipHostProps) => {
 
@@ -596,7 +630,15 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
             return <TooltipHost {...tooltipHostProps} theme={this.props.themeVariant as ITheme} styles={customStyles} />;
         };
 
-        return <DetailsHeader {...props} theme={this.props.themeVariant as ITheme} />;
+        if (this.props.enableStickyHeader) {
+          return (
+            <Sticky stickyPosition={StickyPositionType.Header} isScrollSynced>
+              {defaultRender!({...props, theme: this.props.themeVariant as ITheme})}
+            </Sticky>
+          );
+        }
+
+        return defaultRender!({...props, theme: this.props.themeVariant as ITheme});
     }
 
     private _onColumnClick = (ev: React.MouseEvent<HTMLElement>, column: IColumn): void => {

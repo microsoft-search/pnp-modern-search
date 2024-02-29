@@ -228,7 +228,9 @@ define([], function() {
                 EnableGrouping: "Activar la agrupación",
                 GroupingDescription: "Asegúrese de tener datos que se muestren en el elemento web de resultados para que se muestre una lista de propiedades.",
                 CollapsedGroupsByDefault: "Mostrar colapsado",
-                ResetFieldsBtnLabel: "Restablecer los valores por defecto de los campos"
+                ResetFieldsBtnLabel: "Restablecer los valores por defecto de los campos",
+                EnableStickyHeader: "Activar el encabezado fijo",
+                StickyHeaderListViewHeight: "Altura de la vista de lista con encabezado fijo (en píxeles)"
             },
             Cards: {
                 Name: "Tarjetas",

@@ -228,6 +228,8 @@ declare interface ICommonStrings {
         EnableGrouping: string;
         CollapsedGroupsByDefault: string;
         ResetFieldsBtnLabel: string;
+        EnableStickyHeader: string;
+        StickyHeaderListViewHeight: string;
       };
       Cards: {
         Name: string;

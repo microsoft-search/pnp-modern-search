@@ -227,7 +227,9 @@ define([], function() {
                 EnableGrouping: "Groeperen inschakelen",
                 GroupingDescription: "Zorg ervoor dat er gegevens worden weergegeven in het resultaatwebonderdeel voor een lijst met eigenschappen die moeten worden weergegeven.",
                 CollapsedGroupsByDefault: "Toon ingeklapt",
-                ResetFieldsBtnLabel: "Reset velden naar standaard waarden"
+                ResetFieldsBtnLabel: "Reset velden naar standaard waarden",
+                EnableStickyHeader: "Sticky header inschakelen",
+                StickyHeaderListViewHeight: "Hoogte van de lijstweergave (px)"
             },
             Cards: {
                 Name: "Kaarten",

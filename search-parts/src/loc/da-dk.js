@@ -228,7 +228,9 @@ define([], function() {
                 EnableGrouping: "Aktivér gruppering",
                 GroupingDescription: "Sørg for, at du har data vist i resultatwebdelen for at få vist en liste over egenskaber.",
                 CollapsedGroupsByDefault: "Vis collapsed",
-                ResetFieldsBtnLabel: "Nulstil felter til standardværdier"
+                ResetFieldsBtnLabel: "Nulstil felter til standardværdier",
+                EnableStickyHeader: "Aktivér fastgjort header",
+                StickyHeaderListViewHeight: "Listevisningshøjde (px)"
             },
             Cards: {
                 Name: "Cards",

@@ -226,7 +226,9 @@ define([], function() {
                 EnableGrouping: "Salli ryhmittely",
                 GroupingDescription: "Varmista, että tulosten verkko-osassa on tietoja, jotta voit näyttää ominaisuusluettelon.",
                 CollapsedGroupsByDefault: "Näytä ryhmät tiivistettynä",
-                ResetFieldsBtnLabel: "Palauta kentät templaatin oletusarvoihin"
+                ResetFieldsBtnLabel: "Palauta kentät templaatin oletusarvoihin",
+                EnableStickyHeader: "Kiinnitä ylätunniste",
+                StickyHeaderListViewHeight: "Kiinnitetyn ylätunnisteen korkeus (px)"
             },
             Cards: {
                 Name: "Kortit",

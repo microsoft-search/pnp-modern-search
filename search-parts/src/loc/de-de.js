@@ -228,7 +228,9 @@ define([], function () {
                 EnableGrouping: "Gruppierung aktivieren",
                 GroupingDescription: "Stellen Sie sicher, dass im Ergebnis-Webpart Daten angezeigt werden, damit eine Liste der anzuzeigenden Eigenschaften angezeigt wird.",
                 CollapsedGroupsByDefault: "Eingeklappt anzeigen",
-                ResetFieldsBtnLabel: "Felder auf Standardwerte zurücksetzen"
+                ResetFieldsBtnLabel: "Felder auf Standardwerte zurücksetzen",
+                EnableStickyHeader: "Fixierte Kopfzeile aktivieren",
+                StickyHeaderListViewHeight: "Höhe der Listenansicht (px)"
             },
             Cards: {
                 Name: "Karten",
