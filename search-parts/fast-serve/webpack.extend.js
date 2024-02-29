@@ -51,8 +51,20 @@ const webpackConfig = {
                     replace: '',
                     flags: 'g'
                 }
-            }
+            }, {
+              // Skip HoverReactionsBar from spfx controls as it's not used and is bundles
+              test: /index\.js$/,
+              include: [/spfx-controls-react[/\\]lib[/\\]controls[/\\]HoverReactionsBar/],
+              loader: 'ignore-loader',
+          }
         ]
+    },
+    optimization: {
+      splitChunks: {
+        cacheGroups: {
+          vendors: false
+        }
+      }
     },
     plugins: [
         new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)

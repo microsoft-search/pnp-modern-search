@@ -7,7 +7,6 @@ const build = require('@microsoft/sp-build-web');
 const bundleAnalyzer = require('webpack-bundle-analyzer');
 const log = require('fancy-log');
 const fs = require('fs');
-const colors = require('colors');
 
 const readJson = (path, cb) => {
     fs.readFile(require.resolve(path), (err, data) => {
@@ -40,12 +39,6 @@ if (warningLevel) {
 }
 
 const envCheck = build.subTask('environmentCheck', (gulp, config, done) => {
-
-    if (!config.production) {
-        //https://spblog.net/post/2019/09/18/spfx-overclockers-or-how-to-significantly-improve-your-sharepoint-framework-build-performance#h_296972879501568737888136
-        log(`[${colors.cyan('configure-webpack')}] Turning off ${colors.cyan('tslint')}...`);
-        build.tslintCmd.enabled = false;
-    }
 
     build.configureWebpack.mergeConfig({
         additionalConfiguration: (generatedConfiguration) => {
@@ -94,7 +87,7 @@ const envCheck = build.subTask('environmentCheck', (gulp, config, done) => {
             }, {
                 // Skip HoverReactionsBar from spfx controls as it's not used and is bundles
                 test: /index\.js$/,
-                include: [/spfx-controls-react\/lib\/controls\/HoverReactionsBar/],
+                include: [/spfx-controls-react[/\\]lib[/\\]controls[/\\]HoverReactionsBar/],
                 loader: 'ignore-loader',
             });
 
