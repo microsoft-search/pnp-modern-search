@@ -17,6 +17,23 @@ const webpackConfig = {
     },
     module: {
         rules: [{
+          test: /\.js$/,
+          include: [
+            /lit/, 
+            /@lit/, 
+            /lit-html/
+          ],
+          use: {
+            loader: 'babel-loader',
+            options: {
+              plugins: [
+                '@babel/plugin-transform-optional-chaining',
+                '@babel/plugin-transform-nullish-coalescing-operator',
+                '@babel/plugin-transform-logical-assignment-operators'
+              ]
+            }
+          }
+        }, {
                 test: /utils\.js$/,
                 loader: "unlazy-loader",
                 include: [
@@ -34,8 +51,20 @@ const webpackConfig = {
                     replace: '',
                     flags: 'g'
                 }
-            }
+            }, {
+              // Skip HoverReactionsBar from spfx controls as it's not used and is bundles
+              test: /index\.js$/,
+              include: [/spfx-controls-react[/\\]lib[/\\]controls[/\\]HoverReactionsBar/],
+              loader: 'ignore-loader',
+          }
         ]
+    },
+    optimization: {
+      splitChunks: {
+        cacheGroups: {
+          vendors: false
+        }
+      }
     },
     plugins: [
         new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)

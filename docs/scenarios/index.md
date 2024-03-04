@@ -18,7 +18,6 @@ Most search solutions require some filters (aka refiners) to allow the user to f
 
 Search verticals can be used to selectively search specific content per vertical. Using the SharePoint provider you can use result sources to limit the content returned, or you can add the required KQL in the web part itself. This sample shows how to set up multiple search verticals on different pages.
 
-
 ## [Create a search page with verticals (within the same page)](Create-a-search-page-with-verticals-within-the-same-page.md)
 
 Search verticals can be used to selectively search specific content per vertical. Using the SharePoint provider you can use result sources to limit the content returned,
@@ -43,6 +42,5 @@ A common request in any intranet is to show birthdays of employees. This scenari
 ## [Setup Results web part to show work anniversaries](Setup-Results-web-part-to-show-work-anniversaries.md)
 Showing the work anniversaries of employees is a common request in any intranet. This scenario describes one way to achive this using a sleight of hand trick/cheating as the search index does not contains the information we need. 
 
----
-
-More to come!
+## [Connect one Search Results web part to another Search Results Web Part](Connect-to-a-search-results-webpart.md)
+This scenario describes how to connect more then one results Web Part together. One results Web Part will view the sites, connected with the current HUB site, the other, connected results Web Part, will show the documents from the selected site.

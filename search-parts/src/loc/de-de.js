@@ -1,4 +1,4 @@
-define([], function() {
+define([], function () {
     return {
         Tokens: {
             SelectTokenLabel: "Wähle ein Token...",
@@ -14,7 +14,7 @@ define([], function() {
             Custom: {
                 CustomTokensGroupName: "Benutzerdefinerter Wert",
                 CustomValuePlaceholder: "Wert eingeben...",
-                InvalidtokenFormatErrorMessage: "Bitte gebe den Token im unterstützten Format ein: {' und '}'. (z.B.: {Today})"
+                InvalidtokenFormatErrorMessage: "Bitte geben Sie den Token im unterstützten Format ein: {' und '}'. (z.B.: {Today})"
             },
             Date: {
                 DateTokensGroupName: "Datums Token",
@@ -54,14 +54,14 @@ define([], function() {
             },
             Extensibility: {
                 InvalidDataSourceInstance: "Die ausgewählte Datenquelle '{0}' implementiert die abstrakte Klasse 'BaseDataSource' nicht korrekt. Es fehlen einige Methoden.",
-                DataSourceDefinitionNotFound: "Die benutzerdefinierte Datenquelle mit dem Schlüssel '{0}' wurde nicht gefunden. Stellen Sie sicher, dass die Lösung korrekt für den App-Katalog bereitgestellt und die Manifest-ID für dieses Web Part registriert ist.",
-                LayoutDefinitionNotFound: "Das benutzerdefinierte Layout mit dem Schlüssel '{0}' wurde nicht gefunden. Stellen Sie sicher, dass die Lösung korrekt für das App-Katalog bereitgestellt und die Manifest-ID für dieses Webpart registriert ist.",
+                DataSourceDefinitionNotFound: "Die benutzerdefinierte Datenquelle mit dem Schlüssel '{0}' wurde nicht gefunden. Stellen Sie sicher, dass die Lösung korrekt für den App-Katalog bereitgestellt und die Manifest-ID für dieses Webpart registriert ist.",
+                LayoutDefinitionNotFound: "Das benutzerdefinierte Layout mit dem Schlüssel '{0}' wurde nicht gefunden. Stellen Sie sicher, dass die Lösung korrekt für den App-Katalog bereitgestellt und die Manifest-ID für dieses Webpart registriert ist.",
                 InvalidLayoutInstance: "Das ausgewählte Layout '{0}' implementiert die abstrakte Klasse 'BaseLayout' nicht korrekt. Es fehlen einige Methoden.",
                 DefaultExtensibilityLibraryName: "Standard-Erweiterungsbibliothek",
                 InvalidProviderInstance: "Der ausgewählte Vorschlagsprovider '{0}' implementiert die abstrakte Klasse 'BaseSuggestionProvider' nicht korrekt. Es fehlen einige Methoden.",
                 ProviderDefinitionNotFound: "Der benutzerdefinierte Vorschlagsprovider mit dem Schlüssel '{0}' wurde nicht gefunden. Stellen Sie sicher, dass die Lösung korrekt für den App-Katalog bereitgestellt und die Manifest-ID für dieses Webpart registriert ist.",
-                QueryModifierDefinitionNotFound: "Der benutzerdefinierte Benutzer-Anfragen-Modifizierer mit dem Schlüssel '{0}' wurde nicht gefunden. Stellen Sie sicher, dass die Lösung korrekt für den App-Katalog bereitgestellt und die Manifest-ID für dieses Webpart registriert ist.",
-                InvalidQueryModifierInstance: "Der ausgewählte Benutzer-Anfragen-Modifizierer '{0}'  implementiert  die abstrakte Klasse 'BaseQueryModifier' nicht korrekt. Es fehlen einige Methoden.",
+                QueryModifierDefinitionNotFound: "Der benutzerdefinierte Abfragemodifikator mit dem Schlüssel '{0}' wurde nicht gefunden. Stellen Sie sicher, dass die Lösung korrekt für den App-Katalog bereitgestellt und die Manifest-ID für dieses Webpart registriert ist.",
+                InvalidQueryModifierInstance: "Der ausgewählte Abfragemodifikator '{0}' implementiert die abstrakte Klasse 'BaseQueryModifier' nicht korrekt. Es fehlen einige Methoden.",
             },
             DateFromLabel: "Von",
             DateTolabel: "Bis",
@@ -96,7 +96,7 @@ define([], function() {
                 NoResultsSearchMessage: "Keine Ergebnisse gefunden",
                 SearchPlaceholder: "Suche einen Wert..."
             },
-            CurrentVerticalNotSelectedMessage: "Das derzeit ausgewählte Vertikal passt nicht zu den zu diesem Web Part ({0}) zugeordneten Vertikalen. Es wird im Anzeige Modus als leer angezeigt."            
+            CurrentVerticalNotSelectedMessage: "Das derzeit ausgewählte Vertikal passt nicht zu den zu diesem Web Part ({0}) zugeordneten Vertikalen. Es wird im Anzeige Modus als leer angezeigt."
         },
         DataSources: {
             SharePointSearch: {
@@ -109,8 +109,8 @@ define([], function() {
                 QueryTemplateFieldDescription: "Die Vorlage für die Suchanfrage. Sie können auch {<Tokens>} verwenden, um eine dynamische Abfrage zu erstellen.",
                 ResultSourceIdLabel: "ID der Ergebnisquelle / Scope|Name",
                 ResultSourceIdDescription: "Verwenden Sie eine standardmäßige SharePoint-Ergebnisquellen-ID, geben Sie Ihren eigenen GUID-Wert ein oder den SCOPE und NAMEN der Quelle getrennt durch '|' (z.B.: SPSite|News). Erlaubte Scopes sind [SPSiteSubscription, SPSite, SPWeb]. Drücken Sie zum Speichern die [Eingabetaste].",
-                InvalidResultSourceIdMessage: "Der angegebene Wert ist keine gültige GUID oder nicht als SCOPE|NAME formattiert.",
-                EnableQueryRulesLabel: "Abfrageregeln aktivieren",                
+                InvalidResultSourceIdMessage: "Der angegebene Wert ist keine gültige GUID oder nicht in der Form 'SCOPE|NAME' formatiert.",
+                EnableQueryRulesLabel: "Abfrageregeln aktivieren",
                 RefinementFilters: "Verfeinerungsfilter",
                 RefinementFiltersDescription: "Initiale Verfeinerungsfilter, die auf die Abfrage angewendet werden sollen. Diese werden nicht in den ausgewählten Filtern angezeigt. Verwenden Sie für String-Ausdrücke doppelte Anführungszeichen (\") anstelle von einfachen Anführungszeichen (').",
                 EnableLocalizationLabel: "Lokalisierung einschalten",
@@ -122,10 +122,10 @@ define([], function() {
                 SelectedPropertiesFieldDescription: "Gibt die Eigenschaften an, die aus den Suchergebnissen abgerufen werden sollen.",
                 SelectedPropertiesPlaceholderLabel: "Eigenschaften auswählen",
                 HitHighlightedPropertiesFieldLabel: "Hervorgehobene Eigenschaften",
-                HitHighlightedPropertiesFieldDescription: "Liste der verwalteten Eigenschaften zum hervorheben (i.e. Department,UserName).",
+                HitHighlightedPropertiesFieldDescription: "Liste der verwalteten Eigenschaften zum Hervorheben (i.e. Department,UserName).",
                 TermNotFound: "(Begriff mit ID '{0}' nicht gefunden)",
                 ApplyQueryTemplateBtnText: "Übernehmen",
-                EnableAudienceTargetingTglLabel: "Zielgruppen Adressierung aktivieren",
+                EnableAudienceTargetingTglLabel: "Zielgruppenadressierung aktivieren",
                 TrimDuplicates: "Duplikate kürzen",
                 CollapseSpecificationLabel: "Spezifikation einklappen"
             },
@@ -152,7 +152,7 @@ define([], function() {
                 TrimDuplicates: "Duplikate kürzen",
                 CollapseProperties: {
                     EditCollapsePropertiesLabel: "Bearbeiten Sie die Minimierungseinstellungen",
-                    CollapsePropertiesDescription: "Angiv indstillingerne for sammenbrud for søgeresultaterne. Du kan enten vælge et felt fra rullelisten (kun hvis datakildedataene allerede er hentet) eller indtaste din egen tilpassede værdi (tryk på 'Enter' for at gemme din indtastning)",
+                    CollapsePropertiesDescription: "Geben Sie die Minimierungseinstellungen für die Suchergebnisse an. Sie können entweder ein Feld aus der Dropdown-Liste auswählen (nur wenn die Daten der Datenquelle bereits abgerufen wurden) oder einen eigenen Wert eingeben (drücken Sie 'Enter', um Ihre Eingabe zu speichern).",
                     CollapsePropertiesPropertyPaneFieldLabel: "Minimierungseinstellungen",
                     CollapseLimitFieldLabel: "Grenze",
                     CollapsePropertiesFieldColumnPlaceholder: "Nach Feld reduzieren"
@@ -160,18 +160,21 @@ define([], function() {
             },
             SearchCommon: {
                 Sort: {
-                    SortPropertyPaneFieldLabel: "Sortierreihenfolge",
-                    SortListDescription: "Geben Sie die initiale Sortierreihenfolge für die Suchergebnisse an. Sie können entweder ein Feld aus der Dropdown-Liste auswählen (nur wenn die Daten der Datenquelle bereits abgerufen wurden) oder einen eigenen Wert eingeben (drücken Sie 'Enter', um Ihre Eingabe zu speichern).",
+                    SortPropertyPaneFieldLabel: "Sortierung",
+                    SortListDescription: "Geben Sie die Sortierung der Suchergebnisse an. Sie können entweder ein Feld aus der Dropdown-Liste auswählen (nur wenn die Daten der Datenquelle bereits abgerufen wurden) oder einen eigenen Wert eingeben (drücken Sie 'Enter', um Ihre Eingabe zu speichern).",
                     SortDirectionAscendingLabel: "Aufsteigend",
                     SortDirectionDescendingLabel: "Absteigend",
-                    SortErrorMessage: "Ungültige Sucheigenschaft (Prüfen Sie, ob die verwaltete Eigenschaft sortierbar ist).",
+                    SortErrorMessage: "Ungültige Sucheigenschaft (prüfen Sie, ob die verwaltete Eigenschaft sortierbar ist).",
                     SortPanelSortFieldLabel: "Nach Feld sortieren",
                     SortPanelSortFieldAria: "Sortiere nach",
                     SortPanelSortFieldPlaceHolder: "Sortiere nach",
                     SortPanelSortDirectionLabel: "Sortierrichtung",
                     SortDirectionColumnLabel: "Richtung",
-                    SortFieldColumnLabel: "Feld Name",
-                    EditSortLabel: "Sortierreihenfolge bearbeiten",
+                    SortFieldColumnLabel: "Feldname",
+                    SortFieldDefaultSortLabel: "Standardmäßig sortieren",
+                    SortFieldFriendlyNameLabel: "Anzeigename des Sortierfelds",
+                    SortFieldUserSortLabel: "Sortierung durch Benutzer",
+                    EditSortLabel: "Sortierung bearbeiten",
                     SortInvalidSortableFieldMessage: "Diese Eigenschaft ist nicht sortierbar",
                     SortFieldColumnPlaceholder: "Wähle Feld..."
                 }
@@ -217,14 +220,17 @@ define([], function() {
                 ManageDetailsListColumnDescription: "Hinzufügen, Aktualisieren oder Entfernen von Spalten für das Layout der Detailliste. Sie können entweder Eigenschaftswerte in der Liste direkt und ohne Transformation verwenden oder einen Handlebar-Ausdruck im Wertefeld einsetzen. HTML wird ebenfalls für alle Felder unterstützt.",
                 ManageDetailsListColumnLabel: "Spalten verwalten",
                 ValueColumnLabel: "Spalten Wert",
-                ValueSortingColumnLabel: "Sortierung von Spaltenwerten",
+                ValueSortingColumnLabel: "Sortierfeld auswählen...",
+                ValueSortingColumnNoFieldsLabel: "Keine Sortierfelder verfügbar",
                 DisplayNameColumnLabel: "Spaltenanzeigename",
                 FileExtensionFieldLabel: "Zu verwendendes Feld für die Dateierweiterung",
                 GroupByFieldLabel: "Gruppierung nach Feld",
                 EnableGrouping: "Gruppierung aktivieren",
                 GroupingDescription: "Stellen Sie sicher, dass im Ergebnis-Webpart Daten angezeigt werden, damit eine Liste der anzuzeigenden Eigenschaften angezeigt wird.",
                 CollapsedGroupsByDefault: "Eingeklappt anzeigen",
-                ResetFieldsBtnLabel: "Felder auf Standardwerte zurücksetzen"
+                ResetFieldsBtnLabel: "Felder auf Standardwerte zurücksetzen",
+                EnableStickyHeader: "Fixierte Kopfzeile aktivieren",
+                StickyHeaderListViewHeight: "Höhe der Listenansicht (px)"
             },
             Cards: {
                 Name: "Karten",
@@ -276,13 +282,17 @@ define([], function() {
                 PersonaSizeExtraSmall: "Extra klein",
                 PersonaSizeSmall: "Klein",
                 PersonaSizeRegular: "Regulär",
-                PersonaSizeLarge: "Gross",
-                PersonaSizeExtraLarge: "Extra gross",
+                PersonaSizeLarge: "Groß",
+                PersonaSizeExtraLarge: "Extra groß",
                 ShowInitialsToggleLabel: "Initialen anzeigen, wenn kein Bild vorhanden",
                 SupportHTMLColumnLabel: "HTML erlauben",
                 ResetFieldsBtnLabel: "Felder auf Standardwerte zurücksetzen",
                 ShowPersonaCardOnHover: "Persona-Karte bei Hover anzeigen",
-                ShowPersonaCardOnHoverCalloutMsg: "Diese Funktion verwendet Microsoft Graph, um Informationen über den Benutzer anzuzeigen, und benötigt die folgenden API-Berechtigungen in Ihrem Mandanten, um zu funktionieren: ['User.Read','People.Read','Contacts.Read','User.Read.All'].",
+                ShowPersonaCardOnHoverCalloutMsg: "Diese Funktion verwendet Microsoft Graph, um Informationen über den Benutzer anzuzeigen. Sie benötigt die folgenden API-Berechtigungen in Ihrem Mandanten, um zu funktionieren: ['User.Read','People.Read','Contacts.Read','User.Read.All'].",
+                ShowPersonaCardOnHoverNative: "Persona-Karte bei Hover anzeigen (LPC)",                
+                ShowPersonaCardOnHoverCalloutMsgNative: "Diese Funktion verwendet die Standard-Komponente von SharePoint, um die LivePersona-Karte anzuzeigen. Beachten Sie den Disclaimer unter https://pnp.github.io/sp-dev-fx-controls-react/controls/LivePersona/.",
+                ShowPersonaPresenceInfo: "Präsenz anzeigen",
+                ShowPersonaPresenceInfoCalloutMsg: "Diese Funktion benötigt die folgende API-Berechtigungen in Ihrem Mandanten, um zu funktionieren: ['Presence.Read.All']",
                 Fields: {
                     ImageUrl: "Bild URL",
                     PrimaryText: "Primärer Text",
@@ -349,14 +359,14 @@ define([], function() {
             OrOperator: "OR",
             AndOperator: "AND",
             ComboBoxPlaceHolder: "Wert auswählen",
-            UseAndOperatorValues: "Benutze ein AND Operator zwischen den Werten.",
-            UseOrOperatorValues: "Benutze ein OR Operator zwischen den Werten.",
-            UseValuesOperators: "Wähle einen Operator der zwischen den Filter Werten angewandt werden soll."
+            UseAndOperatorValues: "Benutze einen AND Operator zwischen den Werten.",
+            UseOrOperatorValues: "Benutze einen OR Operator zwischen den Werten.",
+            UseValuesOperators: "Wähle einen Operator, der zwischen den Filterwerten angewandt werden soll."
         },
         SuggestionProviders: {
             SharePointStatic: {
                 ProviderName: "SharePoint Statische Suchvorschläge",
-                ProviderDescription: "Abrufen von statischen benutzerdefinierten SharePoint-Suchvorschlägen"
+                ProviderDescription: "Abrufen von statischen, benutzerdefinierten SharePoint-Suchvorschlägen"
             }
         }
     }

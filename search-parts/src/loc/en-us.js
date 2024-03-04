@@ -228,7 +228,9 @@ define([], function() {
                 EnableGrouping: "Enable grouping",
                 GroupingDescription: "Ensure you have data showing in the result web part for a list of properties to show.",
                 CollapsedGroupsByDefault: "Show collapsed",
-                ResetFieldsBtnLabel: "Reset fields to default values"
+                ResetFieldsBtnLabel: "Reset fields to default values",
+                EnableStickyHeader: "Enable sticky header",
+                StickyHeaderListViewHeight: "List view height (in px)"
             },
             Cards: {
                 Name: "Cards",
@@ -289,6 +291,8 @@ define([], function() {
                 ShowPersonaCardOnHoverCalloutMsg: "This feature uses Microsoft Graph to display information about the user and needs the following API permissions in your tenant to work: ['User.Read','People.Read','Contacts.Read','User.Read.All'].",
                 ShowPersonaCardOnHoverNative: "Show persona card on hover (LPC)",                
                 ShowPersonaCardOnHoverCalloutMsgNative: "This feature uses the native SharePoint implementation to show the live persona card (LPC). See https://pnp.github.io/sp-dev-fx-controls-react/controls/LivePersona/ for considerations.",
+                ShowPersonaPresenceInfo: "Show presence",
+                ShowPersonaPresenceInfoCalloutMsg: "This feature needs the following API permissions in your tenant to work: ['Presence.Read.All']",
                 Fields: {
                     ImageUrl: "Image URL",
                     PrimaryText: "Primary text",

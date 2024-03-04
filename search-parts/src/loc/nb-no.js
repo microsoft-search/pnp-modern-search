@@ -227,7 +227,9 @@ define([], function () {
           EnableGrouping: "Aktiver gruppering",
           GroupingDescription: "Sørg for at du har data som vises i resultatwebdelen for å vise en liste over egenskaper.",
           CollapsedGroupsByDefault: "Vis kollapsede",
-          ResetFieldsBtnLabel: "Bruk standardverdiene"
+          ResetFieldsBtnLabel: "Bruk standardverdiene",
+          EnableStickyHeader: "Aktiver klebrig overskrift",
+          StickyHeaderListViewHeight: "Høyde på listevisning med klebrig overskrift (px)"
         },
         Cards: {
           Name: "Kort",
@@ -287,6 +289,8 @@ define([], function () {
           ShowPersonaCardOnHover: "Vis personkort når du fører musen over",
           ShowPersonaCardOnHoverNative: "Vis personkort når du fører musen over (LPC)",
           ShowPersonaCardOnHoverCalloutMsg: "Denne funksjonen bruker Microsoft Graph for å vise informasjon om brukere og må ha følgende API-tilganger i din klient for at det skal virke: ['User.Read','People.Read','Contacts.Read','User.Read.All'].",
+          ShowPersonaPresenceInfo: "Vis tilstedeværelse",
+          ShowPersonaPresenceInfoCalloutMsg: "Denne funksjonen trenger følgende API-tillatelser i leietakeren for å fungere: ['Presence.Read.All'].",
           Fields: {
             ImageUrl: "Bilde-URL",
             PrimaryText: "Primærtekst",

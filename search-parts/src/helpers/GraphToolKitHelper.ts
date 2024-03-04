@@ -1,13 +1,26 @@
 import { WebPartContext } from '@microsoft/sp-webpart-base';
 
-export const loadMsGraphToolkit = async (context: WebPartContext) => {
+const DISAMBIGUATION = "pnp-modern-search";
 
-    const component = window.customElements.get("mgt-mock-provider");
+export const loadMsGraphToolkit = async (context: WebPartContext) => {
+    // Load Microsoft Graph Toolkit dynamically
+    const { customElementHelper } = await import(
+      /* webpackChunkName: 'microsoft-graph-toolkit' */
+      '@microsoft/mgt-element/dist/es6/components/customElementHelper'
+    );
+
+    customElementHelper.withDisambiguation(DISAMBIGUATION);
+
+    const component = window.customElements.get(`${customElementHelper.prefix}-person`);
     if (!component) {
-        // Load Microsoft Graph Toolkit dynamically
         const { Providers } = await import(
-            /* webpackChunkName: 'microsoft-graph-toolkit' */
-            '@microsoft/mgt-react/dist/es6'
+          /* webpackChunkName: 'microsoft-graph-toolkit' */
+          '@microsoft/mgt-element/dist/es6/providers/Providers'
+        );
+
+        const { registerMgtComponents } = await import(
+          /* webpackChunkName: 'microsoft-graph-toolkit' */
+          '@microsoft/mgt-components/dist/es6'
         );
 
         if (!Providers.globalProvider) {
@@ -18,6 +31,6 @@ export const loadMsGraphToolkit = async (context: WebPartContext) => {
 
             Providers.globalProvider = new SharePointProvider(context);
         }
-
+        registerMgtComponents();
     }
 }

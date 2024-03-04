@@ -228,6 +228,8 @@ declare interface ICommonStrings {
         EnableGrouping: string;
         CollapsedGroupsByDefault: string;
         ResetFieldsBtnLabel: string;
+        EnableStickyHeader: string;
+        StickyHeaderListViewHeight: string;
       };
       Cards: {
         Name: string;
@@ -288,6 +290,8 @@ declare interface ICommonStrings {
         ShowPersonaCardOnHoverNative: string;
         ShowPersonaCardOnHoverCalloutMsg: string;
         ShowPersonaCardOnHoverCalloutMsgNative: string;
+        ShowPersonaPresenceInfo: string;
+        ShowPersonaPresenceInfoCalloutMsg: string;
         Fields: {
           ImageUrl: string;
           PrimaryText: string;

@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Fabric, ShimmeredDetailsList, IShimmeredDetailsListProps } from '@fluentui/react';
+import { Fabric, ShimmeredDetailsList, IShimmeredDetailsListProps, Sticky, StickyPositionType, Stack, ScrollablePane, ScrollbarVisibility, Checkbox } from '@fluentui/react';
 import { ITooltipHostProps, TooltipHost, ITooltipStyles, Shimmer, ShimmerElementsGroup, ShimmerElementType, IShimmerElement, mergeStyleSets, ITheme, Selection } from '@fluentui/react';
 import * as Handlebars from 'handlebars';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import { BaseWebComponent, BuiltinTemplateSlots, ExtensibilityConstants, ISortInfo, SortFieldDirection } from '@pnp/modern-search-extensibility';
 import { groupBy, sortBy, findIndex, isEmpty } from "@microsoft/sp-lodash-subset";
 import { FileIcon } from '../components/FileIconComponent';
-import { DetailsListLayoutMode, SelectionMode, IColumn, IGroup, IDetailsRowProps, DetailsRow, IDetailsHeaderProps, DetailsHeader, CheckboxVisibility } from '@fluentui/react/lib/DetailsList';
+import { DetailsListLayoutMode, SelectionMode, IColumn, IGroup, IDetailsRowProps, DetailsRow, IDetailsHeaderProps, CheckboxVisibility, IDetailsRowCheckProps, DetailsRowCheck, IDetailsCheckboxProps } from '@fluentui/react/lib/DetailsList';
 import { DEFAULT_CELL_STYLE_PROPS, DEFAULT_ROW_HEIGHTS } from '@fluentui/react/lib/components/DetailsList/DetailsRow.styles';
 import { ISearchResultsTemplateContext } from '../models/common/ITemplateContext';
 import { ObjectHelper } from '../helpers/ObjectHelper';
@@ -18,6 +18,7 @@ import { ITemplateService } from '../services/templateService/ITemplateService';
 import { TemplateService } from '../services/templateService/TemplateService';
 import { ServiceScope, ServiceKey } from "@microsoft/sp-core-library";
 import { ISortFieldConfiguration } from '../models/search/ISortFieldConfiguration';
+import { Constants } from '../common/Constants';
 
 const DEFAULT_SHIMMER_HEIGHT = 7;
 const SHIMMER_LINE_VS_CELL_WIDTH_RATIO = 0.95;
@@ -205,6 +206,21 @@ export interface IDetailsListComponentProps {
      * Callback handler when a sort field and direction are selected
      */
     onSort: (sortFieldName: string, sortFieldDirection: SortFieldDirection) => void;
+
+    /**
+     * The template service instance
+     */
+    templateService: ITemplateService;
+
+    /**
+     * If the header should be sticky
+     */
+    enableStickyHeader?: boolean;
+
+    /**
+     * The height of the list view when sticky header is enabled
+     */
+    stickyHeaderListViewHeight?: number;
 }
 
 export interface IDetailsListComponentState {
@@ -221,13 +237,24 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
     private _selection: Selection;
     private _selectionMode: SelectionMode = SelectionMode.none;
 
+    private _scrollClass = mergeStyleSets({
+      detailsListWrapper: {
+          height: this.props.stickyHeaderListViewHeight,
+          maxHeight: 'inherit',
+          width: '100%',
+          position: 'relative'
+      },
+    });
+    
+
     constructor(props: IDetailsListComponentProps) {
         super(props);
 
         this._domPurify = DOMPurify.default;
 
         this._domPurify.setConfig({
-            WHOLE_DOCUMENT: true
+            WHOLE_DOCUMENT: true,
+            ALLOWED_URI_REGEXP: Constants.ALLOWED_URI_REGEXP,
         });
 
         this._domPurify.addHook('uponSanitizeElement', DomPurifyHelper.allowCustomComponentsHook);
@@ -249,6 +276,7 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
 
             if (this.props.allowItemSelection) {
                 this._selectionMode = this.props.allowMulti ? SelectionMode.multiple : SelectionMode.single;
+                this._selection.setItems(this._allItems, false);
             }
 
             this._templateContext = this.props.context;
@@ -330,7 +358,45 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
                                 value = ObjectHelper.byPath(item, column.value);
                             }
 
-                            renderColumnValue = <span title={!hasError ? toolTipText : ''} dangerouslySetInnerHTML={{ __html: this._domPurify.sanitize(value) }}></span>;
+                            const tempColumnValueAsHtml = new DOMParser().parseFromString("<span>" + value as string + "</span>", "text/html");
+
+                            this.props.templateService.replaceDisambiguatedMgtElementNames(tempColumnValueAsHtml);
+
+                            const styleElements = tempColumnValueAsHtml.getElementsByTagName("style");
+
+                            const allStyles = [];
+
+                            if (styleElements.length > 0) {
+                
+                              // The prefix for all CSS selectors
+                              const elementPrefixId = `${this.props.templateService.TEMPLATE_ID_PREFIX}${this._templateContext.instanceId}`;
+                
+                
+                              for (let i = 0; i < styleElements.length; i++) {
+                                  const style = styleElements.item(i);
+                
+                                  let cssscope = style.dataset.cssscope as string;
+                
+                                  if (cssscope !== undefined && cssscope === "layer") {
+                
+                                      allStyles.push(`@layer { ${style.innerText} }`);
+                
+                                  } else {
+                
+                                      allStyles.push(this.props.templateService.legacyStyleParser(style, elementPrefixId));
+                
+                                  }
+                                  styleElements.item(i).remove();
+                              }
+                            }
+                
+                            if (this._templateContext.properties.useMicrosoftGraphToolkit && this.props.templateService.MgtCustomElementHelper.isDisambiguated) {
+                              allStyles.forEach((style, index) => {
+                                allStyles[index] = style.replace(/mgt-/g, `${this.props.templateService.MgtCustomElementHelper.prefix}-`);
+                              });
+                            }
+                
+                            renderColumnValue = <span title={!hasError ? toolTipText : ''} dangerouslySetInnerHTML={{ __html: this._domPurify.sanitize(`<style>${allStyles.join(' ')}</style>${tempColumnValueAsHtml.body.firstElementChild.innerHTML}`) }}></span>;
 
                             return renderColumnValue;
                         },
@@ -348,6 +414,7 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
         this._onRenderCustomPlaceholder = this._onRenderCustomPlaceholder.bind(this);
         this._onRenderDetailsHeader = this._onRenderDetailsHeader.bind(this);
         this._onRenderRow = this._onRenderRow.bind(this);
+        this._onColumnClick = this._onColumnClick.bind(this);
     }
 
     public render() {
@@ -374,6 +441,7 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
             enableShimmer: this.props.showShimmers,
             selectionPreservedOnEmptyClick: true,
             enterModalSelectionOnTouch: true,
+            disableSelectionZone: true,
             onRenderCustomPlaceholder: this._onRenderCustomPlaceholder,
             onRenderRow: this._onRenderRow,
             onRenderDetailsHeader: this._onRenderDetailsHeader,
@@ -386,10 +454,24 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
             };
         }
 
-        return (
+        if (this.props.enableStickyHeader) {
+          return (
             <Fabric>
-                <ShimmeredDetailsList {...shimmeredDetailsListProps} />
+              <Stack horizontal className={this._scrollClass.detailsListWrapper}>
+                <Stack.Item>
+                  <ScrollablePane scrollbarVisibility={ScrollbarVisibility.auto} >
+                    <ShimmeredDetailsList {...shimmeredDetailsListProps} />
+                  </ScrollablePane>
+                </Stack.Item>
+              </Stack >
             </Fabric>
+          );
+        }
+
+        return (
+          <Fabric>
+            <ShimmeredDetailsList {...shimmeredDetailsListProps} />
+          </Fabric>
         );
     }
 
@@ -505,10 +587,25 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
     }
 
     private _onRenderRow(rowProps: IDetailsRowProps): JSX.Element {
-        return <DetailsRow {...rowProps} theme={this.props.themeVariant as ITheme} />;
+
+      rowProps.onRenderCheck = (props: IDetailsRowCheckProps) => {
+        if (this._selectionMode === SelectionMode.multiple) {
+          props.onRenderDetailsCheckbox = (detailsCheckboxProps: IDetailsCheckboxProps) => {
+            return (
+              <Checkbox
+                {...detailsCheckboxProps}
+              />
+            );
+          }
+        }
+
+        return (<DetailsRowCheck {...props} theme={this.props.themeVariant as ITheme} />);
+      };
+
+      return <DetailsRow {...rowProps} theme={this.props.themeVariant as ITheme} />;
     }
 
-    private _onRenderDetailsHeader(props: IDetailsHeaderProps): JSX.Element {
+    private _onRenderDetailsHeader(props: IDetailsHeaderProps, defaultRender): JSX.Element {
 
         props.onRenderColumnHeaderTooltip = (tooltipHostProps: ITooltipHostProps) => {
 
@@ -535,7 +632,15 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
             return <TooltipHost {...tooltipHostProps} theme={this.props.themeVariant as ITheme} styles={customStyles} />;
         };
 
-        return <DetailsHeader {...props} theme={this.props.themeVariant as ITheme} />;
+        if (this.props.enableStickyHeader) {
+          return (
+            <Sticky stickyPosition={StickyPositionType.Header} isScrollSynced>
+              {defaultRender!({...props, theme: this.props.themeVariant as ITheme})}
+            </Sticky>
+          );
+        }
+
+        return defaultRender!({...props, theme: this.props.themeVariant as ITheme});
     }
 
     private _onColumnClick = (ev: React.MouseEvent<HTMLElement>, column: IColumn): void => {
@@ -654,6 +759,7 @@ export class DetailsListWebComponent extends BaseWebComponent {
         const fields: ISortFieldConfiguration[] = props.fields;
 
         const detailsListComponent = <DetailsListComponent {...props}
+            templateService={templateService}
             handlebars={templateService.Handlebars}
             fields={fields}
             defaultSelectedField={props.defaultSelectedField}

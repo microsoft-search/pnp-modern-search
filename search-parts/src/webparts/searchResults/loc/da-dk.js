@@ -15,7 +15,7 @@ define([], function() {
       DataSourcePage: {
         DataSourceConnectionGroupName: "Tilgængelige datakilder",
         PagingOptionsGroupName: "Sidevisninger",
-        ItemsCountPerPageFieldName: "Antal items per side",
+        ItemsCountPerPageFieldName: "Antal elementer per side",
         PagingRangeFieldName: "Antal sider der skal vises i rækkefølge",
         ShowPagingFieldName: "Vis sideantal",
         HidePageNumbersFieldName: "Skjul sidenumre",
@@ -39,7 +39,7 @@ define([], function() {
         CommonOptionsGroupName: "Almindelig",
         TemplateUrlFieldLabel: "Anvend en URL fra en ekstern skabelon",
         TemplateUrlPlaceholder: "https://myfile.html",
-        ErrorTemplateExtension: "Skabelonen skal være en valid .txt, .htm or .html fil",
+        ErrorTemplateExtension: "Skabelonen skal være en valid .htm or .html fil",
         ErrorTemplateResolve: "Kan ikke læse the specificerede skabelon. Fejlbeskrivelse: '{0}'",
         DialogButtonLabel: "Redigér resultatsskabelonen",
         DialogTitle: "Redigér resultatsskabelonen",
@@ -47,7 +47,7 @@ define([], function() {
         ShowBlankIfNoResult: "Skjul denne webpart, hvis der ikke er noget at vise.",
         ShowResultsCount: "Vis antallet af resultater",
         HandlebarsRenderTypeLabel: "Handlebars/HTML",
-        HandlebarsRenderTypeDesc: "Vælg layout baseret på HTML, CSS og styr",
+        HandlebarsRenderTypeDesc: "Vælg layout baseret på HTML, CSS og Handlebars",
         AdaptiveCardsRenderTypeLabel: "Adaptive Cards",
         AdaptiveCardsRenderTypeDesc: "Vælg layout baseret på JSON adaptive kort",        
         Handlebars: {
@@ -62,13 +62,13 @@ define([], function() {
             CondtionOperatorValue: "Operatør",
             ExternalUrlLabel: "Ekstern skabelon-URL",
             EqualOperator: "Er lig med",
-            NotEqualOperator: "Er ikke lige med",
+            NotEqualOperator: "Er ikke lig med",
             ContainsOperator: "Indeholder",
             StartsWithOperator: "Starter med",
             NotNullOperator: "Er ikke nul",
-            GreaterOrEqualOperator: "Større eller lig",
+            GreaterOrEqualOperator: "Større eller lig med",
             GreaterThanOperator: "Større end",
-            LessOrEqualOperator: "Mindre eller lig",
+            LessOrEqualOperator: "Mindre eller lig med",
             LessThanOperator: "Mindre end",
             CancelButtonText: "Annuller",
             DialogButtonText: "Redigér skabelon",
@@ -83,8 +83,13 @@ define([], function() {
           AsDataFiltersDescription: "I denne tilstand sendes valgte værdier til datakilden som almindelige filtre",
           AsTokensDescription: "I denne tilstand bruges de valgte værdier manuelt gennem tokens og tilgængelige metoder. Eksempel med SharePoint søgeforespørgselsskabelon: {?Title:{filters.&lt;destination_field_name&gt;.valueAsText}}",
           FilterValuesOperator: "Den logiske operator, der skal bruges mellem valgte værdier",
+<<<<<<< HEAD
           FieldToConsumeLabel: "Kildefelt til at forbruge",
+          FieldToConsumeDescription: "Brug denne feltværdi til at skabe forbindelse til den anden datakilde",
+=======
+          FieldToConsumeLabel: "Kildefelt til at anvende",
           FieldToConsumeDescription: "Brug denne feltværdi til udvalgte varer",
+>>>>>>> 4b7c7e1f08e290b3d1232a7b8e787c8c5cac06e4
         },
         AdaptiveCards: {
           HostConfigFieldLabel: "Værtskonfiguration"
@@ -109,7 +114,7 @@ define([], function() {
         InputQueryTextStaticValue: "Statisk værdi",
         InputQueryTextDynamicValue: "Dynamisk værdi",
         SearchQueryTextUseDefaultQuery: "Brug en standard værdi",
-        SearchQueryTextDefaultValue: "Standard værdi",
+        SearchQueryTextDefaultValue: "Standardværdi",
         SourceDestinationFieldLabel: "Navn på destinationsfelt",
         SourceDestinationFieldDescription: "Destinationsfelt til brug i denne webdel for at matche de valgte værdier",
         AvailableFieldValuesFromResults: "Felt, der indeholder filterværdien"        
@@ -118,7 +123,10 @@ define([], function() {
         Extensibility: {
           PanelHeader: "Konfigurér extensibility-biblioteker så de indlæser ved opstart.",
           PanelDescription: "Tilføj/Fjern ID på dit extensibility-bibliotek her. Du kan specificere et visningsnavn og beslutte, om biblioteket skal indlæses eller ej ved opstart. Kun brugerdefinerede datakilder, layouts, web-komponenter og Handlebars-hjælpere vil blive loadet her.",
-        }
+        },
+        EnableTelemetryLabel: "PnP telemetri",
+        EnableTelemetryOn: "Slå telemetri til",
+        EnableTelemetryOff: "Slå telemetri fra"
       },
       CustomQueryModifier: {          
           EditQueryModifiersLabel: "Konfigurere tilgængelige brugerdefinerede forespørgselsmodifikatorer",

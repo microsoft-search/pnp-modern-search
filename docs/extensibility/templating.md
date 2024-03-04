@@ -64,7 +64,7 @@ The following custom helpers are available in addition to the [handlebars-helper
 | `{{getUrlParameter <parameter> <url>}}` | Return the query parameter value from a URL. Omitting the optional url parameter uses the current browser URL. | `{{getUrlParameter "k"}}` return the value of the `k` query parameter from the browser URL.<br><br>`{{getUrlParameter "k" "https://foo?k=test"}}` return the value of the `k` query parameter from the provided URL.
 
 
-> Need any other helper? Let us know [here](https://github.com/aequos-solutions/modern-search-results/issues)!
+> Need any other helper? Let us know [here](https://github.com/microsoft-search/pnp-modern-search/issues)!
 
 ### Using builtin web components
 

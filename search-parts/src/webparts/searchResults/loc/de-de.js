@@ -1,4 +1,4 @@
-define([], function() {
+define([], function () {
     return {
         General: {
             PlaceHolder: {
@@ -8,20 +8,20 @@ define([], function() {
                 ConfigureBtnLabel: "Konfigurieren"
             },
             WebPartDefaultTitle: "Suchergebnis Webpart",
-            ShowBlankEditInfoMessage: "Keine Ergebnisse für diese Abfrage. Dieser Webpart bleibt im Anzeigemodus entsprechend den Parametern leer.",
-            CurrentVerticalNotSelectedMessage: "Die aktuell ausgewählte Vertikale stimmt nicht mit der für diesen Webpart zugeordneten überein. Sie bleibt im Anzeigemodus leer."
+            ShowBlankEditInfoMessage: "Keine Ergebnisse für diese Abfrage. Dieses Webpart bleibt im Anzeigemodus entsprechend den Parametern leer.",
+            CurrentVerticalNotSelectedMessage: "Die aktuell ausgewählte Vertikale stimmt nicht mit der für dieses Webpart zugeordneten überein. Sie bleibt im Anzeigemodus leer."
         },
         PropertyPane: {
             DataSourcePage: {
                 DataSourceConnectionGroupName: "Verfügbare Datenquellen",
                 PagingOptionsGroupName: "Paging-Optionen",
-                ItemsCountPerPageFieldName: "Anzahl der items pro Seite",
+                ItemsCountPerPageFieldName: "Anzahl der Treffer pro Seite",
                 PagingRangeFieldName: "Anzahl der anzuzeigenden Seiten im Bereich",
                 ShowPagingFieldName: "Paging anzeigen",
                 HidePageNumbersFieldName: "Verstecke Seitenzahlen",
                 HideNavigationFieldName: "Navigationsknopf verstecken (Seite vor/zurück)",
                 HideFirstLastPagesFieldName: "Anfang/Ende Navigationsknöpfe verstecken",
-                HideDisabledFieldName: "Navigationsknöpfe verstecken (vor, zurück, Anfang, Ende) wenn sie deaktiviert sind.",
+                HideDisabledFieldName: "Navigationsknöpfe verstecken (vor, zurück, Anfang, Ende), wenn sie deaktiviert sind",
                 TemplateSlots: {
                     GroupName: "Layout Slots",
                     ConfigureSlotsLabel: "Layout Slots für diese Datenquelle bearbeiten",
@@ -44,8 +44,8 @@ define([], function() {
                 DialogButtonLabel: "Ergebnisvorlage bearbeiten",
                 DialogTitle: "Ergebnisvorlage bearbeiten",
                 ShowSelectedFilters: "Ausgewählte Filter anzeigen",
-                ShowBlankIfNoResult: "Webpart verstecken wenn es nichts zum Anzeigen gibt.",
-                ShowResultsCount: "Anzahl der Ergebniss anzeigen",
+                ShowBlankIfNoResult: "Webpart verstecken, wenn es nichts zum Anzeigen gibt",
+                ShowResultsCount: "Anzahl der Ergebnisse anzeigen",
                 HandlebarsRenderTypeLabel: "Handlebars/HTML",
                 HandlebarsRenderTypeDesc: "Wählen Sie Layouts basierend auf HTML, CSS und Handlebars aus",
                 AdaptiveCardsRenderTypeLabel: "Adaptive Cards",
@@ -81,7 +81,7 @@ define([], function() {
                     AsTokensSelectionMode: "Ausgewählte Werte als Token verarbeiten (manueller Modus)",
                     AsDataFiltersSelectionMode: "Ausgewählte Werte als Filter (Standard Modus)",
                     AsDataFiltersDescription: "In diesem Modus werden die ausgewählten Werte als reguläre Suchverfeinerungen an die Datenquelle gesendet. In diesem Fall muss die gewählte Zieleigenschaft im Suchschema verfeinerbar sein.",
-                    AsTokensDescription: "In diesem Modus werden die ausgewählten Werte manuell über Token und den verfügbare Methoden verwendet. Beispiel anhand einer SharePoint-Suchabfragevorlage: {?Title:{filters.&lt;destination_field_name&gt;.valueAsText}}",
+                    AsTokensDescription: "In diesem Modus werden die ausgewählten Werte manuell über Token und die verfügbaren Methoden verwendet. Beispiel anhand einer SharePoint-Suchabfragevorlage: {?Title:{filters.&lt;destination_field_name&gt;.valueAsText}}",
                     FilterValuesOperator: "Der logische Operator, der zwischen den ausgewählten Werten verwendet werden soll",
                     FieldToConsumeLabel: "Zu konsumierendes Quellenfeld",
                     FieldToConsumeDescription: "Diesen Feldwert für ausgewählte Items verwenden"
@@ -96,7 +96,7 @@ define([], function() {
                 UseFiltersFromComponentLabel: "Filter dieser Komponente verwenden",
                 UseDynamicFilteringsWebPartLabel: "Mit einem Suchergebnis Webpart verbinden",
                 UseDataResultsFromComponentsLabel: "Daten von diesem Webpart verwenden",
-                UseDataResultsFromComponentsDescription: "Daten von ausgewählten Items in diesen Webparts verwenden",                
+                UseDataResultsFromComponentsDescription: "Daten von ausgewählten Items in diesen Webparts verwenden",
                 UseSearchVerticalsWebPartLabel: "Mit einem Vertikal Webpart verbinden",
                 UseSearchVerticalsFromComponentLabel: "Benutze Vertikale von dieser Komponente",
                 LinkToVerticalLabel: "Daten nur anzeigen, wenn das folgene Vertikal ausgewählt ist",
@@ -116,7 +116,7 @@ define([], function() {
             },
             InformationPage: {
                 Extensibility: {
-                    PanelHeader: "Erweiterungsbibliotheken die beim Start geladen werden konfigurieren ",
+                    PanelHeader: "Erweiterungsbibliotheken, die beim Start geladen werden, konfigurieren",
                     PanelDescription: "Hier können Sie die IDs Ihrer benutzerdefinierten Erweiterungsbibliotheken hinzufügen/entfernen. Sie können einen Anzeigenamen angeben und entscheiden, ob die Bibliothek beim Starten geladen werden soll oder nicht. Nur benutzerdefinierte Datenquellen, Layouts, Webkomponenten und Handlebars-Helfer werden hier geladen.",
                 }
             },
@@ -127,7 +127,7 @@ define([], function() {
                 EnabledPropertyLabel: "Aktiviert",
                 ModifierNamePropertyLabel: "Name",
                 ModifierDescriptionPropertyLabel: "Beschreibung",
-                EndWhenSuccessfullPropertyLabel:"Bei Erfolg beenden"                
+                EndWhenSuccessfullPropertyLabel: "Bei Erfolg beenden"
             }
         }
     }

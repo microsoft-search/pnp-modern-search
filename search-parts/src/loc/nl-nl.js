@@ -227,7 +227,9 @@ define([], function() {
                 EnableGrouping: "Groeperen inschakelen",
                 GroupingDescription: "Zorg ervoor dat er gegevens worden weergegeven in het resultaatwebonderdeel voor een lijst met eigenschappen die moeten worden weergegeven.",
                 CollapsedGroupsByDefault: "Toon ingeklapt",
-                ResetFieldsBtnLabel: "Reset velden naar standaard waarden"
+                ResetFieldsBtnLabel: "Reset velden naar standaard waarden",
+                EnableStickyHeader: "Sticky header inschakelen",
+                StickyHeaderListViewHeight: "Hoogte van de lijstweergave (px)"
             },
             Cards: {
                 Name: "Kaarten",
@@ -287,6 +289,8 @@ define([], function() {
                 ShowPersonaCardOnHover: "Toon persona card bij 'hover'",
                 ShowPersonaCardOnHoverNative: "Toon persona card bij 'hover' (LPC)",
                 ShowPersonaCardOnHoverCalloutMsg: "Deze feature gebruikt Microsoft Graph om informatie over de gebruiker te tonen en heeft de volgende API rechten nodig in de tenant om te kunnen werken: ['User.Read','People.Read','Contacts.Read','User.Read.All'].",
+                ShowPersonaPresenceInfo: "Aanwezigheid tonen",
+                ShowPersonaPresenceInfoCalloutMsg: "Deze functie heeft de volgende API-rechten in je tenant nodig om te werken: ['Presence.Read.All']",
                 Fields: {
                     ImageUrl: "Afbeeldings URL",
                     PrimaryText: "Primaire tekst",
