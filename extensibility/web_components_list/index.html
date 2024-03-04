@@ -902,15 +902,16 @@
                 <h1 id="builtin-web-components">Builtin web components<a class="headerlink" href="#builtin-web-components" title="Permanent link">&para;</a></h1>
 <p>Here are the list of all <strong>reusable</strong> web components you can use to customize your templates. </p>
 <ul>
-<li><a href="#ltpnp-iconfilegt">&lt;pnp-iconfile&gt;</a></li>
-<li><a href="#ltpnp-documentcardgt">&lt;pnp-documentcard&gt;</a></li>
-<li><a href="#ltpnp-filepreviewgt">&lt;pnp-filepreview&gt;</a></li>
-<li><a href="#ltpnp-icongt">&lt;pnp-icon&gt;</a></li>
-<li><a href="#ltpnp-panelgt">&lt;pnp-panel&gt;</a></li>
-<li><a href="#ltpnp-collapsiblegt">&lt;pnp-collapsible&gt;</a></li>
-<li><a href="#ltpnp-personagt">&lt;pnp-persona&gt;</a></li>
-<li><a href="#ltpnp-imggt">&lt;pnp-img&gt;</a></li>
-<li><a href="#ltpnp-breadcrumbgt">&lt;pnp-breadcrumb&gt;</a></li>
+<li><a href="#builtin-web-components">Builtin web components</a></li>
+<li><a href="#pnp-iconfile"><code>&lt;pnp-iconfile&gt;</code></a></li>
+<li><a href="#pnp-documentcard"><code>&lt;pnp-documentcard&gt;</code></a></li>
+<li><a href="#pnp-filepreview"><code>&lt;pnp-filepreview&gt;</code></a></li>
+<li><a href="#pnp-icon"><code>&lt;pnp-icon&gt;</code></a></li>
+<li><a href="#pnp-panel"><code>&lt;pnp-panel&gt;</code></a></li>
+<li><a href="#pnp-collapsible"><code>&lt;pnp-collapsible&gt;</code></a></li>
+<li><a href="#pnp-persona"><code>&lt;pnp-persona&gt;</code></a></li>
+<li><a href="#pnp-img"><code>&lt;pnp-img&gt;</code></a></li>
+<li><a href="#pnp-breadcrumb"><code>&lt;pnp-breadcrumb&gt;</code></a></li>
 </ul>
 <blockquote>
 <p>All other web components you will see in builtin layout templates are considered <strong>internal</strong> and are not supported for custom use.</p>
@@ -1176,8 +1177,10 @@
 <a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>    <span class="na">data-tertiary-text</span><span class="o">=</span><span class="s">&quot;&quot;</span>
 <a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>    <span class="na">data-optional-text</span><span class="o">=</span><span class="s">&quot;514 928 0000&quot;</span>
 <a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>    <span class="na">data-persona-size</span><span class="o">=</span><span class="s">&quot;&quot;</span>
-<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>    <span class="na">data-native-lpc</span><span class="o">=</span><span class="s">true</span> <span class="p">&gt;</span>
-<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="p">&lt;/</span><span class="nt">pnp-persona</span><span class="p">&gt;</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>    <span class="na">data-native-lpc</span><span class="o">=</span><span class="s">true</span>
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>    <span class="na">data-show-presence</span><span class="o">=</span><span class="s">true</span>
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>    <span class="na">data-user-object-id</span><span class="o">=</span><span class="s">&quot;[GUID]&quot;</span><span class="p">&gt;</span>
+<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="p">&lt;/</span><span class="nt">pnp-persona</span><span class="p">&gt;</span>
 </code></pre></div></li>
 </ul>
 <table>
@@ -1215,6 +1218,14 @@
 <tr>
 <td><strong>data-native-lpc</strong></td>
 <td>Enable SharePoint native Live Persona Card on hover.</td>
+</tr>
+<tr>
+<td><strong>data-show-presence</strong></td>
+<td>Show the user's presence-information.</td>
+</tr>
+<tr>
+<td><strong>data-user-object-id</strong></td>
+<td>The person's Entra ID Object-ID (a GUID normally provided by the default-slot "PersonQuery" which is mapped to managed property "AADObjectID")</td>
 </tr>
 </tbody>
 </table>

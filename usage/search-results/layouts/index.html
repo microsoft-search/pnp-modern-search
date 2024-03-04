@@ -1157,6 +1157,16 @@
 <td>Display the details list in compact mode.</td>
 <td></td>
 </tr>
+<tr>
+<td><strong>Enable grouping</strong></td>
+<td>Display a grouped list, grouped by the specified column.</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Enable sticky header</strong></td>
+<td>Display the details list with a sticky header that will stay in place when scrolling. Specify the desired height for the view (in pixels) and then specify the desired items per page in <em>Number of items per page</em> under <em>Paging options</em> and all items on the page will be scrollable within the view.</td>
+<td></td>
+</tr>
 </tbody>
 </table>
 <h3 id="slider">Slider<a class="headerlink" href="#slider" title="Permanent link">&para;</a></h3>
@@ -1263,6 +1273,11 @@
 <tr>
 <td><strong>Show persona card on hover</strong></td>
 <td>If enabled, show a person card on hover for the current item. <p align="center"><a href="../../../assets/webparts/search-results/layouts/persona_card_hover.png"><img alt="&quot;Persona card hover&quot;" src="../../../assets/webparts/search-results/layouts/persona_card_hover.png" /></a></p> This feature uses Microsoft Graph and <a href="https://docs.microsoft.com/en-us/graph/toolkit/components/person">Microsoft Graph Toolkit</a> to display information about the user and needs the following API permissions in your tenant to work: <ul><li>User.Read</li><li>People.Read</li><li>Contacts.Read</li><li>User.Read.All</li></ul><strong>If these permissions are not set, the card won't appear</strong>. You can use <a href="https://pnp.github.io/office365-cli/cmd/spo/serviceprincipal/serviceprincipal-grant-add/">PnP Office 365 CLI</a> to add correct permissions for this feature:</br></br><code>$m365 spo serviceprincipal grant add --resource '&lt;aad_app_display_name&gt;' --scope 'user_impersonation'</code>. Refer to the section below about <a href="#persona-hover-card">persona hover card customization</a>.</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Show presence</strong></td>
+<td><p>If enabled, the person's presence-information will be displayed in the bottom right corner of the user's profile picture.</p>This feature uses Microsoft Graph and needs the API permission 'Presence.Read.All' in your tenant to work.</td>
 <td></td>
 </tr>
 <tr>
