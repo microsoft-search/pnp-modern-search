@@ -9,7 +9,7 @@ import SearchBoxAutoComplete from './SearchBoxAutoComplete/SearchBoxAutoComplete
 import styles from './SearchBoxContainer.module.scss';
 import { BuiltinTokenNames } from '../../../services/tokenService/TokenService';
 import { isEmpty } from '@microsoft/sp-lodash-subset';
-import { WebPartTitle } from '@pnp/spfx-controls-react';
+import { WebPartTitle } from '@pnp/spfx-controls-react/lib/WebPartTitle';
 
 export default class SearchBoxContainer extends React.Component<ISearchBoxContainerProps, ISearchBoxContainerState> {
 
