@@ -7,7 +7,7 @@ import { IPropertyPaneField, PropertyPaneToggle, PropertyPaneDropdown, PropertyP
 import { TemplateValueFieldEditor, ITemplateValueFieldEditorProps } from '../../../controls/TemplateValueFieldEditor/TemplateValueFieldEditor';
 import { AsyncCombo } from "../../../controls/PropertyPaneAsyncCombo/components/AsyncCombo";
 import { IAsyncComboProps } from "../../../controls/PropertyPaneAsyncCombo/components/IAsyncComboProps";
-import { PropertyFieldNumber } from "@pnp/spfx-property-controls";
+import { PropertyFieldNumber } from "@pnp/spfx-property-controls/lib/PropertyFieldNumber";
 
 /**
  * Details List Builtin Layout
