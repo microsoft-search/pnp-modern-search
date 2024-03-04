@@ -12,6 +12,7 @@ import { DomPurifyHelper } from '../helpers/DomPurifyHelper';
 import { IComponentFieldsConfiguration } from '../models/common/IComponentFieldsConfiguration';
 import { ServiceScope, ServiceKey, Log } from '@microsoft/sp-core-library';
 import { LivePersona } from "@pnp/spfx-controls-react/lib/LivePersona";
+import { Constants } from '../common/Constants';
 import { MSGraphClientFactory } from '@microsoft/sp-http';
 
 const LogSource = "PersonaComponent";
@@ -116,7 +117,8 @@ export class PersonaComponent extends React.Component<IPersonaComponentProps, IP
         this._domPurify = DOMPurify.default;
 
         this._domPurify.setConfig({
-            WHOLE_DOCUMENT: true
+            WHOLE_DOCUMENT: true,
+            ALLOWED_URI_REGEXP: Constants.ALLOWED_URI_REGEXP,
         });
 
         this._domPurify.addHook('uponSanitizeElement', DomPurifyHelper.allowCustomComponentsHook);

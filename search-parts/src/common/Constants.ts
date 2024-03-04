@@ -14,6 +14,11 @@ export class Constants {
      * The client tag to append to all REST calls to SharePoint
      */
     public static readonly X_CLIENTSERVICE_CLIENTTAG = 'NonISV|PnP|ModernSearch';
+
+    /**
+     * The regular expression to sanitize URIs with DomPurify
+     */
+    public static readonly ALLOWED_URI_REGEXP = '/^(?:(?:(?:f|ht)tps?|mailto|file|tel|callto|im|cid|xmpp|xxx|ms-\w+):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i';
 }
 
 export enum AutoCalculatedDataSourceFields {

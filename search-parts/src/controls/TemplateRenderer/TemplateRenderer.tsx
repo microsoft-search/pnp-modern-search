@@ -6,8 +6,8 @@ import { isEqual } from "@microsoft/sp-lodash-subset";
 import * as DOMPurify from 'dompurify';
 import { DomPurifyHelper } from '../../helpers/DomPurifyHelper';
 import { ISearchResultsTemplateContext } from '../../models/common/ITemplateContext';
-
 import { LayoutRenderType } from '@pnp/modern-search-extensibility';
+import { Constants } from '../../common/Constants';
 
 // Need a root class to do not conflict with PnP Modern Search Styles.
 const rootCssClassName = "pnp-modern-search";
@@ -29,7 +29,7 @@ export class TemplateRenderer extends React.Component<ITemplateRendererProps, IT
             ADD_TAGS: ['style','#comment'],
             ADD_ATTR: ['target', 'loading'],
             ALLOW_DATA_ATTR: true,
-            ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|file|tel|callto|im|cid|xmpp|xxx|ms-\w+):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
+            ALLOWED_URI_REGEXP: Constants.ALLOWED_URI_REGEXP,
             WHOLE_DOCUMENT: true,
         });
 
