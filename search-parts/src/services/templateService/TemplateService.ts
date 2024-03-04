@@ -16,7 +16,7 @@ import { IDataResultType, ResultTypeOperator } from "../../models/common/IDataRe
 import { ISearchResultsTemplateContext, ISearchFiltersTemplateContext } from "../../models/common/ITemplateContext";
 import { UrlHelper } from "../../helpers/UrlHelper";
 import { ObjectHelper } from "../../helpers/ObjectHelper";
-import { Constants } from "../../common/Constants";
+import { Constants, TestConstants } from "../../common/Constants";
 import * as handlebarsHelpers from 'handlebars-helpers';
 import { ServiceScopeHelper } from "../../helpers/ServiceScopeHelper";
 import { DomPurifyHelper } from "../../helpers/DomPurifyHelper";
@@ -67,6 +67,8 @@ export class TemplateService implements ITemplateService {
      */
     private _handlebars: typeof Handlebars;
 
+    private _customElementHelper;
+
     get Handlebars(): typeof Handlebars {
         return this._handlebars;
     }
@@ -82,6 +84,14 @@ export class TemplateService implements ITemplateService {
 
     set AdaptiveCardsExtensibilityLibraries(value: IExtensibilityLibrary[]) {
         this._adaptiveCardsExtensibilityLibraries = value;
+    }
+
+    get TEMPLATE_ID_PREFIX() : string {
+      return "pnp-template_";
+    }
+
+    get MgtCustomElementHelper() {
+        return this._customElementHelper;
     }
 
     public static ServiceKey: ServiceKey<ITemplateService> = ServiceKey.create(TemplateService_ServiceKey, TemplateService);
@@ -137,7 +147,100 @@ export class TemplateService implements ITemplateService {
                 initializeFileTypeIcons();
                 GlobalSettings.setValue('fileTypeIconsInitialized', true);
             }
+
+            // Load Microsoft Graph Toolkit dynamically
+            const { customElementHelper } = await import(
+              /* webpackChunkName: 'microsoft-graph-toolkit' */
+              '@microsoft/mgt-element/dist/es6/components/customElementHelper'
+            );
+            this._customElementHelper = customElementHelper;
         });
+    }
+
+    public legacyStyleParser(style: HTMLStyleElement, elementPrefixId: string): string {
+
+      let prefixedStyles: string[] = [];
+
+      const sheet: any = style.sheet;
+
+      if ((sheet as CSSStyleSheet).cssRules) {
+          const cssRules = (sheet as CSSStyleSheet).cssRules;
+
+          for (let j = 0; j < cssRules.length; j++) {
+              const cssRule: CSSRule = cssRules.item(j);
+
+              // CSS Media rule
+              if ((cssRule as CSSMediaRule).media) {
+                  const cssMediaRule = cssRule as CSSMediaRule;
+
+                  let cssPrefixedMediaRules = '';
+                  for (let k = 0; k < cssMediaRule.cssRules.length; k++) {
+                      const cssRuleMedia = cssMediaRule.cssRules.item(k);
+                      cssPrefixedMediaRules += `#${elementPrefixId} ${cssRuleMedia.cssText}`;
+                  }
+
+                  prefixedStyles.push(`@media ${cssMediaRule.conditionText} { ${cssPrefixedMediaRules} }`);
+
+              } else {
+                  if (cssRule.cssText.indexOf(TestConstants.SearchResultsErrorMessage) !== -1) {
+                      // Special handling for error message as it's outside the template container to allow user override
+                      prefixedStyles.push(`${cssRule.cssText}`);
+                  } else {
+                      prefixedStyles.push(`#${elementPrefixId} ${cssRule.cssText}`);
+                  }
+              }
+          }
+      }
+
+      return prefixedStyles.join(' ');
+
+    }
+
+    public replaceDisambiguatedMgtElementNames(template: Document): void {
+      if (!this._customElementHelper.isDisambiguated) {
+        return;
+      }
+
+      const handleElement = (element: Element) => {
+        if (element.tagName.toLowerCase().startsWith('mgt-') && !element.tagName.toLowerCase().startsWith(`${this._customElementHelper.prefix}-`)) {
+          // Create a new element with the replaced tag name
+          const newTagName = `${this._customElementHelper.prefix}-${element.tagName.toLowerCase().slice(4)}`;
+          const newElement = template.createElement(newTagName);
+
+          // Copy all attributes of the old element to the new one
+          for (let i = 0; i < element.attributes.length; i++) {
+              const attr = element.attributes[i];
+              newElement.setAttribute(attr.name, attr.value);
+          }
+
+          // Move all child nodes of the old element to the new one
+          while (element.firstChild) {
+              newElement.appendChild(element.firstChild);
+          }
+
+          // Replace the old element with the new one
+          element.parentNode.replaceChild(newElement, element);
+        }
+
+        // Check if the element is a template with a content property
+        if (element instanceof HTMLTemplateElement) {
+          // Get all elements in the content DocumentFragment
+          const contentElements = element.content.querySelectorAll('*');
+
+          // Recursively loop over all content elements
+          contentElements.forEach((contentElement) => {
+              handleElement(contentElement);
+          });
+        }
+      };
+
+      // Get all elements in the document
+      const allElements = template.querySelectorAll('*');
+  
+      // Loop over all elements
+      allElements.forEach((element) => {
+        handleElement(element);
+      });
     }
 
     /**

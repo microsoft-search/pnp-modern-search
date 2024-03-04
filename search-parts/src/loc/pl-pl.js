@@ -228,7 +228,9 @@ define([], function() {
               EnableGrouping: "Grupowanie włączone",
               GroupingDescription: "Upewnij się, że dane są wyświetlane w wynikowym składniku Web Part, aby wyświetlić listę właściwości.",
               CollapsedGroupsByDefault: "Pokaż zapadnięte",
-              ResetFieldsBtnLabel: "Resetuj pola do wartości domyślnych"
+              ResetFieldsBtnLabel: "Resetuj pola do wartości domyślnych",
+              EnableStickyHeader: "Włącz lepką nagłówkę",
+              StickyListViewHeight: "Wysokość listy ze szczegółami (px)"
           },
           Cards: {
               Name: "Karty",
@@ -288,6 +290,8 @@ define([], function() {
               ShowPersonaCardOnHover: "Pokaż kartę po wskazaniu",
               ShowPersonaCardOnHoverNative: "Pokaż kartę po wskazaniu (LPC)",
               ShowPersonaCardOnHoverCalloutMsg: "Ta funkcja używa Microsoft Graph aby wyświetlić informacje o użytkowniku i wymaga następujcych uprawnień API: ['User.Read','People.Read','Contacts.Read','User.ReadBasic.All'].",
+              ShowPersonaPresenceInfo: "Pokaż obecność",
+              ShowPersonaPresenceInfoCalloutMsg: "Ta funkcja wymaga następujących uprawnień API w dzierżawie do działania: ['Presence.Read.All'].",
               Fields: {
                   ImageUrl: "URL obrazu",
                   PrimaryText: "Tekst podstawowy",

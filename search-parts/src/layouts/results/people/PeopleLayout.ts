@@ -28,6 +28,11 @@ export interface IPeopleLayoutProperties {
      * Flag indicating if the persona card should be displayed on hover using native LPC
      */
     showPersonaCardNative: boolean;
+
+    /**
+     * Flag indicating whether to show presence-information or not
+     */
+    showPersonaPresenceInfo: boolean;
 }
 
 export class PeopleLayout extends BaseLayout<IPeopleLayoutProperties> {
@@ -169,6 +174,15 @@ export class PeopleLayout extends BaseLayout<IPeopleLayoutProperties> {
                 onText: strings.General.OnTextLabel,
                 offText: strings.General.OffTextLabel,
                 checked: this.properties.showPersonaCard,
+            }),
+            this._propertyFieldToogleWithCallout('layoutProperties.showPersonaPresenceInfo', {
+                label: strings.Layouts.People.ShowPersonaPresenceInfo,
+                calloutTrigger: this._propertyFieldCalloutTriggers.Hover,
+                key: 'layoutProperties.showPersonaPresenceInfo',
+                calloutContent: React.createElement('p', { style: { maxWidth: 250, wordBreak: 'break-word' } }, strings.Layouts.People.ShowPersonaPresenceInfoCalloutMsg),
+                onText: strings.General.OnTextLabel,
+                offText: strings.General.OffTextLabel,
+                checked: this.properties.showPersonaPresenceInfo
             }),
             PropertyPaneChoiceGroup('layoutProperties.personaSize', {
                 label: strings.Layouts.People.PersonaSizeOptionsLabel,

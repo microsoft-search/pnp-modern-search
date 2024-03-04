@@ -17,7 +17,7 @@ export default class SearchVerticalsContainer extends React.Component<ISearchVer
     super(props);
 
     this.state = {
-      selectedKey: undefined
+      selectedKey: props.defaultSelectedKey
     };
 
     // Listen to inputQueryText value change on the page

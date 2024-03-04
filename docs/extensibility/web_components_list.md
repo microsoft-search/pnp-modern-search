@@ -2,15 +2,16 @@
 
 Here are the list of all **reusable** web components you can use to customize your templates. 
 
-- [&lt;pnp-iconfile&gt;](#ltpnp-iconfilegt)
-- [&lt;pnp-documentcard&gt;](#ltpnp-documentcardgt)
-- [&lt;pnp-filepreview&gt;](#ltpnp-filepreviewgt)
-- [&lt;pnp-icon&gt;](#ltpnp-icongt)
-- [&lt;pnp-panel&gt;](#ltpnp-panelgt)
-- [&lt;pnp-collapsible&gt;](#ltpnp-collapsiblegt)
-- [&lt;pnp-persona&gt;](#ltpnp-personagt)
-- [&lt;pnp-img&gt;](#ltpnp-imggt)
-- [&lt;pnp-breadcrumb&gt;](#ltpnp-breadcrumbgt)
+- [Builtin web components](#builtin-web-components)
+  - [`<pnp-iconfile>`](#pnp-iconfile)
+  - [`<pnp-documentcard>`](#pnp-documentcard)
+  - [`<pnp-filepreview>`](#pnp-filepreview)
+  - [`<pnp-icon>`](#pnp-icon)
+  - [`<pnp-panel>`](#pnp-panel)
+  - [`<pnp-collapsible>`](#pnp-collapsible)
+  - [`<pnp-persona>`](#pnp-persona)
+  - [`<pnp-img>`](#pnp-img)
+  - [`<pnp-breadcrumb>`](#pnp-breadcrumb)
 
 > All other web components you will see in builtin layout templates are considered **internal** and are not supported for custom use.
 
@@ -191,7 +192,9 @@ Here are the list of all **reusable** web components you can use to customize yo
     data-tertiary-text=""
     data-optional-text="514 928 0000"
     data-persona-size=""
-    data-native-lpc=true >
+    data-native-lpc=true
+    data-show-presence=true
+    data-user-object-id="[GUID]">
 </pnp-persona>
 ```
 
@@ -204,6 +207,8 @@ Here are the list of all **reusable** web components you can use to customize yo
 |**data-optional-text**|The optional text to display.
 |**data-persona-size**|The size of the persona **item** to display (no only the picture). Valid values are <ul><li>tiny = 0</li><li>extraExtraSmall = 1</li><li>extraSmall = 2</li><li>small = 3</li><li>regular = 4</li><li>large = 5</li><li>extraLarge = 6</li></ul>
 |**data-native-lpc**|Enable SharePoint native Live Persona Card on hover.
+|**data-show-presence**|Show the user's presence-information.
+|**data-user-object-id**|The person's Entra ID Object-ID (a GUID normally provided by the default-slot "PersonQuery" which is mapped to managed property "AADObjectID")
 
 ## `<pnp-img>` 
 - **Description**: Display an image with support for fallback behavior.

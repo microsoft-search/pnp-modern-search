@@ -226,7 +226,9 @@ define([], function() {
                 EnableGrouping: "Salli ryhmittely",
                 GroupingDescription: "Varmista, että tulosten verkko-osassa on tietoja, jotta voit näyttää ominaisuusluettelon.",
                 CollapsedGroupsByDefault: "Näytä ryhmät tiivistettynä",
-                ResetFieldsBtnLabel: "Palauta kentät templaatin oletusarvoihin"
+                ResetFieldsBtnLabel: "Palauta kentät templaatin oletusarvoihin",
+                EnableStickyHeader: "Kiinnitä ylätunniste",
+                StickyHeaderListViewHeight: "Kiinnitetyn ylätunnisteen korkeus (px)"
             },
             Cards: {
                 Name: "Kortit",
@@ -286,6 +288,8 @@ define([], function() {
                 ShowPersonaCardOnHover: "Näytä henkilökortti hoverilla",
                 ShowPersonaCardOnHoverNative: "Näytä henkilökortti hoverilla (LPC)",
                 ShowPersonaCardOnHoverCalloutMsg: "Tämä ominaisuus käyttää Microsoft Graphia käyttäjäprofiilin tietojen näyttämiseen, ja tarvitsee seuraavat API oikeudet tenantissa toimiakseen: ['User.Read','People.Read','Contacts.Read','User.Read.All'].",
+                ShowPersonaPresenceInfo: "Näytä läsnäolo",
+                ShowPersonaPresenceInfoCalloutMsg: "Tämä ominaisuus vaatii seuraavat API-oikeudet vuokralaisessasi toimiakseen: ['Presence.Read.All']",
                 Fields: {
                     ImageUrl: "Kuvan URL",
                     PrimaryText: "Ensimmäisen rivin teksti",

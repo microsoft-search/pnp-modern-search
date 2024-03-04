@@ -7,6 +7,7 @@ import { IPropertyPaneField, PropertyPaneToggle, PropertyPaneDropdown, PropertyP
 import { TemplateValueFieldEditor, ITemplateValueFieldEditorProps } from '../../../controls/TemplateValueFieldEditor/TemplateValueFieldEditor';
 import { AsyncCombo } from "../../../controls/PropertyPaneAsyncCombo/components/AsyncCombo";
 import { IAsyncComboProps } from "../../../controls/PropertyPaneAsyncCombo/components/IAsyncComboProps";
+import { PropertyFieldNumber } from "@pnp/spfx-property-controls";
 
 /**
  * Details List Builtin Layout
@@ -47,6 +48,16 @@ export interface IDetailsListLayoutProperties {
      * If groups should collapsed by default
      */
     groupsCollapsed: boolean;
+
+    /**
+     * If the header should be sticky
+     */
+    enableStickyHeader: boolean;
+
+    /**
+     * The height of the list view when sticky header is enabled
+     */
+    stickyHeaderListViewHeight: number;
 }
 
 export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> {
@@ -303,6 +314,26 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
             );
         }
 
+        propertyPaneFields.push(
+          PropertyPaneToggle('layoutProperties.enableStickyHeader', {
+            label: strings.Layouts.DetailsList.EnableStickyHeader || 'Enable Sticky Header',
+            checked: this.properties.enableStickyHeader
+          }));
+
+        //Sticky header options
+        if (this.properties.enableStickyHeader) {
+            propertyPaneFields.push(
+                PropertyFieldNumber('layoutProperties.stickyHeaderListViewHeight', {
+                    label: strings.Layouts.DetailsList.StickyHeaderListViewHeight,
+                    maxValue: 5000,
+                    minValue: 200,
+                    value: this.properties.stickyHeaderListViewHeight ? this.properties.stickyHeaderListViewHeight : 500,
+                    disabled: !this.properties.enableStickyHeader,
+                    key: 'layoutProperties.stickyHeaderListViewHeight',
+                })
+            );
+        }
+
         return propertyPaneFields;
     }
 
@@ -311,5 +342,9 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
         if (propertyPath.localeCompare('layoutProperties.enableGrouping') === 0) {
             this.properties.groupByField = '';
         }
-    }
+
+        if (propertyPath.localeCompare('layoutProperties.enableStickyHeader') === 0) {
+          this.properties.stickyHeaderListViewHeight = 500;
+        }
+  }
 }

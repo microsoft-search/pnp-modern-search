@@ -228,7 +228,9 @@ define([], function () {
           EnableGrouping: "Aktivera gruppering",
           GroupingDescription: "Se till att du har data som visas i resultatwebbdelen för en lista över egenskaper att visa.",
           CollapsedGroupsByDefault: "Visa kollapsade",
-          ResetFieldsBtnLabel: "Återställ fält till standardvärden"
+          ResetFieldsBtnLabel: "Återställ fält till standardvärden",
+          EnableStickyHeader: "Aktivera fast rubrik",
+          StickyHeaderListViewHeight: "Höjd för listvy (px)",
         },
         Cards: {
           Name: "Kort",
@@ -288,6 +290,8 @@ define([], function () {
           ShowPersonaCardOnHover: "Visa personakort genom att föra musen över",
           ShowPersonaCardOnHoverNative: "Visa personakort genom att föra musen över (LPC)",
           ShowPersonaCardOnHoverCalloutMsg: "Denna funktion använder Microsoft Graph för att visa information om användaren och måste använda följande API-behörigheter i din klient för att den ska fungera: ['User.Read','People.Read','Contacts.Read','User.Read.All'].",
+          ShowPersonaPresenceInfo: "Visa närvaro",
+          ShowPersonaPresenceInfoCalloutMsg: "Denna funktion kräver följande API-behörigheter i din klient för att fungera: ['Presence.Read.All']",
           Fields: {
             ImageUrl: "Bild URL",
             PrimaryText: "Primärtext",
