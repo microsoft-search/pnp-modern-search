@@ -89,12 +89,7 @@ Also, to help us to resolve your issue, you can include screenshots or error mes
 For any issue, question or feedback, please the [official GitHub repository](https://github.com/microsoft-search/pnp-modern-search/issues). We will be happy to help you!
 
 ## Q&A
-We have a list of frequently asked questions available [here](q&a). If you have a question, it might be already answered there.
-
-
-
-
-
+We have a list of frequently asked questions available in our separate [Q&A section](QnA). If you have a question, it might be already answered there.
 
 ## About
 
