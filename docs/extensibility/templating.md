@@ -313,7 +313,7 @@ Web components and HTML are supported in adaptive cards through markdown process
         {
             "type": "TextBlock",
             "wrap": true,
-            "text": "<aequos-iconfile class='icon' data-extension='${string(jPath($data, concat('.',$root.slots['FileType']))[0])}'></aequos-iconfile>"
+            "text": "<pnp-iconfile class='icon' data-extension='${string(jPath($data, concat('.',$root.slots['FileType']))[0])}'></pnp-iconfile>"
         }
     ],
     "width": "auto"
