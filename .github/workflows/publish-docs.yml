@@ -1,19 +1,22 @@
-name: Publish Docs only
+name: Publish Docs manually
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
+    inputs:
+      publish_docs:
+        default: true
+        description: 'Publish docs?' 
       
 jobs:       
   release:
     runs-on: ubuntu-latest
     environment: production
+    if: ${{ github.event.inputs.publish_docs }}
     steps:     
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-                                    
+
       - name: Setup python
         uses: actions/setup-python@v2
         with:
