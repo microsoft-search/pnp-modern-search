@@ -38,11 +38,25 @@
             </pnp-selectedfilters>
         {{/if}}
         
-        {{#if @root.properties.showResultsCount}}
+        {{#or @root.properties.showResultsCount (and properties.layoutProperties.enableDownload @root.properties.itemSelectionProps.allowItemSelection) }}
+          <div class="template--toolbar">
             <div class="template--resultCount">
+              {{#if @root.properties.showResultsCount}}
                 <label class="ms-fontWeight-semibold">{{getCountMessage @root.data.totalItemsCount @root.inputQueryText}}</label>
+              {{/if}}
             </div>
-        {{/if}}
+            <div>
+              {{#and properties.layoutProperties.enableDownload @root.properties.itemSelectionProps.allowItemSelection}}
+                <pnp-download-selected-items-button 
+                  data-items="{{JSONstringify data.items}}" 
+                  data-context="{{JSONstringify (truncateContext @root)}}"
+                  data-theme-variant="{{JSONstringify @root.theme}}"
+                >
+                </pnp-download-selected-items-button>
+              {{/and}}
+            </div>
+          </div>
+        {{/or}}
 
         <pnp-detailslist 
             data-items="{{JSONstringify data.items}}" 

@@ -24,6 +24,7 @@ import { FilterSearchBoxWebComponent } from './filters/FilterSearchBoxComponent'
 import { FilterValueOperatorWebComponent } from './filters/FilterValueOperatorComponent';
 import { SpoPathBreadcrumbWebComponent } from './SpoPathBreadcrumbComponent';
 import { SortWebComponent } from './SortComponent';
+import { DownloadSelectedItemsButtonWebComponent } from './DownloadSelectedItemsButtonComponent';
 
 export class AvailableComponents {
 
@@ -130,6 +131,10 @@ export class AvailableComponents {
         {
             componentName: 'pnp-sortfield',
             componentClass: SortWebComponent
+        },
+        {
+            componentName: "pnp-download-selected-items-button",
+            componentClass: DownloadSelectedItemsButtonWebComponent
         }
     ];
 }

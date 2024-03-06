@@ -58,6 +58,11 @@ export interface IDetailsListLayoutProperties {
      * The height of the list view when sticky header is enabled
      */
     stickyHeaderListViewHeight: number;
+
+    /**
+     * If the download button should be visible
+     */
+    enableDownload: boolean;
 }
 
 export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> {
@@ -334,6 +339,13 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
             );
         }
 
+        propertyPaneFields.push(
+            PropertyPaneToggle('layoutProperties.enableDownload', {
+                label: strings.Layouts.DetailsList.EnableDownload,
+                checked: this.properties.enableDownload
+            })
+        );
+        
         return propertyPaneFields;
     }
 

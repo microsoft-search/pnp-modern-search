@@ -189,7 +189,8 @@ define([], function () {
         AddStaticDataLabel: "Legg til statisk data",
         TextFieldApplyButtonText: "Lagre",
         SortByPlaceholderText: "Sorter etter",
-        SortByDefaultOptionText: "Misligholde"
+        SortByDefaultOptionText: "Misligholde",
+        DownloadButtonText: "Last ned"
       },
       Layouts: {
         Debug: {
@@ -229,7 +230,8 @@ define([], function () {
           CollapsedGroupsByDefault: "Vis kollapsede",
           ResetFieldsBtnLabel: "Bruk standardverdiene",
           EnableStickyHeader: "Aktiver klebrig overskrift",
-          StickyHeaderListViewHeight: "Høyde på listevisning med klebrig overskrift (px)"
+          StickyHeaderListViewHeight: "Høyde på listevisning med klebrig overskrift (px)",
+          EnableDownload: "Aktiver nedlasting"
         },
         Cards: {
           Name: "Kort",

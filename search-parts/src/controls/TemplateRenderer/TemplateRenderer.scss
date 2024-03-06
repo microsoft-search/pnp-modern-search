@@ -108,6 +108,10 @@
         &--resultCount {
             padding: 10px;
         }
+        &--toolbar {
+            display: flex;
+            justify-content: space-between;
+        }
         &--cardContainer {
             display: flex;
             flex-wrap: wrap;

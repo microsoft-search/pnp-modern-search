@@ -189,7 +189,8 @@ define([], function () {
         SelectItemComboPlaceHolder: "Välj egenskap",
         AddStaticDataLabel: "Lägg till statisk data",
         TextFieldApplyButtonText: "Tillämpa",
-        SortByPlaceholderText: "Sortera efter..."
+        SortByPlaceholderText: "Sortera efter...",
+        DownloadButtonText: "Ladda ner"
       },
       Layouts: {
         Debug: {
@@ -231,6 +232,7 @@ define([], function () {
           ResetFieldsBtnLabel: "Återställ fält till standardvärden",
           EnableStickyHeader: "Aktivera fast rubrik",
           StickyHeaderListViewHeight: "Höjd för listvy (px)",
+          EnableDownload: "Aktivera nedladdning"
         },
         Cards: {
           Name: "Kort",

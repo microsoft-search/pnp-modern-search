@@ -187,7 +187,8 @@ define([], function() {
             TextDialogSaveButtonText: "Salvar",
             SelectItemComboPlaceHolder: "Selecionar propriedade",
             AddStaticDataLabel: "Adicionar dados estáticos",
-            TextFieldApplyButtonText: "Aplicar"
+            TextFieldApplyButtonText: "Aplicar",
+            DownloadButtonText: "Baixar"
         },
         Layouts: {
             Debug: {
@@ -228,7 +229,8 @@ define([], function() {
                 CollapsedGroupsByDefault: "Mostrar recolhido",
                 ResetFieldsBtnLabel: "Redefinir campos para os valores padrão",
                 EnableStickyHeader: "Cabeçalho fixo",
-                StickyHeaderListViewHeight: "Altura da lista de visualização (px)"
+                StickyHeaderListViewHeight: "Altura da lista de visualização (px)",
+                EnableDownload: "Habilitar download"
             },
             Cards: {
                 Name: "Cartões",

@@ -189,6 +189,7 @@ declare interface ICommonStrings {
       TextFieldApplyButtonText: string;
       SortByPlaceholderText: string;
       SortByDefaultOptionText: string;
+      DownloadButtonText: string;
     },
     Layouts: {
       Debug: {
@@ -230,6 +231,7 @@ declare interface ICommonStrings {
         ResetFieldsBtnLabel: string;
         EnableStickyHeader: string;
         StickyHeaderListViewHeight: string;
+        EnableDownload: string;
       };
       Cards: {
         Name: string;
