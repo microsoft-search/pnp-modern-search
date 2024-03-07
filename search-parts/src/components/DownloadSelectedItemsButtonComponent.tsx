@@ -4,7 +4,7 @@ import { BaseWebComponent } from "@pnp/modern-search-extensibility";
 import { ActionButton, IIconProps, ITheme } from "@fluentui/react";
 import { ISearchResultsTemplateContext } from "../models/common/ITemplateContext";
 import { HttpClient, HttpClientResponse, IHttpClientOptions, ISPHttpClientOptions, SPHttpClient, SPHttpClientResponse } from "@microsoft/sp-http";
-import { Guid } from "@microsoft/sp-core-library";
+import { Guid, Log } from "@microsoft/sp-core-library";
 import { IReadonlyTheme } from "@microsoft/sp-component-base";
 import * as strings from "CommonStrings";
 
@@ -85,7 +85,6 @@ export class DownloadSelectedItemsButtonComponent extends React.Component<IExpor
       this.setState({
         exporting: true
       });
-      console.log(this._selectedItems);
       if (this._selectedItems.length === 1 && this._selectedItems[0]["ContentTypeId"].startsWith("0x0101")) {
         window.document.location.href = `${this._selectedItems[0]["SPWebUrl"]}/_layouts/15/download.aspx?UniqueId=${this._selectedItems[0]["NormUniqueID"]}`;
       }
@@ -159,7 +158,7 @@ export class DownloadSelectedItemsButtonComponent extends React.Component<IExpor
                   window.URL.revokeObjectURL(url);
                 })
                 .catch((error: any) => {
-                  console.error("File download failed", error);
+                  Log.error("DownloadSelectedItemsButtonComponent", error);
                 });
             });
         });
