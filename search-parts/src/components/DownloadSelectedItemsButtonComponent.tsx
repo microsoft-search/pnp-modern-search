@@ -158,7 +158,7 @@ export class DownloadSelectedItemsButtonComponent extends React.Component<IExpor
                   window.URL.revokeObjectURL(url);
                 })
                 .catch((error: any) => {
-                  Log.error("DownloadSelectedItemsButtonComponent", error);
+                  Log.error("DownloadSelectedItemsButtonComponent", new Error(`Error when downloading files. Details ${error}`));
                 });
             });
         });
