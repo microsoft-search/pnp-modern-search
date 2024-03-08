@@ -189,7 +189,8 @@ define([], function() {
             AddStaticDataLabel: "Ajouter des données statiques",
             TextFieldApplyButtonText: "Appliquer",
             SortByPlaceholderText: "Trier par...",
-            SortByDefaultOptionText: "Défaut"
+            SortByDefaultOptionText: "Défaut",
+            DownloadButtonText: "Télécharger"
         },
         Layouts: {
             Debug: {
@@ -230,7 +231,8 @@ define([], function() {
                 CollapsedGroupsByDefault: "Afficher les groupes réduits",
                 ResetFieldsBtnLabel: "Rétablir la valeur par défaut dans les champs",
                 EnableStickyHeader: "Activer l’en-tête collant",
-                StickyHeaderListViewHeight: "Hauteur de la liste de détails (en pixels)"
+                StickyHeaderListViewHeight: "Hauteur de la liste de détails (en pixels)",
+                EnableDownload: "Activer le téléchargement"
             },
             Cards: {
                 Name: "Cartes",

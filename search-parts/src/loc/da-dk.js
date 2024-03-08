@@ -189,7 +189,8 @@ define([], function() {
             AddStaticDataLabel: "Tilføj statisk data",
             TextFieldApplyButtonText: "Anvend",
             SortByPlaceholderText: "Sorter efter...",
-            SortByDefaultOptionText: "Standard"
+            SortByDefaultOptionText: "Standard",
+            DownloadButtonText: "Download"
         },
         Layouts: {
             Debug: {
@@ -230,7 +231,8 @@ define([], function() {
                 CollapsedGroupsByDefault: "Vis collapsed",
                 ResetFieldsBtnLabel: "Nulstil felter til standardværdier",
                 EnableStickyHeader: "Aktivér fastgjort header",
-                StickyHeaderListViewHeight: "Listevisningshøjde (px)"
+                StickyHeaderListViewHeight: "Listevisningshøjde (px)",
+                EnableDownload: "Aktivér download"
             },
             Cards: {
                 Name: "Cards",

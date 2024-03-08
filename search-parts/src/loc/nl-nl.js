@@ -189,7 +189,8 @@ define([], function() {
             AddStaticDataLabel: "Voeg statische data toe",
             TextFieldApplyButtonText: "Toepassen",
             SortByPlaceholderText: "Sorteer op...",
-            SortByDefaultOptionText: "Standaard"
+            SortByDefaultOptionText: "Standaard",
+            DownloadButtonText: "Download"
         },
         Layouts: {
             Debug: {
@@ -229,7 +230,8 @@ define([], function() {
                 CollapsedGroupsByDefault: "Toon ingeklapt",
                 ResetFieldsBtnLabel: "Reset velden naar standaard waarden",
                 EnableStickyHeader: "Sticky header inschakelen",
-                StickyHeaderListViewHeight: "Hoogte van de lijstweergave (px)"
+                StickyHeaderListViewHeight: "Hoogte van de lijstweergave (px)",
+                EnableDownload: "Downloaden inschakelen"
             },
             Cards: {
                 Name: "Kaarten",

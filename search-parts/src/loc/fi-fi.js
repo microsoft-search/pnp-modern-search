@@ -187,7 +187,8 @@ define([], function() {
             AddStaticDataLabel: "Lisää staattinen arvo",
             TextFieldApplyButtonText: "Ota käyttöön",
             SortByPlaceholderText: "Järjestä...",
-            SortByDefaultOptionText: "Oletus"
+            SortByDefaultOptionText: "Oletus",
+            DownloadButtonText: "Lataa"
         },
         Layouts: {
             Debug: {
@@ -228,7 +229,8 @@ define([], function() {
                 CollapsedGroupsByDefault: "Näytä ryhmät tiivistettynä",
                 ResetFieldsBtnLabel: "Palauta kentät templaatin oletusarvoihin",
                 EnableStickyHeader: "Kiinnitä ylätunniste",
-                StickyHeaderListViewHeight: "Kiinnitetyn ylätunnisteen korkeus (px)"
+                StickyHeaderListViewHeight: "Kiinnitetyn ylätunnisteen korkeus (px)",
+                EnableDownload: "Salli lataus"
             },
             Cards: {
                 Name: "Kortit",
