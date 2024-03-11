@@ -358,7 +358,7 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
                                 value = ObjectHelper.byPath(item, column.value);
                             }
 
-                            const tempColumnValueAsHtml = new DOMParser().parseFromString("<span>" + value as string + "</span>", "text/html");
+                            const tempColumnValueAsHtml = new DOMParser().parseFromString(`<span>${(value !== null && value !== undefined) ? value as string : ""}</span>`, "text/html");
 
                             this.props.templateService.replaceDisambiguatedMgtElementNames(tempColumnValueAsHtml);
 
