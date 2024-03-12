@@ -6,6 +6,7 @@ nav:
     - Introduction: index.md
     - Installation: installation.md
     - Scenario tutorials: scenarios/index.md
+    - Create custom layouts: create-custom-layouts/index.md
     - How to contribute?: how-to-contribute.md 
     - Building documentation: build-the-doc.md
   - Search Results:
@@ -30,8 +31,10 @@ nav:
     - Custom web component: extensibility/custom_web_component.md
     - Custom suggestions provider: extensibility/custom_suggestions_provider.md
     - Custom Handlebars customizations: extensibility/handlebars_customizations.md
-  - Version 3:
-    - Documentation: v3/index.md
+    - Custom event handlers for adaptive cards actions: extensibility/adaptivecards_customizations.md
+    - Custom data sources: extensibility/custom_data_sources.md
+    - Custom query modifier: extensibility/custom_query_modifications.md
+  
 theme:
   name: 'material'
   features:
@@ -51,6 +54,11 @@ markdown_extensions:
       guess_lang: false
   - toc:
       permalink: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
   - markdown_include.include:
           base_path: docs
 extra:

@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { BaseWebComponent, IDataFilterInfo, ExtensibilityConstants } from '@pnp/modern-search-extensibility';
 import * as ReactDOM from 'react-dom';
-import { Panel, PanelType, IPanelProps, Text, ITheme } from 'office-ui-fabric-react';
+import { Panel, PanelType, IPanelProps, Text, ITheme } from '@fluentui/react';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import { Log } from "@microsoft/sp-core-library";
 import styles from "./PanelComponent.module.scss";
 import * as DOMPurify from 'dompurify';
 import { PnPClientStorage } from "@pnp/common/storage";
 
-const PanelComponent_LogSource = "ModernDataVisualizer:PanelComponent";
+const PanelComponent_LogSource = "PnPModernSearch:PanelComponent";
 
 export interface IPanelComponentProps {
 
@@ -77,7 +77,7 @@ export class PanelComponent extends React.Component<IPanelComponentProps, IPanel
      * The client storage instance
      */
     private clientStorage: PnPClientStorage;
-    private panelComponentUniqueKey: string = "ModernDataVisualizer:PanelComponent";
+    private panelComponentUniqueKey: string = "PnPModernSearch:PanelComponent";
 
     constructor(props: IPanelComponentProps) {
         super(props);
@@ -91,6 +91,7 @@ export class PanelComponent extends React.Component<IPanelComponentProps, IPanel
         this._updateFilter = this._updateFilter.bind(this);
         this._applyAllFilters = this._applyAllFilters.bind(this);
         this._clearAllFilters = this._clearAllFilters.bind(this);
+        this._updateFilterOperator = this._updateFilterOperator.bind(this);
 
         this.clientStorage = new PnPClientStorage();
 
@@ -180,6 +181,7 @@ export class PanelComponent extends React.Component<IPanelComponentProps, IPanel
         this.bindFilterEvents();
         this.bindApplyFiltersEvents();
         this.bindClearFiltersEvents();
+        this.bindOperatorSelectionEvents();
     }
 
     private _onClosePanel() {
@@ -231,6 +233,17 @@ export class PanelComponent extends React.Component<IPanelComponentProps, IPanel
             document.addEventListener(ExtensibilityConstants.EVENT_FILTER_CLEAR_ALL, this._clearAllFilters);
         } else {
             document.removeEventListener(ExtensibilityConstants.EVENT_FILTER_CLEAR_ALL, this._clearAllFilters);
+        }
+    }
+
+    /**
+     * Binds event fired from filter value web components ('When the operator between filter values changes')
+     */
+    private bindOperatorSelectionEvents() {
+        if (this.state.showPanel) {
+            document.addEventListener(ExtensibilityConstants.EVENT_FILTER_VALUE_OPERATOR_UPDATED, this._updateFilterOperator);
+        } else {
+            document.removeEventListener(ExtensibilityConstants.EVENT_FILTER_VALUE_OPERATOR_UPDATED, this._updateFilterOperator);
         }
     }
 
@@ -296,12 +309,35 @@ export class PanelComponent extends React.Component<IPanelComponentProps, IPanel
                     filterName: eventDetails.filterName,
                     filterValues: eventDetails.filterValues,
                     instanceId: eventDetails.instanceId,
-                    forceUpdate: eventDetails.forceUpdate
+                    forceUpdate: eventDetails.forceUpdate,
+                    operator: eventDetails.operator
                 } as IDataFilterInfo,
                 bubbles: true,
                 cancelable: true
             }));
 
+        } else {
+            Log.info(PanelComponent_LogSource, `Unable to find the data filter WP. Did you forget to add the 'instance-id' attribute to the 'pnp-filter-multi' component?`);
+        }
+    }
+
+    private _updateFilterOperator(ev: CustomEvent) {
+
+        ev.stopImmediatePropagation();
+
+        // Get the Web Part instance ID from where the event was fired so we can fire again this event but scoped to the Web Part
+        const webPartInstanceId = ev.detail.instanceId;
+        const webPartDomElement = window.document.querySelector(`div[data-instance-id="${webPartInstanceId}"]`);
+
+        if (webPartDomElement) {
+            webPartDomElement.dispatchEvent(new CustomEvent(ExtensibilityConstants.EVENT_FILTER_VALUE_OPERATOR_UPDATED, {
+                detail: {
+                    filterName: ev.detail.filterName,
+                    operator: ev.detail.operator
+                },
+                bubbles: true,
+                cancelable: true
+            }));
         } else {
             Log.info(PanelComponent_LogSource, `Unable to find the data filter WP. Did you forget to add the 'instance-id' attribute to the 'pnp-filter-multi' component?`);
         }
@@ -337,5 +373,9 @@ export class PanelWebComponent extends BaseWebComponent {
         let props = this.resolveAttributes();
         const fileIcon = <PanelComponent {...props} contentTemplate={contentTemplateContent} openTemplate={openTemplateContent} />;
         ReactDOM.render(fileIcon, this);
+    }
+
+    protected onDispose(): void {
+        ReactDOM.unmountComponentAtNode(this);
     }
 }

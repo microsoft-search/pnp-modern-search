@@ -28,7 +28,7 @@ define([], function() {
                 FilterDisplayName: "Visningsnavn",
                 FilterMaxBuckets: "Antal værdier",
                 FilterTemplate: "Skabelon",
-                FilterExpandByDefault: "Udvid som default",
+                FilterExpandByDefault: "Udvid som standard",
                 FilterType: "Filtertype",
                 FilterTypeRefiner: "Denne skabelon til filtre agerer som en refiner og modtager/sender tilgængelige/valgte værdier fra/til the forbundne datakilde.",
                 FilterTypeStaticFilter: "Denne skabelon til filtre agerer som et statisk filter og sender kun vilkårligt udvalgte værdier til den forbundne datakilde. Indgående filterværdier bliver ikke taget i betragtning.",
@@ -42,7 +42,7 @@ define([], function() {
                 OROperator: "ELLER",
                 IsMulti: "Multiværdier",
                 Templates: {
-                    CheckBoxTemplate: "Check box",
+                    CheckBoxTemplate: "Checkboks",
                     DateRangeTemplate: "Datointerval",
                     ComboBoxTemplate: "Combo-boks",
                     DateIntervalTemplate: "Datointerval",
@@ -51,7 +51,7 @@ define([], function() {
                 SortBy: "Sortér værdier efter",
                 SortDirection: "Sortér efter retning",
                 SortByName: "Efter navn",
-                SortByCount: "Efter optælling",
+                SortByCount: "Efter antal",
                 SortAscending: "Stigende",
                 SortDescending: "Faldende"
             },

@@ -1,0 +1,48 @@
+{
+	"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+	"type": "AdaptiveCard",
+	"version": "1.3",
+	"body": [
+        {
+			"type": "TextBlock",
+			"text": "**${$root.data.totalItemsCount}** results",
+			"size": "Medium",
+			"wrap": true,
+            "$when": "${$root.properties.showResultsCount == true}"
+		},
+		{
+			"type": "Container",
+			"$data": "${data.items}",
+			"items": [
+				{
+					"type": "ColumnSet",
+					"id": "${hitId}",
+					"columns": [
+						{
+							"type": "Column",
+							"items": [
+								{
+									"type": "TextBlock",
+									"wrap": true,
+									"text": "<pnp-iconfile class='icon' data-extension='${if(empty($root.slots['FileType']),'',string(jPath($data, concat('.',$root.slots['FileType']))[0]))}'></pnp-iconfile>"
+								}
+							],
+							"width": "auto"
+						},
+						{
+							"type": "Column",
+							"items": [
+								{
+									"type": "TextBlock",
+									"wrap": true,
+									"text": "[${string(jPath($data, concat('.',$root.slots['Title']))[0])}](${string(jPath($data, concat('.',$root.slots['Path']))[0])})"
+								}
+							],
+							"width": "auto"
+						}
+					]
+				}
+			]
+		}
+	]
+}

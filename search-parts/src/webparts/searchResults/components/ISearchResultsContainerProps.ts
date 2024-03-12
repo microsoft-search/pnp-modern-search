@@ -1,4 +1,4 @@
-import { IDataSource, IDataFilterResult } from "@pnp/modern-search-extensibility";
+import { IDataSource, IDataFilterResult, LayoutRenderType } from "@pnp/modern-search-extensibility";
 import ISearchResultsWebPartProps from "../ISearchResultsWebPartProps";
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import { IDataContext } from "@pnp/modern-search-extensibility";
@@ -17,6 +17,11 @@ export interface ISearchResultsContainerProps {
    * The current page context
    */
   pageContext: PageContext;
+
+  /**
+   * The current page context
+   */
+  teamsContext: any;
 
   /**
    * The selected data source instance
@@ -51,7 +56,7 @@ export interface ISearchResultsContainerProps {
   /**
    * Handler when the data have been retrieved from the source. Useful to list all available fields from the source.
    */
-  onDataRetrieved: (availableDataSourceFields: string[], filters?: IDataFilterResult[], pageNumber?: number, nextLinkUrl?: string, pageLinks?: string[]) => void;
+  onDataRetrieved: (availableDataSourceFields: string[], filters?: IDataFilterResult[], pageNumber?: number) => void;
 
   /**
    * Handler when a item has been selected from results
@@ -67,4 +72,9 @@ export interface ISearchResultsContainerProps {
    * The Web Part Title props
    */
   webPartTitleProps: IWebPartTitleProps;
+
+  /**
+   * The layout render type (Handlebars, Adaptive Cards, etc.)
+   */
+  renderType: LayoutRenderType;
 }

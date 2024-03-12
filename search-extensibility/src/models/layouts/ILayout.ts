@@ -1,5 +1,6 @@
 import { IPropertyPaneField } from "@microsoft/sp-property-pane";
 import { WebPartContext } from '@microsoft/sp-webpart-base';
+import { IDataContext  } from "../../models/dataSources/IDataContext";
 
 export interface ILayout {
 
@@ -21,9 +22,10 @@ export interface ILayout {
     /**
      * Returns the layout property pane option fields if any
      * A good practice is to prefix property pane properties by the layout name like PropertyPaneTextField('customLayout.myTextProperty', {...})}
-     * @param availableFields 
+     * @param availableFields the available fields coming from results
+     * @param dataContext the current data source data context
      */
-    getPropertyPaneFieldsConfiguration(availableFields: string[]): IPropertyPaneField<any>[];
+    getPropertyPaneFieldsConfiguration(availableFields: string[], dataContext?: IDataContext): IPropertyPaneField<any>[];
 
     /**
      * Method called when a property pane field in changed in the Web Part

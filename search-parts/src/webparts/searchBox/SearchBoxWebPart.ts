@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
-import { Version, ServiceKey, Text } from '@microsoft/sp-core-library';
-import { GlobalSettings } from 'office-ui-fabric-react';
+import { Version, ServiceKey, Text, Log } from '@microsoft/sp-core-library';
+import { GlobalSettings } from '@fluentui/react';
 import { IWebPartPropertiesMetadata } from '@microsoft/sp-webpart-base';
 import { uniqBy } from '@microsoft/sp-lodash-subset';
 import { DynamicProperty } from "@microsoft/sp-component-base";
@@ -33,7 +33,7 @@ import { ISuggestionProviderDefinition, BaseSuggestionProvider } from '@pnp/mode
 import { AvailableSuggestionProviders, BuiltinSuggestionProviderKeys } from '../../providers/AvailableSuggestionProviders';
 import { ISuggestionProvider } from '@pnp/modern-search-extensibility';
 import { ServiceScopeHelper } from '../../helpers/ServiceScopeHelper';
-import { Toggle, IToggleProps, MessageBar, MessageBarType, Link } from "office-ui-fabric-react";
+import { Toggle, IToggleProps, MessageBar, MessageBarType, Link } from '@fluentui/react';
 import { ISuggestionProviderConfiguration } from '../../providers/ISuggestionProviderConfiguration';
 import { IExtensibilityConfiguration } from '../../models/common/IExtensibilityConfiguration';
 import { Constants } from '../../common/Constants';
@@ -41,6 +41,10 @@ import { ITokenService } from '@pnp/modern-search-extensibility';
 import { BuiltinTokenNames, TokenService } from '../../services/tokenService/TokenService';
 import { BaseWebPart } from '../../common/BaseWebPart';
 import { DynamicPropertyHelper } from '../../helpers/DynamicPropertyHelper';
+import PnPTelemetry from '@pnp/telemetry-js';
+import commonStyles from '../../styles/Common.module.scss';
+
+const LogSource = "SearchBoxWebPart";
 
 export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps> implements IDynamicDataCallables {
 
@@ -95,6 +99,13 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
     }
 
     protected async onInit() {
+        try {
+            // Disable PnP Telemetry
+            const telemetry = PnPTelemetry.getInstance();
+            telemetry.optOut();
+        } catch (error) {
+            Log.warn(LogSource, `Opt out for PnP Telemetry failed. Details: ${error}`, this.context.serviceScope);
+        }
 
         this.initializeProperties();
 
@@ -179,11 +190,21 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
             queryStringParameter: this.properties.queryStringParameter,
             inputTemplate: this.properties.inputTemplate,
             searchInNewPage: this.properties.searchInNewPage,
+            reQueryOnClear: this.properties.reQueryOnClear,
             themeVariant: this._themeVariant,
             onSearch: this._onSearch,
             suggestionProviders: this._selectedCustomProviders,
             numberOfSuggestionsPerGroup: this.properties.numberOfSuggestionsPerGroup,
-            tokenService: this.tokenService
+            tokenService: this.tokenService,
+            webPartTitleProps: {
+                displayMode: this.displayMode,
+                title: this.properties.title,
+                updateProperty: (value: string) => {
+                    this.properties.title = value;
+                },
+                themeVariant: this._themeVariant,
+                className: commonStyles.wpTitle
+            }
         } as ISearchBoxContainerProps);
 
         // Error message
@@ -481,6 +502,9 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
             }),
             PropertyPaneToggle("searchInNewPage", {
                 label: webPartStrings.PropertyPane.SearchBoxSettingsGroup.SearchInNewPageLabel
+            }),
+            PropertyPaneToggle("reQueryOnClear", {
+                label: webPartStrings.PropertyPane.SearchBoxSettingsGroup.ReQueryOnClearLabel
             })
         ];
 
@@ -679,8 +703,8 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
      * Subscribes to URL hash change if the dynamic property is set to the default 'URL Fragment' property
      */
     private _bindHashChange() {
-
-        if (this.properties.queryText.tryGetSource() && this.properties.queryText.reference.localeCompare('PageContext:UrlData:fragment') === 0) {
+        const queryTextSource = DynamicPropertyHelper.tryGetSourceSafe(this.properties.queryText);
+        if (queryTextSource && this.properties.queryText?.reference?.localeCompare('PageContext:UrlData:fragment') === 0) {
             // Manually subscribe to hash change since the default property doesn't
             window.addEventListener('hashchange', this.render);
         } else {
@@ -737,7 +761,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
                 // Custom provider
                 default:
 
-                    // Gets the registered service key according to the selected provider definition 
+                    // Gets the registered service key according to the selected provider definition
                     const matchingDefinitions = suggestionProviderDefinitions.filter((provider) => { return provider.key === providerKey; });
 
                     // Can only have one data source instance per key
@@ -846,7 +870,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
      */
     private _handleQueryStringChange() {
 
-        // To avoid pushState modification from many components on the page (ex: search box, etc.), 
+        // To avoid pushState modification from many components on the page (ex: search box, etc.),
         // only subscribe to query string changes if the connected source is either the searc queyr or explicit query string parameter
         if (/^(PageContext:SearchData:searchQuery)|(PageContext:UrlData:queryParameters)/.test(this.properties.queryText.reference)) {
 
@@ -860,11 +884,8 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
     private pushStateHandler(state, key, path) {
 
         this._pushStateCallback.apply(history, [state, key, path]);
-        if (this.properties.queryText.isDisposed) {
-            return;
-        }
 
-        const source = this.properties.queryText.tryGetSource();
+        const source = DynamicPropertyHelper.tryGetSourceSafe(this.properties.queryText);
 
         if (source && source.id === ComponentType.PageEnvironment) {
             this.render();

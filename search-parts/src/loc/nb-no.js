@@ -60,6 +60,8 @@ define([], function () {
           DefaultExtensibilityLibraryName: "Standardutbyggnadsbiblioteke",
           InvalidProviderInstance: "Den valgte forslagsleverandøren '{0}' implementerer ikke den abstakte klassen 'BaseSuggestionProvider' korrekt. Noen metoder mangler.",
           ProviderDefinitionNotFound: "Den tilpassede forslagsleverandøren med nøkkelen '{0}' ble ikke funnet. Se til att løsningen är korrekt deployert i appkatalogen og at manifest-ID er registrert for denne nettdelen.",
+          QueryModifierDefinitionNotFound: "Den tilpassede queryModifier med nøkkelen '{0}' ble ikke funnet. Sørg for at løsningen er riktig distribuert til appkatalogen og manifest-ID-en som er registrert for denne webdelen.",
+          InvalidQueryModifierInstance: "Den valgte egendefinerte queryModifier '{0}' implementerer ikke abstraktklassen 'BaseQueryModifier' på riktig måte. Noen metoder mangler.",
         },
         DateFromLabel: "Fra",
         DateTolabel: "Til",
@@ -79,12 +81,12 @@ define([], function () {
         },
         DateIntervalStrings: {
           AnyTime: "Når som helst",
-          PastDay: "Fra de siste 24 timene til siste uke",
-          PastWeek: "Fra forrige uke til forrige måned",
-          PastMonth: "Fra forrige måned til de siste tre månedene",
-          Past3Months: "Fra de siste tre månedene til det siste året",
-          PastYear: "Fra forrige år",
-          Older: "Eldre enn ett år" 
+          PastDay: "Siste 24 timer",
+          PastWeek: "Fra siste 24 timer til forrige uke",
+          PastMonth: "Fra forrige uke til forrige måned",
+          Past3Months: "Fra siste måned til siste 3 måneder",
+          PastYear: "Fra siste 3 måneder til siste år",
+          Older: "Eldre enn ett år"
         },
         SameTabOpenBehavior: "Bruk den aktuelle fanen",
         NewTabOpenBehavior: "Åpne i ny fane",
@@ -123,7 +125,9 @@ define([], function () {
           HitHighlightedPropertiesFieldDescription: "Angi listen over forvaltede egenskaper som skal utheves etter treff.",
           TermNotFound: "(Term med ID '{0}' ble ikke funnet)",
           ApplyQueryTemplateBtnText: "Lagre",
-          EnableAudienceTargetingTglLabel: "Aktiver målgruppetilpasning"
+          EnableAudienceTargetingTglLabel: "Aktiver målgruppetilpasning",
+          TrimDuplicates: "Trim duplikater",
+          CollapseSpecificationLabel: "Skjul spesifikasjonen"
         },
         MicrosoftSearch: {
           QueryTextFieldLabel: "Søketekst",
@@ -144,7 +148,15 @@ define([], function () {
           QueryTemplatePlaceHolderText: "ex: {searchTerms} IsDocument:true",
           QueryTemplateFieldDescription: "Søkemalen. Du kan også bruke {<tokens>} og KQL for å bygge en dynamisk spørring.",
           ApplyQueryTemplateBtnText: "Søke om",
-          UseBetaEndpoint: "Bruk betaendepunkt"
+          UseBetaEndpoint: "Bruk betaendepunkt",
+          TrimDuplicates: "Trim duplikater",
+          CollapseProperties: {
+              EditCollapsePropertiesLabel: "Rediger innstillinger for sammenbrudd",
+              CollapsePropertiesDescription: "Spesifiser sammenbruddsinnstillingene for søkeresultatene. Du kan enten velge et felt fra rullegardinlisten (bare hvis datakildedataene allerede er hentet) eller skrive inn din egen tilpassede verdi (trykk 'Enter' for å lagre oppføringen din)",
+              CollapsePropertiesPropertyPaneFieldLabel: "Kollapsinnstillingene",
+              CollapseLimitFieldLabel: "Grense",
+              CollapsePropertiesFieldColumnPlaceholder: "Skjul etter felt"
+          }
         },
         SearchCommon: {
           Sort: {
@@ -159,6 +171,9 @@ define([], function () {
             SortPanelSortDirectionLabel: "Sorteringsretning",
             SortDirectionColumnLabel: "Retning",
             SortFieldColumnLabel: "Egenskapsnavn",
+            SortFieldDefaultSortLabel: "Standard sortering",
+            SortFieldFriendlyNameLabel: "Visningsnavn for sortering",
+            SortFieldUserSortLabel: "Bruker sortering",
             EditSortLabel: "Rediger sorteringsrekkefølge",
             SortInvalidSortableFieldMessage: "Denne egenskapen kan inte sorteres",
             SortFieldColumnPlaceholder: "Velg egenskap…"
@@ -172,13 +187,18 @@ define([], function () {
         TextDialogSaveButtonText: "Lagre",
         SelectItemComboPlaceHolder: "Velg egenskap",
         AddStaticDataLabel: "Legg til statisk data",
-        TextFieldApplyButtonText: "Lagre"
+        TextFieldApplyButtonText: "Lagre",
+        SortByPlaceholderText: "Sorter etter",
+        SortByDefaultOptionText: "Misligholde"
       },
       Layouts: {
         Debug: {
           Name: "Feilsøk"
         },
-        Custom: {
+        CustomHandlebars: {
+          Name: "Tilpasset"
+        },
+        CustomAdaptiveCards: {
           Name: "Tilpasset"
         },
         SimpleList: {
@@ -200,13 +220,16 @@ define([], function () {
           ManageDetailsListColumnDescription: "Legg til, oppdater eller fjern kolonner fra detaljert liste-malen. Du kan enten bruke egenskapsverdien i listen direkte uten omforming, eller du kan bruke et Handlebars-uttrykk som verdi. HTML støttes også i alle felt.",
           ManageDetailsListColumnLabel: "Rediger kolonner",
           ValueColumnLabel: "Kolonneverdi",
-          ValueSortingColumnLabel: "Kolonneverdisortering",
-          DisplayNameColumnLabel: "Kolonnens visningsnavn",
+          ValueSortingColumnLabel: "Velg sorteringsfelt...",
+          ValueSortingColumnNoFieldsLabel: "Ingen felt tilgjengelig",
           FileExtensionFieldLabel: "Felt för filendelse",
           GroupByFieldLabel: "Grupper etter felt",
           EnableGrouping: "Aktiver gruppering",
+          GroupingDescription: "Sørg for at du har data som vises i resultatwebdelen for å vise en liste over egenskaper.",
           CollapsedGroupsByDefault: "Vis kollapsede",
-          ResetFieldsBtnLabel: "Bruk standardverdiene"
+          ResetFieldsBtnLabel: "Bruk standardverdiene",
+          EnableStickyHeader: "Aktiver klebrig overskrift",
+          StickyHeaderListViewHeight: "Høyde på listevisning med klebrig overskrift (px)"
         },
         Cards: {
           Name: "Kort",
@@ -264,7 +287,10 @@ define([], function () {
           SupportHTMLColumnLabel: "Tillat HTML",
           ResetFieldsBtnLabel: "Bruk standardverdier",
           ShowPersonaCardOnHover: "Vis personkort når du fører musen over",
+          ShowPersonaCardOnHoverNative: "Vis personkort når du fører musen over (LPC)",
           ShowPersonaCardOnHoverCalloutMsg: "Denne funksjonen bruker Microsoft Graph for å vise informasjon om brukere og må ha følgende API-tilganger i din klient for at det skal virke: ['User.Read','People.Read','Contacts.Read','User.Read.All'].",
+          ShowPersonaPresenceInfo: "Vis tilstedeværelse",
+          ShowPersonaPresenceInfoCalloutMsg: "Denne funksjonen trenger følgende API-tillatelser i leietakeren for å fungere: ['Presence.Read.All'].",
           Fields: {
             ImageUrl: "Bilde-URL",
             PrimaryText: "Primærtekst",

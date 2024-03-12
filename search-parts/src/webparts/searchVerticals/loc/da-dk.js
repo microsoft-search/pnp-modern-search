@@ -5,7 +5,7 @@ define([], function() {
       PlaceHolder: {
         EditLabel: "Redigere",
         IconText: "Search Verticals Web Part af @pnp",
-        Description: "Giver mulighed for at gennemse data som vertikaler (dvs. siloer). Denne webdel er beregnet til at blive forbundet med 'Søgeresultater' webdele på siden.",
+        Description: "Giver mulighed for at gennemse data som vertikaler/faner (dvs. siloer). Denne webdel er beregnet til at blive forbundet med 'Søgeresultater' webdele på siden.",
         ConfigureBtnLabel: "Konfigurer"
       }
     },

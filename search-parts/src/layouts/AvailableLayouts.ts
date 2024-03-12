@@ -1,10 +1,12 @@
-import { ILayoutDefinition, LayoutType } from "@pnp/modern-search-extensibility";
+/* eslint-disable @typescript-eslint/no-var-requires */
+import { ILayoutDefinition, LayoutRenderType, LayoutType } from "@pnp/modern-search-extensibility";
 import * as strings from 'CommonStrings';
 
 export enum BuiltinLayoutsKeys {
     ResultsDebug = 'ResultsDebug',
     FiltersDebug = 'FiltersDebug',
-    ResultsCustom = 'ResultsCustom',
+    ResultsCustomHandlebars = 'ResultsCustom',
+    ResultsCustomAdaptiveCards = 'ResultsCustomAdaptiveCards',
     FiltersCustom = 'FiltersCustom',
     DetailsList = 'DetailsList',
     Cards = 'Cards',
@@ -13,7 +15,8 @@ export enum BuiltinLayoutsKeys {
     People = 'People',
     Vertical = 'Vertical',
     Horizontal = 'Horizontal',
-    Panel = 'Panel'
+    Panel = 'Panel',
+    ListAdaptiveCards = 'ListAdaptiveCards'
 }
 
 export class AvailableLayouts {
@@ -28,6 +31,7 @@ export class AvailableLayouts {
             iconName: 'GripperBarVertical',
             type: LayoutType.Filter,
             templateContent: require('./filters/vertical/vertical.html'),
+            renderType: LayoutRenderType.Handlebars,
             serviceKey: null // ServiceKey will be created dynamically for builtin layout
         },
         {
@@ -36,6 +40,7 @@ export class AvailableLayouts {
             iconName: 'GripperBarHorizontal',
             type: LayoutType.Filter,
             templateContent: require('./filters/horizontal/horizontal.html'),
+            renderType: LayoutRenderType.Handlebars,
             serviceKey: null // ServiceKey will be created dynamically for builtin layout
         },
         {
@@ -44,6 +49,7 @@ export class AvailableLayouts {
             iconName: 'ClosePane',
             type: LayoutType.Filter,
             templateContent: require('./filters/panel/panel.html'),
+            renderType: LayoutRenderType.Handlebars,
             serviceKey: null // ServiceKey will be created dynamically for builtin layout
         },
         {
@@ -52,14 +58,16 @@ export class AvailableLayouts {
             key: BuiltinLayoutsKeys.FiltersDebug.toString(),
             type: LayoutType.Filter,
             templateContent: require('./filters/debug/filters-debug.html'),
+            renderType: LayoutRenderType.Handlebars,
             serviceKey: null // ServiceKey will be created dynamically for builtin layout
         },
         {
-            name: strings.Layouts.Custom.Name,
+            name: strings.Layouts.CustomHandlebars.Name,
             key: BuiltinLayoutsKeys.FiltersCustom.toString(),
             iconName: 'CodeEdit',
             type: LayoutType.Filter,
             templateContent: require('./filters/custom/filters-custom.html'),
+            renderType: LayoutRenderType.Handlebars,
             serviceKey: null // ServiceKey will be created dynamically for builtin layout
         },
         {
@@ -68,6 +76,7 @@ export class AvailableLayouts {
             key: BuiltinLayoutsKeys.DetailsList,
             type: LayoutType.Results,
             templateContent: require('./results/detailsList/details-list.html'),
+            renderType: LayoutRenderType.Handlebars,
             serviceKey: null// ServiceKey will be created dynamically for builtin layout
         },
         {
@@ -76,6 +85,7 @@ export class AvailableLayouts {
             iconName: 'Tiles',
             type: LayoutType.Results,
             templateContent: require('./results/cards/cards.html'),
+            renderType: LayoutRenderType.Handlebars,
             serviceKey: null // ServiceKey will be created dynamically for builtin layout
         },
         {
@@ -84,6 +94,7 @@ export class AvailableLayouts {
             iconName: 'Slideshow',
             type: LayoutType.Results,
             templateContent: require('./results/slider/slider.html'),
+            renderType: LayoutRenderType.Handlebars,
             serviceKey: null // ServiceKey will be created dynamically for builtin layout
         },
         {
@@ -92,6 +103,7 @@ export class AvailableLayouts {
             iconName: 'List',
             type: LayoutType.Results,
             templateContent: require('./results/simpleList/simple-list.html'),
+            renderType: LayoutRenderType.Handlebars,
             serviceKey: null // ServiceKey will be created dynamically for builtin layout
         },
         {
@@ -100,14 +112,34 @@ export class AvailableLayouts {
             key: BuiltinLayoutsKeys.ResultsDebug.toString(),
             type: LayoutType.Results,
             templateContent: require('./results/debug/results-debug.html'),
+            renderType: LayoutRenderType.Handlebars,
             serviceKey: null // ServiceKey will be created dynamically for builtin layout
         },
         {
-            name: strings.Layouts.Custom.Name,
-            key: BuiltinLayoutsKeys.ResultsCustom.toString(),
+            name: strings.Layouts.CustomHandlebars.Name,
+            key: BuiltinLayoutsKeys.ResultsCustomHandlebars.toString(),
             iconName: 'CodeEdit',
             type: LayoutType.Results,
             templateContent: require('./results/custom/results-custom.html'),
+            renderType: LayoutRenderType.Handlebars,
+            serviceKey: null // ServiceKey will be created dynamically for builtin layout
+        },
+                {
+            name: strings.Layouts.SimpleList.Name,
+            key: BuiltinLayoutsKeys.ListAdaptiveCards.toString(),
+            iconName: 'List',
+            type: LayoutType.Results,
+            templateContent: JSON.stringify(require('./results/simpleList/simple-list.json'), null, "\t"),
+            renderType: LayoutRenderType.AdaptiveCards,
+            serviceKey: null // ServiceKey will be created dynamically for builtin layout
+        },
+        {
+            name: strings.Layouts.CustomAdaptiveCards.Name,
+            key: BuiltinLayoutsKeys.ResultsCustomAdaptiveCards.toString(),
+            iconName: 'CodeEdit',
+            type: LayoutType.Results,
+            templateContent: JSON.stringify(require('./results/custom/results-custom.json'), null, "\t"),
+            renderType: LayoutRenderType.AdaptiveCards,
             serviceKey: null // ServiceKey will be created dynamically for builtin layout
         },
         {
@@ -116,6 +148,7 @@ export class AvailableLayouts {
             iconName: 'People',
             type: LayoutType.Results,
             templateContent: require('./results/people/people.html'),
+            renderType: LayoutRenderType.Handlebars,
             serviceKey: null // ServiceKey will be created dynamically for builtin layout
         }
     ];

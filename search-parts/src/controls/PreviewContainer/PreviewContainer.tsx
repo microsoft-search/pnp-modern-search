@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { IPreviewContainerProps, PreviewType } from './IPreviewContainerProps';
 import IPreviewContainerState from './IPreviewContainerState';
-import { Callout } from 'office-ui-fabric-react';
-import { Spinner, SpinnerSize } from 'office-ui-fabric-react';
+import { Callout } from '@fluentui/react';
+import { Spinner, SpinnerSize } from '@fluentui/react';
 import previewContainerStyles from './PreviewContainer.module.scss';
-import { IconButton } from 'office-ui-fabric-react';
-import { Overlay } from 'office-ui-fabric-react';
+import { IconButton } from '@fluentui/react';
+import { Overlay } from '@fluentui/react';
 import { TestConstants } from '../../common/Constants';
 
 export default class PreviewContainer extends React.Component<IPreviewContainerProps, IPreviewContainerState> {
@@ -44,7 +44,8 @@ export default class PreviewContainer extends React.Component<IPreviewContainerP
         let renderLoading: JSX.Element = this.state.isLoading ? <Overlay isDarkThemed={false} className={previewContainerStyles.overlay}><Spinner size={ SpinnerSize.large }/></Overlay>: null;
         let backgroundImage = this.state.isLoading ? `url('${this.props.previewImageUrl}')` : 'none';
  
-        return  <Callout 
+
+        return !this.state.showCallout ? null :  <Callout 
                     gapSpace={0} 
                     target={this.props.targetElement} 
                     hidden={false} 
@@ -73,7 +74,7 @@ export default class PreviewContainer extends React.Component<IPreviewContainerP
         });
     }   
 
-    public componentWillReceiveProps(nextProps: IPreviewContainerProps) {
+    public UNSAFE_componentWillReceiveProps(nextProps: IPreviewContainerProps) {
         this.setState({
             showCallout: nextProps.showPreview
         });

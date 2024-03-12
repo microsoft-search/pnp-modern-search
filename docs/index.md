@@ -60,9 +60,13 @@ By getting this solution, you also benefit from an advanced [extensibility model
 
 **The supported extensions are:**
 
+- [Custom layouts](./extensibility/custom_layout.md).
 - [Custom web components](./extensibility/custom_web_component.md).
-- [Custom suggestions providers](./extensibility/custom_suggestions_provider.md).
 - [Custom Handlebars customization (helpers, partials, etc.)](./extensibility/handlebars_customizations.md).
+- [Custom event handlers for adaptive cards actions](./extensibility/adaptivecards_customizations.md).
+- [Custom query modifiers](./extensibility/custom_query_modifications.md).
+- [Custom data sources](./extensibility/custom_data_sources.md).
+- [Custom suggestions providers](./extensibility/custom_suggestions_provider.md).
 
 With these available customizations options, you can do pretty much anything!
 
@@ -71,15 +75,21 @@ With these available customizations options, you can do pretty much anything!
 
 ## Troubleshooting
 
-If you encounter an issue, please use the GitHub issues list of [this repository](https://github.com/microsoft-search/pnp-modern-search/issues). Also, to help us to resolve your issue, you can include screenshots or error messages coming from:
+If you encounter an issue, please use the GitHub issues list of [this repository](https://github.com/microsoft-search/pnp-modern-search/issues). 
+
+However, we will ask you to verify your issue as described here: [Using Query tools to verify issues](using-query-tools-to-verify-issues.md)
+
+Also, to help us to resolve your issue, you can include screenshots or error messages coming from:
 
 - The faulty Web Part itself.
 - Errors displayed in the browser console (typically pressing F12).
 - Errors displayed in the SharePoint console (pressing CTRL+F12)
 
 ## Issues, questions, feedback?
-
 For any issue, question or feedback, please the [official GitHub repository](https://github.com/microsoft-search/pnp-modern-search/issues). We will be happy to help you!
+
+## Q&A
+We have a list of frequently asked questions available in our separate [Q&A section](QnA). If you have a question, it might be already answered there.
 
 ## About
 
@@ -89,11 +99,16 @@ PnP Modern Search version 4 initially made by [Franck Cornu](https://twitter.com
 
 Here is the list of main contributors of the PnP Modern Search (all versions included)
 
-- Franck Cornu (aequos) - [@FranckCornu](http://www.twitter.com/FranckCornu)
+- Franck Cornu (Ubisoft) - [@FranckCornu](http://www.twitter.com/FranckCornu)
 - Mikael Svenson (Microsoft) - [@mikaelsvenson](http://www.twitter.com/mikaelsvenson)
 - Yannick Reekmans - [@yannickreekmans](https://twitter.com/yannickreekmans)
 - Albert-Jan Schot - [@appieschot](https://twitter.com/appieschot)
-- Tarald Gåsbakk (PuzzlePart) - [@taraldgasbakk](https://twitter.com/Taraldgasbakk)
+- Tarald Gåsbakk (Norwegian Armed Forces) - [@taraldgasbakk](https://twitter.com/Taraldgasbakk)
 - Brad Schlintz (Microsoft) - [@bschlintz](https://twitter.com/bschlintz)
 - Richard Gigan - [@PooLP](https://twitter.com/PooLP)
 - Matthew Stark
+- Fabio Franzini (Apvee Solutions) - [@franzinifabio](https://twitter.com/franzinifabio)
+- Paolo Pialorsi (PiaSys.com) - [@PaoloPia](https://twitter.com/paolopia)
+- Patrik Hellgren (SherparsGroupAB) - [@PatrikHellgren](https://twitter.com/patrikhellgren)
+- Erfan Darroudi [@edarroudi](https://github.com/edarroudi)
+- Kasper Larsen (Fellowmind) - [@kasperlarsen](https://twitter.com/kasperbolarsen)

@@ -30,9 +30,9 @@ import { IAsyncComboProps } from '../../controls/PropertyPaneAsyncCombo/componen
 import { AvailableLayouts, BuiltinLayoutsKeys } from '../../layouts/AvailableLayouts';
 import { LayoutHelper } from '../../helpers/LayoutHelper';
 import { TemplateService } from '../../services/templateService/TemplateService';
-import { ITemplateService } from '../../services/templateService/ITemplateService';
+import { FileFormat, ITemplateService } from '../../services/templateService/ITemplateService';
 import { isEmpty, isEqual, uniqBy, cloneDeep, uniq, sortBy } from '@microsoft/sp-lodash-subset';
-import { Dropdown, IDropdownProps, IDropdownOption, Checkbox, Icon, IComboBoxOption, MessageBar, MessageBarType } from 'office-ui-fabric-react';
+import { Dropdown, IDropdownProps, IDropdownOption, Checkbox, Icon, IComboBoxOption, MessageBar, MessageBarType } from '@fluentui/react';
 import { BuiltinFilterTemplates, BuiltinFilterTypes } from '../../layouts/AvailableTemplates';
 import { ServiceScope } from '@microsoft/sp-core-library';
 import { AvailableComponents } from '../../components/AvailableComponents';
@@ -41,6 +41,9 @@ import { BaseWebPart } from '../../common/BaseWebPart';
 import commonStyles from '../../styles/Common.module.scss';
 import { IDataVerticalSourceData } from '../../models/dynamicData/IDataVerticalSourceData';
 import { DynamicPropertyHelper } from '../../helpers/DynamicPropertyHelper';
+import PnPTelemetry from '@pnp/telemetry-js';
+
+const LogSource = "SearchFiltersWebPart";
 
 export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebPartProps> implements IDynamicDataCallables {
 
@@ -107,6 +110,13 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     private propertyPaneConnectionsFields: IPropertyPaneField<any>[] = [];
 
     protected async onInit() {
+        try {
+            // Disable PnP Telemetry
+            const telemetry = PnPTelemetry.getInstance();
+            telemetry.optOut();
+        } catch (error) {
+            Log.warn(LogSource, `Opt out for PnP Telemetry failed. Details: ${error}`, this.context.serviceScope);
+        }
 
         this.initializeProperties();
 
@@ -923,7 +933,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                 return '';
             }
             // Resolves an error if the file isn't a valid .htm or .html file
-            else if (!this.templateService.isValidTemplateFile(value)) {
+            else if (!this.templateService.isValidTemplateFile(value, [".html",".htm",".txt"])) {
                 return webPartStrings.PropertyPane.LayoutPage.ErrorTemplateExtension;
             }
             // Resolves an error if the file doesn't answer a simple head request
@@ -948,7 +958,8 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
         if (this.properties.selectedLayoutKey === BuiltinLayoutsKeys.FiltersCustom) {
 
             if (this.properties.externalTemplateUrl) {
-                this.templateContentToDisplay = await this.templateService.getFileContent(this.properties.externalTemplateUrl);
+                // We do not support filters as adaptive cards
+                this.templateContentToDisplay = await this.templateService.getFileContent(this.properties.externalTemplateUrl, FileFormat.Text);
             } else {
                 this.templateContentToDisplay = this.properties.inlineTemplateContent ? this.properties.inlineTemplateContent : selectedLayoutTemplateContent;
             }
@@ -1039,7 +1050,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     public async loadPropertyPaneResources(): Promise<void> {
 
         const { PropertyFieldCodeEditor, PropertyFieldCodeEditorLanguages } = await import(
-            /* webpackChunkName: 'pnp-modern-search-property-pane' */
+            /* webpackChunkName: 'pnp-modern-search-code-editor', webpackMode: 'lazy' */
             '@pnp/spfx-property-controls/lib/propertyFields/codeEditor'
         );
 
@@ -1185,7 +1196,12 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                 }
             }
 
-            filter.values = sortDirection === FilterSortDirection.Ascending ? sortBy(filter.values, sortByField) : sortBy(filter.values, sortByField).reverse();
+            if( sortByField === 'name') {
+                filter.values = sortDirection === FilterSortDirection.Ascending ? sortBy(filter.values, [item => item["name"].toLocaleLowerCase()]) : sortBy(filter.values, [item => item["name"].toLocaleLowerCase()]).reverse();
+            }
+            else{
+                filter.values = sortDirection === FilterSortDirection.Ascending ? sortBy(filter.values, sortByField) : sortBy(filter.values, sortByField).reverse();
+            }
 
             return filter;
         });

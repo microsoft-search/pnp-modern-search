@@ -39,47 +39,56 @@ define([], function() {
           CommonOptionsGroupName: "Vanlig",
           TemplateUrlFieldLabel: "Bruk en URL for mal",
           TemplateUrlPlaceholder: "https://myfile.html",
-          ErrorTemplateExtension: "Malen må være en gyldig .htm- eller .html-fil",
+          ErrorTemplateExtension: "Malen må være en gyldig .txt, .htm eller .html-fil",
           ErrorTemplateResolve: "Det går ikke å lese denne malen. Feil: '{0}'",
           DialogButtonLabel: "Rediger resultatmalen",
           DialogTitle: "Rediger resultatmalen",
           ShowSelectedFilters: "Vis valgte gilter",
           ShowBlankIfNoResult: "Skjul denne nettdelen om det ikke er noe å vise.",
           ShowResultsCount: "Vis antall resultat",
-          UseMicrosoftGraphToolkit: "Bruk Microsoft Graph Toolkit",
-          ResultTypes: {
-            ResultTypeslabel: "Resultattyper",
-            ResultTypesDescription: "Her kan du legge til de maler som du vil bruke for de ulike resultatobjektene basert på én eller flere betingelser. Betingelsene vurderes i den gitte rekkefølgen, og eksterne maler har forrang over integrerte maler. Pass på at feltene i den datakilden du bruker finnes i dataresponsen.",
-            InlineTemplateContentLabel: "Integrert mal",
-            EditResultTypesLabel: "Rediger resultattyper",
-            ConditionPropertyLabel: "Felt i datakilde",
-            ConditionValueLabel: "Betingelse",
-            CondtionOperatorValue: "Operator",
-            ExternalUrlLabel: "Ekstern mal-URL",
-            EqualOperator: "Er lik",
-            NotEqualOperator: "Er ikke lik",
-            ContainsOperator: "Inneholder",
-            StartsWithOperator: "Starter med",
-            NotNullOperator: "Er ikke null",
-            GreaterOrEqualOperator: "Større enn eller lik",
-            GreaterThanOperator: "Større enn",
-            LessOrEqualOperator: "Mindre enn eller lik",
-            LessThanOperator: "Mindre enn",
-            CancelButtonText: "Avbryt",
-            DialogButtonText: "Rediger mal",
-            DialogTitle: "Rediger resultatmal",
-            SaveButtonText: "Lagre"
+          HandlebarsRenderTypeLabel: "Handlebars/HTML",
+          HandlebarsRenderTypeDesc: "Velg oppsett basert på HTML, CSS og håndtak",
+          AdaptiveCardsRenderTypeLabel: "Adaptive Cards",
+          AdaptiveCardsRenderTypeDesc: "Velg oppsett basert på adaptive JSON-kort",          
+          Handlebars: {
+            UseMicrosoftGraphToolkit: "Bruk Microsoft Graph Toolkit",
+            ResultTypes: {
+              ResultTypeslabel: "Resultattyper",
+              ResultTypesDescription: "Her kan du legge til de maler som du vil bruke for de ulike resultatobjektene basert på én eller flere betingelser. Betingelsene vurderes i den gitte rekkefølgen, og eksterne maler har forrang over integrerte maler. Pass på at feltene i den datakilden du bruker finnes i dataresponsen.",
+              InlineTemplateContentLabel: "Integrert mal",
+              EditResultTypesLabel: "Rediger resultattyper",
+              ConditionPropertyLabel: "Felt i datakilde",
+              ConditionValueLabel: "Betingelse",
+              CondtionOperatorValue: "Operator",
+              ExternalUrlLabel: "Ekstern mal-URL",
+              EqualOperator: "Er lik",
+              NotEqualOperator: "Er ikke lik",
+              ContainsOperator: "Inneholder",
+              StartsWithOperator: "Starter med",
+              NotNullOperator: "Er ikke null",
+              GreaterOrEqualOperator: "Større enn eller lik",
+              GreaterThanOperator: "Større enn",
+              LessOrEqualOperator: "Mindre enn eller lik",
+              LessThanOperator: "Mindre enn",
+              CancelButtonText: "Avbryt",
+              DialogButtonText: "Rediger mal",
+              DialogTitle: "Rediger resultatmal",
+              SaveButtonText: "Lagre"
+            },
+            AllowItemSelection: "Tillat valg av elementer",
+            AllowMultipleItemSelection: "Tillat flere valg",
+            SelectionModeLabel: "Valgmodus",
+            AsTokensSelectionMode: "Behandle valgte verdier som tokens (manuell modus)",
+            AsDataFiltersSelectionMode: "Behandle valgte verdier som filtre (standardmodus)",
+            AsDataFiltersDescription: "I denne modusen sendes valgte verdier til datakilden som vanlige filtre",
+            AsTokensDescription: "I denne modusen brukes valgte verdier manuelt gjennom tokens og tilgjengelige metoder. Eksempel med SharePoint-søkemal: {?Title:{filters.&lt;destination_field_name&gt;.valueAsText}}",
+            FilterValuesOperator: "Den logiske operatoren som skal brukes mellom valgte verdier",
+            FieldToConsumeLabel: "Kildefelt å konsumere",
+            FieldToConsumeDescription: "Bruk denne feltverdien for valgte elementer"
           },
-          AllowItemSelection: "Tillat valg av elementer",
-          AllowMultipleItemSelection: "Tillat flere valg",
-          SelectionModeLabel: "Valgmodus",
-          AsTokensSelectionMode: "Behandle valgte verdier som tokens (manuell modus)",
-          AsDataFiltersSelectionMode: "Behandle valgte verdier som filtre (standardmodus)",
-          AsDataFiltersDescription: "I denne modusen sendes valgte verdier til datakilden som vanlige filtre",
-          AsTokensDescription: "I denne modusen brukes valgte verdier manuelt gjennom tokens og tilgjengelige metoder. Eksempel med SharePoint-søkemal: {?Title:{filters.&lt;destination_field_name&gt;.valueAsText}}",
-          FilterValuesOperator: "Den logiske operatoren som skal brukes mellom valgte verdier",
-          FieldToConsumeLabel: "Kildefelt å konsumere",
-          FieldToConsumeDescription: "Bruk denne feltverdien for valgte elementer"
+          AdaptiveCards: {
+            HostConfigFieldLabel: "Vertskonfigurasjon"
+          } 
         },
         ConnectionsPage: {
           ConnectionsPageGroupName: "Tilgjengelige tilkoblinger",
@@ -109,12 +118,17 @@ define([], function() {
           Extensibility: {
             PanelHeader: "Konfigurer utvidelsesbibliotek som skal lastes ved oppstart.",
             PanelDescription: "Legg til / fjern ID-en til ditt tilpassede utvidelsesbibliotek her. Du kan angi et visningsnavn og bestemme om biblioteket skal lastes ved oppstart eller ikke. Har lastes kun tilpassede datakilder, maler, web-komponenter og Handlebars-hjelpere.",
-          },
-          EnableTelemetryLabel: "PnP-telemetri",
-          EnableTelemetryOn: "Slå på telemetri",
-          EnableTelemetryOff: "Slå av telemetri"
+          }
+        },
+        CustomQueryModifier: {
+              EditQueryModifiersLabel: "Konfigurer tilgjengelige tilpassede spørringsmodifikatorer",
+              QueryModifiersLabel: "Tilpassede spørringsmodifikatorer",
+              QueryModifiersDescription: "Aktiver eller deaktiver individuelle tilpassede søkemodifikatorer",
+              EnabledPropertyLabel: "Aktivert",
+              ModifierNamePropertyLabel: "Navn",
+              ModifierDescriptionPropertyLabel: "Beskrivelse",
+              EndWhenSuccessfullPropertyLabel:"Avslutt når det er vellykket"          
         }
       }
     }
   });
-  

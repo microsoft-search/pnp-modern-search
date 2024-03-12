@@ -9,12 +9,15 @@ You can use tokens in the following locations:
         - **SharePoint Search**
             - Query template field.
             - Refinement filters field.
+        - **Microsoft Search**
+            - Query template field.
 
 - **Search Verticals Web Part**
     - In the link URL when the vertical item is a link.
 
 - **Search Box Web Part**
-    - In the Query input transformation template when sending the query to a new page.
+    - In the _Query input transformation template_ when sending the query to a new page.
+    - In the _Page URL_ field.
 
 #### Supported tokens (all data sources)
 
@@ -44,9 +47,9 @@ Tokens related to connected Web Parts in the Search Results.
 
 |**Token**|**Definition**|
 |:-----|:-----|
-|**{PageContext.&lt;PropertyName&gt;}** | Resolves current SPFx page context related tokens. You can use deep paths here to access properties. Ex: `{PageContext.site.absoluteUrl}`. <br/>
+|**{PageContext.&lt;PropertyName&gt;}** | Resolves current SPFx page context related tokens. You can use deep paths here to access properties. Ex: `{PageContext.site.absoluteUrl}`. Use the debug template in the web part to see all tokens available under the `context` node.<br/>
 | **{LegacyPageContext.&lt;PropertyName&gt;}** | Resolves current SPFx legacy page context related tokens. You can use deep paths here to access properties. Ex: `{LegacyPageContext.aadTenantId}`. <br/>
-|**{QueryString.&lt;ParameterName&gt;}** <br/> | A value from a query string in the URL of the current page. For example, if the URL of the current page contains a query string such as ItemNumber=567, you could obtain the value 567 by specifying `{QueryString.ItemNumber}`. <br/> |
+|**{QueryString.&lt;ParameterName&gt;}** <br/> | A value from a query string in the URL of the current page. For example, if the URL of the current page contains a query string such as ItemNumber=567, you could obtain the value 567 by specifying `{QueryString.ItemNumber}`. <br/> Use `{?QueryString.Parameter}` if you want the part to be omitted in case the query string parameter is not present.|
 |**{CurrentDisplayLanguage}** <br/> |The current display language based on MUI in _ll-cc format_.  <br/> |
 |**{CurrentDisplayLCID}**  <br/> |Numeric value of the current display language based on MUI in _ll-cc format_.  <br/> |
 |**{TenantUrl}**  <br/> |URL of the tenant (root site)<br/> |
@@ -77,9 +80,20 @@ Except for `{Hub}`, these a shortands to the `{PageContext}` tokens. They return
 
 |**Token**|**Definition**
 |-----|-----|
-| **{CurrentYear}** |Todays's date four digits, 2018 <br/> 
-| **{CurrentMonth}** |Today's month, 1-12 <br/> 
-| **{CurrentDate}** |Today's date, 1-31 <br/> 
+| **{CurrentYear}** |Local date four digits, 2023 <br/> 
+| **{CurrentMonth}** |Local month, 1-12 <br/> 
+| **{CurrentDate}** |Local date, 1-31 <br/> 
+| **{CurrentHour}** |Local hour, 0-23 <br/> 
+| **{CurrentMinute}** |Local minute, 0-59 <br/> 
+| **{CurrentSecond}** |Local second, 0-59 <br/> 
+| **{CurrentYearUTC}** |UTC date four digits, 2023 <br/> 
+| **{CurrentMonthUTC}** |UTC month, 1-12 <br/> 
+| **{CurrentDateUTC}** |UTC date, 1-31 <br/> 
+| **{CurrentHourUTC}** |UTC, 0-23 <br/> 
+| **{CurrentMinuteUTC}** |UTC minute, 0-59 <br/> 
+| **{CurrentSecondUTC}** |UTC second, 0-59 <br/> 
+
+
 | **{Today+/- \&lt;integer value for number of days&gt;}**  <br/> |A date calculated by adding/subtracting the specified number of days to/from the date when the query is issued. Date format is YYYY-MM-DD (Ex: `{Today+5}`) <br/> 
 
 #### SharePoint search query variables

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { BaseWebComponent, IDataFilter, IDataFilterValue, FilterConditionOperator, FilterComparisonOperator, IDataFilterInfo, ExtensibilityConstants, IDataFilterConfiguration, IDataFilterValueInfo } from '@pnp/modern-search-extensibility';
 import * as ReactDOM from 'react-dom';
-import { Label, Icon, ITheme } from 'office-ui-fabric-react';
+import { Label, Icon, ITheme } from '@fluentui/react';
 import styles from './SelectedFiltersComponent.module.scss';
 import * as strings from 'CommonStrings';
 import { Log } from '@microsoft/sp-core-library';
@@ -230,5 +230,9 @@ export class SelectedFiltersWebComponent extends BaseWebComponent {
 
         const filtersComponent = <SelectedFiltersComponent {...props} moment={moment} filters={filters} filtersConfiguration={filtersConfiguration}/>;
         ReactDOM.render(filtersComponent, this);
-    }    
+    }
+    
+    protected onDispose(): void {
+        ReactDOM.unmountComponentAtNode(this);
+    }
 }

@@ -2,7 +2,7 @@ import { BaseLayout } from "@pnp/modern-search-extensibility";
 import { IPropertyPaneField, PropertyPaneToggle, PropertyPaneSlider, PropertyPaneButton, PropertyPaneButtonType } from '@microsoft/sp-property-pane';
 import { IComponentFieldsConfiguration } from '../../../models/common/IComponentFieldsConfiguration';
 import * as strings from 'CommonStrings';
-import { Icon, IIconProps, IComboBoxOption } from 'office-ui-fabric-react';
+import { Icon, IIconProps, IComboBoxOption } from '@fluentui/react';
 import * as React from "react";
 import { TemplateValueFieldEditor, ITemplateValueFieldEditorProps } from "../../../controls/TemplateValueFieldEditor/TemplateValueFieldEditor";
 
@@ -55,14 +55,14 @@ export class CardsLayout extends BaseLayout<ICardsLayoutProperties> {
         this.properties.documentCardFields = this.properties.documentCardFields ? this.properties.documentCardFields :
                                                 [
                                                     { name: strings.Layouts.Cards.Fields.Title, field: 'title', value: '{{slot item @root.slots.Title}}', useHandlebarsExpr: true, supportHtml: false },
-                                                    { name: strings.Layouts.Cards.Fields.Location, field: 'location', value: `<a style="color:{{@root.theme.palette.themePrimary}};font-weight:600;font-family:'{{@root.theme.fonts.small.fontFamily}}'" href="{{SPSiteUrl}}">{{SiteTitle}}</a>`, useHandlebarsExpr: true, supportHtml: true },
+                                                    { name: strings.Layouts.Cards.Fields.Location, field: 'location', value: `<a style="color:{{@root.theme.palette.themePrimary}};font-weight:600;font-family:'{{@root.theme.fonts.small.fontFamily}}'" href="{{SPSiteURL}}">{{SiteTitle}}</a>`, useHandlebarsExpr: true, supportHtml: true },
                                                     { name: strings.Layouts.Cards.Fields.Tags, field: 'tags', value: `<style>\n\t.tags {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t }\n\t.tags i { \n\t\tmargin-right: 5px; \n\t}\n\t.tags div {\n\t\tdisplay: flex;\n\t\tflex-wrap: wrap; \n\t\tjustify-content: flex-end; \n\t}\n\t.tags div span {\n\t\ttext-decoration: underline; \n\t\tmargin-right: auto; \n\t}\n </style>\n\n{{#if (slot item @root.slots.Tags)}}\n\t<div class="tags">\n\t\t<pnp-icon data-name="Tag" aria-hidden="true" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-icon>\n\t\t<div>\n\t\t\t{{#each (split (slot item @root.slots.Tags) ",") as |tag| }}\n\t\t\t\t<span>{{trim tag}}</span>\n\t\t\t{{/each}}\n\t\t</div>\n\t</div>\n{{/if}}`, useHandlebarsExpr: true, supportHtml: true },
                                                     { name: strings.Layouts.Cards.Fields.PreviewImage, field: 'previewImage',  value: "{{slot item @root.slots.PreviewImageUrl}}", useHandlebarsExpr: true, supportHtml: false },
                                                     { name: strings.Layouts.Cards.Fields.PreviewUrl, field: 'previewUrl' , value: "{{slot item @root.slots.PreviewUrl}}", useHandlebarsExpr: true, supportHtml: false },
                                                     { name: strings.Layouts.Cards.Fields.Date, field: 'date', value: "{{getDate (slot item @root.slots.Date) 'LL'}}", useHandlebarsExpr: true, supportHtml: false },
                                                     { name: strings.Layouts.Cards.Fields.Url, field: 'href', value: '{{slot item @root.slots.PreviewUrl}}', useHandlebarsExpr: true, supportHtml: false },
                                                     { name: strings.Layouts.Cards.Fields.Author, field: 'author', value: "{{slot item @root.slots.Author}}", useHandlebarsExpr: true, supportHtml: false },
-                                                    { name: strings.Layouts.Cards.Fields.ProfileImage, field: 'profileImage', value: "/_layouts/15/userphoto.aspx?size=L&username={{getUserEmail (slot item @root.slots.UserEmail)}}", useHandlebarsExpr: true, supportHtml: false  },
+                                                    { name: strings.Layouts.Cards.Fields.ProfileImage, field: 'profileImage', value: "/_layouts/15/userphoto.aspx?size=L&username={{getUserEmail (slot item @root.slots.Author)}}", useHandlebarsExpr: true, supportHtml: false  },
                                                     { name: strings.Layouts.Cards.Fields.FileExtension, field: 'fileExtension', value: "{{slot item @root.slots.FileType}}", useHandlebarsExpr: true, supportHtml: false },
                                                     { name: strings.Layouts.Cards.Fields.IsContainer, field: 'isContainer', value: "{{slot item @root.slots.IsFolder}}", useHandlebarsExpr: true, supportHtml: false }
                                                 ] as IComponentFieldsConfiguration[];

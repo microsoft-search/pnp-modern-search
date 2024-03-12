@@ -53,8 +53,10 @@ declare interface ICommonStrings {
         DataSourceDefinitionNotFound: string;
         LayoutDefinitionNotFound: string;
         ProviderDefinitionNotFound: string;
+		QueryModifierDefinitionNotFound: string;
         InvalidProviderInstance: string;
         InvalidLayoutInstance: string;
+		InvalidQueryModifierInstance: string;
         DefaultExtensibilityLibraryName: string;
       },
       OnTextLabel: string;
@@ -108,6 +110,7 @@ declare interface ICommonStrings {
         ResultSourceIdDescription: string;
         InvalidResultSourceIdMessage: string;
         EnableQueryRulesLabel: string;
+        TrimDuplicates: string;
         RefinementFilters: string;
         RefinementFiltersDescription: string;
         EnableLocalizationLabel: string;
@@ -123,6 +126,7 @@ declare interface ICommonStrings {
         TermNotFound: string;
         ApplyQueryTemplateBtnText: string;
         EnableAudienceTargetingTglLabel: string;
+        CollapseSpecificationLabel: string;
       },
       MicrosoftSearch: {
         QueryTextFieldLabel: string;
@@ -144,6 +148,14 @@ declare interface ICommonStrings {
         QueryTemplateFieldDescription: string;
         ApplyQueryTemplateBtnText: string;
         UseBetaEndpoint: string;
+        TrimDuplicates: string;
+        CollapseProperties: {
+          EditCollapsePropertiesLabel: string;
+          CollapsePropertiesDescription: string;
+          CollapsePropertiesPropertyPaneFieldLabel: string;
+          CollapseLimitFieldLabel: string;
+          CollapsePropertiesFieldColumnPlaceholder: string;
+        }
       },
       SearchCommon: {
         Sort: {
@@ -158,6 +170,9 @@ declare interface ICommonStrings {
           SortPanelSortDirectionLabel:string;
           SortDirectionColumnLabel: string;
           SortFieldColumnLabel: string;
+          SortFieldDefaultSortLabel: string;
+          SortFieldUserSortLabel: string;
+          SortFieldFriendlyNameLabel: string;
           EditSortLabel: string;
           SortInvalidSortableFieldMessage: string;
           SortFieldColumnPlaceholder: string;
@@ -172,14 +187,19 @@ declare interface ICommonStrings {
       SelectItemComboPlaceHolder: string;
       AddStaticDataLabel: string;
       TextFieldApplyButtonText: string;
+      SortByPlaceholderText: string;
+      SortByDefaultOptionText: string;
     },
     Layouts: {
       Debug: {
         Name: string;
       };
-      Custom: {
+      CustomHandlebars: {
         Name: string;
       };
+      CustomAdaptiveCards: {
+        Name: string;
+      },
       SimpleList: {
         Name: string;
         ShowFileIconLabel: string;
@@ -201,11 +221,15 @@ declare interface ICommonStrings {
         DisplayNameColumnLabel: string;
         ValueColumnLabel: string;
         ValueSortingColumnLabel: string;
+        ValueSortingColumnNoFieldsLabel: string;
         FileExtensionFieldLabel: string;
         GroupByFieldLabel: string;
+        GroupingDescription: string;
         EnableGrouping: string;
         CollapsedGroupsByDefault: string;
         ResetFieldsBtnLabel: string;
+        EnableStickyHeader: string;
+        StickyHeaderListViewHeight: string;
       };
       Cards: {
         Name: string;
@@ -263,7 +287,11 @@ declare interface ICommonStrings {
         SupportHTMLColumnLabel: string;
         ResetFieldsBtnLabel: string;
         ShowPersonaCardOnHover: string;
+        ShowPersonaCardOnHoverNative: string;
         ShowPersonaCardOnHoverCalloutMsg: string;
+        ShowPersonaCardOnHoverCalloutMsgNative: string;
+        ShowPersonaPresenceInfo: string;
+        ShowPersonaPresenceInfoCalloutMsg: string;
         Fields: {
           ImageUrl: string;
           PrimaryText: string;

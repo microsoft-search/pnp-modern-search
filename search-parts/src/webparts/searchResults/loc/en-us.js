@@ -31,7 +31,7 @@ define([], function() {
                     SlotNameFieldName: "Slot name",
                     SlotFieldFieldName: "Slot field",
                     SlotFieldPlaceholderName: "Choose a field"
-                }
+                },                
             },
             LayoutPage: {
                 LayoutSelectionGroupName: "Available layouts",
@@ -39,47 +39,56 @@ define([], function() {
                 CommonOptionsGroupName: "Common",
                 TemplateUrlFieldLabel: "Use an external template URL",
                 TemplateUrlPlaceholder: "https://myfile.html",
-                ErrorTemplateExtension: "The template must be a valid .htm or .html file",
+                ErrorTemplateExtension: "The template must be a valid .txt, .htm or .html file",
                 ErrorTemplateResolve: "Unable to resolve the specified template. Error details: '{0}'",
                 DialogButtonLabel: "Edit results template",
                 DialogTitle: "Edit results template",
                 ShowSelectedFilters: "Show selected filters",
                 ShowBlankIfNoResult: "Hide this web part if there's nothing to show",
                 ShowResultsCount: "Show results count",
-                UseMicrosoftGraphToolkit: "Use Microsoft Graph Toolkit",
-                ResultTypes: {
-                    ResultTypeslabel: "Result Types",
-                    ResultTypesDescription: "Add here the templates to use for result items according to one ore more conditions. Conditions are evaluated in the configured order and external templates take precedence over inline templates. Also make sure the data source fields you use are present in data response.",
-                    InlineTemplateContentLabel: "Inline template",
-                    EditResultTypesLabel: "Edit result types",
-                    ConditionPropertyLabel: "Data source field",
-                    ConditionValueLabel: "Condition Value",
-                    CondtionOperatorValue: "Operator",
-                    ExternalUrlLabel: "External template URL",
-                    EqualOperator: "Equals",
-                    NotEqualOperator: "Not equals",
-                    ContainsOperator: "Contains",
-                    StartsWithOperator: "Starts with",
-                    NotNullOperator: "Is not null",
-                    GreaterOrEqualOperator: "Greater or equal",
-                    GreaterThanOperator: "Greater than",
-                    LessOrEqualOperator: "Less or equal",
-                    LessThanOperator: "Less than",
-                    CancelButtonText: "Cancel",
-                    DialogButtonText: "Edit template",
-                    DialogTitle: "Edit results template",
-                    SaveButtonText: "Save"
+                HandlebarsRenderTypeLabel: "Handlebars/HTML",
+                HandlebarsRenderTypeDesc: "Select layouts based on HTML, CSS and Handlebars",
+                AdaptiveCardsRenderTypeLabel: "Adaptive Cards",
+                AdaptiveCardsRenderTypeDesc: "Select layouts based on JSON adaptive cards",
+                Handlebars: {
+                    UseMicrosoftGraphToolkit: "Use Microsoft Graph Toolkit",
+                    ResultTypes: {
+                        ResultTypeslabel: "Result Types",
+                        ResultTypesDescription: "Add here the templates to use for result items according to one ore more conditions. Conditions are evaluated in the configured order and external templates take precedence over inline templates. Also make sure the data source fields you use are present in data response.",
+                        InlineTemplateContentLabel: "Inline template",
+                        EditResultTypesLabel: "Edit result types",
+                        ConditionPropertyLabel: "Data source field",
+                        ConditionValueLabel: "Condition Value",
+                        CondtionOperatorValue: "Operator",
+                        ExternalUrlLabel: "External template URL",
+                        EqualOperator: "Equals",
+                        NotEqualOperator: "Not equals",
+                        ContainsOperator: "Contains",
+                        StartsWithOperator: "Starts with",
+                        NotNullOperator: "Is not null",
+                        GreaterOrEqualOperator: "Greater or equal",
+                        GreaterThanOperator: "Greater than",
+                        LessOrEqualOperator: "Less or equal",
+                        LessThanOperator: "Less than",
+                        CancelButtonText: "Cancel",
+                        DialogButtonText: "Edit template",
+                        DialogTitle: "Edit results template",
+                        SaveButtonText: "Save"
+                    },
+                    AllowItemSelection: "Allow items selection",
+                    AllowMultipleItemSelection: "Allow multiple selection",
+                    SelectionModeLabel: "Selection mode",
+                    AsTokensSelectionMode: "Process selected values as tokens (manual mode)",
+                    AsDataFiltersSelectionMode: "Process selected values as filters (default mode)",
+                    AsDataFiltersDescription: "In this mode, selected values are sent to the data source as regular search refiners. In this case, the chosen destination property must be refinable in the search schema.",
+                    AsTokensDescription: "In this mode, selected values are manually used through tokens and available methods. Example with SharePoint search query template: {?Title:{filters.&lt;destination_field_name&gt;.valueAsText}}",
+                    FilterValuesOperator: "The logical operator to use between selected values",
+                    FieldToConsumeLabel: "Source field to consume",
+                    FieldToConsumeDescription: "Use this field value for selected items",
                 },
-                AllowItemSelection: "Allow items selection",
-                AllowMultipleItemSelection: "Allow multiple selection",
-                SelectionModeLabel: "Selection mode",
-                AsTokensSelectionMode: "Process selected values as tokens (manual mode)",
-                AsDataFiltersSelectionMode: "Process selected values as filters (default mode)",
-                AsDataFiltersDescription: "In this mode, selected values are sent to the data source as regular search refiners. In this case, the chosen destination property must be refinable in the search schema.",
-                AsTokensDescription: "In this mode, selected values are manually used through tokens and available methods. Example with SharePoint search query template: {?Title:{filters.&lt;destination_field_name&gt;.valueAsText}}",
-                FilterValuesOperator: "The logical operator to use between selected values",
-                FieldToConsumeLabel: "Source field to consume",
-                FieldToConsumeDescription: "Use this field value for selected items"
+                AdaptiveCards: {
+                    HostConfigFieldLabel: "Host configuration"
+                }
             },
             ConnectionsPage: {
                 ConnectionsPageGroupName: "Available connections",
@@ -109,10 +118,16 @@ define([], function() {
                 Extensibility: {
                     PanelHeader: "Configure extensibility libraries to load at startup.",
                     PanelDescription: "Add/Remove your custom extensibility library IDs here. You can specify a display name and decide if the library should be loaded or not at startup. Only custom data sources, layouts, web components and Handlebars helpers will be loaded here.",
-                },
-                EnableTelemetryLabel: "PnP telemetry",
-                EnableTelemetryOn: "Turn on telemetry",
-                EnableTelemetryOff: "Turn off telemetry"
+                }
+            },
+            CustomQueryModifier: {
+                EditQueryModifiersLabel: "Configure query modifiers",
+                QueryModifiersLabel: "Custom Query modifiers",
+                QueryModifiersDescription: "Enable or disable individual custom query modifiers",
+                EnabledPropertyLabel: "Enabled",
+                ModifierNamePropertyLabel: "Name",
+                ModifierDescriptionPropertyLabel: "Description",
+                EndWhenSuccessfullPropertyLabel:"End when successfull"                
             }
         }
     }

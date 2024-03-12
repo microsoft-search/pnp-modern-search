@@ -60,7 +60,7 @@ define([], function() {
                 LayoutTemplateOptionsGroupName: "Muotoiluvaihtoehdot",
                 TemplateUrlFieldLabel: "Käytä ulkoisen templaatin URL-osoitetta",
                 TemplateUrlPlaceholder: "https://myfile.html",
-                ErrorTemplateExtension: "Templaatin pitää olla oikein muotoiltu .htm tai .html tiedosto",
+                ErrorTemplateExtension: "Templaatin pitää olla oikein muotoiltu .txt, .htm tai .html tiedosto",
                 ErrorTemplateResolve: "Templaatin tunnistaminen ei onnistunut. Virhetiedot: '{0}'",
                 FiltersTemplateFieldLabel: "Muokkaa suodatintemplaattia",
                 FiltersTemplatePanelHeader: "Muokkaa suodatintemplaattia"

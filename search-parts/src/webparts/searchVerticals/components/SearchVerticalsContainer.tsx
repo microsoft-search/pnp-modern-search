@@ -1,11 +1,15 @@
 import * as React from 'react';
 import styles from './SearchVerticalsContainer.module.scss';
 import { ISearchVerticalsContainerProps } from './ISearchVerticalsContainerProps';
-import { Pivot, PivotItem, IPivotItemProps, Icon, GlobalSettings, IChangeDescription, ITheme } from 'office-ui-fabric-react';
+import { Pivot, PivotItem, IPivotItemProps, Icon, GlobalSettings, IChangeDescription, ITheme } from '@fluentui/react';
 import { WebPartTitle } from '@pnp/spfx-controls-react/lib/WebPartTitle';
 import { PageOpenBehavior } from '../../../helpers/UrlHelper';
 import { ISearchVerticalsContainerState } from './ISearchVerticalsContainerState';
 import { BuiltinTokenNames } from '../../../services/tokenService/TokenService';
+import { isEmpty } from '@microsoft/sp-lodash-subset';
+import { Log } from '@microsoft/sp-core-library';
+
+const VerticalContainer_LogSource = "PnPModernSearch:PanelComponent";
 
 export default class SearchVerticalsContainer extends React.Component<ISearchVerticalsContainerProps, ISearchVerticalsContainerState> {
 
@@ -13,7 +17,7 @@ export default class SearchVerticalsContainer extends React.Component<ISearchVer
     super(props);
 
     this.state = {
-      selectedKey: undefined
+      selectedKey: props.defaultSelectedKey
     };
 
     // Listen to inputQueryText value change on the page
@@ -40,7 +44,7 @@ export default class SearchVerticalsContainer extends React.Component<ISearchVer
 
     const renderPivotItems = this.props.verticals.map(vertical => {
 
-      let pivotItemProps: IPivotItemProps = {};
+      const pivotItemProps: IPivotItemProps = {};
       let renderLinkIcon: JSX.Element = null;
 
       if (vertical.iconName && vertical.iconName.trim() !== "") {
@@ -49,12 +53,13 @@ export default class SearchVerticalsContainer extends React.Component<ISearchVer
 
       if (vertical.showLinkIcon) {
         renderLinkIcon = vertical.openBehavior === PageOpenBehavior.NewTab ?
-                        <Icon styles={{ root: { fontSize: 10, paddingLeft: 3 }}} iconName='NavigateExternalInline'></Icon>:
-                        <Icon styles={{ root: { fontSize: 10, paddingLeft: 3 }}} iconName='Link'></Icon>;
+                        <Icon styles={{ root: { fontSize: 10, paddingLeft: 3 }}} iconName='NavigateExternalInline' />:
+                        <Icon styles={{ root: { fontSize: 10, paddingLeft: 3 }}} iconName='Link' />;
       }
 
       return  <PivotItem
                 headerText={vertical.tabName}
+                key={vertical.key}
                 itemKey={vertical.key}                
                 onRenderItemLink={(props, defaultRender) => {
 
@@ -67,8 +72,7 @@ export default class SearchVerticalsContainer extends React.Component<ISearchVer
                     return defaultRender(props);
                   }              
                 }}
-                {...pivotItemProps}>
-              </PivotItem>;
+                {...pivotItemProps} />;
     });
 
     return  <>
@@ -90,13 +94,26 @@ export default class SearchVerticalsContainer extends React.Component<ISearchVer
     if (verticalIdx !== -1) {
 
       const vertical = this.props.verticals[verticalIdx];
-      if (vertical.isLink) {
+      if (vertical.isLink && vertical.linkUrl) {
           // Send the query to the new page
-          const behavior = vertical.openBehavior === PageOpenBehavior.NewTab ? '_blank' : '_self';
-          this.props.tokenService.resolveTokens(vertical.linkUrl).then((resolvedUrl: string) => {           
-            resolvedUrl = resolvedUrl.replace(/\{searchTerms\}|\{SearchBoxQuery\}/gi, GlobalSettings.getValue(BuiltinTokenNames.inputQueryText));
-            window.open(resolvedUrl, behavior);
-          });
+          this.props.tokenService.resolveTokens(vertical.linkUrl).then((resolvedUrl: string) => {      
+            const inputQueryText: string = !isEmpty(GlobalSettings.getValue(BuiltinTokenNames.inputQueryText)) ?  GlobalSettings.getValue(BuiltinTokenNames.inputQueryText) : "";    
+            resolvedUrl = resolvedUrl.replace(/\{inputQueryText\}|\{searchTerms\}|\{SearchBoxQuery\}/gi, inputQueryText);
+            resolvedUrl = resolvedUrl.replace(inputQueryText,encodeURIComponent(inputQueryText));
+
+            if(vertical.openBehavior === PageOpenBehavior.NewTab){
+              window.open(resolvedUrl, "_blank");
+            }else{
+              // Allow SharePoint to intercept the click and do a soft navigation
+              document.body.insertAdjacentHTML('beforeend', `<a href="${resolvedUrl}" style="display:none;"></a>`);
+              const anchor = document.body.lastElementChild as HTMLElement; 
+              anchor.click();
+              document.body.removeChild(anchor);
+            }
+
+          }).catch(error => {
+            Log.warn(VerticalContainer_LogSource, `Error navigating to vertical '${vertical.tabValue}' ${error}`);
+        });
           
       } else {
 

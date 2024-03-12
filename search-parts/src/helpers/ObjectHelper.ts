@@ -1,4 +1,3 @@
-import { isArray } from '@pnp/common/util';
 import * as jspath from 'jspath';
 import { isEmpty } from '@microsoft/sp-lodash-subset';
 
@@ -41,6 +40,10 @@ export class ObjectHelper {
      * @returns the property value as string if found, 'undefined' otherwise
      */
     public static byPath(object: any, path: string, delimiter?: string): string  {
+
+        if(typeof object == "object" && path in object && !delimiter){
+            return object[path];
+        }
 
         let isValidPredicate = true;
         

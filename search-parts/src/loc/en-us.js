@@ -54,12 +54,14 @@ define([], function() {
             },
             Extensibility: {
                 InvalidDataSourceInstance: "The selected data source '{0}' does not implement the 'BaseDataSource' abstract class correctly. Some methods are missing.",
-                DataSourceDefinitionNotFound: "The custom data source with key '{0}' was not found. Make sure the solution is correctly deployed to the app caltog and the manifest ID registered for this Web Part.",
-                LayoutDefinitionNotFound: "The custom layout with key '{0}' was not found. Make sure the solution is correctly deployed to the app caltog and the manifest ID registered for this Web Part.",
+                DataSourceDefinitionNotFound: "The custom data source with key '{0}' was not found. Make sure the solution is correctly deployed to the app catalog and the manifest ID registered for this Web Part.",
+                LayoutDefinitionNotFound: "The custom layout with key '{0}' was not found. Make sure the solution is correctly deployed to the app catalog and the manifest ID registered for this Web Part.",
                 InvalidLayoutInstance: "The selected layout '{0}' does not implement the 'BaseLayout' abstract class correctly. Some methods are missing.",
                 DefaultExtensibilityLibraryName: "Default extensibility library",
                 InvalidProviderInstance: "The selected suggestions provider '{0}' does not implement the 'BaseSuggestionProvider' abstract class correctly. Some methods are missing.",
-                ProviderDefinitionNotFound: "The custom suggestions provider with key '{0}' was not found. Make sure the solution is correctly deployed to the app caltog and the manifest ID registered for this Web Part.",
+                ProviderDefinitionNotFound: "The custom suggestions provider with key '{0}' was not found. Make sure the solution is correctly deployed to the app catalog and the manifest ID registered for this Web Part.",
+                QueryModifierDefinitionNotFound: "The custom queryModifier with key '{0}' was not found. Make sure the solution is correctly deployed to the app catalog and the manifest ID registered for this Web Part.",
+                InvalidQueryModifierInstance: "The selected custom queryModifier '{0}' does not implement the 'BaseQueryModifier' abstract class correctly. Some methods are missing."
             },
             DateFromLabel: "From",
             DateTolabel: "To",
@@ -79,11 +81,11 @@ define([], function() {
             },
             DateIntervalStrings: {
                 AnyTime: "Any time",
-                PastDay: "From past 24 hours to past week",
-                PastWeek: "From past week to past month",
-                PastMonth: "From past month to past 3 months",
-                Past3Months: "From past 3 months to past year",
-                PastYear: "From past year",
+                PastDay: "Past 24 hours",
+                PastWeek: "From past 24 hours to past week",
+                PastMonth: "From past week to past month",
+                Past3Months: "From past month to past 3 months",
+                PastYear: "From past 3 months to past year",
                 Older: "Older than a year"
             },
             SameTabOpenBehavior: "Use the current tab",
@@ -101,7 +103,7 @@ define([], function() {
                 SourceName: "SharePoint Search",
                 SourceConfigurationGroupName: "Source configuration",
                 QueryTextFieldLabel: "Query text",
-                QueryTextFieldInfoMessage: "Use the <strong>Available connections</strong> Web Part configuration tab to specifiy either a static value or a value from a dynamic component on the page like a searchbox",
+                QueryTextFieldInfoMessage: "Use the <strong>Available connections</strong> Web Part configuration tab to specify either a static value or a value from a dynamic component on the page like a searchbox",
                 QueryTemplateFieldLabel: "Query template",
                 QueryTemplatePlaceHolderText: "ex: Path:{Site}",
                 QueryTemplateFieldDescription: "The search query template. You can also use {<tokens>} to build a dynamic query.",
@@ -123,7 +125,9 @@ define([], function() {
                 HitHighlightedPropertiesFieldDescription: "Provide the list of managed properties to hit highlight (i.e. Department,UserName).",
                 TermNotFound: "(Term with ID '{0}' not found)",
                 ApplyQueryTemplateBtnText: "Apply",
-                EnableAudienceTargetingTglLabel: "Enable audience targeting"
+                EnableAudienceTargetingTglLabel: "Enable audience targeting",
+                TrimDuplicates: "Trim duplicates",
+                CollapseSpecificationLabel: "Collapse specification"
             },
             MicrosoftSearch: {
                 QueryTextFieldLabel: "Query text",
@@ -144,12 +148,20 @@ define([], function() {
                 QueryTemplatePlaceHolderText: "ex: {searchTerms} IsDocument:true",
                 QueryTemplateFieldDescription: "The search query template. You can also use {<tokens>} and KQL to build a dynamic query.",
                 ApplyQueryTemplateBtnText: "Apply",
-                UseBetaEndpoint: "Use beta endpoint"
+                UseBetaEndpoint: "Use beta endpoint",
+                TrimDuplicates: "Trim duplicates",
+                CollapseProperties: {
+                    EditCollapsePropertiesLabel: "Edit collapse settings",
+                    CollapsePropertiesDescription: "Specify the collapse settings for the search results. You can either select a field from the dropdown list (only if the data source data have already be fetched) or type your own custom value (press 'Enter' to save your entry)",
+                    CollapsePropertiesPropertyPaneFieldLabel: "Collapse settings",
+                    CollapseLimitFieldLabel: "Limit",
+                    CollapsePropertiesFieldColumnPlaceholder: "Collapse on field"
+                }
             },
             SearchCommon: {
                 Sort: {
-                    SortPropertyPaneFieldLabel: "Sort order",
-                    SortListDescription: "Specify the initial sort order for the search results. You can either select a field from the dropdown list (only if the data source data have already be fetched) or type your own custom value (press 'Enter' to save your entry)",
+                    SortPropertyPaneFieldLabel: "Sort settings",
+                    SortListDescription: "Specify the sort settings for the search results. You can either select a field from the dropdown list (only if the data source data have already be fetched) or type your own custom value (press 'Enter' to save your entry)",
                     SortDirectionAscendingLabel: "Ascending",
                     SortDirectionDescendingLabel: "Descending",
                     SortErrorMessage: "Invalid search property (Check if the managed property is sortable).",
@@ -159,7 +171,10 @@ define([], function() {
                     SortPanelSortDirectionLabel: "Sort Direction",
                     SortDirectionColumnLabel: "Direction",
                     SortFieldColumnLabel: "Field name",
-                    EditSortLabel: "Edit sort order",
+                    SortFieldDefaultSortLabel: "Default sort",
+                    SortFieldFriendlyNameLabel: "Sort field display name",
+                    SortFieldUserSortLabel: "User sort",
+                    EditSortLabel: "Edit sort settings",
                     SortInvalidSortableFieldMessage: "This property is not sortable",
                     SortFieldColumnPlaceholder: "Select field..."
                 }
@@ -172,13 +187,18 @@ define([], function() {
             TextDialogSaveButtonText: "Save",
             SelectItemComboPlaceHolder: "Select property",
             AddStaticDataLabel: "Add static data",
-            TextFieldApplyButtonText: "Apply"
+            TextFieldApplyButtonText: "Apply",
+            SortByPlaceholderText: "Sort by...",
+            SortByDefaultOptionText: "Default"
         },
         Layouts: {
             Debug: {
                 Name: "Debug"
             },
-            Custom: {
+            CustomHandlebars: {
+                Name: "Custom"
+            },
+            CustomAdaptiveCards: {
                 Name: "Custom"
             },
             SimpleList: {
@@ -200,13 +220,17 @@ define([], function() {
                 ManageDetailsListColumnDescription: "Add, update or remove columns for the details list layout. You can use either property values in the list directly without any transformation or use an Handlebars expression in the value field. HTML is supported for all fields as well.",
                 ManageDetailsListColumnLabel: "Manage columns",
                 ValueColumnLabel: "Column value",
-                ValueSortingColumnLabel: "Column value sorting",
+                ValueSortingColumnLabel: "Select sort field...",
+                ValueSortingColumnNoFieldsLabel: "No fields available",
                 DisplayNameColumnLabel: "Column display name",
                 FileExtensionFieldLabel: "Field to use for file extension",
                 GroupByFieldLabel: "Group by field",
                 EnableGrouping: "Enable grouping",
+                GroupingDescription: "Ensure you have data showing in the result web part for a list of properties to show.",
                 CollapsedGroupsByDefault: "Show collapsed",
-                ResetFieldsBtnLabel: "Reset fields to default values"
+                ResetFieldsBtnLabel: "Reset fields to default values",
+                EnableStickyHeader: "Enable sticky header",
+                StickyHeaderListViewHeight: "List view height (in px)"
             },
             Cards: {
                 Name: "Cards",
@@ -265,6 +289,10 @@ define([], function() {
                 ResetFieldsBtnLabel: "Reset fields to default values",
                 ShowPersonaCardOnHover: "Show persona card on hover",
                 ShowPersonaCardOnHoverCalloutMsg: "This feature uses Microsoft Graph to display information about the user and needs the following API permissions in your tenant to work: ['User.Read','People.Read','Contacts.Read','User.Read.All'].",
+                ShowPersonaCardOnHoverNative: "Show persona card on hover (LPC)",                
+                ShowPersonaCardOnHoverCalloutMsgNative: "This feature uses the native SharePoint implementation to show the live persona card (LPC). See https://pnp.github.io/sp-dev-fx-controls-react/controls/LivePersona/ for considerations.",
+                ShowPersonaPresenceInfo: "Show presence",
+                ShowPersonaPresenceInfoCalloutMsg: "This feature needs the following API permissions in your tenant to work: ['Presence.Read.All']",
                 Fields: {
                     ImageUrl: "Image URL",
                     PrimaryText: "Primary text",

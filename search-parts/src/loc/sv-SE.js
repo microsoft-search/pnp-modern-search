@@ -60,6 +60,8 @@ define([], function () {
           DefaultExtensibilityLibraryName: "Standardutbyggnadsbibliotek",
           InvalidProviderInstance: "Den valda förslagsleverantören '{0}' implementerar inte abstraktklassen 'BaseSuggestionProvider' korrekt. Vissa metoder saknas.",
           ProviderDefinitionNotFound: "Den anpassade förslagsleverantören med nyckeln '{0}' hittades inte. Se till att lösningen är korrekt implementerad för appkatalogen och att manifest-ID:t är registrerat för denna webbdel.",
+          QueryModifierDefinitionNotFound: "Den anpassade queryModifier med nyckeln '{0}' hittades inte. Kontrollera att lösningen är korrekt distribuerad till appkatalogen och att manifest-ID:et har registrerats för den här webbdelen.",
+          InvalidQueryModifierInstance: "Den valda anpassade queryModifier '{0}' implementerar inte den abstrakta klassen 'BaseQueryModifier' korrekt. Vissa metoder saknas.",
         },
         DateFromLabel: "Från",
         DateTolabel: "Till",
@@ -79,11 +81,11 @@ define([], function () {
         },
         DateIntervalStrings: {
           AnyTime: "När som helst",
-          PastDay: "Från senaste 24 timmarna till senaste veckan",
-          PastWeek: "Från förra veckan till förra månaden",
-          PastMonth: "Från förra månaden till de senaste tre månaderna",
-          Past3Months: "Från de senaste tre månaderna till det senaste året",
-          PastYear: "Från förra året",
+          PastDay: "Senaste 24 timmarna",
+          PastWeek: "Från senaste 24 timmarna till senaste veckan",
+          PastMonth: "Från senaste veckan till senaste månaden",
+          Past3Months: "Från senaste månaden till senaste 3 månaderna",
+          PastYear: "Från de senaste 3 månaderna till det senaste året",
           Older: "Äldre än ett år" 
         },
         SameTabOpenBehavior: "Använd den aktuella fliken",
@@ -123,7 +125,9 @@ define([], function () {
           HitHighlightedPropertiesFieldDescription: "Tillhandahåll lista över hanterade egenskaper till träffmarkeringar. ",
           TermNotFound: "(Term med ID '{0}' hittades inte)",
           ApplyQueryTemplateBtnText: "Tillämpa",
-          EnableAudienceTargetingTglLabel: "Aktivera målgruppsanpassning"
+          EnableAudienceTargetingTglLabel: "Aktivera målgruppsanpassning",
+          TrimDuplicates: "Trimma dubbletter",
+          CollapseSpecificationLabel: "Komprimera specifikationen"
         },
         MicrosoftSearch: {
           QueryTextFieldLabel: "Sökfrågetext",
@@ -144,7 +148,15 @@ define([], function () {
           QueryTemplatePlaceHolderText: "ex: {searchTerms} IsDocument:true",
           QueryTemplateFieldDescription: "Sökmodifieringsmallen. Du kan också använda {<tokens>} och KQL för att bygga en dynamisk fråga. Allt är kopplat till inputQueryText",
           ApplyQueryTemplateBtnText: "Tillämpa",
-          UseBetaEndpoint: "Använd beta endpoint"
+          UseBetaEndpoint: "Använd beta endpoint",
+          TrimDuplicates: "Trimma dubbletter",
+          CollapseProperties: {
+              EditCollapsePropertiesLabel: "Redigera komprimeringsinställningar",
+              CollapsePropertiesDescription: "Ange komprimeringsinställningarna för sökresultaten. Du kan antingen välja ett fält från rullgardinsmenyn (endast om datakällans data redan har hämtats) eller ange ditt eget anpassade värde (tryck på 'Enter' för att spara din post)",
+              CollapsePropertiesPropertyPaneFieldLabel: "Kollapsinställningarna",
+              CollapseLimitFieldLabel: "Begränsa",
+              CollapsePropertiesFieldColumnPlaceholder: "Komprimera efter fält"
+          }
         },
         SearchCommon: {
           Sort: {
@@ -159,9 +171,13 @@ define([], function () {
             SortPanelSortDirectionLabel: "Sorteringsriktning",
             SortDirectionColumnLabel: "Riktning",
             SortFieldColumnLabel: "Fältnamn",
+            SortFieldDefaultSortLabel: "Standardsortering",
+            SortFieldFriendlyNameLabel: "Sorteringsfältets visningsnamn",
+            SortFieldUserSortLabel: "Användarsortering",
             EditSortLabel: "Redigera sorteringsordning",
             SortInvalidSortableFieldMessage: "Den här egenskapen kan inte sorteras",
-            SortFieldColumnPlaceholder: "Välj fält..."
+            SortFieldColumnPlaceholder: "Välj fält...",
+            SortByDefaultOptionText: "Standard"
           }
         }
       },
@@ -172,13 +188,17 @@ define([], function () {
         TextDialogSaveButtonText: "Spara",
         SelectItemComboPlaceHolder: "Välj egenskap",
         AddStaticDataLabel: "Lägg till statisk data",
-        TextFieldApplyButtonText: "Tillämpa"
+        TextFieldApplyButtonText: "Tillämpa",
+        SortByPlaceholderText: "Sortera efter..."
       },
       Layouts: {
         Debug: {
           Name: "Debug"
         },
-        Custom: {
+        CustomHandlebars: {
+          Name: "Anpassad"
+        },
+        CustomAdaptiveCards: {
           Name: "Anpassad"
         },
         SimpleList: {
@@ -193,20 +213,24 @@ define([], function () {
           MaximumWidthColumnLabel: "Maximal bredd (px)",
           SortableColumnLabel: "Sorterbar",
           ResizableColumnLabel: "Storleken kan redigeras",
-          MultilineColumnLabel: "Flera linjer",
+          MultilineColumnLabel: "Flera rader",
           LinkToItemColumnLabel: "Länk till artikel",
           CompactModeLabel: "Kompakt läge",
           ShowFileIcon: "Visa filikon",
           ManageDetailsListColumnDescription: "Lägg till, uppdatera eller ta bort kolumner från layouten i detaljlistan. Du kan antingen använda egenskapsvärden i listan direkt utan någon omvandling, eller så kan du använda ett styruttryck som fältets värde. HTML stöds för användning i alla fält.",
           ManageDetailsListColumnLabel: "Hantera kolumner",
           ValueColumnLabel: "Kolumnvärde",
-          ValueSortingColumnLabel: "Kolumnvärde sortering",
+          ValueSortingColumnLabel: "Välj sorteringsfält...",
+          ValueSortingColumnNoFieldsLabel: "Inga fält tillgängliga",
           DisplayNameColumnLabel: "Kolumnens visningsnamn",
           FileExtensionFieldLabel: "Fält för användning av filtillägg",
           GroupByFieldLabel: "Gruppera efter fält",
           EnableGrouping: "Aktivera gruppering",
+          GroupingDescription: "Se till att du har data som visas i resultatwebbdelen för en lista över egenskaper att visa.",
           CollapsedGroupsByDefault: "Visa kollapsade",
-          ResetFieldsBtnLabel: "Återställ fält till standardvärden"
+          ResetFieldsBtnLabel: "Återställ fält till standardvärden",
+          EnableStickyHeader: "Aktivera fast rubrik",
+          StickyHeaderListViewHeight: "Höjd för listvy (px)",
         },
         Cards: {
           Name: "Kort",
@@ -264,7 +288,10 @@ define([], function () {
           SupportHTMLColumnLabel: "Tillåt HTML",
           ResetFieldsBtnLabel: "Återställ fält till standardvärden",
           ShowPersonaCardOnHover: "Visa personakort genom att föra musen över",
+          ShowPersonaCardOnHoverNative: "Visa personakort genom att föra musen över (LPC)",
           ShowPersonaCardOnHoverCalloutMsg: "Denna funktion använder Microsoft Graph för att visa information om användaren och måste använda följande API-behörigheter i din klient för att den ska fungera: ['User.Read','People.Read','Contacts.Read','User.Read.All'].",
+          ShowPersonaPresenceInfo: "Visa närvaro",
+          ShowPersonaPresenceInfoCalloutMsg: "Denna funktion kräver följande API-behörigheter i din klient för att fungera: ['Presence.Read.All']",
           Fields: {
             ImageUrl: "Bild URL",
             PrimaryText: "Primärtext",

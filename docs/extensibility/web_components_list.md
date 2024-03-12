@@ -2,14 +2,16 @@
 
 Here are the list of all **reusable** web components you can use to customize your templates. 
 
-- [&lt;pnp-iconfile&gt;](#ltpnp-iconfilegt)
-- [&lt;pnp-documentcard&gt;](#ltpnp-documentcardgt)
-- [&lt;pnp-filepreview&gt;](#ltpnp-filepreviewgt)
-- [&lt;pnp-icon&gt;](#ltpnp-icongt)
-- [&lt;pnp-panel&gt;](#ltpnp-panelgt)
-- [&lt;pnp-collapsible&gt;](#ltpnp-collapsiblegt)
-- [&lt;pnp-persona&gt;](#ltpnp-personagt)
-- [&lt;pnp-img&gt;](#ltpnp-imggt)
+- [Builtin web components](#builtin-web-components)
+  - [`<pnp-iconfile>`](#pnp-iconfile)
+  - [`<pnp-documentcard>`](#pnp-documentcard)
+  - [`<pnp-filepreview>`](#pnp-filepreview)
+  - [`<pnp-icon>`](#pnp-icon)
+  - [`<pnp-panel>`](#pnp-panel)
+  - [`<pnp-collapsible>`](#pnp-collapsible)
+  - [`<pnp-persona>`](#pnp-persona)
+  - [`<pnp-img>`](#pnp-img)
+  - [`<pnp-breadcrumb>`](#pnp-breadcrumb)
 
 > All other web components you will see in builtin layout templates are considered **internal** and are not supported for custom use.
 
@@ -189,7 +191,10 @@ Here are the list of all **reusable** web components you can use to customize yo
     data-secondary-text="Unknown"
     data-tertiary-text=""
     data-optional-text="514 928 0000"
-    data-persona-size="" >
+    data-persona-size=""
+    data-native-lpc=true
+    data-show-presence=true
+    data-user-object-id="[GUID]">
 </pnp-persona>
 ```
 
@@ -201,6 +206,9 @@ Here are the list of all **reusable** web components you can use to customize yo
 |**data-tertiary-text**|The tertiary text to display (ex: work phone).
 |**data-optional-text**|The optional text to display.
 |**data-persona-size**|The size of the persona **item** to display (no only the picture). Valid values are <ul><li>tiny = 0</li><li>extraExtraSmall = 1</li><li>extraSmall = 2</li><li>small = 3</li><li>regular = 4</li><li>large = 5</li><li>extraLarge = 6</li></ul>
+|**data-native-lpc**|Enable SharePoint native Live Persona Card on hover.
+|**data-show-presence**|Show the user's presence-information.
+|**data-user-object-id**|The person's Entra ID Object-ID (a GUID normally provided by the default-slot "PersonQuery" which is mapped to managed property "AADObjectID")
 
 ## `<pnp-img>` 
 - **Description**: Display an image with support for fallback behavior.
@@ -215,3 +223,50 @@ Here are the list of all **reusable** web components you can use to customize yo
 | --------- | ----------- |
 |**errorImage**|URL to the fallback image
 |**hideOnError**|Hide image on error
+
+## `<pnp-breadcrumb>` 
+- **Description**: Render a breadcrumb path of a SharePoint entity (file, item, folder, document library etc.).
+
+!["Breadcrumb component"](../assets/extensibility/web_components/breadcrumb_component.png){: .center}
+
+- **Usage**:
+
+Get started with:
+```html
+<pnp-breadcrumb 
+    data-path="{{OriginalPath}}"
+    data-site-url="{{SPSiteURL}}"
+    data-web-url="{{SPWebUrl}}"
+    data-entity-title="{{Title}}"
+    data-entity-file-type="{{FileType}}"
+/>
+```
+Use all properties:
+```html
+<pnp-breadcrumb 
+    data-path="{{OriginalPath}}"
+    data-site-url="{{SPSiteURL}}"
+    data-web-url="{{SPWebUrl}}"
+    data-entity-title="{{Title}}"
+    data-entity-file-type="{{FileType}}"
+    data-include-site-name="false" 
+    data-include-entity-name="true"
+    data-breadcrumb-items-as-links="true"
+    data-max-displayed-items="3"
+    data-overflow-index="0"
+    data-font-size="12"
+/>
+```
+|Parameter|Description|
+|--|--|
+|data-path|Used for creating the breadcrumb path. Component is designed to receive `OriginalPath` or `Path` property. Property is required for rendering the breadcrumb path. `String`|
+|data-site-url|Used for creating the breadcrumb path. Component is designed to receive `SPSiteURL` property. Property is required for rendering the breadcrumb path. `String`|
+|data-web-url|Used for creating the breadcrumb path. Component is designed to receive `SPWebUrl` property. Property is required for rendering the breadcrumb path. `String`|
+|data-entity-title|Used for creating the breadcrumb path. Component is designed to receive `Title` property. Property is required for rendering the breadcrumb path. `String`|
+|data-entity-file-type|Used for creating the breadcrumb path. Component is designed to receive `FileType` property. Property is required for rendering the breadcrumb path. `String`|
+|data-include-site-name|If the site name should be included in the breadcrumb items. Optional, default value `true`. `Boolean`|
+|data-include-entity-name|If the entity name should be included in the breadcrumb items. If the value is set to `false`, not only is the entity name excluded from the breadcrumb path, but also the last item in the breadcrumb path is not highlighted in bold. Optional, default value `true`. `Boolean`|
+|data-breadcrumb-items-as-links|If the breadcrumb items should be clickable links to the path they represent. Optional, default value `true`. `Boolean`|
+|data-max-displayed-items|The maximum number of breadcrumb items to display before coalescing. If not specified, all breadcrumbs will be rendered. Optional, default value `3`. `Int`|
+|data-overflow-index| Index where overflow items will be collapsed. Optional, default value `0`. `Int`|
+|data-font-size|Font size of breadcrumb items. Optional, default value `12`. `Int`|

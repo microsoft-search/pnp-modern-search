@@ -1,5 +1,5 @@
 .pnp-modern-search {
-    @import "~office-ui-fabric-react/dist/sass/_References.scss";
+    @import '~@fluentui/react/dist/sass/References.scss';
     .template,
     .placeholder {
         &--defaultList {
@@ -114,6 +114,14 @@
             justify-content: space-between;
             align-items: stretch;
             padding: 10px;
+        }
+        &--header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        &--sort {
+            padding: 18px;
         }
         &--card {
             box-sizing: border-box;

@@ -60,6 +60,8 @@ define([], function() {
               DefaultExtensibilityLibraryName: "Domyślna biblioteka rozszerzalności",
               InvalidProviderInstance: "Wybrany dostawca sugestii '{0}' nie implementuje poprawnie abstrakcyjnej klasy 'BaseSuggestionProvider'. Brakuje niektórych metod.",
               ProviderDefinitionNotFound: "Nie znaleziono niestandardowego dostawcy sugestii o kluczu '{0}'. Upewnij się, że rozwiązanie jest poprawnie wdrożone do katalogu aplikacji oraz ID manifetu jest zarejetrowany dla tego składnika Web Part.",
+              QueryModifierDefinitionNotFound: "Nie znaleziono niestandardowego modyfikatora zapytania z kluczem '{0}'. Upewnij się, że rozwiązanie jest poprawnie wdrożone do katalogu aplikacji i identyfikatora manifestu zarejestrowanego dla tej części Web Part.",
+              InvalidQueryModifierInstance: "Wybrany niestandardowy queryModifier '{0}' nie implementuje poprawnie klasy abstrakcyjnej 'BaseQueryModifier'. Brakuje niektórych metod."
           },
           DateFromLabel: "Od",
           DateTolabel: "Do",
@@ -78,13 +80,13 @@ define([], function() {
               invalidInputErrorMessage: 'Nieprawidłowy format daty.'
           },
           DateIntervalStrings: {
-              AnyTime: "Dowolny czas",
-              PastDay: "Ostatnie 24 godziny",
-              PastWeek: "Ostatni tydzień",
-              PastMonth: "Ostatni miesiąc",
-              Past3Months: "Ostatie 3 miesiące",
-              PastYear: "Ostatni rok",
-              Older: "Starsze niż rok"
+            AnyTime: "Kiedykolwiek",
+            PastDay: "Ostatnie 24 godziny",
+            PastWeek: "Od ostatnich 24 godzin do zeszłego tygodnia",
+            PastMonth: "Od ostatniego tygodnia do ostatniego miesiąca",
+            Past3Months: "Od ostatniego miesiąca do ostatnich 3 miesięcy",
+            PastYear: "Od ostatnich 3 miesięcy do zeszłego roku",
+            Older: "Starsze niż rok"
           },
           SameTabOpenBehavior: "Użyj bieżącej karty",
           NewTabOpenBehavior: "Otwórz w nowej karcie",
@@ -123,7 +125,9 @@ define([], function() {
               HitHighlightedPropertiesFieldDescription: "Podaj listę właściwości zarządzanych w celu wyróżniania trafień.",
               TermNotFound: "(Nie znaleziono terminu o identyfikatorze '{0}')",
               ApplyQueryTemplateBtnText: "Zastosuj",
-              EnableAudienceTargetingTglLabel: "Włącz audiencje"
+              EnableAudienceTargetingTglLabel: "Włącz audiencje",
+              TrimDuplicates: "Przytnij duplikaty",
+              CollapseSpecificationLabel: "Zwiń specyfikację"
           },
           MicrosoftSearch: {
               QueryTextFieldLabel: "Tekst zapytania",
@@ -144,7 +148,15 @@ define([], function() {
               QueryTemplatePlaceHolderText: "ex: {searchTerms} IsDocument:true",
               QueryTemplateFieldDescription: "Szablon modyfikatora wyszukiwania. Możesz również użyć {<tokenów>} i KQL do zbudowania dynamicznego zapytania. Wszystko jest połączone z inputQueryText",
               ApplyQueryTemplateBtnText: "Zastosuj",
-              UseBetaEndpoint: "Użyj punktu końcowego wersji beta"
+              UseBetaEndpoint: "Użyj punktu końcowego wersji beta",
+              TrimDuplicates: "Przytnij duplikaty",
+              CollapseProperties: {
+                  EditCollapsePropertiesLabel: "Edytuj ustawienia zwijania",
+                  CollapsePropertiesDescription: "Określ ustawienia zwijania wyników wyszukiwania. Możesz wybrać pole z listy rozwijanej (tylko jeśli dane ze źródła danych zostały już pobrane) lub wpisać własną wartość niestandardową (naciśnij „Enter”, aby zapisać wpis)",
+                  CollapsePropertiesPropertyPaneFieldLabel: "Ustawienia zwinięcia",
+                  CollapseLimitFieldLabel: "Limit",
+                  CollapsePropertiesFieldColumnPlaceholder: "Zwiń według pola"
+              }
           },
           SearchCommon: {
               Sort: {
@@ -159,6 +171,9 @@ define([], function() {
                   SortPanelSortDirectionLabel: "Kierunek sortowania",
                   SortDirectionColumnLabel: "Kierunek",
                   SortFieldColumnLabel: "Nazwa pola",
+                  SortFieldDefaultSortLabel: "Sortowanie domyślne",
+                  SortFieldFriendlyNameLabel: "Wyświetlana nazwa pola sortowania",
+                  SortFieldUserSortLabel: "Sortowanie użytkowników",
                   EditSortLabel: "Edytuj porządek sortowania",
                   SortInvalidSortableFieldMessage: "Ta właściwość nie jest sortowalna",
                   SortFieldColumnPlaceholder: "Wybierz pole..."
@@ -172,14 +187,19 @@ define([], function() {
           TextDialogSaveButtonText: "Zapisz",
           SelectItemComboPlaceHolder: "Wybierz właściwość",
           AddStaticDataLabel: "Dodaj dane statyczne",
-          TextFieldApplyButtonText: "Zastosuj"
+          TextFieldApplyButtonText: "Zastosuj",
+          SortByPlaceholderText: "Sortuj według...",
+          SortByDefaultOptionText: "Domyślna"
       },
       Layouts: {
           Debug: {
               Name: "Diagnostyczny"
           },
-          Custom: {
-              Name: "Niestandardowy"
+          CustomHandlebars: {
+            Name: "Niestandardowy"
+          },
+          CustomAdaptiveCards: {
+            Name: "Niestandardowy"
           },
           SimpleList: {
               Name: "Lista",
@@ -200,12 +220,17 @@ define([], function() {
               ManageDetailsListColumnDescription: "Dodawaj, usuwaj i aktualizuj kolumny układu listy ze szczegółami. Możesz używać wartości pól bezpośrednio bez żadnych przekształceń lub użyć wyrażeń Handlebars. HTML jest wspierany przez wszystkie pola.",
               ManageDetailsListColumnLabel: "Zarządzaj kolumnami",
               ValueColumnLabel: "Wartość kolumny",
+              ValueSortingColumnLabel: "Wybierz pole sortowania...",
+              ValueSortingColumnNoFieldsLabel: "Brak dostępnych pól",
               DisplayNameColumnLabel: "Nazwa wyświetlana kolumny",
               FileExtensionFieldLabel: "Pole używane dla rozszerzenia pliku",
               GroupByFieldLabel: "Grupuj po polu",
               EnableGrouping: "Grupowanie włączone",
+              GroupingDescription: "Upewnij się, że dane są wyświetlane w wynikowym składniku Web Part, aby wyświetlić listę właściwości.",
               CollapsedGroupsByDefault: "Pokaż zapadnięte",
-              ResetFieldsBtnLabel: "Resetuj pola do wartości domyślnych"
+              ResetFieldsBtnLabel: "Resetuj pola do wartości domyślnych",
+              EnableStickyHeader: "Włącz lepką nagłówkę",
+              StickyListViewHeight: "Wysokość listy ze szczegółami (px)"
           },
           Cards: {
               Name: "Karty",
@@ -263,7 +288,10 @@ define([], function() {
               SupportHTMLColumnLabel: "Zezwalaj na HTML",
               ResetFieldsBtnLabel: "Resetuj pola do wartości domyślnych",
               ShowPersonaCardOnHover: "Pokaż kartę po wskazaniu",
+              ShowPersonaCardOnHoverNative: "Pokaż kartę po wskazaniu (LPC)",
               ShowPersonaCardOnHoverCalloutMsg: "Ta funkcja używa Microsoft Graph aby wyświetlić informacje o użytkowniku i wymaga następujcych uprawnień API: ['User.Read','People.Read','Contacts.Read','User.ReadBasic.All'].",
+              ShowPersonaPresenceInfo: "Pokaż obecność",
+              ShowPersonaPresenceInfoCalloutMsg: "Ta funkcja wymaga następujących uprawnień API w dzierżawie do działania: ['Presence.Read.All'].",
               Fields: {
                   ImageUrl: "URL obrazu",
                   PrimaryText: "Tekst podstawowy",

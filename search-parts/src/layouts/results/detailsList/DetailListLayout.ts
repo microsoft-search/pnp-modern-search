@@ -1,13 +1,13 @@
 import * as React from "react";
-import { BaseLayout } from "@pnp/modern-search-extensibility";
+import { BaseLayout, IDataContext } from "@pnp/modern-search-extensibility";
 import * as strings from 'CommonStrings';
-import * as propertyControlStrings from 'PropertyControlStrings';
-import { Checkbox, ICheckboxProps, IComboBoxOption } from 'office-ui-fabric-react';
+import { IComboBoxOption } from '@fluentui/react';
 import { IDetailsListColumnConfiguration } from '../../../components/DetailsListComponent';
 import { IPropertyPaneField, PropertyPaneToggle, PropertyPaneDropdown, PropertyPaneHorizontalRule, PropertyPaneButton, PropertyPaneButtonType } from '@microsoft/sp-property-pane';
 import { TemplateValueFieldEditor, ITemplateValueFieldEditorProps } from '../../../controls/TemplateValueFieldEditor/TemplateValueFieldEditor';
 import { AsyncCombo } from "../../../controls/PropertyPaneAsyncCombo/components/AsyncCombo";
 import { IAsyncComboProps } from "../../../controls/PropertyPaneAsyncCombo/components/IAsyncComboProps";
+import { PropertyFieldNumber } from "@pnp/spfx-property-controls/lib/PropertyFieldNumber";
 
 /**
  * Details List Builtin Layout
@@ -48,6 +48,16 @@ export interface IDetailsListLayoutProperties {
      * If groups should collapsed by default
      */
     groupsCollapsed: boolean;
+
+    /**
+     * If the header should be sticky
+     */
+    enableStickyHeader: boolean;
+
+    /**
+     * The height of the list view when sticky header is enabled
+     */
+    stickyHeaderListViewHeight: number;
 }
 
 export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> {
@@ -56,6 +66,7 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
      * Dynamically loaded components for property pane
      */
     private _propertyFieldCollectionData: any = null;
+    private _propertyPaneWebPartInformation: any = null;
     private _customCollectionFieldType: any = null;
 
     public async onInit(): Promise<void> {
@@ -66,18 +77,16 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
                 {
                     name: 'Title',
                     value: '<a href="{{slot item @root.slots.PreviewUrl}}" target="_blank" style="color: {{@root.theme.semanticColors.link}}">\n\t{{slot item @root.slots.Title}}\n</a>',
-                    valueSorting: 'Title',
                     useHandlebarsExpr: true,
                     minWidth: '80',
                     maxWidth: '300',
-                    enableSorting: true,
+                    enableSorting: false,
                     isMultiline: false,
                     isResizable: true
                 },
                 {
                     name: 'Created',
                     value: "{{getDate (slot item @root.slots.Date) 'LL'}}",
-                    valueSorting: 'Created',
                     useHandlebarsExpr: true,
                     minWidth: '80',
                     maxWidth: '120',
@@ -108,14 +117,31 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
             /* webpackChunkName: 'pnp-modern-search-results-detailslist-layout' */
             '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData'
         );
-
         this._propertyFieldCollectionData = PropertyFieldCollectionData;
+
+        if (this.properties.enableGrouping) {
+            const { PropertyPaneWebPartInformation } = await import(
+                /* webpackChunkName: 'pnp-modern-search-property-pane' */
+                '@pnp/spfx-property-controls/lib/PropertyPaneWebPartInformation'
+            );
+            this._propertyPaneWebPartInformation = PropertyPaneWebPartInformation;
+        }
+
         this._customCollectionFieldType = CustomCollectionFieldType;
     }
 
-    public getPropertyPaneFieldsConfiguration(availableFields: string[]): IPropertyPaneField<any>[] {
+    public getPropertyPaneFieldsConfiguration(availableFields: string[], dataContext?: IDataContext): IPropertyPaneField<any>[] {
 
         let availableOptions: IComboBoxOption[] = availableFields.map((fieldName) => { return { key: fieldName, text: fieldName } as IComboBoxOption; });
+        let sortableFields = [];
+        if (dataContext) {
+            sortableFields = dataContext.sorting.selectedSortableFields.map(field => {
+                return {
+                    key: field,
+                    text: field,
+                } as IComboBoxOption;
+            });
+        }
 
         // Sort ascending
         availableOptions = availableOptions.sort((a, b) => {
@@ -168,40 +194,10 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
                         }
                     },
                     {
-                        id: 'valueSorting',
-                        title: '',
-                        type: this._customCollectionFieldType.custom,
-                        onCustomRender: (field, _value, onUpdate, item, itemId, onCustomFieldValidation) => {
-                            return item.useHandlebarsExpr && item.enableSorting &&
-                                React.createElement("div", { key: `${field.id}-${itemId}` },
-                                    React.createElement(AsyncCombo, {
-                                        allowFreeform: false,
-                                        availableOptions: availableOptions,
-                                        label: strings.Layouts.DetailsList.ValueSortingColumnLabel,
-                                        placeholder: strings.Layouts.DetailsList.ValueSortingColumnLabel,
-                                        textDisplayValue: item[field.id] ? item[field.id] : '',
-                                        defaultSelectedKey: item[field.id] ? item[field.id] : '',
-                                        onUpdate: (filterValue: IComboBoxOption) => {
-                                            onUpdate(field.id, filterValue.key);
-                                            this._updateRequiredValueSorting(item.useHandlebarsExpr, 'enableSorting', item, onCustomFieldValidation, filterValue.key);
-                                        }
-                                    } as IAsyncComboProps));
-                        }
-                    },
-                    {
                         id: 'useHandlebarsExpr',
-                        type: this._customCollectionFieldType.custom,
+                        type: this._customCollectionFieldType.boolean,
                         defaultValue: false,
-                        title: strings.Layouts.DetailsList.UseHandlebarsExpressionLabel,
-                        onCustomRender: (field, _value, onUpdate, item, itemId, onCustomFieldValidation) => {
-                            return this._renderValueSortingAwareCheckbox(field, item, itemId, onCustomFieldValidation, 'enableSorting',
-                                (fieldId, value) => {
-                                    onUpdate(fieldId, value);
-                                    if (!value) {
-                                        onUpdate('valueSorting', null); // Clear value sorting
-                                    }
-                                });
-                        }
+                        title: strings.Layouts.DetailsList.UseHandlebarsExpressionLabel
                     },
                     {
                         id: 'minWidth',
@@ -220,11 +216,27 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
                     {
                         id: 'enableSorting',
                         title: strings.Layouts.DetailsList.SortableColumnLabel,
-                        type: this._customCollectionFieldType.custom,
+                        type: this._customCollectionFieldType.boolean,
                         defaultValue: false,
-                        required: false,
+                        required: false
+                    },
+                    {
+                        id: 'valueSorting',
+                        title: strings.Layouts.DetailsList.ValueSortingColumnLabel,
+                        type: this._customCollectionFieldType.custom,
                         onCustomRender: (field, _value, onUpdate, item, itemId, onCustomFieldValidation) => {
-                            return this._renderValueSortingAwareCheckbox(field, item, itemId, onCustomFieldValidation, 'useHandlebarsExpr', onUpdate);
+                            return React.createElement("div", { key: `${field.id}-${itemId}` },
+                                React.createElement(AsyncCombo, {
+                                    allowFreeform: false,
+                                    availableOptions: sortableFields,
+                                    placeholder: !item.valueSorting && sortableFields.length > 0 ? strings.Layouts.DetailsList.ValueSortingColumnLabel : strings.Layouts.DetailsList.ValueSortingColumnNoFieldsLabel,
+                                    textDisplayValue: item[field.id] ? item[field.id] : '',
+                                    defaultSelectedKey: item[field.id] ? item[field.id] : '',
+                                    disabled: !item.enableSorting,
+                                    onUpdate: (filterValue: IComboBoxOption) => {
+                                        onUpdate(field.id, filterValue.key);
+                                    }
+                                } as IAsyncComboProps));
                         }
                     },
                     {
@@ -285,16 +297,39 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
 
         // Grouping options
         if (this.properties.enableGrouping) {
-
             propertyPaneFields.push(
                 PropertyPaneDropdown('layoutProperties.groupByField', {
                     label: strings.Layouts.DetailsList.GroupByFieldLabel,
                     options: availableOptions,
-                    selectedKey: this.properties.groupByField
+                    selectedKey: this.properties.groupByField,
+                }),
+                this._propertyPaneWebPartInformation({
+                    description: `<small>${strings.Layouts.DetailsList.GroupingDescription}</small>`,
+                    key: 'queryText'
                 }),
                 PropertyPaneToggle('layoutProperties.groupsCollapsed', {
                     label: strings.Layouts.DetailsList.CollapsedGroupsByDefault,
                     checked: this.properties.groupsCollapsed
+                })
+            );
+        }
+
+        propertyPaneFields.push(
+          PropertyPaneToggle('layoutProperties.enableStickyHeader', {
+            label: strings.Layouts.DetailsList.EnableStickyHeader || 'Enable Sticky Header',
+            checked: this.properties.enableStickyHeader
+          }));
+
+        //Sticky header options
+        if (this.properties.enableStickyHeader) {
+            propertyPaneFields.push(
+                PropertyFieldNumber('layoutProperties.stickyHeaderListViewHeight', {
+                    label: strings.Layouts.DetailsList.StickyHeaderListViewHeight,
+                    maxValue: 5000,
+                    minValue: 200,
+                    value: this.properties.stickyHeaderListViewHeight ? this.properties.stickyHeaderListViewHeight : 500,
+                    disabled: !this.properties.enableStickyHeader,
+                    key: 'layoutProperties.stickyHeaderListViewHeight',
                 })
             );
         }
@@ -307,27 +342,9 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
         if (propertyPath.localeCompare('layoutProperties.enableGrouping') === 0) {
             this.properties.groupByField = '';
         }
-    }
 
-    private _renderValueSortingAwareCheckbox(field: any, item: IDetailsListColumnConfiguration, itemId: string, onCustomFieldValidation: (fieldId: string, errorMessage: string) => void, otherDependentField: string, onChange: (fieldId: string, value: any) => void): JSX.Element {
-        return React.createElement(Checkbox, {
-            key: `${field.id}-${itemId}`,
-            checked: item[field.id] ? item[field.id] : false,
-            onChange: (ev, value) => {
-                onChange(field.id, value);
-                this._updateRequiredValueSorting(value, otherDependentField, item, onCustomFieldValidation);
-            },
-            disabled: field.disableEdit,
-            className: "PropertyFieldCollectionData__panel__boolean-field"
-        } as ICheckboxProps);
-    }
-
-    private _updateRequiredValueSorting(value: boolean, otherDependentField: string, item: IDetailsListColumnConfiguration, onCustomFieldValidation: (fieldId: string, errorMessage: string) => void, newValueSorting?: string | number) {
-        if (!value || item.valueSorting || newValueSorting) {
-            onCustomFieldValidation('enableSorting', '');
+        if (propertyPath.localeCompare('layoutProperties.enableStickyHeader') === 0) {
+          this.properties.stickyHeaderListViewHeight = 500;
         }
-        else if (item[otherDependentField]) {
-            onCustomFieldValidation('enableSorting', `${strings.Layouts.DetailsList.ValueSortingColumnLabel} - ${propertyControlStrings.CollectionDataItemFieldRequiredLabel}`);
-        }
-    }
+  }
 }

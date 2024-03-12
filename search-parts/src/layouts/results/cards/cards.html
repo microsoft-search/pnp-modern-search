@@ -23,11 +23,22 @@
             </pnp-selectedfilters>
         {{/if}}
        
-        {{#if @root.properties.showResultsCount}}
-            <div class="template--resultCount">
-                <label class="ms-fontWeight-semibold">{{getCountMessage @root.data.totalItemsCount @root.inputQueryText}}</label>
+        <div class="template--header">
+            {{#if @root.properties.showResultsCount}}
+                <div class="template--resultCount">
+                    <label class="ms-fontWeight-semibold">{{getCountMessage @root.data.totalItemsCount @root.inputQueryText}}</label>
+                </div>
+            {{/if}}
+
+            <div class="template--sort">
+                <pnp-sortfield 
+                    data-fields="{{JSONstringify @root.properties.dataSourceProperties.sortList}}" 
+                    data-default-selected-field="{{sort.selectedSortFieldName}}" 
+                    data-default-direction="{{sort.selectedSortDirection}}"
+                    data-theme-variant="{{JSONstringify @root.theme}}">
+                </pnp-sortfield>    
             </div>
-        {{/if}}
+        </div>
 
         <div class="template--cardContainer">
             {{#each data.items as |item|}}    
@@ -40,7 +51,7 @@
                         data-enable-preview="{{@root.properties.layoutProperties.enablePreview}}" 
                         data-show-file-icon="{{@root.properties.layoutProperties.showFileIcon}}" 
                         data-is-compact="{{@root.properties.layoutProperties.isCompact}}" 
-                        data-context="{{JSONstringify @root}}"
+                        data-context="{{JSONstringify (truncateContext @root)}}"
                         data-instance-id="{{@root.instanceId}}"
                         data-theme-variant="{{JSONstringify @root.theme}}"
                         data-allow-item-selection="{{@root.properties.itemSelectionProps.allowItemSelection}}"
@@ -75,7 +86,6 @@
                     data-range="{{@root.properties.paging.pagingRange}}" 
                     data-items-count-per-page="{{@root.properties.paging.itemsCountPerPage}}" 
                     data-current-page-number="{{@root.paging.currentPageNumber}}"
-                    data-page-links="{{JSONstringify @root.data.paging.links}}"
                     data-theme-variant="{{JSONstringify @root.theme}}"
                 >
                 </pnp-pagination>

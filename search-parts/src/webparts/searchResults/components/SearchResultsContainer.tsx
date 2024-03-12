@@ -2,14 +2,14 @@ import * as React from 'react';
 import { ISearchResultsContainerProps } from './ISearchResultsContainerProps';
 import { ISearchResultsContainerState } from './ISearchResultsContainerState';
 import { TemplateRenderer } from "../../../controls/TemplateRenderer/TemplateRenderer";
-import { Shimmer, ShimmerElementType as ElemType, ShimmerElementsGroup, SelectionZone, Selection, SelectionMode } from 'office-ui-fabric-react';
+import { Shimmer, ShimmerElementType as ElemType, ShimmerElementsGroup, SelectionZone, Selection, SelectionMode } from '@fluentui/react';
 import { isEqual, cloneDeep, merge, isEmpty } from "@microsoft/sp-lodash-subset";
 import { ITemplateService } from '../../../services/templateService/ITemplateService';
 import { TemplateService } from '../../../services/templateService/TemplateService';
 import { Log, DisplayMode } from "@microsoft/sp-core-library";
-import { MessageBar, MessageBarType, Overlay, Spinner, SpinnerSize } from 'office-ui-fabric-react';
+import { MessageBar, MessageBarType, Overlay, Spinner, SpinnerSize } from '@fluentui/react';
 import { IDataSourceData, IDataFilterResult, BuiltinTemplateSlots } from '@pnp/modern-search-extensibility';
-import { IDataResultsTemplateContext } from '../../../models/common/ITemplateContext';
+import { ISearchResultsTemplateContext } from '../../../models/common/ITemplateContext';
 import styles from './SearchResultsContainer.module.scss';
 import { Constants, AutoCalculatedDataSourceFields, TestConstants } from '../../../common/Constants';
 import { ITemplateSlot } from '@pnp/modern-search-extensibility';
@@ -53,6 +53,8 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
     private _lastPageNumber: number;
     private _lastPageSelectedKeys: string[] = [];
 
+    private _searchWebPartRef: HTMLElement;
+
     public constructor(props: ISearchResultsContainerProps) {
 
         super(props);
@@ -66,15 +68,15 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
         };
 
         this.templateService = this.props.serviceScope.consume<ITemplateService>(TemplateService.ServiceKey);
-    
+
         this._onSelectionChanged = this._onSelectionChanged.bind(this);
 
         this._selection = new Selection({
             onSelectionChanged: this._onSelectionChanged,
             getKey: (item, index) => {
-              // Not suitable as keys
-              // - Stringified object as we can't rely on field values. Ex they can diverge from calls with SharePoint (ex: piSearchResultId with SharePoint)
-              return item.key = `${this.props.dataContext.pageNumber}${index}`;
+                // Not suitable as keys
+                // - Stringified object as we can't rely on field values. Ex they can diverge from calls with SharePoint (ex: piSearchResultId with SharePoint)
+                return item.key = `${this.props.dataContext.pageNumber}${index}`;
             },
         });
     }
@@ -102,22 +104,24 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
         // Content loading
         templateContent = this.templateService.getTemplateMarkup(this.props.templateContent);
         const templateContext = this.getTemplateContext();
+        let renderType = this.props.renderType;
 
         let selectionMode = SelectionMode.none;
         if (this.props.properties.itemSelectionProps && this.props.properties.itemSelectionProps.allowItemSelection) {
-          selectionMode = this.props.properties.itemSelectionProps.allowMulti ? SelectionMode.multiple : SelectionMode.single;
+            selectionMode = this.props.properties.itemSelectionProps.allowMulti ? SelectionMode.multiple : SelectionMode.single;
         }
-    
-        renderTemplate =    <SelectionZone 
-                            selection={this._selection} 
-                            selectionMode={selectionMode}>
-                                <TemplateRenderer
-                                templateContent={templateContent} 
-                                templateContext={templateContext}
-                                templateService={this.templateService}
-                                instanceId={this.props.instanceId}
-                                />
-                            </SelectionZone>;
+
+        renderTemplate = <SelectionZone
+            selection={this._selection}
+            selectionMode={selectionMode}>
+            <TemplateRenderer
+                templateContent={templateContent}
+                templateContext={templateContext}
+                templateService={this.templateService}
+                instanceId={this.props.instanceId}
+                renderType={renderType}
+            />
+        </SelectionZone>;
 
         // Determine if the component should show content according to Web Part parameters  
         if (this.state.data && this.state.data.items.length === 0) {
@@ -164,6 +168,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                         templateContext={this.getTemplateContext()}
                         templateService={this.templateService}
                         instanceId={this.props.instanceId}
+                        renderType={this.props.renderType}
                     />;
                 } else {
                     renderShimmerElements = this.getDefaultShimmerElements();
@@ -181,6 +186,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
 
         return <main><div data-instance-id={this.props.instanceId}
             data-ui-test-id={TestConstants.SearchResultsWebPart}>
+            <div tabIndex={-1} ref={(ref) => { this._searchWebPartRef = ref; }}></div>
             {renderOverlay}
             {renderInfoMessage}
             {renderTitle}
@@ -202,7 +208,15 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
 
             if (!isEqual(prevProps.dataContext.pageNumber, this.props.dataContext.pageNumber)) {
                 // Save the last selected keys for the current selection to be able to track items across pages
-                this._lastPageSelectedKeys =  this._selection.getSelection().map(item => item.key as string);
+                this._lastPageSelectedKeys = this._selection.getSelection().map(item => item.key as string);
+
+                // This is WebKit only, so defensively code and fallback to "scrollIntoView"
+                if ((this._searchWebPartRef as any).scrollIntoViewIfNeeded) {
+                    (this._searchWebPartRef as any).scrollIntoViewIfNeeded(false);
+                } else {
+                    // Scroll to the top of the component
+                    this._searchWebPartRef.scrollIntoView(true);
+                }
             }
 
             await this.getDataFromDataSource(this.props.dataContext.pageNumber);
@@ -212,7 +226,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             // Reset already selected items
             this._selection.setItems(this.state.data.items, true);
         }
-        
+
     }
 
     /**
@@ -237,9 +251,6 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             let availableFilters: IDataFilterResult[] = [];
             let totalItemsCount = 0;
 
-            let pageLinks: string[] = this.props.dataContext.paging.pageLinks;
-            let nextLinkUrl: string = this.props.dataContext.paging.nextLinkUrl;
-
             const localDataContext = cloneDeep(this.props.dataContext);
 
             // Fetch live data
@@ -250,11 +261,6 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
 
             // Determine total items count and page number
             totalItemsCount = this.props.dataSource.getItemCount();
-
-            // Reset the links if no item. In theory, data sources should do the same internally but if it is not the case, we double check and reset the count for them
-            if (totalItemsCount === 0 && data.paging && data.paging.links) {
-                data.paging.links = [];
-            }
 
             if (data.filters) {
                 if (data.filters.length === 0) {
@@ -272,7 +278,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 }
             }
 
-            this.props.onDataRetrieved(this.getAvailableFieldsFromResults(data), availableFilters, pageNumber, nextLinkUrl, pageLinks);
+            this.props.onDataRetrieved(this.getAvailableFieldsFromResults(data), availableFilters, pageNumber);
 
             // Persist the total items count
             this._totalItemsCount = totalItemsCount;
@@ -327,7 +333,13 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 if (!pathProperty || (hasContentClass && !isLibItem)) {
                     pathProperty = ObjectHelper.byPath(item, BuiltinTemplateSlots.Path); // Fallback to using Path for if DefaultEncodingURL is missing
                 }
-                if (pathProperty && pathProperty.indexOf("?") === -1 && !isContainer) {
+
+                let webUrl = ObjectHelper.byPath(item, "SPWebUrl");
+                let uniqueId = ObjectHelper.byPath(item, "NormUniqueID");
+                const itemFileType = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.FileType]);
+                if (webUrl && uniqueId && itemFileType && itemFileType.toUpperCase() !== "ASPX") {
+                    item.AutoPreviewUrl = `${webUrl}/_layouts/15/viewer.aspx?sourcedoc={${uniqueId}}`;
+                } else if (pathProperty && pathProperty.indexOf("?") === -1 && !isContainer) {
                     item.AutoPreviewUrl = pathProperty + "?web=1";
                 } else {
                     item.AutoPreviewUrl = pathProperty;
@@ -343,9 +355,9 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             data.items = data.items.map(item => {
 
                 let contentClass = ObjectHelper.byPath(item, BuiltinTemplateSlots.ContentClass);
-                
+
                 if (!isEmpty(contentClass) && (contentClass.toLocaleLowerCase() == "sts_site" || contentClass.toLocaleLowerCase() == "sts_web")) {
-                    item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] =  ObjectHelper.byPath(item, "SiteLogo");
+                    item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = ObjectHelper.byPath(item, "SiteLogo");
                 }
                 else {
                     let siteId = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.SiteId]);
@@ -356,30 +368,38 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                     let isFolder = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.IsFolder]);
                     const isContainerType = isFolder === "true" || isFolder === "1" || (isFolder && isFolder.indexOf('0x0120') !== -1);
 
-                    if (siteId && listId && itemId && !isContainerType) {
-                        // SP item logic
-                        siteId = this.getGuidFromString(siteId);
-                        listId = this.getGuidFromString(listId);
-                        itemId = this.getGuidFromString(itemId);
-
-                        if (webId) {
-                            siteId = siteId + "," + this.getGuidFromString(webId); // add web id if present, needed for sub-sites
+                    let thumbNailUrl = ObjectHelper.byPath(item, "PictureThumbnailURL");
+                    if (!isEmpty(thumbNailUrl)) {
+                        if (thumbNailUrl.indexOf("/content?") !== -1 && thumbNailUrl.indexOf("closestavailablesize") === -1 && thumbNailUrl.indexOf("extendCacheMaxAge") === -1) {
+                            thumbNailUrl = `${thumbNailUrl},closestavailablesize,extendCacheMaxAge`;
                         }
-
-                        const itemFileType = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.FileType]);
-
-                        if (itemFileType && validPreviewExt.indexOf(itemFileType.toUpperCase()) !== -1) {
-                            // Can lead to 404 errors but it is a trade of for performances. We take a guess with this url instead of batching calls for all items and process only 200.
-                            item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = `${this.props.pageContext.site.absoluteUrl}/_api/v2.1/sites/${siteId}/lists/${listId}/items/${itemId}/driveItem/thumbnails/0/large/content?preferNoRedirect=true`;
-                        }
-                    } else {
-                        // Graph items logic
-                        const driveId = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.DriveId]);
-                        //GET /drives/{drive-id}/items/{item-id}/thumbnails
-                        if (driveId && siteId && itemId) {
-                            item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = `${this.props.pageContext.site.absoluteUrl}/_api/v2.1/sites/${siteId}/drives/${driveId}/items/${itemId}/thumbnails/thumbnails/0/large/content?preferNoRedirect=true`;
-                        }
+                        item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = thumbNailUrl;
                     }
+                    else
+                        if (siteId && listId && itemId && !isContainerType) {
+                            // SP item logic
+                            siteId = this.getGuidFromString(siteId);
+                            listId = this.getGuidFromString(listId);
+                            itemId = this.getGuidFromString(itemId);
+
+                            if (webId) {
+                                siteId = siteId + "," + this.getGuidFromString(webId); // add web id if present, needed for sub-sites
+                            }
+
+                            const itemFileType = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.FileType]);
+
+                            if (itemFileType && validPreviewExt.indexOf(itemFileType.toUpperCase()) !== -1) {
+                                // Can lead to 404 errors but it is a trade of for performances. We take a guess with this url instead of batching calls for all items and process only 200.
+                                item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = `${this.props.pageContext.site.absoluteUrl}/_api/v2.1/sites/${siteId}/lists/${listId}/items/${itemId}/driveItem/thumbnails/0/c400x999/content?prefer=noredirect,closestavailablesize,extendCacheMaxAge`;
+                            }
+                        } else {
+                            // Graph items logic
+                            const driveId = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.DriveId]);
+                            //GET /drives/{drive-id}/items/{item-id}/thumbnails
+                            if (driveId && siteId && itemId) {
+                                item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = `${this.props.pageContext.site.absoluteUrl}/_api/v2.1/sites/${siteId}/drives/${driveId}/items/${itemId}/thumbnails/thumbnails/0/c400x999/content?prefer=noredirect,closestavailablesize,extendCacheMaxAge`;
+                            }
+                        }
                 }
 
                 if (!this.isOnlineDomain(item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl])) {
@@ -456,7 +476,9 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
     }
 
     // Build the template context
-    private getTemplateContext(): IDataResultsTemplateContext {
+    private getTemplateContext(): ISearchResultsTemplateContext {
+
+        let adaptiveCardsHostConfig = null;
 
         // Gets information about current page context
         const { site, web, list, listItem, user, cultureInfo } = this.props.pageContext;
@@ -468,6 +490,13 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
         delete trimmedProperties.inlineTemplateContent;
         delete trimmedProperties.documentationLink;
         delete trimmedProperties.externalTemplateUrl;
+
+        try {
+            adaptiveCardsHostConfig = JSON.parse(this.props.properties.adaptiveCardsHostConfig);
+        } catch (error) {
+            Log.warn(LogSource, `Invalid host config provided. Refer to https://docs.microsoft.com/en-us/adaptive-cards/rendering-cards/host-config for more details`, this.props.serviceScope);
+        }
+
 
         return {
             // The data source data
@@ -491,11 +520,17 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 instanceId: this.props.dataContext.filters.instanceId,
                 filtersConfiguration: this.props.dataContext.filters.filtersConfiguration
             },
+            // Sorting information
+            sort: {
+                selectedSortFieldName: this.props.dataContext.sorting.selectedSortFieldName,
+                selectedSortDirection: this.props.dataContext.sorting.selectedSortDirection
+            },
             // The connected verticals information
             verticals: {
                 selectedVertical: this.props.dataContext.verticals.selectedVertical
             },
             inputQueryText: this.props.dataContext.inputQueryText,
+            originalInputQueryText: this.props.dataContext.originalInputQueryText,
             // The available template slots 
             slots: this.convertTemplateSlotsToHashtable(this.props.properties.templateSlots),
             // The current page context
@@ -507,11 +542,13 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 cultureInfo: cultureInfo,
                 listItem: listItem
             },
+            teamsContext: this.props.teamsContext,
             // The Web Part instance ID for scoped CSS styles
             instanceId: this.props.instanceId,
             // Any other useful informations
             utils: {
-                defaultImage: Constants.DEFAULT_IMAGE_CONTENT
+                defaultImage: Constants.DEFAULT_IMAGE_CONTENT,
+                adaptiveCardsHostConfig: adaptiveCardsHostConfig
             },
             selectedKeys: this.state.selectedItemKeys
         };
@@ -567,20 +604,20 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
         // When page is updated, the selection changed is fired clearing all previous selection
         // We need to ensure the state is not updated during this phase 
         if (this.props.dataContext.pageNumber === this._lastPageNumber) {
-    
-          const currentSelectedItems = this._selection.getSelection();
-    
-          const currentPageSelectionKeys =  currentSelectedItems.map(item => item.key as string);
-    
-          this.props.onItemSelected(currentSelectedItems);
-    
-          // Update curent selected keys and values
-          this.setState({
-            selectedItemKeys: [...this._lastPageSelectedKeys,...currentPageSelectionKeys]
-          }, () => {
-            this.forceUpdate();
-          });
+
+            const currentSelectedItems = this._selection.getSelection();
+
+            const currentPageSelectionKeys = currentSelectedItems.map(item => item.key as string);
+
+            this.props.onItemSelected(currentSelectedItems);
+
+            // Update curent selected keys and values
+            this.setState({
+                selectedItemKeys: [...this._lastPageSelectedKeys, ...currentPageSelectionKeys]
+            }, () => {
+                this.forceUpdate();
+            });
         }
-        
-      }
+
+    }
 }

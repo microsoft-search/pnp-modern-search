@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { BaseWebComponent, IDataFilterValueInfo, ExtensibilityConstants, IDataFilterInfo, FilterConditionOperator } from '@pnp/modern-search-extensibility';
 import * as ReactDOM from 'react-dom';
-import { IComboBoxOption, Label, Icon, SelectableOptionMenuItemType, ComboBox, IComboBox, mergeStyles, Fabric } from 'office-ui-fabric-react';
+import { IComboBoxOption, Label, Icon, SelectableOptionMenuItemType, ComboBox, IComboBox, mergeStyles, Fabric } from '@fluentui/react';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import update from 'immutability-helper';
 import styles from './FilterComboBoxComponent.module.scss';
@@ -131,19 +131,31 @@ export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilte
 
         let options = this.state.options;
 
+        let foundValuesCount = 0;
         // Filter the current collection by the search value
         if (this.state.searchValue) {
             
             options = this.state.options.filter(option => {
 
-                if (option.text && option.text.indexOf(this.state.searchValue) !== -1) {
+                if (option.text && option.text.toLocaleLowerCase().indexOf(this.state.searchValue.toLocaleLowerCase()) !== -1) {
+                    foundValuesCount++;
                     return true;
                 }
     
-                if (option.key && (option.key as string).indexOf(this.state.searchValue) !== -1) {
+                if (option.key && (option.key as string).toLocaleLowerCase().indexOf(this.state.searchValue.toLocaleLowerCase()) !== -1) {
+                    foundValuesCount++;
+                    return true;
+                }
+
+                if (option.key && (option.key === FILTER_MULTI_KEY || option.key === FILTER_VALUES_OPERATOR_KEY)) {
                     return true;
                 }
             });
+
+            // No value found
+            if (foundValuesCount === 0) {
+                options = [];
+            }
         }
 
         let renderIcon: JSX.Element = null;
@@ -298,8 +310,7 @@ export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilte
             this.setState({
                 selectedValues: updatedSelectedValues,
                 options: options,
-                selectedOptionKeys: selectedKeys,
-                searchValue: undefined
+                selectedOptionKeys: selectedKeys
             });
 
             if (!this.props.isMulti) {
@@ -481,6 +492,10 @@ export class FilterComboBoxWebComponent extends BaseWebComponent {
                             />;
         
         ReactDOM.render(filterComboBox, this);
+    }
+
+    protected onDispose(): void {
+        ReactDOM.unmountComponentAtNode(this);
     }
 
     private toBoolean(value: string): boolean {
