@@ -2,9 +2,10 @@ import * as React from "react";
 import { BaseLayout } from "@pnp/modern-search-extensibility";
 import { IPropertyPaneField, PropertyPaneChoiceGroup, PropertyPaneButtonType, PropertyPaneButton } from "@microsoft/sp-property-pane";
 import { TemplateValueFieldEditor, ITemplateValueFieldEditorProps } from "../../../controls/TemplateValueFieldEditor/TemplateValueFieldEditor";
-import { IComboBoxOption, Icon, IIconProps } from "office-ui-fabric-react";
+import { IComboBoxOption, Icon, IIconProps } from '@fluentui/react';
 import { IComponentFieldsConfiguration } from "../../../models/common/IComponentFieldsConfiguration";
 import * as strings from 'CommonStrings';
+import { loadMsGraphToolkit } from "../../../helpers/GraphToolKitHelper";
 
 export interface IPeopleLayoutProperties {
 
@@ -22,6 +23,16 @@ export interface IPeopleLayoutProperties {
      * Flag indicating if the persona card should be displayed on hover
      */
     showPersonaCard: boolean;
+
+    /**
+     * Flag indicating if the persona card should be displayed on hover using native LPC
+     */
+    showPersonaCardNative: boolean;
+
+    /**
+     * Flag indicating whether to show presence-information or not
+     */
+    showPersonaPresenceInfo: boolean;
 }
 
 export class PeopleLayout extends BaseLayout<IPeopleLayoutProperties> {
@@ -74,7 +85,7 @@ export class PeopleLayout extends BaseLayout<IPeopleLayoutProperties> {
 
         if (this.properties.showPersonaCard) {
             // Load Microsoft Graph Toolkit to get the persona card
-            await this.loadMsGraphToolkit();
+            await loadMsGraphToolkit(this.context);
         }
     }
 
@@ -146,6 +157,15 @@ export class PeopleLayout extends BaseLayout<IPeopleLayoutProperties> {
                     this.onInit();
                 }
             }),
+            this._propertyFieldToogleWithCallout('layoutProperties.showPersonaCardNative', {
+                label: strings.Layouts.People.ShowPersonaCardOnHoverNative,
+                calloutTrigger: this._propertyFieldCalloutTriggers.Hover,
+                key: 'layoutProperties.showPersonaCardNative',
+                calloutContent: React.createElement('p', { style: { maxWidth: 250, wordBreak: 'break-word' } }, strings.Layouts.People.ShowPersonaCardOnHoverCalloutMsgNative),
+                onText: strings.General.OnTextLabel,
+                offText: strings.General.OffTextLabel,
+                checked: this.properties.showPersonaCardNative
+            }),
             this._propertyFieldToogleWithCallout('layoutProperties.showPersonaCard', {
                 label: strings.Layouts.People.ShowPersonaCardOnHover,
                 calloutTrigger: this._propertyFieldCalloutTriggers.Hover,
@@ -153,7 +173,16 @@ export class PeopleLayout extends BaseLayout<IPeopleLayoutProperties> {
                 calloutContent: React.createElement('p', { style: { maxWidth: 250, wordBreak: 'break-word' } }, strings.Layouts.People.ShowPersonaCardOnHoverCalloutMsg),
                 onText: strings.General.OnTextLabel,
                 offText: strings.General.OffTextLabel,
-                checked: this.properties.showPersonaCard
+                checked: this.properties.showPersonaCard,
+            }),
+            this._propertyFieldToogleWithCallout('layoutProperties.showPersonaPresenceInfo', {
+                label: strings.Layouts.People.ShowPersonaPresenceInfo,
+                calloutTrigger: this._propertyFieldCalloutTriggers.Hover,
+                key: 'layoutProperties.showPersonaPresenceInfo',
+                calloutContent: React.createElement('p', { style: { maxWidth: 250, wordBreak: 'break-word' } }, strings.Layouts.People.ShowPersonaPresenceInfoCalloutMsg),
+                onText: strings.General.OnTextLabel,
+                offText: strings.General.OffTextLabel,
+                checked: this.properties.showPersonaPresenceInfo
             }),
             PropertyPaneChoiceGroup('layoutProperties.personaSize', {
                 label: strings.Layouts.People.PersonaSizeOptionsLabel,
@@ -187,23 +216,7 @@ export class PeopleLayout extends BaseLayout<IPeopleLayoutProperties> {
 
         if (propertyPath.localeCompare('layoutProperties.showPersonaCard') === 0 && this.properties.showPersonaCard) {
             // Load Microsoft Graph Toolkit to get the persona card
-            await this.loadMsGraphToolkit();
+            await loadMsGraphToolkit(this.context);
         }
-    }
-
-    /**
-     * Loads the Microsoft Graph Toolkit library dynamically
-     */
-    private async loadMsGraphToolkit() {
-
-        // Load Microsoft Graph Toolkit dynamically
-        const { Providers, SharePointProvider } = await import(
-            /* webpackChunkName: 'microsoft-graph-toolkit' */
-            '@microsoft/mgt/dist/es6'
-        );
-
-        if (!Providers.globalProvider) {
-            Providers.globalProvider = new SharePointProvider(this.context);
-        }
-    }
+    }    
 }

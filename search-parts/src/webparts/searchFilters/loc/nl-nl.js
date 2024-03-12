@@ -60,7 +60,7 @@ define([], function() {
                 LayoutTemplateOptionsGroupName: "Indelingsopties",
                 TemplateUrlFieldLabel: "Gebruik een externe sjabloon URL",
                 TemplateUrlPlaceholder: "https://mijnbestand.html",
-                ErrorTemplateExtension: "Het sjabloon moet een geldig .htm of .html bestand zijn",
+                ErrorTemplateExtension: "Het sjabloon moet een geldig .txt, .htm of .html bestand zijn",
                 ErrorTemplateResolve: "Kan het opgegeven template niet inladen. Foutmelding: '{0}'",
                 FiltersTemplateFieldLabel: "Bewerk filters sjabloon",
                 FiltersTemplatePanelHeader: "Bewerk filters sjabloon"

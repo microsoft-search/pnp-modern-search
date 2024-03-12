@@ -1,4 +1,4 @@
-name: Extensibility release
+name: Release Modern Search Extensibility package
 
 on:
     workflow_dispatch:
@@ -18,10 +18,10 @@ jobs:
               with:
                   ref: develop
             # setup nodejs
-            - name: Use Node.js 14
+            - name: Use Node.js 16
               uses: actions/setup-node@v2
               with:
-                  node-version: 14
+                  node-version: 16
                   registry-url: "https://registry.npmjs.org"
             # cache node modules
             - name: Cache node modules

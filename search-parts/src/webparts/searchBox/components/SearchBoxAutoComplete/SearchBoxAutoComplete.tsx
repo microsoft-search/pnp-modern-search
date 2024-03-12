@@ -2,8 +2,8 @@ import * as React from 'react';
 import styles from '../SearchBoxContainer.module.scss';
 import { ISearchBoxAutoCompleteState } from './ISearchBoxAutoCompleteState';
 import { ISearchBoxAutoCompleteProps } from './ISearchBoxAutoCompleteProps';
-import { Spinner, SpinnerSize, FocusZone, FocusZoneDirection, SearchBox, IconButton, Label, Icon, IconType, ISearchBox } from 'office-ui-fabric-react';
-import { ITheme } from 'office-ui-fabric-react/lib/Styling';
+import { Spinner, SpinnerSize, FocusZone, FocusZoneDirection, SearchBox, IconButton, Label, Icon, IconType, ISearchBox } from '@fluentui/react';
+import { ITheme } from '@fluentui/react/lib/Styling';
 import { isEqual, debounce } from '@microsoft/sp-lodash-subset';
 import { ISuggestion } from '@pnp/modern-search-extensibility';
 import * as webPartStrings from 'SearchBoxWebPartStrings';
@@ -89,6 +89,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
     }
 
     private _renderSuggestion(suggestion: ISuggestion, suggestionIndex: number): JSX.Element {
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
         const thisComponent = this;
 
         const suggestionInner = <>
@@ -123,6 +124,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
             ? <a {...baseProps}
                 href={suggestion.targetUrl}
                 target="_blank"
+                rel="noreferrer"
                 data-interception="off" // Bypass SPFx page router (https://docs.microsoft.com/en-us/sharepoint/dev/spfx/hyperlinking)
             >
                 {suggestionInner}
@@ -409,9 +411,9 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
                                         this._updateQuerySuggestions(newValue);
                                     }, SUGGESTION_UPDATE_DEBOUNCE_DELAY);
                                 }
-                                this._onChangeDebounced(event.currentTarget.value);
+                                this._onChangeDebounced(event && event.currentTarget ? event.currentTarget.value : "");
                                 this.setState({
-                                    searchInputValue: event.currentTarget.value,
+                                    searchInputValue: event && event.currentTarget ? event.currentTarget.value : "",
                                     isRetrievingSuggestions: true,
                                     isSearchExecuted: false,
                                 });

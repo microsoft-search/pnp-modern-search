@@ -1,7 +1,7 @@
 import { IDataSource, IServiceKeysConfiguration } from "./IDataSource";
 import { IDataSourceData } from "./IDataSourceData";
 import { IPropertyPaneGroup } from "@microsoft/sp-property-pane";
-import { ServiceScope, ServiceKey } from '@microsoft/sp-core-library';
+import { ServiceScope } from '@microsoft/sp-core-library';
 import { PagingBehavior } from './PagingBehavior';
 import { IDataContext } from './IDataContext';
 import { FilterBehavior } from '../filters/FilterBehavior';
@@ -100,5 +100,10 @@ export abstract class BaseDataSource<T> implements IDataSource {
 
     public onPropertyUpdate(propertyPath: string, oldValue: any, newValue: any): void {
         // Do nothing by default      
+    }
+
+    public getSortableFields(): string[] {
+        // No sortable fields by default
+        return [];
     }
 }

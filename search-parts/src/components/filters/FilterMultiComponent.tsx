@@ -1,12 +1,11 @@
 import * as React from "react";
 import { BaseWebComponent, ExtensibilityConstants } from "@pnp/modern-search-extensibility";
 import * as ReactDOM from "react-dom";
-import { DefaultButton, PrimaryButton } from "office-ui-fabric-react";
+import { DefaultButton, PrimaryButton } from '@fluentui/react';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
-import { ITheme } from "office-ui-fabric-react";
+import { ITheme } from '@fluentui/react';
 import styles from "./FilterMultiComponent.module.scss";
 import * as strings from 'CommonStrings';
-import { TestConstants } from "../../common/Constants";
 
 
 type FilterMultiEventCallback = () => void;
@@ -44,26 +43,26 @@ export class FilterMulti extends React.Component<IFilterMultiProps, IFilterMulti
     public constructor(props: IFilterMultiProps) {
         super(props);
         this._applyFilters = this._applyFilters.bind(this);
-        this._clearFilters = this._clearFilters.bind(this);     
+        this._clearFilters = this._clearFilters.bind(this);
     }
-    
+
     public render() {
         return <div className={styles.filterMultiActions}>
-                    <PrimaryButton
-                        className={styles.applyBtn} 
-                        disabled={this.props.applyDisabled}
-                        theme={this.props.themeVariant as ITheme} 
-                        onClick={this._applyFilters}>
-                        {strings.Filters.ApplyAllFiltersButtonLabel}
-                    </PrimaryButton>
-                    <DefaultButton
-                        className={styles.clearBtn}
-                        theme={this.props.themeVariant as ITheme}
-                        disabled={this.props.clearDisabled}
-                        onClick={this._clearFilters}>
-                        {strings.Filters.ClearAllFiltersButtonLabel}
-                    </DefaultButton>
-                </div>;
+            <PrimaryButton
+                className={styles.applyBtn}
+                disabled={this.props.applyDisabled}
+                theme={this.props.themeVariant as ITheme}
+                onClick={this._applyFilters}>
+                {strings.Filters.ApplyAllFiltersButtonLabel}
+            </PrimaryButton>
+            <DefaultButton
+                className={styles.clearBtn}
+                theme={this.props.themeVariant as ITheme}
+                disabled={this.props.clearDisabled}
+                onClick={this._clearFilters}>
+                {strings.Filters.ClearAllFiltersButtonLabel}
+            </DefaultButton>
+        </div>;
     }
 
     /**
@@ -82,38 +81,42 @@ export class FilterMulti extends React.Component<IFilterMultiProps, IFilterMulti
 }
 
 export class FilterMultiWebComponent extends BaseWebComponent {
-   
+
     public constructor() {
-        super(); 
+        super();
     }
- 
+
     public async connectedCallback() {
- 
-       let props = this.resolveAttributes();
-       const filterMulti = <FilterMulti {...props}
-                                onApply={(() => {
-                                    // Bubble event through the DOM
-                                    this.dispatchEvent(new CustomEvent(ExtensibilityConstants.EVENT_FILTER_APPLY_ALL, { 
-                                        detail: {
-                                            filterName: props.filterName,
-                                            instanceId: props.instanceId
-                                        },
-                                        bubbles: true,
-                                        cancelable: true
-                                    }));
-                                }).bind(this)}
-                                onClear={(() => {
-                                    // Bubble event through the DOM
-                                    this.dispatchEvent(new CustomEvent(ExtensibilityConstants.EVENT_FILTER_CLEAR_ALL, { 
-                                        detail: {
-                                            filterName: props.filterName,
-                                            instanceId: props.instanceId
-                                        },
-                                        bubbles: true,
-                                        cancelable: true
-                                    }));
-                                }).bind(this)}
-                            />;
-       ReactDOM.render(filterMulti, this);
-    }    
+
+        let props = this.resolveAttributes();
+        const filterMulti = <FilterMulti {...props}
+            onApply={(() => {
+                // Bubble event through the DOM
+                this.dispatchEvent(new CustomEvent(ExtensibilityConstants.EVENT_FILTER_APPLY_ALL, {
+                    detail: {
+                        filterName: props.filterName,
+                        instanceId: props.instanceId
+                    },
+                    bubbles: true,
+                    cancelable: true
+                }));
+            }).bind(this)}
+            onClear={(() => {
+                // Bubble event through the DOM
+                this.dispatchEvent(new CustomEvent(ExtensibilityConstants.EVENT_FILTER_CLEAR_ALL, {
+                    detail: {
+                        filterName: props.filterName,
+                        instanceId: props.instanceId
+                    },
+                    bubbles: true,
+                    cancelable: true
+                }));
+            }).bind(this)}
+        />;
+        ReactDOM.render(filterMulti, this);
+    }
+
+    protected onDispose(): void {
+        ReactDOM.unmountComponentAtNode(this);
+    }
 }

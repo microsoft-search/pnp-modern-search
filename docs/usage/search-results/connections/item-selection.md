@@ -6,7 +6,7 @@
 
 !["Allow item selection](../../../assets/webparts/search-results/connections/allow_item_selection.png "Allow item selection"){: .center}
 
-2. Specifiy if you want to allow only single or multi selection.
+2. Specify if you want to allow only single or multi selection.
 3. Make sure some results are displayed in the Web Part by setting a default query.
 
 #### Target Web Part(s) configuration

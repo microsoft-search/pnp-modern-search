@@ -8,6 +8,7 @@ define([], function() {
                 GroupName: "Indstillinger til søgeboks",
                 PlaceholderTextLabel: "Pladsholdertekst der skal vises i søgeboksen",
                 SearchInNewPageLabel: "Send forespørgslen til en ny side",
+                ReQueryOnClearLabel: "Nulstil forespørgsel på clear",
                 PageUrlLabel: "Sidens URL",
                 UrlErrorMessage: "Indsæt venligst en gyldig URL.",
                 QueryPathBehaviorLabel: "Metode",

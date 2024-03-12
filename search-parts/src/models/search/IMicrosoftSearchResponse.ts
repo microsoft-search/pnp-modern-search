@@ -1,12 +1,15 @@
+import { IResultTemplates } from "@pnp/modern-search-extensibility";
+
 // https://docs.microsoft.com/en-us/graph/api/resources/searchresponse?view=graph-rest-beta
 export interface IMicrosoftSearchResponse {
     value: IMicrosoftSearchResultSet;
-    queryAlterationResponse?: IQueryAlterationResponse;
 }
 
 export interface IMicrosoftSearchResultSet {
     hitsContainers: ISearchHitsContainer[];
     searchTerms: string[];
+    queryAlterationResponse?: IQueryAlterationResponse;
+    resultTemplates?: IResultTemplates;
 }
 
 export interface ISearchHitsContainer {
@@ -22,6 +25,7 @@ export interface ISearchHit {
     summary: string;
     contentSource: string;
     resource: ISearchResponseResource;
+    resultTemplateId?: string;
 }
 
 export interface ISearchResponseAggregation {
@@ -38,13 +42,18 @@ export interface IBucket {
 
 export interface ISearchResponseResource {
     "@odata.type": string;
+    /* listItem */
     fields?: {
         [fieldName: string]: string;
     };
+    /* properties */
+    properties?: {
+        [fieldName: string]: string;
+    }
 }
 
 // Query alteration response
-// https://docs.microsoft.com/en-us/graph/api/resources/alterationresponse?view=graph-rest-beta 
+// https://docs.microsoft.com/en-us/graph/api/resources/alterationresponse 
 export interface IQueryAlterationResponse {
     originalQueryString:string;
     queryAlteration:ISearchAlteration;

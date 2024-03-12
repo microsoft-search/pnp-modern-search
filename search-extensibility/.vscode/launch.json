@@ -6,7 +6,7 @@
   "version": "0.2.0",
   "configurations": [{
       "name": "Local workbench",
-      "type": "chrome",
+      "type": "pwa-chrome",
       "request": "launch",
       "url": "https://localhost:4321/temp/workbench.html",
       "webRoot": "${workspaceRoot}",
@@ -25,7 +25,7 @@
       "name": "Hosted workbench",
       "type": "chrome",
       "request": "launch",
-      "url": "https://enter-your-SharePoint-site/_layouts/workbench.aspx",
+      "url": "https://{tenantDomain}/_layouts/workbench.aspx",
       "webRoot": "${workspaceRoot}",
       "sourceMaps": true,
       "sourceMapPathOverrides": {

@@ -2,7 +2,6 @@ import { EntityType } from "../../dataSources/MicrosoftSearchDataSource";
 
 export interface IMicrosoftSearchQuery {
     requests: IMicrosoftSearchRequest[];
-    queryAlterationOptions?: IQueryAlterationOptions;
 }
 
 /**
@@ -12,6 +11,7 @@ export interface IMicrosoftSearchRequest {
     entityTypes: EntityType[];
     query: {
         queryString: string;
+        queryTemplate?: string;
     };
     fields?: string[];
     aggregations?: ISearchRequestAggregation[];
@@ -21,6 +21,12 @@ export interface IMicrosoftSearchRequest {
     enableTopResults?: boolean;
     sortProperties?: ISearchSortProperty[];
     contentSources?: string[];
+    queryAlterationOptions?: IQueryAlterationOptions;
+    resultTemplateOptions?:  {
+        enableResultTemplate: boolean;
+    };
+    trimDuplicates?: boolean;
+    collapseProperties?: ICollapseProperty[];
 }
 
 export interface ISearchSortProperty {
@@ -55,4 +61,9 @@ export interface IBucketRangeDefinition {
 export interface IQueryAlterationOptions {
     enableSuggestion: boolean;
     enableModification: boolean;
+}
+
+export interface ICollapseProperty {
+    fields: string[];
+    limit: number;
 }

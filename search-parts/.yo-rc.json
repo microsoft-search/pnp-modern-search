@@ -1,12 +1,21 @@
 {
     "@microsoft/generator-sharepoint": {
-        "isCreatingSolution": false,
+        "plusBeta": false,
+        "isCreatingSolution": true,
         "environment": "spo",
-        "version": "1.12.1",
+        "version": "1.18.2",
+        "solutionName": "modern-pnp-modern-search-web-parts",
         "libraryName": "modern-pnp-modern-search-web-parts",
         "libraryId": "8aa14115-d64a-4545-b215-ee8fb8d82e59",
         "packageManager": "npm",
         "isDomainIsolated": false,
-        "componentType": "webpart"
+        "componentType": "webpart",
+        "solutionShortDescription": "PnP Modern Search web parts",
+        "skipFeatureDeployment": true,
+        "nodeVersion": "16.20.0",
+        "sdkVersions": {
+            "@microsoft/teams-js": "2.12.0",
+            "@microsoft/microsoft-graph-client": "3.0.2"
+          }
     }
 }

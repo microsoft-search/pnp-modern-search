@@ -1,5 +1,6 @@
+/* eslint-disable require-atomic-updates */
 import { ITokenService, IProfileProperties } from "@pnp/modern-search-extensibility";
-import { ServiceKey, ServiceScope, Log, UrlQueryParameterCollection } from "@microsoft/sp-core-library";
+import { ServiceKey, ServiceScope, Log } from "@microsoft/sp-core-library";
 import { PageContext } from '@microsoft/sp-page-context';
 import { SPHttpClient } from '@microsoft/sp-http';
 import { DateHelper } from "../../helpers/DateHelper";
@@ -16,6 +17,12 @@ export enum BuiltinTokenNames {
      * The input query text configured in the search results Web Part
      */
     inputQueryText = 'inputQueryText',
+
+    /**
+     * The original inputQueryText before any custom query modification
+     */
+    originalInputQueryText = 'originalInputQueryText',
+
 
     /**
      * Similar as 'inputQueryText' to match the SharePoint search token
@@ -70,6 +77,7 @@ export class TokenService implements ITokenService {
      */
     private tokenValuesList: { [key: string]: any } = {
         [BuiltinTokenNames.inputQueryText]: undefined,
+        [BuiltinTokenNames.originalInputQueryText]: undefined,
         [BuiltinTokenNames.searchTerms]: undefined,
         [BuiltinTokenNames.filters]: undefined,
         [BuiltinTokenNames.verticals]: undefined
@@ -117,7 +125,7 @@ export class TokenService implements ITokenService {
 
         if (inputString) {
 
-            this.moment  = await this.dateHelper.moment();
+            this.moment = await this.dateHelper.moment();
 
             // Resolves dynamic tokens (i.e. tokens resolved asynchronously versus static ones set by the Web Part context)
             inputString = await this.replacePageTokens(inputString);
@@ -131,7 +139,7 @@ export class TokenService implements ITokenService {
             inputString = this.replaceGroupTokens(inputString);
             inputString = this.replaceLegacyPageContextTokens(inputString);
             inputString = await this.replaceHubTokens(inputString);
-            
+
             inputString = inputString.replace(/\{TenantUrl\}/gi, `https://` + window.location.host);
 
             // Look for static tokens in the specified string
@@ -151,7 +159,7 @@ export class TokenService implements ITokenService {
                     const tokenValue = ObjectHelper.byPath(this.tokenValuesList, tokenName);
 
                     if (tokenValue !== undefined) {
-                        
+
                         if (tokenValue !== null) {
                             inputString = inputString.replace(new RegExp(StringHelper.escapeRegExp(token), 'gi'), tokenValue);
                         } else {
@@ -163,7 +171,7 @@ export class TokenService implements ITokenService {
             }
 
             // The 'OR/AND' operator should be called after all tokens are processed (works with comma delimited values potentially coming from resolved)
-            inputString = this.replaceAndOrOperator(inputString);                
+            inputString = this.replaceAndOrOperator(inputString);
 
             // Replace manually escaped curly braces
             inputString = inputString.replace(/\\({|})/gi, '$1');
@@ -197,6 +205,7 @@ export class TokenService implements ITokenService {
                     let itemRow = JSON.parse(result.value);
                     // Lower case all properties
                     // https://codereview.stackexchange.com/questions/162416/object-keys-to-lowercase
+                    // eslint-disable-next-line no-sequences
                     item = Object.keys(itemRow.Data.Row[0]).reduce((c, k) => (c[k] = itemRow.Data.Row[0][k], c), {});
                 }
                 else {
@@ -277,6 +286,7 @@ export class TokenService implements ITokenService {
 
             item = this.recursivelyLowercaseJSONKeys(item);
 
+            // eslint-disable-next-line no-unmodified-loop-condition
             while (matches !== null && item != null) {
 
                 const pageProperty = matches[1];
@@ -393,7 +403,7 @@ export class TokenService implements ITokenService {
             matches = userTokenRegExp.exec(inputString);
         }
 
-        inputString = inputString.replace(new RegExp("\{Me\}", 'gi'), this.pageContext.user.displayName);
+        inputString = inputString.replace(/\{Me\}/gi, this.pageContext.user.displayName);
 
         return inputString;
     }
@@ -407,6 +417,15 @@ export class TokenService implements ITokenService {
         const currentDate = /\{CurrentDate\}/gi;
         const currentMonth = /\{CurrentMonth\}/gi;
         const currentYear = /\{CurrentYear\}/gi;
+        const currentHour = /\{CurrentHour\}/gi;
+        const currentMinute = /\{CurrentMinute\}/gi;
+        const currentSecond = /\{CurrentSecond\}/gi;
+        const currentDateUTC = /\{CurrentDateUTC\}/gi;
+        const currentMonthUTC = /\{CurrentMonthUTC\}/gi;
+        const currentYearUTC = /\{CurrentYearUTC\}/gi;
+        const currentHourUTC = /\{CurrentHourUTC\}/gi;
+        const currentMinuteUTC = /\{CurrentMinuteUTC\}/gi;
+        const currentSecondUTC = /\{CurrentSecondUTC\}/gi;
 
         // Replaces any "{Today} +/- [digit]" expression
         let results = /\{Today\s*[\+-]\s*\[{0,1}\d{1,}\]{0,1}\}/gi;
@@ -432,6 +451,15 @@ export class TokenService implements ITokenService {
         inputString = inputString.replace(currentDate, d.getDate().toString());
         inputString = inputString.replace(currentMonth, (d.getMonth() + 1).toString());
         inputString = inputString.replace(currentYear, d.getFullYear().toString());
+        inputString = inputString.replace(currentHour, d.getHours().toString());
+        inputString = inputString.replace(currentMinute, d.getMinutes().toString());
+        inputString = inputString.replace(currentSecond, d.getSeconds().toString());
+        inputString = inputString.replace(currentDateUTC, d.getUTCDate().toString());
+        inputString = inputString.replace(currentMonthUTC, (d.getUTCMonth() + 1).toString());
+        inputString = inputString.replace(currentYearUTC, d.getUTCFullYear().toString());
+        inputString = inputString.replace(currentHourUTC, d.getUTCHours().toString());
+        inputString = inputString.replace(currentMinuteUTC, d.getUTCMinutes().toString());
+        inputString = inputString.replace(currentSecondUTC, d.getUTCSeconds().toString());
 
         return inputString;
     }
@@ -608,7 +636,7 @@ export class TokenService implements ITokenService {
         // Example match: {|owstaxidmetadataalltagsinfo:{Page.<TaxnomyProperty>.TermID}}
         const orAndConditionTokens = /\{(?:(\||\&)(.+?)(>=|=|<=|:|<>|<|>))(\{?.*?\}?\s*)\}/gi;
         let reQueryTemplate = inputString;
-        let match = orAndConditionTokens.exec(inputString);        
+        let match = orAndConditionTokens.exec(inputString);
 
         if (match != null) {
             while (match !== null) {
@@ -616,16 +644,16 @@ export class TokenService implements ITokenService {
                 let conditions = [];
                 const conditionOperator = match[1];
                 const property = match[2];
-                const operator = match[3];                
+                const operator = match[3];
                 const tokenValue = match[4];
 
 
                 let quotes = '"';
-                let orAndOperator = conditionOperator === '|' ? 'OR': 'AND';
+                let orAndOperator = conditionOperator === '|' ? 'OR' : 'AND';
 
                 // {User} tokens are resolved server-side by SharePoint so we exclude them
                 if (!/\{(?:User)\.(.*?)\}/gi.test(tokenValue)) {
-                    const allValues = tokenValue.split(','); // Works with taxonomy multi values (TermID, Label) + multi choices fields + {filters.<value>.valueAsText} token. By convention, all multi values for this operator should be sparated by a comma
+                    const allValues = tokenValue.split(/[,|]/gi); // Works with taxonomy multi values (TermID, Label) + multi choices fields + {filters.<value>.valueAsText} token. By convention, all multi values for this operator should be sparated by a comma
 
                     if (allValues.length > 0) {
                         // Remove duplicates before processing
@@ -651,7 +679,7 @@ export class TokenService implements ITokenService {
                 match = orAndConditionTokens.exec(reQueryTemplate);
             }
         }
-        
+
         return inputString;
     }
 

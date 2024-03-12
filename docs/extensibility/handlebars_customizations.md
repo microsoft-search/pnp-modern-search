@@ -20,3 +20,5 @@ public registerHandlebarsCustomizations(namespace: typeof Handlebars) {
     });
 }
 ```
+
+3. To reference the deployed manifest id of your extension in the search web part see the [Introduction](index.md#register-your-extensibility-library-with-a-web-part).

@@ -1,6 +1,7 @@
 import { PageOpenBehavior, QueryPathBehavior } from "../../../helpers/UrlHelper";
 import { IReadonlyTheme } from "@microsoft/sp-component-base";
 import { ISuggestionProvider, ITokenService } from "@pnp/modern-search-extensibility";
+import { IWebPartTitleProps } from "@pnp/spfx-controls-react/lib/WebPartTitle";
 
 export interface ISearchBoxContainerProps {
 
@@ -13,6 +14,11 @@ export interface ISearchBoxContainerProps {
      * Flag indicating in the search query text should be sent to an other page
      */
     searchInNewPage: boolean;
+
+    /**
+     * Flag indicating new search query should be executed when user clear the query (e.g. using backspace)
+     */
+    reQueryOnClear: boolean;
 
     /**
      * The page URL to send the query text
@@ -58,7 +64,7 @@ export interface ISearchBoxContainerProps {
      * The placeholder text to display in the search box
      */
     placeholderText: string;
-    
+
     /**
      * The Web Part root DOM element
      */
@@ -75,4 +81,9 @@ export interface ISearchBoxContainerProps {
     themeVariant: IReadonlyTheme | undefined;
 
     tokenService: ITokenService;
+
+    /**
+   * The Web Part Title props
+   */
+     webPartTitleProps: IWebPartTitleProps;
 }

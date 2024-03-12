@@ -60,6 +60,8 @@ define([], function() {
                 DefaultExtensibilityLibraryName: "Standaard uitbreidingsbibliotheek",
                 InvalidProviderInstance: "Geselecteerde zoeksuggestiebron '{0}' implemententeert de abstracte class 'BaseSuggestionProvider' niet op correcte wijze. Sommige methodes missen.",
                 ProviderDefinitionNotFound: "De aangepaste zoeksuggestiebron met sleutel '{0}' kon niet worden gevonden. Zorg er voor dat het pakket correct geinstalleerd is in de app catalogus en dat het manifest ID dat geregistreerd is voor dit webonderdeel de juiste is.",
+                QueryModifierDefinitionNotFound: "De aangepaste queryModifier met sleutel '{0}' is niet gevonden. Zorg ervoor dat de oplossing correct is ingezet in de app-catalogus en dat de manifest-ID voor dit webonderdeel is geregistreerd.",
+                InvalidQueryModifierInstance: "De geselecteerde aangepaste queryModifier '{0}' implementeert de abstracte klasse 'BaseQueryModifier' niet correct. Sommige methoden ontbreken.",
             },
             DateFromLabel: "Van",
             DateTolabel: "Tot",
@@ -78,12 +80,12 @@ define([], function() {
                 invalidInputErrorMessage: 'Verkeerde datumnotatie.'
             },
             DateIntervalStrings: {
-                AnyTime: "Altijd",
-                PastDay: "Van afgelopen 24 uur tot afgelopen week",
-                PastWeek: "Van afgelopen week tot afgelopen maand",
-                PastMonth: "Van afgelopen maand tot afgelopen 3 maanden",
-                Past3Months: "Van de afgelopen 3 maanden tot het afgelopen jaar",
-                PastYear: "Van vorig jaar",
+                AnyTime: "Elk moment",
+                PastDay: "Afgelopen 24 uur",
+                PastWeek: "Van afgelopen 24 uur tot afgelopen week",
+                PastMonth: "Van afgelopen week tot afgelopen maand",
+                Past3Months: "Van afgelopen maand tot afgelopen 3 maanden",
+                PastYear: "Van de afgelopen 3 maanden tot het afgelopen jaar",
                 Older: "Ouder dan een jaar"
             },
             SameTabOpenBehavior: "Gebruik de huidige tab",
@@ -123,7 +125,9 @@ define([], function() {
                 HitHighlightedPropertiesFieldDescription: "De lijst van beheerde eigenschappen opgeven om markeren in te schakelen. ",
                 TermNotFound: "(Term met ID '{0}' niet gevonden)",
                 ApplyQueryTemplateBtnText: "Toepassen",
-                EnableAudienceTargetingTglLabel: "Schakel doelgroepen in"
+                EnableAudienceTargetingTglLabel: "Schakel doelgroepen in",
+                TrimDuplicates: "Duplicaten bijsnijden",
+                CollapseSpecificationLabel: "Specificatie samenvouwen"
             },
             MicrosoftSearch: {
                 QueryTextFieldLabel: "Zoekopdracht",
@@ -144,7 +148,15 @@ define([], function() {
                 QueryTemplatePlaceHolderText: "ex: {searchTerms} IsDocument:true",
                 QueryTemplateFieldDescription: "De sjabloon voor zoekmodificatie. U kunt ook {<tokens>} en KQL gebruiken om een ​​dynamische query te maken. Alles is aaneengeschakeld naar de inputQueryText",
                 ApplyQueryTemplateBtnText: "Toepassen",
-                UseBetaEndpoint: "Bèta-eindpunt gebruiken"
+                UseBetaEndpoint: "Bèta-eindpunt gebruiken",
+                TrimDuplicates: "Duplicaten bijsnijden",
+                CollapseProperties: {
+                    EditCollapsePropertiesLabel: "Instellingen voor samenvouwen bewerken",
+                    CollapsePropertiesDescription: "Geef de samenvouwinstellingen op voor de zoekresultaten. U kunt een veld selecteren uit de vervolgkeuzelijst (alleen als de gegevensbrongegevens al zijn opgehaald) of uw eigen aangepaste waarde typen (druk op 'Enter' om uw invoer op te slaan)",
+                    CollapsePropertiesPropertyPaneFieldLabel: "Samenvouwinstellingen",
+                    CollapseLimitFieldLabel: "Begrenzing",
+                    CollapsePropertiesFieldColumnPlaceholder: "Samenvouwen op veld"
+                }
             },
             SearchCommon: {
                 Sort: {
@@ -159,6 +171,9 @@ define([], function() {
                     SortPanelSortDirectionLabel: "Sorteervolgorde",
                     SortDirectionColumnLabel: "Volgorde",
                     SortFieldColumnLabel: "Veldnaam",
+                    SortFieldDefaultSortLabel: "Standaard sortering",
+                    SortFieldFriendlyNameLabel: "Weergavenaam veld sorteren",
+                    SortFieldUserSortLabel: "Gebruiker sorteren",
                     EditSortLabel: "Bewerk sorteervolgorde",
                     SortInvalidSortableFieldMessage: "Deze eigenschap kan niet worden gesorteerd",
                     SortFieldColumnPlaceholder: "Selecteer veld..."
@@ -172,13 +187,18 @@ define([], function() {
             TextDialogSaveButtonText: "Bewaar",
             SelectItemComboPlaceHolder: "Selecteer eigenschap",
             AddStaticDataLabel: "Voeg statische data toe",
-            TextFieldApplyButtonText: "Toepassen"
+            TextFieldApplyButtonText: "Toepassen",
+            SortByPlaceholderText: "Sorteer op...",
+            SortByDefaultOptionText: "Standaard"
         },
         Layouts: {
             Debug: {
                 Name: "Debug"
             },
-            Custom: {
+            CustomHandlebars: {
+                Name: "Aangepast"
+            },
+            CustomAdaptiveCards: {
                 Name: "Aangepast"
             },
             SimpleList: {
@@ -200,13 +220,16 @@ define([], function() {
                 ManageDetailsListColumnDescription: "Kolommen toevoegen, bewerken of verwijderen voor de detailslijst indeling. Je kan eigenschapswaarden direct in de lijst gebruiken zonder transformaties toe te passen, of een Handlebars-uitdrukking gebruiken als veldwaarde. HTML wordt ook ondersteund voor alle velden.",
                 ManageDetailsListColumnLabel: "Beheer kolommen",
                 ValueColumnLabel: "Kolomwaarde",
-                ValueSortingColumnLabel: "Kolomwaarde sorteren",
-                DisplayNameColumnLabel: "Kolom weergavenaam",
+                ValueSortingColumnLabel: "Selecteer sorteerveld...",
+                ValueSortingColumnNoFieldsLabel: "Geen velden beschikbaar",
                 FileExtensionFieldLabel: "Te gebruiken veld voor bestandsextensie",
                 GroupByFieldLabel: "Groepeer op veld",
                 EnableGrouping: "Groeperen inschakelen",
+                GroupingDescription: "Zorg ervoor dat er gegevens worden weergegeven in het resultaatwebonderdeel voor een lijst met eigenschappen die moeten worden weergegeven.",
                 CollapsedGroupsByDefault: "Toon ingeklapt",
-                ResetFieldsBtnLabel: "Reset velden naar standaard waarden"
+                ResetFieldsBtnLabel: "Reset velden naar standaard waarden",
+                EnableStickyHeader: "Sticky header inschakelen",
+                StickyHeaderListViewHeight: "Hoogte van de lijstweergave (px)"
             },
             Cards: {
                 Name: "Kaarten",
@@ -264,7 +287,10 @@ define([], function() {
                 SupportHTMLColumnLabel: "Sta HTML toe",
                 ResetFieldsBtnLabel: "Reset velden naar standaard waarden",
                 ShowPersonaCardOnHover: "Toon persona card bij 'hover'",
+                ShowPersonaCardOnHoverNative: "Toon persona card bij 'hover' (LPC)",
                 ShowPersonaCardOnHoverCalloutMsg: "Deze feature gebruikt Microsoft Graph om informatie over de gebruiker te tonen en heeft de volgende API rechten nodig in de tenant om te kunnen werken: ['User.Read','People.Read','Contacts.Read','User.Read.All'].",
+                ShowPersonaPresenceInfo: "Aanwezigheid tonen",
+                ShowPersonaPresenceInfoCalloutMsg: "Deze functie heeft de volgende API-rechten in je tenant nodig om te werken: ['Presence.Read.All']",
                 Fields: {
                     ImageUrl: "Afbeeldings URL",
                     PrimaryText: "Primaire tekst",

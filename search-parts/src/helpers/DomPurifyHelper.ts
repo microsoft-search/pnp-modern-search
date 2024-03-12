@@ -9,6 +9,7 @@ export class DomPurifyHelper {
 
         if(data && data.attrName) {
             if(data.attrName.indexOf("on") == 0) return;
+            if(data.attrName == "href") return;
             data.allowedAttributes[data.attrName] = true;
             data.forceKeepAttr = true;
         }        

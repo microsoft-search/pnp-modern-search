@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { Suspense } from 'react';
-const TextDialog = React.lazy(() => import('../TextDialog/TextDialog'));
+import { TextDialog } from "../TextDialog";
 import { ICustomCollectionField } from '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData';
-import { ComboBox, IComboBoxOption } from 'office-ui-fabric-react';
+import { ComboBox, IComboBoxOption } from '@fluentui/react';
 import * as strings from 'CommonStrings';
 
 export interface ITemplateValueFieldEditorState {
@@ -53,8 +52,7 @@ export class TemplateValueFieldEditor extends React.Component<ITemplateValueFiel
 
         if (this.props.useHandlebarsExpr) {
             let lang: any = "handlebars";
-            renderField =   <Suspense fallback={""}>
-                                <TextDialog
+            renderField =   <TextDialog
                                     language={lang}
                                     dialogTextFieldValue={this.props.value}
                                     onChanged={(fieldValue) => {
@@ -66,8 +64,7 @@ export class TemplateValueFieldEditor extends React.Component<ITemplateValueFiel
                                         dialogTitle: strings.Controls.TextDialogTitle,
                                         saveButtonText: strings.Controls.TextDialogSaveButtonText
                                     }}
-                                />
-                            </Suspense>;
+                            />;
         } else {
 
             renderField = <ComboBox

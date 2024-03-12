@@ -20,11 +20,22 @@
             </pnp-selectedfilters>
         {{/if}}
        
-        {{#if @root.properties.showResultsCount}}
-            <div class="template--resultCount">
-                <label class="ms-fontWeight-semibold">{{getCountMessage @root.data.totalItemsCount @root.inputQueryText}}</label>
+        <div class="template--header">
+            {{#if @root.properties.showResultsCount}}
+                <div class="template--resultCount">
+                    <label class="ms-fontWeight-semibold">{{getCountMessage @root.data.totalItemsCount @root.inputQueryText}}</label>
+                </div>
+            {{/if}}
+
+            <div class="template--sort">
+                <pnp-sortfield 
+                    data-fields="{{JSONstringify @root.properties.dataSourceProperties.sortList}}" 
+                    data-default-selected-field="{{sort.selectedSortFieldName}}" 
+                    data-default-direction="{{sort.selectedSortDirection}}"
+                    data-theme-variant="{{JSONstringify @root.theme}}">
+                </pnp-sortfield>    
             </div>
-        {{/if}}
+        </div>
         
         <div>
             <ul class="template--defaultList">
@@ -48,7 +59,9 @@
                                                     data-persona-size="{{@root.properties.layoutProperties.personaSize}}"
                                                     data-theme-variant="{{JSONstringify @root.theme}}"
                                                     data-instance-id="{{@root.instanceId}}"
-                                                    data-context="{{JSONstringify @root}}">
+                                                    data-context="{{JSONstringify (truncateContext @root)}}"
+                                                    data-show-presence={{@root.properties.layoutProperties.showPersonaPresenceInfo}}
+                                                    data-user-object-id="{{slot item @root.slots.PersonQuery}}">
                                                 </pnp-persona>
                                             </template>
                                             <template data-type="person-card">
@@ -61,9 +74,12 @@
                                             data-fields-configuration="{{JSONstringify @root.properties.layoutProperties.peopleFields}}"
                                             data-item="{{JSONstringify item}}" 
                                             data-persona-size="{{@root.properties.layoutProperties.personaSize}}" 
-                                            data-context="{{JSONstringify @root}}"
+                                            data-context="{{JSONstringify (truncateContext @root)}}"
                                             data-instance-id="{{@root.instanceId}}"
                                             data-theme-variant="{{JSONstringify @root.theme}}"
+                                            data-native-lpc={{@root.properties.layoutProperties.showPersonaCardNative}}
+                                            data-show-presence={{@root.properties.layoutProperties.showPersonaPresenceInfo}}
+                                            data-user-object-id="{{slot item @root.slots.PersonQuery}}"
                                         ></pnp-persona>
                                     {{/and}}
                                     
@@ -87,7 +103,6 @@
                     data-range="{{@root.properties.paging.pagingRange}}" 
                     data-items-count-per-page="{{@root.properties.paging.itemsCountPerPage}}" 
                     data-current-page-number="{{@root.paging.currentPageNumber}}"
-                    data-page-links="{{JSONstringify @root.data.paging.links}}"
                     data-theme-variant="{{JSONstringify @root.theme}}"
                 >
                 </pnp-pagination>

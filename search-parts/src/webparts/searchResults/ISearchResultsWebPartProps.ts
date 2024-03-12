@@ -1,14 +1,15 @@
-import { ITemplateSlot } from "@pnp/modern-search-extensibility";
+import { ITemplateSlot, LayoutRenderType } from "@pnp/modern-search-extensibility";
 import { IDataResultType } from "../../models/common/IDataResultType";
 import { IPagingSettings } from "../../models/common/IPagingSettings";
 import { IBaseWebPartProps } from "../../models/common/IBaseWebPartProps";
 import { DynamicProperty } from "@microsoft/sp-component-base";
 import { IExtensibilityConfiguration } from "../../models/common/IExtensibilityConfiguration";
 import { IItemSelectionProps } from "../../models/common/IItemSelectionProps";
+import { IQueryModifierConfiguration } from "../../queryModifier/IQueryModifierConfiguration";
 
 export enum QueryTextSource {
     StaticValue,
-    DynamicValue 
+    DynamicValue
 }
 
 export default interface ISearchResultsWebPartProps extends IBaseWebPartProps {
@@ -22,7 +23,7 @@ export default interface ISearchResultsWebPartProps extends IBaseWebPartProps {
      * The data source properties. We need a weel identified property to isolate data sources (avoid playing in the root property bag values)
      */
     dataSourceProperties: {
-        [key:string]: any 
+        [key: string]: any
     };
 
     /**
@@ -63,8 +64,18 @@ export default interface ISearchResultsWebPartProps extends IBaseWebPartProps {
         /**
          * Any other property from layouts (builtin + custom)
          */
-        [key:string]: any;
+        [key: string]: any;
     };
+
+    /**
+     * The layout type
+     */
+    layoutRenderType: LayoutRenderType;
+
+    /**
+     * Adaptive cards host config
+     */
+    adaptiveCardsHostConfig: string;
 
     /**
      * Current version of the Web Part (set by CI)
@@ -163,8 +174,15 @@ export default interface ISearchResultsWebPartProps extends IBaseWebPartProps {
     selectedItemFieldValue: DynamicProperty<string>;
 
     /**
-     * Flag indicating if telemetry are enabled
+     * The queryModifier properties
      */
-     enableTelemetry: boolean;
+    queryModifierProperties: {
+        [key: string]: any;
+    };
+
+    /**
+    * Selected query modifier definition
+    */
+    queryModifierConfiguration: IQueryModifierConfiguration[];
 }
 

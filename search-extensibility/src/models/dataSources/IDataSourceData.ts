@@ -1,5 +1,5 @@
 import { IDataFilterResult } from '../filters/IDataFilter';
-import { ISortFieldConfiguration } from '../ISortFieldConfiguration';
+import { IResultTemplates } from './IResultTemplates';
 
 export interface IDataSourceData {
 
@@ -19,7 +19,7 @@ export interface IDataSourceData {
     filters?: IDataFilterResult[];
 
     /**
-     * The sort list by the data source
+     * Result templates available for items provided by the data source
      */
-    sortList?: ISortFieldConfiguration[];
+    resultTemplates?: IResultTemplates;
 }

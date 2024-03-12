@@ -16,10 +16,9 @@ export class Constants {
     public static readonly X_CLIENTSERVICE_CLIENTTAG = 'NonISV|PnP|ModernSearch';
 
     /**
-     * The PnP Application Insights instrumentation key and events for stats tracking
+     * The regular expression to sanitize URIs with DomPurify
      */
-    public static readonly PNP_APP_INSIGHTS_INSTRUMENTATION_KEY = '0f0b9db6-680c-480c-804d-f75830e2c383';
-    public static readonly PNP_MODERN_SEARCH_EVENT_NAME = 'pnpModernSearchV4';
+    public static readonly ALLOWED_URI_REGEXP = /^(?:(?:(?:f|ht)tps?|mailto|file|tel|callto|im|cid|xmpp|xxx|ms-\w+):|[^a-z]|[a-z+.-]+(?:[^a-z+.-:]|$))/i;
 }
 
 export enum AutoCalculatedDataSourceFields {
@@ -42,3 +41,58 @@ export class TestConstants {
     public static CheckBoxFilterCount = "filterCount";
     public static SelectedFiltersClearFilter = "clearFilter";
 }
+
+export const SortableFields = [
+    'AADObjectID',
+    'Author',
+    'ClassificationLastScan',
+    'ClickStreamClickedCount',
+    'ClickStreamLastClickCount',
+    'ClickStreamSkippedCount',
+    'ClickStreamSkippedCount',
+    'CommunityMembersCount',
+    'CommunityRepliesCount',
+    'CommunityTopicsCount',
+    'ComplianceTag',
+    'ComplianceTagWrittenTime',
+    'Created',
+    'DMSDocAccessRight',
+    'DMSDocAuthor',
+    'DMSDocTitle',
+    'DetectedLanguageRanking',
+    'DocumentAnalyticsLastActivityTimestamp',
+    'DocumentAnalyticsLastActivityTimestamp',
+    'EndDateOWSDATE',
+    'EventDateOWSDATE',
+    'EventRate',
+    'EventsRollUpEndDate',
+    'EventsRollUpStartDate',
+    'ExpirationTime',
+    'FileExtension',
+    'Filename',
+    'FirstName',
+    'FirstPublishedDate',
+    'IRMProtected',
+    'IRMTemplateName',
+    'InboundLinkCount',
+    'IsExternalContent',
+    'LastModifiedTime',
+    'LastModifiedTimeForRetention',
+    'LastName',
+    'LevelsToTop',
+    'ModifiedBy',
+    'ModifierAADIDs',
+    'NonWordBrokenComplianceTag',
+    'ProductCatalogGroupNumberOWSTEXT',
+    'PromotedState',
+    'QLogClicks',
+    'QLogLastClicks',
+    'QLogSiteClicks',
+    'QLogSiteLastClicks',
+    'QLogSiteSkips',
+    'QLogSkips',
+    'RecentViewCount',
+    'RecentViewCount',
+    'RecsClickedLifeTime',
+    'RecsClickedRecent'
+];

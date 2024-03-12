@@ -1,7 +1,28 @@
 <content id="data-content">
 
     <style>
+        {{#if properties.layoutProperties.enableStickyHeader}}
+        .template .ms-DetailsHeader-cell:first-child {
+          position: sticky;
+          inset: 0;
+          background-color: {{@root.theme.palette.primaryBackground}};
+          z-index: 1;
+        }
+
+        .template .ms-DetailsRow-cell:first-child {
+          position: sticky;
+          inset: 0;
+          background-color: {{@root.theme.palette.primaryBackground}};
+          z-index: 0;
+        }
+        {{/if}}
+
+        .template .ms-DetailsRow {
+            animation-name: none;
+        }
+        
         /* Insert your CSS overrides here */
+        
     </style>
 
     <div class="template">
@@ -32,12 +53,17 @@
             data-is-compact="{{properties.layoutProperties.isCompact}}"
             data-group-by="{{properties.layoutProperties.groupByField}}"
             data-groups-collapsed="{{properties.layoutProperties.groupsCollapsed}}"
-            data-context="{{JSONstringify @root}}"
+            data-context="{{JSONstringify (truncateContext @root)}}"
             data-instance-id="{{@root.instanceId}}"
             data-theme-variant="{{JSONstringify @root.theme}}"
             data-allow-item-selection="{{properties.itemSelectionProps.allowItemSelection}}"
             data-allow-multi={{properties.itemSelectionProps.allowMulti}}
             data-selected-keys="{{JSONstringify @root.selectedKeys}}"
+            data-fields="{{JSONstringify @root.properties.dataSourceProperties.sortList}}" 
+            data-default-selected-field="{{sort.selectedSortFieldName}}" 
+            data-default-direction="{{sort.selectedSortDirection}}"
+            data-enable-sticky-header="{{properties.layoutProperties.enableStickyHeader}}"
+            data-sticky-header-list-view-height="{{properties.layoutProperties.stickyHeaderListViewHeight}}"
         >
         </pnp-detailslist>
 
@@ -53,7 +79,6 @@
                     data-range="{{@root.properties.paging.pagingRange}}" 
                     data-items-count-per-page="{{@root.properties.paging.itemsCountPerPage}}" 
                     data-current-page-number="{{@root.paging.currentPageNumber}}"
-                    data-page-links="{{JSONstringify @root.data.paging.links}}"
                     data-theme-variant="{{JSONstringify @root.theme}}"
                 >
                 </pnp-pagination>

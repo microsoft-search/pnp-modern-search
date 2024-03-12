@@ -1,12 +1,13 @@
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
-import { Version, Text, DisplayMode, ServiceScope, Log, Guid } from '@microsoft/sp-core-library';
-import { IComboBoxOption, Toggle, IToggleProps, MessageBarType, MessageBar, Link } from 'office-ui-fabric-react';
+import { Version, Text, DisplayMode, ServiceScope, Log } from '@microsoft/sp-core-library';
+import { IComboBoxOption, Toggle, IToggleProps, MessageBarType, MessageBar, Link } from '@fluentui/react';
 import { IWebPartPropertiesMetadata } from '@microsoft/sp-webpart-base';
 import * as webPartStrings from 'SearchResultsWebPartStrings';
 import * as commonStrings from 'CommonStrings';
 import { ISearchResultsContainerProps } from './components/ISearchResultsContainerProps';
-import { IDataSource, IDataSourceDefinition, IComponentDefinition, ILayoutDefinition, ILayout, IDataFilter, LayoutType, FilterType, FilterComparisonOperator, BaseDataSource, IDataFilterValue, IDataFilterResult, FilterConditionOperator, IDataVertical } from '@pnp/modern-search-extensibility';
+import { IDataSource, IDataSourceDefinition, IComponentDefinition, ILayoutDefinition, ILayout, IDataFilter, LayoutType, FilterComparisonOperator, BaseDataSource, IDataFilterValue, IDataFilterResult, FilterConditionOperator, IDataVertical, ExtensibilityConstants, ISortInfo, LayoutRenderType, IQueryModifierDefinition, IQueryModifier, BaseQueryModifier } from '@pnp/modern-search-extensibility';
+
 import {
     IPropertyPaneConfiguration,
     IPropertyPaneChoiceGroupOption,
@@ -29,13 +30,13 @@ import { AvailableDataSources, BuiltinDataSourceProviderKeys } from '../../dataS
 import { ServiceKey } from "@microsoft/sp-core-library";
 import SearchResultsContainer from './components/SearchResultsContainer';
 import { AvailableLayouts, BuiltinLayoutsKeys } from '../../layouts/AvailableLayouts';
-import { ITemplateService } from '../../services/templateService/ITemplateService';
+import { ITemplateService, FileFormat } from '../../services/templateService/ITemplateService';
 import { TemplateService } from '../../services/templateService/TemplateService';
 import { ServiceScopeHelper } from '../../helpers/ServiceScopeHelper';
 import { cloneDeep, flatten, isEmpty, isEqual, uniq, uniqBy } from "@microsoft/sp-lodash-subset";
 import { AvailableComponents } from '../../components/AvailableComponents';
 import { DynamicProperty } from '@microsoft/sp-component-base';
-import { ITemplateSlot, IDataFilterToken, IDataFilterTokenValue, IDataContext, ITokenService } from '@pnp/modern-search-extensibility';
+import { ITemplateSlot, IDataFilterToken, IDataFilterTokenValue, IDataContext, ITokenService, SortFieldDirection, IExtensibilityLibrary } from '@pnp/modern-search-extensibility';
 import { ResultTypeOperator } from '../../models/common/IDataResultType';
 import { TokenService, BuiltinTokenNames } from '../../services/tokenService/TokenService';
 import { TaxonomyService } from '../../services/taxonomyService/TaxonomyService';
@@ -57,13 +58,15 @@ import { BuiltinFilterTemplates } from '../../layouts/AvailableTemplates';
 import { IExtensibilityConfiguration } from '../../models/common/IExtensibilityConfiguration';
 import { IDataVerticalSourceData } from '../../models/dynamicData/IDataVerticalSourceData';
 import { BaseWebPart } from '../../common/BaseWebPart';
-import { ApplicationInsights } from '@microsoft/applicationinsights-web';
 import commonStyles from '../../styles/Common.module.scss';
 import { UrlHelper } from '../../helpers/UrlHelper';
 import { ObjectHelper } from '../../helpers/ObjectHelper';
 import { ItemSelectionMode } from '../../models/common/IItemSelectionProps';
 import { PropertyPaneAsyncCombo } from '../../controls/PropertyPaneAsyncCombo/PropertyPaneAsyncCombo';
 import { DynamicPropertyHelper } from '../../helpers/DynamicPropertyHelper';
+import { IQueryModifierConfiguration } from '../../queryModifier/IQueryModifierConfiguration';
+import { PropertyPaneTabsField } from '../../controls/PropertyPaneTabsField/PropertyPaneTabsField';
+import { loadMsGraphToolkit } from '../../helpers/GraphToolKitHelper';
 
 const LogSource = "SearchResultsWebPart";
 
@@ -111,6 +114,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
      */
     private lastDataSourceKey: string;
     private lastLayoutKey: string;
+    private lastQueryModifierKeys: string[] = [];
 
     /**
      * The selected layout for the Web Part
@@ -138,9 +142,19 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     private availableLayoutDefinitions: ILayoutDefinition[] = AvailableLayouts.BuiltinLayouts.filter(layout => { return layout.type === LayoutType.Results; });
 
     /**
+     * Available layouts to display in the property pane regarding the render ype
+     */
+    private availableLayoutsInPropertyPane: ILayoutDefinition[] = [];
+
+    /**
      * The available web component definitions (not registered yet)
      */
     private availableWebComponentDefinitions: IComponentDefinition<any>[] = AvailableComponents.BuiltinComponents;
+
+    /**
+     * The available custom QueryModifier definitions (not registered yet)
+     */
+    private availableCustomQueryModifierDefinitions: IQueryModifierDefinition[] = [];
 
     /**
      * The current page number
@@ -148,14 +162,9 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     private currentPageNumber: number = 1;
 
     /**
-     * The page URL link if provided by the data source
-     */
-    private currentPageLinkUrl: string = null;
-
-    /**
-     * The available page links available in the pagination control
-     */
-    private availablePageLinks: string[] = [];
+    * The current selected custom query modifiers
+    */
+    private _selectedCustomQueryModifier: IQueryModifier[] = [];
 
     /**
      * The token service instance
@@ -180,12 +189,24 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
      */
     private _defaultTemplateSlots: ITemplateSlot[];
 
+    /**
+     * Sort related properties
+     */
+    private _currentSelectedSortFieldName: string = null;
+    private _currentSelectedSortDirection: SortFieldDirection = SortFieldDirection.Ascending;
+
     private _pushStateCallback = null;
 
     /**
      * The available connections as property pane group
      */
     private propertyPaneConnectionsGroup: IPropertyPaneGroup[] = [];
+
+
+    /**
+     * The current DataContext - is updated in render method
+     */
+    private _currentDataContext: IDataContext;
 
     constructor() {
         super();
@@ -224,6 +245,15 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 this.lastLayoutKey = this.properties.selectedLayoutKey;
             }
 
+
+            const queryModifierKeys = this.properties.queryModifierConfiguration.filter(c => c.enabled).map(c => c.key);
+            // Initialize custom query modifier instances if changed
+            if (!isEqual(this.lastQueryModifierKeys, queryModifierKeys)) {
+                this._selectedCustomQueryModifier = await this.initializeQueryModifiers(this.properties.queryModifierConfiguration);
+                this.lastQueryModifierKeys = queryModifierKeys;
+
+            }
+
         } catch (error) {
             // Catch instanciation or wrong definition errors for extensibility scenarios
             this.errorMessage = error.message ? error.message : error;
@@ -237,6 +267,9 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             this.context.propertyPane.refresh();
         }
 
+        if (this.dataSource) {
+            this._currentDataContext = await this.getDataContext();
+        }
         return this.renderCompleted();
     }
 
@@ -284,7 +317,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                     // "FileType":['docx','pdf']
                     fields[field] = [];
                     this._currentDataResultsSourceData.selectedItems.forEach(selectedItem => {
-                        const fieldValue =  ObjectHelper.byPath(selectedItem, field);
+                        const fieldValue = ObjectHelper.byPath(selectedItem, field);
 
                         // Special case where there value is a taxonomy item. In this case, we only take the GP0 part as it won't work otherwise with SharePoint search refiners or KQL conditions
                         const taxonomyItemRegExp = /GP0\|#0?((\{){0,1}[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}(\}){0,1})/gi;
@@ -318,9 +351,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         let renderRootElement: JSX.Element = null;
         let renderDataContainer: JSX.Element = null;
 
-        if (this.dataSource) {
-
-            const dataContext = this.getDataContext();
+        if (this.dataSource && this.instanceId) {
 
             // The main content WP logic
             renderDataContainer = React.createElement(SearchResultsContainer, {
@@ -332,7 +363,9 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 onDataRetrieved: this._onDataRetrieved,
                 onItemSelected: this._onItemSelected,
                 pageContext: this.context.pageContext,
-                dataContext: dataContext,
+                teamsContext: this.context.sdks.microsoftTeams ? this.context.sdks.microsoftTeams.context : null,
+                renderType: this.properties.layoutRenderType,
+                dataContext: this._currentDataContext,
                 themeVariant: this._themeVariant,
                 serviceScope: this.webPartInstanceServiceScope,
                 webPartTitleProps: {
@@ -358,7 +391,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                         iconText: webPartStrings.General.PlaceHolder.IconText,
                         description: webPartStrings.General.PlaceHolder.Description,
                         buttonLabel: webPartStrings.General.PlaceHolder.ConfigureBtnLabel,
-                        onConfigure: () => { this.context.propertyPane.openDetails(); }
+                        onConfigure: () => { this.context.propertyPane.open(); }
                     }
                 );
                 renderRootElement = placeholder;
@@ -435,11 +468,34 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         ReactDom.render(renderRootElement, this.domElement);
 
+        if(this.properties.showBlankIfNoResult){
+            let element = this.domElement.parentElement;
+                // check up to 3 levels up for padding and exit once found
+                for (let i = 0; i < 3; i++) {
+                    const style = window.getComputedStyle(element);
+                    const hasPadding = style.paddingTop !== "0px";
+                    if (hasPadding) {
+                        element.style.paddingTop = "0px";
+                        element.style.paddingBottom = "0px";
+                        element.style.marginTop = "0px";
+                        element.style.marginBottom = "0px";
+                    }
+                    element = element.parentElement;
+                }
+        }
+
         // This call set this.renderedOnce to 'true' so we need to execute it at the very end
         super.renderCompleted();
     }
 
     protected async onInit(): Promise<void> {
+        try {
+            // Disable PnP Telemetry
+            const telemetry = PnPTelemetry.getInstance();
+            telemetry.optOut();
+        } catch (error) {
+            Log.warn(LogSource, `Opt out for PnP Telemetry failed. Details: ${error}`, this.context.serviceScope);
+        }
 
         // Initializes Web Part properties
         this.initializeProperties();
@@ -453,55 +509,25 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         // Bind web component events
         this.bindPagingEvents();
 
+        // Bind worting events
+        this.bindSortingEvents();
+
         this._bindHashChange();
         this._handleQueryStringChange();
 
         // Load extensibility libaries extensions
         await this.loadExtensions(this.properties.extensibilityLibraryConfiguration);
 
+        // Filter the layouts to be displayed in the property pane according to current render type
+        this.availableLayoutsInPropertyPane = this.availableLayoutDefinitions.filter(layout => layout.renderType === this.properties.layoutRenderType);
+
         // Register Web Components in the global page context. We need to do this BEFORE the template processing to avoid race condition.
         // Web components are only defined once.
         await this.templateService.registerWebComponents(this.availableWebComponentDefinitions, this.instanceId);
 
-        try {
-            // Disable PnP Telemetry
-            const telemetry = PnPTelemetry.getInstance();
-            telemetry.optOut();
-        } catch (error) {
-            Log.warn(LogSource, `Opt out for PnP Telemetry failed. Details: ${error}`, this.context.serviceScope);
-        }
-
-        if (this.properties.dataSourceKey && this.properties.selectedLayoutKey && this.properties.enableTelemetry) {
-
-            const usageEvent = {
-                name: Constants.PNP_MODERN_SEARCH_EVENT_NAME,
-                properties: {
-                    selectedDataSource: this.properties.dataSourceKey,
-                    selectedLayout: this.properties.selectedLayoutKey,
-                    useFilters: this.properties.useFilters,
-                    useVerticals: this.properties.useVerticals
-                }
-            };
-
-            // Track event with application insights (PnP)
-            const appInsights = new ApplicationInsights({
-                config: {
-                    maxBatchInterval: 0,
-                    instrumentationKey: Constants.PNP_APP_INSIGHTS_INSTRUMENTATION_KEY,
-                    namePrefix: LogSource,
-                    disableFetchTracking: true,
-                    disableAjaxTracking: true
-                }
-            });
-
-            appInsights.loadAppInsights();
-            appInsights.context.application.ver = this.manifest.version;
-            appInsights.trackEvent(usageEvent);
-        }
-
         // Initializes MS Graph Toolkit
         if (this.properties.useMicrosoftGraphToolkit) {
-            await this.loadMsGraphToolkit();
+            await loadMsGraphToolkit(this.context);
         }
 
         // Initializes this component as a discoverable dynamic data source
@@ -595,6 +621,14 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 }
             ]);
 
+
+            let queryTransformationGroups: IPropertyPaneGroup[] = [];
+            if (this._selectedCustomQueryModifier.length > 0 && !this.errorMessage) {
+                this._selectedCustomQueryModifier.forEach(modifier => {
+                    queryTransformationGroups = queryTransformationGroups.concat(modifier.getPropertyPaneGroupsConfiguration());
+                });
+            }
+
             // Other pages
             propertyPanePages.push(
                 {
@@ -603,7 +637,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 },
                 {
                     groups: [
-                        ...this.propertyPaneConnectionsGroup
+                        ...this.propertyPaneConnectionsGroup,
+                        ...queryTransformationGroups
                     ],
                     displayGroupsAsAccordion: true
                 }
@@ -630,11 +665,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                             this._propertyPanePropertyEditor({
                                 webpart: this,
                                 key: 'propertyEditor'
-                            }),
-                            PropertyPaneToggle('enableTelemetry', {
-                                label: webPartStrings.PropertyPane.InformationPage.EnableTelemetryLabel,
-                                offText: webPartStrings.PropertyPane.InformationPage.EnableTelemetryOn,
-                                onText: webPartStrings.PropertyPane.InformationPage.EnableTelemetryOff,
                             })
                         ]
                     }
@@ -683,8 +713,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
             // Automatically switch the option to 'Custom' if a default template has been edited
             // (meaning the user started from a default template)
-            if (this.properties.inlineTemplateContent && this.properties.selectedLayoutKey !== BuiltinLayoutsKeys.ResultsCustom) {
-                this.properties.selectedLayoutKey = BuiltinLayoutsKeys.ResultsCustom;
+            if (this.properties.inlineTemplateContent && (this.properties.selectedLayoutKey !== BuiltinLayoutsKeys.ResultsCustomHandlebars || BuiltinLayoutsKeys.ResultsCustomAdaptiveCards)) {
+                this.properties.selectedLayoutKey = this.properties.layoutRenderType === LayoutRenderType.Handlebars ? BuiltinLayoutsKeys.ResultsCustomHandlebars : BuiltinLayoutsKeys.ResultsCustomAdaptiveCards;
 
                 // Reset also the template URL
                 this.properties.externalTemplateUrl = '';
@@ -714,8 +744,38 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
             // Reset paging information
             this.currentPageNumber = 1;
+        }
 
-            this._resetPagingData();
+        // Reset layout properties
+        if (propertyPath.localeCompare('selectedLayoutKey') === 0 && !isEqual(oldValue, newValue)) {
+
+            if (this.properties.selectedLayoutKey !== BuiltinLayoutsKeys.ResultsDebug.toString()) {
+                this.properties.layoutProperties = {};
+            }
+
+            // Update the layout definition
+            const layouts = this.availableLayoutDefinitions.filter((layout) => {
+
+                if (newValue === BuiltinLayoutsKeys.ResultsCustomAdaptiveCards || newValue === BuiltinLayoutsKeys.ResultsCustomHandlebars) {
+                    // Return the custom template according to the last template type in case we have an inline template already saved
+                    return layout.key === newValue && layout.renderType === this.properties.layoutRenderType;
+                } else {
+                    return layout.key === newValue;
+                }
+            });
+
+            if (layouts.length > 0) {
+
+                if (newValue === BuiltinLayoutsKeys.ResultsCustomHandlebars || BuiltinLayoutsKeys.ResultsCustomAdaptiveCards) {
+
+                    // We reset the custom template to avoid mismatch between template type and content as we don't link the two
+                    this.properties.inlineTemplateContent = null;
+                    this.properties.externalTemplateUrl = '';
+                } else {
+                    // This option should follow the type of the template selected. The is way, if the current template is update, the custom layout will have the correct type to render.
+                    this.properties.layoutRenderType = layouts[0].renderType;
+                }
+            }
         }
 
         // Reset layout properties
@@ -733,21 +793,17 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             (propertyPath.localeCompare('queryTextSource') === 0 && oldValue === QueryTextSource.StaticValue && newValue === QueryTextSource.DynamicValue) ||
             (propertyPath.localeCompare('useInputQueryText') === 0 && !this.properties.useInputQueryText)) {
 
-            if (this.properties.queryText.tryGetSource()) {
-                this.properties.queryText.unregister(this.render);
+            const queryText = DynamicPropertyHelper.tryGetSourceSafe(this.properties.queryText);
+            if (queryText && queryText.unregister) {
+                queryText.unregister(this.render);
+                queryText.queryText.setValue('');
             }
-
-            this.properties.queryText.setValue('');
         }
 
         // Update template slots when default slots from data source change (ex: OData client type)
         if (propertyPath.indexOf('dataSourceProperties') !== -1 && this.dataSource && this._defaultTemplateSlots && !isEqual(this._defaultTemplateSlots, this.dataSource.getTemplateSlots())) {
             this.properties.templateSlots = this.dataSource.getTemplateSlots();
             this._defaultTemplateSlots = this.dataSource.getTemplateSlots();
-        }
-
-        if (propertyPath.localeCompare('paging.itemsCountPerPage') === 0) {
-            this._resetPagingData();
         }
 
         if (propertyPath.localeCompare('extensibilityLibraryConfiguration') === 0) {
@@ -759,6 +815,10 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             this.availableDataSourceDefinitions = AvailableDataSources.BuiltinDataSources;
             this.availableLayoutDefinitions = AvailableLayouts.BuiltinLayouts.filter(layout => { return layout.type === LayoutType.Results; });
             this.availableWebComponentDefinitions = AvailableComponents.BuiltinComponents;
+            this.availableCustomQueryModifierDefinitions = [];
+            this._selectedCustomQueryModifier = [];
+            this.properties.queryModifierProperties = {};
+            this.properties.queryModifierConfiguration = [];
 
             await this.loadExtensions(cleanConfiguration);
         }
@@ -771,7 +831,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         if (propertyPath.localeCompare("useMicrosoftGraphToolkit") === 0 && this.properties.useMicrosoftGraphToolkit) {
 
             // We load this dynamically to avoid tokens renewal failure at page load and decrease the bundle size. Most of the time, MGT won't be used in templates.
-            await this.loadMsGraphToolkit();
+            await loadMsGraphToolkit(this.context);
         }
 
         if (propertyPath.localeCompare('selectedItemFieldValue') === 0) {
@@ -797,8 +857,18 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 // Reset previous token value 
                 delete filterToken[oldValue];
             }
-
         }
+
+        if (propertyPath.localeCompare('enableCustomQueryTransformation') === 0 && !newValue) {
+
+            // Disable all providers
+            this.properties.queryModifierConfiguration.forEach(modifier => {
+                modifier.enabled = false;
+            });
+
+            this.properties.queryModifierProperties = {};
+        }
+
 
         // Refresh list of available connections
         this.propertyPaneConnectionsGroup = await this.getConnectionOptionsGroup();
@@ -819,6 +889,19 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             changeCallback(propertyPath, cloneDeep((newValue as IComboBoxOption).key));
             this.context.propertyPane.refresh();
         }
+
+        if (propertyPath.localeCompare("layoutRenderType") === 0) {
+
+            this.availableLayoutsInPropertyPane = this.availableLayoutDefinitions.filter(layoutDefinition => layoutDefinition.renderType === LayoutRenderType[newValue as string]);
+
+            // Reset the inline template if the templating mode is updated since they are not compatible between HTML and JSON
+            this.properties.inlineTemplateContent = null;
+            this.properties.selectedLayoutKey = this.availableLayoutsInPropertyPane[0].key;
+
+            this.properties.layoutRenderType = LayoutRenderType[newValue as string];
+            this.render();
+            this.context.propertyPane.refresh();
+        }
     }
 
     protected get isRenderAsync(): boolean {
@@ -832,14 +915,14 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     /**
      * Determines the input query text value based on Dynamic Data
      */
-    private _getInputQueryTextValue(): string {
+    private async _getInputQueryTextValue(): Promise<string> {
 
         let inputQueryText: string = undefined; // {inputQueryText} token should always resolve as '' by default
 
         // tryGetValue() will resolve to '' if no Web Part is connected or if the connection is removed
         // The value can be also 'undefined' if the data source is not already loaded on the page.
         let inputQueryFromDataSource = "";
-        if (this.properties.queryText) {
+        if (this.properties.queryText && this.properties.useInputQueryText) {
             try {
                 inputQueryFromDataSource = DynamicPropertyHelper.tryGetValueSafe(this.properties.queryText);
                 if (inputQueryFromDataSource !== undefined && typeof (inputQueryFromDataSource) === 'string') {
@@ -863,23 +946,12 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             inputQueryText = decodeURIComponent(inputQueryFromDataSource);
         }
 
-        return inputQueryText;
-    }
-
-    /**
-     * Loads the Microsoft Graph Toolkit library dynamically
-     */
-    private async loadMsGraphToolkit() {
-
-        // Load Microsoft Graph Toolkit dynamically
-        const { Providers, SharePointProvider } = await import(
-            /* webpackChunkName: 'microsoft-graph-toolkit' */
-            '@microsoft/mgt/dist/es6'
-        );
-
-        if (!Providers.globalProvider) {
-            Providers.globalProvider = new SharePointProvider(this.context);
+        //Check if any custom query modifier is active and modify the inputQueryText
+        if (this._selectedCustomQueryModifier && this._selectedCustomQueryModifier.length > 0) {
+            inputQueryText = await this.getModifiedInputQueryText(inputQueryText);
         }
+
+        return inputQueryText;
     }
 
     /**
@@ -889,12 +961,13 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         // Load extensibility library if present
         const extensibilityLibraries = await this.extensibilityService.loadExtensibilityLibraries(librariesConfiguration);
+        const customQueryModifierConfiguration: IQueryModifierConfiguration[] = [];
 
         // Load extensibility additions
         if (extensibilityLibraries.length > 0) {
 
             // Load customizations from extensibility libraries
-            extensibilityLibraries.forEach(extensibilityLibrary => {
+            extensibilityLibraries.forEach((extensibilityLibrary: IExtensibilityLibrary) => {
 
                 // Add custom layouts if any
                 if (extensibilityLibrary.getCustomLayouts)
@@ -908,14 +981,42 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 if (extensibilityLibrary.registerHandlebarsCustomizations)
                     extensibilityLibrary.registerHandlebarsCustomizations(this.templateService.Handlebars);
 
+                // Registers event handler for custom action in Adaptive Cards
+                if (extensibilityLibrary.invokeCardAction)
+                    this.templateService.AdaptiveCardsExtensibilityLibraries = this.templateService.AdaptiveCardsExtensibilityLibraries.concat(extensibilityLibrary);
+
+                // Add custom data sources if any
+                if (extensibilityLibrary.getCustomDataSources)
+                    this.availableDataSourceDefinitions = this.availableDataSourceDefinitions.concat(extensibilityLibrary.getCustomDataSources());
+
+                // Add custom query modifiers if any
+                if (extensibilityLibrary.getCustomQueryModifiers)
+                    this.availableCustomQueryModifierDefinitions = this.availableCustomQueryModifierDefinitions.concat(extensibilityLibrary.getCustomQueryModifiers());
             });
         }
+
+        this.availableCustomQueryModifierDefinitions.forEach(provider => {
+
+            if (!this.properties.queryModifierConfiguration.some(p => p.key === provider.key)) {
+
+                customQueryModifierConfiguration.push({
+                    key: provider.key,
+                    description: provider.description,
+                    enabled: false,
+                    name: provider.name,
+                    endWhenSuccessfull: false
+                });
+            }
+        });
+
+        // Add custom providers to the available providers
+        this.properties.queryModifierConfiguration = this.properties.queryModifierConfiguration.concat(customQueryModifierConfiguration);
     }
 
     public async loadPropertyPaneResources(): Promise<void> {
 
         const { PropertyFieldCodeEditor, PropertyFieldCodeEditorLanguages } = await import(
-            /* webpackChunkName: 'pnp-modern-search-property-pane' */
+            /* webpackChunkName: 'pnp-modern-search-code-editor', webpackMode: 'lazy' */
             '@pnp/spfx-property-controls/lib/propertyFields/codeEditor'
         );
 
@@ -986,8 +1087,27 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
             // These information comes from the PaginationWebComponent class
             this.currentPageNumber = eventDetails.pageNumber;
-            this.currentPageLinkUrl = eventDetails.pageLink;
-            this.availablePageLinks = eventDetails.pageLinks;
+
+            this.render();
+
+        }).bind(this));
+    }
+
+    /**
+     * Binds events fired from sorting web components
+     */
+    private bindSortingEvents() {
+
+        this.domElement.addEventListener(ExtensibilityConstants.EVENT_SORT_BY, ((ev: CustomEvent) => {
+
+            // We ensure the event if not propagated outside the component (i.e. other Web Part instances)
+            ev.stopImmediatePropagation();
+
+            const eventDetails: ISortInfo = ev.detail;
+
+            // These information comes from the SortWebComponent class
+            this._currentSelectedSortFieldName = eventDetails.sortFieldName;
+            this._currentSelectedSortDirection = eventDetails.sortFieldDirection;
 
             this.render();
 
@@ -1015,7 +1135,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         this.properties.showResultsCount = this.properties.showResultsCount !== undefined ? this.properties.showResultsCount : true;
         this.properties.showBlankIfNoResult = this.properties.showBlankIfNoResult !== undefined ? this.properties.showBlankIfNoResult : false;
         this.properties.useMicrosoftGraphToolkit = this.properties.useMicrosoftGraphToolkit !== undefined ? this.properties.useMicrosoftGraphToolkit : false;
-        this.properties.enableTelemetry = this.properties.enableTelemetry !== undefined ? this.properties.enableTelemetry : true;
 
         // Item selection properties
         if (!this.properties.selectedItemFieldValue) {
@@ -1036,6 +1155,10 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             enabled: true,
             id: Constants.DEFAULT_EXTENSIBILITY_LIBRARY_COMPONENT_ID
         }];
+
+        // Custom Query Modifier
+        this.properties.queryModifierConfiguration = this.properties.queryModifierConfiguration ? this.properties.queryModifierConfiguration : [];
+        this.properties.queryModifierProperties = this.properties.queryModifierProperties ? this.properties.queryModifierProperties : { endWhenSuccessfull: false };
 
         if (this.properties.selectedVerticalKeys === undefined) {
             this.properties.selectedVerticalKeys = [];
@@ -1060,6 +1183,15 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 useNextLinks: false
             };
         }
+
+        // Default adaptive cards host config
+        if (!this.properties.adaptiveCardsHostConfig) {
+            this.properties.adaptiveCardsHostConfig = JSON.stringify({
+                fontFamily: "Segoe UI, Helvetica Neue, sans-serif"
+            }, null, "\t");
+        }
+
+        this.properties.layoutRenderType = this.properties.layoutRenderType !== undefined ? this.properties.layoutRenderType : LayoutRenderType.Handlebars;
     }
 
     /**
@@ -1067,11 +1199,27 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
      */
     private getStylingPageGroups(): IPropertyPaneGroup[] {
 
-        const canEditTemplate = this.properties.externalTemplateUrl && this.properties.selectedLayoutKey === BuiltinLayoutsKeys.ResultsCustom ? false : true;
+        const canEditTemplate = this.properties.externalTemplateUrl && (this.properties.selectedLayoutKey === BuiltinLayoutsKeys.ResultsCustomHandlebars || this.properties.selectedLayoutKey === BuiltinLayoutsKeys.ResultsCustomAdaptiveCards) ? false : true;
 
         let stylingFields: IPropertyPaneField<any>[] = [
+            new PropertyPaneTabsField('layoutRenderType', {
+                onPropertyChange: this.onCustomPropertyUpdate.bind(this),
+                options: [
+                    {
+                        key: LayoutRenderType[LayoutRenderType.Handlebars],
+                        text: webPartStrings.PropertyPane.LayoutPage.HandlebarsRenderTypeLabel,
+                        title: webPartStrings.PropertyPane.LayoutPage.HandlebarsRenderTypeDesc,
+                    },
+                    {
+                        key: LayoutRenderType[LayoutRenderType.AdaptiveCards],
+                        text: webPartStrings.PropertyPane.LayoutPage.AdaptiveCardsRenderTypeLabel,
+                        title: webPartStrings.PropertyPane.LayoutPage.AdaptiveCardsRenderTypeDesc,
+                    }
+                ],
+                defaultSelectedKey: LayoutRenderType[this.properties.layoutRenderType]
+            }),
             PropertyPaneChoiceGroup('selectedLayoutKey', {
-                options: LayoutHelper.getLayoutOptions(this.availableLayoutDefinitions)
+                options: LayoutHelper.getLayoutOptions(this.availableLayoutsInPropertyPane)
             })
         ];
 
@@ -1086,7 +1234,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 resultTypeInlineTemplate = require('../../layouts/resultTypes/default_cards.html');
                 break;
 
-            case BuiltinLayoutsKeys.ResultsCustom:
+            case BuiltinLayoutsKeys.ResultsCustomHandlebars:
                 resultTypeInlineTemplate = require('../../layouts/resultTypes/default_custom.html');
                 break;
 
@@ -1109,128 +1257,169 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 properties: this.properties,
                 disabled: !canEditTemplate,
                 key: 'inlineTemplateContentCodeEditor',
-                language: this._propertyFieldCodeEditorLanguages.Handlebars
+                language: this.properties.layoutRenderType !== LayoutRenderType.Handlebars ? this._propertyFieldCodeEditorLanguages.JSON : this._propertyFieldCodeEditorLanguages.Handlebars
             }),
-            this._propertyFieldCollectionData('resultTypes', {
-                manageBtnLabel: webPartStrings.PropertyPane.LayoutPage.ResultTypes.EditResultTypesLabel,
-                key: 'resultTypes',
-                panelHeader: webPartStrings.PropertyPane.LayoutPage.ResultTypes.EditResultTypesLabel,
-                panelDescription: webPartStrings.PropertyPane.LayoutPage.ResultTypes.ResultTypesDescription,
-                enableSorting: true,
-                label: webPartStrings.PropertyPane.LayoutPage.ResultTypes.ResultTypeslabel,
-                value: this.properties.resultTypes,
-                disabled: this.properties.selectedLayoutKey === BuiltinLayoutsKeys.DetailsList
-                    || this.properties.selectedLayoutKey === BuiltinLayoutsKeys.ResultsDebug
-                    || this.properties.selectedLayoutKey === BuiltinLayoutsKeys.Slider ? true : false,
-                fields: [
-                    {
-                        id: 'property',
-                        title: webPartStrings.PropertyPane.LayoutPage.ResultTypes.ConditionPropertyLabel,
-                        type: this._customCollectionFieldType.dropdown,
-                        required: true,
-                        options: this._currentDataResultsSourceData.availableFieldsFromResults.map(field => {
-                            return {
-                                key: field,
-                                text: field
-                            };
-                        })
-                    },
-                    {
-                        id: 'operator',
-                        title: webPartStrings.PropertyPane.LayoutPage.ResultTypes.CondtionOperatorValue,
-                        type: this._customCollectionFieldType.dropdown,
-                        defaultValue: ResultTypeOperator.Equal,
-                        required: true,
-                        options: [
-                            {
-                                key: ResultTypeOperator.Equal,
-                                text: webPartStrings.PropertyPane.LayoutPage.ResultTypes.EqualOperator
-                            },
-                            {
-                                key: ResultTypeOperator.NotEqual,
-                                text: webPartStrings.PropertyPane.LayoutPage.ResultTypes.NotEqualOperator
-                            },
-                            {
-                                key: ResultTypeOperator.Contains,
-                                text: webPartStrings.PropertyPane.LayoutPage.ResultTypes.ContainsOperator
-                            },
-                            {
-                                key: ResultTypeOperator.StartsWith,
-                                text: webPartStrings.PropertyPane.LayoutPage.ResultTypes.StartsWithOperator
-                            },
-                            {
-                                key: ResultTypeOperator.NotNull,
-                                text: webPartStrings.PropertyPane.LayoutPage.ResultTypes.NotNullOperator
-                            },
-                            {
-                                key: ResultTypeOperator.GreaterOrEqual,
-                                text: webPartStrings.PropertyPane.LayoutPage.ResultTypes.GreaterOrEqualOperator
-                            },
-                            {
-                                key: ResultTypeOperator.GreaterThan,
-                                text: webPartStrings.PropertyPane.LayoutPage.ResultTypes.GreaterThanOperator
-                            },
-                            {
-                                key: ResultTypeOperator.LessOrEqual,
-                                text: webPartStrings.PropertyPane.LayoutPage.ResultTypes.LessOrEqualOperator
-                            },
-                            {
-                                key: ResultTypeOperator.LessThan,
-                                text: webPartStrings.PropertyPane.LayoutPage.ResultTypes.LessThanOperator
-                            }
-                        ]
-                    },
-                    {
-                        id: 'value',
-                        title: webPartStrings.PropertyPane.LayoutPage.ResultTypes.ConditionValueLabel,
-                        type: this._customCollectionFieldType.string,
-                        required: false,
-                    },
-                    {
-                        id: "inlineTemplateContent",
-                        title: webPartStrings.PropertyPane.LayoutPage.ResultTypes.InlineTemplateContentLabel,
-                        type: this._customCollectionFieldType.custom,
-                        onCustomRender: ((field, value, onUpdate) => {
-                            return (
-                                React.createElement("div", null,
-                                    React.createElement(this._textDialogComponent.TextDialog, {
-                                        language: this._propertyFieldCodeEditorLanguages.Handlebars,
-                                        dialogTextFieldValue: value ? value : resultTypeInlineTemplate,
-                                        onChanged: (fieldValue) => onUpdate(field.id, fieldValue),
-                                        strings: {
-                                            cancelButtonText: webPartStrings.PropertyPane.LayoutPage.ResultTypes.CancelButtonText,
-                                            dialogButtonText: webPartStrings.PropertyPane.LayoutPage.ResultTypes.DialogButtonText,
-                                            dialogTitle: webPartStrings.PropertyPane.LayoutPage.ResultTypes.DialogTitle,
-                                            saveButtonText: webPartStrings.PropertyPane.LayoutPage.ResultTypes.SaveButtonText
-                                        }
-                                    })
-                                )
-                            );
-                        }).bind(this)
-                    },
-                    {
-                        id: 'externalTemplateUrl',
-                        title: webPartStrings.PropertyPane.LayoutPage.ResultTypes.ExternalUrlLabel,
-                        type: this._customCollectionFieldType.url,
-                        onGetErrorMessage: this.onTemplateUrlChange.bind(this),
-                        placeholder: 'https://mysite/Documents/external.html'
-                    }
-                ]
-            })
         );
 
         // Only show the template external URL for 'Custom' option
-        if (this.properties.selectedLayoutKey === BuiltinLayoutsKeys.ResultsCustom) {
+        if (this.properties.selectedLayoutKey === BuiltinLayoutsKeys.ResultsCustomAdaptiveCards || this.properties.selectedLayoutKey === BuiltinLayoutsKeys.ResultsCustomHandlebars) {
             stylingFields.push(
                 PropertyPaneTextField('externalTemplateUrl', {
                     label: webPartStrings.PropertyPane.LayoutPage.TemplateUrlFieldLabel,
-                    placeholder: webPartStrings.PropertyPane.LayoutPage.TemplateUrlPlaceholder,
+                    placeholder: this.properties.layoutRenderType === LayoutRenderType.Handlebars ? webPartStrings.PropertyPane.LayoutPage.TemplateUrlPlaceholder : "https://myfile.json",
                     deferredValidationTime: 500,
                     validateOnFocusIn: true,
                     validateOnFocusOut: true,
                     onGetErrorMessage: this.onTemplateUrlChange.bind(this)
                 }));
         }
+
+        // Only allow result types for Handlebars based layouts
+        if (this.properties.layoutRenderType === LayoutRenderType.Handlebars) {
+            stylingFields.push(
+                this._propertyFieldCollectionData('resultTypes', {
+                    manageBtnLabel: webPartStrings.PropertyPane.LayoutPage.Handlebars.ResultTypes.EditResultTypesLabel,
+                    key: 'resultTypes',
+                    panelHeader: webPartStrings.PropertyPane.LayoutPage.Handlebars.ResultTypes.EditResultTypesLabel,
+                    panelDescription: webPartStrings.PropertyPane.LayoutPage.Handlebars.ResultTypes.ResultTypesDescription,
+                    enableSorting: true,
+                    label: webPartStrings.PropertyPane.LayoutPage.Handlebars.ResultTypes.ResultTypeslabel,
+                    value: this.properties.resultTypes,
+                    disabled: this.properties.selectedLayoutKey === BuiltinLayoutsKeys.DetailsList
+                        || this.properties.selectedLayoutKey === BuiltinLayoutsKeys.ResultsDebug
+                        || this.properties.selectedLayoutKey === BuiltinLayoutsKeys.Slider,
+                    fields: [
+                        {
+                            id: 'property',
+                            title: webPartStrings.PropertyPane.LayoutPage.Handlebars.ResultTypes.ConditionPropertyLabel,
+                            type: this._customCollectionFieldType.dropdown,
+                            required: true,
+                            options: this._currentDataResultsSourceData.availableFieldsFromResults.map(field => {
+                                return {
+                                    key: field,
+                                    text: field
+                                };
+                            })
+                        },
+                        {
+                            id: 'operator',
+                            title: webPartStrings.PropertyPane.LayoutPage.Handlebars.ResultTypes.CondtionOperatorValue,
+                            type: this._customCollectionFieldType.dropdown,
+                            defaultValue: ResultTypeOperator.Equal,
+                            required: true,
+                            options: [
+                                {
+                                    key: ResultTypeOperator.Equal,
+                                    text: webPartStrings.PropertyPane.LayoutPage.Handlebars.ResultTypes.EqualOperator
+                                },
+                                {
+                                    key: ResultTypeOperator.NotEqual,
+                                    text: webPartStrings.PropertyPane.LayoutPage.Handlebars.ResultTypes.NotEqualOperator
+                                },
+                                {
+                                    key: ResultTypeOperator.Contains,
+                                    text: webPartStrings.PropertyPane.LayoutPage.Handlebars.ResultTypes.ContainsOperator
+                                },
+                                {
+                                    key: ResultTypeOperator.StartsWith,
+                                    text: webPartStrings.PropertyPane.LayoutPage.Handlebars.ResultTypes.StartsWithOperator
+                                },
+                                {
+                                    key: ResultTypeOperator.NotNull,
+                                    text: webPartStrings.PropertyPane.LayoutPage.Handlebars.ResultTypes.NotNullOperator
+                                },
+                                {
+                                    key: ResultTypeOperator.GreaterOrEqual,
+                                    text: webPartStrings.PropertyPane.LayoutPage.Handlebars.ResultTypes.GreaterOrEqualOperator
+                                },
+                                {
+                                    key: ResultTypeOperator.GreaterThan,
+                                    text: webPartStrings.PropertyPane.LayoutPage.Handlebars.ResultTypes.GreaterThanOperator
+                                },
+                                {
+                                    key: ResultTypeOperator.LessOrEqual,
+                                    text: webPartStrings.PropertyPane.LayoutPage.Handlebars.ResultTypes.LessOrEqualOperator
+                                },
+                                {
+                                    key: ResultTypeOperator.LessThan,
+                                    text: webPartStrings.PropertyPane.LayoutPage.Handlebars.ResultTypes.LessThanOperator
+                                }
+                            ]
+                        },
+                        {
+                            id: 'value',
+                            title: webPartStrings.PropertyPane.LayoutPage.Handlebars.ResultTypes.ConditionValueLabel,
+                            type: this._customCollectionFieldType.string,
+                            required: false,
+                        },
+                        {
+                            id: "inlineTemplateContent",
+                            title: webPartStrings.PropertyPane.LayoutPage.Handlebars.ResultTypes.InlineTemplateContentLabel,
+                            type: this._customCollectionFieldType.custom,
+                            onCustomRender: ((field, value, onUpdate) => {
+                                return (
+                                    React.createElement("div", null,
+                                        React.createElement(this._textDialogComponent.TextDialog, {
+                                            language: this._propertyFieldCodeEditorLanguages.Handlebars,
+                                            dialogTextFieldValue: value ? value : resultTypeInlineTemplate,
+                                            onChanged: (fieldValue) => onUpdate(field.id, fieldValue),
+                                            strings: {
+                                                cancelButtonText: webPartStrings.PropertyPane.LayoutPage.Handlebars.ResultTypes.CancelButtonText,
+                                                dialogButtonText: webPartStrings.PropertyPane.LayoutPage.Handlebars.ResultTypes.DialogButtonText,
+                                                dialogTitle: webPartStrings.PropertyPane.LayoutPage.Handlebars.ResultTypes.DialogTitle,
+                                                saveButtonText: webPartStrings.PropertyPane.LayoutPage.Handlebars.ResultTypes.SaveButtonText
+                                            }
+                                        })
+                                    )
+                                );
+                            }).bind(this)
+                        },
+                        {
+                            id: 'externalTemplateUrl',
+                            title: webPartStrings.PropertyPane.LayoutPage.Handlebars.ResultTypes.ExternalUrlLabel,
+                            type: this._customCollectionFieldType.url,
+                            onGetErrorMessage: this.onTemplateUrlChange.bind(this),
+                            placeholder: 'https://mysite/Documents/external.html'
+                        }
+                    ]
+                }),
+                PropertyPaneToggle('itemSelectionProps.allowItemSelection', {
+                    label: webPartStrings.PropertyPane.LayoutPage.Handlebars.AllowItemSelection
+                }),
+            );
+
+            if (this.properties.itemSelectionProps.allowItemSelection) {
+
+                stylingFields.push(
+                    PropertyPaneToggle('itemSelectionProps.allowMulti', {
+                        label: webPartStrings.PropertyPane.LayoutPage.Handlebars.AllowMultipleItemSelection,
+                    }),
+                    PropertyPaneHorizontalRule()
+                );
+            }
+        }
+
+        // Adaptive cards fields
+        if (this.properties.layoutRenderType === LayoutRenderType.AdaptiveCards) {
+            stylingFields.push(
+                this._propertyFieldCodeEditor('adaptiveCardsHostConfig', {
+                    label: webPartStrings.PropertyPane.LayoutPage.AdaptiveCards.HostConfigFieldLabel,
+                    panelTitle: webPartStrings.PropertyPane.LayoutPage.DialogTitle,
+                    initialValue: this.properties.adaptiveCardsHostConfig,
+                    deferredValidationTime: 500,
+                    onPropertyChange: this.onPropertyPaneFieldChanged.bind(this),
+                    properties: this.properties,
+                    key: 'adaptiveCardsHostConfig',
+                    language: this._propertyFieldCodeEditorLanguages.JSON
+                })
+            );
+        }
+
+        stylingFields.push(
+            PropertyPaneToggle('useMicrosoftGraphToolkit', {
+                label: webPartStrings.PropertyPane.LayoutPage.Handlebars.UseMicrosoftGraphToolkit,
+            })
+        );
 
         let groups: IPropertyPaneGroup[] = [
             {
@@ -1240,18 +1429,12 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         ];
 
         let layoutOptionsFields: IPropertyPaneField<any>[] = [
-            PropertyPaneToggle('itemSelectionProps.allowItemSelection', {
-                label: webPartStrings.PropertyPane.LayoutPage.AllowItemSelection
-            }),
             PropertyPaneToggle('showBlankIfNoResult', {
                 label: webPartStrings.PropertyPane.LayoutPage.ShowBlankIfNoResult,
             }),
             PropertyPaneToggle('showResultsCount', {
                 label: webPartStrings.PropertyPane.LayoutPage.ShowResultsCount,
             }),
-            PropertyPaneToggle('useMicrosoftGraphToolkit', {
-                label: webPartStrings.PropertyPane.LayoutPage.UseMicrosoftGraphToolkit,
-            })
         ];
 
         if (this.properties.filtersDataSourceReference) {
@@ -1262,16 +1445,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             );
         }
 
-        if (this.properties.itemSelectionProps.allowItemSelection) {
-
-            layoutOptionsFields.splice(1, 0,
-                PropertyPaneToggle('itemSelectionProps.allowMulti', {
-                    label: webPartStrings.PropertyPane.LayoutPage.AllowMultipleItemSelection,
-                }),
-                PropertyPaneHorizontalRule()
-            );
-        }
-
         // Add template options if any
         const layoutOptions = this.getLayoutTemplateOptions();
 
@@ -1279,12 +1452,17 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             {
                 groupName: webPartStrings.PropertyPane.LayoutPage.CommonOptionsGroupName,
                 groupFields: layoutOptionsFields
-            },
-            {
-                groupName: webPartStrings.PropertyPane.LayoutPage.LayoutTemplateOptionsGroupName,
-                groupFields: layoutOptions
             }
         );
+
+        if (layoutOptions.length > 0) {
+            groups.push(
+                {
+                    groupName: webPartStrings.PropertyPane.LayoutPage.LayoutTemplateOptionsGroupName,
+                    groupFields: layoutOptions
+                }
+            );
+        }
 
         return groups;
     }
@@ -1423,7 +1601,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     private getLayoutTemplateOptions(): IPropertyPaneField<any>[] {
 
         if (this.layout && !this.errorMessage) {
-            return this.layout.getPropertyPaneFieldsConfiguration(this._currentDataResultsSourceData.availableFieldsFromResults);
+            return this.layout.getPropertyPaneFieldsConfiguration(this._currentDataResultsSourceData.availableFieldsFromResults, this._currentDataContext);
         } else {
             return [];
         }
@@ -1572,6 +1750,12 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 default:
                     break;
             }
+
+            if (this.availableCustomQueryModifierDefinitions.length > 0) {
+
+                searchQueryTextFields = searchQueryTextFields.concat(this.getQueryModifierFields());
+            }
+
         }
 
         return searchQueryTextFields;
@@ -1649,21 +1833,21 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                         options: [
                             {
                                 key: ItemSelectionMode.AsDataFilter,
-                                text: webPartStrings.PropertyPane.LayoutPage.AsDataFiltersSelectionMode
+                                text: webPartStrings.PropertyPane.LayoutPage.Handlebars.AsDataFiltersSelectionMode
                             },
                             {
                                 key: ItemSelectionMode.AsTokenValue,
-                                text: webPartStrings.PropertyPane.LayoutPage.AsTokensSelectionMode
+                                text: webPartStrings.PropertyPane.LayoutPage.Handlebars.AsTokensSelectionMode
                             }
                         ],
-                        label: webPartStrings.PropertyPane.LayoutPage.SelectionModeLabel,
+                        label: webPartStrings.PropertyPane.LayoutPage.Handlebars.SelectionModeLabel,
                     })
                 );
 
                 if (this.properties.itemSelectionProps.selectionMode === ItemSelectionMode.AsDataFilter) {
                     dataResultsConnectionFields.splice(5, 0,
                         this._propertyPaneWebPartInformation({
-                            description: `<em>${webPartStrings.PropertyPane.LayoutPage.AsDataFiltersDescription}</em>`,
+                            description: `<em>${webPartStrings.PropertyPane.LayoutPage.Handlebars.AsDataFiltersDescription}</em>`,
                             key: 'selectionModeText'
                         }),
                         PropertyPaneChoiceGroup('itemSelectionProps.valuesOperator', {
@@ -1677,13 +1861,13 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                                     text: 'AND'
                                 },
                             ],
-                            label: webPartStrings.PropertyPane.LayoutPage.FilterValuesOperator
+                            label: webPartStrings.PropertyPane.LayoutPage.Handlebars.FilterValuesOperator
                         })
                     );
                 } else {
                     dataResultsConnectionFields.splice(4, 0,
                         this._propertyPaneWebPartInformation({
-                            description: `<em>${webPartStrings.PropertyPane.LayoutPage.AsTokensDescription}</em>`,
+                            description: `<em>${webPartStrings.PropertyPane.LayoutPage.Handlebars.AsTokensDescription}</em>`,
                             key: 'selectionModeText'
                         })
                     );
@@ -1839,6 +2023,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                     break;
 
                 default:
+                    const source = this.availableDataSourceDefinitions.find(definition => definition.key === dataSourceKey);
+                    serviceKey = source.serviceKey;
                     break;
             }
 
@@ -1911,24 +2097,42 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     }
 
     /**
-      * Custom handler when the external template file URL
-      * @param value the template file URL value
-      */
+     * Custom handler when the external template file URL
+     * @param value the template file URL value
+     */
     private async onTemplateUrlChange(value: string): Promise<string> {
 
         try {
             // Doesn't raise any error if file is empty (otherwise error message will show on initial load...)
             if (isEmpty(value)) {
                 return Promise.resolve('');
-            }
-            // Resolves an error if the file isn't a valid .htm or .html file
-            else if (!this.templateService.isValidTemplateFile(value)) {
-                return Promise.resolve(webPartStrings.PropertyPane.LayoutPage.ErrorTemplateExtension);
-            }
-            // Resolves an error if the file doesn't answer a simple head request
-            else {
-                await this.templateService.ensureFileResolves(value);
-                return Promise.resolve('');
+            } else {
+
+                // Resolves an error if the file isn't a valid .json, .htm or .html file
+                let extensions: string[] = [];
+
+                switch (this.properties.layoutRenderType) {
+                    case LayoutRenderType.Handlebars:
+                        extensions = [".htm", ".html", ".txt"];
+                        break;
+
+                    case LayoutRenderType.AdaptiveCards:
+                        // Because of SharePoint restrictions, JSON files should be read as TXT files
+                        extensions = [".txt", ".json"];
+                        break;
+
+                    default:
+                        break;
+                }
+
+                if (!this.templateService.isValidTemplateFile(value, extensions)) {
+                    return Promise.resolve(Text.format(webPartStrings.PropertyPane.LayoutPage.ErrorTemplateExtension, extensions.join(' or ')));
+                } else {
+
+                    // Resolves an error if the file doesn't answer a simple head request
+                    await this.templateService.ensureFileResolves(value);
+                    return Promise.resolve('');
+                }
             }
         } catch (error) {
             return Promise.resolve(Text.format(webPartStrings.PropertyPane.LayoutPage.ErrorTemplateResolve, error));
@@ -1944,10 +2148,12 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         // Gets the template content according to the selected key
         const selectedLayoutTemplateContent = this.availableLayoutDefinitions.filter(layout => { return layout.key === this.properties.selectedLayoutKey; })[0].templateContent;
 
-        if (this.properties.selectedLayoutKey === BuiltinLayoutsKeys.ResultsCustom) {
+        if (this.properties.selectedLayoutKey === BuiltinLayoutsKeys.ResultsCustomHandlebars ||
+            this.properties.selectedLayoutKey === BuiltinLayoutsKeys.ResultsCustomAdaptiveCards) {
 
             if (this.properties.externalTemplateUrl) {
-                this.templateContentToDisplay = await this.templateService.getFileContent(this.properties.externalTemplateUrl);
+                let fileFormat: FileFormat = this.properties.layoutRenderType === LayoutRenderType.AdaptiveCards ? FileFormat.Json : FileFormat.Text;
+                this.templateContentToDisplay = await this.templateService.getFileContent(this.properties.externalTemplateUrl, fileFormat);
             } else {
                 this.templateContentToDisplay = this.properties.inlineTemplateContent ? this.properties.inlineTemplateContent : selectedLayoutTemplateContent;
             }
@@ -1957,7 +2163,9 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         }
 
         // Register result types inside the template      
-        await this.templateService.registerResultTypes(this.properties.resultTypes);
+        if (this.properties.layoutRenderType === LayoutRenderType.Handlebars && this.templateService) {
+            await this.templateService.registerResultTypes(this.properties.resultTypes);
+        }
 
         return;
     }
@@ -1996,11 +2204,14 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         if (this.tokenService) {
 
             // Input query text
-            const inputQueryText = this._getInputQueryTextValue();
+            const inputQueryText = await this._getInputQueryTextValue();
             this.tokenService.setTokenValue(BuiltinTokenNames.inputQueryText, inputQueryText);
+            this.tokenService.setTokenValue(BuiltinTokenNames.originalInputQueryText, inputQueryText);   
 
+            //Set searchTerms value from inputQueryText, but set initial token value, undefined, if empty
+            const searchTerms = inputQueryText ?? undefined;
             // Legacy token for SharePoint and Microsoft Search data sources
-            this.tokenService.setTokenValue(BuiltinTokenNames.searchTerms, inputQueryText);
+            this.tokenService.setTokenValue(BuiltinTokenNames.searchTerms, searchTerms);    
 
             // Selected filters
             if (this._filtersConnectionSourceData) {
@@ -2176,30 +2387,19 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         return '';
     }
 
-    /**
-     * Reset the paging information for PagingBehavior.Dynamic data sources
-     */
-    private _resetPagingData() {
-        this.availablePageLinks = [];
-        this.currentPageLinkUrl = null;
-    }
 
     /**
    * Get the data context to be passed to the data source according to current connections/configurations
    */
-    private getDataContext(): IDataContext {
+    private async getDataContext(): Promise<IDataContext> {
 
         // Input query text
-        const inputQueryText = this._getInputQueryTextValue();
+        const inputQueryText = await this._getInputQueryTextValue();
 
         // Build the data context to pass to the data source
         let dataContext: IDataContext = {
             pageNumber: this.currentPageNumber,
             itemsCountPerPage: this.properties.paging.itemsCountPerPage,
-            paging: {
-                nextLinkUrl: this.currentPageLinkUrl,
-                pageLinks: this.availablePageLinks
-            },
             filters: {
                 selectedFilters: [],
                 filtersConfiguration: [],
@@ -2210,7 +2410,13 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 selectedVertical: undefined
             },
             inputQueryText: inputQueryText,
-            queryStringParameters: UrlHelper.getQueryStringParams()
+            originalInputQueryText: inputQueryText,
+            queryStringParameters: UrlHelper.getQueryStringParams(),
+            sorting: {
+                selectedSortableFields: this.dataSource.getSortableFields(),
+                selectedSortFieldName: this._currentSelectedSortFieldName,
+                selectedSortDirection: this._currentSelectedSortDirection
+            }
         };
 
         // Connected Search Results or SharePoint List Web Part
@@ -2226,10 +2432,10 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
                 const filterValues: IDataFilterValue[] = uniq(itemFieldValues) // Remove duplicate values selected by the user
                     .filter(value => !value || typeof value === 'string')
-                    .map(fieldValue => {                       
+                    .map(fieldValue => {
                         return {
                             name: fieldValue,
-                            value: fieldValue, 
+                            value: fieldValue,
                             operator: FilterComparisonOperator.Eq
                         };
                     });
@@ -2251,6 +2457,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 // Reset the page number if filters have been updated by the user
                 if (!isEqual(filtersSourceData.selectedFilters, this._lastSelectedFilters)) {
                     dataContext.pageNumber = 1;
+                    this.currentPageNumber = 1;
                 }
 
                 // Use the filter confiugration and then get the corresponding values 
@@ -2271,16 +2478,33 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             }
         }
 
+
         // If input query text changes, then we need to reset the paging
-        if (!isEqual(inputQueryText, this._lastInputQueryText)) {
+        if (!isEqual(dataContext.inputQueryText, this._lastInputQueryText)) {
             dataContext.pageNumber = 1;
             this.currentPageNumber = 1;
-            this._resetPagingData();
         }
 
-        this._lastInputQueryText = inputQueryText;
-
+        this._lastInputQueryText = dataContext.inputQueryText;
         return dataContext;
+    }
+
+
+    private async getModifiedInputQueryText(inputQueryText: string): Promise<string> {
+        let queryText = inputQueryText;
+        for (const modifier of this._selectedCustomQueryModifier) {
+
+            //Cloned context won't be correct for inputQueryText after first modification!
+            const modifiedQueryText = await modifier.modifyQuery(queryText);
+            const doBreak = modifier.endWhenSuccessfull && (!isEqual(queryText, modifiedQueryText));
+            queryText = modifiedQueryText;
+
+            if (doBreak) {
+                break;
+            }
+        }
+
+        return queryText;
     }
 
     /**
@@ -2301,15 +2525,11 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
      * @param availableFields the available fields
      * @param filters the available filters from the data source
      * @param pageNumber the current page number
-     * @param nextLinkUrl the next link URL if any
-     * @param pageLinks the page links
      */
     private _onDataRetrieved(availableDataSourceFields: string[], filters?: IDataFilterResult[], pageNumber?: number, nextLinkUrl?: string, pageLinks?: string[]) {
 
         this._currentDataResultsSourceData.availableFieldsFromResults = availableDataSourceFields;
         this.currentPageNumber = pageNumber;
-        this.availablePageLinks = pageLinks;
-        this.currentPageLinkUrl = nextLinkUrl;
 
         // Set the available filters from the data source 
         if (filters) {
@@ -2374,14 +2594,175 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     private pushStateHandler(state, key, path) {
 
         this._pushStateCallback.apply(history, [state, key, path]);
-        if (this.properties.queryText.isDisposed) {
-            return;
-        }
 
-        const source = this.properties.queryText.tryGetSource();
+        const source = DynamicPropertyHelper.tryGetSourceSafe(this.properties.queryText);
 
         if (source && source.id === ComponentType.PageEnvironment) {
             this.render();
         }
+    }
+
+    private async initializeQueryModifiers(queryModifierConfiguration: IQueryModifierConfiguration[]): Promise<IQueryModifier[]> {
+
+        const promises: Promise<IQueryModifier>[] = [];
+        let selectedQueryModifier: IQueryModifier[] = [];
+
+        queryModifierConfiguration.forEach(configuration => {
+            if (configuration.enabled) {
+                promises.push(this.getQueryModifierInstance(configuration.key, configuration.endWhenSuccessfull, this.availableCustomQueryModifierDefinitions));
+            }
+        });
+
+        if (promises.length > 0) {
+            selectedQueryModifier = await Promise.all(promises);
+        } else {
+            selectedQueryModifier = [];
+        }
+
+        return selectedQueryModifier;
+    }
+
+    /**
+     * Gets the queryModifier provider instance according to the selected one
+     * @param providerKey the selected queryModifier provider key
+     * @param queryModifierDefinitions the available source definitions
+     * @returns the queryModifier instance
+     */
+    private async getQueryModifierInstance(providerKey: string, endWhenSuccessfull: boolean, queryModifierDefinitions: IQueryModifierDefinition[]): Promise<IQueryModifier> {
+
+        let queryModifier: IQueryModifier = undefined;
+        let serviceKey: ServiceKey<IQueryModifier> = undefined;
+
+        if (providerKey) {
+
+            // Gets the registered service key according to the selected provider definition 
+            const matchingDefinitions = queryModifierDefinitions.filter((provider) => { return provider.key === providerKey; });
+
+            // Can only have one data source instance per key
+            if (matchingDefinitions.length > 0) {
+                serviceKey = matchingDefinitions[0].serviceKey;
+            } else {
+                // Case when the extensibility library is removed from the catalog or the configuration
+                throw new Error(Text.format(commonStrings.General.Extensibility.QueryModifierDefinitionNotFound, providerKey));
+            }
+
+
+            return new Promise<IQueryModifier>((resolve, reject) => {
+
+                const childServiceScope = ServiceScopeHelper.registerChildServices(this.webPartInstanceServiceScope, [
+                    serviceKey
+                ]);
+
+                childServiceScope.whenFinished(async () => {
+
+                    queryModifier = childServiceScope.consume<IQueryModifier>(serviceKey);
+
+                    // Verify a queryModifier is a valid QueryModifier
+                    const isValidProvider = (providerInstance: IQueryModifier): providerInstance is BaseQueryModifier<any> => {
+                        return (
+                            (providerInstance as BaseQueryModifier<any>).getPropertyPaneGroupsConfiguration !== undefined &&
+                            (providerInstance as BaseQueryModifier<any>).modifyQuery !== undefined &&
+                            (providerInstance as BaseQueryModifier<any>).onPropertyUpdate !== undefined &&
+                            (providerInstance as BaseQueryModifier<any>).onInit !== undefined
+                        );
+                    };
+
+
+                    if (!isValidProvider(queryModifier)) {
+                        reject(new Error(Text.format(commonStrings.General.Extensibility.InvalidQueryModifierInstance, providerKey)));
+                    }
+
+                    // Initialize the queryModifier
+                    if (queryModifier) {
+
+                        queryModifier.properties = this.properties.queryModifierProperties;
+                        queryModifier.context = this.context;
+                        queryModifier.endWhenSuccessfull = endWhenSuccessfull;
+                        await queryModifier.onInit();
+
+                        resolve(queryModifier);
+                    }
+                });
+            });
+        }
+    }
+
+    private getQueryModifierFields(): IPropertyPaneField<any>[] {
+
+        let queryTransformationFields: IPropertyPaneField<any>[] = [];
+
+        queryTransformationFields.push(
+            this._propertyFieldCollectionData('queryModifierConfiguration', {
+                manageBtnLabel: webPartStrings.PropertyPane.CustomQueryModifier.EditQueryModifiersLabel,
+                key: 'queryModifierConfiguration',
+                panelHeader: webPartStrings.PropertyPane.CustomQueryModifier.EditQueryModifiersLabel,
+                panelDescription: webPartStrings.PropertyPane.CustomQueryModifier.QueryModifiersDescription,
+                disableItemCreation: true,
+                disableItemDeletion: true,
+                enableSorting: true,
+                label: webPartStrings.PropertyPane.CustomQueryModifier.QueryModifiersLabel,
+                value: this.properties.queryModifierConfiguration,
+                fields: [
+                    {
+                        id: 'enabled',
+                        title: webPartStrings.PropertyPane.CustomQueryModifier.EnabledPropertyLabel,
+                        type: this._customCollectionFieldType.custom,
+                        onCustomRender: (field, value, onUpdate, item, itemId) => {
+                            return (
+                                React.createElement("div", null,
+                                    React.createElement(Toggle, {
+                                        key: itemId, checked: value, onChange: (evt, checked) => {
+                                            onUpdate(field.id, checked);
+                                        },
+                                        offText: commonStrings.General.OffTextLabel,
+                                        onText: commonStrings.General.OnTextLabel
+                                    })
+                                )
+                            );
+                        }
+                    },
+                    {
+                        id: 'endWhenSuccessfull',
+                        title: webPartStrings.PropertyPane.CustomQueryModifier.EndWhenSuccessfullPropertyLabel,
+                        type: this._customCollectionFieldType.custom,
+                        onCustomRender: (field, value, onUpdate, item, itemId) => {
+                            return (
+                                React.createElement("div", null,
+                                    React.createElement(Toggle, {
+                                        key: itemId, checked: value, onChange: (evt, checked) => {
+                                            onUpdate(field.id, checked);
+                                        },
+                                        offText: commonStrings.General.OffTextLabel,
+                                        onText: commonStrings.General.OnTextLabel
+                                    })
+                                )
+                            );
+                        }
+                    },
+                    {
+                        id: 'name',
+                        title: webPartStrings.PropertyPane.CustomQueryModifier.ModifierNamePropertyLabel,
+                        type: this._customCollectionFieldType.custom,
+                        onCustomRender: (field, value) => {
+                            return (
+                                React.createElement("div", { style: { 'fontWeight': 600 } }, value)
+                            );
+                        }
+                    },
+                    {
+                        id: 'description',
+                        title: webPartStrings.PropertyPane.CustomQueryModifier.ModifierDescriptionPropertyLabel,
+                        type: this._customCollectionFieldType.custom,
+                        onCustomRender: (field, value) => {
+                            return (
+                                React.createElement("div", null, value)
+                            );
+                        }
+                    }
+                ]
+            })
+        );
+
+        return queryTransformationFields;
     }
 }

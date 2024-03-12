@@ -53,18 +53,18 @@ export interface ICustomComponentProps {
     /**
      * A sample string param
      */
-    myStringParam?: IObjectParam;
+    myStringParam?: string;
 
     /***
      * A sample object param
      */
-    myObjectParam?: string;
+    myObjectParam?: IObjectParam;
 }
 
-export interface ICustomComponenState {
+export interface ICustomComponentState {
 }
 
-export class CustomComponent extends React.Component<ICustomComponentProps, ICustomComponenState> {
+export class CustomComponent extends React.Component<ICustomComponentProps, ICustomComponentState> {
     
     public render() {
 
@@ -125,4 +125,11 @@ public getCustomWebComponents(): IComponentDefinition<any>[] {
         }
     ];
 }
+```
+
+### Consume services from BaseWebComponent
+
+```typescript
+const msGraphClientFactory = this._serviceScope.consume<MSGraphClientFactory>(MSGraphClientFactory.serviceKey);
+const msGraphClient = await msGraphClientFactory.getClient();
 ```

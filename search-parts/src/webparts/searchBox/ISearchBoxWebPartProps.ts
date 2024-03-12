@@ -12,6 +12,11 @@ export interface ISearchBoxWebPartProps extends IBaseWebPartProps {
     searchInNewPage: boolean;
 
     /**
+     * Flag indicating new search query should be executed when user clear the query (e.g. using backspace)
+     */
+    reQueryOnClear: boolean;
+
+    /**
      * The page URL to send the query text
      */
     pageUrl: string;

@@ -7,6 +7,7 @@ declare interface ISearchBoxWebPartStrings {
             GroupName: string;
             PlaceholderTextLabel: string;
             SearchInNewPageLabel: string;
+            ReQueryOnClearLabel: string;
             PageUrlLabel: string;
             UrlErrorMessage: string;
             QueryPathBehaviorLabel: string;

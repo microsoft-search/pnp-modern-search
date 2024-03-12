@@ -60,9 +60,11 @@ define([], function() {
                 DefaultExtensibilityLibraryName: "Bibliothèque d’extensibilité par défaut",
                 InvalidProviderInstance: "Le fournisseur de suggestions sélectionné « {0} » n’applique pas correctement la classe abstraite « BaseSuggestionProvider ». Certaines méthodes sont manquantes.",
                 ProviderDefinitionNotFound: "Le fournisseur de suggestions personnalisées contenant la clé « {0} » est introuvable Assurez-vous que la solution est correctement déployée dans le catalogue de l’application et que l’identifiant de manifeste est enregistré pour ce composant Web",
+                QueryModifierDefinitionNotFound: "Le queryModifier personnalisé avec la clé '{0}' n'a pas été trouvé. Vérifiez que la solution est correctement déployée dans le catalogue d'applications et que l'ID du manifeste est enregistré pour ce composant WebPart.",
+                InvalidQueryModifierInstance: "Le queryModifier personnalisé sélectionné '{0}' n'implémente pas correctement la classe abstraite 'BaseQueryModifier'. Certaines méthodes sont manquantes.",
             },
-            DateFromLabel: "De",
-            DateTolabel: "À",
+            DateFromLabel: "Du",
+            DateTolabel: "Au",
             DatePickerStrings: {
                 months: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
                 shortMonths: ['Janv.', 'Févr.', 'Mars', 'Avr.', 'Mai', 'Juin', 'Juill.', 'Août', 'Sept.', 'Oct.', 'Nov.', 'Déc.'],
@@ -79,11 +81,11 @@ define([], function() {
             },
             DateIntervalStrings: {
                 AnyTime: "N’importe quand",
-                PastDay: "Entre 24 heures et 1 semaine",
-                PastWeek: "Entre 1 semaine et 1 mois",
-                PastMonth: "Entre 1 et 3 mois",
-                Past3Months: "Entre 3 mois et 1 an",
-                PastYear: "Depuis l'année dernière",
+                PastDay: "Derniière 24 heures",
+                PastWeek: "Entre 24 heures et 1 semaine",
+                PastMonth: "Entre 1 semaine et 1 mois",
+                Past3Months: "Entre 1 mois et 3 mois",
+                PastYear: "Entre 3 mois et un an",
                 Older: "Il y a plus d'un an"
             },
             SameTabOpenBehavior: "Utiliser l’onglet actuel",
@@ -123,7 +125,9 @@ define([], function() {
                 HitHighlightedPropertiesFieldDescription: "Entrez la liste des propriétés gérées pour lesquelles trouver des correspondances.",
                 TermNotFound: "(Le critère contenant l’identifiant « {0} » est introuvable)",
                 ApplyQueryTemplateBtnText: "Appliquer",
-                EnableAudienceTargetingTglLabel: "Permet de cibler l’auditoire"
+                EnableAudienceTargetingTglLabel: "Permet de cibler l’auditoire",
+                TrimDuplicates: "Supprimer les doublons",
+                CollapseSpecificationLabel: "Réduire la spécification"
             },
             MicrosoftSearch: {
                 QueryTextFieldLabel: "Texte de la requête",
@@ -144,7 +148,15 @@ define([], function() {
                 QueryTemplatePlaceHolderText: "ex: {searchTerms} IsDocument:true",
                 QueryTemplateFieldDescription: "Vous pouvez également utiliser {<tokens>} et KQL pour créer une requête dynamique.",
                 ApplyQueryTemplateBtnText: "Appliquer",
-                UseBetaEndpoint: "Utiliser le point de terminaison beta"
+                UseBetaEndpoint: "Utiliser le point de terminaison beta",
+                TrimDuplicates: "Supprimer les doublons",
+                CollapseProperties: {
+                    EditCollapsePropertiesLabel: "Modifier les paramètres de repli",
+                    CollapsePropertiesDescription: "Spécifiez les paramètres de réduction des résultats de la recherche. Vous pouvez soit sélectionner un champ dans la liste déroulante (uniquement si les données de la source de données ont déjà été récupérées) ou saisir votre propre valeur personnalisée (appuyez sur 'Entrée' pour enregistrer votre entrée)",
+                    CollapsePropertiesPropertyPaneFieldLabel: "Les paramètres de repli",
+                    CollapseLimitFieldLabel: "Limite",
+                    CollapsePropertiesFieldColumnPlaceholder: "Réduire par champ"
+                }
             },
             SearchCommon: {
                 Sort: {
@@ -159,6 +171,9 @@ define([], function() {
                     SortPanelSortDirectionLabel: "Sens de tri",
                     SortDirectionColumnLabel: "Sens",
                     SortFieldColumnLabel: "Nom du champ",
+                    SortFieldDefaultSortLabel: "Tri par défaut",
+                    SortFieldFriendlyNameLabel: "Nom d'afficahge du champ",
+                    SortFieldUserSortLabel: "Tri par l'utilisateur",
                     EditSortLabel: "Modifier l’ordre de tri",
                     SortInvalidSortableFieldMessage: "Cette propriété n’est pas triable",
                     SortFieldColumnPlaceholder: "Sélectionner le champ..."
@@ -172,13 +187,18 @@ define([], function() {
             TextDialogSaveButtonText: "Enregistrer",
             SelectItemComboPlaceHolder: "Sélectionnez la propriété",
             AddStaticDataLabel: "Ajouter des données statiques",
-            TextFieldApplyButtonText: "Appliquer"
+            TextFieldApplyButtonText: "Appliquer",
+            SortByPlaceholderText: "Trier par...",
+            SortByDefaultOptionText: "Défaut"
         },
         Layouts: {
             Debug: {
                 Name: "Déboguer"
             },
-            Custom: {
+            CustomHandlebars: {
+                Name: "Personnalisé"
+            },
+            CustomAdaptiveCards: {
                 Name: "Personnalisé"
             },
             SimpleList: {
@@ -201,13 +221,16 @@ define([], function() {
                 ManageDetailsListColumnDescription: "Ajouter, modifier ou supprimer des colonnes dans la présentation de la liste de détails. Vous pouvez utiliser la valeur des propriétés directement dans la liste, sans modification, ou utiliser une expression entre accolades dans le champ de valeur Le format HTML est également pris en charge dans tous les champs",
                 ManageDetailsListColumnLabel: "Gérer les colonnes",
                 ValueColumnLabel: "Valeur de la colonne",
-                ValueSortingColumnLabel: "Tri par valeur de colonne",
-                DisplayNameColumnLabel: "Nom d’affichage de la colonne",
+                ValueSortingColumnLabel: "Sélectionnez la propriété...",
+                ValueSortingColumnNoFieldsLabel: "Aucune propriété disponible",
                 FileExtensionFieldLabel: "Champ à utiliser pour l’extension de fichier",
                 GroupByFieldLabel: "Regrouper par champ",
                 EnableGrouping: "Permettre le regroupement",
+                GroupingDescription: "Assurez-vous que les données s'affichent dans le composant WebPart de résultat pour obtenir une liste des propriétés à afficher.",
                 CollapsedGroupsByDefault: "Afficher les groupes réduits",
-                ResetFieldsBtnLabel: "Rétablir la valeur par défaut dans les champs"
+                ResetFieldsBtnLabel: "Rétablir la valeur par défaut dans les champs",
+                EnableStickyHeader: "Activer l’en-tête collant",
+                StickyHeaderListViewHeight: "Hauteur de la liste de détails (en pixels)"
             },
             Cards: {
                 Name: "Cartes",
@@ -265,7 +288,10 @@ define([], function() {
                 SupportHTMLColumnLabel: "Autoriser HTML",
                 ResetFieldsBtnLabel: "Rétablir la valeur par défaut dans les champs",
                 ShowPersonaCardOnHover: "Afficher l’image de la carte en pointant le curseur",
+                ShowPersonaCardOnHoverNative: "Afficher l’image de la carte en pointant le curseur (LPC)",
                 ShowPersonaCardOnHoverCalloutMsg: "Cette fonction utilise Microsoft Graph pour afficher des renseignements sur l’utilisateur et nécessite les autorisations API suivantes pour que votre utilisateur puisse travailler : [« User.Read », « People.Read », « Contacts.Read », « User.Read.All »].",
+                ShowPersonaPresenceInfo: "Afficher la présence",
+                ShowPersonaPresenceInfoCalloutMsg: "Pour fonctionner, cette fonctionnalité nécessite les autorisations API suivantes dans votre locataire : ['Presence.Read.All']",
                 Fields: {
                     ImageUrl: "URL de l’image",
                     PrimaryText: "Texte principal",

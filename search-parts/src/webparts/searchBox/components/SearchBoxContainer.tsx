@@ -1,13 +1,15 @@
 import * as React from 'react';
 import { ISearchBoxContainerProps } from './ISearchBoxContainerProps';
 import { QueryPathBehavior, UrlHelper, PageOpenBehavior } from '../../../helpers/UrlHelper';
-import { MessageBar, MessageBarType, SearchBox, IconButton, ITheme, ISearchBox } from 'office-ui-fabric-react';
+import { MessageBar, MessageBarType, SearchBox, IconButton, ITheme, ISearchBox } from '@fluentui/react';
 import { ISearchBoxContainerState } from './ISearchBoxContainerState';
 import { isEqual } from '@microsoft/sp-lodash-subset';
 import * as webPartStrings from 'SearchBoxWebPartStrings';
 import SearchBoxAutoComplete from './SearchBoxAutoComplete/SearchBoxAutoComplete';
 import styles from './SearchBoxContainer.module.scss';
 import { BuiltinTokenNames } from '../../../services/tokenService/TokenService';
+import { isEmpty } from '@microsoft/sp-lodash-subset';
+import { WebPartTitle } from '@pnp/spfx-controls-react/lib/WebPartTitle';
 
 export default class SearchBoxContainer extends React.Component<ISearchBoxContainerProps, ISearchBoxContainerState> {
 
@@ -50,7 +52,17 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                     className={styles.searchTextField}
                     value={this.state.searchInputValue}
                     autoComplete="off"
-                    onChange={(event) => this.setState({ searchInputValue: event && event.currentTarget ? event.currentTarget.value : "" })}
+                    onChange={(event) => {
+                        const newInputValue = event && event.currentTarget ? event.currentTarget.value : "";
+                        const inputChanged = !isEmpty(this.state.searchInputValue) && isEmpty(newInputValue);
+
+                        if (this.props.reQueryOnClear && inputChanged) {
+                            this._onSearch('', true);
+                            searchBoxRef.current.focus();
+                        } else {
+                            this.setState({ searchInputValue: newInputValue });
+                        }
+                    }}
                     onSearch={() => this._onSearch(this.state.searchInputValue)}
                     onClear={() => {
                         this._onSearch('', true);
@@ -88,10 +100,11 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
 
                 this.props.tokenService.setTokenValue(BuiltinTokenNames.inputQueryText, queryText);
                 queryText = await this.props.tokenService.resolveTokens(this.props.inputTemplate);
-
                 const urlEncodedQueryText = encodeURIComponent(queryText);
 
-                const searchUrl = new URL(this.props.pageUrl);
+                const tokenizedPageUrl = await this.props.tokenService.resolveTokens(this.props.pageUrl);
+                const searchUrl = new URL(tokenizedPageUrl);
+
                 let newUrl;
 
                 if (this.props.queryPathBehavior === QueryPathBehavior.URLFragment) {
@@ -99,7 +112,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                     newUrl = searchUrl.href;
                 }
                 else {
-                    newUrl = UrlHelper.addOrReplaceQueryStringParam(searchUrl.href, this.props.queryStringParameter, queryText);
+                    newUrl = UrlHelper.addOrReplaceQueryStringParam(searchUrl.href, this.props.queryStringParameter, queryText, true);
                 }
 
                 // Send the query to the new page
@@ -134,6 +147,16 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
     }
 
     public render(): React.ReactElement<ISearchBoxContainerProps> {
+
+        let renderTitle: JSX.Element = null;
+
+        // WebPart title
+        renderTitle = <WebPartTitle
+                        displayMode={this.props.webPartTitleProps.displayMode}
+                        title={this.props.webPartTitleProps.title}
+                        updateProperty={this.props.webPartTitleProps.updateProperty}
+                        className={this.props.webPartTitleProps.className} />;
+
         let renderErrorMessage: JSX.Element = null;
 
         if (this.state.errorMessage) {
@@ -155,6 +178,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
         return (
             <div className={styles.searchBox}>
                 {renderErrorMessage}
+                {renderTitle}
                 {renderSearchBox}
             </div>
         );

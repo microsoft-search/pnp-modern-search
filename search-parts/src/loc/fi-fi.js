@@ -44,7 +44,7 @@ define([], function() {
             OffTextLabel: "Pois käytöstä",
             StaticArrayFieldName: "Taulukkotyyppinen kenttä",
             About: "Lisätietoa",
-            Authors: "Tekijö(t)",
+            Authors: "Tekijä(t)",
             Version: "Versio",
             InstanceId: "Webosainstanssin ID",
             Resources: {
@@ -60,6 +60,8 @@ define([], function() {
                 DefaultExtensibilityLibraryName: "Oletuksena käytettävä laajennuskirjasto",
                 InvalidProviderInstance: "Valittu kyselyehdotusten tarjoaja '{0}' ei toteuta 'BaseSuggestionProvider' luokkaa oikein. Jotkut metodit puuttuvat.",
                 ProviderDefinitionNotFound: "Mukautettua kyselyehdotusten tarjoajaa avaimella '{0}' ei löydy. Varmista että sovellus on asennettu sovellusluetteloon ja manifest ID on rekisteröity webosalle.",
+                QueryModifierDefinitionNotFound: "Mukautettua queryModifieria avaimella '{0}' ei löytynyt. Varmista, että ratkaisu on otettu oikein käyttöön sovelluskatalogiin ja että manifestin ID on rekisteröity tälle Web-osalle.",
+                InvalidQueryModifierInstance: "Valittu mukautettu kyselymuodostaja '{0}' ei toteuta abstraktia luokkaa 'BaseQueryModifier' oikein. Jotkin metodit puuttuvat.",
             },
             DateFromLabel: "Alkaa",
             DateTolabel: "Päättyy",
@@ -79,12 +81,12 @@ define([], function() {
             },
             DateIntervalStrings: {
                 AnyTime: "Milloin tahansa",
-                PastDay: "Edellisestä 24 tunnista edelliseen viikkoon",
-                PastWeek: "Edellisestä viikosta edelliseen kuukauteen",
-                PastMonth: "Edellisestä kuukaudesta edelliseen 3 kuukauteen",
-                Past3Months: "Edellisestä 3 kuukaudesta edelliseen vuoteen",
-                PastYear: "Edellinen vuosi",
-                Older: "Yli vuosi sitten"
+                PastDay: "Viimeiset 24 tuntia",
+                PastWeek: "Viimeisestä 24 tunnista viime viikkoon",
+                PastMonth: "Edellisestä viikosta viime kuukauteen",
+                Past3Months: "Viime kuukaudesta viimeiseen kolmeen kuukauteen",
+                PastYear: "Viimeisen 3 kuukauden ajalta viime vuoteen",
+                Older: "Vuotta vanhempi"
             },
             SameTabOpenBehavior: "Avaa samaan välilehteen",
             NewTabOpenBehavior: "Avaa uuteen välilehteen",
@@ -108,7 +110,7 @@ define([], function() {
                 ResultSourceIdLabel: "Haun tuloslähteen Id / Scope|Nimi",
                 ResultSourceIdDescription: "Valitse tarjolla oleva tuloslähde, syötä mukautetun tuloslähteen GUID, tai SCOPE ja NIMI erotettuna pystyviivalla | (i.e: SPSite|News). Mahdolliset tuloslähteet ovat [SPSiteSubscription, SPSite, SPWeb]. Paina [Enter] tallentaaksesi.",
                 InvalidResultSourceIdMessage: "Syötetty arvo ei ole toimiva GUID, tai muotoiltu muodossa SCOPE|NIMI",
-                EnableQueryRulesLabel: "Selli kyselysäännöt",
+                EnableQueryRulesLabel: "Salli kyselysäännöt",
                 RefinementFilters: "Suodattimet",
                 RefinementFiltersDescription: "Suoraan hakukyselyyn liitettävät suodattimet. Nämä eivät näy valituissa suodattimissa. Tekstimuotoisissa suodattimissa käytä tuplalainausmerkkejä (\") yksittäisen hipsun sijasta (').",
                 EnableLocalizationLabel: "Salli lokalisointi",
@@ -121,7 +123,9 @@ define([], function() {
                 SelectedPropertiesPlaceholderLabel: "Valitse ominaisuudet",
                 TermNotFound: "(Termiä ID:llä '{0}' ei löydy)",
                 ApplyQueryTemplateBtnText: "Ota käyttöön",
-                EnableAudienceTargetingTglLabel: "Salli käyttäjäryhmäkohdennus"
+                EnableAudienceTargetingTglLabel: "Salli käyttäjäryhmäkohdennus",
+                TrimDuplicates: "Leikkaa kaksoiskappaleet",
+                CollapseSpecificationLabel: "Kutista määritys"
             },
             MicrosoftSearch: {
                 QueryTextFieldLabel: "Hakukysely",
@@ -142,7 +146,15 @@ define([], function() {
                 QueryTemplatePlaceHolderText: "esimerkki: {searchTerms} IsDocument:true",
                 QueryTemplateFieldDescription: "Hakukyselyn templaatti. Voit myös käyttää {<tokens>} muotoilua ja KQL-määreitä rakentaaksesi dynaamisen kyselyn.",
                 ApplyQueryTemplateBtnText: "Ota käyttöön",
-                UseBetaEndpoint: "Käytä beta endpointtia"
+                UseBetaEndpoint: "Käytä beta endpointtia",
+                TrimDuplicates: "Leikkaa kaksoiskappaleet",
+                CollapseProperties: {
+                    EditCollapsePropertiesLabel: "Muokkaa tiivistysasetuksia",
+                    CollapsePropertiesDescription: "Especifique la configuración de contracción para los resultados de búsqueda. Puede seleccionar un campo de la lista desplegable (solo si los datos de la fuente de datos ya se han obtenido) o escribir su propio valor personalizado (presione 'Entrar' para guardar su entrada)",
+                    CollapsePropertiesPropertyPaneFieldLabel: "Tiivistysasetukset",
+                    CollapseLimitFieldLabel: "Raja",
+                    CollapsePropertiesFieldColumnPlaceholder: "Tiivistä kentän mukaan"
+                }
             },
             SearchCommon: {
                 Sort: {
@@ -157,6 +169,9 @@ define([], function() {
                     SortPanelSortDirectionLabel: "Lajittelusuunta",
                     SortDirectionColumnLabel: "Suunta",
                     SortFieldColumnLabel: "Kentän nimi",
+                    SortFieldDefaultSortLabel: "Oletuslajittelu",
+                    SortFieldFriendlyNameLabel: "Lajittele kentän näyttönimi",
+                    SortFieldUserSortLabel: "Käyttäjälajittelu",
                     EditSortLabel: "Muokkaa lajittelujärjestystä",
                     SortInvalidSortableFieldMessage: "Tämä ominaisuus ei ole lajiteltava",
                     SortFieldColumnPlaceholder: "Valitse kenttä..."
@@ -170,13 +185,18 @@ define([], function() {
             TextDialogSaveButtonText: "Tallenna",
             SelectItemComboPlaceHolder: "Valitse ominaisuus",
             AddStaticDataLabel: "Lisää staattinen arvo",
-            TextFieldApplyButtonText: "Ota käyttöön"
+            TextFieldApplyButtonText: "Ota käyttöön",
+            SortByPlaceholderText: "Järjestä...",
+            SortByDefaultOptionText: "Oletus"
         },
         Layouts: {
             Debug: {
                 Name: "Debug"
             },
-            Custom: {
+            CustomHandlebars: {
+                Name: "Mukautettu"
+            },
+            CustomAdaptiveCards: {
                 Name: "Mukautettu"
             },
             SimpleList: {
@@ -198,13 +218,17 @@ define([], function() {
                 ManageDetailsListColumnDescription: "Lisää, muokkaa tai poista sarakkeita yksityiskohtaisen listan templaatista. Voit käyttää suoraan ominaisuuksien arvoja ilman muotoilua, tai käyttää Handlebars komentoja arvokentässä. Myös HTML-muotoilu on tuettu.",
                 ManageDetailsListColumnLabel: "Hallitse sarakkeita",
                 ValueColumnLabel: "Sarakkeen arvo",
-                ValueSortingColumnLabel: "Sarakkeen lajitteluperuste",
+                ValueSortingColumnLabel: "Valitse lajittelukenttä...",
+                ValueSortingColumnNoFieldsLabel: "Ei kenttiä käytettävissä",
                 DisplayNameColumnLabel: "Sarakkeen näyttönimi",
                 FileExtensionFieldLabel: "Kenttä tiedostotyypin määrittämiseen",
                 GroupByFieldLabel: "Ryhmittele kentän mukaan",
                 EnableGrouping: "Salli ryhmittely",
+                GroupingDescription: "Varmista, että tulosten verkko-osassa on tietoja, jotta voit näyttää ominaisuusluettelon.",
                 CollapsedGroupsByDefault: "Näytä ryhmät tiivistettynä",
-                ResetFieldsBtnLabel: "Palauta kentät templaatin oletusarvoihin"
+                ResetFieldsBtnLabel: "Palauta kentät templaatin oletusarvoihin",
+                EnableStickyHeader: "Kiinnitä ylätunniste",
+                StickyHeaderListViewHeight: "Kiinnitetyn ylätunnisteen korkeus (px)"
             },
             Cards: {
                 Name: "Kortit",
@@ -262,7 +286,10 @@ define([], function() {
                 SupportHTMLColumnLabel: "Salli HTML",
                 ResetFieldsBtnLabel: "Palauta kentät templaatin oletusarvoihin",
                 ShowPersonaCardOnHover: "Näytä henkilökortti hoverilla",
+                ShowPersonaCardOnHoverNative: "Näytä henkilökortti hoverilla (LPC)",
                 ShowPersonaCardOnHoverCalloutMsg: "Tämä ominaisuus käyttää Microsoft Graphia käyttäjäprofiilin tietojen näyttämiseen, ja tarvitsee seuraavat API oikeudet tenantissa toimiakseen: ['User.Read','People.Read','Contacts.Read','User.Read.All'].",
+                ShowPersonaPresenceInfo: "Näytä läsnäolo",
+                ShowPersonaPresenceInfoCalloutMsg: "Tämä ominaisuus vaatii seuraavat API-oikeudet vuokralaisessasi toimiakseen: ['Presence.Read.All']",
                 Fields: {
                     ImageUrl: "Kuvan URL",
                     PrimaryText: "Ensimmäisen rivin teksti",
