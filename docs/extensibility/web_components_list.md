@@ -257,6 +257,7 @@ Use all properties:
     data-font-size="12"
 />
 ```
+
 |Parameter|Description|
 |--|--|
 |data-path|Used for creating the breadcrumb path. Component is designed to receive `OriginalPath` or `Path` property. Property is required for rendering the breadcrumb path. `String`|
