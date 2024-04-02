@@ -133,7 +133,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
     // When new filters are received from the data source
     if (!isEqual(prevProps.availableFilters, this.props.availableFilters)
-       || (!isEqual(prevState.currentUiFilters, this.state.currentUiFilters)) && prevState.currentUiFilters.length > 0) {
+      || (!isEqual(prevState.currentUiFilters, this.state.currentUiFilters)) && prevState.currentUiFilters.length > 0) {
 
       this.getFiltersDeepLink();
       this.getFiltersToDisplay(this.props.availableFilters, this.state.currentUiFilters, this.props.filtersConfiguration);
@@ -525,7 +525,15 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
       // Refresh the UI
       this.getFiltersToDisplay(this.props.availableFilters, updatedfilters, this.props.filtersConfiguration);
 
-      this.resetFiltersDeepLink();
+      // Check whether there are applied filters
+      const appliedFilters = updateSubmittedFilters.filter(filter => filter.values.length > 0);
+      if (appliedFilters.length == 0) {
+        // If no - remove query string
+        this.resetFiltersDeepLink();
+      } else {
+        // If yes - update query string
+        this.setFiltersDeepLink(updateSubmittedFilters);
+      }
 
       // Send selected filters to the data source
       this.props.onUpdateFilters(updateSubmittedFilters);
