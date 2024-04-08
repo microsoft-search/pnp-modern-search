@@ -2,7 +2,7 @@ import { BaseDataSource, FilterSortType, FilterSortDirection, ITemplateSlot, Bui
 import { IPropertyPaneGroup, PropertyPaneLabel, IPropertyPaneField, PropertyPaneToggle, PropertyPaneHorizontalRule } from "@microsoft/sp-property-pane";
 import { cloneDeep, isEmpty, find } from '@microsoft/sp-lodash-subset';
 import { MSGraphClientFactory } from "@microsoft/sp-http";
-import { TokenService } from "../services/tokenService/TokenService";
+import { BuiltinTokenNames, TokenService } from "../services/tokenService/TokenService";
 import { ServiceScope } from '@microsoft/sp-core-library';
 import { Dropdown, IComboBoxOption, IDropdownProps, ITextFieldProps, TextField } from '@fluentui/react';
 import { PropertyPaneAsyncCombo } from "../controls/PropertyPaneAsyncCombo/PropertyPaneAsyncCombo";
@@ -378,7 +378,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         if (this.properties.entityTypes.indexOf(EntityType.DriveItem) !== -1 ||
             this.properties.entityTypes.indexOf(EntityType.ListItem) !== -1 ||
             this.properties.entityTypes.indexOf(EntityType.Site) !== -1 ||
-            this.properties.entityTypes.indexOf(EntityType.List) !== -1 || 
+            this.properties.entityTypes.indexOf(EntityType.List) !== -1 ||
             this.properties.entityTypes.indexOf(EntityType.ExternalItem) !== -1) {
 
             sortPropertiesFields.push(
@@ -687,13 +687,11 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         }
 
         // Query modification
+        // As of 04/08/2024 query template is supported in v1.0 version. 
+        // The {searchTerms} token may not be replaced in query template, otherwise wrong results may be returned.
+        // see (https://learn.microsoft.com/en-us/graph/api/search-query?view=graph-rest-1.0&tabs=http, Example 2)
+        this._tokenService.setTokenValue(BuiltinTokenNames.searchTerms, undefined);
         let queryTemplate = await this._tokenService.resolveTokens(this.properties.queryTemplate);
-        if (!isEmpty(queryTemplate.trim()) && !this.properties.useBetaEndpoint) {
-
-            // Use {searchTerms} or {inputQueryText} to use orginal value
-            // As of 06/06/2022 the query template is still in beta so we use the query text instead
-            queryText = queryTemplate.trim();
-        }
 
         // Paging
         if (dataContext.pageNumber > 1) {
@@ -778,8 +776,8 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         }
 
         // Sort is only available for 'ListItem' and ExternalItem
-        if (this.properties.entityTypes.indexOf(EntityType.ListItem) !== -1 ||  
-        this.properties.entityTypes.indexOf(EntityType.ExternalItem) !== -1) {
+        if (this.properties.entityTypes.indexOf(EntityType.ListItem) !== -1 ||
+            this.properties.entityTypes.indexOf(EntityType.ExternalItem) !== -1) {
 
             if (dataContext.sorting?.selectedSortFieldName
                 && dataContext.sorting?.selectedSortDirection) {
