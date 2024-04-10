@@ -461,6 +461,7 @@ Web components and HTML are supported in adaptive cards through markdown process
 
 Since it is not possible to create custom functions with adaptive cards templates right now, slots values can only be accessed using the builtin [`jPath` function](https://docs.microsoft.com/en-us/azure/bot-service/adaptive-expressions/adaptive-expressions-prebuilt-functions?view=azure-bot-service-4.0#jPath) and the following syntax:
 
+
 ```json
 "items": [
     {
