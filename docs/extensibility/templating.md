@@ -1,22 +1,28 @@
-# Customize layout templates 
+## Customize layout templates
 
 In a basic customization scenario, super users and webmasters can customize existing templates or start from a blank template to adapt the UI to their requirements. Templates can use either [Handlebars](https://handlebarsjs.com/) or [Adaptive cards](https://adaptivecards.io/) templates to display data retrieved from the data source. Depdending of the template type, there are several options to customize a template:
 
-- **Handlebars**
-    - Use regular HTML markup, Handlebars syntax and [helpers](#handlebars-helpers).
-    - [Write custom CSS styles](#custom-css-styles).
-- **Adaptive cards**
-    - Use declarative [Adaptive Cards](#adaptive-cards-customizations) JSON templates with data.
-- **Both techniques**
-    - Use data sources [slots](../usage/search-results/slots.md) 
-    - Use default [web components](#using-builtin-web-components) provided by the solution.
-    - Use [Microsoft Graph Toolkit components](#microsoft-graph-toolkit).
+### Handlebars
+
+- Use regular HTML markup, Handlebars syntax and [helpers](#handlebars-helpers).
+- [Write custom CSS styles](#custom-css-styles).
+
+### Adaptive cards
+
+- Use declarative [Adaptive Cards](#adaptive-cards-customizations) JSON templates with data.
+
+### Both techniques
+
+- Use data sources [slots](../usage/search-results/slots.md) 
+- Use default [web components](#using-builtin-web-components) provided by the solution.
+- Use [Microsoft Graph Toolkit components](#microsoft-graph-toolkit).
 
 ## Handlebars, HTML and CSS customizations
 
 !["Handlebars"](../assets/extensibility/handlebars_templating.png){: .center}
 
 > The templates and fields HTML markup is sanitized automatically preventing XSS attacks. We used [`DOMPurify`](https://github.com/cure53/DOMPurify) to do so. It means for instance, you cannot add your own `<script>` tags or inline JavaScript.
+
 ### Template structure
 
 A layout template is always split into two distinct parts:
@@ -30,6 +36,7 @@ A layout template is always split into two distinct parts:
         <!-- Your placeholder content here -->
     </content>
 ```
+
 - A `template` part, containing the HTML markup to display your data **once fetched**. This part is mandatory to display your data.
 
 - A `placeholder` part, containing the HTML markup to display as placeholder **while the data are getting fetched**. This part is optional.
@@ -42,12 +49,50 @@ The following custom helpers are available in addition to the [handlebars-helper
 
 > The `markdown` and `logging` helpers are not available. For `times` use `multiply` as `times` is a custom iterator.
 
+#### getCountMessage
+
+**Syntax** `{{getCountMessage <total items count> <keywords>}}`
+
+**Description** Display a friendly message displaying the result and the entered keywords.
+
+**Example** `{{getCountMessage 5 'contoso'}}` will display _'5 results for 'contoso'_.
+
+#### getGraphPreviewUrl
+
+**Syntax** `{{getGraphPreviewUrl "<absolute_URL>"}}`
+
+**Description** Try to determine the preview URL based on an absolute URL using the unified Microsoft Graph URL syntax. For instance, _https://contoso.sharepoint.com/sites/dev/Shared%20Documents/MyDocument.pdf_ becomes _https://contoso.sharepoint.com/sites/dev/Shared%20Documents/?id=/sites/dev/Shared%20Documents/MyDocument.pdf&parent=/sites/dev/Shared%20Documents_
+
+**Example** `{{getGraphPreviewUrl 'https://contoso.sharepoint.com/sites/dev/Shared%20Documents/MyDocument.pdf'}}`
+
+#### getSummary
+
+**Syntax** `{{getSummary "<value>"}}`
+
+**Description** _Use with SharePoint Search data source and the HitHighlightedSummary SharePoint search managed property_. Returns the formatted value for rendering.
+
+**Example** `{{getSummary "HitHighlightedSummary"}}`
+
+#### getTagName
+
+**Syntax** `{{getTagName "<value>"}}`
+
+**Description** _Use with tag fields_. Returns the name of the tag, omitting the ID in the tag string (`L0\|#000000000-0000-0000-0000-000000000000\|…`).
+
+**Example** `{{getTagName "Tag"}}`
+
+
+
+
+**Syntax** 
+
+**Description** 
+
+**Example** 
+
+
 | Helper | Description | Example |
 | ------ | ----------- | -------- |
-| `{{getGraphPreviewUrl "<absolute_URL>"` | Try to determine the preview URL based on an absolute URL using the unified Microsoft Graph URL syntax. For instance, _https://contoso.sharepoint.com/sites/dev/Shared%20Documents/MyDocument.pdf_ becomes _https://contoso.sharepoint.com/sites/dev/Shared%20Documents/?id=/sites/dev/Shared%20Documents/MyDocument.pdf&parent=/sites/dev/Shared%20Documents_  | `{{getGraphPreviewUrl 'https://contoso.sharepoint.com/sites/dev/Shared%20Documents/MyDocument.pdf'}}`
-`{{getCountMessage <total items count> <keywords>}}` | Display a friendly message displaying the result and the entered keywords. | `{{getCountMessage 5 'contoso'}}` will display _'5 results for 'contoso'_.
-| `{{getSummary "<value>"}}` | _Use with SharePoint Search data source and the HitHighlightedSummary SharePoint search managed property_. Returns the formatted value for rendering. | `{{getSummary HitHighlightedSummary}}`
-| `{{getTagName "<value>"}}` | _Use with tag fields_. Returns the name of the tag, omitting the ID in the tag string (`L0\|#000000000-0000-0000-0000-000000000000\|…`). | `{{getTagName Tag}}`
 | `{{getDate <data_value> "<format>" "<time handling>"}}` | Format the date with [Moment.js](https://momentjs.com/docs/#/parsing/string-format/) according to the current language. Date in the managed property should be on the form `2018-09-10T06:29:25.0000000Z` for the function to work.<p>&lt;time handling&gt; is optional and takes <ul><li>0 = format to browsers time zone (default)</li><li>1 = ignore Z time and handle as browsers local time zone</li><li>2 = strip time and set to 00:00:00 in browsers local time zone</li><li>3 = display in the time zone for the current web</li><li>4 = display in the time zone from the uers profile</li> | `{{getDate 2018-09-10T06:29:25.0000000Z 'LL'}}`
 | `{{getUrlField <managed_propertyOWSURLH> "URL|Title"}}` | _Use with SharePoint Search data source_. Returns the URL or Title part of a URL autocreated managed property | `{{getUrlField MyPropertyOWSURLH "Title"}}`
 `{{getUniqueCount items "<property>"}}` or  `{{getUniqueCount array}}`| Get the unique count of a property over the result set (or another array) or get the unique count of objects in an array. Example: [1,1,1,2,2,4] would return `3`. | `{{getUniqueCount [1,1,1,2,2,4]}}`
