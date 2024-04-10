@@ -10,7 +10,7 @@ Before modern pages and web parts built on SPFx was introduced search driven sce
 supported any developer to add any HTML, CSS or JavaScript they wanted to tailor their specific scenario. In the modern world this was replaced by the
 Highlighted Content Web Part and a not very configurable search solution for Microsoft Search.
 
-To close the gap of customization and freedom the PnP Modern Search web parts got stated back in 2017, and have stabilized on v3. While allowing flexibility
+To close the gap of customization and freedom the PnP Modern Search web parts got started back in 2017, and have stabilized on v3. While allowing flexibility
 it introduces security measures to block JavaScript and CSS injection, key to many of the enterprise companies using the web parts today in productions.
 
 As the project progressed and the search API's are moving from SharePoint to Microsoft Graph there was a need to restructure and re-invent the web parts.
