@@ -55,7 +55,21 @@ The following custom helpers are available in addition to the [handlebars-helper
 
 **Description** Display a friendly message displaying the result and the entered keywords.
 
-**Example** `{{getCountMessage 5 'contoso'}}` will display _'5 results for 'contoso'_.
+**Example** `{{getCountMessage 5 "contoso"}}` will display _'5 results for 'contoso'_.
+
+#### getDate
+
+**Syntax** `{{getDate <data_value> "<format>" "<time handling>"}}`
+
+**Description** Format the date with [Moment.js](https://momentjs.com/docs/#/parsing/string-format/) according to the current language. Date in the managed property should be on the form `2018-09-10T06:29:25.0000000Z` for the function to work. `<time handling>` is optional and takes:
+
+- 0 = format to browsers time zone (default)
+- 1 = ignore Z time and handle as browsers local time zone
+- 2 = strip time and set to 00:00:00 in browsers local time zone
+- 3 = display in the time zone for the current web
+- 4 = display in the time zone from the user's profile
+
+**Example** `{{getDate 2018-09-10T06:29:25.0000000Z 'LL'}}`
 
 #### getGraphPreviewUrl
 
@@ -63,7 +77,7 @@ The following custom helpers are available in addition to the [handlebars-helper
 
 **Description** Try to determine the preview URL based on an absolute URL using the unified Microsoft Graph URL syntax. For instance, _https://contoso.sharepoint.com/sites/dev/Shared%20Documents/MyDocument.pdf_ becomes _https://contoso.sharepoint.com/sites/dev/Shared%20Documents/?id=/sites/dev/Shared%20Documents/MyDocument.pdf&parent=/sites/dev/Shared%20Documents_
 
-**Example** `{{getGraphPreviewUrl 'https://contoso.sharepoint.com/sites/dev/Shared%20Documents/MyDocument.pdf'}}`
+**Example** `{{getGraphPreviewUrl "https://contoso.sharepoint.com/sites/dev/Shared%20Documents/MyDocument.pdf"}}`
 
 #### getSummary
 
@@ -81,45 +95,122 @@ The following custom helpers are available in addition to the [handlebars-helper
 
 **Example** `{{getTagName "Tag"}}`
 
+#### getUnique
+
+**Syntax** `{{getUnique items "<property>"}}`
+
+**Description** Return the unique values as a new array based on an array or property of an object in the array.
+
+**Example** `{{getUnique items "NewsCategory"}}`
+
+#### getUniqueCount
+
+**Syntax** `{{getUniqueCount items "<property>"}}` or  `{{getUniqueCount array}}`
+
+**Description** Get the unique count of a property over the result set (or another array) or get the unique count of objects in an array. Example: [1,1,1,2,2,4] would return `3`.
+
+**Example** `{{getUniqueCount [1,1,1,2,2,4]}}`
+
+#### getUrlField
+
+**Syntax** `{{getUrlField <managed_propertyOWSURLH> "URL|Title"}}`
+
+**Description** _Use with SharePoint Search data source_. Returns the URL or Title part of a URL auto-created managed property
+
+**Example** `{{getUrlField MyPropertyOWSURLH "Title"}}`
+
+#### #group
+
+**Syntax** `{{#group items by="<property>"}}`
+
+**Description** Group items by a specific results property. See [https://github.com/shannonmoeller/handlebars-group-by](https://github.com/shannonmoeller/handlebars-group-by) for usage.
+
+**Example** `{{#group items by="RefinableString00"}}`
+
+#### slot
+
+**Syntax** `{{slot item <property_name>}}`
+
+**Description** Return the `<property_name>` value for the `item` object. Supports deep property paths.
+
+**Example** `{{slot item "property.subproperty"}}`
 
 
+#### getUserEmail
 
-**Syntax** 
+**Syntax** `{{getUserEmail <value>}}`
 
-**Description** 
+**Description** Extract the user email in a string based on a email regex  (ex: a claim). Returns the first match.
 
-**Example** 
+**Example** `{{getUserEmail "franck.cornu@contoso.onmicrosoft.com | Franck Cornu | 693A30232E667C6D656D626572736869707C6672616E636B2E636F726E7540616571756F736465762E6F6E6D6963726F736F66742E636F6D i:0#.f|membership|franck.cornu@contoso.onmicrosoft.com"}}`
 
+#### #times
 
-| Helper | Description | Example |
-| ------ | ----------- | -------- |
-| `{{getDate <data_value> "<format>" "<time handling>"}}` | Format the date with [Moment.js](https://momentjs.com/docs/#/parsing/string-format/) according to the current language. Date in the managed property should be on the form `2018-09-10T06:29:25.0000000Z` for the function to work.<p>&lt;time handling&gt; is optional and takes <ul><li>0 = format to browsers time zone (default)</li><li>1 = ignore Z time and handle as browsers local time zone</li><li>2 = strip time and set to 00:00:00 in browsers local time zone</li><li>3 = display in the time zone for the current web</li><li>4 = display in the time zone from the uers profile</li> | `{{getDate 2018-09-10T06:29:25.0000000Z 'LL'}}`
-| `{{getUrlField <managed_propertyOWSURLH> "URL|Title"}}` | _Use with SharePoint Search data source_. Returns the URL or Title part of a URL autocreated managed property | `{{getUrlField MyPropertyOWSURLH "Title"}}`
-`{{getUniqueCount items "<property>"}}` or  `{{getUniqueCount array}}`| Get the unique count of a property over the result set (or another array) or get the unique count of objects in an array. Example: [1,1,1,2,2,4] would return `3`. | `{{getUniqueCount [1,1,1,2,2,4]}}`
-`{{getUnique items "<property>"}}` | Return the unique values as a new array based on an array or property of an object in the array. | `{{getUnique items "NewsCategory"}}`
-`{{#group items by="<property>"}}` | Group items by a specific results property. See [https://github.com/shannonmoeller/handlebars-group-by](https://github.com/shannonmoeller/handlebars-group-by) for usage.
-| `{{slot item <property_name>}}` | Return the `<property_name>` value for the `item` object. Supports deep property paths. | `{{slot item "property.subproperty"}}`
-| `{{getUserEmail <value>}}` | Extract the user email in a string based on a email regex  (ex: a claim). Returns the first match.| `{{getUserEmail "franck.cornu@contoso.onmicrosoft.com | Franck Cornu | 693A30232E667C6D656D626572736869707C6672616E636B2E636F726E7540616571756F736465762E6F6E6D6963726F736F66742E636F6D i:0#.f|membership|franck.cornu@contoso.onmicrosoft.com"}}`
-| `{{#times <number>}}` | Iterate the block `<number>` times. | `{{#times 5}} some mark up  {{/times}}`
-| `{{regex <expression> <string>}}` | Run a regular expression and return the match. Return `-` if not match. | `{{regex '\d+' 'digit 15 is a number'}}` will return `15`.
-| `{{getPageContext "<SPFx page property>"}}` | Retrieve a property from the SPFx context object. | `{{getPageContext "user.displayName"}}` or `{{getPageContext "cultureInfo.currentUICultureName"}}`
-| `{{getAttachments}}`| Return object structure for list item attachments. | `{{#getAttachments LinkOfficeChild}}<a href="{{url}}">{{index}} - {{fileName}}</href>{{/getAttachments}}`
-| `{{dayDiff <date1> <date2>}}`| Return the number of days between two dates, eg. show an icon for files created within the last 30 days. | `{{#compare (dayDiff (getDate Created 'YYYY-MMM-DD' ) (getDate timestamp 'YYYY-MMM-DD' )) "<=" 30 }} <img src='/SiteAssets/New.png' />{{/compare}}`
-| `{{urlParse <url>}}` | Same as Handlebar Helpers. Omitting the optional url parameter uses the current browser URL. | `{{get "query" (urlParse)}}` return the query part of a URL
-| `{{getUrlParameter <parameter> <url>}}` | Return the query parameter value from a URL. Omitting the optional url parameter uses the current browser URL. | `{{getUrlParameter "k"}}` return the value of the `k` query parameter from the browser URL.<br><br>`{{getUrlParameter "k" "https://foo?k=test"}}` return the value of the `k` query parameter from the provided URL.
+**Syntax** `{{#times <number>}}`
 
+**Description** Iterate the block `<number>` times.
+
+**Example** `{{#times 5}} some mark up  {{/times}}`
+
+#### regex
+
+**Syntax** `{{regex <expression> <string>}}`
+
+**Description** Run a regular expression and return the match. Return `-` if not match.
+
+**Example** `{{regex '\d+' 'digit 15 is a number'}}` will return `15`
+
+#### getPageContext
+
+**Syntax** `{{getPageContext "<SPFx page property>"}}`
+
+**Description** Retrieve a property from the SPFx context object.
+
+**Example** `{{getPageContext "user.displayName"}}` or `{{getPageContext "cultureInfo.currentUICultureName"}}`
+
+#### getAttachments
+
+**Syntax** `{{getAttachments}}`
+
+**Description** Return object structure for list item attachments.
+
+**Example** `{{#getAttachments LinkOfficeChild}}<a href="{{url}}">{{index}} - {{fileName}}</href>{{/getAttachments}}`
+
+#### dayDiff
+
+**Syntax** `{{dayDiff <date1> <date2>}}`
+
+**Description** Return the number of days between two dates, eg. show an icon for files created within the last 30 days.
+
+**Example** `{{#compare (dayDiff (getDate Created 'YYYY-MMM-DD' ) (getDate timestamp 'YYYY-MMM-DD' )) "<=" 30 }} <img src='/SiteAssets/New.png' />{{/compare}}`
+
+#### urlParse
+
+**Syntax** `{{urlParse <url>}}`
+
+**Description** Same as Handlebar Helpers. Omitting the optional url parameter uses the current browser URL.
+
+**Example** `{{get "query" (urlParse)}}` return the query part of a URL
+
+#### getUrlParameter
+
+**Syntax** `{{getUrlParameter <parameter> <url>}}`
+
+**Description** Return the query parameter value from a URL. Omitting the optional url parameter uses the current browser URL.
+
+**Example** `{{getUrlParameter "k"}}` return the value of the `k` query parameter from the browser URL. `{{getUrlParameter "k" "https://foo?k=test"}}` return the value of the `k` query parameter from the provided URL.
 
 > Need any other helper? Let us know [here](https://github.com/microsoft-search/pnp-modern-search/issues)!
 
-### Using builtin web components
+### Using built-in web components
 
 By default, several components are available ([see the complete list](./web_components_list.md)). If these does not fit your requirement, you can still create your own using the [extensibility library](./custom_web_component.md).
 
 ### Custom CSS styles
 
-#### Default Behaviour
+#### Default Behavior
 
-Inside an HTML template (or layout field), you can write your own CSS styles using a &lt;style&gt; tag. Even better, you can inject Handlebars variables, helpers, conditional blocks, etc. right inside it and get dynamic classes or attributes
+Inside an HTML template (or layout field), you can write your own CSS styles using a `<style>` tag. Even better, you can inject Handlebars variables, helpers, conditional blocks, etc. right inside it and get dynamic classes or attributes
 
 ```html
 <content id="data-content">
@@ -135,13 +226,13 @@ Inside an HTML template (or layout field), you can write your own CSS styles usi
     ...
 ```
 
-However, all CSS rules (including `@media` rules) will be all prefixed automatically by an unique ID (**pnp-template_&lt;Web Part instance ID&gt;**) to make sure styles are isolated from other Web Parts on the page. We do this to avoid conflicts between classes in the global context.
+However, all CSS rules (including `@media` rules) will be all prefixed automatically by an unique ID (`pnp-template_<Web Part instance ID>`) to make sure styles are isolated from other Web Parts on the page. We do this to avoid conflicts between classes in the global context.
 
 #### Use of CSS Layers
 
-In contrast to the automatically prefixing all styles with the web part instance id's, the style can live in its own so called layer. This way the style bleeding to the rest of the page can get avoided.
+In contrast to the automatically prefixing all styles with the web part instance ids, the style can live in its own so called layer. This way styles bleeding into the rest of the page can be avoided.
 
-Layered style in contrast to the default behavior allows mechanisms such as [container queryies](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Container_Queries) and other future improvements such as [CSS Nesting](https://developer.chrome.com/articles/css-nesting/).
+Layered styles - in contrast to the default behavior - allows mechanisms such as [container queries](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Container_Queries) and other future improvements such as [CSS Nesting](https://developer.chrome.com/articles/css-nesting/).
 
 CSS support a mechanism for isolation CSS declarations in layers. To use this mechanism specify on the style tag the data property `data-cssscope` as layer.
 
@@ -176,6 +267,7 @@ This convert the CSS into the following form:
 Browser support for [CSS Layer](https://caniuse.com/css-cascade-layers) on can-i-use.
 
 ### Hide error message using CSS
+
 By default the web parts will output an error message if something goes wrong on for example API calls.
 
 If you want to hide the error message you can add the following CSS in your custom template.
@@ -224,8 +316,7 @@ Login: {{@root.context.user.loginName}}
 </div>
 ```
 
-
-> You can also use this variable in the 'Details List' and 'Cards' layouts in field expresions.
+> You can also use this variable in the 'Details List' and 'Cards' layouts in field expressions.
 
 ![Theme usage in fields](../assets/theme_field.png)
 
@@ -282,13 +373,13 @@ If no placeholder is present in the template, a default one will be loaded.
 
 > The Microsoft Graph Toolkit is a collection of reusable, framework-agnostic web components and helpers for accessing and working with Microsoft Graph. The components are fully functional right of out of the box, with built in providers that authenticate with and fetch data from Microsoft Graph.
 
-In the solution, you can use Graph Tookit components without the need to re-authenticate against Microsoft Graph because the Web Parts already use the [SharePoint provider](https://docs.microsoft.com/en-us/graph/toolkit/providers/sharepoint).
+In the solution, you can use Graph Tookit components without the need to re-authenticate against Microsoft Graph because the Web Parts already use the [SharePoint provider](https://docs.microsoft.com/graph/toolkit/providers/sharepoint).
 
 Refer to the official documentation to see [all available components](https://docs.microsoft.com/en-us/graph/toolkit/components/login). For instance, we use the Microsoft Graph Toolkit for the [people layout](../usage/search-results/layouts/people.md) via `<mgt-person>`.
 
 ### Build templates with item selection
 
-If your template requires items selection for dynamic filtering, you can follow these guidelines to design your template structure. The item selection feature is based on the Office Fluent UI [**Selection**](https://developer.microsoft.com/en-us/fluentui#/controls/web/selection) component and custom `data` attributes.
+If your template requires items selection for dynamic filtering, you can follow these guidelines to design your template structure. The item selection feature is based on the Office Fluent UI [**Selection**](https://developer.microsoft.com/fluentui#/controls/web/selection) component and custom `data` attributes.
 
 The available data attributes you can use in your HTML template are:
 
@@ -302,7 +393,7 @@ The available data attributes you can use in your HTML template are:
 
 - `data-selection-select`: allows a branch of the DOM to ensure that the current item is selected upon interaction.
 
-As item key you must use the builtin Handlebars `{{@index}}` property in the `{{#each}}` loop. Also because state managed is internaly managed by the Web Part, we provide you an Handlebars helper `isItemSelected` to help to apply styles depending of the selection (ex: apply a CSS class or not). To use this helper correctly, you must pass the current selected keys and current index to get the selected state for an item:
+As item key you must use the builtin Handlebars `{{@index}}` property in the `{{#each}}` loop. Also because state managed is internally managed by the Web Part, we provide you an Handlebars helper `isItemSelected` to help to apply styles depending of the selection (ex: apply a CSS class or not). To use this helper correctly, you must pass the current selected keys and current index to get the selected state for an item:
 
 ```
 (isItemSelected @root.selectedKeys @index)
@@ -331,7 +422,6 @@ As item key you must use the builtin Handlebars `{{@index}}` property in the `{{
 
 !!! note
     - If you allowed multi items selection, you must use `CTRL` + `Left click` to select multiple elements. You can also select a range of elements using `SHIFT` + `Left click`.
-
 
 ## Adaptive cards customizations
 
@@ -401,8 +491,8 @@ To reference a field without a slot, just use its name:
 
 ### Styling your adaptive cards
 
-When selecting the adaptive cards mode, you can also setup styles through the [host configuration](https://docs.microsoft.com/en-us/adaptive-cards/rendering-cards/host-config). 
+When selecting the adaptive cards mode, you can also setup styles through the [host configuration](https://docs.microsoft.com/adaptive-cards/rendering-cards/host-config).
 
-From the official Microsoft documentation: 
+From the official Microsoft documentation:
 
 _"HostConfig is a cross-platform configuration object that specifies how an Adaptive Card Renderer generates UI."_.
