@@ -13,7 +13,7 @@ In a basic customization scenario, super users and webmasters can customize exis
 
 ### Both techniques
 
-- Use data sources [slots](../usage/search-results/slots.md) 
+- Use data sources [slots](../usage/search-results/slots.md)
 - Use default [web components](#using-builtin-web-components) provided by the solution.
 - Use [Microsoft Graph Toolkit components](#microsoft-graph-toolkit).
 
@@ -49,6 +49,22 @@ The following custom helpers are available in addition to the [handlebars-helper
 
 > The `markdown` and `logging` helpers are not available. For `times` use `multiply` as `times` is a custom iterator.
 
+#### dayDiff
+
+**Syntax** `{{dayDiff <date1> <date2>}}`
+
+**Description** Return the number of days between two dates, eg. show an icon for files created within the last 30 days.
+
+**Example** `{{#compare (dayDiff (getDate Created 'YYYY-MMM-DD' ) (getDate timestamp 'YYYY-MMM-DD' )) "<=" 30 }} <img src='/SiteAssets/New.png' />{{/compare}}`
+
+#### getAttachments
+
+**Syntax** `{{getAttachments}}`
+
+**Description** Return object structure for list item attachments.
+
+**Example** `{{#getAttachments LinkOfficeChild}}<a href="{{url}}">{{index}} - {{fileName}}</href>{{/getAttachments}}`
+
 #### getCountMessage
 
 **Syntax** `{{getCountMessage <total items count> <keywords>}}`
@@ -78,6 +94,14 @@ The following custom helpers are available in addition to the [handlebars-helper
 **Description** Try to determine the preview URL based on an absolute URL using the unified Microsoft Graph URL syntax. For instance, _https://contoso.sharepoint.com/sites/dev/Shared%20Documents/MyDocument.pdf_ becomes _https://contoso.sharepoint.com/sites/dev/Shared%20Documents/?id=/sites/dev/Shared%20Documents/MyDocument.pdf&parent=/sites/dev/Shared%20Documents_
 
 **Example** `{{getGraphPreviewUrl "https://contoso.sharepoint.com/sites/dev/Shared%20Documents/MyDocument.pdf"}}`
+
+#### getPageContext
+
+**Syntax** `{{getPageContext "<SPFx page property>"}}`
+
+**Description** Retrieve a property from the SPFx context object.
+
+**Example** `{{getPageContext "user.displayName"}}` or `{{getPageContext "cultureInfo.currentUICultureName"}}`
 
 #### getSummary
 
@@ -119,22 +143,13 @@ The following custom helpers are available in addition to the [handlebars-helper
 
 **Example** `{{getUrlField MyPropertyOWSURLH "Title"}}`
 
-#### #group
+#### getUrlParameter
 
-**Syntax** `{{#group items by="<property>"}}`
+**Syntax** `{{getUrlParameter <parameter> <url>}}`
 
-**Description** Group items by a specific results property. See [https://github.com/shannonmoeller/handlebars-group-by](https://github.com/shannonmoeller/handlebars-group-by) for usage.
+**Description** Return the query parameter value from a URL. Omitting the optional url parameter uses the current browser URL.
 
-**Example** `{{#group items by="RefinableString00"}}`
-
-#### slot
-
-**Syntax** `{{slot item <property_name>}}`
-
-**Description** Return the `<property_name>` value for the `item` object. Supports deep property paths.
-
-**Example** `{{slot item "property.subproperty"}}`
-
+**Example** `{{getUrlParameter "k"}}` return the value of the `k` query parameter from the browser URL. `{{getUrlParameter "k" "https://foo?k=test"}}` return the value of the `k` query parameter from the provided URL.
 
 #### getUserEmail
 
@@ -144,13 +159,13 @@ The following custom helpers are available in addition to the [handlebars-helper
 
 **Example** `{{getUserEmail "franck.cornu@contoso.onmicrosoft.com | Franck Cornu | 693A30232E667C6D656D626572736869707C6672616E636B2E636F726E7540616571756F736465762E6F6E6D6963726F736F66742E636F6D i:0#.f|membership|franck.cornu@contoso.onmicrosoft.com"}}`
 
-#### #times
+#### #group
 
-**Syntax** `{{#times <number>}}`
+**Syntax** `{{#group items by="<property>"}}`
 
-**Description** Iterate the block `<number>` times.
+**Description** Group items by a specific results property. See [https://github.com/shannonmoeller/handlebars-group-by](https://github.com/shannonmoeller/handlebars-group-by) for usage.
 
-**Example** `{{#times 5}} some mark up  {{/times}}`
+**Example** `{{#group items by="RefinableString00"}}`
 
 #### regex
 
@@ -160,29 +175,21 @@ The following custom helpers are available in addition to the [handlebars-helper
 
 **Example** `{{regex '\d+' 'digit 15 is a number'}}` will return `15`
 
-#### getPageContext
+#### slot
 
-**Syntax** `{{getPageContext "<SPFx page property>"}}`
+**Syntax** `{{slot item <property_name>}}`
 
-**Description** Retrieve a property from the SPFx context object.
+**Description** Return the `<property_name>` value for the `item` object. Supports deep property paths.
 
-**Example** `{{getPageContext "user.displayName"}}` or `{{getPageContext "cultureInfo.currentUICultureName"}}`
+**Example** `{{slot item "property.subproperty"}}`
 
-#### getAttachments
+#### #times
 
-**Syntax** `{{getAttachments}}`
+**Syntax** `{{#times <number>}}`
 
-**Description** Return object structure for list item attachments.
+**Description** Iterate the block `<number>` times.
 
-**Example** `{{#getAttachments LinkOfficeChild}}<a href="{{url}}">{{index}} - {{fileName}}</href>{{/getAttachments}}`
-
-#### dayDiff
-
-**Syntax** `{{dayDiff <date1> <date2>}}`
-
-**Description** Return the number of days between two dates, eg. show an icon for files created within the last 30 days.
-
-**Example** `{{#compare (dayDiff (getDate Created 'YYYY-MMM-DD' ) (getDate timestamp 'YYYY-MMM-DD' )) "<=" 30 }} <img src='/SiteAssets/New.png' />{{/compare}}`
+**Example** `{{#times 5}} some mark up  {{/times}}`
 
 #### urlParse
 
@@ -191,14 +198,6 @@ The following custom helpers are available in addition to the [handlebars-helper
 **Description** Same as Handlebar Helpers. Omitting the optional url parameter uses the current browser URL.
 
 **Example** `{{get "query" (urlParse)}}` return the query part of a URL
-
-#### getUrlParameter
-
-**Syntax** `{{getUrlParameter <parameter> <url>}}`
-
-**Description** Return the query parameter value from a URL. Omitting the optional url parameter uses the current browser URL.
-
-**Example** `{{getUrlParameter "k"}}` return the value of the `k` query parameter from the browser URL. `{{getUrlParameter "k" "https://foo?k=test"}}` return the value of the `k` query parameter from the provided URL.
 
 > Need any other helper? Let us know [here](https://github.com/microsoft-search/pnp-modern-search/issues)!
 
