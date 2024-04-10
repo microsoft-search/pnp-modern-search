@@ -48,7 +48,6 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                     componentRef={searchBoxRef}
                     placeholder={this.props.placeholderText ? this.props.placeholderText : webPartStrings.SearchBox.DefaultPlaceholder}
                     ariaLabel={this.props.placeholderText ? this.props.placeholderText : webPartStrings.SearchBox.DefaultPlaceholder}
-                    theme={this.props.themeVariant as ITheme}
                     className={styles.searchTextField}
                     value={this.state.searchInputValue}
                     autoComplete="off"
