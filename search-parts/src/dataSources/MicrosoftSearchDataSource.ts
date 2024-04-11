@@ -378,7 +378,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         if (this.properties.entityTypes.indexOf(EntityType.DriveItem) !== -1 ||
             this.properties.entityTypes.indexOf(EntityType.ListItem) !== -1 ||
             this.properties.entityTypes.indexOf(EntityType.Site) !== -1 ||
-            this.properties.entityTypes.indexOf(EntityType.List) !== -1 || 
+            this.properties.entityTypes.indexOf(EntityType.List) !== -1 ||
             this.properties.entityTypes.indexOf(EntityType.ExternalItem) !== -1) {
 
             sortPropertiesFields.push(
@@ -688,12 +688,6 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
 
         // Query modification
         let queryTemplate = await this._tokenService.resolveTokens(this.properties.queryTemplate);
-        if (!isEmpty(queryTemplate.trim()) && !this.properties.useBetaEndpoint) {
-
-            // Use {searchTerms} or {inputQueryText} to use orginal value
-            // As of 06/06/2022 the query template is still in beta so we use the query text instead
-            queryText = queryTemplate.trim();
-        }
 
         // Paging
         if (dataContext.pageNumber > 1) {
@@ -778,8 +772,8 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         }
 
         // Sort is only available for 'ListItem' and ExternalItem
-        if (this.properties.entityTypes.indexOf(EntityType.ListItem) !== -1 ||  
-        this.properties.entityTypes.indexOf(EntityType.ExternalItem) !== -1) {
+        if (this.properties.entityTypes.indexOf(EntityType.ListItem) !== -1 ||
+            this.properties.entityTypes.indexOf(EntityType.ExternalItem) !== -1) {
 
             if (dataContext.sorting?.selectedSortFieldName
                 && dataContext.sorting?.selectedSortDirection) {
