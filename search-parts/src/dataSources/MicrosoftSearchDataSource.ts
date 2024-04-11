@@ -2,7 +2,7 @@ import { BaseDataSource, FilterSortType, FilterSortDirection, ITemplateSlot, Bui
 import { IPropertyPaneGroup, PropertyPaneLabel, IPropertyPaneField, PropertyPaneToggle, PropertyPaneHorizontalRule } from "@microsoft/sp-property-pane";
 import { cloneDeep, isEmpty, find } from '@microsoft/sp-lodash-subset';
 import { MSGraphClientFactory } from "@microsoft/sp-http";
-import { BuiltinTokenNames, TokenService } from "../services/tokenService/TokenService";
+import { TokenService } from "../services/tokenService/TokenService";
 import { ServiceScope } from '@microsoft/sp-core-library';
 import { Dropdown, IComboBoxOption, IDropdownProps, ITextFieldProps, TextField } from '@fluentui/react';
 import { PropertyPaneAsyncCombo } from "../controls/PropertyPaneAsyncCombo/PropertyPaneAsyncCombo";
@@ -686,11 +686,6 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             queryText = await this._tokenService.resolveTokens(dataContext.inputQueryText);
         }
 
-        // Query modification
-        // As of 04/08/2024 query template is supported in v1.0 version. 
-        // The {searchTerms} token may not be replaced in query template, otherwise wrong results may be returned.
-        // see (https://learn.microsoft.com/en-us/graph/api/search-query?view=graph-rest-1.0&tabs=http, Example 2)
-        this._tokenService.setTokenValue(BuiltinTokenNames.searchTerms, undefined);
         let queryTemplate = await this._tokenService.resolveTokens(this.properties.queryTemplate);
 
         // Paging
