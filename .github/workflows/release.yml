@@ -54,8 +54,8 @@ jobs:
     - name: Set outputs
       id: setoutputs
       run: |
-        echo "::set-output name=majorMinorPatch::$GITVERSION_MAJORMINORPATCH"
-        echo "::set-output name=semver::$GITVERSION_SEMVER"
+        echo "name=majorMinorPatch::$GITVERSION_MAJORMINORPATCH" >> $GITHUB_OUTPUT
+        echo "name=semver::$GITVERSION_SEMVER" >> $GITHUB_OUTPUT
     
     - name: Build SPFx
       run: |
