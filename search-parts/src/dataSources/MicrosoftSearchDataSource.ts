@@ -686,6 +686,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             queryText = await this._tokenService.resolveTokens(dataContext.inputQueryText);
         }
 
+        // Query modification
         let queryTemplate = await this._tokenService.resolveTokens(this.properties.queryTemplate);
 
         // Paging
