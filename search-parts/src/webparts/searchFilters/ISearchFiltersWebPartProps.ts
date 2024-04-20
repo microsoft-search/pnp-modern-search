@@ -58,4 +58,9 @@ export default interface ISearchFiltersWebPartProps extends IBaseWebPartProps {
      * The selected vertical fro the Web Part
      */
     selectedVerticalKeys: string[];
+
+    /**
+     * To allow lazy loaded API calls when using webpart for rollup and not needing dynamic data
+     */
+    allowWebPartConnectionsForLazyLoading: boolean;
 }

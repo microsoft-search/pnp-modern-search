@@ -91,6 +91,8 @@ declare interface ISearchResultsWebPartStrings {
         },
         ConnectionsPage: {
             ConnectionsPageGroupName: string;
+            AllowWebPartConnectionsLabel: string;      
+            AllowWebPartConnectionsDescription: string;
             UseFiltersWebPartLabel: string;
             UseFiltersFromComponentLabel: string;
             UseDynamicFilteringsWebPartLabel: string;
