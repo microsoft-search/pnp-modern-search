@@ -83,13 +83,8 @@ define([], function() {
           AsDataFiltersDescription: "I denne tilstand sendes valgte værdier til datakilden som almindelige filtre",
           AsTokensDescription: "I denne tilstand bruges de valgte værdier manuelt gennem tokens og tilgængelige metoder. Eksempel med SharePoint søgeforespørgselsskabelon: {?Title:{filters.&lt;destination_field_name&gt;.valueAsText}}",
           FilterValuesOperator: "Den logiske operator, der skal bruges mellem valgte værdier",
-<<<<<<< HEAD
-          FieldToConsumeLabel: "Kildefelt til at forbruge",
-          FieldToConsumeDescription: "Brug denne feltværdi til at skabe forbindelse til den anden datakilde",
-=======
           FieldToConsumeLabel: "Kildefelt til at anvende",
           FieldToConsumeDescription: "Brug denne feltværdi til udvalgte varer",
->>>>>>> 4b7c7e1f08e290b3d1232a7b8e787c8c5cac06e4
         },
         AdaptiveCards: {
           HostConfigFieldLabel: "Værtskonfiguration"
