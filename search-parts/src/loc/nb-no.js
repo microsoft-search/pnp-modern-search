@@ -223,7 +223,7 @@ define([], function () {
           ValueColumnLabel: "Kolonneverdi",
           ValueSortingColumnLabel: "Velg sorteringsfelt...",
           ValueSortingColumnNoFieldsLabel: "Ingen felt tilgjengelig",
-          FileExtensionFieldLabel: "Felt för filendelse",
+          FileExtensionFieldLabel: "Felt for filendelse",
           GroupByFieldLabel: "Grupper etter felt",
           AdditionalGroupByButtonLabel: "Legg til felt",
           AdditionalGroupByFieldsLabel: "Ytterligere grupperingsfelt",
