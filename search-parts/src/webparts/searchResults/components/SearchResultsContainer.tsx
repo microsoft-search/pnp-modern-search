@@ -402,7 +402,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                         }
                 }
 
-                if (!this.isOnlineDomain(item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl])) {
+                if (!this.isM365Source(item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl]) && !this.isOnlineDomain(item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl])) {
                     item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = null;
                 }
                 return item;
@@ -419,6 +419,15 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
     private isOnlineDomain(url: string) {
         return !isEmpty(url) && url.toLocaleLowerCase().indexOf(window.location.hostname.split('.').slice(-2).join('.').toLocaleLowerCase()) !== -1;
     }
+
+    /**
+     * Check if picture is deliverd from a M365 Source
+     * @param pictureThumbnailUrl
+     */
+        private isM365Source(url: string) {
+            const cdnDomains:string[] = ["https://cdn.hubblecontent.osi.office.net/m365content","https://publiccdn.sharepointonline.com"] //M365 CDNs
+            return cdnDomains.some(cdnDomain => url.startsWith(cdnDomain));
+        }
 
     /**
      * Extracts the GUID value from a string
