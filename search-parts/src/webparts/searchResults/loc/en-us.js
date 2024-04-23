@@ -92,8 +92,6 @@ define([], function() {
             },
             ConnectionsPage: {
                 ConnectionsPageGroupName: "Available connections",
-                AllowWebPartConnectionsLabel: "Allow web part connections",
-                AllowWebPartConnectionsDescription: "By turning off web part connections the search API call can be executed lazily when the web part comes into view, optimizing page performance.",
                 UseFiltersWebPartLabel: "Connect to a filters Web Part",
                 UseFiltersFromComponentLabel: "Use filters from this component",
                 UseDynamicFilteringsWebPartLabel: "Connect to a search results Web Part",
