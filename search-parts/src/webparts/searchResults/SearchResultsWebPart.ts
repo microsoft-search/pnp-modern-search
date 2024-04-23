@@ -532,7 +532,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         // Initializes this component as a discoverable dynamic data source
         if (this.properties.allowWebPartConnections) {
-            //this.context.dynamicDataSourceManager.initializeSource(this);
+            this.context.dynamicDataSourceManager.initializeSource(this);
         }
 
         if (this.displayMode === DisplayMode.Edit) {
@@ -694,7 +694,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 this.properties.filtersDataSourceReference = undefined;
                 this._filtersConnectionSourceData = undefined;
                 if (this.properties.allowWebPartConnections) {
-//                    this.context.dynamicDataSourceManager.notifyPropertyChanged(ComponentType.SearchResults);
+                    this.context.dynamicDataSourceManager.notifyPropertyChanged(ComponentType.SearchResults);
                 }
             }
         }
@@ -742,7 +742,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
             // Notify dynamic data consumers data have changed
             if (this.properties.allowWebPartConnections) {
-//                this.context.dynamicDataSourceManager.notifyPropertyChanged(ComponentType.SearchResults);
+                this.context.dynamicDataSourceManager.notifyPropertyChanged(ComponentType.SearchResults);
             }
 
             this.properties.dataSourceProperties = {};
@@ -1966,24 +1966,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         return verticalsConnectionFields;
     }
 
-    private async allowWebPartConnections(): Promise<IPropertyPaneField<any>[]> {
-        let allowWebPartConnections: IPropertyPaneField<any>[] = [
-            this._propertyFieldToogleWithCallout('allowWebPartConnections', {
-                label: webPartStrings.PropertyPane.ConnectionsPage.AllowWebPartConnectionsLabel,
-                calloutTrigger: this._propertyFieldCalloutTriggers.Hover,
-                key: 'allowWebPartConnections',
-                calloutContent: React.createElement('p', { style: { maxWidth: 250, wordBreak: 'break-word' } }, webPartStrings.PropertyPane.ConnectionsPage.AllowWebPartConnectionsDescription),
-                onText: commonStrings.General.OnTextLabel,
-                offText: commonStrings.General.OffTextLabel,
-                checked: this.properties.allowWebPartConnections
-            })
-        ];
-        return allowWebPartConnections;
-    }
-
     private async getConnectionOptionsGroup(): Promise<IPropertyPaneGroup[]> {
-
-        const allowWebPartConnectionsForLazyLoading = await this.allowWebPartConnections();
         const filterConnectionFields = await this.getFiltersConnectionFields();
         const verticalConnectionFields = await this.getVerticalsConnectionFields();
         const dataResultsConnectionsFields = await this.getDataResultsConnectionFields();
@@ -2005,7 +1988,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             {
                 groupName: webPartStrings.PropertyPane.ConnectionsPage.ConnectionsPageGroupName,
                 groupFields: [
-                    ...allowWebPartConnectionsForLazyLoading,
                     ...dynamicDataToggles
                 ]
             }
