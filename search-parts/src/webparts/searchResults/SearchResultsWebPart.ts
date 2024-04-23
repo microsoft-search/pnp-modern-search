@@ -2563,7 +2563,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         // Notfify dynamic data consumers data have changed
         if (this.properties.allowWebPartConnections && this.context && this.context.dynamicDataSourceManager && !this.context.dynamicDataSourceManager.isDisposed) {
-//            this.context.dynamicDataSourceManager.notifyPropertyChanged(ComponentType.SearchResults);
+            this.context.dynamicDataSourceManager.notifyPropertyChanged(ComponentType.SearchResults);
         }
 
         // Extra call to refresh the property pane in the case where data sources rely on results fields in there configuration (ex: ODataDataSource)
@@ -2582,7 +2582,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         // Notfify dynamic data consumers data have changed
         if (this.properties.allowWebPartConnections) {
- //           this.context.dynamicDataSourceManager.notifyPropertyChanged(DynamicDataProperties.AvailableFieldValuesFromResults);
+            this.context.dynamicDataSourceManager.notifyPropertyChanged(DynamicDataProperties.AvailableFieldValuesFromResults);
         }
     }
 
