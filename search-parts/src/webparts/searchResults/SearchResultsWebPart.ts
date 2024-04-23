@@ -468,20 +468,20 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         ReactDom.render(renderRootElement, this.domElement);
 
-        if(this.properties.showBlankIfNoResult){
+        if (this.properties.showBlankIfNoResult) {
             let element = this.domElement.parentElement;
-                // check up to 3 levels up for padding and exit once found
-                for (let i = 0; i < 3; i++) {
-                    const style = window.getComputedStyle(element);
-                    const hasPadding = style.paddingTop !== "0px";
-                    if (hasPadding) {
-                        element.style.paddingTop = "0px";
-                        element.style.paddingBottom = "0px";
-                        element.style.marginTop = "0px";
-                        element.style.marginBottom = "0px";
-                    }
-                    element = element.parentElement;
+            // check up to 3 levels up for padding and exit once found
+            for (let i = 0; i < 3; i++) {
+                const style = window.getComputedStyle(element);
+                const hasPadding = style.paddingTop !== "0px";
+                if (hasPadding) {
+                    element.style.paddingTop = "0px";
+                    element.style.paddingBottom = "0px";
+                    element.style.marginTop = "0px";
+                    element.style.marginBottom = "0px";
                 }
+                element = element.parentElement;
+            }
         }
 
         // This call set this.renderedOnce to 'true' so we need to execute it at the very end
@@ -531,7 +531,9 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         }
 
         // Initializes this component as a discoverable dynamic data source
-        this.context.dynamicDataSourceManager.initializeSource(this);
+        if (this.properties.allowWebPartConnections) {
+            this.context.dynamicDataSourceManager.initializeSource(this);
+        }
 
         if (this.displayMode === DisplayMode.Edit) {
             const { Placeholder } = await import(
@@ -691,7 +693,9 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             if (!this.properties.useFilters) {
                 this.properties.filtersDataSourceReference = undefined;
                 this._filtersConnectionSourceData = undefined;
-                this.context.dynamicDataSourceManager.notifyPropertyChanged(ComponentType.SearchResults);
+                if (this.properties.allowWebPartConnections) {
+                    this.context.dynamicDataSourceManager.notifyPropertyChanged(ComponentType.SearchResults);
+                }
             }
         }
 
@@ -736,8 +740,10 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             this._currentDataResultsSourceData.availablefilters = [];
             this._currentDataResultsSourceData.availableFieldsFromResults = [];
 
-            // Notfify dynamic data consumers data have changed
-            this.context.dynamicDataSourceManager.notifyPropertyChanged(ComponentType.SearchResults);
+            // Notify dynamic data consumers data have changed
+            if (this.properties.allowWebPartConnections) {
+                this.context.dynamicDataSourceManager.notifyPropertyChanged(ComponentType.SearchResults);
+            }
 
             this.properties.dataSourceProperties = {};
             this.properties.templateSlots = null;
@@ -1170,6 +1176,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         }
 
         this.properties.useVerticals = this.properties.useVerticals !== undefined ? this.properties.useVerticals : false;
+        this.properties.allowWebPartConnections = this.properties.allowWebPartConnections !== undefined ? this.properties.allowWebPartConnections : true;
 
         if (!this.properties.paging) {
 
@@ -1960,22 +1967,28 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     }
 
     private async getConnectionOptionsGroup(): Promise<IPropertyPaneGroup[]> {
-
         const filterConnectionFields = await this.getFiltersConnectionFields();
         const verticalConnectionFields = await this.getVerticalsConnectionFields();
         const dataResultsConnectionsFields = await this.getDataResultsConnectionFields();
+
+        let dynamicDataToggles = [];
+        if (this.properties.allowWebPartConnections) {
+            dynamicDataToggles = [
+                ...this.getSearchQueryTextFields(),
+                PropertyPaneHorizontalRule(),
+                ...filterConnectionFields,
+                PropertyPaneHorizontalRule(),
+                ...verticalConnectionFields,
+                PropertyPaneHorizontalRule(),
+                ...dataResultsConnectionsFields
+            ]
+        }
 
         let availableConnectionsGroup: IPropertyPaneGroup[] = [
             {
                 groupName: webPartStrings.PropertyPane.ConnectionsPage.ConnectionsPageGroupName,
                 groupFields: [
-                    ...this.getSearchQueryTextFields(),
-                    PropertyPaneHorizontalRule(),
-                    ...filterConnectionFields,
-                    PropertyPaneHorizontalRule(),
-                    ...verticalConnectionFields,
-                    PropertyPaneHorizontalRule(),
-                    ...dataResultsConnectionsFields
+                    ...dynamicDataToggles
                 ]
             }
         ];
@@ -2206,7 +2219,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             // Input query text
             const inputQueryText = await this._getInputQueryTextValue();
             this.tokenService.setTokenValue(BuiltinTokenNames.inputQueryText, inputQueryText);
-            this.tokenService.setTokenValue(BuiltinTokenNames.originalInputQueryText, inputQueryText);   
+            this.tokenService.setTokenValue(BuiltinTokenNames.originalInputQueryText, inputQueryText);
 
             // Selected filters
             if (this._filtersConnectionSourceData) {
@@ -2216,7 +2229,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 if (filtersSourceData) {
 
                     // Set the token as 'null' if no filter is selected meaning the token is available but with no data (different from 'undefined')
-                    // It is the caller responsability to check if the value is empty before using it in an expression (ex: `if(empty('{filters}'),'doA','doB)`)
+                    // It is the caller responsibility to check if the value is empty before using it in an expression (ex: `if(empty('{filters}'),'doA','doB)`)
                     let filterTokens: IDataFilterToken = null;
 
                     const allValues = flatten(filtersSourceData.selectedFilters.map(f => f.values));
@@ -2320,6 +2333,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
      */
     private ensureDynamicDataSourcesConnection() {
 
+        if (!this.properties.allowWebPartConnections) return;
         // Filters Web Part data source
         if (this.properties.filtersDataSourceReference) {
 
@@ -2548,7 +2562,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         }
 
         // Notfify dynamic data consumers data have changed
-        if (this.context && this.context.dynamicDataSourceManager && !this.context.dynamicDataSourceManager.isDisposed) {
+        if (this.properties.allowWebPartConnections && this.context && this.context.dynamicDataSourceManager && !this.context.dynamicDataSourceManager.isDisposed) {
             this.context.dynamicDataSourceManager.notifyPropertyChanged(ComponentType.SearchResults);
         }
 
@@ -2567,7 +2581,9 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         this._currentDataResultsSourceData.selectedItems = cloneDeep(currentSelectedItems);
 
         // Notfify dynamic data consumers data have changed
-        this.context.dynamicDataSourceManager.notifyPropertyChanged(DynamicDataProperties.AvailableFieldValuesFromResults);
+        if (this.properties.allowWebPartConnections) {
+            this.context.dynamicDataSourceManager.notifyPropertyChanged(DynamicDataProperties.AvailableFieldValuesFromResults);
+        }
     }
 
     /**
