@@ -425,7 +425,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
      * @param pictureThumbnailUrl
      */
         private isM365Source(url: string) {
-            const cdnDomains:string[] = ["https://cdn.hubblecontent.osi.office.net/m365content","https://publiccdn.sharepointonline.com"] //M365 CDNs
+            const cdnDomains:string[] = ["https://cdn.hubblecontent.osi.office.net/m365content","https://publiccdn.sharepointonline.com","https://privatecdn.sharepointonline.com"] //M365 CDNs
             return !isEmpty(url) && cdnDomains.some(cdnDomain => url.startsWith(cdnDomain));
         }
 
