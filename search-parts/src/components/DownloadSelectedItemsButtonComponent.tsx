@@ -95,11 +95,14 @@ export class DownloadSelectedItemsButtonComponent extends React.Component<IExpor
               "Content-Type": "application/json"
             },
             body: JSON.stringify({
-              "parameters":{"RenderOptions":4103}
+              "parameters":{
+                "RenderOptions":4103,
+                "ViewXml": `<View Scope="RecursiveAll"><Query><Where><Eq><FieldRef Name="UniqueId" /><Value Type="Guid">${item["NormUniqueID"]}</Value></Eq></Where></Query></View>`
+              }
             })
           };
 
-          return this.props.webPartContext.spHttpClient.post(`${item["SPWebUrl"]}/_api/web/lists/GetById('${item["NormListID"]}')/RenderListDataAsStream?FilterField1=UniqueId&FilterValue1=${item["NormUniqueID"]}`, SPHttpClient.configurations.v1, spOptions1)
+          return this.props.webPartContext.spHttpClient.post(`${item["SPWebUrl"]}/_api/web/lists/GetById('${item["NormListID"]}')/RenderListDataAsStream`, SPHttpClient.configurations.v1, spOptions1)
             .then((response: SPHttpClientResponse) => {
               return response.json()
             });
