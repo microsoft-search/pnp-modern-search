@@ -8,6 +8,7 @@ import { TemplateValueFieldEditor, ITemplateValueFieldEditorProps } from '../../
 import { AsyncCombo } from "../../../controls/PropertyPaneAsyncCombo/components/AsyncCombo";
 import { IAsyncComboProps } from "../../../controls/PropertyPaneAsyncCombo/components/IAsyncComboProps";
 import { PropertyFieldNumber } from "@pnp/spfx-property-controls/lib/PropertyFieldNumber";
+import commonStyles from './DetailsListLayout.module.scss';
 
 /**
  * Details List Builtin Layout
@@ -43,6 +44,11 @@ export interface IDetailsListLayoutProperties {
      * The field used to group items in the list
      */
     groupByField: string;
+
+    /**
+     * Additional fields to group items in the list
+     */
+    additionalGroupByFields: IDetailsListColumnConfiguration[];
 
     /**
      * If groups should collapsed by default
@@ -116,6 +122,7 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
         this.properties.fieldIconExtension = this.properties.fieldIconExtension ? this.properties.fieldIconExtension : 'FileType';
         this.properties.enableGrouping = this.properties.enableGrouping !== null && this.properties.enableGrouping !== undefined ? this.properties.enableGrouping : false;
         this.properties.groupByField = this.properties.groupByField ? this.properties.groupByField : '';
+        this.properties.additionalGroupByFields = this.properties.additionalGroupByFields ? this.properties.additionalGroupByFields : [];
         this.properties.groupsCollapsed = this.properties.groupsCollapsed !== null && this.properties.groupsCollapsed !== undefined ? this.properties.groupsCollapsed : true;
 
         const { PropertyFieldCollectionData, CustomCollectionFieldType } = await import(
@@ -312,7 +319,38 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
                     description: `<small>${strings.Layouts.DetailsList.GroupingDescription}</small>`,
                     key: 'queryText'
                 }),
-                PropertyPaneToggle('layoutProperties.groupsCollapsed', {
+                this._propertyFieldCollectionData('layoutProperties.additionalGroupByFields', {
+                  manageBtnLabel: strings.Layouts.DetailsList.AdditionalGroupByButtonLabel,
+                  key: 'layoutProperties.additionalGroupByFields',
+                  panelHeader: strings.Layouts.DetailsList.AdditionalGroupByFieldsLabel,
+                  panelDescription: strings.Layouts.DetailsList.AdditionalGroupByFieldsDescription,
+                  enableSorting: true,
+                  tableClassName: commonStyles.additionalGroupByFieldsTable,
+                  label: strings.Layouts.DetailsList.AdditionalGroupByFieldsLabel,
+                  value: this.properties.additionalGroupByFields,
+                  disabled: !this.properties.enableGrouping || !this.properties.groupByField || this.properties.groupByField.length === 0,
+                  fields: [
+                      {
+                          id: 'value',
+                          title: strings.Layouts.DetailsList.ValueColumnLabel,
+                          type: this._customCollectionFieldType.custom,
+                          required: true,
+                          onCustomRender: (field, value, onUpdate, item, itemId, onCustomFieldValidation) => {
+                              return React.createElement("div", { key: `${field.id}-${itemId}` },
+                                  React.createElement(TemplateValueFieldEditor, {
+                                      currentItem: item,
+                                      field: field,
+                                      useHandlebarsExpr: false,
+                                      onUpdate: onUpdate,
+                                      value: value,
+                                      availableProperties: availableOptions,
+                                  } as ITemplateValueFieldEditorProps)
+                              );
+                          }
+                      },
+                  ]
+              }),
+                  PropertyPaneToggle('layoutProperties.groupsCollapsed', {
                     label: strings.Layouts.DetailsList.CollapsedGroupsByDefault,
                     checked: this.properties.groupsCollapsed
                 })
@@ -353,6 +391,7 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
 
         if (propertyPath.localeCompare('layoutProperties.enableGrouping') === 0) {
             this.properties.groupByField = '';
+            this.properties.additionalGroupByFields = [];
         }
 
         if (propertyPath.localeCompare('layoutProperties.enableStickyHeader') === 0) {
