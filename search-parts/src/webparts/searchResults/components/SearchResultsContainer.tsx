@@ -425,10 +425,10 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
      * @param url
      */
         private isM365Source(url: string) {
-            const cdnDomains:RegExp[] = [/^https?:\/\/(?:[\w]+\.)+office\.net.*/,
-            /^https?:\/\/(?:[\w]+\.)+sharepointonline\.com.*/,
-            /^https?:\/\/(?:[\w]+\.)+sharepoint\.us.*/,
-            /^https?:\/\/(?:[\w]+\.)+sharepoint-mil\.us.*/,
+            const cdnDomains:RegExp[] = [/^https?:\/\/(?:[A-Za-z0-9,-]+\.)+office\.net.*/,
+            /^https?:\/\/(?:[A-Za-z0-9,-]+\.)+sharepointonline\.com.*/,
+            /^https?:\/\/(?:[A-Za-z0-9,-]+\.)+sharepoint\.us.*/,
+            /^https?:\/\/(?:[A-Za-z0-9,-]+\.)+sharepoint-mil\.us.*/,
             ];
             return cdnDomains.some(regex => regex.test(url))
         }
