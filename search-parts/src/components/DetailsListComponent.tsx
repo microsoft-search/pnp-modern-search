@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Fabric, ShimmeredDetailsList, IShimmeredDetailsListProps, Sticky, StickyPositionType, Stack, ScrollablePane, ScrollbarVisibility, Checkbox } from '@fluentui/react';
+import { Fabric, ShimmeredDetailsList, IShimmeredDetailsListProps, Checkbox } from '@fluentui/react';
 import { ITooltipHostProps, TooltipHost, ITooltipStyles, Shimmer, ShimmerElementsGroup, ShimmerElementType, IShimmerElement, mergeStyleSets, ITheme, Selection } from '@fluentui/react';
 import * as Handlebars from 'handlebars';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import { BaseWebComponent, BuiltinTemplateSlots, ExtensibilityConstants, ISortInfo, SortFieldDirection } from '@pnp/modern-search-extensibility';
 import { groupBy, sortBy, findIndex, isEmpty } from "@microsoft/sp-lodash-subset";
 import { FileIcon } from '../components/FileIconComponent';
-import { DetailsListLayoutMode, SelectionMode, IColumn, IGroup, IDetailsRowProps, DetailsRow, IDetailsHeaderProps, CheckboxVisibility, IDetailsRowCheckProps, DetailsRowCheck, IDetailsCheckboxProps } from '@fluentui/react/lib/DetailsList';
+import { DetailsListLayoutMode, SelectionMode, IColumn, IGroup, IDetailsRowProps, DetailsRow, IDetailsHeaderProps, CheckboxVisibility, IDetailsRowCheckProps, DetailsRowCheck, IDetailsCheckboxProps, IDetailsListStyles, ConstrainMode, ISelectionZoneProps } from '@fluentui/react/lib/DetailsList';
 import { DEFAULT_CELL_STYLE_PROPS, DEFAULT_ROW_HEIGHTS } from '@fluentui/react/lib/components/DetailsList/DetailsRow.styles';
 import { ISearchResultsTemplateContext } from '../models/common/ITemplateContext';
 import { ObjectHelper } from '../helpers/ObjectHelper';
@@ -46,9 +46,15 @@ const classNames = mergeStyleSets({
         maxHeight: '16px',
         maxWidth: '16px'
     },
-    controlWrapper: {
-        display: 'flex',
-        flexWrap: 'wrap'
+    header: {
+      margin: 0,
+    },
+    row: {
+      flex: '0 0 auto',
+    },
+    selectionZone: {
+      height: '100%',
+      overflow: 'hidden',
     }
 });
 
@@ -241,16 +247,6 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
     private _domPurify: any;
     private _selection: Selection;
     private _selectionMode: SelectionMode = SelectionMode.none;
-
-    private _scrollClass = mergeStyleSets({
-      detailsListWrapper: {
-          height: this.props.stickyHeaderListViewHeight,
-          maxHeight: 'inherit',
-          width: '100%',
-          position: 'relative'
-      },
-    });
-    
 
     constructor(props: IDetailsListComponentProps) {
         super(props);
@@ -460,25 +456,54 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
             onRenderDetailsHeader: this._onRenderDetailsHeader,
         };
 
+        if (this.props.enableStickyHeader) {
+          const gridStyles: Partial<IDetailsListStyles> = {
+            root: {
+              overflowX: 'auto',
+              selectors: {
+                '& [role=grid]': {
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'start',
+                  height: this.props.stickyHeaderListViewHeight ? `${this.props.stickyHeaderListViewHeight}px` : '100%',
+                },
+              },
+            },
+            headerWrapper: {
+              flex: '0 0 auto',
+            },
+            contentWrapper: {
+              flex: '1 1 auto',
+              overflow: 'hidden',
+            },
+            focusZone: {
+              height: '100%',
+              overflowY: 'auto',
+              overflowX: 'hidden',
+            },
+          };
+          
+          const focusZoneProps = {
+            'data-is-scrollable': 'true',
+          } as React.HTMLAttributes<HTMLElement>;
+  
+          const selectionZoneProps: ISelectionZoneProps = {
+            className: classNames.selectionZone,
+            selection: this._selection,
+          };
+
+          shimmeredDetailsListProps.detailsListStyles = gridStyles;
+          shimmeredDetailsListProps.focusZoneProps = focusZoneProps;
+          shimmeredDetailsListProps.selectionZoneProps = selectionZoneProps;
+          shimmeredDetailsListProps.constrainMode = ConstrainMode.unconstrained;
+          shimmeredDetailsListProps.layoutMode = DetailsListLayoutMode.fixedColumns;
+        }
+        
         if (this.state.groups.length > 0) {
             shimmeredDetailsListProps.groups = this.state.groups;
             shimmeredDetailsListProps.groupProps = {
                 showEmptyGroups: true
             };
-        }
-
-        if (this.props.enableStickyHeader) {
-          return (
-            <Fabric>
-              <Stack horizontal className={this._scrollClass.detailsListWrapper}>
-                <Stack.Item>
-                  <ScrollablePane scrollbarVisibility={ScrollbarVisibility.auto} >
-                    <ShimmeredDetailsList {...shimmeredDetailsListProps} />
-                  </ScrollablePane>
-                </Stack.Item>
-              </Stack >
-            </Fabric>
-          );
         }
 
         return (
@@ -639,14 +664,6 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
 
             return <TooltipHost {...tooltipHostProps} theme={this.props.themeVariant as ITheme} styles={customStyles} />;
         };
-
-        if (this.props.enableStickyHeader) {
-          return (
-            <Sticky stickyPosition={StickyPositionType.Header} isScrollSynced>
-              {defaultRender!({...props, theme: this.props.themeVariant as ITheme})}
-            </Sticky>
-          );
-        }
 
         return defaultRender!({...props, theme: this.props.themeVariant as ITheme});
     }
