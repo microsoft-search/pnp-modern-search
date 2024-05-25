@@ -37,6 +37,11 @@ export interface ICardsLayoutProperties {
      * The card size in %
      */
     columnSizePercentage: number;
+
+    /**
+     * If the download button should be visible
+     */
+    enableDownload: boolean;
 }
 
 export class CardsLayout extends BaseLayout<ICardsLayoutProperties> {
@@ -188,7 +193,12 @@ export class CardsLayout extends BaseLayout<ICardsLayoutProperties> {
                 step: 1,
                 showValue: true,
                 value: this.properties.preferedCardNumberPerRow,                
-            })              
+            }),
+            PropertyPaneToggle('layoutProperties.enableDownload', {
+                label: strings.Layouts.DetailsList.EnableDownload,
+                checked: this.properties.enableDownload
+            })
+  
         ];
     }
 
