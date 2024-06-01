@@ -410,7 +410,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             const parentControlZone = this.getParentControlZone();
 
             // If the current selected vertical is not the one configured for this Web Part, we show nothing
-            if (verticalData && this.properties.selectedVerticalKeys.indexOf(verticalData.selectedVertical.key) === -1) {
+            if (verticalData && this.properties.selectedVerticalKeys.indexOf(verticalData.selectedVertical?.key) === -1) {
 
                 if (this.displayMode === DisplayMode.Edit) {
 
@@ -2550,7 +2550,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             const verticalData = DynamicPropertyHelper.tryGetValueSafe(this._verticalsConnectionSourceData);
 
             // For edit mode only, we want to see the data
-            if (verticalData && this.properties.selectedVerticalKeys.indexOf(verticalData.selectedVertical.key) === -1 && this.displayMode === DisplayMode.Read) {
+            if (verticalData && this.properties.selectedVerticalKeys.indexOf(verticalData.selectedVertical?.key) === -1 && this.displayMode === DisplayMode.Read) {
 
                 // If the current selected vertical is not the one configured for this Web Part, we reset
                 // the data soure information since we don't want to expose them to consumers

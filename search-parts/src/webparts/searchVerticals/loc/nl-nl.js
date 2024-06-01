@@ -16,6 +16,8 @@ define([], function() {
                 PanelHeader: "Configureer zoekverticalen",
                 PanelDescription: "Voeg nieuwe zoekverticalen toe zodat gebruikers kunnen zoeken in een voorgedefinieerde scope of databron.",
                 ButtonLabel: "Configureer zoekverticalen",
+                DefaultVerticalQueryStringParamLabel: "Querystring-parameter om te gebruiken om standaard een verticale tab te selecteren",
+                DefaultVerticalQueryStringParamDescription: "De overeenkomst wordt gemaakt met de tabnaam of de huidige paginakoppeling (als de tab een hyperlink is)",
                 Fields: {
                     TabName: "Tab naam",
                     IconName: "Fluent UI icoon naam",
@@ -24,7 +26,11 @@ define([], function() {
                     OpenBehavior: "Gedrag bij openen",
                     TabValue: "Tabwaarde",
                     ShowLinkIcon: "Toon linkpictogram",
-                }
+                    Audience: "Doelgroep"
+                },
+                AudienceInputPlaceholderText: "Zoek naar een groep",
+                AudienceNoResultsFound: "We hebben geen overeenkomende groepen gevonden.",
+                AudienceLoading: "Groepen laden..."
             }
         }
     }
