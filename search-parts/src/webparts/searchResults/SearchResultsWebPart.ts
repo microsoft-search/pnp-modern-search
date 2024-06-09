@@ -214,6 +214,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         this._bindHashChange = this._bindHashChange.bind(this);
         this._onDataRetrieved = this._onDataRetrieved.bind(this);
         this._onItemSelected = this._onItemSelected.bind(this);
+        this._updateTitleProperty = this._updateTitleProperty.bind(this);
     }
 
     public async render(): Promise<void> {
@@ -371,9 +372,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 webPartTitleProps: {
                     displayMode: this.displayMode,
                     title: this.properties.title,
-                    updateProperty: (value: string) => {
-                        this.properties.title = value;
-                    },
+                    updateProperty: this._updateTitleProperty,
                     themeVariant: this._themeVariant,
                     className: commonStyles.wpTitle
                 }
@@ -2584,6 +2583,11 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         if (this.properties.allowWebPartConnections) {
             this.context.dynamicDataSourceManager.notifyPropertyChanged(DynamicDataProperties.AvailableFieldValuesFromResults);
         }
+    }
+
+    private _updateTitleProperty(value: string) {
+        this.properties.title = value;
+        this.render();
     }
 
     /**

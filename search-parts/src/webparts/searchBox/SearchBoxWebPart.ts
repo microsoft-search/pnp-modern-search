@@ -96,6 +96,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
         super();
 
         this._bindHashChange = this._bindHashChange.bind(this);
+        this._updateTitleProperty = this._updateTitleProperty.bind(this);
     }
 
     protected async onInit() {
@@ -199,9 +200,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
             webPartTitleProps: {
                 displayMode: this.displayMode,
                 title: this.properties.title,
-                updateProperty: (value: string) => {
-                    this.properties.title = value;
-                },
+                updateProperty: this._updateTitleProperty,
                 themeVariant: this._themeVariant,
                 className: commonStyles.wpTitle
             }
@@ -385,6 +384,10 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
         }
     }
 
+    private _updateTitleProperty(value: string) {
+        this.properties.title = value;
+        this.render();
+    }
     /**
      * Determines the group fields for the search query options inside the property pane
      */
