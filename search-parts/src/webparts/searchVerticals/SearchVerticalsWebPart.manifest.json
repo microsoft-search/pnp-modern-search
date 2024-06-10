@@ -19,12 +19,14 @@
         "title": {
             "default": "PnP - Search Verticals",
             "fr-fr": "PnP - Verticaux de recherche",
-            "pl-pl": "PnP - Wertykały wyszukiwania"
+            "pl-pl": "PnP - Wertykały wyszukiwania",
+            "it-it": "PnP - Verticali di Ricerca"
         },
         "description": {
             "default": "Allows to browse data as verticals (i.e silos)",
             "fr-fr": "Permet de parcourir les données de manière verticale (en silos)",
-            "pl-pl": "Pozwala przeglądać dane wertykalnie"
+            "pl-pl": "Pozwala przeglądać dane wertykalnie",
+            "it-it": "Consente di navigare i dati come verticali (ad esempio silos)"
         },
         "officeFabricIconFontName": "Sections",
         "properties": {
