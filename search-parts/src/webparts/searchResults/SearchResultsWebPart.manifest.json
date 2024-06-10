@@ -31,12 +31,14 @@
                 "nb-no": "PnP - Søkeresultater",
                 "nl-nl": "PnP - Zoekresultaten",
                 "pt-br": "PnP - Procurar Resultados",
-                "sv-se": "PnP - Sökresultat"
+                "sv-se": "PnP - Sökresultat",
+                "it-it": "PnP - Risultati di Ricerca"
             },
             "description": {
                 "default": "Displays JSON based data using customizable templates",
                 "fr-fr": "Affiche des données de multiples source de données au format JSON selon des modèles d'affichage personnalisables.",
-                "pl-pl": "Wyświetla dane typu JSON używając konfigurowalnych szablonów"
+                "pl-pl": "Wyświetla dane typu JSON używając konfigurowalnych szablonów",
+                "it-it": "Visualizza dati basati su JSON utilizzando modelli personalizzabili"
             },
             "officeFabricIconFontName": "SearchAndApps",
             "properties": {
@@ -60,10 +62,12 @@
                 "nb-no": "PnP - Søkesamling",
                 "nl-nl": "PnP - Zoekcompilatie",
                 "pt-br": "PnP - Compilação de pesquisa",
-                "sv-se": "PnP - Söksammanställning"
+                "sv-se": "PnP - Söksammanställning",
+                "it-it": "PnP - Riepilogo di Ricerca"
             },
             "description": {
-                "default": "To be used for content roll-up and allow lazy loading"
+                "default": "To be used for content roll-up and allow lazy loading",
+                "it-it": "Da utilizzare per il riepilogo dei contenuti e per consentire il caricamento ritardato"
             },
             "officeFabricIconFontName": "SearchAndApps",
             "properties": {
