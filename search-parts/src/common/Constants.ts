@@ -18,7 +18,7 @@ export class Constants {
     /**
      * The regular expression to sanitize URIs with DomPurify
      */
-    public static readonly ALLOWED_URI_REGEXP = /^(?:(?:(?:f|ht)tps?|mailto|file|tel|callto|im|cid|xmpp|xxx|ms-\w+):|[^a-z]|[a-z+.-]+(?:[^a-z+.-:]|$))/i;
+    public static readonly ALLOWED_URI_REGEXP = /^(?:(?:(?:f|ht)tps?|mailto|file|tel|callto|msteams|im|cid|xmpp|xxx|ms-\w+):|[^a-z]|[a-z+.-]+(?:[^a-z+.-:]|$))/i;
 }
 
 export enum AutoCalculatedDataSourceFields {

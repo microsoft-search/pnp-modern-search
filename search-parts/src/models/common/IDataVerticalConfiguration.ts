@@ -40,4 +40,9 @@ export interface IDataVerticalConfiguration {
      * The Fluent UI icon name
      */
     iconName?: string;
+
+    /**
+     * Audience for the vertical
+     */
+    audience?: any[];
 }

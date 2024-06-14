@@ -13,6 +13,11 @@ export interface ISimpleListLayoutProperties {
      * Show or hide the item thumbnail
      */
     showItemThumbnail: boolean;
+
+    /**
+     * If the download button should be visible
+     */
+    enableDownload: boolean;
 }
 
 export class SimpleListLayout extends BaseLayout<ISimpleListLayoutProperties> {
@@ -31,6 +36,10 @@ export class SimpleListLayout extends BaseLayout<ISimpleListLayoutProperties> {
             }),
             PropertyPaneToggle('layoutProperties.showItemThumbnail', {
                 label: strings.Layouts.SimpleList.ShowItemThumbnailLabel
+            }),
+            PropertyPaneToggle('layoutProperties.enableDownload', {
+              label: strings.Layouts.DetailsList.EnableDownload,
+              checked: this.properties.enableDownload
             })
         ];
     }

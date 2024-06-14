@@ -25,7 +25,11 @@ declare interface ISearchVerticalsWebPartStrings {
         LinkUrl: string;
         ShowLinkIcon: string;
         OpenBehavior: string;
-      }
+        Audience: string;
+      },
+      AudienceInputPlaceholderText: string;
+      AudienceNoResultsFound: string;
+      AudienceLoading: string;
     }
   }
 }

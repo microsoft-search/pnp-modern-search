@@ -25,8 +25,12 @@ define([], function() {
             IsLink: "On linkki",
             LinkUrl: "Linkin URL",
             ShowLinkIcon: "Näytä linkin ikoni",
-            OpenBehavior: "Linkin avausmuoto"
-          }
+            OpenBehavior: "Linkin avausmuoto",
+            Audience: "Kohdeyleisö"
+          },
+          AudienceInputPlaceholderText: "Hae ryhmää",
+          AudienceNoResultsFound: "Yhtään vastaavaa ryhmää ei löytynyt.",
+          AudienceLoading: "Ladataan ryhmiä..."
         }
       }
     }

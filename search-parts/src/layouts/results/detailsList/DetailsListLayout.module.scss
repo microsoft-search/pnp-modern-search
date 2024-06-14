@@ -1,0 +1,21 @@
+.additionalGroupByFieldsTable {
+  table-layout: fixed;
+
+  > div {
+    > span:nth-child(1) {
+      width: 50px;
+    }
+
+    > span:nth-child(2) {
+      width: 350px;
+    }
+
+    > span:nth-child(3) {
+      text-align: end;
+    }
+
+    > span:nth-child(4) {
+      width: 20px;
+    }
+  }
+}

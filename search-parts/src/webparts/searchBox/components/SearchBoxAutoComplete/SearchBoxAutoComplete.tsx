@@ -3,7 +3,6 @@ import styles from '../SearchBoxContainer.module.scss';
 import { ISearchBoxAutoCompleteState } from './ISearchBoxAutoCompleteState';
 import { ISearchBoxAutoCompleteProps } from './ISearchBoxAutoCompleteProps';
 import { Spinner, SpinnerSize, FocusZone, FocusZoneDirection, SearchBox, IconButton, Label, Icon, IconType, ISearchBox } from '@fluentui/react';
-import { ITheme } from '@fluentui/react/lib/Styling';
 import { isEqual, debounce } from '@microsoft/sp-lodash-subset';
 import { ISuggestion } from '@pnp/modern-search-extensibility';
 import * as webPartStrings from 'SearchBoxWebPartStrings';
@@ -400,7 +399,6 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
                             componentRef={searchBoxRef}
                             placeholder={this.props.placeholderText ? this.props.placeholderText : webPartStrings.SearchBox.DefaultPlaceholder}
                             ariaLabel={this.props.placeholderText ? this.props.placeholderText : webPartStrings.SearchBox.DefaultPlaceholder}
-                            theme={this.props.themeVariant as ITheme}
                             className={styles.searchTextField}
                             value={this.state.searchInputValue}
                             autoComplete="off"

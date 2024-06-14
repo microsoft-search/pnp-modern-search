@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ISearchBoxContainerProps } from './ISearchBoxContainerProps';
 import { QueryPathBehavior, UrlHelper, PageOpenBehavior } from '../../../helpers/UrlHelper';
-import { MessageBar, MessageBarType, SearchBox, IconButton, ITheme, ISearchBox } from '@fluentui/react';
+import { MessageBar, MessageBarType, SearchBox, IconButton, ISearchBox } from '@fluentui/react';
 import { ISearchBoxContainerState } from './ISearchBoxContainerState';
 import { isEqual } from '@microsoft/sp-lodash-subset';
 import * as webPartStrings from 'SearchBoxWebPartStrings';
@@ -48,7 +48,6 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                     componentRef={searchBoxRef}
                     placeholder={this.props.placeholderText ? this.props.placeholderText : webPartStrings.SearchBox.DefaultPlaceholder}
                     ariaLabel={this.props.placeholderText ? this.props.placeholderText : webPartStrings.SearchBox.DefaultPlaceholder}
-                    theme={this.props.themeVariant as ITheme}
                     className={styles.searchTextField}
                     value={this.state.searchInputValue}
                     autoComplete="off"

@@ -189,7 +189,8 @@ define([], function () {
         SelectItemComboPlaceHolder: "Välj egenskap",
         AddStaticDataLabel: "Lägg till statisk data",
         TextFieldApplyButtonText: "Tillämpa",
-        SortByPlaceholderText: "Sortera efter..."
+        SortByPlaceholderText: "Sortera efter...",
+        DownloadButtonText: "Ladda ner"
       },
       Layouts: {
         Debug: {
@@ -225,12 +226,16 @@ define([], function () {
           DisplayNameColumnLabel: "Kolumnens visningsnamn",
           FileExtensionFieldLabel: "Fält för användning av filtillägg",
           GroupByFieldLabel: "Gruppera efter fält",
+          AdditionalGroupByButtonLabel: "Hantera grupperingsfält",
+          AdditionalGroupByFieldsLabel: "Ytterligare fält för gruppering",
+          AdditionalGroupByFieldsDescription: "Lägg till ytterligare grupperingsfält för att skapa en hierarki i layouten. Varje kolumn läggs till i ordningen som visas.",
           EnableGrouping: "Aktivera gruppering",
           GroupingDescription: "Se till att du har data som visas i resultatwebbdelen för en lista över egenskaper att visa.",
           CollapsedGroupsByDefault: "Visa kollapsade",
           ResetFieldsBtnLabel: "Återställ fält till standardvärden",
           EnableStickyHeader: "Aktivera fast rubrik",
           StickyHeaderListViewHeight: "Höjd för listvy (px)",
+          EnableDownload: "Aktivera nedladdning"
         },
         Cards: {
           Name: "Kort",

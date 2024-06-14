@@ -189,7 +189,8 @@ define([], function () {
             AddStaticDataLabel: "Statische Daten hinzufügen",
             TextFieldApplyButtonText: "Übernehmen",
             SortByPlaceholderText: "Standardsortierung",
-            SortByDefaultOptionText: "Standard"
+            SortByDefaultOptionText: "Standard",
+            DownloadButtonText: "Herunterladen"
         },
         Layouts: {
             Debug: {
@@ -225,12 +226,16 @@ define([], function () {
                 DisplayNameColumnLabel: "Spaltenanzeigename",
                 FileExtensionFieldLabel: "Zu verwendendes Feld für die Dateierweiterung",
                 GroupByFieldLabel: "Gruppierung nach Feld",
+                AdditionalGroupByButtonLabel: "Weitere Gruppierung hinzufügen",
+                AdditionalGroupByFieldsLabel: "Zusätzliche Gruppierungsfelder",
+                AdditionalGroupByFieldsDescription: "Fügen Sie zusätzliche Gruppierungsfelder hinzu, um die Gruppierungsebene zu erhöhen. Die Reihenfolge der Gruppierungsfelder entspricht der Reihenfolge der Gruppierungsebenen.",
                 EnableGrouping: "Gruppierung aktivieren",
                 GroupingDescription: "Stellen Sie sicher, dass im Ergebnis-Webpart Daten angezeigt werden, damit eine Liste der anzuzeigenden Eigenschaften angezeigt wird.",
                 CollapsedGroupsByDefault: "Eingeklappt anzeigen",
                 ResetFieldsBtnLabel: "Felder auf Standardwerte zurücksetzen",
                 EnableStickyHeader: "Fixierte Kopfzeile aktivieren",
-                StickyHeaderListViewHeight: "Höhe der Listenansicht (px)"
+                StickyHeaderListViewHeight: "Höhe der Listenansicht (px)",
+                EnableDownload: "Download aktivieren"
             },
             Cards: {
                 Name: "Karten",

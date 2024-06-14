@@ -19,6 +19,11 @@ export interface ISliderLayoutProperties {
      * The slide width in px
      */
     slideWidth: number;
+
+    /**
+     * If the download button should be visible
+     */
+    enableDownload: boolean;
 }
 
 export class SliderLayout extends BaseLayout<ISliderLayoutProperties> {
@@ -96,8 +101,12 @@ export class SliderLayout extends BaseLayout<ISliderLayoutProperties> {
                 min: 120,
                 step: 1,
                 showValue: true
+            }),
+            PropertyPaneToggle('layoutProperties.enableDownload', {
+              label: strings.Layouts.DetailsList.EnableDownload,
+              checked: this.properties.enableDownload
             })
-        ]);
+      ]);
 
         return groupFields;
     }

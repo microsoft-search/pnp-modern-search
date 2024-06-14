@@ -123,6 +123,11 @@ export default interface ISearchResultsWebPartProps extends IBaseWebPartProps {
     verticalsDataSourceReference: string;
 
     /**
+     * Disable dynamic data to allow SPFx lazy load
+     */
+    allowWebPartConnections: boolean;
+
+    /**
      * The selected vertical fro the Web Part
      */
     selectedVerticalKeys: string[];

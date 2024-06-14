@@ -187,7 +187,8 @@ define([], function() {
             AddStaticDataLabel: "Lisää staattinen arvo",
             TextFieldApplyButtonText: "Ota käyttöön",
             SortByPlaceholderText: "Järjestä...",
-            SortByDefaultOptionText: "Oletus"
+            SortByDefaultOptionText: "Oletus",
+            DownloadButtonText: "Lataa"
         },
         Layouts: {
             Debug: {
@@ -223,12 +224,16 @@ define([], function() {
                 DisplayNameColumnLabel: "Sarakkeen näyttönimi",
                 FileExtensionFieldLabel: "Kenttä tiedostotyypin määrittämiseen",
                 GroupByFieldLabel: "Ryhmittele kentän mukaan",
+                AdditionalGroupByButtonLabel: "Lisää ryhmittelykenttä",
+                AdditionalGroupByFieldsLabel: "Lisää ryhmittelykenttä",
+                AdditionalGroupByFieldsDescription: "Lisää ryhmittelykenttiä luodaksesi hierarkian asetteluun. Jokainen sarake lisätään näytetyssä järjestyksessä.",
                 EnableGrouping: "Salli ryhmittely",
                 GroupingDescription: "Varmista, että tulosten verkko-osassa on tietoja, jotta voit näyttää ominaisuusluettelon.",
                 CollapsedGroupsByDefault: "Näytä ryhmät tiivistettynä",
                 ResetFieldsBtnLabel: "Palauta kentät templaatin oletusarvoihin",
                 EnableStickyHeader: "Kiinnitä ylätunniste",
-                StickyHeaderListViewHeight: "Kiinnitetyn ylätunnisteen korkeus (px)"
+                StickyHeaderListViewHeight: "Kiinnitetyn ylätunnisteen korkeus (px)",
+                EnableDownload: "Salli lataus"
             },
             Cards: {
                 Name: "Kortit",

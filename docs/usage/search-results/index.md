@@ -5,7 +5,9 @@ The _'Search Results' Web Part_ is the fundamental building block of whole globa
 This Web Part can be used **alone** or **connected to other Web Parts** to add dyanmic interactions (filters, search box or verticals). To use the Web Part on a SharePoint page:
 
 1. Edit your SharePoint modern page.
-2. Search for the _'PnP - Search Results'_ Web Part and add it to your page:
+2. Search for the _'PnP - Search Results'_ Web Part and add it to your page.<br><br>
+    _You may use "PnP - Search Rollup" instead if you don't need to connect web parts. This version support being lazy loaded in the SharePoint framework to optimize page loading._
+
 
 !["PnP Search Results"](../../assets/webparts/search-results/search_results_wp_picker.png){: .center}
 

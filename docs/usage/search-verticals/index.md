@@ -23,3 +23,4 @@ The options for a vertical are as follow:
 | **Link URL** | If the tab is an hyperlink, the link URL to use. Tokens `{<TokenName>}` are supported here. See [tokens](../search-results/tokens.md) for more info.
 | **Open behavior** | If the tab is an hyperlink, the opening behavior (new tab or current tab).
 | **Show link icon** |  If the tab is an hyperlink, display or hide an icon next to the tab name indicating the tab is a link (same page or external).
+| **Audience** |  Groups that this vertical will be visible to. If left empty the vertical will be visible for all users.

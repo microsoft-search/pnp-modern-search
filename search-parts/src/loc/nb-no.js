@@ -189,7 +189,8 @@ define([], function () {
         AddStaticDataLabel: "Legg til statisk data",
         TextFieldApplyButtonText: "Lagre",
         SortByPlaceholderText: "Sorter etter",
-        SortByDefaultOptionText: "Misligholde"
+        SortByDefaultOptionText: "Misligholde",
+        DownloadButtonText: "Last ned"
       },
       Layouts: {
         Debug: {
@@ -222,14 +223,18 @@ define([], function () {
           ValueColumnLabel: "Kolonneverdi",
           ValueSortingColumnLabel: "Velg sorteringsfelt...",
           ValueSortingColumnNoFieldsLabel: "Ingen felt tilgjengelig",
-          FileExtensionFieldLabel: "Felt för filendelse",
+          FileExtensionFieldLabel: "Felt for filendelse",
           GroupByFieldLabel: "Grupper etter felt",
+          AdditionalGroupByButtonLabel: "Legg til felt",
+          AdditionalGroupByFieldsLabel: "Ytterligere grupperingsfelt",
+          AdditionalGroupByFieldsDescription: "Legg til flere grupperingsfelt for å lage et hierarki i oppsettet. Hver kolonne legges til i den viste rekkefølgen.",
           EnableGrouping: "Aktiver gruppering",
           GroupingDescription: "Sørg for at du har data som vises i resultatwebdelen for å vise en liste over egenskaper.",
           CollapsedGroupsByDefault: "Vis kollapsede",
           ResetFieldsBtnLabel: "Bruk standardverdiene",
           EnableStickyHeader: "Aktiver klebrig overskrift",
-          StickyHeaderListViewHeight: "Høyde på listevisning med klebrig overskrift (px)"
+          StickyHeaderListViewHeight: "Høyde på listevisning med klebrig overskrift (px)",
+          EnableDownload: "Aktiver nedlasting"
         },
         Cards: {
           Name: "Kort",

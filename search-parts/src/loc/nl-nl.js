@@ -189,7 +189,8 @@ define([], function() {
             AddStaticDataLabel: "Voeg statische data toe",
             TextFieldApplyButtonText: "Toepassen",
             SortByPlaceholderText: "Sorteer op...",
-            SortByDefaultOptionText: "Standaard"
+            SortByDefaultOptionText: "Standaard",
+            DownloadButtonText: "Download"
         },
         Layouts: {
             Debug: {
@@ -224,12 +225,16 @@ define([], function() {
                 ValueSortingColumnNoFieldsLabel: "Geen velden beschikbaar",
                 FileExtensionFieldLabel: "Te gebruiken veld voor bestandsextensie",
                 GroupByFieldLabel: "Groepeer op veld",
+                AdditionalGroupByButtonLabel: "Voeg groep toe",
+                AdditionalGroupByFieldsLabel: "Extra groeperingsvelden",
+                AdditionalGroupByFieldsDescription: "Hier kunt u extra groepen toevoegen om op te groeperen. U kunt eigenschapswaarden direct in de lij",
                 EnableGrouping: "Groeperen inschakelen",
                 GroupingDescription: "Zorg ervoor dat er gegevens worden weergegeven in het resultaatwebonderdeel voor een lijst met eigenschappen die moeten worden weergegeven.",
                 CollapsedGroupsByDefault: "Toon ingeklapt",
                 ResetFieldsBtnLabel: "Reset velden naar standaard waarden",
                 EnableStickyHeader: "Sticky header inschakelen",
-                StickyHeaderListViewHeight: "Hoogte van de lijstweergave (px)"
+                StickyHeaderListViewHeight: "Hoogte van de lijstweergave (px)",
+                EnableDownload: "Downloaden inschakelen"
             },
             Cards: {
                 Name: "Kaarten",

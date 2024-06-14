@@ -189,7 +189,8 @@ define([], function() {
             AddStaticDataLabel: "Ajouter des données statiques",
             TextFieldApplyButtonText: "Appliquer",
             SortByPlaceholderText: "Trier par...",
-            SortByDefaultOptionText: "Défaut"
+            SortByDefaultOptionText: "Défaut",
+            DownloadButtonText: "Télécharger"
         },
         Layouts: {
             Debug: {
@@ -225,12 +226,16 @@ define([], function() {
                 ValueSortingColumnNoFieldsLabel: "Aucune propriété disponible",
                 FileExtensionFieldLabel: "Champ à utiliser pour l’extension de fichier",
                 GroupByFieldLabel: "Regrouper par champ",
+                AdditionalGroupByButtonLabel: "Ajouter un champ de regroupement supplémentaire",
+                AdditionalGroupByFieldsLabel: "Champs de regroupement supplémentaires",
+                AdditionalGroupByFieldsDescription: "Ajoutez des champs de regroupement supplémentaires pour créer une hiérarchie dans la mise en page. Chaque colonne est ajoutée dans l'ordre indiqué.",
                 EnableGrouping: "Permettre le regroupement",
                 GroupingDescription: "Assurez-vous que les données s'affichent dans le composant WebPart de résultat pour obtenir une liste des propriétés à afficher.",
                 CollapsedGroupsByDefault: "Afficher les groupes réduits",
                 ResetFieldsBtnLabel: "Rétablir la valeur par défaut dans les champs",
                 EnableStickyHeader: "Activer l’en-tête collant",
-                StickyHeaderListViewHeight: "Hauteur de la liste de détails (en pixels)"
+                StickyHeaderListViewHeight: "Hauteur de la liste de détails (en pixels)",
+                EnableDownload: "Activer le téléchargement"
             },
             Cards: {
                 Name: "Cartes",
