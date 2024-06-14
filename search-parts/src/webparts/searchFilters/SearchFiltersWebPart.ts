@@ -109,6 +109,15 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
      */
     private propertyPaneConnectionsFields: IPropertyPaneField<any>[] = [];
 
+    constructor() {
+        super();
+        this._updateTitleProperty = this._updateTitleProperty.bind(this);
+    }
+
+    private _updateTitleProperty(value: string) {
+        this.properties.title = value;
+        this.render();
+    }
     protected async onInit() {
         try {
             // Disable PnP Telemetry
@@ -214,9 +223,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                     webPartTitleProps: {
                         displayMode: this.displayMode,
                         title: this.properties.title,
-                        updateProperty: (value: string) => {
-                            this.properties.title = value;
-                        },
+                        updateProperty: this._updateTitleProperty,
                         className: commonStyles.wpTitle
                     }
                 } as ISearchFiltersContainerProps

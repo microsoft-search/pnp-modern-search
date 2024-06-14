@@ -20,19 +20,30 @@
         {{/if}}
 
         <div class="template--header">
-            {{#if @root.properties.showResultsCount}}
-                <div class="template--resultCount">
-                    <label class="ms-fontWeight-semibold">{{getCountMessage @root.data.totalItemsCount @root.inputQueryText}}</label>
-                </div>
-            {{/if}}
+            <div class="template--resultCount">
+              {{#if @root.properties.showResultsCount}}
+                <label class="ms-fontWeight-semibold">{{getCountMessage @root.data.totalItemsCount @root.inputQueryText}}</label>
+              {{/if}}
+            </div>
 
-            <div class="template--sort">
-                <pnp-sortfield 
-                    data-fields="{{JSONstringify @root.properties.dataSourceProperties.sortList}}" 
-                    data-default-selected-field="{{sort.selectedSortFieldName}}" 
-                    data-default-direction="{{sort.selectedSortDirection}}"
-                    data-theme-variant="{{JSONstringify @root.theme}}">
-                </pnp-sortfield>    
+            <div class="template--toolbar">
+              {{#and properties.layoutProperties.enableDownload @root.properties.itemSelectionProps.allowItemSelection}}
+                <pnp-download-selected-items-button 
+                  data-items="{{JSONstringify data.items}}" 
+                  data-context="{{JSONstringify (truncateContext @root)}}"
+                  data-theme-variant="{{JSONstringify @root.theme}}"
+                >
+                </pnp-download-selected-items-button>
+              {{/and}}
+
+              <div class="template--sort">
+                  <pnp-sortfield 
+                      data-fields="{{JSONstringify @root.properties.dataSourceProperties.sortList}}" 
+                      data-default-selected-field="{{sort.selectedSortFieldName}}" 
+                      data-default-direction="{{sort.selectedSortDirection}}"
+                      data-theme-variant="{{JSONstringify @root.theme}}">
+                  </pnp-sortfield>    
+              </div>
             </div>
         </div>
 

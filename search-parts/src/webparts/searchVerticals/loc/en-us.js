@@ -25,8 +25,12 @@ define([], function() {
             IsLink: "Is hyperlink",
             LinkUrl: "Link URL",
             ShowLinkIcon: "Show link icon",
-            OpenBehavior: "Open behavior"
-          }
+            OpenBehavior: "Open behavior",
+            Audience: "Audience"
+          },
+          AudienceInputPlaceholderText: "Search for a group",
+          AudienceNoResultsFound: "We didn't find any matching groups.",
+          AudienceLoading: "Loading groups..."          
         }
       }
     }

@@ -187,7 +187,8 @@ define([], function() {
             TextDialogSaveButtonText: "Salvar",
             SelectItemComboPlaceHolder: "Selecionar propriedade",
             AddStaticDataLabel: "Adicionar dados estáticos",
-            TextFieldApplyButtonText: "Aplicar"
+            TextFieldApplyButtonText: "Aplicar",
+            DownloadButtonText: "Baixar"
         },
         Layouts: {
             Debug: {
@@ -223,12 +224,16 @@ define([], function() {
                 DisplayNameColumnLabel: "Nome de exibição da coluna",
                 FileExtensionFieldLabel: "Campo usado para a extensão do arquivo",
                 GroupByFieldLabel: "Agrupar pelo campo",
+                AdditionalGroupByButtonLabel: "Adicionar campo de agrupamento",
+                AdditionalGroupByFieldsLabel: "Campos de agrupamento adicionais",
+                AdditionalGroupByFieldsDescription: "Adicione campos de agrupamento adicionais para criar uma hierarquia no layout. Cada coluna é adicionada na ordem mostrada.",
                 EnableGrouping: "Ativar agrupamento",
                 GroupingDescription: "Certifique-se de que os dados sejam exibidos na Web Part de resultado para uma lista de propriedades a serem exibidas.",
                 CollapsedGroupsByDefault: "Mostrar recolhido",
                 ResetFieldsBtnLabel: "Redefinir campos para os valores padrão",
                 EnableStickyHeader: "Cabeçalho fixo",
-                StickyHeaderListViewHeight: "Altura da lista de visualização (px)"
+                StickyHeaderListViewHeight: "Altura da lista de visualização (px)",
+                EnableDownload: "Habilitar download"
             },
             Cards: {
                 Name: "Cartões",

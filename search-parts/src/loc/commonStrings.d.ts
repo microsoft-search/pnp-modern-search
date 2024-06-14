@@ -189,6 +189,7 @@ declare interface ICommonStrings {
       TextFieldApplyButtonText: string;
       SortByPlaceholderText: string;
       SortByDefaultOptionText: string;
+      DownloadButtonText: string;
     },
     Layouts: {
       Debug: {
@@ -224,12 +225,16 @@ declare interface ICommonStrings {
         ValueSortingColumnNoFieldsLabel: string;
         FileExtensionFieldLabel: string;
         GroupByFieldLabel: string;
+        AdditionalGroupByButtonLabel: string;
+        AdditionalGroupByFieldsLabel: string;
+        AdditionalGroupByFieldsDescription: string;
         GroupingDescription: string;
         EnableGrouping: string;
         CollapsedGroupsByDefault: string;
         ResetFieldsBtnLabel: string;
         EnableStickyHeader: string;
         StickyHeaderListViewHeight: string;
+        EnableDownload: string;
       };
       Cards: {
         Name: string;

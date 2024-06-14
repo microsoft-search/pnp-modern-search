@@ -20,7 +20,7 @@ export const loadMsGraphToolkit = async (context: WebPartContext) => {
 
         const { registerMgtComponents } = await import(
           /* webpackChunkName: 'microsoft-graph-toolkit' */
-          '@microsoft/mgt-components/dist/es6'
+          '@microsoft/mgt-components/dist/es6/registerMgtComponents'
         );
 
         if (!Providers.globalProvider) {

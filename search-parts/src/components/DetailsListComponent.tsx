@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Fabric, ShimmeredDetailsList, IShimmeredDetailsListProps, Sticky, StickyPositionType, Stack, ScrollablePane, ScrollbarVisibility, Checkbox } from '@fluentui/react';
+import { Fabric, ShimmeredDetailsList, IShimmeredDetailsListProps, Checkbox } from '@fluentui/react';
 import { ITooltipHostProps, TooltipHost, ITooltipStyles, Shimmer, ShimmerElementsGroup, ShimmerElementType, IShimmerElement, mergeStyleSets, ITheme, Selection } from '@fluentui/react';
 import * as Handlebars from 'handlebars';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import { BaseWebComponent, BuiltinTemplateSlots, ExtensibilityConstants, ISortInfo, SortFieldDirection } from '@pnp/modern-search-extensibility';
 import { groupBy, sortBy, findIndex, isEmpty } from "@microsoft/sp-lodash-subset";
 import { FileIcon } from '../components/FileIconComponent';
-import { DetailsListLayoutMode, SelectionMode, IColumn, IGroup, IDetailsRowProps, DetailsRow, IDetailsHeaderProps, CheckboxVisibility, IDetailsRowCheckProps, DetailsRowCheck, IDetailsCheckboxProps } from '@fluentui/react/lib/DetailsList';
+import { DetailsListLayoutMode, SelectionMode, IColumn, IGroup, IDetailsRowProps, DetailsRow, IDetailsHeaderProps, CheckboxVisibility, IDetailsRowCheckProps, DetailsRowCheck, IDetailsCheckboxProps, IDetailsListStyles, ConstrainMode, ISelectionZoneProps } from '@fluentui/react/lib/DetailsList';
 import { DEFAULT_CELL_STYLE_PROPS, DEFAULT_ROW_HEIGHTS } from '@fluentui/react/lib/components/DetailsList/DetailsRow.styles';
 import { ISearchResultsTemplateContext } from '../models/common/ITemplateContext';
 import { ObjectHelper } from '../helpers/ObjectHelper';
@@ -46,9 +46,15 @@ const classNames = mergeStyleSets({
         maxHeight: '16px',
         maxWidth: '16px'
     },
-    controlWrapper: {
-        display: 'flex',
-        flexWrap: 'wrap'
+    header: {
+      margin: 0,
+    },
+    row: {
+      flex: '0 0 auto',
+    },
+    selectionZone: {
+      height: '100%',
+      overflow: 'hidden',
     }
 });
 
@@ -158,6 +164,11 @@ export interface IDetailsListComponentProps {
     groupBy?: string;
 
     /**
+     * Additional fields to group items in the list
+     */
+    additionalGroupBy?: IDetailsListColumnConfiguration[];
+
+    /**
      * Show groups as collapsed by default if true. Expanded otherwise
      */
     groupsCollapsed?: boolean;
@@ -237,16 +248,6 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
     private _selection: Selection;
     private _selectionMode: SelectionMode = SelectionMode.none;
 
-    private _scrollClass = mergeStyleSets({
-      detailsListWrapper: {
-          height: this.props.stickyHeaderListViewHeight,
-          maxHeight: 'inherit',
-          width: '100%',
-          position: 'relative'
-      },
-    });
-    
-
     constructor(props: IDetailsListComponentProps) {
         super(props);
 
@@ -260,7 +261,15 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
         this._domPurify.addHook('uponSanitizeElement', DomPurifyHelper.allowCustomComponentsHook);
         this._domPurify.addHook('uponSanitizeAttribute', DomPurifyHelper.allowCustomAttributesHook);
 
-        this._allItems = this.props.items ? this.props.items : [];
+        // Build the intitial groups
+        if (this.props.groupBy) {
+          // Because groups are determined by a start index and a count, we need to sort items to regroup them in the collection before processing.
+          const additionalGroupBy = this.props.additionalGroupBy ? this.props.additionalGroupBy.map((field) => field.value) : [];
+          this._allItems = sortBy(this.props.items, [this.props.groupBy, ...additionalGroupBy]);
+        }
+        else {
+          this._allItems = this.props.items ? this.props.items : [];
+        }
 
         if (!isEmpty(this.props.context)) {
 
@@ -358,7 +367,7 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
                                 value = ObjectHelper.byPath(item, column.value);
                             }
 
-                            const tempColumnValueAsHtml = new DOMParser().parseFromString("<span>" + value as string + "</span>", "text/html");
+                            const tempColumnValueAsHtml = new DOMParser().parseFromString(`<span>${value ?? ""}</span>`, "text/html");
 
                             this.props.templateService.replaceDisambiguatedMgtElementNames(tempColumnValueAsHtml);
 
@@ -447,25 +456,54 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
             onRenderDetailsHeader: this._onRenderDetailsHeader,
         };
 
+        if (this.props.enableStickyHeader) {
+          const gridStyles: Partial<IDetailsListStyles> = {
+            root: {
+              overflowX: 'auto',
+              selectors: {
+                '& [role=grid]': {
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'start',
+                  height: this.props.stickyHeaderListViewHeight ? `${this.props.stickyHeaderListViewHeight}px` : '100%',
+                },
+              },
+            },
+            headerWrapper: {
+              flex: '0 0 auto',
+            },
+            contentWrapper: {
+              flex: '1 1 auto',
+              overflow: 'hidden',
+            },
+            focusZone: {
+              height: '100%',
+              overflowY: 'auto',
+              overflowX: 'hidden',
+            },
+          };
+          
+          const focusZoneProps = {
+            'data-is-scrollable': 'true',
+          } as React.HTMLAttributes<HTMLElement>;
+  
+          const selectionZoneProps: ISelectionZoneProps = {
+            className: classNames.selectionZone,
+            selection: this._selection,
+          };
+
+          shimmeredDetailsListProps.detailsListStyles = gridStyles;
+          shimmeredDetailsListProps.focusZoneProps = focusZoneProps;
+          shimmeredDetailsListProps.selectionZoneProps = selectionZoneProps;
+          shimmeredDetailsListProps.constrainMode = ConstrainMode.unconstrained;
+          shimmeredDetailsListProps.layoutMode = DetailsListLayoutMode.fixedColumns;
+        }
+        
         if (this.state.groups.length > 0) {
             shimmeredDetailsListProps.groups = this.state.groups;
             shimmeredDetailsListProps.groupProps = {
                 showEmptyGroups: true
             };
-        }
-
-        if (this.props.enableStickyHeader) {
-          return (
-            <Fabric>
-              <Stack horizontal className={this._scrollClass.detailsListWrapper}>
-                <Stack.Item>
-                  <ScrollablePane scrollbarVisibility={ScrollbarVisibility.auto} >
-                    <ShimmeredDetailsList {...shimmeredDetailsListProps} />
-                  </ScrollablePane>
-                </Stack.Item>
-              </Stack >
-            </Fabric>
-          );
         }
 
         return (
@@ -479,15 +517,10 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
 
         // Build the intitial groups
         if (this.props.groupBy) {
+          const additionalGroupBy = this.props.additionalGroupBy ? this.props.additionalGroupBy.map((field) => field.value) : [];
+          const groups = this._buildGroups(this.state.items, [this.props.groupBy, ...additionalGroupBy], 0, 0);
 
-            // Because groups are determined by a start index and a count, we need to sort items to regroup them in the collection before processing. 
-            const items = sortBy(this.state.items, this.props.groupBy);
-            const groups = this._buildGroups(items, this.props.groupBy);
-
-            this.setState({
-                groups: groups,
-                items: items
-            });
+          this.setState({groups: groups});
         }
 
         // Manually select the items in the list
@@ -632,14 +665,6 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
             return <TooltipHost {...tooltipHostProps} theme={this.props.themeVariant as ITheme} styles={customStyles} />;
         };
 
-        if (this.props.enableStickyHeader) {
-          return (
-            <Sticky stickyPosition={StickyPositionType.Header} isScrollSynced>
-              {defaultRender!({...props, theme: this.props.themeVariant as ITheme})}
-            </Sticky>
-          );
-        }
-
         return defaultRender!({...props, theme: this.props.themeVariant as ITheme});
     }
 
@@ -668,10 +693,10 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
 
     }
 
-    private _buildGroups(items: any[], groupByField: string): IGroup[] {
+    private _buildGroups(items: any[], groupByFields: string[], level: number, currentIndex: number): IGroup[] {
 
         const groupedItems = groupBy(items, (i) => {
-            return ObjectHelper.byPath(i, groupByField);
+            return ObjectHelper.byPath(i, groupByFields[level]);
         });
 
         let groups: IGroup[] = [];
@@ -683,18 +708,22 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
 
                 // If items can't be grouped by the groupByField property, lodash groupBy will return 'undefined' as the group name
                 if (group === 'undefined') {
-                    return ObjectHelper.byPath(i, groupByField) === undefined;
+                    return ObjectHelper.byPath(i, groupByFields[level]) === undefined;
                 } else {
-                    return ObjectHelper.byPath(i, groupByField) === group;
+                    return ObjectHelper.byPath(i, groupByFields[level]) === group;
                 }
             });
 
             let groupProps: IGroup = {
                 name: group,
                 key: group,
-                startIndex: idx,
+                startIndex: currentIndex + idx,
                 count: groupedItems[group].length,
-                isCollapsed: this.props.groupsCollapsed
+                isCollapsed: this.props.groupsCollapsed && !groupedItems[group].some((value: any) => {
+                  return this.props.selectedKeys.includes(value.key);
+                }),
+                level: level,
+                children: level < groupByFields.length - 1 ? this._buildGroups(groupedItems[group], groupByFields, level + 1, currentIndex + idx) : []
             };
 
             groups.push(groupProps);

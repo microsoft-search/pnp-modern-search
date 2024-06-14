@@ -189,7 +189,8 @@ define([], function() {
             AddStaticDataLabel: "Tilføj statisk data",
             TextFieldApplyButtonText: "Anvend",
             SortByPlaceholderText: "Sorter efter...",
-            SortByDefaultOptionText: "Standard"
+            SortByDefaultOptionText: "Standard",
+            DownloadButtonText: "Download"
         },
         Layouts: {
             Debug: {
@@ -225,12 +226,16 @@ define([], function() {
                 DisplayNameColumnLabel: "Kolonnens visningsnavn",
                 FileExtensionFieldLabel: "Felt til brug af file extension",
                 GroupByFieldLabel: "Gruppér efter felt",
+                AdditionalGroupByButtonLabel: "Tilføj felt",
+                AdditionalGroupByFieldsLabel: "Yderligere grupperingsfelter",
+                AdditionalGroupByFieldsDescription: "Tilføj yderligere grupperingsfelter for at skabe et hierarki i layoutet. Hver kolonne tilføjes i den viste rækkefølge.",
                 EnableGrouping: "Aktivér gruppering",
                 GroupingDescription: "Sørg for, at du har data vist i resultatwebdelen for at få vist en liste over egenskaber.",
                 CollapsedGroupsByDefault: "Vis collapsed",
                 ResetFieldsBtnLabel: "Nulstil felter til standardværdier",
                 EnableStickyHeader: "Aktivér fastgjort header",
-                StickyHeaderListViewHeight: "Listevisningshøjde (px)"
+                StickyHeaderListViewHeight: "Listevisningshøjde (px)",
+                EnableDownload: "Aktivér download"
             },
             Cards: {
                 Name: "Cards",

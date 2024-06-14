@@ -189,7 +189,8 @@ define([], function() {
             AddStaticDataLabel: "Add static data",
             TextFieldApplyButtonText: "Apply",
             SortByPlaceholderText: "Sort by...",
-            SortByDefaultOptionText: "Default"
+            SortByDefaultOptionText: "Default",
+            DownloadButtonText: "Download"
         },
         Layouts: {
             Debug: {
@@ -225,12 +226,16 @@ define([], function() {
                 DisplayNameColumnLabel: "Column display name",
                 FileExtensionFieldLabel: "Field to use for file extension",
                 GroupByFieldLabel: "Group by field",
+                AdditionalGroupByButtonLabel: "Add group by field",
+                AdditionalGroupByFieldsLabel: "Additional group by fields",
+                AdditionalGroupByFieldsDescription: "Add additional grouping fields to create a hierarchy in the layout. Each column is added in the order shown.",
                 EnableGrouping: "Enable grouping",
                 GroupingDescription: "Ensure you have data showing in the result web part for a list of properties to show.",
                 CollapsedGroupsByDefault: "Show collapsed",
                 ResetFieldsBtnLabel: "Reset fields to default values",
                 EnableStickyHeader: "Enable sticky header",
-                StickyHeaderListViewHeight: "List view height (in px)"
+                StickyHeaderListViewHeight: "List view height (in px)",
+                EnableDownload: "Enable download"
             },
             Cards: {
                 Name: "Cards",

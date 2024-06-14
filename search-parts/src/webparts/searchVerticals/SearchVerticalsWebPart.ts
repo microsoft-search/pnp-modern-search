@@ -23,6 +23,15 @@ import { PageOpenBehavior } from '../../helpers/UrlHelper';
 import { IDataVerticalConfiguration } from '../../models/common/IDataVerticalConfiguration';
 import commonStyles from '../../styles/Common.module.scss';
 import PnPTelemetry from '@pnp/telemetry-js';
+import type { IDynamicPerson } from '@microsoft/mgt-react';
+import { MSGraphClientFactory } from '@microsoft/sp-http';
+import { loadMsGraphToolkit } from '../../helpers/GraphToolKitHelper';
+import { LocalizationHelper } from "@microsoft/mgt-element/dist/es6/utils/LocalizationHelper";
+
+const PeoplePicker = React.lazy(() => 
+	import(/* webpackChunkName: 'microsoft-graph-toolkit' */ '@microsoft/mgt-react/dist/es6/generated/people-picker')
+		.then(({ PeoplePicker }) => ({ default: PeoplePicker }))
+);
 
 const LogSource = "SearchVerticalsWebPart";
 
@@ -46,6 +55,8 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
      */
     private tokenService: ITokenService;
 
+    private _memberGroups: any;
+
     public constructor() {
         super();
 
@@ -61,6 +72,8 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
             Log.warn(LogSource, `Opt out for PnP Telemetry failed. Details: ${error}`, this.context.serviceScope);
         }
 
+        loadMsGraphToolkit(this.context);
+    
         // Initializes Web Part properties
         this.initializeProperties();
 
@@ -80,6 +93,10 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
             );
             this._placeholderComponent = Placeholder;
         }
+
+        const msGraphClientFactory = this.context.serviceScope.consume<MSGraphClientFactory>(MSGraphClientFactory.serviceKey);
+        const msGraphClient = await msGraphClientFactory.getClient('3');
+        this._memberGroups = await msGraphClient.api("https://graph.microsoft.com/v1.0/me/getMemberGroups").post({securityEnabledOnly: false});
     }
 
     public render(): void {
@@ -126,7 +143,9 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
             renderRootElement = React.createElement(
                 SearchVerticalsContainer,
                 {
-                    verticals: this.properties.verticals,
+                    verticals: this.properties.verticals.filter(v => !v.audience || v.audience.length === 0 || v.audience.some(audienceId => {
+                      return this._memberGroups.value.includes(audienceId);
+                    })),
                     webPartTitleProps: {
                         displayMode: this.displayMode,
                         title: this.properties.title,
@@ -369,6 +388,38 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
                         },
                         required: false
                     },
+                    {
+                        id: 'audience',
+                        title: webPartStrings.PropertyPane.Verticals.Fields.Audience,
+                        type: this._customCollectionFieldType.custom,
+                        onCustomRender: (field, value, onUpdate, item, itemId) => {
+                          const onSelectionChanged = (e: CustomEvent<IDynamicPerson[]>) => {
+                            console.log(e.detail);
+                            onUpdate(field.id, e.detail.map(p => p.id));
+                          };
+                          LocalizationHelper.strings = {
+                            _components: {
+                              "pnp-modern-search-people-picker": {
+                                inputPlaceholderText: webPartStrings.PropertyPane.Verticals.AudienceInputPlaceholderText,
+                                noResultsFound: webPartStrings.PropertyPane.Verticals.AudienceNoResultsFound,
+                                loading: webPartStrings.PropertyPane.Verticals.AudienceLoading
+                              }
+                            }
+                          };
+                          return (
+                            React.createElement("div", null,
+                              React.createElement(React.Suspense, { fallback: React.createElement("div", null, webPartStrings.PropertyPane.Verticals.AudienceLoading) },
+                                React.createElement(PeoplePicker, {
+                                  defaultSelectedGroupIds: item.audience || [],
+                                  selectionMode: "multiple",
+                                  type: "group",
+                                  selectionChanged: onSelectionChanged,
+                                })
+                              )
+                            )
+                          )
+                        }
+                    }
                 ]
             }),
             PropertyPaneTextField('defaultVerticalQueryStringParam', {

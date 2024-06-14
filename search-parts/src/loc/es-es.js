@@ -189,7 +189,8 @@ define([], function() {
             AddStaticDataLabel: "Añadir datos estáticos",
             TextFieldApplyButtonText: "Aplicar",
             SortByPlaceholderText: "Ordenar por...",
-            SortByDefaultOptionText: "Defecto"
+            SortByDefaultOptionText: "Defecto",
+            DownloadButtonText: "Descargar"
         },
         Layouts: {
             Debug: {
@@ -225,12 +226,16 @@ define([], function() {
                 DisplayNameColumnLabel: "Nombre de la columna",
                 FileExtensionFieldLabel: "Campo a utilizar para la extensión del archivo",
                 GroupByFieldLabel: "Agrupar por campo",
+                AdditionalGroupByButtonLabel: "Añadir campo de agrupación adicional",
+                AdditionalGroupByFieldsLabel: "Campos de agrupación adicionales",
+                AdditionalGroupByFieldsDescription: "Agregue campos de agrupación adicionales para crear una jerarquía en el diseño. Cada columna se agrega en el orden que se muestra.",
                 EnableGrouping: "Activar la agrupación",
                 GroupingDescription: "Asegúrese de tener datos que se muestren en el elemento web de resultados para que se muestre una lista de propiedades.",
                 CollapsedGroupsByDefault: "Mostrar colapsado",
                 ResetFieldsBtnLabel: "Restablecer los valores por defecto de los campos",
                 EnableStickyHeader: "Activar el encabezado fijo",
-                StickyHeaderListViewHeight: "Altura de la vista de lista con encabezado fijo (en píxeles)"
+                StickyHeaderListViewHeight: "Altura de la vista de lista con encabezado fijo (en píxeles)",
+                EnableDownload: "Activar la descarga de archivos"
             },
             Cards: {
                 Name: "Tarjetas",
