@@ -131,13 +131,11 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
         );
         this._propertyFieldCollectionData = PropertyFieldCollectionData;
 
-        if (this.properties.enableGrouping) {
-            const { PropertyPaneWebPartInformation } = await import(
-                /* webpackChunkName: 'pnp-modern-search-property-pane' */
-                '@pnp/spfx-property-controls/lib/PropertyPaneWebPartInformation'
-            );
-            this._propertyPaneWebPartInformation = PropertyPaneWebPartInformation;
-        }
+        const { PropertyPaneWebPartInformation } = await import(
+            /* webpackChunkName: 'pnp-modern-search-property-pane' */
+            '@pnp/spfx-property-controls/lib/PropertyPaneWebPartInformation'
+        );
+        this._propertyPaneWebPartInformation = PropertyPaneWebPartInformation;
 
         this._customCollectionFieldType = CustomCollectionFieldType;
     }
