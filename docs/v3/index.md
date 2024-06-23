@@ -1,5 +1,16 @@
 # PnP Modern Search v3 #
 
+!!! important "PnP Modern Search v3.x deprecation"
+    **v4 uses a brand new code architecture and replace the older v3 codebase**. There will be no new features added to v3.x, but we will continue to
+    provide bug fixes and minor changes as needed. As v4.x is not yet at feature parity with v3.x, you can still use the v3.x packages to meet your requirements.
+    Also not that there is not an auto-upgrade path from v3 to v4 due to the new architecture, so you are perfectly ok
+    to stay on the v3 version until v4 provides the features validating your upgrade.
+    However, the main focus is on the v4 version, and new search functionality backed by the Microsoft Graph Search API will be v4 only.
+
+    **v3 and v4 don't share the same package name, Web Part and solution IDs meaning you can have them side by side on a page if necessary without overlap.**
+    
+    !["V3 & v4"](./assets/v3_v4.png){: .center}
+
 ## Solution overview
 
 ![Solution demo](./images/react-search-refiners.gif)
