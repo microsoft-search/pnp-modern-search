@@ -2,7 +2,7 @@
 
 **Q: In version 4.10.1 the LPC (Live Person Card) hover option became available as an option for the People Layout. What is the difference between LCP and Persona card? **
 
-![LCP option](/assets/LCP.png "LCP option in the People Layout")
+![LCP option](./assets/LCP.png "LCP option in the People Layout")
 
 
 

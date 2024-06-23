@@ -1,4 +1,4 @@
-!["PnP"](https://pnp.github.io/images/hero-parker-p-1080.png){: .center .logo}
+!["PnP"](./assets/pnp_logo.png){: .center .logo}
 
 # PnP Modern Search v4
 
@@ -99,16 +99,15 @@ PnP Modern Search version 4 initially made by [Franck Cornu](https://twitter.com
 
 Here is the list of main contributors of the PnP Modern Search (all versions included)
 
-- Franck Cornu (Ubisoft) - [@FranckCornu](http://www.twitter.com/FranckCornu)
 - Mikael Svenson (Microsoft) - [@mikaelsvenson](http://www.twitter.com/mikaelsvenson)
-- Yannick Reekmans - [@yannickreekmans](https://twitter.com/yannickreekmans)
-- Albert-Jan Schot - [@appieschot](https://twitter.com/appieschot)
-- Tarald Gåsbakk (Norwegian Armed Forces) - [@taraldgasbakk](https://twitter.com/Taraldgasbakk)
+- Franck Cornu (Ubisoft) - [@FranckCornu](http://www.twitter.com/FranckCornu)
+- David Mehr (IOZAG) - [@davmehr](https://github.com/davemehr)
 - Brad Schlintz (Microsoft) - [@bschlintz](https://twitter.com/bschlintz)
-- Richard Gigan - [@PooLP](https://twitter.com/PooLP)
-- Matthew Stark
+- Patrik Hellgren (SherparsGroupAB) - [@PatrikHellgren](https://twitter.com/patrikhellgren)
+- Per Ove Sandhåland (crayon) - [@PerOve](https://github.com/PerOve)
+- Marc Anderson ( Sympraxis) [@sympmarc](https://github.com/sympmarc)
 - Fabio Franzini (Apvee Solutions) - [@franzinifabio](https://twitter.com/franzinifabio)
 - Paolo Pialorsi (PiaSys.com) - [@PaoloPia](https://twitter.com/paolopia)
-- Patrik Hellgren (SherparsGroupAB) - [@PatrikHellgren](https://twitter.com/patrikhellgren)
-- Erfan Darroudi [@edarroudi](https://github.com/edarroudi)
-- Kasper Larsen (Fellowmind) - [@kasperlarsen](https://twitter.com/kasperbolarsen)
+- Kasper Larsen (Fellowmind) - [@kasperbolarsen](https://twitter.com/kasperbolarsen)
+
+ 
