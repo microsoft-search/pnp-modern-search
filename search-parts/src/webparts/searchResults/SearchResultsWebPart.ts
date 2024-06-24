@@ -2461,16 +2461,17 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         if (this._filtersConnectionSourceData) {
             const filtersSourceData: IDataFilterSourceData = DynamicPropertyHelper.tryGetValueSafe(this._filtersConnectionSourceData);
             if (filtersSourceData) {
+                const selectedFilters = dataContext.filters.selectedFilters.concat(filtersSourceData.selectedFilters);
 
                 // Reset the page number if filters have been updated by the user
-                if (!isEqual(filtersSourceData.selectedFilters, this._lastSelectedFilters)) {
+                if (!isEqual(selectedFilters, this._lastSelectedFilters)) {
                     dataContext.pageNumber = 1;
                     this.currentPageNumber = 1;
                 }
 
-                // Use the filter confiugration and then get the corresponding values 
+                // Use the filter configuration and then get the corresponding values 
                 dataContext.filters.filtersConfiguration = filtersSourceData.filterConfiguration;
-                dataContext.filters.selectedFilters = dataContext.filters.selectedFilters.concat(filtersSourceData.selectedFilters);
+                dataContext.filters.selectedFilters = selectedFilters;
                 dataContext.filters.filterOperator = filtersSourceData.filterOperator;
                 dataContext.filters.instanceId = filtersSourceData.instanceId;
 
