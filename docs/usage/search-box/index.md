@@ -21,7 +21,7 @@ The 'Search box' Web Part allows users to enter free text search queries connect
 
 ### Query suggestions
 
-!["Search Box suggestions"](../../assets/webparts/search-box/search_box_suggestions){: .center}
+!["Search Box suggestions"](../../assets/webparts/search-box/search_box_suggestions.png){: .center}
 
 The query suggestions allows users to easily find relevant query keywords based on their entry:
 
