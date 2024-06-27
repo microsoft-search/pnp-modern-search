@@ -2,382 +2,382 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>http://127.0.0.1:8000/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/QnA/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/build-the-doc/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/how-to-contribute/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/installation/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/using-query-tools-to-verify-issues/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/create-custom-layouts/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/create-custom-layouts/create-your-first-custom-template/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/create-custom-layouts/edit-custom-templates-in-sharepoint/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/create-custom-layouts/edit-templates-using-vscode-and-onedrive/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/create-custom-layouts/howto-store-custom-templates-in-sharepoint/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/extensibility/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/extensibility/adaptivecards_customizations/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/extensibility/custom_data_sources/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/extensibility/custom_layout/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/extensibility/custom_query_modifications/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/extensibility/custom_suggestions_provider/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/extensibility/custom_web_component/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/extensibility/handlebars_customizations/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/extensibility/templating/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/extensibility/web_components_list/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/scenarios/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/scenarios/Connect-to-a-search-results-webpart/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/scenarios/Create-a-search-page-with-verticals-on-different-pages/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/scenarios/Create-a-search-page-with-verticals-within-the-same-page/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/scenarios/Create-a-useful-People-Search/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/scenarios/Setup-Results-web-part-to-show-birthdays/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/scenarios/Setup-Results-web-part-to-show-work-anniversaries/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/scenarios/Use-query-rules-for-promoted-links/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/scenarios/create-simple-search-page/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/scenarios/page-with-filters/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/scenarios/set-up-managed-properties/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/scenarios/use-query-string-in-url/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/scenarios/use-search-as-a-department-webpart/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/scenarios/includes/deployment-note/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/usage/search-box/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/usage/search-filters/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/usage/search-filters/layouts/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/usage/search-filters/layouts/custom/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/usage/search-filters/layouts/debug/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/usage/search-filters/layouts/horizontal/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/usage/search-filters/layouts/panel/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/usage/search-filters/layouts/vertical/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/usage/search-results/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/usage/search-results/slots/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/usage/search-results/tokens/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/usage/search-results/common/paging/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/usage/search-results/connections/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/usage/search-results/connections/item-selection/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/usage/search-results/data-sources/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/usage/search-results/data-sources/microsoft-search/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/usage/search-results/data-sources/sharepoint-search/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/usage/search-results/layouts/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/usage/search-results/layouts/cards/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/usage/search-results/layouts/custom/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/usage/search-results/layouts/debug/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/usage/search-results/layouts/details-list/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/usage/search-results/layouts/people/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/usage/search-results/layouts/simple-list/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/usage/search-results/layouts/slider/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/usage/search-results/layouts/templating/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/usage/search-verticals/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/v3/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/v3/build-the-doc/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/v3/contributors/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/v3/search-custom-renderer/getting-started/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/v3/search-extensibility-library/getting-started/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/v3/search-parts/getting-started/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/v3/search-parts/search-box/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/v3/search-parts/search-filters/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/v3/search-parts/search-pagination/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/v3/search-parts/search-results/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/v3/search-parts/search-verticals/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/v3/search-parts/templating/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/v3/search-query-enhancer/debug-locally/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://127.0.0.1:8000/v3/search-query-enhancer/getting-started/</loc>
-         <lastmod>2024-06-26</lastmod>
+         <lastmod>2024-06-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>
