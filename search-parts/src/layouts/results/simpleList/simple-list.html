@@ -2,7 +2,15 @@
 
     <style>
         /* Insert your CSS overrides here */
-        
+        .simpletags {
+            display: inline-block;
+            padding: 2px 5px;
+            margin-right: 5px;
+            background-color: #f4f4f4;
+            color: #333;
+            border-radius: 5px;
+            font-size: 12px;
+        }        
         .example-themePrimary a {
             color: {
                 {
@@ -114,7 +122,9 @@
                                             <pnp-icon data-name="Tag" aria-hidden="true" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-icon>
                                             <div>
                                                 {{#each (split (slot item @root.slots.Tags) ",") as |tag| }}
-                                                    <span>{{trim tag}}</span>
+                                                <div class="simpletags">
+                                                    {{trim tag}}
+                                                </div>
                                                 {{/each}}
                                             </div>
                                         {{/if}}

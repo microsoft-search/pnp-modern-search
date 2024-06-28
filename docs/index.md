@@ -1,4 +1,4 @@
-!["PnP"](https://pnp.github.io/images/hero-parker-p-1080.png){: .center .logo}
+!["PnP"](./assets/pnp_logo.png){: .center .logo } 
 
 # PnP Modern Search v4
 
@@ -18,18 +18,6 @@ Hence v4 was born. The goal of v4 is to solve scenarios already solved by v3, bu
 
 As more and more Microsoft Search functionality is exposed via the Microsoft Graph Search API's, we will keep on investing in v4 to surface these great capabilities.
 
-**Looking for the v3 documentation? [Here you go!](./v3/index.md)**
-
-!!! important "PnP Modern Search v3.x deprecation"
-    **v4 uses a brand new code architecture and replace the older v3 codebase**. There will be no new features added to v3.x, but we will continue to
-    provide bug fixes and minor changes as needed. As v4.x is not yet at feature parity with v3.x, you can still use the v3.x packages to meet your requirements.
-    Also not that there is not an auto-upgrade path from v3 to v4 due to the new architecture, so you are perfectly ok
-    to stay on the v3 version until v4 provides the features validating your upgrade.
-    However, the main focus is on the v4 version, and new search functionality backed by the Microsoft Graph Search API will be v4 only.
-
-    **v3 and v4 don't share the same package name, Web Part and solution IDs meaning you can have them side by side on a page if necessary without overlap.**
-    
-    !["V3 & v4"](./assets/v3_v4.png){: .center}
 
 ## What's included?
 
@@ -99,16 +87,15 @@ PnP Modern Search version 4 initially made by [Franck Cornu](https://twitter.com
 
 Here is the list of main contributors of the PnP Modern Search (all versions included)
 
-- Franck Cornu (Ubisoft) - [@FranckCornu](http://www.twitter.com/FranckCornu)
 - Mikael Svenson (Microsoft) - [@mikaelsvenson](http://www.twitter.com/mikaelsvenson)
-- Yannick Reekmans - [@yannickreekmans](https://twitter.com/yannickreekmans)
-- Albert-Jan Schot - [@appieschot](https://twitter.com/appieschot)
-- Tarald Gåsbakk (Norwegian Armed Forces) - [@taraldgasbakk](https://twitter.com/Taraldgasbakk)
+- Franck Cornu (Ubisoft) - [@FranckCornu](http://www.twitter.com/FranckCornu)
+- David Mehr (IOZAG) - [@davmehr](https://github.com/davemehr)
 - Brad Schlintz (Microsoft) - [@bschlintz](https://twitter.com/bschlintz)
-- Richard Gigan - [@PooLP](https://twitter.com/PooLP)
-- Matthew Stark
+- Patrik Hellgren (SherparsGroupAB) - [@PatrikHellgren](https://twitter.com/patrikhellgren)
+- Per Ove Sandhåland (crayon) - [@PerOve](https://github.com/PerOve)
+- Marc Anderson ( Sympraxis) [@sympmarc](https://github.com/sympmarc)
 - Fabio Franzini (Apvee Solutions) - [@franzinifabio](https://twitter.com/franzinifabio)
 - Paolo Pialorsi (PiaSys.com) - [@PaoloPia](https://twitter.com/paolopia)
-- Patrik Hellgren (SherparsGroupAB) - [@PatrikHellgren](https://twitter.com/patrikhellgren)
-- Erfan Darroudi [@edarroudi](https://github.com/edarroudi)
-- Kasper Larsen (Fellowmind) - [@kasperlarsen](https://twitter.com/kasperbolarsen)
+- Kasper Larsen (Fellowmind) - [@kasperbolarsen](https://twitter.com/kasperbolarsen)
+
+ 
