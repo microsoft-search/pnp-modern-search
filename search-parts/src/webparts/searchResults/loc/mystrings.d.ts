@@ -25,6 +25,7 @@ declare interface ISearchResultsWebPartStrings {
                 GroupName: string;
                 ConfigureSlotsLabel: string;
                 ConfigureSlotsBtnLabel: string;
+                MissingSlotsMessage: string;
                 ConfigureSlotsPanelHeader: string;
                 ConfigureSlotsPanelDescription: string;
                 SlotNameFieldName: string;
@@ -42,6 +43,7 @@ declare interface ISearchResultsWebPartStrings {
             ErrorTemplateResolve: string;
             DialogButtonLabel: string;
             DialogTitle: string;
+            MissingSlotsMessage: string;
             ShowSelectedFilters: string;
             ShowBlankIfNoResult: string;
             ShowResultsCount: string;

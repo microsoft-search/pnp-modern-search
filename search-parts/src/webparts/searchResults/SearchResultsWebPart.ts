@@ -67,6 +67,7 @@ import { DynamicPropertyHelper } from '../../helpers/DynamicPropertyHelper';
 import { IQueryModifierConfiguration } from '../../queryModifier/IQueryModifierConfiguration';
 import { PropertyPaneTabsField } from '../../controls/PropertyPaneTabsField/PropertyPaneTabsField';
 import { loadMsGraphToolkit } from '../../helpers/GraphToolKitHelper';
+import { PropertyFieldMessage } from '@pnp/spfx-property-controls';
 
 const LogSource = "SearchResultsWebPart";
 
@@ -125,6 +126,16 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
      * The template content to display
      */
     private templateContentToDisplay: string;
+
+    /**
+     * Array of slot names currently used in the selected layout.
+     */
+    private layoutSlotNames: string[];
+
+    /**
+     * Array of slot names currently used in result types (if layout-type is 'Handlebars').
+     */
+    private resultTypesSlotNames: string[];
 
     /**
      * The template service instance
@@ -1280,6 +1291,21 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 }));
         }
 
+        if (this.properties.templateSlots) {
+            const templateSlotNames = this.properties.templateSlots.map(slot => slot.slotName);
+            const undefinedTemplateSlots = this.layoutSlotNames.filter(slot => !templateSlotNames.includes(slot));
+
+            stylingFields.push(
+                PropertyFieldMessage('messageMissingLayoutSlots', {
+                    key: 'messageMissingLayoutSlotsKey',
+                    multiline: true,
+                    text: Text.format(webPartStrings.PropertyPane.LayoutPage.MissingSlotsMessage, undefinedTemplateSlots.join(", ")),
+                    messageType: MessageBarType.warning,
+                    isVisible: undefinedTemplateSlots.length > 0
+                })
+            );
+        }
+
         // Only allow result types for Handlebars based layouts
         if (this.properties.layoutRenderType === LayoutRenderType.Handlebars) {
             stylingFields.push(
@@ -1388,7 +1414,24 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                             placeholder: 'https://mysite/Documents/external.html'
                         }
                     ]
-                }),
+                })
+            );
+            if (this.properties.templateSlots) {
+                const templateSlotNames = this.properties.templateSlots.map(slot => slot.slotName);
+                const undefinedTemplateSlots = this.resultTypesSlotNames.filter(slot => !templateSlotNames.includes(slot));
+
+                stylingFields.push(
+                    PropertyFieldMessage('messageMissingResultTypesSlots', {
+                        key: 'messageMissingResultTypesSlotsKey',
+                        multiline: true,
+                        text: Text.format(webPartStrings.PropertyPane.LayoutPage.MissingSlotsMessage, undefinedTemplateSlots.join(", ")),
+                        messageType: MessageBarType.warning,
+                        isVisible: undefinedTemplateSlots.length > 0
+                    })
+                );
+            }
+
+            stylingFields.push(
                 PropertyPaneToggle('itemSelectionProps.allowItemSelection', {
                     label: webPartStrings.PropertyPane.LayoutPage.Handlebars.AllowItemSelection
                 }),
@@ -1680,6 +1723,22 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                     ]
                 })
             );
+
+            if (this.templateContentToDisplay && this.properties.templateSlots) {
+
+                const templateSlotNames = this.properties.templateSlots.map(slot => slot.slotName);
+                const undefinedTemplateSlots = this.layoutSlotNames.concat(this.resultTypesSlotNames).filter(slot => !templateSlotNames.includes(slot));
+
+                templateSlotFields.push(
+                    PropertyFieldMessage('messageMissingSlots', {
+                        key: 'messageMissingSlotsKey',
+                        multiline: true,
+                        text: Text.format(webPartStrings.PropertyPane.DataSourcePage.TemplateSlots.MissingSlotsMessage, undefinedTemplateSlots.join(", ")),
+                        messageType: MessageBarType.warning,                        
+                        isVisible: undefinedTemplateSlots.length > 0
+                    })
+                );
+            }
         }
 
         return templateSlotFields;
@@ -2174,9 +2233,18 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             this.templateContentToDisplay = selectedLayoutTemplateContent;
         }
 
+        // extract all used slot names from selected layout
+        this.layoutSlotNames = LayoutHelper.getUsedSlotNames(this.templateContentToDisplay, this.properties.layoutRenderType);
+
         // Register result types inside the template      
         if (this.properties.layoutRenderType === LayoutRenderType.Handlebars && this.templateService) {
             await this.templateService.registerResultTypes(this.properties.resultTypes);
+
+            // extract all used slot names from result types
+            this.resultTypesSlotNames = [];
+            if (this.properties.resultTypes) {
+                this.properties.resultTypes.forEach(resultType => { this.resultTypesSlotNames = this.resultTypesSlotNames.concat(LayoutHelper.getUsedSlotNames(resultType.inlineTemplateContent)); });
+            }
         }
 
         return;
