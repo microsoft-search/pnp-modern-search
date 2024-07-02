@@ -303,7 +303,8 @@ define([], function () {
                     PrimaryText: "Testo principale",
                     SecondaryText: "Testo secondario",
                     TertiaryText: "Testo terziario",
-                    OptionalText: "Testo opzionale"
+                    OptionalText: "Testo opzionale",
+                    UPN: "UPN"
                 }
             },
             Vertical: {

@@ -1,4 +1,4 @@
-define([], function() {
+define([], function () {
     return {
         Tokens: {
             SelectTokenLabel: "Seleccione un token...",
@@ -79,7 +79,7 @@ define([], function() {
                 isRequiredErrorMessage: 'Se requiere una fecha de inicio.',
                 invalidInputErrorMessage: 'Formato de fecha no válido.'
             },
-            DateIntervalStrings:  {
+            DateIntervalStrings: {
                 AnyTime: "En cualquier momento",
                 PastDay: "Últimas 24 horas",
                 PastWeek: "De las últimas 24 horas a la semana pasada",
@@ -293,7 +293,7 @@ define([], function() {
                 SupportHTMLColumnLabel: "Permitir HTML",
                 ResetFieldsBtnLabel: "Restablecer los valores por defecto de los campos",
                 ShowPersonaCardOnHover: "Mostrar tarjeta de persona al pasar el ratón por encima",
-                ShowPersonaCardOnHoverNative:"Mostrar tarjeta de persona al pasar el ratón por encima (LPC)",
+                ShowPersonaCardOnHoverNative: "Mostrar tarjeta de persona al pasar el ratón por encima (LPC)",
                 ShowPersonaCardOnHoverCalloutMsg: "Esta función utiliza Microsoft Graph para mostrar información sobre el usuario y necesita los siguientes permisos de la API en su inquilino para funcionar: ['User.Read','People.Read','Contacts.Read','User.Read.All'].",
                 ShowPersonaPresenceInfo: "Mostrar presencia",
                 ShowPersonaPresenceInfoCalloutMsg: "Esta función necesita los siguientes permisos de API en su tenant para funcionar: ['Presence.Read.All']",
@@ -302,7 +302,8 @@ define([], function() {
                     PrimaryText: "Texto principal",
                     SecondaryText: "Texto secundario",
                     TertiaryText: "Texto terciario",
-                    OptionalText: "Texto opcional"
+                    OptionalText: "Texto opcional",
+                    UPN: "UPN"
                 }
             },
             Vertical: {

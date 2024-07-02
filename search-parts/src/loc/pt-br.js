@@ -1,4 +1,4 @@
-define([], function() {
+define([], function () {
     return {
         Tokens: {
             SelectTokenLabel: "Escolha uma marcação...",
@@ -300,7 +300,8 @@ define([], function() {
                     PrimaryText: "Texto primário",
                     SecondaryText: "Texto secundário",
                     TertiaryText: "Texto terciário",
-                    OptionalText: "Texto opcional"
+                    OptionalText: "Texto opcional",
+                    UPN: "UPN"
                 }
             },
             Vertical: {

@@ -1,4 +1,4 @@
-define([], function() {
+define([], function () {
     return {
         Tokens: {
             SelectTokenLabel: "Valitse token...",
@@ -300,7 +300,8 @@ define([], function() {
                     PrimaryText: "Ensimmäisen rivin teksti",
                     SecondaryText: "Toisen rivin teksti",
                     TertiaryText: "Kolmannes rivin teksti",
-                    OptionalText: "Valinnainen teksti"
+                    OptionalText: "Valinnainen teksti",
+                    UPN: "UPN"
                 }
             },
             Vertical: {
