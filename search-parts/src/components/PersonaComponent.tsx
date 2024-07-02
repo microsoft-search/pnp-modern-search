@@ -57,6 +57,11 @@ export interface IPersonaComponentProps {
     optionalText?: string;
 
     /**
+     * UPN of the person (necessary to display LPC)
+     */
+    upn?:string;
+
+    /**
      * The persona image size
      */
     personaSize?: string;
@@ -203,7 +208,7 @@ export class PersonaComponent extends React.Component<IPersonaComponentProps, IP
         }
 
         if (this.props.nativeLpc) {
-            return <LivePersona upn={processedProps.tertiaryText}
+            return <LivePersona upn={processedProps.upn}
                 template={
                     <>
                         <Persona {...persona} size={parseInt(this.props.personaSize)}></Persona>
