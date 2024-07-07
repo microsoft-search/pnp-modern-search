@@ -1,4 +1,4 @@
-define([], function() {
+define([], function () {
     return {
         Tokens: {
             SelectTokenLabel: "Select a token...",
@@ -294,7 +294,7 @@ define([], function() {
                 ResetFieldsBtnLabel: "Reset fields to default values",
                 ShowPersonaCardOnHover: "Show persona card on hover",
                 ShowPersonaCardOnHoverCalloutMsg: "This feature uses Microsoft Graph to display information about the user and needs the following API permissions in your tenant to work: ['User.Read','People.Read','Contacts.Read','User.Read.All'].",
-                ShowPersonaCardOnHoverNative: "Show persona card on hover (LPC)",                
+                ShowPersonaCardOnHoverNative: "Show persona card on hover (LPC)",
                 ShowPersonaCardOnHoverCalloutMsgNative: "This feature uses the native SharePoint implementation to show the live persona card (LPC). See https://pnp.github.io/sp-dev-fx-controls-react/controls/LivePersona/ for considerations.",
                 ShowPersonaPresenceInfo: "Show presence",
                 ShowPersonaPresenceInfoCalloutMsg: "This feature needs the following API permissions in your tenant to work: ['Presence.Read.All']",
@@ -303,7 +303,8 @@ define([], function() {
                     PrimaryText: "Primary text",
                     SecondaryText: "Secondary text",
                     TertiaryText: "Tertiary text",
-                    OptionalText: "Optional text"
+                    OptionalText: "Optional text",
+                    UPN: "UPN"
                 }
             },
             Vertical: {

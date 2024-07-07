@@ -56,7 +56,13 @@ export class PeopleLayout extends BaseLayout<IPeopleLayoutProperties> {
                 { name: strings.Layouts.People.Fields.SecondaryText, field: 'secondaryText', value: "JobTitle", useHandlebarsExpr: false, supportHtml: true },
                 { name: strings.Layouts.People.Fields.TertiaryText, field: 'tertiaryText', value: "{{getUserEmail (slot item @root.slots.UserEmail)}}", useHandlebarsExpr: true, supportHtml: true },
                 { name: strings.Layouts.People.Fields.OptionalText, field: 'optionalText', value: "WorkPhone", useHandlebarsExpr: false, supportHtml: true },
+                { name: strings.Layouts.People.Fields.UPN, field: 'upn', value: "{{getUserEmail (slot item @root.slots.UserEmail)}}", useHandlebarsExpr: true, supportHtml: false },
             ] as IComponentFieldsConfiguration[];
+        }
+        
+        // for backwards-compatibility reasons, add the UPN field if it's not there
+        if (!this.properties.peopleFields.some(f => f.field === 'upn')) {
+            this.properties.peopleFields.push({ name: strings.Layouts.People.Fields.UPN, field: 'upn', value: "{{getUserEmail (slot item @root.slots.UserEmail)}}", useHandlebarsExpr: true, supportHtml: false } as IComponentFieldsConfiguration);
         }
 
         if (!this.properties.personaSize) {
@@ -218,5 +224,5 @@ export class PeopleLayout extends BaseLayout<IPeopleLayoutProperties> {
             // Load Microsoft Graph Toolkit to get the persona card
             await loadMsGraphToolkit(this.context);
         }
-    }    
+    }
 }
