@@ -374,6 +374,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 properties: JSON.parse(JSON.stringify(this.properties)), // Create a copy to avoid unexpected reference value updates from data sources 
                 onDataRetrieved: this._onDataRetrieved,
                 onItemSelected: this._onItemSelected,
+                onNoResultsFound: this._onNoResultsFound.bind(this),
                 pageContext: this.context.pageContext,
                 teamsContext: this.context.sdks.microsoftTeams ? this.context.sdks.microsoftTeams.context : null,
                 renderType: this.properties.layoutRenderType,
@@ -477,22 +478,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         }
 
         ReactDom.render(renderRootElement, this.domElement);
-
-        if (this.properties.showBlankIfNoResult) {
-            let element = this.domElement.parentElement;
-            // check up to 3 levels up for padding and exit once found
-            for (let i = 0; i < 3; i++) {
-                const style = window.getComputedStyle(element);
-                const hasPadding = style.paddingTop !== "0px";
-                if (hasPadding) {
-                    element.style.paddingTop = "0px";
-                    element.style.paddingBottom = "0px";
-                    element.style.marginTop = "0px";
-                    element.style.marginBottom = "0px";
-                }
-                element = element.parentElement;
-            }
-        }
 
         // This call set this.renderedOnce to 'true' so we need to execute it at the very end
         super.renderCompleted();
@@ -1734,7 +1719,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                         key: 'messageMissingSlotsKey',
                         multiline: true,
                         text: Text.format(webPartStrings.PropertyPane.DataSourcePage.TemplateSlots.MissingSlotsMessage, undefinedTemplateSlots.join(", ")),
-                        messageType: MessageBarType.warning,                        
+                        messageType: MessageBarType.warning,
                         isVisible: undefinedTemplateSlots.length > 0
                     })
                 );
@@ -2651,6 +2636,24 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         // Notfify dynamic data consumers data have changed
         if (this.properties.allowWebPartConnections) {
             this.context.dynamicDataSourceManager.notifyPropertyChanged(DynamicDataProperties.AvailableFieldValuesFromResults);
+        }
+    }
+
+    /**
+     * Handler when no results have been found
+     */
+    private _onNoResultsFound() {
+
+        // Remarks: this is the same approach as implemented in function 'renderCompleted' - it may break, if Microsoft changes the page's DOM!
+        const parentControlZone = this.getParentControlZone();
+        if (parentControlZone) {
+            if (this.properties.showBlankIfNoResult) {
+                // Remove margin and padding to avoid extra space
+                parentControlZone.setAttribute('style', 'margin:0px;padding:0px;');
+            }
+            else {
+                parentControlZone.removeAttribute('style');
+            }
         }
     }
 

@@ -143,6 +143,9 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                     renderTemplate = null;
                 }
             }
+            
+            // call handler if results found
+            this.props.onNoResultsFound();
         }
 
         if (this.state.isLoading) {
@@ -424,14 +427,14 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
      * Check if picture is deliverd from a M365 Source
      * @param url
      */
-        private isM365Source(url: string) {
-            const cdnDomains:RegExp[] = [/^https?:\/\/(?:[A-Za-z0-9,-]+\.)+office\.net.*/,
+    private isM365Source(url: string) {
+        const cdnDomains:RegExp[] = [/^https?:\/\/(?:[A-Za-z0-9,-]+\.)+office\.net.*/,
             /^https?:\/\/(?:[A-Za-z0-9,-]+\.)+sharepointonline\.com.*/,
             /^https?:\/\/(?:[A-Za-z0-9,-]+\.)+sharepoint\.us.*/,
             /^https?:\/\/(?:[A-Za-z0-9,-]+\.)+sharepoint-mil\.us.*/,
-            ];
-            return cdnDomains.some(regex => regex.test(url))
-        }
+        ];
+        return cdnDomains.some(regex => regex.test(url))
+    }
 
     /**
      * Extracts the GUID value from a string

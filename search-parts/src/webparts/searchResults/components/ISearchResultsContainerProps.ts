@@ -61,7 +61,12 @@ export interface ISearchResultsContainerProps {
   /**
    * Handler when a item has been selected from results
    */
-  onItemSelected: (currentSelectedItems: {[key: string]: any}[]) => void;  
+  onItemSelected: (currentSelectedItems: {[key: string]: any}[]) => void; 
+  
+  /**
+   * Handler when no results have been found
+   */
+  onNoResultsFound: () => void;
 
   /**
    * The current service scope
