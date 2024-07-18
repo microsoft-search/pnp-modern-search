@@ -144,7 +144,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 }
             }
             
-            // call handler if results found
+            // call handler if no results found
             this.props.onNoResultsFound();
         }
 
