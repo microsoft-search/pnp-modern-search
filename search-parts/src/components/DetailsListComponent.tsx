@@ -334,7 +334,8 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
                         isRowHeader: false,
                         isResizable: column.isResizable === true,
                         isMultiline: column.isMultiline === true,
-                        isSorted: allowSorting,
+                        // show sort arrow only if the column is sortable and sorting has been applied by a previous click ('user sort' happened)
+                        isSorted: allowSorting && column.valueSorting === this.props.defaultSelectedField,
                         isSortedDescending: this.props.defaultDirection === SortFieldDirection.Descending,
                         sortAscendingAriaLabel: 'Sorted A to Z',
                         sortDescendingAriaLabel: 'Sorted Z to A',
