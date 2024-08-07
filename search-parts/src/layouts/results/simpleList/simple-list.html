@@ -121,9 +121,15 @@
                                         {{#if (slot item @root.slots.Tags)}}
                                             <pnp-icon data-name="Tag" aria-hidden="true" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-icon>
                                             <div>
-                                                {{#each (split (slot item @root.slots.Tags) ",") as |tag| }}
+                                                {{#each (split (slot item @root.slots.Tags) ";") as |tag| }}
                                                 <div class="simpletags">
-                                                    {{trim tag}}
+                                                    {{#with (split (tag) '|')}}
+                                                        {{trim [2]}}
+                                                    <!-- Use this if you want the tags to be displayed as a search link -->
+                                                    <!-- <i class="ms-Icon ms-Icon--MapPin" aria-hidden="true"></i> -->
+                                                    <!-- <a href="?q=Tags:'    {{[2]}}'" data-interception="off">{{[2]}}</a> -->
+                                                    {{/with}}
+                                                    
                                                 </div>
                                                 {{/each}}
                                             </div>
