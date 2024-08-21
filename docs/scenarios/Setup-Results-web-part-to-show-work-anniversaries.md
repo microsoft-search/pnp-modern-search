@@ -52,6 +52,7 @@ Hit the Reindex site in the site collections Search and Offline Availability sec
 
 Map the crawled properties to a couple of RefinableDates. If possible it is recommended to make this mapping on the tenant level as it ensures that you can use them in your entire tenant. 
 ![mapping birthdaythisyear and hiredatethisyear](../scenarios/assets/Setup-Results-web-part-to-show-work-anniversaries/mapping2.png)
+
 Find the Content Type ID of the Content type created by the script.
 
 
