@@ -123,6 +123,8 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
             if (tokenPayload?.scp) {
                 const scopes: string[] = tokenPayload.scp.split(' ');
                 return (
+                    (scopes.includes('User.ReadBasic.All') && scopes.includes('GroupMember.Read.All')) ||
+                    (scopes.includes('User.ReadBasic.All') && scopes.includes('Group.Read.All')) ||
                     (scopes.includes('User.Read.All') && scopes.includes('GroupMember.Read.All')) ||
                     (scopes.includes('User.Read.All') && scopes.includes('Group.Read.All')) ||
                     (scopes.includes('Directory.Read.All'))
