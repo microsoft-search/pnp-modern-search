@@ -386,7 +386,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
 
     private _updateTitleProperty(value: string) {
         this.properties.title = value;
-        this.render();
+        this.renderCompleted();
     }
     /**
      * Determines the group fields for the search query options inside the property pane
