@@ -866,18 +866,14 @@ export class TemplateService implements ITemplateService {
 
         // Match and return an email in the specified expression
         this.Handlebars.registerHelper("getUserEmail", (expr: string) => {
-
             if (!isEmpty(expr)) {
-
-                const matches = expr.match(/([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,63})/gi);
+                const matches = expr.match(/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*/gi);
                 if (matches) {
                     return matches[0]; // Return the full match
                 } else {
                     return expr;
                 }
-
             }
-
         });
 
         // Return SPFx page context variable
