@@ -28,9 +28,9 @@ import { MSGraphClientFactory } from '@microsoft/sp-http';
 import { loadMsGraphToolkit } from '../../helpers/GraphToolKitHelper';
 import { LocalizationHelper } from "@microsoft/mgt-element/dist/es6/utils/LocalizationHelper";
 
-const PeoplePicker = React.lazy(() => 
-	import(/* webpackChunkName: 'microsoft-graph-toolkit' */ '@microsoft/mgt-react/dist/es6/generated/people-picker')
-		.then(({ PeoplePicker }) => ({ default: PeoplePicker }))
+const PeoplePicker = React.lazy(() =>
+    import(/* webpackChunkName: 'microsoft-graph-toolkit' */ '@microsoft/mgt-react/dist/es6/generated/people-picker')
+        .then(({ PeoplePicker }) => ({ default: PeoplePicker }))
 );
 
 const LogSource = "SearchVerticalsWebPart";
@@ -73,7 +73,7 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
         }
 
         loadMsGraphToolkit(this.context);
-    
+
         // Initializes Web Part properties
         this.initializeProperties();
 
@@ -94,9 +94,54 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
             this._placeholderComponent = Placeholder;
         }
 
+        // if there are verticals with audiences and if necessary MS Graph API-permissions have been granted --> load member groups of current user
+        if (this.properties.verticals && this.properties.verticals.some(v => v.audience && v.audience.length > 0) && await this._graphTokenContainsRequiredScopes()) {
+            await this._loadMemberGroups();
+        }
+    }
+
+    /**
+     * Check if a graph token contains the required scopes for calling ../me/getMemberGroups
+     * See details: https://learn.microsoft.com/en-us/graph/api/directoryobject-getmembergroups?view=graph-rest-1.0&tabs=http#group-memberships-for-a-directory-object
+     * @returns true if the graph token contains the required scopes
+     */
+    private async _graphTokenContainsRequiredScopes(): Promise<boolean> {
+
+        const tokenProvider = await this.context.aadTokenProviderFactory.getTokenProvider();
+        // retrieve a token for MS Graph API
+        const tokenRaw = await tokenProvider.getToken('https://graph.microsoft.com');
+        // check if the returned token-value has a valid structure
+        if (!tokenRaw && !((tokenRaw.match(/./g) || []).length === 2)) {
+            return false;
+        }
+        else {
+            // get object to token
+            let tokenPayload;
+            try { tokenPayload = JSON.parse(atob(tokenRaw.split('.')[1])); }
+            catch { return false; }
+            // check if the token contains the required scopes
+            if (tokenPayload?.scp) {
+                const scopes: string[] = tokenPayload.scp.split(' ');
+                return (
+                    (scopes.includes('User.ReadBasic.All') && scopes.includes('GroupMember.Read.All')) ||
+                    (scopes.includes('User.ReadBasic.All') && scopes.includes('Group.Read.All')) ||
+                    (scopes.includes('User.Read.All') && scopes.includes('GroupMember.Read.All')) ||
+                    (scopes.includes('User.Read.All') && scopes.includes('Group.Read.All')) ||
+                    (scopes.includes('Directory.Read.All'))
+                );
+            } else {
+                return false;
+            }
+        }
+    }
+
+    /**
+     * Load the member groups of the current user via MS Graph API
+     */
+    private async _loadMemberGroups() {
         const msGraphClientFactory = this.context.serviceScope.consume<MSGraphClientFactory>(MSGraphClientFactory.serviceKey);
         const msGraphClient = await msGraphClientFactory.getClient('3');
-        this._memberGroups = await msGraphClient.api("https://graph.microsoft.com/v1.0/me/getMemberGroups").post({securityEnabledOnly: false});
+        this._memberGroups = await msGraphClient.api("me/getMemberGroups").post({ securityEnabledOnly: false });
     }
 
     public render(): void {
@@ -140,12 +185,19 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
 
         } else {
 
+            let verticalsToBeDisplayed = this.properties.verticals;
+            // if not in edit mode, filter for verticals without audiences or with audiences based on the current user's group memberships
+            if (this.displayMode !== DisplayMode.Edit) {
+                verticalsToBeDisplayed = verticalsToBeDisplayed.filter((v: IDataVerticalConfiguration) =>
+                    !v.audience ||
+                    v.audience.length === 0 ||
+                    v.audience.some(audienceId => { return this._memberGroups?.value.includes(audienceId); })
+                );
+            }
             renderRootElement = React.createElement(
                 SearchVerticalsContainer,
                 {
-                    verticals: this.properties.verticals.filter(v => !v.audience || v.audience.length === 0 || v.audience.some(audienceId => {
-                      return this._memberGroups.value.includes(audienceId);
-                    })),
+                    verticals: verticalsToBeDisplayed,
                     webPartTitleProps: {
                         displayMode: this.displayMode,
                         title: this.properties.title,
@@ -393,31 +445,31 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
                         title: webPartStrings.PropertyPane.Verticals.Fields.Audience,
                         type: this._customCollectionFieldType.custom,
                         onCustomRender: (field, value, onUpdate, item, itemId) => {
-                          const onSelectionChanged = (e: CustomEvent<IDynamicPerson[]>) => {
-                            console.log(e.detail);
-                            onUpdate(field.id, e.detail.map(p => p.id));
-                          };
-                          LocalizationHelper.strings = {
-                            _components: {
-                              "pnp-modern-search-people-picker": {
-                                inputPlaceholderText: webPartStrings.PropertyPane.Verticals.AudienceInputPlaceholderText,
-                                noResultsFound: webPartStrings.PropertyPane.Verticals.AudienceNoResultsFound,
-                                loading: webPartStrings.PropertyPane.Verticals.AudienceLoading
-                              }
-                            }
-                          };
-                          return (
-                            React.createElement("div", null,
-                              React.createElement(React.Suspense, { fallback: React.createElement("div", null, webPartStrings.PropertyPane.Verticals.AudienceLoading) },
-                                React.createElement(PeoplePicker, {
-                                  defaultSelectedGroupIds: item.audience || [],
-                                  selectionMode: "multiple",
-                                  type: "group",
-                                  selectionChanged: onSelectionChanged,
-                                })
-                              )
+                            const onSelectionChanged = (e: CustomEvent<IDynamicPerson[]>) => {
+                                console.log(e.detail);
+                                onUpdate(field.id, e.detail.map(p => p.id));
+                            };
+                            LocalizationHelper.strings = {
+                                _components: {
+                                    "pnp-modern-search-people-picker": {
+                                        inputPlaceholderText: webPartStrings.PropertyPane.Verticals.AudienceInputPlaceholderText,
+                                        noResultsFound: webPartStrings.PropertyPane.Verticals.AudienceNoResultsFound,
+                                        loading: webPartStrings.PropertyPane.Verticals.AudienceLoading
+                                    }
+                                }
+                            };
+                            return (
+                                React.createElement("div", null,
+                                    React.createElement(React.Suspense, { fallback: React.createElement("div", null, webPartStrings.PropertyPane.Verticals.AudienceLoading) },
+                                        React.createElement(PeoplePicker, {
+                                            defaultSelectedGroupIds: item.audience || [],
+                                            selectionMode: "multiple",
+                                            type: "group",
+                                            selectionChanged: onSelectionChanged,
+                                        })
+                                    )
+                                )
                             )
-                          )
                         }
                     }
                 ]
