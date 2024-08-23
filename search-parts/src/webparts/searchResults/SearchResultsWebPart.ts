@@ -2659,7 +2659,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
     private _updateTitleProperty(value: string) {
         this.properties.title = value;
-        this.render();
+        this.renderCompleted();
     }
 
     /**

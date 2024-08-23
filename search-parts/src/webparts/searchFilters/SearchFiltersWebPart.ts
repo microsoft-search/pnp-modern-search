@@ -116,7 +116,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
 
     private _updateTitleProperty(value: string) {
         this.properties.title = value;
-        this.render();
+        this.renderCompleted();
     }
     protected async onInit() {
         try {
