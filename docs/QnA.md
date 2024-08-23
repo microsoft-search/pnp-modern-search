@@ -1,12 +1,23 @@
 
 
+
+**Q: Should I switch from using SharePoint Search as the datasource to Microsoft Search? **
+![Microsoft Search](./assets/DataSources.png "Datasources")
+
+**A**: It depends on your requirement. Microsoft Search is the API being invested in going forward and allows search on entities outside of SharePoint such as Teams, Outlook and Graph Connector items. If you are only using SharePoint and OneDrive data, using features such as managed metadata, or creating a people directory, then using the SharePoint Search API is recommended for now.
+
+
+
+**Q: How will the automatic disabling of SharePoint Online custom scripts affect the PnP Modern Search web parts? **
+
+**A**: Not at all. The PnP Modern Search web parts are built using the SharePoint Framework, which is not affected by the automatic disabling of custom scripts.
+
+
+
 **Q: In version 4.10.1 the LPC (Live Person Card) hover option became available as an option for the People Layout. What is the difference between LCP and Persona card? **
 
 ![LCP option](./assets/LCP.png "LCP option in the People Layout")
 
-
-
- 
 
 **A**: The Live Person Card does not require any additional Graph Permissions. The LPC can be customized to show additional fields from Entra ID, but not the same way as the pnp-people or mgt-person. However it will always show equal to any other people card shown in Microsoft 365.See https://learn.microsoft.com/en-us/graph/add-properties-profilecard.  
 
