@@ -1,6 +1,6 @@
 {
     "name": "@pnp/modern-search-web-parts",
-    "version": "4.12.2",
+    "version": "4.13.0",
     "private": true,
     "main": "lib/index.js",
     "engines": {
@@ -12,15 +12,15 @@
         "serve": "fast-serve"
     },
     "dependencies": {
-        "@fluentui/font-icons-mdl2": "^8.5.32",
+        "@fluentui/font-icons-mdl2": "^8.5.50",
         "@fluentui/react": "8.106.4",
-        "@fluentui/react-file-type-icons": "8.11.3",
+        "@fluentui/react-file-type-icons": "8.11.21",
         "@fluentui/react-theme-provider": "0.19.16",
         "@iconify/react": "^4.1.1",
-        "@microsoft/mgt-components": "4.2.1",
-        "@microsoft/mgt-element": "4.2.1",
-        "@microsoft/mgt-react": "4.2.1",
-        "@microsoft/mgt-sharepoint-provider": "4.2.1",
+        "@microsoft/mgt-components": "4.2.4",
+        "@microsoft/mgt-element": "4.2.4",
+        "@microsoft/mgt-react": "4.2.4",
+        "@microsoft/mgt-sharepoint-provider": "4.2.4",
         "@microsoft/sp-adaptive-card-extension-base": "1.18.2",
         "@microsoft/sp-component-base": "1.18.2",
         "@microsoft/sp-core-library": "1.18.2",
@@ -32,15 +32,15 @@
         "@microsoft/sp-property-pane": "1.18.2",
         "@microsoft/sp-webpart-base": "1.18.2",
         "@pnp/common": "2.0.13",
-        "@pnp/modern-search-extensibility": "^1.18.2",
-        "@pnp/spfx-controls-react": "^3.17.0",
-        "@pnp/spfx-property-controls": "^3.16.0",
+        "@pnp/modern-search-extensibility": "1.18.2",
+        "@pnp/spfx-controls-react": "3.17.0",
+        "@pnp/spfx-property-controls": "3.16.0",
         "@pnp/telemetry-js": "2.0.0",
-        "adaptive-expressions": "4.22.1",
-        "adaptivecards": "3.0.2",
+        "adaptive-expressions": "^4.23.0",
+        "adaptivecards": "^3.0.4",
         "adaptivecards-templating": "2.3.1",
         "core-js": "3.26.0",
-        "dompurify": "3.0.9",
+        "dompurify": "^3.1.6",
         "flickity": "2.3.0",
         "handlebars": "4.7.8",
         "handlebars-group-by": "1.0.1",
@@ -56,15 +56,10 @@
         "react-js-pagination": "3.0.3",
         "tslib": "2.3.1"
     },
-    "resolutions": {
-        "@types/react": "^16.9.51",
-        "@types/react-dom": "^16.9.8"
-    },
     "devDependencies": {
-        "@babel/plugin-transform-logical-assignment-operators": "^7.23.4",
-        "@babel/plugin-transform-nullish-coalescing-operator": "^7.23.4",
-        "@babel/plugin-transform-optional-chaining": "^7.23.4",
-        "@babel/preset-env": "^7.22.20",
+        "@babel/plugin-transform-logical-assignment-operators": "^7.24.7",
+        "@babel/plugin-transform-nullish-coalescing-operator": "^7.24.7",
+        "@babel/plugin-transform-optional-chaining": "^7.24.8",
         "@microsoft/eslint-config-spfx": "1.18.2",
         "@microsoft/eslint-plugin-spfx": "1.18.2",
         "@microsoft/rush-stack-compiler-4.5": "0.2.2",
@@ -91,7 +86,7 @@
         "typescript": "4.7.4",
         "unlazy-loader": "0.1.3",
         "webpack": "^4.42.0",
-        "webpack-bundle-analyzer": "4.10.1"
+        "webpack-bundle-analyzer": "4.10.2"
     },
     "overrides": {
         "@xmldom/xmldom": "0.8.4",
