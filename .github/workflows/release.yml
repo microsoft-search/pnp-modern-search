@@ -21,7 +21,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [18.x]
         
     outputs: 
       majorMinorPatch: ${{ steps.setoutputs.outputs.majorMinorPatch }}
