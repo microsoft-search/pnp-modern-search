@@ -91,7 +91,6 @@ const envCheck = build.subTask('environmentCheck', (gulp, config, done) => {
                 loader: 'ignore-loader',
             });
 
-            //generatedConfiguration.optimization.splitChunks.cacheGroups = { vendors: false };
             generatedConfiguration.optimization.splitChunks = { cacheGroups: { vendors: false } };
 
             // pack each moment.js locale individually to optimize bundle
