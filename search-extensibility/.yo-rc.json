@@ -2,13 +2,13 @@
     "@microsoft/generator-sharepoint": {
         "isCreatingSolution": true,
         "environment": "spo",
-        "version": "1.18.2",
+        "version": "1.19.0",
         "libraryName": "pnp-search-extensibility",
         "libraryId": "f13a5866-004f-4219-b078-69731f848bd1",
         "packageManager": "npm",
         "isDomainIsolated": false,
         "componentType": "library",
-        "nodeVersion": "16.20.0",
+        "nodeVersion": "18.20.4",
         "sdkVersions": {
             "@microsoft/teams-js": "2.12.0",
             "@microsoft/microsoft-graph-client": "3.0.2"            
