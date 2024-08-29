@@ -1,4 +1,4 @@
-import { ILayoutDefinition, ILayout, BaseLayout } from '@pnp/modern-search-extensibility';
+import { ILayoutDefinition, ILayout, BaseLayout, LayoutRenderType } from '@pnp/modern-search-extensibility';
 import { BuiltinLayoutsKeys } from '../layouts/AvailableLayouts';
 import { ServiceKey, ServiceScope, Text } from '@microsoft/sp-core-library';
 import { ServiceScopeHelper } from './ServiceScopeHelper';
@@ -51,7 +51,7 @@ export class LayoutHelper {
 
                     serviceKey = ServiceKey.create<ILayout>('PnPModernSearchResultsDebugLayout', ResultsDebugLayout);
                     break;
-                
+
                 // Filters Debug
                 case BuiltinLayoutsKeys.FiltersDebug:
 
@@ -64,7 +64,7 @@ export class LayoutHelper {
                     break;
 
                 // Results Custom (Handlebars)
-                case BuiltinLayoutsKeys.ResultsCustomHandlebars :
+                case BuiltinLayoutsKeys.ResultsCustomHandlebars:
 
                     const { ResultsCustomLayout } = await import(
                         /* webpackChunkName: 'pnp-modern-search-results-custom-layout' */
@@ -145,7 +145,7 @@ export class LayoutHelper {
                     serviceKey = ServiceKey.create<ILayout>('PnPModernSearchSimpleListLayout', SimpleListLayout);
                     break;
                 }
-                
+
                 // People
                 case BuiltinLayoutsKeys.People:
 
@@ -178,7 +178,7 @@ export class LayoutHelper {
 
                     serviceKey = ServiceKey.create<ILayout>('PnPModernSearchHorizontalFilterLayout', HorizontalFilterLayout);
                     break;
-                
+
                 // Panel
                 case BuiltinLayoutsKeys.Panel:
 
@@ -194,7 +194,7 @@ export class LayoutHelper {
                 default:
                     // Gets the registered service key according to the selected layou definition 
                     const matchingDefinitions = layoutDefinitions.filter((layoutDefinition) => { return layoutDefinition.key === layoutKey; });
-                                
+
                     // Can only have one layout instance per key
                     if (matchingDefinitions.length > 0) {
                         serviceKey = matchingDefinitions[0].serviceKey;
@@ -247,7 +247,7 @@ export class LayoutHelper {
     public static getLayoutOptions(availableLayoutDefinitions: ILayoutDefinition[]): IPropertyPaneChoiceGroupOption[] {
 
         let layoutOptions: IPropertyPaneChoiceGroupOption[] = [];
-        
+
         availableLayoutDefinitions.forEach((layout) => {
             layoutOptions.push({
                 iconProps: {
@@ -263,5 +263,32 @@ export class LayoutHelper {
         });
 
         return layoutOptions;
+    }
+
+    /**
+     * Retrieves the used slot names from the provided template content.
+     * @param templateContent The content of the template.
+     * @param renderType The type of layout rendering ('AdaptiveCards' or 'Handlebars'). Defaults to `undefined`.
+     * @returns An array of used slot names.
+     */
+    public static getUsedSlotNames(templateContent: string, renderType?: LayoutRenderType): string[] {
+
+        if (!templateContent || templateContent.trim() === '') {
+            return [];
+        }
+
+        // The regex pattern depends on the render type.
+        // > if render type is AdaptiveCards, it matches `$root.slots['slotName']`
+        // > if render type is not AdaptiveCards (= Handlebars), it matches `root.slots.slotName`
+        const regex = (renderType && renderType === LayoutRenderType.AdaptiveCards) ?
+            /\$root\.slots\['(\w+)'\]/g :
+            /root\.slots\.(\w+)/g;
+
+        let match: RegExpExecArray | null;
+        const matches = new Set<string>();
+        while ((match = regex.exec(templateContent)) !== null) {
+            matches.add(match[1]);
+        }
+        return Array.from<string>(matches);
     }
 }

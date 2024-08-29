@@ -294,7 +294,7 @@ define([], function () {
                 ResetFieldsBtnLabel: "Felder auf Standardwerte zurücksetzen",
                 ShowPersonaCardOnHover: "Persona-Karte bei Hover anzeigen",
                 ShowPersonaCardOnHoverCalloutMsg: "Diese Funktion verwendet Microsoft Graph, um Informationen über den Benutzer anzuzeigen. Sie benötigt die folgenden API-Berechtigungen in Ihrem Mandanten, um zu funktionieren: ['User.Read','People.Read','Contacts.Read','User.Read.All'].",
-                ShowPersonaCardOnHoverNative: "Persona-Karte bei Hover anzeigen (LPC)",                
+                ShowPersonaCardOnHoverNative: "Persona-Karte bei Hover anzeigen (LPC)",
                 ShowPersonaCardOnHoverCalloutMsgNative: "Diese Funktion verwendet die Standard-Komponente von SharePoint, um die LivePersona-Karte anzuzeigen. Beachten Sie den Disclaimer unter https://pnp.github.io/sp-dev-fx-controls-react/controls/LivePersona/.",
                 ShowPersonaPresenceInfo: "Präsenz anzeigen",
                 ShowPersonaPresenceInfoCalloutMsg: "Diese Funktion benötigt die folgende API-Berechtigungen in Ihrem Mandanten, um zu funktionieren: ['Presence.Read.All']",
@@ -303,7 +303,8 @@ define([], function () {
                     PrimaryText: "Primärer Text",
                     SecondaryText: "Sekundärer Text",
                     TertiaryText: "Tertiärer Text",
-                    OptionalText: "Optionaler Text"
+                    OptionalText: "Optionaler Text",
+                    UPN: "UPN"
                 }
             },
             Vertical: {
@@ -361,11 +362,11 @@ define([], function () {
             ApplyAllFiltersButtonLabel: "Anwenden",
             ClearAllFiltersButtonLabel: "Zurücksetzen",
             FilterNoValuesMessage: "Keine Werte für diesen Filter",
-            OrOperator: "OR",
-            AndOperator: "AND",
+            OrOperator: "UND",
+            AndOperator: "ODER",
             ComboBoxPlaceHolder: "Wert auswählen",
-            UseAndOperatorValues: "Benutze einen AND Operator zwischen den Werten.",
-            UseOrOperatorValues: "Benutze einen OR Operator zwischen den Werten.",
+            UseAndOperatorValues: "Benutze einen ODER Operator zwischen den Werten.",
+            UseOrOperatorValues: "Benutze einen UND Operator zwischen den Werten.",
             UseValuesOperators: "Wähle einen Operator, der zwischen den Filterwerten angewandt werden soll."
         },
         SuggestionProviders: {

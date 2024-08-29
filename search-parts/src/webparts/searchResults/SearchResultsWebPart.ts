@@ -67,6 +67,7 @@ import { DynamicPropertyHelper } from '../../helpers/DynamicPropertyHelper';
 import { IQueryModifierConfiguration } from '../../queryModifier/IQueryModifierConfiguration';
 import { PropertyPaneTabsField } from '../../controls/PropertyPaneTabsField/PropertyPaneTabsField';
 import { loadMsGraphToolkit } from '../../helpers/GraphToolKitHelper';
+import { PropertyFieldMessage } from '@pnp/spfx-property-controls';
 
 const LogSource = "SearchResultsWebPart";
 
@@ -125,6 +126,16 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
      * The template content to display
      */
     private templateContentToDisplay: string;
+
+    /**
+     * Array of slot names currently used in the selected layout.
+     */
+    private layoutSlotNames: string[];
+
+    /**
+     * Array of slot names currently used in result types (if layout-type is 'Handlebars').
+     */
+    private resultTypesSlotNames: string[];
 
     /**
      * The template service instance
@@ -363,6 +374,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 properties: JSON.parse(JSON.stringify(this.properties)), // Create a copy to avoid unexpected reference value updates from data sources 
                 onDataRetrieved: this._onDataRetrieved,
                 onItemSelected: this._onItemSelected,
+                onNoResultsFound: this._onNoResultsFound.bind(this),
                 pageContext: this.context.pageContext,
                 teamsContext: this.context.sdks.microsoftTeams ? this.context.sdks.microsoftTeams.context : null,
                 renderType: this.properties.layoutRenderType,
@@ -466,22 +478,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         }
 
         ReactDom.render(renderRootElement, this.domElement);
-
-        if (this.properties.showBlankIfNoResult) {
-            let element = this.domElement.parentElement;
-            // check up to 3 levels up for padding and exit once found
-            for (let i = 0; i < 3; i++) {
-                const style = window.getComputedStyle(element);
-                const hasPadding = style.paddingTop !== "0px";
-                if (hasPadding) {
-                    element.style.paddingTop = "0px";
-                    element.style.paddingBottom = "0px";
-                    element.style.marginTop = "0px";
-                    element.style.marginBottom = "0px";
-                }
-                element = element.parentElement;
-            }
-        }
 
         // This call set this.renderedOnce to 'true' so we need to execute it at the very end
         super.renderCompleted();
@@ -1280,6 +1276,21 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 }));
         }
 
+        if (this.properties.templateSlots) {
+            const templateSlotNames = this.properties.templateSlots.map(slot => slot.slotName);
+            const undefinedTemplateSlots = this.layoutSlotNames.filter(slot => !templateSlotNames.includes(slot));
+
+            stylingFields.push(
+                PropertyFieldMessage('messageMissingLayoutSlots', {
+                    key: 'messageMissingLayoutSlotsKey',
+                    multiline: true,
+                    text: Text.format(webPartStrings.PropertyPane.LayoutPage.MissingSlotsMessage, undefinedTemplateSlots.join(", ")),
+                    messageType: MessageBarType.warning,
+                    isVisible: undefinedTemplateSlots.length > 0
+                })
+            );
+        }
+
         // Only allow result types for Handlebars based layouts
         if (this.properties.layoutRenderType === LayoutRenderType.Handlebars) {
             stylingFields.push(
@@ -1388,7 +1399,24 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                             placeholder: 'https://mysite/Documents/external.html'
                         }
                     ]
-                }),
+                })
+            );
+            if (this.properties.templateSlots) {
+                const templateSlotNames = this.properties.templateSlots.map(slot => slot.slotName);
+                const undefinedTemplateSlots = this.resultTypesSlotNames.filter(slot => !templateSlotNames.includes(slot));
+
+                stylingFields.push(
+                    PropertyFieldMessage('messageMissingResultTypesSlots', {
+                        key: 'messageMissingResultTypesSlotsKey',
+                        multiline: true,
+                        text: Text.format(webPartStrings.PropertyPane.LayoutPage.MissingSlotsMessage, undefinedTemplateSlots.join(", ")),
+                        messageType: MessageBarType.warning,
+                        isVisible: undefinedTemplateSlots.length > 0
+                    })
+                );
+            }
+
+            stylingFields.push(
                 PropertyPaneToggle('itemSelectionProps.allowItemSelection', {
                     label: webPartStrings.PropertyPane.LayoutPage.Handlebars.AllowItemSelection
                 }),
@@ -1680,6 +1708,22 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                     ]
                 })
             );
+
+            if (this.templateContentToDisplay && this.properties.templateSlots) {
+
+                const templateSlotNames = this.properties.templateSlots.map(slot => slot.slotName);
+                const undefinedTemplateSlots = this.layoutSlotNames.concat(this.resultTypesSlotNames).filter(slot => !templateSlotNames.includes(slot));
+
+                templateSlotFields.push(
+                    PropertyFieldMessage('messageMissingSlots', {
+                        key: 'messageMissingSlotsKey',
+                        multiline: true,
+                        text: Text.format(webPartStrings.PropertyPane.DataSourcePage.TemplateSlots.MissingSlotsMessage, undefinedTemplateSlots.join(", ")),
+                        messageType: MessageBarType.warning,
+                        isVisible: undefinedTemplateSlots.length > 0
+                    })
+                );
+            }
         }
 
         return templateSlotFields;
@@ -2174,9 +2218,18 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             this.templateContentToDisplay = selectedLayoutTemplateContent;
         }
 
+        // extract all used slot names from selected layout
+        this.layoutSlotNames = LayoutHelper.getUsedSlotNames(this.templateContentToDisplay, this.properties.layoutRenderType);
+
         // Register result types inside the template      
         if (this.properties.layoutRenderType === LayoutRenderType.Handlebars && this.templateService) {
             await this.templateService.registerResultTypes(this.properties.resultTypes);
+
+            // extract all used slot names from result types
+            this.resultTypesSlotNames = [];
+            if (this.properties.resultTypes) {
+                this.properties.resultTypes.forEach(resultType => { this.resultTypesSlotNames = this.resultTypesSlotNames.concat(LayoutHelper.getUsedSlotNames(resultType.inlineTemplateContent)); });
+            }
         }
 
         return;
@@ -2586,9 +2639,27 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         }
     }
 
+    /**
+     * Handler when no results have been found
+     */
+    private _onNoResultsFound() {
+
+        // Remarks: this is the same approach as implemented in function 'renderCompleted' - it may break, if Microsoft changes the page's DOM!
+        const parentControlZone = this.getParentControlZone();
+        if (parentControlZone) {
+            if (this.properties.showBlankIfNoResult) {
+                // Remove margin and padding to avoid extra space
+                parentControlZone.setAttribute('style', 'margin:0px;padding:0px;');
+            }
+            else {
+                parentControlZone.removeAttribute('style');
+            }
+        }
+    }
+
     private _updateTitleProperty(value: string) {
         this.properties.title = value;
-        this.render();
+        this.renderCompleted();
     }
 
     /**

@@ -9,6 +9,7 @@ nav:
     - Create custom layouts: create-custom-layouts/index.md
     - How to contribute?: how-to-contribute.md 
     - Building documentation: build-the-doc.md
+    - Version 3 : v3/index.md
   - Search Results:
     - Usage: usage/search-results/index.md
     - Data sources: usage/search-results/data-sources/index.md

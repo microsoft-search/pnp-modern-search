@@ -14,19 +14,20 @@ jobs:
         # Steps represent a sequence of tasks that will be executed as part of the job
         steps:
             # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-            - uses: actions/checkout@v2
+            - uses: actions/checkout@v4
               with:
                   ref: develop
+                  node-version: 18
             # setup nodejs
-            - name: Use Node.js 16
-              uses: actions/setup-node@v2
+            - name: Use Node.js 18
+              uses: actions/setup-node@v4
               with:
-                  node-version: 16
+                  node-version: 18
                   registry-url: "https://registry.npmjs.org"
             # cache node modules
             - name: Cache node modules
               id: cache
-              uses: actions/cache@v2
+              uses: actions/cache@v3
               with:
                   path: |
                       **/node_modules

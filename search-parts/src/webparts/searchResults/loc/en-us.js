@@ -1,4 +1,4 @@
-define([], function() {
+define([], function () {
     return {
         General: {
             PlaceHolder: {
@@ -26,12 +26,13 @@ define([], function() {
                     GroupName: "Layout slots",
                     ConfigureSlotsLabel: "Edit layout slots for this data source",
                     ConfigureSlotsBtnLabel: "Customize",
+                    MissingSlotsMessage: "Missing slots found in layout template: {0}",
                     ConfigureSlotsPanelHeader: "Layout slots",
                     ConfigureSlotsPanelDescription: "Add here the slots to be used for the different layouts. A slot is a placeholder variable that you put in your templates where the value will be dynamically subsituted by a data source field value. This way, your templates become more generic and reusable regardless the data source specific fields. To use them, use the `{{slot item @root.slots.<SlotName>}}` Handlebars expression.",
                     SlotNameFieldName: "Slot name",
                     SlotFieldFieldName: "Slot field",
                     SlotFieldPlaceholderName: "Choose a field"
-                },                
+                },
             },
             LayoutPage: {
                 LayoutSelectionGroupName: "Available layouts",
@@ -43,6 +44,7 @@ define([], function() {
                 ErrorTemplateResolve: "Unable to resolve the specified template. Error details: '{0}'",
                 DialogButtonLabel: "Edit results template",
                 DialogTitle: "Edit results template",
+                MissingSlotsMessage: "The following slots have not been configured: {0}",
                 ShowSelectedFilters: "Show selected filters",
                 ShowBlankIfNoResult: "Hide this web part if there's nothing to show",
                 ShowResultsCount: "Show results count",
@@ -96,7 +98,7 @@ define([], function() {
                 UseFiltersFromComponentLabel: "Use filters from this component",
                 UseDynamicFilteringsWebPartLabel: "Connect to a search results Web Part",
                 UseDataResultsFromComponentsLabel: "Use data from this Web Part",
-                UseDataResultsFromComponentsDescription: "Use data from selected items in these Web Parts",                
+                UseDataResultsFromComponentsDescription: "Use data from selected items in these Web Parts",
                 UseSearchVerticalsWebPartLabel: "Connect to a verticals Web Part",
                 UseSearchVerticalsFromComponentLabel: "Use verticals from this component",
                 LinkToVerticalLabel: "Display data only when the following vertical is selected",
@@ -127,7 +129,7 @@ define([], function() {
                 EnabledPropertyLabel: "Enabled",
                 ModifierNamePropertyLabel: "Name",
                 ModifierDescriptionPropertyLabel: "Description",
-                EndWhenSuccessfullPropertyLabel:"End when successfull"                
+                EndWhenSuccessfullPropertyLabel: "End when successfull"
             }
         }
     }

@@ -6,18 +6,13 @@
     "outDir": "lib",
     "strict": true,
     "moduleResolution": "node",
-    "types": [
-      "es6-promise",
-    ],
-    "lib": [
-      "es5",
-      "dom"
-    ],
+    "types": ["es6-promise"],
+    "lib": ["es5", "dom"],
     "experimentalDecorators": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "strictNullChecks": false,
-    "importHelpers": true,
+    "importHelpers": true
   },
   "include": ["src"],
   "exclude": ["node_modules", "**/__tests__/*"]
