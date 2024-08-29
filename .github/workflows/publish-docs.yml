@@ -16,7 +16,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          node-version: 18
 
       - name: Setup python
         uses: actions/setup-python@v2
