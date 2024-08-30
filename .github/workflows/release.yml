@@ -66,7 +66,7 @@ jobs:
           name: pnp-modern-search-parts-${{ steps.gitversion.outputs.semver }}
           path: ${{ github.workspace }}/**/*.sppkg
           retention-days: 1
-          overwrite: true
+          overwrite: false
           compression-level: 0
 
   release:
