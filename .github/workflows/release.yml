@@ -66,14 +66,21 @@ jobs:
         path: ${{ github.workspace }}/**/*.sppkg
         retention-days: 1
         overwrite: true
-        compress: false
+        compression-level: 0
         
   release:
     runs-on: ubuntu-latest
     environment: production
     needs: build
-    if: ${{ github.ref_name == 'main' || startsWith(github.ref_name, 'release') || github.event.inputs.create_release }}    
-    steps:      
+    # if: ${{ github.ref_name == 'main' || startsWith(github.ref_name, 'release') || github.event.inputs.create_release }}    
+    if: contains(needs.build.outputs['GitVersion_BranchName'], 'main')
+    steps:
+      - run: |
+          echo "(needs.build.outputs.GitVersion_semver) : ${{ needs.build.outputs.GitVersion_semver }}"
+          echo "(needs.build.outputs.semver) : ${{ needs.build.outputs.semver }}"
+        name: Print GitVersion_semver
+        shell: bash
+
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -83,7 +90,7 @@ jobs:
       - name: Create GitHub release
         uses: ncipollo/release-action@v1
         with:
-          name: PnP Modern Search - ${{ needs.build.outputs.semver }}
+          name: PnP Modern Search - ${{ needs.build.outputs.GitVersion_semver }}
           artifacts: ${{ github.workspace }}/**/*.sppkg
           bodyFile: ".github/workflows/release-template.md"
           draft: true
@@ -91,7 +98,7 @@ jobs:
           allowUpdates: true
           replacesArtifacts: true
           prerelease: ${{ startsWith(github.ref_name, 'release') }}
-          tag: ${{ needs.build.outputs.majorMinorPatch }}
+          tag: ${{ needs.build.outputs.GitVersion_majorMinorPatch }}
           commit: ${{ github.ref_name }}
           
       - name: Setup python
