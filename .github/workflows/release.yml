@@ -72,8 +72,8 @@ jobs:
   release:
     runs-on: ubuntu-latest
     environment: production
-    needs: build
-    if: ${{ github.ref_name == 'main' || startsWith(github.ref_name, 'release') || github.event.inputs.create_release }}
+    needs: build    
+    if: contains(needs.build.outputs['branchName'], 'main')
     steps:
       - uses: actions/checkout@v4
         with:
@@ -96,7 +96,7 @@ jobs:
           commit: ${{ github.ref_name }}
 
       - name: Setup python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: 3.x
 
