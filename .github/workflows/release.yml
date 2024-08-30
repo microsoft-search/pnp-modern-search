@@ -63,7 +63,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: pnp-modern-search-parts-${{ steps.gitversion.outputs.semver }}
+          name: pnp-modern-search-parts-v4
           path: ${{ github.workspace }}/**/*.sppkg
           retention-days: 1
           overwrite: false
