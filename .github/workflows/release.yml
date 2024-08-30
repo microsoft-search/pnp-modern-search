@@ -73,8 +73,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     needs: build
-    # if: ${{ github.ref_name == 'main' || startsWith(github.ref_name, 'release') || github.event.inputs.create_release }}
-    if: contains(needs.build.outputs['branchName'], 'main')
+    if: ${{ github.ref_name == 'main' || startsWith(github.ref_name, 'release') || github.event.inputs.create_release }}
     steps:
       - uses: actions/checkout@v4
         with:
