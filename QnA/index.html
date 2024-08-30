@@ -393,6 +393,18 @@
   
 
           
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../v3/" class="md-nav__link">
+        Version 3
+      </a>
+    </li>
+  
+
+          
         </ul>
       </nav>
     </li>
@@ -808,8 +820,13 @@
                 
                   <h1>QnA</h1>
                 
-                <p>**Q: In version 4.10.1 the LPC (Live Person Card) hover option became available as an option for the People Layout. What is the difference between LCP and Persona card? **</p>
-<p><img alt="LCP option" src="/assets/LCP.png" title="LCP option in the People Layout" /></p>
+                <p>**Q: Should I switch from using SharePoint Search as the datasource to Microsoft Search? **
+<img alt="Microsoft Search" src="../assets/DataSources.png" title="Datasources" /></p>
+<p><strong>A</strong>: It depends on your requirement. Microsoft Search is the API being invested in going forward and allows search on entities outside of SharePoint such as Teams, Outlook and Graph Connector items. If you are only using SharePoint and OneDrive data, using features such as managed metadata, or creating a people directory, then using the SharePoint Search API is recommended for now.</p>
+<p>**Q: How will the automatic disabling of SharePoint Online custom scripts affect the PnP Modern Search web parts? **</p>
+<p><strong>A</strong>: Not at all. The PnP Modern Search web parts are built using the SharePoint Framework, which is not affected by the automatic disabling of custom scripts.</p>
+<p>**Q: In version 4.10.1 the LPC (Live Person Card) hover option became available as an option for the People Layout. What is the difference between LCP and Persona card? **</p>
+<p><img alt="LCP option" src="../assets/LCP.png" title="LCP option in the People Layout" /></p>
 <p><strong>A</strong>: The Live Person Card does not require any additional Graph Permissions. The LPC can be customized to show additional fields from Entra ID, but not the same way as the pnp-people or mgt-person. However it will always show equal to any other people card shown in Microsoft 365.See https://learn.microsoft.com/en-us/graph/add-properties-profilecard.  </p>
 <hr />
 <p><strong>Q: Is the deprecation of SharePoint-Add-in's affecting PnP Modern Search?</strong></p>

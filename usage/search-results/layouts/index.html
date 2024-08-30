@@ -400,6 +400,18 @@
   
 
           
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../v3/" class="md-nav__link">
+        Version 3
+      </a>
+    </li>
+  
+
+          
         </ul>
       </nav>
     </li>
@@ -1268,7 +1280,7 @@
 </tbody>
 </table>
 <h3 id="people">People<a class="headerlink" href="#people" title="Permanent link">&para;</a></h3>
-<p>The 'people' layout display a list of persons with additional information. Typically, this layout is well suited for a people directory.</p>
+<p>The 'people' layout displays a list of persons with additional information. Typically, this layout is well suited for a people directory.</p>
 <p><img alt="&quot;People layout&quot;" class="center" src="../../../assets/webparts/search-results/layouts/people_layout.png" /></p>
 <p>By default, the user profile pictures are fetched from the SharePoint User Profile Service. If your user pictures are stored in Active Directoy, make sure you synchronized them with SharePoint User Profile Service. Otherwise, a placeholder image will be displayed.</p>
 <table>
@@ -1282,7 +1294,7 @@
 <tbody>
 <tr>
 <td><strong>Manage people fields</strong></td>
-<td>Allows you to define you own values for people placeholder fields. <br><p align="center"><a href="../../../assets/webparts/search-results/layouts/manage_people_fields.png"><img alt="&quot;Manage people fields&quot;" src="../../../assets/webparts/search-results/layouts/manage_people_fields.png" /></a></p>As a field value, you can choose either a field property value (from the list or as free text) and without any transformation or use an Handlebars expression by clicking on the checkbox next to it. In this case, all helpers from the main template are available. Also, if the field doesn't have the <strong>'Allow HTML'</strong> indication flag enabled, it means the value will be always interpreted as text, regardless if you set an HTML value. Otherwise, your value will be interpreted as HTML for those fields (ex: '<em>Primary text</em>' placeholder field). For HTML fields you can use the special variable <code>@root.theme</code> to use theme colors (ex: <code>@root.theme.palette.themePrimary</code>) or <code>@root.slots.&lt;SlotName&gt;</code> to access slot value. If you don't set a value for those fields (i.e an empty value), they won't appear in the UI.</br></td>
+<td>Allows you to define you own values for people placeholder fields. <br><p align="center"><a href="../../../assets/webparts/search-results/layouts/manage_people_fields.png"><img alt="&quot;Manage people fields&quot;" src="../../../assets/webparts/search-results/layouts/manage_people_fields.png" /></a></p>As a field value, you can choose either a field property value (from the list or as free text) and without any transformation or use an Handlebars expression by clicking on the checkbox next to it. In this case, all helpers from the main template are available. Also, if the field doesn't have the <strong>'Allow HTML'</strong> indication flag enabled, it means the value will be always interpreted as text, regardless if you set an HTML value. Otherwise, your value will be interpreted as HTML for those fields (ex: '<em>Primary text</em>' placeholder field). For HTML fields you can use the special variable <code>@root.theme</code> to use theme colors (ex: <code>@root.theme.palette.themePrimary</code>) or <code>@root.slots.&lt;SlotName&gt;</code> to access slot value. If you don't set a value for those fields (i.e an empty value), they won't appear in the UI.<br><br>The <em>UPN</em>-field is necessary for displaying the native SharePoint persona card (LPC) on hover. If it contains an empty value, the persona card will not appear. If it contains an invalid value (e.g. a non-existing UPN), an empty persona card will be shown.</br></td>
 <td></td>
 </tr>
 <tr>

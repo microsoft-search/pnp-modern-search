@@ -16,7 +16,7 @@
     
     
       
-        <title>PnP Modern Search v3 - PnP Modern Search (v4)</title>
+        <title>Version 3 - PnP Modern Search (v4)</title>
       
     
     
@@ -94,7 +94,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              PnP Modern Search v3
+              Version 3
             
           </span>
         </div>
@@ -166,13 +166,15 @@
         
   
   
+    
+  
 
 
   
   
   
     <li class="md-tabs__item">
-      <a href=".." class="md-tabs__link">
+      <a href=".." class="md-tabs__link md-tabs__link--active">
         Getting Started
       </a>
     </li>
@@ -308,12 +310,14 @@
 
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_1" type="checkbox" id="__nav_1" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_1" type="checkbox" id="__nav_1" checked>
       
       <label class="md-nav__link" for="__nav_1">
         Getting Started
@@ -394,6 +398,148 @@
       <a href="../build-the-doc/" class="md-nav__link">
         Building documentation
       </a>
+    </li>
+  
+
+          
+            
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Version 3
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Version 3
+      </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#solution-overview" class="md-nav__link">
+    Solution overview
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#current-version" class="md-nav__link">
+    Current version
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#table-of-contents" class="md-nav__link">
+    Table of contents
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    Summary
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#whats-included" class="md-nav__link">
+    What's included?
+  </a>
+  
+    <nav class="md-nav" aria-label="What's included?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#search-web-parts" class="md-nav__link">
+    Search Web Parts
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#search-extensibility-library" class="md-nav__link">
+    Search extensibility library
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#search-custom-renderer" class="md-nav__link">
+    Search custom renderer
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#search-query-enhancer" class="md-nav__link">
+    Search query enhancer
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#applies-to" class="md-nav__link">
+    Applies to
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#important-notice-on-upgrading-the-solution-from-pre-v2200" class="md-nav__link">
+    Important notice on upgrading the solution from pre v2.2.0.0
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#important-notice-on-upgrading-the-solution-from-pre-v3000" class="md-nav__link">
+    Important notice on upgrading the solution from pre v3.0.0.0
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#disclaimer" class="md-nav__link">
+    Disclaimer
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -934,6 +1080,16 @@
                 
                 
                 <h1 id="pnp-modern-search-v3">PnP Modern Search v3<a class="headerlink" href="#pnp-modern-search-v3" title="Permanent link">&para;</a></h1>
+<div class="admonition important">
+<p class="admonition-title">PnP Modern Search v3.x deprecation</p>
+<p><strong>v4 uses a brand new code architecture and replace the older v3 codebase</strong>. There will be no new features added to v3.x, but we will continue to
+provide bug fixes and minor changes as needed. As v4.x is not yet at feature parity with v3.x, you can still use the v3.x packages to meet your requirements.
+Also not that there is not an auto-upgrade path from v3 to v4 due to the new architecture, so you are perfectly ok
+to stay on the v3 version until v4 provides the features validating your upgrade.
+However, the main focus is on the v4 version, and new search functionality backed by the Microsoft Graph Search API will be v4 only.</p>
+<p><strong>v3 and v4 don't share the same package name, Web Part and solution IDs meaning you can have them side by side on a page if necessary without overlap.</strong></p>
+<p><img alt="&quot;V3 &amp; v4&quot;" class="center" src="./assets/v3_v4.png" /></p>
+</div>
 <h2 id="solution-overview">Solution overview<a class="headerlink" href="#solution-overview" title="Permanent link">&para;</a></h2>
 <p><img alt="Solution demo" src="images/react-search-refiners.gif" /></p>
 <h2 id="current-version">Current version<a class="headerlink" href="#current-version" title="Permanent link">&para;</a></h2>
@@ -1016,6 +1172,41 @@
       
         
 <footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+        
+        <a href="../build-the-doc/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Building documentation" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Building documentation
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../usage/search-results/" class="md-footer__link md-footer__link--next" aria-label="Next: Usage" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Usage
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
   
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">

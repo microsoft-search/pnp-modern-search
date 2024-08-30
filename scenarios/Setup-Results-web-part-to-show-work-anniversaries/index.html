@@ -398,6 +398,18 @@
   
 
           
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../v3/" class="md-nav__link">
+        Version 3
+      </a>
+    </li>
+  
+
+          
         </ul>
       </nav>
     </li>
@@ -888,8 +900,8 @@ Grab the script here . It will create a few Site Columns and a Content type on t
 The Add-UserDataToList function will query the UPA for accounts and write the data we need to the list.</p>
 <p>Hit the Reindex site in the site collections Search and Offline Availability section for the site columns to be picked up by search.</p>
 <p>Map the crawled properties to a couple of RefinableDates. If possible it is recommended to make this mapping on the tenant level as it ensures that you can use them in your entire tenant. 
-<img alt="mapping birthdaythisyear and hiredatethisyear" src="../assets/Setup-Results-web-part-to-show-work-anniversaries/mapping2.png" />
-Find the Content Type ID of the Content type created by the script.</p>
+<img alt="mapping birthdaythisyear and hiredatethisyear" src="../assets/Setup-Results-web-part-to-show-work-anniversaries/mapping2.png" /></p>
+<p>Find the Content Type ID of the Content type created by the script.</p>
 <p>Add a Results web part, name it "Todays work anniversaries"</p>
 <p>Set the Query template to: </p>
 <p><em>Contenttypeid:0x01009290F0FA40E7CB42B55D6D96F897262B* RefinableDate12=Today</em></p>
