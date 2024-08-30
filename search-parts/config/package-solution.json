@@ -54,6 +54,10 @@
             },
             {
                 "resource": "Microsoft Graph",
+                "scope": "Chat.ReadWrite"
+            },
+            {
+                "resource": "Microsoft Graph",
                 "scope": "ChannelMessage.Read.All"
             },
             {
