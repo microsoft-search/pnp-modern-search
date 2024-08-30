@@ -66,10 +66,12 @@ jobs:
         gulp package-solution --ship
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: pnp-modern-search-parts-${{ steps.gitversion.outputs.semver }}
         path: ${{ github.workspace }}/**/*.sppkg
+        retention-days: 1
+        overwrite: true
         
   release:
     runs-on: ubuntu-latest
@@ -82,9 +84,7 @@ jobs:
         with:
           fetch-depth: 0
       
-      - uses: actions/download-artifact@v3
-        with:
-          name: pnp-modern-search-parts-${{ needs.build.steps.gitversion.outputs.semver }}
+      - uses: actions/download-artifact@v4
     
       - name: Create GitHub release
         uses: ncipollo/release-action@v1
