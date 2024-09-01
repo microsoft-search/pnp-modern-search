@@ -62,7 +62,7 @@ export class DownloadSelectedItemsButtonComponent extends React.Component<IExpor
         return <ActionButton {...buttonProps} 
                   text={strings.Controls.DownloadButtonText}
                   iconProps={downloadIcon}
-                  disabled={this.state.exporting || !this.props.context.selectedKeys || this.props.context.selectedKeys.length === 0 || !onlyDocumentsOrFoldersInCurrentHostSelected || !requiredPropertiesAvailable}
+                  disabled={this.state.exporting || !this._selectedItems || this._selectedItems.length === 0 || !onlyDocumentsOrFoldersInCurrentHostSelected || !requiredPropertiesAvailable}
                   onClick={this._downloadSelectedItems}
                   theme={this.props.themeVariant as ITheme}
                 />;
@@ -72,7 +72,7 @@ export class DownloadSelectedItemsButtonComponent extends React.Component<IExpor
 
       if (this.props.context && this.props.context.selectedKeys && this.props.context.selectedKeys.length > 0) {
 
-        this._selectedItems = this.props.context.selectedKeys.map(key => {
+        this._selectedItems = this.props.context.selectedKeys.filter(key => key.startsWith(this.props.context.paging.currentPageNumber.toString())).map(key => {
           return this.props.items[key.replace(this.props.context.paging.currentPageNumber.toString(), "")];
         });
 
