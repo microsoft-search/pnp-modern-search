@@ -356,11 +356,11 @@ define([], function () {
             ApplyAllFiltersButtonLabel: "Anwenden",
             ClearAllFiltersButtonLabel: "Zurücksetzen",
             FilterNoValuesMessage: "Keine Werte für diesen Filter",
-            OrOperator: "UND",
-            AndOperator: "ODER",
+            OrOperator: "ODER",
+            AndOperator: "UND",
             ComboBoxPlaceHolder: "Wert auswählen",
-            UseAndOperatorValues: "Benutze einen ODER Operator zwischen den Werten.",
-            UseOrOperatorValues: "Benutze einen UND Operator zwischen den Werten.",
+            UseAndOperatorValues: "Benutze einen UND Operator zwischen den Werten.",
+            UseOrOperatorValues: "Benutze einen ODER Operator zwischen den Werten.",
             UseValuesOperators: "Wähle einen Operator, der zwischen den Filterwerten angewandt werden soll."
         },
         SuggestionProviders: {
