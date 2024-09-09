@@ -203,6 +203,7 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
                         title: this.properties.title,
                         updateProperty: (value: string) => {
                             this.properties.title = value;
+                            this.render();
                         },
                         className: commonStyles.wpTitle
                     },
