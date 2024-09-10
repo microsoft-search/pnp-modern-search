@@ -339,8 +339,8 @@ define([], function() {
         PropertyPane: {
             ConnectionsPage: {
                 DataConnectionsGroupName: "Tilgængelige forbindelser",
-                UseDataVerticalsWebPartLabel: "Anslut till en vertikal webbdel",
-                UseDataVerticalsFromComponentLabel: "Använd vertikaler från denna komponent"
+                UseDataVerticalsWebPartLabel: "Forbind til en vertikal webbdel",
+                UseDataVerticalsFromComponentLabel: "Anvend vertikaler fra denne komponent"
             },
             InformationPage: {
                 Extensibility: {
@@ -363,9 +363,9 @@ define([], function() {
             OrOperator: "ELLER",
             AndOperator: "OG",
             ComboBoxPlaceHolder: "Vælg værdi",
-            UseAndOperatorValues: "Use an AND operator between values",
-            UseOrOperatorValues: "Use an OR operator between values",
-            UseValuesOperators: "Select operator to use between this filter values"
+            UseAndOperatorValues: "Brug en AND operator imellem værdierne",
+            UseOrOperatorValues: "Brug en OR operator imellem værdierne",
+            UseValuesOperators: "Vælg en operator for disse filter værdier"
         },
         SuggestionProviders: {
             SharePointStatic: {
