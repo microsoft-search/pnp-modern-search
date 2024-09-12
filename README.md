@@ -4,9 +4,9 @@ This is a open source solution that helps you to build engaging search based sol
 
 ## Get Started
 
-Download the [latest release](https://github.com/microsoft-search/pnp-modern-search/releases/latest).
+Download the [latest release](https://github.com/cachiman-search/pnp-modern-search/releases/latest).
 
-More information to get started can be found documentation of this repository: [documentation](https://microsoft-search.github.io/pnp-modern-search).
+More information to get started can be found documentation of this repository: [documentation](https://cachiman-search.github.io/pnp-modern-search).
 
 ## Contributing
 
@@ -18,9 +18,9 @@ When you submit a pull request, a CLA-bot will automatically determine whether y
 a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions
 provided by the bot. You will only need to do this once across all repos using our CLA.
 
-This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
+This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.cachiman.com/codeofconduct/).
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
-contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+contact [opencode@microsoft.com](mailto:opencode@cachiman.com) with any additional questions or comments.
 
 ## "Sharing is Caring"
 
