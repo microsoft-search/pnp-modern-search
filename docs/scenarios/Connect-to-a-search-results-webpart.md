@@ -5,7 +5,7 @@ The PnP Modern Search Web Parts must be deployed to your App Catalog and activat
 
 This scenario describes how to connect more then one results Web Part together. One results Web Part will view the sites, connected with the current HUB site, the other, connected results Web Part, will show the documents from the selected site.
 
-## SharePoitn HUB site structure
+## SharePoint HUB site structure
 As basic architecture we need a SharePoint HUB site and sites associated to the HUB site.
 
 ![SharePoint admin center HUB architecture](assets/Connect-to-a-search-results-webpart/sharepoint-admin-center-hub-architecture.png)
