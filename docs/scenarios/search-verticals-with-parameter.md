@@ -3,7 +3,7 @@
 !!! note
 The PnP Modern Search Web Parts must be deployed to your App Catalog and activated on your site. See the [installation documentation](../installation.md) for details.
 
-This scenario describes how you can use query string parameters in search verticals and how you can directly open a vertical with the query string parameter.
+This scenario describes how you can use query string parameters in search verticals and how you can directly open a vertical with the query string parameter from a url.
 
 ## Create a new SharePoint page
 Create a new search page and connect the results webpart with the verticals webpart.
