@@ -638,32 +638,37 @@ export class TokenService implements ITokenService {
      */
     private replaceCookieTokens(inputString: string): string {
 
-        const cookieRegExp = /\{(?:Cookie)\.(.*?)\}/gi;
+        const cookieRegExp = /\{(?:\?){0,1}(?:Cookie)\.(.*?)\}/gi;
+        let modifiedString = inputString;
         let matches = cookieRegExp.exec(inputString);
 
-        if (matches != null) {
-
-            while (matches !== null) {
-                const cookie = matches[1];
-                inputString = inputString.replace(new RegExp(matches[0], "gi"), this.pageContext ? this.getCookieValue(cookie) : '');
-                matches = cookieRegExp.exec(inputString);
+        while (matches !== null) {
+            const cookieName = matches[1];
+            const cookieValue = this.getCookieValue(cookieName);
+            if (cookieValue) {
+                modifiedString = modifiedString.replace(matches[0], cookieValue);
             }
+            else if (matches[0].includes("?")) {
+                // If Cookie Token is specified like this, {?Cookie.CookieName}, it is removed if the Cookie doesn't exist
+                modifiedString = modifiedString.replace(matches[0], "");
+            }
+            matches = cookieRegExp.exec(inputString);
         }
 
-        return inputString;
+        return modifiedString;
     }
 
     /**
-     * Return the cookie value or '*' if cookie is empty or doesn't exist
+     * Return the cookie value
      * @param cookieName name of the cookie
      */
      private getCookieValue(cookieName: string): string {
         const name = cookieName + "=";
         const decodedCookie = decodeURIComponent(document.cookie);
         const ca = decodedCookie.split(';');
-        let val = ca.filter(cookie => cookie.indexOf(name) > 0)[0]?.split("=")[1];
+        let val = ca.filter(cookie => cookie.includes(name))[0]?.split("=")[1];
         if (!val) {
-            val = '*';
+            val = '';
         }
         return val;
     }
