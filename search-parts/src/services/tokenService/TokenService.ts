@@ -139,6 +139,7 @@ export class TokenService implements ITokenService {
             inputString = this.replaceGroupTokens(inputString);
             inputString = this.replaceLegacyPageContextTokens(inputString);
             inputString = await this.replaceHubTokens(inputString);
+            inputString = this.replaceCookieTokens(inputString);
 
             inputString = inputString.replace(/\{TenantUrl\}/gi, `https://` + window.location.host);
 
@@ -629,6 +630,42 @@ export class TokenService implements ITokenService {
         }
 
         return inputString;
+    }
+
+    /**
+     * Resolve current cookie related tokens
+     * @param inputString the input string containing tokens
+     */
+    private replaceCookieTokens(inputString: string): string {
+
+        const cookieRegExp = /\{(?:Cookie)\.(.*?)\}/gi;
+        let matches = cookieRegExp.exec(inputString);
+
+        if (matches != null) {
+
+            while (matches !== null) {
+                const cookie = matches[1];
+                inputString = inputString.replace(new RegExp(matches[0], "gi"), this.pageContext ? this.getCookieValue(cookie) : '');
+                matches = cookieRegExp.exec(inputString);
+            }
+        }
+
+        return inputString;
+    }
+
+    /**
+     * Return the cookie value or '*' if cookie is empty or doesn't exist
+     * @param cookieName name of the cookie
+     */
+     private getCookieValue(cookieName: string): string {
+        const name = cookieName + "=";
+        const decodedCookie = decodeURIComponent(document.cookie);
+        const ca = decodedCookie.split(';');
+        let val = ca.filter(cookie => cookie.indexOf(name) > 0)[0]?.split("=")[1];
+        if (!val) {
+            val = '*';
+        }
+        return val;
     }
 
     private replaceAndOrOperator(inputString: string) {
