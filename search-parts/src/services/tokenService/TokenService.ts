@@ -139,6 +139,7 @@ export class TokenService implements ITokenService {
             inputString = this.replaceGroupTokens(inputString);
             inputString = this.replaceLegacyPageContextTokens(inputString);
             inputString = await this.replaceHubTokens(inputString);
+            inputString = this.replaceCookieTokens(inputString);
 
             inputString = inputString.replace(/\{TenantUrl\}/gi, `https://` + window.location.host);
 
@@ -629,6 +630,47 @@ export class TokenService implements ITokenService {
         }
 
         return inputString;
+    }
+
+    /**
+     * Resolve current cookie related tokens
+     * @param inputString the input string containing tokens
+     */
+    private replaceCookieTokens(inputString: string): string {
+
+        const cookieRegExp = /\{(?:\?){0,1}(?:Cookie)\.(.*?)\}/gi;
+        let modifiedString = inputString;
+        let matches = cookieRegExp.exec(inputString);
+
+        while (matches !== null) {
+            const cookieName = matches[1];
+            const cookieValue = this.getCookieValue(cookieName);
+            if (cookieValue) {
+                modifiedString = modifiedString.replace(matches[0], cookieValue);
+            }
+            else if (matches[0].includes("?")) {
+                // If Cookie Token is specified like this, {?Cookie.CookieName}, it is removed if the Cookie doesn't exist
+                modifiedString = modifiedString.replace(matches[0], "");
+            }
+            matches = cookieRegExp.exec(inputString);
+        }
+
+        return modifiedString;
+    }
+
+    /**
+     * Return the cookie value
+     * @param cookieName name of the cookie
+     */
+     private getCookieValue(cookieName: string): string {
+        const name = cookieName + "=";
+        const decodedCookie = decodeURIComponent(document.cookie);
+        const ca = decodedCookie.split(';');
+        let val = ca.filter(cookie => cookie.includes(name))[0]?.split("=")[1];
+        if (!val) {
+            val = '';
+        }
+        return val;
     }
 
     private replaceAndOrOperator(inputString: string) {
