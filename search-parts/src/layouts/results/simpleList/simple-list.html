@@ -121,17 +121,31 @@
                                         {{#if (slot item @root.slots.Tags)}}
                                             <pnp-icon data-name="Tag" aria-hidden="true" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-icon>
                                             <div>
-                                                {{#each (split (slot item @root.slots.Tags) ";") as |tag| }}
-                                                <div class="simpletags">
-                                                    {{#with (split (tag) '|')}}
-                                                        {{trim [2]}}
-                                                    <!-- Use this if you want the tags to be displayed as a search link -->
-                                                    <!-- <i class="ms-Icon ms-Icon--MapPin" aria-hidden="true"></i> -->
-                                                    <!-- <a href="?q=Tags:'    {{[2]}}'" data-interception="off">{{[2]}}</a> -->
-                                                    {{/with}}
+
+                                                <!-- If the enableLocalization is on I assume that the Auto[property] is used -->
+                                                {{#if @root.properties.dataSourceProperties.enableLocalization}}
+                                                 
+                                                    {{#each (split (slot item @root.slots.Tags) "|") as |tag| }}
+                                                    <div class="simpletags"> 
+                                                        {{trim tag}}
+                                                    </div>        
+                                                        
+                                                    {{/each}}
                                                     
-                                                </div>
-                                                {{/each}}
+                                                {{else}}    
+                                                    <!-- If the enableLocalization is OFF I assume that the Auto[property] is NOT used -->
+                                                    {{#each (split (slot item @root.slots.Tags) ";") as |tag| }}
+                                                    <div class="simpletags">
+                                                        {{#with (split (tag) '|')}}
+                                                            {{trim [2]}}
+                                                        <!-- Use this if you want the tags to be displayed as a search link -->
+                                                        <!-- <i class="ms-Icon ms-Icon--MapPin" aria-hidden="true"></i> -->
+                                                        <!-- <a href="?q=Tags:'    {{[2]}}'" data-interception="off">{{[2]}}</a> -->
+                                                        {{/with}}
+                                                        
+                                                    </div>
+                                                    {{/each}}
+                                                {{/if}}
                                             </div>
                                         {{/if}}
                                     </div>

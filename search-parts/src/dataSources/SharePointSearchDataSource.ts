@@ -1347,7 +1347,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
 
                         // Create a new property and keep the original value with the original property name
                         // This allow to let the original value accessible in templates 
-                        result[`Auto${res.propertyName}`] = res.termLabels.join(', ');
+                        result[`Auto${res.propertyName}`] = res.termLabels.join('| ');
                     });
                 }
 
