@@ -68,7 +68,7 @@ export class CardsLayout extends BaseLayout<ICardsLayoutProperties> {
 		    <!-- If the enableLocalization is on I assume that the Auto[property] is used -->
             {{#if @root.properties.dataSourceProperties.enableLocalization}}
              
-                {{#each (split (slot item @root.slots.Tags) "|") as |tag| }}
+                {{#each (split (slot item @root.slots.Tags) "ǂǂ") as |tag| }}
              <span class="simpletags">
                     {{trim tag}}
                 
