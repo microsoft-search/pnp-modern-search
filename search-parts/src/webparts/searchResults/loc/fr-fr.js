@@ -54,7 +54,7 @@ define([], function() {
         AdaptiveCardsRenderTypeLabel: "Cartes adaptatives",
         AdaptiveCardsRenderTypeDesc: "Sélectionnez un affichage basé sur des cartes adaptatives JSON",
         Handlebars: {
-          UseMicrosoftGraphToolkit: "Use Microsoft Graph Toolkit",
+          UseMicrosoftGraphToolkit: "Utiliser Microsoft Graph Toolkit",
           ResultTypes: {
             ResultTypeslabel: "Type de résultat",
             ResultTypesDescription: "Ajoutez ici les modèles à utiliser pour les éléments de résultat selon une ou plusieurs conditions supplémentaires. Les conditions sont évaluées dans l’ordre configuré et les modèles externes ont préséance sur les modèles intégrés. Assurez-vous également que les champs de la source des données que vous utilisez sont présents dans la réponse aux données.",
