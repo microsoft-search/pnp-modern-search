@@ -61,7 +61,32 @@ export class CardsLayout extends BaseLayout<ICardsLayoutProperties> {
                                                 [
                                                     { name: strings.Layouts.Cards.Fields.Title, field: 'title', value: '{{slot item @root.slots.Title}}', useHandlebarsExpr: true, supportHtml: false },
                                                     { name: strings.Layouts.Cards.Fields.Location, field: 'location', value: `<a style="color:{{@root.theme.palette.themePrimary}};font-weight:600;font-family:'{{@root.theme.fonts.small.fontFamily}}'" href="{{SPSiteURL}}">{{SiteTitle}}</a>`, useHandlebarsExpr: true, supportHtml: true },
-                                                    { name: strings.Layouts.Cards.Fields.Tags, field: 'tags', value: `<style>\n\t.tags {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\twhite-space: normal;\n\t\tscursor: auto; \n\t}\n\t.tags i { \n\t\tmargin-right: 5px; \n\t}\n\t.tags div {\n\t\tdisplay: flex;\n\t\tflex-wrap: wrap; \n\t\tjustify-content: flex-end; \n\t}\n\t.tags div span {\n\t\ttext-decoration: underline; \n\t\tmargin-right: auto; \n\t}\n\t .simpletags \n\t\{\n\t\tdisplay: inline-block;\n\t\tpadding: 2px 5px;\n\t\tmargin-right: 5px;\n\t\tbackground-color: {{@root.theme.palette.neutralLight}};\n\t\tcolor: {{@root.theme.palette.neutralDark}};\n\t\tborder-radius: 5px;\n\t\tfont-size: 12px;\n\t\}\n</style>\n\n{{#if (slot item @root.slots.Tags)}}\n\t<div class="tags">\n\t\t<pnp-icon data-name="Tag" aria-hidden="true" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-icon>\n\t\t<div>\n\t\t\t{{#each (split (slot item @root.slots.Tags) ";") as |tag| }}\n\t\t\t\t<span class="simpletags">\n\t\t\t\t\t{{#with (split (tag) '|')}}\n\t\t\t\t\t\t{{trim [2]}}\n\t\t\t\t\t{{/with}}\n\t\t\t</span>\n\t\t\t{{/each}}\n\t\t</div>\n\t</div>\n{{/if}}`, useHandlebarsExpr: true, supportHtml: true },
+                                                    { name: strings.Layouts.Cards.Fields.Tags, field: 'tags', value: `<style>\n\t.tags {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\twhite-space: normal;\n\t\tcursor: auto; \n\t}\n\t.tags i { \n\t\tmargin-right: 5px; \n\t}\n\t.tags div {\n\t\tdisplay: flex;\n\t\tflex-wrap: wrap; \n\t\tjustify-content: flex-end; \n\t}\n\t.tags div span {\n\t\ttext-decoration: underline; \n\t\tmargin-right: auto; \n\t}\n\t .simpletags \n\t\{\n\t\tdisplay: inline-block;\n\t\tpadding: 2px 5px;\n\t\tmargin-right: 5px;\n\t\tbackground-color: {{@root.theme.palette.neutralLight}};\n\t\tcolor: {{@root.theme.palette.neutralDark}};\n\t\tborder-radius: 5px;\n\t\tfont-size: 12px;\n\t\}\n</style>\n\n{{#if (slot item @root.slots.Tags)}}
+	<div class="tags">
+		<pnp-icon data-name="Tag" aria-hidden="true" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-icon>
+		<div>
+		    <!-- If the enableLocalization is on I assume that the Auto[property] is used -->
+            {{#if @root.properties.dataSourceProperties.enableLocalization}}
+             
+                {{#each (split (slot item @root.slots.Tags) "ǂǂ") as |tag| }}
+             <span class="simpletags">
+                    {{trim tag}}
+                
+            </span>
+                {{/each}}
+                
+            {{else}}    
+			{{#each (split (slot item @root.slots.Tags) ";") as |tag| }}
+				<span class="simpletags">
+					{{#with (split (tag) '|')}}
+						{{trim [2]}}
+					{{/with}}
+			</span>
+			{{/each}}
+			  {{/if}}
+		</div>
+	</div>
+{{/if}}`, useHandlebarsExpr: true, supportHtml: true },
                                                     { name: strings.Layouts.Cards.Fields.PreviewImage, field: 'previewImage',  value: "{{slot item @root.slots.PreviewImageUrl}}", useHandlebarsExpr: true, supportHtml: false },
                                                     { name: strings.Layouts.Cards.Fields.PreviewUrl, field: 'previewUrl' , value: "{{slot item @root.slots.PreviewUrl}}", useHandlebarsExpr: true, supportHtml: false },
                                                     { name: strings.Layouts.Cards.Fields.Date, field: 'date', value: "{{getDate (slot item @root.slots.Date) 'LL'}}", useHandlebarsExpr: true, supportHtml: false },
