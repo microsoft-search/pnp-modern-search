@@ -1,4 +1,4 @@
-import { BaseDataSource, FilterSortType, FilterSortDirection, ITemplateSlot, BuiltinTemplateSlots, IDataContext, ITokenService, FilterBehavior, PagingBehavior, IDataFilterResult, IDataFilterResultValue, FilterComparisonOperator } from "@pnp/modern-search-extensibility";
+import { BaseDataSource, FilterSortType, FilterSortDirection, ITemplateSlot, BuiltinTemplateSlots, IDataContext, ITokenService, FilterBehavior, PagingBehavior, IDataFilterResult, IDataFilterResultValue, FilterComparisonOperator, IDataFilter } from "@pnp/modern-search-extensibility";
 import { IPropertyPaneGroup, PropertyPaneLabel, IPropertyPaneField, PropertyPaneToggle, PropertyPaneHorizontalRule } from "@microsoft/sp-property-pane";
 import { cloneDeep, isEmpty, find } from '@microsoft/sp-lodash-subset';
 import { MSGraphClientFactory } from "@microsoft/sp-http";
@@ -756,11 +756,11 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             if (dataContext.filters.selectedFilters.length > 1 && dataContext.filters.selectedFilters.filter(selectedFilter => selectedFilter.values.length > 0).length > 1) {
                 const refinementString = DataFilterHelper.buildFqlRefinementString(dataContext.filters.selectedFilters, dataContext.filters.filtersConfiguration, this.moment).join(',');
                 if (!isEmpty(refinementString)) {
-                    aggregationFilters = aggregationFilters.concat([`${dataContext.filters.filterOperator}(${refinementString})`]);
+                    // aggregationFilters = aggregationFilters.concat([`${dataContext.filters.filterOperator}(${refinementString})`]);
                 }
 
             } else {
-                aggregationFilters = aggregationFilters.concat(DataFilterHelper.buildFqlRefinementString(dataContext.filters.selectedFilters, dataContext.filters.filtersConfiguration, this.moment));
+                // aggregationFilters = aggregationFilters.concat(DataFilterHelper.buildFqlRefinementString(dataContext.filters.selectedFilters, dataContext.filters.filtersConfiguration, this.moment));
             }
         }
 
@@ -795,6 +795,9 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                 });
             }
         }
+
+        const filters = this.generateKQLQuery(dataContext.filters.selectedFilters, dataContext.filters.filterOperator === 'or' ? commonStrings.Filters.OrOperator : commonStrings.Filters.AndOperator);
+        queryTemplate = filters ? `${queryTemplate} ${commonStrings.Filters.AndOperator} ${filters}` : queryTemplate;
 
         // Build search request
         let searchRequest: IMicrosoftSearchRequest = {
@@ -858,6 +861,26 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
 
         return searchQuery;
     }
+
+    private generateKQLQuery(filters: IDataFilter[], filterOperator: string): string {
+        let kqlParts = [];
+
+        filters.forEach(filter => {
+            const { filterName, values } = filter;
+
+            if (values && values.length > 0) {
+                const fieldValues = values
+                    .map(value => `${filterName}:"${value.name}"`)
+                    .join(` ${filter.operator === 'or' ? commonStrings.Filters.OrOperator : commonStrings.Filters.AndOperator} `);
+                kqlParts.push(`(${fieldValues})`);
+            }
+        });
+
+        const kqlQuery = kqlParts.length ? `(${kqlParts.join(` ${filterOperator} `)})` : '';
+
+        return kqlQuery;
+    }
+
 
     /**
      * Retrieves data from Microsoft Graph API
