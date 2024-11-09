@@ -84,7 +84,7 @@ export class DataFilterHelper {
      * @param moment The moment.js instance to resolve dates
      * @param encodeTokens If true, encodes the taxonomy refinement tokens in UTF-8 to work with GET requests. Javascript encodes natively in UTF-16 by default.
      */
-    public static buildKqlRefinementString(selectedFilters: IDataFilter[], moment: any, encodeTokens?: boolean): string {
+    public static buildKqlRefinementString(selectedFilters: IDataFilter[], moment: any): string {
         let refinementQueryConditions: string[] = [];
         selectedFilters.forEach(filter => {
 
@@ -93,14 +93,17 @@ export class DataFilterHelper {
             if (values && values.length > 0) {
                 let startDate = null;
                 let endDate = null;
+                let dateOperator = null;
                 const fieldValues = values
                     .map(refinement => {
                         if (moment(refinement.value, moment.ISO_8601, true).isValid()) {
                             if (!startDate && (refinement.operator === FilterComparisonOperator.Geq || refinement.operator === FilterComparisonOperator.Gt)) {
+                                dateOperator = ">=";
                                 startDate = refinement.value;
                             }
 
                             if (!endDate && (refinement.operator === FilterComparisonOperator.Lt || refinement.operator === FilterComparisonOperator.Leq)) {
+                                dateOperator = "<";
                                 endDate = refinement.value;
                             }
                         }
@@ -111,6 +114,11 @@ export class DataFilterHelper {
 
                 if (startDate && endDate) {
                     refinementQueryConditions.push(`${filter.filterName}:${startDate}..${endDate}`);
+                } else if (startDate){
+                    refinementQueryConditions.push(`${filter.filterName}${dateOperator}${startDate}`);
+                }
+                else if (endDate){
+                    refinementQueryConditions.push(`${filter.filterName}${dateOperator}${endDate}`);
                 }
                 else {
                     const joinedFieldValues = fieldValues.length > 1
