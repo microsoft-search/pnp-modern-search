@@ -81,11 +81,56 @@ export class DataFilterHelper {
     /**
      * Build the refinement condition in FQL format
      * @param selectedFilters The selected filter array
-     * @param filtersConfiguration The current filters configuration
      * @param moment The moment.js instance to resolve dates
      * @param encodeTokens If true, encodes the taxonomy refinement tokens in UTF-8 to work with GET requests. Javascript encodes natively in UTF-16 by default.
      */
-    public static buildFqlRefinementString(selectedFilters: IDataFilter[], filtersConfiguration: IDataFilterConfiguration[], moment: any, encodeTokens?: boolean): string[] {
+    public static buildKqlRefinementString(selectedFilters: IDataFilter[], moment: any, encodeTokens?: boolean): string {
+        let refinementQueryConditions: string[] = [];
+        selectedFilters.forEach(filter => {
+
+            const { filterName, values } = filter;
+
+            if (values && values.length > 0) {
+                let startDate = null;
+                let endDate = null;
+                const fieldValues = values
+                    .map(refinement => {
+                        if (moment(refinement.value, moment.ISO_8601, true).isValid()) {
+                            if (!startDate && (refinement.operator === FilterComparisonOperator.Geq || refinement.operator === FilterComparisonOperator.Gt)) {
+                                startDate = refinement.value;
+                            }
+
+                            if (!endDate && (refinement.operator === FilterComparisonOperator.Lt || refinement.operator === FilterComparisonOperator.Leq)) {
+                                endDate = refinement.value;
+                            }
+                        }
+                        else {
+                            return `${filterName}:"${refinement.name}"`;
+                        }
+                    }).filter(c => c);
+
+                if (startDate && endDate) {
+                    refinementQueryConditions.push(`${filter.filterName}:${startDate}..${endDate}`);
+                }
+                else {
+                    const joinedFieldValues = fieldValues.length > 1
+                        ? fieldValues.join(` ${filter.operator === 'or' ? "OR" : "AND"} `)
+                        : fieldValues[0];
+                    refinementQueryConditions.push(`(${joinedFieldValues})`);
+                }
+            }
+        });
+
+        return refinementQueryConditions.join(" OR "); // only used when building aggregation with OR between filters
+    }
+
+    /**
+     * Build the refinement condition in FQL format
+     * @param selectedFilters The selected filter array
+     * @param moment The moment.js instance to resolve dates
+     * @param encodeTokens If true, encodes the taxonomy refinement tokens in UTF-8 to work with GET requests. Javascript encodes natively in UTF-16 by default.
+     */
+    public static buildFqlRefinementString(selectedFilters: IDataFilter[], moment: any, encodeTokens?: boolean): string[] {
 
         let refinementQueryConditions: string[] = [];
 
@@ -93,7 +138,7 @@ export class DataFilterHelper {
 
             let operator: any = filter.operator;
 
-            // Mutli values
+            // Multi values
             if (filter.values.length > 1) {
 
                 let startDate = null;
@@ -108,7 +153,6 @@ export class DataFilterHelper {
                     let value = filterValue.value;
 
                     if (moment(value, moment.ISO_8601, true).isValid()) {
-
                         if (!startDate && (filterValue.operator === FilterComparisonOperator.Geq || filterValue.operator === FilterComparisonOperator.Gt)) {
                             startDate = value;
                             startBehaviour = filterValue.operator === FilterComparisonOperator.Gt ? "GT" : "GE";
