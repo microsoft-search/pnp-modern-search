@@ -637,7 +637,11 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             {
                 slotName: BuiltinTemplateSlots.Id,
                 slotField: 'hitId'
-            }
+            },
+            {
+                slotName: BuiltinTemplateSlots.Author,
+                slotField: 'resource.createdBy.user.displayName'
+            },
         ];
     }
 
