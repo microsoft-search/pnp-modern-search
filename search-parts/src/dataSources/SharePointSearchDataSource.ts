@@ -559,6 +559,10 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
             {
                 slotName: BuiltinTemplateSlots.UserEmail,
                 slotField: 'UserName'
+            },
+            {
+                slotName: BuiltinTemplateSlots.Id,
+                slotField: 'DocId'
             }
         ];
     }
