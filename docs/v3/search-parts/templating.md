@@ -26,7 +26,7 @@ Displays the search results inside a tabular view using the associated Office UI
 
 | Option | Description
 | ------ | ---------------
-| **Manage columns** | Allows you to build you own table view by adding or removing columns dynamically. For each column, you get the following options:<br>![Details list columns](../images/details_list_manage_columns.png)<ul><li>**Column name**: the column name to display.</li><li>**Minimum width in px**: the minimum width of the column.</li><li>**Maximum width in px**: the maximum width of the column.</li><li>**Sortable**: allows you to sort column values alphabetically when the column header is clicked (ascending or descending).</li><li>**Resizable**: allows you to resize the column dynamically in display mode.</li><li>**Multiline**: if the column column should be multiline. By default only ellipsis (...) will be display for larger text.</li><li>**Link to item**: if enabled, wrap the column value with an URL link pointing to the search result item (i.e. Path). This option is especially suitable for the 'Title' column.</li><li>**Column value**: you can choose here either a managed property value (from the list or as free text) without any transformation or use an Handlebars expression by clicking on the checkbox next to it. In this case, all helpers from the main template are available and you can also add you own HTML markup in the column value. For HTML fields you can use the special variable `@themeVariant` to use theme colors (ex: `@themeVariant.palette.themePrimary`)<br>![Handlebars Expression](../images/details_list_hb_expr.png)<br><br>![Handlebars Expression 2](../images/details_list_hb_expr2.png)</ul>
+| **Manage columns** | Allows you to build you own table view by adding or removing columns dynamically. For each column, you get the following options:<br>![Details list columns](../images/details_list_manage_columns.png)<ul><li>**Column name**: the column name to display.</li><li>**Minimum width in px**: the minimum width of the column.</li><li>**Maximum width in px**: the maximum width of the column.</li><li>**Sortable**: allows you to sort column values alphabetically when the column header is clicked (ascending or descending).</li><li>**Resizable**: allows you to resize the column dynamically in display mode.</li><li>**Multiline**: if the column column should be multiline. By default only ellipsis (...) will be display for larger text.</li><li>**Link to item**: if enabled, wrap the column value with an URL link pointing to the search result item (i.e. Path). This option is especially suitable for the 'Title' column.</li><li>**Column value**: you can choose here either a managed property value (from the list or as free text) without any transformation or use an Handlebars expression by clicking on the checkbox next to it. In this case, all helpers from the main template are available and you can also add you own HTML markup in the column value. For HTML fields you can use the special variable `@theme` to use theme colors (ex: `@theme.palette.themePrimary`)<br>![Handlebars Expression](../images/details_list_hb_expr.png)<br><br>![Handlebars Expression 2](../images/details_list_hb_expr2.png)</ul>
 | **Show file icon** | Hide or display the file icon in the first column.
 | **Compact mode** | Display the details list in compact mode. 
 
@@ -54,7 +54,7 @@ Displays search results as cards view using the associated Office UI Fabric [Doc
 
 In order to use the property `IconSrc`, ensure you do not specify a property for `File Extension` to not override the custom IconSrc. A custom icon should be a 16x16 pixel image.
 
-For HTML fields you can use the special variable `@themeVariant` to use theme colors (ex: `@themeVariant.palette.themePrimary`). If you don't set a value for those fields (i.e an empty value), they won't appear in the UI:<br>![HTML Fields](../images/documentcards_html_fields.png)</p>
+For HTML fields you can use the special variable `@theme` to use theme colors (ex: `@theme.palette.themePrimary`). If you don't set a value for those fields (i.e an empty value), they won't appear in the UI:<br>![HTML Fields](../images/documentcards_html_fields.png)</p>
 | **Enable result preview** | If enabled, displays a preview callout when the document card image is clicked.
 | **Show file icon** | Hide or display the file icon in the card.
 | **Compact mode** | Display the cards in compact mode. 
@@ -401,17 +401,17 @@ Notice your template content must be enclosed in a `<content id="template">` tag
 
 ### Work with SharePoint theme
 
-A `themeVariant` variable is available in the root Handlebars context. It contains all current theme information that can use in your CSS classes or inline styles. Example:
+A `theme` variable is available in the root Handlebars context. It contains all current theme information that can use in your CSS classes or inline styles. Example:
 
 ```
 <style>
     .example-themePrimary a {
-        color: {{@root.themeVariant.palette.themePrimary}};
+        color: {{@root.theme.palette.themePrimary}};
     }
 </style>
 ``` 
 
-To see all available values, you can inspect the `themeVariant` objetc using the 'Debug View' layout. Notice the values are udpated dynamically every time you udpate the theme through the UI.
+To see all available values, you can inspect the `theme` objetc using the 'Debug View' layout. Notice the values are udpated dynamically every time you udpate the theme through the UI.
 
 ### Custom code renderers
 

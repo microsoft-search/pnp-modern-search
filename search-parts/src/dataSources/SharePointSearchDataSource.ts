@@ -559,6 +559,10 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
             {
                 slotName: BuiltinTemplateSlots.UserEmail,
                 slotField: 'UserName'
+            },
+            {
+                slotName: BuiltinTemplateSlots.Id,
+                slotField: 'DocId'
             }
         ];
     }
@@ -892,13 +896,13 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
 
                 // Make sure, if we have multiple filters, at least two filters have values to avoid apply an operator ('or','and') on only one condition failing the query.
                 if (dataContext.filters.selectedFilters.length > 1 && dataContext.filters.selectedFilters.filter(selectedFilter => selectedFilter.values.length > 0).length > 1) {
-                    const refinementString = DataFilterHelper.buildFqlRefinementString(dataContext.filters.selectedFilters, dataContext.filters.filtersConfiguration, this.moment).join(',');
+                    const refinementString = DataFilterHelper.buildFqlRefinementString(dataContext.filters.selectedFilters, this.moment).join(',');
                     if (!isEmpty(refinementString)) {
                         refinementFilters = refinementFilters.concat([`${dataContext.filters.filterOperator}(${refinementString})`]);
                     }
 
                 } else {
-                    refinementFilters = refinementFilters.concat(DataFilterHelper.buildFqlRefinementString(dataContext.filters.selectedFilters, dataContext.filters.filtersConfiguration, this.moment));
+                    refinementFilters = refinementFilters.concat(DataFilterHelper.buildFqlRefinementString(dataContext.filters.selectedFilters, this.moment));
                 }
             }
 
@@ -1347,7 +1351,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
 
                         // Create a new property and keep the original value with the original property name
                         // This allow to let the original value accessible in templates 
-                        result[`Auto${res.propertyName}`] = res.termLabels.join(', ');
+                        result[`Auto${res.propertyName}`] = res.termLabels.join('ǂǂ ');
                     });
                 }
 
