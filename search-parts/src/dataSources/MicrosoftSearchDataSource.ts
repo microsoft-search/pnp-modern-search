@@ -755,16 +755,17 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
 
         // Build aggregation filters
         if (dataContext.filters.selectedFilters.length > 0) {
-
-            // Make sure, if we have multiple filters, at least two filters have values to avoid apply an operator ('or','and') on only one condition failing the query.
-            if (dataContext.filters.selectedFilters.length > 1 && dataContext.filters.selectedFilters.filter(selectedFilter => selectedFilter.values.length > 0).length > 1) {
-                const refinementString = DataFilterHelper.buildFqlRefinementString(dataContext.filters.selectedFilters, dataContext.filters.filtersConfiguration, this.moment).join(',');
-                if (!isEmpty(refinementString)) {
-                    aggregationFilters = aggregationFilters.concat([`${dataContext.filters.filterOperator}(${refinementString})`]);
+            if (dataContext.filters.filterOperator === 'and') {
+                // Make sure, if we have multiple filters, at least two filters have values to avoid apply an operator ('or','and') on only one condition failing the query.
+                const refinementStrings = DataFilterHelper.buildFqlRefinementString(dataContext.filters.selectedFilters, this.moment);
+                if (!isEmpty(refinementStrings)) {
+                    aggregationFilters = aggregationFilters.concat(refinementStrings);
                 }
-
             } else {
-                aggregationFilters = aggregationFilters.concat(DataFilterHelper.buildFqlRefinementString(dataContext.filters.selectedFilters, dataContext.filters.filtersConfiguration, this.moment));
+                const refinementStrings = DataFilterHelper.buildKqlRefinementString(dataContext.filters.selectedFilters, this.moment);
+                if (!isEmpty(refinementStrings)) {
+                    queryTemplate = refinementStrings ? `${queryTemplate} AND ${refinementStrings}` : queryTemplate;
+                }
             }
         }
 
