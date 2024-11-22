@@ -1,6 +1,6 @@
 import { ILayoutDefinition, ILayout, BaseLayout, LayoutRenderType } from '@pnp/modern-search-extensibility';
 import { BuiltinLayoutsKeys } from '../layouts/AvailableLayouts';
-import { ServiceKey, ServiceScope, Text } from '@microsoft/sp-core-library';
+import { DisplayMode, ServiceKey, ServiceScope, Text } from '@microsoft/sp-core-library';
 import { ServiceScopeHelper } from './ServiceScopeHelper';
 import { IPropertyPaneChoiceGroupOption } from '@microsoft/sp-property-pane';
 import ISearchFiltersWebPartProps from '../webparts/searchFilters/ISearchFiltersWebPartProps';
@@ -19,7 +19,7 @@ export class LayoutHelper {
      * @param layoutDefinitions the available layout definitions
      * @returns the data source provider instance
      */
-    public static async getLayoutInstance(rootScope: ServiceScope, context: WebPartContext, properties: ISearchFiltersWebPartProps | ISearchResultsWebPartProps, layoutKey: string, layoutDefinitions: ILayoutDefinition[]): Promise<ILayout> {
+    public static async getLayoutInstance(rootScope: ServiceScope, context: WebPartContext, properties: ISearchFiltersWebPartProps | ISearchResultsWebPartProps, layoutKey: string, layoutDefinitions: ILayoutDefinition[], displayMode: DisplayMode): Promise<ILayout> {
 
         let layout: ILayout = undefined;
         let serviceKey: ServiceKey<ILayout> = undefined;
@@ -233,6 +233,7 @@ export class LayoutHelper {
 
                         layout.properties = properties.layoutProperties; // Web Parts using layouts must define this sub property
                         layout.context = context;
+                        layout.editMode = displayMode === DisplayMode.Edit;
                         await layout.onInit();
                         resolve(layout);
                     }

@@ -15,6 +15,11 @@ export interface ILayout {
     context: WebPartContext;
 
     /**
+    * Check if web part is in display or edit mode
+    */
+    editMode: boolean;
+
+    /**
      * Method called during the Web Part initialization.
      */
     onInit(): void | Promise<void>;
