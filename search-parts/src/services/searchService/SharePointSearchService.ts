@@ -226,6 +226,7 @@ export class SharePointSearchService implements ISharePointSearchService {
             if (response.ok) {
 
                 const searchResponse: ISharePointSearchResponse = await response.json();
+                if (searchResponse.PrimaryQueryResult) {
                 const refinementResultsRows = searchResponse.PrimaryQueryResult.RefinementResults;
                 const refinementRows: any = refinementResultsRows ? refinementResultsRows.Refiners : [];
 
@@ -237,7 +238,7 @@ export class SharePointSearchService implements ISharePointSearchService {
                         });
                     });
                 });
-
+            }
             } else {
                 throw new Error(`${response['statusMessage']}`);
             }
