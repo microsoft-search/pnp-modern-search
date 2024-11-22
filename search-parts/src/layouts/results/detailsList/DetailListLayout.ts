@@ -125,21 +125,20 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
         this.properties.additionalGroupByFields = this.properties.additionalGroupByFields ? this.properties.additionalGroupByFields : [];
         this.properties.groupsCollapsed = this.properties.groupsCollapsed !== null && this.properties.groupsCollapsed !== undefined ? this.properties.groupsCollapsed : true;
 
-        const { PropertyFieldCollectionData, CustomCollectionFieldType } = await import(
+        if (this.editMode) {
+          const { PropertyFieldCollectionData, CustomCollectionFieldType } = await import(
             /* webpackChunkName: 'pnp-modern-search-results-detailslist-layout' */
             '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData'
-        );
-        this._propertyFieldCollectionData = PropertyFieldCollectionData;
+          );
+          this._propertyFieldCollectionData = PropertyFieldCollectionData;
+          this._customCollectionFieldType = CustomCollectionFieldType;
 
-        if (this.editMode) {
           const { PropertyPaneWebPartInformation } = await import(
             /* webpackChunkName: 'pnp-modern-search-property-pane' */
             '@pnp/spfx-property-controls/lib/PropertyPaneWebPartInformation'
           );
           this._propertyPaneWebPartInformation = PropertyPaneWebPartInformation;
         }
-
-        this._customCollectionFieldType = CustomCollectionFieldType;
     }
 
     public getPropertyPaneFieldsConfiguration(availableFields: string[], dataContext?: IDataContext): IPropertyPaneField<any>[] {
