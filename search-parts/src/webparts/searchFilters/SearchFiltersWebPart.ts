@@ -165,7 +165,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
 
         // Get and initialize layout instance if different (i.e avoid to create a new instance every time)
         if (this.lastLayoutKey !== this.properties.selectedLayoutKey) {
-            this.layout = await LayoutHelper.getLayoutInstance(this.webPartInstanceServiceScope, this.context, this.properties, this.properties.selectedLayoutKey, this.availableLayoutDefinitions);
+            this.layout = await LayoutHelper.getLayoutInstance(this.webPartInstanceServiceScope, this.context, this.properties, this.properties.selectedLayoutKey, this.availableLayoutDefinitions, this.displayMode);
             this.lastLayoutKey = this.properties.selectedLayoutKey;
         }
 

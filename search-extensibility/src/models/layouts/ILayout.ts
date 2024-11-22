@@ -17,7 +17,7 @@ export interface ILayout {
     /**
     * Check if web part is in display or edit mode
     */
-    editMode: boolean
+    editMode: boolean;
 
     /**
      * Method called during the Web Part initialization.
