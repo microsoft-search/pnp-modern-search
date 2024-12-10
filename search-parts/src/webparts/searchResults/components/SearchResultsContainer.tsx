@@ -113,7 +113,8 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
 
         renderTemplate = <SelectionZone
             selection={this._selection}
-            selectionMode={selectionMode}>
+            selectionMode={selectionMode}
+            isSelectedOnFocus={false}>
             <TemplateRenderer
                 templateContent={templateContent}
                 templateContext={templateContext}
