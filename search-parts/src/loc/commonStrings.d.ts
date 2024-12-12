@@ -149,6 +149,8 @@ declare interface ICommonStrings {
         ApplyQueryTemplateBtnText: string;
         UseBetaEndpoint: string;
         TrimDuplicates: string;
+        showSPEmbeddedContentLabel: string;
+        showMSArchivedContentLabel: string;
         CollapseProperties: {
           EditCollapsePropertiesLabel: string;
           CollapsePropertiesDescription: string;

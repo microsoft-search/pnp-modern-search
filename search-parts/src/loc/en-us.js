@@ -150,6 +150,8 @@ define([], function() {
                 ApplyQueryTemplateBtnText: "Apply",
                 UseBetaEndpoint: "Use beta endpoint",
                 TrimDuplicates: "Trim duplicates",
+                showSPEmbeddedContentLabel: "Show SharePoint Embedded (hidden) in search results",
+                showMSArchivedContentLabel: "Show MS Archived content in search results",
                 CollapseProperties: {
                     EditCollapsePropertiesLabel: "Edit collapse settings",
                     CollapsePropertiesDescription: "Specify the collapse settings for the search results. You can either select a field from the dropdown list (only if the data source data have already be fetched) or type your own custom value (press 'Enter' to save your entry)",

@@ -27,6 +27,9 @@ export interface IMicrosoftSearchRequest {
     };
     trimDuplicates?: boolean;
     collapseProperties?: ICollapseProperty[];
+    sharePointOneDriveOptions:{
+        includeHiddenContent: boolean;
+    };
 }
 
 export interface ISearchSortProperty {
