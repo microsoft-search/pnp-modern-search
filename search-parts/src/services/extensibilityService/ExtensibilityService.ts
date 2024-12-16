@@ -79,6 +79,7 @@ export class ExtensibilityService {
 
             return extensibilityLibraries;
 
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (error) {
 
             //Resovles empty array

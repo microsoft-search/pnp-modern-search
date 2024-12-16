@@ -9,7 +9,6 @@ import { BaseWebComponent, BuiltinTemplateSlots, ExtensibilityConstants, ISortIn
 import { groupBy, sortBy, findIndex, isEmpty } from "@microsoft/sp-lodash-subset";
 import { FileIcon } from '../components/FileIconComponent';
 import { DetailsListLayoutMode, SelectionMode, IColumn, IGroup, IDetailsRowProps, DetailsRow, IDetailsHeaderProps, CheckboxVisibility, IDetailsRowCheckProps, DetailsRowCheck, IDetailsCheckboxProps, IDetailsListStyles, ConstrainMode, ISelectionZoneProps, IDetailsList } from '@fluentui/react/lib/DetailsList';
-import { DEFAULT_CELL_STYLE_PROPS, DEFAULT_ROW_HEIGHTS } from '@fluentui/react/lib/components/DetailsList/DetailsRow.styles';
 import { ISearchResultsTemplateContext } from '../models/common/ITemplateContext';
 import { ObjectHelper } from '../helpers/ObjectHelper';
 import * as DOMPurify from 'dompurify';
@@ -22,6 +21,17 @@ import { Constants } from '../common/Constants';
 
 const DEFAULT_SHIMMER_HEIGHT = 7;
 const SHIMMER_LINE_VS_CELL_WIDTH_RATIO = 0.95;
+
+const DEFAULT_CELL_STYLE_PROPS = {
+  cellLeftPadding: 12,
+  cellRightPadding: 8,
+  cellExtraRightPadding: 24,
+};
+
+const DEFAULT_ROW_HEIGHTS = {
+  rowHeight: 42,
+  compactRowHeight: 32,
+};
 
 const classNames = mergeStyleSets({
     fileIconHeaderIcon: {

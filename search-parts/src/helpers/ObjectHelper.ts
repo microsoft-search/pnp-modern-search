@@ -50,6 +50,7 @@ export class ObjectHelper {
         // Test if the provided path is a valid predicate https://www.npmjs.com/package/jspath#documentation
         try {
             jspath.compile(`.${path}`);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (e) {
             isValidPredicate = false;
         }
@@ -83,6 +84,7 @@ export class ObjectHelper {
                 // Use the default behavior of the toString() method. Arrays of simple values (string, integer, etc.) will be separated by a comma (',')
                 return value.toString();                                  
             
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             } catch (error) {
                 // Case when unexpected string or tokens are passed in the path
                 return null;

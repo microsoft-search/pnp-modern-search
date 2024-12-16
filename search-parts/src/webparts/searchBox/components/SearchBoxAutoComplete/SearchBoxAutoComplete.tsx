@@ -384,6 +384,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
             if (parentStackingContext) {
                 parentStackingContext.classList.add(styles.parentStackingCtx);
             }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (error) { }
 
         let searchBoxRef = React.createRef<ISearchBox>();

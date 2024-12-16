@@ -10,6 +10,7 @@ export class DynamicPropertyHelper {
         if (property.isDisposed) return undefined;
         try {
             return property.tryGetValue();
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (error) {
             return undefined;
         }
@@ -24,6 +25,7 @@ export class DynamicPropertyHelper {
         if (property.isDisposed) return undefined;
         try {
             return property.tryGetValues();
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (error) {
             return undefined;
         }
@@ -34,6 +36,7 @@ export class DynamicPropertyHelper {
         if (property.isDisposed) return undefined;
         try {
             return property.tryGetSource();
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (error) {
             return undefined;
         }
