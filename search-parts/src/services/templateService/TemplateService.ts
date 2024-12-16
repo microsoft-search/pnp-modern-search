@@ -759,6 +759,7 @@ export class TemplateService implements ITemplateService {
                     }
                     return this.moment(new Date(date)).format(format);
                 }
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             } catch (error) {
                 return date;
             }
@@ -935,6 +936,7 @@ export class TemplateService implements ITemplateService {
 
         // Initialize the serialization context for the Adaptive Cards, if needed
         if (!this._serializationContext) {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const { Action, CardElement, CardObjectRegistry, GlobalRegistry, SerializationContext } = await import(
                 /* webpackChunkName: 'pnp-modern-search-adaptive-cards-bundle' */
                 'adaptivecards'
@@ -948,7 +950,9 @@ export class TemplateService implements ITemplateService {
 
             this._serializationContext = new SerializationContext();
 
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             let actionType: InstanceType<typeof Action>
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             let cardElementType: InstanceType<typeof CardElement>;
 
             let elementRegistry = new CardObjectRegistry<typeof cardElementType>();
@@ -994,7 +998,9 @@ export class TemplateService implements ITemplateService {
 
                 this._serializationContext = new SerializationContext();
 
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 const CardElementType = this._adaptiveCardsNS.CardElement;
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 const ActionElementType = this._adaptiveCardsNS.Action;
 
                 let elementRegistry = new CardObjectRegistry<InstanceType<typeof CardElementType>>();

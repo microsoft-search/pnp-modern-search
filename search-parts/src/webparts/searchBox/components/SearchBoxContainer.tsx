@@ -135,6 +135,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
             try {
                 query = decodeURIComponent(this.props.inputValue);
 
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             } catch (error) {
                 // Likely issue when q=%25 in spfx
             }

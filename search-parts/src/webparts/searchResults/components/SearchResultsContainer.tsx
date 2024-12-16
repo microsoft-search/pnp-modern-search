@@ -510,6 +510,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
 
         try {
             adaptiveCardsHostConfig = JSON.parse(this.props.properties.adaptiveCardsHostConfig);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (error) {
             Log.warn(LogSource, `Invalid host config provided. Refer to https://docs.microsoft.com/en-us/adaptive-cards/rendering-cards/host-config for more details`, this.props.serviceScope);
         }

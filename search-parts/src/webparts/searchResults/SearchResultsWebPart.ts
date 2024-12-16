@@ -930,6 +930,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                     inputQueryFromDataSource = decodeURIComponent(inputQueryFromDataSource);
                 }
 
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             } catch (error) {
                 // Likely issue when q=%25 in spfx
             }

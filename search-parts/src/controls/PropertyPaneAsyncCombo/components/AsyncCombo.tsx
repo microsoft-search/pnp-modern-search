@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { ComboBox, IComboBoxOption, IComboBoxProps, IComboBox, SelectableOptionMenuItemType, Label } from '@fluentui/react';
-import { Spinner, SpinnerSize } from '@fluentui/react/lib/components/Spinner';
+import { ComboBox, IComboBoxOption, IComboBoxProps, IComboBox, SelectableOptionMenuItemType, Label, Spinner, SpinnerSize } from '@fluentui/react';
 import { isEqual, isEmpty } from '@microsoft/sp-lodash-subset';
 import update from 'immutability-helper';
 import { IAsyncComboProps } from "./IAsyncComboProps";
