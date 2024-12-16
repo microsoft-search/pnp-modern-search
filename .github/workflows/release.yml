@@ -35,8 +35,8 @@ jobs:
 
       - name: Setup GitVersion
         uses: gittools/actions/gitversion/setup@v3.0.0
-        with:
-          versionSpec: "6.x"
+#        with:
+#          versionSpec: "6.x"
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
