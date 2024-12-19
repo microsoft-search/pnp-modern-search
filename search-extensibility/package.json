@@ -1,7 +1,7 @@
 {
     "name": "@pnp/modern-search-extensibility",
     "description": "Base library for creating PnP Modern Search extensions",
-    "version": "1.20.0",
+    "version": "1.20.1",
     "private": false,
     "main": "lib/index.js",
     "types": "lib/index.d.ts",
