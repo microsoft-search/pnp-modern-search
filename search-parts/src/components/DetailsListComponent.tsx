@@ -416,7 +416,7 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
                 
                             if (this._templateContext.properties.useMicrosoftGraphToolkit && this.props.templateService.MgtCustomElementHelper.isDisambiguated) {
                               allStyles.forEach((style, index) => {
-                                allStyles[index] = this.props.templateService.MgtCustomElementHelper.applyDisambiguatedMgtPrefixIfNeeded(style);
+                                allStyles[index] = this.props.templateService.applyDisambiguatedMgtPrefixIfNeeded(style);
                               });
                             }
                 
