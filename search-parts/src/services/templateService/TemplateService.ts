@@ -243,6 +243,12 @@ export class TemplateService implements ITemplateService {
       });
     }
 
+    public applyDisambiguatedMgtPrefixIfNeeded(elementName: string): string {
+        const prefix = this.MgtCustomElementHelper.prefix;
+        const regex = new RegExp(`mgt-(?!${prefix.slice(4)})`, 'g');
+        return elementName?.replace(regex, `${prefix}-`);
+    }
+
     /**
      * Gets the template HTML markup in the full template content
      * @param templateContent the full template content
@@ -1020,7 +1026,8 @@ export class TemplateService implements ITemplateService {
                 text = text.replace(/<c0\>/g, "<strong>").replace(/<\/c0\>/g, "</strong>").replace(/<ddd\/>/g, "&#8230;");
 
                 // We use Markdown here to render HTML and use web components
-                const rawHtml = this._markdownIt.render(text).replace(/\&lt;/g, '<').replace(/\&gt;/g, '>');
+                let rawHtml = this._markdownIt.render(text).replace(/\&lt;/g, '<').replace(/\&gt;/g, '>');
+                rawHtml = this.applyDisambiguatedMgtPrefixIfNeeded(rawHtml);
                 result.outputHtml = domPurify.sanitize(rawHtml);
                 result.didProcess = true;
             };
