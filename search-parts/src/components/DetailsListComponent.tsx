@@ -828,12 +828,7 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
             {
                 data: {
                     root: {
-                        slots: this._templateContext.slots,
-                        theme: this._templateContext.theme,
-                        context: this._templateContext.context,
-                        instanceId: this._templateContext.instanceId,
-                        properties: this._templateContext.properties,
-                        utils: this._templateContext.utils
+                      ...this._templateContext
                     }
                 }
             }
