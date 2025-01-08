@@ -520,6 +520,10 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         // Web components are only defined once.
         await this.templateService.registerWebComponents(this.availableWebComponentDefinitions, this.instanceId);
 
+        if(this.properties.layoutProperties?.showPersonaCard){
+            this.properties.useMicrosoftGraphToolkit = true;
+        }
+
         // Initializes MS Graph Toolkit
         if (this.properties.useMicrosoftGraphToolkit) {
             await loadMsGraphToolkit(this.context);
