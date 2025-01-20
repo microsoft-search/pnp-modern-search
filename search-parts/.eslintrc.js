@@ -298,7 +298,7 @@ module.exports = {
             }
         },
         {
-            files: ['node_modules/.pnpm/@lit+task@1.0.2/node_modules/@lit/task/task.d.ts'],
+            files: ['**/@lit/**/task.d.ts'],
             rules: {
                 '@typescript-eslint/ban-ts-comment': [
                     'error',
