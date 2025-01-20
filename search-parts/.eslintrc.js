@@ -295,7 +295,21 @@ module.exports = {
                 'no-case-declarations': 0,
                 '@typescript-eslint/no-empty-function': 0,
                 '@typescript-eslint/ban-ts-comment': 0
-
+            }
+        },
+        {
+            files: ['node_modules/.pnpm/@lit+task@1.0.2/node_modules/@lit/task/task.d.ts'],
+            rules: {
+                '@typescript-eslint/ban-ts-comment': [
+                    'error',
+                    {
+                        'ts-ignore': 'allow-with-description',
+                        'minimumDescriptionLength': 10
+                    }
+                ],
+                '@typescript-eslint/no-empty-function': 'off',
+                '@typescript-eslint/no-unused-vars': 'off',
+                '@typescript-eslint/no-explicit-any': 'off'
             }
         },
         {
