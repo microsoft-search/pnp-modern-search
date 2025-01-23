@@ -34,7 +34,7 @@ define([], function() {
                 FilterTypeStaticFilter: "Dit filtersjabloon gedraagt zich als een statisch filter en stuurt enkel geselecteerde waarden welke vooraf gedefinieerd zijn naar de verbonden databron.  Filterwaarden afkomstig uit de verbonden databron worden buiten beschouwing gelaten.",
                 CustomizeFiltersBtnLabel: "Bewerk",
                 CustomizeFiltersHeader: "Bewerk filters",
-                CustomizeFiltersDescription: "Configureer de zoekfilters door rijen toe te voegen of te verwijderen. Je kunt velden uit de resultaten van de databron selecteren (wanneer al geselecteerd) of statische waarden gebruiken voor filters.",
+                CustomizeFiltersDescription: "Configureer de zoekfilters door rijen toe te voegen of te verwijderen. Je kunt velden uit de resultaten van de databron selecteren (wanneer al geselecteerd) of statische waarden gebruiken voor filters. For more details see https://microsoft-search.github.io/pnp-modern-search/usage/search-filters/#filter-settings",
                 CustomizeFiltersFieldLabel: "Pas filters aan",
                 ShowCount: "Toon aantallen",
                 Operator: "Bewerking tussen waarden",
