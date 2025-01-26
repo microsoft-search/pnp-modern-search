@@ -118,6 +118,14 @@ export class FilterSearchBox extends React.Component<IFilterSearchBoxProps, IFil
             },
             onRenderItem: (props) => {
 
+                let propsitemname:string = props.item.name;
+                if(props.item.name.indexOf("i:0#.f") > -1) 
+                    {
+                        propsitemname = props.item.name.split('|')[1]
+                        // propsitemname = "testing"
+                    }
+                    
+
                 return <div
                     className={styles.tagItem}
                     style={
@@ -133,7 +141,9 @@ export class FilterSearchBox extends React.Component<IFilterSearchBoxProps, IFil
                         className={styles.tagItemText}
                         aria-label={props.item.name}
                     >
-                        {props.item.name}
+                        {propsitemname}
+                        
+                        
                     </Text>
                     <IconButton
                         className={styles.tagRemoveBtn}
@@ -142,7 +152,7 @@ export class FilterSearchBox extends React.Component<IFilterSearchBoxProps, IFil
                         onClick={() => {
 
                             const filterValue: IDataFilterValueInfo = {
-                                name: props.item.name,
+                                name: "props.item.name",
                                 value: props.item.key.toString(),
                                 selected: false
                             };

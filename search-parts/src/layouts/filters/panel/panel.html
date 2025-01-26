@@ -92,6 +92,46 @@
                                             </pnp-filtercombobox>
                                         </div>
                                 {{else}}
+                                    {{#eq filter.selectedTemplate 'PeopleTemplate'}}
+                                            {{#if filter.isMulti}}
+                                            <div class="filter--option">
+                                                <pnp-filteroperator 
+                                                    data-instance-id="{{@root.instanceId}}"
+                                                    data-filter-name="{{filter.filterName}}" 
+                                                    data-operator="{{filter.operator}}" 
+                                                    data-theme-variant="{{JSONstringify @root.theme}}"
+                                                ></pnp-filteroperator>
+                                            </div>
+                                        {{/if}}
+                            
+                                        <div class="filter--option">
+                                            <pnp-filtersearchbox data-filter="{{JSONstringify filter}}" data-instance-id="{{@root.instanceId}}" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-filtersearchbox>
+                                        </div>
+
+                                        <div class="filter--values-list">
+                                            {{#each filter.values}}
+                                            
+                                                <!-- <div title="{{#with (split name '|')}}{{[1]}}({{[0]}}){{/with}} {{#if ../showCount}}({{count}}){{/if}}" class="filter--value"> -->
+                                                    <div title="{{#with (split name '|')}}{{[1]}}{{/with}} {{#if ../showCount}}({{count}}){{/if}}" class="filter--value">
+                                                    <pnp-filtercheckbox 
+                                                        data-instance-id="{{@root.instanceId}}" 
+                                                        data-filter-name="{{filter.filterName}}" 
+                                                        data-name= "{{#with (split name '|')}}{{[1]}}{{/with}}" 
+                                                        data-value="{{value}}" 
+                                                        data-selected="{{selected}}" 
+                                                        data-disabled="{{disabled}}" 
+                                                        data-count="{{count}}"
+                                                        data-is-multi="{{../isMulti}}"
+                                                        data-theme-variant="{{JSONstringify @root.theme}}"
+                                                    >
+                                                    </pnp-filtercheckbox>
+                                                    {{#if ../showCount}}
+                                                        <span data-ui-test-id="filterCount">({{count}})</span>
+                                                    {{/if}}
+                                                </div>
+                                            {{/each}}
+                                        </div>				
+                                    {{else}}
                                     <pnp-collapsible data-group-name="{{filter.displayName}}" data-default-collapsed="{{#or hasSelectedValues expandByDefault selectedOnce}}false{{else}}true{{/or}}" data-theme-variant="{{JSONstringify @root.theme}}">
                                             
                                         <template id="collapsible-content" item-class="filter--value">
@@ -184,6 +224,7 @@
                                         </template>
                 
                                     </pnp-collapsible>
+                                    {{/eq}}    
                                 {{/eq}}
                             </div>		
                         {{/each}}

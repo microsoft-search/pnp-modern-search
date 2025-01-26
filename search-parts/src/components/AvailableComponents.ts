@@ -9,6 +9,7 @@ import { SliderWebComponent } from './SliderComponent';
 import { FilePreviewWebComponent } from './FilePreviewComponent';
 import { PaginationWebComponent } from './PaginationComponent';
 import { FilterCheckBoxWebComponent } from './filters/FilterCheckBoxComponent';
+import { FilterPeopleCheckBoxWebComponent } from './filters/FilterPeopleCheckBoxComponent';
 import { PanelWebComponent } from './PanelComponent';
 import { FilterMultiWebComponent } from './filters/FilterMultiComponent';
 import { SelectedFiltersWebComponent } from './filters/SelectedFiltersComponent';
@@ -71,6 +72,10 @@ export class AvailableComponents {
         {
             componentName: 'pnp-filtercheckbox',
             componentClass: FilterCheckBoxWebComponent
+        },
+        {
+            componentName: 'pnp-peoplefilter',
+            componentClass: FilterPeopleCheckBoxWebComponent
         },
         {
             componentName: 'pnp-panel',
