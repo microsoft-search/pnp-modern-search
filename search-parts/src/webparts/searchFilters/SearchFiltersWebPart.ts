@@ -684,37 +684,16 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                                 text: webPartStrings.PropertyPane.DataFilterCollection.Templates.DateIntervalTemplate
                             },
                             {
+                                key: BuiltinFilterTemplates.People,
+                                text: webPartStrings.PropertyPane.DataFilterCollection.Templates.PeopleTemplate
+                            },
+                            {
                                 key: BuiltinFilterTemplates.ComboBox,
                                 text: webPartStrings.PropertyPane.DataFilterCollection.Templates.ComboBoxTemplate
                             }
                         ]
                     },
-                    {
-                        id: 'type',
-                        title: webPartStrings.PropertyPane.DataFilterCollection.FilterType,
-                        type: this._customCollectionFieldType.custom,
-                        defaultValue: FilterType.Refiner,
-                        onCustomRender: (field, value, onUpdate, item: IDataFilterConfiguration, itemId) => {
-
-                            if (item.selectedTemplate) {
-                                const filterType: FilterType = BuiltinFilterTypes[item.selectedTemplate];
-
-                                return React.createElement("div", { key: `${field.id}-${itemId}` },
-                                    React.createElement(Icon, {
-                                        iconName: filterType === FilterType.Refiner ? 'HorizontalTabKey' : 'Export',
-                                        styles: {
-                                            root: {
-                                                color: filterType === FilterType.Refiner ? '#498205' : '#a4262c'
-                                            }
-                                        },
-                                        title: filterType === FilterType.Refiner ? webPartStrings.PropertyPane.DataFilterCollection.FilterTypeRefiner : webPartStrings.PropertyPane.DataFilterCollection.FilterTypeStaticFilter
-                                    })
-                                );
-                            } else {
-                                return null;
-                            }
-                        }
-                    },
+                    
                     {
                         id: 'expandByDefault',
                         title: webPartStrings.PropertyPane.DataFilterCollection.FilterExpandByDefault,

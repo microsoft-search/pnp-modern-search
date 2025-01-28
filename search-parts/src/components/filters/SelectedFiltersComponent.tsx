@@ -84,8 +84,15 @@ export class SelectedFiltersComponent extends React.Component<ISelectedFiltersPr
                         filterName = currentFilterConfig[0].displayValue ? currentFilterConfig[0].displayValue : filterName;
                     }
     
-                    renderValues =  filter.values.map((value, j) => {                                        
-                                        const displayValue = this.props.moment && this.props.moment(value.value, this.props.moment.ISO_8601, true).isValid() ? this.props.moment(value.value).format('LL') : value.name;
+                    renderValues =  filter.values.map((value, j) => {      
+                                        let   displayValue = this.props.moment && this.props.moment(value.value, this.props.moment.ISO_8601, true).isValid() ? this.props.moment(value.value).format('LL') : value.name;                                 
+                                        
+                                        if(displayValue.indexOf("i:0#") > -1) 
+                                        {
+                                            //displayValue = displayValue.split("|")[1] + " (" + displayValue.split("|")[0] +")";  //like [PeopleCheckBox=" Lee Gu (LeeG@tcwlv.onmicrosoft.com )"]
+                                            displayValue = displayValue.split("|")[1] ;  //like [PeopleCheckBox=" Lee Gu"]
+                                        }
+                                        
                                         const filterString = `${filterName}${this.getComparisonOperatorString(value.operator)}"${displayValue}"`;
                                         filterValuesString = `${filterString}`;
                                         let renderFilterValues = null;

@@ -72,7 +72,7 @@ export interface IDataFilterConfiguration {
     /**
      * The type of the filter ('Refiner' or 'Static Filter')
      */
-    type: FilterType;
+    // type: FilterType;
 
     /**
      * If the filter should be sorted by name or by count

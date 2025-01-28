@@ -34,7 +34,7 @@ define([], function() {
                 FilterTypeStaticFilter: "Este modelo de filtro age como um filtro estático e apensa envia valores selecionados arbitrários para a fonte de dados selecionada. Valores de filtro de entrada não são levados em consideração.",
                 CustomizeFiltersBtnLabel: "Editar",
                 CustomizeFiltersHeader: "Editar filtros",
-                CustomizeFiltersDescription: "Configurar filtros de busca adicionando ou removendo linhas. Você pode selecionar campos dos resultados da fonte de dados (se já selecionados) ou usar valores estáticos como filtros.",
+                CustomizeFiltersDescription: "Configurar filtros de busca adicionando ou removendo linhas. Você pode selecionar campos dos resultados da fonte de dados (se já selecionados) ou usar valores estáticos como filtros. For more details see https://microsoft-search.github.io/pnp-modern-search/usage/search-filters/#filter-settings",
                 CustomizeFiltersFieldLabel: "Customizar filtros",
                 ShowCount: "Exibir contagem",
                 Operator: "Operador entre os valores",

@@ -34,7 +34,7 @@ define([], function() {
                 FilterTypeStaticFilter: "Diese Filter Vorlage agiert als ein statischer Filter und sendet nur willkürlich ausgewählte Werte zu der verbundenen Datenquelle. Einkommende Filter Werte werden nicht beachtet.",
                 CustomizeFiltersBtnLabel: "Bearbeiten",
                 CustomizeFiltersHeader: "Filter bearbeiten",
-                CustomizeFiltersDescription: "Filter durch Hinzufügen/Entfernen von Zeilen konfigurieren. Für die Filter können Felder von den Datenquellen-Ergebnissen oder statische Werte selektiert werden.",
+                CustomizeFiltersDescription: "Filter durch Hinzufügen/Entfernen von Zeilen konfigurieren. Für die Filter können Felder von den Datenquellen-Ergebnissen oder statische Werte selektiert werden. Für weitere Informationen sehen Sie https://microsoft-search.github.io/pnp-modern-search/usage/search-filters/#filter-settings",
                 CustomizeFiltersFieldLabel: "Filter anpassen",
                 ShowCount: "Zeige Anzahl",
                 Operator: "Operator zwichen Werten",

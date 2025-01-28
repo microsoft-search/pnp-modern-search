@@ -4,6 +4,7 @@ export enum BuiltinFilterTemplates {
     CheckBox = 'CheckboxFilterTemplate',
     DateRange = 'DateRangeFilterTemplate',
     ComboBox = 'ComboBoxFilterTemplate',
+    People = 'PeopleTemplate',
     DateInterval = 'DateIntervalFilterTemplate',
     TaxonomyPicker = 'TaxonomyPickerFilterTemplate'
 }
@@ -15,6 +16,7 @@ export const BuiltinFilterTypes = {
     [BuiltinFilterTemplates.CheckBox]: FilterType.Refiner,
     [BuiltinFilterTemplates.DateInterval]: FilterType.Refiner,
     [BuiltinFilterTemplates.ComboBox]: FilterType.Refiner,
+    [BuiltinFilterTemplates.People]: FilterType.Refiner,
     [BuiltinFilterTemplates.DateRange]: FilterType.StaticFilter,
     [BuiltinFilterTemplates.TaxonomyPicker]: FilterType.StaticFilter
 };

@@ -34,7 +34,7 @@ define([], function() {
                 FilterTypeStaticFilter: "Esta plantilla de filtro actúa como un filtro estático y sólo envía valores seleccionados arbitrariamente a la fuente de datos conectada. Los valores entrantes del filtro no se tienen en cuenta.",
                 CustomizeFiltersBtnLabel: "Editar",
                 CustomizeFiltersHeader: "Editar filtros",
-                CustomizeFiltersDescription: "Configure los filtros de búsqueda añadiendo o eliminando filas. Puede seleccionar campos de los resultados de la fuente de datos (si ya están seleccionados) o utilizar valores estáticos para los filtros.",
+                CustomizeFiltersDescription: "Configure los filtros de búsqueda añadiendo o eliminando filas. Puede seleccionar campos de los resultados de la fuente de datos (si ya están seleccionados) o utilizar valores estáticos para los filtros. Para más detalles,  https://microsoft-search.github.io/pnp-modern-search/usage/search-filters/#filter-settings",
                 CustomizeFiltersFieldLabel: "Personalizar los filtros",
                 ShowCount: "Mostrar el recuento",
                 Operator: "Operador entre valores",
