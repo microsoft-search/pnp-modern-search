@@ -178,6 +178,10 @@ export class DataFilterHelper {
                         value = "string('')";
                     }
 
+                    if (/RefinableYesNo/.test(filter.filterName)) {
+                        value = DataFilterHelper.fixRefinableYesNoFilter(filter, value);
+                    }
+
                     // Enclose the expression with quotes if the value contains spaces, or number only
                     if ((/\s/.test(value) && value.indexOf('range') === -1) || (filter.filterName.indexOf("RefinableString") && /^\d+$/.test(value))) {
                         value = `"${value}"`;
@@ -222,6 +226,10 @@ export class DataFilterHelper {
                         refinementToken = "string('')";
                     }
 
+                    if (/RefinableYesNo/.test(filter.filterName)) {
+                        refinementToken = DataFilterHelper.fixRefinableYesNoFilter(filter, refinementToken);
+                    }
+
                     // Enclose the expression with quotes if the value contains spaces
                     if (/\s/.test(refinementToken) && refinementToken.indexOf('range') === -1) {
                         refinementToken = `"${refinementToken}"`;
@@ -233,5 +241,14 @@ export class DataFilterHelper {
         });
 
         return refinementQueryConditions;
+    }
+
+    private static fixRefinableYesNoFilter(filter: IDataFilter, value: string) {
+        if (value === "\"ǂǂ54727565\"") {
+            value = "true";
+        } else if (value === "\"ǂǂ46616c7365\"") {
+            value = "false";
+        }
+        return value;
     }
 }

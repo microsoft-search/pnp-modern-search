@@ -5,15 +5,24 @@
  */
 
 const webpack = require("webpack");
+const { IgnorePlugin } = require('webpack');
+const { ProvidePlugin } = require('webpack'); 
 
 // you can add your project related webpack configuration here, it will be merged using webpack-merge module
 // i.e. plugins: [new webpack.Plugin()]
 const webpackConfig = {
-    node: {
-        fs: "empty"
-    },
     resolve: {
-        alias: { handlebars: 'handlebars/dist/handlebars.min.js' }
+        alias: { 
+          handlebars: 'handlebars/dist/handlebars.min.js',
+          process: 'process/browser',
+        },
+        fallback: {
+          "path": require.resolve("path-browserify"),
+          "util": require.resolve("util/"),
+          "url": require.resolve("url/"),
+          "querystring": require.resolve("querystring-es3"),
+          "fs": false
+        }
     },
     module: {
         rules: [{
@@ -33,31 +42,33 @@ const webpackConfig = {
               ]
             }
           }
-        }, {
-                test: /utils\.js$/,
-                loader: "unlazy-loader",
-                include: [
-                    /node_modules/,
-                ]
-            },
-            {
-                test: /index.js$/,
-                loader: 'string-replace-loader',
-                include: [
-                    /handlebars-helpers/,
-                ],
-                options: {
-                    search: '(logging|markdown): require.*?,',
-                    replace: '',
-                    flags: 'g'
-                }
-            }, {
-              // Skip HoverReactionsBar from spfx controls as it's not used and is bundles
-              test: /index\.js$/,
-              include: [/spfx-controls-react[/\\]lib[/\\]controls[/\\]HoverReactionsBar/],
-              loader: 'ignore-loader',
-          }
-        ]
+        }, 
+        {
+          test: /utils\.js$/,
+          loader: "unlazy-loader",
+          include: [
+              /node_modules/,
+          ]
+        },
+        {
+            test: /index.js$/,
+            loader: 'string-replace-loader',
+            include: [
+                /handlebars-helpers/,
+            ],
+            options: {
+                search: '(logging|markdown): require.*?,',
+                replace: '',
+                flags: 'g'
+            }
+        }, 
+        {
+          // Skip HoverReactionsBar from spfx controls as it's not used and is bundles
+          test: /index\.js$/,
+          include: [/spfx-controls-react[/\\]lib[/\\]controls[/\\]HoverReactionsBar/],
+          loader: 'ignore-loader',
+        }
+      ]
     },
     optimization: {
       splitChunks: {
@@ -67,7 +78,13 @@ const webpackConfig = {
       }
     },
     plugins: [
-        new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
+      new IgnorePlugin({
+        resourceRegExp: /^\.\/locale$/, // Example: Ignore all locale files
+        contextRegExp: /moment$/ // Example: Ignore locale files in moment package
+      }),
+      new ProvidePlugin({
+        process: 'process/browser'
+      }),
     ]
 }
 

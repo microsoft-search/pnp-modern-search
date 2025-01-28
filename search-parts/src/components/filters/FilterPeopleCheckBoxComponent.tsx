@@ -4,15 +4,16 @@ import * as ReactDOM from 'react-dom';
 import { Checkbox, ChoiceGroup, IChoiceGroupOption, IStyleFunctionOrObject, ITextProps, ITextStyles, ITheme, Text } from '@fluentui/react';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 
-export interface IFilterCheckBoxProps {
+// export interface IFilterCheckBoxProps {
+    export interface IFilterPeopleTemplateProps {
 
     /**
-     * If the checkbox should be selected
+     * If the People template should be selected
      */
     selected?: boolean;
 
     /**
-     * If the checkbox should be disabled
+     * If the People template should be disabled
      */
     disabled?: boolean;
 
@@ -57,10 +58,11 @@ export interface IFilterCheckBoxProps {
     onChecked: (filterName: string, filterValue: IDataFilterValueInfo) => void;
 }
 
-export interface IFilterCheckBoxState {
+// export interface IFilterCheckBoxState {
+    export interface IFilterPeopleTemplateState {
 }
 
-export class FilterCheckBoxComponent extends React.Component<IFilterCheckBoxProps, IFilterCheckBoxState> {
+export class FilterPeopleTemplateComponent extends React.Component<IFilterPeopleTemplateProps, IFilterPeopleTemplateState> {
 
     public render() {
 
@@ -78,21 +80,14 @@ export class FilterCheckBoxComponent extends React.Component<IFilterCheckBoxProp
             }
         };
 
-        let labelValue = filterValue.name;
-        if(filterValue.name.indexOf("i:0#") > -1) 
-        {
-            labelValue = filterValue.name.split("|")[1] + "(" + filterValue.name.split("|")[0] + ")";
-        }
-        
-
         if (this.props.isMulti) {
             renderInput = <Checkbox
                 styles={{
                     root: {
-                        padding: 10,
+                        padding: 40,
                     },
                     label: {
-                        width: '100%'
+                        width: '100%',                      
                     },
                     text: {
                         color: this.props.count && this.props.count === 0 ? this.props.themeVariant.semanticColors.disabledText : textColor
@@ -101,10 +96,8 @@ export class FilterCheckBoxComponent extends React.Component<IFilterCheckBoxProp
                 theme={this.props.themeVariant as ITheme}
                 defaultChecked={this.props.selected}
                 disabled={this.props.disabled}
-                title={filterValue.name} 
-                label=  {labelValue}
-                
-                
+                title={filterValue.name}
+                label={filterValue.name}
                 onChange={(ev, checked: boolean) => {
                     filterValue.selected = checked;
                     this.props.onChecked(this.props.filterName, filterValue);
@@ -155,7 +148,7 @@ export class FilterCheckBoxComponent extends React.Component<IFilterCheckBoxProp
     }
 }
 
-export class FilterCheckBoxWebComponent extends BaseWebComponent {
+export class FilterPeopleCheckBoxWebComponent extends BaseWebComponent {
 
     public constructor() {
         super();
@@ -164,12 +157,12 @@ export class FilterCheckBoxWebComponent extends BaseWebComponent {
     public async connectedCallback() {
 
         let props = this.resolveAttributes();
-        const checkBox = <FilterCheckBoxComponent {...props} onChecked={((filterName: string, filterValue: IDataFilterValueInfo) => {
+        const checkBox = <FilterPeopleTemplateComponent {...props} onChecked={((filterName: string, filterValue: IDataFilterValueInfo) => {
             // Bubble event through the DOM
             this.dispatchEvent(new CustomEvent(ExtensibilityConstants.EVENT_FILTER_UPDATED, {
                 detail: {
                     filterName: filterName,
-                    filterValues: [filterValue],
+                    filterValues: [filterValue],                    
                     instanceId: props.instanceId
                 } as IDataFilterInfo,
                 bubbles: true,

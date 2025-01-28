@@ -1,15 +1,14 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Fabric, ShimmeredDetailsList, IShimmeredDetailsListProps, Checkbox } from '@fluentui/react';
+import { Fabric, ShimmeredDetailsList, IShimmeredDetailsListProps, Checkbox, ScrollToMode } from '@fluentui/react';
 import { ITooltipHostProps, TooltipHost, ITooltipStyles, Shimmer, ShimmerElementsGroup, ShimmerElementType, IShimmerElement, mergeStyleSets, ITheme, Selection } from '@fluentui/react';
 import * as Handlebars from 'handlebars';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import { BaseWebComponent, BuiltinTemplateSlots, ExtensibilityConstants, ISortInfo, SortFieldDirection } from '@pnp/modern-search-extensibility';
 import { groupBy, sortBy, findIndex, isEmpty } from "@microsoft/sp-lodash-subset";
 import { FileIcon } from '../components/FileIconComponent';
-import { DetailsListLayoutMode, SelectionMode, IColumn, IGroup, IDetailsRowProps, DetailsRow, IDetailsHeaderProps, CheckboxVisibility, IDetailsRowCheckProps, DetailsRowCheck, IDetailsCheckboxProps, IDetailsListStyles, ConstrainMode, ISelectionZoneProps } from '@fluentui/react/lib/DetailsList';
-import { DEFAULT_CELL_STYLE_PROPS, DEFAULT_ROW_HEIGHTS } from '@fluentui/react/lib/components/DetailsList/DetailsRow.styles';
+import { DetailsListLayoutMode, SelectionMode, IColumn, IGroup, IDetailsRowProps, DetailsRow, IDetailsHeaderProps, CheckboxVisibility, IDetailsRowCheckProps, DetailsRowCheck, IDetailsCheckboxProps, IDetailsListStyles, ConstrainMode, ISelectionZoneProps, IDetailsList } from '@fluentui/react/lib/DetailsList';
 import { ISearchResultsTemplateContext } from '../models/common/ITemplateContext';
 import { ObjectHelper } from '../helpers/ObjectHelper';
 import * as DOMPurify from 'dompurify';
@@ -22,6 +21,17 @@ import { Constants } from '../common/Constants';
 
 const DEFAULT_SHIMMER_HEIGHT = 7;
 const SHIMMER_LINE_VS_CELL_WIDTH_RATIO = 0.95;
+
+const DEFAULT_CELL_STYLE_PROPS = {
+  cellLeftPadding: 12,
+  cellRightPadding: 8,
+  cellExtraRightPadding: 24,
+};
+
+const DEFAULT_ROW_HEIGHTS = {
+  rowHeight: 42,
+  compactRowHeight: 32,
+};
 
 const classNames = mergeStyleSets({
     fileIconHeaderIcon: {
@@ -242,11 +252,13 @@ export interface IDetailsListComponentState {
 
 export class DetailsListComponent extends React.Component<IDetailsListComponentProps, IDetailsListComponentState> {
 
+    private scrollPositionKey = 'scrollPosition';
     private _allItems: any[];
     private _templateContext: ISearchResultsTemplateContext;
     private _domPurify: any;
     private _selection: Selection;
     private _selectionMode: SelectionMode = SelectionMode.none;
+    private _detailsListRef: React.RefObject<IDetailsList>;
 
     constructor(props: IDetailsListComponentProps) {
         super(props);
@@ -260,6 +272,8 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
 
         this._domPurify.addHook('uponSanitizeElement', DomPurifyHelper.allowCustomComponentsHook);
         this._domPurify.addHook('uponSanitizeAttribute', DomPurifyHelper.allowCustomAttributesHook);
+
+        this._detailsListRef = React.createRef<IDetailsList>();
 
         // Build the intitial groups
         if (this.props.groupBy) {
@@ -402,7 +416,7 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
                 
                             if (this._templateContext.properties.useMicrosoftGraphToolkit && this.props.templateService.MgtCustomElementHelper.isDisambiguated) {
                               allStyles.forEach((style, index) => {
-                                allStyles[index] = style.replace(/mgt-/g, `${this.props.templateService.MgtCustomElementHelper.prefix}-`);
+                                allStyles[index] = this.props.templateService.applyDisambiguatedMgtPrefixIfNeeded(style);
                               });
                             }
                 
@@ -432,6 +446,7 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
         const { columns, items } = this.state;
 
         let shimmeredDetailsListProps: IShimmeredDetailsListProps = {
+            componentRef: this._detailsListRef,
             theme: this.props.themeVariant as ITheme,
             items: items,
             compact: this.props.isCompact,
@@ -444,9 +459,14 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
             selectionPreservedOnEmptyClick: true,
             enterModalSelectionOnTouch: true,
             disableSelectionZone: true,
+            isSelectedOnFocus: false,
+            focusZoneProps: {
+              shouldRaiseClicks: false,
+            },
             onRenderCustomPlaceholder: this._onRenderCustomPlaceholder,
             onRenderRow: this._onRenderRow,
             onRenderDetailsHeader: this._onRenderDetailsHeader,
+            onShouldVirtualize: () => { return false; },
         };
 
         if (this.props.enableStickyHeader) {
@@ -483,15 +503,19 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
           const selectionZoneProps: ISelectionZoneProps = {
             className: classNames.selectionZone,
             selection: this._selection,
+            selectionMode: this._selectionMode,
           };
 
           shimmeredDetailsListProps.detailsListStyles = gridStyles;
-          shimmeredDetailsListProps.focusZoneProps = focusZoneProps;
+          shimmeredDetailsListProps.focusZoneProps = {
+            ...focusZoneProps,
+            ...shimmeredDetailsListProps.focusZoneProps,
+          };
           shimmeredDetailsListProps.selectionZoneProps = selectionZoneProps;
           shimmeredDetailsListProps.constrainMode = ConstrainMode.unconstrained;
           shimmeredDetailsListProps.layoutMode = DetailsListLayoutMode.fixedColumns;
         }
-        
+
         if (this.state.groups.length > 0) {
             shimmeredDetailsListProps.groups = this.state.groups;
             shimmeredDetailsListProps.groupProps = {
@@ -513,18 +537,73 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
           const additionalGroupBy = this.props.additionalGroupBy ? this.props.additionalGroupBy.map((field) => field.value) : [];
           const groups = this._buildGroups(this.state.items, [this.props.groupBy, ...additionalGroupBy], 0, 0);
 
-          this.setState({groups: groups});
+          this.setState({groups: groups}, () => {
+            this.updateSelection();
+          });
         }
+      else {
+        this.updateSelection();
+      }
+    }
 
-        // Manually select the items in the list
-        if (this.props.selectedKeys) {
+    private updateSelection = () => {
+      if (this.props.selectedKeys) {
+        this.forceUpdate(() => {
+          this._selection.setAllSelected(false);
+          this.props.selectedKeys.forEach(key => {
+            this._selection.setKeySelected(key, true, true);
+          });
+          const savedScrollPosition = sessionStorage.getItem(`${this.scrollPositionKey}${this._templateContext?.instanceId}`);
+          if (savedScrollPosition) {
+            const { top, left, itemIndex } = JSON.parse(savedScrollPosition);
+            const webpartElement = document.querySelector(`[data-instance-id="${this._templateContext?.instanceId}"]`);
+            const itemElement = webpartElement?.querySelector(`[data-item-index="${itemIndex}"]`)?.parentElement;
+            if (itemElement) {
+              this._detailsListRef.current?.focusIndex(itemIndex, false, () => itemElement.getBoundingClientRect().height, ScrollToMode.auto);
+              const scrollableContainer = itemElement.closest('[data-is-scrollable="true"]');
+              if (scrollableContainer) {
+                const scrollToOptions = {
+                  top: top,
+                  left: left,
+                  behavior: 'instant'
+                }
+                scrollableContainer.scrollTo(scrollToOptions as unknown as ScrollToOptions);
+              }
+            }
+            sessionStorage.removeItem(`${this.scrollPositionKey}${this._templateContext?.instanceId}`);
+          }
+        });
+      }
+    }
 
-            this.props.selectedKeys.forEach(key => {
-                this._selection.setKeySelected(key, true, false);
-            });
+    private handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>, itemIndex: number) => {
+      if (event.key === ' ') {
+        this.setScrollPosition(event.currentTarget as HTMLElement);
+      }
+    };
+    
+    private handleItemClick = (event: React.MouseEvent<HTMLDivElement>) => {
+      this.setScrollPosition(event.currentTarget as HTMLElement);
+    }
 
-            this.forceUpdate();
-        }
+    private setScrollPosition = (target: HTMLElement) => {
+      const itemIndex = this.getItemIndex(target);
+      const scrollableContainer = target.closest('[data-is-scrollable="true"]');
+      const scrollPosition = {
+        top: scrollableContainer.scrollTop,
+        left: scrollableContainer.scrollLeft,
+        itemIndex: itemIndex
+      };
+      sessionStorage.setItem(`${this.scrollPositionKey}${this._templateContext?.instanceId}`, JSON.stringify(scrollPosition));
+    }
+
+    private getItemIndex(target: HTMLElement): string | null {
+      if (target.hasAttribute('data-item-index')) {
+        return target.getAttribute('data-item-index');
+      }
+      const closestElement = target.closest('[data-item-index]');
+      const closestChild = target.querySelector('[data-item-index]');
+      return closestElement ? closestElement.getAttribute('data-item-index') : closestChild ? closestChild.getAttribute('data-item-index') : null;
     }
 
     private _onRenderCustomPlaceholder(rowProps: IDetailsRowProps): JSX.Element {
@@ -628,7 +707,15 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
         return (<DetailsRowCheck {...props} theme={this.props.themeVariant as ITheme} />);
       };
 
-      return <DetailsRow {...rowProps} theme={this.props.themeVariant as ITheme} />;
+      return <div 
+        onPointerDown={this.props.allowItemSelection ? this.handleItemClick : undefined}
+        onKeyDown={this.props.allowItemSelection ? (event) => this.handleKeyDown(event, rowProps.itemIndex) : undefined}
+      >
+        <DetailsRow 
+          {...rowProps}
+          theme={this.props.themeVariant as ITheme} 
+        />
+      </div>;
     }
 
     private _onRenderDetailsHeader(props: IDetailsHeaderProps, defaultRender): JSX.Element {
@@ -741,12 +828,7 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
             {
                 data: {
                     root: {
-                        slots: this._templateContext.slots,
-                        theme: this._templateContext.theme,
-                        context: this._templateContext.context,
-                        instanceId: this._templateContext.instanceId,
-                        properties: this._templateContext.properties,
-                        utils: this._templateContext.utils
+                      ...this._templateContext
                     }
                 }
             }

@@ -24,4 +24,5 @@ export interface ITemplateService {
     registerResultTypes(resultTypes: IDataResultType[]): Promise<void>;
     replaceDisambiguatedMgtElementNames(template: Document): void;
     legacyStyleParser(style: HTMLStyleElement, elementPrefixId: string): string;
+    applyDisambiguatedMgtPrefixIfNeeded(elementName: string): string;
 }

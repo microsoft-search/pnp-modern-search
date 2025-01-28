@@ -7,6 +7,7 @@ export abstract class BaseLayout<T> implements ILayout {
 
     private _properties!: T;
     private _context: WebPartContext;
+    private _editMode: boolean;
     protected serviceScope: ServiceScope;
 
     get properties(): T {
@@ -27,6 +28,14 @@ export abstract class BaseLayout<T> implements ILayout {
 
     public constructor(serviceScope: ServiceScope) {
         this.serviceScope = serviceScope;
+    }
+
+    get editMode() {
+      return this._editMode;
+    }
+    
+    set editMode(editMode: boolean) {
+        this._editMode = editMode;
     }
 
     public onInit(): void | Promise<void> {

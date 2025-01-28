@@ -634,6 +634,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
           submittedFilters: dataFilters
         });
 
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (e) {
         Log.verbose(`[SearchFiltersContainer.getFiltersDeepLink]`, `Filters format in the query string is invalid.`);
       }

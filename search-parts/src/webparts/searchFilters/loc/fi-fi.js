@@ -34,7 +34,7 @@ define([], function() {
                 FilterTypeStaticFilter: "Tämä suodatintemplaatti on staattinen ja ainoastaan lähettää valitut suodatinarvot yhdistettyyn sisältölähteeseen. Palautunut hakutulos ei vaikuta suodattimen arvoihin.",
                 CustomizeFiltersBtnLabel: "Muokkaa",
                 CustomizeFiltersHeader: "Muokkaa suodattimia",
-                CustomizeFiltersDescription: "Konfiguroi haun suodattimet lisäämällä tai poistamalla rivejä. Voit valita kenttiä kaikista sisältölähteistä tai käyttää staattisia arvoja suodattimina.",
+                CustomizeFiltersDescription: "Konfiguroi haun suodattimet lisäämällä tai poistamalla rivejä. Voit valita kenttiä kaikista sisältölähteistä tai käyttää staattisia arvoja suodattimina. For more details see https://microsoft-search.github.io/pnp-modern-search/usage/search-filters/#filter-settings",
                 CustomizeFiltersFieldLabel: "Mukauta suodattimia",
                 ShowCount: "Näytä tulosten määrä",
                 Operator: "Suodatinarvojen välinen operaattori",

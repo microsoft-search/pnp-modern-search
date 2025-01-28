@@ -36,6 +36,8 @@ export class TemplateRenderer extends React.Component<ITemplateRendererProps, IT
         this._domPurify.addHook('uponSanitizeElement', DomPurifyHelper.allowCustomComponentsHook);
         this._domPurify.addHook('uponSanitizeAttribute', DomPurifyHelper.allowCustomAttributesHook);
 
+        this.updateTemplate = this.updateTemplate.bind(this);
+
         // Create an instance of the div ref container 
         this._divTemplateRenderer = React.createRef<HTMLDivElement>();
     }
@@ -81,8 +83,6 @@ export class TemplateRenderer extends React.Component<ITemplateRendererProps, IT
 
             // Get <style> tags from Handlebars template content and prefix all CSS rules by the Web Part instance ID to isolate styles
             const styleElements = templateAsHtml.getElementsByTagName("style");
-            // let styles: string[] = [];
-            // debugger;
             const allStyles = [];
 
             if (styleElements.length > 0) {
@@ -110,14 +110,16 @@ export class TemplateRenderer extends React.Component<ITemplateRendererProps, IT
 
             if (this.props.templateContext.properties.useMicrosoftGraphToolkit && this.props.templateService.MgtCustomElementHelper.isDisambiguated) {
               allStyles.forEach((style, index) => {
-                allStyles[index] = style.replace(/mgt-/g, `${this.props.templateService.MgtCustomElementHelper.prefix}-`);
+                allStyles[index] = this.props.templateService.applyDisambiguatedMgtPrefixIfNeeded(style);
               });
             }
 
+            if(!this._divTemplateRenderer?.current) {return;}
             this._divTemplateRenderer.current.innerHTML = `<style>${allStyles.join(' ')}</style><div id="${this.props.templateService.TEMPLATE_ID_PREFIX}${this.props.instanceId}">${templateAsHtml.body.innerHTML}</div>`
 
         } else if (props.renderType == LayoutRenderType.AdaptiveCards && template instanceof HTMLElement) {
 
+            if(!this._divTemplateRenderer?.current) {return;}
             this._divTemplateRenderer.current.innerHTML = "";
             this._divTemplateRenderer.current.appendChild(template as HTMLElement);
         }

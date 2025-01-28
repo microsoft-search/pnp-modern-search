@@ -253,7 +253,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
             // Get and initialize layout instance if different (i.e avoid to create a new instance every time)
             if (this.lastLayoutKey !== this.properties.selectedLayoutKey) {
-                this.layout = await LayoutHelper.getLayoutInstance(this.webPartInstanceServiceScope, this.context, this.properties, this.properties.selectedLayoutKey, this.availableLayoutDefinitions);
+                this.layout = await LayoutHelper.getLayoutInstance(this.webPartInstanceServiceScope, this.context, this.properties, this.properties.selectedLayoutKey, this.availableLayoutDefinitions, this.displayMode);
                 this.lastLayoutKey = this.properties.selectedLayoutKey;
             }
 
@@ -519,6 +519,10 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         // Register Web Components in the global page context. We need to do this BEFORE the template processing to avoid race condition.
         // Web components are only defined once.
         await this.templateService.registerWebComponents(this.availableWebComponentDefinitions, this.instanceId);
+
+        if(this.properties.layoutProperties?.showPersonaCard){
+            this.properties.useMicrosoftGraphToolkit = true;
+        }
 
         // Initializes MS Graph Toolkit
         if (this.properties.useMicrosoftGraphToolkit) {
@@ -930,6 +934,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                     inputQueryFromDataSource = decodeURIComponent(inputQueryFromDataSource);
                 }
 
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             } catch (error) {
                 // Likely issue when q=%25 in spfx
             }

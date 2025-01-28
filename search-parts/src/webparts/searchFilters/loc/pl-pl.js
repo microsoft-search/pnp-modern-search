@@ -34,7 +34,7 @@ define([], function() {
                 FilterTypeStaticFilter: "Ten szablon filtru działa jak statyczny filtr i jedynie wysyła z góry wybraną wartość do połączonego źródła danych. Przychodzące wartości filtrów nie są brane pod uwagę.",
                 CustomizeFiltersBtnLabel: "Edytuj",
                 CustomizeFiltersHeader: "Edytuj filtry",
-                CustomizeFiltersDescription: "Konfiguruj filtry wyszukiwania dodając i usuwając wiersze. Możesz wybrać pola z wyników źródła wyszukiwania lub użyć stałych wartości filtrów.",
+                CustomizeFiltersDescription: "Konfiguruj filtry wyszukiwania dodając i usuwając wiersze. Możesz wybrać pola z wyników źródła wyszukiwania lub użyć stałych wartości filtrów. For more details see https://microsoft-search.github.io/pnp-modern-search/usage/search-filters/#filter-settings",
                 CustomizeFiltersFieldLabel: "Zmodyfikuj filtry",
                 ShowCount: "Pokaż liczność",
                 Operator: "Operator pomiędzy wartościami",

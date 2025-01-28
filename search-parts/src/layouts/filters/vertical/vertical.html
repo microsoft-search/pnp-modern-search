@@ -117,16 +117,57 @@
 										{{/each}}
 									</div>
 								{{else}}
-									{{#eq filter.selectedTemplate 'DateIntervalFilterTemplate'}}
-										<div class="filter--value">
-											<pnp-filterdateinterval 
-												data-instance-id="{{@root.instanceId}}" 
-												data-filter="{{JSONstringify filter 2}}"
-												data-theme-variant="{{JSONstringify @root.theme}}"
-											>
-										</pnp-filterdateinterval>
+									{{#eq filter.selectedTemplate 'PeopleTemplate'}}
+										{{#if filter.isMulti}}
+											<div class="filter--option">
+												<pnp-filteroperator 
+													data-instance-id="{{@root.instanceId}}"
+													data-filter-name="{{filter.filterName}}" 
+													data-operator="{{filter.operator}}" 
+													data-theme-variant="{{JSONstringify @root.theme}}"
+												></pnp-filteroperator>
+											</div>
+										{{/if}}
+							
+										<div class="filter--option">
+											<pnp-filtersearchbox data-filter="{{JSONstringify filter}}" data-instance-id="{{@root.instanceId}}" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-filtersearchbox>
 										</div>
-									{{/eq}}	
+
+										<div class="filter--values-list">
+											{{#each filter.values}}
+											
+												<!-- <div title="{{#with (split name '|')}}{{[1]}}({{[0]}}){{/with}} {{#if ../showCount}}({{count}}){{/if}}" class="filter--value"> -->
+													<div title="{{#with (split name '|')}}{{[1]}}{{/with}} {{#if ../showCount}}({{count}}){{/if}}" class="filter--value">
+													<pnp-filtercheckbox 
+														data-instance-id="{{@root.instanceId}}" 
+														data-filter-name="{{filter.filterName}}" 
+														data-name= "{{#with (split name '|')}}{{[1]}}{{/with}}" 
+														data-value="{{value}}" 
+														data-selected="{{selected}}" 
+														data-disabled="{{disabled}}" 
+														data-count="{{count}}"
+														data-is-multi="{{../isMulti}}"
+														data-theme-variant="{{JSONstringify @root.theme}}"
+													>
+													</pnp-filtercheckbox>
+													{{#if ../showCount}}
+														<span data-ui-test-id="filterCount">({{count}})</span>
+													{{/if}}
+												</div>
+											{{/each}}
+										</div>
+									{{else}}
+										{{#eq filter.selectedTemplate 'DateIntervalFilterTemplate'}}
+											<div class="filter--value">
+												<pnp-filterdateinterval 
+													data-instance-id="{{@root.instanceId}}" 
+													data-filter="{{JSONstringify filter 2}}"
+													data-theme-variant="{{JSONstringify @root.theme}}"
+												>
+											</pnp-filterdateinterval>
+											</div>
+										{{/eq}}	
+									{{/eq}}
 								{{/eq}}
 							{{/eq}}
 

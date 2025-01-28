@@ -243,6 +243,12 @@ export class TemplateService implements ITemplateService {
       });
     }
 
+    public applyDisambiguatedMgtPrefixIfNeeded(elementName: string): string {
+        const prefix = this.MgtCustomElementHelper.prefix;
+        const regex = new RegExp(`mgt-(?!${prefix.slice(4)})`, 'g');
+        return elementName?.replace(regex, `${prefix}-`);
+    }
+
     /**
      * Gets the template HTML markup in the full template content
      * @param templateContent the full template content
@@ -759,6 +765,7 @@ export class TemplateService implements ITemplateService {
                     }
                     return this.moment(new Date(date)).format(format);
                 }
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             } catch (error) {
                 return date;
             }
@@ -935,6 +942,7 @@ export class TemplateService implements ITemplateService {
 
         // Initialize the serialization context for the Adaptive Cards, if needed
         if (!this._serializationContext) {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const { Action, CardElement, CardObjectRegistry, GlobalRegistry, SerializationContext } = await import(
                 /* webpackChunkName: 'pnp-modern-search-adaptive-cards-bundle' */
                 'adaptivecards'
@@ -948,7 +956,9 @@ export class TemplateService implements ITemplateService {
 
             this._serializationContext = new SerializationContext();
 
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             let actionType: InstanceType<typeof Action>
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             let cardElementType: InstanceType<typeof CardElement>;
 
             let elementRegistry = new CardObjectRegistry<typeof cardElementType>();
@@ -994,7 +1004,9 @@ export class TemplateService implements ITemplateService {
 
                 this._serializationContext = new SerializationContext();
 
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 const CardElementType = this._adaptiveCardsNS.CardElement;
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 const ActionElementType = this._adaptiveCardsNS.Action;
 
                 let elementRegistry = new CardObjectRegistry<InstanceType<typeof CardElementType>>();
@@ -1014,7 +1026,8 @@ export class TemplateService implements ITemplateService {
                 text = text.replace(/<c0\>/g, "<strong>").replace(/<\/c0\>/g, "</strong>").replace(/<ddd\/>/g, "&#8230;");
 
                 // We use Markdown here to render HTML and use web components
-                const rawHtml = this._markdownIt.render(text).replace(/\&lt;/g, '<').replace(/\&gt;/g, '>');
+                let rawHtml = this._markdownIt.render(text).replace(/\&lt;/g, '<').replace(/\&gt;/g, '>');
+                rawHtml = this.applyDisambiguatedMgtPrefixIfNeeded(rawHtml);
                 result.outputHtml = domPurify.sanitize(rawHtml);
                 result.didProcess = true;
             };
