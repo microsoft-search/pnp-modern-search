@@ -19,10 +19,12 @@ Add the new site column to a SharePoint document library and tag your documents.
 When you check the library with your 2 different users, you can see SharePoint will be translate the multilingual term sets in the language from the user, where is logged in. SharePoint will be translate all default terms also in the other language, but not columns or views, but you can translate this terms manually.
 
 Library in english:
+
 ![Document library in english](assets/display-multilingual-term-store-values-with-pnp-search-results/document-library-in-english.png)
 
 Library in german:
-![Document library in german](assets/display-multilingual-term-store-values-with-pnp-search-results/results-in-german.png)
+
+![Document library in german](assets/display-multilingual-term-store-values-with-pnp-search-results/document-library-in-german.png)
 
 As prepare for our search configuration, map the new crawled property to RefinableStringXX Managed Properties, please attention, map both Crawled properties, OWS_ and the OWS_TAXID_, to Managed Properties.
 ![Managed properties RefinableString](assets/display-multilingual-term-store-values-with-pnp-search-results/Managed-Properties-RefinableString.png)
@@ -41,6 +43,7 @@ Add the new Managed Property, with the OWS_, as Managed columns into the results
 ![Configure PnP Search Result WebPart - Managed columns](assets/display-multilingual-term-store-values-with-pnp-search-results/webpart-configuration-manage-columns.png)
 
 Check the page with both users and different language settings and you can see, the terms will NOT translate into the languages, we can see the default language as column values.
+
 ![Search Results without translation](assets/display-multilingual-term-store-values-with-pnp-search-results/search-results-without-translation.png)
 
 ## Configure multilingual columns
