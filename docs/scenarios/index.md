@@ -44,3 +44,6 @@ Showing the work anniversaries of employees is a common request in any intranet.
 
 ## [Connect one Search Results web part to another Search Results Web Part](Connect-to-a-search-results-webpart.md)
 This scenario describes how to connect more then one results Web Part together. One results Web Part will view the sites, connected with the current HUB site, the other, connected results Web Part, will show the documents from the selected site.
+
+## [Display Multilingual term store values with PnP Search Results](display-multilingual-term-store-values-with-pnp-search-results.md)
+This scenario describes how term store values can be displayed in multiple languages in the PnP Modern Search.
