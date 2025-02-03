@@ -59,4 +59,4 @@ After saving the configuration, now you can see the translated values in the PnP
 ### Results in german
 ![Multilingual Search Results in German](assets/display-multilingual-term-store-values-with-pnp-search-results/results-in-german.png)
 
-*A little multilingual disclaimer: The search columns or SharePoint WebPart titles are not multilingual, but you can use SharePoint Multilingual Pages to configure more in a different language. See more in the Microsoft article: ![Create multilingual SharePoint sites, pages, and news](https://support.microsoft.com/en-us/office/create-multilingual-sharepoint-sites-pages-and-news-2bb7d610-5453-41c6-a0e8-6f40b3ed750c?WT.mc_id=DX-MVP-5004845)
+*A little multilingual disclaimer: The search columns or SharePoint WebPart titles are not multilingual, but you can use SharePoint Multilingual Pages to configure more in a different language. See more in the Microsoft article: [Create multilingual SharePoint sites, pages, and news](https://support.microsoft.com/en-us/office/create-multilingual-sharepoint-sites-pages-and-news-2bb7d610-5453-41c6-a0e8-6f40b3ed750c?WT.mc_id=DX-MVP-5004845)
