@@ -79,6 +79,7 @@ define([], function() {
                     },
                     AllowItemSelection: "Zezwalaj na wybór przedmiotów",
                     AllowMultipleItemSelection: "Zezwalaj na wielokrotny wybór",
+                    SelectionPreservedOnEmptyClick: "Zachowaj wybór przy pustym kliknięciu",
                     SelectionModeLabel: "Tryb wyboru",
                     AsTokensSelectionMode: "Przetwarzaj wybrane wartości jako tokeny (tryb ręczny)",
                     AsDataFiltersSelectionMode: "Przetwarzaj wybrane wartości jako filtry (tryb domyślny)",

@@ -1153,7 +1153,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             destinationFieldName: undefined,
             selectionMode: ItemSelectionMode.AsDataFilter,
             allowMulti: false,
-            valuesOperator: FilterConditionOperator.OR
+            valuesOperator: FilterConditionOperator.OR,
+            selectionPreservedOnEmptyClick: false
         };
 
         this.properties.extensibilityLibraryConfiguration = this.properties.extensibilityLibraryConfiguration ? this.properties.extensibilityLibraryConfiguration : [{
@@ -1432,6 +1433,9 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 stylingFields.push(
                     PropertyPaneToggle('itemSelectionProps.allowMulti', {
                         label: webPartStrings.PropertyPane.LayoutPage.Handlebars.AllowMultipleItemSelection,
+                    }),
+                    PropertyPaneToggle('itemSelectionProps.selectionPreservedOnEmptyClick', {
+                        label: webPartStrings.PropertyPane.LayoutPage.Handlebars.SelectionPreservedOnEmptyClick,
                     }),
                     PropertyPaneHorizontalRule()
                 );

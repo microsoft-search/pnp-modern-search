@@ -111,10 +111,13 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             selectionMode = this.props.properties.itemSelectionProps.allowMulti ? SelectionMode.multiple : SelectionMode.single;
         }
 
+        const selectionPreservedOnEmptyClick = this.props.properties.itemSelectionProps?.selectionPreservedOnEmptyClick ?? false;
+
         renderTemplate = <SelectionZone
             selection={this._selection}
             selectionMode={selectionMode}
-            isSelectedOnFocus={false}>
+            isSelectedOnFocus={false}
+            selectionPreservedOnEmptyClick={selectionPreservedOnEmptyClick}>
             <TemplateRenderer
                 templateContent={templateContent}
                 templateContext={templateContext}
