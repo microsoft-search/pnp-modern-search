@@ -150,6 +150,8 @@ define([], function () {
                 ApplyQueryTemplateBtnText: "Aplicar",
                 UseBetaEndpoint: "Utilizar endpoint beta",
                 TrimDuplicates: "Recortar duplicados",
+                showSPEmbeddedContentLabel: "Mostrar SharePoint incrustado (oculto) en los resultados de búsqueda",
+                showMSArchivedContentLabel: "Mostrar contenido archivado de MS en los resultados de búsqueda",
                 CollapseProperties: {
                     EditCollapsePropertiesLabel: "Editar configuración de contracción",
                     CollapsePropertiesDescription: "Especifique la configuración de contracción para los resultados de búsqueda. Puede seleccionar un campo de la lista desplegable (solo si los datos de la fuente de datos ya se han obtenido) o escribir su propio valor personalizado (presione 'Entrar' para guardar su entrada)",

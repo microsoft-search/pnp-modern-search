@@ -150,6 +150,8 @@ define([], function () {
         ApplyQueryTemplateBtnText: "Tillämpa",
         UseBetaEndpoint: "Använd beta endpoint",
         TrimDuplicates: "Trimma dubbletter",
+        showSPEmbeddedContentLabel: "Visa SharePoint Embedded (dold) i sökresultat",
+        showMSArchivedContentLabel: "Visa MS-arkiverat innehåll i sökresultat",
         CollapseProperties: {
           EditCollapsePropertiesLabel: "Redigera komprimeringsinställningar",
           CollapsePropertiesDescription: "Ange komprimeringsinställningarna för sökresultaten. Du kan antingen välja ett fält från rullgardinsmenyn (endast om datakällans data redan har hämtats) eller ange ditt eget anpassade värde (tryck på 'Enter' för att spara din post)",

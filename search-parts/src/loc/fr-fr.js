@@ -150,6 +150,8 @@ define([], function () {
                 ApplyQueryTemplateBtnText: "Appliquer",
                 UseBetaEndpoint: "Utiliser le point de terminaison beta",
                 TrimDuplicates: "Supprimer les doublons",
+                showSPEmbeddedContentLabel: "Afficher SharePoint Embedded (masqué) dans les résultats de recherche",
+                showMSArchivedContentLabel: "Afficher le contenu MS archivé dans les résultats de recherche",
                 CollapseProperties: {
                     EditCollapsePropertiesLabel: "Modifier les paramètres de repli",
                     CollapsePropertiesDescription: "Spécifiez les paramètres de réduction des résultats de la recherche. Vous pouvez soit sélectionner un champ dans la liste déroulante (uniquement si les données de la source de données ont déjà été récupérées) ou saisir votre propre valeur personnalisée (appuyez sur 'Entrée' pour enregistrer votre entrée)",

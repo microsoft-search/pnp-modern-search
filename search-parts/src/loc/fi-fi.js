@@ -148,6 +148,8 @@ define([], function () {
                 ApplyQueryTemplateBtnText: "Ota käyttöön",
                 UseBetaEndpoint: "Käytä beta endpointtia",
                 TrimDuplicates: "Leikkaa kaksoiskappaleet",
+                showSPEmbeddedContentLabel: "Näytä SharePoint Embedded (piilotettu) hakutuloksissa",
+                showMSArchivedContentLabel: "Näytä MS-arkistoitu sisältö hakutuloksissa",
                 CollapseProperties: {
                     EditCollapsePropertiesLabel: "Muokkaa tiivistysasetuksia",
                     CollapsePropertiesDescription: "Especifique la configuración de contracción para los resultados de búsqueda. Puede seleccionar un campo de la lista desplegable (solo si los datos de la fuente de datos ya se han obtenido) o escribir su propio valor personalizado (presione 'Entrar' para guardar su entrada)",

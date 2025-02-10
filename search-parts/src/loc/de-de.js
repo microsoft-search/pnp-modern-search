@@ -150,6 +150,8 @@ define([], function () {
                 ApplyQueryTemplateBtnText: "Anwenden",
                 UseBetaEndpoint: "Benutze den Beta-Endpunkt",
                 TrimDuplicates: "Duplikate kürzen",
+                showSPEmbeddedContentLabel: "SharePoint Embedded (ausgeblendet) in den Suchergebnissen anzeigen",
+                showMSArchivedContentLabel: "Von MS archivierte Inhalte in den Suchergebnissen anzeigen",
                 CollapseProperties: {
                     EditCollapsePropertiesLabel: "Bearbeiten Sie die Minimierungseinstellungen",
                     CollapsePropertiesDescription: "Geben Sie die Minimierungseinstellungen für die Suchergebnisse an. Sie können entweder ein Feld aus der Dropdown-Liste auswählen (nur wenn die Daten der Datenquelle bereits abgerufen wurden) oder einen eigenen Wert eingeben (drücken Sie 'Enter', um Ihre Eingabe zu speichern).",

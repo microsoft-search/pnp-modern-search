@@ -101,6 +101,17 @@ export interface IMicrosoftSearchDataSourceProperties {
      * More information: https://learn.microsoft.com/en-us/graph/search-concept-collapse
      */
     collapseProperties: ICollapseProperty[];
+    /**
+     * Specifies if the search results should include the SharePoint embedded data.
+     * More information: https://learn.microsoft.com/en-us/sharepoint/dev/embedded/concepts/content-experiences/search-content
+     */
+    showSPEmbeddedContent: boolean;
+
+    /**
+     * Specifies if the search results should include the Microsoft Search archived content.
+     * More information: https://learn.microsoft.com/en-us/graph/api/resources/sharepointonedriveoptions?view=graph-rest-beta
+     */
+    showMSArchivedContent: boolean;
 }
 
 export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDataSourceProperties> {
@@ -294,6 +305,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                 onPropertyChange: this.onCustomPropertyUpdate.bind(this),
                 textDisplayValue: entityTypesDisplayValue.filter(e => e).join(",")
             }),
+            
             new PropertyPaneAsyncCombo('dataSourceProperties.fields', {
                 availableOptions: this._availableFields,
                 allowMultiSelect: true,
@@ -311,6 +323,16 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             PropertyPaneToggle('dataSourceProperties.enableResultTypes', {
                 label: "Enable result types",
                 disabled: this.properties.entityTypes.indexOf(EntityType.ExternalItem) === -1
+            })
+            ,
+            PropertyPaneToggle('dataSourceProperties.showSPEmbeddedContent', {
+                label: commonStrings.DataSources.MicrosoftSearch.showSPEmbeddedContentLabel,
+                
+            })
+            ,
+            PropertyPaneToggle('dataSourceProperties.showMSArchivedContent', {
+                label: commonStrings.DataSources.MicrosoftSearch.showMSArchivedContentLabel,
+                
             })
         ];
 
@@ -373,6 +395,10 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                 PropertyPaneHorizontalRule()
             );
         }
+
+        
+
+
 
         // Sorting results is currently only supported on the following SharePoint and OneDrive types: driveItem, listItem, list, site , ExternalItem.
         if (this.properties.entityTypes.indexOf(EntityType.DriveItem) !== -1 ||
@@ -671,6 +697,8 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         } else {
             this._microsoftSearchUrl = `${this.context?.pageContext?.legacyPageContext?.msGraphEndpointUrl}/v1.0/search/query`;
         }
+        this.properties.showSPEmbeddedContent = this.properties.showSPEmbeddedContent !== undefined ? this.properties.showSPEmbeddedContent : false;
+        this.properties.showMSArchivedContent = this.properties.showMSArchivedContent !== undefined ? this.properties.showMSArchivedContent : false;
     }
 
     private async buildMicrosoftSearchQuery(dataContext: IDataContext): Promise<IMicrosoftSearchQuery> {
@@ -684,6 +712,10 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         let contentSources: string[] = [];
         let queryText = '*'; // Default query string if not specified, the API does not support empty value
         let from = 0;
+        // let sharePointOneDriveOptions = ""
+        let includeHiddenContent = false;
+        
+
 
         // Query text
         if (dataContext.inputQueryText) {
@@ -755,17 +787,16 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
 
         // Build aggregation filters
         if (dataContext.filters.selectedFilters.length > 0) {
-            if (dataContext.filters.filterOperator === 'and') {
-                // Make sure, if we have multiple filters, at least two filters have values to avoid apply an operator ('or','and') on only one condition failing the query.
-                const refinementStrings = DataFilterHelper.buildFqlRefinementString(dataContext.filters.selectedFilters, this.moment);
-                if (!isEmpty(refinementStrings)) {
-                    aggregationFilters = aggregationFilters.concat(refinementStrings);
+
+            // Make sure, if we have multiple filters, at least two filters have values to avoid apply an operator ('or','and') on only one condition failing the query.
+            if (dataContext.filters.selectedFilters.length > 1 && dataContext.filters.selectedFilters.filter(selectedFilter => selectedFilter.values.length > 0).length > 1) {
+                const refinementString = DataFilterHelper.buildFqlRefinementString(dataContext.filters.selectedFilters, dataContext.filters.filtersConfiguration, this.moment).join(',');
+                if (!isEmpty(refinementString)) {
+                    aggregationFilters = aggregationFilters.concat([`${dataContext.filters.filterOperator}(${refinementString})`]);
                 }
+
             } else {
-                const refinementStrings = DataFilterHelper.buildKqlRefinementString(dataContext.filters.selectedFilters, this.moment);
-                if (!isEmpty(refinementStrings)) {
-                    queryTemplate = refinementStrings ? `${queryTemplate} AND ${refinementStrings}` : queryTemplate;
-                }
+                aggregationFilters = aggregationFilters.concat(DataFilterHelper.buildFqlRefinementString(dataContext.filters.selectedFilters, dataContext.filters.filtersConfiguration, this.moment));
             }
         }
 
@@ -800,7 +831,23 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                 });
             }
         }
-
+        if(this.properties.showMSArchivedContent === true && this.properties.showSPEmbeddedContent === true)
+            {
+                includeHiddenContent = true;
+            }   
+            if(this.properties.showMSArchivedContent === true && this.properties.showSPEmbeddedContent === false)
+            {
+                includeHiddenContent = true;
+                // and show only archived content
+                queryTemplate = queryTemplate + " AND isarchived:true";
+    
+            }
+            if(this.properties.showMSArchivedContent === false && this.properties.showSPEmbeddedContent === true)
+            {
+                includeHiddenContent = true;
+                // hide archived content
+                queryTemplate = queryTemplate + " AND NOT isarchived:true";
+            }
         // Build search request
         let searchRequest: IMicrosoftSearchRequest = {
             entityTypes: this.properties.entityTypes,
@@ -808,8 +855,12 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                 queryString: queryText,
                 queryTemplate: queryTemplate
             },
+            sharePointOneDriveOptions: {
+                includeHiddenContent: includeHiddenContent                
+            },
             size: dataContext.itemsCountPerPage
         };
+        
 
         //If bookmark or Acronym, paging is not supported
         if (this.properties.entityTypes.indexOf(EntityType.Bookmark) === -1 && this.properties.entityTypes.indexOf(EntityType.Acronym) === -1) {

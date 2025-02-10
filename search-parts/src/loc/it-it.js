@@ -127,6 +127,8 @@ define([], function () {
                 ApplyQueryTemplateBtnText: "Applica",
                 EnableAudienceTargetingTglLabel: "Abilita il targeting del pubblico",
                 TrimDuplicates: "Elimina duplicati",
+                showSPEmbeddedContentLabel: "Mostra SharePoint incorporato (nascosto) nei risultati di ricerca",
+                showMSArchivedContentLabel: "Mostra i contenuti archiviati in MS nei risultati di ricerca",
                 CollapseSpecificationLabel: "Specifiche di collasso"
             },
             MicrosoftSearch: {
