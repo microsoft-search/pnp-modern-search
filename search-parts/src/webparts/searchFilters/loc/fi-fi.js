@@ -46,6 +46,7 @@ define([], function() {
                     DateRangeTemplate: "Päivämäärärajaus",
                     ComboBoxTemplate: "Yhdistelmävalinta",
                     DateIntervalTemplate: "Ajankohtarajaus (esim. viime kuussa)",
+                    PeopleTemplate: "Henkilö malli",
                     TaxonomyPickerTemplate: "Taksonomiavalinta"
                 },
                 SortBy: "Lajitteluperuste",
