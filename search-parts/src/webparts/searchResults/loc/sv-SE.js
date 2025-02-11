@@ -79,6 +79,7 @@ define([], function() {
           },
           AllowItemSelection: "Tillåt val av objekt",
           AllowMultipleItemSelection: "Tillåt flera val",
+          SelectionPreservedOnEmptyClick: "Behåll val vid tomt klick",
           SelectionModeLabel: "Urvalsläge",
           AsTokensSelectionMode: "Bearbeta valda värden som tokens (manuellt läge)",
           AsDataFiltersSelectionMode: "Bearbeta valda värden som filter (standardläge)",

@@ -79,6 +79,7 @@ define([], function() {
                     },
                     AllowItemSelection: "Salli kohteiden valinta",
                     AllowMultipleItemSelection: "Salli monivalinta",
+                    SelectionPreservedOnEmptyClick: "Säilytä valinta tyhjällä napsautuksella",
                     SelectionModeLabel: "Valintatila",
                     AsTokensSelectionMode: "Käsittele valittuja arvoja tokeneina (manuaalitila)",
                     AsDataFiltersSelectionMode: "Käsittele valittuja arvoja suodattimina (oletustila)",

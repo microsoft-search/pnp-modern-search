@@ -78,6 +78,7 @@ declare interface ISearchResultsWebPartStrings {
                 },
                 AllowItemSelection: string;
                 AllowMultipleItemSelection: string;
+                SelectionPreservedOnEmptyClick: string;
                 SelectionModeLabel: string;
                 AsTokensSelectionMode: string;
                 AsDataFiltersSelectionMode: string;

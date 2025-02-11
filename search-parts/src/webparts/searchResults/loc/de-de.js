@@ -79,6 +79,7 @@ define([], function () {
                     },
                     AllowItemSelection: "Item Auswahl erlauben",
                     AllowMultipleItemSelection: "Mehrfachauswahl erlauben",
+                    SelectionPreservedOnEmptyClick: "Auswahl bei leerem Klick beibehalten",
                     SelectionModeLabel: "Auswahlmodus",
                     AsTokensSelectionMode: "Ausgewählte Werte als Token verarbeiten (manueller Modus)",
                     AsDataFiltersSelectionMode: "Ausgewählte Werte als Filter (Standard Modus)",

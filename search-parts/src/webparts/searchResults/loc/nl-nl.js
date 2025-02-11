@@ -79,6 +79,7 @@ define([], function() {
           },
           AllowItemSelection: "Selectie van items toestaan",
           AllowMultipleItemSelection: "Meerdere selectie toestaan",
+          SelectionPreservedOnEmptyClick: "Selectie behouden bij lege klik",
           SelectionModeLabel: "Selectiemodus",
           AsTokensSelectionMode: "Verwerk geselecteerde waarden als tokens (handmatige modus)",
           AsDataFiltersSelectionMode: "Verwerk geselecteerde waarden als filters (standaardmodus)",
