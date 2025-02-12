@@ -227,6 +227,7 @@ define([], function () {
         ValueSortingColumnNoFieldsLabel: "Ingen felt tilgjengelig",
         FileExtensionFieldLabel: "Felt for filendelse",
         GroupByFieldLabel: "Grupper etter felt",
+        GroupByOthersGroupFieldLabel: "Gruppenavn for andre elementer",
         AdditionalGroupByButtonLabel: "Legg til felt",
         AdditionalGroupByFieldsLabel: "Ytterligere grupperingsfelt",
         AdditionalGroupByFieldsDescription: "Legg til flere grupperingsfelt for å lage et hierarki i oppsettet. Hver kolonne legges til i den viste rekkefølgen.",

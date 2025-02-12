@@ -227,6 +227,7 @@ define([], function () {
                 ValueSortingColumnNoFieldsLabel: "Geen velden beschikbaar",
                 FileExtensionFieldLabel: "Te gebruiken veld voor bestandsextensie",
                 GroupByFieldLabel: "Groepeer op veld",
+                GroupByOthersGroupFieldLabel: "Groepsnaam voor andere elementen",
                 AdditionalGroupByButtonLabel: "Voeg groep toe",
                 AdditionalGroupByFieldsLabel: "Extra groeperingsvelden",
                 AdditionalGroupByFieldsDescription: "Hier kunt u extra groepen toevoegen om op te groeperen. U kunt eigenschapswaarden direct in de lij",

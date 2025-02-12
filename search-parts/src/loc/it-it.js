@@ -228,6 +228,7 @@ define([], function () {
                 DisplayNameColumnLabel: "Nome visualizzato colonna",
                 FileExtensionFieldLabel: "Campo da usare per l'estensione del file",
                 GroupByFieldLabel: "Raggruppa per campo",
+                GroupByOthersGroupFieldLabel: "Nome del gruppo per altri elementi",
                 AdditionalGroupByButtonLabel: "Aggiungi campo di raggruppamento",
                 AdditionalGroupByFieldsLabel: "Campi di raggruppamento aggiuntivi",
                 AdditionalGroupByFieldsDescription: "Aggiungi campi di raggruppamento aggiuntivi per creare una gerarchia nel layout. Ogni colonna è aggiunta nell'ordine mostrato.",

@@ -226,6 +226,7 @@ define([], function () {
                 DisplayNameColumnLabel: "Sarakkeen näyttönimi",
                 FileExtensionFieldLabel: "Kenttä tiedostotyypin määrittämiseen",
                 GroupByFieldLabel: "Ryhmittele kentän mukaan",
+                GroupByOthersGroupFieldLabel: "Ryhmän nimi muille elementeille",
                 AdditionalGroupByButtonLabel: "Lisää ryhmittelykenttä",
                 AdditionalGroupByFieldsLabel: "Lisää ryhmittelykenttä",
                 AdditionalGroupByFieldsDescription: "Lisää ryhmittelykenttiä luodaksesi hierarkian asetteluun. Jokainen sarake lisätään näytetyssä järjestyksessä.",

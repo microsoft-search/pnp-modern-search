@@ -227,6 +227,7 @@ declare interface ICommonStrings {
         ValueSortingColumnNoFieldsLabel: string;
         FileExtensionFieldLabel: string;
         GroupByFieldLabel: string;
+        GroupByOthersGroupFieldLabel: string;
         AdditionalGroupByButtonLabel: string;
         AdditionalGroupByFieldsLabel: string;
         AdditionalGroupByFieldsDescription: string;

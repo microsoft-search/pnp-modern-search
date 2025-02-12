@@ -228,6 +228,7 @@ define([], function () {
                 DisplayNameColumnLabel: "Nazwa wyświetlana kolumny",
                 FileExtensionFieldLabel: "Pole używane dla rozszerzenia pliku",
                 GroupByFieldLabel: "Grupuj po polu",
+                GroupByOthersGroupFieldLabel: "Nazwa grupy dla innych elementów",
                 AdditionalGroupByButtonLabel: "Dodaj grupowanie",
                 AdditionalGroupByFieldsLabel: "Dodatkowe pola grupowania",
                 AdditionalGroupByFieldsDescription: "Dodaj dodatkowe pola grupujące, aby utworzyć hierarchię w układzie. Każda kolumna jest dodawana w pokazanej kolejności.",

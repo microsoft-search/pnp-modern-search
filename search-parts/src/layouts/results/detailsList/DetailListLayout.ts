@@ -3,7 +3,7 @@ import { BaseLayout, IDataContext } from "@pnp/modern-search-extensibility";
 import * as strings from 'CommonStrings';
 import { IComboBoxOption } from '@fluentui/react';
 import { IDetailsListColumnConfiguration } from '../../../components/DetailsListComponent';
-import { IPropertyPaneField, PropertyPaneToggle, PropertyPaneDropdown, PropertyPaneHorizontalRule, PropertyPaneButton, PropertyPaneButtonType } from '@microsoft/sp-property-pane';
+import { IPropertyPaneField, PropertyPaneToggle, PropertyPaneDropdown, PropertyPaneHorizontalRule, PropertyPaneButton, PropertyPaneButtonType, PropertyPaneTextField } from '@microsoft/sp-property-pane';
 import { TemplateValueFieldEditor, ITemplateValueFieldEditorProps } from '../../../controls/TemplateValueFieldEditor/TemplateValueFieldEditor';
 import { AsyncCombo } from "../../../controls/PropertyPaneAsyncCombo/components/AsyncCombo";
 import { IAsyncComboProps } from "../../../controls/PropertyPaneAsyncCombo/components/IAsyncComboProps";
@@ -49,6 +49,12 @@ export interface IDetailsListLayoutProperties {
      * Additional fields to group items in the list
      */
     additionalGroupByFields: IDetailsListColumnConfiguration[];
+
+    /**
+     * The title of group created for all items that could not be grouped
+     * (e.g. the grouping value is either null, undefined or empty string)
+     */
+    groupByOthersGroupTitle?: string;
 
     /**
      * If groups should collapsed by default
@@ -122,6 +128,7 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
         this.properties.fieldIconExtension = this.properties.fieldIconExtension ? this.properties.fieldIconExtension : 'FileType';
         this.properties.enableGrouping = this.properties.enableGrouping !== null && this.properties.enableGrouping !== undefined ? this.properties.enableGrouping : false;
         this.properties.groupByField = this.properties.groupByField ? this.properties.groupByField : '';
+        this.properties.groupByOthersGroupTitle = this.properties.groupByOthersGroupTitle ? this.properties.groupByOthersGroupTitle : '';
         this.properties.additionalGroupByFields = this.properties.additionalGroupByFields ? this.properties.additionalGroupByFields : [];
         this.properties.groupsCollapsed = this.properties.groupsCollapsed !== null && this.properties.groupsCollapsed !== undefined ? this.properties.groupsCollapsed : true;
 
@@ -349,6 +356,10 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
                       },
                   ]
               }),
+              PropertyPaneTextField('layoutProperties.groupByOthersGroupTitle', {
+                label: strings.Layouts.DetailsList.GroupByOthersGroupFieldLabel,
+                value: this.properties.groupByOthersGroupTitle,
+            }),
                   PropertyPaneToggle('layoutProperties.groupsCollapsed', {
                     label: strings.Layouts.DetailsList.CollapsedGroupsByDefault,
                     checked: this.properties.groupsCollapsed

@@ -228,6 +228,7 @@ define([], function () {
                 ValueSortingColumnNoFieldsLabel: "Aucune propriété disponible",
                 FileExtensionFieldLabel: "Champ à utiliser pour l’extension de fichier",
                 GroupByFieldLabel: "Regrouper par champ",
+                GroupByOthersGroupFieldLabel: "Nom du groupe pour les autres éléments",
                 AdditionalGroupByButtonLabel: "Ajouter un champ de regroupement supplémentaire",
                 AdditionalGroupByFieldsLabel: "Champs de regroupement supplémentaires",
                 AdditionalGroupByFieldsDescription: "Ajoutez des champs de regroupement supplémentaires pour créer une hiérarchie dans la mise en page. Chaque colonne est ajoutée dans l'ordre indiqué.",
