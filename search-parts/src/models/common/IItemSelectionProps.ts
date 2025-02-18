@@ -25,6 +25,11 @@ export interface IItemSelectionProps {
      * The logical operator to use between values
      */
     valuesOperator: FilterConditionOperator;
+
+    /**
+     * Keep the selection when the user clicks on an empty area
+     */
+    selectionPreservedOnEmptyClick: boolean;
 }
 
 export enum ItemSelectionMode {

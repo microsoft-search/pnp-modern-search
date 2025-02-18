@@ -150,6 +150,8 @@ define([], function () {
                 ApplyQueryTemplateBtnText: "Aplicar",
                 UseBetaEndpoint: "Usar endpoint <i>beta</i>",
                 TrimDuplicates: "Limpar duplicados",
+                showSPEmbeddedContentLabel: "Mostrar SharePoint incorporado (oculto) nos resultados de pesquisa",
+                showMSArchivedContentLabel: "Mostrar conteúdo arquivado do MS nos resultados da pesquisa",
                 CollapseProperties: {
                     EditCollapsePropertiesLabel: "Editar configurações de recolhimento",
                     CollapsePropertiesDescription: "Especifique as configurações de recolhimento para os resultados da pesquisa. Você pode selecionar um campo na lista suspensa (somente se os dados da fonte de dados já tiverem sido buscados) ou digitar seu próprio valor personalizado (pressione 'Enter' para salvar sua entrada)",

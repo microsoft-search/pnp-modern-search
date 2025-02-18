@@ -46,6 +46,7 @@ define([], function() {
                     DateRangeTemplate: "Datumintervall",
                     ComboBoxTemplate: "Kombinationsruta",
                     DateIntervalTemplate: "Datumintervall (fasta intervall)",
+                    PeopleTemplate: "Person mall",
                     TaxonomyPickerTemplate: "Taxonomiväljare"
                 },
                 SortBy: "Sorteringsordning",

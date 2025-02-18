@@ -1,4 +1,4 @@
-define([], function () {
+define([], function() {
     return {
         Tokens: {
             SelectTokenLabel: "Select a token...",
@@ -150,6 +150,8 @@ define([], function () {
                 ApplyQueryTemplateBtnText: "Apply",
                 UseBetaEndpoint: "Use beta endpoint",
                 TrimDuplicates: "Trim duplicates",
+                showSPEmbeddedContentLabel: "Show SharePoint Embedded (hidden) in search results",
+                showMSArchivedContentLabel: "Show MS Archived content in search results",
                 CollapseProperties: {
                     EditCollapsePropertiesLabel: "Edit collapse settings",
                     CollapsePropertiesDescription: "Specify the collapse settings for the search results. You can either select a field from the dropdown list (only if the data source data have already be fetched) or type your own custom value (press 'Enter' to save your entry)",
@@ -294,7 +296,7 @@ define([], function () {
                 ResetFieldsBtnLabel: "Reset fields to default values",
                 ShowPersonaCardOnHover: "Show persona card on hover",
                 ShowPersonaCardOnHoverCalloutMsg: "This feature uses Microsoft Graph to display information about the user and needs the following API permissions in your tenant to work: ['User.Read','People.Read','Contacts.Read','User.Read.All'].",
-                ShowPersonaCardOnHoverNative: "Show persona card on hover (LPC)",
+                ShowPersonaCardOnHoverNative: "Show persona card on hover (LPC)",                
                 ShowPersonaCardOnHoverCalloutMsgNative: "This feature uses the native SharePoint implementation to show the live persona card (LPC). See https://pnp.github.io/sp-dev-fx-controls-react/controls/LivePersona/ for considerations.",
                 ShowPersonaPresenceInfo: "Show presence",
                 ShowPersonaPresenceInfoCalloutMsg: "This feature needs the following API permissions in your tenant to work: ['Presence.Read.All']",

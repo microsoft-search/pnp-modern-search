@@ -79,6 +79,7 @@ define([], function() {
             },
             AllowItemSelection: "Tillat valg av elementer",
             AllowMultipleItemSelection: "Tillat flere valg",
+            SelectionPreservedOnEmptyClick: "Behold valg ved tomt klikk",
             SelectionModeLabel: "Valgmodus",
             AsTokensSelectionMode: "Behandle valgte verdier som tokens (manuell modus)",
             AsDataFiltersSelectionMode: "Behandle valgte verdier som filtre (standardmodus)",

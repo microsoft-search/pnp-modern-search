@@ -150,6 +150,8 @@ define([], function () {
                 ApplyQueryTemplateBtnText: "Zastosuj",
                 UseBetaEndpoint: "Użyj punktu końcowego wersji beta",
                 TrimDuplicates: "Przytnij duplikaty",
+                showSPEmbeddedContentLabel: "Pokaż SharePoint osadzony (ukryty) w wynikach wyszukiwania",
+                showMSArchivedContentLabel: "Pokaż zawartość zarchiwizowaną MS w wynikach wyszukiwania",
                 CollapseProperties: {
                     EditCollapsePropertiesLabel: "Edytuj ustawienia zwijania",
                     CollapsePropertiesDescription: "Określ ustawienia zwijania wyników wyszukiwania. Możesz wybrać pole z listy rozwijanej (tylko jeśli dane ze źródła danych zostały już pobrane) lub wpisać własną wartość niestandardową (naciśnij „Enter”, aby zapisać wpis)",

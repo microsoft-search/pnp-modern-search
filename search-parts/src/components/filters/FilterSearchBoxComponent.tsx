@@ -121,8 +121,20 @@ export class FilterSearchBox extends React.Component<IFilterSearchBoxProps, IFil
                 let propsitemname:string = props.item.name;
                 if(props.item.name.indexOf("i:0#.f") > -1) 
                     {
-                        propsitemname = props.item.name.split('|')[1]
-                        // propsitemname = "testing"
+                        //From localSharePointResults: Admin@tcwlv.onmicrosoft.com | Kasper Larsen | 693A30232E667C6D656D626572736869707C61646D696E407463776C762E6F6E6D6963726F736F66742E636F6D i:0#.f|membership|admin@tcwlv.onmicrosoft.com
+                        //From localPeopleResults: i:0#.f|membership|pattif@tcwlv.onmicrosoft.com
+                        if(props.item.name.indexOf("i:0#.f") === 0) 
+                        {
+                            propsitemname = props.item.name.split('|')[2]
+                        }
+                        else
+                        {
+                            propsitemname = props.item.name.split('|')[1] 
+
+                        }
+
+                        
+                        
                     }
                     
 

@@ -150,6 +150,8 @@ define([], function () {
         ApplyQueryTemplateBtnText: "Søke om",
         UseBetaEndpoint: "Bruk betaendepunkt",
         TrimDuplicates: "Trim duplikater",
+        showSPEmbeddedContentLabel: "Vis SharePoint Embedded (skjult) i søkeresultater",
+        showMSArchivedContentLabel: "Vis MS Arkivert innhold i søkeresultater",
         CollapseProperties: {
           EditCollapsePropertiesLabel: "Rediger innstillinger for sammenbrudd",
           CollapsePropertiesDescription: "Spesifiser sammenbruddsinnstillingene for søkeresultatene. Du kan enten velge et felt fra rullegardinlisten (bare hvis datakildedataene allerede er hentet) eller skrive inn din egen tilpassede verdi (trykk 'Enter' for å lagre oppføringen din)",

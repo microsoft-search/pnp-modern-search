@@ -60,6 +60,11 @@ const envCheck = build.subTask('environmentCheck', (gulp, config, done) => {
               "fs": false
             };
 
+            // Remove the default html rule
+            generatedConfiguration.module.rules = generatedConfiguration.module.rules.filter(rule => {
+                return rule.test.toString() !== '/\\.html$/';
+            });
+
             generatedConfiguration.module.rules.push({
                 test: /\.js$/,
                 include: [
@@ -100,6 +105,13 @@ const envCheck = build.subTask('environmentCheck', (gulp, config, done) => {
                 test: /index\.js$/,
                 include: [/spfx-controls-react[/\\]lib[/\\]controls[/\\]HoverReactionsBar/],
                 loader: 'ignore-loader',
+            }, {
+              // Add html loader without minimize so that we can use it for handlebars templates
+              test: /\.html$/,
+              loader: 'html-loader',
+              options: {
+                minimize: false
+              }
             });
 
             generatedConfiguration.optimization.splitChunks = { cacheGroups: { vendors: false } };

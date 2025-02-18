@@ -1,4 +1,4 @@
-define([], function () {
+define([], function() {
     return {
         Tokens: {
             SelectTokenLabel: "Vælg token...",
@@ -150,6 +150,8 @@ define([], function () {
                 ApplyQueryTemplateBtnText: "Anvend",
                 UseBetaEndpoint: "Brug beta-endepunkt",
                 TrimDuplicates: "Trim dubletter",
+                showSPEmbeddedContentLabel: "Vis SharePoint Embedded (skjult) i søgeresultater",
+                showMSArchivedContentLabel: "Vis MS Arkiveret indhold i søgeresultater",
                 CollapseProperties: {
                     EditCollapsePropertiesLabel: "Rediger indstillinger for skjul",
                     CollapsePropertiesDescription: "Angiv indstillingerne for sammenbrud for søgeresultaterne. Du kan enten vælge et felt fra rullelisten (kun hvis datakildedataene allerede er hentet) eller indtaste din egen tilpassede værdi (tryk på 'Enter' for at gemme din indtastning)",

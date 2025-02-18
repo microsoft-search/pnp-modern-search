@@ -150,6 +150,8 @@ define([], function () {
                 ApplyQueryTemplateBtnText: "Toepassen",
                 UseBetaEndpoint: "Bèta-eindpunt gebruiken",
                 TrimDuplicates: "Duplicaten bijsnijden",
+                showSPEmbeddedContentLabel: "Toon SharePoint Embedded (verborgen) in zoekresultaten",
+                showMSArchivedContentLabel: "Toon MS-gearchiveerde inhoud in zoekresultaten",
                 CollapseProperties: {
                     EditCollapsePropertiesLabel: "Instellingen voor samenvouwen bewerken",
                     CollapsePropertiesDescription: "Geef de samenvouwinstellingen op voor de zoekresultaten. U kunt een veld selecteren uit de vervolgkeuzelijst (alleen als de gegevensbrongegevens al zijn opgehaald) of uw eigen aangepaste waarde typen (druk op 'Enter' om uw invoer op te slaan)",

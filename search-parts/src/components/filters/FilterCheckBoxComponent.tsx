@@ -79,9 +79,9 @@ export class FilterCheckBoxComponent extends React.Component<IFilterCheckBoxProp
         };
 
         let labelValue = filterValue.name;
-        if(filterValue.name.indexOf("i:0#") > -1) 
+        if(filterValue.name.toString().indexOf("i:0#") > -1) 
         {
-            labelValue = filterValue.name.split("|")[1] + "(" + filterValue.name.split("|")[0] + ")";
+            labelValue = filterValue.name.toString().split("|")[1] + "(" + filterValue.name.toString().split("|")[0] + ")";
         }
         
 

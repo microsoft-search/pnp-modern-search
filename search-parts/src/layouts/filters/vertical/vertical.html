@@ -136,24 +136,51 @@
 										<div class="filter--values-list">
 											{{#each filter.values}}
 											
+											<!-- From localSharePointResults: Admin@tcwlv.onmicrosoft.com | Kasper Larsen | 693A30232E667C6D656D626572736869707C61646D696E407463776C762E6F6E6D6963726F736F66742E636F6D i:0#.f|membership|admin@tcwlv.onmicrosoft.com -->
+											<!-- From localPeopleResults: i:0#.f|membership|pattif@tcwlv.onmicrosoft.com -->
+										   
 												<!-- <div title="{{#with (split name '|')}}{{[1]}}({{[0]}}){{/with}} {{#if ../showCount}}({{count}}){{/if}}" class="filter--value"> -->
+													
+													{{#eq (itemAt (split name "|") 1) "membership"}} <!-- this must be from localPeopleResults -->
+														<div title="{{#with (split name '|')}}{{[2]}}{{/with}} {{#if ../showCount}}({{count}}){{/if}}" class="filter--value">
+														<pnp-filtercheckbox 
+															data-instance-id="{{@root.instanceId}}" 
+															data-filter-name="{{filter.filterName}}" 
+															data-name= "{{#with (split name '|')}}{{[2]}}{{/with}}" 
+															data-value="{{value}}" 
+															data-selected="{{selected}}" 
+															data-disabled="{{disabled}}" 
+															data-count="{{count}}"
+															data-is-multi="{{../isMulti}}"
+															data-theme-variant="{{JSONstringify @root.theme}}"
+														>
+														</pnp-filtercheckbox>
+														{{#if ../showCount}}
+															<span data-ui-test-id="filterCount">({{count}})</span>
+														{{/if}}
+														</div>
+													{{else}}
 													<div title="{{#with (split name '|')}}{{[1]}}{{/with}} {{#if ../showCount}}({{count}}){{/if}}" class="filter--value">
-													<pnp-filtercheckbox 
-														data-instance-id="{{@root.instanceId}}" 
-														data-filter-name="{{filter.filterName}}" 
-														data-name= "{{#with (split name '|')}}{{[1]}}{{/with}}" 
-														data-value="{{value}}" 
-														data-selected="{{selected}}" 
-														data-disabled="{{disabled}}" 
-														data-count="{{count}}"
-														data-is-multi="{{../isMulti}}"
-														data-theme-variant="{{JSONstringify @root.theme}}"
-													>
-													</pnp-filtercheckbox>
-													{{#if ../showCount}}
-														<span data-ui-test-id="filterCount">({{count}})</span>
-													{{/if}}
-												</div>
+														<pnp-filtercheckbox 
+															data-instance-id="{{@root.instanceId}}" 
+															data-filter-name="{{filter.filterName}}" 
+															data-name= "{{#with (split name '|')}}{{[1]}}{{/with}}" 
+															data-value="{{value}}" 
+															data-selected="{{selected}}" 
+															data-disabled="{{disabled}}" 
+															data-count="{{count}}"
+															data-is-multi="{{../isMulti}}"
+															data-theme-variant="{{JSONstringify @root.theme}}"
+														>
+														</pnp-filtercheckbox>
+														{{#if ../showCount}}
+															<span data-ui-test-id="filterCount">({{count}})</span>
+														{{/if}}
+														</div>
+													{{/eq}}
+													
+
+													
 											{{/each}}
 										</div>
 									{{else}}

@@ -69,6 +69,12 @@ import { PropertyPaneTabsField } from '../../controls/PropertyPaneTabsField/Prop
 import { loadMsGraphToolkit } from '../../helpers/GraphToolKitHelper';
 import { PropertyFieldMessage } from '@pnp/spfx-property-controls';
 
+// Import statements for templates
+import defaultSimpleListTemplate from '../../layouts/resultTypes/default_simple_list.html';
+import defaultCardsTemplate from '../../layouts/resultTypes/default_cards.html';
+import defaultCustomTemplate from '../../layouts/resultTypes/default_custom.html';
+import defaultPeopleTemplate from '../../layouts/resultTypes/default_people.html';
+
 const LogSource = "SearchResultsWebPart";
 
 export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebPartProps> implements IDynamicDataCallables {
@@ -1153,7 +1159,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             destinationFieldName: undefined,
             selectionMode: ItemSelectionMode.AsDataFilter,
             allowMulti: false,
-            valuesOperator: FilterConditionOperator.OR
+            valuesOperator: FilterConditionOperator.OR,
+            selectionPreservedOnEmptyClick: false
         };
 
         this.properties.extensibilityLibraryConfiguration = this.properties.extensibilityLibraryConfiguration ? this.properties.extensibilityLibraryConfiguration : [{
@@ -1234,19 +1241,19 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         switch (this.properties.selectedLayoutKey) {
             case BuiltinLayoutsKeys.SimpleList:
-                resultTypeInlineTemplate = require('../../layouts/resultTypes/default_simple_list.html');
+                resultTypeInlineTemplate = defaultSimpleListTemplate;
                 break;
 
             case BuiltinLayoutsKeys.Cards:
-                resultTypeInlineTemplate = require('../../layouts/resultTypes/default_cards.html');
+                resultTypeInlineTemplate = defaultCardsTemplate;
                 break;
 
             case BuiltinLayoutsKeys.ResultsCustomHandlebars:
-                resultTypeInlineTemplate = require('../../layouts/resultTypes/default_custom.html');
+                resultTypeInlineTemplate = defaultCustomTemplate;
                 break;
 
             case BuiltinLayoutsKeys.People:
-                resultTypeInlineTemplate = require('../../layouts/resultTypes/default_people.html');
+                resultTypeInlineTemplate = defaultPeopleTemplate;
                 break;
 
             default:
@@ -1432,6 +1439,9 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 stylingFields.push(
                     PropertyPaneToggle('itemSelectionProps.allowMulti', {
                         label: webPartStrings.PropertyPane.LayoutPage.Handlebars.AllowMultipleItemSelection,
+                    }),
+                    PropertyPaneToggle('itemSelectionProps.selectionPreservedOnEmptyClick', {
+                        label: webPartStrings.PropertyPane.LayoutPage.Handlebars.SelectionPreservedOnEmptyClick,
                     }),
                     PropertyPaneHorizontalRule()
                 );
