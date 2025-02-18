@@ -1149,6 +1149,16 @@
 <td>Display results according to the result types defined in the Microsoft Search admin center. <strong>This option can only be used if <code>External Items</code> entity type is selected and the layout type is "Adaptive Cards</strong></td>
 <td>None.</td>
 </tr>
+<tr>
+<td><strong>Show SharePoint Embedded (hidden) in search results</strong></td>
+<td>By default content in SharePoint Embedded Containers is not <a href="https://learn.microsoft.com/en-us/sharepoint/dev/embedded/concepts/content-experiences/search-content">visible</a> in Microsoft Search. Add the relevant ContainerTypeids to the query template, like ContainerTypeId:"1adc34ca-aef3-4e13-aacf-39b43affd198" and the contain is now returned.</td>
+<td>None.</td>
+</tr>
+<tr>
+<td><strong>Show MS Archived content in search results</strong></td>
+<td>By default contain archived with Microsoft Archive is hidden from Microsoft Search, but this option sets the required "includeHiddenContent" and "isArchived" properties, which ensures that the contant is now returned by the API.</td>
+<td>None.</td>
+</tr>
 </tbody>
 </table>
 <h2 id="paging">Paging<a class="headerlink" href="#paging" title="Permanent link">&para;</a></h2>
