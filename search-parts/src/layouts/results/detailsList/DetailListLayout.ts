@@ -128,7 +128,7 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
         this.properties.fieldIconExtension = this.properties.fieldIconExtension ? this.properties.fieldIconExtension : 'FileType';
         this.properties.enableGrouping = this.properties.enableGrouping !== null && this.properties.enableGrouping !== undefined ? this.properties.enableGrouping : false;
         this.properties.groupByField = this.properties.groupByField ? this.properties.groupByField : '';
-        this.properties.groupByOthersGroupTitle = this.properties.groupByOthersGroupTitle ? this.properties.groupByOthersGroupTitle : '';
+        this.properties.groupByOthersGroupTitle = this.properties.groupByOthersGroupTitle ? this.properties.groupByOthersGroupTitle : strings.Layouts.DetailsList.GroupByOthersGroupDefaultValue;
         this.properties.additionalGroupByFields = this.properties.additionalGroupByFields ? this.properties.additionalGroupByFields : [];
         this.properties.groupsCollapsed = this.properties.groupsCollapsed !== null && this.properties.groupsCollapsed !== undefined ? this.properties.groupsCollapsed : true;
 

@@ -228,6 +228,7 @@ declare interface ICommonStrings {
         FileExtensionFieldLabel: string;
         GroupByFieldLabel: string;
         GroupByOthersGroupFieldLabel: string;
+        GroupByOthersGroupDefaultValue: string;
         AdditionalGroupByButtonLabel: string;
         AdditionalGroupByFieldsLabel: string;
         AdditionalGroupByFieldsDescription: string;

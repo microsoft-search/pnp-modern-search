@@ -229,6 +229,7 @@ define([], function() {
                 FileExtensionFieldLabel: "Field to use for file extension",
                 GroupByFieldLabel: "Group by field",
                 GroupByOthersGroupFieldLabel: "Group title for other items",
+                GroupByOthersGroupDefaultValue: "No value",
                 AdditionalGroupByButtonLabel: "Add group by field",
                 AdditionalGroupByFieldsLabel: "Additional group by fields",
                 AdditionalGroupByFieldsDescription: "Add additional grouping fields to create a hierarchy in the layout. Each column is added in the order shown.",
