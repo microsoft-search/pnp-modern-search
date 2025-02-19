@@ -228,6 +228,8 @@ define([], function () {
                 DisplayNameColumnLabel: "Spaltenanzeigename",
                 FileExtensionFieldLabel: "Zu verwendendes Feld für die Dateierweiterung",
                 GroupByFieldLabel: "Gruppierung nach Feld",
+                GroupByOthersGroupFieldLabel: "Gruppentitel für andere Elemente",
+                GroupByOthersGroupDefaultValue: "Kein Wert",
                 AdditionalGroupByButtonLabel: "Weitere Gruppierung hinzufügen",
                 AdditionalGroupByFieldsLabel: "Zusätzliche Gruppierungsfelder",
                 AdditionalGroupByFieldsDescription: "Fügen Sie zusätzliche Gruppierungsfelder hinzu, um die Gruppierungsebene zu erhöhen. Die Reihenfolge der Gruppierungsfelder entspricht der Reihenfolge der Gruppierungsebenen.",

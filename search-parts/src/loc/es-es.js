@@ -228,6 +228,8 @@ define([], function () {
                 DisplayNameColumnLabel: "Nombre de la columna",
                 FileExtensionFieldLabel: "Campo a utilizar para la extensión del archivo",
                 GroupByFieldLabel: "Agrupar por campo",
+                GroupByOthersGroupFieldLabel: "Título de grupo para otros artículos",
+                GroupByOthersGroupDefaultValue: "Sin valor",
                 AdditionalGroupByButtonLabel: "Añadir campo de agrupación adicional",
                 AdditionalGroupByFieldsLabel: "Campos de agrupación adicionales",
                 AdditionalGroupByFieldsDescription: "Agregue campos de agrupación adicionales para crear una jerarquía en el diseño. Cada columna se agrega en el orden que se muestra.",

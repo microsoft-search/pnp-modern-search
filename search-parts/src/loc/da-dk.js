@@ -228,6 +228,8 @@ define([], function() {
                 DisplayNameColumnLabel: "Kolonnens visningsnavn",
                 FileExtensionFieldLabel: "Felt til brug af file extension",
                 GroupByFieldLabel: "Gruppér efter felt",
+                GroupByOthersGroupFieldLabel: "Gruppetitel for andre varer",
+                GroupByOthersGroupDefaultValue: "Ingen værdi",
                 AdditionalGroupByButtonLabel: "Tilføj felt",
                 AdditionalGroupByFieldsLabel: "Yderligere grupperingsfelter",
                 AdditionalGroupByFieldsDescription: "Tilføj yderligere grupperingsfelter for at skabe et hierarki i layoutet. Hver kolonne tilføjes i den viste rækkefølge.",
