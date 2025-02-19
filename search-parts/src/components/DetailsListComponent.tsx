@@ -269,7 +269,7 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
     constructor(props: IDetailsListComponentProps) {
         super(props);
 
-        this._domPurify = DOMPurify.default;
+        this._domPurify = DOMPurify;
 
         this._domPurify.setConfig({
             WHOLE_DOCUMENT: true,

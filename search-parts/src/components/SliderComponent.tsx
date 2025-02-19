@@ -85,7 +85,7 @@ export class SliderComponent extends React.Component<ISliderComponentProps, ISli
     public constructor(props: ISliderComponentProps) {
         super(props);
 
-        this._domPurify = DOMPurify.default;
+        this._domPurify = DOMPurify;
 
         this._domPurify.setConfig({
             WHOLE_DOCUMENT: true,

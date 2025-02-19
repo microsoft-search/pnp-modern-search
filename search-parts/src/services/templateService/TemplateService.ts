@@ -974,7 +974,7 @@ export class TemplateService implements ITemplateService {
 
         if (!this._adaptiveCardsNS) {
 
-            const domPurify = DOMPurify.default;
+            const domPurify = DOMPurify;
 
             domPurify.setConfig({
                 WHOLE_DOCUMENT: false

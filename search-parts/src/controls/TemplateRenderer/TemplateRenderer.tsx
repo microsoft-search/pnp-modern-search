@@ -23,7 +23,7 @@ export class TemplateRenderer extends React.Component<ITemplateRendererProps, IT
         this.state = {
         };
 
-        this._domPurify = DOMPurify.default;
+        this._domPurify = DOMPurify;
 
         this._domPurify.setConfig({
             ADD_TAGS: ['style','#comment'],
