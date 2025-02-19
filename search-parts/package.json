@@ -40,7 +40,7 @@
         "adaptivecards": "2.11.2",
         "adaptivecards-templating": "2.2.0",
         "core-js": "3.26.0",
-        "dompurify": "3.1.7",
+        "dompurify": "3.2.4",
         "flickity": "2.3.0",
         "handlebars": "4.7.8",
         "handlebars-group-by": "1.0.1",
