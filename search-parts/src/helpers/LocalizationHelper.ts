@@ -90,6 +90,43 @@ class LocalizationHelper {
         if (cultureFolderCandidate.length == 2) return cultureFolderCandidate; //ISO-639-1 uses two letter codes
         return null;
     }
+    public static getTranslatedBooleanValue(displayvalue:string, lcid: number): string
+    {
+        if(displayvalue.toUpperCase() === "TRUE") 
+        {
+            let localizedValue = "Yes";
+            if (lcid == 1030) return "Ja";
+            if (lcid == 1031) return "Ja";
+            if (lcid == 1033) return "Yes";
+            if (lcid == 1035) return "Kyllä";
+            if (lcid == 1036) return "Oui";
+            if (lcid == 1040) return "Si";
+            if (lcid == 1043) return "Ja";
+            if (lcid == 1044) return "Ja";
+            if (lcid == 1045) return "Tak";
+            if (lcid == 1046) return "Sim";
+            if (lcid == 1053) return "Ja";
+            if (lcid == 3082) return "Sí";
+            return localizedValue;
+        }
+        else
+        {
+            let localizedValue = "No";
+            if (lcid == 1030) return "Nej";
+            if (lcid == 1033) return "No";
+            if (lcid == 1035) return "Ei";
+            if (lcid == 1036) return "Non";
+            if (lcid == 1040) return "No";
+            if (lcid == 1043) return "Nee";
+            if (lcid == 1044) return "Nei";
+            if (lcid == 1045) return "Nie";
+            if (lcid == 1046) return "Não";
+            if (lcid == 1053) return "Nej";
+            if (lcid == 3082) return "No";
+            return localizedValue;
+        }
+        
+    }
 }
 
 export default LocalizationHelper;

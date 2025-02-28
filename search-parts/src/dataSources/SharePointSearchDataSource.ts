@@ -1086,8 +1086,18 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                             updatedValues[existingFilterIdx].value = fqlFilterValue;
                         }
                     });
-                } else {
-                    updatedValues.push(value);
+                } else 
+                {
+                    if(filterResult.filterName.toString().indexOf("RefinableYesNo")>-1) 
+                    {
+                        value.name = LocalizationHelper.getTranslatedBooleanValue(value.name, lcid);
+                        updatedValues.push(value);
+                    }
+                    else
+                    {
+                        updatedValues.push(value);
+                    }
+                    
                 }
             });
 
