@@ -58,6 +58,11 @@ export class TokenService implements ITokenService {
     private currentPageItem: any = null;
 
     /**
+     * The current hub site information. Used to avoid refetching it every time.
+     */
+    private currentHubInfos: any = null;
+
+    /**
      * The current service scope
      */
     private serviceScope: ServiceScope;
@@ -272,16 +277,14 @@ export class TokenService implements ITokenService {
         // Make a check to the listItem property in the case we are in the hosted workbench
         if (matches != null && this.pageContext.listItem) {
 
-            let pageItem = this.currentPageItem;
-
-            if (!pageItem) {
+            if (!this.currentPageItem) {
                 // Get page properties dymamically
-                pageItem = await this.getPageProperties();
+                this.currentPageItem = await this.getPageProperties();
             }
 
-            let properties = Object.keys(pageItem);
+            let properties = Object.keys(this.currentPageItem);
             properties.forEach(property => {
-                item[property] = pageItem[property];
+                item[property] = this.currentPageItem[property];
             });
 
             item = this.recursivelyLowercaseJSONKeys(item);
@@ -554,16 +557,18 @@ export class TokenService implements ITokenService {
         const hubRegExp = /\{(?:Hub)\.(.*?)\}/gi;
         let matches = hubRegExp.exec(inputString);
 
-        // Get hub info
-        const hubInfos = await this.getHubInfo();
+        if (matches != null) {
 
-        if (matches != null && hubInfos) {
+          if (!this.currentHubInfos) {
+              // Get hub site data
+              this.currentHubInfos = await this.getHubInfo();
+          }
 
-            while (matches !== null) {
-                const hubProp = matches[1];
-                inputString = inputString.replace(new RegExp(matches[0], "gi"), hubInfos[hubProp]);
-                matches = hubRegExp.exec(inputString);
-            }
+          while (matches !== null) {
+              const hubProp = matches[1];
+              inputString = inputString.replace(new RegExp(matches[0], "gi"), this.currentHubInfos[hubProp]);
+              matches = hubRegExp.exec(inputString);
+          }
         }
 
         return inputString;
