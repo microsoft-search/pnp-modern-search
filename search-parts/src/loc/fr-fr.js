@@ -81,7 +81,7 @@ define([], function () {
             },
             DateIntervalStrings: {
                 AnyTime: "N’importe quand",
-                PastDay: "Derniière 24 heures",
+                PastDay: "Dernières 24 heures",
                 PastWeek: "Entre 24 heures et 1 semaine",
                 PastMonth: "Entre 1 semaine et 1 mois",
                 Past3Months: "Entre 1 mois et 3 mois",
