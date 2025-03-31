@@ -62,9 +62,38 @@ To create an extensibility library, you have the choice to reuse the one provide
 
 1. Create a new SharePoint Framework project of type 'Library' with `yo @microsoft/sharepoint`.
 2. Add an npm reference to `@pnp/modern-search-extensibility` library using `npm i @pnp/modern-search-extensibility --save` cmd.
-3. In the main entry point, implement the `IExtensibilityLibrary` interface. Provide all method implementations (return empty arrays if you don't implement specific extensions).
+3. Install npm-package `html-loader` as a dev-dependency using `npm i html-loader@4.2.0 --save-dev`
+4. Insert the following lines of code into `gulpfile.js` of your SPFx-project
+```js
+const envCheck = build.subTask('environmentCheck', (gulp, config, done) => {
+
+  build.configureWebpack.mergeConfig({
+      additionalConfiguration: (generatedConfiguration) => {
+
+          // Remove the default html rule
+          generatedConfiguration.module.rules = generatedConfiguration.module.rules.filter(rule => {
+              return rule.test.toString() !== '/\\.html$/';
+          });
+          // Add html loader without minimize so that we can use it for handlebars templates
+          generatedConfiguration.module.rules.push({
+            test: /\.html$/,
+            loader: 'html-loader',
+            options: {
+              minimize: false
+            }
+          });
+          return generatedConfiguration;
+      }
+  });
+  done();
+});
+
+build.rig.addPreBuildTask(envCheck);
+```
+
+5. In the main entry point, implement the `IExtensibilityLibrary` interface. Provide all method implementations (return empty arrays if you don't implement specific extensions).
     !["Extensibility interface implementation"](../assets/extensibility/implement_interface.png){: .center}
-5. Implement your extension(s) depending of the type:
+6. Implement your extension(s) depending of the type:
     - [Layout](./custom_layout.md)
     - [Web component](./custom_web_component.md)
     - [Suggestions providers](./custom_suggestions_provider.md)
@@ -78,9 +107,9 @@ To create an extensibility library, you have the choice to reuse the one provide
     1. Create the extension data logic or render logic.
     2. Register the information about the extension to be discovered and instanciated by the target Web Part by implementing the corresponding method according to the `IExtensibilityLibrary` interface.
 
-6. Bundle `gulp bundle --ship` and package `gulp package-solution --ship` and add the solution to the global or site collection catalog (for this one, it must be the same site collection where the Web Part loading that extension(s) is present).
-7. [Register your manifest ID in the target Web Part instance](#register-your-extensibility-library-with-a-web-part).
-8. Enjoy!
+7. Bundle `gulp bundle --ship` and package `gulp package-solution --ship` and add the solution to the global or site collection catalog (for this one, it must be the same site collection where the Web Part loading that extension(s) is present).
+8. [Register your manifest ID in the target Web Part instance](#register-your-extensibility-library-with-a-web-part).
+9.  Enjoy!
 
 #### Debug a library component
 

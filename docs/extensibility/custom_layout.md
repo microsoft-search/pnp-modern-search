@@ -93,13 +93,15 @@ The next step is to fill information about your new layout. In the library main 
 
 ```typescript
 public getCustomLayouts(): ILayoutDefinition[] {
+    /* eslint-disable @typescript-eslint/no-var-requires */
+    
     return [
         {
             name: 'My custom layout',
             iconName: 'Color',
             key: 'CustomLayout',
             type: LayoutType.Results,
-            templateContent: require('../custom-layout.html'),
+            templateContent: require('../custom-layout.html').default.toString(),
             serviceKey: ServiceKey.create<ILayout>('MyCompany:CustomLayout', Customlayout)
         }
     ];
