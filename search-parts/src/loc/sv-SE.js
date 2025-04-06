@@ -96,7 +96,10 @@ define([], function () {
         NoResultsSearchMessage: "Inga resultat funna",
         SearchPlaceholder: "Sök efter ett värde..."
       },
-      CurrentVerticalNotSelectedMessage: "Den aktuella valda vertikalen matchar inte de som är kopplade till den här webbdelen ({0}). Den förblir tom i visningsläge."
+      CurrentVerticalNotSelectedMessage: "Den aktuella valda vertikalen matchar inte de som är kopplade till den här webbdelen ({0}). Den förblir tom i visningsläge.",
+      True:"Ja",
+      False:"Nej",
+
     },
     DataSources: {
       SharePointSearch: {

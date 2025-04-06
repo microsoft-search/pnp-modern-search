@@ -1090,7 +1090,8 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                 {
                     if(filterResult.filterName.toString().indexOf("RefinableYesNo")>-1) 
                     {
-                        value.name = LocalizationHelper.getTranslatedBooleanValue(value.name, lcid);
+                       let localizedValue = commonStrings.General[value.name] || value.name
+                        value.name = localizedValue;  
                         updatedValues.push(value);
                     }
                     else

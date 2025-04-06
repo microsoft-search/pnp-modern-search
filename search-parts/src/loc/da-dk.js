@@ -96,7 +96,9 @@ define([], function() {
                 NoResultsSearchMessage: "Ingen resultater fundet",
                 SearchPlaceholder: "Søg efter en værdi..."
             },
-            CurrentVerticalNotSelectedMessage: "Den aktuelle valgte vertikal stemmer ikke overens med dem, der er knyttet til denne webdel ({0}). Den forbliver tom i visningstilstand."
+            CurrentVerticalNotSelectedMessage: "Den aktuelle valgte vertikal stemmer ikke overens med dem, der er knyttet til denne webdel ({0}). Den forbliver tom i visningstilstand.",
+            True: "Ja",
+            False: "Nej"
         },
         DataSources: {
             SharePointSearch: {
@@ -128,6 +130,7 @@ define([], function() {
                 EnableAudienceTargetingTglLabel: "Aktivér målgruppestyring",
                 TrimDuplicates: "Trim dubletter",
                 CollapseSpecificationLabel: "Skjul specifikation"
+            
             },
             MicrosoftSearch: {
                 QueryTextFieldLabel: "Forespørgselstekst",
