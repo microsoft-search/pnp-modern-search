@@ -1086,8 +1086,19 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                             updatedValues[existingFilterIdx].value = fqlFilterValue;
                         }
                     });
-                } else {
-                    updatedValues.push(value);
+                } else 
+                {
+                    if(filterResult.filterName.toString().indexOf("RefinableYesNo")>-1) 
+                    {
+                       let localizedValue = commonStrings.General[value.name] || value.name
+                        value.name = localizedValue;  
+                        updatedValues.push(value);
+                    }
+                    else
+                    {
+                        updatedValues.push(value);
+                    }
+                    
                 }
             });
 

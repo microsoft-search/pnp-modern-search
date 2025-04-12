@@ -96,7 +96,9 @@ define([], function () {
                 NoResultsSearchMessage: "Tuloksia ei löytynyt",
                 SearchPlaceholder: "Hae arvoa..."
             },
-            CurrentVerticalNotSelectedMessage: "Valittu vertikaali ei ole yhdistetty hakutulososaan ({0}). Hakutulososa on tyhjä sivun lukutilassa."
+            CurrentVerticalNotSelectedMessage: "Valittu vertikaali ei ole yhdistetty hakutulososaan ({0}). Hakutulososa on tyhjä sivun lukutilassa.",
+            True:"Kyllä",
+            False:"Ei"
         },
         DataSources: {
             SharePointSearch: {

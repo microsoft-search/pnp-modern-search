@@ -96,7 +96,9 @@ define([], function() {
                 NoResultsSearchMessage: "No results found",
                 SearchPlaceholder: "Search a value..."
             },
-            CurrentVerticalNotSelectedMessage: "The current selected vertical does not match with the ones associated for this Web Part ({0}). It will remains blank in display mode."
+            CurrentVerticalNotSelectedMessage: "The current selected vertical does not match with the ones associated for this Web Part ({0}). It will remains blank in display mode.",
+            True:"Yes",
+            False:"No"
         },
         DataSources: {
             SharePointSearch: {

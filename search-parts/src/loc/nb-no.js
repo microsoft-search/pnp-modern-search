@@ -96,7 +96,9 @@ define([], function () {
         NoResultsSearchMessage: "Ingen resultater",
         SearchPlaceholder: "Søk etter en verdi..."
       },
-      CurrentVerticalNotSelectedMessage: "Den gjeldende valgte vertikalen samsvarer ikke med de som er knyttet til denne nettdelen ({0}). Det vil forbli tomt i visningsmodus."
+      CurrentVerticalNotSelectedMessage: "Den gjeldende valgte vertikalen samsvarer ikke med de som er knyttet til denne nettdelen ({0}). Det vil forbli tomt i visningsmodus.",
+      True:"Ja",
+      False:"Nei"
     },
     DataSources: {
       SharePointSearch: {

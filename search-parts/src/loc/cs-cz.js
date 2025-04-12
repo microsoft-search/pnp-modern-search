@@ -96,7 +96,9 @@ define([], function() {
                 NoResultsSearchMessage: "Nebyla nalezena žádná shoda",
                 SearchPlaceholder: "Hledat hodnotu..."
             },
-            CurrentVerticalNotSelectedMessage: "Aktuálně vybraná vertikála neodpovídá těm, které jsou přiřazeny k této webové části ({0}). V režimu zobrazení zůstane prázdná."
+            CurrentVerticalNotSelectedMessage: "Aktuálně vybraná vertikála neodpovídá těm, které jsou přiřazeny k této webové části ({0}). V režimu zobrazení zůstane prázdná.",
+            True: "Ano",
+            False: "Ne"
         },
         DataSources: {
             SharePointSearch: {

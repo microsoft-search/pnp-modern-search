@@ -96,7 +96,9 @@ define([], function () {
                 NoResultsSearchMessage: "Keine Ergebnisse gefunden",
                 SearchPlaceholder: "Suche einen Wert..."
             },
-            CurrentVerticalNotSelectedMessage: "Das derzeit ausgewählte Vertikal passt nicht zu den zu diesem Web Part ({0}) zugeordneten Vertikalen. Es wird im Anzeige Modus als leer angezeigt."
+            CurrentVerticalNotSelectedMessage: "Das derzeit ausgewählte Vertikal passt nicht zu den zu diesem Web Part ({0}) zugeordneten Vertikalen. Es wird im Anzeige Modus als leer angezeigt."            ,
+            True:"Ja",
+            False:"Nei"
         },
         DataSources: {
             SharePointSearch: {

@@ -96,7 +96,10 @@ define([], function () {
                 NoResultsSearchMessage: "Nie znaleziono wyników",
                 SearchPlaceholder: "Wyszukaj wartość..."
             },
-            CurrentVerticalNotSelectedMessage: "Aktualnie wybrana branża nie odpowiada branżom powiązanym z tym składnikiem Web Part ({0}). W trybie wyświetlania pozostanie puste."
+            CurrentVerticalNotSelectedMessage: "Aktualnie wybrana branża nie odpowiada branżom powiązanym z tym składnikiem Web Part ({0}). W trybie wyświetlania pozostanie puste.",
+            True:"Tak",
+            False:"Nie"
+
         },
         DataSources: {
             SharePointSearch: {

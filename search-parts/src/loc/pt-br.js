@@ -97,6 +97,8 @@ define([], function () {
                 SearchPlaceholder: "Procurar por..."
             },
             CurrentVerticalNotSelectedMessage: "A vertical corrente não combina com as associadas para este Web Part ({0}). Ele permanecerá em branco no modo de exibição.",
+            True:"Sim",
+            False:"Não",
         },
         DataSources: {
             SharePointSearch: {

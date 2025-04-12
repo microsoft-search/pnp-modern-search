@@ -96,7 +96,9 @@ define([], function () {
                 NoResultsSearchMessage: "Geen resultaten gevonden",
                 SearchPlaceholder: "Zoek een waarde..."
             },
-            CurrentVerticalNotSelectedMessage: "De huidige geselecteerde branche komt niet overeen met die welke zijn gekoppeld aan dit webonderdeel ({0}). Het blijft leeg in de weergavemodus."
+            CurrentVerticalNotSelectedMessage: "De huidige geselecteerde branche komt niet overeen met die welke zijn gekoppeld aan dit webonderdeel ({0}). Het blijft leeg in de weergavemodus.",
+            True:"Ja",
+            False:"Nee"
         },
         DataSources: {
             SharePointSearch: {
