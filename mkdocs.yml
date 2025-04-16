@@ -35,6 +35,7 @@ nav:
     - Custom event handlers for adaptive cards actions: extensibility/adaptivecards_customizations.md
     - Custom data sources: extensibility/custom_data_sources.md
     - Custom query modifier: extensibility/custom_query_modifications.md
+    - Compatibility matrix: extensibility/extensibility_compatibility_matrix.md
   
 theme:
   name: 'material'
