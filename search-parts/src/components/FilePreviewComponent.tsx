@@ -5,6 +5,7 @@ import PreviewContainer from '../controls/PreviewContainer/PreviewContainer';
 import { PreviewType } from '../controls/PreviewContainer/IPreviewContainerProps';
 import { UrlHelper } from '../helpers/UrlHelper';
 import * as DOMPurify from 'dompurify';
+import { Constants } from '../common/Constants';
 
 export interface IFilePreviewProps {
 
@@ -36,9 +37,15 @@ export interface IFileIconState {
 export class FilePreview extends React.Component<IFilePreviewProps, IFileIconState> {
 
     private elementPreviewRef = React.createRef<HTMLDivElement>();
+    private _domPurify: any;
 
     constructor(props) {
         super(props);
+        this._domPurify = DOMPurify;
+        this._domPurify.setConfig({
+            WHOLE_DOCUMENT: true,
+            ALLOWED_URI_REGEXP: Constants.ALLOWED_URI_REGEXP,
+        });
 
         this.state = {
             isCalloutVisible: false
@@ -52,7 +59,7 @@ export class FilePreview extends React.Component<IFilePreviewProps, IFileIconSta
         let previewUrl = this.props.previewUrl;
 
         // Fallback to thumbnail in iframe if different domain as auth won't work cross domains
-        if(previewUrl && this.props.previewImageUrl && !this.isCurrentDomain(previewUrl)) {
+        if (previewUrl && this.props.previewImageUrl && !this.isCurrentDomain(previewUrl)) {
             previewUrl = this.props.previewImageUrl;
         }
 
@@ -73,7 +80,7 @@ export class FilePreview extends React.Component<IFilePreviewProps, IFileIconSta
         return <div>
             <div
                 ref={this.elementPreviewRef}
-                dangerouslySetInnerHTML={{ __html: DOMPurify.default.sanitize(this.props.template) }}
+                dangerouslySetInnerHTML={{ __html: this._domPurify.sanitize(this.props.template) }}
                 onClick={() => {
                     this.setState({
                         isCalloutVisible: true

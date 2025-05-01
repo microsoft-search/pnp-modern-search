@@ -96,7 +96,9 @@ define([], function() {
                 NoResultsSearchMessage: "No results found",
                 SearchPlaceholder: "Search a value..."
             },
-            CurrentVerticalNotSelectedMessage: "The current selected vertical does not match with the ones associated for this Web Part ({0}). It will remains blank in display mode."
+            CurrentVerticalNotSelectedMessage: "The current selected vertical does not match with the ones associated for this Web Part ({0}). It will remains blank in display mode.",
+            True:"Yes",
+            False:"No"
         },
         DataSources: {
             SharePointSearch: {
@@ -228,6 +230,8 @@ define([], function() {
                 DisplayNameColumnLabel: "Column display name",
                 FileExtensionFieldLabel: "Field to use for file extension",
                 GroupByFieldLabel: "Group by field",
+                GroupByOthersGroupFieldLabel: "Group title for other items",
+                GroupByOthersGroupDefaultValue: "No value",
                 AdditionalGroupByButtonLabel: "Add group by field",
                 AdditionalGroupByFieldsLabel: "Additional group by fields",
                 AdditionalGroupByFieldsDescription: "Add additional grouping fields to create a hierarchy in the layout. Each column is added in the order shown.",
@@ -334,6 +338,50 @@ define([], function() {
                     ExtraLarge: 'Extra large',
                     SmallFluid: 'Full-width (fluid)'
                 }
+            },
+            PersonCard: {
+              SendEmailLinkSubtitle: "Send email",
+              StartChatLinkSubtitle: "Start chat",
+              ShowMoreSectionButton: "Show more",
+              ContactSectionTitle: "Contact",
+              ReportsToSectionTitle: "Reports to",
+              DirectReportsSectionTitle: "Direct reports",
+              OrganizationSectionTitle: "Organization",
+              YouWorkWithSubSectionTitle: "You work with",
+              UserWorksWithSubSectionTitle: "works with",
+              EmailsSectionTitle: "Emails",
+              FilesSectionTitle: "Files",
+              SharedTextSubtitle: "Shared",
+              SkillsAndExperienceSectionTitle: "Skills & Experience",
+              AboutCompactSectionTitle: "About",
+              SkillsSubSectionTitle: "Skills",
+              LanguagesSubSectionTitle: "Languages",
+              WorkExperienceSubSectionTitle: "Work Experience",
+              EducationSubSectionTitle: "Education",
+              ProfessionalInterestsSubSectionTitle: "Professional Interests",
+              PersonalInterestsSubSectionTitle: "Personal Interests",
+              BirthdaySubSectionTitle: "Birthday",
+              CurrentYearSubtitle: "Current",
+              EndOfCard: "End of the card",
+              QuickMessage: "Send a quick message",
+              ExpandDetailsLabel: "Expand details",
+              SendMessageLabel: "Send message",
+              EmailButtonLabel: "Email",
+              CallButtonLabel: "Call",
+              ChatButtonLabel: "Chat", 
+              CloseCardLabel: "Close card",
+              VideoButtonLabel: "Video",
+              GoBackLabel: "Go Back",
+              EmailTitle: "Email",
+              ChatTitle: "Teams",
+              BusinessPhoneTitle: "Business Phone",
+              CellPhoneTitle: "Mobile Phone",
+              DepartmentTitle: "Department",
+              PersonTitle: "Title",
+              OfficeLocationTitle: "Office Location",
+              CopyToClipboardButton: "Copy to clipboard",
+              ShowMoreSubtitle: "Show more items",
+              SocialMediaSubSectionTitle: "Social Media"
             }
         },
         HandlebarsHelpers: {

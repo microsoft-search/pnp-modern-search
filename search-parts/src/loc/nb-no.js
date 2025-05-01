@@ -96,7 +96,9 @@ define([], function () {
         NoResultsSearchMessage: "Ingen resultater",
         SearchPlaceholder: "Søk etter en verdi..."
       },
-      CurrentVerticalNotSelectedMessage: "Den gjeldende valgte vertikalen samsvarer ikke med de som er knyttet til denne nettdelen ({0}). Det vil forbli tomt i visningsmodus."
+      CurrentVerticalNotSelectedMessage: "Den gjeldende valgte vertikalen samsvarer ikke med de som er knyttet til denne nettdelen ({0}). Det vil forbli tomt i visningsmodus.",
+      True:"Ja",
+      False:"Nei"
     },
     DataSources: {
       SharePointSearch: {
@@ -227,6 +229,8 @@ define([], function () {
         ValueSortingColumnNoFieldsLabel: "Ingen felt tilgjengelig",
         FileExtensionFieldLabel: "Felt for filendelse",
         GroupByFieldLabel: "Grupper etter felt",
+        GroupByOthersGroupFieldLabel: "Gruppetittel for andre elementer",
+        GroupByOthersGroupDefaultValue: "Ingen verdi",
         AdditionalGroupByButtonLabel: "Legg til felt",
         AdditionalGroupByFieldsLabel: "Ytterligere grupperingsfelt",
         AdditionalGroupByFieldsDescription: "Legg til flere grupperingsfelt for å lage et hierarki i oppsettet. Hver kolonne legges til i den viste rekkefølgen.",
@@ -332,6 +336,50 @@ define([], function () {
           ExtraLarge: 'Ekstra stor',
           SmallFluid: 'Full bredde (flytende)'
         }
+      },
+      PersonCard: {
+        SendEmailLinkSubtitle: "Send e-post",
+        StartChatLinkSubtitle: "Start chat",
+        ShowMoreSectionButton: "Vis mer",
+        ContactSectionTitle: "Kontakt",
+        ReportsToSectionTitle: "Rapporterer til",
+        DirectReportsSectionTitle: "Direkte underordnede",
+        OrganizationSectionTitle: "Organisasjon",
+        YouWorkWithSubSectionTitle: "Du jobber med",
+        UserWorksWithSubSectionTitle: "jobber med",
+        EmailsSectionTitle: "E-poster",
+        FilesSectionTitle: "Filer",
+        SharedTextSubtitle: "Delt",
+        SkillsAndExperienceSectionTitle: "Ferdigheter og erfaring",
+        AboutCompactSectionTitle: "Om",
+        SkillsSubSectionTitle: "Ferdigheter",
+        LanguagesSubSectionTitle: "Språk",
+        WorkExperienceSubSectionTitle: "Arbeidserfaring",
+        EducationSubSectionTitle: "Utdanning",
+        ProfessionalInterestsSubSectionTitle: "Faglige interesser",
+        PersonalInterestsSubSectionTitle: "Personlige interesser",
+        BirthdaySubSectionTitle: "Fødselsdag",
+        CurrentYearSubtitle: "Nåværende",
+        EndOfCard: "Slutt på kortet",
+        QuickMessage: "Send en rask melding",
+        ExpandDetailsLabel: "Utvid detaljer",
+        SendMessageLabel: "Send melding",
+        EmailButtonLabel: "E-post",
+        CallButtonLabel: "Ring",
+        ChatButtonLabel: "Chat",
+        CloseCardLabel: "Lukk kort",
+        VideoButtonLabel: "Video",
+        GoBackLabel: "Gå tilbake",
+        EmailTitle: "E-post",
+        ChatTitle: "Teams",
+        BusinessPhoneTitle: "Jobbtelefon",
+        CellPhoneTitle: "Mobiltelefon",
+        DepartmentTitle: "Avdeling",
+        PersonTitle: "Tittel",
+        OfficeLocationTitle: "Kontorsted",
+        CopyToClipboardButton: "Kopier til utklippstavle",
+        ShowMoreSubtitle: "Vis flere elementer",
+        SocialMediaSubSectionTitle: "Sosiale medier"
       }
     },
     HandlebarsHelpers: {

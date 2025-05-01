@@ -179,6 +179,12 @@ export interface IDetailsListComponentProps {
     additionalGroupBy?: IDetailsListColumnConfiguration[];
 
     /**
+     * The title of group created for all items that could not be grouped
+     * (e.g. the grouping value is either null, undefined or empty string)
+     */
+    groupByOthersGroupTitle?: string;
+
+    /**
      * Show groups as collapsed by default if true. Expanded otherwise
      */
     groupsCollapsed?: boolean;
@@ -263,7 +269,7 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
     constructor(props: IDetailsListComponentProps) {
         super(props);
 
-        this._domPurify = DOMPurify.default;
+        this._domPurify = DOMPurify;
 
         this._domPurify.setConfig({
             WHOLE_DOCUMENT: true,
@@ -279,7 +285,10 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
         if (this.props.groupBy) {
           // Because groups are determined by a start index and a count, we need to sort items to regroup them in the collection before processing.
           const additionalGroupBy = this.props.additionalGroupBy ? this.props.additionalGroupBy.map((field) => field.value) : [];
-          this._allItems = sortBy(this.props.items, [this.props.groupBy, ...additionalGroupBy]);
+          const preprocessedItems = this.props.items && this.props.items.map(i => !i[this.props.groupBy] ? {...i, [this.props.groupBy]:this.props.groupByOthersGroupTitle}: i);
+          if (preprocessedItems) {
+            this._allItems = sortBy(preprocessedItems, [this.props.groupBy, ...additionalGroupBy]);
+          }
         }
         else {
           this._allItems = this.props.items ? this.props.items : [];
@@ -535,7 +544,7 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
         // Build the intitial groups
         if (this.props.groupBy) {
           const additionalGroupBy = this.props.additionalGroupBy ? this.props.additionalGroupBy.map((field) => field.value) : [];
-          const groups = this._buildGroups(this.state.items, [this.props.groupBy, ...additionalGroupBy], 0, 0);
+          const groups = this._buildGroups(this.state.items, [this.props.groupBy, ...additionalGroupBy], 0, 0, this.props.groupByOthersGroupTitle);
 
           this.setState({groups: groups}, () => {
             this.updateSelection();
@@ -773,26 +782,14 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
 
     }
 
-    private _buildGroups(items: any[], groupByFields: string[], level: number, currentIndex: number): IGroup[] {
-
-        const groupedItems = groupBy(items, (i) => {
-            return ObjectHelper.byPath(i, groupByFields[level]);
-        });
-
+    private _buildGroups(items: any[], groupByFields: string[], level: number, currentIndex: number, othersGroupTitle: string): IGroup[] {
+      const groupedItems = groupBy(items, (i) => ObjectHelper.byPath(i, groupByFields[level]) || othersGroupTitle || '');
         let groups: IGroup[] = [];
 
         // eslint-disable-next-line guard-for-in
         for (const group in groupedItems) {
 
-            const idx = findIndex(items, (i: any) => {
-
-                // If items can't be grouped by the groupByField property, lodash groupBy will return 'undefined' as the group name
-                if (group === 'undefined') {
-                    return ObjectHelper.byPath(i, groupByFields[level]) === undefined;
-                } else {
-                    return ObjectHelper.byPath(i, groupByFields[level]) === group;
-                }
-            });
+            const idx = findIndex(items, (i: any) => (ObjectHelper.byPath(i, groupByFields[level]) || othersGroupTitle || '') === group);
 
             let groupProps: IGroup = {
                 name: group,
@@ -803,7 +800,7 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
                   return this.props.selectedKeys.includes(value.key);
                 }),
                 level: level,
-                children: level < groupByFields.length - 1 ? this._buildGroups(groupedItems[group], groupByFields, level + 1, currentIndex + idx) : []
+                children: level < groupByFields.length - 1 ? this._buildGroups(groupedItems[group], groupByFields, level + 1, currentIndex + idx, othersGroupTitle) : []
             };
 
             groups.push(groupProps);

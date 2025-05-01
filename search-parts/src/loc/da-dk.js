@@ -96,7 +96,9 @@ define([], function() {
                 NoResultsSearchMessage: "Ingen resultater fundet",
                 SearchPlaceholder: "Søg efter en værdi..."
             },
-            CurrentVerticalNotSelectedMessage: "Den aktuelle valgte vertikal stemmer ikke overens med dem, der er knyttet til denne webdel ({0}). Den forbliver tom i visningstilstand."
+            CurrentVerticalNotSelectedMessage: "Den aktuelle valgte vertikal stemmer ikke overens med dem, der er knyttet til denne webdel ({0}). Den forbliver tom i visningstilstand.",
+            True: "Ja",
+            False: "Nej"
         },
         DataSources: {
             SharePointSearch: {
@@ -128,6 +130,7 @@ define([], function() {
                 EnableAudienceTargetingTglLabel: "Aktivér målgruppestyring",
                 TrimDuplicates: "Trim dubletter",
                 CollapseSpecificationLabel: "Skjul specifikation"
+            
             },
             MicrosoftSearch: {
                 QueryTextFieldLabel: "Forespørgselstekst",
@@ -228,6 +231,8 @@ define([], function() {
                 DisplayNameColumnLabel: "Kolonnens visningsnavn",
                 FileExtensionFieldLabel: "Felt til brug af file extension",
                 GroupByFieldLabel: "Gruppér efter felt",
+                GroupByOthersGroupFieldLabel: "Gruppetitel for andre varer",
+                GroupByOthersGroupDefaultValue: "Ingen værdi",
                 AdditionalGroupByButtonLabel: "Tilføj felt",
                 AdditionalGroupByFieldsLabel: "Yderligere grupperingsfelter",
                 AdditionalGroupByFieldsDescription: "Tilføj yderligere grupperingsfelter for at skabe et hierarki i layoutet. Hver kolonne tilføjes i den viste rækkefølge.",
@@ -333,6 +338,50 @@ define([], function() {
                     ExtraLarge: 'Ekstra stor',
                     SmallFluid: 'Fuld bredde (fluid)'
                 }
+            },
+            PersonCard: {
+              SendEmailLinkSubtitle: "Send e-mail",
+              StartChatLinkSubtitle: "Start chat",
+              ShowMoreSectionButton: "Vis mere",
+              ContactSectionTitle: "Kontakt",
+              ReportsToSectionTitle: "Rapporterer til",
+              DirectReportsSectionTitle: "Direkte underordnede",
+              OrganizationSectionTitle: "Organisation",
+              YouWorkWithSubSectionTitle: "Du arbejder med",
+              UserWorksWithSubSectionTitle: "arbejder med",
+              EmailsSectionTitle: "E-mails",
+              FilesSectionTitle: "Filer",
+              SharedTextSubtitle: "Delt",
+              SkillsAndExperienceSectionTitle: "Færdigheder & Erfaring",
+              AboutCompactSectionTitle: "Om",
+              SkillsSubSectionTitle: "Færdigheder",
+              LanguagesSubSectionTitle: "Sprog",
+              WorkExperienceSubSectionTitle: "Arbejdserfaring",
+              EducationSubSectionTitle: "Uddannelse",
+              ProfessionalInterestsSubSectionTitle: "Professionelle interesser",
+              PersonalInterestsSubSectionTitle: "Personlige interesser",
+              BirthdaySubSectionTitle: "Fødselsdag",
+              CurrentYearSubtitle: "Nuværende",
+              EndOfCard: "Slut på kortet",
+              QuickMessage: "Send en hurtig besked",
+              ExpandDetailsLabel: "Udvid detaljer",
+              SendMessageLabel: "Send besked",
+              EmailButtonLabel: "E-mail",
+              CallButtonLabel: "Ring",
+              ChatButtonLabel: "Chat",
+              CloseCardLabel: "Luk kort",
+              VideoButtonLabel: "Video",
+              GoBackLabel: "Gå tilbage",
+              EmailTitle: "E-mail",
+              ChatTitle: "Teams",
+              BusinessPhoneTitle: "Arbejdstelefon",
+              CellPhoneTitle: "Mobiltelefon",
+              DepartmentTitle: "Afdeling",
+              PersonTitle: "Titel",
+              OfficeLocationTitle: "Kontorplacering",
+              CopyToClipboardButton: "Kopier til udklipsholder",
+              ShowMoreSubtitle: "Vis flere elementer",
+              SocialMediaSubSectionTitle: "Sociale medier"
             }
         },
         HandlebarsHelpers: {

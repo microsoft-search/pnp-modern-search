@@ -96,7 +96,10 @@ define([], function () {
         NoResultsSearchMessage: "Inga resultat funna",
         SearchPlaceholder: "Sök efter ett värde..."
       },
-      CurrentVerticalNotSelectedMessage: "Den aktuella valda vertikalen matchar inte de som är kopplade till den här webbdelen ({0}). Den förblir tom i visningsläge."
+      CurrentVerticalNotSelectedMessage: "Den aktuella valda vertikalen matchar inte de som är kopplade till den här webbdelen ({0}). Den förblir tom i visningsläge.",
+      True:"Ja",
+      False:"Nej",
+
     },
     DataSources: {
       SharePointSearch: {
@@ -227,7 +230,9 @@ define([], function () {
         ValueSortingColumnNoFieldsLabel: "Inga fält tillgängliga",
         DisplayNameColumnLabel: "Kolumnens visningsnamn",
         FileExtensionFieldLabel: "Fält för användning av filtillägg",
-        GroupByFieldLabel: "Gruppera efter fält",
+        GroupByFieldLabel: "Gruppnamn för andra element",
+        GroupByOthersGroupFieldLabel: "Grupptitel för andra objekt",
+        GroupByOthersGroupDefaultValue: "Inget värde",
         AdditionalGroupByButtonLabel: "Hantera grupperingsfält",
         AdditionalGroupByFieldsLabel: "Ytterligare fält för gruppering",
         AdditionalGroupByFieldsDescription: "Lägg till ytterligare grupperingsfält för att skapa en hierarki i layouten. Varje kolumn läggs till i ordningen som visas.",
@@ -333,6 +338,50 @@ define([], function () {
           ExtraLarge: 'Extra stor',
           SmallFluid: 'Fullbredd (flytande)'
         }
+      },
+      PersonCard: {
+        SendEmailLinkSubtitle: "Skicka e-post",
+        StartChatLinkSubtitle: "Starta chatt",
+        ShowMoreSectionButton: "Visa mer",
+        ContactSectionTitle: "Kontakt",
+        ReportsToSectionTitle: "Rapporterar till",
+        DirectReportsSectionTitle: "Direkt underställda",
+        OrganizationSectionTitle: "Organisation",
+        YouWorkWithSubSectionTitle: "Du arbetar med",
+        UserWorksWithSubSectionTitle: "arbetar med",
+        EmailsSectionTitle: "E-post",
+        FilesSectionTitle: "Filer",
+        SharedTextSubtitle: "Delad",
+        SkillsAndExperienceSectionTitle: "Färdigheter och erfarenhet",
+        AboutCompactSectionTitle: "Om",
+        SkillsSubSectionTitle: "Färdigheter",
+        LanguagesSubSectionTitle: "Språk",
+        WorkExperienceSubSectionTitle: "Arbetslivserfarenhet",
+        EducationSubSectionTitle: "Utbildning",
+        ProfessionalInterestsSubSectionTitle: "Professionella intressen",
+        PersonalInterestsSubSectionTitle: "Personliga intressen",
+        BirthdaySubSectionTitle: "Födelsedag",
+        CurrentYearSubtitle: "Nuvarande",
+        EndOfCard: "Slut på kortet",
+        QuickMessage: "Skicka ett snabbmeddelande",
+        ExpandDetailsLabel: "Expandera detaljer",
+        SendMessageLabel: "Skicka meddelande",
+        EmailButtonLabel: "E-post",
+        CallButtonLabel: "Ring",
+        ChatButtonLabel: "Chatt", 
+        CloseCardLabel: "Stäng kort",
+        VideoButtonLabel: "Video",
+        GoBackLabel: "Gå tillbaka",
+        EmailTitle: "E-post",
+        ChatTitle: "Teams",
+        BusinessPhoneTitle: "Arbetstelefon",
+        CellPhoneTitle: "Mobiltelefon",
+        DepartmentTitle: "Avdelning",
+        PersonTitle: "Titel",
+        OfficeLocationTitle: "Kontorsplats",
+        CopyToClipboardButton: "Kopiera till urklipp",
+        ShowMoreSubtitle: "Visa fler objekt",
+        SocialMediaSubSectionTitle: "Sociala medier"
       }
     },
     HandlebarsHelpers: {

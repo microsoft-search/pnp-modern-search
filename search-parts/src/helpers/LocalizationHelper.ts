@@ -2,7 +2,9 @@
  * This class help you to translate the current culture name into LCID and vice versa
  * The class logic is directly inspired from the official SPFx documentation https://docs.microsoft.com/en-us/sharepoint/dev/spfx/web-parts/guidance/localize-web-parts
  */
-class LocalizationHelper {
+
+
+export class LocalizationHelper {
 
     // Locales to match with this.context.pageContext.cultureInfo.currentUICultureName for SPFx
     public static locales = {
@@ -90,6 +92,9 @@ class LocalizationHelper {
         if (cultureFolderCandidate.length == 2) return cultureFolderCandidate; //ISO-639-1 uses two letter codes
         return null;
     }
+
+
+    
 }
 
 export default LocalizationHelper;

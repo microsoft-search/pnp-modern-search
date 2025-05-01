@@ -127,6 +127,9 @@ declare interface ICommonStrings {
         ApplyQueryTemplateBtnText: string;
         EnableAudienceTargetingTglLabel: string;
         CollapseSpecificationLabel: string;
+        True: string;
+        False: string;
+                
       },
       MicrosoftSearch: {
         QueryTextFieldLabel: string;
@@ -227,6 +230,8 @@ declare interface ICommonStrings {
         ValueSortingColumnNoFieldsLabel: string;
         FileExtensionFieldLabel: string;
         GroupByFieldLabel: string;
+        GroupByOthersGroupFieldLabel: string;
+        GroupByOthersGroupDefaultValue: string;
         AdditionalGroupByButtonLabel: string;
         AdditionalGroupByFieldsLabel: string;
         AdditionalGroupByFieldsDescription: string;
@@ -333,7 +338,51 @@ declare interface ICommonStrings {
           ExtraLarge: string;
           SmallFluid: string;
         }
-      }
+      },
+      PersonCard: {
+        SendEmailLinkSubtitle: string;
+        StartChatLinkSubtitle: string;
+        ShowMoreSectionButton: string;
+        ContactSectionTitle: string;
+        ReportsToSectionTitle: string;
+        DirectReportsSectionTitle: string;
+        OrganizationSectionTitle: string;
+        YouWorkWithSubSectionTitle: string;
+        UserWorksWithSubSectionTitle: string;
+        EmailsSectionTitle: string;
+        FilesSectionTitle: string;
+        SharedTextSubtitle: string;
+        SkillsAndExperienceSectionTitle: string;
+        AboutCompactSectionTitle: string;
+        SkillsSubSectionTitle: string;
+        LanguagesSubSectionTitle: string;
+        WorkExperienceSubSectionTitle: string;
+        EducationSubSectionTitle: string;
+        ProfessionalInterestsSubSectionTitle: string;
+        PersonalInterestsSubSectionTitle: string;
+        BirthdaySubSectionTitle: string;
+        CurrentYearSubtitle: string;
+        EndOfCard: string;
+        QuickMessage: string;
+        ExpandDetailsLabel: string;
+        SendMessageLabel: string;
+        EmailButtonLabel: string;
+        CallButtonLabel: string;
+        ChatButtonLabel: string;
+        CloseCardLabel: string;
+        VideoButtonLabel: string;
+        GoBackLabel: string;
+        EmailTitle: string;
+        ChatTitle: string;
+        BusinessPhoneTitle: string;
+        CellPhoneTitle: string;
+        DepartmentTitle: string;
+        PersonTitle: string;
+        OfficeLocationTitle: string;
+        CopyToClipboardButton: string;
+        ShowMoreSubtitle: string;
+        SocialMediaSubSectionTitle: string;
+      };
     },
     HandlebarsHelpers: {
       CountMessageLong: string;

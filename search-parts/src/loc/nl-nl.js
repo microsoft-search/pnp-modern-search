@@ -96,7 +96,9 @@ define([], function () {
                 NoResultsSearchMessage: "Geen resultaten gevonden",
                 SearchPlaceholder: "Zoek een waarde..."
             },
-            CurrentVerticalNotSelectedMessage: "De huidige geselecteerde branche komt niet overeen met die welke zijn gekoppeld aan dit webonderdeel ({0}). Het blijft leeg in de weergavemodus."
+            CurrentVerticalNotSelectedMessage: "De huidige geselecteerde branche komt niet overeen met die welke zijn gekoppeld aan dit webonderdeel ({0}). Het blijft leeg in de weergavemodus.",
+            True:"Ja",
+            False:"Nee"
         },
         DataSources: {
             SharePointSearch: {
@@ -227,6 +229,8 @@ define([], function () {
                 ValueSortingColumnNoFieldsLabel: "Geen velden beschikbaar",
                 FileExtensionFieldLabel: "Te gebruiken veld voor bestandsextensie",
                 GroupByFieldLabel: "Groepeer op veld",
+                GroupByOthersGroupFieldLabel: "Groepstitel voor andere items",
+                GroupByOthersGroupDefaultValue: "Geen waarde",
                 AdditionalGroupByButtonLabel: "Voeg groep toe",
                 AdditionalGroupByFieldsLabel: "Extra groeperingsvelden",
                 AdditionalGroupByFieldsDescription: "Hier kunt u extra groepen toevoegen om op te groeperen. U kunt eigenschapswaarden direct in de lij",
@@ -332,6 +336,50 @@ define([], function () {
                     ExtraLarge: 'Extra groot',
                     SmallFluid: 'Volledige breedte (fluid)'
                 }
+            },
+            PersonCard: {
+              SendEmailLinkSubtitle: "E-mail verzenden",
+              StartChatLinkSubtitle: "Chat starten",
+              ShowMoreSectionButton: "Meer weergeven",
+              ContactSectionTitle: "Contact",
+              ReportsToSectionTitle: "Rapporteert aan",
+              DirectReportsSectionTitle: "Directe ondergeschikten",
+              OrganizationSectionTitle: "Organisatie",
+              YouWorkWithSubSectionTitle: "U werkt samen met",
+              UserWorksWithSubSectionTitle: "werkt samen met",
+              EmailsSectionTitle: "E-mails",
+              FilesSectionTitle: "Bestanden",
+              SharedTextSubtitle: "Gedeeld",
+              SkillsAndExperienceSectionTitle: "Vaardigheden & Ervaring",
+              AboutCompactSectionTitle: "Over",
+              SkillsSubSectionTitle: "Vaardigheden",
+              LanguagesSubSectionTitle: "Talen",
+              WorkExperienceSubSectionTitle: "Werkervaring",
+              EducationSubSectionTitle: "Opleiding",
+              ProfessionalInterestsSubSectionTitle: "Professionele interesses",
+              PersonalInterestsSubSectionTitle: "Persoonlijke interesses",
+              BirthdaySubSectionTitle: "Verjaardag",
+              CurrentYearSubtitle: "Huidig",
+              EndOfCard: "Einde van de kaart",
+              QuickMessage: "Stuur een snel bericht",
+              ExpandDetailsLabel: "Details uitvouwen",
+              SendMessageLabel: "Bericht verzenden",
+              EmailButtonLabel: "E-mail",
+              CallButtonLabel: "Bellen",
+              ChatButtonLabel: "Chat",
+              CloseCardLabel: "Kaart sluiten",
+              VideoButtonLabel: "Video",
+              GoBackLabel: "Teruggaan",
+              EmailTitle: "E-mail",
+              ChatTitle: "Teams",
+              BusinessPhoneTitle: "Zakelijk telefoonnummer",
+              CellPhoneTitle: "Mobiel telefoonnummer",
+              DepartmentTitle: "Afdeling",
+              PersonTitle: "Titel",
+              OfficeLocationTitle: "Kantoorlocatie",
+              CopyToClipboardButton: "Kopiëren naar klembord",
+              ShowMoreSubtitle: "Meer items weergeven",
+              SocialMediaSubSectionTitle: "Sociale media"
             }
         },
         HandlebarsHelpers: {

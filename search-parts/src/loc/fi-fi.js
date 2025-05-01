@@ -96,7 +96,9 @@ define([], function () {
                 NoResultsSearchMessage: "Tuloksia ei löytynyt",
                 SearchPlaceholder: "Hae arvoa..."
             },
-            CurrentVerticalNotSelectedMessage: "Valittu vertikaali ei ole yhdistetty hakutulososaan ({0}). Hakutulososa on tyhjä sivun lukutilassa."
+            CurrentVerticalNotSelectedMessage: "Valittu vertikaali ei ole yhdistetty hakutulososaan ({0}). Hakutulososa on tyhjä sivun lukutilassa.",
+            True:"Kyllä",
+            False:"Ei"
         },
         DataSources: {
             SharePointSearch: {
@@ -226,6 +228,8 @@ define([], function () {
                 DisplayNameColumnLabel: "Sarakkeen näyttönimi",
                 FileExtensionFieldLabel: "Kenttä tiedostotyypin määrittämiseen",
                 GroupByFieldLabel: "Ryhmittele kentän mukaan",
+                GroupByOthersGroupFieldLabel: "Ryhmän nimi muille kohteille",
+                GroupByOthersGroupDefaultValue: "Ei arvoa",
                 AdditionalGroupByButtonLabel: "Lisää ryhmittelykenttä",
                 AdditionalGroupByFieldsLabel: "Lisää ryhmittelykenttä",
                 AdditionalGroupByFieldsDescription: "Lisää ryhmittelykenttiä luodaksesi hierarkian asetteluun. Jokainen sarake lisätään näytetyssä järjestyksessä.",
@@ -331,6 +335,50 @@ define([], function () {
                     ExtraLarge: 'Erittäin suuri',
                     SmallFluid: 'Täysleveä (fluid)'
                 }
+            },
+            PersonCard: {
+              SendEmailLinkSubtitle: "Lähetä sähköposti",
+              StartChatLinkSubtitle: "Aloita keskustelu",
+              ShowMoreSectionButton: "Näytä lisää",
+              ContactSectionTitle: "Yhteystiedot",
+              ReportsToSectionTitle: "Raportoi henkilölle",
+              DirectReportsSectionTitle: "Suorat alaiset",
+              OrganizationSectionTitle: "Organisaatio",
+              YouWorkWithSubSectionTitle: "Työskentelet henkilön kanssa",
+              UserWorksWithSubSectionTitle: "työskentelee henkilön kanssa",
+              EmailsSectionTitle: "Sähköpostit",
+              FilesSectionTitle: "Tiedostot",
+              SharedTextSubtitle: "Jaettu",
+              SkillsAndExperienceSectionTitle: "Taidot ja kokemus",
+              AboutCompactSectionTitle: "Tietoja",
+              SkillsSubSectionTitle: "Taidot",
+              LanguagesSubSectionTitle: "Kielet",
+              WorkExperienceSubSectionTitle: "Työkokemus",
+              EducationSubSectionTitle: "Koulutus",
+              ProfessionalInterestsSubSectionTitle: "Ammatilliset kiinnostuksen kohteet",
+              PersonalInterestsSubSectionTitle: "Henkilökohtaiset kiinnostuksen kohteet",
+              BirthdaySubSectionTitle: "Syntymäpäivä",
+              CurrentYearSubtitle: "Nykyinen",
+              EndOfCard: "Kortin loppu",
+              QuickMessage: "Lähetä pikaviesti",
+              ExpandDetailsLabel: "Laajenna tiedot",
+              SendMessageLabel: "Lähetä viesti",
+              EmailButtonLabel: "Sähköposti",
+              CallButtonLabel: "Soita",
+              ChatButtonLabel: "Keskustelu",
+              CloseCardLabel: "Sulje kortti",
+              VideoButtonLabel: "Video",
+              GoBackLabel: "Takaisin",
+              EmailTitle: "Sähköposti",
+              ChatTitle: "Teams",
+              BusinessPhoneTitle: "Työpuhelin",
+              CellPhoneTitle: "Matkapuhelin",
+              DepartmentTitle: "Osasto",
+              PersonTitle: "Titteli",
+              OfficeLocationTitle: "Toimiston sijainti",
+              CopyToClipboardButton: "Kopioi leikepöydälle",
+              ShowMoreSubtitle: "Näytä lisää kohteita",
+              SocialMediaSubSectionTitle: "Sosiaalinen media"
             }
         },
         HandlebarsHelpers: {

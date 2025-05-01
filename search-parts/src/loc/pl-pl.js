@@ -96,7 +96,10 @@ define([], function () {
                 NoResultsSearchMessage: "Nie znaleziono wyników",
                 SearchPlaceholder: "Wyszukaj wartość..."
             },
-            CurrentVerticalNotSelectedMessage: "Aktualnie wybrana branża nie odpowiada branżom powiązanym z tym składnikiem Web Part ({0}). W trybie wyświetlania pozostanie puste."
+            CurrentVerticalNotSelectedMessage: "Aktualnie wybrana branża nie odpowiada branżom powiązanym z tym składnikiem Web Part ({0}). W trybie wyświetlania pozostanie puste.",
+            True:"Tak",
+            False:"Nie"
+
         },
         DataSources: {
             SharePointSearch: {
@@ -228,6 +231,8 @@ define([], function () {
                 DisplayNameColumnLabel: "Nazwa wyświetlana kolumny",
                 FileExtensionFieldLabel: "Pole używane dla rozszerzenia pliku",
                 GroupByFieldLabel: "Grupuj po polu",
+                GroupByOthersGroupFieldLabel: "Tytuł grupy dla innych elementów",
+                GroupByOthersGroupDefaultValue: "Brak wartości",
                 AdditionalGroupByButtonLabel: "Dodaj grupowanie",
                 AdditionalGroupByFieldsLabel: "Dodatkowe pola grupowania",
                 AdditionalGroupByFieldsDescription: "Dodaj dodatkowe pola grupujące, aby utworzyć hierarchię w układzie. Każda kolumna jest dodawana w pokazanej kolejności.",
@@ -333,6 +338,50 @@ define([], function () {
                     ExtraLarge: 'Bardzo duże',
                     SmallFluid: 'Pełna szerokość (płynnie)'
                 }
+            },
+            PersonCard: {
+              SendEmailLinkSubtitle: "Wyślij e-mail",
+              StartChatLinkSubtitle: "Rozpocznij czat",
+              ShowMoreSectionButton: "Pokaż więcej",
+              ContactSectionTitle: "Kontakt",
+              ReportsToSectionTitle: "Raportuje do",
+              DirectReportsSectionTitle: "Bezpośredni podwładni",
+              OrganizationSectionTitle: "Organizacja",
+              YouWorkWithSubSectionTitle: "Pracujesz z",
+              UserWorksWithSubSectionTitle: "pracuje z",
+              EmailsSectionTitle: "E-maile",
+              FilesSectionTitle: "Pliki",
+              SharedTextSubtitle: "Udostępnione",
+              SkillsAndExperienceSectionTitle: "Umiejętności i doświadczenie",
+              AboutCompactSectionTitle: "O mnie",
+              SkillsSubSectionTitle: "Umiejętności",
+              LanguagesSubSectionTitle: "Języki",
+              WorkExperienceSubSectionTitle: "Doświadczenie zawodowe",
+              EducationSubSectionTitle: "Edukacja",
+              ProfessionalInterestsSubSectionTitle: "Zainteresowania zawodowe",
+              PersonalInterestsSubSectionTitle: "Zainteresowania osobiste",
+              BirthdaySubSectionTitle: "Urodziny",
+              CurrentYearSubtitle: "Bieżący",
+              EndOfCard: "Koniec karty",
+              QuickMessage: "Wyślij szybką wiadomość",
+              ExpandDetailsLabel: "Rozwiń szczegóły",
+              SendMessageLabel: "Wyślij wiadomość",
+              EmailButtonLabel: "E-mail",
+              CallButtonLabel: "Zadzwoń",
+              ChatButtonLabel: "Czat",
+              CloseCardLabel: "Zamknij kartę",
+              VideoButtonLabel: "Wideo",
+              GoBackLabel: "Wróć",
+              EmailTitle: "E-mail",
+              ChatTitle: "Teams",
+              BusinessPhoneTitle: "Telefon służbowy",
+              CellPhoneTitle: "Telefon komórkowy",
+              DepartmentTitle: "Dział",
+              PersonTitle: "Tytuł",
+              OfficeLocationTitle: "Lokalizacja biura",
+              CopyToClipboardButton: "Kopiuj do schowka",
+              ShowMoreSubtitle: "Pokaż więcej elementów",
+              SocialMediaSubSectionTitle: "Media społecznościowe"
             }
         },
         HandlebarsHelpers: {

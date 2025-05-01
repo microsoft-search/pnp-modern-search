@@ -87,7 +87,7 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
             showCallout: false
         };
 
-        this._domPurify = DOMPurify.default;
+        this._domPurify = DOMPurify;
 
         this._domPurify.setConfig({
             WHOLE_DOCUMENT: true,

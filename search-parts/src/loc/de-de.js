@@ -96,7 +96,9 @@ define([], function () {
                 NoResultsSearchMessage: "Keine Ergebnisse gefunden",
                 SearchPlaceholder: "Suche einen Wert..."
             },
-            CurrentVerticalNotSelectedMessage: "Das derzeit ausgewählte Vertikal passt nicht zu den zu diesem Web Part ({0}) zugeordneten Vertikalen. Es wird im Anzeige Modus als leer angezeigt."
+            CurrentVerticalNotSelectedMessage: "Das derzeit ausgewählte Vertikal passt nicht zu den zu diesem Web Part ({0}) zugeordneten Vertikalen. Es wird im Anzeige Modus als leer angezeigt."            ,
+            True:"Ja",
+            False:"Nei"
         },
         DataSources: {
             SharePointSearch: {
@@ -228,6 +230,8 @@ define([], function () {
                 DisplayNameColumnLabel: "Spaltenanzeigename",
                 FileExtensionFieldLabel: "Zu verwendendes Feld für die Dateierweiterung",
                 GroupByFieldLabel: "Gruppierung nach Feld",
+                GroupByOthersGroupFieldLabel: "Gruppentitel für andere Elemente",
+                GroupByOthersGroupDefaultValue: "Kein Wert",
                 AdditionalGroupByButtonLabel: "Weitere Gruppierung hinzufügen",
                 AdditionalGroupByFieldsLabel: "Zusätzliche Gruppierungsfelder",
                 AdditionalGroupByFieldsDescription: "Fügen Sie zusätzliche Gruppierungsfelder hinzu, um die Gruppierungsebene zu erhöhen. Die Reihenfolge der Gruppierungsfelder entspricht der Reihenfolge der Gruppierungsebenen.",
@@ -334,6 +338,50 @@ define([], function () {
                     ExtraLarge: 'Extra Gross',
                     SmallFluid: 'Volle Breite (flüssig)'
                 }
+            },
+            PersonCard: {
+              SendEmailLinkSubtitle: "E-Mail senden",
+              StartChatLinkSubtitle: "Chat starten",
+              ShowMoreSectionButton: "Mehr anzeigen",
+              ContactSectionTitle: "Kontakt",
+              ReportsToSectionTitle: "Berichtet an",
+              DirectReportsSectionTitle: "Direkt unterstellte Mitarbeiter",
+              OrganizationSectionTitle: "Organisation",
+              YouWorkWithSubSectionTitle: "Sie arbeiten mit",
+              UserWorksWithSubSectionTitle: "arbeitet mit",
+              EmailsSectionTitle: "E-Mails",
+              FilesSectionTitle: "Dateien",
+              SharedTextSubtitle: "Geteilt",
+              SkillsAndExperienceSectionTitle: "Fähigkeiten & Erfahrung",
+              AboutCompactSectionTitle: "Über",
+              SkillsSubSectionTitle: "Fähigkeiten",
+              LanguagesSubSectionTitle: "Sprachen",
+              WorkExperienceSubSectionTitle: "Berufserfahrung",
+              EducationSubSectionTitle: "Ausbildung",
+              ProfessionalInterestsSubSectionTitle: "Berufliche Interessen",
+              PersonalInterestsSubSectionTitle: "Persönliche Interessen",
+              BirthdaySubSectionTitle: "Geburtstag",
+              CurrentYearSubtitle: "Aktuell",
+              EndOfCard: "Ende der Karte",
+              QuickMessage: "Schnelle Nachricht senden",
+              ExpandDetailsLabel: "Details erweitern",
+              SendMessageLabel: "Nachricht senden",
+              EmailButtonLabel: "E-Mail",
+              CallButtonLabel: "Anrufen",
+              ChatButtonLabel: "Chat",
+              CloseCardLabel: "Karte schließen",
+              VideoButtonLabel: "Video",
+              GoBackLabel: "Zurück",
+              EmailTitle: "E-Mail",
+              ChatTitle: "Teams",
+              BusinessPhoneTitle: "Geschäftstelefon",
+              CellPhoneTitle: "Mobiltelefon",
+              DepartmentTitle: "Abteilung",
+              PersonTitle: "Titel",
+              OfficeLocationTitle: "Bürostandort",
+              CopyToClipboardButton: "In die Zwischenablage kopieren",
+              ShowMoreSubtitle: "Weitere Elemente anzeigen",
+              SocialMediaSubSectionTitle: "Soziale Medien"
             }
         },
         HandlebarsHelpers: {
