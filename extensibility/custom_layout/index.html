@@ -891,6 +891,18 @@
   
 
           
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../extensibility_compatibility_matrix/" class="md-nav__link">
+        Compatibility matrix
+      </a>
+    </li>
+  
+
+          
         </ul>
       </nav>
     </li>
@@ -1122,17 +1134,19 @@
 </tbody>
 </table>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">public</span><span class="w"> </span><span class="nx">getCustomLayouts</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="nx">ILayoutDefinition</span><span class="p">[]</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">[</span>
-<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">        </span><span class="p">{</span>
-<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">            </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;My custom layout&#39;</span><span class="p">,</span>
-<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">            </span><span class="nx">iconName</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;Color&#39;</span><span class="p">,</span>
-<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">            </span><span class="nx">key</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;CustomLayout&#39;</span><span class="p">,</span>
-<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">            </span><span class="kr">type</span><span class="o">:</span><span class="w"> </span><span class="nx">LayoutType</span><span class="p">.</span><span class="nx">Results</span><span class="p">,</span>
-<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="w">            </span><span class="nx">templateContent</span><span class="o">:</span><span class="w"> </span><span class="kt">require</span><span class="p">(</span><span class="s1">&#39;../custom-layout.html&#39;</span><span class="p">),</span>
-<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="w">            </span><span class="nx">serviceKey</span><span class="o">:</span><span class="w"> </span><span class="kt">ServiceKey.create</span><span class="o">&lt;</span><span class="nx">ILayout</span><span class="o">&gt;</span><span class="p">(</span><span class="s1">&#39;MyCompany:CustomLayout&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">Customlayout</span><span class="p">)</span>
-<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="w">        </span><span class="p">}</span>
-<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="w">    </span><span class="p">];</span>
-<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="p">}</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">    </span><span class="cm">/* eslint-disable @typescript-eslint/no-var-requires */</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">[</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">        </span><span class="p">{</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">            </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;My custom layout&#39;</span><span class="p">,</span>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">            </span><span class="nx">iconName</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;Color&#39;</span><span class="p">,</span>
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="w">            </span><span class="nx">key</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;CustomLayout&#39;</span><span class="p">,</span>
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="w">            </span><span class="kr">type</span><span class="o">:</span><span class="w"> </span><span class="nx">LayoutType</span><span class="p">.</span><span class="nx">Results</span><span class="p">,</span>
+<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="w">            </span><span class="nx">templateContent</span><span class="o">:</span><span class="w"> </span><span class="kt">require</span><span class="p">(</span><span class="s1">&#39;../custom-layout.html&#39;</span><span class="p">).</span><span class="k">default</span><span class="p">.</span><span class="nx">toString</span><span class="p">(),</span>
+<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="w">            </span><span class="nx">serviceKey</span><span class="o">:</span><span class="w"> </span><span class="kt">ServiceKey.create</span><span class="o">&lt;</span><span class="nx">ILayout</span><span class="o">&gt;</span><span class="p">(</span><span class="s1">&#39;MyCompany:CustomLayout&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">Customlayout</span><span class="p">)</span>
+<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="w">        </span><span class="p">}</span>
+<a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a><span class="w">    </span><span class="p">];</span>
+<a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a><span class="p">}</span>
 </code></pre></div>
                 
               
