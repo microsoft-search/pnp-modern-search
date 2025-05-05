@@ -1,3 +1,4 @@
+"use client";
 /* eslint-disable no-lone-blocks */
 import { FileFormat, ITemplateService } from "./ITemplateService";
 import { Log, ServiceKey, ServiceScope, Text } from "@microsoft/sp-core-library";

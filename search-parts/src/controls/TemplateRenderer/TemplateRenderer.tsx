@@ -1,3 +1,4 @@
+"use client";
 import * as React from 'react';
 import ITemplateRendererProps from './ITemplateRendererProps';
 import ITemplateRendererState from './ITemplateRendererState';

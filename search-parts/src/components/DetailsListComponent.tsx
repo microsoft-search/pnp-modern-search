@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
+"use client";/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Fabric, ShimmeredDetailsList, IShimmeredDetailsListProps, Checkbox, ScrollToMode } from '@fluentui/react';
