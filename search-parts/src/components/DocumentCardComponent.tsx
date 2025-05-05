@@ -1,3 +1,4 @@
+"use client";
 import * as React from "react";
 import * as ReactDOM from 'react-dom';
 import { IDocumentCardPreviewProps, DocumentCard, DocumentCardPreview, DocumentCardTitle, DocumentCardActivity, DocumentCardType, DocumentCardDetails, IDocumentCardLocationStyleProps, IDocumentCardLocationStyles, IDocumentCardStyles, ITheme, Check } from '@fluentui/react';
