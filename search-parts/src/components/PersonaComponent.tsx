@@ -1,3 +1,4 @@
+"use client";
 import * as React from 'react';
 import { Persona, IPersonaProps, IPersonaSharedProps, getInitials, Icon, ITheme, PersonaPresence } from '@fluentui/react';
 import { TemplateService } from "../services/templateService/TemplateService";

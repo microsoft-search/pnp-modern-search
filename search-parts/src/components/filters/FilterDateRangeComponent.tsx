@@ -68,12 +68,18 @@ export class FilterDateRangeComponent extends React.Component<IFilterDateRangeCo
                     selectors: {
                         input: {
                             backgroundColor: this.props.themeVariant.semanticColors.bodyBackground,
-                            color: this.props.themeVariant.semanticColors.bodyText
+                            color: this.props.themeVariant.semanticColors.bodyText                          
+                            
+
                         },
                         'input::placeholder': {
                             color: this.props.themeVariant.semanticColors.bodyText
                         }
                     }
+                },
+                icon: 
+                {
+                    pointerEvents: 'none'
                 }
             };
 
