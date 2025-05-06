@@ -89,9 +89,19 @@ Except for `{Hub}`, these a shortands to the `{PageContext}` tokens. They return
 | **{CurrentYearUTC}** |UTC date four digits, 2023 <br/> 
 | **{CurrentMonthUTC}** |UTC month, 1-12 <br/> 
 | **{CurrentDateUTC}** |UTC date, 1-31 <br/> 
-| **{CurrentHourUTC}** |UTC, 0-23 <br/> 
+| **{CurrentHourUTC}** |UTC hour, 0-23 <br/> 
 | **{CurrentMinuteUTC}** |UTC minute, 0-59 <br/> 
 | **{CurrentSecondUTC}** |UTC second, 0-59 <br/> 
+| **{CurrentMonth2Digits}** |Local month, 01-12 <br/> 
+| **{CurrentDate2Digits}** |Local date, 01-31 <br/> 
+| **{CurrentHour2Digits}** |Local hour, 00-23 <br/> 
+| **{CurrentMinute2Digits}** |Local minute, 00-59 <br/> 
+| **{CurrentSecond2Digits}** |Local second, 00-59 <br/> 
+| **{CurrentMonth2DigitsUTC}** |UTC month, 01-12 <br/> 
+| **{CurrentDate2DigitsUTC}** |UTC date, 01-31 <br/> 
+| **{CurrentHour2DigitsUTC}** |UTC hour, 00-23 <br/> 
+| **{CurrentMinute2DigitsUTC}** |UTC minute, 00-59 <br/> 
+| **{CurrentSecond2DigitsUTC}** |UTC second, 00-59 <br/> 
 
 
 | **{Today+/- \&lt;integer value for number of days&gt;}**  <br/> |A date calculated by adding/subtracting the specified number of days to/from the date when the query is issued. Date format is YYYY-MM-DD (Ex: `{Today+5}`) <br/> 
