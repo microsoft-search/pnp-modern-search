@@ -1,3 +1,4 @@
+"use client";
 import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const Flickity = require('react-flickity-component');
