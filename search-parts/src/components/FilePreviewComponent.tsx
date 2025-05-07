@@ -5,7 +5,8 @@ import * as ReactDOM from 'react-dom';
 import PreviewContainer from '../controls/PreviewContainer/PreviewContainer';
 import { PreviewType } from '../controls/PreviewContainer/IPreviewContainerProps';
 import { UrlHelper } from '../helpers/UrlHelper';
-import * as DOMPurify from 'dompurify';
+// import * as DOMPurify from 'dompurify';
+import * as DOMPurify from "isomorphic-dompurify";
 import { Constants } from '../common/Constants';
 
 export interface IFilePreviewProps {
