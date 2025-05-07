@@ -9,6 +9,7 @@ import { MessageBar, MessageBarType } from '@fluentui/react/lib/MessageBar';
 import { BaseWebComponent } from '@pnp/modern-search-extensibility';
 import { isEmpty } from "@microsoft/sp-lodash-subset";
 // import * as DOMPurify from 'dompurify';
+
 import * as DOMPurify from "isomorphic-dompurify";
 import { ITemplateService } from '../services/templateService/ITemplateService';
 import { TemplateService } from '../services/templateService/TemplateService';
