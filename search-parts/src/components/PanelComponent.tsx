@@ -6,7 +6,8 @@ import { Panel, PanelType, IPanelProps, Text, ITheme } from '@fluentui/react';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import { Log } from "@microsoft/sp-core-library";
 import styles from "./PanelComponent.module.scss";
-import * as DOMPurify from 'dompurify';
+// import * as DOMPurify from 'dompurify';
+import * as DOMPurify from "isomorphic-dompurify";
 import { PnPClientStorage } from "@pnp/common/storage";
 import { Constants } from '../common/Constants';
 

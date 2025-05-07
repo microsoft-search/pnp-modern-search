@@ -21,7 +21,8 @@ import { Constants, TestConstants } from "../../common/Constants";
 import * as handlebarsHelpers from 'handlebars-helpers';
 import { ServiceScopeHelper } from "../../helpers/ServiceScopeHelper";
 import { DomPurifyHelper } from "../../helpers/DomPurifyHelper";
-import * as DOMPurify from 'dompurify';
+// import * as DOMPurify from 'dompurify';
+import * as DOMPurify from "isomorphic-dompurify";
 import { IAdaptiveCardAction } from '@pnp/modern-search-extensibility';
 
 const TemplateService_ServiceKey = 'PnPModernSearchTemplateService';
