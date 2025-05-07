@@ -6,7 +6,8 @@ import { IGroup, IGroupDividerProps, Icon, Text, GroupedList, ITextProps, IStyle
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import styles from './CollapsibleContentComponent.module.scss';
 import 'core-js/features/dom-collections';
-import * as DOMPurify from 'dompurify';
+// import * as DOMPurify from 'dompurify';
+import * as DOMPurify from "isomorphic-dompurify";
 import { Constants } from '../common/Constants';
 
 export interface ICollapsibleContentComponentProps {
