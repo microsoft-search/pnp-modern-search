@@ -1,6 +1,8 @@
-## Customize layout templates
+# Customize layout templates
 
-In a basic customization scenario, super users and webmasters can customize existing templates or start from a blank template to adapt the UI to their requirements. Templates can use either [Handlebars](https://handlebarsjs.com/) or [Adaptive cards](https://adaptivecards.io/) templates to display data retrieved from the data source. Depdending of the template type, there are several options to customize a template:
+In a basic customization scenario, super users and webmasters can customize existing templates or start from a blank template to adapt the UI to their requirements. Templates can use either [Handlebars](https://handlebarsjs.com/) or [Adaptive cards](https://adaptivecards.io/) templates to display data retrieved from the data source. Depending on the template type, there are several options to customize a template.
+
+## Template types
 
 ### Handlebars
 
@@ -14,7 +16,7 @@ In a basic customization scenario, super users and webmasters can customize exis
 ### Both techniques
 
 - Use data sources [slots](../usage/search-results/slots.md)
-- Use default [web components](#using-builtin-web-components) provided by the solution.
+- Use default [web components](#using-built-in-web-components) provided by the solution.
 - Use [Microsoft Graph Toolkit components](#microsoft-graph-toolkit).
 
 ## Handlebars, HTML and CSS customizations
@@ -91,7 +93,7 @@ The following custom helpers are available in addition to the [handlebars-helper
 
 **Syntax** `{{getGraphPreviewUrl "<absolute_URL>"}}`
 
-**Description** Try to determine the preview URL based on an absolute URL using the unified Microsoft Graph URL syntax. For instance, _https://contoso.sharepoint.com/sites/dev/Shared%20Documents/MyDocument.pdf_ becomes _https://contoso.sharepoint.com/sites/dev/Shared%20Documents/?id=/sites/dev/Shared%20Documents/MyDocument.pdf&parent=/sites/dev/Shared%20Documents_
+**Description** Try to determine the preview URL based on an absolute URL using the unified Microsoft Graph URL syntax. For instance, _`https://contoso.sharepoint.com/sites/dev/Shared%20Documents/MyDocument.pdf`_ becomes _`https://contoso.sharepoint.com/sites/dev/Shared%20Documents/?id=/sites/dev/Shared%20Documents/MyDocument.pdf&parent=/sites/dev/Shared%20Documents`_
 
 **Example** `{{getGraphPreviewUrl "https://contoso.sharepoint.com/sites/dev/Shared%20Documents/MyDocument.pdf"}}`
 
@@ -374,7 +376,7 @@ If no placeholder is present in the template, a default one will be loaded.
 
 In the solution, you can use Graph Tookit components without the need to re-authenticate against Microsoft Graph because the Web Parts already use the [SharePoint provider](https://docs.microsoft.com/graph/toolkit/providers/sharepoint).
 
-Refer to the official documentation to see [all available components](https://docs.microsoft.com/en-us/graph/toolkit/components/login). For instance, we use the Microsoft Graph Toolkit for the [people layout](../usage/search-results/layouts/people.md) via `<mgt-person>`.
+Refer to the official documentation to see [all available components](https://docs.microsoft.com/graph/toolkit/components/login). For instance, we use the Microsoft Graph Toolkit for the [people layout](../usage/search-results/layouts/people.md) via `<mgt-person>`.
 
 ### Build templates with item selection
 
@@ -383,22 +385,16 @@ If your template requires items selection for dynamic filtering, you can follow 
 The available data attributes you can use in your HTML template are:
 
 - `data-selection-index`: the index of the item being represented. This would go on the root of the tile/row.
-
 - `data-selection-toggle`: this boolean flag would be set on the element which should handle toggles.This could be a checkbox or a div.
-
 - `data-selection-all-toggle`: this boolean flag indicates that clicking it should toggle all selection.
-
 - `data-selection-disabled`: allows a branch of the DOM to be marked to ignore input events that alter selections.
-
 - `data-selection-select`: allows a branch of the DOM to ensure that the current item is selected upon interaction.
 
 As item key you must use the builtin Handlebars `{{@index}}` property in the `{{#each}}` loop. Also because state managed is internally managed by the Web Part, we provide you an Handlebars helper `isItemSelected` to help to apply styles depending of the selection (ex: apply a CSS class or not). To use this helper correctly, you must pass the current selected keys and current index to get the selected state for an item:
 
-```
-(isItemSelected @root.selectedKeys @index)
-```
+`(isItemSelected @root.selectedKeys @index)`
 
-**Template example with item selection**
+### Template example with item selection
 
 ```html
 <style>
@@ -459,8 +455,7 @@ Web components and HTML are supported in adaptive cards through markdown process
 
 ### Reference a slot in a adaptive card
 
-Since it is not possible to create custom functions with adaptive cards templates right now, slots values can only be accessed using the builtin [`jPath` function](https://docs.microsoft.com/en-us/azure/bot-service/adaptive-expressions/adaptive-expressions-prebuilt-functions?view=azure-bot-service-4.0#jPath) and the following syntax:
-
+Since it is not possible to create custom functions with adaptive cards templates right now, slots values can only be accessed using the builtin [`jPath` function](https://docs.microsoft.com/azure/bot-service/adaptive-expressions/adaptive-expressions-prebuilt-functions?view=azure-bot-service-4.0#jPath) and the following syntax:
 
 ```json
 "items": [
@@ -484,7 +479,7 @@ To reference a field without a slot, just use its name:
 ],
 ```
 
-**Explanation**
+#### Explanation
 
 - `string()` is here to make sure the result of the jPath expression will always be a string. **If omitted, if the slot provided (i.e. the object path) doesn't exist, it will return `null` causing a render error**. The `jPath` function always returns an array.
 - `jPath(<data>, concat('.', $root.slots['<your_slot_name>']))` where `<data>` is the JSON object used to resolve the slot. When looping through `items`, use the `$data` token representing the current item with properties. The expression `concat('.', $root.slots['<your_slot_name>']))` is to comply with the jPath syntax: every property path should be begin with a '.' (See the official jPath [documentation](https://www.npmjs.com/package/jspath)).
