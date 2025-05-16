@@ -44,7 +44,7 @@
 
 **A**: There isn’t an App Registration nor an Enterprise application, as PnP Modern Search does not rely on an application entry. The solution uses FedAuth cookies from SharePoint when calling the SharePoint Search API, and uses the “SharePoint Online Client Extensibility” app registrations when calling Graph APIs.
 
-The solution does NOT elevate any permissions when calling the APIs, as permissions are all of the type Delegated Permissions. This means that the permissions are bound to the current user in the API calls, not the PnP Modern Search solution itself.
+The solution **does NOT elevate** any permissions when calling the APIs, as permissions are all of the type Delegated Permissions. This means that the permissions are bound to the current user in the API calls, not the PnP Modern Search solution itself.
 
 -----------------------
 
