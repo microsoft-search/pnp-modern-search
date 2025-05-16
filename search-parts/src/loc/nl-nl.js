@@ -240,7 +240,9 @@ define([], function () {
                 ResetFieldsBtnLabel: "Reset velden naar standaard waarden",
                 EnableStickyHeader: "Sticky header inschakelen",
                 StickyHeaderListViewHeight: "Hoogte van de lijstweergave (px)",
-                EnableDownload: "Downloaden inschakelen"
+                EnableDownload: "Downloaden inschakelen",
+                UseAlternatingBackgroundColor:"Gebruik afwisselende achtergrondkleur"
+
             },
             Cards: {
                 Name: "Kaarten",

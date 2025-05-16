@@ -242,7 +242,8 @@ define([], function() {
                 ResetFieldsBtnLabel: "Nulstil felter til standardværdier",
                 EnableStickyHeader: "Aktivér fastgjort header",
                 StickyHeaderListViewHeight: "Listevisningshøjde (px)",
-                EnableDownload: "Aktivér download"
+                EnableDownload: "Aktivér download",
+                UseAlternatingBackgroundColor:"Vis skiftende baggrundsfarve"
             },
             Cards: {
                 Name: "Cards",

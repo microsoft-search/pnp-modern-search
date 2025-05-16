@@ -241,7 +241,8 @@ define([], function() {
                 ResetFieldsBtnLabel: "Reset fields to default values",
                 EnableStickyHeader: "Enable sticky header",
                 StickyHeaderListViewHeight: "List view height (in px)",
-                EnableDownload: "Enable download"
+                EnableDownload: "Enable download",
+                UseAlternatingBackgroundColor:"Use Alternating Background Color"
             },
             Cards: {
                 Name: "Cards",

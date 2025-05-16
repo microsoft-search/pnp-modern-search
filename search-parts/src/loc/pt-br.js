@@ -239,7 +239,8 @@ define([], function () {
                 ResetFieldsBtnLabel: "Redefinir campos para os valores padrão",
                 EnableStickyHeader: "Cabeçalho fixo",
                 StickyHeaderListViewHeight: "Altura da lista de visualização (px)",
-                EnableDownload: "Habilitar download"
+                EnableDownload: "Habilitar download",
+                UseAlternatingBackgroundColor:"Utilize cores de fundo alternadas"
             },
             Cards: {
                 Name: "Cartões",

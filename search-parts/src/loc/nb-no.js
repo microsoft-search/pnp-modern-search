@@ -240,7 +240,8 @@ define([], function () {
         ResetFieldsBtnLabel: "Bruk standardverdiene",
         EnableStickyHeader: "Aktiver klebrig overskrift",
         StickyHeaderListViewHeight: "Høyde på listevisning med klebrig overskrift (px)",
-        EnableDownload: "Aktiver nedlasting"
+        EnableDownload: "Aktiver nedlasting",
+        UseAlternatingBackgroundColor:"Bruk vekslende bakgrunnsfarge"
       },
       Cards: {
         Name: "Kort",

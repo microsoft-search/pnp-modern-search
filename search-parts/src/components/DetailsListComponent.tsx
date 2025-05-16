@@ -120,6 +120,8 @@ export interface IDetailsListColumnConfiguration {
      * Callback handler when a sort field and direction are selected
      */
     onSort: (sortFieldName: string, sortFieldDirection: SortFieldDirection) => void;
+
+    
 }
 
 export interface IDetailsListComponentProps {
@@ -249,6 +251,11 @@ export interface IDetailsListComponentProps {
      * The height of the list view when sticky header is enabled
      */
     stickyHeaderListViewHeight?: number;
+
+    /**
+     * enable in order to have every other row with a different background color
+     */
+    useAlternatingBackgroundColor?: boolean;
 }
 
 export interface IDetailsListComponentState {
@@ -429,7 +436,8 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
                                 allStyles[index] = this.props.templateService.applyDisambiguatedMgtPrefixIfNeeded(style);
                               });
                             }
-                
+                            
+
                             renderColumnValue = <span title={!hasError ? toolTipText : ''} dangerouslySetInnerHTML={{ __html: this._domPurify.sanitize(`<style>${allStyles.join(' ')}</style>${tempColumnValueAsHtml.body.firstElementChild.innerHTML}`) }}></span>;
 
                             return renderColumnValue;
@@ -525,6 +533,7 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
           shimmeredDetailsListProps.constrainMode = ConstrainMode.unconstrained;
           shimmeredDetailsListProps.layoutMode = DetailsListLayoutMode.fixedColumns;
         }
+        
 
         if (this.state.groups.length > 0) {
             shimmeredDetailsListProps.groups = this.state.groups;
@@ -703,6 +712,23 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
 
     private _onRenderRow(rowProps: IDetailsRowProps): JSX.Element {
 
+      
+    if (this.props.useAlternatingBackgroundColor ) 
+    {
+      if(rowProps.itemIndex %2 === 0) 
+      {
+        rowProps.styles = {
+          ...rowProps.styles,
+          root: {
+            backgroundColor: this.props.themeVariant.semanticColors.bodyBackgroundChecked
+            
+          }
+        };
+      }
+    }   
+      
+        
+      
       rowProps.onRenderCheck = (props: IDetailsRowCheckProps) => {
         if (this._selectionMode === SelectionMode.multiple) {
           props.onRenderDetailsCheckbox = (detailsCheckboxProps: IDetailsCheckboxProps) => {
@@ -745,7 +771,6 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
                     }
                 }
             };
-
             //Add data-selection-all-toggle = true to "Select all" radio button div to have the results container Selection object update on clicking the radio button
             const child: any = React.Children.only(tooltipHostProps.children);
             if (child.props.id?.endsWith("-check")) {

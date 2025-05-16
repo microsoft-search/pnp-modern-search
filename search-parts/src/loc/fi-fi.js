@@ -239,7 +239,8 @@ define([], function () {
                 ResetFieldsBtnLabel: "Palauta kentät templaatin oletusarvoihin",
                 EnableStickyHeader: "Kiinnitä ylätunniste",
                 StickyHeaderListViewHeight: "Kiinnitetyn ylätunnisteen korkeus (px)",
-                EnableDownload: "Salli lataus"
+                EnableDownload: "Salli lataus",
+                UseAlternatingBackgroundColor:"Käytä Vaihtelevaa taustaväriä"
             },
             Cards: {
                 Name: "Kortit",
