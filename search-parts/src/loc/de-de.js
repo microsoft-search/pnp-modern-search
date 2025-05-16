@@ -241,7 +241,8 @@ define([], function () {
                 ResetFieldsBtnLabel: "Felder auf Standardwerte zurücksetzen",
                 EnableStickyHeader: "Fixierte Kopfzeile aktivieren",
                 StickyHeaderListViewHeight: "Höhe der Listenansicht (px)",
-                EnableDownload: "Download aktivieren"
+                EnableDownload: "Download aktivieren",
+                UseAlternatingBackgroundColor:"Verwenden Sie abwechselnde Hintergrundfarben"
             },
             Cards: {
                 Name: "Karten",

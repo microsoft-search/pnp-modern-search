@@ -242,7 +242,8 @@ define([], function () {
         ResetFieldsBtnLabel: "Återställ fält till standardvärden",
         EnableStickyHeader: "Aktivera fast rubrik",
         StickyHeaderListViewHeight: "Höjd för listvy (px)",
-        EnableDownload: "Aktivera nedladdning"
+        EnableDownload: "Aktivera nedladdning",
+        UseAlternatingBackgroundColor:"Använd alternerande bakgrundsfärg"
       },
       Cards: {
         Name: "Kort",

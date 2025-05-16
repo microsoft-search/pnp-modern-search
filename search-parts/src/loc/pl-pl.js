@@ -242,7 +242,8 @@ define([], function () {
                 ResetFieldsBtnLabel: "Resetuj pola do wartości domyślnych",
                 EnableStickyHeader: "Włącz lepką nagłówkę",
                 StickyListViewHeight: "Wysokość listy ze szczegółami (px)",
-                EnableDownload: "Włącz pobieranie"
+                EnableDownload: "Włącz pobieranie",
+                UseAlternatingBackgroundColor:"Użyj naprzemiennego koloru tła"
             },
             Cards: {
                 Name: "Karty",

@@ -241,7 +241,8 @@ define([], function () {
                 ResetFieldsBtnLabel: "Rétablir la valeur par défaut dans les champs",
                 EnableStickyHeader: "Activer l’en-tête collant",
                 StickyHeaderListViewHeight: "Hauteur de la liste de détails (en pixels)",
-                EnableDownload: "Activer le téléchargement"
+                EnableDownload: "Activer le téléchargement",
+                UseAlternatingBackgroundColor:"Utiliser une couleur d'arrière-plan alternée"
             },
             Cards: {
                 Name: "Cartes",

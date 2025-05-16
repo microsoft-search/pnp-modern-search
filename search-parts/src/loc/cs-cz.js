@@ -239,7 +239,8 @@ define([], function() {
                 ResetFieldsBtnLabel: "Obnovit výchozí hodnoty polí",
                 EnableStickyHeader: "Povolit pevnou hlavičku",
                 StickyHeaderListViewHeight: "Výška zobrazení seznamu (v px)",
-                EnableDownload: "Povolit stažení"
+                EnableDownload: "Povolit stažení",
+                UseAlternatingBackgroundColor:"Použijte střídající se barvu pozadí"
             },
             Cards: {
                 Name: "Karty",
