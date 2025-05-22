@@ -85,6 +85,11 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     private errorMessage: string = undefined;
 
     /**
+     * Flag to track if extensions have been loaded
+     */
+    private extensionsLoaded: boolean = false;
+
+    /**
      * Dynamic data related fields
      */
     private _filtersConnectionSourceData: DynamicProperty<IDataFilterSourceData>;
@@ -235,6 +240,11 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     }
 
     public async render(): Promise<void> {
+
+        // Ensure extensions are loaded before rendering
+        if (!this.extensionsLoaded) {
+            await this.loadExtensions(this.properties.extensibilityLibraryConfiguration);
+        }
 
         // Determine the template content to display
         // In the case of an external template is selected, the render is done asynchronously waiting for the content to be fetched
@@ -1023,6 +1033,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         // Add custom providers to the available providers
         this.properties.queryModifierConfiguration = this.properties.queryModifierConfiguration.concat(customQueryModifierConfiguration);
+        this.extensionsLoaded = true;
     }
 
     public async loadPropertyPaneResources(): Promise<void> {
