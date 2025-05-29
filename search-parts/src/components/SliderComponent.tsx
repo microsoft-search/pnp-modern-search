@@ -1,21 +1,18 @@
 "use client";
 import * as React from 'react';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const Flickity = require('react-flickity-component');
-import 'flickity/dist/flickity.min.css';
 import * as ReactDOM from 'react-dom';
 import * as Handlebars from 'handlebars';
 import { MessageBar, MessageBarType } from '@fluentui/react/lib/MessageBar';
 import { BaseWebComponent } from '@pnp/modern-search-extensibility';
 import { isEmpty } from "@microsoft/sp-lodash-subset";
-// import * as DOMPurify from 'dompurify';
-
+import { Carousel, CarouselButtonsLocation, CarouselButtonsDisplay } from "@pnp/spfx-controls-react/lib/Carousel";
 import * as DOMPurify from "isomorphic-dompurify";
 import { ITemplateService } from '../services/templateService/ITemplateService';
 import { TemplateService } from '../services/templateService/TemplateService';
 import { DomPurifyHelper } from '../helpers/DomPurifyHelper';
 import { ServiceScope, ServiceKey } from "@microsoft/sp-core-library";
 import { Constants } from '../common/Constants';
+import './SliderComponent.module.scss';
 
 export interface ISliderOptions {
 
@@ -107,56 +104,65 @@ export class SliderComponent extends React.Component<ISliderComponentProps, ISli
             const sliderOptions = this.props.options ? this.props.options as ISliderOptions : {};
             const templateContext = !isEmpty(this.props.context) ? this.props.context : null;
 
-            let autoPlayValue: any = sliderOptions.autoPlay;
+            let autoPlayInterval: number | null = null;
 
             if (sliderOptions.autoPlay) {
                 // Check if a duration has been set
                 if (sliderOptions.autoPlayDuration) {
-                    autoPlayValue = sliderOptions.autoPlayDuration * 1000;
+                    autoPlayInterval = sliderOptions.autoPlayDuration * 1000;
                 }
             }
 
-            return <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }} />
-                <Flickity
-                    options={{
-                        autoPlay: autoPlayValue,
-                        pauseAutoPlayOnHover: sliderOptions.pauseAutoPlayOnHover,
-                        wrapAround: sliderOptions.wrapAround,
-                        lazyLoad: true,
-                        groupCells: sliderOptions.numberOfSlides,
-                        adaptiveHeight: true,
-                        pageDots: sliderOptions.showPageDots,
-                        imagesLoaded: true
-                    }}
-                >
-                    {items.map((item, index) => {
+            // Map items to JSX elements for the Carousel
+            const carouselElements = items.map((item, index) => {
+                // Create a temp context with the current so we can use global registered helpers on the current item
+                const tempTemplateContent = `{{#with item as |item|}}${this.props.template.trim()}{{/with}}`;
 
-                        // Create a temp context with the current so we can use global registered helpers on the current item
-                        const tempTemplateContent = `{{#with item as |item|}}${this.props.template.trim()}{{/with}}`;
+                let template = this.props.handlebars.compile(tempTemplateContent);
 
-                        let template = this.props.handlebars.compile(tempTemplateContent);
-
-                        const templateContentValue = template(
-                            {
-                                item: item,
+                const templateContentValue = template(
+                    {
+                        item: item,
+                    },
+                    {
+                        data: {
+                            root: {
+                                ...templateContext
                             },
-                            {
-                                data: {
-                                    root: {
-                                        ...templateContext
-                                    },
-                                    index: index
-                                }
-                            }
-                        );
-
-                        return <div style={{ position: 'relative' }} key={index}>
-                            <div dangerouslySetInnerHTML={{ __html: this._domPurify.sanitize(templateContentValue) }}></div>
-                        </div>;
-                    })
+                            index: index
+                        }
                     }
-                </Flickity>
+                );
+
+                return <div key={index} className="carouselSlide">
+                    <div dangerouslySetInnerHTML={{ __html: this._domPurify.sanitize(templateContentValue) }}></div>
+                </div>;
+            });
+
+            // Extract slideHeight and slideWidth from context (layout properties)
+            const slideHeight = templateContext?.properties?.layoutProperties?.slideHeight || 360;
+            const slideWidth = templateContext?.properties?.layoutProperties?.slideWidth || 318;
+
+            return <div 
+                className="carouselContainer"
+                ref={(el) => {
+                    if (el) {
+                        el.style.setProperty('--slide-width', `${slideWidth}px`);
+                        el.style.setProperty('--slide-height', `${slideHeight}px`);
+                    }
+                }}
+            >
+                <Carousel
+                    element={carouselElements}
+                    isInfinite={sliderOptions.wrapAround}
+                    interval={autoPlayInterval}
+                    pauseOnHover={sliderOptions.pauseAutoPlayOnHover}
+                    indicators={sliderOptions.showPageDots}
+                    buttonsLocation={CarouselButtonsLocation.center}
+                    buttonsDisplay={CarouselButtonsDisplay.block}
+                    contentHeight={slideHeight}
+                    indicatorStyle={{ bottom: '5px' }}
+                />
             </div>;
         } catch (error) {
             return <MessageBar messageBarType={MessageBarType.error}>{error}</MessageBar>;
