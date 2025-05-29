@@ -65,7 +65,7 @@ The following custom helpers are available in addition to the [handlebars-helper
 
 **Description** Return object structure for list item attachments.
 
-**Example** `{{#getAttachments LinkOfficeChild}}<a href="{{url}}">{{index}} - {{fileName}}</href>{{/getAttachments}}`
+**Example** `{{#getAttachments LinkOfficeChild}}<a href="{{url}}">{{index}} - {{fileName}}</a>{{/getAttachments}}`
 
 #### getCountMessage
 
