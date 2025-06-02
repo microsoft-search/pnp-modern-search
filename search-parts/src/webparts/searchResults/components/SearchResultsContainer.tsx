@@ -2,12 +2,10 @@ import * as React from 'react';
 import { ISearchResultsContainerProps } from './ISearchResultsContainerProps';
 import { ISearchResultsContainerState } from './ISearchResultsContainerState';
 import { TemplateRenderer } from "../../../controls/TemplateRenderer/TemplateRenderer";
-import { Shimmer, ShimmerElementType as ElemType, ShimmerElementsGroup, SelectionZone, Selection, SelectionMode } from '@fluentui/react';
 import { isEqual, cloneDeep, merge, isEmpty } from "@microsoft/sp-lodash-subset";
 import { ITemplateService } from '../../../services/templateService/ITemplateService';
 import { TemplateService } from '../../../services/templateService/TemplateService';
 import { Log, DisplayMode } from "@microsoft/sp-core-library";
-import { MessageBar, MessageBarType, Overlay, Spinner, SpinnerSize } from '@fluentui/react';
 import { IDataSourceData, IDataFilterResult, BuiltinTemplateSlots } from '@pnp/modern-search-extensibility';
 import { ISearchResultsTemplateContext } from '../../../models/common/ITemplateContext';
 import styles from './SearchResultsContainer.module.scss';
@@ -17,6 +15,11 @@ import { ObjectHelper } from '../../../helpers/ObjectHelper';
 import { BuiltinLayoutsKeys } from '../../../layouts/AvailableLayouts';
 import { WebPartTitle } from '@pnp/spfx-controls-react/lib/WebPartTitle';
 import * as webPartStrings from 'SearchResultsWebPartStrings';
+import { Selection, SelectionMode, SelectionZone } from "@fluentui/react/lib/Selection";
+import { MessageBar, MessageBarType } from '@fluentui/react/lib/MessageBar';
+import { Overlay } from '@fluentui/react/lib/Overlay';
+import { Spinner, SpinnerSize } from '@fluentui/react/lib/Spinner';
+import { Shimmer, ShimmerElementsGroup, ShimmerElementType } from '@fluentui/react/lib/Shimmer';
 
 const LogSource = "SearchResultsContainer";
 
@@ -147,7 +150,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                     renderTemplate = null;
                 }
             }
-            
+
             // call handler if no results found
             this.props.onNoResultsFound();
         }
@@ -432,7 +435,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
      * @param url
      */
     private isM365Source(url: string) {
-        const cdnDomains:RegExp[] = [/^https?:\/\/(?:[A-Za-z0-9,-]+\.)+office\.net.*/,
+        const cdnDomains: RegExp[] = [/^https?:\/\/(?:[A-Za-z0-9,-]+\.)+office\.net.*/,
             /^https?:\/\/(?:[A-Za-z0-9,-]+\.)+sharepointonline\.com.*/,
             /^https?:\/\/(?:[A-Za-z0-9,-]+\.)+sharepoint\.us.*/,
             /^https?:\/\/(?:[A-Za-z0-9,-]+\.)+sharepoint-mil\.us.*/,
@@ -466,17 +469,17 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
         const shimmerContent: JSX.Element = <div style={{ display: 'flex' }}>
             <ShimmerElementsGroup
                 shimmerElements={[
-                    { type: ElemType.line, width: 40, height: 40 },
-                    { type: ElemType.gap, width: 10, height: 40 }
+                    { type: ShimmerElementType.line, width: 40, height: 40 },
+                    { type: ShimmerElementType.gap, width: 10, height: 40 }
                 ]}
             />
             <ShimmerElementsGroup
                 flexWrap={true}
                 width="100%"
                 shimmerElements={[
-                    { type: ElemType.line, width: '100%', height: 10 },
-                    { type: ElemType.line, width: '75%', height: 10 },
-                    { type: ElemType.gap, width: '25%', height: 20 }
+                    { type: ShimmerElementType.line, width: '100%', height: 10 },
+                    { type: ShimmerElementType.line, width: '75%', height: 10 },
+                    { type: ShimmerElementType.gap, width: '25%', height: 20 }
                 ]}
             />
         </div>;
@@ -513,7 +516,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
 
         try {
             adaptiveCardsHostConfig = JSON.parse(this.props.properties.adaptiveCardsHostConfig);
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (error) {
             Log.warn(LogSource, `Invalid host config provided. Refer to https://docs.microsoft.com/en-us/adaptive-cards/rendering-cards/host-config for more details`, this.props.serviceScope);
         }

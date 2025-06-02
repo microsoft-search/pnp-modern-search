@@ -32,7 +32,6 @@ import { LayoutHelper } from '../../helpers/LayoutHelper';
 import { TemplateService } from '../../services/templateService/TemplateService';
 import { FileFormat, ITemplateService } from '../../services/templateService/ITemplateService';
 import { isEmpty, isEqual, uniqBy, cloneDeep, uniq, sortBy } from '@microsoft/sp-lodash-subset';
-import { Dropdown, IDropdownProps, IDropdownOption, Checkbox, IComboBoxOption, MessageBar, MessageBarType } from '@fluentui/react';
 import { BuiltinFilterTemplates, BuiltinFilterTypes } from '../../layouts/AvailableTemplates';
 import { ServiceScope } from '@microsoft/sp-core-library';
 import { AvailableComponents } from '../../components/AvailableComponents';
@@ -42,6 +41,10 @@ import commonStyles from '../../styles/Common.module.scss';
 import { IDataVerticalSourceData } from '../../models/dynamicData/IDataVerticalSourceData';
 import { DynamicPropertyHelper } from '../../helpers/DynamicPropertyHelper';
 import PnPTelemetry from '@pnp/telemetry-js';
+import { MessageBar, MessageBarType } from '@fluentui/react/lib/MessageBar';
+import { IComboBoxOption } from '@fluentui/react/lib/ComboBox';
+import { Checkbox } from '@fluentui/react/lib/Checkbox';
+import { Dropdown, IDropdownOption, IDropdownProps } from '@fluentui/react/lib/Dropdown';
 
 const LogSource = "SearchFiltersWebPart";
 
