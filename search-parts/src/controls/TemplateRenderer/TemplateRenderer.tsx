@@ -4,19 +4,15 @@ import ITemplateRendererProps from './ITemplateRendererProps';
 import ITemplateRendererState from './ITemplateRendererState';
 import './TemplateRenderer.scss';
 import { isEqual } from "@microsoft/sp-lodash-subset";
-// import * as DOMPurify from 'dompurify';
-import * as DOMPurify from "isomorphic-dompurify";
 import { DomPurifyHelper } from '../../helpers/DomPurifyHelper';
 import { ISearchResultsTemplateContext } from '../../models/common/ITemplateContext';
 import { LayoutRenderType } from '@pnp/modern-search-extensibility';
-import { Constants } from '../../common/Constants';
 
 // Need a root class to do not conflict with PnP Modern Search Styles.
 const rootCssClassName = "pnp-modern-search";
 
 export class TemplateRenderer extends React.Component<ITemplateRendererProps, ITemplateRendererState> {
 
-    private _domPurify: any;
     private _divTemplateRenderer: React.RefObject<HTMLDivElement>;
 
     constructor(props: ITemplateRendererProps) {
@@ -24,19 +20,6 @@ export class TemplateRenderer extends React.Component<ITemplateRendererProps, IT
 
         this.state = {
         };
-
-        this._domPurify = DOMPurify;
-
-        this._domPurify.setConfig({
-            ADD_TAGS: ['style','#comment'],
-            ADD_ATTR: ['target', 'loading'],
-            ALLOW_DATA_ATTR: true,
-            ALLOWED_URI_REGEXP: Constants.ALLOWED_URI_REGEXP,
-            WHOLE_DOCUMENT: true,
-        });
-
-        this._domPurify.addHook('uponSanitizeElement', DomPurifyHelper.allowCustomComponentsHook);
-        this._domPurify.addHook('uponSanitizeAttribute', DomPurifyHelper.allowCustomAttributesHook);
 
         this.updateTemplate = this.updateTemplate.bind(this);
 
@@ -76,7 +59,7 @@ export class TemplateRenderer extends React.Component<ITemplateRendererProps, IT
         if (props.renderType == LayoutRenderType.Handlebars && typeof template === 'string') {
 
             // Sanitize the template HTML
-            template = template ? this._domPurify.sanitize(`${template}`) : template;
+            template = template ? DomPurifyHelper.instance.sanitize(`${template}`) : template;
             const templateAsHtml = new DOMParser().parseFromString(template as string, "text/html");
 
             if (props.templateContext.properties.useMicrosoftGraphToolkit) {

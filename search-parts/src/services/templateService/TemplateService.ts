@@ -21,8 +21,6 @@ import { Constants, TestConstants } from "../../common/Constants";
 import * as handlebarsHelpers from 'handlebars-helpers';
 import { ServiceScopeHelper } from "../../helpers/ServiceScopeHelper";
 import { DomPurifyHelper } from "../../helpers/DomPurifyHelper";
-// import * as DOMPurify from 'dompurify';
-import * as DOMPurify from "isomorphic-dompurify";
 import { IAdaptiveCardAction } from '@pnp/modern-search-extensibility';
 
 const TemplateService_ServiceKey = 'PnPModernSearchTemplateService';
@@ -976,15 +974,6 @@ export class TemplateService implements ITemplateService {
 
         if (!this._adaptiveCardsNS) {
 
-            const domPurify = DOMPurify;
-
-            domPurify.setConfig({
-                WHOLE_DOCUMENT: false
-            });
-
-            domPurify.addHook('uponSanitizeElement', DomPurifyHelper.allowCustomComponentsHook);
-            domPurify.addHook('uponSanitizeAttribute', DomPurifyHelper.allowCustomAttributesHook);
-
             // Load dynamic resources
             this._adaptiveCardsNS = await import(
                 /* webpackChunkName: 'pnp-modern-search-adaptive-cards-bundle' */
@@ -1030,7 +1019,7 @@ export class TemplateService implements ITemplateService {
                 // We use Markdown here to render HTML and use web components
                 let rawHtml = this._markdownIt.render(text).replace(/\&lt;/g, '<').replace(/\&gt;/g, '>');
                 rawHtml = this.applyDisambiguatedMgtPrefixIfNeeded(rawHtml);
-                result.outputHtml = domPurify.sanitize(rawHtml);
+                result.outputHtml = DomPurifyHelper.instance.sanitize(rawHtml);
                 result.didProcess = true;
             };
 

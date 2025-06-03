@@ -6,15 +6,12 @@ import * as ReactDOM from 'react-dom';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import { BaseWebComponent } from '@pnp/modern-search-extensibility';
 import { ITemplateService } from '../services/templateService/ITemplateService';
-// import * as DOMPurify from 'dompurify';
-import * as DOMPurify from "isomorphic-dompurify";
 import { UrlHelper } from '../helpers/UrlHelper';
 import { isEmpty } from '@microsoft/sp-lodash-subset';
 import { DomPurifyHelper } from '../helpers/DomPurifyHelper';
 import { IComponentFieldsConfiguration } from '../models/common/IComponentFieldsConfiguration';
 import { ServiceScope, ServiceKey, Log } from '@microsoft/sp-core-library';
 import { LivePersona } from "@pnp/spfx-controls-react/lib/LivePersona";
-import { Constants } from '../common/Constants';
 import { MSGraphClientFactory } from '@microsoft/sp-http';
 
 const LogSource = "PersonaComponent";
@@ -116,20 +113,8 @@ export interface IPersonaComponentState {
 
 export class PersonaComponent extends React.Component<IPersonaComponentProps, IPersonaComponentState> {
 
-    private _domPurify: any;
-
     public constructor(props: IPersonaComponentProps) {
         super(props);
-
-        this._domPurify = DOMPurify;
-
-        this._domPurify.setConfig({
-            WHOLE_DOCUMENT: true,
-            ALLOWED_URI_REGEXP: Constants.ALLOWED_URI_REGEXP,
-        });
-
-        this._domPurify.addHook('uponSanitizeElement', DomPurifyHelper.allowCustomComponentsHook);
-        this._domPurify.addHook('uponSanitizeAttribute', DomPurifyHelper.allowCustomAttributesHook);
 
         this.state = {
             PresenceProcessed: false,
@@ -190,16 +175,16 @@ export class PersonaComponent extends React.Component<IPersonaComponentProps, IP
                 return imageInitials ? <span>{imageInitials}</span> : <Icon iconName="Contact" />;
             },
             onRenderPrimaryText: (props: IPersonaProps) => {
-                return <div style={{ display: 'inline', whiteSpace: 'normal' }} dangerouslySetInnerHTML={{ __html: this._domPurify.sanitize(this.props.templateService.applyDisambiguatedMgtPrefixIfNeeded(processedProps.primaryText)) }}></div>;
+                return <div style={{ display: 'inline', whiteSpace: 'normal' }} dangerouslySetInnerHTML={{ __html: DomPurifyHelper.instance.sanitize(this.props.templateService.applyDisambiguatedMgtPrefixIfNeeded(processedProps.primaryText)) }}></div>;
             },
             onRenderSecondaryText: (props: IPersonaProps) => {
-                return <div style={{ display: 'inline', whiteSpace: 'normal' }} dangerouslySetInnerHTML={{ __html: this._domPurify.sanitize(this.props.templateService.applyDisambiguatedMgtPrefixIfNeeded(processedProps.secondaryText)) }}></div>;
+                return <div style={{ display: 'inline', whiteSpace: 'normal' }} dangerouslySetInnerHTML={{ __html: DomPurifyHelper.instance.sanitize(this.props.templateService.applyDisambiguatedMgtPrefixIfNeeded(processedProps.secondaryText)) }}></div>;
             },
             onRenderTertiaryText: (props: IPersonaProps) => {
-                return <div style={{ display: 'inline', whiteSpace: 'normal' }} dangerouslySetInnerHTML={{ __html: this._domPurify.sanitize(this.props.templateService.applyDisambiguatedMgtPrefixIfNeeded(processedProps.tertiaryText)) }}></div>;
+                return <div style={{ display: 'inline', whiteSpace: 'normal' }} dangerouslySetInnerHTML={{ __html: DomPurifyHelper.instance.sanitize(this.props.templateService.applyDisambiguatedMgtPrefixIfNeeded(processedProps.tertiaryText)) }}></div>;
             },
             onRenderOptionalText: (props: IPersonaProps) => {
-                return <div style={{ display: 'inline', whiteSpace: 'normal' }} dangerouslySetInnerHTML={{ __html: this._domPurify.sanitize(this.props.templateService.applyDisambiguatedMgtPrefixIfNeeded(processedProps.optionalText)) }}></div>;
+                return <div style={{ display: 'inline', whiteSpace: 'normal' }} dangerouslySetInnerHTML={{ __html: DomPurifyHelper.instance.sanitize(this.props.templateService.applyDisambiguatedMgtPrefixIfNeeded(processedProps.optionalText)) }}></div>;
             }
         };
 

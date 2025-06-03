@@ -11,14 +11,11 @@ import { FileIcon } from '../components/FileIconComponent';
 import { DetailsListLayoutMode, SelectionMode, IColumn, IGroup, IDetailsRowProps, DetailsRow, IDetailsHeaderProps, CheckboxVisibility, IDetailsRowCheckProps, DetailsRowCheck, IDetailsCheckboxProps, IDetailsListStyles, ConstrainMode, ISelectionZoneProps, IDetailsList } from '@fluentui/react/lib/DetailsList';
 import { ISearchResultsTemplateContext } from '../models/common/ITemplateContext';
 import { ObjectHelper } from '../helpers/ObjectHelper';
-// import * as DOMPurify from 'dompurify';
-import * as DOMPurify from "isomorphic-dompurify";
 import { DomPurifyHelper } from '../helpers/DomPurifyHelper';
 import { ITemplateService } from '../services/templateService/ITemplateService';
 import { TemplateService } from '../services/templateService/TemplateService';
 import { ServiceScope, ServiceKey } from "@microsoft/sp-core-library";
 import { ISortFieldConfiguration } from '../models/search/ISortFieldConfiguration';
-import { Constants } from '../common/Constants';
 
 const DEFAULT_SHIMMER_HEIGHT = 7;
 const SHIMMER_LINE_VS_CELL_WIDTH_RATIO = 0.95;
@@ -269,23 +266,12 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
     private scrollPositionKey = 'scrollPosition';
     private _allItems: any[];
     private _templateContext: ISearchResultsTemplateContext;
-    private _domPurify: any;
     private _selection: Selection;
     private _selectionMode: SelectionMode = SelectionMode.none;
     private _detailsListRef: React.RefObject<IDetailsList>;
 
     constructor(props: IDetailsListComponentProps) {
         super(props);
-
-        this._domPurify = DOMPurify;
-
-        this._domPurify.setConfig({
-            WHOLE_DOCUMENT: true,
-            ALLOWED_URI_REGEXP: Constants.ALLOWED_URI_REGEXP,
-        });
-
-        this._domPurify.addHook('uponSanitizeElement', DomPurifyHelper.allowCustomComponentsHook);
-        this._domPurify.addHook('uponSanitizeAttribute', DomPurifyHelper.allowCustomAttributesHook);
 
         this._detailsListRef = React.createRef<IDetailsList>();
 
@@ -438,7 +424,7 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
                             }
                             
 
-                            renderColumnValue = <span title={!hasError ? toolTipText : ''} dangerouslySetInnerHTML={{ __html: this._domPurify.sanitize(`<style>${allStyles.join(' ')}</style>${tempColumnValueAsHtml.body.firstElementChild.innerHTML}`) }}></span>;
+                            renderColumnValue = <span title={!hasError ? toolTipText : ''} dangerouslySetInnerHTML={{ __html: DomPurifyHelper.instance.sanitize(`<style>${allStyles.join(' ')}</style>${tempColumnValueAsHtml.body.firstElementChild.innerHTML}`) }}></span>;
 
                             return renderColumnValue;
                         },

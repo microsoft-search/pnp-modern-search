@@ -6,10 +6,8 @@ import { Panel, PanelType, IPanelProps, Text, ITheme } from '@fluentui/react';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import { Log } from "@microsoft/sp-core-library";
 import styles from "./PanelComponent.module.scss";
-// import * as DOMPurify from 'dompurify';
-import * as DOMPurify from "isomorphic-dompurify";
 import { PnPClientStorage } from "@pnp/common/storage";
-import { Constants } from '../common/Constants';
+import { DomPurifyHelper } from '../helpers/DomPurifyHelper';
 
 const PanelComponent_LogSource = "PnPModernSearch:PanelComponent";
 
@@ -81,15 +79,9 @@ export class PanelComponent extends React.Component<IPanelComponentProps, IPanel
      */
     private clientStorage: PnPClientStorage;
     private panelComponentUniqueKey: string = "PnPModernSearch:PanelComponent";
-    private _domPurify: any;
 
     constructor(props: IPanelComponentProps) {
         super(props);
-        this._domPurify = DOMPurify;
-        this._domPurify.setConfig({
-            WHOLE_DOCUMENT: true,
-            ALLOWED_URI_REGEXP: Constants.ALLOWED_URI_REGEXP,
-        });
 
         this.state = {
             showPanel: this.props.isOpen
@@ -126,7 +118,7 @@ export class PanelComponent extends React.Component<IPanelComponentProps, IPanel
                 return <div style={{
                     overflow: 'auto',
                     marginLeft: 15
-                }} dangerouslySetInnerHTML={{ __html: this._domPurify.sanitize(this.props.contentTemplate) }}>
+                }} dangerouslySetInnerHTML={{ __html: DomPurifyHelper.instance.sanitize(this.props.contentTemplate) }}>
                 </div>;
             }
         };
@@ -153,7 +145,7 @@ export class PanelComponent extends React.Component<IPanelComponentProps, IPanel
                             this._onTogglePanel();
                         }
                     }}
-                    dangerouslySetInnerHTML={{ __html: this._domPurify.sanitize(this.props.openTemplate) }}>
+                    dangerouslySetInnerHTML={{ __html: DomPurifyHelper.instance.sanitize(this.props.openTemplate) }}>
                 </div>
             </Text>
             <Panel {...panelProps} />

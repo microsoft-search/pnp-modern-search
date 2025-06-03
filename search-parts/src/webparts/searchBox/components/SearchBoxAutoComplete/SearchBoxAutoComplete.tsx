@@ -6,7 +6,7 @@ import { Spinner, SpinnerSize, FocusZone, FocusZoneDirection, SearchBox, IconBut
 import { isEqual, debounce } from '@microsoft/sp-lodash-subset';
 import { ISuggestion } from '@pnp/modern-search-extensibility';
 import * as webPartStrings from 'SearchBoxWebPartStrings';
-import * as DOMPurify from 'dompurify';
+import { DomPurifyHelper } from '../../../../helpers/DomPurifyHelper';
 
 const SUGGESTION_CHAR_COUNT_TRIGGER = 2;
 const SUGGESTION_UPDATE_DEBOUNCE_DELAY = 200;
@@ -15,7 +15,6 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
 
     private _onChangeDebounced = null;
     private _containerElemRef: React.RefObject<any> = null;
-    private _domPurify = DOMPurify;
 
     public constructor(props: ISearchBoxAutoCompleteProps) {
 
@@ -99,7 +98,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
                 </div>
                 <div className={styles.suggestionContent}>
                     <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <span className={styles.suggestionDisplayText} dangerouslySetInnerHTML={{ __html: this._domPurify.sanitize(suggestion.displayText) }}></span>
+                        <span className={styles.suggestionDisplayText} dangerouslySetInnerHTML={{ __html: DomPurifyHelper.instance.sanitize(suggestion.displayText) }}></span>
                         <span className={styles.suggestionDescription}>{suggestion.description ? suggestion.description : ""}</span>
                     </div>
                 </div>

@@ -16,14 +16,11 @@ import { TemplateService } from "../services/templateService/TemplateService";
 import { ITemplateService } from "../services/templateService/ITemplateService";
 import { UrlHelper } from "../helpers/UrlHelper";
 import { FileIcon } from "./FileIconComponent";
-// import * as DOMPurify from 'dompurify';
-import * as DOMPurify from "isomorphic-dompurify";
 import { DomPurifyHelper } from "../helpers/DomPurifyHelper";
 import { IComponentFieldsConfiguration } from "../models/common/IComponentFieldsConfiguration";
 import { TestConstants } from "../common/Constants";
 import { ServiceScope, ServiceKey } from "@microsoft/sp-core-library";
 import { ISelectableComponentItem } from "../models/common/ISelectableComponentItem";
-import { Constants } from '../common/Constants';
 
 /**
  * Document card props. These properties are retrieved from the web component attributes. They must be camel case.
@@ -79,8 +76,6 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
 
     private documentCardPreviewRef = React.createRef<HTMLDivElement>();
 
-    private _domPurify: any;
-
     public constructor(props: IDocumentCardComponentProps) {
         super(props);
         this.showPreviewOnClick = this.showPreviewOnClick.bind(this);
@@ -88,16 +83,6 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
         this.state = {
             showCallout: false
         };
-
-        this._domPurify = DOMPurify;
-
-        this._domPurify.setConfig({
-            WHOLE_DOCUMENT: true,
-            ALLOWED_URI_REGEXP: Constants.ALLOWED_URI_REGEXP,
-        });
-
-        this._domPurify.addHook('uponSanitizeElement', DomPurifyHelper.allowCustomComponentsHook);
-        this._domPurify.addHook('uponSanitizeAttribute', DomPurifyHelper.allowCustomAttributesHook);
     }
 
     private showPreviewOnClick() {
@@ -231,7 +216,7 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
                 </div>
                 <DocumentCardDetails>
                     {processedProps.location && !this.props.isCompact ?
-                        <div className={documentCardLocationClassNames.root} dangerouslySetInnerHTML={{ __html: this._domPurify.sanitize(this.props.templateService.applyDisambiguatedMgtPrefixIfNeeded(processedProps.location)) }}></div> : null
+                        <div className={documentCardLocationClassNames.root} dangerouslySetInnerHTML={{ __html: DomPurifyHelper.instance.sanitize(this.props.templateService.applyDisambiguatedMgtPrefixIfNeeded(processedProps.location)) }}></div> : null
                     }
                     <Link
                         theme={this.props.themeVariant as ITheme}
@@ -251,7 +236,7 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
                         />
                     </Link>
                     {processedProps.tags && !this.props.isCompact ?
-                        <div className={documentCardLocationClassNames.root} style={{ whiteSpace: 'pre-line' }} dangerouslySetInnerHTML={{ __html: this._domPurify.sanitize(this.props.templateService.applyDisambiguatedMgtPrefixIfNeeded(processedProps.tags)) }}></div> : null
+                        <div className={documentCardLocationClassNames.root} style={{ whiteSpace: 'pre-line' }} dangerouslySetInnerHTML={{ __html: DomPurifyHelper.instance.sanitize(this.props.templateService.applyDisambiguatedMgtPrefixIfNeeded(processedProps.tags)) }}></div> : null
                     }
                     {processedProps.author ?
                         <DocumentCardActivity

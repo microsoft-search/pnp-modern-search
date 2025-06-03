@@ -1,4 +1,35 @@
+import { Constants } from '../common/Constants';
+
 export class DomPurifyHelper {
+
+    private static _instance: any = null;
+
+    /**
+     * Gets the singleton DOMPurify instance with shared configuration
+     */
+    public static get instance(): any {
+        if (!DomPurifyHelper._instance) {
+            DomPurifyHelper._instance = require('dompurify');
+            DomPurifyHelper.configureInstance();
+        }
+        return DomPurifyHelper._instance;
+    }
+
+    /**
+     * Configures the DOMPurify instance with shared settings
+     */
+    private static configureInstance(): void {
+        DomPurifyHelper._instance.setConfig({
+            ADD_TAGS: ['style','#comment'],
+            ADD_ATTR: ['target', 'loading'],
+            ALLOW_DATA_ATTR: true,
+            ALLOWED_URI_REGEXP: Constants.ALLOWED_URI_REGEXP,
+            WHOLE_DOCUMENT: true,
+        });
+
+        DomPurifyHelper._instance.addHook('uponSanitizeElement', DomPurifyHelper.allowCustomComponentsHook);
+        DomPurifyHelper._instance.addHook('uponSanitizeAttribute', DomPurifyHelper.allowCustomAttributesHook);
+    }
 
     /**
      * Allows custom attributes
