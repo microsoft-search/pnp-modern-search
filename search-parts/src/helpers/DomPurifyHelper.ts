@@ -17,14 +17,23 @@ export class DomPurifyHelper {
 
     /**
      * Configures the DOMPurify instance with shared settings
+     * Using WHOLE_DOCUMENT: false since we work with HTML fragments that get inserted into larger DOM
      */
     private static configureInstance(): void {
         DomPurifyHelper._instance.setConfig({
-            ADD_TAGS: ['style','#comment'],
-            ADD_ATTR: ['target', 'loading'],
+            ADD_TAGS: ['style', '#comment'],
+            ADD_ATTR: ['target', 'loading', 'data-fields-configuration', 'data-*'],
             ALLOW_DATA_ATTR: true,
             ALLOWED_URI_REGEXP: Constants.ALLOWED_URI_REGEXP,
-            WHOLE_DOCUMENT: true,
+            WHOLE_DOCUMENT: false,
+            // Explicitly allow very long attribute values for configuration data
+            SANITIZE_NAMED_PROPS: false,
+            RETURN_DOM: false,
+            RETURN_DOM_FRAGMENT: false,
+            RETURN_DOM_IMPORT: false,
+            // More permissive configuration to preserve custom attributes
+            KEEP_CONTENT: true,
+            SAFE_FOR_TEMPLATES: false,
         });
 
         DomPurifyHelper._instance.addHook('uponSanitizeElement', DomPurifyHelper.allowCustomComponentsHook);
@@ -41,6 +50,7 @@ export class DomPurifyHelper {
         if(data && data.attrName) {
             if(data.attrName.indexOf("on") == 0) return;
             if(data.attrName == "href") return;
+            
             data.allowedAttributes[data.attrName] = true;
             data.forceKeepAttr = true;
         }        
