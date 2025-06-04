@@ -58,8 +58,69 @@ export class TemplateRenderer extends React.Component<ITemplateRendererProps, IT
 
         if (props.renderType == LayoutRenderType.Handlebars && typeof template === 'string') {
 
-            // Sanitize the template HTML
+            // Pre-process: Extract ALL data-* attributes before sanitization to preserve them
+            const originalTemplate = template as string;
+            
+            // Sanitize the template HTML 
             template = template ? DomPurifyHelper.instance.sanitize(`${template}`) : template;
+            const sanitizedTemplate = template as string;
+
+            // Post-process: Detect and restore any stripped data-* attributes
+            // Only proceed if sanitization actually removed some content
+            if (originalTemplate.length > sanitizedTemplate.length) {
+                
+                // Extract all data-* attributes from the original template
+                const dataAttributePattern = /data-[a-zA-Z][a-zA-Z0-9-]*="[^"]*"/g;
+                const originalDataAttrs = originalTemplate.match(dataAttributePattern) || [];
+                const sanitizedDataAttrs = sanitizedTemplate.match(dataAttributePattern) || [];
+                
+                // Find attributes that were stripped during sanitization
+                const strippedAttrs = originalDataAttrs.filter(attr => 
+                    !sanitizedDataAttrs.some(sanitizedAttr => sanitizedAttr === attr)
+                );
+                
+                if (strippedAttrs.length > 0) {
+                    let restoredTemplate = sanitizedTemplate;
+                    
+                    // For each stripped attribute, try to restore it to common web component patterns
+                    strippedAttrs.forEach(strippedAttr => {
+                        const attrName = strippedAttr.match(/^(data-[a-zA-Z][a-zA-Z0-9-]*)/)?.[1];
+                        if (!attrName || restoredTemplate.includes(strippedAttr)) return;
+                        
+                        // Common web component patterns that might use data attributes
+                        const componentPatterns = [
+                            /<(pnp-[a-zA-Z][a-zA-Z0-9-]*)([^>]*?)>/g,
+                            /<([a-zA-Z][a-zA-Z0-9-]*-[a-zA-Z][a-zA-Z0-9-]*)([^>]*?)>/g, // Generic web components with dashes
+                        ];
+                        
+                        componentPatterns.forEach(pattern => {
+                            const regex = new RegExp(pattern.source, pattern.flags);
+                            let match;
+                            
+                            // Use a manual loop instead of matchAll for better compatibility
+                            const matches = [];
+                            while ((match = regex.exec(restoredTemplate)) !== null) {
+                                matches.push(match);
+                            }
+                            
+                            matches.forEach(componentMatch => {
+                                const fullTag = componentMatch[0];
+                                const tagName = componentMatch[1];
+                                const existingAttrs = componentMatch[2];
+                                
+                                // Only add if this tag doesn't already have the attribute
+                                if (!fullTag.includes(attrName)) {
+                                    const newTag = `<${tagName}${existingAttrs} ${strippedAttr}>`;
+                                    restoredTemplate = restoredTemplate.replace(fullTag, newTag);
+                                }
+                            });
+                        });
+                    });
+                    
+                    template = restoredTemplate;
+                }
+            }
+            
             const templateAsHtml = new DOMParser().parseFromString(template as string, "text/html");
 
             if (props.templateContext.properties.useMicrosoftGraphToolkit) {
