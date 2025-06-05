@@ -6,12 +6,10 @@ import { MessageBar, MessageBarType } from '@fluentui/react/lib/MessageBar';
 import { BaseWebComponent } from '@pnp/modern-search-extensibility';
 import { isEmpty } from "@microsoft/sp-lodash-subset";
 import { Carousel, CarouselButtonsLocation, CarouselButtonsDisplay } from "@pnp/spfx-controls-react/lib/Carousel";
-import * as DOMPurify from "isomorphic-dompurify";
 import { ITemplateService } from '../services/templateService/ITemplateService';
 import { TemplateService } from '../services/templateService/TemplateService';
 import { DomPurifyHelper } from '../helpers/DomPurifyHelper';
 import { ServiceScope, ServiceKey } from "@microsoft/sp-core-library";
-import { Constants } from '../common/Constants';
 import './SliderComponent.module.scss';
 
 export interface ISliderOptions {
@@ -80,20 +78,8 @@ export interface ISliderComponentState {
 
 export class SliderComponent extends React.Component<ISliderComponentProps, ISliderComponentState> {
 
-    private _domPurify: any;
-
     public constructor(props: ISliderComponentProps) {
         super(props);
-
-        this._domPurify = DOMPurify;
-
-        this._domPurify.setConfig({
-            WHOLE_DOCUMENT: true,
-            ALLOWED_URI_REGEXP: Constants.ALLOWED_URI_REGEXP,
-        });
-
-        this._domPurify.addHook('uponSanitizeElement', DomPurifyHelper.allowCustomComponentsHook);
-        this._domPurify.addHook('uponSanitizeAttribute', DomPurifyHelper.allowCustomAttributesHook);
     }
 
     public render() {
@@ -135,7 +121,7 @@ export class SliderComponent extends React.Component<ISliderComponentProps, ISli
                 );
 
                 return <div key={index} className="carouselSlide">
-                    <div dangerouslySetInnerHTML={{ __html: this._domPurify.sanitize(templateContentValue) }}></div>
+                    <div dangerouslySetInnerHTML={{ __html: DomPurifyHelper.instance.sanitize(templateContentValue) }}></div>
                 </div>;
             });
 

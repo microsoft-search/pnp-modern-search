@@ -5,9 +5,7 @@ import * as ReactDOM from 'react-dom';
 import PreviewContainer from '../controls/PreviewContainer/PreviewContainer';
 import { PreviewType } from '../controls/PreviewContainer/IPreviewContainerProps';
 import { UrlHelper } from '../helpers/UrlHelper';
-// import * as DOMPurify from 'dompurify';
-import * as DOMPurify from "isomorphic-dompurify";
-import { Constants } from '../common/Constants';
+import { DomPurifyHelper } from '../helpers/DomPurifyHelper';
 
 export interface IFilePreviewProps {
 
@@ -39,15 +37,9 @@ export interface IFileIconState {
 export class FilePreview extends React.Component<IFilePreviewProps, IFileIconState> {
 
     private elementPreviewRef = React.createRef<HTMLDivElement>();
-    private _domPurify: any;
 
     constructor(props) {
         super(props);
-        this._domPurify = DOMPurify;
-        this._domPurify.setConfig({
-            WHOLE_DOCUMENT: true,
-            ALLOWED_URI_REGEXP: Constants.ALLOWED_URI_REGEXP,
-        });
 
         this.state = {
             isCalloutVisible: false
@@ -82,7 +74,7 @@ export class FilePreview extends React.Component<IFilePreviewProps, IFileIconSta
         return <div>
             <div
                 ref={this.elementPreviewRef}
-                dangerouslySetInnerHTML={{ __html: this._domPurify.sanitize(this.props.template) }}
+                dangerouslySetInnerHTML={{ __html: DomPurifyHelper.instance.sanitize(this.props.template) }}
                 onClick={() => {
                     this.setState({
                         isCalloutVisible: true
