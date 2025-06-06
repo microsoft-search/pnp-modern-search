@@ -7,7 +7,6 @@ import { WebPartTitle } from "@pnp/spfx-controls-react/lib/WebPartTitle";
 import * as webPartStrings from 'SearchFiltersWebPartStrings';
 import * as commonStrings from 'CommonStrings';
 import update from 'immutability-helper';
-import { MessageBar, MessageBarType } from '@fluentui/react';
 import {
   IDataFilterInternal,
   IDataFilterValueInternal,
@@ -27,6 +26,7 @@ import { DisplayMode, Log } from '@microsoft/sp-core-library';
 import { DataFilterHelper } from '../../../helpers/DataFilterHelper';
 import { UrlHelper } from '../../../helpers/UrlHelper';
 import { BuiltinFilterTemplates } from '../../../layouts/AvailableTemplates';
+import { MessageBar, MessageBarType } from '@fluentui/react/lib/MessageBar';
 
 const DEEPLINK_QUERYSTRING_PARAM = 'f';
 
