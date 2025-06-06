@@ -129,7 +129,8 @@ define([], function () {
                 ApplyQueryTemplateBtnText: "Appliquer",
                 EnableAudienceTargetingTglLabel: "Permet de cibler l’auditoire",
                 TrimDuplicates: "Supprimer les doublons",
-                CollapseSpecificationLabel: "Réduire la spécification"
+                CollapseSpecificationLabel: "Réduire la spécification",
+                CacheTimeoutLabel: "Cache timeout in minutes (Set to 0 for no caching)"
             },
             MicrosoftSearch: {
                 QueryTextFieldLabel: "Texte de la requête",

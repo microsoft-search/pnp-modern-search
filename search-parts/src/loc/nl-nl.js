@@ -129,7 +129,8 @@ define([], function () {
                 ApplyQueryTemplateBtnText: "Toepassen",
                 EnableAudienceTargetingTglLabel: "Schakel doelgroepen in",
                 TrimDuplicates: "Duplicaten bijsnijden",
-                CollapseSpecificationLabel: "Specificatie samenvouwen"
+                CollapseSpecificationLabel: "Specificatie samenvouwen",
+                CacheTimeoutLabel: "Cache timeout in minutes (Set to 0 for no caching)"
             },
             MicrosoftSearch: {
                 QueryTextFieldLabel: "Zoekopdracht",

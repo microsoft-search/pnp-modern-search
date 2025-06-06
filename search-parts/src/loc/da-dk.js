@@ -129,8 +129,8 @@ define([], function() {
                 ApplyQueryTemplateBtnText: "Anvend",
                 EnableAudienceTargetingTglLabel: "Aktivér målgruppestyring",
                 TrimDuplicates: "Trim dubletter",
-                CollapseSpecificationLabel: "Skjul specifikation"
-            
+                CollapseSpecificationLabel: "Skjul specifikation",
+                CacheTimeoutLabel: "Cache timeout in minutes (Set to 0 for no caching)"            
             },
             MicrosoftSearch: {
                 QueryTextFieldLabel: "Forespørgselstekst",

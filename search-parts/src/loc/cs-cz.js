@@ -129,7 +129,8 @@ define([], function() {
                 ApplyQueryTemplateBtnText: "Použít",
                 EnableAudienceTargetingTglLabel: "Povolit cílení na publikum",
                 TrimDuplicates: "Odstranit duplicity",
-                CollapseSpecificationLabel: "Specifikace sbalení"
+                CollapseSpecificationLabel: "Specifikace sbalení",
+                CacheTimeoutLabel: "Cache timeout in minutes (Set to 0 for no caching)"
             },
             MicrosoftSearch: {
                 QueryTextFieldLabel: "Text dotazu",
