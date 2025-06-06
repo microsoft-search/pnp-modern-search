@@ -127,7 +127,8 @@ define([], function () {
                 ApplyQueryTemplateBtnText: "Ota käyttöön",
                 EnableAudienceTargetingTglLabel: "Salli käyttäjäryhmäkohdennus",
                 TrimDuplicates: "Leikkaa kaksoiskappaleet",
-                CollapseSpecificationLabel: "Kutista määritys"
+                CollapseSpecificationLabel: "Kutista määritys",
+                CacheTimeoutLabel: "Cache timeout in minutes (Set to 0 for no caching)"
             },
             MicrosoftSearch: {
                 QueryTextFieldLabel: "Hakukysely",
