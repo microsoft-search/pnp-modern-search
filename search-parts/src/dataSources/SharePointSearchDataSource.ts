@@ -1424,7 +1424,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
 
         if (searchQuery) {
             const str = JSON.stringify(searchQuery);
-            console.log(`Search query: ${str}`);
+            // console.log(`Search query: ${str}`);
             if (str.length === 0) {
                 return hash;
             }
@@ -1434,7 +1434,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                 hash |= 0; // Convert to 32bit integer
             }
         }
-        console.log(`Search query hash: ${hash}`);
+        // console.log(`Search query hash: ${hash}`);
         return hash;
     }
 }
