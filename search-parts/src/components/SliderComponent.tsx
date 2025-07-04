@@ -121,7 +121,7 @@ export class SliderComponent extends React.Component<ISliderComponentProps, ISli
                 );
 
                 return <div key={index} className="carouselSlide">
-                    <div dangerouslySetInnerHTML={{ __html: DomPurifyHelper.instance.sanitize(templateContentValue) }}></div>
+                    <div dangerouslySetInnerHTML={{ __html: DomPurifyHelper.sanitizeWithStyleTags(templateContentValue) }}></div>
                 </div>;
             });
 

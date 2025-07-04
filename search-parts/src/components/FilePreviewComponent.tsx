@@ -74,7 +74,7 @@ export class FilePreview extends React.Component<IFilePreviewProps, IFileIconSta
         return <div>
             <div
                 ref={this.elementPreviewRef}
-                dangerouslySetInnerHTML={{ __html: DomPurifyHelper.instance.sanitize(this.props.template) }}
+                dangerouslySetInnerHTML={{ __html: DomPurifyHelper.sanitizeWithStyleTags(this.props.template) }}
                 onClick={() => {
                     this.setState({
                         isCalloutVisible: true

@@ -216,7 +216,7 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
                 </div>
                 <DocumentCardDetails>
                     {processedProps.location && !this.props.isCompact ?
-                        <div className={documentCardLocationClassNames.root} dangerouslySetInnerHTML={{ __html: DomPurifyHelper.instance.sanitize(this.props.templateService.applyDisambiguatedMgtPrefixIfNeeded(processedProps.location)) }}></div> : null
+                        <div className={documentCardLocationClassNames.root} dangerouslySetInnerHTML={{ __html: DomPurifyHelper.sanitizeWithStyleTags(this.props.templateService.applyDisambiguatedMgtPrefixIfNeeded(processedProps.location)) }}></div> : null
                     }
                     <Link
                         theme={this.props.themeVariant as ITheme}
@@ -236,7 +236,7 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
                         />
                     </Link>
                     {processedProps.tags && !this.props.isCompact ?
-                        <div className={documentCardLocationClassNames.root} style={{ whiteSpace: 'pre-line' }} dangerouslySetInnerHTML={{ __html: DomPurifyHelper.instance.sanitize(this.props.templateService.applyDisambiguatedMgtPrefixIfNeeded(processedProps.tags)) }}></div> : null
+                        <div className={documentCardLocationClassNames.root} style={{ whiteSpace: 'pre-line' }} dangerouslySetInnerHTML={{ __html: DomPurifyHelper.sanitizeWithStyleTags(this.props.templateService.applyDisambiguatedMgtPrefixIfNeeded(processedProps.tags)) }}></div> : null
                     }
                     {processedProps.author ?
                         <DocumentCardActivity

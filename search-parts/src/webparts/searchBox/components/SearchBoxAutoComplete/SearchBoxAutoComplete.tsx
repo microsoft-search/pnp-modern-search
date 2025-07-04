@@ -98,7 +98,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
                 </div>
                 <div className={styles.suggestionContent}>
                     <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <span className={styles.suggestionDisplayText} dangerouslySetInnerHTML={{ __html: DomPurifyHelper.instance.sanitize(suggestion.displayText) }}></span>
+                        <span className={styles.suggestionDisplayText} dangerouslySetInnerHTML={{ __html: DomPurifyHelper.sanitizeWithStyleTags(suggestion.displayText) }}></span>
                         <span className={styles.suggestionDescription}>{suggestion.description ? suggestion.description : ""}</span>
                     </div>
                 </div>

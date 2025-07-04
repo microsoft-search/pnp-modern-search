@@ -22,7 +22,7 @@ export class DomPurifyHelper {
     private static configureInstance(): void {
         DomPurifyHelper._instance.setConfig({
             ADD_TAGS: ['style', '#comment'],
-            ADD_ATTR: ['target', 'loading', 'data-fields-configuration', 'data-*'],
+            ADD_ATTR: ['target', 'loading', 'data-*'],
             ALLOW_DATA_ATTR: true,
             ALLOWED_URI_REGEXP: Constants.ALLOWED_URI_REGEXP,
             WHOLE_DOCUMENT: false,
@@ -67,4 +67,38 @@ export class DomPurifyHelper {
             data.allowedTags[data.tagName] = true;
         }
     }
+
+    /**
+     * Sanitizes HTML while preserving style tags
+     * @param html the HTML string to sanitize
+     * @param config optional DOMPurify configuration
+     * @returns sanitized HTML string with style tags preserved
+     */
+    public static sanitizeWithStyleTags(html: string, config?: any): string {
+        if (!html) return html;
+        
+        // Extract style tags before sanitization
+        const styleTagRegex = /<style[^>]*>([\s\S]*?)<\/style>/gi;
+        const styleTags: string[] = [];
+        let match;
+        
+        while ((match = styleTagRegex.exec(html)) !== null) {
+            styleTags.push(match[0]);
+        }
+        
+        // Remove style tags from HTML for sanitization
+        const htmlWithoutStyles = html.replace(styleTagRegex, '');
+        
+        // Sanitize the HTML without style tags
+        const sanitizedHtml = DomPurifyHelper.instance.sanitize(htmlWithoutStyles, config);
+        
+        // Add back the style tags at the end
+        if (styleTags.length > 0) {
+            return sanitizedHtml + '\n' + styleTags.join('\n');
+        }
+        
+        return sanitizedHtml;
+    }
+
+    
 }

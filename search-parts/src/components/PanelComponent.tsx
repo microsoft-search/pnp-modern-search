@@ -118,7 +118,7 @@ export class PanelComponent extends React.Component<IPanelComponentProps, IPanel
                 return <div style={{
                     overflow: 'auto',
                     marginLeft: 15
-                }} dangerouslySetInnerHTML={{ __html: DomPurifyHelper.instance.sanitize(this.props.contentTemplate) }}>
+                }} dangerouslySetInnerHTML={{ __html: DomPurifyHelper.sanitizeWithStyleTags(this.props.contentTemplate) }}>
                 </div>;
             }
         };
@@ -145,7 +145,7 @@ export class PanelComponent extends React.Component<IPanelComponentProps, IPanel
                             this._onTogglePanel();
                         }
                     }}
-                    dangerouslySetInnerHTML={{ __html: DomPurifyHelper.instance.sanitize(this.props.openTemplate) }}>
+                    dangerouslySetInnerHTML={{ __html: DomPurifyHelper.sanitizeWithStyleTags(this.props.openTemplate) }}>
                 </div>
             </Text>
             <Panel {...panelProps} />

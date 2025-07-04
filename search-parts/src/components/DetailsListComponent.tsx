@@ -269,6 +269,7 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
     private _selection: Selection;
     private _selectionMode: SelectionMode = SelectionMode.none;
     private _detailsListRef: React.RefObject<IDetailsList>;
+    private _precompiledColumnTemplates: Map<string, HandlebarsTemplateDelegate> = new Map();
 
     constructor(props: IDetailsListComponentProps) {
         super(props);
@@ -307,6 +308,9 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
 
             this._templateContext = this.props.context;
         }
+
+        // Pre-compile column templates for better performance and to avoid sanitization issues
+        this._precompileColumnTemplates();
 
         const columns: IColumn[] = [
         ];
@@ -374,7 +378,14 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
                             // Check if the value in an Handlebars expression
                             if (column.useHandlebarsExpr) {
                                 try {
-                                    value = this.props.handlebars ? this._processHandleBarsExprValue(column.value, item) : column.value;
+                                    // Use pre-compiled template if available, otherwise fall back to runtime compilation
+                                    const precompiledResult = this._executePrecompiledTemplate(column.name, item);
+                                    if (precompiledResult !== null) {
+                                        value = precompiledResult;
+                                    } else {
+                                        // Fallback to runtime compilation (for error cases)
+                                        value = this.props.handlebars ? this._processHandleBarsExprValue(column.value, item) : column.value;
+                                    }
                                 } catch (error) {
                                     hasError = true;
                                     value = `<span style="color:red;font-style: italic" title="${error.message}">${`Error: ${error.message}`}</span>`;
@@ -424,7 +435,9 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
                             }
                             
 
-                            renderColumnValue = <span title={!hasError ? toolTipText : ''} dangerouslySetInnerHTML={{ __html: DomPurifyHelper.instance.sanitize(`<style>${allStyles.join(' ')}</style>${tempColumnValueAsHtml.body.firstElementChild.innerHTML}`) }}></span>;
+                            // Sanitize column content for security, but use pre-compiled templates for performance
+                            const sanitizedHtml = DomPurifyHelper.sanitizeWithStyleTags(`<style>${allStyles.join(' ')}</style>${tempColumnValueAsHtml.body.firstElementChild.innerHTML}`);
+                            renderColumnValue = <span title={!hasError ? toolTipText : ''} dangerouslySetInnerHTML={{ __html: sanitizedHtml }}></span>;
 
                             return renderColumnValue;
                         },
@@ -845,6 +858,47 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
         exprValue = exprValue ? exprValue.trim() : null;
 
         return exprValue;
+    }
+
+    /**
+     * Pre-compiles Handlebars expressions for columns to avoid runtime compilation and sanitization issues
+     */
+    private _precompileColumnTemplates(): void {
+        if (this.props.columnsConfiguration && this.props.handlebars) {
+            this.props.columnsConfiguration.forEach((column: IDetailsListColumnConfiguration) => {
+                if (column.useHandlebarsExpr && column.value) {
+                    try {
+                        // Create template that expects item context
+                        const tempTemplateContent = `{{#with item as |item|}}${column.value}{{/with}}`;
+                        const compiledTemplate = this.props.handlebars.compile(tempTemplateContent);
+                        this._precompiledColumnTemplates.set(column.name, compiledTemplate);
+                    } catch (error) {
+                        // If compilation fails, we'll handle it at render time
+                        console.warn(`Failed to pre-compile column template for ${column.name}:`, error);
+                    }
+                }
+            });
+        }
+    }
+
+    /**
+     * Executes a pre-compiled column template with the given item context
+     */
+    private _executePrecompiledTemplate(columnName: string, item: any): string {
+        const template = this._precompiledColumnTemplates.get(columnName);
+        if (template) {
+            return template(
+                { item: item },
+                {
+                    data: {
+                        root: {
+                            ...this._templateContext
+                        }
+                    }
+                }
+            );
+        }
+        return null;
     }
 }
 

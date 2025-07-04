@@ -62,7 +62,7 @@ export class TemplateRenderer extends React.Component<ITemplateRendererProps, IT
             const originalTemplate = template as string;
             
             // Sanitize the template HTML 
-            template = template ? DomPurifyHelper.instance.sanitize(`${template}`) : template;
+            template = template ? DomPurifyHelper.sanitizeWithStyleTags(`${template}`) : template;
             const sanitizedTemplate = template as string;
 
             // Post-process: Detect and restore any stripped data-* attributes

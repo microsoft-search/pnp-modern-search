@@ -1019,7 +1019,7 @@ export class TemplateService implements ITemplateService {
                 // We use Markdown here to render HTML and use web components
                 let rawHtml = this._markdownIt.render(text).replace(/\&lt;/g, '<').replace(/\&gt;/g, '>');
                 rawHtml = this.applyDisambiguatedMgtPrefixIfNeeded(rawHtml);
-                result.outputHtml = DomPurifyHelper.instance.sanitize(rawHtml);
+                result.outputHtml = DomPurifyHelper.sanitizeWithStyleTags(rawHtml);
                 result.didProcess = true;
             };
 

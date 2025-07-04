@@ -175,16 +175,16 @@ export class PersonaComponent extends React.Component<IPersonaComponentProps, IP
                 return imageInitials ? <span>{imageInitials}</span> : <Icon iconName="Contact" />;
             },
             onRenderPrimaryText: (props: IPersonaProps) => {
-                return <div style={{ display: 'inline', whiteSpace: 'normal' }} dangerouslySetInnerHTML={{ __html: DomPurifyHelper.instance.sanitize(this.props.templateService.applyDisambiguatedMgtPrefixIfNeeded(processedProps.primaryText)) }}></div>;
+                return <div style={{ display: 'inline', whiteSpace: 'normal' }} dangerouslySetInnerHTML={{ __html: DomPurifyHelper.sanitizeWithStyleTags(this.props.templateService.applyDisambiguatedMgtPrefixIfNeeded(processedProps.primaryText)) }}></div>;
             },
             onRenderSecondaryText: (props: IPersonaProps) => {
-                return <div style={{ display: 'inline', whiteSpace: 'normal' }} dangerouslySetInnerHTML={{ __html: DomPurifyHelper.instance.sanitize(this.props.templateService.applyDisambiguatedMgtPrefixIfNeeded(processedProps.secondaryText)) }}></div>;
+                return <div style={{ display: 'inline', whiteSpace: 'normal' }} dangerouslySetInnerHTML={{ __html: DomPurifyHelper.sanitizeWithStyleTags(this.props.templateService.applyDisambiguatedMgtPrefixIfNeeded(processedProps.secondaryText)) }}></div>;
             },
             onRenderTertiaryText: (props: IPersonaProps) => {
-                return <div style={{ display: 'inline', whiteSpace: 'normal' }} dangerouslySetInnerHTML={{ __html: DomPurifyHelper.instance.sanitize(this.props.templateService.applyDisambiguatedMgtPrefixIfNeeded(processedProps.tertiaryText)) }}></div>;
+                return <div style={{ display: 'inline', whiteSpace: 'normal' }} dangerouslySetInnerHTML={{ __html: DomPurifyHelper.sanitizeWithStyleTags(this.props.templateService.applyDisambiguatedMgtPrefixIfNeeded(processedProps.tertiaryText)) }}></div>;
             },
             onRenderOptionalText: (props: IPersonaProps) => {
-                return <div style={{ display: 'inline', whiteSpace: 'normal' }} dangerouslySetInnerHTML={{ __html: DomPurifyHelper.instance.sanitize(this.props.templateService.applyDisambiguatedMgtPrefixIfNeeded(processedProps.optionalText)) }}></div>;
+                return <div style={{ display: 'inline', whiteSpace: 'normal' }} dangerouslySetInnerHTML={{ __html: DomPurifyHelper.sanitizeWithStyleTags(this.props.templateService.applyDisambiguatedMgtPrefixIfNeeded(processedProps.optionalText)) }}></div>;
             }
         };
 

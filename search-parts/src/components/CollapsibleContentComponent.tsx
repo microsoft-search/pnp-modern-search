@@ -82,7 +82,7 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
 
         const groupedList = <GroupedList
             items={[
-                <div key={'template'} dangerouslySetInnerHTML={{ __html: DomPurifyHelper.instance.sanitize(this.props.contentTemplate) }}></div>
+                <div key={'template'} dangerouslySetInnerHTML={{ __html: DomPurifyHelper.sanitizeWithStyleTags(this.props.contentTemplate) }}></div>
             ]}
             styles={{
                 root: {
@@ -103,7 +103,7 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
                     onRenderFooter: ((props) => {
 
                         if (!props.group.isCollapsed) {
-                            return <div dangerouslySetInnerHTML={{ __html: DomPurifyHelper.instance.sanitize(this.props.footerTemplate) }}></div>;
+                            return <div dangerouslySetInnerHTML={{ __html: DomPurifyHelper.sanitizeWithStyleTags(this.props.footerTemplate) }}></div>;
                         } else {
                             return null;
                         }
@@ -155,7 +155,7 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
                     </div>
                 </div>
                 {!props.group.isCollapsed ?
-                    <div dangerouslySetInnerHTML={{ __html: DomPurifyHelper.instance.sanitize(this.props.headerTemplate) }}></div>
+                    <div dangerouslySetInnerHTML={{ __html: DomPurifyHelper.sanitizeWithStyleTags(this.props.headerTemplate) }}></div>
                     :
                     null
                 }
