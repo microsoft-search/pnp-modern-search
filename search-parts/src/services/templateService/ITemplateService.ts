@@ -22,7 +22,10 @@ export interface ITemplateService {
     registerWebComponents(webComponents: IComponentDefinition<any>[], instanceId: string): Promise<void>;
     processFieldsConfiguration<T>(fieldsConfiguration: IComponentFieldsConfiguration[], item: {[key:string]: any}, context?: ISearchResultsTemplateContext | any): T;
     registerResultTypes(resultTypes: IDataResultType[]): Promise<void>;
-    replaceDisambiguatedMgtElementNames(template: Document): void;
+    replaceDisambiguatedMgtElementNames(template: Document): Promise<void>;
+    replaceDisambiguatedMgtElementNamesSync(template: Document): void;
     legacyStyleParser(style: HTMLStyleElement, elementPrefixId: string): string;
-    applyDisambiguatedMgtPrefixIfNeeded(elementName: string): string;
+    applyDisambiguatedMgtPrefixIfNeeded(elementName: string): Promise<string>;
+    applyDisambiguatedMgtPrefixIfNeededSync(elementName: string): string;
+    preloadCustomElementHelper(): Promise<any>;
 }

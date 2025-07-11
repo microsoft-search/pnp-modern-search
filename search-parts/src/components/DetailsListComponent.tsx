@@ -259,6 +259,7 @@ export interface IDetailsListComponentState {
     columns: IColumn[];
     items: any[];
     groups: IGroup[];
+    mgtElementsProcessed: boolean;
 }
 
 export class DetailsListComponent extends React.Component<IDetailsListComponentProps, IDetailsListComponentState> {
@@ -398,46 +399,10 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
 
                             const tempColumnValueAsHtml = new DOMParser().parseFromString(`<span>${value ?? ""}</span>`, "text/html");
 
-                            this.props.templateService.replaceDisambiguatedMgtElementNames(tempColumnValueAsHtml);
+                            // Handle MGT element replacement asynchronously if needed
+                            const processedContent = this._getProcessedColumnContent(tempColumnValueAsHtml, !hasError ? toolTipText : '');
 
-                            const styleElements = tempColumnValueAsHtml.getElementsByTagName("style");
-
-                            const allStyles = [];
-
-                            if (styleElements.length > 0) {
-                
-                              // The prefix for all CSS selectors
-                              const elementPrefixId = `${this.props.templateService.TEMPLATE_ID_PREFIX}${this._templateContext.instanceId}`;
-                
-                
-                              for (let i = 0; i < styleElements.length; i++) {
-                                  const style = styleElements.item(i);
-                
-                                  let cssscope = style.dataset.cssscope as string;
-                
-                                  if (cssscope !== undefined && cssscope === "layer") {
-                
-                                      allStyles.push(`@layer { ${style.innerText} }`);
-                
-                                  } else {
-                
-                                      allStyles.push(this.props.templateService.legacyStyleParser(style, elementPrefixId));
-                
-                                  }
-                                  styleElements.item(i).remove();
-                              }
-                            }
-                
-                            if (this._templateContext.properties.useMicrosoftGraphToolkit && this.props.templateService.MgtCustomElementHelper.isDisambiguated) {
-                              allStyles.forEach((style, index) => {
-                                allStyles[index] = this.props.templateService.applyDisambiguatedMgtPrefixIfNeeded(style);
-                              });
-                            }
-                            
-
-                            // Sanitize column content for security, but use pre-compiled templates for performance
-                            const sanitizedHtml = DomPurifyHelper.sanitizeWithStyleTags(`<style>${allStyles.join(' ')}</style>${tempColumnValueAsHtml.body.firstElementChild.innerHTML}`);
-                            renderColumnValue = <span title={!hasError ? toolTipText : ''} dangerouslySetInnerHTML={{ __html: sanitizedHtml }}></span>;
+                            renderColumnValue = processedContent;
 
                             return renderColumnValue;
                         },
@@ -449,13 +414,81 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
         this.state = {
             items: this._allItems,
             columns: columns,
-            groups: []
+            groups: [],
+            mgtElementsProcessed: false
         };
 
         this._onRenderCustomPlaceholder = this._onRenderCustomPlaceholder.bind(this);
         this._onRenderDetailsHeader = this._onRenderDetailsHeader.bind(this);
         this._onRenderRow = this._onRenderRow.bind(this);
         this._onColumnClick = this._onColumnClick.bind(this);
+    }
+
+    /**
+     * Processes column content with proper MGT element handling
+     */
+    private _getProcessedColumnContent(tempColumnValueAsHtml: Document, toolTipText: string): JSX.Element {
+        // Replace MGT element names synchronously using the sync version
+        this.props.templateService.replaceDisambiguatedMgtElementNamesSync(tempColumnValueAsHtml);
+
+        // Process styles synchronously
+        const styleElements = tempColumnValueAsHtml.getElementsByTagName("style");
+        const allStyles = [];
+
+        if (styleElements.length > 0) {
+            // The prefix for all CSS selectors
+            const elementPrefixId = `${this.props.templateService.TEMPLATE_ID_PREFIX}${this._templateContext.instanceId}`;
+
+            for (let i = 0; i < styleElements.length; i++) {
+                const style = styleElements.item(i);
+                let cssscope = style.dataset.cssscope as string;
+
+                if (cssscope !== undefined && cssscope === "layer") {
+                    allStyles.push(`@layer { ${style.innerText} }`);
+                } else {
+                    allStyles.push(this.props.templateService.legacyStyleParser(style, elementPrefixId));
+                }
+                // Remove the style element after processing
+                styleElements.item(i).remove();
+            }
+        }
+
+        // Apply MGT prefix to styles if needed (sync version for render)
+        if (this._templateContext.properties.useMicrosoftGraphToolkit && this.props.templateService.MgtCustomElementHelper?.isDisambiguated) {
+            allStyles.forEach((style, index) => {
+                allStyles[index] = this.props.templateService.applyDisambiguatedMgtPrefixIfNeededSync(style);
+            });
+        }
+
+        // If we haven't processed MGT elements yet and they are needed, trigger async processing
+        if (this._templateContext.properties.useMicrosoftGraphToolkit && !this.state.mgtElementsProcessed) {
+            this._processMgtElementsAsync();
+        }
+
+        // Construct the final HTML with styles
+        const contentHtml = tempColumnValueAsHtml.body.firstElementChild?.innerHTML || '';
+        
+        const sanitizedHtml = DomPurifyHelper.sanitizeWithStyleTags(`<style>${allStyles.join(' ')}</style>${contentHtml}`);
+        const renderColumnValue = <span title={toolTipText} dangerouslySetInnerHTML={{ __html: sanitizedHtml }}></span>;
+
+        return renderColumnValue;
+    }
+
+    /**
+     * Asynchronously processes MGT elements and triggers re-render
+     */
+    private async _processMgtElementsAsync(): Promise<void> {
+        try {
+            // Load and process MGT elements
+            await this.props.templateService.preloadCustomElementHelper();
+            
+            // Update state to trigger re-render with properly processed MGT elements
+            this.setState({ mgtElementsProcessed: true });
+        } catch (error) {
+            console.error('Error processing MGT elements:', error);
+            // Set the flag to true even on error to prevent infinite retry
+            this.setState({ mgtElementsProcessed: true });
+        }
     }
 
     public render() {
@@ -561,6 +594,11 @@ export class DetailsListComponent extends React.Component<IDetailsListComponentP
         }
       else {
         this.updateSelection();
+      }
+
+      // Start processing MGT elements if needed
+      if (this._templateContext?.properties.useMicrosoftGraphToolkit && !this.state.mgtElementsProcessed) {
+        this._processMgtElementsAsync();
       }
     }
 

@@ -124,7 +124,7 @@ export class TemplateRenderer extends React.Component<ITemplateRendererProps, IT
             const templateAsHtml = new DOMParser().parseFromString(template as string, "text/html");
 
             if (props.templateContext.properties.useMicrosoftGraphToolkit) {
-              this.props.templateService.replaceDisambiguatedMgtElementNames(templateAsHtml);
+              await this.props.templateService.replaceDisambiguatedMgtElementNames(templateAsHtml);
             }
 
             // Get <style> tags from Handlebars template content and prefix all CSS rules by the Web Part instance ID to isolate styles
@@ -154,9 +154,9 @@ export class TemplateRenderer extends React.Component<ITemplateRendererProps, IT
               }
             }
 
-            if (this.props.templateContext.properties.useMicrosoftGraphToolkit && this.props.templateService.MgtCustomElementHelper.isDisambiguated) {
+            if (this.props.templateContext.properties.useMicrosoftGraphToolkit && this.props.templateService.MgtCustomElementHelper?.isDisambiguated) {
               allStyles.forEach((style, index) => {
-                allStyles[index] = this.props.templateService.applyDisambiguatedMgtPrefixIfNeeded(style);
+                allStyles[index] = this.props.templateService.applyDisambiguatedMgtPrefixIfNeededSync(style);
               });
             }
 

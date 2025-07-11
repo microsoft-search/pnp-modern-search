@@ -68,6 +68,7 @@ export class TemplateService implements ITemplateService {
     private _handlebars: typeof Handlebars;
 
     private _customElementHelper;
+    private _customElementHelperPromise: Promise<any>;
 
     get Handlebars(): typeof Handlebars {
         return this._handlebars;
@@ -91,7 +92,55 @@ export class TemplateService implements ITemplateService {
     }
 
     get MgtCustomElementHelper() {
-        return this._customElementHelper;
+        // If not loaded yet, trigger async loading (non-blocking)
+        if (!this._customElementHelper && !this._customElementHelperPromise) {
+            this.ensureCustomElementHelper().catch(console.error);
+        }
+        return this._customElementHelper || { isDisambiguated: false, prefix: 'mgt' };
+    }
+
+    /**
+     * Lazy loads the customElementHelper if not already loaded
+     */
+    private async ensureCustomElementHelper(): Promise<any> {
+        if (this._customElementHelper) {
+            return this._customElementHelper;
+        }
+
+        if (!this._customElementHelperPromise) {
+            this._customElementHelperPromise = this.loadCustomElementHelper();
+        }
+
+        return this._customElementHelperPromise;
+    }
+
+    /**
+     * Loads the Microsoft Graph Toolkit customElementHelper
+     */
+    private async loadCustomElementHelper(): Promise<any> {
+        try {
+            const { customElementHelper } = await import(
+                /* webpackChunkName: 'microsoft-graph-toolkit' */
+                '@microsoft/mgt-element/dist/es6/components/customElementHelper'
+            );
+            this._customElementHelper = customElementHelper;
+            return customElementHelper;
+        } catch (error) {
+            console.error('Failed to load customElementHelper:', error);
+            // Return a fallback object with default values
+            return {
+                isDisambiguated: false,
+                prefix: 'mgt'
+            };
+        }
+    }
+
+    /**
+     * Preloads the customElementHelper for better performance.
+     * This can be called early in the component lifecycle to ensure the helper is available.
+     */
+    public preloadCustomElementHelper(): Promise<any> {
+        return this.ensureCustomElementHelper();
     }
 
     public static ServiceKey: ServiceKey<ITemplateService> = ServiceKey.create(TemplateService_ServiceKey, TemplateService);
@@ -147,13 +196,6 @@ export class TemplateService implements ITemplateService {
                 initializeFileTypeIcons();
                 GlobalSettings.setValue('fileTypeIconsInitialized', true);
             }
-
-            // Load Microsoft Graph Toolkit dynamically
-            const { customElementHelper } = await import(
-              /* webpackChunkName: 'microsoft-graph-toolkit' */
-              '@microsoft/mgt-element/dist/es6/components/customElementHelper'
-            );
-            this._customElementHelper = customElementHelper;
         });
     }
 
@@ -196,15 +238,17 @@ export class TemplateService implements ITemplateService {
 
     }
 
-    public replaceDisambiguatedMgtElementNames(template: Document): void {
-      if (!this._customElementHelper.isDisambiguated) {
+    public async replaceDisambiguatedMgtElementNames(template: Document): Promise<void> {
+      const customElementHelper = await this.ensureCustomElementHelper();
+      
+      if (!customElementHelper.isDisambiguated) {
         return;
       }
 
       const handleElement = (element: Element) => {
-        if (element.tagName.toLowerCase().startsWith('mgt-') && !element.tagName.toLowerCase().startsWith(`${this._customElementHelper.prefix}-`)) {
+        if (element.tagName.toLowerCase().startsWith('mgt-') && !element.tagName.toLowerCase().startsWith(`${customElementHelper.prefix}-`)) {
           // Create a new element with the replaced tag name
-          const newTagName = `${this._customElementHelper.prefix}-${element.tagName.toLowerCase().slice(4)}`;
+          const newTagName = `${customElementHelper.prefix}-${element.tagName.toLowerCase().slice(4)}`;
           const newElement = template.createElement(newTagName);
 
           // Copy all attributes of the old element to the new one
@@ -243,10 +287,78 @@ export class TemplateService implements ITemplateService {
       });
     }
 
-    public applyDisambiguatedMgtPrefixIfNeeded(elementName: string): string {
-        const prefix = this.MgtCustomElementHelper.prefix;
+    public replaceDisambiguatedMgtElementNamesSync(template: Document): void {
+      // Use the sync getter for the customElementHelper which provides fallback
+      const customElementHelper = this.MgtCustomElementHelper;
+      
+      if (!customElementHelper || !customElementHelper.isDisambiguated) {
+        return;
+      }
+
+      const handleElement = (element: Element) => {
+        if (element.tagName.toLowerCase().startsWith('mgt-') && !element.tagName.toLowerCase().startsWith(`${customElementHelper.prefix}-`)) {
+          // Create a new element with the replaced tag name
+          const newTagName = `${customElementHelper.prefix}-${element.tagName.toLowerCase().slice(4)}`;
+          const newElement = template.createElement(newTagName);
+
+          // Copy all attributes of the old element to the new one
+          for (let i = 0; i < element.attributes.length; i++) {
+              const attr = element.attributes[i];
+              newElement.setAttribute(attr.name, attr.value);
+          }
+
+          // Move all child nodes of the old element to the new one
+          while (element.firstChild) {
+              newElement.appendChild(element.firstChild);
+          }
+
+          // Replace the old element with the new one
+          element.parentNode.replaceChild(newElement, element);
+        }
+
+        // Check if the element is a template with a content property
+        if (element instanceof HTMLTemplateElement) {
+          // Get all elements in the content DocumentFragment
+          const contentElements = element.content.querySelectorAll('*');
+
+          // Recursively loop over all content elements
+          contentElements.forEach((contentElement) => {
+              handleElement(contentElement);
+          });
+        }
+      };
+
+      // Get all elements in the document
+      const allElements = template.querySelectorAll('*');
+  
+      // Loop over all elements
+      allElements.forEach((element) => {
+        handleElement(element);
+      });
+    }
+
+    public async applyDisambiguatedMgtPrefixIfNeeded(elementName: string): Promise<string> {
+        const customElementHelper = await this.ensureCustomElementHelper();
+        const prefix = customElementHelper.prefix;
         const regex = new RegExp(`mgt-(?!${prefix.slice(4)})`, 'g');
         return elementName?.replace(regex, `${prefix}-`);
+    }
+
+    /**
+     * Synchronous version of applyDisambiguatedMgtPrefixIfNeeded for use in callbacks and render methods
+     * Falls back to default 'mgt' prefix when helper is not yet loaded
+     */
+    public applyDisambiguatedMgtPrefixIfNeededSync(elementName: string): string {
+        if (!this._customElementHelper) {
+            // Trigger async loading for next time (non-blocking)
+            this.ensureCustomElementHelper().catch(console.error);
+            // Fallback: use default 'mgt' prefix when helper is not loaded yet
+            return elementName || '';
+        }
+        
+        const prefix = this._customElementHelper.prefix;
+        const regex = new RegExp(`mgt-(?!${prefix.slice(4)})`, 'g');
+        return elementName?.replace(regex, `${prefix}-`) || '';
     }
 
     /**
@@ -400,6 +512,9 @@ export class TemplateService implements ITemplateService {
      */
     public async registerWebComponents(webComponents: IComponentDefinition<any>[], instanceId: string): Promise<void> {
 
+        // Preload customElementHelper for web components that might need MGT
+        this.ensureCustomElementHelper().catch(console.error);
+
         return new Promise<void>((resolve) => {
 
             // List of serice keys we want to expose to web components
@@ -536,8 +651,11 @@ export class TemplateService implements ITemplateService {
 
         let renderTemplateContent: HTMLElement = null;
 
-        // Load dynamic resources
-        await this._initAdaptiveCardsResources();
+        // Load dynamic resources and ensure customElementHelper is available
+        await Promise.all([
+            this._initAdaptiveCardsResources(),
+            this.ensureCustomElementHelper()
+        ]);
 
         let hostConfiguration: { [key: string]: any } = {
             fontFamily: "Segoe UI, Helvetica Neue, sans-serif"
