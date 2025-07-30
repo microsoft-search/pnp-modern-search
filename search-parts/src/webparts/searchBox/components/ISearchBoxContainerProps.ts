@@ -93,11 +93,6 @@ export interface ISearchBoxContainerProps {
     searchBoxBorderColor?: string;
 
     /**
-     * Search box border radius in pixels
-     */
-    searchBoxBorderRadius?: number;
-
-    /**
      * Search box height in pixels
      */
     searchBoxHeight?: number;
@@ -116,11 +111,6 @@ export interface ISearchBoxContainerProps {
      * Placeholder text color
      */
     placeholderTextColor?: string;
-
-    /**
-     * Search box background color
-     */
-    searchBoxBackgroundColor?: string;
 
     /**
      * Search box text color

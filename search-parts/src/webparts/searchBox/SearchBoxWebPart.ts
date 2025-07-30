@@ -201,12 +201,10 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
             numberOfSuggestionsPerGroup: this.properties.numberOfSuggestionsPerGroup,
             tokenService: this.tokenService,
             searchBoxBorderColor: this.properties.searchBoxBorderColor,
-            searchBoxBorderRadius: this.properties.searchBoxBorderRadius,
             searchBoxHeight: this.properties.searchBoxHeight,
             searchButtonColor: this.properties.searchButtonColor,
             searchButtonHoverColor: this.properties.searchButtonHoverColor,
             placeholderTextColor: this.properties.placeholderTextColor,
-            searchBoxBackgroundColor: this.properties.searchBoxBackgroundColor,
             searchBoxTextColor: this.properties.searchBoxTextColor,
             webPartTitleProps: {
                 displayMode: this.displayMode,
@@ -591,14 +589,6 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
                 value: this.properties.searchBoxBorderColor || '',
                 placeholder: '#c2c2c2'
             }),
-            PropertyPaneSlider('searchBoxBorderRadius', {
-                label: webPartStrings.PropertyPane.SearchBoxStylingGroup.BorderRadiusLabel,
-                min: 0,
-                max: 20,
-                step: 1,
-                showValue: true,
-                value: this.properties.searchBoxBorderRadius || 0
-            }),
             PropertyPaneSlider('searchBoxHeight', {
                 label: webPartStrings.PropertyPane.SearchBoxStylingGroup.HeightLabel,
                 min: 24,
@@ -622,11 +612,6 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
                 value: this.properties.placeholderTextColor || '',
                 placeholder: '#666666'
             }),
-            PropertyPaneTextField('searchBoxBackgroundColor', {
-                label: webPartStrings.PropertyPane.SearchBoxStylingGroup.BackgroundColorLabel,
-                value: this.properties.searchBoxBackgroundColor || '',
-                placeholder: '#ffffff'
-            }),
             PropertyPaneTextField('searchBoxTextColor', {
                 label: webPartStrings.PropertyPane.SearchBoxStylingGroup.TextColorLabel,
                 value: this.properties.searchBoxTextColor || '',
@@ -646,12 +631,10 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
     private _resetSearchBoxStylingToDefault(): void {
         // Reset all styling properties to their default values
         this.properties.searchBoxBorderColor = undefined;
-        this.properties.searchBoxBorderRadius = undefined;
         this.properties.searchBoxHeight = undefined;
         this.properties.searchButtonColor = undefined;
         this.properties.searchButtonHoverColor = undefined;
         this.properties.placeholderTextColor = undefined;
-        this.properties.searchBoxBackgroundColor = undefined;
         this.properties.searchBoxTextColor = undefined;
         
         // Refresh the property pane to show the reset values
