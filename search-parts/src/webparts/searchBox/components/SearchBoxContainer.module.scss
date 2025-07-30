@@ -15,6 +15,7 @@
       width: 100%;
       flex: 1 1 auto;
       border: none;
+      min-height: 32px; 
       height: auto;
 
       // Support for dynamic placeholder color
@@ -49,9 +50,19 @@
   }
 
   .searchButton {
-      background: '[theme:primaryButtonBackground, default:#0078d7]';
+      background: '[theme:primaryButtonBackground, default:#0078d7]' !important;
+      
       &:hover {
-        background: '[theme:primaryButtonBackgroundHovered, default:#0078d7]';
+        background: '[theme:primaryButtonBackgroundHovered, default:#0078d7]' !important;
+      }
+
+      // Target all button types within search button container
+      :global(.ms-Button) {
+        background: '[theme:primaryButtonBackground, default:#0078d7]' !important;
+        
+        &:hover {
+          background: '[theme:primaryButtonBackgroundHovered, default:#0078d7]' !important;
+        }
       }
 
       & i {

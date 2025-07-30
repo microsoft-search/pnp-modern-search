@@ -33,7 +33,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
 
         const commonStyles = {
             root: {
-                backgroundColor: 'transparent',
+                backgroundColor: this.props.searchButtonColor || undefined,
                 width: '100%',
                 height: '100%',
                 minWidth: '32px',
@@ -158,11 +158,6 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
             padding: '0 8px' // Add space before and after text
         };
 
-        const dynamicSearchButtonStyle: React.CSSProperties = {
-            backgroundColor: this.props.searchButtonColor || undefined,
-            height: this.props.searchBoxHeight ? `${this.props.searchBoxHeight - 2}px` : undefined // Account for border
-        };
-
         const dynamicPlaceholderStyle: React.CSSProperties = this.props.placeholderTextColor ? {
             '--placeholder-color': this.props.placeholderTextColor
         } as React.CSSProperties : {};
@@ -202,16 +197,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                     }}
                 />
                 {(this.state.searchInputValue || this.props.showSearchButtonWhenEmpty) &&
-                    <div className={styles.searchButton} style={{
-                        ...dynamicSearchButtonStyle,
-                        width: 'auto', // Auto width to accommodate content
-                        minWidth: '32px',
-                        justifyContent: 'center',
-                        display: 'flex',
-                        alignItems: 'center',
-                        overflow: 'visible',
-                        paddingBottom: '2px' // Add 2px padding for better height alignment
-                    }}>
+                    <div className={styles.searchButton}>
                         {this.renderSearchButton()}
                     </div>
                 }

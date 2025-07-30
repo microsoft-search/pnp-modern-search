@@ -311,7 +311,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
 
         const commonStyles = {
             root: {
-                backgroundColor: this.props.searchButtonColor || '#0078d7',
+                backgroundColor: this.props.searchButtonColor || undefined,
                 width: 'auto',
                 height: '100%',
                 minWidth: '32px',
