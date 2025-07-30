@@ -202,10 +202,14 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
             tokenService: this.tokenService,
             searchBoxBorderColor: this.properties.searchBoxBorderColor,
             searchBoxHeight: this.properties.searchBoxHeight,
+            searchBoxFontSize: this.properties.searchBoxFontSize,
             searchButtonColor: this.properties.searchButtonColor,
-            searchButtonHoverColor: this.properties.searchButtonHoverColor,
             placeholderTextColor: this.properties.placeholderTextColor,
             searchBoxTextColor: this.properties.searchBoxTextColor,
+            showSearchButtonWhenEmpty: this.properties.showSearchButtonWhenEmpty,
+            searchButtonDisplayMode: this.properties.searchButtonDisplayMode,
+            searchIconName: this.properties.searchIconName,
+            searchButtonText: this.properties.searchButtonText,
             webPartTitleProps: {
                 displayMode: this.displayMode,
                 title: this.properties.title,
@@ -584,11 +588,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
 
     private _getSearchBoxStylingFields(): IPropertyPaneField<any>[] {
         let searchBoxStylingFields: IPropertyPaneField<any>[] = [
-            PropertyPaneTextField('searchBoxBorderColor', {
-                label: webPartStrings.PropertyPane.SearchBoxStylingGroup.BorderColorLabel,
-                value: this.properties.searchBoxBorderColor || '',
-                placeholder: '#c2c2c2'
-            }),
+            // Input Field Settings
             PropertyPaneSlider('searchBoxHeight', {
                 label: webPartStrings.PropertyPane.SearchBoxStylingGroup.HeightLabel,
                 min: 24,
@@ -597,26 +597,66 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
                 showValue: true,
                 value: this.properties.searchBoxHeight || 32
             }),
-            PropertyPaneTextField('searchButtonColor', {
-                label: webPartStrings.PropertyPane.SearchBoxStylingGroup.ButtonColorLabel,
-                value: this.properties.searchButtonColor || '',
-                placeholder: '#0078d7'
+            PropertyPaneSlider('searchBoxFontSize', {
+                label: webPartStrings.PropertyPane.SearchBoxStylingGroup.FontSizeLabel,
+                min: 10,
+                max: 24,
+                step: 1,
+                showValue: true,
+                value: this.properties.searchBoxFontSize || 14
             }),
-            PropertyPaneTextField('searchButtonHoverColor', {
-                label: webPartStrings.PropertyPane.SearchBoxStylingGroup.ButtonHoverColorLabel,
-                value: this.properties.searchButtonHoverColor || '',
-                placeholder: '#106ebe'
-            }),
-            PropertyPaneTextField('placeholderTextColor', {
-                label: webPartStrings.PropertyPane.SearchBoxStylingGroup.PlaceholderTextColorLabel,
-                value: this.properties.placeholderTextColor || '',
-                placeholder: '#666666'
+            
+            // Colors
+            PropertyPaneTextField('searchBoxBorderColor', {
+                label: webPartStrings.PropertyPane.SearchBoxStylingGroup.BorderColorLabel,
+                value: this.properties.searchBoxBorderColor || '',
+                placeholder: '#c2c2c2'
             }),
             PropertyPaneTextField('searchBoxTextColor', {
                 label: webPartStrings.PropertyPane.SearchBoxStylingGroup.TextColorLabel,
                 value: this.properties.searchBoxTextColor || '',
                 placeholder: '#323130'
             }),
+            PropertyPaneTextField('placeholderTextColor', {
+                label: webPartStrings.PropertyPane.SearchBoxStylingGroup.PlaceholderTextColorLabel,
+                value: this.properties.placeholderTextColor || '',
+                placeholder: '#666666'
+            }),
+            PropertyPaneTextField('searchButtonColor', {
+                label: webPartStrings.PropertyPane.SearchBoxStylingGroup.ButtonColorLabel,
+                value: this.properties.searchButtonColor || '',
+                placeholder: '#0078d7'
+            }),
+            
+            // Search Button Configuration
+            PropertyPaneToggle('showSearchButtonWhenEmpty', {
+                label: webPartStrings.PropertyPane.SearchBoxStylingGroup.ShowSearchButtonWhenEmptyLabel,
+                checked: this.properties.showSearchButtonWhenEmpty || false
+            }),
+            PropertyPaneDropdown('searchButtonDisplayMode', {
+                label: webPartStrings.PropertyPane.SearchBoxStylingGroup.SearchButtonDisplayModeLabel,
+                options: [
+                    { key: 'icon', text: 'Icon only' },
+                    { key: 'text', text: 'Text only' },
+                    { key: 'both', text: 'Icon and text' }
+                ],
+                selectedKey: this.properties.searchButtonDisplayMode || 'icon'
+            }),
+            PropertyPaneTextField('searchIconName', {
+                label: webPartStrings.PropertyPane.SearchBoxStylingGroup.SearchIconNameLabel,
+                value: this.properties.searchIconName || '',
+                placeholder: 'Forward',
+                description: webPartStrings.PropertyPane.SearchBoxStylingGroup.SearchIconNameDescription,
+                disabled: this.properties.searchButtonDisplayMode === 'text'
+            }),
+            PropertyPaneTextField('searchButtonText', {
+                label: webPartStrings.PropertyPane.SearchBoxStylingGroup.SearchButtonTextLabel,
+                value: this.properties.searchButtonText || '',
+                placeholder: 'Search',
+                disabled: this.properties.searchButtonDisplayMode === 'icon'
+            }),
+            
+            // Reset
             PropertyPaneButton('resetSearchBoxStyling', {
                 text: webPartStrings.PropertyPane.SearchBoxStylingGroup.ResetToDefaultLabel,
                 description: webPartStrings.PropertyPane.SearchBoxStylingGroup.ResetToDefaultDescription,
@@ -632,10 +672,16 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
         // Reset all styling properties to their default values
         this.properties.searchBoxBorderColor = undefined;
         this.properties.searchBoxHeight = undefined;
+        this.properties.searchBoxFontSize = undefined;
         this.properties.searchButtonColor = undefined;
-        this.properties.searchButtonHoverColor = undefined;
         this.properties.placeholderTextColor = undefined;
         this.properties.searchBoxTextColor = undefined;
+        
+        // Reset button properties to their default values
+        this.properties.showSearchButtonWhenEmpty = undefined;
+        this.properties.searchButtonDisplayMode = undefined;
+        this.properties.searchIconName = undefined;
+        this.properties.searchButtonText = undefined;
         
         // Refresh the property pane to show the reset values
         this.context.propertyPane.refresh();

@@ -34,6 +34,17 @@
           color: var(--placeholder-color, #666666);
         }
       }
+
+      // Dynamic icon sizing for search and clear icons
+      :global(.ms-SearchBox-icon) {
+        font-size: var(--search-icon-size, 16px);
+      }
+      
+      :global(.ms-SearchBox-clearButton) {
+        i {
+          font-size: var(--clear-icon-size, 16px);
+        }
+      }
   }
 
   .searchButton {

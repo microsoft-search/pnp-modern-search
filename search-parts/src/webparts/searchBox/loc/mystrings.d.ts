@@ -22,11 +22,17 @@ declare interface ISearchBoxWebPartStrings {
             BorderColorLabel: string;
             BorderRadiusLabel: string;
             HeightLabel: string;
+            FontSizeLabel: string;
             ButtonColorLabel: string;
-            ButtonHoverColorLabel: string;
             PlaceholderTextColorLabel: string;
             BackgroundColorLabel: string;
             TextColorLabel: string;
+            ShowSearchButtonWhenEmptyLabel: string;
+            ShowSearchButtonWhenEmptyDescription: string;
+            SearchButtonDisplayModeLabel: string;
+            SearchIconNameLabel: string;
+            SearchIconNameDescription: string;
+            SearchButtonTextLabel: string;
             ResetToDefaultLabel: string;
             ResetToDefaultDescription: string;
         },

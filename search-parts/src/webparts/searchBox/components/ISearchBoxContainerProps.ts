@@ -88,24 +88,24 @@ export interface ISearchBoxContainerProps {
      webPartTitleProps: IWebPartTitleProps;
 
     /**
-     * Search box border color
-     */
-    searchBoxBorderColor?: string;
-
-    /**
      * Search box height in pixels
      */
     searchBoxHeight?: number;
 
     /**
+     * Search box font size in pixels
+     */
+    searchBoxFontSize?: number;
+
+    /**
+     * Search box border color
+     */
+    searchBoxBorderColor?: string;
+
+    /**
      * Search button background color
      */
     searchButtonColor?: string;
-
-    /**
-     * Search button hover background color
-     */
-    searchButtonHoverColor?: string;
 
     /**
      * Placeholder text color
@@ -116,4 +116,24 @@ export interface ISearchBoxContainerProps {
      * Search box text color
      */
     searchBoxTextColor?: string;
+
+    /**
+     * Show search button when no text is present
+     */
+    showSearchButtonWhenEmpty?: boolean;
+
+    /**
+     * Search button display mode: 'icon', 'text', 'both'
+     */
+    searchButtonDisplayMode?: 'icon' | 'text' | 'both';
+
+    /**
+     * Search icon name (Fluent UI icon)
+     */
+    searchIconName?: string;
+
+    /**
+     * Text to display in search button
+     */
+    searchButtonText?: string;
 }
