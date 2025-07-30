@@ -17,6 +17,19 @@ declare interface ISearchBoxWebPartStrings {
             QueryStringParameterName: string;
             QueryParameterNotEmpty: string;
         },
+        SearchBoxStylingGroup: {
+            GroupName: string;
+            BorderColorLabel: string;
+            BorderRadiusLabel: string;
+            HeightLabel: string;
+            ButtonColorLabel: string;
+            ButtonHoverColorLabel: string;
+            PlaceholderTextColorLabel: string;
+            BackgroundColorLabel: string;
+            TextColorLabel: string;
+            ResetToDefaultLabel: string;
+            ResetToDefaultDescription: string;
+        },
         AvailableConnectionsGroup: {
             GroupName: string;
             UseDynamicDataSourceLabel: string;

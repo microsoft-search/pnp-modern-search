@@ -18,6 +18,19 @@ define([], function() {
                 QueryStringParameterName: "Parameter name",
                 QueryParameterNotEmpty: "Please provide a value for the parameter."
             },
+            SearchBoxStylingGroup: {
+                GroupName: "Search box styling",
+                BorderColorLabel: "Border color",
+                BorderRadiusLabel: "Border radius (px)",
+                HeightLabel: "Height (px)",
+                ButtonColorLabel: "Search button color",
+                ButtonHoverColorLabel: "Search button hover color",
+                PlaceholderTextColorLabel: "Placeholder text color",
+                BackgroundColorLabel: "Background color",
+                TextColorLabel: "Text color",
+                ResetToDefaultLabel: "Reset styling to default",
+                ResetToDefaultDescription: "Reset all styling options to their default values"
+            },
             AvailableConnectionsGroup: {
                 GroupName: "Available connections",
                 UseDynamicDataSourceLabel: "Use dynamic data source as default input",

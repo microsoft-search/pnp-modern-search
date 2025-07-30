@@ -18,6 +18,19 @@ define([], function() {
                 QueryStringParameterName: "Parameter naam",
                 QueryParameterNotEmpty: "Geef een waarde op voor de parameter."
             },
+            SearchBoxStylingGroup: {
+                GroupName: "Zoekvak styling",
+                BorderColorLabel: "Randkleur",
+                BorderRadiusLabel: "Randradius (px)",
+                HeightLabel: "Hoogte (px)",
+                ButtonColorLabel: "Zoekknop kleur",
+                ButtonHoverColorLabel: "Zoekknop hover kleur",
+                PlaceholderTextColorLabel: "Placeholder tekst kleur",
+                BackgroundColorLabel: "Achtergrondkleur",
+                TextColorLabel: "Tekstkleur",
+                ResetToDefaultLabel: "Herstel naar standaard styling",
+                ResetToDefaultDescription: "Herstel alle styling opties naar hun standaardwaarden"
+            },
             AvailableConnectionsGroup: {
                 GroupName: "Beschikbare verbindingen",
                 UseDynamicDataSourceLabel: "Gebruik een dynamische databron als standaard invoer",

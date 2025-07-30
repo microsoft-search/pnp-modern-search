@@ -82,4 +82,44 @@ export interface ISearchBoxWebPartProps extends IBaseWebPartProps {
      * The extensibility configuraion to load
      */
     extensibilityLibraryConfiguration: IExtensibilityConfiguration[];
+
+    /**
+     * Search box border color
+     */
+    searchBoxBorderColor?: string;
+
+    /**
+     * Search box border radius in pixels
+     */
+    searchBoxBorderRadius?: number;
+
+    /**
+     * Search box height in pixels
+     */
+    searchBoxHeight?: number;
+
+    /**
+     * Search button background color
+     */
+    searchButtonColor?: string;
+
+    /**
+     * Search button hover background color
+     */
+    searchButtonHoverColor?: string;
+
+    /**
+     * Placeholder text color
+     */
+    placeholderTextColor?: string;
+
+    /**
+     * Search box background color
+     */
+    searchBoxBackgroundColor?: string;
+
+    /**
+     * Search box text color
+     */
+    searchBoxTextColor?: string;
 }

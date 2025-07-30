@@ -42,8 +42,30 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
 
         let searchBoxRef = React.createRef<ISearchBox>();
 
+        // Build dynamic styles
+        const dynamicSearchBoxWrapperStyle: React.CSSProperties = {
+            borderColor: this.props.searchBoxBorderColor || '#c2c2c2',
+            borderRadius: `${this.props.searchBoxBorderRadius || 0}px`,
+            height: this.props.searchBoxHeight ? `${this.props.searchBoxHeight}px` : undefined,
+            backgroundColor: this.props.searchBoxBackgroundColor || undefined
+        };
+
+        const dynamicSearchBoxTextStyle: React.CSSProperties = {
+            color: this.props.searchBoxTextColor || undefined,
+            height: this.props.searchBoxHeight ? `${this.props.searchBoxHeight - 2}px` : undefined // Account for border
+        };
+
+        const dynamicSearchButtonStyle: React.CSSProperties = {
+            backgroundColor: this.props.searchButtonColor || undefined,
+            height: this.props.searchBoxHeight ? `${this.props.searchBoxHeight - 2}px` : undefined // Account for border
+        };
+
+        const dynamicPlaceholderStyle: React.CSSProperties = this.props.placeholderTextColor ? {
+            '--placeholder-color': this.props.placeholderTextColor
+        } as React.CSSProperties : {};
+
         return (
-            <div className={styles.searchBoxWrapper}>
+            <div className={styles.searchBoxWrapper} style={dynamicSearchBoxWrapperStyle}>
                 <SearchBox
                     componentRef={searchBoxRef}
                     placeholder={this.props.placeholderText ? this.props.placeholderText : webPartStrings.SearchBox.DefaultPlaceholder}
@@ -51,6 +73,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                     className={styles.searchTextField}
                     value={this.state.searchInputValue}
                     autoComplete="off"
+                    style={{...dynamicSearchBoxTextStyle, ...dynamicPlaceholderStyle}}
                     onChange={(event) => {
                         const newInputValue = event && event.currentTarget ? event.currentTarget.value : "";
                         const inputChanged = !isEmpty(this.state.searchInputValue) && isEmpty(newInputValue);
@@ -68,12 +91,20 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                         searchBoxRef.current.focus();
                     }}
                 />
-                <div className={styles.searchButton}>
+                <div className={styles.searchButton} style={dynamicSearchButtonStyle}>
                     {this.state.searchInputValue &&
                         <IconButton
                             onClick={() => this._onSearch(this.state.searchInputValue)}
                             iconProps={{ iconName: 'Forward' }}
                             ariaLabel={webPartStrings.SearchBox.SearchButtonLabel}
+                            styles={{
+                                root: {
+                                    backgroundColor: 'transparent',
+                                    ':hover': {
+                                        backgroundColor: this.props.searchButtonHoverColor || undefined
+                                    }
+                                }
+                            }}
                         />
                     }
                 </div>

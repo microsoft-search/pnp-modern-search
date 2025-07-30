@@ -15,6 +15,25 @@
       width: 100%;
       flex: 1 1 auto;
       border: none;
+
+      // Support for dynamic placeholder color
+      :global(.ms-SearchBox-field) {
+        &::placeholder {
+          color: var(--placeholder-color, #666666);
+        }
+        &::-webkit-input-placeholder {
+          color: var(--placeholder-color, #666666);
+        }
+        &::-moz-placeholder {
+          color: var(--placeholder-color, #666666);
+        }
+        &:-ms-input-placeholder {
+          color: var(--placeholder-color, #666666);
+        }
+        &:-moz-placeholder {
+          color: var(--placeholder-color, #666666);
+        }
+      }
   }
 
   .searchButton {

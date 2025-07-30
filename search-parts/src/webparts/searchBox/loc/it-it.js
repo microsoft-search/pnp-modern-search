@@ -18,6 +18,19 @@ define([], function () {
                 QueryStringParameterName: "Nome del parametro",
                 QueryParameterNotEmpty: "Per favore, fornisci un valore per il parametro."
             },
+            SearchBoxStylingGroup: {
+                GroupName: "Stile della casella di ricerca",
+                BorderColorLabel: "Colore del bordo",
+                BorderRadiusLabel: "Raggio del bordo (px)",
+                HeightLabel: "Altezza (px)",
+                ButtonColorLabel: "Colore del pulsante di ricerca",
+                ButtonHoverColorLabel: "Colore hover del pulsante di ricerca",
+                PlaceholderTextColorLabel: "Colore del testo placeholder",
+                BackgroundColorLabel: "Colore di sfondo",
+                TextColorLabel: "Colore del testo",
+                ResetToDefaultLabel: "Ripristina stile predefinito",
+                ResetToDefaultDescription: "Ripristina tutte le opzioni di stile ai loro valori predefiniti"
+            },
             AvailableConnectionsGroup: {
                 GroupName: "Connessioni disponibili",
                 UseDynamicDataSourceLabel: "Usa fonte dati dinamica come input predefinito",

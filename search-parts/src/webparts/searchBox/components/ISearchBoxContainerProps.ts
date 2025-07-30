@@ -86,4 +86,44 @@ export interface ISearchBoxContainerProps {
    * The Web Part Title props
    */
      webPartTitleProps: IWebPartTitleProps;
+
+    /**
+     * Search box border color
+     */
+    searchBoxBorderColor?: string;
+
+    /**
+     * Search box border radius in pixels
+     */
+    searchBoxBorderRadius?: number;
+
+    /**
+     * Search box height in pixels
+     */
+    searchBoxHeight?: number;
+
+    /**
+     * Search button background color
+     */
+    searchButtonColor?: string;
+
+    /**
+     * Search button hover background color
+     */
+    searchButtonHoverColor?: string;
+
+    /**
+     * Placeholder text color
+     */
+    placeholderTextColor?: string;
+
+    /**
+     * Search box background color
+     */
+    searchBoxBackgroundColor?: string;
+
+    /**
+     * Search box text color
+     */
+    searchBoxTextColor?: string;
 }
