@@ -1255,6 +1255,9 @@ export class TemplateService implements ITemplateService {
         this._serializationContext.setActionRegistry(actionRegistry);
       }
 
+      // Ensure MGT helper is initialized before setting up the callback
+      await this._ensureMgtCustomElementHelper();
+
       this._adaptiveCardsNS.AdaptiveCard.onProcessMarkdown = (
         text: string,
         result
@@ -1271,10 +1274,8 @@ export class TemplateService implements ITemplateService {
           .replace(/\&lt;/g, "<")
           .replace(/\&gt;/g, ">");
 
-        // Only apply MGT prefix if helper is initialized (sync check)
-        if (this._customElementHelper) {
-          rawHtml = this.applyDisambiguatedMgtPrefixIfNeeded(rawHtml);
-        }
+        // MGT helper is guaranteed to be initialized at this point
+        rawHtml = this.applyDisambiguatedMgtPrefixIfNeeded(rawHtml);
 
         result.outputHtml = DomPurifyHelper.instance.sanitize(rawHtml);
         result.didProcess = true;
