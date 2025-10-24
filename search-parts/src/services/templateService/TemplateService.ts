@@ -625,6 +625,45 @@ export class TemplateService implements ITemplateService {
   }
 
   /**
+   * Sanitizes HTML content while preserving <style> tags using extract/restore pattern.
+   * This is needed because DomPurify 3.x strips <style> tags in fragment mode (WHOLE_DOCUMENT: false).
+   * 
+   * @param html The HTML content to sanitize
+   * @returns Sanitized HTML with style tags preserved
+   */
+  public sanitizeHtmlWithStylePreservation(html: string): string {
+    if (!html) return html;
+
+    // Extract all <style> tags before sanitization
+    const styleTags: string[] = [];
+    let templateWithoutStyles = html;
+    const styleRegex = /<style[\s\S]*?<\/style>/gi;
+    let match;
+
+    while ((match = styleRegex.exec(html)) !== null) {
+      styleTags.push(match[0]);
+      templateWithoutStyles = templateWithoutStyles.replace(
+        match[0],
+        `<div data-style-placeholder="${styleTags.length - 1}"></div>`
+      );
+    }
+
+    // Sanitize the template without style tags
+    let sanitized = DomPurifyHelper.sanitize(templateWithoutStyles);
+
+    // Restore all style tags
+    let restoredTemplate = sanitized;
+    styleTags.forEach((styleTag, index) => {
+      restoredTemplate = restoredTemplate.replace(
+        `<div data-style-placeholder="${index}"></div>`,
+        styleTag
+      );
+    });
+
+    return restoredTemplate;
+  }
+
+  /**
    * Builds and registers the result types as this.Handlebars partials
    * Based on https://github.com/helpers/handlebars-helpers/ operators
    * @param resultTypes the configured result types from the property pane
@@ -1277,7 +1316,7 @@ export class TemplateService implements ITemplateService {
         // MGT helper is guaranteed to be initialized at this point
         rawHtml = this.applyDisambiguatedMgtPrefixIfNeeded(rawHtml);
 
-        result.outputHtml = DomPurifyHelper.instance.sanitize(rawHtml);
+        result.outputHtml = this.sanitizeHtmlWithStylePreservation(rawHtml);
         result.didProcess = true;
       };
 

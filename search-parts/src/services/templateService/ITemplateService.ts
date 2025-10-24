@@ -40,4 +40,5 @@ export interface ITemplateService {
   replaceDisambiguatedMgtElementNames(template: Document): Promise<void>;
   legacyStyleParser(style: HTMLStyleElement, elementPrefixId: string): string;
   applyDisambiguatedMgtPrefixIfNeeded(elementName: string): string;
+  sanitizeHtmlWithStylePreservation(html: string): string;
 }

@@ -88,32 +88,8 @@ export class TemplateRenderer extends React.Component<
     ) {
       const originalTemplate = template as string;
 
-      // WORKAROUND: Extract <style> tags before sanitization
-      // DomPurify 3.x strips <style> tags in fragment mode, so we extract them,
-      // sanitize the rest, then restore them afterward
-      const styleTags: string[] = [];
-      const styleRegex = /<style[\s\S]*?<\/style>/gi;
-      let templateWithoutStyles = originalTemplate;
-      let match;
-      while ((match = styleRegex.exec(originalTemplate)) !== null) {
-        styleTags.push(match[0]);
-        // Use a div placeholder that DomPurify will preserve
-        templateWithoutStyles = templateWithoutStyles.replace(match[0], `<div data-style-placeholder="${styleTags.length - 1}"></div>`);
-      }
-
-      // Sanitize the template HTML (without style tags)
-      template = templateWithoutStyles
-        ? DomPurifyHelper.sanitize(templateWithoutStyles)
-        : templateWithoutStyles;
-      
-      // Restore <style> tags after sanitization
-      let restoredTemplate = template as string;
-      styleTags.forEach((styleTag, index) => {
-        const placeholder = `<div data-style-placeholder="${index}"></div>`;
-        restoredTemplate = restoredTemplate.replace(placeholder, styleTag);
-      });
-      
-      template = restoredTemplate;
+      // Sanitize with style preservation (DomPurify 3.x strips <style> tags in fragment mode)
+      template = this.props.templateService.sanitizeHtmlWithStylePreservation(originalTemplate);
       const sanitizedTemplate = template as string;
 
       // Post-process: Detect and restore any stripped data-* attributes

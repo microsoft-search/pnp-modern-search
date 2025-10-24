@@ -281,7 +281,7 @@ export class DocumentCardComponent extends React.Component<
               <div
                 className={documentCardLocationClassNames.root}
                 dangerouslySetInnerHTML={{
-                  __html: DomPurifyHelper.instance.sanitize(
+                  __html: this.props.templateService.sanitizeHtmlWithStylePreservation(
                     (
                       this.props.templateService as any
                     ).applyDisambiguatedMgtPrefixIfNeeded(
@@ -316,7 +316,7 @@ export class DocumentCardComponent extends React.Component<
                 className={documentCardLocationClassNames.root}
                 style={{ whiteSpace: "pre-line" }}
                 dangerouslySetInnerHTML={{
-                  __html: DomPurifyHelper.instance.sanitize(
+                  __html: this.props.templateService.sanitizeHtmlWithStylePreservation(
                     (
                       this.props.templateService as any
                     ).applyDisambiguatedMgtPrefixIfNeeded(processedProps.tags)

@@ -202,7 +202,7 @@ export class PersonaComponent extends React.Component<
           <div
             style={{ display: "inline", whiteSpace: "normal" }}
             dangerouslySetInnerHTML={{
-              __html: DomPurifyHelper.instance.sanitize(
+              __html: this.props.templateService.sanitizeHtmlWithStylePreservation(
                 (
                   this.props.templateService as any
                 ).applyDisambiguatedMgtPrefixIfNeeded(
@@ -218,7 +218,7 @@ export class PersonaComponent extends React.Component<
           <div
             style={{ display: "inline", whiteSpace: "normal" }}
             dangerouslySetInnerHTML={{
-              __html: DomPurifyHelper.instance.sanitize(
+              __html: this.props.templateService.sanitizeHtmlWithStylePreservation(
                 (
                   this.props.templateService as any
                 ).applyDisambiguatedMgtPrefixIfNeeded(
@@ -234,7 +234,7 @@ export class PersonaComponent extends React.Component<
           <div
             style={{ display: "inline", whiteSpace: "normal" }}
             dangerouslySetInnerHTML={{
-              __html: DomPurifyHelper.instance.sanitize(
+              __html: this.props.templateService.sanitizeHtmlWithStylePreservation(
                 (
                   this.props.templateService as any
                 ).applyDisambiguatedMgtPrefixIfNeeded(
@@ -250,7 +250,7 @@ export class PersonaComponent extends React.Component<
           <div
             style={{ display: "inline", whiteSpace: "normal" }}
             dangerouslySetInnerHTML={{
-              __html: DomPurifyHelper.instance.sanitize(
+              __html: this.props.templateService.sanitizeHtmlWithStylePreservation(
                 (
                   this.props.templateService as any
                 ).applyDisambiguatedMgtPrefixIfNeeded(
