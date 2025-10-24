@@ -3,7 +3,7 @@
         "plusBeta": false,
         "isCreatingSolution": true,
         "environment": "spo",
-        "version": "1.20.0",
+        "version": "1.21.1",
         "solutionName": "modern-pnp-modern-search-web-parts",
         "libraryName": "modern-pnp-modern-search-web-parts",
         "libraryId": "8aa14115-d64a-4545-b215-ee8fb8d82e59",
@@ -12,10 +12,10 @@
         "componentType": "webpart",
         "solutionShortDescription": "PnP Modern Search web parts",
         "skipFeatureDeployment": true,
-        "nodeVersion": "16.20.0",
+        "nodeVersion": "22.14.0",
         "sdkVersions": {
             "@microsoft/teams-js": "2.24.0",
             "@microsoft/microsoft-graph-client": "3.0.2"
-          }
+        }
     }
 }

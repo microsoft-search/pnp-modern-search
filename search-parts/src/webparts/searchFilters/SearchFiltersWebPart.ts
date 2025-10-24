@@ -416,9 +416,6 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                     configuration.operator = FilterConditionOperator.AND;
                 }
 
-                // Set the correct type according to the filter tempalte
-                configuration.type = BuiltinFilterTypes[configuration.selectedTemplate];
-
                 return configuration;
             });
 
@@ -1085,7 +1082,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
         // Get the corresponding configuration for this filter
         filtersConfiguration.forEach(filterConfiguration => {
 
-            if (filterConfiguration.type === FilterType.StaticFilter) {
+            if (BuiltinFilterTypes[filterConfiguration.selectedTemplate] === FilterType.StaticFilter) {
 
                 // Check if the filter already exists
                 if (filterResults.filter(filterResult => filterResult.filterName === filterConfiguration.filterName).length === 0) {
