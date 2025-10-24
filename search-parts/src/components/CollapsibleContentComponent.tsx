@@ -5,10 +5,7 @@ import * as ReactDOM from 'react-dom';
 import { IGroup, IGroupDividerProps, Icon, Text, GroupedList, ITextProps, IStyleFunctionOrObject, ITextStyles } from '@fluentui/react';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import styles from './CollapsibleContentComponent.module.scss';
-import 'core-js/features/dom-collections';
-// import * as DOMPurify from 'dompurify';
-import * as DOMPurify from "isomorphic-dompurify";
-import { Constants } from '../common/Constants';
+import { DomPurifyHelper } from '../helpers/DomPurifyHelper';
 
 export interface ICollapsibleContentComponentProps {
 
@@ -54,7 +51,6 @@ export interface ICollapsibleContentComponentState {
 export class CollapsibleContentComponent extends React.Component<ICollapsibleContentComponentProps, ICollapsibleContentComponentState> {
 
     private componentRef = React.createRef<HTMLDivElement>();
-    private _domPurify: any;
 
     public constructor(props) {
         super(props);
@@ -66,12 +62,6 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
         this._onRenderCell = this._onRenderCell.bind(this);
         this._onRenderHeader = this._onRenderHeader.bind(this);
         this._onTogglePanel = this._onTogglePanel.bind(this);
-
-        this._domPurify = DOMPurify;
-        this._domPurify.setConfig({
-            WHOLE_DOCUMENT: true,
-            ALLOWED_URI_REGEXP: Constants.ALLOWED_URI_REGEXP,
-        });
     }
 
 
@@ -91,7 +81,7 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
 
         const groupedList = <GroupedList
             items={[
-                <div key={'template'} dangerouslySetInnerHTML={{ __html: this._domPurify.sanitize(this.props.contentTemplate) }}></div>
+                <div key={'template'} dangerouslySetInnerHTML={{ __html: DomPurifyHelper.instance.sanitize(this.props.contentTemplate) }}></div>
             ]}
             styles={{
                 root: {
@@ -112,7 +102,7 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
                     onRenderFooter: ((props) => {
 
                         if (!props.group.isCollapsed) {
-                            return <div dangerouslySetInnerHTML={{ __html: this._domPurify.sanitize(this.props.footerTemplate) }}></div>;
+                            return <div dangerouslySetInnerHTML={{ __html: DomPurifyHelper.instance.sanitize(this.props.footerTemplate) }}></div>;
                         } else {
                             return null;
                         }
@@ -164,7 +154,7 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
                     </div>
                 </div>
                 {!props.group.isCollapsed ?
-                    <div dangerouslySetInnerHTML={{ __html: this._domPurify.sanitize(this.props.headerTemplate) }}></div>
+                    <div dangerouslySetInnerHTML={{ __html: DomPurifyHelper.instance.sanitize(this.props.headerTemplate) }}></div>
                     :
                     null
                 }

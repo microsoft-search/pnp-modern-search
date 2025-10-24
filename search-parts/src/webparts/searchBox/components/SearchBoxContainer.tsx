@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ISearchBoxContainerProps } from './ISearchBoxContainerProps';
 import { QueryPathBehavior, UrlHelper, PageOpenBehavior } from '../../../helpers/UrlHelper';
-import { MessageBar, MessageBarType, SearchBox, IconButton, ISearchBox } from '@fluentui/react';
+import { MessageBar, MessageBarType, SearchBox, IconButton, ISearchBox, DefaultButton, Icon } from '@fluentui/react';
 import { ISearchBoxContainerState } from './ISearchBoxContainerState';
 import { isEqual } from '@microsoft/sp-lodash-subset';
 import * as webPartStrings from 'SearchBoxWebPartStrings';
@@ -26,6 +26,99 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
         this._onSearch = this._onSearch.bind(this);
     }
 
+    private renderSearchButton(): JSX.Element {
+        const displayMode = this.props.searchButtonDisplayMode || 'icon';
+        const buttonText = this.props.searchButtonText || 'Search';
+        const iconName = this.props.searchIconName || 'Forward';
+
+        const commonStyles = {
+            root: {
+                backgroundColor: this.props.searchButtonColor || undefined,
+                width: '100%',
+                height: '100%',
+                minWidth: '32px',
+                padding: '0 12px', // More padding on left and right
+                color: 'white',
+                justifyContent: 'center',
+                display: 'flex',
+                alignItems: 'center',
+                border: 'none'
+            }
+        };
+
+        const iconFontSize = this.props.searchBoxFontSize ? `${this.props.searchBoxFontSize}px` : '16px';
+        const textFontSize = this.props.searchBoxFontSize ? `${this.props.searchBoxFontSize}px` : '14px';
+
+        if (displayMode === 'icon') {
+            // Icon only
+            return (
+                <IconButton
+                    onClick={() => this._onSearch(this.state.searchInputValue)}
+                    iconProps={{ iconName }}
+                    ariaLabel={webPartStrings.SearchBox.SearchButtonLabel}
+                    styles={{
+                        ...commonStyles,
+                        icon: {
+                            fontSize: iconFontSize,
+                            color: 'white'
+                        }
+                    }}
+                />
+            );
+        } else if (displayMode === 'text') {
+            // Text only
+            return (
+                <DefaultButton
+                    onClick={() => this._onSearch(this.state.searchInputValue)}
+                    text={buttonText}
+                    ariaLabel={webPartStrings.SearchBox.SearchButtonLabel}
+                    styles={{
+                        ...commonStyles,
+                        label: {
+                            color: 'white',
+                            fontSize: textFontSize,
+                            fontWeight: '400'
+                        }
+                    }}
+                />
+            );
+        } else {
+            // Both text and icon - text first, then icon on the right
+            return (
+                <DefaultButton
+                    onClick={() => this._onSearch(this.state.searchInputValue)}
+                    ariaLabel={webPartStrings.SearchBox.SearchButtonLabel}
+                    styles={{
+                        ...commonStyles,
+                        root: {
+                            ...commonStyles.root,
+                            padding: '0 12px' // More padding on left and right
+                        },
+                        flexContainer: {
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flexDirection: 'row' // Text first, icon second
+                        }
+                    }}
+                >
+                    <span style={{ 
+                        marginRight: '6px',
+                        color: 'white',
+                        fontSize: textFontSize,
+                        fontWeight: '400'
+                    }}>{buttonText}</span>
+                    <Icon 
+                        iconName={iconName} 
+                        style={{ 
+                            fontSize: iconFontSize, 
+                            color: 'white'
+                        }} 
+                    />
+                </DefaultButton>
+            );
+        }
+    }
+
     private renderSearchBoxWithAutoComplete(): JSX.Element {
         return <SearchBoxAutoComplete
             inputValue={this.props.inputValue}
@@ -35,6 +128,16 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
             themeVariant={this.props.themeVariant}
             domElement={this.props.domElement}
             numberOfSuggestionsPerGroup={this.props.numberOfSuggestionsPerGroup}
+            searchBoxBorderColor={this.props.searchBoxBorderColor}
+            searchBoxHeight={this.props.searchBoxHeight}
+            searchBoxFontSize={this.props.searchBoxFontSize}
+            searchButtonColor={this.props.searchButtonColor}
+            placeholderTextColor={this.props.placeholderTextColor}
+            searchBoxTextColor={this.props.searchBoxTextColor}
+            showSearchButtonWhenEmpty={this.props.showSearchButtonWhenEmpty}
+            searchButtonDisplayMode={this.props.searchButtonDisplayMode}
+            searchIconName={this.props.searchIconName}
+            searchButtonText={this.props.searchButtonText}
         />;
     }
 
@@ -42,8 +145,32 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
 
         let searchBoxRef = React.createRef<ISearchBox>();
 
+        // Build dynamic styles
+        const dynamicSearchBoxWrapperStyle: React.CSSProperties = {
+            borderColor: this.props.searchBoxBorderColor || '#c2c2c2',
+            height: this.props.searchBoxHeight ? `${this.props.searchBoxHeight}px` : undefined
+        };
+
+        const dynamicSearchBoxTextStyle: React.CSSProperties = {
+            color: this.props.searchBoxTextColor || undefined,
+            height: this.props.searchBoxHeight ? `${this.props.searchBoxHeight - 2}px` : undefined, // Account for border
+            fontSize: this.props.searchBoxFontSize ? `${this.props.searchBoxFontSize}px` : undefined,
+            padding: '0 8px' // Add space before and after text
+        };
+
+        const dynamicPlaceholderStyle: React.CSSProperties = this.props.placeholderTextColor ? {
+            '--placeholder-color': this.props.placeholderTextColor
+        } as React.CSSProperties : {};
+
+        // Dynamic icon sizing for search icon and clear icon
+        const iconFontSize = this.props.searchBoxFontSize ? `${this.props.searchBoxFontSize}px` : '16px';
+        const dynamicIconStyle: React.CSSProperties = {
+            '--search-icon-size': iconFontSize,
+            '--clear-icon-size': iconFontSize
+        } as React.CSSProperties;
+
         return (
-            <div className={styles.searchBoxWrapper}>
+            <div className={styles.searchBoxWrapper} style={dynamicSearchBoxWrapperStyle}>
                 <SearchBox
                     componentRef={searchBoxRef}
                     placeholder={this.props.placeholderText ? this.props.placeholderText : webPartStrings.SearchBox.DefaultPlaceholder}
@@ -51,6 +178,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                     className={styles.searchTextField}
                     value={this.state.searchInputValue}
                     autoComplete="off"
+                    style={{...dynamicSearchBoxTextStyle, ...dynamicPlaceholderStyle, ...dynamicIconStyle}}
                     onChange={(event) => {
                         const newInputValue = event && event.currentTarget ? event.currentTarget.value : "";
                         const inputChanged = !isEmpty(this.state.searchInputValue) && isEmpty(newInputValue);
@@ -68,15 +196,11 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                         searchBoxRef.current.focus();
                     }}
                 />
-                <div className={styles.searchButton}>
-                    {this.state.searchInputValue &&
-                        <IconButton
-                            onClick={() => this._onSearch(this.state.searchInputValue)}
-                            iconProps={{ iconName: 'Forward' }}
-                            ariaLabel={webPartStrings.SearchBox.SearchButtonLabel}
-                        />
-                    }
-                </div>
+                {(this.state.searchInputValue || this.props.showSearchButtonWhenEmpty) &&
+                    <div className={styles.searchButton}>
+                        {this.renderSearchButton()}
+                    </div>
+                }
             </div>
         );
     }

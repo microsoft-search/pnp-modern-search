@@ -75,6 +75,11 @@ export interface IDetailsListLayoutProperties {
      * If the download button should be visible
      */
     enableDownload: boolean;
+
+    /**
+     * enable in order to have every other row with a different background color
+     */
+    useAlternatingBackgroundColor?: boolean;
 }
 
 export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> {
@@ -394,6 +399,12 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
             })
         );
         
+        propertyPaneFields.push(
+          PropertyPaneToggle('layoutProperties.useAlternatingBackgroundColor', {
+            label: strings.Layouts.DetailsList.UseAlternatingBackgroundColor || 'Use Alternating Background color',
+            checked: this.properties.useAlternatingBackgroundColor
+          }));
+
         return propertyPaneFields;
     }
 

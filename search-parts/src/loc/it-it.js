@@ -131,7 +131,8 @@ define([], function () {
                 TrimDuplicates: "Elimina duplicati",
                 showSPEmbeddedContentLabel: "Mostra SharePoint incorporato (nascosto) nei risultati di ricerca",
                 showMSArchivedContentLabel: "Mostra i contenuti archiviati in MS nei risultati di ricerca",
-                CollapseSpecificationLabel: "Specifiche di collasso"
+                CollapseSpecificationLabel: "Specifiche di collasso",
+                CacheTimeoutLabel: "Cache timeout in minutes (Set to 0 for no caching)"
             },
             MicrosoftSearch: {
                 QueryTextFieldLabel: "Testo della query",
@@ -241,7 +242,9 @@ define([], function () {
                 ResetFieldsBtnLabel: "Reimposta campi ai valori predefiniti",
                 EnableStickyHeader: "Abilita intestazione fissa",
                 StickyHeaderListViewHeight: "Altezza vista elenco (in px)",
-                EnableDownload: "Abilita download"
+                EnableDownload: "Abilita download",
+                UseAlternatingBackgroundColor:"Usa colori di sfondo alternati"
+
             },
             Cards: {
                 Name: "Carte",

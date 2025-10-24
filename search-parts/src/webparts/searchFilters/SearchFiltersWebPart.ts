@@ -32,7 +32,6 @@ import { LayoutHelper } from '../../helpers/LayoutHelper';
 import { TemplateService } from '../../services/templateService/TemplateService';
 import { FileFormat, ITemplateService } from '../../services/templateService/ITemplateService';
 import { isEmpty, isEqual, uniqBy, cloneDeep, uniq, sortBy } from '@microsoft/sp-lodash-subset';
-import { Dropdown, IDropdownProps, IDropdownOption, Checkbox, IComboBoxOption, MessageBar, MessageBarType } from '@fluentui/react';
 import { BuiltinFilterTemplates, BuiltinFilterTypes } from '../../layouts/AvailableTemplates';
 import { ServiceScope } from '@microsoft/sp-core-library';
 import { AvailableComponents } from '../../components/AvailableComponents';
@@ -42,6 +41,10 @@ import commonStyles from '../../styles/Common.module.scss';
 import { IDataVerticalSourceData } from '../../models/dynamicData/IDataVerticalSourceData';
 import { DynamicPropertyHelper } from '../../helpers/DynamicPropertyHelper';
 import PnPTelemetry from '@pnp/telemetry-js';
+import { MessageBar, MessageBarType } from '@fluentui/react/lib/MessageBar';
+import { IComboBoxOption } from '@fluentui/react/lib/ComboBox';
+import { Checkbox } from '@fluentui/react/lib/Checkbox';
+import { Dropdown, IDropdownOption, IDropdownProps } from '@fluentui/react/lib/Dropdown';
 
 const LogSource = "SearchFiltersWebPart";
 
@@ -412,9 +415,6 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                     configuration.isMulti = false;
                     configuration.operator = FilterConditionOperator.AND;
                 }
-
-                // Set the correct type according to the filter tempalte
-                configuration.type = BuiltinFilterTypes[configuration.selectedTemplate];
 
                 return configuration;
             });
@@ -1082,7 +1082,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
         // Get the corresponding configuration for this filter
         filtersConfiguration.forEach(filterConfiguration => {
 
-            if (filterConfiguration.type === FilterType.StaticFilter) {
+            if (BuiltinFilterTypes[filterConfiguration.selectedTemplate] === FilterType.StaticFilter) {
 
                 // Check if the filter already exists
                 if (filterResults.filter(filterResult => filterResult.filterName === filterConfiguration.filterName).length === 0) {

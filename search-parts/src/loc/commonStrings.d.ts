@@ -127,9 +127,9 @@ declare interface ICommonStrings {
         ApplyQueryTemplateBtnText: string;
         EnableAudienceTargetingTglLabel: string;
         CollapseSpecificationLabel: string;
+        CacheTimeoutLabel: string;
         True: string;
         False: string;
-                
       },
       MicrosoftSearch: {
         QueryTextFieldLabel: string;
@@ -242,6 +242,7 @@ declare interface ICommonStrings {
         EnableStickyHeader: string;
         StickyHeaderListViewHeight: string;
         EnableDownload: string;
+        UseAlternatingBackgroundColor:string;
       };
       Cards: {
         Name: string;

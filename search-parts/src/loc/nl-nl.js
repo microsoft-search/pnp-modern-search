@@ -129,7 +129,8 @@ define([], function () {
                 ApplyQueryTemplateBtnText: "Toepassen",
                 EnableAudienceTargetingTglLabel: "Schakel doelgroepen in",
                 TrimDuplicates: "Duplicaten bijsnijden",
-                CollapseSpecificationLabel: "Specificatie samenvouwen"
+                CollapseSpecificationLabel: "Specificatie samenvouwen",
+                CacheTimeoutLabel: "Cache timeout in minutes (Set to 0 for no caching)"
             },
             MicrosoftSearch: {
                 QueryTextFieldLabel: "Zoekopdracht",
@@ -240,7 +241,9 @@ define([], function () {
                 ResetFieldsBtnLabel: "Reset velden naar standaard waarden",
                 EnableStickyHeader: "Sticky header inschakelen",
                 StickyHeaderListViewHeight: "Hoogte van de lijstweergave (px)",
-                EnableDownload: "Downloaden inschakelen"
+                EnableDownload: "Downloaden inschakelen",
+                UseAlternatingBackgroundColor:"Gebruik afwisselende achtergrondkleur"
+
             },
             Cards: {
                 Name: "Kaarten",

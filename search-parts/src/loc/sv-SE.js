@@ -130,7 +130,8 @@ define([], function () {
         ApplyQueryTemplateBtnText: "Tillämpa",
         EnableAudienceTargetingTglLabel: "Aktivera målgruppsanpassning",
         TrimDuplicates: "Trimma dubbletter",
-        CollapseSpecificationLabel: "Komprimera specifikationen"
+        CollapseSpecificationLabel: "Komprimera specifikationen",
+        CacheTimeoutLabel: "Cache timeout in minutes (Set to 0 for no caching)"
       },
       MicrosoftSearch: {
         QueryTextFieldLabel: "Sökfrågetext",
@@ -242,7 +243,8 @@ define([], function () {
         ResetFieldsBtnLabel: "Återställ fält till standardvärden",
         EnableStickyHeader: "Aktivera fast rubrik",
         StickyHeaderListViewHeight: "Höjd för listvy (px)",
-        EnableDownload: "Aktivera nedladdning"
+        EnableDownload: "Aktivera nedladdning",
+        UseAlternatingBackgroundColor:"Använd alternerande bakgrundsfärg"
       },
       Cards: {
         Name: "Kort",

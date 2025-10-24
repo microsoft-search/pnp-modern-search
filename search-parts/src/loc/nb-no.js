@@ -129,7 +129,8 @@ define([], function () {
         ApplyQueryTemplateBtnText: "Lagre",
         EnableAudienceTargetingTglLabel: "Aktiver målgruppetilpasning",
         TrimDuplicates: "Trim duplikater",
-        CollapseSpecificationLabel: "Skjul spesifikasjonen"
+        CollapseSpecificationLabel: "Skjul spesifikasjonen",
+                CacheTimeoutLabel: "Cache timeout in minutes (Set to 0 for no caching)"
       },
       MicrosoftSearch: {
         QueryTextFieldLabel: "Søketekst",
@@ -240,7 +241,8 @@ define([], function () {
         ResetFieldsBtnLabel: "Bruk standardverdiene",
         EnableStickyHeader: "Aktiver klebrig overskrift",
         StickyHeaderListViewHeight: "Høyde på listevisning med klebrig overskrift (px)",
-        EnableDownload: "Aktiver nedlasting"
+        EnableDownload: "Aktiver nedlasting",
+        UseAlternatingBackgroundColor:"Bruk vekslende bakgrunnsfarge"
       },
       Cards: {
         Name: "Kort",

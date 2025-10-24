@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import { Version, Text, DisplayMode, ServiceScope, Log } from '@microsoft/sp-core-library';
-import { IComboBoxOption, Toggle, IToggleProps, MessageBarType, MessageBar, Link } from '@fluentui/react';
 import { IWebPartPropertiesMetadata } from '@microsoft/sp-webpart-base';
 import * as webPartStrings from 'SearchResultsWebPartStrings';
 import * as commonStrings from 'CommonStrings';
@@ -67,13 +66,17 @@ import { DynamicPropertyHelper } from '../../helpers/DynamicPropertyHelper';
 import { IQueryModifierConfiguration } from '../../queryModifier/IQueryModifierConfiguration';
 import { PropertyPaneTabsField } from '../../controls/PropertyPaneTabsField/PropertyPaneTabsField';
 import { loadMsGraphToolkit } from '../../helpers/GraphToolKitHelper';
-import { PropertyFieldMessage } from '@pnp/spfx-property-controls';
 
 // Import statements for templates
 import defaultSimpleListTemplate from '../../layouts/resultTypes/default_simple_list.html';
 import defaultCardsTemplate from '../../layouts/resultTypes/default_cards.html';
 import defaultCustomTemplate from '../../layouts/resultTypes/default_custom.html';
 import defaultPeopleTemplate from '../../layouts/resultTypes/default_people.html';
+import { MessageBar, MessageBarType } from '@fluentui/react/lib/MessageBar';
+import { Link } from '@fluentui/react/lib/Link';
+import { IComboBoxOption } from '@fluentui/react/lib/ComboBox';
+import { IToggleProps, Toggle } from '@fluentui/react/lib/Toggle';
+import { PropertyFieldMessage } from '@pnp/spfx-property-controls/lib/PropertyFieldMessage';
 
 const LogSource = "SearchResultsWebPart";
 
@@ -83,6 +86,11 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
      * The error message
      */
     private errorMessage: string = undefined;
+
+    /**
+     * Flag to track if extensions have been loaded
+     */
+    private extensionsLoaded: boolean = false;
 
     /**
      * Dynamic data related fields
@@ -235,6 +243,11 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     }
 
     public async render(): Promise<void> {
+
+        // Ensure extensions are loaded before rendering
+        if (!this.extensionsLoaded) {
+            await this.loadExtensions(this.properties.extensibilityLibraryConfiguration);
+        }
 
         // Determine the template content to display
         // In the case of an external template is selected, the render is done asynchronously waiting for the content to be fetched
@@ -1023,6 +1036,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         // Add custom providers to the available providers
         this.properties.queryModifierConfiguration = this.properties.queryModifierConfiguration.concat(customQueryModifierConfiguration);
+        this.extensionsLoaded = true;
     }
 
     public async loadPropertyPaneResources(): Promise<void> {

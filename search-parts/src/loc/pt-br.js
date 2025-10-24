@@ -129,7 +129,8 @@ define([], function () {
                 ApplyQueryTemplateBtnText: "Aplicar",
                 EnableAudienceTargetingTglLabel: "Ativar a segmentação por público-alvo",
                 TrimDuplicates: "Limpar duplicados",
-                CollapseSpecificationLabel: "Recolher especificação"
+                CollapseSpecificationLabel: "Recolher especificação",
+                CacheTimeoutLabel: "Cache timeout in minutes (Set to 0 for no caching)"
             },
             MicrosoftSearch: {
                 QueryTextFieldLabel: "Texto da consulta",
@@ -239,7 +240,8 @@ define([], function () {
                 ResetFieldsBtnLabel: "Redefinir campos para os valores padrão",
                 EnableStickyHeader: "Cabeçalho fixo",
                 StickyHeaderListViewHeight: "Altura da lista de visualização (px)",
-                EnableDownload: "Habilitar download"
+                EnableDownload: "Habilitar download",
+                UseAlternatingBackgroundColor:"Utilize cores de fundo alternadas"
             },
             Cards: {
                 Name: "Cartões",

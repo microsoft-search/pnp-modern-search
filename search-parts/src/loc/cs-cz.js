@@ -129,7 +129,8 @@ define([], function() {
                 ApplyQueryTemplateBtnText: "Použít",
                 EnableAudienceTargetingTglLabel: "Povolit cílení na publikum",
                 TrimDuplicates: "Odstranit duplicity",
-                CollapseSpecificationLabel: "Specifikace sbalení"
+                CollapseSpecificationLabel: "Specifikace sbalení",
+                CacheTimeoutLabel: "Cache timeout in minutes (Set to 0 for no caching)"
             },
             MicrosoftSearch: {
                 QueryTextFieldLabel: "Text dotazu",
@@ -239,7 +240,8 @@ define([], function() {
                 ResetFieldsBtnLabel: "Obnovit výchozí hodnoty polí",
                 EnableStickyHeader: "Povolit pevnou hlavičku",
                 StickyHeaderListViewHeight: "Výška zobrazení seznamu (v px)",
-                EnableDownload: "Povolit stažení"
+                EnableDownload: "Povolit stažení",
+                UseAlternatingBackgroundColor:"Použijte střídající se barvu pozadí"
             },
             Cards: {
                 Name: "Karty",
