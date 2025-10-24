@@ -5,7 +5,6 @@ import * as ReactDOM from 'react-dom';
 import { IGroup, IGroupDividerProps, Icon, Text, GroupedList, ITextProps, IStyleFunctionOrObject, ITextStyles } from '@fluentui/react';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import styles from './CollapsibleContentComponent.module.scss';
-import 'core-js/features/dom-collections';
 import { DomPurifyHelper } from '../helpers/DomPurifyHelper';
 
 export interface ICollapsibleContentComponentProps {

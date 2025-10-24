@@ -8,7 +8,6 @@ import styles from './FilterComboBoxComponent.module.scss';
 import { FilterMulti } from './FilterMultiComponent';
 import * as strings from 'CommonStrings';
 import { cloneDeep, isEqual, sortBy } from '@microsoft/sp-lodash-subset';
-import 'core-js/features/dom-collections';
 import { FilterValueOperator } from './FilterValueOperatorComponent';
 
 type FilterMultiEventCallback = () => void;
