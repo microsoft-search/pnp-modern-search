@@ -1,6 +1,6 @@
-The _'Microsoft Search'_ data source retrieve items from the Microsoft search engine.
+The _'Microsoft Search'_ data source retrieves items from the Microsoft search engine.
 
-> This data source can use the Microsoft Search beta API that is not suitable for a production use. Use the normal version for production use.
+> This data source can use the Microsoft Search beta API that is not suitable for production use. Use the normal version for production use.
 
 #### Source configuration
 

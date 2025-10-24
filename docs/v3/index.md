@@ -41,7 +41,7 @@ This solution allows you to build user friendly SharePoint search experiences us
 
 - Fully customizable SharePoint search query like the good old Content Search Web Part.
 - Can either use a static query or be connected to a search box component using SPFx dynamic data.
-- Live templating system with Handlebar to meet your requirements in terms of UI + built-in layouts. Can also use template from an external file.
+- Live templating system with Handlebar to meet your requirements in terms of UI + built-in layouts. Can also use a template from an external file.
 - Search results including previews for Office documents and Office 365 videos.
 - Customizable refiners supporting multilingual values for taxonomy based filters.
 - Sortable results (unique field).
