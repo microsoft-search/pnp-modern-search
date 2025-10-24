@@ -18,6 +18,25 @@ define([], function() {
                 QueryStringParameterName: "Parameter name",
                 QueryParameterNotEmpty: "Please provide a value for the parameter."
             },
+            SearchBoxStylingGroup: {
+                GroupName: "Search box styling",
+                BorderColorLabel: "Border color",
+                BorderRadiusLabel: "Border radius (px)",
+                HeightLabel: "Input field height (px)",
+                FontSizeLabel: "Font size (px)",
+                ButtonColorLabel: "Search button color",
+                PlaceholderTextColorLabel: "Placeholder text color",
+                BackgroundColorLabel: "Background color",
+                TextColorLabel: "Text color",
+                ShowSearchButtonWhenEmptyLabel: "Show search button when input is empty",
+                ShowSearchButtonWhenEmptyDescription: "Display the search button when the search input field is empty",
+                SearchButtonDisplayModeLabel: "Search button display",
+                SearchIconNameLabel: "Search icon name",
+                SearchIconNameDescription: "Fluent UI icon name (e.g., Search, Forward, ChevronRight)",
+                SearchButtonTextLabel: "Search button text",
+                ResetToDefaultLabel: "Reset styling to default",
+                ResetToDefaultDescription: "Reset all styling options to their default values"
+            },
             AvailableConnectionsGroup: {
                 GroupName: "Available connections",
                 UseDynamicDataSourceLabel: "Use dynamic data source as default input",

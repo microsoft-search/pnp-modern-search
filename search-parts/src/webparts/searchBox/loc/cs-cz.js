@@ -18,6 +18,19 @@ define([], function() {
                 QueryStringParameterName: "Název parametru",
                 QueryParameterNotEmpty: "Zadejte hodnotu pro parametr."
             },
+            SearchBoxStylingGroup: {
+                GroupName: "Styl vyhledávacího pole",
+                BorderColorLabel: "Barva ohraničení",
+                BorderRadiusLabel: "Poloměr ohraničení (px)",
+                HeightLabel: "Výška (px)",
+                ButtonColorLabel: "Barva tlačítka vyhledávání",
+                ButtonHoverColorLabel: "Barva najetí tlačítka vyhledávání",
+                PlaceholderTextColorLabel: "Barva zástupného textu",
+                BackgroundColorLabel: "Barva pozadí",
+                TextColorLabel: "Barva textu",
+                ResetToDefaultLabel: "Obnovit výchozí styl",
+                ResetToDefaultDescription: "Obnovit všechny možnosti stylu na jejich výchozí hodnoty"
+            },
             AvailableConnectionsGroup: {
                 GroupName: "Dostupná připojení",
                 UseDynamicDataSourceLabel: "Použít dynamický datový zdroj jako výchozí vstup",

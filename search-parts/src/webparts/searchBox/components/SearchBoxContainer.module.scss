@@ -15,12 +15,54 @@
       width: 100%;
       flex: 1 1 auto;
       border: none;
+      min-height: 32px; 
+      height: auto;
+
+      // Support for dynamic placeholder color
+      :global(.ms-SearchBox-field) {
+        &::placeholder {
+          color: var(--placeholder-color, #666666);
+        }
+        &::-webkit-input-placeholder {
+          color: var(--placeholder-color, #666666);
+        }
+        &::-moz-placeholder {
+          color: var(--placeholder-color, #666666);
+        }
+        &:-ms-input-placeholder {
+          color: var(--placeholder-color, #666666);
+        }
+        &:-moz-placeholder {
+          color: var(--placeholder-color, #666666);
+        }
+      }
+
+      // Dynamic icon sizing for search and clear icons
+      :global(.ms-SearchBox-icon) {
+        font-size: var(--search-icon-size, 16px);
+      }
+      
+      :global(.ms-SearchBox-clearButton) {
+        i {
+          font-size: var(--clear-icon-size, 16px);
+        }
+      }
   }
 
   .searchButton {
-      background: '[theme:primaryButtonBackground, default:#0078d7]';
+      background: '[theme:primaryButtonBackground, default:#0078d7]' !important;
+      
       &:hover {
-        background: '[theme:primaryButtonBackgroundHovered, default:#0078d7]';
+        background: '[theme:primaryButtonBackgroundHovered, default:#0078d7]' !important;
+      }
+
+      // Target all button types within search button container
+      :global(.ms-Button) {
+        background: '[theme:primaryButtonBackground, default:#0078d7]' !important;
+        
+        &:hover {
+          background: '[theme:primaryButtonBackgroundHovered, default:#0078d7]' !important;
+        }
       }
 
       & i {
