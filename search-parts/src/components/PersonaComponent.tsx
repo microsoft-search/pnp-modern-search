@@ -16,7 +16,6 @@ import { BaseWebComponent } from "@pnp/modern-search-extensibility";
 import { ITemplateService } from "../services/templateService/ITemplateService";
 import { UrlHelper } from "../helpers/UrlHelper";
 import { isEmpty } from "@microsoft/sp-lodash-subset";
-import { DomPurifyHelper } from "../helpers/DomPurifyHelper";
 import { IComponentFieldsConfiguration } from "../models/common/IComponentFieldsConfiguration";
 import { ServiceScope, ServiceKey, Log } from "@microsoft/sp-core-library";
 import { LivePersona } from "@pnp/spfx-controls-react/lib/LivePersona";

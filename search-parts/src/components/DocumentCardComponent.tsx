@@ -29,7 +29,6 @@ import { TemplateService } from "../services/templateService/TemplateService";
 import { ITemplateService } from "../services/templateService/ITemplateService";
 import { UrlHelper } from "../helpers/UrlHelper";
 import { FileIcon } from "./FileIconComponent";
-import { DomPurifyHelper } from "../helpers/DomPurifyHelper";
 import { IComponentFieldsConfiguration } from "../models/common/IComponentFieldsConfiguration";
 import { TestConstants } from "../common/Constants";
 import { ServiceScope, ServiceKey } from "@microsoft/sp-core-library";

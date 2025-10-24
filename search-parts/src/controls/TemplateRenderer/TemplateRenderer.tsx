@@ -4,7 +4,6 @@ import ITemplateRendererProps from "./ITemplateRendererProps";
 import ITemplateRendererState from "./ITemplateRendererState";
 import "./TemplateRenderer.scss";
 import { isEqual } from "@microsoft/sp-lodash-subset";
-import { DomPurifyHelper } from "../../helpers/DomPurifyHelper";
 import { ISearchResultsTemplateContext } from "../../models/common/ITemplateContext";
 import { LayoutRenderType } from "@pnp/modern-search-extensibility";
 
