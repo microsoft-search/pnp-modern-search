@@ -18,6 +18,19 @@ define([], function() {
                 QueryStringParameterName: "Parametrin nimi",
                 QueryParameterNotEmpty: "Syötä arvo parametrille."
             },
+            SearchBoxStylingGroup: {
+                GroupName: "Hakukentän tyyli",
+                BorderColorLabel: "Reunan väri",
+                BorderRadiusLabel: "Reunan säde (px)",
+                HeightLabel: "Korkeus (px)",
+                ButtonColorLabel: "Hakupainikkeen väri",
+                ButtonHoverColorLabel: "Hakupainikkeen hover-väri",
+                PlaceholderTextColorLabel: "Paikkamerkkitekstin väri",
+                BackgroundColorLabel: "Taustaväri",
+                TextColorLabel: "Tekstin väri",
+                ResetToDefaultLabel: "Palauta oletustyyli",
+                ResetToDefaultDescription: "Palauta kaikki tyyliasetukset oletusarvoihinsa"
+            },
             AvailableConnectionsGroup: {
                 GroupName: "Tarjolla olevat yhteydet",
                 UseDynamicDataSourceLabel: "Käytä dynaamista sisältölähdettä oletussyötteenä",

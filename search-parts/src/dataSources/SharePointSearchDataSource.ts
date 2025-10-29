@@ -40,6 +40,8 @@ import { StringHelper } from '../helpers/StringHelper';
 import { AutoCalculatedDataSourceFields, SortableFields } from '../common/Constants';
 import { PnPClientStorage } from "@pnp/common/storage";
 import { ObjectHelper } from '../helpers/ObjectHelper';
+import { SortableFields } from '../common/Constants';
+import { PnPClientStorage } from "@pnp/common/storage";
 
 const TAXONOMY_REFINER_REGEX = /((L0)\|#.?([0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}))\|?/;
 

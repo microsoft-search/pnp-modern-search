@@ -10,7 +10,7 @@ const fs = require('fs');
 const semver = require('semver');
 const { DefinePlugin } = require('webpack');
 const { IgnorePlugin } = require('webpack');
-const { ProvidePlugin } = require('webpack'); 
+const { ProvidePlugin } = require('webpack');
 
 const readJson = (path, cb) => {
     fs.readFile(require.resolve(path), (err, data) => {
@@ -47,17 +47,17 @@ const envCheck = build.subTask('environmentCheck', (gulp, config, done) => {
     build.configureWebpack.mergeConfig({
         additionalConfiguration: (generatedConfiguration) => {
 
-            generatedConfiguration.resolve.alias = { 
-              handlebars: 'handlebars/dist/handlebars.min.js',
-              process: "process/browser",
+            generatedConfiguration.resolve.alias = {
+                handlebars: 'handlebars/dist/handlebars.min.js',
+                process: "process/browser",
             };
 
             generatedConfiguration.resolve.fallback = {
-              "path": require.resolve("path-browserify"),
-              "util": require.resolve("util/"),
-              "url": require.resolve("url/"),
-              "querystring": require.resolve("querystring-es3"),
-              "fs": false
+                "path": require.resolve("path-browserify"),
+                "util": require.resolve("util/"),
+                "url": require.resolve("url/"),
+                "querystring": require.resolve("querystring-es3"),
+                "fs": false
             };
 
             // Remove the default html rule
@@ -106,25 +106,25 @@ const envCheck = build.subTask('environmentCheck', (gulp, config, done) => {
                 include: [/spfx-controls-react[/\\]lib[/\\]controls[/\\]HoverReactionsBar/],
                 loader: 'ignore-loader',
             }, {
-              // Add html loader without minimize so that we can use it for handlebars templates
-              test: /\.html$/,
-              loader: 'html-loader',
-              options: {
-                minimize: false
-              }
+                // Add html loader without minimize so that we can use it for handlebars templates
+                test: /\.html$/,
+                loader: 'html-loader',
+                options: {
+                    minimize: false
+                }
             });
 
             generatedConfiguration.optimization.splitChunks = { cacheGroups: { vendors: false } };
 
             // pack each moment.js locale individually to optimize bundle
             generatedConfiguration.plugins.push(
-              new IgnorePlugin({
-                resourceRegExp: /^\.\/locale$/, // Example: Ignore all locale files
-                contextRegExp: /moment$/ // Example: Ignore locale files in moment package
-              }),
-              new ProvidePlugin({
-                process: 'process/browser'
-              }),
+                new IgnorePlugin({
+                    resourceRegExp: /^\.\/locale$/, // Example: Ignore all locale files
+                    contextRegExp: /moment$/ // Example: Ignore locale files in moment package
+                }),
+                new ProvidePlugin({
+                    process: 'process/browser'
+                }),
             );
 
             if (config.production) {
@@ -185,59 +185,59 @@ const findFilesByExt = (base, ext, files, result) => {
 
 gulp.task('update-version', async () => {
 
-  // List all manifest files
-  const manifestFiles = findFilesByExt('./src', 'manifest.json');
+    // List all manifest files
+    const manifestFiles = findFilesByExt('./src', 'manifest.json');
 
-  const semver = require('semver')
-  const versionArgIdx = process.argv.indexOf('--value');
-  const newVersionNumber = semver.valid(process.argv[versionArgIdx + 1]);
+    const semver = require('semver')
+    const versionArgIdx = process.argv.indexOf('--value');
+    const newVersionNumber = semver.valid(process.argv[versionArgIdx + 1]);
 
-  if (versionArgIdx !== -1 && newVersionNumber) {
+    if (versionArgIdx !== -1 && newVersionNumber) {
 
-      // Update version in the package-solution
-      const pkgSolutionFilePath = './config/package-solution.json';
+        // Update version in the package-solution
+        const pkgSolutionFilePath = './config/package-solution.json';
 
-      readJson(pkgSolutionFilePath, (err, pkgSolution) => {
-          log.info('Old package-solution.json version:\t' + pkgSolution.solution.version);
-          const pkgVersion = `${semver.major(newVersionNumber)}.${semver.minor(newVersionNumber)}.${semver.patch(newVersionNumber)}.0`;
-          pkgSolution.solution.version = pkgVersion
-          log.info('New package-solution.json version:\t' + pkgVersion);
-          fs.writeFile(pkgSolutionFilePath, JSON.stringify(pkgSolution, null, 4), (error) => { });
-      });
+        readJson(pkgSolutionFilePath, (err, pkgSolution) => {
+            log.info('Old package-solution.json version:\t' + pkgSolution.solution.version);
+            const pkgVersion = `${semver.major(newVersionNumber)}.${semver.minor(newVersionNumber)}.${semver.patch(newVersionNumber)}.0`;
+            pkgSolution.solution.version = pkgVersion
+            log.info('New package-solution.json version:\t' + pkgVersion);
+            fs.writeFile(pkgSolutionFilePath, JSON.stringify(pkgSolution, null, 4), (error) => { });
+        });
 
-      // Updated version in Web Part manifests
-      manifestFiles.forEach((manifestFile) => {
-          readJson(`./${manifestFile}`, (err, manifest) => {
+        // Updated version in Web Part manifests
+        manifestFiles.forEach((manifestFile) => {
+            readJson(`./${manifestFile}`, (err, manifest) => {
 
-              log.info(`Updating manifest file: "./${manifestFile}"`);
+                log.info(`Updating manifest file: "./${manifestFile}"`);
 
-              log.info('Old manifestFile version:\t' + manifest.version);
-              const wpVersion = `${semver.major(newVersionNumber)}.${semver.minor(newVersionNumber)}.${semver.patch(newVersionNumber)}`;
-              manifest.version = wpVersion;
-              log.info('New manifestFile version:\t' + wpVersion);
-              fs.writeFile(manifestFile, JSON.stringify(manifest, null, 4), (error) => { });
-          });
-      });
-  } else {
-      log.error(`The provided version ${process.argv[versionArgIdx + 1]} is not a valid SemVer version`);
-  }
+                log.info('Old manifestFile version:\t' + manifest.version);
+                const wpVersion = `${semver.major(newVersionNumber)}.${semver.minor(newVersionNumber)}.${semver.patch(newVersionNumber)}`;
+                manifest.version = wpVersion;
+                log.info('New manifestFile version:\t' + wpVersion);
+                fs.writeFile(manifestFile, JSON.stringify(manifest, null, 4), (error) => { });
+            });
+        });
+    } else {
+        log.error(`The provided version ${process.argv[versionArgIdx + 1]} is not a valid SemVer version`);
+    }
 });
 
 gulp.task('update-package-name', async () => {
 
-  const pkgSolutionFilePath = './config/package-solution.json';
+    const pkgSolutionFilePath = './config/package-solution.json';
 
-  const fileNameArg = process.argv.indexOf('--name');
-  const fileName = process.argv[fileNameArg + 1];
+    const fileNameArg = process.argv.indexOf('--name');
+    const fileName = process.argv[fileNameArg + 1];
 
-  if (fileNameArg !== -1 && fileName) {
-      readJson(pkgSolutionFilePath, (err, pkgSolution) => {
-          const currentPackageName = path.basename(pkgSolution.paths.zippedPackage, '.sppkg');
-          log.info(`Rename ${currentPackageName}.sppkg to ${fileName}.sppkg`);
-          pkgSolution.paths.zippedPackage = pkgSolution.paths.zippedPackage.replace(path.basename(pkgSolution.paths.zippedPackage, '.sppkg'), fileName);
-          fs.writeFile(pkgSolutionFilePath, JSON.stringify(pkgSolution, null, 4), (error) => { });
-      });
-  } else {
-      log.error(`Error: wrong parameters`);
-  }
+    if (fileNameArg !== -1 && fileName) {
+        readJson(pkgSolutionFilePath, (err, pkgSolution) => {
+            const currentPackageName = path.basename(pkgSolution.paths.zippedPackage, '.sppkg');
+            log.info(`Rename ${currentPackageName}.sppkg to ${fileName}.sppkg`);
+            pkgSolution.paths.zippedPackage = pkgSolution.paths.zippedPackage.replace(path.basename(pkgSolution.paths.zippedPackage, '.sppkg'), fileName);
+            fs.writeFile(pkgSolutionFilePath, JSON.stringify(pkgSolution, null, 4), (error) => { });
+        });
+    } else {
+        log.error(`Error: wrong parameters`);
+    }
 });

@@ -7,6 +7,11 @@ import { ITemplateService } from '../../../services/templateService/ITemplateSer
 import { TemplateService } from '../../../services/templateService/TemplateService';
 import { Log, DisplayMode } from "@microsoft/sp-core-library";
 import { IDataSourceData, IDataFilterResult } from '@pnp/modern-search-extensibility';
+import { isEqual, cloneDeep, merge, isEmpty } from "@microsoft/sp-lodash-subset";
+import { ITemplateService } from '../../../services/templateService/ITemplateService';
+import { TemplateService } from '../../../services/templateService/TemplateService';
+import { Log, DisplayMode } from "@microsoft/sp-core-library";
+import { IDataSourceData, IDataFilterResult, BuiltinTemplateSlots } from '@pnp/modern-search-extensibility';
 import { ISearchResultsTemplateContext } from '../../../models/common/ITemplateContext';
 import styles from './SearchResultsContainer.module.scss';
 import { Constants, TestConstants } from '../../../common/Constants';

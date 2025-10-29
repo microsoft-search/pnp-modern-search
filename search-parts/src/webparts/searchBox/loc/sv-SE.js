@@ -18,6 +18,19 @@ define([], function() {
                 QueryStringParameterName: "Parameternamn",
                 QueryParameterNotEmpty: "Vänligen ange ett parametervärde."
             },
+            SearchBoxStylingGroup: {
+                GroupName: "Stil för sökruta",
+                BorderColorLabel: "Kantfärg",
+                BorderRadiusLabel: "Kantradius (px)",
+                HeightLabel: "Höjd (px)",
+                ButtonColorLabel: "Sökknappens färg",
+                ButtonHoverColorLabel: "Sökknappens hover-färg",
+                PlaceholderTextColorLabel: "Platshållartextens färg",
+                BackgroundColorLabel: "Bakgrundsfärg",
+                TextColorLabel: "Textfärg",
+                ResetToDefaultLabel: "Återställ till standardstil",
+                ResetToDefaultDescription: "Återställ alla stilalternativ till deras standardvärden"
+            },
             AvailableConnectionsGroup: {
                 GroupName: "Tillgängliga anslutningar",
                 UseDynamicDataSourceLabel: "Använd dynamisk datakälla som standardinmatning",

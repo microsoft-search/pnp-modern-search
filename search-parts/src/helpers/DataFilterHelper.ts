@@ -1,6 +1,7 @@
 import { isEmpty } from "@microsoft/sp-lodash-subset";
 import { IDataFilter, IDataFilterConfiguration, FilterType, IDataFilterResult, FilterComparisonOperator } from "@pnp/modern-search-extensibility";
 import { BuiltinTokenNames } from "../services/tokenService/TokenService";
+import { BuiltinFilterTypes } from "../layouts/AvailableTemplates";
 
 export class DataFilterHelper {
 
@@ -35,7 +36,7 @@ export class DataFilterHelper {
         filters.forEach(filter => {
 
             const configuration = this.getConfigurationForFilter(filter, filtersConfiguration);
-            if (configuration && configuration.type === type) {
+            if (configuration && BuiltinFilterTypes[configuration.selectedTemplate] === type) {
                 selectedValues = selectedValues.concat(filter.values.map(value => value.value));
             }
         });

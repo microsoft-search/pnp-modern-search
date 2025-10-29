@@ -18,6 +18,25 @@ define([], function() {
                 QueryStringParameterName: "Nom du paramètre",
                 QueryParameterNotEmpty: "Veuillez fournir une valeur pour le critère"
             },
+            SearchBoxStylingGroup: {
+                GroupName: "Style de la zone de recherche",
+                BorderColorLabel: "Couleur de la bordure",
+                BorderRadiusLabel: "Rayon de bordure (px)",
+                HeightLabel: "Hauteur (px)",
+                FontSizeLabel: "Taille de police (px)",
+                ButtonColorLabel: "Couleur du bouton de recherche",
+                PlaceholderTextColorLabel: "Couleur du texte d'espace réservé",
+                BackgroundColorLabel: "Couleur d'arrière-plan",
+                TextColorLabel: "Couleur du texte",
+                ShowSearchButtonWhenEmptyLabel: "Afficher le bouton de recherche lorsque le champ est vide",
+                ShowSearchButtonWhenEmptyDescription: "Afficher le bouton de recherche lorsque le champ de saisie de recherche est vide",
+                SearchButtonDisplayModeLabel: "Affichage du bouton de recherche",
+                SearchIconNameLabel: "Nom de l'icône de recherche",
+                SearchIconNameDescription: "Nom de l'icône Fluent UI (ex: Search, Forward, ChevronRight)",
+                SearchButtonTextLabel: "Texte du bouton de recherche",
+                ResetToDefaultLabel: "Réinitialiser le style par défaut",
+                ResetToDefaultDescription: "Réinitialiser toutes les options de style à leurs valeurs par défaut"
+            },
             AvailableConnectionsGroup: {
                 GroupName: "Connexions disponibles",
                 UseDynamicDataSourceLabel: "Utiliser la source de données dynamique comme entrée par défaut",

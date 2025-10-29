@@ -11,7 +11,6 @@ import * as commonStrings from 'CommonStrings';
 import * as webPartStrings from 'SearchVerticalsWebPartStrings';
 import { ISearchVerticalsContainerProps } from './components/ISearchVerticalsContainerProps';
 import { ISearchVerticalsWebPartProps } from './ISearchVerticalsWebPartProps';
-import { TextField, ITextFieldProps, Dropdown, IDropdownProps, Checkbox } from '@fluentui/react';
 import SearchVerticalsContainer from './components/SearchVerticalsContainer';
 import { ComponentType } from '../../common/ComponentType';
 import { IDynamicDataCallables, IDynamicDataPropertyDefinition } from '@microsoft/sp-dynamic-data';
@@ -27,6 +26,9 @@ import type { IDynamicPerson } from '@microsoft/mgt-react';
 import { MSGraphClientFactory } from '@microsoft/sp-http';
 import { loadMsGraphToolkit } from '../../helpers/GraphToolKitHelper';
 import { LocalizationHelper } from "@microsoft/mgt-element/dist/es6/utils/LocalizationHelper";
+import { ITextFieldProps, TextField } from '@fluentui/react/lib/TextField';
+import { Dropdown, IDropdownProps } from '@fluentui/react/lib/Dropdown';
+import { Checkbox } from '@fluentui/react/lib/Checkbox';
 
 const PeoplePicker = React.lazy(() =>
     import(/* webpackChunkName: 'microsoft-graph-toolkit' */ '@microsoft/mgt-react/dist/es6/generated/people-picker')

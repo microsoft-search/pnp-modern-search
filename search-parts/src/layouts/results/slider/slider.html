@@ -1,11 +1,5 @@
 
 <content id="data-content">
-    <style>
-        .flickity-page-dots { 
-            bottom: 5px; 
-        }
-    </style>
-
     <div class="template">
 
         {{#if @root.properties.showSelectedFilters}}
@@ -89,13 +83,6 @@
 </content>
 
 <content id="placeholder-content"> 
-
-    <style>        
-        .flickity-page-dots { 
-            bottom: 10px; 
-        }
-    </style>
-
     <div class="placeholder">
         <pnp-slider items="[{},{},{},{},{}]" options="{{JSONstringify @root.properties.layoutProperties.sliderOptions}}">
             <div class="template--slide" style="height: {{@root.properties.layoutProperties.slideHeight}}px; width: {{@root.properties.layoutProperties.slideWidth}}px;margin: 5px;">
