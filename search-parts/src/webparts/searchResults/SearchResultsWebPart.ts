@@ -1,12 +1,11 @@
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import { Version, Text, DisplayMode, ServiceScope, Log } from '@microsoft/sp-core-library';
-import { IComboBoxOption, Toggle, IToggleProps, MessageBarType, MessageBar, Link } from '@fluentui/react';
 import { IWebPartPropertiesMetadata } from '@microsoft/sp-webpart-base';
 import * as webPartStrings from 'SearchResultsWebPartStrings';
 import * as commonStrings from 'CommonStrings';
 import { ISearchResultsContainerProps } from './components/ISearchResultsContainerProps';
-import { IDataSource, IDataSourceDefinition, IComponentDefinition, ILayoutDefinition, ILayout, IDataFilter, LayoutType, FilterComparisonOperator, BaseDataSource, IDataFilterValue, IDataFilterResult, FilterConditionOperator, IDataVertical, ExtensibilityConstants, ISortInfo, LayoutRenderType, IQueryModifierDefinition, IQueryModifier, BaseQueryModifier } from '@pnp/modern-search-extensibility';
+import { IDataSource, IDataSourceDefinition, IComponentDefinition, ILayoutDefinition, ILayout, IDataFilter, LayoutType, FilterComparisonOperator,  IDataFilterValue, IDataFilterResult, FilterConditionOperator, IDataVertical, ExtensibilityConstants, ISortInfo, LayoutRenderType, IQueryModifierDefinition, IQueryModifier, BaseQueryModifier } from '@pnp/modern-search-extensibility';
 
 import {
     IPropertyPaneConfiguration,
@@ -67,13 +66,17 @@ import { DynamicPropertyHelper } from '../../helpers/DynamicPropertyHelper';
 import { IQueryModifierConfiguration } from '../../queryModifier/IQueryModifierConfiguration';
 import { PropertyPaneTabsField } from '../../controls/PropertyPaneTabsField/PropertyPaneTabsField';
 import { loadMsGraphToolkit } from '../../helpers/GraphToolKitHelper';
-import { PropertyFieldMessage } from '@pnp/spfx-property-controls';
 
 // Import statements for templates
 import defaultSimpleListTemplate from '../../layouts/resultTypes/default_simple_list.html';
 import defaultCardsTemplate from '../../layouts/resultTypes/default_cards.html';
 import defaultCustomTemplate from '../../layouts/resultTypes/default_custom.html';
 import defaultPeopleTemplate from '../../layouts/resultTypes/default_people.html';
+import { MessageBar, MessageBarType } from '@fluentui/react/lib/MessageBar';
+import { Link } from '@fluentui/react/lib/Link';
+import { IComboBoxOption } from '@fluentui/react/lib/ComboBox';
+import { IToggleProps, Toggle } from '@fluentui/react/lib/Toggle';
+import { PropertyFieldMessage } from '@pnp/spfx-property-controls/lib/PropertyFieldMessage';
 
 const LogSource = "SearchResultsWebPart";
 
@@ -2132,17 +2135,18 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                     dataSource = childServiceScope.consume<IDataSource>(serviceKey);
 
                     // Verifiy if the data source implements correctly the IDataSource interface and BaseDataSource methods
-                    const isValidDataSource = (dataSourceInstance: IDataSource): dataSourceInstance is BaseDataSource<any> => {
+                    const isValidDataSource = (dataSourceInstance: IDataSource): dataSourceInstance is IDataSource => {
                         return (
-                            (dataSourceInstance as BaseDataSource<any>).getAppliedFilters !== undefined &&
-                            (dataSourceInstance as BaseDataSource<any>).getData !== undefined &&
-                            (dataSourceInstance as BaseDataSource<any>).getFilterBehavior !== undefined &&
-                            (dataSourceInstance as BaseDataSource<any>).getItemCount !== undefined &&
-                            (dataSourceInstance as BaseDataSource<any>).getPagingBehavior !== undefined &&
-                            (dataSourceInstance as BaseDataSource<any>).getPropertyPaneGroupsConfiguration !== undefined &&
-                            (dataSourceInstance as BaseDataSource<any>).getTemplateSlots !== undefined &&
-                            (dataSourceInstance as BaseDataSource<any>).onInit !== undefined &&
-                            (dataSourceInstance as BaseDataSource<any>).onPropertyUpdate !== undefined
+                            (dataSourceInstance as IDataSource).getAppliedFilters !== undefined &&
+                            (dataSourceInstance as IDataSource).getData !== undefined &&
+                            (dataSourceInstance as IDataSource).getFilterBehavior !== undefined &&
+                            (dataSourceInstance as IDataSource).getItemCount !== undefined &&
+                            (dataSourceInstance as IDataSource).getPagingBehavior !== undefined &&
+                            (dataSourceInstance as IDataSource).getPropertyPaneGroupsConfiguration !== undefined &&
+                            (dataSourceInstance as IDataSource).getTemplateSlots !== undefined &&
+                            (dataSourceInstance as IDataSource).onInit !== undefined &&
+                            (dataSourceInstance as IDataSource).onPropertyUpdate !== undefined &&
+                            (dataSourceInstance as IDataSource).getItemsPreview !== undefined
                         );
                     };
 

@@ -98,4 +98,11 @@ export interface IDataSource {
      * Get the list of sortable fields for the data source is applicable
      */
     getSortableFields(): string[];
+
+    /**
+     * Enhance items properties with preview information (AutoPreviewUrl, AutoPreviewImageUrl)
+     * @param data the data to enhance
+     * @param slots the configured template slots mapping
+     */
+    getItemsPreview(data: IDataSourceData, slots: { [key: string]: string }): Promise<IDataSourceData>;
 }

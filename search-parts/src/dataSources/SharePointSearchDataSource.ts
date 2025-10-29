@@ -6,7 +6,8 @@ import {
     PropertyPaneDropdownOptionType,
     PropertyPaneToggle,
     PropertyPaneDropdown,
-    PropertyPaneLabel
+    PropertyPaneLabel,
+    PropertyPaneSlider
 } from "@microsoft/sp-property-pane";
 import * as commonStrings from 'CommonStrings';
 import { ServiceScope, Guid, Text } from '@microsoft/sp-core-library';
@@ -36,7 +37,9 @@ import { ISortFieldConfiguration, } from '../models/search/ISortFieldConfigurati
 import { EnumHelper } from '../helpers/EnumHelper';
 import { BuiltinDataSourceProviderKeys } from './AvailableDataSources';
 import { StringHelper } from '../helpers/StringHelper';
-import { SortableFields } from '../common/Constants';
+import { AutoCalculatedDataSourceFields, SortableFields } from '../common/Constants';
+import { PnPClientStorage } from "@pnp/common/storage";
+import { ObjectHelper } from '../helpers/ObjectHelper';
 
 const TAXONOMY_REFINER_REGEX = /((L0)\|#.?([0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}))\|?/;
 
@@ -125,6 +128,11 @@ export interface ISharePointSearchDataSourceProperties {
      * More information: https://learn.microsoft.com/en-us/sharepoint/dev/general-development/customizing-search-results-in-sharepoint#collapse-similar-search-results-using-the-collapsespecification-property
      */
     collapseSpecification: string;
+
+    /**
+     * Number of minutes before the cache is refreshed. No cache is used if set to 0. 
+     */
+    cacheTimeout: number;
 }
 
 export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearchDataSourceProperties> {
@@ -144,6 +152,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
     private _tokenService: ITokenService;
     private _taxonomyService: ITaxonomyService;
     private _currentLocaleId: number;
+    private storage: PnPClientStorage = new PnPClientStorage();
 
     private _propertyFieldCollectionData: any = null;
     private _customCollectionFieldType: any = null;
@@ -163,6 +172,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
     * The moment.js library reference
     */
     private moment: any;
+    props: any;
 
     public constructor(serviceScope: ServiceScope) {
         super(serviceScope);
@@ -224,7 +234,18 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
     public async getData(dataContext: IDataContext): Promise<IDataSourceData> {
 
         const searchQuery = await this.buildSharePointSearchQuery(dataContext);
-        const results = await this._sharePointSearchService.search(searchQuery);
+        let results;
+        if (!this.properties.cacheTimeout) {
+            results = await this._sharePointSearchService.search(searchQuery);
+        }
+        else {
+            // Check if the cache is still valid
+            const cacheKey = `pnpSearchResults_${this.getHashCode(searchQuery)}`;
+            const expiration = new Date(new Date().getTime() + this.properties.cacheTimeout * 60 * 1000);
+            results = await this.storage.local.getOrPut(cacheKey, async () => {
+                return await this._sharePointSearchService.search(searchQuery);
+            }, expiration);
+        }
 
         let data: IDataSourceData = {
             items: results.relevantResults,
@@ -247,6 +268,37 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         this._itemsCount = results.totalRows;
 
         return data;
+    }
+private getGuidFromString(value: string): string {
+
+        if (value) {
+            const matches = value.match(/(\{){0,1}[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}(\}){0,1}/);
+            if (matches) {
+                return matches[0];
+            }
+        }
+
+        return value;
+    }
+    /**
+     * Check if we're on an online domain
+     * @param domain
+     */
+    private isOnlineDomain(url: string) {
+        return !isEmpty(url) && url.toLocaleLowerCase().indexOf(window.location.hostname.split('.').slice(-2).join('.').toLocaleLowerCase()) !== -1;
+    }
+
+    /**
+     * Check if picture is deliverd from a M365 Source
+     * @param url
+     */
+    private isM365Source(url: string) {
+        const cdnDomains: RegExp[] = [/^https?:\/\/(?:[A-Za-z0-9,-]+\.)+office\.net.*/,
+            /^https?:\/\/(?:[A-Za-z0-9,-]+\.)+sharepointonline\.com.*/,
+            /^https?:\/\/(?:[A-Za-z0-9,-]+\.)+sharepoint\.us.*/,
+            /^https?:\/\/(?:[A-Za-z0-9,-]+\.)+sharepoint-mil\.us.*/,
+        ];
+        return cdnDomains.some(regex => regex.test(url))
     }
 
     public getPropertyPaneGroupsConfiguration(): IPropertyPaneGroup[] {
@@ -432,6 +484,13 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                         applyBtnText: commonStrings.DataSources.SharePointSearch.ApplyQueryTemplateBtnText,
                         rows: 2
                     }),
+                    PropertyPaneSlider('dataSourceProperties.cacheTimeout', {
+                        label: commonStrings.DataSources.SharePointSearch.CacheTimeoutLabel,
+                        min: 0,
+                        max: 240,
+                        step: 5,
+                        value: this.properties.cacheTimeout ? this.properties.cacheTimeout : 0
+                    }),
                     PropertyPaneToggle('dataSourceProperties.enableAudienceTargeting', {
                         label: commonStrings.DataSources.SharePointSearch.EnableAudienceTargetingTglLabel,
                         checked: this.properties.enableAudienceTargeting,
@@ -569,6 +628,108 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
 
     public getSortableFields(): string[] {
         return this.properties.sortList.filter(sort => sort.isUserSort).map(field => field.sortField);
+    }
+
+    /**
+     * Enhance items properties with preview information
+     * @param data the data to enhance
+     * @param slots the configured template slots
+     */
+    public async getItemsPreview(data: IDataSourceData, slots: { [key: string]: string }): Promise<IDataSourceData> {
+        
+        const validPreviewExt = ["SVG", "MOVIE", "PAGES", "PICT", "SKETCH", "AI", "PDF", "PSB", "PSD", "3G2", "3GP", "ASF", "BMP", "HEVC", "M2TS", "M4V", "MOV", "MP3", "MP4", "MP4V", "MTS", "TS", "WMV", "DWG", "FBX", "ERF", "ZIP", "ZIP", "DCM", "DCM30", "DICM", "DICOM", "PLY", "HCP", "GIF", "HEIC", "HEIF", "JPEG", "JPG", "JPE", "MEF", "MRW", "NEF", "NRW", "ORF", "PANO", "PEF", "PNG", "SPM", "TIF", "TIFF", "XBM", "XCF", "KEY", "LOG", "CSV", "DIC", "DOC", "DOCM", "DOCX", "DOTM", "DOTX", "POT", "POTM", "POTX", "PPS", "PPSM", "PPSX", "PPT", "PPTM", "PPTX", "XD", "XLS", "XLSB", "XLSX", "SLTX", "EML", "MSG", "VSD", "VSDX", "CUR", "ICO", "ICON", "EPUB", "ODP", "ODS", "ODT", "ARW", "CR2", "CRW", "DNG", "RTF", "ABAP", "ADA", "ADP", "AHK", "AS", "AS3", "ASC", "ASCX", "ASM", "ASP", "ASPX", "AWK", "BAS", "BASH", "BASH_LOGIN", "BASH_LOGOUT", "BASH_PROFILE", "BASHRC", "BAT", "BIB", "BSH", "BUILD", "BUILDER", "C", "CAPFILE", "CBK", "CC", "CFC", "CFM", "CFML", "CL", "CLJ", "CMAKE", "CMD", "COFFEE", "CPP", "CPT", "CPY", "CS", "CSHTML", "CSON", "CSPROJ", "CSS", "CTP", "CXX", "D", "DDL", "DI.DIF", "DIFF", "DISCO", "DML", "DTD", "DTML", "EL", "EMAKE", "ERB", "ERL", "F90", "F95", "FS", "FSI", "FSSCRIPT", "FSX", "GEMFILE", "GEMSPEC", "GITCONFIG", "GO", "GROOVY", "GVY", "H", "HAML", "HANDLEBARS", "HBS", "HRL", "HS", "HTC", "HTML", "HXX", "IDL", "IIM", "INC", "INF", "INI", "INL", "IPP", "IRBRC", "JADE", "JAV", "JAVA", "JS", "JSON", "JSP", "JSX", "L", "LESS", "LHS", "LISP", "LOG", "LST", "LTX", "LUA", "M", "MAKE", "MARKDN", "MARKDOWN", "MD", "MDOWN", "MKDN", "ML", "MLI", "MLL", "MLY", "MM", "MUD", "NFO", "OPML", "OSASCRIPT", "OUT", "P", "PAS", "PATCH", "PHP", "PHP2", "PHP3", "PHP4", "PHP5", "PL", "PLIST", "PM", "POD", "PP", "PROFILE", "PROPERTIES", "PS", "PS1", "PT", "PY", "PYW", "R", "RAKE", "RB", "RBX", "RC", "RE", "README", "REG", "REST", "RESW", "RESX", "RHTML", "RJS", "RPROFILE", "RPY", "RSS", "RST", "RXML", "S", "SASS", "SCALA", "SCM", "SCONSCRIPT", "SCONSTRUCT", "SCRIPT", "SCSS", "SGML", "SH", "SHTML", "SML", "SQL", "STY", "TCL", "TEX", "TEXT", "TEXTILE", "TLD", "TLI", "TMPL", "TPL", "TXT", "VB", "VI", "VIM", "WSDL", "XAML", "XHTML", "XOML", "XML", "XSD", "XSL", "XSLT", "YAML", "YAWS", "YML", "ZSH", "HTM", "HTML", "Markdown", "MD", "URL"];
+        // Auto determined preview URL 
+        if (slots[BuiltinTemplateSlots.PreviewUrl] === 'AutoPreviewUrl') {
+
+            data.items = data.items.map(item => {
+                const contentClass = item[slots[BuiltinTemplateSlots.ContentClass]] || item['contentclass'];
+                const hasContentClass = !isEmpty(contentClass);
+                const isLibItem = hasContentClass && contentClass.indexOf("Library") !== -1;
+
+                const contentTypeId = item[slots[BuiltinTemplateSlots.IsFolder]] || item['ContentTypeId'];
+                const isContainer = contentTypeId ? contentTypeId.indexOf('0x0120') !== -1 : false;
+
+                let pathProperty = item[slots[BuiltinTemplateSlots.Path]] || item['DefaultEncodingURL'];
+                if (!pathProperty || (hasContentClass && !isLibItem)) {
+                    pathProperty = item['Path']; // Fallback to using Path if DefaultEncodingURL is missing
+                }
+
+                const webUrl = item['SPWebUrl'];
+                const uniqueId = item['NormUniqueID'];
+                const itemFileType = item[slots[BuiltinTemplateSlots.FileType]] || item['FileType'];
+                
+                if (webUrl && uniqueId && itemFileType && itemFileType.toUpperCase() !== "ASPX") {
+                    item.AutoPreviewUrl = `${webUrl}/_layouts/15/viewer.aspx?sourcedoc={${uniqueId}}`;
+                } else if (pathProperty && pathProperty.indexOf("?") === -1 && !isContainer) {
+                    item.AutoPreviewUrl = pathProperty + "?web=1";
+                } else {
+                    item.AutoPreviewUrl = pathProperty;
+                }
+                
+                return item;
+            });
+        }
+// Auto determined preview image URL (thumbnail)
+        if (slots[BuiltinTemplateSlots.PreviewImageUrl] === AutoCalculatedDataSourceFields.AutoPreviewImageUrl) {
+
+            // TODO: I'd like to move this logic over to each provider
+            data.items = data.items.map(item => {
+
+                let contentClass = ObjectHelper.byPath(item, BuiltinTemplateSlots.ContentClass);
+
+                if (!isEmpty(contentClass) && (contentClass.toLocaleLowerCase() == "sts_site" || contentClass.toLocaleLowerCase() == "sts_web")) {
+                    item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = ObjectHelper.byPath(item, "SiteLogo");
+                }
+                else {
+                    let siteId = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.SiteId]);
+                    let webId = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.WebId]);
+                    let listId = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.ListId]);
+                    let itemId = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.ItemId]); // Could be UniqueId or item ID
+
+                    let isFolder = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.IsFolder]);
+                    const isContainerType = isFolder === "true" || isFolder === "1" || (isFolder && isFolder.indexOf('0x0120') !== -1);
+
+                    let thumbNailUrl = ObjectHelper.byPath(item, "PictureThumbnailURL");
+                    if (!isEmpty(thumbNailUrl)) {
+                        if (thumbNailUrl.indexOf("/content?") !== -1 && thumbNailUrl.indexOf("closestavailablesize") === -1 && thumbNailUrl.indexOf("extendCacheMaxAge") === -1) {
+                            thumbNailUrl = `${thumbNailUrl},closestavailablesize,extendCacheMaxAge`;
+                        }
+                        item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = thumbNailUrl;
+                    }
+                    else
+                        if (siteId && listId && itemId && !isContainerType) {
+                            // SP item logic
+                            siteId = this.getGuidFromString(siteId);
+                            listId = this.getGuidFromString(listId);
+                            itemId = this.getGuidFromString(itemId);
+
+                            if (webId) {
+                                siteId = siteId + "," + this.getGuidFromString(webId); // add web id if present, needed for sub-sites
+                            }
+
+                            const itemFileType = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.FileType]);
+
+                            if (itemFileType && validPreviewExt.indexOf(itemFileType.toUpperCase()) !== -1) {
+                                // Can lead to 404 errors but it is a trade of for performances. We take a guess with this url instead of batching calls for all items and process only 200.
+                                item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = `${this.props.pageContext.site.absoluteUrl}/_api/v2.1/sites/${siteId}/lists/${listId}/items/${itemId}/driveItem/thumbnails/0/c400x999/content?prefer=noredirect,closestavailablesize,extendCacheMaxAge`;
+                            }
+                        } else {
+                            // Graph items logic
+                            const driveId = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.DriveId]);
+                            //GET /drives/{drive-id}/items/{item-id}/thumbnails
+                            if (driveId && siteId && itemId) {
+                                item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = `${this.props.pageContext.site.absoluteUrl}/_api/v2.1/sites/${siteId}/drives/${driveId}/items/${itemId}/thumbnails/thumbnails/0/c400x999/content?prefer=noredirect,closestavailablesize,extendCacheMaxAge`;
+                            }
+                        }
+                }
+
+                if (!this.isM365Source(item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl]) && !this.isOnlineDomain(item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl])) {
+                    item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = null;
+                }
+                return item;
+            });
+        }
+        return data;
     }
 
     private initProperties(): void {
@@ -871,12 +1032,19 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                 const refinableDateRegex = new RegExp(regexExpr.replace(/\s+/gi, ''), 'gi');
                 if (refinableDateRegex.test(filterConfig.filterName)) {
 
-                    const pastYear = this.moment(new Date()).subtract(1, 'years').subtract('minutes', 1).toISOString();
-                    const past3Months = this.moment(new Date()).subtract(3, 'months').subtract('minutes', 1).toISOString();
-                    const pastMonth = this.moment(new Date()).subtract(1, 'months').subtract('minutes', 1).toISOString();
-                    const pastWeek = this.moment(new Date()).subtract(1, 'week').subtract('minutes', 1).toISOString();
-                    const past24hours = this.moment(new Date()).subtract(24, 'hours').subtract('minutes', 1).toISOString();
-                    const today = new Date().toISOString();
+                    const todayDate = new Date();
+                    // Ignore hours if caching
+                    if (this.properties.cacheTimeout) {
+                        todayDate.setHours(0, 0, 0, 0);
+                    }
+                    const today = todayDate.toISOString();
+
+                    const pastYear = this.moment(todayDate).subtract(1, 'years').subtract('minutes', 1).toISOString();
+                    const past3Months = this.moment(todayDate).subtract(3, 'months').subtract('minutes', 1).toISOString();
+                    const pastMonth = this.moment(todayDate).subtract(1, 'months').subtract('minutes', 1).toISOString();
+                    const pastWeek = this.moment(todayDate).subtract(1, 'week').subtract('minutes', 1).toISOString();
+                    const past24hours = this.moment(todayDate).subtract(24, 'hours').subtract('minutes', 1).toISOString();
+                    // const today = new Date().toISOString();
 
                     return `${filterConfig.filterName}(discretize=manual/${pastYear}/${past3Months}/${pastMonth}/${pastWeek}/${past24hours}/${today})`;
 
@@ -1086,19 +1254,16 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                             updatedValues[existingFilterIdx].value = fqlFilterValue;
                         }
                     });
-                } else 
-                {
-                    if(filterResult.filterName.toString().indexOf("RefinableYesNo")>-1) 
-                    {
-                       let localizedValue = commonStrings.General[value.name] || value.name
-                        value.name = localizedValue;  
+                } else {
+                    if (filterResult.filterName.toString().indexOf("RefinableYesNo") > -1) {
+                        let localizedValue = commonStrings.General[value.name] || value.name
+                        value.name = localizedValue;
                         updatedValues.push(value);
                     }
-                    else
-                    {
+                    else {
                         updatedValues.push(value);
                     }
-                    
+
                 }
             });
 
@@ -1376,12 +1541,35 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         }
     }
 
-
     private parseAndCleanOptions(options: IComboBoxOption[]): IComboBoxOption[] {
         let optionWithComma = options.find(o => (o.key as string).indexOf(",") > 0);
         if (optionWithComma) {
             return (optionWithComma.key as string).split(",").map(k => { return { key: k.trim(), text: k.trim(), selected: true }; });
         }
         return options;
+    }
+
+    /**
+     * Generates a ~unique hash code
+     *
+     * From: https://stackoverflow.com/questions/6122571/simple-non-secure-hash-function-for-javascript
+     */
+    private getHashCode(searchQuery: ISharePointSearchQuery) {
+        let hash = 0;
+
+        if (searchQuery) {
+            const str = JSON.stringify(searchQuery);
+            // console.log(`Search query: ${str}`);
+            if (str.length === 0) {
+                return hash;
+            }
+            for (let i = 0, len = str.length; i < len; i++) {
+                let chr = str.charCodeAt(i);
+                hash = (hash << 5) - hash + chr;
+                hash |= 0; // Convert to 32bit integer
+            }
+        }
+        // console.log(`Search query hash: ${hash}`);
+        return hash;
     }
 }
