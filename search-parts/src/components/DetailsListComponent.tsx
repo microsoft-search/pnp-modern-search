@@ -466,15 +466,9 @@ export class DetailsListComponent extends React.Component<
                 "text/html"
               );
 
-              // Note: replaceDisambiguatedMgtElementNames is async but we can't await in onRender
-              // The helper should be pre-initialized in componentDidMount, so this will complete synchronously
-              // Fire and forget - if it's not ready yet, it will be skipped
+              // Synchronously rename MGT elements (helper is already initialized in componentDidMount)
               if (this._templateContext.properties.useMicrosoftGraphToolkit) {
-                this.props.templateService
-                  .replaceDisambiguatedMgtElementNames(tempColumnValueAsHtml)
-                  .catch(() => {
-                    /* Ignore errors */
-                  });
+                (this.props.templateService as any)._replaceDisambiguatedMgtElementNamesSync(tempColumnValueAsHtml);
               }
 
               const styleElements =
