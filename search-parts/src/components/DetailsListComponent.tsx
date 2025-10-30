@@ -468,7 +468,7 @@ export class DetailsListComponent extends React.Component<
 
               // Synchronously rename MGT elements (helper is already initialized in componentDidMount)
               if (this._templateContext.properties.useMicrosoftGraphToolkit) {
-                this._replaceDisambiguatedMgtElementNamesSync(tempColumnValueAsHtml);
+                (this.props.templateService as any)._replaceDisambiguatedMgtElementNamesSync(tempColumnValueAsHtml);
               }
 
               const styleElements =
@@ -1033,52 +1033,6 @@ export class DetailsListComponent extends React.Component<
     }
 
     return groups;
-  }
-
-  /**
-   * Synchronously replaces MGT element names with disambiguated versions.
-   * This assumes the MGT helper is already initialized (done in componentDidMount).
-   */
-  private _replaceDisambiguatedMgtElementNamesSync(template: Document): void {
-    const helper = this.props.templateService.MgtCustomElementHelper;
-    
-    if (!helper || !helper.isDisambiguated) {
-      return;
-    }
-
-    const handleElement = (element: Element) => {
-      if (
-        element.tagName.toLowerCase().startsWith("mgt-") &&
-        !element.tagName.toLowerCase().startsWith(`${helper.prefix}-`)
-      ) {
-        // Create a new element with the replaced tag name
-        const newTagName = `${helper.prefix}-${element.tagName.toLowerCase().slice(4)}`;
-        const newElement = template.createElement(newTagName);
-
-        // Copy all attributes
-        for (let i = 0; i < element.attributes.length; i++) {
-          const attr = element.attributes[i];
-          newElement.setAttribute(attr.name, attr.value);
-        }
-
-        // Move all child nodes
-        while (element.firstChild) {
-          newElement.appendChild(element.firstChild);
-        }
-
-        // Replace the old element with the new one
-        element.parentNode?.replaceChild(newElement, element);
-      }
-
-      // Process children recursively
-      const children = Array.from(element.children);
-      children.forEach(handleElement);
-    };
-
-    // Start processing from the body element
-    if (template.body) {
-      Array.from(template.body.children).forEach(handleElement);
-    }
   }
 
   private _processHandleBarsExprValue(columnValue: string, item: any): string {

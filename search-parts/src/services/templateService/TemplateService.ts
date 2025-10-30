@@ -250,11 +250,12 @@ export class TemplateService implements ITemplateService {
     return prefixedStyles.join(" ");
   }
 
-  public async replaceDisambiguatedMgtElementNames(
-    template: Document
-  ): Promise<void> {
-    await this._ensureMgtCustomElementHelper();
-
+  /**
+   * Synchronously replaces MGT element names with disambiguated versions.
+   * This assumes the MGT helper is already initialized.
+   * Used internally by replaceDisambiguatedMgtElementNames and by components that need synchronous processing.
+   */
+  private _replaceDisambiguatedMgtElementNamesSync(template: Document): void {
     if (
       !this._customElementHelper ||
       !this._customElementHelper.isDisambiguated
@@ -310,6 +311,13 @@ export class TemplateService implements ITemplateService {
     allElements.forEach((element) => {
       handleElement(element);
     });
+  }
+
+  public async replaceDisambiguatedMgtElementNames(
+    template: Document
+  ): Promise<void> {
+    await this._ensureMgtCustomElementHelper();
+    this._replaceDisambiguatedMgtElementNamesSync(template);
   }
 
   public applyDisambiguatedMgtPrefixIfNeeded(elementName: string): string {
