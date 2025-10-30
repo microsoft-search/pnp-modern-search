@@ -250,11 +250,12 @@ export class TemplateService implements ITemplateService {
     return prefixedStyles.join(" ");
   }
 
-  public async replaceDisambiguatedMgtElementNames(
-    template: Document
-  ): Promise<void> {
-    await this._ensureMgtCustomElementHelper();
-
+  /**
+   * Synchronously replaces MGT element names with disambiguated versions.
+   * This assumes the MGT helper is already initialized.
+   * Used internally by replaceDisambiguatedMgtElementNames and by components that need synchronous processing.
+   */
+  private _replaceDisambiguatedMgtElementNamesSync(template: Document): void {
     if (
       !this._customElementHelper ||
       !this._customElementHelper.isDisambiguated
@@ -273,6 +274,7 @@ export class TemplateService implements ITemplateService {
         const newTagName = `${
           this._customElementHelper.prefix
         }-${element.tagName.toLowerCase().slice(4)}`;
+        
         const newElement = template.createElement(newTagName);
 
         // Copy all attributes of the old element to the new one
@@ -311,12 +313,24 @@ export class TemplateService implements ITemplateService {
     });
   }
 
+  public async replaceDisambiguatedMgtElementNames(
+    template: Document
+  ): Promise<void> {
+    await this._ensureMgtCustomElementHelper();
+    this._replaceDisambiguatedMgtElementNamesSync(template);
+  }
+
   public applyDisambiguatedMgtPrefixIfNeeded(elementName: string): string {
     if (!elementName || !this.MgtCustomElementHelper) {
       return elementName;
     }
     const prefix = this.MgtCustomElementHelper.prefix;
-    const regex = new RegExp(`mgt-(?!${prefix.slice(4)})`, "g");
+    
+    // Fix for issue #4504: Only replace "mgt-" when it appears as an element selector
+    // The original regex was replacing ALL instances of "mgt-" including in class names like ".test-mgt-template"
+    // New regex uses lookbehind/lookahead to ensure we only match actual element selectors
+    const regex = new RegExp(`(?<![\\.#\\w-])mgt-(?!${prefix.slice(4)})(?=\\w)`, "g");
+    
     return elementName.replace(regex, `${prefix}-`);
   }
 
