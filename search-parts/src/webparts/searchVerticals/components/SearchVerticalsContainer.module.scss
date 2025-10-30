@@ -1,10 +1,13 @@
-.dataVerticals {
-  div[role=tablist] {
-    white-space: normal;
-  }
+.searchVerticalsContainer {
+  background: none;
 
-  .isLink {
-    display: flex;
+  .dataVerticals {
+    div[role=tablist] {
+      white-space: normal;
+    }
+
+    .isLink {
+      display: flex;
+    }
   }
-  
 }

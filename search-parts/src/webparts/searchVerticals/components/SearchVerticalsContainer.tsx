@@ -43,6 +43,7 @@ export default class SearchVerticalsContainer extends React.Component<ISearchVer
       displayMode={this.props.webPartTitleProps.displayMode}
       title={this.props.webPartTitleProps.title}
       updateProperty={this.props.webPartTitleProps.updateProperty}
+      themeVariant={this.props.webPartTitleProps.themeVariant}
       className={this.props.webPartTitleProps.className}
     />;
 
@@ -80,8 +81,10 @@ export default class SearchVerticalsContainer extends React.Component<ISearchVer
     });
 
     const theme = getTheme();
-    
-    return <ThemeProvider theme={theme}>
+
+    return <ThemeProvider
+      theme={theme}
+      className={styles.searchVerticalsContainer}>
       {renderTitle}
       <Pivot
         className={styles.dataVerticals}
