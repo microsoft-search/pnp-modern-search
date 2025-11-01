@@ -307,7 +307,7 @@ export class DocumentCardComponent extends React.Component<
               <DocumentCardTitle
                 theme={this.props.themeVariant as ITheme}
                 title={processedProps.title}
-                shouldTruncate={true}
+                //  shouldTruncate={true}
               />
             </Link>
             {processedProps.tags && !this.props.isCompact ? (
