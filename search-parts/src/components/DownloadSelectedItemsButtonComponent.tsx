@@ -296,25 +296,25 @@ export class DownloadSelectedItemsButtonComponent extends React.Component<IExpor
         // Build CSV content
         const rows: string[] = [];
 
-        // Add header row with internal field names
-        rows.push(columnHeaders.join("¤"));
+  // Add header row with internal field names
+  rows.push(columnHeaders.join(";"));
 
         // Add data rows
+        // CSV field formatter: wrap all values in double quotes and escape embedded quotes
+        const toCsvField = (val: any): string => {
+          if (val === null || val === undefined) {
+            return "";
+          }
+          let text = (typeof val === "object") ? JSON.stringify(val) : String(val);
+          // Escape embedded quotes by doubling them per CSV rules
+          text = text.replace(/"/g, '""');
+          // Wrap in quotes so delimiters and newlines are preserved
+          return `"${text}"`;
+        };
+
         this._selectedItems.forEach(item => {
-          const rowValues = columnHeaders.map(header => {
-            const value = item[header];
-            // Handle null/undefined values
-            if (value === null || value === undefined) {
-              return "";
-            }
-            // Convert objects/arrays to JSON string
-            if (typeof value === "object") {
-              return JSON.stringify(value).replace(/¤/g, "");
-            }
-            // Convert to string and escape ¤ separator
-            return String(value).replace(/¤/g, "");
-          });
-          rows.push(rowValues.join("¤"));
+          const rowValues = columnHeaders.map(header => toCsvField(item[header]));
+          rows.push(rowValues.join(";"));
         });
 
         // Join all rows with newlines
