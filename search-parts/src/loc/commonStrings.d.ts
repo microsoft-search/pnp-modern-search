@@ -195,6 +195,7 @@ declare interface ICommonStrings {
       SortByPlaceholderText: string;
       SortByDefaultOptionText: string;
       DownloadButtonText: string;
+      DownloadCSVButtonText: string;
     },
     Layouts: {
       Debug: {

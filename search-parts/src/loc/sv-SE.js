@@ -196,7 +196,8 @@ define([], function () {
       AddStaticDataLabel: "Lägg till statisk data",
       TextFieldApplyButtonText: "Tillämpa",
       SortByPlaceholderText: "Sortera efter...",
-      DownloadButtonText: "Ladda ner"
+      DownloadButtonText: "Ladda ner",
+      DownloadCSVButtonText: "Ladda ner som CSV"
     },
     Layouts: {
       Debug: {
