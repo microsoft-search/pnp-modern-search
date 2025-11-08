@@ -306,6 +306,8 @@ define([], function () {
                 ShowPersonaCardOnHoverCalloutMsgNative: "Diese Funktion verwendet die Standard-Komponente von SharePoint, um die LivePersona-Karte anzuzeigen. Beachten Sie den Disclaimer unter https://pnp.github.io/sp-dev-fx-controls-react/controls/LivePersona/.",
                 ShowPersonaPresenceInfo: "Präsenz anzeigen",
                 ShowPersonaPresenceInfoCalloutMsg: "Diese Funktion benötigt die folgende API-Berechtigungen in Ihrem Mandanten, um zu funktionieren: ['Presence.Read.All']",
+                ShowHoverOnPictureOnly: "Hover nur auf Bild anzeigen",
+                ShowHoverOnPictureOnlyCalloutMsg: "Wenn aktiviert, öffnet sich die Personenkarte nur beim Hovern über das Persona-Bild (Coin).",
                 Fields: {
                     ImageUrl: "Bild URL",
                     PrimaryText: "Primärer Text",

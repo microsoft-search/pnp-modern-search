@@ -50,25 +50,61 @@
                                 {{#> resultTypes item=item}}
 
                                     {{#and @root.properties.layoutProperties.showPersonaCard (slot item @root.slots.PersonQuery)}}
-                                        <mgt-person user-id="{{getUserEmail (slot item @root.slots.PersonQuery)}}" person-card="hover">
-                                            <template>
+                                        {{#if @root.properties.layoutProperties.showHoverOnPictureOnly}}
+                                            <div class="people-persona-row" style="display:flex;align-items:center;column-gap:4px;">
+                                                <mgt-person user-id="{{getUserEmail (slot item @root.slots.PersonQuery)}}" person-card="hover" class="people-persona-image-trigger">
+                                                    <template>
+                                                        <pnp-persona 
+                                                            data-image-url="\{{personImage}}" 
+                                                            data-fields-configuration="{{JSONstringify @root.properties.layoutProperties.peopleFields}}" 
+                                                            data-item="{{JSONstringify item}}" 
+                                                            data-persona-size="{{@root.properties.layoutProperties.personaSize}}"
+                                                            data-theme-variant="{{JSONstringify @root.theme}}"
+                                                            data-instance-id="{{@root.instanceId}}"
+                                                            data-context="{{JSONstringify (truncateContext @root)}}"
+                                                            data-show-presence={{@root.properties.layoutProperties.showPersonaPresenceInfo}}
+                                                            data-user-object-id="{{slot item @root.slots.PersonQuery}}"
+                                                            data-image-only="true"
+                                                        >
+                                                        </pnp-persona>
+                                                    </template>
+                                                    <template data-type="person-card">
+                                                        <mgt-person-card inherit-details></mgt-person-card>
+                                                    </template>
+                                                </mgt-person>
                                                 <pnp-persona 
-                                                    data-image-url="\{{personImage}}" 
                                                     data-fields-configuration="{{JSONstringify @root.properties.layoutProperties.peopleFields}}" 
                                                     data-item="{{JSONstringify item}}" 
-                                                    data-persona-size="{{@root.properties.layoutProperties.personaSize}}"
-                                                    data-theme-variant="{{JSONstringify @root.theme}}"
-                                                    data-instance-id="{{@root.instanceId}}"
-                                                    data-context="{{JSONstringify (truncateContext @root)}}"
-                                                    data-show-presence={{@root.properties.layoutProperties.showPersonaPresenceInfo}}
-                                                    data-user-object-id="{{slot item @root.slots.PersonQuery}}">
-                                                </pnp-persona>
-                                            </template>
-                                            <template data-type="person-card">
-                                                <mgt-person-card inherit-details>
-                                                </mgt-person-card>
-                                            </template>
-                                        </mgt-person>
+                                                    data-persona-size="{{@root.properties.layoutProperties.personaSize}}" 
+                                                    data-theme-variant="{{JSONstringify @root.theme}}" 
+                                                    data-instance-id="{{@root.instanceId}}" 
+                                                    data-context="{{JSONstringify (truncateContext @root)}}" 
+                                                    data-show-presence={{@root.properties.layoutProperties.showPersonaPresenceInfo}} 
+                                                    data-user-object-id="{{slot item @root.slots.PersonQuery}}" 
+                                                    data-hide-image="true"
+                                                ></pnp-persona>
+                                            </div>
+                                        {{else}}
+                                            <mgt-person user-id="{{getUserEmail (slot item @root.slots.PersonQuery)}}" person-card="hover">
+                                                <template>
+                                                    <pnp-persona 
+                                                        data-image-url="\{{personImage}}" 
+                                                        data-fields-configuration="{{JSONstringify @root.properties.layoutProperties.peopleFields}}" 
+                                                        data-item="{{JSONstringify item}}" 
+                                                        data-persona-size="{{@root.properties.layoutProperties.personaSize}}"
+                                                        data-theme-variant="{{JSONstringify @root.theme}}"
+                                                        data-instance-id="{{@root.instanceId}}"
+                                                        data-context="{{JSONstringify (truncateContext @root)}}"
+                                                        data-show-presence={{@root.properties.layoutProperties.showPersonaPresenceInfo}}
+                                                        data-user-object-id="{{slot item @root.slots.PersonQuery}}">
+                                                    </pnp-persona>
+                                                </template>
+                                                <template data-type="person-card">
+                                                    <mgt-person-card inherit-details>
+                                                    </mgt-person-card>
+                                                </template>
+                                            </mgt-person>
+                                        {{/if}}
                                     {{else}}
                                         <pnp-persona 
                                             data-fields-configuration="{{JSONstringify @root.properties.layoutProperties.peopleFields}}"
@@ -78,6 +114,7 @@
                                             data-instance-id="{{@root.instanceId}}"
                                             data-theme-variant="{{JSONstringify @root.theme}}"
                                             data-native-lpc={{@root.properties.layoutProperties.showPersonaCardNative}}
+                                            data-show-hover-on-picture-only={{@root.properties.layoutProperties.showHoverOnPictureOnly}}
                                             data-show-presence={{@root.properties.layoutProperties.showPersonaPresenceInfo}}
                                             data-user-object-id="{{slot item @root.slots.PersonQuery}}"
                                         ></pnp-persona>

@@ -33,6 +33,11 @@ export interface IPeopleLayoutProperties {
      * Flag indicating whether to show presence-information or not
      */
     showPersonaPresenceInfo: boolean;
+
+    /**
+     * When true, the hover card (native LPC or Graph Toolkit card) should only trigger when hovering the persona image (coin) instead of the whole row.
+     */
+    showHoverOnPictureOnly: boolean;
 }
 
 export class PeopleLayout extends BaseLayout<IPeopleLayoutProperties> {
@@ -67,6 +72,11 @@ export class PeopleLayout extends BaseLayout<IPeopleLayoutProperties> {
 
         if (!this.properties.personaSize) {
             this.properties.personaSize = 14;
+        }
+
+        if (this.properties.showHoverOnPictureOnly === undefined) {
+            // default value is false
+            this.properties.showHoverOnPictureOnly = false;
         }
 
         const { PropertyFieldCollectionData, CustomCollectionFieldType } = await import(
@@ -189,6 +199,15 @@ export class PeopleLayout extends BaseLayout<IPeopleLayoutProperties> {
                 onText: strings.General.OnTextLabel,
                 offText: strings.General.OffTextLabel,
                 checked: this.properties.showPersonaPresenceInfo
+            }),
+            this._propertyFieldToogleWithCallout('layoutProperties.showHoverOnPictureOnly', {
+                label: strings.Layouts.People.ShowHoverOnPictureOnly,
+                calloutTrigger: this._propertyFieldCalloutTriggers.Hover,
+                key: 'layoutProperties.showHoverOnPictureOnly',
+                calloutContent: React.createElement('p', { style: { maxWidth: 250, wordBreak: 'break-word' } }, strings.Layouts.People.ShowHoverOnPictureOnlyCalloutMsg),
+                onText: strings.General.OnTextLabel,
+                offText: strings.General.OffTextLabel,
+                checked: this.properties.showHoverOnPictureOnly
             }),
             PropertyPaneChoiceGroup('layoutProperties.personaSize', {
                 label: strings.Layouts.People.PersonaSizeOptionsLabel,

@@ -105,6 +105,21 @@ export interface IPersonaComponentProps {
    * The person's Entra ID Object-ID (usually passed via default-slot "PersonQuery")
    */
   userObjectId?: string;
+
+  /**
+   * If true, only render the image/coin (used when hover should trigger on image only)
+   */
+  imageOnly?: boolean;
+
+  /**
+   * If true, hide the image/coin and render only the text fields
+   */
+  hideImage?: boolean;
+
+  /**
+   * If true in combination with nativeLpc, trigger LPC hover only on the image
+   */
+  showHoverOnPictureOnly?: boolean;
 }
 
 export interface IPresenceInfo {
@@ -115,18 +130,23 @@ export interface IPresenceInfo {
 export interface IPersonaComponentState {
   PresenceProcessed: boolean;
   PresenceInfo: IPresenceInfo;
+  imageHeight: number | null;
 }
 
 export class PersonaComponent extends React.Component<
   IPersonaComponentProps,
   IPersonaComponentState
 > {
+  private imageWrapperRef: React.RefObject<HTMLDivElement>;
+
   public constructor(props: IPersonaComponentProps) {
     super(props);
 
+    this.imageWrapperRef = React.createRef();
     this.state = {
       PresenceProcessed: false,
       PresenceInfo: undefined,
+      imageHeight: null,
     };
   }
 
@@ -153,6 +173,19 @@ export class PersonaComponent extends React.Component<
       // if not showing presence-information, simply set state "PresenceProcessed" to "true" and leave "PresenceInfo" = "undefined"
       this.setState({ PresenceProcessed: true });
     }
+
+    // Measure image height for showHoverOnPictureOnly mode
+    if (this.props.showHoverOnPictureOnly && this.imageWrapperRef.current) {
+      // Use setTimeout to ensure DOM has rendered
+      setTimeout(() => {
+        if (this.imageWrapperRef.current) {
+          const height = this.imageWrapperRef.current.offsetHeight;
+          if (height > 0) {
+            this.setState({ imageHeight: height });
+          }
+        }
+      }, 100);
+    }
   }
 
   public render() {
@@ -167,6 +200,39 @@ export class PersonaComponent extends React.Component<
         );
     }
 
+    // Build styles; tighten coin spacing when rendering image-only
+    const personaStyles: any = {
+      root: { 
+        height: "100%",
+        ...(this.props.imageOnly ? { display: 'block !important' } : {})
+      },
+      ...(this.props.hideImage
+        ? {
+            // When hideImage is true (text-only persona), completely hide coin and imageArea
+            coin: { display: 'none !important' },
+            imageArea: { 
+              display: 'none !important',
+              margin: '0 !important', 
+              padding: '0 !important', 
+              width: '0 !important', 
+              minWidth: '0 !important',
+            },
+          }
+        : {}),
+      ...(this.props.imageOnly
+        ? {
+            // When imageOnly is true (coin-only persona), hide details and show pointer cursor
+            details: { display: "none" },
+            coin: {
+              cursor: 'pointer'
+            },
+            imageArea: {
+              cursor: 'pointer'
+            }
+          }
+        : {}),
+    };
+
     const persona: IPersonaProps = {
       theme: this.props.themeVariant as ITheme,
       imageUrl: this.props.imageUrl
@@ -174,12 +240,12 @@ export class PersonaComponent extends React.Component<
         : processedProps.imageUrl,
       imageShouldFadeIn: false,
       imageShouldStartVisible: true,
-      styles: {
-        root: {
-          height: "100%",
-        },
-      },
+      styles: personaStyles,
+      hidePersonaDetails: this.props.imageOnly ? true : undefined,
       text: processedProps.primaryText, // This is to get the correct color for coin (used internally by the Persona component)
+      onRenderCoin: this.props.hideImage
+        ? () => null
+        : undefined,
       onRenderInitials: (props: IPersonaSharedProps) => {
         let imageInitials = undefined;
         if (!isEmpty(processedProps.primaryText)) {
@@ -197,6 +263,7 @@ export class PersonaComponent extends React.Component<
         );
       },
       onRenderPrimaryText: (props: IPersonaProps) => {
+        if (this.props.imageOnly) return null;
         return (
           <div
             style={{ display: "inline", whiteSpace: "normal" }}
@@ -213,6 +280,7 @@ export class PersonaComponent extends React.Component<
         );
       },
       onRenderSecondaryText: (props: IPersonaProps) => {
+        if (this.props.imageOnly) return null;
         return (
           <div
             style={{ display: "inline", whiteSpace: "normal" }}
@@ -229,6 +297,7 @@ export class PersonaComponent extends React.Component<
         );
       },
       onRenderTertiaryText: (props: IPersonaProps) => {
+        if (this.props.imageOnly) return null;
         return (
           <div
             style={{ display: "inline", whiteSpace: "normal" }}
@@ -245,6 +314,7 @@ export class PersonaComponent extends React.Component<
         );
       },
       onRenderOptionalText: (props: IPersonaProps) => {
+        if (this.props.imageOnly) return null;
         return (
           <div
             style={{ display: "inline", whiteSpace: "normal" }}
@@ -269,6 +339,69 @@ export class PersonaComponent extends React.Component<
     }
 
     if (this.props.nativeLpc) {
+      if (this.props.showHoverOnPictureOnly) {
+        // Render coin wrapped in LivePersona and text-only persona beside it
+        const sizeNum = parseInt(this.props.personaSize) || 48;
+        // Use measured image height, fallback to sizeNum if not yet measured
+        const actualHeight = this.state.imageHeight || sizeNum;
+        const wrapperWidth = Math.round(actualHeight * 1.0);
+        // const textMarginLeft = actualHeight <= 48 ? 12 : 16; // gentle shift right for text persona
+        const coinOnly: IPersonaProps = {
+          ...persona,
+          onRenderPrimaryText: () => null,
+          onRenderSecondaryText: () => null,
+          onRenderTertiaryText: () => null,
+          onRenderOptionalText: () => null,
+        };
+
+        const textOnly: IPersonaProps = {
+          ...persona,
+          onRenderCoin: () => null,
+          styles: {
+            ...(persona.styles as any),
+            // Completely hide coin and imageArea in text-only persona
+            coin: { display: 'none !important' },
+            imageArea: { 
+              display: 'none !important',
+              width: '0 !important',
+              minWidth: '0 !important',
+              margin: '0 !important',
+              padding: '0 !important'
+            },
+            details: {
+              paddingLeft: '6px !important'
+            }
+          } as any
+        };
+
+        return (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div 
+              ref={this.imageWrapperRef}
+              className="live-persona-card-wrapper" 
+              style={{ 
+                width: wrapperWidth,
+                maxWidth: wrapperWidth,
+                minWidth: wrapperWidth,
+                cursor: 'pointer'
+              }}>
+              <LivePersona
+                upn={processedProps.upn}
+                template={<Persona {...coinOnly} size={parseInt(this.props.personaSize)} />}
+                serviceScope={this.props.serviceScope}
+              />
+            </div>
+            <div className="text-only-persona" style={{ 
+              display: 'inline-block'
+            }}>
+              <style dangerouslySetInnerHTML={{
+                __html: `.text-only-persona .ms-Persona-coin, .text-only-persona .ms-Persona-imageArea { display: none !important; }`
+              }} />
+              <Persona {...textOnly} size={parseInt(this.props.personaSize)} />
+            </div>
+          </div>
+        );
+      }
       return (
         <LivePersona
           upn={processedProps.upn}

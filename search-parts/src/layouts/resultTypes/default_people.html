@@ -2,6 +2,34 @@
     /* Insert your CSS here */
 </style>
 
+{{#if @root.properties.layoutProperties.showHoverOnPictureOnly}}
+<div style="display:flex;align-items:center;column-gap:4px;">
+    <pnp-persona
+        data-image-url="/_layouts/15/userphoto.aspx?size=L&username={{getUserEmail (slot item @root.slots.UserEmail)}}"
+        data-primary-text="{{slot item @root.slots.UserDisplayName}}"
+        data-secondary-text="{{JobTitle}}"
+        data-tertiary-text="{{getUserEmail (slot item @root.slots.UserEmail)}}"
+        data-optional-text="WorkPhone"
+        data-persona-size="{{@root.properties.layoutProperties.personaSize}}"
+        data-theme-variant="{{JSONstringify @root.theme}}"
+        data-native-lpc={{@root.properties.layoutProperties.showPersonaCardNative}}
+        data-show-hover-on-picture-only={{@root.properties.layoutProperties.showHoverOnPictureOnly}}
+        data-image-only="true"
+    >
+    </pnp-persona>
+    <pnp-persona
+        data-image-url="/_layouts/15/userphoto.aspx?size=L&username={{getUserEmail (slot item @root.slots.UserEmail)}}"
+        data-primary-text="{{slot item @root.slots.UserDisplayName}}"
+        data-secondary-text="{{JobTitle}}"
+        data-tertiary-text="{{getUserEmail (slot item @root.slots.UserEmail)}}"
+        data-optional-text="WorkPhone"
+        data-persona-size="{{@root.properties.layoutProperties.personaSize}}"
+        data-theme-variant="{{JSONstringify @root.theme}}"
+        data-hide-image="true"
+    >
+    </pnp-persona>
+</div>
+{{else}}
 <pnp-persona
     data-image-url="/_layouts/15/userphoto.aspx?size=L&username={{getUserEmail (slot item @root.slots.UserEmail)}}"
     data-primary-text="{{slot item @root.slots.UserDisplayName}}"
@@ -13,3 +41,4 @@
     data-native-lpc={{@root.properties.layoutProperties.showPersonaCardNative}}
 >
 </pnp-persona>
+{{/if}}

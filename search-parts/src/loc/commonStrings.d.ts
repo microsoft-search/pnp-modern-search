@@ -305,6 +305,8 @@ declare interface ICommonStrings {
         ShowPersonaCardOnHoverCalloutMsgNative: string;
         ShowPersonaPresenceInfo: string;
         ShowPersonaPresenceInfoCalloutMsg: string;
+        ShowHoverOnPictureOnly: string;
+        ShowHoverOnPictureOnlyCalloutMsg: string;
         Fields: {
           ImageUrl: string;
           PrimaryText: string;

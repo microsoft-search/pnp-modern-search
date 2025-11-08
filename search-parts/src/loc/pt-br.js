@@ -303,6 +303,8 @@ define([], function () {
                 ShowPersonaCardOnHoverCalloutMsg: "Esse recurso usa o Microsoft Graph para exibir informações sobre o usuário e precisa das seguintes permissões de API em seu locatário para funcionar: ['User.Read','People.Read','Contacts.Read','User.Read.All'].",
                 ShowPersonaPresenceInfo: "Mostrar presença",
                 ShowPersonaPresenceInfoCalloutMsg: "Esse recurso precisa das seguintes permissões de API em seu locatário para funcionar: ['Presence.Read.All']",
+                ShowHoverOnPictureOnly: "Mostrar hover apenas na imagem",
+                ShowHoverOnPictureOnlyCalloutMsg: "Quando ativado, o cartão de pessoa abre apenas ao passar o mouse sobre a imagem da persona (moeda).",
                 Fields: {
                     ImageUrl: "URL da imagem",
                     PrimaryText: "Texto primário",
