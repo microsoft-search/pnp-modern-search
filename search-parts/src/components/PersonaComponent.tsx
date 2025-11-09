@@ -130,296 +130,209 @@ export interface IPresenceInfo {
 export interface IPersonaComponentState {
   PresenceProcessed: boolean;
   PresenceInfo: IPresenceInfo;
-  imageHeight: number | null;
+  imageHeight: number | undefined;
 }
 
-export class PersonaComponent extends React.Component<
-  IPersonaComponentProps,
-  IPersonaComponentState
-> {
-  private imageWrapperRef: React.RefObject<HTMLDivElement>;
+export class PersonaComponent extends React.Component<IPersonaComponentProps, IPersonaComponentState> {
+  private imageWrapperRef = React.createRef<HTMLDivElement>();
+  private componentRef = React.createRef<HTMLDivElement>();
 
-  public constructor(props: IPersonaComponentProps) {
+  constructor(props: IPersonaComponentProps) {
     super(props);
-
-    this.imageWrapperRef = React.createRef();
     this.state = {
       PresenceProcessed: false,
-      PresenceInfo: undefined,
-      imageHeight: null,
+      PresenceInfo: undefined as any, // will be set after graph call
+      imageHeight: undefined
     };
   }
 
   public async componentDidMount(): Promise<void> {
-    if (
-      this.props.showPresence &&
-      this.props.userObjectId &&
-      !this.state.PresenceProcessed
-    ) {
-      // get presence-information via MS Graph asynchronously
+    // Presence fetch
+    if (this.props.showPresence && this.props.userObjectId && !this.state.PresenceProcessed) {
       this.getUserPresenceInfo(this.props.userObjectId)
-        .then((presenceInfo) => {
-          this.setState({
-            PresenceProcessed: true,
-            PresenceInfo: presenceInfo,
-          });
-        })
-        .catch((error) => {
-          // in case of an error, simply set state "PresenceProcessed" to "true" and leave "PresenceInfo" = "undefined"
+        .then(presenceInfo => this.setState({ PresenceProcessed: true, PresenceInfo: presenceInfo }))
+        .catch(error => {
           Log.error(LogSource, error, this.props.serviceScope);
           this.setState({ PresenceProcessed: true });
         });
     } else {
-      // if not showing presence-information, simply set state "PresenceProcessed" to "true" and leave "PresenceInfo" = "undefined"
       this.setState({ PresenceProcessed: true });
     }
 
-    // Measure image height for showHoverOnPictureOnly mode
+    // Measure image wrapper for picture-only split layout
     if (this.props.showHoverOnPictureOnly && this.imageWrapperRef.current) {
-      // Use setTimeout to ensure DOM has rendered
       setTimeout(() => {
         if (this.imageWrapperRef.current) {
-          const height = this.imageWrapperRef.current.offsetHeight;
-          if (height > 0) {
-            this.setState({ imageHeight: height });
-          }
+          const h = this.imageWrapperRef.current.offsetHeight;
+          if (h > 0) this.setState({ imageHeight: h });
         }
       }, 100);
     }
   }
 
-  public render() {
+  public render(): React.ReactNode {
+    // Resolve fields via fieldsConfiguration when provided to populate persona texts/image
     let processedProps: IPersonaComponentProps = this.props;
-
     if (this.props.fieldsConfiguration && this.props.item) {
-      processedProps =
-        this.props.templateService.processFieldsConfiguration<IPersonaComponentProps>(
-          this.props.fieldsConfiguration,
-          this.props.item,
-          this.props.context
-        );
+      processedProps = this.props.templateService.processFieldsConfiguration<IPersonaComponentProps>(
+        this.props.fieldsConfiguration,
+        this.props.item,
+        this.props.context
+      );
     }
+    
+    // Fallbacks to handle missing fields gracefully
+    const primaryText = (this.props.primaryText ?? (processedProps as any).primaryText ?? (this.props.item as any)?.primaryText ?? (this.props.item as any)?.PrimaryText) || '';
+    const secondaryText = (this.props.secondaryText ?? (processedProps as any).secondaryText ?? (this.props.item as any)?.secondaryText ?? (this.props.item as any)?.SecondaryText) || '';
+    const tertiaryText = (this.props.tertiaryText ?? (processedProps as any).tertiaryText ?? (this.props.item as any)?.tertiaryText ?? (this.props.item as any)?.TertiaryText) || '';
+    const optionalText = (this.props.optionalText ?? (processedProps as any).optionalText ?? (this.props.item as any)?.optionalText ?? (this.props.item as any)?.OptionalText) || '';
+    const imageUrlResolved = (this.props.imageUrl ?? (processedProps as any).imageUrl ?? (this.props.item as any)?.imageUrl ?? (this.props.item as any)?.ImageUrl) as string | undefined;
+    const upnResolved = (this.props.upn ?? (processedProps as any).upn ?? (this.props.item as any)?.upn ?? (this.props.item as any)?.Upn) as string | undefined;
 
-    // Build styles; tighten coin spacing when rendering image-only
-    const personaStyles: any = {
-      root: { 
-        height: "100%",
-        ...(this.props.imageOnly ? { display: 'block !important' } : {})
-      },
-      ...(this.props.hideImage
-        ? {
-            // When hideImage is true (text-only persona), completely hide coin and imageArea
-            coin: { display: 'none !important' },
-            imageArea: { 
-              display: 'none !important',
-              margin: '0 !important', 
-              padding: '0 !important', 
-              width: '0 !important', 
-              minWidth: '0 !important',
-            },
-          }
-        : {}),
-      ...(this.props.imageOnly
-        ? {
-            // When imageOnly is true (coin-only persona), hide details and show pointer cursor
-            details: { display: "none" },
-            coin: {
-              cursor: 'pointer'
-            },
-            imageArea: {
-              cursor: 'pointer'
-            }
-          }
-        : {}),
-    };
+    // Hide coin only when explicitly requested via hideImage prop
+    const hideCoin = this.props.hideImage;
+
+    const personaStyles: any = hideCoin ? {
+      coin: { display: 'none', width: 0, visibility: 'hidden' },
+      imageArea: { display: 'none', width: 0, visibility: 'hidden' }
+    } : {};
 
     const persona: IPersonaProps = {
       theme: this.props.themeVariant as ITheme,
-      imageUrl: this.props.imageUrl
-        ? this.props.imageUrl
-        : processedProps.imageUrl,
+      imageUrl: hideCoin ? undefined : imageUrlResolved,
       imageShouldFadeIn: false,
       imageShouldStartVisible: true,
       styles: personaStyles,
       hidePersonaDetails: this.props.imageOnly ? true : undefined,
-      text: processedProps.primaryText, // This is to get the correct color for coin (used internally by the Persona component)
-      onRenderCoin: this.props.hideImage
-        ? () => null
-        : undefined,
+      text: primaryText,
+      onRenderCoin: hideCoin ? () => null : undefined,
       onRenderInitials: (props: IPersonaSharedProps) => {
         let imageInitials = undefined;
-        if (!isEmpty(processedProps.primaryText)) {
-          imageInitials = getInitials(
-            UrlHelper.decode(processedProps.primaryText),
-            false,
-            false
-          );
+        if (!isEmpty(primaryText)) {
+          imageInitials = getInitials(UrlHelper.decode(primaryText), false, false);
         }
-
-        return imageInitials ? (
-          <span>{imageInitials}</span>
-        ) : (
-          <Icon iconName="Contact" />
-        );
+        return imageInitials ? <span>{imageInitials}</span> : <Icon iconName="Contact" />;
       },
-      onRenderPrimaryText: (props: IPersonaProps) => {
+      onRenderPrimaryText: () => {
         if (this.props.imageOnly) return null;
-        return (
-          <div
-            style={{ display: "inline", whiteSpace: "normal" }}
-            dangerouslySetInnerHTML={{
-              __html: this.props.templateService.sanitizeHtmlWithStylePreservation(
-                (
-                  this.props.templateService as any
-                ).applyDisambiguatedMgtPrefixIfNeeded(
-                  processedProps.primaryText
-                )
-              ),
-            }}
-          ></div>
-        );
+        return <div style={{ display: 'inline', whiteSpace: 'normal' }} dangerouslySetInnerHTML={{ __html: this.props.templateService.sanitizeHtmlWithStylePreservation((this.props.templateService as any).applyDisambiguatedMgtPrefixIfNeeded(primaryText)) }} />;
       },
-      onRenderSecondaryText: (props: IPersonaProps) => {
+      onRenderSecondaryText: () => {
         if (this.props.imageOnly) return null;
-        return (
-          <div
-            style={{ display: "inline", whiteSpace: "normal" }}
-            dangerouslySetInnerHTML={{
-              __html: this.props.templateService.sanitizeHtmlWithStylePreservation(
-                (
-                  this.props.templateService as any
-                ).applyDisambiguatedMgtPrefixIfNeeded(
-                  processedProps.secondaryText
-                )
-              ),
-            }}
-          ></div>
-        );
+        return <div style={{ display: 'inline', whiteSpace: 'normal' }} dangerouslySetInnerHTML={{ __html: this.props.templateService.sanitizeHtmlWithStylePreservation((this.props.templateService as any).applyDisambiguatedMgtPrefixIfNeeded(secondaryText)) }} />;
       },
-      onRenderTertiaryText: (props: IPersonaProps) => {
+      onRenderTertiaryText: () => {
         if (this.props.imageOnly) return null;
-        return (
-          <div
-            style={{ display: "inline", whiteSpace: "normal" }}
-            dangerouslySetInnerHTML={{
-              __html: this.props.templateService.sanitizeHtmlWithStylePreservation(
-                (
-                  this.props.templateService as any
-                ).applyDisambiguatedMgtPrefixIfNeeded(
-                  processedProps.tertiaryText
-                )
-              ),
-            }}
-          ></div>
-        );
+        return <div style={{ display: 'inline', whiteSpace: 'normal' }} dangerouslySetInnerHTML={{ __html: this.props.templateService.sanitizeHtmlWithStylePreservation((this.props.templateService as any).applyDisambiguatedMgtPrefixIfNeeded(tertiaryText)) }} />;
       },
-      onRenderOptionalText: (props: IPersonaProps) => {
+      onRenderOptionalText: () => {
         if (this.props.imageOnly) return null;
-        return (
-          <div
-            style={{ display: "inline", whiteSpace: "normal" }}
-            dangerouslySetInnerHTML={{
-              __html: this.props.templateService.sanitizeHtmlWithStylePreservation(
-                (
-                  this.props.templateService as any
-                ).applyDisambiguatedMgtPrefixIfNeeded(
-                  processedProps.optionalText
-                )
-              ),
-            }}
-          ></div>
-        );
-      },
+        return <div style={{ display: 'inline', whiteSpace: 'normal' }} dangerouslySetInnerHTML={{ __html: this.props.templateService.sanitizeHtmlWithStylePreservation((this.props.templateService as any).applyDisambiguatedMgtPrefixIfNeeded(optionalText)) }} />;
+      }
     };
 
-    // if PresenceInfo is present, set appropriate props in IPersonaProps
     if (this.state.PresenceInfo) {
       persona.presence = this.state.PresenceInfo.Presence;
       persona.presenceTitle = this.state.PresenceInfo.Activity;
     }
 
+    // Native LPC path
     if (this.props.nativeLpc) {
       if (this.props.showHoverOnPictureOnly) {
-        // Render coin wrapped in LivePersona and text-only persona beside it
-        const sizeNum = parseInt(this.props.personaSize) || 48;
-        // Use measured image height, fallback to sizeNum if not yet measured
+        // Picture-only mode: split layout with hover on image only
+        const sizeNum = parseInt(this.props.personaSize ?? '48') || 48;
         const actualHeight = this.state.imageHeight || sizeNum;
         const wrapperWidth = Math.round(actualHeight * 1.0);
-        // const textMarginLeft = actualHeight <= 48 ? 12 : 16; // gentle shift right for text persona
-        const coinOnly: IPersonaProps = {
-          ...persona,
+
+        // For coin-only: ensure image is visible by NOT inheriting hideCoin styles
+        const coinOnly: IPersonaProps = { 
+          ...persona, 
+          imageUrl: imageUrlResolved, // Explicitly set image
+          styles: {}, // No coin hiding styles
+          onRenderCoin: undefined, // Allow default coin render
+          hidePersonaDetails: true,
           onRenderPrimaryText: () => null,
           onRenderSecondaryText: () => null,
           onRenderTertiaryText: () => null,
-          onRenderOptionalText: () => null,
+          onRenderOptionalText: () => null
         };
 
-        const textOnly: IPersonaProps = {
-          ...persona,
+        // Text-only half: aggressively suppress any coin/initials
+        const textOnly: IPersonaProps = { 
+          ...persona, 
+          imageUrl: undefined, 
           onRenderCoin: () => null,
-          styles: {
-            ...(persona.styles as any),
-            // Completely hide coin and imageArea in text-only persona
-            coin: { display: 'none !important' },
-            imageArea: { 
-              display: 'none !important',
-              width: '0 !important',
-              minWidth: '0 !important',
-              margin: '0 !important',
-              padding: '0 !important'
-            },
-            details: {
-              paddingLeft: '6px !important'
-            }
-          } as any
+          onRenderInitials: () => null,
+          styles: { 
+            ...(persona.styles as any), 
+            coin: { display: 'none', width: 0, minWidth: 0, height: 0, minHeight: 0, visibility: 'hidden', overflow: 'hidden' }, 
+            imageArea: { display: 'none', width: 0, minWidth: 0, height: 0, minHeight: 0, visibility: 'hidden', overflow: 'hidden' } 
+          } 
         };
 
         return (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <div 
-              ref={this.imageWrapperRef}
-              className="live-persona-card-wrapper" 
-              style={{ 
-                width: wrapperWidth,
-                maxWidth: wrapperWidth,
-                minWidth: wrapperWidth,
-                cursor: 'pointer'
-              }}>
-              <LivePersona
-                upn={processedProps.upn}
-                template={<Persona {...coinOnly} size={parseInt(this.props.personaSize)} />}
-                serviceScope={this.props.serviceScope}
-              />
+          <div ref={this.componentRef} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div ref={this.imageWrapperRef} className="live-persona-card-wrapper" style={{ width: wrapperWidth, maxWidth: wrapperWidth, minWidth: wrapperWidth, cursor: 'pointer' }}>
+              <LivePersona upn={upnResolved} template={<Persona {...coinOnly} size={parseInt(this.props.personaSize ?? '48')} />} serviceScope={this.props.serviceScope} />
             </div>
-            <div className="text-only-persona" style={{ 
-              display: 'inline-block'
-            }}>
-              <style dangerouslySetInnerHTML={{
-                __html: `.text-only-persona .ms-Persona-coin, .text-only-persona .ms-Persona-imageArea { display: none !important; }`
-              }} />
-              <Persona {...textOnly} size={parseInt(this.props.personaSize)} />
+            <div className="text-only-persona" style={{ display: 'inline-block' }}>
+              <style dangerouslySetInnerHTML={{ __html: `.text-only-persona .ms-Persona-coin, .text-only-persona .ms-Persona-imageArea, .text-only-persona .ms-Persona-initials, .text-only-persona [class*="coin-"], .text-only-persona [class*="imageArea-"], .text-only-persona [class*="initials-"], .text-only-persona [data-automationid="PersonaCoin"] { display: none !important; width: 0 !important; min-width: 0 !important; height: 0 !important; min-height: 0 !important; overflow: hidden !important; visibility: hidden !important; }` }} />
+              <Persona {...textOnly} size={parseInt(this.props.personaSize ?? '48')} />
             </div>
           </div>
         );
       }
+
+      // Native LPC without picture-only: full persona with hover on entire component
       return (
-        <LivePersona
-          upn={processedProps.upn}
-          template={
-            <>
-              <Persona
-                {...persona}
-                size={parseInt(this.props.personaSize)}
-              ></Persona>
-            </>
-          }
-          serviceScope={this.props.serviceScope}
-        />
+        <div ref={this.componentRef}>
+          <LivePersona upn={upnResolved} template={<Persona {...persona} size={parseInt(this.props.personaSize ?? '48')} />} serviceScope={this.props.serviceScope} />
+        </div>
+      );
+    }
+
+    // Non-native picture-only: this is handled by mgt-person in the template, so just render image-only or text-only persona
+    // No LivePersona wrapper needed here since mgt-person provides the hover card functionality
+
+    // Non-native hover-on-picture-only text-only variation
+    if (this.props.showHoverOnPictureOnly && this.props.hideImage) {
+      // Forcefully suppress any coin/initials rendering for the text-only persona
+      const textOnly: IPersonaProps = {
+        ...persona,
+        imageUrl: undefined,
+        onRenderCoin: () => null,
+        onRenderInitials: () => null,
+        styles: {
+          ...(persona.styles as any),
+          coin: { display: 'none', width: 0, minWidth: 0, height: 0, minHeight: 0, visibility: 'hidden', overflow: 'hidden' },
+          imageArea: { display: 'none', width: 0, minWidth: 0, height: 0, minHeight: 0, visibility: 'hidden', overflow: 'hidden' }
+        }
+      };
+
+      return (
+        <div ref={this.componentRef} className="text-only-persona" style={{ display: 'inline-block' }}>
+          <style
+            dangerouslySetInnerHTML={{
+              __html:
+                `.text-only-persona .ms-Persona-coin,` +
+                `.text-only-persona .ms-Persona-imageArea,` +
+                `.text-only-persona .ms-Persona-initials,` +
+                `.text-only-persona [class*="coin-"],` +
+                `.text-only-persona [class*="imageArea-"],` +
+                `.text-only-persona [class*="initials-"],` +
+                `.text-only-persona [data-automationid="PersonaCoin"] {` +
+                ` display: none !important; width: 0 !important; min-width: 0 !important; height: 0 !important; min-height: 0 !important; overflow: hidden !important; visibility: hidden !important; }`
+            }}
+          />
+          <Persona {...textOnly} size={parseInt(this.props.personaSize ?? '48')} />
+        </div>
       );
     }
 
     return (
-      <Persona {...persona} size={parseInt(this.props.personaSize)}></Persona>
+      <div ref={this.componentRef} style={{ display: 'inline-block' }}>
+        <Persona {...persona} size={parseInt(this.props.personaSize ?? '48')} />
+      </div>
     );
   }
 
