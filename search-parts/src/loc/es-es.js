@@ -306,6 +306,8 @@ define([], function () {
                 ShowPersonaCardOnHoverCalloutMsg: "Esta función utiliza Microsoft Graph para mostrar información sobre el usuario y necesita los siguientes permisos de la API en su inquilino para funcionar: ['User.Read','People.Read','Contacts.Read','User.Read.All'].",
                 ShowPersonaPresenceInfo: "Mostrar presencia",
                 ShowPersonaPresenceInfoCalloutMsg: "Esta función necesita los siguientes permisos de API en su tenant para funcionar: ['Presence.Read.All']",
+                ShowHoverOnPictureOnly: "Mostrar hover solo en la imagen",
+                ShowHoverOnPictureOnlyCalloutMsg: "Cuando está habilitado, la tarjeta de persona se abre solo al pasar el cursor sobre la imagen de persona (moneda).",
                 Fields: {
                     ImageUrl: "URL de la imagen",
                     PrimaryText: "Texto principal",

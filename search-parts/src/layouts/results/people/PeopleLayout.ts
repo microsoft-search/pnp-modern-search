@@ -33,6 +33,11 @@ export interface IPeopleLayoutProperties {
      * Flag indicating whether to show presence-information or not
      */
     showPersonaPresenceInfo: boolean;
+
+    /**
+     * When true, the hover card (native LPC or Graph Toolkit card) should only trigger when hovering the persona image (coin) instead of the whole row.
+     */
+    showHoverOnPictureOnly: boolean;
 }
 
 export class PeopleLayout extends BaseLayout<IPeopleLayoutProperties> {
@@ -69,6 +74,11 @@ export class PeopleLayout extends BaseLayout<IPeopleLayoutProperties> {
             this.properties.personaSize = 14;
         }
 
+        if (this.properties.showHoverOnPictureOnly === undefined) {
+            // default value is false
+            this.properties.showHoverOnPictureOnly = false;
+        }
+
         const { PropertyFieldCollectionData, CustomCollectionFieldType } = await import(
             /* webpackChunkName: 'pnp-modern-search-results-people-layout' */
             '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData'
@@ -99,8 +109,9 @@ export class PeopleLayout extends BaseLayout<IPeopleLayoutProperties> {
 
         const availableOptions: IComboBoxOption[] = availableFields.map((fieldName) => { return { key: fieldName, text: fieldName } as IComboBoxOption; });
 
-        return [
+        const fields: IPropertyPaneField<any>[] = [];
 
+        fields.push(
             this._propertyFieldCollectionData('layoutProperties.peopleFields', {
                 manageBtnLabel: strings.Layouts.People.ManagePeopleFieldsLabel,
                 key: 'layoutProperties.peopleFields',
@@ -152,7 +163,10 @@ export class PeopleLayout extends BaseLayout<IPeopleLayoutProperties> {
                         title: strings.Layouts.People.UseHandlebarsExpressionLabel
                     }
                 ]
-            }),
+            })
+        );
+
+        fields.push(
             PropertyPaneButton('layoutProperties.resetFields', {
                 buttonType: PropertyPaneButtonType.Command,
                 icon: 'Refresh',
@@ -162,7 +176,21 @@ export class PeopleLayout extends BaseLayout<IPeopleLayoutProperties> {
                     this.properties.peopleFields = null;
                     this.onInit();
                 }
-            }),
+            })
+        );
+
+        // Mutually exclusive persona card toggles with better UX:
+        // Instead of silently clearing the opposing toggle after selection, we disable it and show a helper label.
+        const nativeEnabled: boolean = this.properties.showPersonaCardNative === true;
+        const nonNativeEnabled: boolean = this.properties.showPersonaCard === true;
+
+        // Ensure only one stored value can be true (data integrity) while still providing a disabled opposing toggle.
+        if (nativeEnabled && nonNativeEnabled) {
+            // If both somehow ended up true (legacy config), prefer native and disable non-native.
+            this.properties.showPersonaCard = false;
+        }
+
+        fields.push(
             this._propertyFieldToogleWithCallout('layoutProperties.showPersonaCardNative', {
                 label: strings.Layouts.People.ShowPersonaCardOnHoverNative,
                 calloutTrigger: this._propertyFieldCalloutTriggers.Hover,
@@ -170,8 +198,12 @@ export class PeopleLayout extends BaseLayout<IPeopleLayoutProperties> {
                 calloutContent: React.createElement('p', { style: { maxWidth: 250, wordBreak: 'break-word' } }, strings.Layouts.People.ShowPersonaCardOnHoverCalloutMsgNative),
                 onText: strings.General.OnTextLabel,
                 offText: strings.General.OffTextLabel,
-                checked: this.properties.showPersonaCardNative
-            }),
+                checked: nativeEnabled,
+                disabled: nonNativeEnabled // disable if the other is active
+            })
+        );
+
+        fields.push(
             this._propertyFieldToogleWithCallout('layoutProperties.showPersonaCard', {
                 label: strings.Layouts.People.ShowPersonaCardOnHover,
                 calloutTrigger: this._propertyFieldCalloutTriggers.Hover,
@@ -179,8 +211,14 @@ export class PeopleLayout extends BaseLayout<IPeopleLayoutProperties> {
                 calloutContent: React.createElement('p', { style: { maxWidth: 250, wordBreak: 'break-word' } }, strings.Layouts.People.ShowPersonaCardOnHoverCalloutMsg),
                 onText: strings.General.OnTextLabel,
                 offText: strings.General.OffTextLabel,
-                checked: this.properties.showPersonaCard,
-            }),
+                checked: nonNativeEnabled,
+                disabled: nativeEnabled // disable if native is active
+            })
+        );
+
+        // Removed helper label to keep the pane clean; exclusivity is enforced via disabled state only.
+
+        fields.push(
             this._propertyFieldToogleWithCallout('layoutProperties.showPersonaPresenceInfo', {
                 label: strings.Layouts.People.ShowPersonaPresenceInfo,
                 calloutTrigger: this._propertyFieldCalloutTriggers.Hover,
@@ -189,7 +227,23 @@ export class PeopleLayout extends BaseLayout<IPeopleLayoutProperties> {
                 onText: strings.General.OnTextLabel,
                 offText: strings.General.OffTextLabel,
                 checked: this.properties.showPersonaPresenceInfo
-            }),
+            })
+        );
+
+        fields.push(
+            this._propertyFieldToogleWithCallout('layoutProperties.showHoverOnPictureOnly', {
+                label: strings.Layouts.People.ShowHoverOnPictureOnly,
+                calloutTrigger: this._propertyFieldCalloutTriggers.Hover,
+                key: 'layoutProperties.showHoverOnPictureOnly',
+                calloutContent: React.createElement('p', { style: { maxWidth: 250, wordBreak: 'break-word' } }, strings.Layouts.People.ShowHoverOnPictureOnlyCalloutMsg),
+                onText: strings.General.OnTextLabel,
+                offText: strings.General.OffTextLabel,
+                checked: this.properties.showHoverOnPictureOnly,
+                disabled: !this.properties.showPersonaCardNative && !this.properties.showPersonaCard
+            })
+        );
+
+        fields.push(
             PropertyPaneChoiceGroup('layoutProperties.personaSize', {
                 label: strings.Layouts.People.PersonaSizeOptionsLabel,
                 options: [
@@ -214,8 +268,10 @@ export class PeopleLayout extends BaseLayout<IPeopleLayoutProperties> {
                         text: strings.Layouts.People.PersonaSizeExtraLarge
                     }
                 ]
-            }),
-        ];
+            })
+        );
+
+        return fields;
     }
 
     public async onPropertyUpdate(propertyPath: string, newValue: any, oldValue: any) {
@@ -223,6 +279,14 @@ export class PeopleLayout extends BaseLayout<IPeopleLayoutProperties> {
         if (propertyPath.localeCompare('layoutProperties.showPersonaCard') === 0 && this.properties.showPersonaCard) {
             // Load Microsoft Graph Toolkit to get the persona card
             await loadMsGraphToolkit(this.context);
+        }
+
+        // Auto-reset 'showHoverOnPictureOnly' if both persona card options are now disabled
+        if ((propertyPath === 'layoutProperties.showPersonaCard' || propertyPath === 'layoutProperties.showPersonaCardNative') ) {
+            const personaCardEnabled = this.properties.showPersonaCard || this.properties.showPersonaCardNative;
+            if (!personaCardEnabled && this.properties.showHoverOnPictureOnly) {
+                this.properties.showHoverOnPictureOnly = false;
+            }
         }
     }
 }
