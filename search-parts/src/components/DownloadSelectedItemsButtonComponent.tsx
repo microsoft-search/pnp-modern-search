@@ -79,28 +79,16 @@ export class DownloadSelectedItemsButtonComponent extends React.Component<IExpor
           return null;
         }
 
-        if (onlyListItemsInCurrentHostSelected) {
-          return (
-            <ActionButton
-              {...buttonProps}
-              text={strings.Controls.DownloadCSVButtonText}
-              iconProps={{ iconName: "Download" }}
-              disabled={
-                this.state.exporting ||
-                !requiredPropertiesAvailable
-              }
-              onClick={this._downloadSelectedItems}
-              theme={this.props.themeVariant as ITheme}
-            />
-          );
-        }
+        // Single selection type (all list items OR all documents/folders)
+        if (onlyListItemsInCurrentHostSelected || onlyDocumentsOrFoldersInCurrentHostSelected) {
+          const buttonText = onlyListItemsInCurrentHostSelected
+            ? strings.Controls.DownloadCSVButtonText
+            : strings.Controls.DownloadButtonText;
 
-        // Default: documents/folders 
-        if (onlyDocumentsOrFoldersInCurrentHostSelected) {
           return (
             <ActionButton
               {...buttonProps}
-              text={strings.Controls.DownloadButtonText}
+              text={buttonText}
               iconProps={downloadIcon}
               disabled={
                 this.state.exporting ||
