@@ -22,7 +22,7 @@ export class DomPurifyHelper {
     if (!DomPurifyHelper._config) {
       DomPurifyHelper._config = {
         ADD_TAGS: ["style", "#comment", "link", "content"],
-        ADD_ATTR: ["target", "loading", "data-fields-configuration", "data-*"],
+        ADD_ATTR: ["target", "loading", "data-fields-configuration", "data-*", "style"],
         ALLOW_DATA_ATTR: true,
         ALLOWED_URI_REGEXP: Constants.ALLOWED_URI_REGEXP,
         // CRITICAL: Must be false for fragments, but we handle <style> via hook
@@ -40,6 +40,9 @@ export class DomPurifyHelper {
         FORBID_ATTR: [],
         // CRITICAL: Allow <style> in body context
         IN_PLACE: false,
+        // Security: Sanitize style attributes to prevent XSS via CSS
+        // This removes dangerous CSS like expression(), javascript: URLs, etc.
+        SANITIZE_DOM: true, // Default is true, but being explicit
       };
     }
     return DomPurifyHelper._config;
@@ -61,6 +64,10 @@ export class DomPurifyHelper {
     DomPurifyHelper._instance.addHook(
       "uponSanitizeElement",
       DomPurifyHelper.allowStyleAndContentTagsHook
+    );
+    DomPurifyHelper._instance.addHook(
+      "afterSanitizeAttributes",
+      DomPurifyHelper.sanitizeStyleAttributeHook
     );
   }
 
@@ -114,6 +121,49 @@ export class DomPurifyHelper {
       !data.allowedTags[data.tagName]
     ) {
       data.allowedTags[data.tagName] = true;
+    }
+  }
+
+  /**
+   * Sanitizes style attribute values to prevent XSS attacks
+   * Removes dangerous CSS patterns like:
+   * - expression() (IE legacy XSS vector)
+   * - javascript: URLs in url()
+   * - data: URLs in url() (can contain scripts)
+   * - import statements
+   * 
+   * This provides defense-in-depth on top of DOMPurify's built-in CSS sanitization
+   * 
+   * @param node the HTML node
+   * @param data the DOMPurify data
+   */
+  public static sanitizeStyleAttributeHook(node) {
+    if (node.hasAttribute && node.hasAttribute('style')) {
+      let styleValue = node.getAttribute('style');
+      
+      if (styleValue) {
+        // Remove expression() - IE legacy XSS vector
+        styleValue = styleValue.replace(/expression\s*\(/gi, '');
+        
+        // Remove javascript: URLs in url()
+        styleValue = styleValue.replace(/url\s*\(\s*['"]?\s*javascript:/gi, 'url(');
+        
+        // Remove data: URLs in url() that could contain scripts
+        // Allow data:image/* for legitimate image use cases
+        styleValue = styleValue.replace(/url\s*\(\s*['"]?\s*data:(?!image\/)/gi, 'url(');
+        
+        // Remove @import statements (shouldn't be in inline styles but just in case)
+        styleValue = styleValue.replace(/@import/gi, '');
+        
+        // Remove behavior property (IE legacy)
+        styleValue = styleValue.replace(/behavior\s*:/gi, '');
+        
+        // Remove -moz-binding (Firefox legacy XSS)
+        styleValue = styleValue.replace(/-moz-binding\s*:/gi, '');
+        
+        // Update the attribute with sanitized value
+        node.setAttribute('style', styleValue);
+      }
     }
   }
 }
