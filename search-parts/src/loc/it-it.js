@@ -195,7 +195,8 @@ define([], function () {
             TextFieldApplyButtonText: "Applica",
             SortByPlaceholderText: "Ordina per…",
             SortByDefaultOptionText: "Predefinito",
-            DownloadButtonText: "Scarica"
+            DownloadButtonText: "Scarica",
+            DownloadCSVButtonText: "Scarica come CSV"
         },
         Layouts: {
             Debug: {

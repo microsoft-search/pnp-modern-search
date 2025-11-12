@@ -195,7 +195,8 @@ define([], function() {
             TextFieldApplyButtonText: "Použít",
             SortByPlaceholderText: "Řadit podle...",
             SortByDefaultOptionText: "Výchozí",
-            DownloadButtonText: "Stáhnout"
+            DownloadButtonText: "Stáhnout",
+            DownloadCSVButtonText: "Stáhnout jako CSV"
         },
         Layouts: {
             Debug: {
