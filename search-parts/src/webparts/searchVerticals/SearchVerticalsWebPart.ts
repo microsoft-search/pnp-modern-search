@@ -207,6 +207,7 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
                             this.properties.title = value;
                             this.render();
                         },
+                        themeVariant: this._themeVariant,
                         className: commonStyles.wpTitle
                     },
                     tokenService: this.tokenService,

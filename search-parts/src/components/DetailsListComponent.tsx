@@ -55,7 +55,6 @@ import {
 } from "@fluentui/react/lib/DetailsList";
 import { ISearchResultsTemplateContext } from "../models/common/ITemplateContext";
 import { ObjectHelper } from "../helpers/ObjectHelper";
-import { DomPurifyHelper } from "../helpers/DomPurifyHelper";
 import { ITemplateService } from "../services/templateService/ITemplateService";
 import { TemplateService } from "../services/templateService/TemplateService";
 import { ServiceScope, ServiceKey } from "@microsoft/sp-core-library";
@@ -515,7 +514,7 @@ export class DetailsListComponent extends React.Component<
                 <span
                   title={!hasError ? toolTipText : ""}
                   dangerouslySetInnerHTML={{
-                    __html: DomPurifyHelper.instance.sanitize(
+                    __html: this.props.templateService.sanitizeHtmlWithStylePreservation(
                       `<style>${allStyles.join(" ")}</style>${
                         tempColumnValueAsHtml.body.firstElementChild.innerHTML
                       }`
