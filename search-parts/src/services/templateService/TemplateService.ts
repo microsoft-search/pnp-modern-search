@@ -214,7 +214,8 @@ export class TemplateService implements ITemplateService {
 
     const sheet: any = style.sheet;
 
-    if ((sheet as CSSStyleSheet).cssRules) {
+    // Try to use CSSOM if available (for live DOM elements)
+    if ((sheet as CSSStyleSheet)?.cssRules) {
       const cssRules = (sheet as CSSStyleSheet).cssRules;
 
       for (let j = 0; j < cssRules.length; j++) {
@@ -244,6 +245,73 @@ export class TemplateService implements ITemplateService {
             prefixedStyles.push(`#${elementPrefixId} ${cssRule.cssText}`);
           }
         }
+      }
+    } else {
+      // Fallback: Parse CSS text directly (for detached DOM elements from DOMParser)
+      // This handles templates created via DOMParser where style.sheet is null
+      const cssText = style.textContent || style.innerText || '';
+      
+      if (cssText.trim()) {
+        // Simple CSS parser - prefix all selectors
+        // Handle @media queries
+        const mediaRegex = /@media\s+([^{]+)\s*\{([\s\S]+?)\}\s*\}/g;
+        let processedCss = cssText;
+        const mediaMatches: Array<{match: string, mediaQuery: string, content: string}> = [];
+        
+        let mediaMatch;
+        while ((mediaMatch = mediaRegex.exec(cssText)) !== null) {
+          mediaMatches.push({
+            match: mediaMatch[0],
+            mediaQuery: mediaMatch[1].trim(),
+            content: mediaMatch[2]
+          });
+          // Replace with placeholder to avoid processing it again
+          processedCss = processedCss.replace(mediaMatch[0], '');
+        }
+        
+        // Process regular CSS rules (outside @media)
+        // Match CSS rules: selector { properties }
+        const ruleRegex = /([^{}\s][^{}]*?)\s*\{([^{}]*)\}/g;
+        let ruleMatch;
+        
+        while ((ruleMatch = ruleRegex.exec(processedCss)) !== null) {
+          const selector = ruleMatch[1].trim();
+          const properties = ruleMatch[2].trim();
+          
+          if (selector && properties) {
+            // Special handling for error message selector
+            if (selector.indexOf(TestConstants.SearchResultsErrorMessage) !== -1) {
+              prefixedStyles.push(`${selector} { ${properties} }`);
+            } else {
+              // Split multiple selectors (e.g., ".class1, .class2")
+              const selectors = selector.split(',').map(s => s.trim());
+              const prefixedSelectors = selectors.map(s => `#${elementPrefixId} ${s}`).join(', ');
+              prefixedStyles.push(`${prefixedSelectors} { ${properties} }`);
+            }
+          }
+        }
+        
+        // Process @media queries
+        mediaMatches.forEach(media => {
+          const innerRules: string[] = [];
+          let innerMatch;
+          const innerRegex = /([^{}\s][^{}]*?)\s*\{([^{}]*)\}/g;
+          
+          while ((innerMatch = innerRegex.exec(media.content)) !== null) {
+            const selector = innerMatch[1].trim();
+            const properties = innerMatch[2].trim();
+            
+            if (selector && properties) {
+              const selectors = selector.split(',').map(s => s.trim());
+              const prefixedSelectors = selectors.map(s => `#${elementPrefixId} ${s}`).join(', ');
+              innerRules.push(`${prefixedSelectors} { ${properties} }`);
+            }
+          }
+          
+          if (innerRules.length > 0) {
+            prefixedStyles.push(`@media ${media.mediaQuery} { ${innerRules.join(' ')} }`);
+          }
+        });
       }
     }
 

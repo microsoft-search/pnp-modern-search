@@ -515,7 +515,7 @@ export class DetailsListComponent extends React.Component<
                 <span
                   title={!hasError ? toolTipText : ""}
                   dangerouslySetInnerHTML={{
-                    __html: DomPurifyHelper.instance.sanitize(
+                    __html: this.props.templateService.sanitizeHtmlWithStylePreservation(
                       `<style>${allStyles.join(" ")}</style>${
                         tempColumnValueAsHtml.body.firstElementChild.innerHTML
                       }`
