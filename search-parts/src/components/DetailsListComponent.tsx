@@ -55,7 +55,6 @@ import {
 } from "@fluentui/react/lib/DetailsList";
 import { ISearchResultsTemplateContext } from "../models/common/ITemplateContext";
 import { ObjectHelper } from "../helpers/ObjectHelper";
-import { DomPurifyHelper } from "../helpers/DomPurifyHelper";
 import { ITemplateService } from "../services/templateService/ITemplateService";
 import { TemplateService } from "../services/templateService/TemplateService";
 import { ServiceScope, ServiceKey } from "@microsoft/sp-core-library";
