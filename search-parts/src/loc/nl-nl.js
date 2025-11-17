@@ -306,6 +306,8 @@ define([], function () {
                 ShowPersonaCardOnHoverCalloutMsg: "Deze feature gebruikt Microsoft Graph om informatie over de gebruiker te tonen en heeft de volgende API rechten nodig in de tenant om te kunnen werken: ['User.Read','People.Read','Contacts.Read','User.Read.All'].",
                 ShowPersonaPresenceInfo: "Aanwezigheid tonen",
                 ShowPersonaPresenceInfoCalloutMsg: "Deze functie heeft de volgende API-rechten in je tenant nodig om te werken: ['Presence.Read.All']",
+                ShowHoverOnPictureOnly: "Hover alleen op afbeelding tonen",
+                ShowHoverOnPictureOnlyCalloutMsg: "Wanneer ingeschakeld, opent de persoonskaart alleen bij het zweven over de persona-afbeelding (munt).",
                 Fields: {
                     ImageUrl: "Afbeeldings URL",
                     PrimaryText: "Primaire tekst",

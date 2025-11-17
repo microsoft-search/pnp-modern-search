@@ -304,6 +304,8 @@ define([], function () {
                 ShowPersonaCardOnHoverCalloutMsg: "Tämä ominaisuus käyttää Microsoft Graphia käyttäjäprofiilin tietojen näyttämiseen, ja tarvitsee seuraavat API oikeudet tenantissa toimiakseen: ['User.Read','People.Read','Contacts.Read','User.Read.All'].",
                 ShowPersonaPresenceInfo: "Näytä läsnäolo",
                 ShowPersonaPresenceInfoCalloutMsg: "Tämä ominaisuus vaatii seuraavat API-oikeudet vuokralaisessasi toimiakseen: ['Presence.Read.All']",
+                ShowHoverOnPictureOnly: "Näytä hover vain kuvassa",
+                ShowHoverOnPictureOnlyCalloutMsg: "Kun käytössä, henkilökortti avautuu vain kun hiiri on persona-kuvan (kolikon) päällä.",
                 Fields: {
                     ImageUrl: "Kuvan URL",
                     PrimaryText: "Ensimmäisen rivin teksti",

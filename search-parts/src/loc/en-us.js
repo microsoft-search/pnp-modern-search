@@ -307,6 +307,8 @@ define([], function() {
                 ShowPersonaCardOnHoverCalloutMsgNative: "This feature uses the native SharePoint implementation to show the live persona card (LPC). See https://pnp.github.io/sp-dev-fx-controls-react/controls/LivePersona/ for considerations.",
                 ShowPersonaPresenceInfo: "Show presence",
                 ShowPersonaPresenceInfoCalloutMsg: "This feature needs the following API permissions in your tenant to work: ['Presence.Read.All']",
+                ShowHoverOnPictureOnly: "Show hover on picture only",
+                ShowHoverOnPictureOnlyCalloutMsg: "When enabled, the person card opens only when hovering the persona image (coin).",
                 Fields: {
                     ImageUrl: "Image URL",
                     PrimaryText: "Primary text",

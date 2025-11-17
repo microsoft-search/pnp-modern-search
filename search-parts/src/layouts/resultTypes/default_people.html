@@ -2,14 +2,45 @@
     /* Insert your CSS here */
 </style>
 
-<pnp-persona
-    data-image-url="/_layouts/15/userphoto.aspx?size=L&username={{getUserEmail (slot item @root.slots.UserEmail)}}"
-    data-primary-text="{{slot item @root.slots.UserDisplayName}}"
-    data-secondary-text="{{JobTitle}}"
-    data-tertiary-text="{{getUserEmail (slot item @root.slots.UserEmail)}}"
-    data-optional-text="WorkPhone"
-    data-persona-size="{{@root.properties.layoutProperties.personaSize}}"
-    data-theme-variant="{{JSONstringify @root.theme}}"
-    data-native-lpc={{@root.properties.layoutProperties.showPersonaCardNative}}
->
-</pnp-persona>
+{{#if @root.properties.layoutProperties.showPersonaCardNative}}
+    {{!-- Native LPC: PersonaComponent handles split layout internally --}}
+    <pnp-persona
+        data-image-url="/_layouts/15/userphoto.aspx?size=L&username={{getUserEmail (slot item @root.slots.UserEmail)}}"
+        data-primary-text="{{slot item @root.slots.UserDisplayName}}"
+        data-secondary-text="{{JobTitle}}"
+        data-tertiary-text="{{getUserEmail (slot item @root.slots.UserEmail)}}"
+        data-optional-text="WorkPhone"
+        data-persona-size="{{@root.properties.layoutProperties.personaSize}}"
+        data-theme-variant="{{JSONstringify @root.theme}}"
+        data-native-lpc="{{@root.properties.layoutProperties.showPersonaCardNative}}"
+        data-show-hover-on-picture-only="{{@root.properties.layoutProperties.showHoverOnPictureOnly}}"
+    >
+    </pnp-persona>
+{{else}}
+    {{#if @root.properties.layoutProperties.showHoverOnPictureOnly}}
+        {{!-- Non-native picture-only with standard single persona (no separate coin) --}}
+        <pnp-persona
+            data-image-url="/_layouts/15/userphoto.aspx?size=L&username={{getUserEmail (slot item @root.slots.UserEmail)}}"
+            data-primary-text="{{slot item @root.slots.UserDisplayName}}"
+            data-secondary-text="{{JobTitle}}"
+            data-tertiary-text="{{getUserEmail (slot item @root.slots.UserEmail)}}"
+            data-optional-text="WorkPhone"
+            data-persona-size="{{@root.properties.layoutProperties.personaSize}}"
+            data-theme-variant="{{JSONstringify @root.theme}}"
+            data-show-hover-on-picture-only="{{@root.properties.layoutProperties.showHoverOnPictureOnly}}"
+        >
+        </pnp-persona>
+    {{else}}
+        {{!-- Non-native standard persona --}}
+        <pnp-persona
+            data-image-url="/_layouts/15/userphoto.aspx?size=L&username={{getUserEmail (slot item @root.slots.UserEmail)}}"
+            data-primary-text="{{slot item @root.slots.UserDisplayName}}"
+            data-secondary-text="{{JobTitle}}"
+            data-tertiary-text="{{getUserEmail (slot item @root.slots.UserEmail)}}"
+            data-optional-text="WorkPhone"
+            data-persona-size="{{@root.properties.layoutProperties.personaSize}}"
+            data-theme-variant="{{JSONstringify @root.theme}}"
+        >
+        </pnp-persona>
+    {{/if}}
+{{/if}}

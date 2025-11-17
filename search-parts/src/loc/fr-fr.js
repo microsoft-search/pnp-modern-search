@@ -306,6 +306,8 @@ define([], function () {
                 ShowPersonaCardOnHoverCalloutMsg: "Cette fonction utilise Microsoft Graph pour afficher des renseignements sur l’utilisateur et nécessite les autorisations API suivantes pour que votre utilisateur puisse travailler : [« User.Read », « People.Read », « Contacts.Read », « User.Read.All »].",
                 ShowPersonaPresenceInfo: "Afficher la présence",
                 ShowPersonaPresenceInfoCalloutMsg: "Pour fonctionner, cette fonctionnalité nécessite les autorisations API suivantes dans votre locataire : ['Presence.Read.All']",
+                ShowHoverOnPictureOnly: "Afficher le survol uniquement sur l'image",
+                ShowHoverOnPictureOnlyCalloutMsg: "Lorsqu'activé, la carte de personne s'ouvre uniquement lors du survol de l'image persona (pièce).",
                 Fields: {
                     ImageUrl: "URL de l’image",
                     PrimaryText: "Texte principal",

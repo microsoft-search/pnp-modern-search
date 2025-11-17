@@ -308,6 +308,8 @@ define([], function () {
                 ShowPersonaCardOnHoverCalloutMsgNative: "Questa funzionalità utilizza l'implementazione nativa di SharePoint per mostrare la scheda persona live (LPC). Vedi https://pnp.github.io/sp-dev-fx-controls-react/controls/LivePersona/ per considerazioni.",
                 ShowPersonaPresenceInfo: "Mostra presenza",
                 ShowPersonaPresenceInfoCalloutMsg: "Questa funzionalità richiede le seguenti autorizzazioni API nel tuo tenant per funzionare: ['Presence.Read.All']",
+                ShowHoverOnPictureOnly: "Mostra hover solo sull'immagine",
+                ShowHoverOnPictureOnlyCalloutMsg: "Quando abilitato, la scheda persona si apre solo passando sopra l'immagine persona (moneta).",
                 Fields: {
                     ImageUrl: "URL immagine",
                     PrimaryText: "Testo principale",

@@ -305,6 +305,8 @@ define([], function() {
                 ShowPersonaCardOnHoverCalloutMsgNative: "Tato funkce používá nativní implementaci SharePointu pro zobrazení živé karty osoby (LPC). Viz https://pnp.github.io/sp-dev-fx-controls-react/controls/LivePersona/ pro další informace.",
                 ShowPersonaPresenceInfo: "Zobrazit přítomnost",
                 ShowPersonaPresenceInfoCalloutMsg: "Tato funkce potřebuje následující oprávnění API ve vaší tenant: ['Presence.Read.All']",
+                ShowHoverOnPictureOnly: "Zobrazit hover pouze na obrázku",
+                ShowHoverOnPictureOnlyCalloutMsg: "Pokud je povoleno, karta osoby se otevře pouze při najetí na obrázek osoby (minci).",
                 Fields: {
                     ImageUrl: "URL obrázku",
                     PrimaryText: "Hlavní text",

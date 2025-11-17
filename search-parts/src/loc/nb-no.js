@@ -304,7 +304,9 @@ define([], function () {
         ShowPersonaCardOnHoverNative: "Vis personkort når du fører musen over (LPC)",
         ShowPersonaCardOnHoverCalloutMsg: "Denne funksjonen bruker Microsoft Graph for å vise informasjon om brukere og må ha følgende API-tilganger i din klient for at det skal virke: ['User.Read','People.Read','Contacts.Read','User.Read.All'].",
         ShowPersonaPresenceInfo: "Vis tilstedeværelse",
-        ShowPersonaPresenceInfoCalloutMsg: "Denne funksjonen trenger følgende API-tillatelser i leietakeren for å fungere: ['Presence.Read.All'].",
+  ShowPersonaPresenceInfoCalloutMsg: "Denne funksjonen trenger følgende API-tillatelser i leietakeren for å fungere: ['Presence.Read.All'].",
+  ShowHoverOnPictureOnly: "Vis hover bare på bildet",
+  ShowHoverOnPictureOnlyCalloutMsg: "Når aktivert, åpnes personkortet bare ved å holde markøren over persona-bildet (mynt).",
         Fields: {
           ImageUrl: "Bilde-URL",
           PrimaryText: "Primærtekst",
