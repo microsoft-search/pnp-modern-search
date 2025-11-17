@@ -193,7 +193,8 @@ define([], function () {
             TextFieldApplyButtonText: "Ota käyttöön",
             SortByPlaceholderText: "Järjestä...",
             SortByDefaultOptionText: "Oletus",
-            DownloadButtonText: "Lataa"
+            DownloadButtonText: "Lataa",
+            DownloadCSVButtonText: "Lataa CSV-muodossa"
         },
         Layouts: {
             Debug: {

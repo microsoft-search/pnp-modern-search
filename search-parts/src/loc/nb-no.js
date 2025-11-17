@@ -195,7 +195,8 @@ define([], function () {
       TextFieldApplyButtonText: "Lagre",
       SortByPlaceholderText: "Sorter etter",
       SortByDefaultOptionText: "Misligholde",
-      DownloadButtonText: "Last ned"
+      DownloadButtonText: "Last ned",
+      DownloadCSVButtonText: "Last ned som CSV"
     },
     Layouts: {
       Debug: {

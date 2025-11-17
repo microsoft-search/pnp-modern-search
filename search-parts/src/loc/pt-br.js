@@ -193,7 +193,8 @@ define([], function () {
             SelectItemComboPlaceHolder: "Selecionar propriedade",
             AddStaticDataLabel: "Adicionar dados estáticos",
             TextFieldApplyButtonText: "Aplicar",
-            DownloadButtonText: "Baixar"
+            DownloadButtonText: "Baixar",
+            DownloadCSVButtonText: "Baixar como CSV"
         },
         Layouts: {
             Debug: {
