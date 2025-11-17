@@ -63,7 +63,7 @@
             data-items="{{JSONstringify data.items}}" 
             data-columns-configuration="{{JSONstringify properties.layoutProperties.detailsListColumns}}" 
             data-show-file-icon="{{properties.layoutProperties.showFileIcon}}" 
-            data-file-extension-field="{{properties.layoutProperties.fieldIconExtension}}"  
+            data-file-extension-field="{{@root.slots.FileType}}"  
             data-is-container-field="{{@root.slots.IsFolder}}"
             data-is-compact="{{properties.layoutProperties.isCompact}}"
             data-group-by="{{properties.layoutProperties.groupByField}}"
