@@ -1,6 +1,6 @@
 import { BaseDataSource, FilterSortType, FilterSortDirection, ITemplateSlot, BuiltinTemplateSlots, IDataContext, ITokenService, FilterBehavior, PagingBehavior, IDataFilterResult, IDataFilterResultValue, FilterComparisonOperator, IDataSourceData } from "@pnp/modern-search-extensibility";
 import { IPropertyPaneGroup, PropertyPaneLabel, IPropertyPaneField, PropertyPaneToggle, PropertyPaneHorizontalRule } from "@microsoft/sp-property-pane";
-import { cloneDeep, isEmpty, find } from '@microsoft/sp-lodash-subset';
+import { cloneDeep, isEmpty } from '@microsoft/sp-lodash-subset';
 import { MSGraphClientFactory } from "@microsoft/sp-http";
 import { TokenService } from "../services/tokenService/TokenService";
 import { ServiceScope } from '@microsoft/sp-core-library';
@@ -13,6 +13,7 @@ import { DataFilterHelper } from "../helpers/DataFilterHelper";
 import { IMicrosoftSearchResultSet } from "../models/search/IMicrosoftSearchResponse";
 import { ISortFieldConfiguration } from '../models/search/ISortFieldConfiguration';
 import { AsyncCombo } from "../controls/PropertyPaneAsyncCombo/components/AsyncCombo";
+import { DataSourceHelper } from '../helpers/DataSourceHelper';
 import { IAsyncComboProps } from "../controls/PropertyPaneAsyncCombo/components/IAsyncComboProps";
 import { PropertyPaneNonReactiveTextField } from "../controls/PropertyPaneNonReactiveTextField/PropertyPaneNonReactiveTextField";
 import { IMicrosoftSearchDataSourceData } from "../models/search/IMicrosoftSearchDataSourceData";
@@ -264,37 +265,6 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         return results;
     }
 
-     private getGuidFromString(value: string): string {
-
-        if (value) {
-            const matches = value.match(/(\{){0,1}[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}(\}){0,1}/);
-            if (matches) {
-                return matches[0];
-            }
-        }
-
-        return value;
-    }
-/**
-     * Check if we're on an online domain
-     * @param domain
-     */
-    private isOnlineDomain(url: string) {
-        return !isEmpty(url) && url.toLocaleLowerCase().indexOf(window.location.hostname.split('.').slice(-2).join('.').toLocaleLowerCase()) !== -1;
-    }
-
-    /**
-     * Check if picture is deliverd from a M365 Source
-     * @param url
-     */
-    private isM365Source(url: string) {
-        const cdnDomains: RegExp[] = [/^https?:\/\/(?:[A-Za-z0-9,-]+\.)+office\.net.*/,
-            /^https?:\/\/(?:[A-Za-z0-9,-]+\.)+sharepointonline\.com.*/,
-            /^https?:\/\/(?:[A-Za-z0-9,-]+\.)+sharepoint\.us.*/,
-            /^https?:\/\/(?:[A-Za-z0-9,-]+\.)+sharepoint-mil\.us.*/,
-        ];
-        return cdnDomains.some(regex => regex.test(url))
-    }
     public getPropertyPaneGroupsConfiguration(): IPropertyPaneGroup[] {
 
         const entityTypesDisplayValue = this._availableEntityTypeOptions.map((option) => {
@@ -626,7 +596,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         }
 
         if (propertyPath.localeCompare('dataSourceProperties.fields') === 0) {
-            let options = this.parseAndCleanOptions((cloneDeep(newValue) as IComboBoxOption[]));
+            let options = DataSourceHelper.parseAndCleanOptions((cloneDeep(newValue) as IComboBoxOption[]));
             this.properties.fields = options.map(v => { return v.key as string; });
             this.context.propertyPane.refresh();
             this.render();
@@ -727,7 +697,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
     public async getItemsPreview(data: IDataSourceData, slots: { [key: string]: string }): Promise<IDataSourceData> 
     {
 
-        const validPreviewExt = ["SVG", "MOVIE", "PAGES", "PICT", "SKETCH", "AI", "PDF", "PSB", "PSD", "3G2", "3GP", "ASF", "BMP", "HEVC", "M2TS", "M4V", "MOV", "MP3", "MP4", "MP4V", "MTS", "TS", "WMV", "DWG", "FBX", "ERF", "ZIP", "ZIP", "DCM", "DCM30", "DICM", "DICOM", "PLY", "HCP", "GIF", "HEIC", "HEIF", "JPEG", "JPG", "JPE", "MEF", "MRW", "NEF", "NRW", "ORF", "PANO", "PEF", "PNG", "SPM", "TIF", "TIFF", "XBM", "XCF", "KEY", "LOG", "CSV", "DIC", "DOC", "DOCM", "DOCX", "DOTM", "DOTX", "POT", "POTM", "POTX", "PPS", "PPSM", "PPSX", "PPT", "PPTM", "PPTX", "XD", "XLS", "XLSB", "XLSX", "SLTX", "EML", "MSG", "VSD", "VSDX", "CUR", "ICO", "ICON", "EPUB", "ODP", "ODS", "ODT", "ARW", "CR2", "CRW", "DNG", "RTF", "ABAP", "ADA", "ADP", "AHK", "AS", "AS3", "ASC", "ASCX", "ASM", "ASP", "ASPX", "AWK", "BAS", "BASH", "BASH_LOGIN", "BASH_LOGOUT", "BASH_PROFILE", "BASHRC", "BAT", "BIB", "BSH", "BUILD", "BUILDER", "C", "CAPFILE", "CBK", "CC", "CFC", "CFM", "CFML", "CL", "CLJ", "CMAKE", "CMD", "COFFEE", "CPP", "CPT", "CPY", "CS", "CSHTML", "CSON", "CSPROJ", "CSS", "CTP", "CXX", "D", "DDL", "DI.DIF", "DIFF", "DISCO", "DML", "DTD", "DTML", "EL", "EMAKE", "ERB", "ERL", "F90", "F95", "FS", "FSI", "FSSCRIPT", "FSX", "GEMFILE", "GEMSPEC", "GITCONFIG", "GO", "GROOVY", "GVY", "H", "HAML", "HANDLEBARS", "HBS", "HRL", "HS", "HTC", "HTML", "HXX", "IDL", "IIM", "INC", "INF", "INI", "INL", "IPP", "IRBRC", "JADE", "JAV", "JAVA", "JS", "JSON", "JSP", "JSX", "L", "LESS", "LHS", "LISP", "LOG", "LST", "LTX", "LUA", "M", "MAKE", "MARKDN", "MARKDOWN", "MD", "MDOWN", "MKDN", "ML", "MLI", "MLL", "MLY", "MM", "MUD", "NFO", "OPML", "OSASCRIPT", "OUT", "P", "PAS", "PATCH", "PHP", "PHP2", "PHP3", "PHP4", "PHP5", "PL", "PLIST", "PM", "POD", "PP", "PROFILE", "PROPERTIES", "PS", "PS1", "PT", "PY", "PYW", "R", "RAKE", "RB", "RBX", "RC", "RE", "README", "REG", "REST", "RESW", "RESX", "RHTML", "RJS", "RPROFILE", "RPY", "RSS", "RST", "RXML", "S", "SASS", "SCALA", "SCM", "SCONSCRIPT", "SCONSTRUCT", "SCRIPT", "SCSS", "SGML", "SH", "SHTML", "SML", "SQL", "STY", "TCL", "TEX", "TEXT", "TEXTILE", "TLD", "TLI", "TMPL", "TPL", "TXT", "VB", "VI", "VIM", "WSDL", "XAML", "XHTML", "XOML", "XML", "XSD", "XSL", "XSLT", "YAML", "YAWS", "YML", "ZSH", "HTM", "HTML", "Markdown", "MD", "URL"];
+        const validPreviewExt = DataSourceHelper.getValidPreviewExtensions();
         // Auto determined preview URL for Microsoft Search
         if (slots[BuiltinTemplateSlots.PreviewUrl] === AutoCalculatedDataSourceFields.AutoPreviewUrl) 
             {
@@ -782,9 +752,9 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                     else
                         if (siteId && listId && itemId && !isContainerType) {
                             // SP item logic
-                            siteId = this.getGuidFromString(item.resource.listItem.fields.siteId);
-                            listId = this.getGuidFromString(item.resource.parentReference.sharepointIds.listId);
-                            itemId = this.getGuidFromString(item.resource.parentReference.sharepointIds.listItemUniqueId);
+                            siteId = DataSourceHelper.getGuidFromString(item.resource.listItem.fields.siteId);
+                            listId = DataSourceHelper.getGuidFromString(item.resource.parentReference.sharepointIds.listId);
+                            itemId = DataSourceHelper.getGuidFromString(item.resource.parentReference.sharepointIds.listItemUniqueId);
 
                             const itemFileType = ObjectHelper.byPath(item, "resource.listItem.fields.filetype");
 
@@ -807,7 +777,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                         }
                 }
 
-                if (!this.isM365Source(item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl]) && !this.isOnlineDomain(item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl])) {
+                if (!DataSourceHelper.isM365Source(item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl]) && !DataSourceHelper.isOnlineDomain(item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl])) {
                     item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = null;
                 }
                 return item;
@@ -1183,13 +1153,5 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         this._itemsCount = itemsCount;
 
         return response;
-    }
-
-    private parseAndCleanOptions(options: IComboBoxOption[]): IComboBoxOption[] {
-        let optionWithComma = find(options, o => (o.key as string).indexOf(",") > 0);
-        if (optionWithComma) {
-            return (optionWithComma.key as string).split(",").map(k => { return { key: k.trim(), text: k.trim(), selected: true }; });
-        }
-        return options;
     }
 }
