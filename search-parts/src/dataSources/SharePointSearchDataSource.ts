@@ -625,32 +625,27 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                 const isLibItem = hasContentClass && contentClass.indexOf("Library") !== -1;
 
                 const contentTypeId = item[slots[BuiltinTemplateSlots.IsFolder]] || item['ContentTypeId'];
-                const isContainer = contentTypeId ? contentTypeId.indexOf('0x0120') !== -1 : false;
+                const isContainer = DataSourceHelper.isContainerContentType(contentTypeId);
 
                 let pathProperty = item[slots[BuiltinTemplateSlots.Path]] || item['DefaultEncodingURL'];
                 if (!pathProperty || (hasContentClass && !isLibItem)) {
                     pathProperty = item['Path']; // Fallback to using Path if DefaultEncodingURL is missing
                 }
 
-                const webUrl = item['SPWebUrl'];
-                const uniqueId = item['NormUniqueID'];
-                const itemFileType = item[slots[BuiltinTemplateSlots.FileType]] || item['FileType'];
-
-                if (webUrl && uniqueId && itemFileType && itemFileType.toUpperCase() !== "ASPX") {
-                    item.AutoPreviewUrl = `${webUrl}/_layouts/15/viewer.aspx?sourcedoc={${uniqueId}}`;
-                } else if (pathProperty && pathProperty.indexOf("?") === -1 && !isContainer) {
-                    item.AutoPreviewUrl = pathProperty + "?web=1";
-                } else {
-                    item.AutoPreviewUrl = pathProperty;
-                }
+                item.AutoPreviewUrl = DataSourceHelper.generatePreviewUrl({
+                    webUrl: item['SPWebUrl'],
+                    uniqueId: item['NormUniqueID'],
+                    fileType: item[slots[BuiltinTemplateSlots.FileType]] || item['FileType'],
+                    pathProperty: pathProperty,
+                    isContainer: isContainer
+                });
 
                 return item;
             });
         }
-// Auto determined preview image URL (thumbnail)
+        // Auto determined preview image URL (thumbnail)
         if (slots[BuiltinTemplateSlots.PreviewImageUrl] === AutoCalculatedDataSourceFields.AutoPreviewImageUrl) {
 
-            // TODO: I'd like to move this logic over to each provider
             data.items = data.items.map(item => {
 
                 let contentClass = ObjectHelper.byPath(item, BuiltinTemplateSlots.ContentClass);
@@ -659,51 +654,53 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                     item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = ObjectHelper.byPath(item, "SiteLogo");
                 }
                 else {
-                    let siteId = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.SiteId]);
-                    let webId = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.WebId]);
-                    let listId = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.ListId]);
-                    let itemId = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.ItemId]); // Could be UniqueId or item ID
+                    const siteId = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.SiteId]);
+                    const webId = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.WebId]);
+                    const listId = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.ListId]);
+                    const itemId = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.ItemId]);
 
-                    let isFolder = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.IsFolder]);
-                    const isContainerType = isFolder === "true" || isFolder === "1" || (isFolder && isFolder.indexOf('0x0120') !== -1);
+                    const isFolder = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.IsFolder]);
+                    const isContainerType = DataSourceHelper.isContainerType(isFolder);
 
+                    // Try thumbnail URL first
                     let thumbNailUrl = ObjectHelper.byPath(item, "PictureThumbnailURL");
-                    if (!isEmpty(thumbNailUrl)) {
-                        if (thumbNailUrl.indexOf("/content?") !== -1 && thumbNailUrl.indexOf("closestavailablesize") === -1 && thumbNailUrl.indexOf("extendCacheMaxAge") === -1) {
-                            thumbNailUrl = `${thumbNailUrl},closestavailablesize,extendCacheMaxAge`;
-                        }
+                    thumbNailUrl = DataSourceHelper.enhanceThumbnailUrl(thumbNailUrl);
+                    
+                    if (thumbNailUrl) {
                         item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = thumbNailUrl;
                     }
-                    else
-                        if (siteId && listId && itemId && !isContainerType) {
-                            // SP item logic
-                            siteId = DataSourceHelper.getGuidFromString(siteId);
-                            listId = DataSourceHelper.getGuidFromString(listId);
-                            itemId = DataSourceHelper.getGuidFromString(itemId);
-
-                            if (webId) {
-                                siteId = siteId + "," + DataSourceHelper.getGuidFromString(webId); // add web id if present, needed for sub-sites
-                            }
-
-                            const itemFileType = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.FileType]);
-
-                            if (itemFileType && validPreviewExt.indexOf(itemFileType.toUpperCase()) !== -1) {
-                                // Can lead to 404 errors but it is a trade of for performances. We take a guess with this url instead of batching calls for all items and process only 200.
-                                item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = `${this.context.pageContext.site.absoluteUrl}/_api/v2.1/sites/${siteId}/lists/${listId}/items/${itemId}/driveItem/thumbnails/0/c400x999/content?prefer=noredirect,closestavailablesize,extendCacheMaxAge`;
-                            }
-                        } else {
-                            // Graph items logic
-                            const driveId = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.DriveId]);
-                            //GET /drives/{drive-id}/items/{item-id}/thumbnails
-                            if (driveId && siteId && itemId) {
-                                item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = `${this.context.pageContext.site.absoluteUrl}/_api/v2.1/sites/${siteId}/drives/${driveId}/items/${itemId}/thumbnails/thumbnails/0/c400x999/content?prefer=noredirect,closestavailablesize,extendCacheMaxAge`;
-                            }
+                    else if (siteId && listId && itemId && !isContainerType) {
+                        // SharePoint item thumbnail
+                        const itemFileType = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.FileType]);
+                        
+                        if (itemFileType && validPreviewExt.indexOf(itemFileType.toUpperCase()) !== -1) {
+                            item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = DataSourceHelper.generateSharePointThumbnailUrl({
+                                baseUrl: this.context.pageContext.site.absoluteUrl,
+                                siteId,
+                                webId,
+                                listId,
+                                itemId
+                            });
                         }
+                    } else {
+                        // Graph items logic
+                        const driveId = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.DriveId]);
+                        if (driveId && siteId && itemId) {
+                            item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = DataSourceHelper.generateGraphThumbnailUrl({
+                                baseUrl: this.context.pageContext.site.absoluteUrl,
+                                siteId,
+                                driveId,
+                                itemId
+                            });
+                        }
+                    }
                 }
 
-                if (!DataSourceHelper.isM365Source(item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl]) && !DataSourceHelper.isOnlineDomain(item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl])) {
-                    item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = null;
-                }
+                // Validate URL is from trusted domain
+                item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = DataSourceHelper.validatePreviewImageUrl(
+                    item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl]
+                );
+                
                 return item;
             });
         }

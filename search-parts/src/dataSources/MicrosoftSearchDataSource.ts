@@ -703,22 +703,19 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             {
 
             data.items = data.items.map(item => {
-                const contentTypeId =  item.resource.listItem.fields.contentTypeId;
-                const isContainer = contentTypeId ? contentTypeId.indexOf('0x0120') !== -1 : false;
+                const contentTypeId = item.resource.listItem.fields.contentTypeId;
+                const isContainer = DataSourceHelper.isContainerContentType(contentTypeId);
 
                 const webUrl = item.resource.listItem.fields.sitePath;
                 let pathProperty = item[slots[BuiltinTemplateSlots.Path]] || webUrl || item['DefaultEncodingURL'];
 
-                const uniqueId = item.resource.listItem.id;
-                const itemFileType = item[slots[BuiltinTemplateSlots.FileType]] || item.resource.listItem.fields.filetype;
-
-                if (webUrl && uniqueId && itemFileType && itemFileType.toUpperCase() !== "ASPX") {
-                    item.AutoPreviewUrl = `${webUrl}/_layouts/15/viewer.aspx?sourcedoc={${uniqueId}}`;
-                } else if (pathProperty && pathProperty.indexOf("?") === -1 && !isContainer) {
-                    item.AutoPreviewUrl = pathProperty + "?web=1";
-                } else {
-                    item.AutoPreviewUrl = pathProperty;
-                }
+                item.AutoPreviewUrl = DataSourceHelper.generatePreviewUrl({
+                    webUrl: webUrl,
+                    uniqueId: item.resource.listItem.id,
+                    fileType: item[slots[BuiltinTemplateSlots.FileType]] || item.resource.listItem.fields.filetype,
+                    pathProperty: pathProperty,
+                    isContainer: isContainer
+                });
 
                 return item;
             });
@@ -726,7 +723,6 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         // Auto determined preview image URL (thumbnail)
         if (slots[BuiltinTemplateSlots.PreviewImageUrl] === AutoCalculatedDataSourceFields.AutoPreviewImageUrl) {
 
-            // TODO: I'd like to move this logic over to each provider
             data.items = data.items.map(item => {
 
                 let contentClass = ObjectHelper.byPath(item, slots.ContentClass);
@@ -735,51 +731,59 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                     item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = ObjectHelper.byPath(item, "SiteLogo");
                 }
                 else {
-                    let siteId = ObjectHelper.byPath(item, slots.SiteId);
-                    let listId = ObjectHelper.byPath(item, slots.ListId);
-                    let itemId = ObjectHelper.byPath(item, slots.ItemId);
+                    const siteId = ObjectHelper.byPath(item, slots.SiteId);
+                    const webId = ObjectHelper.byPath(item, slots.WebId);
+                    const listId = ObjectHelper.byPath(item, slots.ListId);
+                    const itemId = ObjectHelper.byPath(item, slots.ItemId);
 
-                    let isFolder = ObjectHelper.byPath(item, slots.IsFolder);
-                    const isContainerType = isFolder === "true" || isFolder === "1" || (isFolder && isFolder.indexOf('0x0120') !== -1);
+                    const isFolder = ObjectHelper.byPath(item, slots.IsFolder);
+                    const isContainerType = DataSourceHelper.isContainerType(isFolder);
 
+                    // Try thumbnail URL first
                     let thumbNailUrl = ObjectHelper.byPath(item, "PictureThumbnailURL");
-                    if (!isEmpty(thumbNailUrl)) {
-                        if (thumbNailUrl.indexOf("/content?") !== -1 && thumbNailUrl.indexOf("closestavailablesize") === -1 && thumbNailUrl.indexOf("extendCacheMaxAge") === -1) {
-                            thumbNailUrl = `${thumbNailUrl},closestavailablesize,extendCacheMaxAge`;
-                        }
+                    thumbNailUrl = DataSourceHelper.enhanceThumbnailUrl(thumbNailUrl);
+                    
+                    if (thumbNailUrl) {
                         item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = thumbNailUrl;
                     }
-                    else
-                        if (siteId && listId && itemId && !isContainerType) {
-                            // SP item logic
-                            siteId = DataSourceHelper.getGuidFromString(item.resource.listItem.fields.siteId);
-                            listId = DataSourceHelper.getGuidFromString(item.resource.parentReference.sharepointIds.listId);
-                            itemId = DataSourceHelper.getGuidFromString(item.resource.parentReference.sharepointIds.listItemUniqueId);
-
-                            const itemFileType = ObjectHelper.byPath(item, "resource.listItem.fields.filetype");
-
-                            if (itemFileType && validPreviewExt.indexOf(itemFileType.toUpperCase()) !== -1) {
-                                // Can lead to 404 errors but it is a trade of for performances. We take a guess with this url instead of batching calls for all items and process only 200.
-                                let tenantUrl = item.resource.webUrl.split('/sites/')[0];
-                                if(tenantUrl == null)
-                                {
-                                    tenantUrl = item.resource.webUrl.split('/teams/')[0];
-                                }
-                             item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = tenantUrl + `/_api/v2.1/sites/${siteId}/lists/${listId}/items/${itemId}/driveitem/thumbnails/0/c400x999/content?prefer=noredirect,closestavailablesize,extendCacheMaxAge`;
+                    else if (siteId && listId && itemId && !isContainerType) {
+                        // SharePoint item thumbnail
+                        const itemFileType = ObjectHelper.byPath(item, "resource.listItem.fields.filetype");
+                        
+                        if (itemFileType && validPreviewExt.indexOf(itemFileType.toUpperCase()) !== -1) {
+                            // Extract base URL from resource.webUrl
+                            let tenantUrl = item.resource.webUrl.split('/sites/')[0];
+                            if (tenantUrl == null) {
+                                tenantUrl = item.resource.webUrl.split('/teams/')[0];
                             }
-                        } else {
-                            // Graph items logic
-                            const driveId = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.DriveId]);
-                            //GET /drives/{drive-id}/items/{item-id}/thumbnails
-                            if (driveId && siteId && itemId) {
-                                item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = `${this.context.pageContext.site.absoluteUrl}/_api/v2.1/sites/${siteId}/drives/${driveId}/items/${itemId}/thumbnails/thumbnails/0/c400x999/content?prefer=noredirect,closestavailablesize,extendCacheMaxAge`;
-                            }
+                            
+                            item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = DataSourceHelper.generateSharePointThumbnailUrl({
+                                baseUrl: tenantUrl,
+                                siteId: item.resource.listItem.fields.siteId,
+                                webId: webId,
+                                listId: item.resource.parentReference.sharepointIds.listId,
+                                itemId: item.resource.parentReference.sharepointIds.listItemUniqueId
+                            });
                         }
+                    } else {
+                        // Graph items logic
+                        const driveId = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.DriveId]);
+                        if (driveId && siteId && itemId) {
+                            item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = DataSourceHelper.generateGraphThumbnailUrl({
+                                baseUrl: this.context.pageContext.site.absoluteUrl,
+                                siteId,
+                                driveId,
+                                itemId
+                            });
+                        }
+                    }
                 }
 
-                if (!DataSourceHelper.isM365Source(item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl]) && !DataSourceHelper.isOnlineDomain(item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl])) {
-                    item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = null;
-                }
+                // Validate URL is from trusted domain
+                item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = DataSourceHelper.validatePreviewImageUrl(
+                    item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl]
+                );
+                
                 return item;
             });
         }
@@ -790,7 +794,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
     private initProperties(): void {
         this.properties.entityTypes = this.properties.entityTypes !== undefined ? this.properties.entityTypes : [EntityType.DriveItem];
 
-    const CommonFields = ["name", "webUrl", "filetype", "createdBy", "createdDateTime", "lastModifiedDateTime", "parentReference", "size", "description", "file", "folder", "subject", "bodyPreview", "replyTo", "from", "sender", "start", "end", "displayName", "givenName", "surname", "userPrincipalName", "mail", "phones", "department","contentTypeId","siteId", "webId", "contentClass", "siteTitle", "sitePath", "AuthorOWSUSER"];
+    const CommonFields = ["name", "webUrl", "filetype", "createdBy", "createdDateTime", "lastModifiedDateTime", "parentReference", "size", "description", "file", "folder", "subject", "bodyPreview", "replyTo", "from", "sender", "start", "end", "displayName", "givenName", "surname", "userPrincipalName", "mail", "phones", "department","contentTypeId","siteId", "webId", "contentClass", "siteTitle", "sitePath", "AuthorOWSUSER", "listId", "listItemId", "listItemUniqueId", "driveId"];
 
         this.properties.fields = this.properties.fields !== undefined ? this.properties.fields : CommonFields;
         this.properties.sortProperties = this.properties.sortProperties !== undefined ? this.properties.sortProperties : [];
@@ -1100,7 +1104,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                                 if (email || dispName || aadObjectId || upn) {
                                     (hit as any).AuthorOWSUSER = `${email ?? ''}|${dispName ?? ''}|${aadObjectId ?? ''}|${upn ?? ''}`;
                                 }
-                            } catch (e) {
+                            } catch {
                                 // Non-fatal: entity types may not include these shapes
                             }
 
