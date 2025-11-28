@@ -1,23 +1,59 @@
 .carouselContainer {
   width: 100%;
-  height: var(--slide-height, 360px);
+  min-height: var(--slide-height, 360px);
+  position: relative;
   
-  /* Ensure carousel respects the height */
-  :global(.ms-Carousel) {
-    height: 100%;
+  /* Style the indicators - make them visible and styled */
+  :global {
+    ol[class*="indicators_"],
+    div[class*="indicators_"] {
+      z-index: 100 !important;
+      margin-top: 15px !important;
+      padding-bottom: 10px !important;
+      
+      > li {
+        background-color: rgba(0, 0, 0, 0.4) !important;
+        width: 12px !important;
+        height: 12px !important;
+        border-radius: 50% !important;
+        margin: 0 6px !important;
+        opacity: 0.6 !important;
+        border: 2px solid rgba(255, 255, 255, 0.9) !important;
+        border-top: 2px solid rgba(255, 255, 255, 0.9) !important;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.9) !important;
+        
+        &:hover {
+          opacity: 0.9 !important;
+        }
+        
+        &[class*="active_"] {
+          background-color: rgba(255, 255, 255, 0.9) !important;
+          opacity: 1 !important;
+          border-color: rgba(0, 0, 0, 0.6) !important;
+          border-top-color: rgba(0, 0, 0, 0.6) !important;
+          border-bottom-color: rgba(0, 0, 0, 0.6) !important;
+        }
+      }
+    }
   }
-  
-  /* Style the carousel slides */
-  :global(.ms-Carousel-contentContainer) {
-    height: 100%;
-  }
+}
+
+.carouselSlideGroup {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px;
+  height: 100%;
+  width: fit-content;
+  margin: 0 auto;
 }
 
 .carouselSlide {
   position: relative;
   width: var(--slide-width, 318px);
   height: var(--slide-height, 360px);
-  margin: 5px;
+  flex-shrink: 0;
   
   /* Ensure slide content fills the container */
   > div {
