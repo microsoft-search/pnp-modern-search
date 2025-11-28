@@ -470,7 +470,7 @@ export class DetailsListComponent extends React.Component<
               );
 
               // Synchronously rename MGT elements (helper is already initialized in componentDidMount)
-              if (this._templateContext.properties.useMicrosoftGraphToolkit) {
+              if (this._templateContext?.properties?.useMicrosoftGraphToolkit) {
                 (this.props.templateService as any)._replaceDisambiguatedMgtElementNamesSync(tempColumnValueAsHtml);
               }
 
@@ -503,7 +503,7 @@ export class DetailsListComponent extends React.Component<
               }
 
               if (
-                this._templateContext.properties.useMicrosoftGraphToolkit &&
+                this._templateContext?.properties?.useMicrosoftGraphToolkit &&
                 this.props.templateService.MgtCustomElementHelper
                   ?.isDisambiguated
               ) {
@@ -616,7 +616,7 @@ export class DetailsListComponent extends React.Component<
 
   public async componentDidMount() {
     // Pre-initialize MGT helper to avoid race conditions
-    if (this._templateContext.properties.useMicrosoftGraphToolkit) {
+    if (this._templateContext?.properties?.useMicrosoftGraphToolkit) {
       await (this.props.templateService as any)._ensureMgtCustomElementHelper();
     }
 

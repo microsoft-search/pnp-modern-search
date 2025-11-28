@@ -227,7 +227,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
      */
     private propertyPaneConnectionsGroup: IPropertyPaneGroup[] = [];
 
-
     /**
      * The current DataContext - is updated in render method
      */
@@ -1337,7 +1336,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                             title: webPartStrings.PropertyPane.LayoutPage.Handlebars.ResultTypes.ConditionPropertyLabel,
                             type: this._customCollectionFieldType.dropdown,
                             required: true,
-                            options: this._currentDataResultsSourceData.availableFieldsFromResults.map(field => {
+                            options: this.getSelectedProperties().map((field: string) => {
                                 return {
                                     key: field,
                                     text: field
@@ -1664,7 +1663,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     private getLayoutTemplateOptions(): IPropertyPaneField<any>[] {
 
         if (this.layout && !this.errorMessage) {
-            return this.layout.getPropertyPaneFieldsConfiguration(this._currentDataResultsSourceData.availableFieldsFromResults, this._currentDataContext);
+            return this.layout.getPropertyPaneFieldsConfiguration(this.getSelectedProperties(), this._currentDataContext);
         } else {
             return [];
         }
@@ -1676,8 +1675,9 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         if (this.dataSource) {
 
             let availableOptions: IComboBoxOption[];
-            if (this._currentDataResultsSourceData.availableFieldsFromResults.length > 0) {
-                availableOptions = this._currentDataResultsSourceData.availableFieldsFromResults.map(field => {
+            const selectedProperties = this.getSelectedProperties();
+            if (selectedProperties.length > 0) {
+                availableOptions = selectedProperties.map((field: string) => {
                     return {
                         key: field,
                         text: field
@@ -1883,7 +1883,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
             if (isSourceFieldConfigured) {
 
-                const availableOptions: IComboBoxOption[] = this._currentDataResultsSourceData.availableFieldsFromResults.map(field => {
+                const availableOptions: IComboBoxOption[] = this.getSelectedProperties().map((field: string) => {
                     return {
                         key: field,
                         text: field
@@ -2686,6 +2686,14 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 parentControlZone.removeAttribute('style');
             }
         }
+    }
+
+    /**
+     * Gets the list of selected properties from the data source, filtered to remove empty values.
+     * Always recomputed (no caching) to reflect latest user changes immediately.
+     */
+    private getSelectedProperties(): string[] {
+        return (this.dataSource?.properties?.selectedProperties || []).filter((p: string) => !!p);
     }
 
     private _updateTitleProperty(value: string) {
