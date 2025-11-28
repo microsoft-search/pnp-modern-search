@@ -882,44 +882,44 @@ export class DetailsListComponent extends React.Component<
     );
   }
 
+  private _onRenderColumnHeaderTooltip = (tooltipHostProps: ITooltipHostProps): JSX.Element => {
+    const customStyles: Partial<ITooltipStyles> = {};
+    customStyles.root = {
+      backgroundColor: this.props.themeVariant.semanticColors.listBackground,
+      color: this.props.themeVariant.semanticColors.listText,
+      selectors: {
+        ":hover": {
+          backgroundColor:
+            this.props.themeVariant.semanticColors
+              .listHeaderBackgroundHovered,
+        },
+        i: {
+          color: this.props.themeVariant.semanticColors.listText,
+        },
+      },
+    };
+    //Add data-selection-all-toggle = true to "Select all" radio button div to have the results container Selection object update on clicking the radio button
+    const child: any = React.Children.only(tooltipHostProps.children);
+    if (child.props.id?.endsWith("-check")) {
+      tooltipHostProps.children = React.cloneElement(child, {
+        "data-selection-all-toggle": true,
+      });
+    }
+
+    return (
+      <TooltipHost
+        {...tooltipHostProps}
+        theme={this.props.themeVariant as ITheme}
+        styles={customStyles}
+      />
+    );
+  };
+
   private _onRenderDetailsHeader(
     props: IDetailsHeaderProps,
     defaultRender
   ): JSX.Element {
-    props.onRenderColumnHeaderTooltip = (
-      tooltipHostProps: ITooltipHostProps
-    ) => {
-      const customStyles: Partial<ITooltipStyles> = {};
-      customStyles.root = {
-        backgroundColor: this.props.themeVariant.semanticColors.listBackground,
-        color: this.props.themeVariant.semanticColors.listText,
-        selectors: {
-          ":hover": {
-            backgroundColor:
-              this.props.themeVariant.semanticColors
-                .listHeaderBackgroundHovered,
-          },
-          i: {
-            color: this.props.themeVariant.semanticColors.listText,
-          },
-        },
-      };
-      //Add data-selection-all-toggle = true to "Select all" radio button div to have the results container Selection object update on clicking the radio button
-      const child: any = React.Children.only(tooltipHostProps.children);
-      if (child.props.id?.endsWith("-check")) {
-        tooltipHostProps.children = React.cloneElement(child, {
-          "data-selection-all-toggle": true,
-        });
-      }
-
-      return (
-        <TooltipHost
-          {...tooltipHostProps}
-          theme={this.props.themeVariant as ITheme}
-          styles={customStyles}
-        />
-      );
-    };
+    props.onRenderColumnHeaderTooltip = this._onRenderColumnHeaderTooltip;
 
     return defaultRender!({
       ...props,
@@ -954,38 +954,7 @@ export class DetailsListComponent extends React.Component<
               }
             },
           },
-          onRenderColumnHeaderTooltip: (tooltipHostProps: ITooltipHostProps) => {
-            const customStyles: Partial<ITooltipStyles> = {};
-            customStyles.root = {
-              backgroundColor: this.props.themeVariant.semanticColors.listBackground,
-              color: this.props.themeVariant.semanticColors.listText,
-              selectors: {
-                ":hover": {
-                  backgroundColor:
-                    this.props.themeVariant.semanticColors
-                      .listHeaderBackgroundHovered,
-                },
-                i: {
-                  color: this.props.themeVariant.semanticColors.listText,
-                },
-              },
-            };
-            //Add data-selection-all-toggle = true to "Select all" radio button div to have the results container Selection object update on clicking the radio button
-            const child: any = React.Children.only(tooltipHostProps.children);
-            if (child.props.id?.endsWith("-check")) {
-              tooltipHostProps.children = React.cloneElement(child, {
-                "data-selection-all-toggle": true,
-              });
-            }
-
-            return (
-              <TooltipHost
-                {...tooltipHostProps}
-                theme={this.props.themeVariant as ITheme}
-                styles={customStyles}
-              />
-            );
-          }
+          onRenderColumnHeaderTooltip: this._onRenderColumnHeaderTooltip
         })}
       </Sticky>
     );
