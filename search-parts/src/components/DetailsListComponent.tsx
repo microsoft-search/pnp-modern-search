@@ -7,6 +7,10 @@ import {
   IShimmeredDetailsListProps,
   Checkbox,
   ScrollToMode,
+  Sticky,
+  StickyPositionType,
+  ScrollablePane,
+  ScrollbarVisibility,
 } from "@fluentui/react";
 import {
   ITooltipHostProps,
@@ -48,9 +52,7 @@ import {
   IDetailsRowCheckProps,
   DetailsRowCheck,
   IDetailsCheckboxProps,
-  IDetailsListStyles,
   ConstrainMode,
-  ISelectionZoneProps,
   IDetailsList,
 } from "@fluentui/react/lib/DetailsList";
 import { ISearchResultsTemplateContext } from "../models/common/ITemplateContext";
@@ -59,6 +61,8 @@ import { ITemplateService } from "../services/templateService/ITemplateService";
 import { TemplateService } from "../services/templateService/TemplateService";
 import { ServiceScope, ServiceKey } from "@microsoft/sp-core-library";
 import { ISortFieldConfiguration } from "../models/search/ISortFieldConfiguration";
+import detailsListStyles from './DetailsListComponent.module.scss';
+
 
 const DEFAULT_SHIMMER_HEIGHT = 7;
 const SHIMMER_LINE_VS_CELL_WIDTH_RATIO = 0.95;
@@ -536,9 +540,9 @@ export class DetailsListComponent extends React.Component<
       groups: [],
     };
 
-    this._onRenderCustomPlaceholder =
-      this._onRenderCustomPlaceholder.bind(this);
+    this._onRenderCustomPlaceholder = this._onRenderCustomPlaceholder.bind(this);
     this._onRenderDetailsHeader = this._onRenderDetailsHeader.bind(this);
+    this._onRenderDetailsHeaderSticky = this._onRenderDetailsHeaderSticky.bind(this);
     this._onRenderRow = this._onRenderRow.bind(this);
     this._onColumnClick = this._onColumnClick.bind(this);
   }
@@ -566,66 +570,41 @@ export class DetailsListComponent extends React.Component<
       },
       onRenderCustomPlaceholder: this._onRenderCustomPlaceholder,
       onRenderRow: this._onRenderRow,
-      onRenderDetailsHeader: this._onRenderDetailsHeader,
+      onRenderDetailsHeader: this.props.enableStickyHeader ? this._onRenderDetailsHeaderSticky : this._onRenderDetailsHeader,
       onShouldVirtualize: () => {
-        return false;
+        return this.props.stickyHeaderListViewHeight ? true : false;
       },
     };
 
-    if (this.props.enableStickyHeader) {
-      const gridStyles: Partial<IDetailsListStyles> = {
-        root: {
-          overflowX: "auto",
-          selectors: {
-            "& [role=grid]": {
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "start",
-              height: this.props.stickyHeaderListViewHeight
-                ? `${this.props.stickyHeaderListViewHeight}px`
-                : "100%",
-            },
-          },
-        },
-        headerWrapper: {
-          flex: "0 0 auto",
-        },
-        contentWrapper: {
-          flex: "1 1 auto",
-          overflow: "hidden",
-        },
-        focusZone: {
-          height: "100%",
-          overflowY: "auto",
-          overflowX: "hidden",
-        },
-      };
-
-      const focusZoneProps = {
-        "data-is-scrollable": "true",
-      } as React.HTMLAttributes<HTMLElement>;
-
-      const selectionZoneProps: ISelectionZoneProps = {
-        className: classNames.selectionZone,
-        selection: this._selection,
-        selectionMode: this._selectionMode,
-      };
-
-      shimmeredDetailsListProps.detailsListStyles = gridStyles;
-      shimmeredDetailsListProps.focusZoneProps = {
-        ...focusZoneProps,
-        ...shimmeredDetailsListProps.focusZoneProps,
-      };
-      shimmeredDetailsListProps.selectionZoneProps = selectionZoneProps;
-      shimmeredDetailsListProps.constrainMode = ConstrainMode.unconstrained;
-      shimmeredDetailsListProps.layoutMode = DetailsListLayoutMode.fixedColumns;
-    }
-
-    if (this.state.groups.length > 0) {
-      shimmeredDetailsListProps.groups = this.state.groups;
-      shimmeredDetailsListProps.groupProps = {
+      if (this.state.groups.length > 0) {
+        shimmeredDetailsListProps.groups = this.state.groups;
+        shimmeredDetailsListProps.groupProps = {
         showEmptyGroups: true,
       };
+    }
+
+    if (this.props.enableStickyHeader) {
+      const containerHeight = this.props.stickyHeaderListViewHeight 
+        ? `${this.props.stickyHeaderListViewHeight}px` 
+        : "500px";
+
+      shimmeredDetailsListProps.layoutMode = DetailsListLayoutMode.fixedColumns;
+      shimmeredDetailsListProps.constrainMode = ConstrainMode.unconstrained;
+
+      return (
+        <Fabric>
+          <div 
+            style={{ 
+              height: containerHeight, 
+              position: "relative"
+            }}
+          >
+            <ScrollablePane scrollbarVisibility={ScrollbarVisibility.auto}>
+              <ShimmeredDetailsList {...shimmeredDetailsListProps} />
+            </ScrollablePane>
+          </div>
+        </Fabric>
+      );
     }
 
     return (
@@ -946,6 +925,70 @@ export class DetailsListComponent extends React.Component<
       ...props,
       theme: this.props.themeVariant as ITheme,
     });
+  }
+
+  private _onRenderDetailsHeaderSticky(
+    props: IDetailsHeaderProps,
+    defaultRender
+  ): JSX.Element {
+
+    return (
+      <Sticky stickyPosition={StickyPositionType.Header} isScrollSynced={true} stickyBackgroundColor={this.props.themeVariant.semanticColors.listBackground}>
+        {defaultRender({
+          ...props,
+          className: detailsListStyles.detailsListHeader,
+          styles: {
+            root: {
+              backgroundColor: "transparent",
+              color: this.props.themeVariant.semanticColors.bodyText,
+              borderBottom: `1px solid ${this.props.themeVariant.semanticColors.bodyDivider}`,
+              selectors: {
+                i: {
+                  color: this.props.themeVariant.semanticColors.bodyText,
+                  fontWeight: "600",
+                },
+                [`.${detailsListStyles.detailsListHeader} .ms-DetailsHeader-cellTitle`]: {
+                  color: this.props.themeVariant.semanticColors.bodyText,
+                  fontWeight: "600",
+                }
+              }
+            },
+          },
+          onRenderColumnHeaderTooltip: (tooltipHostProps: ITooltipHostProps) => {
+            const customStyles: Partial<ITooltipStyles> = {};
+            customStyles.root = {
+              backgroundColor: this.props.themeVariant.semanticColors.listBackground,
+              color: this.props.themeVariant.semanticColors.listText,
+              selectors: {
+                ":hover": {
+                  backgroundColor:
+                    this.props.themeVariant.semanticColors
+                      .listHeaderBackgroundHovered,
+                },
+                i: {
+                  color: this.props.themeVariant.semanticColors.listText,
+                },
+              },
+            };
+            //Add data-selection-all-toggle = true to "Select all" radio button div to have the results container Selection object update on clicking the radio button
+            const child: any = React.Children.only(tooltipHostProps.children);
+            if (child.props.id?.endsWith("-check")) {
+              tooltipHostProps.children = React.cloneElement(child, {
+                "data-selection-all-toggle": true,
+              });
+            }
+
+            return (
+              <TooltipHost
+                {...tooltipHostProps}
+                theme={this.props.themeVariant as ITheme}
+                styles={customStyles}
+              />
+            );
+          }
+        })}
+      </Sticky>
+    );
   }
 
   private _onColumnClick = (

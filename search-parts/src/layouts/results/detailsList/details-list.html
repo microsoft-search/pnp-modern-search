@@ -1,22 +1,6 @@
 <content id="data-content">
 
     <style>
-        {{#if properties.layoutProperties.enableStickyHeader}}
-        .template .ms-DetailsHeader-cell:first-child {
-          position: sticky;
-          inset: 0;
-          background-color: {{@root.theme.palette.primaryBackground}};
-          z-index: 1;
-        }
-
-        .template .ms-DetailsRow-cell:first-child {
-          position: sticky;
-          inset: 0;
-          background-color: {{@root.theme.palette.primaryBackground}};
-          z-index: 0;
-        }
-        {{/if}}
-
         .template .ms-DetailsRow {
             animation-name: none;
         }
