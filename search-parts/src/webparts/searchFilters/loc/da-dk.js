@@ -27,6 +27,7 @@ define([], function() {
                 FilterNameLabel: "Felt til filter",
                 FilterDisplayName: "Visningsnavn",
                 FilterMaxBuckets: "Antal værdier",
+                FilterMaxBucketsWarning: "Det maksimale antal værdier er 1000",
                 FilterTemplate: "Skabelon",
                 FilterExpandByDefault: "Udvid som standard",
                 // FilterType: "Filtertype",

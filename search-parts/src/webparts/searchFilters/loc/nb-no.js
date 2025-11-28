@@ -26,6 +26,7 @@ define([], function() {
                 SelectFilterComboBoxLabel: "Velg felt",
                 FilterNameLabel: "Felt for filter",
                 FilterMaxBuckets: "Antall verdier",
+                FilterMaxBucketsWarning: "Maksimalt antall verdier er 1000",
                 FilterDisplayName: "Visningsnavn",
                 FilterTemplate: "Mal",
                 FilterExpandByDefault: "Utvid som standard",

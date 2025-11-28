@@ -26,6 +26,7 @@ define([], function() {
                 SelectFilterComboBoxLabel: "Vybrat pole",
                 FilterNameLabel: "Filtrační pole",
                 FilterMaxBuckets: "Počet hodnot",
+                FilterMaxBucketsWarning: "Maximální počet hodnot je 1000",
                 FilterDisplayName: "Zobrazovaný název",
                 FilterTemplate: "Šablona",
                 FilterExpandByDefault: "Rozbalit ve výchozím nastavení",

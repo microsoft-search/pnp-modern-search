@@ -26,6 +26,7 @@ define([], function() {
                 SelectFilterComboBoxLabel: "Wybierz pole",
                 FilterNameLabel: "Filter field",
                 FilterMaxBuckets: "# wartości",
+                FilterMaxBucketsWarning: "Maksymalna liczba wartości to 1000",
                 FilterDisplayName: "Tytuł",
                 FilterTemplate: "Szablon",
                 FilterExpandByDefault: "Domyślnie rozwinięte",

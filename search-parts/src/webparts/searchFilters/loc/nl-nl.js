@@ -24,9 +24,10 @@ define([], function() {
             },
             DataFilterCollection: {
                 SelectFilterComboBoxLabel: "Selecteer veld",
-                FilterNameLabel: "Filter veld",
+                FilterNameLabel: "Filterveld",
                 FilterMaxBuckets: "# waarden",
-                FilterDisplayName: "Weergave naam",
+                FilterMaxBucketsWarning: "Het maximale aantal waarden is 1000",
+                FilterDisplayName: "Weergavenaam",
                 FilterTemplate: "Sjabloon",
                 FilterExpandByDefault: "Standaard uitklappen",
                 FilterType: "Soort filter",

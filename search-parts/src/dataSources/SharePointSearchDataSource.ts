@@ -40,7 +40,7 @@ import { StringHelper } from '../helpers/StringHelper';
 import { SortableFields } from '../common/Constants';
 import { PnPClientStorage } from "@pnp/common/storage";
 
-const TAXONOMY_REFINER_REGEX = /((L0)\|#.?([0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}))\|?/;
+const TAXONOMY_REFINER_REGEX = /((L0|GP0)\|#.?([0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}))\|?/;
 
 export enum BuiltinSourceIds {
     Documents = 'e7ec8cee-ded8-43c9-beb5-436b54b31e84',
@@ -1229,8 +1229,9 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                         if (isTerm) {
                             const matches = TAXONOMY_REFINER_REGEX.exec(value.name);
                             const termId = matches[3];
-                            const termPrefix = matches[2]; // 'L0'
-                            if (termPrefix.localeCompare("L0") === 0) {
+                            const termPrefix = matches[2]; // 'L0' or 'GP0'
+                            // Handle both L0 and GP0 formats
+                            if (termPrefix.localeCompare("L0") === 0 || termPrefix.localeCompare("GP0") === 0) {
                                 const termFilterWithoutTranslations = `GP0|#${termId.toString()}`;
                                 const termTextFilter = `L0|#0${termId.toString()}`;
 
@@ -1245,8 +1246,9 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                         value.name = existingFilters[0].localizedTermLabel;
                     }
 
-                    // Keep only terms (L0). The crawl property ows_taxid_xxx return term sets too.
-                    if (!(/(GTSet|GPP|GP0)/i).test(value.name)) {
+                    // Keep only terms (L0 or GP0). The crawl property ows_taxid_xxx return term sets too.
+                    // GP0 values should be kept as they represent actual terms when maxBuckets is used
+                    if (!(/(GTSet|GPP)/i).test(value.name)) {
                         return value;
                     }
 

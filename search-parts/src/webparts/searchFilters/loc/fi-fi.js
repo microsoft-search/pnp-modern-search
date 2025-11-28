@@ -26,6 +26,7 @@ define([], function() {
                 SelectFilterComboBoxLabel: "Valitse kenttä",
                 FilterNameLabel: "Suodatinkenttä",
                 FilterMaxBuckets: "# arvojen määrä",
+                FilterMaxBucketsWarning: "Arvojen enimmäismäärä on 1000",
                 FilterDisplayName: "Näyttönimi",
                 FilterTemplate: "Templaatti",
                 FilterExpandByDefault: "Näytä oletuksena laajennettuna",
