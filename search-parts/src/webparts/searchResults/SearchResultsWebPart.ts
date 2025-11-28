@@ -208,6 +208,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
     private _lastSelectedFilters: IDataFilter[] = [];
     private _lastInputQueryText: string = undefined;
+    private _lastSelectedVerticalKey: string = undefined;
 
     /**
      * The default template slots when the data source is instanciated for the first time
@@ -295,6 +296,15 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         // Refresh the property pane to get layout and data source options
         if (this.context && this.context.propertyPane && this.context.propertyPane.isPropertyPaneOpen()) {
             this.context.propertyPane.refresh();
+        }
+
+        // Reset page number when switching between verticals (before getDataContext)
+        if (this._verticalsConnectionSourceData && this.properties.selectedVerticalKeys.length > 0) {
+            const verticalData = DynamicPropertyHelper.tryGetValueSafe(this._verticalsConnectionSourceData);
+            if (verticalData && verticalData.selectedVertical?.key && this._lastSelectedVerticalKey !== verticalData.selectedVertical.key) {
+                this.currentPageNumber = 1;
+                this._lastSelectedVerticalKey = verticalData.selectedVertical.key;
+            }
         }
 
         if (this.dataSource) {
