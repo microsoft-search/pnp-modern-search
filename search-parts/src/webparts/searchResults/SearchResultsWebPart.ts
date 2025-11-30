@@ -1303,7 +1303,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         if (this.properties.templateSlots) {
             const templateSlotNames = this.properties.templateSlots.map(slot => slot.slotName);
-            const undefinedTemplateSlots = this.layoutSlotNames.filter(slot => !templateSlotNames.includes(slot));
+            const layoutSlots = this.layoutSlotNames || [];
+            const undefinedTemplateSlots = layoutSlots.filter(slot => !templateSlotNames.includes(slot));
 
             stylingFields.push(
                 PropertyFieldMessage('messageMissingLayoutSlots', {
@@ -1428,7 +1429,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             );
             if (this.properties.templateSlots) {
                 const templateSlotNames = this.properties.templateSlots.map(slot => slot.slotName);
-                const undefinedTemplateSlots = this.resultTypesSlotNames.filter(slot => !templateSlotNames.includes(slot));
+                const resultTypesSlots = this.resultTypesSlotNames || [];
+                const undefinedTemplateSlots = resultTypesSlots.filter(slot => !templateSlotNames.includes(slot));
 
                 stylingFields.push(
                     PropertyFieldMessage('messageMissingResultTypesSlots', {
@@ -1741,7 +1743,9 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             if (this.templateContentToDisplay && this.properties.templateSlots) {
 
                 const templateSlotNames = this.properties.templateSlots.map(slot => slot.slotName);
-                const undefinedTemplateSlots = this.layoutSlotNames.concat(this.resultTypesSlotNames).filter(slot => !templateSlotNames.includes(slot));
+                const layoutSlots = this.layoutSlotNames || [];
+                const resultTypesSlots = this.resultTypesSlotNames || [];
+                const undefinedTemplateSlots = layoutSlots.concat(resultTypesSlots).filter(slot => !templateSlotNames.includes(slot));
 
                 templateSlotFields.push(
                     PropertyFieldMessage('messageMissingSlots', {

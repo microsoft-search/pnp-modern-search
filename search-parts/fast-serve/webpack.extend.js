@@ -5,6 +5,7 @@
  */
 
 const webpack = require("webpack");
+const path = require("path");
 const { IgnorePlugin } = require('webpack');
 const { ProvidePlugin } = require('webpack'); 
 
@@ -15,12 +16,18 @@ const webpackConfig = {
         alias: { 
           handlebars: 'handlebars/dist/handlebars.min.js',
           process: 'process/browser',
+          // Force ALL imports of adaptive-expressions (including from adaptivecards-templating)
+          // to use the main entry (index.js) instead of browser field.
+          // Using prefix match (not $) to also match internal imports from node_modules.
+          "adaptive-expressions": path.resolve(__dirname, '../node_modules/adaptive-expressions/lib/index.js'),
         },
         fallback: {
           "path": require.resolve("path-browserify"),
           "util": require.resolve("util/"),
           "url": require.resolve("url/"),
           "querystring": require.resolve("querystring-es3"),
+          "os": require.resolve("os-browserify/browser"),
+          "assert": require.resolve("assert/"),
           "fs": false
         }
     },
@@ -71,11 +78,10 @@ const webpackConfig = {
       ]
     },
     optimization: {
-      splitChunks: {
-        cacheGroups: {
-          vendors: false
-        }
-      }
+      // CRITICAL: Completely disable splitChunks to prevent duplicate module instances.
+      // Adaptivecards-templating and adaptive-expressions MUST be
+      // in the same module cache to share the standardFunctions map.
+      splitChunks: false
     },
     plugins: [
       new IgnorePlugin({
