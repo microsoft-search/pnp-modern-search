@@ -52,7 +52,6 @@ const envCheck = build.subTask('environmentCheck', (gulp, config, done) => {
                 process: "process/browser",
                 // Force ALL imports of adaptive-expressions (including from adaptivecards-templating)
                 // to use the main entry (index.js) instead of browser field.
-                // Using prefix match (not $) to also match internal imports from node_modules.
                 "adaptive-expressions": path.resolve(__dirname, 'node_modules/adaptive-expressions/lib/index.js'),
             };
 
@@ -120,7 +119,7 @@ const envCheck = build.subTask('environmentCheck', (gulp, config, done) => {
                 }
             });
 
-            // CRITICAL: Completely disable splitChunks to prevent duplicate module instances.
+            // Completely disable splitChunks to prevent duplicate module instances.
             // Adaptivecards-templating and adaptive-expressions MUST be
             // in the same module cache to share the standardFunctions map.
             generatedConfiguration.optimization.splitChunks = false;
