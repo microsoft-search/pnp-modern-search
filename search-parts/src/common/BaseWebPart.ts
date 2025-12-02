@@ -12,6 +12,10 @@ import { ThemeProvider, IReadonlyTheme, ThemeChangedEventArgs } from '@microsoft
 import { isEqual } from '@microsoft/sp-lodash-subset';
 import { PropertyPaneWebPartInformation } from '@pnp/spfx-property-controls/lib/PropertyPaneWebPartInformation';
 import { Log } from '@microsoft/sp-core-library';
+import { DisplayMode } from '@microsoft/sp-core-library';
+import { AudienceTargetingService } from '../services/audienceTargetingService/AudienceTargetingService';
+import { PropertyFieldPeoplePicker, PrincipalType } from '@pnp/spfx-property-controls/lib/PropertyFieldPeoplePicker';
+import { PropertyFieldNumber } from '@pnp/spfx-property-controls/lib/PropertyFieldNumber';
 
 /**
  * Generic abstract class for all Web Parts in the solution
@@ -34,6 +38,11 @@ export abstract class BaseWebPart<T extends IBaseWebPartProps> extends BaseClien
      * The data source service instance
      */
     protected extensibilityService: IExtensibilityService = undefined;
+
+    /**
+     * Cached audience check result to avoid repeated API calls during the same render cycle
+     */
+    private _audienceCheckResult: boolean | null = null;
 
     constructor() {
         super();
@@ -112,6 +121,67 @@ export abstract class BaseWebPart<T extends IBaseWebPartProps> extends BaseClien
       }
 
       return parentControlZone;
+    }
+
+    /**
+     * Check if the current user is in the target audience
+     * @returns true if user is in audience or no audience is configured, false otherwise
+     */
+    protected async isInAudience(): Promise<boolean> {
+        // Always show in edit mode so editors can configure the web part
+        if (this.displayMode === DisplayMode.Edit) {
+            return true;
+        }
+
+        // Use cached result if available
+        if (this._audienceCheckResult !== null) {
+            return this._audienceCheckResult;
+        }
+
+        // If no audiences configured, show to everyone
+        if (!this.properties.audiences || this.properties.audiences.length === 0) {
+            this._audienceCheckResult = true;
+            return true;
+        }
+
+        const audienceService = new AudienceTargetingService(
+            this.properties.audiences,
+            this.properties.audienceCacheDuration,
+            this.context
+        );
+
+        this._audienceCheckResult = await audienceService.checkAudiences();
+        return this._audienceCheckResult;
+    }
+
+    /**
+     * Returns the property pane group for audience targeting configuration
+     */
+    protected getAudienceTargetingPropertyPaneGroup(): IPropertyPaneGroup {
+        return {
+            groupName: commonStrings.PropertyPane.AudienceTargeting.GroupName,
+            groupFields: [
+                PropertyFieldPeoplePicker('audiences', {
+                    label: commonStrings.PropertyPane.AudienceTargeting.TargetAudienceLabel,
+                    initialData: this.properties.audiences,
+                    allowDuplicate: false,
+                    principalType: [PrincipalType.SharePoint, PrincipalType.Users, PrincipalType.Security],
+                    onPropertyChange: this.onPropertyPaneFieldChanged.bind(this),
+                    context: this.context as any,
+                    properties: this.properties,
+                    onGetErrorMessage: null,
+                    deferredValidationTime: 0,
+                    key: 'audienceTargeting'
+                }),
+                PropertyFieldNumber('audienceCacheDuration', {
+                    key: 'audienceCacheDuration',
+                    label: commonStrings.PropertyPane.AudienceTargeting.CacheDurationLabel,
+                    description: commonStrings.PropertyPane.AudienceTargeting.CacheDurationDescription,
+                    value: this.properties.audienceCacheDuration || 24,
+                    minValue: 1,
+                })
+            ]
+        };
     }
 
     /**
