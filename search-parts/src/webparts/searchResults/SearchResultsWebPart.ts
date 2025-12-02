@@ -1127,7 +1127,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             this.domElement.removeEventListener('pageNumberUpdated', this._pagingEventHandler);
         }
 
-        this._pagingEventHandler = ((ev: CustomEvent) => {
+        this._pagingEventHandler = (ev: CustomEvent) => {
 
             // We ensure the event if not propagated outside the component (i.e. other Web Part instances)
             ev.stopImmediatePropagation();
@@ -1139,7 +1139,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
             this.render();
 
-        }).bind(this);
+        };
 
         this.domElement.addEventListener('pageNumberUpdated', this._pagingEventHandler);
     }
@@ -1154,7 +1154,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             this.domElement.removeEventListener(ExtensibilityConstants.EVENT_SORT_BY, this._sortingEventHandler);
         }
 
-        this._sortingEventHandler = ((ev: CustomEvent) => {
+        this._sortingEventHandler = (ev: CustomEvent) => {
 
             // We ensure the event if not propagated outside the component (i.e. other Web Part instances)
             ev.stopImmediatePropagation();
@@ -1167,7 +1167,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
             this.render();
 
-        }).bind(this);
+        };
 
         this.domElement.addEventListener(ExtensibilityConstants.EVENT_SORT_BY, this._sortingEventHandler);
     }
