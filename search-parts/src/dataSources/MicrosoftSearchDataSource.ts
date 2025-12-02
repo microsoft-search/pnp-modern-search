@@ -939,7 +939,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             } else {
 
                 // Default sort
-                this.properties.sortProperties.filter(s => s.sortField).forEach(sortProperty => {
+                this.properties.sortProperties.filter(s => s.isDefaultSort).forEach(sortProperty => {
                     sortProperties.push({
                         name: sortProperty.sortField,
                         isDescending: sortProperty.sortDirection === SortFieldDirection.Descending ? true : false
