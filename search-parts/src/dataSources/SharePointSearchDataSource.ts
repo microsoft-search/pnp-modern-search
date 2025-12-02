@@ -922,7 +922,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
             });
         }
 
-        searchQuery.Querytext = dataContext.inputQueryText;
+        searchQuery.Querytext = await this._tokenService.resolveTokens(dataContext.inputQueryText);
 
         searchQuery.EnableQueryRules = this.properties.enableQueryRules;
         if (searchQuery.EnableQueryRules == true || searchQuery.EnableQueryRules == null) {
