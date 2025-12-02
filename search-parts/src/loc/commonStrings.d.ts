@@ -410,6 +410,12 @@ declare interface ICommonStrings {
           }
         },
         ImportExport: string;
+      },
+      AudienceTargeting: {
+        GroupName: string;
+        TargetAudienceLabel: string;
+        CacheDurationLabel: string;
+        CacheDurationDescription: string;
       }
     },
     Filters: {
