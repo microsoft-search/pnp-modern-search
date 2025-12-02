@@ -20,10 +20,11 @@ import { ITokenService, IDataVertical } from '@pnp/modern-search-extensibility';
 import { BaseWebPart } from '../../common/BaseWebPart';
 import { PageOpenBehavior } from '../../helpers/UrlHelper';
 import { IDataVerticalConfiguration } from '../../models/common/IDataVerticalConfiguration';
+import { AudienceTargetingService } from '../../services/audienceTargetingService/AudienceTargetingService';
+import { IPropertyFieldGroupOrPerson } from '@pnp/spfx-property-controls';
 import commonStyles from '../../styles/Common.module.scss';
 import PnPTelemetry from '@pnp/telemetry-js';
 import type { IDynamicPerson } from '@microsoft/mgt-react';
-import { MSGraphClientFactory } from '@microsoft/sp-http';
 import { loadMsGraphToolkit } from '../../helpers/GraphToolKitHelper';
 import { LocalizationHelper } from "@microsoft/mgt-element/dist/es6/utils/LocalizationHelper";
 import { ITextFieldProps, TextField } from '@fluentui/react/lib/TextField';
@@ -56,8 +57,6 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
      * The token service instance
      */
     private tokenService: ITokenService;
-
-    private _memberGroups: any;
 
     public constructor() {
         super();
@@ -95,58 +94,16 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
             );
             this._placeholderComponent = Placeholder;
         }
-
-        // if there are verticals with audiences and if necessary MS Graph API-permissions have been granted --> load member groups of current user
-        if (this.properties.verticals && this.properties.verticals.some(v => v.audience && v.audience.length > 0) && await this._graphTokenContainsRequiredScopes()) {
-            await this._loadMemberGroups();
-        }
     }
 
-    /**
-     * Check if a graph token contains the required scopes for calling ../me/getMemberGroups
-     * See details: https://learn.microsoft.com/en-us/graph/api/directoryobject-getmembergroups?view=graph-rest-1.0&tabs=http#group-memberships-for-a-directory-object
-     * @returns true if the graph token contains the required scopes
-     */
-    private async _graphTokenContainsRequiredScopes(): Promise<boolean> {
+    public async render(): Promise<void> {
 
-        const tokenProvider = await this.context.aadTokenProviderFactory.getTokenProvider();
-        // retrieve a token for MS Graph API
-        const tokenRaw = await tokenProvider.getToken('https://graph.microsoft.com');
-        // check if the returned token-value has a valid structure
-        if (!tokenRaw && !((tokenRaw.match(/./g) || []).length === 2)) {
-            return false;
+        // Check audience targeting - if user is not in audience, don't render
+        const isInAudience = await this.isInAudience();
+        if (!isInAudience) {
+            this.domElement.innerHTML = '';
+            return;
         }
-        else {
-            // get object to token
-            let tokenPayload;
-            try { tokenPayload = JSON.parse(atob(tokenRaw.split('.')[1])); }
-            catch { return false; }
-            // check if the token contains the required scopes
-            if (tokenPayload?.scp) {
-                const scopes: string[] = tokenPayload.scp.split(' ');
-                return (
-                    (scopes.includes('User.ReadBasic.All') && scopes.includes('GroupMember.Read.All')) ||
-                    (scopes.includes('User.ReadBasic.All') && scopes.includes('Group.Read.All')) ||
-                    (scopes.includes('User.Read.All') && scopes.includes('GroupMember.Read.All')) ||
-                    (scopes.includes('User.Read.All') && scopes.includes('Group.Read.All')) ||
-                    (scopes.includes('Directory.Read.All'))
-                );
-            } else {
-                return false;
-            }
-        }
-    }
-
-    /**
-     * Load the member groups of the current user via MS Graph API
-     */
-    private async _loadMemberGroups() {
-        const msGraphClientFactory = this.context.serviceScope.consume<MSGraphClientFactory>(MSGraphClientFactory.serviceKey);
-        const msGraphClient = await msGraphClientFactory.getClient('3');
-        this._memberGroups = await msGraphClient.api("me/getMemberGroups").post({ securityEnabledOnly: false });
-    }
-
-    public render(): void {
 
         let renderRootElement: JSX.Element = null;
 
@@ -190,11 +147,7 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
             let verticalsToBeDisplayed = this.properties.verticals;
             // if not in edit mode, filter for verticals without audiences or with audiences based on the current user's group memberships
             if (this.displayMode !== DisplayMode.Edit) {
-                verticalsToBeDisplayed = verticalsToBeDisplayed.filter((v: IDataVerticalConfiguration) =>
-                    !v.audience ||
-                    v.audience.length === 0 ||
-                    v.audience.some(audienceId => { return this._memberGroups?.value.includes(audienceId); })
-                );
+                verticalsToBeDisplayed = await this._filterVerticalsByAudience(verticalsToBeDisplayed);
             }
             renderRootElement = React.createElement(
                 SearchVerticalsContainer,
@@ -220,6 +173,45 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
 
 
         ReactDom.render(renderRootElement, this.domElement);
+    }
+
+    /**
+     * Filter verticals based on audience targeting configuration.
+     * Backwards compatible: supports legacy string[] format (AAD group IDs only)
+     * @param verticals Array of vertical configurations to filter
+     * @returns Filtered array of verticals the user has access to
+     */
+    private async _filterVerticalsByAudience(verticals: IDataVerticalConfiguration[]): Promise<IDataVerticalConfiguration[]> {
+        const filteredVerticals: IDataVerticalConfiguration[] = [];
+        
+        for (const vertical of verticals) {
+            // If no audience configured, show to everyone
+            if (!vertical.audience || vertical.audience.length === 0) {
+                filteredVerticals.push(vertical);
+                continue;
+            }
+
+            // Convert legacy string[] (AAD group IDs) to IPropertyFieldGroupOrPerson[] format
+            // This maintains backwards compatibility with existing configurations
+            const audienceConfig: IPropertyFieldGroupOrPerson[] = vertical.audience.map((groupId: string) => ({
+                id: `c:0o.c|federateddirectoryclaimprovider|${groupId}`,
+                login: 'FederatedDirectoryClaimProvider',
+                fullName: groupId // We only have the ID in legacy format
+            } as IPropertyFieldGroupOrPerson));
+
+            const audienceService = new AudienceTargetingService(
+                audienceConfig,
+                this.properties.audienceCacheDuration || 1,
+                this.context
+            );
+
+            const isInAudience = await audienceService.checkAudiences();
+            if (isInAudience) {
+                filteredVerticals.push(vertical);
+            }
+        }
+
+        return filteredVerticals;
     }
 
     public getPropertyDefinitions(): IDynamicDataPropertyDefinition[] {
@@ -288,6 +280,7 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
                 displayGroupsAsAccordion: true,
                 groups: [
                     ...this.getPropertyPaneWebPartInfoGroups(),
+                    this.getAudienceTargetingPropertyPaneGroup(),
                     {
                         groupName: commonStrings.PropertyPane.InformationPage.ImportExport,
                         groupFields: [

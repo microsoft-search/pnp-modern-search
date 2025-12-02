@@ -97,8 +97,8 @@ define([], function () {
                 SearchPlaceholder: "Zoek een waarde..."
             },
             CurrentVerticalNotSelectedMessage: "De huidige geselecteerde branche komt niet overeen met die welke zijn gekoppeld aan dit webonderdeel ({0}). Het blijft leeg in de weergavemodus.",
-            True:"Ja",
-            False:"Nee"
+            True: "Ja",
+            False: "Nee"
         },
         DataSources: {
             SharePointSearch: {
@@ -243,7 +243,7 @@ define([], function () {
                 EnableStickyHeader: "Sticky header inschakelen",
                 StickyHeaderListViewHeight: "Hoogte van de lijstweergave (px)",
                 EnableDownload: "Downloaden inschakelen",
-                UseAlternatingBackgroundColor:"Gebruik afwisselende achtergrondkleur"
+                UseAlternatingBackgroundColor: "Gebruik afwisselende achtergrondkleur"
 
             },
             Cards: {
@@ -344,48 +344,48 @@ define([], function () {
                 }
             },
             PersonCard: {
-              SendEmailLinkSubtitle: "E-mail verzenden",
-              StartChatLinkSubtitle: "Chat starten",
-              ShowMoreSectionButton: "Meer weergeven",
-              ContactSectionTitle: "Contact",
-              ReportsToSectionTitle: "Rapporteert aan",
-              DirectReportsSectionTitle: "Directe ondergeschikten",
-              OrganizationSectionTitle: "Organisatie",
-              YouWorkWithSubSectionTitle: "U werkt samen met",
-              UserWorksWithSubSectionTitle: "werkt samen met",
-              EmailsSectionTitle: "E-mails",
-              FilesSectionTitle: "Bestanden",
-              SharedTextSubtitle: "Gedeeld",
-              SkillsAndExperienceSectionTitle: "Vaardigheden & Ervaring",
-              AboutCompactSectionTitle: "Over",
-              SkillsSubSectionTitle: "Vaardigheden",
-              LanguagesSubSectionTitle: "Talen",
-              WorkExperienceSubSectionTitle: "Werkervaring",
-              EducationSubSectionTitle: "Opleiding",
-              ProfessionalInterestsSubSectionTitle: "Professionele interesses",
-              PersonalInterestsSubSectionTitle: "Persoonlijke interesses",
-              BirthdaySubSectionTitle: "Verjaardag",
-              CurrentYearSubtitle: "Huidig",
-              EndOfCard: "Einde van de kaart",
-              QuickMessage: "Stuur een snel bericht",
-              ExpandDetailsLabel: "Details uitvouwen",
-              SendMessageLabel: "Bericht verzenden",
-              EmailButtonLabel: "E-mail",
-              CallButtonLabel: "Bellen",
-              ChatButtonLabel: "Chat",
-              CloseCardLabel: "Kaart sluiten",
-              VideoButtonLabel: "Video",
-              GoBackLabel: "Teruggaan",
-              EmailTitle: "E-mail",
-              ChatTitle: "Teams",
-              BusinessPhoneTitle: "Zakelijk telefoonnummer",
-              CellPhoneTitle: "Mobiel telefoonnummer",
-              DepartmentTitle: "Afdeling",
-              PersonTitle: "Titel",
-              OfficeLocationTitle: "Kantoorlocatie",
-              CopyToClipboardButton: "Kopiëren naar klembord",
-              ShowMoreSubtitle: "Meer items weergeven",
-              SocialMediaSubSectionTitle: "Sociale media"
+                SendEmailLinkSubtitle: "E-mail verzenden",
+                StartChatLinkSubtitle: "Chat starten",
+                ShowMoreSectionButton: "Meer weergeven",
+                ContactSectionTitle: "Contact",
+                ReportsToSectionTitle: "Rapporteert aan",
+                DirectReportsSectionTitle: "Directe ondergeschikten",
+                OrganizationSectionTitle: "Organisatie",
+                YouWorkWithSubSectionTitle: "U werkt samen met",
+                UserWorksWithSubSectionTitle: "werkt samen met",
+                EmailsSectionTitle: "E-mails",
+                FilesSectionTitle: "Bestanden",
+                SharedTextSubtitle: "Gedeeld",
+                SkillsAndExperienceSectionTitle: "Vaardigheden & Ervaring",
+                AboutCompactSectionTitle: "Over",
+                SkillsSubSectionTitle: "Vaardigheden",
+                LanguagesSubSectionTitle: "Talen",
+                WorkExperienceSubSectionTitle: "Werkervaring",
+                EducationSubSectionTitle: "Opleiding",
+                ProfessionalInterestsSubSectionTitle: "Professionele interesses",
+                PersonalInterestsSubSectionTitle: "Persoonlijke interesses",
+                BirthdaySubSectionTitle: "Verjaardag",
+                CurrentYearSubtitle: "Huidig",
+                EndOfCard: "Einde van de kaart",
+                QuickMessage: "Stuur een snel bericht",
+                ExpandDetailsLabel: "Details uitvouwen",
+                SendMessageLabel: "Bericht verzenden",
+                EmailButtonLabel: "E-mail",
+                CallButtonLabel: "Bellen",
+                ChatButtonLabel: "Chat",
+                CloseCardLabel: "Kaart sluiten",
+                VideoButtonLabel: "Video",
+                GoBackLabel: "Teruggaan",
+                EmailTitle: "E-mail",
+                ChatTitle: "Teams",
+                BusinessPhoneTitle: "Zakelijk telefoonnummer",
+                CellPhoneTitle: "Mobiel telefoonnummer",
+                DepartmentTitle: "Afdeling",
+                PersonTitle: "Titel",
+                OfficeLocationTitle: "Kantoorlocatie",
+                CopyToClipboardButton: "Kopiëren naar klembord",
+                ShowMoreSubtitle: "Meer items weergeven",
+                SocialMediaSubSectionTitle: "Sociale media"
             }
         },
         HandlebarsHelpers: {
@@ -410,6 +410,12 @@ define([], function () {
                     }
                 },
                 ImportExport: "Importeer/Exporteer instellingen"
+            },
+            AudienceTargeting: {
+                GroupName: "Doelgroeptargeting",
+                TargetAudienceLabel: "Doelgroep",
+                CacheDurationLabel: "Cacheduur (uren)",
+                CacheDurationDescription: "Duur in uren voor het cachen van doelgroeplidmaatschap"
             }
         },
         Filters: {

@@ -97,8 +97,8 @@ define([], function () {
                 SearchPlaceholder: "Hae arvoa..."
             },
             CurrentVerticalNotSelectedMessage: "Valittu vertikaali ei ole yhdistetty hakutulososaan ({0}). Hakutulososa on tyhjä sivun lukutilassa.",
-            True:"Kyllä",
-            False:"Ei"
+            True: "Kyllä",
+            False: "Ei"
         },
         DataSources: {
             SharePointSearch: {
@@ -242,7 +242,7 @@ define([], function () {
                 EnableStickyHeader: "Kiinnitä ylätunniste",
                 StickyHeaderListViewHeight: "Kiinnitetyn ylätunnisteen korkeus (px)",
                 EnableDownload: "Salli lataus",
-                UseAlternatingBackgroundColor:"Käytä Vaihtelevaa taustaväriä"
+                UseAlternatingBackgroundColor: "Käytä Vaihtelevaa taustaväriä"
             },
             Cards: {
                 Name: "Kortit",
@@ -342,48 +342,48 @@ define([], function () {
                 }
             },
             PersonCard: {
-              SendEmailLinkSubtitle: "Lähetä sähköposti",
-              StartChatLinkSubtitle: "Aloita keskustelu",
-              ShowMoreSectionButton: "Näytä lisää",
-              ContactSectionTitle: "Yhteystiedot",
-              ReportsToSectionTitle: "Raportoi henkilölle",
-              DirectReportsSectionTitle: "Suorat alaiset",
-              OrganizationSectionTitle: "Organisaatio",
-              YouWorkWithSubSectionTitle: "Työskentelet henkilön kanssa",
-              UserWorksWithSubSectionTitle: "työskentelee henkilön kanssa",
-              EmailsSectionTitle: "Sähköpostit",
-              FilesSectionTitle: "Tiedostot",
-              SharedTextSubtitle: "Jaettu",
-              SkillsAndExperienceSectionTitle: "Taidot ja kokemus",
-              AboutCompactSectionTitle: "Tietoja",
-              SkillsSubSectionTitle: "Taidot",
-              LanguagesSubSectionTitle: "Kielet",
-              WorkExperienceSubSectionTitle: "Työkokemus",
-              EducationSubSectionTitle: "Koulutus",
-              ProfessionalInterestsSubSectionTitle: "Ammatilliset kiinnostuksen kohteet",
-              PersonalInterestsSubSectionTitle: "Henkilökohtaiset kiinnostuksen kohteet",
-              BirthdaySubSectionTitle: "Syntymäpäivä",
-              CurrentYearSubtitle: "Nykyinen",
-              EndOfCard: "Kortin loppu",
-              QuickMessage: "Lähetä pikaviesti",
-              ExpandDetailsLabel: "Laajenna tiedot",
-              SendMessageLabel: "Lähetä viesti",
-              EmailButtonLabel: "Sähköposti",
-              CallButtonLabel: "Soita",
-              ChatButtonLabel: "Keskustelu",
-              CloseCardLabel: "Sulje kortti",
-              VideoButtonLabel: "Video",
-              GoBackLabel: "Takaisin",
-              EmailTitle: "Sähköposti",
-              ChatTitle: "Teams",
-              BusinessPhoneTitle: "Työpuhelin",
-              CellPhoneTitle: "Matkapuhelin",
-              DepartmentTitle: "Osasto",
-              PersonTitle: "Titteli",
-              OfficeLocationTitle: "Toimiston sijainti",
-              CopyToClipboardButton: "Kopioi leikepöydälle",
-              ShowMoreSubtitle: "Näytä lisää kohteita",
-              SocialMediaSubSectionTitle: "Sosiaalinen media"
+                SendEmailLinkSubtitle: "Lähetä sähköposti",
+                StartChatLinkSubtitle: "Aloita keskustelu",
+                ShowMoreSectionButton: "Näytä lisää",
+                ContactSectionTitle: "Yhteystiedot",
+                ReportsToSectionTitle: "Raportoi henkilölle",
+                DirectReportsSectionTitle: "Suorat alaiset",
+                OrganizationSectionTitle: "Organisaatio",
+                YouWorkWithSubSectionTitle: "Työskentelet henkilön kanssa",
+                UserWorksWithSubSectionTitle: "työskentelee henkilön kanssa",
+                EmailsSectionTitle: "Sähköpostit",
+                FilesSectionTitle: "Tiedostot",
+                SharedTextSubtitle: "Jaettu",
+                SkillsAndExperienceSectionTitle: "Taidot ja kokemus",
+                AboutCompactSectionTitle: "Tietoja",
+                SkillsSubSectionTitle: "Taidot",
+                LanguagesSubSectionTitle: "Kielet",
+                WorkExperienceSubSectionTitle: "Työkokemus",
+                EducationSubSectionTitle: "Koulutus",
+                ProfessionalInterestsSubSectionTitle: "Ammatilliset kiinnostuksen kohteet",
+                PersonalInterestsSubSectionTitle: "Henkilökohtaiset kiinnostuksen kohteet",
+                BirthdaySubSectionTitle: "Syntymäpäivä",
+                CurrentYearSubtitle: "Nykyinen",
+                EndOfCard: "Kortin loppu",
+                QuickMessage: "Lähetä pikaviesti",
+                ExpandDetailsLabel: "Laajenna tiedot",
+                SendMessageLabel: "Lähetä viesti",
+                EmailButtonLabel: "Sähköposti",
+                CallButtonLabel: "Soita",
+                ChatButtonLabel: "Keskustelu",
+                CloseCardLabel: "Sulje kortti",
+                VideoButtonLabel: "Video",
+                GoBackLabel: "Takaisin",
+                EmailTitle: "Sähköposti",
+                ChatTitle: "Teams",
+                BusinessPhoneTitle: "Työpuhelin",
+                CellPhoneTitle: "Matkapuhelin",
+                DepartmentTitle: "Osasto",
+                PersonTitle: "Titteli",
+                OfficeLocationTitle: "Toimiston sijainti",
+                CopyToClipboardButton: "Kopioi leikepöydälle",
+                ShowMoreSubtitle: "Näytä lisää kohteita",
+                SocialMediaSubSectionTitle: "Sosiaalinen media"
             }
         },
         HandlebarsHelpers: {
@@ -408,6 +408,12 @@ define([], function () {
                     }
                 },
                 ImportExport: "Vienti/Tuonti asetukset"
+            },
+            AudienceTargeting: {
+                GroupName: "Kohderyhmäkohdistus",
+                TargetAudienceLabel: "Kohderyhmä",
+                CacheDurationLabel: "Välimuistin kesto (tuntia)",
+                CacheDurationDescription: "Aika tunteina kohderyhmän jäsenyyden välimuistiin tallentamiseksi"
             }
         },
         Filters: {

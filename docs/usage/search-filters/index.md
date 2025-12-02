@@ -74,3 +74,7 @@ The Search Filter Web Part supports deep linking, meaning you can preselect filt
 
 !!! important
     **We recommend to use the URL generated from filter values selection instead of crafting the URL manually.**
+
+## Audience Targeting
+
+You can control the visibility of the filter web part based on user group membership. See [Audience Targeting](../search-results/common/audience-targeting.md) for details.

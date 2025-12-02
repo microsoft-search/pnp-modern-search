@@ -97,8 +97,8 @@ define([], function () {
                 SearchPlaceholder: "Wyszukaj wartość..."
             },
             CurrentVerticalNotSelectedMessage: "Aktualnie wybrana branża nie odpowiada branżom powiązanym z tym składnikiem Web Part ({0}). W trybie wyświetlania pozostanie puste.",
-            True:"Tak",
-            False:"Nie"
+            True: "Tak",
+            False: "Nie"
 
         },
         DataSources: {
@@ -245,7 +245,7 @@ define([], function () {
                 EnableStickyHeader: "Włącz lepką nagłówkę",
                 StickyListViewHeight: "Wysokość listy ze szczegółami (px)",
                 EnableDownload: "Włącz pobieranie",
-                UseAlternatingBackgroundColor:"Użyj naprzemiennego koloru tła"
+                UseAlternatingBackgroundColor: "Użyj naprzemiennego koloru tła"
             },
             Cards: {
                 Name: "Karty",
@@ -345,48 +345,48 @@ define([], function () {
                 }
             },
             PersonCard: {
-              SendEmailLinkSubtitle: "Wyślij e-mail",
-              StartChatLinkSubtitle: "Rozpocznij czat",
-              ShowMoreSectionButton: "Pokaż więcej",
-              ContactSectionTitle: "Kontakt",
-              ReportsToSectionTitle: "Raportuje do",
-              DirectReportsSectionTitle: "Bezpośredni podwładni",
-              OrganizationSectionTitle: "Organizacja",
-              YouWorkWithSubSectionTitle: "Pracujesz z",
-              UserWorksWithSubSectionTitle: "pracuje z",
-              EmailsSectionTitle: "E-maile",
-              FilesSectionTitle: "Pliki",
-              SharedTextSubtitle: "Udostępnione",
-              SkillsAndExperienceSectionTitle: "Umiejętności i doświadczenie",
-              AboutCompactSectionTitle: "O mnie",
-              SkillsSubSectionTitle: "Umiejętności",
-              LanguagesSubSectionTitle: "Języki",
-              WorkExperienceSubSectionTitle: "Doświadczenie zawodowe",
-              EducationSubSectionTitle: "Edukacja",
-              ProfessionalInterestsSubSectionTitle: "Zainteresowania zawodowe",
-              PersonalInterestsSubSectionTitle: "Zainteresowania osobiste",
-              BirthdaySubSectionTitle: "Urodziny",
-              CurrentYearSubtitle: "Bieżący",
-              EndOfCard: "Koniec karty",
-              QuickMessage: "Wyślij szybką wiadomość",
-              ExpandDetailsLabel: "Rozwiń szczegóły",
-              SendMessageLabel: "Wyślij wiadomość",
-              EmailButtonLabel: "E-mail",
-              CallButtonLabel: "Zadzwoń",
-              ChatButtonLabel: "Czat",
-              CloseCardLabel: "Zamknij kartę",
-              VideoButtonLabel: "Wideo",
-              GoBackLabel: "Wróć",
-              EmailTitle: "E-mail",
-              ChatTitle: "Teams",
-              BusinessPhoneTitle: "Telefon służbowy",
-              CellPhoneTitle: "Telefon komórkowy",
-              DepartmentTitle: "Dział",
-              PersonTitle: "Tytuł",
-              OfficeLocationTitle: "Lokalizacja biura",
-              CopyToClipboardButton: "Kopiuj do schowka",
-              ShowMoreSubtitle: "Pokaż więcej elementów",
-              SocialMediaSubSectionTitle: "Media społecznościowe"
+                SendEmailLinkSubtitle: "Wyślij e-mail",
+                StartChatLinkSubtitle: "Rozpocznij czat",
+                ShowMoreSectionButton: "Pokaż więcej",
+                ContactSectionTitle: "Kontakt",
+                ReportsToSectionTitle: "Raportuje do",
+                DirectReportsSectionTitle: "Bezpośredni podwładni",
+                OrganizationSectionTitle: "Organizacja",
+                YouWorkWithSubSectionTitle: "Pracujesz z",
+                UserWorksWithSubSectionTitle: "pracuje z",
+                EmailsSectionTitle: "E-maile",
+                FilesSectionTitle: "Pliki",
+                SharedTextSubtitle: "Udostępnione",
+                SkillsAndExperienceSectionTitle: "Umiejętności i doświadczenie",
+                AboutCompactSectionTitle: "O mnie",
+                SkillsSubSectionTitle: "Umiejętności",
+                LanguagesSubSectionTitle: "Języki",
+                WorkExperienceSubSectionTitle: "Doświadczenie zawodowe",
+                EducationSubSectionTitle: "Edukacja",
+                ProfessionalInterestsSubSectionTitle: "Zainteresowania zawodowe",
+                PersonalInterestsSubSectionTitle: "Zainteresowania osobiste",
+                BirthdaySubSectionTitle: "Urodziny",
+                CurrentYearSubtitle: "Bieżący",
+                EndOfCard: "Koniec karty",
+                QuickMessage: "Wyślij szybką wiadomość",
+                ExpandDetailsLabel: "Rozwiń szczegóły",
+                SendMessageLabel: "Wyślij wiadomość",
+                EmailButtonLabel: "E-mail",
+                CallButtonLabel: "Zadzwoń",
+                ChatButtonLabel: "Czat",
+                CloseCardLabel: "Zamknij kartę",
+                VideoButtonLabel: "Wideo",
+                GoBackLabel: "Wróć",
+                EmailTitle: "E-mail",
+                ChatTitle: "Teams",
+                BusinessPhoneTitle: "Telefon służbowy",
+                CellPhoneTitle: "Telefon komórkowy",
+                DepartmentTitle: "Dział",
+                PersonTitle: "Tytuł",
+                OfficeLocationTitle: "Lokalizacja biura",
+                CopyToClipboardButton: "Kopiuj do schowka",
+                ShowMoreSubtitle: "Pokaż więcej elementów",
+                SocialMediaSubSectionTitle: "Media społecznościowe"
             }
         },
         HandlebarsHelpers: {
@@ -411,6 +411,12 @@ define([], function () {
                     }
                 },
                 ImportExport: "Importuj / Eksportuj ustawienia"
+            },
+            AudienceTargeting: {
+                GroupName: "Targetowanie odbiorców",
+                TargetAudienceLabel: "Grupa docelowa",
+                CacheDurationLabel: "Czas przechowywania w pamięci podręcznej (godziny)",
+                CacheDurationDescription: "Czas w godzinach przechowywania informacji o członkostwie w grupie w pamięci podręcznej"
             }
         },
         Filters: {

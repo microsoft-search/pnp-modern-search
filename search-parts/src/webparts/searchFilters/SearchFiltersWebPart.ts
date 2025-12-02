@@ -162,6 +162,13 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
 
     public async render(): Promise<void> {
 
+        // Check audience targeting - if user is not in audience, don't render
+        const isInAudience = await this.isInAudience();
+        if (!isInAudience) {
+            this.domElement.innerHTML = '';
+            return;
+        }
+
         // Determine the template content to display
         // In the case of an external template is selected, the render is done asynchronously waiting for the content to be fetched
         await this.initTemplate();
@@ -381,6 +388,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                 displayGroupsAsAccordion: true,
                 groups: [
                     ...this.getPropertyPaneWebPartInfoGroups(),
+                    this.getAudienceTargetingPropertyPaneGroup(),
                     {
                         groupName: commonStrings.PropertyPane.InformationPage.ImportExport,
                         groupFields: [this._propertyPanePropertyEditor({

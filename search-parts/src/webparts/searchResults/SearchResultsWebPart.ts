@@ -243,6 +243,13 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
     public async render(): Promise<void> {
 
+        // Check audience targeting - if user is not in audience, don't render
+        const isInAudience = await this.isInAudience();
+        if (!isInAudience) {
+            this.domElement.innerHTML = '';
+            return;
+        }
+
         // Ensure extensions are loaded before rendering
         if (!this.extensionsLoaded) {
             await this.loadExtensions(this.properties.extensibilityLibraryConfiguration);
@@ -678,6 +685,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 groups: [
                     ...this.getPropertyPaneWebPartInfoGroups(),
                     ...extensibilityConfigurationGroups,
+                    this.getAudienceTargetingPropertyPaneGroup(),
                     {
                         groupName: commonStrings.PropertyPane.InformationPage.ImportExport,
                         groupFields: [

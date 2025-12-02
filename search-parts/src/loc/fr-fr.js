@@ -97,8 +97,8 @@ define([], function () {
                 SearchPlaceholder: "Rechercher une valeur..."
             },
             CurrentVerticalNotSelectedMessage: "La verticale actuellement sélectionnée ne correspond pas à celles associées à ce composant WebPart ({0}). Il restera vide en mode d'affichage.",
-            True:"Oui",
-            False:"Non"
+            True: "Oui",
+            False: "Non"
         },
         DataSources: {
             SharePointSearch: {
@@ -244,7 +244,7 @@ define([], function () {
                 EnableStickyHeader: "Activer l’en-tête collant",
                 StickyHeaderListViewHeight: "Hauteur de la liste de détails (en pixels)",
                 EnableDownload: "Activer le téléchargement",
-                UseAlternatingBackgroundColor:"Utiliser une couleur d'arrière-plan alternée"
+                UseAlternatingBackgroundColor: "Utiliser une couleur d'arrière-plan alternée"
             },
             Cards: {
                 Name: "Cartes",
@@ -344,48 +344,48 @@ define([], function () {
                 }
             },
             PersonCard: {
-              SendEmailLinkSubtitle: "Envoyer un e-mail",
-              StartChatLinkSubtitle: "Démarrer une discussion",
-              ShowMoreSectionButton: "Afficher plus",
-              ContactSectionTitle: "Contact",
-              ReportsToSectionTitle: "Rend compte à",
-              DirectReportsSectionTitle: "Subordonnés directs",
-              OrganizationSectionTitle: "Organisation",
-              YouWorkWithSubSectionTitle: "Vous travaillez avec",
-              UserWorksWithSubSectionTitle: "travaille avec",
-              EmailsSectionTitle: "E-mails",
-              FilesSectionTitle: "Fichiers",
-              SharedTextSubtitle: "Partagé",
-              SkillsAndExperienceSectionTitle: "Compétences et Expérience",
-              AboutCompactSectionTitle: "À propos",
-              SkillsSubSectionTitle: "Compétences",
-              LanguagesSubSectionTitle: "Langues",
-              WorkExperienceSubSectionTitle: "Expérience professionnelle",
-              EducationSubSectionTitle: "Formation",
-              ProfessionalInterestsSubSectionTitle: "Intérêts professionnels",
-              PersonalInterestsSubSectionTitle: "Intérêts personnels",
-              BirthdaySubSectionTitle: "Anniversaire",
-              CurrentYearSubtitle: "Actuel",
-              EndOfCard: "Fin de la carte",
-              QuickMessage: "Envoyer un message rapide",
-              ExpandDetailsLabel: "Développer les détails",
-              SendMessageLabel: "Envoyer un message",
-              EmailButtonLabel: "E-mail",
-              CallButtonLabel: "Appeler",
-              ChatButtonLabel: "Discuter",
-              CloseCardLabel: "Fermer la carte",
-              VideoButtonLabel: "Vidéo",
-              GoBackLabel: "Retour",
-              EmailTitle: "E-mail",
-              ChatTitle: "Teams",
-              BusinessPhoneTitle: "Téléphone professionnel",
-              CellPhoneTitle: "Téléphone portable",
-              DepartmentTitle: "Département",
-              PersonTitle: "Titre",
-              OfficeLocationTitle: "Emplacement du bureau",
-              CopyToClipboardButton: "Copier dans le presse-papiers",
-              ShowMoreSubtitle: "Afficher plus d'éléments",
-              SocialMediaSubSectionTitle: "Médias sociaux"
+                SendEmailLinkSubtitle: "Envoyer un e-mail",
+                StartChatLinkSubtitle: "Démarrer une discussion",
+                ShowMoreSectionButton: "Afficher plus",
+                ContactSectionTitle: "Contact",
+                ReportsToSectionTitle: "Rend compte à",
+                DirectReportsSectionTitle: "Subordonnés directs",
+                OrganizationSectionTitle: "Organisation",
+                YouWorkWithSubSectionTitle: "Vous travaillez avec",
+                UserWorksWithSubSectionTitle: "travaille avec",
+                EmailsSectionTitle: "E-mails",
+                FilesSectionTitle: "Fichiers",
+                SharedTextSubtitle: "Partagé",
+                SkillsAndExperienceSectionTitle: "Compétences et Expérience",
+                AboutCompactSectionTitle: "À propos",
+                SkillsSubSectionTitle: "Compétences",
+                LanguagesSubSectionTitle: "Langues",
+                WorkExperienceSubSectionTitle: "Expérience professionnelle",
+                EducationSubSectionTitle: "Formation",
+                ProfessionalInterestsSubSectionTitle: "Intérêts professionnels",
+                PersonalInterestsSubSectionTitle: "Intérêts personnels",
+                BirthdaySubSectionTitle: "Anniversaire",
+                CurrentYearSubtitle: "Actuel",
+                EndOfCard: "Fin de la carte",
+                QuickMessage: "Envoyer un message rapide",
+                ExpandDetailsLabel: "Développer les détails",
+                SendMessageLabel: "Envoyer un message",
+                EmailButtonLabel: "E-mail",
+                CallButtonLabel: "Appeler",
+                ChatButtonLabel: "Discuter",
+                CloseCardLabel: "Fermer la carte",
+                VideoButtonLabel: "Vidéo",
+                GoBackLabel: "Retour",
+                EmailTitle: "E-mail",
+                ChatTitle: "Teams",
+                BusinessPhoneTitle: "Téléphone professionnel",
+                CellPhoneTitle: "Téléphone portable",
+                DepartmentTitle: "Département",
+                PersonTitle: "Titre",
+                OfficeLocationTitle: "Emplacement du bureau",
+                CopyToClipboardButton: "Copier dans le presse-papiers",
+                ShowMoreSubtitle: "Afficher plus d'éléments",
+                SocialMediaSubSectionTitle: "Médias sociaux"
             }
         },
         HandlebarsHelpers: {
@@ -410,6 +410,12 @@ define([], function () {
                     }
                 },
                 ImportExport: "Paramètres d'importation/exportation"
+            },
+            AudienceTargeting: {
+                GroupName: "Ciblage d'audience",
+                TargetAudienceLabel: "Audience cible",
+                CacheDurationLabel: "Durée du cache (heures)",
+                CacheDurationDescription: "Durée en heures pour la mise en cache des informations d'appartenance à l'audience"
             }
         },
         Filters: {
