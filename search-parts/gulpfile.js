@@ -50,6 +50,9 @@ const envCheck = build.subTask('environmentCheck', (gulp, config, done) => {
             generatedConfiguration.resolve.alias = {
                 handlebars: 'handlebars/dist/handlebars.min.js',
                 process: "process/browser",
+                // Force ALL imports of adaptive-expressions (including from adaptivecards-templating)
+                // to use the main entry (index.js) instead of browser field.
+                "adaptive-expressions": path.resolve(__dirname, 'node_modules/adaptive-expressions/lib/index.js'),
             };
 
             generatedConfiguration.resolve.fallback = {
@@ -57,6 +60,8 @@ const envCheck = build.subTask('environmentCheck', (gulp, config, done) => {
                 "util": require.resolve("util/"),
                 "url": require.resolve("url/"),
                 "querystring": require.resolve("querystring-es3"),
+                "os": require.resolve("os-browserify/browser"),
+                "assert": require.resolve("assert/"),
                 "fs": false
             };
 
@@ -114,7 +119,10 @@ const envCheck = build.subTask('environmentCheck', (gulp, config, done) => {
                 }
             });
 
-            generatedConfiguration.optimization.splitChunks = { cacheGroups: { vendors: false } };
+            // Completely disable splitChunks to prevent duplicate module instances.
+            // Adaptivecards-templating and adaptive-expressions MUST be
+            // in the same module cache to share the standardFunctions map.
+            generatedConfiguration.optimization.splitChunks = false;
 
             // pack each moment.js locale individually to optimize bundle
             generatedConfiguration.plugins.push(
