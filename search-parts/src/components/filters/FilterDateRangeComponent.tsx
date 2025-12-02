@@ -76,10 +76,6 @@ export class FilterDateRangeComponent extends React.Component<IFilterDateRangeCo
                             color: this.props.themeVariant.semanticColors.bodyText
                         }
                     }
-                },
-                icon: 
-                {
-                    pointerEvents: 'none'
                 }
             };
 
@@ -158,20 +154,36 @@ export class FilterDateRangeComponent extends React.Component<IFilterDateRangeCo
 
     private _updateFromDate(fromDate: Date) {
 
-        this.setState({
-            selectedFromDate: fromDate
-        });
+        // Only update if the date actually changed to prevent unnecessary re-renders
+        const currentDate = this.state.selectedFromDate;
+        const dateChanged = (!currentDate && fromDate) || 
+                           (currentDate && !fromDate) || 
+                           (currentDate && fromDate && currentDate.getTime() !== fromDate.getTime());
 
-        this._updateFilter(fromDate, this.state.selectedToDate, true);
+        if (dateChanged) {
+            this.setState({
+                selectedFromDate: fromDate
+            });
+
+            this._updateFilter(fromDate, this.state.selectedToDate, true);
+        }
     }
 
     private _updateToDate(toDate: Date) {
 
-        this.setState({
-            selectedToDate: toDate
-        });
+        // Only update if the date actually changed to prevent unnecessary re-renders
+        const currentDate = this.state.selectedToDate;
+        const dateChanged = (!currentDate && toDate) || 
+                           (currentDate && !toDate) || 
+                           (currentDate && toDate && currentDate.getTime() !== toDate.getTime());
 
-        this._updateFilter(this.state.selectedFromDate, toDate, true);
+        if (dateChanged) {
+            this.setState({
+                selectedToDate: toDate
+            });
+
+            this._updateFilter(this.state.selectedFromDate, toDate, true);
+        }
     }
 
     private _updateFilter(selectedFromDate: Date, selectedToDate: Date, selected: boolean) {
