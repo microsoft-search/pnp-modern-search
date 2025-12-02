@@ -60,3 +60,7 @@ The query suggestions allows users to easily find relevant query keywords based 
 !["Search Box connections"](../../assets/webparts/search-box/dynamic_data_source.png){: .center}
 
 Optionally, you can set a default query text coming from an other dynamic data source on the page. For instance, connect the search box to a page environment variable like a query string parameter. The value retrieved from a connected data source will be displayed automatically at page load in the text box if present and broadcasted to any other Web Parts connected to the search box Web Part (ex: a 'Search Results' Web Part) resulting to a cascading effect.
+
+### Audience Targeting
+
+You can control the visibility of the search box based on user group membership. See [Audience Targeting](../search-results/common/audience-targeting.md) for details.
