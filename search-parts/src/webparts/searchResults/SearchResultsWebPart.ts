@@ -223,6 +223,12 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     private _pushStateCallback = null;
 
     /**
+     * Event handler references for cleanup during SPA navigation
+     */
+    private _pagingEventHandler: (ev: CustomEvent) => void = null;
+    private _sortingEventHandler: (ev: CustomEvent) => void = null;
+
+    /**
      * The available connections as property pane group
      */
     private propertyPaneConnectionsGroup: IPropertyPaneGroup[] = [];
@@ -503,6 +509,11 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         }
 
         ReactDom.render(renderRootElement, this.domElement);
+
+        // Re-bind web component events after render to handle SPA navigation scenarios
+        // where the DOM element is replaced without triggering onInit
+        this.bindPagingEvents();
+        this.bindSortingEvents();
 
         // This call set this.renderedOnce to 'true' so we need to execute it at the very end
         super.renderCompleted();
@@ -1111,7 +1122,12 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
      */
     private bindPagingEvents() {
 
-        this.domElement.addEventListener('pageNumberUpdated', ((ev: CustomEvent) => {
+        // Remove existing listener to prevent duplicates during SPA navigation
+        if (this._pagingEventHandler) {
+            this.domElement.removeEventListener('pageNumberUpdated', this._pagingEventHandler);
+        }
+
+        this._pagingEventHandler = (ev: CustomEvent) => {
 
             // We ensure the event if not propagated outside the component (i.e. other Web Part instances)
             ev.stopImmediatePropagation();
@@ -1123,7 +1139,9 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
             this.render();
 
-        }).bind(this));
+        };
+
+        this.domElement.addEventListener('pageNumberUpdated', this._pagingEventHandler);
     }
 
     /**
@@ -1131,7 +1149,12 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
      */
     private bindSortingEvents() {
 
-        this.domElement.addEventListener(ExtensibilityConstants.EVENT_SORT_BY, ((ev: CustomEvent) => {
+        // Remove existing listener to prevent duplicates during SPA navigation
+        if (this._sortingEventHandler) {
+            this.domElement.removeEventListener(ExtensibilityConstants.EVENT_SORT_BY, this._sortingEventHandler);
+        }
+
+        this._sortingEventHandler = (ev: CustomEvent) => {
 
             // We ensure the event if not propagated outside the component (i.e. other Web Part instances)
             ev.stopImmediatePropagation();
@@ -1144,7 +1167,9 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
             this.render();
 
-        }).bind(this));
+        };
+
+        this.domElement.addEventListener(ExtensibilityConstants.EVENT_SORT_BY, this._sortingEventHandler);
     }
 
     /**
