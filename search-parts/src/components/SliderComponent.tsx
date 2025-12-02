@@ -10,7 +10,7 @@ import { ITemplateService } from '../services/templateService/ITemplateService';
 import { TemplateService } from '../services/templateService/TemplateService';
 import { DomPurifyHelper } from '../helpers/DomPurifyHelper';
 import { ServiceScope, ServiceKey } from "@microsoft/sp-core-library";
-import './SliderComponent.module.scss';
+import styles from './SliderComponent.module.scss';
 
 export interface ISliderOptions {
 
@@ -99,29 +99,48 @@ export class SliderComponent extends React.Component<ISliderComponentProps, ISli
                 }
             }
 
-            // Map items to JSX elements for the Carousel
-            const carouselElements = items.map((item, index) => {
-                // Create a temp context with the current so we can use global registered helpers on the current item
-                const tempTemplateContent = `{{#with item as |item|}}${this.props.template.trim()}{{/with}}`;
+            // Get number of slides to show at once (default to 1 if not specified)
+            const numberOfSlides = sliderOptions.numberOfSlides || 1;
 
-                let template = this.props.handlebars.compile(tempTemplateContent);
+            // Group items into chunks based on numberOfSlides
+            const groupedItems: any[][] = [];
+            for (let i = 0; i < items.length; i += numberOfSlides) {
+                groupedItems.push(items.slice(i, i + numberOfSlides));
+            }
 
-                const templateContentValue = template(
-                    {
-                        item: item,
-                    },
-                    {
-                        data: {
-                            root: {
-                                ...templateContext
-                            },
-                            index: index
+            // Map grouped items to JSX elements for the Carousel
+            const carouselElements = groupedItems.map((itemGroup, groupIndex) => {
+                // Create slides for each item in the group
+                const slideElements = itemGroup.map((item, itemIndex) => {
+                    const absoluteIndex = groupIndex * numberOfSlides + itemIndex;
+                    
+                    // Create a temp context with the current so we can use global registered helpers on the current item
+                    const tempTemplateContent = `{{#with item as |item|}}${this.props.template.trim()}{{/with}}`;
+
+                    let template = this.props.handlebars.compile(tempTemplateContent);
+
+                    const templateContentValue = template(
+                        {
+                            item: item,
+                        },
+                        {
+                            data: {
+                                root: {
+                                    ...templateContext
+                                },
+                                index: absoluteIndex
+                            }
                         }
-                    }
-                );
+                    );
 
-                return <div key={index} className="carouselSlide">
-                    <div dangerouslySetInnerHTML={{ __html: DomPurifyHelper.instance.sanitize(templateContentValue) }}></div>
+                    return <div key={absoluteIndex} className={styles.carouselSlide}>
+                        <div dangerouslySetInnerHTML={{ __html: DomPurifyHelper.instance.sanitize(templateContentValue) }}></div>
+                    </div>;
+                });
+
+                // Return a group container for multiple slides
+                return <div key={groupIndex} className={styles.carouselSlideGroup}>
+                    {slideElements}
                 </div>;
             });
 
@@ -130,7 +149,7 @@ export class SliderComponent extends React.Component<ISliderComponentProps, ISli
             const slideWidth = templateContext?.properties?.layoutProperties?.slideWidth || 318;
 
             return <div 
-                className="carouselContainer"
+                className={styles.carouselContainer}
                 ref={(el) => {
                     if (el) {
                         el.style.setProperty('--slide-width', `${slideWidth}px`);
