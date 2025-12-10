@@ -25,6 +25,7 @@ declare interface ISearchFiltersWebPartStrings {
             SelectFilterComboBoxLabel: string;
             FilterNameLabel: string;
             FilterMaxBuckets: string;
+            FilterMaxBucketsWarning: string;
             FilterDisplayName: string;
             FilterTemplate: string;
             FilterExpandByDefault: string;

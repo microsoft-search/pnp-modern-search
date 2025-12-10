@@ -45,6 +45,7 @@ import { MessageBar, MessageBarType } from '@fluentui/react/lib/MessageBar';
 import { IComboBoxOption } from '@fluentui/react/lib/ComboBox';
 import { Checkbox } from '@fluentui/react/lib/Checkbox';
 import { Dropdown, IDropdownOption, IDropdownProps } from '@fluentui/react/lib/Dropdown';
+import { TextField } from '@fluentui/react/lib/TextField';
 
 const LogSource = "SearchFiltersWebPart";
 
@@ -629,7 +630,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                 required: true,
                 onCustomRender: (field, value, onUpdate, item) => {
                     return (
-                        React.createElement("div", null,
+                        React.createElement("div", { title: item[field.id] ? item[field.id] : '' },
                             React.createElement(AsyncCombo, {
                                 allowFreeform: true,
                                 availableOptions: availableFieldOptionsFromResults, // We remove already selected fields
@@ -669,9 +670,25 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                     {
                         id: 'maxBuckets',
                         title: webPartStrings.PropertyPane.DataFilterCollection.FilterMaxBuckets,
-                        type: this._customCollectionFieldType.number,
+                        type: this._customCollectionFieldType.custom,
                         required: false,
-                        defaultValue: ""
+                        onCustomRender: (field, value, onUpdate, item, itemId, onCustomFieldValidation) => {
+                            const numValue = value ? parseInt(value.toString(), 10) : undefined;
+                            const errorMessage = numValue && numValue > 1000 
+                                ? webPartStrings.PropertyPane.DataFilterCollection.FilterMaxBucketsWarning 
+                                : '';
+                            
+                            return React.createElement(TextField, {
+                                key: `${field.id}-${itemId}`,
+                                type: 'number',
+                                value: value ? value.toString() : '',
+                                errorMessage: errorMessage,
+                                onChange: (ev, newValue) => {
+                                    const parsedValue = newValue && newValue.trim() !== '' ? parseInt(newValue, 10) : undefined;
+                                    onUpdate(field.id, parsedValue);
+                                }
+                            });
+                        }
                     },
                     {
                         id: 'selectedTemplate',

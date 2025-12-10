@@ -26,8 +26,9 @@ define([], function() {
             },
             DataFilterCollection: {
                 SelectFilterComboBoxLabel: "Sélectionner un champ",
-                FilterNameLabel: "Champ Filtre",
+                FilterNameLabel: "Champ de filtre",
                 FilterMaxBuckets: "Nombre de valeurs",
+                FilterMaxBucketsWarning: "Le nombre maximum de valeurs est 1000",
                 FilterDisplayName: "Nom d'affichage",
                 FilterTemplate: "Modèle",
                 FilterExpandByDefault: "Agrandir par défaut",
