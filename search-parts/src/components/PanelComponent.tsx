@@ -254,6 +254,12 @@ export class PanelComponent extends React.Component<IPanelComponentProps, IPanel
 
         // Get the Web Part instance ID from where the event was fired so we can fire again this event but scoped to the Web Part
         const webPartInstanceId = ev.detail.instanceId;
+        
+        // Only process the event if it belongs to this panel's web part instance
+        if (this.props.stateKey && webPartInstanceId !== this.props.stateKey) {
+            return;
+        }
+        
         const webPartDomElement = window.document.querySelector(`div[data-instance-id="${webPartInstanceId}"]`);
 
         if (webPartDomElement) {
@@ -276,6 +282,12 @@ export class PanelComponent extends React.Component<IPanelComponentProps, IPanel
 
         // Get the Web Part instance ID from where the event was fired so we can fire again this event but scoped to the Web Part
         const webPartInstanceId = ev.detail.instanceId;
+        
+        // Only process the event if it belongs to this panel's web part instance
+        if (this.props.stateKey && webPartInstanceId !== this.props.stateKey) {
+            return;
+        }
+        
         const webPartDomElement = window.document.querySelector(`div[data-instance-id="${webPartInstanceId}"]`);
 
         if (webPartDomElement) {
@@ -299,6 +311,12 @@ export class PanelComponent extends React.Component<IPanelComponentProps, IPanel
         // Get the Web Part instance ID from where the event was fired so we can fire again this event but scoped to the Web Part
         // 'data-instance-id' is a custom managed attribute to uniquely identify the filter Web Part when the panel belongs to
         const webPartInstanceId = ev.detail.instanceId;
+        
+        // Only process the event if it belongs to this panel's web part instance
+        if (this.props.stateKey && webPartInstanceId !== this.props.stateKey) {
+            return;
+        }
+        
         const webPartDomElement = window.document.querySelector(`div[data-instance-id="${webPartInstanceId}"]`);
 
         const eventDetails = ev.detail as IDataFilterInfo;
@@ -328,6 +346,12 @@ export class PanelComponent extends React.Component<IPanelComponentProps, IPanel
 
         // Get the Web Part instance ID from where the event was fired so we can fire again this event but scoped to the Web Part
         const webPartInstanceId = ev.detail.instanceId;
+        
+        // Only process the event if it belongs to this panel's web part instance
+        if (this.props.stateKey && webPartInstanceId !== this.props.stateKey) {
+            return;
+        }
+        
         const webPartDomElement = window.document.querySelector(`div[data-instance-id="${webPartInstanceId}"]`);
 
         if (webPartDomElement) {
