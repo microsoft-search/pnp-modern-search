@@ -76,14 +76,21 @@ export class CardsLayout extends BaseLayout<ICardsLayoutProperties> {
                 {{/each}}
                 
             {{else}}    
-			{{#each (split (slot item @root.slots.Tags) ";") as |tag| }}
+			<!-- Check if value contains taxonomy format (L0|#) to determine separator -->
+			{{#if (regex "L0\\\\|#" (slot item @root.slots.Tags))}}
+				<!-- Taxonomy format: split by semicolon -->
+				{{#each (split (slot item @root.slots.Tags) ";") as |tag| }}
 				<span class="simpletags">
-					{{#with (split (tag) '|')}}
-						{{trim [2]}}
-					{{/with}}
-			</span>
-			{{/each}}
-			  {{/if}}
+					{{getTagName (trim tag)}}
+				</span>
+				{{/each}}
+			{{else}}
+				<!-- Plain text format: display as-is -->
+				<span class="simpletags">
+					{{trim (slot item @root.slots.Tags)}}
+				</span>
+			{{/if}}
+			{{/if}}
 		</div>
 	</div>
 {{/if}}`, useHandlebarsExpr: true, supportHtml: true },

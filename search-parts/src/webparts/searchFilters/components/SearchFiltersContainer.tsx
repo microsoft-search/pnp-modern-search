@@ -260,7 +260,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
         // Merge information with filter configuration and other useful proeprties
         const filterResultInternal: IDataFilterInternal = {
-          displayName: filterConfiguration.displayValue ? filterConfiguration.displayValue : availableFilter.filterName,
+          displayName: filterConfiguration.displayValue && filterConfiguration.displayValue.trim() ? filterConfiguration.displayValue : availableFilter.filterName,
           filterName: availableFilter.filterName,
           isMulti: !filterConfiguration.isMulti ? false : filterConfiguration.isMulti,
           showCount: !filterConfiguration.showCount ? false : filterConfiguration.showCount,
@@ -345,7 +345,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         });
 
         const filterResultInternal: IDataFilterInternal = {
-          displayName: filterConfiguration.displayValue ? filterConfiguration.displayValue : filterInfo.filterName,
+          displayName: filterConfiguration.displayValue && filterConfiguration.displayValue.trim() ? filterConfiguration.displayValue : filterInfo.filterName,
           filterName: filterInfo.filterName,
           hasSelectedValues: filterInfo.filterValues.filter(value => value.selected).length > 0,
           selectedOnce: true,
@@ -607,7 +607,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
           const filterConfiguration = DataFilterHelper.getConfigurationForFilter(filter, this.props.filtersConfiguration);
 
           return {
-            displayName: filterConfiguration.displayValue ? filterConfiguration.displayValue : filter.filterName,
+            displayName: filterConfiguration.displayValue && filterConfiguration.displayValue.trim() ? filterConfiguration.displayValue : filter.filterName,
             expandByDefault: filterConfiguration.expandByDefault,
             filterName: filter.filterName,
             isMulti: filterConfiguration.isMulti,
