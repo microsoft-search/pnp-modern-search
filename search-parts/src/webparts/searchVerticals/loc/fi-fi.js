@@ -31,6 +31,22 @@ define([], function() {
           AudienceInputPlaceholderText: "Hae ryhmää",
           AudienceNoResultsFound: "Yhtään vastaavaa ryhmää ei löytynyt.",
           AudienceLoading: "Ladataan ryhmiä..."
+        },
+        Styling: {
+            WebPartContentStylingGroupName: "WebPart-sisällön muotoilu",
+            VerticalBackgroundColorLabel: "Pystysuuntainen taustaväri",
+            MouseOverColorLabel: "Hiiren kohdistusväri",
+            VerticalBorderColorLabel: "Pystysuuntainen reunaväri",
+            VerticalBorderThicknessLabel: "Pystysuuntainen reunan paksuus",
+            VerticalFontSizeLabel: "Pystysuuntainen fonttikoko",
+            ResetToDefaultLabel: "Palauta oletusarvot",
+            ResetToDefaultDescription: "Palauta kaikki sisällön muotoiluasetukset oletusarvoihin",
+            WebPartTitleStylingGroupName: "WebPart-otsikon muotoilu",
+            TitleFontFamilyLabel: "Otsikon fonttiperhe",
+            TitleFontSizeLabel: "Otsikon fonttikoko",
+            TitleFontColorLabel: "Otsikon fonttiväri",
+            ResetTitleStylingLabel: "Palauta otsikon muotoilu",
+            ResetTitleStylingDescription: "Palauta kaikki otsikon muotoiluasetukset oletusarvoihin"
         }
       }
     }

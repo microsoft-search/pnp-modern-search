@@ -10,7 +10,11 @@ import {
     PropertyPaneToggle,
     PropertyPaneDropdown,
     PropertyPaneHorizontalRule,
+    PropertyPaneSlider,
+    PropertyPaneButton,
+    PropertyPaneButtonType
 } from '@microsoft/sp-property-pane';
+import { PropertyFieldColorPicker, PropertyFieldColorPickerStyle } from '@pnp/spfx-property-controls/lib/PropertyFieldColorPicker';
 import { DynamicProperty } from '@microsoft/sp-component-base';
 import { IPropertyPanePage } from '@microsoft/sp-property-pane';
 import * as webPartStrings from 'SearchFiltersWebPartStrings';
@@ -236,7 +240,13 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                         title: this.properties.title,
                         updateProperty: this._updateTitleProperty,
                         className: commonStyles.wpTitle
-                    }
+                    },
+                    filterBackgroundColor: this.properties.filterBackgroundColor,
+                    filterBorderColor: this.properties.filterBorderColor,
+                    filterBorderThickness: this.properties.filterBorderThickness,
+                    titleFont: this.properties.titleFont,
+                    titleFontSize: this.properties.titleFontSize,
+                    titleFontColor: this.properties.titleFontColor
                 } as ISearchFiltersContainerProps
             );
 
@@ -581,6 +591,54 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                 groupFields: stylingFields
             }
         ];
+
+        // Add styling options group
+        groups.push({
+            groupName: webPartStrings.Styling.StylingOptionsGroupName,
+            groupFields: [
+                PropertyFieldColorPicker('filterBackgroundColor', {
+                    label: webPartStrings.Styling.FilterBackgroundColorLabel,
+                    selectedColor: this.properties.filterBackgroundColor,
+                    onPropertyChange: this.onPropertyPaneFieldChanged,
+                    properties: this.properties,
+                    disabled: false,
+                    debounce: 1000,
+                    isHidden: false,
+                    alphaSliderHidden: false,
+                    style: PropertyFieldColorPickerStyle.Inline,
+                    key: 'filterBackgroundColorFieldId'
+                }),
+                PropertyFieldColorPicker('filterBorderColor', {
+                    label: webPartStrings.Styling.FilterBorderColorLabel,
+                    selectedColor: this.properties.filterBorderColor,
+                    onPropertyChange: this.onPropertyPaneFieldChanged,
+                    properties: this.properties,
+                    disabled: false,
+                    debounce: 1000,
+                    isHidden: false,
+                    alphaSliderHidden: false,
+                    style: PropertyFieldColorPickerStyle.Inline,
+                    key: 'filterBorderColorFieldId'
+                }),
+                PropertyPaneSlider('filterBorderThickness', {
+                    label: webPartStrings.Styling.FilterBorderThicknessLabel,
+                    min: 0,
+                    max: 10,
+                    step: 1,
+                    showValue: true,
+                    value: this.properties.filterBorderThickness || 0
+                }),
+                PropertyPaneButton('resetContentStylingButton', {
+                    text: webPartStrings.Styling.ResetToDefaultLabel,
+                    buttonType: PropertyPaneButtonType.Command,
+                    icon: 'Refresh',
+                    onClick: this._resetContentStylingToDefault.bind(this)
+                })
+            ]
+        });
+
+        // Add web part title styling group
+        groups.push(this._getTitleStylingGroup());
 
         // Add template options if any
         const layoutOptions = this.getLayoutTemplateOptions();
@@ -1094,6 +1152,81 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
         } else {
             return [];
         }
+    }
+
+    private _getTitleStylingGroup(): IPropertyPaneGroup {
+        return {
+            groupName: webPartStrings.Styling.WebPartTitleStylingGroupName,
+            isCollapsed: true,
+            groupFields: [
+                PropertyPaneDropdown('titleFont', {
+                    label: webPartStrings.Styling.TitleFontFamilyLabel,
+                    selectedKey: this.properties.titleFont || '"Segoe UI", "Segoe UI Web (West European)", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif',
+                    options: [
+                        { key: '"Segoe UI", "Segoe UI Web (West European)", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif', text: 'Segoe UI' },
+                        { key: 'Arial, Helvetica, sans-serif', text: 'Arial' },
+                        { key: 'Georgia, serif', text: 'Georgia' },
+                        { key: '"Times New Roman", Times, serif', text: 'Times New Roman' },
+                        { key: 'Verdana, Geneva, sans-serif', text: 'Verdana' },
+                        { key: 'Calibri, sans-serif', text: 'Calibri' },
+                        { key: '"Trebuchet MS", sans-serif', text: 'Trebuchet MS' },
+                        { key: 'Consolas, Monaco, monospace', text: 'Consolas' }
+                    ]
+                }),
+                PropertyPaneSlider('titleFontSize', {
+                    label: webPartStrings.Styling.TitleFontSizeLabel,
+                    min: 10,
+                    max: 32,
+                    step: 1,
+                    showValue: true,
+                    value: this.properties.titleFontSize || 16
+                }),
+                PropertyFieldColorPicker('titleFontColor', {
+                    label: webPartStrings.Styling.TitleFontColorLabel,
+                    selectedColor: this.properties.titleFontColor,
+                    onPropertyChange: this.onPropertyPaneFieldChanged,
+                    properties: this.properties,
+                    disabled: false,
+                    debounce: 1000,
+                    isHidden: false,
+                    alphaSliderHidden: false,
+                    style: PropertyFieldColorPickerStyle.Inline,
+                    key: 'titleFontColorFieldId'
+                }),
+                PropertyPaneButton('resetTitleStylingButton', {
+                    text: webPartStrings.Styling.ResetTitleStylingLabel,
+                    buttonType: PropertyPaneButtonType.Command,
+                    icon: 'Refresh',
+                    onClick: this._resetTitleStylingToDefault.bind(this)
+                })
+            ]
+        };
+    }
+
+    private _resetContentStylingToDefault(): void {
+        // Reset all content styling properties to their default values
+        this.properties.filterBackgroundColor = undefined;
+        this.properties.filterBorderColor = undefined;
+        this.properties.filterBorderThickness = undefined;
+        
+        // Refresh the property pane to show the reset values
+        this.context.propertyPane.refresh();
+        
+        // Re-render the web part to apply changes
+        this.render();
+    }
+    
+    private _resetTitleStylingToDefault(): void {
+        // Reset all title styling properties to their default values
+        this.properties.titleFont = undefined;
+        this.properties.titleFontSize = undefined;
+        this.properties.titleFontColor = undefined;
+        
+        // Refresh the property pane to show the reset values
+        this.context.propertyPane.refresh();
+        
+        // Re-render the web part to apply changes
+        this.render();
     }
 
     /**

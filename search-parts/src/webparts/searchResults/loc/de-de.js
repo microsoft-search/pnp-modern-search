@@ -132,6 +132,20 @@ define([], function () {
                 ModifierDescriptionPropertyLabel: "Beschreibung",
                 EndWhenSuccessfullPropertyLabel: "Bei Erfolg beenden"
             }
+        },
+        Styling: {
+            StylingOptionsGroupName: "Stiloptionen",
+            ResultsBackgroundColorLabel: "Ergebnisse-Hintergrundfarbe",
+            ResultsBorderColorLabel: "Ergebnisse-Rahmenfarbe",
+            ResultsBorderThicknessLabel: "Ergebnisse-Rahmenstärke",
+            ResetToDefaultLabel: "Styling auf Standard zurücksetzen",
+            ResetToDefaultDescription: "Alle Styling-Optionen auf ihre Standardwerte zurücksetzen",
+            WebPartTitleStylingGroupName: "WebPart-Titelstyling",
+            TitleFontFamilyLabel: "Titel-Schriftfamilie",
+            TitleFontSizeLabel: "Titel-Schriftgröße",
+            TitleFontColorLabel: "Titel-Schriftfarbe",
+            ResetTitleStylingLabel: "Titelstyling auf Standard zurücksetzen",
+            ResetTitleStylingDescription: "Alle Titelstyling-Optionen auf ihre Standardwerte zurücksetzen"
         }
     }
 });

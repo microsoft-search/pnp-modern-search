@@ -132,6 +132,20 @@ define([], function() {
                   ModifierDescriptionPropertyLabel: "Opis",
                   EndWhenSuccessfullPropertyLabel:"Zakończ po pomyślnym zakończeniu"              
             }
+        },
+        Styling: {
+            StylingOptionsGroupName: "Opcje stylu",
+            ResultsBackgroundColorLabel: "Kolor tła wyników",
+            ResultsBorderColorLabel: "Kolor obramowania wyników",
+            ResultsBorderThicknessLabel: "Grubość obramowania wyników",
+            ResetToDefaultLabel: "Przywróć domyślny styl",
+            ResetToDefaultDescription: "Przywróć wszystkie opcje stylu do wartości domyślnych",
+            WebPartTitleStylingGroupName: "Styl tytułu składnika WebPart",
+            TitleFontFamilyLabel: "Rodzina czcionek tytułu",
+            TitleFontSizeLabel: "Rozmiar czcionki tytułu",
+            TitleFontColorLabel: "Kolor czcionki tytułu",
+            ResetTitleStylingLabel: "Przywróć domyślny styl tytułu",
+            ResetTitleStylingDescription: "Przywróć wszystkie opcje stylu tytułu do wartości domyślnych"
         }
     }
 });

@@ -66,6 +66,20 @@ declare interface ISearchFiltersWebPartStrings {
             FiltersTemplateFieldLabel: string;
             FiltersTemplatePanelHeader: string;
         }
+    },
+    Styling: {
+        StylingOptionsGroupName: string;
+        FilterBackgroundColorLabel: string;
+        FilterBorderColorLabel: string;
+        FilterBorderThicknessLabel: string;
+        ResetToDefaultLabel: string;
+        ResetToDefaultDescription: string;
+        WebPartTitleStylingGroupName: string;
+        TitleFontFamilyLabel: string;
+        TitleFontSizeLabel: string;
+        TitleFontColorLabel: string;
+        ResetTitleStylingLabel: string;
+        ResetTitleStylingDescription: string;
     }
 }
 

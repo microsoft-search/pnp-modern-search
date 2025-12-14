@@ -67,6 +67,20 @@ define([], function() {
                 FiltersTemplateFieldLabel: "Bewerk filters sjabloon",
                 FiltersTemplatePanelHeader: "Bewerk filters sjabloon"
             }
+        },
+        Styling: {
+            StylingOptionsGroupName: "Stijlopties",
+            FilterBackgroundColorLabel: "Filter achtergrondkleur",
+            FilterBorderColorLabel: "Filter randkleur",
+            FilterBorderThicknessLabel: "Filter randdikte",
+            ResetToDefaultLabel: "Herstel naar standaard styling",
+            ResetToDefaultDescription: "Herstel alle styling opties naar hun standaardwaarden",
+            WebPartTitleStylingGroupName: "WebPart-titelopmaak",
+            TitleFontFamilyLabel: "Titel-lettertypefamilie",
+            TitleFontSizeLabel: "Titel-lettergrootte",
+            TitleFontColorLabel: "Titel-letterkleur",
+            ResetTitleStylingLabel: "Herstel titelstijl naar standaard",
+            ResetTitleStylingDescription: "Herstel alle titelstijlopties naar hun standaardwaarden"
         }
     }
 });

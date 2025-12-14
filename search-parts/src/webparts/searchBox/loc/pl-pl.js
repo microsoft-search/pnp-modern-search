@@ -29,7 +29,9 @@ define([], function() {
                 BackgroundColorLabel: "Kolor tła",
                 TextColorLabel: "Kolor tekstu",
                 ResetToDefaultLabel: "Przywróć domyślny styl",
-                ResetToDefaultDescription: "Przywróć wszystkie opcje stylów do ich domyślnych wartości"
+                ResetToDefaultDescription: "Przywróć wszystkie opcje stylu do wartości domyślnych",
+                ResetTitleStylingLabel: "Przywróć domyślny styl tytułu",
+                ResetTitleStylingDescription: "Przywróć wszystkie opcje stylu tytułu do wartości domyślnych"
             },
             AvailableConnectionsGroup: {
                 GroupName: "Dostępne połączenia",

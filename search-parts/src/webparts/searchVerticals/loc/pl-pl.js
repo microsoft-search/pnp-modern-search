@@ -31,6 +31,22 @@ define([], function() {
                 AudienceInputPlaceholderText: "Wyszukaj grupę",
                 AudienceNoResultsFound: "Nie znaleźliśmy pasujących grup.",
                 AudienceLoading: "Ładowanie grup..."
+            },
+            Styling: {
+                WebPartContentStylingGroupName: "Styl treści składnika WebPart",
+                VerticalBackgroundColorLabel: "Kolor tła pionowego",
+                MouseOverColorLabel: "Kolor po najechaniu myszką",
+                VerticalBorderColorLabel: "Kolor obramowania pionowego",
+                VerticalBorderThicknessLabel: "Grubość obramowania pionowego",
+                VerticalFontSizeLabel: "Rozmiar czcionki pionowej",
+                ResetToDefaultLabel: "Przywróć domyślne",
+                ResetToDefaultDescription: "Przywróć wszystkie opcje stylu treści do ich domyślnych wartości",
+                WebPartTitleStylingGroupName: "Styl tytułu składnika WebPart",
+                TitleFontFamilyLabel: "Rodzina czcionek tytułu",
+                TitleFontSizeLabel: "Rozmiar czcionki tytułu",
+                TitleFontColorLabel: "Kolor czcionki tytułu",
+                ResetTitleStylingLabel: "Przywróć styl tytułu",
+                ResetTitleStylingDescription: "Przywróć wszystkie opcje stylu tytułu do ich domyślnych wartości"
             }
         }
     }

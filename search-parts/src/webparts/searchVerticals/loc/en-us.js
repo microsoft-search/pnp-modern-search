@@ -31,6 +31,22 @@ define([], function() {
           AudienceInputPlaceholderText: "Search for a group",
           AudienceNoResultsFound: "We didn't find any matching groups.",
           AudienceLoading: "Loading groups..."          
+        },
+        Styling: {
+          WebPartContentStylingGroupName: "Web Part Content Styling",
+          VerticalBackgroundColorLabel: "Vertical Background Color",
+          MouseOverColorLabel: "Mouse Over Color",
+          VerticalBorderColorLabel: "Vertical Border Color",
+          VerticalBorderThicknessLabel: "Vertical Border Thickness",
+          VerticalFontSizeLabel: "Vertical Font Size",
+          ResetToDefaultLabel: "Reset to Default",
+          ResetToDefaultDescription: "Reset all content styling options to their default values",
+          WebPartTitleStylingGroupName: "Web Part Title Styling",
+          TitleFontFamilyLabel: "Title Font Family",
+          TitleFontSizeLabel: "Title Font Size",
+          TitleFontColorLabel: "Title Font Color",
+          ResetTitleStylingLabel: "Reset Title Styling",
+          ResetTitleStylingDescription: "Reset all title styling options to their default values"
         }
       }
     }

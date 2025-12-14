@@ -67,6 +67,20 @@ define([], function() {
                 FiltersTemplateFieldLabel: "Edit filters template",
                 FiltersTemplatePanelHeader: "Edit filters template"
             }
+        },
+        Styling: {
+            StylingOptionsGroupName: "Styling Options",
+            FilterBackgroundColorLabel: "Filter Background Color",
+            FilterBorderColorLabel: "Filter Border Color",
+            FilterBorderThicknessLabel: "Filter Border Thickness",
+            ResetToDefaultLabel: "Reset to Default",
+            ResetToDefaultDescription: "Reset all content styling options to their default values",
+            WebPartTitleStylingGroupName: "Web Part Title Styling",
+            TitleFontFamilyLabel: "Title Font Family",
+            TitleFontSizeLabel: "Title Font Size",
+            TitleFontColorLabel: "Title Font Color",
+            ResetTitleStylingLabel: "Reset Title Styling",
+            ResetTitleStylingDescription: "Reset all title styling options to their default values"
         }
     }
 });

@@ -136,7 +136,19 @@ define([], function () {
                 },
                 EnableQueryModificationLabel: "Povolit úpravy dotazu",
                 DisableQueryModificationLabel: "Zakázat úpravy dotazu"
-            }
-        }
+            }        },
+        Styling: {
+            StylingOptionsGroupName: "Možnosti stylu",
+            ResultsBackgroundColorLabel: "Barva pozadí výsledků",
+            ResultsBorderColorLabel: "Barva okraje výsledků",
+            ResultsBorderThicknessLabel: "Tloušťka okraje výsledků",
+            ResetToDefaultLabel: "Obnovit výchozí styl",
+            ResetToDefaultDescription: "Obnovit všechny možnosti stylu na výchozí hodnoty",
+            WebPartTitleStylingGroupName: "Styl názvu webové části",
+            TitleFontFamilyLabel: "Rodina písem názvu",
+            TitleFontSizeLabel: "Velikost písma názvu",
+            TitleFontColorLabel: "Barva písma názvu",
+            ResetTitleStylingLabel: "Obnovit výchozí styl názvu",
+            ResetTitleStylingDescription: "Obnovit všechny možnosti stylu názvu na výchozí hodnoty"        }
     };
 });

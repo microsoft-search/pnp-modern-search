@@ -134,7 +134,19 @@ define([], function() {
           ModifierNamePropertyLabel: "Navn",
           ModifierDescriptionPropertyLabel: "Beskrivelse",
           EndWhenSuccessfullPropertyLabel:"Afslutter, når det lykkes"        
-      }
-    }
+      }    },
+    Styling: {
+      StylingOptionsGroupName: "Stilindstillinger",
+      ResultsBackgroundColorLabel: "Resultater baggrundsfarve",
+      ResultsBorderColorLabel: "Resultater kantfarve",
+      ResultsBorderThicknessLabel: "Resultater kanttykkelse",
+      ResetToDefaultLabel: "Gendan til standardstil",
+      ResetToDefaultDescription: "Gendan alle stilmuligheder til deres standardværdier",
+      WebPartTitleStylingGroupName: "WebPart-titelstyling",
+      TitleFontFamilyLabel: "Titel-skrifttypefamilie",
+      TitleFontSizeLabel: "Titel-skriftstørrelse",
+      TitleFontColorLabel: "Titel-skriftfarve",
+      ResetTitleStylingLabel: "Gendan titelstil til standard",
+      ResetTitleStylingDescription: "Gendan alle titelstilingmuligheder til deres standardværdier"    }
   }
 });

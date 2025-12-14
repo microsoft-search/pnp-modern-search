@@ -31,6 +31,22 @@ define([], function() {
         AudienceInputPlaceholderText: "Søg efter en gruppe",
         AudienceNoResultsFound: "Vi fandt ingen matchende grupper.",
         AudienceLoading: "Indlæser grupper..."
+      },
+      Styling: {
+        WebPartContentStylingGroupName: "WebPart-indholdstyling",
+        VerticalBackgroundColorLabel: "Vertikal baggrundsfarve",
+        MouseOverColorLabel: "Muse-overførselsfarve",
+        VerticalBorderColorLabel: "Vertikal kantfarve",
+        VerticalBorderThicknessLabel: "Vertikal kanttykkelse",
+        VerticalFontSizeLabel: "Vertikal skriftstørrelse",
+        ResetToDefaultLabel: "Nulstil til standard",
+        ResetToDefaultDescription: "Nulstil alle indholdstylingindstillinger til standardværdier",
+        WebPartTitleStylingGroupName: "WebPart-titelstyling",
+        TitleFontFamilyLabel: "Titel-skrifttypefamilie",
+        TitleFontSizeLabel: "Titel-skriftstørrelse",
+        TitleFontColorLabel: "Titel-skriftfarve",
+        ResetTitleStylingLabel: "Nulstil titelstyling",
+        ResetTitleStylingDescription: "Nulstil alle titelstylingindstillinger til standardværdier"
       }
     }
   }

@@ -66,7 +66,19 @@ define([], function() {
                 ErrorTemplateResolve: "Templaatin tunnistaminen ei onnistunut. Virhetiedot: '{0}'",
                 FiltersTemplateFieldLabel: "Muokkaa suodatintemplaattia",
                 FiltersTemplatePanelHeader: "Muokkaa suodatintemplaattia"
-            }
-        }
+            }        },
+        Styling: {
+            StylingOptionsGroupName: "Tyyliasetukset",
+            FilterBackgroundColorLabel: "Suodattimen taustav\u00e4ri",
+            FilterBorderColorLabel: "Suodattimen reunav\u00e4ri",
+            FilterBorderThicknessLabel: "Suodattimen reunan paksuus",
+            ResetToDefaultLabel: "Palauta oletustyyli",
+            ResetToDefaultDescription: "Palauta kaikki tyyliasetukset oletusarvoihinsa",
+            WebPartTitleStylingGroupName: "WebPart-otsikon muotoilu",
+            TitleFontFamilyLabel: "Otsikon fonttiperhe",
+            TitleFontSizeLabel: "Otsikon fonttikoko",
+            TitleFontColorLabel: "Otsikon fonttiv\u00e4ri",
+            ResetTitleStylingLabel: "Palauta otsikkotyyli oletusarvoon",
+            ResetTitleStylingDescription: "Palauta kaikki otsikkotyyliasetukset oletusarvoihinsa"        }
     }
 });

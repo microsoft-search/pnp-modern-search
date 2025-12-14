@@ -58,4 +58,34 @@ export default interface ISearchFiltersWebPartProps extends IBaseWebPartProps {
      * The selected vertical fro the Web Part
      */
     selectedVerticalKeys: string[];
+
+    /**
+     * Filter panel background color
+     */
+    filterBackgroundColor?: string;
+
+    /**
+   * Filter panel border color
+   */
+  filterBorderColor?: string;
+
+  /**
+   * Filter panel border thickness in pixels
+   */
+  filterBorderThickness?: number;
+
+    /**
+     * Title font family
+     */
+    titleFont?: string;
+
+    /**
+     * Title font size
+     */
+    titleFontSize?: number;
+
+    /**
+     * Title font color
+     */
+    titleFontColor?: string;
 }

@@ -31,6 +31,22 @@ define([], function() {
                 AudienceInputPlaceholderText: "Zoek naar een groep",
                 AudienceNoResultsFound: "We hebben geen overeenkomende groepen gevonden.",
                 AudienceLoading: "Groepen laden..."
+            },
+            Styling: {
+                WebPartContentStylingGroupName: "WebPart-inhoudopmaak",
+                VerticalBackgroundColorLabel: "Verticale achtergrondkleur",
+                MouseOverColorLabel: "Muisaanwijzer-kleur",
+                VerticalBorderColorLabel: "Verticale randkleur",
+                VerticalBorderThicknessLabel: "Verticale randdikte",
+                VerticalFontSizeLabel: "Verticale lettergrootte",
+                ResetToDefaultLabel: "Standaardwaarden herstellen",
+                ResetToDefaultDescription: "Alle opmaakopties voor inhoud herstellen naar hun standaardwaarden",
+                WebPartTitleStylingGroupName: "WebPart-titelopmaak",
+                TitleFontFamilyLabel: "Titel-lettertypefamilie",
+                TitleFontSizeLabel: "Titel-lettergrootte",
+                TitleFontColorLabel: "Titel-letterkleur",
+                ResetTitleStylingLabel: "Titelopmaak herstellen",
+                ResetTitleStylingDescription: "Alle titelopmaakopties herstellen naar hun standaardwaarden"
             }
         }
     }

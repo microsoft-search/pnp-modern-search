@@ -131,7 +131,19 @@ define([], function() {
             ModifierNamePropertyLabel: "Naam",
             ModifierDescriptionPropertyLabel: "Beschrijving",
             EndWhenSuccessfullPropertyLabel:"Beëindig bij succes"        
-      }
-    }
+      }    },
+    Styling: {
+      StylingOptionsGroupName: "Stijlopties",
+      ResultsBackgroundColorLabel: "Resultaten achtergrondkleur",
+      ResultsBorderColorLabel: "Resultaten randkleur",
+      ResultsBorderThicknessLabel: "Resultaten randdikte",
+      ResetToDefaultLabel: "Herstel naar standaard styling",
+      ResetToDefaultDescription: "Herstel alle styling opties naar hun standaardwaarden",
+      WebPartTitleStylingGroupName: "WebPart-titelopmaak",
+      TitleFontFamilyLabel: "Titel-lettertypefamilie",
+      TitleFontSizeLabel: "Titel-lettergrootte",
+      TitleFontColorLabel: "Titel-letterkleur",
+      ResetTitleStylingLabel: "Herstel titelstijl naar standaard",
+      ResetTitleStylingDescription: "Herstel alle titelstijlopties naar hun standaardwaarden"    }
   }
 });

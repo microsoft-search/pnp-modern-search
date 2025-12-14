@@ -131,7 +131,19 @@ define([], function() {
             ModifierNamePropertyLabel: "Namn",
             ModifierDescriptionPropertyLabel: "Beskrivning",
             EndWhenSuccessfullPropertyLabel:"Avsluta när det är lyckat"        
-      }
-    }
+      }    },
+    Styling: {
+      StylingOptionsGroupName: "Stilalternativ",
+      ResultsBackgroundColorLabel: "Resultat bakgrundsfärg",
+      ResultsBorderColorLabel: "Resultat kantfärg",
+      ResultsBorderThicknessLabel: "Resultat kanttjocklek",
+      ResetToDefaultLabel: "Återställ till standardstil",
+      ResetToDefaultDescription: "Återställ alla stilalternativ till sina standardvärden",
+      WebPartTitleStylingGroupName: "WebPart-titelstyling",
+      TitleFontFamilyLabel: "Titel-teckensnittsfamilj",
+      TitleFontSizeLabel: "Titel-teckensnittsstorlek",
+      TitleFontColorLabel: "Titel-teckensnittsfärg",
+      ResetTitleStylingLabel: "Återställ titelstil till standard",
+      ResetTitleStylingDescription: "Återställ alla titelstilingalternativ till sina standardvärden"    }
   }
 });

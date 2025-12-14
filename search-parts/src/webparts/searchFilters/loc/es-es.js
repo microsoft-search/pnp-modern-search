@@ -67,6 +67,20 @@ define([], function() {
                 FiltersTemplateFieldLabel: "Editar plantilla de filtros",
                 FiltersTemplatePanelHeader: "Editar plantilla de filtros"
             }
+        },
+        Styling: {
+            StylingOptionsGroupName: "Opciones de estilo",
+            FilterBackgroundColorLabel: "Color de fondo del filtro",
+            FilterBorderColorLabel: "Color de borde del filtro",
+            FilterBorderThicknessLabel: "Grosor de borde del filtro",
+            ResetToDefaultLabel: "Restablecer estilo por defecto",
+            ResetToDefaultDescription: "Restablecer todas las opciones de estilo a sus valores por defecto",
+            WebPartTitleStylingGroupName: "Estilo del título del elemento web",
+            TitleFontFamilyLabel: "Familia de fuentes del título",
+            TitleFontSizeLabel: "Tamaño de fuente del título",
+            TitleFontColorLabel: "Color de fuente del título",
+            ResetTitleStylingLabel: "Restablecer estilo del título por defecto",
+            ResetTitleStylingDescription: "Restablecer todas las opciones de estilo del título a sus valores por defecto"
         }
     }
 });

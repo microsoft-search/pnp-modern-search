@@ -35,7 +35,9 @@ define([], function() {
                 SearchIconNameDescription: "Nom de l'icône Fluent UI (ex: Search, Forward, ChevronRight)",
                 SearchButtonTextLabel: "Texte du bouton de recherche",
                 ResetToDefaultLabel: "Réinitialiser le style par défaut",
-                ResetToDefaultDescription: "Réinitialiser toutes les options de style à leurs valeurs par défaut"
+                ResetToDefaultDescription: "Réinitialiser toutes les options de style à leurs valeurs par défaut",
+                ResetTitleStylingLabel: "Réinitialiser le style du titre par défaut",
+                ResetTitleStylingDescription: "Réinitialiser toutes les options de style du titre à leurs valeurs par défaut"
             },
             AvailableConnectionsGroup: {
                 GroupName: "Connexions disponibles",

@@ -30,6 +30,22 @@ declare interface ISearchVerticalsWebPartStrings {
       AudienceInputPlaceholderText: string;
       AudienceNoResultsFound: string;
       AudienceLoading: string;
+    },
+    Styling: {
+      WebPartContentStylingGroupName: string;
+      VerticalBackgroundColorLabel: string;
+      MouseOverColorLabel: string;
+      VerticalBorderColorLabel: string;
+      VerticalBorderThicknessLabel: string;
+      VerticalFontSizeLabel: string;
+      ResetToDefaultLabel: string;
+      ResetToDefaultDescription: string;
+      WebPartTitleStylingGroupName: string;
+      TitleFontFamilyLabel: string;
+      TitleFontSizeLabel: string;
+      TitleFontColorLabel: string;
+      ResetTitleStylingLabel: string;
+      ResetTitleStylingDescription: string;
     }
   }
 }

@@ -132,6 +132,20 @@ define([], function() {
                 ModifierDescriptionPropertyLabel: "Descrição",
                 EndWhenSuccessfullPropertyLabel:"Terminar quando bem sucedido!"                
             }
+        },
+        Styling: {
+            StylingOptionsGroupName: "Opções de estilo",
+            ResultsBackgroundColorLabel: "Cor de fundo dos resultados",
+            ResultsBorderColorLabel: "Cor da borda dos resultados",
+            ResultsBorderThicknessLabel: "Espessura da borda dos resultados",
+            ResetToDefaultLabel: "Restaurar estilo padrão",
+            ResetToDefaultDescription: "Restaurar todas as opções de estilo para seus valores padrão",
+            WebPartTitleStylingGroupName: "Estilo do título da web part",
+            TitleFontFamilyLabel: "Família de fontes do título",
+            TitleFontSizeLabel: "Tamanho da fonte do título",
+            TitleFontColorLabel: "Cor da fonte do título",
+            ResetTitleStylingLabel: "Restaurar estilo do título padrão",
+            ResetTitleStylingDescription: "Restaurar todas as opções de estilo do título para seus valores padrão"
         }
     }
 });

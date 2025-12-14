@@ -29,7 +29,9 @@ define([], function() {
                 BackgroundColorLabel: "Bakgrunnsfarge",
                 TextColorLabel: "Tekstfarge",
                 ResetToDefaultLabel: "Tilbakestill til standardstil",
-                ResetToDefaultDescription: "Tilbakestill alle stilalternativer til sine standardverdier"
+                ResetToDefaultDescription: "Tilbakestill alle stilalternativer til sine standardverdier",
+                ResetTitleStylingLabel: "Tilbakestill tittelstil til standard",
+                ResetTitleStylingDescription: "Tilbakestill alle tittelstilingalternativer til sine standardverdier"
             },
             AvailableConnectionsGroup: {
                 GroupName: "Tilgjengelige tilkoblinger",

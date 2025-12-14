@@ -54,13 +54,39 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
     let templateContent: string = null;
     let renderTitle: JSX.Element = null;
 
-    // WP title
-    renderTitle = <WebPartTitle
-      displayMode={this.props.webPartTitleProps.displayMode}
-      title={this.props.webPartTitleProps.title}
-      updateProperty={this.props.webPartTitleProps.updateProperty}
-      className={this.props.webPartTitleProps.className}
-    />;
+    // WP title with custom styling
+    const titleWrapperClass = `custom-title-wrapper-${this.props.instanceId || 'default'}`;
+    
+    if (this.props.titleFont || this.props.titleFontSize !== undefined || this.props.titleFontColor) {
+      const styleString = `
+        .${titleWrapperClass} *,
+        .${titleWrapperClass} div,
+        .${titleWrapperClass} span,
+        .${titleWrapperClass} h2,
+        .${titleWrapperClass} textarea {
+          ${this.props.titleFont ? `font-family: ${this.props.titleFont} !important;` : ''}
+          ${this.props.titleFontSize !== undefined ? `font-size: ${this.props.titleFontSize}px !important;` : ''}
+          ${this.props.titleFontColor ? `color: ${this.props.titleFontColor} !important;` : ''}
+        }
+      `;
+      
+      renderTitle = <div className={titleWrapperClass}>
+        <style key={`title-style-${this.props.titleFont}-${this.props.titleFontSize}-${this.props.titleFontColor}`} dangerouslySetInnerHTML={{ __html: styleString }} />
+        <WebPartTitle
+          displayMode={this.props.webPartTitleProps.displayMode}
+          title={this.props.webPartTitleProps.title}
+          updateProperty={this.props.webPartTitleProps.updateProperty}
+          className={this.props.webPartTitleProps.className}
+        />
+      </div>;
+    } else {
+      renderTitle = <WebPartTitle
+        displayMode={this.props.webPartTitleProps.displayMode}
+        title={this.props.webPartTitleProps.title}
+        updateProperty={this.props.webPartTitleProps.updateProperty}
+        className={this.props.webPartTitleProps.className}
+      />;
+    }
 
     // If no filter 
     if (this.state.currentUiFilters.length === 0) {
@@ -85,7 +111,14 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
       />;
     }
 
-    return <div ref={this.componentRef} data-instance-id={this.props.instanceId}>
+    const containerStyles: React.CSSProperties = {
+      backgroundColor: this.props.filterBackgroundColor || undefined,
+      borderStyle: this.props.filterBorderColor || this.props.filterBorderThickness ? 'solid' : undefined,
+      borderColor: this.props.filterBorderColor || undefined,
+      borderWidth: this.props.filterBorderThickness !== undefined ? `${this.props.filterBorderThickness}px` : undefined
+    };
+
+    return <div ref={this.componentRef} data-instance-id={this.props.instanceId} style={containerStyles}>
       {renderTitle}
       {renderWpContent}
     </div>;

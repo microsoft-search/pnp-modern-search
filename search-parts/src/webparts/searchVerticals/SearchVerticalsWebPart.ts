@@ -5,8 +5,14 @@ import {
     IPropertyPaneConfiguration,
     IPropertyPanePage,
     IPropertyPaneField,
-    PropertyPaneTextField
+    IPropertyPaneGroup,
+    PropertyPaneTextField,
+    PropertyPaneSlider,
+    PropertyPaneDropdown,
+    PropertyPaneButton,
+    PropertyPaneButtonType
 } from '@microsoft/sp-property-pane';
+import { PropertyFieldColorPicker, PropertyFieldColorPickerStyle } from '@pnp/spfx-property-controls/lib/PropertyFieldColorPicker';
 import * as commonStrings from 'CommonStrings';
 import * as webPartStrings from 'SearchVerticalsWebPartStrings';
 import { ISearchVerticalsContainerProps } from './components/ISearchVerticalsContainerProps';
@@ -166,7 +172,16 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
                     tokenService: this.tokenService,
                     themeVariant: this._themeVariant,
                     onVerticalSelected: this.onVerticalSelected.bind(this),
-                    defaultSelectedKey: defaultSelectedKey
+                    defaultSelectedKey: defaultSelectedKey,
+                    verticalBackgroundColor: this.properties.verticalBackgroundColor,
+                    verticalBorderColor: this.properties.verticalBorderColor,
+                    verticalBorderThickness: this.properties.verticalBorderThickness,
+                    verticalFontSize: this.properties.verticalFontSize,
+                    verticalMouseOverColor: this.properties.verticalMouseOverColor,
+                    titleFont: this.properties.titleFont,
+                    titleFontSize: this.properties.titleFontSize,
+                    titleFontColor: this.properties.titleFontColor,
+                    instanceId: this.instanceId
                 } as ISearchVerticalsContainerProps
             );
         }
@@ -268,7 +283,9 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
                     {
                         groupName: webPartStrings.PropertyPane.SearchVerticalsGroupName,
                         groupFields: this._getVerticalsConfguration()
-                    }
+                    },
+                    this._getContentStylingGroup(),
+                    this._getTitleStylingGroup()
                 ],
                 displayGroupsAsAccordion: true
             }
@@ -478,6 +495,150 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
         ];
 
         return settingFields;
+    }
+
+    private _getContentStylingGroup(): IPropertyPaneGroup {
+        return {
+            groupName: webPartStrings.PropertyPane.Styling.WebPartContentStylingGroupName,
+            isCollapsed: true,
+            groupFields: [
+                PropertyFieldColorPicker('verticalBackgroundColor', {
+                    label: webPartStrings.PropertyPane.Styling.VerticalBackgroundColorLabel,
+                    selectedColor: this.properties.verticalBackgroundColor,
+                    onPropertyChange: this.onPropertyPaneFieldChanged,
+                    properties: this.properties,
+                    disabled: false,
+                    debounce: 1000,
+                    isHidden: false,
+                    alphaSliderHidden: false,
+                    style: PropertyFieldColorPickerStyle.Inline,
+                    key: 'verticalBackgroundColorFieldId'
+                }),
+                PropertyFieldColorPicker('verticalMouseOverColor', {
+                    label: webPartStrings.PropertyPane.Styling.MouseOverColorLabel,
+                    selectedColor: this.properties.verticalMouseOverColor,
+                    onPropertyChange: this.onPropertyPaneFieldChanged,
+                    properties: this.properties,
+                    disabled: false,
+                    debounce: 1000,
+                    isHidden: false,
+                    alphaSliderHidden: false,
+                    style: PropertyFieldColorPickerStyle.Inline,
+                    key: 'verticalMouseOverColorFieldId'
+                }),
+                PropertyFieldColorPicker('verticalBorderColor', {
+                    label: webPartStrings.PropertyPane.Styling.VerticalBorderColorLabel,
+                    selectedColor: this.properties.verticalBorderColor,
+                    onPropertyChange: this.onPropertyPaneFieldChanged,
+                    properties: this.properties,
+                    disabled: false,
+                    debounce: 1000,
+                    isHidden: false,
+                    alphaSliderHidden: false,
+                    style: PropertyFieldColorPickerStyle.Inline,
+                    key: 'verticalBorderColorFieldId'
+                }),
+                PropertyPaneSlider('verticalBorderThickness', {
+                    label: webPartStrings.PropertyPane.Styling.VerticalBorderThicknessLabel,
+                    min: 0,
+                    max: 10,
+                    step: 1,
+                    showValue: true,
+                    value: this.properties.verticalBorderThickness || 0
+                }),
+                PropertyPaneSlider('verticalFontSize', {
+                    label: webPartStrings.PropertyPane.Styling.VerticalFontSizeLabel,
+                    min: 10,
+                    max: 32,
+                    step: 1,
+                    showValue: true,
+                    value: this.properties.verticalFontSize || 14
+                }),
+                PropertyPaneButton('resetContentStylingButton', {
+                    text: webPartStrings.PropertyPane.Styling.ResetToDefaultLabel,
+                    buttonType: PropertyPaneButtonType.Command,
+                    icon: 'Refresh',
+                    onClick: this._resetContentStylingToDefault.bind(this)
+                })
+            ]
+        };
+    }
+
+    private _getTitleStylingGroup(): IPropertyPaneGroup {
+        return {
+            groupName: webPartStrings.PropertyPane.Styling.WebPartTitleStylingGroupName,
+            isCollapsed: true,
+            groupFields: [
+                PropertyPaneDropdown('titleFont', {
+                    label: webPartStrings.PropertyPane.Styling.TitleFontFamilyLabel,
+                    selectedKey: this.properties.titleFont || '"Segoe UI", "Segoe UI Web (West European)", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif',
+                    options: [
+                        { key: '"Segoe UI", "Segoe UI Web (West European)", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif', text: 'Segoe UI' },
+                        { key: 'Arial, Helvetica, sans-serif', text: 'Arial' },
+                        { key: 'Georgia, serif', text: 'Georgia' },
+                        { key: '"Times New Roman", Times, serif', text: 'Times New Roman' },
+                        { key: 'Verdana, Geneva, sans-serif', text: 'Verdana' },
+                        { key: 'Calibri, sans-serif', text: 'Calibri' },
+                        { key: '"Trebuchet MS", sans-serif', text: 'Trebuchet MS' },
+                        { key: 'Consolas, Monaco, monospace', text: 'Consolas' }
+                    ]
+                }),
+                PropertyPaneSlider('titleFontSize', {
+                    label: webPartStrings.PropertyPane.Styling.TitleFontSizeLabel,
+                    min: 10,
+                    max: 32,
+                    step: 1,
+                    showValue: true,
+                    value: this.properties.titleFontSize || 16
+                }),
+                PropertyFieldColorPicker('titleFontColor', {
+                    label: webPartStrings.PropertyPane.Styling.TitleFontColorLabel,
+                    selectedColor: this.properties.titleFontColor,
+                    onPropertyChange: this.onPropertyPaneFieldChanged,
+                    properties: this.properties,
+                    disabled: false,
+                    debounce: 1000,
+                    isHidden: false,
+                    alphaSliderHidden: false,
+                    style: PropertyFieldColorPickerStyle.Inline,
+                    key: 'titleFontColorFieldId'
+                }),
+                PropertyPaneButton('resetTitleStylingButton', {
+                    text: webPartStrings.PropertyPane.Styling.ResetTitleStylingLabel,
+                    buttonType: PropertyPaneButtonType.Command,
+                    icon: 'Refresh',
+                    onClick: this._resetTitleStylingToDefault.bind(this)
+                })
+            ]
+        };
+    }
+
+    private _resetContentStylingToDefault(): void {
+        // Reset all content styling properties to their default values
+        this.properties.verticalBackgroundColor = undefined;
+        this.properties.verticalMouseOverColor = undefined;
+        this.properties.verticalBorderColor = undefined;
+        this.properties.verticalBorderThickness = undefined;
+        this.properties.verticalFontSize = undefined;
+        
+        // Refresh the property pane to show the reset values
+        this.context.propertyPane.refresh();
+        
+        // Re-render the web part to apply changes
+        this.render();
+    }
+    
+    private _resetTitleStylingToDefault(): void {
+        // Reset all title styling properties to their default values
+        this.properties.titleFont = undefined;
+        this.properties.titleFontSize = undefined;
+        this.properties.titleFontColor = undefined;
+        
+        // Refresh the property pane to show the reset values
+        this.context.propertyPane.refresh();
+        
+        // Re-render the web part to apply changes
+        this.render();
     }
 
     private initializeWebPartServices(): void {

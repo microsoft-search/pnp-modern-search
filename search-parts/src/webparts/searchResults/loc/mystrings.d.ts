@@ -131,6 +131,20 @@ declare interface ISearchResultsWebPartStrings {
             ModifierDescriptionPropertyLabel: string;
             EndWhenSuccessfullPropertyLabel: string;
         }
+    },
+    Styling: {
+        StylingOptionsGroupName: string;
+        ResultsBackgroundColorLabel: string;
+        ResultsBorderColorLabel: string;
+        ResultsBorderThicknessLabel: string;
+        ResetToDefaultLabel: string;
+        ResetToDefaultDescription: string;
+        WebPartTitleStylingGroupName: string;
+        TitleFontFamilyLabel: string;
+        TitleFontSizeLabel: string;
+        TitleFontColorLabel: string;
+        ResetTitleStylingLabel: string;
+        ResetTitleStylingDescription: string;
     }
 }
 

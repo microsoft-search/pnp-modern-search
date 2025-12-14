@@ -189,5 +189,35 @@ export default interface ISearchResultsWebPartProps extends IBaseWebPartProps {
     * Selected query modifier definition
     */
     queryModifierConfiguration: IQueryModifierConfiguration[];
+
+    /**
+     * Results panel background color
+     */
+    resultsBackgroundColor?: string;
+
+    /**
+   * Results panel border color
+   */
+  resultsBorderColor?: string;
+
+  /**
+   * Results panel border thickness in pixels
+   */
+  resultsBorderThickness?: number;
+
+  /**
+     * Title font family
+     */
+    titleFont?: string;
+
+    /**
+     * Title font size
+     */
+    titleFontSize?: number;
+
+    /**
+     * Title font color
+     */
+    titleFontColor?: string;
 }
 

@@ -25,6 +25,30 @@ The options for a vertical are as follow:
 | **Show link icon** |  If the tab is an hyperlink, display or hide an icon next to the tab name indicating the tab is a link (same page or external). |
 | **Audience** | Microsoft Entra ID (Azure AD) security groups that this vertical will be visible to. If left empty the vertical will be visible for all users. See note below about limitations. |
 
+### Vertical styling
+
+The vertical styling section allows you to customize the visual appearance of the vertical tabs to match your branding and design requirements.
+
+| **Setting** | **Description** | **Default value**
+|------------|---------------- | ----------
+| **Vertical background color** | The background color of the vertical tabs. | _Transparent_
+| **Vertical mouse-over color** | The background color when hovering over a vertical tab. | _Theme lighter color_
+| **Vertical border color** | The border color of the vertical tabs. | _Theme primary color_
+| **Vertical border thickness** | The thickness of the vertical tab borders (in pixels). | _2px_
+| **Vertical font size** | Controls the font size (in pixels) for the vertical tab text. | _14px_
+| **Reset styling to default** | Reset all styling options to their default values. | N/A
+
+### Web part title styling
+
+The title styling section allows you to customize the visual appearance of the web part title.
+
+| **Setting** | **Description** | **Default value**
+|------------|---------------- | ----------
+| **Title font** | The font family to use for the web part title. | _Segoe UI_
+| **Title font size** | Controls the font size (in pixels) for the web part title. | _16px_
+| **Title font color** | The color of the web part title text. | _Theme primary color_
+| **Reset title styling to default** | Reset all title styling options to their default values. | N/A
+
 ### Per-Vertical Audience Targeting
 
 The per-vertical audience targeting allows you to show or hide individual vertical tabs based on Microsoft Entra ID (Azure AD) security group membership.
