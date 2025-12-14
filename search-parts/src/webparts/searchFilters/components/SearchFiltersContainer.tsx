@@ -584,8 +584,13 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
       const filters = this.state.currentUiFilters.map(filter => {
 
         const selectedValues = filter.values.filter(v => v.selected);
+        const selectedValueStrings = selectedValues.map(s => s.value);
+        
         // Submitted values for the current filter name
-        const submittedValues = this.state.submittedFilters.filter(f => f.filterName === eventDetail.filterName && f.values.filter(v => selectedValues.map(s => s.value).indexOf(v.value) !== -1));
+        const submittedValues = this.state.submittedFilters.filter(f => 
+          f.filterName === eventDetail.filterName && 
+          f.values.some(v => selectedValueStrings.includes(v.value))
+        );
 
         if (filter.filterName === eventDetail.filterName) {
 
