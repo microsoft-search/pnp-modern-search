@@ -38,21 +38,26 @@ export class PanelFilterLayout extends BaseLayout<IPanelFilterLayoutProperties> 
         // Setup default values
         this.properties.isBlocking = this.properties.isBlocking !== null && this.properties.isBlocking !== undefined ? this.properties.isBlocking : true;
         this.properties.isLightDismiss = this.properties.isLightDismiss !== null && this.properties.isLightDismiss !== undefined ? this.properties.isLightDismiss : true;
-        this.properties.size = this.properties.size ? this.properties.size : PanelType.medium;
+        this.properties.size = (this.properties.size !== null && this.properties.size !== undefined) ? this.properties.size : PanelType.smallFixedFar;
         this.properties.btnLabel = this.properties.btnLabel ? this.properties.btnLabel : strings.Layouts.Panel.ButtonLabel;
         this.properties.headerText = this.properties.headerText ? this.properties.headerText: strings.Layouts.Panel.HeaderText;
     }
 
     public getPropertyPaneFieldsConfiguration(availableFields: string[]): IPropertyPaneField<any>[] {
 
+        // Ensure default size is set
+        if (this.properties.size === null || this.properties.size === undefined) {
+            this.properties.size = PanelType.smallFixedFar;
+        }
+
         const options: IPropertyPaneDropdownOption[] = [
-            { text: strings.Layouts.Panel.SizeOptions.SmallFixedFar, key: String(PanelType.smallFixedFar) },
-            { text: strings.Layouts.Panel.SizeOptions.SmallFixedNear, key: String(PanelType.smallFixedNear) },
-            { text: strings.Layouts.Panel.SizeOptions.Medium, key: String(PanelType.medium) },
-            { text: strings.Layouts.Panel.SizeOptions.Large, key: String(PanelType.large) },
-            { text: strings.Layouts.Panel.SizeOptions.LargeFixed, key: String(PanelType.largeFixed) },
-            { text: strings.Layouts.Panel.SizeOptions.ExtraLarge, key: String(PanelType.extraLarge) },
-            { text: strings.Layouts.Panel.SizeOptions.SmallFluid, key: String(PanelType.smallFluid) },
+            { text: strings.Layouts.Panel.SizeOptions.SmallFixedFar, key: PanelType.smallFixedFar },
+            { text: strings.Layouts.Panel.SizeOptions.SmallFixedNear, key: PanelType.smallFixedNear },
+            { text: strings.Layouts.Panel.SizeOptions.Medium, key: PanelType.medium },
+            { text: strings.Layouts.Panel.SizeOptions.Large, key: PanelType.large },
+            { text: strings.Layouts.Panel.SizeOptions.LargeFixed, key: PanelType.largeFixed },
+            { text: strings.Layouts.Panel.SizeOptions.ExtraLarge, key: PanelType.extraLarge },
+            { text: strings.Layouts.Panel.SizeOptions.SmallFluid, key: PanelType.smallFluid },
         ];
 
         return [
@@ -76,7 +81,7 @@ export class PanelFilterLayout extends BaseLayout<IPanelFilterLayoutProperties> 
             PropertyPaneDropdown('layoutProperties.size', {
                 label: strings.Layouts.Panel.Size,
                 options: options,
-                selectedKey: String(this.properties.size)
+                selectedKey: this.properties.size !== null && this.properties.size !== undefined ? this.properties.size : PanelType.smallFixedFar
             })
         ];
     }

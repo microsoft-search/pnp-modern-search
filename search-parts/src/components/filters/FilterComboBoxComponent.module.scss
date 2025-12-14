@@ -3,6 +3,7 @@
     display: flex;
     align-items: center;
     padding: 10px;
+    width: 90%;
 
     i {
         margin-right: 5px;
@@ -12,5 +13,17 @@
     i:hover {
         color: "[theme: themePrimary, default: #005a9e]";
         cursor: pointer;
+    }
+
+    :global(.ms-Fabric) {
+        flex: 1;
+    }
+
+    :global(.ms-ComboBox-container) {
+        width: 100%;
+    }
+
+    :global(.ms-ComboBox) {
+        width: 100%;
     }
  }       
