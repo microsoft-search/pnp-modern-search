@@ -62,8 +62,12 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
         // Check if there's a stored state for this group
         const storedState = sessionStorage.getItem(this.storageKey);
         
+        const initialCollapsedState = storedState !== null 
+            ? JSON.parse(storedState) 
+            : !!props.defaultCollapsed;
+        
         this.state = {
-            isCollapsed: storedState !== null ? JSON.parse(storedState) : (props.defaultCollapsed ? true : false),
+            isCollapsed: initialCollapsedState,
         };
 
         this._onRenderCell = this._onRenderCell.bind(this);
