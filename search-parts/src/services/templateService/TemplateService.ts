@@ -389,7 +389,7 @@ export class TemplateService implements ITemplateService {
   }
 
   public applyDisambiguatedMgtPrefixIfNeeded(elementName: string): string {
-    if (!elementName || !this.MgtCustomElementHelper) {
+    if (!elementName || typeof elementName !== 'string' || !this.MgtCustomElementHelper) {
       return elementName;
     }
     const prefix = this.MgtCustomElementHelper.prefix;

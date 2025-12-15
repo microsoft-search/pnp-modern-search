@@ -51,12 +51,23 @@ export interface ICollapsibleContentComponentState {
 export class CollapsibleContentComponent extends React.Component<ICollapsibleContentComponentProps, ICollapsibleContentComponentState> {
 
     private componentRef = React.createRef<HTMLDivElement>();
+    private storageKey: string;
 
     public constructor(props) {
         super(props);
 
+        // Create a unique storage key for this collapsible group
+        this.storageKey = `pnp-collapsible-${props.groupName}`;
+        
+        // Check if there's a stored state for this group
+        const storedState = sessionStorage.getItem(this.storageKey);
+        
+        const initialCollapsedState = storedState !== null 
+            ? JSON.parse(storedState) 
+            : !!props.defaultCollapsed;
+        
         this.state = {
-            isCollapsed: props.defaultCollapsed ? true : false,
+            isCollapsed: initialCollapsedState,
         };
 
         this._onRenderCell = this._onRenderCell.bind(this);
@@ -116,8 +127,13 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
     }
 
     private _onTogglePanel(props: IGroupDividerProps) {
+        const newCollapsedState = !props.group.isCollapsed;
+        
+        // Store the user's preference in session storage
+        sessionStorage.setItem(this.storageKey, JSON.stringify(newCollapsedState));
+        
         this.setState({
-            isCollapsed: !props.group.isCollapsed
+            isCollapsed: newCollapsedState
         });
         props.onToggleCollapse(props.group);
     }
