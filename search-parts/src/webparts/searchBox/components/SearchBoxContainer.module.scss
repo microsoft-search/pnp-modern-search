@@ -21,19 +21,19 @@
       // Support for dynamic placeholder color
       :global(.ms-SearchBox-field) {
         &::placeholder {
-          color: var(--placeholder-color, #666666);
+          color: var(--placeholder-color, #605e5c);
         }
         &::-webkit-input-placeholder {
-          color: var(--placeholder-color, #666666);
+          color: var(--placeholder-color, #605e5c);
         }
         &::-moz-placeholder {
-          color: var(--placeholder-color, #666666);
+          color: var(--placeholder-color, #605e5c);
         }
         &:-ms-input-placeholder {
-          color: var(--placeholder-color, #666666);
+          color: var(--placeholder-color, #605e5c);
         }
         &:-moz-placeholder {
-          color: var(--placeholder-color, #666666);
+          color: var(--placeholder-color, #605e5c);
         }
       }
 
