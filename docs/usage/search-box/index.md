@@ -33,7 +33,7 @@ The search box styling section allows you to customize the visual appearance of 
 | **Border radius** | The border radius (in pixels) for rounded corners. | _2px_
 | **Background color** | The background color of the search input field. | _White_
 | **Text color** | The color of the text entered in the search box. | _Theme text color_
-| **Placeholder text color** | The color of the placeholder text when the search box is empty. | _Theme secondary text color_
+| **Placeholder text color** | The color of the placeholder text when the search box is empty. WCAG AA compliant default ensures 4.5:1 contrast ratio. | _#605e5c (WCAG AA compliant)_
 | **Search button color** | The background color of the search button. | _Theme primary color_
 | **Show search button when input is empty** | Display the search button even when the search input field is empty. | False
 | **Search button display** | Choose how the search button appears: Icon only, Text only, or Both (text with icon). | _Icon only_
