@@ -416,7 +416,12 @@ declare interface ICommonStrings {
         TargetAudienceLabel: string;
         CacheDurationLabel: string;
         CacheDurationDescription: string;
-      }
+      },
+      TitleStylingGroupName: string;
+      TitleFont: string;
+      TitleFontSize: string;
+      TitleFontColor: string;
+      ResetTitleStylingToDefault: string;
     },
     Filters: {
       ApplyAllFiltersButtonLabel: string;

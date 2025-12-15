@@ -139,13 +139,7 @@ define([], function() {
         ResultsBorderColorLabel: "Resultater kantfarge",
         ResultsBorderThicknessLabel: "Resultater kanttykkelse",
         ResetToDefaultLabel: "Tilbakestill til standardstil",
-        ResetToDefaultDescription: "Tilbakestill alle stilalternativer til sine standardverdier",
-        WebPartTitleStylingGroupName: "WebPart-tittelstyling",
-        TitleFontFamilyLabel: "Tittel-skriftfamilie",
-        TitleFontSizeLabel: "Tittel-skriftstørrelse",
-        TitleFontColorLabel: "Tittel-skriftfarge",
-        ResetTitleStylingLabel: "Tilbakestill tittelstil til standard",
-        ResetTitleStylingDescription: "Tilbakestill alle tittelstilingalternativer til sine standardverdier"
+        ResetToDefaultDescription: "Tilbakestill alle stilalternativer til sine standardverdier"
       }
     }
   });

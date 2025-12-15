@@ -139,13 +139,7 @@ define([], function() {
             ResultsBorderColorLabel: "Color de borde de los resultados",
             ResultsBorderThicknessLabel: "Grosor de borde de los resultados",
             ResetToDefaultLabel: "Restablecer estilo por defecto",
-            ResetToDefaultDescription: "Restablecer todas las opciones de estilo a sus valores por defecto",
-            WebPartTitleStylingGroupName: "Estilo del título del elemento web",
-            TitleFontFamilyLabel: "Familia de fuentes del título",
-            TitleFontSizeLabel: "Tamaño de fuente del título",
-            TitleFontColorLabel: "Color de fuente del título",
-            ResetTitleStylingLabel: "Restablecer estilo del título por defecto",
-            ResetTitleStylingDescription: "Restablecer todas las opciones de estilo del título a sus valores por defecto"
+            ResetToDefaultDescription: "Restablecer todas las opciones de estilo a sus valores por defecto"
         }
     }
 });

@@ -417,7 +417,12 @@ define([], function () {
                 TargetAudienceLabel: "Zielgruppe",
                 CacheDurationLabel: "Cache-Dauer (Stunden)",
                 CacheDurationDescription: "Dauer in Stunden für die Zwischenspeicherung der Zielgruppenmitgliedschaft"
-            }
+            },
+            TitleStylingGroupName: "Webpart-Titelstyling",
+            TitleFont: "Titelschriftart",
+            TitleFontSize: "Titelschriftgröße (px)",
+            TitleFontColor: "Titelschriftfarbe",
+            ResetTitleStylingToDefault: "Titelstyling auf Standard zurücksetzen"
         },
         Filters: {
             ApplyAllFiltersButtonLabel: "Anwenden",

@@ -40,13 +40,7 @@ define([], function() {
             VerticalBorderThicknessLabel: "Pystysuuntainen reunan paksuus",
             VerticalFontSizeLabel: "Pystysuuntainen fonttikoko",
             ResetToDefaultLabel: "Palauta oletusarvot",
-            ResetToDefaultDescription: "Palauta kaikki sisällön muotoiluasetukset oletusarvoihin",
-            WebPartTitleStylingGroupName: "WebPart-otsikon muotoilu",
-            TitleFontFamilyLabel: "Otsikon fonttiperhe",
-            TitleFontSizeLabel: "Otsikon fonttikoko",
-            TitleFontColorLabel: "Otsikon fonttiväri",
-            ResetTitleStylingLabel: "Palauta otsikon muotoilu",
-            ResetTitleStylingDescription: "Palauta kaikki otsikon muotoiluasetukset oletusarvoihin"
+            ResetToDefaultDescription: "Palauta kaikki sisällön muotoiluasetukset oletusarvoihin"
         }
       }
     }

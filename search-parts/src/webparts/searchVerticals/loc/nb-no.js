@@ -40,13 +40,7 @@ define([], function() {
             VerticalBorderThicknessLabel: "Vertikal kanttykkelse",
             VerticalFontSizeLabel: "Vertikal skriftstørrelse",
             ResetToDefaultLabel: "Tilbakestill til standard",
-            ResetToDefaultDescription: "Tilbakestill alle innholdsstylingalternativer til standardverdier",
-            WebPartTitleStylingGroupName: "WebPart-tittelstyling",
-            TitleFontFamilyLabel: "Tittel-skriftfamilie",
-            TitleFontSizeLabel: "Tittel-skriftstørrelse",
-            TitleFontColorLabel: "Tittel-skriftfarge",
-            ResetTitleStylingLabel: "Tilbakestill tittelstyling",
-            ResetTitleStylingDescription: "Tilbakestill alle tittelstylingalternativer til standardverdier"
+            ResetToDefaultDescription: "Tilbakestill alle innholdsstylingalternativer til standardverdier"
         }
     }
 });

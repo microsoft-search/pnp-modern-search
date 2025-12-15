@@ -415,7 +415,12 @@ define([], function () {
                 TargetAudienceLabel: "Cílové publikum",
                 CacheDurationLabel: "Doba uložení v mezipaměti (hodiny)",
                 CacheDurationDescription: "Doba v hodinách pro ukládání informací o členství v publiku do mezipaměti"
-            }
+            },
+            TitleStylingGroupName: "Styly nadpisu webové části",
+            TitleFont: "Písmo nadpisu",
+            TitleFontSize: "Velikost písma nadpisu (px)",
+            TitleFontColor: "Barva písma nadpisu",
+            ResetTitleStylingToDefault: "Obnovit styly nadpisu na výchozí"
         },
         Filters: {
             ApplyAllFiltersButtonLabel: "Použít",

@@ -415,7 +415,12 @@ define([], function () {
                 TargetAudienceLabel: "Målgruppe",
                 CacheDurationLabel: "Hurtigbuffervarighet (timer)",
                 CacheDurationDescription: "Varighet i timer for hurtigbufring av målgruppemedlemskap"
-            }
+            },
+            TitleStylingGroupName: "Webdel tittelstyling",
+            TitleFont: "Tittelskrift",
+            TitleFontSize: "Tittelskriftstørrelse (px)",
+            TitleFontColor: "Tittelskriftfarge",
+            ResetTitleStylingToDefault: "Tilbakestill tittelstyling til standard"
         },
         Filters: {
             ApplyAllFiltersButtonLabel: "Bruk",

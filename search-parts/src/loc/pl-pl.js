@@ -417,7 +417,12 @@ define([], function () {
                 TargetAudienceLabel: "Grupa docelowa",
                 CacheDurationLabel: "Czas przechowywania w pamięci podręcznej (godziny)",
                 CacheDurationDescription: "Czas w godzinach przechowywania informacji o członkostwie w grupie w pamięci podręcznej"
-            }
+            },
+            TitleStylingGroupName: "Stylizacja tytułu składnika Web Part",
+            TitleFont: "Czcionka tytułu",
+            TitleFontSize: "Rozmiar czcionki tytułu (px)",
+            TitleFontColor: "Kolor czcionki tytułu",
+            ResetTitleStylingToDefault: "Zresetuj stylizację tytułu do domyślnej"
         },
         Filters: {
             ApplyAllFiltersButtonLabel: "Zastosuj",

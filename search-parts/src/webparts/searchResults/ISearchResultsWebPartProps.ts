@@ -204,20 +204,5 @@ export default interface ISearchResultsWebPartProps extends IBaseWebPartProps {
    * Results panel border thickness in pixels
    */
   resultsBorderThickness?: number;
-
-  /**
-     * Title font family
-     */
-    titleFont?: string;
-
-    /**
-     * Title font size
-     */
-    titleFontSize?: number;
-
-    /**
-     * Title font color
-     */
-    titleFontColor?: string;
 }
 

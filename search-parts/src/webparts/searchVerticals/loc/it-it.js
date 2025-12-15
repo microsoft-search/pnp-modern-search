@@ -40,13 +40,7 @@ define([], function () {
                 VerticalBorderThicknessLabel: "Spessore del bordo verticale",
                 VerticalFontSizeLabel: "Dimensione carattere verticale",
                 ResetToDefaultLabel: "Ripristina predefinito",
-                ResetToDefaultDescription: "Ripristina tutte le opzioni di stile del contenuto ai loro valori predefiniti",
-                WebPartTitleStylingGroupName: "Stile del titolo della web part",
-                TitleFontFamilyLabel: "Famiglia di caratteri del titolo",
-                TitleFontSizeLabel: "Dimensione carattere del titolo",
-                TitleFontColorLabel: "Colore carattere del titolo",
-                ResetTitleStylingLabel: "Ripristina stile titolo",
-                ResetTitleStylingDescription: "Ripristina tutte le opzioni di stile del titolo ai loro valori predefiniti"
+                ResetToDefaultDescription: "Ripristina tutte le opzioni di stile del contenuto ai loro valori predefiniti"
             }
         }
     }

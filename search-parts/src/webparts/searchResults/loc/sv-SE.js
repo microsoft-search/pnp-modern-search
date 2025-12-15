@@ -138,12 +138,6 @@ define([], function() {
       ResultsBorderColorLabel: "Resultat kantfärg",
       ResultsBorderThicknessLabel: "Resultat kanttjocklek",
       ResetToDefaultLabel: "Återställ till standardstil",
-      ResetToDefaultDescription: "Återställ alla stilalternativ till sina standardvärden",
-      WebPartTitleStylingGroupName: "WebPart-titelstyling",
-      TitleFontFamilyLabel: "Titel-teckensnittsfamilj",
-      TitleFontSizeLabel: "Titel-teckensnittsstorlek",
-      TitleFontColorLabel: "Titel-teckensnittsfärg",
-      ResetTitleStylingLabel: "Återställ titelstil till standard",
-      ResetTitleStylingDescription: "Återställ alla titelstilingalternativ till sina standardvärden"    }
+      ResetToDefaultDescription: "Återställ alla stilalternativ till sina standardvärden"    }
   }
 });

@@ -143,12 +143,6 @@ define([], function () {
             ResultsBorderColorLabel: "Barva okraje výsledků",
             ResultsBorderThicknessLabel: "Tloušťka okraje výsledků",
             ResetToDefaultLabel: "Obnovit výchozí styl",
-            ResetToDefaultDescription: "Obnovit všechny možnosti stylu na výchozí hodnoty",
-            WebPartTitleStylingGroupName: "Styl názvu webové části",
-            TitleFontFamilyLabel: "Rodina písem názvu",
-            TitleFontSizeLabel: "Velikost písma názvu",
-            TitleFontColorLabel: "Barva písma názvu",
-            ResetTitleStylingLabel: "Obnovit výchozí styl názvu",
-            ResetTitleStylingDescription: "Obnovit všechny možnosti stylu názvu na výchozí hodnoty"        }
+            ResetToDefaultDescription: "Obnovit všechny možnosti stylu na výchozí hodnoty"        }
     };
 });

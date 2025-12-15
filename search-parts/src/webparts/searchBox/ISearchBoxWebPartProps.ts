@@ -133,18 +133,5 @@ export interface ISearchBoxWebPartProps extends IBaseWebPartProps {
      */
     searchButtonText?: string;
 
-    /**
-     * Title font family
-     */
-    titleFont?: string;
 
-    /**
-     * Title font size in pixels
-     */
-    titleFontSize?: number;
-
-    /**
-     * Title font color
-     */
-    titleFontColor?: string;
 }

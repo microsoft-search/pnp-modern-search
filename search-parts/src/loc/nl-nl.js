@@ -416,7 +416,12 @@ define([], function () {
                 TargetAudienceLabel: "Doelgroep",
                 CacheDurationLabel: "Cacheduur (uren)",
                 CacheDurationDescription: "Duur in uren voor het cachen van doelgroeplidmaatschap"
-            }
+            },
+            TitleStylingGroupName: "Webonderdeel titelopmaak",
+            TitleFont: "Titellettertype",
+            TitleFontSize: "Titellettertypegrootte (px)",
+            TitleFontColor: "Titellettertypekleur",
+            ResetTitleStylingToDefault: "Titelopmaak herstellen naar standaard"
         },
         Filters: {
             ApplyAllFiltersButtonLabel: "Toepassen",

@@ -287,7 +287,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
                         isCollapsed: true,
                         groupFields: this._getSearchBoxStylingFields()
                     },
-                    this._getTitleStylingGroup()
+                    this.getTitleStylingPropertyPaneGroup()
                 ],
                 displayGroupsAsAccordion: true
             },
@@ -632,7 +632,6 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
                 isHidden: false,
                 alphaSliderHidden: false,
                 style: PropertyFieldColorPickerStyle.Inline,
-                iconName: 'Precipitation',
                 key: 'searchBoxBorderColorFieldId'
             }),
             PropertyFieldColorPicker('searchBoxTextColor', {
@@ -645,7 +644,6 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
                 isHidden: false,
                 alphaSliderHidden: false,
                 style: PropertyFieldColorPickerStyle.Inline,
-                iconName: 'Precipitation',
                 key: 'searchBoxTextColorFieldId'
             }),
             PropertyFieldColorPicker('placeholderTextColor', {
@@ -658,7 +656,6 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
                 isHidden: false,
                 alphaSliderHidden: false,
                 style: PropertyFieldColorPickerStyle.Inline,
-                iconName: 'Precipitation',
                 key: 'placeholderTextColorFieldId'
             }),
             PropertyFieldColorPicker('searchButtonColor', {
@@ -671,7 +668,6 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
                 isHidden: false,
                 alphaSliderHidden: false,
                 style: PropertyFieldColorPickerStyle.Inline,
-                iconName: 'Precipitation',
                 key: 'searchButtonColorFieldId'
             }),
             
@@ -715,57 +711,6 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
         return searchBoxStylingFields;
     }
 
-    private _getTitleStylingGroup(): IPropertyPaneGroup {
-        return {
-            groupName: 'Web Part Title Styling',
-            isCollapsed: true,
-            groupFields: [
-                PropertyPaneDropdown('titleFont', {
-                    label: 'Title Font Family',
-                    selectedKey: this.properties.titleFont || '"Segoe UI", "Segoe UI Web (West European)", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif',
-                    options: [
-                        { key: '"Segoe UI", "Segoe UI Web (West European)", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif', text: 'Segoe UI' },
-                        { key: 'Arial, Helvetica, sans-serif', text: 'Arial' },
-                        { key: 'Georgia, serif', text: 'Georgia' },
-                        { key: '"Times New Roman", Times, serif', text: 'Times New Roman' },
-                        { key: 'Verdana, Geneva, sans-serif', text: 'Verdana' },
-                        { key: 'Calibri, sans-serif', text: 'Calibri' },
-                        { key: '"Trebuchet MS", sans-serif', text: 'Trebuchet MS' },
-                        { key: 'Consolas, Monaco, monospace', text: 'Consolas' }
-                    ]
-                }),
-                PropertyPaneSlider('titleFontSize', {
-                    label: 'Title Font Size',
-                    min: 10,
-                    max: 32,
-                    step: 1,
-                    showValue: true,
-                    value: this.properties.titleFontSize || 16
-                }),
-                PropertyFieldColorPicker('titleFontColor', {
-                    label: 'Title Font Color',
-                    selectedColor: this.properties.titleFontColor,
-                    onPropertyChange: this.onPropertyPaneFieldChanged,
-                    properties: this.properties,
-                    disabled: false,
-                    debounce: 1000,
-                    isHidden: false,
-                    alphaSliderHidden: false,
-                    style: PropertyFieldColorPickerStyle.Inline,
-                    key: 'titleFontColorFieldId'
-                }),
-                
-                // Reset
-                PropertyPaneButton('resetTitleStyling', {
-                    text: webPartStrings.PropertyPane.SearchBoxStylingGroup.ResetTitleStylingLabel,
-                    description: webPartStrings.PropertyPane.SearchBoxStylingGroup.ResetTitleStylingDescription,
-                    buttonType: PropertyPaneButtonType.Command,
-                    onClick: this._resetTitleStylingToDefault.bind(this)
-                })
-            ]
-        };
-    }
-
     private _resetSearchBoxStylingToDefault(): void {
         // Reset all styling properties to their default values
         this.properties.searchBoxBorderColor = undefined;
@@ -780,19 +725,6 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
         this.properties.searchButtonDisplayMode = undefined;
         this.properties.searchIconName = undefined;
         this.properties.searchButtonText = undefined;
-        
-        // Refresh the property pane to show the reset values
-        this.context.propertyPane.refresh();
-        
-        // Re-render the web part to apply changes
-        this.render();
-    }
-    
-    private _resetTitleStylingToDefault(): void {
-        // Reset all title styling properties to their default values
-        this.properties.titleFont = undefined;
-        this.properties.titleFontSize = undefined;
-        this.properties.titleFontColor = undefined;
         
         // Refresh the property pane to show the reset values
         this.context.propertyPane.refresh();

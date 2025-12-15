@@ -40,13 +40,7 @@ define([], function() {
                 VerticalBorderThicknessLabel: "Vertikal kanttjocklek",
                 VerticalFontSizeLabel: "Vertikal teckensnittsstorlek",
                 ResetToDefaultLabel: "Återställ till standard",
-                ResetToDefaultDescription: "Återställ alla innehållsstylingalternativ till standardvärden",
-                WebPartTitleStylingGroupName: "WebPart-titelstyling",
-                TitleFontFamilyLabel: "Titel-teckensnittsfamilj",
-                TitleFontSizeLabel: "Titel-teckensnittsstorlek",
-                TitleFontColorLabel: "Titel-teckensnittsfärg",
-                ResetTitleStylingLabel: "Återställ titelstyling",
-                ResetTitleStylingDescription: "Återställ alla titelstylingalternativ till standardvärden"
+                ResetToDefaultDescription: "Återställ alla innehållsstylingalternativ till standardvärden"
             }
         }
     }

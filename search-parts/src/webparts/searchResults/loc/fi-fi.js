@@ -139,13 +139,7 @@ define([], function() {
             ResultsBorderColorLabel: "Tulosten reunaväri",
             ResultsBorderThicknessLabel: "Tulosten reunan paksuus",
             ResetToDefaultLabel: "Palauta oletustyyli",
-            ResetToDefaultDescription: "Palauta kaikki tyyliasetukset oletusarvoihinsa",
-            WebPartTitleStylingGroupName: "WebPart-otsikon muotoilu",
-            TitleFontFamilyLabel: "Otsikon fonttiperhe",
-            TitleFontSizeLabel: "Otsikon fonttikoko",
-            TitleFontColorLabel: "Otsikon fonttiväri",
-            ResetTitleStylingLabel: "Palauta otsikkotyyli oletusarvoon",
-            ResetTitleStylingDescription: "Palauta kaikki otsikkotyyliasetukset oletusarvoihinsa"
+            ResetToDefaultDescription: "Palauta kaikki tyyliasetukset oletusarvoihinsa"
         }
     }
 });

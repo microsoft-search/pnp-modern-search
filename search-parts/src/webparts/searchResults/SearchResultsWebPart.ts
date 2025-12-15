@@ -1574,6 +1574,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         // Add styling options group
         groups.push({
             groupName: webPartStrings.Styling.StylingOptionsGroupName,
+            isCollapsed: true,
             groupFields: [
                 PropertyFieldColorPicker('resultsBackgroundColor', {
                     label: webPartStrings.Styling.ResultsBackgroundColorLabel,
@@ -1617,7 +1618,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         });
 
         // Add web part title styling group
-        groups.push(this._getTitleStylingGroup());
+        groups.push(this.getTitleStylingPropertyPaneGroup());
 
         if (layoutOptions.length > 0) {
             groups.push(
@@ -1631,54 +1632,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         return groups;
     }
 
-    private _getTitleStylingGroup(): IPropertyPaneGroup {
-        return {
-            groupName: webPartStrings.Styling.WebPartTitleStylingGroupName,
-            isCollapsed: true,
-            groupFields: [
-                PropertyPaneDropdown('titleFont', {
-                    label: webPartStrings.Styling.TitleFontFamilyLabel,
-                    selectedKey: this.properties.titleFont || '"Segoe UI", "Segoe UI Web (West European)", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif',
-                    options: [
-                        { key: '"Segoe UI", "Segoe UI Web (West European)", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif', text: 'Segoe UI' },
-                        { key: 'Arial, Helvetica, sans-serif', text: 'Arial' },
-                        { key: 'Georgia, serif', text: 'Georgia' },
-                        { key: '"Times New Roman", Times, serif', text: 'Times New Roman' },
-                        { key: 'Verdana, Geneva, sans-serif', text: 'Verdana' },
-                        { key: 'Calibri, sans-serif', text: 'Calibri' },
-                        { key: '"Trebuchet MS", sans-serif', text: 'Trebuchet MS' },
-                        { key: 'Consolas, Monaco, monospace', text: 'Consolas' }
-                    ]
-                }),
-                PropertyPaneSlider('titleFontSize', {
-                    label: webPartStrings.Styling.TitleFontSizeLabel,
-                    min: 10,
-                    max: 32,
-                    step: 1,
-                    showValue: true,
-                    value: this.properties.titleFontSize || 16
-                }),
-                PropertyFieldColorPicker('titleFontColor', {
-                    label: webPartStrings.Styling.TitleFontColorLabel,
-                    selectedColor: this.properties.titleFontColor,
-                    onPropertyChange: this.onPropertyPaneFieldChanged,
-                    properties: this.properties,
-                    disabled: false,
-                    debounce: 1000,
-                    isHidden: false,
-                    alphaSliderHidden: false,
-                    style: PropertyFieldColorPickerStyle.Inline,
-                    key: 'titleFontColorFieldId'
-                }),
-                PropertyPaneButton('resetTitleStylingButton', {
-                    text: webPartStrings.Styling.ResetTitleStylingLabel,
-                    buttonType: PropertyPaneButtonType.Command,
-                    icon: 'Refresh',
-                    onClick: this._resetTitleStylingToDefault.bind(this)
-                })
-            ]
-        };
-    }
+
 
     private _resetContentStylingToDefault(): void {
         // Reset all content styling properties to their default values
@@ -1693,18 +1647,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         this.render();
     }
     
-    private _resetTitleStylingToDefault(): void {
-        // Reset all title styling properties to their default values
-        this.properties.titleFont = undefined;
-        this.properties.titleFontSize = undefined;
-        this.properties.titleFontColor = undefined;
-        
-        // Refresh the property pane to show the reset values
-        this.context.propertyPane.refresh();
-        
-        // Re-render the web part to apply changes
-        this.render();
-    }
+
 
     /**
      * Returns property pane 'Paging' group fields

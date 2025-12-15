@@ -417,7 +417,12 @@ define([], function () {
                 TargetAudienceLabel: "Målgrupp",
                 CacheDurationLabel: "Cachelängd (timmar)",
                 CacheDurationDescription: "Tid i timmar för cachelagring av målgruppsmedlemskap"
-            }
+            },
+            TitleStylingGroupName: "Webbdelstitelstyling",
+            TitleFont: "Titeltypsnitt",
+            TitleFontSize: "Titeltypsnittsstorlek (px)",
+            TitleFontColor: "Titeltypsnittsfärg",
+            ResetTitleStylingToDefault: "Återställ titelstyling till standard"
         },
         Filters: {
             ApplyAllFiltersButtonLabel: "Tillämpa",

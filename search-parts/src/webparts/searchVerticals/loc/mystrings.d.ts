@@ -40,12 +40,6 @@ declare interface ISearchVerticalsWebPartStrings {
       VerticalFontSizeLabel: string;
       ResetToDefaultLabel: string;
       ResetToDefaultDescription: string;
-      WebPartTitleStylingGroupName: string;
-      TitleFontFamilyLabel: string;
-      TitleFontSizeLabel: string;
-      TitleFontColorLabel: string;
-      ResetTitleStylingLabel: string;
-      ResetTitleStylingDescription: string;
     }
   }
 }

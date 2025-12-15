@@ -414,7 +414,12 @@ define([], function () {
                 TargetAudienceLabel: "Público-alvo",
                 CacheDurationLabel: "Duração do cache (horas)",
                 CacheDurationDescription: "Duração em horas para armazenar em cache as informações de associação ao público"
-            }
+            },
+            TitleStylingGroupName: "Estilo do título da web part",
+            TitleFont: "Fonte do título",
+            TitleFontSize: "Tamanho da fonte do título (px)",
+            TitleFontColor: "Cor da fonte do título",
+            ResetTitleStylingToDefault: "Redefinir estilo do título para padrão"
         },
         Filters: {
             ApplyAllFiltersButtonLabel: "Aplicar",

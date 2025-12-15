@@ -74,13 +74,7 @@ define([], function() {
             FilterBorderColorLabel: "Barva okraje filtru",
             FilterBorderThicknessLabel: "Tloušťka okraje filtru",
             ResetToDefaultLabel: "Obnovit výchozí styl",
-            ResetToDefaultDescription: "Obnovit všechny možnosti stylu na výchozí hodnoty",
-            WebPartTitleStylingGroupName: "Styl názvu webové části",
-            TitleFontFamilyLabel: "Rodina písem názvu",
-            TitleFontSizeLabel: "Velikost písma názvu",
-            TitleFontColorLabel: "Barva písma názvu",
-            ResetTitleStylingLabel: "Obnovit výchozí styl názvu",
-            ResetTitleStylingDescription: "Obnovit všechny možnosti stylu názvu na výchozí hodnoty"
+            ResetToDefaultDescription: "Obnovit všechny možnosti stylu na výchozí hodnoty"
         }
     }
 });

@@ -40,13 +40,7 @@ define([], function() {
             VerticalBorderThicknessLabel: "Grosor de borde vertical",
             VerticalFontSizeLabel: "Tamaño de fuente vertical",
             ResetToDefaultLabel: "Restablecer valores predeterminados",
-            ResetToDefaultDescription: "Restablecer todas las opciones de estilo de contenido a sus valores predeterminados",
-            WebPartTitleStylingGroupName: "Estilo del título del elemento web",
-            TitleFontFamilyLabel: "Familia de fuentes del título",
-            TitleFontSizeLabel: "Tamaño de fuente del título",
-            TitleFontColorLabel: "Color de fuente del título",
-            ResetTitleStylingLabel: "Restablecer estilo de título",
-            ResetTitleStylingDescription: "Restablecer todas las opciones de estilo de título a sus valores predeterminados"
+          ResetToDefaultDescription: "Restablecer todas las opciones de estilo de contenido a sus valores predeterminados"
         }
       }
     }

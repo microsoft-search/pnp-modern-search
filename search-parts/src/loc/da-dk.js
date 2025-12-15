@@ -416,7 +416,12 @@ define([], function () {
                 TargetAudienceLabel: "Målgruppe",
                 CacheDurationLabel: "Cache-varighed (timer)",
                 CacheDurationDescription: "Varighed i timer for caching af målgruppemedlemskab"
-            }
+            },
+            TitleStylingGroupName: "Webdel titelstyling",
+            TitleFont: "Titelskrifttype",
+            TitleFontSize: "Titelskriftstørrelse (px)",
+            TitleFontColor: "Titelskriftfarve",
+            ResetTitleStylingToDefault: "Nulstil titelstyling til standard"
         },
         Filters: {
             ApplyAllFiltersButtonLabel: "Anvend",
