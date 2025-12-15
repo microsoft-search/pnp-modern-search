@@ -1220,12 +1220,13 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                             } as IDataFilterResultValue);
 
                         } else {
-
-                            // Increment the count for that filter
-                            updatedValues[existingFilterIdx].count = updatedValues[existingFilterIdx].count + 1;
-
-                            // The refinement filter value can't be an exact match anymore to include ';' concatenated strings so we use the FQL expression here
-                            updatedValues[existingFilterIdx].value = fqlFilterValue;
+                            // If the term already exists (duplicate from different site/language), 
+                            // combine the FQL filter values with OR to match all variants,
+                            // but keep the original count (don't double-count results)
+                            const existingValue = updatedValues[existingFilterIdx].value;
+                            if (existingValue !== fqlFilterValue && existingValue.indexOf(fqlFilterValue) === -1) {
+                                updatedValues[existingFilterIdx].value = `or(${existingValue},${fqlFilterValue})`;
+                            }
                         }
                     });
                 } else {
@@ -1366,6 +1367,24 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                 return filter;
             });
         }
+
+        // Remove duplicate filter values (same name and value) that might appear due to multi-source indexing
+        updatedFilters = updatedFilters.map(filter => {
+            const uniqueValues: IDataFilterResultValue[] = [];
+            const seenKeys = new Set<string>();
+            
+            filter.values.forEach(value => {
+                // Create a unique key combining name and value
+                const key = `${value.name}|||${value.value}`;
+                if (!seenKeys.has(key)) {
+                    seenKeys.add(key);
+                    uniqueValues.push(value);
+                }
+            });
+            
+            filter.values = uniqueValues;
+            return filter;
+        });
 
         return updatedFilters;
     }

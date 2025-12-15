@@ -12,29 +12,14 @@
             font-size: 12px;
         }        
         .example-themePrimary a {
-            color: {
-                {
-                    @root.theme.palette.themePrimary
-                }
-            }
-            ;
+            color: {{@root.theme.palette.themePrimary}};
         }
         
-        {
-            {
-                #unless @root.properties.layoutProperties.showItemThumbnail
-            }
-        }
-        
+        {{#unless @root.properties.layoutProperties.showItemThumbnail}}
         .template--listItem--result {
             flex-basis: 100%!important;
         }
-        
-        {
-            {
-                /unless
-            }
-        }
+        {{/unless}}
     </style>
 
     <div class="template">
@@ -134,17 +119,24 @@
                                                     
                                                 {{else}}    
                                                     <!-- If the enableLocalization is OFF I assume that the Auto[property] is NOT used -->
-                                                    {{#each (split (slot item @root.slots.Tags) ";") as |tag| }}
-                                                    <div class="simpletags">
-                                                        {{#with (split (tag) '|')}}
-                                                            {{trim [2]}}
-                                                        <!-- Use this if you want the tags to be displayed as a search link -->
-                                                        <!-- <i class="ms-Icon ms-Icon--MapPin" aria-hidden="true"></i> -->
-                                                        <!-- <a href="?q=Tags:'    {{[2]}}'" data-interception="off">{{[2]}}</a> -->
-                                                        {{/with}}
-                                                        
-                                                    </div>
-                                                    {{/each}}
+                                                    <!-- Check if value contains taxonomy format (L0|#) to determine separator -->
+                                                    {{#if (regex "L0\\|#" (slot item @root.slots.Tags))}}
+                                                        <!-- Taxonomy format: split by semicolon -->
+                                                        {{#each (split (slot item @root.slots.Tags) ";") as |tag| }}
+                                                        <div class="simpletags">
+															{{getTagName (trim tag)}}
+															<!-- Use this if you want the tags to be displayed as a search link -->
+															<!-- <i class="ms-Icon ms-Icon--MapPin" aria-hidden="true"></i> -->
+															<!-- <a href="?q=Tags:'{{getTagName (trim tag)}}" data-interception="off">{{getTagName (trim tag)}}</a> -->
+                                                            
+                                                        </div>
+                                                        {{/each}}
+                                                    {{else}}
+                                                        <!-- Plain text format: display as-is -->
+                                                        <div class="simpletags">
+															{{trim (slot item @root.slots.Tags)}}
+                                                        </div>
+                                                    {{/if}}
                                                 {{/if}}
                                             </div>
                                         {{/if}}
