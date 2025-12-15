@@ -274,12 +274,37 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
 
         let renderTitle: JSX.Element = null;
 
-        // WebPart title
-        renderTitle = <WebPartTitle
-                        displayMode={this.props.webPartTitleProps.displayMode}
-                        title={this.props.webPartTitleProps.title}
-                        updateProperty={this.props.webPartTitleProps.updateProperty}
-                        className={this.props.webPartTitleProps.className} />;
+        // WebPart title with custom styling
+        const titleWrapperClass = `custom-title-wrapper-${this.props.instanceId || 'default'}`;
+        
+        if (this.props.titleFont || this.props.titleFontSize !== undefined || this.props.titleFontColor) {
+            const styleString = `
+                .${titleWrapperClass} *,
+                .${titleWrapperClass} div,
+                .${titleWrapperClass} span,
+                .${titleWrapperClass} h2,
+                .${titleWrapperClass} textarea {
+                    ${this.props.titleFont ? `font-family: ${this.props.titleFont} !important;` : ''}
+                    ${this.props.titleFontSize !== undefined ? `font-size: ${this.props.titleFontSize}px !important;` : ''}
+                    ${this.props.titleFontColor ? `color: ${this.props.titleFontColor} !important;` : ''}
+                }
+            `;
+            
+            renderTitle = <div className={titleWrapperClass}>
+                <style key={`title-style-${this.props.titleFont}-${this.props.titleFontSize}-${this.props.titleFontColor}`} dangerouslySetInnerHTML={{ __html: styleString }} />
+                <WebPartTitle
+                    displayMode={this.props.webPartTitleProps.displayMode}
+                    title={this.props.webPartTitleProps.title}
+                    updateProperty={this.props.webPartTitleProps.updateProperty}
+                    className={this.props.webPartTitleProps.className} />
+            </div>;
+        } else {
+            renderTitle = <WebPartTitle
+                displayMode={this.props.webPartTitleProps.displayMode}
+                title={this.props.webPartTitleProps.title}
+                updateProperty={this.props.webPartTitleProps.updateProperty}
+                className={this.props.webPartTitleProps.className} />;
+        }
 
         let renderErrorMessage: JSX.Element = null;
 

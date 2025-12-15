@@ -82,4 +82,34 @@ export interface ISearchResultsContainerProps {
    * The layout render type (Handlebars, Adaptive Cards, etc.)
    */
   renderType: LayoutRenderType;
+
+  /**
+   * Results panel background color
+   */
+  resultsBackgroundColor?: string;
+
+  /**
+   * Results panel border color
+   */
+  resultsBorderColor?: string;
+
+  /**
+   * Results panel border thickness in pixels
+   */
+  resultsBorderThickness?: number;
+
+  /**
+   * Title font family
+   */
+  titleFont?: string;
+
+  /**
+   * Title font size in pixels
+   */
+  titleFontSize?: number;
+
+  /**
+   * Title font color
+   */
+  titleFontColor?: string;
 }

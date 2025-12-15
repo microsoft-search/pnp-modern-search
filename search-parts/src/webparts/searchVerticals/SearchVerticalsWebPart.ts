@@ -5,8 +5,13 @@ import {
     IPropertyPaneConfiguration,
     IPropertyPanePage,
     IPropertyPaneField,
-    PropertyPaneTextField
+    IPropertyPaneGroup,
+    PropertyPaneTextField,
+    PropertyPaneSlider,
+    PropertyPaneButton,
+    PropertyPaneButtonType
 } from '@microsoft/sp-property-pane';
+import { PropertyFieldColorPicker, PropertyFieldColorPickerStyle } from '@pnp/spfx-property-controls/lib/PropertyFieldColorPicker';
 import * as commonStrings from 'CommonStrings';
 import * as webPartStrings from 'SearchVerticalsWebPartStrings';
 import { ISearchVerticalsContainerProps } from './components/ISearchVerticalsContainerProps';
@@ -166,7 +171,16 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
                     tokenService: this.tokenService,
                     themeVariant: this._themeVariant,
                     onVerticalSelected: this.onVerticalSelected.bind(this),
-                    defaultSelectedKey: defaultSelectedKey
+                    defaultSelectedKey: defaultSelectedKey,
+                    verticalBackgroundColor: this.properties.verticalBackgroundColor,
+                    verticalBorderColor: this.properties.verticalBorderColor,
+                    verticalBorderThickness: this.properties.verticalBorderThickness,
+                    verticalFontSize: this.properties.verticalFontSize,
+                    verticalMouseOverColor: this.properties.verticalMouseOverColor,
+                    titleFont: this.properties.titleFont,
+                    titleFontSize: this.properties.titleFontSize,
+                    titleFontColor: this.properties.titleFontColor,
+                    instanceId: this.instanceId
                 } as ISearchVerticalsContainerProps
             );
         }
@@ -268,7 +282,9 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
                     {
                         groupName: webPartStrings.PropertyPane.SearchVerticalsGroupName,
                         groupFields: this._getVerticalsConfguration()
-                    }
+                    },
+                    this._getContentStylingGroup(),
+                    this.getTitleStylingPropertyPaneGroup()
                 ],
                 displayGroupsAsAccordion: true
             }
@@ -478,6 +494,90 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
         ];
 
         return settingFields;
+    }
+
+    private _getContentStylingGroup(): IPropertyPaneGroup {
+        return {
+            groupName: webPartStrings.PropertyPane.Styling.WebPartContentStylingGroupName,
+            isCollapsed: true,
+            groupFields: [
+                PropertyFieldColorPicker('verticalBackgroundColor', {
+                    label: webPartStrings.PropertyPane.Styling.VerticalBackgroundColorLabel,
+                    selectedColor: this.properties.verticalBackgroundColor,
+                    onPropertyChange: this.onPropertyPaneFieldChanged,
+                    properties: this.properties,
+                    disabled: false,
+                    debounce: 1000,
+                    isHidden: false,
+                    alphaSliderHidden: false,
+                    style: PropertyFieldColorPickerStyle.Inline,
+                    key: 'verticalBackgroundColorFieldId'
+                }),
+                PropertyFieldColorPicker('verticalMouseOverColor', {
+                    label: webPartStrings.PropertyPane.Styling.MouseOverColorLabel,
+                    selectedColor: this.properties.verticalMouseOverColor,
+                    onPropertyChange: this.onPropertyPaneFieldChanged,
+                    properties: this.properties,
+                    disabled: false,
+                    debounce: 1000,
+                    isHidden: false,
+                    alphaSliderHidden: false,
+                    style: PropertyFieldColorPickerStyle.Inline,
+                    key: 'verticalMouseOverColorFieldId'
+                }),
+                PropertyFieldColorPicker('verticalBorderColor', {
+                    label: webPartStrings.PropertyPane.Styling.VerticalBorderColorLabel,
+                    selectedColor: this.properties.verticalBorderColor,
+                    onPropertyChange: this.onPropertyPaneFieldChanged,
+                    properties: this.properties,
+                    disabled: false,
+                    debounce: 1000,
+                    isHidden: false,
+                    alphaSliderHidden: false,
+                    style: PropertyFieldColorPickerStyle.Inline,
+                    key: 'verticalBorderColorFieldId'
+                }),
+                PropertyPaneSlider('verticalBorderThickness', {
+                    label: webPartStrings.PropertyPane.Styling.VerticalBorderThicknessLabel,
+                    min: 0,
+                    max: 10,
+                    step: 1,
+                    showValue: true,
+                    value: this.properties.verticalBorderThickness || 0
+                }),
+                PropertyPaneSlider('verticalFontSize', {
+                    label: webPartStrings.PropertyPane.Styling.VerticalFontSizeLabel,
+                    min: 10,
+                    max: 32,
+                    step: 1,
+                    showValue: true,
+                    value: this.properties.verticalFontSize || 14
+                }),
+                PropertyPaneButton('resetContentStylingButton', {
+                    text: webPartStrings.PropertyPane.Styling.ResetToDefaultLabel,
+                    buttonType: PropertyPaneButtonType.Command,
+                    icon: 'Refresh',
+                    onClick: this._resetContentStylingToDefault.bind(this)
+                })
+            ]
+        };
+    }
+
+
+
+    private _resetContentStylingToDefault(): void {
+        // Reset all content styling properties to their default values
+        this.properties.verticalBackgroundColor = undefined;
+        this.properties.verticalMouseOverColor = undefined;
+        this.properties.verticalBorderColor = undefined;
+        this.properties.verticalBorderThickness = undefined;
+        this.properties.verticalFontSize = undefined;
+        
+        // Refresh the property pane to show the reset values
+        this.context.propertyPane.refresh();
+        
+        // Re-render the web part to apply changes
+        this.render();
     }
 
     private initializeWebPartServices(): void {

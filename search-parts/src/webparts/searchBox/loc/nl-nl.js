@@ -35,7 +35,9 @@ define([], function() {
                 SearchIconNameDescription: "Fluent UI pictogram naam (bijv: Search, Forward, ChevronRight)",
                 SearchButtonTextLabel: "Tekst van zoekknop",
                 ResetToDefaultLabel: "Herstel naar standaard styling",
-                ResetToDefaultDescription: "Herstel alle styling opties naar hun standaardwaarden"
+                ResetToDefaultDescription: "Herstel alle styling opties naar hun standaardwaarden",
+                ResetTitleStylingLabel: "Herstel titelstijl naar standaard",
+                ResetTitleStylingDescription: "Herstel alle titelstijlopties naar hun standaardwaarden"
             },
             AvailableConnectionsGroup: {
                 GroupName: "Beschikbare verbindingen",

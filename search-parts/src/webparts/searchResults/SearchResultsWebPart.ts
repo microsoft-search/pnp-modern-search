@@ -23,7 +23,10 @@ import {
     PropertyPaneDynamicField,
     DynamicDataSharedDepth,
     PropertyPaneDynamicFieldSet,
+    PropertyPaneButton,
+    PropertyPaneButtonType
 } from "@microsoft/sp-property-pane";
+import { PropertyFieldColorPicker, PropertyFieldColorPickerStyle } from '@pnp/spfx-property-controls/lib/PropertyFieldColorPicker';
 import ISearchResultsWebPartProps, { QueryTextSource } from './ISearchResultsWebPartProps';
 import { AvailableDataSources, BuiltinDataSourceProviderKeys } from '../../dataSources/AvailableDataSources';
 import { ServiceKey } from "@microsoft/sp-core-library";
@@ -428,7 +431,13 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                     updateProperty: this._updateTitleProperty,
                     themeVariant: this._themeVariant,
                     className: commonStyles.wpTitle
-                }
+                },
+                resultsBackgroundColor: this.properties.resultsBackgroundColor,
+                resultsBorderColor: this.properties.resultsBorderColor,
+                resultsBorderThickness: this.properties.resultsBorderThickness,
+                titleFont: this.properties.titleFont,
+                titleFontSize: this.properties.titleFontSize,
+                titleFontColor: this.properties.titleFontColor
             } as ISearchResultsContainerProps);
 
             renderRootElement = renderDataContainer;
@@ -1562,6 +1571,55 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             }
         );
 
+        // Add styling options group
+        groups.push({
+            groupName: webPartStrings.Styling.StylingOptionsGroupName,
+            isCollapsed: true,
+            groupFields: [
+                PropertyFieldColorPicker('resultsBackgroundColor', {
+                    label: webPartStrings.Styling.ResultsBackgroundColorLabel,
+                    selectedColor: this.properties.resultsBackgroundColor,
+                    onPropertyChange: this.onPropertyPaneFieldChanged,
+                    properties: this.properties,
+                    disabled: false,
+                    debounce: 1000,
+                    isHidden: false,
+                    alphaSliderHidden: false,
+                    style: PropertyFieldColorPickerStyle.Inline,
+                    key: 'resultsBackgroundColorFieldId'
+                }),
+                PropertyFieldColorPicker('resultsBorderColor', {
+                    label: webPartStrings.Styling.ResultsBorderColorLabel,
+                    selectedColor: this.properties.resultsBorderColor,
+                    onPropertyChange: this.onPropertyPaneFieldChanged,
+                    properties: this.properties,
+                    disabled: false,
+                    debounce: 1000,
+                    isHidden: false,
+                    alphaSliderHidden: false,
+                    style: PropertyFieldColorPickerStyle.Inline,
+                    key: 'resultsBorderColorFieldId'
+                }),
+                PropertyPaneSlider('resultsBorderThickness', {
+                    label: webPartStrings.Styling.ResultsBorderThicknessLabel,
+                    min: 0,
+                    max: 10,
+                    step: 1,
+                    showValue: true,
+                    value: this.properties.resultsBorderThickness || 0
+                }),
+                PropertyPaneButton('resetContentStylingButton', {
+                    text: webPartStrings.Styling.ResetToDefaultLabel,
+                    buttonType: PropertyPaneButtonType.Command,
+                    icon: 'Refresh',
+                    onClick: this._resetContentStylingToDefault.bind(this)
+                })
+            ]
+        });
+
+        // Add web part title styling group
+        groups.push(this.getTitleStylingPropertyPaneGroup());
+
         if (layoutOptions.length > 0) {
             groups.push(
                 {
@@ -1573,6 +1631,23 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         return groups;
     }
+
+
+
+    private _resetContentStylingToDefault(): void {
+        // Reset all content styling properties to their default values
+        this.properties.resultsBackgroundColor = undefined;
+        this.properties.resultsBorderColor = undefined;
+        this.properties.resultsBorderThickness = undefined;
+        
+        // Refresh the property pane to show the reset values
+        this.context.propertyPane.refresh();
+        
+        // Re-render the web part to apply changes
+        this.render();
+    }
+    
+
 
     /**
      * Returns property pane 'Paging' group fields

@@ -414,7 +414,12 @@ define([], function () {
                 TargetAudienceLabel: "Kohderyhmä",
                 CacheDurationLabel: "Välimuistin kesto (tuntia)",
                 CacheDurationDescription: "Aika tunteina kohderyhmän jäsenyyden välimuistiin tallentamiseksi"
-            }
+            },
+            TitleStylingGroupName: "Web-osan otsikon muotoilu",
+            TitleFont: "Otsikon fontti",
+            TitleFontSize: "Otsikon fonttikoko (px)",
+            TitleFontColor: "Otsikon fonttiväri",
+            ResetTitleStylingToDefault: "Palauta otsikon muotoilu oletusarvoon"
         },
         Filters: {
             ApplyAllFiltersButtonLabel: "Ota käyttöön",

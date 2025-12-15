@@ -2,7 +2,12 @@ import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 import {
   IPropertyPaneGroup,
     PropertyPaneLabel,
-    PropertyPaneLink
+    PropertyPaneLink,
+    PropertyPaneDropdown,
+    IPropertyPaneDropdownOption,
+    PropertyPaneSlider,
+    PropertyPaneButton,
+    PropertyPaneButtonType
 } from '@microsoft/sp-property-pane';
 import IExtensibilityService from '../services/extensibilityService/IExtensibilityService';
 import { ExtensibilityService } from '../services/extensibilityService/ExtensibilityService';
@@ -16,6 +21,7 @@ import { DisplayMode } from '@microsoft/sp-core-library';
 import { AudienceTargetingService } from '../services/audienceTargetingService/AudienceTargetingService';
 import { PropertyFieldPeoplePicker, PrincipalType } from '@pnp/spfx-property-controls/lib/PropertyFieldPeoplePicker';
 import { PropertyFieldNumber } from '@pnp/spfx-property-controls/lib/PropertyFieldNumber';
+import { PropertyFieldColorPicker, PropertyFieldColorPickerStyle } from '@pnp/spfx-property-controls/lib/PropertyFieldColorPicker';
 
 /**
  * Generic abstract class for all Web Parts in the solution
@@ -182,6 +188,69 @@ export abstract class BaseWebPart<T extends IBaseWebPartProps> extends BaseClien
                 })
             ]
         };
+    }
+
+    /**
+     * Returns the property pane group for title styling configuration
+     */
+    protected getTitleStylingPropertyPaneGroup(): IPropertyPaneGroup {
+        const fontOptions: IPropertyPaneDropdownOption[] = [
+            { key: '"Segoe UI", "Segoe UI Web (West European)", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif', text: 'Segoe UI' },
+            { key: 'Arial, Helvetica, sans-serif', text: 'Arial' },
+            { key: '"Times New Roman", Times, serif', text: 'Times New Roman' },
+            { key: '"Courier New", Courier, monospace', text: 'Courier New' },
+            { key: 'Georgia, serif', text: 'Georgia' },
+            { key: 'Verdana, Geneva, sans-serif', text: 'Verdana' }
+        ];
+
+        return {
+            groupName: commonStrings.PropertyPane.TitleStylingGroupName,
+            isCollapsed: true,
+            groupFields: [
+                PropertyPaneDropdown('titleFont', {
+                    label: commonStrings.PropertyPane.TitleFont,
+                    selectedKey: this.properties.titleFont || '"Segoe UI", "Segoe UI Web (West European)", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif',
+                    options: fontOptions
+                }),
+                PropertyPaneSlider('titleFontSize', {
+                    label: commonStrings.PropertyPane.TitleFontSize,
+                    min: 10,
+                    max: 48,
+                    step: 1,
+                    showValue: true,
+                    value: this.properties.titleFontSize || 16
+                }),
+                PropertyFieldColorPicker('titleFontColor', {
+                    label: commonStrings.PropertyPane.TitleFontColor,
+                    selectedColor: this.properties.titleFontColor,
+                    onPropertyChange: this.onPropertyPaneFieldChanged,
+                    properties: this.properties,
+                    disabled: false,
+                    debounce: 1000,
+                    isHidden: false,
+                    alphaSliderHidden: false,
+                    style: PropertyFieldColorPickerStyle.Inline,
+                    key: 'titleFontColorFieldId'
+                }),
+                PropertyPaneButton('resetTitleStyling', {
+                    text: commonStrings.PropertyPane.ResetTitleStylingToDefault,
+                    buttonType: PropertyPaneButtonType.Command,
+                    onClick: this._resetTitleStylingToDefault.bind(this)
+                })
+            ]
+        };
+    }
+
+    /**
+     * Resets title styling properties to default values
+     */
+    protected _resetTitleStylingToDefault(): void {
+        this.properties.titleFont = undefined;
+        this.properties.titleFontSize = undefined;
+        this.properties.titleFontColor = undefined;
+
+        this.context.propertyPane.refresh();
+        this.render();
     }
 
     /**

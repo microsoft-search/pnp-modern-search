@@ -67,6 +67,14 @@ define([], function() {
                 FiltersTemplateFieldLabel: "Edytuj filtry szablonu",
                 FiltersTemplatePanelHeader: "Edytuj filtry szablonu"
             }
+        },
+        Styling: {
+            StylingOptionsGroupName: "Opcje stylu",
+            FilterBackgroundColorLabel: "Kolor tła filtra",
+            FilterBorderColorLabel: "Kolor obramowania filtra",
+            FilterBorderThicknessLabel: "Grubość obramowania filtra",
+            ResetToDefaultLabel: "Przywróć domyślny styl",
+            ResetToDefaultDescription: "Przywróć wszystkie opcje stylu do wartości domyślnych"
         }
     }
 });

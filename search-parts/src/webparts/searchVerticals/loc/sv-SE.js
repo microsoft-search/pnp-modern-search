@@ -31,6 +31,16 @@ define([], function() {
                 AudienceInputPlaceholderText: "Sök efter en grupp",
                 AudienceNoResultsFound: "Vi hittade inga matchande grupper.",
                 AudienceLoading: "Laddar grupper..."
+            },
+            Styling: {
+                WebPartContentStylingGroupName: "WebPart-innehållsstyling",
+                VerticalBackgroundColorLabel: "Vertikal bakgrundsfärg",
+                MouseOverColorLabel: "Musöverföringsfärg",
+                VerticalBorderColorLabel: "Vertikal kantfärg",
+                VerticalBorderThicknessLabel: "Vertikal kanttjocklek",
+                VerticalFontSizeLabel: "Vertikal teckensnittsstorlek",
+                ResetToDefaultLabel: "Återställ till standard",
+                ResetToDefaultDescription: "Återställ alla innehållsstylingalternativ till standardvärden"
             }
         }
     }

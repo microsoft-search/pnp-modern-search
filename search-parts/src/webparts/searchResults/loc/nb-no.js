@@ -132,6 +132,14 @@ define([], function() {
               ModifierDescriptionPropertyLabel: "Beskrivelse",
               EndWhenSuccessfullPropertyLabel:"Avslutt når det er vellykket"          
         }
+      },
+      Styling: {
+        StylingOptionsGroupName: "Stilalternativer",
+        ResultsBackgroundColorLabel: "Resultater bakgrunnsfarge",
+        ResultsBorderColorLabel: "Resultater kantfarge",
+        ResultsBorderThicknessLabel: "Resultater kanttykkelse",
+        ResetToDefaultLabel: "Tilbakestill til standardstil",
+        ResetToDefaultDescription: "Tilbakestill alle stilalternativer til sine standardverdier"
       }
     }
   });

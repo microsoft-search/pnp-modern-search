@@ -31,7 +31,22 @@ define([], function() {
           AudienceInputPlaceholderText: "Hledat skupinu",
           AudienceNoResultsFound: "Nenašli jsme žádné odpovídající skupiny.",
           AudienceLoading: "Načítání skupin..."
-        }
+        },
+        Styling: {
+            WebPartContentStylingGroupName: "Styl obsahu webové části",
+            VerticalBackgroundColorLabel: "Vertikální barva pozadí",
+            MouseOverColorLabel: "Barva při najetí myší",
+            VerticalBorderColorLabel: "Vertikální barva okraje",
+            VerticalBorderThicknessLabel: "Vertikální tloušťka okraje",
+            VerticalFontSizeLabel: "Vertikální velikost písma",
+            ResetToDefaultLabel: "Obnovit výchozí",
+            ResetToDefaultDescription: "Obnovit všechny možnosti stylu obsahu na jejich výchozí hodnoty",
+            WebPartTitleStylingGroupName: "Styl názvu webové části",
+            TitleFontFamilyLabel: "Rodina písem názvu",
+            TitleFontSizeLabel: "Velikost písma názvu",
+            TitleFontColorLabel: "Barva písma názvu",
+            ResetTitleStylingLabel: "Obnovit styl názvu",
+            ResetTitleStylingDescription: "Obnovit všechny možnosti stylu názvu na jejich výchozí hodnoty"
       }
     }
 });

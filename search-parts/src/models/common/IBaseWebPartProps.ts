@@ -21,4 +21,19 @@ export interface IBaseWebPartProps {
      * Duration in hours to cache audience membership information
      */
     audienceCacheDuration: number;
+
+    /**
+     * The font family for the web part title
+     */
+    titleFont?: string;
+
+    /**
+     * The font size for the web part title
+     */
+    titleFontSize?: number;
+
+    /**
+     * The font color for the web part title
+     */
+    titleFontColor?: string;
 }

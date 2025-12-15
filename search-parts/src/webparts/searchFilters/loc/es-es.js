@@ -67,6 +67,14 @@ define([], function() {
                 FiltersTemplateFieldLabel: "Editar plantilla de filtros",
                 FiltersTemplatePanelHeader: "Editar plantilla de filtros"
             }
+        },
+        Styling: {
+            StylingOptionsGroupName: "Opciones de estilo",
+            FilterBackgroundColorLabel: "Color de fondo del filtro",
+            FilterBorderColorLabel: "Color de borde del filtro",
+            FilterBorderThicknessLabel: "Grosor de borde del filtro",
+            ResetToDefaultLabel: "Restablecer estilo por defecto",
+            ResetToDefaultDescription: "Restablecer todas las opciones de estilo a sus valores por defecto"
         }
     }
 });

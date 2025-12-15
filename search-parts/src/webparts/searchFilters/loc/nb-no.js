@@ -67,6 +67,14 @@ define([], function() {
                 FiltersTemplateFieldLabel: "Rediger filtermal",
                 FiltersTemplatePanelHeader: "Rediger filtermal"
             }
+        },
+        Styling: {
+            StylingOptionsGroupName: "Stilalternativer",
+            FilterBackgroundColorLabel: "Filter bakgrunnsfarge",
+            FilterBorderColorLabel: "Filter kantfarge",
+            FilterBorderThicknessLabel: "Filter kanttykkelse",
+            ResetToDefaultLabel: "Tilbakestill til standardstil",
+            ResetToDefaultDescription: "Tilbakestill alle stilalternativer til sine standardverdier"
         }
     }
 });

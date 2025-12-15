@@ -66,7 +66,13 @@ define([], function() {
                 ErrorTemplateResolve: "Kann die angegebene Vorlage nicht auflösen. Fehler Details: '{0}'",
                 FiltersTemplateFieldLabel: "Filter Vorlage bearbeiten",
                 FiltersTemplatePanelHeader: "Filter Vorlage bearbeiten"
-            }
-        }
+            }        },
+        Styling: {
+            StylingOptionsGroupName: "Stiloptionen",
+            FilterBackgroundColorLabel: "Filter-Hintergrundfarbe",
+            FilterBorderColorLabel: "Filter-Rahmenfarbe",
+            FilterBorderThicknessLabel: "Filter-Rahmenstärke",
+            ResetToDefaultLabel: "Styling auf Standard zurücksetzen",
+            ResetToDefaultDescription: "Alle Styling-Optionen auf ihre Standardwerte zurücksetzen"        }
     }
 });

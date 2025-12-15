@@ -60,4 +60,34 @@ export interface ISearchFiltersContainerProps {
    * The Web Part Title props
    */
   webPartTitleProps: IWebPartTitleProps;
+
+  /**
+   * Filter panel background color
+   */
+  filterBackgroundColor?: string;
+
+  /**
+   * Filter panel border color
+   */
+  filterBorderColor?: string;
+
+  /**
+   * Filter panel border thickness in pixels
+   */
+  filterBorderThickness?: number;
+
+  /**
+   * Title font family
+   */
+  titleFont?: string;
+
+  /**
+   * Title font size in pixels
+   */
+  titleFontSize?: number;
+
+  /**
+   * Title font color
+   */
+  titleFontColor?: string;
 }

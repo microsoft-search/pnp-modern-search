@@ -67,6 +67,14 @@ define([], function() {
                 FiltersTemplateFieldLabel: "Bewerk filters sjabloon",
                 FiltersTemplatePanelHeader: "Bewerk filters sjabloon"
             }
+        },
+        Styling: {
+            StylingOptionsGroupName: "Stijlopties",
+            FilterBackgroundColorLabel: "Filter achtergrondkleur",
+            FilterBorderColorLabel: "Filter randkleur",
+            FilterBorderThicknessLabel: "Filter randdikte",
+            ResetToDefaultLabel: "Herstel naar standaard styling",
+            ResetToDefaultDescription: "Herstel alle styling opties naar hun standaardwaarden"
         }
     }
 });

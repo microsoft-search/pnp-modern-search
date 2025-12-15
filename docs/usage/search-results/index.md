@@ -20,6 +20,30 @@ The search results Web Part configuration is divided into four parts each corres
 3. [**Connections**](./connections/index.md): How the Web Part will be connected to others in the page.
 4. [**Extensibility**](../../extensibility/index.md): How the Web Part will be connected to others in the page.
 
+## Styling
+
+### Results styling
+
+The results styling section allows you to customize the visual appearance of the results container to match your branding and design requirements.
+
+| **Setting** | **Description** | **Default value**
+|------------|---------------- | ----------
+| **Results background color** | The background color of the results container. | _Transparent_
+| **Results border color** | The border color of the results container. | _Theme primary color_
+| **Results border thickness** | The thickness of the results container borders (in pixels). | _1px_
+| **Reset styling to default** | Reset all styling options to their default values. | N/A
+
+### Web part title styling
+
+The title styling section allows you to customize the visual appearance of the web part title.
+
+| **Setting** | **Description** | **Default value**
+|------------|---------------- | ----------
+| **Title font** | The font family to use for the web part title. | _Segoe UI_
+| **Title font size** | Controls the font size (in pixels) for the web part title. | _16px_
+| **Title font color** | The color of the web part title text. | _Theme primary color_
+| **Reset title styling to default** | Reset all title styling options to their default values. | N/A
+
 ## Common Settings
 
 These settings are available across all PnP Modern Search web parts:

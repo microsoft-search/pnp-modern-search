@@ -21,6 +21,7 @@ import {
     IPropertyPanePage,
     IPropertyPaneGroup
 } from "@microsoft/sp-property-pane";
+import { PropertyFieldColorPicker, PropertyFieldColorPickerStyle } from '@pnp/spfx-property-controls/lib/PropertyFieldColorPicker';
 import SearchBoxContainer from './components/SearchBoxContainer';
 import { ISearchBoxContainerProps } from './components/ISearchBoxContainerProps';
 import { DynamicDataService } from '../../services/dynamicDataService/DynamicDataService';
@@ -217,6 +218,10 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
             searchButtonDisplayMode: this.properties.searchButtonDisplayMode,
             searchIconName: this.properties.searchIconName,
             searchButtonText: this.properties.searchButtonText,
+            titleFont: this.properties.titleFont,
+            titleFontSize: this.properties.titleFontSize,
+            titleFontColor: this.properties.titleFontColor,
+            instanceId: this.instanceId,
             webPartTitleProps: {
                 displayMode: this.displayMode,
                 title: this.properties.title,
@@ -279,8 +284,10 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
                     },
                     {
                         groupName: webPartStrings.PropertyPane.SearchBoxStylingGroup.GroupName,
+                        isCollapsed: true,
                         groupFields: this._getSearchBoxStylingFields()
-                    }
+                    },
+                    this.getTitleStylingPropertyPaneGroup()
                 ],
                 displayGroupsAsAccordion: true
             },
@@ -615,25 +622,53 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
             }),
             
             // Colors
-            PropertyPaneTextField('searchBoxBorderColor', {
+            PropertyFieldColorPicker('searchBoxBorderColor', {
                 label: webPartStrings.PropertyPane.SearchBoxStylingGroup.BorderColorLabel,
-                value: this.properties.searchBoxBorderColor || '',
-                placeholder: '#c2c2c2'
+                selectedColor: this.properties.searchBoxBorderColor,
+                onPropertyChange: this.onPropertyPaneFieldChanged,
+                properties: this.properties,
+                disabled: false,
+                debounce: 500,
+                isHidden: false,
+                alphaSliderHidden: false,
+                style: PropertyFieldColorPickerStyle.Inline,
+                key: 'searchBoxBorderColorFieldId'
             }),
-            PropertyPaneTextField('searchBoxTextColor', {
+            PropertyFieldColorPicker('searchBoxTextColor', {
                 label: webPartStrings.PropertyPane.SearchBoxStylingGroup.TextColorLabel,
-                value: this.properties.searchBoxTextColor || '',
-                placeholder: '#323130'
+                selectedColor: this.properties.searchBoxTextColor,
+                onPropertyChange: this.onPropertyPaneFieldChanged,
+                properties: this.properties,
+                disabled: false,
+                debounce: 500,
+                isHidden: false,
+                alphaSliderHidden: false,
+                style: PropertyFieldColorPickerStyle.Inline,
+                key: 'searchBoxTextColorFieldId'
             }),
-            PropertyPaneTextField('placeholderTextColor', {
+            PropertyFieldColorPicker('placeholderTextColor', {
                 label: webPartStrings.PropertyPane.SearchBoxStylingGroup.PlaceholderTextColorLabel,
-                value: this.properties.placeholderTextColor || '',
-                placeholder: '#666666'
+                selectedColor: this.properties.placeholderTextColor,
+                onPropertyChange: this.onPropertyPaneFieldChanged,
+                properties: this.properties,
+                disabled: false,
+                debounce: 500,
+                isHidden: false,
+                alphaSliderHidden: false,
+                style: PropertyFieldColorPickerStyle.Inline,
+                key: 'placeholderTextColorFieldId'
             }),
-            PropertyPaneTextField('searchButtonColor', {
+            PropertyFieldColorPicker('searchButtonColor', {
                 label: webPartStrings.PropertyPane.SearchBoxStylingGroup.ButtonColorLabel,
-                value: this.properties.searchButtonColor || '',
-                placeholder: '#0078d7'
+                selectedColor: this.properties.searchButtonColor,
+                onPropertyChange: this.onPropertyPaneFieldChanged,
+                properties: this.properties,
+                disabled: false,
+                debounce: 500,
+                isHidden: false,
+                alphaSliderHidden: false,
+                style: PropertyFieldColorPickerStyle.Inline,
+                key: 'searchButtonColorFieldId'
             }),
             
             // Search Button Configuration

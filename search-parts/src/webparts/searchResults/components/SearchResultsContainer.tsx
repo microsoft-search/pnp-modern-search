@@ -92,17 +92,45 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
         let renderTitle: JSX.Element = null;
         let renderInfoMessage: JSX.Element = null;
 
-        // Web Part title
-        renderTitle = <div data-ui-test-id={TestConstants.SearchResultsWebPartTitle}>
-            <WebPartTitle
-                displayMode={this.props.webPartTitleProps.displayMode}
-                title={this.props.webPartTitleProps.title}
-                updateProperty={this.props.webPartTitleProps.updateProperty}
-                moreLink={this.props.webPartTitleProps.moreLink}
-                themeVariant={this.props.webPartTitleProps.themeVariant}
-                className={this.props.webPartTitleProps.className}
-            />
-        </div>;
+        // Web Part title with custom styling
+        const titleWrapperClass = `custom-title-wrapper-${this.props.instanceId || 'default'}`;
+        
+        if (this.props.titleFont || this.props.titleFontSize !== undefined || this.props.titleFontColor) {
+            const styleString = `
+                .${titleWrapperClass} *,
+                .${titleWrapperClass} div,
+                .${titleWrapperClass} span,
+                .${titleWrapperClass} h2,
+                .${titleWrapperClass} textarea {
+                    ${this.props.titleFont ? `font-family: ${this.props.titleFont} !important;` : ''}
+                    ${this.props.titleFontSize !== undefined ? `font-size: ${this.props.titleFontSize}px !important;` : ''}
+                    ${this.props.titleFontColor ? `color: ${this.props.titleFontColor} !important;` : ''}
+                }
+            `;
+            
+            renderTitle = <div data-ui-test-id={TestConstants.SearchResultsWebPartTitle} className={titleWrapperClass}>
+                <style key={`title-style-${this.props.titleFont}-${this.props.titleFontSize}-${this.props.titleFontColor}`} dangerouslySetInnerHTML={{ __html: styleString }} />
+                <WebPartTitle
+                    displayMode={this.props.webPartTitleProps.displayMode}
+                    title={this.props.webPartTitleProps.title}
+                    updateProperty={this.props.webPartTitleProps.updateProperty}
+                    moreLink={this.props.webPartTitleProps.moreLink}
+                    themeVariant={this.props.webPartTitleProps.themeVariant}
+                    className={this.props.webPartTitleProps.className}
+                />
+            </div>;
+        } else {
+            renderTitle = <div data-ui-test-id={TestConstants.SearchResultsWebPartTitle}>
+                <WebPartTitle
+                    displayMode={this.props.webPartTitleProps.displayMode}
+                    title={this.props.webPartTitleProps.title}
+                    updateProperty={this.props.webPartTitleProps.updateProperty}
+                    moreLink={this.props.webPartTitleProps.moreLink}
+                    themeVariant={this.props.webPartTitleProps.themeVariant}
+                    className={this.props.webPartTitleProps.className}
+                />
+            </div>;
+        }
 
         // Content loading
         templateContent = this.templateService.getTemplateMarkup(this.props.templateContent);
@@ -194,8 +222,16 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             errorTemplate = <div className={TestConstants.SearchResultsErrorMessage} data-ui-test-id={TestConstants.SearchResultsErrorMessage}><MessageBar messageBarType={MessageBarType.error}>{this.state.errorMessage}</MessageBar></div>;
         }
 
+        const containerStyles: React.CSSProperties = {
+            backgroundColor: this.props.resultsBackgroundColor || undefined,
+            borderStyle: this.props.resultsBorderColor || this.props.resultsBorderThickness ? 'solid' : undefined,
+            borderColor: this.props.resultsBorderColor || undefined,
+            borderWidth: this.props.resultsBorderThickness !== undefined ? `${this.props.resultsBorderThickness}px` : undefined
+        };
+
         return <main><div data-instance-id={this.props.instanceId}
-            data-ui-test-id={TestConstants.SearchResultsWebPart}>
+            data-ui-test-id={TestConstants.SearchResultsWebPart}
+            style={containerStyles}>
             <div tabIndex={-1} ref={(ref) => { this._searchWebPartRef = ref; }}></div>
             {renderOverlay}
             {renderInfoMessage}

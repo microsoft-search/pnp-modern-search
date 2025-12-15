@@ -29,7 +29,9 @@ define([], function() {
                 BackgroundColorLabel: "Taustaväri",
                 TextColorLabel: "Tekstin väri",
                 ResetToDefaultLabel: "Palauta oletustyyli",
-                ResetToDefaultDescription: "Palauta kaikki tyyliasetukset oletusarvoihinsa"
+                ResetToDefaultDescription: "Palauta kaikki tyyliasetukset oletusarvoihinsa",
+                ResetTitleStylingLabel: "Palauta otsikkotyyli oletusarvoon",
+                ResetTitleStylingDescription: "Palauta kaikki otsikkotyyliasetukset oletusarvoihinsa"
             },
             AvailableConnectionsGroup: {
                 GroupName: "Tarjolla olevat yhteydet",

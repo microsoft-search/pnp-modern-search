@@ -41,6 +41,17 @@ The search box styling section allows you to customize the visual appearance of 
 | **Search button text** | The text to display on the search button when using "Text only" or "Both" display modes. | _"Search"_
 | **Reset styling to default** | Reset all styling options to their default values. | N/A
 
+### Web part title styling
+
+The title styling section allows you to customize the visual appearance of the web part title.
+
+| **Setting** | **Description** | **Default value**
+|------------|---------------- | ----------
+| **Title font** | The font family to use for the web part title. | _Segoe UI_
+| **Title font size** | Controls the font size (in pixels) for the web part title. | _16px_
+| **Title font color** | The color of the web part title text. | _Theme primary color_
+| **Reset title styling to default** | Reset all title styling options to their default values. | N/A
+
 ### Query suggestions
 
 !["Search Box suggestions"](../../assets/webparts/search-box/search_box_suggestions.png){: .center}
