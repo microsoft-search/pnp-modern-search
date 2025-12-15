@@ -28,15 +28,23 @@ import { UrlHelper } from '../../../helpers/UrlHelper';
 import { BuiltinFilterTemplates } from '../../../layouts/AvailableTemplates';
 import { MessageBar, MessageBarType } from '@fluentui/react/lib/MessageBar';
 
-const DEEPLINK_QUERYSTRING_PARAM = 'f';
+const DEEPLINK_QUERYSTRING_PARAM_BASE = 'f';
 
 export default class SearchFiltersContainer extends React.Component<ISearchFiltersContainerProps, ISearchFiltersContainerState> {
 
   private componentRef: React.RefObject<any>;
+  
+  /**
+   * The URL query parameter name for this specific web part instance
+   */
+  private deeplinkQueryStringParam: string;
 
   public constructor(props: ISearchFiltersContainerProps) {
 
     super(props);
+    
+    // Create instance-specific query parameter to avoid conflicts between multiple filter web parts
+    this.deeplinkQueryStringParam = `${DEEPLINK_QUERYSTRING_PARAM_BASE}_${this.props.instanceId}`;
 
     this.state = {
       currentUiFilters: [],
@@ -455,8 +463,11 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
       const dataFilterInfo = ev.detail as IDataFilterInfo;
 
-      // Need the 'selected' because web components are stateless so we need to know if the filter has been selected or removed
-      this.onFilterValuesUpdated(dataFilterInfo);
+      // Only process the filter event if it belongs to this web part instance
+      if (dataFilterInfo.instanceId === this.props.instanceId) {
+        // Need the 'selected' because web components are stateless so we need to know if the filter has been selected or removed
+        this.onFilterValuesUpdated(dataFilterInfo);
+      }
 
     }).bind(this));
   }
@@ -470,20 +481,25 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
       ev.stopImmediatePropagation();
 
-      const submittedFilters = this.getSelectedFiltersFromUIFilters(this.state.currentUiFilters);
+      const eventDetail = ev.detail as { instanceId: string };
 
-      // Set the filter links in URL
-      this.setFiltersDeepLink(submittedFilters);
+      // Only process the event if it belongs to this web part instance
+      if (eventDetail.instanceId === this.props.instanceId) {
+        const submittedFilters = this.getSelectedFiltersFromUIFilters(this.state.currentUiFilters);
 
-      // Refresh the UI
-      this.getFiltersToDisplay(this.props.availableFilters, this.state.currentUiFilters, this.props.filtersConfiguration);
+        // Set the filter links in URL
+        this.setFiltersDeepLink(submittedFilters);
 
-      this.setState({
-        submittedFilters: submittedFilters
-      });
+        // Refresh the UI
+        this.getFiltersToDisplay(this.props.availableFilters, this.state.currentUiFilters, this.props.filtersConfiguration);
 
-      // Send selected filters to the data source
-      this.props.onUpdateFilters(submittedFilters);
+        this.setState({
+          submittedFilters: submittedFilters
+        });
+
+        // Send selected filters to the data source
+        this.props.onUpdateFilters(submittedFilters);
+      }
 
     }).bind(this));
   }
@@ -497,11 +513,18 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
       ev.stopImmediatePropagation();
 
+      const eventDetail = ev.detail as { filterName: string; instanceId: string };
+
+      // Only process the event if it belongs to this web part instance
+      if (eventDetail.instanceId !== this.props.instanceId) {
+        return;
+      }
+
       const updatedfilters = this.state.currentUiFilters.map(selectedFilter => {
 
         const updatedFilter = cloneDeep(selectedFilter);
 
-        if (updatedFilter.filterName === ev.detail.filterName) {
+        if (updatedFilter.filterName === eventDetail.filterName) {
           updatedFilter.values = [];
           updatedFilter.selectedOnce = true;
           updatedFilter.hasSelectedValues = false;
@@ -512,7 +535,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
       });
 
       const updateSubmittedFilters = this.state.submittedFilters.map(submittedFilter => {
-        if (submittedFilter.filterName === ev.detail.filterName) {
+        if (submittedFilter.filterName === eventDetail.filterName) {
           submittedFilter.values = [];
         }
         return submittedFilter;
@@ -550,18 +573,30 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
       ev.stopImmediatePropagation();
 
+      const eventDetail = ev.detail as { filterName: string; operator: any; instanceId: string };
+
+      // Only process the event if it belongs to this web part instance
+      if (eventDetail.instanceId !== this.props.instanceId) {
+        return;
+      }
+
       // Find the filter wit hthis specific name
       const filters = this.state.currentUiFilters.map(filter => {
 
         const selectedValues = filter.values.filter(v => v.selected);
+        const selectedValueStrings = selectedValues.map(s => s.value);
+        
         // Submitted values for the current filter name
-        const submittedValues = this.state.submittedFilters.filter(f => f.filterName === ev.detail.filterName && f.values.filter(v => selectedValues.map(s => s.value).indexOf(v.value) !== -1));
+        const submittedValues = this.state.submittedFilters.filter(f => 
+          f.filterName === eventDetail.filterName && 
+          f.values.some(v => selectedValueStrings.includes(v.value))
+        );
 
-        if (filter.filterName === ev.detail.filterName) {
+        if (filter.filterName === eventDetail.filterName) {
 
           // We let the user apply the new filters only if the operator changes or has at least two selected values      
-          filter.canApply = (!filter.canApply && filter.operator !== ev.detail.operator && selectedValues.length > 1) || (filter.canApply && submittedValues.length === 0);
-          filter.operator = ev.detail.operator;
+          filter.canApply = (!filter.canApply && filter.operator !== eventDetail.operator && selectedValues.length > 1) || (filter.canApply && submittedValues.length === 0);
+          filter.operator = eventDetail.operator;
         }
 
         return filter;
@@ -595,7 +630,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
    */
   private getFiltersDeepLink() {
 
-    const queryString = UrlHelper.getQueryStringParam(DEEPLINK_QUERYSTRING_PARAM, window.location.href);
+    const queryString = UrlHelper.getQueryStringParam(this.deeplinkQueryStringParam, window.location.href);
 
     if (queryString) {
 
@@ -649,9 +684,9 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
     let filtersDeepLinkUrl: string;
     if (submittedFilters.length > 0) {
-      filtersDeepLinkUrl = UrlHelper.addOrReplaceQueryStringParam(window.location.href, DEEPLINK_QUERYSTRING_PARAM, JSON.stringify(submittedFilters));
+      filtersDeepLinkUrl = UrlHelper.addOrReplaceQueryStringParam(window.location.href, this.deeplinkQueryStringParam, JSON.stringify(submittedFilters));
     } else {
-      filtersDeepLinkUrl = UrlHelper.removeQueryStringParam(DEEPLINK_QUERYSTRING_PARAM, window.location.href);
+      filtersDeepLinkUrl = UrlHelper.removeQueryStringParam(this.deeplinkQueryStringParam, window.location.href);
     }
 
     window.history.pushState({ path: filtersDeepLinkUrl }, '', filtersDeepLinkUrl);
@@ -659,7 +694,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
   private resetFiltersDeepLink() {
     // Reset filters query string
-    const filtersDeepLinkUrl = UrlHelper.removeQueryStringParam(DEEPLINK_QUERYSTRING_PARAM, window.location.href);
+    const filtersDeepLinkUrl = UrlHelper.removeQueryStringParam(this.deeplinkQueryStringParam, window.location.href);
     window.history.pushState({ path: filtersDeepLinkUrl }, '', filtersDeepLinkUrl);
   }
 
@@ -680,7 +715,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
     // When the browser 'back' or 'forward' button is pressed
     window.onpopstate = (ev) => {
 
-      const queryString = UrlHelper.getQueryStringParam(DEEPLINK_QUERYSTRING_PARAM, window.location.href);
+      const queryString = UrlHelper.getQueryStringParam(this.deeplinkQueryStringParam, window.location.href);
 
       // Initial state where no filter are selected
       if (!queryString) {
