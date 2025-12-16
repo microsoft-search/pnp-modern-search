@@ -5,7 +5,7 @@ import { IWebPartPropertiesMetadata } from '@microsoft/sp-webpart-base';
 import * as webPartStrings from 'SearchResultsWebPartStrings';
 import * as commonStrings from 'CommonStrings';
 import { ISearchResultsContainerProps } from './components/ISearchResultsContainerProps';
-import { IDataSource, IDataSourceDefinition, IComponentDefinition, ILayoutDefinition, ILayout, IDataFilter, LayoutType, FilterComparisonOperator, IDataFilterValue, IDataFilterResult, FilterConditionOperator, IDataVertical, ExtensibilityConstants, ISortInfo, LayoutRenderType, IQueryModifierDefinition, IQueryModifier, BaseQueryModifier } from '@pnp/modern-search-extensibility';
+import { IDataSource, IDataSourceDefinition, IComponentDefinition, ILayoutDefinition, ILayout, IDataFilter, LayoutType, FilterComparisonOperator, IDataFilterValue, IDataFilterResult, FilterConditionOperator, ExtensibilityConstants, ISortInfo, LayoutRenderType, IQueryModifierDefinition, IQueryModifier, BaseQueryModifier } from '@pnp/modern-search-extensibility';
 
 import {
     IPropertyPaneConfiguration,
@@ -22,11 +22,8 @@ import {
     PropertyPaneCheckbox,
     PropertyPaneDynamicField,
     DynamicDataSharedDepth,
-    PropertyPaneDynamicFieldSet,
-    PropertyPaneButton,
-    PropertyPaneButtonType
+    PropertyPaneDynamicFieldSet
 } from "@microsoft/sp-property-pane";
-import { PropertyFieldColorPicker, PropertyFieldColorPickerStyle } from '@pnp/spfx-property-controls/lib/PropertyFieldColorPicker';
 import ISearchResultsWebPartProps, { QueryTextSource } from './ISearchResultsWebPartProps';
 import { AvailableDataSources, BuiltinDataSourceProviderKeys } from '../../dataSources/AvailableDataSources';
 import { ServiceKey } from "@microsoft/sp-core-library";
@@ -35,11 +32,10 @@ import { AvailableLayouts, BuiltinLayoutsKeys } from '../../layouts/AvailableLay
 import { ITemplateService, FileFormat } from '../../services/templateService/ITemplateService';
 import { TemplateService } from '../../services/templateService/TemplateService';
 import { ServiceScopeHelper } from '../../helpers/ServiceScopeHelper';
-import { cloneDeep, flatten, isEmpty, isEqual, uniq, uniqBy } from "@microsoft/sp-lodash-subset";
+import { cloneDeep, isEmpty, isEqual, uniq, uniqBy } from "@microsoft/sp-lodash-subset";
 import { AvailableComponents } from '../../components/AvailableComponents';
 import { DynamicProperty } from '@microsoft/sp-component-base';
-import { ITemplateSlot, IDataFilterToken, IDataFilterTokenValue, IDataContext, ITokenService, SortFieldDirection, IExtensibilityLibrary } from '@pnp/modern-search-extensibility';
-import { ResultTypeOperator } from '../../models/common/IDataResultType';
+import { ITemplateSlot, IDataContext, ITokenService, SortFieldDirection, IExtensibilityLibrary } from '@pnp/modern-search-extensibility';
 import { TokenService, BuiltinTokenNames } from '../../services/tokenService/TokenService';
 import { TaxonomyService } from '../../services/taxonomyService/TaxonomyService';
 import { SharePointSearchService } from '../../services/searchService/SharePointSearchService';
@@ -55,8 +51,6 @@ import { AsyncCombo } from '../../controls/PropertyPaneAsyncCombo/components/Asy
 import { Constants } from '../../common/Constants';
 import PnPTelemetry from "@pnp/telemetry-js";
 import { IPageEventInfo } from '../../components/PaginationComponent';
-import { DataFilterHelper } from '../../helpers/DataFilterHelper';
-import { BuiltinFilterTemplates } from '../../layouts/AvailableTemplates';
 import { IExtensibilityConfiguration } from '../../models/common/IExtensibilityConfiguration';
 import { IDataVerticalSourceData } from '../../models/dynamicData/IDataVerticalSourceData';
 import { BaseWebPart } from '../../common/BaseWebPart';
@@ -74,7 +68,6 @@ import { ConnectionsPropertyPaneBuilder } from './propertyPane/ConnectionsProper
 import { AboutPropertyPaneBuilder } from './propertyPane/AboutPropertyPaneBuilder';
 import { TokenSetter } from './services/TokenSetter';
 import { StylingPageGroupsBuilder } from './propertyPane/StylingPageGroupsBuilder';
-import { PropertyPaneTabsField } from '../../controls/PropertyPaneTabsField/PropertyPaneTabsField';
 
 // Import statements for templates
 import defaultSimpleListTemplate from '../../layouts/resultTypes/default_simple_list.html';
