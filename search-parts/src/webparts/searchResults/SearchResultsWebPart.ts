@@ -69,6 +69,10 @@ import { DynamicPropertyHelper } from '../../helpers/DynamicPropertyHelper';
 import { IQueryModifierConfiguration } from '../../queryModifier/IQueryModifierConfiguration';
 import { PropertyPaneTabsField } from '../../controls/PropertyPaneTabsField/PropertyPaneTabsField';
 import { loadMsGraphToolkit } from '../../helpers/GraphToolKitHelper';
+import { DataSourcePropertyPaneBuilder } from './propertyPane/DataSourcePropertyPaneBuilder';
+import { StylingPropertyPaneBuilder } from './propertyPane/StylingPropertyPaneBuilder';
+import { ConnectionsPropertyPaneBuilder } from './propertyPane/ConnectionsPropertyPaneBuilder';
+import { AboutPropertyPaneBuilder } from './propertyPane/AboutPropertyPaneBuilder';
 
 // Import statements for templates
 import defaultSimpleListTemplate from '../../layouts/resultTypes/default_simple_list.html';
@@ -630,27 +634,44 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         let propertyPanePages: IPropertyPanePage[] = [];
         let layoutSlotsGroup: IPropertyPaneGroup[] = [];
         let commonDataSourceProperties: IPropertyPaneGroup[] = [];
-        let extensibilityConfigurationGroups: IPropertyPaneGroup[] = [];
 
         // Retrieve the property settings for the data source provider
         let dataSourceProperties: IPropertyPaneGroup[] = [];
 
-        // Data source options page
-        propertyPanePages.push(
-            {
-                groups: [
-                    {
-                        groupName: webPartStrings.PropertyPane.DataSourcePage.DataSourceConnectionGroupName,
-                        groupFields: [
-                            PropertyPaneChoiceGroup('dataSourceKey', {
-                                options: this.getDataSourceOptions()
-                            })
-                        ]
-                    }
-                ],
-                displayGroupsAsAccordion: true
-            }
+        // Initialize property pane builders
+        const dataSourceBuilder = new DataSourcePropertyPaneBuilder(
+            this.properties,
+            this.dataSource,
+            this.availableDataSourceDefinitions,
+            this.getTemplateSlotOptions.bind(this),
+            this.getPagingGroupFields.bind(this),
+            this.getDataSourceOptions.bind(this),
+            webPartStrings
         );
+
+        const stylingBuilder = new StylingPropertyPaneBuilder(
+            this.getStylingPageGroups.bind(this)
+        );
+
+        const connectionsBuilder = new ConnectionsPropertyPaneBuilder(
+            this.propertyPaneConnectionsGroup,
+            this._selectedCustomQueryModifier
+        );
+
+        const aboutBuilder = new AboutPropertyPaneBuilder(
+            this.getPropertyPaneWebPartInfoGroups.bind(this),
+            this.getExtensibilityFields.bind(this),
+            this.getAudienceTargetingPropertyPaneGroup.bind(this),
+            this._propertyPanePropertyEditor,
+            this,
+            commonStrings
+        );
+
+        // Build data source page
+        propertyPanePages.push({
+            groups: dataSourceBuilder.buildDataSourcePage(),
+            displayGroupsAsAccordion: true
+        });
 
         // A data source is selected
         if (this.dataSource && !this.errorMessage) {
@@ -665,69 +686,33 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 }];
             }
 
-            // Add data source options to the first page
-            propertyPanePages[0].groups = propertyPanePages[0].groups.concat([
-                ...layoutSlotsGroup,
-                // Load data source specific properties
-                ...dataSourceProperties,
-                ...commonDataSourceProperties,
-                {
-                    groupName: webPartStrings.PropertyPane.DataSourcePage.PagingOptionsGroupName,
-                    groupFields: this.getPagingGroupFields()
-                }
-            ]);
+            // Add additional data source groups to the first page
+            propertyPanePages[0].groups = propertyPanePages[0].groups.concat(
+                dataSourceBuilder.buildAdditionalDataSourceGroups(
+                    layoutSlotsGroup,
+                    dataSourceProperties,
+                    commonDataSourceProperties
+                )
+            );
 
-
-            let queryTransformationGroups: IPropertyPaneGroup[] = [];
-            if (this._selectedCustomQueryModifier.length > 0 && !this.errorMessage) {
-                this._selectedCustomQueryModifier.forEach(modifier => {
-                    queryTransformationGroups = queryTransformationGroups.concat(modifier.getPropertyPaneGroupsConfiguration());
-                });
-            }
-
-            // Other pages
+            // Add styling and connections pages
             propertyPanePages.push(
                 {
                     displayGroupsAsAccordion: true,
-                    groups: this.getStylingPageGroups()
+                    groups: stylingBuilder.buildStylingPage()
                 },
                 {
-                    groups: [
-                        ...this.propertyPaneConnectionsGroup,
-                        ...queryTransformationGroups
-                    ],
+                    groups: connectionsBuilder.buildConnectionsPage(),
                     displayGroupsAsAccordion: true
                 }
             );
         }
 
-        // Extensibility configuration
-        extensibilityConfigurationGroups.push({
-            groupName: commonStrings.PropertyPane.InformationPage.Extensibility.GroupName,
-            groupFields: this.getExtensibilityFields()
+        // Add about page
+        propertyPanePages.push({
+            displayGroupsAsAccordion: true,
+            groups: aboutBuilder.buildAboutPage()
         });
-
-
-        // 'About' infos
-        propertyPanePages.push(
-            {
-                displayGroupsAsAccordion: true,
-                groups: [
-                    ...this.getPropertyPaneWebPartInfoGroups(),
-                    ...extensibilityConfigurationGroups,
-                    this.getAudienceTargetingPropertyPaneGroup(),
-                    {
-                        groupName: commonStrings.PropertyPane.InformationPage.ImportExport,
-                        groupFields: [
-                            this._propertyPanePropertyEditor({
-                                webpart: this,
-                                key: 'propertyEditor'
-                            })
-                        ]
-                    }
-                ]
-            }
-        );
 
         return {
             pages: propertyPanePages
