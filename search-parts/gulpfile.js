@@ -119,10 +119,29 @@ const envCheck = build.subTask('environmentCheck', (gulp, config, done) => {
                 }
             });
 
-            // Completely disable splitChunks to prevent duplicate module instances.
-            // Adaptivecards-templating and adaptive-expressions MUST be
-            // in the same module cache to share the standardFunctions map.
-            generatedConfiguration.optimization.splitChunks = false;
+            // Configure splitChunks to allow deduplication of moment.js across locale chunks
+            // while keeping adaptive-expressions and adaptivecards-templating together
+            generatedConfiguration.optimization.splitChunks = {
+                cacheGroups: {
+                    // Keep moment.js in a single chunk that locale chunks can reference
+                    moment: {
+                        test: /[\\/]node_modules[\\/]\.pnpm[\\/]moment@[^\\/]+[\\/]node_modules[\\/]moment[\\/](?!locale)/,
+                        name: 'moment-base',
+                        chunks: 'all',
+                        priority: 20,
+                        enforce: true
+                    },
+                    // Prevent splitting adaptive-expressions to avoid duplicate function registrations
+                    adaptiveCards: {
+                        test: /[\\/]node_modules[\\/].*[\\/](adaptive-expressions|adaptivecards|adaptivecards-templating)[\\/]/,
+                        name: 'adaptive-cards-shared',
+                        chunks: 'all',
+                        priority: 10,
+                        enforce: true
+                    },
+                    default: false
+                }
+            };
 
             // pack each moment.js locale individually to optimize bundle
             generatedConfiguration.plugins.push(

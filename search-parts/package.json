@@ -173,6 +173,14 @@
             "send": "0.19.1",
             "serve-static": "1.16.2",
             "semver": "7.7.3"
-        }
+        },
+        "onlyBuiltDependencies": [
+            "@pnp/spfx-controls-react",
+            "@pnp/spfx-property-controls",
+            "core-js-pure",
+            "es5-ext",
+            "fsevents",
+            "swiper"
+        ]
     }
 }
