@@ -63,8 +63,6 @@ import { DynamicPropertyHelper } from '../../helpers/DynamicPropertyHelper';
 import { IQueryModifierConfiguration } from '../../queryModifier/IQueryModifierConfiguration';
 import { loadMsGraphToolkit } from '../../helpers/GraphToolKitHelper';
 import { DataSourcePropertyPaneBuilder } from './propertyPane/DataSourcePropertyPaneBuilder';
-import { StylingPropertyPaneBuilder } from './propertyPane/StylingPropertyPaneBuilder';
-import { ConnectionsPropertyPaneBuilder } from './propertyPane/ConnectionsPropertyPaneBuilder';
 import { AboutPropertyPaneBuilder } from './propertyPane/AboutPropertyPaneBuilder';
 import { TokenSetter } from './services/TokenSetter';
 import { StylingPageGroupsBuilder } from './propertyPane/StylingPageGroupsBuilder';
@@ -644,15 +642,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             webPartStrings
         );
 
-        const stylingBuilder = new StylingPropertyPaneBuilder(
-            this.getStylingPageGroups.bind(this)
-        );
-
-        const connectionsBuilder = new ConnectionsPropertyPaneBuilder(
-            this.propertyPaneConnectionsGroup,
-            this._selectedCustomQueryModifier
-        );
-
         const aboutBuilder = new AboutPropertyPaneBuilder(
             this.getPropertyPaneWebPartInfoGroups.bind(this),
             this.getExtensibilityFields.bind(this),
@@ -691,13 +680,23 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             );
 
             // Add styling and connections pages
+            let queryTransformationGroups: IPropertyPaneGroup[] = [];
+            if (this._selectedCustomQueryModifier.length > 0) {
+                this._selectedCustomQueryModifier.forEach(modifier => {
+                    queryTransformationGroups.push(...modifier.getPropertyPaneGroupsConfiguration());
+                });
+            }
+
             propertyPanePages.push(
                 {
                     displayGroupsAsAccordion: true,
-                    groups: stylingBuilder.buildStylingPage()
+                    groups: this.getStylingPageGroups()
                 },
                 {
-                    groups: connectionsBuilder.buildConnectionsPage(),
+                    groups: [
+                        ...this.propertyPaneConnectionsGroup,
+                        ...queryTransformationGroups
+                    ],
                     displayGroupsAsAccordion: true
                 }
             );

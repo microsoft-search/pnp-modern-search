@@ -4,7 +4,7 @@ import { IQueryModifier } from '@pnp/modern-search-extensibility';
 export class ConnectionsPropertyPaneBuilder {
     
     constructor(
-        private propertyPaneConnectionsGroup: IPropertyPaneGroup[],
+        private getPropertyPaneConnectionsGroup: () => IPropertyPaneGroup[],
         private selectedCustomQueryModifier: IQueryModifier[]
     ) {}
 
@@ -18,7 +18,7 @@ export class ConnectionsPropertyPaneBuilder {
         }
 
         return [
-            ...this.propertyPaneConnectionsGroup,
+            ...this.getPropertyPaneConnectionsGroup(),
             ...queryTransformationGroups
         ];
     }
