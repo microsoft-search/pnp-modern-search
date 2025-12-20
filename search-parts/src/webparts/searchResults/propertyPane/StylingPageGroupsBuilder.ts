@@ -1,4 +1,4 @@
-import { IPropertyPaneGroup, IPropertyPaneField, PropertyPaneToggle, PropertyPaneTextField, PropertyPaneSlider, PropertyPaneHorizontalRule } from "@microsoft/sp-property-pane";
+import { IPropertyPaneGroup, IPropertyPaneField, PropertyPaneToggle, PropertyPaneTextField, PropertyPaneSlider, PropertyPaneHorizontalRule, PropertyPaneChoiceGroup } from "@microsoft/sp-property-pane";
 import { Text } from '@microsoft/sp-core-library';
 import { LayoutRenderType } from '@pnp/modern-search-extensibility';
 import { BuiltinLayoutsKeys } from '../../../layouts/AvailableLayouts';
@@ -9,6 +9,8 @@ import { PropertyPaneButton, PropertyPaneButtonType } from "@microsoft/sp-proper
 import ISearchResultsWebPartProps from '../ISearchResultsWebPartProps';
 import { ResultTypeOperator } from '../../../models/common/IDataResultType';
 import * as React from 'react';
+import { LayoutHelper } from '../../../helpers/LayoutHelper';
+import { PropertyPaneTabsField } from '../../../controls/PropertyPaneTabsField/PropertyPaneTabsField';
 
 export class StylingPageGroupsBuilder {
 
@@ -73,26 +75,25 @@ export class StylingPageGroupsBuilder {
 
         // Add render type tabs and layout selection
         fields.push(
-            {
-                type: 14, // Custom field type
-                targetProperty: 'layoutRenderType',
-                properties: {
-                    onPropertyChange: this.onPropertyPaneFieldChanged,
-                    options: [
-                        {
-                            key: LayoutRenderType[LayoutRenderType.Handlebars],
-                            text: this.webPartStrings.PropertyPane.LayoutPage.HandlebarsRenderTypeLabel,
-                            title: this.webPartStrings.PropertyPane.LayoutPage.HandlebarsRenderTypeDesc,
-                        },
-                        {
-                            key: LayoutRenderType[LayoutRenderType.AdaptiveCards],
-                            text: this.webPartStrings.PropertyPane.LayoutPage.AdaptiveCardsRenderTypeLabel,
-                            title: this.webPartStrings.PropertyPane.LayoutPage.AdaptiveCardsRenderTypeDesc,
-                        }
-                    ],
-                    defaultSelectedKey: LayoutRenderType[this.properties.layoutRenderType]
-                }
-            } as any
+            new PropertyPaneTabsField('layoutRenderType', {
+                options: [
+                    {
+                        key: LayoutRenderType[LayoutRenderType.Handlebars],
+                        text: this.webPartStrings.PropertyPane.LayoutPage.HandlebarsRenderTypeLabel,
+                        title: this.webPartStrings.PropertyPane.LayoutPage.HandlebarsRenderTypeDesc,
+                    },
+                    {
+                        key: LayoutRenderType[LayoutRenderType.AdaptiveCards],
+                        text: this.webPartStrings.PropertyPane.LayoutPage.AdaptiveCardsRenderTypeLabel,
+                        title: this.webPartStrings.PropertyPane.LayoutPage.AdaptiveCardsRenderTypeDesc,
+                    }
+                ],
+                defaultSelectedKey: LayoutRenderType[this.properties.layoutRenderType],
+                onPropertyChange: this.onPropertyPaneFieldChanged
+            }),
+            PropertyPaneChoiceGroup('selectedLayoutKey', {
+                options: LayoutHelper.getLayoutOptions(this.availableLayoutsInPropertyPane)
+            })
         );
 
         // Add template editor and URL fields
