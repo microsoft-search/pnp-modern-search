@@ -16,7 +16,7 @@ export class StylingPageGroupsBuilder {
 
     constructor(
         private properties: ISearchResultsWebPartProps,
-        private availableLayoutsInPropertyPane: any[],
+        private availableLayoutDefinitions: any[],
         private templateContentToDisplay: string,
         private layoutSlotNames: string[],
         private resultTypesSlotNames: string[],
@@ -74,6 +74,8 @@ export class StylingPageGroupsBuilder {
         const fields: IPropertyPaneField<any>[] = [];
 
         // Add render type tabs and layout selection
+        const filteredLayouts = this.availableLayoutDefinitions.filter(layout => layout.renderType === this.properties.layoutRenderType);
+        
         fields.push(
             new PropertyPaneTabsField('layoutRenderType', {
                 options: [
@@ -92,7 +94,7 @@ export class StylingPageGroupsBuilder {
                 onPropertyChange: this.onPropertyPaneFieldChanged
             }),
             PropertyPaneChoiceGroup('selectedLayoutKey', {
-                options: LayoutHelper.getLayoutOptions(this.availableLayoutsInPropertyPane)
+                options: LayoutHelper.getLayoutOptions(filteredLayouts)
             })
         );
 
@@ -138,15 +140,15 @@ export class StylingPageGroupsBuilder {
             })
         );
 
-        // Only show the template external URL for 'Custom' option
-        if (this.properties.selectedLayoutKey === BuiltinLayoutsKeys.ResultsCustomAdaptiveCards || 
-            this.properties.selectedLayoutKey === BuiltinLayoutsKeys.ResultsCustomHandlebars) {
+        // Only show the template external URL for 'Custom' option and Handlebars render type
+        // Note: External URLs for Adaptive Cards are not currently supported but may be enabled in the future
+        if ((this.properties.selectedLayoutKey === BuiltinLayoutsKeys.ResultsCustomAdaptiveCards || 
+            this.properties.selectedLayoutKey === BuiltinLayoutsKeys.ResultsCustomHandlebars) &&
+            this.properties.layoutRenderType === LayoutRenderType.Handlebars) {
             fields.push(
                 PropertyPaneTextField('externalTemplateUrl', {
                     label: this.webPartStrings.PropertyPane.LayoutPage.TemplateUrlFieldLabel,
-                    placeholder: this.properties.layoutRenderType === LayoutRenderType.Handlebars ? 
-                        this.webPartStrings.PropertyPane.LayoutPage.TemplateUrlPlaceholder : 
-                        "https://myfile.json",
+                    placeholder: this.webPartStrings.PropertyPane.LayoutPage.TemplateUrlPlaceholder,
                     deferredValidationTime: 500,
                     validateOnFocusIn: true,
                     validateOnFocusOut: true,

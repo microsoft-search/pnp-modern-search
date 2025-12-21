@@ -932,11 +932,12 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         if (propertyPath.localeCompare("layoutRenderType") === 0) {
 
-            this.availableLayoutsInPropertyPane = this.availableLayoutDefinitions.filter(layoutDefinition => layoutDefinition.renderType === LayoutRenderType[newValue as string]);
+            const filteredLayouts = this.availableLayoutDefinitions.filter(layoutDefinition => layoutDefinition.renderType === LayoutRenderType[newValue as string]);
+            this.availableLayoutsInPropertyPane = filteredLayouts;
 
             // Reset the inline template if the templating mode is updated since they are not compatible between HTML and JSON
             this.properties.inlineTemplateContent = null;
-            this.properties.selectedLayoutKey = this.availableLayoutsInPropertyPane[0].key;
+            this.properties.selectedLayoutKey = filteredLayouts[0].key;
 
             this.properties.layoutRenderType = LayoutRenderType[newValue as string];
             this.render();
@@ -1258,7 +1259,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     private getStylingPageGroups(): IPropertyPaneGroup[] {
         const builder = new StylingPageGroupsBuilder(
             this.properties,
-            this.availableLayoutsInPropertyPane,
+            this.availableLayoutDefinitions,
             this.templateContentToDisplay,
             this.layoutSlotNames,
             this.resultTypesSlotNames,
