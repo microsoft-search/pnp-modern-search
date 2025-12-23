@@ -24,7 +24,7 @@
 								{
 									"type": "TextBlock",
 									"wrap": true,
-									"text": "<pnp-iconfile class='icon' data-extension='${if(empty($root.slots['FileType']),'',string(jPath($data, concat('.',$root.slots['FileType']))[0]))}'></pnp-iconfile>"
+									"text": "<pnp-iconfile class='icon' data-extension='${if(empty($root.slots['FileType']),'',if(count(jPath($data, concat('.',$root.slots['FileType']))) > 0, string(first(jPath($data, concat('.',$root.slots['FileType'])))), ''))}'></pnp-iconfile>"
 								}
 							],
 							"width": "auto"
@@ -35,7 +35,7 @@
 								{
 									"type": "TextBlock",
 									"wrap": true,
-									"text": "[${string(jPath($data, concat('.',$root.slots['Title']))[0])}](${string(jPath($data, concat('.',$root.slots['Path']))[0])})"
+									"text": "[${if(count(jPath($data, concat('.',$root.slots['Title']))) > 0, string(first(jPath($data, concat('.',$root.slots['Title'])))), '')}](${if(count(jPath($data, concat('.',$root.slots['Path']))) > 0, string(first(jPath($data, concat('.',$root.slots['Path'])))), '')})"
 								}
 							],
 							"width": "auto"

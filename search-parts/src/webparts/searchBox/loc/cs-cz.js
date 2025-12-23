@@ -29,7 +29,9 @@ define([], function() {
                 BackgroundColorLabel: "Barva pozadí",
                 TextColorLabel: "Barva textu",
                 ResetToDefaultLabel: "Obnovit výchozí styl",
-                ResetToDefaultDescription: "Obnovit všechny možnosti stylu na jejich výchozí hodnoty"
+                ResetToDefaultDescription: "Obnovit všechny možnosti stylu na výchozí hodnoty",
+                ResetTitleStylingLabel: "Obnovit výchozí styl názvu",
+                ResetTitleStylingDescription: "Obnovit všechny možnosti stylu názvu na výchozí hodnoty"
             },
             AvailableConnectionsGroup: {
                 GroupName: "Dostupná připojení",

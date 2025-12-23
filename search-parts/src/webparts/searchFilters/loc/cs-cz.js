@@ -26,6 +26,7 @@ define([], function() {
                 SelectFilterComboBoxLabel: "Vybrat pole",
                 FilterNameLabel: "Filtrační pole",
                 FilterMaxBuckets: "Počet hodnot",
+                FilterMaxBucketsWarning: "Maximální počet hodnot je 1000",
                 FilterDisplayName: "Zobrazovaný název",
                 FilterTemplate: "Šablona",
                 FilterExpandByDefault: "Rozbalit ve výchozím nastavení",
@@ -66,6 +67,14 @@ define([], function() {
                 FiltersTemplateFieldLabel: "Upravit šablonu filtrů",
                 FiltersTemplatePanelHeader: "Upravit šablonu filtrů"
             }
+        },
+        Styling: {
+            StylingOptionsGroupName: "Možnosti stylu",
+            FilterBackgroundColorLabel: "Barva pozadí filtru",
+            FilterBorderColorLabel: "Barva okraje filtru",
+            FilterBorderThicknessLabel: "Tloušťka okraje filtru",
+            ResetToDefaultLabel: "Obnovit výchozí styl",
+            ResetToDefaultDescription: "Obnovit všechny možnosti stylu na výchozí hodnoty"
         }
     }
 });

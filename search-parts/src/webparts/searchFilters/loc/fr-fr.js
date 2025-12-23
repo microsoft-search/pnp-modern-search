@@ -26,8 +26,9 @@ define([], function() {
             },
             DataFilterCollection: {
                 SelectFilterComboBoxLabel: "Sélectionner un champ",
-                FilterNameLabel: "Champ Filtre",
+                FilterNameLabel: "Champ de filtre",
                 FilterMaxBuckets: "Nombre de valeurs",
+                FilterMaxBucketsWarning: "Le nombre maximum de valeurs est 1000",
                 FilterDisplayName: "Nom d'affichage",
                 FilterTemplate: "Modèle",
                 FilterExpandByDefault: "Agrandir par défaut",
@@ -68,6 +69,14 @@ define([], function() {
                 FiltersTemplateFieldLabel: "Modifier le modèle de filtres",
                 FiltersTemplatePanelHeader: "Modifier le modèle de filtres"
             }
+        },
+        Styling: {
+            StylingOptionsGroupName: "Options de style",
+            FilterBackgroundColorLabel: "Couleur d'arrière-plan du filtre",
+            FilterBorderColorLabel: "Couleur de bordure du filtre",
+            FilterBorderThicknessLabel: "Épaisseur de bordure du filtre",
+            ResetToDefaultLabel: "Réinitialiser le style par défaut",
+            ResetToDefaultDescription: "Réinitialiser toutes les options de style à leurs valeurs par défaut"
         }
     }
 });

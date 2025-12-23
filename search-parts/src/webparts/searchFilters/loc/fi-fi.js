@@ -26,6 +26,7 @@ define([], function() {
                 SelectFilterComboBoxLabel: "Valitse kenttä",
                 FilterNameLabel: "Suodatinkenttä",
                 FilterMaxBuckets: "# arvojen määrä",
+                FilterMaxBucketsWarning: "Arvojen enimmäismäärä on 1000",
                 FilterDisplayName: "Näyttönimi",
                 FilterTemplate: "Templaatti",
                 FilterExpandByDefault: "Näytä oletuksena laajennettuna",
@@ -65,7 +66,13 @@ define([], function() {
                 ErrorTemplateResolve: "Templaatin tunnistaminen ei onnistunut. Virhetiedot: '{0}'",
                 FiltersTemplateFieldLabel: "Muokkaa suodatintemplaattia",
                 FiltersTemplatePanelHeader: "Muokkaa suodatintemplaattia"
-            }
-        }
+            }        },
+        Styling: {
+            StylingOptionsGroupName: "Tyyliasetukset",
+            FilterBackgroundColorLabel: "Suodattimen taustav\u00e4ri",
+            FilterBorderColorLabel: "Suodattimen reunav\u00e4ri",
+            FilterBorderThicknessLabel: "Suodattimen reunan paksuus",
+            ResetToDefaultLabel: "Palauta oletustyyli",
+            ResetToDefaultDescription: "Palauta kaikki tyyliasetukset oletusarvoihinsa"        }
     }
 });

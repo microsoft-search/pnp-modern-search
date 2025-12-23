@@ -29,7 +29,9 @@ define([], function() {
                 BackgroundColorLabel: "Baggrundsfarve",
                 TextColorLabel: "Tekstfarve",
                 ResetToDefaultLabel: "Gendan til standardstil",
-                ResetToDefaultDescription: "Gendan alle stilmuligheder til deres standardværdier"
+                ResetToDefaultDescription: "Gendan alle stilmuligheder til deres standardværdier",
+                ResetTitleStylingLabel: "Gendan titelstil til standard",
+                ResetTitleStylingDescription: "Gendan alle titelstilingmuligheder til deres standardværdier"
             },
             AvailableConnectionsGroup: {
                 GroupName: "Tilgængelige forbindelser",

@@ -24,9 +24,10 @@ define([], function() {
             },
             DataFilterCollection: {
                 SelectFilterComboBoxLabel: "Selecteer veld",
-                FilterNameLabel: "Filter veld",
+                FilterNameLabel: "Filterveld",
                 FilterMaxBuckets: "# waarden",
-                FilterDisplayName: "Weergave naam",
+                FilterMaxBucketsWarning: "Het maximale aantal waarden is 1000",
+                FilterDisplayName: "Weergavenaam",
                 FilterTemplate: "Sjabloon",
                 FilterExpandByDefault: "Standaard uitklappen",
                 FilterType: "Soort filter",
@@ -66,6 +67,14 @@ define([], function() {
                 FiltersTemplateFieldLabel: "Bewerk filters sjabloon",
                 FiltersTemplatePanelHeader: "Bewerk filters sjabloon"
             }
+        },
+        Styling: {
+            StylingOptionsGroupName: "Stijlopties",
+            FilterBackgroundColorLabel: "Filter achtergrondkleur",
+            FilterBorderColorLabel: "Filter randkleur",
+            FilterBorderThicknessLabel: "Filter randdikte",
+            ResetToDefaultLabel: "Herstel naar standaard styling",
+            ResetToDefaultDescription: "Herstel alle styling opties naar hun standaardwaarden"
         }
     }
 });

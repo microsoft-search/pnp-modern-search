@@ -132,6 +132,14 @@ define([], function() {
                   ModifierDescriptionPropertyLabel: "Opis",
                   EndWhenSuccessfullPropertyLabel:"Zakończ po pomyślnym zakończeniu"              
             }
+        },
+        Styling: {
+            StylingOptionsGroupName: "Opcje stylu",
+            ResultsBackgroundColorLabel: "Kolor tła wyników",
+            ResultsBorderColorLabel: "Kolor obramowania wyników",
+            ResultsBorderThicknessLabel: "Grubość obramowania wyników",
+            ResetToDefaultLabel: "Przywróć domyślny styl",
+            ResetToDefaultDescription: "Przywróć wszystkie opcje stylu do wartości domyślnych"
         }
     }
 });

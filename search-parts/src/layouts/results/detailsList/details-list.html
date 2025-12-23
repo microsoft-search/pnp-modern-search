@@ -1,22 +1,6 @@
 <content id="data-content">
 
     <style>
-        {{#if properties.layoutProperties.enableStickyHeader}}
-        .template .ms-DetailsHeader-cell:first-child {
-          position: sticky;
-          inset: 0;
-          background-color: {{@root.theme.palette.primaryBackground}};
-          z-index: 1;
-        }
-
-        .template .ms-DetailsRow-cell:first-child {
-          position: sticky;
-          inset: 0;
-          background-color: {{@root.theme.palette.primaryBackground}};
-          z-index: 0;
-        }
-        {{/if}}
-
         .template .ms-DetailsRow {
             animation-name: none;
         }
@@ -52,6 +36,7 @@
                   data-items="{{JSONstringify data.items}}" 
                   data-context="{{JSONstringify (truncateContext @root)}}"
                   data-theme-variant="{{JSONstringify @root.theme}}"
+                  data-columns-configuration="{{JSONstringify properties.layoutProperties.detailsListColumns}}"
                 >
                 </pnp-download-selected-items-button>
               {{/and}}
@@ -63,7 +48,7 @@
             data-items="{{JSONstringify data.items}}" 
             data-columns-configuration="{{JSONstringify properties.layoutProperties.detailsListColumns}}" 
             data-show-file-icon="{{properties.layoutProperties.showFileIcon}}" 
-            data-file-extension-field="{{properties.layoutProperties.fieldIconExtension}}"  
+            data-file-extension-field="{{@root.slots.FileType}}"  
             data-is-container-field="{{@root.slots.IsFolder}}"
             data-is-compact="{{properties.layoutProperties.isCompact}}"
             data-group-by="{{properties.layoutProperties.groupByField}}"

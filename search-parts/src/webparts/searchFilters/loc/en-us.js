@@ -26,6 +26,7 @@ define([], function() {
                 SelectFilterComboBoxLabel: "Select field",
                 FilterNameLabel: "Filter field",
                 FilterMaxBuckets: "# of values",
+                FilterMaxBucketsWarning: "The maximum number of values is 1000",
                 FilterDisplayName: "Display name",
                 FilterTemplate: "Template",
                 FilterExpandByDefault: "Expand by default",
@@ -66,6 +67,14 @@ define([], function() {
                 FiltersTemplateFieldLabel: "Edit filters template",
                 FiltersTemplatePanelHeader: "Edit filters template"
             }
+        },
+        Styling: {
+            StylingOptionsGroupName: "Styling Options",
+            FilterBackgroundColorLabel: "Filter Background Color",
+            FilterBorderColorLabel: "Filter Border Color",
+            FilterBorderThicknessLabel: "Filter Border Thickness",
+            ResetToDefaultLabel: "Reset to Default",
+            ResetToDefaultDescription: "Reset all content styling options to their default values"
         }
     }
 });

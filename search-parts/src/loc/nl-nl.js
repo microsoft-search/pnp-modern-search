@@ -97,8 +97,8 @@ define([], function () {
                 SearchPlaceholder: "Zoek een waarde..."
             },
             CurrentVerticalNotSelectedMessage: "De huidige geselecteerde branche komt niet overeen met die welke zijn gekoppeld aan dit webonderdeel ({0}). Het blijft leeg in de weergavemodus.",
-            True:"Ja",
-            False:"Nee"
+            True: "Ja",
+            False: "Nee"
         },
         DataSources: {
             SharePointSearch: {
@@ -195,7 +195,8 @@ define([], function () {
             TextFieldApplyButtonText: "Toepassen",
             SortByPlaceholderText: "Sorteer op...",
             SortByDefaultOptionText: "Standaard",
-            DownloadButtonText: "Download"
+            DownloadButtonText: "Download",
+            DownloadCSVButtonText: "Download als CSV"
         },
         Layouts: {
             Debug: {
@@ -242,7 +243,7 @@ define([], function () {
                 EnableStickyHeader: "Sticky header inschakelen",
                 StickyHeaderListViewHeight: "Hoogte van de lijstweergave (px)",
                 EnableDownload: "Downloaden inschakelen",
-                UseAlternatingBackgroundColor:"Gebruik afwisselende achtergrondkleur"
+                UseAlternatingBackgroundColor: "Gebruik afwisselende achtergrondkleur"
 
             },
             Cards: {
@@ -305,6 +306,8 @@ define([], function () {
                 ShowPersonaCardOnHoverCalloutMsg: "Deze feature gebruikt Microsoft Graph om informatie over de gebruiker te tonen en heeft de volgende API rechten nodig in de tenant om te kunnen werken: ['User.Read','People.Read','Contacts.Read','User.Read.All'].",
                 ShowPersonaPresenceInfo: "Aanwezigheid tonen",
                 ShowPersonaPresenceInfoCalloutMsg: "Deze functie heeft de volgende API-rechten in je tenant nodig om te werken: ['Presence.Read.All']",
+                ShowHoverOnPictureOnly: "Hover alleen op afbeelding tonen",
+                ShowHoverOnPictureOnlyCalloutMsg: "Wanneer ingeschakeld, opent de persoonskaart alleen bij het zweven over de persona-afbeelding (munt).",
                 Fields: {
                     ImageUrl: "Afbeeldings URL",
                     PrimaryText: "Primaire tekst",
@@ -341,48 +344,48 @@ define([], function () {
                 }
             },
             PersonCard: {
-              SendEmailLinkSubtitle: "E-mail verzenden",
-              StartChatLinkSubtitle: "Chat starten",
-              ShowMoreSectionButton: "Meer weergeven",
-              ContactSectionTitle: "Contact",
-              ReportsToSectionTitle: "Rapporteert aan",
-              DirectReportsSectionTitle: "Directe ondergeschikten",
-              OrganizationSectionTitle: "Organisatie",
-              YouWorkWithSubSectionTitle: "U werkt samen met",
-              UserWorksWithSubSectionTitle: "werkt samen met",
-              EmailsSectionTitle: "E-mails",
-              FilesSectionTitle: "Bestanden",
-              SharedTextSubtitle: "Gedeeld",
-              SkillsAndExperienceSectionTitle: "Vaardigheden & Ervaring",
-              AboutCompactSectionTitle: "Over",
-              SkillsSubSectionTitle: "Vaardigheden",
-              LanguagesSubSectionTitle: "Talen",
-              WorkExperienceSubSectionTitle: "Werkervaring",
-              EducationSubSectionTitle: "Opleiding",
-              ProfessionalInterestsSubSectionTitle: "Professionele interesses",
-              PersonalInterestsSubSectionTitle: "Persoonlijke interesses",
-              BirthdaySubSectionTitle: "Verjaardag",
-              CurrentYearSubtitle: "Huidig",
-              EndOfCard: "Einde van de kaart",
-              QuickMessage: "Stuur een snel bericht",
-              ExpandDetailsLabel: "Details uitvouwen",
-              SendMessageLabel: "Bericht verzenden",
-              EmailButtonLabel: "E-mail",
-              CallButtonLabel: "Bellen",
-              ChatButtonLabel: "Chat",
-              CloseCardLabel: "Kaart sluiten",
-              VideoButtonLabel: "Video",
-              GoBackLabel: "Teruggaan",
-              EmailTitle: "E-mail",
-              ChatTitle: "Teams",
-              BusinessPhoneTitle: "Zakelijk telefoonnummer",
-              CellPhoneTitle: "Mobiel telefoonnummer",
-              DepartmentTitle: "Afdeling",
-              PersonTitle: "Titel",
-              OfficeLocationTitle: "Kantoorlocatie",
-              CopyToClipboardButton: "Kopiëren naar klembord",
-              ShowMoreSubtitle: "Meer items weergeven",
-              SocialMediaSubSectionTitle: "Sociale media"
+                SendEmailLinkSubtitle: "E-mail verzenden",
+                StartChatLinkSubtitle: "Chat starten",
+                ShowMoreSectionButton: "Meer weergeven",
+                ContactSectionTitle: "Contact",
+                ReportsToSectionTitle: "Rapporteert aan",
+                DirectReportsSectionTitle: "Directe ondergeschikten",
+                OrganizationSectionTitle: "Organisatie",
+                YouWorkWithSubSectionTitle: "U werkt samen met",
+                UserWorksWithSubSectionTitle: "werkt samen met",
+                EmailsSectionTitle: "E-mails",
+                FilesSectionTitle: "Bestanden",
+                SharedTextSubtitle: "Gedeeld",
+                SkillsAndExperienceSectionTitle: "Vaardigheden & Ervaring",
+                AboutCompactSectionTitle: "Over",
+                SkillsSubSectionTitle: "Vaardigheden",
+                LanguagesSubSectionTitle: "Talen",
+                WorkExperienceSubSectionTitle: "Werkervaring",
+                EducationSubSectionTitle: "Opleiding",
+                ProfessionalInterestsSubSectionTitle: "Professionele interesses",
+                PersonalInterestsSubSectionTitle: "Persoonlijke interesses",
+                BirthdaySubSectionTitle: "Verjaardag",
+                CurrentYearSubtitle: "Huidig",
+                EndOfCard: "Einde van de kaart",
+                QuickMessage: "Stuur een snel bericht",
+                ExpandDetailsLabel: "Details uitvouwen",
+                SendMessageLabel: "Bericht verzenden",
+                EmailButtonLabel: "E-mail",
+                CallButtonLabel: "Bellen",
+                ChatButtonLabel: "Chat",
+                CloseCardLabel: "Kaart sluiten",
+                VideoButtonLabel: "Video",
+                GoBackLabel: "Teruggaan",
+                EmailTitle: "E-mail",
+                ChatTitle: "Teams",
+                BusinessPhoneTitle: "Zakelijk telefoonnummer",
+                CellPhoneTitle: "Mobiel telefoonnummer",
+                DepartmentTitle: "Afdeling",
+                PersonTitle: "Titel",
+                OfficeLocationTitle: "Kantoorlocatie",
+                CopyToClipboardButton: "Kopiëren naar klembord",
+                ShowMoreSubtitle: "Meer items weergeven",
+                SocialMediaSubSectionTitle: "Sociale media"
             }
         },
         HandlebarsHelpers: {
@@ -407,7 +410,18 @@ define([], function () {
                     }
                 },
                 ImportExport: "Importeer/Exporteer instellingen"
-            }
+            },
+            AudienceTargeting: {
+                GroupName: "Doelgroeptargeting",
+                TargetAudienceLabel: "Doelgroep",
+                CacheDurationLabel: "Cacheduur (uren)",
+                CacheDurationDescription: "Duur in uren voor het cachen van doelgroeplidmaatschap"
+            },
+            TitleStylingGroupName: "Webonderdeel titelopmaak",
+            TitleFont: "Titellettertype",
+            TitleFontSize: "Titellettertypegrootte (px)",
+            TitleFontColor: "Titellettertypekleur",
+            ResetTitleStylingToDefault: "Titelopmaak herstellen naar standaard"
         },
         Filters: {
             ApplyAllFiltersButtonLabel: "Toepassen",

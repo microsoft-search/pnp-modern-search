@@ -52,6 +52,11 @@
 			max-width: 100%;
 		}
 
+		pnp-filtercombobox {
+			width: 90%;
+			max-width: 325px;
+		}
+
 		        	                
     </style>
 
@@ -66,7 +71,7 @@
 
             <template id="panel-open">
                 <div class="panelOpenBar">
-                    <pnp-icon data-name="Filter" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-icon><span role="button" aria-label="{{@root.properties.layoutProperties.btnLabel}}">{{@root.properties.layoutProperties.btnLabel}}</span>
+                    <pnp-icon data-name="Filter" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-icon><span role="button" tabindex="0" aria-label="{{@root.properties.layoutProperties.btnLabel}}">{{@root.properties.layoutProperties.btnLabel}}</span>
                 </div>
             </template>
 

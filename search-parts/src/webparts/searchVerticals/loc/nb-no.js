@@ -31,7 +31,16 @@ define([], function() {
                 AudienceInputPlaceholderText: "Søk etter en gruppe",
                 AudienceNoResultsFound: "Vi fant ingen matchende grupper.",
                 AudienceLoading: "Laster grupper..."
-            }
+        },
+        Styling: {
+            WebPartContentStylingGroupName: "WebPart-innholdsstyling",
+            VerticalBackgroundColorLabel: "Vertikal bakgrunnsfarge",
+            MouseOverColorLabel: "Museoverføringsfarge",
+            VerticalBorderColorLabel: "Vertikal kantfarge",
+            VerticalBorderThicknessLabel: "Vertikal kanttykkelse",
+            VerticalFontSizeLabel: "Vertikal skriftstørrelse",
+            ResetToDefaultLabel: "Tilbakestill til standard",
+            ResetToDefaultDescription: "Tilbakestill alle innholdsstylingalternativer til standardverdier"
         }
     }
 });

@@ -31,6 +31,16 @@ define([], function () {
                 AudienceInputPlaceholderText: "Cerca un gruppo",
                 AudienceNoResultsFound: "Non abbiamo trovato gruppi corrispondenti.",
                 AudienceLoading: "Caricamento gruppi..."
+            },
+            Styling: {
+                WebPartContentStylingGroupName: "Stile del contenuto della web part",
+                VerticalBackgroundColorLabel: "Colore di sfondo verticale",
+                MouseOverColorLabel: "Colore al passaggio del mouse",
+                VerticalBorderColorLabel: "Colore del bordo verticale",
+                VerticalBorderThicknessLabel: "Spessore del bordo verticale",
+                VerticalFontSizeLabel: "Dimensione carattere verticale",
+                ResetToDefaultLabel: "Ripristina predefinito",
+                ResetToDefaultDescription: "Ripristina tutte le opzioni di stile del contenuto ai loro valori predefiniti"
             }
         }
     }

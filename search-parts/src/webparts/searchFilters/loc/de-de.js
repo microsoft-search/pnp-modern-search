@@ -26,6 +26,7 @@ define([], function() {
                 SelectFilterComboBoxLabel: "Wähle ein Feld",
                 FilterNameLabel: "Filter Feld",
                 FilterMaxBuckets: "# der Werte",
+                FilterMaxBucketsWarning: "Die maximale Anzahl von Werten ist 1000",
                 FilterDisplayName: "Anzeige name",
                 FilterTemplate: "Vorlage",
                 FilterExpandByDefault: "Standardmäßig erweitert",
@@ -65,7 +66,13 @@ define([], function() {
                 ErrorTemplateResolve: "Kann die angegebene Vorlage nicht auflösen. Fehler Details: '{0}'",
                 FiltersTemplateFieldLabel: "Filter Vorlage bearbeiten",
                 FiltersTemplatePanelHeader: "Filter Vorlage bearbeiten"
-            }
-        }
+            }        },
+        Styling: {
+            StylingOptionsGroupName: "Stiloptionen",
+            FilterBackgroundColorLabel: "Filter-Hintergrundfarbe",
+            FilterBorderColorLabel: "Filter-Rahmenfarbe",
+            FilterBorderThicknessLabel: "Filter-Rahmenstärke",
+            ResetToDefaultLabel: "Styling auf Standard zurücksetzen",
+            ResetToDefaultDescription: "Alle Styling-Optionen auf ihre Standardwerte zurücksetzen"        }
     }
 });

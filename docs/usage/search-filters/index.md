@@ -41,6 +41,28 @@ The filter settings are as follow:
 | **Sort values by** | Sort values by name or by count.
 | **Sort direction** | Sort values in ascending/descending order.
 
+### Filter styling
+
+The filter styling section allows you to customize the visual appearance of the filter panel to match your branding and design requirements.
+
+| **Setting** | **Description** | **Default value**
+|------------|---------------- | ----------
+| **Filter background color** | The background color of the filter panel. | _Transparent_
+| **Filter border color** | The border color of the filter panel. | _Theme primary color_
+| **Filter border thickness** | The thickness of the filter panel borders (in pixels). | _1px_
+| **Reset styling to default** | Reset all styling options to their default values. | N/A
+
+### Web part title styling
+
+The title styling section allows you to customize the visual appearance of the web part title.
+
+| **Setting** | **Description** | **Default value**
+|------------|---------------- | ----------
+| **Title font** | The font family to use for the web part title. | _Segoe UI_
+| **Title font size** | Controls the font size (in pixels) for the web part title. | _16px_
+| **Title font color** | The color of the web part title text. | _Theme primary color_
+| **Reset title styling to default** | Reset all title styling options to their default values. | N/A
+
 ### Operator between filters
 
 !["Operator filters"](../../assets/webparts/search-filters/operator_filters.png){: .center}
@@ -74,3 +96,7 @@ The Search Filter Web Part supports deep linking, meaning you can preselect filt
 
 !!! important
     **We recommend to use the URL generated from filter values selection instead of crafting the URL manually.**
+
+## Audience Targeting
+
+You can control the visibility of the filter web part based on user group membership. See [Audience Targeting](../search-results/common/audience-targeting.md) for details.

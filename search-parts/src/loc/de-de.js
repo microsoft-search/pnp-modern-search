@@ -96,9 +96,9 @@ define([], function () {
                 NoResultsSearchMessage: "Keine Ergebnisse gefunden",
                 SearchPlaceholder: "Suche einen Wert..."
             },
-            CurrentVerticalNotSelectedMessage: "Das derzeit ausgewählte Vertikal passt nicht zu den zu diesem Web Part ({0}) zugeordneten Vertikalen. Es wird im Anzeige Modus als leer angezeigt."            ,
-            True:"Ja",
-            False:"Nei"
+            CurrentVerticalNotSelectedMessage: "Das derzeit ausgewählte Vertikal passt nicht zu den zu diesem Web Part ({0}) zugeordneten Vertikalen. Es wird im Anzeige Modus als leer angezeigt.",
+            True: "Ja",
+            False: "Nei"
         },
         DataSources: {
             SharePointSearch: {
@@ -195,7 +195,8 @@ define([], function () {
             TextFieldApplyButtonText: "Übernehmen",
             SortByPlaceholderText: "Standardsortierung",
             SortByDefaultOptionText: "Standard",
-            DownloadButtonText: "Herunterladen"
+            DownloadButtonText: "Herunterladen",
+            DownloadCSVButtonText: "Als CSV herunterladen"
         },
         Layouts: {
             Debug: {
@@ -243,7 +244,7 @@ define([], function () {
                 EnableStickyHeader: "Fixierte Kopfzeile aktivieren",
                 StickyHeaderListViewHeight: "Höhe der Listenansicht (px)",
                 EnableDownload: "Download aktivieren",
-                UseAlternatingBackgroundColor:"Verwenden Sie abwechselnde Hintergrundfarben"
+                UseAlternatingBackgroundColor: "Verwenden Sie abwechselnde Hintergrundfarben"
             },
             Cards: {
                 Name: "Karten",
@@ -306,6 +307,8 @@ define([], function () {
                 ShowPersonaCardOnHoverCalloutMsgNative: "Diese Funktion verwendet die Standard-Komponente von SharePoint, um die LivePersona-Karte anzuzeigen. Beachten Sie den Disclaimer unter https://pnp.github.io/sp-dev-fx-controls-react/controls/LivePersona/.",
                 ShowPersonaPresenceInfo: "Präsenz anzeigen",
                 ShowPersonaPresenceInfoCalloutMsg: "Diese Funktion benötigt die folgende API-Berechtigungen in Ihrem Mandanten, um zu funktionieren: ['Presence.Read.All']",
+                ShowHoverOnPictureOnly: "Hover nur auf Bild anzeigen",
+                ShowHoverOnPictureOnlyCalloutMsg: "Wenn aktiviert, öffnet sich die Personenkarte nur beim Hovern über das Persona-Bild (Coin).",
                 Fields: {
                     ImageUrl: "Bild URL",
                     PrimaryText: "Primärer Text",
@@ -342,48 +345,48 @@ define([], function () {
                 }
             },
             PersonCard: {
-              SendEmailLinkSubtitle: "E-Mail senden",
-              StartChatLinkSubtitle: "Chat starten",
-              ShowMoreSectionButton: "Mehr anzeigen",
-              ContactSectionTitle: "Kontakt",
-              ReportsToSectionTitle: "Berichtet an",
-              DirectReportsSectionTitle: "Direkt unterstellte Mitarbeiter",
-              OrganizationSectionTitle: "Organisation",
-              YouWorkWithSubSectionTitle: "Sie arbeiten mit",
-              UserWorksWithSubSectionTitle: "arbeitet mit",
-              EmailsSectionTitle: "E-Mails",
-              FilesSectionTitle: "Dateien",
-              SharedTextSubtitle: "Geteilt",
-              SkillsAndExperienceSectionTitle: "Fähigkeiten & Erfahrung",
-              AboutCompactSectionTitle: "Über",
-              SkillsSubSectionTitle: "Fähigkeiten",
-              LanguagesSubSectionTitle: "Sprachen",
-              WorkExperienceSubSectionTitle: "Berufserfahrung",
-              EducationSubSectionTitle: "Ausbildung",
-              ProfessionalInterestsSubSectionTitle: "Berufliche Interessen",
-              PersonalInterestsSubSectionTitle: "Persönliche Interessen",
-              BirthdaySubSectionTitle: "Geburtstag",
-              CurrentYearSubtitle: "Aktuell",
-              EndOfCard: "Ende der Karte",
-              QuickMessage: "Schnelle Nachricht senden",
-              ExpandDetailsLabel: "Details erweitern",
-              SendMessageLabel: "Nachricht senden",
-              EmailButtonLabel: "E-Mail",
-              CallButtonLabel: "Anrufen",
-              ChatButtonLabel: "Chat",
-              CloseCardLabel: "Karte schließen",
-              VideoButtonLabel: "Video",
-              GoBackLabel: "Zurück",
-              EmailTitle: "E-Mail",
-              ChatTitle: "Teams",
-              BusinessPhoneTitle: "Geschäftstelefon",
-              CellPhoneTitle: "Mobiltelefon",
-              DepartmentTitle: "Abteilung",
-              PersonTitle: "Titel",
-              OfficeLocationTitle: "Bürostandort",
-              CopyToClipboardButton: "In die Zwischenablage kopieren",
-              ShowMoreSubtitle: "Weitere Elemente anzeigen",
-              SocialMediaSubSectionTitle: "Soziale Medien"
+                SendEmailLinkSubtitle: "E-Mail senden",
+                StartChatLinkSubtitle: "Chat starten",
+                ShowMoreSectionButton: "Mehr anzeigen",
+                ContactSectionTitle: "Kontakt",
+                ReportsToSectionTitle: "Berichtet an",
+                DirectReportsSectionTitle: "Direkt unterstellte Mitarbeiter",
+                OrganizationSectionTitle: "Organisation",
+                YouWorkWithSubSectionTitle: "Sie arbeiten mit",
+                UserWorksWithSubSectionTitle: "arbeitet mit",
+                EmailsSectionTitle: "E-Mails",
+                FilesSectionTitle: "Dateien",
+                SharedTextSubtitle: "Geteilt",
+                SkillsAndExperienceSectionTitle: "Fähigkeiten & Erfahrung",
+                AboutCompactSectionTitle: "Über",
+                SkillsSubSectionTitle: "Fähigkeiten",
+                LanguagesSubSectionTitle: "Sprachen",
+                WorkExperienceSubSectionTitle: "Berufserfahrung",
+                EducationSubSectionTitle: "Ausbildung",
+                ProfessionalInterestsSubSectionTitle: "Berufliche Interessen",
+                PersonalInterestsSubSectionTitle: "Persönliche Interessen",
+                BirthdaySubSectionTitle: "Geburtstag",
+                CurrentYearSubtitle: "Aktuell",
+                EndOfCard: "Ende der Karte",
+                QuickMessage: "Schnelle Nachricht senden",
+                ExpandDetailsLabel: "Details erweitern",
+                SendMessageLabel: "Nachricht senden",
+                EmailButtonLabel: "E-Mail",
+                CallButtonLabel: "Anrufen",
+                ChatButtonLabel: "Chat",
+                CloseCardLabel: "Karte schließen",
+                VideoButtonLabel: "Video",
+                GoBackLabel: "Zurück",
+                EmailTitle: "E-Mail",
+                ChatTitle: "Teams",
+                BusinessPhoneTitle: "Geschäftstelefon",
+                CellPhoneTitle: "Mobiltelefon",
+                DepartmentTitle: "Abteilung",
+                PersonTitle: "Titel",
+                OfficeLocationTitle: "Bürostandort",
+                CopyToClipboardButton: "In die Zwischenablage kopieren",
+                ShowMoreSubtitle: "Weitere Elemente anzeigen",
+                SocialMediaSubSectionTitle: "Soziale Medien"
             }
         },
         HandlebarsHelpers: {
@@ -408,7 +411,18 @@ define([], function () {
                     }
                 },
                 ImportExport: "Einstellungen importieren/exportieren"
-            }
+            },
+            AudienceTargeting: {
+                GroupName: "Zielgruppenansprache",
+                TargetAudienceLabel: "Zielgruppe",
+                CacheDurationLabel: "Cache-Dauer (Stunden)",
+                CacheDurationDescription: "Dauer in Stunden für die Zwischenspeicherung der Zielgruppenmitgliedschaft"
+            },
+            TitleStylingGroupName: "Webpart-Titelstyling",
+            TitleFont: "Titelschriftart",
+            TitleFontSize: "Titelschriftgröße (px)",
+            TitleFontColor: "Titelschriftfarbe",
+            ResetTitleStylingToDefault: "Titelstyling auf Standard zurücksetzen"
         },
         Filters: {
             ApplyAllFiltersButtonLabel: "Anwenden",

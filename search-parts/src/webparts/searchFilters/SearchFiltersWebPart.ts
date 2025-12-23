@@ -10,7 +10,11 @@ import {
     PropertyPaneToggle,
     PropertyPaneDropdown,
     PropertyPaneHorizontalRule,
+    PropertyPaneSlider,
+    PropertyPaneButton,
+    PropertyPaneButtonType
 } from '@microsoft/sp-property-pane';
+import { PropertyFieldColorPicker, PropertyFieldColorPickerStyle } from '@pnp/spfx-property-controls/lib/PropertyFieldColorPicker';
 import { DynamicProperty } from '@microsoft/sp-component-base';
 import { IPropertyPanePage } from '@microsoft/sp-property-pane';
 import * as webPartStrings from 'SearchFiltersWebPartStrings';
@@ -45,6 +49,7 @@ import { MessageBar, MessageBarType } from '@fluentui/react/lib/MessageBar';
 import { IComboBoxOption } from '@fluentui/react/lib/ComboBox';
 import { Checkbox } from '@fluentui/react/lib/Checkbox';
 import { Dropdown, IDropdownOption, IDropdownProps } from '@fluentui/react/lib/Dropdown';
+import { TextField } from '@fluentui/react/lib/TextField';
 
 const LogSource = "SearchFiltersWebPart";
 
@@ -162,6 +167,13 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
 
     public async render(): Promise<void> {
 
+        // Check audience targeting - if user is not in audience, don't render
+        const isInAudience = await this.isInAudience();
+        if (!isInAudience) {
+            this.domElement.innerHTML = '';
+            return;
+        }
+
         // Determine the template content to display
         // In the case of an external template is selected, the render is done asynchronously waiting for the content to be fetched
         await this.initTemplate();
@@ -228,7 +240,13 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                         title: this.properties.title,
                         updateProperty: this._updateTitleProperty,
                         className: commonStyles.wpTitle
-                    }
+                    },
+                    filterBackgroundColor: this.properties.filterBackgroundColor,
+                    filterBorderColor: this.properties.filterBorderColor,
+                    filterBorderThickness: this.properties.filterBorderThickness,
+                    titleFont: this.properties.titleFont,
+                    titleFontSize: this.properties.titleFontSize,
+                    titleFontColor: this.properties.titleFontColor
                 } as ISearchFiltersContainerProps
             );
 
@@ -381,6 +399,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                 displayGroupsAsAccordion: true,
                 groups: [
                     ...this.getPropertyPaneWebPartInfoGroups(),
+                    this.getAudienceTargetingPropertyPaneGroup(),
                     {
                         groupName: commonStrings.PropertyPane.InformationPage.ImportExport,
                         groupFields: [this._propertyPanePropertyEditor({
@@ -573,6 +592,55 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
             }
         ];
 
+        // Add styling options group
+        groups.push({
+            groupName: webPartStrings.Styling.StylingOptionsGroupName,
+            isCollapsed: true,
+            groupFields: [
+                PropertyFieldColorPicker('filterBackgroundColor', {
+                    label: webPartStrings.Styling.FilterBackgroundColorLabel,
+                    selectedColor: this.properties.filterBackgroundColor,
+                    onPropertyChange: this.onPropertyPaneFieldChanged,
+                    properties: this.properties,
+                    disabled: false,
+                    debounce: 1000,
+                    isHidden: false,
+                    alphaSliderHidden: false,
+                    style: PropertyFieldColorPickerStyle.Inline,
+                    key: 'filterBackgroundColorFieldId'
+                }),
+                PropertyFieldColorPicker('filterBorderColor', {
+                    label: webPartStrings.Styling.FilterBorderColorLabel,
+                    selectedColor: this.properties.filterBorderColor,
+                    onPropertyChange: this.onPropertyPaneFieldChanged,
+                    properties: this.properties,
+                    disabled: false,
+                    debounce: 1000,
+                    isHidden: false,
+                    alphaSliderHidden: false,
+                    style: PropertyFieldColorPickerStyle.Inline,
+                    key: 'filterBorderColorFieldId'
+                }),
+                PropertyPaneSlider('filterBorderThickness', {
+                    label: webPartStrings.Styling.FilterBorderThicknessLabel,
+                    min: 0,
+                    max: 10,
+                    step: 1,
+                    showValue: true,
+                    value: this.properties.filterBorderThickness || 0
+                }),
+                PropertyPaneButton('resetContentStylingButton', {
+                    text: webPartStrings.Styling.ResetToDefaultLabel,
+                    buttonType: PropertyPaneButtonType.Command,
+                    icon: 'Refresh',
+                    onClick: this._resetContentStylingToDefault.bind(this)
+                })
+            ]
+        });
+
+        // Add web part title styling group
+        groups.push(this.getTitleStylingPropertyPaneGroup());
+
         // Add template options if any
         const layoutOptions = this.getLayoutTemplateOptions();
         if (layoutOptions.length > 0) {
@@ -621,7 +689,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                 required: true,
                 onCustomRender: (field, value, onUpdate, item) => {
                     return (
-                        React.createElement("div", null,
+                        React.createElement("div", { title: item[field.id] ? item[field.id] : '' },
                             React.createElement(AsyncCombo, {
                                 allowFreeform: true,
                                 availableOptions: availableFieldOptionsFromResults, // We remove already selected fields
@@ -661,9 +729,25 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                     {
                         id: 'maxBuckets',
                         title: webPartStrings.PropertyPane.DataFilterCollection.FilterMaxBuckets,
-                        type: this._customCollectionFieldType.number,
+                        type: this._customCollectionFieldType.custom,
                         required: false,
-                        defaultValue: ""
+                        onCustomRender: (field, value, onUpdate, item, itemId, onCustomFieldValidation) => {
+                            const numValue = value ? parseInt(value.toString(), 10) : undefined;
+                            const errorMessage = numValue && numValue > 1000 
+                                ? webPartStrings.PropertyPane.DataFilterCollection.FilterMaxBucketsWarning 
+                                : '';
+                            
+                            return React.createElement(TextField, {
+                                key: `${field.id}-${itemId}`,
+                                type: 'number',
+                                value: value ? value.toString() : '',
+                                errorMessage: errorMessage,
+                                onChange: (ev, newValue) => {
+                                    const parsedValue = newValue && newValue.trim() !== '' ? parseInt(newValue, 10) : undefined;
+                                    onUpdate(field.id, parsedValue);
+                                }
+                            });
+                        }
                     },
                     {
                         id: 'selectedTemplate',
@@ -1070,6 +1154,23 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
             return [];
         }
     }
+
+
+
+    private _resetContentStylingToDefault(): void {
+        // Reset all content styling properties to their default values
+        this.properties.filterBackgroundColor = undefined;
+        this.properties.filterBorderColor = undefined;
+        this.properties.filterBorderThickness = undefined;
+        
+        // Refresh the property pane to show the reset values
+        this.context.propertyPane.refresh();
+        
+        // Re-render the web part to apply changes
+        this.render();
+    }
+    
+
 
     /**
      * Initializes filter results according to 'Static' type filters in the configuration

@@ -1,6 +1,6 @@
 {
     "name": "@pnp/modern-search-web-parts",
-    "version": "4.18.2",
+    "version": "4.19.0",
     "private": true,
     "main": "lib/index.js",
     "engines": {
@@ -31,7 +31,7 @@
         "@microsoft/sp-property-pane": "1.21.1",
         "@microsoft/sp-webpart-base": "1.21.1",
         "@pnp/common": "2.15.0",
-        "@pnp/modern-search-extensibility": "1.21.1",
+        "@pnp/modern-search-extensibility": "1.21.2",
         "@pnp/spfx-controls-react": "3.22.0",
         "@pnp/spfx-property-controls": "3.21.0",
         "@pnp/telemetry-js": "2.0.0",
@@ -66,6 +66,7 @@
         "@types/react-dom": "17.0.17",
         "@types/webpack-env": "~1.15.2",
         "ajv": "6.12.5",
+        "assert": "^2.1.0",
         "babel-loader": "8.4.1",
         "colors": "1.4.0",
         "eslint": "8.57.1",
@@ -74,6 +75,7 @@
         "gulp": "4.0.2",
         "html-loader": "4.2.0",
         "ignore-loader": "0.1.2",
+        "os-browserify": "^0.3.0",
         "path-browserify": "1.0.1",
         "process": "0.11.10",
         "querystring-es3": "0.2.1",
@@ -171,6 +173,14 @@
             "send": "0.19.1",
             "serve-static": "1.16.2",
             "semver": "7.7.3"
-        }
+        },
+        "onlyBuiltDependencies": [
+            "@pnp/spfx-controls-react",
+            "@pnp/spfx-property-controls",
+            "core-js-pure",
+            "es5-ext",
+            "fsevents",
+            "swiper"
+        ]
     }
 }

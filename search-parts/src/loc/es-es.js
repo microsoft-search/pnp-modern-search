@@ -97,8 +97,8 @@ define([], function () {
                 SearchPlaceholder: "Buscar un valor..."
             },
             CurrentVerticalNotSelectedMessage: "La vertical seleccionada actualmente no coincide con las asociadas a este Web Part ({0}). Permanecerá en blanco en el modo de visualización.",
-            True:"Si",
-            False:"No"
+            True: "Si",
+            False: "No"
 
         },
         DataSources: {
@@ -196,7 +196,8 @@ define([], function () {
             TextFieldApplyButtonText: "Aplicar",
             SortByPlaceholderText: "Ordenar por...",
             SortByDefaultOptionText: "Defecto",
-            DownloadButtonText: "Descargar"
+            DownloadButtonText: "Descargar",
+            DownloadCSVButtonText: "Descargar como CSV"
         },
         Layouts: {
             Debug: {
@@ -244,7 +245,7 @@ define([], function () {
                 EnableStickyHeader: "Activar el encabezado fijo",
                 StickyHeaderListViewHeight: "Altura de la vista de lista con encabezado fijo (en píxeles)",
                 EnableDownload: "Activar la descarga de archivos",
-                UseAlternatingBackgroundColor:"Utilice colores de fondo alternos"
+                UseAlternatingBackgroundColor: "Utilice colores de fondo alternos"
             },
             Cards: {
                 Name: "Tarjetas",
@@ -306,6 +307,8 @@ define([], function () {
                 ShowPersonaCardOnHoverCalloutMsg: "Esta función utiliza Microsoft Graph para mostrar información sobre el usuario y necesita los siguientes permisos de la API en su inquilino para funcionar: ['User.Read','People.Read','Contacts.Read','User.Read.All'].",
                 ShowPersonaPresenceInfo: "Mostrar presencia",
                 ShowPersonaPresenceInfoCalloutMsg: "Esta función necesita los siguientes permisos de API en su tenant para funcionar: ['Presence.Read.All']",
+                ShowHoverOnPictureOnly: "Mostrar hover solo en la imagen",
+                ShowHoverOnPictureOnlyCalloutMsg: "Cuando está habilitado, la tarjeta de persona se abre solo al pasar el cursor sobre la imagen de persona (moneda).",
                 Fields: {
                     ImageUrl: "URL de la imagen",
                     PrimaryText: "Texto principal",
@@ -342,48 +345,48 @@ define([], function () {
                 }
             },
             PersonCard: {
-              SendEmailLinkSubtitle: "Enviar correo electrónico",
-              StartChatLinkSubtitle: "Iniciar chat",
-              ShowMoreSectionButton: "Mostrar más",
-              ContactSectionTitle: "Contacto",
-              ReportsToSectionTitle: "Reporta a",
-              DirectReportsSectionTitle: "Reportes directos",
-              OrganizationSectionTitle: "Organización",
-              YouWorkWithSubSectionTitle: "Trabajas con",
-              UserWorksWithSubSectionTitle: "trabaja con",
-              EmailsSectionTitle: "Correos electrónicos",
-              FilesSectionTitle: "Archivos",
-              SharedTextSubtitle: "Compartido",
-              SkillsAndExperienceSectionTitle: "Habilidades y Experiencia",
-              AboutCompactSectionTitle: "Acerca de",
-              SkillsSubSectionTitle: "Habilidades",
-              LanguagesSubSectionTitle: "Idiomas",
-              WorkExperienceSubSectionTitle: "Experiencia laboral",
-              EducationSubSectionTitle: "Educación",
-              ProfessionalInterestsSubSectionTitle: "Intereses profesionales",
-              PersonalInterestsSubSectionTitle: "Intereses personales",
-              BirthdaySubSectionTitle: "Cumpleaños",
-              CurrentYearSubtitle: "Actual",
-              EndOfCard: "Fin de la tarjeta",
-              QuickMessage: "Enviar un mensaje rápido",
-              ExpandDetailsLabel: "Expandir detalles",
-              SendMessageLabel: "Enviar mensaje",
-              EmailButtonLabel: "Correo electrónico",
-              CallButtonLabel: "Llamar",
-              ChatButtonLabel: "Chat",
-              CloseCardLabel: "Cerrar tarjeta",
-              VideoButtonLabel: "Vídeo",
-              GoBackLabel: "Volver",
-              EmailTitle: "Correo electrónico",
-              ChatTitle: "Teams",
-              BusinessPhoneTitle: "Teléfono de trabajo",
-              CellPhoneTitle: "Teléfono móvil",
-              DepartmentTitle: "Departamento",
-              PersonTitle: "Título",
-              OfficeLocationTitle: "Ubicación de la oficina",
-              CopyToClipboardButton: "Copiar al portapapeles",
-              ShowMoreSubtitle: "Mostrar más elementos",
-              SocialMediaSubSectionTitle: "Redes sociales"
+                SendEmailLinkSubtitle: "Enviar correo electrónico",
+                StartChatLinkSubtitle: "Iniciar chat",
+                ShowMoreSectionButton: "Mostrar más",
+                ContactSectionTitle: "Contacto",
+                ReportsToSectionTitle: "Reporta a",
+                DirectReportsSectionTitle: "Reportes directos",
+                OrganizationSectionTitle: "Organización",
+                YouWorkWithSubSectionTitle: "Trabajas con",
+                UserWorksWithSubSectionTitle: "trabaja con",
+                EmailsSectionTitle: "Correos electrónicos",
+                FilesSectionTitle: "Archivos",
+                SharedTextSubtitle: "Compartido",
+                SkillsAndExperienceSectionTitle: "Habilidades y Experiencia",
+                AboutCompactSectionTitle: "Acerca de",
+                SkillsSubSectionTitle: "Habilidades",
+                LanguagesSubSectionTitle: "Idiomas",
+                WorkExperienceSubSectionTitle: "Experiencia laboral",
+                EducationSubSectionTitle: "Educación",
+                ProfessionalInterestsSubSectionTitle: "Intereses profesionales",
+                PersonalInterestsSubSectionTitle: "Intereses personales",
+                BirthdaySubSectionTitle: "Cumpleaños",
+                CurrentYearSubtitle: "Actual",
+                EndOfCard: "Fin de la tarjeta",
+                QuickMessage: "Enviar un mensaje rápido",
+                ExpandDetailsLabel: "Expandir detalles",
+                SendMessageLabel: "Enviar mensaje",
+                EmailButtonLabel: "Correo electrónico",
+                CallButtonLabel: "Llamar",
+                ChatButtonLabel: "Chat",
+                CloseCardLabel: "Cerrar tarjeta",
+                VideoButtonLabel: "Vídeo",
+                GoBackLabel: "Volver",
+                EmailTitle: "Correo electrónico",
+                ChatTitle: "Teams",
+                BusinessPhoneTitle: "Teléfono de trabajo",
+                CellPhoneTitle: "Teléfono móvil",
+                DepartmentTitle: "Departamento",
+                PersonTitle: "Título",
+                OfficeLocationTitle: "Ubicación de la oficina",
+                CopyToClipboardButton: "Copiar al portapapeles",
+                ShowMoreSubtitle: "Mostrar más elementos",
+                SocialMediaSubSectionTitle: "Redes sociales"
             }
         },
         HandlebarsHelpers: {
@@ -408,7 +411,18 @@ define([], function () {
                     }
                 },
                 ImportExport: "Importación/Exportación de configuración"
-            }
+            },
+            AudienceTargeting: {
+                GroupName: "Segmentación de audiencia",
+                TargetAudienceLabel: "Audiencia objetivo",
+                CacheDurationLabel: "Duración de caché (horas)",
+                CacheDurationDescription: "Duración en horas para almacenar en caché la información de pertenencia a la audiencia"
+            },
+            TitleStylingGroupName: "Estilo del título del elemento web",
+            TitleFont: "Fuente del título",
+            TitleFontSize: "Tamaño de fuente del título (px)",
+            TitleFontColor: "Color de fuente del título",
+            ResetTitleStylingToDefault: "Restablecer el estilo del título predeterminado"
         },
         Filters: {
             ApplyAllFiltersButtonLabel: "Aplicar",

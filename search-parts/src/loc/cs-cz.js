@@ -1,4 +1,4 @@
-define([], function() {
+define([], function () {
     return {
         Tokens: {
             SelectTokenLabel: "Vyberte token...",
@@ -195,7 +195,8 @@ define([], function() {
             TextFieldApplyButtonText: "Použít",
             SortByPlaceholderText: "Řadit podle...",
             SortByDefaultOptionText: "Výchozí",
-            DownloadButtonText: "Stáhnout"
+            DownloadButtonText: "Stáhnout",
+            DownloadCSVButtonText: "Stáhnout jako CSV"
         },
         Layouts: {
             Debug: {
@@ -241,7 +242,7 @@ define([], function() {
                 EnableStickyHeader: "Povolit pevnou hlavičku",
                 StickyHeaderListViewHeight: "Výška zobrazení seznamu (v px)",
                 EnableDownload: "Povolit stažení",
-                UseAlternatingBackgroundColor:"Použijte střídající se barvu pozadí"
+                UseAlternatingBackgroundColor: "Použijte střídající se barvu pozadí"
             },
             Cards: {
                 Name: "Karty",
@@ -304,6 +305,8 @@ define([], function() {
                 ShowPersonaCardOnHoverCalloutMsgNative: "Tato funkce používá nativní implementaci SharePointu pro zobrazení živé karty osoby (LPC). Viz https://pnp.github.io/sp-dev-fx-controls-react/controls/LivePersona/ pro další informace.",
                 ShowPersonaPresenceInfo: "Zobrazit přítomnost",
                 ShowPersonaPresenceInfoCalloutMsg: "Tato funkce potřebuje následující oprávnění API ve vaší tenant: ['Presence.Read.All']",
+                ShowHoverOnPictureOnly: "Zobrazit hover pouze na obrázku",
+                ShowHoverOnPictureOnlyCalloutMsg: "Pokud je povoleno, karta osoby se otevře pouze při najetí na obrázek osoby (minci).",
                 Fields: {
                     ImageUrl: "URL obrázku",
                     PrimaryText: "Hlavní text",
@@ -340,48 +343,48 @@ define([], function() {
                 }
             },
             PersonCard: {
-              SendEmailLinkSubtitle: "Odeslat e-mail",
-              StartChatLinkSubtitle: "Zahájit chat",
-              ShowMoreSectionButton: "Zobrazit více",
-              ContactSectionTitle: "Kontakt",
-              ReportsToSectionTitle: "Podřízený",
-              DirectReportsSectionTitle: "Přímí podřízení",
-              OrganizationSectionTitle: "Organizace",
-              YouWorkWithSubSectionTitle: "Pracujete s",
-              UserWorksWithSubSectionTitle: "pracuje s",
-              EmailsSectionTitle: "E-maily",
-              FilesSectionTitle: "Soubory",
-              SharedTextSubtitle: "Sdíleno",
-              SkillsAndExperienceSectionTitle: "Dovednosti a zkušenosti",
-              AboutCompactSectionTitle: "O mně",
-              SkillsSubSectionTitle: "Dovednosti",
-              LanguagesSubSectionTitle: "Jazyky",
-              WorkExperienceSubSectionTitle: "Pracovní zkušenosti",
-              EducationSubSectionTitle: "Vzdělání",
-              ProfessionalInterestsSubSectionTitle: "Profesní zájmy",
-              PersonalInterestsSubSectionTitle: "Osobní zájmy",
-              BirthdaySubSectionTitle: "Narozeniny",
-              CurrentYearSubtitle: "Aktuální",
-              EndOfCard: "Konec karty",
-              QuickMessage: "Odeslat rychlou zprávu",
-              ExpandDetailsLabel: "Rozbalit podrobnosti",
-              SendMessageLabel: "Odeslat zprávu",
-              EmailButtonLabel: "E-mail",
-              CallButtonLabel: "Zavolat",
-              ChatButtonLabel: "Chat",
-              CloseCardLabel: "Zavřít kartu",
-              VideoButtonLabel: "Video",
-              GoBackLabel: "Zpět",
-              EmailTitle: "E-mail",
-              ChatTitle: "Teams",
-              BusinessPhoneTitle: "Pracovní telefon",
-              CellPhoneTitle: "Mobilní telefon",
-              DepartmentTitle: "Oddělení",
-              PersonTitle: "Titul",
-              OfficeLocationTitle: "Umístění kanceláře",
-              CopyToClipboardButton: "Kopírovat do schránky",
-              ShowMoreSubtitle: "Zobrazit více položek",
-              SocialMediaSubSectionTitle: "Sociální média"
+                SendEmailLinkSubtitle: "Odeslat e-mail",
+                StartChatLinkSubtitle: "Zahájit chat",
+                ShowMoreSectionButton: "Zobrazit více",
+                ContactSectionTitle: "Kontakt",
+                ReportsToSectionTitle: "Podřízený",
+                DirectReportsSectionTitle: "Přímí podřízení",
+                OrganizationSectionTitle: "Organizace",
+                YouWorkWithSubSectionTitle: "Pracujete s",
+                UserWorksWithSubSectionTitle: "pracuje s",
+                EmailsSectionTitle: "E-maily",
+                FilesSectionTitle: "Soubory",
+                SharedTextSubtitle: "Sdíleno",
+                SkillsAndExperienceSectionTitle: "Dovednosti a zkušenosti",
+                AboutCompactSectionTitle: "O mně",
+                SkillsSubSectionTitle: "Dovednosti",
+                LanguagesSubSectionTitle: "Jazyky",
+                WorkExperienceSubSectionTitle: "Pracovní zkušenosti",
+                EducationSubSectionTitle: "Vzdělání",
+                ProfessionalInterestsSubSectionTitle: "Profesní zájmy",
+                PersonalInterestsSubSectionTitle: "Osobní zájmy",
+                BirthdaySubSectionTitle: "Narozeniny",
+                CurrentYearSubtitle: "Aktuální",
+                EndOfCard: "Konec karty",
+                QuickMessage: "Odeslat rychlou zprávu",
+                ExpandDetailsLabel: "Rozbalit podrobnosti",
+                SendMessageLabel: "Odeslat zprávu",
+                EmailButtonLabel: "E-mail",
+                CallButtonLabel: "Zavolat",
+                ChatButtonLabel: "Chat",
+                CloseCardLabel: "Zavřít kartu",
+                VideoButtonLabel: "Video",
+                GoBackLabel: "Zpět",
+                EmailTitle: "E-mail",
+                ChatTitle: "Teams",
+                BusinessPhoneTitle: "Pracovní telefon",
+                CellPhoneTitle: "Mobilní telefon",
+                DepartmentTitle: "Oddělení",
+                PersonTitle: "Titul",
+                OfficeLocationTitle: "Umístění kanceláře",
+                CopyToClipboardButton: "Kopírovat do schránky",
+                ShowMoreSubtitle: "Zobrazit více položek",
+                SocialMediaSubSectionTitle: "Sociální média"
             }
         },
         HandlebarsHelpers: {
@@ -406,7 +409,18 @@ define([], function() {
                     }
                 },
                 ImportExport: "Import/Export nastavení"
-            }
+            },
+            AudienceTargeting: {
+                GroupName: "Cílení na publikum",
+                TargetAudienceLabel: "Cílové publikum",
+                CacheDurationLabel: "Doba uložení v mezipaměti (hodiny)",
+                CacheDurationDescription: "Doba v hodinách pro ukládání informací o členství v publiku do mezipaměti"
+            },
+            TitleStylingGroupName: "Styly nadpisu webové části",
+            TitleFont: "Písmo nadpisu",
+            TitleFontSize: "Velikost písma nadpisu (px)",
+            TitleFontColor: "Barva písma nadpisu",
+            ResetTitleStylingToDefault: "Obnovit styly nadpisu na výchozí"
         },
         Filters: {
             ApplyAllFiltersButtonLabel: "Použít",

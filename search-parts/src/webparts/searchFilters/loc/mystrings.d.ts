@@ -25,6 +25,7 @@ declare interface ISearchFiltersWebPartStrings {
             SelectFilterComboBoxLabel: string;
             FilterNameLabel: string;
             FilterMaxBuckets: string;
+            FilterMaxBucketsWarning: string;
             FilterDisplayName: string;
             FilterTemplate: string;
             FilterExpandByDefault: string;
@@ -65,6 +66,14 @@ declare interface ISearchFiltersWebPartStrings {
             FiltersTemplateFieldLabel: string;
             FiltersTemplatePanelHeader: string;
         }
+    },
+    Styling: {
+        StylingOptionsGroupName: string;
+        FilterBackgroundColorLabel: string;
+        FilterBorderColorLabel: string;
+        FilterBorderThicknessLabel: string;
+        ResetToDefaultLabel: string;
+        ResetToDefaultDescription: string;
     }
 }
 

@@ -31,6 +31,16 @@ define([], function() {
           AudienceInputPlaceholderText: "Pesquisar por um grupo",
           AudienceNoResultsFound: "Não encontramos nenhum grupo correspondente.",
           AudienceLoading: "Carregando grupos..."
+        },
+        Styling: {
+            WebPartContentStylingGroupName: "Estilo do conteúdo da web part",
+            VerticalBackgroundColorLabel: "Cor de fundo vertical",
+            MouseOverColorLabel: "Cor ao passar o mouse",
+            VerticalBorderColorLabel: "Cor da borda vertical",
+            VerticalBorderThicknessLabel: "Espessura da borda vertical",
+            VerticalFontSizeLabel: "Tamanho da fonte vertical",
+            ResetToDefaultLabel: "Redefinir para padrão",
+          ResetToDefaultDescription: "Redefinir todas as opções de estilo de conteúdo para seus valores padrão"
         }
       }
     }

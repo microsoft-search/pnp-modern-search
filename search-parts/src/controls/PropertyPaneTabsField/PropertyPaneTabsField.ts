@@ -51,7 +51,7 @@ export class PropertyPaneTabsField implements IPropertyPaneField<IPropertyPaneTa
             React.createElement(ChoiceGroupTabs, {        
                 defaultSelectedKey: this.properties.defaultSelectedKey,
                 onChange: (selectedKey: string) => {
-                    this.properties.onPropertyChange(this.targetProperty, selectedKey, changeCallback);
+                    changeCallback(this.targetProperty, selectedKey);
                 },
                 options: this.properties.options
             } as IChoiceGroupTabsProps)

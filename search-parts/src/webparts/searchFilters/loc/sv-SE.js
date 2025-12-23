@@ -26,6 +26,7 @@ define([], function() {
                 SelectFilterComboBoxLabel: "Välj fält",
                 FilterNameLabel: "Fält för filter",
                 FilterMaxBuckets: "# av värden",
+                FilterMaxBucketsWarning: "Det maximala antalet värden är 1000",
                 FilterDisplayName: "Visningsnamn",
                 FilterTemplate: "Filtermall",
                 FilterExpandByDefault: "Expandera som standard",
@@ -66,6 +67,14 @@ define([], function() {
                 FiltersTemplateFieldLabel: "Redigera filtermall",
                 FiltersTemplatePanelHeader: "Redigera filtermall"
             }
+        },
+        Styling: {
+            StylingOptionsGroupName: "Stilalternativ",
+            FilterBackgroundColorLabel: "Filter bakgrundsfärg",
+            FilterBorderColorLabel: "Filter kantfärg",
+            FilterBorderThicknessLabel: "Filter kanttjocklek",
+            ResetToDefaultLabel: "Återställ till standardstil",
+            ResetToDefaultDescription: "Återställ alla stilalternativ till sina standardvärden"
         }
     }
 });

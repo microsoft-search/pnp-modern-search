@@ -132,6 +132,14 @@ define([], function() {
                   ModifierDescriptionPropertyLabel: "Kuvaus",
                   EndWhenSuccessfullPropertyLabel:"Loppuu, kun onnistuu"              
             }
+        },
+        Styling: {
+            StylingOptionsGroupName: "Tyyliasetukset",
+            ResultsBackgroundColorLabel: "Tulosten taustaväri",
+            ResultsBorderColorLabel: "Tulosten reunaväri",
+            ResultsBorderThicknessLabel: "Tulosten reunan paksuus",
+            ResetToDefaultLabel: "Palauta oletustyyli",
+            ResetToDefaultDescription: "Palauta kaikki tyyliasetukset oletusarvoihinsa"
         }
     }
 });

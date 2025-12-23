@@ -97,8 +97,8 @@ define([], function () {
                 SearchPlaceholder: "Cerca un valore..."
             },
             CurrentVerticalNotSelectedMessage: "Il verticale selezionato attualmente non corrisponde a quelli associati a questa Web Part ({0}). Rimarrà vuoto in modalità di visualizzazione.",
-            True:"Sì",
-            False:"No"
+            True: "Sì",
+            False: "No"
         },
         DataSources: {
             SharePointSearch: {
@@ -195,7 +195,8 @@ define([], function () {
             TextFieldApplyButtonText: "Applica",
             SortByPlaceholderText: "Ordina per…",
             SortByDefaultOptionText: "Predefinito",
-            DownloadButtonText: "Scarica"
+            DownloadButtonText: "Scarica",
+            DownloadCSVButtonText: "Scarica come CSV"
         },
         Layouts: {
             Debug: {
@@ -243,7 +244,7 @@ define([], function () {
                 EnableStickyHeader: "Abilita intestazione fissa",
                 StickyHeaderListViewHeight: "Altezza vista elenco (in px)",
                 EnableDownload: "Abilita download",
-                UseAlternatingBackgroundColor:"Usa colori di sfondo alternati"
+                UseAlternatingBackgroundColor: "Usa colori di sfondo alternati"
 
             },
             Cards: {
@@ -307,6 +308,8 @@ define([], function () {
                 ShowPersonaCardOnHoverCalloutMsgNative: "Questa funzionalità utilizza l'implementazione nativa di SharePoint per mostrare la scheda persona live (LPC). Vedi https://pnp.github.io/sp-dev-fx-controls-react/controls/LivePersona/ per considerazioni.",
                 ShowPersonaPresenceInfo: "Mostra presenza",
                 ShowPersonaPresenceInfoCalloutMsg: "Questa funzionalità richiede le seguenti autorizzazioni API nel tuo tenant per funzionare: ['Presence.Read.All']",
+                ShowHoverOnPictureOnly: "Mostra hover solo sull'immagine",
+                ShowHoverOnPictureOnlyCalloutMsg: "Quando abilitato, la scheda persona si apre solo passando sopra l'immagine persona (moneta).",
                 Fields: {
                     ImageUrl: "URL immagine",
                     PrimaryText: "Testo principale",
@@ -343,48 +346,48 @@ define([], function () {
                 }
             },
             PersonCard: {
-              SendEmailLinkSubtitle: "Invia email",
-              StartChatLinkSubtitle: "Avvia chat",
-              ShowMoreSectionButton: "Mostra altro",
-              ContactSectionTitle: "Contatto",
-              ReportsToSectionTitle: "Riporta a",
-              DirectReportsSectionTitle: "Subordinati diretti",
-              OrganizationSectionTitle: "Organizzazione",
-              YouWorkWithSubSectionTitle: "Lavori con",
-              UserWorksWithSubSectionTitle: "lavora con",
-              EmailsSectionTitle: "Email",
-              FilesSectionTitle: "File",
-              SharedTextSubtitle: "Condiviso",
-              SkillsAndExperienceSectionTitle: "Competenze ed Esperienza",
-              AboutCompactSectionTitle: "Informazioni",
-              SkillsSubSectionTitle: "Competenze",
-              LanguagesSubSectionTitle: "Lingue",
-              WorkExperienceSubSectionTitle: "Esperienza lavorativa",
-              EducationSubSectionTitle: "Istruzione",
-              ProfessionalInterestsSubSectionTitle: "Interessi professionali",
-              PersonalInterestsSubSectionTitle: "Interessi personali",
-              BirthdaySubSectionTitle: "Compleanno",
-              CurrentYearSubtitle: "Attuale",
-              EndOfCard: "Fine della scheda",
-              QuickMessage: "Invia un messaggio rapido",
-              ExpandDetailsLabel: "Espandi dettagli",
-              SendMessageLabel: "Invia messaggio",
-              EmailButtonLabel: "Email",
-              CallButtonLabel: "Chiama",
-              ChatButtonLabel: "Chat",
-              CloseCardLabel: "Chiudi scheda",
-              VideoButtonLabel: "Video",
-              GoBackLabel: "Torna indietro",
-              EmailTitle: "Email",
-              ChatTitle: "Teams",
-              BusinessPhoneTitle: "Telefono aziendale",
-              CellPhoneTitle: "Telefono cellulare",
-              DepartmentTitle: "Dipartimento",
-              PersonTitle: "Titolo",
-              OfficeLocationTitle: "Sede ufficio",
-              CopyToClipboardButton: "Copia negli appunti",
-              ShowMoreSubtitle: "Mostra altri elementi",
-              SocialMediaSubSectionTitle: "Social Media"
+                SendEmailLinkSubtitle: "Invia email",
+                StartChatLinkSubtitle: "Avvia chat",
+                ShowMoreSectionButton: "Mostra altro",
+                ContactSectionTitle: "Contatto",
+                ReportsToSectionTitle: "Riporta a",
+                DirectReportsSectionTitle: "Subordinati diretti",
+                OrganizationSectionTitle: "Organizzazione",
+                YouWorkWithSubSectionTitle: "Lavori con",
+                UserWorksWithSubSectionTitle: "lavora con",
+                EmailsSectionTitle: "Email",
+                FilesSectionTitle: "File",
+                SharedTextSubtitle: "Condiviso",
+                SkillsAndExperienceSectionTitle: "Competenze ed Esperienza",
+                AboutCompactSectionTitle: "Informazioni",
+                SkillsSubSectionTitle: "Competenze",
+                LanguagesSubSectionTitle: "Lingue",
+                WorkExperienceSubSectionTitle: "Esperienza lavorativa",
+                EducationSubSectionTitle: "Istruzione",
+                ProfessionalInterestsSubSectionTitle: "Interessi professionali",
+                PersonalInterestsSubSectionTitle: "Interessi personali",
+                BirthdaySubSectionTitle: "Compleanno",
+                CurrentYearSubtitle: "Attuale",
+                EndOfCard: "Fine della scheda",
+                QuickMessage: "Invia un messaggio rapido",
+                ExpandDetailsLabel: "Espandi dettagli",
+                SendMessageLabel: "Invia messaggio",
+                EmailButtonLabel: "Email",
+                CallButtonLabel: "Chiama",
+                ChatButtonLabel: "Chat",
+                CloseCardLabel: "Chiudi scheda",
+                VideoButtonLabel: "Video",
+                GoBackLabel: "Torna indietro",
+                EmailTitle: "Email",
+                ChatTitle: "Teams",
+                BusinessPhoneTitle: "Telefono aziendale",
+                CellPhoneTitle: "Telefono cellulare",
+                DepartmentTitle: "Dipartimento",
+                PersonTitle: "Titolo",
+                OfficeLocationTitle: "Sede ufficio",
+                CopyToClipboardButton: "Copia negli appunti",
+                ShowMoreSubtitle: "Mostra altri elementi",
+                SocialMediaSubSectionTitle: "Social Media"
             }
         },
         HandlebarsHelpers: {
@@ -409,7 +412,18 @@ define([], function () {
                     }
                 },
                 ImportExport: "Importa/Esporta impostazioni"
-            }
+            },
+            AudienceTargeting: {
+                GroupName: "Targeting del pubblico",
+                TargetAudienceLabel: "Pubblico di destinazione",
+                CacheDurationLabel: "Durata cache (ore)",
+                CacheDurationDescription: "Durata in ore per la memorizzazione nella cache delle informazioni sull'appartenenza al pubblico"
+            },
+            TitleStylingGroupName: "Stile del titolo della web part",
+            TitleFont: "Carattere del titolo",
+            TitleFontSize: "Dimensione carattere del titolo (px)",
+            TitleFontColor: "Colore del carattere del titolo",
+            ResetTitleStylingToDefault: "Ripristina lo stile del titolo predefinito"
         },
         Filters: {
             ApplyAllFiltersButtonLabel: "Applica",

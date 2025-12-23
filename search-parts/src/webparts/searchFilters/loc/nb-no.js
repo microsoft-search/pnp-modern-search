@@ -26,6 +26,7 @@ define([], function() {
                 SelectFilterComboBoxLabel: "Velg felt",
                 FilterNameLabel: "Felt for filter",
                 FilterMaxBuckets: "Antall verdier",
+                FilterMaxBucketsWarning: "Maksimalt antall verdier er 1000",
                 FilterDisplayName: "Visningsnavn",
                 FilterTemplate: "Mal",
                 FilterExpandByDefault: "Utvid som standard",
@@ -66,6 +67,14 @@ define([], function() {
                 FiltersTemplateFieldLabel: "Rediger filtermal",
                 FiltersTemplatePanelHeader: "Rediger filtermal"
             }
+        },
+        Styling: {
+            StylingOptionsGroupName: "Stilalternativer",
+            FilterBackgroundColorLabel: "Filter bakgrunnsfarge",
+            FilterBorderColorLabel: "Filter kantfarge",
+            FilterBorderThicknessLabel: "Filter kanttykkelse",
+            ResetToDefaultLabel: "Tilbakestill til standardstil",
+            ResetToDefaultDescription: "Tilbakestill alle stilalternativer til sine standardverdier"
         }
     }
 });

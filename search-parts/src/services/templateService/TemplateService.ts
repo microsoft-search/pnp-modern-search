@@ -389,7 +389,7 @@ export class TemplateService implements ITemplateService {
   }
 
   public applyDisambiguatedMgtPrefixIfNeeded(elementName: string): string {
-    if (!elementName || !this.MgtCustomElementHelper) {
+    if (!elementName || typeof elementName !== 'string' || !this.MgtCustomElementHelper) {
       return elementName;
     }
     const prefix = this.MgtCustomElementHelper.prefix;
@@ -814,9 +814,34 @@ export class TemplateService implements ITemplateService {
         hostConfiguration
       );
     } else {
-      const template = new this._adaptiveCardsTemplating.Template(
-        JSON.parse(templateContent)
-      );
+      if (!templateContent) {
+        console.warn("Adaptive Cards template content is undefined or empty");
+        return renderTemplateContent;
+      }
+
+      // Guard against undefined templating library
+      if (!this._adaptiveCardsTemplating || !this._adaptiveCardsTemplating.Template) {
+        console.error("Adaptive Cards templating library is not properly initialized");
+        return renderTemplateContent;
+      }
+
+      let parsedTemplate;
+      try {
+        parsedTemplate = JSON.parse(templateContent);
+      } catch (parseError) {
+        console.error("Failed to parse Adaptive Cards template as JSON:", parseError);
+        return renderTemplateContent;
+      }
+
+      let template;
+      try {
+        template = new this._adaptiveCardsTemplating.Template(
+          parsedTemplate
+        );
+      } catch (templateError) {
+        console.error("Failed to create Adaptive Cards template:", templateError);
+        return renderTemplateContent;
+      }
 
       // The root context will be available in the the card implicitly
       const context = {
@@ -1402,15 +1427,17 @@ export class TemplateService implements ITemplateService {
         result.didProcess = true;
       };
 
-      await import(
+      // IMPORTANT: Use the AdaptiveCardsLoader module which ensures that
+      // adaptive-expressions and adaptivecards-templating are loaded together
+      // in the correct order. This is necessary because adaptivecards-templating
+      // has a static import of adaptive-expressions, and dynamic imports may
+      // not properly link the modules if loaded separately.
+      const acLoader = await import(
         /* webpackChunkName: 'pnp-modern-search-adaptive-cards-bundle' */
-        "adaptive-expressions"
+        "./AdaptiveCardsLoader"
       );
 
-      this._adaptiveCardsTemplating = await import(
-        /* webpackChunkName: 'pnp-modern-search-adaptive-cards-bundle' */
-        "adaptivecards-templating"
-      );
+      this._adaptiveCardsTemplating = acLoader.AdaptiveCardsTemplating;
 
       const MarkdownIt = await import(
         /* webpackChunkName: 'pnp-modern-search-adaptive-cards-bundle' */
@@ -1418,6 +1445,16 @@ export class TemplateService implements ITemplateService {
       );
 
       this._markdownIt = new MarkdownIt.default();
+    }
+
+    // Ensure adaptivecards-templating is loaded even if _adaptiveCardsNS was already initialized
+    if (!this._adaptiveCardsTemplating) {
+      const acLoader = await import(
+        /* webpackChunkName: 'pnp-modern-search-adaptive-cards-bundle' */
+        "./AdaptiveCardsLoader"
+      );
+
+      this._adaptiveCardsTemplating = acLoader.AdaptiveCardsTemplating;
     }
   }
 
@@ -1438,7 +1475,13 @@ export class TemplateService implements ITemplateService {
       $root: templateContext,
     };
 
-    const card = template.expand(context);
+    let card;
+    try {
+      card = template.expand(context);
+    } catch (expandError) {
+      console.error("Failed to expand Adaptive Cards template:", expandError);
+      throw expandError;
+    }
     mainCard.parse(card, this._serializationContext);
 
     const mainHtml = mainCard.render();

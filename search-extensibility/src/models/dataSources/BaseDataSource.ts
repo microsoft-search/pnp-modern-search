@@ -106,4 +106,10 @@ export abstract class BaseDataSource<T> implements IDataSource {
         // No sortable fields by default
         return [];
     }
+
+    public async getItemsPreview(data: IDataSourceData, slots: { [key: string]: string }): Promise<IDataSourceData> {
+        // Default implementation - return data unchanged
+        // Derived classes should override this method to provide preview enhancement logic
+        return data;
+    }
 }

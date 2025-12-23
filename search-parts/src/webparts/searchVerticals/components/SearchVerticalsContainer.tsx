@@ -38,14 +38,41 @@ export default class SearchVerticalsContainer extends React.Component<ISearchVer
 
     let renderTitle: JSX.Element = null;
 
-    // Web Part title
-    renderTitle = <WebPartTitle
-      displayMode={this.props.webPartTitleProps.displayMode}
-      title={this.props.webPartTitleProps.title}
-      updateProperty={this.props.webPartTitleProps.updateProperty}
-      themeVariant={this.props.webPartTitleProps.themeVariant}
-      className={this.props.webPartTitleProps.className}
-    />;
+    // Web Part title with custom styling
+    const titleWrapperClass = `custom-title-wrapper-${this.props.instanceId || 'default'}`;
+    
+    if (this.props.titleFont || this.props.titleFontSize !== undefined || this.props.titleFontColor) {
+      const styleString = `
+        .${titleWrapperClass} *,
+        .${titleWrapperClass} div,
+        .${titleWrapperClass} span,
+        .${titleWrapperClass} h2,
+        .${titleWrapperClass} textarea {
+          ${this.props.titleFont ? `font-family: ${this.props.titleFont} !important;` : ''}
+          ${this.props.titleFontSize !== undefined ? `font-size: ${this.props.titleFontSize}px !important;` : ''}
+          ${this.props.titleFontColor ? `color: ${this.props.titleFontColor} !important;` : ''}
+        }
+      `;
+      
+      renderTitle = <div className={titleWrapperClass}>
+        <style key={`title-style-${this.props.titleFont}-${this.props.titleFontSize}-${this.props.titleFontColor}`} dangerouslySetInnerHTML={{ __html: styleString }} />
+        <WebPartTitle
+          displayMode={this.props.webPartTitleProps.displayMode}
+          title={this.props.webPartTitleProps.title}
+          updateProperty={this.props.webPartTitleProps.updateProperty}
+          themeVariant={this.props.webPartTitleProps.themeVariant}
+          className={this.props.webPartTitleProps.className}
+        />
+      </div>;
+    } else {
+      renderTitle = <WebPartTitle
+        displayMode={this.props.webPartTitleProps.displayMode}
+        title={this.props.webPartTitleProps.title}
+        updateProperty={this.props.webPartTitleProps.updateProperty}
+        themeVariant={this.props.webPartTitleProps.themeVariant}
+        className={this.props.webPartTitleProps.className}
+      />;
+    }
 
     const renderPivotItems = this.props.verticals.map(vertical => {
 
@@ -82,18 +109,49 @@ export default class SearchVerticalsContainer extends React.Component<ISearchVer
 
     const theme = getTheme();
 
-    return <ThemeProvider
-      theme={theme}
-      className={styles.searchVerticalsContainer}>
-      {renderTitle}
-      <Pivot
-        className={styles.dataVerticals}
-        onLinkClick={this.onVerticalSelected}
-        selectedKey={this.state.selectedKey}
-        theme={this.props.themeVariant as ITheme}>
-        {renderPivotItems}
-      </Pivot>
-    </ThemeProvider>;
+    const pivotStyles = {
+      root: {
+        backgroundColor: this.props.verticalBackgroundColor || undefined
+      },
+      link: {
+        fontSize: this.props.verticalFontSize ? `${this.props.verticalFontSize}px` : undefined,
+        selectors: {
+          ':hover': {
+            backgroundColor: this.props.verticalMouseOverColor || undefined
+          }
+        }
+      },
+      linkIsSelected: {
+        fontSize: this.props.verticalFontSize ? `${this.props.verticalFontSize}px` : undefined,
+        selectors: {
+          ':hover': {
+            backgroundColor: this.props.verticalMouseOverColor || undefined
+          }
+        }
+      }
+    };
+
+    const containerStyles: React.CSSProperties = {
+      borderStyle: this.props.verticalBorderColor || this.props.verticalBorderThickness ? 'solid' : undefined,
+      borderColor: this.props.verticalBorderColor || undefined,
+      borderWidth: this.props.verticalBorderThickness !== undefined ? `${this.props.verticalBorderThickness}px` : undefined
+    };
+
+    return <div style={containerStyles}>
+      <ThemeProvider
+        theme={theme}
+        className={styles.searchVerticalsContainer}>
+        {renderTitle}
+        <Pivot
+          className={styles.dataVerticals}
+          onLinkClick={this.onVerticalSelected}
+          selectedKey={this.state.selectedKey}
+          theme={this.props.themeVariant as ITheme}
+          styles={pivotStyles}>
+          {renderPivotItems}
+        </Pivot>
+      </ThemeProvider>
+    </div>;
   }
 
   public onVerticalSelected(item: PivotItem): void {

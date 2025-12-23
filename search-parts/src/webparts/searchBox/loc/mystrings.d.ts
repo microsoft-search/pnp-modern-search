@@ -35,6 +35,8 @@ declare interface ISearchBoxWebPartStrings {
             SearchButtonTextLabel: string;
             ResetToDefaultLabel: string;
             ResetToDefaultDescription: string;
+            ResetTitleStylingLabel: string;
+            ResetTitleStylingDescription: string;
         },
         AvailableConnectionsGroup: {
             GroupName: string;

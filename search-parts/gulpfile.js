@@ -50,6 +50,9 @@ const envCheck = build.subTask('environmentCheck', (gulp, config, done) => {
             generatedConfiguration.resolve.alias = {
                 handlebars: 'handlebars/dist/handlebars.min.js',
                 process: "process/browser",
+                // Force ALL imports of adaptive-expressions (including from adaptivecards-templating)
+                // to use the main entry (index.js) instead of browser field.
+                "adaptive-expressions": path.resolve(__dirname, 'node_modules/adaptive-expressions/lib/index.js'),
             };
 
             generatedConfiguration.resolve.fallback = {
@@ -57,6 +60,8 @@ const envCheck = build.subTask('environmentCheck', (gulp, config, done) => {
                 "util": require.resolve("util/"),
                 "url": require.resolve("url/"),
                 "querystring": require.resolve("querystring-es3"),
+                "os": require.resolve("os-browserify/browser"),
+                "assert": require.resolve("assert/"),
                 "fs": false
             };
 
@@ -114,7 +119,29 @@ const envCheck = build.subTask('environmentCheck', (gulp, config, done) => {
                 }
             });
 
-            generatedConfiguration.optimization.splitChunks = { cacheGroups: { vendors: false } };
+            // Configure splitChunks to allow deduplication of moment.js across locale chunks
+            // while keeping adaptive-expressions and adaptivecards-templating together
+            generatedConfiguration.optimization.splitChunks = {
+                cacheGroups: {
+                    // Keep moment.js in a single chunk that locale chunks can reference
+                    moment: {
+                        test: /[\\/]node_modules[\\/]\.pnpm[\\/]moment@[^\\/]+[\\/]node_modules[\\/]moment[\\/](?!locale)/,
+                        name: 'moment-base',
+                        chunks: 'all',
+                        priority: 20,
+                        enforce: true
+                    },
+                    // Prevent splitting adaptive-expressions to avoid duplicate function registrations
+                    adaptiveCards: {
+                        test: /[\\/]node_modules[\\/].*[\\/](adaptive-expressions|adaptivecards|adaptivecards-templating)[\\/]/,
+                        name: 'adaptive-cards-shared',
+                        chunks: 'all',
+                        priority: 10,
+                        enforce: true
+                    },
+                    default: false
+                }
+            };
 
             // pack each moment.js locale individually to optimize bundle
             generatedConfiguration.plugins.push(

@@ -136,4 +136,24 @@ export interface ISearchBoxContainerProps {
      * Text to display in search button
      */
     searchButtonText?: string;
+
+    /**
+     * Title font family
+     */
+    titleFont?: string;
+
+    /**
+     * Title font size in pixels
+     */
+    titleFontSize?: number;
+
+    /**
+     * Title font color
+     */
+    titleFontColor?: string;
+
+    /**
+     * Web part instance ID for unique styling
+     */
+    instanceId?: string;
 }

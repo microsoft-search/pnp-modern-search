@@ -35,7 +35,9 @@ define([], function () {
                 SearchIconNameDescription: "Fluent UI Icon-Name (z.B. Search, Forward, ChevronRight)",
                 SearchButtonTextLabel: "Text der Suchschaltfläche",
                 ResetToDefaultLabel: "Styling auf Standard zurücksetzen",
-                ResetToDefaultDescription: "Alle Styling-Optionen auf ihre Standardwerte zurücksetzen"
+                ResetToDefaultDescription: "Alle Styling-Optionen auf ihre Standardwerte zurücksetzen",
+                ResetTitleStylingLabel: "Titelstyling auf Standard zurücksetzen",
+                ResetTitleStylingDescription: "Alle Titelstyling-Optionen auf ihre Standardwerte zurücksetzen"
             },
             AvailableConnectionsGroup: {
                 GroupName: "Verfügbare Verbindungen",

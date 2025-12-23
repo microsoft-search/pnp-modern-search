@@ -17,7 +17,7 @@ The 'Search box' Web Part allows users to enter free text search queries connect
 | **Placeholder text** | The placeholder text to display in the search box. | _"Enter your search terms..."_
 | **Query input transformation template** | Query that will be sent to the page as URL fragment (`#`) | Search box keyword entered by the user.
 | **Send the query to a new page** | Sends the search query text to a new page. From here you can select the page URL, the open behavior and send method (URL fragment '#' or a query string parameter). The input value can be transformed before sending it to another page. `{inputQueryText}` is replaced with the value from the search box and [other tokens](../search-results/tokens.md) are also supported. | False.
-| **Reset query on clear** | Sends a new search query request when the search box is cleared. | False.
+| **Reset query on clear** | Sends a new search query request when the search box is cleared. | True.
 
 ### Search box styling
 
@@ -33,13 +33,24 @@ The search box styling section allows you to customize the visual appearance of 
 | **Border radius** | The border radius (in pixels) for rounded corners. | _2px_
 | **Background color** | The background color of the search input field. | _White_
 | **Text color** | The color of the text entered in the search box. | _Theme text color_
-| **Placeholder text color** | The color of the placeholder text when the search box is empty. | _Theme secondary text color_
+| **Placeholder text color** | The color of the placeholder text when the search box is empty. WCAG AA compliant default ensures 4.5:1 contrast ratio. | _#605e5c (WCAG AA compliant)_
 | **Search button color** | The background color of the search button. | _Theme primary color_
 | **Show search button when input is empty** | Display the search button even when the search input field is empty. | False
 | **Search button display** | Choose how the search button appears: Icon only, Text only, or Both (text with icon). | _Icon only_
 | **Search icon name** | The Fluent UI icon name to display on the search button (e.g., Search, Forward, ChevronRight). See [Fluent UI Icons](https://developer.microsoft.com/en-us/fluentui#/styles/web/icons) for available icons. | _Search_
 | **Search button text** | The text to display on the search button when using "Text only" or "Both" display modes. | _"Search"_
 | **Reset styling to default** | Reset all styling options to their default values. | N/A
+
+### Web part title styling
+
+The title styling section allows you to customize the visual appearance of the web part title.
+
+| **Setting** | **Description** | **Default value**
+|------------|---------------- | ----------
+| **Title font** | The font family to use for the web part title. | _Segoe UI_
+| **Title font size** | Controls the font size (in pixels) for the web part title. | _16px_
+| **Title font color** | The color of the web part title text. | _Theme primary color_
+| **Reset title styling to default** | Reset all title styling options to their default values. | N/A
 
 ### Query suggestions
 
@@ -60,3 +71,7 @@ The query suggestions allows users to easily find relevant query keywords based 
 !["Search Box connections"](../../assets/webparts/search-box/dynamic_data_source.png){: .center}
 
 Optionally, you can set a default query text coming from an other dynamic data source on the page. For instance, connect the search box to a page environment variable like a query string parameter. The value retrieved from a connected data source will be displayed automatically at page load in the text box if present and broadcasted to any other Web Parts connected to the search box Web Part (ex: a 'Search Results' Web Part) resulting to a cascading effect.
+
+### Audience Targeting
+
+You can control the visibility of the search box based on user group membership. See [Audience Targeting](../search-results/common/audience-targeting.md) for details.

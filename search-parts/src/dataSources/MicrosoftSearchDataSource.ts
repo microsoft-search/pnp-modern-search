@@ -1,6 +1,6 @@
-import { BaseDataSource, FilterSortType, FilterSortDirection, ITemplateSlot, BuiltinTemplateSlots, IDataContext, ITokenService, FilterBehavior, PagingBehavior, IDataFilterResult, IDataFilterResultValue, FilterComparisonOperator } from "@pnp/modern-search-extensibility";
+import { BaseDataSource, FilterSortType, FilterSortDirection, ITemplateSlot, BuiltinTemplateSlots, IDataContext, ITokenService, FilterBehavior, PagingBehavior, IDataFilterResult, IDataFilterResultValue, FilterComparisonOperator, IDataSourceData } from "@pnp/modern-search-extensibility";
 import { IPropertyPaneGroup, PropertyPaneLabel, IPropertyPaneField, PropertyPaneToggle, PropertyPaneHorizontalRule } from "@microsoft/sp-property-pane";
-import { cloneDeep, isEmpty, find } from '@microsoft/sp-lodash-subset';
+import { cloneDeep, isEmpty } from '@microsoft/sp-lodash-subset';
 import { MSGraphClientFactory } from "@microsoft/sp-http";
 import { TokenService } from "../services/tokenService/TokenService";
 import { ServiceScope } from '@microsoft/sp-core-library';
@@ -13,6 +13,7 @@ import { DataFilterHelper } from "../helpers/DataFilterHelper";
 import { IMicrosoftSearchResultSet } from "../models/search/IMicrosoftSearchResponse";
 import { ISortFieldConfiguration } from '../models/search/ISortFieldConfiguration';
 import { AsyncCombo } from "../controls/PropertyPaneAsyncCombo/components/AsyncCombo";
+import { DataSourceHelper } from '../helpers/DataSourceHelper';
 import { IAsyncComboProps } from "../controls/PropertyPaneAsyncCombo/components/IAsyncComboProps";
 import { PropertyPaneNonReactiveTextField } from "../controls/PropertyPaneNonReactiveTextField/PropertyPaneNonReactiveTextField";
 import { IMicrosoftSearchDataSourceData } from "../models/search/IMicrosoftSearchDataSourceData";
@@ -20,8 +21,9 @@ import { SortFieldDirection } from "@pnp/modern-search-extensibility";
 import * as React from "react";
 import { IMicrosoftSearchResponse } from "../models/search/IMicrosoftSearchResponse";
 import { BuiltinDataSourceProviderKeys } from "./AvailableDataSources";
-import { SortableFields } from "../common/Constants";
+import { AutoCalculatedDataSourceFields,SortableFields } from "../common/Constants";
 import LocalizationHelper from "../helpers/LocalizationHelper";
+import { ObjectHelper } from "../helpers/ObjectHelper";
 
 export enum EntityType {
     Message = 'message',
@@ -197,6 +199,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
 
     private _propertyFieldCollectionData: any = null;
     private _customCollectionFieldType: any = null;
+    props: any;
 
     public constructor(serviceScope: ServiceScope) {
         super(serviceScope);
@@ -593,7 +596,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         }
 
         if (propertyPath.localeCompare('dataSourceProperties.fields') === 0) {
-            let options = this.parseAndCleanOptions((cloneDeep(newValue) as IComboBoxOption[]));
+            let options = DataSourceHelper.parseAndCleanOptions((cloneDeep(newValue) as IComboBoxOption[]));
             this.properties.fields = options.map(v => { return v.key as string; });
             this.context.propertyPane.refresh();
             this.render();
@@ -622,7 +625,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             },
             {
                 slotName: BuiltinTemplateSlots.FileType,
-                slotField: 'resource.webUrl'
+                slotField: 'resource.listItem.fields.filetype'
             },
             {
                 slotName: BuiltinTemplateSlots.PreviewImageUrl,
@@ -638,11 +641,11 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             },
             {
                 slotName: BuiltinTemplateSlots.Date,
-                slotField: 'created'
+                slotField: 'resource.createdDateTime'
             },
             {
                 slotName: BuiltinTemplateSlots.SiteId,
-                slotField: 'resource.fields.normSiteID'
+                slotField: 'resource.listItem.fields.siteId'
             },
             {
                 slotName: BuiltinTemplateSlots.WebId,
@@ -650,11 +653,11 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             },
             {
                 slotName: BuiltinTemplateSlots.ListId,
-                slotField: 'resource.fields.normListID'
+                slotField: 'resource.parentReference.sharepointIds.listId'
             },
             {
                 slotName: BuiltinTemplateSlots.ItemId,
-                slotField: 'resource.fields.normUniqueID'
+                slotField: 'resource.listItem.id'
             },
             {
                 slotName: BuiltinTemplateSlots.IsFolder,
@@ -666,7 +669,19 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             },
             {
                 slotName: BuiltinTemplateSlots.Author,
-                slotField: 'resource.createdBy.user.displayName'
+                slotField: 'AuthorOWSUSER'
+            },
+            {
+                slotName: BuiltinTemplateSlots.ContentClass,
+                slotField: 'resource.fields.contentClass'
+            },
+            {
+                slotName: 'SPWebURL',
+                slotField: 'resource.listItem.fields.sitePath'
+            },
+            {
+                slotName: 'SiteTitle',
+                slotField: 'resource.listItem.fields.siteTitle'
             },
         ];
     }
@@ -674,11 +689,112 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
     public getSortableFields(): string[] {
         return this.properties.sortProperties.filter(sort => sort.isUserSort).map(field => field.sortField);
     }
+     /**
+     * Enhance items properties with preview information
+     * @param data the data to enhance
+     * @param slots the configured template slots
+     */
+    public async getItemsPreview(data: IDataSourceData, slots: { [key: string]: string }): Promise<IDataSourceData> 
+    {
+
+        const validPreviewExt = DataSourceHelper.getValidPreviewExtensions();
+        // Auto determined preview URL for Microsoft Search
+        if (slots[BuiltinTemplateSlots.PreviewUrl] === AutoCalculatedDataSourceFields.AutoPreviewUrl) 
+            {
+
+            data.items = data.items.map(item => {
+                const contentTypeId = item.resource.listItem.fields.contentTypeId;
+                const isContainer = DataSourceHelper.isContainerContentType(contentTypeId);
+
+                const webUrl = item.resource.listItem.fields.sitePath;
+                let pathProperty = item[slots[BuiltinTemplateSlots.Path]] || webUrl || item['DefaultEncodingURL'];
+
+                item.AutoPreviewUrl = DataSourceHelper.generatePreviewUrl({
+                    webUrl: webUrl,
+                    uniqueId: item.resource.listItem.id,
+                    fileType: item[slots[BuiltinTemplateSlots.FileType]] || item.resource.listItem.fields.filetype,
+                    pathProperty: pathProperty,
+                    isContainer: isContainer
+                });
+
+                return item;
+            });
+        }
+        // Auto determined preview image URL (thumbnail)
+        if (slots[BuiltinTemplateSlots.PreviewImageUrl] === AutoCalculatedDataSourceFields.AutoPreviewImageUrl) {
+
+            data.items = data.items.map(item => {
+
+                let contentClass = ObjectHelper.byPath(item, slots.ContentClass);
+
+                if (!isEmpty(contentClass) && (contentClass.toLocaleLowerCase() == "sts_site" || contentClass.toLocaleLowerCase() == "sts_web")) {
+                    item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = ObjectHelper.byPath(item, "SiteLogo");
+                }
+                else {
+                    const siteId = ObjectHelper.byPath(item, slots.SiteId);
+                    const webId = ObjectHelper.byPath(item, slots.WebId);
+                    const listId = ObjectHelper.byPath(item, slots.ListId);
+                    const itemId = ObjectHelper.byPath(item, slots.ItemId);
+
+                    const isFolder = ObjectHelper.byPath(item, slots.IsFolder);
+                    const isContainerType = DataSourceHelper.isContainerType(isFolder);
+
+                    // Try thumbnail URL first
+                    let thumbNailUrl = ObjectHelper.byPath(item, "PictureThumbnailURL");
+                    thumbNailUrl = DataSourceHelper.enhanceThumbnailUrl(thumbNailUrl);
+                    
+                    if (thumbNailUrl) {
+                        item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = thumbNailUrl;
+                    }
+                    else if (siteId && listId && itemId && !isContainerType) {
+                        // SharePoint item thumbnail
+                        const itemFileType = ObjectHelper.byPath(item, "resource.listItem.fields.filetype");
+                        
+                        if (itemFileType && validPreviewExt.indexOf(itemFileType.toUpperCase()) !== -1) {
+                            // Extract base URL from resource.webUrl
+                            let tenantUrl = item.resource.webUrl.split('/sites/')[0];
+                            if (tenantUrl == null) {
+                                tenantUrl = item.resource.webUrl.split('/teams/')[0];
+                            }
+                            
+                            item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = DataSourceHelper.generateSharePointThumbnailUrl({
+                                baseUrl: tenantUrl,
+                                siteId: item.resource.listItem.fields.siteId,
+                                webId: webId,
+                                listId: item.resource.parentReference.sharepointIds.listId,
+                                itemId: item.resource.parentReference.sharepointIds.listItemUniqueId
+                            });
+                        }
+                    } else {
+                        // Graph items logic
+                        const driveId = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.DriveId]);
+                        if (driveId && siteId && itemId) {
+                            item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = DataSourceHelper.generateGraphThumbnailUrl({
+                                baseUrl: this.context.pageContext.site.absoluteUrl,
+                                siteId,
+                                driveId,
+                                itemId
+                            });
+                        }
+                    }
+                }
+
+                // Validate URL is from trusted domain
+                item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = DataSourceHelper.validatePreviewImageUrl(
+                    item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl]
+                );
+                
+                return item;
+            });
+        }
+
+        return data;
+    }
 
     private initProperties(): void {
         this.properties.entityTypes = this.properties.entityTypes !== undefined ? this.properties.entityTypes : [EntityType.DriveItem];
 
-        const CommonFields = ["name", "webUrl", "filetype", "createdBy", "createdDateTime", "lastModifiedDateTime", "parentReference", "size", "description", "file", "folder", "subject", "bodyPreview", "replyTo", "from", "sender", "start", "end", "displayName", "givenName", "surname", "userPrincipalName", "phones", "department"];
+    const CommonFields = ["name", "webUrl", "filetype", "createdBy", "createdDateTime", "lastModifiedDateTime", "parentReference", "size", "description", "file", "folder", "subject", "bodyPreview", "replyTo", "from", "sender", "start", "end", "displayName", "givenName", "surname", "userPrincipalName", "mail", "phones", "department","contentTypeId","siteId", "webId", "contentClass", "siteTitle", "sitePath", "AuthorOWSUSER", "listId", "listItemId", "listItemUniqueId", "driveId"];
 
         this.properties.fields = this.properties.fields !== undefined ? this.properties.fields : CommonFields;
         this.properties.sortProperties = this.properties.sortProperties !== undefined ? this.properties.sortProperties : [];
@@ -823,7 +939,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             } else {
 
                 // Default sort
-                this.properties.sortProperties.filter(s => s.sortField).forEach(sortProperty => {
+                this.properties.sortProperties.filter(s => s.isDefaultSort).forEach(sortProperty => {
                     sortProperties.push({
                         name: sortProperty.sortField,
                         isDescending: sortProperty.sortDirection === SortFieldDirection.Descending ? true : false
@@ -951,16 +1067,50 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                     if (hitContainer.hits) {
 
                         const hits = hitContainer.hits.map(hit => {
-
                             // 'externalItem' will contain resource.properties but 'listItem' will be resource.fields
-                            const propertiesFieldName = hit.resource.properties ? 'properties' : (hit.resource.properties ? 'fields' : null)
+                            const propertiesFieldName = hit.resource.properties ? 'properties' : (hit.resource.fields ? 'fields' : null);
 
                             if (propertiesFieldName) {
-
-                                // Flatten 'fields' to be usable with the Search Fitler WP as refiners
                                 Object.keys(hit.resource[propertiesFieldName]).forEach(field => {
                                     hit[field] = hit.resource[propertiesFieldName][field];
                                 });
+                            }
+
+                            // Build a flat AuthorOWSUSER alias: Email|DisplayName|AADObjectId|UPN
+                            try {
+                                const resourceAny = ((hit as any).resource || {}) as any;
+                                const createdByUser = resourceAny?.createdBy?.user;
+                                
+                                // Get email, display name, and AAD Object ID from createdBy.user
+                                let email: string | undefined = createdByUser?.email;
+                                let dispName: string | undefined = createdByUser?.displayName?.trim();
+                                let aadObjectId: string | undefined = createdByUser?.id;
+                                
+                                // For UPN: try userPrincipalName from flat fields first (Person entity),
+                                // then fall back to email (common in M365)
+                                let upn: string | undefined = (hit as any).userPrincipalName || email;
+
+                                // Additional fallbacks for messages where author may be in `from.emailAddress`
+                                if (!email) {
+                                    email = resourceAny?.from?.emailAddress?.address || (hit as any).mail;
+                                }
+                                if (!dispName) {
+                                    dispName = resourceAny?.from?.emailAddress?.name?.trim();
+                                }
+                                if (!upn) {
+                                    upn = email; // Final fallback
+                                }
+
+                                if (email || dispName || aadObjectId || upn) {
+                                    (hit as any).AuthorOWSUSER = `${email ?? ''}|${dispName ?? ''}|${aadObjectId ?? ''}|${upn ?? ''}`;
+                                }
+                            } catch {
+                                // Non-fatal: entity types may not include these shapes
+                            }
+
+                            // Create FileType alias (capitalized) for compatibility with SharePoint Search field name
+                            if ((hit as any).filetype) {
+                                (hit as any).FileType = (hit as any).filetype;
                             }
 
                             return hit;
@@ -1007,13 +1157,5 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         this._itemsCount = itemsCount;
 
         return response;
-    }
-
-    private parseAndCleanOptions(options: IComboBoxOption[]): IComboBoxOption[] {
-        let optionWithComma = find(options, o => (o.key as string).indexOf(",") > 0);
-        if (optionWithComma) {
-            return (optionWithComma.key as string).split(",").map(k => { return { key: k.trim(), text: k.trim(), selected: true }; });
-        }
-        return options;
     }
 }

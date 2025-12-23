@@ -134,6 +134,14 @@ define([], function() {
             ModifierDescriptionPropertyLabel: "Description",
             EndWhenSuccessfullPropertyLabel:"Fin en cas de succès"        
       }
+    },
+    Styling: {
+      StylingOptionsGroupName: "Options de style",
+      ResultsBackgroundColorLabel: "Couleur d'arrière-plan des résultats",
+      ResultsBorderColorLabel: "Couleur de bordure des résultats",
+      ResultsBorderThicknessLabel: "Épaisseur de bordure des résultats",
+      ResetToDefaultLabel: "Réinitialiser le style par défaut",
+      ResetToDefaultDescription: "Réinitialiser toutes les options de style à leurs valeurs par défaut"
     }
   }
 });

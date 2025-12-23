@@ -132,4 +132,6 @@ export interface ISearchBoxWebPartProps extends IBaseWebPartProps {
      * Text to display in search button
      */
     searchButtonText?: string;
+
+
 }

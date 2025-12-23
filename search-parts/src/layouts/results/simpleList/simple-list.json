@@ -48,7 +48,7 @@
 			"$data": "${data.items}",
 			"items": [
                 {
-                    "id": "${jPath($data, concat('.',$root.slots['Id']))[0]}",
+                    "id": "${if(count(jPath($data, concat('.',$root.slots['Id']))) > 0, first(jPath($data, concat('.',$root.slots['Id']))), '')}",
                     "type": "ColumnSet",
                     "columns": [
                         {
@@ -58,7 +58,7 @@
 								{
 									"type": "TextBlock",
 									"wrap": true,
-									"text": "<pnp-iconfile size='32' class='icon' data-extension='${if(empty($root.slots['FileType']),'',string(jPath($data, concat('.',$root.slots['FileType']))[0]))}'></pnp-iconfile>",
+									"text": "<pnp-iconfile size='32' class='icon' data-extension='${if(empty($root.slots['FileType']),'',if(count(jPath($data, concat('.',$root.slots['FileType']))) > 0, string(first(jPath($data, concat('.',$root.slots['FileType'])))), ''))}'></pnp-iconfile>",
                                     "horizontalAlignment": "left"
 								}
                             ],
@@ -72,7 +72,7 @@
                             "items": [
                                 {
                                     "type": "TextBlock",
-                                    "text": "<a href='${string(jPath($data, concat('.',$root.slots['Path']))[0])}'>${jPath($data, concat('.',$root.slots['Title']))[0]}</a>",
+                                    "text": "<a href='${if(count(jPath($data, concat('.',$root.slots['Path']))) > 0, string(first(jPath($data, concat('.',$root.slots['Path'])))), '')}'>${if(count(jPath($data, concat('.',$root.slots['Title']))) > 0, first(jPath($data, concat('.',$root.slots['Title']))), '')}</a>",
                                     "color": "Accent",
                                     "size": "Medium",
                                     "weight": "Bolder",
@@ -80,12 +80,12 @@
                                 },
                                 {
                                     "type": "TextBlock",
-                                    "text": "<strong>${split(string(jPath($data, concat('.',$root.slots['Author']))[0]),'|')[1]}</strong>",
+                                    "text": "<strong>${if(count(jPath($data, concat('.',$root.slots['Author']))) > 0, if(count(split(string(first(jPath($data, concat('.',$root.slots['Author'])))),'|')) > 1, first(skip(split(string(first(jPath($data, concat('.',$root.slots['Author'])))),'|'), 1)), string(first(jPath($data, concat('.',$root.slots['Author']))))), '')}</strong>",
                                     "spacing": "Small"
                                 },
                                 {
                                     "type": "TextBlock",
-                                    "text": "{{DATE(${formatDateTime(string(jPath($data, concat('.',$root.slots['Date']))[0]),'yyyy-MM-ddTHH:mm:ssZ')},LONG)}}",
+                                    "text": "{{DATE(${if(count(jPath($data, concat('.',$root.slots['Date']))) > 0, formatDateTime(string(first(jPath($data, concat('.',$root.slots['Date'])))),'yyyy-MM-ddTHH:mm:ssZ'), '')},LONG)}}",
                                     "spacing": "Small",
                                     "$when": "${$root.slots['Date'] != ''}"
                                 },
@@ -108,7 +108,7 @@
                                     
                                     "type": "TextBlock",
                                     "wrap": true,
-                                    "text": "<pnp-filepreview data-preview-url='${string(jPath($data, concat('.',$root.slots['PreviewUrl']))[0])}' data-preview-image-url='${string(jPath($data, concat('.',$root.slots['PreviewImageUrl']))[0])}'><pnp-img alt='preview-image' width='120' src='${string(jPath($data, concat('.',$root.slots['PreviewImageUrl']))[0])}' loading='lazy'  data-error-image='' /> </pnp-filepreview>",
+                                    "text": "<pnp-filepreview data-preview-url='${if(count(jPath($data, concat('.',$root.slots['PreviewUrl']))) > 0, string(first(jPath($data, concat('.',$root.slots['PreviewUrl'])))), '')}' data-preview-image-url='${if(count(jPath($data, concat('.',$root.slots['PreviewImageUrl']))) > 0, string(first(jPath($data, concat('.',$root.slots['PreviewImageUrl'])))), '')}'><pnp-img alt='preview-image' width='120' src='${if(count(jPath($data, concat('.',$root.slots['PreviewImageUrl']))) > 0, string(first(jPath($data, concat('.',$root.slots['PreviewImageUrl'])))), '')}' loading='lazy'  data-error-image='' /> </pnp-filepreview>",
                                     "horizontalAlignment": "right"
                                 }
                             ],

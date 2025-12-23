@@ -1,4 +1,4 @@
-define([], function() {
+define([], function () {
     return {
         Tokens: {
             SelectTokenLabel: "Select a token...",
@@ -97,8 +97,8 @@ define([], function() {
                 SearchPlaceholder: "Search a value..."
             },
             CurrentVerticalNotSelectedMessage: "The current selected vertical does not match with the ones associated for this Web Part ({0}). It will remains blank in display mode.",
-            True:"Yes",
-            False:"No"
+            True: "Yes",
+            False: "No"
         },
         DataSources: {
             SharePointSearch: {
@@ -195,7 +195,8 @@ define([], function() {
             TextFieldApplyButtonText: "Apply",
             SortByPlaceholderText: "Sort by...",
             SortByDefaultOptionText: "Default",
-            DownloadButtonText: "Download"
+            DownloadButtonText: "Download",
+            DownloadCSVButtonText: "Download as CSV"
         },
         Layouts: {
             Debug: {
@@ -243,7 +244,7 @@ define([], function() {
                 EnableStickyHeader: "Enable sticky header",
                 StickyHeaderListViewHeight: "List view height (in px)",
                 EnableDownload: "Enable download",
-                UseAlternatingBackgroundColor:"Use Alternating Background Color"
+                UseAlternatingBackgroundColor: "Use Alternating Background Color"
             },
             Cards: {
                 Name: "Cards",
@@ -302,10 +303,12 @@ define([], function() {
                 ResetFieldsBtnLabel: "Reset fields to default values",
                 ShowPersonaCardOnHover: "Show persona card on hover",
                 ShowPersonaCardOnHoverCalloutMsg: "This feature uses Microsoft Graph to display information about the user and needs the following API permissions in your tenant to work: ['User.Read','People.Read','Contacts.Read','User.Read.All'].",
-                ShowPersonaCardOnHoverNative: "Show persona card on hover (LPC)",                
+                ShowPersonaCardOnHoverNative: "Show persona card on hover (LPC)",
                 ShowPersonaCardOnHoverCalloutMsgNative: "This feature uses the native SharePoint implementation to show the live persona card (LPC). See https://pnp.github.io/sp-dev-fx-controls-react/controls/LivePersona/ for considerations.",
                 ShowPersonaPresenceInfo: "Show presence",
                 ShowPersonaPresenceInfoCalloutMsg: "This feature needs the following API permissions in your tenant to work: ['Presence.Read.All']",
+                ShowHoverOnPictureOnly: "Show hover on picture only",
+                ShowHoverOnPictureOnlyCalloutMsg: "When enabled, the person card opens only when hovering the persona image (coin).",
                 Fields: {
                     ImageUrl: "Image URL",
                     PrimaryText: "Primary text",
@@ -342,48 +345,48 @@ define([], function() {
                 }
             },
             PersonCard: {
-              SendEmailLinkSubtitle: "Send email",
-              StartChatLinkSubtitle: "Start chat",
-              ShowMoreSectionButton: "Show more",
-              ContactSectionTitle: "Contact",
-              ReportsToSectionTitle: "Reports to",
-              DirectReportsSectionTitle: "Direct reports",
-              OrganizationSectionTitle: "Organization",
-              YouWorkWithSubSectionTitle: "You work with",
-              UserWorksWithSubSectionTitle: "works with",
-              EmailsSectionTitle: "Emails",
-              FilesSectionTitle: "Files",
-              SharedTextSubtitle: "Shared",
-              SkillsAndExperienceSectionTitle: "Skills & Experience",
-              AboutCompactSectionTitle: "About",
-              SkillsSubSectionTitle: "Skills",
-              LanguagesSubSectionTitle: "Languages",
-              WorkExperienceSubSectionTitle: "Work Experience",
-              EducationSubSectionTitle: "Education",
-              ProfessionalInterestsSubSectionTitle: "Professional Interests",
-              PersonalInterestsSubSectionTitle: "Personal Interests",
-              BirthdaySubSectionTitle: "Birthday",
-              CurrentYearSubtitle: "Current",
-              EndOfCard: "End of the card",
-              QuickMessage: "Send a quick message",
-              ExpandDetailsLabel: "Expand details",
-              SendMessageLabel: "Send message",
-              EmailButtonLabel: "Email",
-              CallButtonLabel: "Call",
-              ChatButtonLabel: "Chat", 
-              CloseCardLabel: "Close card",
-              VideoButtonLabel: "Video",
-              GoBackLabel: "Go Back",
-              EmailTitle: "Email",
-              ChatTitle: "Teams",
-              BusinessPhoneTitle: "Business Phone",
-              CellPhoneTitle: "Mobile Phone",
-              DepartmentTitle: "Department",
-              PersonTitle: "Title",
-              OfficeLocationTitle: "Office Location",
-              CopyToClipboardButton: "Copy to clipboard",
-              ShowMoreSubtitle: "Show more items",
-              SocialMediaSubSectionTitle: "Social Media"
+                SendEmailLinkSubtitle: "Send email",
+                StartChatLinkSubtitle: "Start chat",
+                ShowMoreSectionButton: "Show more",
+                ContactSectionTitle: "Contact",
+                ReportsToSectionTitle: "Reports to",
+                DirectReportsSectionTitle: "Direct reports",
+                OrganizationSectionTitle: "Organization",
+                YouWorkWithSubSectionTitle: "You work with",
+                UserWorksWithSubSectionTitle: "works with",
+                EmailsSectionTitle: "Emails",
+                FilesSectionTitle: "Files",
+                SharedTextSubtitle: "Shared",
+                SkillsAndExperienceSectionTitle: "Skills & Experience",
+                AboutCompactSectionTitle: "About",
+                SkillsSubSectionTitle: "Skills",
+                LanguagesSubSectionTitle: "Languages",
+                WorkExperienceSubSectionTitle: "Work Experience",
+                EducationSubSectionTitle: "Education",
+                ProfessionalInterestsSubSectionTitle: "Professional Interests",
+                PersonalInterestsSubSectionTitle: "Personal Interests",
+                BirthdaySubSectionTitle: "Birthday",
+                CurrentYearSubtitle: "Current",
+                EndOfCard: "End of the card",
+                QuickMessage: "Send a quick message",
+                ExpandDetailsLabel: "Expand details",
+                SendMessageLabel: "Send message",
+                EmailButtonLabel: "Email",
+                CallButtonLabel: "Call",
+                ChatButtonLabel: "Chat",
+                CloseCardLabel: "Close card",
+                VideoButtonLabel: "Video",
+                GoBackLabel: "Go Back",
+                EmailTitle: "Email",
+                ChatTitle: "Teams",
+                BusinessPhoneTitle: "Business Phone",
+                CellPhoneTitle: "Mobile Phone",
+                DepartmentTitle: "Department",
+                PersonTitle: "Title",
+                OfficeLocationTitle: "Office Location",
+                CopyToClipboardButton: "Copy to clipboard",
+                ShowMoreSubtitle: "Show more items",
+                SocialMediaSubSectionTitle: "Social Media"
             }
         },
         HandlebarsHelpers: {
@@ -408,7 +411,18 @@ define([], function() {
                     }
                 },
                 ImportExport: "Import/Export settings"
-            }
+            },
+            AudienceTargeting: {
+                GroupName: "Audience Targeting",
+                TargetAudienceLabel: "Target Audience",
+                CacheDurationLabel: "Cache duration (hours)",
+                CacheDurationDescription: "Duration in hours to cache the audience membership information"
+            },
+            TitleStylingGroupName: "Web part title styling",
+            TitleFont: "Title font",
+            TitleFontSize: "Title font size (px)",
+            TitleFontColor: "Title font color",
+            ResetTitleStylingToDefault: "Reset title styling to default"
         },
         Filters: {
             ApplyAllFiltersButtonLabel: "Apply",

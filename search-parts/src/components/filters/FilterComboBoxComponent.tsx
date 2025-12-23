@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { BaseWebComponent, IDataFilterValueInfo, ExtensibilityConstants, IDataFilterInfo, FilterConditionOperator } from '@pnp/modern-search-extensibility';
 import * as ReactDOM from 'react-dom';
-import { IComboBoxOption, Label, Icon, SelectableOptionMenuItemType, ComboBox, IComboBox, mergeStyles, Fabric } from '@fluentui/react';
+import { IComboBoxOption, Label, Icon, SelectableOptionMenuItemType, ComboBox, IComboBox, Fabric } from '@fluentui/react';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import update from 'immutability-helper';
 import styles from './FilterComboBoxComponent.module.scss';
@@ -122,12 +122,6 @@ export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilte
     
     public render() {
 
-        const wrapperClassName = mergeStyles({
-            selectors: {
-              '& .ms-ComboBox': { maxWidth: '250px' }
-            }
-        });
-
         let options = this.state.options;
 
         let foundValuesCount = 0;
@@ -158,7 +152,7 @@ export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilte
         }
 
         let renderIcon: JSX.Element = null;
-        let renderCombo: JSX.Element =  <Fabric className={wrapperClassName}>
+        let renderCombo: JSX.Element =  <Fabric>
                                             <ComboBox 
                                                 allowFreeform={true}
                                                 text={this.state.searchValue ? this.state.searchValue : this.props.defaultOptions.filter(option => option.selected).map(option => option.text).join(',')}
@@ -182,6 +176,12 @@ export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilte
                                                 }}
                                                 autoComplete='off'
                                                 styles={{
+                                                    root: {
+                                                        width: '90%'
+                                                    },
+                                                    container: {
+                                                        width: '90%'
+                                                    },
                                                     optionsContainerWrapper: {
                                                         overflow: 'hidden'
                                                     },

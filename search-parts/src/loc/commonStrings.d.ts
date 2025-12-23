@@ -195,6 +195,7 @@ declare interface ICommonStrings {
       SortByPlaceholderText: string;
       SortByDefaultOptionText: string;
       DownloadButtonText: string;
+      DownloadCSVButtonText: string;
     },
     Layouts: {
       Debug: {
@@ -305,6 +306,8 @@ declare interface ICommonStrings {
         ShowPersonaCardOnHoverCalloutMsgNative: string;
         ShowPersonaPresenceInfo: string;
         ShowPersonaPresenceInfoCalloutMsg: string;
+        ShowHoverOnPictureOnly: string;
+        ShowHoverOnPictureOnlyCalloutMsg: string;
         Fields: {
           ImageUrl: string;
           PrimaryText: string;
@@ -407,7 +410,18 @@ declare interface ICommonStrings {
           }
         },
         ImportExport: string;
-      }
+      },
+      AudienceTargeting: {
+        GroupName: string;
+        TargetAudienceLabel: string;
+        CacheDurationLabel: string;
+        CacheDurationDescription: string;
+      },
+      TitleStylingGroupName: string;
+      TitleFont: string;
+      TitleFontSize: string;
+      TitleFontColor: string;
+      ResetTitleStylingToDefault: string;
     },
     Filters: {
       ApplyAllFiltersButtonLabel: string;

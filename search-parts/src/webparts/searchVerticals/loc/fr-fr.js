@@ -31,6 +31,22 @@ define([], function() {
           AudienceInputPlaceholderText: "Rechercher un groupe",
           AudienceNoResultsFound: "Nous n'avons trouvé aucun groupe correspondant.",
           AudienceLoading: "Chargement des groupes..."
+        },
+        Styling: {
+            WebPartContentStylingGroupName: "Style du contenu du composant WebPart",
+            VerticalBackgroundColorLabel: "Couleur d'arrière-plan verticale",
+            MouseOverColorLabel: "Couleur au survol de la souris",
+            VerticalBorderColorLabel: "Couleur de bordure verticale",
+            VerticalBorderThicknessLabel: "Épaisseur de bordure verticale",
+            VerticalFontSizeLabel: "Taille de police verticale",
+            ResetToDefaultLabel: "Réinitialiser aux valeurs par défaut",
+            ResetToDefaultDescription: "Réinitialiser toutes les options de style de contenu à leurs valeurs par défaut",
+            WebPartTitleStylingGroupName: "Style du titre du composant WebPart",
+            TitleFontFamilyLabel: "Famille de polices du titre",
+            TitleFontSizeLabel: "Taille de police du titre",
+            TitleFontColorLabel: "Couleur de police du titre",
+            ResetTitleStylingLabel: "Réinitialiser le style du titre",
+            ResetTitleStylingDescription: "Réinitialiser toutes les options de style de titre à leurs valeurs par défaut"
         }
       }
     }

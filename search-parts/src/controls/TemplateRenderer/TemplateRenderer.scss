@@ -10,9 +10,13 @@
             .template--peopleListItem {
                 display: flex;
                 padding: 10px;
-                outline: none;
                 justify-content: space-between;
                 flex-wrap: wrap-reverse;
+                
+                &:focus-visible {
+                    outline: 2px solid #0078d4;
+                    outline-offset: 2px;
+                }
             }
             .template--listItem {
                 display: flex;
@@ -20,7 +24,11 @@
                 min-height: 110px;
                 justify-content: space-between;
                 flex-wrap: wrap-reverse;
-                outline: none;
+                
+                &:focus-visible {
+                    outline: 2px solid #0078d4;
+                    outline-offset: 2px;
+                }
                 &--result {
                     display: flex;
                     flex-grow: 0;

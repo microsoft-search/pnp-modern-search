@@ -34,4 +34,49 @@ export interface ISearchVerticalsContainerProps {
    * The default selected vertical
    */
   defaultSelectedKey: string;
+
+  /**
+   * Vertical tabs background color
+   */
+  verticalBackgroundColor?: string;
+
+  /**
+   * Vertical tabs border color
+   */
+  verticalBorderColor?: string;
+
+  /**
+   * Vertical tabs border thickness in pixels
+   */
+  verticalBorderThickness?: number;
+
+  /**
+   * Vertical tabs font size in pixels
+   */
+  verticalFontSize?: number;
+
+  /**
+   * Vertical tabs mouse over color
+   */
+  verticalMouseOverColor?: string;
+
+  /**
+   * Title font family
+   */
+  titleFont?: string;
+
+  /**
+   * Title font size in pixels
+   */
+  titleFontSize?: number;
+
+  /**
+   * Title font color
+   */
+  titleFontColor?: string;
+
+  /**
+   * Web part instance ID for unique styling
+   */
+  instanceId?: string;
 }
