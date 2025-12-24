@@ -664,8 +664,36 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#vertical-styling" class="md-nav__link">
+    Vertical styling
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#web-part-title-styling" class="md-nav__link">
+    Web part title styling
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#per-vertical-audience-targeting" class="md-nav__link">
+    Per-Vertical Audience Targeting
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#web-part-level-audience-targeting" class="md-nav__link">
+    Web Part Level Audience Targeting
+  </a>
   
 </li>
       
@@ -915,8 +943,36 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#vertical-styling" class="md-nav__link">
+    Vertical styling
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#web-part-title-styling" class="md-nav__link">
+    Web part title styling
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#per-vertical-audience-targeting" class="md-nav__link">
+    Per-Vertical Audience Targeting
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#web-part-level-audience-targeting" class="md-nav__link">
+    Web Part Level Audience Targeting
+  </a>
   
 </li>
       
@@ -962,7 +1018,7 @@
 <td>The vertical value that will be sent to connected 'Search Results' Web Parts. You can use this value using the <code>{verticals.value}</code> token. See <a href="../search-results/tokens/">tokens</a> for more info.</td>
 </tr>
 <tr>
-<td><strong>Fluent UIFabric icon name</strong></td>
+<td><strong>Fluent UI Fabric icon name</strong></td>
 <td>The optional Fluent UI icon to display for the tab. Refer to <a href="https://developer.microsoft.com/en-us/fluentui#/styles/web/icons">Fluent UI Fabric documentation</a> to see all available icons.</td>
 </tr>
 <tr>
@@ -983,10 +1039,113 @@
 </tr>
 <tr>
 <td><strong>Audience</strong></td>
-<td>Groups that this vertical will be visible to. If left empty the vertical will be visible for all users. Requires at least User.Read.All and GroupMember.Read.All permissions for the SharePoint Online Client Extensibility Web Application Principal.</td>
+<td>Microsoft Entra ID (Azure AD) security groups that this vertical will be visible to. If left empty the vertical will be visible for all users. See note below about limitations.</td>
 </tr>
 </tbody>
 </table>
+<h3 id="vertical-styling">Vertical styling<a class="headerlink" href="#vertical-styling" title="Permanent link">&para;</a></h3>
+<p>The vertical styling section allows you to customize the visual appearance of the vertical tabs to match your branding and design requirements.</p>
+<table>
+<thead>
+<tr>
+<th><strong>Setting</strong></th>
+<th><strong>Description</strong></th>
+<th><strong>Default value</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Vertical background color</strong></td>
+<td>The background color of the vertical tabs.</td>
+<td><em>Transparent</em></td>
+</tr>
+<tr>
+<td><strong>Vertical mouse-over color</strong></td>
+<td>The background color when hovering over a vertical tab.</td>
+<td><em>Theme lighter color</em></td>
+</tr>
+<tr>
+<td><strong>Vertical border color</strong></td>
+<td>The border color of the vertical tabs.</td>
+<td><em>Theme primary color</em></td>
+</tr>
+<tr>
+<td><strong>Vertical border thickness</strong></td>
+<td>The thickness of the vertical tab borders (in pixels).</td>
+<td><em>2px</em></td>
+</tr>
+<tr>
+<td><strong>Vertical font size</strong></td>
+<td>Controls the font size (in pixels) for the vertical tab text.</td>
+<td><em>14px</em></td>
+</tr>
+<tr>
+<td><strong>Reset styling to default</strong></td>
+<td>Reset all styling options to their default values.</td>
+<td>N/A</td>
+</tr>
+</tbody>
+</table>
+<h3 id="web-part-title-styling">Web part title styling<a class="headerlink" href="#web-part-title-styling" title="Permanent link">&para;</a></h3>
+<p>The title styling section allows you to customize the visual appearance of the web part title.</p>
+<table>
+<thead>
+<tr>
+<th><strong>Setting</strong></th>
+<th><strong>Description</strong></th>
+<th><strong>Default value</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Title font</strong></td>
+<td>The font family to use for the web part title.</td>
+<td><em>Segoe UI</em></td>
+</tr>
+<tr>
+<td><strong>Title font size</strong></td>
+<td>Controls the font size (in pixels) for the web part title.</td>
+<td><em>16px</em></td>
+</tr>
+<tr>
+<td><strong>Title font color</strong></td>
+<td>The color of the web part title text.</td>
+<td><em>Theme primary color</em></td>
+</tr>
+<tr>
+<td><strong>Reset title styling to default</strong></td>
+<td>Reset all title styling options to their default values.</td>
+<td>N/A</td>
+</tr>
+</tbody>
+</table>
+<h3 id="per-vertical-audience-targeting">Per-Vertical Audience Targeting<a class="headerlink" href="#per-vertical-audience-targeting" title="Permanent link">&para;</a></h3>
+<p>The per-vertical audience targeting allows you to show or hide individual vertical tabs based on Microsoft Entra ID (Azure AD) security group membership.</p>
+<p>cat /Users/miksvenson/repos/pnp/pnp-modern-search-v4/docs/usage/search-verticals/index.md! note "Limitations"
+    The per-vertical audience picker <strong>only supports Microsoft Entra ID security groups</strong>. It does not support SharePoint groups or individual users. If you need to target SharePoint groups or users, use the web part level audience targeting instead.</p>
+<p><strong>Requirements:</strong></p>
+<ul>
+<li>At least <code>User.Read.All</code> and <code>GroupMember.Read.All</code> permissions for the SharePoint Online Client Extensibility Web Application Principal</li>
+<li>Or <code>Directory.Read.All</code> permission</li>
+</ul>
+<p><strong>How it works:</strong></p>
+<ol>
+<li>In the verticals configuration panel, use the Audience picker to select one or more Entra ID security groups</li>
+<li>Users who are members of <strong>any</strong> selected group will see the vertical tab</li>
+<li>Users who are not members of any selected group will not see the tab</li>
+<li>If no audience is configured, the vertical is visible to everyone</li>
+<li>In Edit mode, all verticals are visible regardless of audience settings</li>
+</ol>
+<h2 id="web-part-level-audience-targeting">Web Part Level Audience Targeting<a class="headerlink" href="#web-part-level-audience-targeting" title="Permanent link">&para;</a></h2>
+<p>You can also control the visibility of the <strong>entire verticals web part</strong> based on user group membership. This is 
+**Requirements:e per-vertical audience targeting that controls individual tab visibility.</p>
+<p>The web part level targeting supports:</p>
+<ul>
+<li>SharePoint groups</li>
+<li>Microsoft Entra ID (Azure AD) security groups  </li>
+<li>Individual users</li>
+</ul>
+<p>See <a href="../search-results/common/audience-targeting/">Audience Targeting</a> for details on configuring web part level audience targeting.</p>
                 
               
               

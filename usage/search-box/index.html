@@ -714,6 +714,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#web-part-title-styling" class="md-nav__link">
+    Web part title styling
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#query-suggestions" class="md-nav__link">
     Query suggestions
   </a>
@@ -723,6 +730,13 @@
           <li class="md-nav__item">
   <a href="#connections" class="md-nav__link">
     Connections
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#audience-targeting" class="md-nav__link">
+    Audience Targeting
   </a>
   
 </li>
@@ -944,6 +958,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#web-part-title-styling" class="md-nav__link">
+    Web part title styling
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#query-suggestions" class="md-nav__link">
     Query suggestions
   </a>
@@ -953,6 +974,13 @@
           <li class="md-nav__item">
   <a href="#connections" class="md-nav__link">
     Connections
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#audience-targeting" class="md-nav__link">
+    Audience Targeting
   </a>
   
 </li>
@@ -1013,7 +1041,7 @@
 <tr>
 <td><strong>Reset query on clear</strong></td>
 <td>Sends a new search query request when the search box is cleared.</td>
-<td>False.</td>
+<td>True.</td>
 </tr>
 </tbody>
 </table>
@@ -1061,8 +1089,8 @@
 </tr>
 <tr>
 <td><strong>Placeholder text color</strong></td>
-<td>The color of the placeholder text when the search box is empty.</td>
-<td><em>Theme secondary text color</em></td>
+<td>The color of the placeholder text when the search box is empty. WCAG AA compliant default ensures 4.5:1 contrast ratio.</td>
+<td><em>#605e5c (WCAG AA compliant)</em></td>
 </tr>
 <tr>
 <td><strong>Search button color</strong></td>
@@ -1092,6 +1120,39 @@
 <tr>
 <td><strong>Reset styling to default</strong></td>
 <td>Reset all styling options to their default values.</td>
+<td>N/A</td>
+</tr>
+</tbody>
+</table>
+<h3 id="web-part-title-styling">Web part title styling<a class="headerlink" href="#web-part-title-styling" title="Permanent link">&para;</a></h3>
+<p>The title styling section allows you to customize the visual appearance of the web part title.</p>
+<table>
+<thead>
+<tr>
+<th><strong>Setting</strong></th>
+<th><strong>Description</strong></th>
+<th><strong>Default value</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Title font</strong></td>
+<td>The font family to use for the web part title.</td>
+<td><em>Segoe UI</em></td>
+</tr>
+<tr>
+<td><strong>Title font size</strong></td>
+<td>Controls the font size (in pixels) for the web part title.</td>
+<td><em>16px</em></td>
+</tr>
+<tr>
+<td><strong>Title font color</strong></td>
+<td>The color of the web part title text.</td>
+<td><em>Theme primary color</em></td>
+</tr>
+<tr>
+<td><strong>Reset title styling to default</strong></td>
+<td>Reset all title styling options to their default values.</td>
 <td>N/A</td>
 </tr>
 </tbody>
@@ -1129,6 +1190,8 @@
 <h3 id="connections">Connections<a class="headerlink" href="#connections" title="Permanent link">&para;</a></h3>
 <p><img alt="&quot;Search Box connections&quot;" class="center" src="../../assets/webparts/search-box/dynamic_data_source.png" /></p>
 <p>Optionally, you can set a default query text coming from an other dynamic data source on the page. For instance, connect the search box to a page environment variable like a query string parameter. The value retrieved from a connected data source will be displayed automatically at page load in the text box if present and broadcasted to any other Web Parts connected to the search box Web Part (ex: a 'Search Results' Web Part) resulting to a cascading effect.</p>
+<h3 id="audience-targeting">Audience Targeting<a class="headerlink" href="#audience-targeting" title="Permanent link">&para;</a></h3>
+<p>You can control the visibility of the search box based on user group membership. See <a href="../search-results/common/audience-targeting/">Audience Targeting</a> for details.</p>
                 
               
               

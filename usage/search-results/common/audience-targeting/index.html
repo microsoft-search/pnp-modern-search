@@ -9,14 +9,14 @@
       
       
       
-        <link rel="canonical" href="http://127.0.0.1:8000/usage/search-results/layouts/details-list/">
+        <link rel="canonical" href="http://127.0.0.1:8000/usage/search-results/common/audience-targeting/">
       
       <link rel="icon" href="../../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-7.2.4">
     
     
       
-        <title>Details list - PnP Modern Search (v4)</title>
+        <title>Audience Targeting - PnP Modern Search (v4)</title>
       
     
     
@@ -64,6 +64,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#audience-targeting" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -89,7 +94,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Details list
+              Audience Targeting
             
           </span>
         </div>
@@ -488,7 +493,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../" class="md-nav__link">
+      <a href="../../layouts/" class="md-nav__link">
         Layouts
       </a>
     </li>
@@ -820,20 +825,58 @@
               </div>
             
             
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#how-it-works" class="md-nav__link">
+    How it works
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cache-behavior" class="md-nav__link">
+    Cache behavior
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
           
           <div class="md-content" data-md-component="content">
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/microsoft-search/pnp-modern-search/blob/develop/docs/usage/search-results/layouts/details-list.md" title="Edit this page" class="md-content__button md-icon">
+                  <a href="https://github.com/microsoft-search/pnp-modern-search/blob/develop/docs/usage/search-results/common/audience-targeting.md" title="Edit this page" class="md-content__button md-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
                   </a>
                 
                 
-                  <h1>Details list</h1>
-                
-                <p>The 'details list' layout allows you to display items as a structured list, the same way as a SharePoint document library or list.</p>
-<p><img alt="&quot;Details list layout&quot;" class="center" src="../../../../assets/webparts/search-results/layouts/details_list_layout.png" /> </p>
+                <h1 id="audience-targeting">Audience Targeting<a class="headerlink" href="#audience-targeting" title="Permanent link">&para;</a></h1>
+<p>Audience targeting allows you to control the visibility of the web part based on user membership in SharePoint groups, Microsoft Entra ID (Azure AD) security groups, or specific users.</p>
+<p><img alt="&quot;Audience targeting settings&quot;" class="center" src="../../../../assets/webparts/audience-settings.png" /></p>
 <table>
 <thead>
 <tr>
@@ -844,42 +887,54 @@
 </thead>
 <tbody>
 <tr>
-<td><strong>Manage columns</strong></td>
-<td>Allows you to build you own table view by adding or removing columns dynamically. For each column, you get the following options:<br><p align="center"><a href="../../../../assets/webparts/search-results/layouts/details_list_fields.png"><img alt="&quot;Manage columns&quot;" src="../../../../assets/webparts/search-results/layouts/details_list_fields.png" /></a></p><ul><li><strong>Sort order</strong>: the order of the column in the table.</li><li><strong>Column name</strong>: the column friendly name to display.</li><li><strong>Column value</strong>: you can choose here from the list of Selected Properties, without any transformation or use an Handlebars expression by clicking on the checkbox next to it. In this case, all Handlebars helpers from the main template are available and you can also add you own HTML markup in the column value. For HTML fields you can use the special variable <code>@root.theme</code> to use theme colors (ex: <code>@root.theme.palette.themePrimary</code>).<br>You can specify a different field for sorting when using an Handlebars expression by specifying the field from the separate dropdown.<br><img alt="Handlebars Expression" src="../../../../assets/webparts/search-results/layouts/details_list_hb_expr.png" /><br><br><img alt="Handlebars Expression 2" src="../../../../assets/webparts/search-results/layouts/details_list_hb_expr2.png" /></li><li><strong>Minimum width in px</strong>: the minimum width of the column in pixels.</li><li><strong>Maximum width in px</strong>: the maximum width of the column in pixels.</li><li><strong>Sortable</strong>: allows you to sort column values according to the <strong>data source sort settings</strong>. It means you must first configure the sort setting at data source level with option <em>'User sort'</em> to <code>true</code> to see them in the details list columns configuration. Sort is perfromed one column at a time.</li><li><strong>Resizable</strong>: allows you to resize the column dynamically in display mode.</li><li><strong>Multiline</strong>: if the column column should be multiline. By default only ellipsis (...) will be display for larger text.</li></ul></td>
-<td></td>
+<td><strong>Target Audience</strong></td>
+<td>Select SharePoint groups, Microsoft Entra ID security groups, or individual users. The web part will only be visible if the current user is a member of at least one selected group or matches a selected user. If no audience is selected, the web part is visible to everyone.</td>
+<td>Empty (visible to everyone)</td>
 </tr>
 <tr>
-<td><strong>Show file icon</strong></td>
-<td>Hide or display the file icon in the first column.</td>
-<td>True.</td>
-</tr>
-<tr>
-<td><strong>Compact mode</strong></td>
-<td>Display the details list in compact mode.</td>
-<td>False.</td>
-</tr>
-<tr>
-<td><strong>Enable grouping</strong></td>
-<td>Display a grouped list, grouped by the specified column. You may also specify a list of additional columns to group by in a hierarchy of groups.</td>
-<td>False.</td>
-</tr>
-<tr>
-<td><strong>Enable sticky header</strong></td>
-<td>Display the details list with a sticky header that will stay in place when scrolling. Specify the desired height for the view (in pixels) and then specify the desired items per page in <em>Number of items per page</em> under <em>Paging options</em> and all items on the page will be scrollable within the view.</td>
-<td>False.</td>
-</tr>
-<tr>
-<td><strong>Enable download</strong></td>
-<td><strong>Documents:</strong><br>Enable download of selected files. Requires <em>Allow items selection</em> to be enabled and supports both single and multiple selection. If single selection is enabled the selected file will be downloaded as is. If multiple selection is enabled the selected files and folders will be downloaded in a single zip file like in SharePoint document libraries. Requires <em>SPWebUrl</em>, <em>ContentTypeId</em>, <em>NormListID</em> and <em>NormUniqueID</em> to be selected in <em>Selected properties</em>. <br><strong>ListItems:</strong><br>If the selected items are list items, the values in the columns will be exported to a CSV file, and each column will be seperated by a semi colon <br> If the selection is a mix of documents and list items , or contains other kinds of content, like Sites, then the download button is NOT shown</td>
-<td>False.</td>
-</tr>
-<tr>
-<td><strong>Use Alternating Background color</strong></td>
-<td>Enables the use of alternating background color.The alternating background color is set to themeVariant.semanticColors.bodyBackgroundChecked, and it can not be changed in the web part properties.<br><br><img alt="Alternating background color" src="../../../../assets/webparts/search-results/layouts/Details-List-Alternating-background-color.png" /></td>
-<td>False.</td>
+<td><strong>Cache Duration (hours)</strong></td>
+<td>How long to cache audience membership results. Microsoft Entra ID group membership is cached in localStorage, while SharePoint group membership is cached in sessionStorage.</td>
+<td>1</td>
 </tr>
 </tbody>
 </table>
+<h2 id="how-it-works">How it works<a class="headerlink" href="#how-it-works" title="Permanent link">&para;</a></h2>
+<ul>
+<li>When audiences are configured, the web part checks if the current user is a member of any of the selected groups or matches any of the selected users.</li>
+<li>If the user matches <strong>at least one</strong> selected audience (OR logic), the web part renders normally.</li>
+<li>If the user does not match any audience, the web part renders nothing (empty).</li>
+<li>In <strong>Edit mode</strong>, the web part always renders regardless of audience settings, so page editors can configure it.</li>
+<li>Group membership c|<strong>Cache Duration (hours)</strong> | How long to cache audience membership resuted audience types</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>SharePoint Group</strong></td>
+<td>Any SharePoint group in the current site. Membership is checked via SharePoint REST API.</td>
+</tr>
+<tr>
+<td><strong>Microsoft Entra ID Security Group</strong></td>
+<td>Security groups from Microsoft Entra ID (Azure AD). Membership is checked via Microsoft Graph API using transitive membership (includes nested groups).</td>
+</tr>
+<tr>
+<td><strong>User</strong></td>
+<td>Individual users by email or login name. Direct match against the current user.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="cache-behavior">Cache behavior<a class="headerlink" href="#cache-behavior" title="Permanent link">&para;</a></h2>
+<p>To minimize API calls and improve performance, audience membership results are cached:</p>
+<ul>
+<li><strong>Microsoft Entra ID groups</strong>: Cached in <code>localStorage</code> with the key <code>pnp-search-aad-groups</code> for the duration specified.</li>
+<li><strong>SharePoint groups</strong>: Cached in <code>sessionStorage</code> with per-group keys for the duration specified.</li>
+</ul>
+<p>The cache is automatically invalidated when the duration expires.</p>
                 
               
               

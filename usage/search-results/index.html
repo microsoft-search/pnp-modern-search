@@ -488,6 +488,40 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#styling" class="md-nav__link">
+    Styling
+  </a>
+  
+    <nav class="md-nav" aria-label="Styling">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#results-styling" class="md-nav__link">
+    Results styling
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#web-part-title-styling" class="md-nav__link">
+    Web part title styling
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-settings" class="md-nav__link">
+    Common Settings
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -894,6 +928,40 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#styling" class="md-nav__link">
+    Styling
+  </a>
+  
+    <nav class="md-nav" aria-label="Styling">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#results-styling" class="md-nav__link">
+    Results styling
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#web-part-title-styling" class="md-nav__link">
+    Web part title styling
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-settings" class="md-nav__link">
+    Common Settings
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -913,12 +981,10 @@
                 
                 <h1 id="search-results-web-part">Search Results Web Part<a class="headerlink" href="#search-results-web-part" title="Permanent link">&para;</a></h1>
 <p>The <em>'Search Results' Web Part</em> is the fundamental building block of whole global solution. Its purpose is basically to get data from a specifc source and render them in a specific native or custom layout based on Handlebars and web components.</p>
-<p>This Web Part can be used <strong>alone</strong> or <strong>connected to other Web Parts</strong> to add dyanmic interactions (filters, search box or verticals). To use the Web Part on a SharePoint page:</p>
-<ol>
-<li>Edit your SharePoint modern page.</li>
-<li>Search for the <em>'PnP - Search Results'</em> Web Part and add it to your page.<br><br>
-    <em>You may use "PnP - Search Rollup" instead if you don't need to connect web parts. This version support being lazy loaded in the SharePoint framework to optimize page loading.</em></li>
-</ol>
+<p>This Web Part can be used <strong>alone</strong> or <strong>connected to other Web Parts</strong> to add dyanmic interactions (filters, search box or verticals). To use the Web Part on a SharePoint page:
+1. Edit your SharePoint modern page.
+2. Search for the <em>'PnP - Search Results'</em> Web Part and add it to your page.<br><br>
+    <em>You may use "PnP - Search Rollup" instead if you don't need to connect web parts. This version support being lazy loaded in the SharePoint framework to optimize page loading.</em></p>
 <p><img alt="&quot;PnP Search Results&quot;" class="center" src="../../assets/webparts/search-results/search_results_wp_picker.png" /></p>
 <p><img alt="&quot;PnP Search Results&quot;" class="center" src="../../assets/webparts/search-results/search_results_wp_placeholder.png" /></p>
 <h2 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">&para;</a></h2>
@@ -929,6 +995,79 @@
 <li><a href="connections/"><strong>Connections</strong></a>: How the Web Part will be connected to others in the page.</li>
 <li><a href="../../extensibility/"><strong>Extensibility</strong></a>: How the Web Part will be connected to others in the page.</li>
 </ol>
+<h2 id="styling">Styling<a class="headerlink" href="#styling" title="Permanent link">&para;</a></h2>
+<h3 id="results-styling">Results styling<a class="headerlink" href="#results-styling" title="Permanent link">&para;</a></h3>
+<p>The results styling section allows you to customize the visual appearance of the results container to match your branding and design requirements.</p>
+<table>
+<thead>
+<tr>
+<th><strong>Setting</strong></th>
+<th><strong>Description</strong></th>
+<th><strong>Default value</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Results background color</strong></td>
+<td>The background color of the results container.</td>
+<td><em>Transparent</em></td>
+</tr>
+<tr>
+<td><strong>Results border color</strong></td>
+<td>The border color of the results container.</td>
+<td><em>Theme primary color</em></td>
+</tr>
+<tr>
+<td><strong>Results border thickness</strong></td>
+<td>The thickness of the results container borders (in pixels).</td>
+<td><em>1px</em></td>
+</tr>
+<tr>
+<td><strong>Reset styling to default</strong></td>
+<td>Reset all styling options to their default values.</td>
+<td>N/A</td>
+</tr>
+</tbody>
+</table>
+<h3 id="web-part-title-styling">Web part title styling<a class="headerlink" href="#web-part-title-styling" title="Permanent link">&para;</a></h3>
+<p>The title styling section allows you to customize the visual appearance of the web part title.</p>
+<table>
+<thead>
+<tr>
+<th><strong>Setting</strong></th>
+<th><strong>Description</strong></th>
+<th><strong>Default value</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Title font</strong></td>
+<td>The font family to use for the web part title.</td>
+<td><em>Segoe UI</em></td>
+</tr>
+<tr>
+<td><strong>Title font size</strong></td>
+<td>Controls the font size (in pixels) for the web part title.</td>
+<td><em>16px</em></td>
+</tr>
+<tr>
+<td><strong>Title font color</strong></td>
+<td>The color of the web part title text.</td>
+<td><em>Theme primary color</em></td>
+</tr>
+<tr>
+<td><strong>Reset title styling to default</strong></td>
+<td>Reset all title styling options to their default values.</td>
+<td>N/A</td>
+</tr>
+</tbody>
+</table>
+<h2 id="common-settings">Common Settings<a class="headerlink" href="#common-settings" title="Permanent link">&para;</a></h2>
+<p>These settings are available across all PnP Modern Search web parts:</p>
+<ul>
+<li><a href="common/audience-targeting/"><strong>Audience Targeting</strong></a>: Control web part visibility based on user group membership.</li>
+<li><a href="common/paging/"><strong>Paging</strong></a>: Configure pagination for data display.</li>
+</ul>
                 
               
               

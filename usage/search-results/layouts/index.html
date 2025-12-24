@@ -1173,7 +1173,7 @@
 <tbody>
 <tr>
 <td><strong>Manage columns</strong></td>
-<td>Allows you to build you own table view by adding or removing columns dynamically. For each column, you get the following options:<br><p align="center"><a href="../../../assets/webparts/search-results/layouts/details_list_fields.png"><img alt="&quot;Manage columns&quot;" src="../../../assets/webparts/search-results/layouts/details_list_fields.png" /></a></p><ul><li><strong>Sort order</strong>: the order of the column in the table.</li><li><strong>Column name</strong>: the column friendly name to display.</li><li><strong>Column value</strong>: you can choose here either a field from the data source current results set (from the list or as free text) without any transformation or use an Handlebars expression by clicking on the checkbox next to it. In this case, all Handlebars helpers from the main template are available and you can also add you own HTML markup in the column value. For HTML fields you can use the special variable <code>@root.theme</code> to use theme colors (ex: <code>@root.theme.palette.themePrimary</code>).<br>You can specify a different field for sorting when using an Handlebars expression by specifying the field from the separate dropdown.<br><img alt="Handlebars Expression" src="../../../assets/webparts/search-results/layouts/details_list_hb_expr.png" /><br><br><img alt="Handlebars Expression 2" src="../../../assets/webparts/search-results/layouts/details_list_hb_expr2.png" /></li><li><strong>Minimum width in px</strong>: the minimum width of the column in pixels.</li><li><strong>Maximum width in px</strong>: the maximum width of the column in pixels.</li><li><strong>Sortable</strong>: allows you to sort column values according to the <strong>data source sort settings</strong>. It means you must first configure the sort setting at data source level with option <em>'User sort'</em> to <code>true</code> to see them in the details list columns configuration. Sort is perfromed one column at a time.</li><li><strong>Resizable</strong>: allows you to resize the column dynamically in display mode.</li><li><strong>Multiline</strong>: if the column column should be multiline. By default only ellipsis (...) will be display for larger text.</li></ul></td>
+<td>Allows you to build you own table view by adding or removing columns dynamically. For each column, you get the following options:<br><p align="center"><a href="../../../assets/webparts/search-results/layouts/details_list_fields.png"><img alt="&quot;Manage columns&quot;" src="../../../assets/webparts/search-results/layouts/details_list_fields.png" /></a></p><ul><li><strong>Sort order</strong>: the order of the column in the table.</li><li><strong>Column name</strong>: the column friendly name to display.</li><li><strong>Column value</strong>: you can choose here from the list of Selected Properties, without any transformation or use an Handlebars expression by clicking on the checkbox next to it. In this case, all Handlebars helpers from the main template are available and you can also add you own HTML markup in the column value. For HTML fields you can use the special variable <code>@root.theme</code> to use theme colors (ex: <code>@root.theme.palette.themePrimary</code>).<br>You can specify a different field for sorting when using an Handlebars expression by specifying the field from the separate dropdown.<br><img alt="Handlebars Expression" src="../../../assets/webparts/search-results/layouts/details_list_hb_expr.png" /><br><br><img alt="Handlebars Expression 2" src="../../../assets/webparts/search-results/layouts/details_list_hb_expr2.png" /></li><li><strong>Minimum width in px</strong>: the minimum width of the column in pixels.</li><li><strong>Maximum width in px</strong>: the maximum width of the column in pixels.</li><li><strong>Sortable</strong>: allows you to sort column values according to the <strong>data source sort settings</strong>. It means you must first configure the sort setting at data source level with option <em>'User sort'</em> to <code>true</code> to see them in the details list columns configuration. Sort is perfromed one column at a time.</li><li><strong>Resizable</strong>: allows you to resize the column dynamically in display mode.</li><li><strong>Multiline</strong>: if the column column should be multiline. By default only ellipsis (...) will be display for larger text.</li></ul></td>
 <td></td>
 </tr>
 <tr>
@@ -1198,7 +1198,7 @@
 </tr>
 <tr>
 <td><strong>Enable download</strong></td>
-<td>Enable download of selected files. Requires <em>Allow items selection</em> to be enabled and supports both single and multiple selection. If single selection is enabled the selected file will be downloaded as is. If multiple selection is enabled the selected files and folders will be downloaded in a single zip file like in SharePoint document libraries. Requires <em>SPWebUrl</em>, <em>ContentTypeId</em>, <em>NormListID</em> and <em>NormUniqueID</em> to be selected in <em>Selected properties</em>.</td>
+<td><strong>Documents:</strong><br>Enable download of selected files. Requires <em>Allow items selection</em> to be enabled and supports both single and multiple selection. If single selection is enabled the selected file will be downloaded as is. If multiple selection is enabled the selected files and folders will be downloaded in a single zip file like in SharePoint document libraries. Requires <em>SPWebUrl</em>, <em>ContentTypeId</em>, <em>NormListID</em> and <em>NormUniqueID</em> to be selected in <em>Selected properties</em>. <br><strong>ListItems:</strong><br>If the selected items are list items, the values in the columns will be exported to a CSV file, and each column will be seperated by a semi colon <br> If the selection is a mix of documents and list items , or contains other kinds of content, like Sites, then the download button is NOT shown</td>
 <td>False.</td>
 </tr>
 <tr>
@@ -1242,7 +1242,7 @@
 </tr>
 <tr>
 <td><strong>Show page dots</strong></td>
-<td>Enable or disable slider navigation. You can adjust the dots position by updating the <code>.flickity-page-dots</code> CSS class.</td>
+<td>Enable or disable slider navigation.</td>
 <td>True.</td>
 </tr>
 <tr>
@@ -1327,6 +1327,11 @@
 <tr>
 <td><strong>Show presence</strong></td>
 <td><p>If enabled, the person's presence-information will be displayed in the bottom right corner of the user's profile picture.</p>This feature uses Microsoft Graph and needs the API permission 'Presence.Read.All' in your tenant to work.</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Show hover on picture only</strong></td>
+<td>If enabled, the person card (LPC) or the persona card will only appear when hovering over the profile picture, not the entire item. This provides a more focused hover experience and is useful for compact layouts.</td>
 <td></td>
 </tr>
 <tr>
