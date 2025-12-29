@@ -1,0 +1,9 @@
+# SPFx requires hoisted dependencies for proper webpack bundling
+shamefully-hoist=true
+
+# Allow flexible peer dependency resolution
+strict-peer-dependencies=false
+auto-install-peers=false
+
+# Use same lockfile format for consistency
+lockfile-version=9
