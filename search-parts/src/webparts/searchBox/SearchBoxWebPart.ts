@@ -401,6 +401,9 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
         }
 
         this._bindHashChange();
+
+        // Call base class method to persist property changes
+        super.onPropertyPaneFieldChanged(propertyPath, oldValue, newValue);
     }
 
     protected async onPropertyPaneConfigurationStart() {

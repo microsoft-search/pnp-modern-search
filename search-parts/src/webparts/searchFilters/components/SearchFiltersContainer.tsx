@@ -77,9 +77,14 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
         } else {
 
-            // Content loading
-            templateContent = this.props.templateService.getTemplateMarkup(this.props.templateContent);
-            const templateContext = this.getTemplateContext();
+      // Content loading
+      templateContent = this.props.templateService.getTemplateMarkup(this.props.templateContent);
+      const templateContext = this.getTemplateContext();
+
+      // Create a key that excludes the context property to avoid circular reference serialization
+      const contextForKey = { ...templateContext };
+      delete contextForKey.context;
+      const templateContextKey = JSON.stringify(contextForKey);
 
             renderWpContent = <TemplateRenderer
                 key={JSON.stringify(templateContext)}
@@ -159,15 +164,17 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         }
     }
 
-    /**
-     * Determines filters to be sent to the Handlebars templates as context with enhanced information from configuration
-     * @param availableFilters the available filter results returned from the data source
-     * @param currentUIFilters the current selected filters in the UI
-     * @param filtersConfiguration the filter configuration from the property pane
-     */
-    private getFiltersToDisplay(availableFilters: IDataFilterResult[], currentUiFilters: IDataFilterInternal[], filtersConfiguration: IDataFilterConfiguration[]): void {
+  /**
+   * Determines filters to be sent to the Handlebars templates as context with enhanced information from configuration
+   * @param availableFilters the available filter results returned from the data source
+   * @param currentUIFilters the current selected filters in the UI
+   * @param filtersConfiguration the filter configuration from the property pane
+   */
+  private async getFiltersToDisplay(availableFilters: IDataFilterResult[], currentUiFilters: IDataFilterInternal[], filtersConfiguration: IDataFilterConfiguration[]): Promise<void> {
 
-        const updatedFilters: IDataFilterInternal[] = availableFilters.map(availableFilter => {
+    const updatedFilters: IDataFilterInternal[] = [];
+
+    for (const availableFilter of availableFilters) {
 
             let values: IDataFilterValueInternal[] = [];
 
@@ -271,26 +278,87 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
                 const filterOperator = currentUiFilters[selectedFilterIdx] ? currentUiFilters[selectedFilterIdx].operator : filterConfiguration.operator;
 
-                // Merge information with filter configuration and other useful proeprties
-                const filterResultInternal: IDataFilterInternal = {
-                    displayName: filterConfiguration.displayValue && filterConfiguration.displayValue.trim() ? filterConfiguration.displayValue : availableFilter.filterName,
-                    filterName: availableFilter.filterName,
-                    isMulti: !filterConfiguration.isMulti ? false : filterConfiguration.isMulti,
-                    showCount: !filterConfiguration.showCount ? false : filterConfiguration.showCount,
-                    expandByDefault: !filterConfiguration.expandByDefault ? false : filterConfiguration.expandByDefault,
-                    selectedOnce: selectedOnce,
-                    selectedTemplate: filterConfiguration.selectedTemplate,
-                    hasSelectedValues: hasSelectedValues,
-                    values: values,
-                    operator: filterOperator,
-                    sortIdx: filterConfiguration.sortIdx,
-                    canApply: canApply,
-                    canClear: canClear
-                };
+        // Merge information with filter configuration and other useful proeprties
+        const filterResultInternal: any = {
+          displayName: filterConfiguration.displayValue && filterConfiguration.displayValue.trim() ? filterConfiguration.displayValue : availableFilter.filterName,
+          filterName: availableFilter.filterName,
+          isMulti: !filterConfiguration.isMulti ? false : filterConfiguration.isMulti,
+          showCount: !filterConfiguration.showCount ? false : filterConfiguration.showCount,
+          expandByDefault: !filterConfiguration.expandByDefault ? false : filterConfiguration.expandByDefault,
+          selectedOnce: selectedOnce,
+          selectedTemplate: filterConfiguration.useHierarchical && filterConfiguration.termSetId ? BuiltinFilterTemplates.Hierarchical : filterConfiguration.selectedTemplate,
+          hasSelectedValues: hasSelectedValues,
+          values: values,
+          operator: filterOperator,
+          sortIdx: filterConfiguration.sortIdx,
+          canApply: canApply,
+          canClear: canClear,
+          termSetId: filterConfiguration.termSetId,
+          termGroupId: filterConfiguration.termGroupId
+        };
 
-                return filterResultInternal;
-            }
-        });
+        // Fetch hierarchical terms if configured
+        if (filterConfiguration.useHierarchical && filterConfiguration.termSetId && filterConfiguration.termGroupId && this.props.taxonomyService) {
+          try {
+            const terms = await this.props.taxonomyService.getTermsByTermSetId(
+              this.props.context.pageContext.web.absoluteUrl, 
+              filterConfiguration.termSetId, 
+              filterConfiguration.termGroupId
+            );
+
+            // Build hierarchical structure from flat terms list using PathOfTerm
+            const buildHierarchy = (allTerms: any[]) => {
+              const termMap = new Map();
+              const rootTerms = [];
+
+              // First pass: create a map of all terms keyed by their full path
+              allTerms.forEach(term => {
+                const path = term.PathOfTerm || term.Name;
+                const termObj = {
+                  id: term.Id,
+                  name: term.Name,
+                  label: term.Labels && term.Labels._Child_Items_ && term.Labels._Child_Items_.length > 0 
+                    ? term.Labels._Child_Items_[0].Value 
+                    : term.Name,
+                  parentId: term.ParentId,
+                  pathOfTerm: path,
+                  children: []
+                };
+                termMap.set(path, termObj);
+              });
+
+              // Second pass: build hierarchy using PathOfTerm
+              termMap.forEach((term, path) => {
+                const pathParts = path.split(';');
+                if (pathParts.length > 1) {
+                  // This term has a parent in the path
+                  const parentPath = pathParts.slice(0, -1).join(';');
+                  const parent = termMap.get(parentPath);
+                  if (parent) {
+                    parent.children.push(term);
+                  } else {
+                    // Parent not found, treat as root
+                    rootTerms.push(term);
+                  }
+                } else {
+                  // This is a root term
+                  rootTerms.push(term);
+                }
+              });
+
+              return rootTerms;
+            };
+
+            filterResultInternal.hierarchicalTerms = buildHierarchy(terms);
+
+          } catch (error) {
+            Log.error('SearchFiltersContainer', new Error(`Error fetching hierarchical terms for filter ${availableFilter.filterName}: ${error}`));
+          }
+        }
+
+        updatedFilters.push(filterResultInternal);
+      }
+    }
 
         this.setState({
             currentUiFilters: update(this.state.currentUiFilters, { $set: sortBy(updatedFilters.filter(updatedFilter => updatedFilter), 'sortIdx') })
@@ -357,19 +425,20 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                     };
                 });
 
-                const filterResultInternal: IDataFilterInternal = {
-                    displayName: filterConfiguration.displayValue && filterConfiguration.displayValue.trim() ? filterConfiguration.displayValue : filterInfo.filterName,
-                    filterName: filterInfo.filterName,
-                    hasSelectedValues: filterInfo.filterValues.filter(value => value.selected).length > 0,
-                    selectedOnce: true,
-                    isMulti: !filterConfiguration.isMulti ? false : filterConfiguration.isMulti,
-                    showCount: !filterConfiguration.showCount ? false : filterConfiguration.showCount,
-                    expandByDefault: !filterConfiguration.expandByDefault ? false : filterConfiguration.expandByDefault,
-                    values: filterValuesInternal,
-                    operator: filterInfo.operator ? filterInfo.operator : currentUiFilters[filterIdx].operator,
-                    selectedTemplate: filterConfiguration.selectedTemplate,
-                    sortIdx: filterConfiguration.sortIdx
-                };
+        const filterResultInternal: IDataFilterInternal = {
+          displayName: filterConfiguration.displayValue && filterConfiguration.displayValue.trim() ? filterConfiguration.displayValue : filterInfo.filterName,
+          filterName: filterInfo.filterName,
+          hasSelectedValues: filterInfo.filterValues.filter(value => value.selected).length > 0,
+          selectedOnce: true,
+          isMulti: !filterConfiguration.isMulti ? false : filterConfiguration.isMulti,
+          showCount: !filterConfiguration.showCount ? false : filterConfiguration.showCount,
+          expandByDefault: !filterConfiguration.expandByDefault ? false : filterConfiguration.expandByDefault,
+          values: filterValuesInternal,
+          operator: filterInfo.operator ? filterInfo.operator : currentUiFilters[filterIdx].operator,
+          selectedTemplate: filterConfiguration.useHierarchical && filterConfiguration.termSetId ? BuiltinFilterTemplates.Hierarchical : filterConfiguration.selectedTemplate,
+          sortIdx: filterConfiguration.sortIdx,
+          termSetId: filterConfiguration.termSetId
+        };
 
                 // If does not exist, add to selected filters collection
                 currentUiFilters = update(this.state.currentUiFilters, { $push: [filterResultInternal] });
@@ -617,18 +686,19 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
     // Build the template context
     private getTemplateContext(): ISearchFiltersTemplateContext {
 
-        return {
-            filters: this.state.currentUiFilters,
-            selectedFilters: this.state.submittedFilters,
-            instanceId: this.props.instanceId,
-            theme: this.props.themeVariant,
-            strings: commonStrings.Filters,
-            selectedOnce: this.state.currentUiFilters.filter(currentFilter => currentFilter.selectedOnce).length > 0,
-            properties: {
-                ...this.props.properties
-            },
-        };
-    }
+    return {
+      filters: this.state.currentUiFilters,
+      selectedFilters: this.state.submittedFilters,
+      instanceId: this.props.instanceId,
+      theme: this.props.themeVariant,
+      context: this.props.context,
+      strings: commonStrings.Filters,
+      selectedOnce: this.state.currentUiFilters.filter(currentFilter => currentFilter.selectedOnce).length > 0,
+      properties: {
+        ...this.props.properties
+      },
+    };
+  }
 
     /**
      * Retrieves the default filters from the URL and set them as initial state

@@ -37,6 +37,9 @@ declare interface ISearchFiltersWebPartStrings {
             CustomizeFiltersDescription: string;
             CustomizeFiltersFieldLabel: string;
             ShowCount: string;
+            UseHierarchical: string;
+            TermSetId: string;
+            TermGroupId: string;
             Operator: string;
             ANDOperator: string;
             OROperator: string;
@@ -48,6 +51,7 @@ declare interface ISearchFiltersWebPartStrings {
                 PeopleTemplate: string;
                 DateIntervalTemplate: string;
                 TaxonomyPickerTemplate: string;
+                HierarchicalFilterTemplate: string;
             },
             SortBy: string;
             SortDirection: string;

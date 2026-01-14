@@ -48,6 +48,8 @@ import PnPTelemetry from '@pnp/telemetry-js';
 import { MessageBar, MessageBarType } from '@fluentui/react/lib/MessageBar';
 import { IComboBoxOption } from '@fluentui/react/lib/ComboBox';
 import { Checkbox } from '@fluentui/react/lib/Checkbox';
+import { ITaxonomyService } from '../../services/taxonomyService/ITaxonomyService';
+import { TaxonomyService } from '../../services/taxonomyService/TaxonomyService';
 import { Dropdown, IDropdownOption, IDropdownProps } from '@fluentui/react/lib/Dropdown';
 import { TextField } from '@fluentui/react/lib/TextField';
 
@@ -91,6 +93,11 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
      * The template service instance
      */
     private templateService: ITemplateService = undefined;
+
+    /**
+     * The taxonomy service instance
+     */
+    private taxonomyService: ITaxonomyService = undefined;
 
     /**
      * the dynamic data service instance
@@ -167,6 +174,12 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
 
     public async render(): Promise<void> {
 
+        // Check if domElement is available before proceeding
+        if (!this.domElement) {
+            Log.warn('SearchFiltersWebPart', 'domElement is not available, render aborted');
+            return;
+        }
+
         // Check audience targeting - if user is not in audience, don't render
         const isInAudience = await this.isInAudience();
         this._isHiddenByAudience = !isInAudience;
@@ -187,7 +200,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
         }
 
         // Refresh the property pane to get layout and data source options
-        if (this.context.propertyPane.isPropertyPaneOpen()) {
+        if (this.context && this.context.propertyPane && this.context.propertyPane.isPropertyPaneOpen()) {
             this.context.propertyPane.refresh();
         }
 
@@ -202,11 +215,18 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
             return;
         }
 
-        let renderRootElement: JSX.Element = null;
-        let filterResults: IDataFilterResult[] = [];
+        try {
+            // Check if domElement is available before proceeding
+            if (!this.domElement) {
+                Log.warn('SearchFiltersWebPart', 'domElement is not available in renderCompleted');
+                return;
+            }
 
-        // Display the Web Part only if a valid configuration is set
-        if (this.templateContentToDisplay && this.properties.filtersConfiguration.length > 0) {
+            let renderRootElement: JSX.Element = null;
+            let filterResults: IDataFilterResult[] = [];
+
+            // Display the Web Part only if a valid configuration is set
+            if (this.templateContentToDisplay && this.properties.filtersConfiguration.length > 0) {
 
             // Get data from connected sources
             if (this._dataSourceDynamicProperties.length > 0) {
@@ -235,6 +255,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                     selectedLayoutKey: this.properties.selectedLayoutKey,
                     properties: JSON.parse(JSON.stringify(this.properties)),
                     themeVariant: this._themeVariant,
+                    context: this.context,
                     onUpdateFilters: (updatedFilters: IDataFilter[]) => {
 
                         this._selectedFilters = updatedFilters;
@@ -243,6 +264,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                         this.context.dynamicDataSourceManager.notifyPropertyChanged(ComponentType.SearchFilters);
                     },
                     templateService: this.templateService,
+                    taxonomyService: this.taxonomyService,
                     webPartTitleProps: {
                         displayMode: this.displayMode,
                         title: this.properties.title,
@@ -333,6 +355,10 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
 
         // This call set this.renderedOnce to 'true' so we need to execute it at the very end
         super.renderCompleted();
+        } catch (error) {
+            Log.error('SearchFiltersWebPart', new Error(`Error in renderCompleted: ${error}`));
+            console.error('[SearchFiltersWebPart] Error in renderCompleted:', error);
+        }
     }
 
     public getPropertyDefinitions(): IDynamicDataPropertyDefinition[] {
@@ -443,6 +469,17 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                     configuration.operator = FilterConditionOperator.AND;
                 }
 
+                // Ensure hierarchical-specific fields are preserved from the input
+                // These are set by the custom field onUpdate handlers
+                if (newValue && newValue.length > 0) {
+                    const correspondingNewConfig = newValue.find((c: IDataFilterConfiguration) => c.filterName === configuration.filterName);
+                    if (correspondingNewConfig) {
+                        configuration.useHierarchical = correspondingNewConfig.useHierarchical;
+                        configuration.termSetId = correspondingNewConfig.termSetId;
+                        configuration.termGroupId = correspondingNewConfig.termGroupId;
+                    }
+                }
+
                 return configuration;
             });
 
@@ -496,6 +533,9 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
         // Refresh list of available connections
         this.propertyPaneConnectionsFields = await this.getConnectionOptionsFields();
         this.context.propertyPane.refresh();
+
+        // Call base class method to persist property changes
+        super.onPropertyPaneFieldChanged(propertyPath, oldValue, this.properties[propertyPath]);
     }
 
     protected get isRenderAsync(): boolean {
@@ -794,27 +834,14 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                             {
                                 key: BuiltinFilterTemplates.ComboBox,
                                 text: webPartStrings.PropertyPane.DataFilterCollection.Templates.ComboBoxTemplate
+                            },
+                            {
+                                key: BuiltinFilterTemplates.Hierarchical,
+                                text: webPartStrings.PropertyPane.DataFilterCollection.Templates.HierarchicalFilterTemplate
                             }
                         ]
                     },
-
-                    {
-                        id: 'expandByDefault',
-                        title: webPartStrings.PropertyPane.DataFilterCollection.FilterExpandByDefault,
-                        type: this._customCollectionFieldType.custom,
-                        defaultValue: false,
-                        onCustomRender: (field, value, onUpdate, item: IDataFilterConfiguration, itemId) => {
-                            return React.createElement("div", { key: `${field.id}-${itemId}` },
-                                React.createElement(Checkbox, {
-                                    defaultChecked: item.selectedTemplate === BuiltinFilterTemplates.ComboBox ? false : item.expandByDefault,
-                                    disabled: item.selectedTemplate === BuiltinFilterTemplates.ComboBox,
-                                    onChange: (ev, checked: boolean) => {
-                                        onUpdate(field.id, checked);
-                                    }
-                                })
-                            );
-                        }
-                    },
+                    
                     {
                         id: 'showCount',
                         title: webPartStrings.PropertyPane.DataFilterCollection.ShowCount,
@@ -823,7 +850,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                         onCustomRender: (field, value, onUpdate, item: IDataFilterConfiguration, itemId) => {
                             return React.createElement("div", { key: `${field.id}-${itemId}` },
                                 React.createElement(Checkbox, {
-                                    defaultChecked: item.selectedTemplate === BuiltinFilterTemplates.DateRange ? false : item.showCount,
+                                    checked: item.selectedTemplate === BuiltinFilterTemplates.DateRange ? false : value,
                                     disabled: item.selectedTemplate === BuiltinFilterTemplates.DateRange,
                                     onChange: (ev, checked: boolean) => {
                                         onUpdate(field.id, checked);
@@ -840,7 +867,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                         onCustomRender: (field, value, onUpdate, item: IDataFilterConfiguration, itemId) => {
                             return React.createElement("div", { key: `${field.id}-${itemId}` },
                                 React.createElement(Checkbox, {
-                                    defaultChecked: item.selectedTemplate === BuiltinFilterTemplates.DateRange || item.selectedTemplate === BuiltinFilterTemplates.DateInterval ? false : item.isMulti,
+                                    checked: item.selectedTemplate === BuiltinFilterTemplates.DateRange || item.selectedTemplate === BuiltinFilterTemplates.DateInterval ? false : value,
                                     disabled: item.selectedTemplate === BuiltinFilterTemplates.DateRange || item.selectedTemplate === BuiltinFilterTemplates.DateInterval,
                                     onChange: (ev, checked: boolean) => {
                                         onUpdate(field.id, checked);
@@ -896,7 +923,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                                                 text: webPartStrings.PropertyPane.DataFilterCollection.SortByCount
                                             },
                                         ],
-                                        disabled: item.selectedTemplate === BuiltinFilterTemplates.DateRange || item.selectedTemplate === BuiltinFilterTemplates.DateInterval,
+                                        disabled: item.selectedTemplate === BuiltinFilterTemplates.DateRange || item.selectedTemplate === BuiltinFilterTemplates.DateInterval || item.useHierarchical,
                                         defaultSelectedKey: item.sortBy,
                                         onChange: (ev, option) => onUpdate(field.id, option.key),
                                     } as IDropdownProps)
@@ -923,12 +950,102 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                                                 text: webPartStrings.PropertyPane.DataFilterCollection.SortDescending
                                             },
                                         ],
-                                        disabled: item.selectedTemplate === BuiltinFilterTemplates.DateRange || item.selectedTemplate === BuiltinFilterTemplates.DateInterval,
+                                        disabled: item.selectedTemplate === BuiltinFilterTemplates.DateRange || item.selectedTemplate === BuiltinFilterTemplates.DateInterval || item.useHierarchical,
                                         defaultSelectedKey: item.sortDirection,
                                         onChange: (ev, option) => onUpdate(field.id, option.key),
                                     } as IDropdownProps)
                                 )
                             );
+                        }
+                    },
+                    {
+                        id: 'useHierarchical',
+                        title: webPartStrings.PropertyPane.DataFilterCollection.UseHierarchical,
+                        type: this._customCollectionFieldType.custom,
+                        defaultValue: false,
+                        required: false,
+                        onCustomRender: (field, value, onUpdate, item: IDataFilterConfiguration, itemId) => {
+                            return React.createElement("div", { key: `${field.id}-${itemId}` },
+                                React.createElement(Checkbox, {
+                                    checked: value !== undefined ? value : false,
+                                    onChange: (ev?: React.FormEvent<HTMLElement>, checked?: boolean) => {
+                                        if (checked !== undefined) {
+                                            onUpdate(field.id, checked);
+                                        }
+                                    }
+                                })
+                            );
+                        }
+                    },
+                    {
+                        id: 'expandByDefault',
+                        title: webPartStrings.PropertyPane.DataFilterCollection.FilterExpandByDefault,
+                        type: this._customCollectionFieldType.custom,
+                        defaultValue: true,
+                        onCustomRender: (field, value, onUpdate, item: IDataFilterConfiguration, itemId) => {
+                            const isHierarchical = !!item.useHierarchical;
+
+                            // Only show this control when hierarchical filtering is enabled
+                            if (!isHierarchical) {
+                                return null;
+                            }
+
+                            // Default to expanded for hierarchical filters
+                            const effectiveValue = value !== undefined ? value : true;
+
+                            return React.createElement("div", { key: `${field.id}-${itemId}` },
+                                React.createElement(Checkbox, {
+                                    checked: effectiveValue,
+                                    disabled: false,
+                                    onChange: (ev, checked: boolean) => {
+                                        onUpdate(field.id, checked);
+                                    }
+                                })
+                            );
+                        }
+                    },
+                    {
+                        id: 'termGroupId',
+                        title: webPartStrings.PropertyPane.DataFilterCollection.TermGroupId,
+                        type: this._customCollectionFieldType.custom,
+                        defaultValue: '',
+                        required: false,
+                        onCustomRender: (field, value, onUpdate, item: IDataFilterConfiguration, itemId) => {
+                            if (!item.useHierarchical) {
+                                return null;
+                            }
+                            return React.createElement(TextField, {
+                                key: `${field.id}-${itemId}`,
+                                value: value !== undefined && value !== null ? value : '',
+                                placeholder: 'Enter term group id',
+                                onChange: (ev?: React.FormEvent<HTMLInputElement>, newValue?: string) => {
+                                    if (newValue !== undefined) {
+                                        onUpdate(field.id, newValue);
+                                    }
+                                }
+                            });
+                        }
+                    },
+                    {
+                        id: 'termSetId',
+                        title: webPartStrings.PropertyPane.DataFilterCollection.TermSetId,
+                        type: this._customCollectionFieldType.custom,
+                        defaultValue: '',
+                        required: false,
+                        onCustomRender: (field, value, onUpdate, item: IDataFilterConfiguration, itemId) => {
+                            if (!item.useHierarchical) {
+                                return null;
+                            }
+                            return React.createElement(TextField, {
+                                key: `${field.id}-${itemId}`,
+                                value: value !== undefined && value !== null ? value : '',
+                                placeholder: 'Enter term set id',
+                                onChange: (ev?: React.FormEvent<HTMLInputElement>, newValue?: string) => {
+                                    if (newValue !== undefined) {
+                                        onUpdate(field.id, newValue);
+                                    }
+                                }
+                            });
                         }
                     }
                 ]
@@ -1064,6 +1181,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     private async initializeWebPartServices(): Promise<void> {
         this.webPartInstanceServiceScope = this.context.serviceScope.startNewChild();
         this.templateService = this.webPartInstanceServiceScope.createAndProvide(TemplateService.ServiceKey, TemplateService);
+        this.taxonomyService = this.webPartInstanceServiceScope.createAndProvide(TaxonomyService.ServiceKey, TaxonomyService);
         this.dynamicDataService = this.webPartInstanceServiceScope.createAndProvide(DynamicDataService.ServiceKey, DynamicDataService);
         this.dynamicDataService.dynamicDataProvider = this.context.dynamicDataProvider;
         this.webPartInstanceServiceScope.finish();

@@ -98,4 +98,19 @@ export interface IDataFilterConfiguration {
     * Range definition
     */
     rangeDefinition: number;
+
+    /**
+     * Indicates if the filter should use hierarchical display
+     */
+    useHierarchical?: boolean;
+
+    /**
+     * The term set ID for hierarchical filters
+     */
+    termSetId?: string;
+
+    /**
+     * The term group ID for hierarchical filters
+     */
+    termGroupId?: string;
 }

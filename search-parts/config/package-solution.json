@@ -71,6 +71,10 @@
             {
                 "resource": "Microsoft Graph",
                 "scope": "GroupMember.Read.All"
+            },
+            {
+                "resource": "Microsoft Graph",
+                "scope": "TermStore.Read.All"
             }
         ],
         "metadata": {

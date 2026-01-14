@@ -1,0 +1,48 @@
+.filterHierarchical {
+  width: 100%;
+  
+  .termItem {
+    margin: 0;
+    padding: 0;
+  }
+
+  .termRow {
+    display: flex;
+    align-items: center;
+    padding: 4px 0;
+    
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+  }
+
+  .expandIcon {
+    cursor: pointer;
+    margin-right: 4px;
+    font-size: 12px;
+    width: 16px;
+    height: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.1);
+      border-radius: 2px;
+    }
+  }
+
+  .noChildrenSpacer {
+    display: inline-block;
+    width: 16px;
+    margin-right: 4px;
+  }
+
+  .termCheckbox {
+    flex: 1;
+  }
+
+  .childTerms {
+    margin: 0;
+  }
+}

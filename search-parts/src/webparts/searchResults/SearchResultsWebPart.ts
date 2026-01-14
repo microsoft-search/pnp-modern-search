@@ -255,6 +255,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
     public async render(): Promise<void> {
 
+        try {
+
         // Check audience targeting - if user is not in audience, don't render
         const isInAudience = await this.isInAudience();
         this._isHiddenByAudience = !isInAudience;
@@ -278,68 +280,74 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             }
         }
 
-        // Determine the template content to display
-        // In the case of an external template is selected, the render is done asynchronously waiting for the content to be fetched
-        await this.initTemplate();
+            // Determine the template content to display
+            // In the case of an external template is selected, the render is done asynchronously waiting for the content to be fetched
+            await this.initTemplate();
 
-        // Refresh the token values with the latest information from environment (i.e connections and settings)
-        await this.setTokens();
+            // Refresh the token values with the latest information from environment (i.e connections and settings)
+            await this.setTokens();
 
-        // We resolve data source and layout instances directly in the render method to avoid unexpected render triggers due to Web Part property bag manipulation 
-        // SPFx has an inner routine in reactive mode to trigger a render every time a property bag value is updated conflicting with the way data source and layouts share properties (see _afterPropertyUpdated)
+            // We resolve data source and layout instances directly in the render method to avoid unexpected render triggers due to Web Part property bag manipulation 
+            // SPFx has an inner routine in reactive mode to trigger a render every time a property bag value is updated conflicting with the way data source and layouts share properties (see _afterPropertyUpdated)
 
-        try {
+            try {
 
-            // Reset the error message every time
-            this.errorMessage = undefined;
+                // Reset the error message every time
+                this.errorMessage = undefined;
 
-            // Get and initialize the data source instance if different (i.e avoid to create a new instance every time)
-            if (this.lastDataSourceKey !== this.properties.dataSourceKey) {
-                this.dataSource = await this.getDataSourceInstance(this.properties.dataSourceKey);
-                this.lastDataSourceKey = this.properties.dataSourceKey;
+                // Get and initialize the data source instance if different (i.e avoid to create a new instance every time)
+                if (this.lastDataSourceKey !== this.properties.dataSourceKey) {
+                    this.dataSource = await this.getDataSourceInstance(this.properties.dataSourceKey);
+                    this.lastDataSourceKey = this.properties.dataSourceKey;
+                }
+
+                // Get and initialize layout instance if different (i.e avoid to create a new instance every time)
+                if (this.lastLayoutKey !== this.properties.selectedLayoutKey) {
+                    this.layout = await LayoutHelper.getLayoutInstance(this.webPartInstanceServiceScope, this.context, this.properties, this.properties.selectedLayoutKey, this.availableLayoutDefinitions, this.displayMode);
+                    this.lastLayoutKey = this.properties.selectedLayoutKey;
+                }
+
+
+                const queryModifierKeys = this.properties.queryModifierConfiguration.filter(c => c.enabled).map(c => c.key);
+                // Initialize custom query modifier instances if changed
+                if (!isEqual(this.lastQueryModifierKeys, queryModifierKeys)) {
+                    this._selectedCustomQueryModifier = await this.initializeQueryModifiers(this.properties.queryModifierConfiguration);
+                    this.lastQueryModifierKeys = queryModifierKeys;
+
+                }
+
+            } catch (error) {
+                // Catch instanciation or wrong definition errors for extensibility scenarios
+                this.errorMessage = error.message ? error.message : error;
             }
 
-            // Get and initialize layout instance if different (i.e avoid to create a new instance every time)
-            if (this.lastLayoutKey !== this.properties.selectedLayoutKey) {
-                this.layout = await LayoutHelper.getLayoutInstance(this.webPartInstanceServiceScope, this.context, this.properties, this.properties.selectedLayoutKey, this.availableLayoutDefinitions, this.displayMode);
-                this.lastLayoutKey = this.properties.selectedLayoutKey;
+            // Refresh the token values with the latest information from environment (i.e connections and settings)
+            await this.setTokens();
+
+            // Refresh the property pane to get layout and data source options
+            if (this.context && this.context.propertyPane && this.context.propertyPane.isPropertyPaneOpen()) {
+                this.context.propertyPane.refresh();
             }
 
-
-            const queryModifierKeys = this.properties.queryModifierConfiguration.filter(c => c.enabled).map(c => c.key);
-            // Initialize custom query modifier instances if changed
-            if (!isEqual(this.lastQueryModifierKeys, queryModifierKeys)) {
-                this._selectedCustomQueryModifier = await this.initializeQueryModifiers(this.properties.queryModifierConfiguration);
-                this.lastQueryModifierKeys = queryModifierKeys;
-
+            // Reset page number when switching between verticals (before getDataContext)
+            if (this._verticalsConnectionSourceData && this.properties.selectedVerticalKeys.length > 0) {
+                const verticalData = DynamicPropertyHelper.tryGetValueSafe(this._verticalsConnectionSourceData);
+                if (verticalData && verticalData.selectedVertical?.key && this._lastSelectedVerticalKey !== verticalData.selectedVertical.key) {
+                    this.currentPageNumber = 1;
+                    this._lastSelectedVerticalKey = verticalData.selectedVertical.key;
+                }
             }
+
+            if (this.dataSource) {
+                this._currentDataContext = await this.getDataContext();
+            }
+            return this.renderCompleted();
 
         } catch (error) {
-            // Catch instanciation or wrong definition errors for extensibility scenarios
-            this.errorMessage = error.message ? error.message : error;
+            // Log any errors that occur during render and prevent them from crashing the web part
+            console.error('[SearchResultsWebPart.render] Error during render:', error);
+            Log.error(LogSource, new Error(`Error during render: ${error.message ? error.message : error}`), this.webPartInstanceServiceScope);
         }
-
-        // Refresh the token values with the latest information from environment (i.e connections and settings)
-        await this.setTokens();
-
-        // Refresh the property pane to get layout and data source options
-        if (this.context && this.context.propertyPane && this.context.propertyPane.isPropertyPaneOpen()) {
-            this.context.propertyPane.refresh();
-        }
-
-        // Reset page number when switching between verticals (before getDataContext)
-        if (this._verticalsConnectionSourceData && this.properties.selectedVerticalKeys.length > 0) {
-            const verticalData = DynamicPropertyHelper.tryGetValueSafe(this._verticalsConnectionSourceData);
-            if (verticalData && verticalData.selectedVertical?.key && this._lastSelectedVerticalKey !== verticalData.selectedVertical.key) {
-                this.currentPageNumber = 1;
-                this._lastSelectedVerticalKey = verticalData.selectedVertical.key;
-            }
-        }
-
-        if (this.dataSource) {
-            this._currentDataContext = await this.getDataContext();
-        }
-        return this.renderCompleted();
     }
 
     public getPropertyDefinitions(): IDynamicDataPropertyDefinition[] {
@@ -945,6 +953,9 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         // Reset the page number to 1 every time the Web Part properties change
         this.currentPageNumber = 1;
+
+        // Call base class method to persist property changes
+        super.onPropertyPaneFieldChanged(propertyPath, oldValue, newValue);
     }
 
     public onCustomPropertyUpdate(propertyPath: string, newValue: any, changeCallback?: (targetProperty?: string, newValue?: any) => void): void {

@@ -139,6 +139,9 @@
                                     {{else}}
                                     <pnp-collapsible data-group-name="{{filter.displayName}}" data-default-collapsed="{{#or hasSelectedValues expandByDefault selectedOnce}}false{{else}}true{{/or}}" data-theme-variant="{{JSONstringify @root.theme}}">
                                             
+                                        <template id="collapsible-header">
+                                        </template>
+
                                         <template id="collapsible-content" item-class="filter--value">
                 
                                             {{#eq filter.selectedTemplate 'DateRangeFilterTemplate'}}

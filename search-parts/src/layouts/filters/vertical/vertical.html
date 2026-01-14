@@ -70,7 +70,7 @@
 					<pnp-collapsible data-group-name="{{filter.displayName}}" data-default-collapsed="{{#or hasSelectedValues expandByDefault selectedOnce}}false{{else}}true{{/or}}" data-theme-variant="{{JSONstringify @root.theme}}">
 						
 						<template id="collapsible-header">
-														
+							<!-- Header intentionally left blank for hierarchical filters -->
 						</template>
 						
 						<template id="collapsible-content">
@@ -198,7 +198,18 @@
 												>
 											</pnp-filterdateinterval>
 											</div>
-										{{/eq}}	
+										{{else}}
+											{{#eq filter.selectedTemplate 'HierarchicalFilterTemplate'}}
+												<div class="filter--value">
+													<pnp-filterhierarchical 
+														data-instance-id="{{@root.instanceId}}" 
+														data-filter="{{JSONstringify filter 2}}"
+														data-theme-variant="{{JSONstringify @root.theme}}"
+													>
+													</pnp-filterhierarchical>
+												</div>
+											{{/eq}}
+										{{/eq}}
 									{{/eq}}
 								{{/eq}}
 							{{/eq}}

@@ -3,6 +3,7 @@ import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import ISearchResultsWebPartProps from "../../webparts/searchResults/ISearchResultsWebPartProps";
 import { SPSite, SPWeb, SPUser, SPList, SPListItem, CultureInfo } from "@microsoft/sp-page-context";
 import ISearchFiltersWebPartProps from "../../webparts/searchFilters/ISearchFiltersWebPartProps";
+import { WebPartContext } from '@microsoft/sp-webpart-base';
 
 /**
  * Represents the context passed to the Handlebars template (Search Results)
@@ -194,6 +195,11 @@ export interface ISearchFiltersTemplateContext {
      * Current theme variables
      */
     theme: IReadonlyTheme;
+
+    /**
+     * The Web Part context
+     */
+    context: WebPartContext;
 
     /**
      * Localized strings that can be used in the Web Part

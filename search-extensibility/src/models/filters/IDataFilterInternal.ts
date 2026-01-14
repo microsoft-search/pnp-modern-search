@@ -64,6 +64,16 @@ export interface IDataFilterInternal extends IDataFilter {
      * The index of this filter in the configuration
      */
     sortIdx: number;
+
+    /**
+     * The term set ID for hierarchical filters
+     */
+    termSetId?: string;
+
+    /**
+     * The terms fetched from the term set (for hierarchical filters)
+     */
+    hierarchicalTerms?: Array<{ id: string; name: string; label: string }>;
 }
 
 export interface IDataFilterValueInternal extends IDataFilterValue {

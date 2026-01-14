@@ -675,7 +675,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
 
                         if (itemFileType && validPreviewExt.indexOf(itemFileType.toUpperCase()) !== -1) {
                             item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = DataSourceHelper.generateSharePointThumbnailUrl({
-                                baseUrl: this.context.pageContext.site.absoluteUrl,
+                                baseUrl: this._pageContext.site.absoluteUrl,
                                 siteId,
                                 webId,
                                 listId,
@@ -687,7 +687,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                         const driveId = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.DriveId]);
                         if (driveId && siteId && itemId) {
                             item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = DataSourceHelper.generateGraphThumbnailUrl({
-                                baseUrl: this.context.pageContext.site.absoluteUrl,
+                                baseUrl: this._pageContext.site.absoluteUrl,
                                 siteId,
                                 driveId,
                                 itemId
