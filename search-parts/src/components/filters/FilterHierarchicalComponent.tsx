@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { BaseWebComponent, IDataFilterInfo, IDataFilterValueInfo, ExtensibilityConstants } from '@pnp/modern-search-extensibility';
+import { BaseWebComponent, IDataFilterInfo, IDataFilterValueInfo, ExtensibilityConstants, FilterComparisonOperator } from '@pnp/modern-search-extensibility';
 import * as ReactDOM from 'react-dom';
 import styles from './FilterHierarchicalComponent.module.scss';
 import { Checkbox } from '@fluentui/react/lib/Checkbox';
@@ -29,6 +29,11 @@ export interface IFilterHierarchicalProps {
    * Handler when a filter value is selected
    */
   onChecked: (filterName: string, filterValue: IDataFilterValueInfo) => void;
+
+  /**
+   * The DOM element to dispatch events to
+   */
+  domElement?: HTMLElement;
 }
 
 export interface IFilterHierarchicalState {
@@ -75,6 +80,26 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
         this.findAndMarkTermAsSelected(hierarchicalTerms, guidPart, selectedTerms);
       }
     });
+
+    // Ensure all terms have an explicit false if not selected
+    const hierarchicalTerms = this.props.filter?.hierarchicalTerms || [];
+    const allTermIds: string[] = [];
+    const collectAllTermIds = (terms: any[]) => {
+      terms.forEach(term => {
+        allTermIds.push(term.id);
+        if (term.children && term.children.length > 0) {
+          collectAllTermIds(term.children);
+        }
+      });
+    };
+    collectAllTermIds(hierarchicalTerms);
+    
+    // Initialize all terms to false, then override with selected ones
+    allTermIds.forEach(termId => {
+      if (!selectedTerms.hasOwnProperty(termId)) {
+        selectedTerms[termId] = false;
+      }
+    });
     
     return selectedTerms;
   }
@@ -97,7 +122,12 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
 
   public componentDidUpdate(prevProps: IFilterHierarchicalProps) {
     // If filter values changed, update selected terms
-    if (prevProps.filter?.values !== this.props.filter?.values) {
+    // Check both reference and length to catch array mutations
+    const prevValues = prevProps.filter?.values || [];
+    const currValues = this.props.filter?.values || [];
+    
+    if (prevValues.length !== currValues.length || 
+        JSON.stringify(prevValues) !== JSON.stringify(currValues)) {
       this.setState({
         selectedTerms: this.initializeSelectedTerms()
       });
@@ -131,36 +161,75 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
       }
     }));
 
-    // Reuse the exact refinement token (hex-encoded GP0/L0 value) from search results so URL/state matches other refiners
-    const filterValues = this.props.filter?.values || [];
-    const termGuid = (this.extractGuidFromTermId(term.id) || '').replace(/-/g, '').toLowerCase();
-    const matchingRefiner = filterValues.find((filterValue: any) => {
-      if (!filterValue?.value) return false;
-      const decoded = this.decodeHexString(filterValue.value) || '';
-      const parts = decoded.split('|');
-      const guidPart = (parts[1] || '').replace('#', '').replace(/-/g, '').toLowerCase();
-      return guidPart === termGuid;
-    });
+    const termGuid = this.extractGuidFromTermId(term.id) || '';
+    const isParentNode = term.children && term.children.length > 0;
 
-    // Prefer the exact refiner object from the results so we emit the same payload as the checkbox layout
-    const filterValue: IDataFilterValueInfo = matchingRefiner ? (() => {
-      const decoded = this.decodeHexString(matchingRefiner.value || '');
-      const normalizedToken = this.normalizeRefinementToken(decoded);
-      const encodedToken = this.encodeRefinementToken(normalizedToken);
+    if (isParentNode) {
+      // For parent nodes: emit both GPP (children) and GP0 (parent itself) in a single event
+      const gppToken = `GPP|#${termGuid}`;
+      const gp0Token = `GP0|#${termGuid}`;
+      
+      const gppEncoded = this.encodeRefinementToken(gppToken);
+      const gp0Encoded = this.encodeRefinementToken(gp0Token);
 
-      return {
-        name: normalizedToken,
-        value: encodedToken,
-        operator: matchingRefiner.operator,
+      // Dispatch custom event directly with both values to avoid sequential event issues
+      if (this.props.domElement) {
+        const filterValues: IDataFilterValueInfo[] = [
+          {
+            name: gppToken,
+            value: gppEncoded,
+            operator: FilterComparisonOperator.Eq,
+            selected: checked,
+          },
+          {
+            name: gp0Token,
+            value: gp0Encoded,
+            operator: FilterComparisonOperator.Eq,
+            selected: checked,
+          }
+        ];
+
+        this.props.domElement.dispatchEvent(new CustomEvent(ExtensibilityConstants.EVENT_FILTER_UPDATED, {
+          detail: {
+            filterName: this.props.filter?.filterName,
+            filterValues: filterValues,
+            instanceId: this.props.instanceId
+          },
+          bubbles: true,
+          cancelable: true
+        }));
+      }
+    } else {
+      // For leaf nodes: emit only GP0
+      const filterValues = this.props.filter?.values || [];
+      const termGuidForMatching = (this.extractGuidFromTermId(term.id) || '').replace(/-/g, '').toLowerCase();
+      const matchingRefiner = filterValues.find((filterValue: any) => {
+        if (!filterValue?.value) return false;
+        const decoded = this.decodeHexString(filterValue.value) || '';
+        const parts = decoded.split('|');
+        const guidPart = (parts[1] || '').replace('#', '').replace(/-/g, '').toLowerCase();
+        return guidPart === termGuidForMatching;
+      });
+
+      const filterValue: IDataFilterValueInfo = matchingRefiner ? (() => {
+        const decoded = this.decodeHexString(matchingRefiner.value || '');
+        const normalizedToken = this.normalizeRefinementToken(decoded);
+        const encodedToken = this.encodeRefinementToken(normalizedToken);
+
+        return {
+          name: normalizedToken,
+          value: encodedToken,
+          operator: matchingRefiner.operator,
+          selected: checked,
+        };
+      })() : {
+        name: term.label,
+        value: term.id,
         selected: checked,
       };
-    })() : {
-      name: term.label,
-      value: term.id,
-      selected: checked,
-    };
-    
-    this.props.onChecked(this.props.filter?.filterName, filterValue);
+      
+      this.props.onChecked(this.props.filter?.filterName, filterValue);
+    }
   }
 
   private decodeHexString = (hexStr: string): string => {
@@ -198,10 +267,12 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
       return token;
     }
 
-    // Replace L0 with GP0 to match checkbox layout output
-    let prefix = parts[0];
-    if (prefix.startsWith('L0')) {
-      prefix = prefix.replace('L0', 'GP0');
+    // Always use GP0 to match checkbox layout behavior (specific term only)
+    let prefix = 'GP0';
+    
+    // If token already has GP prefix, keep it
+    if (parts[0].startsWith('GP')) {
+      prefix = parts[0];
     }
 
     // Keep and sanitize the term ID segment (e.g. '#0<GUID>')
@@ -327,7 +398,7 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
         data-instance-id={this.props.instanceId}
         data-theme-variant={this.props.themeVariant ? 'true' : 'false'}
       >
-        {hierarchicalTerms.map((term: any) => this.renderTerm(term, 0))}
+        {hierarchicalTerms.map((term: any) => this.renderTerm(term))}
       </div>
     );
   }
@@ -341,7 +412,10 @@ export class FilterHierarchicalWebComponent extends BaseWebComponent {
 
   public async connectedCallback() {
     let props = this.resolveAttributes();
-    const hierarchical = <FilterHierarchicalComponent {...props} onChecked={(filterName: string, filterValue: IDataFilterValueInfo) => {
+    const hierarchical = <FilterHierarchicalComponent 
+      {...props} 
+      domElement={this}
+      onChecked={(filterName: string, filterValue: IDataFilterValueInfo) => {
       // Bubble event through the DOM
       this.dispatchEvent(new CustomEvent(ExtensibilityConstants.EVENT_FILTER_UPDATED, {
         detail: {
