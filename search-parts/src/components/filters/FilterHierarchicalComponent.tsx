@@ -43,7 +43,7 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
 
     this.state = {
         expandedTerms: this.initializeExpandedTerms(),
-        selectedTerms: {}
+        selectedTerms: this.initializeSelectedTerms()
     };
   }
 
@@ -57,6 +57,51 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
     }
     
     return expandedTerms;
+  }
+
+  private initializeSelectedTerms = (): { [key: string]: boolean } => {
+    const selectedTerms: { [key: string]: boolean } = {};
+    const filterValues = this.props.filter?.values || [];
+    
+    // Mark terms as selected only if they are in the selected filter values
+    filterValues.forEach((filterValue: any) => {
+      if (filterValue?.selected && filterValue?.value) {
+        const decoded = this.decodeHexString(filterValue.value) || '';
+        const parts = decoded.split('|');
+        const guidPart = (parts[1] || '').replace('#', '').replace(/-/g, '').toLowerCase();
+        
+        // Find the term with this GUID and mark it as selected
+        const hierarchicalTerms = this.props.filter?.hierarchicalTerms || [];
+        this.findAndMarkTermAsSelected(hierarchicalTerms, guidPart, selectedTerms);
+      }
+    });
+    
+    return selectedTerms;
+  }
+
+  private findAndMarkTermAsSelected = (terms: any[], guidToMatch: string, selectedTerms: { [key: string]: boolean }): boolean => {
+    for (const term of terms) {
+      const termGuid = (this.extractGuidFromTermId(term.id) || '').replace(/-/g, '').toLowerCase();
+      if (termGuid === guidToMatch) {
+        selectedTerms[term.id] = true;
+        return true;
+      }
+      if (term.children && term.children.length > 0) {
+        if (this.findAndMarkTermAsSelected(term.children, guidToMatch, selectedTerms)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  public componentDidUpdate(prevProps: IFilterHierarchicalProps) {
+    // If filter values changed, update selected terms
+    if (prevProps.filter?.values !== this.props.filter?.values) {
+      this.setState({
+        selectedTerms: this.initializeSelectedTerms()
+      });
+    }
   }
 
   private expandAllTermsRecursive = (terms: any[], expandedTerms: { [key: string]: boolean }): void => {
@@ -86,10 +131,33 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
       }
     }));
 
-    const filterValue: IDataFilterValueInfo = {
+    // Reuse the exact refinement token (hex-encoded GP0/L0 value) from search results so URL/state matches other refiners
+    const filterValues = this.props.filter?.values || [];
+    const termGuid = (this.extractGuidFromTermId(term.id) || '').replace(/-/g, '').toLowerCase();
+    const matchingRefiner = filterValues.find((filterValue: any) => {
+      if (!filterValue?.value) return false;
+      const decoded = this.decodeHexString(filterValue.value) || '';
+      const parts = decoded.split('|');
+      const guidPart = (parts[1] || '').replace('#', '').replace(/-/g, '').toLowerCase();
+      return guidPart === termGuid;
+    });
+
+    // Prefer the exact refiner object from the results so we emit the same payload as the checkbox layout
+    const filterValue: IDataFilterValueInfo = matchingRefiner ? (() => {
+      const decoded = this.decodeHexString(matchingRefiner.value || '');
+      const normalizedToken = this.normalizeRefinementToken(decoded);
+      const encodedToken = this.encodeRefinementToken(normalizedToken);
+
+      return {
+        name: normalizedToken,
+        value: encodedToken,
+        operator: matchingRefiner.operator,
+        selected: checked,
+      };
+    })() : {
       name: term.label,
       value: term.id,
-      selected: checked
+      selected: checked,
     };
     
     this.props.onChecked(this.props.filter?.filterName, filterValue);
@@ -112,6 +180,50 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
     } catch {
       return '';
     }
+  }
+
+  private stripWrappingQuotes = (value: string): string => {
+    if (!value) return value;
+    if (value.startsWith('"') && value.endsWith('"')) {
+      return value.substring(1, value.length - 1);
+    }
+    return value;
+  }
+
+  private normalizeRefinementToken = (token: string): string => {
+    if (!token) return token;
+    // Expect formats like 'L0|#0<GUID>|Label' or 'GP0|#0<GUID>'
+    const parts = token.split('|');
+    if (parts.length === 0) {
+      return token;
+    }
+
+    // Replace L0 with GP0 to match checkbox layout output
+    let prefix = parts[0];
+    if (prefix.startsWith('L0')) {
+      prefix = prefix.replace('L0', 'GP0');
+    }
+
+    // Keep and sanitize the term ID segment (e.g. '#0<GUID>')
+    const rawIdPart = parts.length > 1 ? parts[1] : '';
+    // Drop the leading '#', then collapse extra leading zeroes after the required '0'
+    let guidPart = rawIdPart.replace(/^#/, ''); // now something like '0ffe...' or '00ffe...'
+    // Ensure we keep exactly one leading '0' before the GUID as per refiner format
+    guidPart = guidPart.replace(/^0+/, (m) => m.length > 0 ? '0' : '');
+    const normalizedIdPart = `#${guidPart}`;
+
+    // Ignore trailing label segment if present to mirror checkbox payload
+    const normalized = `${prefix}|${normalizedIdPart}`;
+    return normalized;
+  }
+
+  private encodeRefinementToken = (token: string): string => {
+    if (!token) return token;
+    const hex = token
+      .split('')
+      .map(char => char.charCodeAt(0).toString(16).padStart(2, '0'))
+      .join('');
+    return `"ǂǂ${hex}"`;
   }
 
   private extractGuidFromTermId = (termId: string): string => {

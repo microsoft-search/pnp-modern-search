@@ -135,9 +135,13 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
     public componentDidUpdate(prevProps: ISearchFiltersContainerProps, prevState: ISearchFiltersContainerState) {
 
+<<<<<<< HEAD
         // When filters configuration is updated or the layout is changed 
         if (!isEqual(prevProps.selectedLayoutKey, this.props.selectedLayoutKey)
             || !isEqual(prevProps.properties, this.props.properties)) {
+=======
+      this.getFiltersToDisplay(this.props.availableFilters, this.state.currentUiFilters, this.props.filtersConfiguration);
+>>>>>>> 59ad246e (works now, time to optimize)
 
             const updatedfilters = this.resetSelectedFilterValues(this.state.currentUiFilters);
             const submittedFilters = this.getSelectedFiltersFromUIFilters(updatedfilters);
@@ -522,8 +526,26 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             }
         });
 
+<<<<<<< HEAD
         return selectedFilters.filter(filter => filter);
     }
+=======
+        // Remove useless properties since we don't want to expose them in the data source, especially for consumers
+        // We need to return only proeprties used for IDataFilter to avoid confusion
+        delete newSelectedFilter.expandByDefault;
+        delete newSelectedFilter.hasSelectedValues;
+        delete newSelectedFilter.selectedOnce;
+        delete newSelectedFilter.showCount;
+        delete newSelectedFilter.isMulti;
+        delete newSelectedFilter.displayName;
+        delete newSelectedFilter.canApply;
+        delete newSelectedFilter.canClear;
+        delete newSelectedFilter.sortIdx;
+        delete newSelectedFilter.selectedTemplate;
+        delete (newSelectedFilter as any).hierarchicalTerms;
+        // Preserve taxonomy metadata keys for parity with other layouts; normalize to null for deep links
+        (newSelectedFilter as any).termSetId = null;
+>>>>>>> 59ad246e (works now, time to optimize)
 
     /**
      * Binds event fired from filter value web components ('When an single filter value is selected')
@@ -744,11 +766,39 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                     submittedFilters: dataFilters
                 });
 
+<<<<<<< HEAD
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars
             } catch (e) {
                 Log.verbose(`[SearchFiltersContainer.getFiltersDeepLink]`, `Filters format in the query string is invalid.`);
             }
         }
+=======
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      } catch (e) {
+        Log.verbose(`[SearchFiltersContainer.getFiltersDeepLink]`, `Filters format in the query string is invalid.`);
+      }
+    }
+  }
+
+  /**
+   * Set the current selected filters as query string in the URL for deep linking
+   * @param submittedFilters the current submitted filters
+   */
+  private setFiltersDeepLink(submittedFilters: IDataFilter[]) {
+
+    let filtersDeepLinkUrl: string;
+    if (submittedFilters.length > 0) {
+      // Normalize taxonomy metadata so all layouts emit identical deep-link payloads
+      const sanitized = submittedFilters.map(f => {
+        const cleaned = { ...f, termSetId: null };
+        delete (cleaned as any).termGroupId;
+        return cleaned as IDataFilter;
+      });
+
+      filtersDeepLinkUrl = UrlHelper.addOrReplaceQueryStringParam(window.location.href, this.deeplinkQueryStringParam, JSON.stringify(sanitized));
+    } else {
+      filtersDeepLinkUrl = UrlHelper.removeQueryStringParam(this.deeplinkQueryStringParam, window.location.href);
+>>>>>>> 59ad246e (works now, time to optimize)
     }
 
     /**
