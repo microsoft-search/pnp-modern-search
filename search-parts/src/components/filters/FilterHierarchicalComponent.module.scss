@@ -1,6 +1,24 @@
 .filterHierarchical {
   width: 100%;
   
+  .searchContainer {
+    margin-bottom: 8px;
+  }
+
+  .searchInput {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid #d0d0d0;
+    border-radius: 2px;
+    font-size: 13px;
+    box-sizing: border-box;
+    
+    &:focus {
+      outline: none;
+      border-color: #0078d4;
+    }
+  }
+  
   .termItem {
     margin: 0;
     padding: 0;

@@ -39,6 +39,7 @@ export interface IFilterHierarchicalProps {
 export interface IFilterHierarchicalState {
     expandedTerms: { [key: string]: boolean };
     selectedTerms: { [key: string]: boolean };
+    searchText: string;
 }
 
 export class FilterHierarchicalComponent extends React.Component<IFilterHierarchicalProps, IFilterHierarchicalState> {
@@ -48,7 +49,8 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
 
     this.state = {
         expandedTerms: this.initializeExpandedTerms(),
-        selectedTerms: this.initializeSelectedTerms()
+        selectedTerms: this.initializeSelectedTerms(),
+        searchText: ''
     };
   }
 
@@ -332,7 +334,27 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
     return false;
   }
 
-  private renderTerm = (term: any, level: number = 0): JSX.Element => {
+  private termOrDescendantMatchesSearch = (term: any, searchText: string): boolean => {
+    if (!searchText) return true;
+    
+    // Check if this term's label matches
+    if (term.label && term.label.toLowerCase().includes(searchText.toLowerCase())) {
+      return true;
+    }
+    
+    // Check if any descendants match
+    if (term.children && term.children.length > 0) {
+      return term.children.some((child: any) => this.termOrDescendantMatchesSearch(child, searchText));
+    }
+    
+    return false;
+  }
+
+  private onSearchChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    this.setState({ searchText: event.target.value });
+  }
+
+  private renderTerm = (term: any, level: number = 0): JSX.Element | null => {
     const hasChildren = term.children && term.children.length > 0;
     const isExpanded = this.state.expandedTerms[term.id];
     const isSelected = this.state.selectedTerms[term.id];
@@ -343,6 +365,12 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
     // Decoded format is: 'L0|#0<GUID>|<Name>' e.g. 'L0|#04c155d36-d6cb-4b13-a4d3-32581f755174|Lyon, Auvergne-Rhône-Alpes, France'
     const filterValues = this.props.filter?.values || [];
     const termExistsInResults = this.termOrDescendantExistsInResults(term, filterValues);
+    
+    // Filter by search text
+    const matchesSearch = this.termOrDescendantMatchesSearch(term, this.state.searchText);
+    if (!matchesSearch) {
+      return null;
+    }
     
     return (
       <div key={term.id} className={styles.termItem}>
@@ -398,7 +426,16 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
         data-instance-id={this.props.instanceId}
         data-theme-variant={this.props.themeVariant ? 'true' : 'false'}
       >
-        {hierarchicalTerms.map((term: any) => this.renderTerm(term))}
+        <div className={styles.searchContainer}>
+          <input
+            type="text"
+            placeholder="Search..."
+            value={this.state.searchText}
+            onChange={this.onSearchChange}
+            className={styles.searchInput}
+          />
+        </div>
+        {hierarchicalTerms.map((term: any) => this.renderTerm(term)).filter(x => x !== null)}
       </div>
     );
   }

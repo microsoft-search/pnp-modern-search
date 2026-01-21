@@ -1301,6 +1301,25 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                                                 fontSize: '13px'
                                             }
                                         }, 'Select Term Set:'),
+                                        // Search filter input
+                                        React.createElement("input", {
+                                            type: 'text',
+                                            placeholder: 'Search term sets...',
+                                            onChange: (e) => {
+                                                const searchKey = `termset_search_${itemId}`;
+                                                (window as any)[searchKey] = e.target.value.toLowerCase();
+                                                this.context.propertyPane.refresh();
+                                            },
+                                            style: {
+                                                width: '100%',
+                                                padding: '8px',
+                                                marginBottom: '10px',
+                                                border: '1px solid #d0d0d0',
+                                                borderRadius: '2px',
+                                                fontSize: '13px',
+                                                boxSizing: 'border-box'
+                                            }
+                                        }),
                                         React.createElement("div", {
                                             style: {
                                                 border: '1px solid #ccc',
@@ -1310,31 +1329,56 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                                                 padding: '8px'
                                             }
                                         },
-                                            Array.from(this.groupedTermSets.entries()).length > 0 ?
-                                            Array.from(this.groupedTermSets.entries()).map(([groupId, termSets]) => {
-                                                const groupName = termSets.length > 0 ? termSets[0].groupName : groupId;
-                                                const isExpanded = expandedGroups.has(groupId);
+                                            (() => {
+                                                const searchKey = `termset_search_${itemId}`;
+                                                const searchText = (window as any)[searchKey] || '';
                                                 
-                                                return React.createElement("div", { key: groupId },
-                                                    React.createElement("div", {
-                                                        style: {
-                                                            display: 'flex',
-                                                            alignItems: 'center',
-                                                            padding: '4px 0',
-                                                            cursor: 'pointer',
-                                                            userSelect: 'none'
+                                                // Helper function to check if term set matches search
+                                                const matchesSearch = (termSetName: string): boolean => {
+                                                    if (!searchText) return true;
+                                                    return termSetName.toLowerCase().includes(searchText);
+                                                };
+                                                
+                                                // Helper function to check if a group has any matching term sets (including nested)
+                                                const groupHasMatches = (termSets: any[]): boolean => {
+                                                    if (!searchText) return true;
+                                                    return termSets.some(ts => matchesSearch(ts.name));
+                                                };
+                                                
+                                                if (Array.from(this.groupedTermSets.entries()).length === 0) {
+                                                    return React.createElement("div", { style: { color: '#999', fontStyle: 'italic' } }, 
+                                                        "No term sets available. Loading term store...");
+                                                }
+                                                
+                                                return Array.from(this.groupedTermSets.entries()).map(([groupId, termSets]) => {
+                                                    // Skip groups that don't have matching term sets
+                                                    if (!groupHasMatches(termSets)) {
+                                                        return null;
+                                                    }
+                                                    
+                                                    const groupName = termSets.length > 0 ? termSets[0].groupName : groupId;
+                                                    const isExpanded = expandedGroups.has(groupId);
+                                                    
+                                                    return React.createElement("div", { key: groupId },
+                                                        React.createElement("div", {
+                                                            style: {
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                padding: '4px 0',
+                                                                cursor: 'pointer',
+                                                                userSelect: 'none'
+                                                            },
+                                                            onClick: () => toggleGroupExpanded(groupId)
                                                         },
-                                                        onClick: () => toggleGroupExpanded(groupId)
-                                                    },
-                                                        React.createElement("span", {
-                                                            style: { marginRight: '6px', minWidth: '16px', fontSize: '12px', fontWeight: 'bold' }
+                                                            React.createElement("span", {
+                                                                style: { marginRight: '6px', minWidth: '16px', fontSize: '12px', fontWeight: 'bold' }
                                                         }, isExpanded ? '▼' : '▶'),
                                                         React.createElement("span", { style: { fontWeight: 'bold', color: '#333' } }, groupName)
                                                     ),
                                                     isExpanded && React.createElement("div", {
                                                         style: { marginLeft: '16px', paddingBottom: '8px' }
                                                     },
-                                                        termSets.map(ts => {
+                                                        termSets.filter(ts => matchesSearch(ts.name)).map(ts => {
                                                             const cleanTermSetId = extractGuid(ts.id);
                                                             const isSelected = cleanTermSetId === currentTermSetId;
                                                             
@@ -1368,10 +1412,8 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                                                         })
                                                     )
                                                 );
-                                            })
-                                            :
-                                            React.createElement("div", { style: { color: '#999', fontStyle: 'italic' } }, 
-                                                "No term sets available. Loading term store...")
+                                            }).filter(x => x !== null);
+                                            })()
                                         )
                                     ),
                                     
