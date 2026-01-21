@@ -301,7 +301,7 @@ export class FilterDateRangeWebComponent extends BaseWebComponent {
             </MessageBar>;
         }
 
-        ReactDOM.render(renderDateRange, this);
+        ReactDOM.render(renderDateRange as any, this);
     }
 
     protected onDispose(): void {

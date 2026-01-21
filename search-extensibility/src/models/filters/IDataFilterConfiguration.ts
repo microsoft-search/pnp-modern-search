@@ -113,4 +113,9 @@ export interface IDataFilterConfiguration {
      * The term group ID for hierarchical filters
      */
     termGroupId?: string;
+
+    /**
+     * Cache duration in days for hierarchical taxonomy terms (default: 3)
+     */
+    cacheDuration?: number;
 }

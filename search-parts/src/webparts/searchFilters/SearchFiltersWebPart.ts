@@ -124,6 +124,19 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
      */
     private propertyPaneConnectionsFields: IPropertyPaneField<any>[] = [];
 
+    /**
+     * Cached term set options for dropdown
+     */
+    private termSetOptions: IDropdownOption[] = [];
+    private termSetOptionsLoading: boolean = false;
+    
+    /**
+     * Cached grouped term sets: map of groupId -> array of term sets in that group
+     */
+    private groupedTermSets: Map<string, Array<{id: string, name: string, groupId: string, groupName: string}>> = new Map();
+    private termGroups: IDropdownOption[] = [];
+    private selectedTermGroup: string = '';
+
     constructor() {
         super();
         this._updateTitleProperty = this._updateTitleProperty.bind(this);
@@ -133,6 +146,91 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
         this.properties.title = value;
         this.renderCompleted();
     }
+
+    private async _loadTermSets(): Promise<IComboBoxOption[]> {
+        try {
+            // Check if both taxonomyService and context are initialized
+            if (!this.taxonomyService || !this.context || !this.context.pageContext) {
+                Log.verbose(LogSource, '_loadTermSets called but taxonomyService or context not ready yet');
+                console.warn('[SearchFilters] _loadTermSets called before taxonomyService/context ready');
+                return [];
+            }
+
+            console.log('[SearchFilters] _loadTermSets calling taxonomyService.getTermSets');
+            const termSets = await this.taxonomyService.getTermSets(this.context.pageContext.web.absoluteUrl);
+            console.log('[SearchFilters] _loadTermSets received', termSets);
+            
+            // Organize term sets by group for hierarchical display
+            this.groupedTermSets.clear();
+            const uniqueGroups = new Set<string>();
+            
+            for (const ts of termSets) {
+                uniqueGroups.add(ts.groupId);
+                if (!this.groupedTermSets.has(ts.groupId)) {
+                    this.groupedTermSets.set(ts.groupId, []);
+                }
+                this.groupedTermSets.get(ts.groupId)!.push(ts);
+            }
+            
+            // Build group dropdown options sorted by group name
+            const groups = Array.from(uniqueGroups)
+                .map(groupId => {
+                    const firstSetInGroup = termSets.find(ts => ts.groupId === groupId);
+                    return {
+                        key: groupId,
+                        text: firstSetInGroup?.groupName || groupId,
+                        data: { groupId }
+                    } as IDropdownOption;
+                })
+                .sort((a, b) => a.text.localeCompare(b.text));
+            
+            this.termGroups = groups;
+            console.log('[SearchFilters] Organized into', groups.length, 'groups');
+            
+            return termSets.map(ts => ({
+                key: ts.id,
+                text: `${ts.groupName} > ${ts.name}`,
+                data: {
+                    groupId: ts.groupId
+                }
+            } as IComboBoxOption));
+        } catch (error) {
+            console.error('[SearchFilters] Error loading term sets', error);
+            Log.error(LogSource, new Error(`Error loading term sets: ${error}`));
+            return [];
+        }
+    }
+    
+    /**
+     * Get term set options for the currently selected group
+     */
+    private _getTermSetsForGroup(groupId: string): IDropdownOption[] {
+        const termSetsInGroup = this.groupedTermSets.get(groupId) || [];
+        return termSetsInGroup
+            .sort((a, b) => a.name.localeCompare(b.name))
+            .map(ts => ({
+                key: ts.id,
+                text: ts.name,
+                data: { groupId: ts.groupId }
+            } as IDropdownOption));
+    }
+
+    private async _getTermGroupIdForTermSet(termSetId: string): Promise<string> {
+        try {
+            if (!this.taxonomyService || !this.context || !this.context.pageContext) {
+                return '';
+            }
+
+            const termSets = await this.taxonomyService.getTermSets(this.context.pageContext.web.absoluteUrl);
+            const matchingTermSet = termSets.find(ts => ts.id === termSetId);
+            
+            return matchingTermSet ? matchingTermSet.groupId : '';
+        } catch (error) {
+            Log.error(LogSource, new Error(`Error getting term group ID: ${error}`));
+            return '';
+        }
+    }
+
     protected async onInit() {
         try {
             // Disable PnP Telemetry
@@ -351,7 +449,12 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
             }
         }
 
-        ReactDom.render(renderRootElement, this.domElement);
+        if (renderRootElement) {
+            ReactDom.render(renderRootElement as any, this.domElement);
+        } else {
+            // Clear the DOM if there's nothing to render
+            this.domElement.innerHTML = '';
+        }
 
         // This call set this.renderedOnce to 'true' so we need to execute it at the very end
         super.renderCompleted();
@@ -452,6 +555,37 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
 
     protected async onPropertyPaneConfigurationStart() {
         await this.loadPropertyPaneResources();
+        
+        // Ensure web part services are initialized
+        if (!this.taxonomyService) {
+            await this.initializeWebPartServices();
+        }
+        
+        try {
+            // Load term sets for the dropdown
+            this.termSetOptionsLoading = true;
+            console.log('[SearchFilters] Loading term sets...');
+            const termSetOptions = await this._loadTermSets();
+            console.log('[SearchFilters] Term set options loaded', termSetOptions);
+            
+            // Convert IComboBoxOption to IDropdownOption format
+            this.termSetOptions = termSetOptions.map((option: IComboBoxOption) => ({
+                key: option.key,
+                text: option.text,
+                groupId: (option.data as any)?.groupId
+            } as IDropdownOption));
+            console.log('[SearchFilters] Converted term set options', this.termSetOptions);
+            
+            this.termSetOptionsLoading = false;
+            
+            // Refresh the property pane to update the dropdown state
+            this.context.propertyPane.refresh();
+        } catch (error) {
+            console.error('[SearchFilters] Error loading term sets in property pane', error);
+            Log.error(LogSource, new Error(`Error loading term sets in property pane: ${error}`));
+            this.termSetOptionsLoading = false;
+            this.termSetOptions = [];
+        }
     }
 
     protected async onPropertyPaneFieldChanged(propertyPath: string, oldValue: any, newValue: any): Promise<void> {
@@ -477,6 +611,14 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                         configuration.useHierarchical = correspondingNewConfig.useHierarchical;
                         configuration.termSetId = correspondingNewConfig.termSetId;
                         configuration.termGroupId = correspondingNewConfig.termGroupId;
+                        
+                        if (configuration.termSetId || configuration.termGroupId) {
+                            console.log('[SearchFilters] Saved filter config:', {
+                                filterName: configuration.filterName,
+                                termSetId: configuration.termSetId,
+                                termGroupId: configuration.termGroupId
+                            });
+                        }
                     }
                 }
 
@@ -977,75 +1119,361 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                             );
                         }
                     },
-                    {
-                        id: 'expandByDefault',
-                        title: webPartStrings.PropertyPane.DataFilterCollection.FilterExpandByDefault,
-                        type: this._customCollectionFieldType.custom,
-                        defaultValue: true,
-                        onCustomRender: (field, value, onUpdate, item: IDataFilterConfiguration, itemId) => {
-                            const isHierarchical = !!item.useHierarchical;
 
-                            // Only show this control when hierarchical filtering is enabled
-                            if (!isHierarchical) {
+                    {
+                        id: 'hierarchicalSettings',
+                        title: 'Hierarchical Settings',
+                        type: this._customCollectionFieldType.custom,
+                        onCustomRender: (field, value, onUpdate, item: IDataFilterConfiguration, itemId) => {
+                            if (!item.useHierarchical) {
                                 return null;
                             }
-
-                            // Default to expanded for hierarchical filters
-                            const effectiveValue = value !== undefined ? value : true;
-
-                            return React.createElement("div", { key: `${field.id}-${itemId}` },
-                                React.createElement(Checkbox, {
-                                    checked: effectiveValue,
-                                    disabled: false,
-                                    onChange: (ev, checked: boolean) => {
-                                        onUpdate(field.id, checked);
+                            
+                            const modalKey = `hierarchical_modal_${itemId}`;
+                            const showModal = (window as any)[modalKey] || false;
+                            
+                            // Get the current term set for this filter
+                            const currentTermSetId = item.termSetId || '';
+                            
+                            // Helper to extract GUID from /Guid(xxx)/ format
+                            const extractGuid = (guidStr: string): string => {
+                                if (!guidStr) return '';
+                                const match = guidStr.match(/Guid\(([0-9a-fA-F\-]{36})\)/);
+                                return match ? match[1] : guidStr;
+                            };
+                            
+                            // Find the current term set name for display
+                            let currentTermSetName = 'Not selected';
+                            if (currentTermSetId) {
+                                Array.from(this.groupedTermSets.values()).forEach(termSets => {
+                                    const found = termSets.find(ts => extractGuid(ts.id) === currentTermSetId);
+                                    if (found) {
+                                        currentTermSetName = found.name;
                                     }
-                                })
+                                });
+                            }
+                            
+                            // Track expanded groups in component state
+                            const expandedKey = `expanded_termsets_${itemId}`;
+                            const expandedGroupsStr = (window as any)[expandedKey] || '';
+                            const expandedGroups = new Set(expandedGroupsStr ? expandedGroupsStr.split('|') : []);
+                            
+                            // Auto-expand the group containing the currently selected term set
+                            if (currentTermSetId && expandedGroups.size === 0) {
+                                Array.from(this.groupedTermSets.keys()).forEach(groupId => {
+                                    const termSets = this.groupedTermSets.get(groupId);
+                                    if (termSets) {
+                                        const hasSelectedTermSet = termSets.some(ts => extractGuid(ts.id) === currentTermSetId);
+                                        if (hasSelectedTermSet) {
+                                            expandedGroups.add(groupId);
+                                            (window as any)[expandedKey] = Array.from(expandedGroups).join('|');
+                                        }
+                                    }
+                                });
+                            }
+                            
+                            const toggleGroupExpanded = (groupId: string) => {
+                                if (expandedGroups.has(groupId)) {
+                                    expandedGroups.delete(groupId);
+                                } else {
+                                    expandedGroups.add(groupId);
+                                }
+                                (window as any)[expandedKey] = Array.from(expandedGroups).join('|');
+                                this.context.propertyPane.refresh();
+                            };
+                            
+                            const effectiveCacheDuration = item.cacheDuration !== undefined ? item.cacheDuration : 3;
+                            
+                            // Summary view (collapsed)
+                            if (!showModal) {
+                                return React.createElement("div", { 
+                                    key: `${field.id}-${itemId}`,
+                                    style: { marginTop: '10px' }
+                                },
+                                    React.createElement("div", {
+                                        style: {
+                                            padding: '10px 12px',
+                                            backgroundColor: '#f0f0f0',
+                                            border: '1px solid #d0d0d0',
+                                            borderRadius: '2px',
+                                            marginBottom: '10px'
+                                        }
+                                    },
+                                        React.createElement("div", { style: { marginBottom: '8px' } },
+                                            React.createElement("strong", null, 'Term Set: '),
+                                            React.createElement("span", { style: { color: '#444' } }, currentTermSetName)
+                                        ),
+                                        React.createElement("div", null,
+                                            React.createElement("strong", null, 'Cache Duration: '),
+                                            React.createElement("span", { style: { color: '#444' } }, effectiveCacheDuration + ' days')
+                                        )
+                                    ),
+                                    React.createElement("button", {
+                                        onClick: () => {
+                                            (window as any)[modalKey] = true;
+                                            this.context.propertyPane.refresh();
+                                        },
+                                        style: {
+                                            padding: '8px 16px',
+                                            backgroundColor: '#0078d4',
+                                            color: 'white',
+                                            border: 'none',
+                                            borderRadius: '2px',
+                                            cursor: 'pointer',
+                                            fontSize: '14px',
+                                            fontWeight: '600'
+                                        }
+                                    }, 'Edit Hierarchical Settings')
+                                );
+                            }
+                            
+                            // Modal dialog (expanded)
+                            return React.createElement("div", { 
+                                key: `${field.id}-modal-${itemId}`,
+                                style: {
+                                    position: 'fixed',
+                                    top: 0,
+                                    left: 0,
+                                    right: 0,
+                                    bottom: 0,
+                                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    zIndex: 10000
+                                },
+                                onClick: (e) => {
+                                    if (e.target === e.currentTarget) {
+                                        (window as any)[modalKey] = false;
+                                        this.context.propertyPane.refresh();
+                                    }
+                                }
+                            },
+                                React.createElement("div", {
+                                    style: {
+                                        backgroundColor: 'white',
+                                        borderRadius: '4px',
+                                        padding: '20px',
+                                        width: '90%',
+                                        maxWidth: '500px',
+                                        maxHeight: '80vh',
+                                        overflowY: 'auto',
+                                        boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)'
+                                    }
+                                },
+                                    // Header
+                                    React.createElement("div", {
+                                        style: {
+                                            display: 'flex',
+                                            justifyContent: 'space-between',
+                                            alignItems: 'center',
+                                            marginBottom: '20px',
+                                            borderBottom: '1px solid #e0e0e0',
+                                            paddingBottom: '10px'
+                                        }
+                                    },
+                                        React.createElement("h3", {
+                                            style: { margin: 0, fontSize: '16px', fontWeight: '600' }
+                                        }, 'Hierarchical Filter Settings'),
+                                        React.createElement("button", {
+                                            onClick: () => {
+                                                (window as any)[modalKey] = false;
+                                                this.context.propertyPane.refresh();
+                                            },
+                                            style: {
+                                                background: 'none',
+                                                border: 'none',
+                                                fontSize: '24px',
+                                                cursor: 'pointer',
+                                                padding: 0,
+                                                color: '#666'
+                                            }
+                                        }, '✕')
+                                    ),
+                                    
+                                    // Term Set Picker
+                                    React.createElement("div", { style: { marginBottom: '20px' } },
+                                        React.createElement("label", {
+                                            style: {
+                                                display: 'block',
+                                                marginBottom: '8px',
+                                                fontWeight: '600',
+                                                fontSize: '13px'
+                                            }
+                                        }, 'Select Term Set:'),
+                                        React.createElement("div", {
+                                            style: {
+                                                border: '1px solid #ccc',
+                                                borderRadius: '2px',
+                                                maxHeight: '200px',
+                                                overflowY: 'auto',
+                                                padding: '8px'
+                                            }
+                                        },
+                                            Array.from(this.groupedTermSets.entries()).length > 0 ?
+                                            Array.from(this.groupedTermSets.entries()).map(([groupId, termSets]) => {
+                                                const groupName = termSets.length > 0 ? termSets[0].groupName : groupId;
+                                                const isExpanded = expandedGroups.has(groupId);
+                                                
+                                                return React.createElement("div", { key: groupId },
+                                                    React.createElement("div", {
+                                                        style: {
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            padding: '4px 0',
+                                                            cursor: 'pointer',
+                                                            userSelect: 'none'
+                                                        },
+                                                        onClick: () => toggleGroupExpanded(groupId)
+                                                    },
+                                                        React.createElement("span", {
+                                                            style: { marginRight: '6px', minWidth: '16px', fontSize: '12px', fontWeight: 'bold' }
+                                                        }, isExpanded ? '▼' : '▶'),
+                                                        React.createElement("span", { style: { fontWeight: 'bold', color: '#333' } }, groupName)
+                                                    ),
+                                                    isExpanded && React.createElement("div", {
+                                                        style: { marginLeft: '16px', paddingBottom: '8px' }
+                                                    },
+                                                        termSets.map(ts => {
+                                                            const cleanTermSetId = extractGuid(ts.id);
+                                                            const isSelected = cleanTermSetId === currentTermSetId;
+                                                            
+                                                            return React.createElement("div", {
+                                                                key: ts.id,
+                                                                onClick: () => {
+                                                                    const cleanGroupId = extractGuid(ts.groupId);
+                                                                    console.log('[SearchFilters] Term set selected:', ts.name, 'ID:', cleanTermSetId);
+                                                                    onUpdate('termSetId', cleanTermSetId);
+                                                                    onUpdate('termGroupId', cleanGroupId);
+                                                                },
+                                                                style: {
+                                                                    display: 'flex',
+                                                                    alignItems: 'center',
+                                                                    padding: '6px 8px',
+                                                                    marginBottom: '4px',
+                                                                    backgroundColor: isSelected ? '#e3f2fd' : '#f5f5f5',
+                                                                    border: isSelected ? '2px solid #2196F3' : '1px solid #ddd',
+                                                                    borderRadius: '2px',
+                                                                    cursor: 'pointer'
+                                                                }
+                                                            },
+                                                                React.createElement("input", {
+                                                                    type: 'checkbox',
+                                                                    checked: isSelected,
+                                                                    readOnly: true,
+                                                                    style: { marginRight: '8px', cursor: 'pointer' }
+                                                                }),
+                                                                ts.name
+                                                            );
+                                                        })
+                                                    )
+                                                );
+                                            })
+                                            :
+                                            React.createElement("div", { style: { color: '#999', fontStyle: 'italic' } }, 
+                                                "No term sets available. Loading term store...")
+                                        )
+                                    ),
+                                    
+                                    // Cache Duration
+                                    React.createElement("div", { style: { marginBottom: '20px' } },
+                                        React.createElement("label", {
+                                            style: {
+                                                display: 'block',
+                                                marginBottom: '8px',
+                                                fontWeight: '600',
+                                                fontSize: '13px'
+                                            }
+                                        }, 'Cache Duration: ' + effectiveCacheDuration + ' days'),
+                                        React.createElement("input", {
+                                            type: 'range',
+                                            min: 1,
+                                            max: 5,
+                                            value: effectiveCacheDuration,
+                                            onChange: (e) => {
+                                                const newValue = parseInt(e.target.value, 10);
+                                                onUpdate('cacheDuration', newValue);
+                                            },
+                                            style: { width: '100%', height: '4px', borderRadius: '2px', outline: 'none', cursor: 'pointer' }
+                                        }),
+                                        React.createElement("div", {
+                                            style: { display: 'flex', justifyContent: 'space-between', marginTop: '4px', fontSize: '12px', color: '#666' }
+                                        },
+                                            React.createElement("span", null, '1'),
+                                            React.createElement("span", null, '5')
+                                        )
+                                    ),
+                                    
+                                    // Expand by Default
+                                    React.createElement("div", { style: { marginBottom: '20px', padding: '10px', backgroundColor: '#f9f9f9', borderRadius: '2px' } },
+                                        React.createElement("label", {
+                                            style: {
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                fontWeight: '600',
+                                                fontSize: '13px',
+                                                cursor: 'pointer'
+                                            }
+                                        },
+                                            React.createElement("input", {
+                                                type: 'checkbox',
+                                                checked: item.expandByDefault || false,
+                                                onChange: (e) => {
+                                                    onUpdate('expandByDefault', e.target.checked);
+                                                },
+                                                style: { marginRight: '8px', cursor: 'pointer' }
+                                            }),
+                                            'Expand by Default'
+                                        )
+                                    ),
+                                    
+                                    // Refresh Button
+                                    React.createElement("div", { style: { marginBottom: '20px' } },
+                                        React.createElement("button", {
+                                            onClick: () => {
+                                                if (this.taxonomyService && item.termSetId) {
+                                                    this.taxonomyService.clearTermsCache(item.termSetId);
+                                                    console.log('[SearchFilters] Cleared cache for term set:', item.termSetId);
+                                                    alert('Terms cache cleared');
+                                                }
+                                            },
+                                            style: {
+                                                width: '100%',
+                                                padding: '10px',
+                                                backgroundColor: '#50e6ff',
+                                                color: '#333',
+                                                border: 'none',
+                                                borderRadius: '2px',
+                                                cursor: 'pointer',
+                                                fontSize: '13px',
+                                                fontWeight: '600'
+                                            }
+                                        }, 'Refresh Cache Now')
+                                    ),
+                                    
+                                    // Footer Buttons
+                                    React.createElement("div", {
+                                        style: { display: 'flex', gap: '8px', justifyContent: 'flex-end' }
+                                    },
+                                        React.createElement("button", {
+                                            onClick: () => {
+                                                (window as any)[modalKey] = false;
+                                                this.context.propertyPane.refresh();
+                                            },
+                                            style: {
+                                                padding: '8px 16px',
+                                                backgroundColor: '#0078d4',
+                                                color: 'white',
+                                                border: 'none',
+                                                borderRadius: '2px',
+                                                cursor: 'pointer',
+                                                fontSize: '13px',
+                                                fontWeight: '600'
+                                            }
+                                        }, 'Done')
+                                    )
+                                )
                             );
-                        }
-                    },
-                    {
-                        id: 'termGroupId',
-                        title: webPartStrings.PropertyPane.DataFilterCollection.TermGroupId,
-                        type: this._customCollectionFieldType.custom,
-                        defaultValue: '',
-                        required: false,
-                        onCustomRender: (field, value, onUpdate, item: IDataFilterConfiguration, itemId) => {
-                            if (!item.useHierarchical) {
-                                return null;
-                            }
-                            return React.createElement(TextField, {
-                                key: `${field.id}-${itemId}`,
-                                value: value !== undefined && value !== null ? value : '',
-                                placeholder: 'Enter term group id',
-                                onChange: (ev?: React.FormEvent<HTMLInputElement>, newValue?: string) => {
-                                    if (newValue !== undefined) {
-                                        onUpdate(field.id, newValue);
-                                    }
-                                }
-                            });
-                        }
-                    },
-                    {
-                        id: 'termSetId',
-                        title: webPartStrings.PropertyPane.DataFilterCollection.TermSetId,
-                        type: this._customCollectionFieldType.custom,
-                        defaultValue: '',
-                        required: false,
-                        onCustomRender: (field, value, onUpdate, item: IDataFilterConfiguration, itemId) => {
-                            if (!item.useHierarchical) {
-                                return null;
-                            }
-                            return React.createElement(TextField, {
-                                key: `${field.id}-${itemId}`,
-                                value: value !== undefined && value !== null ? value : '',
-                                placeholder: 'Enter term set id',
-                                onChange: (ev?: React.FormEvent<HTMLInputElement>, newValue?: string) => {
-                                    if (newValue !== undefined) {
-                                        onUpdate(field.id, newValue);
-                                    }
-                                }
-                            });
                         }
                     }
                 ]

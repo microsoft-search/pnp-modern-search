@@ -227,7 +227,11 @@ export class CollapsibleContentWebComponent extends BaseWebComponent {
             footerTemplate={footerTemplate}
         />;
 
-        ReactDOM.render(collapsibleContent, this);
+        if (collapsibleContent) {
+            ReactDOM.render(collapsibleContent as any, this);
+        } else {
+            this.innerHTML = '';
+        }
     }
 
     protected onDispose(): void {

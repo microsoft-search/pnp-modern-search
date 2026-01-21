@@ -87,7 +87,7 @@ const createActionDiv = (
             actionClickHandler={actionClickHandler}
             style={style}
             theme={theme}
-        />, div);
+        /> as any, div);
     return div;
 };
 

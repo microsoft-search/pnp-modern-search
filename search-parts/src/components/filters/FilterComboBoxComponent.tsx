@@ -490,7 +490,7 @@ export class FilterComboBoxWebComponent extends BaseWebComponent {
                                 }).bind(this)}
                             />;
         
-        ReactDOM.render(filterComboBox, this);
+        ReactDOM.render(filterComboBox as any, this);
     }
 
     protected onDispose(): void {

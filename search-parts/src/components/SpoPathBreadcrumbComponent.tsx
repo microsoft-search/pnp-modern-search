@@ -207,10 +207,11 @@ export class SpoPathBreadcrumbWebComponent extends BaseWebComponent {
     public async connectedCallback() {
         let props = this.resolveAttributes();
         const spoPathBreadcrumb = <div style={{ display: 'flex' }}><SpoPathBreadcrumb {...props} /></div>;
-        ReactDOM.render(spoPathBreadcrumb, this);
+        ReactDOM.render(spoPathBreadcrumb as any, this);
     }
 
     protected onDispose(): void {
         ReactDOM.unmountComponentAtNode(this);
     }
 }
+

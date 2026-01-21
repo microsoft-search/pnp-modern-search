@@ -126,7 +126,7 @@ export class FilterValueOperatorWebComponent extends BaseWebComponent {
                                                 }).bind(this)}
                                             />;
 
-       ReactDOM.render(renderFilterValueOperator, this);
+       ReactDOM.render(renderFilterValueOperator as any, this);
     }    
 
     protected onDispose(): void {

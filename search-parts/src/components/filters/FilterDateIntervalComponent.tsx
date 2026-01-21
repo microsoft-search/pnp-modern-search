@@ -379,7 +379,7 @@ export class FilterDateIntervalWebComponent extends BaseWebComponent {
             </MessageBar>;
         }
 
-        ReactDOM.render(renderDateRange, this);
+        ReactDOM.render(renderDateRange as any, this);
     }
 
     protected onDispose(): void {

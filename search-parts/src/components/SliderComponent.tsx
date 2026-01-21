@@ -197,7 +197,7 @@ export class SliderWebComponent extends BaseWebComponent {
         const templateService = serviceScope.consume<ITemplateService>(templateServiceKey);
 
         const sliderComponent = <SliderComponent {...props} template={this.innerHTML} handlebars={templateService.Handlebars} />;
-        ReactDOM.render(sliderComponent, this);
+        ReactDOM.render(sliderComponent as any, this);
     }
 
     protected onDispose(): void {

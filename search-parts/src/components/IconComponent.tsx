@@ -42,7 +42,7 @@ export class IconWebComponent extends BaseWebComponent {
     public async connectedCallback() {
         let props = this.resolveAttributes();
         const fileIcon = <div style={{ display: 'flex' }}><FileIcon {...props} /></div>;
-        ReactDOM.render(fileIcon, this);
+        ReactDOM.render(fileIcon as any, this);
     }
 
     protected onDispose(): void {

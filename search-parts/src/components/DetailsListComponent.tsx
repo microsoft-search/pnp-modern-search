@@ -1120,7 +1120,7 @@ export class DetailsListWebComponent extends BaseWebComponent {
         }}
       />
     );
-    ReactDOM.render(detailsListComponent, this);
+    ReactDOM.render(detailsListComponent as any, this);
   }
 
   protected onDispose(): void {

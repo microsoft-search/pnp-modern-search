@@ -388,7 +388,7 @@ export class DownloadSelectedItemsButtonWebComponent extends BaseWebComponent {
       props.webPartContext.aadTokenProviderFactory = this._serviceScope.consume(AadTokenProviderFactory.serviceKey);
 
       const exportButtonComponent = <DownloadSelectedItemsButtonComponent {...props} />;
-      ReactDOM.render(exportButtonComponent, this);
+      ReactDOM.render(exportButtonComponent as any, this);
     }
 
     protected onDispose(): void {

@@ -429,7 +429,7 @@ export class FilterHierarchicalWebComponent extends BaseWebComponent {
     }}
     />;
 
-    ReactDOM.render(hierarchical, this);
+    ReactDOM.render(hierarchical as any, this);
   }
 
   protected onDispose(): void {

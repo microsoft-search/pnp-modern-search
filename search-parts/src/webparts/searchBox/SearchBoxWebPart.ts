@@ -249,7 +249,12 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
             }, commonStrings.General.Resources.PleaseReferToDocumentationMessage));
         }
 
-        ReactDom.render(renderRootElement, this.domElement);
+        if (renderRootElement) {
+            ReactDom.render(renderRootElement as any, this.domElement);
+        } else {
+            // Clear the DOM if there's nothing to render
+            this.domElement.innerHTML = '';
+        }
 
         // This call set this.renderedOnce to 'true' so we need to execute it at the very end
         super.renderCompleted();

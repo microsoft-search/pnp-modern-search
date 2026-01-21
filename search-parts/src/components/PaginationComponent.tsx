@@ -205,7 +205,7 @@ export class PaginationWebComponent extends BaseWebComponent {
                 cancelable: true
             }));
         }} />;
-        ReactDOM.render(pagination, this);
+        ReactDOM.render(pagination as any, this);
     }
 
     protected onDispose(): void {

@@ -103,7 +103,7 @@ export class FilePreviewWebComponent extends BaseWebComponent {
 
         let props = this.resolveAttributes();
         const filePreview = <FilePreview {...props} template={this.innerHTML} />;
-        ReactDOM.render(filePreview, this);
+        ReactDOM.render(filePreview as any, this);
     }
 
     protected onDispose(): void {

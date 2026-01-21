@@ -369,10 +369,11 @@ export class DocumentCardWebComponent extends BaseWebComponent {
     const documentCarditem = (
       <DocumentCardComponent {...props} templateService={templateService} />
     );
-    ReactDOM.render(documentCarditem, this);
+    ReactDOM.render(documentCarditem as any, this);
   }
 
   protected onDispose(): void {
     ReactDOM.unmountComponentAtNode(this);
   }
 }
+

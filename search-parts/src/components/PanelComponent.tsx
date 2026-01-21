@@ -397,7 +397,7 @@ export class PanelWebComponent extends BaseWebComponent {
 
         let props = this.resolveAttributes();
         const fileIcon = <PanelComponent {...props} contentTemplate={contentTemplateContent} openTemplate={openTemplateContent} />;
-        ReactDOM.render(fileIcon, this);
+        ReactDOM.render(fileIcon as any, this);
     }
 
     protected onDispose(): void {

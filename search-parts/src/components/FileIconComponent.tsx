@@ -99,7 +99,7 @@ export class FileIconWebComponent extends BaseWebComponent {
 
         let props = this.resolveAttributes();
         const fileIcon = <FileIcon {...props} />;
-        ReactDOM.render(fileIcon, this);
+        ReactDOM.render(fileIcon as any, this);
     }
 
     protected onDispose(): void {

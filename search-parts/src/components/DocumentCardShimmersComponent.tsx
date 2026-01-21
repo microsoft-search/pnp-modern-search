@@ -205,7 +205,7 @@ export class DocumentCardShimmersWebComponent extends BaseWebComponent {
     public connectedCallback() {
         let props = this.resolveAttributes();
         const documentCarditem = <DocumentCardShimmersComponent {...props} />;
-        ReactDOM.render(documentCarditem, this);
+        ReactDOM.render(documentCarditem as any, this);
     }
 
     protected onDispose(): void {

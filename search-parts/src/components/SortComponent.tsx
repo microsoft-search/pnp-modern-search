@@ -153,7 +153,7 @@ export class SortWebComponent extends BaseWebComponent {
                 }}
             />;
 
-            ReactDOM.render(sortComponent, this);
+            ReactDOM.render(sortComponent as any, this);
         }
     }
 

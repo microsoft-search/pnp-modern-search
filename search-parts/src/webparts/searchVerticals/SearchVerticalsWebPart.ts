@@ -187,7 +187,12 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
         }
 
 
-        ReactDom.render(renderRootElement, this.domElement);
+        if (renderRootElement) {
+            ReactDom.render(renderRootElement as any, this.domElement);
+        } else {
+            // Clear the DOM if there's nothing to render
+            this.domElement.innerHTML = '';
+        }
     }
 
     /**

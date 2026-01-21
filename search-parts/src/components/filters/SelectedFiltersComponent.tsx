@@ -236,7 +236,7 @@ export class SelectedFiltersWebComponent extends BaseWebComponent {
         const filtersConfiguration = props.filtersConfiguration ? props.filtersConfiguration as IDataFilterConfiguration[] : [];
 
         const filtersComponent = <SelectedFiltersComponent {...props} moment={moment} filters={filters} filtersConfiguration={filtersConfiguration}/>;
-        ReactDOM.render(filtersComponent, this);
+        ReactDOM.render(filtersComponent as any, this);
     }
     
     protected onDispose(): void {

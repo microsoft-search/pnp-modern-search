@@ -1343,12 +1343,12 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                             // Handle both L0 and GP0 formats
                             if (termPrefix.localeCompare("L0") === 0 || termPrefix.localeCompare("GP0") === 0) {
                                 const termFilterWithoutTranslations = `GP0|#${termId.toString()}`;
-                                const termTextFilter = `L0|#0${termId.toString()}`;
+                                const termTextFilter = `L0|#${termId.toString()}`;
 
                                 // https://docs.microsoft.com/en-us/sharepoint/technical-reference/automatically-created-managed-properties-in-sharepoint
 
-                                // termFilterWithoutTranslations => language agnostic term value
-                                // termTextFilter => Text value in case the value is a litteral string (ex: a property bag value or a text column https://microsoft-search.github.io/pnp-modern-search/usage/search-filters/#use-indexed-property-bag-properties-with-taxonomy-values)
+                                // termFilterWithoutTranslations => language agnostic term value (GP0|# includes term + children)
+                                // termTextFilter => Text value with children (L0|# includes term + children; L0|#0 would be term only)
                                 value.value = `or(${termFilterWithoutTranslations},${termTextFilter})`;
                             }
                         }

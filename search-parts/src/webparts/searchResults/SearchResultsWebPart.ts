@@ -560,7 +560,12 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             }, commonStrings.General.Resources.PleaseReferToDocumentationMessage));
         }
 
-        ReactDom.render(renderRootElement, this.domElement);
+        if (renderRootElement) {
+            ReactDom.render(renderRootElement as any, this.domElement);
+        } else {
+            // Clear the DOM if there's nothing to render
+            this.domElement.innerHTML = '';
+        }
 
         // Re-bind web component events after render to handle SPA navigation scenarios
         // where the DOM element is replaced without triggering onInit

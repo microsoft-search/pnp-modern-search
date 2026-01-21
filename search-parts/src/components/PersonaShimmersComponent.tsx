@@ -103,7 +103,7 @@ export class PersonaShimmersWebComponent extends BaseWebComponent {
 
         let props = this.resolveAttributes();
         const personaShimmers = <PersonaCardShimmersComponent {...props} />;
-        ReactDOM.render(personaShimmers, this);
+        ReactDOM.render(personaShimmers as any, this);
     }
 
     protected onDispose(): void {

@@ -27,12 +27,25 @@ import { DataFilterHelper } from '../../../helpers/DataFilterHelper';
 import { UrlHelper } from '../../../helpers/UrlHelper';
 import { BuiltinFilterTemplates } from '../../../layouts/AvailableTemplates';
 import { MessageBar, MessageBarType } from '@fluentui/react/lib/MessageBar';
+import { ITerm } from '../../../services/taxonomyService/ITaxonomyItems';
 
 const DEEPLINK_QUERYSTRING_PARAM_BASE = 'f';
 
 export default class SearchFiltersContainer extends React.Component<ISearchFiltersContainerProps, ISearchFiltersContainerState> {
 
+<<<<<<< HEAD
     private componentRef: React.RefObject<any>;
+=======
+  private componentRef: React.RefObject<any>;
+  // In-memory caches to avoid repeated term fetches within the same session
+  private _hierarchicalTermsCache: Map<string, ITerm[]> = new Map();
+  private _hierarchicalTermsInflight: Map<string, Promise<ITerm[]>> = new Map();
+  
+  /**
+   * The URL query parameter name for this specific web part instance
+   */
+  private deeplinkQueryStringParam: string;
+>>>>>>> 1bd2b373 (caching and reset of caching complete)
 
     /**
      * The URL query parameter name for this specific web part instance
@@ -301,14 +314,38 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
           termGroupId: filterConfiguration.termGroupId
         };
 
-        // Fetch hierarchical terms if configured
+        // Fetch hierarchical terms if configured (with in-memory cache to avoid re-entrancy loops)
         if (filterConfiguration.useHierarchical && filterConfiguration.termSetId && filterConfiguration.termGroupId && this.props.taxonomyService) {
           try {
-            const terms = await this.props.taxonomyService.getTermsByTermSetId(
-              this.props.context.pageContext.web.absoluteUrl, 
-              filterConfiguration.termSetId, 
-              filterConfiguration.termGroupId
-            );
+            const cacheDuration = filterConfiguration.cacheDuration !== undefined ? filterConfiguration.cacheDuration : 3;
+            const cacheKey = `${filterConfiguration.termSetId}`;
+
+            const getTerms = async (): Promise<ITerm[]> => {
+              const terms = await this.props.taxonomyService.getTermsByTermSetId(
+                this.props.context.pageContext.web.absoluteUrl,
+                filterConfiguration.termSetId!,
+                filterConfiguration.termGroupId!,
+                cacheDuration
+              );
+              return terms;
+            };
+
+            const existing = this._hierarchicalTermsCache.get(cacheKey);
+            const inflight = this._hierarchicalTermsInflight.get(cacheKey);
+
+            let terms: ITerm[];
+
+            if (existing) {
+              terms = existing;
+            } else if (inflight) {
+              terms = await inflight;
+            } else {
+              const promise = getTerms();
+              this._hierarchicalTermsInflight.set(cacheKey, promise);
+              terms = await promise;
+              this._hierarchicalTermsInflight.delete(cacheKey);
+              this._hierarchicalTermsCache.set(cacheKey, terms);
+            }
 
             // Build hierarchical structure from flat terms list using PathOfTerm
             const buildHierarchy = (allTerms: any[]) => {

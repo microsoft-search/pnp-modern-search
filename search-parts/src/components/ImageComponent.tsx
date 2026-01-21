@@ -53,7 +53,7 @@ export class ImageWebComponent extends BaseWebComponent {
     public connectedCallback() {
         let props = this.resolveAttributes();
         const iconComponent = <ImageComponent {...props} />;
-        ReactDOM.render(iconComponent, this);
+        ReactDOM.render(iconComponent as any, this);
     }
 
     protected onDispose(): void {

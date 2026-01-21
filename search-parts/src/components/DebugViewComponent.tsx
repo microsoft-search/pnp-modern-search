@@ -55,7 +55,11 @@ export class DebugViewWebComponent extends BaseWebComponent {
 
         let props = this.resolveAttributes();
         const debugView = <DebugView {...props} />;
-        ReactDOM.render(debugView, this);
+        if (debugView) {
+            ReactDOM.render(debugView as any, this);
+        } else {
+            this.innerHTML = '';
+        }
     }
 
     protected onDispose(): void {

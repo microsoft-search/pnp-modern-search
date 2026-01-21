@@ -222,7 +222,7 @@ export class FilterSearchBoxWebComponent extends BaseWebComponent {
                 }));
             }).bind(this)}
         />;
-        ReactDOM.render(renderFilterSearchBox, this);
+        ReactDOM.render(renderFilterSearchBox as any, this);
     }
 
     protected onDispose(): void {

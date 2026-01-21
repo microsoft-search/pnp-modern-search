@@ -92,6 +92,6 @@ export class PropertyPaneAsyncCombo implements IPropertyPaneField<IPropertyPaneA
             } as IAsyncComboProps)
         );
 
-        ReactDom.render(element, elem);
+        ReactDom.render(element as any, elem);
     }
 }

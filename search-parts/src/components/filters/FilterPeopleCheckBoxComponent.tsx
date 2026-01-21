@@ -171,7 +171,7 @@ export class FilterPeopleCheckBoxWebComponent extends BaseWebComponent {
         }).bind(this)}
         />;
 
-        ReactDOM.render(checkBox, this);
+        ReactDOM.render(checkBox as any, this);
     }
 
     protected onDispose(): void {

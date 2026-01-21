@@ -429,17 +429,18 @@ export class PersonaWebComponent extends BaseWebComponent {
         const templateService =
             serviceScope.consume<ITemplateService>(templateServiceKey);
 
-        const personaItem = (
-            <PersonaComponent
-                {...props}
-                templateService={templateService}
-                serviceScope={serviceScope}
-            />
-        );
-        ReactDOM.render(personaItem, this);
-    }
+    const personaItem = (
+      <PersonaComponent
+        {...props}
+        templateService={templateService}
+        serviceScope={serviceScope}
+      />
+    );
+    ReactDOM.render(personaItem as any, this);
+  }
 
     protected onDispose(): void {
         ReactDOM.unmountComponentAtNode(this);
     }
 }
+

@@ -70,7 +70,7 @@ export class PropertyPaneNonReactiveTextField implements IPropertyPaneField<IPro
             } as INonReactiveTextFieldProps)
         );
 
-        ReactDom.render(element, elem);
+        ReactDom.render(element as any, elem);
     }
     
 }

@@ -113,7 +113,7 @@ export class FilterMultiWebComponent extends BaseWebComponent {
                 }));
             }).bind(this)}
         />;
-        ReactDOM.render(filterMulti, this);
+        ReactDOM.render(filterMulti as any, this);
     }
 
     protected onDispose(): void {

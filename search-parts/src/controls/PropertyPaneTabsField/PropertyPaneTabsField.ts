@@ -57,7 +57,7 @@ export class PropertyPaneTabsField implements IPropertyPaneField<IPropertyPaneTa
             } as IChoiceGroupTabsProps)
         );
 
-        ReactDom.render(element, elem);
+        ReactDom.render(element as any, elem);
     }
 
 }
