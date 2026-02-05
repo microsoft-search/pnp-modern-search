@@ -86,7 +86,7 @@
         "unlazy-loader": "0.1.3",
         "url": "0.11.4",
         "util": "0.12.5",
-        "webpack": "5.102.1",
+        "webpack": "5.104.1",
         "webpack-bundle-analyzer": "4.10.2"
     },
     "overrides": {
