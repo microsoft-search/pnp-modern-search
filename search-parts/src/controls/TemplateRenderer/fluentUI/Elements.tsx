@@ -169,7 +169,7 @@ export class FluentUIChoiceSetInput extends Input {
                 }
             </>;
 
-        this.element = internalRender(control);
+        this.element = internalRender(control, this.element);
         this.element.style.width = "100%";
         return this.element;
     }
@@ -277,7 +277,7 @@ export class FluentUIDateInput extends Input {
                 />
             </ThemeProvider>;
 
-        this.element = internalRender(control);
+        this.element = internalRender(control, this.element);
         this.element.style.width = "100%";
         return this.element;
     }
@@ -391,7 +391,7 @@ export class FluentUINumberInput extends Input {
                 componentRef={(input) => this.refControl = input}
             />;
 
-        this.element = internalRender(control);
+        this.element = internalRender(control, this.element);
         this.element.style.width = "100%";
         return this.element;
     }
@@ -481,6 +481,7 @@ export class FluentUITextInput extends Input {
 
     private refControl: ITextField;
     private element: HTMLElement | undefined;
+    private _inlineActionElement: HTMLElement | undefined;
 
     protected internalRender(): HTMLElement | undefined {
         let theme: ITheme = getFluentUIThemeFromHostCapability(this.hostConfig);
@@ -500,7 +501,7 @@ export class FluentUITextInput extends Input {
                 componentRef={(input) => this.refControl = input}
             />;
 
-        this.element = internalRender(control);
+        this.element = internalRender(control, this.element);
         this.element.style.width = "100%";
         return this.element;
     }
@@ -522,11 +523,13 @@ export class FluentUITextInput extends Input {
     }
 
     private buildInlineActionButton = (): HTMLElement => {
-        return internalRender(
+        this._inlineActionElement = internalRender(
             (this.inlineAction.iconUrl) ?
                 this.inlineIconActionButton :
-                this.buildTextOnlyInlineActionActionButton
+                this.buildTextOnlyInlineActionActionButton,
+            this._inlineActionElement
         );
+        return this._inlineActionElement;
     }
 
     private inlineActionClickHandler = (e: React.MouseEvent<Button>): void => {
@@ -673,7 +676,7 @@ export class FluentUITimeInput extends Input {
                 componentRef={(input) => this.refControl = input}
             />;
 
-        this.element = internalRender(control);
+        this.element = internalRender(control, this.element);
         this.element.style.width = "100%";
         return this.element;
     }
@@ -801,7 +804,7 @@ export class FluentUIToggleInput extends Input {
                 />
             </ThemeProvider>;
 
-        this.element = internalRender(control);
+        this.element = internalRender(control, this.element);
         this.element.style.width = "100%";
         return this.element;
     }

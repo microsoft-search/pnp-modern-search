@@ -109,15 +109,15 @@ function helperCompare(this: any, a: any, operator: string, b: any, options: any
     let result: boolean;
     switch (operator) {
         // eslint-disable-next-line eqeqeq
-        case '==':  result = a == b; break;
+        case '==': result = a == b; break;
         case '===': result = a === b; break;
         // eslint-disable-next-line eqeqeq
-        case '!=':  result = a != b; break;
+        case '!=': result = a != b; break;
         case '!==': result = a !== b; break;
-        case '<':   result = a < b; break;
-        case '>':   result = a > b; break;
-        case '<=':  result = a <= b; break;
-        case '>=':  result = a >= b; break;
+        case '<': result = a < b; break;
+        case '>': result = a > b; break;
+        case '<=': result = a <= b; break;
+        case '>=': result = a >= b; break;
         case 'typeof': result = typeof a === b; break;
         default: throw new Error(`{{compare}}: invalid operator: \`${operator}\``);
     }
@@ -130,8 +130,8 @@ function helperContains(this: any, collection: any, val: any, startIndex: any, o
 }
 
 function helperHas(this: any, val: any, pattern: any, options: any): any {
-    if (isOptions(val))     { options = val;     pattern = null; val = null; }
-    if (isOptions(pattern)) { options = pattern;  pattern = null; }
+    if (isOptions(val)) { options = val; pattern = null; val = null; }
+    if (isOptions(pattern)) { options = pattern; pattern = null; }
     if (val === null) return value(false, this, options);
     if (arguments.length === 2) return value(val != null, this, options);
     if ((Array.isArray(val) || isString(val)) && isString(pattern)) {

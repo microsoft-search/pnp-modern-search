@@ -70,10 +70,13 @@ const createActionDiv = (
     iconSize: number,
     actionClickHandler: (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement | HTMLDivElement | BaseButton | Button | HTMLSpanElement>) => void,
     style: string,
-    theme?: ITheme): HTMLDivElement => {
+    theme?: ITheme,
+    previousElement?: HTMLElement): HTMLDivElement => {
+    if (previousElement) {
+        ReactDOM.unmountComponentAtNode(previousElement);
+    }
     const div = createDiv();
     div.className = "fluentUI";
-    // eslint-disable-next-line @microsoft/spfx/pair-react-dom-render-unmount
     ReactDOM.render(
         <ActionButton
             text={title}
@@ -109,7 +112,8 @@ export class FluentUIExecuteAction extends ExecuteAction {
             actionsConfig.iconSize,
             this.actionClickHandler,
             this.style,
-            theme);
+            theme,
+            this._renderedElement);
     }
 }
 
@@ -134,7 +138,8 @@ export class FluentUIOpenUrlAction extends OpenUrlAction {
             actionsConfig.iconSize,
             this.actionClickHandler,
             this.style,
-            theme);
+            theme,
+            this._renderedElement);
     }
 }
 
@@ -165,7 +170,8 @@ export class FluentUIShowCardAction extends ShowCardAction {
             actionsConfig.iconSize,
             this.actionClickHandler,
             this.style,
-            theme);
+            theme,
+            this._renderedElement);
     }
 }
 
@@ -190,7 +196,8 @@ export class FluentUISubmitAction extends SubmitAction {
             actionsConfig.iconSize,
             this.actionClickHandler,
             this.style,
-            theme);
+            theme,
+            this._renderedElement);
     }
 }
 
@@ -221,7 +228,8 @@ export class FluentUIToggleVisibilityAction extends ToggleVisibilityAction {
             actionsConfig.iconSize,
             this.actionClickHandler,
             this.style,
-            theme);
+            theme,
+            this._renderedElement);
     }
 }
 
