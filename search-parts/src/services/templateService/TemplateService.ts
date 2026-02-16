@@ -25,7 +25,6 @@ import {
   IResultTemplates,
   LayoutRenderType,
 } from "@pnp/modern-search-extensibility";
-import groupBy from "handlebars-group-by";
 import { IComponentFieldsConfiguration } from "../../models/common/IComponentFieldsConfiguration";
 import { initializeFileTypeIcons } from "@fluentui/react-file-type-icons";
 import { GlobalSettings } from "@fluentui/react";
@@ -40,7 +39,7 @@ import {
 import { UrlHelper } from "../../helpers/UrlHelper";
 import { ObjectHelper } from "../../helpers/ObjectHelper";
 import { Constants, TestConstants } from "../../common/Constants";
-import * as handlebarsHelpers from "handlebars-helpers";
+import { getHandlebarsHelpers } from "../../helpers/HandlebarsHelpers";
 import { ServiceScopeHelper } from "../../helpers/ServiceScopeHelper";
 import { DomPurifyHelper } from "../../helpers/DomPurifyHelper";
 import { IAdaptiveCardAction } from "@pnp/modern-search-extensibility";
@@ -168,9 +167,9 @@ export class TemplateService implements ITemplateService {
       // Create a distinct version of the Handlebars namespace to avoid conflcit with multiple versions
       this._handlebars = Handlebars.create();
 
-      const helpers = handlebarsHelpers();
+      const helpers = getHandlebarsHelpers();
 
-      // Registers all helpers in the global Handlebars context
+      // Registers all internalized helpers
       Object.keys(helpers).forEach((helperName) => {
         this._handlebars.registerHelper(helperName, helpers[helperName]);
       });
@@ -1223,9 +1222,6 @@ export class TemplateService implements ITemplateService {
       let ret: string = i[0];
       return ret;
     });
-
-    // Group by a specific property
-    this.Handlebars.registerHelper(groupBy(this.Handlebars));
 
     // Return the value for a specific slot
     this.Handlebars.registerHelper(

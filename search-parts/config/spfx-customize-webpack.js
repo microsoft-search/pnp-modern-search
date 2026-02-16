@@ -68,17 +68,6 @@ module.exports = function (webpackConfig, taskSession, heftConfiguration, webpac
             loader: 'unlazy-loader',
             include: [/node_modules/],
         },
-        // Strip logging/markdown helpers from handlebars-helpers (they break webpack)
-        {
-            test: /index\.js$/,
-            loader: 'string-replace-loader',
-            include: [/handlebars-helpers/],
-            options: {
-                search: '(logging|markdown): require.*?,',
-                replace: '',
-                flags: 'g',
-            },
-        },
         // Ignore HoverReactionsBar from spfx-controls-react (unused, bloats bundle)
         {
             test: /index\.js$/,
@@ -104,11 +93,12 @@ module.exports = function (webpackConfig, taskSession, heftConfiguration, webpac
     // ─── Plugins ───────────────────────────────────────────────────────────────
     webpackConfig.plugins = webpackConfig.plugins || [];
 
-    // Ignore moment locale files to reduce bundle size
+    // Ignore dayjs locale files that are not dynamically imported
+    // (dayjs is much smaller than moment, but this keeps the main chunk lean)
     webpackConfig.plugins.push(
         new webpack.IgnorePlugin({
-            resourceRegExp: /^\.\/locale$/,
-            contextRegExp: /moment$/,
+            resourceRegExp: /^\.\.\/locale$/,
+            contextRegExp: /dayjs$/,
         })
     );
 
