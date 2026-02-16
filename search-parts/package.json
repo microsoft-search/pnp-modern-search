@@ -92,7 +92,6 @@
         "@types/react": "17.0.45"
     },
     "overrides": {
-        "@rushstack/heft": "1.1.2",
         "@xmldom/xmldom": "0.8.10",
         "validator": "13.15.22",
         "loader-utils": "2.0.4",

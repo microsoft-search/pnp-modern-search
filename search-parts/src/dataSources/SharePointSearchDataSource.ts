@@ -174,7 +174,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
     */
     private moment: any;
     props: any;
-    
+
     public constructor(serviceScope: ServiceScope) {
         super(serviceScope);
 
@@ -665,14 +665,14 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                     // Try thumbnail URL first
                     let thumbNailUrl = ObjectHelper.byPath(item, "PictureThumbnailURL");
                     thumbNailUrl = DataSourceHelper.enhanceThumbnailUrl(thumbNailUrl);
-                    
+
                     if (thumbNailUrl) {
                         item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = thumbNailUrl;
                     }
                     else if (siteId && listId && itemId && !isContainerType) {
                         // SharePoint item thumbnail
                         const itemFileType = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.FileType]);
-                        
+
                         if (itemFileType && validPreviewExt.indexOf(itemFileType.toUpperCase()) !== -1) {
                             item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = DataSourceHelper.generateSharePointThumbnailUrl({
                                 baseUrl: this.context.pageContext.site.absoluteUrl,
@@ -700,7 +700,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                 item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = DataSourceHelper.validatePreviewImageUrl(
                     item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl]
                 );
-                
+
                 return item;
             });
         }
@@ -758,7 +758,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         }
     }
 
-    private getBuiltinSourceIdOptions(): IComboBoxOption[] {
+    private async getBuiltinSourceIdOptions(): Promise<IComboBoxOption[]> {
 
         this._resultSourcesOptions = [
             {
@@ -1372,7 +1372,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         updatedFilters = updatedFilters.map(filter => {
             const uniqueValues: IDataFilterResultValue[] = [];
             const seenKeys = new Set<string>();
-            
+
             filter.values.forEach(value => {
                 // Create a unique key combining name and value
                 const key = `${value.name}|||${value.value}`;
@@ -1381,7 +1381,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                     uniqueValues.push(value);
                 }
             });
-            
+
             filter.values = uniqueValues;
             return filter;
         });
