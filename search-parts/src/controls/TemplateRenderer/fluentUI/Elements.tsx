@@ -73,11 +73,11 @@ export class FluentUIChoiceSetInput extends Input {
 
     private updateSelectedValues = (key: any, isMultiSelect: boolean, selected: boolean): void => {
         if (isMultiSelect) {
-          if (selected) {
-            this.selectedValues.push(key);
-          } else {
-            this.removeItemFromArray(this.selectedValues, key);
-          }
+            if (selected) {
+                this.selectedValues.push(key);
+            } else {
+                this.removeItemFromArray(this.selectedValues, key);
+            }
         }
         else {
             this.selectedValues = [];

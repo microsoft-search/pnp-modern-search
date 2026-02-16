@@ -215,7 +215,7 @@ export class TemplateService implements ITemplateService {
     private async _initMgtCustomElementHelper(): Promise<void> {
         if (!this._customElementHelper) {
             const { customElementHelper } = await import(
-                /* webpackChunkName: 'microsoft-graph-toolkit' */
+                /* webpackChunkName: 'pnp-modern-search-microsoft-graph-toolkit' */
                 "@microsoft/mgt-element/dist/es6/components/customElementHelper"
             );
             this._customElementHelper = customElementHelper;

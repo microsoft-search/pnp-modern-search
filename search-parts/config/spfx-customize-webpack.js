@@ -62,12 +62,6 @@ module.exports = function (webpackConfig, taskSession, heftConfiguration, webpac
                 },
             },
         },
-        // unlazy-loader for utils.js in node_modules
-        {
-            test: /utils\.js$/,
-            loader: 'unlazy-loader',
-            include: [/node_modules/],
-        },
         // Ignore HoverReactionsBar from spfx-controls-react (unused, bloats bundle)
         {
             test: /index\.js$/,

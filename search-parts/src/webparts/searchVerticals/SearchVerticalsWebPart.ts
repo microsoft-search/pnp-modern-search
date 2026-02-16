@@ -37,7 +37,7 @@ import { Dropdown, IDropdownProps } from '@fluentui/react/lib/Dropdown';
 import { Checkbox } from '@fluentui/react/lib/Checkbox';
 
 const PeoplePicker = React.lazy(() =>
-    import(/* webpackChunkName: 'microsoft-graph-toolkit' */ '@microsoft/mgt-react/dist/es6/generated/people-picker')
+    import(/* webpackChunkName: 'pnp-modern-search-microsoft-graph-toolkit' */ '@microsoft/mgt-react/dist/es6/generated/people-picker')
         .then(({ PeoplePicker }) => ({ default: PeoplePicker }))
 );
 
@@ -94,7 +94,7 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
 
         if (this.displayMode === DisplayMode.Edit) {
             const { Placeholder } = await import(
-                /* webpackChunkName: 'search-verticals-property-pane' */
+                /* webpackChunkName: 'pnp-modern-search-property-pane' */
                 '@pnp/spfx-controls-react/lib/Placeholder'
             );
             this._placeholderComponent = Placeholder;

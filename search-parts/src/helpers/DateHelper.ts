@@ -82,7 +82,7 @@ export class DateHelper {
         if (DateHelper.importedLocales.has(key)) return true;
         try {
             await import(
-                /* webpackMode: 'lazy', webpackChunkName: 'pnp-modern-search-dayjs-locale' */
+                /* webpackMode: 'lazy', webpackChunkName: 'pnp-modern-search-dayjs-locale-[request]' */
                 `dayjs/locale/${key}.js`
             );
             DateHelper.importedLocales.add(key);
