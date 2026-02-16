@@ -38,3 +38,7 @@ obj
 pnpm-lock.yaml
 
 .heft
+lib-dts
+lib-commonjs
+lib-esm
+jest-output
