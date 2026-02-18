@@ -439,8 +439,8 @@ export class TokenService implements ITokenService {
         const currentDate2DigitsUTC = /\{CurrentDate2DigitsUTC\}/gi;
         const currentMonth2DigitsUTC = /\{CurrentMonth2DigitsUTC\}/gi;
         const currentHour2DigitsUTC = /\{CurrentHour2DigitsUTC\}/gi;
-        const currentMinute2DigitsUTC= /\{CurrentMinute2DigitsUTC\}/gi;
-        const currentSecond2DigitsUTC = /\{CurrentSecond2DigitsUTC\}/gi; 
+        const currentMinute2DigitsUTC = /\{CurrentMinute2DigitsUTC\}/gi;
+        const currentSecond2DigitsUTC = /\{CurrentSecond2DigitsUTC\}/gi;
 
         // Replaces any "{Today} +/- [digit]" expression
         let results = /\{Today\s*[\+-]\s*\[{0,1}\d{1,}\]{0,1}\}/gi;
@@ -584,16 +584,16 @@ export class TokenService implements ITokenService {
 
         if (matches != null) {
 
-          if (!this.currentHubInfos) {
-              // Get hub site data
-              this.currentHubInfos = await this.getHubInfo();
-          }
+            if (!this.currentHubInfos) {
+                // Get hub site data
+                this.currentHubInfos = await this.getHubInfo();
+            }
 
-          while (matches !== null) {
-              const hubProp = matches[1];
-              inputString = inputString.replace(new RegExp(matches[0], "gi"), this.currentHubInfos[hubProp]);
-              matches = hubRegExp.exec(inputString);
-          }
+            while (matches !== null) {
+                const hubProp = matches[1];
+                inputString = inputString.replace(new RegExp(matches[0], "gi"), this.currentHubInfos[hubProp]);
+                matches = hubRegExp.exec(inputString);
+            }
         }
 
         return inputString;

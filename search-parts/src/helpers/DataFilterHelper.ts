@@ -115,10 +115,10 @@ export class DataFilterHelper {
 
                 if (startDate && endDate) {
                     refinementQueryConditions.push(`${filter.filterName}:${startDate}..${endDate}`);
-                } else if (startDate){
+                } else if (startDate) {
                     refinementQueryConditions.push(`${filter.filterName}${dateOperator}${startDate}`);
                 }
-                else if (endDate){
+                else if (endDate) {
                     refinementQueryConditions.push(`${filter.filterName}${dateOperator}${endDate}`);
                 }
                 else {
