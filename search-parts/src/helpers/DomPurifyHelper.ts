@@ -210,9 +210,10 @@ export class DomPurifyHelper {
         // Block @import (external stylesheet loading)
         css = css.replace(/@import\s+[^;]+;?/gi, '/* @import blocked */');
         // Block javascript: URLs inside url()
-        css = css.replace(/url\s*\(\s*['"]?\s*javascript:/gi, 'url(/* blocked */');
+        // [\s'"]* instead of \s*['"]?\s* to avoid ReDoS via quadratic backtracking
+        css = css.replace(/url\s*\([\s'"]*javascript:/gi, 'url(/* blocked */');
         // Block data: URLs inside url() except data:image/* (legitimate use)
-        css = css.replace(/url\s*\(\s*['"]?\s*data:(?!image\/)/gi, 'url(/* blocked */');
+        css = css.replace(/url\s*\([\s'"]*data:(?!image\/)/gi, 'url(/* blocked */');
         // Block expression() (IE legacy XSS)
         css = css.replace(/expression\s*\([^)]*\)/gi, '/* expression() blocked */');
         // Block behavior (IE legacy)
@@ -246,11 +247,12 @@ export class DomPurifyHelper {
                 styleValue = styleValue.replace(/expression\s*\(/gi, '');
 
                 // Remove javascript: URLs in url()
-                styleValue = styleValue.replace(/url\s*\(\s*['"]?\s*javascript:/gi, 'url(');
+                // [\s'"]* instead of \s*['"]?\s* to avoid ReDoS via quadratic backtracking
+                styleValue = styleValue.replace(/url\s*\([\s'"]*javascript:/gi, 'url(');
 
                 // Remove data: URLs in url() that could contain scripts
                 // Allow data:image/* for legitimate image use cases
-                styleValue = styleValue.replace(/url\s*\(\s*['"]?\s*data:(?!image\/)/gi, 'url(');
+                styleValue = styleValue.replace(/url\s*\([\s'"]*data:(?!image\/)/gi, 'url(');
 
                 // Remove @import statements (shouldn't be in inline styles but just in case)
                 styleValue = styleValue.replace(/@import/gi, '');
