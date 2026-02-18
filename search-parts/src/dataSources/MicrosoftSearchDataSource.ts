@@ -191,9 +191,9 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
     private dateHelper: DateHelper;
 
     /**
-    * The moment.js library reference
+    * The dayjs library reference
     */
-    private moment: any;
+    private dayjs: any;
 
     private _propertyFieldCollectionData: any = null;
     private _customCollectionFieldType: any = null;
@@ -210,7 +210,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
     public async onInit(): Promise<void> {
 
         this.dateHelper = this.serviceScope.consume<DateHelper>(DateHelper.ServiceKey);
-        this.moment = await this.dateHelper.moment();
+        this.dayjs = await this.dateHelper.moment();
 
         if (this.editMode) {
             // Use the same chunk name as the main Web Part to avoid recreating/loading a new one
@@ -1134,11 +1134,11 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
     }
 
     private buildDateRanges(): any[] {
-        const pastYear = this.moment(new Date()).subtract(1, 'years').subtract('minutes', 1).toISOString();
-        const past3Months = this.moment(new Date()).subtract(3, 'months').subtract('minutes', 1).toISOString();
-        const pastMonth = this.moment(new Date()).subtract(1, 'months').subtract('minutes', 1).toISOString();
-        const pastWeek = this.moment(new Date()).subtract(1, 'week').subtract('minutes', 1).toISOString();
-        const past24hours = this.moment(new Date()).subtract(24, 'hours').subtract('minutes', 1).toISOString();
+        const pastYear = this.dayjs(new Date()).subtract(1, 'years').subtract('minutes', 1).toISOString();
+        const past3Months = this.dayjs(new Date()).subtract(3, 'months').subtract('minutes', 1).toISOString();
+        const pastMonth = this.dayjs(new Date()).subtract(1, 'months').subtract('minutes', 1).toISOString();
+        const pastWeek = this.dayjs(new Date()).subtract(1, 'week').subtract('minutes', 1).toISOString();
+        const past24hours = this.dayjs(new Date()).subtract(24, 'hours').subtract('minutes', 1).toISOString();
         const today = new Date().toISOString();
 
         return [
@@ -1158,12 +1158,12 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         if (dataContext.filters.selectedFilters.length > 0) {
             if (dataContext.filters.selectedFilters.length > 1 && 
                 dataContext.filters.selectedFilters.filter(f => f.values.length > 0).length > 1) {
-                const refinementString = DataFilterHelper.buildFqlRefinementString(dataContext.filters.selectedFilters, this.moment).join(',');
+                const refinementString = DataFilterHelper.buildFqlRefinementString(dataContext.filters.selectedFilters, this.dayjs).join(',');
                 if (!isEmpty(refinementString)) {
                     aggregationFilters.push(`${dataContext.filters.filterOperator}(${refinementString})`);
                 }
             } else {
-                aggregationFilters.push(...DataFilterHelper.buildFqlRefinementString(dataContext.filters.selectedFilters, this.moment));
+                aggregationFilters.push(...DataFilterHelper.buildFqlRefinementString(dataContext.filters.selectedFilters, this.dayjs));
             }
         }
 

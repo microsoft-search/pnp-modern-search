@@ -5,18 +5,13 @@ import {
     Log,
     ServiceKey,
     ServiceScope,
-    Text,
 } from "@microsoft/sp-core-library";
 import { SPHttpClient, SPHttpClientResponse } from "@microsoft/sp-http";
 import * as Handlebars from "handlebars";
 import {
-    uniqBy,
-    uniq,
-    isEmpty,
     trimEnd,
     get,
 } from "@microsoft/sp-lodash-subset";
-import * as strings from "CommonStrings";
 import { DateHelper } from "../../helpers/DateHelper";
 import { PageContext } from "@microsoft/sp-page-context";
 import {
@@ -36,7 +31,6 @@ import {
     ISearchResultsTemplateContext,
     ISearchFiltersTemplateContext,
 } from "../../models/common/ITemplateContext";
-import { UrlHelper } from "../../helpers/UrlHelper";
 import { ObjectHelper } from "../../helpers/ObjectHelper";
 import { Constants, TestConstants } from "../../common/Constants";
 import { getHandlebarsHelpers } from "../../helpers/HandlebarsHelpers";
@@ -70,9 +64,9 @@ export class TemplateService implements ITemplateService {
     private _extendedHelpersPromise: Promise<void> | null = null;
 
     /**
-     * The moment.js library reference
+     * The dayjs library reference
      */
-    private moment: any;
+    private dayjs: any;
 
     private timeZoneBias = {
         WebBias: 0,
@@ -158,10 +152,10 @@ export class TemplateService implements ITemplateService {
                     : 0;
             }
 
-            // Get a global moment instance
-            if (!this.moment) {
-                this.dateHelper.moment().then((moment) => {
-                    this.moment = moment;
+            // Get a global dayjs instance
+            if (!this.dayjs) {
+                this.dateHelper.moment().then((dayjs) => {
+                    this.dayjs = dayjs;
                 });
             }
 
@@ -640,7 +634,7 @@ export class TemplateService implements ITemplateService {
                         wc.componentClass.prototype._serviceScope =
                             ServiceScopeHelper.getRootServiceScope(this.serviceScope);
 
-                        wc.componentClass.prototype.moment = this.moment;
+                        wc.componentClass.prototype.moment = this.dayjs;
                         window.customElements.define(wc.componentName, wc.componentClass);
                     } else {
                         // Update the instances array for all calling Web Parts
@@ -1017,81 +1011,7 @@ export class TemplateService implements ITemplateService {
      * Registers custom Handlebars helpers in the global context
      */
     private registerCustomHelpers() {
-        // Truncate items from context, as that is not usually used and bloats the HTML
-        this.Handlebars.registerHelper("truncateContext", (context: any) => {
-            //Extract data property
-            const { data, ...newContext } = context;
-            //Extract items property
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const { items, ...newData } = data;
-            //Set data property without items
-            newContext.data = newData;
-            return newContext;
-        });
-
-        // Return the URL of the search result item
-        // Usage: <a href="{{getGraphPreviewUrl url}}">
-        this.Handlebars.registerHelper(
-            "getGraphPreviewUrl",
-            (url: any, context?: any) => {
-                return new this.Handlebars.SafeString(
-                    UrlHelper.getGraphPreviewUrl(url)
-                );
-            }
-        );
-
-        // Return the search result count message
-        // Usage: {{getCountMessage totalRows keywords}} or {{getCountMessage totalRows null}}
-        this.Handlebars.registerHelper(
-            "getCountMessage",
-            (totalRows: string, inputQuery?: string) => {
-                let countResultMessage;
-                if (inputQuery) {
-                    const safeQuery = this.Handlebars.escapeExpression(inputQuery);
-                    countResultMessage = Text.format(
-                        strings.HandlebarsHelpers.CountMessageLong,
-                        totalRows,
-                        safeQuery
-                    );
-                } else {
-                    countResultMessage = Text.format(
-                        strings.HandlebarsHelpers.CountMessageShort,
-                        totalRows
-                    );
-                }
-
-                return new this.Handlebars.SafeString(countResultMessage);
-            }
-        );
-
-        // Return the highlighted summary of the search result item
-        // <p>{{getSummary HitHighlightedSummary}}</p>
-        this.Handlebars.registerHelper(
-            "getSummary",
-            (hitHighlightedSummary: string) => {
-                if (!isEmpty(hitHighlightedSummary)) {
-                    return new this.Handlebars.SafeString(
-                        hitHighlightedSummary
-                            .replace(/<c0\>/g, "<strong>")
-                            .replace(/<\/c0\>/g, "</strong>")
-                            .replace(/<ddd\/>/g, "&#8230;")
-                            .replace(
-                                /[{]?[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}[}]?/g,
-                                ""
-                            )
-                    );
-                }
-            }
-        );
-
-        // Return tag name from a tag string
-        this.Handlebars.registerHelper("getTagName", (tag: string) => {
-            if (!isEmpty(tag)) {
-                return new Handlebars.SafeString(tag.split("|").pop());
-            }
-        });
-
-        // Return the formatted date according to current locale using moment.js
+        // Return the formatted date according to current locale using dayjs
         // <p>{{getDate Created "LL"}}</p>
         this.Handlebars.registerHelper(
             "getDate",
@@ -1138,92 +1058,13 @@ export class TemplateService implements ITemplateService {
                                 date = trimEnd(date, "Z");
                             }
                         }
-                        return this.moment(new Date(date)).format(format);
+                        return this.dayjs(new Date(date)).format(format);
                     }
                     // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 } catch (error) {
                     return date;
                 }
             }).bind(this)
-        );
-
-        // Return the URL or Title part of a URL automatic managed property
-        // <p>{{getUrlField MyLinkOWSURLH "Title"}}</p>
-        this.Handlebars.registerHelper(
-            "getUrlField",
-            (urlField: string, value: "URL" | "Title") => {
-                if (!isEmpty(urlField)) {
-                    let separatorPos = urlField.indexOf(",");
-                    if (separatorPos === -1) {
-                        return urlField;
-                    }
-                    if (value === "URL") {
-                        return urlField.substr(0, separatorPos);
-                    }
-                    return urlField.substr(separatorPos + 1).trim();
-                }
-                return new this.Handlebars.SafeString(urlField);
-            }
-        );
-
-        // Return the unique count based on an array or property of an object in the array
-        // <p>{{getUniqueCount items "Title"}}</p>
-        this.Handlebars.registerHelper(
-            "getUniqueCount",
-            (array: any[], property: string) => {
-                if (!Array.isArray(array)) return 0;
-                if (array.length === 0) return 0;
-
-                let result;
-                if (property) {
-                    result = uniqBy(array, property);
-                } else {
-                    result = uniq(array);
-                }
-                return result.length;
-            }
-        );
-
-        // Return the unique values as a new array based on an array or property of an object in the array
-        // <p>{{getUnique items "NewsCategory"}}</p>
-        this.Handlebars.registerHelper(
-            "getUnique",
-            (array: any[], property: string) => {
-                if (!Array.isArray(array)) return 0;
-                if (array.length === 0) return 0;
-
-                let result;
-                if (property) {
-                    result = uniqBy(array, property);
-                } else {
-                    result = uniq(array);
-                }
-                return result;
-            }
-        );
-
-        // Repeat the block N times
-        // https://stackoverflow.com/questions/11924452/iterating-over-basic-for-loop-using-handlebars-js
-        // <p>{{#times 10}}</p>
-        this.Handlebars.unregisterHelper("times"); // unregister times alias for multiply from helpers
-        this.Handlebars.registerHelper("times", (n, block) => {
-            let accumulator = "";
-            for (let i = 0; i < n; ++i) accumulator += block.fn(i);
-            return accumulator;
-        });
-
-        // Get url parameter from current URL or a provided URL
-        // <p>{{getUrlParameter "q"}}</p>
-        this.Handlebars.registerHelper(
-            "getUrlParameter",
-            (name: string, url?: string): string => {
-                if (url && typeof url === "object") {
-                    url = window.location.href;
-                }
-                const search = new URL(url).search;
-                const queryParameters = new URLSearchParams(search);
-                return this.Handlebars.escapeExpression(queryParameters.get(name));
-            }
         );
 
         // Support urlParse with an empty string to use current URL
@@ -1234,40 +1075,6 @@ export class TemplateService implements ITemplateService {
                 url = window.location.href;
             }
             return origParse(url);
-        });
-
-        //
-        this.Handlebars.registerHelper("regex", (regx: string, str: string) => {
-            let rx = new RegExp(regx);
-            let i = rx.exec(str);
-            if (!!!i || i.length === 0) return "-";
-            let ret: string = i[0];
-            return ret;
-        });
-
-        // Return the value for a specific slot
-        this.Handlebars.registerHelper(
-            "slot",
-            (item: any, propertyPath: string) => {
-                if (propertyPath && !isEmpty(propertyPath)) {
-                    const value = ObjectHelper.byPath(item, propertyPath);
-                    return value;
-                }
-            }
-        );
-
-        // Match and return an email in the specified expression
-        this.Handlebars.registerHelper("getUserEmail", (expr: string) => {
-            if (!isEmpty(expr)) {
-                const matches = expr.match(
-                    /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*/gi
-                );
-                if (matches) {
-                    return matches[0]; // Return the full match
-                } else {
-                    return expr;
-                }
-            }
         });
 
         // Return SPFx page context variable
@@ -1281,58 +1088,10 @@ export class TemplateService implements ITemplateService {
             return "";
         });
 
-        // Get Attachments from LinkOfficeChild managed properties
-        // Usage:
-        //   {{#getAttachments LinkOfficeChild}}
-        //      <a href="{{url}}">{{fileName}}</href>
-        //   {{/getAttachments}}
-        this.Handlebars.registerHelper(
-            "getAttachments",
-            (value: string, options) => {
-                let out: string = "";
-                if (!isEmpty(value)) {
-                    let splitArr: string[] = value.split(/\n+/);
-
-                    if (splitArr && splitArr.length > 0) {
-                        let index: number = 0;
-                        for (let i of splitArr) {
-                            let pos: number = i.lastIndexOf("/");
-                            if (pos !== -1) {
-                                let fileName: string = i.substring(pos + 1);
-                                let objLine = { url: i, fileName: fileName, index: index };
-                                out += options.fn(objLine);
-                                index++;
-                            }
-                        }
-                    }
-                }
-                return out;
-            }
-        );
-
-        // Parse a JSON object
-        // <p>{{JSONparse jsonObject}}</p>
-        this.Handlebars.registerHelper("JSONparse", (str: string, options: any) => {
-            return JSON.parse(str);
-        });
-
-        this.Handlebars.registerHelper(
-            "isItemSelected",
-            (selectedKeys: any[], itemIndex: any, options: any) => {
-                if (Array.isArray(selectedKeys) && selectedKeys.length > 0) {
-                    return (
-                        selectedKeys.indexOf(
-                            `${options.data.root.paging.currentPageNumber}${itemIndex}`
-                        ) !== -1
-                    );
-                }
-            }
-        );
-
         this.Handlebars.registerHelper(
             "dayDiff",
             (date1: string, date2: string) => {
-                let dayCount = this.moment(date1).diff(this.moment(date2), "days");
+                let dayCount = this.dayjs(date1).diff(this.dayjs(date2), "days");
                 return Math.abs(dayCount);
             }
         );

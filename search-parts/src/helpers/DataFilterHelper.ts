@@ -82,10 +82,10 @@ export class DataFilterHelper {
     /**
      * Build the refinement condition in FQL format
      * @param selectedFilters The selected filter array
-     * @param moment The moment.js instance to resolve dates
+     * @param dayjs The dayjs instance to resolve dates
      * @param encodeTokens If true, encodes the taxonomy refinement tokens in UTF-8 to work with GET requests. Javascript encodes natively in UTF-16 by default.
      */
-    public static buildKqlRefinementString(selectedFilters: IDataFilter[], moment: any): string {
+    public static buildKqlRefinementString(selectedFilters: IDataFilter[], dayjs: any): string {
         let refinementQueryConditions: string[] = [];
         selectedFilters.forEach(filter => {
 
@@ -97,7 +97,7 @@ export class DataFilterHelper {
                 let dateOperator = null;
                 const fieldValues = values
                     .map(refinement => {
-                        if (moment(refinement.value, moment.ISO_8601, true).isValid()) {
+                        if (dayjs(refinement.value, dayjs.ISO_8601, true).isValid()) {
                             if (!startDate && (refinement.operator === FilterComparisonOperator.Geq || refinement.operator === FilterComparisonOperator.Gt)) {
                                 dateOperator = ">=";
                                 startDate = refinement.value;
@@ -136,10 +136,10 @@ export class DataFilterHelper {
     /**
      * Build the refinement condition in FQL format
      * @param selectedFilters The selected filter array
-     * @param moment The moment.js instance to resolve dates
+     * @param dayjs The dayjs instance to resolve dates
      * @param encodeTokens If true, encodes the taxonomy refinement tokens in UTF-8 to work with GET requests. Javascript encodes natively in UTF-16 by default.
      */
-    public static buildFqlRefinementString(selectedFilters: IDataFilter[], moment: any, encodeTokens?: boolean): string[] {
+    public static buildFqlRefinementString(selectedFilters: IDataFilter[], dayjs: any, encodeTokens?: boolean): string[] {
 
         let refinementQueryConditions: string[] = [];
 
@@ -161,7 +161,7 @@ export class DataFilterHelper {
 
                     let value = filterValue.value;
 
-                    if (moment(value, moment.ISO_8601, true).isValid()) {
+                    if (dayjs(value, dayjs.ISO_8601, true).isValid()) {
                         if (!startDate && (filterValue.operator === FilterComparisonOperator.Geq || filterValue.operator === FilterComparisonOperator.Gt)) {
                             startDate = value;
                             startBehaviour = filterValue.operator === FilterComparisonOperator.Gt ? "GT" : "GE";
@@ -209,7 +209,7 @@ export class DataFilterHelper {
                     let refinementToken = /ǂǂ/.test(filterValue.value) && encodeTokens ? encodeURIComponent(filterValue.value) : filterValue.value;
 
                     // https://docs.microsoft.com/en-us/sharepoint/dev/general-development/fast-query-language-fql-syntax-reference#fql_range_operator
-                    if (moment(refinementToken, moment.ISO_8601, true).isValid()) {
+                    if (dayjs(refinementToken, dayjs.ISO_8601, true).isValid()) {
 
                         if (filterValue.operator === FilterComparisonOperator.Gt || filterValue.operator === FilterComparisonOperator.Geq) {
                             refinementToken = `range(${refinementToken},max)`;

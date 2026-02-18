@@ -1,3 +1,10 @@
+import * as Handlebars from "handlebars";
+import { Text } from "@microsoft/sp-core-library";
+import * as strings from "CommonStrings";
+import { isEmpty, uniqBy, uniq } from "@microsoft/sp-lodash-subset";
+import { UrlHelper } from "./UrlHelper";
+import { ObjectHelper } from "./ObjectHelper";
+
 /**
  * Internalized subset of handlebars-helpers.
  *
@@ -299,6 +306,154 @@ function helperFloor(a: any): number { return Math.floor(Number(a)); }
 function helperRound(a: any): number { return Math.round(Number(a)); }
 function helperAbs(a: any): number { return Math.abs(Number(a)); }
 
+// ─── Custom project helpers (moved from TemplateService) ──────────────────────
+
+function helperTruncateContext(context: any): any {
+    const { data, ...newContext } = context;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { items, ...newData } = data;
+    newContext.data = newData;
+    return newContext;
+}
+
+function helperGetGraphPreviewUrl(url: any, _context?: any): any {
+    return new Handlebars.SafeString(UrlHelper.getGraphPreviewUrl(url));
+}
+
+function helperGetCountMessage(totalRows: string, inputQuery?: string): any {
+    let countResultMessage: string;
+    if (inputQuery) {
+        const safeQuery = Handlebars.escapeExpression(inputQuery);
+        countResultMessage = Text.format(
+            strings.HandlebarsHelpers.CountMessageLong,
+            totalRows,
+            safeQuery
+        );
+    } else {
+        countResultMessage = Text.format(
+            strings.HandlebarsHelpers.CountMessageShort,
+            totalRows
+        );
+    }
+    return new Handlebars.SafeString(countResultMessage);
+}
+
+function helperGetSummary(hitHighlightedSummary: string): any {
+    if (!isEmpty(hitHighlightedSummary)) {
+        return new Handlebars.SafeString(
+            hitHighlightedSummary
+                .replace(/<c0\>/g, "<strong>")
+                .replace(/<\/c0\>/g, "</strong>")
+                .replace(/<ddd\/>/g, "&#8230;")
+                .replace(
+                    /[{]?[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}[}]?/g,
+                    ""
+                )
+        );
+    }
+}
+
+function helperGetTagName(tag: string): any {
+    if (!isEmpty(tag)) {
+        return new Handlebars.SafeString(tag.split("|").pop());
+    }
+}
+
+function helperGetUrlField(urlField: string, fieldValue: "URL" | "Title"): any {
+    if (!isEmpty(urlField)) {
+        const separatorPos = urlField.indexOf(",");
+        if (separatorPos === -1) {
+            return urlField;
+        }
+        if (fieldValue === "URL") {
+            return urlField.substr(0, separatorPos);
+        }
+        return urlField.substr(separatorPos + 1).trim();
+    }
+    return new Handlebars.SafeString(urlField);
+}
+
+function helperGetUniqueCount(array: any[], property: string): number {
+    if (!Array.isArray(array)) return 0;
+    if (array.length === 0) return 0;
+    return (property ? uniqBy(array, property) : uniq(array)).length;
+}
+
+function helperGetUnique(array: any[], property: string): any {
+    if (!Array.isArray(array)) return 0;
+    if (array.length === 0) return 0;
+    return property ? uniqBy(array, property) : uniq(array);
+}
+
+function helperTimes(n: number, block: any): string {
+    let accumulator = "";
+    for (let i = 0; i < n; ++i) accumulator += block.fn(i);
+    return accumulator;
+}
+
+function helperGetUrlParameter(name: string, url?: any): string {
+    if (!url || typeof url === "object") {
+        url = window.location.href;
+    }
+    const search = new URL(url).search;
+    const queryParameters = new URLSearchParams(search);
+    return Handlebars.escapeExpression(queryParameters.get(name));
+}
+
+function helperRegex(regx: string, str: string): string {
+    const rx = new RegExp(regx);
+    const match = rx.exec(str);
+    if (!match || match.length === 0) return "-";
+    return match[0];
+}
+
+function helperSlot(item: any, propertyPath: string): any {
+    if (propertyPath && !isEmpty(propertyPath)) {
+        return ObjectHelper.byPath(item, propertyPath);
+    }
+}
+
+function helperGetUserEmail(expr: string): any {
+    if (!isEmpty(expr)) {
+        const matches = expr.match(
+            /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*/gi
+        );
+        if (matches) {
+            return matches[0];
+        } else {
+            return expr;
+        }
+    }
+}
+
+function helperGetAttachments(attachmentValue: string, options: any): string {
+    let out = "";
+    if (!isEmpty(attachmentValue)) {
+        const splitArr: string[] = attachmentValue.split(/\n+/);
+        if (splitArr && splitArr.length > 0) {
+            let index = 0;
+            for (const item of splitArr) {
+                const pos = item.lastIndexOf("/");
+                if (pos !== -1) {
+                    const fileName = item.substring(pos + 1);
+                    out += options.fn({ url: item, fileName, index });
+                    index++;
+                }
+            }
+        }
+    }
+    return out;
+}
+
+function helperIsItemSelected(selectedKeys: any[], itemIndex: any, options: any): boolean {
+    if (Array.isArray(selectedKeys) && selectedKeys.length > 0) {
+        return selectedKeys.indexOf(
+            `${options.data.root.paging.currentPageNumber}${itemIndex}`
+        ) !== -1;
+    }
+    return false;
+}
+
 // ─── Public API ───────────────────────────────────────────────────────────────
 
 /**
@@ -357,11 +512,27 @@ export function getHandlebarsHelpers(): Record<string, (...args: any[]) => any> 
         add: helperAdd,
         subtract: helperSubtract,
         multiply: helperMultiply,
-        times: helperMultiply, // alias — TemplateService overrides this with a repeat-N block
         divide: helperDivide,
         ceil: helperCeil,
         floor: helperFloor,
         round: helperRound,
         abs: helperAbs,
+
+        // custom (moved from TemplateService)
+        truncateContext: helperTruncateContext,
+        getGraphPreviewUrl: helperGetGraphPreviewUrl,
+        getCountMessage: helperGetCountMessage,
+        getSummary: helperGetSummary,
+        getTagName: helperGetTagName,
+        getUrlField: helperGetUrlField,
+        getUniqueCount: helperGetUniqueCount,
+        getUnique: helperGetUnique,
+        times: helperTimes,
+        getUrlParameter: helperGetUrlParameter,
+        regex: helperRegex,
+        slot: helperSlot,
+        getUserEmail: helperGetUserEmail,
+        getAttachments: helperGetAttachments,
+        isItemSelected: helperIsItemSelected,
     };
 }

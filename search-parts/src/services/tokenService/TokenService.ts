@@ -94,9 +94,9 @@ export class TokenService implements ITokenService {
     private dateHelper: DateHelper;
 
     /**
-     * The moment.js library reference
+     * The dayjs library reference
      */
-    private moment: any;
+    private dayjs: any;
 
     public static ServiceKey: ServiceKey<ITokenService> = ServiceKey.create(TokenService_ServiceKey, TokenService);
 
@@ -130,7 +130,7 @@ export class TokenService implements ITokenService {
 
         if (inputString) {
 
-            this.moment = await this.dateHelper.moment();
+            this.dayjs = await this.dateHelper.moment();
 
             // Resolves dynamic tokens (i.e. tokens resolved asynchronously versus static ones set by the Web Part context)
             inputString = await this.replacePageTokens(inputString);
@@ -453,13 +453,13 @@ export class TokenService implements ITokenService {
                 const digit = parseInt(operatorSplit[operatorSplit.length - 1].replace("{", "").replace("}", "").trim()) * addOrRemove;
                 let dt = new Date();
                 dt.setDate(dt.getDate() + digit);
-                const formatDate = this.moment(dt).toISOString();
+                const formatDate = this.dayjs(dt).toISOString();
                 inputString = inputString.replace(result, formatDate);
             }
         }
 
         // Replaces any "{Today}" expression by it's actual value
-        let formattedDate = this.moment(new Date()).toISOString();
+        let formattedDate = this.dayjs(new Date()).toISOString();
         inputString = inputString.replace(new RegExp("{Today}", 'gi'), formattedDate);
 
         const d = new Date();
