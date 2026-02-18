@@ -21,28 +21,35 @@ export class DomPurifyHelper {
     private static getConfig(): any {
         if (!DomPurifyHelper._config) {
             DomPurifyHelper._config = {
+                // Allow <style> for template CSS, <link> for same-origin stylesheets (restricted via hook),
+                // <content> for custom template elements, #comment for HTML comments
                 ADD_TAGS: ["style", "#comment", "link", "content"],
+                // Allow target (link behavior), loading (lazy images), data-* (custom component config),
+                // style (inline CSS — sanitized via sanitizeStyleAttributeHook)
                 ADD_ATTR: ["target", "loading", "data-fields-configuration", "data-*", "style"],
                 ALLOW_DATA_ATTR: true,
+                // Allowlist of safe URI schemes — blocks javascript:, data:, vbscript: etc.
                 ALLOWED_URI_REGEXP: Constants.ALLOWED_URI_REGEXP,
-                // CRITICAL: Must be false for fragments, but we handle <style> via hook
+                // Must be false — templates are rendered as fragments, not full documents
                 WHOLE_DOCUMENT: false,
-                // Explicitly allow very long attribute values for configuration data
                 SANITIZE_NAMED_PROPS: false,
                 RETURN_DOM: false,
                 RETURN_DOM_FRAGMENT: false,
                 RETURN_DOM_IMPORT: false,
-                // More permissive configuration to preserve custom attributes
+                // Preserve text content when removing disallowed elements
                 KEEP_CONTENT: true,
                 SAFE_FOR_TEMPLATES: false,
-                // Force allow style tags and custom elements
-                FORBID_TAGS: [],
-                FORBID_ATTR: [],
-                // CRITICAL: Allow <style> in body context
+                // SECURITY: Block elements with no legitimate use in search result templates
+                // form/button: action/formaction attributes accept javascript: URIs
+                // object/embed: plugin execution, external resource loading
+                FORBID_TAGS: ['form', 'button', 'object', 'embed'],
+                // SECURITY: Block attributes that carry URIs or enable code execution.
+                // forceKeepAttr in allowCustomAttributesHook bypasses DOMPurify's URI validation,
+                // so these must be explicitly forbidden. Also blocked in the hook as defense-in-depth.
+                FORBID_ATTR: ['action', 'formaction', 'xlink:href', 'srcdoc', 'ping', 'dynsrc', 'lowsrc', 'background'],
                 IN_PLACE: false,
-                // Security: Sanitize style attributes to prevent XSS via CSS
-                // This removes dangerous CSS like expression(), javascript: URLs, etc.
-                SANITIZE_DOM: true, // Default is true, but being explicit
+                // Sanitize DOM clobbering attacks (e.g. id/name that shadow document properties)
+                SANITIZE_DOM: true,
             };
         }
         return DomPurifyHelper._config;
@@ -102,15 +109,35 @@ export class DomPurifyHelper {
         return DomPurifyHelper.instance.sanitize(dirty, config);
     }
 
+    // Attributes that carry URIs or enable code execution — must not be force-kept.
+    // Returning early lets DOMPurify apply its own validation (ALLOWED_URI_REGEXP / FORBID_ATTR).
+    private static readonly DANGEROUS_ATTRS: ReadonlySet<string> = new Set([
+        'href',        // DOMPurify validates against ALLOWED_URI_REGEXP — don't bypass
+        'action',      // form submit target — accepts javascript: URIs
+        'formaction',  // per-button override of action — same risk
+        'xlink:href',  // SVG link — accepts javascript: URIs
+        'srcdoc',      // iframe HTML injection
+        'ping',        // <a> data exfiltration to attacker-controlled URLs
+        'dynsrc',      // legacy IE — javascript: execution
+        'lowsrc',      // legacy IE — javascript: execution
+        'background',  // legacy body/table — external resource loading
+    ]);
+
     /**
-     * Allows custom attributes
-     * @param attr the attribute name
-     * @param data the DOMPurify data
+     * Allows custom attributes needed by web components and Handlebars templates.
+     * Blocks event handlers (on*) and dangerous URI-carrying attributes.
+     * All other attributes are force-kept to support custom components like
+     * <my-component data-foo="bar"> and Handlebars data attributes.
      */
     public static allowCustomAttributesHook(attr, data) {
         if (data && data.attrName) {
-            if (data.attrName.indexOf("on") == 0) return;
-            if (data.attrName == "href") return;
+            const attrLower = data.attrName.toLowerCase();
+
+            // Block event handlers (onclick, onerror, onload, etc.)
+            if (attrLower.startsWith('on')) return;
+
+            // Don't force-keep dangerous URI attributes — let DOMPurify validate them
+            if (DomPurifyHelper.DANGEROUS_ATTRS.has(attrLower)) return;
 
             data.allowedAttributes[data.attrName] = true;
             data.forceKeepAttr = true;
