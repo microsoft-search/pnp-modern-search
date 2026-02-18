@@ -13,7 +13,7 @@ import { Constants, TestConstants } from '../../../common/Constants';
 import { ITemplateSlot } from '@pnp/modern-search-extensibility';
 import { ObjectHelper } from '../../../helpers/ObjectHelper';
 import { BuiltinLayoutsKeys } from '../../../layouts/AvailableLayouts';
-import { WebPartTitle } from '@pnp/spfx-controls-react/lib/WebPartTitle';
+import { StyledWebPartTitle } from '../../../components/StyledWebPartTitle';
 import * as webPartStrings from 'SearchResultsWebPartStrings';
 import { Selection, SelectionMode, SelectionZone } from "@fluentui/react/lib/Selection";
 import { MessageBar, MessageBarType } from '@fluentui/react/lib/MessageBar';
@@ -89,48 +89,16 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
         let renderTemplate: JSX.Element = null;
         let renderOverlay: JSX.Element = null;
         let templateContent: string = null;
-        let renderTitle: JSX.Element = null;
         let renderInfoMessage: JSX.Element = null;
 
-        // Web Part title with custom styling
-        const titleWrapperClass = `custom-title-wrapper-${this.props.instanceId || 'default'}`;
-        
-        if (this.props.titleFont || this.props.titleFontSize !== undefined || this.props.titleFontColor) {
-            const styleString = `
-                .${titleWrapperClass} *,
-                .${titleWrapperClass} div,
-                .${titleWrapperClass} span,
-                .${titleWrapperClass} h2,
-                .${titleWrapperClass} textarea {
-                    ${this.props.titleFont ? `font-family: ${this.props.titleFont} !important;` : ''}
-                    ${this.props.titleFontSize !== undefined ? `font-size: ${this.props.titleFontSize}px !important;` : ''}
-                    ${this.props.titleFontColor ? `color: ${this.props.titleFontColor} !important;` : ''}
-                }
-            `;
-            
-            renderTitle = <div data-ui-test-id={TestConstants.SearchResultsWebPartTitle} className={titleWrapperClass}>
-                <style key={`title-style-${this.props.titleFont}-${this.props.titleFontSize}-${this.props.titleFontColor}`} dangerouslySetInnerHTML={{ __html: styleString }} />
-                <WebPartTitle
-                    displayMode={this.props.webPartTitleProps.displayMode}
-                    title={this.props.webPartTitleProps.title}
-                    updateProperty={this.props.webPartTitleProps.updateProperty}
-                    moreLink={this.props.webPartTitleProps.moreLink}
-                    themeVariant={this.props.webPartTitleProps.themeVariant}
-                    className={this.props.webPartTitleProps.className}
-                />
-            </div>;
-        } else {
-            renderTitle = <div data-ui-test-id={TestConstants.SearchResultsWebPartTitle}>
-                <WebPartTitle
-                    displayMode={this.props.webPartTitleProps.displayMode}
-                    title={this.props.webPartTitleProps.title}
-                    updateProperty={this.props.webPartTitleProps.updateProperty}
-                    moreLink={this.props.webPartTitleProps.moreLink}
-                    themeVariant={this.props.webPartTitleProps.themeVariant}
-                    className={this.props.webPartTitleProps.className}
-                />
-            </div>;
-        }
+        let renderTitle: JSX.Element = <StyledWebPartTitle
+            instanceId={this.props.instanceId}
+            titleFont={this.props.titleFont}
+            titleFontSize={this.props.titleFontSize}
+            titleFontColor={this.props.titleFontColor}
+            webPartTitleProps={this.props.webPartTitleProps}
+            testId={TestConstants.SearchResultsWebPartTitle}
+        />;
 
         // Content loading
         templateContent = this.templateService.getTemplateMarkup(this.props.templateContent);

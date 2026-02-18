@@ -202,11 +202,25 @@ export class TemplateRenderer extends React.Component<
       if (!this._divTemplateRenderer?.current) {
         return;
       }
-      this._divTemplateRenderer.current.innerHTML = `<style>${allStyles.join(
-        " "
-      )}</style><div id="${this.props.templateService.TEMPLATE_ID_PREFIX}${
-        this.props.instanceId
-      }">${templateAsHtml.body.innerHTML}</div>`;
+
+      // Security fix: Use DOM methods instead of innerHTML string concatenation
+      // to prevent XSS via CSS escape sequences (e.g. \3c unescaping to <)
+      // that could break out of <style> tags when using cssText.
+      const container = this._divTemplateRenderer.current;
+      container.innerHTML = "";
+
+      // Create <style> element and set content via textContent (auto-escapes)
+      if (allStyles.length > 0) {
+        const styleEl = document.createElement("style");
+        styleEl.textContent = allStyles.join(" ");
+        container.appendChild(styleEl);
+      }
+
+      // Create content wrapper div
+      const contentDiv = document.createElement("div");
+      contentDiv.id = `${this.props.templateService.TEMPLATE_ID_PREFIX}${this.props.instanceId}`;
+      contentDiv.innerHTML = templateAsHtml.body.innerHTML;
+      container.appendChild(contentDiv);
     } else if (
       props.renderType == LayoutRenderType.AdaptiveCards &&
       template instanceof HTMLElement

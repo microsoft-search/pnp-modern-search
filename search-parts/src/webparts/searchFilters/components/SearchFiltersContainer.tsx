@@ -3,7 +3,7 @@ import { ISearchFiltersContainerProps } from './ISearchFiltersContainerProps';
 import { TemplateRenderer } from '../../../controls/TemplateRenderer/TemplateRenderer';
 import { ISearchFiltersContainerState } from './ISearchFiltersContainerState';
 import { isEqual, cloneDeep, sortBy } from '@microsoft/sp-lodash-subset';
-import { WebPartTitle } from "@pnp/spfx-controls-react/lib/WebPartTitle";
+import { StyledWebPartTitle } from '../../../components/StyledWebPartTitle';
 import * as webPartStrings from 'SearchFiltersWebPartStrings';
 import * as commonStrings from 'CommonStrings';
 import update from 'immutability-helper';
@@ -60,41 +60,13 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
         let renderWpContent: JSX.Element = null;
         let templateContent: string = null;
-        let renderTitle: JSX.Element = null;
-
-        // WP title with custom styling
-        const titleWrapperClass = `custom-title-wrapper-${this.props.instanceId || 'default'}`;
-
-        if (this.props.titleFont || this.props.titleFontSize !== undefined || this.props.titleFontColor) {
-            const styleString = `
-        .${titleWrapperClass} *,
-        .${titleWrapperClass} div,
-        .${titleWrapperClass} span,
-        .${titleWrapperClass} h2,
-        .${titleWrapperClass} textarea {
-          ${this.props.titleFont ? `font-family: ${this.props.titleFont} !important;` : ''}
-          ${this.props.titleFontSize !== undefined ? `font-size: ${this.props.titleFontSize}px !important;` : ''}
-          ${this.props.titleFontColor ? `color: ${this.props.titleFontColor} !important;` : ''}
-        }
-      `;
-
-            renderTitle = <div className={titleWrapperClass}>
-                <style key={`title-style-${this.props.titleFont}-${this.props.titleFontSize}-${this.props.titleFontColor}`} dangerouslySetInnerHTML={{ __html: styleString }} />
-                <WebPartTitle
-                    displayMode={this.props.webPartTitleProps.displayMode}
-                    title={this.props.webPartTitleProps.title}
-                    updateProperty={this.props.webPartTitleProps.updateProperty}
-                    className={this.props.webPartTitleProps.className}
-                />
-            </div>;
-        } else {
-            renderTitle = <WebPartTitle
-                displayMode={this.props.webPartTitleProps.displayMode}
-                title={this.props.webPartTitleProps.title}
-                updateProperty={this.props.webPartTitleProps.updateProperty}
-                className={this.props.webPartTitleProps.className}
-            />;
-        }
+        const renderTitle = <StyledWebPartTitle
+            instanceId={this.props.instanceId}
+            titleFont={this.props.titleFont}
+            titleFontSize={this.props.titleFontSize}
+            titleFontColor={this.props.titleFontColor}
+            webPartTitleProps={this.props.webPartTitleProps}
+        />;
 
         // If no filter 
         if (this.state.currentUiFilters.length === 0) {
