@@ -15,8 +15,6 @@ jobs:
         steps:
             # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
             - uses: actions/checkout@v4
-              with:
-                  ref: develop
             # setup nodejs
             - name: Use Node.js 22
               uses: actions/setup-node@v4

@@ -519,10 +519,11 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                 textDisplayValue: textDisplayValues.join(','),
                 label: webPartStrings.PropertyPane.ConnectionsPage.UseDataResultsFromComponentsLabel,
                 description: webPartStrings.PropertyPane.ConnectionsPage.UseDataResultsFromComponentsDescription,
-                onPropertyChange: (propertyPath, newValue: IComboBoxOption[], changeCallback?: (targetProperty?: string, newValue?: any) => void) => {
+                onPropertyChange: (propertyPath, newValue: IComboBoxOption | IComboBoxOption[], changeCallback?: (targetProperty?: string, newValue?: any) => void) => {
 
                     // Persist the new data sources references
-                    changeCallback(propertyPath, newValue.map(option => option.key as string));
+                    const values = Array.isArray(newValue) ? newValue : [newValue];
+                    changeCallback(propertyPath, values.map(option => option.key as string));
                     this.ensureDynamicDataSourcesConnection();
 
                     // Refresh the property pane for available fields
@@ -678,7 +679,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                 }
             });
 
-            availableFieldOptionsFromResults = uniq(allAvailableFieldsFromResults).map(field => { 
+            availableFieldOptionsFromResults = uniq(allAvailableFieldsFromResults).map(field => {
                 // Trim common prefixes to make field names cleaner for filtering
                 let cleanFieldName = field;
                 if (field.startsWith('resource.fields.')) {
@@ -688,7 +689,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                 } else if (field.startsWith('resource.')) {
                     cleanFieldName = field.replace('resource.', '');
                 }
-                return { key: cleanFieldName, text: cleanFieldName }; 
+                return { key: cleanFieldName, text: cleanFieldName };
             });
         }
 
@@ -744,10 +745,10 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                         required: false,
                         onCustomRender: (field, value, onUpdate, item, itemId, onCustomFieldValidation) => {
                             const numValue = value ? parseInt(value.toString(), 10) : undefined;
-                            const errorMessage = numValue && numValue > 1000 
-                                ? webPartStrings.PropertyPane.DataFilterCollection.FilterMaxBucketsWarning 
+                            const errorMessage = numValue && numValue > 1000
+                                ? webPartStrings.PropertyPane.DataFilterCollection.FilterMaxBucketsWarning
                                 : '';
-                            
+
                             return React.createElement(TextField, {
                                 key: `${field.id}-${itemId}`,
                                 type: 'number',
@@ -788,7 +789,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                             }
                         ]
                     },
-                    
+
                     {
                         id: 'expandByDefault',
                         title: webPartStrings.PropertyPane.DataFilterCollection.FilterExpandByDefault,
@@ -1014,7 +1015,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                 return '';
             }
             // Resolves an error if the file isn't a valid .htm or .html file
-            else if (!this.templateService.isValidTemplateFile(value, [".html",".htm",".txt"])) {
+            else if (!this.templateService.isValidTemplateFile(value, [".html", ".htm", ".txt"])) {
                 return webPartStrings.PropertyPane.LayoutPage.ErrorTemplateExtension;
             }
             // Resolves an error if the file doesn't answer a simple head request
@@ -1173,14 +1174,14 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
         this.properties.filterBackgroundColor = undefined;
         this.properties.filterBorderColor = undefined;
         this.properties.filterBorderThickness = undefined;
-        
+
         // Refresh the property pane to show the reset values
         this.context.propertyPane.refresh();
-        
+
         // Re-render the web part to apply changes
         this.render();
     }
-    
+
 
 
     /**
@@ -1294,10 +1295,10 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                 }
             }
 
-            if( sortByField === 'name') {
+            if (sortByField === 'name') {
                 filter.values = sortDirection === FilterSortDirection.Ascending ? sortBy(filter.values, [item => item["name"].toLocaleLowerCase()]) : sortBy(filter.values, [item => item["name"].toLocaleLowerCase()]).reverse();
             }
-            else{
+            else {
                 filter.values = sortDirection === FilterSortDirection.Ascending ? sortBy(filter.values, sortByField) : sortBy(filter.values, sortByField).reverse();
             }
 

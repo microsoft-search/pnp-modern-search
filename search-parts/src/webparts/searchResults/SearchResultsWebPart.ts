@@ -578,7 +578,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         // Web components are only defined once.
         await this.templateService.registerWebComponents(this.availableWebComponentDefinitions, this.instanceId);
 
-        if(this.properties.layoutProperties?.showPersonaCard){
+        if (this.properties.layoutProperties?.showPersonaCard) {
             this.properties.useMicrosoftGraphToolkit = true;
         }
 
@@ -976,7 +976,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                     inputQueryFromDataSource = decodeURIComponent(inputQueryFromDataSource);
                 }
 
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
             } catch (error) {
                 // Likely issue when q=%25 in spfx
             }
@@ -1129,7 +1129,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         // Remove existing listener to prevent duplicates during SPA navigation
         if (this._pagingEventHandler) {
-            this.domElement.removeEventListener('pageNumberUpdated', this._pagingEventHandler);
+            this.domElement.removeEventListener('pageNumberUpdated', this._pagingEventHandler as EventListener);
         }
 
         this._pagingEventHandler = (ev: CustomEvent) => {
@@ -1146,7 +1146,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         };
 
-        this.domElement.addEventListener('pageNumberUpdated', this._pagingEventHandler);
+        this.domElement.addEventListener('pageNumberUpdated', this._pagingEventHandler as EventListener);
     }
 
     /**
@@ -1156,7 +1156,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         // Remove existing listener to prevent duplicates during SPA navigation
         if (this._sortingEventHandler) {
-            this.domElement.removeEventListener(ExtensibilityConstants.EVENT_SORT_BY, this._sortingEventHandler);
+            this.domElement.removeEventListener(ExtensibilityConstants.EVENT_SORT_BY, this._sortingEventHandler as EventListener);
         }
 
         this._sortingEventHandler = (ev: CustomEvent) => {
@@ -1174,7 +1174,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         };
 
-        this.domElement.addEventListener(ExtensibilityConstants.EVENT_SORT_BY, this._sortingEventHandler);
+        this.domElement.addEventListener(ExtensibilityConstants.EVENT_SORT_BY, this._sortingEventHandler as EventListener);
     }
 
     /**
@@ -1300,14 +1300,14 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         this.properties.resultsBackgroundColor = undefined;
         this.properties.resultsBorderColor = undefined;
         this.properties.resultsBorderThickness = undefined;
-        
+
         // Refresh the property pane to show the reset values
         this.context.propertyPane.refresh();
-        
+
         // Re-render the web part to apply changes
         this.render();
     }
-    
+
 
 
     /**
@@ -1918,7 +1918,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                     dataSource = childServiceScope.consume<IDataSource>(serviceKey);
 
                     // Verifiy if the data source implements correctly the IDataSource interface and BaseDataSource methods
-                     const isValidDataSource = (dataSourceInstance: IDataSource): dataSourceInstance is IDataSource => {
+                    const isValidDataSource = (dataSourceInstance: IDataSource): dataSourceInstance is IDataSource => {
                         return (
                             (dataSourceInstance as IDataSource).getAppliedFilters !== undefined &&
                             (dataSourceInstance as IDataSource).getData !== undefined &&

@@ -94,9 +94,9 @@ export class TokenService implements ITokenService {
     private dateHelper: DateHelper;
 
     /**
-     * The moment.js library reference
+     * The dayjs library reference
      */
-    private moment: any;
+    private dayjs: any;
 
     public static ServiceKey: ServiceKey<ITokenService> = ServiceKey.create(TokenService_ServiceKey, TokenService);
 
@@ -130,7 +130,7 @@ export class TokenService implements ITokenService {
 
         if (inputString) {
 
-            this.moment = await this.dateHelper.moment();
+            this.dayjs = await this.dateHelper.moment();
 
             // Resolves dynamic tokens (i.e. tokens resolved asynchronously versus static ones set by the Web Part context)
             inputString = await this.replacePageTokens(inputString);
@@ -439,8 +439,8 @@ export class TokenService implements ITokenService {
         const currentDate2DigitsUTC = /\{CurrentDate2DigitsUTC\}/gi;
         const currentMonth2DigitsUTC = /\{CurrentMonth2DigitsUTC\}/gi;
         const currentHour2DigitsUTC = /\{CurrentHour2DigitsUTC\}/gi;
-        const currentMinute2DigitsUTC= /\{CurrentMinute2DigitsUTC\}/gi;
-        const currentSecond2DigitsUTC = /\{CurrentSecond2DigitsUTC\}/gi; 
+        const currentMinute2DigitsUTC = /\{CurrentMinute2DigitsUTC\}/gi;
+        const currentSecond2DigitsUTC = /\{CurrentSecond2DigitsUTC\}/gi;
 
         // Replaces any "{Today} +/- [digit]" expression
         let results = /\{Today\s*[\+-]\s*\[{0,1}\d{1,}\]{0,1}\}/gi;
@@ -453,13 +453,13 @@ export class TokenService implements ITokenService {
                 const digit = parseInt(operatorSplit[operatorSplit.length - 1].replace("{", "").replace("}", "").trim()) * addOrRemove;
                 let dt = new Date();
                 dt.setDate(dt.getDate() + digit);
-                const formatDate = this.moment(dt).toISOString();
+                const formatDate = this.dayjs(dt).toISOString();
                 inputString = inputString.replace(result, formatDate);
             }
         }
 
         // Replaces any "{Today}" expression by it's actual value
-        let formattedDate = this.moment(new Date()).toISOString();
+        let formattedDate = this.dayjs(new Date()).toISOString();
         inputString = inputString.replace(new RegExp("{Today}", 'gi'), formattedDate);
 
         const d = new Date();
@@ -584,16 +584,16 @@ export class TokenService implements ITokenService {
 
         if (matches != null) {
 
-          if (!this.currentHubInfos) {
-              // Get hub site data
-              this.currentHubInfos = await this.getHubInfo();
-          }
+            if (!this.currentHubInfos) {
+                // Get hub site data
+                this.currentHubInfos = await this.getHubInfo();
+            }
 
-          while (matches !== null) {
-              const hubProp = matches[1];
-              inputString = inputString.replace(new RegExp(matches[0], "gi"), this.currentHubInfos[hubProp]);
-              matches = hubRegExp.exec(inputString);
-          }
+            while (matches !== null) {
+                const hubProp = matches[1];
+                inputString = inputString.replace(new RegExp(matches[0], "gi"), this.currentHubInfos[hubProp]);
+                matches = hubRegExp.exec(inputString);
+            }
         }
 
         return inputString;

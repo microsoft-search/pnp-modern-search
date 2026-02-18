@@ -170,11 +170,11 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
     private dateHelper: DateHelper;
 
     /**
-    * The moment.js library reference
+    * The dayjs library reference
     */
-    private moment: any;
+    private dayjs: any;
     props: any;
-    
+
     public constructor(serviceScope: ServiceScope) {
         super(serviceScope);
 
@@ -191,7 +191,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         this.initProperties();
 
         this.dateHelper = this.serviceScope.consume<DateHelper>(DateHelper.ServiceKey);
-        this.moment = await this.dateHelper.moment();
+        this.dayjs = await this.dateHelper.moment();
 
         if (this.editMode) {
             // Use the same chunk name as the main Web Part to avoid recreating/loading a new one
@@ -665,14 +665,14 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                     // Try thumbnail URL first
                     let thumbNailUrl = ObjectHelper.byPath(item, "PictureThumbnailURL");
                     thumbNailUrl = DataSourceHelper.enhanceThumbnailUrl(thumbNailUrl);
-                    
+
                     if (thumbNailUrl) {
                         item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = thumbNailUrl;
                     }
                     else if (siteId && listId && itemId && !isContainerType) {
                         // SharePoint item thumbnail
                         const itemFileType = ObjectHelper.byPath(item, slots[BuiltinTemplateSlots.FileType]);
-                        
+
                         if (itemFileType && validPreviewExt.indexOf(itemFileType.toUpperCase()) !== -1) {
                             item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = DataSourceHelper.generateSharePointThumbnailUrl({
                                 baseUrl: this.context.pageContext.site.absoluteUrl,
@@ -700,7 +700,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                 item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = DataSourceHelper.validatePreviewImageUrl(
                     item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl]
                 );
-                
+
                 return item;
             });
         }
@@ -758,7 +758,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         }
     }
 
-    private getBuiltinSourceIdOptions(): IComboBoxOption[] {
+    private async getBuiltinSourceIdOptions(): Promise<IComboBoxOption[]> {
 
         this._resultSourcesOptions = [
             {
@@ -1013,11 +1013,11 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                     }
                     const today = todayDate.toISOString();
 
-                    const pastYear = this.moment(todayDate).subtract(1, 'years').subtract('minutes', 1).toISOString();
-                    const past3Months = this.moment(todayDate).subtract(3, 'months').subtract('minutes', 1).toISOString();
-                    const pastMonth = this.moment(todayDate).subtract(1, 'months').subtract('minutes', 1).toISOString();
-                    const pastWeek = this.moment(todayDate).subtract(1, 'week').subtract('minutes', 1).toISOString();
-                    const past24hours = this.moment(todayDate).subtract(24, 'hours').subtract('minutes', 1).toISOString();
+                    const pastYear = this.dayjs(todayDate).subtract(1, 'years').subtract('minutes', 1).toISOString();
+                    const past3Months = this.dayjs(todayDate).subtract(3, 'months').subtract('minutes', 1).toISOString();
+                    const pastMonth = this.dayjs(todayDate).subtract(1, 'months').subtract('minutes', 1).toISOString();
+                    const pastWeek = this.dayjs(todayDate).subtract(1, 'week').subtract('minutes', 1).toISOString();
+                    const past24hours = this.dayjs(todayDate).subtract(24, 'hours').subtract('minutes', 1).toISOString();
                     // const today = new Date().toISOString();
 
                     return `${filterConfig.filterName}(discretize=manual/${pastYear}/${past3Months}/${pastMonth}/${pastWeek}/${past24hours}/${today})`;
@@ -1038,13 +1038,13 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
 
                 // Make sure, if we have multiple filters, at least two filters have values to avoid apply an operator ('or','and') on only one condition failing the query.
                 if (dataContext.filters.selectedFilters.length > 1 && dataContext.filters.selectedFilters.filter(selectedFilter => selectedFilter.values.length > 0).length > 1) {
-                    const refinementString = DataFilterHelper.buildFqlRefinementString(dataContext.filters.selectedFilters, this.moment).join(',');
+                    const refinementString = DataFilterHelper.buildFqlRefinementString(dataContext.filters.selectedFilters, this.dayjs).join(',');
                     if (!isEmpty(refinementString)) {
                         refinementFilters = refinementFilters.concat([`${dataContext.filters.filterOperator}(${refinementString})`]);
                     }
 
                 } else {
-                    refinementFilters = refinementFilters.concat(DataFilterHelper.buildFqlRefinementString(dataContext.filters.selectedFilters, this.moment));
+                    refinementFilters = refinementFilters.concat(DataFilterHelper.buildFqlRefinementString(dataContext.filters.selectedFilters, this.dayjs));
                 }
             }
 
@@ -1372,7 +1372,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         updatedFilters = updatedFilters.map(filter => {
             const uniqueValues: IDataFilterResultValue[] = [];
             const seenKeys = new Set<string>();
-            
+
             filter.values.forEach(value => {
                 // Create a unique key combining name and value
                 const key = `${value.name}|||${value.value}`;
@@ -1381,7 +1381,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                     uniqueValues.push(value);
                 }
             });
-            
+
             filter.values = uniqueValues;
             return filter;
         });
