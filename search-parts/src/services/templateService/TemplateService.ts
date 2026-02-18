@@ -735,7 +735,7 @@ export class TemplateService implements ITemplateService {
         // Extract all <style> tags before sanitization
         const styleTags: string[] = [];
         let templateWithoutStyles = html;
-        const styleRegex = /<style[\s\S]*?<\/style>/gi;
+        const styleRegex = /<style(?:\s[^>]*)?>[\s\S]*?<\/style[^>]*>/gi;
         let match;
 
         while ((match = styleRegex.exec(html)) !== null) {
