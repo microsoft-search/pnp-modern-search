@@ -113,11 +113,17 @@ export class DomPurifyHelper {
     // Returning early lets DOMPurify apply its own validation (ALLOWED_URI_REGEXP / FORBID_ATTR).
     private static readonly DANGEROUS_ATTRS: ReadonlySet<string> = new Set([
         'href',        // DOMPurify validates against ALLOWED_URI_REGEXP — don't bypass
+        'src',         // images, scripts, iframes — DOMPurify validates URI scheme
+        'srcset',      // responsive images — contains URIs
         'action',      // form submit target — accepts javascript: URIs
         'formaction',  // per-button override of action — same risk
         'xlink:href',  // SVG link — accepts javascript: URIs
         'srcdoc',      // iframe HTML injection
         'ping',        // <a> data exfiltration to attacker-controlled URLs
+        'poster',      // <video> — external resource loading
+        'cite',        // <blockquote>/<q> — URI attribute
+        'codebase',    // <object>/<applet> — base URI for code loading
+        'usemap',      // client-side image map — URI reference
         'dynsrc',      // legacy IE — javascript: execution
         'lowsrc',      // legacy IE — javascript: execution
         'background',  // legacy body/table — external resource loading
@@ -195,7 +201,9 @@ export class DomPurifyHelper {
                         return;
                     }
                 } catch {
-                    // Relative URL that new URL can't parse — allow it
+                    // With a base URL, only truly malformed URIs throw — treat as unsafe
+                    node.parentNode?.removeChild(node);
+                    return;
                 }
             }
         }
