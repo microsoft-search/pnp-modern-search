@@ -138,12 +138,26 @@ export default class SearchVerticalsContainer extends React.Component<ISearchVer
           resolvedUrl = resolvedUrl.replace(/\{inputQueryText\}|\{searchTerms\}|\{SearchBoxQuery\}/gi, inputQueryText);
           resolvedUrl = resolvedUrl.replace(inputQueryText, encodeURIComponent(inputQueryText));
 
+          // Block dangerous URI schemes (javascript:, data:, vbscript:, etc.)
+          try {
+            const parsed = new URL(resolvedUrl, window.location.href);
+            if (!['http:', 'https:'].includes(parsed.protocol)) {
+              Log.warn(VerticalContainer_LogSource, `Blocked navigation to disallowed URL scheme: ${parsed.protocol}`);
+              return;
+            }
+          } catch {
+            Log.warn(VerticalContainer_LogSource, `Invalid URL for vertical navigation: ${resolvedUrl}`);
+            return;
+          }
+
           if (vertical.openBehavior === PageOpenBehavior.NewTab) {
-            window.open(resolvedUrl, "_blank");
+            window.open(resolvedUrl, "_blank", "noopener");
           } else {
             // Allow SharePoint to intercept the click and do a soft navigation
-            document.body.insertAdjacentHTML('beforeend', `<a href="${resolvedUrl}" style="display:none;"></a>`);
-            const anchor = document.body.lastElementChild as HTMLElement;
+            const anchor = document.createElement('a');
+            anchor.href = resolvedUrl;
+            anchor.style.display = 'none';
+            document.body.appendChild(anchor);
             anchor.click();
             document.body.removeChild(anchor);
           }
