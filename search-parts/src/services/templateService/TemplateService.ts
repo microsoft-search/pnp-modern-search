@@ -739,7 +739,8 @@ export class TemplateService implements ITemplateService {
         let match;
 
         while ((match = styleRegex.exec(html)) !== null) {
-            styleTags.push(match[0]);
+            // Sanitize CSS content before storing to block exfiltration vectors
+            styleTags.push(DomPurifyHelper.sanitizeCssContent(match[0]));
             templateWithoutStyles = templateWithoutStyles.replace(
                 match[0],
                 `<div data-style-placeholder="${styleTags.length - 1}"></div>`
