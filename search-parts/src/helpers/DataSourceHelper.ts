@@ -177,7 +177,7 @@ export class DataSourceHelper {
     }): string {
         const { baseUrl, siteId, driveId, itemId } = options;
 
-        return `${baseUrl}/_api/v2.1/sites/${siteId}/drives/${driveId}/items/${itemId}/thumbnails/thumbnails/0/c400x999/content?prefer=noredirect,closestavailablesize,extendCacheMaxAge`;
+        return `${baseUrl}/_api/v2.1/sites/${siteId}/drives/${driveId}/items/${itemId}/thumbnails/0/c400x999/content?prefer=noredirect,closestavailablesize,extendCacheMaxAge`;
     }
 
     /**
