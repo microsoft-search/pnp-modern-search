@@ -44,10 +44,12 @@ export class AudienceTargetingService {
             }
 
             // Collect all AAD group IDs for batch checking
-            if (audience.login === "FederatedDirectoryClaimProvider") {
-                aadGroupIds.push(audience.id.replace(AudienceTargetingService.CLAIM_GROUP_PREFIX, ""));
-            } else if (audience.login === "Tenant") {
-                aadGroupIds.push(audience.id.replace(AudienceTargetingService.CLAIM_TENANT_PREFIX, ""));
+            if (audience.id && audience.login === "FederatedDirectoryClaimProvider"
+                && audience.id.toLowerCase().startsWith(AudienceTargetingService.CLAIM_GROUP_PREFIX.toLowerCase())) {
+                aadGroupIds.push(audience.id.substring(AudienceTargetingService.CLAIM_GROUP_PREFIX.length));
+            } else if (audience.id && audience.login === "Tenant"
+                && audience.id.toLowerCase().startsWith(AudienceTargetingService.CLAIM_TENANT_PREFIX.toLowerCase())) {
+                aadGroupIds.push(audience.id.substring(AudienceTargetingService.CLAIM_TENANT_PREFIX.length));
             }
         }
 

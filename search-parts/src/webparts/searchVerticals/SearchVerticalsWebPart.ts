@@ -106,6 +106,7 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
         // Check audience targeting - if user is not in audience, don't render
         const isInAudience = await this.isInAudience();
         if (!isInAudience) {
+            ReactDom.unmountComponentAtNode(this.domElement);
             this.domElement.innerHTML = '';
             return this.renderCompleted();
         }

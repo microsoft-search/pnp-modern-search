@@ -136,6 +136,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
         const isInAudience = await this.isInAudience();
         this._isHiddenByAudience = !isInAudience;
         if (!isInAudience) {
+            ReactDom.unmountComponentAtNode(this.domElement);
             this.domElement.innerHTML = '';
             return this.renderCompleted();
         }

@@ -171,6 +171,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
         const isInAudience = await this.isInAudience();
         this._isHiddenByAudience = !isInAudience;
         if (!isInAudience) {
+            ReactDom.unmountComponentAtNode(this.domElement);
             this.domElement.innerHTML = '';
             return this.renderCompleted();
         }
