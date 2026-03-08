@@ -251,11 +251,13 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     public async render(): Promise<void> {
 
         // Check audience targeting - if user is not in audience, don't render
-        // const isInAudience = await this.isInAudience();
-        // if (!isInAudience) {
-        //     this.domElement.innerHTML = '';
-        //     return this.renderCompleted();
-        // }
+        const isInAudience = await this.isInAudience();
+        this._isHiddenByAudience = !isInAudience;
+        if (!isInAudience) {
+            ReactDom.unmountComponentAtNode(this.domElement);
+            this.domElement.innerHTML = '';
+            return this.renderCompleted();
+        }
 
         // Ensure extensions are loaded before rendering
         if (!this.extensionsLoaded) {
@@ -400,6 +402,12 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     }
 
     protected renderCompleted(): void {
+
+        // If hidden by audience targeting, skip rendering and just mark as completed
+        if (this._isHiddenByAudience) {
+            super.renderCompleted();
+            return;
+        }
 
         let renderRootElement: JSX.Element = null;
         let renderDataContainer: JSX.Element = null;

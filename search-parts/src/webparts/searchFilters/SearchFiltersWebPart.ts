@@ -169,7 +169,9 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
 
         // Check audience targeting - if user is not in audience, don't render
         const isInAudience = await this.isInAudience();
+        this._isHiddenByAudience = !isInAudience;
         if (!isInAudience) {
+            ReactDom.unmountComponentAtNode(this.domElement);
             this.domElement.innerHTML = '';
             return this.renderCompleted();
         }
@@ -193,6 +195,12 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     }
 
     protected renderCompleted(): void {
+
+        // If hidden by audience targeting, skip rendering and just mark as completed
+        if (this._isHiddenByAudience) {
+            super.renderCompleted();
+            return;
+        }
 
         let renderRootElement: JSX.Element = null;
         let filterResults: IDataFilterResult[] = [];
