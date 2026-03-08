@@ -8,6 +8,7 @@ import { SPHttpClient, SPHttpClientResponse } from '@microsoft/sp-http';
 export class AudienceTargetingService {
     private static readonly CLAIM_USER_PREFIX = "i:0#.f|membership|";
     private static readonly CLAIM_GROUP_PREFIX = "c:0o.c|federateddirectoryclaimprovider|";
+    private static readonly CLAIM_TENANT_PREFIX = "c:0t.c|tenant|";
     private static readonly AAD_GROUP_CACHE_KEY = "PnPModernSearchAudienceAADCache";
 
     private _audiences: IPropertyFieldGroupOrPerson[];
@@ -45,6 +46,8 @@ export class AudienceTargetingService {
             // Collect all AAD group IDs for batch checking
             if (audience.login === "FederatedDirectoryClaimProvider") {
                 aadGroupIds.push(audience.id.replace(AudienceTargetingService.CLAIM_GROUP_PREFIX, ""));
+            } else if (audience.login === "Tenant") {
+                aadGroupIds.push(audience.id.replace(AudienceTargetingService.CLAIM_TENANT_PREFIX, ""));
             }
         }
 

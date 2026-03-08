@@ -134,6 +134,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
 
         // Check audience targeting - if user is not in audience, don't render
         const isInAudience = await this.isInAudience();
+        this._isHiddenByAudience = !isInAudience;
         if (!isInAudience) {
             this.domElement.innerHTML = '';
             return this.renderCompleted();
@@ -160,6 +161,12 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
     }
 
     protected renderCompleted(): void {
+
+        // If hidden by audience targeting, skip rendering and just mark as completed
+        if (this._isHiddenByAudience) {
+            super.renderCompleted();
+            return;
+        }
 
         if (!this.domElement) {
             return;

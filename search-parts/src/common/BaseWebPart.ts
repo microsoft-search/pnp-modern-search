@@ -50,6 +50,12 @@ export abstract class BaseWebPart<T extends IBaseWebPartProps> extends BaseClien
      */
     private _audienceCheckResult: boolean | null = null;
 
+    /**
+     * Flag indicating the web part is hidden due to audience targeting.
+     * Used by renderCompleted() overrides to skip re-rendering.
+     */
+    protected _isHiddenByAudience: boolean = false;
+
     constructor() {
         super();
     } 
