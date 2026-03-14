@@ -849,7 +849,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             case EntityType.Site:
             case EntityType.List:
             case EntityType.ExternalItem:
-                this.applySharePointPreviewUrl(item, slots);
+                this.applySharePointPreviewUrl(item, slots, entityType);
                 break;
             default:
                 break;
@@ -951,22 +951,53 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         this.applyAcronymPreviewUrl(item);
     }
 
-    private applySharePointPreviewUrl(item: any, slots: { [key: string]: string }): void {
-        if (item.resource?.listItem?.fields) {
-            const contentTypeId = item.resource.listItem.fields.contentTypeId;
-            const isContainer = DataSourceHelper.isContainerContentType(contentTypeId);
+    private applySharePointPreviewUrl(item: any, slots: { [key: string]: string }, entityType?: EntityType): void {
+        const contentTypeId = this.getSharePointField(item, "contentTypeId");
+        const isContainer = DataSourceHelper.isContainerContentType(contentTypeId) || this.isContainerEntityType(entityType);
 
-            const webUrl = item.resource.listItem.fields.sitePath;
-            let pathProperty = item[slots[BuiltinTemplateSlots.Path]] || webUrl || item['DefaultEncodingURL'];
+        const webUrl = this.getSharePointField(item, "sitePath") || ObjectHelper.byPath(item, "resource.webUrl") || ObjectHelper.byPath(item, "webUrl");
+        const pathProperty = this.getSlotValue(item, slots, BuiltinTemplateSlots.Path) || webUrl || item["DefaultEncodingURL"];
+        const fileType = this.getSlotValue(item, slots, BuiltinTemplateSlots.FileType) || this.getSharePointField(item, "filetype") || this.getSharePointField(item, "fileType");
 
-            item.AutoPreviewUrl = DataSourceHelper.generatePreviewUrl({
-                webUrl: webUrl,
-                uniqueId: item.resource.listItem.id,
-                fileType: item[slots[BuiltinTemplateSlots.FileType]] || item.resource.listItem.fields.filetype,
-                pathProperty: pathProperty,
-                isContainer: isContainer
-            });
+        const previewUrl = DataSourceHelper.generatePreviewUrl({
+            webUrl: webUrl,
+            uniqueId: this.getSharePointListItemId(item),
+            fileType: fileType,
+            pathProperty: pathProperty,
+            isContainer: isContainer
+        });
+
+        if (previewUrl) {
+            item.AutoPreviewUrl = previewUrl;
         }
+    }
+
+    private isContainerEntityType(entityType: EntityType | undefined): boolean {
+        return entityType === EntityType.Site || entityType === EntityType.List || entityType === EntityType.Drive;
+    }
+
+    private getSlotValue(item: any, slots: { [key: string]: string }, slotName: string): string | undefined {
+        const slotPath = slots[slotName];
+        if (!slotPath) {
+            return undefined;
+        }
+
+        return item[slotPath] || ObjectHelper.byPath(item, slotPath);
+    }
+
+    private getSharePointField(item: any, fieldName: string): string | undefined {
+        return ObjectHelper.byPath(item, `resource.listItem.fields.${fieldName}`)
+            || ObjectHelper.byPath(item, `resource.fields.${fieldName}`)
+            || ObjectHelper.byPath(item, `resource.${fieldName}`)
+            || ObjectHelper.byPath(item, fieldName);
+    }
+
+    private getSharePointListItemId(item: any): string | undefined {
+        return ObjectHelper.byPath(item, "resource.listItem.id")
+            || ObjectHelper.byPath(item, "resource.parentReference.sharepointIds.listItemUniqueId")
+            || ObjectHelper.byPath(item, "listItemUniqueId")
+            || ObjectHelper.byPath(item, "resource.id")
+            || ObjectHelper.byPath(item, "id");
     }
 
     private applySharePointPreviewImage(item: any, slots: { [key: string]: string }, validPreviewExt: string[]): void {
@@ -989,11 +1020,11 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
     }
 
     private applyNonSitePreviewImage(item: any, slots: { [key: string]: string }, validPreviewExt: string[]): void {
-        const siteId = ObjectHelper.byPath(item, slots.SiteId);
-        const webId = ObjectHelper.byPath(item, slots.WebId);
-        const listId = ObjectHelper.byPath(item, slots.ListId);
-        const itemId = ObjectHelper.byPath(item, slots.ItemId);
-        const isFolder = ObjectHelper.byPath(item, slots.IsFolder);
+        const siteId = ObjectHelper.byPath(item, slots.SiteId) || this.getSharePointField(item, "siteId");
+        const webId = ObjectHelper.byPath(item, slots.WebId) || this.getSharePointField(item, "normWebID") || this.getSharePointField(item, "webId");
+        const listId = ObjectHelper.byPath(item, slots.ListId) || this.getSharePointField(item, "listId") || ObjectHelper.byPath(item, "resource.parentReference.sharepointIds.listId");
+        const itemId = ObjectHelper.byPath(item, slots.ItemId) || this.getSharePointListItemId(item);
+        const isFolder = ObjectHelper.byPath(item, slots.IsFolder) || this.getSharePointField(item, "contentTypeId");
         const isContainerType = DataSourceHelper.isContainerType(isFolder);
 
         // Try thumbnail URL first
@@ -1009,19 +1040,32 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
     }
 
     private applySharePointItemThumbnail(item: any, siteId: string, webId: string, listId: string, itemId: string, validPreviewExt: string[]): void {
-        const itemFileType = ObjectHelper.byPath(item, "resource.listItem.fields.filetype");
+        const itemFileType = this.getSharePointField(item, "filetype") || this.getSharePointField(item, "fileType");
 
         if (itemFileType && validPreviewExt.includes(itemFileType.toUpperCase())) {
-            let tenantUrl = item.resource.webUrl.split('/sites/')[0];
-            tenantUrl ??= item.resource.webUrl.split('/teams/')[0];
+            const resourceWebUrl = ObjectHelper.byPath(item, "resource.webUrl") || ObjectHelper.byPath(item, "webUrl");
+            let tenantUrl = resourceWebUrl;
 
-            item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = DataSourceHelper.generateSharePointThumbnailUrl({
-                baseUrl: tenantUrl,
-                siteId: item.resource.listItem.fields.siteId,
-                webId: webId,
-                listId: item.resource.parentReference.sharepointIds.listId,
-                itemId: item.resource.parentReference.sharepointIds.listItemUniqueId
-            });
+            if (resourceWebUrl) {
+                tenantUrl = resourceWebUrl.split('/sites/')[0];
+                if (tenantUrl === resourceWebUrl) {
+                    tenantUrl = resourceWebUrl.split('/teams/')[0];
+                }
+            }
+
+            const resolvedSiteId = siteId || this.getSharePointField(item, "siteId");
+            const resolvedListId = listId || ObjectHelper.byPath(item, "resource.parentReference.sharepointIds.listId");
+            const resolvedItemId = ObjectHelper.byPath(item, "resource.parentReference.sharepointIds.listItemUniqueId") || itemId;
+
+            if (tenantUrl && resolvedSiteId && resolvedListId && resolvedItemId) {
+                item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = DataSourceHelper.generateSharePointThumbnailUrl({
+                    baseUrl: tenantUrl,
+                    siteId: resolvedSiteId,
+                    webId: webId,
+                    listId: resolvedListId,
+                    itemId: resolvedItemId
+                });
+            }
         }
     }
 
