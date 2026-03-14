@@ -49,5 +49,4 @@ define([], function() {
             ResetTitleStylingDescription: "Obnovit všechny možnosti stylu názvu na jejich výchozí hodnoty"
       }
     }
-  }
 });
