@@ -249,6 +249,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
             }, commonStrings.General.Resources.PleaseReferToDocumentationMessage));
         }
 
+        ReactDom.unmountComponentAtNode(this.domElement);
         ReactDom.render(renderRootElement, this.domElement);
 
         // This call set this.renderedOnce to 'true' so we need to execute it at the very end
