@@ -329,7 +329,6 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
             }
         }
 
-        ReactDom.unmountComponentAtNode(this.domElement);
         ReactDom.render(renderRootElement, this.domElement);
 
         // This call set this.renderedOnce to 'true' so we need to execute it at the very end

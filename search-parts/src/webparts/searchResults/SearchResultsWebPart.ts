@@ -271,8 +271,11 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             if (!this._extensionsLoadingPromise) {
                 this._extensionsLoadingPromise = this.loadExtensions(this.properties.extensibilityLibraryConfiguration);
             }
-            await this._extensionsLoadingPromise;
-            this._extensionsLoadingPromise = null;
+            try {
+                await this._extensionsLoadingPromise;
+            } finally {
+                this._extensionsLoadingPromise = null;
+            }
         }
 
         // Determine the template content to display
@@ -549,7 +552,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             }, commonStrings.General.Resources.PleaseReferToDocumentationMessage));
         }
 
-        ReactDom.unmountComponentAtNode(this.domElement);
         ReactDom.render(renderRootElement, this.domElement);
 
         // Re-bind web component events after render to handle SPA navigation scenarios

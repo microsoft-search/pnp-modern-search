@@ -46,11 +46,11 @@ export class ExtensibilityService {
      */
     private instantiateLibrary(extensibilityLibraryComponent: any, configurationId: string): IExtensibilityLibrary | undefined {
 
-        // Parse the library component properties to instanciate the library itself.
+        // Parse the library component properties to instantiate the library itself.
         // This way, we are not depending on a naming convention for the entry point name. We depend only on the component ID
         const libraryMainEntryPoints = Object.keys(extensibilityLibraryComponent).filter(property => {
 
-            // Return the library main entry point object by checking the prototype methods. They should be matching the IExtensibilityLibray interface.
+            // Return the library main entry point object by checking the prototype methods. They should be matching the IExtensibilityLibrary interface.
             const extensibilityLibraryPrototype: IExtensibilityLibrary = extensibilityLibraryComponent[property].prototype;
             return property.indexOf('__') === -1 && (
                 extensibilityLibraryPrototype.getCustomSuggestionProviders ||
@@ -96,9 +96,9 @@ export class ExtensibilityService {
                 try {
                     const extensibilityLibraryComponent = await this.loadComponentWithRetry(configuration.id);
                     return this.instantiateLibrary(extensibilityLibraryComponent, configuration.id);
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 } catch (error) {
-                    Log.warn(ExtensibilityService_ServiceKey, `No extensibility library component found with id '${configuration.id}' after ${ExtensibilityService.MAX_LOAD_RETRIES} retries`, this.serviceScope);
+                    const errorDetails = error instanceof Error ? error.message : String(error);
+                    Log.warn(ExtensibilityService_ServiceKey, `Failed to load extensibility library component with id '${configuration.id}' after ${ExtensibilityService.MAX_LOAD_RETRIES} retries. Error: ${errorDetails}`, this.serviceScope);
                     return undefined;
                 }
             });
