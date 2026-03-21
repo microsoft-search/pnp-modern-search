@@ -93,6 +93,11 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     private extensionsLoaded: boolean = false;
 
     /**
+     * Promise guard to prevent concurrent loadExtensions calls during render re-entry
+     */
+    private _extensionsLoadingPromise: Promise<void> = null;
+
+    /**
      * Dynamic data related fields
      */
     private _filtersConnectionSourceData: DynamicProperty<IDataFilterSourceData>;
@@ -259,9 +264,18 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             return this.renderCompleted();
         }
 
-        // Ensure extensions are loaded before rendering
+        // Ensure extensions are loaded before rendering.
+        // Use a promise guard to prevent concurrent loadExtensions calls if render() is
+        // re-entered while loading is still in progress (e.g. via dynamic data callbacks).
         if (!this.extensionsLoaded) {
-            await this.loadExtensions(this.properties.extensibilityLibraryConfiguration);
+            if (!this._extensionsLoadingPromise) {
+                this._extensionsLoadingPromise = this.loadExtensions(this.properties.extensibilityLibraryConfiguration);
+            }
+            try {
+                await this._extensionsLoadingPromise;
+            } finally {
+                this._extensionsLoadingPromise = null;
+            }
         }
 
         // Determine the template content to display
@@ -873,6 +887,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             this._selectedCustomQueryModifier = [];
             this.properties.queryModifierProperties = {};
             this.properties.queryModifierConfiguration = [];
+            this.extensionsLoaded = false;
 
             await this.loadExtensions(cleanConfiguration);
         }
