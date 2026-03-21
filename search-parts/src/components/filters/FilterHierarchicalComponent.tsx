@@ -98,7 +98,7 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
     
     // Initialize all terms to false, then override with selected ones
     allTermIds.forEach(termId => {
-      if (!selectedTerms.hasOwnProperty(termId)) {
+      if (!Object.prototype.hasOwnProperty.call(selectedTerms, termId)) {
         selectedTerms[termId] = false;
       }
     });

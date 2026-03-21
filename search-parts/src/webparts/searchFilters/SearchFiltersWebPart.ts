@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
-import { Version, Text, DisplayMode, Log } from '@microsoft/sp-core-library';
+import { Version, Text, DisplayMode, Log, ServiceScope } from '@microsoft/sp-core-library';
 import {
     IPropertyPaneConfiguration,
     IPropertyPaneField,
@@ -12,11 +12,11 @@ import {
     PropertyPaneHorizontalRule,
     PropertyPaneSlider,
     PropertyPaneButton,
-    PropertyPaneButtonType
+    PropertyPaneButtonType,
+    IPropertyPanePage
 } from '@microsoft/sp-property-pane';
 import { PropertyFieldColorPicker, PropertyFieldColorPickerStyle } from '@pnp/spfx-property-controls/lib/PropertyFieldColorPicker';
 import { DynamicProperty } from '@microsoft/sp-component-base';
-import { IPropertyPanePage } from '@microsoft/sp-property-pane';
 import * as webPartStrings from 'SearchFiltersWebPartStrings';
 import * as commonStrings from 'CommonStrings';
 import SearchFilters from './components/SearchFiltersContainer';
@@ -37,7 +37,6 @@ import { TemplateService } from '../../services/templateService/TemplateService'
 import { FileFormat, ITemplateService } from '../../services/templateService/ITemplateService';
 import { isEmpty, isEqual, uniqBy, cloneDeep, uniq, sortBy } from '@microsoft/sp-lodash-subset';
 import { BuiltinFilterTemplates, BuiltinFilterTypes } from '../../layouts/AvailableTemplates';
-import { ServiceScope } from '@microsoft/sp-core-library';
 import { AvailableComponents } from '../../components/AvailableComponents';
 import { PropertyPaneAsyncCombo } from '../../controls/PropertyPaneAsyncCombo/PropertyPaneAsyncCombo';
 import { BaseWebPart } from '../../common/BaseWebPart';
@@ -54,6 +53,13 @@ import { Dropdown, IDropdownOption, IDropdownProps } from '@fluentui/react/lib/D
 import { TextField } from '@fluentui/react/lib/TextField';
 
 const LogSource = "SearchFiltersWebPart";
+
+interface IHierarchicalFilterConfiguration extends IDataFilterConfiguration {
+    useHierarchical?: boolean;
+    termSetId?: string;
+    termGroupId?: string;
+    cacheDuration?: number;
+}
 
 export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebPartProps> implements IDynamicDataCallables {
 
@@ -107,7 +113,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     /**
      * The available layout definitions (not instanciated)
      */
-    private availableLayoutDefinitions: ILayoutDefinition[] = AvailableLayouts.BuiltinLayouts.filter(layout => { return layout.type === LayoutType.Filter; });
+    private readonly availableLayoutDefinitions: ILayoutDefinition[] = AvailableLayouts.BuiltinLayouts.filter(layout => { return layout.type === LayoutType.Filter; });
 
     /**
      * The service scope for this specific Web Part instance
@@ -117,7 +123,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     /**
      * The available web component definitions (not registered yet)
      */
-    private availableWebComponentDefinitions: IComponentDefinition<any>[] = AvailableComponents.BuiltinComponents;
+    private readonly availableWebComponentDefinitions: IComponentDefinition<any>[] = AvailableComponents.BuiltinComponents;
 
     /**
      * The available connections as property pane fields
@@ -133,9 +139,9 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     /**
      * Cached grouped term sets: map of groupId -> array of term sets in that group
      */
-    private groupedTermSets: Map<string, Array<{id: string, name: string, groupId: string, groupName: string}>> = new Map();
+    private readonly groupedTermSets: Map<string, Array<{id: string, name: string, groupId: string, groupName: string}>> = new Map();
     private termGroups: IDropdownOption[] = [];
-    private selectedTermGroup: string = '';
+    private readonly selectedTermGroup: string = '';
 
     constructor() {
         super();
@@ -150,7 +156,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     private async _loadTermSets(): Promise<IComboBoxOption[]> {
         try {
             // Check if both taxonomyService and context are initialized
-            if (!this.taxonomyService || !this.context || !this.context.pageContext) {
+            if (!this.taxonomyService || !this.context?.pageContext) {
                 Log.verbose(LogSource, '_loadTermSets called but taxonomyService or context not ready yet');
                 console.warn('[SearchFilters] _loadTermSets called before taxonomyService/context ready');
                 return [];
@@ -169,7 +175,10 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                 if (!this.groupedTermSets.has(ts.groupId)) {
                     this.groupedTermSets.set(ts.groupId, []);
                 }
-                this.groupedTermSets.get(ts.groupId)!.push(ts);
+                const groupedTerms = this.groupedTermSets.get(ts.groupId);
+                if (groupedTerms) {
+                    groupedTerms.push(ts);
+                }
             }
             
             // Build group dropdown options sorted by group name
@@ -206,9 +215,9 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
      */
     private _getTermSetsForGroup(groupId: string): IDropdownOption[] {
         const termSetsInGroup = this.groupedTermSets.get(groupId) || [];
-        return termSetsInGroup
-            .sort((a, b) => a.name.localeCompare(b.name))
-            .map(ts => ({
+        const sortedTermSets = [...termSetsInGroup];
+        sortedTermSets.sort((a, b) => a.name.localeCompare(b.name));
+        return sortedTermSets.map(ts => ({
                 key: ts.id,
                 text: ts.name,
                 data: { groupId: ts.groupId }
@@ -217,7 +226,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
 
     private async _getTermGroupIdForTermSet(termSetId: string): Promise<string> {
         try {
-            if (!this.taxonomyService || !this.context || !this.context.pageContext) {
+            if (!this.taxonomyService || !this.context?.pageContext) {
                 return '';
             }
 
@@ -270,7 +279,12 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
         return super.onInit();
     }
 
-    public async render(): Promise<void> {
+    public render(): void {
+
+        void this.renderAsync();
+    }
+
+    private async renderAsync(): Promise<void> {
 
         // Check if domElement is available before proceeding
         if (!this.domElement) {
@@ -298,11 +312,11 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
         }
 
         // Refresh the property pane to get layout and data source options
-        if (this.context && this.context.propertyPane && this.context.propertyPane.isPropertyPaneOpen()) {
+        if (this.context?.propertyPane?.isPropertyPaneOpen()) {
             this.context.propertyPane.refresh();
         }
 
-        return this.renderCompleted();
+        this.renderCompleted();
     }
 
     protected renderCompleted(): void {
@@ -351,7 +365,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                     domElement: this.domElement,
                     instanceId: this.instanceId,
                     selectedLayoutKey: this.properties.selectedLayoutKey,
-                    properties: JSON.parse(JSON.stringify(this.properties)),
+                    properties: structuredClone(this.properties),
                     themeVariant: this._themeVariant,
                     context: this.context,
                     onUpdateFilters: (updatedFilters: IDataFilter[]) => {
@@ -378,23 +392,20 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                 } as ISearchFiltersContainerProps
             );
 
+        } else if (this.displayMode === DisplayMode.Edit) {
+            const placeholder: React.ReactElement<any> = React.createElement(
+                this._placeholderComponent,
+                {
+                    iconName: 'Filter',
+                    iconText: webPartStrings.General.PlaceHolder.IconText,
+                    description: webPartStrings.General.PlaceHolder.Description,
+                    buttonLabel: webPartStrings.General.PlaceHolder.ConfigureBtnLabel,
+                    onConfigure: () => { this.context.propertyPane.open(); }
+                }
+            );
+            renderRootElement = placeholder;
         } else {
-            if (this.displayMode === DisplayMode.Edit) {
-                const placeholder: React.ReactElement<any> = React.createElement(
-                    this._placeholderComponent,
-                    {
-                        iconName: 'Filter',
-                        iconText: webPartStrings.General.PlaceHolder.IconText,
-                        description: webPartStrings.General.PlaceHolder.Description,
-                        buttonLabel: webPartStrings.General.PlaceHolder.ConfigureBtnLabel,
-                        onConfigure: () => { this.context.propertyPane.open(); }
-                    }
-                );
-                renderRootElement = placeholder;
-            } else {
-                renderRootElement = null;
-                Log.verbose(`[SearchResultsWebPart.renderCompleted]`, `The 'renderRootElement' was null during render.`, this.webPartInstanceServiceScope);
-            }
+            Log.verbose(`[SearchResultsWebPart.renderCompleted]`, `The 'renderRootElement' was null during render.`, this.webPartInstanceServiceScope);
         }
 
         // Check if the Web part is connected to a data vertical
@@ -406,7 +417,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
             const parentControlZone = this.getParentControlZone();
 
             // If the current selected vertical is not the one configured for this Web Part, we show nothing
-            if (verticalData && verticalData.selectedVertical && this.properties.selectedVerticalKeys.indexOf(verticalData.selectedVertical.key) === -1) {
+            if (verticalData?.selectedVertical && !this.properties.selectedVerticalKeys.includes(verticalData.selectedVertical.key)) {
 
                 if (this.displayMode === DisplayMode.Edit) {
 
@@ -416,7 +427,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
 
                     // Get tab name of selected verticals
                     const verticalNames = verticalData.verticalsConfiguration.filter(cfg => {
-                        return this.properties.selectedVerticalKeys.indexOf(cfg.key) !== -1;
+                        return this.properties.selectedVerticalKeys.includes(cfg.key);
                     }).map(v => v.tabName);
 
                     renderRootElement = React.createElement('div', {},
@@ -441,11 +452,8 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                     }
                 }
 
-            } else {
-
-                if (parentControlZone) {
-                    parentControlZone.removeAttribute('style');
-                }
+            } else if (parentControlZone) {
+                parentControlZone.removeAttribute('style');
             }
         }
 
@@ -475,19 +483,16 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
 
     public getPropertyValue(propertyId: string) {
 
-        switch (propertyId) {
-
-            case propertyId:
-                return {
-                    filterConfiguration: this.properties.filtersConfiguration,
-                    selectedFilters: this._selectedFilters,
-                    filterOperator: this.properties.filterOperator,
-                    instanceId: this.instanceId
-                } as IDataFilterSourceData;
-
-            default:
-                throw new Error('Bad property id');
+        if (propertyId === ComponentType.SearchFilters) {
+            return {
+                filterConfiguration: this.properties.filtersConfiguration,
+                selectedFilters: this._selectedFilters,
+                filterOperator: this.properties.filterOperator,
+                instanceId: this.instanceId
+            } as IDataFilterSourceData;
         }
+
+        throw new Error('Bad property id');
     }
 
     public onCustomPropertyUpdate(propertyPath: string, newValue: any, changeCallback?: (targetProperty?: string, newValue?: any) => void): void {
@@ -508,9 +513,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
 
     protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
 
-        let propertyPanePages: IPropertyPanePage[] = [];
-
-        propertyPanePages.push(
+        const propertyPanePages: IPropertyPanePage[] = [
             {
                 groups: [
                     {
@@ -527,11 +530,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
             {
                 groups: this.getStylingPageGroups(),
                 displayGroupsAsAccordion: true
-            }
-        );
-
-        // 'About' infos
-        propertyPanePages.push(
+            },
             {
                 displayGroupsAsAccordion: true,
                 groups: [
@@ -546,49 +545,51 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                     }
                 ]
             }
-        );
+        ];
 
         return {
             pages: propertyPanePages
         };
     }
 
-    protected async onPropertyPaneConfigurationStart() {
-        await this.loadPropertyPaneResources();
-        
-        // Ensure web part services are initialized
-        if (!this.taxonomyService) {
-            await this.initializeWebPartServices();
-        }
-        
-        try {
-            // Load term sets for the dropdown
-            this.termSetOptionsLoading = true;
-            console.log('[SearchFilters] Loading term sets...');
-            const termSetOptions = await this._loadTermSets();
-            console.log('[SearchFilters] Term set options loaded', termSetOptions);
-            
-            // Convert IComboBoxOption to IDropdownOption format
-            this.termSetOptions = termSetOptions.map((option: IComboBoxOption) => ({
-                key: option.key,
-                text: option.text,
-                groupId: (option.data as any)?.groupId
-            } as IDropdownOption));
-            console.log('[SearchFilters] Converted term set options', this.termSetOptions);
-            
-            this.termSetOptionsLoading = false;
-            
-            // Refresh the property pane to update the dropdown state
-            this.context.propertyPane.refresh();
-        } catch (error) {
-            console.error('[SearchFilters] Error loading term sets in property pane', error);
-            Log.error(LogSource, new Error(`Error loading term sets in property pane: ${error}`));
-            this.termSetOptionsLoading = false;
-            this.termSetOptions = [];
-        }
+    protected onPropertyPaneConfigurationStart(): void {
+        void (async () => {
+            await this.loadPropertyPaneResources();
+
+            // Ensure web part services are initialized
+            if (!this.taxonomyService) {
+                await this.initializeWebPartServices();
+            }
+
+            try {
+                // Load term sets for the dropdown
+                this.termSetOptionsLoading = true;
+                console.log('[SearchFilters] Loading term sets...');
+                const termSetOptions = await this._loadTermSets();
+                console.log('[SearchFilters] Term set options loaded', termSetOptions);
+
+                // Convert IComboBoxOption to IDropdownOption format
+                this.termSetOptions = termSetOptions.map((option: IComboBoxOption) => ({
+                    key: option.key,
+                    text: option.text,
+                    groupId: option.data?.groupId
+                } as IDropdownOption));
+                console.log('[SearchFilters] Converted term set options', this.termSetOptions);
+
+                this.termSetOptionsLoading = false;
+
+                // Refresh the property pane to update the dropdown state
+                this.context.propertyPane.refresh();
+            } catch (error) {
+                console.error('[SearchFilters] Error loading term sets in property pane', error);
+                Log.error(LogSource, new Error(`Error loading term sets in property pane: ${error}`));
+                this.termSetOptionsLoading = false;
+                this.termSetOptions = [];
+            }
+        })();
     }
 
-    protected async onPropertyPaneFieldChanged(propertyPath: string, oldValue: any, newValue: any): Promise<void> {
+    protected onPropertyPaneFieldChanged(propertyPath: string, oldValue: any, newValue: any): void {
 
         if (propertyPath.localeCompare('filtersConfiguration') === 0 && !isEqual(oldValue, newValue)) {
 
@@ -596,7 +597,8 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
             this.properties.filtersConfiguration = uniqBy(this.properties.filtersConfiguration, 'filterName');
 
             // Set correct default values according to the template
-            this.properties.filtersConfiguration = (newValue as IDataFilterConfiguration[]).map(configuration => {
+            const nextConfigurations = newValue as IHierarchicalFilterConfiguration[];
+            this.properties.filtersConfiguration = nextConfigurations.map(configuration => {
                 if (configuration.selectedTemplate === BuiltinFilterTemplates.DateRange
                     || configuration.selectedTemplate === BuiltinFilterTemplates.DateInterval) {
                     configuration.isMulti = false;
@@ -605,8 +607,8 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
 
                 // Ensure hierarchical-specific fields are preserved from the input
                 // These are set by the custom field onUpdate handlers
-                if (newValue && newValue.length > 0) {
-                    const correspondingNewConfig = newValue.find((c: IDataFilterConfiguration) => c.filterName === configuration.filterName);
+                if (nextConfigurations.length > 0) {
+                    const correspondingNewConfig = nextConfigurations.find((c: IHierarchicalFilterConfiguration) => c.filterName === configuration.filterName);
                     if (correspondingNewConfig) {
                         configuration.useHierarchical = correspondingNewConfig.useHierarchical;
                         configuration.termSetId = correspondingNewConfig.termSetId;
@@ -673,8 +675,10 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
         }
 
         // Refresh list of available connections
-        this.propertyPaneConnectionsFields = await this.getConnectionOptionsFields();
-        this.context.propertyPane.refresh();
+        void (async () => {
+            this.propertyPaneConnectionsFields = await this.getConnectionOptionsFields();
+            this.context.propertyPane.refresh();
+        })();
 
         // Call base class method to persist property changes
         super.onPropertyPaneFieldChanged(propertyPath, oldValue, this.properties[propertyPath]);
@@ -697,7 +701,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
         // The text to display in the combo
         const textDisplayValues: string[] = [];
         sourceOptions.forEach(option => {
-            if (this.properties.dataResultsDataSourceReferences.indexOf(option.key as string) !== -1) {
+            if (this.properties.dataResultsDataSourceReferences.includes(option.key as string)) {
                 textDisplayValues.push(option.text);
             }
         });
@@ -780,57 +784,53 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
             {
                 groupName: webPartStrings.PropertyPane.LayoutPage.AvailableLayoutsGroupName,
                 groupFields: stylingFields
-            }
+            },
+            {
+                groupName: webPartStrings.Styling.StylingOptionsGroupName,
+                isCollapsed: true,
+                groupFields: [
+                    PropertyFieldColorPicker('filterBackgroundColor', {
+                        label: webPartStrings.Styling.FilterBackgroundColorLabel,
+                        selectedColor: this.properties.filterBackgroundColor,
+                        onPropertyChange: this.onPropertyPaneFieldChanged,
+                        properties: this.properties,
+                        disabled: false,
+                        debounce: 1000,
+                        isHidden: false,
+                        alphaSliderHidden: false,
+                        style: PropertyFieldColorPickerStyle.Inline,
+                        key: 'filterBackgroundColorFieldId'
+                    }),
+                    PropertyFieldColorPicker('filterBorderColor', {
+                        label: webPartStrings.Styling.FilterBorderColorLabel,
+                        selectedColor: this.properties.filterBorderColor,
+                        onPropertyChange: this.onPropertyPaneFieldChanged,
+                        properties: this.properties,
+                        disabled: false,
+                        debounce: 1000,
+                        isHidden: false,
+                        alphaSliderHidden: false,
+                        style: PropertyFieldColorPickerStyle.Inline,
+                        key: 'filterBorderColorFieldId'
+                    }),
+                    PropertyPaneSlider('filterBorderThickness', {
+                        label: webPartStrings.Styling.FilterBorderThicknessLabel,
+                        min: 0,
+                        max: 10,
+                        step: 1,
+                        showValue: true,
+                        value: this.properties.filterBorderThickness || 0
+                    }),
+                    PropertyPaneButton('resetContentStylingButton', {
+                        text: webPartStrings.Styling.ResetToDefaultLabel,
+                        buttonType: PropertyPaneButtonType.Command,
+                        icon: 'Refresh',
+                        onClick: this._resetContentStylingToDefault.bind(this)
+                    })
+                ]
+            },
+            this.getTitleStylingPropertyPaneGroup()
         ];
-
-        // Add styling options group
-        groups.push({
-            groupName: webPartStrings.Styling.StylingOptionsGroupName,
-            isCollapsed: true,
-            groupFields: [
-                PropertyFieldColorPicker('filterBackgroundColor', {
-                    label: webPartStrings.Styling.FilterBackgroundColorLabel,
-                    selectedColor: this.properties.filterBackgroundColor,
-                    onPropertyChange: this.onPropertyPaneFieldChanged,
-                    properties: this.properties,
-                    disabled: false,
-                    debounce: 1000,
-                    isHidden: false,
-                    alphaSliderHidden: false,
-                    style: PropertyFieldColorPickerStyle.Inline,
-                    key: 'filterBackgroundColorFieldId'
-                }),
-                PropertyFieldColorPicker('filterBorderColor', {
-                    label: webPartStrings.Styling.FilterBorderColorLabel,
-                    selectedColor: this.properties.filterBorderColor,
-                    onPropertyChange: this.onPropertyPaneFieldChanged,
-                    properties: this.properties,
-                    disabled: false,
-                    debounce: 1000,
-                    isHidden: false,
-                    alphaSliderHidden: false,
-                    style: PropertyFieldColorPickerStyle.Inline,
-                    key: 'filterBorderColorFieldId'
-                }),
-                PropertyPaneSlider('filterBorderThickness', {
-                    label: webPartStrings.Styling.FilterBorderThicknessLabel,
-                    min: 0,
-                    max: 10,
-                    step: 1,
-                    showValue: true,
-                    value: this.properties.filterBorderThickness || 0
-                }),
-                PropertyPaneButton('resetContentStylingButton', {
-                    text: webPartStrings.Styling.ResetToDefaultLabel,
-                    buttonType: PropertyPaneButtonType.Command,
-                    icon: 'Refresh',
-                    onClick: this._resetContentStylingToDefault.bind(this)
-                })
-            ]
-        });
-
-        // Add web part title styling group
-        groups.push(this.getTitleStylingPropertyPaneGroup());
 
         // Add template options if any
         const layoutOptions = this.getLayoutTemplateOptions();
@@ -934,7 +934,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                         type: this._customCollectionFieldType.custom,
                         required: false,
                         onCustomRender: (field, value, onUpdate, item, itemId, onCustomFieldValidation) => {
-                            const numValue = value ? parseInt(value.toString(), 10) : undefined;
+                            const numValue = value ? Number.parseInt(value.toString(), 10) : undefined;
                             const errorMessage = numValue && numValue > 1000
                                 ? webPartStrings.PropertyPane.DataFilterCollection.FilterMaxBucketsWarning
                                 : '';
@@ -945,7 +945,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                                 value: value ? value.toString() : '',
                                 errorMessage: errorMessage,
                                 onChange: (ev, newValue) => {
-                                    const parsedValue = newValue && newValue.trim() !== '' ? parseInt(newValue, 10) : undefined;
+                                    const parsedValue = newValue && newValue.trim() !== '' ? Number.parseInt(newValue, 10) : undefined;
                                     onUpdate(field.id, parsedValue);
                                 }
                             });
@@ -1027,7 +1027,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
 
                             return React.createElement("div", { key: `${field.id}-${itemId}` },
                                 React.createElement(Dropdown, {
-                                    disabled: item.isMulti ? false : true,
+                                    disabled: !item.isMulti,
                                     onChange: (event: React.FormEvent<HTMLDivElement>, optionItem: IDropdownOption) => {
                                         onUpdate(field.id, optionItem.key);
                                     },
@@ -1052,6 +1052,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                         type: this._customCollectionFieldType.custom,
                         defaultValue: FilterSortType.ByName,
                         onCustomRender: (field, value, onUpdate, item) => {
+                            const currentItem = item as IHierarchicalFilterConfiguration;
                             return (
                                 React.createElement("div", null,
                                     React.createElement(Dropdown, {
@@ -1065,8 +1066,8 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                                                 text: webPartStrings.PropertyPane.DataFilterCollection.SortByCount
                                             },
                                         ],
-                                        disabled: item.selectedTemplate === BuiltinFilterTemplates.DateRange || item.selectedTemplate === BuiltinFilterTemplates.DateInterval || item.useHierarchical,
-                                        defaultSelectedKey: item.sortBy,
+                                        disabled: currentItem.selectedTemplate === BuiltinFilterTemplates.DateRange || currentItem.selectedTemplate === BuiltinFilterTemplates.DateInterval || currentItem.useHierarchical,
+                                        defaultSelectedKey: currentItem.sortBy,
                                         onChange: (ev, option) => onUpdate(field.id, option.key),
                                     } as IDropdownProps)
                                 )
@@ -1079,6 +1080,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                         type: this._customCollectionFieldType.custom,
                         defaultValue: FilterSortDirection.Ascending,
                         onCustomRender: (field, value, onUpdate, item) => {
+                            const currentItem = item as IHierarchicalFilterConfiguration;
                             return (
                                 React.createElement("div", null,
                                     React.createElement(Dropdown, {
@@ -1092,8 +1094,8 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                                                 text: webPartStrings.PropertyPane.DataFilterCollection.SortDescending
                                             },
                                         ],
-                                        disabled: item.selectedTemplate === BuiltinFilterTemplates.DateRange || item.selectedTemplate === BuiltinFilterTemplates.DateInterval || item.useHierarchical,
-                                        defaultSelectedKey: item.sortDirection,
+                                        disabled: currentItem.selectedTemplate === BuiltinFilterTemplates.DateRange || currentItem.selectedTemplate === BuiltinFilterTemplates.DateInterval || currentItem.useHierarchical,
+                                        defaultSelectedKey: currentItem.sortDirection,
                                         onChange: (ev, option) => onUpdate(field.id, option.key),
                                     } as IDropdownProps)
                                 )
@@ -1106,10 +1108,10 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                         type: this._customCollectionFieldType.custom,
                         defaultValue: false,
                         required: false,
-                        onCustomRender: (field, value, onUpdate, item: IDataFilterConfiguration, itemId) => {
+                        onCustomRender: (field, value, onUpdate, item: IHierarchicalFilterConfiguration, itemId) => {
                             return React.createElement("div", { key: `${field.id}-${itemId}` },
                                 React.createElement(Checkbox, {
-                                    checked: value !== undefined ? value : false,
+                                    checked: value ?? false,
                                     onChange: (ev?: React.FormEvent<HTMLElement>, checked?: boolean) => {
                                         if (checked !== undefined) {
                                             onUpdate(field.id, checked);
@@ -1124,13 +1126,13 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                         id: 'hierarchicalSettings',
                         title: 'Hierarchical Settings',
                         type: this._customCollectionFieldType.custom,
-                        onCustomRender: (field, value, onUpdate, item: IDataFilterConfiguration, itemId) => {
+                        onCustomRender: (field, value, onUpdate, item: IHierarchicalFilterConfiguration, itemId) => {
                             if (!item.useHierarchical) {
                                 return null;
                             }
                             
                             const modalKey = `hierarchical_modal_${itemId}`;
-                            const showModal = (window as any)[modalKey] || false;
+                            const showModal = (globalThis as any)[modalKey] || false;
                             
                             // Get the current term set for this filter
                             const currentTermSetId = item.termSetId || '';
@@ -1138,7 +1140,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                             // Helper to extract GUID from /Guid(xxx)/ format
                             const extractGuid = (guidStr: string): string => {
                                 if (!guidStr) return '';
-                                const match = guidStr.match(/Guid\(([0-9a-fA-F\-]{36})\)/);
+                                const match = /Guid\(([0-9a-fA-F-]{36})\)/.exec(guidStr);
                                 return match ? match[1] : guidStr;
                             };
                             
@@ -1155,8 +1157,8 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                             
                             // Track expanded groups in component state
                             const expandedKey = `expanded_termsets_${itemId}`;
-                            const expandedGroupsStr = (window as any)[expandedKey] || '';
-                            const expandedGroups = new Set(expandedGroupsStr ? expandedGroupsStr.split('|') : []);
+                            const expandedGroupsStr = (globalThis as any)[expandedKey] || '';
+                            const expandedGroups = new Set<string>(expandedGroupsStr ? expandedGroupsStr.split('|') : []);
                             
                             // Auto-expand the group containing the currently selected term set
                             if (currentTermSetId && expandedGroups.size === 0) {
@@ -1166,7 +1168,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                                         const hasSelectedTermSet = termSets.some(ts => extractGuid(ts.id) === currentTermSetId);
                                         if (hasSelectedTermSet) {
                                             expandedGroups.add(groupId);
-                                            (window as any)[expandedKey] = Array.from(expandedGroups).join('|');
+                                            (globalThis as any)[expandedKey] = Array.from(expandedGroups).join('|');
                                         }
                                     }
                                 });
@@ -1178,11 +1180,11 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                                 } else {
                                     expandedGroups.add(groupId);
                                 }
-                                (window as any)[expandedKey] = Array.from(expandedGroups).join('|');
+                                (globalThis as any)[expandedKey] = Array.from(expandedGroups).join('|');
                                 this.context.propertyPane.refresh();
                             };
                             
-                            const effectiveCacheDuration = item.cacheDuration !== undefined ? item.cacheDuration : 3;
+                            const effectiveCacheDuration = item.cacheDuration ?? 3;
                             
                             // Summary view (collapsed)
                             if (!showModal) {
@@ -1210,7 +1212,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                                     ),
                                     React.createElement("button", {
                                         onClick: () => {
-                                            (window as any)[modalKey] = true;
+                                            (globalThis as any)[modalKey] = true;
                                             this.context.propertyPane.refresh();
                                         },
                                         style: {
@@ -1244,7 +1246,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                                 },
                                 onClick: (e) => {
                                     if (e.target === e.currentTarget) {
-                                        (window as any)[modalKey] = false;
+                                        (globalThis as any)[modalKey] = false;
                                         this.context.propertyPane.refresh();
                                     }
                                 }
@@ -1277,7 +1279,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                                         }, 'Hierarchical Filter Settings'),
                                         React.createElement("button", {
                                             onClick: () => {
-                                                (window as any)[modalKey] = false;
+                                                (globalThis as any)[modalKey] = false;
                                                 this.context.propertyPane.refresh();
                                             },
                                             style: {
@@ -1307,7 +1309,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                                             placeholder: 'Search term sets...',
                                             onChange: (e) => {
                                                 const searchKey = `termset_search_${itemId}`;
-                                                (window as any)[searchKey] = e.target.value.toLowerCase();
+                                                (globalThis as any)[searchKey] = e.target.value.toLowerCase();
                                                 this.context.propertyPane.refresh();
                                             },
                                             style: {
@@ -1331,7 +1333,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                                         },
                                             (() => {
                                                 const searchKey = `termset_search_${itemId}`;
-                                                const searchText = (window as any)[searchKey] || '';
+                                                const searchText = (globalThis as any)[searchKey] || '';
                                                 
                                                 // Helper function to check if term set matches search
                                                 const matchesSearch = (termSetName: string): boolean => {
@@ -1433,7 +1435,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                                             max: 5,
                                             value: effectiveCacheDuration,
                                             onChange: (e) => {
-                                                const newValue = parseInt(e.target.value, 10);
+                                                const newValue = Number.parseInt(e.target.value, 10);
                                                 onUpdate('cacheDuration', newValue);
                                             },
                                             style: { width: '100%', height: '4px', borderRadius: '2px', outline: 'none', cursor: 'pointer' }
@@ -1499,7 +1501,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                                     },
                                         React.createElement("button", {
                                             onClick: () => {
-                                                (window as any)[modalKey] = false;
+                                                (globalThis as any)[modalKey] = false;
                                                 this.context.propertyPane.refresh();
                                             },
                                             style: {
@@ -1567,7 +1569,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                         let selectedKeysAsText: string[] = [];
 
                         availableVerticals.verticalsConfiguration.forEach(verticalConfiguration => {
-                            if (this.properties.selectedVerticalKeys.indexOf(verticalConfiguration.key) !== -1) {
+                            if (this.properties.selectedVerticalKeys.includes(verticalConfiguration.key)) {
                                 selectedKeysAsText.push(verticalConfiguration.tabName);
                             }
                         });
@@ -1610,13 +1612,12 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                 return '';
             }
             // Resolves an error if the file isn't a valid .htm or .html file
-            else if (!this.templateService.isValidTemplateFile(value, [".html", ".htm", ".txt"])) {
-                return webPartStrings.PropertyPane.LayoutPage.ErrorTemplateExtension;
-            }
-            // Resolves an error if the file doesn't answer a simple head request
-            else {
+            else if (this.templateService.isValidTemplateFile(value, [".html", ".htm", ".txt"])) {
+                // Resolves an error if the file doesn't answer a simple head request
                 await this.templateService.ensureFileResolves(value);
                 return '';
+            } else {
+                return webPartStrings.PropertyPane.LayoutPage.ErrorTemplateExtension;
             }
         } catch (error) {
             return Text.format(webPartStrings.PropertyPane.LayoutPage.ErrorTemplateResolve, error);
@@ -1630,7 +1631,8 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     private async initTemplate(): Promise<void> {
 
         // Gets the template content according to the selected key
-        const selectedLayoutTemplateContent = this.availableLayoutDefinitions.filter(layout => { return layout.key === this.properties.selectedLayoutKey; })[0].templateContent;
+        const selectedLayoutDefinition = this.availableLayoutDefinitions.find(layout => { return layout.key === this.properties.selectedLayoutKey; });
+        const selectedLayoutTemplateContent = selectedLayoutDefinition ? selectedLayoutDefinition.templateContent : '';
 
         if (this.properties.selectedLayoutKey === BuiltinLayoutsKeys.FiltersCustom) {
 
@@ -1645,7 +1647,6 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
             this.templateContentToDisplay = selectedLayoutTemplateContent;
         }
 
-        return;
     }
 
     private async initializeWebPartServices(): Promise<void> {
@@ -1673,11 +1674,8 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
         }
 
         /* Verticals */
-        this.properties.useVerticals = this.properties.useVerticals !== undefined ? this.properties.useVerticals : false;
-
-        if (this.properties.selectedVerticalKeys === undefined) {
-            this.properties.selectedVerticalKeys = [];
-        }
+        this.properties.useVerticals = this.properties.useVerticals ?? false;
+        this.properties.selectedVerticalKeys ??= [];
     }
 
     /**
@@ -1718,10 +1716,8 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
             this._verticalsSourceData.setReference(this.properties.verticalsDataSourceReference);
             this._verticalsSourceData.register(this.render);
 
-        } else {
-            if (this._verticalsSourceData) {
-                this._verticalsSourceData.unregister(this.render);
-            }
+        } else if (this._verticalsSourceData) {
+            this._verticalsSourceData.unregister(this.render);
         }
     }
 

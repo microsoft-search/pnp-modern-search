@@ -3,7 +3,7 @@ import { ISearchFiltersContainerProps } from './ISearchFiltersContainerProps';
 import { TemplateRenderer } from '../../../controls/TemplateRenderer/TemplateRenderer';
 import { ISearchFiltersContainerState } from './ISearchFiltersContainerState';
 import { isEqual, cloneDeep, sortBy } from '@microsoft/sp-lodash-subset';
-import { StyledWebPartTitle } from '../../../components/StyledWebPartTitle';
+import { WebPartTitle } from "@pnp/spfx-controls-react/lib/WebPartTitle";
 import * as webPartStrings from 'SearchFiltersWebPartStrings';
 import * as commonStrings from 'CommonStrings';
 import update from 'immutability-helper';
@@ -27,25 +27,12 @@ import { DataFilterHelper } from '../../../helpers/DataFilterHelper';
 import { UrlHelper } from '../../../helpers/UrlHelper';
 import { BuiltinFilterTemplates } from '../../../layouts/AvailableTemplates';
 import { MessageBar, MessageBarType } from '@fluentui/react/lib/MessageBar';
-import { ITerm } from '../../../services/taxonomyService/ITaxonomyItems';
 
 const DEEPLINK_QUERYSTRING_PARAM_BASE = 'f';
 
 export default class SearchFiltersContainer extends React.Component<ISearchFiltersContainerProps, ISearchFiltersContainerState> {
 
-<<<<<<< HEAD
     private componentRef: React.RefObject<any>;
-=======
-  private componentRef: React.RefObject<any>;
-  // In-memory caches to avoid repeated term fetches within the same session
-  private _hierarchicalTermsCache: Map<string, ITerm[]> = new Map();
-  private _hierarchicalTermsInflight: Map<string, Promise<ITerm[]>> = new Map();
-  
-  /**
-   * The URL query parameter name for this specific web part instance
-   */
-  private deeplinkQueryStringParam: string;
->>>>>>> 1bd2b373 (caching and reset of caching complete)
 
     /**
      * The URL query parameter name for this specific web part instance
@@ -73,13 +60,41 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
         let renderWpContent: JSX.Element = null;
         let templateContent: string = null;
-        const renderTitle = <StyledWebPartTitle
-            instanceId={this.props.instanceId}
-            titleFont={this.props.titleFont}
-            titleFontSize={this.props.titleFontSize}
-            titleFontColor={this.props.titleFontColor}
-            webPartTitleProps={this.props.webPartTitleProps}
-        />;
+        let renderTitle: JSX.Element = null;
+
+        // WP title with custom styling
+        const titleWrapperClass = `custom-title-wrapper-${this.props.instanceId || 'default'}`;
+
+        if (this.props.titleFont || this.props.titleFontSize !== undefined || this.props.titleFontColor) {
+            const styleString = `
+        .${titleWrapperClass} *,
+        .${titleWrapperClass} div,
+        .${titleWrapperClass} span,
+        .${titleWrapperClass} h2,
+        .${titleWrapperClass} textarea {
+          ${this.props.titleFont ? `font-family: ${this.props.titleFont} !important;` : ''}
+          ${this.props.titleFontSize !== undefined ? `font-size: ${this.props.titleFontSize}px !important;` : ''}
+          ${this.props.titleFontColor ? `color: ${this.props.titleFontColor} !important;` : ''}
+        }
+      `;
+
+            renderTitle = <div className={titleWrapperClass}>
+                <style key={`title-style-${this.props.titleFont}-${this.props.titleFontSize}-${this.props.titleFontColor}`} dangerouslySetInnerHTML={{ __html: styleString }} />
+                <WebPartTitle
+                    displayMode={this.props.webPartTitleProps.displayMode}
+                    title={this.props.webPartTitleProps.title}
+                    updateProperty={this.props.webPartTitleProps.updateProperty}
+                    className={this.props.webPartTitleProps.className}
+                />
+            </div>;
+        } else {
+            renderTitle = <WebPartTitle
+                displayMode={this.props.webPartTitleProps.displayMode}
+                title={this.props.webPartTitleProps.title}
+                updateProperty={this.props.webPartTitleProps.updateProperty}
+                className={this.props.webPartTitleProps.className}
+            />;
+        }
 
         // If no filter 
         if (this.state.currentUiFilters.length === 0) {
@@ -90,14 +105,9 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
         } else {
 
-      // Content loading
-      templateContent = this.props.templateService.getTemplateMarkup(this.props.templateContent);
-      const templateContext = this.getTemplateContext();
-
-      // Create a key that excludes the context property to avoid circular reference serialization
-      const contextForKey = { ...templateContext };
-      delete contextForKey.context;
-      const templateContextKey = JSON.stringify(contextForKey);
+            // Content loading
+            templateContent = this.props.templateService.getTemplateMarkup(this.props.templateContent);
+            const templateContext = this.getTemplateContext();
 
             renderWpContent = <TemplateRenderer
                 key={JSON.stringify(templateContext)}
@@ -148,13 +158,9 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
     public componentDidUpdate(prevProps: ISearchFiltersContainerProps, prevState: ISearchFiltersContainerState) {
 
-<<<<<<< HEAD
         // When filters configuration is updated or the layout is changed 
         if (!isEqual(prevProps.selectedLayoutKey, this.props.selectedLayoutKey)
             || !isEqual(prevProps.properties, this.props.properties)) {
-=======
-      this.getFiltersToDisplay(this.props.availableFilters, this.state.currentUiFilters, this.props.filtersConfiguration);
->>>>>>> 59ad246e (works now, time to optimize)
 
             const updatedfilters = this.resetSelectedFilterValues(this.state.currentUiFilters);
             const submittedFilters = this.getSelectedFiltersFromUIFilters(updatedfilters);
@@ -181,17 +187,15 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         }
     }
 
-  /**
-   * Determines filters to be sent to the Handlebars templates as context with enhanced information from configuration
-   * @param availableFilters the available filter results returned from the data source
-   * @param currentUIFilters the current selected filters in the UI
-   * @param filtersConfiguration the filter configuration from the property pane
-   */
-  private async getFiltersToDisplay(availableFilters: IDataFilterResult[], currentUiFilters: IDataFilterInternal[], filtersConfiguration: IDataFilterConfiguration[]): Promise<void> {
+    /**
+     * Determines filters to be sent to the Handlebars templates as context with enhanced information from configuration
+     * @param availableFilters the available filter results returned from the data source
+     * @param currentUIFilters the current selected filters in the UI
+     * @param filtersConfiguration the filter configuration from the property pane
+     */
+    private getFiltersToDisplay(availableFilters: IDataFilterResult[], currentUiFilters: IDataFilterInternal[], filtersConfiguration: IDataFilterConfiguration[]): void {
 
-    const updatedFilters: IDataFilterInternal[] = [];
-
-    for (const availableFilter of availableFilters) {
+        const updatedFilters: IDataFilterInternal[] = availableFilters.map(availableFilter => {
 
             let values: IDataFilterValueInternal[] = [];
 
@@ -295,111 +299,26 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
                 const filterOperator = currentUiFilters[selectedFilterIdx] ? currentUiFilters[selectedFilterIdx].operator : filterConfiguration.operator;
 
-        // Merge information with filter configuration and other useful proeprties
-        const filterResultInternal: any = {
-          displayName: filterConfiguration.displayValue && filterConfiguration.displayValue.trim() ? filterConfiguration.displayValue : availableFilter.filterName,
-          filterName: availableFilter.filterName,
-          isMulti: !filterConfiguration.isMulti ? false : filterConfiguration.isMulti,
-          showCount: !filterConfiguration.showCount ? false : filterConfiguration.showCount,
-          expandByDefault: !filterConfiguration.expandByDefault ? false : filterConfiguration.expandByDefault,
-          selectedOnce: selectedOnce,
-          selectedTemplate: filterConfiguration.useHierarchical && filterConfiguration.termSetId ? BuiltinFilterTemplates.Hierarchical : filterConfiguration.selectedTemplate,
-          hasSelectedValues: hasSelectedValues,
-          values: values,
-          operator: filterOperator,
-          sortIdx: filterConfiguration.sortIdx,
-          canApply: canApply,
-          canClear: canClear,
-          termSetId: filterConfiguration.termSetId,
-          termGroupId: filterConfiguration.termGroupId
-        };
-
-        // Fetch hierarchical terms if configured (with in-memory cache to avoid re-entrancy loops)
-        if (filterConfiguration.useHierarchical && filterConfiguration.termSetId && filterConfiguration.termGroupId && this.props.taxonomyService) {
-          try {
-            const cacheDuration = filterConfiguration.cacheDuration !== undefined ? filterConfiguration.cacheDuration : 3;
-            const cacheKey = `${filterConfiguration.termSetId}`;
-
-            const getTerms = async (): Promise<ITerm[]> => {
-              const terms = await this.props.taxonomyService.getTermsByTermSetId(
-                this.props.context.pageContext.web.absoluteUrl,
-                filterConfiguration.termSetId!,
-                filterConfiguration.termGroupId!,
-                cacheDuration
-              );
-              return terms;
-            };
-
-            const existing = this._hierarchicalTermsCache.get(cacheKey);
-            const inflight = this._hierarchicalTermsInflight.get(cacheKey);
-
-            let terms: ITerm[];
-
-            if (existing) {
-              terms = existing;
-            } else if (inflight) {
-              terms = await inflight;
-            } else {
-              const promise = getTerms();
-              this._hierarchicalTermsInflight.set(cacheKey, promise);
-              terms = await promise;
-              this._hierarchicalTermsInflight.delete(cacheKey);
-              this._hierarchicalTermsCache.set(cacheKey, terms);
-            }
-
-            // Build hierarchical structure from flat terms list using PathOfTerm
-            const buildHierarchy = (allTerms: any[]) => {
-              const termMap = new Map();
-              const rootTerms = [];
-
-              // First pass: create a map of all terms keyed by their full path
-              allTerms.forEach(term => {
-                const path = term.PathOfTerm || term.Name;
-                const termObj = {
-                  id: term.Id,
-                  name: term.Name,
-                  label: term.Labels && term.Labels._Child_Items_ && term.Labels._Child_Items_.length > 0 
-                    ? term.Labels._Child_Items_[0].Value 
-                    : term.Name,
-                  parentId: term.ParentId,
-                  pathOfTerm: path,
-                  children: []
+                // Merge information with filter configuration and other useful proeprties
+                const filterResultInternal: IDataFilterInternal = {
+                    displayName: filterConfiguration.displayValue && filterConfiguration.displayValue.trim() ? filterConfiguration.displayValue : availableFilter.filterName,
+                    filterName: availableFilter.filterName,
+                    isMulti: !filterConfiguration.isMulti ? false : filterConfiguration.isMulti,
+                    showCount: !filterConfiguration.showCount ? false : filterConfiguration.showCount,
+                    expandByDefault: !filterConfiguration.expandByDefault ? false : filterConfiguration.expandByDefault,
+                    selectedOnce: selectedOnce,
+                    selectedTemplate: filterConfiguration.selectedTemplate,
+                    hasSelectedValues: hasSelectedValues,
+                    values: values,
+                    operator: filterOperator,
+                    sortIdx: filterConfiguration.sortIdx,
+                    canApply: canApply,
+                    canClear: canClear
                 };
-                termMap.set(path, termObj);
-              });
 
-              // Second pass: build hierarchy using PathOfTerm
-              termMap.forEach((term, path) => {
-                const pathParts = path.split(';');
-                if (pathParts.length > 1) {
-                  // This term has a parent in the path
-                  const parentPath = pathParts.slice(0, -1).join(';');
-                  const parent = termMap.get(parentPath);
-                  if (parent) {
-                    parent.children.push(term);
-                  } else {
-                    // Parent not found, treat as root
-                    rootTerms.push(term);
-                  }
-                } else {
-                  // This is a root term
-                  rootTerms.push(term);
-                }
-              });
-
-              return rootTerms;
-            };
-
-            filterResultInternal.hierarchicalTerms = buildHierarchy(terms);
-
-          } catch (error) {
-            Log.error('SearchFiltersContainer', new Error(`Error fetching hierarchical terms for filter ${availableFilter.filterName}: ${error}`));
-          }
-        }
-
-        updatedFilters.push(filterResultInternal);
-      }
-    }
+                return filterResultInternal;
+            }
+        });
 
         this.setState({
             currentUiFilters: update(this.state.currentUiFilters, { $set: sortBy(updatedFilters.filter(updatedFilter => updatedFilter), 'sortIdx') })
@@ -466,20 +385,19 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                     };
                 });
 
-        const filterResultInternal: IDataFilterInternal = {
-          displayName: filterConfiguration.displayValue && filterConfiguration.displayValue.trim() ? filterConfiguration.displayValue : filterInfo.filterName,
-          filterName: filterInfo.filterName,
-          hasSelectedValues: filterInfo.filterValues.filter(value => value.selected).length > 0,
-          selectedOnce: true,
-          isMulti: !filterConfiguration.isMulti ? false : filterConfiguration.isMulti,
-          showCount: !filterConfiguration.showCount ? false : filterConfiguration.showCount,
-          expandByDefault: !filterConfiguration.expandByDefault ? false : filterConfiguration.expandByDefault,
-          values: filterValuesInternal,
-          operator: filterInfo.operator ? filterInfo.operator : currentUiFilters[filterIdx].operator,
-          selectedTemplate: filterConfiguration.useHierarchical && filterConfiguration.termSetId ? BuiltinFilterTemplates.Hierarchical : filterConfiguration.selectedTemplate,
-          sortIdx: filterConfiguration.sortIdx,
-          termSetId: filterConfiguration.termSetId
-        };
+                const filterResultInternal: IDataFilterInternal = {
+                    displayName: filterConfiguration.displayValue && filterConfiguration.displayValue.trim() ? filterConfiguration.displayValue : filterInfo.filterName,
+                    filterName: filterInfo.filterName,
+                    hasSelectedValues: filterInfo.filterValues.filter(value => value.selected).length > 0,
+                    selectedOnce: true,
+                    isMulti: !filterConfiguration.isMulti ? false : filterConfiguration.isMulti,
+                    showCount: !filterConfiguration.showCount ? false : filterConfiguration.showCount,
+                    expandByDefault: !filterConfiguration.expandByDefault ? false : filterConfiguration.expandByDefault,
+                    values: filterValuesInternal,
+                    operator: filterInfo.operator ? filterInfo.operator : currentUiFilters[filterIdx].operator,
+                    selectedTemplate: filterConfiguration.selectedTemplate,
+                    sortIdx: filterConfiguration.sortIdx
+                };
 
                 // If does not exist, add to selected filters collection
                 currentUiFilters = update(this.state.currentUiFilters, { $push: [filterResultInternal] });
@@ -563,26 +481,8 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             }
         });
 
-<<<<<<< HEAD
         return selectedFilters.filter(filter => filter);
     }
-=======
-        // Remove useless properties since we don't want to expose them in the data source, especially for consumers
-        // We need to return only proeprties used for IDataFilter to avoid confusion
-        delete newSelectedFilter.expandByDefault;
-        delete newSelectedFilter.hasSelectedValues;
-        delete newSelectedFilter.selectedOnce;
-        delete newSelectedFilter.showCount;
-        delete newSelectedFilter.isMulti;
-        delete newSelectedFilter.displayName;
-        delete newSelectedFilter.canApply;
-        delete newSelectedFilter.canClear;
-        delete newSelectedFilter.sortIdx;
-        delete newSelectedFilter.selectedTemplate;
-        delete (newSelectedFilter as any).hierarchicalTerms;
-        // Preserve taxonomy metadata keys for parity with other layouts; normalize to null for deep links
-        (newSelectedFilter as any).termSetId = null;
->>>>>>> 59ad246e (works now, time to optimize)
 
     /**
      * Binds event fired from filter value web components ('When an single filter value is selected')
@@ -745,19 +645,19 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
     // Build the template context
     private getTemplateContext(): ISearchFiltersTemplateContext {
 
-    return {
-      filters: this.state.currentUiFilters,
-      selectedFilters: this.state.submittedFilters,
-      instanceId: this.props.instanceId,
-      theme: this.props.themeVariant,
-      context: this.props.context,
-      strings: commonStrings.Filters,
-      selectedOnce: this.state.currentUiFilters.filter(currentFilter => currentFilter.selectedOnce).length > 0,
-      properties: {
-        ...this.props.properties
-      },
-    };
-  }
+        return {
+            filters: this.state.currentUiFilters,
+            selectedFilters: this.state.submittedFilters,
+            instanceId: this.props.instanceId,
+            theme: this.props.themeVariant,
+            context: this.props.context,
+            strings: commonStrings.Filters,
+            selectedOnce: this.state.currentUiFilters.filter(currentFilter => currentFilter.selectedOnce).length > 0,
+            properties: {
+                ...this.props.properties
+            },
+        };
+    }
 
     /**
      * Retrieves the default filters from the URL and set them as initial state
@@ -803,39 +703,11 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                     submittedFilters: dataFilters
                 });
 
-<<<<<<< HEAD
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars
             } catch (e) {
                 Log.verbose(`[SearchFiltersContainer.getFiltersDeepLink]`, `Filters format in the query string is invalid.`);
             }
         }
-=======
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      } catch (e) {
-        Log.verbose(`[SearchFiltersContainer.getFiltersDeepLink]`, `Filters format in the query string is invalid.`);
-      }
-    }
-  }
-
-  /**
-   * Set the current selected filters as query string in the URL for deep linking
-   * @param submittedFilters the current submitted filters
-   */
-  private setFiltersDeepLink(submittedFilters: IDataFilter[]) {
-
-    let filtersDeepLinkUrl: string;
-    if (submittedFilters.length > 0) {
-      // Normalize taxonomy metadata so all layouts emit identical deep-link payloads
-      const sanitized = submittedFilters.map(f => {
-        const cleaned = { ...f, termSetId: null };
-        delete (cleaned as any).termGroupId;
-        return cleaned as IDataFilter;
-      });
-
-      filtersDeepLinkUrl = UrlHelper.addOrReplaceQueryStringParam(window.location.href, this.deeplinkQueryStringParam, JSON.stringify(sanitized));
-    } else {
-      filtersDeepLinkUrl = UrlHelper.removeQueryStringParam(this.deeplinkQueryStringParam, window.location.href);
->>>>>>> 59ad246e (works now, time to optimize)
     }
 
     /**
