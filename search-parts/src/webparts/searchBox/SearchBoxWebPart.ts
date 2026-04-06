@@ -190,13 +190,17 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
 
         if (inputValue && typeof (inputValue) === 'string') {
 
-            // Notify subscriber a new value if available
-            this._searchQueryText = decodeURIComponent(inputValue);
+            const decodedInputValue = decodeURIComponent(inputValue);
 
-            // Set the input query text globally for the page. There can be only one input query text submitted at a time even if multiple search box components are on the page
-            GlobalSettings.setValue(BuiltinTokenNames.inputQueryText, this._searchQueryText);
+            // Only notify subscribers if the value actually changed
+            if (decodedInputValue !== this._searchQueryText) {
+                this._searchQueryText = decodedInputValue;
 
-            this.context.dynamicDataSourceManager.notifyPropertyChanged(ComponentType.SearchBox);
+                // Set the input query text globally for the page. There can be only one input query text submitted at a time even if multiple search box components are on the page
+                GlobalSettings.setValue(BuiltinTokenNames.inputQueryText, this._searchQueryText);
+
+                this.context.dynamicDataSourceManager.notifyPropertyChanged(ComponentType.SearchBox);
+            }
         }
 
         renderRootElement = React.createElement(SearchBoxContainer, {
@@ -1066,7 +1070,11 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
         const source = DynamicPropertyHelper.tryGetSourceSafe(this.properties.queryText);
 
         if (source && source.id === ComponentType.PageEnvironment) {
-            this.render();
+            // Only re-render if the dynamic property value actually changed
+            const currentValue = DynamicPropertyHelper.tryGetValueSafe(this.properties.queryText);
+            if (currentValue !== this._searchQueryText) {
+                this.render();
+            }
         }
     }
 }
