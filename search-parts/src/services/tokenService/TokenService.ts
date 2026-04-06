@@ -321,6 +321,7 @@ export class TokenService implements ITokenService {
                 }
 
                 inputString = inputString.replace(matches[0], itemProp);
+                pageTokenRegExp.lastIndex = 0;
                 matches = pageTokenRegExp.exec(inputString);
             }
         }
