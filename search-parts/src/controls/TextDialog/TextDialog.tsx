@@ -114,6 +114,11 @@ export default class TextDialog extends React.Component<ITextDialogProps, ITextD
                                     $blockScrolling: Infinity
                                 }
                             }
+                            onLoad={(editor) => {
+                                // Force resize after the dialog's CSS transform is applied,
+                                // otherwise Ace miscalculates cursor/click positions
+                                requestAnimationFrame(() => editor.resize());
+                            }}
                             name="CodeEditor"
                             enableBasicAutocompletion={true}
                         />
