@@ -75,6 +75,7 @@ import defaultPeopleTemplate from '../../layouts/resultTypes/default_people.html
 import { MessageBar, MessageBarType } from '@fluentui/react/lib/MessageBar';
 import { Link } from '@fluentui/react/lib/Link';
 import { IComboBoxOption } from '@fluentui/react/lib/ComboBox';
+import { PanelType } from '@fluentui/react/lib/Panel';
 import { IToggleProps, Toggle } from '@fluentui/react/lib/Toggle';
 import { PropertyFieldMessage } from '@pnp/spfx-property-controls/lib/PropertyFieldMessage';
 
@@ -1506,6 +1507,10 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                     panelDescription: webPartStrings.PropertyPane.DataSourcePage.TemplateSlots.ConfigureSlotsPanelDescription,
                     label: webPartStrings.PropertyPane.DataSourcePage.TemplateSlots.ConfigureSlotsLabel,
                     value: this.properties.templateSlots,
+                    panelProps: {
+                        type: PanelType.medium
+                    },
+                    tableClassName: commonStyles.slotTable,
                     fields: [
                         {
                             id: 'slotName',
