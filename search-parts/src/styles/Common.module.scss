@@ -5,3 +5,32 @@
         font-family: var(--fontFamilyCustomFont1300, var(--fontFamilyBase));
     }
 }
+
+// Fix PropertyFieldCollectionData table layout broken by FluentUI/SPFx CSS upgrades.
+// Applied via tableClassName prop on the PropertyFieldCollectionData control.
+.slotTable {
+    display: table !important;
+    width: 100% !important;
+    border-collapse: separate;
+    border-spacing: 0 8px;
+
+    :global {
+        .PropertyFieldCollectionData__panel__table-head,
+        .PropertyFieldCollectionData__panel__table-row {
+            display: table-row !important;
+            line-height: 30px;
+        }
+
+        .PropertyFieldCollectionData__panel__table-cell {
+            display: table-cell !important;
+            padding: 0 10px;
+            vertical-align: middle;
+        }
+
+        .PropertyFieldCollectionData__panel__table-row > span {
+            display: table-cell !important;
+            padding: 0 10px;
+            vertical-align: middle;
+        }
+    }
+}

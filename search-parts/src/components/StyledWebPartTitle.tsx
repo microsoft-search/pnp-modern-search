@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { WebPartTitle, IWebPartTitleProps } from '@pnp/spfx-controls-react/lib/WebPartTitle';
+import styles from './StyledWebPartTitle.module.scss';
 
 export interface IStyledWebPartTitleProps {
     instanceId: string;
@@ -30,9 +31,11 @@ export const StyledWebPartTitle: React.FC<IStyledWebPartTitleProps> = (props) =>
     const hasCustomStyling = titleFont || titleFontSize !== undefined || titleFontColor;
 
     if (!hasCustomStyling) {
-        return testId
-            ? <div data-ui-test-id={testId}><WebPartTitle {...webPartTitleProps} /></div>
-            : <WebPartTitle {...webPartTitleProps} />;
+        return (
+            <div className={styles.titleWrapper} {...(testId ? { 'data-ui-test-id': testId } : {})}>
+                <WebPartTitle {...webPartTitleProps} />
+            </div>
+        );
     }
 
     const safeFont = sanitizeFont(titleFont);
@@ -53,7 +56,7 @@ export const StyledWebPartTitle: React.FC<IStyledWebPartTitleProps> = (props) =>
     `;
 
     return (
-        <div className={titleWrapperClass} {...(testId ? { 'data-ui-test-id': testId } : {})}>
+        <div className={`${styles.titleWrapper} ${titleWrapperClass}`} {...(testId ? { 'data-ui-test-id': testId } : {})}>
             <style key={`title-style-${safeFont}-${safeFontSize}-${safeColor}`}>{styleString}</style>
             <WebPartTitle {...webPartTitleProps} />
         </div>
