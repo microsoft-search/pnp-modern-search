@@ -5,6 +5,7 @@ import * as strings from 'CommonStrings';
 import { Icon, IIconProps, IComboBoxOption } from '@fluentui/react';
 import * as React from "react";
 import { TemplateValueFieldEditor, ITemplateValueFieldEditorProps } from "../../../controls/TemplateValueFieldEditor/TemplateValueFieldEditor";
+import commonStyles from '../../../styles/Common.module.scss';
 
 export interface ICardsLayoutProperties {
 
@@ -148,6 +149,7 @@ export class CardsLayout extends BaseLayout<ICardsLayoutProperties> {
                 disableItemDeletion: true,
                 label: strings.Layouts.Cards.ManageTilesFieldsLabel,
                 value: this.properties.documentCardFields,
+                tableClassName: commonStyles.slotTable,
                 fields: [
                     {
                         id: 'name',

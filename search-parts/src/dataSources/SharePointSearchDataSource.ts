@@ -40,6 +40,7 @@ import { BuiltinDataSourceProviderKeys } from './AvailableDataSources';
 import { StringHelper } from '../helpers/StringHelper';
 import { AutoCalculatedDataSourceFields, SortableFields } from '../common/Constants';
 import { ObjectHelper } from '../helpers/ObjectHelper';
+import commonStyles from '../styles/Common.module.scss';
 import { PnPClientStorage } from "@pnp/common/storage";
 
 const TAXONOMY_REFINER_REGEX = /((L0|GP0)\|#.?([0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}))\|?/;
@@ -335,6 +336,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                         panelDescription: commonStrings.DataSources.SearchCommon.Sort.SortListDescription,
                         label: commonStrings.DataSources.SearchCommon.Sort.SortPropertyPaneFieldLabel,
                         value: this.properties.sortList,
+                        tableClassName: commonStyles.slotTable,
                         fields: [
                             {
                                 id: 'sortField',

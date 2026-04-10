@@ -6,6 +6,7 @@ import { IComboBoxOption, Icon, IIconProps } from '@fluentui/react';
 import { IComponentFieldsConfiguration } from "../../../models/common/IComponentFieldsConfiguration";
 import * as strings from 'CommonStrings';
 import { loadMsGraphToolkit } from "../../../helpers/GraphToolKitHelper";
+import commonStyles from '../../../styles/Common.module.scss';
 
 export interface IPeopleLayoutProperties {
 
@@ -122,6 +123,7 @@ export class PeopleLayout extends BaseLayout<IPeopleLayoutProperties> {
                 disableItemDeletion: true,
                 label: strings.Layouts.People.ManagePeopleFieldsLabel,
                 value: this.properties.peopleFields,
+                tableClassName: commonStyles.slotTable,
                 fields: [
                     {
                         id: 'name',
