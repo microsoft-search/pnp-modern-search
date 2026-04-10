@@ -484,6 +484,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
                     disabled: !this.properties.enableQuerySuggestions,
                     label: webPartStrings.PropertyPane.QuerySuggestionsGroup.SuggestionProvidersLabel,
                     value: this.properties.suggestionProviderConfiguration,
+                    tableClassName: commonStyles.slotTable,
                     fields: [
                         {
                             id: 'enabled',
@@ -756,6 +757,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
                 panelDescription: webPartStrings.PropertyPane.InformationPage.Extensibility.PanelDescription,
                 label: commonStrings.PropertyPane.InformationPage.Extensibility.FieldLabel,
                 value: this.properties.extensibilityLibraryConfiguration,
+                tableClassName: commonStyles.slotTable,
                 fields: [
                     {
                         id: 'name',

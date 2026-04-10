@@ -350,6 +350,7 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
                 enableSorting: true,
                 label: webPartStrings.PropertyPane.Verticals.PropertyLabel,
                 value: this.properties.verticals,
+                tableClassName: commonStyles.slotTable,
                 fields: [
                     {
                         id: 'tabName',

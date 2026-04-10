@@ -11,6 +11,7 @@ import { ResultTypeOperator } from '../../../models/common/IDataResultType';
 import * as React from 'react';
 import { LayoutHelper } from '../../../helpers/LayoutHelper';
 import { PropertyPaneTabsField } from '../../../controls/PropertyPaneTabsField/PropertyPaneTabsField';
+import commonStyles from '../../../styles/Common.module.scss';
 
 export class StylingPageGroupsBuilder {
 
@@ -197,6 +198,7 @@ export class StylingPageGroupsBuilder {
                 enableSorting: true,
                 label: this.webPartStrings.PropertyPane.LayoutPage.Handlebars.ResultTypes.ResultTypeslabel,
                 value: this.properties.resultTypes,
+                tableClassName: commonStyles.slotTable,
                 disabled: this.properties.selectedLayoutKey === BuiltinLayoutsKeys.DetailsList
                     || this.properties.selectedLayoutKey === BuiltinLayoutsKeys.ResultsDebug
                     || this.properties.selectedLayoutKey === BuiltinLayoutsKeys.Slider,

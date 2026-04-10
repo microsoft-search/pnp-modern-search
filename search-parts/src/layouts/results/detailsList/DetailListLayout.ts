@@ -9,6 +9,7 @@ import { AsyncCombo } from "../../../controls/PropertyPaneAsyncCombo/components/
 import { IAsyncComboProps } from "../../../controls/PropertyPaneAsyncCombo/components/IAsyncComboProps";
 import { PropertyFieldNumber } from "@pnp/spfx-property-controls/lib/PropertyFieldNumber";
 import commonStyles from './DetailsListLayout.module.scss';
+import sharedStyles from '../../../styles/Common.module.scss';
 
 /**
  * Details List Builtin Layout
@@ -191,6 +192,7 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
                 enableSorting: true,
                 label: strings.Layouts.DetailsList.ManageDetailsListColumnLabel,
                 value: this.properties.detailsListColumns,
+                tableClassName: sharedStyles.slotTable,
                 fields: [
                     {
                         id: 'name',
@@ -336,7 +338,7 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
                   panelHeader: strings.Layouts.DetailsList.AdditionalGroupByFieldsLabel,
                   panelDescription: strings.Layouts.DetailsList.AdditionalGroupByFieldsDescription,
                   enableSorting: true,
-                  tableClassName: commonStyles.additionalGroupByFieldsTable,
+                  tableClassName: sharedStyles.slotTable,
                   label: strings.Layouts.DetailsList.AdditionalGroupByFieldsLabel,
                   value: this.properties.additionalGroupByFields,
                   disabled: !this.properties.enableGrouping || !this.properties.groupByField || this.properties.groupByField.length === 0,

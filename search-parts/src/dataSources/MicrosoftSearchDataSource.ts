@@ -17,6 +17,7 @@ import { DataSourceHelper } from '../helpers/DataSourceHelper';
 import { IAsyncComboProps } from "../controls/PropertyPaneAsyncCombo/components/IAsyncComboProps";
 import { PropertyPaneNonReactiveTextField } from "../controls/PropertyPaneNonReactiveTextField/PropertyPaneNonReactiveTextField";
 import { IMicrosoftSearchDataSourceData } from "../models/search/IMicrosoftSearchDataSourceData";
+import commonStyles from '../styles/Common.module.scss';
 import * as React from "react";
 import { BuiltinDataSourceProviderKeys } from "./AvailableDataSources";
 import { AutoCalculatedDataSourceFields, SortableFields } from "../common/Constants";
@@ -355,6 +356,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                     panelDescription: commonStrings.DataSources.MicrosoftSearch.CollapseProperties.CollapsePropertiesDescription,
                     label: commonStrings.DataSources.MicrosoftSearch.CollapseProperties.CollapsePropertiesPropertyPaneFieldLabel,
                     value: this.properties.collapseProperties,
+                    tableClassName: commonStyles.slotTable,
                     fields: [
                         {
                             id: 'fields',
@@ -414,6 +416,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                     panelDescription: commonStrings.DataSources.SearchCommon.Sort.SortListDescription,
                     label: commonStrings.DataSources.SearchCommon.Sort.SortPropertyPaneFieldLabel,
                     value: this.properties.sortProperties,
+                    tableClassName: commonStyles.slotTable,
                     fields: [
                         {
                             id: 'sortField',
