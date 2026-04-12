@@ -208,6 +208,17 @@ export class DataFilterHelper {
                     // See https://sharepoint.stackexchange.com/questions/258081/how-to-hex-encode-refiners/258161
                     let refinementToken = /ǂǂ/.test(filterValue.value) && encodeTokens ? encodeURIComponent(filterValue.value) : filterValue.value;
 
+                    // Taxonomy hierarchical parent selection:
+                    // GPP means "include children" but can miss items tagged only with the parent term.
+                    // Expand single GPP selection to OR(GPP, GP0) so parent + descendants are included.
+                    const decodedTaxonomyToken = DataFilterHelper.decodeHexRefinementToken(refinementToken);
+                    if (decodedTaxonomyToken && decodedTaxonomyToken.startsWith('GPP|#')) {
+                        const gp0Token = `GP0|#${decodedTaxonomyToken.substring('GPP|#'.length)}`;
+                        const gp0RefinementToken = DataFilterHelper.encodeHexRefinementToken(gp0Token);
+                        refinementQueryConditions.push(`${filter.filterName}:or(${refinementToken},${gp0RefinementToken})`);
+                        return;
+                    }
+
                     // https://docs.microsoft.com/en-us/sharepoint/dev/general-development/fast-query-language-fql-syntax-reference#fql_range_operator
                     if (dayjs(refinementToken, dayjs.ISO_8601, true).isValid()) {
 
@@ -242,6 +253,45 @@ export class DataFilterHelper {
         });
 
         return refinementQueryConditions;
+    }
+
+    private static decodeHexRefinementToken(value: string): string | null {
+        if (!value) {
+            return null;
+        }
+
+        let normalized = value;
+        if (normalized.startsWith('"') && normalized.endsWith('"')) {
+            normalized = normalized.substring(1, normalized.length - 1);
+        }
+
+        if (!normalized.startsWith('ǂǂ')) {
+            return null;
+        }
+
+        const hex = normalized.substring(2);
+        if (!hex || hex.length % 2 !== 0 || /[^0-9a-fA-F]/.test(hex)) {
+            return null;
+        }
+
+        try {
+            let decoded = '';
+            for (let i = 0; i < hex.length; i += 2) {
+                decoded += String.fromCharCode(parseInt(hex.substring(i, i + 2), 16));
+            }
+            return decoded;
+        } catch {
+            return null;
+        }
+    }
+
+    private static encodeHexRefinementToken(token: string): string {
+        const hex = token
+            .split('')
+            .map(char => char.charCodeAt(0).toString(16).padStart(2, '0'))
+            .join('');
+
+        return `"ǂǂ${hex}"`;
     }
 
     private static fixRefinableYesNoFilter(filter: IDataFilter, value: string) {

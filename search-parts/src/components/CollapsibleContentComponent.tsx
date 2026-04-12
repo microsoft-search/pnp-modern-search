@@ -62,9 +62,13 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
         // Check if there's a stored state for this group
         const storedState = sessionStorage.getItem(this.storageKey);
         
-        const initialCollapsedState = storedState 
-            ? JSON.parse(storedState) 
-            : !!props.defaultCollapsed;
+        // A forced-open state from the parent (selected filters or expandByDefault)
+        // must override any previously stored collapsed preference.
+        const initialCollapsedState = props.defaultCollapsed === false
+            ? false
+            : storedState
+                ? JSON.parse(storedState)
+                : !!props.defaultCollapsed;
         
         this.state = {
             isCollapsed: initialCollapsedState,
@@ -73,6 +77,19 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
         this._onRenderCell = this._onRenderCell.bind(this);
         this._onRenderHeader = this._onRenderHeader.bind(this);
         this._onTogglePanel = this._onTogglePanel.bind(this);
+    }
+
+    public componentDidUpdate(prevProps: ICollapsibleContentComponentProps) {
+        // If the parent indicates this panel should be open (selected filters or expandByDefault),
+        // force it open even if session storage previously remembered it as collapsed.
+        if (this.props.defaultCollapsed === false && (prevProps.defaultCollapsed !== this.props.defaultCollapsed || this.state.isCollapsed)) {
+            if (this.state.isCollapsed) {
+                sessionStorage.setItem(this.storageKey, JSON.stringify(false));
+                this.setState({
+                    isCollapsed: false
+                });
+            }
+        }
     }
 
 

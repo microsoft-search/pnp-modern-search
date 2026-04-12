@@ -67,8 +67,53 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
         expandedTerms[term.id] = true;
       });
     }
+
+    // Always expand the path to currently selected terms so users can see context
+    // (for example, Europa -> Germany -> Berlin when Berlin is selected).
+    const selectedPathExpansions = this.getExpandedTermsForSelectedValues();
+    Object.assign(expandedTerms, selectedPathExpansions);
     
     return expandedTerms;
+  }
+
+  private getExpandedTermsForSelectedValues = (): { [key: string]: boolean } => {
+    const expandedTerms: { [key: string]: boolean } = {};
+    const filterValues = this.props.filter?.values || [];
+    const hierarchicalTerms = this.props.filter?.hierarchicalTerms || [];
+
+    filterValues.forEach((filterValue: any) => {
+      if (filterValue?.selected && filterValue?.value) {
+        const decoded = this.decodeHexString(filterValue.value) || '';
+        const parts = decoded.split('|');
+        const guidPart = (parts[1] || '').replace('#', '').replace(/-/g, '').toLowerCase();
+        this.findAndExpandPathToTerm(hierarchicalTerms, guidPart, expandedTerms);
+      }
+    });
+
+    return expandedTerms;
+  }
+
+  private findAndExpandPathToTerm = (terms: any[], guidToMatch: string, expandedTerms: { [key: string]: boolean }): boolean => {
+    for (const term of terms) {
+      const termGuid = (this.extractGuidFromTermId(term.id) || '').replace(/-/g, '').toLowerCase();
+
+      if (termGuid === guidToMatch) {
+        // If the selected term has children, expand it too.
+        if (term.children && term.children.length > 0) {
+          expandedTerms[term.id] = true;
+        }
+        return true;
+      }
+
+      if (term.children && term.children.length > 0) {
+        if (this.findAndExpandPathToTerm(term.children, guidToMatch, expandedTerms)) {
+          expandedTerms[term.id] = true;
+          return true;
+        }
+      }
+    }
+
+    return false;
   }
 
   private initializeSelectedTerms = (): { [key: string]: boolean } => {
@@ -134,16 +179,32 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
 
   public componentDidUpdate(prevProps: IFilterHierarchicalProps) {
     // If filter values changed, update selected terms
-    // Only check length and reference, avoid expensive JSON.stringify
+    // Compare selected token signatures and avoid expensive JSON.stringify
     const prevValues = prevProps.filter?.values || [];
     const currValues = this.props.filter?.values || [];
+    const getSelectedSignature = (values: any[]): string => {
+      return values
+        .filter(v => v?.selected && v?.value)
+        .map(v => v.value)
+        .sort()
+        .join('|');
+    };
+    const prevSignature = getSelectedSignature(prevValues);
+    const currSignature = getSelectedSignature(currValues);
     
-    if (prevValues.length !== currValues.length) {
+    if (prevValues.length !== currValues.length || prevSignature !== currSignature) {
+      const selectedPathExpansions = this.getExpandedTermsForSelectedValues();
+
       // Use setTimeout to defer heavy state update and avoid blocking the UI
       setTimeout(() => {
-        this.setState({
+        this.setState(prevState => ({
           selectedTerms: this.initializeSelectedTerms()
-        });
+          ,
+          expandedTerms: {
+            ...prevState.expandedTerms,
+            ...selectedPathExpansions
+          }
+        }));
       }, 0);
     }
   }

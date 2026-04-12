@@ -1314,28 +1314,6 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                                         )
                                     ),
 
-                                    React.createElement("div", { style: { marginBottom: '20px', padding: '10px', backgroundColor: '#f9f9f9', borderRadius: '2px' } },
-                                        React.createElement("label", {
-                                            style: {
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                fontWeight: '600',
-                                                fontSize: '13px',
-                                                cursor: 'pointer'
-                                            }
-                                        },
-                                            React.createElement("input", {
-                                                type: 'checkbox',
-                                                checked: item.expandByDefault || false,
-                                                onChange: (e) => {
-                                                    onUpdate('expandByDefault', e.target.checked);
-                                                },
-                                                style: { marginRight: '8px', cursor: 'pointer' }
-                                            }),
-                                            'Expand by Default'
-                                        )
-                                    ),
-
                                     React.createElement("div", { style: { marginBottom: '20px' } },
                                         React.createElement("button", {
                                             onClick: () => {
