@@ -44,6 +44,8 @@ export interface IFilterHierarchicalState {
 
 export class FilterHierarchicalComponent extends React.Component<IFilterHierarchicalProps, IFilterHierarchicalState> {
 
+  private searchDebounceTimer: ReturnType<typeof setTimeout> | null = null;
+
   constructor(props: IFilterHierarchicalProps) {
     super(props);
 
@@ -93,14 +95,24 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
     return expandedTerms;
   }
 
+  private expandAllDescendants = (terms: any[], expandedTerms: { [key: string]: boolean }): void => {
+    terms.forEach(term => {
+      if (term.children && term.children.length > 0) {
+        expandedTerms[term.id] = true;
+        this.expandAllDescendants(term.children, expandedTerms);
+      }
+    });
+  }
+
   private findAndExpandPathToTerm = (terms: any[], guidToMatch: string, expandedTerms: { [key: string]: boolean }): boolean => {
     for (const term of terms) {
       const termGuid = (this.extractGuidFromTermId(term.id) || '').replace(/-/g, '').toLowerCase();
 
       if (termGuid === guidToMatch) {
-        // If the selected term has children, expand it too.
+        // Expand the selected term and all its descendants so the full sub-tree is visible.
         if (term.children && term.children.length > 0) {
           expandedTerms[term.id] = true;
+          this.expandAllDescendants(term.children, expandedTerms);
         }
         return true;
       }
@@ -119,52 +131,30 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
   private initializeSelectedTerms = (): { [key: string]: boolean } => {
     const selectedTerms: { [key: string]: boolean } = {};
     const filterValues = this.props.filter?.values || [];
-    
-    // Hierarchical filter behaves as single-select: keep only the first selected value.
-    const selectedFilterValue = filterValues.find((filterValue: any) => filterValue?.selected && filterValue?.value);
+    const hierarchicalTerms = this.props.filter?.hierarchicalTerms || [];
+
+    // Determine the selected term's GUID (single-select: use first selected value)
+    const selectedFilterValue = filterValues.find((fv: any) => fv?.selected && fv?.value);
+    let selectedGuid = '';
     if (selectedFilterValue) {
       const decoded = this.decodeHexString(selectedFilterValue.value) || '';
       const parts = decoded.split('|');
-      const guidPart = (parts[1] || '').replace('#', '').replace(/-/g, '').toLowerCase();
-
-      // Find the term with this GUID and mark it as selected
-      const hierarchicalTerms = this.props.filter?.hierarchicalTerms || [];
-      this.findAndMarkTermAsSelected(hierarchicalTerms, guidPart, selectedTerms);
+      selectedGuid = (parts[1] || '').replace('#', '').replace(/-/g, '').toLowerCase();
     }
 
-    // Collect all term IDs efficiently in one pass
-    const hierarchicalTerms = this.props.filter?.hierarchicalTerms || [];
-    const collectAllTermIds = (terms: any[]) => {
+    // Single-pass: initialize all terms and mark the selected one
+    const collectTerms = (terms: any[]) => {
       terms.forEach(term => {
-        // Only initialize if not already set
-        if (!Object.prototype.hasOwnProperty.call(selectedTerms, term.id)) {
-          selectedTerms[term.id] = false;
-        }
-        // Recursively process children
+        const termGuid = (this.extractGuidFromTermId(term.id) || '').replace(/-/g, '').toLowerCase();
+        selectedTerms[term.id] = selectedGuid.length > 0 && termGuid === selectedGuid;
         if (term.children && term.children.length > 0) {
-          collectAllTermIds(term.children);
+          collectTerms(term.children);
         }
       });
     };
-    collectAllTermIds(hierarchicalTerms);
-    
-    return selectedTerms;
-  }
+    collectTerms(hierarchicalTerms);
 
-  private findAndMarkTermAsSelected = (terms: any[], guidToMatch: string, selectedTerms: { [key: string]: boolean }): boolean => {
-    for (const term of terms) {
-      const termGuid = (this.extractGuidFromTermId(term.id) || '').replace(/-/g, '').toLowerCase();
-      if (termGuid === guidToMatch) {
-        selectedTerms[term.id] = true;
-        return true;
-      }
-      if (term.children && term.children.length > 0) {
-        if (this.findAndMarkTermAsSelected(term.children, guidToMatch, selectedTerms)) {
-          return true;
-        }
-      }
-    }
-    return false;
+    return selectedTerms;
   }
 
   public shouldComponentUpdate(nextProps: IFilterHierarchicalProps, nextState: IFilterHierarchicalState): boolean {
@@ -177,20 +167,21 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
     return false;
   }
 
+  private getSelectedSignature = (values: any[]): string => {
+    return values
+      .filter(v => v?.selected && v?.value)
+      .map(v => v.value)
+      .sort()
+      .join('|');
+  }
+
   public componentDidUpdate(prevProps: IFilterHierarchicalProps) {
     // If filter values changed, update selected terms
     // Compare selected token signatures and avoid expensive JSON.stringify
     const prevValues = prevProps.filter?.values || [];
     const currValues = this.props.filter?.values || [];
-    const getSelectedSignature = (values: any[]): string => {
-      return values
-        .filter(v => v?.selected && v?.value)
-        .map(v => v.value)
-        .sort()
-        .join('|');
-    };
-    const prevSignature = getSelectedSignature(prevValues);
-    const currSignature = getSelectedSignature(currValues);
+    const prevSignature = this.getSelectedSignature(prevValues);
+    const currSignature = this.getSelectedSignature(currValues);
     
     if (prevValues.length !== currValues.length || prevSignature !== currSignature) {
       const selectedPathExpansions = this.getExpandedTermsForSelectedValues();
@@ -198,14 +189,19 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
       // Use setTimeout to defer heavy state update and avoid blocking the UI
       setTimeout(() => {
         this.setState(prevState => ({
-          selectedTerms: this.initializeSelectedTerms()
-          ,
+          selectedTerms: this.initializeSelectedTerms(),
           expandedTerms: {
             ...prevState.expandedTerms,
             ...selectedPathExpansions
           }
         }));
       }, 0);
+    }
+  }
+
+  public componentWillUnmount(): void {
+    if (this.searchDebounceTimer !== null) {
+      clearTimeout(this.searchDebounceTimer);
     }
   }
 
@@ -383,7 +379,7 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
     // Drop the leading '#', then collapse extra leading zeroes after the required '0'
     let guidPart = rawIdPart.replace(/^#/, ''); // now something like '0ffe...' or '00ffe...'
     // Ensure we keep exactly one leading '0' before the GUID as per refiner format
-    guidPart = guidPart.replace(/^0+/, (m) => m.length > 0 ? '0' : '');
+    guidPart = guidPart.replace(/^0+/, '0');
     const normalizedIdPart = `#${guidPart}`;
 
     // Ignore trailing label segment if present to mirror checkbox payload
@@ -414,65 +410,43 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
     return termId;
   }
 
-  private termOrDescendantExistsInResults = (term: any, filterValues: any[]): boolean => {
-    // Check if this term itself matches
-    const termGuid = this.extractGuidFromTermId(term.id);
-    const hasMatch = filterValues.some((filterValue: any) => {
-      if (!filterValue.value) return false;
-      const decodedValue = this.decodeHexString(filterValue.value);
-      const parts = decodedValue.split('|');
-      const guidPart = parts[1] ? parts[1].replace('#0', '') : '';
-      return guidPart === termGuid || guidPart.toLowerCase() === termGuid.toLowerCase();
-    });
-    
-    if (hasMatch) return true;
-    
-    // Check if any descendants match
+  private termOrDescendantExistsInResults = (term: any, resultGuids: Set<string>): boolean => {
+    const termGuid = (this.extractGuidFromTermId(term.id) || '').replace(/-/g, '').toLowerCase();
+    if (resultGuids.has(termGuid)) return true;
     if (term.children && term.children.length > 0) {
-      return term.children.some((child: any) => this.termOrDescendantExistsInResults(child, filterValues));
+      return term.children.some((child: any) => this.termOrDescendantExistsInResults(child, resultGuids));
     }
-    
     return false;
   }
 
-  private termOrDescendantMatchesSearch = (term: any, searchText: string): boolean => {
-    if (!searchText) return true;
-    
-    // Check if this term's label matches
-    if (term.label && term.label.toLowerCase().includes(searchText.toLowerCase())) {
-      return true;
-    }
-    
-    // Check if any descendants match
+  private termOrDescendantMatchesSearch = (term: any, lowerSearchText: string): boolean => {
+    if (!lowerSearchText) return true;
+    if (term.label && term.label.toLowerCase().includes(lowerSearchText)) return true;
     if (term.children && term.children.length > 0) {
-      return term.children.some((child: any) => this.termOrDescendantMatchesSearch(child, searchText));
+      return term.children.some((child: any) => this.termOrDescendantMatchesSearch(child, lowerSearchText));
     }
-    
     return false;
   }
 
   private onSearchChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    // Capture the value before setTimeout
     const newSearchText = event.target.value;
-    // Defer search state update asynchronously to avoid blocking on input
-    setTimeout(() => {
+    if (this.searchDebounceTimer !== null) {
+      clearTimeout(this.searchDebounceTimer);
+    }
+    this.searchDebounceTimer = setTimeout(() => {
       this.setState({ searchText: newSearchText });
-    }, 0);
+      this.searchDebounceTimer = null;
+    }, 150);
   }
 
-  private renderTerm = (term: any, level: number = 0): JSX.Element | null => {
+  private renderTerm = (term: any, level: number = 0, resultGuids: Set<string> = new Set(), lowerSearchText: string = ''): JSX.Element | null => {
     const hasChildren = term.children && term.children.length > 0;
     const isExpanded = this.state.expandedTerms[term.id];
     const isSelected = this.state.selectedTerms[term.id];
     const indent = level * 20;
 
-    // Check if this term ID or any descendant exists in the available filter values from results
-    const filterValues = this.props.filter?.values || [];
-    const termExistsInResults = this.termOrDescendantExistsInResults(term, filterValues);
-    
-    // Filter by search text
-    const matchesSearch = this.termOrDescendantMatchesSearch(term, this.state.searchText);
-    if (!matchesSearch) {
+    const termExistsInResults = this.termOrDescendantExistsInResults(term, resultGuids);
+    if (!this.termOrDescendantMatchesSearch(term, lowerSearchText)) {
       return null;
     }
     
@@ -497,7 +471,7 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
         </div>
         {hasChildren && isExpanded && (
           <div className={styles.childTerms}>
-            {term.children.map((child: any) => this.renderTerm(child, level + 1))}
+            {term.children.map((child: any) => this.renderTerm(child, level + 1, resultGuids, lowerSearchText))}
           </div>
         )}
       </div>
@@ -519,10 +493,23 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
     if (hierarchicalTerms.length === 0) {
       return (
         <div className={styles.filterHierarchical}>
-          <div>No terms available</div>
+          <div>Loading...</div>
         </div>
       );
     }
+
+    const filterValues = this.props.filter?.values || [];
+    const resultGuidSet = new Set<string>(
+      filterValues
+        .filter((fv: any) => fv?.value)
+        .map((fv: any) => {
+          const decoded = this.decodeHexString(fv.value);
+          const parts = decoded.split('|');
+          return (parts[1] || '').replace('#', '').replace(/^0+/, '').replace(/-/g, '').toLowerCase();
+        })
+        .filter((g: string) => g.length > 0)
+    );
+    const lowerSearchText = this.state.searchText.toLowerCase();
 
     return (
       <div
@@ -534,12 +521,12 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
           <input
             type="text"
             placeholder="Search..."
-            value={this.state.searchText}
+            defaultValue=""
             onChange={this.onSearchChange}
             className={styles.searchInput}
           />
         </div>
-        {hierarchicalTerms.map((term: any) => this.renderTerm(term)).filter(x => x !== null)}
+        {hierarchicalTerms.map((term: any) => this.renderTerm(term, 0, resultGuidSet, lowerSearchText)).filter(x => x !== null)}
       </div>
     );
   }

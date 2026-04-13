@@ -61,14 +61,15 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
         
         // Check if there's a stored state for this group
         const storedState = sessionStorage.getItem(this.storageKey);
+        const defaultCollapsed = this.getNormalizedDefaultCollapsed(props.defaultCollapsed);
         
         // A forced-open state from the parent (selected filters or expandByDefault)
         // must override any previously stored collapsed preference.
-        const initialCollapsedState = props.defaultCollapsed === false
+        const initialCollapsedState = defaultCollapsed === false
             ? false
             : storedState
                 ? JSON.parse(storedState)
-                : !!props.defaultCollapsed;
+            : !!defaultCollapsed;
         
         this.state = {
             isCollapsed: initialCollapsedState,
@@ -80,9 +81,12 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
     }
 
     public componentDidUpdate(prevProps: ICollapsibleContentComponentProps) {
+        const defaultCollapsed = this.getNormalizedDefaultCollapsed(this.props.defaultCollapsed);
+        const prevDefaultCollapsed = this.getNormalizedDefaultCollapsed(prevProps.defaultCollapsed);
+
         // If the parent indicates this panel should be open (selected filters or expandByDefault),
         // force it open even if session storage previously remembered it as collapsed.
-        if (this.props.defaultCollapsed === false && (prevProps.defaultCollapsed !== this.props.defaultCollapsed || this.state.isCollapsed)) {
+        if (defaultCollapsed === false && (prevDefaultCollapsed !== defaultCollapsed || this.state.isCollapsed)) {
             if (this.state.isCollapsed) {
                 sessionStorage.setItem(this.storageKey, JSON.stringify(false));
                 this.setState({
@@ -90,6 +94,22 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
                 });
             }
         }
+    }
+
+    private getNormalizedDefaultCollapsed(defaultCollapsed: boolean | string | undefined): boolean | undefined {
+        if (defaultCollapsed === 'false') {
+            return false;
+        }
+
+        if (defaultCollapsed === 'true') {
+            return true;
+        }
+
+        if (typeof defaultCollapsed === 'boolean') {
+            return defaultCollapsed;
+        }
+
+        return undefined;
     }
 
 
