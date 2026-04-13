@@ -432,7 +432,9 @@ define([], function () {
             ComboBoxPlaceHolder: "Vyberte hodnotu",
             UseAndOperatorValues: "Použijte operátor A mezi hodnotami",
             UseOrOperatorValues: "Použijte operátor NEBO mezi hodnotami",
-            UseValuesOperators: "Vyberte operátor, který chcete použít mezi těmito hodnotami filtru"
+            UseValuesOperators: "Vyberte operátor, který chcete použít mezi těmito hodnotami filtru",
+            LoadingMessage: "Načítání...",
+            SearchPlaceholder: "Hledat..."
         },
         SuggestionProviders: {
             SharePointStatic: {

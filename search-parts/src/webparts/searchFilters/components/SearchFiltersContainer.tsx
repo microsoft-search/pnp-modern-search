@@ -484,7 +484,8 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             }
 
             const values = newSelectedFilter.values.filter(selectedValue => {
-                return selectedValue.selected;
+                const hasValue = selectedValue.value !== undefined && selectedValue.value !== null && `${selectedValue.value}`.trim().length > 0;
+                return selectedValue.selected && hasValue;
             });
 
             if (values.length > 0) {
@@ -722,7 +723,18 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
             try {
 
-                const dataFilters: IDataFilter[] = JSON.parse(decodeURIComponent(queryString));
+                const parsedFilters: IDataFilter[] = JSON.parse(decodeURIComponent(queryString));
+                const dataFilters: IDataFilter[] = parsedFilters.map(filter => {
+                    const sanitizedValues = (filter.values || []).filter((value: any) => {
+                        return value && value.value !== undefined && value.value !== null && `${value.value}`.trim().length > 0;
+                    });
+
+                    return {
+                        ...filter,
+                        values: sanitizedValues
+                    };
+                }).filter(filter => filter.values && filter.values.length > 0);
+
                 const currentUiFilters = dataFilters.map(filter => {
 
                     const filterConfiguration = DataFilterHelper.getConfigurationForFilter(filter, this.props.filtersConfiguration);

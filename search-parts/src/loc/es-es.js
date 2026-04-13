@@ -434,7 +434,9 @@ define([], function () {
             ComboBoxPlaceHolder: "Seleccione el valor",
             UseAndOperatorValues: "Utilizar un operador Y entre valores",
             UseOrOperatorValues: "Utilizar un operador O entre valores",
-            UseValuesOperators: "Seleccione el operador a utilizar entre los valores de este filtro"
+            UseValuesOperators: "Seleccione el operador a utilizar entre los valores de este filtro",
+            LoadingMessage: "Cargando...",
+            SearchPlaceholder: "Buscar..."
         },
         SuggestionProviders: {
             SharePointStatic: {

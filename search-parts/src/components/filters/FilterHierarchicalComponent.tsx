@@ -4,6 +4,7 @@ import * as ReactDOM from 'react-dom';
 import styles from './FilterHierarchicalComponent.module.scss';
 import { Checkbox } from '@fluentui/react/lib/Checkbox';
 import { Icon } from '@fluentui/react/lib/Icon';
+import * as strings from 'CommonStrings';
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 export interface IFilterHierarchicalProps {
@@ -85,9 +86,7 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
 
     filterValues.forEach((filterValue: any) => {
       if (filterValue?.selected && filterValue?.value) {
-        const decoded = this.decodeHexString(filterValue.value) || '';
-        const parts = decoded.split('|');
-        const guidPart = (parts[1] || '').replace('#', '').replace(/-/g, '').toLowerCase();
+        const guidPart = this.extractGuidsFromFilterValue(filterValue.value)[0] || '';
         this.findAndExpandPathToTerm(hierarchicalTerms, guidPart, expandedTerms);
       }
     });
@@ -137,9 +136,7 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
     const selectedFilterValue = filterValues.find((fv: any) => fv?.selected && fv?.value);
     let selectedGuid = '';
     if (selectedFilterValue) {
-      const decoded = this.decodeHexString(selectedFilterValue.value) || '';
-      const parts = decoded.split('|');
-      selectedGuid = (parts[1] || '').replace('#', '').replace(/-/g, '').toLowerCase();
+      selectedGuid = this.extractGuidsFromFilterValue(selectedFilterValue.value)[0] || '';
     }
 
     // Single-pass: initialize all terms and mark the selected one
@@ -279,26 +276,21 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
       const termGuidForMatching = (this.extractGuidFromTermId(term.id) || '').replace(/-/g, '').toLowerCase();
       const matchingRefiner = filterValues.find((filterValue: any) => {
         if (!filterValue?.value) return false;
-        const decoded = this.decodeHexString(filterValue.value) || '';
-        const parts = decoded.split('|');
-        const guidPart = (parts[1] || '').replace('#', '').replace(/-/g, '').toLowerCase();
-        return guidPart === termGuidForMatching;
+        const filterGuids = this.extractGuidsFromFilterValue(filterValue.value);
+        return filterGuids.some(guid => guid === termGuidForMatching);
       });
 
-      const filterValue: IDataFilterValueInfo = matchingRefiner ? (() => {
-        const decoded = this.decodeHexString(matchingRefiner.value || '');
-        const normalizedToken = this.normalizeRefinementToken(decoded);
-        const encodedToken = this.encodeRefinementToken(normalizedToken);
-
-        return {
-          name: term.label,
-          value: encodedToken,
-          operator: matchingRefiner.operator,
-          selected: checked,
-        };
-      })() : {
+      // Use the raw refiner value from search as-is (handles both localized or(...) FQL and ǂǂHEX formats).
+      // buildFqlRefinementString passes or(...) through unchanged and ǂǂHEX with its surrounding quotes,
+      // both of which produce correct RefinementFilters FQL and return results.
+      const filterValue: IDataFilterValueInfo = matchingRefiner ? {
         name: term.label,
-        value: term.id,
+        value: matchingRefiner.value,
+        operator: matchingRefiner.operator,
+        selected: checked,
+      } : {
+        name: term.label,
+        value: termGuidForMatching ? this.encodeRefinementToken(`GP0|#${termGuidForMatching}`) : term.id,
         selected: checked,
       };
 
@@ -358,33 +350,71 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
     return value;
   }
 
-  private normalizeRefinementToken = (token: string): string => {
-    if (!token) return token;
-    // Expect formats like 'L0|#0<GUID>|Label' or 'GP0|#0<GUID>'
+  private extractGuidsFromTokenString = (token: string): string[] => {
+    if (!token) return [];
+
+    const guids = new Set<string>();
+
+    const addGuid = (rawGuid: string): void => {
+      if (!rawGuid) return;
+      const normalized = rawGuid.replace(/^#/, '').replace(/^0+/, '').replace(/-/g, '').toLowerCase();
+      if (/^[0-9a-f]{32}$/.test(normalized)) {
+        guids.add(normalized);
+      }
+    };
+
+    // Handles GP0|#<guid>, GPP|#<guid> and L0|#0<guid> patterns.
+    const taxonomyTokenRegex = /(?:GP0|GPP|L0)\|#0?([0-9a-fA-F-]{32,36})/g;
+    let regexMatch: RegExpExecArray | null;
+    while ((regexMatch = taxonomyTokenRegex.exec(token)) !== null) {
+      addGuid(regexMatch[1]);
+    }
+
+    // Handles direct token formats when not wrapped in larger expressions.
     const parts = token.split('|');
-    if (parts.length === 0) {
-      return token;
+    if (parts.length > 1) {
+      addGuid(parts[1]);
     }
 
-    // Always use GP0 to match checkbox layout behavior (specific term only)
-    let prefix = 'GP0';
-    
-    // If token already has GP prefix, keep it
-    if (parts[0].startsWith('GP')) {
-      prefix = parts[0];
+    return Array.from(guids);
+  }
+
+  private extractGuidsFromFilterValue = (rawValue: string): string[] => {
+    if (!rawValue) return [];
+
+    const guids = new Set<string>();
+    const addGuids = (items: string[]): void => {
+      items.forEach(item => guids.add(item));
+    };
+
+    const value = this.stripWrappingQuotes(rawValue.trim());
+
+    // 1) Parse value as-is (covers localized or(GP0|...,L0|...) expressions)
+    addGuids(this.extractGuidsFromTokenString(value));
+
+    // 2) Parse decoded value when token is hex-encoded (ǂǂ...)
+    const decoded = this.decodeHexString(rawValue);
+    if (decoded) {
+      addGuids(this.extractGuidsFromTokenString(decoded));
     }
 
-    // Keep and sanitize the term ID segment (e.g. '#0<GUID>')
-    const rawIdPart = parts.length > 1 ? parts[1] : '';
-    // Drop the leading '#', then collapse extra leading zeroes after the required '0'
-    let guidPart = rawIdPart.replace(/^#/, ''); // now something like '0ffe...' or '00ffe...'
-    // Ensure we keep exactly one leading '0' before the GUID as per refiner format
-    guidPart = guidPart.replace(/^0+/, '0');
-    const normalizedIdPart = `#${guidPart}`;
+    // 3) Parse any encoded sub-tokens embedded inside an expression (for robustness)
+    const encodedTokenRegex = /"ǂǂ([0-9a-fA-F]+)"/g;
+    let encodedMatch: RegExpExecArray | null;
+    while ((encodedMatch = encodedTokenRegex.exec(rawValue)) !== null) {
+      const decodedEmbedded = this.decodeHexString(`"ǂǂ${encodedMatch[1]}"`);
+      if (decodedEmbedded) {
+        addGuids(this.extractGuidsFromTokenString(decodedEmbedded));
+      }
+    }
 
-    // Ignore trailing label segment if present to mirror checkbox payload
-    const normalized = `${prefix}|${normalizedIdPart}`;
-    return normalized;
+    // 4) Fallback when raw value directly contains a GUID-like term id
+    const fallbackGuid = (this.extractGuidFromTermId(value) || '').replace(/-/g, '').toLowerCase();
+    if (/^[0-9a-f]{32}$/.test(fallbackGuid)) {
+      guids.add(fallbackGuid);
+    }
+
+    return Array.from(guids);
   }
 
   private encodeRefinementToken = (token: string): string => {
@@ -493,22 +523,17 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
     if (hierarchicalTerms.length === 0) {
       return (
         <div className={styles.filterHierarchical}>
-          <div>Loading...</div>
+          <div>{strings.Filters.LoadingMessage}</div>
         </div>
       );
     }
 
     const filterValues = this.props.filter?.values || [];
-    const resultGuidSet = new Set<string>(
-      filterValues
-        .filter((fv: any) => fv?.value)
-        .map((fv: any) => {
-          const decoded = this.decodeHexString(fv.value);
-          const parts = decoded.split('|');
-          return (parts[1] || '').replace('#', '').replace(/^0+/, '').replace(/-/g, '').toLowerCase();
-        })
-        .filter((g: string) => g.length > 0)
-    );
+    const resultGuidSet = new Set<string>();
+    filterValues.forEach((fv: any) => {
+      if (!fv?.value) return;
+      this.extractGuidsFromFilterValue(fv.value).forEach(guid => resultGuidSet.add(guid));
+    });
     const lowerSearchText = this.state.searchText.toLowerCase();
 
     return (
@@ -520,7 +545,7 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
         <div className={styles.searchContainer}>
           <input
             type="text"
-            placeholder="Search..."
+            placeholder={strings.Filters.SearchPlaceholder}
             defaultValue=""
             onChange={this.onSearchChange}
             className={styles.searchInput}
