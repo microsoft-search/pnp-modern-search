@@ -26,6 +26,7 @@ import { FilterValueOperatorWebComponent } from './filters/FilterValueOperatorCo
 import { SpoPathBreadcrumbWebComponent } from './SpoPathBreadcrumbComponent';
 import { SortWebComponent } from './SortComponent';
 import { DownloadSelectedItemsButtonWebComponent } from './DownloadSelectedItemsButtonComponent';
+import { FilterHierarchicalWebComponent } from './filters/FilterHierarchicalComponent';
 
 export class AvailableComponents {
 
@@ -140,6 +141,10 @@ export class AvailableComponents {
         {
             componentName: "pnp-download-selected-items-button",
             componentClass: DownloadSelectedItemsButtonWebComponent
+        },
+        {
+            componentName: "pnp-filterhierarchical",
+            componentClass: FilterHierarchicalWebComponent
         }
     ];
 }

@@ -38,6 +38,8 @@ define([], function() {
                 CustomizeFiltersDescription: "Configure search filters by adding or removing rows. You can select fields from the data source results (if already selected) or use static values for filters.For more details see https://microsoft-search.github.io/pnp-modern-search/usage/search-filters/#filter-settings",
                 CustomizeFiltersFieldLabel: "Customize filters",
                 ShowCount: "Show count",
+                TermSetId: "Termset id",
+                TermGroupId: "Term group id",
                 Operator: "Operator between values",
                 ANDOperator: "AND",
                 OROperator: "OR",
@@ -48,7 +50,8 @@ define([], function() {
                     ComboBoxTemplate: "Combo box",
                     DateIntervalTemplate: "Date interval",
                     PeopleTemplate: "People Template",
-                    TaxonomyPickerTemplate: "Taxonomy picker"
+                    TaxonomyPickerTemplate: "Taxonomy picker",
+                    HierarchicalFilterTemplate: "Hierarchical filter"
                 },
                 SortBy: "Sort values by",
                 SortDirection: "Sort direction",

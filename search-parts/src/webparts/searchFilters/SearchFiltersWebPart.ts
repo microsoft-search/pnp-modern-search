@@ -48,10 +48,18 @@ import PnPTelemetry from '@pnp/telemetry-js';
 import { MessageBar, MessageBarType } from '@fluentui/react/lib/MessageBar';
 import { IComboBoxOption } from '@fluentui/react/lib/ComboBox';
 import { Checkbox } from '@fluentui/react/lib/Checkbox';
+import { ITaxonomyService } from '../../services/taxonomyService/ITaxonomyService';
+import { TaxonomyService } from '../../services/taxonomyService/TaxonomyService';
 import { Dropdown, IDropdownOption, IDropdownProps } from '@fluentui/react/lib/Dropdown';
 import { TextField } from '@fluentui/react/lib/TextField';
 
 const LogSource = "SearchFiltersWebPart";
+
+interface IHierarchicalFilterConfiguration extends IDataFilterConfiguration {
+    termSetId?: string;
+    termGroupId?: string;
+    cacheDuration?: number;
+}
 
 export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebPartProps> implements IDynamicDataCallables {
 
@@ -93,6 +101,11 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     private templateService: ITemplateService = undefined;
 
     /**
+     * The taxonomy service instance
+     */
+    private taxonomyService: ITaxonomyService = undefined;
+
+    /**
      * the dynamic data service instance
      */
     private dynamicDataService: IDynamicDataService;
@@ -117,6 +130,11 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
      */
     private propertyPaneConnectionsFields: IPropertyPaneField<any>[] = [];
 
+    /**
+     * Cached grouped term sets: map of groupId -> array of term sets in that group
+     */
+    private readonly groupedTermSets: Map<string, Array<{ id: string, name: string, groupId: string, groupName: string }>> = new Map();
+
     constructor() {
         super();
         this._updateTitleProperty = this._updateTitleProperty.bind(this);
@@ -125,6 +143,29 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     private _updateTitleProperty(value: string) {
         this.properties.title = value;
         this.renderCompleted();
+    }
+
+    private async _loadTermSets(): Promise<void> {
+        try {
+            if (!this.taxonomyService || !this.context?.pageContext) {
+                return;
+            }
+
+            const termSets = await this.taxonomyService.getTermSets(this.context.pageContext.web.absoluteUrl);
+
+            this.groupedTermSets.clear();
+            for (const ts of termSets) {
+                if (!this.groupedTermSets.has(ts.groupId)) {
+                    this.groupedTermSets.set(ts.groupId, []);
+                }
+                const groupedTerms = this.groupedTermSets.get(ts.groupId);
+                if (groupedTerms) {
+                    groupedTerms.push(ts);
+                }
+            }
+        } catch (error) {
+            Log.error(LogSource, new Error(`Error loading term sets: ${error}`));
+        }
     }
     protected async onInit() {
         try {
@@ -235,6 +276,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                     selectedLayoutKey: this.properties.selectedLayoutKey,
                     properties: JSON.parse(JSON.stringify(this.properties)),
                     themeVariant: this._themeVariant,
+                    context: this.context,
                     onUpdateFilters: (updatedFilters: IDataFilter[]) => {
 
                         this._selectedFilters = updatedFilters;
@@ -243,6 +285,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                         this.context.dynamicDataSourceManager.notifyPropertyChanged(ComponentType.SearchFilters);
                     },
                     templateService: this.templateService,
+                    taxonomyService: this.taxonomyService,
                     webPartTitleProps: {
                         displayMode: this.displayMode,
                         title: this.properties.title,
@@ -426,6 +469,10 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
 
     protected async onPropertyPaneConfigurationStart() {
         await this.loadPropertyPaneResources();
+
+        if (this.groupedTermSets.size === 0) {
+            await this._loadTermSets();
+        }
     }
 
     protected async onPropertyPaneFieldChanged(propertyPath: string, oldValue: any, newValue: any): Promise<void> {
@@ -436,11 +483,20 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
             this.properties.filtersConfiguration = uniqBy(this.properties.filtersConfiguration, 'filterName');
 
             // Set correct default values according to the template
-            this.properties.filtersConfiguration = (newValue as IDataFilterConfiguration[]).map(configuration => {
+            const nextConfigurations = newValue as IHierarchicalFilterConfiguration[];
+            this.properties.filtersConfiguration = nextConfigurations.map(configuration => {
                 if (configuration.selectedTemplate === BuiltinFilterTemplates.DateRange
                     || configuration.selectedTemplate === BuiltinFilterTemplates.DateInterval) {
                     configuration.isMulti = false;
                     configuration.operator = FilterConditionOperator.AND;
+                }
+
+                // Preserve hierarchical settings set through custom fields.
+                const correspondingNewConfig = nextConfigurations.find(c => c.filterName === configuration.filterName);
+                if (correspondingNewConfig) {
+                    configuration.termSetId = correspondingNewConfig.termSetId;
+                    configuration.termGroupId = correspondingNewConfig.termGroupId;
+                    configuration.cacheDuration = correspondingNewConfig.cacheDuration;
                 }
 
                 return configuration;
@@ -795,6 +851,10 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                             {
                                 key: BuiltinFilterTemplates.ComboBox,
                                 text: webPartStrings.PropertyPane.DataFilterCollection.Templates.ComboBoxTemplate
+                            },
+                            {
+                                key: BuiltinFilterTemplates.Hierarchical,
+                                text: webPartStrings.PropertyPane.DataFilterCollection.Templates.HierarchicalFilterTemplate
                             }
                         ]
                     },
@@ -884,6 +944,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                         type: this._customCollectionFieldType.custom,
                         defaultValue: FilterSortType.ByName,
                         onCustomRender: (field, value, onUpdate, item) => {
+                            const currentItem = item as IHierarchicalFilterConfiguration;
                             return (
                                 React.createElement("div", null,
                                     React.createElement(Dropdown, {
@@ -897,7 +958,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                                                 text: webPartStrings.PropertyPane.DataFilterCollection.SortByCount
                                             },
                                         ],
-                                        disabled: item.selectedTemplate === BuiltinFilterTemplates.DateRange || item.selectedTemplate === BuiltinFilterTemplates.DateInterval,
+                                        disabled: currentItem.selectedTemplate === BuiltinFilterTemplates.DateRange || currentItem.selectedTemplate === BuiltinFilterTemplates.DateInterval || currentItem.selectedTemplate === BuiltinFilterTemplates.Hierarchical,
                                         defaultSelectedKey: item.sortBy,
                                         onChange: (ev, option) => onUpdate(field.id, option.key),
                                     } as IDropdownProps)
@@ -911,6 +972,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                         type: this._customCollectionFieldType.custom,
                         defaultValue: FilterSortDirection.Ascending,
                         onCustomRender: (field, value, onUpdate, item) => {
+                            const currentItem = item as IHierarchicalFilterConfiguration;
                             return (
                                 React.createElement("div", null,
                                     React.createElement(Dropdown, {
@@ -924,10 +986,377 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                                                 text: webPartStrings.PropertyPane.DataFilterCollection.SortDescending
                                             },
                                         ],
-                                        disabled: item.selectedTemplate === BuiltinFilterTemplates.DateRange || item.selectedTemplate === BuiltinFilterTemplates.DateInterval,
+                                        disabled: currentItem.selectedTemplate === BuiltinFilterTemplates.DateRange || currentItem.selectedTemplate === BuiltinFilterTemplates.DateInterval || currentItem.selectedTemplate === BuiltinFilterTemplates.Hierarchical,
                                         defaultSelectedKey: item.sortDirection,
                                         onChange: (ev, option) => onUpdate(field.id, option.key),
                                     } as IDropdownProps)
+                                )
+                            );
+                        }
+                    },
+                    {
+                        id: 'hierarchicalSettings',
+                        title: 'Hierarchical Settings',
+                        type: this._customCollectionFieldType.custom,
+                        onCustomRender: (field, value, onUpdate, item: IHierarchicalFilterConfiguration, itemId) => {
+                            if (item.selectedTemplate !== BuiltinFilterTemplates.Hierarchical) {
+                                return null;
+                            }
+
+                            const modalKey = `hierarchical_modal_${itemId}`;
+                            const showModal = (globalThis as any)[modalKey] || false;
+
+                            const currentTermSetId = item.termSetId || '';
+
+                            const extractGuid = (guidStr: string): string => {
+                                if (!guidStr) {
+                                    return '';
+                                }
+
+                                const match = /Guid\(([0-9a-fA-F-]{36})\)/.exec(guidStr);
+                                return match ? match[1] : guidStr;
+                            };
+
+                            let currentTermSetName = 'Not selected';
+                            if (currentTermSetId) {
+                                Array.from(this.groupedTermSets.values()).forEach(termSets => {
+                                    const found = termSets.find(ts => extractGuid(ts.id) === currentTermSetId);
+                                    if (found) {
+                                        currentTermSetName = found.name;
+                                    }
+                                });
+                            }
+
+                            const expandedKey = `expanded_termsets_${itemId}`;
+                            const expandedGroupsStr = (globalThis as any)[expandedKey] || '';
+                            const expandedGroups = new Set<string>(expandedGroupsStr ? expandedGroupsStr.split('|') : []);
+
+                            if (currentTermSetId && expandedGroups.size === 0) {
+                                Array.from(this.groupedTermSets.keys()).forEach(groupId => {
+                                    const termSets = this.groupedTermSets.get(groupId);
+                                    if (termSets) {
+                                        const hasSelectedTermSet = termSets.some(ts => extractGuid(ts.id) === currentTermSetId);
+                                        if (hasSelectedTermSet) {
+                                            expandedGroups.add(groupId);
+                                            (globalThis as any)[expandedKey] = Array.from(expandedGroups).join('|');
+                                        }
+                                    }
+                                });
+                            }
+
+                            const toggleGroupExpanded = (groupId: string) => {
+                                if (expandedGroups.has(groupId)) {
+                                    expandedGroups.delete(groupId);
+                                } else {
+                                    expandedGroups.add(groupId);
+                                }
+
+                                (globalThis as any)[expandedKey] = Array.from(expandedGroups).join('|');
+                                this.context.propertyPane.refresh();
+                            };
+
+                            const effectiveCacheDuration = item.cacheDuration ?? 3;
+
+                            if (!showModal) {
+                                return React.createElement("div", {
+                                    key: `${field.id}-${itemId}`,
+                                    style: { marginTop: '10px' }
+                                },
+                                    React.createElement("div", {
+                                        style: {
+                                            padding: '10px 12px',
+                                            backgroundColor: '#f0f0f0',
+                                            border: '1px solid #d0d0d0',
+                                            borderRadius: '2px',
+                                            marginBottom: '10px'
+                                        }
+                                    },
+                                        React.createElement("div", { style: { marginBottom: '8px' } },
+                                            React.createElement("strong", null, 'Term Set: '),
+                                            React.createElement("span", { style: { color: '#444' } }, currentTermSetName)
+                                        ),
+                                        React.createElement("div", null,
+                                            React.createElement("strong", null, 'Cache Duration: '),
+                                            React.createElement("span", { style: { color: '#444' } }, `${effectiveCacheDuration} days`)
+                                        )
+                                    ),
+                                    React.createElement("button", {
+                                        className: 'ms-Button ms-Button--primary',
+                                        onClick: () => {
+                                            (globalThis as any)[modalKey] = true;
+                                            this.context.propertyPane.refresh();
+                                        },
+                                        style: {
+                                            padding: '8px 16px',
+                                            backgroundColor: 'var(--themePrimary, #106ebe)',
+                                            color: 'var(--white, #ffffff)',
+                                            border: 'none',
+                                            borderRadius: '2px',
+                                            cursor: 'pointer',
+                                            fontSize: '14px',
+                                            fontWeight: '600'
+                                        }
+                                    }, 'Edit Hierarchical Settings')
+                                );
+                            }
+
+                            return React.createElement("div", {
+                                key: `${field.id}-modal-${itemId}`,
+                                style: {
+                                    position: 'fixed',
+                                    top: 0,
+                                    left: 0,
+                                    right: 0,
+                                    bottom: 0,
+                                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    zIndex: 10000
+                                },
+                                onClick: (e) => {
+                                    if (e.target === e.currentTarget) {
+                                        (globalThis as any)[modalKey] = false;
+                                        this.context.propertyPane.refresh();
+                                    }
+                                }
+                            },
+                                React.createElement("div", {
+                                    style: {
+                                        backgroundColor: 'white',
+                                        borderRadius: '4px',
+                                        padding: '20px',
+                                        width: '90%',
+                                        maxWidth: '500px',
+                                        maxHeight: '80vh',
+                                        overflowY: 'auto',
+                                        boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)'
+                                    }
+                                },
+                                    React.createElement("div", {
+                                        style: {
+                                            display: 'flex',
+                                            justifyContent: 'space-between',
+                                            alignItems: 'center',
+                                            marginBottom: '20px',
+                                            borderBottom: '1px solid #e0e0e0',
+                                            paddingBottom: '10px'
+                                        }
+                                    },
+                                        React.createElement("h3", { style: { margin: 0, fontSize: '16px', fontWeight: '600' } }, 'Hierarchical Filter Settings'),
+                                        React.createElement("button", {
+                                            onClick: () => {
+                                                (globalThis as any)[modalKey] = false;
+                                                this.context.propertyPane.refresh();
+                                            },
+                                            style: {
+                                                background: 'none',
+                                                border: 'none',
+                                                fontSize: '24px',
+                                                cursor: 'pointer',
+                                                padding: 0,
+                                                color: '#666'
+                                            }
+                                        }, '✕')
+                                    ),
+
+                                    React.createElement("div", { style: { marginBottom: '20px' } },
+                                        React.createElement("label", {
+                                            style: {
+                                                display: 'block',
+                                                marginBottom: '8px',
+                                                fontWeight: '600',
+                                                fontSize: '13px'
+                                            }
+                                        }, 'Select Term Set:'),
+                                        React.createElement("input", {
+                                            type: 'text',
+                                            placeholder: 'Search term sets...',
+                                            onChange: (e) => {
+                                                const searchKey = `termset_search_${itemId}`;
+                                                (globalThis as any)[searchKey] = e.target.value.toLowerCase();
+                                                this.context.propertyPane.refresh();
+                                            },
+                                            style: {
+                                                width: '100%',
+                                                padding: '8px',
+                                                marginBottom: '10px',
+                                                border: '1px solid #d0d0d0',
+                                                borderRadius: '2px',
+                                                fontSize: '13px',
+                                                boxSizing: 'border-box'
+                                            }
+                                        }),
+                                        React.createElement("div", {
+                                            style: {
+                                                border: '1px solid #ccc',
+                                                borderRadius: '2px',
+                                                maxHeight: '200px',
+                                                overflowY: 'auto',
+                                                padding: '8px'
+                                            }
+                                        },
+                                            (() => {
+                                                const searchKey = `termset_search_${itemId}`;
+                                                const searchText = (globalThis as any)[searchKey] || '';
+
+                                                const matchesSearch = (termSetName: string): boolean => {
+                                                    if (!searchText) {
+                                                        return true;
+                                                    }
+
+                                                    return termSetName.toLowerCase().includes(searchText);
+                                                };
+
+                                                const groupHasMatches = (termSets: Array<{ id: string, name: string, groupId: string, groupName: string }>): boolean => {
+                                                    if (!searchText) {
+                                                        return true;
+                                                    }
+
+                                                    return termSets.some(ts => matchesSearch(ts.name));
+                                                };
+
+                                                if (Array.from(this.groupedTermSets.entries()).length === 0) {
+                                                    return React.createElement("div", { style: { color: '#999', fontStyle: 'italic' } },
+                                                        'No term sets available. Loading term store...');
+                                                }
+
+                                                return Array.from(this.groupedTermSets.entries()).map(([groupId, termSets]) => {
+                                                    if (!groupHasMatches(termSets)) {
+                                                        return null;
+                                                    }
+
+                                                    const groupName = termSets.length > 0 ? termSets[0].groupName : groupId;
+                                                    const isExpanded = expandedGroups.has(groupId);
+
+                                                    return React.createElement("div", { key: groupId },
+                                                        React.createElement("div", {
+                                                            style: {
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                padding: '4px 0',
+                                                                cursor: 'pointer',
+                                                                userSelect: 'none'
+                                                            },
+                                                            onClick: () => toggleGroupExpanded(groupId)
+                                                        },
+                                                            React.createElement("span", {
+                                                                style: { marginRight: '6px', minWidth: '16px', fontSize: '12px', fontWeight: 'bold' }
+                                                            }, isExpanded ? '▼' : '▶'),
+                                                            React.createElement("span", { style: { fontWeight: 'bold', color: '#333' } }, groupName)
+                                                        ),
+                                                        isExpanded && React.createElement("div", {
+                                                            style: { marginLeft: '16px', paddingBottom: '8px' }
+                                                        },
+                                                            termSets.filter(ts => matchesSearch(ts.name)).map(ts => {
+                                                                const cleanTermSetId = extractGuid(ts.id);
+                                                                const isSelected = cleanTermSetId === currentTermSetId;
+
+                                                                return React.createElement("div", {
+                                                                    key: ts.id,
+                                                                    onClick: () => {
+                                                                        const cleanGroupId = extractGuid(ts.groupId);
+                                                                        onUpdate('termSetId', cleanTermSetId);
+                                                                        onUpdate('termGroupId', cleanGroupId);
+                                                                    },
+                                                                    style: {
+                                                                        display: 'flex',
+                                                                        alignItems: 'center',
+                                                                        padding: '6px 8px',
+                                                                        marginBottom: '4px',
+                                                                        backgroundColor: isSelected ? '#e3f2fd' : '#f5f5f5',
+                                                                        border: isSelected ? '2px solid #2196F3' : '1px solid #ddd',
+                                                                        borderRadius: '2px',
+                                                                        cursor: 'pointer'
+                                                                    }
+                                                                },
+                                                                    React.createElement("input", {
+                                                                        type: 'checkbox',
+                                                                        checked: isSelected,
+                                                                        readOnly: true,
+                                                                        style: { marginRight: '8px', cursor: 'pointer' }
+                                                                    }),
+                                                                    ts.name
+                                                                );
+                                                            })
+                                                        )
+                                                    );
+                                                }).filter(x => x !== null);
+                                            })()
+                                        )
+                                    ),
+
+                                    React.createElement("div", { style: { marginBottom: '20px' } },
+                                        React.createElement("label", {
+                                            style: {
+                                                display: 'block',
+                                                marginBottom: '8px',
+                                                fontWeight: '600',
+                                                fontSize: '13px'
+                                            }
+                                        }, `Cache Duration: ${effectiveCacheDuration} days`),
+                                        React.createElement("input", {
+                                            type: 'range',
+                                            min: 1,
+                                            max: 5,
+                                            value: effectiveCacheDuration,
+                                            onChange: (e) => {
+                                                const newValue = Number.parseInt(e.target.value, 10);
+                                                onUpdate('cacheDuration', newValue);
+                                            },
+                                            style: { width: '100%', height: '4px', borderRadius: '2px', outline: 'none', cursor: 'pointer' }
+                                        }),
+                                        React.createElement("div", {
+                                            style: { display: 'flex', justifyContent: 'space-between', marginTop: '4px', fontSize: '12px', color: '#666' }
+                                        },
+                                            React.createElement("span", null, '1'),
+                                            React.createElement("span", null, '5')
+                                        )
+                                    ),
+
+                                    React.createElement("div", { style: { marginBottom: '20px' } },
+                                        React.createElement("button", {
+                                            onClick: () => {
+                                                if (this.taxonomyService && item.termSetId) {
+                                                    this.taxonomyService.clearTermsCache(item.termSetId);
+                                                    alert('Terms cache cleared');
+                                                }
+                                            },
+                                            style: {
+                                                width: '100%',
+                                                padding: '10px',
+                                                backgroundColor: '#50e6ff',
+                                                color: '#333',
+                                                border: 'none',
+                                                borderRadius: '2px',
+                                                cursor: 'pointer',
+                                                fontSize: '13px',
+                                                fontWeight: '600'
+                                            }
+                                        }, 'Refresh Cache Now')
+                                    ),
+
+                                    React.createElement("div", {
+                                        style: { display: 'flex', gap: '8px', justifyContent: 'flex-end' }
+                                    },
+                                        React.createElement("button", {
+                                            className: 'ms-Button ms-Button--primary',
+                                            onClick: () => {
+                                                (globalThis as any)[modalKey] = false;
+                                                this.context.propertyPane.refresh();
+                                            },
+                                            style: {
+                                                padding: '8px 16px',
+                                                backgroundColor: 'var(--themePrimary, #106ebe)',
+                                                color: 'var(--white, #ffffff)',
+                                                border: 'none',
+                                                borderRadius: '2px',
+                                                cursor: 'pointer',
+                                                fontSize: '13px',
+                                                fontWeight: '600'
+                                            }
+                                        }, 'Done')
+                                    )
                                 )
                             );
                         }
@@ -1065,6 +1494,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     private async initializeWebPartServices(): Promise<void> {
         this.webPartInstanceServiceScope = this.context.serviceScope.startNewChild();
         this.templateService = this.webPartInstanceServiceScope.createAndProvide(TemplateService.ServiceKey, TemplateService);
+        this.taxonomyService = this.webPartInstanceServiceScope.createAndProvide(TaxonomyService.ServiceKey, TaxonomyService);
         this.dynamicDataService = this.webPartInstanceServiceScope.createAndProvide(DynamicDataService.ServiceKey, DynamicDataService);
         this.dynamicDataService.dynamicDataProvider = this.context.dynamicDataProvider;
         this.webPartInstanceServiceScope.finish();

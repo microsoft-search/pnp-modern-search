@@ -254,6 +254,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     }
 
     public async render(): Promise<void> {
+        try {
 
         // Check audience targeting - if user is not in audience, don't render
         const isInAudience = await this.isInAudience();
@@ -340,6 +341,11 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             this._currentDataContext = await this.getDataContext();
         }
         return this.renderCompleted();
+        } catch (error) {
+            this.errorMessage = error?.message ? error.message : error;
+            Log.error(LogSource, error);
+            return this.renderCompleted();
+        }
     }
 
     public getPropertyDefinitions(): IDynamicDataPropertyDefinition[] {

@@ -73,4 +73,8 @@ export interface ITerm extends ITaxonomyItem {
     LocalCustomProperties?: {
         [property: string]: any
     };
+    Labels?: {
+        _ObjectType_: string;
+        _Child_Items_: Array<{ Value: string; IsDefaultForLanguage: boolean; Language: number }>;
+    };
 }

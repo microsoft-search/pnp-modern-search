@@ -431,7 +431,9 @@ define([], function () {
             ComboBoxPlaceHolder: "Valitse arvo",
             UseAndOperatorValues: "Käytä JA operaattoria arvojen välissä",
             UseOrOperatorValues: "Käytä TAI operaattoria arvojen välissä",
-            UseValuesOperators: "Valitse operaattori käytettäväksi arvojen välissä"
+            UseValuesOperators: "Valitse operaattori käytettäväksi arvojen välissä",
+            LoadingMessage: "Ladataan...",
+            SearchPlaceholder: "Hae..."
         },
         SuggestionProviders: {
             SharePointStatic: {

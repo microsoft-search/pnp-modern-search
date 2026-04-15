@@ -198,6 +198,17 @@
 												>
 											</pnp-filterdateinterval>
 											</div>
+										{{else}}
+											{{#eq filter.selectedTemplate 'HierarchicalFilterTemplate'}}
+												<div class="filter--value">
+													<pnp-filterhierarchical 
+														data-instance-id="{{@root.instanceId}}" 
+														data-filter="{{JSONstringify filter 2}}"
+														data-theme-variant="{{JSONstringify @root.theme}}"
+													>
+													</pnp-filterhierarchical>
+												</div>
+											{{/eq}}
 										{{/eq}}	
 									{{/eq}}
 								{{/eq}}
@@ -207,6 +218,7 @@
 
 						<template id="collapsible-footer">
 							{{#isnt filter.selectedTemplate 'DateRangeFilterTemplate'}}
+								{{#isnt filter.selectedTemplate 'HierarchicalFilterTemplate'}}
 									{{#eq filter.values.length 0}}
 										<div class="filter--message">
 											{{@root.strings.FilterNoValuesMessage}}
@@ -221,6 +233,7 @@
 											</pnp-filtermultiselect>
 										{{/if}}
 									{{/eq}}
+								{{/isnt}}
 							{{/isnt}}
 						</template>
 
