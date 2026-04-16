@@ -79,7 +79,7 @@ export class TaxonomyService implements ITaxonomyService {
 	 * Gets all terms from a term set using CSOM and optional local storage cache.
 	 */
 	public async getTermsByTermSetId(siteUrl: string, termSetId: string, termGroupId: string, cacheDurationDays?: number): Promise<ITerm[]> {
-		void termGroupId;
+		void termGroupId; // eslint-disable-line no-void
 		const sanitizedTermSetId = this.normalizeGuid(termSetId);
 		if (!sanitizedTermSetId) {
 			Log.warn(TaxonomyService_ServiceKey, `Invalid term set id '${termSetId}' supplied.`);

@@ -260,6 +260,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         const isInAudience = await this.isInAudience();
         this._isHiddenByAudience = !isInAudience;
         if (!isInAudience) {
+            // eslint-disable-next-line @rushstack/pair-react-dom-render-unmount -- cleanup on audience hide, paired with onDispose
             ReactDom.unmountComponentAtNode(this.domElement);
             this.domElement.innerHTML = '';
             return this.renderCompleted();
@@ -558,6 +559,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             }, commonStrings.General.Resources.PleaseReferToDocumentationMessage));
         }
 
+        // eslint-disable-next-line @rushstack/pair-react-dom-render-unmount -- render is paired with unmount in onDispose
         ReactDom.render(renderRootElement, this.domElement);
 
         // Re-bind web component events after render to handle SPA navigation scenarios
@@ -638,6 +640,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         if (this._pushStateCallback) {
             window.history.pushState = this._pushStateCallback;
         }
+        // eslint-disable-next-line @rushstack/pair-react-dom-render-unmount -- paired with render in renderCompleted
         ReactDom.unmountComponentAtNode(this.domElement);
     }
 

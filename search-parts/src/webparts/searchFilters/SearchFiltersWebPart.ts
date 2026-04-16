@@ -243,6 +243,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
         const isInAudience = await this.isInAudience();
         this._isHiddenByAudience = !isInAudience;
         if (!isInAudience) {
+            // eslint-disable-next-line @rushstack/pair-react-dom-render-unmount -- cleanup on audience hide, paired with onDispose
             ReactDom.unmountComponentAtNode(this.domElement);
             this.domElement.innerHTML = '';
             return this.renderCompleted();
@@ -403,6 +404,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
             }
         }
 
+        // eslint-disable-next-line @rushstack/pair-react-dom-render-unmount -- render is paired with unmount in onDispose
         ReactDom.render(renderRootElement, this.domElement);
 
         // This call set this.renderedOnce to 'true' so we need to execute it at the very end
@@ -445,6 +447,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
 
     protected onDispose(): void {
         this.hierarchicalSettingsUiStateByItemId.clear();
+        // eslint-disable-next-line @rushstack/pair-react-dom-render-unmount -- paired with render in renderCompleted
         ReactDom.unmountComponentAtNode(this.domElement);
     }
 

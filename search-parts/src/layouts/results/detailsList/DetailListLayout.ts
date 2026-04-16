@@ -8,7 +8,6 @@ import { TemplateValueFieldEditor, ITemplateValueFieldEditorProps } from '../../
 import { AsyncCombo } from "../../../controls/PropertyPaneAsyncCombo/components/AsyncCombo";
 import { IAsyncComboProps } from "../../../controls/PropertyPaneAsyncCombo/components/IAsyncComboProps";
 import { PropertyFieldNumber } from "@pnp/spfx-property-controls/lib/PropertyFieldNumber";
-import commonStyles from './DetailsListLayout.module.scss';
 import sharedStyles from '../../../styles/Common.module.scss';
 
 /**
