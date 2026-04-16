@@ -34,9 +34,9 @@ export interface IFilterDateIntervalComponentProps {
     onUpdate: (filterValues: IDataFilterValueInfo[]) => void;
 
     /**
-     * The moment.js library reference
+     * The dayjs library reference
      */
-    moment: any;
+    dayjs: any;
 }
 
 export interface IFilterDateIntervalComponentState {
@@ -175,7 +175,7 @@ export class FilterDateIntervalComponent extends React.Component<IFilterDateInte
                 updatedValues.push(
                     {
                         name: strings.General.DateIntervalStrings.Older,
-                        value: this.props.moment(new Date()).subtract(1, 'years').subtract('minutes', 1).toISOString(), // Needed to distinguish past year VS older than a year
+                        value: this.props.dayjs(new Date()).subtract(1, 'years').subtract(1, 'minute').toISOString(), // Needed to distinguish past year VS older than a year
                         selected: true,
                         operator: FilterComparisonOperator.Lt
                     }
@@ -192,7 +192,7 @@ export class FilterDateIntervalComponent extends React.Component<IFilterDateInte
                     },
                     {
                         name: strings.General.DateIntervalStrings.PastDay,
-                        value: this.props.moment(new Date()).subtract(24, 'hours').toISOString(),
+                        value: this.props.dayjs(new Date()).subtract(24, 'hours').toISOString(),
                         selected: true,
                         operator: FilterComparisonOperator.Geq
                     }
@@ -203,13 +203,13 @@ export class FilterDateIntervalComponent extends React.Component<IFilterDateInte
                 updatedValues.push(
                     {
                         name: strings.General.DateIntervalStrings.Past3Months,
-                        value: this.props.moment(new Date()).subtract(1, 'months').toISOString(),
+                        value: this.props.dayjs(new Date()).subtract(1, 'months').toISOString(),
                         selected: true,
                         operator: FilterComparisonOperator.Leq
                     },
                     {
                         name: strings.General.DateIntervalStrings.Past3Months,
-                        value: this.props.moment(new Date()).subtract(3, 'months').toISOString(),
+                        value: this.props.dayjs(new Date()).subtract(3, 'months').toISOString(),
                         selected: true,
                         operator: FilterComparisonOperator.Geq
                     }
@@ -220,13 +220,13 @@ export class FilterDateIntervalComponent extends React.Component<IFilterDateInte
                 updatedValues.push(
                     {
                         name: strings.General.DateIntervalStrings.PastMonth,
-                        value: this.props.moment(new Date()).subtract(1, 'week').toISOString(),
+                        value: this.props.dayjs(new Date()).subtract(1, 'week').toISOString(),
                         selected: true,
                         operator: FilterComparisonOperator.Leq
                     },
                     {
                         name: strings.General.DateIntervalStrings.PastMonth,
-                        value: this.props.moment(new Date()).subtract(1, 'months').toISOString(),
+                        value: this.props.dayjs(new Date()).subtract(1, 'months').toISOString(),
                         selected: true,
                         operator: FilterComparisonOperator.Geq
                     }
@@ -237,13 +237,13 @@ export class FilterDateIntervalComponent extends React.Component<IFilterDateInte
                 updatedValues.push(
                     {
                         name: strings.General.DateIntervalStrings.PastWeek,
-                        value: this.props.moment(new Date()).subtract(24, 'hours').toISOString(),
+                        value: this.props.dayjs(new Date()).subtract(24, 'hours').toISOString(),
                         selected: true,
                         operator: FilterComparisonOperator.Leq
                     },
                     {
                         name: strings.General.DateIntervalStrings.PastWeek,
-                        value: this.props.moment(new Date()).subtract(1, 'week').toISOString(),
+                        value: this.props.dayjs(new Date()).subtract(1, 'week').toISOString(),
                         selected: true,
                         operator: FilterComparisonOperator.Geq
                     }
@@ -254,13 +254,13 @@ export class FilterDateIntervalComponent extends React.Component<IFilterDateInte
                 updatedValues.push(
                     {
                         name: strings.General.DateIntervalStrings.PastYear,
-                        value: this.props.moment(new Date()).subtract(3, 'months').toISOString(),
+                        value: this.props.dayjs(new Date()).subtract(3, 'months').toISOString(),
                         selected: true,
                         operator: FilterComparisonOperator.Leq
                     },
                     {
                         name: strings.General.DateIntervalStrings.PastYear,
-                        value: this.props.moment(new Date()).subtract(1, 'years').toISOString(),
+                        value: this.props.dayjs(new Date()).subtract(1, 'years').toISOString(),
                         selected: true,
                         operator: FilterComparisonOperator.Geq
                     }
@@ -276,7 +276,7 @@ export class FilterDateIntervalComponent extends React.Component<IFilterDateInte
     }
 
     private _getIntervalDateFromStartDate(startDate: Date, unit: string, count: number): Date {
-        return this.props.moment(startDate).subtract(count, unit).toDate();
+        return this.props.dayjs(startDate).subtract(count, unit).toDate();
     }
 
     private _getIntervalKeyForValue(dateAsString: string): string {
@@ -335,7 +335,7 @@ export class FilterDateIntervalWebComponent extends BaseWebComponent {
     public async connectedCallback() {
 
         const dateHelper = this._serviceScope.consume<DateHelper>(DateHelper.ServiceKey);
-        const moment = await dateHelper.moment();
+        const dayjs = await dateHelper.moment();
 
         let props = this.resolveAttributes();
         let renderDateRange: JSX.Element = null;
@@ -343,7 +343,7 @@ export class FilterDateIntervalWebComponent extends BaseWebComponent {
         if (props.filter) {
 
             const filter = props.filter as IDataFilterInternal;
-            renderDateRange = <FilterDateIntervalComponent {...props} moment={moment} filter={filter} onUpdate={((filterValues: IDataFilterValueInfo[]) => {
+            renderDateRange = <FilterDateIntervalComponent {...props} dayjs={dayjs} filter={filter} onUpdate={((filterValues: IDataFilterValueInfo[]) => {
 
                 // Unselect all previous values
                 const updatedValues = filter.values.map(value => {

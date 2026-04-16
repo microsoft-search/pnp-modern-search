@@ -76,7 +76,7 @@ export abstract class BaseWebComponent extends HTMLElement {
                             } catch (error) {
 
                                 // Date
-                                if (this._moment && this._moment(value, this._moment.ISO_8601, true).isValid()) {
+                                if (this._moment && this._moment(value).isValid()) {
                                     props[camelCase(attr)] = new Date(Date.parse(value));
                                 } else {
                                     // Return the original value as string

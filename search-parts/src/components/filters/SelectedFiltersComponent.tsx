@@ -33,9 +33,9 @@ export interface ISelectedFiltersProps {
     operator?: string;
 
     /**
-     * The moment.js library reference
+     * The dayjs library reference
      */
-    moment: any;
+    dayjs: any;
 
     /**
      * The current theme settings
@@ -85,7 +85,7 @@ export class SelectedFiltersComponent extends React.Component<ISelectedFiltersPr
                     }
     
                     renderValues =  filter.values.map((value, j) => {      
-                                        let   displayValue = this.props.moment && this.props.moment(value.value, this.props.moment.ISO_8601, true).isValid() ? this.props.moment(value.value).format('LL') : value.name;                                 
+                                        let   displayValue = this.props.dayjs && this.props.dayjs(value.value).isValid() ? this.props.dayjs(value.value).format('LL') : value.name;                                 
                                         
                                         if(displayValue.indexOf("i:0#") > -1) 
                                         {
@@ -229,13 +229,13 @@ export class SelectedFiltersWebComponent extends BaseWebComponent {
     public async connectedCallback() {
  
         const dateHelper = this._serviceScope.consume<DateHelper>(DateHelper.ServiceKey);
-        const moment = await dateHelper.moment();
+        const dayjs = await dateHelper.moment();
 
         let props = this.resolveAttributes();
         const filters = props.filters ? props.filters as IDataFilter[] : [];
         const filtersConfiguration = props.filtersConfiguration ? props.filtersConfiguration as IDataFilterConfiguration[] : [];
 
-        const filtersComponent = <SelectedFiltersComponent {...props} moment={moment} filters={filters} filtersConfiguration={filtersConfiguration}/>;
+        const filtersComponent = <SelectedFiltersComponent {...props} dayjs={dayjs} filters={filters} filtersConfiguration={filtersConfiguration}/>;
         ReactDOM.render(filtersComponent, this);
     }
     

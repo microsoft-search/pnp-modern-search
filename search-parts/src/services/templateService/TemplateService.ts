@@ -634,7 +634,7 @@ export class TemplateService implements ITemplateService {
                         wc.componentClass.prototype._serviceScope =
                             ServiceScopeHelper.getRootServiceScope(this.serviceScope);
 
-                        wc.componentClass.prototype.moment = this.dayjs;
+                        wc.componentClass.prototype._moment = this.dayjs;
                         window.customElements.define(wc.componentName, wc.componentClass);
                     } else {
                         // Update the instances array for all calling Web Parts
