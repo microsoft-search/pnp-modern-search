@@ -46,6 +46,7 @@ export interface IFilterHierarchicalState {
 export class FilterHierarchicalComponent extends React.Component<IFilterHierarchicalProps, IFilterHierarchicalState> {
 
   private searchDebounceTimer: ReturnType<typeof setTimeout> | null = null;
+  private pendingStateUpdateTimers: Array<ReturnType<typeof setTimeout>> = [];
 
   constructor(props: IFilterHierarchicalProps) {
     super(props);
@@ -183,8 +184,7 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
     if (prevValues.length !== currValues.length || prevSignature !== currSignature) {
       const selectedPathExpansions = this.getExpandedTermsForSelectedValues();
 
-      // Use setTimeout to defer heavy state update and avoid blocking the UI
-      setTimeout(() => {
+      this.scheduleStateUpdate(() => {
         this.setState(prevState => ({
           selectedTerms: this.initializeSelectedTerms(),
           expandedTerms: {
@@ -192,31 +192,33 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
             ...selectedPathExpansions
           }
         }));
-      }, 0);
+      });
     }
   }
 
   public componentWillUnmount(): void {
     if (this.searchDebounceTimer !== null) {
       clearTimeout(this.searchDebounceTimer);
+      this.searchDebounceTimer = null;
     }
+
+    this.pendingStateUpdateTimers.forEach(timer => clearTimeout(timer));
+    this.pendingStateUpdateTimers = [];
   }
 
   private toggleExpand = (termId: string): void => {
-    // Defer state update asynchronously to avoid blocking on expand/collapse
-    setTimeout(() => {
+    this.scheduleStateUpdate(() => {
       this.setState(prevState => ({
         expandedTerms: {
           ...prevState.expandedTerms,
           [termId]: !prevState.expandedTerms[termId]
         }
       }));
-    }, 0);
+    });
   }
 
   private onTermCheckboxChange = (term: any, checked: boolean): void => {
-    // Defer state update asynchronously to avoid blocking on event dispatch
-    setTimeout(() => {
+    this.scheduleStateUpdate(() => {
       this.setState(prevState => ({
         selectedTerms: checked
           ? Object.keys(prevState.selectedTerms).reduce((acc, key) => {
@@ -228,7 +230,7 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
               [term.id]: false
             }
       }));
-    }, 0);
+    });
 
     const termGuid = this.extractGuidFromTermId(term.id) || '';
     const isParentNode = term.children && term.children.length > 0;
@@ -469,6 +471,15 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
     }, 150);
   }
 
+  private scheduleStateUpdate(updateAction: () => void): void {
+    const timer = setTimeout(() => {
+      this.pendingStateUpdateTimers = this.pendingStateUpdateTimers.filter(currentTimer => currentTimer !== timer);
+      updateAction();
+    }, 0);
+
+    this.pendingStateUpdateTimers.push(timer);
+  }
+
   private renderTerm = (term: any, level: number = 0, resultGuids: Set<string> = new Set(), lowerSearchText: string = ''): JSX.Element | null => {
     const hasChildren = term.children && term.children.length > 0;
     const isExpanded = this.state.expandedTerms[term.id];
@@ -494,7 +505,7 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
           <Checkbox
             label={term.label}
             checked={isSelected}
-            onChange={(ev, checked) => this.onTermCheckboxChange(term, checked)}
+            onChange={(ev, checked) => this.onTermCheckboxChange(term, !!checked)}
             className={styles.termCheckbox}
             disabled={!termExistsInResults}
           />

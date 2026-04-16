@@ -61,6 +61,13 @@ interface IHierarchicalFilterConfiguration extends IDataFilterConfiguration {
     cacheDuration?: number;
 }
 
+interface IHierarchicalSettingsUiState {
+    showModal: boolean;
+    searchText: string;
+    expandedGroups: Set<string>;
+    cacheMessage: string;
+}
+
 export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebPartProps> implements IDynamicDataCallables {
 
     /**
@@ -134,6 +141,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
      * Cached grouped term sets: map of groupId -> array of term sets in that group
      */
     private readonly groupedTermSets: Map<string, Array<{ id: string, name: string, groupId: string, groupName: string }>> = new Map();
+    private readonly hierarchicalSettingsUiStateByItemId: Map<string, IHierarchicalSettingsUiState> = new Map();
 
     constructor() {
         super();
@@ -166,6 +174,23 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
         } catch (error) {
             Log.error(LogSource, new Error(`Error loading term sets: ${error}`));
         }
+    }
+
+    private getHierarchicalSettingsUiState(itemId: string | number): IHierarchicalSettingsUiState {
+        const stateKey = `${this.instanceId}_${String(itemId)}`;
+        let uiState = this.hierarchicalSettingsUiStateByItemId.get(stateKey);
+
+        if (!uiState) {
+            uiState = {
+                showModal: false,
+                searchText: '',
+                expandedGroups: new Set<string>(),
+                cacheMessage: ''
+            };
+            this.hierarchicalSettingsUiStateByItemId.set(stateKey, uiState);
+        }
+
+        return uiState;
     }
     protected async onInit() {
         try {
@@ -413,6 +438,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     }
 
     protected onDispose(): void {
+        this.hierarchicalSettingsUiStateByItemId.clear();
         ReactDom.unmountComponentAtNode(this.domElement);
     }
 
@@ -1003,8 +1029,8 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                                 return null;
                             }
 
-                            const modalKey = `hierarchical_modal_${itemId}`;
-                            const showModal = (globalThis as any)[modalKey] || false;
+                            const uiState = this.getHierarchicalSettingsUiState(itemId);
+                            const showModal = uiState.showModal;
 
                             const currentTermSetId = item.termSetId || '';
 
@@ -1027,9 +1053,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                                 });
                             }
 
-                            const expandedKey = `expanded_termsets_${itemId}`;
-                            const expandedGroupsStr = (globalThis as any)[expandedKey] || '';
-                            const expandedGroups = new Set<string>(expandedGroupsStr ? expandedGroupsStr.split('|') : []);
+                            const expandedGroups = new Set<string>(uiState.expandedGroups);
 
                             if (currentTermSetId && expandedGroups.size === 0) {
                                 Array.from(this.groupedTermSets.keys()).forEach(groupId => {
@@ -1038,7 +1062,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                                         const hasSelectedTermSet = termSets.some(ts => extractGuid(ts.id) === currentTermSetId);
                                         if (hasSelectedTermSet) {
                                             expandedGroups.add(groupId);
-                                            (globalThis as any)[expandedKey] = Array.from(expandedGroups).join('|');
+                                            uiState.expandedGroups = new Set(expandedGroups);
                                         }
                                     }
                                 });
@@ -1051,7 +1075,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                                     expandedGroups.add(groupId);
                                 }
 
-                                (globalThis as any)[expandedKey] = Array.from(expandedGroups).join('|');
+                                uiState.expandedGroups = new Set(expandedGroups);
                                 this.context.propertyPane.refresh();
                             };
 
@@ -1083,7 +1107,8 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                                     React.createElement("button", {
                                         className: 'ms-Button ms-Button--primary',
                                         onClick: () => {
-                                            (globalThis as any)[modalKey] = true;
+                                            uiState.showModal = true;
+                                            uiState.cacheMessage = '';
                                             this.context.propertyPane.refresh();
                                         },
                                         style: {
@@ -1116,7 +1141,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                                 },
                                 onClick: (e) => {
                                     if (e.target === e.currentTarget) {
-                                        (globalThis as any)[modalKey] = false;
+                                        uiState.showModal = false;
                                         this.context.propertyPane.refresh();
                                     }
                                 }
@@ -1146,7 +1171,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                                         React.createElement("h3", { style: { margin: 0, fontSize: '16px', fontWeight: '600' } }, 'Hierarchical Filter Settings'),
                                         React.createElement("button", {
                                             onClick: () => {
-                                                (globalThis as any)[modalKey] = false;
+                                                uiState.showModal = false;
                                                 this.context.propertyPane.refresh();
                                             },
                                             style: {
@@ -1172,9 +1197,9 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                                         React.createElement("input", {
                                             type: 'text',
                                             placeholder: 'Search term sets...',
+                                            value: uiState.searchText,
                                             onChange: (e) => {
-                                                const searchKey = `termset_search_${itemId}`;
-                                                (globalThis as any)[searchKey] = e.target.value.toLowerCase();
+                                                uiState.searchText = e.target.value.toLowerCase();
                                                 this.context.propertyPane.refresh();
                                             },
                                             style: {
@@ -1197,8 +1222,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                                             }
                                         },
                                             (() => {
-                                                const searchKey = `termset_search_${itemId}`;
-                                                const searchText = (globalThis as any)[searchKey] || '';
+                                                const searchText = uiState.searchText;
 
                                                 const matchesSearch = (termSetName: string): boolean => {
                                                     if (!searchText) {
@@ -1319,7 +1343,8 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                                             onClick: () => {
                                                 if (this.taxonomyService && item.termSetId) {
                                                     this.taxonomyService.clearTermsCache(item.termSetId);
-                                                    alert('Terms cache cleared');
+                                                    uiState.cacheMessage = 'Terms cache cleared';
+                                                    this.context.propertyPane.refresh();
                                                 }
                                             },
                                             style: {
@@ -1335,6 +1360,16 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                                             }
                                         }, 'Refresh Cache Now')
                                     ),
+                                    uiState.cacheMessage
+                                        ? React.createElement(MessageBar, {
+                                            messageBarType: MessageBarType.success,
+                                            isMultiline: false,
+                                            onDismiss: () => {
+                                                uiState.cacheMessage = '';
+                                                this.context.propertyPane.refresh();
+                                            }
+                                        }, uiState.cacheMessage)
+                                        : null,
 
                                     React.createElement("div", {
                                         style: { display: 'flex', gap: '8px', justifyContent: 'flex-end' }
@@ -1342,7 +1377,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                                         React.createElement("button", {
                                             className: 'ms-Button ms-Button--primary',
                                             onClick: () => {
-                                                (globalThis as any)[modalKey] = false;
+                                                uiState.showModal = false;
                                                 this.context.propertyPane.refresh();
                                             },
                                             style: {

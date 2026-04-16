@@ -4,6 +4,15 @@ import { BuiltinTokenNames } from "../services/tokenService/TokenService";
 import { BuiltinFilterTypes } from "../layouts/AvailableTemplates";
 
 export class DataFilterHelper {
+    private static isIsoDateValue(value: string, dayjs: any): boolean {
+        if (!value) {
+            return false;
+        }
+
+        const normalizedValue = value.trim().replace(/^"(.*)"$/, '$1');
+        const isoDatePattern = /^\d{4}-\d{2}-\d{2}(?:[Tt ]\d{2}:\d{2}(?::\d{2}(?:\.\d{1,7})?)?(?:[Zz]|[+-]\d{2}:?\d{2})?)?$/;
+        return isoDatePattern.test(normalizedValue) && dayjs(normalizedValue).isValid();
+    }
 
     /**
      * Returns the configuration for a specific filter
@@ -97,7 +106,7 @@ export class DataFilterHelper {
                 let dateOperator = null;
                 const fieldValues = values
                     .map(refinement => {
-                        if (dayjs(refinement.value, dayjs.ISO_8601, true).isValid()) {
+                        if (DataFilterHelper.isIsoDateValue(refinement.value, dayjs)) {
                             if (!startDate && (refinement.operator === FilterComparisonOperator.Geq || refinement.operator === FilterComparisonOperator.Gt)) {
                                 dateOperator = ">=";
                                 startDate = refinement.value;
@@ -161,7 +170,7 @@ export class DataFilterHelper {
 
                     let value = filterValue.value;
 
-                    if (dayjs(value, dayjs.ISO_8601, true).isValid()) {
+                    if (DataFilterHelper.isIsoDateValue(value, dayjs)) {
                         if (!startDate && (filterValue.operator === FilterComparisonOperator.Geq || filterValue.operator === FilterComparisonOperator.Gt)) {
                             startDate = value;
                             startBehaviour = filterValue.operator === FilterComparisonOperator.Gt ? "GT" : "GE";
@@ -220,7 +229,7 @@ export class DataFilterHelper {
                     }
 
                     // https://docs.microsoft.com/en-us/sharepoint/dev/general-development/fast-query-language-fql-syntax-reference#fql_range_operator
-                    if (dayjs(refinementToken, dayjs.ISO_8601, true).isValid()) {
+                    if (DataFilterHelper.isIsoDateValue(refinementToken, dayjs)) {
 
                         if (filterValue.operator === FilterComparisonOperator.Gt || filterValue.operator === FilterComparisonOperator.Geq) {
                             refinementToken = `range(${refinementToken},max)`;

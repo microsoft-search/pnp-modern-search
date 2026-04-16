@@ -13,6 +13,8 @@ export class TaxonomyService implements ITaxonomyService {
 
 	private readonly termsCachePrefix = 'pnp_taxonomy_cache_';
 
+	private readonly guidPattern = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
+
 	/**
 	 * The SPHttpClient instance
 	 */
@@ -78,7 +80,13 @@ export class TaxonomyService implements ITaxonomyService {
 	 */
 	public async getTermsByTermSetId(siteUrl: string, termSetId: string, termGroupId: string, cacheDurationDays?: number): Promise<ITerm[]> {
 		void termGroupId;
-		const cacheKey = `${this.termsCachePrefix}${termSetId}`;
+		const sanitizedTermSetId = this.normalizeGuid(termSetId);
+		if (!sanitizedTermSetId) {
+			Log.warn(TaxonomyService_ServiceKey, `Invalid term set id '${termSetId}' supplied.`);
+			return [];
+		}
+
+		const cacheKey = `${this.termsCachePrefix}${sanitizedTermSetId}`;
 		const effectiveCacheDuration = cacheDurationDays !== undefined ? cacheDurationDays : 3;
 
 		try {
@@ -98,7 +106,7 @@ export class TaxonomyService implements ITaxonomyService {
 		}
 
 		const clientServiceUrl = `${siteUrl}/_vti_bin/client.svc/ProcessQuery`;
-		const data = `<Request xmlns="http://schemas.microsoft.com/sharepoint/clientquery/2009" SchemaVersion="15.0.0.0" LibraryVersion="16.0.0.0" ApplicationName="pnp"><Actions><ObjectPath Id="1" ObjectPathId="0"/><ObjectPath Id="3" ObjectPathId="2"/><ObjectPath Id="5" ObjectPathId="4"/><ObjectPath Id="7" ObjectPathId="6"/><Query Id="8" ObjectPathId="6"><Query SelectAllProperties="true"><Properties/></Query><ChildItemQuery SelectAllProperties="true"><Properties/></ChildItemQuery></Query></Actions><ObjectPaths><StaticMethod Id="0" Name="GetTaxonomySession" TypeId="{981cbc68-9edc-4f8d-872f-71146fcbb84f}"/><Method Id="2" ParentId="0" Name="GetDefaultSiteCollectionTermStore"/><Method Id="4" ParentId="2" Name="GetTermSet"><Parameters><Parameter Type="String">${termSetId}</Parameter></Parameters></Method><Method Id="6" ParentId="4" Name="GetAllTerms"/></ObjectPaths></Request>`;
+		const data = `<Request xmlns="http://schemas.microsoft.com/sharepoint/clientquery/2009" SchemaVersion="15.0.0.0" LibraryVersion="16.0.0.0" ApplicationName="pnp"><Actions><ObjectPath Id="1" ObjectPathId="0"/><ObjectPath Id="3" ObjectPathId="2"/><ObjectPath Id="5" ObjectPathId="4"/><ObjectPath Id="7" ObjectPathId="6"/><Query Id="8" ObjectPathId="6"><Query SelectAllProperties="true"><Properties/></Query><ChildItemQuery SelectAllProperties="true"><Properties/></ChildItemQuery></Query></Actions><ObjectPaths><StaticMethod Id="0" Name="GetTaxonomySession" TypeId="{981cbc68-9edc-4f8d-872f-71146fcbb84f}"/><Method Id="2" ParentId="0" Name="GetDefaultSiteCollectionTermStore"/><Method Id="4" ParentId="2" Name="GetTermSet"><Parameters><Parameter Type="String">${this.escapeXml(sanitizedTermSetId)}</Parameter></Parameters></Method><Method Id="6" ParentId="4" Name="GetAllTerms"/></ObjectPaths></Request>`;
 
 		try {
 			const response = await this.spHttpClient.post(clientServiceUrl, SPHttpClient.configurations.v1, {
@@ -138,7 +146,7 @@ export class TaxonomyService implements ITaxonomyService {
 				return terms;
 			}
 		} catch (error) {
-			Log.warn(TaxonomyService_ServiceKey, `Error calling CSOM for term set '${termSetId}': ${error}`);
+			Log.warn(TaxonomyService_ServiceKey, `Error calling CSOM for term set '${sanitizedTermSetId}': ${error}`);
 		}
 
 		return [];
@@ -201,9 +209,32 @@ export class TaxonomyService implements ITaxonomyService {
 
 	public clearTermsCache(termSetId: string): void {
 		try {
+			const sanitizedTermSetId = this.normalizeGuid(termSetId);
+			if (sanitizedTermSetId) {
+				localStorage.removeItem(`${this.termsCachePrefix}${sanitizedTermSetId}`);
+			}
 			localStorage.removeItem(`${this.termsCachePrefix}${termSetId}`);
 		} catch (error) {
 			Log.warn(TaxonomyService_ServiceKey, `Error clearing cache: ${error}`);
 		}
+	}
+
+	private normalizeGuid(value: string): string | null {
+		if (!value || typeof value !== 'string') {
+			return null;
+		}
+
+		const trimmedValue = value.trim();
+		const guid = trimmedValue.replace(/[{}]/g, '');
+		return this.guidPattern.test(guid) ? guid.toLowerCase() : null;
+	}
+
+	private escapeXml(value: string): string {
+		return value
+			.replace(/&/g, '&amp;')
+			.replace(/</g, '&lt;')
+			.replace(/>/g, '&gt;')
+			.replace(/"/g, '&quot;')
+			.replace(/'/g, '&apos;');
 	}
 }

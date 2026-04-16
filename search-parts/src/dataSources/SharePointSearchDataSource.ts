@@ -1015,11 +1015,11 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                     }
                     const today = todayDate.toISOString();
 
-                    const pastYear = this.dayjs(todayDate).subtract(1, 'years').subtract('minutes', 1).toISOString();
-                    const past3Months = this.dayjs(todayDate).subtract(3, 'months').subtract('minutes', 1).toISOString();
-                    const pastMonth = this.dayjs(todayDate).subtract(1, 'months').subtract('minutes', 1).toISOString();
-                    const pastWeek = this.dayjs(todayDate).subtract(1, 'week').subtract('minutes', 1).toISOString();
-                    const past24hours = this.dayjs(todayDate).subtract(24, 'hours').subtract('minutes', 1).toISOString();
+                    const pastYear = this.dayjs(todayDate).subtract(1, 'years').subtract(1, 'minute').toISOString();
+                    const past3Months = this.dayjs(todayDate).subtract(3, 'months').subtract(1, 'minute').toISOString();
+                    const pastMonth = this.dayjs(todayDate).subtract(1, 'months').subtract(1, 'minute').toISOString();
+                    const pastWeek = this.dayjs(todayDate).subtract(1, 'week').subtract(1, 'minute').toISOString();
+                    const past24hours = this.dayjs(todayDate).subtract(24, 'hours').subtract(1, 'minute').toISOString();
                     // const today = new Date().toISOString();
 
                     return `${filterConfig.filterName}(discretize=manual/${pastYear}/${past3Months}/${pastMonth}/${pastWeek}/${past24hours}/${today})`;

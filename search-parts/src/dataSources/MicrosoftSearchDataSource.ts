@@ -1180,11 +1180,11 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
     }
 
     private buildDateRanges(): any[] {
-        const pastYear = this.dayjs(new Date()).subtract(1, 'years').subtract('minutes', 1).toISOString();
-        const past3Months = this.dayjs(new Date()).subtract(3, 'months').subtract('minutes', 1).toISOString();
-        const pastMonth = this.dayjs(new Date()).subtract(1, 'months').subtract('minutes', 1).toISOString();
-        const pastWeek = this.dayjs(new Date()).subtract(1, 'week').subtract('minutes', 1).toISOString();
-        const past24hours = this.dayjs(new Date()).subtract(24, 'hours').subtract('minutes', 1).toISOString();
+        const pastYear = this.dayjs(new Date()).subtract(1, 'years').subtract(1, 'minute').toISOString();
+        const past3Months = this.dayjs(new Date()).subtract(3, 'months').subtract(1, 'minute').toISOString();
+        const pastMonth = this.dayjs(new Date()).subtract(1, 'months').subtract(1, 'minute').toISOString();
+        const pastWeek = this.dayjs(new Date()).subtract(1, 'week').subtract(1, 'minute').toISOString();
+        const past24hours = this.dayjs(new Date()).subtract(24, 'hours').subtract(1, 'minute').toISOString();
         const today = new Date().toISOString();
 
         return [
@@ -1538,4 +1538,3 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         } as IDataFilterResultValue));
     }
 }
-
