@@ -901,13 +901,13 @@ function helperPascalcase(str: any): string {
 function helperPathcase(str: any): string {
     if (!isString(str)) return "";
     return str
-        .replace(/[A-Z]/g, (c) => `/${c.toLowerCase()}`)
-        .replace(/[\s_.-]+/g, "/")
+        .replaceAll(/[A-Z]/g, (c) => `/${c.toLowerCase()}`)
+        .replaceAll(/[\s_.-]+/g, "/")
         .replace(/^\//, "");
 }
 
 function helperPlusify(str: any): string {
-    return isString(str) ? str.replace(/\s/g, "+") : "";
+    return isString(str) ? str.replaceAll(/\s/g, "+") : "";
 }
 
 function helperPrepend(str: any, prefix: string): string {
