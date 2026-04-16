@@ -134,7 +134,10 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
 
         // Check audience targeting - if user is not in audience, don't render
         const isInAudience = await this.isInAudience();
+        this._isHiddenByAudience = !isInAudience;
         if (!isInAudience) {
+            // eslint-disable-next-line @rushstack/pair-react-dom-render-unmount -- cleanup on audience hide, paired with onDispose
+            ReactDom.unmountComponentAtNode(this.domElement);
             this.domElement.innerHTML = '';
             return this.renderCompleted();
         }
@@ -161,6 +164,12 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
 
     protected renderCompleted(): void {
 
+        // If hidden by audience targeting, skip rendering and just mark as completed
+        if (this._isHiddenByAudience) {
+            super.renderCompleted();
+            return;
+        }
+
         if (!this.domElement) {
             return;
         }
@@ -174,7 +183,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
                     inputValue = decodeURIComponent(inputValue);
                 }
 
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
             } catch (error) {
                 // Likely issue when q=%25 in spfx
             }
@@ -182,13 +191,17 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
 
         if (inputValue && typeof (inputValue) === 'string') {
 
-            // Notify subscriber a new value if available
-            this._searchQueryText = decodeURIComponent(inputValue);
+            const decodedInputValue = decodeURIComponent(inputValue);
 
-            // Set the input query text globally for the page. There can be only one input query text submitted at a time even if multiple search box components are on the page
-            GlobalSettings.setValue(BuiltinTokenNames.inputQueryText, this._searchQueryText);
+            // Only notify subscribers if the value actually changed
+            if (decodedInputValue !== this._searchQueryText) {
+                this._searchQueryText = decodedInputValue;
 
-            this.context.dynamicDataSourceManager.notifyPropertyChanged(ComponentType.SearchBox);
+                // Set the input query text globally for the page. There can be only one input query text submitted at a time even if multiple search box components are on the page
+                GlobalSettings.setValue(BuiltinTokenNames.inputQueryText, this._searchQueryText);
+
+                this.context.dynamicDataSourceManager.notifyPropertyChanged(ComponentType.SearchBox);
+            }
         }
 
         renderRootElement = React.createElement(SearchBoxContainer, {
@@ -241,6 +254,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
             }, commonStrings.General.Resources.PleaseReferToDocumentationMessage));
         }
 
+        // eslint-disable-next-line @rushstack/pair-react-dom-render-unmount -- render is paired with unmount in onDispose
         ReactDom.render(renderRootElement, this.domElement);
 
         // This call set this.renderedOnce to 'true' so we need to execute it at the very end
@@ -251,6 +265,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
         if (this._pushStateCallback) {
             window.history.pushState = this._pushStateCallback;
         }
+        // eslint-disable-next-line @rushstack/pair-react-dom-render-unmount -- paired with render in renderCompleted
         ReactDom.unmountComponentAtNode(this.domElement);
     }
 
@@ -472,6 +487,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
                     disabled: !this.properties.enableQuerySuggestions,
                     label: webPartStrings.PropertyPane.QuerySuggestionsGroup.SuggestionProvidersLabel,
                     value: this.properties.suggestionProviderConfiguration,
+                    tableClassName: commonStyles.slotTable,
                     fields: [
                         {
                             id: 'enabled',
@@ -620,7 +636,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
                 showValue: true,
                 value: this.properties.searchBoxFontSize || 14
             }),
-            
+
             // Colors
             PropertyFieldColorPicker('searchBoxBorderColor', {
                 label: webPartStrings.PropertyPane.SearchBoxStylingGroup.BorderColorLabel,
@@ -670,7 +686,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
                 style: PropertyFieldColorPickerStyle.Inline,
                 key: 'searchButtonColorFieldId'
             }),
-            
+
             // Search Button Configuration
             PropertyPaneToggle('showSearchButtonWhenEmpty', {
                 label: webPartStrings.PropertyPane.SearchBoxStylingGroup.ShowSearchButtonWhenEmptyLabel,
@@ -698,7 +714,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
                 placeholder: 'Search',
                 disabled: this.properties.searchButtonDisplayMode === 'icon'
             }),
-            
+
             // Reset
             PropertyPaneButton('resetSearchBoxStyling', {
                 text: webPartStrings.PropertyPane.SearchBoxStylingGroup.ResetToDefaultLabel,
@@ -719,16 +735,16 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
         this.properties.searchButtonColor = undefined;
         this.properties.placeholderTextColor = undefined;
         this.properties.searchBoxTextColor = undefined;
-        
+
         // Reset button properties to their default values
         this.properties.showSearchButtonWhenEmpty = undefined;
         this.properties.searchButtonDisplayMode = undefined;
         this.properties.searchIconName = undefined;
         this.properties.searchButtonText = undefined;
-        
+
         // Refresh the property pane to show the reset values
         this.context.propertyPane.refresh();
-        
+
         // Re-render the web part to apply changes
         this.render();
     }
@@ -744,6 +760,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
                 panelDescription: webPartStrings.PropertyPane.InformationPage.Extensibility.PanelDescription,
                 label: commonStrings.PropertyPane.InformationPage.Extensibility.FieldLabel,
                 value: this.properties.extensibilityLibraryConfiguration,
+                tableClassName: commonStyles.slotTable,
                 fields: [
                     {
                         id: 'name',
@@ -1058,7 +1075,11 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
         const source = DynamicPropertyHelper.tryGetSourceSafe(this.properties.queryText);
 
         if (source && source.id === ComponentType.PageEnvironment) {
-            this.render();
+            // Only re-render if the dynamic property value actually changed
+            const currentValue = DynamicPropertyHelper.tryGetValueSafe(this.properties.queryText);
+            if (currentValue !== this._searchQueryText) {
+                this.render();
+            }
         }
     }
 }

@@ -8,6 +8,7 @@ import { SPHttpClient, SPHttpClientResponse } from '@microsoft/sp-http';
 export class AudienceTargetingService {
     private static readonly CLAIM_USER_PREFIX = "i:0#.f|membership|";
     private static readonly CLAIM_GROUP_PREFIX = "c:0o.c|federateddirectoryclaimprovider|";
+    private static readonly CLAIM_TENANT_PREFIX = "c:0t.c|tenant|";
     private static readonly AAD_GROUP_CACHE_KEY = "PnPModernSearchAudienceAADCache";
 
     private _audiences: IPropertyFieldGroupOrPerson[];
@@ -43,8 +44,12 @@ export class AudienceTargetingService {
             }
 
             // Collect all AAD group IDs for batch checking
-            if (audience.login === "FederatedDirectoryClaimProvider") {
-                aadGroupIds.push(audience.id.replace(AudienceTargetingService.CLAIM_GROUP_PREFIX, ""));
+            if (audience.id && audience.login === "FederatedDirectoryClaimProvider"
+                && audience.id.toLowerCase().startsWith(AudienceTargetingService.CLAIM_GROUP_PREFIX.toLowerCase())) {
+                aadGroupIds.push(audience.id.substring(AudienceTargetingService.CLAIM_GROUP_PREFIX.length));
+            } else if (audience.id && audience.login === "Tenant"
+                && audience.id.toLowerCase().startsWith(AudienceTargetingService.CLAIM_TENANT_PREFIX.toLowerCase())) {
+                aadGroupIds.push(audience.id.substring(AudienceTargetingService.CLAIM_TENANT_PREFIX.length));
             }
         }
 
@@ -111,8 +116,9 @@ export class AudienceTargetingService {
     }
 
     /**
-     * Check if the current user is a member or transitive member of an AAD group
-     * @param groupIds The IDs of the Azure AD groups
+     * Check if the current user is a member of any of the specified Entra groups (transitive).
+     * Uses getMemberGroups which returns up to 11,000 group IDs in a single call.
+     * @param groupIds The IDs of the Entra groups to check
      * @returns true if the user is a member of any of the groups, false otherwise
      */
     private async isCurrentUserMemberOfAADGroup(groupIds: string[]): Promise<boolean> {
@@ -134,23 +140,22 @@ export class AudienceTargetingService {
 
             const graphClient = await this._context.msGraphClientFactory.getClient('3');
 
-            // Get the list of groups (including nested groups) the current user is a member of
-            const transitiveGroups = await graphClient
-                .api('/me/transitiveMemberOf')
+            // Use getMemberGroups (POST) which is transitive and returns up to 11,000 group IDs
+            // in a single call without pagination
+            const response = await graphClient
+                .api('/me/getMemberGroups')
                 .version('v1.0')
-                .select('id') // Only select group IDs to reduce the payload
-                .get();
+                .post({ securityEnabledOnly: false });
 
-            // Cache the groupIds and timestamp in localStorage
-            const transitiveGroupIds = transitiveGroups.value.map((group: { id: string }) => group.id);
+            const memberGroupIds: string[] = response.value;
             const groupData = {
-                ids: transitiveGroupIds,
+                ids: memberGroupIds,
                 timestamp: new Date().getTime().toString()
             };
             localStorage.setItem(AudienceTargetingService.AAD_GROUP_CACHE_KEY, JSON.stringify(groupData));
 
             // Filter locally for the group IDs you're interested in
-            return groupIds.some(groupId => transitiveGroupIds.includes(groupId));
+            return groupIds.some(groupId => memberGroupIds.includes(groupId));
         } catch (error) {
             console.error(`Error checking AAD group membership: ${error}`);
             return false;

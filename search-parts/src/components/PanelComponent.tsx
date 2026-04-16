@@ -207,9 +207,9 @@ export class PanelComponent extends React.Component<IPanelComponentProps, IPanel
         if (this.state.showPanel) {
             // Catch panel event
             // Because the panel is outside the component DOM elemnt itself, we need to catch the event at document level
-            document.addEventListener(ExtensibilityConstants.EVENT_FILTER_UPDATED, this._updateFilter);
+            document.addEventListener(ExtensibilityConstants.EVENT_FILTER_UPDATED, this._updateFilter as EventListener);
         } else {
-            document.removeEventListener(ExtensibilityConstants.EVENT_FILTER_UPDATED, this._updateFilter);
+            document.removeEventListener(ExtensibilityConstants.EVENT_FILTER_UPDATED, this._updateFilter as EventListener);
         }
     }
 
@@ -219,9 +219,9 @@ export class PanelComponent extends React.Component<IPanelComponentProps, IPanel
     private bindApplyFiltersEvents() {
 
         if (this.state.showPanel) {
-            document.addEventListener(ExtensibilityConstants.EVENT_FILTER_APPLY_ALL, this._applyAllFilters);
+            document.addEventListener(ExtensibilityConstants.EVENT_FILTER_APPLY_ALL, this._applyAllFilters as EventListener);
         } else {
-            document.removeEventListener(ExtensibilityConstants.EVENT_FILTER_APPLY_ALL, this._applyAllFilters);
+            document.removeEventListener(ExtensibilityConstants.EVENT_FILTER_APPLY_ALL, this._applyAllFilters as EventListener);
         }
     }
 
@@ -231,9 +231,9 @@ export class PanelComponent extends React.Component<IPanelComponentProps, IPanel
     private bindClearFiltersEvents() {
 
         if (this.state.showPanel) {
-            document.addEventListener(ExtensibilityConstants.EVENT_FILTER_CLEAR_ALL, this._clearAllFilters);
+            document.addEventListener(ExtensibilityConstants.EVENT_FILTER_CLEAR_ALL, this._clearAllFilters as EventListener);
         } else {
-            document.removeEventListener(ExtensibilityConstants.EVENT_FILTER_CLEAR_ALL, this._clearAllFilters);
+            document.removeEventListener(ExtensibilityConstants.EVENT_FILTER_CLEAR_ALL, this._clearAllFilters as EventListener);
         }
     }
 
@@ -242,9 +242,9 @@ export class PanelComponent extends React.Component<IPanelComponentProps, IPanel
      */
     private bindOperatorSelectionEvents() {
         if (this.state.showPanel) {
-            document.addEventListener(ExtensibilityConstants.EVENT_FILTER_VALUE_OPERATOR_UPDATED, this._updateFilterOperator);
+            document.addEventListener(ExtensibilityConstants.EVENT_FILTER_VALUE_OPERATOR_UPDATED, this._updateFilterOperator as EventListener);
         } else {
-            document.removeEventListener(ExtensibilityConstants.EVENT_FILTER_VALUE_OPERATOR_UPDATED, this._updateFilterOperator);
+            document.removeEventListener(ExtensibilityConstants.EVENT_FILTER_VALUE_OPERATOR_UPDATED, this._updateFilterOperator as EventListener);
         }
     }
 
@@ -254,12 +254,12 @@ export class PanelComponent extends React.Component<IPanelComponentProps, IPanel
 
         // Get the Web Part instance ID from where the event was fired so we can fire again this event but scoped to the Web Part
         const webPartInstanceId = ev.detail.instanceId;
-        
+
         // Only process the event if it belongs to this panel's web part instance
         if (this.props.stateKey && webPartInstanceId !== this.props.stateKey) {
             return;
         }
-        
+
         const webPartDomElement = window.document.querySelector(`div[data-instance-id="${webPartInstanceId}"]`);
 
         if (webPartDomElement) {
@@ -282,12 +282,12 @@ export class PanelComponent extends React.Component<IPanelComponentProps, IPanel
 
         // Get the Web Part instance ID from where the event was fired so we can fire again this event but scoped to the Web Part
         const webPartInstanceId = ev.detail.instanceId;
-        
+
         // Only process the event if it belongs to this panel's web part instance
         if (this.props.stateKey && webPartInstanceId !== this.props.stateKey) {
             return;
         }
-        
+
         const webPartDomElement = window.document.querySelector(`div[data-instance-id="${webPartInstanceId}"]`);
 
         if (webPartDomElement) {
@@ -311,12 +311,12 @@ export class PanelComponent extends React.Component<IPanelComponentProps, IPanel
         // Get the Web Part instance ID from where the event was fired so we can fire again this event but scoped to the Web Part
         // 'data-instance-id' is a custom managed attribute to uniquely identify the filter Web Part when the panel belongs to
         const webPartInstanceId = ev.detail.instanceId;
-        
+
         // Only process the event if it belongs to this panel's web part instance
         if (this.props.stateKey && webPartInstanceId !== this.props.stateKey) {
             return;
         }
-        
+
         const webPartDomElement = window.document.querySelector(`div[data-instance-id="${webPartInstanceId}"]`);
 
         const eventDetails = ev.detail as IDataFilterInfo;
@@ -346,12 +346,12 @@ export class PanelComponent extends React.Component<IPanelComponentProps, IPanel
 
         // Get the Web Part instance ID from where the event was fired so we can fire again this event but scoped to the Web Part
         const webPartInstanceId = ev.detail.instanceId;
-        
+
         // Only process the event if it belongs to this panel's web part instance
         if (this.props.stateKey && webPartInstanceId !== this.props.stateKey) {
             return;
         }
-        
+
         const webPartDomElement = window.document.querySelector(`div[data-instance-id="${webPartInstanceId}"]`);
 
         if (webPartDomElement) {

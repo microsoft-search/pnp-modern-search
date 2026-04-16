@@ -33,13 +33,46 @@ The filter settings are as follow:
 | **Display Name** | A friendly name for the filter |
 | **Filter field** | The internal data source field to use as filter. Here you can select a field from the current data source (if data have been already retrieved) of type your own custom value (press enter to validate).
 | **# of values** | The maximum number of values to be retrieved for a given filter. This value is useful if you use SharePoint refiners with a lot of refiner values. By default SharePoint will only retreve the first 100 values. To get all refiner values, you must specify an higher number manually (maximum value is 1000).
-| **Template** | The template to use to display filter values. The builtin templates are: </br><ul><li>**Check box** <p align="center">!["Check box"](../../assets/webparts/search-filters/checkbox_template.png)</p></li><li>**Date range** <p align="center">!["Date range"](../../assets/webparts/search-filters/daterange_template.png)</p></li><li>**Date interval** <p align="center">!["Date interval"](../../assets/webparts/search-filters/dateinterval_template.png)</p></li><li>**Combo** <p align="center">!["Combo"](../../assets/webparts/search-filters/combo_template.png)</p></br> You can search a value directly in the list by typing keywords in the combo text field.</br></br><li>**People Template** <p align="center">!["People Template"](../../assets/webparts/search-filters/people_template.png)  </p></br></li></ul>
+| **Template** | The template to use to display filter values. The builtin templates are: </br><ul><li>**Check box** <p align="center">!["Check box"](../../assets/webparts/search-filters/checkbox_template.png)</p></li><li>**Date range** <p align="center">!["Date range"](../../assets/webparts/search-filters/daterange_template.png)</p></li><li>**Date interval** <p align="center">!["Date interval"](../../assets/webparts/search-filters/dateinterval_template.png)</p></li><li>**Combo** <p align="center">!["Combo"](../../assets/webparts/search-filters/combo_template.png)</p></br> You can search a value directly in the list by typing keywords in the combo text field.</br></br><li>**People Template** <p align="center">!["People Template"](../../assets/webparts/search-filters/people_template.png)  </p></br></li><li>**Hierarchical Refiner** (taxonomy tree for parent/child terms)</li></ul>
 | **Expand by default** | If applicable for the selected template, display values as expanded.
 | **Show count** | If applicable for the selected template, display counts for values.
 | **Mutli values** | If applicable for the selected template, allow selection of multiple values.
 | **Operator between values** | If multi values is selected, the operator to use between values (OR/AND).
 | **Sort values by** | Sort values by name or by count.
 | **Sort direction** | Sort values in ascending/descending order.
+
+### Hierarchical refiner (taxonomy)
+
+Use the **Hierarchical Refiner** template when you want to browse and filter terms as a tree (parent/child hierarchy).
+
+This template is designed for taxonomy-backed fields (typically `RefinableStringXX` values returned by search refiners).
+
+!["Hierarchical Refiner"](../../assets/webparts/search-filters/hierarchical_refiner.png){: .center}
+
+#### Hierarchical settings
+
+When the **Hierarchical Refiner** template is selected, a **Hierarchical Settings** entry appears in the filter row.
+
+| **Setting** | **Description** |
+|------------|-----------------|
+| **Term Set** | Select the term set used to build the tree. Term sets are grouped by term group, and you can search within available term sets. |
+| **Cache Duration** | Number of days to cache retrieved terms (1-5 days, default 3). |
+| **Refresh Cache Now** | Clears the cached terms for the selected term set and reloads from term store. |
+
+#### Option behavior with hierarchical template
+
+| **General filter option** | **Behavior with Hierarchical Refiner** |
+|---------------------------|----------------------------------------|
+| **Expand by default** | Supported (root level expands by default). |
+| **Show count** | Not shown in the hierarchical tree UI. |
+| **Multi values** | Template behaves as single-select in the tree (one active selection at a time). |
+| **Operator between values** | Not relevant in practice because selection is single-select. |
+| **Sort values by / Sort direction** | Disabled for this template. The hierarchy follows term store structure. |
+
+#### Localization and deep links
+
+- Works with localized taxonomy refiner values when **Enable localization** is enabled in the connected SharePoint Search data source.
+- Deep links generated from hierarchical selections are supported.
 
 ### Filter styling
 

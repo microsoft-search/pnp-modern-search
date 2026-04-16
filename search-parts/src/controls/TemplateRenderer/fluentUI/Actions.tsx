@@ -70,10 +70,13 @@ const createActionDiv = (
     iconSize: number,
     actionClickHandler: (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement | HTMLDivElement | BaseButton | Button | HTMLSpanElement>) => void,
     style: string,
-    theme?: ITheme): HTMLDivElement => {
+    theme?: ITheme,
+    previousElement?: HTMLElement): HTMLDivElement => {
+    if (previousElement) {
+        ReactDOM.unmountComponentAtNode(previousElement);
+    }
     const div = createDiv();
     div.className = "fluentUI";
-    // eslint-disable-next-line @microsoft/spfx/pair-react-dom-render-unmount
     ReactDOM.render(
         <ActionButton
             text={title}
@@ -92,7 +95,7 @@ export class FluentUIExecuteAction extends ExecuteAction {
     protected updateCssClasses() {
     }
 
-    private actionClickHandler = (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement | HTMLDivElement | BaseButton | Button | HTMLSpanElement>): void => {
+    private readonly actionClickHandler = (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement | HTMLDivElement | BaseButton | Button | HTMLSpanElement>): void => {
         e.stopPropagation();
         e.preventDefault();
         this.execute();
@@ -109,7 +112,8 @@ export class FluentUIExecuteAction extends ExecuteAction {
             actionsConfig.iconSize,
             this.actionClickHandler,
             this.style,
-            theme);
+            theme,
+            this._renderedElement);
     }
 }
 
@@ -117,7 +121,7 @@ export class FluentUIOpenUrlAction extends OpenUrlAction {
     protected updateCssClasses() {
     }
 
-    private actionClickHandler = (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement | HTMLDivElement | BaseButton | Button | HTMLSpanElement>): void => {
+    private readonly actionClickHandler = (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement | HTMLDivElement | BaseButton | Button | HTMLSpanElement>): void => {
         e.stopPropagation();
         e.preventDefault();
         this.execute();
@@ -134,7 +138,8 @@ export class FluentUIOpenUrlAction extends OpenUrlAction {
             actionsConfig.iconSize,
             this.actionClickHandler,
             this.style,
-            theme);
+            theme,
+            this._renderedElement);
     }
 }
 
@@ -148,7 +153,7 @@ export class FluentUIShowCardAction extends ShowCardAction {
         }
     }
 
-    private actionClickHandler = (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement | HTMLDivElement | BaseButton | Button | HTMLSpanElement>): void => {
+    private readonly actionClickHandler = (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement | HTMLDivElement | BaseButton | Button | HTMLSpanElement>): void => {
         e.stopPropagation();
         e.preventDefault();
         this.execute();
@@ -165,7 +170,8 @@ export class FluentUIShowCardAction extends ShowCardAction {
             actionsConfig.iconSize,
             this.actionClickHandler,
             this.style,
-            theme);
+            theme,
+            this._renderedElement);
     }
 }
 
@@ -173,7 +179,7 @@ export class FluentUISubmitAction extends SubmitAction {
     protected updateCssClasses() {
     }
 
-    private actionClickHandler = (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement | HTMLDivElement | BaseButton | Button | HTMLSpanElement>): void => {
+    private readonly actionClickHandler = (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement | HTMLDivElement | BaseButton | Button | HTMLSpanElement>): void => {
         e.stopPropagation();
         e.preventDefault();
         this.execute();
@@ -190,7 +196,8 @@ export class FluentUISubmitAction extends SubmitAction {
             actionsConfig.iconSize,
             this.actionClickHandler,
             this.style,
-            theme);
+            theme,
+            this._renderedElement);
     }
 }
 
@@ -204,7 +211,7 @@ export class FluentUIToggleVisibilityAction extends ToggleVisibilityAction {
         }
     }
 
-    private actionClickHandler = (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement | HTMLDivElement | BaseButton | Button | HTMLSpanElement>): void => {
+    private readonly actionClickHandler = (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement | HTMLDivElement | BaseButton | Button | HTMLSpanElement>): void => {
         e.stopPropagation();
         e.preventDefault();
         this.execute();
@@ -221,7 +228,8 @@ export class FluentUIToggleVisibilityAction extends ToggleVisibilityAction {
             actionsConfig.iconSize,
             this.actionClickHandler,
             this.style,
-            theme);
+            theme,
+            this._renderedElement);
     }
 }
 

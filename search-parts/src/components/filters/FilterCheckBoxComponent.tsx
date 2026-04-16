@@ -79,11 +79,10 @@ export class FilterCheckBoxComponent extends React.Component<IFilterCheckBoxProp
         };
 
         let labelValue = filterValue.name;
-        if(filterValue.name.toString().indexOf("i:0#") > -1) 
-        {
+        if (filterValue.name.toString().indexOf("i:0#") > -1) {
             labelValue = filterValue.name.toString().split("|")[1] + "(" + filterValue.name.toString().split("|")[0] + ")";
         }
-        
+
 
         if (this.props.isMulti) {
             renderInput = <Checkbox
@@ -101,10 +100,10 @@ export class FilterCheckBoxComponent extends React.Component<IFilterCheckBoxProp
                 theme={this.props.themeVariant as ITheme}
                 defaultChecked={this.props.selected}
                 disabled={this.props.disabled}
-                title={filterValue.name} 
-                label=  {labelValue}
-                
-                
+                title={filterValue.name}
+                label={labelValue}
+
+
                 onChange={(ev, checked: boolean) => {
                     filterValue.selected = checked;
                     this.props.onChecked(this.props.filterName, filterValue);
@@ -144,8 +143,8 @@ export class FilterCheckBoxComponent extends React.Component<IFilterCheckBoxProp
                         }
                     }
                 ]}
-                onChange={(ev?: React.FormEvent<HTMLInputElement>, option?: IChoiceGroupOption) => {
-                    filterValue.selected = ev.currentTarget.checked;
+                onChange={(ev?: React.FormEvent<HTMLElement | HTMLInputElement>, option?: IChoiceGroupOption) => {
+                    filterValue.selected = (ev.currentTarget as HTMLInputElement).checked;
                     this.props.onChecked(this.props.filterName, filterValue);
                 }}
             />;

@@ -434,6 +434,8 @@ declare interface ICommonStrings {
       UseAndOperatorValues: string;
       UseOrOperatorValues: string;
       UseValuesOperators: string;
+      LoadingMessage: string;
+      SearchPlaceholder: string;
     },
     SuggestionProviders: {
       SharePointStatic: {

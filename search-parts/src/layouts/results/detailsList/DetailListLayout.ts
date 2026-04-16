@@ -8,7 +8,7 @@ import { TemplateValueFieldEditor, ITemplateValueFieldEditorProps } from '../../
 import { AsyncCombo } from "../../../controls/PropertyPaneAsyncCombo/components/AsyncCombo";
 import { IAsyncComboProps } from "../../../controls/PropertyPaneAsyncCombo/components/IAsyncComboProps";
 import { PropertyFieldNumber } from "@pnp/spfx-property-controls/lib/PropertyFieldNumber";
-import commonStyles from './DetailsListLayout.module.scss';
+import sharedStyles from '../../../styles/Common.module.scss';
 
 /**
  * Details List Builtin Layout
@@ -128,28 +128,28 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
                 }
             ] as IDetailsListColumnConfiguration[];
 
-        this.properties.isCompact = this.properties.isCompact !== null && this.properties.isCompact !== undefined ? this.properties.isCompact : false;
-        this.properties.showFileIcon = this.properties.showFileIcon !== null && this.properties.showFileIcon !== undefined ? this.properties.showFileIcon : true;
-        this.properties.fieldIconExtension = this.properties.fieldIconExtension ? this.properties.fieldIconExtension : 'FileType';
-        this.properties.enableGrouping = this.properties.enableGrouping !== null && this.properties.enableGrouping !== undefined ? this.properties.enableGrouping : false;
-        this.properties.groupByField = this.properties.groupByField ? this.properties.groupByField : '';
-        this.properties.groupByOthersGroupTitle = this.properties.groupByOthersGroupTitle ? this.properties.groupByOthersGroupTitle : strings.Layouts.DetailsList.GroupByOthersGroupDefaultValue;
-        this.properties.additionalGroupByFields = this.properties.additionalGroupByFields ? this.properties.additionalGroupByFields : [];
-        this.properties.groupsCollapsed = this.properties.groupsCollapsed !== null && this.properties.groupsCollapsed !== undefined ? this.properties.groupsCollapsed : true;
+        this.properties.isCompact = this.properties.isCompact ?? false;
+        this.properties.showFileIcon = this.properties.showFileIcon ?? true;
+        this.properties.fieldIconExtension = this.properties.fieldIconExtension ?? 'FileType';
+        this.properties.enableGrouping = this.properties.enableGrouping ?? false;
+        this.properties.groupByField = this.properties.groupByField ?? '';
+        this.properties.groupByOthersGroupTitle = this.properties.groupByOthersGroupTitle ?? strings.Layouts.DetailsList.GroupByOthersGroupDefaultValue;
+        this.properties.additionalGroupByFields = this.properties.additionalGroupByFields ?? [];
+        this.properties.groupsCollapsed = this.properties.groupsCollapsed ?? true;
 
         if (this.editMode) {
-          const { PropertyFieldCollectionData, CustomCollectionFieldType } = await import(
-            /* webpackChunkName: 'pnp-modern-search-results-detailslist-layout' */
-            '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData'
-          );
-          this._propertyFieldCollectionData = PropertyFieldCollectionData;
-          this._customCollectionFieldType = CustomCollectionFieldType;
+            const { PropertyFieldCollectionData, CustomCollectionFieldType } = await import(
+                /* webpackChunkName: 'pnp-modern-search-results-detailslist-layout' */
+                '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData'
+            );
+            this._propertyFieldCollectionData = PropertyFieldCollectionData;
+            this._customCollectionFieldType = CustomCollectionFieldType;
 
-          const { PropertyPaneWebPartInformation } = await import(
-            /* webpackChunkName: 'pnp-modern-search-property-pane' */
-            '@pnp/spfx-property-controls/lib/PropertyPaneWebPartInformation'
-          );
-          this._propertyPaneWebPartInformation = PropertyPaneWebPartInformation;
+            const { PropertyPaneWebPartInformation } = await import(
+                /* webpackChunkName: 'pnp-modern-search-property-pane' */
+                '@pnp/spfx-property-controls/lib/PropertyPaneWebPartInformation'
+            );
+            this._propertyPaneWebPartInformation = PropertyPaneWebPartInformation;
         }
     }
 
@@ -191,6 +191,7 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
                 enableSorting: true,
                 label: strings.Layouts.DetailsList.ManageDetailsListColumnLabel,
                 value: this.properties.detailsListColumns,
+                tableClassName: sharedStyles.slotTable,
                 fields: [
                     {
                         id: 'name',
@@ -331,41 +332,41 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
                     key: 'queryText'
                 }),
                 this._propertyFieldCollectionData('layoutProperties.additionalGroupByFields', {
-                  manageBtnLabel: strings.Layouts.DetailsList.AdditionalGroupByButtonLabel,
-                  key: 'layoutProperties.additionalGroupByFields',
-                  panelHeader: strings.Layouts.DetailsList.AdditionalGroupByFieldsLabel,
-                  panelDescription: strings.Layouts.DetailsList.AdditionalGroupByFieldsDescription,
-                  enableSorting: true,
-                  tableClassName: commonStyles.additionalGroupByFieldsTable,
-                  label: strings.Layouts.DetailsList.AdditionalGroupByFieldsLabel,
-                  value: this.properties.additionalGroupByFields,
-                  disabled: !this.properties.enableGrouping || !this.properties.groupByField || this.properties.groupByField.length === 0,
-                  fields: [
-                      {
-                          id: 'value',
-                          title: strings.Layouts.DetailsList.ValueColumnLabel,
-                          type: this._customCollectionFieldType.custom,
-                          required: true,
-                          onCustomRender: (field, value, onUpdate, item, itemId, onCustomFieldValidation) => {
-                              return React.createElement("div", { key: `${field.id}-${itemId}` },
-                                  React.createElement(TemplateValueFieldEditor, {
-                                      currentItem: item,
-                                      field: field,
-                                      useHandlebarsExpr: false,
-                                      onUpdate: onUpdate,
-                                      value: value,
-                                      availableProperties: availableOptions,
-                                  } as ITemplateValueFieldEditorProps)
-                              );
-                          }
-                      },
-                  ]
-              }),
-              PropertyPaneTextField('layoutProperties.groupByOthersGroupTitle', {
-                label: strings.Layouts.DetailsList.GroupByOthersGroupFieldLabel,
-                value: this.properties.groupByOthersGroupTitle,
-            }),
-                  PropertyPaneToggle('layoutProperties.groupsCollapsed', {
+                    manageBtnLabel: strings.Layouts.DetailsList.AdditionalGroupByButtonLabel,
+                    key: 'layoutProperties.additionalGroupByFields',
+                    panelHeader: strings.Layouts.DetailsList.AdditionalGroupByFieldsLabel,
+                    panelDescription: strings.Layouts.DetailsList.AdditionalGroupByFieldsDescription,
+                    enableSorting: true,
+                    tableClassName: sharedStyles.slotTable,
+                    label: strings.Layouts.DetailsList.AdditionalGroupByFieldsLabel,
+                    value: this.properties.additionalGroupByFields,
+                    disabled: !this.properties.enableGrouping || !this.properties.groupByField || this.properties.groupByField.length === 0,
+                    fields: [
+                        {
+                            id: 'value',
+                            title: strings.Layouts.DetailsList.ValueColumnLabel,
+                            type: this._customCollectionFieldType.custom,
+                            required: true,
+                            onCustomRender: (field, value, onUpdate, item, itemId, onCustomFieldValidation) => {
+                                return React.createElement("div", { key: `${field.id}-${itemId}` },
+                                    React.createElement(TemplateValueFieldEditor, {
+                                        currentItem: item,
+                                        field: field,
+                                        useHandlebarsExpr: false,
+                                        onUpdate: onUpdate,
+                                        value: value,
+                                        availableProperties: availableOptions,
+                                    } as ITemplateValueFieldEditorProps)
+                                );
+                            }
+                        },
+                    ]
+                }),
+                PropertyPaneTextField('layoutProperties.groupByOthersGroupTitle', {
+                    label: strings.Layouts.DetailsList.GroupByOthersGroupFieldLabel,
+                    value: this.properties.groupByOthersGroupTitle,
+                }),
+                PropertyPaneToggle('layoutProperties.groupsCollapsed', {
                     label: strings.Layouts.DetailsList.CollapsedGroupsByDefault,
                     checked: this.properties.groupsCollapsed
                 })
@@ -373,10 +374,10 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
         }
 
         propertyPaneFields.push(
-          PropertyPaneToggle('layoutProperties.enableStickyHeader', {
-            label: strings.Layouts.DetailsList.EnableStickyHeader || 'Enable Sticky Header',
-            checked: this.properties.enableStickyHeader
-          }));
+            PropertyPaneToggle('layoutProperties.enableStickyHeader', {
+                label: strings.Layouts.DetailsList.EnableStickyHeader || 'Enable Sticky Header',
+                checked: this.properties.enableStickyHeader
+            }));
 
         //Sticky header options
         if (this.properties.enableStickyHeader) {
@@ -398,12 +399,12 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
                 checked: this.properties.enableDownload
             })
         );
-        
+
         propertyPaneFields.push(
-          PropertyPaneToggle('layoutProperties.useAlternatingBackgroundColor', {
-            label: strings.Layouts.DetailsList.UseAlternatingBackgroundColor || 'Use Alternating Background color',
-            checked: this.properties.useAlternatingBackgroundColor
-          }));
+            PropertyPaneToggle('layoutProperties.useAlternatingBackgroundColor', {
+                label: strings.Layouts.DetailsList.UseAlternatingBackgroundColor || 'Use Alternating Background color',
+                checked: this.properties.useAlternatingBackgroundColor
+            }));
 
         return propertyPaneFields;
     }
@@ -416,7 +417,7 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
         }
 
         if (propertyPath.localeCompare('layoutProperties.enableStickyHeader') === 0) {
-          this.properties.stickyHeaderListViewHeight = 500;
+            this.properties.stickyHeaderListViewHeight = 500;
         }
-  }
+    }
 }

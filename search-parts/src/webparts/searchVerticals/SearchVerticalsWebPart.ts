@@ -37,7 +37,7 @@ import { Dropdown, IDropdownProps } from '@fluentui/react/lib/Dropdown';
 import { Checkbox } from '@fluentui/react/lib/Checkbox';
 
 const PeoplePicker = React.lazy(() =>
-    import(/* webpackChunkName: 'microsoft-graph-toolkit' */ '@microsoft/mgt-react/dist/es6/generated/people-picker')
+    import(/* webpackChunkName: 'pnp-modern-search-microsoft-graph-toolkit' */ '@microsoft/mgt-react/dist/es6/generated/people-picker')
         .then(({ PeoplePicker }) => ({ default: PeoplePicker }))
 );
 
@@ -94,7 +94,7 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
 
         if (this.displayMode === DisplayMode.Edit) {
             const { Placeholder } = await import(
-                /* webpackChunkName: 'search-verticals-property-pane' */
+                /* webpackChunkName: 'pnp-modern-search-property-pane' */
                 '@pnp/spfx-controls-react/lib/Placeholder'
             );
             this._placeholderComponent = Placeholder;
@@ -106,6 +106,8 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
         // Check audience targeting - if user is not in audience, don't render
         const isInAudience = await this.isInAudience();
         if (!isInAudience) {
+            // eslint-disable-next-line @rushstack/pair-react-dom-render-unmount -- cleanup on audience hide, paired with onDispose
+            ReactDom.unmountComponentAtNode(this.domElement);
             this.domElement.innerHTML = '';
             return this.renderCompleted();
         }
@@ -186,6 +188,7 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
         }
 
 
+        // eslint-disable-next-line @rushstack/pair-react-dom-render-unmount -- render is paired with unmount in onDispose
         ReactDom.render(renderRootElement, this.domElement);
     }
 
@@ -197,7 +200,7 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
      */
     private async _filterVerticalsByAudience(verticals: IDataVerticalConfiguration[]): Promise<IDataVerticalConfiguration[]> {
         const filteredVerticals: IDataVerticalConfiguration[] = [];
-        
+
         for (const vertical of verticals) {
             // If no audience configured, show to everyone
             if (!vertical.audience || vertical.audience.length === 0) {
@@ -265,6 +268,7 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
     }
 
     protected onDispose(): void {
+        // eslint-disable-next-line @rushstack/pair-react-dom-render-unmount -- paired with render in renderCompleted
         ReactDom.unmountComponentAtNode(this.domElement);
     }
 
@@ -349,6 +353,7 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
                 enableSorting: true,
                 label: webPartStrings.PropertyPane.Verticals.PropertyLabel,
                 value: this.properties.verticals,
+                tableClassName: commonStyles.slotTable,
                 fields: [
                     {
                         id: 'tabName',
@@ -572,10 +577,10 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
         this.properties.verticalBorderColor = undefined;
         this.properties.verticalBorderThickness = undefined;
         this.properties.verticalFontSize = undefined;
-        
+
         // Refresh the property pane to show the reset values
         this.context.propertyPane.refresh();
-        
+
         // Re-render the web part to apply changes
         this.render();
     }

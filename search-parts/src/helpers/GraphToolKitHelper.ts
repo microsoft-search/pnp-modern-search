@@ -6,7 +6,7 @@ const DISAMBIGUATION = "pnp-modern-search";
 export const loadMsGraphToolkit = async (context: WebPartContext) => {
     // Load Microsoft Graph Toolkit dynamically
     const { customElementHelper } = await import(
-      /* webpackChunkName: 'microsoft-graph-toolkit' */
+      /* webpackChunkName: 'pnp-modern-search-microsoft-graph-toolkit' */
       '@microsoft/mgt-element/dist/es6/components/customElementHelper'
     );
 
@@ -15,18 +15,18 @@ export const loadMsGraphToolkit = async (context: WebPartContext) => {
     const component = window.customElements.get(`${customElementHelper.prefix}-person`);
     if (!component) {
         const { Providers } = await import(
-          /* webpackChunkName: 'microsoft-graph-toolkit' */
+          /* webpackChunkName: 'pnp-modern-search-microsoft-graph-toolkit' */
           '@microsoft/mgt-element/dist/es6/providers/Providers'
         );
 
         const { registerMgtComponents } = await import(
-          /* webpackChunkName: 'microsoft-graph-toolkit' */
+          /* webpackChunkName: 'pnp-modern-search-microsoft-graph-toolkit' */
           '@microsoft/mgt-components/dist/es6/registerMgtComponents'
         );
 
         if (!Providers.globalProvider) {
             const { SharePointProvider } = await import(
-                /* webpackChunkName: 'microsoft-graph-toolkit' */
+                /* webpackChunkName: 'pnp-modern-search-microsoft-graph-toolkit' */
                 '@microsoft/mgt-sharepoint-provider/dist/es6'
             );
 
@@ -36,7 +36,7 @@ export const loadMsGraphToolkit = async (context: WebPartContext) => {
     }
 
     const { LocalizationHelper } = await import(
-      /* webpackChunkName: 'microsoft-graph-toolkit' */
+      /* webpackChunkName: 'pnp-modern-search-microsoft-graph-toolkit' */
       '@microsoft/mgt-element/dist/es6/utils/LocalizationHelper'
     );
 

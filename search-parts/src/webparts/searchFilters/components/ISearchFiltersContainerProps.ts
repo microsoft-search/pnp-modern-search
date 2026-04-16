@@ -3,6 +3,8 @@ import ISearchFiltersWebPartProps from "../ISearchFiltersWebPartProps";
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import { ITemplateService } from "../../../services/templateService/ITemplateService";
 import { IWebPartTitleProps } from "@pnp/spfx-controls-react/lib/WebPartTitle";
+import { WebPartContext } from '@microsoft/sp-webpart-base';
+import { ITaxonomyService } from '../../../services/taxonomyService/ITaxonomyService';
 
 export interface ISearchFiltersContainerProps {
 
@@ -47,6 +49,11 @@ export interface ISearchFiltersContainerProps {
   themeVariant: IReadonlyTheme;
 
   /**
+   * The Web Part context
+   */
+  context: WebPartContext;
+
+  /**
    * Handler method when a filter value is updated in children components
    */
   onUpdateFilters: (filters: IDataFilter[]) => void;
@@ -55,6 +62,11 @@ export interface ISearchFiltersContainerProps {
    * A template service instance
    */
   templateService: ITemplateService;
+
+  /**
+   * A taxonomy service instance
+   */
+  taxonomyService: ITaxonomyService;
 
   /**
    * The Web Part Title props

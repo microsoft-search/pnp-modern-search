@@ -5,7 +5,7 @@ import { Checkbox, ChoiceGroup, IChoiceGroupOption, IStyleFunctionOrObject, ITex
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 
 // export interface IFilterCheckBoxProps {
-    export interface IFilterPeopleTemplateProps {
+export interface IFilterPeopleTemplateProps {
 
     /**
      * If the People template should be selected
@@ -59,7 +59,7 @@ import { IReadonlyTheme } from '@microsoft/sp-component-base';
 }
 
 // export interface IFilterCheckBoxState {
-    export interface IFilterPeopleTemplateState {
+export interface IFilterPeopleTemplateState {
 }
 
 export class FilterPeopleTemplateComponent extends React.Component<IFilterPeopleTemplateProps, IFilterPeopleTemplateState> {
@@ -73,7 +73,7 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
         };
 
         let renderInput: JSX.Element = null;
-        let textColor: string = this.props.themeVariant && this.props.themeVariant.isInverted ? (this.props.themeVariant ? this.props.themeVariant.semanticColors.bodyText : '#323130') : this.props.themeVariant.semanticColors.inputText;
+        let textColor: string = this.props.themeVariant?.isInverted ? this.props.themeVariant.semanticColors.bodyText : this.props.themeVariant?.semanticColors?.inputText ?? '#323130';
         const textComponentStyles: IStyleFunctionOrObject<ITextProps, ITextStyles> = {
             root: {
                 color: textColor
@@ -87,7 +87,7 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
                         padding: 40,
                     },
                     label: {
-                        width: '100%',                      
+                        width: '100%',
                     },
                     text: {
                         color: this.props.count && this.props.count === 0 ? this.props.themeVariant.semanticColors.disabledText : textColor
@@ -137,8 +137,8 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
                         }
                     }
                 ]}
-                onChange={(ev?: React.FormEvent<HTMLInputElement>, option?: IChoiceGroupOption) => {
-                    filterValue.selected = ev.currentTarget.checked;
+                onChange={(ev?: React.FormEvent<HTMLElement | HTMLInputElement>, option?: IChoiceGroupOption) => {
+                    filterValue.selected = (ev.currentTarget as HTMLInputElement).checked;
                     this.props.onChecked(this.props.filterName, filterValue);
                 }}
             />;
@@ -162,7 +162,7 @@ export class FilterPeopleCheckBoxWebComponent extends BaseWebComponent {
             this.dispatchEvent(new CustomEvent(ExtensibilityConstants.EVENT_FILTER_UPDATED, {
                 detail: {
                     filterName: filterName,
-                    filterValues: [filterValue],                    
+                    filterValues: [filterValue],
                     instanceId: props.instanceId
                 } as IDataFilterInfo,
                 bubbles: true,

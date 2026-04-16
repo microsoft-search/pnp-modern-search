@@ -1,7 +1,7 @@
 {
     "name": "@pnp/modern-search-extensibility",
     "description": "Base library for creating PnP Modern Search extensions",
-    "version": "1.22.1",
+    "version": "1.22.2",
     "private": false,
     "main": "lib/index.js",
     "types": "lib/index.d.ts",
@@ -13,11 +13,11 @@
         "build": "heft build"
     },
     "devDependencies": {
-        "@microsoft/eslint-config-spfx": "1.22.1",
-        "@microsoft/eslint-plugin-spfx": "1.22.1",
-        "@microsoft/sp-module-interfaces": "1.22.1",
-        "@microsoft/spfx-heft-plugins": "1.22.1",
-        "@microsoft/spfx-web-build-rig": "1.22.1",
+        "@microsoft/eslint-config-spfx": "1.22.2",
+        "@microsoft/eslint-plugin-spfx": "1.22.2",
+        "@microsoft/sp-module-interfaces": "1.22.2",
+        "@microsoft/spfx-heft-plugins": "1.22.2",
+        "@microsoft/spfx-web-build-rig": "1.22.2",
         "@rushstack/eslint-config": "4.5.2",
         "@rushstack/heft": "1.1.2",
         "@types/es6-promise": "0.0.33",
@@ -33,19 +33,19 @@
     },
     "dependencies": {
         "@fluentui/react": "8.106.4",
-        "@microsoft/sp-adaptive-card-extension-base": "1.22.1",
-        "@microsoft/sp-component-base": "1.22.1",
-        "@microsoft/sp-core-library": "1.22.1",
-        "@microsoft/sp-lodash-subset": "1.22.1",
-        "@microsoft/sp-property-pane": "1.22.1",
-        "@microsoft/sp-webpart-base": "1.22.1",
+        "@microsoft/sp-adaptive-card-extension-base": "1.22.2",
+        "@microsoft/sp-component-base": "1.22.2",
+        "@microsoft/sp-core-library": "1.22.2",
+        "@microsoft/sp-lodash-subset": "1.22.2",
+        "@microsoft/sp-property-pane": "1.22.2",
+        "@microsoft/sp-webpart-base": "1.22.2",
         "@webcomponents/custom-elements": "1.5.1",
         "@webcomponents/webcomponentsjs": "2.7.0",
-        "handlebars": "4.7.7",
+        "handlebars": "4.7.9",
         "office-ui-fabric-react": "7.199.1",
         "react": "17.0.1",
         "react-dom": "17.0.1",
-        "tslib": "^1.11.0"
+        "tslib": "2.3.1"
     },
     "resolutions": {
         "@types/react": "17.0.45"

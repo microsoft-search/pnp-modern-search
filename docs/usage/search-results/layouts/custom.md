@@ -10,6 +10,8 @@ You can also start from an existing layout by first selecting it, and then click
 
 You have also the ability to use an external _.html_ file to centralize your customizations. This file must be stored in an accessible location for uses (ex: a SharePoint document library with _'Read'_ permissions for concerned users).
 
+> Template HTML is sanitized to prevent XSS attacks. Some elements (e.g. `<script>`, `<form>`, `<iframe>`) and dangerous attributes are blocked. See [Template sanitization](../../../extensibility/templating.md#blocked-html-elements) for the full list of blocked elements and attributes.
+
 !["External file"](../../../assets/webparts/search-results/layouts/custom_external_file.png){: .center} 
 
 > Unless you specify an external file, the template content is stored in the Web Part property bag.

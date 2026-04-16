@@ -93,6 +93,11 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     private extensionsLoaded: boolean = false;
 
     /**
+     * Promise guard to prevent concurrent loadExtensions calls during render re-entry
+     */
+    private _extensionsLoadingPromise: Promise<void> = null;
+
+    /**
      * Dynamic data related fields
      */
     private _filtersConnectionSourceData: DynamicProperty<IDataFilterSourceData>;
@@ -249,81 +254,99 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     }
 
     public async render(): Promise<void> {
-
-        // Check audience targeting - if user is not in audience, don't render
-        // const isInAudience = await this.isInAudience();
-        // if (!isInAudience) {
-        //     this.domElement.innerHTML = '';
-        //     return this.renderCompleted();
-        // }
-
-        // Ensure extensions are loaded before rendering
-        if (!this.extensionsLoaded) {
-            await this.loadExtensions(this.properties.extensibilityLibraryConfiguration);
-        }
-
-        // Determine the template content to display
-        // In the case of an external template is selected, the render is done asynchronously waiting for the content to be fetched
-        await this.initTemplate();
-
-        // Refresh the token values with the latest information from environment (i.e connections and settings)
-        await this.setTokens();
-
-        // We resolve data source and layout instances directly in the render method to avoid unexpected render triggers due to Web Part property bag manipulation 
-        // SPFx has an inner routine in reactive mode to trigger a render every time a property bag value is updated conflicting with the way data source and layouts share properties (see _afterPropertyUpdated)
-
         try {
 
-            // Reset the error message every time
-            this.errorMessage = undefined;
-
-            // Get and initialize the data source instance if different (i.e avoid to create a new instance every time)
-            if (this.lastDataSourceKey !== this.properties.dataSourceKey) {
-                this.dataSource = await this.getDataSourceInstance(this.properties.dataSourceKey);
-                this.lastDataSourceKey = this.properties.dataSourceKey;
+            // Check audience targeting - if user is not in audience, don't render
+            const isInAudience = await this.isInAudience();
+            this._isHiddenByAudience = !isInAudience;
+            if (!isInAudience) {
+                // eslint-disable-next-line @rushstack/pair-react-dom-render-unmount -- cleanup on audience hide, paired with onDispose
+                ReactDom.unmountComponentAtNode(this.domElement);
+                this.domElement.innerHTML = '';
+                return this.renderCompleted();
             }
 
-            // Get and initialize layout instance if different (i.e avoid to create a new instance every time)
-            if (this.lastLayoutKey !== this.properties.selectedLayoutKey) {
-                this.layout = await LayoutHelper.getLayoutInstance(this.webPartInstanceServiceScope, this.context, this.properties, this.properties.selectedLayoutKey, this.availableLayoutDefinitions, this.displayMode);
-                this.lastLayoutKey = this.properties.selectedLayoutKey;
+            // Ensure extensions are loaded before rendering.
+            // Use a promise guard to prevent concurrent loadExtensions calls if render() is
+            // re-entered while loading is still in progress (e.g. via dynamic data callbacks).
+            if (!this.extensionsLoaded) {
+                if (!this._extensionsLoadingPromise) {
+                    this._extensionsLoadingPromise = this.loadExtensions(this.properties.extensibilityLibraryConfiguration);
+                }
+                try {
+                    await this._extensionsLoadingPromise;
+                } finally {
+                    this._extensionsLoadingPromise = null;
+                }
             }
 
+            // Determine the template content to display
+            // In the case of an external template is selected, the render is done asynchronously waiting for the content to be fetched
+            await this.initTemplate();
 
-            const queryModifierKeys = this.properties.queryModifierConfiguration.filter(c => c.enabled).map(c => c.key);
-            // Initialize custom query modifier instances if changed
-            if (!isEqual(this.lastQueryModifierKeys, queryModifierKeys)) {
-                this._selectedCustomQueryModifier = await this.initializeQueryModifiers(this.properties.queryModifierConfiguration);
-                this.lastQueryModifierKeys = queryModifierKeys;
+            // Refresh the token values with the latest information from environment (i.e connections and settings)
+            await this.setTokens();
 
+            // We resolve data source and layout instances directly in the render method to avoid unexpected render triggers due to Web Part property bag manipulation 
+            // SPFx has an inner routine in reactive mode to trigger a render every time a property bag value is updated conflicting with the way data source and layouts share properties (see _afterPropertyUpdated)
+
+            try {
+
+                // Reset the error message every time
+                this.errorMessage = undefined;
+
+                // Get and initialize the data source instance if different (i.e avoid to create a new instance every time)
+                if (this.lastDataSourceKey !== this.properties.dataSourceKey) {
+                    this.dataSource = await this.getDataSourceInstance(this.properties.dataSourceKey);
+                    this.lastDataSourceKey = this.properties.dataSourceKey;
+                }
+
+                // Get and initialize layout instance if different (i.e avoid to create a new instance every time)
+                if (this.lastLayoutKey !== this.properties.selectedLayoutKey) {
+                    this.layout = await LayoutHelper.getLayoutInstance(this.webPartInstanceServiceScope, this.context, this.properties, this.properties.selectedLayoutKey, this.availableLayoutDefinitions, this.displayMode);
+                    this.lastLayoutKey = this.properties.selectedLayoutKey;
+                }
+
+
+                const queryModifierKeys = this.properties.queryModifierConfiguration.filter(c => c.enabled).map(c => c.key);
+                // Initialize custom query modifier instances if changed
+                if (!isEqual(this.lastQueryModifierKeys, queryModifierKeys)) {
+                    this._selectedCustomQueryModifier = await this.initializeQueryModifiers(this.properties.queryModifierConfiguration);
+                    this.lastQueryModifierKeys = queryModifierKeys;
+
+                }
+
+            } catch (error) {
+                // Catch instanciation or wrong definition errors for extensibility scenarios
+                this.errorMessage = error.message ? error.message : error;
             }
 
+            // Refresh the token values with the latest information from environment (i.e connections and settings)
+            await this.setTokens();
+
+            // Refresh the property pane to get layout and data source options
+            if (this.context && this.context.propertyPane && this.context.propertyPane.isPropertyPaneOpen()) {
+                this.context.propertyPane.refresh();
+            }
+
+            // Reset page number when switching between verticals (before getDataContext)
+            if (this._verticalsConnectionSourceData && this.properties.selectedVerticalKeys.length > 0) {
+                const verticalData = DynamicPropertyHelper.tryGetValueSafe(this._verticalsConnectionSourceData);
+                if (verticalData && verticalData.selectedVertical?.key && this._lastSelectedVerticalKey !== verticalData.selectedVertical.key) {
+                    this.currentPageNumber = 1;
+                    this._lastSelectedVerticalKey = verticalData.selectedVertical.key;
+                }
+            }
+
+            if (this.dataSource) {
+                this._currentDataContext = await this.getDataContext();
+            }
+            return this.renderCompleted();
         } catch (error) {
-            // Catch instanciation or wrong definition errors for extensibility scenarios
-            this.errorMessage = error.message ? error.message : error;
+            this.errorMessage = error?.message ? error.message : error;
+            Log.error(LogSource, error);
+            return this.renderCompleted();
         }
-
-        // Refresh the token values with the latest information from environment (i.e connections and settings)
-        await this.setTokens();
-
-        // Refresh the property pane to get layout and data source options
-        if (this.context && this.context.propertyPane && this.context.propertyPane.isPropertyPaneOpen()) {
-            this.context.propertyPane.refresh();
-        }
-
-        // Reset page number when switching between verticals (before getDataContext)
-        if (this._verticalsConnectionSourceData && this.properties.selectedVerticalKeys.length > 0) {
-            const verticalData = DynamicPropertyHelper.tryGetValueSafe(this._verticalsConnectionSourceData);
-            if (verticalData && verticalData.selectedVertical?.key && this._lastSelectedVerticalKey !== verticalData.selectedVertical.key) {
-                this.currentPageNumber = 1;
-                this._lastSelectedVerticalKey = verticalData.selectedVertical.key;
-            }
-        }
-
-        if (this.dataSource) {
-            this._currentDataContext = await this.getDataContext();
-        }
-        return this.renderCompleted();
     }
 
     public getPropertyDefinitions(): IDynamicDataPropertyDefinition[] {
@@ -400,6 +423,12 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     }
 
     protected renderCompleted(): void {
+
+        // If hidden by audience targeting, skip rendering and just mark as completed
+        if (this._isHiddenByAudience) {
+            super.renderCompleted();
+            return;
+        }
 
         let renderRootElement: JSX.Element = null;
         let renderDataContainer: JSX.Element = null;
@@ -530,6 +559,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             }, commonStrings.General.Resources.PleaseReferToDocumentationMessage));
         }
 
+        // eslint-disable-next-line @rushstack/pair-react-dom-render-unmount -- render is paired with unmount in onDispose
         ReactDom.render(renderRootElement, this.domElement);
 
         // Re-bind web component events after render to handle SPA navigation scenarios
@@ -578,7 +608,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         // Web components are only defined once.
         await this.templateService.registerWebComponents(this.availableWebComponentDefinitions, this.instanceId);
 
-        if(this.properties.layoutProperties?.showPersonaCard){
+        if (this.properties.layoutProperties?.showPersonaCard) {
             this.properties.useMicrosoftGraphToolkit = true;
         }
 
@@ -610,6 +640,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         if (this._pushStateCallback) {
             window.history.pushState = this._pushStateCallback;
         }
+        // eslint-disable-next-line @rushstack/pair-react-dom-render-unmount -- paired with render in renderCompleted
         ReactDom.unmountComponentAtNode(this.domElement);
     }
 
@@ -865,6 +896,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             this._selectedCustomQueryModifier = [];
             this.properties.queryModifierProperties = {};
             this.properties.queryModifierConfiguration = [];
+            this.extensionsLoaded = false;
 
             await this.loadExtensions(cleanConfiguration);
         }
@@ -976,7 +1008,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                     inputQueryFromDataSource = decodeURIComponent(inputQueryFromDataSource);
                 }
 
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
             } catch (error) {
                 // Likely issue when q=%25 in spfx
             }
@@ -1129,7 +1161,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         // Remove existing listener to prevent duplicates during SPA navigation
         if (this._pagingEventHandler) {
-            this.domElement.removeEventListener('pageNumberUpdated', this._pagingEventHandler);
+            this.domElement.removeEventListener('pageNumberUpdated', this._pagingEventHandler as EventListener);
         }
 
         this._pagingEventHandler = (ev: CustomEvent) => {
@@ -1146,7 +1178,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         };
 
-        this.domElement.addEventListener('pageNumberUpdated', this._pagingEventHandler);
+        this.domElement.addEventListener('pageNumberUpdated', this._pagingEventHandler as EventListener);
     }
 
     /**
@@ -1156,7 +1188,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         // Remove existing listener to prevent duplicates during SPA navigation
         if (this._sortingEventHandler) {
-            this.domElement.removeEventListener(ExtensibilityConstants.EVENT_SORT_BY, this._sortingEventHandler);
+            this.domElement.removeEventListener(ExtensibilityConstants.EVENT_SORT_BY, this._sortingEventHandler as EventListener);
         }
 
         this._sortingEventHandler = (ev: CustomEvent) => {
@@ -1174,7 +1206,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         };
 
-        this.domElement.addEventListener(ExtensibilityConstants.EVENT_SORT_BY, this._sortingEventHandler);
+        this.domElement.addEventListener(ExtensibilityConstants.EVENT_SORT_BY, this._sortingEventHandler as EventListener);
     }
 
     /**
@@ -1300,14 +1332,14 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         this.properties.resultsBackgroundColor = undefined;
         this.properties.resultsBorderColor = undefined;
         this.properties.resultsBorderThickness = undefined;
-        
+
         // Refresh the property pane to show the reset values
         this.context.propertyPane.refresh();
-        
+
         // Re-render the web part to apply changes
         this.render();
     }
-    
+
 
 
     /**
@@ -1374,6 +1406,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 panelDescription: webPartStrings.PropertyPane.InformationPage.Extensibility.PanelDescription,
                 label: commonStrings.PropertyPane.InformationPage.Extensibility.FieldLabel,
                 value: this.properties.extensibilityLibraryConfiguration,
+                tableClassName: commonStyles.slotTable,
                 fields: [
                     {
                         id: 'name',
@@ -1483,6 +1516,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                     panelDescription: webPartStrings.PropertyPane.DataSourcePage.TemplateSlots.ConfigureSlotsPanelDescription,
                     label: webPartStrings.PropertyPane.DataSourcePage.TemplateSlots.ConfigureSlotsLabel,
                     value: this.properties.templateSlots,
+                    tableClassName: commonStyles.slotTable,
                     fields: [
                         {
                             id: 'slotName',
@@ -1918,7 +1952,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                     dataSource = childServiceScope.consume<IDataSource>(serviceKey);
 
                     // Verifiy if the data source implements correctly the IDataSource interface and BaseDataSource methods
-                     const isValidDataSource = (dataSourceInstance: IDataSource): dataSourceInstance is IDataSource => {
+                    const isValidDataSource = (dataSourceInstance: IDataSource): dataSourceInstance is IDataSource => {
                         return (
                             (dataSourceInstance as IDataSource).getAppliedFilters !== undefined &&
                             (dataSourceInstance as IDataSource).getData !== undefined &&
@@ -2508,6 +2542,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 enableSorting: true,
                 label: webPartStrings.PropertyPane.CustomQueryModifier.QueryModifiersLabel,
                 value: this.properties.queryModifierConfiguration,
+                tableClassName: commonStyles.slotTable,
                 fields: [
                     {
                         id: 'enabled',

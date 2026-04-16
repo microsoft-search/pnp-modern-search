@@ -1,23 +1,11 @@
 {
-  "extends": "./node_modules/@microsoft/rush-stack-compiler-5.3/includes/tsconfig-web.json",
+  "extends": "./node_modules/@microsoft/spfx-web-build-rig/profiles/default/tsconfig-base.json",
   "compilerOptions": {
-    "target": "es5",
-    "forceConsistentCasingInFileNames": true,
-    "module": "esnext",
-    "moduleResolution": "node",
-    "jsx": "react",
-    "declaration": true,
-    "sourceMap": true,
-    "experimentalDecorators": true,
-    "skipLibCheck": true,
-    "outDir": "lib",
-    "inlineSources": false,
+    // TODO: Enable these incrementally and fix errors
     "strictNullChecks": false,
-    "noUnusedLocals": false,
-    "typeRoots": ["./node_modules/@types", "./node_modules/@microsoft"],
-    "types": ["webpack-env"],
-    "lib": ["es2017", "dom"]
-  },
-  "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "lib"]
+    "strictPropertyInitialization": false,
+    "noImplicitAny": false,
+    "useUnknownInCatchVariables": false,
+    "lib": ["dom", "es2021"]
+  }
 }

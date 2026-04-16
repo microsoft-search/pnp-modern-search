@@ -5,3 +5,79 @@
         font-family: var(--fontFamilyCustomFont1300, var(--fontFamilyBase));
     }
 }
+
+// Fix PropertyFieldCollectionData table layout broken by FluentUI/SPFx CSS upgrades.
+// Applied via tableClassName prop on the PropertyFieldCollectionData control.
+.slotTable {
+    display: table !important;
+    width: 100% !important;
+    border-collapse: separate;
+    border-spacing: 0 8px;
+
+    :global {
+        .PropertyFieldCollectionData__panel__table-head,
+        .PropertyFieldCollectionData__panel__table-row,
+        [class*='tableHead_'],
+        [class*='tableRow_'] {
+            display: table-row !important;
+            line-height: 30px;
+        }
+
+        .PropertyFieldCollectionData__panel__table-head > span,
+        [class*='tableHead_'] > span {
+            display: table-cell !important;
+            padding: 0 10px;
+            vertical-align: middle;
+            font-size: 12px;
+            font-weight: 300;
+        }
+
+        .PropertyFieldCollectionData__panel__table-cell {
+            display: table-cell !important;
+            padding: 0 10px;
+            vertical-align: middle;
+        }
+
+        .PropertyFieldCollectionData__panel__table-row,
+        [class*='tableRow_']:not([class*='tableHead_']) {
+            background-color: #edebe9;
+        }
+
+        .PropertyFieldCollectionData__panel__table-row > span,
+        [class*='tableCell_'] {
+            display: table-cell !important;
+            padding: 0 10px;
+            vertical-align: middle;
+        }
+
+        [class*='tableCell_'] > div,
+        [class*='tableCell_'] > div.ms-TextField {
+            margin-top: 8px;
+            margin-bottom: 8px;
+        }
+    }
+}
+
+// Restore broken native styles for "No data" label and action buttons
+// in all PropertyFieldCollectionData panels after FluentUI/SPFx CSS upgrades.
+:global {
+    .PropertyFieldCollectionData__panel__no-collection-data,
+    [class*='noCollectionData_'] {
+        text-align: center !important;
+        display: block !important;
+    }
+
+    .PropertyFieldCollectionData__panel__actions,
+    [class*='panelActions_'] {
+        margin-top: 15px !important;
+        text-align: right !important;
+
+        button {
+            margin-right: 15px;
+
+            &:last-child {
+                margin-right: 0;
+            }
+        }
+    }
+}

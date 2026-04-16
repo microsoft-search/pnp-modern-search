@@ -25,9 +25,9 @@ export interface IFilterDateRangeComponentProps {
     onUpdate: (filterValues: IDataFilterValueInfo[]) => void;
 
     /**
-     * The moment.js library reference
+     * The dayjs library reference
      */
-    moment: any;
+    dayjs: any;
 }
 
 export interface IFilterDateRangeComponentState {
@@ -68,8 +68,8 @@ export class FilterDateRangeComponent extends React.Component<IFilterDateRangeCo
                     selectors: {
                         input: {
                             backgroundColor: this.props.themeVariant.semanticColors.bodyBackground,
-                            color: this.props.themeVariant.semanticColors.bodyText                          
-                            
+                            color: this.props.themeVariant.semanticColors.bodyText
+
 
                         },
                         'input::placeholder': {
@@ -86,12 +86,12 @@ export class FilterDateRangeComponent extends React.Component<IFilterDateRangeCo
             setInitialFocus: false,
             popupProps: {
                 onRestoreFocus: (params) => {
-                    const originalElement = params && params.originalElement;
-                    if (originalElement && (originalElement as HTMLElement).focus) {
+                    const originalElement = params?.originalElement as HTMLElement;
+                    if (originalElement?.focus) {
                         try {
-                            (originalElement as HTMLElement).focus({ preventScroll: true });
+                            originalElement.focus({ preventScroll: true });
                         } catch {
-                            (originalElement as HTMLElement).focus();
+                            originalElement.focus();
                         }
                     }
                 }
@@ -174,9 +174,9 @@ export class FilterDateRangeComponent extends React.Component<IFilterDateRangeCo
 
         // Only update if the date actually changed to prevent unnecessary re-renders
         const currentDate = this.state.selectedFromDate;
-        const dateChanged = (!currentDate && fromDate) || 
-                           (currentDate && !fromDate) || 
-                           (currentDate && fromDate && currentDate.getTime() !== fromDate.getTime());
+        const dateChanged = (!currentDate && fromDate) ||
+            (currentDate && !fromDate) ||
+            (currentDate && fromDate && currentDate.getTime() !== fromDate.getTime());
 
         if (dateChanged) {
             this.setState({
@@ -191,9 +191,9 @@ export class FilterDateRangeComponent extends React.Component<IFilterDateRangeCo
 
         // Only update if the date actually changed to prevent unnecessary re-renders
         const currentDate = this.state.selectedToDate;
-        const dateChanged = (!currentDate && toDate) || 
-                           (currentDate && !toDate) || 
-                           (currentDate && toDate && currentDate.getTime() !== toDate.getTime());
+        const dateChanged = (!currentDate && toDate) ||
+            (currentDate && !toDate) ||
+            (currentDate && toDate && currentDate.getTime() !== toDate.getTime());
 
         if (dateChanged) {
             this.setState({
@@ -244,7 +244,7 @@ export class FilterDateRangeComponent extends React.Component<IFilterDateRangeCo
     }
 
     private _onFormatDate(date: Date): string {
-        return this.props.moment(date).format('LL');
+        return this.props.dayjs(date).format('LL');
     }
 }
 
@@ -257,7 +257,7 @@ export class FilterDateRangeWebComponent extends BaseWebComponent {
     public async connectedCallback() {
 
         const dateHelper = this._serviceScope.consume<DateHelper>(DateHelper.ServiceKey);
-        const moment = await dateHelper.moment();
+        const dayjs = await dateHelper.moment();
 
         let props = this.resolveAttributes();
         let renderDateRange: JSX.Element = null;
@@ -265,7 +265,7 @@ export class FilterDateRangeWebComponent extends BaseWebComponent {
         if (props.filter) {
 
             const filter = props.filter as IDataFilterInternal;
-            renderDateRange = <FilterDateRangeComponent {...props} moment={moment} filter={filter} onUpdate={((filterValues: IDataFilterValueInfo[]) => {
+            renderDateRange = <FilterDateRangeComponent {...props} dayjs={dayjs} filter={filter} onUpdate={((filterValues: IDataFilterValueInfo[]) => {
 
                 // Unselect all previous values
                 const updatedValues = filter.values.map(value => {

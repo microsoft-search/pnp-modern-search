@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styles from './SearchVerticalsContainer.module.scss';
 import { ISearchVerticalsContainerProps } from './ISearchVerticalsContainerProps';
-import { WebPartTitle } from '@pnp/spfx-controls-react/lib/WebPartTitle';
+import { StyledWebPartTitle } from '../../../components/StyledWebPartTitle';
 import { PageOpenBehavior } from '../../../helpers/UrlHelper';
 import { ISearchVerticalsContainerState } from './ISearchVerticalsContainerState';
 import { BuiltinTokenNames } from '../../../services/tokenService/TokenService';
@@ -36,43 +36,13 @@ export default class SearchVerticalsContainer extends React.Component<ISearchVer
 
   public render(): React.ReactElement<ISearchVerticalsContainerProps> {
 
-    let renderTitle: JSX.Element = null;
-
-    // Web Part title with custom styling
-    const titleWrapperClass = `custom-title-wrapper-${this.props.instanceId || 'default'}`;
-    
-    if (this.props.titleFont || this.props.titleFontSize !== undefined || this.props.titleFontColor) {
-      const styleString = `
-        .${titleWrapperClass} *,
-        .${titleWrapperClass} div,
-        .${titleWrapperClass} span,
-        .${titleWrapperClass} h2,
-        .${titleWrapperClass} textarea {
-          ${this.props.titleFont ? `font-family: ${this.props.titleFont} !important;` : ''}
-          ${this.props.titleFontSize !== undefined ? `font-size: ${this.props.titleFontSize}px !important;` : ''}
-          ${this.props.titleFontColor ? `color: ${this.props.titleFontColor} !important;` : ''}
-        }
-      `;
-      
-      renderTitle = <div className={titleWrapperClass}>
-        <style key={`title-style-${this.props.titleFont}-${this.props.titleFontSize}-${this.props.titleFontColor}`} dangerouslySetInnerHTML={{ __html: styleString }} />
-        <WebPartTitle
-          displayMode={this.props.webPartTitleProps.displayMode}
-          title={this.props.webPartTitleProps.title}
-          updateProperty={this.props.webPartTitleProps.updateProperty}
-          themeVariant={this.props.webPartTitleProps.themeVariant}
-          className={this.props.webPartTitleProps.className}
-        />
-      </div>;
-    } else {
-      renderTitle = <WebPartTitle
-        displayMode={this.props.webPartTitleProps.displayMode}
-        title={this.props.webPartTitleProps.title}
-        updateProperty={this.props.webPartTitleProps.updateProperty}
-        themeVariant={this.props.webPartTitleProps.themeVariant}
-        className={this.props.webPartTitleProps.className}
-      />;
-    }
+    const renderTitle = <StyledWebPartTitle
+      instanceId={this.props.instanceId}
+      titleFont={this.props.titleFont}
+      titleFontSize={this.props.titleFontSize}
+      titleFontColor={this.props.titleFontColor}
+      webPartTitleProps={this.props.webPartTitleProps}
+    />;
 
     const renderPivotItems = this.props.verticals.map(vertical => {
 
@@ -168,12 +138,26 @@ export default class SearchVerticalsContainer extends React.Component<ISearchVer
           resolvedUrl = resolvedUrl.replace(/\{inputQueryText\}|\{searchTerms\}|\{SearchBoxQuery\}/gi, inputQueryText);
           resolvedUrl = resolvedUrl.replace(inputQueryText, encodeURIComponent(inputQueryText));
 
+          // Block dangerous URI schemes (javascript:, data:, vbscript:, etc.)
+          try {
+            const parsed = new URL(resolvedUrl, window.location.href);
+            if (!['http:', 'https:'].includes(parsed.protocol)) {
+              Log.warn(VerticalContainer_LogSource, `Blocked navigation to disallowed URL scheme: ${parsed.protocol}`);
+              return;
+            }
+          } catch {
+            Log.warn(VerticalContainer_LogSource, `Invalid URL for vertical navigation: ${resolvedUrl}`);
+            return;
+          }
+
           if (vertical.openBehavior === PageOpenBehavior.NewTab) {
-            window.open(resolvedUrl, "_blank");
+            window.open(resolvedUrl, "_blank", "noopener");
           } else {
             // Allow SharePoint to intercept the click and do a soft navigation
-            document.body.insertAdjacentHTML('beforeend', `<a href="${resolvedUrl}" style="display:none;"></a>`);
-            const anchor = document.body.lastElementChild as HTMLElement;
+            const anchor = document.createElement('a');
+            anchor.href = resolvedUrl;
+            anchor.style.display = 'none';
+            document.body.appendChild(anchor);
             anchor.click();
             document.body.removeChild(anchor);
           }

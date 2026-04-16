@@ -23,7 +23,45 @@ In a basic customization scenario, super users and webmasters can customize exis
 
 !["Handlebars"](../assets/extensibility/handlebars_templating.png){: .center}
 
-> The templates and fields HTML markup is sanitized automatically preventing XSS attacks. We used [`DOMPurify`](https://github.com/cure53/DOMPurify) to do so. It means for instance, you cannot add your own `<script>` tags or inline JavaScript.
+> The templates and fields HTML markup is sanitized automatically preventing XSS attacks. We use [`DOMPurify`](https://github.com/cure53/DOMPurify) to do so. It means for instance, you cannot add your own `<script>` tags or inline JavaScript.
+
+### Blocked HTML elements
+
+The following HTML elements are removed during sanitization because they have no legitimate use in search result templates and present security risks:
+
+| Element | Reason |
+|---------|--------|
+| `<script>` | JavaScript execution |
+| `<iframe>` | Arbitrary content embedding |
+| `<form>` | `action` attribute accepts `javascript:` URIs |
+| `<button>` | `formaction` attribute accepts `javascript:` URIs |
+| `<object>` | Plugin execution, external resource loading |
+| `<embed>` | Plugin execution, external resource loading |
+
+### Blocked HTML attributes
+
+The following attributes are stripped from all elements to prevent JavaScript execution and data exfiltration:
+
+| Attribute | Reason |
+|-----------|--------|
+| `on*` (onclick, onerror, etc.) | Inline JavaScript execution |
+| `action`, `formaction` | Accept `javascript:` URIs |
+| `xlink:href` | SVG JavaScript execution via `javascript:` URIs |
+| `srcdoc` | HTML/JavaScript injection |
+| `ping` | Data exfiltration to external servers |
+| `dynsrc`, `lowsrc`, `background` | Legacy attributes that accept `javascript:` URIs |
+
+### Allowed elements and attributes
+
+Standard HTML elements for layout and presentation (`<div>`, `<span>`, `<table>`, `<a>`, `<img>`, `<ul>`, `<li>`, etc.) are allowed, along with:
+
+- **`<style>` tags** for [custom CSS](#custom-css-styles) (CSS content is sanitized to block `@import`, `javascript:`, and similar vectors)
+- **`<link rel="stylesheet">` tags** for same-origin stylesheets only (external domains are blocked)
+- **`<content>` tags** for template structure
+- **Custom web components** (e.g. `<pnp-iconfile>`, `<my-component>`)
+- **`data-*` attributes** for custom component configuration
+- **`style` attributes** (sanitized to remove dangerous CSS patterns)
+- **`href`** on links (validated against an allowlist of safe URI schemes — `javascript:` is blocked)
 
 ### Template structure
 

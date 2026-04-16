@@ -17,9 +17,10 @@ import { DataSourceHelper } from '../helpers/DataSourceHelper';
 import { IAsyncComboProps } from "../controls/PropertyPaneAsyncCombo/components/IAsyncComboProps";
 import { PropertyPaneNonReactiveTextField } from "../controls/PropertyPaneNonReactiveTextField/PropertyPaneNonReactiveTextField";
 import { IMicrosoftSearchDataSourceData } from "../models/search/IMicrosoftSearchDataSourceData";
+import commonStyles from '../styles/Common.module.scss';
 import * as React from "react";
 import { BuiltinDataSourceProviderKeys } from "./AvailableDataSources";
-import { AutoCalculatedDataSourceFields,SortableFields } from "../common/Constants";
+import { AutoCalculatedDataSourceFields, SortableFields } from "../common/Constants";
 import LocalizationHelper from "../helpers/LocalizationHelper";
 import { ObjectHelper } from "../helpers/ObjectHelper";
 
@@ -191,9 +192,9 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
     private dateHelper: DateHelper;
 
     /**
-    * The moment.js library reference
+    * The dayjs library reference
     */
-    private moment: any;
+    private dayjs: any;
 
     private _propertyFieldCollectionData: any = null;
     private _customCollectionFieldType: any = null;
@@ -210,7 +211,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
     public async onInit(): Promise<void> {
 
         this.dateHelper = this.serviceScope.consume<DateHelper>(DateHelper.ServiceKey);
-        this.moment = await this.dateHelper.moment();
+        this.dayjs = await this.dateHelper.moment();
 
         if (this.editMode) {
             // Use the same chunk name as the main Web Part to avoid recreating/loading a new one
@@ -326,11 +327,11 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             }),
             PropertyPaneToggle('dataSourceProperties.showSPEmbeddedContent', {
                 label: commonStrings.DataSources.MicrosoftSearch.showSPEmbeddedContentLabel,
-                
+
             }),
             PropertyPaneToggle('dataSourceProperties.showMSArchivedContent', {
                 label: commonStrings.DataSources.MicrosoftSearch.showMSArchivedContentLabel,
-                
+
             })
         ];
 
@@ -355,6 +356,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                     panelDescription: commonStrings.DataSources.MicrosoftSearch.CollapseProperties.CollapsePropertiesDescription,
                     label: commonStrings.DataSources.MicrosoftSearch.CollapseProperties.CollapsePropertiesPropertyPaneFieldLabel,
                     value: this.properties.collapseProperties,
+                    tableClassName: commonStyles.slotTable,
                     fields: [
                         {
                             id: 'fields',
@@ -394,7 +396,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             );
         }
 
-        
+
 
 
 
@@ -414,6 +416,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                     panelDescription: commonStrings.DataSources.SearchCommon.Sort.SortListDescription,
                     label: commonStrings.DataSources.SearchCommon.Sort.SortPropertyPaneFieldLabel,
                     value: this.properties.sortProperties,
+                    tableClassName: commonStyles.slotTable,
                     fields: [
                         {
                             id: 'sortField',
@@ -590,7 +593,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             const hasBookmark = this.properties.entityTypes.includes(EntityType.Bookmark);
             const hasAcronym = this.properties.entityTypes.includes(EntityType.Acronym);
             const hasPerson = this.properties.entityTypes.includes(EntityType.Person);
-            
+
             if (hasBookmark && hasAcronym) {
                 // Both Bookmark and Acronym selected - union of both: id, displayName, description, webUrl, categories
                 this.properties.fields = ['id', 'displayName', 'description', 'webUrl', 'categories'];
@@ -629,10 +632,10 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         const hasPerson = this.properties.entityTypes.includes(EntityType.Person);
         const hasBookmark = this.properties.entityTypes.includes(EntityType.Bookmark);
         const hasAcronym = this.properties.entityTypes.includes(EntityType.Acronym);
-        const hasSharePointTypes = this.properties.entityTypes.some(et => 
-            et === EntityType.ListItem || 
-            et === EntityType.DriveItem || 
-            et === EntityType.Site || 
+        const hasSharePointTypes = this.properties.entityTypes.some(et =>
+            et === EntityType.ListItem ||
+            et === EntityType.DriveItem ||
+            et === EntityType.Site ||
             et === EntityType.List ||
             et === EntityType.Drive ||
             et === EntityType.ExternalItem
@@ -803,18 +806,17 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
     public getSortableFields(): string[] {
         return this.properties.sortProperties.filter(sort => sort.isUserSort).map(field => field.sortField);
     }
-     /**
-     * Enhance items properties with preview information
-     * @param data the data to enhance
-     * @param slots the configured template slots
-     */
-    public async getItemsPreview(data: IDataSourceData, slots: { [key: string]: string }): Promise<IDataSourceData> 
-    {
+    /**
+    * Enhance items properties with preview information
+    * @param data the data to enhance
+    * @param slots the configured template slots
+    */
+    public async getItemsPreview(data: IDataSourceData, slots: { [key: string]: string }): Promise<IDataSourceData> {
         // Auto determined preview URL for Microsoft Search
         if (slots[BuiltinTemplateSlots.PreviewUrl] === AutoCalculatedDataSourceFields.AutoPreviewUrl) {
             data.items = data.items.map(item => this.generateItemPreviewUrl(item, slots));
         }
-        
+
         // Auto determined preview image URL (thumbnail)
         if (slots[BuiltinTemplateSlots.PreviewImageUrl] === AutoCalculatedDataSourceFields.AutoPreviewImageUrl) {
             const validPreviewExt = DataSourceHelper.getValidPreviewExtensions();
@@ -850,7 +852,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             case EntityType.Site:
             case EntityType.List:
             case EntityType.ExternalItem:
-                this.applySharePointPreviewUrl(item, slots);
+                this.applySharePointPreviewUrl(item, slots, entityType);
                 break;
             default:
                 break;
@@ -952,22 +954,53 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         this.applyAcronymPreviewUrl(item);
     }
 
-    private applySharePointPreviewUrl(item: any, slots: { [key: string]: string }): void {
-        if (item.resource?.listItem?.fields) {
-            const contentTypeId = item.resource.listItem.fields.contentTypeId;
-            const isContainer = DataSourceHelper.isContainerContentType(contentTypeId);
+    private applySharePointPreviewUrl(item: any, slots: { [key: string]: string }, entityType?: EntityType): void {
+        const contentTypeId = this.getSharePointField(item, "contentTypeId");
+        const isContainer = DataSourceHelper.isContainerContentType(contentTypeId) || this.isContainerEntityType(entityType);
 
-            const webUrl = item.resource.listItem.fields.sitePath;
-            let pathProperty = item[slots[BuiltinTemplateSlots.Path]] || webUrl || item['DefaultEncodingURL'];
+        const webUrl = this.getSharePointField(item, "sitePath") || ObjectHelper.byPath(item, "resource.webUrl") || ObjectHelper.byPath(item, "webUrl");
+        const pathProperty = this.getSlotValue(item, slots, BuiltinTemplateSlots.Path) || webUrl || item["DefaultEncodingURL"];
+        const fileType = this.getSlotValue(item, slots, BuiltinTemplateSlots.FileType) || this.getSharePointField(item, "filetype") || this.getSharePointField(item, "fileType");
 
-            item.AutoPreviewUrl = DataSourceHelper.generatePreviewUrl({
-                webUrl: webUrl,
-                uniqueId: item.resource.listItem.id,
-                fileType: item[slots[BuiltinTemplateSlots.FileType]] || item.resource.listItem.fields.filetype,
-                pathProperty: pathProperty,
-                isContainer: isContainer
-            });
+        const previewUrl = DataSourceHelper.generatePreviewUrl({
+            webUrl: webUrl,
+            uniqueId: this.getSharePointListItemId(item),
+            fileType: fileType,
+            pathProperty: pathProperty,
+            isContainer: isContainer
+        });
+
+        if (previewUrl) {
+            item.AutoPreviewUrl = previewUrl;
         }
+    }
+
+    private isContainerEntityType(entityType: EntityType | undefined): boolean {
+        return entityType === EntityType.Site || entityType === EntityType.List || entityType === EntityType.Drive;
+    }
+
+    private getSlotValue(item: any, slots: { [key: string]: string }, slotName: string): string | undefined {
+        const slotPath = slots[slotName];
+        if (!slotPath) {
+            return undefined;
+        }
+
+        return item[slotPath] || ObjectHelper.byPath(item, slotPath);
+    }
+
+    private getSharePointField(item: any, fieldName: string): string | undefined {
+        return ObjectHelper.byPath(item, `resource.listItem.fields.${fieldName}`)
+            || ObjectHelper.byPath(item, `resource.fields.${fieldName}`)
+            || ObjectHelper.byPath(item, `resource.${fieldName}`)
+            || ObjectHelper.byPath(item, fieldName);
+    }
+
+    private getSharePointListItemId(item: any): string | undefined {
+        return ObjectHelper.byPath(item, "resource.listItem.id")
+            || ObjectHelper.byPath(item, "resource.parentReference.sharepointIds.listItemUniqueId")
+            || ObjectHelper.byPath(item, "listItemUniqueId")
+            || ObjectHelper.byPath(item, "resource.id")
+            || ObjectHelper.byPath(item, "id");
     }
 
     private applySharePointPreviewImage(item: any, slots: { [key: string]: string }, validPreviewExt: string[]): void {
@@ -990,16 +1023,16 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
     }
 
     private applyNonSitePreviewImage(item: any, slots: { [key: string]: string }, validPreviewExt: string[]): void {
-        const siteId = ObjectHelper.byPath(item, slots.SiteId);
-        const webId = ObjectHelper.byPath(item, slots.WebId);
-        const listId = ObjectHelper.byPath(item, slots.ListId);
-        const itemId = ObjectHelper.byPath(item, slots.ItemId);
-        const isFolder = ObjectHelper.byPath(item, slots.IsFolder);
+        const siteId = ObjectHelper.byPath(item, slots.SiteId) || this.getSharePointField(item, "siteId");
+        const webId = ObjectHelper.byPath(item, slots.WebId) || this.getSharePointField(item, "normWebID") || this.getSharePointField(item, "webId");
+        const listId = ObjectHelper.byPath(item, slots.ListId) || this.getSharePointField(item, "listId") || ObjectHelper.byPath(item, "resource.parentReference.sharepointIds.listId");
+        const itemId = ObjectHelper.byPath(item, slots.ItemId) || this.getSharePointListItemId(item);
+        const isFolder = ObjectHelper.byPath(item, slots.IsFolder) || this.getSharePointField(item, "contentTypeId");
         const isContainerType = DataSourceHelper.isContainerType(isFolder);
 
         // Try thumbnail URL first
         const thumbNailUrl = DataSourceHelper.enhanceThumbnailUrl(ObjectHelper.byPath(item, "PictureThumbnailURL"));
-        
+
         if (thumbNailUrl) {
             item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = thumbNailUrl;
         } else if (siteId && listId && itemId && !isContainerType) {
@@ -1010,26 +1043,39 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
     }
 
     private applySharePointItemThumbnail(item: any, siteId: string, webId: string, listId: string, itemId: string, validPreviewExt: string[]): void {
-        const itemFileType = ObjectHelper.byPath(item, "resource.listItem.fields.filetype");
-        
+        const itemFileType = this.getSharePointField(item, "filetype") || this.getSharePointField(item, "fileType");
+
         if (itemFileType && validPreviewExt.includes(itemFileType.toUpperCase())) {
-            let tenantUrl = item.resource.webUrl.split('/sites/')[0];
-            tenantUrl ??= item.resource.webUrl.split('/teams/')[0];
-            
-            item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = DataSourceHelper.generateSharePointThumbnailUrl({
-                baseUrl: tenantUrl,
-                siteId: item.resource.listItem.fields.siteId,
-                webId: webId,
-                listId: item.resource.parentReference.sharepointIds.listId,
-                itemId: item.resource.parentReference.sharepointIds.listItemUniqueId
-            });
+            const resourceWebUrl = ObjectHelper.byPath(item, "resource.webUrl") || ObjectHelper.byPath(item, "webUrl");
+            let tenantUrl = resourceWebUrl;
+
+            if (resourceWebUrl) {
+                tenantUrl = resourceWebUrl.split('/sites/')[0];
+                if (tenantUrl === resourceWebUrl) {
+                    tenantUrl = resourceWebUrl.split('/teams/')[0];
+                }
+            }
+
+            const resolvedSiteId = siteId || this.getSharePointField(item, "siteId");
+            const resolvedListId = listId || ObjectHelper.byPath(item, "resource.parentReference.sharepointIds.listId");
+            const resolvedItemId = ObjectHelper.byPath(item, "resource.parentReference.sharepointIds.listItemUniqueId") || itemId;
+
+            if (tenantUrl && resolvedSiteId && resolvedListId && resolvedItemId) {
+                item[AutoCalculatedDataSourceFields.AutoPreviewImageUrl] = DataSourceHelper.generateSharePointThumbnailUrl({
+                    baseUrl: tenantUrl,
+                    siteId: resolvedSiteId,
+                    webId: webId,
+                    listId: resolvedListId,
+                    itemId: resolvedItemId
+                });
+            }
         }
     }
 
     private initProperties(): void {
         this.properties.entityTypes = this.properties.entityTypes ?? [EntityType.DriveItem];
 
-    const CommonFields = ["title", "name", "webUrl", "filetype", "fileType", "createdBy", "createdDateTime", "lastModifiedDateTime", "parentReference", "size", "description", "file", "folder", "subject", "bodyPreview", "replyTo", "from", "sender", "start", "end", "displayName", "givenName", "surname", "userPrincipalName", "mail", "phones", "department","contentTypeId","siteId", "webId", "contentClass", "siteTitle", "sitePath", "AuthorOWSUSER", "listId", "listItemId", "listItemUniqueId", "driveId", "owstaxidmetadataalltagsinfo"];
+        const CommonFields = ["title", "name", "webUrl", "filetype", "fileType", "createdBy", "createdDateTime", "lastModifiedDateTime", "parentReference", "size", "description", "file", "folder", "subject", "bodyPreview", "replyTo", "from", "sender", "start", "end", "displayName", "givenName", "surname", "userPrincipalName", "mail", "phones", "department", "contentTypeId", "siteId", "webId", "contentClass", "siteTitle", "sitePath", "AuthorOWSUSER", "listId", "listItemId", "listItemUniqueId", "driveId", "owstaxidmetadataalltagsinfo"];
 
         this.properties.fields = this.properties.fields ?? CommonFields;
         this.properties.sortProperties = this.properties.sortProperties ?? [];
@@ -1056,7 +1102,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         const queryText = await this.resolveQueryText(dataContext);
         let queryTemplate = await this.resolveQueryTemplate(dataContext, queryText);
         const from = this.calculatePagingOffset(dataContext);
-        
+
         const aggregations = this.buildAggregations(dataContext);
         const aggregationFilters = this.buildAggregationFilters(dataContext);
         const contentSources = this.buildContentSources();
@@ -1134,11 +1180,11 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
     }
 
     private buildDateRanges(): any[] {
-        const pastYear = this.moment(new Date()).subtract(1, 'years').subtract('minutes', 1).toISOString();
-        const past3Months = this.moment(new Date()).subtract(3, 'months').subtract('minutes', 1).toISOString();
-        const pastMonth = this.moment(new Date()).subtract(1, 'months').subtract('minutes', 1).toISOString();
-        const pastWeek = this.moment(new Date()).subtract(1, 'week').subtract('minutes', 1).toISOString();
-        const past24hours = this.moment(new Date()).subtract(24, 'hours').subtract('minutes', 1).toISOString();
+        const pastYear = this.dayjs(new Date()).subtract(1, 'years').subtract(1, 'minute').toISOString();
+        const past3Months = this.dayjs(new Date()).subtract(3, 'months').subtract(1, 'minute').toISOString();
+        const pastMonth = this.dayjs(new Date()).subtract(1, 'months').subtract(1, 'minute').toISOString();
+        const pastWeek = this.dayjs(new Date()).subtract(1, 'week').subtract(1, 'minute').toISOString();
+        const past24hours = this.dayjs(new Date()).subtract(24, 'hours').subtract(1, 'minute').toISOString();
         const today = new Date().toISOString();
 
         return [
@@ -1156,14 +1202,14 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         const aggregationFilters: string[] = [];
 
         if (dataContext.filters.selectedFilters.length > 0) {
-            if (dataContext.filters.selectedFilters.length > 1 && 
+            if (dataContext.filters.selectedFilters.length > 1 &&
                 dataContext.filters.selectedFilters.filter(f => f.values.length > 0).length > 1) {
-                const refinementString = DataFilterHelper.buildFqlRefinementString(dataContext.filters.selectedFilters, this.moment).join(',');
+                const refinementString = DataFilterHelper.buildFqlRefinementString(dataContext.filters.selectedFilters, this.dayjs).join(',');
                 if (!isEmpty(refinementString)) {
                     aggregationFilters.push(`${dataContext.filters.filterOperator}(${refinementString})`);
                 }
             } else {
-                aggregationFilters.push(...DataFilterHelper.buildFqlRefinementString(dataContext.filters.selectedFilters, this.moment));
+                aggregationFilters.push(...DataFilterHelper.buildFqlRefinementString(dataContext.filters.selectedFilters, this.dayjs));
             }
         }
 
@@ -1186,7 +1232,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         const sortProperties: ISearchSortProperty[] = [];
 
         // Sort is only available for 'ListItem' and ExternalItem
-        if (!this.properties.entityTypes.includes(EntityType.ListItem) && 
+        if (!this.properties.entityTypes.includes(EntityType.ListItem) &&
             !this.properties.entityTypes.includes(EntityType.ExternalItem)) {
             return sortProperties;
         }
@@ -1271,9 +1317,9 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
     private applyFields(searchRequest: IMicrosoftSearchRequest): void {
         if (this.properties.fields.length > 0) {
             const fieldsToUse = this.properties.fields.filter(Boolean);
-            
-            if (!(this.properties.entityTypes.includes(EntityType.Acronym) || 
-                  this.properties.entityTypes.includes(EntityType.Bookmark)) && fieldsToUse.length > 0) {
+
+            if (!(this.properties.entityTypes.includes(EntityType.Acronym) ||
+                this.properties.entityTypes.includes(EntityType.Bookmark)) && fieldsToUse.length > 0) {
                 searchRequest.fields = fieldsToUse;
             }
         }
@@ -1439,12 +1485,12 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         try {
             const resource = hit.resource || {};
             const createdByUser = resource?.createdBy?.user;
-            
+
             // Get email, display name, and AAD Object ID from createdBy.user
             let email: string | undefined = createdByUser?.email;
             let dispName: string | undefined = createdByUser?.displayName?.trim();
             let aadObjectId: string | undefined = createdByUser?.id;
-            
+
             // For UPN: try userPrincipalName from flat fields first (Person entity),
             // then fall back to email (common in M365)
             let upn: string | undefined = hit.userPrincipalName || email;
@@ -1492,4 +1538,3 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         } as IDataFilterResultValue));
     }
 }
-
