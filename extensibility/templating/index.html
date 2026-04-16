@@ -788,6 +788,27 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#blocked-html-elements" class="md-nav__link">
+    Blocked HTML elements
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#blocked-html-attributes" class="md-nav__link">
+    Blocked HTML attributes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#allowed-elements-and-attributes" class="md-nav__link">
+    Allowed elements and attributes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#template-structure" class="md-nav__link">
     Template structure
   </a>
@@ -1239,6 +1260,27 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#blocked-html-elements" class="md-nav__link">
+    Blocked HTML elements
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#blocked-html-attributes" class="md-nav__link">
+    Blocked HTML attributes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#allowed-elements-and-attributes" class="md-nav__link">
+    Allowed elements and attributes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#template-structure" class="md-nav__link">
     Template structure
   </a>
@@ -1550,8 +1592,91 @@
 <h2 id="handlebars-html-and-css-customizations">Handlebars, HTML and CSS customizations<a class="headerlink" href="#handlebars-html-and-css-customizations" title="Permanent link">&para;</a></h2>
 <p><img alt="&quot;Handlebars&quot;" class="center" src="../../assets/extensibility/handlebars_templating.png" /></p>
 <blockquote>
-<p>The templates and fields HTML markup is sanitized automatically preventing XSS attacks. We used <a href="https://github.com/cure53/DOMPurify"><code>DOMPurify</code></a> to do so. It means for instance, you cannot add your own <code>&lt;script&gt;</code> tags or inline JavaScript.</p>
+<p>The templates and fields HTML markup is sanitized automatically preventing XSS attacks. We use <a href="https://github.com/cure53/DOMPurify"><code>DOMPurify</code></a> to do so. It means for instance, you cannot add your own <code>&lt;script&gt;</code> tags or inline JavaScript.</p>
 </blockquote>
+<h3 id="blocked-html-elements">Blocked HTML elements<a class="headerlink" href="#blocked-html-elements" title="Permanent link">&para;</a></h3>
+<p>The following HTML elements are removed during sanitization because they have no legitimate use in search result templates and present security risks:</p>
+<table>
+<thead>
+<tr>
+<th>Element</th>
+<th>Reason</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&lt;script&gt;</code></td>
+<td>JavaScript execution</td>
+</tr>
+<tr>
+<td><code>&lt;iframe&gt;</code></td>
+<td>Arbitrary content embedding</td>
+</tr>
+<tr>
+<td><code>&lt;form&gt;</code></td>
+<td><code>action</code> attribute accepts <code>javascript:</code> URIs</td>
+</tr>
+<tr>
+<td><code>&lt;button&gt;</code></td>
+<td><code>formaction</code> attribute accepts <code>javascript:</code> URIs</td>
+</tr>
+<tr>
+<td><code>&lt;object&gt;</code></td>
+<td>Plugin execution, external resource loading</td>
+</tr>
+<tr>
+<td><code>&lt;embed&gt;</code></td>
+<td>Plugin execution, external resource loading</td>
+</tr>
+</tbody>
+</table>
+<h3 id="blocked-html-attributes">Blocked HTML attributes<a class="headerlink" href="#blocked-html-attributes" title="Permanent link">&para;</a></h3>
+<p>The following attributes are stripped from all elements to prevent JavaScript execution and data exfiltration:</p>
+<table>
+<thead>
+<tr>
+<th>Attribute</th>
+<th>Reason</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>on*</code> (onclick, onerror, etc.)</td>
+<td>Inline JavaScript execution</td>
+</tr>
+<tr>
+<td><code>action</code>, <code>formaction</code></td>
+<td>Accept <code>javascript:</code> URIs</td>
+</tr>
+<tr>
+<td><code>xlink:href</code></td>
+<td>SVG JavaScript execution via <code>javascript:</code> URIs</td>
+</tr>
+<tr>
+<td><code>srcdoc</code></td>
+<td>HTML/JavaScript injection</td>
+</tr>
+<tr>
+<td><code>ping</code></td>
+<td>Data exfiltration to external servers</td>
+</tr>
+<tr>
+<td><code>dynsrc</code>, <code>lowsrc</code>, <code>background</code></td>
+<td>Legacy attributes that accept <code>javascript:</code> URIs</td>
+</tr>
+</tbody>
+</table>
+<h3 id="allowed-elements-and-attributes">Allowed elements and attributes<a class="headerlink" href="#allowed-elements-and-attributes" title="Permanent link">&para;</a></h3>
+<p>Standard HTML elements for layout and presentation (<code>&lt;div&gt;</code>, <code>&lt;span&gt;</code>, <code>&lt;table&gt;</code>, <code>&lt;a&gt;</code>, <code>&lt;img&gt;</code>, <code>&lt;ul&gt;</code>, <code>&lt;li&gt;</code>, etc.) are allowed, along with:</p>
+<ul>
+<li><strong><code>&lt;style&gt;</code> tags</strong> for <a href="#custom-css-styles">custom CSS</a> (CSS content is sanitized to block <code>@import</code>, <code>javascript:</code>, and similar vectors)</li>
+<li><strong><code>&lt;link rel="stylesheet"&gt;</code> tags</strong> for same-origin stylesheets only (external domains are blocked)</li>
+<li><strong><code>&lt;content&gt;</code> tags</strong> for template structure</li>
+<li><strong>Custom web components</strong> (e.g. <code>&lt;pnp-iconfile&gt;</code>, <code>&lt;my-component&gt;</code>)</li>
+<li><strong><code>data-*</code> attributes</strong> for custom component configuration</li>
+<li><strong><code>style</code> attributes</strong> (sanitized to remove dangerous CSS patterns)</li>
+<li><strong><code>href</code></strong> on links (validated against an allowlist of safe URI schemes — <code>javascript:</code> is blocked)</li>
+</ul>
 <h3 id="template-structure">Template structure<a class="headerlink" href="#template-structure" title="Permanent link">&para;</a></h3>
 <p>A layout template is always split into two distinct parts:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>    <span class="p">&lt;</span><span class="nt">content</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;template&quot;</span><span class="p">&gt;</span>

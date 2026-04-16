@@ -618,6 +618,40 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#hierarchical-refiner-taxonomy" class="md-nav__link">
+    Hierarchical refiner (taxonomy)
+  </a>
+  
+    <nav class="md-nav" aria-label="Hierarchical refiner (taxonomy)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hierarchical-settings" class="md-nav__link">
+    Hierarchical settings
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-behavior-with-hierarchical-template" class="md-nav__link">
+    Option behavior with hierarchical template
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#localization-and-deep-links" class="md-nav__link">
+    Localization and deep links
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#filter-styling" class="md-nav__link">
     Filter styling
   </a>
@@ -979,6 +1013,40 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#hierarchical-refiner-taxonomy" class="md-nav__link">
+    Hierarchical refiner (taxonomy)
+  </a>
+  
+    <nav class="md-nav" aria-label="Hierarchical refiner (taxonomy)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hierarchical-settings" class="md-nav__link">
+    Hierarchical settings
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-behavior-with-hierarchical-template" class="md-nav__link">
+    Option behavior with hierarchical template
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#localization-and-deep-links" class="md-nav__link">
+    Localization and deep links
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#filter-styling" class="md-nav__link">
     Filter styling
   </a>
@@ -1086,7 +1154,7 @@
 </tr>
 <tr>
 <td><strong>Template</strong></td>
-<td>The template to use to display filter values. The builtin templates are: </br><ul><li><strong>Check box</strong> <p align="center"><img alt="&quot;Check box&quot;" src="../../assets/webparts/search-filters/checkbox_template.png" /></p></li><li><strong>Date range</strong> <p align="center"><img alt="&quot;Date range&quot;" src="../../assets/webparts/search-filters/daterange_template.png" /></p></li><li><strong>Date interval</strong> <p align="center"><img alt="&quot;Date interval&quot;" src="../../assets/webparts/search-filters/dateinterval_template.png" /></p></li><li><strong>Combo</strong> <p align="center"><img alt="&quot;Combo&quot;" src="../../assets/webparts/search-filters/combo_template.png" /></p></br> You can search a value directly in the list by typing keywords in the combo text field.</br></br><li><strong>People Template</strong> <p align="center"><img alt="&quot;People Template&quot;" src="../../assets/webparts/search-filters/people_template.png" />  </p></br></li></ul></td>
+<td>The template to use to display filter values. The builtin templates are: </br><ul><li><strong>Check box</strong> <p align="center"><img alt="&quot;Check box&quot;" src="../../assets/webparts/search-filters/checkbox_template.png" /></p></li><li><strong>Date range</strong> <p align="center"><img alt="&quot;Date range&quot;" src="../../assets/webparts/search-filters/daterange_template.png" /></p></li><li><strong>Date interval</strong> <p align="center"><img alt="&quot;Date interval&quot;" src="../../assets/webparts/search-filters/dateinterval_template.png" /></p></li><li><strong>Combo</strong> <p align="center"><img alt="&quot;Combo&quot;" src="../../assets/webparts/search-filters/combo_template.png" /></p></br> You can search a value directly in the list by typing keywords in the combo text field.</br></br><li><strong>People Template</strong> <p align="center"><img alt="&quot;People Template&quot;" src="../../assets/webparts/search-filters/people_template.png" />  </p></br></li><li><strong>Hierarchical Refiner</strong> (taxonomy tree for parent/child terms)</li></ul></td>
 </tr>
 <tr>
 <td><strong>Expand by default</strong></td>
@@ -1114,6 +1182,70 @@
 </tr>
 </tbody>
 </table>
+<h3 id="hierarchical-refiner-taxonomy">Hierarchical refiner (taxonomy)<a class="headerlink" href="#hierarchical-refiner-taxonomy" title="Permanent link">&para;</a></h3>
+<p>Use the <strong>Hierarchical Refiner</strong> template when you want to browse and filter terms as a tree (parent/child hierarchy).</p>
+<p>This template is designed for taxonomy-backed fields (typically <code>RefinableStringXX</code> values returned by search refiners).</p>
+<p><img alt="&quot;Hierarchical Refiner&quot;" class="center" src="../../assets/webparts/search-filters/hierarchical_refiner.png" /></p>
+<h4 id="hierarchical-settings">Hierarchical settings<a class="headerlink" href="#hierarchical-settings" title="Permanent link">&para;</a></h4>
+<p>When the <strong>Hierarchical Refiner</strong> template is selected, a <strong>Hierarchical Settings</strong> entry appears in the filter row.</p>
+<table>
+<thead>
+<tr>
+<th><strong>Setting</strong></th>
+<th><strong>Description</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Term Set</strong></td>
+<td>Select the term set used to build the tree. Term sets are grouped by term group, and you can search within available term sets.</td>
+</tr>
+<tr>
+<td><strong>Cache Duration</strong></td>
+<td>Number of days to cache retrieved terms (1-5 days, default 3).</td>
+</tr>
+<tr>
+<td><strong>Refresh Cache Now</strong></td>
+<td>Clears the cached terms for the selected term set and reloads from term store.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="option-behavior-with-hierarchical-template">Option behavior with hierarchical template<a class="headerlink" href="#option-behavior-with-hierarchical-template" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th><strong>General filter option</strong></th>
+<th><strong>Behavior with Hierarchical Refiner</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Expand by default</strong></td>
+<td>Supported (root level expands by default).</td>
+</tr>
+<tr>
+<td><strong>Show count</strong></td>
+<td>Not shown in the hierarchical tree UI.</td>
+</tr>
+<tr>
+<td><strong>Multi values</strong></td>
+<td>Template behaves as single-select in the tree (one active selection at a time).</td>
+</tr>
+<tr>
+<td><strong>Operator between values</strong></td>
+<td>Not relevant in practice because selection is single-select.</td>
+</tr>
+<tr>
+<td><strong>Sort values by / Sort direction</strong></td>
+<td>Disabled for this template. The hierarchy follows term store structure.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="localization-and-deep-links">Localization and deep links<a class="headerlink" href="#localization-and-deep-links" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Works with localized taxonomy refiner values when <strong>Enable localization</strong> is enabled in the connected SharePoint Search data source.</li>
+<li>Deep links generated from hierarchical selections are supported.</li>
+</ul>
 <h3 id="filter-styling">Filter styling<a class="headerlink" href="#filter-styling" title="Permanent link">&para;</a></h3>
 <p>The filter styling section allows you to customize the visual appearance of the filter panel to match your branding and design requirements.</p>
 <table>

@@ -840,6 +840,9 @@
 </blockquote>
 <p><img alt="&quot;Custom edit&quot;" class="center" src="../../../../assets/webparts/search-results/layouts/custom_edit.png" /> </p>
 <p>You have also the ability to use an external <em>.html</em> file to centralize your customizations. This file must be stored in an accessible location for uses (ex: a SharePoint document library with <em>'Read'</em> permissions for concerned users).</p>
+<blockquote>
+<p>Template HTML is sanitized to prevent XSS attacks. Some elements (e.g. <code>&lt;script&gt;</code>, <code>&lt;form&gt;</code>, <code>&lt;iframe&gt;</code>) and dangerous attributes are blocked. See <a href="../../../../extensibility/templating/#blocked-html-elements">Template sanitization</a> for the full list of blocked elements and attributes.</p>
+</blockquote>
 <p><img alt="&quot;External file&quot;" class="center" src="../../../../assets/webparts/search-results/layouts/custom_external_file.png" /> </p>
 <blockquote>
 <p>Unless you specify an external file, the template content is stored in the Web Part property bag.</p>
