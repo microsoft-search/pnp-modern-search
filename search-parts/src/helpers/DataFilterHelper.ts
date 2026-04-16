@@ -4,6 +4,9 @@ import { BuiltinTokenNames } from "../services/tokenService/TokenService";
 import { BuiltinFilterTypes } from "../layouts/AvailableTemplates";
 
 export class DataFilterHelper {
+    /**
+     * Checks whether a value is an ISO date string and parsable by Dayjs.
+     */
     private static isIsoDateValue(value: string, dayjs: any): boolean {
         if (!value) {
             return false;

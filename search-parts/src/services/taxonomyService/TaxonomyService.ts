@@ -219,6 +219,9 @@ export class TaxonomyService implements ITaxonomyService {
 		}
 	}
 
+	/**
+	 * Validates and normalizes a GUID value by trimming, removing braces, and lowercasing.
+	 */
 	private normalizeGuid(value: string): string | null {
 		if (!value || typeof value !== 'string') {
 			return null;
@@ -229,6 +232,9 @@ export class TaxonomyService implements ITaxonomyService {
 		return this.guidPattern.test(guid) ? guid.toLowerCase() : null;
 	}
 
+	/**
+	 * Escapes XML special characters before interpolating values into CSOM request payloads.
+	 */
 	private escapeXml(value: string): string {
 		return value
 			.replace(/&/g, '&amp;')

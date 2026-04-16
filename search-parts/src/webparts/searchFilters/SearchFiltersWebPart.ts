@@ -61,6 +61,9 @@ interface IHierarchicalFilterConfiguration extends IDataFilterConfiguration {
     cacheDuration?: number;
 }
 
+/**
+ * Transient UI state used by the hierarchical settings custom property pane renderer.
+ */
 interface IHierarchicalSettingsUiState {
     showModal: boolean;
     searchText: string;
@@ -176,6 +179,9 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
         }
     }
 
+    /**
+     * Gets (or creates) the transient property pane UI state for a hierarchical filter item.
+     */
     private getHierarchicalSettingsUiState(itemId: string | number): IHierarchicalSettingsUiState {
         const stateKey = `${this.instanceId}_${String(itemId)}`;
         let uiState = this.hierarchicalSettingsUiStateByItemId.get(stateKey);

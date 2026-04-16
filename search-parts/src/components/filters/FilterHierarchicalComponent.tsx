@@ -471,6 +471,9 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
     }, 150);
   }
 
+  /**
+   * Schedules deferred state work and tracks timers so they can be cleared on unmount.
+   */
   private scheduleStateUpdate(updateAction: () => void): void {
     const timer = setTimeout(() => {
       this.pendingStateUpdateTimers = this.pendingStateUpdateTimers.filter(currentTimer => currentTimer !== timer);
