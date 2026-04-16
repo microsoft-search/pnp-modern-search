@@ -73,7 +73,7 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
         };
 
         let renderInput: JSX.Element = null;
-        let textColor: string = this.props.themeVariant && this.props.themeVariant.isInverted ? (this.props.themeVariant ? this.props.themeVariant.semanticColors.bodyText : '#323130') : this.props.themeVariant.semanticColors.inputText;
+        let textColor: string = this.props.themeVariant?.isInverted ? this.props.themeVariant.semanticColors.bodyText : this.props.themeVariant?.semanticColors?.inputText ?? '#323130';
         const textComponentStyles: IStyleFunctionOrObject<ITextProps, ITextStyles> = {
             root: {
                 color: textColor
