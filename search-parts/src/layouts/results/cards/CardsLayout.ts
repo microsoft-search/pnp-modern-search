@@ -59,10 +59,11 @@ export class CardsLayout extends BaseLayout<ICardsLayoutProperties> {
 
         // Setup default values
         this.properties.documentCardFields = this.properties.documentCardFields ? this.properties.documentCardFields :
-                                                [
-                                                    { name: strings.Layouts.Cards.Fields.Title, field: 'title', value: '{{slot item @root.slots.Title}}', useHandlebarsExpr: true, supportHtml: false },
-                                                    { name: strings.Layouts.Cards.Fields.Location, field: 'location', value: `<a style="color:{{@root.theme.palette.themePrimary}};font-weight:600;font-family:'{{@root.theme.fonts.small.fontFamily}}'" href="{{slot item @root.slots.SPWebURL}}">{{slot item @root.slots.SiteTitle}}</a>`, useHandlebarsExpr: true, supportHtml: true },
-                                                    { name: strings.Layouts.Cards.Fields.Tags, field: 'tags', value: `<style>\n\t.tags {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\twhite-space: normal;\n\t\tcursor: auto; \n\t}\n\t.tags i { \n\t\tmargin-right: 5px; \n\t}\n\t.tags div {\n\t\tdisplay: flex;\n\t\tflex-wrap: wrap; \n\t\tjustify-content: flex-end; \n\t}\n\t.tags div span {\n\t\ttext-decoration: underline; \n\t\tmargin-right: auto; \n\t}\n\t .simpletags \n\t\{\n\t\tdisplay: inline-block;\n\t\tpadding: 2px 5px;\n\t\tmargin-right: 5px;\n\t\tbackground-color: {{@root.theme.palette.neutralLight}};\n\t\tcolor: {{@root.theme.palette.neutralDark}};\n\t\tborder-radius: 5px;\n\t\tfont-size: 12px;\n\t\}\n</style>\n\n{{#if (slot item @root.slots.Tags)}}
+            [
+                { name: strings.Layouts.Cards.Fields.Title, field: 'title', value: '{{slot item @root.slots.Title}}', useHandlebarsExpr: true, supportHtml: false },
+                { name: strings.Layouts.Cards.Fields.Location, field: 'location', value: `<a style="color:{{@root.theme.palette.themePrimary}};font-weight:600;font-family:'{{@root.theme.fonts.small.fontFamily}}'" href="{{slot item @root.slots.SPWebURL}}">{{slot item @root.slots.SiteTitle}}</a>`, useHandlebarsExpr: true, supportHtml: true },
+                {
+                    name: strings.Layouts.Cards.Fields.Tags, field: 'tags', value: `<style>\n\t.tags {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\twhite-space: normal;\n\t\tcursor: auto; \n\t}\n\t.tags i { \n\t\tmargin-right: 5px; \n\t}\n\t.tags div {\n\t\tdisplay: flex;\n\t\tflex-wrap: wrap; \n\t\tjustify-content: flex-end; \n\t}\n\t.tags div span {\n\t\ttext-decoration: underline; \n\t\tmargin-right: auto; \n\t}\n\t .simpletags \n\t\{\n\t\tdisplay: inline-block;\n\t\tpadding: 2px 5px;\n\t\tmargin-right: 5px;\n\t\tbackground-color: {{@root.theme.palette.neutralLight}};\n\t\tcolor: {{@root.theme.palette.neutralDark}};\n\t\tborder-radius: 5px;\n\t\tfont-size: 12px;\n\t\}\n</style>\n\n{{#if (slot item @root.slots.Tags)}}
 	<div class="tags">
 		<pnp-icon data-name="Tag" aria-hidden="true" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-icon>
 		<div>
@@ -94,22 +95,23 @@ export class CardsLayout extends BaseLayout<ICardsLayoutProperties> {
 			{{/if}}
 		</div>
 	</div>
-{{/if}}`, useHandlebarsExpr: true, supportHtml: true },
-                                                    { name: strings.Layouts.Cards.Fields.PreviewImage, field: 'previewImage',  value: "{{slot item @root.slots.PreviewImageUrl}}", useHandlebarsExpr: true, supportHtml: false },
-                                                    { name: strings.Layouts.Cards.Fields.PreviewUrl, field: 'previewUrl' , value: "{{slot item @root.slots.PreviewUrl}}", useHandlebarsExpr: true, supportHtml: false },
-                                                    { name: strings.Layouts.Cards.Fields.Date, field: 'date', value: "{{getDate (slot item @root.slots.Date) 'LL'}}", useHandlebarsExpr: true, supportHtml: false },
-                                                    { name: strings.Layouts.Cards.Fields.Url, field: 'href', value: '{{slot item @root.slots.PreviewUrl}}', useHandlebarsExpr: true, supportHtml: false },
-                                                    { name: strings.Layouts.Cards.Fields.Author, field: 'author', value: "{{slot item @root.slots.Author}}", useHandlebarsExpr: true, supportHtml: false },
-                                                    { name: strings.Layouts.Cards.Fields.ProfileImage, field: 'profileImage', value: "/_layouts/15/userphoto.aspx?size=L&username={{getUserEmail (slot item @root.slots.Author)}}", useHandlebarsExpr: true, supportHtml: false  },
-                                                    { name: strings.Layouts.Cards.Fields.FileExtension, field: 'fileExtension', value: "{{slot item @root.slots.FileType}}", useHandlebarsExpr: true, supportHtml: false },
-                                                    { name: strings.Layouts.Cards.Fields.IsContainer, field: 'isContainer', value: "{{slot item @root.slots.IsFolder}}", useHandlebarsExpr: true, supportHtml: false }
-                                                ] as IComponentFieldsConfiguration[];
-            
-        this.properties.isCompact = this.properties.isCompact !== null && this.properties.isCompact !== undefined ?  this.properties.isCompact: false;
-        this.properties.showFileIcon = this.properties.showFileIcon !== null && this.properties.showFileIcon !== undefined ?  this.properties.showFileIcon: true;
-        this.properties.enablePreview = this.properties.enablePreview !== null && this.properties.enablePreview !== undefined ?  this.properties.enablePreview: false; // Watch out performance issues if too many items displayed
-        this.properties.preferedCardNumberPerRow = this.properties.preferedCardNumberPerRow ? this.properties.preferedCardNumberPerRow : 3;
-        this.properties.columnSizePercentage = this.properties.columnSizePercentage ? this.properties.columnSizePercentage : 33;
+{{/if}}`, useHandlebarsExpr: true, supportHtml: true
+                },
+                { name: strings.Layouts.Cards.Fields.PreviewImage, field: 'previewImage', value: "{{slot item @root.slots.PreviewImageUrl}}", useHandlebarsExpr: true, supportHtml: false },
+                { name: strings.Layouts.Cards.Fields.PreviewUrl, field: 'previewUrl', value: "{{slot item @root.slots.PreviewUrl}}", useHandlebarsExpr: true, supportHtml: false },
+                { name: strings.Layouts.Cards.Fields.Date, field: 'date', value: "{{getDate (slot item @root.slots.Date) 'LL'}}", useHandlebarsExpr: true, supportHtml: false },
+                { name: strings.Layouts.Cards.Fields.Url, field: 'href', value: '{{slot item @root.slots.PreviewUrl}}', useHandlebarsExpr: true, supportHtml: false },
+                { name: strings.Layouts.Cards.Fields.Author, field: 'author', value: "{{slot item @root.slots.Author}}", useHandlebarsExpr: true, supportHtml: false },
+                { name: strings.Layouts.Cards.Fields.ProfileImage, field: 'profileImage', value: "/_layouts/15/userphoto.aspx?size=L&username={{getUserEmail (slot item @root.slots.Author)}}", useHandlebarsExpr: true, supportHtml: false },
+                { name: strings.Layouts.Cards.Fields.FileExtension, field: 'fileExtension', value: "{{slot item @root.slots.FileType}}", useHandlebarsExpr: true, supportHtml: false },
+                { name: strings.Layouts.Cards.Fields.IsContainer, field: 'isContainer', value: "{{slot item @root.slots.IsFolder}}", useHandlebarsExpr: true, supportHtml: false }
+            ] as IComponentFieldsConfiguration[];
+
+        this.properties.isCompact = this.properties.isCompact ?? false;
+        this.properties.showFileIcon = this.properties.showFileIcon ?? true;
+        this.properties.enablePreview = this.properties.enablePreview ?? false; // Watch out performance issues if too many items displayed
+        this.properties.preferedCardNumberPerRow = this.properties.preferedCardNumberPerRow ?? 3;
+        this.properties.columnSizePercentage = this.properties.columnSizePercentage ?? 33;
 
         const { PropertyFieldCollectionData, CustomCollectionFieldType } = await import(
             /* webpackChunkName: 'pnp-modern-search-results-cards-layout' */
@@ -125,7 +127,7 @@ export class CardsLayout extends BaseLayout<ICardsLayoutProperties> {
             /* webpackChunkName: 'pnp-modern-search-results-cards-layout' */
             '@pnp/spfx-property-controls/lib/common/callout/Callout'
         );
-        
+
         this._propertyFieldCollectionData = PropertyFieldCollectionData;
         this._customCollectionFieldType = CustomCollectionFieldType;
         this._propertyFieldToogleWithCallout = PropertyFieldToggleWithCallout;
@@ -134,10 +136,10 @@ export class CardsLayout extends BaseLayout<ICardsLayoutProperties> {
 
     public getPropertyPaneFieldsConfiguration(availableFields: string[]): IPropertyPaneField<any>[] {
 
-        const availableOptions: IComboBoxOption[] = availableFields.map((fieldName) => { return  { key: fieldName, text: fieldName } as IComboBoxOption; });
+        const availableOptions: IComboBoxOption[] = availableFields.map((fieldName) => { return { key: fieldName, text: fieldName } as IComboBoxOption; });
 
         return [
-            
+
             // Careful, the property names should match the React components props. These will be injected in the Handlebars template context and passed as web component attributes
             this._propertyFieldCollectionData('layoutProperties.documentCardFields', {
                 manageBtnLabel: strings.Layouts.Cards.ManageTilesFieldsLabel,
@@ -174,7 +176,7 @@ export class CardsLayout extends BaseLayout<ICardsLayoutProperties> {
                         type: this._customCollectionFieldType.custom,
                         required: true,
                         onCustomRender: (field, value, onUpdate, item, itemId, onCustomFieldValidation) => {
-                            return React.createElement("div", { key: `${field.id}-${itemId}` }, 
+                            return React.createElement("div", { key: `${field.id}-${itemId}` },
                                 React.createElement(TemplateValueFieldEditor, {
                                     currentItem: item,
                                     field: field,
@@ -197,7 +199,7 @@ export class CardsLayout extends BaseLayout<ICardsLayoutProperties> {
                 buttonType: PropertyPaneButtonType.Command,
                 icon: 'Refresh',
                 text: strings.Layouts.Cards.ResetFieldsBtnLabel,
-                onClick: ()=> {
+                onClick: () => {
                     // Just reset the fields
                     this.properties.documentCardFields = null;
                     this.onInit();
@@ -207,17 +209,17 @@ export class CardsLayout extends BaseLayout<ICardsLayoutProperties> {
                 label: strings.Layouts.Cards.EnableItemPreview,
                 calloutTrigger: this._propertyFieldCalloutTriggers.Hover,
                 key: 'layoutProperties.enablePreview',
-                calloutContent: React.createElement('p', { style:{ maxWidth: 250, wordBreak: 'break-word' }}, strings.Layouts.Cards.EnableItemPreviewHoverMessage),
+                calloutContent: React.createElement('p', { style: { maxWidth: 250, wordBreak: 'break-word' } }, strings.Layouts.Cards.EnableItemPreviewHoverMessage),
                 onText: strings.General.OnTextLabel,
                 offText: strings.General.OffTextLabel,
                 checked: this.properties.enablePreview
             }),
             PropertyPaneToggle('layoutProperties.showFileIcon', {
-                label: strings.Layouts.Cards.ShowFileIcon,                        
+                label: strings.Layouts.Cards.ShowFileIcon,
                 checked: this.properties.showFileIcon
             }),
             PropertyPaneToggle('layoutProperties.isCompact', {
-                label: strings.Layouts.Cards.CompactModeLabel,               
+                label: strings.Layouts.Cards.CompactModeLabel,
                 checked: this.properties.isCompact
             }),
             PropertyPaneSlider('layoutProperties.preferedCardNumberPerRow', {
@@ -226,21 +228,21 @@ export class CardsLayout extends BaseLayout<ICardsLayoutProperties> {
                 max: 6,
                 step: 1,
                 showValue: true,
-                value: this.properties.preferedCardNumberPerRow,                
+                value: this.properties.preferedCardNumberPerRow,
             }),
             PropertyPaneToggle('layoutProperties.enableDownload', {
                 label: strings.Layouts.DetailsList.EnableDownload,
                 checked: this.properties.enableDownload
             })
-  
+
         ];
     }
 
     public onPropertyUpdate(propertyPath: string, oldValue: any, newValue: any) {
-        
+
         if (propertyPath.localeCompare('layoutProperties.preferedCardNumberPerRow') === 0) {
             // Calculate the correct % for card flex-basis
-            this.properties.columnSizePercentage = Math.floor(100 /newValue)-1;
+            this.properties.columnSizePercentage = Math.floor(100 / newValue) - 1;
         }
     }
 }
