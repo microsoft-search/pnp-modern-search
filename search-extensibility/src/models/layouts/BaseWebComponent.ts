@@ -22,7 +22,7 @@ export abstract class BaseWebComponent extends HTMLElement {
     /**
      * INTERNAL USE ONLY. Array of service keys of Web Part IDs who registered this web component. Use this array to look up correct service keys context for a specific Web Part instance ID.
      */
-    public _webPartServiceKeys: Map<string, {[key:string]: ServiceKey<any>}>;
+    public _webPartServiceKeys: Map<string, { [key: string]: ServiceKey<any> }>;
 
     /**
      * INTERNAL USE ONLY. For custom web component use `_serviceScope` property and the `DateHelper` service (ex: `this._serviceScope.consume<DateHelper>(DateHelper.ServiceKey)`)
@@ -30,26 +30,26 @@ export abstract class BaseWebComponent extends HTMLElement {
     public _moment: any;
 
     protected abstract connectedCallback(): void;
-        
+
     protected disconnectedCallback() {
         // eslint-disable-next-line @rushstack/pair-react-dom-render-unmount -- render is called in subclass connectedCallback implementations
         ReactDOM.unmountComponentAtNode(this);
     }
-    
+
     /**
      * Transforms web component attributes to camel case properties to pass in React components
      * (ex: a 'preview-image' HTML attribute becomes 'previewImage' prop, etc.)
      * @returns the properties with formatted names 
      */
-    protected resolveAttributes(): { [key:string] : any } {
-        
+    protected resolveAttributes(): { [key: string]: any } {
+
         const props = {} as any;
 
-        for (let i =0;i < this.attributes.length;i++) {
+        for (let i = 0; i < this.attributes.length; i++) {
 
             if (this.attributes.item(i)) {
 
-                const value = this.attributes.item(i).value; 
+                const value = this.attributes.item(i).value;
                 let attr = this.attributes.item(i).name;
 
                 // Resolve 'data-*' attribute name
@@ -72,7 +72,7 @@ export abstract class BaseWebComponent extends HTMLElement {
                         } else {
                             // Objects
                             try {
-                                props[camelCase(attr)] = JSON.parse(value);                            
+                                props[camelCase(attr)] = JSON.parse(value);
                             } catch (error) {
 
                                 // Date
@@ -83,10 +83,10 @@ export abstract class BaseWebComponent extends HTMLElement {
                                     props[camelCase(attr)] = value;
                                 }
                             }
-                        }    
+                        }
                     }
                 }
-            }         
+            }
         }
 
         // Added theme variant to be available in components
@@ -98,7 +98,7 @@ export abstract class BaseWebComponent extends HTMLElement {
             const themeVariant = themeProvider.tryGetTheme();
             props.themeVariant = themeVariant;
         }
-         
+
         return props;
     }
 }

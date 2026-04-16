@@ -53,7 +53,7 @@ export class SelectedFiltersComponent extends React.Component<ISelectedFiltersPr
         super(props);
 
         this.state = {
-            selectedFilters:  []
+            selectedFilters: []
         };
 
         this._onRemovefilter = this._onRemovefilter.bind(this);
@@ -64,12 +64,12 @@ export class SelectedFiltersComponent extends React.Component<ISelectedFiltersPr
 
         let renderSelectedFilterValues: JSX.Element = null;
         const filters = this.props.filters;
-    
-        if (filters.length > 0 ) {
+
+        if (filters.length > 0) {
 
             // Display only filter with values
-            const renderFilters = filters.map((filter: IDataFilter, i) => {     
-                
+            const renderFilters = filters.map((filter: IDataFilter, i) => {
+
                 let filterValuesString;
 
                 if (filter.values.length > 0) {
@@ -80,57 +80,56 @@ export class SelectedFiltersComponent extends React.Component<ISelectedFiltersPr
                     // Get display name of the filter if specified 
                     let filterName = filter.filterName;
                     const currentFilterConfig = this.props.filtersConfiguration.filter(filterConfig => filterConfig.filterName === filter.filterName);
-                    if (currentFilterConfig.length === 1 ) {
+                    if (currentFilterConfig.length === 1) {
                         filterName = currentFilterConfig[0].displayValue ? currentFilterConfig[0].displayValue : filterName;
                     }
-    
-                    renderValues =  filter.values.map((value, j) => {      
-                                        let   displayValue = this.props.dayjs && this.props.dayjs(value.value).isValid() ? this.props.dayjs(value.value).format('LL') : value.name;                                 
-                                        
-                                        if(displayValue.indexOf("i:0#") > -1) 
-                                        {
-                                            //displayValue = displayValue.split("|")[1] + " (" + displayValue.split("|")[0] +")";  //like [PeopleCheckBox=" Lee Gu (LeeG@tcwlv.onmicrosoft.com )"]
-                                            displayValue = displayValue.split("|")[1] ;  //like [PeopleCheckBox=" Lee Gu"]
-                                        }
-                                        
-                                        const filterString = `${filterName}${this.getComparisonOperatorString(value.operator)}"${displayValue}"`;
-                                        filterValuesString = `${filterString}`;
-                                        let renderFilterValues = null;
 
-                                        if (j < filter.values.length - 1) {
-                                            renderFilterValues =  <span className={styles.operator} style={{ marginLeft: 5, marginRight: 5}}>{`${operator}`}</span>;
-                                            filterValuesString = `${filterValuesString} ${operator}`;
-                                        }
-                                        
-                                        return  <>
-                                                    {filterString}
-                                                    {renderFilterValues}
-                                                </>;
-                                    });
-                            
-                    return  <>
-                                <div className={styles.filterRow}>
-                                    <Label theme={this.props.themeVariant as ITheme}>
-                                        <Icon   iconName='ClearFilter' 
-                                                data-ui-test-id={TestConstants.SelectedFiltersClearFilter}
-                                                theme={this.props.themeVariant as ITheme}
-                                                onClick={() => {
-                                                    // Remove all the values for that filter
-                                                    this._onRemovefilter(filter.filterName, filter.values, this.props.instanceId);
-                                                }}>
-                                        </Icon>
-                                    </Label>                                    
-                                    <Label className={styles.filterRowValues} style={{minWidth: 0}} theme={this.props.themeVariant as ITheme}>
-                                        <div className={styles.ellipsis}>[{renderValues}]</div>
-                                    </Label>
-                                </div>
-                                {i < filters.length - 1 && filter.values.length > 0 ? 
-                                    <div className={styles.filterRow}>
-                                        <Label className={styles.operator} theme={this.props.themeVariant as ITheme}>{`${this.getConditionOperatorString(this.props.operator as FilterConditionOperator)}`}</Label>
-                                    </div>
-                                    : null
-                                }
-                            </>; 
+                    renderValues = filter.values.map((value, j) => {
+                        let displayValue = this.props.dayjs && this.props.dayjs(value.value).isValid() ? this.props.dayjs(value.value).format('LL') : value.name;
+
+                        if (displayValue.indexOf("i:0#") > -1) {
+                            //displayValue = displayValue.split("|")[1] + " (" + displayValue.split("|")[0] +")";  //like [PeopleCheckBox=" Lee Gu (LeeG@tcwlv.onmicrosoft.com )"]
+                            displayValue = displayValue.split("|")[1];  //like [PeopleCheckBox=" Lee Gu"]
+                        }
+
+                        const filterString = `${filterName}${this.getComparisonOperatorString(value.operator)}"${displayValue}"`;
+                        filterValuesString = `${filterString}`;
+                        let renderFilterValues = null;
+
+                        if (j < filter.values.length - 1) {
+                            renderFilterValues = <span className={styles.operator} style={{ marginLeft: 5, marginRight: 5 }}>{`${operator}`}</span>;
+                            filterValuesString = `${filterValuesString} ${operator}`;
+                        }
+
+                        return <>
+                            {filterString}
+                            {renderFilterValues}
+                        </>;
+                    });
+
+                    return <>
+                        <div className={styles.filterRow}>
+                            <Label theme={this.props.themeVariant as ITheme}>
+                                <Icon iconName='ClearFilter'
+                                    data-ui-test-id={TestConstants.SelectedFiltersClearFilter}
+                                    theme={this.props.themeVariant as ITheme}
+                                    onClick={() => {
+                                        // Remove all the values for that filter
+                                        this._onRemovefilter(filter.filterName, filter.values, this.props.instanceId);
+                                    }}>
+                                </Icon>
+                            </Label>
+                            <Label className={styles.filterRowValues} style={{ minWidth: 0 }} theme={this.props.themeVariant as ITheme}>
+                                <div className={styles.ellipsis}>[{renderValues}]</div>
+                            </Label>
+                        </div>
+                        {i < filters.length - 1 && filter.values.length > 0 ?
+                            <div className={styles.filterRow}>
+                                <Label className={styles.operator} theme={this.props.themeVariant as ITheme}>{`${this.getConditionOperatorString(this.props.operator as FilterConditionOperator)}`}</Label>
+                            </div>
+                            : null
+                        }
+                    </>;
                 }
             });
 
@@ -149,7 +148,7 @@ export class SelectedFiltersComponent extends React.Component<ISelectedFiltersPr
 
         if (webPartDomElement) {
 
-            const filterInfoValues  = filterValues.map(filterValue => {
+            const filterInfoValues = filterValues.map(filterValue => {
                 return {
                     name: filterValue.name,
                     value: filterValue.value,
@@ -159,18 +158,18 @@ export class SelectedFiltersComponent extends React.Component<ISelectedFiltersPr
             });
 
             webPartDomElement.dispatchEvent(new CustomEvent(ExtensibilityConstants.EVENT_FILTER_UPDATED, {
-                detail: {                                       
+                detail: {
                     filterName: filterName,
                     filterValues: filterInfoValues,
                     instanceId: instanceId,
                     forceUpdate: true
-                } as IDataFilterInfo, 
+                } as IDataFilterInfo,
                 bubbles: true,
                 cancelable: true
-            })); 
-        } else { 
+            }));
+        } else {
             Log.info(SelectedFilters_LogSource, `Unable to find the data filter WP. Did you forget to add the 'instance-id' attribute to the 'pnp-selectedfilters' component?`);
-        } 
+        }
     }
 
     private getConditionOperatorString(operator: FilterConditionOperator): string {
@@ -221,13 +220,13 @@ export class SelectedFiltersComponent extends React.Component<ISelectedFiltersPr
 }
 
 export class SelectedFiltersWebComponent extends BaseWebComponent {
-   
+
     public constructor() {
-        super(); 
+        super();
     }
- 
+
     public async connectedCallback() {
- 
+
         const dateHelper = this._serviceScope.consume<DateHelper>(DateHelper.ServiceKey);
         const dayjs = await dateHelper.moment();
 
@@ -235,10 +234,10 @@ export class SelectedFiltersWebComponent extends BaseWebComponent {
         const filters = props.filters ? props.filters as IDataFilter[] : [];
         const filtersConfiguration = props.filtersConfiguration ? props.filtersConfiguration as IDataFilterConfiguration[] : [];
 
-        const filtersComponent = <SelectedFiltersComponent {...props} dayjs={dayjs} filters={filters} filtersConfiguration={filtersConfiguration}/>;
+        const filtersComponent = <SelectedFiltersComponent {...props} dayjs={dayjs} filters={filters} filtersConfiguration={filtersConfiguration} />;
         ReactDOM.render(filtersComponent, this);
     }
-    
+
     protected onDispose(): void {
         ReactDOM.unmountComponentAtNode(this);
     }

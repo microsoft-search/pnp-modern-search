@@ -200,7 +200,7 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
      */
     private async _filterVerticalsByAudience(verticals: IDataVerticalConfiguration[]): Promise<IDataVerticalConfiguration[]> {
         const filteredVerticals: IDataVerticalConfiguration[] = [];
-        
+
         for (const vertical of verticals) {
             // If no audience configured, show to everyone
             if (!vertical.audience || vertical.audience.length === 0) {
@@ -577,10 +577,10 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
         this.properties.verticalBorderColor = undefined;
         this.properties.verticalBorderThickness = undefined;
         this.properties.verticalFontSize = undefined;
-        
+
         // Refresh the property pane to show the reset values
         this.context.propertyPane.refresh();
-        
+
         // Re-render the web part to apply changes
         this.render();
     }

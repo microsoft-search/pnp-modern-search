@@ -256,92 +256,92 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     public async render(): Promise<void> {
         try {
 
-        // Check audience targeting - if user is not in audience, don't render
-        const isInAudience = await this.isInAudience();
-        this._isHiddenByAudience = !isInAudience;
-        if (!isInAudience) {
-            // eslint-disable-next-line @rushstack/pair-react-dom-render-unmount -- cleanup on audience hide, paired with onDispose
-            ReactDom.unmountComponentAtNode(this.domElement);
-            this.domElement.innerHTML = '';
-            return this.renderCompleted();
-        }
-
-        // Ensure extensions are loaded before rendering.
-        // Use a promise guard to prevent concurrent loadExtensions calls if render() is
-        // re-entered while loading is still in progress (e.g. via dynamic data callbacks).
-        if (!this.extensionsLoaded) {
-            if (!this._extensionsLoadingPromise) {
-                this._extensionsLoadingPromise = this.loadExtensions(this.properties.extensibilityLibraryConfiguration);
+            // Check audience targeting - if user is not in audience, don't render
+            const isInAudience = await this.isInAudience();
+            this._isHiddenByAudience = !isInAudience;
+            if (!isInAudience) {
+                // eslint-disable-next-line @rushstack/pair-react-dom-render-unmount -- cleanup on audience hide, paired with onDispose
+                ReactDom.unmountComponentAtNode(this.domElement);
+                this.domElement.innerHTML = '';
+                return this.renderCompleted();
             }
+
+            // Ensure extensions are loaded before rendering.
+            // Use a promise guard to prevent concurrent loadExtensions calls if render() is
+            // re-entered while loading is still in progress (e.g. via dynamic data callbacks).
+            if (!this.extensionsLoaded) {
+                if (!this._extensionsLoadingPromise) {
+                    this._extensionsLoadingPromise = this.loadExtensions(this.properties.extensibilityLibraryConfiguration);
+                }
+                try {
+                    await this._extensionsLoadingPromise;
+                } finally {
+                    this._extensionsLoadingPromise = null;
+                }
+            }
+
+            // Determine the template content to display
+            // In the case of an external template is selected, the render is done asynchronously waiting for the content to be fetched
+            await this.initTemplate();
+
+            // Refresh the token values with the latest information from environment (i.e connections and settings)
+            await this.setTokens();
+
+            // We resolve data source and layout instances directly in the render method to avoid unexpected render triggers due to Web Part property bag manipulation 
+            // SPFx has an inner routine in reactive mode to trigger a render every time a property bag value is updated conflicting with the way data source and layouts share properties (see _afterPropertyUpdated)
+
             try {
-                await this._extensionsLoadingPromise;
-            } finally {
-                this._extensionsLoadingPromise = null;
-            }
-        }
 
-        // Determine the template content to display
-        // In the case of an external template is selected, the render is done asynchronously waiting for the content to be fetched
-        await this.initTemplate();
+                // Reset the error message every time
+                this.errorMessage = undefined;
 
-        // Refresh the token values with the latest information from environment (i.e connections and settings)
-        await this.setTokens();
+                // Get and initialize the data source instance if different (i.e avoid to create a new instance every time)
+                if (this.lastDataSourceKey !== this.properties.dataSourceKey) {
+                    this.dataSource = await this.getDataSourceInstance(this.properties.dataSourceKey);
+                    this.lastDataSourceKey = this.properties.dataSourceKey;
+                }
 
-        // We resolve data source and layout instances directly in the render method to avoid unexpected render triggers due to Web Part property bag manipulation 
-        // SPFx has an inner routine in reactive mode to trigger a render every time a property bag value is updated conflicting with the way data source and layouts share properties (see _afterPropertyUpdated)
+                // Get and initialize layout instance if different (i.e avoid to create a new instance every time)
+                if (this.lastLayoutKey !== this.properties.selectedLayoutKey) {
+                    this.layout = await LayoutHelper.getLayoutInstance(this.webPartInstanceServiceScope, this.context, this.properties, this.properties.selectedLayoutKey, this.availableLayoutDefinitions, this.displayMode);
+                    this.lastLayoutKey = this.properties.selectedLayoutKey;
+                }
 
-        try {
 
-            // Reset the error message every time
-            this.errorMessage = undefined;
+                const queryModifierKeys = this.properties.queryModifierConfiguration.filter(c => c.enabled).map(c => c.key);
+                // Initialize custom query modifier instances if changed
+                if (!isEqual(this.lastQueryModifierKeys, queryModifierKeys)) {
+                    this._selectedCustomQueryModifier = await this.initializeQueryModifiers(this.properties.queryModifierConfiguration);
+                    this.lastQueryModifierKeys = queryModifierKeys;
 
-            // Get and initialize the data source instance if different (i.e avoid to create a new instance every time)
-            if (this.lastDataSourceKey !== this.properties.dataSourceKey) {
-                this.dataSource = await this.getDataSourceInstance(this.properties.dataSourceKey);
-                this.lastDataSourceKey = this.properties.dataSourceKey;
-            }
+                }
 
-            // Get and initialize layout instance if different (i.e avoid to create a new instance every time)
-            if (this.lastLayoutKey !== this.properties.selectedLayoutKey) {
-                this.layout = await LayoutHelper.getLayoutInstance(this.webPartInstanceServiceScope, this.context, this.properties, this.properties.selectedLayoutKey, this.availableLayoutDefinitions, this.displayMode);
-                this.lastLayoutKey = this.properties.selectedLayoutKey;
+            } catch (error) {
+                // Catch instanciation or wrong definition errors for extensibility scenarios
+                this.errorMessage = error.message ? error.message : error;
             }
 
+            // Refresh the token values with the latest information from environment (i.e connections and settings)
+            await this.setTokens();
 
-            const queryModifierKeys = this.properties.queryModifierConfiguration.filter(c => c.enabled).map(c => c.key);
-            // Initialize custom query modifier instances if changed
-            if (!isEqual(this.lastQueryModifierKeys, queryModifierKeys)) {
-                this._selectedCustomQueryModifier = await this.initializeQueryModifiers(this.properties.queryModifierConfiguration);
-                this.lastQueryModifierKeys = queryModifierKeys;
-
+            // Refresh the property pane to get layout and data source options
+            if (this.context && this.context.propertyPane && this.context.propertyPane.isPropertyPaneOpen()) {
+                this.context.propertyPane.refresh();
             }
 
-        } catch (error) {
-            // Catch instanciation or wrong definition errors for extensibility scenarios
-            this.errorMessage = error.message ? error.message : error;
-        }
-
-        // Refresh the token values with the latest information from environment (i.e connections and settings)
-        await this.setTokens();
-
-        // Refresh the property pane to get layout and data source options
-        if (this.context && this.context.propertyPane && this.context.propertyPane.isPropertyPaneOpen()) {
-            this.context.propertyPane.refresh();
-        }
-
-        // Reset page number when switching between verticals (before getDataContext)
-        if (this._verticalsConnectionSourceData && this.properties.selectedVerticalKeys.length > 0) {
-            const verticalData = DynamicPropertyHelper.tryGetValueSafe(this._verticalsConnectionSourceData);
-            if (verticalData && verticalData.selectedVertical?.key && this._lastSelectedVerticalKey !== verticalData.selectedVertical.key) {
-                this.currentPageNumber = 1;
-                this._lastSelectedVerticalKey = verticalData.selectedVertical.key;
+            // Reset page number when switching between verticals (before getDataContext)
+            if (this._verticalsConnectionSourceData && this.properties.selectedVerticalKeys.length > 0) {
+                const verticalData = DynamicPropertyHelper.tryGetValueSafe(this._verticalsConnectionSourceData);
+                if (verticalData && verticalData.selectedVertical?.key && this._lastSelectedVerticalKey !== verticalData.selectedVertical.key) {
+                    this.currentPageNumber = 1;
+                    this._lastSelectedVerticalKey = verticalData.selectedVertical.key;
+                }
             }
-        }
 
-        if (this.dataSource) {
-            this._currentDataContext = await this.getDataContext();
-        }
-        return this.renderCompleted();
+            if (this.dataSource) {
+                this._currentDataContext = await this.getDataContext();
+            }
+            return this.renderCompleted();
         } catch (error) {
             this.errorMessage = error?.message ? error.message : error;
             Log.error(LogSource, error);

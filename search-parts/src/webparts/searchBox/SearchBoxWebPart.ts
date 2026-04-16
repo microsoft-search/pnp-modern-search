@@ -183,7 +183,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
                     inputValue = decodeURIComponent(inputValue);
                 }
 
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
             } catch (error) {
                 // Likely issue when q=%25 in spfx
             }
@@ -636,7 +636,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
                 showValue: true,
                 value: this.properties.searchBoxFontSize || 14
             }),
-            
+
             // Colors
             PropertyFieldColorPicker('searchBoxBorderColor', {
                 label: webPartStrings.PropertyPane.SearchBoxStylingGroup.BorderColorLabel,
@@ -686,7 +686,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
                 style: PropertyFieldColorPickerStyle.Inline,
                 key: 'searchButtonColorFieldId'
             }),
-            
+
             // Search Button Configuration
             PropertyPaneToggle('showSearchButtonWhenEmpty', {
                 label: webPartStrings.PropertyPane.SearchBoxStylingGroup.ShowSearchButtonWhenEmptyLabel,
@@ -714,7 +714,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
                 placeholder: 'Search',
                 disabled: this.properties.searchButtonDisplayMode === 'icon'
             }),
-            
+
             // Reset
             PropertyPaneButton('resetSearchBoxStyling', {
                 text: webPartStrings.PropertyPane.SearchBoxStylingGroup.ResetToDefaultLabel,
@@ -735,16 +735,16 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
         this.properties.searchButtonColor = undefined;
         this.properties.placeholderTextColor = undefined;
         this.properties.searchBoxTextColor = undefined;
-        
+
         // Reset button properties to their default values
         this.properties.showSearchButtonWhenEmpty = undefined;
         this.properties.searchButtonDisplayMode = undefined;
         this.properties.searchIconName = undefined;
         this.properties.searchButtonText = undefined;
-        
+
         // Refresh the property pane to show the reset values
         this.context.propertyPane.refresh();
-        
+
         // Re-render the web part to apply changes
         this.render();
     }
