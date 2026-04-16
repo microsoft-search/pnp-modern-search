@@ -68,8 +68,8 @@ export class FilterDateRangeComponent extends React.Component<IFilterDateRangeCo
                     selectors: {
                         input: {
                             backgroundColor: this.props.themeVariant.semanticColors.bodyBackground,
-                            color: this.props.themeVariant.semanticColors.bodyText                          
-                            
+                            color: this.props.themeVariant.semanticColors.bodyText
+
 
                         },
                         'input::placeholder': {
@@ -86,12 +86,12 @@ export class FilterDateRangeComponent extends React.Component<IFilterDateRangeCo
             setInitialFocus: false,
             popupProps: {
                 onRestoreFocus: (params) => {
-                    const originalElement = params && params.originalElement;
-                    if (originalElement && (originalElement as HTMLElement).focus) {
+                    const originalElement = params?.originalElement as HTMLElement;
+                    if (originalElement?.focus) {
                         try {
-                            (originalElement as HTMLElement).focus({ preventScroll: true });
+                            originalElement.focus({ preventScroll: true });
                         } catch {
-                            (originalElement as HTMLElement).focus();
+                            originalElement.focus();
                         }
                     }
                 }
@@ -174,9 +174,9 @@ export class FilterDateRangeComponent extends React.Component<IFilterDateRangeCo
 
         // Only update if the date actually changed to prevent unnecessary re-renders
         const currentDate = this.state.selectedFromDate;
-        const dateChanged = (!currentDate && fromDate) || 
-                           (currentDate && !fromDate) || 
-                           (currentDate && fromDate && currentDate.getTime() !== fromDate.getTime());
+        const dateChanged = (!currentDate && fromDate) ||
+            (currentDate && !fromDate) ||
+            (currentDate && fromDate && currentDate.getTime() !== fromDate.getTime());
 
         if (dateChanged) {
             this.setState({
@@ -191,9 +191,9 @@ export class FilterDateRangeComponent extends React.Component<IFilterDateRangeCo
 
         // Only update if the date actually changed to prevent unnecessary re-renders
         const currentDate = this.state.selectedToDate;
-        const dateChanged = (!currentDate && toDate) || 
-                           (currentDate && !toDate) || 
-                           (currentDate && toDate && currentDate.getTime() !== toDate.getTime());
+        const dateChanged = (!currentDate && toDate) ||
+            (currentDate && !toDate) ||
+            (currentDate && toDate && currentDate.getTime() !== toDate.getTime());
 
         if (dateChanged) {
             this.setState({

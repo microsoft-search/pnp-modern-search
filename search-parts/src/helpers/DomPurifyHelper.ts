@@ -136,7 +136,7 @@ export class DomPurifyHelper {
      * <my-component data-foo="bar"> and Handlebars data attributes.
      */
     public static allowCustomAttributesHook(attr, data) {
-        if (data && data.attrName) {
+        if (data?.attrName) {
             const attrLower = data.attrName.toLowerCase();
 
             // Block event handlers (onclick, onerror, onload, etc.)
