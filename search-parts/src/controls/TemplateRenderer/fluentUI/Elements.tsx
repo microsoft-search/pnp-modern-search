@@ -506,7 +506,7 @@ export class FluentUITextInput extends Input {
         return this.element;
     }
 
-    private handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
+    private readonly handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
         // Enter pressed
         if (e.key === 'Enter' && this.inlineAction) {
             this.inlineAction.execute();

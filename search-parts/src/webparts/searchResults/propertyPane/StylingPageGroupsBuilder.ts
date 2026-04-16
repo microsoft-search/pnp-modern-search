@@ -18,10 +18,10 @@ export class StylingPageGroupsBuilder {
     constructor(
         private properties: ISearchResultsWebPartProps,
         private availableLayoutDefinitions: any[],
-        private templateContentToDisplay: string,
-        private layoutSlotNames: string[],
-        private resultTypesSlotNames: string[],
-        private webPartStrings: any,
+        private readonly templateContentToDisplay: string,
+        private readonly layoutSlotNames: string[],
+        private readonly resultTypesSlotNames: string[],
+        private readonly webPartStrings: any,
         private propertyFieldCodeEditor: any,
         private propertyFieldCodeEditorLanguages: any,
         private propertyFieldCollectionData: any,
@@ -33,22 +33,22 @@ export class StylingPageGroupsBuilder {
         private getLayoutTemplateOptions: () => IPropertyPaneField<any>[],
         private getTitleStylingPropertyPaneGroup: () => IPropertyPaneGroup,
         private resetContentStylingToDefault: () => void,
-        private filtersDataSourceReference: any,
+        private readonly filtersDataSourceReference: any,
         private defaultTemplates: {
             simpleList: string;
             cards: string;
             custom: string;
             people: string;
         }
-    ) {}
+    ) { }
 
     public getStylingPageGroups(): IPropertyPaneGroup[] {
-        const canEditTemplate = this.properties.externalTemplateUrl && 
-            (this.properties.selectedLayoutKey === BuiltinLayoutsKeys.ResultsCustomHandlebars || 
-             this.properties.selectedLayoutKey === BuiltinLayoutsKeys.ResultsCustomAdaptiveCards) ? false : true;
+        const canEditTemplate = this.properties.externalTemplateUrl &&
+            (this.properties.selectedLayoutKey === BuiltinLayoutsKeys.ResultsCustomHandlebars ||
+                this.properties.selectedLayoutKey === BuiltinLayoutsKeys.ResultsCustomAdaptiveCards) ? false : true;
 
         let stylingFields: IPropertyPaneField<any>[] = this.buildLayoutSelectionFields(canEditTemplate);
-        
+
         let groups: IPropertyPaneGroup[] = [
             {
                 groupName: this.webPartStrings.PropertyPane.LayoutPage.LayoutSelectionGroupName,
@@ -76,7 +76,7 @@ export class StylingPageGroupsBuilder {
 
         // Add render type tabs and layout selection
         const filteredLayouts = this.availableLayoutDefinitions.filter(layout => layout.renderType === this.properties.layoutRenderType);
-        
+
         fields.push(
             new PropertyPaneTabsField('layoutRenderType', {
                 options: [
@@ -135,15 +135,15 @@ export class StylingPageGroupsBuilder {
                 properties: this.properties,
                 disabled: !canEditTemplate,
                 key: 'inlineTemplateContentCodeEditor',
-                language: this.properties.layoutRenderType !== LayoutRenderType.Handlebars ? 
-                    this.propertyFieldCodeEditorLanguages.JSON : 
+                language: this.properties.layoutRenderType !== LayoutRenderType.Handlebars ?
+                    this.propertyFieldCodeEditorLanguages.JSON :
                     this.propertyFieldCodeEditorLanguages.Handlebars
             })
         );
 
         // Only show the template external URL for 'Custom' option and Handlebars render type
         // Note: External URLs for Adaptive Cards are not currently supported but may be enabled in the future
-        if ((this.properties.selectedLayoutKey === BuiltinLayoutsKeys.ResultsCustomAdaptiveCards || 
+        if ((this.properties.selectedLayoutKey === BuiltinLayoutsKeys.ResultsCustomAdaptiveCards ||
             this.properties.selectedLayoutKey === BuiltinLayoutsKeys.ResultsCustomHandlebars) &&
             this.properties.layoutRenderType === LayoutRenderType.Handlebars) {
             fields.push(
@@ -173,7 +173,7 @@ export class StylingPageGroupsBuilder {
                 PropertyFieldMessage('messageMissingLayoutSlots', {
                     key: 'messageMissingLayoutSlotsKey',
                     multiline: true,
-                    text: Text.format(this.webPartStrings.PropertyPane.LayoutPage.MissingSlotsMessage, 
+                    text: Text.format(this.webPartStrings.PropertyPane.LayoutPage.MissingSlotsMessage,
                         undefinedTemplateSlots.join(", ")),
                     messageType: MessageBarType.warning,
                     isVisible: undefinedTemplateSlots.length > 0
@@ -216,7 +216,7 @@ export class StylingPageGroupsBuilder {
                 PropertyFieldMessage('messageMissingResultTypesSlots', {
                     key: 'messageMissingResultTypesSlotsKey',
                     multiline: true,
-                    text: Text.format(this.webPartStrings.PropertyPane.LayoutPage.MissingSlotsMessage, 
+                    text: Text.format(this.webPartStrings.PropertyPane.LayoutPage.MissingSlotsMessage,
                         undefinedTemplateSlots.join(", ")),
                     messageType: MessageBarType.warning,
                     isVisible: undefinedTemplateSlots.length > 0

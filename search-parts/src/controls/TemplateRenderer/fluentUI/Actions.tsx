@@ -95,7 +95,7 @@ export class FluentUIExecuteAction extends ExecuteAction {
     protected updateCssClasses() {
     }
 
-    private actionClickHandler = (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement | HTMLDivElement | BaseButton | Button | HTMLSpanElement>): void => {
+    private readonly actionClickHandler = (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement | HTMLDivElement | BaseButton | Button | HTMLSpanElement>): void => {
         e.stopPropagation();
         e.preventDefault();
         this.execute();
@@ -121,7 +121,7 @@ export class FluentUIOpenUrlAction extends OpenUrlAction {
     protected updateCssClasses() {
     }
 
-    private actionClickHandler = (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement | HTMLDivElement | BaseButton | Button | HTMLSpanElement>): void => {
+    private readonly actionClickHandler = (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement | HTMLDivElement | BaseButton | Button | HTMLSpanElement>): void => {
         e.stopPropagation();
         e.preventDefault();
         this.execute();
@@ -153,7 +153,7 @@ export class FluentUIShowCardAction extends ShowCardAction {
         }
     }
 
-    private actionClickHandler = (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement | HTMLDivElement | BaseButton | Button | HTMLSpanElement>): void => {
+    private readonly actionClickHandler = (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement | HTMLDivElement | BaseButton | Button | HTMLSpanElement>): void => {
         e.stopPropagation();
         e.preventDefault();
         this.execute();
@@ -179,7 +179,7 @@ export class FluentUISubmitAction extends SubmitAction {
     protected updateCssClasses() {
     }
 
-    private actionClickHandler = (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement | HTMLDivElement | BaseButton | Button | HTMLSpanElement>): void => {
+    private readonly actionClickHandler = (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement | HTMLDivElement | BaseButton | Button | HTMLSpanElement>): void => {
         e.stopPropagation();
         e.preventDefault();
         this.execute();
@@ -211,7 +211,7 @@ export class FluentUIToggleVisibilityAction extends ToggleVisibilityAction {
         }
     }
 
-    private actionClickHandler = (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement | HTMLDivElement | BaseButton | Button | HTMLSpanElement>): void => {
+    private readonly actionClickHandler = (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement | HTMLDivElement | BaseButton | Button | HTMLSpanElement>): void => {
         e.stopPropagation();
         e.preventDefault();
         this.execute();
