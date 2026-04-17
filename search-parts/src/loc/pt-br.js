@@ -193,6 +193,8 @@ define([], function () {
             SelectItemComboPlaceHolder: "Selecionar propriedade",
             AddStaticDataLabel: "Adicionar dados estáticos",
             TextFieldApplyButtonText: "Aplicar",
+            SortByPlaceholderText: "Ordenar por...",
+            SortByDefaultOptionText: "Ordenação padrão",
             DownloadButtonText: "Baixar",
             DownloadCSVButtonText: "Baixar como CSV"
         },
