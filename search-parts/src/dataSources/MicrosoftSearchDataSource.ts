@@ -323,7 +323,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             }),
             PropertyPaneToggle('dataSourceProperties.enableResultTypes', {
                 label: "Enable result types",
-                disabled: !this.properties.entityTypes.every(e => e === EntityType.ExternalItem || e === EntityType.DriveItem || e === EntityType.ListItem || e === EntityType.Site)
+                disabled: !this.properties.entityTypes.every(e => e === EntityType.ExternalItem || e === EntityType.ListItem)
             }),
             PropertyPaneToggle('dataSourceProperties.showSPEmbeddedContent', {
                 label: commonStrings.DataSources.MicrosoftSearch.showSPEmbeddedContentLabel,
@@ -1369,7 +1369,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
     }
 
     private applyResultTemplateOptions(searchRequest: IMicrosoftSearchRequest): void {
-        const supportedTypes = [EntityType.ExternalItem, EntityType.DriveItem, EntityType.ListItem, EntityType.Site];
+        const supportedTypes = [EntityType.ExternalItem, EntityType.ListItem];
         if (this.properties.enableResultTypes && this.properties.entityTypes.every(e => supportedTypes.includes(e))) {
             searchRequest.resultTemplateOptions = {
                 enableResultTemplate: true
