@@ -276,6 +276,10 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         let enableTopResultsFields: IPropertyPaneField<any>[] = [];
         let sortPropertiesFields: IPropertyPaneField<any>[] = [];
         let queryAlterationFields: IPropertyPaneField<any>[] = [];
+        const supportsResultTypes = (entityTypes: EntityType[] = []) => {
+            return entityTypes.every(e => e === EntityType.ExternalItem || e === EntityType.ListItem);
+        };
+
         let commonFields: IPropertyPaneField<any>[] = [
             PropertyPaneLabel('', {
                 text: commonStrings.DataSources.MicrosoftSearch.QueryTextFieldLabel
@@ -304,7 +308,14 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                 placeholder: "",
                 searchAsYouType: false,
                 defaultSelectedKeys: this.properties.entityTypes,
-                onPropertyChange: this.onCustomPropertyUpdate.bind(this),
+                onPropertyChange: (targetProperty?: string, newValue?: EntityType[]) => {
+                    const previousEnableResultTypes = this.properties.enableResultTypes;
+                    this.onCustomPropertyUpdate(targetProperty, newValue);
+
+                    if (supportsResultTypes(newValue) && previousEnableResultTypes) {
+                        this.properties.enableResultTypes = previousEnableResultTypes;
+                    }
+                },
                 textDisplayValue: entityTypesDisplayValue.filter(Boolean).join(",")
             }),
             new PropertyPaneAsyncCombo('dataSourceProperties.fields', {
@@ -323,7 +334,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             }),
             PropertyPaneToggle('dataSourceProperties.enableResultTypes', {
                 label: "Enable result types",
-                disabled: this.properties.entityTypes.includes(EntityType.ExternalItem)
+                disabled: !supportsResultTypes(this.properties.entityTypes)
             }),
             PropertyPaneToggle('dataSourceProperties.showSPEmbeddedContent', {
                 label: commonStrings.DataSources.MicrosoftSearch.showSPEmbeddedContentLabel,
@@ -1369,7 +1380,8 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
     }
 
     private applyResultTemplateOptions(searchRequest: IMicrosoftSearchRequest): void {
-        if (this.properties.enableResultTypes) {
+        const supportedTypes = [EntityType.ExternalItem, EntityType.ListItem];
+        if (this.properties.enableResultTypes && this.properties.entityTypes.every(e => supportedTypes.includes(e))) {
             searchRequest.resultTemplateOptions = {
                 enableResultTemplate: true
             };
