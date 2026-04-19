@@ -580,6 +580,20 @@ export class DetailsListComponent extends React.Component<
         shimmeredDetailsListProps.groups = this.state.groups;
         shimmeredDetailsListProps.groupProps = {
         showEmptyGroups: true,
+        headerProps: {
+          onRenderGroupHeaderCheckbox: () => null,
+          styles: {
+            headerCount: {
+              color: this.props.themeVariant?.semanticColors?.bodyText,
+            },
+            title: {
+              color: this.props.themeVariant?.semanticColors?.bodyText,
+            },
+            expand: {
+              color: this.props.themeVariant?.semanticColors?.bodyText,
+            },
+          },
+        },
       };
     }
 
