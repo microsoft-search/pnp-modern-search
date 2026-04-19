@@ -95,6 +95,8 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
      */
     private tokenService: ITokenService;
 
+    private readonly _boundRender = this.render.bind(this);
+
     constructor() {
         super();
 
@@ -171,6 +173,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
         }
 
         if (!this.domElement) {
+            super.renderCompleted();
             return;
         }
         let renderRootElement: JSX.Element = null;
@@ -262,6 +265,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
     }
 
     protected onDispose(): void {
+        window.removeEventListener('hashchange', this._boundRender);
         if (this._pushStateCallback) {
             window.history.pushState = this._pushStateCallback;
         }
@@ -893,9 +897,9 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
         const queryTextSource = DynamicPropertyHelper.tryGetSourceSafe(this.properties.queryText);
         if (queryTextSource && this.properties.queryText?.reference?.localeCompare('PageContext:UrlData:fragment') === 0) {
             // Manually subscribe to hash change since the default property doesn't
-            window.addEventListener('hashchange', this.render);
+            window.addEventListener('hashchange', this._boundRender);
         } else {
-            window.removeEventListener('hashchange', this.render);
+            window.removeEventListener('hashchange', this._boundRender);
         }
     }
 
