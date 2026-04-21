@@ -48,7 +48,8 @@ define([], function() {
                     ComboBoxTemplate: "Rozbalovací nabídka",
                     DateIntervalTemplate: "Časový interval",
                     PeopleTemplate: "Šablona pro osoby",
-                    TaxonomyPickerTemplate: "Výběr taxonomie"
+                    TaxonomyPickerTemplate: "Výběr taxonomie",
+                    HierarchicalFilterTemplate: "Hierarchický filtr"
                 },
                 SortBy: "Řadit hodnoty podle",
                 SortDirection: "Směr řazení",

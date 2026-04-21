@@ -48,7 +48,8 @@ define([], function() {
                     ComboBoxTemplate: "Yhdistelmävalinta",
                     DateIntervalTemplate: "Ajankohtarajaus (esim. viime kuussa)",
                     PeopleTemplate: "Henkilö malli",
-                    TaxonomyPickerTemplate: "Taksonomiavalinta"
+                    TaxonomyPickerTemplate: "Taksonomiavalinta",
+                    HierarchicalFilterTemplate: "Hierarkkinen suodatin"
                 },
                 SortBy: "Lajitteluperuste",
                 SortDirection: "Lajittelun suunta",

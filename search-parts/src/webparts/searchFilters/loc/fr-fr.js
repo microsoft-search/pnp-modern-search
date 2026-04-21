@@ -50,7 +50,8 @@ define([], function() {
                     ComboBoxTemplate: "Zone de liste modifiable",
                     DateIntervalTemplate: "Intervalle de dates",
                     PeopleTemplate: "Modèle de personne",
-                    TaxonomyPickerTemplate: "Sélecteur de taxonomie"
+                    TaxonomyPickerTemplate: "Sélecteur de taxonomie",
+                    HierarchicalFilterTemplate: "Filtre hiérarchique"
                 },
                 SortBy: "Trier les valeurs par",
                 SortDirection: "Sens de tri",

@@ -48,7 +48,8 @@ define([], function() {
                     ComboBoxTemplate: "Kombinationsruta",
                     DateIntervalTemplate: "Datumintervall (fasta intervall)",
                     PeopleTemplate: "Person mall",
-                    TaxonomyPickerTemplate: "Taxonomiväljare"
+                    TaxonomyPickerTemplate: "Taxonomiväljare",
+                    HierarchicalFilterTemplate: "Hierarkiskt filter"
                 },
                 SortBy: "Sorteringsordning",
                 SortDirection: "Sorteringsriktning",

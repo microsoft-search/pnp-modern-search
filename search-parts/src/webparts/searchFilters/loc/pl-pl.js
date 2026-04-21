@@ -48,7 +48,8 @@ define([], function() {
                     ComboBoxTemplate: "Pole rozwijalne",
                     DateIntervalTemplate: "Okres czasu",
                     PeopleTemplate: "Szablon osoby",
-                    TaxonomyPickerTemplate: "Wybór terminu"
+                    TaxonomyPickerTemplate: "Wybór terminu",
+                    HierarchicalFilterTemplate: "Filtr hierarchiczny"
                 },
                 SortBy: "Sortuj po",
                 SortDirection: "Kierunek sortowania",

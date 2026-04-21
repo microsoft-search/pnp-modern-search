@@ -48,7 +48,8 @@ define([], function () {
                     ComboBoxTemplate: "Casella combinata",
                     DateIntervalTemplate: "Intervallo di tempo",
                     PeopleTemplate: "Modello di persona",
-                    TaxonomyPickerTemplate: "Selettore di tassonomia"
+                    TaxonomyPickerTemplate: "Selettore di tassonomia",
+                    HierarchicalFilterTemplate: "Filtro gerarchico"
                 },
                 SortBy: "Ordina valori per",
                 SortDirection: "Direzione di ordinamento",
