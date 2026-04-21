@@ -48,7 +48,8 @@ define([], function() {
                     ComboBoxTemplate: "Kombinasjonsboks",
                     DateIntervalTemplate: "Datointervall (faste intervaller)",
                     PeopleTemplate: "Person mal",
-                    TaxonomyPickerTemplate: "Taksonomivelger"
+                    TaxonomyPickerTemplate: "Taksonomivelger",
+                    HierarchicalFilterTemplate: "Hierarkisk filter"
                 },
                 SortBy: "Sorter verdier etter",
                 SortDirection: "Sorteringsretning",
