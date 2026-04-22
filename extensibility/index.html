@@ -596,6 +596,34 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#common-steps-both-toolchains" class="md-nav__link">
+    Common steps (both toolchains)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configure-the-html-loader" class="md-nav__link">
+    Configure the html-loader
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#implement-the-extensibility-interface" class="md-nav__link">
+    Implement the extensibility interface
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#build-and-deploy" class="md-nav__link">
+    Build and deploy
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#debug-a-library-component" class="md-nav__link">
     Debug a library component
   </a>
@@ -879,6 +907,34 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#common-steps-both-toolchains" class="md-nav__link">
+    Common steps (both toolchains)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configure-the-html-loader" class="md-nav__link">
+    Configure the html-loader
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#implement-the-extensibility-interface" class="md-nav__link">
+    Implement the extensibility interface
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#build-and-deploy" class="md-nav__link">
+    Build and deploy
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#debug-a-library-component" class="md-nav__link">
     Debug a library component
   </a>
@@ -1094,6 +1150,34 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#common-steps-both-toolchains" class="md-nav__link">
+    Common steps (both toolchains)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configure-the-html-loader" class="md-nav__link">
+    Configure the html-loader
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#implement-the-extensibility-interface" class="md-nav__link">
+    Implement the extensibility interface
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#build-and-deploy" class="md-nav__link">
+    Build and deploy
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#debug-a-library-component" class="md-nav__link">
     Debug a library component
   </a>
@@ -1161,7 +1245,7 @@
 </ul>
 <div class="admonition important">
 <p class="admonition-title">SPFx version</p>
-<p>The SPFx library project must use the same SPFx version as the main solution (check <a href="extensibility_compatibility_matrix/">compatibility matrix</a>). Owherwise you may face issues at build time. See <a href="https://github.com/microsoft-search/pnp-modern-search/issues/1893">GitHub issue #1893</a></p>
+<p>The SPFx library project must use the same SPFx version as the main solution (check <a href="extensibility_compatibility_matrix/">compatibility matrix</a>). Otherwise you may face issues at build time. See <a href="https://github.com/microsoft-search/pnp-modern-search/issues/1893">GitHub issue #1893</a>. Starting with PnP Modern Search v4.21.0, the solution uses SPFx v1.22.2 with the <strong>Heft-based toolchain</strong>. Your extensibility library must also use the Heft toolchain if targeting this version.</p>
 </div>
 <h3 id="supported-extensions">Supported extensions<a class="headerlink" href="#supported-extensions" title="Permanent link">&para;</a></h3>
 <p>Each Web Part type in the solution supports several extensions or no extension at all. It means even your extensibility library contains all possible extensions, they won't be loaded if the Web Part does not support them.</p>
@@ -1202,42 +1286,91 @@
 </blockquote>
 <h3 id="create-an-extensibility-library">Create an extensibility library<a class="headerlink" href="#create-an-extensibility-library" title="Permanent link">&para;</a></h3>
 <p>To create an extensibility library, you have the choice to reuse the one provided in the GitHub repository or start from scratch. In this case:</p>
+<div class="admonition important">
+<p class="admonition-title">Toolchain</p>
+<p>Starting with <strong>SPFx v1.22</strong>, the SharePoint Framework uses a new <strong>Heft-based</strong> build toolchain, replacing the previous Gulp-based toolchain. New projects generated with the SPFx v1.22+ Yeoman generator will use Heft by default. If you are working with SPFx v1.21.1 or earlier, continue using the Gulp-based instructions. See <a href="https://learn.microsoft.com/en-us/sharepoint/dev/spfx/toolchain/sharepoint-framework-toolchain-rushstack-heft">SharePoint Framework Toolchain: Heft &amp; Webpack</a> for details.</p>
+</div>
+<h4 id="common-steps-both-toolchains">Common steps (both toolchains)<a class="headerlink" href="#common-steps-both-toolchains" title="Permanent link">&para;</a></h4>
 <ol>
 <li>Create a new SharePoint Framework project of type 'Library' with <code>yo @microsoft/sharepoint</code>.</li>
-<li>Add an npm reference to <code>@pnp/modern-search-extensibility</code> library using <code>npm i @pnp/modern-search-extensibility --save</code> cmd.</li>
-<li>Install npm-package <code>html-loader</code> as a dev-dependency using <code>npm i html-loader@4.2.0 --save-dev</code></li>
-<li>
-<p>Insert the following lines of code into <code>gulpfile.js</code> of your SPFx-project
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kd">const</span><span class="w"> </span><span class="nx">envCheck</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">build</span><span class="p">.</span><span class="nx">subTask</span><span class="p">(</span><span class="s1">&#39;environmentCheck&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nx">gulp</span><span class="p">,</span><span class="w"> </span><span class="nx">config</span><span class="p">,</span><span class="w"> </span><span class="nx">done</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nx">build</span><span class="p">.</span><span class="nx">configureWebpack</span><span class="p">.</span><span class="nx">mergeConfig</span><span class="p">({</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">      </span><span class="nx">additionalConfiguration</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">generatedConfiguration</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">          </span><span class="c1">// Remove the default html rule</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">          </span><span class="nx">generatedConfiguration</span><span class="p">.</span><span class="nx">module</span><span class="p">.</span><span class="nx">rules</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">generatedConfiguration</span><span class="p">.</span><span class="nx">module</span><span class="p">.</span><span class="nx">rules</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">rule</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">              </span><span class="k">return</span><span class="w"> </span><span class="nx">rule</span><span class="p">.</span><span class="nx">test</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span><span class="w"> </span><span class="o">!==</span><span class="w"> </span><span class="s1">&#39;/\\.html$/&#39;</span><span class="p">;</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">          </span><span class="p">});</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">          </span><span class="c1">// Add html loader without minimize so that we can use it for handlebars templates</span>
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">          </span><span class="nx">generatedConfiguration</span><span class="p">.</span><span class="nx">module</span><span class="p">.</span><span class="nx">rules</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span>
-<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">            </span><span class="nx">test</span><span class="o">:</span><span class="w"> </span><span class="sr">/\.html$/</span><span class="p">,</span>
-<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">            </span><span class="nx">loader</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;html-loader&#39;</span><span class="p">,</span>
-<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">            </span><span class="nx">options</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="w">              </span><span class="nx">minimize</span><span class="o">:</span><span class="w"> </span><span class="kc">false</span>
-<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="w">            </span><span class="p">}</span>
-<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="w">          </span><span class="p">});</span>
-<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="w">          </span><span class="k">return</span><span class="w"> </span><span class="nx">generatedConfiguration</span><span class="p">;</span>
-<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="w">      </span><span class="p">}</span>
-<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="w">  </span><span class="p">});</span>
-<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a><span class="w">  </span><span class="nx">done</span><span class="p">();</span>
-<a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a><span class="p">});</span>
-<a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>
-<a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a><span class="nx">build</span><span class="p">.</span><span class="nx">rig</span><span class="p">.</span><span class="nx">addPreBuildTask</span><span class="p">(</span><span class="nx">envCheck</span><span class="p">);</span>
-</code></pre></div></p>
-</li>
-<li>
-<p>In the main entry point, implement the <code>IExtensibilityLibrary</code> interface. Provide all method implementations (return empty arrays if you don't implement specific extensions).
-    <img alt="&quot;Extensibility interface implementation&quot;" class="center" src="../assets/extensibility/implement_interface.png" /></p>
-</li>
+<li>Add an npm reference to <code>@pnp/modern-search-extensibility</code> library using <code>npm i @pnp/modern-search-extensibility --save</code>.</li>
+<li>Install npm-package <code>html-loader</code> as a dev-dependency using <code>npm i html-loader@4.2.0 --save-dev</code>.</li>
+</ol>
+<h4 id="configure-the-html-loader">Configure the html-loader<a class="headerlink" href="#configure-the-html-loader" title="Permanent link">&para;</a></h4>
+<p>The extensibility library requires <code>html-loader</code> to load Handlebars templates from <code>.html</code> files without minification. The configuration differs depending on which toolchain you are using.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Heft (SPFx v1.22+)</label><label for="__tabbed_1_2">Gulp (SPFx v1.21.1 and earlier)</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p>With the Heft-based toolchain, webpack customizations are done through <strong>patch files</strong> registered in a <code>config/webpack-patch.json</code> file, instead of <code>gulpfile.js</code>. No <code>gulpfile.js</code> is needed.</p>
+<p><strong>Step 1.</strong> Create the file <code>config/webpack-patch.json</code> in your project:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">&quot;$schema&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://developer.microsoft.com/en-us/json-schemas/spfx-build/webpack-patch.schema.json&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nt">&quot;patchFiles&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="s2">&quot;./config/webpack-patch/html-loader.js&quot;</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">  </span><span class="p">]</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="p">}</span>
+</code></pre></div>
+<p><strong>Step 2.</strong> Create the folder <code>config/webpack-patch/</code> and add the file <code>config/webpack-patch/html-loader.js</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="s1">&#39;use strict&#39;</span><span class="p">;</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="p">(</span><span class="nx">webpackConfig</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">    </span><span class="c1">// Remove the default html rule</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">    </span><span class="nx">webpackConfig</span><span class="p">.</span><span class="nx">module</span><span class="p">.</span><span class="nx">rules</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">webpackConfig</span><span class="p">.</span><span class="nx">module</span><span class="p">.</span><span class="nx">rules</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">rule</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nx">rule</span><span class="p">.</span><span class="nx">test</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span><span class="w"> </span><span class="o">!==</span><span class="w"> </span><span class="s1">&#39;/\\.html$/&#39;</span><span class="p">;</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">    </span><span class="p">});</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">    </span><span class="c1">// Add html-loader without minimize so that we can use it for handlebars templates</span>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">    </span><span class="nx">webpackConfig</span><span class="p">.</span><span class="nx">module</span><span class="p">.</span><span class="nx">rules</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span>
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">        </span><span class="nx">test</span><span class="o">:</span><span class="w"> </span><span class="sr">/\.html$/</span><span class="p">,</span>
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">        </span><span class="nx">loader</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;html-loader&#39;</span><span class="p">,</span>
+<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">        </span><span class="nx">options</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="w">            </span><span class="nx">minimize</span><span class="o">:</span><span class="w"> </span><span class="kc">false</span>
+<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="w">        </span><span class="p">}</span>
+<a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="w">    </span><span class="p">});</span>
+<a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a>
+<a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">webpackConfig</span><span class="p">;</span>
+<a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a><span class="p">};</span>
+</code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>For more information on customizing webpack with Heft, see <a href="https://learn.microsoft.com/en-us/sharepoint/dev/spfx/toolchain/customize-heft-toolchain-customize-webpack-config">Customize webpack with the Heft Webpack Patch plugin</a> and <a href="https://www.voitanos.io/blog/sharepoint-framework-customize-heft-toolchain-plugins-scripts-webpack/#register-the-patch-file-with-the-webpack-patch-plugin">Andrew Connell's walkthrough</a>.</p>
+</div>
+</div>
+<div class="tabbed-block">
+<p>Insert the following lines of code into <code>gulpfile.js</code> of your SPFx-project:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kd">const</span><span class="w"> </span><span class="nx">envCheck</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">build</span><span class="p">.</span><span class="nx">subTask</span><span class="p">(</span><span class="s1">&#39;environmentCheck&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nx">gulp</span><span class="p">,</span><span class="w"> </span><span class="nx">config</span><span class="p">,</span><span class="w"> </span><span class="nx">done</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span><span class="nx">build</span><span class="p">.</span><span class="nx">configureWebpack</span><span class="p">.</span><span class="nx">mergeConfig</span><span class="p">({</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">      </span><span class="nx">additionalConfiguration</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">generatedConfiguration</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">          </span><span class="c1">// Remove the default html rule</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">          </span><span class="nx">generatedConfiguration</span><span class="p">.</span><span class="nx">module</span><span class="p">.</span><span class="nx">rules</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">generatedConfiguration</span><span class="p">.</span><span class="nx">module</span><span class="p">.</span><span class="nx">rules</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">rule</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">              </span><span class="k">return</span><span class="w"> </span><span class="nx">rule</span><span class="p">.</span><span class="nx">test</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span><span class="w"> </span><span class="o">!==</span><span class="w"> </span><span class="s1">&#39;/\\.html$/&#39;</span><span class="p">;</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">          </span><span class="p">});</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">          </span><span class="c1">// Add html loader without minimize so that we can use it for handlebars templates</span>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">          </span><span class="nx">generatedConfiguration</span><span class="p">.</span><span class="nx">module</span><span class="p">.</span><span class="nx">rules</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span>
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">            </span><span class="nx">test</span><span class="o">:</span><span class="w"> </span><span class="sr">/\.html$/</span><span class="p">,</span>
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="w">            </span><span class="nx">loader</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;html-loader&#39;</span><span class="p">,</span>
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="w">            </span><span class="nx">options</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="w">              </span><span class="nx">minimize</span><span class="o">:</span><span class="w"> </span><span class="kc">false</span>
+<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="w">            </span><span class="p">}</span>
+<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="w">          </span><span class="p">});</span>
+<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a><span class="w">          </span><span class="k">return</span><span class="w"> </span><span class="nx">generatedConfiguration</span><span class="p">;</span>
+<a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a><span class="w">      </span><span class="p">}</span>
+<a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a><span class="w">  </span><span class="p">});</span>
+<a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a><span class="w">  </span><span class="nx">done</span><span class="p">();</span>
+<a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a><span class="p">});</span>
+<a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a>
+<a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a><span class="nx">build</span><span class="p">.</span><span class="nx">rig</span><span class="p">.</span><span class="nx">addPreBuildTask</span><span class="p">(</span><span class="nx">envCheck</span><span class="p">);</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<h4 id="implement-the-extensibility-interface">Implement the extensibility interface<a class="headerlink" href="#implement-the-extensibility-interface" title="Permanent link">&para;</a></h4>
+<ol>
+<li>In the main entry point, implement the <code>IExtensibilityLibrary</code> interface. Provide all method implementations (return empty arrays if you don't implement specific extensions).
+    <img alt="&quot;Extensibility interface implementation&quot;" class="center" src="../assets/extensibility/implement_interface.png" /></li>
 <li>
 <p>Implement your extension(s) depending of the type:</p>
 <ul>
@@ -1255,102 +1388,132 @@
 <li>Register the information about the extension to be discovered and instanciated by the target Web Part by implementing the corresponding method according to the <code>IExtensibilityLibrary</code> interface.</li>
 </ol>
 </li>
-<li>
-<p>Bundle <code>gulp bundle --ship</code> and package <code>gulp package-solution --ship</code> and add the solution to the global or site collection catalog (for this one, it must be the same site collection where the Web Part loading that extension(s) is present).</p>
-</li>
+</ol>
+<h4 id="build-and-deploy">Build and deploy<a class="headerlink" href="#build-and-deploy" title="Permanent link">&para;</a></h4>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Heft (SPFx v1.22+)</label><label for="__tabbed_2_2">Gulp (SPFx v1.21.1 and earlier)</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p>Bundle and package your solution:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="go">heft build --production</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="go">heft package-solution --production</span>
+</code></pre></div>
+<p>Add the resulting <code>.sppkg</code> from the <code>sharepoint/solution</code> folder to the global or site collection app catalog (for the latter, it must be the same site collection where the Web Part loading the extension(s) is present).</p>
+</div>
+<div class="tabbed-block">
+<p>Bundle and package your solution:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="go">gulp bundle --ship</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="go">gulp package-solution --ship</span>
+</code></pre></div>
+<p>Add the resulting <code>.sppkg</code> from the <code>sharepoint/solution</code> folder to the global or site collection app catalog (for the latter, it must be the same site collection where the Web Part loading the extension(s) is present).</p>
+</div>
+</div>
+</div>
+<ol>
 <li><a href="#register-your-extensibility-library-with-a-web-part">Register your manifest ID in the target Web Part instance</a>.</li>
 <li>Enjoy!</li>
 </ol>
 <h4 id="debug-a-library-component">Debug a library component<a class="headerlink" href="#debug-a-library-component" title="Permanent link">&para;</a></h4>
-<p>Debugging a library component is exactly the same as debugging an SPFx Web Part. Run <code>gulp serve</code> in the hosted workbench and put a <em>'Search Results'</em>,<em>'Search Filters'</em> or <em>'Search Box'</em> Web Part depending the extension you want to test. If registered correctly, your breakpoints will be triggerred by the main Web Part loading your extension.</p>
+<p>Debugging a library component is exactly the same as debugging an SPFx Web Part. Put a <em>'Search Results'</em>, <em>'Search Filters'</em> or <em>'Search Box'</em> Web Part on the hosted workbench depending on the extension you want to test. If registered correctly, your breakpoints will be triggered by the main Web Part loading your extension.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">Heft (SPFx v1.22+)</label><label for="__tabbed_3_2">Gulp (SPFx v1.21.1 and earlier)</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="go">heft start</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="go">gulp serve</span>
+</code></pre></div>
+</div>
+</div>
+</div>
 <h4 id="accessing-the-sharepoint-framework-context-and-services-in-a-library-component">Accessing the SharePoint Framework context and services in a library component<a class="headerlink" href="#accessing-the-sharepoint-framework-context-and-services-in-a-library-component" title="Permanent link">&para;</a></h4>
 <p>In case you need to access the SharePoint Framework context and services, within your custom library component, you can easily do that by relying on the Service Locator pattern available in SPFx.
 You simply need to declare a public static property with name <code>serviceKey</code> in your library component and provide a constructor that accepts a <a href="https://docs.microsoft.com/en-us/javascript/api/sp-core-library/servicescope?view=sp-typescript-latest"><code>ServiceScope</code></a> instance as input argument.
 For example, here you can see a code excerpt of such a library component that handles custom actions for Adaptive Cards rendering:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">IAdaptiveCardAction</span><span class="p">,</span><span class="w"> </span><span class="nx">IComponentDefinition</span><span class="p">,</span><span class="w"> </span><span class="nx">IExtensibilityLibrary</span><span class="p">,</span><span class="w"> </span><span class="nx">ILayoutDefinition</span><span class="p">,</span><span class="w"> </span><span class="nx">ISuggestionProviderDefinition</span><span class="p">,</span><span class="w"> </span><span class="nx">IQueryModifierDefinition</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@pnp/modern-search-extensibility&#39;</span><span class="p">;</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">ServiceKey</span><span class="p">,</span><span class="w"> </span><span class="nx">ServiceScope</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@microsoft/sp-core-library&#39;</span><span class="p">;</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">SPHttpClient</span><span class="p">,</span><span class="w"> </span><span class="nx">SPHttpClientResponse</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@microsoft/sp-http&#39;</span><span class="p">;</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">PageContext</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@microsoft/sp-page-context&#39;</span><span class="p">;</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="k">export</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">MyCustomLibraryComponent</span><span class="w"> </span><span class="k">implements</span><span class="w"> </span><span class="nx">IExtensibilityLibrary</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">  </span><span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="k">readonly</span><span class="w"> </span><span class="nx">serviceKey</span><span class="o">:</span><span class="w"> </span><span class="kt">ServiceKey</span><span class="o">&lt;</span><span class="nx">MyCustomLibraryComponent</span><span class="o">&gt;</span><span class="w"> </span><span class="o">=</span>
-<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">    </span><span class="nx">ServiceKey</span><span class="p">.</span><span class="nx">create</span><span class="o">&lt;</span><span class="nx">MyCustomLibraryComponent</span><span class="o">&gt;</span><span class="p">(</span><span class="s1">&#39;SPFx:MyCustomLibraryComponent&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">MyCustomLibraryComponent</span><span class="p">);</span>
-<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>
-<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">  </span><span class="k">private</span><span class="w"> </span><span class="nx">_spHttpClient</span><span class="o">:</span><span class="w"> </span><span class="kt">SPHttpClient</span><span class="p">;</span>
-<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">  </span><span class="k">private</span><span class="w"> </span><span class="nx">_pageContext</span><span class="o">:</span><span class="w"> </span><span class="kt">PageContext</span><span class="p">;</span>
-<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">  </span><span class="k">private</span><span class="w"> </span><span class="nx">_currentWebUrl</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
-<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>
-<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="w">  </span><span class="kr">constructor</span><span class="p">(</span><span class="nx">serviceScope</span><span class="o">:</span><span class="w"> </span><span class="kt">ServiceScope</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="w">    </span><span class="nx">serviceScope</span><span class="p">.</span><span class="nx">whenFinished</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="w">      </span><span class="k">this</span><span class="p">.</span><span class="nx">_spHttpClient</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">serviceScope</span><span class="p">.</span><span class="nx">consume</span><span class="p">(</span><span class="nx">SPHttpClient</span><span class="p">.</span><span class="nx">serviceKey</span><span class="p">);</span>
-<a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a>
-<a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a><span class="w">      </span><span class="k">this</span><span class="p">.</span><span class="nx">_pageContext</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">serviceScope</span><span class="p">.</span><span class="nx">consume</span><span class="p">(</span><span class="nx">PageContext</span><span class="p">.</span><span class="nx">serviceKey</span><span class="p">);</span>
-<a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a><span class="w">      </span><span class="k">this</span><span class="p">.</span><span class="nx">_currentWebUrl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">_pageContext</span><span class="p">.</span><span class="nx">web</span><span class="p">.</span><span class="nx">absoluteUrl</span><span class="p">;</span>
-<a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a><span class="w">    </span><span class="p">});</span>
-<a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a><span class="w">  </span><span class="p">}</span>
-<a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a>
-<a id="__codelineno-1-24" name="__codelineno-1-24" href="#__codelineno-1-24"></a><span class="w">  </span><span class="k">public</span><span class="w"> </span><span class="nx">getCustomLayouts</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="nx">ILayoutDefinition</span><span class="p">[]</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-1-25" name="__codelineno-1-25" href="#__codelineno-1-25"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">[];</span>
-<a id="__codelineno-1-26" name="__codelineno-1-26" href="#__codelineno-1-26"></a><span class="w">  </span><span class="p">}</span>
-<a id="__codelineno-1-27" name="__codelineno-1-27" href="#__codelineno-1-27"></a>
-<a id="__codelineno-1-28" name="__codelineno-1-28" href="#__codelineno-1-28"></a><span class="w">  </span><span class="k">public</span><span class="w"> </span><span class="nx">getCustomWebComponents</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="nx">IComponentDefinition</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;</span><span class="p">[]</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-1-29" name="__codelineno-1-29" href="#__codelineno-1-29"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">[];</span>
-<a id="__codelineno-1-30" name="__codelineno-1-30" href="#__codelineno-1-30"></a><span class="w">  </span><span class="p">}</span>
-<a id="__codelineno-1-31" name="__codelineno-1-31" href="#__codelineno-1-31"></a>
-<a id="__codelineno-1-32" name="__codelineno-1-32" href="#__codelineno-1-32"></a><span class="w">  </span><span class="k">public</span><span class="w"> </span><span class="nx">getCustomSuggestionProviders</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="nx">ISuggestionProviderDefinition</span><span class="p">[]</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-1-33" name="__codelineno-1-33" href="#__codelineno-1-33"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">[];</span>
-<a id="__codelineno-1-34" name="__codelineno-1-34" href="#__codelineno-1-34"></a><span class="w">  </span><span class="p">}</span>
-<a id="__codelineno-1-35" name="__codelineno-1-35" href="#__codelineno-1-35"></a>
-<a id="__codelineno-1-36" name="__codelineno-1-36" href="#__codelineno-1-36"></a><span class="w">  </span><span class="k">public</span><span class="w"> </span><span class="nx">registerHandlebarsCustomizations</span><span class="o">?</span><span class="p">(</span><span class="nx">handlebarsNamespace</span><span class="o">:</span><span class="w"> </span><span class="kt">typeof</span><span class="w"> </span><span class="nx">Handlebars</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-1-37" name="__codelineno-1-37" href="#__codelineno-1-37"></a><span class="w">  </span><span class="p">}</span>
-<a id="__codelineno-1-38" name="__codelineno-1-38" href="#__codelineno-1-38"></a>
-<a id="__codelineno-1-39" name="__codelineno-1-39" href="#__codelineno-1-39"></a><span class="w">  </span><span class="k">public</span><span class="w"> </span><span class="nx">getCustomQueryModifiers</span><span class="o">?</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="nx">IQueryModifierDefinition</span><span class="p">[]{</span>
-<a id="__codelineno-1-40" name="__codelineno-1-40" href="#__codelineno-1-40"></a>
-<a id="__codelineno-1-41" name="__codelineno-1-41" href="#__codelineno-1-41"></a><span class="w">  </span><span class="p">}</span>
-<a id="__codelineno-1-42" name="__codelineno-1-42" href="#__codelineno-1-42"></a>
-<a id="__codelineno-1-43" name="__codelineno-1-43" href="#__codelineno-1-43"></a><span class="w">  </span><span class="k">public</span><span class="w"> </span><span class="nx">invokeCardAction</span><span class="p">(</span><span class="nx">action</span><span class="o">:</span><span class="w"> </span><span class="kt">IAdaptiveCardAction</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-1-44" name="__codelineno-1-44" href="#__codelineno-1-44"></a>
-<a id="__codelineno-1-45" name="__codelineno-1-45" href="#__codelineno-1-45"></a><span class="w">    </span><span class="c1">// Process the action based on type</span>
-<a id="__codelineno-1-46" name="__codelineno-1-46" href="#__codelineno-1-46"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="kr">type</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">&quot;Action.OpenUrl&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-1-47" name="__codelineno-1-47" href="#__codelineno-1-47"></a><span class="w">      </span><span class="nb">window</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">url</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;_blank&quot;</span><span class="p">);</span>
-<a id="__codelineno-1-48" name="__codelineno-1-48" href="#__codelineno-1-48"></a><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="kr">type</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">&quot;Action.Submit&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-1-49" name="__codelineno-1-49" href="#__codelineno-1-49"></a><span class="w">      </span><span class="c1">// Process the Submit action based on title</span>
-<a id="__codelineno-1-50" name="__codelineno-1-50" href="#__codelineno-1-50"></a><span class="w">      </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">title</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-1-51" name="__codelineno-1-51" href="#__codelineno-1-51"></a><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="s2">&quot;user&quot;</span><span class="o">:</span>
-<a id="__codelineno-1-52" name="__codelineno-1-52" href="#__codelineno-1-52"></a>
-<a id="__codelineno-1-53" name="__codelineno-1-53" href="#__codelineno-1-53"></a><span class="w">          </span><span class="c1">// Invoke the currentUser endpoint</span>
-<a id="__codelineno-1-54" name="__codelineno-1-54" href="#__codelineno-1-54"></a><span class="w">          </span><span class="k">this</span><span class="p">.</span><span class="nx">_spHttpClient</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span>
-<a id="__codelineno-1-55" name="__codelineno-1-55" href="#__codelineno-1-55"></a><span class="w">            </span><span class="sb">`</span><span class="si">${</span><span class="k">this</span><span class="p">.</span><span class="nx">_currentWebUrl</span><span class="si">}</span><span class="sb">/_api/web/currentUser`</span><span class="p">,</span>
-<a id="__codelineno-1-56" name="__codelineno-1-56" href="#__codelineno-1-56"></a><span class="w">            </span><span class="nx">SPHttpClient</span><span class="p">.</span><span class="nx">configurations</span><span class="p">.</span><span class="nx">v1</span><span class="p">,</span><span class="w"> </span>
-<a id="__codelineno-1-57" name="__codelineno-1-57" href="#__codelineno-1-57"></a><span class="w">            </span><span class="kc">null</span><span class="p">).</span><span class="nx">then</span><span class="p">((</span><span class="nx">response</span><span class="o">:</span><span class="w"> </span><span class="kt">SPHttpClientResponse</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-1-58" name="__codelineno-1-58" href="#__codelineno-1-58"></a><span class="w">              </span><span class="k">return</span><span class="w"> </span><span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">();</span>
-<a id="__codelineno-1-59" name="__codelineno-1-59" href="#__codelineno-1-59"></a><span class="w">            </span><span class="p">});</span>
-<a id="__codelineno-1-60" name="__codelineno-1-60" href="#__codelineno-1-60"></a>
-<a id="__codelineno-1-61" name="__codelineno-1-61" href="#__codelineno-1-61"></a><span class="w">          </span><span class="k">break</span><span class="p">;</span>
-<a id="__codelineno-1-62" name="__codelineno-1-62" href="#__codelineno-1-62"></a><span class="w">        </span><span class="nx">default</span><span class="o">:</span>
-<a id="__codelineno-1-63" name="__codelineno-1-63" href="#__codelineno-1-63"></a><span class="w">          </span><span class="kt">console.log</span><span class="p">(</span><span class="s1">&#39;Action not supported!&#39;</span><span class="p">);</span>
-<a id="__codelineno-1-64" name="__codelineno-1-64" href="#__codelineno-1-64"></a><span class="w">          </span><span class="k">break</span><span class="p">;</span>
-<a id="__codelineno-1-65" name="__codelineno-1-65" href="#__codelineno-1-65"></a><span class="w">      </span><span class="p">}</span>
-<a id="__codelineno-1-66" name="__codelineno-1-66" href="#__codelineno-1-66"></a><span class="w">    </span><span class="p">}</span>
-<a id="__codelineno-1-67" name="__codelineno-1-67" href="#__codelineno-1-67"></a><span class="w">  </span><span class="p">}</span>
-<a id="__codelineno-1-68" name="__codelineno-1-68" href="#__codelineno-1-68"></a>
-<a id="__codelineno-1-69" name="__codelineno-1-69" href="#__codelineno-1-69"></a><span class="w">  </span><span class="k">public</span><span class="w"> </span><span class="nx">getCustomDataSources</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="nx">IDataSourceDefinition</span><span class="p">[]</span>
-<a id="__codelineno-1-70" name="__codelineno-1-70" href="#__codelineno-1-70"></a><span class="w">  </span><span class="p">{</span>
-<a id="__codelineno-1-71" name="__codelineno-1-71" href="#__codelineno-1-71"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">[</span>
-<a id="__codelineno-1-72" name="__codelineno-1-72" href="#__codelineno-1-72"></a><span class="w">      </span><span class="p">{</span>
-<a id="__codelineno-1-73" name="__codelineno-1-73" href="#__codelineno-1-73"></a><span class="w">          </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;Custom Data Source&#39;</span><span class="p">,</span>
-<a id="__codelineno-1-74" name="__codelineno-1-74" href="#__codelineno-1-74"></a><span class="w">          </span><span class="nx">iconName</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;Database&#39;</span><span class="p">,</span>
-<a id="__codelineno-1-75" name="__codelineno-1-75" href="#__codelineno-1-75"></a><span class="w">          </span><span class="nx">key</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;CustomDataSource&#39;</span><span class="p">,</span>
-<a id="__codelineno-1-76" name="__codelineno-1-76" href="#__codelineno-1-76"></a><span class="w">          </span><span class="nx">serviceKey</span><span class="o">:</span><span class="w"> </span><span class="kt">ServiceKey.create</span><span class="o">&lt;</span><span class="nx">IDataSource</span><span class="o">&gt;</span><span class="p">(</span><span class="s1">&#39;CustomDataSource&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">CustomDataSource</span><span class="p">)</span>
-<a id="__codelineno-1-77" name="__codelineno-1-77" href="#__codelineno-1-77"></a><span class="w">      </span><span class="p">}</span>
-<a id="__codelineno-1-78" name="__codelineno-1-78" href="#__codelineno-1-78"></a><span class="w">    </span><span class="p">];</span>
-<a id="__codelineno-1-79" name="__codelineno-1-79" href="#__codelineno-1-79"></a><span class="w">  </span><span class="p">}</span>
-<a id="__codelineno-1-80" name="__codelineno-1-80" href="#__codelineno-1-80"></a>
-<a id="__codelineno-1-81" name="__codelineno-1-81" href="#__codelineno-1-81"></a><span class="w">  </span><span class="k">public</span><span class="w"> </span><span class="nx">name</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-1-82" name="__codelineno-1-82" href="#__codelineno-1-82"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;MyCustomLibraryComponent&#39;</span><span class="p">;</span>
-<a id="__codelineno-1-83" name="__codelineno-1-83" href="#__codelineno-1-83"></a><span class="w">  </span><span class="p">}</span>
-<a id="__codelineno-1-84" name="__codelineno-1-84" href="#__codelineno-1-84"></a><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">IAdaptiveCardAction</span><span class="p">,</span><span class="w"> </span><span class="nx">IComponentDefinition</span><span class="p">,</span><span class="w"> </span><span class="nx">IExtensibilityLibrary</span><span class="p">,</span><span class="w"> </span><span class="nx">ILayoutDefinition</span><span class="p">,</span><span class="w"> </span><span class="nx">ISuggestionProviderDefinition</span><span class="p">,</span><span class="w"> </span><span class="nx">IQueryModifierDefinition</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@pnp/modern-search-extensibility&#39;</span><span class="p">;</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">ServiceKey</span><span class="p">,</span><span class="w"> </span><span class="nx">ServiceScope</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@microsoft/sp-core-library&#39;</span><span class="p">;</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">SPHttpClient</span><span class="p">,</span><span class="w"> </span><span class="nx">SPHttpClientResponse</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@microsoft/sp-http&#39;</span><span class="p">;</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">PageContext</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@microsoft/sp-page-context&#39;</span><span class="p">;</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="k">export</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">MyCustomLibraryComponent</span><span class="w"> </span><span class="k">implements</span><span class="w"> </span><span class="nx">IExtensibilityLibrary</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>
+<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="w">  </span><span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="k">readonly</span><span class="w"> </span><span class="nx">serviceKey</span><span class="o">:</span><span class="w"> </span><span class="kt">ServiceKey</span><span class="o">&lt;</span><span class="nx">MyCustomLibraryComponent</span><span class="o">&gt;</span><span class="w"> </span><span class="o">=</span>
+<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="w">    </span><span class="nx">ServiceKey</span><span class="p">.</span><span class="nx">create</span><span class="o">&lt;</span><span class="nx">MyCustomLibraryComponent</span><span class="o">&gt;</span><span class="p">(</span><span class="s1">&#39;SPFx:MyCustomLibraryComponent&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">MyCustomLibraryComponent</span><span class="p">);</span>
+<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>
+<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="w">  </span><span class="k">private</span><span class="w"> </span><span class="nx">_spHttpClient</span><span class="o">:</span><span class="w"> </span><span class="kt">SPHttpClient</span><span class="p">;</span>
+<a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="w">  </span><span class="k">private</span><span class="w"> </span><span class="nx">_pageContext</span><span class="o">:</span><span class="w"> </span><span class="kt">PageContext</span><span class="p">;</span>
+<a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="w">  </span><span class="k">private</span><span class="w"> </span><span class="nx">_currentWebUrl</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
+<a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a>
+<a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a><span class="w">  </span><span class="kr">constructor</span><span class="p">(</span><span class="nx">serviceScope</span><span class="o">:</span><span class="w"> </span><span class="kt">ServiceScope</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a><span class="w">    </span><span class="nx">serviceScope</span><span class="p">.</span><span class="nx">whenFinished</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a><span class="w">      </span><span class="k">this</span><span class="p">.</span><span class="nx">_spHttpClient</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">serviceScope</span><span class="p">.</span><span class="nx">consume</span><span class="p">(</span><span class="nx">SPHttpClient</span><span class="p">.</span><span class="nx">serviceKey</span><span class="p">);</span>
+<a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a>
+<a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a><span class="w">      </span><span class="k">this</span><span class="p">.</span><span class="nx">_pageContext</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">serviceScope</span><span class="p">.</span><span class="nx">consume</span><span class="p">(</span><span class="nx">PageContext</span><span class="p">.</span><span class="nx">serviceKey</span><span class="p">);</span>
+<a id="__codelineno-7-20" name="__codelineno-7-20" href="#__codelineno-7-20"></a><span class="w">      </span><span class="k">this</span><span class="p">.</span><span class="nx">_currentWebUrl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">_pageContext</span><span class="p">.</span><span class="nx">web</span><span class="p">.</span><span class="nx">absoluteUrl</span><span class="p">;</span>
+<a id="__codelineno-7-21" name="__codelineno-7-21" href="#__codelineno-7-21"></a><span class="w">    </span><span class="p">});</span>
+<a id="__codelineno-7-22" name="__codelineno-7-22" href="#__codelineno-7-22"></a><span class="w">  </span><span class="p">}</span>
+<a id="__codelineno-7-23" name="__codelineno-7-23" href="#__codelineno-7-23"></a>
+<a id="__codelineno-7-24" name="__codelineno-7-24" href="#__codelineno-7-24"></a><span class="w">  </span><span class="k">public</span><span class="w"> </span><span class="nx">getCustomLayouts</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="nx">ILayoutDefinition</span><span class="p">[]</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-25" name="__codelineno-7-25" href="#__codelineno-7-25"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">[];</span>
+<a id="__codelineno-7-26" name="__codelineno-7-26" href="#__codelineno-7-26"></a><span class="w">  </span><span class="p">}</span>
+<a id="__codelineno-7-27" name="__codelineno-7-27" href="#__codelineno-7-27"></a>
+<a id="__codelineno-7-28" name="__codelineno-7-28" href="#__codelineno-7-28"></a><span class="w">  </span><span class="k">public</span><span class="w"> </span><span class="nx">getCustomWebComponents</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="nx">IComponentDefinition</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;</span><span class="p">[]</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-29" name="__codelineno-7-29" href="#__codelineno-7-29"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">[];</span>
+<a id="__codelineno-7-30" name="__codelineno-7-30" href="#__codelineno-7-30"></a><span class="w">  </span><span class="p">}</span>
+<a id="__codelineno-7-31" name="__codelineno-7-31" href="#__codelineno-7-31"></a>
+<a id="__codelineno-7-32" name="__codelineno-7-32" href="#__codelineno-7-32"></a><span class="w">  </span><span class="k">public</span><span class="w"> </span><span class="nx">getCustomSuggestionProviders</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="nx">ISuggestionProviderDefinition</span><span class="p">[]</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-33" name="__codelineno-7-33" href="#__codelineno-7-33"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">[];</span>
+<a id="__codelineno-7-34" name="__codelineno-7-34" href="#__codelineno-7-34"></a><span class="w">  </span><span class="p">}</span>
+<a id="__codelineno-7-35" name="__codelineno-7-35" href="#__codelineno-7-35"></a>
+<a id="__codelineno-7-36" name="__codelineno-7-36" href="#__codelineno-7-36"></a><span class="w">  </span><span class="k">public</span><span class="w"> </span><span class="nx">registerHandlebarsCustomizations</span><span class="o">?</span><span class="p">(</span><span class="nx">handlebarsNamespace</span><span class="o">:</span><span class="w"> </span><span class="kt">typeof</span><span class="w"> </span><span class="nx">Handlebars</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-37" name="__codelineno-7-37" href="#__codelineno-7-37"></a><span class="w">  </span><span class="p">}</span>
+<a id="__codelineno-7-38" name="__codelineno-7-38" href="#__codelineno-7-38"></a>
+<a id="__codelineno-7-39" name="__codelineno-7-39" href="#__codelineno-7-39"></a><span class="w">  </span><span class="k">public</span><span class="w"> </span><span class="nx">getCustomQueryModifiers</span><span class="o">?</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="nx">IQueryModifierDefinition</span><span class="p">[]{</span>
+<a id="__codelineno-7-40" name="__codelineno-7-40" href="#__codelineno-7-40"></a>
+<a id="__codelineno-7-41" name="__codelineno-7-41" href="#__codelineno-7-41"></a><span class="w">  </span><span class="p">}</span>
+<a id="__codelineno-7-42" name="__codelineno-7-42" href="#__codelineno-7-42"></a>
+<a id="__codelineno-7-43" name="__codelineno-7-43" href="#__codelineno-7-43"></a><span class="w">  </span><span class="k">public</span><span class="w"> </span><span class="nx">invokeCardAction</span><span class="p">(</span><span class="nx">action</span><span class="o">:</span><span class="w"> </span><span class="kt">IAdaptiveCardAction</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-44" name="__codelineno-7-44" href="#__codelineno-7-44"></a>
+<a id="__codelineno-7-45" name="__codelineno-7-45" href="#__codelineno-7-45"></a><span class="w">    </span><span class="c1">// Process the action based on type</span>
+<a id="__codelineno-7-46" name="__codelineno-7-46" href="#__codelineno-7-46"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="kr">type</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">&quot;Action.OpenUrl&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-47" name="__codelineno-7-47" href="#__codelineno-7-47"></a><span class="w">      </span><span class="nb">window</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">url</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;_blank&quot;</span><span class="p">);</span>
+<a id="__codelineno-7-48" name="__codelineno-7-48" href="#__codelineno-7-48"></a><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="kr">type</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">&quot;Action.Submit&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-49" name="__codelineno-7-49" href="#__codelineno-7-49"></a><span class="w">      </span><span class="c1">// Process the Submit action based on title</span>
+<a id="__codelineno-7-50" name="__codelineno-7-50" href="#__codelineno-7-50"></a><span class="w">      </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">title</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-51" name="__codelineno-7-51" href="#__codelineno-7-51"></a><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="s2">&quot;user&quot;</span><span class="o">:</span>
+<a id="__codelineno-7-52" name="__codelineno-7-52" href="#__codelineno-7-52"></a>
+<a id="__codelineno-7-53" name="__codelineno-7-53" href="#__codelineno-7-53"></a><span class="w">          </span><span class="c1">// Invoke the currentUser endpoint</span>
+<a id="__codelineno-7-54" name="__codelineno-7-54" href="#__codelineno-7-54"></a><span class="w">          </span><span class="k">this</span><span class="p">.</span><span class="nx">_spHttpClient</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span>
+<a id="__codelineno-7-55" name="__codelineno-7-55" href="#__codelineno-7-55"></a><span class="w">            </span><span class="sb">`</span><span class="si">${</span><span class="k">this</span><span class="p">.</span><span class="nx">_currentWebUrl</span><span class="si">}</span><span class="sb">/_api/web/currentUser`</span><span class="p">,</span>
+<a id="__codelineno-7-56" name="__codelineno-7-56" href="#__codelineno-7-56"></a><span class="w">            </span><span class="nx">SPHttpClient</span><span class="p">.</span><span class="nx">configurations</span><span class="p">.</span><span class="nx">v1</span><span class="p">,</span><span class="w"> </span>
+<a id="__codelineno-7-57" name="__codelineno-7-57" href="#__codelineno-7-57"></a><span class="w">            </span><span class="kc">null</span><span class="p">).</span><span class="nx">then</span><span class="p">((</span><span class="nx">response</span><span class="o">:</span><span class="w"> </span><span class="kt">SPHttpClientResponse</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-58" name="__codelineno-7-58" href="#__codelineno-7-58"></a><span class="w">              </span><span class="k">return</span><span class="w"> </span><span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">();</span>
+<a id="__codelineno-7-59" name="__codelineno-7-59" href="#__codelineno-7-59"></a><span class="w">            </span><span class="p">});</span>
+<a id="__codelineno-7-60" name="__codelineno-7-60" href="#__codelineno-7-60"></a>
+<a id="__codelineno-7-61" name="__codelineno-7-61" href="#__codelineno-7-61"></a><span class="w">          </span><span class="k">break</span><span class="p">;</span>
+<a id="__codelineno-7-62" name="__codelineno-7-62" href="#__codelineno-7-62"></a><span class="w">        </span><span class="nx">default</span><span class="o">:</span>
+<a id="__codelineno-7-63" name="__codelineno-7-63" href="#__codelineno-7-63"></a><span class="w">          </span><span class="kt">console.log</span><span class="p">(</span><span class="s1">&#39;Action not supported!&#39;</span><span class="p">);</span>
+<a id="__codelineno-7-64" name="__codelineno-7-64" href="#__codelineno-7-64"></a><span class="w">          </span><span class="k">break</span><span class="p">;</span>
+<a id="__codelineno-7-65" name="__codelineno-7-65" href="#__codelineno-7-65"></a><span class="w">      </span><span class="p">}</span>
+<a id="__codelineno-7-66" name="__codelineno-7-66" href="#__codelineno-7-66"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-7-67" name="__codelineno-7-67" href="#__codelineno-7-67"></a><span class="w">  </span><span class="p">}</span>
+<a id="__codelineno-7-68" name="__codelineno-7-68" href="#__codelineno-7-68"></a>
+<a id="__codelineno-7-69" name="__codelineno-7-69" href="#__codelineno-7-69"></a><span class="w">  </span><span class="k">public</span><span class="w"> </span><span class="nx">getCustomDataSources</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="nx">IDataSourceDefinition</span><span class="p">[]</span>
+<a id="__codelineno-7-70" name="__codelineno-7-70" href="#__codelineno-7-70"></a><span class="w">  </span><span class="p">{</span>
+<a id="__codelineno-7-71" name="__codelineno-7-71" href="#__codelineno-7-71"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">[</span>
+<a id="__codelineno-7-72" name="__codelineno-7-72" href="#__codelineno-7-72"></a><span class="w">      </span><span class="p">{</span>
+<a id="__codelineno-7-73" name="__codelineno-7-73" href="#__codelineno-7-73"></a><span class="w">          </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;Custom Data Source&#39;</span><span class="p">,</span>
+<a id="__codelineno-7-74" name="__codelineno-7-74" href="#__codelineno-7-74"></a><span class="w">          </span><span class="nx">iconName</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;Database&#39;</span><span class="p">,</span>
+<a id="__codelineno-7-75" name="__codelineno-7-75" href="#__codelineno-7-75"></a><span class="w">          </span><span class="nx">key</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;CustomDataSource&#39;</span><span class="p">,</span>
+<a id="__codelineno-7-76" name="__codelineno-7-76" href="#__codelineno-7-76"></a><span class="w">          </span><span class="nx">serviceKey</span><span class="o">:</span><span class="w"> </span><span class="kt">ServiceKey.create</span><span class="o">&lt;</span><span class="nx">IDataSource</span><span class="o">&gt;</span><span class="p">(</span><span class="s1">&#39;CustomDataSource&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">CustomDataSource</span><span class="p">)</span>
+<a id="__codelineno-7-77" name="__codelineno-7-77" href="#__codelineno-7-77"></a><span class="w">      </span><span class="p">}</span>
+<a id="__codelineno-7-78" name="__codelineno-7-78" href="#__codelineno-7-78"></a><span class="w">    </span><span class="p">];</span>
+<a id="__codelineno-7-79" name="__codelineno-7-79" href="#__codelineno-7-79"></a><span class="w">  </span><span class="p">}</span>
+<a id="__codelineno-7-80" name="__codelineno-7-80" href="#__codelineno-7-80"></a>
+<a id="__codelineno-7-81" name="__codelineno-7-81" href="#__codelineno-7-81"></a><span class="w">  </span><span class="k">public</span><span class="w"> </span><span class="nx">name</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-82" name="__codelineno-7-82" href="#__codelineno-7-82"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;MyCustomLibraryComponent&#39;</span><span class="p">;</span>
+<a id="__codelineno-7-83" name="__codelineno-7-83" href="#__codelineno-7-83"></a><span class="w">  </span><span class="p">}</span>
+<a id="__codelineno-7-84" name="__codelineno-7-84" href="#__codelineno-7-84"></a><span class="p">}</span>
 </code></pre></div>
 <p>In order to run the above sample code, you will need to import in your library the following npm packages: <code>@microsoft/sp-component-base</code>, <code>@microsoft/sp-core-library</code>, and <code>@microsoft/sp-webpart-base</code>.  </p>
                 
