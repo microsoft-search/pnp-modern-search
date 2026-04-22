@@ -3,9 +3,10 @@
 When developing a new extensibility library for the PnP Modern Search solution, your SPFx library project must use the same SPFx version as the main solution.
 The following table lists the SPFx version used by each PnP Modern Search release, helping you determine the appropriate version for your extensibility project.
 
-| PnP Modern Search Release | Release Date       | SPFx Version used |
-|----------------------------|--------------------|--------------------|
-| 4.16.0                     | February 2025     | 1.20.0             |
+| PnP Modern Search Release | Release Date       | SPFx Version used | Toolchain |
+|----------------------------|--------------------|--------------------|-----------|
+| 4.21.0                     | April 2026        | 1.22.2             | Heft      |
+| 4.16.0                     | February 2025     | 1.20.0             | Gulp      |
 | 4.15.0                     | January 2025      | 1.20.0             |
 | 4.14.0                     | November 2024     | 1.18.2             |
 | 4.13.1                     | September 2024    | 1.18.2             |
