@@ -75,18 +75,29 @@ The extensibility library requires `html-loader` to load Handlebars templates fr
 
 === "Heft (SPFx v1.22+)"
 
-    With the Heft-based toolchain, webpack customizations are done through a JavaScript file referenced by the SPFx rig, instead of `gulpfile.js`. No `gulpfile.js` is needed.
+    With the Heft-based toolchain, webpack customizations are done through **patch files** registered in a `config/webpack-patch.json` file, instead of `gulpfile.js`. No `gulpfile.js` is needed.
 
-    Create or edit the file `config/spfx-customize-webpack.js` in your project:
+    **Step 1.** Create the file `config/webpack-patch.json` in your project:
+
+    ```json
+    {
+      "$schema": "https://developer.microsoft.com/en-us/json-schemas/spfx-build/webpack-patch.schema.json",
+      "patchFiles": [
+        "./config/webpack-patch/html-loader.js"
+      ]
+    }
+    ```
+
+    **Step 2.** Create the folder `config/webpack-patch/` and add the file `config/webpack-patch/html-loader.js`:
 
     ```js
     'use strict';
 
-    module.exports = function (webpackConfig, taskSession, heftConfiguration, webpack) {
+    module.exports = function (webpackConfig) {
 
         // Remove the default html rule
-        webpackConfig.module.rules = webpackConfig.module.rules.filter((rule) => {
-            return !(rule.test && rule.test.toString() === '/\\.html$/');
+        webpackConfig.module.rules = webpackConfig.module.rules.filter(rule => {
+            return rule.test.toString() !== '/\\.html$/';
         });
 
         // Add html-loader without minimize so that we can use it for handlebars templates
@@ -97,11 +108,13 @@ The extensibility library requires `html-loader` to load Handlebars templates fr
                 minimize: false
             }
         });
+
+        return webpackConfig;
     };
     ```
 
     !!! tip
-        For more information on customizing webpack with Heft, see [Customize webpack with the Heft Webpack Patch plugin](https://learn.microsoft.com/en-us/sharepoint/dev/spfx/toolchain/customize-heft-toolchain-customize-webpack-config).
+        For more information on customizing webpack with Heft, see [Customize webpack with the Heft Webpack Patch plugin](https://learn.microsoft.com/en-us/sharepoint/dev/spfx/toolchain/customize-heft-toolchain-customize-webpack-config) and [Andrew Connell's walkthrough](https://www.voitanos.io/blog/sharepoint-framework-customize-heft-toolchain-plugins-scripts-webpack/#register-the-patch-file-with-the-webpack-patch-plugin).
 
 === "Gulp (SPFx v1.21.1 and earlier)"
 
