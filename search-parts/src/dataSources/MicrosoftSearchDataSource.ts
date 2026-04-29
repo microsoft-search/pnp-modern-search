@@ -308,11 +308,15 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                 placeholder: "",
                 searchAsYouType: false,
                 defaultSelectedKeys: this.properties.entityTypes,
-                onPropertyChange: (targetProperty?: string, newValue?: EntityType[]) => {
+                onPropertyChange: (targetProperty: string, newValue: IComboBoxOption | IComboBoxOption[]) => {
                     const previousEnableResultTypes = this.properties.enableResultTypes;
                     this.onCustomPropertyUpdate(targetProperty, newValue);
 
-                    if (supportsResultTypes(newValue) && previousEnableResultTypes) {
+                    const selectedEntityTypes = (Array.isArray(newValue) ? newValue : [newValue])
+                        .filter(Boolean)
+                        .map((option) => option.key as EntityType);
+
+                    if (supportsResultTypes(selectedEntityTypes) && previousEnableResultTypes) {
                         this.properties.enableResultTypes = previousEnableResultTypes;
                     }
                 },
