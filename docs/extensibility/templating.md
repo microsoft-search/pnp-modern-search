@@ -97,6 +97,26 @@ The following custom helpers are available in addition to the [handlebars-helper
 
 **Example** `{{#compare (dayDiff (getDate Created 'YYYY-MMM-DD' ) (getDate timestamp 'YYYY-MMM-DD' )) "<=" 30 }} <img src='/SiteAssets/New.png' />{{/compare}}`
 
+#### dayjs / moment
+
+**Syntax** `{{dayjs "<format>"}}`, `{{dayjs <date> "<format>"}}`, or `{{dayjs format="<format>"}}` (same for `moment`)
+
+**Description** Format dates using [dayjs](https://day.js.org/docs/en/display/format). The `moment` helper name is kept for backward compatibility. Both names are identical.
+
+When the second positional argument is `"X"` or `"x"` and the first argument is numeric, it is treated as an **input parsing hint** (`"X"` = Unix seconds, `"x"` = Unix milliseconds) rather than an output format. To output Unix seconds/milliseconds from a date value, use the `format` hash argument instead: `{{dayjs someDate format="X"}}`.
+
+- `{{dayjs "X"}}` — current date as Unix seconds
+- `{{dayjs "2026-10-01" "LL"}}` — parse date, format as locale date
+- `{{dayjs someDate "YYYY-MM-DD"}}` — parse date value, custom format
+- `{{dayjs someDate "X"}}` — format date as Unix seconds (non-numeric first arg = output format)
+- `{{dayjs 1714400000 "X"}}` — parse `1714400000` as Unix seconds (numeric first arg = input parsing)
+- `{{dayjs someDate format="X"}}` — format date as Unix seconds (explicit hash format)
+- `{{dayjs format="LL" subtract="7 days"}}` — 7 days ago, locale format
+
+Supported output format tokens include all [dayjs format tokens](https://day.js.org/docs/en/display/format) plus `X` (Unix seconds), `x` (Unix milliseconds), `Do` (ordinal day), `Q` (quarter), `k`/`kk` (hour 1-24), `w`/`ww` (locale week), `W`/`WW` (ISO week), `e` (locale weekday), `E` (ISO weekday), `gg`/`gggg` and `GG`/`GGGG` (week year).
+
+**Example** `{{dayjs "X"}}` returns the current date as a Unix timestamp (seconds).
+
 #### getAttachments
 
 **Syntax** `{{getAttachments}}`
@@ -117,7 +137,7 @@ The following custom helpers are available in addition to the [handlebars-helper
 
 **Syntax** `{{getDate <data_value> "<format>" "<time handling>"}}`
 
-**Description** Format the date with [Moment.js](https://momentjs.com/docs/#/parsing/string-format/) according to the current language. Date in the managed property should be on the form `2018-09-10T06:29:25.0000000Z` for the function to work. `<time handling>` is optional and takes:
+**Description** Format the date with [dayjs](https://day.js.org/docs/en/display/format) (moment.js-compatible) according to the current language. Date in the managed property should be on the form `2018-09-10T06:29:25.0000000Z` for the function to work. `<time handling>` is optional and takes:
 
 - 0 = format to browsers time zone (default)
 - 1 = ignore Z time and handle as browsers local time zone
