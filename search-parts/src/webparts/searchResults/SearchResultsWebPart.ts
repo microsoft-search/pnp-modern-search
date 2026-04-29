@@ -379,6 +379,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 // Pass the Handlebars context to consumers, so they can register custom helpers for their own services 
                 this._currentDataResultsSourceData.handlebarsContext = this.templateService.Handlebars;
                 this._currentDataResultsSourceData.totalCount = this.dataSource?.getItemCount();
+                this._currentDataResultsSourceData.connectedFilterSourceReference = this.properties.filtersDataSourceReference;
 
                 return this._currentDataResultsSourceData;
 
@@ -1790,6 +1791,28 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                     label: webPartStrings.PropertyPane.ConnectionsPage.UseFiltersFromComponentLabel
                 })
             );
+
+            // Check bidirectional connection: does the filter web part also connect back to this results web part?
+            if (this.properties.filtersDataSourceReference && this._filtersConnectionSourceData) {
+                const filterData: IDataFilterSourceData = DynamicPropertyHelper.tryGetValueSafe(this._filtersConnectionSourceData);
+                if (filterData && filterData.connectedResultsSourceReferences) {
+                    // Extract sourceId from each reference (format: "sourceId:propertyId") and check if it ends with this web part's instanceId
+                    const isConnectedBack = filterData.connectedResultsSourceReferences.some(
+                        ref => {
+                            const sourceId = ref.split(':')[0];
+                            return sourceId.endsWith(this.instanceId);
+                        }
+                    );
+                    if (!isConnectedBack) {
+                        filtersConnectionFields.push(
+                            this._propertyPaneWebPartInformation({
+                                description: `<span style="color: #d83b01;">⚠ ${webPartStrings.PropertyPane.ConnectionsPage.BidirectionalConnectionWarning}</span>`,
+                                key: 'bidirectionalFilterWarning'
+                            })
+                        );
+                    }
+                }
+            }
         }
 
         return filtersConnectionFields;

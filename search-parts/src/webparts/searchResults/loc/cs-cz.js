@@ -115,7 +115,8 @@ define([], function () {
                 SearchQueryTextDefaultValue: "Výchozí hodnota",
                 SourceDestinationFieldLabel: "Název cílového pole",
                 SourceDestinationFieldDescription: "Cílové pole, které se použije v tomto webovém dílu pro shodu s vybranými hodnotami",
-                AvailableFieldValuesFromResults: "Pole obsahující hodnotu filtru"
+                AvailableFieldValuesFromResults: "Pole obsahující hodnotu filtru",
+                BidirectionalConnectionWarning: "Připojený webový díl filtrů není nakonfigurován pro zpětné připojení k tomuto webovému dílu výsledků vyhledávání. Oba webové díly musí být vzájemně propojeny, aby filtry fungovaly správně."
             },
             InformationPage: {
                 Extensibility: {
@@ -136,13 +137,15 @@ define([], function () {
                 },
                 EnableQueryModificationLabel: "Povolit úpravy dotazu",
                 DisableQueryModificationLabel: "Zakázat úpravy dotazu"
-            }        },
+            }
+        },
         Styling: {
             StylingOptionsGroupName: "Možnosti stylu",
             ResultsBackgroundColorLabel: "Barva pozadí výsledků",
             ResultsBorderColorLabel: "Barva okraje výsledků",
             ResultsBorderThicknessLabel: "Tloušťka okraje výsledků",
             ResetToDefaultLabel: "Obnovit výchozí styl",
-            ResetToDefaultDescription: "Obnovit všechny možnosti stylu na výchozí hodnoty"        }
+            ResetToDefaultDescription: "Obnovit všechny možnosti stylu na výchozí hodnoty"
+        }
     };
 });

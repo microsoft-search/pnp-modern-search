@@ -115,6 +115,7 @@ declare interface ISearchResultsWebPartStrings {
             SourceDestinationFieldLabel: string;
             SourceDestinationFieldDescription: string;
             AvailableFieldValuesFromResults: string;
+            BidirectionalConnectionWarning: string;
         },
         InformationPage: {
             Extensibility: {

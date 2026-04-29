@@ -115,7 +115,8 @@ define([], function () {
                 SearchQueryTextDefaultValue: "Valore predefinito",
                 SourceDestinationFieldLabel: "Nome campo di destinazione",
                 SourceDestinationFieldDescription: "Campo di destinazione da usare in questa Web Part per corrispondere ai valori selezionati",
-                AvailableFieldValuesFromResults: "Campo contenente il valore del filtro"
+                AvailableFieldValuesFromResults: "Campo contenente il valore del filtro",
+                BidirectionalConnectionWarning: "La Web Part dei filtri connessa non è stata configurata per ricollegarsi a questa Web Part dei risultati di ricerca. Entrambe le Web Part devono essere collegate tra loro affinché i filtri funzionino correttamente."
             },
             InformationPage: {
                 Extensibility: {

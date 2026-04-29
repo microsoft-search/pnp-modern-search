@@ -16,6 +16,7 @@ declare interface ISearchFiltersWebPartStrings {
             UseDataResultsFromComponentsDescription: string;
             LinkToVerticalLabel: string;
             LinkToVerticalLabelHoverMessage: string;
+            BidirectionalConnectionWarning: string;
         },
         FiltersSettingsPage: {
             SettingsGroupName: string;

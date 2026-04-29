@@ -1,4 +1,4 @@
-define([], function() {
+define([], function () {
     return {
         General: {
             PlaceHolder: {
@@ -16,9 +16,10 @@ define([], function() {
                 UseDataResultsFromComponentsLabel: "Gebruik data van deze webonderdelen",
                 UseDataResultsFromComponentsDescription: "Wanneer je verbindt met meer dan één webonderdeel worden aantallen en waarden voor gelijknamige filters samengevoegd.",
                 LinkToVerticalLabel: "Filters alleen weergeven als de volgende verticalen zijn geselecteerd",
-                LinkToVerticalLabelHoverMessage: "De filters worden alleen weergegeven als de geselecteerde verticale lijn overeenkomt met de filters die voor dit webonderdeel zijn geconfigureerd. Anders is het webonderdeel leeg (geen marge en geen opvulling) in de weergavemodus."
+                LinkToVerticalLabelHoverMessage: "De filters worden alleen weergegeven als de geselecteerde verticale lijn overeenkomt met de filters die voor dit webonderdeel zijn geconfigureerd. Anders is het webonderdeel leeg (geen marge en geen opvulling) in de weergavemodus.",
+                BidirectionalConnectionWarning: "Een of meer verbonden zoekresultaten webonderdelen zijn niet geconfigureerd om terug te verbinden met dit filters webonderdeel. Beide webonderdelen moeten met elkaar verbonden zijn om filters correct te laten werken."
             },
-            FiltersSettingsPage: { 
+            FiltersSettingsPage: {
                 SettingsGroupName: "Filter instellingen",
                 FilterOperator: "Bewerking om tussen filters te gebruiken"
             },

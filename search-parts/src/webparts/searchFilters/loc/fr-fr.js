@@ -1,4 +1,4 @@
-define([], function() {
+define([], function () {
     return {
         General: {
             PlaceHolder: {
@@ -18,7 +18,8 @@ define([], function() {
                 UseDataVerticalsWebPartLabel: "Se connecter à un composant WebPart de verticales",
                 UseDataVerticalsFromComponentLabel: "Utiliser les verticales de ce composant",
                 LinkToVerticalLabel: "Afficher les données uniquement lorsque les verticales suivantes sont sélectionnées",
-                LinkToVerticalLabelHoverMessage: "Les filtres ne seront affichés que si la verticale sélectionnée correspond à celles configurées pour ce composant WebPart. Sinon, le composant WebPart restera vide (pas de marge ni de remplissage) en mode affichage."
+                LinkToVerticalLabelHoverMessage: "Les filtres ne seront affichés que si la verticale sélectionnée correspond à celles configurées pour ce composant WebPart. Sinon, le composant WebPart restera vide (pas de marge ni de remplissage) en mode affichage.",
+                BidirectionalConnectionWarning: "Un ou plusieurs composants WebPart de résultats de recherche connectés n'ont pas été configurés pour se reconnecter à ce composant WebPart de filtres. Les deux composants WebPart doivent être connectés l'un à l'autre pour que les filtres fonctionnent correctement."
             },
             FiltersSettingsPage: {
                 SettingsGroupName: "Paramètres des filtres",

@@ -1,4 +1,4 @@
-define([], function() {
+define([], function () {
     return {
         General: {
             PlaceHolder: {
@@ -16,7 +16,8 @@ define([], function() {
                 UseDataResultsFromComponentsLabel: "Benutze Daten von diesen Webparts",
                 UseDataResultsFromComponentsDescription: "Wenn mehr als ein Webpart verbunden ist, dann werden die Filter Werte und die Anzahl für ähnliche Filter Namen zusammengeführt.",
                 LinkToVerticalLabel: "Zeige Filter nur an, wenn folgende Vertikale ausgewählt sind",
-                LinkToVerticalLabelHoverMessage: "Diese Filter werden nur angezeigt, wenn das ausgewählte Vertikal mit einem der für dieses Webpart konfigurierten übereinstimmt. Ansonsten bleibt das Webpart im Anzeigemodus leer (kein Rand)."
+                LinkToVerticalLabelHoverMessage: "Diese Filter werden nur angezeigt, wenn das ausgewählte Vertikal mit einem der für dieses Webpart konfigurierten übereinstimmt. Ansonsten bleibt das Webpart im Anzeigemodus leer (kein Rand).",
+                BidirectionalConnectionWarning: "Ein oder mehrere verbundene Suchergebnis-Webparts wurden nicht so konfiguriert, dass sie eine Rückverbindung zu diesem Filter-Webpart herstellen. Beide Webparts müssen miteinander verbunden sein, damit die Filter korrekt funktionieren."
             },
             FiltersSettingsPage: {
                 SettingsGroupName: "Filter Einstellungen",
@@ -67,13 +68,15 @@ define([], function() {
                 ErrorTemplateResolve: "Kann die angegebene Vorlage nicht auflösen. Fehler Details: '{0}'",
                 FiltersTemplateFieldLabel: "Filter Vorlage bearbeiten",
                 FiltersTemplatePanelHeader: "Filter Vorlage bearbeiten"
-            }        },
+            }
+        },
         Styling: {
             StylingOptionsGroupName: "Stiloptionen",
             FilterBackgroundColorLabel: "Filter-Hintergrundfarbe",
             FilterBorderColorLabel: "Filter-Rahmenfarbe",
             FilterBorderThicknessLabel: "Filter-Rahmenstärke",
             ResetToDefaultLabel: "Styling auf Standard zurücksetzen",
-            ResetToDefaultDescription: "Alle Styling-Optionen auf ihre Standardwerte zurücksetzen"        }
+            ResetToDefaultDescription: "Alle Styling-Optionen auf ihre Standardwerte zurücksetzen"
+        }
     }
 });

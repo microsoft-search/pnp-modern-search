@@ -1,4 +1,4 @@
-define([], function() {
+define([], function () {
     return {
         General: {
             PlaceHolder: {
@@ -16,7 +16,8 @@ define([], function() {
                 UseDataResultsFromComponentsLabel: "Bruk data fra disse nettdelene",
                 UseDataResultsFromComponentsDescription: "Om du kobler til mer enn 1 nettdel slås filterverdiene sammen til liknende filternavn.",
                 LinkToVerticalLabel: "Vis filtre bare når følgende vertikaler er valgt",
-                LinkToVerticalLabelHoverMessage: "Filtrene vil bare vises hvis den valgte vertikalen samsvarer med de som er konfigurert for denne webdelen. Ellers vil webdelen være tom (ingen marg og ingen utfylling) i visningsmodus."
+                LinkToVerticalLabelHoverMessage: "Filtrene vil bare vises hvis den valgte vertikalen samsvarer med de som er konfigurert for denne webdelen. Ellers vil webdelen være tom (ingen marg og ingen utfylling) i visningsmodus.",
+                BidirectionalConnectionWarning: "En eller flere tilkoblede søkeresultat-webdeler er ikke konfigurert til å koble tilbake til denne filter-webdelen. Begge webdelene må være koblet til hverandre for at filtre skal fungere korrekt."
             },
             FiltersSettingsPage: {
                 SettingsGroupName: "Filterinnstillinger",

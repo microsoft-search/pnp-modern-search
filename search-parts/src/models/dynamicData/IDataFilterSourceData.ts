@@ -10,7 +10,7 @@ export interface IDataFilterSourceData {
     /**
      * The filters configuration for the Data Filter Web Part
      */
-    filterConfiguration: IDataFilterConfiguration[];    
+    filterConfiguration: IDataFilterConfiguration[];
 
     /**
      * The configured logical operator to use between filters
@@ -21,4 +21,9 @@ export interface IDataFilterSourceData {
      * The Web Part instance ID
      */
     instanceId: string;
+
+    /**
+     * The data source references this filter web part is connected to (used for bidirectional connection validation)
+     */
+    connectedResultsSourceReferences?: string[];
 }
