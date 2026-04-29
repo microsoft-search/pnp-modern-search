@@ -11,8 +11,6 @@ import {
   StickyPositionType,
   ScrollablePane,
   ScrollbarVisibility,
-} from "@fluentui/react";
-import {
   ITooltipHostProps,
   TooltipHost,
   ITooltipStyles,
@@ -23,6 +21,7 @@ import {
   mergeStyleSets,
   ITheme,
   Selection,
+  IconButton,
 } from "@fluentui/react";
 import * as Handlebars from "handlebars";
 import { IReadonlyTheme } from "@microsoft/sp-component-base";
@@ -56,7 +55,6 @@ import {
   IDetailsList,
   IDetailsColumnProps,
 } from "@fluentui/react/lib/DetailsList";
-import { IconButton } from "@fluentui/react";
 import { ISearchResultsTemplateContext } from "../models/common/ITemplateContext";
 import { ObjectHelper } from "../helpers/ObjectHelper";
 import { ITemplateService } from "../services/templateService/ITemplateService";
@@ -907,7 +905,7 @@ export class DetailsListComponent extends React.Component<
     );
   }
 
-  private _onRenderColumnHeaderWithInfo = (column: IDetailsListColumnConfiguration, headerProps?: IDetailsColumnProps): JSX.Element => {
+  private readonly _onRenderColumnHeaderWithInfo = (column: IDetailsListColumnConfiguration, headerProps?: IDetailsColumnProps): JSX.Element => {
     const hasDescription = !!column.columnDescription?.trim();
     const columnWidth = headerProps?.column?.calculatedWidth ?? headerProps?.column?.currentWidth ?? 999;
     const showIcon = hasDescription && columnWidth >= 30;
