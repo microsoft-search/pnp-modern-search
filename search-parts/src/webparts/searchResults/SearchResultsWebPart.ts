@@ -1796,8 +1796,12 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             if (this.properties.filtersDataSourceReference && this._filtersConnectionSourceData) {
                 const filterData: IDataFilterSourceData = DynamicPropertyHelper.tryGetValueSafe(this._filtersConnectionSourceData);
                 if (filterData && filterData.connectedResultsSourceReferences) {
+                    // Extract sourceId from each reference (format: "sourceId:propertyId") and check if it ends with this web part's instanceId
                     const isConnectedBack = filterData.connectedResultsSourceReferences.some(
-                        ref => ref.indexOf(this.instanceId) !== -1
+                        ref => {
+                            const sourceId = ref.split(':')[0];
+                            return sourceId.endsWith(this.instanceId);
+                        }
                     );
                     if (!isConnectedBack) {
                         filtersConnectionFields.push(

@@ -637,20 +637,22 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
 
         // Check bidirectional connection: do the connected results web parts also connect back to this filter web part?
         if (this.properties.dataResultsDataSourceReferences.length > 0 && this._dataSourceDynamicProperties.length > 0) {
-            const missingBackConnections: string[] = [];
+            let hasMissingBackConnection = false;
 
             this._dataSourceDynamicProperties.forEach((dynProp) => {
                 const resultData: IDataResultSourceData = DynamicPropertyHelper.tryGetValueSafe(dynProp);
                 if (resultData) {
-                    const isConnectedBack = resultData.connectedFilterSourceReference &&
-                        resultData.connectedFilterSourceReference.indexOf(this.instanceId) !== -1;
+                    // Extract sourceId from the reference (format: "sourceId:propertyId") and check if it ends with this web part's instanceId
+                    const connectedRef = resultData.connectedFilterSourceReference;
+                    const isConnectedBack = connectedRef &&
+                        connectedRef.split(':')[0].endsWith(this.instanceId);
                     if (!isConnectedBack) {
-                        missingBackConnections.push('results');
+                        hasMissingBackConnection = true;
                     }
                 }
             });
 
-            if (missingBackConnections.length > 0 && this._propertyPaneWebPartInformation) {
+            if (hasMissingBackConnection && this._propertyPaneWebPartInformation) {
                 fields.push(
                     this._propertyPaneWebPartInformation({
                         description: `<span style="color: #d83b01;">⚠ ${webPartStrings.PropertyPane.ConnectionsPage.BidirectionalConnectionWarning}</span>`,
