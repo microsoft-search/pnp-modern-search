@@ -1,4 +1,4 @@
-define([], function() {
+define([], function () {
     return {
         General: {
             PlaceHolder: {
@@ -16,7 +16,8 @@ define([], function() {
                 UseDataResultsFromComponentsLabel: "Użyj danych z następujących Web Partów",
                 UseDataResultsFromComponentsDescription: "Jeśli połączysz więcej niż jeden Web Part, wartości filtrów i liczność będzie połączona po nazwach filtrów.",
                 LinkToVerticalLabel: "Wyświetlaj filtry tylko wtedy, gdy wybrane są następujące branże",
-                LinkToVerticalLabelHoverMessage: "Filtry będą wyświetlane tylko wtedy, gdy wybrana branża pasuje do tych skonfigurowanych dla tego składnika Web Part. W przeciwnym razie składnik Web Part będzie pusty (bez marginesów i dopełnienia) w trybie wyświetlania."
+                LinkToVerticalLabelHoverMessage: "Filtry będą wyświetlane tylko wtedy, gdy wybrana branża pasuje do tych skonfigurowanych dla tego składnika Web Part. W przeciwnym razie składnik Web Part będzie pusty (bez marginesów i dopełnienia) w trybie wyświetlania.",
+                BidirectionalConnectionWarning: "Jeden lub więcej połączonych składników Web Part wyników wyszukiwania nie zostało skonfigurowanych do połączenia zwrotnego z tym składnikiem Web Part filtrów. Oba składniki Web Part muszą być ze sobą połączone, aby filtry działały poprawnie."
             },
             FiltersSettingsPage: {
                 SettingsGroupName: "Ustawienia filtrów",

@@ -1,4 +1,4 @@
-define([], function() {
+define([], function () {
     return {
         General: {
             PlaceHolder: {
@@ -16,7 +16,8 @@ define([], function() {
                 UseDataResultsFromComponentsLabel: "Použít data z těchto webových dílů",
                 UseDataResultsFromComponentsDescription: "Pokud připojíte více než jeden webový díl, hodnoty a počty filtrů se sloučí pro podobné názvy filtrů.",
                 LinkToVerticalLabel: "Zobrazit filtry pouze při výběru těchto vertikál",
-                LinkToVerticalLabelHoverMessage: "Filtry se zobrazí pouze tehdy, pokud vybraná vertikála odpovídá těm, které jsou nakonfigurovány pro tento webový díl. V opačném případě bude webový díl v režimu zobrazení prázdný (bez okrajů a výplní)."
+                LinkToVerticalLabelHoverMessage: "Filtry se zobrazí pouze tehdy, pokud vybraná vertikála odpovídá těm, které jsou nakonfigurovány pro tento webový díl. V opačném případě bude webový díl v režimu zobrazení prázdný (bez okrajů a výplní).",
+                BidirectionalConnectionWarning: "Jeden nebo více připojených webových dílů výsledků vyhledávání nebylo nakonfigurováno pro zpětné připojení k tomuto webovému dílu filtrů. Oba webové díly musí být vzájemně propojeny, aby filtry fungovaly správně."
             },
             FiltersSettingsPage: {
                 SettingsGroupName: "Nastavení filtrů",

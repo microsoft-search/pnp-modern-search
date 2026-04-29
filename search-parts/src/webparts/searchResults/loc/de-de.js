@@ -115,7 +115,8 @@ define([], function () {
                 SearchQueryTextDefaultValue: "Standardwert",
                 SourceDestinationFieldLabel: "Ergebnis Feldname",
                 SourceDestinationFieldDescription: "Zielfeld, das in diesem Webpart verwendet werden soll, um die ausgewählten Werte abzugleichen",
-                AvailableFieldValuesFromResults: "Feld, das den Filterwert enthält"
+                AvailableFieldValuesFromResults: "Feld, das den Filterwert enthält",
+                BidirectionalConnectionWarning: "Das verbundene Filter-Webpart wurde nicht so konfiguriert, dass es eine Rückverbindung zu diesem Suchergebnis-Webpart herstellt. Beide Webparts müssen miteinander verbunden sein, damit die Filter korrekt funktionieren."
             },
             InformationPage: {
                 Extensibility: {

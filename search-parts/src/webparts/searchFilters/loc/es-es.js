@@ -1,4 +1,4 @@
-define([], function() {
+define([], function () {
     return {
         General: {
             PlaceHolder: {
@@ -16,7 +16,8 @@ define([], function() {
                 UseDataResultsFromComponentsLabel: "Utilizar los datos de estos Web Parts",
                 UseDataResultsFromComponentsDescription: "Si conecta más de un Web Part, los valores de los filtros y los recuentos se fusionarán para nombres de filtros similares.",
                 LinkToVerticalLabel: "Muestra los filtros sólo cuando se seleccionan las siguientes verticales",
-                LinkToVerticalLabelHoverMessage: "Los filtros se mostrarán sólo si la vertical seleccionada coincide con las configuradas para este Web Part. De lo contrario, el Web Part estará en blanco (sin margen y sin relleno) en el modo de visualización."
+                LinkToVerticalLabelHoverMessage: "Los filtros se mostrarán sólo si la vertical seleccionada coincide con las configuradas para este Web Part. De lo contrario, el Web Part estará en blanco (sin margen y sin relleno) en el modo de visualización.",
+                BidirectionalConnectionWarning: "Uno o más Web Parts de resultados de búsqueda conectados no han sido configurados para conectarse de vuelta a este Web Part de filtros. Ambos Web Parts deben estar conectados entre sí para que los filtros funcionen correctamente."
             },
             FiltersSettingsPage: {
                 SettingsGroupName: "Configuración de los filtros",

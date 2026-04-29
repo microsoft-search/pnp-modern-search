@@ -1,4 +1,4 @@
-define([], function() {
+define([], function () {
     return {
         General: {
             PlaceHolder: {
@@ -91,7 +91,7 @@ define([], function() {
                 },
                 AdaptiveCards: {
                     HostConfigFieldLabel: "Konfiguracja hosta"
-                }                
+                }
             },
             ConnectionsPage: {
                 ConnectionsPageGroupName: "Dostępne połączenia",
@@ -115,7 +115,8 @@ define([], function() {
                 SearchQueryTextDefaultValue: "Wartość domyślna",
                 SourceDestinationFieldLabel: "Nazwa pola docelowego",
                 SourceDestinationFieldDescription: "Pole docelowe do użycia w tym składniku Web Part w celu dopasowania wybranych wartości",
-                AvailableFieldValuesFromResults: "Pole zawierające wartość filtra"
+                AvailableFieldValuesFromResults: "Pole zawierające wartość filtra",
+                BidirectionalConnectionWarning: "Połączony składnik Web Part filtrów nie został skonfigurowany do połączenia zwrotnego z tym składnikiem Web Part wyników wyszukiwania. Oba składniki Web Part muszą być ze sobą połączone, aby filtry działały poprawnie."
             },
             InformationPage: {
                 Extensibility: {
@@ -124,13 +125,13 @@ define([], function() {
                 }
             },
             CustomQueryModifier: {
-                  EditQueryModifiersLabel: "Konfiguracja dostępnych niestandardowych modyfikatorów zapytań",
-                  QueryModifiersLabel: "Własne modyfikatory zapytań",
-                  QueryModifiersDescription: "Włączanie lub wyłączanie poszczególnych własnych modyfikatorów zapytań",
-                  EnabledPropertyLabel: "Włączone",
-                  ModifierNamePropertyLabel: "Nazwa",
-                  ModifierDescriptionPropertyLabel: "Opis",
-                  EndWhenSuccessfullPropertyLabel:"Zakończ po pomyślnym zakończeniu"              
+                EditQueryModifiersLabel: "Konfiguracja dostępnych niestandardowych modyfikatorów zapytań",
+                QueryModifiersLabel: "Własne modyfikatory zapytań",
+                QueryModifiersDescription: "Włączanie lub wyłączanie poszczególnych własnych modyfikatorów zapytań",
+                EnabledPropertyLabel: "Włączone",
+                ModifierNamePropertyLabel: "Nazwa",
+                ModifierDescriptionPropertyLabel: "Opis",
+                EndWhenSuccessfullPropertyLabel: "Zakończ po pomyślnym zakończeniu"
             }
         },
         Styling: {

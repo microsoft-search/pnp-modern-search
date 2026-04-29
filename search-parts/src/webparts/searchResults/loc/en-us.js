@@ -115,7 +115,8 @@ define([], function () {
                 SearchQueryTextDefaultValue: "Default value",
                 SourceDestinationFieldLabel: "Destination field name",
                 SourceDestinationFieldDescription: "Destination field to use in this Web Part to match the selected values",
-                AvailableFieldValuesFromResults: "Field containing the filter value"
+                AvailableFieldValuesFromResults: "Field containing the filter value",
+                BidirectionalConnectionWarning: "The connected filters Web Part has not been configured to connect back to this search results Web Part. Both web parts must be connected to each other for filters to work correctly."
             },
             InformationPage: {
                 Extensibility: {

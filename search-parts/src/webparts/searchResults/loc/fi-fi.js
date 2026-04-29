@@ -1,4 +1,4 @@
-define([], function() {
+define([], function () {
     return {
         General: {
             PlaceHolder: {
@@ -99,7 +99,7 @@ define([], function() {
                 UseFiltersFromComponentLabel: "Käytä suodattimia tästä webosasta",
                 UseDynamicFilteringsWebPartLabel: "Yhdistä hakutulosten webosaan",
                 UseDataResultsFromComponentsLabel: "Käytä tuloksia tästä webosasta",
-                UseDataResultsFromComponentsDescription: "Käytä tuloksia valituista kohteista näissä webosissa",                
+                UseDataResultsFromComponentsDescription: "Käytä tuloksia valituista kohteista näissä webosissa",
                 UseSearchVerticalsWebPartLabel: "Yhdistä vertikaalien webosaan",
                 UseSearchVerticalsFromComponentLabel: "Käytä vertikaaleja näistä webosista",
                 LinkToVerticalLabel: "Näytä tulokset vain, kun seuraava vertikaali on valittu",
@@ -115,7 +115,8 @@ define([], function() {
                 SearchQueryTextDefaultValue: "Oletusarvo",
                 SourceDestinationFieldLabel: "Kohdekentän nimi",
                 SourceDestinationFieldDescription: "Tässä webosassa käytettävä kohdekenttä, joka vastaa valittuihin arvoihin",
-                AvailableFieldValuesFromResults: "Kenttä joka sisältää suodatinarvon"
+                AvailableFieldValuesFromResults: "Kenttä joka sisältää suodatinarvon",
+                BidirectionalConnectionWarning: "Yhdistettyä suodatin-webosaa ei ole määritetty yhdistämään takaisin tähän hakutulokset-webosaan. Molemmat webosat on yhdistettävä toisiinsa, jotta suodattimet toimivat oikein."
             },
             InformationPage: {
                 Extensibility: {
@@ -124,13 +125,13 @@ define([], function() {
                 }
             },
             CustomQueryModifier: {
-                  EditQueryModifiersLabel: "Käytettävissä olevien mukautettujen kyselyn muokkaimien määrittäminen",
-                  QueryModifiersLabel: "Mukautetut kyselyn muokkaajat",
-                  QueryModifiersDescription: "Ota käyttöön tai poista käytöstä yksittäisiä mukautettuja kyselyn muokkaajia.",
-                  EnabledPropertyLabel: "Enabled",
-                  ModifierNamePropertyLabel: "Nimi",
-                  ModifierDescriptionPropertyLabel: "Kuvaus",
-                  EndWhenSuccessfullPropertyLabel:"Loppuu, kun onnistuu"              
+                EditQueryModifiersLabel: "Käytettävissä olevien mukautettujen kyselyn muokkaimien määrittäminen",
+                QueryModifiersLabel: "Mukautetut kyselyn muokkaajat",
+                QueryModifiersDescription: "Ota käyttöön tai poista käytöstä yksittäisiä mukautettuja kyselyn muokkaajia.",
+                EnabledPropertyLabel: "Enabled",
+                ModifierNamePropertyLabel: "Nimi",
+                ModifierDescriptionPropertyLabel: "Kuvaus",
+                EndWhenSuccessfullPropertyLabel: "Loppuu, kun onnistuu"
             }
         },
         Styling: {

@@ -1,4 +1,4 @@
-define([], function() {
+define([], function () {
     return {
         General: {
             PlaceHolder: {
@@ -99,7 +99,7 @@ define([], function() {
                 UseFiltersFromComponentLabel: "Usar filtros deste componente",
                 UseDynamicFilteringsWebPartLabel: "Conectar a uma Web Part de resultados de busca",
                 UseDataResultsFromComponentsLabel: "Usar os dados desta Web Part",
-                UseDataResultsFromComponentsDescription: "Usar dados de itens selecionados destas Web Parts",                
+                UseDataResultsFromComponentsDescription: "Usar dados de itens selecionados destas Web Parts",
                 UseSearchVerticalsWebPartLabel: "Conectar com uma Web Part de verticais",
                 UseSearchVerticalsFromComponentLabel: "Usar as verticais deste componente",
                 LinkToVerticalLabel: "Exibir dados somente quando a seguinte vertical estiver selecionada",
@@ -115,7 +115,8 @@ define([], function() {
                 SearchQueryTextDefaultValue: "Valor padrão",
                 SourceDestinationFieldLabel: "Nome do campo de destino",
                 SourceDestinationFieldDescription: "Campo de destino para usar nesta WebPart mara combinar com os valores selecionados",
-                AvailableFieldValuesFromResults: "Campo contendo o valor do filtro"
+                AvailableFieldValuesFromResults: "Campo contendo o valor do filtro",
+                BidirectionalConnectionWarning: "A Web Part de filtros conectada não foi configurada para se conectar de volta a esta Web Part de resultados de pesquisa. Ambas as Web Parts devem estar conectadas entre si para que os filtros funcionem corretamente."
             },
             InformationPage: {
                 Extensibility: {
@@ -130,7 +131,7 @@ define([], function() {
                 EnabledPropertyLabel: "Ativado",
                 ModifierNamePropertyLabel: "Nome",
                 ModifierDescriptionPropertyLabel: "Descrição",
-                EndWhenSuccessfullPropertyLabel:"Terminar quando bem sucedido!"                
+                EndWhenSuccessfullPropertyLabel: "Terminar quando bem sucedido!"
             }
         },
         Styling: {
