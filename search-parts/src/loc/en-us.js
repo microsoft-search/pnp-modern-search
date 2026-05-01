@@ -244,7 +244,8 @@ define([], function () {
                 EnableStickyHeader: "Enable sticky header",
                 StickyHeaderListViewHeight: "List view height (in px)",
                 EnableDownload: "Enable download",
-                UseAlternatingBackgroundColor: "Use Alternating Background Color"
+                UseAlternatingBackgroundColor: "Use Alternating Background Color",
+                ColumnDescriptionFieldLabel: "Column description (tooltip)"
             },
             Cards: {
                 Name: "Cards",
