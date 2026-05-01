@@ -2,9 +2,24 @@ import { ServiceKey, ServiceScope } from "@microsoft/sp-core-library";
 import { PageContext } from "@microsoft/sp-page-context";
 import LocalizationHelper from "./LocalizationHelper";
 import dayjs from "dayjs";
+import advancedFormat from "dayjs/plugin/advancedFormat";
+import isoWeek from "dayjs/plugin/isoWeek";
 import localizedFormat from "dayjs/plugin/localizedFormat";
+import weekOfYear from "dayjs/plugin/weekOfYear";
+import weekYear from "dayjs/plugin/weekYear";
+import weekday from "dayjs/plugin/weekday";
 
-// Extend dayjs with the localizedFormat plugin (supports "LL", "LLL", etc.)
+// Extend dayjs with plugins for full moment.js format-token compatibility
+// advancedFormat: X, x, Do, Q, k, kk
+// weekOfYear + weekYear: w, ww, gggg, gg
+// isoWeek: W, WW, E (+ GGGG/GG via advancedFormat)
+// weekday: e
+// localizedFormat: LL, LLL, etc.
+dayjs.extend(weekOfYear);
+dayjs.extend(weekYear);
+dayjs.extend(isoWeek);
+dayjs.extend(weekday);
+dayjs.extend(advancedFormat);
 dayjs.extend(localizedFormat);
 
 const DateHelper_ServiceKey = 'PnPModernSearchDateHelper';

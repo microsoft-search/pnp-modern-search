@@ -17,9 +17,19 @@
  */
 
 import dayjs from "dayjs";
+import advancedFormat from "dayjs/plugin/advancedFormat";
+import isoWeek from "dayjs/plugin/isoWeek";
 import localizedFormat from "dayjs/plugin/localizedFormat";
 import relativeTime from "dayjs/plugin/relativeTime";
+import weekOfYear from "dayjs/plugin/weekOfYear";
+import weekYear from "dayjs/plugin/weekYear";
+import weekday from "dayjs/plugin/weekday";
 
+dayjs.extend(weekOfYear);
+dayjs.extend(weekYear);
+dayjs.extend(isoWeek);
+dayjs.extend(weekday);
+dayjs.extend(advancedFormat);
 dayjs.extend(localizedFormat);
 dayjs.extend(relativeTime);
 
@@ -416,7 +426,36 @@ function helperMomentCompat(...args: any[]): any {
     if (isOptions(options)) args.pop();
     const hash = options?.hash || {};
 
-    let d = args.length > 0 ? dayjs(args[0]) : dayjs();
+    // Replicate helper-date (moment) positional-arg semantics:
+    //   {{moment}}                  → current date, default format
+    //   {{moment "X"}}              → current date, format "X" (single string arg = output format for "now")
+    //   {{moment 1714400000}}       → parse as ms timestamp (single numeric arg = date value)
+    //   {{moment someDate "LL"}}    → parse date, format "LL" (two args = value + output format)
+    //   {{moment unixValue "X"}}    → parse Unix seconds input (X = seconds, x = milliseconds)
+    let d: dayjs.Dayjs;
+    let positionalFormat: string | undefined;
+
+    if (args.length > 1 && (args[1] === "X" || args[1] === "x") && isNum(args[0])) {
+        // Two args with numeric first arg + X/x: parse as Unix timestamp
+        // X = seconds, x = milliseconds
+        d = args[1] === "X" ? dayjs.unix(Number(args[0])) : dayjs(Number(args[0]));
+    } else if (args.length > 1) {
+        // Two positional args: value + output format (original helper-date behavior)
+        d = dayjs(args[0]);
+        positionalFormat = String(args[1]);
+    } else if (args.length === 1 && typeof args[0] === "number") {
+        // Single numeric arg: treat as date value (ms timestamp)
+        d = dayjs(args[0]);
+    } else if (args.length === 1 && typeof args[0] === "string" && /\d/.test(args[0])) {
+        // Single string arg containing digits: treat as date value (e.g. "2026-10-01")
+        d = dayjs(args[0]);
+    } else if (args.length === 1) {
+        // Single string arg without digits: treat as output format for current date (e.g. "X", "LL")
+        d = dayjs();
+        positionalFormat = String(args[0]);
+    } else {
+        d = dayjs();
+    }
 
     if (hash.add) {
         const parts = String(hash.add).split(/\s+/);
@@ -429,7 +468,7 @@ function helperMomentCompat(...args: any[]): any {
 
     if (hash.fromNow) return d.fromNow();
     if (hash.utc) return d.toISOString();
-    return d.format(hash.format || "MMMM DD, YYYY");
+    return d.format(hash.format || positionalFormat || "MMMM DD, YYYY");
 }
 
 // ─── HTML helpers ─────────────────────────────────────────────────────────────
@@ -1092,6 +1131,7 @@ export function getExtendedHandlebarsHelpers(): Record<
         year: helperYear,
         date: helperDateFmt,
         moment: helperMomentCompat,
+        dayjs: helperMomentCompat,
 
         // ── html ──
         attr: helperAttr,

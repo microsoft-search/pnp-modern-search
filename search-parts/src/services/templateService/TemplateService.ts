@@ -1017,6 +1017,7 @@ export class TemplateService implements ITemplateService {
         this.Handlebars.registerHelper(
             "getDate",
             ((date: string, format: string, timeHandling?: number, isZ?: boolean) => {
+                const originalDate = date;
                 try {
                     if (isZ && !date.toUpperCase().endsWith("Z")) {
                         if (date.indexOf(" ") !== -1) {
@@ -1059,11 +1060,17 @@ export class TemplateService implements ITemplateService {
                                 date = trimEnd(date, "Z");
                             }
                         }
-                        return this.dayjs(new Date(date)).format(format);
+
+                        const resolvedDate = new Date(date);
+                        if (Number.isNaN(resolvedDate.getTime())) {
+                            return originalDate;
+                        }
+
+                        return this.dayjs(resolvedDate).format(format);
                     }
                     // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 } catch (error) {
-                    return date;
+                    return originalDate;
                 }
             }).bind(this)
         );
