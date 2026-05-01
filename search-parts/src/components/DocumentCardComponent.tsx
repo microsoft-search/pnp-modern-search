@@ -120,6 +120,42 @@ export class DocumentCardComponent extends React.Component<
         );
     }
 
+    const asString = (value: unknown): string | undefined => {
+      if (value === null || value === undefined) {
+        return undefined;
+      }
+
+      if (value instanceof Date) {
+        return value.toString();
+      }
+
+      if (
+        typeof value === "string" ||
+        typeof value === "number" ||
+        typeof value === "boolean" ||
+        typeof value === "bigint"
+      ) {
+        return String(value);
+      }
+
+      return undefined;
+    };
+
+    processedProps = {
+      ...processedProps,
+      title: asString(processedProps.title),
+      location: asString(processedProps.location),
+      tags: asString(processedProps.tags),
+      href: asString(processedProps.href),
+      previewImage: asString(processedProps.previewImage),
+      date: asString(processedProps.date),
+      profileImage: asString(processedProps.profileImage),
+      previewUrl: asString(processedProps.previewUrl),
+      author: asString(processedProps.author),
+      fileExtension: asString(processedProps.fileExtension),
+      isContainer: asString(processedProps.isContainer),
+    };
+
     if (processedProps.fileExtension) {
       fileExtension = processedProps.fileExtension
         .split("?")[0]
@@ -205,6 +241,10 @@ export class DocumentCardComponent extends React.Component<
       const parts = processedProps.author.split("|");
       author = parts.length === 1 ? parts[0] : parts[1];
     }
+
+    const activityText = processedProps.date
+      ? String(processedProps.date)
+      : undefined;
 
     let previewFunc = this.props.enablePreview ? this.showPreviewOnClick : null;
 
@@ -326,7 +366,7 @@ export class DocumentCardComponent extends React.Component<
             {processedProps.author ? (
               <DocumentCardActivity
                 theme={this.props.themeVariant as ITheme}
-                activity={processedProps.date}
+                activity={activityText}
                 people={[
                   {
                     name: author,
