@@ -243,6 +243,40 @@ Supported output format tokens include all [dayjs format tokens](https://day.js.
 
 **Example** `{{slot item "property.subproperty"}}`
 
+#### stringToHex
+
+**Syntax** `{{stringToHex <value>}}`
+
+**Description** Convert a string value to a UTF-8 hexadecimal string. This is useful when you need to generate the encoded filter value used by the Search Filters deep-link format.
+
+**Example** `{{stringToHex "Keogh’s Crisps"}}` returns `4b656f6768e280997320437269737073`.
+
+#### hexToString
+
+**Syntax** `{{hexToString <value>}}`
+
+**Description** Convert a UTF-8 hexadecimal string back to text. The helper also accepts the filter value format used in deep links, including optional surrounding quotes and the `ǂǂ` prefix.
+
+**Example** `{{hexToString '"ǂǂ4b656f6768e280997320437269737073"'}}` returns `Keogh’s Crisps`.
+
+#### Deep Link Example For Search Filters
+
+If you want a value rendered in a custom results template to open a page with a filter already selected, you can build the filter payload yourself.
+
+The deep-link query string parameter is `f_<Search Filters instance ID>`. The filter `value` must contain the UTF-8 hex form of the label, prefixed with `ǂǂ` and wrapped in escaped quotes.
+
+```handlebars
+{{!-- Example for a Search Filters web part whose instance ID is known --}}
+{{!-- Replace the GUID below with the instance ID of your Search Filters web part --}}
+<a
+    href="/sites/contoso/SitePages/Search.aspx?f_4b43307b-8891-42d5-9a62-7bfb83c11de9=%5B%7B%22filterName%22%3A%22RefinableString109%22%2C%22values%22%3A%5B%7B%22name%22%3A%22{{slot item @root.slots.Title}}%22%2C%22value%22%3A%22%5C%22%C7%82%C7%82{{stringToHex (slot item @root.slots.Title)}}%5C%22%22%2C%22operator%22%3A0%2C%22disabled%22%3Afalse%7D%5D%2C%22operator%22%3A%22or%22%7D%5D"
+>
+    {{slot item @root.slots.Title}}
+</a>
+```
+
+In practice, the safest approach is still to select a filter once in the UI, copy the generated URL, and then replace only the `name` and hex-encoded `value` parts in your template.
+
 #### #times
 
 **Syntax** `{{#times <number>}}`
