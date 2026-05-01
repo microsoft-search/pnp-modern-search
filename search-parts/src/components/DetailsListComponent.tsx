@@ -909,11 +909,12 @@ export class DetailsListComponent extends React.Component<
     const hasDescription = !!column.columnDescription?.trim();
     const columnWidth = headerProps?.column?.calculatedWidth ?? headerProps?.column?.currentWidth ?? 999;
     const showIcon = hasDescription && columnWidth >= 30;
+    const sliderStyles = detailsListStyles as unknown as Record<string, string>;
 
     return (
-      <div className={detailsListStyles.columnHeaderWithInfo}>
+      <div className={sliderStyles.columnHeaderWithInfo}>
         <span
-          className={detailsListStyles.columnHeaderTitle}
+          className={sliderStyles.columnHeaderTitle}
           title={column.name}
         >
           {column.name}

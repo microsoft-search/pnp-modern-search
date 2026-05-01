@@ -1,17 +1,74 @@
 .carouselContainer {
   width: 100%;
-  min-height: var(--slide-height, 360px);
+  height: var(--slide-height, 360px);
   position: relative;
-  
-  /* Style the indicators - make them visible and styled */
+
   :global {
+    div[class*="root_"] {
+      height: 100%;
+    }
+
+    div[class*="container_"] {
+      height: 100%;
+      position: relative;
+    }
+
+    div[class*="contentContainer_"] {
+      height: 100% !important;
+      overflow: hidden;
+      flex: 1 1 auto;
+    }
+
+    div[class*="slideWrapper_"] {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    div[class*="container_"] > div[class*="blockButtonsContainer_"],
+    div[class*="container_"] > div[class*="hiddenButtonsContainer_"],
+    div[class*="container_"] > div[class*="buttonsOnlyContainer_"] {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 101;
+    }
+
+    div[class*="container_"] > div[class*="blockButtonsContainer_"]:first-child,
+    div[class*="container_"] > div[class*="hiddenButtonsContainer_"]:first-child,
+    div[class*="container_"] > div[class*="buttonsOnlyContainer_"]:first-child {
+      left: -32px;
+    }
+
+    div[class*="container_"] > div[class*="blockButtonsContainer_"]:last-child,
+    div[class*="container_"] > div[class*="hiddenButtonsContainer_"]:last-child,
+    div[class*="container_"] > div[class*="buttonsOnlyContainer_"]:last-child {
+      right: -32px;
+    }
+
+    /* Style the indicators - make them visible and styled */
     ol[class*="indicators_"],
     div[class*="indicators_"] {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      list-style: none;
+      padding-inline-start: 0;
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 8px;
       z-index: 100 !important;
-      margin-top: 15px !important;
-      padding-bottom: 10px !important;
+      margin: 0 !important;
+      padding-bottom: 0 !important;
       
       > li {
+        display: block;
+        text-indent: -999px;
         background-color: rgba(0, 0, 0, 0.4) !important;
         width: 12px !important;
         height: 12px !important;
@@ -35,23 +92,30 @@
         }
       }
     }
+
   }
 }
 
 .carouselSlideGroup {
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
-  gap: 10px;
+  gap: var(--slide-gap, 10px);
   height: 100%;
-  width: fit-content;
-  margin: 0 auto;
+  width: 100%;
 }
 
 .carouselSlide {
   position: relative;
-  width: var(--slide-width, 318px);
+  width: min(
+    var(--slide-width, 318px),
+    calc(
+      (100% - ((var(--slides-per-page, 1) - 1) * var(--slide-gap, 10px))) /
+        var(--slides-per-page, 1)
+    )
+  );
+  max-width: var(--slide-width, 318px);
   height: var(--slide-height, 360px);
   flex-shrink: 0;
   
@@ -59,5 +123,13 @@
   > div {
     width: 100%;
     height: 100%;
+
+    > :first-child {
+      width: 100% !important;
+      max-width: 100% !important;
+      height: 100% !important;
+      margin: 0 !important;
+      box-sizing: border-box;
+    }
   }
 }

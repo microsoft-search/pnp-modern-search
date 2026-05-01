@@ -58,7 +58,7 @@
                         data-location="\{{SiteTitle}}"
                         data-preview-image="\{{slot item @root.slots.PreviewImageUrl}}" 
                         data-preview-url="\{{slot item @root.slots.PreviewUrl}}" 
-                        data-date="\{{getDate (slot item @root.slots.Date) 'LL'}}" 
+                        data-date="{{JSONstringify (getDate (slot item @root.slots.Date) 'LL')}}" 
                         data-href="\{{slot item @root.slots.Path}}" 
                         data-author="\{{slot item @root.slots.Author}}" 
                         data-profile-image="/_layouts/15/userphoto.aspx?size=L&username=\{{getUserEmail (slot item @root.slots.UserEmail)}}" 
