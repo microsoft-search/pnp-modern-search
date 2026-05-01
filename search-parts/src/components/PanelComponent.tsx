@@ -266,6 +266,7 @@ export class PanelComponent extends React.Component<IPanelComponentProps, IPanel
             webPartDomElement.dispatchEvent(new CustomEvent(ExtensibilityConstants.EVENT_FILTER_APPLY_ALL, {
                 detail: {
                     filterName: ev.detail.filterName,
+                    instanceId: webPartInstanceId
                 },
                 bubbles: true,
                 cancelable: true
@@ -291,10 +292,10 @@ export class PanelComponent extends React.Component<IPanelComponentProps, IPanel
         const webPartDomElement = window.document.querySelector(`div[data-instance-id="${webPartInstanceId}"]`);
 
         if (webPartDomElement) {
-
             webPartDomElement.dispatchEvent(new CustomEvent(ExtensibilityConstants.EVENT_FILTER_CLEAR_ALL, {
                 detail: {
                     filterName: ev.detail.filterName,
+                    instanceId: webPartInstanceId
                 },
                 bubbles: true,
                 cancelable: true
@@ -358,7 +359,8 @@ export class PanelComponent extends React.Component<IPanelComponentProps, IPanel
             webPartDomElement.dispatchEvent(new CustomEvent(ExtensibilityConstants.EVENT_FILTER_VALUE_OPERATOR_UPDATED, {
                 detail: {
                     filterName: ev.detail.filterName,
-                    operator: ev.detail.operator
+                    operator: ev.detail.operator,
+                    instanceId: webPartInstanceId
                 },
                 bubbles: true,
                 cancelable: true
