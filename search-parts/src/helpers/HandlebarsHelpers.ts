@@ -4,6 +4,7 @@ import * as strings from "CommonStrings";
 import { isEmpty, uniqBy, uniq } from "@microsoft/sp-lodash-subset";
 import { UrlHelper } from "./UrlHelper";
 import { ObjectHelper } from "./ObjectHelper";
+import { StringHelper } from "./StringHelper";
 
 /**
  * Internalized subset of handlebars-helpers.
@@ -223,6 +224,16 @@ function helperStartsWith(this: any, prefix: string, str: string, options: any):
         return options.fn(this);
     }
     return typeof options.inverse === 'function' ? options.inverse(this) : '';
+}
+
+function helperStringToHex(str: any): string {
+    if (str === null || str === undefined) return '';
+    return StringHelper._bytesToHex(StringHelper._stringToUTF8Bytes(String(str)));
+}
+
+function helperHexToString(hex: any): string {
+    if (hex === null || hex === undefined) return '';
+    return StringHelper.hexToString(String(hex));
 }
 
 // ─── Object helpers ───────────────────────────────────────────────────────────
@@ -493,6 +504,8 @@ export function getHandlebarsHelpers(): Record<string, (...args: any[]) => any> 
         split: helperSplit,
         trim: helperTrim,
         startsWith: helperStartsWith,
+        stringToHex: helperStringToHex,
+        hexToString: helperHexToString,
 
         // object
         JSONstringify: helperJSONstringify,

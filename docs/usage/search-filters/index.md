@@ -121,9 +121,11 @@ These taxonomy values can then be used in the Filters Web Part using a `Refinabl
 
 ## Filter deep linking
 
-The Search Filter Web Part supports deep linking, meaning you can preselect filters from the URL at page load. When filter values are selected, a query string parameter `f` is append to the current URL containing the current filter values data.
+The Search Filter Web Part supports deep linking, meaning you can preselect filters from the URL at page load. When filter values are selected, a query string parameter named `f_<instanceId>` is appended to the current URL containing the current filter values data. This instance-specific parameter name avoids conflicts when multiple Search Filters web parts are present on the same page.
 
 > If you have connected the search result web part to a search box, ensure the search term is set to be dynamic and part of the URL in the search box web part. If not, copying the URL will not contain the search terms."
+
+If you need to build those links yourself in a custom results template, you can use the built-in `stringToHex` helper documented in the [templating helpers documentation](../../extensibility/templating.md#stringtohex).
 
 !["Filters deep linking"](../../assets/webparts/search-filters/filter_deep_linking.png){: .center}
 
