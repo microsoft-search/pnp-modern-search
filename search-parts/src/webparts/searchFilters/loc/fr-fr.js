@@ -33,6 +33,8 @@ define([], function () {
                 FilterDisplayName: "Nom d'affichage",
                 FilterTemplate: "Modèle",
                 FilterExpandByDefault: "Agrandir par défaut",
+                ExpandAllNodesByDefault: "Développer tous les nœuds par défaut",
+                HideNodesNotInDataSet: "Masquer les nœuds absents du jeu de données actuel",
                 FilterType: "Type de filtre",
                 FilterTypeRefiner: "Ce modèle de filtre sert de raffineur et reçoit/envoie les valeurs disponibles/sélectionnées à partir de/vers la source de données connectée.",
                 FilterTypeStaticFilter: "Ce modèle de filtre agit comme un filtre statique et envoie uniquement les valeurs sélectionnées de façon arbitraire à la source de données connectée. Les valeurs des filtres entrants ne sont pas prises en compte",

@@ -30,6 +30,8 @@ declare interface ISearchFiltersWebPartStrings {
             FilterDisplayName: string;
             FilterTemplate: string;
             FilterExpandByDefault: string;
+            ExpandAllNodesByDefault: string;
+            HideNodesNotInDataSet: string;
             FilterType: string;
             FilterTypeRefiner: string;
             FilterTypeStaticFilter: string;

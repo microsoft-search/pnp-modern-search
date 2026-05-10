@@ -31,6 +31,8 @@ define([], function () {
                 FilterDisplayName: "Näyttönimi",
                 FilterTemplate: "Templaatti",
                 FilterExpandByDefault: "Näytä oletuksena laajennettuna",
+                ExpandAllNodesByDefault: "Laajenna kaikki solmut oletusarvoisesti",
+                HideNodesNotInDataSet: "Piilota solmut, jotka eivät ole nykyisessä tietojoukossa",
                 FilterType: "Suodatintyyppi",
                 FilterTypeRefiner: "Tämä suodatintemplaatti mukautuu sisältölähteen palauttaman tulosjoukon saatavilla olevien arvojen perusteella, ja rajaa hakutulosta suodattimesta valittujen arvojen perusteella.",
                 FilterTypeStaticFilter: "Tämä suodatintemplaatti on staattinen ja ainoastaan lähettää valitut suodatinarvot yhdistettyyn sisältölähteeseen. Palautunut hakutulos ei vaikuta suodattimen arvoihin.",

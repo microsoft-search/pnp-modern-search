@@ -31,6 +31,8 @@ define([], function () {
                 FilterDisplayName: "Visningsnamn",
                 FilterTemplate: "Filtermall",
                 FilterExpandByDefault: "Expandera som standard",
+                ExpandAllNodesByDefault: "Expandera alla noder som standard",
+                HideNodesNotInDataSet: "Dölj noder som inte finns i den aktuella datamängden",
                 FilterType: "Filtertyp",
                 FilterTypeRefiner: "Denna filtermall fungerar som en raffinör och tar emot/skickar tillgängliga/valda värden från/till den anslutna datakällan.",
                 FilterTypeStaticFilter: "Denna filtermall fungerar som ett statiskt filter och skickar endast slumpmässigt valda värden till den anslutna datakällan. Inkommande filtervärden beaktas inte.",

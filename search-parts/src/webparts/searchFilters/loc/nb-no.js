@@ -31,6 +31,8 @@ define([], function () {
                 FilterDisplayName: "Visningsnavn",
                 FilterTemplate: "Mal",
                 FilterExpandByDefault: "Utvid som standard",
+                ExpandAllNodesByDefault: "Utvid alle noder som standard",
+                HideNodesNotInDataSet: "Skjul noder som ikke finnes i det gjeldende datasettet",
                 // FilterType: "Filtertype",
                 FilterTypeRefiner: "Denne filtermalen fungerer som en refiner og mottar/sender tilgjengelige/valgte verdier fra/til den tilkoblede datakilden.",
                 FilterTypeStaticFilter: "Denne filtermalen fungerer som et statisk filter og sender angitte verdier til den tilkoblede datakilden. Innkommende filterverdier har ingen effekt.",

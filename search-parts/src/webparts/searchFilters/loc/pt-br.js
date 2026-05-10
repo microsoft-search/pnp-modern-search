@@ -31,6 +31,8 @@ define([], function () {
                 FilterDisplayName: "Nome de exibição",
                 FilterTemplate: "Modelo",
                 FilterExpandByDefault: "Expandido por padrão",
+                ExpandAllNodesByDefault: "Expandir todos os nós por padrão",
+                HideNodesNotInDataSet: "Ocultar nós que não estão no conjunto de dados atual",
                 FilterType: "Tipo de filtro",
                 FilterTypeRefiner: "Este modelo de filtro age como um refinador e recebe/envia valores disponíveis/selecionados de/para a fonte de dados conectada.",
                 FilterTypeStaticFilter: "Este modelo de filtro age como um filtro estático e apensa envia valores selecionados arbitrários para a fonte de dados selecionada. Valores de filtro de entrada não são levados em consideração.",

@@ -31,6 +31,8 @@ define([], function () {
                 FilterDisplayName: "Display name",
                 FilterTemplate: "Template",
                 FilterExpandByDefault: "Expand by default",
+                ExpandAllNodesByDefault: "Expand all nodes by default",
+                HideNodesNotInDataSet: "Hide nodes not in the current data set",
                 // FilterType: "Filter type",
                 FilterTypeRefiner: "This filter template acts as a refiner and receives/sends available/selected values from/to the connected data source.",
                 FilterTypeStaticFilter: "This filter template acts as a static filter and only sends arbitrary selected values to the connected data source. Incoming filter values are not taken into account.",

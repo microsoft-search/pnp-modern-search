@@ -31,6 +31,8 @@ define([], function () {
                 FilterDisplayName: "Nome visualizzato",
                 FilterTemplate: "Modello",
                 FilterExpandByDefault: "Espandi per impostazione predefinita",
+                ExpandAllNodesByDefault: "Espandi tutti i nodi per impostazione predefinita",
+                HideNodesNotInDataSet: "Nascondi i nodi non presenti nel set di dati corrente",
                 FilterType: "Tipo di filtro",
                 FilterTypeRefiner: "Questo modello di filtro agisce come un raffinatore e riceve/invia valori disponibili/selezionati da/a la fonte dati collegata.",
                 FilterTypeStaticFilter: "Questo modello di filtro agisce come un filtro statico e invia solo valori selezionati arbitrariamente alla fonte dati collegata. I valori dei filtri in entrata non sono presi in considerazione.",

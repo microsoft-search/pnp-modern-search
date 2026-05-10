@@ -31,6 +31,8 @@ define([], function () {
                 FilterMaxBucketsWarning: "Det maksimale antal værdier er 1000",
                 FilterTemplate: "Skabelon",
                 FilterExpandByDefault: "Udvid som standard",
+                ExpandAllNodesByDefault: "Udvid alle noder som standard",
+                HideNodesNotInDataSet: "Skjul noder, der ikke findes i det aktuelle datasæt",
                 // FilterType: "Filtertype",
                 FilterTypeRefiner: "Denne skabelon til filtre agerer som en refiner og modtager/sender tilgængelige/valgte værdier fra/til the forbundne datakilde.",
                 FilterTypeStaticFilter: "Denne skabelon til filtre agerer som et statisk filter og sender kun vilkårligt udvalgte værdier til den forbundne datakilde. Indgående filterværdier bliver ikke taget i betragtning.",
