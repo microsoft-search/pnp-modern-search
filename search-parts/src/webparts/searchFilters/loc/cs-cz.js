@@ -31,6 +31,8 @@ define([], function () {
                 FilterDisplayName: "Zobrazovaný název",
                 FilterTemplate: "Šablona",
                 FilterExpandByDefault: "Rozbalit ve výchozím nastavení",
+                ExpandAllNodesByDefault: "Rozbalit všechny uzly ve výchozím nastavení",
+                HideNodesNotInDataSet: "Skrýt uzly, které nejsou v aktuální sadě dat",
                 // FilterType: "Typ filtru",
                 FilterTypeRefiner: "Tato šablona filtru funguje jako upřesňující filtr a přijímá/odesílá dostupné/vybrané hodnoty do/z připojeného zdroje dat.",
                 FilterTypeStaticFilter: "Tato šablona filtru funguje jako statický filtr a odesílá pouze libovolně vybrané hodnoty do připojeného zdroje dat. Přicházející hodnoty filtrů nejsou brány v úvahu.",

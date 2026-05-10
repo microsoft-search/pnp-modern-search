@@ -31,6 +31,8 @@ define([], function () {
                 FilterDisplayName: "Tytuł",
                 FilterTemplate: "Szablon",
                 FilterExpandByDefault: "Domyślnie rozwinięte",
+                ExpandAllNodesByDefault: "Domyślnie rozwiń wszystkie węzły",
+                HideNodesNotInDataSet: "Ukryj węzły, których nie ma w bieżącym zestawie danych",
                 FilterType: "Rodzaj filtru",
                 FilterTypeRefiner: "Ten szablon filtru działa jak zawężacz i odbiera/wysyła dostępne/wybrane wartości z/do połączonego źródła danych.",
                 FilterTypeStaticFilter: "Ten szablon filtru działa jak statyczny filtr i jedynie wysyła z góry wybraną wartość do połączonego źródła danych. Przychodzące wartości filtrów nie są brane pod uwagę.",

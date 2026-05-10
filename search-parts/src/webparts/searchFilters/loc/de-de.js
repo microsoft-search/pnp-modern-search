@@ -31,6 +31,8 @@ define([], function () {
                 FilterDisplayName: "Anzeige name",
                 FilterTemplate: "Vorlage",
                 FilterExpandByDefault: "Standardmäßig erweitert",
+                ExpandAllNodesByDefault: "Alle Knoten standardmäßig erweitern",
+                HideNodesNotInDataSet: "Knoten ausblenden, die nicht im aktuellen Datensatz enthalten sind",
                 FilterType: "Filter Typ",
                 FilterTypeRefiner: "Diese Filter Vorlage agiert als ein Verfeinerer und erhält/sendet verfügbare/ausgewählte Werte von/zu einer verbundenen Datenquelle.",
                 FilterTypeStaticFilter: "Diese Filter Vorlage agiert als ein statischer Filter und sendet nur willkürlich ausgewählte Werte zu der verbundenen Datenquelle. Einkommende Filter Werte werden nicht beachtet.",

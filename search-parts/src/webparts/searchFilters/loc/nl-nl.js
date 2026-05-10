@@ -31,6 +31,8 @@ define([], function () {
                 FilterDisplayName: "Weergavenaam",
                 FilterTemplate: "Sjabloon",
                 FilterExpandByDefault: "Standaard uitklappen",
+                ExpandAllNodesByDefault: "Alle knooppunten standaard uitklappen",
+                HideNodesNotInDataSet: "Knooppunten verbergen die niet in de huidige gegevensset voorkomen",
                 FilterType: "Soort filter",
                 FilterTypeRefiner: "Dit filtersjabloon gedraagt zich als verfijning en ontvangt/zendt beschikbare/geselecteerde waarden van/naar de verbonden databron.",
                 FilterTypeStaticFilter: "Dit filtersjabloon gedraagt zich als een statisch filter en stuurt enkel geselecteerde waarden welke vooraf gedefinieerd zijn naar de verbonden databron.  Filterwaarden afkomstig uit de verbonden databron worden buiten beschouwing gelaten.",

@@ -31,6 +31,8 @@ define([], function () {
                 FilterDisplayName: "Nombre para mostrar",
                 FilterTemplate: "Plantilla",
                 FilterExpandByDefault: "Expandir por defecto",
+                ExpandAllNodesByDefault: "Expandir todos los nodos por defecto",
+                HideNodesNotInDataSet: "Ocultar nodos que no estén en el conjunto de datos actual",
                 FilterType: "Tipo de filtro",
                 FilterTypeRefiner: "Esta plantilla de filtro actúa como un refinador y recibe/envía valores disponibles/seleccionados desde/a la fuente de datos conectada.",
                 FilterTypeStaticFilter: "Esta plantilla de filtro actúa como un filtro estático y sólo envía valores seleccionados arbitrariamente a la fuente de datos conectada. Los valores entrantes del filtro no se tienen en cuenta.",

@@ -59,6 +59,8 @@ interface IHierarchicalFilterConfiguration extends IDataFilterConfiguration {
     termSetId?: string;
     termGroupId?: string;
     cacheDuration?: number;
+    hideNodesNotInDataSet?: boolean;
+    expandAllNodesByDefault?: boolean;
 }
 
 /**
@@ -534,6 +536,8 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                     configuration.termSetId = correspondingNewConfig.termSetId;
                     configuration.termGroupId = correspondingNewConfig.termGroupId;
                     configuration.cacheDuration = correspondingNewConfig.cacheDuration;
+                    configuration.hideNodesNotInDataSet = correspondingNewConfig.hideNodesNotInDataSet;
+                    configuration.expandAllNodesByDefault = correspondingNewConfig.expandAllNodesByDefault;
                 }
 
                 return configuration;
@@ -1120,6 +1124,8 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                             };
 
                             const effectiveCacheDuration = item.cacheDuration ?? 3;
+                            const hideNodesNotInDataSet = item.hideNodesNotInDataSet ?? false;
+                            const expandAllNodesByDefault = item.expandAllNodesByDefault ?? false;
 
                             if (!showModal) {
                                 return React.createElement("div", {
@@ -1142,6 +1148,14 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                                         React.createElement("div", null,
                                             React.createElement("strong", null, 'Cache Duration: '),
                                             React.createElement("span", { style: { color: '#444' } }, `${effectiveCacheDuration} days`)
+                                        ),
+                                        React.createElement("div", { style: { marginTop: '8px' } },
+                                            React.createElement("strong", null, `${webPartStrings.PropertyPane.DataFilterCollection.HideNodesNotInDataSet}: `),
+                                            React.createElement("span", { style: { color: '#444' } }, hideNodesNotInDataSet ? 'Yes' : 'No')
+                                        ),
+                                        React.createElement("div", { style: { marginTop: '8px' } },
+                                            React.createElement("strong", null, `${webPartStrings.PropertyPane.DataFilterCollection.ExpandAllNodesByDefault}: `),
+                                            React.createElement("span", { style: { color: '#444' } }, expandAllNodesByDefault ? 'Yes' : 'No')
                                         )
                                     ),
                                     React.createElement("button", {
@@ -1223,6 +1237,26 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                                                 color: '#666'
                                             }
                                         }, '✕')
+                                    ),
+
+                                    React.createElement("div", { style: { marginBottom: '20px' } },
+                                        React.createElement(Checkbox, {
+                                            checked: hideNodesNotInDataSet,
+                                            label: webPartStrings.PropertyPane.DataFilterCollection.HideNodesNotInDataSet,
+                                            onChange: (ev, checked: boolean) => {
+                                                onUpdate('hideNodesNotInDataSet', checked);
+                                            }
+                                        })
+                                    ),
+
+                                    React.createElement("div", { style: { marginBottom: '20px' } },
+                                        React.createElement(Checkbox, {
+                                            checked: expandAllNodesByDefault,
+                                            label: webPartStrings.PropertyPane.DataFilterCollection.ExpandAllNodesByDefault,
+                                            onChange: (ev, checked: boolean) => {
+                                                onUpdate('expandAllNodesByDefault', checked);
+                                            }
+                                        })
                                     ),
 
                                     React.createElement("div", { style: { marginBottom: '20px' } },

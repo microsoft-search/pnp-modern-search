@@ -34,6 +34,17 @@ interface IHierarchicalFilterConfiguration extends IDataFilterConfiguration {
     termSetId?: string;
     termGroupId?: string;
     cacheDuration?: number;
+    hideNodesNotInDataSet?: boolean;
+    expandAllNodesByDefault?: boolean;
+}
+
+interface IHierarchicalTerm {
+    id: string;
+    name: string;
+    label: string;
+    parentId: string;
+    pathOfTerm: string;
+    children: IHierarchicalTerm[];
 }
 
 export default class SearchFiltersContainer extends React.Component<ISearchFiltersContainerProps, ISearchFiltersContainerState> {
@@ -62,6 +73,193 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         this.componentRef = React.createRef();
 
         this.onFilterValuesUpdated = this.onFilterValuesUpdated.bind(this);
+    }
+
+    private buildHierarchy = (allTerms: any[]): IHierarchicalTerm[] => {
+        const termMap = new Map<string, IHierarchicalTerm>();
+        const rootTerms: IHierarchicalTerm[] = [];
+
+        allTerms.forEach(term => {
+            const path = term.PathOfTerm || term.Name;
+            const termObj: IHierarchicalTerm = {
+                id: term.Id,
+                name: term.Name,
+                label: term.Labels && term.Labels._Child_Items_ && term.Labels._Child_Items_.length > 0
+                    ? term.Labels._Child_Items_[0].Value
+                    : term.Name,
+                parentId: term.ParentId,
+                pathOfTerm: path,
+                children: []
+            };
+            termMap.set(path, termObj);
+        });
+
+        termMap.forEach(termObj => {
+            const pathParts = termObj.pathOfTerm.split(';');
+
+            if (pathParts.length > 1) {
+                const parentPath = pathParts.slice(0, -1).join(';');
+                const parent = termMap.get(parentPath);
+
+                if (parent) {
+                    parent.children.push(termObj);
+                } else {
+                    rootTerms.push(termObj);
+                }
+            } else {
+                rootTerms.push(termObj);
+            }
+        });
+
+        return rootTerms;
+    }
+
+    private pruneHierarchy = (terms: IHierarchicalTerm[], resultGuids: Set<string>, selectedGuids: Set<string>): IHierarchicalTerm[] => {
+        return terms.reduce((visibleTerms: IHierarchicalTerm[], term) => {
+            const children = this.pruneHierarchy(term.children || [], resultGuids, selectedGuids);
+            const termGuid = this.normalizeGuid(this.extractGuidFromTermId(term.id));
+            const keepTerm = resultGuids.has(termGuid) || selectedGuids.has(termGuid) || children.length > 0;
+
+            if (keepTerm) {
+                visibleTerms.push({
+                    ...term,
+                    children
+                });
+            }
+
+            return visibleTerms;
+        }, []);
+    }
+
+    private extractGuidFromTermId = (termId: string): string => {
+        if (!termId) {
+            return '';
+        }
+
+        const cleaned = termId.replace(/^\/+|\/+$/g, '');
+        const guidMatch = cleaned.match(/Guid\(([0-9a-fA-F\-]{36})\)/);
+        if (guidMatch && guidMatch[1]) {
+            return guidMatch[1];
+        }
+
+        const plainGuidMatch = cleaned.match(/[0-9a-fA-F\-]{36}/);
+        if (plainGuidMatch) {
+            return plainGuidMatch[0];
+        }
+
+        return termId;
+    }
+
+    private normalizeGuid = (rawGuid: string): string => {
+        return rawGuid ? rawGuid.replace(/^#/, '').replace(/^0+/, '').replaceAll('-', '').toLowerCase() : '';
+    }
+
+    private decodeHexString = (hexStr: string): string => {
+        try {
+            let value = hexStr;
+
+            if (value.startsWith('"')) {
+                value = value.substring(1);
+            }
+
+            if (value.endsWith('"')) {
+                value = value.substring(0, value.length - 1);
+            }
+
+            value = value.replace(/^ǂǂ/, '');
+            return decodeURIComponent('%' + value.match(/.{1,2}/g)!.join('%'));
+        } catch {
+            return '';
+        }
+    }
+
+    private stripWrappingQuotes = (value: string): string => {
+        if (!value) {
+            return value;
+        }
+
+        if (value.startsWith('"') && value.endsWith('"')) {
+            return value.substring(1, value.length - 1);
+        }
+
+        return value;
+    }
+
+    private extractGuidsFromTokenString = (token: string): string[] => {
+        if (!token) {
+            return [];
+        }
+
+        const guids = new Set<string>();
+        const addGuid = (rawGuid: string): void => {
+            const normalized = this.normalizeGuid(rawGuid);
+            if (/^[0-9a-f]{32}$/.test(normalized)) {
+                guids.add(normalized);
+            }
+        };
+
+        const taxonomyTokenRegex = /(?:GP0|GPP|L0)\|#0?([-0-9a-fA-F]{32,36})/g;
+        let regexMatch: RegExpExecArray | null;
+
+        while ((regexMatch = taxonomyTokenRegex.exec(token)) !== null) {
+            addGuid(regexMatch[1]);
+        }
+
+        const parts = token.split('|');
+        if (parts.length > 1) {
+            addGuid(parts[1]);
+        }
+
+        return Array.from(guids);
+    }
+
+    private extractGuidsFromFilterValue = (rawValue: string): string[] => {
+        if (!rawValue) {
+            return [];
+        }
+
+        const guids = new Set<string>();
+        const addGuids = (items: string[]): void => {
+            items.forEach(item => guids.add(item));
+        };
+
+        const value = this.stripWrappingQuotes(rawValue.trim());
+        addGuids(this.extractGuidsFromTokenString(value));
+
+        const decoded = this.decodeHexString(rawValue);
+        if (decoded) {
+            addGuids(this.extractGuidsFromTokenString(decoded));
+        }
+
+        const encodedTokenRegex = /"ǂǂ([0-9a-fA-F]+)"/g;
+        let encodedMatch: RegExpExecArray | null;
+        while ((encodedMatch = encodedTokenRegex.exec(rawValue)) !== null) {
+            const decodedEmbedded = this.decodeHexString(`"ǂǂ${encodedMatch[1]}"`);
+            if (decodedEmbedded) {
+                addGuids(this.extractGuidsFromTokenString(decodedEmbedded));
+            }
+        }
+
+        const fallbackGuid = this.normalizeGuid(this.extractGuidFromTermId(value));
+        if (/^[0-9a-f]{32}$/.test(fallbackGuid)) {
+            guids.add(fallbackGuid);
+        }
+
+        return Array.from(guids);
+    }
+
+    private buildGuidSetFromFilterValues = (filterValues: Array<{ value: string }>): Set<string> => {
+        const guidSet = new Set<string>();
+
+        (filterValues || []).forEach(filterValue => {
+            if (!filterValue?.value) {
+                return;
+            }
+
+            this.extractGuidsFromFilterValue(filterValue.value).forEach(guid => guidSet.add(guid));
+        });
+
+        return guidSet;
     }
 
     public render(): React.ReactElement<ISearchFiltersContainerProps> {
@@ -281,7 +479,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                 const filterOperator = currentUiFilters[selectedFilterIdx] ? currentUiFilters[selectedFilterIdx].operator : filterConfiguration.operator;
 
                 // Merge information with filter configuration and other useful proeprties
-                const filterResultInternal: IDataFilterInternal & { termSetId?: string; termGroupId?: string; hierarchicalTerms?: any[] } = {
+                const filterResultInternal: IDataFilterInternal & { termSetId?: string; termGroupId?: string; hierarchicalTerms?: IHierarchicalTerm[]; hideNodesNotInDataSet?: boolean; expandAllNodesByDefault?: boolean } = {
                     displayName: filterConfiguration.displayValue && filterConfiguration.displayValue.trim() ? filterConfiguration.displayValue : availableFilter.filterName,
                     filterName: availableFilter.filterName,
                     isMulti: !filterConfiguration.isMulti ? false : filterConfiguration.isMulti,
@@ -296,7 +494,9 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                     canApply: canApply,
                     canClear: canClear,
                     termSetId: filterConfiguration.termSetId,
-                    termGroupId: filterConfiguration.termGroupId
+                    termGroupId: filterConfiguration.termGroupId,
+                    hideNodesNotInDataSet: filterConfiguration.hideNodesNotInDataSet,
+                    expandAllNodesByDefault: filterConfiguration.expandAllNodesByDefault
                 };
 
                 if (filterConfiguration.selectedTemplate === BuiltinFilterTemplates.Hierarchical
@@ -311,45 +511,16 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                             filterConfiguration.cacheDuration
                         );
 
-                        const buildHierarchy = (allTerms: any[]) => {
-                            const termMap = new Map();
-                            const rootTerms = [];
+                        const hierarchicalTerms = this.buildHierarchy(terms);
 
-                            allTerms.forEach(term => {
-                                const path = term.PathOfTerm || term.Name;
-                                const termObj = {
-                                    id: term.Id,
-                                    name: term.Name,
-                                    label: term.Labels && term.Labels._Child_Items_ && term.Labels._Child_Items_.length > 0
-                                        ? term.Labels._Child_Items_[0].Value
-                                        : term.Name,
-                                    parentId: term.ParentId,
-                                    pathOfTerm: path,
-                                    children: []
-                                };
-                                termMap.set(path, termObj);
-                            });
+                        if (filterConfiguration.hideNodesNotInDataSet) {
+                            const resultGuids = this.buildGuidSetFromFilterValues(availableFilter.values as Array<{ value: string }>);
+                            const selectedGuids = this.buildGuidSetFromFilterValues(values.filter(value => value.selected) as Array<{ value: string }>);
 
-                            termMap.forEach(termObj => {
-                                const pathParts = termObj.pathOfTerm.split(';');
-
-                                if (pathParts.length > 1) {
-                                    const parentPath = pathParts.slice(0, -1).join(';');
-                                    const parent = termMap.get(parentPath);
-                                    if (parent) {
-                                        parent.children.push(termObj);
-                                    } else {
-                                        rootTerms.push(termObj);
-                                    }
-                                } else {
-                                    rootTerms.push(termObj);
-                                }
-                            });
-
-                            return rootTerms;
-                        };
-
-                        filterResultInternal.hierarchicalTerms = buildHierarchy(terms);
+                            filterResultInternal.hierarchicalTerms = this.pruneHierarchy(hierarchicalTerms, resultGuids, selectedGuids);
+                        } else {
+                            filterResultInternal.hierarchicalTerms = hierarchicalTerms;
+                        }
                     } catch (error) {
                         Log.error('SearchFiltersContainer', new Error(`Error fetching hierarchical terms for filter ${availableFilter.filterName}: ${error}`));
                     }
