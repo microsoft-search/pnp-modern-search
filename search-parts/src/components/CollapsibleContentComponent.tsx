@@ -84,9 +84,10 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
         const defaultCollapsed = this.getNormalizedDefaultCollapsed(this.props.defaultCollapsed);
         const prevDefaultCollapsed = this.getNormalizedDefaultCollapsed(prevProps.defaultCollapsed);
 
-        // If the parent indicates this panel should be open (selected filters or expandByDefault),
-        // force it open even if session storage previously remembered it as collapsed.
-        if (defaultCollapsed === false && (prevDefaultCollapsed !== defaultCollapsed || this.state.isCollapsed)) {
+        // Only react when the parent default changes to open.
+        // This keeps expandByDefault as an initial/open-on-state-change behavior,
+        // but still lets users collapse the panel afterwards.
+        if (defaultCollapsed === false && prevDefaultCollapsed !== defaultCollapsed && this.state.isCollapsed) {
             if (this.state.isCollapsed) {
                 sessionStorage.setItem(this.storageKey, JSON.stringify(false));
                 this.setState({
