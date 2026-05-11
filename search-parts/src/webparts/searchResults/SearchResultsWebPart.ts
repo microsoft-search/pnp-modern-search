@@ -1355,9 +1355,9 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
      * @param pageNumber 
      */
     private _updatePageNumberInQueryString(pageNumber: number): void {
-        const url = new URL(window.location.href);
+        const url = new URL(globalThis.location.href);
         url.searchParams.set('page', pageNumber.toString());
-        window.history.pushState({}, '', url.toString());
+        globalThis.history.pushState({}, '', url.toString());
     }
 
 
@@ -2358,10 +2358,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         return dataContext;
     }
 
-    private _handlePageQueryString() {
-        
-    }
-
 
     private async getModifiedInputQueryText(inputQueryText: string): Promise<string> {
         let queryText = inputQueryText;
@@ -2514,7 +2510,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     private _handlePopStatePagination() {
         if (this.properties.paging.enableQueryString) {
 
-            window.addEventListener('popstate', (event) => {
+            globalThis.addEventListener('popstate', (event) => {
                 const queryStringParams = UrlHelper.getQueryStringParams();
                 const pageNumberFromQueryString = Number.parseInt(queryStringParams['page'], 10);
                 if (!Number.isNaN(pageNumberFromQueryString) && pageNumberFromQueryString > 0) {

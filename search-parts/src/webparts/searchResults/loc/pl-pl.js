@@ -22,6 +22,7 @@ define([], function () {
                 HideNavigationFieldName: "Ukryj przyciski nawigacyjne (poprzednia strona, następna strona)",
                 HideFirstLastPagesFieldName: "Ukruj przyciski początek/koniec",
                 HideDisabledFieldName: "Ukryj przyciski nawigacyjne (poprzednia strona, następna strona, początek, koniec) gdy są nieaktywne.",
+                EnableQueryStringFieldName: "Włącz numer strony w URL",
                 TemplateSlots: {
                     GroupName: "Sloty układu",
                     ConfigureSlotsLabel: "Edytuje sloty dla tego źródła danych",

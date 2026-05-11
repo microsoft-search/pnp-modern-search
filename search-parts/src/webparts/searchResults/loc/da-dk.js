@@ -22,6 +22,7 @@ define([], function () {
                 HideNavigationFieldName: "Skjul navigationsknapper (foregående side, næste side)",
                 HideFirstLastPagesFieldName: "Skjul første/sidste navigationsknapper",
                 HideDisabledFieldName: "Skjul navigationsknapper (foregående, næste, første, sidste), hvis de er deaktiveret.",
+                EnableQueryStringFieldName: "Aktivér sidetal i URL'en",
                 TemplateSlots: {
                     GroupName: "Layout-slots",
                     ConfigureSlotsLabel: "Redigér layout-slots for denne datakilde",

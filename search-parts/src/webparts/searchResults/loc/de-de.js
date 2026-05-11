@@ -22,6 +22,7 @@ define([], function () {
                 HideNavigationFieldName: "Navigationsknopf verstecken (Seite vor/zurück)",
                 HideFirstLastPagesFieldName: "Anfang/Ende Navigationsknöpfe verstecken",
                 HideDisabledFieldName: "Navigationsknöpfe verstecken (vor, zurück, Anfang, Ende), wenn sie deaktiviert sind",
+                EnableQueryStringFieldName: "Seitenzahl in der URL aktivieren",
                 TemplateSlots: {
                     GroupName: "Layout Slots",
                     ConfigureSlotsLabel: "Layout Slots für diese Datenquelle bearbeiten",

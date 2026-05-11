@@ -22,6 +22,7 @@ define([], function () {
                 HideNavigationFieldName: "Verberg navigatieknoppen (vorige pagina, volgende pagina)",
                 HideFirstLastPagesFieldName: "Verberg eerste/laatste navigatieknoppen",
                 HideDisabledFieldName: "Verberg navigatieknoppen (vorige, vorige, eerste, laatste) wanneer deze uitgeschakeld zijn.",
+                EnableQueryStringFieldName: "Schakel paginanummer in URL in",
                 TemplateSlots: {
                     GroupName: "Indelingssleuven",
                     ConfigureSlotsLabel: "Bewerk indelingssleuven voor deze databron",

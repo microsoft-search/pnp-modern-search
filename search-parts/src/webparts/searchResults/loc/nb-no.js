@@ -22,6 +22,7 @@ define([], function () {
                 HideNavigationFieldName: "Skjul navigeringslenker forrige side / neste side",
                 HideFirstLastPagesFieldName: "Skjul navigeringslenkene første/siste",
                 HideDisabledFieldName: "Skjul navigeringslenker (forrige, neste, første, siste) hvis de er deaktivert.",
+                EnableQueryStringFieldName: "Aktiver sidetall i URL-en",
                 TemplateSlots: {
                     GroupName: "Mal",
                     ConfigureSlotsLabel: "Rediger mal-slots for denne datakilden",

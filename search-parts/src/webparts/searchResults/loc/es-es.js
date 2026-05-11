@@ -22,6 +22,7 @@ define([], function () {
                 HideNavigationFieldName: "Ocultar los botones de navegación (página anterior, página siguiente)",
                 HideFirstLastPagesFieldName: "Ocultar los botones de navegación primero/último",
                 HideDisabledFieldName: "Ocultar los botones de navegación (anterior, siguiente, primero, ultimo) si están desactivados.",
+                EnableQueryStringFieldName: "Activar el número de página en la URL",
                 TemplateSlots: {
                     GroupName: "Ranuras de diseño",
                     ConfigureSlotsLabel: "Editar ranuras de diseño para esta fuente de datos",
