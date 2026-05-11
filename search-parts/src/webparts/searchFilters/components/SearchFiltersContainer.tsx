@@ -24,6 +24,7 @@ import { ISearchFiltersTemplateContext } from '../../../models/common/ITemplateC
 import { flatten } from '@microsoft/sp-lodash-subset';
 import { DisplayMode, Log } from '@microsoft/sp-core-library';
 import { DataFilterHelper } from '../../../helpers/DataFilterHelper';
+import { TaxonomyHelper } from '../../../helpers/TaxonomyHelper';
 import { UrlHelper } from '../../../helpers/UrlHelper';
 import { BuiltinFilterTemplates } from '../../../layouts/AvailableTemplates';
 import { MessageBar, MessageBarType } from '@fluentui/react/lib/MessageBar';
@@ -117,7 +118,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
     private pruneHierarchy = (terms: IHierarchicalTerm[], resultGuids: Set<string>, selectedGuids: Set<string>): IHierarchicalTerm[] => {
         return terms.reduce((visibleTerms: IHierarchicalTerm[], term) => {
             const children = this.pruneHierarchy(term.children || [], resultGuids, selectedGuids);
-            const termGuid = this.normalizeGuid(this.extractGuidFromTermId(term.id));
+            const termGuid = TaxonomyHelper.normalizeGuid(TaxonomyHelper.extractGuidFromTermId(term.id));
             const keepTerm = resultGuids.has(termGuid) || selectedGuids.has(termGuid) || children.length > 0;
 
             if (keepTerm) {
@@ -131,123 +132,6 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         }, []);
     }
 
-    private extractGuidFromTermId = (termId: string): string => {
-        if (!termId) {
-            return '';
-        }
-
-        const cleaned = termId.replace(/^\/+|\/+$/g, '');
-        const guidMatch = cleaned.match(/Guid\(([0-9a-fA-F\-]{36})\)/);
-        if (guidMatch && guidMatch[1]) {
-            return guidMatch[1];
-        }
-
-        const plainGuidMatch = cleaned.match(/[0-9a-fA-F\-]{36}/);
-        if (plainGuidMatch) {
-            return plainGuidMatch[0];
-        }
-
-        return termId;
-    }
-
-    private normalizeGuid = (rawGuid: string): string => {
-        return rawGuid ? rawGuid.replace(/^#/, '').replace(/^0+/, '').replaceAll('-', '').toLowerCase() : '';
-    }
-
-    private decodeHexString = (hexStr: string): string => {
-        try {
-            let value = hexStr;
-
-            if (value.startsWith('"')) {
-                value = value.substring(1);
-            }
-
-            if (value.endsWith('"')) {
-                value = value.substring(0, value.length - 1);
-            }
-
-            value = value.replace(/^ǂǂ/, '');
-            return decodeURIComponent('%' + value.match(/.{1,2}/g)!.join('%'));
-        } catch {
-            return '';
-        }
-    }
-
-    private stripWrappingQuotes = (value: string): string => {
-        if (!value) {
-            return value;
-        }
-
-        if (value.startsWith('"') && value.endsWith('"')) {
-            return value.substring(1, value.length - 1);
-        }
-
-        return value;
-    }
-
-    private extractGuidsFromTokenString = (token: string): string[] => {
-        if (!token) {
-            return [];
-        }
-
-        const guids = new Set<string>();
-        const addGuid = (rawGuid: string): void => {
-            const normalized = this.normalizeGuid(rawGuid);
-            if (/^[0-9a-f]{32}$/.test(normalized)) {
-                guids.add(normalized);
-            }
-        };
-
-        const taxonomyTokenRegex = /(?:GP0|GPP|L0)\|#0?([-0-9a-fA-F]{32,36})/g;
-        let regexMatch: RegExpExecArray | null;
-
-        while ((regexMatch = taxonomyTokenRegex.exec(token)) !== null) {
-            addGuid(regexMatch[1]);
-        }
-
-        const parts = token.split('|');
-        if (parts.length > 1) {
-            addGuid(parts[1]);
-        }
-
-        return Array.from(guids);
-    }
-
-    private extractGuidsFromFilterValue = (rawValue: string): string[] => {
-        if (!rawValue) {
-            return [];
-        }
-
-        const guids = new Set<string>();
-        const addGuids = (items: string[]): void => {
-            items.forEach(item => guids.add(item));
-        };
-
-        const value = this.stripWrappingQuotes(rawValue.trim());
-        addGuids(this.extractGuidsFromTokenString(value));
-
-        const decoded = this.decodeHexString(rawValue);
-        if (decoded) {
-            addGuids(this.extractGuidsFromTokenString(decoded));
-        }
-
-        const encodedTokenRegex = /"ǂǂ([0-9a-fA-F]+)"/g;
-        let encodedMatch: RegExpExecArray | null;
-        while ((encodedMatch = encodedTokenRegex.exec(rawValue)) !== null) {
-            const decodedEmbedded = this.decodeHexString(`"ǂǂ${encodedMatch[1]}"`);
-            if (decodedEmbedded) {
-                addGuids(this.extractGuidsFromTokenString(decodedEmbedded));
-            }
-        }
-
-        const fallbackGuid = this.normalizeGuid(this.extractGuidFromTermId(value));
-        if (/^[0-9a-f]{32}$/.test(fallbackGuid)) {
-            guids.add(fallbackGuid);
-        }
-
-        return Array.from(guids);
-    }
-
     private buildGuidSetFromFilterValues = (filterValues: Array<{ value: string }>): Set<string> => {
         const guidSet = new Set<string>();
 
@@ -256,7 +140,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                 return;
             }
 
-            this.extractGuidsFromFilterValue(filterValue.value).forEach(guid => guidSet.add(guid));
+            TaxonomyHelper.extractGuidsFromFilterValue(filterValue.value).forEach(guid => guidSet.add(guid));
         });
 
         return guidSet;

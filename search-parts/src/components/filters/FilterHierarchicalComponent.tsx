@@ -5,6 +5,7 @@ import styles from './FilterHierarchicalComponent.module.scss';
 import { Checkbox } from '@fluentui/react/lib/Checkbox';
 import { Icon } from '@fluentui/react/lib/Icon';
 import * as strings from 'CommonStrings';
+import { TaxonomyHelper } from '../../helpers/TaxonomyHelper';
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 export interface IFilterHierarchicalProps {
@@ -91,7 +92,7 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
 
         filterValues.forEach((filterValue: any) => {
             if (filterValue?.selected && filterValue?.value) {
-                const guidPart = this.extractGuidsFromFilterValue(filterValue.value)[0] || '';
+                const guidPart = TaxonomyHelper.extractGuidsFromFilterValue(filterValue.value)[0] || '';
                 this.findAndExpandPathToTerm(hierarchicalTerms, guidPart, expandedTerms);
             }
         });
@@ -108,17 +109,13 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
         });
     }
 
-    private normalizeGuid = (rawGuid: string): string => {
-        return rawGuid ? rawGuid.replace(/^#/, '').replace(/^0+/, '').replaceAll('-', '').toLowerCase() : '';
-    }
-
     private normalizeLabel = (value: string): string => {
         return value ? value.trim().toLowerCase() : '';
     }
 
     private findAndExpandPathToTerm = (terms: any[], guidToMatch: string, expandedTerms: { [key: string]: boolean }): boolean => {
         for (const term of terms) {
-            const termGuid = this.normalizeGuid(this.extractGuidFromTermId(term.id));
+            const termGuid = TaxonomyHelper.normalizeGuid(TaxonomyHelper.extractGuidFromTermId(term.id));
 
             if (termGuid === guidToMatch) {
                 // Expand the selected term and all its descendants so the full sub-tree is visible.
@@ -149,13 +146,13 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
         const selectedFilterValue = filterValues.find((fv: any) => fv?.selected && fv?.value);
         let selectedGuid = '';
         if (selectedFilterValue) {
-            selectedGuid = this.extractGuidsFromFilterValue(selectedFilterValue.value)[0] || '';
+            selectedGuid = TaxonomyHelper.extractGuidsFromFilterValue(selectedFilterValue.value)[0] || '';
         }
 
         // Single-pass: initialize all terms and mark the selected one
         const collectTerms = (terms: any[]) => {
             terms.forEach(term => {
-                const termGuid = this.normalizeGuid(this.extractGuidFromTermId(term.id));
+                const termGuid = TaxonomyHelper.normalizeGuid(TaxonomyHelper.extractGuidFromTermId(term.id));
                 selectedTerms[term.id] = selectedGuid.length > 0 && termGuid === selectedGuid;
                 if (term.children && term.children.length > 0) {
                     collectTerms(term.children);
@@ -244,7 +241,7 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
             }));
         });
 
-        const termGuid = this.extractGuidFromTermId(term.id) || '';
+        const termGuid = TaxonomyHelper.extractGuidFromTermId(term.id) || '';
         const isParentNode = term.children && term.children.length > 0;
 
         if (isParentNode) {
@@ -287,11 +284,11 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
         } else {
             // For leaf nodes: emit only GP0
             const filterValues = this.props.filter?.values || [];
-            const termGuidForMatching = this.normalizeGuid(this.extractGuidFromTermId(term.id));
+            const termGuidForMatching = TaxonomyHelper.normalizeGuid(TaxonomyHelper.extractGuidFromTermId(term.id));
             const normalizedTermLabel = this.normalizeLabel(term.label);
             const matchingRefiner = filterValues.find((filterValue: any) => {
                 if (!filterValue?.value) return false;
-                const filterGuids = this.extractGuidsFromFilterValue(filterValue.value);
+                const filterGuids = TaxonomyHelper.extractGuidsFromFilterValue(filterValue.value);
                 if (filterGuids.includes(termGuidForMatching)) {
                     return true;
                 }
@@ -343,62 +340,6 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
         }
     }
 
-    private decodeHexString = (hexStr: string): string => {
-        try {
-            // Remove surrounding quotes if present (avoid replaceAll for older targets)
-            let str = hexStr;
-            if (str.startsWith('"')) {
-                str = str.substring(1);
-            }
-            if (str.endsWith('"')) {
-                str = str.substring(0, str.length - 1);
-            }
-            // Remove the ǂǂ prefix used by SharePoint for hex encoding
-            str = str.replace(/^ǂǂ/, '');
-            // Decode hex to string
-            return decodeURIComponent('%' + str.match(/.{1,2}/g)!.join('%'));
-        } catch {
-            return '';
-        }
-    }
-
-    private stripWrappingQuotes = (value: string): string => {
-        if (!value) return value;
-        if (value.startsWith('"') && value.endsWith('"')) {
-            return value.substring(1, value.length - 1);
-        }
-        return value;
-    }
-
-    private extractGuidsFromTokenString = (token: string): string[] => {
-        if (!token) return [];
-
-        const guids = new Set<string>();
-
-        const addGuid = (rawGuid: string): void => {
-            if (!rawGuid) return;
-            const normalized = this.normalizeGuid(rawGuid);
-            if (/^[0-9a-f]{32}$/.test(normalized)) {
-                guids.add(normalized);
-            }
-        };
-
-        // Handles GP0|#<guid>, GPP|#<guid> and L0|#0<guid> patterns.
-        const taxonomyTokenRegex = /(?:GP0|GPP|L0)\|#0?([-0-9a-fA-F]{32,36})/g;
-        let regexMatch: RegExpExecArray | null;
-        while ((regexMatch = taxonomyTokenRegex.exec(token)) !== null) {
-            addGuid(regexMatch[1]);
-        }
-
-        // Handles direct token formats when not wrapped in larger expressions.
-        const parts = token.split('|');
-        if (parts.length > 1) {
-            addGuid(parts[1]);
-        }
-
-        return Array.from(guids);
-    }
-
     private extractLabelsFromTokenString = (token: string): string[] => {
         if (!token) return [];
 
@@ -419,44 +360,6 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
         return Array.from(labels);
     }
 
-    private readonly extractGuidsFromFilterValue = (rawValue: string): string[] => {
-        if (!rawValue) return [];
-
-        const guids = new Set<string>();
-        const addGuids = (items: string[]): void => {
-            items.forEach(item => guids.add(item));
-        };
-
-        const value = this.stripWrappingQuotes(rawValue.trim());
-
-        // 1) Parse value as-is (covers localized or(GP0|...,L0|...) expressions)
-        addGuids(this.extractGuidsFromTokenString(value));
-
-        // 2) Parse decoded value when token is hex-encoded (ǂǂ...)
-        const decoded = this.decodeHexString(rawValue);
-        if (decoded) {
-            addGuids(this.extractGuidsFromTokenString(decoded));
-        }
-
-        // 3) Parse any encoded sub-tokens embedded inside an expression (for robustness)
-        const encodedTokenRegex = /"ǂǂ([0-9a-fA-F]+)"/g;
-        let encodedMatch: RegExpExecArray | null;
-        while ((encodedMatch = encodedTokenRegex.exec(rawValue)) !== null) {
-            const decodedEmbedded = this.decodeHexString(`"ǂǂ${encodedMatch[1]}"`);
-            if (decodedEmbedded) {
-                addGuids(this.extractGuidsFromTokenString(decodedEmbedded));
-            }
-        }
-
-        // 4) Fallback when raw value directly contains a GUID-like term id
-        const fallbackGuid = this.normalizeGuid(this.extractGuidFromTermId(value));
-        if (/^[0-9a-f]{32}$/.test(fallbackGuid)) {
-            guids.add(fallbackGuid);
-        }
-
-        return Array.from(guids);
-    }
-
     private extractLabelsFromFilter = (filterValue: any): string[] => {
         if (!filterValue) return [];
 
@@ -470,10 +373,10 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
         }
 
         if (filterValue.value) {
-            const rawValue = this.stripWrappingQuotes(filterValue.value.trim());
+            const rawValue = filterValue.value.trim().replace(/^"(.*)"$/, '$1');
             addLabels(this.extractLabelsFromTokenString(rawValue));
 
-            const decodedValue = this.decodeHexString(filterValue.value);
+            const decodedValue = TaxonomyHelper.decodeHexString(filterValue.value);
             if (decodedValue) {
                 addLabels(this.extractLabelsFromTokenString(decodedValue));
             }
@@ -491,22 +394,8 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
         return `"ǂǂ${hex}"`;
     }
 
-    private extractGuidFromTermId = (termId: string): string => {
-        if (!termId) return '';
-        const cleaned = termId.replace(/^\/+|\/+$/g, '');
-        const guidMatch = cleaned.match(/Guid\(([0-9a-fA-F\-]{36})\)/);
-        if (guidMatch && guidMatch[1]) {
-            return guidMatch[1];
-        }
-        const plainGuidMatch = cleaned.match(/[0-9a-fA-F\-]{36}/);
-        if (plainGuidMatch) {
-            return plainGuidMatch[0];
-        }
-        return termId;
-    }
-
     private termOrDescendantExistsInResults = (term: any, resultGuids: Set<string>, resultLabels: Set<string>): boolean => {
-        const termGuid = this.normalizeGuid(this.extractGuidFromTermId(term.id));
+        const termGuid = TaxonomyHelper.normalizeGuid(TaxonomyHelper.extractGuidFromTermId(term.id));
         if (resultGuids.has(termGuid)) return true;
         const termLabel = this.normalizeLabel(term.label);
         if (termLabel && resultLabels.has(termLabel)) return true;
@@ -612,7 +501,7 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
         const resultLabelSet = new Set<string>();
         filterValues.forEach((fv: any) => {
             if (!fv?.value) return;
-            this.extractGuidsFromFilterValue(fv.value).forEach(guid => resultGuidSet.add(guid));
+            TaxonomyHelper.extractGuidsFromFilterValue(fv.value).forEach(guid => resultGuidSet.add(guid));
             this.extractLabelsFromFilter(fv).forEach(label => resultLabelSet.add(label));
         });
         const lowerSearchText = this.state.searchText.toLowerCase();
