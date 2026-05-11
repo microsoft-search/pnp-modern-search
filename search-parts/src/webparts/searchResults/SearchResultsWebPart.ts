@@ -465,6 +465,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                     themeVariant: this._themeVariant,
                     className: commonStyles.wpTitle
                 },
+                titleAction: this.getTitleMoreLink(),
                 resultsBackgroundColor: this.properties.resultsBackgroundColor,
                 resultsBorderColor: this.properties.resultsBorderColor,
                 resultsBorderThickness: this.properties.resultsBorderThickness,
@@ -1214,6 +1215,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
      * Initializes required Web Part properties
      */
     private initializeProperties() {
+        this.properties.showTitle = this.properties.showTitle ?? true;
         this.properties.selectedLayoutKey = this.properties.selectedLayoutKey ? this.properties.selectedLayoutKey : BuiltinLayoutsKeys.Cards;
         this.properties.resultTypes = this.properties.resultTypes ? this.properties.resultTypes : [];
         this.properties.dataSourceProperties = this.properties.dataSourceProperties ? this.properties.dataSourceProperties : {};
@@ -1231,6 +1233,9 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         this.properties.showResultsCount = this.properties.showResultsCount !== undefined ? this.properties.showResultsCount : true;
         this.properties.showBlankIfNoResult = this.properties.showBlankIfNoResult !== undefined ? this.properties.showBlankIfNoResult : false;
         this.properties.useMicrosoftGraphToolkit = this.properties.useMicrosoftGraphToolkit !== undefined ? this.properties.useMicrosoftGraphToolkit : false;
+        this.properties.titleLinkText = this.properties.titleLinkText ? this.properties.titleLinkText : '';
+        this.properties.titleLinkUrl = this.properties.titleLinkUrl ? this.properties.titleLinkUrl : '';
+        this.properties.titleLinkOpenInNewTab = this.properties.titleLinkOpenInNewTab ?? false;
 
         // Item selection properties
         if (!this.properties.selectedItemFieldValue) {
@@ -2436,6 +2441,31 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     private _updateTitleProperty(value: string) {
         this.properties.title = value;
         this.renderCompleted();
+    }
+
+    private getTitleMoreLink(): JSX.Element {
+        const hasTitle = !!this.properties.title?.trim();
+        const linkText = this.properties.titleLinkText?.trim();
+        const linkUrl = this.properties.titleLinkUrl?.trim();
+
+        if (!this.properties.showTitle || !hasTitle || !linkText || !linkUrl) {
+            return null;
+        }
+
+        // SharePoint/SPFx page navigation can intercept anchors rendered in the title area,
+        // so use a button and handle navigation explicitly to preserve the configured tab behavior.
+        return React.createElement('button', {
+            type: 'button',
+            className: commonStyles.linkButton,
+            onClick: () => {
+                if (this.properties.titleLinkOpenInNewTab) {
+                    window.open(linkUrl, '_blank', 'noopener,noreferrer');
+                    return;
+                }
+
+                window.location.href = linkUrl;
+            },
+        }, linkText);
     }
 
     /**

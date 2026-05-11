@@ -1,8 +1,29 @@
 .wpTitle {
-    textarea, span {
-        font-size: 20px!important;
-        font-weight: 600!important;
-        font-family: var(--fontFamilyCustomFont1300, var(--fontFamilyBase));
+    > div:first-child {
+        textarea,
+        span {
+            font-size: 20px!important;
+            font-weight: 600!important;
+            font-family: var(--fontFamilyCustomFont1300, var(--fontFamilyBase));
+        }
+    }
+}
+
+.linkButton {
+    appearance: none;
+    background: none;
+    border: 0;
+    color: "[theme: themePrimary, default: #005a9e]";
+    cursor: pointer;
+    font: inherit;
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+
+    &:hover,
+    &:focus-visible {
+        color: "[theme: themeDarkAlt, default: #106ebe]";
+        text-decoration: underline;
     }
 }
 

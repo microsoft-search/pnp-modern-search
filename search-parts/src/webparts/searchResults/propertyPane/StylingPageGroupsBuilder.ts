@@ -58,7 +58,7 @@ export class StylingPageGroupsBuilder {
 
         groups.push(...this.buildCommonOptionsGroup());
         groups.push(this.buildStylingOptionsGroup());
-        groups.push(this.getTitleStylingPropertyPaneGroup());
+    groups.push(this.buildMergedTitleStylingGroup());
 
         const layoutOptions = this.getLayoutTemplateOptions();
         if (layoutOptions.length > 0) {
@@ -283,6 +283,46 @@ export class StylingPageGroupsBuilder {
             groupName: this.webPartStrings.PropertyPane.LayoutPage.CommonOptionsGroupName,
             groupFields: layoutOptionsFields
         }];
+    }
+
+    private buildTitleOptionFields(): IPropertyPaneField<any>[] {
+        const titleFields: IPropertyPaneField<any>[] = [
+            PropertyPaneToggle('showTitle', {
+                label: this.webPartStrings.PropertyPane.LayoutPage.ShowTitle,
+            })
+        ];
+
+        if (this.properties.showTitle) {
+            titleFields.push(
+                PropertyPaneTextField('titleLinkText', {
+                    label: this.webPartStrings.PropertyPane.LayoutPage.TitleLinkTextFieldLabel,
+                }),
+                PropertyPaneTextField('titleLinkUrl', {
+                    label: this.webPartStrings.PropertyPane.LayoutPage.TitleLinkUrlFieldLabel,
+                }),
+                PropertyPaneToggle('titleLinkOpenInNewTab', {
+                    label: this.webPartStrings.PropertyPane.LayoutPage.TitleLinkOpenInNewTab,
+                })
+            );
+        }
+
+        return titleFields;
+    }
+
+    private buildMergedTitleStylingGroup(): IPropertyPaneGroup {
+        const titleStylingGroup = this.getTitleStylingPropertyPaneGroup();
+        const groupFields = [...titleStylingGroup.groupFields];
+        const resetField = groupFields.pop();
+
+        return {
+            ...titleStylingGroup,
+            groupFields: [
+                ...groupFields,
+                PropertyPaneHorizontalRule(),
+                ...this.buildTitleOptionFields(),
+                resetField
+            ]
+        };
     }
 
     private buildStylingOptionsGroup(): IPropertyPaneGroup {

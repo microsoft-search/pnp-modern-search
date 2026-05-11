@@ -6,3 +6,21 @@
         }
     }
 }
+
+.headerRow {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.titleContent {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.titleAction {
+    flex: 0 0 auto;
+    margin-bottom: 11px;
+    white-space: nowrap;
+}
