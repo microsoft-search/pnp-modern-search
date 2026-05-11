@@ -9,13 +9,15 @@ export class TaxonomyHelper {
             return '';
         }
 
-        const cleaned = termId.replace(/^\/+|\/+$/g, '');
-        const guidMatch = cleaned.match(/Guid\(([0-9a-fA-F-]{36})\)/);
-        if (guidMatch && guidMatch[1]) {
+        const cleaned = termId.replaceAll(/^\/+/, '').replaceAll(/\/+$/, '');
+        const wrappedGuidPattern = /Guid\(([0-9a-fA-F-]{36})\)/;
+        const guidMatch = wrappedGuidPattern.exec(cleaned);
+        if (guidMatch?.[1]) {
             return guidMatch[1];
         }
 
-        const plainGuidMatch = cleaned.match(/[0-9a-fA-F-]{36}/);
+        const plainGuidPattern = /[0-9a-fA-F-]{36}/;
+        const plainGuidMatch = plainGuidPattern.exec(cleaned);
         if (plainGuidMatch) {
             return plainGuidMatch[0];
         }
@@ -36,7 +38,17 @@ export class TaxonomyHelper {
             }
 
             value = value.replace(/^ǂǂ/, '');
-            return decodeURIComponent('%' + value.match(/.{1,2}/g)!.join('%'));
+
+            if (!/^[0-9a-fA-F]+$/.test(value) || value.length % 2 !== 0) {
+                return '';
+            }
+
+            const hexPairs = value.match(/.{1,2}/g);
+            if (!hexPairs) {
+                return '';
+            }
+
+            return decodeURIComponent('%' + hexPairs.join('%'));
         } catch {
             return '';
         }
