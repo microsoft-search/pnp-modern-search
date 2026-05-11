@@ -1243,8 +1243,8 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                                         React.createElement(Checkbox, {
                                             checked: hideNodesNotInDataSet,
                                             label: webPartStrings.PropertyPane.DataFilterCollection.HideNodesNotInDataSet,
-                                            onChange: (ev, checked: boolean) => {
-                                                onUpdate('hideNodesNotInDataSet', checked);
+                                            onChange: (ev, checked?: boolean) => {
+                                                onUpdate('hideNodesNotInDataSet', checked ?? false);
                                             }
                                         })
                                     ),
@@ -1253,8 +1253,8 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                                         React.createElement(Checkbox, {
                                             checked: expandAllNodesByDefault,
                                             label: webPartStrings.PropertyPane.DataFilterCollection.ExpandAllNodesByDefault,
-                                            onChange: (ev, checked: boolean) => {
-                                                onUpdate('expandAllNodesByDefault', checked);
+                                            onChange: (ev, checked?: boolean) => {
+                                                onUpdate('expandAllNodesByDefault', checked ?? false);
                                             }
                                         })
                                     ),
