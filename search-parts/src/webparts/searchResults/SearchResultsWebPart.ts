@@ -1175,6 +1175,11 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             // These information comes from the PaginationWebComponent class
             this.currentPageNumber = eventDetails.pageNumber;
 
+            // Bind to query string if enabled
+            if (this.properties.paging.enableQueryString) {
+                this._updatePageNumberInQueryString(eventDetails.pageNumber);
+            }
+
             this.render();
 
         };
@@ -1278,7 +1283,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 hideDisabled: true,
                 hideFirstLastPages: false,
                 hideNavigation: false,
-                useNextLinks: false
+                useNextLinks: false,
+                enableQueryString: false
             };
         }
 
@@ -1344,6 +1350,18 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
 
     /**
+     * Updates the page number in the query string 
+     * @param pageNumber 
+     */
+    private _updatePageNumberInQueryString(pageNumber: number): void {
+        const url = new URL(window.location.href);
+        url.searchParams.set('page', pageNumber.toString());
+        window.history.replaceState({}, '', url.toString());
+    }
+
+
+
+    /**
      * Returns property pane 'Paging' group fields
      */
     private getPagingGroupFields(): IPropertyPaneField<any>[] {
@@ -1387,6 +1405,10 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                     }),
                     PropertyPaneToggle('paging.hideDisabled', {
                         label: webPartStrings.PropertyPane.DataSourcePage.HideDisabledFieldName,
+                        disabled: !this.properties.paging.showPaging
+                    }),
+                    PropertyPaneToggle('paging.enableQueryString', {
+                        label: webPartStrings.PropertyPane.DataSourcePage.EnableQueryStringFieldName,
                         disabled: !this.properties.paging.showPaging
                     })
                 );
@@ -2308,11 +2330,27 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             }
         }
 
-
         // If input query text changes, then we need to reset the paging
         if (!isEqual(dataContext.inputQueryText, this._lastInputQueryText)) {
             dataContext.pageNumber = 1;
             this.currentPageNumber = 1;
+        }
+
+        // Pagination in query string
+        if (this.properties.paging.enableQueryString) {
+            // If input query text changes and this is not a browser page refresh
+            if (this._lastInputQueryText != undefined && !isEqual(dataContext.inputQueryText, this._lastInputQueryText)) {
+                dataContext.pageNumber = 1;
+                this.currentPageNumber = 1;
+            } else {
+                // Classic page navigation with query string (ex: ?page=2)
+                const queryStringParams = UrlHelper.getQueryStringParams();
+                const pageNumberFromQueryString = parseInt(queryStringParams['page'], 10);
+                if (!isNaN(pageNumberFromQueryString) && pageNumberFromQueryString > 0) {
+                    dataContext.pageNumber = pageNumberFromQueryString;
+                    this.currentPageNumber = pageNumberFromQueryString;
+                }
+            }
         }
 
         this._lastInputQueryText = dataContext.inputQueryText;
