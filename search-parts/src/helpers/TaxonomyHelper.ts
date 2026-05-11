@@ -9,7 +9,7 @@ export class TaxonomyHelper {
             return '';
         }
 
-        const cleaned = termId.replaceAll(/^\/+/, '').replaceAll(/\/+$/, '');
+        const cleaned = this.trimWrappingSlashes(termId);
         const wrappedGuidPattern = /Guid\(([0-9a-fA-F-]{36})\)/;
         const guidMatch = wrappedGuidPattern.exec(cleaned);
         if (guidMatch?.[1]) {
@@ -99,6 +99,21 @@ export class TaxonomyHelper {
         }
 
         return value;
+    }
+
+    private static trimWrappingSlashes(value: string): string {
+        let startIndex = 0;
+        let endIndex = value.length;
+
+        while (startIndex < endIndex && value.charAt(startIndex) === '/') {
+            startIndex++;
+        }
+
+        while (endIndex > startIndex && value.charAt(endIndex - 1) === '/') {
+            endIndex--;
+        }
+
+        return value.substring(startIndex, endIndex);
     }
 
     private static extractGuidsFromTokenString(token: string): string[] {
