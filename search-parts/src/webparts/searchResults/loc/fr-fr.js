@@ -22,7 +22,6 @@ define([], function () {
                 HideNavigationFieldName: "Masquer les boutons de navigation (page précédente, page suivante)",
                 HideFirstLastPagesFieldName: "Masquer les boutons de navigation (première, dernière)",
                 HideDisabledFieldName: "Masquer les boutons de navigation (précédente, suivante, première, dernière) s’ils sont désactivés.",
-                EnableQueryStringFieldName: "Activer la pagination dans l'URL",
                 TemplateSlots: {
                     GroupName: "Emplacements de la mise en page",
                     ConfigureSlotsLabel: "Modifier les emplacements de la mise en page pour cette source de données",

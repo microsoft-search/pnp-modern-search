@@ -2346,8 +2346,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             } else {
                 // Classic page navigation with query string (ex: ?page=2)
                 const queryStringParams = UrlHelper.getQueryStringParams();
-                const pageNumberFromQueryString = parseInt(queryStringParams['page'], 10);
-                if (!isNaN(pageNumberFromQueryString) && pageNumberFromQueryString > 0) {
+                const pageNumberFromQueryString = Number.parseInt(queryStringParams['page'], 10);
+                if (!Number.isNaN(pageNumberFromQueryString) && pageNumberFromQueryString > 0) {
                     dataContext.pageNumber = pageNumberFromQueryString;
                     this.currentPageNumber = pageNumberFromQueryString;
                 }
@@ -2356,6 +2356,10 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         this._lastInputQueryText = dataContext.inputQueryText;
         return dataContext;
+    }
+
+    private _handlePageQueryString() {
+        
     }
 
 
@@ -2512,8 +2516,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
             window.addEventListener('popstate', (event) => {
                 const queryStringParams = UrlHelper.getQueryStringParams();
-                const pageNumberFromQueryString = parseInt(queryStringParams['page'], 10);
-                if (!isNaN(pageNumberFromQueryString) && pageNumberFromQueryString > 0) {
+                const pageNumberFromQueryString = Number.parseInt(queryStringParams['page'], 10);
+                if (!Number.isNaN(pageNumberFromQueryString) && pageNumberFromQueryString > 0) {
                     this.currentPageNumber = pageNumberFromQueryString;
                     this.render();
                 }
