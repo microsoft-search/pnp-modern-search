@@ -598,6 +598,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         this._bindHashChange();
         this._handleQueryStringChange();
+        this._handlePopStatePagination();
 
         // Load extensibility libaries extensions
         await this.loadExtensions(this.properties.extensibilityLibraryConfiguration);
@@ -1356,7 +1357,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     private _updatePageNumberInQueryString(pageNumber: number): void {
         const url = new URL(window.location.href);
         url.searchParams.set('page', pageNumber.toString());
-        window.history.replaceState({}, '', url.toString());
+        window.history.pushState({}, '', url.toString());
     }
 
 
@@ -2502,6 +2503,23 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             this.render();
         }
     }
+
+    /**
+     * Subscribes to browser navigation events to handle pagination with query string (ex: ?page=2)
+     */
+    private _handlePopStatePagination() {
+        if (this.properties.paging.enableQueryString) {
+
+            window.addEventListener('popstate', (event) => {
+                const queryStringParams = UrlHelper.getQueryStringParams();
+                const pageNumberFromQueryString = parseInt(queryStringParams['page'], 10);
+                if (!isNaN(pageNumberFromQueryString) && pageNumberFromQueryString > 0) {
+                    this.currentPageNumber = pageNumberFromQueryString;
+                    this.render();
+                }
+            });
+    }
+}
 
     private async initializeQueryModifiers(queryModifierConfiguration: IQueryModifierConfiguration[]): Promise<IQueryModifier[]> {
 
