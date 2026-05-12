@@ -58,7 +58,7 @@ export class StylingPageGroupsBuilder {
 
         groups.push(...this.buildCommonOptionsGroup());
         groups.push(this.buildStylingOptionsGroup());
-    groups.push(this.buildMergedTitleStylingGroup());
+        groups.push(this.buildMergedTitleStylingGroup());
 
         const layoutOptions = this.getLayoutTemplateOptions();
         if (layoutOptions.length > 0) {
@@ -312,7 +312,7 @@ export class StylingPageGroupsBuilder {
     private buildMergedTitleStylingGroup(): IPropertyPaneGroup {
         const titleStylingGroup = this.getTitleStylingPropertyPaneGroup();
         const groupFields = [...titleStylingGroup.groupFields];
-        const resetField = groupFields.pop();
+        const resetField = groupFields.length > 0 ? groupFields.pop() : undefined;
 
         return {
             ...titleStylingGroup,
@@ -320,7 +320,7 @@ export class StylingPageGroupsBuilder {
                 ...groupFields,
                 PropertyPaneHorizontalRule(),
                 ...this.buildTitleOptionFields(),
-                resetField
+                ...(resetField ? [resetField] : [])
             ]
         };
     }

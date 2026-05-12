@@ -2443,7 +2443,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         this.renderCompleted();
     }
 
-    private getTitleMoreLink(): JSX.Element {
+    private getTitleMoreLink(): JSX.Element | null {
         const hasTitle = !!this.properties.title?.trim();
         const linkText = this.properties.titleLinkText?.trim();
         const linkUrl = this.properties.titleLinkUrl?.trim();
@@ -2458,14 +2458,46 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             type: 'button',
             className: commonStyles.linkButton,
             onClick: () => {
-                if (this.properties.titleLinkOpenInNewTab) {
-                    window.open(linkUrl, '_blank', 'noopener,noreferrer');
-                    return;
-                }
-
-                window.location.href = linkUrl;
+                this.navigateToTitleLink(linkUrl, this.properties.titleLinkOpenInNewTab);
             },
         }, linkText);
+    }
+
+    private navigateToTitleLink(linkUrl: string, openInNewTab: boolean): void {
+        const resolvedUrl = this.resolveTitleLinkUrl(linkUrl);
+
+        if (!resolvedUrl) {
+            return;
+        }
+
+        if (openInNewTab) {
+            window.open(resolvedUrl, '_blank', 'noopener,noreferrer');
+            return;
+        }
+
+        // Allow SharePoint to intercept the click and do a soft navigation.
+        const anchor = document.createElement('a');
+        anchor.href = resolvedUrl;
+        anchor.style.display = 'none';
+        document.body.appendChild(anchor);
+        anchor.click();
+        document.body.removeChild(anchor);
+    }
+
+    private resolveTitleLinkUrl(linkUrl: string): string | null {
+        try {
+            const parsedUrl = new URL(linkUrl, window.location.href);
+
+            if (!['http:', 'https:'].includes(parsedUrl.protocol)) {
+                Log.warn(LogSource, `Blocked navigation to disallowed title link URL scheme: ${parsedUrl.protocol}`);
+                return null;
+            }
+
+            return parsedUrl.toString();
+        } catch {
+            Log.warn(LogSource, `Invalid title link URL: ${linkUrl}`);
+            return null;
+        }
     }
 
     /**
