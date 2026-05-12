@@ -465,6 +465,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                     themeVariant: this._themeVariant,
                     className: commonStyles.wpTitle
                 },
+                titleAction: this.getTitleMoreLink(),
                 resultsBackgroundColor: this.properties.resultsBackgroundColor,
                 resultsBorderColor: this.properties.resultsBorderColor,
                 resultsBorderThickness: this.properties.resultsBorderThickness,
@@ -1214,6 +1215,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
      * Initializes required Web Part properties
      */
     private initializeProperties() {
+        this.properties.showTitle = this.properties.showTitle ?? true;
         this.properties.selectedLayoutKey = this.properties.selectedLayoutKey ? this.properties.selectedLayoutKey : BuiltinLayoutsKeys.Cards;
         this.properties.resultTypes = this.properties.resultTypes ? this.properties.resultTypes : [];
         this.properties.dataSourceProperties = this.properties.dataSourceProperties ? this.properties.dataSourceProperties : {};
@@ -1231,6 +1233,9 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         this.properties.showResultsCount = this.properties.showResultsCount !== undefined ? this.properties.showResultsCount : true;
         this.properties.showBlankIfNoResult = this.properties.showBlankIfNoResult !== undefined ? this.properties.showBlankIfNoResult : false;
         this.properties.useMicrosoftGraphToolkit = this.properties.useMicrosoftGraphToolkit !== undefined ? this.properties.useMicrosoftGraphToolkit : false;
+        this.properties.titleLinkText = this.properties.titleLinkText ? this.properties.titleLinkText : '';
+        this.properties.titleLinkUrl = this.properties.titleLinkUrl ? this.properties.titleLinkUrl : '';
+        this.properties.titleLinkOpenInNewTab = this.properties.titleLinkOpenInNewTab ?? false;
 
         // Item selection properties
         if (!this.properties.selectedItemFieldValue) {
@@ -2436,6 +2441,63 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     private _updateTitleProperty(value: string) {
         this.properties.title = value;
         this.renderCompleted();
+    }
+
+    private getTitleMoreLink(): JSX.Element | null {
+        const hasTitle = !!this.properties.title?.trim();
+        const linkText = this.properties.titleLinkText?.trim();
+        const linkUrl = this.properties.titleLinkUrl?.trim();
+
+        if (!this.properties.showTitle || !hasTitle || !linkText || !linkUrl) {
+            return null;
+        }
+
+        // SharePoint/SPFx page navigation can intercept anchors rendered in the title area,
+        // so use a button and handle navigation explicitly to preserve the configured tab behavior.
+        return React.createElement('button', {
+            type: 'button',
+            className: commonStyles.linkButton,
+            onClick: () => {
+                this.navigateToTitleLink(linkUrl, this.properties.titleLinkOpenInNewTab);
+            },
+        }, linkText);
+    }
+
+    private navigateToTitleLink(linkUrl: string, openInNewTab: boolean): void {
+        const resolvedUrl = this.resolveTitleLinkUrl(linkUrl);
+
+        if (!resolvedUrl) {
+            return;
+        }
+
+        if (openInNewTab) {
+            window.open(resolvedUrl, '_blank', 'noopener,noreferrer');
+            return;
+        }
+
+        // Allow SharePoint to intercept the click and do a soft navigation.
+        const anchor = document.createElement('a');
+        anchor.href = resolvedUrl;
+        anchor.style.display = 'none';
+        document.body.appendChild(anchor);
+        anchor.click();
+        document.body.removeChild(anchor);
+    }
+
+    private resolveTitleLinkUrl(linkUrl: string): string | null {
+        try {
+            const parsedUrl = new URL(linkUrl, window.location.href);
+
+            if (!['http:', 'https:'].includes(parsedUrl.protocol)) {
+                Log.warn(LogSource, `Blocked navigation to disallowed title link URL scheme: ${parsedUrl.protocol}`);
+                return null;
+            }
+
+            return parsedUrl.toString();
+        } catch {
+            Log.warn(LogSource, `Invalid title link URL: ${linkUrl}`);
+            return null;
+        }
     }
 
     /**

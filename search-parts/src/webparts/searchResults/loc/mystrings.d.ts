@@ -36,6 +36,10 @@ declare interface ISearchResultsWebPartStrings {
         LayoutPage: {
             LayoutSelectionGroupName: string;
             CommonOptionsGroupName: string;
+            ShowTitle: string;
+            TitleLinkTextFieldLabel: string;
+            TitleLinkUrlFieldLabel: string;
+            TitleLinkOpenInNewTab: string;
             LayoutTemplateOptionsGroupName: string;
             TemplateUrlFieldLabel: string;
             TemplateUrlPlaceholder: string;

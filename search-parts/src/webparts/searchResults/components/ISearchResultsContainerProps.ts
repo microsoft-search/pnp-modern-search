@@ -5,6 +5,7 @@ import { IDataContext } from "@pnp/modern-search-extensibility";
 import { PageContext } from "@microsoft/sp-page-context";
 import { ServiceScope } from "@microsoft/sp-core-library";
 import { IWebPartTitleProps } from "@pnp/spfx-controls-react/lib/WebPartTitle";
+import * as React from 'react';
 
 export interface ISearchResultsContainerProps {
 
@@ -77,6 +78,11 @@ export interface ISearchResultsContainerProps {
    * The Web Part Title props
    */
   webPartTitleProps: IWebPartTitleProps;
+
+  /**
+   * Optional action rendered on the right side of the title bar
+   */
+  titleAction?: React.ReactNode;
 
   /**
    * The layout render type (Handlebars, Adaptive Cards, etc.)

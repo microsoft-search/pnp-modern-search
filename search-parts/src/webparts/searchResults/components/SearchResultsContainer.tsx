@@ -91,14 +91,18 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
         let templateContent: string = null;
         let renderInfoMessage: JSX.Element = null;
 
-        let renderTitle: JSX.Element = <StyledWebPartTitle
+        const hasTitleText = !!this.props.webPartTitleProps.title?.trim();
+        const shouldRenderTitle = this.props.properties.showTitle && (this.props.webPartTitleProps.displayMode === DisplayMode.Edit || hasTitleText);
+
+        let renderTitle: JSX.Element = shouldRenderTitle ? <StyledWebPartTitle
             instanceId={this.props.instanceId}
             titleFont={this.props.titleFont}
             titleFontSize={this.props.titleFontSize}
             titleFontColor={this.props.titleFontColor}
             webPartTitleProps={this.props.webPartTitleProps}
+            titleAction={this.props.titleAction}
             testId={TestConstants.SearchResultsWebPartTitle}
-        />;
+        /> : null;
 
         // Content loading
         templateContent = this.templateService.getTemplateMarkup(this.props.templateContent);

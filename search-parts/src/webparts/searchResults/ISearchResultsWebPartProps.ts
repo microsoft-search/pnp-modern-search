@@ -15,6 +15,26 @@ export enum QueryTextSource {
 export default interface ISearchResultsWebPartProps extends IBaseWebPartProps {
 
     /**
+     * Determines if the web part title bar should be displayed
+     */
+    showTitle: boolean;
+
+    /**
+     * The text for the optional title action link
+     */
+    titleLinkText?: string;
+
+    /**
+     * The URL for the optional title action link
+     */
+    titleLinkUrl?: string;
+
+    /**
+     * Determines if the title action link opens in a new tab
+     */
+    titleLinkOpenInNewTab?: boolean;
+
+    /**
      * The selected data source key
      */
     dataSourceKey: string;

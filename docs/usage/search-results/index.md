@@ -35,13 +35,17 @@ The results styling section allows you to customize the visual appearance of the
 
 ### Web part title styling
 
-The title styling section allows you to customize the visual appearance of the web part title.
+The title styling section allows you to customize the visual appearance of the web part title and configure an optional action link on the right side of the title row. By default, the title follows the current SharePoint theme styling. Font family, font size, and font color can be overridden in the web part settings.
 
 | **Setting** | **Description** | **Default value**
 |------------|---------------- | ----------
 | **Title font** | The font family to use for the web part title. | _Segoe UI_
 | **Title font size** | Controls the font size (in pixels) for the web part title. | _16px_
 | **Title font color** | The color of the web part title text. | _Theme primary color_
+| **Show title** | Shows or hides the title row for the Search Results web part. | _On_
+| **See all text** | The action text displayed on the right side of the title row. | _Empty_
+| **See all URL** | The destination URL for the action link. | _Empty_
+| **Open in new tab** | Opens the action link in a new browser tab. | _Off_
 | **Reset title styling to default** | Reset all title styling options to their default values. | N/A
 
 ## Common Settings
