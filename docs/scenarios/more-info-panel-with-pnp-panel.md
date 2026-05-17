@@ -138,10 +138,3 @@ Save and publish the page. Each result row will show the info icon on the right.
 
 !!! tip
 If a field shows blank, check two things: (1) the managed property is included in the **Selected Properties** list in the Data sources panel, and (2) the slot mapping in the Layouts panel points to the correct managed property name.
-
-## Related scenarios and references
-
-* [Create a simple search page](create-simple-search-page.md)
-* [Set up Managed Properties](set-up-managed-properties.md)
-* [Build a page with filters](page-with-filters.md)
-* [Built-in web components reference](../extensibility/web_components_list.md)
