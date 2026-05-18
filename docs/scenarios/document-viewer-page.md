@@ -15,7 +15,7 @@ The solution involves two pages:
 ## Prerequisites
 
 - The **PnP Modern Search Web Parts** must be deployed to your App Catalog and activated on your site
-- The **Advanced IFrame web part** ([react-advanced-iframe](https://github.com/pnp/sp-dev-fx-webparts/tree/main/samples/react-advanced-iframe)) must be deployed to your App Catalog
+- The **Advanced IFrame web part** ([react-advanced-iframe](https://github.com/pnp/sp-dev-fx-webparts/tree/main/samples/react-advanced-iframe)) by [Sven Sieverding (365knoten)](https://github.com/365knoten) must be deployed to your App Catalog
 - You need an existing search results page using the **DetailsList** layout. If you haven't set one up yet, follow the [Create a simple search page](create-simple-search-page.md) scenario first
 
 ---
