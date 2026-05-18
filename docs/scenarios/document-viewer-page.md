@@ -220,10 +220,3 @@ Save and publish your search results page. Each result row will show the view ic
 !!! tip
     If the iframe shows blank, check that `ServerRedirectedEmbedURL` is included in the **Selected Properties** of your search results web part. If the metadata panel shows blank, check that `NormUniqueID` is being passed correctly in the URL and that the PnP Search Results web part on the viewer page is configured to read from the query string.
 
-## Related scenarios and references
-
-* [Create a simple search page](create-simple-search-page.md)
-* [Add a More Info panel to search results](more-info-panel-with-pnp-panel.md)
-* [Make a column value a clickable filter link](clickable-column-filter-link.md)
-* [Set up Managed Properties](set-up-managed-properties.md)
-* [Advanced IFrame web part](https://github.com/pnp/sp-dev-fx-webparts/tree/main/samples/react-advanced-iframe)
