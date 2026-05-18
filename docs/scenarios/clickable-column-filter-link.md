@@ -73,8 +73,6 @@ Under **Layouts → Columns**, add a new column and configure it as follows:
 
 - **Column display name:** `Contractor`
 - **Use Handlebar expression:** checked
-- **Minimum width:** `50`
-- **Maximum width:** `310`
 
 Paste the following as the column value:
 
@@ -92,7 +90,7 @@ Paste the following as the column value:
 {{/with}}
 ```
 
-To use this for a different field, change `"Contractor"` on the first line to match the slot name you defined in Step 4. Everything else in the template is dynamic and does not need to change.
+To use this for a different field, change `"Contractor"` on line 2 to match the slot name you defined in Step 4. Everything else in the template is dynamic and does not need to change.
 
 !!! note
     The template uses the `stringToHex` Handlebars helper to encode the filter value into the URL format that PnP Search expects. This helper was introduced in PnP Modern Search 4.22.0 — earlier versions do not include it.
@@ -115,8 +113,6 @@ Still in the Filters web part property pane, under **Filters**, add a new filter
 - **Display name:** `Contractor`
 - **Filter name (managed property):** `RefinableString109`
 - **Template:** `CheckboxFilterTemplate`
-- **Sort by:** `By name`
-- **Sort direction:** `Ascending`
 
 ---
 
