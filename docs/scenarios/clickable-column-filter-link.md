@@ -19,7 +19,7 @@ When a user clicks the link, the page reloads with a filter parameter appended t
 https://yourtenant.sharepoint.com/sites/YourSite?f_4b43307b-8891-42d5-9a62-7bfb83c11de9=%5B%7B%22filterName%22%3A%22RefinableString109%22%2C%22values%22%3A%5B%7B%22name%22%3A%22Trouble%20Brewing%22%2C%22value%22%3A%22%5C%22%C7%82%C7%8254726f75626c652042726577696e67%5C%22%22%2C%22operator%22%3A0%2C%22disabled%22%3Afalse%7D%5D%2C%22operator%22%3A%22or%22%7D%5D#
 ```
 
-This is the same URL format that PnP Search writes when a user manually clicks a filter — the Filters web part on the page reads it on load and applies the selection automatically.
+This is the same URL format that PnP Search writes when a user manually clicks a filter - the Filters web part on the page reads it on load and applies the selection automatically.
 
 The Handlebars template builds this URL dynamically using the item's slot value, so it works for any result row without hardcoding individual values.
 
