@@ -73,7 +73,7 @@ This queries for the specific document whose `NormUniqueID` matches the value pa
 
 **Data Source — Selected properties:**
 
-Ensure the following managed properties are included in addition to any you already have:
+Ensure the following managed properties are included in addition to the default managed propeties included by default when adding the web part.
 
 - `EditorOWSUSER`
 - `Filename`
