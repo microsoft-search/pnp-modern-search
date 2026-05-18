@@ -45,5 +45,14 @@ Showing the work anniversaries of employees is a common request in any intranet.
 ## [Connect one Search Results web part to another Search Results Web Part](Connect-to-a-search-results-webpart.md)
 This scenario describes how to connect more then one results Web Part together. One results Web Part will view the sites, connected with the current HUB site, the other, connected results Web Part, will show the documents from the selected site.
 
+## [Add a More Info panel to search results](more-info-panel-with-pnp-panel.md)
+A common need in any document library search experience is to let users access richer metadata about a result without navigating away from the search page. This scenario shows how to add a small icon column to a DetailsList search results layout that opens a right-hand flyout panel displaying as much metadata as you need.
+
+## [Make a column value a clickable filter link](clickable-column-filter-link.md)
+This scenario shows how to make a metadata column value in a PnP Search Results web part a clickable link that reloads the page with a matching filter pre-applied, allowing users to instantly filter results by clicking a value in the results list. Requires PnP Modern Search 4.22.0 or later.
+
+## [Open documents in a dedicated viewer page](document-viewer-page.md)
+This scenario shows how to build a dedicated document viewer page in SharePoint using the Advanced IFrame web part and a PnP Search Results web part, linked from a view icon column in a search results list. The viewer page displays the document in an embedded iframe alongside a metadata panel.
+
 ## [Display Multilingual term store values with PnP Search Results](display-multilingual-term-store-values-with-pnp-search-results.md)
 This scenario describes how term store values can be displayed in multiple languages in the PnP Modern Search.
