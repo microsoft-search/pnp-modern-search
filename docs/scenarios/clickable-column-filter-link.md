@@ -1,7 +1,10 @@
 !!! note
 The PnP Modern Search Web Parts must be deployed to your App Catalog and activated on your site. See the [installation documentation](../installation.md) for details.
 
-By default, metadata values in a search results column are plain text. This scenario makes a column value a clickable link that reloads the same page with a matching filter pre-applied — so clicking "Trouble Brewing" in a Contractor column instantly filters the results to show only items where Contractor equals "Trouble Brewing", without the user having to find and click the filter manually. Contractor is used as the example throughout this scenario - you can swap it for any metadata field as long as it is mapped to a refinable managed property in your SharePoint Search Schema.
+!!! warning
+    This scenario requires **PnP Modern Search version 4.22.0 or later**. It uses the `stringToHex` Handlebars helper which was added in 4.22.0 and is not available in earlier versions. If you are on an older version the filter link column will not work correctly.
+
+By default, metadata values in a search results column are plain text. This scenario makes a column value a clickable link that reloads the same page with a matching filter pre-applied — so clicking "Trouble Brewing" in a Contractor column instantly filters the results to show only items where Contractor equals "Trouble Brewing", without the user having to find and click the filter manually. Contractor is used as the example throughout this scenario — you can swap it for any metadata field as long as it is mapped to a refinable managed property in your SharePoint Search Schema.
 
 ![A column value rendered as a clickable filter link](assets/clickable-column-filter-link/clickable-column-filter-link-result.png)
 
@@ -19,7 +22,7 @@ When a user clicks the link, the page reloads with a filter parameter appended t
 https://yourtenant.sharepoint.com/sites/YourSite?f_4b43307b-8891-42d5-9a62-7bfb83c11de9=%5B%7B%22filterName%22%3A%22RefinableString109%22%2C%22values%22%3A%5B%7B%22name%22%3A%22Trouble%20Brewing%22%2C%22value%22%3A%22%5C%22%C7%82%C7%8254726f75626c652042726577696e67%5C%22%22%2C%22operator%22%3A0%2C%22disabled%22%3Afalse%7D%5D%2C%22operator%22%3A%22or%22%7D%5D#
 ```
 
-This is the same URL format that PnP Search writes when a user manually clicks a filter - the Filters web part on the page reads it on load and applies the selection automatically.
+This is the same URL format that PnP Search writes when a user manually clicks a filter — the Filters web part on the page reads it on load and applies the selection automatically.
 
 The Handlebars template builds this URL dynamically using the item's slot value, so it works for any result row without hardcoding individual values.
 
@@ -46,7 +49,7 @@ This restricts results to document library items only, scoped to the current sit
 
 ### Step 3: Add the required managed property
 
-Under **SharePoint Search**, find the **Selected properties** field and add the refinable managed property you want to filter on. In this example:
+Under **SharePoint Search**, find the **Selected properties** field and ensure the following is included in addition to any you already have:
 
 - `RefinableString109`
 
@@ -70,6 +73,8 @@ Under **Layouts → Columns**, add a new column and configure it as follows:
 
 - **Column display name:** `Contractor`
 - **Use Handlebar expression:** checked
+- **Minimum width:** `50`
+- **Maximum width:** `310`
 
 Paste the following as the column value:
 
@@ -87,10 +92,12 @@ Paste the following as the column value:
 {{/with}}
 ```
 
-To use this for a different field, change `"Contractor"` on line 2 to match the slot name you defined in Step 4. Everything else in the template is dynamic and does not need to change.
+To use this for a different field, change `"Contractor"` on the first line to match the slot name you defined in Step 4. Everything else in the template is dynamic and does not need to change.
+
+!!! note
+    The template uses the `stringToHex` Handlebars helper to encode the filter value into the URL format that PnP Search expects. This helper was introduced in PnP Modern Search 4.22.0 — earlier versions do not include it.
 
 ---
-
 
 ## Part 2: Configure the Search Filters Web Part
 
@@ -108,6 +115,8 @@ Still in the Filters web part property pane, under **Filters**, add a new filter
 - **Display name:** `Contractor`
 - **Filter name (managed property):** `RefinableString109`
 - **Template:** `CheckboxFilterTemplate`
+- **Sort by:** `By name`
+- **Sort direction:** `Ascending`
 
 ---
 
