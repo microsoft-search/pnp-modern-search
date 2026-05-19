@@ -233,10 +233,11 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
 
     public getPropertyDefinitions(): IDynamicDataPropertyDefinition[] {
         // Use the Web Part title as property title since we don't expose sub properties
+        const instanceId = this.tryGetInstanceId() || '';
         return [
             {
                 id: ComponentType.SearchVerticals,
-                title: this.properties.title ? `${this.properties.title} - ${this.instanceId}` : `${webPartStrings.General.WebPartDefaultTitle} - ${this.instanceId}`
+                title: this.properties.title ? `${this.properties.title} - ${instanceId}` : `${webPartStrings.General.WebPartDefaultTitle} - ${instanceId}`
             }
         ];
     }

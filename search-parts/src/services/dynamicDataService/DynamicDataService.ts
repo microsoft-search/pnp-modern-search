@@ -31,7 +31,7 @@ export class DynamicDataService implements IDynamicDataService {
         let propertyOptions: IDataSourceProperty[] = [];
 
         if (!this.dynamicDataProvider.isDisposed) {
-            this._dynamicDataProvider.getAvailableSources().forEach(async (sourceInfo) => {
+            await Promise.all(this._dynamicDataProvider.getAvailableSources().map(async (sourceInfo) => {
                 const source: IDynamicDataSource = this._dynamicDataProvider.tryGetSource(sourceInfo.id);
                 if (source) {
                     const properties = await source.getPropertyDefinitionsAsync();
@@ -44,7 +44,7 @@ export class DynamicDataService implements IDynamicDataService {
                         }
                     });
                 }
-            });
+            }));
         }
     
         return propertyOptions;

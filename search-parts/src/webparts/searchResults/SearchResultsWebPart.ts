@@ -364,7 +364,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         propertyDefinitions.push(
             {
                 id: ComponentType.SearchResults,
-                title: this.properties.title ? `${this.properties.title} - ${this.instanceId}` : `${webPartStrings.General.WebPartDefaultTitle} - ${this.instanceId}`,
+                title: this.properties.title ? `${this.properties.title} - ${this.tryGetInstanceId() || ''}` : `${webPartStrings.General.WebPartDefaultTitle} - ${this.tryGetInstanceId() || ''}`,
             }
         );
 
@@ -433,21 +433,23 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         let renderRootElement: JSX.Element = null;
         let renderDataContainer: JSX.Element = null;
+        const instanceId = this.tryGetInstanceId();
 
         // Check if instanceId is defined - it might not be initialized yet during early render cycles
-        if (!this.instanceId) {
+        if (!instanceId) {
             Log.verbose(`[SearchResultsWebPart.renderCompleted]`, `instanceId is not yet initialized, skipping render`, this.context?.serviceScope);
+            super.renderCompleted();
             return;
         }
 
-        if (this.dataSource && this.instanceId) {
+        if (this.dataSource && instanceId) {
 
             // The main content WP logic
             renderDataContainer = React.createElement(SearchResultsContainer, {
                 dataSource: this.dataSource,
                 dataSourceKey: this.properties.dataSourceKey,
                 templateContent: this.templateContentToDisplay,
-                instanceId: this.instanceId,
+                instanceId: instanceId,
                 properties: JSON.parse(JSON.stringify(this.properties)), // Create a copy to avoid unexpected reference value updates from data sources 
                 onDataRetrieved: this._onDataRetrieved,
                 onItemSelected: this._onItemSelected,
@@ -633,7 +635,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         }
 
         // Initializes dynamic data connections. This could trigger a render if a connection is made with an other component resulting to a render race condition.
-        this.ensureDynamicDataSourcesConnection();
+        await this.ensureDynamicDataSourcesConnection();
 
         return super.onInit();
     }
@@ -758,7 +760,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         if (propertyPath.localeCompare('filtersDataSourceReference') === 0 && this.properties.filtersDataSourceReference ||
             propertyPath.localeCompare('verticalsDataSourceReference') === 0 && this.properties.verticalsDataSourceReference
         ) {
-            this.ensureDynamicDataSourcesConnection();
+            await this.ensureDynamicDataSourcesConnection();
             this.context.propertyPane.refresh();
         }
 
@@ -956,6 +958,14 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         // Reset the page number to 1 every time the Web Part properties change
         this.currentPageNumber = 1;
+    }
+
+    protected onAfterPropertyPaneChangesApplied(): void {
+        void this.ensureDynamicDataSourcesConnection().then(() => this.getConnectionOptionsGroup()).then(connectionOptionsGroup => {
+            this.propertyPaneConnectionsGroup = connectionOptionsGroup;
+            this.context.propertyPane.refresh();
+            void this.render();
+        });
     }
 
     public onCustomPropertyUpdate(propertyPath: string, newValue: any, changeCallback?: (targetProperty?: string, newValue?: any) => void): void {
@@ -2156,7 +2166,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     /**
      * Make sure the dynamic properties are correctly connected to the corresponding sources according to the proeprty pane settings
      */
-    private ensureDynamicDataSourcesConnection() {
+    private async ensureDynamicDataSourcesConnection(): Promise<void> {
 
         if (!this.properties.allowWebPartConnections) return;
         // Filters Web Part data source
@@ -2177,6 +2187,16 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         }
 
         // Verticals Web Part data source
+        if (this.properties.useVerticals) {
+            const availableVerticalSources = await this.dynamicDataService.getAvailableDataSourcesByType(ComponentType.SearchVerticals);
+            const hasConfiguredVerticalSource = this.properties.verticalsDataSourceReference && availableVerticalSources.some(source => source.key === this.properties.verticalsDataSourceReference);
+
+            // Auto-heal stale provisioning/raw-property references when there is a single Search Verticals source on the page.
+            if ((!hasConfiguredVerticalSource || !this.properties.verticalsDataSourceReference) && availableVerticalSources.length === 1) {
+                this.properties.verticalsDataSourceReference = availableVerticalSources[0].key;
+            }
+        }
+
         if (this.properties.verticalsDataSourceReference) {
 
             if (!this._verticalsConnectionSourceData) {
