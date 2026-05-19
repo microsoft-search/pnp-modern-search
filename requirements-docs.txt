@@ -1,0 +1,4 @@
+mkdocs==1.2.2
+mkdocs-material==7.2.4
+markdown-include==0.8.1
+Jinja2<3.1
