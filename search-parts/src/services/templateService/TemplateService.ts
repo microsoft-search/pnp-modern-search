@@ -12,7 +12,15 @@ import {
     trimEnd,
     get,
 } from "@microsoft/sp-lodash-subset";
+import dayjs from "dayjs";
+import advancedFormat from "dayjs/plugin/advancedFormat";
 import { DateHelper } from "../../helpers/DateHelper";
+
+// Ensure `advancedFormat` is registered on the shared dayjs singleton before any
+// helper that uses tokens like `X` / `x` runs. Without this, `dayjs(...).format('X')`
+// would echo back the literal "X" — breaking handlebars templates that compare
+// Unix timestamps (see #4741).
+dayjs.extend(advancedFormat);
 import { PageContext } from "@microsoft/sp-page-context";
 import {
     IComponentDefinition,
@@ -64,9 +72,13 @@ export class TemplateService implements ITemplateService {
     private _extendedHelpersPromise: Promise<void> | null = null;
 
     /**
-     * The dayjs library reference
+     * The dayjs library reference. Initialized synchronously to the imported
+     * singleton so helpers that depend on it (e.g. `getDate`, `dayDiff`) can be
+     * invoked from templates rendered before `dateHelper.moment()` resolves its
+     * locale chunk. The async assignment below still runs and updates the same
+     * singleton's locale configuration.
      */
-    private dayjs: any;
+    private dayjs: any = dayjs;
 
     private timeZoneBias = {
         WebBias: 0,
