@@ -975,11 +975,11 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     }
 
     protected onAfterPropertyPaneChangesApplied(): void {
-        void this.ensureDynamicDataSourcesConnection().then(() => this.getConnectionOptionsGroup()).then(connectionOptionsGroup => {
+        this.ensureDynamicDataSourcesConnection().then(() => this.getConnectionOptionsGroup()).then(connectionOptionsGroup => {
             this.propertyPaneConnectionsGroup = connectionOptionsGroup;
             this.context.propertyPane.refresh();
-            void this.render();
-        });
+            this.render();
+        }).catch(() => { /* no-op */ });
     }
 
     public onCustomPropertyUpdate(propertyPath: string, newValue: any, changeCallback?: (targetProperty?: string, newValue?: any) => void): void {
