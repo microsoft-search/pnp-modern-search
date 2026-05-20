@@ -1304,6 +1304,10 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             };
         }
 
+        // Backfill `enableQueryString` for web parts saved before this setting existed so
+        // the property pane Toggle binds to a defined boolean instead of `undefined`.
+        this.properties.paging.enableQueryString = this.properties.paging.enableQueryString !== undefined ? this.properties.paging.enableQueryString : false;
+
         // Default adaptive cards host config
         if (!this.properties.adaptiveCardsHostConfig) {
             this.properties.adaptiveCardsHostConfig = JSON.stringify({
