@@ -2359,6 +2359,11 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 if (currentUrl.searchParams.has('page')) {
                     currentUrl.searchParams.delete('page');
                     History.prototype.pushState.call(globalThis.history, {}, '', currentUrl.toString());
+                    // Keep dataContext.queryStringParameters in sync so downstream consumers
+                    // (custom data sources, extensibility) don't see the stale `page` value.
+                    if (dataContext.queryStringParameters) {
+                        delete dataContext.queryStringParameters['page'];
+                    }
                 }
             } else {
                 // Classic page navigation with query string (ex: ?page=2)
