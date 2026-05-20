@@ -1401,10 +1401,16 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         } else {
             url.searchParams.set('page', desired);
         }
+        // Preserve any existing `history.state` (e.g., set by SearchBoxWebPart with
+        // `{ path }`) and the current document title rather than overwriting them with
+        // empty values — `pushState({}, '', url)` would silently drop state other
+        // components on the page may be relying on.
+        const state = globalThis.history.state;
+        const title = globalThis.document.title;
         if (replace) {
-            History.prototype.replaceState.call(globalThis.history, {}, '', url.toString());
+            History.prototype.replaceState.call(globalThis.history, state, title, url.toString());
         } else {
-            History.prototype.pushState.call(globalThis.history, {}, '', url.toString());
+            History.prototype.pushState.call(globalThis.history, state, title, url.toString());
         }
         return true;
     }
