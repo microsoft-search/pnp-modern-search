@@ -831,6 +831,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#dayjs-moment" class="md-nav__link">
+    dayjs / moment
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#getattachments" class="md-nav__link">
     getAttachments
   </a>
@@ -931,6 +938,27 @@
           <li class="md-nav__item">
   <a href="#slot" class="md-nav__link">
     slot
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stringtohex" class="md-nav__link">
+    stringToHex
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hextostring" class="md-nav__link">
+    hexToString
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deep-link-example-for-search-filters" class="md-nav__link">
+    Deep Link Example For Search Filters
   </a>
   
 </li>
@@ -1303,6 +1331,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#dayjs-moment" class="md-nav__link">
+    dayjs / moment
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#getattachments" class="md-nav__link">
     getAttachments
   </a>
@@ -1403,6 +1438,27 @@
           <li class="md-nav__item">
   <a href="#slot" class="md-nav__link">
     slot
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stringtohex" class="md-nav__link">
+    stringToHex
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hextostring" class="md-nav__link">
+    hexToString
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deep-link-example-for-search-filters" class="md-nav__link">
+    Deep Link Example For Search Filters
   </a>
   
 </li>
@@ -1705,6 +1761,21 @@
 <p><strong>Syntax</strong> <code>{{dayDiff &lt;date1&gt; &lt;date2&gt;}}</code></p>
 <p><strong>Description</strong> Return the number of days between two dates, eg. show an icon for files created within the last 30 days.</p>
 <p><strong>Example</strong> <code>{{#compare (dayDiff (getDate Created 'YYYY-MMM-DD' ) (getDate timestamp 'YYYY-MMM-DD' )) "&lt;=" 30 }} &lt;img src='/SiteAssets/New.png' /&gt;{{/compare}}</code></p>
+<h4 id="dayjs-moment">dayjs / moment<a class="headerlink" href="#dayjs-moment" title="Permanent link">&para;</a></h4>
+<p><strong>Syntax</strong> <code>{{dayjs "&lt;format&gt;"}}</code>, <code>{{dayjs &lt;date&gt; "&lt;format&gt;"}}</code>, or <code>{{dayjs format="&lt;format&gt;"}}</code> (same for <code>moment</code>)</p>
+<p><strong>Description</strong> Format dates using <a href="https://day.js.org/docs/en/display/format">dayjs</a>. The <code>moment</code> helper name is kept for backward compatibility. Both names are identical.</p>
+<p>When the second positional argument is <code>"X"</code> or <code>"x"</code> and the first argument is numeric, it is treated as an <strong>input parsing hint</strong> (<code>"X"</code> = Unix seconds, <code>"x"</code> = Unix milliseconds) rather than an output format. To output Unix seconds/milliseconds from a date value, use the <code>format</code> hash argument instead: <code>{{dayjs someDate format="X"}}</code>.</p>
+<ul>
+<li><code>{{dayjs "X"}}</code> — current date as Unix seconds</li>
+<li><code>{{dayjs "2026-10-01" "LL"}}</code> — parse date, format as locale date</li>
+<li><code>{{dayjs someDate "YYYY-MM-DD"}}</code> — parse date value, custom format</li>
+<li><code>{{dayjs someDate "X"}}</code> — format date as Unix seconds (non-numeric first arg = output format)</li>
+<li><code>{{dayjs 1714400000 "X"}}</code> — parse <code>1714400000</code> as Unix seconds (numeric first arg = input parsing)</li>
+<li><code>{{dayjs someDate format="X"}}</code> — format date as Unix seconds (explicit hash format)</li>
+<li><code>{{dayjs format="LL" subtract="7 days"}}</code> — 7 days ago, locale format</li>
+</ul>
+<p>Supported output format tokens include all <a href="https://day.js.org/docs/en/display/format">dayjs format tokens</a> plus <code>X</code> (Unix seconds), <code>x</code> (Unix milliseconds), <code>Do</code> (ordinal day), <code>Q</code> (quarter), <code>k</code>/<code>kk</code> (hour 1-24), <code>w</code>/<code>ww</code> (locale week), <code>W</code>/<code>WW</code> (ISO week), <code>e</code> (locale weekday), <code>E</code> (ISO weekday), <code>gg</code>/<code>gggg</code> and <code>GG</code>/<code>GGGG</code> (week year).</p>
+<p><strong>Example</strong> <code>{{dayjs "X"}}</code> returns the current date as a Unix timestamp (seconds).</p>
 <h4 id="getattachments">getAttachments<a class="headerlink" href="#getattachments" title="Permanent link">&para;</a></h4>
 <p><strong>Syntax</strong> <code>{{getAttachments}}</code></p>
 <p><strong>Description</strong> Return object structure for list item attachments.</p>
@@ -1715,7 +1786,7 @@
 <p><strong>Example</strong> <code>{{getCountMessage 5 "contoso"}}</code> will display <em>'5 results for 'contoso'</em>.</p>
 <h4 id="getdate">getDate<a class="headerlink" href="#getdate" title="Permanent link">&para;</a></h4>
 <p><strong>Syntax</strong> <code>{{getDate &lt;data_value&gt; "&lt;format&gt;" "&lt;time handling&gt;"}}</code></p>
-<p><strong>Description</strong> Format the date with <a href="https://momentjs.com/docs/#/parsing/string-format/">Moment.js</a> according to the current language. Date in the managed property should be on the form <code>2018-09-10T06:29:25.0000000Z</code> for the function to work. <code>&lt;time handling&gt;</code> is optional and takes:</p>
+<p><strong>Description</strong> Format the date with <a href="https://day.js.org/docs/en/display/format">dayjs</a> (moment.js-compatible) according to the current language. Date in the managed property should be on the form <code>2018-09-10T06:29:25.0000000Z</code> for the function to work. <code>&lt;time handling&gt;</code> is optional and takes:</p>
 <ul>
 <li>0 = format to browsers time zone (default)</li>
 <li>1 = ignore Z time and handle as browsers local time zone</li>
@@ -1772,6 +1843,26 @@
 <p><strong>Syntax</strong> <code>{{slot item &lt;property_name&gt;}}</code></p>
 <p><strong>Description</strong> Return the <code>&lt;property_name&gt;</code> value for the <code>item</code> object. Supports deep property paths.</p>
 <p><strong>Example</strong> <code>{{slot item "property.subproperty"}}</code></p>
+<h4 id="stringtohex">stringToHex<a class="headerlink" href="#stringtohex" title="Permanent link">&para;</a></h4>
+<p><strong>Syntax</strong> <code>{{stringToHex &lt;value&gt;}}</code></p>
+<p><strong>Description</strong> Convert a string value to a UTF-8 hexadecimal string. This is useful when you need to generate the encoded filter value used by the Search Filters deep-link format.</p>
+<p><strong>Example</strong> <code>{{stringToHex "Keogh’s Crisps"}}</code> returns <code>4b656f6768e280997320437269737073</code>.</p>
+<h4 id="hextostring">hexToString<a class="headerlink" href="#hextostring" title="Permanent link">&para;</a></h4>
+<p><strong>Syntax</strong> <code>{{hexToString &lt;value&gt;}}</code></p>
+<p><strong>Description</strong> Convert a UTF-8 hexadecimal string back to text. The helper also accepts the filter value format used in deep links, including optional surrounding quotes and the <code>ǂǂ</code> prefix.</p>
+<p><strong>Example</strong> <code>{{hexToString '"ǂǂ4b656f6768e280997320437269737073"'}}</code> returns <code>Keogh’s Crisps</code>.</p>
+<h4 id="deep-link-example-for-search-filters">Deep Link Example For Search Filters<a class="headerlink" href="#deep-link-example-for-search-filters" title="Permanent link">&para;</a></h4>
+<p>If you want a value rendered in a custom results template to open a page with a filter already selected, you can build the filter payload yourself.</p>
+<p>The deep-link query string parameter is <code>f_&lt;Search Filters instance ID&gt;</code>. The filter <code>value</code> must contain the UTF-8 hex form of the label, prefixed with <code>ǂǂ</code> and wrapped in escaped quotes.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c">{{!-- Example for a Search Filters web part whose instance ID is known --}}</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="c">{{!-- Replace the GUID below with the instance ID of your Search Filters web part --}}</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="x">&lt;a</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="x">    href=&quot;/sites/contoso/SitePages/Search.aspx?f_4b43307b-8891-42d5-9a62-7bfb83c11de9=%5B%7B%22filterName%22%3A%22RefinableString109%22%2C%22values%22%3A%5B%7B%22name%22%3A%22</span><span class="cp">{{</span><span class="nv">slot</span> <span class="nv">item</span> <span class="nv">@root.slots.Title</span><span class="cp">}}</span><span class="x">%22%2C%22value%22%3A%22%5C%22%C7%82%C7%82</span><span class="cp">{{</span><span class="nv">stringToHex</span> <span class="nv">(slot</span> <span class="nv">item</span> <span class="nv">@root.slots.Title)</span><span class="cp">}}</span><span class="x">%5C%22%22%2C%22operator%22%3A0%2C%22disabled%22%3Afalse%7D%5D%2C%22operator%22%3A%22or%22%7D%5D&quot;</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="x">&gt;</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="x">    </span><span class="cp">{{</span><span class="nv">slot</span> <span class="nv">item</span> <span class="nv">@root.slots.Title</span><span class="cp">}}</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="x">&lt;/a&gt;</span>
+</code></pre></div>
+<p>In practice, the safest approach is still to select a filter once in the UI, copy the generated URL, and then replace only the <code>name</code> and hex-encoded <code>value</code> parts in your template.</p>
 <h4 id="times">#times<a class="headerlink" href="#times" title="Permanent link">&para;</a></h4>
 <p><strong>Syntax</strong> <code>{{#times &lt;number&gt;}}</code></p>
 <p><strong>Description</strong> Iterate the block <code>&lt;number&gt;</code> times.</p>
@@ -1788,25 +1879,8 @@
 <h3 id="custom-css-styles">Custom CSS styles<a class="headerlink" href="#custom-css-styles" title="Permanent link">&para;</a></h3>
 <h4 id="default-behavior">Default Behavior<a class="headerlink" href="#default-behavior" title="Permanent link">&para;</a></h4>
 <p>Inside an HTML template (or layout field), you can write your own CSS styles using a <code>&lt;style&gt;</code> tag. Even better, you can inject Handlebars variables, helpers, conditional blocks, etc. right inside it and get dynamic classes or attributes</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">&lt;</span><span class="nt">content</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;data-content&quot;</span><span class="p">&gt;</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="p">&lt;</span><span class="nt">style</span><span class="p">&gt;</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">        </span><span class="p">.</span><span class="nc">example-themePrimary</span><span class="w"> </span><span class="nt">a</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">            </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="err">{{</span><span class="o">@</span><span class="n">root</span><span class="o">.</span><span class="n">theme</span><span class="o">.</span><span class="n">palette</span><span class="o">.</span><span class="n">themePrimary</span><span class="p">}</span><span class="err">}</span><span class="o">;</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">        </span><span class="err">}</span>
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">        </span><span class="o">...</span>
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="p">&lt;/</span><span class="nt">style</span><span class="p">&gt;</span>
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>
-<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;template&quot;</span><span class="p">&gt;</span>
-<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>        ...
-<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>    ...
-</code></pre></div>
-<p>However, all CSS rules (including <code>@media</code> rules) will be all prefixed automatically by an unique ID (<code>pnp-template_&lt;Web Part instance ID&gt;</code>) to make sure styles are isolated from other Web Parts on the page. We do this to avoid conflicts between classes in the global context.</p>
-<h4 id="use-of-css-layers">Use of CSS Layers<a class="headerlink" href="#use-of-css-layers" title="Permanent link">&para;</a></h4>
-<p>In contrast to the automatically prefixing all styles with the web part instance ids, the style can live in its own so called layer. This way styles bleeding into the rest of the page can be avoided.</p>
-<p>Layered styles - in contrast to the default behavior - allows mechanisms such as <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Container_Queries">container queries</a> and other future improvements such as <a href="https://developer.chrome.com/articles/css-nesting/">CSS Nesting</a>.</p>
-<p>CSS support a mechanism for isolation CSS declarations in layers. To use this mechanism specify on the style tag the data property <code>data-cssscope</code> as layer.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">&lt;</span><span class="nt">content</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;data-content&quot;</span><span class="p">&gt;</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="p">&lt;</span><span class="nt">style</span> <span class="na">data-cssscope</span><span class="o">=</span><span class="s">&quot;layer&quot;</span><span class="p">&gt;</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="p">&lt;</span><span class="nt">style</span><span class="p">&gt;</span>
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">        </span><span class="p">.</span><span class="nc">example-themePrimary</span><span class="w"> </span><span class="nt">a</span><span class="w"> </span><span class="p">{</span>
 <a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">            </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="err">{{</span><span class="o">@</span><span class="n">root</span><span class="o">.</span><span class="n">theme</span><span class="o">.</span><span class="n">palette</span><span class="o">.</span><span class="n">themePrimary</span><span class="p">}</span><span class="err">}</span><span class="o">;</span>
 <a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">        </span><span class="err">}</span>
@@ -1817,55 +1891,72 @@
 <a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>        ...
 <a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>    ...
 </code></pre></div>
-<p>This convert the CSS into the following form:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="w">    </span><span class="o">&lt;</span><span class="nt">style</span><span class="w"> </span><span class="nt">data-cssscope</span><span class="o">=</span><span class="s2">&quot;layer&quot;</span><span class="o">&gt;</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">    </span><span class="p">@</span><span class="k">layer</span><span class="w"> </span><span class="p">{</span>
+<p>However, all CSS rules (including <code>@media</code> rules) will be all prefixed automatically by an unique ID (<code>pnp-template_&lt;Web Part instance ID&gt;</code>) to make sure styles are isolated from other Web Parts on the page. We do this to avoid conflicts between classes in the global context.</p>
+<h4 id="use-of-css-layers">Use of CSS Layers<a class="headerlink" href="#use-of-css-layers" title="Permanent link">&para;</a></h4>
+<p>In contrast to the automatically prefixing all styles with the web part instance ids, the style can live in its own so called layer. This way styles bleeding into the rest of the page can be avoided.</p>
+<p>Layered styles - in contrast to the default behavior - allows mechanisms such as <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Container_Queries">container queries</a> and other future improvements such as <a href="https://developer.chrome.com/articles/css-nesting/">CSS Nesting</a>.</p>
+<p>CSS support a mechanism for isolation CSS declarations in layers. To use this mechanism specify on the style tag the data property <code>data-cssscope</code> as layer.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="p">&lt;</span><span class="nt">content</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;data-content&quot;</span><span class="p">&gt;</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    <span class="p">&lt;</span><span class="nt">style</span> <span class="na">data-cssscope</span><span class="o">=</span><span class="s">&quot;layer&quot;</span><span class="p">&gt;</span>
 <a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">        </span><span class="p">.</span><span class="nc">example-themePrimary</span><span class="w"> </span><span class="nt">a</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">            </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="err">{{</span><span class="o">@</span><span class="n">root</span><span class="o">.</span><span class="n">theme</span><span class="o">.</span><span class="n">palette</span><span class="o">.</span><span class="n">themePrimary</span><span class="p">}}</span><span class="o">;</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">            </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="err">{{</span><span class="o">@</span><span class="n">root</span><span class="o">.</span><span class="n">theme</span><span class="o">.</span><span class="n">palette</span><span class="o">.</span><span class="n">themePrimary</span><span class="p">}</span><span class="err">}</span><span class="o">;</span>
 <a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">        </span><span class="err">}</span>
-<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
-<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">        </span><span class="o">...</span>
-<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">    </span><span class="err">}</span>
-<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">    </span><span class="o">&lt;/</span><span class="nt">style</span><span class="o">&gt;</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">        </span><span class="o">...</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">    </span><span class="p">&lt;/</span><span class="nt">style</span><span class="p">&gt;</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;template&quot;</span><span class="p">&gt;</span>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>        ...
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>    ...
+</code></pre></div>
+<p>This convert the CSS into the following form:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="w">    </span><span class="o">&lt;</span><span class="nt">style</span><span class="w"> </span><span class="nt">data-cssscope</span><span class="o">=</span><span class="s2">&quot;layer&quot;</span><span class="o">&gt;</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span><span class="p">@</span><span class="k">layer</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">        </span><span class="p">.</span><span class="nc">example-themePrimary</span><span class="w"> </span><span class="nt">a</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">            </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="err">{{</span><span class="o">@</span><span class="n">root</span><span class="o">.</span><span class="n">theme</span><span class="o">.</span><span class="n">palette</span><span class="o">.</span><span class="n">themePrimary</span><span class="p">}}</span><span class="o">;</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">        </span><span class="err">}</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">        </span><span class="o">...</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">    </span><span class="err">}</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">    </span><span class="o">&lt;/</span><span class="nt">style</span><span class="o">&gt;</span>
 </code></pre></div>
 <p>Browser support for <a href="https://caniuse.com/css-cascade-layers">CSS Layer</a> on can-i-use.</p>
 <h3 id="hide-error-message-using-css">Hide error message using CSS<a class="headerlink" href="#hide-error-message-using-css" title="Permanent link">&para;</a></h3>
 <p>By default the web parts will output an error message if something goes wrong on for example API calls.</p>
 <p>If you want to hide the error message you can add the following CSS in your custom template.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="p">&lt;</span><span class="nt">content</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;data-content&quot;</span><span class="p">&gt;</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>    <span class="p">&lt;</span><span class="nt">style</span><span class="p">&gt;</span>
-<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">        </span><span class="p">.</span><span class="nc">pnpSearchResultsErrorMessage</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">display</span><span class="p">:</span><span class="kc">none</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">        </span><span class="o">...</span>
-<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">    </span><span class="p">&lt;/</span><span class="nt">style</span><span class="p">&gt;</span>
-<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>
-<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;template&quot;</span><span class="p">&gt;</span>
-<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>        ...
-<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>    ...
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="p">&lt;</span><span class="nt">content</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;data-content&quot;</span><span class="p">&gt;</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>    <span class="p">&lt;</span><span class="nt">style</span><span class="p">&gt;</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">        </span><span class="p">.</span><span class="nc">pnpSearchResultsErrorMessage</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">display</span><span class="p">:</span><span class="kc">none</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">        </span><span class="o">...</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">    </span><span class="p">&lt;/</span><span class="nt">style</span><span class="p">&gt;</span>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;template&quot;</span><span class="p">&gt;</span>
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>        ...
+<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>    ...
 </code></pre></div>
 <h3 id="use-sharepoint-contexts-and-theme-in-your-templates">Use SharePoint contexts and theme in your templates<a class="headerlink" href="#use-sharepoint-contexts-and-theme-in-your-templates" title="Permanent link">&para;</a></h3>
 <p>If you need to use current site theme colors, fonts and so on you can use the <code>theme</code> property available in the <code>@root</code> Handlebars context like this:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="p">&lt;</span><span class="nt">content</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;data-content&quot;</span><span class="p">&gt;</span>
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
-<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>        <span class="p">&lt;</span><span class="nt">style</span><span class="p">&gt;</span>
-<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">            </span><span class="p">.</span><span class="nc">example-themePrimary</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>                color: {{@root.theme.palette.themePrimary}};
-<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>            }
-<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>            ...
-<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>        <span class="p">&lt;/</span><span class="nt">styles</span><span class="p">&gt;</span>
-<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>
-<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>        ...
-<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>
-<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>        <span class="p">&lt;</span><span class="nt">span</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;example-themePrimary&quot;</span><span class="p">&gt;</span>{{Title}}<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
-<a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>
-<a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a>        ...
-<a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a>
-<a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a><span class="p">&lt;/</span><span class="nt">content</span><span class="p">&gt;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="p">&lt;</span><span class="nt">content</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;data-content&quot;</span><span class="p">&gt;</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>        <span class="p">&lt;</span><span class="nt">style</span><span class="p">&gt;</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">            </span><span class="p">.</span><span class="nc">example-themePrimary</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>                color: {{@root.theme.palette.themePrimary}};
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>            }
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>            ...
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>        <span class="p">&lt;/</span><span class="nt">styles</span><span class="p">&gt;</span>
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>        ...
+<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>
+<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>        <span class="p">&lt;</span><span class="nt">span</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;example-themePrimary&quot;</span><span class="p">&gt;</span>{{Title}}<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+<a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a>
+<a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a>        ...
+<a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a>
+<a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a><span class="p">&lt;/</span><span class="nt">content</span><span class="p">&gt;</span>
 </code></pre></div>
 <p>If you want to reference the current user, you can get that from a context variable like this:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>Login: {{@root.context.user.loginName}}
-<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>Login: {{@root.context.user.loginName}}
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
 </code></pre></div>
 <blockquote>
 <p>You can also use this variable in the 'Details List' and 'Cards' layouts in field expressions.</p>
@@ -1876,39 +1967,39 @@
 <h3 id="work-with-placeholders">Work with placeholders<a class="headerlink" href="#work-with-placeholders" title="Permanent link">&para;</a></h3>
 <p>To indicate the data are loading, you can create placeholders (shimmers) using the <code>&lt;content id="placeholder-content"&gt;</code> section of your HTML template:
 The placeholder is only loaded during first data load. For subsequent requests, a overlay will be displayed.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="p">&lt;</span><span class="nt">content</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;placeholder-content&quot;</span><span class="p">&gt;</span>
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>
-<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>    <span class="p">&lt;</span><span class="nt">style</span><span class="p">&gt;</span>
-<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>
-<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">        </span><span class="p">.</span><span class="nc">placeholder</span><span class="w"> </span><span class="p">.</span><span class="nc">icon</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">            </span><span class="k">width</span><span class="p">:</span><span class="w"> </span><span class="mi">20</span><span class="kt">px</span><span class="p">;</span>
-<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">            </span><span class="k">height</span><span class="p">:</span><span class="w"> </span><span class="mi">16</span><span class="kt">px</span><span class="p">;</span>
-<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="w">            </span><span class="k">margin-right</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="kt">px</span><span class="p">;</span>
-<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="w">        </span><span class="p">}</span>
-<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>
-<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="w">        </span><span class="p">.</span><span class="nc">placeholder</span><span class="w"> </span><span class="nt">ul</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="w">            </span><span class="k">list-style</span><span class="p">:</span><span class="w"> </span><span class="kc">none</span><span class="p">;</span>
-<a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="w">        </span><span class="p">}</span>
-<a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a>
-<a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a><span class="w">        </span><span class="p">.</span><span class="nc">placeholder</span><span class="w"> </span><span class="nt">ul</span><span class="w"> </span><span class="nt">li</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a><span class="w">            </span><span class="k">display</span><span class="p">:</span><span class="w"> </span><span class="kc">flex</span><span class="p">;</span>
-<a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a><span class="w">            </span><span class="k">align-items</span><span class="p">:</span><span class="w"> </span><span class="kc">center</span><span class="p">;</span>
-<a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a><span class="w">            </span><span class="k">padding</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="kt">px</span><span class="p">;</span>
-<a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a><span class="w">        </span><span class="p">}</span>
-<a id="__codelineno-7-20" name="__codelineno-7-20" href="#__codelineno-7-20"></a>
-<a id="__codelineno-7-21" name="__codelineno-7-21" href="#__codelineno-7-21"></a><span class="w">    </span><span class="p">&lt;/</span><span class="nt">style</span><span class="p">&gt;</span>
-<a id="__codelineno-7-22" name="__codelineno-7-22" href="#__codelineno-7-22"></a>
-<a id="__codelineno-7-23" name="__codelineno-7-23" href="#__codelineno-7-23"></a>    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;placeholder&quot;</span><span class="p">&gt;</span>
-<a id="__codelineno-7-24" name="__codelineno-7-24" href="#__codelineno-7-24"></a>        <span class="p">&lt;</span><span class="nt">ul</span><span class="p">&gt;</span>
-<a id="__codelineno-7-25" name="__codelineno-7-25" href="#__codelineno-7-25"></a>            {{#times 5}}
-<a id="__codelineno-7-26" name="__codelineno-7-26" href="#__codelineno-7-26"></a>                <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;</span>
-<a id="__codelineno-7-27" name="__codelineno-7-27" href="#__codelineno-7-27"></a>                    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;icon placeholder--shimmer&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
-<a id="__codelineno-7-28" name="__codelineno-7-28" href="#__codelineno-7-28"></a>                    <span class="p">&lt;</span><span class="nt">span</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;placeholder--shimmer placeholder--line&quot;</span> <span class="na">style</span><span class="o">=</span><span class="s">&quot;width: 60%&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
-<a id="__codelineno-7-29" name="__codelineno-7-29" href="#__codelineno-7-29"></a>                <span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
-<a id="__codelineno-7-30" name="__codelineno-7-30" href="#__codelineno-7-30"></a>            {{/times}}
-<a id="__codelineno-7-31" name="__codelineno-7-31" href="#__codelineno-7-31"></a>        <span class="p">&lt;/</span><span class="nt">ul</span><span class="p">&gt;</span>
-<a id="__codelineno-7-32" name="__codelineno-7-32" href="#__codelineno-7-32"></a>    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
-<a id="__codelineno-7-33" name="__codelineno-7-33" href="#__codelineno-7-33"></a><span class="p">&lt;/</span><span class="nt">content</span><span class="p">&gt;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="p">&lt;</span><span class="nt">content</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;placeholder-content&quot;</span><span class="p">&gt;</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>    <span class="p">&lt;</span><span class="nt">style</span><span class="p">&gt;</span>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">        </span><span class="p">.</span><span class="nc">placeholder</span><span class="w"> </span><span class="p">.</span><span class="nc">icon</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="w">            </span><span class="k">width</span><span class="p">:</span><span class="w"> </span><span class="mi">20</span><span class="kt">px</span><span class="p">;</span>
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="w">            </span><span class="k">height</span><span class="p">:</span><span class="w"> </span><span class="mi">16</span><span class="kt">px</span><span class="p">;</span>
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="w">            </span><span class="k">margin-right</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="kt">px</span><span class="p">;</span>
+<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="w">        </span><span class="p">}</span>
+<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>
+<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="w">        </span><span class="p">.</span><span class="nc">placeholder</span><span class="w"> </span><span class="nt">ul</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a><span class="w">            </span><span class="k">list-style</span><span class="p">:</span><span class="w"> </span><span class="kc">none</span><span class="p">;</span>
+<a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a><span class="w">        </span><span class="p">}</span>
+<a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a>
+<a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a><span class="w">        </span><span class="p">.</span><span class="nc">placeholder</span><span class="w"> </span><span class="nt">ul</span><span class="w"> </span><span class="nt">li</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-8-16" name="__codelineno-8-16" href="#__codelineno-8-16"></a><span class="w">            </span><span class="k">display</span><span class="p">:</span><span class="w"> </span><span class="kc">flex</span><span class="p">;</span>
+<a id="__codelineno-8-17" name="__codelineno-8-17" href="#__codelineno-8-17"></a><span class="w">            </span><span class="k">align-items</span><span class="p">:</span><span class="w"> </span><span class="kc">center</span><span class="p">;</span>
+<a id="__codelineno-8-18" name="__codelineno-8-18" href="#__codelineno-8-18"></a><span class="w">            </span><span class="k">padding</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="kt">px</span><span class="p">;</span>
+<a id="__codelineno-8-19" name="__codelineno-8-19" href="#__codelineno-8-19"></a><span class="w">        </span><span class="p">}</span>
+<a id="__codelineno-8-20" name="__codelineno-8-20" href="#__codelineno-8-20"></a>
+<a id="__codelineno-8-21" name="__codelineno-8-21" href="#__codelineno-8-21"></a><span class="w">    </span><span class="p">&lt;/</span><span class="nt">style</span><span class="p">&gt;</span>
+<a id="__codelineno-8-22" name="__codelineno-8-22" href="#__codelineno-8-22"></a>
+<a id="__codelineno-8-23" name="__codelineno-8-23" href="#__codelineno-8-23"></a>    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;placeholder&quot;</span><span class="p">&gt;</span>
+<a id="__codelineno-8-24" name="__codelineno-8-24" href="#__codelineno-8-24"></a>        <span class="p">&lt;</span><span class="nt">ul</span><span class="p">&gt;</span>
+<a id="__codelineno-8-25" name="__codelineno-8-25" href="#__codelineno-8-25"></a>            {{#times 5}}
+<a id="__codelineno-8-26" name="__codelineno-8-26" href="#__codelineno-8-26"></a>                <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;</span>
+<a id="__codelineno-8-27" name="__codelineno-8-27" href="#__codelineno-8-27"></a>                    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;icon placeholder--shimmer&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<a id="__codelineno-8-28" name="__codelineno-8-28" href="#__codelineno-8-28"></a>                    <span class="p">&lt;</span><span class="nt">span</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;placeholder--shimmer placeholder--line&quot;</span> <span class="na">style</span><span class="o">=</span><span class="s">&quot;width: 60%&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+<a id="__codelineno-8-29" name="__codelineno-8-29" href="#__codelineno-8-29"></a>                <span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+<a id="__codelineno-8-30" name="__codelineno-8-30" href="#__codelineno-8-30"></a>            {{/times}}
+<a id="__codelineno-8-31" name="__codelineno-8-31" href="#__codelineno-8-31"></a>        <span class="p">&lt;/</span><span class="nt">ul</span><span class="p">&gt;</span>
+<a id="__codelineno-8-32" name="__codelineno-8-32" href="#__codelineno-8-32"></a>    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<a id="__codelineno-8-33" name="__codelineno-8-33" href="#__codelineno-8-33"></a><span class="p">&lt;/</span><span class="nt">content</span><span class="p">&gt;</span>
 </code></pre></div>
 <p>Use CSS classes <code>placeholder--shimmer</code> and <code>placeholder--line</code> to build your placeholders. Basically, you can reuse the same HTML structure as your template content markup, but using these these classes instead to fill areas.</p>
 <p>If no placeholder is present in the template, a default one will be loaded.</p>
@@ -1931,22 +2022,22 @@ The placeholder is only loaded during first data load. For subsequent requests, 
 <p>As item key you must use the builtin Handlebars <code>{{@index}}</code> property in the <code>{{#each}}</code> loop. Also because state managed is internally managed by the Web Part, we provide you an Handlebars helper <code>isItemSelected</code> to help to apply styles depending of the selection (ex: apply a CSS class or not). To use this helper correctly, you must pass the current selected keys and current index to get the selected state for an item:</p>
 <p><code>(isItemSelected @root.selectedKeys @index)</code></p>
 <h3 id="template-example-with-item-selection">Template example with item selection<a class="headerlink" href="#template-example-with-item-selection" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="p">&lt;</span><span class="nt">style</span><span class="p">&gt;</span>
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>
-<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">    </span><span class="p">.</span><span class="nc">selected</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">        </span><span class="k">background-color</span><span class="p">:</span><span class="w"> </span><span class="err">{{</span><span class="o">@</span><span class="n">root</span><span class="o">.</span><span class="n">theme</span><span class="o">.</span><span class="n">palette</span><span class="o">.</span><span class="n">themeLighter</span><span class="p">}</span><span class="err">}</span><span class="o">;</span>
-<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">        </span><span class="nt">border</span><span class="o">:</span><span class="w"> </span><span class="nt">1px</span><span class="w"> </span><span class="nt">solid</span><span class="w"> </span><span class="p">{</span><span class="err">{@root.theme.palette.themePrimary</span><span class="p">}</span><span class="err">}</span><span class="o">;</span>
-<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="w">        </span><span class="nt">color</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="err">{@root.theme.palette.themePrimary</span><span class="p">}</span><span class="err">}</span><span class="o">;</span>
-<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="w">    </span><span class="err">}</span>
-<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="w">    </span><span class="o">...</span>
-<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>
-<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="p">&lt;/</span><span class="nt">style</span><span class="p">&gt;</span>
-<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>...
-<a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a>{{#each data.items as |item|}}
-<a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a>    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;{{#if (isItemSelected @root.selectedKeys @index)}}selected{{/if}}&quot;</span> <span class="na">data-is-focusable</span> <span class="na">data-selection-index</span><span class="o">=</span><span class="s">&quot;{{@index}}&quot;</span> <span class="na">data-selection-toggle</span><span class="p">&gt;</span>
-<a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a>        <span class="p">&lt;</span><span class="nt">span</span><span class="p">&gt;</span>{{slot item @root.slots.Title}}<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
-<a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a>    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
-<a id="__codelineno-8-16" name="__codelineno-8-16" href="#__codelineno-8-16"></a>{{/each}}
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="p">&lt;</span><span class="nt">style</span><span class="p">&gt;</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">    </span><span class="p">.</span><span class="nc">selected</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">        </span><span class="k">background-color</span><span class="p">:</span><span class="w"> </span><span class="err">{{</span><span class="o">@</span><span class="n">root</span><span class="o">.</span><span class="n">theme</span><span class="o">.</span><span class="n">palette</span><span class="o">.</span><span class="n">themeLighter</span><span class="p">}</span><span class="err">}</span><span class="o">;</span>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">        </span><span class="nt">border</span><span class="o">:</span><span class="w"> </span><span class="nt">1px</span><span class="w"> </span><span class="nt">solid</span><span class="w"> </span><span class="p">{</span><span class="err">{@root.theme.palette.themePrimary</span><span class="p">}</span><span class="err">}</span><span class="o">;</span>
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">        </span><span class="nt">color</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="err">{@root.theme.palette.themePrimary</span><span class="p">}</span><span class="err">}</span><span class="o">;</span>
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="w">    </span><span class="err">}</span>
+<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="w">    </span><span class="o">...</span>
+<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>
+<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="p">&lt;/</span><span class="nt">style</span><span class="p">&gt;</span>
+<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>...
+<a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a>{{#each data.items as |item|}}
+<a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a>    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;{{#if (isItemSelected @root.selectedKeys @index)}}selected{{/if}}&quot;</span> <span class="na">data-is-focusable</span> <span class="na">data-selection-index</span><span class="o">=</span><span class="s">&quot;{{@index}}&quot;</span> <span class="na">data-selection-toggle</span><span class="p">&gt;</span>
+<a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a>        <span class="p">&lt;</span><span class="nt">span</span><span class="p">&gt;</span>{{slot item @root.slots.Title}}<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+<a id="__codelineno-9-15" name="__codelineno-9-15" href="#__codelineno-9-15"></a>    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<a id="__codelineno-9-16" name="__codelineno-9-16" href="#__codelineno-9-16"></a>{{/each}}
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -1965,41 +2056,41 @@ Adaptive cards can be used for SharePoint Search and Micrososft Search data sour
 </blockquote>
 <h3 id="use-web-components-and-html-markup-in-adaptive-cards">Use web components and HTML markup in adaptive cards<a class="headerlink" href="#use-web-components-and-html-markup-in-adaptive-cards" title="Permanent link">&para;</a></h3>
 <p>Web components and HTML are supported in adaptive cards through markdown processing. To use it simply, add your HTML markup in the text property. Example:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="err">...</span>
-<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="p">{</span>
-<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Column&quot;</span><span class="p">,</span>
-<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">    </span><span class="nt">&quot;items&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">        </span><span class="p">{</span>
-<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;TextBlock&quot;</span><span class="p">,</span>
-<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="w">            </span><span class="nt">&quot;wrap&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
-<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="w">            </span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;pnp-iconfile class=&#39;icon&#39; data-extension=&#39;${string(jPath($data, concat(&#39;.&#39;,$root.slots[&#39;FileType&#39;]))[0])}&#39;&gt;&lt;/pnp-iconfile&gt;&quot;</span>
-<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="w">        </span><span class="p">}</span>
-<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="w">    </span><span class="p">],</span>
-<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="w">    </span><span class="nt">&quot;width&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;auto&quot;</span>
-<a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a><span class="p">}</span>
-<a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a><span class="err">...</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="err">...</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="p">{</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Column&quot;</span><span class="p">,</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">    </span><span class="nt">&quot;items&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">        </span><span class="p">{</span>
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;TextBlock&quot;</span><span class="p">,</span>
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="w">            </span><span class="nt">&quot;wrap&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="w">            </span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;pnp-iconfile class=&#39;icon&#39; data-extension=&#39;${string(jPath($data, concat(&#39;.&#39;,$root.slots[&#39;FileType&#39;]))[0])}&#39;&gt;&lt;/pnp-iconfile&gt;&quot;</span>
+<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="w">        </span><span class="p">}</span>
+<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="w">    </span><span class="p">],</span>
+<a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="w">    </span><span class="nt">&quot;width&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;auto&quot;</span>
+<a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="p">}</span>
+<a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a><span class="err">...</span>
 </code></pre></div>
 <blockquote>
 <p>HTML in adaptive cards will be sanitized.</p>
 </blockquote>
 <h3 id="reference-a-slot-in-a-adaptive-card">Reference a slot in a adaptive card<a class="headerlink" href="#reference-a-slot-in-a-adaptive-card" title="Permanent link">&para;</a></h3>
 <p>Since it is not possible to create custom functions with adaptive cards templates right now, slots values can only be accessed using the builtin <a href="https://docs.microsoft.com/azure/bot-service/adaptive-expressions/adaptive-expressions-prebuilt-functions?view=azure-bot-service-4.0#jPath"><code>jPath</code> function</a> and the following syntax:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="nt">&quot;items&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">    </span><span class="p">{</span>
-<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">        </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;TextBlock&quot;</span><span class="p">,</span>
-<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">        </span><span class="nt">&quot;wrap&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
-<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">        </span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;${string(jPath($data, concat(&#39;.&#39;,$root.slots[&#39;&lt;your_slot_name&gt;&#39;]))[0])}&quot;</span><span class="err">&quot;</span>
-<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="err">    }</span>
-<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="err">],</span>
-</code></pre></div>
-<p>To reference a field without a slot, just use its name:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="nt">&quot;items&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">    </span><span class="p">{</span>
 <a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="w">        </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;TextBlock&quot;</span><span class="p">,</span>
 <a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="w">        </span><span class="nt">&quot;wrap&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
-<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="w">        </span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;${Title}&quot;</span><span class="err">&quot;</span>
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="w">        </span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;${string(jPath($data, concat(&#39;.&#39;,$root.slots[&#39;&lt;your_slot_name&gt;&#39;]))[0])}&quot;</span><span class="err">&quot;</span>
 <a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="err">    }</span>
 <a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="err">],</span>
+</code></pre></div>
+<p>To reference a field without a slot, just use its name:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="nt">&quot;items&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="w">    </span><span class="p">{</span>
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="w">        </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;TextBlock&quot;</span><span class="p">,</span>
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="w">        </span><span class="nt">&quot;wrap&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="w">        </span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;${Title}&quot;</span><span class="err">&quot;</span>
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="err">    }</span>
+<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="err">],</span>
 </code></pre></div>
 <h4 id="explanation">Explanation<a class="headerlink" href="#explanation" title="Permanent link">&para;</a></h4>
 <ul>

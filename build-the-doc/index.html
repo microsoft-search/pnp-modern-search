@@ -918,23 +918,19 @@
 <p>When executing the pip module on Windows you can prefix it with <strong>python -m</strong>.
 For example:</p>
 <p><code>python -m pip install mkdocs-material</code></p>
+<p>The repository includes a pinned set of documentation dependencies in <code>requirements-docs.txt</code>. Using these versions avoids compatibility issues between MkDocs 1.2.2 and newer Jinja2 releases.</p>
 <ul>
 <li><a href="https://www.mkdocs.org/#installation">Install MkDocs</a><ul>
-<li><code>pip install mkdocs==1.2.2</code></li>
-<li><code>pip install markdown-include</code></li>
-</ul>
-</li>
-<li>Install the Material theme<ul>
-<li><code>pip install mkdocs-material==7.2.4</code></li>
+<li><code>python -m pip install -r requirements-docs.txt</code></li>
 </ul>
 </li>
 <li>Serve it up<ul>
-<li><code>mkdocs serve</code></li>
+<li><code>python -m mkdocs serve</code></li>
 <li>Open a browser to http://127.0.0.1:8000/</li>
 </ul>
 </li>
 <li>Deploy<ul>
-<li><code>mkdocs gh-deploy</code> from main branch</li>
+<li><code>python -m mkdocs gh-deploy</code> from main branch</li>
 </ul>
 </li>
 </ul>

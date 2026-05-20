@@ -1,0 +1,1238 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="canonical" href="http://127.0.0.1:8000/scenarios/document-viewer-page/">
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-7.2.4">
+    
+    
+      
+        <title>Document viewer page - PnP Modern Search (v4)</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.f7f47774.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.3f5d1f46.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=:300,400,400i,700%7CUbuntu+Mono&display=fallback">
+        <style>:root{--md-text-font-family:"";--md-code-font-family:"Ubuntu Mono"}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="../../assets/extra.css">
+    
+    
+      
+
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+  
+    
+    <script>function __prefix(e){return new URL("../..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#prerequisites" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="PnP Modern Search (v4)" class="md-header__button md-logo" aria-label="PnP Modern Search (v4)" data-md-component="logo">
+      
+  <img src="../../assets/pnp_logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            PnP Modern Search (v4)
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Document viewer page
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        
+<a href="https://github.com/microsoft-search/pnp-modern-search/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        Getting Started
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../usage/search-results/" class="md-tabs__link">
+        Search Results
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../usage/search-filters/" class="md-tabs__link">
+        Search Filters
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../usage/search-verticals/" class="md-tabs__link">
+        Search Verticals
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../usage/search-box/" class="md-tabs__link">
+        Search Box
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../extensibility/" class="md-tabs__link">
+        Extensibility
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="PnP Modern Search (v4)" class="md-nav__button md-logo" aria-label="PnP Modern Search (v4)" data-md-component="logo">
+      
+  <img src="../../assets/pnp_logo.png" alt="logo">
+
+    </a>
+    PnP Modern Search (v4)
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/microsoft-search/pnp-modern-search/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_1" type="checkbox" id="__nav_1" >
+      
+      <label class="md-nav__link" for="__nav_1">
+        Getting Started
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Getting Started" data-md-level="1">
+        <label class="md-nav__title" for="__nav_1">
+          <span class="md-nav__icon md-icon"></span>
+          Getting Started
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        Introduction
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../installation/" class="md-nav__link">
+        Installation
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        Scenario tutorials
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../create-custom-layouts/" class="md-nav__link">
+        Create custom layouts
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to-contribute/" class="md-nav__link">
+        How to contribute?
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../build-the-doc/" class="md-nav__link">
+        Building documentation
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../v3/" class="md-nav__link">
+        Version 3
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+      
+      <label class="md-nav__link" for="__nav_2">
+        Search Results
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Search Results" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Search Results
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usage/search-results/" class="md-nav__link">
+        Usage
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usage/search-results/data-sources/" class="md-nav__link">
+        Data sources
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usage/search-results/slots/" class="md-nav__link">
+        Slots
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usage/search-results/tokens/" class="md-nav__link">
+        Tokens
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usage/search-results/layouts/" class="md-nav__link">
+        Layouts
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usage/search-results/connections/" class="md-nav__link">
+        Connections
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../extensibility/" class="md-nav__link">
+        Extensibility
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      <label class="md-nav__link" for="__nav_3">
+        Search Filters
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Search Filters" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Search Filters
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usage/search-filters/" class="md-nav__link">
+        Usage
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usage/search-filters/layouts/" class="md-nav__link">
+        Layouts
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
+      
+      <label class="md-nav__link" for="__nav_4">
+        Search Verticals
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Search Verticals" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Search Verticals
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usage/search-verticals/" class="md-nav__link">
+        Usage
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
+      
+      <label class="md-nav__link" for="__nav_5">
+        Search Box
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Search Box" data-md-level="1">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          Search Box
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usage/search-box/" class="md-nav__link">
+        Usage
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6" type="checkbox" id="__nav_6" >
+      
+      <label class="md-nav__link" for="__nav_6">
+        Extensibility
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Extensibility" data-md-level="1">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          Extensibility
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../extensibility/" class="md-nav__link">
+        Extensibility
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../extensibility/templating/" class="md-nav__link">
+        Templating
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../extensibility/custom_layout/" class="md-nav__link">
+        Custom layout
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../extensibility/custom_web_component/" class="md-nav__link">
+        Custom web component
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../extensibility/custom_suggestions_provider/" class="md-nav__link">
+        Custom suggestions provider
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../extensibility/handlebars_customizations/" class="md-nav__link">
+        Custom Handlebars customizations
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../extensibility/adaptivecards_customizations/" class="md-nav__link">
+        Custom event handlers for adaptive cards actions
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../extensibility/custom_data_sources/" class="md-nav__link">
+        Custom data sources
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../extensibility/custom_query_modifications/" class="md-nav__link">
+        Custom query modifier
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../extensibility/extensibility_compatibility_matrix/" class="md-nav__link">
+        Compatibility matrix
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    Prerequisites
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-1-create-the-document-viewer-page" class="md-nav__link">
+    Part 1: Create the Document Viewer page
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 1: Create the Document Viewer page">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-copy-the-home-page" class="md-nav__link">
+    Step 1: Copy the Home page
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-clear-the-page" class="md-nav__link">
+    Step 2: Clear the page
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-set-up-the-page-layout" class="md-nav__link">
+    Step 3: Set up the page layout
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4-add-the-advanced-iframe-web-part" class="md-nav__link">
+    Step 4: Add the Advanced IFrame web part
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-5-add-the-pnp-search-results-web-part" class="md-nav__link">
+    Step 5: Add the PnP Search Results web part
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-6-publish-the-document-viewer-page" class="md-nav__link">
+    Step 6: Publish the Document Viewer page
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-2-add-the-view-icon-column-to-the-search-results-page" class="md-nav__link">
+    Part 2: Add the view icon column to the Search Results page
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 2: Add the view icon column to the Search Results page">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-7-add-the-required-managed-properties" class="md-nav__link">
+    Step 7: Add the required managed properties
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-8-add-the-view-icon-column" class="md-nav__link">
+    Step 8: Add the view icon column
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-3-publish-and-test" class="md-nav__link">
+    Part 3: Publish and test
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 3: Publish and test">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-9-publish-and-test" class="md-nav__link">
+    Step 9: Publish and test
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/microsoft-search/pnp-modern-search/blob/develop/docs/scenarios/document-viewer-page.md" title="Edit this page" class="md-content__button md-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+                  </a>
+                
+                
+                  <h1>Document viewer page</h1>
+                
+                <div class="admonition note">
+<p class="admonition-title">Note</p>
+</div>
+<p>The PnP Modern Search Web Parts must be deployed to your App Catalog and activated on your site. See the <a href="../../installation/">installation documentation</a> for details.</p>
+<p>This scenario builds a dedicated document viewer page in SharePoint that opens when a user clicks a view icon in a search results list. The viewer page displays the document in an embedded iframe alongside a metadata panel, giving users a rich in-context viewing experience without leaving SharePoint.</p>
+<p><img alt="Search results list showing the view icon column on the right" src="../assets/document-viewer-page/document-viewer-search-results.png" /></p>
+<p><img alt="The finished document viewer page showing a PDF in an iframe with metadata on the right" src="../assets/document-viewer-page/document-viewer-page-result.png" /></p>
+<p>The solution involves two pages:</p>
+<ul>
+<li><strong>Document-Viewer.aspx</strong> — a SharePoint site page hosting the Advanced IFrame web part and a PnP Search Results web part</li>
+<li><strong>Your search results page</strong> — which gets a small view icon column added that links through to the viewer page</li>
+</ul>
+<h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h2>
+<ul>
+<li>The <strong>PnP Modern Search Web Parts</strong> must be deployed to your App Catalog and activated on your site</li>
+<li>The <strong>Advanced IFrame web part</strong> (<a href="https://github.com/pnp/sp-dev-fx-webparts/tree/main/samples/react-advanced-iframe">react-advanced-iframe</a>) by <a href="https://github.com/365knoten">Sven Sieverding (365knoten)</a> must be deployed to your App Catalog</li>
+<li>You need an existing search results page using the <strong>DetailsList</strong> layout. If you haven't set one up yet, follow the <a href="../create-simple-search-page/">Create a simple search page</a> scenario first</li>
+</ul>
+<hr />
+<h2 id="part-1-create-the-document-viewer-page">Part 1: Create the Document Viewer page<a class="headerlink" href="#part-1-create-the-document-viewer-page" title="Permanent link">&para;</a></h2>
+<h3 id="step-1-copy-the-home-page">Step 1: Copy the Home page<a class="headerlink" href="#step-1-copy-the-home-page" title="Permanent link">&para;</a></h3>
+<p>The viewer page needs to be full width without the standard modern page chrome restricting the content area. The most reliable way to achieve this is to copy your site's Home page, which already has the correct layout, and clear it out.</p>
+<ol>
+<li>Navigate to <strong>Site Contents → Site Pages</strong></li>
+<li>Find your <strong>Home.aspx</strong> page, click the three dots next to it and select <strong>Copy to</strong></li>
+<li>Copy it to the same <strong>Site Pages</strong> library</li>
+<li>Rename the copied page to <code>Document-Viewer.aspx</code></li>
+</ol>
+<h3 id="step-2-clear-the-page">Step 2: Clear the page<a class="headerlink" href="#step-2-clear-the-page" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Open <code>Document-Viewer.aspx</code> and click <strong>Edit</strong></li>
+<li>Delete all existing web parts and content from the page, leaving a clean blank canvas</li>
+<li>Do not publish yet</li>
+</ol>
+<h3 id="step-3-set-up-the-page-layout">Step 3: Set up the page layout<a class="headerlink" href="#step-3-set-up-the-page-layout" title="Permanent link">&para;</a></h3>
+<p>The viewer page uses two sections:</p>
+<ol>
+<li>A <strong>single column section</strong> for the main content area — this is where the Advanced IFrame web part will go</li>
+<li>A <strong>Vertical section</strong> on the right hand side that spans the full page height — this is where the PnP Search Results web part will go</li>
+</ol>
+<p>To set this up:</p>
+<ol>
+<li>Add a <strong>single column</strong> section to the page</li>
+<li>Enable the <strong>Vertical section</strong> on the right by clicking <strong>+</strong> on the right edge of the page and selecting <strong>Add a vertical section</strong></li>
+</ol>
+<h3 id="step-4-add-the-advanced-iframe-web-part">Step 4: Add the Advanced IFrame web part<a class="headerlink" href="#step-4-add-the-advanced-iframe-web-part" title="Permanent link">&para;</a></h3>
+<p>In the <strong>single column section</strong>, add the <strong>Advanced IFrame</strong> web part and in the web part properties set the <strong>IFrame URL</strong> to:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>{{query.ServerRedirectedEmbedURL}}
+</code></pre></div>
+<p>This tells the web part to read the <code>ServerRedirectedEmbedURL</code> value from the page query string and load it in the iframe — so each time the page is opened with a different document URL, the correct file is displayed.</p>
+<h3 id="step-5-add-the-pnp-search-results-web-part">Step 5: Add the PnP Search Results web part<a class="headerlink" href="#step-5-add-the-pnp-search-results-web-part" title="Permanent link">&para;</a></h3>
+<p>In the <strong>vertical section on the right</strong>, add a <strong>PnP Search Results</strong> web part and configure it as follows.</p>
+<p><strong>Data Source — Query template:</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>NormUniqueID:&quot;{QueryString.NormUniqueID}&quot;
+</code></pre></div>
+<p>This queries for the specific document whose <code>NormUniqueID</code> matches the value passed in the query string, so the metadata panel always shows details for the document currently open in the iframe.</p>
+<p><strong>Data Source — Selected properties:</strong></p>
+<p>Ensure the following managed properties are included in addition to the default managed propeties included by default when adding the web part.</p>
+<ul>
+<li><code>EditorOWSUSER</code></li>
+<li><code>Filename</code></li>
+<li><code>LastModifiedTimeForRetention</code></li>
+</ul>
+<p><strong>Layouts — Layout type:</strong></p>
+<p>Select <strong>Custom</strong> and paste the following as the inline template:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">&lt;</span><span class="nt">content</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;data-content&quot;</span><span class="p">&gt;</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    {{#each data.items as |item|}}
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>        <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;docMetadata&quot;</span><span class="p">&gt;</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>            <span class="p">&lt;</span><span class="nt">div</span> <span class="na">style</span><span class="o">=</span><span class="s">&quot;display: flex; flex-wrap: wrap; gap: 0; margin-top: 16px; border-collapse: collapse; width: 100%;&quot;</span><span class="p">&gt;</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>                <span class="cm">&lt;!-- Header Row --&gt;</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>                <span class="p">&lt;</span><span class="nt">div</span> <span class="na">style</span><span class="o">=</span><span class="s">&quot;display: flex; flex-direction: row; flex: 1 1 100%; padding: 8px 9px; border-bottom: none; align-items: center; font-weight: bold; color: black; text-align: left;&quot;</span><span class="p">&gt;</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>                    <span class="p">&lt;</span><span class="nt">pnp-iconfile</span> <span class="na">data-extension</span><span class="o">=</span><span class="s">&quot;{{slot item @root.slots.FileType}}&quot;</span> <span class="na">data-is-container</span><span class="o">=</span><span class="s">&quot;false&quot;</span> <span class="na">data-size</span><span class="o">=</span><span class="s">&quot;32&quot;</span> <span class="na">style</span><span class="o">=</span><span class="s">&quot;margin-right: 5px;&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">pnp-iconfile</span><span class="p">&gt;</span> {{slot item @root.slots.Filename}}
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>                <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>                <span class="cm">&lt;!-- Data Rows --&gt;</span>
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>                <span class="p">&lt;</span><span class="nt">div</span> <span class="na">style</span><span class="o">=</span><span class="s">&quot;display: flex; flex-direction: row; flex: 1 1 100%; padding: 4px 9px; border-bottom: 1px solid #ddd; align-items: center;&quot;</span><span class="p">&gt;</span>
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>                    <span class="p">&lt;</span><span class="nt">span</span> <span class="na">style</span><span class="o">=</span><span class="s">&quot;font-weight: bold; padding-right: 15px; flex: 0 0 110px; text-align: left; word-wrap: break-word; white-space: normal;&quot;</span><span class="p">&gt;</span>Document Link<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>                    <span class="p">&lt;</span><span class="nt">span</span> <span class="na">style</span><span class="o">=</span><span class="s">&quot;flex: 1; color: #333; text-align: left;&quot;</span><span class="p">&gt;&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;{{slot item @root.slots.PreviewUrl}}&quot;</span> <span class="na">target</span><span class="o">=</span><span class="s">&quot;_blank&quot;</span><span class="p">&gt;</span>{{slot item @root.slots.Filename}}<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>                <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>                <span class="p">&lt;</span><span class="nt">div</span> <span class="na">style</span><span class="o">=</span><span class="s">&quot;display: flex; flex-direction: row; flex: 1 1 100%; padding: 4px 9px; border-bottom: 1px solid #ddd; align-items: center;&quot;</span><span class="p">&gt;</span>
+<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>                    <span class="p">&lt;</span><span class="nt">span</span> <span class="na">style</span><span class="o">=</span><span class="s">&quot;font-weight: bold; padding-right: 15px; flex: 0 0 110px; text-align: left; word-wrap: break-word; white-space: normal;&quot;</span><span class="p">&gt;</span>Site<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+<a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>                    <span class="p">&lt;</span><span class="nt">span</span> <span class="na">style</span><span class="o">=</span><span class="s">&quot;flex: 1; color: #333; text-align: left;&quot;</span><span class="p">&gt;&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;{{slot item @root.slots.SPWebURL}}&quot;</span> <span class="na">target</span><span class="o">=</span><span class="s">&quot;_blank&quot;</span> <span class="na">data-interception</span><span class="o">=</span><span class="s">&quot;off&quot;</span><span class="p">&gt;</span>{{slot item @root.slots.SiteTitle}}<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+<a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a>                <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a>            <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a>        <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a>
+<a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a>        <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;docMetadata&quot;</span><span class="p">&gt;</span>
+<a id="__codelineno-2-25" name="__codelineno-2-25" href="#__codelineno-2-25"></a>            <span class="p">&lt;</span><span class="nt">div</span> <span class="na">style</span><span class="o">=</span><span class="s">&quot;display: flex; flex-wrap: wrap; gap: 0; margin-top: 16px; border-collapse: collapse; width: 100%;&quot;</span><span class="p">&gt;</span>
+<a id="__codelineno-2-26" name="__codelineno-2-26" href="#__codelineno-2-26"></a>                <span class="cm">&lt;!-- Header Row --&gt;</span>
+<a id="__codelineno-2-27" name="__codelineno-2-27" href="#__codelineno-2-27"></a>                <span class="p">&lt;</span><span class="nt">div</span> <span class="na">style</span><span class="o">=</span><span class="s">&quot;display: flex; flex-direction: row; flex: 1 1 100%; padding: 8px 9px; border-bottom: none; align-items: center; font-weight: bold; color: black; text-align: left;&quot;</span><span class="p">&gt;</span>
+<a id="__codelineno-2-28" name="__codelineno-2-28" href="#__codelineno-2-28"></a>                    Other File Metadata
+<a id="__codelineno-2-29" name="__codelineno-2-29" href="#__codelineno-2-29"></a>                <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<a id="__codelineno-2-30" name="__codelineno-2-30" href="#__codelineno-2-30"></a>
+<a id="__codelineno-2-31" name="__codelineno-2-31" href="#__codelineno-2-31"></a>                <span class="cm">&lt;!-- Data Rows --&gt;</span>
+<a id="__codelineno-2-32" name="__codelineno-2-32" href="#__codelineno-2-32"></a>                <span class="p">&lt;</span><span class="nt">div</span> <span class="na">style</span><span class="o">=</span><span class="s">&quot;display: flex; flex-direction: row; flex: 1 1 100%; padding: 4px 9px; border-bottom: 1px solid #ddd; align-items: center;&quot;</span><span class="p">&gt;</span>
+<a id="__codelineno-2-33" name="__codelineno-2-33" href="#__codelineno-2-33"></a>                    <span class="p">&lt;</span><span class="nt">span</span> <span class="na">style</span><span class="o">=</span><span class="s">&quot;font-weight: bold; padding-right: 15px; flex: 0 0 110px; text-align: left; word-wrap: break-word; white-space: normal;&quot;</span><span class="p">&gt;</span>Filename<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+<a id="__codelineno-2-34" name="__codelineno-2-34" href="#__codelineno-2-34"></a>                    <span class="p">&lt;</span><span class="nt">span</span> <span class="na">style</span><span class="o">=</span><span class="s">&quot;flex: 1; color: #333; text-align: left;&quot;</span><span class="p">&gt;</span>{{#if (slot item @root.slots.Filename)}}{{slot item @root.slots.Filename}}{{else}}<span class="p">&lt;</span><span class="nt">span</span> <span class="na">style</span><span class="o">=</span><span class="s">&quot;color: #999;&quot;</span><span class="p">&gt;</span>No Filename detected.<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>{{/if}}<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+<a id="__codelineno-2-35" name="__codelineno-2-35" href="#__codelineno-2-35"></a>                <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<a id="__codelineno-2-36" name="__codelineno-2-36" href="#__codelineno-2-36"></a>                <span class="p">&lt;</span><span class="nt">div</span> <span class="na">style</span><span class="o">=</span><span class="s">&quot;display: flex; flex-direction: row; flex: 1 1 100%; padding: 4px 9px; border-bottom: 1px solid #ddd; align-items: center;&quot;</span><span class="p">&gt;</span>
+<a id="__codelineno-2-37" name="__codelineno-2-37" href="#__codelineno-2-37"></a>                    <span class="p">&lt;</span><span class="nt">span</span> <span class="na">style</span><span class="o">=</span><span class="s">&quot;font-weight: bold; padding-right: 15px; flex: 0 0 110px; text-align: left; word-wrap: break-word; white-space: normal;&quot;</span><span class="p">&gt;</span>Document Title<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+<a id="__codelineno-2-38" name="__codelineno-2-38" href="#__codelineno-2-38"></a>                    <span class="p">&lt;</span><span class="nt">span</span> <span class="na">style</span><span class="o">=</span><span class="s">&quot;flex: 1; color: #333; text-align: left;&quot;</span><span class="p">&gt;</span>{{slot item @root.slots.Title}}<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+<a id="__codelineno-2-39" name="__codelineno-2-39" href="#__codelineno-2-39"></a>                <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<a id="__codelineno-2-40" name="__codelineno-2-40" href="#__codelineno-2-40"></a>                <span class="p">&lt;</span><span class="nt">div</span> <span class="na">style</span><span class="o">=</span><span class="s">&quot;display: flex; flex-direction: row; flex: 1 1 100%; padding: 4px 9px; border-bottom: 1px solid #ddd; align-items: center;&quot;</span><span class="p">&gt;</span>
+<a id="__codelineno-2-41" name="__codelineno-2-41" href="#__codelineno-2-41"></a>                    <span class="p">&lt;</span><span class="nt">span</span> <span class="na">style</span><span class="o">=</span><span class="s">&quot;font-weight: bold; padding-right: 15px; flex: 0 0 110px; text-align: left; word-wrap: break-word; white-space: normal;&quot;</span><span class="p">&gt;</span>Search Summary<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+<a id="__codelineno-2-42" name="__codelineno-2-42" href="#__codelineno-2-42"></a>                    <span class="p">&lt;</span><span class="nt">span</span> <span class="na">style</span><span class="o">=</span><span class="s">&quot;flex: 1; color: #333; text-align: left;&quot;</span><span class="p">&gt;</span>{{#if (slot item @root.slots.Summary)}}{{getSummary (slot item @root.slots.Summary)}}{{else}}<span class="p">&lt;</span><span class="nt">span</span> <span class="na">style</span><span class="o">=</span><span class="s">&quot;color: #999;&quot;</span><span class="p">&gt;</span>No Summary detected.<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>{{/if}}<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+<a id="__codelineno-2-43" name="__codelineno-2-43" href="#__codelineno-2-43"></a>                <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<a id="__codelineno-2-44" name="__codelineno-2-44" href="#__codelineno-2-44"></a>                <span class="p">&lt;</span><span class="nt">div</span> <span class="na">style</span><span class="o">=</span><span class="s">&quot;display: flex; flex-direction: row; flex: 1 1 100%; padding: 4px 9px; border-bottom: 1px solid #ddd; align-items: center;&quot;</span><span class="p">&gt;</span>
+<a id="__codelineno-2-45" name="__codelineno-2-45" href="#__codelineno-2-45"></a>                    <span class="p">&lt;</span><span class="nt">span</span> <span class="na">style</span><span class="o">=</span><span class="s">&quot;font-weight: bold; padding-right: 15px; flex: 0 0 110px; text-align: left; word-wrap: break-word; white-space: normal;&quot;</span><span class="p">&gt;</span>Created By<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+<a id="__codelineno-2-46" name="__codelineno-2-46" href="#__codelineno-2-46"></a>                    <span class="p">&lt;</span><span class="nt">span</span> <span class="na">style</span><span class="o">=</span><span class="s">&quot;flex: 1; color: #333; text-align: left;&quot;</span><span class="p">&gt;</span>{{#with (split (slot item @root.slots.Author) &#39;|&#39;) as |values|}}{{values.[1]}}{{/with}}<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+<a id="__codelineno-2-47" name="__codelineno-2-47" href="#__codelineno-2-47"></a>                <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<a id="__codelineno-2-48" name="__codelineno-2-48" href="#__codelineno-2-48"></a>                <span class="p">&lt;</span><span class="nt">div</span> <span class="na">style</span><span class="o">=</span><span class="s">&quot;display: flex; flex-direction: row; flex: 1 1 100%; padding: 4px 9px; border-bottom: 1px solid #ddd; align-items: center;&quot;</span><span class="p">&gt;</span>
+<a id="__codelineno-2-49" name="__codelineno-2-49" href="#__codelineno-2-49"></a>                    <span class="p">&lt;</span><span class="nt">span</span> <span class="na">style</span><span class="o">=</span><span class="s">&quot;font-weight: bold; padding-right: 15px; flex: 0 0 110px; text-align: left; word-wrap: break-word; white-space: normal;&quot;</span><span class="p">&gt;</span>Created Date<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+<a id="__codelineno-2-50" name="__codelineno-2-50" href="#__codelineno-2-50"></a>                    <span class="p">&lt;</span><span class="nt">span</span> <span class="na">style</span><span class="o">=</span><span class="s">&quot;flex: 1; color: #333; text-align: left;&quot;</span><span class="p">&gt;</span>{{getDate (slot item @root.slots.Date) &quot;LL&quot;}}<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+<a id="__codelineno-2-51" name="__codelineno-2-51" href="#__codelineno-2-51"></a>                <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<a id="__codelineno-2-52" name="__codelineno-2-52" href="#__codelineno-2-52"></a>                <span class="p">&lt;</span><span class="nt">div</span> <span class="na">style</span><span class="o">=</span><span class="s">&quot;display: flex; flex-direction: row; flex: 1 1 100%; padding: 4px 9px; border-bottom: 1px solid #ddd; align-items: center;&quot;</span><span class="p">&gt;</span>
+<a id="__codelineno-2-53" name="__codelineno-2-53" href="#__codelineno-2-53"></a>                    <span class="p">&lt;</span><span class="nt">span</span> <span class="na">style</span><span class="o">=</span><span class="s">&quot;font-weight: bold; padding-right: 15px; flex: 0 0 110px; text-align: left; word-wrap: break-word; white-space: normal;&quot;</span><span class="p">&gt;</span>Modified By<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+<a id="__codelineno-2-54" name="__codelineno-2-54" href="#__codelineno-2-54"></a>                    <span class="p">&lt;</span><span class="nt">span</span> <span class="na">style</span><span class="o">=</span><span class="s">&quot;flex: 1; color: #333; text-align: left;&quot;</span><span class="p">&gt;</span>{{#with (split (slot item @root.slots.Editor) &#39;|&#39;) as |values|}}{{values.[1]}}{{/with}}<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+<a id="__codelineno-2-55" name="__codelineno-2-55" href="#__codelineno-2-55"></a>                <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<a id="__codelineno-2-56" name="__codelineno-2-56" href="#__codelineno-2-56"></a>                <span class="p">&lt;</span><span class="nt">div</span> <span class="na">style</span><span class="o">=</span><span class="s">&quot;display: flex; flex-direction: row; flex: 1 1 100%; padding: 4px 9px; border-bottom: 1px solid #ddd; align-items: center;&quot;</span><span class="p">&gt;</span>
+<a id="__codelineno-2-57" name="__codelineno-2-57" href="#__codelineno-2-57"></a>                    <span class="p">&lt;</span><span class="nt">span</span> <span class="na">style</span><span class="o">=</span><span class="s">&quot;font-weight: bold; padding-right: 15px; flex: 0 0 110px; text-align: left; word-wrap: break-word; white-space: normal;&quot;</span><span class="p">&gt;</span>Last Modified<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+<a id="__codelineno-2-58" name="__codelineno-2-58" href="#__codelineno-2-58"></a>                    <span class="p">&lt;</span><span class="nt">span</span> <span class="na">style</span><span class="o">=</span><span class="s">&quot;flex: 1; color: #333; text-align: left;&quot;</span><span class="p">&gt;</span>{{getDate (slot item @root.slots.LastModifiedTimeForRetention) &quot;LL&quot;}}<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+<a id="__codelineno-2-59" name="__codelineno-2-59" href="#__codelineno-2-59"></a>                <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<a id="__codelineno-2-60" name="__codelineno-2-60" href="#__codelineno-2-60"></a>            <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<a id="__codelineno-2-61" name="__codelineno-2-61" href="#__codelineno-2-61"></a>        <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<a id="__codelineno-2-62" name="__codelineno-2-62" href="#__codelineno-2-62"></a>
+<a id="__codelineno-2-63" name="__codelineno-2-63" href="#__codelineno-2-63"></a>    {{/each}}
+<a id="__codelineno-2-64" name="__codelineno-2-64" href="#__codelineno-2-64"></a>
+<a id="__codelineno-2-65" name="__codelineno-2-65" href="#__codelineno-2-65"></a><span class="p">&lt;/</span><span class="nt">content</span><span class="p">&gt;</span>
+</code></pre></div>
+<p><strong>Layouts — Template slots:</strong></p>
+<p>Add the following three slots in addition to the standard set:</p>
+<table>
+<thead>
+<tr>
+<th>Slot name</th>
+<th>Slot field</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Filename</code></td>
+<td><code>Filename</code></td>
+</tr>
+<tr>
+<td><code>Editor</code></td>
+<td><code>EditorOWSUSER</code></td>
+</tr>
+<tr>
+<td><code>LastModifiedTimeForRetention</code></td>
+<td><code>LastModifiedTimeForRetention</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="step-6-publish-the-document-viewer-page">Step 6: Publish the Document Viewer page<a class="headerlink" href="#step-6-publish-the-document-viewer-page" title="Permanent link">&para;</a></h3>
+<p>Save and publish <code>Document-Viewer.aspx</code>. Note the full URL of the page — you will need it in Part 2.</p>
+<hr />
+<h2 id="part-2-add-the-view-icon-column-to-the-search-results-page">Part 2: Add the view icon column to the Search Results page<a class="headerlink" href="#part-2-add-the-view-icon-column-to-the-search-results-page" title="Permanent link">&para;</a></h2>
+<h3 id="step-7-add-the-required-managed-properties">Step 7: Add the required managed properties<a class="headerlink" href="#step-7-add-the-required-managed-properties" title="Permanent link">&para;</a></h3>
+<p>On your search results page, edit the <strong>PnP Search Results</strong> web part. Under <strong>SharePoint Search</strong>, find the <strong>Selected properties</strong> field and ensure the following are included in addition to any you already have:</p>
+<ul>
+<li><code>ServerRedirectedEmbedURL</code></li>
+</ul>
+<h3 id="step-8-add-the-view-icon-column">Step 8: Add the view icon column<a class="headerlink" href="#step-8-add-the-view-icon-column" title="Permanent link">&para;</a></h3>
+<p>Under <strong>Layouts → Columns</strong>, add a new column at the end of your existing columns and configure it as follows:</p>
+<ul>
+<li><strong>Column display name:</strong> enter a single space (leaving it visually blank)</li>
+<li><strong>Use Handlebar expression:</strong> checked</li>
+<li><strong>Minimum width:</strong> <code>5</code></li>
+<li><strong>Maximum width:</strong> <code>5</code></li>
+</ul>
+<p>Paste the following as the column value:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="cp">{{</span><span class="m m-Attribute">#if</span> <span class="nv">(eq</span> <span class="nv">FileType</span> <span class="s2">&quot;pdf&quot;</span><span class="nv">)</span><span class="cp">}}</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="x">&lt;a href=&quot;</span><span class="cp">{{</span><span class="nv">replace</span> <span class="nv">@root.context.site.absoluteUrl</span> <span class="nv">@root.context.site.serverRelativeUrl</span> <span class="s1">&#39;&#39;</span><span class="cp">}}{{</span><span class="nv">@root.context.site.serverRelativeUrl</span><span class="cp">}}</span><span class="x">/SitePages/Document-Viewer.aspx?ServerRedirectedEmbedURL=</span><span class="cp">{{</span><span class="nv">encodeURI</span> <span class="nv">DefaultEncodingURL</span><span class="cp">}}</span><span class="x">%23toolbar%3D0&amp;NormUniqueID=</span><span class="cp">{{</span><span class="nv">NormUniqueID</span><span class="cp">}}</span><span class="x">&quot; style=&quot;text-decoration: none&quot; data-interception=&quot;off&quot; target=&quot;_blank&quot;&gt;</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="x">    &lt;pnp-icon data-name=&quot;EntryView&quot; aria-hidden=&quot;true&quot;&gt;&lt;/pnp-icon&gt;</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="x">&lt;/a&gt;</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="cp">{{</span><span class="nv">else</span><span class="cp">}}</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="x">&lt;a href=&quot;</span><span class="cp">{{</span><span class="nv">replace</span> <span class="nv">@root.context.site.absoluteUrl</span> <span class="nv">@root.context.site.serverRelativeUrl</span> <span class="s1">&#39;&#39;</span><span class="cp">}}{{</span><span class="nv">@root.context.site.serverRelativeUrl</span><span class="cp">}}</span><span class="x">/SitePages/Document-Viewer.aspx?ServerRedirectedEmbedURL=</span><span class="cp">{{</span><span class="nv">encodeURI</span> <span class="nv">ServerRedirectedEmbedURL</span><span class="cp">}}</span><span class="x">&amp;NormUniqueID=</span><span class="cp">{{</span><span class="nv">NormUniqueID</span><span class="cp">}}</span><span class="x">&quot; style=&quot;text-decoration: none&quot; data-interception=&quot;off&quot; target=&quot;_blank&quot;&gt;</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="x">    &lt;pnp-icon data-name=&quot;EntryView&quot; aria-hidden=&quot;true&quot;&gt;&lt;/pnp-icon&gt;</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="x">&lt;/a&gt;</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="cp">{{</span><span class="m m-Attribute">/if</span><span class="cp">}}</span>
+</code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>The template handles PDFs and non-PDFs differently. For PDFs it uses <code>DefaultEncodingURL</code> with <code>%23toolbar%3D0</code> appended to hide the browser PDF toolbar in the iframe. For all other file types it uses <code>ServerRedirectedEmbedURL</code> which provides the Office Online viewer URL.</p>
+</div>
+<p><img alt="Search results list showing the view icon column on the right" src="../assets/document-viewer-page/document-viewer-search-results.png" /></p>
+<hr />
+<h2 id="part-3-publish-and-test">Part 3: Publish and test<a class="headerlink" href="#part-3-publish-and-test" title="Permanent link">&para;</a></h2>
+<h3 id="step-9-publish-and-test">Step 9: Publish and test<a class="headerlink" href="#step-9-publish-and-test" title="Permanent link">&para;</a></h3>
+<p>Save and publish your search results page. Each result row will show the view icon. Click it and verify that:</p>
+<ul>
+<li><code>Document-Viewer.aspx</code> opens in a new tab</li>
+<li>The document loads in the iframe on the left</li>
+<li>The metadata panel on the right shows the correct details for that document</li>
+</ul>
+<p><img alt="The document viewer page open with a PDF in the iframe and metadata on the right" src="../assets/document-viewer-page/document-viewer-page-result.png" /></p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>If the iframe shows blank, check that <code>ServerRedirectedEmbedURL</code> is included in the <strong>Selected Properties</strong> of your search results web part. If the metadata panel shows blank, check that <code>NormUniqueID</code> is being passed correctly in the URL and that the PnP Search Results web part on the viewer page is configured to read from the query string.</p>
+</div>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+        
+      </main>
+      
+        
+<footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+        
+      </div>
+      
+  <div class="md-footer-social">
+    
+      
+      
+        
+        
+      
+      <a href="https://twitter.com/m365pnp" target="_blank" rel="noopener" title="twitter.com" class="md-footer-social__link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+      </a>
+    
+      
+      
+        
+        
+      
+      <a href="https://microsoft-search.github.io/pnp-modern-search/" target="_blank" rel="noopener" title="microsoft-search.github.io" class="md-footer-social__link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+      </a>
+    
+  </div>
+
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "instant"], "search": "../../assets/javascripts/workers/search.709b4209.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.febc23d1.min.js"></script>
+      
+    
+  </body>
+</html>
