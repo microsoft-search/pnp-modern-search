@@ -2352,10 +2352,13 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 dataContext.pageNumber = 1;
                 this.currentPageNumber = 1;
                 // Clear any stale `page` query param so the URL stays in sync with the reset.
-                // Use the native pushState so this does not trigger a duplicate render().
-                const cleanedUrl = UrlHelper.removeQueryStringParam('page', globalThis.location.href);
-                if (cleanedUrl !== globalThis.location.href) {
-                    History.prototype.pushState.call(globalThis.history, {}, '', cleanedUrl);
+                // Use the URL API (preserves the hash, unlike UrlHelper.removeQueryStringParam which
+                // drops it when no other query params remain) and the native pushState so this does
+                // not trigger a duplicate render().
+                const currentUrl = new URL(globalThis.location.href);
+                if (currentUrl.searchParams.has('page')) {
+                    currentUrl.searchParams.delete('page');
+                    History.prototype.pushState.call(globalThis.history, {}, '', currentUrl.toString());
                 }
             } else {
                 // Classic page navigation with query string (ex: ?page=2)
