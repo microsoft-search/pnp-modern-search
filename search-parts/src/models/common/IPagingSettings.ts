@@ -34,4 +34,9 @@ export interface IPagingSettings {
      * Flag indicating if the data source use @odata.nextLink to handle server-side paging
      */
     useNextLinks: boolean;
+
+    /**
+     * Flag indicating if the page number should be added in the query string for deep linking and browser navigation
+     */
+    enableQueryString: boolean;
 }

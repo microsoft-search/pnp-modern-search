@@ -22,6 +22,7 @@ define([], function () {
                 HideNavigationFieldName: "Skrýt navigační tlačítka (předchozí stránka, další stránka)",
                 HideFirstLastPagesFieldName: "Skrýt první/poslední navigační tlačítka",
                 HideDisabledFieldName: "Skrýt navigační tlačítka (předchozí, další, první, poslední), pokud jsou zakázána.",
+                EnableQueryStringFieldName: "Povolit číslo stránky v URL",
                 TemplateSlots: {
                     GroupName: "Sloty rozvržení",
                     ConfigureSlotsLabel: "Upravit sloty rozvržení pro tento datový zdroj",

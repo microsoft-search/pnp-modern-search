@@ -22,6 +22,7 @@ define([], function () {
                 HideNavigationFieldName: "Dölj navigeringsval (föregående sida, nästa sida)",
                 HideFirstLastPagesFieldName: "Dölj första/sista navigeringsknapparna",
                 HideDisabledFieldName: "Dölj navigeringsval (föregående, nästa, första, sista) om de är inaktiverade",
+                EnableQueryStringFieldName: "Aktivera sidnummer i URL",
                 TemplateSlots: {
                     GroupName: "Layout",
                     ConfigureSlotsLabel: "Redigera layout för den här datakällan",

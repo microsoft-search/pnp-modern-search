@@ -22,6 +22,7 @@ define([], function () {
                 HideNavigationFieldName: "Hide navigation buttons (prev page, next page)",
                 HideFirstLastPagesFieldName: "Hide first/last navigation buttons",
                 HideDisabledFieldName: "Hide navigation buttons (prev, next, first, last) if they are disabled.",
+                EnableQueryStringFieldName: "Enable page number in query string",
                 TemplateSlots: {
                     GroupName: "Layout slots",
                     ConfigureSlotsLabel: "Edit layout slots for this data source",

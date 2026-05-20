@@ -22,6 +22,7 @@ define([], function () {
                 HideNavigationFieldName: "Piilota siirtymäpainikkeet (edellinen sivu, seuraava sivu)",
                 HideFirstLastPagesFieldName: "Piilota ensimmäinen/viimeinen siirtymäpainikkeet",
                 HideDisabledFieldName: "Piilota siirtymäpainikkeet (edellinen, seuraava, ensimmäinen, viimeinen) jos ne eivät ole käytössä.",
+                EnableQueryStringFieldName: "Ota sivunumero käyttöön URL-osoitteessa",
                 TemplateSlots: {
                     GroupName: "Muotoilumääreet (slots)",
                     ConfigureSlotsLabel: "Muokkaa muotoilumääreitä tälle sisältölähteelle",

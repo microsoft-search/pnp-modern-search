@@ -22,6 +22,7 @@ define([], function () {
                 HideNavigationFieldName: "Esconder botões de navegação (próxima página, página anterior)",
                 HideFirstLastPagesFieldName: "Esconder botões de navegação primeiro/último",
                 HideDisabledFieldName: "Esconder botões de navegação (anterior, próximo, primeiro, último) de eles estiverem desativados.",
+                EnableQueryStringFieldName: "Ativar número da página na URL",
                 TemplateSlots: {
                     GroupName: "Slots do layout",
                     ConfigureSlotsLabel: "Editar slots do layout para esta fonte de dados",

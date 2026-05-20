@@ -21,6 +21,7 @@ declare interface ISearchResultsWebPartStrings {
             HideNavigationFieldName: string;
             HideFirstLastPagesFieldName: string;
             HideDisabledFieldName: string;
+            EnableQueryStringFieldName: string;
             TemplateSlots: {
                 GroupName: string;
                 ConfigureSlotsLabel: string;

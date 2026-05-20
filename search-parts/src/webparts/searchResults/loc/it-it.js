@@ -22,6 +22,7 @@ define([], function () {
                 HideNavigationFieldName: "Nascondi pulsanti di navigazione (pagina precedente, pagina successiva)",
                 HideFirstLastPagesFieldName: "Nascondi pulsanti di navigazione prima/ultima pagina",
                 HideDisabledFieldName: "Nascondi pulsanti di navigazione (precedente, successiva, prima, ultima) se disabilitati.",
+                EnableQueryStringFieldName: "Attiva il numero di pagina nell'URL",
                 TemplateSlots: {
                     GroupName: "Slot di layout",
                     ConfigureSlotsLabel: "Modifica slot di layout per questa fonte di dati",

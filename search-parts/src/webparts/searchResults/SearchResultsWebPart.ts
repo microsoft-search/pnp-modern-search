@@ -233,6 +233,15 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
      */
     private _pagingEventHandler: (ev: CustomEvent) => void = null;
     private _sortingEventHandler: (ev: CustomEvent) => void = null;
+    private _popStateHandler: () => void = null;
+
+    /**
+     * Tracks whether the initial `?page=N` query string parameter has already been
+     * applied to `currentPageNumber`. Used by `getDataContext()` to honor deep-links
+     * on the first render and switch to URL-write mode thereafter, without relying
+     * on `_lastInputQueryText` (which can legitimately stay `undefined`).
+     */
+    private _hasInitializedPagingFromQueryString = false;
 
     /**
      * The available connections as property pane group
@@ -601,6 +610,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         this._bindHashChange();
         this._handleQueryStringChange();
+        this._handlePopStatePagination();
 
         // Load extensibility libaries extensions
         await this.loadExtensions(this.properties.extensibilityLibraryConfiguration);
@@ -643,6 +653,10 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     protected onDispose(): void {
         if (this._pushStateCallback) {
             window.history.pushState = this._pushStateCallback;
+        }
+        if (this._popStateHandler) {
+            globalThis.removeEventListener('popstate', this._popStateHandler);
+            this._popStateHandler = null;
         }
         // eslint-disable-next-line @rushstack/pair-react-dom-render-unmount -- paired with render in renderCompleted
         ReactDom.unmountComponentAtNode(this.domElement);
@@ -1186,6 +1200,13 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             // These information comes from the PaginationWebComponent class
             this.currentPageNumber = eventDetails.pageNumber;
 
+            // Bind to query string if enabled. The render() call below will also keep the URL in
+            // sync via getDataContext(), but we update it eagerly here so the address bar reflects
+            // the click without waiting for the next render cycle.
+            if (this.properties.paging.enableQueryString) {
+                this._syncPageQueryString(eventDetails.pageNumber);
+            }
+
             this.render();
 
         };
@@ -1293,9 +1314,14 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 hideDisabled: true,
                 hideFirstLastPages: false,
                 hideNavigation: false,
-                useNextLinks: false
+                useNextLinks: false,
+                enableQueryString: false
             };
         }
+
+        // Backfill `enableQueryString` for web parts saved before this setting existed so
+        // the property pane Toggle binds to a defined boolean instead of `undefined`.
+        this.properties.paging.enableQueryString = this.properties.paging.enableQueryString ?? false;
 
         // Default adaptive cards host config
         if (!this.properties.adaptiveCardsHostConfig) {
@@ -1359,6 +1385,54 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
 
     /**
+     * Synchronizes the `page` query string parameter with the given page number.
+     * Sets `?page=N` for N > 1, removes the parameter for N <= 1 (the default page),
+     * and no-ops when the URL is already in sync.
+     *
+     * Uses the native pushState / replaceState (via History.prototype) so the URL
+     * update does not trigger an extra render() through `_handleQueryStringChange()`'s
+     * monkey-patched pushState.
+     *
+     * Pass `replace = true` when reconciling the URL to match an already-derived page
+     * number (e.g. from `getDataContext()` after a filter / query reset). That avoids
+     * polluting browser history with normalization entries — in particular it prevents
+     * the back-button loop that would otherwise occur for a `?page=1` deep-link
+     * (push-delete → back → push-delete …). The default (push) is intended for explicit
+     * user-initiated page navigation so the back button steps through prior pages.
+     *
+     * @param pageNumber the desired page number (must be a valid positive integer)
+     * @param replace use `replaceState` instead of `pushState`; defaults to false
+     * @returns true when the URL was updated, false when it was already in sync
+     */
+    private _syncPageQueryString(pageNumber: number, replace: boolean = false): boolean {
+        const url = new URL(globalThis.location.href);
+        const actual = url.searchParams.get('page');
+        const desired = pageNumber > 1 ? pageNumber.toString() : null;
+        if (desired === actual) {
+            return false;
+        }
+        if (desired === null) {
+            url.searchParams.delete('page');
+        } else {
+            url.searchParams.set('page', desired);
+        }
+        // Preserve any existing `history.state` (e.g., set by SearchBoxWebPart with
+        // `{ path }`) and the current document title rather than overwriting them with
+        // empty values — `pushState({}, '', url)` would silently drop state other
+        // components on the page may be relying on.
+        const state = globalThis.history.state;
+        const title = globalThis.document.title;
+        if (replace) {
+            History.prototype.replaceState.call(globalThis.history, state, title, url.toString());
+        } else {
+            History.prototype.pushState.call(globalThis.history, state, title, url.toString());
+        }
+        return true;
+    }
+
+
+
+    /**
      * Returns property pane 'Paging' group fields
      */
     private getPagingGroupFields(): IPropertyPaneField<any>[] {
@@ -1402,6 +1476,10 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                     }),
                     PropertyPaneToggle('paging.hideDisabled', {
                         label: webPartStrings.PropertyPane.DataSourcePage.HideDisabledFieldName,
+                        disabled: !this.properties.paging.showPaging
+                    }),
+                    PropertyPaneToggle('paging.enableQueryString', {
+                        label: webPartStrings.PropertyPane.DataSourcePage.EnableQueryStringFieldName,
                         disabled: !this.properties.paging.showPaging
                     })
                 );
@@ -2333,11 +2411,39 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             }
         }
 
-
         // If input query text changes, then we need to reset the paging
         if (!isEqual(dataContext.inputQueryText, this._lastInputQueryText)) {
             dataContext.pageNumber = 1;
             this.currentPageNumber = 1;
+        }
+
+        // Pagination in query string
+        if (this.properties.paging.enableQueryString) {
+            if (!this._hasInitializedPagingFromQueryString) {
+                this._hasInitializedPagingFromQueryString = true;
+                // Initial render: honor `?page=N` from the URL so deep-links work.
+                const pageNumberFromQueryString = Number.parseInt(dataContext.queryStringParameters['page'], 10);
+                if (!Number.isNaN(pageNumberFromQueryString) && pageNumberFromQueryString > 0) {
+                    dataContext.pageNumber = pageNumberFromQueryString;
+                    this.currentPageNumber = pageNumberFromQueryString;
+                }
+            } else {
+                // Any subsequent render: keep the URL aligned with the (possibly just-reset)
+                // page number. Centralizing here covers every reset path — input query text
+                // change, connected filters change, vertical change, etc. — without each one
+                // having to duplicate URL cleanup logic. Use `replaceState` so URL
+                // normalization doesn't add browser history entries (which would otherwise
+                // create a back-button loop for a `?page=1` deep-link, or surface stale
+                // page numbers when the user navigates back across a filter change).
+                const urlChanged = this._syncPageQueryString(dataContext.pageNumber, true);
+                if (urlChanged && dataContext.queryStringParameters) {
+                    if (dataContext.pageNumber > 1) {
+                        dataContext.queryStringParameters['page'] = dataContext.pageNumber.toString();
+                    } else {
+                        delete dataContext.queryStringParameters['page'];
+                    }
+                }
+            }
         }
 
         this._lastInputQueryText = dataContext.inputQueryText;
@@ -2545,6 +2651,31 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         if (source && source.id === ComponentType.PageEnvironment) {
             this.render();
         }
+    }
+
+    /**
+     * Subscribes to browser navigation events to handle pagination with query string (ex: ?page=2).
+     * The listener is always attached so that toggling `paging.enableQueryString` from the property
+     * pane does not require a full page refresh; the toggle is checked inside the handler instead.
+     */
+    private _handlePopStatePagination() {
+        this._popStateHandler = () => {
+            if (!this.properties.paging.enableQueryString) {
+                return;
+            }
+            const queryStringParams = UrlHelper.getQueryStringParams();
+            const pageNumberFromQueryString = Number.parseInt(queryStringParams['page'], 10);
+            // Missing or invalid `page` param (e.g. navigating back to the initial results URL)
+            // should be treated as page 1, otherwise the web part stays on the previous page.
+            const pageNumber = !Number.isNaN(pageNumberFromQueryString) && pageNumberFromQueryString > 0
+                ? pageNumberFromQueryString
+                : 1;
+            if (this.currentPageNumber !== pageNumber) {
+                this.currentPageNumber = pageNumber;
+                this.render();
+            }
+        };
+        globalThis.addEventListener('popstate', this._popStateHandler);
     }
 
     private async initializeQueryModifiers(queryModifierConfiguration: IQueryModifierConfiguration[]): Promise<IQueryModifier[]> {
