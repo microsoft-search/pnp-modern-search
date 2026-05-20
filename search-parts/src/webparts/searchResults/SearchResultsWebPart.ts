@@ -236,6 +236,14 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     private _popStateHandler: () => void = null;
 
     /**
+     * Tracks whether the initial `?page=N` query string parameter has already been
+     * applied to `currentPageNumber`. Used by `getDataContext()` to honor deep-links
+     * on the first render and switch to URL-write mode thereafter, without relying
+     * on `_lastInputQueryText` (which can legitimately stay `undefined`).
+     */
+    private _hasInitializedPagingFromQueryString = false;
+
+    /**
      * The available connections as property pane group
      */
     private propertyPaneConnectionsGroup: IPropertyPaneGroup[] = [];
@@ -1362,13 +1370,22 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
      * Sets `?page=N` for N > 1, removes the parameter for N <= 1 (the default page),
      * and no-ops when the URL is already in sync.
      *
-     * Uses the native pushState (via History.prototype) so an updated URL
-     * does not trigger an extra render() through `_handleQueryStringChange()`'s
-     * monkey-patched pushState — the caller is responsible for the render.
-     * @param pageNumber the desired page number
+     * Uses the native pushState / replaceState (via History.prototype) so the URL
+     * update does not trigger an extra render() through `_handleQueryStringChange()`'s
+     * monkey-patched pushState.
+     *
+     * Pass `replace = true` when reconciling the URL to match an already-derived page
+     * number (e.g. from `getDataContext()` after a filter / query reset). That avoids
+     * polluting browser history with normalization entries — in particular it prevents
+     * the back-button loop that would otherwise occur for a `?page=1` deep-link
+     * (push-delete → back → push-delete …). The default (push) is intended for explicit
+     * user-initiated page navigation so the back button steps through prior pages.
+     *
+     * @param pageNumber the desired page number (must be a valid positive integer)
+     * @param replace use `replaceState` instead of `pushState`; defaults to false
      * @returns true when the URL was updated, false when it was already in sync
      */
-    private _syncPageQueryString(pageNumber: number): boolean {
+    private _syncPageQueryString(pageNumber: number, replace: boolean = false): boolean {
         const url = new URL(globalThis.location.href);
         const actual = url.searchParams.get('page');
         const desired = pageNumber > 1 ? pageNumber.toString() : null;
@@ -1380,7 +1397,11 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         } else {
             url.searchParams.set('page', desired);
         }
-        History.prototype.pushState.call(globalThis.history, {}, '', url.toString());
+        if (replace) {
+            History.prototype.replaceState.call(globalThis.history, {}, '', url.toString());
+        } else {
+            History.prototype.pushState.call(globalThis.history, {}, '', url.toString());
+        }
         return true;
     }
 
@@ -2363,7 +2384,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         // Pagination in query string
         if (this.properties.paging.enableQueryString) {
-            if (this._lastInputQueryText === undefined) {
+            if (!this._hasInitializedPagingFromQueryString) {
+                this._hasInitializedPagingFromQueryString = true;
                 // Initial render: honor `?page=N` from the URL so deep-links work.
                 const pageNumberFromQueryString = Number.parseInt(dataContext.queryStringParameters['page'], 10);
                 if (!Number.isNaN(pageNumberFromQueryString) && pageNumberFromQueryString > 0) {
@@ -2374,8 +2396,11 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 // Any subsequent render: keep the URL aligned with the (possibly just-reset)
                 // page number. Centralizing here covers every reset path — input query text
                 // change, connected filters change, vertical change, etc. — without each one
-                // having to duplicate URL cleanup logic.
-                const urlChanged = this._syncPageQueryString(dataContext.pageNumber);
+                // having to duplicate URL cleanup logic. Use `replaceState` so URL
+                // normalization doesn't add browser history entries (which would otherwise
+                // create a back-button loop for a `?page=1` deep-link, or surface stale
+                // page numbers when the user navigates back across a filter change).
+                const urlChanged = this._syncPageQueryString(dataContext.pageNumber, true);
                 if (urlChanged && dataContext.queryStringParameters) {
                     if (dataContext.pageNumber > 1) {
                         dataContext.queryStringParameters['page'] = dataContext.pageNumber.toString();
