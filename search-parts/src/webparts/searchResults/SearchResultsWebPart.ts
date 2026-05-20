@@ -1181,9 +1181,11 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             // These information comes from the PaginationWebComponent class
             this.currentPageNumber = eventDetails.pageNumber;
 
-            // Bind to query string if enabled
+            // Bind to query string if enabled. The render() call below will also keep the URL in
+            // sync via getDataContext(), but we update it eagerly here so the address bar reflects
+            // the click without waiting for the next render cycle.
             if (this.properties.paging.enableQueryString) {
-                this._updatePageNumberInQueryString(eventDetails.pageNumber);
+                this._syncPageQueryString(eventDetails.pageNumber);
             }
 
             this.render();
@@ -1356,16 +1358,30 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
 
     /**
-     * Updates the page number in the query string
+     * Synchronizes the `page` query string parameter with the given page number.
+     * Sets `?page=N` for N > 1, removes the parameter for N <= 1 (the default page),
+     * and no-ops when the URL is already in sync.
+     *
      * Uses the native pushState (via History.prototype) so an updated URL
      * does not trigger an extra render() through `_handleQueryStringChange()`'s
      * monkey-patched pushState — the caller is responsible for the render.
-     * @param pageNumber
+     * @param pageNumber the desired page number
+     * @returns true when the URL was updated, false when it was already in sync
      */
-    private _updatePageNumberInQueryString(pageNumber: number): void {
+    private _syncPageQueryString(pageNumber: number): boolean {
         const url = new URL(globalThis.location.href);
-        url.searchParams.set('page', pageNumber.toString());
+        const actual = url.searchParams.get('page');
+        const desired = pageNumber > 1 ? pageNumber.toString() : null;
+        if (desired === actual) {
+            return false;
+        }
+        if (desired === null) {
+            url.searchParams.delete('page');
+        } else {
+            url.searchParams.set('page', desired);
+        }
         History.prototype.pushState.call(globalThis.history, {}, '', url.toString());
+        return true;
     }
 
 
@@ -2347,31 +2363,25 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         // Pagination in query string
         if (this.properties.paging.enableQueryString) {
-            // If input query text changes and this is not a browser page refresh
-            if (this._lastInputQueryText != undefined && !isEqual(dataContext.inputQueryText, this._lastInputQueryText)) {
-                dataContext.pageNumber = 1;
-                this.currentPageNumber = 1;
-                // Clear any stale `page` query param so the URL stays in sync with the reset.
-                // Use the URL API (preserves the hash, unlike UrlHelper.removeQueryStringParam which
-                // drops it when no other query params remain) and the native pushState so this does
-                // not trigger a duplicate render().
-                const currentUrl = new URL(globalThis.location.href);
-                if (currentUrl.searchParams.has('page')) {
-                    currentUrl.searchParams.delete('page');
-                    History.prototype.pushState.call(globalThis.history, {}, '', currentUrl.toString());
-                    // Keep dataContext.queryStringParameters in sync so downstream consumers
-                    // (custom data sources, extensibility) don't see the stale `page` value.
-                    if (dataContext.queryStringParameters) {
-                        delete dataContext.queryStringParameters['page'];
-                    }
-                }
-            } else {
-                // Classic page navigation with query string (ex: ?page=2)
-                const queryStringParams = UrlHelper.getQueryStringParams();
-                const pageNumberFromQueryString = Number.parseInt(queryStringParams['page'], 10);
+            if (this._lastInputQueryText === undefined) {
+                // Initial render: honor `?page=N` from the URL so deep-links work.
+                const pageNumberFromQueryString = Number.parseInt(dataContext.queryStringParameters['page'], 10);
                 if (!Number.isNaN(pageNumberFromQueryString) && pageNumberFromQueryString > 0) {
                     dataContext.pageNumber = pageNumberFromQueryString;
                     this.currentPageNumber = pageNumberFromQueryString;
+                }
+            } else {
+                // Any subsequent render: keep the URL aligned with the (possibly just-reset)
+                // page number. Centralizing here covers every reset path — input query text
+                // change, connected filters change, vertical change, etc. — without each one
+                // having to duplicate URL cleanup logic.
+                const urlChanged = this._syncPageQueryString(dataContext.pageNumber);
+                if (urlChanged && dataContext.queryStringParameters) {
+                    if (dataContext.pageNumber > 1) {
+                        dataContext.queryStringParameters['page'] = dataContext.pageNumber.toString();
+                    } else {
+                        delete dataContext.queryStringParameters['page'];
+                    }
                 }
             }
         }
