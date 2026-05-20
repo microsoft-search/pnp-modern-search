@@ -244,6 +244,7 @@ declare interface ICommonStrings {
         StickyHeaderListViewHeight: string;
         EnableDownload: string;
         UseAlternatingBackgroundColor:string;
+        ColumnDescriptionFieldLabel: string;
       };
       Cards: {
         Name: string;

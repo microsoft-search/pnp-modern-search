@@ -1,4 +1,4 @@
-define([], function() {
+define([], function () {
     return {
         General: {
             PlaceHolder: {
@@ -22,6 +22,7 @@ define([], function() {
                 HideNavigationFieldName: "Piilota siirtymäpainikkeet (edellinen sivu, seuraava sivu)",
                 HideFirstLastPagesFieldName: "Piilota ensimmäinen/viimeinen siirtymäpainikkeet",
                 HideDisabledFieldName: "Piilota siirtymäpainikkeet (edellinen, seuraava, ensimmäinen, viimeinen) jos ne eivät ole käytössä.",
+                EnableQueryStringFieldName: "Ota sivunumero käyttöön URL-osoitteessa",
                 TemplateSlots: {
                     GroupName: "Muotoilumääreet (slots)",
                     ConfigureSlotsLabel: "Muokkaa muotoilumääreitä tälle sisältölähteelle",
@@ -38,6 +39,10 @@ define([], function() {
                 LayoutSelectionGroupName: "Tarjolla olevat templaatit",
                 LayoutTemplateOptionsGroupName: "Templaattien vaihtoehdot",
                 CommonOptionsGroupName: "Yleinen",
+                ShowTitle: "Näytä otsikko",
+                TitleLinkTextFieldLabel: "\"Näytä kaikki\" -linkin teksti",
+                TitleLinkUrlFieldLabel: "\"Näytä kaikki\" -linkin URL-osoite",
+                TitleLinkOpenInNewTab: "Avaa uudessa välilehdessä",
                 TemplateUrlFieldLabel: "Käytä ulkoisen templaatin URL-osoitetta",
                 TemplateUrlPlaceholder: "https://myfile.html",
                 ErrorTemplateExtension: "Templaatin pitää olla oikein muotoiltu .txt, .htm tai .html tiedosto",
@@ -99,7 +104,7 @@ define([], function() {
                 UseFiltersFromComponentLabel: "Käytä suodattimia tästä webosasta",
                 UseDynamicFilteringsWebPartLabel: "Yhdistä hakutulosten webosaan",
                 UseDataResultsFromComponentsLabel: "Käytä tuloksia tästä webosasta",
-                UseDataResultsFromComponentsDescription: "Käytä tuloksia valituista kohteista näissä webosissa",                
+                UseDataResultsFromComponentsDescription: "Käytä tuloksia valituista kohteista näissä webosissa",
                 UseSearchVerticalsWebPartLabel: "Yhdistä vertikaalien webosaan",
                 UseSearchVerticalsFromComponentLabel: "Käytä vertikaaleja näistä webosista",
                 LinkToVerticalLabel: "Näytä tulokset vain, kun seuraava vertikaali on valittu",
@@ -115,7 +120,8 @@ define([], function() {
                 SearchQueryTextDefaultValue: "Oletusarvo",
                 SourceDestinationFieldLabel: "Kohdekentän nimi",
                 SourceDestinationFieldDescription: "Tässä webosassa käytettävä kohdekenttä, joka vastaa valittuihin arvoihin",
-                AvailableFieldValuesFromResults: "Kenttä joka sisältää suodatinarvon"
+                AvailableFieldValuesFromResults: "Kenttä joka sisältää suodatinarvon",
+                BidirectionalConnectionWarning: "Yhdistettyä suodatin-webosaa ei ole määritetty yhdistämään takaisin tähän hakutulokset-webosaan. Molemmat webosat on yhdistettävä toisiinsa, jotta suodattimet toimivat oikein."
             },
             InformationPage: {
                 Extensibility: {
@@ -124,13 +130,13 @@ define([], function() {
                 }
             },
             CustomQueryModifier: {
-                  EditQueryModifiersLabel: "Käytettävissä olevien mukautettujen kyselyn muokkaimien määrittäminen",
-                  QueryModifiersLabel: "Mukautetut kyselyn muokkaajat",
-                  QueryModifiersDescription: "Ota käyttöön tai poista käytöstä yksittäisiä mukautettuja kyselyn muokkaajia.",
-                  EnabledPropertyLabel: "Enabled",
-                  ModifierNamePropertyLabel: "Nimi",
-                  ModifierDescriptionPropertyLabel: "Kuvaus",
-                  EndWhenSuccessfullPropertyLabel:"Loppuu, kun onnistuu"              
+                EditQueryModifiersLabel: "Käytettävissä olevien mukautettujen kyselyn muokkaimien määrittäminen",
+                QueryModifiersLabel: "Mukautetut kyselyn muokkaajat",
+                QueryModifiersDescription: "Ota käyttöön tai poista käytöstä yksittäisiä mukautettuja kyselyn muokkaajia.",
+                EnabledPropertyLabel: "Enabled",
+                ModifierNamePropertyLabel: "Nimi",
+                ModifierDescriptionPropertyLabel: "Kuvaus",
+                EndWhenSuccessfullPropertyLabel: "Loppuu, kun onnistuu"
             }
         },
         Styling: {

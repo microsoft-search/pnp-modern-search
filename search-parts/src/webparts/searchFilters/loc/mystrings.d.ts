@@ -16,6 +16,7 @@ declare interface ISearchFiltersWebPartStrings {
             UseDataResultsFromComponentsDescription: string;
             LinkToVerticalLabel: string;
             LinkToVerticalLabelHoverMessage: string;
+            BidirectionalConnectionWarning: string;
         },
         FiltersSettingsPage: {
             SettingsGroupName: string;
@@ -29,6 +30,8 @@ declare interface ISearchFiltersWebPartStrings {
             FilterDisplayName: string;
             FilterTemplate: string;
             FilterExpandByDefault: string;
+            ExpandAllNodesByDefault: string;
+            HideNodesNotInDataSet: string;
             FilterType: string;
             FilterTypeRefiner: string;
             FilterTypeStaticFilter: string;

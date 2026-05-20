@@ -21,6 +21,7 @@ declare interface ISearchResultsWebPartStrings {
             HideNavigationFieldName: string;
             HideFirstLastPagesFieldName: string;
             HideDisabledFieldName: string;
+            EnableQueryStringFieldName: string;
             TemplateSlots: {
                 GroupName: string;
                 ConfigureSlotsLabel: string;
@@ -36,6 +37,10 @@ declare interface ISearchResultsWebPartStrings {
         LayoutPage: {
             LayoutSelectionGroupName: string;
             CommonOptionsGroupName: string;
+            ShowTitle: string;
+            TitleLinkTextFieldLabel: string;
+            TitleLinkUrlFieldLabel: string;
+            TitleLinkOpenInNewTab: string;
             LayoutTemplateOptionsGroupName: string;
             TemplateUrlFieldLabel: string;
             TemplateUrlPlaceholder: string;
@@ -115,6 +120,7 @@ declare interface ISearchResultsWebPartStrings {
             SourceDestinationFieldLabel: string;
             SourceDestinationFieldDescription: string;
             AvailableFieldValuesFromResults: string;
+            BidirectionalConnectionWarning: string;
         },
         InformationPage: {
             Extensibility: {

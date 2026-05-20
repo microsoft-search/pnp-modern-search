@@ -1,4 +1,4 @@
-define([], function() {
+define([], function () {
     return {
         General: {
             PlaceHolder: {
@@ -16,7 +16,8 @@ define([], function() {
                 UseDataResultsFromComponentsLabel: "Käytä tuloksia näistä hakutulosten webosista",
                 UseDataResultsFromComponentsDescription: "Jos yhdistät useamman kuin yhden hakutulosten webosan, suodatinarvot ja tulosmäärät yhdistetään samannimisille suodattimille.",
                 LinkToVerticalLabel: "Näytä suodattimet vain, kun nämä vertikaalit ovat valittuna",
-                LinkToVerticalLabelHoverMessage: "Suodattimet näytetään vain, jos valittu vertikaali on sama kuin tälle webosalle konfiguroitu. Muussa tapauksessa suodatinwebosa on tyhjä (ei vie tilaa eikä näytä kehystä) sivun lukutilassa."
+                LinkToVerticalLabelHoverMessage: "Suodattimet näytetään vain, jos valittu vertikaali on sama kuin tälle webosalle konfiguroitu. Muussa tapauksessa suodatinwebosa on tyhjä (ei vie tilaa eikä näytä kehystä) sivun lukutilassa.",
+                BidirectionalConnectionWarning: "Yhtä tai useampaa yhdistettyä hakutulokset-webosaa ei ole määritetty yhdistämään takaisin tähän suodatin-webosaan. Molemmat webosat on yhdistettävä toisiinsa, jotta suodattimet toimivat oikein."
             },
             FiltersSettingsPage: {
                 SettingsGroupName: "Suodattimien asetukset",
@@ -30,6 +31,8 @@ define([], function() {
                 FilterDisplayName: "Näyttönimi",
                 FilterTemplate: "Templaatti",
                 FilterExpandByDefault: "Näytä oletuksena laajennettuna",
+                ExpandAllNodesByDefault: "Laajenna kaikki solmut oletusarvoisesti",
+                HideNodesNotInDataSet: "Piilota solmut, jotka eivät ole nykyisessä tietojoukossa",
                 FilterType: "Suodatintyyppi",
                 FilterTypeRefiner: "Tämä suodatintemplaatti mukautuu sisältölähteen palauttaman tulosjoukon saatavilla olevien arvojen perusteella, ja rajaa hakutulosta suodattimesta valittujen arvojen perusteella.",
                 FilterTypeStaticFilter: "Tämä suodatintemplaatti on staattinen ja ainoastaan lähettää valitut suodatinarvot yhdistettyyn sisältölähteeseen. Palautunut hakutulos ei vaikuta suodattimen arvoihin.",
@@ -48,7 +51,8 @@ define([], function() {
                     ComboBoxTemplate: "Yhdistelmävalinta",
                     DateIntervalTemplate: "Ajankohtarajaus (esim. viime kuussa)",
                     PeopleTemplate: "Henkilö malli",
-                    TaxonomyPickerTemplate: "Taksonomiavalinta"
+                    TaxonomyPickerTemplate: "Taksonomiavalinta",
+                    HierarchicalFilterTemplate: "Hierarkkinen suodatin"
                 },
                 SortBy: "Lajitteluperuste",
                 SortDirection: "Lajittelun suunta",
@@ -66,13 +70,15 @@ define([], function() {
                 ErrorTemplateResolve: "Templaatin tunnistaminen ei onnistunut. Virhetiedot: '{0}'",
                 FiltersTemplateFieldLabel: "Muokkaa suodatintemplaattia",
                 FiltersTemplatePanelHeader: "Muokkaa suodatintemplaattia"
-            }        },
+            }
+        },
         Styling: {
             StylingOptionsGroupName: "Tyyliasetukset",
             FilterBackgroundColorLabel: "Suodattimen taustav\u00e4ri",
             FilterBorderColorLabel: "Suodattimen reunav\u00e4ri",
             FilterBorderThicknessLabel: "Suodattimen reunan paksuus",
             ResetToDefaultLabel: "Palauta oletustyyli",
-            ResetToDefaultDescription: "Palauta kaikki tyyliasetukset oletusarvoihinsa"        }
+            ResetToDefaultDescription: "Palauta kaikki tyyliasetukset oletusarvoihinsa"
+        }
     }
 });

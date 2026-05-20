@@ -75,8 +75,15 @@ export abstract class BaseWebComponent extends HTMLElement {
                                 props[camelCase(attr)] = JSON.parse(value);
                             } catch (error) {
 
-                                // Date
-                                if (this._moment && this._moment(value).isValid()) {
+                                // Date — only attempt to parse strings that match an ISO 8601
+                                // date / date-time shape. `dayjs` (which replaced `moment`)
+                                // accepts much looser input than the legacy moment behavior
+                                // and returns `isValid() === true` for arbitrary strings that
+                                // merely end in a number (e.g. titles ending in a year such as
+                                // "... 2009"), causing them to be silently coerced to Date.
+                                // See https://github.com/microsoft-search/pnp-modern-search/issues/4775
+                                const isoDatePattern = /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|[+-]\d{2}:?\d{2})?)?$/;
+                                if (isoDatePattern.test(value) && this._moment && this._moment(value).isValid()) {
                                     props[camelCase(attr)] = new Date(Date.parse(value));
                                 } else {
                                     // Return the original value as string

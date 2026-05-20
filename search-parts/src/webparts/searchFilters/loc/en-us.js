@@ -1,4 +1,4 @@
-define([], function() {
+define([], function () {
     return {
         General: {
             PlaceHolder: {
@@ -16,7 +16,8 @@ define([], function() {
                 UseDataResultsFromComponentsLabel: "Use data from these Web Parts",
                 UseDataResultsFromComponentsDescription: "If you connect more than one Web Part, the filter values and counts will be merged for similar filter names.",
                 LinkToVerticalLabel: "Display filters only when the following verticals are selected",
-                LinkToVerticalLabelHoverMessage: "The filters will be displayed only if the selected vertical matches with the ones configured for this Web Part. Otherwise, the Web part will be blank (no margin and no padding) in display mode."
+                LinkToVerticalLabelHoverMessage: "The filters will be displayed only if the selected vertical matches with the ones configured for this Web Part. Otherwise, the Web part will be blank (no margin and no padding) in display mode.",
+                BidirectionalConnectionWarning: "One or more connected search results Web Parts have not been configured to connect back to this filters Web Part. Both web parts must be connected to each other for filters to work correctly."
             },
             FiltersSettingsPage: {
                 SettingsGroupName: "Filters settings",
@@ -30,6 +31,8 @@ define([], function() {
                 FilterDisplayName: "Display name",
                 FilterTemplate: "Template",
                 FilterExpandByDefault: "Expand by default",
+                ExpandAllNodesByDefault: "Expand all nodes by default",
+                HideNodesNotInDataSet: "Hide nodes not in the current data set",
                 // FilterType: "Filter type",
                 FilterTypeRefiner: "This filter template acts as a refiner and receives/sends available/selected values from/to the connected data source.",
                 FilterTypeStaticFilter: "This filter template acts as a static filter and only sends arbitrary selected values to the connected data source. Incoming filter values are not taken into account.",

@@ -1,4 +1,4 @@
-define([], function() {
+define([], function () {
     return {
         General: {
             PlaceHolder: {
@@ -16,7 +16,8 @@ define([], function() {
                 UseDataResultsFromComponentsLabel: "Använd data från dessa webbdelar",
                 UseDataResultsFromComponentsDescription: "Om du ansluter mer än en webbdel slås filtervärden samman till liknande filternamn.",
                 LinkToVerticalLabel: "Visa filter endast när följande vertikaler är valda",
-                LinkToVerticalLabelHoverMessage: "Filtren kommer endast att visas om den valda vertikalen matchar de som konfigurerats för den här webbdelen. Annars kommer webbdelen att vara tom (ingen marginal och ingen utfyllnad) i visningsläge."
+                LinkToVerticalLabelHoverMessage: "Filtren kommer endast att visas om den valda vertikalen matchar de som konfigurerats för den här webbdelen. Annars kommer webbdelen att vara tom (ingen marginal och ingen utfyllnad) i visningsläge.",
+                BidirectionalConnectionWarning: "En eller flera anslutna sökresultatwebbdelar har inte konfigurerats för att ansluta tillbaka till denna filterwebbdel. Båda webbdelarna måste vara anslutna till varandra för att filtren ska fungera korrekt."
             },
             FiltersSettingsPage: {
                 SettingsGroupName: "Filterinställningar",
@@ -30,6 +31,8 @@ define([], function() {
                 FilterDisplayName: "Visningsnamn",
                 FilterTemplate: "Filtermall",
                 FilterExpandByDefault: "Expandera som standard",
+                ExpandAllNodesByDefault: "Expandera alla noder som standard",
+                HideNodesNotInDataSet: "Dölj noder som inte finns i den aktuella datamängden",
                 FilterType: "Filtertyp",
                 FilterTypeRefiner: "Denna filtermall fungerar som en raffinör och tar emot/skickar tillgängliga/valda värden från/till den anslutna datakällan.",
                 FilterTypeStaticFilter: "Denna filtermall fungerar som ett statiskt filter och skickar endast slumpmässigt valda värden till den anslutna datakällan. Inkommande filtervärden beaktas inte.",
@@ -48,7 +51,8 @@ define([], function() {
                     ComboBoxTemplate: "Kombinationsruta",
                     DateIntervalTemplate: "Datumintervall (fasta intervall)",
                     PeopleTemplate: "Person mall",
-                    TaxonomyPickerTemplate: "Taxonomiväljare"
+                    TaxonomyPickerTemplate: "Taxonomiväljare",
+                    HierarchicalFilterTemplate: "Hierarkiskt filter"
                 },
                 SortBy: "Sorteringsordning",
                 SortDirection: "Sorteringsriktning",

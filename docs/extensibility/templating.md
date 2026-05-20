@@ -97,6 +97,26 @@ The following custom helpers are available in addition to the [handlebars-helper
 
 **Example** `{{#compare (dayDiff (getDate Created 'YYYY-MMM-DD' ) (getDate timestamp 'YYYY-MMM-DD' )) "<=" 30 }} <img src='/SiteAssets/New.png' />{{/compare}}`
 
+#### dayjs / moment
+
+**Syntax** `{{dayjs "<format>"}}`, `{{dayjs <date> "<format>"}}`, or `{{dayjs format="<format>"}}` (same for `moment`)
+
+**Description** Format dates using [dayjs](https://day.js.org/docs/en/display/format). The `moment` helper name is kept for backward compatibility. Both names are identical.
+
+When the second positional argument is `"X"` or `"x"` and the first argument is numeric, it is treated as an **input parsing hint** (`"X"` = Unix seconds, `"x"` = Unix milliseconds) rather than an output format. To output Unix seconds/milliseconds from a date value, use the `format` hash argument instead: `{{dayjs someDate format="X"}}`.
+
+- `{{dayjs "X"}}` — current date as Unix seconds
+- `{{dayjs "2026-10-01" "LL"}}` — parse date, format as locale date
+- `{{dayjs someDate "YYYY-MM-DD"}}` — parse date value, custom format
+- `{{dayjs someDate "X"}}` — format date as Unix seconds (non-numeric first arg = output format)
+- `{{dayjs 1714400000 "X"}}` — parse `1714400000` as Unix seconds (numeric first arg = input parsing)
+- `{{dayjs someDate format="X"}}` — format date as Unix seconds (explicit hash format)
+- `{{dayjs format="LL" subtract="7 days"}}` — 7 days ago, locale format
+
+Supported output format tokens include all [dayjs format tokens](https://day.js.org/docs/en/display/format) plus `X` (Unix seconds), `x` (Unix milliseconds), `Do` (ordinal day), `Q` (quarter), `k`/`kk` (hour 1-24), `w`/`ww` (locale week), `W`/`WW` (ISO week), `e` (locale weekday), `E` (ISO weekday), `gg`/`gggg` and `GG`/`GGGG` (week year).
+
+**Example** `{{dayjs "X"}}` returns the current date as a Unix timestamp (seconds).
+
 #### getAttachments
 
 **Syntax** `{{getAttachments}}`
@@ -117,7 +137,7 @@ The following custom helpers are available in addition to the [handlebars-helper
 
 **Syntax** `{{getDate <data_value> "<format>" "<time handling>"}}`
 
-**Description** Format the date with [Moment.js](https://momentjs.com/docs/#/parsing/string-format/) according to the current language. Date in the managed property should be on the form `2018-09-10T06:29:25.0000000Z` for the function to work. `<time handling>` is optional and takes:
+**Description** Format the date with [dayjs](https://day.js.org/docs/en/display/format) (moment.js-compatible) according to the current language. Date in the managed property should be on the form `2018-09-10T06:29:25.0000000Z` for the function to work. `<time handling>` is optional and takes:
 
 - 0 = format to browsers time zone (default)
 - 1 = ignore Z time and handle as browsers local time zone
@@ -222,6 +242,40 @@ The following custom helpers are available in addition to the [handlebars-helper
 **Description** Return the `<property_name>` value for the `item` object. Supports deep property paths.
 
 **Example** `{{slot item "property.subproperty"}}`
+
+#### stringToHex
+
+**Syntax** `{{stringToHex <value>}}`
+
+**Description** Convert a string value to a UTF-8 hexadecimal string. This is useful when you need to generate the encoded filter value used by the Search Filters deep-link format.
+
+**Example** `{{stringToHex "Keogh’s Crisps"}}` returns `4b656f6768e280997320437269737073`.
+
+#### hexToString
+
+**Syntax** `{{hexToString <value>}}`
+
+**Description** Convert a UTF-8 hexadecimal string back to text. The helper also accepts the filter value format used in deep links, including optional surrounding quotes and the `ǂǂ` prefix.
+
+**Example** `{{hexToString '"ǂǂ4b656f6768e280997320437269737073"'}}` returns `Keogh’s Crisps`.
+
+#### Deep Link Example For Search Filters
+
+If you want a value rendered in a custom results template to open a page with a filter already selected, you can build the filter payload yourself.
+
+The deep-link query string parameter is `f_<Search Filters instance ID>`. The filter `value` must contain the UTF-8 hex form of the label, prefixed with `ǂǂ` and wrapped in escaped quotes.
+
+```handlebars
+{{!-- Example for a Search Filters web part whose instance ID is known --}}
+{{!-- Replace the GUID below with the instance ID of your Search Filters web part --}}
+<a
+    href="/sites/contoso/SitePages/Search.aspx?f_4b43307b-8891-42d5-9a62-7bfb83c11de9=%5B%7B%22filterName%22%3A%22RefinableString109%22%2C%22values%22%3A%5B%7B%22name%22%3A%22{{slot item @root.slots.Title}}%22%2C%22value%22%3A%22%5C%22%C7%82%C7%82{{stringToHex (slot item @root.slots.Title)}}%5C%22%22%2C%22operator%22%3A0%2C%22disabled%22%3Afalse%7D%5D%2C%22operator%22%3A%22or%22%7D%5D"
+>
+    {{slot item @root.slots.Title}}
+</a>
+```
+
+In practice, the safest approach is still to select a filter once in the UI, copy the generated URL, and then replace only the `name` and hex-encoded `value` parts in your template.
 
 #### #times
 

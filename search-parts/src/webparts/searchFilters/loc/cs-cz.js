@@ -1,4 +1,4 @@
-define([], function() {
+define([], function () {
     return {
         General: {
             PlaceHolder: {
@@ -16,7 +16,8 @@ define([], function() {
                 UseDataResultsFromComponentsLabel: "Použít data z těchto webových dílů",
                 UseDataResultsFromComponentsDescription: "Pokud připojíte více než jeden webový díl, hodnoty a počty filtrů se sloučí pro podobné názvy filtrů.",
                 LinkToVerticalLabel: "Zobrazit filtry pouze při výběru těchto vertikál",
-                LinkToVerticalLabelHoverMessage: "Filtry se zobrazí pouze tehdy, pokud vybraná vertikála odpovídá těm, které jsou nakonfigurovány pro tento webový díl. V opačném případě bude webový díl v režimu zobrazení prázdný (bez okrajů a výplní)."
+                LinkToVerticalLabelHoverMessage: "Filtry se zobrazí pouze tehdy, pokud vybraná vertikála odpovídá těm, které jsou nakonfigurovány pro tento webový díl. V opačném případě bude webový díl v režimu zobrazení prázdný (bez okrajů a výplní).",
+                BidirectionalConnectionWarning: "Jeden nebo více připojených webových dílů výsledků vyhledávání nebylo nakonfigurováno pro zpětné připojení k tomuto webovému dílu filtrů. Oba webové díly musí být vzájemně propojeny, aby filtry fungovaly správně."
             },
             FiltersSettingsPage: {
                 SettingsGroupName: "Nastavení filtrů",
@@ -30,6 +31,8 @@ define([], function() {
                 FilterDisplayName: "Zobrazovaný název",
                 FilterTemplate: "Šablona",
                 FilterExpandByDefault: "Rozbalit ve výchozím nastavení",
+                ExpandAllNodesByDefault: "Rozbalit všechny uzly ve výchozím nastavení",
+                HideNodesNotInDataSet: "Skrýt uzly, které nejsou v aktuální sadě dat",
                 // FilterType: "Typ filtru",
                 FilterTypeRefiner: "Tato šablona filtru funguje jako upřesňující filtr a přijímá/odesílá dostupné/vybrané hodnoty do/z připojeného zdroje dat.",
                 FilterTypeStaticFilter: "Tato šablona filtru funguje jako statický filtr a odesílá pouze libovolně vybrané hodnoty do připojeného zdroje dat. Přicházející hodnoty filtrů nejsou brány v úvahu.",
@@ -48,7 +51,8 @@ define([], function() {
                     ComboBoxTemplate: "Rozbalovací nabídka",
                     DateIntervalTemplate: "Časový interval",
                     PeopleTemplate: "Šablona pro osoby",
-                    TaxonomyPickerTemplate: "Výběr taxonomie"
+                    TaxonomyPickerTemplate: "Výběr taxonomie",
+                    HierarchicalFilterTemplate: "Hierarchický filtr"
                 },
                 SortBy: "Řadit hodnoty podle",
                 SortDirection: "Směr řazení",

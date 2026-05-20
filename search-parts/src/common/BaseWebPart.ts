@@ -61,6 +61,19 @@ export abstract class BaseWebPart<T extends IBaseWebPartProps> extends BaseClien
     }
 
     /**
+     * Safely gets the SPFx web part instance id.
+     * The underlying SPFx getter can throw during transient page editor updates.
+     */
+    protected tryGetInstanceId(): string | undefined {
+        try {
+            return this.instanceId;
+        } catch (error) {
+            Log.verbose(this.manifest?.alias || 'BaseWebPart', `instanceId is unavailable during the current lifecycle phase. Details: ${error}`, this.context?.serviceScope);
+            return undefined;
+        }
+    }
+
+    /**
      * Initializes services shared by all Web Parts
      */
     protected async initializeBaseWebPart(): Promise<void> {
@@ -91,7 +104,7 @@ export abstract class BaseWebPart<T extends IBaseWebPartProps> extends BaseClien
                         text: `${commonStrings.General.Version}: ${this && this.manifest.version ? this.manifest.version : ''}`
                     }),
                     PropertyPaneLabel('', {
-                        text: `${commonStrings.General.InstanceId}: ${this.instanceId}`
+                        text: `${commonStrings.General.InstanceId}: ${this.tryGetInstanceId() || ''}`
                     }),
                 ]
             },
@@ -113,8 +126,13 @@ export abstract class BaseWebPart<T extends IBaseWebPartProps> extends BaseClien
     */
     protected getParentControlZone(): HTMLElement {
 
+        const instanceId = this.tryGetInstanceId();
+        if (!instanceId) {
+            return null;
+        }
+
         // 1st attempt: use the DOM element with the Web Part instance id     
-        let parentControlZone = document.getElementById(this.instanceId);
+        let parentControlZone = document.getElementById(instanceId);
 
         if (!parentControlZone) {
 
@@ -124,7 +142,7 @@ export abstract class BaseWebPart<T extends IBaseWebPartProps> extends BaseClien
             if (!parentControlZone) {
 
                 // 3rd attempt: try the Control zone with ID
-                parentControlZone = this.domElement.closest(`div[data-sp-a11y-id="ControlZone_${this.instanceId}"]`);
+                parentControlZone = this.domElement.closest(`div[data-sp-a11y-id="ControlZone_${instanceId}"]`);
 
                 if (!parentControlZone) {
                     Log.warn(this.manifest.alias, `Parent control zone DOM element was not found in the DOM.`, this.context.serviceScope);

@@ -22,6 +22,7 @@ define([], function () {
                 HideNavigationFieldName: "Hide navigation buttons (prev page, next page)",
                 HideFirstLastPagesFieldName: "Hide first/last navigation buttons",
                 HideDisabledFieldName: "Hide navigation buttons (prev, next, first, last) if they are disabled.",
+                EnableQueryStringFieldName: "Enable page number in query string",
                 TemplateSlots: {
                     GroupName: "Layout slots",
                     ConfigureSlotsLabel: "Edit layout slots for this data source",
@@ -38,6 +39,10 @@ define([], function () {
                 LayoutSelectionGroupName: "Available layouts",
                 LayoutTemplateOptionsGroupName: "Layout options",
                 CommonOptionsGroupName: "Common",
+                ShowTitle: "Show title",
+                TitleLinkTextFieldLabel: "See all text",
+                TitleLinkUrlFieldLabel: "See all URL",
+                TitleLinkOpenInNewTab: "Open in new tab",
                 TemplateUrlFieldLabel: "Use an external template URL",
                 TemplateUrlPlaceholder: "https://myfile.html",
                 ErrorTemplateExtension: "The template must be a valid .txt, .htm or .html file",
@@ -115,7 +120,8 @@ define([], function () {
                 SearchQueryTextDefaultValue: "Default value",
                 SourceDestinationFieldLabel: "Destination field name",
                 SourceDestinationFieldDescription: "Destination field to use in this Web Part to match the selected values",
-                AvailableFieldValuesFromResults: "Field containing the filter value"
+                AvailableFieldValuesFromResults: "Field containing the filter value",
+                BidirectionalConnectionWarning: "The connected filters Web Part has not been configured to connect back to this search results Web Part. Both web parts must be connected to each other for filters to work correctly."
             },
             InformationPage: {
                 Extensibility: {

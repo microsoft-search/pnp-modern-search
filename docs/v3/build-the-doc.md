@@ -10,12 +10,12 @@ For example:
 
 `python -m pip install mkdocs-material`
 
+The repository includes a pinned set of documentation dependencies in `requirements-docs.txt`. Using these versions avoids compatibility issues between MkDocs 1.2.2 and newer Jinja2 releases.
+
 - [Install MkDocs](https://www.mkdocs.org/#installation)
-    - `pip install mkdocs`
-- Install the Material theme
-    - `pip install mkdocs-material==4.6.3`
+    - `python -m pip install -r requirements-docs.txt`
 - Serve it up
-    - `mkdocs serve`
+    - `python -m mkdocs serve`
     - Open a browser to http://127.0.0.1:8000/
 - Deploy
-    - `mkdocs gh-deploy` from main branch
+    - `python -m mkdocs gh-deploy` from main branch

@@ -276,6 +276,13 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
                         type: this._customCollectionFieldType.boolean,
                         defaultValue: false,
                         required: false
+                    },
+                    {
+                        id: 'columnDescription',
+                        title: strings.Layouts.DetailsList.ColumnDescriptionFieldLabel,
+                        type: this._customCollectionFieldType.string,
+                        defaultValue: '',
+                        required: false
                     }
                 ]
             }),

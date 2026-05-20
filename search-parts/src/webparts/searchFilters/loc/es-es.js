@@ -1,4 +1,4 @@
-define([], function() {
+define([], function () {
     return {
         General: {
             PlaceHolder: {
@@ -16,7 +16,8 @@ define([], function() {
                 UseDataResultsFromComponentsLabel: "Utilizar los datos de estos Web Parts",
                 UseDataResultsFromComponentsDescription: "Si conecta más de un Web Part, los valores de los filtros y los recuentos se fusionarán para nombres de filtros similares.",
                 LinkToVerticalLabel: "Muestra los filtros sólo cuando se seleccionan las siguientes verticales",
-                LinkToVerticalLabelHoverMessage: "Los filtros se mostrarán sólo si la vertical seleccionada coincide con las configuradas para este Web Part. De lo contrario, el Web Part estará en blanco (sin margen y sin relleno) en el modo de visualización."
+                LinkToVerticalLabelHoverMessage: "Los filtros se mostrarán sólo si la vertical seleccionada coincide con las configuradas para este Web Part. De lo contrario, el Web Part estará en blanco (sin margen y sin relleno) en el modo de visualización.",
+                BidirectionalConnectionWarning: "Uno o más Web Parts de resultados de búsqueda conectados no han sido configurados para conectarse de vuelta a este Web Part de filtros. Ambos Web Parts deben estar conectados entre sí para que los filtros funcionen correctamente."
             },
             FiltersSettingsPage: {
                 SettingsGroupName: "Configuración de los filtros",
@@ -30,6 +31,8 @@ define([], function() {
                 FilterDisplayName: "Nombre para mostrar",
                 FilterTemplate: "Plantilla",
                 FilterExpandByDefault: "Expandir por defecto",
+                ExpandAllNodesByDefault: "Expandir todos los nodos por defecto",
+                HideNodesNotInDataSet: "Ocultar nodos que no estén en el conjunto de datos actual",
                 FilterType: "Tipo de filtro",
                 FilterTypeRefiner: "Esta plantilla de filtro actúa como un refinador y recibe/envía valores disponibles/seleccionados desde/a la fuente de datos conectada.",
                 FilterTypeStaticFilter: "Esta plantilla de filtro actúa como un filtro estático y sólo envía valores seleccionados arbitrariamente a la fuente de datos conectada. Los valores entrantes del filtro no se tienen en cuenta.",
@@ -48,7 +51,8 @@ define([], function() {
                     ComboBoxTemplate: "Caja combo",
                     DateIntervalTemplate: "Intervalo de fechas",
                     PeopleTemplate: "Plantilla de persona",
-                    TaxonomyPickerTemplate: "Selector de taxonomía"
+                    TaxonomyPickerTemplate: "Selector de taxonomía",
+                    HierarchicalFilterTemplate: "Filtro jerárquico"
                 },
                 SortBy: "Ordenar los valores por",
                 SortDirection: "Dirección de ordenación",

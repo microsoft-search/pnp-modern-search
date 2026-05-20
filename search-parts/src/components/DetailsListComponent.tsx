@@ -11,8 +11,6 @@ import {
   StickyPositionType,
   ScrollablePane,
   ScrollbarVisibility,
-} from "@fluentui/react";
-import {
   ITooltipHostProps,
   TooltipHost,
   ITooltipStyles,
@@ -23,6 +21,7 @@ import {
   mergeStyleSets,
   ITheme,
   Selection,
+  IconButton,
 } from "@fluentui/react";
 import * as Handlebars from "handlebars";
 import { IReadonlyTheme } from "@microsoft/sp-component-base";
@@ -54,6 +53,7 @@ import {
   IDetailsCheckboxProps,
   ConstrainMode,
   IDetailsList,
+  IDetailsColumnProps,
 } from "@fluentui/react/lib/DetailsList";
 import { ISearchResultsTemplateContext } from "../models/common/ITemplateContext";
 import { ObjectHelper } from "../helpers/ObjectHelper";
@@ -158,6 +158,12 @@ export interface IDetailsListColumnConfiguration {
    * Enable multiline column
    */
   isMultiline: boolean;
+
+  /**
+   * Optional description shown as a tooltip on an info icon in the column header.
+   * Leave empty to show no icon.
+   */
+  columnDescription?: string;
 
   /**
    * Callback handler when a sort field and direction are selected
@@ -441,6 +447,9 @@ export class DetailsListComponent extends React.Component<
               value: column.valueSorting,
             },
             isPadded: true,
+            onRenderHeader: (headerProps?: IDetailsColumnProps) => {
+              return this._onRenderColumnHeaderWithInfo(column, headerProps);
+            },
             onRender: (item: any) => {
               let value: any;
               let renderColumnValue: JSX.Element = null;
@@ -580,6 +589,20 @@ export class DetailsListComponent extends React.Component<
         shimmeredDetailsListProps.groups = this.state.groups;
         shimmeredDetailsListProps.groupProps = {
         showEmptyGroups: true,
+        headerProps: {
+          onRenderGroupHeaderCheckbox: () => null,
+          styles: {
+            headerCount: {
+              color: this.props.themeVariant?.semanticColors?.bodyText,
+            },
+            title: {
+              color: this.props.themeVariant?.semanticColors?.bodyText,
+            },
+            expand: {
+              color: this.props.themeVariant?.semanticColors?.bodyText,
+            },
+          },
+        },
       };
     }
 
@@ -881,6 +904,48 @@ export class DetailsListComponent extends React.Component<
       </div>
     );
   }
+
+  private readonly _onRenderColumnHeaderWithInfo = (column: IDetailsListColumnConfiguration, headerProps?: IDetailsColumnProps): JSX.Element => {
+    const hasDescription = !!column.columnDescription?.trim();
+    const columnWidth = headerProps?.column?.calculatedWidth ?? headerProps?.column?.currentWidth ?? 999;
+    const showIcon = hasDescription && columnWidth >= 30;
+    const sliderStyles = detailsListStyles as unknown as Record<string, string>;
+
+    return (
+      <div className={sliderStyles.columnHeaderWithInfo}>
+        <span
+          className={sliderStyles.columnHeaderTitle}
+          title={column.name}
+        >
+          {column.name}
+        </span>
+        {showIcon && (
+          <TooltipHost content={column.columnDescription} calloutProps={{ gapSpace: 0 }}>
+            <IconButton
+              iconProps={{ iconName: "Info" }}
+              styles={{
+                root: {
+                  padding: "0 4px",
+                  height: "24px",
+                  width: "24px",
+                  minWidth: "24px",
+                  flexShrink: 0,
+                },
+                icon: {
+                  color: this.props.themeVariant?.semanticColors.bodySubtext,
+                  fontSize: "12px",
+                },
+                rootHovered: {
+                  backgroundColor: this.props.themeVariant?.semanticColors.listHeaderBackgroundHovered,
+                },
+              }}
+              ariaLabel={`More information about ${column.name}`}
+            />
+          </TooltipHost>
+        )}
+      </div>
+    );
+  };
 
   private _onRenderColumnHeaderTooltip = (tooltipHostProps: ITooltipHostProps): JSX.Element => {
     const customStyles: Partial<ITooltipStyles> = {};

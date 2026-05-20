@@ -59,6 +59,8 @@ interface IHierarchicalFilterConfiguration extends IDataFilterConfiguration {
     termSetId?: string;
     termGroupId?: string;
     cacheDuration?: number;
+    hideNodesNotInDataSet?: boolean;
+    expandAllNodesByDefault?: boolean;
 }
 
 /**
@@ -89,6 +91,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     private _propertyFieldCodeEditorLanguages: any = null;
     private _customCollectionFieldType: any = null;
     private _propertyPanePropertyEditor = null;
+    private _propertyPaneWebPartInformation: any = null;
 
     /**
      * Properties to avoid to recreate instances every render
@@ -429,7 +432,8 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                     filterConfiguration: this.properties.filtersConfiguration,
                     selectedFilters: this._selectedFilters,
                     filterOperator: this.properties.filterOperator,
-                    instanceId: this.instanceId
+                    instanceId: this.instanceId,
+                    connectedResultsSourceReferences: this.properties.dataResultsDataSourceReferences
                 } as IDataFilterSourceData;
 
             default:
@@ -532,6 +536,8 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                     configuration.termSetId = correspondingNewConfig.termSetId;
                     configuration.termGroupId = correspondingNewConfig.termGroupId;
                     configuration.cacheDuration = correspondingNewConfig.cacheDuration;
+                    configuration.hideNodesNotInDataSet = correspondingNewConfig.hideNodesNotInDataSet;
+                    configuration.expandAllNodesByDefault = correspondingNewConfig.expandAllNodesByDefault;
                 }
 
                 return configuration;
@@ -611,7 +617,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
             }
         });
 
-        return [
+        const fields: IPropertyPaneField<any>[] = [
             new PropertyPaneAsyncCombo('dataResultsDataSourceReferences', {
                 availableOptions: sourceOptions,
                 allowFreeform: false,
@@ -632,6 +638,35 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                 allowMultiSelect: true
             }),
         ];
+
+        // Check bidirectional connection: do the connected results web parts also connect back to this filter web part?
+        if (this.properties.dataResultsDataSourceReferences.length > 0 && this._dataSourceDynamicProperties.length > 0) {
+            let hasMissingBackConnection = false;
+
+            this._dataSourceDynamicProperties.forEach((dynProp) => {
+                const resultData: IDataResultSourceData = DynamicPropertyHelper.tryGetValueSafe(dynProp);
+                if (resultData) {
+                    // Extract sourceId from the reference (format: "sourceId:propertyId") and check if it ends with this web part's instanceId
+                    const connectedRef = resultData.connectedFilterSourceReference;
+                    const isConnectedBack = connectedRef &&
+                        connectedRef.split(':')[0].endsWith(this.instanceId);
+                    if (!isConnectedBack) {
+                        hasMissingBackConnection = true;
+                    }
+                }
+            });
+
+            if (hasMissingBackConnection && this._propertyPaneWebPartInformation) {
+                fields.push(
+                    this._propertyPaneWebPartInformation({
+                        description: `<span style="color: #d83b01;">⚠ ${webPartStrings.PropertyPane.ConnectionsPage.BidirectionalConnectionWarning}</span>`,
+                        key: 'bidirectionalResultsWarning'
+                    })
+                );
+            }
+        }
+
+        return fields;
     }
 
     private async getConnectionOptionsFields(): Promise<IPropertyPaneField<any>[]> {
@@ -1089,6 +1124,8 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                             };
 
                             const effectiveCacheDuration = item.cacheDuration ?? 3;
+                            const hideNodesNotInDataSet = item.hideNodesNotInDataSet ?? false;
+                            const expandAllNodesByDefault = item.expandAllNodesByDefault ?? false;
 
                             if (!showModal) {
                                 return React.createElement("div", {
@@ -1111,6 +1148,14 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                                         React.createElement("div", null,
                                             React.createElement("strong", null, 'Cache Duration: '),
                                             React.createElement("span", { style: { color: '#444' } }, `${effectiveCacheDuration} days`)
+                                        ),
+                                        React.createElement("div", { style: { marginTop: '8px' } },
+                                            React.createElement("strong", null, `${webPartStrings.PropertyPane.DataFilterCollection.HideNodesNotInDataSet}: `),
+                                            React.createElement("span", { style: { color: '#444' } }, hideNodesNotInDataSet ? 'Yes' : 'No')
+                                        ),
+                                        React.createElement("div", { style: { marginTop: '8px' } },
+                                            React.createElement("strong", null, `${webPartStrings.PropertyPane.DataFilterCollection.ExpandAllNodesByDefault}: `),
+                                            React.createElement("span", { style: { color: '#444' } }, expandAllNodesByDefault ? 'Yes' : 'No')
                                         )
                                     ),
                                     React.createElement("button", {
@@ -1192,6 +1237,26 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                                                 color: '#666'
                                             }
                                         }, '✕')
+                                    ),
+
+                                    React.createElement("div", { style: { marginBottom: '20px' } },
+                                        React.createElement(Checkbox, {
+                                            checked: hideNodesNotInDataSet,
+                                            label: webPartStrings.PropertyPane.DataFilterCollection.HideNodesNotInDataSet,
+                                            onChange: (ev, checked?: boolean) => {
+                                                onUpdate('hideNodesNotInDataSet', checked ?? false);
+                                            }
+                                        })
+                                    ),
+
+                                    React.createElement("div", { style: { marginBottom: '20px' } },
+                                        React.createElement(Checkbox, {
+                                            checked: expandAllNodesByDefault,
+                                            label: webPartStrings.PropertyPane.DataFilterCollection.ExpandAllNodesByDefault,
+                                            onChange: (ev, checked?: boolean) => {
+                                                onUpdate('expandAllNodesByDefault', checked ?? false);
+                                            }
+                                        })
                                     ),
 
                                     React.createElement("div", { style: { marginBottom: '20px' } },
@@ -1634,6 +1699,12 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
             '@pnp/spfx-property-controls/lib/PropertyPanePropertyEditor'
         );
         this._propertyPanePropertyEditor = PropertyPanePropertyEditor;
+
+        const { PropertyPaneWebPartInformation } = await import(
+            /* webpackChunkName: 'pnp-modern-search-property-pane' */
+            '@pnp/spfx-property-controls/lib/PropertyPaneWebPartInformation'
+        );
+        this._propertyPaneWebPartInformation = PropertyPaneWebPartInformation;
 
         this.propertyPaneConnectionsFields = await this.getConnectionOptionsFields();
     }

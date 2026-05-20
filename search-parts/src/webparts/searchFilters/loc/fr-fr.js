@@ -1,4 +1,4 @@
-define([], function() {
+define([], function () {
     return {
         General: {
             PlaceHolder: {
@@ -18,7 +18,8 @@ define([], function() {
                 UseDataVerticalsWebPartLabel: "Se connecter à un composant WebPart de verticales",
                 UseDataVerticalsFromComponentLabel: "Utiliser les verticales de ce composant",
                 LinkToVerticalLabel: "Afficher les données uniquement lorsque les verticales suivantes sont sélectionnées",
-                LinkToVerticalLabelHoverMessage: "Les filtres ne seront affichés que si la verticale sélectionnée correspond à celles configurées pour ce composant WebPart. Sinon, le composant WebPart restera vide (pas de marge ni de remplissage) en mode affichage."
+                LinkToVerticalLabelHoverMessage: "Les filtres ne seront affichés que si la verticale sélectionnée correspond à celles configurées pour ce composant WebPart. Sinon, le composant WebPart restera vide (pas de marge ni de remplissage) en mode affichage.",
+                BidirectionalConnectionWarning: "Un ou plusieurs composants WebPart de résultats de recherche connectés n'ont pas été configurés pour se reconnecter à ce composant WebPart de filtres. Les deux composants WebPart doivent être connectés l'un à l'autre pour que les filtres fonctionnent correctement."
             },
             FiltersSettingsPage: {
                 SettingsGroupName: "Paramètres des filtres",
@@ -32,6 +33,8 @@ define([], function() {
                 FilterDisplayName: "Nom d'affichage",
                 FilterTemplate: "Modèle",
                 FilterExpandByDefault: "Agrandir par défaut",
+                ExpandAllNodesByDefault: "Développer tous les nœuds par défaut",
+                HideNodesNotInDataSet: "Masquer les nœuds absents du jeu de données actuel",
                 FilterType: "Type de filtre",
                 FilterTypeRefiner: "Ce modèle de filtre sert de raffineur et reçoit/envoie les valeurs disponibles/sélectionnées à partir de/vers la source de données connectée.",
                 FilterTypeStaticFilter: "Ce modèle de filtre agit comme un filtre statique et envoie uniquement les valeurs sélectionnées de façon arbitraire à la source de données connectée. Les valeurs des filtres entrants ne sont pas prises en compte",
@@ -50,7 +53,8 @@ define([], function() {
                     ComboBoxTemplate: "Zone de liste modifiable",
                     DateIntervalTemplate: "Intervalle de dates",
                     PeopleTemplate: "Modèle de personne",
-                    TaxonomyPickerTemplate: "Sélecteur de taxonomie"
+                    TaxonomyPickerTemplate: "Sélecteur de taxonomie",
+                    HierarchicalFilterTemplate: "Filtre hiérarchique"
                 },
                 SortBy: "Trier les valeurs par",
                 SortDirection: "Sens de tri",

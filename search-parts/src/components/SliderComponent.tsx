@@ -154,6 +154,8 @@ export class SliderComponent extends React.Component<ISliderComponentProps, ISli
                     if (el) {
                         el.style.setProperty('--slide-width', `${slideWidth}px`);
                         el.style.setProperty('--slide-height', `${slideHeight}px`);
+                        el.style.setProperty('--slides-per-page', `${numberOfSlides}`);
+                        el.style.setProperty('--slide-gap', '10px');
                     }
                 }}
             >

@@ -20,10 +20,15 @@ export interface IDataResultSourceData {
     /**
      * The current selected items in the Search Results Web Part
      */
-    selectedItems?: {[key: string]: string}[];
+    selectedItems?: { [key: string]: string }[];
 
     /**
      * The count of items returned by the getItemCount method of a datasource
      */
-    totalCount?:number;
+    totalCount?: number;
+
+    /**
+     * The filter data source reference this results web part is connected to (used for bidirectional connection validation)
+     */
+    connectedFilterSourceReference?: string;
 }

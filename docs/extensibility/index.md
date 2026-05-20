@@ -29,7 +29,7 @@ For your project to be a valid extensibility library, you must have the followin
 - You library **manifest ID** must be registered in the Web Part where you want to use the extension.
 
 !!! important "SPFx version"
-    The SPFx library project must use the same SPFx version as the main solution (check [compatibility matrix](./extensibility_compatibility_matrix.md)). Owherwise you may face issues at build time. See [GitHub issue #1893](https://github.com/microsoft-search/pnp-modern-search/issues/1893)
+    The SPFx library project must use the same SPFx version as the main solution (check [compatibility matrix](./extensibility_compatibility_matrix.md)). Otherwise you may face issues at build time. See [GitHub issue #1893](https://github.com/microsoft-search/pnp-modern-search/issues/1893). Starting with PnP Modern Search v4.21.0, the solution uses SPFx v1.22.2 with the **Heft-based toolchain**. Your extensibility library must also use the Heft toolchain if targeting this version.
 
 ### Supported extensions
 
@@ -60,36 +60,94 @@ From here, you can add the manifest IDs of your libraries and decide to enable o
 
 To create an extensibility library, you have the choice to reuse the one provided in the GitHub repository or start from scratch. In this case:
 
+!!! important "Toolchain"
+    Starting with **SPFx v1.22**, the SharePoint Framework uses a new **Heft-based** build toolchain, replacing the previous Gulp-based toolchain. New projects generated with the SPFx v1.22+ Yeoman generator will use Heft by default. If you are working with SPFx v1.21.1 or earlier, continue using the Gulp-based instructions. See [SharePoint Framework Toolchain: Heft & Webpack](https://learn.microsoft.com/en-us/sharepoint/dev/spfx/toolchain/sharepoint-framework-toolchain-rushstack-heft) for details.
+
+#### Common steps (both toolchains)
+
 1. Create a new SharePoint Framework project of type 'Library' with `yo @microsoft/sharepoint`.
-2. Add an npm reference to `@pnp/modern-search-extensibility` library using `npm i @pnp/modern-search-extensibility --save` cmd.
-3. Install npm-package `html-loader` as a dev-dependency using `npm i html-loader@4.2.0 --save-dev`
-4. Insert the following lines of code into `gulpfile.js` of your SPFx-project
-```js
-const envCheck = build.subTask('environmentCheck', (gulp, config, done) => {
+2. Add an npm reference to `@pnp/modern-search-extensibility` library using `npm i @pnp/modern-search-extensibility --save`.
+3. Install npm-package `html-loader` as a dev-dependency using `npm i html-loader@4.2.0 --save-dev`.
 
-  build.configureWebpack.mergeConfig({
-      additionalConfiguration: (generatedConfiguration) => {
+#### Configure the html-loader
 
-          // Remove the default html rule
-          generatedConfiguration.module.rules = generatedConfiguration.module.rules.filter(rule => {
-              return rule.test.toString() !== '/\\.html$/';
-          });
-          // Add html loader without minimize so that we can use it for handlebars templates
-          generatedConfiguration.module.rules.push({
+The extensibility library requires `html-loader` to load Handlebars templates from `.html` files without minification. The configuration differs depending on which toolchain you are using.
+
+=== "Heft (SPFx v1.22+)"
+
+    With the Heft-based toolchain, webpack customizations are done through **patch files** registered in a `config/webpack-patch.json` file, instead of `gulpfile.js`. No `gulpfile.js` is needed.
+
+    **Step 1.** Create the file `config/webpack-patch.json` in your project:
+
+    ```json
+    {
+      "$schema": "https://developer.microsoft.com/en-us/json-schemas/spfx-build/webpack-patch.schema.json",
+      "patchFiles": [
+        "./config/webpack-patch/html-loader.js"
+      ]
+    }
+    ```
+
+    **Step 2.** Create the folder `config/webpack-patch/` and add the file `config/webpack-patch/html-loader.js`:
+
+    ```js
+    'use strict';
+
+    module.exports = function (webpackConfig) {
+
+        // Remove the default html rule
+        webpackConfig.module.rules = webpackConfig.module.rules.filter(rule => {
+            return rule.test.toString() !== '/\\.html$/';
+        });
+
+        // Add html-loader without minimize so that we can use it for handlebars templates
+        webpackConfig.module.rules.push({
             test: /\.html$/,
             loader: 'html-loader',
             options: {
-              minimize: false
+                minimize: false
             }
-          });
-          return generatedConfiguration;
-      }
-  });
-  done();
-});
+        });
 
-build.rig.addPreBuildTask(envCheck);
-```
+        return webpackConfig;
+    };
+    ```
+
+    !!! tip
+        For more information on customizing webpack with Heft, see [Customize webpack with the Heft Webpack Patch plugin](https://learn.microsoft.com/en-us/sharepoint/dev/spfx/toolchain/customize-heft-toolchain-customize-webpack-config) and [Andrew Connell's walkthrough](https://www.voitanos.io/blog/sharepoint-framework-customize-heft-toolchain-plugins-scripts-webpack/#register-the-patch-file-with-the-webpack-patch-plugin).
+
+=== "Gulp (SPFx v1.21.1 and earlier)"
+
+    Insert the following lines of code into `gulpfile.js` of your SPFx-project:
+
+    ```js
+    const envCheck = build.subTask('environmentCheck', (gulp, config, done) => {
+
+      build.configureWebpack.mergeConfig({
+          additionalConfiguration: (generatedConfiguration) => {
+
+              // Remove the default html rule
+              generatedConfiguration.module.rules = generatedConfiguration.module.rules.filter(rule => {
+                  return rule.test.toString() !== '/\\.html$/';
+              });
+              // Add html loader without minimize so that we can use it for handlebars templates
+              generatedConfiguration.module.rules.push({
+                test: /\.html$/,
+                loader: 'html-loader',
+                options: {
+                  minimize: false
+                }
+              });
+              return generatedConfiguration;
+          }
+      });
+      done();
+    });
+
+    build.rig.addPreBuildTask(envCheck);
+    ```
+
+#### Implement the extensibility interface
 
 5. In the main entry point, implement the `IExtensibilityLibrary` interface. Provide all method implementations (return empty arrays if you don't implement specific extensions).
     !["Extensibility interface implementation"](../assets/extensibility/implement_interface.png){: .center}
@@ -107,13 +165,48 @@ build.rig.addPreBuildTask(envCheck);
     1. Create the extension data logic or render logic.
     2. Register the information about the extension to be discovered and instanciated by the target Web Part by implementing the corresponding method according to the `IExtensibilityLibrary` interface.
 
-7. Bundle `gulp bundle --ship` and package `gulp package-solution --ship` and add the solution to the global or site collection catalog (for this one, it must be the same site collection where the Web Part loading that extension(s) is present).
+#### Build and deploy
+
+=== "Heft (SPFx v1.22+)"
+
+    Bundle and package your solution:
+
+    ```console
+    heft build --production
+    heft package-solution --production
+    ```
+
+    Add the resulting `.sppkg` from the `sharepoint/solution` folder to the global or site collection app catalog (for the latter, it must be the same site collection where the Web Part loading the extension(s) is present).
+
+=== "Gulp (SPFx v1.21.1 and earlier)"
+
+    Bundle and package your solution:
+
+    ```console
+    gulp bundle --ship
+    gulp package-solution --ship
+    ```
+
+    Add the resulting `.sppkg` from the `sharepoint/solution` folder to the global or site collection app catalog (for the latter, it must be the same site collection where the Web Part loading the extension(s) is present).
+
 8. [Register your manifest ID in the target Web Part instance](#register-your-extensibility-library-with-a-web-part).
 9.  Enjoy!
 
 #### Debug a library component
 
-Debugging a library component is exactly the same as debugging an SPFx Web Part. Run `gulp serve` in the hosted workbench and put a _'Search Results'_,_'Search Filters'_ or _'Search Box'_ Web Part depending the extension you want to test. If registered correctly, your breakpoints will be triggerred by the main Web Part loading your extension.
+Debugging a library component is exactly the same as debugging an SPFx Web Part. Put a _'Search Results'_, _'Search Filters'_ or _'Search Box'_ Web Part on the hosted workbench depending on the extension you want to test. If registered correctly, your breakpoints will be triggered by the main Web Part loading your extension.
+
+=== "Heft (SPFx v1.22+)"
+
+    ```console
+    heft start
+    ```
+
+=== "Gulp (SPFx v1.21.1 and earlier)"
+
+    ```console
+    gulp serve
+    ```
 
 #### Accessing the SharePoint Framework context and services in a library component
 

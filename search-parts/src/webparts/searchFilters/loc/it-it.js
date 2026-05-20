@@ -16,7 +16,8 @@ define([], function () {
                 UseDataResultsFromComponentsLabel: "Usa dati da questa Web Part",
                 UseDataResultsFromComponentsDescription: "Se colleghi più di una Web Part, i valori e i conteggi dei filtri saranno uniti per nomi di filtro simili.",
                 LinkToVerticalLabel: "Visualizza i filtri solo quando sono selezionati i seguenti verticali",
-                LinkToVerticalLabelHoverMessage: "I filtri saranno visualizzati solo se il verticale selezionato corrisponde a quelli configurati per questa Web Part. Altrimenti, la Web Part sarà vuota (nessun margine e nessun padding) in modalità di visualizzazione."
+                LinkToVerticalLabelHoverMessage: "I filtri saranno visualizzati solo se il verticale selezionato corrisponde a quelli configurati per questa Web Part. Altrimenti, la Web Part sarà vuota (nessun margine e nessun padding) in modalità di visualizzazione.",
+                BidirectionalConnectionWarning: "Una o più Web Part dei risultati di ricerca connesse non sono state configurate per ricollegarsi a questa Web Part dei filtri. Entrambe le Web Part devono essere collegate tra loro affinché i filtri funzionino correttamente."
             },
             FiltersSettingsPage: {
                 SettingsGroupName: "Impostazioni dei filtri",
@@ -30,12 +31,14 @@ define([], function () {
                 FilterDisplayName: "Nome visualizzato",
                 FilterTemplate: "Modello",
                 FilterExpandByDefault: "Espandi per impostazione predefinita",
+                ExpandAllNodesByDefault: "Espandi tutti i nodi per impostazione predefinita",
+                HideNodesNotInDataSet: "Nascondi i nodi non presenti nel set di dati corrente",
                 FilterType: "Tipo di filtro",
                 FilterTypeRefiner: "Questo modello di filtro agisce come un raffinatore e riceve/invia valori disponibili/selezionati da/a la fonte dati collegata.",
                 FilterTypeStaticFilter: "Questo modello di filtro agisce come un filtro statico e invia solo valori selezionati arbitrariamente alla fonte dati collegata. I valori dei filtri in entrata non sono presi in considerazione.",
                 CustomizeFiltersBtnLabel: "Modifica",
                 CustomizeFiltersHeader: "Modifica filtri",
-                CustomizeFiltersDescription: "Configura i filtri di ricerca aggiungendo o rimuovendo righe. Puoi selezionare campi dai risultati della fonte dati (se già selezionati) o usare valori statici per i filtri. For more details see https://microsoft-search.github.io/pnp-modern-search/usage/search-filters/#filter-settings" ,
+                CustomizeFiltersDescription: "Configura i filtri di ricerca aggiungendo o rimuovendo righe. Puoi selezionare campi dai risultati della fonte dati (se già selezionati) o usare valori statici per i filtri. For more details see https://microsoft-search.github.io/pnp-modern-search/usage/search-filters/#filter-settings",
                 CustomizeFiltersFieldLabel: "Personalizza filtri",
                 ShowCount: "Mostra conteggio",
                 Operator: "Operatore tra i valori",
@@ -48,7 +51,8 @@ define([], function () {
                     ComboBoxTemplate: "Casella combinata",
                     DateIntervalTemplate: "Intervallo di tempo",
                     PeopleTemplate: "Modello di persona",
-                    TaxonomyPickerTemplate: "Selettore di tassonomia"
+                    TaxonomyPickerTemplate: "Selettore di tassonomia",
+                    HierarchicalFilterTemplate: "Filtro gerarchico"
                 },
                 SortBy: "Ordina valori per",
                 SortDirection: "Direzione di ordinamento",

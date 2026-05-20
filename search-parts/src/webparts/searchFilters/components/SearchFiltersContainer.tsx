@@ -24,6 +24,7 @@ import { ISearchFiltersTemplateContext } from '../../../models/common/ITemplateC
 import { flatten } from '@microsoft/sp-lodash-subset';
 import { DisplayMode, Log } from '@microsoft/sp-core-library';
 import { DataFilterHelper } from '../../../helpers/DataFilterHelper';
+import { TaxonomyHelper } from '../../../helpers/TaxonomyHelper';
 import { UrlHelper } from '../../../helpers/UrlHelper';
 import { BuiltinFilterTemplates } from '../../../layouts/AvailableTemplates';
 import { MessageBar, MessageBarType } from '@fluentui/react/lib/MessageBar';
@@ -34,6 +35,17 @@ interface IHierarchicalFilterConfiguration extends IDataFilterConfiguration {
     termSetId?: string;
     termGroupId?: string;
     cacheDuration?: number;
+    hideNodesNotInDataSet?: boolean;
+    expandAllNodesByDefault?: boolean;
+}
+
+interface IHierarchicalTerm {
+    id: string;
+    name: string;
+    label: string;
+    parentId: string;
+    pathOfTerm: string;
+    children: IHierarchicalTerm[];
 }
 
 export default class SearchFiltersContainer extends React.Component<ISearchFiltersContainerProps, ISearchFiltersContainerState> {
@@ -62,6 +74,76 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         this.componentRef = React.createRef();
 
         this.onFilterValuesUpdated = this.onFilterValuesUpdated.bind(this);
+    }
+
+    private buildHierarchy = (allTerms: any[]): IHierarchicalTerm[] => {
+        const termMap = new Map<string, IHierarchicalTerm>();
+        const rootTerms: IHierarchicalTerm[] = [];
+
+        allTerms.forEach(term => {
+            const path = term.PathOfTerm || term.Name;
+            const termObj: IHierarchicalTerm = {
+                id: term.Id,
+                name: term.Name,
+                label: term.Labels && term.Labels._Child_Items_ && term.Labels._Child_Items_.length > 0
+                    ? term.Labels._Child_Items_[0].Value
+                    : term.Name,
+                parentId: term.ParentId,
+                pathOfTerm: path,
+                children: []
+            };
+            termMap.set(path, termObj);
+        });
+
+        termMap.forEach(termObj => {
+            const pathParts = termObj.pathOfTerm.split(';');
+
+            if (pathParts.length > 1) {
+                const parentPath = pathParts.slice(0, -1).join(';');
+                const parent = termMap.get(parentPath);
+
+                if (parent) {
+                    parent.children.push(termObj);
+                } else {
+                    rootTerms.push(termObj);
+                }
+            } else {
+                rootTerms.push(termObj);
+            }
+        });
+
+        return rootTerms;
+    }
+
+    private pruneHierarchy = (terms: IHierarchicalTerm[], resultGuids: Set<string>, selectedGuids: Set<string>): IHierarchicalTerm[] => {
+        return terms.reduce((visibleTerms: IHierarchicalTerm[], term) => {
+            const children = this.pruneHierarchy(term.children || [], resultGuids, selectedGuids);
+            const termGuid = TaxonomyHelper.normalizeGuid(TaxonomyHelper.extractGuidFromTermId(term.id));
+            const keepTerm = resultGuids.has(termGuid) || selectedGuids.has(termGuid) || children.length > 0;
+
+            if (keepTerm) {
+                visibleTerms.push({
+                    ...term,
+                    children
+                });
+            }
+
+            return visibleTerms;
+        }, []);
+    }
+
+    private buildGuidSetFromFilterValues = (filterValues: Array<{ value: string }>): Set<string> => {
+        const guidSet = new Set<string>();
+
+        (filterValues || []).forEach(filterValue => {
+            if (!filterValue?.value) {
+                return;
+            }
+
+            TaxonomyHelper.extractGuidsFromFilterValue(filterValue.value).forEach(guid => guidSet.add(guid));
+        });
+
+        return guidSet;
     }
 
     public render(): React.ReactElement<ISearchFiltersContainerProps> {
@@ -281,7 +363,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                 const filterOperator = currentUiFilters[selectedFilterIdx] ? currentUiFilters[selectedFilterIdx].operator : filterConfiguration.operator;
 
                 // Merge information with filter configuration and other useful proeprties
-                const filterResultInternal: IDataFilterInternal & { termSetId?: string; termGroupId?: string; hierarchicalTerms?: any[] } = {
+                const filterResultInternal: IDataFilterInternal & { termSetId?: string; termGroupId?: string; hierarchicalTerms?: IHierarchicalTerm[]; hideNodesNotInDataSet?: boolean; expandAllNodesByDefault?: boolean } = {
                     displayName: filterConfiguration.displayValue && filterConfiguration.displayValue.trim() ? filterConfiguration.displayValue : availableFilter.filterName,
                     filterName: availableFilter.filterName,
                     isMulti: !filterConfiguration.isMulti ? false : filterConfiguration.isMulti,
@@ -296,7 +378,9 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                     canApply: canApply,
                     canClear: canClear,
                     termSetId: filterConfiguration.termSetId,
-                    termGroupId: filterConfiguration.termGroupId
+                    termGroupId: filterConfiguration.termGroupId,
+                    hideNodesNotInDataSet: filterConfiguration.hideNodesNotInDataSet,
+                    expandAllNodesByDefault: filterConfiguration.expandAllNodesByDefault
                 };
 
                 if (filterConfiguration.selectedTemplate === BuiltinFilterTemplates.Hierarchical
@@ -311,45 +395,16 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                             filterConfiguration.cacheDuration
                         );
 
-                        const buildHierarchy = (allTerms: any[]) => {
-                            const termMap = new Map();
-                            const rootTerms = [];
+                        const hierarchicalTerms = this.buildHierarchy(terms);
 
-                            allTerms.forEach(term => {
-                                const path = term.PathOfTerm || term.Name;
-                                const termObj = {
-                                    id: term.Id,
-                                    name: term.Name,
-                                    label: term.Labels && term.Labels._Child_Items_ && term.Labels._Child_Items_.length > 0
-                                        ? term.Labels._Child_Items_[0].Value
-                                        : term.Name,
-                                    parentId: term.ParentId,
-                                    pathOfTerm: path,
-                                    children: []
-                                };
-                                termMap.set(path, termObj);
-                            });
+                        if (filterConfiguration.hideNodesNotInDataSet) {
+                            const resultGuids = this.buildGuidSetFromFilterValues(availableFilter.values as Array<{ value: string }>);
+                            const selectedGuids = this.buildGuidSetFromFilterValues(values.filter(value => value.selected) as Array<{ value: string }>);
 
-                            termMap.forEach(termObj => {
-                                const pathParts = termObj.pathOfTerm.split(';');
-
-                                if (pathParts.length > 1) {
-                                    const parentPath = pathParts.slice(0, -1).join(';');
-                                    const parent = termMap.get(parentPath);
-                                    if (parent) {
-                                        parent.children.push(termObj);
-                                    } else {
-                                        rootTerms.push(termObj);
-                                    }
-                                } else {
-                                    rootTerms.push(termObj);
-                                }
-                            });
-
-                            return rootTerms;
-                        };
-
-                        filterResultInternal.hierarchicalTerms = buildHierarchy(terms);
+                            filterResultInternal.hierarchicalTerms = this.pruneHierarchy(hierarchicalTerms, resultGuids, selectedGuids);
+                        } else {
+                            filterResultInternal.hierarchicalTerms = hierarchicalTerms;
+                        }
                     } catch (error) {
                         Log.error('SearchFiltersContainer', new Error(`Error fetching hierarchical terms for filter ${availableFilter.filterName}: ${error}`));
                     }

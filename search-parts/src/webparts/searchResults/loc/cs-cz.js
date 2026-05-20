@@ -22,6 +22,7 @@ define([], function () {
                 HideNavigationFieldName: "Skrýt navigační tlačítka (předchozí stránka, další stránka)",
                 HideFirstLastPagesFieldName: "Skrýt první/poslední navigační tlačítka",
                 HideDisabledFieldName: "Skrýt navigační tlačítka (předchozí, další, první, poslední), pokud jsou zakázána.",
+                EnableQueryStringFieldName: "Povolit číslo stránky v URL",
                 TemplateSlots: {
                     GroupName: "Sloty rozvržení",
                     ConfigureSlotsLabel: "Upravit sloty rozvržení pro tento datový zdroj",
@@ -38,6 +39,10 @@ define([], function () {
                 LayoutSelectionGroupName: "Dostupná rozvržení",
                 LayoutTemplateOptionsGroupName: "Možnosti rozvržení",
                 CommonOptionsGroupName: "Obecné",
+                ShowTitle: "Zobrazit název",
+                TitleLinkTextFieldLabel: "Text odkazu \"Zobrazit vše\"",
+                TitleLinkUrlFieldLabel: "URL odkazu \"Zobrazit vše\"",
+                TitleLinkOpenInNewTab: "Otevřít na nové kartě",
                 TemplateUrlFieldLabel: "Použít externí šablonu URL",
                 TemplateUrlPlaceholder: "https://myfile.html",
                 ErrorTemplateExtension: "Šablona musí být platný soubor .txt, .htm nebo .html",
@@ -115,7 +120,8 @@ define([], function () {
                 SearchQueryTextDefaultValue: "Výchozí hodnota",
                 SourceDestinationFieldLabel: "Název cílového pole",
                 SourceDestinationFieldDescription: "Cílové pole, které se použije v tomto webovém dílu pro shodu s vybranými hodnotami",
-                AvailableFieldValuesFromResults: "Pole obsahující hodnotu filtru"
+                AvailableFieldValuesFromResults: "Pole obsahující hodnotu filtru",
+                BidirectionalConnectionWarning: "Připojený webový díl filtrů není nakonfigurován pro zpětné připojení k tomuto webovému dílu výsledků vyhledávání. Oba webové díly musí být vzájemně propojeny, aby filtry fungovaly správně."
             },
             InformationPage: {
                 Extensibility: {
@@ -136,13 +142,15 @@ define([], function () {
                 },
                 EnableQueryModificationLabel: "Povolit úpravy dotazu",
                 DisableQueryModificationLabel: "Zakázat úpravy dotazu"
-            }        },
+            }
+        },
         Styling: {
             StylingOptionsGroupName: "Možnosti stylu",
             ResultsBackgroundColorLabel: "Barva pozadí výsledků",
             ResultsBorderColorLabel: "Barva okraje výsledků",
             ResultsBorderThicknessLabel: "Tloušťka okraje výsledků",
             ResetToDefaultLabel: "Obnovit výchozí styl",
-            ResetToDefaultDescription: "Obnovit všechny možnosti stylu na výchozí hodnoty"        }
+            ResetToDefaultDescription: "Obnovit všechny možnosti stylu na výchozí hodnoty"
+        }
     };
 });

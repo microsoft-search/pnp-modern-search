@@ -2,5 +2,22 @@
     "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/spfx-serve.schema.json",
     "port": 4321,
     "https": true,
-    "initialPage": "https://{tenantDomain}/_layouts/workbench.aspx"
+    "initialPage": "https://{tenantDomain}/_layouts/15/workbench.aspx",
+    "serveConfigurations": {
+        "default": {
+            "pageUrl": "https://{tenantDomain}/_layouts/15/workbench.aspx"
+        },
+        "modern-search-results-web-part": {
+            "pageUrl": "https://{tenantDomain}/_layouts/15/workbench.aspx"
+        },
+        "modern-search-filters-web-part": {
+            "pageUrl": "https://{tenantDomain}/_layouts/15/workbench.aspx"
+        },
+        "modern-search-box-web-part": {
+            "pageUrl": "https://{tenantDomain}/_layouts/15/workbench.aspx"
+        },
+        "modern-search-verticals-web-part": {
+            "pageUrl": "https://{tenantDomain}/_layouts/15/workbench.aspx"
+        }
+    }
 }

@@ -1,4 +1,4 @@
-define([], function() {
+define([], function () {
     return {
         General: {
             PlaceHolder: {
@@ -16,7 +16,8 @@ define([], function() {
                 UseDataResultsFromComponentsLabel: "Użyj danych z następujących Web Partów",
                 UseDataResultsFromComponentsDescription: "Jeśli połączysz więcej niż jeden Web Part, wartości filtrów i liczność będzie połączona po nazwach filtrów.",
                 LinkToVerticalLabel: "Wyświetlaj filtry tylko wtedy, gdy wybrane są następujące branże",
-                LinkToVerticalLabelHoverMessage: "Filtry będą wyświetlane tylko wtedy, gdy wybrana branża pasuje do tych skonfigurowanych dla tego składnika Web Part. W przeciwnym razie składnik Web Part będzie pusty (bez marginesów i dopełnienia) w trybie wyświetlania."
+                LinkToVerticalLabelHoverMessage: "Filtry będą wyświetlane tylko wtedy, gdy wybrana branża pasuje do tych skonfigurowanych dla tego składnika Web Part. W przeciwnym razie składnik Web Part będzie pusty (bez marginesów i dopełnienia) w trybie wyświetlania.",
+                BidirectionalConnectionWarning: "Jeden lub więcej połączonych składników Web Part wyników wyszukiwania nie zostało skonfigurowanych do połączenia zwrotnego z tym składnikiem Web Part filtrów. Oba składniki Web Part muszą być ze sobą połączone, aby filtry działały poprawnie."
             },
             FiltersSettingsPage: {
                 SettingsGroupName: "Ustawienia filtrów",
@@ -30,6 +31,8 @@ define([], function() {
                 FilterDisplayName: "Tytuł",
                 FilterTemplate: "Szablon",
                 FilterExpandByDefault: "Domyślnie rozwinięte",
+                ExpandAllNodesByDefault: "Domyślnie rozwiń wszystkie węzły",
+                HideNodesNotInDataSet: "Ukryj węzły, których nie ma w bieżącym zestawie danych",
                 FilterType: "Rodzaj filtru",
                 FilterTypeRefiner: "Ten szablon filtru działa jak zawężacz i odbiera/wysyła dostępne/wybrane wartości z/do połączonego źródła danych.",
                 FilterTypeStaticFilter: "Ten szablon filtru działa jak statyczny filtr i jedynie wysyła z góry wybraną wartość do połączonego źródła danych. Przychodzące wartości filtrów nie są brane pod uwagę.",
@@ -48,7 +51,8 @@ define([], function() {
                     ComboBoxTemplate: "Pole rozwijalne",
                     DateIntervalTemplate: "Okres czasu",
                     PeopleTemplate: "Szablon osoby",
-                    TaxonomyPickerTemplate: "Wybór terminu"
+                    TaxonomyPickerTemplate: "Wybór terminu",
+                    HierarchicalFilterTemplate: "Filtr hierarchiczny"
                 },
                 SortBy: "Sortuj po",
                 SortDirection: "Kierunek sortowania",
