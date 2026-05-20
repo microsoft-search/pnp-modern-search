@@ -233,6 +233,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
      */
     private _pagingEventHandler: (ev: CustomEvent) => void = null;
     private _sortingEventHandler: (ev: CustomEvent) => void = null;
+    private _popStateHandler: () => void = null;
 
     /**
      * The available connections as property pane group
@@ -641,6 +642,10 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     protected onDispose(): void {
         if (this._pushStateCallback) {
             window.history.pushState = this._pushStateCallback;
+        }
+        if (this._popStateHandler) {
+            globalThis.removeEventListener('popstate', this._popStateHandler);
+            this._popStateHandler = null;
         }
         // eslint-disable-next-line @rushstack/pair-react-dom-render-unmount -- paired with render in renderCompleted
         ReactDom.unmountComponentAtNode(this.domElement);
@@ -1351,13 +1356,16 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
 
     /**
-     * Updates the page number in the query string 
-     * @param pageNumber 
+     * Updates the page number in the query string
+     * Uses the native pushState (via History.prototype) so an updated URL
+     * does not trigger an extra render() through `_handleQueryStringChange()`'s
+     * monkey-patched pushState — the caller is responsible for the render.
+     * @param pageNumber
      */
     private _updatePageNumberInQueryString(pageNumber: number): void {
         const url = new URL(globalThis.location.href);
         url.searchParams.set('page', pageNumber.toString());
-        globalThis.history.pushState({}, '', url.toString());
+        History.prototype.pushState.call(globalThis.history, {}, '', url.toString());
     }
 
 
@@ -2343,6 +2351,12 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             if (this._lastInputQueryText != undefined && !isEqual(dataContext.inputQueryText, this._lastInputQueryText)) {
                 dataContext.pageNumber = 1;
                 this.currentPageNumber = 1;
+                // Clear any stale `page` query param so the URL stays in sync with the reset.
+                // Use the native pushState so this does not trigger a duplicate render().
+                const cleanedUrl = UrlHelper.removeQueryStringParam('page', globalThis.location.href);
+                if (cleanedUrl !== globalThis.location.href) {
+                    History.prototype.pushState.call(globalThis.history, {}, '', cleanedUrl);
+                }
             } else {
                 // Classic page navigation with query string (ex: ?page=2)
                 const queryStringParams = UrlHelper.getQueryStringParams();
@@ -2505,21 +2519,29 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     }
 
     /**
-     * Subscribes to browser navigation events to handle pagination with query string (ex: ?page=2)
+     * Subscribes to browser navigation events to handle pagination with query string (ex: ?page=2).
+     * The listener is always attached so that toggling `paging.enableQueryString` from the property
+     * pane does not require a full page refresh; the toggle is checked inside the handler instead.
      */
     private _handlePopStatePagination() {
-        if (this.properties.paging.enableQueryString) {
-
-            globalThis.addEventListener('popstate', (event) => {
-                const queryStringParams = UrlHelper.getQueryStringParams();
-                const pageNumberFromQueryString = Number.parseInt(queryStringParams['page'], 10);
-                if (!Number.isNaN(pageNumberFromQueryString) && pageNumberFromQueryString > 0) {
-                    this.currentPageNumber = pageNumberFromQueryString;
-                    this.render();
-                }
-            });
+        this._popStateHandler = () => {
+            if (!this.properties.paging.enableQueryString) {
+                return;
+            }
+            const queryStringParams = UrlHelper.getQueryStringParams();
+            const pageNumberFromQueryString = Number.parseInt(queryStringParams['page'], 10);
+            // Missing or invalid `page` param (e.g. navigating back to the initial results URL)
+            // should be treated as page 1, otherwise the web part stays on the previous page.
+            const pageNumber = !Number.isNaN(pageNumberFromQueryString) && pageNumberFromQueryString > 0
+                ? pageNumberFromQueryString
+                : 1;
+            if (this.currentPageNumber !== pageNumber) {
+                this.currentPageNumber = pageNumber;
+                this.render();
+            }
+        };
+        globalThis.addEventListener('popstate', this._popStateHandler);
     }
-}
 
     private async initializeQueryModifiers(queryModifierConfiguration: IQueryModifierConfiguration[]): Promise<IQueryModifier[]> {
 
