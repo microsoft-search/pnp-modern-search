@@ -26,6 +26,9 @@ module.exports = function (webpackConfig, taskSession, heftConfiguration, webpac
         // Force ALL imports of adaptive-expressions (including from adaptivecards-templating)
         // to use the main entry (index.js) instead of the browser field.
         'adaptive-expressions': path.resolve(projectRoot, 'node_modules/adaptive-expressions/lib/index.js'),
+        // Prevent moment.js from being bundled (transitive dep via chart.js 2.x from @pnp/spfx-controls-react).
+        // We use dayjs instead; chart.js time scale (the only consumer) is not used.
+        moment: false,
     };
 
     // ─── resolve.fallback (Node polyfills for browser) ─────────────────────────
