@@ -1,5 +1,6 @@
 !!! note
-The PnP Modern Search Web Parts must be deployed to your App Catalog and activated on your site. See the [installation documentation](../installation.md) for details.
+    The PnP Modern Search Web Parts must be deployed to your App Catalog and activated on your site. See the [installation documentation](../installation.md) for details.
+
 
 Search results pages are always fighting for screen (width) real estate — you want to show useful metadata but you can't add endless columns. By adding a single small icon column to your results list, users can click it to open a right-hand flyout panel that displays as much metadata as you need, without cluttering the results view.
 
@@ -134,7 +135,8 @@ Paste the following as the column value:
 
 Save and publish the page. Each result row will show the info icon on the right. Click it to open the panel and verify all fields appear correctly.
 
-![The panel open showing metadata for a selected result](assets/more-info-panel-with-pnp-panel/panel-open-with-metadata.png)
+![The panel open showing metadata for a selected result](assets/more-info-panel-with-pnp-panel/more-info-panel-result.png)
 
 !!! tip
-If a field shows blank, check two things: (1) the managed property is included in the **Selected Properties** list in the Data sources panel, and (2) the slot mapping in the Layouts panel points to the correct managed property name.
+    If a field shows blank, check two things: (1) the managed property is included in the **Selected Properties** list in the Data sources panel, and (2) the slot mapping in the Layouts panel points to the correct managed property name.
+
