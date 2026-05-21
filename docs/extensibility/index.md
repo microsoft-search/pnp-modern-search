@@ -31,6 +31,9 @@ For your project to be a valid extensibility library, you must have the followin
 !!! important "SPFx version"
     The SPFx library project must use the same SPFx version as the main solution (check [compatibility matrix](./extensibility_compatibility_matrix.md)). Otherwise you may face issues at build time. See [GitHub issue #1893](https://github.com/microsoft-search/pnp-modern-search/issues/1893). Starting with PnP Modern Search v4.21.0, the solution uses SPFx v1.22.2 with the **Heft-based toolchain**. Your extensibility library must also use the Heft toolchain if targeting this version.
 
+!!! note "Extensibility package v2.0.0+"
+    Starting with `@pnp/modern-search-extensibility` v2.0.0, the npm package has **zero SPFx runtime dependencies**. SPFx types like `WebPartContext` and `ServiceScope` are typed as `any` in the base classes, but you can get full type safety by passing your own SPFx types as generic parameters. See the [custom data source](./custom_data_sources.md) or [custom layout](./custom_layout.md) documentation for examples.
+
 ### Supported extensions
 
 Each Web Part type in the solution supports several extensions or no extension at all. It means even your extensibility library contains all possible extensions, they won't be loaded if the Web Part does not support them.
@@ -211,11 +214,15 @@ Debugging a library component is exactly the same as debugging an SPFx Web Part.
 #### Accessing the SharePoint Framework context and services in a library component
 
 In case you need to access the SharePoint Framework context and services, within your custom library component, you can easily do that by relying on the Service Locator pattern available in SPFx.
-You simply need to declare a public static property with name `serviceKey` in your library component and provide a constructor that accepts a [`ServiceScope`](https://docs.microsoft.com/en-us/javascript/api/sp-core-library/servicescope?view=sp-typescript-latest) instance as input argument.
+You simply need to declare a public static property with name `serviceKey` in your library component and provide a constructor that accepts a `ServiceScope` instance as input argument.
+
+!!! note "Extensibility package v2.0.0+"
+    With v2.0.0+, the `serviceScope` constructor parameter is typed as `any` in the base classes. You can cast it to `ServiceScope` from your own SPFx dependencies for full type safety.
+
 For example, here you can see a code excerpt of such a library component that handles custom actions for Adaptive Cards rendering:
 
 ```typescript
-import { IAdaptiveCardAction, IComponentDefinition, IExtensibilityLibrary, ILayoutDefinition, ISuggestionProviderDefinition, IQueryModifierDefinition } from '@pnp/modern-search-extensibility';
+import { IAdaptiveCardAction, IComponentDefinition, IExtensibilityLibrary, ILayoutDefinition, ISuggestionProviderDefinition, IQueryModifierDefinition, IDataSourceDefinition, IDataSource } from '@pnp/modern-search-extensibility';
 import { ServiceKey, ServiceScope } from '@microsoft/sp-core-library';
 import { SPHttpClient, SPHttpClientResponse } from '@microsoft/sp-http';
 import { PageContext } from '@microsoft/sp-page-context';

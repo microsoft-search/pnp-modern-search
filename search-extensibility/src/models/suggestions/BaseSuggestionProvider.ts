@@ -1,11 +1,11 @@
 import { ISuggestionProvider } from './ISuggestionProvider';
 import { ISuggestion } from './ISuggestion';
 
-export abstract class BaseSuggestionProvider<T> implements ISuggestionProvider {
+export abstract class BaseSuggestionProvider<T, TContext = any> implements ISuggestionProvider {
     
     protected _isZeroTermSuggestionsEnabled: boolean;
     protected _properties!: T;
-    private _context: any;
+    private _context: TContext;
     protected serviceScope: any;
 
     get properties(): T {
@@ -24,11 +24,11 @@ export abstract class BaseSuggestionProvider<T> implements ISuggestionProvider {
         this._isZeroTermSuggestionsEnabled = isZeroTermSuggestionsEnabled;
     }
     
-    get context(): any {
+    get context(): TContext {
         return this._context;
     }
 
-    set context(context: any) {
+    set context(context: TContext) {
         this._context = context;
     }
 

@@ -27,8 +27,20 @@ Suggestions provider creation process comes in two distinct steps:
 ```
 
 * Implement the `BaseSuggestionProvider` abstract class using your properties interface:
+
+**Basic (no SPFx type safety on context):**
 ```typescript
     export class CustomSuggestionProvider extends BaseSuggestionProvider<ICustomSuggestionProviderProperties> {
+        ...
+    }
+```
+
+**With full SPFx type safety (recommended):**
+```typescript
+    import { WebPartContext } from '@microsoft/sp-webpart-base';
+
+    export class CustomSuggestionProvider extends BaseSuggestionProvider<ICustomSuggestionProviderProperties, WebPartContext> {
+        // this.context now has full WebPartContext intellisense
         ...
     }
 ```

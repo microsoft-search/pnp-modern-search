@@ -6,13 +6,13 @@ import { FilterBehavior } from '../filters/FilterBehavior';
 import { ITemplateSlot } from './ITemplateSlot';
 import { IDataFilter } from '../..';
 
-export abstract class BaseDataSource<T> implements IDataSource {
+export abstract class BaseDataSource<T, TContext = any> implements IDataSource {
 
     protected serviceScope: any;
 
     protected _properties: T;
     private _serviceKeys: IServiceKeysConfiguration;
-    private _context: any;
+    private _context: TContext;
     private _editMode: boolean;
     private _render: () => void | Promise<void>;
 
@@ -32,11 +32,11 @@ export abstract class BaseDataSource<T> implements IDataSource {
         this._render = renderFunc;
     }
 
-    get context(): any {
+    get context(): TContext {
         return this._context;
     }
 
-    set context(context: any) {
+    set context(context: TContext) {
         this._context = context;
     }
 

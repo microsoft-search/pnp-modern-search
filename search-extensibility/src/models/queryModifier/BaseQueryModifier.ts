@@ -1,9 +1,9 @@
 import { IQueryModifier } from './IQueryModifier';
 
-export abstract class BaseQueryModifier<T> implements IQueryModifier {
+export abstract class BaseQueryModifier<T, TContext = any> implements IQueryModifier {
 
     protected _properties!: T;
-    private _context: any;
+    private _context: TContext;
     protected serviceScope: any;
     protected _endWhenSuccessfull: boolean;
 
@@ -15,11 +15,11 @@ export abstract class BaseQueryModifier<T> implements IQueryModifier {
         this._properties = properties;
     }
 
-    get context(): any {
+    get context(): TContext {
         return this._context;
     }
 
-    set context(context: any) {
+    set context(context: TContext) {
         this._context = context;
     }
 

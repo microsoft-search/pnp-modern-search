@@ -1,9 +1,9 @@
 import { ILayout } from './ILayout';
 
-export abstract class BaseLayout<T> implements ILayout {
+export abstract class BaseLayout<T, TContext = any> implements ILayout {
 
     private _properties!: T;
-    private _context: any;
+    private _context: TContext;
     private _editMode: boolean;
     protected serviceScope: any;
 
@@ -15,11 +15,11 @@ export abstract class BaseLayout<T> implements ILayout {
         this._properties = properties;
     }
 
-    get context(): any {
+    get context(): TContext {
         return this._context;
     }
 
-    set context(context: any) {
+    set context(context: TContext) {
         this._context = context;
     }
 

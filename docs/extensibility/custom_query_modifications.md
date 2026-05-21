@@ -25,8 +25,20 @@ Custom modifier creation process comes in two distinct steps:
 ```
 
 * Implement the `BaseQueryModifier` abstract class using your properties interface:
+
+**Basic (no SPFx type safety on context):**
 ```typescript
     export class CustomQueryModifier extends BaseQueryModifier<ICustomQueryModifierProperties> {
+        ...
+    }
+```
+
+**With full SPFx type safety (recommended):**
+```typescript
+    import { WebPartContext } from '@microsoft/sp-webpart-base';
+
+    export class CustomQueryModifier extends BaseQueryModifier<ICustomQueryModifierProperties, WebPartContext> {
+        // this.context now has full WebPartContext intellisense
         ...
     }
 ```

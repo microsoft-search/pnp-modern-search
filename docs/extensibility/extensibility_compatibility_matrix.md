@@ -3,9 +3,13 @@
 When developing a new extensibility library for the PnP Modern Search solution, your SPFx library project must use the same SPFx version as the main solution.
 The following table lists the SPFx version used by each PnP Modern Search release, helping you determine the appropriate version for your extensibility project.
 
-| PnP Modern Search Release | Release Date       | SPFx Version used | Toolchain |
-|----------------------------|--------------------|--------------------|-----------|
-| 4.21.0                     | April 2026        | 1.22.2             | Heft      |
+!!! note "Extensibility package v2.0.0+"
+    Starting with `@pnp/modern-search-extensibility` v2.0.0, the npm package itself has **zero SPFx runtime dependencies** and uses its own semver versioning (decoupled from SPFx). However, your extensibility library project still needs to target the same SPFx version as the web part solution because the SPFx build tooling embeds version-specific framework references in the component manifest.
+
+| PnP Modern Search Release | Release Date       | SPFx Version used | Extensibility Package | Toolchain |
+|----------------------------|--------------------|--------------------|----------------------|-----------|
+| 4.22.0                     | May 2026          | 1.22.2             | 2.0.0                | Heft      |
+| 4.21.0                     | April 2026        | 1.22.2             | 1.22.3               | Heft      |
 | 4.16.0                     | February 2025     | 1.20.0             | Gulp      |
 | 4.15.0                     | January 2025      | 1.20.0             |
 | 4.14.0                     | November 2024     | 1.18.2             |
