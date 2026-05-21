@@ -27,7 +27,7 @@ export abstract class BaseWebComponent extends HTMLElement {
     /**
      * INTERNAL USE ONLY. For custom web component use `_serviceScope` property and the `DateHelper` service (ex: `this._serviceScope.consume<DateHelper>(DateHelper.ServiceKey)`)
      */
-    public _moment: any;
+    public _dayjs: any;
 
     protected abstract connectedCallback(): void;
 
@@ -75,20 +75,12 @@ export abstract class BaseWebComponent extends HTMLElement {
                                 props[camelCase(attr)] = JSON.parse(value);
                             } catch (error) {
 
-                                // Date — only attempt to parse strings that match an ISO 8601
-                                // date / date-time shape. `dayjs` (which replaced `moment`)
-                                // accepts much looser input than the legacy moment behavior
-                                // and returns `isValid() === true` for arbitrary strings that
-                                // merely end in a number (e.g. titles ending in a year such as
-                                // "... 2009"), causing them to be silently coerced to Date.
-                                // See https://github.com/microsoft-search/pnp-modern-search/issues/4775
-                                const isoDatePattern = /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|[+-]\d{2}:?\d{2})?)?$/;
-                                if (isoDatePattern.test(value) && this._moment && this._moment(value).isValid()) {
-                                    props[camelCase(attr)] = new Date(Date.parse(value));
-                                } else {
-                                    // Return the original value as string
-                                    props[camelCase(attr)] = value;
-                                }
+                                // Return the original value as string.
+                                // Date-like strings are intentionally kept as
+                                // strings so they are safe to render as React
+                                // children. Components that need a Date object
+                                // can parse the ISO string themselves.
+                                props[camelCase(attr)] = value;
                             }
                         }
                     }
