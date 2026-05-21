@@ -1,6 +1,3 @@
-import { IPropertyPaneGroup } from "@microsoft/sp-property-pane";
-import { WebPartContext } from '@microsoft/sp-webpart-base';
-
 export interface IQueryModifier {
   /**
    * The Web Part properties in the property bag. Corresponds to the isolated 'queryModifierProperties' property in the global property bag.
@@ -10,7 +7,7 @@ export interface IQueryModifier {
   /**
    * Context of the main Web Part
    */
-  context: WebPartContext;
+  context: any;
 
   /**
     * Flag to indicate that no further transformation ist necessary when the query was transformed
@@ -32,7 +29,7 @@ export interface IQueryModifier {
   /**
    * Returns the data source property pane option fields if any.
    */
-  getPropertyPaneGroupsConfiguration(): IPropertyPaneGroup[];
+  getPropertyPaneGroupsConfiguration(): any[];
 
   /**
    * Method called when a property pane field in changed in the Web Part.

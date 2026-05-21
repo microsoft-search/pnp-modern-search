@@ -1,13 +1,10 @@
-import { ServiceScope } from '@microsoft/sp-core-library';
-import { IPropertyPaneGroup } from '@microsoft/sp-property-pane';
-import { WebPartContext } from '@microsoft/sp-webpart-base';
 import { IQueryModifier } from './IQueryModifier';
 
 export abstract class BaseQueryModifier<T> implements IQueryModifier {
 
     protected _properties!: T;
-    private _context: WebPartContext;
-    protected serviceScope: ServiceScope;
+    private _context: any;
+    protected serviceScope: any;
     protected _endWhenSuccessfull: boolean;
 
     get properties(): T {
@@ -18,11 +15,11 @@ export abstract class BaseQueryModifier<T> implements IQueryModifier {
         this._properties = properties;
     }
 
-    get context(): WebPartContext {
+    get context(): any {
         return this._context;
     }
 
-    set context(context: WebPartContext) {
+    set context(context: any) {
         this._context = context;
     }
 
@@ -34,14 +31,14 @@ export abstract class BaseQueryModifier<T> implements IQueryModifier {
         this._endWhenSuccessfull = endWhenSuccessfull;
     }
 
-    public constructor(serviceScope: ServiceScope) {
+    public constructor(serviceScope: any) {
         this.serviceScope = serviceScope;
     }
 
     public onInit(): void | Promise<void> {
     }
 
-    public getPropertyPaneGroupsConfiguration(): IPropertyPaneGroup[] {
+    public getPropertyPaneGroupsConfiguration(): any[] {
 
         // Returns an empty configuration by default
         return [];

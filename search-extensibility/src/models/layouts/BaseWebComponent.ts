@@ -1,9 +1,12 @@
 import * as ReactDOM from 'react-dom';
-import { camelCase } from '@microsoft/sp-lodash-subset';
-import '@webcomponents/custom-elements/src/native-shim';
-import '@webcomponents/custom-elements/custom-elements.min';
-import { ThemeProvider } from '@microsoft/sp-component-base';
-import { ServiceScope, ServiceKey } from '@microsoft/sp-core-library';
+
+/**
+ * Converts a kebab-case string to camelCase.
+ * Replaces @microsoft/sp-lodash-subset dependency.
+ */
+function camelCase(str: string): string {
+    return str.replace(/-([a-z])/g, function (_match: string, letter: string) { return letter.toUpperCase(); });
+}
 
 export abstract class BaseWebComponent extends HTMLElement {
 
@@ -12,17 +15,17 @@ export abstract class BaseWebComponent extends HTMLElement {
     /**
      * The root shared service scope for all Web Part instances on the page. Use this scope to consume common services (ex: SPHttpClient, HttpClient , etc.) 
      */
-    public _serviceScope: ServiceScope;
+    public _serviceScope: any;
 
     /**
      * INTERNAL USE ONLY. Array of service scopes of Web Part IDs who registered this web component. Use this array to look up correct service scope for a specific Web Part instance ID.
      */
-    public _webPartServiceScopes: Map<string, ServiceScope>;
+    public _webPartServiceScopes: Map<string, any>;
 
     /**
      * INTERNAL USE ONLY. Array of service keys of Web Part IDs who registered this web component. Use this array to look up correct service keys context for a specific Web Part instance ID.
      */
-    public _webPartServiceKeys: Map<string, { [key: string]: ServiceKey<any> }>;
+    public _webPartServiceKeys: Map<string, { [key: string]: any }>;
 
     /**
      * INTERNAL USE ONLY. For custom web component use `_serviceScope` property and the `DateHelper` service (ex: `this._serviceScope.consume<DateHelper>(DateHelper.ServiceKey)`)
@@ -88,15 +91,8 @@ export abstract class BaseWebComponent extends HTMLElement {
             }
         }
 
-        // Added theme variant to be available in components
-        // Be careful: the theme variant will be the one of the last registered Web Part on the page (because serviceScope is set using prototype and called every time a Web part is rendered) 
-        // The theme variant may not correspond to the actual Web Part section theme
-        // We set this property as a fallback if the web component does not set the data-theme-variant attribute.
-        if (this._serviceScope && !props.themeVariant) {
-            const themeProvider = this._serviceScope.consume(ThemeProvider.serviceKey);
-            const themeVariant = themeProvider.tryGetTheme();
-            props.themeVariant = themeVariant;
-        }
+        // Theme variant is now set explicitly by the host via the data-theme-variant attribute.
+        // No automatic ThemeProvider consumption needed.
 
         return props;
     }

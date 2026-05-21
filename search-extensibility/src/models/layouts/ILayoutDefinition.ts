@@ -1,4 +1,3 @@
-import { ServiceKey } from '@microsoft/sp-core-library';
 import { ILayout } from './ILayout';
 
 export interface ILayoutDefinition {
@@ -37,7 +36,7 @@ export interface ILayoutDefinition {
     /**
      * The layout service key
      */
-    serviceKey: ServiceKey<ILayout>;
+    serviceKey: any;
 }
 
 export enum LayoutType {

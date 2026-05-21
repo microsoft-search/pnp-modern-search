@@ -1,15 +1,12 @@
-import { ServiceScope } from '@microsoft/sp-core-library';
 import { ISuggestionProvider } from './ISuggestionProvider';
 import { ISuggestion } from './ISuggestion';
-import { IPropertyPaneGroup } from '@microsoft/sp-property-pane';
-import { WebPartContext } from '@microsoft/sp-webpart-base';
 
 export abstract class BaseSuggestionProvider<T> implements ISuggestionProvider {
     
     protected _isZeroTermSuggestionsEnabled: boolean;
     protected _properties!: T;
-    private _context: WebPartContext;
-    protected serviceScope: ServiceScope;
+    private _context: any;
+    protected serviceScope: any;
 
     get properties(): T {
         return this._properties;
@@ -27,22 +24,22 @@ export abstract class BaseSuggestionProvider<T> implements ISuggestionProvider {
         this._isZeroTermSuggestionsEnabled = isZeroTermSuggestionsEnabled;
     }
     
-    get context(): WebPartContext {
+    get context(): any {
         return this._context;
     }
 
-    set context(context: WebPartContext) {
+    set context(context: any) {
         this._context = context;
     }
 
-    public constructor(serviceScope: ServiceScope) {
+    public constructor(serviceScope: any) {
         this.serviceScope = serviceScope;
     }
 
     public onInit(): void | Promise<void> {
     }
 
-    public getPropertyPaneGroupsConfiguration(): IPropertyPaneGroup[] {
+    public getPropertyPaneGroupsConfiguration(): any[] {
 
         // Returns an empty configuration by default
         return [];

@@ -1,6 +1,4 @@
 import { ISuggestion } from './ISuggestion';
-import { IPropertyPaneGroup } from '@microsoft/sp-property-pane';
-import { WebPartContext } from '@microsoft/sp-webpart-base';
 
 export interface ISuggestionProvider {
 
@@ -12,7 +10,7 @@ export interface ISuggestionProvider {
     /**
      * Context of the main Web Part
      */
-    context: WebPartContext;
+    context: any;
 
     /**
      * Flag indicating if the provider supports zero term suggestions
@@ -38,7 +36,7 @@ export interface ISuggestionProvider {
     /**
      * Returns the data source property pane option fields if any.
      */
-    getPropertyPaneGroupsConfiguration(): IPropertyPaneGroup[];
+    getPropertyPaneGroupsConfiguration(): any[];
 
     /**
      * Method called when a property pane field in changed in the Web Part.

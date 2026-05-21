@@ -32,20 +32,20 @@
         "typescript": "5.8.3"
     },
     "dependencies": {
-        "@fluentui/react": "8.106.4",
-        "@microsoft/sp-adaptive-card-extension-base": "1.22.2",
-        "@microsoft/sp-component-base": "1.22.2",
-        "@microsoft/sp-core-library": "1.22.2",
-        "@microsoft/sp-lodash-subset": "1.22.2",
-        "@microsoft/sp-property-pane": "1.22.2",
-        "@microsoft/sp-webpart-base": "1.22.2",
-        "@webcomponents/custom-elements": "1.5.1",
-        "@webcomponents/webcomponentsjs": "2.7.0",
         "handlebars": "4.7.9",
-        "office-ui-fabric-react": "7.199.1",
-        "react": "17.0.1",
-        "react-dom": "17.0.1",
         "tslib": "2.3.1"
+    },
+    "peerDependencies": {
+        "react": ">=16.8.0",
+        "react-dom": ">=16.8.0"
+    },
+    "peerDependenciesMeta": {
+        "react": {
+            "optional": true
+        },
+        "react-dom": {
+            "optional": true
+        }
     },
     "resolutions": {
         "@types/react": "17.0.45"

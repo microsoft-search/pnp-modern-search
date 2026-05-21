@@ -1,5 +1,4 @@
 import { IDataSource } from "./IDataSource";
-import { ServiceKey } from '@microsoft/sp-core-library';
 
 export interface IDataSourceDefinition {
     
@@ -22,5 +21,5 @@ export interface IDataSourceDefinition {
     /**
      * The data source service key
      */
-    serviceKey: ServiceKey<IDataSource>;
+    serviceKey: any;
 }
