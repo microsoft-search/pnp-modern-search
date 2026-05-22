@@ -24,8 +24,44 @@ const isDebugMode = (): boolean => {
     }
 };
 const _debugEnabled = isDebugMode();
+
+/**
+ * Safely serialise a single dbg() arg for inclusion in a Log.verbose
+ * message. Strings pass through as-is; objects are JSON-stringified;
+ * unserialisable values (cycles, BigInt, etc.) fall back to String(value)
+ * so the log call never throws.
+ */
+const _serializeDbgArg = (value: unknown): string => {
+    if (typeof value === 'string') return value;
+    if (value === undefined) return 'undefined';
+    if (value === null) return 'null';
+    try {
+        return JSON.stringify(value);
+    } catch {
+        try {
+            return String(value);
+        } catch {
+            return '[unserialisable]';
+        }
+    }
+};
+
+/** Hard cap for the serialised-args suffix appended to verbose log entries. */
+const DBG_MAX_ARGS_LEN = 2000;
+
 const dbg = (message: string, ...args: unknown[]): void => {
-    Log.verbose(ExtensibilityService_ServiceKey, message, undefined);
+    // Serialise extra args into the verbose message so the SPFx diagnostic
+    // stream captures the same context the browser console gets (config
+    // arrays, strategy objects, error details, etc.). Truncate to keep
+    // support logs readable.
+    let verboseMessage = message;
+    if (args.length > 0) {
+        const serialized = args.map(_serializeDbgArg).join(' ');
+        verboseMessage += ' ' + (serialized.length > DBG_MAX_ARGS_LEN
+            ? serialized.slice(0, DBG_MAX_ARGS_LEN) + '\u2026[truncated]'
+            : serialized);
+    }
+    Log.verbose(ExtensibilityService_ServiceKey, verboseMessage, undefined);
     if (_debugEnabled) {
         // eslint-disable-next-line no-console
         console.log(`[${ExtensibilityService_ServiceKey}] ${message}`, ...args);
