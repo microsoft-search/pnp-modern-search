@@ -105,8 +105,8 @@ importers:
         specifier: 2.15.0
         version: 2.15.0
       '@pnp/modern-search-extensibility':
-        specifier: 2.0.0-pre.1
-        version: 2.0.0-pre.1(react-dom@17.0.1(react@17.0.1))(react@17.0.1)
+        specifier: 2.0.0
+        version: 2.0.0(react-dom@17.0.1(react@17.0.1))(react@17.0.1)
       '@pnp/spfx-controls-react':
         specifier: 3.23.0
         version: 3.23.0(@babel/core@7.29.0)(@babel/template@7.28.6)(@microsoft/microsoft-graph-client@3.0.2)(@types/node@25.9.1)(@types/react-dom@17.0.17)(@types/react@17.0.45)(scheduler@0.20.2)
@@ -2031,8 +2031,8 @@ packages:
   '@pnp/logging@2.5.0':
     resolution: {integrity: sha512-SnmMCN6oADjiHKAIR23FfTqXeQZeXPBnWeVfyZAgzJfRn9uEQoUlkyET3jHjl9kkrFOVkiOD1CRI7TWMIxURbA==}
 
-  '@pnp/modern-search-extensibility@2.0.0-pre.1':
-    resolution: {integrity: sha512-X2NvLPIdBKR7YZt7G28ml3i/qhyL5usEFQl97zTOBm5mBxrjHJOiio0/jN4rPHkMipvo/v7kfRyjACoivQ7xEQ==}
+  '@pnp/modern-search-extensibility@2.0.0':
+    resolution: {integrity: sha512-8sa+Y1Oy8iJ96nqZ2ugV1NjjuSPClI3p+AbKv4Br5W1HQyx9A1OgHoT7C4lH5gC9F3thVZoJuiBkbwGkVor8MA==}
     engines: {node: '>=22.14.0 < 23.0.0'}
     peerDependencies:
       react: '>=16.8.0'
@@ -10552,7 +10552,7 @@ snapshots:
     dependencies:
       tslib: 2.2.0
 
-  '@pnp/modern-search-extensibility@2.0.0-pre.1(react-dom@17.0.1(react@17.0.1))(react@17.0.1)':
+  '@pnp/modern-search-extensibility@2.0.0(react-dom@17.0.1(react@17.0.1))(react@17.0.1)':
     dependencies:
       '@webcomponents/custom-elements': 1.6.0
       handlebars: 4.7.9
