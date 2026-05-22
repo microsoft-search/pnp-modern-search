@@ -197,6 +197,16 @@ export class TemplateService implements ITemplateService {
                 : (s: string) => String(s);
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             hb.registerHelper("helperMissing", function (this: any, ...args: any[]) {
+                // Handlebars calls helperMissing for BOTH:
+                //   (a) genuine missing helper calls: {{foo "x" y=1}}  -> args = [arg, ..., options]   (length >= 2)
+                //   (b) property lookups that resolve to undefined:    {{Title}}        -> args = [options]            (length === 1)
+                // We only want to surface (a) as an inline placeholder. Treating (b)
+                // as missing would flag every undefined data field (e.g. {{Title}}
+                // when the data hasn't loaded yet) as a broken helper. For (b),
+                // return undefined to match Handlebars' default silent behavior.
+                if (args.length <= 1) {
+                    return undefined;
+                }
                 const options = args[args.length - 1];
                 const name = options && options.name ? options.name : "(unknown)";
                 // eslint-disable-next-line no-console
