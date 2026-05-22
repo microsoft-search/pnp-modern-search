@@ -1059,7 +1059,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     }
 
     /**
-     * Loads extensions from registered extensibility librairies
+     * Loads extensions from registered extensibility libraries
      */
     private async loadExtensions(librariesConfiguration: IExtensibilityConfiguration[]) {
 

@@ -18,7 +18,7 @@ export interface IQueryModifierDefinition {
     description: string;
 
     /**
-     * The layout service key
+     * The query modifier service key
      */
     serviceKey: any;
 }

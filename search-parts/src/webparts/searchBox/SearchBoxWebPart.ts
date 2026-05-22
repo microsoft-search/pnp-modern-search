@@ -1007,7 +1007,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
     }
 
     /**
-     * Loads extensions from registered extensibility librairies
+     * Loads extensions from registered extensibility libraries
      */
     private async loadExtensions(librariesConfiguration: IExtensibilityConfiguration[]) {
 

@@ -414,15 +414,15 @@ export class ExtensibilityService {
     }
 
     /**
-     * Loads the extensibility libraries from the global or site collection app catalog acording to the configuration.
+     * Loads the extensibility libraries from the global or site collection app catalog according to the configuration.
      */
-    public async loadExtensibilityLibraries(librairiesConfiguration: IExtensibilityConfiguration[]): Promise<IExtensibilityLibrary[]> {
+    public async loadExtensibilityLibraries(librariesConfiguration: IExtensibilityConfiguration[]): Promise<IExtensibilityLibrary[]> {
 
         // Log the full incoming configuration so we can see exactly what the web part passed in
-        dbg(`loadExtensibilityLibraries: incoming config (${librairiesConfiguration.length} entries):`,
-            librairiesConfiguration.map(c => ({ id: c.id, name: c.name, enabled: c.enabled })));
+        dbg(`loadExtensibilityLibraries: incoming config (${librariesConfiguration.length} entries):`,
+            librariesConfiguration.map(c => ({ id: c.id, name: c.name, enabled: c.enabled })));
 
-        const enabled = librairiesConfiguration.filter(c => c.enabled);
+        const enabled = librariesConfiguration.filter(c => c.enabled);
         dbg(`loadExtensibilityLibraries: START — ${enabled.length} enabled libraries:`, enabled.map(c => ({ id: c.id, name: c.name })));
         dbg(`loadExtensibilityLibraries: page has ${this.getPageManifestVersions().size} manifests registered`);
 

@@ -195,6 +195,12 @@ export class TemplateService implements ITemplateService {
             const escapeFn = hb.Utils && hb.Utils.escapeExpression
                 ? hb.Utils.escapeExpression
                 : (s: string) => String(s);
+            // Shared placeholder builder so the helperMissing and
+            // blockHelperMissing fallbacks stay visually consistent and
+            // easy to maintain in one place.
+            const buildMissingPlaceholder = (label: string, name: string, title: string): string =>
+                `<span style="color:#a4262c;background:#fde7e9;padding:1px 4px;border-radius:3px;font-family:monospace;font-size:11px;" title="${title}">[missing ${label}: ${escapeFn(name)}]</span>`;
+            const placeholderTitle = "Handlebars helper not registered. If this comes from an extensibility library, the library may have failed to load.";
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             hb.registerHelper("helperMissing", function (this: any, ...args: any[]) {
                 // Handlebars calls helperMissing for BOTH:
@@ -227,9 +233,7 @@ export class TemplateService implements ITemplateService {
                 console.warn(`[TemplateService] Missing Handlebars helper '${name}'. The template references a helper that is not registered. If '${name}' comes from an extensibility library, the library may have failed to load \u2014 check earlier console output.`);
                 // Use the per-WP instance's SafeString so the value is
                 // produced by the same Handlebars instance that renders it.
-                return new hb.SafeString(
-                    `<span style="color:#a4262c;background:#fde7e9;padding:1px 4px;border-radius:3px;font-family:monospace;font-size:11px;" title="Handlebars helper not registered. If this comes from an extensibility library, the library may have failed to load.">[missing helper: ${escapeFn(name)}]</span>`
-                );
+                return new hb.SafeString(buildMissingPlaceholder("helper", name, placeholderTitle));
             });
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             hb.registerHelper("blockHelperMissing", function (this: any, context: any, options: any) {
@@ -246,8 +250,7 @@ export class TemplateService implements ITemplateService {
                 const inverse = options && typeof options.inverse === "function"
                     ? options.inverse(this)
                     : "";
-                const placeholder = `<span style="color:#a4262c;background:#fde7e9;padding:1px 4px;border-radius:3px;font-family:monospace;font-size:11px;" title="Handlebars block helper not registered. If this comes from an extensibility library, the library may have failed to load.">[missing block helper: #${escapeFn(name)}]</span>`;
-                return new hb.SafeString(inverse + placeholder);
+                return new hb.SafeString(inverse + buildMissingPlaceholder("block helper", `#${name}`, placeholderTitle));
             });
 
             // Register icons and pull the fonts from the default SharePoint cdn.

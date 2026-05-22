@@ -18,7 +18,7 @@ export interface ISuggestionProviderDefinition {
     description: string;
 
     /**
-     * The layout service key
+     * The suggestion provider service key
      */
     serviceKey: any;
 }
