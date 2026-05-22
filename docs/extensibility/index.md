@@ -32,7 +32,7 @@ For your project to be a valid extensibility library, you must have the followin
     The SPFx library project must use the same SPFx version as the main solution (check [compatibility matrix](./extensibility_compatibility_matrix.md)). Otherwise you may face issues at build time. See [GitHub issue #1893](https://github.com/microsoft-search/pnp-modern-search/issues/1893). Starting with PnP Modern Search v4.21.0, the solution uses SPFx v1.22.2 with the **Heft-based toolchain**. Your extensibility library must also use the Heft toolchain if targeting this version.
 
 !!! note "Extensibility package v2.0.0+"
-    Starting with `@pnp/modern-search-extensibility` v2.0.0, the npm package has **zero SPFx runtime dependencies**. SPFx types like `WebPartContext` and `ServiceScope` are typed as `any` in the base classes, but you can get full type safety by passing your own SPFx types as generic parameters. See the [custom data source](./custom_data_sources.md) or [custom layout](./custom_layout.md) documentation for examples.
+    Starting with `@pnp/modern-search-extensibility` v2.0.0, the npm package has **zero SPFx runtime dependencies**. SPFx types like `WebPartContext` and `ServiceScope` are typed as `any` in the base classes. **No code changes are required when upgrading** — existing extensions compile as-is since they already import SPFx types directly from `@microsoft/sp-*`. Optionally, you can pass your own SPFx types as a second generic parameter for improved intellisense (e.g., `extends BaseDataSource<IMyProps, WebPartContext>`). See the [custom data source](./custom_data_sources.md) or [custom layout](./custom_layout.md) documentation for examples.
 
 ### Supported extensions
 
