@@ -71,13 +71,6 @@ export class ExtensibilityService {
     }
 
     /**
-     * Determines if a dependency name belongs to the SPFx framework.
-     * SPFx framework packages have backwards-compatible APIs and are safe
-     * to patch from the extension's declared version to the page's version.
-     * Non-framework packages (like react, react-dom) are NOT patched because
-     * downgrading them could break the extension's runtime expectations.
-     */
-    /**
      * Returns true if a dependency can be safely patched at runtime.
      *
      * Any component-type dependency that is registered in the page's

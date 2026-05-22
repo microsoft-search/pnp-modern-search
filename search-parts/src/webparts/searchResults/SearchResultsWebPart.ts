@@ -612,7 +612,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         this._handleQueryStringChange();
         this._handlePopStatePagination();
 
-        // Load extensibility libaries extensions.
+        // Load extensibility libraries extensions.
         // loadExtensions() also registers web components in the global page context,
         // so we don't need a separate registerWebComponents call here.
         await this.loadExtensions(this.properties.extensibilityLibraryConfiguration);
