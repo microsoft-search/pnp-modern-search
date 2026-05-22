@@ -55,13 +55,14 @@ jobs:
               run: pnpm run build
 
             - name: Publish
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
+                  PRERELEASE: ${{ github.event.inputs.prerelease }}
               run: |
-                  if [ "${{ inputs.prerelease }}" = "true" ]; then
+                  if [ "$PRERELEASE" = "true" ]; then
                     echo "Publishing as pre-release with 'next' tag"
                     npm publish --tag next
                   else
                     echo "Publishing as latest"
                     npm publish
                   fi
-              env:
-                  NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}

@@ -40,14 +40,6 @@
         "react": ">=16.8.0",
         "react-dom": ">=16.8.0"
     },
-    "peerDependenciesMeta": {
-        "react": {
-            "optional": true
-        },
-        "react-dom": {
-            "optional": true
-        }
-    },
     "resolutions": {
         "@types/react": "17.0.45"
     },

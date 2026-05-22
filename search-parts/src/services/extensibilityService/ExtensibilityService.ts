@@ -52,22 +52,34 @@ export class ExtensibilityService {
      * Builds a lookup map of component id → version for all manifests
      * registered on the current page. Used to rewrite extension manifests
      * for cross-SPFx-version compatibility.
+     *
+     * Caching note: we only cache a *non-empty* result. If SPComponentLoader
+     * hasn't populated its manifest store yet (early page-load race) or
+     * `getManifests()` throws, we don't memoize the empty map — a later
+     * retry rebuilds it and can pick up newly-registered manifests, which
+     * lets the patch path engage on subsequent attempts.
      */
     private getPageManifestVersions(): Map<string, string> {
-        if (!this._pageManifestVersions) {
-            this._pageManifestVersions = new Map<string, string>();
-            try {
-                const manifests = SPComponentLoader.getManifests();
-                for (const m of manifests) {
-                    if (m.id && m.version) {
-                        this._pageManifestVersions.set(m.id, m.version);
-                    }
-                }
-            } catch (e) {
-                Log.warn(ExtensibilityService_ServiceKey, `Could not build page manifest version map: ${e}`, this.serviceScope);
-            }
+        if (this._pageManifestVersions && this._pageManifestVersions.size > 0) {
+            return this._pageManifestVersions;
         }
-        return this._pageManifestVersions;
+        const map = new Map<string, string>();
+        try {
+            const manifests = SPComponentLoader.getManifests();
+            for (const m of manifests) {
+                if (m.id && m.version) {
+                    map.set(m.id, m.version);
+                }
+            }
+        } catch (e) {
+            Log.warn(ExtensibilityService_ServiceKey, `Could not build page manifest version map: ${e}`, this.serviceScope);
+        }
+        // Only memoize once we have at least one entry; otherwise leave
+        // _pageManifestVersions unset so the next call rebuilds.
+        if (map.size > 0) {
+            this._pageManifestVersions = map;
+        }
+        return map;
     }
 
     /**
