@@ -834,9 +834,11 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
 
         this.properties.providerProperties = this.properties.providerProperties ? this.properties.providerProperties : {};
 
+        // Seed an example row (disabled by default) so the property pane shows users
+        // where to add their extension manifest IDs. Disabled — it doesn't try to load.
         this.properties.extensibilityLibraryConfiguration = this.properties.extensibilityLibraryConfiguration ? this.properties.extensibilityLibraryConfiguration : [{
             name: commonStrings.General.Extensibility.DefaultExtensibilityLibraryName,
-            enabled: true,
+            enabled: false,
             id: Constants.DEFAULT_EXTENSIBILITY_LIBRARY_COMPONENT_ID
         }];
 

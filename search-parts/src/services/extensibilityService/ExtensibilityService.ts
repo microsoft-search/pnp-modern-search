@@ -7,6 +7,31 @@ import { IExtensibilityConfiguration } from "../../models/common/IExtensibilityC
 
 const ExtensibilityService_ServiceKey = "PnPModernSearchExtensibilityService";
 
+/**
+ * Debug logger gated by the `?pnpSearchDebug=1` URL query parameter (or the
+ * SPFx workbench `?debug=true` flag). When neither is set, returns no-op so
+ * the rich diagnostic logs don't pollute production browser consoles.
+ *
+ * Even when disabled, the messages still flow through `Log.verbose` so they
+ * remain available in the SPFx diagnostic stream for support scenarios.
+ */
+const isDebugMode = (): boolean => {
+    try {
+        const search = window.location.search.toLowerCase();
+        return search.indexOf('pnpsearchdebug=1') !== -1 || search.indexOf('debug=true') !== -1;
+    } catch {
+        return false;
+    }
+};
+const _debugEnabled = isDebugMode();
+const dbg = (message: string, ...args: unknown[]): void => {
+    Log.verbose(ExtensibilityService_ServiceKey, message, undefined);
+    if (_debugEnabled) {
+        // eslint-disable-next-line no-console
+        console.log(`[${ExtensibilityService_ServiceKey}] ${message}`, ...args);
+    }
+};
+
 export class ExtensibilityService {
 
     private static readonly MAX_LOAD_RETRIES = 3;
@@ -46,6 +71,17 @@ export class ExtensibilityService {
     }
 
     /**
+     * Determines if a dependency name belongs to the SPFx framework.
+     * SPFx framework packages have backwards-compatible APIs and are safe
+     * to patch from the extension's declared version to the page's version.
+     * Non-framework packages (like react, react-dom) are NOT patched because
+     * downgrading them could break the extension's runtime expectations.
+     */
+    private isSafeToPatch(depName: string): boolean {
+        return depName.indexOf('@microsoft/sp-') === 0;
+    }
+
+    /**
      * Rewrites version-pinned component dependencies in an extension manifest
      * to match the versions available on the current page. This enables
      * extensions built against an older SPFx version to load on a newer page.
@@ -54,6 +90,10 @@ export class ExtensibilityService {
      * `@microsoft/sp-core-library@1.18.2` in scriptResources. The page
      * running SPFx 1.22.2 has `@microsoft/sp-core-library@1.22.2`. Without
      * rewriting, the loader fails because it does an exact version lookup.
+     *
+     * Only @microsoft/sp-* packages are patched (they maintain API stability
+     * across minor versions). Other dependencies (react, react-dom, custom
+     * components) are left alone — patching them could downgrade APIs.
      *
      * @param manifest - The extension's original manifest (will be cloned, not mutated)
      * @returns A patched manifest with updated dependency versions, or the original if no changes needed
@@ -71,10 +111,10 @@ export class ExtensibilityService {
 
         let needsPatch = false;
 
-        // Check if any component dependency has a version mismatch with the page
+        // Check if any SAFE component dependency has a version mismatch with the page
         for (const depName of Object.keys(scriptResources)) {
             const resource = scriptResources[depName];
-            if (resource.type === 'component' && resource.id && resource.version) {
+            if (resource.type === 'component' && resource.id && resource.version && this.isSafeToPatch(depName)) {
                 const pageVersion = pageVersions.get(resource.id);
                 if (pageVersion && pageVersion !== resource.version) {
                     needsPatch = true;
@@ -94,7 +134,7 @@ export class ExtensibilityService {
 
         for (const depName of Object.keys(patchedResources)) {
             const resource = patchedResources[depName];
-            if (resource.type === 'component' && resource.id && resource.version) {
+            if (resource.type === 'component' && resource.id && resource.version && this.isSafeToPatch(depName)) {
                 const pageVersion = pageVersions.get(resource.id);
                 if (pageVersion && pageVersion !== resource.version) {
                     rewrites.push(`${depName}: ${resource.version} → ${pageVersion}`);
@@ -104,9 +144,12 @@ export class ExtensibilityService {
         }
 
         if (rewrites.length > 0) {
-            Log.info(ExtensibilityService_ServiceKey,
-                `Patched extension manifest '${manifest.id}' for cross-version compatibility: ${rewrites.join(', ')}`,
-                this.serviceScope);
+            // Always surfaced (info-level) — this is a meaningful one-time
+            // diagnostic that helps support understand cross-version loading.
+            const msg = `Patched extension manifest '${manifest.id}' for cross-version compatibility: ${rewrites.join(', ')}`;
+            Log.info(ExtensibilityService_ServiceKey, msg, this.serviceScope);
+            // eslint-disable-next-line no-console
+            console.info(`[${ExtensibilityService_ServiceKey}] ${msg}`);
         }
 
         return patched as IClientSideComponentManifest;
@@ -124,22 +167,33 @@ export class ExtensibilityService {
      * 5. If anything throws, retry with exponential backoff
      */
     private async loadComponentWithRetry(componentId: string): Promise<any> {
+        dbg(`loadComponentWithRetry: START for '${componentId}'`);
+
         // Upfront manifest inspection: decide if we need to patch versions
         const manifestStrategy = await this.resolveLoadStrategy(componentId);
+        dbg(`loadComponentWithRetry: strategy for '${componentId}':`, manifestStrategy.needsPatching ? 'PATCH then loadComponent' : 'standard loadComponentById');
 
         for (let attempt = 0; attempt <= ExtensibilityService.MAX_LOAD_RETRIES; attempt++) {
             try {
                 if (manifestStrategy.needsPatching && manifestStrategy.manifest) {
+                    dbg(`loadComponentWithRetry: attempt ${attempt + 1}/${ExtensibilityService.MAX_LOAD_RETRIES + 1} — patching + loadComponent for '${componentId}'`);
                     const patched = this.patchManifestVersions(manifestStrategy.manifest);
-                    return await SPComponentLoader.loadComponent(patched);
+                    const result = await SPComponentLoader.loadComponent(patched);
+                    dbg(`loadComponentWithRetry: SUCCESS via patched loadComponent for '${componentId}' (attempt ${attempt + 1})`);
+                    return result;
                 }
-                return await SPComponentLoader.loadComponentById(componentId);
+                dbg(`loadComponentWithRetry: attempt ${attempt + 1}/${ExtensibilityService.MAX_LOAD_RETRIES + 1} — loadComponentById for '${componentId}'`);
+                const result = await SPComponentLoader.loadComponentById(componentId);
+                dbg(`loadComponentWithRetry: SUCCESS via loadComponentById for '${componentId}' (attempt ${attempt + 1})`);
+                return result;
             } catch (error) {
                 if (attempt < ExtensibilityService.MAX_LOAD_RETRIES) {
                     const delay = ExtensibilityService.RETRY_BASE_DELAY_MS * Math.pow(2, attempt);
+                    dbg(`loadComponentWithRetry: attempt ${attempt + 1} FAILED for '${componentId}', retrying in ${delay}ms. Error:`, error);
                     Log.verbose(ExtensibilityService_ServiceKey, `Retry ${attempt + 1}/${ExtensibilityService.MAX_LOAD_RETRIES} loading component '${componentId}' after ${delay}ms`, this.serviceScope);
                     await new Promise(resolve => setTimeout(resolve, delay));
                 } else {
+                    dbg(`loadComponentWithRetry: ALL ATTEMPTS FAILED for '${componentId}'. Final error:`, error);
                     throw error;
                 }
             }
@@ -153,16 +207,22 @@ export class ExtensibilityService {
      */
     private async resolveLoadStrategy(componentId: string): Promise<{ manifest: IClientSideComponentManifest | undefined; needsPatching: boolean }> {
         let manifest: IClientSideComponentManifest | undefined;
+        let source: 'cache' | 'server' | 'none' = 'none';
 
         try {
             // Try local manifest cache first (fast, synchronous)
             manifest = (SPComponentLoader as any).tryGetManifestById?.(componentId);
-
-            // Fall back to server lookup if not yet cached
-            if (!manifest) {
+            if (manifest) {
+                source = 'cache';
+            } else {
+                // Fall back to server lookup if not yet cached
                 manifest = await (SPComponentLoader as any).requestManifest?.(componentId);
+                if (manifest) {
+                    source = 'server';
+                }
             }
         } catch (e) {
+            dbg(`resolveLoadStrategy: could not inspect manifest for '${componentId}', will use standard load. Error:`, e);
             Log.verbose(ExtensibilityService_ServiceKey,
                 `Could not inspect manifest for '${componentId}' upfront; will use standard load. Error: ${e}`,
                 this.serviceScope);
@@ -170,15 +230,16 @@ export class ExtensibilityService {
         }
 
         if (!manifest) {
+            dbg(`resolveLoadStrategy: no manifest available for '${componentId}' (will use standard load and let SPFx fetch it)`);
             return { manifest: undefined, needsPatching: false };
         }
+
+        dbg(`resolveLoadStrategy: manifest for '${componentId}' obtained from ${source}`);
 
         // Log what we found for diagnostics
         const versionedDeps = this.summarizeVersionedDependencies(manifest);
         if (versionedDeps.length > 0) {
-            Log.info(ExtensibilityService_ServiceKey,
-                `Extension '${componentId}' (v${manifest.version}) declares versioned dependencies: ${versionedDeps.join(', ')}`,
-                this.serviceScope);
+            dbg(`Extension '${componentId}' (v${manifest.version}) declares versioned dependencies: ${versionedDeps.join(', ')}`);
         }
 
         const needsPatching = this.manifestHasVersionMismatch(manifest);
@@ -201,7 +262,16 @@ export class ExtensibilityService {
             const resource = scriptResources[depName];
             if (resource.type === 'component' && resource.id && resource.version) {
                 const pageVersion = pageVersions.get(resource.id);
-                const status = pageVersion === resource.version ? 'match' : (pageVersion ? `page has ${pageVersion}` : 'not on page');
+                let status: string;
+                if (pageVersion === resource.version) {
+                    status = 'match';
+                } else if (!pageVersion) {
+                    status = 'not on page';
+                } else if (this.isSafeToPatch(depName)) {
+                    status = `page has ${pageVersion}, will patch`;
+                } else {
+                    status = `page has ${pageVersion}, NOT patching (non-SPFx)`;
+                }
                 summary.push(`${depName}@${resource.version} (${status})`);
             }
         }
@@ -209,8 +279,10 @@ export class ExtensibilityService {
     }
 
     /**
-     * Returns true if any component-type dependency in the manifest declares
-     * a version that differs from what's currently on the page.
+     * Returns true if any SAFE-to-patch component dependency in the manifest
+     * declares a version that differs from what's currently on the page.
+     * Only @microsoft/sp-* packages count — other deps like react are never
+     * patched, so their mismatches don't trigger patching.
      */
     private manifestHasVersionMismatch(manifest: IClientSideComponentManifest): boolean {
         const pageVersions = this.getPageManifestVersions();
@@ -225,7 +297,7 @@ export class ExtensibilityService {
 
         for (const depName of Object.keys(scriptResources)) {
             const resource = scriptResources[depName];
-            if (resource.type === 'component' && resource.id && resource.version) {
+            if (resource.type === 'component' && resource.id && resource.version && this.isSafeToPatch(depName)) {
                 const pageVersion = pageVersions.get(resource.id);
                 if (pageVersion && pageVersion !== resource.version) {
                     return true;
@@ -255,24 +327,38 @@ export class ExtensibilityService {
                 extensibilityLibraryPrototype.invokeCardAction);
         });
 
+        dbg(`instantiateLibrary: '${configurationId}' — found ${libraryMainEntryPoints.length} matching entry point(s):`, libraryMainEntryPoints);
+
         // Load the library once
         if (libraryMainEntryPoints.length === 1) {
 
             let extensibilityLibrary: any;
+            const entryName = libraryMainEntryPoints[0];
+            const hasServiceKey = !!extensibilityLibraryComponent[entryName].serviceKey;
 
-            if (extensibilityLibraryComponent[libraryMainEntryPoints[0]].serviceKey) {
-                // If the library provides a static serviceKey property
-                // we use the serviceScope to create a new instance
-                extensibilityLibrary = this.serviceScope.consume(extensibilityLibraryComponent[libraryMainEntryPoints[0]].serviceKey);
+            if (hasServiceKey) {
+                dbg(`instantiateLibrary: '${configurationId}' — instantiating '${entryName}' via serviceScope.consume(serviceKey)`);
+                extensibilityLibrary = this.serviceScope.consume(extensibilityLibraryComponent[entryName].serviceKey);
             } else {
-                // Otherwise we just use the new syntax
-                extensibilityLibrary = new extensibilityLibraryComponent[libraryMainEntryPoints[0]]();
+                dbg(`instantiateLibrary: '${configurationId}' — instantiating '${entryName}' via new ExtensionClass()`);
+                extensibilityLibrary = new extensibilityLibraryComponent[entryName]();
             }
 
-            Log.verbose(ExtensibilityService_ServiceKey, `Extensibility library component with id '${configurationId}' and name '${libraryMainEntryPoints[0]}' loaded.`, this.serviceScope);
+            dbg(`instantiateLibrary: '${configurationId}' — instance created, has methods:`, {
+                getCustomLayouts: typeof extensibilityLibrary.getCustomLayouts === 'function',
+                getCustomWebComponents: typeof extensibilityLibrary.getCustomWebComponents === 'function',
+                getCustomDataSources: typeof extensibilityLibrary.getCustomDataSources === 'function',
+                getCustomQueryModifiers: typeof extensibilityLibrary.getCustomQueryModifiers === 'function',
+                getCustomSuggestionProviders: typeof extensibilityLibrary.getCustomSuggestionProviders === 'function',
+                registerHandlebarsCustomizations: typeof extensibilityLibrary.registerHandlebarsCustomizations === 'function',
+                invokeCardAction: typeof extensibilityLibrary.invokeCardAction === 'function'
+            });
+
+            Log.verbose(ExtensibilityService_ServiceKey, `Extensibility library component with id '${configurationId}' and name '${entryName}' loaded.`, this.serviceScope);
             return extensibilityLibrary as IExtensibilityLibrary;
         }
 
+        dbg(`instantiateLibrary: '${configurationId}' — SKIPPED, expected 1 entry point but found ${libraryMainEntryPoints.length}`);
         return undefined;
     }
 
@@ -281,17 +367,31 @@ export class ExtensibilityService {
      */
     public async loadExtensibilityLibraries(librairiesConfiguration: IExtensibilityConfiguration[]): Promise<IExtensibilityLibrary[]> {
 
+        // Log the full incoming configuration so we can see exactly what the web part passed in
+        dbg(`loadExtensibilityLibraries: incoming config (${librairiesConfiguration.length} entries):`,
+            librairiesConfiguration.map(c => ({ id: c.id, name: c.name, enabled: c.enabled })));
+
+        const enabled = librairiesConfiguration.filter(c => c.enabled);
+        dbg(`loadExtensibilityLibraries: START — ${enabled.length} enabled libraries:`, enabled.map(c => ({ id: c.id, name: c.name })));
+        dbg(`loadExtensibilityLibraries: page has ${this.getPageManifestVersions().size} manifests registered`);
+
         let extensibilityLibraries: IExtensibilityLibrary[] = [];
+
+        if (enabled.length === 0) {
+            dbg(`loadExtensibilityLibraries: DONE — no enabled libraries to load`);
+            return extensibilityLibraries;
+        }
 
         try {
 
             // Load only "Enabled" configuration
-            const promises = librairiesConfiguration.filter(configuration => configuration.enabled).map(async (configuration) => {
+            const promises = enabled.map(async (configuration) => {
                 try {
                     const extensibilityLibraryComponent = await this.loadComponentWithRetry(configuration.id);
                     return this.instantiateLibrary(extensibilityLibraryComponent, configuration.id);
                 } catch (error) {
                     const errorDetails = error instanceof Error ? error.message : String(error);
+                    dbg(`loadExtensibilityLibraries: FAILED to load '${configuration.id}':`, error);
                     Log.warn(ExtensibilityService_ServiceKey, `Failed to load extensibility library component with id '${configuration.id}' after ${ExtensibilityService.MAX_LOAD_RETRIES} retries. Error: ${errorDetails}`, this.serviceScope);
                     return undefined;
                 }
@@ -303,6 +403,7 @@ export class ExtensibilityService {
                 extensibilityLibraries.push(response);
             });
 
+            dbg(`loadExtensibilityLibraries: DONE — ${extensibilityLibraries.length}/${enabled.length} libraries loaded successfully`);
             return extensibilityLibraries;
 
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
