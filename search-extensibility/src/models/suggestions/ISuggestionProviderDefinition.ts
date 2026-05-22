@@ -2,23 +2,23 @@ import { ISuggestionProvider } from './ISuggestionProvider';
 
 export interface ISuggestionProviderDefinition {
 
-  /**
-   * The provider internal name
-   */
-  name: string;
+    /**
+     * The provider internal name
+     */
+    name: string;
 
-  /**
-   * The provider unique key
-   */
-  key: string;
+    /**
+     * The provider unique key
+     */
+    key: string;
 
-  /**
-   * The provider description
-   */
-  description: string;
+    /**
+     * The provider description
+     */
+    description: string;
 
-  /**
-   * The layout service key
-   */
-  serviceKey: any;
+    /**
+     * The layout service key
+     */
+    serviceKey: any;
 }

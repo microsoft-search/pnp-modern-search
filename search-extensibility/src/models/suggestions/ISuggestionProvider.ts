@@ -27,7 +27,7 @@ export interface ISuggestionProvider {
      * @param queryText the input query text from the search box
      */
     getSuggestions(queryText: string): Promise<ISuggestion[]>;
-    
+
     /**
      * Returns the zero term suggestions
      */

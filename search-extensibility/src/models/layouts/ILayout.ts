@@ -1,4 +1,4 @@
-import { IDataContext  } from "../../models/dataSources/IDataContext";
+import { IDataContext } from "../../models/dataSources/IDataContext";
 
 export interface ILayout {
 

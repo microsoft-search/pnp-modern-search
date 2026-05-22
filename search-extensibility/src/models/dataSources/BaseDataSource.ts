@@ -55,7 +55,7 @@ export abstract class BaseDataSource<T, TContext = any> implements IDataSource {
     get editMode() {
         return this._editMode;
     }
-    
+
     set editMode(editMode: boolean) {
         this._editMode = editMode;
     }

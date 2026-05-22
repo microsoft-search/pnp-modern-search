@@ -5,34 +5,34 @@ import { SharePointSearchService } from "../services/searchService/SharePointSea
 import * as commonStrings from 'CommonStrings';
 
 export interface ISharePointSuggestionProviderProperties {
-  myProperty: string;
+    myProperty: string;
 }
 
 export class SharePointSuggestionProvider extends BaseSuggestionProvider<ISharePointSuggestionProviderProperties> {
 
     private _searchService: ISharePointSearchService;
-  
+
     public async onInit(): Promise<void> {
         this.serviceScope.whenFinished(() => {
-          this._searchService = this.serviceScope.consume(SharePointSearchService.ServiceKey);
+            this._searchService = this.serviceScope.consume(SharePointSearchService.ServiceKey);
         });
     }
-  
+
     public get isZeroTermSuggestionsEnabled(): boolean {
         return false;
     }
-  
+
     public async getSuggestions(queryText: string): Promise<ISuggestion[]> {
-      const suggestions = await this._searchService.suggest(queryText);
-      return suggestions.map<ISuggestion>(textSuggestion => ({
-        displayText: textSuggestion,
-        groupName: commonStrings.SuggestionProviders.SharePointStatic.ProviderName
-      }));
+        const suggestions = await this._searchService.suggest(queryText);
+        return suggestions.map<ISuggestion>(textSuggestion => ({
+            displayText: textSuggestion,
+            groupName: commonStrings.SuggestionProviders.SharePointStatic.ProviderName
+        }));
     }
-      
+
     public getPropertyPaneGroupsConfiguration(): IPropertyPaneGroup[] {
 
-       return [
-       ];
+        return [
+        ];
     }
 }

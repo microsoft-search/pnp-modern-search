@@ -2,7 +2,7 @@ import { ISuggestionProvider } from './ISuggestionProvider';
 import { ISuggestion } from './ISuggestion';
 
 export abstract class BaseSuggestionProvider<T, TContext = any> implements ISuggestionProvider {
-    
+
     protected _isZeroTermSuggestionsEnabled: boolean;
     protected _properties!: T;
     private _context: TContext;
@@ -23,7 +23,7 @@ export abstract class BaseSuggestionProvider<T, TContext = any> implements ISugg
     set isZeroTermSuggestionsEnabled(isZeroTermSuggestionsEnabled: boolean) {
         this._isZeroTermSuggestionsEnabled = isZeroTermSuggestionsEnabled;
     }
-    
+
     get context(): TContext {
         return this._context;
     }

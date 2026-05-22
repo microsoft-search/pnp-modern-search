@@ -28,9 +28,9 @@ export abstract class BaseLayout<T, TContext = any> implements ILayout {
     }
 
     get editMode() {
-      return this._editMode;
+        return this._editMode;
     }
-    
+
     set editMode(editMode: boolean) {
         this._editMode = editMode;
     }

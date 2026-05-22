@@ -1,7 +1,7 @@
 import { IDataSource } from "./IDataSource";
 
 export interface IDataSourceDefinition {
-    
+
     /**
      * The data source friendly name that will be displayed in the property pane options
      */
