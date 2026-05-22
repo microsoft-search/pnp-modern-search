@@ -31,7 +31,7 @@
         "@microsoft/sp-property-pane": "1.22.2",
         "@microsoft/sp-webpart-base": "1.22.2",
         "@pnp/common": "2.15.0",
-        "@pnp/modern-search-extensibility": "2.0.0-pre.0",
+        "@pnp/modern-search-extensibility": "2.0.0-pre.1",
         "@pnp/spfx-controls-react": "3.23.0",
         "@pnp/spfx-property-controls": "3.22.0",
         "@pnp/telemetry-js": "2.0.0",
