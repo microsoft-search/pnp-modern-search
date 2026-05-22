@@ -1,7 +1,7 @@
 {
   "extends": "./node_modules/@microsoft/spfx-web-build-rig/profiles/default/tsconfig-base.json",
   "compilerOptions": {
-    "target": "es5",
+    "target": "es2017",
     "declaration": true,
     "outDir": "lib",
     "strict": true,
@@ -10,9 +10,8 @@
       "es6-promise"
     ],
     "lib": [
-      "es5",
       "dom",
-      "es2015.collection"
+      "es2021"
     ],
     "experimentalDecorators": true,
     "esModuleInterop": true,
