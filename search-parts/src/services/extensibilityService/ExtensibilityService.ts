@@ -366,16 +366,31 @@ export class ExtensibilityService {
         // Parse the library component properties to instantiate the library itself.
         // This way, we are not depending on a naming convention for the entry point name. We depend only on the component ID
         const libraryMainEntryPoints = Object.keys(extensibilityLibraryComponent).filter(property => {
+            if (property.indexOf('__') !== -1) {
+                return false;
+            }
 
-            // Return the library main entry point object by checking the prototype methods. They should be matching the IExtensibilityLibrary interface.
-            const extensibilityLibraryPrototype: IExtensibilityLibrary = extensibilityLibraryComponent[property].prototype;
-            return property.indexOf('__') === -1 && (
+            // Guard: the bundle may export non-class values (objects,
+            // constants, etc.). Only consider entries that are functions
+            // (classes) with a prototype — otherwise `.prototype` would be
+            // undefined and property access on it would throw.
+            const candidate = extensibilityLibraryComponent[property];
+            if (typeof candidate !== 'function' || !candidate.prototype) {
+                return false;
+            }
+
+            // Return the library main entry point object by checking the prototype methods.
+            // They should be matching the IExtensibilityLibrary interface.
+            const extensibilityLibraryPrototype: IExtensibilityLibrary = candidate.prototype;
+            return !!(
                 extensibilityLibraryPrototype.getCustomSuggestionProviders ||
                 extensibilityLibraryPrototype.getCustomWebComponents ||
                 extensibilityLibraryPrototype.getCustomLayouts ||
                 extensibilityLibraryPrototype.registerHandlebarsCustomizations ||
                 extensibilityLibraryPrototype.getCustomQueryModifiers ||
-                extensibilityLibraryPrototype.invokeCardAction);
+                extensibilityLibraryPrototype.getCustomDataSources ||
+                extensibilityLibraryPrototype.invokeCardAction
+            );
         });
 
         dbg(`instantiateLibrary: '${configurationId}' — found ${libraryMainEntryPoints.length} matching entry point(s):`, libraryMainEntryPoints);

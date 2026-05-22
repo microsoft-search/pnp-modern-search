@@ -10,11 +10,29 @@ import '@webcomponents/custom-elements/custom-elements.min';
 import * as ReactDOM from 'react-dom';
 
 /**
- * Converts a kebab-case string to camelCase.
- * Replaces @microsoft/sp-lodash-subset dependency.
+ * Converts a kebab-case (HTML attribute) string to camelCase.
+ * Replaces the previous @microsoft/sp-lodash-subset dependency on `camelCase`.
+ *
+ * Behaviour:
+ *   - Collapses one or more `-` separators
+ *   - Uppercases the character that follows (letter or digit — digits are
+ *     left as-is since `'1'.toUpperCase()` returns `'1'`)
+ *   - Trailing `-` is dropped
+ *
+ * Examples:
+ *   data-my-prop      -> myProp
+ *   data-api-v3       -> apiV3
+ *   data-foo-1        -> foo1
+ *   data--foo         -> foo
+ *   data-FOO          -> FOO  (HTML attribute names are lowercased by the
+ *                              parser, so this case shouldn't appear in
+ *                              practice, but we preserve any uppercase that
+ *                              does arrive)
  */
 function camelCase(str: string): string {
-    return str.replace(/-([a-z])/g, function (_match: string, letter: string) { return letter.toUpperCase(); });
+    return str.replace(/-+([a-zA-Z0-9])?/g, function (_match: string, letter: string | undefined) {
+        return letter ? letter.toUpperCase() : '';
+    });
 }
 
 export abstract class BaseWebComponent extends HTMLElement {
