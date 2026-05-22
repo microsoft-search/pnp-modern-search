@@ -1,5 +1,6 @@
 import { SPComponentLoader } from "@microsoft/sp-loader";
 import { ServiceScope, ServiceKey, Log } from "@microsoft/sp-core-library";
+import type { IClientSideComponentManifest } from "@microsoft/sp-module-interfaces";
 import IExtensibilityService from "./IExtensibilityService";
 import { IExtensibilityLibrary } from "@pnp/modern-search-extensibility";
 import { IExtensibilityConfiguration } from "../../models/common/IExtensibilityConfiguration";
@@ -13,6 +14,9 @@ export class ExtensibilityService {
 
     private serviceScope: ServiceScope;
 
+    /** Cached lookup of component id → current page manifest version */
+    private _pageManifestVersions: Map<string, string> | undefined;
+
     public static ServiceKey: ServiceKey<IExtensibilityService> = ServiceKey.create(ExtensibilityService_ServiceKey, ExtensibilityService);
 
     public constructor(serviceScope: ServiceScope) {
@@ -20,25 +24,148 @@ export class ExtensibilityService {
     }
 
     /**
-     * Loads an SPFx component by ID with retry logic.
-     * SPComponentLoader.loadComponentById can fail intermittently during page load if the library
-     * manifest hasn't been fully processed by the SPFx framework yet. Retrying with backoff
-     * gives the framework time to complete manifest processing.
+     * Builds a lookup map of component id → version for all manifests
+     * registered on the current page. Used to rewrite extension manifests
+     * for cross-SPFx-version compatibility.
+     */
+    private getPageManifestVersions(): Map<string, string> {
+        if (!this._pageManifestVersions) {
+            this._pageManifestVersions = new Map<string, string>();
+            try {
+                const manifests = SPComponentLoader.getManifests();
+                for (const m of manifests) {
+                    if (m.id && m.version) {
+                        this._pageManifestVersions.set(m.id, m.version);
+                    }
+                }
+            } catch (e) {
+                Log.warn(ExtensibilityService_ServiceKey, `Could not build page manifest version map: ${e}`, this.serviceScope);
+            }
+        }
+        return this._pageManifestVersions;
+    }
+
+    /**
+     * Rewrites version-pinned component dependencies in an extension manifest
+     * to match the versions available on the current page. This enables
+     * extensions built against an older SPFx version to load on a newer page.
+     *
+     * For example, an extension built with SPFx 1.18.2 declares
+     * `@microsoft/sp-core-library@1.18.2` in scriptResources. The page
+     * running SPFx 1.22.2 has `@microsoft/sp-core-library@1.22.2`. Without
+     * rewriting, the loader fails because it does an exact version lookup.
+     *
+     * @param manifest - The extension's original manifest (will be cloned, not mutated)
+     * @returns A patched manifest with updated dependency versions, or the original if no changes needed
+     */
+    private patchManifestVersions(manifest: IClientSideComponentManifest): IClientSideComponentManifest {
+        const pageVersions = this.getPageManifestVersions();
+        if (pageVersions.size === 0) {
+            return manifest;
+        }
+
+        const scriptResources = (manifest as any).loaderConfig?.scriptResources;
+        if (!scriptResources) {
+            return manifest;
+        }
+
+        let needsPatch = false;
+
+        // Check if any component dependency has a version mismatch with the page
+        for (const depName of Object.keys(scriptResources)) {
+            const resource = scriptResources[depName];
+            if (resource.type === 'component' && resource.id && resource.version) {
+                const pageVersion = pageVersions.get(resource.id);
+                if (pageVersion && pageVersion !== resource.version) {
+                    needsPatch = true;
+                    break;
+                }
+            }
+        }
+
+        if (!needsPatch) {
+            return manifest;
+        }
+
+        // Deep clone the manifest to avoid mutating the original in ManifestStore
+        const patched: any = JSON.parse(JSON.stringify(manifest));
+        const patchedResources = patched.loaderConfig.scriptResources;
+        const rewrites: string[] = [];
+
+        for (const depName of Object.keys(patchedResources)) {
+            const resource = patchedResources[depName];
+            if (resource.type === 'component' && resource.id && resource.version) {
+                const pageVersion = pageVersions.get(resource.id);
+                if (pageVersion && pageVersion !== resource.version) {
+                    rewrites.push(`${depName}: ${resource.version} → ${pageVersion}`);
+                    resource.version = pageVersion;
+                }
+            }
+        }
+
+        if (rewrites.length > 0) {
+            Log.info(ExtensibilityService_ServiceKey,
+                `Patched extension manifest '${manifest.id}' for cross-version compatibility: ${rewrites.join(', ')}`,
+                this.serviceScope);
+        }
+
+        return patched as IClientSideComponentManifest;
+    }
+
+    /**
+     * Loads an SPFx component by ID with retry logic and cross-version support.
+     *
+     * First attempts a standard load via SPComponentLoader.loadComponentById().
+     * If that fails (e.g., due to version-pinned dependencies), falls back to
+     * manifest rewriting: fetches the manifest, patches dependency versions to
+     * match the current page, and loads via SPComponentLoader.loadComponent().
      */
     private async loadComponentWithRetry(componentId: string): Promise<any> {
         for (let attempt = 0; attempt <= ExtensibilityService.MAX_LOAD_RETRIES; attempt++) {
             try {
                 return await SPComponentLoader.loadComponentById(componentId);
             } catch (error) {
-                if (attempt < ExtensibilityService.MAX_LOAD_RETRIES) {
-                    const delay = ExtensibilityService.RETRY_BASE_DELAY_MS * Math.pow(2, attempt);
-                    Log.verbose(ExtensibilityService_ServiceKey, `Retry ${attempt + 1}/${ExtensibilityService.MAX_LOAD_RETRIES} loading component '${componentId}' after ${delay}ms`, this.serviceScope);
-                    await new Promise(resolve => setTimeout(resolve, delay));
-                } else {
-                    throw error;
+                // On the last retry, try the cross-version fallback before giving up
+                if (attempt === ExtensibilityService.MAX_LOAD_RETRIES) {
+                    try {
+                        return await this.loadComponentWithVersionPatching(componentId);
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                    } catch (_patchError) {
+                        // If patching also fails, throw the original error
+                        throw error;
+                    }
                 }
+
+                const delay = ExtensibilityService.RETRY_BASE_DELAY_MS * Math.pow(2, attempt);
+                Log.verbose(ExtensibilityService_ServiceKey, `Retry ${attempt + 1}/${ExtensibilityService.MAX_LOAD_RETRIES} loading component '${componentId}' after ${delay}ms`, this.serviceScope);
+                await new Promise(resolve => setTimeout(resolve, delay));
             }
         }
+    }
+
+    /**
+     * Attempts to load a component by patching its manifest dependency versions
+     * to match the current page. This is the cross-version compatibility fallback.
+     */
+    private async loadComponentWithVersionPatching(componentId: string): Promise<any> {
+        Log.info(ExtensibilityService_ServiceKey,
+            `Attempting cross-version load for component '${componentId}' via manifest patching`,
+            this.serviceScope);
+
+        // Get the manifest — try local cache first, then request from server
+        let manifest: IClientSideComponentManifest | undefined =
+            (SPComponentLoader as any).tryGetManifestById?.(componentId);
+
+        if (!manifest) {
+            manifest = await (SPComponentLoader as any).requestManifest?.(componentId);
+        }
+
+        if (!manifest) {
+            throw new Error(`Could not retrieve manifest for component '${componentId}'`);
+        }
+
+        const patched = this.patchManifestVersions(manifest);
+        return SPComponentLoader.loadComponent(patched);
     }
 
     /**
