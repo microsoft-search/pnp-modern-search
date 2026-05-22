@@ -184,6 +184,34 @@ export class TemplateService implements ITemplateService {
             // Register helpers
             this.registerCustomHelpers();
 
+            // Graceful fallbacks for missing helpers. When an enabled
+            // extensibility library fails to load, its custom Handlebars
+            // helpers (e.g. {{myExt-foo}}) are not registered. The default
+            // Handlebars behavior throws ("Missing helper: ..."), which
+            // crashes the entire template render and bombs the web part.
+            // Instead, render an inline placeholder so the rest of the
+            // template still renders and the problem is discoverable.
+            const escapeFn = (this._handlebars as any).Utils && (this._handlebars as any).Utils.escapeExpression
+                ? (this._handlebars as any).Utils.escapeExpression
+                : (s: string) => String(s);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (this._handlebars as any).registerHelper("helperMissing", function (this: any, ...args: any[]) {
+                const options = args[args.length - 1];
+                const name = options && options.name ? options.name : "(unknown)";
+                // eslint-disable-next-line no-console
+                console.warn(`[TemplateService] Missing Handlebars helper '${name}'. The template references a helper that is not registered. If '${name}' comes from an extensibility library, the library may have failed to load \u2014 check earlier console output.`);
+                return new (Handlebars as any).SafeString(
+                    `<span style="color:#a4262c;background:#fde7e9;padding:1px 4px;border-radius:3px;font-family:monospace;font-size:11px;" title="Handlebars helper not registered. If this comes from an extensibility library, the library may have failed to load.">[missing helper: ${escapeFn(name)}]</span>`
+                );
+            });
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (this._handlebars as any).registerHelper("blockHelperMissing", function (this: any, _context: any, options: any) {
+                const name = options && options.name ? options.name : "(unknown)";
+                // eslint-disable-next-line no-console
+                console.warn(`[TemplateService] Missing Handlebars block helper '#${name}'. Skipping block. If it comes from an extensibility library, the library may have failed to load.`);
+                return "";
+            });
+
             // Register icons and pull the fonts from the default SharePoint cdn.
             // Do not load icons twice as it may generate warnings
             if (!GlobalSettings.getValue("fileTypeIconsInitialized")) {

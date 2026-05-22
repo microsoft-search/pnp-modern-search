@@ -77,23 +77,58 @@ export class ExtensibilityService {
      * Non-framework packages (like react, react-dom) are NOT patched because
      * downgrading them could break the extension's runtime expectations.
      */
-    private isSafeToPatch(depName: string): boolean {
-        return depName.indexOf('@microsoft/sp-') === 0;
+    /**
+     * Returns true if a dependency can be safely patched at runtime.
+     *
+     * Any component-type dependency that is registered in the page's
+     * ManifestStore is patchable: there is only one instance of that
+     * component on the page (looked up by GUID), so the bundle must use
+     * whatever version the page provides — patching the manifest is the
+     * only way to make the loader resolve it.
+     *
+     * Returning `false` here means the loader will hard-fail ("Cannot
+     * destructure property 'id' of 'e'") on any version mismatch, which is
+     * strictly worse than patching. The only real risk is cross-major
+     * version mismatches (e.g. react 18 → 17) — those are reported via a
+     * separate warning in `patchManifestVersions` so users can see them.
+     */
+    private isSafeToPatch(_depName: string): boolean {
+        return true;
+    }
+
+    /**
+     * Returns true if two version strings differ in their major component
+     * (e.g. "18.0.0" vs "17.0.1"). Used to warn when a patch crosses a
+     * major-version boundary — those patches typically succeed at load time
+     * but may break at runtime due to API differences.
+     */
+    private isCrossMajor(versionA: string, versionB: string): boolean {
+        const majorA = parseInt(versionA.split('.')[0], 10);
+        const majorB = parseInt(versionB.split('.')[0], 10);
+        if (isNaN(majorA) || isNaN(majorB)) {
+            return false;
+        }
+        return majorA !== majorB;
     }
 
     /**
      * Rewrites version-pinned component dependencies in an extension manifest
      * to match the versions available on the current page. This enables
-     * extensions built against an older SPFx version to load on a newer page.
+     * extensions built against an older SPFx version — or against a slightly
+     * different patch release of a shared lib like react — to load on the
+     * current page runtime.
      *
-     * For example, an extension built with SPFx 1.18.2 declares
+     * Example: an extension built with SPFx 1.18.2 declares
      * `@microsoft/sp-core-library@1.18.2` in scriptResources. The page
      * running SPFx 1.22.2 has `@microsoft/sp-core-library@1.22.2`. Without
-     * rewriting, the loader fails because it does an exact version lookup.
+     * rewriting, the loader fails because it does an EXACT version lookup
+     * by component GUID + version.
      *
-     * Only @microsoft/sp-* packages are patched (they maintain API stability
-     * across minor versions). Other dependencies (react, react-dom, custom
-     * components) are left alone — patching them could downgrade APIs.
+     * Any component-type dependency is patchable. There is only one instance
+     * of each component (by GUID) on the page, so the bundle MUST use the
+     * page's version — patching is the only way to make the loader resolve
+     * it. Cross-major-version mismatches (e.g. react 18 → 17) are flagged as
+     * warnings since they may cause runtime API breakages.
      *
      * @param manifest - The extension's original manifest (will be cloned, not mutated)
      * @returns A patched manifest with updated dependency versions, or the original if no changes needed
@@ -137,8 +172,18 @@ export class ExtensibilityService {
             if (resource.type === 'component' && resource.id && resource.version && this.isSafeToPatch(depName)) {
                 const pageVersion = pageVersions.get(resource.id);
                 if (pageVersion && pageVersion !== resource.version) {
-                    rewrites.push(`${depName}: ${resource.version} → ${pageVersion}`);
+                    const originalVersion = resource.version;
+                    const majorMismatch = this.isCrossMajor(originalVersion, pageVersion);
+                    rewrites.push(`${depName}: ${originalVersion} → ${pageVersion}${majorMismatch ? ' (CROSS-MAJOR — may break)' : ''}`);
                     resource.version = pageVersion;
+                    if (majorMismatch) {
+                        // Warn loudly: patching across majors can succeed at load time
+                        // but break at runtime due to API differences.
+                        const warnMsg = `Cross-major version patch for '${manifest.id}': ${depName} bundle was built against ${originalVersion} but page provides ${pageVersion}. Extension may misbehave.`;
+                        Log.warn(ExtensibilityService_ServiceKey, warnMsg, this.serviceScope);
+                        // eslint-disable-next-line no-console
+                        console.warn(`[${ExtensibilityService_ServiceKey}] ${warnMsg}`);
+                    }
                 }
             }
         }
@@ -267,10 +312,8 @@ export class ExtensibilityService {
                     status = 'match';
                 } else if (!pageVersion) {
                     status = 'not on page';
-                } else if (this.isSafeToPatch(depName)) {
-                    status = `page has ${pageVersion}, will patch`;
                 } else {
-                    status = `page has ${pageVersion}, NOT patching (non-SPFx)`;
+                    status = `page has ${pageVersion}, will patch`;
                 }
                 summary.push(`${depName}@${resource.version} (${status})`);
             }
@@ -279,10 +322,10 @@ export class ExtensibilityService {
     }
 
     /**
-     * Returns true if any SAFE-to-patch component dependency in the manifest
-     * declares a version that differs from what's currently on the page.
-     * Only @microsoft/sp-* packages count — other deps like react are never
-     * patched, so their mismatches don't trigger patching.
+     * Returns true if any component dependency in the manifest declares a
+     * version that differs from what's currently on the page. Any component
+     * (registered in the page's ManifestStore by GUID) is patchable, so any
+     * mismatch triggers the patch path.
      */
     private manifestHasVersionMismatch(manifest: IClientSideComponentManifest): boolean {
         const pageVersions = this.getPageManifestVersions();
