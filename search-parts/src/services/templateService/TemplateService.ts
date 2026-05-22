@@ -198,17 +198,31 @@ export class TemplateService implements ITemplateService {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             hb.registerHelper("helperMissing", function (this: any, ...args: any[]) {
                 // Handlebars calls helperMissing for BOTH:
-                //   (a) genuine missing helper calls: {{foo "x" y=1}}  -> args = [arg, ..., options]   (length >= 2)
-                //   (b) property lookups that resolve to undefined:    {{Title}}        -> args = [options]            (length === 1)
-                // We only want to surface (a) as an inline placeholder. Treating (b)
-                // as missing would flag every undefined data field (e.g. {{Title}}
-                // when the data hasn't loaded yet) as a broken helper. For (b),
-                // return undefined to match Handlebars' default silent behavior.
-                if (args.length <= 1) {
-                    return undefined;
-                }
+                //   (a) genuine missing helper calls with params/hash:
+                //       {{foo "x" y=1}}    -> args = [arg, ..., options]   (length >= 2)
+                //   (b) bare expressions where Handlebars couldn't resolve the name
+                //       as a property on the current context AND no helper of that
+                //       name is registered:
+                //       {{Title}}          -> args = [options]              (length === 1)
+                //       {{myExt-foo}}      -> args = [options]              (length === 1)
+                //
+                // Case (b) ambiguously covers both "data field that's undefined"
+                // (very common when data hasn't loaded yet) and "arg-less helper
+                // that was never registered" (e.g. an extensibility library failed
+                // to load). To minimise false positives while still surfacing
+                // genuinely broken helpers, we use a name heuristic: hyphen-
+                // delimited names (e.g. `myExt-foo`, `pnp-iconfile`) are almost
+                // certainly helpers/components, while typical data fields are
+                // single-word identifiers (`Title`, `Path`) or camel/Pascal-case.
                 const options = args[args.length - 1];
                 const name = options && options.name ? options.name : "(unknown)";
+                const looksLikeHelperOrComponent = name.indexOf("-") !== -1;
+                if (args.length <= 1 && !looksLikeHelperOrComponent) {
+                    // Likely an undefined data field \u2014 stay silent to match
+                    // Handlebars' default behaviour and avoid red noise on every
+                    // missing property reference.
+                    return undefined;
+                }
                 // eslint-disable-next-line no-console
                 console.warn(`[TemplateService] Missing Handlebars helper '${name}'. The template references a helper that is not registered. If '${name}' comes from an extensibility library, the library may have failed to load \u2014 check earlier console output.`);
                 // Use the per-WP instance's SafeString so the value is
