@@ -1,5 +1,5 @@
 !!! note
-    The PnP Modern Search Web Parts must be deployed to your App Catalog and activated on your site. See the [installation documentation](../installation.md) for details.
+The PnP Modern Search Web Parts must be deployed to your App Catalog and activated on your site. See the [installation documentation](../installation.md) for details.
 
 
 Search results pages are always fighting for screen (width) real estate — you want to show useful metadata but you can't add endless columns. By adding a single small icon column to your results list, users can click it to open a right-hand flyout panel that displays as much metadata as you need, without cluttering the results view.
