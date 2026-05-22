@@ -45,6 +45,46 @@ Each Web Part type in the solution supports several extensions or no extension a
 | **Search box** | <ul><li>Custom suggestions providers.</li></ul>
 | **Search Verticals** | None.
 
+### Context and data available to each extension type
+
+Different extension types receive different runtime context. This table summarises **what each extension can access** so you don't have to dig through each individual doc page.
+
+| Extension type | Base class | Runtime context exposed | How to access SPFx context |
+|---|---|---|---|
+| **Custom Data Source** | `BaseDataSource<TProps, TContext>` | `this.context` (TContext), `this.properties` (TProps), `this.serviceScope` (any), `this.editMode`, `this.serviceKeys`, `this.render()`. Plus `IDataContext` argument on every `getData(dataContext)` call (paging, filters, query text, sort, verticals). | `this.serviceScope.consume(<ServiceKey>)` or cast `TContext` to `WebPartContext`. |
+| **Custom Layout** | `BaseLayout<TProps, TContext>` | `this.context`, `this.properties`, `this.serviceScope`, `this.editMode`. | Same as above. |
+| **Custom Query Modifier** | `BaseQueryModifier<TProps, TContext>` | `this.context`, `this.properties`, `this.serviceScope`, `this.endWhenSuccessfull`. Receives `queryText: string` argument on every `modifyQuery(queryText)` call. | Same as above. |
+| **Custom Suggestion Provider** | `BaseSuggestionProvider<TProps, TContext>` | `this.context`, `this.properties`, `this.serviceScope`, `this.isZeroTermSuggestionsEnabled`. Receives `queryText` on `getSuggestions(queryText)`. | Same as above. |
+| **Custom Web Component** | `BaseWebComponent` (extends `HTMLElement`) | `this._serviceScope` (root scope, any), `this._webPartServiceScopes: Map<webPartId, scope>` (per-WP scopes), `this._webPartServiceKeys: Map<webPartId, keys>`, HTML attributes via `this.resolveAttributes()`, optional theme via overriding `getThemeVariant()`. | `this._serviceScope.consume(PageContext.serviceKey)`, etc. Web components do not auto-receive a TContext. |
+| **Handlebars helper / partial** | n/a — registered on the per-WP namespace | Only what the template explicitly passes via hash args (`{{myHelper x theme=@root.theme}}`) and what your closure captured at `registerHandlebarsCustomizations` time. | Capture `serviceScope` in your library's constructor and reference it inside the helper closure. See [Handlebars customizations](./handlebars_customizations.md) for the full `@root` reference. |
+| **Adaptive Card action handler** | `IExtensibilityLibrary.invokeCardAction(action)` | The `IAdaptiveCardAction` argument: `type`, `title`, `url`, `data`. | Capture `serviceScope` in your library's constructor (see example below). |
+
+#### Generic TContext pattern (v2.0.0+)
+
+Starting with `@pnp/modern-search-extensibility` v2.0.0, every base class accepts an optional second generic for typing `context`:
+
+```typescript
+import { BaseDataSource } from '@pnp/modern-search-extensibility';
+import { WebPartContext } from '@microsoft/sp-webpart-base';
+
+export class MyDataSource extends BaseDataSource<IMyProps, WebPartContext> {
+    public async getData() {
+        const url = this.context.pageContext.web.absoluteUrl;
+        // ... fully typed!
+    }
+}
+```
+
+You can use any context shape: `WebPartContext`, `BaseComponentContext`, or your own typed alias. The base class typings stay `any` if you don't specify, so no migration is required.
+
+#### Quick reference — what's where
+
+- **Per-WP runtime context** (PageContext, etc.) → `serviceScope.consume(ServiceKey)` in any base class, or `_serviceScope.consume(ServiceKey)` in a web component.
+- **Web Part property bag** → `this.properties` (typed as `TProps` you pass to the generic).
+- **Selected filters / paging / query / sort / vertical** at fetch time → `IDataContext` argument on `BaseDataSource.getData()`.
+- **Theme** → React layouts/components: pass `themeVariant` through props. Web components: override `getThemeVariant()` (slim package) or pass `data-theme-variant` in the template. Helpers: read `options.hash.theme` from a `theme=@root.theme` hash arg.
+- **Template root data** for Handlebars → `@root.<field>`. The exact shape is built by each web part's `getTemplateContext()` method — see [`SearchResultsContainer.getTemplateContext()`](../../search-parts/src/webparts/searchResults/components/SearchResultsContainer.tsx) and [`SearchFiltersContainer.getTemplateContext()`](../../search-parts/src/webparts/searchFilters/components/SearchFiltersContainer.tsx) for the verified field list, or the [`ISearchResultsTemplateContext`](../../search-parts/src/models/common/ITemplateContext.ts) / [`ISearchFiltersTemplateContext`](../../search-parts/src/models/common/ITemplateContext.ts) interface definitions. Common fields: `theme`, `properties`, `context.{site,web,user,list,listItem,cultureInfo}`, `data`, `slots`, `inputQueryText`, `instanceId`.
+
 ### Register your extensibility library with a Web Part
 
 When a Web Part type supports one or multiple extensions, you can register them going to the last property pane confguration page in the _'Extensibility configuration'_ section:
