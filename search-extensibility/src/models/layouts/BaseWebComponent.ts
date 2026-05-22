@@ -1,3 +1,12 @@
+// Custom Elements polyfill. Required because:
+//   1. `BaseWebComponent extends HTMLElement` uses native ES6 class syntax
+//   2. Many SPFx projects downlevel to ES5 in their consumer builds, which
+//      breaks `extends HTMLElement` (HTMLElement requires native `new`).
+// Imported here so consumers don't have to remember it (the OLD non-slim
+// package did the same). Pure browser polyfill — no @microsoft/sp-* deps.
+import '@webcomponents/custom-elements/src/native-shim';
+import '@webcomponents/custom-elements/custom-elements.min';
+
 import * as ReactDOM from 'react-dom';
 
 /**
