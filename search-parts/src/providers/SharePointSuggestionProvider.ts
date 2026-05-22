@@ -14,7 +14,7 @@ export class SharePointSuggestionProvider extends BaseSuggestionProvider<IShareP
   
     public async onInit(): Promise<void> {
         this.serviceScope.whenFinished(() => {
-          this._searchService = this.serviceScope.consume<ISharePointSearchService>(SharePointSearchService.ServiceKey);
+          this._searchService = this.serviceScope.consume(SharePointSearchService.ServiceKey);
         });
     }
   

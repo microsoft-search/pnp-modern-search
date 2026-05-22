@@ -104,8 +104,8 @@ importers:
         specifier: 2.15.0
         version: 2.15.0
       '@pnp/modern-search-extensibility':
-        specifier: 1.22.3
-        version: 1.22.3(@microsoft/microsoft-graph-client@3.0.2)(@types/node@25.2.3)(@types/react-dom@17.0.17)(@types/react@17.0.45)(scheduler@0.20.2)(swiper@8.4.7)
+        specifier: 2.0.0-pre.0
+        version: 2.0.0-pre.0(react-dom@17.0.1(react@17.0.1))(react@17.0.1)
       '@pnp/spfx-controls-react':
         specifier: 3.23.0
         version: 3.23.0(@babel/core@7.29.0)(@babel/template@7.28.6)(@microsoft/microsoft-graph-client@3.0.2)(@types/node@25.2.3)(@types/react-dom@17.0.17)(@types/react@17.0.45)(scheduler@0.20.2)
@@ -575,9 +575,6 @@ packages:
   '@fluentui/accessibility@0.66.5':
     resolution: {integrity: sha512-W+QPr0oJ+YmBN8lDK0wps2D9FczlfWAHdQKJn85HN05mLxc2/Js2o/3N7oCKyFH6/B+h+ZheFt5RNa6UJd3IQQ==}
 
-  '@fluentui/date-time-utilities@7.9.1':
-    resolution: {integrity: sha512-o8iU1VIY+QsqVRWARKiky29fh4KR1xaKSgMClXIi65qkt8EDDhjmlzL0KVDEoDA2GWukwb/1PpaVCWDg4v3cUQ==}
-
   '@fluentui/date-time-utilities@8.6.11':
     resolution: {integrity: sha512-zq49tveFzmzwgaJ73rVvxu9+rqhPBIAJSbevciIQnmvv6dlh2GzZcL14Zevk9QV+q6CWaF6yzvhT11E2TpAv8Q==}
 
@@ -598,9 +595,6 @@ packages:
     peerDependencies:
       '@types/react': 17.0.45
       react: '>=16.8.0 <20.0.0'
-
-  '@fluentui/keyboard-key@0.2.17':
-    resolution: {integrity: sha512-iT1bU56rKrKEOfODoW6fScY11qj3iaYrZ+z11T6fo5+TDm84UGkkXjLXJTE57ZJzg0/gbccHQWYv+chY7bJN8Q==}
 
   '@fluentui/keyboard-key@0.4.23':
     resolution: {integrity: sha512-9GXeyUqNJUdg5JiQUZeGPiKnRzMRi9YEUn1l9zq6X/imYdMhxHrxpVZS12129cBfgvPyxt9ceJpywSfmLWqlKA==}
@@ -814,14 +808,6 @@ packages:
     peerDependencies:
       '@types/react': 17.0.45
       react: '>=16.8.0 <20.0.0'
-
-  '@fluentui/react-focus@7.18.17':
-    resolution: {integrity: sha512-W+sLIhX7wLzMsJ0jhBrDAblkG3DNbRbF8UoSieRVdAAm7xVf5HpiwJ6tb6nGqcFOnpRh8y+fjyVM+dV3K6GNHA==}
-    peerDependencies:
-      '@types/react': 17.0.45
-      '@types/react-dom': '>=16.8.0 <18.0.0'
-      react: '>=16.8.0 <18.0.0'
-      react-dom: '>=16.8.0 <18.0.0'
 
   '@fluentui/react-focus@8.10.4':
     resolution: {integrity: sha512-k5FfTJ5psg4xN/52X4AzJ38qh3Oh2C29KL5pA3fVY34QkJAHgxeETe9JzjTeh/s8i5SLXvf1Uh+FjERZTRGQAA==}
@@ -2037,9 +2023,17 @@ packages:
   '@pnp/logging@2.5.0':
     resolution: {integrity: sha512-SnmMCN6oADjiHKAIR23FfTqXeQZeXPBnWeVfyZAgzJfRn9uEQoUlkyET3jHjl9kkrFOVkiOD1CRI7TWMIxURbA==}
 
-  '@pnp/modern-search-extensibility@1.22.3':
-    resolution: {integrity: sha512-Kp4EAhZu1SwRy+YONZfURfikEOrXBP1I349fpaEpq3RzDAlRZ1RWjzKJFIl1ONQYLGX8hLI78z07p1lD19N1hg==}
+  '@pnp/modern-search-extensibility@2.0.0-pre.0':
+    resolution: {integrity: sha512-THJoeazDfRJx7jV2sa87gqUtkjxKNXLKAATQlPknojF3Nl7rXvcNvfQDzaIvOQrqwwdXbaZQYf8gkIFN7ipdsg==}
     engines: {node: '>=22.14.0 < 23.0.0'}
+    peerDependencies:
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+    peerDependenciesMeta:
+      react:
+        optional: true
+      react-dom:
+        optional: true
 
   '@pnp/odata@1.3.11':
     resolution: {integrity: sha512-yMaRiuVZRei2pkryCOqsw3ZXD2Lw30IJv136WQmQPQPOxG4cvsS9+woXkfMqbWV2KQ1evFUqVXbitIz6eDVfNA==}
@@ -2670,22 +2664,11 @@ packages:
     resolution: {integrity: sha512-91fp6CAAJSRtH5ja95T1FHSKa8aPW9/Zw6cta81jlZTUw/+Vq8jM/AfF/14h2b71wwR84JUTW/3Y8QPhDAawFA==}
     engines: {node: '>=20.0.0'}
 
-  '@uifabric/foundation@7.10.16':
-    resolution: {integrity: sha512-x13xS9aKh6FEWsyQP2jrjyiXmUUdgyuAfWKMLhUTK4Rsc+vJANwwVk4fqGsU021WA6pghcIirvEVpWf5MlykDQ==}
-    peerDependencies:
-      '@types/react': 17.0.45
-      '@types/react-dom': '>=16.8.0 <18.0.0'
-      react: '>=16.8.0 <18.0.0'
-      react-dom: '>=16.8.0 <18.0.0'
-
   '@uifabric/icons@7.5.17':
     resolution: {integrity: sha512-2S1kse0gtseTuV2r59iWukLxxoOJ6GgP2Yhxt9oxzaP9QubpYdxCUepvJmfPQQvvy4GELdykDUWQ6/hbzliJyw==}
 
   '@uifabric/icons@7.9.5':
     resolution: {integrity: sha512-0e2fEURtR7sNqoGr9gU/pzcOp24B/Lkdc05s1BSnIgXlaL2QxRszfaEsl3/E9vsNmqA3tvRwDJWbtRolDbjCpQ==}
-
-  '@uifabric/icons@7.9.6':
-    resolution: {integrity: sha512-cnFIB6R7iRe/fwyxbw3w0UekH1J9Wc/Fkk3yDWKr3hD4A1S2O5n3edZpBShuhAuNjtX3DcHxMRMnUctpIhH7qA==}
 
   '@uifabric/merge-styles@7.20.2':
     resolution: {integrity: sha512-cJy8hW9smlWOKgz9xSDMCz/A0yMl4mdo466pcGlIOn84vz+e94grfA7OoTuTzg3Cl0Gj6ODBSf1o0ZwIXYL1Xg==}
@@ -2779,12 +2762,6 @@ packages:
 
   '@webassemblyjs/wast-printer@1.14.1':
     resolution: {integrity: sha512-kPSSXE6De1XOR820C90RIo2ogvZG+c3KiHzqUoO/F34Y2shGzesfqv7o57xrxovZJH/MetF5UjroJ/R/3isoiw==}
-
-  '@webcomponents/custom-elements@1.5.1':
-    resolution: {integrity: sha512-6T/XT3S1UHDlRWFSxRXdeSoYWczEl78sygNPS7jDyHVrfZcF/pUtWGYgxF4uviH59iPVw1eOWbhubm8CqO0MpA==}
-
-  '@webcomponents/webcomponentsjs@2.7.0':
-    resolution: {integrity: sha512-j161Z9oiy8k74vchdrQGihfSp7QulrTclCUiPo0D7JF6/RjpXAmB0ThlTAFlSElkgqg0vdFgNAXaX9ZHZy25wQ==}
 
   '@xmldom/xmldom@0.8.10':
     resolution: {integrity: sha512-2WALfTl4xo2SkGCYRt6rDTFfk9R1czmBvUQy12gK2KuRKIpWEhcbbzy8EZXtz/jkRqHX8bFEc6FC1HjX4TUWYw==}
@@ -5253,14 +5230,6 @@ packages:
   office-ui-fabric-core@11.1.0:
     resolution: {integrity: sha512-uV7CbMBAqbHRa7ihNlgbDMIdiKb49TCamhsfuK7Yx7JXx05WdN/lZPWLmPnAALVQAFuO95ZJMAwNjyyEeXk47A==}
 
-  office-ui-fabric-react@7.199.1:
-    resolution: {integrity: sha512-wKhlbYSWH8IcphqBy6ySeFF9xSnE3um4yp/Tim6RD7zK54AydUIC66QclAxmsqfHulZDOLb4O7aihU7tyK4jig==}
-    peerDependencies:
-      '@types/react': 17.0.45
-      '@types/react-dom': '>=16.8.0 <18.0.0'
-      react: '>=16.8.0 <18.0.0'
-      react-dom: '>=16.8.0 <18.0.0'
-
   on-finished@2.4.1:
     resolution: {integrity: sha512-oVlzkg3ENAhCk2zdv7IJwd/QUD4z2RxRwpkcGY8psCVcCYZNq4wYnVWALHM+brtuJjePWiYF/ClmuDr8Ch5+kg==}
     engines: {node: '>= 0.8'}
@@ -6702,14 +6671,17 @@ packages:
 
   uuid@10.0.0:
     resolution: {integrity: sha512-8XkAphELsDnEGrDxUOHB3RGvXz6TeuYSGEZBOjtTtPm2lwhGBjLgOzLHB63IUWfBpNucQjND6d3AOudO+H3RWQ==}
+    deprecated: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
     hasBin: true
 
   uuid@8.3.2:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
+    deprecated: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
     hasBin: true
 
   uuid@9.0.1:
     resolution: {integrity: sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==}
+    deprecated: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
     hasBin: true
 
   v8-to-istanbul@9.3.0:
@@ -7362,11 +7334,6 @@ snapshots:
       '@babel/runtime': 7.26.0
       lodash: 4.17.21
 
-  '@fluentui/date-time-utilities@7.9.1':
-    dependencies:
-      '@uifabric/set-version': 7.0.24
-      tslib: 1.14.1
-
   '@fluentui/date-time-utilities@8.6.11':
     dependencies:
       '@fluentui/set-version': 8.2.24
@@ -7412,10 +7379,6 @@ snapshots:
       '@types/react': 17.0.45
       react: 17.0.1
       tslib: 2.8.1
-
-  '@fluentui/keyboard-key@0.2.17':
-    dependencies:
-      tslib: 1.14.1
 
   '@fluentui/keyboard-key@0.4.23':
     dependencies:
@@ -7915,19 +7878,6 @@ snapshots:
       '@types/react': 17.0.45
       react: 17.0.1
       tslib: 2.8.1
-
-  '@fluentui/react-focus@7.18.17(@types/react-dom@17.0.17)(@types/react@17.0.45)(react-dom@17.0.1(react@17.0.1))(react@17.0.1)':
-    dependencies:
-      '@fluentui/keyboard-key': 0.2.17
-      '@types/react': 17.0.45
-      '@types/react-dom': 17.0.17
-      '@uifabric/merge-styles': 7.20.2
-      '@uifabric/set-version': 7.0.24
-      '@uifabric/styling': 7.25.1(@types/react-dom@17.0.17)(@types/react@17.0.45)(react-dom@17.0.1(react@17.0.1))(react@17.0.1)
-      '@uifabric/utilities': 7.38.2(@types/react-dom@17.0.17)(@types/react@17.0.45)(react-dom@17.0.1(react@17.0.1))(react@17.0.1)
-      react: 17.0.1
-      react-dom: 17.0.1(react@17.0.1)
-      tslib: 1.14.1
 
   '@fluentui/react-focus@8.10.4(@types/react@17.0.45)(react@17.0.1)':
     dependencies:
@@ -10515,31 +10465,13 @@ snapshots:
     dependencies:
       tslib: 2.2.0
 
-  '@pnp/modern-search-extensibility@1.22.3(@microsoft/microsoft-graph-client@3.0.2)(@types/node@25.2.3)(@types/react-dom@17.0.17)(@types/react@17.0.45)(scheduler@0.20.2)(swiper@8.4.7)':
+  '@pnp/modern-search-extensibility@2.0.0-pre.0(react-dom@17.0.1(react@17.0.1))(react@17.0.1)':
     dependencies:
-      '@fluentui/react': 8.106.4(@types/react-dom@17.0.17)(@types/react@17.0.45)(react-dom@17.0.1(react@17.0.1))(react@17.0.1)
-      '@microsoft/sp-adaptive-card-extension-base': 1.22.2(@microsoft/microsoft-graph-client@3.0.2)(@types/node@25.2.3)(@types/react-dom@17.0.17)(@types/react@17.0.45)(react-dom@17.0.1(react@17.0.1))(react@17.0.1)(scheduler@0.20.2)(swiper@8.4.7)
-      '@microsoft/sp-component-base': 1.22.2(@microsoft/microsoft-graph-client@3.0.2)(@types/node@25.2.3)(@types/react-dom@17.0.17)(@types/react@17.0.45)(react-dom@17.0.1(react@17.0.1))(react@17.0.1)(scheduler@0.20.2)
-      '@microsoft/sp-core-library': 1.22.2(@types/node@25.2.3)(@types/react-dom@17.0.17)(@types/react@17.0.45)(react-dom@17.0.1(react@17.0.1))(react@17.0.1)
-      '@microsoft/sp-lodash-subset': 1.22.2
-      '@microsoft/sp-property-pane': 1.22.2(@microsoft/microsoft-graph-client@3.0.2)(@types/node@25.2.3)(@types/react-dom@17.0.17)(@types/react@17.0.45)(scheduler@0.20.2)
-      '@microsoft/sp-webpart-base': 1.22.2(@microsoft/microsoft-graph-client@3.0.2)(@types/node@25.2.3)(@types/react-dom@17.0.17)(@types/react@17.0.45)(scheduler@0.20.2)
-      '@webcomponents/custom-elements': 1.5.1
-      '@webcomponents/webcomponentsjs': 2.7.0
       handlebars: 4.7.9
-      office-ui-fabric-react: 7.199.1(@types/react-dom@17.0.17)(@types/react@17.0.45)(react-dom@17.0.1(react@17.0.1))(react@17.0.1)
+      tslib: 2.3.1
+    optionalDependencies:
       react: 17.0.1
       react-dom: 17.0.1(react@17.0.1)
-      tslib: 2.3.1
-    transitivePeerDependencies:
-      - '@microsoft/microsoft-graph-client'
-      - '@types/node'
-      - '@types/react'
-      - '@types/react-dom'
-      - encoding
-      - scheduler
-      - supports-color
-      - swiper
 
   '@pnp/odata@1.3.11(@pnp/common@1.3.11)(@pnp/logging@1.3.11)':
     dependencies:
@@ -11501,18 +11433,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@uifabric/foundation@7.10.16(@types/react-dom@17.0.17)(@types/react@17.0.45)(react-dom@17.0.1(react@17.0.1))(react@17.0.1)':
-    dependencies:
-      '@types/react': 17.0.45
-      '@types/react-dom': 17.0.17
-      '@uifabric/merge-styles': 7.20.2
-      '@uifabric/set-version': 7.0.24
-      '@uifabric/styling': 7.25.1(@types/react-dom@17.0.17)(@types/react@17.0.45)(react-dom@17.0.1(react@17.0.1))(react@17.0.1)
-      '@uifabric/utilities': 7.38.2(@types/react-dom@17.0.17)(@types/react@17.0.45)(react-dom@17.0.1(react@17.0.1))(react@17.0.1)
-      react: 17.0.1
-      react-dom: 17.0.1(react@17.0.1)
-      tslib: 1.14.1
-
   '@uifabric/icons@7.5.17(@types/react-dom@17.0.17)(@types/react@17.0.45)(react-dom@17.0.1(react@17.0.1))(react@17.0.1)':
     dependencies:
       '@uifabric/set-version': 7.0.24
@@ -11525,18 +11445,6 @@ snapshots:
       - react-dom
 
   '@uifabric/icons@7.9.5(@types/react-dom@17.0.17)(@types/react@17.0.45)(react-dom@17.0.1(react@17.0.1))(react@17.0.1)':
-    dependencies:
-      '@uifabric/set-version': 7.0.24
-      '@uifabric/styling': 7.25.1(@types/react-dom@17.0.17)(@types/react@17.0.45)(react-dom@17.0.1(react@17.0.1))(react@17.0.1)
-      '@uifabric/utilities': 7.38.2(@types/react-dom@17.0.17)(@types/react@17.0.45)(react-dom@17.0.1(react@17.0.1))(react@17.0.1)
-      tslib: 1.14.1
-    transitivePeerDependencies:
-      - '@types/react'
-      - '@types/react-dom'
-      - react
-      - react-dom
-
-  '@uifabric/icons@7.9.6(@types/react-dom@17.0.17)(@types/react@17.0.45)(react-dom@17.0.1(react@17.0.1))(react@17.0.1)':
     dependencies:
       '@uifabric/set-version': 7.0.24
       '@uifabric/styling': 7.25.1(@types/react-dom@17.0.17)(@types/react@17.0.45)(react-dom@17.0.1(react@17.0.1))(react@17.0.1)
@@ -11684,10 +11592,6 @@ snapshots:
     dependencies:
       '@webassemblyjs/ast': 1.14.1
       '@xtuc/long': 4.2.2
-
-  '@webcomponents/custom-elements@1.5.1': {}
-
-  '@webcomponents/webcomponentsjs@2.7.0': {}
 
   '@xmldom/xmldom@0.8.10': {}
 
@@ -14689,26 +14593,6 @@ snapshots:
   office-ui-fabric-core@11.0.1: {}
 
   office-ui-fabric-core@11.1.0: {}
-
-  office-ui-fabric-react@7.199.1(@types/react-dom@17.0.17)(@types/react@17.0.45)(react-dom@17.0.1(react@17.0.1))(react@17.0.1):
-    dependencies:
-      '@fluentui/date-time-utilities': 7.9.1
-      '@fluentui/react-focus': 7.18.17(@types/react-dom@17.0.17)(@types/react@17.0.45)(react-dom@17.0.1(react@17.0.1))(react@17.0.1)
-      '@fluentui/react-window-provider': 1.0.6(@types/react-dom@17.0.17)(@types/react@17.0.45)(react-dom@17.0.1(react@17.0.1))(react@17.0.1)
-      '@microsoft/load-themed-styles': 1.10.295
-      '@types/react': 17.0.45
-      '@types/react-dom': 17.0.17
-      '@uifabric/foundation': 7.10.16(@types/react-dom@17.0.17)(@types/react@17.0.45)(react-dom@17.0.1(react@17.0.1))(react@17.0.1)
-      '@uifabric/icons': 7.9.6(@types/react-dom@17.0.17)(@types/react@17.0.45)(react-dom@17.0.1(react@17.0.1))(react@17.0.1)
-      '@uifabric/merge-styles': 7.20.2
-      '@uifabric/react-hooks': 7.16.4(@types/react-dom@17.0.17)(@types/react@17.0.45)(react-dom@17.0.1(react@17.0.1))(react@17.0.1)
-      '@uifabric/set-version': 7.0.24
-      '@uifabric/styling': 7.25.1(@types/react-dom@17.0.17)(@types/react@17.0.45)(react-dom@17.0.1(react@17.0.1))(react@17.0.1)
-      '@uifabric/utilities': 7.38.2(@types/react-dom@17.0.17)(@types/react@17.0.45)(react-dom@17.0.1(react@17.0.1))(react@17.0.1)
-      prop-types: 15.8.1
-      react: 17.0.1
-      react-dom: 17.0.1(react@17.0.1)
-      tslib: 1.14.1
 
   on-finished@2.4.1:
     dependencies:
