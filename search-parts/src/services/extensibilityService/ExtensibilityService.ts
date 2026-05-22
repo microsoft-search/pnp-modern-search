@@ -207,11 +207,14 @@ export class ExtensibilityService {
     private async loadComponentWithRetry(componentId: string): Promise<any> {
         dbg(`loadComponentWithRetry: START for '${componentId}'`);
 
-        // Upfront manifest inspection: decide if we need to patch versions
-        const manifestStrategy = await this.resolveLoadStrategy(componentId);
-        dbg(`loadComponentWithRetry: strategy for '${componentId}':`, manifestStrategy.needsPatching ? 'PATCH then loadComponent' : 'standard loadComponentById');
-
         for (let attempt = 0; attempt <= ExtensibilityService.MAX_LOAD_RETRIES; attempt++) {
+            // Re-resolve the strategy on every attempt. On the first call the
+            // SPFx manifest store may not have populated entries for this
+            // component yet (page-load race) — a later attempt can succeed in
+            // inspecting the manifest and switch us onto the patch path.
+            const manifestStrategy = await this.resolveLoadStrategy(componentId);
+            dbg(`loadComponentWithRetry: attempt ${attempt + 1}/${ExtensibilityService.MAX_LOAD_RETRIES + 1} — strategy for '${componentId}':`, manifestStrategy.needsPatching ? 'PATCH then loadComponent' : 'standard loadComponentById');
+
             try {
                 if (manifestStrategy.needsPatching && manifestStrategy.manifest) {
                     dbg(`loadComponentWithRetry: attempt ${attempt + 1}/${ExtensibilityService.MAX_LOAD_RETRIES + 1} — patching + loadComponent for '${componentId}'`);

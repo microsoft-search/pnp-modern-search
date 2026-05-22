@@ -78,7 +78,7 @@ Don't `JSONstringify` for helper hash args — you'd just get the JSON string in
 
 ## What's on `@root`
 
-The full set of fields exposed at `@root` is the template context object built by each web part. The canonical source of truth is the [`ISearchResultsTemplateContext`](../../search-parts/src/models/common/ITemplateContext.ts) / [`ISearchFiltersTemplateContext`](../../search-parts/src/models/common/ITemplateContext.ts) interface definitions plus the `getTemplateContext()` method in each web part's container component.
+The full set of fields exposed at `@root` is the template context object built by each web part. The canonical source of truth is the [`ISearchResultsTemplateContext`](https://github.com/microsoft-search/pnp-modern-search/blob/develop/search-parts/src/models/common/ITemplateContext.ts) / [`ISearchFiltersTemplateContext`](https://github.com/microsoft-search/pnp-modern-search/blob/develop/search-parts/src/models/common/ITemplateContext.ts) interface definitions plus the `getTemplateContext()` method in each web part's container component.
 
 Commonly-used fields:
 

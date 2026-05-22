@@ -218,11 +218,22 @@ export class TemplateService implements ITemplateService {
                 );
             });
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            hb.registerHelper("blockHelperMissing", function (this: any, _context: any, options: any) {
+            hb.registerHelper("blockHelperMissing", function (this: any, context: any, options: any) {
                 const name = options && options.name ? options.name : "(unknown)";
                 // eslint-disable-next-line no-console
-                console.warn(`[TemplateService] Missing Handlebars block helper '#${name}'. Skipping block. If it comes from an extensibility library, the library may have failed to load.`);
-                return "";
+                console.warn(`[TemplateService] Missing Handlebars block helper '#${name}'. Rendering {{else}} fallback (if any) and an inline placeholder. If '${name}' comes from an extensibility library, the library may have failed to load \u2014 check earlier console output.`);
+                // Default Handlebars behaviour for an unresolved block helper is:
+                //   - if context is truthy, render the main body (options.fn)
+                //   - if context is falsy, render the {{else}} block (options.inverse)
+                // Returning "" would silently drop any {{else}} fallback the author
+                // provided. Delegate to options.inverse(this) so {{else}} content
+                // still renders, then append a small placeholder so the missing
+                // helper is discoverable.
+                const inverse = options && typeof options.inverse === "function"
+                    ? options.inverse(this)
+                    : "";
+                const placeholder = `<span style="color:#a4262c;background:#fde7e9;padding:1px 4px;border-radius:3px;font-family:monospace;font-size:11px;" title="Handlebars block helper not registered. If this comes from an extensibility library, the library may have failed to load.">[missing block helper: #${escapeFn(name)}]</span>`;
+                return new hb.SafeString(inverse + placeholder);
             });
 
             // Register icons and pull the fonts from the default SharePoint cdn.
