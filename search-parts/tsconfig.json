@@ -7,6 +7,13 @@
     "strictPropertyInitialization": false,
     "noImplicitAny": false,
     "useUnknownInCatchVariables": false,
-    "lib": ["dom", "es2021"]
+    "lib": ["dom", "es2021"],
+    // The SPFx rig (spfx-web-build-rig) sets moduleResolution=node10,
+    // which is deprecated and will be removed in TypeScript 7.0. The fix
+    // belongs upstream in @microsoft/spfx-web-build-rig — until then,
+    // silence the deprecation here. Value "5.0" is the only accepted
+    // value in the TypeScript 5.x series (the compiler error mentioning
+    // "6.0" is a forward-looking hint for TS 6+). See https://aka.ms/ts6.
+    "ignoreDeprecations": "5.0"
   }
 }
