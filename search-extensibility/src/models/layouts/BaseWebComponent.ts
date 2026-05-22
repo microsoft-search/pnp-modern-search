@@ -91,9 +91,25 @@ export abstract class BaseWebComponent extends HTMLElement {
             }
         }
 
-        // Theme variant is now set explicitly by the host via the data-theme-variant attribute.
-        // No automatic ThemeProvider consumption needed.
+        // Theme variant: prefer the data-theme-variant attribute (set by the
+        // host's Handlebars template). If not present, call the optional
+        // getThemeVariant() hook so subclasses can provide a fallback.
+        if (!props.themeVariant) {
+            const fallback = this.getThemeVariant();
+            if (fallback) {
+                props.themeVariant = fallback;
+            }
+        }
 
         return props;
+    }
+
+    /**
+     * Override this method to provide a theme variant fallback when the
+     * `data-theme-variant` attribute is not set in the template.
+     * The default implementation returns undefined (no fallback).
+     */
+    protected getThemeVariant(): any {
+        return undefined;
     }
 }

@@ -130,6 +130,50 @@ public getCustomWebComponents(): IComponentDefinition<any>[] {
 ### Consume services from BaseWebComponent
 
 ```typescript
-const msGraphClientFactory = this._serviceScope.consume<MSGraphClientFactory>(MSGraphClientFactory.serviceKey);
+const msGraphClientFactory = this._serviceScope.consume(MSGraphClientFactory.serviceKey);
 const msGraphClient = await msGraphClientFactory.getClient();
+```
+
+### Theming in custom web components
+
+To apply the current SharePoint section theme to your component, pass the theme variant via the `data-theme-variant` attribute in your Handlebars template:
+
+```html
+<my-custom-component 
+    data-my-string-param="Default value"
+    data-theme-variant="{{JSONstringify @root.theme}}"
+>
+</my-custom-component>
+```
+
+The `resolveAttributes()` method will parse this into a `themeVariant` prop (an `IReadonlyTheme` object) that you can pass to Fluent UI components:
+
+```typescript
+import { IReadonlyTheme } from '@microsoft/sp-component-base';
+
+public async connectedCallback() {
+    const props = this.resolveAttributes();
+    const theme: IReadonlyTheme = props.themeVariant;
+    // Use theme.semanticColors, theme.palette, etc.
+}
+```
+
+If your component cannot receive the attribute from the template (e.g., it's not rendered by Handlebars), you can override the `getThemeVariant()` hook to provide a fallback:
+
+```typescript
+import { ThemeProvider } from '@microsoft/sp-component-base';
+
+export class MyComponent extends BaseWebComponent {
+    protected getThemeVariant(): any {
+        if (this._serviceScope) {
+            const themeProvider = this._serviceScope.consume(ThemeProvider.serviceKey);
+            return themeProvider.tryGetTheme();
+        }
+    }
+
+    public async connectedCallback() {
+        const props = this.resolveAttributes();
+        // props.themeVariant is now available via the hook fallback
+    }
+}
 ```
