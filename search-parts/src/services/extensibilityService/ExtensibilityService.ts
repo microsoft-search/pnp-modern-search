@@ -115,57 +115,124 @@ export class ExtensibilityService {
     /**
      * Loads an SPFx component by ID with retry logic and cross-version support.
      *
-     * First attempts a standard load via SPComponentLoader.loadComponentById().
-     * If that fails (e.g., due to version-pinned dependencies), falls back to
-     * manifest rewriting: fetches the manifest, patches dependency versions to
-     * match the current page, and loads via SPComponentLoader.loadComponent().
+     * Strategy:
+     * 1. Inspect the extension's manifest upfront via tryGetManifestById/requestManifest
+     * 2. Compare its component dependency versions to what's available on the page
+     * 3. If versions match → use the standard SPComponentLoader.loadComponentById fast path
+     * 4. If versions differ → proactively patch the manifest and load via loadComponent
+     *    (avoids noisy SPFx internal fallback errors)
+     * 5. If anything throws, retry with exponential backoff
      */
     private async loadComponentWithRetry(componentId: string): Promise<any> {
+        // Upfront manifest inspection: decide if we need to patch versions
+        const manifestStrategy = await this.resolveLoadStrategy(componentId);
+
         for (let attempt = 0; attempt <= ExtensibilityService.MAX_LOAD_RETRIES; attempt++) {
             try {
+                if (manifestStrategy.needsPatching && manifestStrategy.manifest) {
+                    const patched = this.patchManifestVersions(manifestStrategy.manifest);
+                    return await SPComponentLoader.loadComponent(patched);
+                }
                 return await SPComponentLoader.loadComponentById(componentId);
             } catch (error) {
-                // On the last retry, try the cross-version fallback before giving up
-                if (attempt === ExtensibilityService.MAX_LOAD_RETRIES) {
-                    try {
-                        return await this.loadComponentWithVersionPatching(componentId);
-                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                    } catch (_patchError) {
-                        // If patching also fails, throw the original error
-                        throw error;
-                    }
+                if (attempt < ExtensibilityService.MAX_LOAD_RETRIES) {
+                    const delay = ExtensibilityService.RETRY_BASE_DELAY_MS * Math.pow(2, attempt);
+                    Log.verbose(ExtensibilityService_ServiceKey, `Retry ${attempt + 1}/${ExtensibilityService.MAX_LOAD_RETRIES} loading component '${componentId}' after ${delay}ms`, this.serviceScope);
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                } else {
+                    throw error;
                 }
-
-                const delay = ExtensibilityService.RETRY_BASE_DELAY_MS * Math.pow(2, attempt);
-                Log.verbose(ExtensibilityService_ServiceKey, `Retry ${attempt + 1}/${ExtensibilityService.MAX_LOAD_RETRIES} loading component '${componentId}' after ${delay}ms`, this.serviceScope);
-                await new Promise(resolve => setTimeout(resolve, delay));
             }
         }
     }
 
     /**
-     * Attempts to load a component by patching its manifest dependency versions
-     * to match the current page. This is the cross-version compatibility fallback.
+     * Inspects the extension manifest and decides whether to patch versions
+     * before loading. Returns the manifest and a flag indicating whether
+     * any dependency versions differ from the current page.
      */
-    private async loadComponentWithVersionPatching(componentId: string): Promise<any> {
-        Log.info(ExtensibilityService_ServiceKey,
-            `Attempting cross-version load for component '${componentId}' via manifest patching`,
-            this.serviceScope);
+    private async resolveLoadStrategy(componentId: string): Promise<{ manifest: IClientSideComponentManifest | undefined; needsPatching: boolean }> {
+        let manifest: IClientSideComponentManifest | undefined;
 
-        // Get the manifest — try local cache first, then request from server
-        let manifest: IClientSideComponentManifest | undefined =
-            (SPComponentLoader as any).tryGetManifestById?.(componentId);
+        try {
+            // Try local manifest cache first (fast, synchronous)
+            manifest = (SPComponentLoader as any).tryGetManifestById?.(componentId);
 
-        if (!manifest) {
-            manifest = await (SPComponentLoader as any).requestManifest?.(componentId);
+            // Fall back to server lookup if not yet cached
+            if (!manifest) {
+                manifest = await (SPComponentLoader as any).requestManifest?.(componentId);
+            }
+        } catch (e) {
+            Log.verbose(ExtensibilityService_ServiceKey,
+                `Could not inspect manifest for '${componentId}' upfront; will use standard load. Error: ${e}`,
+                this.serviceScope);
+            return { manifest: undefined, needsPatching: false };
         }
 
         if (!manifest) {
-            throw new Error(`Could not retrieve manifest for component '${componentId}'`);
+            return { manifest: undefined, needsPatching: false };
         }
 
-        const patched = this.patchManifestVersions(manifest);
-        return SPComponentLoader.loadComponent(patched);
+        // Log what we found for diagnostics
+        const versionedDeps = this.summarizeVersionedDependencies(manifest);
+        if (versionedDeps.length > 0) {
+            Log.info(ExtensibilityService_ServiceKey,
+                `Extension '${componentId}' (v${manifest.version}) declares versioned dependencies: ${versionedDeps.join(', ')}`,
+                this.serviceScope);
+        }
+
+        const needsPatching = this.manifestHasVersionMismatch(manifest);
+        return { manifest, needsPatching };
+    }
+
+    /**
+     * Returns a string summary of all component-type dependencies in a manifest
+     * along with their declared and current page versions. Used for logging.
+     */
+    private summarizeVersionedDependencies(manifest: IClientSideComponentManifest): string[] {
+        const pageVersions = this.getPageManifestVersions();
+        const scriptResources = (manifest as any).loaderConfig?.scriptResources;
+        if (!scriptResources) {
+            return [];
+        }
+
+        const summary: string[] = [];
+        for (const depName of Object.keys(scriptResources)) {
+            const resource = scriptResources[depName];
+            if (resource.type === 'component' && resource.id && resource.version) {
+                const pageVersion = pageVersions.get(resource.id);
+                const status = pageVersion === resource.version ? 'match' : (pageVersion ? `page has ${pageVersion}` : 'not on page');
+                summary.push(`${depName}@${resource.version} (${status})`);
+            }
+        }
+        return summary;
+    }
+
+    /**
+     * Returns true if any component-type dependency in the manifest declares
+     * a version that differs from what's currently on the page.
+     */
+    private manifestHasVersionMismatch(manifest: IClientSideComponentManifest): boolean {
+        const pageVersions = this.getPageManifestVersions();
+        if (pageVersions.size === 0) {
+            return false;
+        }
+
+        const scriptResources = (manifest as any).loaderConfig?.scriptResources;
+        if (!scriptResources) {
+            return false;
+        }
+
+        for (const depName of Object.keys(scriptResources)) {
+            const resource = scriptResources[depName];
+            if (resource.type === 'component' && resource.id && resource.version) {
+                const pageVersion = pageVersions.get(resource.id);
+                if (pageVersion && pageVersion !== resource.version) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -238,7 +305,7 @@ export class ExtensibilityService {
 
             return extensibilityLibraries;
 
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (error) {
 
             //Resovles empty array
