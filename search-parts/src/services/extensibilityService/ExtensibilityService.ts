@@ -17,8 +17,8 @@ const ExtensibilityService_ServiceKey = "PnPModernSearchExtensibilityService";
  */
 const isDebugMode = (): boolean => {
     try {
-        const search = window.location.search.toLowerCase();
-        return search.indexOf('pnpsearchdebug=1') !== -1 || search.indexOf('debug=true') !== -1;
+        const search = globalThis.location.search.toLowerCase();
+        return search.includes('pnpsearchdebug=1') || search.includes('debug=true');
     } catch {
         return false;
     }
@@ -108,9 +108,9 @@ export class ExtensibilityService {
      * but may break at runtime due to API differences.
      */
     private isCrossMajor(versionA: string, versionB: string): boolean {
-        const majorA = parseInt(versionA.split('.')[0], 10);
-        const majorB = parseInt(versionB.split('.')[0], 10);
-        if (isNaN(majorA) || isNaN(majorB)) {
+        const majorA = Number.parseInt(versionA.split('.')[0], 10);
+        const majorB = Number.parseInt(versionB.split('.')[0], 10);
+        if (Number.isNaN(majorA) || Number.isNaN(majorB)) {
             return false;
         }
         return majorA !== majorB;
@@ -149,49 +149,20 @@ export class ExtensibilityService {
             return manifest;
         }
 
-        let needsPatch = false;
-
-        // Check if any SAFE component dependency has a version mismatch with the page
-        for (const depName of Object.keys(scriptResources)) {
-            const resource = scriptResources[depName];
-            if (resource.type === 'component' && resource.id && resource.version && this.isSafeToPatch(depName)) {
-                const pageVersion = pageVersions.get(resource.id);
-                if (pageVersion && pageVersion !== resource.version) {
-                    needsPatch = true;
-                    break;
-                }
-            }
-        }
-
-        if (!needsPatch) {
+        const mismatches = this.findVersionMismatches(scriptResources, pageVersions);
+        if (mismatches.length === 0) {
             return manifest;
         }
 
-        // Deep clone the manifest to avoid mutating the original in ManifestStore
-        const patched: any = JSON.parse(JSON.stringify(manifest));
-        const patchedResources = patched.loaderConfig.scriptResources;
-        const rewrites: string[] = [];
-
-        for (const depName of Object.keys(patchedResources)) {
-            const resource = patchedResources[depName];
-            if (resource.type === 'component' && resource.id && resource.version && this.isSafeToPatch(depName)) {
-                const pageVersion = pageVersions.get(resource.id);
-                if (pageVersion && pageVersion !== resource.version) {
-                    const originalVersion = resource.version;
-                    const majorMismatch = this.isCrossMajor(originalVersion, pageVersion);
-                    rewrites.push(`${depName}: ${originalVersion} → ${pageVersion}${majorMismatch ? ' (CROSS-MAJOR — may break)' : ''}`);
-                    resource.version = pageVersion;
-                    if (majorMismatch) {
-                        // Warn loudly: patching across majors can succeed at load time
-                        // but break at runtime due to API differences.
-                        const warnMsg = `Cross-major version patch for '${manifest.id}': ${depName} bundle was built against ${originalVersion} but page provides ${pageVersion}. Extension may misbehave.`;
-                        Log.warn(ExtensibilityService_ServiceKey, warnMsg, this.serviceScope);
-                        // eslint-disable-next-line no-console
-                        console.warn(`[${ExtensibilityService_ServiceKey}] ${warnMsg}`);
-                    }
-                }
-            }
-        }
+        // Deep clone the manifest to avoid mutating the original in ManifestStore.
+        // structuredClone handles complex shapes natively and is supported by
+        // every browser SPFx 1.22 targets (Edge ≥92, Chrome ≥98, FF ≥94, Safari ≥15.4).
+        const patched: any = structuredClone(manifest);
+        const rewrites = this.applyPatchesToResources(
+            patched.loaderConfig.scriptResources,
+            mismatches,
+            manifest.id
+        );
 
         if (rewrites.length > 0) {
             // Always surfaced (info-level) — this is a meaningful one-time
@@ -203,6 +174,75 @@ export class ExtensibilityService {
         }
 
         return patched as IClientSideComponentManifest;
+    }
+
+    /**
+     * Walks `scriptResources` and returns the dep names whose declared
+     * version differs from the page's version (i.e. need patching).
+     */
+    private findVersionMismatches(
+        scriptResources: any,
+        pageVersions: Map<string, string>
+    ): string[] {
+        const mismatches: string[] = [];
+        for (const depName of Object.keys(scriptResources)) {
+            const resource = scriptResources[depName];
+            if (!this.isPatchableResource(resource, depName)) {
+                continue;
+            }
+            const pageVersion = pageVersions.get(resource.id);
+            if (pageVersion && pageVersion !== resource.version) {
+                mismatches.push(depName);
+            }
+        }
+        return mismatches;
+    }
+
+    /**
+     * Returns true if `resource` is a component-type scriptResource with the
+     * fields required for patching and is on the safe-to-patch list.
+     */
+    private isPatchableResource(resource: any, depName: string): boolean {
+        return resource
+            && resource.type === 'component'
+            && !!resource.id
+            && !!resource.version
+            && this.isSafeToPatch(depName);
+    }
+
+    /**
+     * Mutates `patchedResources` in place: for each dep in `mismatches`,
+     * replaces its version with the page's version. Returns a list of
+     * human-readable rewrite descriptions and emits a `console.warn` per
+     * cross-major patch (those may break at runtime due to API differences).
+     */
+    private applyPatchesToResources(
+        patchedResources: any,
+        mismatches: string[],
+        manifestId: string
+    ): string[] {
+        const pageVersions = this.getPageManifestVersions();
+        const rewrites: string[] = [];
+        for (const depName of mismatches) {
+            const resource = patchedResources[depName];
+            const pageVersion = pageVersions.get(resource.id);
+            if (!pageVersion || pageVersion === resource.version) {
+                continue;
+            }
+            const originalVersion = resource.version;
+            const majorMismatch = this.isCrossMajor(originalVersion, pageVersion);
+            rewrites.push(`${depName}: ${originalVersion} → ${pageVersion}${majorMismatch ? ' (CROSS-MAJOR — may break)' : ''}`);
+            resource.version = pageVersion;
+            if (majorMismatch) {
+                // Warn loudly: patching across majors can succeed at load time
+                // but break at runtime due to API differences.
+                const warnMsg = `Cross-major version patch for '${manifestId}': ${depName} bundle was built against ${originalVersion} but page provides ${pageVersion}. Extension may misbehave.`;
+                Log.warn(ExtensibilityService_ServiceKey, warnMsg, this.serviceScope);
+                // eslint-disable-next-line no-console
+                console.warn(`[${ExtensibilityService_ServiceKey}] ${warnMsg}`);
+            }
+        }
+        return rewrites;
     }
 
     /**
@@ -316,10 +356,10 @@ export class ExtensibilityService {
             if (resource.type === 'component' && resource.id && resource.version) {
                 const pageVersion = pageVersions.get(resource.id);
                 let status: string;
-                if (pageVersion === resource.version) {
-                    status = 'match';
-                } else if (!pageVersion) {
+                if (!pageVersion) {
                     status = 'not on page';
+                } else if (pageVersion === resource.version) {
+                    status = 'match';
                 } else {
                     status = `page has ${pageVersion}, will patch`;
                 }
@@ -366,7 +406,7 @@ export class ExtensibilityService {
         // Parse the library component properties to instantiate the library itself.
         // This way, we are not depending on a naming convention for the entry point name. We depend only on the component ID
         const libraryMainEntryPoints = Object.keys(extensibilityLibraryComponent).filter(property => {
-            if (property.indexOf('__') !== -1) {
+            if (property.includes('__')) {
                 return false;
             }
 

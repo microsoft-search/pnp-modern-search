@@ -192,9 +192,7 @@ export class TemplateService implements ITemplateService {
             // Instead, render an inline placeholder so the rest of the
             // template still renders and the problem is discoverable.
             const hb: any = this._handlebars;
-            const escapeFn = hb.Utils && hb.Utils.escapeExpression
-                ? hb.Utils.escapeExpression
-                : (s: string) => String(s);
+            const escapeFn = hb.Utils?.escapeExpression ?? String;
             // Shared placeholder builder so the helperMissing and
             // blockHelperMissing fallbacks stay visually consistent and
             // easy to maintain in one place.
@@ -220,9 +218,9 @@ export class TemplateService implements ITemplateService {
                 // delimited names (e.g. `myExt-foo`, `pnp-iconfile`) are almost
                 // certainly helpers/components, while typical data fields are
                 // single-word identifiers (`Title`, `Path`) or camel/Pascal-case.
-                const options = args[args.length - 1];
-                const name = options && options.name ? options.name : "(unknown)";
-                const looksLikeHelperOrComponent = name.indexOf("-") !== -1;
+                const options = args.at(-1);
+                const name = options?.name ?? "(unknown)";
+                const looksLikeHelperOrComponent = name.includes("-");
                 if (args.length <= 1 && !looksLikeHelperOrComponent) {
                     // Likely an undefined data field \u2014 stay silent to match
                     // Handlebars' default behaviour and avoid red noise on every
@@ -237,7 +235,7 @@ export class TemplateService implements ITemplateService {
             });
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             hb.registerHelper("blockHelperMissing", function (this: any, context: any, options: any) {
-                const name = options && options.name ? options.name : "(unknown)";
+                const name = options?.name ?? "(unknown)";
                 // eslint-disable-next-line no-console
                 console.warn(`[TemplateService] Missing Handlebars block helper '#${name}'. Rendering {{else}} fallback (if any) and an inline placeholder. If '${name}' comes from an extensibility library, the library may have failed to load \u2014 check earlier console output.`);
                 // Default Handlebars behaviour for an unresolved block helper is:
