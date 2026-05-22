@@ -35,7 +35,7 @@ Under **Layouts → Slots**, add the following three slots:
 | `LastModifiedTimeForRetention` | `LastModifiedTimeForRetention` |
 
 !!! warning
-    The slot names must match exactly as shown — they are referenced directly in the `<pnp-panel>` template in Step 4. A typo or different casing will result in those fields showing blank in the panel.
+The slot names must match exactly as shown — they are referenced directly in the `<pnp-panel>` template in Step 4. A typo or different casing will result in those fields showing blank in the panel.
 
 ## Step 4: Add the info panel column
 
@@ -128,7 +128,7 @@ Paste the following as the column value:
 ```
 
 !!! tip
-    The template above relies on the managed properties and slot names being exactly as specified in Steps 2 and 3. Once you have it working you can freely customise the panel to add, remove, or relabel any metadata fields.
+The template above relies on the managed properties and slot names being exactly as specified in Steps 2 and 3. Once you have it working you can freely customise the panel to add, remove, or relabel any metadata fields.
 
 ## Step 5: Publish and test
 
@@ -137,5 +137,5 @@ Save and publish the page. Each result row will show the info icon on the right.
 ![The panel open showing metadata for a selected result](assets/more-info-panel-with-pnp-panel/more-info-panel-result.png)
 
 !!! tip
-    If a field shows blank, check two things: (1) the managed property is included in the **Selected Properties** list in the Data sources panel, and (2) the slot mapping in the Layouts panel points to the correct managed property name.
+If a field shows blank, check two things: (1) the managed property is included in the **Selected Properties** list in the Data sources panel, and (2) the slot mapping in the Layouts panel points to the correct managed property name.
 
