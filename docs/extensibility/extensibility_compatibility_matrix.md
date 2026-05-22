@@ -8,7 +8,8 @@ The following table lists the SPFx version used by each PnP Modern Search releas
 
 | PnP Modern Search Release | Release Date       | SPFx Version used | Extensibility Package | Toolchain |
 |----------------------------|--------------------|--------------------|----------------------|-----------|
-| 4.22.0                     | May 2026          | 1.22.2             | 2.0.0                | Heft      |
+| 4.23.0                     | _upcoming_         | 1.22.2             | 2.0.0                | Heft      |
+| 4.22.0                     | May 2026          | 1.22.2             | 1.22.3               | Heft      |
 | 4.21.0                     | April 2026        | 1.22.2             | 1.22.3               | Heft      |
 | 4.16.0                     | February 2025     | 1.20.0             | Gulp      |
 | 4.15.0                     | January 2025      | 1.20.0             |
