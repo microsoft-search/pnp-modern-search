@@ -1,6 +1,7 @@
 {
   "extends": "./node_modules/@microsoft/spfx-web-build-rig/profiles/default/tsconfig-base.json",
   "compilerOptions": {
+    "target": "es2017",
     // TODO: Enable these incrementally and fix errors
     "strictNullChecks": false,
     "strictPropertyInitialization": false,
