@@ -2,6 +2,11 @@ name: Release Modern Search Extensibility package
 
 on:
     workflow_dispatch:
+        inputs:
+            prerelease:
+                description: "Publish as pre-release? (uses 'next' dist-tag instead of 'latest')"
+                type: boolean
+                default: false
 
 jobs:
     extensibility-release:
@@ -50,6 +55,13 @@ jobs:
               run: pnpm run build
 
             - name: Publish
-              run: npm publish
+              run: |
+                  if [ "${{ inputs.prerelease }}" = "true" ]; then
+                    echo "Publishing as pre-release with 'next' tag"
+                    npm publish --tag next
+                  else
+                    echo "Publishing as latest"
+                    npm publish
+                  fi
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
