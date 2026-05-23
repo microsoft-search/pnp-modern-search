@@ -49,6 +49,21 @@ const _serializeDbgArg = (value: unknown): string => {
 /** Hard cap for the serialised-args suffix appended to verbose log entries. */
 const DBG_MAX_ARGS_LEN = 2000;
 
+/**
+ * Deep-clones a JSON-shaped value. Prefers `structuredClone` (native, faster,
+ * handles cycles/typed-arrays/etc.) and falls back to JSON round-trip for
+ * any environment where `structuredClone` is unavailable. SPFx 1.22's
+ * supported browsers (last-2 evergreen) all ship `structuredClone`, but the
+ * fallback removes any risk if this code is ever executed in an older host
+ * (e.g. a test harness, embedded WebView, or non-evergreen channel).
+ */
+const _deepClone = <T>(value: T): T => {
+    if (typeof structuredClone === 'function') {
+        return structuredClone(value);
+    }
+    return JSON.parse(JSON.stringify(value));
+};
+
 const dbg = (message: string, ...args: unknown[]): void => {
     // Serialise extra args into the verbose message so the SPFx diagnostic
     // stream captures the same context the browser console gets (config
@@ -191,9 +206,8 @@ export class ExtensibilityService {
         }
 
         // Deep clone the manifest to avoid mutating the original in ManifestStore.
-        // structuredClone handles complex shapes natively and is supported by
-        // every browser SPFx 1.22 targets (Edge ≥92, Chrome ≥98, FF ≥94, Safari ≥15.4).
-        const patched: any = structuredClone(manifest);
+        // Uses structuredClone with a JSON-clone fallback (see _deepClone).
+        const patched: any = _deepClone(manifest);
         const rewrites = this.applyPatchesToResources(
             patched.loaderConfig.scriptResources,
             mismatches,
