@@ -221,9 +221,8 @@ export class TemplateService implements ITemplateService {
                 // NOTE: `args.at(-1)` would be cleaner but is an ES2022 runtime
                 // feature; this code is shipped to ES2017-targeted bundles so we
                 // keep the index-based form to avoid relying on a polyfill in
-                // older runtimes. SonarCloud's sonarjs/prefer-at may flag this —
-                // the comment above is the reason.
-                const options = args[args.length - 1];
+                // older runtimes. SonarCloud S7755 (prefer-at) is suppressed below.
+                const options = args[args.length - 1]; // NOSONAR
                 const name = options?.name ?? "(unknown)";
                 const looksLikeHelperOrComponent = name.includes("-");
                 if (args.length <= 1 && !looksLikeHelperOrComponent) {

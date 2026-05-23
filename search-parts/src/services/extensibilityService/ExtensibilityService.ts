@@ -40,11 +40,9 @@ const _serializeDbgArg = (value: unknown): string => {
     try {
         return JSON.stringify(value);
     } catch {
-        try {
-            return String(value);
-        } catch {
-            return '[unserialisable]';
-        }
+        // JSON.stringify only throws on cycles / BigInt; bail with a marker
+        // rather than `String(value)` which would just emit '[object Object]'.
+        return '[unserialisable]';
     }
 };
 
@@ -63,7 +61,10 @@ const _deepClone = <T>(value: T): T => {
     if (typeof structuredClone === 'function') {
         return structuredClone(value);
     }
-    return JSON.parse(JSON.stringify(value));
+    // Intentional fallback for environments without structuredClone (older
+    // test harnesses / embedded WebViews). Sonar S7784 would prefer
+    // structuredClone only; we already use it when available above.
+    return JSON.parse(JSON.stringify(value)); // NOSONAR
 };
 
 const dbg = (message: string, ...args: unknown[]): void => {
@@ -255,8 +256,7 @@ export class ExtensibilityService {
      * fields required for patching and is on the safe-to-patch list.
      */
     private isPatchableResource(resource: any, depName: string): boolean {
-        return resource
-            && resource.type === 'component'
+        return resource?.type === 'component'
             && !!resource.id
             && !!resource.version
             && this.isSafeToPatch(depName);
