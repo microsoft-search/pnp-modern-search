@@ -191,7 +191,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
 
         this.initProperties();
 
-        this.dateHelper = this.serviceScope.consume<DateHelper>(DateHelper.ServiceKey);
+        this.dateHelper = this.serviceScope.consume(DateHelper.ServiceKey);
         this.dayjs = await this.dateHelper.moment();
 
         if (this.editMode) {

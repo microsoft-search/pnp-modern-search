@@ -1,9 +1,39 @@
-import * as ReactDOM from 'react-dom';
-import { camelCase } from '@microsoft/sp-lodash-subset';
+// Custom Elements polyfill. Required because:
+//   1. `BaseWebComponent extends HTMLElement` uses native ES6 class syntax
+//   2. Many SPFx projects downlevel to ES5 in their consumer builds, which
+//      breaks `extends HTMLElement` (HTMLElement requires native `new`).
+// Imported here so consumers don't have to remember it (the OLD non-slim
+// package did the same). Pure browser polyfill — no @microsoft/sp-* deps.
 import '@webcomponents/custom-elements/src/native-shim';
 import '@webcomponents/custom-elements/custom-elements.min';
-import { ThemeProvider } from '@microsoft/sp-component-base';
-import { ServiceScope, ServiceKey } from '@microsoft/sp-core-library';
+
+import * as ReactDOM from 'react-dom';
+
+/**
+ * Converts a kebab-case (HTML attribute) string to camelCase.
+ * Replaces the previous @microsoft/sp-lodash-subset dependency on `camelCase`.
+ *
+ * Behaviour:
+ *   - Collapses one or more `-` separators
+ *   - Uppercases the character that follows (letter or digit — digits are
+ *     left as-is since `'1'.toUpperCase()` returns `'1'`)
+ *   - Trailing `-` is dropped
+ *
+ * Examples:
+ *   data-my-prop      -> myProp
+ *   data-api-v3       -> apiV3
+ *   data-foo-1        -> foo1
+ *   data--foo         -> foo
+ *   data-FOO          -> FOO  (HTML attribute names are lowercased by the
+ *                              parser, so this case shouldn't appear in
+ *                              practice, but we preserve any uppercase that
+ *                              does arrive)
+ */
+function camelCase(str: string): string {
+    return str.replace(/-+([a-zA-Z0-9])?/g, function (_match: string, letter: string | undefined) {
+        return letter ? letter.toUpperCase() : '';
+    });
+}
 
 export abstract class BaseWebComponent extends HTMLElement {
 
@@ -12,17 +42,17 @@ export abstract class BaseWebComponent extends HTMLElement {
     /**
      * The root shared service scope for all Web Part instances on the page. Use this scope to consume common services (ex: SPHttpClient, HttpClient , etc.) 
      */
-    public _serviceScope: ServiceScope;
+    public _serviceScope: any;
 
     /**
      * INTERNAL USE ONLY. Array of service scopes of Web Part IDs who registered this web component. Use this array to look up correct service scope for a specific Web Part instance ID.
      */
-    public _webPartServiceScopes: Map<string, ServiceScope>;
+    public _webPartServiceScopes: Map<string, any>;
 
     /**
      * INTERNAL USE ONLY. Array of service keys of Web Part IDs who registered this web component. Use this array to look up correct service keys context for a specific Web Part instance ID.
      */
-    public _webPartServiceKeys: Map<string, { [key: string]: ServiceKey<any> }>;
+    public _webPartServiceKeys: Map<string, { [key: string]: any }>;
 
     /**
      * INTERNAL USE ONLY. For custom web component use `_serviceScope` property and the `DateHelper` service (ex: `this._serviceScope.consume<DateHelper>(DateHelper.ServiceKey)`)
@@ -88,16 +118,25 @@ export abstract class BaseWebComponent extends HTMLElement {
             }
         }
 
-        // Added theme variant to be available in components
-        // Be careful: the theme variant will be the one of the last registered Web Part on the page (because serviceScope is set using prototype and called every time a Web part is rendered) 
-        // The theme variant may not correspond to the actual Web Part section theme
-        // We set this property as a fallback if the web component does not set the data-theme-variant attribute.
-        if (this._serviceScope && !props.themeVariant) {
-            const themeProvider = this._serviceScope.consume(ThemeProvider.serviceKey);
-            const themeVariant = themeProvider.tryGetTheme();
-            props.themeVariant = themeVariant;
+        // Theme variant: prefer the data-theme-variant attribute (set by the
+        // host's Handlebars template). If not present, call the optional
+        // getThemeVariant() hook so subclasses can provide a fallback.
+        if (!props.themeVariant) {
+            const fallback = this.getThemeVariant();
+            if (fallback) {
+                props.themeVariant = fallback;
+            }
         }
 
         return props;
+    }
+
+    /**
+     * Override this method to provide a theme variant fallback when the
+     * `data-theme-variant` attribute is not set in the template.
+     * The default implementation returns undefined (no fallback).
+     */
+    protected getThemeVariant(): any {
+        return undefined;
     }
 }

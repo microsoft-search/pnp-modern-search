@@ -1,21 +1,18 @@
 import { IDataSource, IServiceKeysConfiguration } from "./IDataSource";
 import { IDataSourceData } from "./IDataSourceData";
-import { IPropertyPaneGroup } from "@microsoft/sp-property-pane";
-import { ServiceScope } from '@microsoft/sp-core-library';
 import { PagingBehavior } from './PagingBehavior';
 import { IDataContext } from './IDataContext';
 import { FilterBehavior } from '../filters/FilterBehavior';
 import { ITemplateSlot } from './ITemplateSlot';
-import { WebPartContext } from "@microsoft/sp-webpart-base";
 import { IDataFilter } from '../..';
 
-export abstract class BaseDataSource<T> implements IDataSource {
+export abstract class BaseDataSource<T, TContext = any> implements IDataSource {
 
-    protected serviceScope: ServiceScope;
+    protected serviceScope: any;
 
     protected _properties: T;
     private _serviceKeys: IServiceKeysConfiguration;
-    private _context: WebPartContext;
+    private _context: TContext;
     private _editMode: boolean;
     private _render: () => void | Promise<void>;
 
@@ -35,11 +32,11 @@ export abstract class BaseDataSource<T> implements IDataSource {
         this._render = renderFunc;
     }
 
-    get context(): WebPartContext {
+    get context(): TContext {
         return this._context;
     }
 
-    set context(context: WebPartContext) {
+    set context(context: TContext) {
         this._context = context;
     }
 
@@ -51,14 +48,14 @@ export abstract class BaseDataSource<T> implements IDataSource {
         this._serviceKeys = keys;
     }
 
-    public constructor(serviceScope: ServiceScope) {
+    public constructor(serviceScope: any) {
         this.serviceScope = serviceScope;
     }
 
     get editMode() {
         return this._editMode;
     }
-    
+
     set editMode(editMode: boolean) {
         this._editMode = editMode;
     }
@@ -68,7 +65,7 @@ export abstract class BaseDataSource<T> implements IDataSource {
 
     public abstract getData(dataContext?: IDataContext): Promise<IDataSourceData>;
 
-    public getPropertyPaneGroupsConfiguration(): IPropertyPaneGroup[] {
+    public getPropertyPaneGroupsConfiguration(): any[] {
 
         // Returns an empty configuration by default
         return [];
