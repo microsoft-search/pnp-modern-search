@@ -1,0 +1,269 @@
+# SharePoint Test Harness
+
+This harness provisions an isolated SharePoint Online site, enables a site collection app catalog, deploys the current `search-parts` package, and creates test pages from a JSON scenario.
+
+## What it does
+
+The PowerShell entry point can:
+
+- build the current SPFx package with `pnpm build`
+- create or reuse an isolated site collection
+- enable a site collection app catalog on that site
+- upload, publish, and install the current `.sppkg`
+- create modern pages and add configured PnP Modern Search web parts from JSON
+- optionally delete the test site when you are done
+
+## Prerequisites
+
+- PowerShell 7+
+- `PnP.PowerShell`
+- `pnpm`
+- an Entra ID app registration that PnP PowerShell can use for interactive auth
+
+Install the PowerShell dependency if needed:
+
+```powershell
+Install-Module PnP.PowerShell -Scope CurrentUser
+```
+
+## Scenario format
+
+The harness expects a JSON file with three top-level sections:
+
+- `auth`: tenant and PnP client settings
+- `site`: target site metadata
+- `package`: where to find the `.sppkg`
+- `pages`: ordered page definitions, each with sections and web parts
+
+CLI parameters override anything in `auth`, so you can keep a default tenant in the scenario and switch on demand when needed.
+
+For web parts, you can use one of:
+
+- `componentKey`: one of `search-box`, `search-results`, `search-filters`, `search-verticals`
+- `componentId`: explicit SPFx component id
+- `componentAlias`: explicit component alias
+
+`propertiesJson` can be either a JSON object or a raw JSON string. The script converts objects to the string format required by `Set-PnPPageWebPart`.
+
+See `exported-scenarios/sample-scenario.json` for a working example.
+
+## Run it
+
+From the `search-parts` folder:
+
+```powershell
+pwsh ./testing/sharepoint-harness/scripts/Provision-TestEnvironment.ps1 \
+  -ScenarioPath ./testing/sharepoint-harness/exported-scenarios/sample-scenario.json
+```
+
+To switch tenant or app registration without editing the scenario:
+
+```powershell
+pwsh ./testing/sharepoint-harness/scripts/Provision-TestEnvironment.ps1 \
+  -ScenarioPath ./testing/sharepoint-harness/exported-scenarios/sample-scenario.json \
+  -TenantUrl https://contoso.sharepoint.com \
+  -ClientId <your-entra-app-id>
+```
+
+Useful switches:
+
+- `-SkipBuild`
+- `-SkipSiteCreation`
+- `-SkipAppCatalog`
+- `-SkipAppDeployment`
+- `-SkipPageProvisioning`
+- `-SkipWebPartProvisioning`
+- `-Force`
+- `-UseUniquePageNames`
+- `-DeleteSite`
+
+When `-UseUniquePageNames` is supplied, each scenario page name gets a timestamp suffix for that run, for example `SearchValidation-20260522-153045.aspx`. This is useful when a prior draft page is locked and you want a fresh page instead of replacing the original.
+
+Example cleanup:
+
+```powershell
+pwsh ./testing/sharepoint-harness/scripts/Provision-TestEnvironment.ps1 \
+  -ScenarioPath ./testing/sharepoint-harness/exported-scenarios/sample-scenario.json \
+  -DeleteSite
+```
+
+## Local debug-manifest flow
+
+When the site collection app catalog installation does not surface the custom SPFx web parts in SharePoint's available component list, you can still provision page shells and load the local debug manifests into those pages.
+
+1. Provision the test site and page shells without trying to add web parts:
+
+```powershell
+pwsh ./testing/sharepoint-harness/scripts/Provision-TestEnvironment.ps1 \
+  -ScenarioPath ./testing/sharepoint-harness/exported-scenarios/sample-scenario.json \
+  -SkipAppDeployment \
+  -SkipWebPartProvisioning \
+  -UseUniquePageNames
+```
+
+2. Start the local SPFx dev server from `search-parts`:
+
+```powershell
+pnpm start
+```
+
+Wait until `https://localhost:4321/temp/build/manifests.js` is reachable before opening the page.
+
+3. Generate the ready-to-open debug URLs for the provisioned pages:
+
+```powershell
+pwsh ./testing/sharepoint-harness/scripts/Get-LocalDebugPageUrls.ps1 \
+  -ScenarioPath ./testing/sharepoint-harness/exported-scenarios/sample-scenario.json \
+  -ClientId <your-entra-app-id> \
+  -ResolveLatestPageNames
+```
+
+Add `-Open` to launch those URLs in the default browser.
+
+The generated URLs append `loadSPFX=true` and `debugManifestsFile=https://localhost:4321/temp/build/manifests.js` to the page so SharePoint loads the locally served manifests instead of relying on the site collection app catalog component list.
+
+## Export from an existing page
+
+If you already have a configured SharePoint page and want to bootstrap a scenario JSON from it, use the exporter:
+
+```powershell
+pwsh ./testing/sharepoint-harness/scripts/Export-ScenarioFromPage.ps1 \
+  -PageUrl "https://tcwlv.sharepoint.com/sites/PnPModernSearch/SitePages/Testing-4-21-8.aspx" \
+  -ClientId <your-entra-app-id> \
+  -OutPath ./testing/sharepoint-harness/exported-scenarios/Testing-4-21-8-scenario.json
+```
+
+If you omit `-OutPath`, the exporter now writes a file whose name reflects the source page, for example `Testing-4-21-8-scenario.json`.
+By default, that file is written under `testing/sharepoint-harness/exported-scenarios/`.
+The extracted provisioning template is also persisted by default in the same folder, for example `Testing-4-21-8-template.xml`.
+
+You can override either path explicitly:
+
+```powershell
+pwsh ./testing/sharepoint-harness/scripts/Export-ScenarioFromPage.ps1 \
+  -PageUrl "https://tcwlv.sharepoint.com/sites/PnPModernSearch/SitePages/Testing-4-21-8.aspx" \
+  -ClientId <your-entra-app-id> \
+  -OutPath ./testing/sharepoint-harness/exported-scenarios/Testing-4-21-8-scenario.json \
+  -TemplateOutPath ./testing/sharepoint-harness/exported-scenarios/Testing-4-21-8-template.xml
+```
+
+The exporter uses `Get-PnPSiteTemplate -Handlers Pages,PageContents -IncludeAllPages` as the extraction source, then converts the selected modern page into the harness scenario format.
+
+What it preserves:
+
+- page name and title
+- section templates and section order
+- numeric web part placement using `section`, `column`, and `order`
+- web part configuration from the page's `properties` payload
+- known PnP Modern Search web parts as `componentKey`
+- unknown custom web parts as `componentId`
+
+What it intentionally skips:
+
+- the built-in page title control
+- package metadata from the source SharePoint site itself; the exported scenario uses the local harness package path you pass or the default `../../sharepoint/solution/pnp-modern-search-parts-v4.sppkg`
+
+## Graphical launcher
+
+If you prefer a graphical entry point, open the harness launcher:
+
+```powershell
+pwsh ./testing/sharepoint-harness/Show-HarnessLauncher.ps1
+```
+
+The launcher opens a Windows form where you can choose actions such as:
+
+- running the harness tests
+- provisioning the full environment
+- running the split site, package, and page steps
+- exporting a new sample scenario from an existing SharePoint page
+- generating local debug URLs
+- removing the test site
+
+It starts the selected action in a new `pwsh` window so you can see output and complete any interactive PnP sign-in prompts normally.
+
+To see the supported actions without opening the window:
+
+```powershell
+pwsh ./testing/sharepoint-harness/Show-HarnessLauncher.ps1 -ListActions
+```
+
+## Smoke test
+
+After provisioning, you can validate that the expected pages and web parts exist by running:
+
+```powershell
+pwsh ./testing/sharepoint-harness/scripts/Test-ProvisionedPages.ps1 \
+  -ScenarioPath ./testing/sharepoint-harness/exported-scenarios/sample-scenario.json
+```
+
+If the pages were provisioned with `-UseUniquePageNames`, add `-ResolveLatestPageNames` so the smoke test validates the latest timestamped page for each configured base name.
+
+The smoke test reads the same scenario file, connects to `scenario.site.url`, and fails with exit code `1` if:
+
+- a page from the scenario is missing
+- an expected web part is missing from a page
+- `-FailOnUnexpectedWebParts` is supplied and extra web parts are present
+
+It currently validates page and web part presence, not deep `propertiesJson` equivalence.
+
+## Split task scripts
+
+The harness now exposes the scaffolding activities as separate scripts:
+
+- `scripts/Build-SolutionPackage.ps1`: builds the current `.sppkg`
+- `scripts/Ensure-TestSite.ps1`: creates or reuses the test site and enables the site collection app catalog
+- `scripts/Deploy-SitePackage.ps1`: uploads, publishes, and installs the package to the site collection app catalog
+- `scripts/Provision-TestPages.ps1`: creates the scenario pages and optionally skips web part placement
+- `scripts/Remove-TestSite.ps1`: deletes the configured test site
+
+The original `Provision-TestEnvironment.ps1` remains as the full end-to-end entry point.
+
+## Test runner
+
+Use the runner to see the available tests and run a selected set. The default is `all`, which expands to `build`, `site`, `package`, `pages`, and `smoke`.
+
+When the runner sees any combination of `site`, `package`, and `pages`, it batches those scaffold steps into a single `Provision-TestEnvironment.ps1` invocation. This reduces repeated `Connect-PnPOnline -Interactive` prompts during one run while keeping the split task scripts available for manual use.
+
+List the available tests:
+
+```powershell
+pwsh ./testing/sharepoint-harness/scripts/Run-HarnessTests.ps1 \
+  -ScenarioPath ./testing/sharepoint-harness/exported-scenarios/sample-scenario.json \
+  -ListTests
+```
+
+Run the default full set:
+
+```powershell
+pwsh ./testing/sharepoint-harness/scripts/Run-HarnessTests.ps1 \
+  -ScenarioPath ./testing/sharepoint-harness/exported-scenarios/sample-scenario.json \
+  -ClientId <your-entra-app-id>
+```
+
+Run only selected tests:
+
+```powershell
+pwsh ./testing/sharepoint-harness/scripts/Run-HarnessTests.ps1 \
+  -ScenarioPath ./testing/sharepoint-harness/exported-scenarios/sample-scenario.json \
+  -ClientId <your-entra-app-id> \
+  -Tests site,package,pages
+```
+
+When `-UseUniquePageNames` is combined with the runner, it automatically tells the smoke test to validate the latest timestamped page names.
+
+Each runner execution now writes a structured JSON result file under `testing/sharepoint-harness/results/` by default. Use `-ResultsPath` to override the output location, which is useful for GitHub Actions artifact collection or post-run reporting.
+
+## Notes
+
+- If `scenario.auth.adminUrl` is omitted, the admin URL is derived automatically from the resolved tenant URL.
+- The script reads `config/package-solution.json` to pick up the current package path and `skipFeatureDeployment` value when they are not overridden in the scenario.
+- Site collection app catalogs isolate package deployment, but tenant-wide Graph permission approval still remains a tenant concern.
+
+## GitHub integration
+
+This harness is structured so the same entry point can be reused in a future workflow. The main additions later should be:
+
+- non-interactive auth for `Connect-PnPOnline`
+- workflow inputs for scenario selection and cleanup policy
+- artifact capture for provisioning logs and page state

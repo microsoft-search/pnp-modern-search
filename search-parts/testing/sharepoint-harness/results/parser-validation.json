@@ -1,0 +1,24 @@
+{
+  "startedAt": "2026-05-22T12:42:40.7685245+02:00",
+  "finishedAt": "2026-05-22T12:42:40.8991245+02:00",
+  "status": "Passed",
+  "scenarioPath": "./testing/sharepoint-harness/sample-scenario.json",
+  "resolvedResultsPath": "C:\\GitHub\\pnp-modern-search\\search-parts\\testing\\sharepoint-harness\\results\\parser-validation.json",
+  "selectedTests": [
+    "debug-urls"
+  ],
+  "useUniquePageNames": false,
+  "skipWebPartProvisioning": false,
+  "tests": [
+    {
+      "name": "debug-urls",
+      "description": "Generate local debug-manifest URLs for the scenario pages",
+      "startedAt": "2026-05-22T12:42:40.7958950+02:00",
+      "finishedAt": "2026-05-22T12:42:40.8829658+02:00",
+      "durationSeconds": 0.087,
+      "status": "Passed",
+      "error": null
+    }
+  ],
+  "durationSeconds": 0.131
+}

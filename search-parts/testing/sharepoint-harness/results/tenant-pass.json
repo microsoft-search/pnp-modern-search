@@ -1,0 +1,74 @@
+{
+  "startedAt": "2026-05-22T13:45:37.2582615+02:00",
+  "finishedAt": "2026-05-22T14:00:02.2631413+02:00",
+  "status": "Failed",
+  "scenarioPath": "./testing/sharepoint-harness/sample-scenario.json",
+  "resolvedResultsPath": "C:\\GitHub\\pnp-modern-search\\search-parts\\testing\\sharepoint-harness\\results\\tenant-pass.json",
+  "selectedTests": [
+    "build",
+    "site",
+    "package",
+    "pages",
+    "inspect",
+    "debug-urls"
+  ],
+  "useUniquePageNames": true,
+  "skipWebPartProvisioning": true,
+  "tests": [
+    {
+      "name": "build",
+      "description": "Build the current SPFx .sppkg package",
+      "startedAt": "2026-05-22T13:45:37.2885928+02:00",
+      "finishedAt": "2026-05-22T13:51:28.1789326+02:00",
+      "durationSeconds": 350.89,
+      "status": "Passed",
+      "error": null
+    },
+    {
+      "name": "site",
+      "description": "Create or reuse the test site and enable the site collection app catalog",
+      "startedAt": "2026-05-22T13:51:28.2016541+02:00",
+      "finishedAt": "2026-05-22T13:58:09.7983451+02:00",
+      "durationSeconds": 401.597,
+      "status": "Passed",
+      "error": null
+    },
+    {
+      "name": "package",
+      "description": "Upload, publish, and install the current package to the site app catalog",
+      "startedAt": "2026-05-22T13:58:09.8039796+02:00",
+      "finishedAt": "2026-05-22T13:59:37.9638075+02:00",
+      "durationSeconds": 88.16,
+      "status": "Passed",
+      "error": null
+    },
+    {
+      "name": "pages",
+      "description": "Provision pages from the scenario",
+      "startedAt": "2026-05-22T13:59:37.9690792+02:00",
+      "finishedAt": "2026-05-22T13:59:53.1276731+02:00",
+      "durationSeconds": 15.159,
+      "status": "Passed",
+      "error": null
+    },
+    {
+      "name": "inspect",
+      "description": "Inspect the latest provisioned pages and page component state",
+      "startedAt": "2026-05-22T13:59:53.1305997+02:00",
+      "finishedAt": "2026-05-22T13:59:58.5207436+02:00",
+      "durationSeconds": 5.39,
+      "status": "Passed",
+      "error": null
+    },
+    {
+      "name": "debug-urls",
+      "description": "Generate local debug-manifest URLs for the scenario pages",
+      "startedAt": "2026-05-22T13:59:58.5252777+02:00",
+      "finishedAt": "2026-05-22T14:00:02.2601670+02:00",
+      "durationSeconds": 3.735,
+      "status": "Failed",
+      "error": "Unable to resolve a provisioned page for 'SearchValidation.aspx'."
+    }
+  ],
+  "durationSeconds": 865.005
+}
