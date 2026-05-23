@@ -1,0 +1,55 @@
+{
+  "startedAt": "2026-05-23T17:27:53.0013035+02:00",
+  "finishedAt": "2026-05-23T17:36:28.5652560+02:00",
+  "status": "Failed",
+  "scenarioPath": "C:\\GitHub\\pnp-modern-search\\search-parts\\testing\\sharepoint-harness\\exported-scenarios\\Testing-4-21-8-scenario.json",
+  "resolvedResultsPath": "C:\\GitHub\\pnp-modern-search\\search-parts\\testing\\sharepoint-harness\\results\\harness-results-20260523-172752.json",
+  "selectedTests": [
+    "build",
+    "site",
+    "package",
+    "pages",
+    "smoke"
+  ],
+  "useUniquePageNames": false,
+  "skipWebPartProvisioning": false,
+  "tests": [
+    {
+      "name": "build",
+      "description": "Build the current SPFx .sppkg package",
+      "startedAt": "2026-05-23T17:27:53.0435759+02:00",
+      "finishedAt": "2026-05-23T17:33:26.5131009+02:00",
+      "durationSeconds": 333.47,
+      "status": "Passed",
+      "error": null
+    },
+    {
+      "name": "site",
+      "description": "Create or reuse the test site and enable the site collection app catalog",
+      "startedAt": "2026-05-23T17:33:26.5427197+02:00",
+      "finishedAt": "2026-05-23T17:36:28.5603677+02:00",
+      "durationSeconds": 182.018,
+      "status": "Failed",
+      "error": "Page 'Testing-4-21-8.aspx' already exists. Re-run with -Force to replace it."
+    },
+    {
+      "name": "package",
+      "description": "Upload, publish, and install the current package to the site app catalog",
+      "startedAt": "2026-05-23T17:33:26.5427197+02:00",
+      "finishedAt": "2026-05-23T17:36:28.5603677+02:00",
+      "durationSeconds": 182.018,
+      "status": "Failed",
+      "error": "Page 'Testing-4-21-8.aspx' already exists. Re-run with -Force to replace it."
+    },
+    {
+      "name": "pages",
+      "description": "Provision pages from the scenario",
+      "startedAt": "2026-05-23T17:33:26.5427197+02:00",
+      "finishedAt": "2026-05-23T17:36:28.5603677+02:00",
+      "durationSeconds": 182.018,
+      "status": "Failed",
+      "error": "Page 'Testing-4-21-8.aspx' already exists. Re-run with -Force to replace it."
+    }
+  ],
+  "durationSeconds": 515.564
+}
