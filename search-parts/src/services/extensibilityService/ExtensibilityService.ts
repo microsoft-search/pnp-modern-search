@@ -9,11 +9,13 @@ const ExtensibilityService_ServiceKey = "PnPModernSearchExtensibilityService";
 
 /**
  * Debug logger gated by the `?pnpSearchDebug=1` URL query parameter (or the
- * SPFx workbench `?debug=true` flag). When neither is set, returns no-op so
- * the rich diagnostic logs don't pollute production browser consoles.
+ * SPFx workbench `?debug=true` flag). When neither is set, the browser
+ * `console.log` output is suppressed so the rich diagnostic logs don't
+ * pollute production browser consoles.
  *
- * Even when disabled, the messages still flow through `Log.verbose` so they
- * remain available in the SPFx diagnostic stream for support scenarios.
+ * The message (and serialised args) always flow through `Log.verbose` so
+ * they remain available in the SPFx diagnostic stream for support
+ * scenarios regardless of the debug flag.
  */
 const isDebugMode = (): boolean => {
     try {

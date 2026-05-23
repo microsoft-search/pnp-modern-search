@@ -24,7 +24,7 @@ In most cases **no code changes are required** — existing extensions compile a
 | Constructor signature | `(serviceScope: ServiceScope)` | `(serviceScope: any)` | None — `any` is assignable from anything. |
 | `BaseWebComponent._serviceScope` | typed as `ServiceScope` | typed as `any` | None. Continue calling `_serviceScope.consume(MyServiceKey)` — works identically at runtime. Cast if you want types: `(this._serviceScope as ServiceScope).consume(...)`. |
 | `BaseWebComponent` theme | Auto-consumed `ThemeProvider` from `_serviceScope` and set `props.themeVariant` | **Removed.** Theme is opt-in. | If you relied on auto-theme, either (a) pass `data-theme-variant='{{JSONstringify @root.theme}}'` from the Handlebars template, or (b) override `getThemeVariant()` in your web component and consume `ThemeProvider.serviceKey` from `_serviceScope` yourself. |
-| `BaseWebComponent._moment` | held a `moment` library instance (internal use) | **Renamed to `_dayjs`** (now a dayjs instance). Both were marked "INTERNAL USE ONLY". | If you accessed `_moment` directly (against advice), use `this._serviceScope.consume(DateHelper.serviceKey)` instead. |
+| `BaseWebComponent._moment` | held a `moment` library instance (internal use) | **Renamed to `_dayjs`** (now a dayjs instance). Both were marked "INTERNAL USE ONLY". | If you accessed `_moment` directly (against advice), use `this._serviceScope.consume(DateHelper.ServiceKey)` instead. |
 | Web component polyfill | Pulled in transitively via SPFx deps | Direct dep on `@webcomponents/custom-elements ^1.6.0` | None — auto-included. |
 | Public exports (`index.ts`) | n/a | **Identical to v1.18.2** | None. |
 
