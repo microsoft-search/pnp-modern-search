@@ -218,7 +218,12 @@ export class TemplateService implements ITemplateService {
                 // delimited names (e.g. `myExt-foo`, `pnp-iconfile`) are almost
                 // certainly helpers/components, while typical data fields are
                 // single-word identifiers (`Title`, `Path`) or camel/Pascal-case.
-                const options = args.at(-1);
+                // NOTE: `args.at(-1)` would be cleaner but is an ES2022 runtime
+                // feature; this code is shipped to ES2017-targeted bundles so we
+                // keep the index-based form to avoid relying on a polyfill in
+                // older runtimes. SonarCloud's sonarjs/prefer-at may flag this —
+                // the comment above is the reason.
+                const options = args[args.length - 1];
                 const name = options?.name ?? "(unknown)";
                 const looksLikeHelperOrComponent = name.includes("-");
                 if (args.length <= 1 && !looksLikeHelperOrComponent) {
