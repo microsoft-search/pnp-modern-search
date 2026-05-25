@@ -68,7 +68,7 @@ export abstract class BaseWebPart<T extends IBaseWebPartProps> extends BaseClien
         try {
             return this.instanceId;
         } catch (error) {
-            Log.verbose(this.manifest?.alias || 'BaseWebPart', `instanceId is unavailable during the current lifecycle phase. Details: ${error}`, this.context?.serviceScope);
+            Log.verbose('BaseWebPart', `instanceId is unavailable during the current lifecycle phase. Details: ${error}`, this.context?.serviceScope);
             return undefined;
         }
     }

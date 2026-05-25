@@ -38,6 +38,16 @@ export interface ICollapsibleContentComponentProps {
      * The current theme settings
      */
     themeVariant?: IReadonlyTheme;
+
+    /**
+     * Indicates whether a warning marker should be shown in the header.
+     */
+    showWarningMarker?: boolean;
+
+    /**
+     * Tooltip text for the warning marker.
+     */
+    warningMarkerTooltip?: string;
 }
 
 export interface ICollapsibleContentComponentState {
@@ -198,7 +208,18 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
                         }
                     }}
                 >
-                    <Text variant={'large'} styles={textComponentStyles}>{props.group.name}</Text>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <Text variant={'large'} styles={textComponentStyles}>{props.group.name}</Text>
+                        {this.props.showWarningMarker ?
+                            <span
+                                title={this.props.warningMarkerTooltip}
+                                aria-label={this.props.warningMarkerTooltip}
+                                style={{ color: '#d83b01', fontWeight: 700, cursor: 'help' }}
+                            >
+                                [!]
+                            </span>
+                            : null}
+                    </div>
                     <div className={styles.collapsible__filterPanel__body__headerIcon}>
                         {props.group.isCollapsed ?
                             <Icon iconName='ChevronDown' />

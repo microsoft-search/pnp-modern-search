@@ -90,7 +90,7 @@
                         {{#each @root.filters as |filter|}}
                             <div class="filter">
                                 {{#eq filter.selectedTemplate 'ComboBoxFilterTemplate'}}
-                                        <div class="filter--name">{{filter.displayName}}</div>
+                                        <div class="filter--name">{{filter.displayName}}{{#if filter.showLimitExceededWarning}} <span title="{{filter.limitExceededWarningText}}">[!]</span>{{/if}}</div>
                                         <div class="filter--value">
                                             <pnp-filtercombobox 
                                                 data-instance-id="{{@root.instanceId}}" 
@@ -106,7 +106,7 @@
                                             </pnp-filtercombobox>
                                         </div>
                                 {{else}}
-                                    <pnp-collapsible data-group-name="{{filter.displayName}}" data-default-collapsed="{{#or hasSelectedValues expandByDefault selectedOnce}}false{{else}}true{{/or}}" data-theme-variant="{{JSONstringify @root.theme}}">
+                                    <pnp-collapsible data-group-name="{{filter.displayName}}" data-show-warning-marker="{{filter.showLimitExceededWarning}}" data-warning-marker-tooltip="{{filter.limitExceededWarningText}}" data-default-collapsed="{{#or hasSelectedValues expandByDefault selectedOnce}}false{{else}}true{{/or}}" data-theme-variant="{{JSONstringify @root.theme}}">
                                             
                                         <template id="collapsible-content" item-class="filter--value">
                 
