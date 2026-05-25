@@ -57,22 +57,30 @@ When the **Hierarchical Refiner** template is selected, a **Hierarchical Setting
 |------------|-----------------|
 | **Term Set** | Select the term set used to build the tree. Term sets are grouped by term group, and you can search within available term sets. |
 | **Cache Duration** | Number of days to cache retrieved terms (1-5 days, default 3). |
-| **Refresh Cache Now** | Clears the cached terms for the selected term set and reloads from term store. |
+| **Hide nodes not in the current data set** | Removes branches that do not contain any values returned in the current result set. This option is useful when many terms are never or rarely used, making large parts of the tree irrelevant. |
+| **Expand all nodes by default** | Expands the full taxonomy tree when the filter loads. This is different from the general **Expand by default** option, which only expands the root level. |
+| **Refresh Cache Now** | Clears the cached terms for the selected term set. The terms are fetched again the next time the hierarchical tree is loaded. |
 
 #### Option behavior with hierarchical template
 
 | **General filter option** | **Behavior with Hierarchical Refiner** |
 |---------------------------|----------------------------------------|
-| **Expand by default** | Supported (root level expands by default). |
+| **Expand by default** | Supported. Expands only the root level of the hierarchy. |
 | **Show count** | Not shown in the hierarchical tree UI. |
-| **Multi values** | Template behaves as single-select in the tree (one active selection at a time). |
-| **Operator between values** | Not relevant in practice because selection is single-select. |
+| **Multi values** | The hierarchical tree behaves as single-select in the UI. Only one active selection is kept at a time, even though this general option still exists in the filter configuration. |
+| **Operator between values** | Not relevant in practice because hierarchical selection is single-select. |
 | **Sort values by / Sort direction** | Disabled for this template. The hierarchy follows term store structure. |
 
 #### Localization and deep links
 
 - Works with localized taxonomy refiner values when **Enable localization** is enabled in the connected SharePoint Search data source.
 - Deep links generated from hierarchical selections are supported.
+
+#### Selection behavior
+
+- Selecting a parent node applies a taxonomy parent token so the selection includes child terms.
+- Selecting a leaf node applies that specific term only.
+- When a hierarchical value is already selected, the component automatically expands the selected branch so users can see the current context.
 
 ### Filter styling
 
