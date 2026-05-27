@@ -770,9 +770,80 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Custom Handlebars customizations
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         Custom Handlebars customizations
       </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#passing-the-current-theme-and-other-context-to-your-helpers" class="md-nav__link">
+    Passing the current theme (and other context) to your helpers
+  </a>
+  
+    <nav class="md-nav" aria-label="Passing the current theme (and other context) to your helpers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#theme-parameter-pattern" class="md-nav__link">
+    Theme parameter pattern
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#other-useful-root-context-values" class="md-nav__link">
+    Other useful root-context values
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-no-auto-injection" class="md-nav__link">
+    Why no auto-injection?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#html-attributes-vs-hash-arguments" class="md-nav__link">
+    HTML attributes vs. hash arguments
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#whats-on-root" class="md-nav__link">
+    What's on @root
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -851,6 +922,62 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#passing-the-current-theme-and-other-context-to-your-helpers" class="md-nav__link">
+    Passing the current theme (and other context) to your helpers
+  </a>
+  
+    <nav class="md-nav" aria-label="Passing the current theme (and other context) to your helpers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#theme-parameter-pattern" class="md-nav__link">
+    Theme parameter pattern
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#other-useful-root-context-values" class="md-nav__link">
+    Other useful root-context values
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-no-auto-injection" class="md-nav__link">
+    Why no auto-injection?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#html-attributes-vs-hash-arguments" class="md-nav__link">
+    HTML attributes vs. hash arguments
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#whats-on-root" class="md-nav__link">
+    What's on @root
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -889,6 +1016,53 @@
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span><span class="p">});</span>
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="p">}</span>
 </code></pre></div>
+<h2 id="passing-the-current-theme-and-other-context-to-your-helpers">Passing the current theme (and other context) to your helpers<a class="headerlink" href="#passing-the-current-theme-and-other-context-to-your-helpers" title="Permanent link">&para;</a></h2>
+<p>Handlebars helpers run as string-template functions — unlike React web components, they don't automatically receive the current SPFx theme or page context. If your helper needs theme colors or other root data, <strong>the template author passes them as hash arguments</strong> when invoking the helper.</p>
+<h3 id="theme-parameter-pattern">Theme parameter pattern<a class="headerlink" href="#theme-parameter-pattern" title="Permanent link">&para;</a></h3>
+<p>The web part exposes the current theme on the Handlebars data context as <code>@root.theme</code>. Templates can pass it through:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="cp">{{</span><span class="nv">myColoredBadge</span> <span class="s2">&quot;Hello&quot;</span> <span class="na">theme</span><span class="o">=</span><span class="nv">@root.theme</span><span class="cp">}}</span>
+</code></pre></div>
+<p>Inside the helper, the hash argument arrives on <code>options.hash</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nx">namespace</span><span class="p">.</span><span class="nx">registerHelper</span><span class="p">(</span><span class="s1">&#39;myColoredBadge&#39;</span><span class="p">,</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="p">(</span><span class="nx">text</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">options</span><span class="o">:</span><span class="w"> </span><span class="kt">any</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="c1">// Accept either a Fluent-style theme object or a plain palette object,</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="c1">// fall back to a hardcoded color if no theme was passed.</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">palette</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="nx">options</span><span class="o">?</span><span class="p">.</span><span class="nx">hash</span><span class="o">?</span><span class="p">.</span><span class="nx">theme</span><span class="o">?</span><span class="p">.</span><span class="nx">palette</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nx">options</span><span class="o">?</span><span class="p">.</span><span class="nx">hash</span><span class="o">?</span><span class="p">.</span><span class="nx">theme</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">{};</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">accent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">palette</span><span class="p">.</span><span class="nx">themePrimary</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="s1">&#39;#0078d4&#39;</span><span class="p">;</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">safeText</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">namespace</span><span class="p">.</span><span class="nx">Utils</span><span class="p">.</span><span class="nx">escapeExpression</span><span class="p">(</span><span class="nx">text</span><span class="p">);</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">namespace</span><span class="p">.</span><span class="nx">SafeString</span><span class="p">(</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">        </span><span class="sb">`&lt;span style=&quot;background:</span><span class="si">${</span><span class="nx">accent</span><span class="si">}</span><span class="sb">;color:#fff;padding:2px 8px;border-radius:4px;&quot;&gt;</span><span class="si">${</span><span class="nx">safeText</span><span class="si">}</span><span class="sb">&lt;/span&gt;`</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">    </span><span class="p">);</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="p">});</span>
+</code></pre></div>
+<h3 id="other-useful-root-context-values">Other useful root-context values<a class="headerlink" href="#other-useful-root-context-values" title="Permanent link">&para;</a></h3>
+<p>Anything the web part puts on the template context root is accessible via <code>@root.&lt;name&gt;</code> and can be forwarded to a helper the same way. Common examples templates can pass:</p>
+<ul>
+<li><code>theme=@root.theme</code> — current Fluent theme (palette, semanticColors, fonts, etc.)</li>
+<li><code>slots=@root.slots</code> — current slot configuration</li>
+<li>Custom values set on <code>additionalData</code> in the template render context</li>
+</ul>
+<h3 id="why-no-auto-injection">Why no auto-injection?<a class="headerlink" href="#why-no-auto-injection" title="Permanent link">&para;</a></h3>
+<p>Helpers receive only the arguments the template explicitly passes. This keeps helpers pure and predictable, avoids surprising globals, and lets the same helper work across web parts with different context shapes.</p>
+<h3 id="html-attributes-vs-hash-arguments">HTML attributes vs. hash arguments<a class="headerlink" href="#html-attributes-vs-hash-arguments" title="Permanent link">&para;</a></h3>
+<p>When you pass values to a <strong>web component</strong> (an HTML element in the template) you must stringify objects, because HTML attributes are strings:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="x">&lt;my-banner data-theme-variant=&#39;</span><span class="cp">{{</span><span class="nv">JSONstringify</span> <span class="nv">@root.theme</span><span class="cp">}}</span><span class="x">&#39;&gt;&lt;/my-banner&gt;</span>
+</code></pre></div>
+<p>When you pass values to a <strong>Handlebars helper</strong> (a <code>{{name ...}}</code> expression), pass the object directly — Handlebars passes it through as a JS object:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="cp">{{</span><span class="nv">myBadge</span> <span class="s2">&quot;Hello&quot;</span> <span class="na">theme</span><span class="o">=</span><span class="nv">@root.theme</span><span class="cp">}}</span>
+</code></pre></div>
+<p>Don't <code>JSONstringify</code> for helper hash args — you'd just get the JSON string instead of the object.</p>
+<h2 id="whats-on-root">What's on <code>@root</code><a class="headerlink" href="#whats-on-root" title="Permanent link">&para;</a></h2>
+<p>The full set of fields exposed at <code>@root</code> is the template context object built by each web part. The canonical source of truth is the <a href="https://github.com/microsoft-search/pnp-modern-search/blob/develop/search-parts/src/models/common/ITemplateContext.ts"><code>ISearchResultsTemplateContext</code></a> / <a href="https://github.com/microsoft-search/pnp-modern-search/blob/develop/search-parts/src/models/common/ITemplateContext.ts"><code>ISearchFiltersTemplateContext</code></a> interface definitions plus the <code>getTemplateContext()</code> method in each web part's container component.</p>
+<p>Commonly-used fields:</p>
+<ul>
+<li><code>@root.theme</code> — current Fluent theme (palette, semanticColors, fonts)</li>
+<li><code>@root.properties</code> — the web part's property bag</li>
+<li><code>@root.context.{site,web,user,list,listItem,cultureInfo}</code> — current SharePoint page context (Search Results only)</li>
+<li><code>@root.data</code> — data returned by the connected data source (typically <code>@root.data.items</code>)</li>
+<li><code>@root.slots</code> — configured slot name → managed property map</li>
+<li><code>@root.inputQueryText</code> / <code>@root.originalInputQueryText</code> — current query</li>
+</ul>
+<p>See the <a href="../#context-and-data-available-to-each-extension-type">extensibility index</a> for the full per-extension-type runtime context overview.</p>
 <ol>
 <li>To reference the deployed manifest id of your extension in the search web part see the <a href="../#register-your-extensibility-library-with-a-web-part">Introduction</a>.</li>
 </ol>

@@ -646,6 +646,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#selection-behavior" class="md-nav__link">
+    Selection behavior
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1041,6 +1048,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#selection-behavior" class="md-nav__link">
+    Selection behavior
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1205,8 +1219,16 @@
 <td>Number of days to cache retrieved terms (1-5 days, default 3).</td>
 </tr>
 <tr>
+<td><strong>Hide nodes not in the current data set</strong></td>
+<td>Removes branches that do not contain any values returned in the current result set. This option is useful when many terms are never or rarely used, making large parts of the tree irrelevant.</td>
+</tr>
+<tr>
+<td><strong>Expand all nodes by default</strong></td>
+<td>Expands the full taxonomy tree when the filter loads. This is different from the general <strong>Expand by default</strong> option, which only expands the root level.</td>
+</tr>
+<tr>
 <td><strong>Refresh Cache Now</strong></td>
-<td>Clears the cached terms for the selected term set and reloads from term store.</td>
+<td>Clears the cached terms for the selected term set. The terms are fetched again the next time the hierarchical tree is loaded.</td>
 </tr>
 </tbody>
 </table>
@@ -1221,7 +1243,7 @@
 <tbody>
 <tr>
 <td><strong>Expand by default</strong></td>
-<td>Supported (root level expands by default).</td>
+<td>Supported. Expands only the root level of the hierarchy.</td>
 </tr>
 <tr>
 <td><strong>Show count</strong></td>
@@ -1229,11 +1251,11 @@
 </tr>
 <tr>
 <td><strong>Multi values</strong></td>
-<td>Template behaves as single-select in the tree (one active selection at a time).</td>
+<td>The hierarchical tree behaves as single-select in the UI. Only one active selection is kept at a time, even though this general option still exists in the filter configuration.</td>
 </tr>
 <tr>
 <td><strong>Operator between values</strong></td>
-<td>Not relevant in practice because selection is single-select.</td>
+<td>Not relevant in practice because hierarchical selection is single-select.</td>
 </tr>
 <tr>
 <td><strong>Sort values by / Sort direction</strong></td>
@@ -1245,6 +1267,12 @@
 <ul>
 <li>Works with localized taxonomy refiner values when <strong>Enable localization</strong> is enabled in the connected SharePoint Search data source.</li>
 <li>Deep links generated from hierarchical selections are supported.</li>
+</ul>
+<h4 id="selection-behavior">Selection behavior<a class="headerlink" href="#selection-behavior" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Selecting a parent node applies a taxonomy parent token so the selection includes child terms.</li>
+<li>Selecting a leaf node applies that specific term only.</li>
+<li>When a hierarchical value is already selected, the component automatically expands the selected branch so users can see the current context.</li>
 </ul>
 <h3 id="filter-styling">Filter styling<a class="headerlink" href="#filter-styling" title="Permanent link">&para;</a></h3>
 <p>The filter styling section allows you to customize the visual appearance of the filter panel to match your branding and design requirements.</p>
