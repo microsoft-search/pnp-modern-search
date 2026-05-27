@@ -29,7 +29,7 @@ define([], function () {
                 FilterMaxBuckets: "# wartości",
                 FilterMaxBucketsWarning: "Maksymalna liczba wartości to 1000",
                 FilterLimitReachedWarningToggle: "Pokaż ostrzeżenie po osiągnięciu limitu",
-                FilterLimitReachedWarningMessage: "Interfejs API zwrócił {0} wartości, co odpowiada skonfigurowanemu limitowi {1} lub go przekracza. Dodatkowe wartości mogły zostać obcięte.",
+                FilterLimitReachedWarningMessage: "Osiągnięto limit wyników — nie wszystkie pasujące elementy są wyświetlane. Doprecyzuj wyszukiwanie, aby zawęzić listę.",
                 FilterDisplayName: "Tytuł",
                 FilterTemplate: "Szablon",
                 FilterExpandByDefault: "Domyślnie rozwinięte",

@@ -29,7 +29,7 @@ define([], function () {
                 FilterMaxBuckets: "# arvojen määrä",
                 FilterMaxBucketsWarning: "Arvojen enimmäismäärä on 1000",
                 FilterLimitReachedWarningToggle: "Näytä varoitus, kun raja saavutetaan",
-                FilterLimitReachedWarningMessage: "API palautti {0} arvoa, mikä vastaa määritettyä rajaa {1} tai ylittää sen. Lisäarvoja on voitu katkaista.",
+                FilterLimitReachedWarningMessage: "Tulosten enimmäismäärä on saavutettu — kaikkia vastaavia kohteita ei näytetä. Rajaa luetteloa tarkentamalla hakua.",
                 FilterDisplayName: "Näyttönimi",
                 FilterTemplate: "Templaatti",
                 FilterExpandByDefault: "Näytä oletuksena laajennettuna",

@@ -30,7 +30,7 @@ define([], function () {
                 FilterMaxBuckets: "Antal værdier",
                 FilterMaxBucketsWarning: "Det maksimale antal værdier er 1000",
                 FilterLimitReachedWarningToggle: "Vis advarsel, når grænsen er nået",
-                FilterLimitReachedWarningMessage: "API'et returnerede {0} værdi(er), hvilket svarer til eller overstiger den konfigurerede grænse på {1}. Yderligere værdier kan være blevet afkortet.",
+                FilterLimitReachedWarningMessage: "Resultatgrænsen er nået — ikke alle matchende elementer vises. Forfin din søgning for at indsnævre listen.",
                 FilterTemplate: "Skabelon",
                 FilterExpandByDefault: "Udvid som standard",
                 ExpandAllNodesByDefault: "Udvid alle noder som standard",
