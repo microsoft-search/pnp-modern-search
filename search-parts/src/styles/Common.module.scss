@@ -1,11 +1,8 @@
 .wpTitle {
-    > div:first-child {
-        textarea,
-        span {
-            font-size: 20px!important;
-            font-weight: 600!important;
-            font-family: var(--fontFamilyCustomFont1300, var(--fontFamilyBase));
-        }
+    textarea, span {
+        font-size: 20px!important;
+        font-weight: 600!important;
+        font-family: var(--fontFamilyCustomFont1300, var(--fontFamilyBase));
     }
 }
 
