@@ -9,7 +9,9 @@ define([], function () {
             },
             WebPartDefaultTitle: "Web Part de resultados de búsqueda",
             ShowBlankEditInfoMessage: "No se devuelve ningún resultado para esta consulta. Este Web Part permanecerá en blanco en el modo de visualización según los parámetros.",
-            CurrentVerticalNotSelectedMessage: "La vertical seleccionada actualmente no coincide con la asociada a este Web Part. Permanecerá en blanco en el modo de visualización."
+            CurrentVerticalNotSelectedMessage: "La vertical seleccionada actualmente no coincide con la asociada a este Web Part. Permanecerá en blanco en el modo de visualización.",
+            RollupSuggestionMessage: "Este Web Part de Resultados de búsqueda no está conectado a ningún otro Web Part en la página. Considere usar la versión 'PnP - Search Rollup' en su lugar — puede ser cargada de forma diferida por SharePoint y no ejecutará consultas al origen de datos hasta que se desplace a la vista, mejorando el rendimiento de carga de la página.",
+            RollupSuggestionLinkText: "Más información"
         },
         PropertyPane: {
             DataSourcePage: {

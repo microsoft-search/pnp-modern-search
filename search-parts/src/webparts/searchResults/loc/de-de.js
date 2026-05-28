@@ -9,7 +9,9 @@ define([], function () {
             },
             WebPartDefaultTitle: "Suchergebnis Webpart",
             ShowBlankEditInfoMessage: "Keine Ergebnisse für diese Abfrage. Dieses Webpart bleibt im Anzeigemodus entsprechend den Parametern leer.",
-            CurrentVerticalNotSelectedMessage: "Die aktuell ausgewählte Vertikale stimmt nicht mit der für dieses Webpart zugeordneten überein. Sie bleibt im Anzeigemodus leer."
+            CurrentVerticalNotSelectedMessage: "Die aktuell ausgewählte Vertikale stimmt nicht mit der für dieses Webpart zugeordneten überein. Sie bleibt im Anzeigemodus leer.",
+            RollupSuggestionMessage: "Dieses Suchergebnisse-Webpart ist nicht mit einem anderen Webpart auf der Seite verbunden. Erwägen Sie stattdessen die Verwendung der Version 'PnP - Search Rollup' — sie kann von SharePoint verzögert geladen werden und löst keine Datenquellenabfragen aus, bis sie in den sichtbaren Bereich gescrollt wird, wodurch die Seitenladeleistung verbessert wird.",
+            RollupSuggestionLinkText: "Weitere Informationen"
         },
         PropertyPane: {
             DataSourcePage: {

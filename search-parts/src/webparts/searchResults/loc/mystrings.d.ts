@@ -9,6 +9,8 @@ declare interface ISearchResultsWebPartStrings {
         WebPartDefaultTitle: string;
         ShowBlankEditInfoMessage: string;
         CurrentVerticalNotSelectedMessage: string;
+        RollupSuggestionMessage: string;
+        RollupSuggestionLinkText: string;
     },
     PropertyPane: {
         DataSourcePage: {

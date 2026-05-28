@@ -9,7 +9,9 @@ define([], function () {
             },
             WebPartDefaultTitle: "Søgeresultats-webpart",
             ShowBlankEditInfoMessage: "Intet resultat returneret på denne forespørgsel. Denne webpart vil forblive blank i visningstilstand ifølge parametrene.",
-            CurrentVerticalNotSelectedMessage: "Den valgte vertikal matcher ikke med den, der er associeret denne webpart. Den vil forblive blank i visningstilstand."
+            CurrentVerticalNotSelectedMessage: "Den valgte vertikal matcher ikke med den, der er associeret denne webpart. Den vil forblive blank i visningstilstand.",
+            RollupSuggestionMessage: "Denne Søgeresultater-webdel er ikke forbundet til nogen anden webdel på siden. Overvej at bruge 'PnP - Search Rollup'-versionen i stedet — den kan loades dovent af SharePoint og udfører ikke datakildeforespørgsler, før den rulles ind i visningen, hvilket forbedrer sideindlæsningens ydeevne.",
+            RollupSuggestionLinkText: "Læs mere"
         },
         PropertyPane: {
             DataSourcePage: {

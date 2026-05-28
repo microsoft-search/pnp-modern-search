@@ -9,7 +9,9 @@ define([], function () {
             },
             WebPartDefaultTitle: "Composant Web des résultats de recherche",
             ShowBlankEditInfoMessage: "Cette requête n’a donné aucun résultat. Ce composant Web doit demeurer vide en mode d’affichage en fonction des critères.",
-            CurrentVerticalNotSelectedMessage: "Le secteur vertical sélectionné ne correspond pas à ce composant Web. Il doit demeurer vide en mode d’affichage."
+            CurrentVerticalNotSelectedMessage: "Le secteur vertical sélectionné ne correspond pas à ce composant Web. Il doit demeurer vide en mode d’affichage.",
+            RollupSuggestionMessage: "Ce composant WebPart Résultats de recherche n'est connecté à aucun autre composant WebPart sur la page. Envisagez plutôt d'utiliser la version 'PnP - Search Rollup' — elle peut être chargée à la demande par SharePoint et ne déclenchera pas de requêtes vers la source de données tant qu'elle n'est pas visible à l'écran, améliorant ainsi les performances de chargement de la page.",
+            RollupSuggestionLinkText: "En savoir plus"
         },
         PropertyPane: {
             DataSourcePage: {
