@@ -334,7 +334,7 @@ export class FilterDateIntervalWebComponent extends BaseWebComponent {
 
     public async connectedCallback() {
 
-        const dateHelper = this._serviceScope.consume<DateHelper>(DateHelper.ServiceKey);
+        const dateHelper: DateHelper = this._serviceScope.consume(DateHelper.ServiceKey);
         const dayjs = await dateHelper.moment();
 
         let props = this.resolveAttributes();

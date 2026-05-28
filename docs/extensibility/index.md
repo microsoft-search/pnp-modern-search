@@ -31,6 +31,9 @@ For your project to be a valid extensibility library, you must have the followin
 !!! important "SPFx version"
     The SPFx library project must use the same SPFx version as the main solution (check [compatibility matrix](./extensibility_compatibility_matrix.md)). Otherwise you may face issues at build time. See [GitHub issue #1893](https://github.com/microsoft-search/pnp-modern-search/issues/1893). Starting with PnP Modern Search v4.21.0, the solution uses SPFx v1.22.2 with the **Heft-based toolchain**. Your extensibility library must also use the Heft toolchain if targeting this version.
 
+!!! note "Extensibility package v2.0.0+"
+    Starting with `@pnp/modern-search-extensibility` v2.0.0, the npm package has **zero SPFx runtime dependencies**. SPFx types like `WebPartContext` and `ServiceScope` are typed as `any` in the base classes. **No code changes are required when upgrading** — existing extensions compile as-is since they already import SPFx types directly from `@microsoft/sp-*`. Optionally, you can pass your own SPFx types as a second generic parameter for improved intellisense (e.g., `extends BaseDataSource<IMyProps, WebPartContext>`). See the [custom data source](./custom_data_sources.md) or [custom layout](./custom_layout.md) documentation for examples.
+
 ### Supported extensions
 
 Each Web Part type in the solution supports several extensions or no extension at all. It means even your extensibility library contains all possible extensions, they won't be loaded if the Web Part does not support them.
@@ -41,6 +44,46 @@ Each Web Part type in the solution supports several extensions or no extension a
 | **Search Filters** |  <ul><li>Custom web components (_not directly but via the 'Search Results' Web Part extensibility library registration_).</li></ul>
 | **Search box** | <ul><li>Custom suggestions providers.</li></ul>
 | **Search Verticals** | None.
+
+### Context and data available to each extension type
+
+Different extension types receive different runtime context. This table summarises **what each extension can access** so you don't have to dig through each individual doc page.
+
+| Extension type | Base class | Runtime context exposed | How to access SPFx context |
+|---|---|---|---|
+| **Custom Data Source** | `BaseDataSource<TProps, TContext>` | `this.context` (TContext), `this.properties` (TProps), `this.serviceScope` (any), `this.editMode`, `this.serviceKeys`, `this.render()`. Plus `IDataContext` argument on every `getData(dataContext)` call (paging, filters, query text, sort, verticals). | `this.serviceScope.consume(<ServiceKey>)` or cast `TContext` to `WebPartContext`. |
+| **Custom Layout** | `BaseLayout<TProps, TContext>` | `this.context`, `this.properties`, `this.serviceScope`, `this.editMode`. | Same as above. |
+| **Custom Query Modifier** | `BaseQueryModifier<TProps, TContext>` | `this.context`, `this.properties`, `this.serviceScope`, `this.endWhenSuccessfull`. Receives `queryText: string` argument on every `modifyQuery(queryText)` call. | Same as above. |
+| **Custom Suggestion Provider** | `BaseSuggestionProvider<TProps, TContext>` | `this.context`, `this.properties`, `this.serviceScope`, `this.isZeroTermSuggestionsEnabled`. Receives `queryText` on `getSuggestions(queryText)`. | Same as above. |
+| **Custom Web Component** | `BaseWebComponent` (extends `HTMLElement`) | `this._serviceScope` (root scope, any), `this._webPartServiceScopes: Map<webPartId, scope>` (per-WP scopes), `this._webPartServiceKeys: Map<webPartId, keys>`, HTML attributes via `this.resolveAttributes()`, optional theme via overriding `getThemeVariant()`. | `this._serviceScope.consume(PageContext.serviceKey)`, etc. Web components do not auto-receive a TContext. |
+| **Handlebars helper / partial** | n/a — registered on the per-WP namespace | Only what the template explicitly passes via hash args (`{{myHelper x theme=@root.theme}}`) and what your closure captured at `registerHandlebarsCustomizations` time. | Capture `serviceScope` in your library's constructor and reference it inside the helper closure. See [Handlebars customizations](./handlebars_customizations.md) for the full `@root` reference. |
+| **Adaptive Card action handler** | `IExtensibilityLibrary.invokeCardAction(action)` | The `IAdaptiveCardAction` argument: `type`, `title`, `url`, `data`. | Capture `serviceScope` in your library's constructor (see example below). |
+
+#### Generic TContext pattern (v2.0.0+)
+
+Starting with `@pnp/modern-search-extensibility` v2.0.0, every base class accepts an optional second generic for typing `context`:
+
+```typescript
+import { BaseDataSource } from '@pnp/modern-search-extensibility';
+import { WebPartContext } from '@microsoft/sp-webpart-base';
+
+export class MyDataSource extends BaseDataSource<IMyProps, WebPartContext> {
+    public async getData() {
+        const url = this.context.pageContext.web.absoluteUrl;
+        // ... fully typed!
+    }
+}
+```
+
+You can use any context shape: `WebPartContext`, `BaseComponentContext`, or your own typed alias. The base class typings stay `any` if you don't specify, so no migration is required.
+
+#### Quick reference — what's where
+
+- **Per-WP runtime context** (PageContext, etc.) → `serviceScope.consume(ServiceKey)` in any base class, or `_serviceScope.consume(ServiceKey)` in a web component.
+- **Web Part property bag** → `this.properties` (typed as `TProps` you pass to the generic).
+- **Selected filters / paging / query / sort / vertical** at fetch time → `IDataContext` argument on `BaseDataSource.getData()`.
+- **Theme** → React layouts/components: pass `themeVariant` through props. Web components: override `getThemeVariant()` (slim package) or pass `data-theme-variant` in the template. Helpers: read `options.hash.theme` from a `theme=@root.theme` hash arg.
+- **Template root data** for Handlebars → `@root.<field>`. The exact shape is built by each web part's `getTemplateContext()` method — see [`SearchResultsContainer.getTemplateContext()`](https://github.com/microsoft-search/pnp-modern-search/blob/develop/search-parts/src/webparts/searchResults/components/SearchResultsContainer.tsx) and [`SearchFiltersContainer.getTemplateContext()`](https://github.com/microsoft-search/pnp-modern-search/blob/develop/search-parts/src/webparts/searchFilters/components/SearchFiltersContainer.tsx) for the verified field list, or the [`ISearchResultsTemplateContext`](https://github.com/microsoft-search/pnp-modern-search/blob/develop/search-parts/src/models/common/ITemplateContext.ts) / [`ISearchFiltersTemplateContext`](https://github.com/microsoft-search/pnp-modern-search/blob/develop/search-parts/src/models/common/ITemplateContext.ts) interface definitions. Common fields: `theme`, `properties`, `context.{site,web,user,list,listItem,cultureInfo}`, `data`, `slots`, `inputQueryText`, `instanceId`.
 
 ### Register your extensibility library with a Web Part
 
@@ -211,11 +254,15 @@ Debugging a library component is exactly the same as debugging an SPFx Web Part.
 #### Accessing the SharePoint Framework context and services in a library component
 
 In case you need to access the SharePoint Framework context and services, within your custom library component, you can easily do that by relying on the Service Locator pattern available in SPFx.
-You simply need to declare a public static property with name `serviceKey` in your library component and provide a constructor that accepts a [`ServiceScope`](https://docs.microsoft.com/en-us/javascript/api/sp-core-library/servicescope?view=sp-typescript-latest) instance as input argument.
+You simply need to declare a public static property with name `serviceKey` in your library component and provide a constructor that accepts a `ServiceScope` instance as input argument.
+
+!!! note "Extensibility package v2.0.0+"
+    With v2.0.0+, the `serviceScope` constructor parameter is typed as `any` in the base classes. You can cast it to `ServiceScope` from your own SPFx dependencies for full type safety.
+
 For example, here you can see a code excerpt of such a library component that handles custom actions for Adaptive Cards rendering:
 
 ```typescript
-import { IAdaptiveCardAction, IComponentDefinition, IExtensibilityLibrary, ILayoutDefinition, ISuggestionProviderDefinition, IQueryModifierDefinition } from '@pnp/modern-search-extensibility';
+import { IAdaptiveCardAction, IComponentDefinition, IExtensibilityLibrary, ILayoutDefinition, ISuggestionProviderDefinition, IQueryModifierDefinition, IDataSourceDefinition, IDataSource } from '@pnp/modern-search-extensibility';
 import { ServiceKey, ServiceScope } from '@microsoft/sp-core-library';
 import { SPHttpClient, SPHttpClientResponse } from '@microsoft/sp-http';
 import { PageContext } from '@microsoft/sp-page-context';

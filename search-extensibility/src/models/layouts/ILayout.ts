@@ -1,6 +1,4 @@
-import { IPropertyPaneField } from "@microsoft/sp-property-pane";
-import { WebPartContext } from '@microsoft/sp-webpart-base';
-import { IDataContext  } from "../../models/dataSources/IDataContext";
+import { IDataContext } from "../../models/dataSources/IDataContext";
 
 export interface ILayout {
 
@@ -12,7 +10,7 @@ export interface ILayout {
     /**
      * Context of the main Web Part
      */
-    context: WebPartContext;
+    context: any;
 
     /**
     * Check if web part is in display or edit mode
@@ -30,7 +28,7 @@ export interface ILayout {
      * @param availableFields the available fields coming from results
      * @param dataContext the current data source data context
      */
-    getPropertyPaneFieldsConfiguration(availableFields: string[], dataContext?: IDataContext): IPropertyPaneField<any>[];
+    getPropertyPaneFieldsConfiguration(availableFields: string[], dataContext?: IDataContext): any[];
 
     /**
      * Method called when a property pane field in changed in the Web Part

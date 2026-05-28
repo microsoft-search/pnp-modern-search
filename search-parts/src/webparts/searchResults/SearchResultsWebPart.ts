@@ -611,15 +611,13 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         this._handleQueryStringChange();
         this._handlePopStatePagination();
 
-        // Load extensibility libaries extensions
+        // Load extensions from extensibility libraries.
+        // loadExtensions() also registers web components in the global page context,
+        // so we don't need a separate registerWebComponents call here.
         await this.loadExtensions(this.properties.extensibilityLibraryConfiguration);
 
         // Filter the layouts to be displayed in the property pane according to current render type
         this.availableLayoutsInPropertyPane = this.availableLayoutDefinitions.filter(layout => layout.renderType === this.properties.layoutRenderType);
-
-        // Register Web Components in the global page context. We need to do this BEFORE the template processing to avoid race condition.
-        // Web components are only defined once.
-        await this.templateService.registerWebComponents(this.availableWebComponentDefinitions, this.instanceId);
 
         if (this.properties.layoutProperties?.showPersonaCard) {
             this.properties.useMicrosoftGraphToolkit = true;
@@ -1060,7 +1058,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     }
 
     /**
-     * Loads extensions from registered extensibility librairies
+     * Loads extensions from registered extensibility libraries
      */
     private async loadExtensions(librariesConfiguration: IExtensibilityConfiguration[]) {
 
@@ -1116,6 +1114,13 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         // Add custom providers to the available providers
         this.properties.queryModifierConfiguration = this.properties.queryModifierConfiguration.concat(customQueryModifierConfiguration);
+
+        // Register web components in the global page context. This must happen every time
+        // extensions are loaded (not just once in onInit) so that newly-enabled extension
+        // components are upgraded in the DOM. Safe to call repeatedly — the underlying
+        // customElements.define() is guarded so already-registered components are skipped.
+        await this.templateService.registerWebComponents(this.availableWebComponentDefinitions, this.instanceId);
+
         this.extensionsLoaded = true;
     }
 
@@ -1282,9 +1287,11 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             selectionPreservedOnEmptyClick: false
         };
 
+        // Seed an example row (disabled by default) so the property pane shows users
+        // where to add their extension manifest IDs. Disabled — it doesn't try to load.
         this.properties.extensibilityLibraryConfiguration = this.properties.extensibilityLibraryConfiguration ? this.properties.extensibilityLibraryConfiguration : [{
             name: commonStrings.General.Extensibility.DefaultExtensibilityLibraryName,
-            enabled: true,
+            enabled: false,
             id: Constants.DEFAULT_EXTENSIBILITY_LIBRARY_COMPONENT_ID
         }];
 

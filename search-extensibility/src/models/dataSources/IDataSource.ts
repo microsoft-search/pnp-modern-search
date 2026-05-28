@@ -1,11 +1,8 @@
 import { IDataSourceData } from "./IDataSourceData";
-import { IPropertyPaneGroup } from "@microsoft/sp-property-pane";
 import { PagingBehavior } from './PagingBehavior';
 import { IDataContext } from './IDataContext';
-import { ServiceKey } from "@microsoft/sp-core-library";
 import { FilterBehavior } from '../filters/FilterBehavior';
 import { ITemplateSlot } from './ITemplateSlot';
-import { WebPartContext } from '@microsoft/sp-webpart-base';
 import { IDataFilter } from '../filters/IDataFilter';
 
 export interface IServiceKeysConfiguration {
@@ -13,7 +10,7 @@ export interface IServiceKeysConfiguration {
     /***
      * The token service service key
      */
-    TokenService: ServiceKey<any>;
+    TokenService: any;
 }
 
 export interface IDataSource {
@@ -31,7 +28,7 @@ export interface IDataSource {
     /**
      * Context of the main Web Part
      */
-    context: WebPartContext;
+    context: any;
 
     /**
     * Check if web part is in display or edit mode
@@ -57,7 +54,7 @@ export interface IDataSource {
     /**
      * Returns the data source property pane option fields if any.
      */
-    getPropertyPaneGroupsConfiguration(): IPropertyPaneGroup[];
+    getPropertyPaneGroupsConfiguration(): any[];
 
     /**
      * The paging behavior for the data source. Will be 'None' if not specified.

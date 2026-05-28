@@ -25,8 +25,20 @@ Same as data source, the layout creation process comes in three distinct steps:
 !["Custom layout properties"](../assets/extensibility/layout/layout_properties.png){: .center}
 
 * Implement the `BaseLayout` abstract class using your properties interface:
+
+**Basic (no SPFx type safety on context):**
 ```typescript
     export class Customlayout extends BaseLayout<ICustomLayoutProperties> {
+        ...
+    }
+```
+
+**With full SPFx type safety (recommended):**
+```typescript
+    import { WebPartContext } from '@microsoft/sp-webpart-base';
+
+    export class Customlayout extends BaseLayout<ICustomLayoutProperties, WebPartContext> {
+        // this.context now has full WebPartContext intellisense
         ...
     }
 ```

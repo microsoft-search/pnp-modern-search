@@ -184,6 +184,77 @@ export class TemplateService implements ITemplateService {
             // Register helpers
             this.registerCustomHelpers();
 
+            // Graceful fallbacks for missing helpers. When an enabled
+            // extensibility library fails to load, its custom Handlebars
+            // helpers (e.g. {{myExt-foo}}) are not registered. The default
+            // Handlebars behavior throws ("Missing helper: ..."), which
+            // crashes the entire template render and bombs the web part.
+            // Instead, render an inline placeholder so the rest of the
+            // template still renders and the problem is discoverable.
+            const hb: any = this._handlebars;
+            const escapeFn = hb.Utils?.escapeExpression ?? String;
+            // Shared placeholder builder so the helperMissing and
+            // blockHelperMissing fallbacks stay visually consistent and
+            // easy to maintain in one place.
+            const buildMissingPlaceholder = (label: string, name: string, title: string): string =>
+                `<span style="color:#a4262c;background:#fde7e9;padding:1px 4px;border-radius:3px;font-family:monospace;font-size:11px;" title="${title}">[missing ${label}: ${escapeFn(name)}]</span>`;
+            const placeholderTitle = "Handlebars helper not registered. If this comes from an extensibility library, the library may have failed to load.";
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            hb.registerHelper("helperMissing", function (this: any, ...args: any[]) {
+                // Handlebars calls helperMissing for BOTH:
+                //   (a) genuine missing helper calls with params/hash:
+                //       {{foo "x" y=1}}    -> args = [arg, ..., options]   (length >= 2)
+                //   (b) bare expressions where Handlebars couldn't resolve the name
+                //       as a property on the current context AND no helper of that
+                //       name is registered:
+                //       {{Title}}          -> args = [options]              (length === 1)
+                //       {{myExt-foo}}      -> args = [options]              (length === 1)
+                //
+                // Case (b) ambiguously covers both "data field that's undefined"
+                // (very common when data hasn't loaded yet) and "arg-less helper
+                // that was never registered" (e.g. an extensibility library failed
+                // to load). To minimise false positives while still surfacing
+                // genuinely broken helpers, we use a name heuristic: hyphen-
+                // delimited names (e.g. `myExt-foo`, `pnp-iconfile`) are almost
+                // certainly helpers/components, while typical data fields are
+                // single-word identifiers (`Title`, `Path`) or camel/Pascal-case.
+                // NOTE: `args.at(-1)` would be cleaner but is an ES2022 runtime
+                // feature; this code is shipped to ES2017-targeted bundles so we
+                // keep the index-based form to avoid relying on a polyfill in
+                // older runtimes. SonarCloud S7755 (prefer-at) is suppressed below.
+                const options = args[args.length - 1]; // NOSONAR
+                const name = options?.name ?? "(unknown)";
+                const looksLikeHelperOrComponent = name.includes("-");
+                if (args.length <= 1 && !looksLikeHelperOrComponent) {
+                    // Likely an undefined data field \u2014 stay silent to match
+                    // Handlebars' default behaviour and avoid red noise on every
+                    // missing property reference.
+                    return undefined;
+                }
+                // eslint-disable-next-line no-console
+                console.warn(`[TemplateService] Missing Handlebars helper '${name}'. The template references a helper that is not registered. If '${name}' comes from an extensibility library, the library may have failed to load \u2014 check earlier console output.`);
+                // Use the per-WP instance's SafeString so the value is
+                // produced by the same Handlebars instance that renders it.
+                return new hb.SafeString(buildMissingPlaceholder("helper", name, placeholderTitle));
+            });
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            hb.registerHelper("blockHelperMissing", function (this: any, context: any, options: any) {
+                const name = options?.name ?? "(unknown)";
+                // eslint-disable-next-line no-console
+                console.warn(`[TemplateService] Missing Handlebars block helper '#${name}'. Rendering {{else}} fallback (if any) and an inline placeholder. If '${name}' comes from an extensibility library, the library may have failed to load \u2014 check earlier console output.`);
+                // Default Handlebars behaviour for an unresolved block helper is:
+                //   - if context is truthy, render the main body (options.fn)
+                //   - if context is falsy, render the {{else}} block (options.inverse)
+                // Returning "" would silently drop any {{else}} fallback the author
+                // provided. Delegate to options.inverse(this) so {{else}} content
+                // still renders, then append a small placeholder so the missing
+                // helper is discoverable.
+                const inverse = options && typeof options.inverse === "function"
+                    ? options.inverse(this)
+                    : "";
+                return new hb.SafeString(inverse + buildMissingPlaceholder("block helper", `#${name}`, placeholderTitle));
+            });
+
             // Register icons and pull the fonts from the default SharePoint cdn.
             // Do not load icons twice as it may generate warnings
             if (!GlobalSettings.getValue("fileTypeIconsInitialized")) {

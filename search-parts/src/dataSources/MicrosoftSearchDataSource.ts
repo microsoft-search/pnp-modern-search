@@ -210,7 +210,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
 
     public async onInit(): Promise<void> {
 
-        this.dateHelper = this.serviceScope.consume<DateHelper>(DateHelper.ServiceKey);
+        this.dateHelper = this.serviceScope.consume(DateHelper.ServiceKey);
         this.dayjs = await this.dateHelper.moment();
 
         if (this.editMode) {
@@ -1433,7 +1433,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         let aggregationResults: IDataFilterResult[] = [];
 
         // Get an instance to the MSGraphClient
-        const msGraphClientFactory = this.serviceScope.consume<MSGraphClientFactory>(MSGraphClientFactory.serviceKey);
+        const msGraphClientFactory: MSGraphClientFactory = this.serviceScope.consume(MSGraphClientFactory.serviceKey);
         const msGraphClient = await msGraphClientFactory.getClient('3');
         const request = msGraphClient.api(this._microsoftSearchUrl);
 

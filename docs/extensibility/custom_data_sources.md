@@ -20,8 +20,20 @@ Custom data source creation process comes in two distinct steps:
 ```
 
 * Implement the `BaseDataSource` abstract class using your properties interface:
+
+**Basic (no SPFx type safety on context):**
 ```typescript
     export class CustomDataSource extends BaseDataSource<ICustomDataSourceProperties> {
+        ...
+    }
+```
+
+**With full SPFx type safety (recommended):**
+```typescript
+    import { WebPartContext } from '@microsoft/sp-webpart-base';
+
+    export class CustomDataSource extends BaseDataSource<ICustomDataSourceProperties, WebPartContext> {
+        // this.context now has full WebPartContext intellisense
         ...
     }
 ```

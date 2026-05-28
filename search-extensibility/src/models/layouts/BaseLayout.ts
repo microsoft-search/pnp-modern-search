@@ -1,14 +1,11 @@
 import { ILayout } from './ILayout';
-import { IPropertyPaneField } from "@microsoft/sp-property-pane";
-import { ServiceScope } from '@microsoft/sp-core-library';
-import { WebPartContext } from '@microsoft/sp-webpart-base';
 
-export abstract class BaseLayout<T> implements ILayout {
+export abstract class BaseLayout<T, TContext = any> implements ILayout {
 
     private _properties!: T;
-    private _context: WebPartContext;
+    private _context: TContext;
     private _editMode: boolean;
-    protected serviceScope: ServiceScope;
+    protected serviceScope: any;
 
     get properties(): T {
         return this._properties;
@@ -18,22 +15,22 @@ export abstract class BaseLayout<T> implements ILayout {
         this._properties = properties;
     }
 
-    get context(): WebPartContext {
+    get context(): TContext {
         return this._context;
     }
 
-    set context(context: WebPartContext) {
+    set context(context: TContext) {
         this._context = context;
     }
 
-    public constructor(serviceScope: ServiceScope) {
+    public constructor(serviceScope: any) {
         this.serviceScope = serviceScope;
     }
 
     get editMode() {
-      return this._editMode;
+        return this._editMode;
     }
-    
+
     set editMode(editMode: boolean) {
         this._editMode = editMode;
     }
@@ -41,7 +38,7 @@ export abstract class BaseLayout<T> implements ILayout {
     public onInit(): void | Promise<void> {
     }
 
-    public getPropertyPaneFieldsConfiguration(availableFields: string[]): IPropertyPaneField<any>[] {
+    public getPropertyPaneFieldsConfiguration(availableFields: string[]): any[] {
         // Return no option by default
         return [];
     }
