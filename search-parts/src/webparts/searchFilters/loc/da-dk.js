@@ -29,6 +29,8 @@ define([], function () {
                 FilterDisplayName: "Visningsnavn",
                 FilterMaxBuckets: "Antal værdier",
                 FilterMaxBucketsWarning: "Det maksimale antal værdier er 1000",
+                FilterLimitReachedWarningToggle: "Vis advarsel, når grænsen er nået",
+                FilterLimitReachedWarningMessage: "Resultatgrænsen er nået — ikke alle matchende elementer vises. Forfin din søgning for at indsnævre listen.",
                 FilterTemplate: "Skabelon",
                 FilterExpandByDefault: "Udvid som standard",
                 ExpandAllNodesByDefault: "Udvid alle noder som standard",

@@ -28,6 +28,8 @@ define([], function () {
                 FilterNameLabel: "Filter field",
                 FilterMaxBuckets: "# of values",
                 FilterMaxBucketsWarning: "The maximum number of values is 1000",
+                FilterLimitReachedWarningToggle: "Show warning when limit is reached",
+                FilterLimitReachedWarningMessage: "Result limit reached — not all matching items are shown. Refine your search to narrow the list",
                 FilterDisplayName: "Display name",
                 FilterTemplate: "Template",
                 FilterExpandByDefault: "Expand by default",

@@ -61,6 +61,13 @@ interface IHierarchicalFilterConfiguration extends IDataFilterConfiguration {
     cacheDuration?: number;
     hideNodesNotInDataSet?: boolean;
     expandAllNodesByDefault?: boolean;
+    showLimitExceededWarning?: boolean;
+}
+
+interface IFilterResultWithLimitInfo extends IDataFilterResult {
+    isMaxBucketsExceeded?: boolean;
+    configuredMaxBuckets?: number;
+    returnedValueCount?: number;
 }
 
 /**
@@ -894,6 +901,23 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                                     onUpdate(field.id, parsedValue);
                                 }
                             });
+                        }
+                    },
+                    {
+                        id: 'showLimitExceededWarning',
+                        title: webPartStrings.PropertyPane.DataFilterCollection.FilterLimitReachedWarningToggle,
+                        type: this._customCollectionFieldType.custom,
+                        defaultValue: false,
+                        onCustomRender: (field, value, onUpdate, item: IHierarchicalFilterConfiguration, itemId) => {
+                            return React.createElement("div", { key: `${field.id}-${itemId}` },
+                                React.createElement(Checkbox, {
+                                    defaultChecked: item.showLimitExceededWarning ?? false,
+                                    disabled: item.selectedTemplate === BuiltinFilterTemplates.DateRange || item.selectedTemplate === BuiltinFilterTemplates.DateInterval,
+                                    onChange: (ev, checked: boolean) => {
+                                        onUpdate(field.id, checked);
+                                    }
+                                })
+                            );
                         }
                     },
                     {
@@ -1777,9 +1801,9 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
         };
 
         let allAvailableFieldsFromResults: string[] = [];
-        let allAvailableFilters: IDataFilterResult[] = [];
+        let allAvailableFilters: IFilterResultWithLimitInfo[] = [];
 
-        let allMergedFilters: IDataFilterResult[] = [];
+        let allMergedFilters: IFilterResultWithLimitInfo[] = [];
 
         // Get values for all dynamic properties
         dynamicProperties.forEach(dataSourceDynamicProperty => {
@@ -1789,7 +1813,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
 
                 // 1. Concatenate all values from all connected results Web Parts
                 allAvailableFieldsFromResults = allAvailableFieldsFromResults.concat(dataSourceData.availableFieldsFromResults);
-                allAvailableFilters = allAvailableFilters.concat(dataSourceData.availablefilters);
+                allAvailableFilters = allAvailableFilters.concat(dataSourceData.availablefilters as IFilterResultWithLimitInfo[]);
 
                 // Merge all custom registred Handlebars helpers from all connected Search Results Web Parts
                 if (dataSourceData.handlebarsContext) {
@@ -1827,6 +1851,9 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                 });
 
                 allMergedFilters[mergedFilterIdx].values = allMergedValues;
+                allMergedFilters[mergedFilterIdx].isMaxBucketsExceeded = Boolean(allMergedFilters[mergedFilterIdx].isMaxBucketsExceeded || filterResult.isMaxBucketsExceeded);
+                allMergedFilters[mergedFilterIdx].configuredMaxBuckets = allMergedFilters[mergedFilterIdx].configuredMaxBuckets ?? filterResult.configuredMaxBuckets;
+                allMergedFilters[mergedFilterIdx].returnedValueCount = Math.max(allMergedFilters[mergedFilterIdx].returnedValueCount ?? 0, filterResult.returnedValueCount ?? 0);
             }
         });
 

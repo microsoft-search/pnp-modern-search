@@ -33,6 +33,7 @@ The filter settings are as follow:
 | **Display Name** | A friendly name for the filter |
 | **Filter field** | The internal data source field to use as filter. Here you can select a field from the current data source (if data have been already retrieved) of type your own custom value (press enter to validate).
 | **# of values** | The maximum number of values to be retrieved for a given filter. This value is useful if you use SharePoint refiners with a lot of refiner values. By default SharePoint will only retreve the first 100 values. To get all refiner values, you must specify an higher number manually (maximum value is 1000).
+| **Show warning when limit is reached** | Off by default. When enabled, an info icon appears after the filter title if the connected API returns a number of refiner or aggregation values equal to or greater than the configured **# of values** limit. Hover the icon to see the warning details. |
 | **Template** | The template to use to display filter values. The builtin templates are: </br><ul><li>**Check box** <p align="center">!["Check box"](../../assets/webparts/search-filters/checkbox_template.png)</p></li><li>**Date range** <p align="center">!["Date range"](../../assets/webparts/search-filters/daterange_template.png)</p></li><li>**Date interval** <p align="center">!["Date interval"](../../assets/webparts/search-filters/dateinterval_template.png)</p></li><li>**Combo** <p align="center">!["Combo"](../../assets/webparts/search-filters/combo_template.png)</p></br> You can search a value directly in the list by typing keywords in the combo text field.</br></br><li>**People Template** <p align="center">!["People Template"](../../assets/webparts/search-filters/people_template.png)  </p></br></li><li>**Hierarchical Refiner** (taxonomy tree for parent/child terms)</li></ul>
 | **Expand by default** | If applicable for the selected template, display values as expanded.
 | **Show count** | If applicable for the selected template, display counts for values.
@@ -74,6 +75,7 @@ When the **Hierarchical Refiner** template is selected, a **Hierarchical Setting
 #### Localization and deep links
 
 - Works with localized taxonomy refiner values when **Enable localization** is enabled in the connected SharePoint Search data source.
+- The limit warning info icon tooltip is localized using the current UI language for all supported Search Filters languages.
 - Deep links generated from hierarchical selections are supported.
 
 #### Selection behavior

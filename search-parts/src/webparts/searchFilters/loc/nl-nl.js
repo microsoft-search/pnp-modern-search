@@ -28,6 +28,8 @@ define([], function () {
                 FilterNameLabel: "Filterveld",
                 FilterMaxBuckets: "# waarden",
                 FilterMaxBucketsWarning: "Het maximale aantal waarden is 1000",
+                FilterLimitReachedWarningToggle: "Waarschuwing tonen wanneer de limiet is bereikt",
+                FilterLimitReachedWarningMessage: "Resultaatlimiet bereikt — niet alle overeenkomende items worden weergegeven. Verfijn uw zoekopdracht om de lijst te beperken.",
                 FilterDisplayName: "Weergavenaam",
                 FilterTemplate: "Sjabloon",
                 FilterExpandByDefault: "Standaard uitklappen",

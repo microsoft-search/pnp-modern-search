@@ -255,6 +255,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         if (this._properties.entityTypes.length > 0) {
             const searchQuery = await this.buildMicrosoftSearchQuery(dataContext);
             results = await this.search(searchQuery);
+            this.logAggregationCounts(dataContext, results.filters || []);
         } else {
             // If no entity is selected, manually set the results to prevent
             // having the previous search results items count displayed.
@@ -262,6 +263,32 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         }
 
         return results;
+    }
+
+    private logAggregationCounts(dataContext: IDataContext, filters: IDataFilterResult[]): void {
+        const defaultAggregationSize = 10;
+        const configuredFilters = dataContext.filters?.filtersConfiguration || [];
+
+        filters.forEach((filter) => {
+            const filterConfiguration = configuredFilters.find((config) => config.filterName === filter.filterName);
+            const configuredLimit = filterConfiguration?.maxBuckets ?? defaultAggregationSize;
+            const returnedCount = filter.values?.length ?? 0;
+            const filterWithLimitInfo = filter as IDataFilterResult & { isMaxBucketsExceeded?: boolean; configuredMaxBuckets?: number; returnedValueCount?: number; };
+
+            filterWithLimitInfo.isMaxBucketsExceeded = returnedCount >= configuredLimit;
+            filterWithLimitInfo.configuredMaxBuckets = configuredLimit;
+            filterWithLimitInfo.returnedValueCount = returnedCount;
+
+            if (returnedCount >= configuredLimit) {
+                console.warn(
+                    `%c[PnP Modern Search][Microsoft Search] Aggregation '${filter.filterName}' returned ${returnedCount} item(s), matching or exceeding the configured limit of ${configuredLimit}. Additional values may have been truncated by the API.`,
+                    'color:#8a1c00;background:#fff4ce;font-weight:bold;padding:2px 4px;'
+                );
+                return;
+            }
+
+            console.info(`[PnP Modern Search][Microsoft Search] Aggregation '${filter.filterName}' returned ${returnedCount} item(s) from the API (limit ${configuredLimit}).`);
+        });
     }
 
     public getPropertyPaneGroupsConfiguration(): IPropertyPaneGroup[] {

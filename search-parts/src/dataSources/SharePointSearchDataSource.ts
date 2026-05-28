@@ -258,6 +258,8 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
             promotedResults: results.promotedResults
         };
 
+        this.logRefinerCounts(dataContext, data.filters || []);
+
         // Translates taxonomy refiners and result values by using terms ID if applicable
         if (this.properties.enableLocalization) {
             const localizedFilters = await this._getLocalizedFilters(data.filters, this._currentLocaleId);
@@ -270,6 +272,32 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         this._itemsCount = results.totalRows;
 
         return data;
+    }
+
+    private logRefinerCounts(dataContext: IDataContext, filters: IDataFilterResult[]): void {
+        const defaultRefinerSize = 100;
+        const configuredFilters = dataContext.filters?.filtersConfiguration || [];
+
+        filters.forEach((filter) => {
+            const filterConfiguration = configuredFilters.find((config) => config.filterName === filter.filterName);
+            const configuredLimit = filterConfiguration?.maxBuckets ?? defaultRefinerSize;
+            const returnedCount = filter.values?.length ?? 0;
+            const filterWithLimitInfo = filter as IDataFilterResult & { isMaxBucketsExceeded?: boolean; configuredMaxBuckets?: number; returnedValueCount?: number; };
+
+            filterWithLimitInfo.isMaxBucketsExceeded = returnedCount >= configuredLimit;
+            filterWithLimitInfo.configuredMaxBuckets = configuredLimit;
+            filterWithLimitInfo.returnedValueCount = returnedCount;
+
+            if (returnedCount >= configuredLimit) {
+                console.warn(
+                    `%c[PnP Modern Search][SharePoint Search] Refiner '${filter.filterName}' returned ${returnedCount} item(s), matching or exceeding the configured limit of ${configuredLimit}. Additional values may have been truncated by the API.`,
+                    'color:#8a1c00;background:#fff4ce;font-weight:bold;padding:2px 4px;'
+                );
+                return;
+            }
+
+            console.info(`[PnP Modern Search][SharePoint Search] Refiner '${filter.filterName}' returned ${returnedCount} item(s) from the API (limit ${configuredLimit}).`);
+        });
     }
 
     public getPropertyPaneGroupsConfiguration(): IPropertyPaneGroup[] {
