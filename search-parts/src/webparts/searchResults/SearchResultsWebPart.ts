@@ -264,6 +264,14 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
      */
     private _hasPotentialIncomingConnections: boolean = false;
 
+    /**
+     * Tracks whether the Web Part has been disposed. Async callbacks (theme change, dynamic data
+     * 'available sources changed', extension loading, etc.) may resolve after the instance is torn
+     * down; rendering then crashes inside SPFx's async render watchdog (`Cannot read properties of
+     * undefined (reading 'webPartTag')`). This flag lets render() bail out safely.
+     */
+    private _webPartDisposed: boolean = false;
+
     constructor() {
         super();
 
@@ -275,6 +283,13 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
     public async render(): Promise<void> {
         try {
+
+            // The Web Part may have been disposed while an async callback (theme change, dynamic data
+            // source change, extension loading, ...) was in flight. Rendering a disposed instance
+            // crashes SPFx's async render watchdog, so bail out early.
+            if (this._webPartDisposed) {
+                return;
+            }
 
             // Check audience targeting - if user is not in audience, don't render
             const isInAudience = await this.isInAudience();
@@ -703,6 +718,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     }
 
     protected onDispose(): void {
+        this._webPartDisposed = true;
         if (this._pushStateCallback) {
             window.history.pushState = this._pushStateCallback;
         }
