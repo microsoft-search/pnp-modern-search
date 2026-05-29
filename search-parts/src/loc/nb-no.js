@@ -282,7 +282,10 @@ define([], function () {
                 SliderShowPageDots: "Visa sidepunkter",
                 SliderWrapAround: "Uendelig rulling",
                 SlideHeight: "Lysbildehøyde (px)",
-                SlideWidth: "Lysbildebredde (px)"
+                SlideWidth: "Lysbildebredde (px)",
+                PreviousPageLabel: "Forrige side",
+                NextPageLabel: "Neste side",
+                GoToPageLabel: "Gå til side {0}"
             },
             People: {
                 Name: "Person",

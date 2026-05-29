@@ -284,7 +284,10 @@ define([], function () {
                 SliderShowPageDots: "Show page dots",
                 SliderWrapAround: "Infinite scrolling",
                 SlideHeight: "Slide height (in px)",
-                SlideWidth: "Slide width (in px)"
+                SlideWidth: "Slide width (in px)",
+                PreviousPageLabel: "Previous page",
+                NextPageLabel: "Next page",
+                GoToPageLabel: "Go to page {0}"
             },
             People: {
                 Name: "People",

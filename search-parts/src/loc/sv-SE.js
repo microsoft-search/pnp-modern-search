@@ -284,7 +284,10 @@ define([], function () {
                 SliderShowPageDots: "Visa sidpunkter",
                 SliderWrapAround: "Oändlig scroll",
                 SlideHeight: "Reglagehöjd (px)",
-                SlideWidth: "Reglagebredd (px)"
+                SlideWidth: "Reglagebredd (px)",
+                PreviousPageLabel: "Föregående sida",
+                NextPageLabel: "Nästa sida",
+                GoToPageLabel: "Gå till sida {0}"
             },
             People: {
                 Name: "Person",

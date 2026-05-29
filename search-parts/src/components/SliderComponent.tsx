@@ -11,6 +11,7 @@ import { TemplateService } from '../services/templateService/TemplateService';
 import { DomPurifyHelper } from '../helpers/DomPurifyHelper';
 import { ServiceScope, ServiceKey } from "@microsoft/sp-core-library";
 import styles from './SliderComponent.module.scss';
+import * as strings from 'CommonStrings';
 
 export interface ISliderOptions {
 
@@ -118,7 +119,9 @@ export class SliderComponent extends React.Component<ISliderComponentProps, ISli
 
     public componentDidUpdate(): void {
         // Clamp the current index if the number of pages shrank (e.g. fewer results).
-        if (this.state.currentIndex > this._pageCount - 1) {
+        // Guard against _pageCount === 0 (0 > -1 would otherwise re-set the state on every
+        // update and loop indefinitely) by only clamping when there is at least one page.
+        if (this._pageCount > 0 && this.state.currentIndex > this._pageCount - 1) {
             this.setState({ currentIndex: Math.max(0, this._pageCount - 1) });
         }
     }
@@ -300,7 +303,7 @@ export class SliderComponent extends React.Component<ISliderComponentProps, ISli
                     <IconButton
                         className={`${styles.carouselButton} ${styles.carouselButtonPrev}`}
                         iconProps={{ iconName: 'ChevronLeft' }}
-                        ariaLabel="Previous"
+                        ariaLabel={strings.Layouts.Slider.PreviousPageLabel}
                         disabled={prevDisabled}
                         onClick={this._goToPrevious}
                     />
@@ -325,7 +328,7 @@ export class SliderComponent extends React.Component<ISliderComponentProps, ISli
                     <IconButton
                         className={`${styles.carouselButton} ${styles.carouselButtonNext}`}
                         iconProps={{ iconName: 'ChevronRight' }}
-                        ariaLabel="Next"
+                        ariaLabel={strings.Layouts.Slider.NextPageLabel}
                         disabled={nextDisabled}
                         onClick={this._goToNext}
                     />
@@ -338,7 +341,7 @@ export class SliderComponent extends React.Component<ISliderComponentProps, ISli
                                 className={index === currentIndex ? styles.carouselIndicatorActive : undefined}
                                 role="button"
                                 tabIndex={0}
-                                aria-label={`Go to page ${index + 1}`}
+                                aria-label={strings.Layouts.Slider.GoToPageLabel.replace('{0}', String(index + 1))}
                                 aria-current={index === currentIndex}
                                 onClick={() => this._goToIndex(index)}
                                 onKeyDown={(e) => {

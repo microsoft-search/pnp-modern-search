@@ -281,7 +281,10 @@ define([], function () {
                 SliderShowPageDots: "Näytä sivujen pallurat",
                 SliderWrapAround: "Ääretön skrollaus",
                 SlideHeight: "Korkeus (px)",
-                SlideWidth: "Leveys (px)"
+                SlideWidth: "Leveys (px)",
+                PreviousPageLabel: "Edellinen sivu",
+                NextPageLabel: "Seuraava sivu",
+                GoToPageLabel: "Siirry sivulle {0}"
             },
             People: {
                 Name: "Henkilöt",
