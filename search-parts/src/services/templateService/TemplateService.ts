@@ -257,9 +257,6 @@ export class TemplateService implements ITemplateService {
                 initializeFileTypeIcons();
                 GlobalSettings.setValue("fileTypeIconsInitialized", true);
             }
-
-            // Load Microsoft Graph Toolkit dynamically
-            this._customElementHelperPromise = this._initMgtCustomElementHelper();
         });
     }
 
@@ -287,8 +284,11 @@ export class TemplateService implements ITemplateService {
 
     private async _initMgtCustomElementHelper(): Promise<void> {
         if (!this._customElementHelper) {
+            // Only the lightweight mgt-element customElementHelper (element-name prefix
+            // plumbing) is loaded here. The heavy mgt-components / fast-foundation bundle
+            // is loaded separately via loadMsGraphToolkit, gated by useMicrosoftGraphToolkit.
             const { customElementHelper } = await import(
-                /* webpackChunkName: 'pnp-modern-search-microsoft-graph-toolkit' */
+                /* webpackChunkName: 'pnp-modern-search-mgt-element' */
                 "@microsoft/mgt-element/dist/es6/components/customElementHelper"
             );
             this._customElementHelper = customElementHelper;
@@ -296,9 +296,12 @@ export class TemplateService implements ITemplateService {
     }
 
     private async _ensureMgtCustomElementHelper(): Promise<void> {
-        if (this._customElementHelperPromise) {
-            await this._customElementHelperPromise;
+        // Lazily load the helper on first actual need (disambiguation / adaptive cards)
+        // instead of eagerly on every render, so pages that don't use MGT never load it.
+        if (!this._customElementHelperPromise) {
+            this._customElementHelperPromise = this._initMgtCustomElementHelper();
         }
+        await this._customElementHelperPromise;
     }
 
     public legacyStyleParser(

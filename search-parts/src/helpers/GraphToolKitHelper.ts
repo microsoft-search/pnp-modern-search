@@ -6,7 +6,7 @@ const DISAMBIGUATION = "pnp-modern-search";
 export const loadMsGraphToolkit = async (context: WebPartContext) => {
     // Load Microsoft Graph Toolkit dynamically
     const { customElementHelper } = await import(
-      /* webpackChunkName: 'pnp-modern-search-microsoft-graph-toolkit' */
+      /* webpackChunkName: 'pnp-modern-search-mgt-element' */
       '@microsoft/mgt-element/dist/es6/components/customElementHelper'
     );
 
