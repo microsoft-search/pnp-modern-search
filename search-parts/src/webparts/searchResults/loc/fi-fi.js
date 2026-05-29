@@ -9,7 +9,9 @@ define([], function () {
             },
             WebPartDefaultTitle: "Hakutulosten webosa",
             ShowBlankEditInfoMessage: "Ei tuloksia tälle hakukyselylle. Näillä parametreillä webosa on tyhjä sivun lukutilassa.",
-            CurrentVerticalNotSelectedMessage: "Valittu vertikaali ei ole yhdistetty tähän tuloswebosaan. Tuloswebosa on tyhjä sivun lukutilassa."
+            CurrentVerticalNotSelectedMessage: "Valittu vertikaali ei ole yhdistetty tähän tuloswebosaan. Tuloswebosa on tyhjä sivun lukutilassa.",
+            RollupSuggestionMessage: "Tämä Hakutulokset-webosa ei ole yhdistetty mihinkään muuhun sivun webosaan. Harkitse 'PnP - Search Rollup' -version käyttämistä — SharePoint voi ladata sen laiskasti, eikä se suorita tietolähdekyselyjä ennen kuin se vieritetään näkyviin, mikä parantaa sivun latauksen suorituskykyä.",
+            RollupSuggestionLinkText: "Lue lisää"
         },
         PropertyPane: {
             DataSourcePage: {

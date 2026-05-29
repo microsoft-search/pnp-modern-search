@@ -9,7 +9,9 @@ define([], function () {
             },
             WebPartDefaultTitle: "Søkeresultat",
             ShowBlankEditInfoMessage: "Fant ikke noe med denne spørringen. Nettdelen vil være tom i visningsmodus, i tråd med innstillingene.",
-            CurrentVerticalNotSelectedMessage: "Den valgte vertikalen matcher ikke den som er assosiert med denne nettdelen. Den vil være tom i visningsmodus."
+            CurrentVerticalNotSelectedMessage: "Den valgte vertikalen matcher ikke den som er assosiert med denne nettdelen. Den vil være tom i visningsmodus.",
+            RollupSuggestionMessage: "Denne Søkeresultatnettdelen er ikke koblet til noen annen nettdel på siden. Vurder å bruke 'PnP - Search Rollup'-versjonen i stedet — den kan lastes inn ved behov av SharePoint og kjører ikke datakildespørringer før den rulles inn i visningen, noe som forbedrer sideinnlastingsytelsen.",
+            RollupSuggestionLinkText: "Les mer"
         },
         PropertyPane: {
             DataSourcePage: {
