@@ -71,6 +71,14 @@ module.exports = function (webpackConfig, taskSession, heftConfiguration, webpac
             include: [/spfx-controls-react[/\\]lib[/\\]controls[/\\]HoverReactionsBar/],
             loader: 'ignore-loader',
         },
+        // Ignore Dashboard & Toolbar controls from spfx-controls-react. We never import them,
+        // but they pull in @fluentui/react-northstar (+ react-icons-northstar) — ~600KB of
+        // Fluent UI v0 that is otherwise dead weight in the bundle.
+        {
+            test: /\.js$/,
+            include: [/spfx-controls-react[/\\]lib[/\\]controls[/\\](dashboard|toolbar)[/\\]/i],
+            loader: 'ignore-loader',
+        },
         // html-loader for .html files (handlebars templates) without minification
         {
             test: /\.html$/,
@@ -81,10 +89,39 @@ module.exports = function (webpackConfig, taskSession, heftConfiguration, webpac
         }
     );
 
-    // ─── optimization: disable vendor chunk splitting ──────────────────────────
+    // ─── optimization: shared async vendor chunks ─────────────────────────────
+    // SPFx injects only the single entry script per web part, so we must NOT create
+    // *initial* split chunks (they would never be loaded → runtime crash). Instead we
+    // split only *async* chunks (chunks: 'async'). Because each web part now loads its
+    // React container via dynamic import(), the heavy vendors (Fluent UI, PnP controls,
+    // handlebars, dompurify) live in the async graph and can be hoisted into shared
+    // chunks that webpack's own runtime loads on demand — emitted once instead of being
+    // duplicated across all four web part entries.
     webpackConfig.optimization = webpackConfig.optimization || {};
     webpackConfig.optimization.splitChunks = {
-        cacheGroups: { vendors: false },
+        chunks: 'async',
+        minSize: 20000,
+        cacheGroups: {
+            vendors: false,
+            fluentui: {
+                test: /[\\/]node_modules[\\/](@fluentui|@uifabric|office-ui-fabric-react)[\\/]/,
+                name: 'pnp-modern-search-fluentui',
+                priority: 40,
+                reuseExistingChunk: true,
+            },
+            pnpControls: {
+                test: /[\\/]node_modules[\\/]@pnp[\\/]spfx-(controls|property)-(react|controls)[\\/]/,
+                name: 'pnp-modern-search-pnp-controls',
+                priority: 30,
+                reuseExistingChunk: true,
+            },
+            handlebars: {
+                test: /[\\/]node_modules[\\/]handlebars[\\/]/,
+                name: 'pnp-modern-search-handlebars',
+                priority: 20,
+                reuseExistingChunk: true,
+            },
+        },
     };
 
     // ─── Plugins ───────────────────────────────────────────────────────────────

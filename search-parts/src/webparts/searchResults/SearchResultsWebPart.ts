@@ -20,13 +20,20 @@ import {
 import ISearchResultsWebPartProps, { QueryTextSource } from './ISearchResultsWebPartProps';
 import { AvailableDataSources, BuiltinDataSourceProviderKeys } from '../../dataSources/AvailableDataSources';
 import { ServiceKey } from "@microsoft/sp-core-library";
-import SearchResultsContainer from './components/SearchResultsContainer';
+// Lazy-loaded so the container (and its @fluentui/react dependency graph) is emitted as a shared
+// async chunk instead of being bundled synchronously into every web part entry.
+const SearchResultsContainer = React.lazy(() => import(
+    /* webpackChunkName: 'pnp-modern-search-results-container' */
+    './components/SearchResultsContainer'
+));
 import { AvailableLayouts, BuiltinLayoutsKeys } from '../../layouts/AvailableLayouts';
 import { ITemplateService, FileFormat } from '../../services/templateService/ITemplateService';
 import { TemplateService } from '../../services/templateService/TemplateService';
 import { ServiceScopeHelper } from '../../helpers/ServiceScopeHelper';
 import { cloneDeep, isEmpty, isEqual, uniq, uniqBy } from "@microsoft/sp-lodash-subset";
-import { AvailableComponents } from '../../components/AvailableComponents';
+// AvailableComponents pulls in every Fluent UI-based web component. It is loaded as a shared async
+// chunk in loadExtensions() instead of being imported synchronously, so its heavy dependency graph
+// stays out of the web part entry bundle (it is still loaded at view time before rendering).
 import { DynamicProperty } from '@microsoft/sp-component-base';
 import { ITemplateSlot, IDataContext, ITokenService, SortFieldDirection, IExtensibilityLibrary } from '@pnp/modern-search-extensibility';
 import { TokenService, BuiltinTokenNames } from '../../services/tokenService/TokenService';
@@ -40,7 +47,9 @@ import { IDynamicDataCallables, IDynamicDataPropertyDefinition } from '@microsof
 import { IDataResultSourceData } from '../../models/dynamicData/IDataResultSourceData';
 import { LayoutHelper } from '../../helpers/LayoutHelper';
 import { IAsyncComboProps } from '../../controls/PropertyPaneAsyncCombo/components/IAsyncComboProps';
-import { AsyncCombo } from '../../controls/PropertyPaneAsyncCombo/components/AsyncCombo';
+// Type-only import: the actual AsyncCombo control is loaded as part of the property-pane chunk
+// in loadPropertyPaneResources() so its @fluentui/react dependency stays out of the entry bundle.
+import type { AsyncCombo as AsyncComboType } from '../../controls/PropertyPaneAsyncCombo/components/AsyncCombo';
 import { Constants } from '../../common/Constants';
 import PnPTelemetry from "@pnp/telemetry-js";
 import { IPageEventInfo } from '../../components/PaginationComponent';
@@ -54,11 +63,14 @@ import { ItemSelectionMode } from '../../models/common/IItemSelectionProps';
 import { DynamicPropertyHelper } from '../../helpers/DynamicPropertyHelper';
 import { IQueryModifierConfiguration } from '../../queryModifier/IQueryModifierConfiguration';
 import { loadMsGraphToolkit } from '../../helpers/GraphToolKitHelper';
-import { DataSourcePropertyPaneBuilder } from './propertyPane/DataSourcePropertyPaneBuilder';
-import { AboutPropertyPaneBuilder } from './propertyPane/AboutPropertyPaneBuilder';
+// Property-pane builders are loaded lazily (type-only here) so their @fluentui/react and
+// @pnp/spfx-property-controls dependency graphs are emitted in the property-pane chunk instead
+// of the synchronous web part entry bundle. They are downloaded only when the pane is opened.
+import type { DataSourcePropertyPaneBuilder as DataSourcePropertyPaneBuilderType } from './propertyPane/DataSourcePropertyPaneBuilder';
+import type { AboutPropertyPaneBuilder as AboutPropertyPaneBuilderType } from './propertyPane/AboutPropertyPaneBuilder';
 import type { ConnectionsPropertyPaneBuilder as ConnectionsPropertyPaneBuilderType } from './propertyPane/ConnectionsPropertyPaneBuilder';
 import { TokenSetter } from './services/TokenSetter';
-import { StylingPageGroupsBuilder } from './propertyPane/StylingPageGroupsBuilder';
+import type { StylingPageGroupsBuilder as StylingPageGroupsBuilderType } from './propertyPane/StylingPageGroupsBuilder';
 
 // Import statements for templates
 import defaultSimpleListTemplate from '../../layouts/resultTypes/default_simple_list.html';
@@ -69,7 +81,7 @@ import { MessageBar, MessageBarType } from '@fluentui/react/lib/MessageBar';
 import { Link } from '@fluentui/react/lib/Link';
 import { IComboBoxOption } from '@fluentui/react/lib/ComboBox';
 import { IToggleProps, Toggle } from '@fluentui/react/lib/Toggle';
-import { PropertyFieldMessage } from '@pnp/spfx-property-controls/lib/PropertyFieldMessage';
+// PropertyFieldMessage is loaded with the property-pane chunk (see loadPropertyPaneResources).
 
 const LogSource = "SearchResultsWebPart";
 
@@ -123,6 +135,18 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
      * downloaded when the property pane is opened. View-mode page loads do not pull it.
      */
     private _connectionsPropertyPaneBuilderClass: typeof ConnectionsPropertyPaneBuilderType = null;
+
+    /**
+     * Lazily-loaded property-pane builder/control references. Like the connections builder above,
+     * these are loaded as part of the `'pnp-modern-search-property-pane'` chunk in
+     * `loadPropertyPaneResources()`, so their heavy dependencies (Fluent UI, property controls)
+     * are only downloaded when the property pane is opened. View-mode page loads do not pull them.
+     */
+    private _dataSourcePropertyPaneBuilderClass: typeof DataSourcePropertyPaneBuilderType = null;
+    private _aboutPropertyPaneBuilderClass: typeof AboutPropertyPaneBuilderType = null;
+    private _stylingPageGroupsBuilderClass: typeof StylingPageGroupsBuilderType = null;
+    private _asyncComboComponent: typeof AsyncComboType = null;
+    private _propertyFieldMessage: typeof import('@pnp/spfx-property-controls/lib/PropertyFieldMessage').PropertyFieldMessage = null;
 
     /**
      * The selected data source for the WebPart
@@ -179,7 +203,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     /**
      * The available web component definitions (not registered yet)
      */
-    private availableWebComponentDefinitions: IComponentDefinition<any>[] = AvailableComponents.BuiltinComponents;
+    private availableWebComponentDefinitions: IComponentDefinition<any>[] = [];
 
     /**
      * The available custom QueryModifier definitions (not registered yet)
@@ -493,7 +517,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 titleFontColor: this.properties.titleFontColor
             } as ISearchResultsContainerProps);
 
-            renderRootElement = renderDataContainer;
+            renderRootElement = React.createElement(React.Suspense, { fallback: null }, renderDataContainer);
 
         } else {
 
@@ -737,7 +761,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         let dataSourceProperties: IPropertyPaneGroup[] = [];
 
         // Initialize property pane builders
-        const dataSourceBuilder = new DataSourcePropertyPaneBuilder(
+        const dataSourceBuilder = new this._dataSourcePropertyPaneBuilderClass(
             this.properties,
             this.dataSource,
             this.availableDataSourceDefinitions,
@@ -747,7 +771,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             webPartStrings
         );
 
-        const aboutBuilder = new AboutPropertyPaneBuilder(
+        const aboutBuilder = new this._aboutPropertyPaneBuilderClass(
             this.getPropertyPaneWebPartInfoGroups.bind(this),
             this.getExtensibilityFields.bind(this),
             this.getAudienceTargetingPropertyPaneGroup.bind(this),
@@ -959,7 +983,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             // Reset existing definitions to default
             this.availableDataSourceDefinitions = AvailableDataSources.BuiltinDataSources;
             this.availableLayoutDefinitions = AvailableLayouts.BuiltinLayouts.filter(layout => { return layout.type === LayoutType.Results; });
-            this.availableWebComponentDefinitions = AvailableComponents.BuiltinComponents;
+            // Builtin web components are re-seeded at the top of loadExtensions() (loaded async).
+            this.availableWebComponentDefinitions = [];
             this.availableCustomQueryModifierDefinitions = [];
             this._selectedCustomQueryModifier = [];
             this.properties.queryModifierProperties = {};
@@ -1115,6 +1140,13 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
      */
     private async loadExtensions(librariesConfiguration: IExtensibilityConfiguration[]) {
 
+        // Seed builtin web components from a shared async chunk (keeps Fluent UI out of the entry).
+        const { AvailableComponents } = await import(
+            /* webpackChunkName: 'pnp-modern-search-web-components' */
+            '../../components/AvailableComponents'
+        );
+        this.availableWebComponentDefinitions = AvailableComponents.BuiltinComponents;
+
         // Load extensibility library if present
         const extensibilityLibraries = await this.extensibilityService.loadExtensibilityLibraries(librariesConfiguration);
         const customQueryModifierConfiguration: IQueryModifierConfiguration[] = [];
@@ -1179,6 +1211,9 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
     public async loadPropertyPaneResources(): Promise<void> {
 
+        // Load shared property-controls used by the base web part property-pane groups
+        await this.loadCommonPropertyPaneResources();
+
         const { PropertyFieldCodeEditor, PropertyFieldCodeEditorLanguages } = await import(
             /* webpackChunkName: 'pnp-modern-search-code-editor', webpackMode: 'lazy' */
             '@pnp/spfx-property-controls/lib/propertyFields/codeEditor'
@@ -1239,6 +1274,36 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             './propertyPane/ConnectionsPropertyPaneBuilder'
         );
         this._connectionsPropertyPaneBuilderClass = ConnectionsPropertyPaneBuilder;
+
+        const { DataSourcePropertyPaneBuilder } = await import(
+            /* webpackChunkName: 'pnp-modern-search-property-pane' */
+            './propertyPane/DataSourcePropertyPaneBuilder'
+        );
+        this._dataSourcePropertyPaneBuilderClass = DataSourcePropertyPaneBuilder;
+
+        const { AboutPropertyPaneBuilder } = await import(
+            /* webpackChunkName: 'pnp-modern-search-property-pane' */
+            './propertyPane/AboutPropertyPaneBuilder'
+        );
+        this._aboutPropertyPaneBuilderClass = AboutPropertyPaneBuilder;
+
+        const { StylingPageGroupsBuilder } = await import(
+            /* webpackChunkName: 'pnp-modern-search-property-pane' */
+            './propertyPane/StylingPageGroupsBuilder'
+        );
+        this._stylingPageGroupsBuilderClass = StylingPageGroupsBuilder;
+
+        const { AsyncCombo } = await import(
+            /* webpackChunkName: 'pnp-modern-search-property-pane' */
+            '../../controls/PropertyPaneAsyncCombo/components/AsyncCombo'
+        );
+        this._asyncComboComponent = AsyncCombo;
+
+        const { PropertyFieldMessage } = await import(
+            /* webpackChunkName: 'pnp-modern-search-property-pane' */
+            '@pnp/spfx-property-controls/lib/PropertyFieldMessage'
+        );
+        this._propertyFieldMessage = PropertyFieldMessage;
 
         this.propertyPaneConnectionsGroup = await this.getConnectionOptionsGroup();
     }
@@ -1402,7 +1467,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
      * Returns property pane 'Styling' page groups
      */
     private getStylingPageGroups(): IPropertyPaneGroup[] {
-        const builder = new StylingPageGroupsBuilder(
+        const builder = new this._stylingPageGroupsBuilderClass(
             this.properties,
             this.availableLayoutDefinitions,
             this.templateContentToDisplay,
@@ -1690,7 +1755,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                             onCustomRender: (field, value, onUpdate, item) => {
                                 return (
                                     React.createElement("div", null,
-                                        React.createElement(AsyncCombo, {
+                                        React.createElement(this._asyncComboComponent, {
                                             allowFreeform: true,
                                             availableOptions: availableOptions,
                                             placeholder: webPartStrings.PropertyPane.DataSourcePage.TemplateSlots.SlotFieldPlaceholderName,
@@ -1720,7 +1785,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 const undefinedTemplateSlots = layoutSlots.concat(resultTypesSlots).filter(slot => !templateSlotNames.includes(slot));
 
                 templateSlotFields.push(
-                    PropertyFieldMessage('messageMissingSlots', {
+                    this._propertyFieldMessage('messageMissingSlots', {
                         key: 'messageMissingSlotsKey',
                         multiline: true,
                         text: Text.format(webPartStrings.PropertyPane.DataSourcePage.TemplateSlots.MissingSlotsMessage, undefinedTemplateSlots.join(", ")),

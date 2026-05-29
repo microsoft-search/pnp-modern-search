@@ -14,12 +14,13 @@ import {
     PropertyPaneButton,
     PropertyPaneButtonType
 } from '@microsoft/sp-property-pane';
-import { PropertyFieldColorPicker, PropertyFieldColorPickerStyle } from '@pnp/spfx-property-controls/lib/PropertyFieldColorPicker';
+// PropertyFieldColorPicker is edit-mode only and is provided by BaseWebPart's lazily-loaded
+// _basePropertyFieldColorPicker / _basePropertyFieldColorPickerStyle (shared property-pane chunk).
 import { DynamicProperty } from '@microsoft/sp-component-base';
 import { IPropertyPanePage } from '@microsoft/sp-property-pane';
 import * as webPartStrings from 'SearchFiltersWebPartStrings';
 import * as commonStrings from 'CommonStrings';
-import SearchFilters from './components/SearchFiltersContainer';
+const SearchFilters = React.lazy(() => import(/* webpackChunkName: 'pnp-modern-search-filters-container' */ './components/SearchFiltersContainer'));
 import { ISearchFiltersContainerProps } from './components/ISearchFiltersContainerProps';
 import ISearchFiltersWebPartProps from './ISearchFiltersWebPartProps';
 import IDynamicDataService from '../../services/dynamicDataService/IDynamicDataService';
@@ -38,7 +39,8 @@ import { FileFormat, ITemplateService } from '../../services/templateService/ITe
 import { isEmpty, isEqual, uniqBy, cloneDeep, uniq, sortBy } from '@microsoft/sp-lodash-subset';
 import { BuiltinFilterTemplates, BuiltinFilterTypes } from '../../layouts/AvailableTemplates';
 import { ServiceScope } from '@microsoft/sp-core-library';
-import { AvailableComponents } from '../../components/AvailableComponents';
+// AvailableComponents pulls in the Fluent UI web component registry. It is loaded on demand inside
+// onInit() (see availableWebComponentDefinitions seeding) so it stays out of the entry bundle.
 import { PropertyPaneAsyncCombo } from '../../controls/PropertyPaneAsyncCombo/PropertyPaneAsyncCombo';
 import { BaseWebPart } from '../../common/BaseWebPart';
 import commonStyles from '../../styles/Common.module.scss';
@@ -143,7 +145,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     /**
      * The available web component definitions (not registered yet)
      */
-    private availableWebComponentDefinitions: IComponentDefinition<any>[] = AvailableComponents.BuiltinComponents;
+    private availableWebComponentDefinitions: IComponentDefinition<any>[] = [];
 
     /**
      * The available connections as property pane fields
@@ -242,6 +244,8 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
         // Register Web Components in the global page context. We need to do this BEFORE the template processing to avoid race condition.
         // Web components are only defined once.
         // We need to register components here in the case where the Search Results WP is not present on the page
+        const { AvailableComponents } = await import(/* webpackChunkName: 'pnp-modern-search-web-components' */ '../../components/AvailableComponents');
+        this.availableWebComponentDefinitions = AvailableComponents.BuiltinComponents;
         await this.templateService.registerWebComponents(this.availableWebComponentDefinitions, this.instanceId);
 
         return super.onInit();
@@ -308,6 +312,9 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
             filterResults = this._initStaticFilters(filterResults, this.properties.filtersConfiguration);
 
             renderRootElement = React.createElement(
+                React.Suspense,
+                { fallback: null },
+                React.createElement(
                 SearchFilters,
                 {
                     templateContent: this.templateContentToDisplay,
@@ -341,6 +348,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                     titleFontSize: this.properties.titleFontSize,
                     titleFontColor: this.properties.titleFontColor
                 } as ISearchFiltersContainerProps
+                )
             );
 
         } else {
@@ -739,7 +747,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
             groupName: webPartStrings.Styling.StylingOptionsGroupName,
             isCollapsed: true,
             groupFields: [
-                PropertyFieldColorPicker('filterBackgroundColor', {
+                this._basePropertyFieldColorPicker('filterBackgroundColor', {
                     label: webPartStrings.Styling.FilterBackgroundColorLabel,
                     selectedColor: this.properties.filterBackgroundColor,
                     onPropertyChange: this.onPropertyPaneFieldChanged,
@@ -748,10 +756,10 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                     debounce: 1000,
                     isHidden: false,
                     alphaSliderHidden: false,
-                    style: PropertyFieldColorPickerStyle.Inline,
+                    style: this._basePropertyFieldColorPickerStyle.Inline,
                     key: 'filterBackgroundColorFieldId'
                 }),
-                PropertyFieldColorPicker('filterBorderColor', {
+                this._basePropertyFieldColorPicker('filterBorderColor', {
                     label: webPartStrings.Styling.FilterBorderColorLabel,
                     selectedColor: this.properties.filterBorderColor,
                     onPropertyChange: this.onPropertyPaneFieldChanged,
@@ -760,7 +768,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                     debounce: 1000,
                     isHidden: false,
                     alphaSliderHidden: false,
-                    style: PropertyFieldColorPickerStyle.Inline,
+                    style: this._basePropertyFieldColorPickerStyle.Inline,
                     key: 'filterBorderColorFieldId'
                 }),
                 PropertyPaneSlider('filterBorderThickness', {
@@ -1702,6 +1710,9 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     }
 
     public async loadPropertyPaneResources(): Promise<void> {
+
+        // Load shared property-controls used by the base web part property-pane groups
+        await this.loadCommonPropertyPaneResources();
 
         const { PropertyFieldCodeEditor, PropertyFieldCodeEditorLanguages } = await import(
             /* webpackChunkName: 'pnp-modern-search-code-editor', webpackMode: 'lazy' */
