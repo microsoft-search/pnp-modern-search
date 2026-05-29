@@ -326,7 +326,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
 
                             this._selectedFilters = updatedFilters;
 
-                            // Notfify dynamic data consumers data have changed
+                            // Notify dynamic data consumers data have changed
                             this.context.dynamicDataSourceManager.notifyPropertyChanged(ComponentType.SearchFilters);
                         },
                         templateService: this.templateService,

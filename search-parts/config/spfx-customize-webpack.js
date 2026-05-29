@@ -118,9 +118,11 @@ module.exports = function (webpackConfig, taskSession, heftConfiguration, webpac
                 priority: 35,
                 reuseExistingChunk: true,
             },
-            // Monaco/ACE code editor stack used by the property pane code editor (on demand only).
-            // Not named: ace-builds does internal dynamic requires and diff-match-patch is also
-            // reachable from an entry's sync graph, so forcing a single named chunk conflicts.
+            // Handlebars templating engine (on demand only, used by the Handlebars layout).
+            // Note: the Monaco/ACE code editor stack (property pane code editor) is intentionally
+            // NOT given a named cacheGroup — ace-builds does internal dynamic requires and
+            // diff-match-patch is also reachable from an entry's sync graph, so forcing a single
+            // named chunk conflicts.
             handlebars: {
                 test: /[\\/]node_modules[\\/]handlebars[\\/]/,
                 name: 'pnp-modern-search-handlebars',
