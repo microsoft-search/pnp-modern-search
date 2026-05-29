@@ -109,6 +109,18 @@ module.exports = function (webpackConfig, taskSession, heftConfiguration, webpac
                 priority: 30,
                 reuseExistingChunk: true,
             },
+            // Adaptive Cards stack (adaptivecards, adaptivecards-templating, adaptive-expressions,
+            // antlr4ts, markdown-it). These always load together via AdaptiveCardsLoader and are
+            // only pulled in on demand by the Adaptive Card layout.
+            adaptiveCards: {
+                test: /[\\/]node_modules[\\/](adaptivecards|adaptivecards-templating|adaptive-expressions|antlr4ts|markdown-it)[\\/]/,
+                name: 'pnp-modern-search-adaptivecards',
+                priority: 35,
+                reuseExistingChunk: true,
+            },
+            // Monaco/ACE code editor stack used by the property pane code editor (on demand only).
+            // Not named: ace-builds does internal dynamic requires and diff-match-patch is also
+            // reachable from an entry's sync graph, so forcing a single named chunk conflicts.
             handlebars: {
                 test: /[\\/]node_modules[\\/]handlebars[\\/]/,
                 name: 'pnp-modern-search-handlebars',
