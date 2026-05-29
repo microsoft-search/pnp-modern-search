@@ -78,6 +78,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
                 const groupLabelId = `pnp-searchbox-suggestion-group-${groupIndex}`;
 
                 return (
+                    // NOSONAR - intentional WAI-ARIA listbox grouping; native <optgroup>/<select> cannot render rich suggestion content (icons, sanitized HTML, links)
                     <div key={groupLabelId} role="group" aria-labelledby={groupLabelId}>
                         <Label id={groupLabelId} className={styles.suggestionGroupName}>{groupName}</Label>
                         <div>

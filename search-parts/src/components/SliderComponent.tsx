@@ -100,6 +100,13 @@ export class SliderComponent extends React.Component<ISliderComponentProps, ISli
      */
     private _pageCount: number = 0;
 
+    /**
+     * The page count the auto play timer was last (re)started for. Used by componentDidUpdate to
+     * detect when the rendered page count changed so the timer can be restarted safely (after the
+     * DOM has committed and only while mounted), instead of scheduling work from render().
+     */
+    private _autoPlayPageCount: number = 0;
+
     public constructor(props: ISliderComponentProps) {
         super(props);
 
@@ -114,10 +121,19 @@ export class SliderComponent extends React.Component<ISliderComponentProps, ISli
     }
 
     public componentDidMount(): void {
+        this._autoPlayPageCount = this._pageCount;
         this._resetAutoPlay();
     }
 
     public componentDidUpdate(): void {
+        // Restart auto play when the rendered page count changed. Doing this here (rather than from
+        // render()) ensures the timer is only (re)created while the component is mounted, avoiding
+        // leaks / "setState on unmounted component" warnings.
+        if (this._autoPlayPageCount !== this._pageCount) {
+            this._autoPlayPageCount = this._pageCount;
+            this._resetAutoPlay();
+        }
+
         // Clamp the current index if the number of pages shrank (e.g. fewer results).
         // Guard against _pageCount === 0 (0 > -1 would otherwise re-set the state on every
         // update and loop indefinitely) by only clamping when there is at least one page.
@@ -266,13 +282,9 @@ export class SliderComponent extends React.Component<ISliderComponentProps, ISli
                 </div>;
             });
 
-            // Keep the page count in sync for auto play / bounds logic.
-            const previousPageCount = this._pageCount;
+            // Keep the page count in sync for auto play / bounds logic. The auto play timer is
+            // (re)started from componentDidUpdate when this value changes, not from render().
             this._pageCount = carouselElements.length;
-            if (previousPageCount !== this._pageCount) {
-                // Restart auto play once the rendered DOM reflects the new page count.
-                globalThis.requestAnimationFrame(() => this._resetAutoPlay());
-            }
 
             const currentIndex = Math.max(0, Math.min(this.state.currentIndex, this._pageCount - 1));
             const wrapAround = sliderOptions.wrapAround === true;

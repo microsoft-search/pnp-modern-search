@@ -293,6 +293,13 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
             // Check audience targeting - if user is not in audience, don't render
             const isInAudience = await this.isInAudience();
+
+            // The Web Part may have been disposed while awaiting audience evaluation; bail out before
+            // touching this.context (SPFx tears it down on dispose).
+            if (this._webPartDisposed || !this.context) {
+                return;
+            }
+
             this._isHiddenByAudience = !isInAudience;
             if (!isInAudience) {
                 // eslint-disable-next-line @rushstack/pair-react-dom-render-unmount -- cleanup on audience hide, paired with onDispose
@@ -321,6 +328,12 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
             // Refresh the token values with the latest information from environment (i.e connections and settings)
             await this.setTokens();
+
+            // Re-check disposal after the awaited init/token work before resolving context-dependent
+            // data source and layout instances (LayoutHelper.getLayoutInstance uses this.context).
+            if (this._webPartDisposed || !this.context) {
+                return;
+            }
 
             // We resolve data source and layout instances directly in the render method to avoid unexpected render triggers due to Web Part property bag manipulation 
             // SPFx has an inner routine in reactive mode to trigger a render every time a property bag value is updated conflicting with the way data source and layouts share properties (see _afterPropertyUpdated)
@@ -374,6 +387,10 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             }
 
             if (this.dataSource) {
+                // Re-check disposal after the prior awaits before building the data context.
+                if (this._webPartDisposed || !this.context) {
+                    return;
+                }
                 this._currentDataContext = await this.getDataContext();
             }
             return this.renderCompleted();
