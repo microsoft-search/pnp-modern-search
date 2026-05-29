@@ -87,16 +87,27 @@ export class FilterCheckBoxComponent extends React.Component<IFilterCheckBoxProp
 
     /**
      * For single-select filters each value renders its own single-option `ChoiceGroup`, which emits a
-     * `radiogroup` containing a single radio. Screen readers therefore announce every value as
-     * "1 of 1". Setting explicit `aria-setsize`/`aria-posinset` on the radio input overrides the
-     * computed set size so the value is announced with its real position within the filter.
+     * `radiogroup` containing a single radio with a unique `name` attribute. Screen readers therefore
+     * announce every value as "1 of 1" because native radios are positioned relative to other radios
+     * sharing the same `name` (and `aria-setsize` is ignored for native radios in most SRs).
+     *
+     * To make the value announce its real position within the filter we (1) neutralize the inner
+     * per-value `radiogroup` role, (2) give every value radio of the same filter a shared, stable
+     * `name` so the browser/SR treats them as one radio set, and (3) set explicit
+     * `aria-setsize`/`aria-posinset` as a fallback for SRs that honor them.
      */
     private _applyRadioSetSizeAria(): void {
         if (this.props.isMulti || !this._rootRef.current || !this.props.valueCount || this.props.valueIndex === undefined || this.props.valueIndex === null) {
             return;
         }
+        const radioGroup = this._rootRef.current.querySelector('[role="radiogroup"]');
+        if (radioGroup) {
+            radioGroup.setAttribute('role', 'presentation');
+        }
         const radioInput = this._rootRef.current.querySelector('input[type="radio"]');
         if (radioInput) {
+            const sharedName = `pnp-filter-${this.props.instanceId || ''}-${this.props.filterName || ''}`;
+            radioInput.setAttribute('name', sharedName);
             radioInput.setAttribute('aria-setsize', this.props.valueCount.toString());
             radioInput.setAttribute('aria-posinset', (this.props.valueIndex + 1).toString());
         }
