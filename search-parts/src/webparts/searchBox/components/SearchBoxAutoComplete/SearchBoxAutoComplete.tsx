@@ -88,7 +88,6 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
     }
 
     private _renderSuggestion(suggestion: ISuggestion, suggestionIndex: number): JSX.Element {
-        // eslint-disable-next-line @typescript-eslint/no-this-alias
         const thisComponent = this;
 
         const suggestionInner = <>

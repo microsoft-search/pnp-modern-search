@@ -81,7 +81,6 @@ const dbg = (message: string, ...args: unknown[]): void => {
     }
     Log.verbose(ExtensibilityService_ServiceKey, verboseMessage, undefined);
     if (_debugEnabled) {
-        // eslint-disable-next-line no-console
         console.log(`[${ExtensibilityService_ServiceKey}] ${message}`, ...args);
     }
 };
@@ -222,7 +221,6 @@ export class ExtensibilityService {
             // diagnostic that helps support understand cross-version loading.
             const msg = `Patched extension manifest '${manifest.id}' for cross-version compatibility: ${rewrites.join(', ')}`;
             Log.info(ExtensibilityService_ServiceKey, msg, this.serviceScope);
-            // eslint-disable-next-line no-console
             console.info(`[${ExtensibilityService_ServiceKey}] ${msg}`);
         }
 
@@ -290,7 +288,6 @@ export class ExtensibilityService {
                 // but break at runtime due to API differences.
                 const warnMsg = `Cross-major version patch for '${manifestId}': ${depName} bundle was built against ${originalVersion} but page provides ${pageVersion}. Extension may misbehave.`;
                 Log.warn(ExtensibilityService_ServiceKey, warnMsg, this.serviceScope);
-                // eslint-disable-next-line no-console
                 console.warn(`[${ExtensibilityService_ServiceKey}] ${warnMsg}`);
             }
         }

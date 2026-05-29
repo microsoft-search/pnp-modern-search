@@ -82,13 +82,11 @@ function helperEq(this: any, a: any, b: any, options: any): any {
 
 function helperIs(this: any, a: any, b: any, options: any): any {
     if (arguments.length === 2) { options = b; b = options.hash.compare; }
-    // eslint-disable-next-line eqeqeq
     return value(a == b, this, options);
 }
 
 function helperIsnt(this: any, a: any, b: any, options: any): any {
     if (arguments.length === 2) { options = b; b = options.hash.compare; }
-    // eslint-disable-next-line eqeqeq
     return value(a != b, this, options);
 }
 
@@ -116,10 +114,8 @@ function helperCompare(this: any, a: any, operator: string, b: any, options: any
     if (arguments.length < 4) throw new Error('{{compare}} expects 4 arguments');
     let result: boolean;
     switch (operator) {
-        // eslint-disable-next-line eqeqeq
         case '==': result = a == b; break;
         case '===': result = a === b; break;
-        // eslint-disable-next-line eqeqeq
         case '!=': result = a != b; break;
         case '!==': result = a !== b; break;
         case '<': result = a < b; break;

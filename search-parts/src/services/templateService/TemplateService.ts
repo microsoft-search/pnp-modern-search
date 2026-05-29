@@ -199,7 +199,6 @@ export class TemplateService implements ITemplateService {
             const buildMissingPlaceholder = (label: string, name: string, title: string): string =>
                 `<span style="color:#a4262c;background:#fde7e9;padding:1px 4px;border-radius:3px;font-family:monospace;font-size:11px;" title="${title}">[missing ${label}: ${escapeFn(name)}]</span>`;
             const placeholderTitle = "Handlebars helper not registered. If this comes from an extensibility library, the library may have failed to load.";
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             hb.registerHelper("helperMissing", function (this: any, ...args: any[]) {
                 // Handlebars calls helperMissing for BOTH:
                 //   (a) genuine missing helper calls with params/hash:
@@ -231,16 +230,13 @@ export class TemplateService implements ITemplateService {
                     // missing property reference.
                     return undefined;
                 }
-                // eslint-disable-next-line no-console
                 console.warn(`[TemplateService] Missing Handlebars helper '${name}'. The template references a helper that is not registered. If '${name}' comes from an extensibility library, the library may have failed to load \u2014 check earlier console output.`);
                 // Use the per-WP instance's SafeString so the value is
                 // produced by the same Handlebars instance that renders it.
                 return new hb.SafeString(buildMissingPlaceholder("helper", name, placeholderTitle));
             });
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             hb.registerHelper("blockHelperMissing", function (this: any, context: any, options: any) {
                 const name = options?.name ?? "(unknown)";
-                // eslint-disable-next-line no-console
                 console.warn(`[TemplateService] Missing Handlebars block helper '#${name}'. Rendering {{else}} fallback (if any) and an inline placeholder. If '${name}' comes from an extensibility library, the library may have failed to load \u2014 check earlier console output.`);
                 // Default Handlebars behaviour for an unresolved block helper is:
                 //   - if context is truthy, render the main body (options.fn)
