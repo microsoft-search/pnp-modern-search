@@ -168,6 +168,12 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
             this.errorMessage = error.message ? error.message : error;
         }
 
+        // Re-check disposal here: the await above yields control and the instance can be disposed in
+        // the meantime, leaving 'this.context' undefined when this code resumes.
+        if (this._webPartDisposed || !this.context) {
+            return;
+        }
+
         if (this.context.propertyPane && this.context.propertyPane.isPropertyPaneOpen()) {
             this.context.propertyPane.refresh();
         }

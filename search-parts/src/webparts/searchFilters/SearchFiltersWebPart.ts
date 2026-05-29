@@ -284,7 +284,14 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
             this.lastLayoutKey = this.properties.selectedLayoutKey;
         }
 
-        // Refresh the property pane to get layout and data source options
+        // Refresh the property pane to get layout and data source options.
+        // Re-check disposal here: the awaits above (audience, template, layout) yield control, and the
+        // instance can be disposed in the meantime (e.g. another Web Part's source change races with
+        // removal in edit mode), leaving 'this.context' undefined when this code resumes.
+        if (this._webPartDisposed || !this.context) {
+            return;
+        }
+
         if (this.context.propertyPane.isPropertyPaneOpen()) {
             this.context.propertyPane.refresh();
         }
