@@ -54,6 +54,14 @@ export class FilterValueOperator extends React.Component<IFilterValueOperatorPro
                                                             '.ms-ChoiceField + .ms-ChoiceField': {
                                                                 marginLeft: 0
                                                             },
+                                                            // Render the visual '/' separator between the two operators as a
+                                                            // presentational pseudo-element instead of a (disabled) radio option,
+                                                            // so screen readers announce only the two real options (e.g. '1 of 2').
+                                                            '.ms-ChoiceField + .ms-ChoiceField::before': {
+                                                                content: '"/"',
+                                                                padding: '0 4px',
+                                                                color: this.props.themeVariant && this.props.themeVariant.isInverted ? '#fff' : (this.props.themeVariant ? this.props.themeVariant.semanticColors.bodyText : undefined)
+                                                            },
                                                             'label::before, label::after': {
                                                                 display: 'none',
                                                             },
@@ -76,11 +84,6 @@ export class FilterValueOperator extends React.Component<IFilterValueOperatorPro
                                                         key: FilterConditionOperator.AND,
                                                         text: commonStrings.Filters.AndOperator,
                                                         title: commonStrings.Filters.UseAndOperatorValues
-                                                    },
-                                                    {
-                                                        key: null,
-                                                        text: "/",
-                                                        disabled: true
                                                     },
                                                     {
                                                         key: FilterConditionOperator.OR,
