@@ -198,7 +198,8 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
 
     /**
      * Resolves the key of the vertical that should be selected by default, based either on the
-     * configured query-string parameter or on the current page URL (for link verticals).     * Returns undefined when no single matching vertical is found.
+     * configured query-string parameter or on the current page URL (for link verticals).
+     * Returns undefined when no single matching vertical is found.
      */
     private _resolveDefaultSelectedKey(): string {
 

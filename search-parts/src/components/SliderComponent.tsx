@@ -233,7 +233,7 @@ export class SliderComponent extends React.Component<ISliderComponentProps, ISli
         try {
 
             // Get item properties
-            const items = this.props.items ? this.props.items : [];
+            const items: any[] = Array.isArray(this.props.items) ? this.props.items : [];
             const sliderOptions = this.props.options ? this.props.options as ISliderOptions : {};
             const templateContext = !isEmpty(this.props.context) ? this.props.context : null;
 
@@ -242,8 +242,8 @@ export class SliderComponent extends React.Component<ISliderComponentProps, ISli
 
             // Group items into chunks based on numberOfSlides
             const groupedItems: any[][] = [];
-            for (let i = 0; i < (items as any[]).length; i += numberOfSlides) {
-                groupedItems.push((items as any[]).slice(i, i + numberOfSlides));
+            for (let i = 0; i < items.length; i += numberOfSlides) {
+                groupedItems.push(items.slice(i, i + numberOfSlides));
             }
 
             // Map grouped items to JSX elements (one element per page)
