@@ -61,6 +61,8 @@ export interface ICollapsibleContentComponentState {
 export class CollapsibleContentComponent extends React.Component<ICollapsibleContentComponentProps, ICollapsibleContentComponentState> {
 
     private componentRef = React.createRef<HTMLDivElement>();
+    private headerRef = React.createRef<HTMLDivElement>();
+    private headerDividerProps: IGroupDividerProps;
     private storageKey: string;
 
     public constructor(props) {
@@ -88,6 +90,7 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
         this._onRenderCell = this._onRenderCell.bind(this);
         this._onRenderHeader = this._onRenderHeader.bind(this);
         this._onTogglePanel = this._onTogglePanel.bind(this);
+        this._collapsePanel = this._collapsePanel.bind(this);
     }
 
     public componentDidUpdate(prevProps: ICollapsibleContentComponentProps) {
@@ -171,7 +174,38 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
             groups={groups}
         />;
 
-        return <div ref={this.componentRef} data-name={this.props.groupName} data-is-scrollable={true}>{groupedList}</div>;
+        return <div ref={this.componentRef} data-name={this.props.groupName} data-is-scrollable={true} onKeyDown={(e) => {
+            // Allow keyboard users to close an opened widget and return to its header (#3900).
+            // Escape from anywhere inside the expanded widget collapses it and moves focus back
+            // to the header so it can be re-opened or navigated away from.
+            if (e.key === 'Escape' && !this.state.isCollapsed) {
+                this._collapsePanel();
+            }
+        }}>{groupedList}</div>;
+    }
+
+    /**
+     * Collapses the panel (if expanded) and returns focus to the header so keyboard users are not
+     * trapped inside the filter options (#3900).
+     */
+    private _collapsePanel() {
+        if (this.state.isCollapsed) {
+            return;
+        }
+
+        sessionStorage.setItem(this.storageKey, JSON.stringify(true));
+        this.setState({ isCollapsed: true });
+
+        if (this.headerDividerProps && this.headerDividerProps.onToggleCollapse) {
+            this.headerDividerProps.onToggleCollapse(this.headerDividerProps.group);
+        }
+
+        // Restore focus to the header once the collapse has been applied.
+        window.requestAnimationFrame(() => {
+            if (this.headerRef.current) {
+                this.headerRef.current.focus();
+            }
+        });
     }
 
     private _onTogglePanel(props: IGroupDividerProps) {
@@ -187,6 +221,9 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
     }
 
     private _onRenderHeader(props: IGroupDividerProps): JSX.Element {
+        // Keep a reference to the divider props so the panel can be collapsed programmatically
+        // (e.g. on Escape) and stay in sync with the GroupedList internal collapse state (#3900).
+        this.headerDividerProps = props;
         let textColor: string = this.props.themeVariant && this.props.themeVariant.isInverted ? (this.props.themeVariant ? this.props.themeVariant.semanticColors.bodyText : '#323130') : this.props.themeVariant.semanticColors.inputText;
         const warningDescriptionId = `pnp-warning-${(this.props.groupName || 'group').toString().replace(/[^a-zA-Z0-9_-]/g, '-')}`;
         const textComponentStyles: IStyleFunctionOrObject<ITextProps, ITextStyles> = {
@@ -197,14 +234,17 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
         return (
             <div style={{ position: 'relative' }}>
                 <div
+                    ref={this.headerRef}
                     className={styles.collapsible__filterPanel__body__group__header}
                     role={"menubar"}
                     tabIndex={0}
                     onClick={() => {
                         this._onTogglePanel(props);
                     }}
-                    onKeyPress={(e) => {
-                        if (e.charCode === 13) {
+                    onKeyDown={(e) => {
+                        // Enter or Space toggles the widget open/closed from the header.
+                        if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+                            e.preventDefault();
                             this._onTogglePanel(props);
                         }
                     }}
