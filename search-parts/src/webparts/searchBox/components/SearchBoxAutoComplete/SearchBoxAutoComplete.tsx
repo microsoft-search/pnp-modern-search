@@ -56,8 +56,14 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
                 return groups;
             }, {});
 
+            // Total number of suggestions that will actually be rendered (capped per group). Used to
+            // expose `aria-setsize`/`aria-posinset` so screen readers announce "x of y" correctly.
+            const totalRenderedSuggestions = Object.keys(suggestionGroups).reduce((total, groupName) => {
+                return total + Math.min(suggestionGroups[groupName].suggestions.length, this.props.numberOfSuggestionsPerGroup);
+            }, 0);
+
             let indexIncrementer = -1;
-            const renderedSuggestionGroups = Object.keys(suggestionGroups).map(groupName => {
+            const renderedSuggestionGroups = Object.keys(suggestionGroups).map((groupName, groupIndex) => {
                 const currentGroup = suggestionGroups[groupName];
                 let renderedSuggestions: JSX.Element[] = [];
 
@@ -65,21 +71,23 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
 
                     if (i < this.props.numberOfSuggestionsPerGroup) {
                         indexIncrementer++;
-                        renderedSuggestions.push(this._renderSuggestion(item.suggestion, indexIncrementer));
+                        renderedSuggestions.push(this._renderSuggestion(item.suggestion, indexIncrementer, totalRenderedSuggestions));
                     }
                 });
 
+                const groupLabelId = `pnp-searchbox-suggestion-group-${groupIndex}`;
+
                 return (
-                    <>
-                        <Label className={styles.suggestionGroupName}>{groupName}</Label>
+                    <div key={groupLabelId} role="group" aria-labelledby={groupLabelId}>
+                        <Label id={groupLabelId} className={styles.suggestionGroupName}>{groupName}</Label>
                         <div>
                             {renderedSuggestions}
                         </div>
-                    </>
+                    </div>
                 );
             });
 
-            renderSuggestions = <div className={styles.suggestionPanel}>
+            renderSuggestions = <div className={styles.suggestionPanel} role="listbox" aria-label={webPartStrings.SearchBox.DefaultPlaceholder}>
                 {renderedSuggestionGroups}
             </div>;
         }
@@ -87,7 +95,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
         return renderSuggestions;
     }
 
-    private _renderSuggestion(suggestion: ISuggestion, suggestionIndex: number): JSX.Element {
+    private _renderSuggestion(suggestion: ISuggestion, suggestionIndex: number, totalSuggestions: number): JSX.Element {
         const thisComponent = this;
 
         const suggestionInner = <>
@@ -114,6 +122,11 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
 
         const baseProps = {
             key: suggestionIndex,
+            id: `pnp-searchbox-suggestion-${suggestionIndex}`,
+            role: 'option',
+            'aria-setsize': totalSuggestions,
+            'aria-posinset': suggestionIndex + 1,
+            'aria-selected': false,
             title: suggestion.hoverText ? suggestion.hoverText : "",
             className: styles.suggestionItem,
             'data-is-focusable': true, // Used by FocusZone component
@@ -373,18 +386,18 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
                         }
                     }}
                 >
-                    <span style={{ 
+                    <span style={{
                         marginRight: '6px',
                         color: 'white',
                         fontSize: textFontSize,
                         fontWeight: '400'
                     }}>{buttonText}</span>
-                    <Icon 
-                        iconName={iconName} 
-                        style={{ 
-                            fontSize: iconFontSize, 
+                    <Icon
+                        iconName={iconName}
+                        style={{
+                            fontSize: iconFontSize,
                             color: 'white'
-                        }} 
+                        }}
                     />
                 </DefaultButton>
             );
@@ -474,7 +487,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
             if (parentStackingContext) {
                 parentStackingContext.classList.add(styles.parentStackingCtx);
             }
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (error) { }
 
         let searchBoxRef = React.createRef<ISearchBox>();
@@ -518,7 +531,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
                             className={styles.searchTextField}
                             value={this.state.searchInputValue}
                             autoComplete="off"
-                            style={{...dynamicSearchBoxTextStyle, ...dynamicPlaceholderStyle, ...dynamicIconStyle}}
+                            style={{ ...dynamicSearchBoxTextStyle, ...dynamicPlaceholderStyle, ...dynamicIconStyle }}
                             //data-is-focusable={this.state.proposedQuerySuggestions.length > 0}
                             onChange={(event) => {
                                 if (!this._onChangeDebounced) {
