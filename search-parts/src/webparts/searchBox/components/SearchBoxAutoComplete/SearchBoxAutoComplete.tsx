@@ -22,7 +22,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
      * `option` element references resolve to the correct instance for screen readers.
      */
     private get _idPrefix(): string {
-        return this.props.domElement && this.props.domElement.id ? this.props.domElement.id : 'pnp-searchbox';
+        return this.props.domElement?.id ? this.props.domElement.id : 'pnp-searchbox';
     }
 
     public constructor(props: ISearchBoxAutoCompleteProps) {

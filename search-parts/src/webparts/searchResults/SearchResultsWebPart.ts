@@ -2455,7 +2455,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         // Notify dynamic data consumers data have changed.
         // Selection changes can occur while the web part is being torn down, so guard against a missing
         // or disposed context/dynamicDataSourceManager (same pattern as _onDataRetrieved).
-        if (this.properties.allowWebPartConnections && this.context && this.context.dynamicDataSourceManager && !this.context.dynamicDataSourceManager.isDisposed) {
+        if (this.properties.allowWebPartConnections && this.context?.dynamicDataSourceManager && !this.context.dynamicDataSourceManager.isDisposed) {
             this.context.dynamicDataSourceManager.notifyPropertyChanged(DynamicDataProperties.AvailableFieldValuesFromResults);
 
             // Also notify consumers connected to the whole results source object so a connection to the
