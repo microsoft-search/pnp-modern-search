@@ -16,6 +16,15 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
     private _onChangeDebounced = null;
     private _containerElemRef: React.RefObject<any> = null;
 
+    /**
+     * Per-instance prefix used to keep generated DOM ids (suggestion groups/options) unique when
+     * multiple Search Box Web Parts are rendered on the same page, so that `aria-labelledby` and the
+     * `option` element references resolve to the correct instance for screen readers.
+     */
+    private get _idPrefix(): string {
+        return this.props.domElement && this.props.domElement.id ? this.props.domElement.id : 'pnp-searchbox';
+    }
+
     public constructor(props: ISearchBoxAutoCompleteProps) {
 
         super(props);
@@ -75,7 +84,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
                     }
                 });
 
-                const groupLabelId = `pnp-searchbox-suggestion-group-${groupIndex}`;
+                const groupLabelId = `${this._idPrefix}-suggestion-group-${groupIndex}`;
 
                 return (
                     // NOSONAR - intentional WAI-ARIA listbox grouping; native <optgroup>/<select> cannot render rich suggestion content (icons, sanitized HTML, links)
@@ -123,7 +132,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
 
         const baseProps = {
             key: suggestionIndex,
-            id: `pnp-searchbox-suggestion-${suggestionIndex}`,
+            id: `${this._idPrefix}-suggestion-${suggestionIndex}`,
             role: 'option',
             'aria-setsize': totalSuggestions,
             'aria-posinset': suggestionIndex + 1,
