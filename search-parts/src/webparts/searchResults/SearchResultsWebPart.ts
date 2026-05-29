@@ -2122,7 +2122,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             }
 
             const refs = filterData?.connectedResultsSourceReferences;
-            if (refs && refs.some(ref => ref.split(':')[0]?.endsWith(instanceId))) {
+            if (refs?.some(ref => ref.split(':')[0]?.endsWith(instanceId))) {
                 Log.verbose(LogSource, `[_checkPotentialIncomingConnections] Detected incoming filter connection from source '${sourceInfo.id}' for instance '${instanceId}'.`, this.webPartInstanceServiceScope);
                 return true;
             }

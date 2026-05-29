@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Text } from '@microsoft/sp-core-library';
 import { DynamicProperty } from '@microsoft/sp-component-base';
 import {
     IPropertyPaneGroup,
@@ -347,7 +346,7 @@ export class ConnectionsPropertyPaneBuilder {
             // Check bidirectional connection: does the filter web part also connect back to this results web part?
             if (properties.filtersDataSourceReference && filtersConnectionSourceData) {
                 const filterData: IDataFilterSourceData = DynamicPropertyHelper.tryGetValueSafe(filtersConnectionSourceData);
-                if (filterData && filterData.connectedResultsSourceReferences) {
+                if (filterData?.connectedResultsSourceReferences) {
                     // Extract sourceId from each reference (format: "sourceId:propertyId") and check if it ends with this web part's instanceId
                     const isConnectedBack = filterData.connectedResultsSourceReferences.some(
                         ref => {
@@ -405,7 +404,7 @@ export class ConnectionsPropertyPaneBuilder {
                     const selectedKeysAsText: string[] = [];
 
                     availableVerticals.verticalsConfiguration.forEach(verticalConfiguration => {
-                        if (properties.selectedVerticalKeys.indexOf(verticalConfiguration.key) !== -1) {
+                        if (properties.selectedVerticalKeys.includes(verticalConfiguration.key)) {
                             selectedKeysAsText.push(verticalConfiguration.tabName);
                         }
                     });
@@ -523,7 +522,7 @@ export class ConnectionsPropertyPaneBuilder {
         return queryTransformationFields;
     }
 
-    private validateEmptyField = (value: string): string => {
+    private readonly validateEmptyField = (value: string): string => {
         if (!value) {
             return this.options.commonStrings.General.EmptyFieldErrorMessage;
         }
