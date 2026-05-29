@@ -30,6 +30,7 @@ import {
 } from "@pnp/modern-search-extensibility";
 import { IComponentFieldsConfiguration } from "../../models/common/IComponentFieldsConfiguration";
 import { initializeFileTypeIcons } from "@fluentui/react-file-type-icons";
+import { FileTypeIconHelper } from "../../helpers/FileTypeIconHelper";
 import { GlobalSettings } from "@fluentui/react";
 import {
     IDataResultType,
@@ -254,7 +255,11 @@ export class TemplateService implements ITemplateService {
             // Register icons and pull the fonts from the default SharePoint cdn.
             // Do not load icons twice as it may generate warnings
             if (!GlobalSettings.getValue("fileTypeIconsInitialized")) {
-                initializeFileTypeIcons();
+                // Provide the SharePoint CDN prefix so file type icons are served from the same CDN host
+                // SharePoint uses (more likely reachable in restricted environments). The version-correct
+                // icon path still comes from Fluent. Resolved once here and reused by FileIconComponent.
+                FileTypeIconHelper.setCdnPrefix(this.pageContext?.legacyPageContext?.cdnPrefix);
+                initializeFileTypeIcons(FileTypeIconHelper.getBaseUrl());
                 GlobalSettings.setValue("fileTypeIconsInitialized", true);
             }
         });
