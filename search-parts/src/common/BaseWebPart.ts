@@ -235,6 +235,7 @@ export abstract class BaseWebPart<T extends IBaseWebPartProps> extends BaseClien
                     properties: this.properties,
                     onGetErrorMessage: null,
                     deferredValidationTime: 0,
+                    searchTextLimit: 3,
                     key: 'audienceTargeting'
                 }),
                 this._basePropertyFieldNumber('audienceCacheDuration', {
