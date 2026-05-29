@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 import { ILayoutDefinition, LayoutRenderType, LayoutType } from "@pnp/modern-search-extensibility";
 import * as strings from 'CommonStrings';
 import DetailsListContent from './results/detailsList/details-list.html';
