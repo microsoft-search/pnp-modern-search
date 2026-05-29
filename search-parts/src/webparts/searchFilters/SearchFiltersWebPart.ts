@@ -14,12 +14,11 @@ import {
     PropertyPaneButton,
     PropertyPaneButtonType
 } from '@microsoft/sp-property-pane';
-import { PropertyFieldColorPicker, PropertyFieldColorPickerStyle } from '@pnp/spfx-property-controls/lib/PropertyFieldColorPicker';
 import { DynamicProperty } from '@microsoft/sp-component-base';
 import { IPropertyPanePage } from '@microsoft/sp-property-pane';
 import * as webPartStrings from 'SearchFiltersWebPartStrings';
 import * as commonStrings from 'CommonStrings';
-import SearchFilters from './components/SearchFiltersContainer';
+const SearchFilters = React.lazy(() => import(/* webpackChunkName: 'pnp-modern-search-filters-container' */ './components/SearchFiltersContainer'));
 import { ISearchFiltersContainerProps } from './components/ISearchFiltersContainerProps';
 import ISearchFiltersWebPartProps from './ISearchFiltersWebPartProps';
 import IDynamicDataService from '../../services/dynamicDataService/IDynamicDataService';
@@ -38,7 +37,6 @@ import { FileFormat, ITemplateService } from '../../services/templateService/ITe
 import { isEmpty, isEqual, uniqBy, cloneDeep, uniq, sortBy } from '@microsoft/sp-lodash-subset';
 import { BuiltinFilterTemplates, BuiltinFilterTypes } from '../../layouts/AvailableTemplates';
 import { ServiceScope } from '@microsoft/sp-core-library';
-import { AvailableComponents } from '../../components/AvailableComponents';
 import { PropertyPaneAsyncCombo } from '../../controls/PropertyPaneAsyncCombo/PropertyPaneAsyncCombo';
 import { BaseWebPart } from '../../common/BaseWebPart';
 import commonStyles from '../../styles/Common.module.scss';
@@ -143,7 +141,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     /**
      * The available web component definitions (not registered yet)
      */
-    private availableWebComponentDefinitions: IComponentDefinition<any>[] = AvailableComponents.BuiltinComponents;
+    private availableWebComponentDefinitions: IComponentDefinition<any>[] = [];
 
     /**
      * The available connections as property pane fields
@@ -242,6 +240,8 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
         // Register Web Components in the global page context. We need to do this BEFORE the template processing to avoid race condition.
         // Web components are only defined once.
         // We need to register components here in the case where the Search Results WP is not present on the page
+        const { AvailableComponents } = await import(/* webpackChunkName: 'pnp-modern-search-web-components' */ '../../components/AvailableComponents');
+        this.availableWebComponentDefinitions = AvailableComponents.BuiltinComponents;
         await this.templateService.registerWebComponents(this.availableWebComponentDefinitions, this.instanceId);
 
         return super.onInit();
@@ -308,39 +308,43 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
             filterResults = this._initStaticFilters(filterResults, this.properties.filtersConfiguration);
 
             renderRootElement = React.createElement(
-                SearchFilters,
-                {
-                    templateContent: this.templateContentToDisplay,
-                    availableFilters: filterResults,
-                    filtersConfiguration: this.properties.filtersConfiguration,
-                    domElement: this.domElement,
-                    instanceId: this.instanceId,
-                    selectedLayoutKey: this.properties.selectedLayoutKey,
-                    properties: JSON.parse(JSON.stringify(this.properties)),
-                    themeVariant: this._themeVariant,
-                    context: this.context,
-                    onUpdateFilters: (updatedFilters: IDataFilter[]) => {
+                React.Suspense,
+                { fallback: null },
+                React.createElement(
+                    SearchFilters,
+                    {
+                        templateContent: this.templateContentToDisplay,
+                        availableFilters: filterResults,
+                        filtersConfiguration: this.properties.filtersConfiguration,
+                        domElement: this.domElement,
+                        instanceId: this.instanceId,
+                        selectedLayoutKey: this.properties.selectedLayoutKey,
+                        properties: JSON.parse(JSON.stringify(this.properties)),
+                        themeVariant: this._themeVariant,
+                        context: this.context,
+                        onUpdateFilters: (updatedFilters: IDataFilter[]) => {
 
-                        this._selectedFilters = updatedFilters;
+                            this._selectedFilters = updatedFilters;
 
-                        // Notfify dynamic data consumers data have changed
-                        this.context.dynamicDataSourceManager.notifyPropertyChanged(ComponentType.SearchFilters);
-                    },
-                    templateService: this.templateService,
-                    taxonomyService: this.taxonomyService,
-                    webPartTitleProps: {
-                        displayMode: this.displayMode,
-                        title: this.properties.title,
-                        updateProperty: this._updateTitleProperty,
-                        className: commonStyles.wpTitle
-                    },
-                    filterBackgroundColor: this.properties.filterBackgroundColor,
-                    filterBorderColor: this.properties.filterBorderColor,
-                    filterBorderThickness: this.properties.filterBorderThickness,
-                    titleFont: this.properties.titleFont,
-                    titleFontSize: this.properties.titleFontSize,
-                    titleFontColor: this.properties.titleFontColor
-                } as ISearchFiltersContainerProps
+                            // Notify dynamic data consumers data have changed
+                            this.context.dynamicDataSourceManager.notifyPropertyChanged(ComponentType.SearchFilters);
+                        },
+                        templateService: this.templateService,
+                        taxonomyService: this.taxonomyService,
+                        webPartTitleProps: {
+                            displayMode: this.displayMode,
+                            title: this.properties.title,
+                            updateProperty: this._updateTitleProperty,
+                            className: commonStyles.wpTitle
+                        },
+                        filterBackgroundColor: this.properties.filterBackgroundColor,
+                        filterBorderColor: this.properties.filterBorderColor,
+                        filterBorderThickness: this.properties.filterBorderThickness,
+                        titleFont: this.properties.titleFont,
+                        titleFontSize: this.properties.titleFontSize,
+                        titleFontColor: this.properties.titleFontColor
+                    } as ISearchFiltersContainerProps
+                )
             );
 
         } else {
@@ -739,7 +743,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
             groupName: webPartStrings.Styling.StylingOptionsGroupName,
             isCollapsed: true,
             groupFields: [
-                PropertyFieldColorPicker('filterBackgroundColor', {
+                this._basePropertyFieldColorPicker('filterBackgroundColor', {
                     label: webPartStrings.Styling.FilterBackgroundColorLabel,
                     selectedColor: this.properties.filterBackgroundColor,
                     onPropertyChange: this.onPropertyPaneFieldChanged,
@@ -748,10 +752,10 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                     debounce: 1000,
                     isHidden: false,
                     alphaSliderHidden: false,
-                    style: PropertyFieldColorPickerStyle.Inline,
+                    style: this._basePropertyFieldColorPickerStyle.Inline,
                     key: 'filterBackgroundColorFieldId'
                 }),
-                PropertyFieldColorPicker('filterBorderColor', {
+                this._basePropertyFieldColorPicker('filterBorderColor', {
                     label: webPartStrings.Styling.FilterBorderColorLabel,
                     selectedColor: this.properties.filterBorderColor,
                     onPropertyChange: this.onPropertyPaneFieldChanged,
@@ -760,7 +764,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                     debounce: 1000,
                     isHidden: false,
                     alphaSliderHidden: false,
-                    style: PropertyFieldColorPickerStyle.Inline,
+                    style: this._basePropertyFieldColorPickerStyle.Inline,
                     key: 'filterBorderColorFieldId'
                 }),
                 PropertyPaneSlider('filterBorderThickness', {
@@ -1702,6 +1706,8 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     }
 
     public async loadPropertyPaneResources(): Promise<void> {
+
+        await this.loadCommonPropertyPaneResources();
 
         const { PropertyFieldCodeEditor, PropertyFieldCodeEditorLanguages } = await import(
             /* webpackChunkName: 'pnp-modern-search-code-editor', webpackMode: 'lazy' */

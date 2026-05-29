@@ -11,12 +11,11 @@ import {
     PropertyPaneButton,
     PropertyPaneButtonType
 } from '@microsoft/sp-property-pane';
-import { PropertyFieldColorPicker, PropertyFieldColorPickerStyle } from '@pnp/spfx-property-controls/lib/PropertyFieldColorPicker';
 import * as commonStrings from 'CommonStrings';
 import * as webPartStrings from 'SearchVerticalsWebPartStrings';
 import { ISearchVerticalsContainerProps } from './components/ISearchVerticalsContainerProps';
 import { ISearchVerticalsWebPartProps } from './ISearchVerticalsWebPartProps';
-import SearchVerticalsContainer from './components/SearchVerticalsContainer';
+const SearchVerticalsContainer = React.lazy(() => import(/* webpackChunkName: 'pnp-modern-search-verticals-container' */ './components/SearchVerticalsContainer'));
 import { ComponentType } from '../../common/ComponentType';
 import { IDynamicDataCallables, IDynamicDataPropertyDefinition } from '@microsoft/sp-dynamic-data';
 import { IDataVerticalSourceData } from '../../models/dynamicData/IDataVerticalSourceData';
@@ -157,33 +156,37 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
                 verticalsToBeDisplayed = await this._filterVerticalsByAudience(verticalsToBeDisplayed);
             }
             renderRootElement = React.createElement(
-                SearchVerticalsContainer,
-                {
-                    verticals: verticalsToBeDisplayed,
-                    webPartTitleProps: {
-                        displayMode: this.displayMode,
-                        title: this.properties.title,
-                        updateProperty: (value: string) => {
-                            this.properties.title = value;
-                            this.render();
+                React.Suspense,
+                { fallback: null },
+                React.createElement(
+                    SearchVerticalsContainer,
+                    {
+                        verticals: verticalsToBeDisplayed,
+                        webPartTitleProps: {
+                            displayMode: this.displayMode,
+                            title: this.properties.title,
+                            updateProperty: (value: string) => {
+                                this.properties.title = value;
+                                this.render();
+                            },
+                            themeVariant: this._themeVariant,
+                            className: commonStyles.wpTitle
                         },
+                        tokenService: this.tokenService,
                         themeVariant: this._themeVariant,
-                        className: commonStyles.wpTitle
-                    },
-                    tokenService: this.tokenService,
-                    themeVariant: this._themeVariant,
-                    onVerticalSelected: this.onVerticalSelected.bind(this),
-                    defaultSelectedKey: defaultSelectedKey,
-                    verticalBackgroundColor: this.properties.verticalBackgroundColor,
-                    verticalBorderColor: this.properties.verticalBorderColor,
-                    verticalBorderThickness: this.properties.verticalBorderThickness,
-                    verticalFontSize: this.properties.verticalFontSize,
-                    verticalMouseOverColor: this.properties.verticalMouseOverColor,
-                    titleFont: this.properties.titleFont,
-                    titleFontSize: this.properties.titleFontSize,
-                    titleFontColor: this.properties.titleFontColor,
-                    instanceId: this.instanceId
-                } as ISearchVerticalsContainerProps
+                        onVerticalSelected: this.onVerticalSelected.bind(this),
+                        defaultSelectedKey: defaultSelectedKey,
+                        verticalBackgroundColor: this.properties.verticalBackgroundColor,
+                        verticalBorderColor: this.properties.verticalBorderColor,
+                        verticalBorderThickness: this.properties.verticalBorderThickness,
+                        verticalFontSize: this.properties.verticalFontSize,
+                        verticalMouseOverColor: this.properties.verticalMouseOverColor,
+                        titleFont: this.properties.titleFont,
+                        titleFontSize: this.properties.titleFontSize,
+                        titleFontColor: this.properties.titleFontColor,
+                        instanceId: this.instanceId
+                    } as ISearchVerticalsContainerProps
+                )
             );
         }
 
@@ -325,6 +328,8 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
     }
 
     protected async loadPropertyPaneResources(): Promise<void> {
+
+        await this.loadCommonPropertyPaneResources();
 
         // tslint:disable-next-line:no-shadowed-variable
         const { PropertyFieldCollectionData, CustomCollectionFieldType } = await import(
@@ -507,7 +512,7 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
             groupName: webPartStrings.PropertyPane.Styling.WebPartContentStylingGroupName,
             isCollapsed: true,
             groupFields: [
-                PropertyFieldColorPicker('verticalBackgroundColor', {
+                this._basePropertyFieldColorPicker('verticalBackgroundColor', {
                     label: webPartStrings.PropertyPane.Styling.VerticalBackgroundColorLabel,
                     selectedColor: this.properties.verticalBackgroundColor,
                     onPropertyChange: this.onPropertyPaneFieldChanged,
@@ -516,10 +521,10 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
                     debounce: 1000,
                     isHidden: false,
                     alphaSliderHidden: false,
-                    style: PropertyFieldColorPickerStyle.Inline,
+                    style: this._basePropertyFieldColorPickerStyle.Inline,
                     key: 'verticalBackgroundColorFieldId'
                 }),
-                PropertyFieldColorPicker('verticalMouseOverColor', {
+                this._basePropertyFieldColorPicker('verticalMouseOverColor', {
                     label: webPartStrings.PropertyPane.Styling.MouseOverColorLabel,
                     selectedColor: this.properties.verticalMouseOverColor,
                     onPropertyChange: this.onPropertyPaneFieldChanged,
@@ -528,10 +533,10 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
                     debounce: 1000,
                     isHidden: false,
                     alphaSliderHidden: false,
-                    style: PropertyFieldColorPickerStyle.Inline,
+                    style: this._basePropertyFieldColorPickerStyle.Inline,
                     key: 'verticalMouseOverColorFieldId'
                 }),
-                PropertyFieldColorPicker('verticalBorderColor', {
+                this._basePropertyFieldColorPicker('verticalBorderColor', {
                     label: webPartStrings.PropertyPane.Styling.VerticalBorderColorLabel,
                     selectedColor: this.properties.verticalBorderColor,
                     onPropertyChange: this.onPropertyPaneFieldChanged,
@@ -540,7 +545,7 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
                     debounce: 1000,
                     isHidden: false,
                     alphaSliderHidden: false,
-                    style: PropertyFieldColorPickerStyle.Inline,
+                    style: this._basePropertyFieldColorPickerStyle.Inline,
                     key: 'verticalBorderColorFieldId'
                 }),
                 PropertyPaneSlider('verticalBorderThickness', {

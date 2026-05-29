@@ -21,9 +21,7 @@ import {
     IPropertyPanePage,
     IPropertyPaneGroup
 } from "@microsoft/sp-property-pane";
-import { PropertyFieldColorPicker, PropertyFieldColorPickerStyle } from '@pnp/spfx-property-controls/lib/PropertyFieldColorPicker';
-import SearchBoxContainer from './components/SearchBoxContainer';
-import { ISearchBoxContainerProps } from './components/ISearchBoxContainerProps';
+const SearchBoxContainer = React.lazy(() => import(/* webpackChunkName: 'pnp-modern-search-box-container' */ './components/SearchBoxContainer'));
 import { DynamicDataService } from '../../services/dynamicDataService/DynamicDataService';
 import { IDynamicDataCallables, IDynamicDataPropertyDefinition } from '@microsoft/sp-dynamic-data';
 import IDynamicDataService from '../../services/dynamicDataService/IDynamicDataService';
@@ -207,7 +205,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
             }
         }
 
-        renderRootElement = React.createElement(SearchBoxContainer, {
+        const searchBoxElement = React.createElement(SearchBoxContainer, {
             domElement: this.domElement,
             enableQuerySuggestions: this.properties.enableQuerySuggestions,
             inputValue: this._searchQueryText,
@@ -245,7 +243,9 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
                 themeVariant: this._themeVariant,
                 className: commonStyles.wpTitle
             }
-        } as ISearchBoxContainerProps);
+        });
+
+        renderRootElement = React.createElement(React.Suspense, { fallback: null }, searchBoxElement);
 
         // Error message
         if (this.errorMessage) {
@@ -363,6 +363,8 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
     }
 
     protected async loadPropertyPaneResources(): Promise<void> {
+
+        await this.loadCommonPropertyPaneResources();
 
         const { PropertyFieldCollectionData, CustomCollectionFieldType } = await import(
             /* webpackChunkName: 'pnp-modern-search-property-pane' */
@@ -642,7 +644,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
             }),
 
             // Colors
-            PropertyFieldColorPicker('searchBoxBorderColor', {
+            this._basePropertyFieldColorPicker('searchBoxBorderColor', {
                 label: webPartStrings.PropertyPane.SearchBoxStylingGroup.BorderColorLabel,
                 selectedColor: this.properties.searchBoxBorderColor,
                 onPropertyChange: this.onPropertyPaneFieldChanged,
@@ -651,10 +653,10 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
                 debounce: 500,
                 isHidden: false,
                 alphaSliderHidden: false,
-                style: PropertyFieldColorPickerStyle.Inline,
+                style: this._basePropertyFieldColorPickerStyle.Inline,
                 key: 'searchBoxBorderColorFieldId'
             }),
-            PropertyFieldColorPicker('searchBoxTextColor', {
+            this._basePropertyFieldColorPicker('searchBoxTextColor', {
                 label: webPartStrings.PropertyPane.SearchBoxStylingGroup.TextColorLabel,
                 selectedColor: this.properties.searchBoxTextColor,
                 onPropertyChange: this.onPropertyPaneFieldChanged,
@@ -663,10 +665,10 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
                 debounce: 500,
                 isHidden: false,
                 alphaSliderHidden: false,
-                style: PropertyFieldColorPickerStyle.Inline,
+                style: this._basePropertyFieldColorPickerStyle.Inline,
                 key: 'searchBoxTextColorFieldId'
             }),
-            PropertyFieldColorPicker('placeholderTextColor', {
+            this._basePropertyFieldColorPicker('placeholderTextColor', {
                 label: webPartStrings.PropertyPane.SearchBoxStylingGroup.PlaceholderTextColorLabel,
                 selectedColor: this.properties.placeholderTextColor,
                 onPropertyChange: this.onPropertyPaneFieldChanged,
@@ -675,10 +677,10 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
                 debounce: 500,
                 isHidden: false,
                 alphaSliderHidden: false,
-                style: PropertyFieldColorPickerStyle.Inline,
+                style: this._basePropertyFieldColorPickerStyle.Inline,
                 key: 'placeholderTextColorFieldId'
             }),
-            PropertyFieldColorPicker('searchButtonColor', {
+            this._basePropertyFieldColorPicker('searchButtonColor', {
                 label: webPartStrings.PropertyPane.SearchBoxStylingGroup.ButtonColorLabel,
                 selectedColor: this.properties.searchButtonColor,
                 onPropertyChange: this.onPropertyPaneFieldChanged,
@@ -687,7 +689,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
                 debounce: 500,
                 isHidden: false,
                 alphaSliderHidden: false,
-                style: PropertyFieldColorPickerStyle.Inline,
+                style: this._basePropertyFieldColorPickerStyle.Inline,
                 key: 'searchButtonColorFieldId'
             }),
 
