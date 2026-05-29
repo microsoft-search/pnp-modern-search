@@ -490,6 +490,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         // Check if instanceId is defined - it might not be initialized yet during early render cycles
         if (!instanceId) {
             Log.verbose(`[SearchResultsWebPart.renderCompleted]`, `instanceId is not yet initialized, skipping render`, this.context?.serviceScope);
+            super.renderCompleted();
             return;
         }
 
@@ -2432,7 +2433,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             }
         }
 
-        // Notfify dynamic data consumers data have changed
+        // Notify dynamic data consumers data have changed
         if (this.properties.allowWebPartConnections && this.context && this.context.dynamicDataSourceManager && !this.context.dynamicDataSourceManager.isDisposed) {
             this.context.dynamicDataSourceManager.notifyPropertyChanged(ComponentType.SearchResults);
         }
