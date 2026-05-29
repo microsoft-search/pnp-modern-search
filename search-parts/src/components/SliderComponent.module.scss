@@ -2,97 +2,85 @@
   width: 100%;
   height: var(--slide-height, 360px);
   position: relative;
+}
 
-  :global {
-    div[class*="root_"] {
-      height: 100%;
+/* The clipped window that shows one page at a time */
+.carouselViewport {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+/* The horizontal track holding all pages side by side; translated to page into view */
+.carouselTrack {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  width: 100%;
+  transition: transform 0.4s ease;
+}
+
+/* A single page occupying the full viewport width */
+.carouselPage {
+  flex: 0 0 100%;
+  width: 100%;
+  height: 100%;
+}
+
+/* Navigation arrows */
+.carouselButton {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 101;
+  width: 32px;
+  height: 32px;
+}
+
+.carouselButtonPrev {
+  left: -32px;
+}
+
+.carouselButtonNext {
+  right: -32px;
+}
+
+/* Page indicator dots */
+.carouselIndicators {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  list-style: none;
+  padding-inline-start: 0;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 8px;
+  z-index: 100;
+  margin: 0;
+
+  > li {
+    display: block;
+    box-sizing: border-box;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin: 0 6px;
+    cursor: pointer;
+    background-color: rgba(0, 0, 0, 0.4);
+    opacity: 0.6;
+    border: 2px solid rgba(255, 255, 255, 0.9);
+
+    &:hover {
+      opacity: 0.9;
     }
 
-    div[class*="container_"] {
-      height: 100%;
-      position: relative;
+    &.carouselIndicatorActive {
+      background-color: rgba(255, 255, 255, 0.9);
+      opacity: 1;
+      border-color: rgba(0, 0, 0, 0.6);
     }
-
-    div[class*="contentContainer_"] {
-      height: 100% !important;
-      overflow: hidden;
-      flex: 1 1 auto;
-    }
-
-    div[class*="slideWrapper_"] {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    div[class*="container_"] > div[class*="blockButtonsContainer_"],
-    div[class*="container_"] > div[class*="hiddenButtonsContainer_"],
-    div[class*="container_"] > div[class*="buttonsOnlyContainer_"] {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      width: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 101;
-    }
-
-    div[class*="container_"] > div[class*="blockButtonsContainer_"]:first-child,
-    div[class*="container_"] > div[class*="hiddenButtonsContainer_"]:first-child,
-    div[class*="container_"] > div[class*="buttonsOnlyContainer_"]:first-child {
-      left: -32px;
-    }
-
-    div[class*="container_"] > div[class*="blockButtonsContainer_"]:last-child,
-    div[class*="container_"] > div[class*="hiddenButtonsContainer_"]:last-child,
-    div[class*="container_"] > div[class*="buttonsOnlyContainer_"]:last-child {
-      right: -32px;
-    }
-
-    /* Style the indicators - make them visible and styled */
-    ol[class*="indicators_"],
-    div[class*="indicators_"] {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      list-style: none;
-      padding-inline-start: 0;
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 8px;
-      z-index: 100 !important;
-      margin: 0 !important;
-      padding-bottom: 0 !important;
-      
-      > li {
-        display: block;
-        text-indent: -999px;
-        background-color: rgba(0, 0, 0, 0.4) !important;
-        width: 12px !important;
-        height: 12px !important;
-        border-radius: 50% !important;
-        margin: 0 6px !important;
-        opacity: 0.6 !important;
-        border: 2px solid rgba(255, 255, 255, 0.9) !important;
-        border-top: 2px solid rgba(255, 255, 255, 0.9) !important;
-        border-bottom: 2px solid rgba(255, 255, 255, 0.9) !important;
-        
-        &:hover {
-          opacity: 0.9 !important;
-        }
-        
-        &[class*="active_"] {
-          background-color: rgba(255, 255, 255, 0.9) !important;
-          opacity: 1 !important;
-          border-color: rgba(0, 0, 0, 0.6) !important;
-          border-top-color: rgba(0, 0, 0, 0.6) !important;
-          border-bottom-color: rgba(0, 0, 0, 0.6) !important;
-        }
-      }
-    }
-
   }
 }
 
@@ -118,7 +106,7 @@
   max-width: var(--slide-width, 318px);
   height: var(--slide-height, 360px);
   flex-shrink: 0;
-  
+
   /* Ensure slide content fills the container */
   > div {
     width: 100%;
