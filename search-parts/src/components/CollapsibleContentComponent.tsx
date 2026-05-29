@@ -61,7 +61,7 @@ export interface ICollapsibleContentComponentState {
 export class CollapsibleContentComponent extends React.Component<ICollapsibleContentComponentProps, ICollapsibleContentComponentState> {
 
     private componentRef = React.createRef<HTMLDivElement>();
-    private headerRef = React.createRef<HTMLDivElement>();
+    private readonly headerRef = React.createRef<HTMLDivElement>();
     private headerDividerProps: IGroupDividerProps;
     private storageKey: string;
 
@@ -196,12 +196,12 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
         sessionStorage.setItem(this.storageKey, JSON.stringify(true));
         this.setState({ isCollapsed: true });
 
-        if (this.headerDividerProps && this.headerDividerProps.onToggleCollapse) {
+        if (this.headerDividerProps?.onToggleCollapse) {
             this.headerDividerProps.onToggleCollapse(this.headerDividerProps.group);
         }
 
         // Restore focus to the header once the collapse has been applied.
-        window.requestAnimationFrame(() => {
+        globalThis.requestAnimationFrame(() => {
             if (this.headerRef.current) {
                 this.headerRef.current.focus();
             }

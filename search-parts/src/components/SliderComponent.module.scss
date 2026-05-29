@@ -62,24 +62,29 @@
 
   > li {
     display: block;
-    box-sizing: border-box;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
     margin: 0 6px;
-    cursor: pointer;
-    background-color: rgba(0, 0, 0, 0.4);
-    opacity: 0.6;
-    border: 2px solid rgba(255, 255, 255, 0.9);
 
-    &:hover {
-      opacity: 0.9;
-    }
+    > button {
+      display: block;
+      box-sizing: border-box;
+      width: 12px;
+      height: 12px;
+      padding: 0;
+      border-radius: 50%;
+      cursor: pointer;
+      background-color: rgba(0, 0, 0, 0.4);
+      opacity: 0.6;
+      border: 2px solid rgba(255, 255, 255, 0.9);
 
-    &.carouselIndicatorActive {
-      background-color: rgba(255, 255, 255, 0.9);
-      opacity: 1;
-      border-color: rgba(0, 0, 0, 0.6);
+      &:hover {
+        opacity: 0.9;
+      }
+
+      &.carouselIndicatorActive {
+        background-color: rgba(255, 255, 255, 0.9);
+        opacity: 1;
+        border-color: rgba(0, 0, 0, 0.6);
+      }
     }
   }
 }

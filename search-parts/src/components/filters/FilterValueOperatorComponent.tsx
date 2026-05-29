@@ -60,7 +60,7 @@ export class FilterValueOperator extends React.Component<IFilterValueOperatorPro
                                                             '.ms-ChoiceField + .ms-ChoiceField::before': {
                                                                 content: '"/"',
                                                                 padding: '0 4px',
-                                                                color: this.props.themeVariant && this.props.themeVariant.isInverted ? '#fff' : (this.props.themeVariant ? this.props.themeVariant.semanticColors.bodyText : undefined)
+                                                                color: this.props.themeVariant?.isInverted ? '#fff' : this.props.themeVariant?.semanticColors.bodyText
                                                             },
                                                             'label::before, label::after': {
                                                                 display: 'none',

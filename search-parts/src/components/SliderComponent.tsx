@@ -143,7 +143,7 @@ export class SliderComponent extends React.Component<ISliderComponentProps, ISli
 
     private _clearAutoPlay(): void {
         if (this._autoPlayTimer !== undefined) {
-            window.clearInterval(this._autoPlayTimer);
+            globalThis.clearInterval(this._autoPlayTimer);
             this._autoPlayTimer = undefined;
         }
     }
@@ -160,7 +160,7 @@ export class SliderComponent extends React.Component<ISliderComponentProps, ISli
             return;
         }
 
-        this._autoPlayTimer = window.setInterval(() => {
+        this._autoPlayTimer = globalThis.setInterval(() => {
             if (!this._isHovering) {
                 this._goToNext();
             }
@@ -271,7 +271,7 @@ export class SliderComponent extends React.Component<ISliderComponentProps, ISli
             this._pageCount = carouselElements.length;
             if (previousPageCount !== this._pageCount) {
                 // Restart auto play once the rendered DOM reflects the new page count.
-                window.requestAnimationFrame(() => this._resetAutoPlay());
+                globalThis.requestAnimationFrame(() => this._resetAutoPlay());
             }
 
             const currentIndex = Math.max(0, Math.min(this.state.currentIndex, this._pageCount - 1));
@@ -336,21 +336,15 @@ export class SliderComponent extends React.Component<ISliderComponentProps, ISli
                 {showDots &&
                     <ol className={styles.carouselIndicators}>
                         {carouselElements.map((element, index) => (
-                            <li
-                                key={index}
-                                className={index === currentIndex ? styles.carouselIndicatorActive : undefined}
-                                role="button"
-                                tabIndex={0}
-                                aria-label={strings.Layouts.Slider.GoToPageLabel.replace('{0}', String(index + 1))}
-                                aria-current={index === currentIndex}
-                                onClick={() => this._goToIndex(index)}
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
-                                        e.preventDefault();
-                                        this._goToIndex(index);
-                                    }
-                                }}
-                            />
+                            <li key={`carousel-dot-${index}`}>
+                                <button
+                                    type="button"
+                                    className={index === currentIndex ? styles.carouselIndicatorActive : undefined}
+                                    aria-label={strings.Layouts.Slider.GoToPageLabel.replace('{0}', String(index + 1))}
+                                    aria-current={index === currentIndex}
+                                    onClick={() => this._goToIndex(index)}
+                                />
+                            </li>
                         ))}
                     </ol>
                 }

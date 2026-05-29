@@ -75,7 +75,7 @@ export interface IFilterCheckBoxState {
 
 export class FilterCheckBoxComponent extends React.Component<IFilterCheckBoxProps, IFilterCheckBoxState> {
 
-    private _rootRef: React.RefObject<HTMLDivElement> = React.createRef();
+    private readonly _rootRef: React.RefObject<HTMLDivElement> = React.createRef();
 
     public componentDidMount(): void {
         this._applyRadioSetSizeAria();

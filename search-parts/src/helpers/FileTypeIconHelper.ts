@@ -50,9 +50,8 @@ export class FileTypeIconHelper {
     public static getBaseUrl(): string {
 
         // 1. Explicit override wins, used as-is.
-        const override = (typeof window !== "undefined")
-            ? (window as unknown as { [key: string]: string })[FileTypeIconHelper.OverrideGlobalName]
-            : undefined;
+        const globalScope = globalThis as unknown as { [key: string]: string };
+        const override = globalScope[FileTypeIconHelper.OverrideGlobalName];
 
         if (override && typeof override === "string" && override.trim().length > 0) {
             return override.trim();
@@ -69,9 +68,9 @@ export class FileTypeIconHelper {
                 const iconPath = new URL(fluentBaseUrl).pathname;
                 return `https://${cdnHost}${iconPath}`;
             }
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (error) {
-            // Fall through to the Fluent default below.
+            // Malformed CDN host/path: fall back to the Fluent default CDN below.
+            console.warn('[FileTypeIconHelper] Failed to resolve SharePoint CDN base URL, falling back to Fluent default.', error);
         }
 
         // 3. Fluent UI default CDN.
