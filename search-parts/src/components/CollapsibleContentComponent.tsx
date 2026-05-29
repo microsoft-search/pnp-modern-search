@@ -91,6 +91,22 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
         this._onRenderHeader = this._onRenderHeader.bind(this);
         this._onTogglePanel = this._onTogglePanel.bind(this);
         this._collapsePanel = this._collapsePanel.bind(this);
+        this._onContainerKeyDown = this._onContainerKeyDown.bind(this);
+    }
+
+    public componentDidMount(): void {
+        // Listen for Escape on the container imperatively rather than via a JSX handler on a static
+        // element. The container is not an interactive control itself; it only catches Escape as it
+        // bubbles up from the filter options (#3900).
+        if (this.componentRef.current) {
+            this.componentRef.current.addEventListener('keydown', this._onContainerKeyDown);
+        }
+    }
+
+    public componentWillUnmount(): void {
+        if (this.componentRef.current) {
+            this.componentRef.current.removeEventListener('keydown', this._onContainerKeyDown);
+        }
     }
 
     public componentDidUpdate(prevProps: ICollapsibleContentComponentProps) {
@@ -174,14 +190,18 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
             groups={groups}
         />;
 
-        return <div ref={this.componentRef} data-name={this.props.groupName} data-is-scrollable={true} onKeyDown={(e) => {
-            // Allow keyboard users to close an opened widget and return to its header (#3900).
-            // Escape from anywhere inside the expanded widget collapses it and moves focus back
-            // to the header so it can be re-opened or navigated away from.
-            if (e.key === 'Escape' && !this.state.isCollapsed) {
-                this._collapsePanel();
-            }
-        }}>{groupedList}</div>;
+        return <div ref={this.componentRef} data-name={this.props.groupName} data-is-scrollable={true}>{groupedList}</div>;
+    }
+
+    /**
+     * Allow keyboard users to close an opened widget and return to its header (#3900). Escape from
+     * anywhere inside the expanded widget collapses it and moves focus back to the header so it can
+     * be re-opened or navigated away from.
+     */
+    private _onContainerKeyDown(e: KeyboardEvent): void {
+        if (e.key === 'Escape' && !this.state.isCollapsed) {
+            this._collapsePanel();
+        }
     }
 
     /**
