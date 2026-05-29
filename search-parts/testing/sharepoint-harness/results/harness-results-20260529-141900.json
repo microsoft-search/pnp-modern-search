@@ -1,0 +1,28 @@
+{
+  "startedAt": "2026-05-29T14:19:00.2004055+02:00",
+  "finishedAt": "2026-05-29T14:20:44.9221570+02:00",
+  "status": "Failed",
+  "scenarioPath": "C:\\GitHub\\pnp-modern-search\\search-parts\\testing\\sharepoint-harness\\exported-scenarios\\sample-scenario.json",
+  "resolvedResultsPath": "C:\\GitHub\\pnp-modern-search\\search-parts\\testing\\sharepoint-harness\\results\\harness-results-20260529-141900.json",
+  "selectedTests": [
+    "build",
+    "site",
+    "package",
+    "pages",
+    "smoke"
+  ],
+  "useUniquePageNames": false,
+  "skipWebPartProvisioning": false,
+  "tests": [
+    {
+      "name": "build",
+      "description": "Build the current SPFx .sppkg package",
+      "startedAt": "2026-05-29T14:19:00.2542525+02:00",
+      "finishedAt": "2026-05-29T14:20:44.9108406+02:00",
+      "durationSeconds": 104.657,
+      "status": "Failed",
+      "error": "pnpm build failed with exit code 1"
+    }
+  ],
+  "durationSeconds": 104.722
+}
