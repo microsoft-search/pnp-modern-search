@@ -22,7 +22,6 @@ import {
     IPropertyPaneGroup
 } from "@microsoft/sp-property-pane";
 const SearchBoxContainer = React.lazy(() => import(/* webpackChunkName: 'pnp-modern-search-box-container' */ './components/SearchBoxContainer'));
-import { ISearchBoxContainerProps } from './components/ISearchBoxContainerProps';
 import { DynamicDataService } from '../../services/dynamicDataService/DynamicDataService';
 import { IDynamicDataCallables, IDynamicDataPropertyDefinition } from '@microsoft/sp-dynamic-data';
 import IDynamicDataService from '../../services/dynamicDataService/IDynamicDataService';
@@ -244,7 +243,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
                 themeVariant: this._themeVariant,
                 className: commonStyles.wpTitle
             }
-        } as ISearchBoxContainerProps);
+        });
 
         renderRootElement = React.createElement(React.Suspense, { fallback: null }, searchBoxElement);
 
