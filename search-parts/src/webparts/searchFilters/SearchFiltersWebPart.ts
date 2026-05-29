@@ -154,6 +154,14 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     private readonly groupedTermSets: Map<string, Array<{ id: string, name: string, groupId: string, groupName: string }>> = new Map();
     private readonly hierarchicalSettingsUiStateByItemId: Map<string, IHierarchicalSettingsUiState> = new Map();
 
+    /**
+     * Tracks whether the Web Part has been disposed. Async callbacks (dynamic data 'available sources
+     * changed', theme change, etc.) may resolve after the instance is torn down; rendering then
+     * crashes because 'this.context' is no longer available (`Cannot read properties of undefined
+     * (reading 'propertyPane')`). This flag lets render() bail out safely.
+     */
+    private _webPartDisposed: boolean = false;
+
     constructor() {
         super();
         this._updateTitleProperty = this._updateTitleProperty.bind(this);
@@ -248,6 +256,13 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     }
 
     public async render(): Promise<void> {
+
+        // The Web Part may have been disposed while an async callback (dynamic data 'available sources
+        // changed', theme change, ...) was in flight. Rendering a disposed instance crashes because
+        // 'this.context' is no longer available (e.g. reading 'propertyPane'), so bail out early.
+        if (this._webPartDisposed) {
+            return;
+        }
 
         // Check audience targeting - if user is not in audience, don't render
         const isInAudience = await this.isInAudience();
@@ -461,6 +476,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     }
 
     protected onDispose(): void {
+        this._webPartDisposed = true;
         this.hierarchicalSettingsUiStateByItemId.clear();
         // eslint-disable-next-line @rushstack/pair-react-dom-render-unmount -- paired with render in renderCompleted
         ReactDom.unmountComponentAtNode(this.domElement);

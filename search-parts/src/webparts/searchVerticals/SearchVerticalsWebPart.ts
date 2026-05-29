@@ -100,7 +100,20 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
         }
     }
 
+    /**
+     * Tracks whether the Web Part has been disposed. Async callbacks may resolve after the instance
+     * is torn down; rendering then crashes because 'this.context' is no longer available. This flag
+     * lets render() bail out safely.
+     */
+    private _webPartDisposed: boolean = false;
+
     public async render(): Promise<void> {
+
+        // The Web Part may have been disposed while an async callback was in flight. Rendering a
+        // disposed instance crashes because 'this.context' is no longer available, so bail out early.
+        if (this._webPartDisposed) {
+            return;
+        }
 
         // Check audience targeting - if user is not in audience, don't render
         const isInAudience = await this.isInAudience();
@@ -272,6 +285,7 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
     }
 
     protected onDispose(): void {
+        this._webPartDisposed = true;
         // eslint-disable-next-line @rushstack/pair-react-dom-render-unmount -- paired with render in renderCompleted
         ReactDom.unmountComponentAtNode(this.domElement);
     }
