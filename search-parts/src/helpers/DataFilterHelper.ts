@@ -1,5 +1,5 @@
 import { isEmpty } from "@microsoft/sp-lodash-subset";
-import { IDataFilter, IDataFilterConfiguration, FilterType, IDataFilterResult, FilterComparisonOperator } from "@pnp/modern-search-extensibility";
+import { IDataFilter, IDataFilterConfiguration, FilterType, IDataFilterResult, FilterComparisonOperator, FilterConditionOperator } from "@pnp/modern-search-extensibility";
 import { BuiltinTokenNames } from "../services/tokenService/TokenService";
 import { BuiltinFilterTypes } from "../layouts/AvailableTemplates";
 
@@ -92,12 +92,12 @@ export class DataFilterHelper {
     }
 
     /**
-     * Build the refinement condition in FQL format
+     * Build the refinement condition in KQL format
      * @param selectedFilters The selected filter array
      * @param dayjs The dayjs instance to resolve dates
-     * @param encodeTokens If true, encodes the taxonomy refinement tokens in UTF-8 to work with GET requests. Javascript encodes natively in UTF-16 by default.
+     * @param filterOperator The logical operator (AND/OR) to use between filters. Defaults to OR.
      */
-    public static buildKqlRefinementString(selectedFilters: IDataFilter[], dayjs: any): string {
+    public static buildKqlRefinementString(selectedFilters: IDataFilter[], dayjs: any, filterOperator: FilterConditionOperator = FilterConditionOperator.OR): string {
         let refinementQueryConditions: string[] = [];
         selectedFilters.forEach(filter => {
 
@@ -142,7 +142,8 @@ export class DataFilterHelper {
             }
         });
 
-        return refinementQueryConditions.join(" OR "); // only used when building aggregation with OR between filters
+        const filterJoinOperator = filterOperator === FilterConditionOperator.AND ? " AND " : " OR ";
+        return refinementQueryConditions.join(filterJoinOperator);
     }
 
     /**
