@@ -47,6 +47,19 @@ export interface IFilterCheckBoxProps {
     isMulti?: boolean;
 
     /**
+     * The total number of values in the parent filter. Used for the `aria-setsize`
+     * attribute so screen readers announce single-select radios as "x of y" instead
+     * of "1 of 1" (each value is rendered as its own web component).
+     */
+    valueCount?: number;
+
+    /**
+     * The 0-based index of this value within the parent filter. Used to compute the
+     * 1-based `aria-posinset` attribute (see `valueCount`).
+     */
+    valueIndex?: number;
+
+    /**
      * The current theme settings
      */
     themeVariant?: IReadonlyTheme;
@@ -61,6 +74,33 @@ export interface IFilterCheckBoxState {
 }
 
 export class FilterCheckBoxComponent extends React.Component<IFilterCheckBoxProps, IFilterCheckBoxState> {
+
+    private _rootRef: React.RefObject<HTMLDivElement> = React.createRef();
+
+    public componentDidMount(): void {
+        this._applyRadioSetSizeAria();
+    }
+
+    public componentDidUpdate(): void {
+        this._applyRadioSetSizeAria();
+    }
+
+    /**
+     * For single-select filters each value renders its own single-option `ChoiceGroup`, which emits a
+     * `radiogroup` containing a single radio. Screen readers therefore announce every value as
+     * "1 of 1". Setting explicit `aria-setsize`/`aria-posinset` on the radio input overrides the
+     * computed set size so the value is announced with its real position within the filter.
+     */
+    private _applyRadioSetSizeAria(): void {
+        if (this.props.isMulti || !this._rootRef.current || !this.props.valueCount || this.props.valueIndex === undefined || this.props.valueIndex === null) {
+            return;
+        }
+        const radioInput = this._rootRef.current.querySelector('input[type="radio"]');
+        if (radioInput) {
+            radioInput.setAttribute('aria-setsize', this.props.valueCount.toString());
+            radioInput.setAttribute('aria-posinset', (this.props.valueIndex + 1).toString());
+        }
+    }
 
     public render() {
 
@@ -148,6 +188,9 @@ export class FilterCheckBoxComponent extends React.Component<IFilterCheckBoxProp
                     this.props.onChecked(this.props.filterName, filterValue);
                 }}
             />;
+
+            // Wrap so we can reach the rendered radio input and set aria-setsize/aria-posinset on it.
+            renderInput = <div ref={this._rootRef}>{renderInput}</div>;
         }
 
         return renderInput;
