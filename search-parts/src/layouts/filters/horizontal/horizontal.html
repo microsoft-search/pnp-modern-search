@@ -210,6 +210,8 @@
 											</div>
 
 							<div class="filter--values-list" role="{{#if filter.isMulti}}group{{else}}radiogroup{{/if}}" aria-label="{{filter.displayName}}">
+												{{#each filter.values}}
+													<div title="{{#with (split name '|')}}{{[1]}}{{/with}} {{#if ../showCount}}({{count}}){{/if}}" class="filter--value">
 														<pnp-filtercheckbox 
 															data-instance-id="{{@root.instanceId}}" 
 															data-filter-name="{{filter.filterName}}" 

@@ -2421,6 +2421,10 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         // Notfify dynamic data consumers data have changed
         if (this.properties.allowWebPartConnections) {
             this.context.dynamicDataSourceManager.notifyPropertyChanged(DynamicDataProperties.AvailableFieldValuesFromResults);
+
+            // Also notify consumers connected to the whole results source object so a connection to the
+            // 'selectedItems' sub-property is refreshed when the selection changes (otherwise it stays empty).
+            this.context.dynamicDataSourceManager.notifyPropertyChanged(ComponentType.SearchResults);
         }
     }
 
