@@ -284,7 +284,10 @@ define([], function () {
                 SliderShowPageDots: "Pokaż kropki",
                 SliderWrapAround: "Nieskończone przewijanie",
                 SlideHeight: "Wysokość slajdu (w pikselach)",
-                SlideWidth: "Szerokość slajdu (w pikselach)"
+                SlideWidth: "Szerokość slajdu (w pikselach)",
+                PreviousPageLabel: "Poprzednia strona",
+                NextPageLabel: "Następna strona",
+                GoToPageLabel: "Przejdź do strony {0}"
             },
             People: {
                 Name: "Osoba",

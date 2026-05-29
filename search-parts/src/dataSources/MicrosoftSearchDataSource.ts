@@ -1244,14 +1244,16 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         const aggregationFilters: string[] = [];
 
         if (dataContext.filters.selectedFilters.length > 0) {
-            if (dataContext.filters.selectedFilters.length > 1 &&
-                dataContext.filters.selectedFilters.filter(f => f.values.length > 0).length > 1) {
-                const refinementString = DataFilterHelper.buildFqlRefinementString(dataContext.filters.selectedFilters, this.dayjs).join(',');
-                if (!isEmpty(refinementString)) {
-                    aggregationFilters.push(`${dataContext.filters.filterOperator}(${refinementString})`);
-                }
-            } else {
-                aggregationFilters.push(...DataFilterHelper.buildFqlRefinementString(dataContext.filters.selectedFilters, this.dayjs));
+            // The Microsoft Search API expects KQL-formatted refinement strings in aggregationFilters.
+            // Using FQL here causes multi-filter combinations to return 0 results (issue #4796).
+            const refinementString = DataFilterHelper.buildKqlRefinementString(
+                dataContext.filters.selectedFilters,
+                this.dayjs,
+                dataContext.filters.filterOperator
+            );
+
+            if (!isEmpty(refinementString)) {
+                aggregationFilters.push(refinementString);
             }
         }
 

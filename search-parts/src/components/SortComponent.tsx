@@ -66,6 +66,8 @@ export class SortComponent extends React.Component<ISortComponentProps, ISortCom
         if (this.props.defaultSelectedField && this.props.defaultDirection || this.state.selectedFieldName) {
 
             renderSortButton = <IconButton
+                ariaLabel={strings.Controls.SortByPlaceholderText}
+                title={strings.Controls.SortByPlaceholderText}
                 iconProps={{
                     iconName: this.props.defaultDirection === SortFieldDirection.Ascending ? "SortUp" : "SortDown"
                 }}
@@ -80,6 +82,7 @@ export class SortComponent extends React.Component<ISortComponentProps, ISortCom
         return <div style={{ display: 'flex' }}>
             <Dropdown
                 placeholder={strings.Controls.SortByPlaceholderText}
+                ariaLabel={strings.Controls.SortByPlaceholderText}
                 styles={dropdownStyles}
                 defaultSelectedKey={this.props.defaultSelectedField ? this.props.defaultSelectedField : null}
                 options={options}

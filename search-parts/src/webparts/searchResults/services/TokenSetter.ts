@@ -122,7 +122,10 @@ export class TokenSetter {
             } as IDataFilterTokenValue
         };
 
-        filterTokens[this.destinationFieldName].valueAsText = itemFieldValues.length > 0 ? itemFieldValues.join(',') : undefined;  // This allow the `{? <KQL expression>}` to work
+        // 'itemFieldValues' can be undefined when the source connection is not (yet) fully wired.
+        // Guard against it so we still publish the token (resolving to an empty value) instead of
+        // throwing, which would abort token setup and leave '{filters.<field>}' unresolved.
+        filterTokens[this.destinationFieldName].valueAsText = (itemFieldValues && itemFieldValues.length > 0) ? itemFieldValues.join(',') : undefined;  // This allow the `{? <KQL expression>}` to work
         this.tokenService.setTokenValue(BuiltinTokenNames.filters, filterTokens);
     }
 

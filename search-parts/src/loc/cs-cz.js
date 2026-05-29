@@ -281,7 +281,10 @@ define([], function () {
                 SliderShowPageDots: "Zobrazit body stránky",
                 SliderWrapAround: "Nekonečné rolování",
                 SlideHeight: "Výška karuselu (v px)",
-                SlideWidth: "Šířka karuselu (v px)"
+                SlideWidth: "Šířka karuselu (v px)",
+                PreviousPageLabel: "Předchozí stránka",
+                NextPageLabel: "Další stránka",
+                GoToPageLabel: "Přejít na stránku {0}"
             },
             People: {
                 Name: "Lidé",

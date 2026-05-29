@@ -154,6 +154,14 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     private readonly groupedTermSets: Map<string, Array<{ id: string, name: string, groupId: string, groupName: string }>> = new Map();
     private readonly hierarchicalSettingsUiStateByItemId: Map<string, IHierarchicalSettingsUiState> = new Map();
 
+    /**
+     * Tracks whether the Web Part has been disposed. Async callbacks (dynamic data 'available sources
+     * changed', theme change, etc.) may resolve after the instance is torn down; rendering then
+     * crashes because 'this.context' is no longer available (`Cannot read properties of undefined
+     * (reading 'propertyPane')`). This flag lets render() bail out safely.
+     */
+    private _webPartDisposed: boolean = false;
+
     constructor() {
         super();
         this._updateTitleProperty = this._updateTitleProperty.bind(this);
@@ -249,6 +257,13 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
 
     public async render(): Promise<void> {
 
+        // The Web Part may have been disposed while an async callback (dynamic data 'available sources
+        // changed', theme change, ...) was in flight. Rendering a disposed instance crashes because
+        // 'this.context' is no longer available (e.g. reading 'propertyPane'), so bail out early.
+        if (this._webPartDisposed) {
+            return;
+        }
+
         // Check audience targeting - if user is not in audience, don't render
         const isInAudience = await this.isInAudience();
         this._isHiddenByAudience = !isInAudience;
@@ -263,13 +278,26 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
         // In the case of an external template is selected, the render is done asynchronously waiting for the content to be fetched
         await this.initTemplate();
 
+        // Re-check disposal after the awaited audience/template work before resolving the layout
+        // instance, which uses this.context (torn down on dispose).
+        if (this._webPartDisposed || !this.context) {
+            return;
+        }
+
         // Get and initialize layout instance if different (i.e avoid to create a new instance every time)
         if (this.lastLayoutKey !== this.properties.selectedLayoutKey) {
             this.layout = await LayoutHelper.getLayoutInstance(this.webPartInstanceServiceScope, this.context, this.properties, this.properties.selectedLayoutKey, this.availableLayoutDefinitions, this.displayMode);
             this.lastLayoutKey = this.properties.selectedLayoutKey;
         }
 
-        // Refresh the property pane to get layout and data source options
+        // Refresh the property pane to get layout and data source options.
+        // Re-check disposal here: the awaits above (audience, template, layout) yield control, and the
+        // instance can be disposed in the meantime (e.g. another Web Part's source change races with
+        // removal in edit mode), leaving 'this.context' undefined when this code resumes.
+        if (this._webPartDisposed || !this.context) {
+            return;
+        }
+
         if (this.context.propertyPane.isPropertyPaneOpen()) {
             this.context.propertyPane.refresh();
         }
@@ -461,6 +489,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     }
 
     protected onDispose(): void {
+        this._webPartDisposed = true;
         this.hierarchicalSettingsUiStateByItemId.clear();
         // eslint-disable-next-line @rushstack/pair-react-dom-render-unmount -- paired with render in renderCompleted
         ReactDom.unmountComponentAtNode(this.domElement);
