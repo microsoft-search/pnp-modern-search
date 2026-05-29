@@ -14,8 +14,6 @@ import {
     PropertyPaneButton,
     PropertyPaneButtonType
 } from '@microsoft/sp-property-pane';
-// PropertyFieldColorPicker is edit-mode only and is provided by BaseWebPart's lazily-loaded
-// _basePropertyFieldColorPicker / _basePropertyFieldColorPickerStyle (shared property-pane chunk).
 import { DynamicProperty } from '@microsoft/sp-component-base';
 import { IPropertyPanePage } from '@microsoft/sp-property-pane';
 import * as webPartStrings from 'SearchFiltersWebPartStrings';
@@ -39,8 +37,6 @@ import { FileFormat, ITemplateService } from '../../services/templateService/ITe
 import { isEmpty, isEqual, uniqBy, cloneDeep, uniq, sortBy } from '@microsoft/sp-lodash-subset';
 import { BuiltinFilterTemplates, BuiltinFilterTypes } from '../../layouts/AvailableTemplates';
 import { ServiceScope } from '@microsoft/sp-core-library';
-// AvailableComponents pulls in the Fluent UI web component registry. It is loaded on demand inside
-// onInit() (see availableWebComponentDefinitions seeding) so it stays out of the entry bundle.
 import { PropertyPaneAsyncCombo } from '../../controls/PropertyPaneAsyncCombo/PropertyPaneAsyncCombo';
 import { BaseWebPart } from '../../common/BaseWebPart';
 import commonStyles from '../../styles/Common.module.scss';
@@ -315,39 +311,39 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                 React.Suspense,
                 { fallback: null },
                 React.createElement(
-                SearchFilters,
-                {
-                    templateContent: this.templateContentToDisplay,
-                    availableFilters: filterResults,
-                    filtersConfiguration: this.properties.filtersConfiguration,
-                    domElement: this.domElement,
-                    instanceId: this.instanceId,
-                    selectedLayoutKey: this.properties.selectedLayoutKey,
-                    properties: JSON.parse(JSON.stringify(this.properties)),
-                    themeVariant: this._themeVariant,
-                    context: this.context,
-                    onUpdateFilters: (updatedFilters: IDataFilter[]) => {
+                    SearchFilters,
+                    {
+                        templateContent: this.templateContentToDisplay,
+                        availableFilters: filterResults,
+                        filtersConfiguration: this.properties.filtersConfiguration,
+                        domElement: this.domElement,
+                        instanceId: this.instanceId,
+                        selectedLayoutKey: this.properties.selectedLayoutKey,
+                        properties: JSON.parse(JSON.stringify(this.properties)),
+                        themeVariant: this._themeVariant,
+                        context: this.context,
+                        onUpdateFilters: (updatedFilters: IDataFilter[]) => {
 
-                        this._selectedFilters = updatedFilters;
+                            this._selectedFilters = updatedFilters;
 
-                        // Notfify dynamic data consumers data have changed
-                        this.context.dynamicDataSourceManager.notifyPropertyChanged(ComponentType.SearchFilters);
-                    },
-                    templateService: this.templateService,
-                    taxonomyService: this.taxonomyService,
-                    webPartTitleProps: {
-                        displayMode: this.displayMode,
-                        title: this.properties.title,
-                        updateProperty: this._updateTitleProperty,
-                        className: commonStyles.wpTitle
-                    },
-                    filterBackgroundColor: this.properties.filterBackgroundColor,
-                    filterBorderColor: this.properties.filterBorderColor,
-                    filterBorderThickness: this.properties.filterBorderThickness,
-                    titleFont: this.properties.titleFont,
-                    titleFontSize: this.properties.titleFontSize,
-                    titleFontColor: this.properties.titleFontColor
-                } as ISearchFiltersContainerProps
+                            // Notfify dynamic data consumers data have changed
+                            this.context.dynamicDataSourceManager.notifyPropertyChanged(ComponentType.SearchFilters);
+                        },
+                        templateService: this.templateService,
+                        taxonomyService: this.taxonomyService,
+                        webPartTitleProps: {
+                            displayMode: this.displayMode,
+                            title: this.properties.title,
+                            updateProperty: this._updateTitleProperty,
+                            className: commonStyles.wpTitle
+                        },
+                        filterBackgroundColor: this.properties.filterBackgroundColor,
+                        filterBorderColor: this.properties.filterBorderColor,
+                        filterBorderThickness: this.properties.filterBorderThickness,
+                        titleFont: this.properties.titleFont,
+                        titleFontSize: this.properties.titleFontSize,
+                        titleFontColor: this.properties.titleFontColor
+                    } as ISearchFiltersContainerProps
                 )
             );
 
@@ -1711,7 +1707,6 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
 
     public async loadPropertyPaneResources(): Promise<void> {
 
-        // Load shared property-controls used by the base web part property-pane groups
         await this.loadCommonPropertyPaneResources();
 
         const { PropertyFieldCodeEditor, PropertyFieldCodeEditorLanguages } = await import(

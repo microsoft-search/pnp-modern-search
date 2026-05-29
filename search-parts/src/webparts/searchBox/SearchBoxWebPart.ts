@@ -21,8 +21,6 @@ import {
     IPropertyPanePage,
     IPropertyPaneGroup
 } from "@microsoft/sp-property-pane";
-// PropertyFieldColorPicker is edit-mode only and is provided by BaseWebPart's lazily-loaded
-// _basePropertyFieldColorPicker / _basePropertyFieldColorPickerStyle (shared property-pane chunk).
 const SearchBoxContainer = React.lazy(() => import(/* webpackChunkName: 'pnp-modern-search-box-container' */ './components/SearchBoxContainer'));
 import { ISearchBoxContainerProps } from './components/ISearchBoxContainerProps';
 import { DynamicDataService } from '../../services/dynamicDataService/DynamicDataService';
@@ -367,7 +365,6 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
 
     protected async loadPropertyPaneResources(): Promise<void> {
 
-        // Load shared property-controls used by the base web part property-pane groups
         await this.loadCommonPropertyPaneResources();
 
         const { PropertyFieldCollectionData, CustomCollectionFieldType } = await import(

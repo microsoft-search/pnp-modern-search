@@ -20,8 +20,6 @@ import {
 import ISearchResultsWebPartProps, { QueryTextSource } from './ISearchResultsWebPartProps';
 import { AvailableDataSources, BuiltinDataSourceProviderKeys } from '../../dataSources/AvailableDataSources';
 import { ServiceKey } from "@microsoft/sp-core-library";
-// Lazy-loaded so the container (and its @fluentui/react dependency graph) is emitted as a shared
-// async chunk instead of being bundled synchronously into every web part entry.
 const SearchResultsContainer = React.lazy(() => import(
     /* webpackChunkName: 'pnp-modern-search-results-container' */
     './components/SearchResultsContainer'
@@ -31,9 +29,6 @@ import { ITemplateService, FileFormat } from '../../services/templateService/ITe
 import { TemplateService } from '../../services/templateService/TemplateService';
 import { ServiceScopeHelper } from '../../helpers/ServiceScopeHelper';
 import { cloneDeep, isEmpty, isEqual, uniq, uniqBy } from "@microsoft/sp-lodash-subset";
-// AvailableComponents pulls in every Fluent UI-based web component. It is loaded as a shared async
-// chunk in loadExtensions() instead of being imported synchronously, so its heavy dependency graph
-// stays out of the web part entry bundle (it is still loaded at view time before rendering).
 import { DynamicProperty } from '@microsoft/sp-component-base';
 import { ITemplateSlot, IDataContext, ITokenService, SortFieldDirection, IExtensibilityLibrary } from '@pnp/modern-search-extensibility';
 import { TokenService, BuiltinTokenNames } from '../../services/tokenService/TokenService';
@@ -47,8 +42,6 @@ import { IDynamicDataCallables, IDynamicDataPropertyDefinition } from '@microsof
 import { IDataResultSourceData } from '../../models/dynamicData/IDataResultSourceData';
 import { LayoutHelper } from '../../helpers/LayoutHelper';
 import { IAsyncComboProps } from '../../controls/PropertyPaneAsyncCombo/components/IAsyncComboProps';
-// Type-only import: the actual AsyncCombo control is loaded as part of the property-pane chunk
-// in loadPropertyPaneResources() so its @fluentui/react dependency stays out of the entry bundle.
 import type { AsyncCombo as AsyncComboType } from '../../controls/PropertyPaneAsyncCombo/components/AsyncCombo';
 import { Constants } from '../../common/Constants';
 import PnPTelemetry from "@pnp/telemetry-js";
@@ -63,9 +56,6 @@ import { ItemSelectionMode } from '../../models/common/IItemSelectionProps';
 import { DynamicPropertyHelper } from '../../helpers/DynamicPropertyHelper';
 import { IQueryModifierConfiguration } from '../../queryModifier/IQueryModifierConfiguration';
 import { loadMsGraphToolkit } from '../../helpers/GraphToolKitHelper';
-// Property-pane builders are loaded lazily (type-only here) so their @fluentui/react and
-// @pnp/spfx-property-controls dependency graphs are emitted in the property-pane chunk instead
-// of the synchronous web part entry bundle. They are downloaded only when the pane is opened.
 import type { DataSourcePropertyPaneBuilder as DataSourcePropertyPaneBuilderType } from './propertyPane/DataSourcePropertyPaneBuilder';
 import type { AboutPropertyPaneBuilder as AboutPropertyPaneBuilderType } from './propertyPane/AboutPropertyPaneBuilder';
 import type { ConnectionsPropertyPaneBuilder as ConnectionsPropertyPaneBuilderType } from './propertyPane/ConnectionsPropertyPaneBuilder';
@@ -81,7 +71,6 @@ import { MessageBar, MessageBarType } from '@fluentui/react/lib/MessageBar';
 import { Link } from '@fluentui/react/lib/Link';
 import { IComboBoxOption } from '@fluentui/react/lib/ComboBox';
 import { IToggleProps, Toggle } from '@fluentui/react/lib/Toggle';
-// PropertyFieldMessage is loaded with the property-pane chunk (see loadPropertyPaneResources).
 
 const LogSource = "SearchResultsWebPart";
 
@@ -129,19 +118,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     private _textDialogComponent: any = null;
     private _propertyPanePropertyEditor = null;
 
-    /**
-     * Lazily-loaded `ConnectionsPropertyPaneBuilder` class reference. Loaded as part of the
-     * `'pnp-modern-search-property-pane'` chunk in `loadPropertyPaneResources()`, so it is only
-     * downloaded when the property pane is opened. View-mode page loads do not pull it.
-     */
     private _connectionsPropertyPaneBuilderClass: typeof ConnectionsPropertyPaneBuilderType = null;
 
-    /**
-     * Lazily-loaded property-pane builder/control references. Like the connections builder above,
-     * these are loaded as part of the `'pnp-modern-search-property-pane'` chunk in
-     * `loadPropertyPaneResources()`, so their heavy dependencies (Fluent UI, property controls)
-     * are only downloaded when the property pane is opened. View-mode page loads do not pull them.
-     */
     private _dataSourcePropertyPaneBuilderClass: typeof DataSourcePropertyPaneBuilderType = null;
     private _aboutPropertyPaneBuilderClass: typeof AboutPropertyPaneBuilderType = null;
     private _stylingPageGroupsBuilderClass: typeof StylingPageGroupsBuilderType = null;
@@ -983,7 +961,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             // Reset existing definitions to default
             this.availableDataSourceDefinitions = AvailableDataSources.BuiltinDataSources;
             this.availableLayoutDefinitions = AvailableLayouts.BuiltinLayouts.filter(layout => { return layout.type === LayoutType.Results; });
-            // Builtin web components are re-seeded at the top of loadExtensions() (loaded async).
             this.availableWebComponentDefinitions = [];
             this.availableCustomQueryModifierDefinitions = [];
             this._selectedCustomQueryModifier = [];
@@ -1140,7 +1117,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
      */
     private async loadExtensions(librariesConfiguration: IExtensibilityConfiguration[]) {
 
-        // Seed builtin web components from a shared async chunk (keeps Fluent UI out of the entry).
         const { AvailableComponents } = await import(
             /* webpackChunkName: 'pnp-modern-search-web-components' */
             '../../components/AvailableComponents'
@@ -1211,7 +1187,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
     public async loadPropertyPaneResources(): Promise<void> {
 
-        // Load shared property-controls used by the base web part property-pane groups
         await this.loadCommonPropertyPaneResources();
 
         const { PropertyFieldCodeEditor, PropertyFieldCodeEditorLanguages } = await import(

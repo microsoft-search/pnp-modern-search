@@ -15,9 +15,6 @@ import { IBaseWebPartProps } from "../models/common/IBaseWebPartProps";
 import * as commonStrings from 'CommonStrings';
 import { ThemeProvider, IReadonlyTheme, ThemeChangedEventArgs } from '@microsoft/sp-component-base';
 import { isEqual } from '@microsoft/sp-lodash-subset';
-// @pnp/spfx-property-controls fields are edit-mode only. They are loaded as a shared async chunk in
-// loadCommonPropertyPaneResources() (called from each web part's loadPropertyPaneResources) instead
-// of being imported synchronously here, so they stay out of every web part's entry bundle.
 import { Log } from '@microsoft/sp-core-library';
 import { DisplayMode } from '@microsoft/sp-core-library';
 import { AudienceTargetingService } from '../services/audienceTargetingService/AudienceTargetingService';
@@ -55,11 +52,6 @@ export abstract class BaseWebPart<T extends IBaseWebPartProps> extends BaseClien
      */
     protected _isHiddenByAudience: boolean = false;
 
-    /**
-     * Lazily-loaded @pnp/spfx-property-controls references, shared by all web parts. Populated by
-     * loadCommonPropertyPaneResources() as part of the property-pane chunk so the heavy dependency
-     * graph is only downloaded when the property pane is opened (never on view-mode page loads).
-     */
     protected _basePropertyPaneWebPartInformation: typeof import('@pnp/spfx-property-controls/lib/PropertyPaneWebPartInformation').PropertyPaneWebPartInformation = null;
     protected _basePropertyFieldPeoplePicker: typeof import('@pnp/spfx-property-controls/lib/PropertyFieldPeoplePicker').PropertyFieldPeoplePicker = null;
     protected _basePrincipalType: typeof import('@pnp/spfx-property-controls/lib/PropertyFieldPeoplePicker').PrincipalType = null;
@@ -101,12 +93,10 @@ export abstract class BaseWebPart<T extends IBaseWebPartProps> extends BaseClien
     /**
      * Lazily loads the @pnp/spfx-property-controls used by the shared property-pane groups.
      * Web parts must call this from their own loadPropertyPaneResources() before building the
-     * property pane configuration. All controls share the 'pnp-modern-search-property-pane' async
-     * chunk so they never end up in the synchronous web part entry bundle.
+     * property pane configuration.
      */
     protected async loadCommonPropertyPaneResources(): Promise<void> {
 
-        // Already loaded
         if (this._basePropertyFieldColorPicker) {
             return;
         }

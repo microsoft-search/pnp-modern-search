@@ -11,8 +11,6 @@ import {
     PropertyPaneButton,
     PropertyPaneButtonType
 } from '@microsoft/sp-property-pane';
-// PropertyFieldColorPicker is edit-mode only and is provided by BaseWebPart's lazily-loaded
-// _basePropertyFieldColorPicker / _basePropertyFieldColorPickerStyle (shared property-pane chunk).
 import * as commonStrings from 'CommonStrings';
 import * as webPartStrings from 'SearchVerticalsWebPartStrings';
 import { ISearchVerticalsContainerProps } from './components/ISearchVerticalsContainerProps';
@@ -161,33 +159,33 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
                 React.Suspense,
                 { fallback: null },
                 React.createElement(
-                SearchVerticalsContainer,
-                {
-                    verticals: verticalsToBeDisplayed,
-                    webPartTitleProps: {
-                        displayMode: this.displayMode,
-                        title: this.properties.title,
-                        updateProperty: (value: string) => {
-                            this.properties.title = value;
-                            this.render();
+                    SearchVerticalsContainer,
+                    {
+                        verticals: verticalsToBeDisplayed,
+                        webPartTitleProps: {
+                            displayMode: this.displayMode,
+                            title: this.properties.title,
+                            updateProperty: (value: string) => {
+                                this.properties.title = value;
+                                this.render();
+                            },
+                            themeVariant: this._themeVariant,
+                            className: commonStyles.wpTitle
                         },
+                        tokenService: this.tokenService,
                         themeVariant: this._themeVariant,
-                        className: commonStyles.wpTitle
-                    },
-                    tokenService: this.tokenService,
-                    themeVariant: this._themeVariant,
-                    onVerticalSelected: this.onVerticalSelected.bind(this),
-                    defaultSelectedKey: defaultSelectedKey,
-                    verticalBackgroundColor: this.properties.verticalBackgroundColor,
-                    verticalBorderColor: this.properties.verticalBorderColor,
-                    verticalBorderThickness: this.properties.verticalBorderThickness,
-                    verticalFontSize: this.properties.verticalFontSize,
-                    verticalMouseOverColor: this.properties.verticalMouseOverColor,
-                    titleFont: this.properties.titleFont,
-                    titleFontSize: this.properties.titleFontSize,
-                    titleFontColor: this.properties.titleFontColor,
-                    instanceId: this.instanceId
-                } as ISearchVerticalsContainerProps
+                        onVerticalSelected: this.onVerticalSelected.bind(this),
+                        defaultSelectedKey: defaultSelectedKey,
+                        verticalBackgroundColor: this.properties.verticalBackgroundColor,
+                        verticalBorderColor: this.properties.verticalBorderColor,
+                        verticalBorderThickness: this.properties.verticalBorderThickness,
+                        verticalFontSize: this.properties.verticalFontSize,
+                        verticalMouseOverColor: this.properties.verticalMouseOverColor,
+                        titleFont: this.properties.titleFont,
+                        titleFontSize: this.properties.titleFontSize,
+                        titleFontColor: this.properties.titleFontColor,
+                        instanceId: this.instanceId
+                    } as ISearchVerticalsContainerProps
                 )
             );
         }
@@ -331,7 +329,6 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
 
     protected async loadPropertyPaneResources(): Promise<void> {
 
-        // Load shared property-controls used by the base web part property-pane groups
         await this.loadCommonPropertyPaneResources();
 
         // tslint:disable-next-line:no-shadowed-variable

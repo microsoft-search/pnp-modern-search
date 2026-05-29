@@ -71,9 +71,7 @@ module.exports = function (webpackConfig, taskSession, heftConfiguration, webpac
             include: [/spfx-controls-react[/\\]lib[/\\]controls[/\\]HoverReactionsBar/],
             loader: 'ignore-loader',
         },
-        // Ignore Dashboard & Toolbar controls from spfx-controls-react. We never import them,
-        // but they pull in @fluentui/react-northstar (+ react-icons-northstar) — ~600KB of
-        // Fluent UI v0 that is otherwise dead weight in the bundle.
+        // Ignore Dashboard & Toolbar controls from spfx-controls-react (unused, pull in northstar)
         {
             test: /\.js$/,
             include: [/spfx-controls-react[/\\]lib[/\\]controls[/\\](dashboard|toolbar)[/\\]/i],
@@ -90,13 +88,9 @@ module.exports = function (webpackConfig, taskSession, heftConfiguration, webpac
     );
 
     // ─── optimization: shared async vendor chunks ─────────────────────────────
-    // SPFx injects only the single entry script per web part, so we must NOT create
-    // *initial* split chunks (they would never be loaded → runtime crash). Instead we
-    // split only *async* chunks (chunks: 'async'). Because each web part now loads its
-    // React container via dynamic import(), the heavy vendors (Fluent UI, PnP controls,
-    // handlebars, dompurify) live in the async graph and can be hoisted into shared
-    // chunks that webpack's own runtime loads on demand — emitted once instead of being
-    // duplicated across all four web part entries.
+    // SPFx injects only the single entry script per web part, so we split only *async* chunks
+    // (initial split chunks would never be loaded). Heavy vendors reachable via the web parts'
+    // dynamic import()s are hoisted into shared chunks emitted once instead of per entry.
     webpackConfig.optimization = webpackConfig.optimization || {};
     webpackConfig.optimization.splitChunks = {
         chunks: 'async',
