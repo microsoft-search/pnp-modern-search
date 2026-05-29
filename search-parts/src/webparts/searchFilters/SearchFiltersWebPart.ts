@@ -278,6 +278,12 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
         // In the case of an external template is selected, the render is done asynchronously waiting for the content to be fetched
         await this.initTemplate();
 
+        // Re-check disposal after the awaited audience/template work before resolving the layout
+        // instance, which uses this.context (torn down on dispose).
+        if (this._webPartDisposed || !this.context) {
+            return;
+        }
+
         // Get and initialize layout instance if different (i.e avoid to create a new instance every time)
         if (this.lastLayoutKey !== this.properties.selectedLayoutKey) {
             this.layout = await LayoutHelper.getLayoutInstance(this.webPartInstanceServiceScope, this.context, this.properties, this.properties.selectedLayoutKey, this.availableLayoutDefinitions, this.displayMode);

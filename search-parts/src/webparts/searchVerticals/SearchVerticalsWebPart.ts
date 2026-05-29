@@ -186,14 +186,19 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
         }
 
 
+        // The Web Part may have been disposed while awaiting audience filtering above. Rendering a
+        // disposed instance crashes because 'this.context' is no longer available, so bail out.
+        if (this._webPartDisposed || !this.context) {
+            return;
+        }
+
         // eslint-disable-next-line @rushstack/pair-react-dom-render-unmount -- render is paired with unmount in onDispose
         ReactDom.render(renderRootElement, this.domElement);
     }
 
     /**
      * Resolves the key of the vertical that should be selected by default, based either on the
-     * configured query-string parameter or on the current page URL (for link verticals).
-     * Returns undefined when no single matching vertical is found.
+     * configured query-string parameter or on the current page URL (for link verticals).     * Returns undefined when no single matching vertical is found.
      */
     private _resolveDefaultSelectedKey(): string {
 

@@ -2451,7 +2451,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         this._currentDataResultsSourceData.selectedItems = cloneDeep(currentSelectedItems);
 
-        // Notfify dynamic data consumers data have changed.
+        // Notify dynamic data consumers data have changed.
         // Selection changes can occur while the web part is being torn down, so guard against a missing
         // or disposed context/dynamicDataSourceManager (same pattern as _onDataRetrieved).
         if (this.properties.allowWebPartConnections && this.context && this.context.dynamicDataSourceManager && !this.context.dynamicDataSourceManager.isDisposed) {
