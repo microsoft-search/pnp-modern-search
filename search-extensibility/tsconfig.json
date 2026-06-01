@@ -1,12 +1,15 @@
 {
-  "extends": "./node_modules/@microsoft/spfx-web-build-rig/profiles/default/tsconfig-base.json",
   "compilerOptions": {
     "target": "es2017",
+    "module": "esnext",
     "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
     "outDir": "lib",
+    "rootDir": "src",
     "strict": true,
-    "moduleResolution": "node",
-    "types": ["es6-promise"],
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "bundler",
     "lib": ["dom", "es2021"],
     "experimentalDecorators": true,
     "esModuleInterop": true,
