@@ -482,6 +482,33 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#which-version-to-choose-pnp-search-results-vs-pnp-search-rollup" class="md-nav__link">
+    Which version to choose: 'PnP - Search Results' vs 'PnP - Search Rollup'
+  </a>
+  
+    <nav class="md-nav" aria-label="Which version to choose: 'PnP - Search Results' vs 'PnP - Search Rollup'">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#why-this-matters-for-performance" class="md-nav__link">
+    Why this matters for performance
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-the-rollup-variant-can-and-cannot-consume" class="md-nav__link">
+    What the Rollup variant can and cannot consume
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#configuration" class="md-nav__link">
     Configuration
   </a>
@@ -922,6 +949,33 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#which-version-to-choose-pnp-search-results-vs-pnp-search-rollup" class="md-nav__link">
+    Which version to choose: 'PnP - Search Results' vs 'PnP - Search Rollup'
+  </a>
+  
+    <nav class="md-nav" aria-label="Which version to choose: 'PnP - Search Results' vs 'PnP - Search Rollup'">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#why-this-matters-for-performance" class="md-nav__link">
+    Why this matters for performance
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-the-rollup-variant-can-and-cannot-consume" class="md-nav__link">
+    What the Rollup variant can and cannot consume
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#configuration" class="md-nav__link">
     Configuration
   </a>
@@ -983,10 +1037,80 @@
 <p>The <em>'Search Results' Web Part</em> is the fundamental building block of whole global solution. Its purpose is basically to get data from a specifc source and render them in a specific native or custom layout based on Handlebars and web components.</p>
 <p>This Web Part can be used <strong>alone</strong> or <strong>connected to other Web Parts</strong> to add dyanmic interactions (filters, search box or verticals). To use the Web Part on a SharePoint page:
 1. Edit your SharePoint modern page.
-2. Search for the <em>'PnP - Search Results'</em> Web Part and add it to your page.<br><br>
-    <em>You may use "PnP - Search Rollup" instead if you don't need to connect web parts. This version support being lazy loaded in the SharePoint framework to optimize page loading.</em></p>
+2. Search for the <em>'PnP - Search Results'</em> Web Part and add it to your page.</p>
 <p><img alt="&quot;PnP Search Results&quot;" class="center" src="../../assets/webparts/search-results/search_results_wp_picker.png" /></p>
 <p><img alt="&quot;PnP Search Results&quot;" class="center" src="../../assets/webparts/search-results/search_results_wp_placeholder.png" /></p>
+<h3 id="which-version-to-choose-pnp-search-results-vs-pnp-search-rollup">Which version to choose: <em>'PnP - Search Results'</em> vs <em>'PnP - Search Rollup'</em><a class="headerlink" href="#which-version-to-choose-pnp-search-results-vs-pnp-search-rollup" title="Permanent link">&para;</a></h3>
+<p>Two preconfigured variants of this Web Part are available in the Web Part picker. They share the <strong>same codebase, features, layouts, data sources and configuration options</strong> — they differ only in how SharePoint loads them on the page.</p>
+<table>
+<thead>
+<tr>
+<th>Variant</th>
+<th>When to use it</th>
+<th>Behavior on the page</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>PnP - Search Results</strong></td>
+<td>You <strong>might want to connect this Web Part to other Web Parts</strong> on the same page (a Search Box, Search Filters, Search Verticals, or another Search Results for dynamic filtering / item selection). Connections are optional — you can leave them unconfigured — but the Web Part remains <em>able</em> to participate in them.</td>
+<td>Registers as a SharePoint dynamic data source/consumer as soon as the page loads, so it must be initialized eagerly — its bundle is downloaded and its data source query is issued during the page's initial load, even if the Web Part is far below the fold.</td>
+</tr>
+<tr>
+<td><strong>PnP - Search Rollup</strong></td>
+<td>You are using the Web Part <strong>standalone</strong> — typically a content roll-up (latest news, recent documents, page hit highlights, etc.) where you know it will not need to react to or feed any other Web Part, and you do not need to drive the query from a SharePoint page-environment value (URL fragment, query-string parameter, page search query, etc.).</td>
+<td>Opts out of dynamic data connections (<code>allowWebPartConnections: false</code>). This lets SharePoint <strong>defer-load the Web Part</strong> until it actually scrolls into the viewport, so its JavaScript bundle, dependent chunks and underlying search query are not fetched at all on initial page load.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="why-this-matters-for-performance">Why this matters for performance<a class="headerlink" href="#why-this-matters-for-performance" title="Permanent link">&para;</a></h4>
+<p>SharePoint Framework only defer-loads a Web Part when it is certain no other component will try to read from it. As soon as a Web Part registers itself as a dynamic data source/consumer, SPFx is forced to initialize it eagerly on page load to make the connection available — defeating any below-the-fold lazy-loading optimization.</p>
+<p>The <em>'PnP - Search Rollup'</em> variant exists precisely to opt out of that registration. The practical impact on a page with a roll-up below the fold:</p>
+<ul>
+<li>The Web Part's JavaScript bundle and its dependent chunks (data source, layout, templating engine, etc.) are <strong>not downloaded</strong> until the user scrolls the rollup into view.</li>
+<li>The data source query (SharePoint Search, Microsoft Search, etc.) is <strong>not executed</strong> on initial page load — saving an API round-trip, search throttling capacity and bandwidth for every visitor who never scrolls to it.</li>
+<li>Initial page render, Largest Contentful Paint and Total Blocking Time all improve, because the page no longer waits on (or competes with) the roll-up's resources during the critical load phase.</li>
+</ul>
+<h4 id="what-the-rollup-variant-can-and-cannot-consume">What the Rollup variant can and cannot consume<a class="headerlink" href="#what-the-rollup-variant-can-and-cannot-consume" title="Permanent link">&para;</a></h4>
+<p>It's important to distinguish two very different ways the Web Part can be parameterized at runtime — only one of them is disabled by the rollup variant:</p>
+<table>
+<thead>
+<tr>
+<th>Input mechanism</th>
+<th>Where it's configured</th>
+<th>Works in <em>Search Results</em></th>
+<th>Works in <em>Search Rollup</em></th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>SPFx dynamic data — other Web Parts</strong> (Search Box, Filters, Verticals, dynamic filtering / item selection)</td>
+<td><em>Connections</em> property-pane page</td>
+<td>✅ Yes</td>
+<td>❌ No</td>
+<td>Requires registering as a dynamic data source/consumer; SPFx must initialize the Web Part eagerly to wire the connection.</td>
+</tr>
+<tr>
+<td><strong>SPFx dynamic data — page environment</strong> (URL fragment binding, <code>?param=</code> binding via the dynamic property picker, <code>PageContext:SearchData:searchQuery</code>)</td>
+<td><em>Connections</em> → "Use input query text" → <em>Dynamic value</em></td>
+<td>✅ Yes</td>
+<td>❌ No</td>
+<td>Same reason — these are SPFx dynamic data sources too.</td>
+</tr>
+<tr>
+<td><strong>Tokens</strong> in Query text, Query template, refiners, sort, etc. — including <code>{QueryString.&lt;name&gt;}</code>, <code>{Page.&lt;field&gt;}</code>, <code>{Site}</code>, <code>{User.&lt;prop&gt;}</code>, date tokens, <code>{Me}</code>, …</td>
+<td>Wherever the property pane accepts a value</td>
+<td>✅ Yes</td>
+<td>✅ Yes</td>
+<td>Tokens are resolved by the built-in <code>TokenService</code> at render time directly from <code>window.location.href</code>, the page context and the current user — they do <strong>not</strong> go through SPFx dynamic data, so the Rollup's lazy-load benefit is preserved.</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>TL;DR:</strong> The Rollup variant gives up SPFx <strong>Web Part connections</strong> and SPFx <strong>dynamic page-environment bindings</strong>, but it keeps the full <strong>token system</strong> — including <code>{QueryString.q}</code>, <code>{QueryString.dept}</code>, etc. So a URL-driven search results page (<code>?q=foo</code>, <code>?category=news</code>, …) still works perfectly with the rollup variant — just use a token instead of a dynamic property binding. See <a href="tokens/">Tokens</a> for the full list.</p>
+</blockquote>
+<p>If you later decide a roll-up needs to be connected to a filter or search box, simply switch to the <em>'PnP - Search Results'</em> variant — all properties and templates are compatible. While you are editing a <em>'PnP - Search Results'</em> Web Part that is not connected to anything on the page, the Web Part will also surface an inline warning suggesting you switch to the rollup variant.</p>
 <h2 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">&para;</a></h2>
 <p>The search results Web Part configuration is divided into four parts each corresponding to a property pane page:</p>
 <ol>

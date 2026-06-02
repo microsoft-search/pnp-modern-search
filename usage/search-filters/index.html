@@ -1167,6 +1167,10 @@
 <td>The maximum number of values to be retrieved for a given filter. This value is useful if you use SharePoint refiners with a lot of refiner values. By default SharePoint will only retreve the first 100 values. To get all refiner values, you must specify an higher number manually (maximum value is 1000).</td>
 </tr>
 <tr>
+<td><strong>Show warning when limit is reached</strong></td>
+<td>Off by default. When enabled, an info icon appears after the filter title if the connected API returns a number of refiner or aggregation values equal to or greater than the configured <strong># of values</strong> limit. Hover the icon to see the warning details.</td>
+</tr>
+<tr>
 <td><strong>Template</strong></td>
 <td>The template to use to display filter values. The builtin templates are: </br><ul><li><strong>Check box</strong> <p align="center"><img alt="&quot;Check box&quot;" src="../../assets/webparts/search-filters/checkbox_template.png" /></p></li><li><strong>Date range</strong> <p align="center"><img alt="&quot;Date range&quot;" src="../../assets/webparts/search-filters/daterange_template.png" /></p></li><li><strong>Date interval</strong> <p align="center"><img alt="&quot;Date interval&quot;" src="../../assets/webparts/search-filters/dateinterval_template.png" /></p></li><li><strong>Combo</strong> <p align="center"><img alt="&quot;Combo&quot;" src="../../assets/webparts/search-filters/combo_template.png" /></p></br> You can search a value directly in the list by typing keywords in the combo text field.</br></br><li><strong>People Template</strong> <p align="center"><img alt="&quot;People Template&quot;" src="../../assets/webparts/search-filters/people_template.png" />  </p></br></li><li><strong>Hierarchical Refiner</strong> (taxonomy tree for parent/child terms)</li></ul></td>
 </tr>
@@ -1266,6 +1270,7 @@
 <h4 id="localization-and-deep-links">Localization and deep links<a class="headerlink" href="#localization-and-deep-links" title="Permanent link">&para;</a></h4>
 <ul>
 <li>Works with localized taxonomy refiner values when <strong>Enable localization</strong> is enabled in the connected SharePoint Search data source.</li>
+<li>The limit warning info icon tooltip is localized using the current UI language for all supported Search Filters languages.</li>
 <li>Deep links generated from hierarchical selections are supported.</li>
 </ul>
 <h4 id="selection-behavior">Selection behavior<a class="headerlink" href="#selection-behavior" title="Permanent link">&para;</a></h4>
