@@ -9,7 +9,9 @@ define([], function () {
             },
             WebPartDefaultTitle: "Zoekresultaten webonderdeel",
             ShowBlankEditInfoMessage: "Geen resultaten gevonden voor deze zoekopdracht. Dit webonderdeel blijft leeg in weergave modus conform parameters.",
-            CurrentVerticalNotSelectedMessage: "De nu selecteerde zoekverticaal komt niet overeen met degene die geassocieerd is met dit webonderdeel. Dit webonderdeel blijft leeg in weergave modus."
+            CurrentVerticalNotSelectedMessage: "De nu selecteerde zoekverticaal komt niet overeen met degene die geassocieerd is met dit webonderdeel. Dit webonderdeel blijft leeg in weergave modus.",
+            RollupSuggestionMessage: "Dit Zoekresultaten-webonderdeel is niet verbonden met een ander webonderdeel op de pagina. Overweeg in plaats daarvan de versie 'PnP - Search Rollup' te gebruiken — deze kan lazy worden geladen door SharePoint en zal geen gegevensbronaanvragen activeren totdat deze in beeld komt, wat de prestaties bij het laden van de pagina verbetert.",
+            RollupSuggestionLinkText: "Meer informatie"
         },
         PropertyPane: {
             DataSourcePage: {

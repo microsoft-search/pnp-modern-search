@@ -210,7 +210,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
 
     public async onInit(): Promise<void> {
 
-        this.dateHelper = this.serviceScope.consume<DateHelper>(DateHelper.ServiceKey);
+        this.dateHelper = this.serviceScope.consume(DateHelper.ServiceKey);
         this.dayjs = await this.dateHelper.moment();
 
         if (this.editMode) {
@@ -255,6 +255,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         if (this._properties.entityTypes.length > 0) {
             const searchQuery = await this.buildMicrosoftSearchQuery(dataContext);
             results = await this.search(searchQuery);
+            this.logAggregationCounts(dataContext, results.filters || []);
         } else {
             // If no entity is selected, manually set the results to prevent
             // having the previous search results items count displayed.
@@ -262,6 +263,32 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         }
 
         return results;
+    }
+
+    private logAggregationCounts(dataContext: IDataContext, filters: IDataFilterResult[]): void {
+        const defaultAggregationSize = 10;
+        const configuredFilters = dataContext.filters?.filtersConfiguration || [];
+
+        filters.forEach((filter) => {
+            const filterConfiguration = configuredFilters.find((config) => config.filterName === filter.filterName);
+            const configuredLimit = filterConfiguration?.maxBuckets ?? defaultAggregationSize;
+            const returnedCount = filter.values?.length ?? 0;
+            const filterWithLimitInfo = filter as IDataFilterResult & { isMaxBucketsExceeded?: boolean; configuredMaxBuckets?: number; returnedValueCount?: number; };
+
+            filterWithLimitInfo.isMaxBucketsExceeded = returnedCount >= configuredLimit;
+            filterWithLimitInfo.configuredMaxBuckets = configuredLimit;
+            filterWithLimitInfo.returnedValueCount = returnedCount;
+
+            if (returnedCount >= configuredLimit) {
+                console.warn(
+                    `%c[PnP Modern Search][Microsoft Search] Aggregation '${filter.filterName}' returned ${returnedCount} item(s), matching or exceeding the configured limit of ${configuredLimit}. Additional values may have been truncated by the API.`,
+                    'color:#8a1c00;background:#fff4ce;font-weight:bold;padding:2px 4px;'
+                );
+                return;
+            }
+
+            console.info(`[PnP Modern Search][Microsoft Search] Aggregation '${filter.filterName}' returned ${returnedCount} item(s) from the API (limit ${configuredLimit}).`);
+        });
     }
 
     public getPropertyPaneGroupsConfiguration(): IPropertyPaneGroup[] {
@@ -1217,14 +1244,16 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         const aggregationFilters: string[] = [];
 
         if (dataContext.filters.selectedFilters.length > 0) {
-            if (dataContext.filters.selectedFilters.length > 1 &&
-                dataContext.filters.selectedFilters.filter(f => f.values.length > 0).length > 1) {
-                const refinementString = DataFilterHelper.buildFqlRefinementString(dataContext.filters.selectedFilters, this.dayjs).join(',');
-                if (!isEmpty(refinementString)) {
-                    aggregationFilters.push(`${dataContext.filters.filterOperator}(${refinementString})`);
-                }
-            } else {
-                aggregationFilters.push(...DataFilterHelper.buildFqlRefinementString(dataContext.filters.selectedFilters, this.dayjs));
+            // The Microsoft Search API expects KQL-formatted refinement strings in aggregationFilters.
+            // Using FQL here causes multi-filter combinations to return 0 results (issue #4796).
+            const refinementString = DataFilterHelper.buildKqlRefinementString(
+                dataContext.filters.selectedFilters,
+                this.dayjs,
+                dataContext.filters.filterOperator
+            );
+
+            if (!isEmpty(refinementString)) {
+                aggregationFilters.push(refinementString);
             }
         }
 
@@ -1406,7 +1435,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         let aggregationResults: IDataFilterResult[] = [];
 
         // Get an instance to the MSGraphClient
-        const msGraphClientFactory = this.serviceScope.consume<MSGraphClientFactory>(MSGraphClientFactory.serviceKey);
+        const msGraphClientFactory: MSGraphClientFactory = this.serviceScope.consume(MSGraphClientFactory.serviceKey);
         const msGraphClient = await msGraphClientFactory.getClient('3');
         const request = msGraphClient.api(this._microsoftSearchUrl);
 

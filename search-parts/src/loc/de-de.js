@@ -283,7 +283,10 @@ define([], function () {
                 SliderShowPageDots: "Seitenpunkte anzeigen",
                 SliderWrapAround: "Unendlicher Bildlauf",
                 SlideHeight: "Slide Höhe (in px)",
-                SlideWidth: "Slide Breite (in px)"
+                SlideWidth: "Slide Breite (in px)",
+                PreviousPageLabel: "Vorherige Seite",
+                NextPageLabel: "Nächste Seite",
+                GoToPageLabel: "Gehe zu Seite {0}"
             },
             People: {
                 Name: "People",

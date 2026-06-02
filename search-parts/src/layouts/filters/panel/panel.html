@@ -35,6 +35,54 @@
 			font-size: {{@root.theme.fonts.large.fontSize}};
 			margin-bottom: 5px;
 		}
+
+        .filter--limit-warning-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 16px;
+            height: 16px;
+            margin-left: 6px;
+            border: 1px solid #d83b01;
+            border-radius: 50%;
+            color: #d83b01;
+            background: transparent;
+            font-size: 11px;
+            font-weight: 700;
+            line-height: 1;
+            cursor: help;
+            position: relative;
+        }
+
+        .filter--limit-warning-button:hover::after,
+        .filter--limit-warning-button:focus-visible::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 50%;
+            transform: translateX(-50%);
+            max-width: 320px;
+            padding: 6px 8px;
+            background: #323130;
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: 400;
+            white-space: normal;
+            border-radius: 2px;
+            z-index: 10;
+        }
+
+        .filter--limit-warning-sr-only {
+            border: 0;
+            clip: rect(0 0 0 0);
+            height: 1px;
+            margin: -1px;
+            overflow: hidden;
+            padding: 0;
+            position: absolute;
+            width: 1px;
+            white-space: nowrap;
+        }
         
         .filterPanelContent {
             padding-left: 32px;
@@ -90,7 +138,7 @@
                         {{#each @root.filters as |filter|}}
                             <div class="filter">
                                 {{#eq filter.selectedTemplate 'ComboBoxFilterTemplate'}}
-                                        <div class="filter--name">{{filter.displayName}}</div>
+                                        <div class="filter--name">{{filter.displayName}}{{#if filter.showLimitExceededWarning}} <button type="button" class="filter--limit-warning-button" title="{{filter.limitExceededWarningText}}" data-tooltip="{{filter.limitExceededWarningText}}" aria-label="{{filter.limitExceededWarningText}}" aria-describedby="filter-limit-warning-{{@root.instanceId}}-{{@index}}">i</button><span id="filter-limit-warning-{{@root.instanceId}}-{{@index}}" class="filter--limit-warning-sr-only">{{filter.limitExceededWarningText}}</span>{{/if}}</div>
                                         <div class="filter--value">
                                             <pnp-filtercombobox 
                                                 data-instance-id="{{@root.instanceId}}" 
@@ -106,7 +154,7 @@
                                             </pnp-filtercombobox>
                                         </div>
                                 {{else}}
-                                    <pnp-collapsible data-group-name="{{filter.displayName}}" data-default-collapsed="{{#or hasSelectedValues expandByDefault selectedOnce}}false{{else}}true{{/or}}" data-theme-variant="{{JSONstringify @root.theme}}">
+                                    <pnp-collapsible data-group-name="{{filter.displayName}}" data-show-warning-marker="{{filter.showLimitExceededWarning}}" data-warning-marker-tooltip="{{filter.limitExceededWarningText}}" data-default-collapsed="{{#or hasSelectedValues expandByDefault selectedOnce}}false{{else}}true{{/or}}" data-theme-variant="{{JSONstringify @root.theme}}">
                                             
                                         <template id="collapsible-content" item-class="filter--value">
                 
@@ -137,7 +185,7 @@
                                                         <pnp-filtersearchbox data-filter="{{JSONstringify filter}}" data-instance-id="{{@root.instanceId}}" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-filtersearchbox>
                                                     </div>
                                                     
-                                                    <div class="filter--values-list">
+                                                    <div class="filter--values-list" role="{{#if filter.isMulti}}group{{else}}radiogroup{{/if}}" aria-label="{{filter.displayName}}">
                                                         {{#each filter.values}}
                                                             <div title="{{name}} {{#if ../showCount}}({{count}}){{/if}}" class="filter--value">
                                                                 <pnp-filtercheckbox 
@@ -149,6 +197,8 @@
                                                                     data-disabled="{{disabled}}" 
                                                                     data-count="{{count}}"
                                                                     data-is-multi="{{../isMulti}}"
+                                                                    data-value-count="{{../values.length}}"
+                                                                    data-value-index="{{@index}}"
                                                                     data-theme-variant="{{JSONstringify @root.theme}}"
                                                                 >
                                                                 </pnp-filtercheckbox>
@@ -175,7 +225,7 @@
                                                             <pnp-filtersearchbox data-filter="{{JSONstringify filter}}" data-instance-id="{{@root.instanceId}}" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-filtersearchbox>
                                                         </div>
 
-                                                        <div class="filter--values-list">
+                                                        <div class="filter--values-list" role="{{#if filter.isMulti}}group{{else}}radiogroup{{/if}}" aria-label="{{filter.displayName}}">
                                                             {{#each filter.values}}
                                                                 {{#eq (itemAt (split name "|") 1) "membership"}}
                                                                     <div title="{{#with (split name '|')}}{{[2]}}{{/with}} {{#if ../showCount}}({{count}}){{/if}}" class="filter--value">
@@ -188,6 +238,8 @@
                                                                             data-disabled="{{disabled}}" 
                                                                             data-count="{{count}}"
                                                                             data-is-multi="{{../isMulti}}"
+                                                                            data-value-count="{{../values.length}}"
+                                                                            data-value-index="{{@index}}"
                                                                             data-theme-variant="{{JSONstringify @root.theme}}"
                                                                         >
                                                                         </pnp-filtercheckbox>
@@ -206,6 +258,8 @@
                                                                             data-disabled="{{disabled}}" 
                                                                             data-count="{{count}}"
                                                                             data-is-multi="{{../isMulti}}"
+                                                                            data-value-count="{{../values.length}}"
+                                                                            data-value-index="{{@index}}"
                                                                             data-theme-variant="{{JSONstringify @root.theme}}"
                                                                         >
                                                                         </pnp-filtercheckbox>

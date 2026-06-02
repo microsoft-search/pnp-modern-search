@@ -71,6 +71,12 @@ module.exports = function (webpackConfig, taskSession, heftConfiguration, webpac
             include: [/spfx-controls-react[/\\]lib[/\\]controls[/\\]HoverReactionsBar/],
             loader: 'ignore-loader',
         },
+        // Ignore Dashboard & Toolbar controls from spfx-controls-react (unused, pull in northstar)
+        {
+            test: /\.js$/,
+            include: [/spfx-controls-react[/\\]lib[/\\]controls[/\\](dashboard|toolbar)[/\\]/i],
+            loader: 'ignore-loader',
+        },
         // html-loader for .html files (handlebars templates) without minification
         {
             test: /\.html$/,
@@ -81,10 +87,49 @@ module.exports = function (webpackConfig, taskSession, heftConfiguration, webpac
         }
     );
 
-    // ─── optimization: disable vendor chunk splitting ──────────────────────────
+    // ─── optimization: shared async vendor chunks ─────────────────────────────
+    // SPFx injects only the single entry script per web part, so we split only *async* chunks
+    // (initial split chunks would never be loaded). Heavy vendors reachable via the web parts'
+    // dynamic import()s are hoisted into shared chunks emitted once instead of per entry.
     webpackConfig.optimization = webpackConfig.optimization || {};
     webpackConfig.optimization.splitChunks = {
-        cacheGroups: { vendors: false },
+        chunks: 'async',
+        minSize: 20000,
+        cacheGroups: {
+            vendors: false,
+            fluentui: {
+                test: /[\\/]node_modules[\\/](@fluentui|@uifabric|office-ui-fabric-react)[\\/]/,
+                name: 'pnp-modern-search-fluentui',
+                priority: 40,
+                reuseExistingChunk: true,
+            },
+            pnpControls: {
+                test: /[\\/]node_modules[\\/]@pnp[\\/]spfx-(controls|property)-(react|controls)[\\/]/,
+                name: 'pnp-modern-search-pnp-controls',
+                priority: 30,
+                reuseExistingChunk: true,
+            },
+            // Adaptive Cards stack (adaptivecards, adaptivecards-templating, adaptive-expressions,
+            // antlr4ts, markdown-it). These always load together via AdaptiveCardsLoader and are
+            // only pulled in on demand by the Adaptive Card layout.
+            adaptiveCards: {
+                test: /[\\/]node_modules[\\/](adaptivecards|adaptivecards-templating|adaptive-expressions|antlr4ts|markdown-it)[\\/]/,
+                name: 'pnp-modern-search-adaptivecards',
+                priority: 35,
+                reuseExistingChunk: true,
+            },
+            // Handlebars templating engine (on demand only, used by the Handlebars layout).
+            // Note: the Monaco/ACE code editor stack (property pane code editor) is intentionally
+            // NOT given a named cacheGroup — ace-builds does internal dynamic requires and
+            // diff-match-patch is also reachable from an entry's sync graph, so forcing a single
+            // named chunk conflicts.
+            handlebars: {
+                test: /[\\/]node_modules[\\/]handlebars[\\/]/,
+                name: 'pnp-modern-search-handlebars',
+                priority: 20,
+                reuseExistingChunk: true,
+            },
+        },
     };
 
     // ─── Plugins ───────────────────────────────────────────────────────────────

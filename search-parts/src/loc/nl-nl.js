@@ -283,7 +283,10 @@ define([], function () {
                 SliderShowPageDots: "Toon puntjes voor callout",
                 SliderWrapAround: "Oneindig scrollen",
                 SlideHeight: "Slide hoogte (in px)",
-                SlideWidth: "Slide breedte (in px)"
+                SlideWidth: "Slide breedte (in px)",
+                PreviousPageLabel: "Vorige pagina",
+                NextPageLabel: "Volgende pagina",
+                GoToPageLabel: "Ga naar pagina {0}"
             },
             People: {
                 Name: "Personen",

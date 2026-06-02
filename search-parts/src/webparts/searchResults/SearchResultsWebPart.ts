@@ -11,29 +11,24 @@ import {
     IPropertyPaneConfiguration,
     IPropertyPaneChoiceGroupOption,
     IPropertyPaneGroup,
-    PropertyPaneChoiceGroup,
     IPropertyPaneField,
     PropertyPaneHorizontalRule,
     PropertyPaneToggle,
-    PropertyPaneTextField,
     PropertyPaneSlider,
-    IPropertyPanePage,
-    PropertyPaneDropdown,
-    PropertyPaneCheckbox,
-    PropertyPaneDynamicField,
-    DynamicDataSharedDepth,
-    PropertyPaneDynamicFieldSet
+    IPropertyPanePage
 } from "@microsoft/sp-property-pane";
 import ISearchResultsWebPartProps, { QueryTextSource } from './ISearchResultsWebPartProps';
 import { AvailableDataSources, BuiltinDataSourceProviderKeys } from '../../dataSources/AvailableDataSources';
 import { ServiceKey } from "@microsoft/sp-core-library";
-import SearchResultsContainer from './components/SearchResultsContainer';
+const SearchResultsContainer = React.lazy(() => import(
+    /* webpackChunkName: 'pnp-modern-search-results-container' */
+    './components/SearchResultsContainer'
+));
 import { AvailableLayouts, BuiltinLayoutsKeys } from '../../layouts/AvailableLayouts';
 import { ITemplateService, FileFormat } from '../../services/templateService/ITemplateService';
 import { TemplateService } from '../../services/templateService/TemplateService';
 import { ServiceScopeHelper } from '../../helpers/ServiceScopeHelper';
 import { cloneDeep, isEmpty, isEqual, uniq, uniqBy } from "@microsoft/sp-lodash-subset";
-import { AvailableComponents } from '../../components/AvailableComponents';
 import { DynamicProperty } from '@microsoft/sp-component-base';
 import { ITemplateSlot, IDataContext, ITokenService, SortFieldDirection, IExtensibilityLibrary } from '@pnp/modern-search-extensibility';
 import { TokenService, BuiltinTokenNames } from '../../services/tokenService/TokenService';
@@ -47,7 +42,7 @@ import { IDynamicDataCallables, IDynamicDataPropertyDefinition } from '@microsof
 import { IDataResultSourceData } from '../../models/dynamicData/IDataResultSourceData';
 import { LayoutHelper } from '../../helpers/LayoutHelper';
 import { IAsyncComboProps } from '../../controls/PropertyPaneAsyncCombo/components/IAsyncComboProps';
-import { AsyncCombo } from '../../controls/PropertyPaneAsyncCombo/components/AsyncCombo';
+import type { AsyncCombo as AsyncComboType } from '../../controls/PropertyPaneAsyncCombo/components/AsyncCombo';
 import { Constants } from '../../common/Constants';
 import PnPTelemetry from "@pnp/telemetry-js";
 import { IPageEventInfo } from '../../components/PaginationComponent';
@@ -58,14 +53,14 @@ import commonStyles from '../../styles/Common.module.scss';
 import { UrlHelper } from '../../helpers/UrlHelper';
 import { ObjectHelper } from '../../helpers/ObjectHelper';
 import { ItemSelectionMode } from '../../models/common/IItemSelectionProps';
-import { PropertyPaneAsyncCombo } from '../../controls/PropertyPaneAsyncCombo/PropertyPaneAsyncCombo';
 import { DynamicPropertyHelper } from '../../helpers/DynamicPropertyHelper';
 import { IQueryModifierConfiguration } from '../../queryModifier/IQueryModifierConfiguration';
 import { loadMsGraphToolkit } from '../../helpers/GraphToolKitHelper';
-import { DataSourcePropertyPaneBuilder } from './propertyPane/DataSourcePropertyPaneBuilder';
-import { AboutPropertyPaneBuilder } from './propertyPane/AboutPropertyPaneBuilder';
+import type { DataSourcePropertyPaneBuilder as DataSourcePropertyPaneBuilderType } from './propertyPane/DataSourcePropertyPaneBuilder';
+import type { AboutPropertyPaneBuilder as AboutPropertyPaneBuilderType } from './propertyPane/AboutPropertyPaneBuilder';
+import type { ConnectionsPropertyPaneBuilder as ConnectionsPropertyPaneBuilderType } from './propertyPane/ConnectionsPropertyPaneBuilder';
 import { TokenSetter } from './services/TokenSetter';
-import { StylingPageGroupsBuilder } from './propertyPane/StylingPageGroupsBuilder';
+import type { StylingPageGroupsBuilder as StylingPageGroupsBuilderType } from './propertyPane/StylingPageGroupsBuilder';
 
 // Import statements for templates
 import defaultSimpleListTemplate from '../../layouts/resultTypes/default_simple_list.html';
@@ -76,7 +71,6 @@ import { MessageBar, MessageBarType } from '@fluentui/react/lib/MessageBar';
 import { Link } from '@fluentui/react/lib/Link';
 import { IComboBoxOption } from '@fluentui/react/lib/ComboBox';
 import { IToggleProps, Toggle } from '@fluentui/react/lib/Toggle';
-import { PropertyFieldMessage } from '@pnp/spfx-property-controls/lib/PropertyFieldMessage';
 
 const LogSource = "SearchResultsWebPart";
 
@@ -123,6 +117,14 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     private _customCollectionFieldType: any = null;
     private _textDialogComponent: any = null;
     private _propertyPanePropertyEditor = null;
+
+    private _connectionsPropertyPaneBuilderClass: typeof ConnectionsPropertyPaneBuilderType = null;
+
+    private _dataSourcePropertyPaneBuilderClass: typeof DataSourcePropertyPaneBuilderType = null;
+    private _aboutPropertyPaneBuilderClass: typeof AboutPropertyPaneBuilderType = null;
+    private _stylingPageGroupsBuilderClass: typeof StylingPageGroupsBuilderType = null;
+    private _asyncComboComponent: typeof AsyncComboType = null;
+    private _propertyFieldMessage: typeof import('@pnp/spfx-property-controls/lib/PropertyFieldMessage').PropertyFieldMessage = null;
 
     /**
      * The selected data source for the WebPart
@@ -179,7 +181,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     /**
      * The available web component definitions (not registered yet)
      */
-    private availableWebComponentDefinitions: IComponentDefinition<any>[] = AvailableComponents.BuiltinComponents;
+    private availableWebComponentDefinitions: IComponentDefinition<any>[] = [];
 
     /**
      * The available custom QueryModifier definitions (not registered yet)
@@ -253,6 +255,23 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
      */
     private _currentDataContext: IDataContext;
 
+    /**
+     * Tracks whether other Web Parts on the page could potentially consume data from this Search
+     * Results Web Part. Default `false` (no incoming detected) so a brand-new, unconnected Web Part
+     * surfaces the rollup-version suggestion on the very first render; the async re-evaluation only
+     * needs to flip it to `true` when other consumer-capable Web Parts (Search Filters, other Search
+     * Results) are present on the page.
+     */
+    private _hasPotentialIncomingConnections: boolean = false;
+
+    /**
+     * Tracks whether the Web Part has been disposed. Async callbacks (theme change, dynamic data
+     * 'available sources changed', extension loading, etc.) may resolve after the instance is torn
+     * down; rendering then crashes inside SPFx's async render watchdog (`Cannot read properties of
+     * undefined (reading 'webPartTag')`). This flag lets render() bail out safely.
+     */
+    private _webPartDisposed: boolean = false;
+
     constructor() {
         super();
 
@@ -265,8 +284,22 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     public async render(): Promise<void> {
         try {
 
+            // The Web Part may have been disposed while an async callback (theme change, dynamic data
+            // source change, extension loading, ...) was in flight. Rendering a disposed instance
+            // crashes SPFx's async render watchdog, so bail out early.
+            if (this._webPartDisposed) {
+                return;
+            }
+
             // Check audience targeting - if user is not in audience, don't render
             const isInAudience = await this.isInAudience();
+
+            // The Web Part may have been disposed while awaiting audience evaluation; bail out before
+            // touching this.context (SPFx tears it down on dispose).
+            if (this._webPartDisposed || !this.context) {
+                return;
+            }
+
             this._isHiddenByAudience = !isInAudience;
             if (!isInAudience) {
                 // eslint-disable-next-line @rushstack/pair-react-dom-render-unmount -- cleanup on audience hide, paired with onDispose
@@ -295,6 +328,12 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
             // Refresh the token values with the latest information from environment (i.e connections and settings)
             await this.setTokens();
+
+            // Re-check disposal after the awaited init/token work before resolving context-dependent
+            // data source and layout instances (LayoutHelper.getLayoutInstance uses this.context).
+            if (this._webPartDisposed || !this.context) {
+                return;
+            }
 
             // We resolve data source and layout instances directly in the render method to avoid unexpected render triggers due to Web Part property bag manipulation 
             // SPFx has an inner routine in reactive mode to trigger a render every time a property bag value is updated conflicting with the way data source and layouts share properties (see _afterPropertyUpdated)
@@ -348,6 +387,10 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             }
 
             if (this.dataSource) {
+                // Re-check disposal after the prior awaits before building the data context.
+                if (this._webPartDisposed || !this.context) {
+                    return;
+                }
                 this._currentDataContext = await this.getDataContext();
             }
             return this.renderCompleted();
@@ -485,7 +528,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 titleFontColor: this.properties.titleFontColor
             } as ISearchResultsContainerProps);
 
-            renderRootElement = renderDataContainer;
+            renderRootElement = React.createElement(React.Suspense, { fallback: null }, renderDataContainer);
 
         } else {
 
@@ -562,6 +605,33 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             }
         }
 
+        // Suggestion: when in edit mode and this Web Part is not (and is unlikely to be) connected to
+        // any other Web Part, surface a warning recommending the lazy-loadable "Search Rollup" variant.
+        // Outgoing connections are checked synchronously here; incoming connections are checked
+        // asynchronously in `_evaluateRollupSuggestion()` and reflected via `_hasPotentialIncomingConnections`.
+        const shouldShowRollupSuggestion = this.displayMode === DisplayMode.Edit
+            && this.properties.allowWebPartConnections === true
+            && !this._hasOutgoingConnections()
+            && !this._hasPotentialIncomingConnections;
+
+        if (shouldShowRollupSuggestion && renderRootElement) {
+            const docsHref = 'https://microsoft-search.github.io/pnp-modern-search/usage/search-results/';
+            renderRootElement = React.createElement('div', {},
+                React.createElement(
+                    MessageBar, {
+                    messageBarType: MessageBarType.warning,
+                },
+                    webPartStrings.General.RollupSuggestionMessage,
+                    ' ',
+                    React.createElement(Link, {
+                        target: '_blank',
+                        href: docsHref
+                    }, webPartStrings.General.RollupSuggestionLinkText)
+                ),
+                renderRootElement
+            );
+        }
+
         // Error message
         if (this.errorMessage) {
             renderRootElement = React.createElement(MessageBar, {
@@ -612,15 +682,13 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         this._handleQueryStringChange();
         this._handlePopStatePagination();
 
-        // Load extensibility libaries extensions
+        // Load extensions from extensibility libraries.
+        // loadExtensions() also registers web components in the global page context,
+        // so we don't need a separate registerWebComponents call here.
         await this.loadExtensions(this.properties.extensibilityLibraryConfiguration);
 
         // Filter the layouts to be displayed in the property pane according to current render type
         this.availableLayoutsInPropertyPane = this.availableLayoutDefinitions.filter(layout => layout.renderType === this.properties.layoutRenderType);
-
-        // Register Web Components in the global page context. We need to do this BEFORE the template processing to avoid race condition.
-        // Web components are only defined once.
-        await this.templateService.registerWebComponents(this.availableWebComponentDefinitions, this.instanceId);
 
         if (this.properties.layoutProperties?.showPersonaCard) {
             this.properties.useMicrosoftGraphToolkit = true;
@@ -647,10 +715,28 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         // Initializes dynamic data connections. This could trigger a render if a connection is made with an other component resulting to a render race condition.
         await this.ensureDynamicDataSourcesConnection();
 
+        // Re-evaluate the rollup-version suggestion whenever the set of available dynamic data
+        // sources on the page changes (i.e. another Web Part is added or removed). This keeps the
+        // inline warning in sync without requiring a property pane change or page refresh.
+        if (this.displayMode === DisplayMode.Edit && this.context.dynamicDataProvider) {
+            this.context.dynamicDataProvider.registerAvailableSourcesChanged(() => {
+                this._evaluateRollupSuggestion().catch(error => {
+                    Log.warn(LogSource, `Failed to evaluate rollup suggestion: ${error}`, this.webPartInstanceServiceScope);
+                });
+            });
+
+            // Initial evaluation. Fire-and-forget: it triggers an additional render only if the
+            // computed state actually changes (so an unconnected new Web Part avoids a redundant render).
+            this._evaluateRollupSuggestion().catch(error => {
+                Log.warn(LogSource, `Failed to evaluate rollup suggestion: ${error}`, this.webPartInstanceServiceScope);
+            });
+        }
+
         return super.onInit();
     }
 
     protected onDispose(): void {
+        this._webPartDisposed = true;
         if (this._pushStateCallback) {
             window.history.pushState = this._pushStateCallback;
         }
@@ -687,7 +773,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         let dataSourceProperties: IPropertyPaneGroup[] = [];
 
         // Initialize property pane builders
-        const dataSourceBuilder = new DataSourcePropertyPaneBuilder(
+        const dataSourceBuilder = new this._dataSourcePropertyPaneBuilderClass(
             this.properties,
             this.dataSource,
             this.availableDataSourceDefinitions,
@@ -697,7 +783,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             webPartStrings
         );
 
-        const aboutBuilder = new AboutPropertyPaneBuilder(
+        const aboutBuilder = new this._aboutPropertyPaneBuilderClass(
             this.getPropertyPaneWebPartInfoGroups.bind(this),
             this.getExtensibilityFields.bind(this),
             this.getAudienceTargetingPropertyPaneGroup.bind(this),
@@ -909,7 +995,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             // Reset existing definitions to default
             this.availableDataSourceDefinitions = AvailableDataSources.BuiltinDataSources;
             this.availableLayoutDefinitions = AvailableLayouts.BuiltinLayouts.filter(layout => { return layout.type === LayoutType.Results; });
-            this.availableWebComponentDefinitions = AvailableComponents.BuiltinComponents;
+            this.availableWebComponentDefinitions = [];
             this.availableCustomQueryModifierDefinitions = [];
             this._selectedCustomQueryModifier = [];
             this.properties.queryModifierProperties = {};
@@ -1061,9 +1147,15 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     }
 
     /**
-     * Loads extensions from registered extensibility librairies
+     * Loads extensions from registered extensibility libraries
      */
     private async loadExtensions(librariesConfiguration: IExtensibilityConfiguration[]) {
+
+        const { AvailableComponents } = await import(
+            /* webpackChunkName: 'pnp-modern-search-web-components' */
+            '../../components/AvailableComponents'
+        );
+        this.availableWebComponentDefinitions = AvailableComponents.BuiltinComponents;
 
         // Load extensibility library if present
         const extensibilityLibraries = await this.extensibilityService.loadExtensibilityLibraries(librariesConfiguration);
@@ -1117,10 +1209,19 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         // Add custom providers to the available providers
         this.properties.queryModifierConfiguration = this.properties.queryModifierConfiguration.concat(customQueryModifierConfiguration);
+
+        // Register web components in the global page context. This must happen every time
+        // extensions are loaded (not just once in onInit) so that newly-enabled extension
+        // components are upgraded in the DOM. Safe to call repeatedly — the underlying
+        // customElements.define() is guarded so already-registered components are skipped.
+        await this.templateService.registerWebComponents(this.availableWebComponentDefinitions, this.instanceId);
+
         this.extensionsLoaded = true;
     }
 
     public async loadPropertyPaneResources(): Promise<void> {
+
+        await this.loadCommonPropertyPaneResources();
 
         const { PropertyFieldCodeEditor, PropertyFieldCodeEditorLanguages } = await import(
             /* webpackChunkName: 'pnp-modern-search-code-editor', webpackMode: 'lazy' */
@@ -1176,6 +1277,42 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         this._propertyFieldCalloutTriggers = CalloutTriggers;
 
         this._propertyFieldNumber = PropertyFieldNumber;
+
+        const { ConnectionsPropertyPaneBuilder } = await import(
+            /* webpackChunkName: 'pnp-modern-search-property-pane' */
+            './propertyPane/ConnectionsPropertyPaneBuilder'
+        );
+        this._connectionsPropertyPaneBuilderClass = ConnectionsPropertyPaneBuilder;
+
+        const { DataSourcePropertyPaneBuilder } = await import(
+            /* webpackChunkName: 'pnp-modern-search-property-pane' */
+            './propertyPane/DataSourcePropertyPaneBuilder'
+        );
+        this._dataSourcePropertyPaneBuilderClass = DataSourcePropertyPaneBuilder;
+
+        const { AboutPropertyPaneBuilder } = await import(
+            /* webpackChunkName: 'pnp-modern-search-property-pane' */
+            './propertyPane/AboutPropertyPaneBuilder'
+        );
+        this._aboutPropertyPaneBuilderClass = AboutPropertyPaneBuilder;
+
+        const { StylingPageGroupsBuilder } = await import(
+            /* webpackChunkName: 'pnp-modern-search-property-pane' */
+            './propertyPane/StylingPageGroupsBuilder'
+        );
+        this._stylingPageGroupsBuilderClass = StylingPageGroupsBuilder;
+
+        const { AsyncCombo } = await import(
+            /* webpackChunkName: 'pnp-modern-search-property-pane' */
+            '../../controls/PropertyPaneAsyncCombo/components/AsyncCombo'
+        );
+        this._asyncComboComponent = AsyncCombo;
+
+        const { PropertyFieldMessage } = await import(
+            /* webpackChunkName: 'pnp-modern-search-property-pane' */
+            '@pnp/spfx-property-controls/lib/PropertyFieldMessage'
+        );
+        this._propertyFieldMessage = PropertyFieldMessage;
 
         this.propertyPaneConnectionsGroup = await this.getConnectionOptionsGroup();
     }
@@ -1283,9 +1420,11 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             selectionPreservedOnEmptyClick: false
         };
 
+        // Seed an example row (disabled by default) so the property pane shows users
+        // where to add their extension manifest IDs. Disabled — it doesn't try to load.
         this.properties.extensibilityLibraryConfiguration = this.properties.extensibilityLibraryConfiguration ? this.properties.extensibilityLibraryConfiguration : [{
             name: commonStrings.General.Extensibility.DefaultExtensibilityLibraryName,
-            enabled: true,
+            enabled: false,
             id: Constants.DEFAULT_EXTENSIBILITY_LIBRARY_COMPONENT_ID
         }];
 
@@ -1337,7 +1476,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
      * Returns property pane 'Styling' page groups
      */
     private getStylingPageGroups(): IPropertyPaneGroup[] {
-        const builder = new StylingPageGroupsBuilder(
+        const builder = new this._stylingPageGroupsBuilderClass(
             this.properties,
             this.availableLayoutDefinitions,
             this.templateContentToDisplay,
@@ -1625,7 +1764,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                             onCustomRender: (field, value, onUpdate, item) => {
                                 return (
                                     React.createElement("div", null,
-                                        React.createElement(AsyncCombo, {
+                                        React.createElement(this._asyncComboComponent, {
                                             allowFreeform: true,
                                             availableOptions: availableOptions,
                                             placeholder: webPartStrings.PropertyPane.DataSourcePage.TemplateSlots.SlotFieldPlaceholderName,
@@ -1655,7 +1794,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 const undefinedTemplateSlots = layoutSlots.concat(resultTypesSlots).filter(slot => !templateSlotNames.includes(slot));
 
                 templateSlotFields.push(
-                    PropertyFieldMessage('messageMissingSlots', {
+                    this._propertyFieldMessage('messageMissingSlots', {
                         key: 'messageMissingSlotsKey',
                         multiline: true,
                         text: Text.format(webPartStrings.PropertyPane.DataSourcePage.TemplateSlots.MissingSlotsMessage, undefinedTemplateSlots.join(", ")),
@@ -1669,336 +1808,34 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         return templateSlotFields;
     }
 
-    private getSearchQueryTextFields(): IPropertyPaneField<any>[] {
-        let searchQueryTextFields: IPropertyPaneField<any>[] = [
-            this._propertyFieldToogleWithCallout('useInputQueryText', {
-                label: webPartStrings.PropertyPane.ConnectionsPage.UseInputQueryText,
-                calloutTrigger: this._propertyFieldCalloutTriggers.Hover,
-                key: 'useInputQueryText',
-                calloutContent: React.createElement('p', { style: { maxWidth: 250, wordBreak: 'break-word' } }, webPartStrings.PropertyPane.ConnectionsPage.UseInputQueryTextHoverMessage),
-                onText: commonStrings.General.OnTextLabel,
-                offText: commonStrings.General.OffTextLabel,
-                checked: this.properties.useInputQueryText
-            })
-        ];
-
-        if (this.properties.useInputQueryText) {
-
-            searchQueryTextFields.push(
-                PropertyPaneChoiceGroup('queryTextSource', {
-                    options: [
-                        {
-                            key: QueryTextSource.StaticValue,
-                            text: webPartStrings.PropertyPane.ConnectionsPage.InputQueryTextStaticValue
-                        },
-                        {
-                            key: QueryTextSource.DynamicValue,
-                            text: webPartStrings.PropertyPane.ConnectionsPage.InputQueryTextDynamicValue
-                        }
-                    ]
-                })
-            );
-
-            switch (this.properties.queryTextSource) {
-
-                case QueryTextSource.StaticValue:
-                    searchQueryTextFields.push(
-                        PropertyPaneTextField('queryText', {
-                            label: webPartStrings.PropertyPane.ConnectionsPage.SearchQueryTextFieldLabel,
-                            description: webPartStrings.PropertyPane.ConnectionsPage.SearchQueryTextFieldDescription,
-                            multiline: true,
-                            resizable: true,
-                            placeholder: webPartStrings.PropertyPane.ConnectionsPage.SearchQueryPlaceHolderText,
-                            onGetErrorMessage: this._validateEmptyField.bind(this),
-                            deferredValidationTime: 500
-                        })
-                    );
-                    break;
-
-                case QueryTextSource.DynamicValue:
-                    searchQueryTextFields.push(
-                        PropertyPaneDynamicField('queryText', {
-                            label: ''
-                        }),
-                        PropertyPaneCheckbox('useDefaultQueryText', {
-                            text: webPartStrings.PropertyPane.ConnectionsPage.SearchQueryTextUseDefaultQuery,
-                            disabled: this.properties.queryText.reference === undefined
-                        })
-                    );
-
-                    if (this.properties.useDefaultQueryText && this.properties.queryText.reference !== undefined) {
-                        searchQueryTextFields.push(
-                            PropertyPaneTextField('defaultQueryText', {
-                                label: webPartStrings.PropertyPane.ConnectionsPage.SearchQueryTextDefaultValue,
-                                multiline: true
-                            })
-                        );
-                    }
-
-                    break;
-
-                default:
-                    break;
-            }
-
-            if (this.availableCustomQueryModifierDefinitions.length > 0) {
-
-                searchQueryTextFields = searchQueryTextFields.concat(this.getQueryModifierFields());
-            }
-
-        }
-
-        return searchQueryTextFields;
-    }
-
-    private async getDataResultsConnectionFields(): Promise<IPropertyPaneField<any>[]> {
-
-        let dataResultsConnectionFields: IPropertyPaneField<any>[] = [
-            PropertyPaneToggle('useDynamicFiltering', {
-                label: webPartStrings.PropertyPane.ConnectionsPage.UseDynamicFilteringsWebPartLabel,
-                checked: this.properties.useDynamicFiltering
-            })
-        ];
-
-        if (this.properties.useDynamicFiltering) {
-
-            let isSourceFieldConfigured: boolean = false;
-
-            // Make sure a property is selected in the source according to the reference format.
-            // Ex: PageContext:UrlData:queryParameters.q = Page environment
-            // Ex: WebPart.544c1372-42df-47c3-94d6-017428cd2baf.1272b161-3435-4815-99a1-996590334cff:AvailableFieldValuesFromResults:FileType = Search Results
-            if (this.properties.selectedItemFieldValue.reference) {
-                isSourceFieldConfigured = /^.+:.+:(.+)$/.test(this.properties.selectedItemFieldValue.reference);
-            }
-
-            dataResultsConnectionFields.push(
-
-                // Allow both 'Search Results' Web Parts and OOTB SharePoint List Web Parts 
-                PropertyPaneDynamicFieldSet({
-                    label: webPartStrings.PropertyPane.ConnectionsPage.UseDataResultsFromComponentsLabel,
-                    fields: [
-                        PropertyPaneDynamicField('selectedItemFieldValue', {
-                            label: webPartStrings.PropertyPane.ConnectionsPage.UseDataResultsFromComponentsLabel,
-                        })
-                    ],
-                    sharedConfiguration: {
-                        depth: DynamicDataSharedDepth.Property,
-                        property: {
-                            filters: {
-                                propertyId: DynamicDataProperties.AvailableFieldValuesFromResults
-                            }
-                        }
-                    }
-                })
-            );
-
-            if (isSourceFieldConfigured) {
-
-                const availableOptions: IComboBoxOption[] = this.getSelectedProperties().map((field: string) => {
-                    return {
-                        key: field,
-                        text: field
-                    };
-                });
-
-                dataResultsConnectionFields.splice(4, 0,
-                    new PropertyPaneAsyncCombo('itemSelectionProps.destinationFieldName', {
-                        label: webPartStrings.PropertyPane.ConnectionsPage.SourceDestinationFieldLabel,
-                        availableOptions: availableOptions,
-                        description: webPartStrings.PropertyPane.ConnectionsPage.SourceDestinationFieldDescription,
-                        allowMultiSelect: false,
-                        allowFreeform: true,
-                        searchAsYouType: false,
-                        defaultSelectedKeys: this.properties.selectedVerticalKeys,
-                        textDisplayValue: this.properties.itemSelectionProps.destinationFieldName,
-                        onPropertyChange: this.onCustomPropertyUpdate.bind(this),
-                    })
-                );
-            }
-
-            if (isSourceFieldConfigured && this.properties.itemSelectionProps.destinationFieldName) {
-
-                dataResultsConnectionFields.splice(4, 0,
-                    PropertyPaneChoiceGroup('itemSelectionProps.selectionMode', {
-                        options: [
-                            {
-                                key: ItemSelectionMode.AsDataFilter,
-                                text: webPartStrings.PropertyPane.LayoutPage.Handlebars.AsDataFiltersSelectionMode
-                            },
-                            {
-                                key: ItemSelectionMode.AsTokenValue,
-                                text: webPartStrings.PropertyPane.LayoutPage.Handlebars.AsTokensSelectionMode
-                            }
-                        ],
-                        label: webPartStrings.PropertyPane.LayoutPage.Handlebars.SelectionModeLabel,
-                    })
-                );
-
-                if (this.properties.itemSelectionProps.selectionMode === ItemSelectionMode.AsDataFilter) {
-                    dataResultsConnectionFields.splice(5, 0,
-                        this._propertyPaneWebPartInformation({
-                            description: `<em>${webPartStrings.PropertyPane.LayoutPage.Handlebars.AsDataFiltersDescription}</em>`,
-                            key: 'selectionModeText'
-                        }),
-                        PropertyPaneChoiceGroup('itemSelectionProps.valuesOperator', {
-                            options: [
-                                {
-                                    key: FilterConditionOperator.OR,
-                                    text: 'OR'
-                                },
-                                {
-                                    key: FilterConditionOperator.AND,
-                                    text: 'AND'
-                                },
-                            ],
-                            label: webPartStrings.PropertyPane.LayoutPage.Handlebars.FilterValuesOperator
-                        })
-                    );
-                } else {
-                    dataResultsConnectionFields.splice(4, 0,
-                        this._propertyPaneWebPartInformation({
-                            description: `<em>${webPartStrings.PropertyPane.LayoutPage.Handlebars.AsTokensDescription}</em>`,
-                            key: 'selectionModeText'
-                        })
-                    );
-                }
-            }
-        }
-
-        return dataResultsConnectionFields;
-    }
-
-    private async getFiltersConnectionFields(): Promise<IPropertyPaneField<any>[]> {
-
-        let filtersConnectionFields: IPropertyPaneField<any>[] = [
-            PropertyPaneToggle('useFilters', {
-                label: webPartStrings.PropertyPane.ConnectionsPage.UseFiltersWebPartLabel,
-                checked: this.properties.useFilters
-            })
-        ];
-
-        if (this.properties.useFilters) {
-            filtersConnectionFields.splice(1, 0,
-                PropertyPaneDropdown('filtersDataSourceReference', {
-                    options: await this.dynamicDataService.getAvailableDataSourcesByType(ComponentType.SearchFilters),
-                    label: webPartStrings.PropertyPane.ConnectionsPage.UseFiltersFromComponentLabel
-                })
-            );
-
-            // Check bidirectional connection: does the filter web part also connect back to this results web part?
-            if (this.properties.filtersDataSourceReference && this._filtersConnectionSourceData) {
-                const filterData: IDataFilterSourceData = DynamicPropertyHelper.tryGetValueSafe(this._filtersConnectionSourceData);
-                if (filterData && filterData.connectedResultsSourceReferences) {
-                    // Extract sourceId from each reference (format: "sourceId:propertyId") and check if it ends with this web part's instanceId
-                    const isConnectedBack = filterData.connectedResultsSourceReferences.some(
-                        ref => {
-                            const sourceId = ref.split(':')[0];
-                            return sourceId.endsWith(this.instanceId);
-                        }
-                    );
-                    if (!isConnectedBack) {
-                        filtersConnectionFields.push(
-                            this._propertyPaneWebPartInformation({
-                                description: `<span style="color: #d83b01;">⚠ ${webPartStrings.PropertyPane.ConnectionsPage.BidirectionalConnectionWarning}</span>`,
-                                key: 'bidirectionalFilterWarning'
-                            })
-                        );
-                    }
-                }
-            }
-        }
-
-        return filtersConnectionFields;
-    }
-
-    private async getVerticalsConnectionFields(): Promise<IPropertyPaneField<any>[]> {
-
-        let verticalsConnectionFields: IPropertyPaneField<any>[] = [
-            PropertyPaneToggle('useVerticals', {
-                label: webPartStrings.PropertyPane.ConnectionsPage.UseSearchVerticalsWebPartLabel,
-                checked: this.properties.useVerticals
-            })
-        ];
-
-        if (this.properties.useVerticals) {
-            verticalsConnectionFields.splice(1, 0,
-                PropertyPaneDropdown('verticalsDataSourceReference', {
-                    options: await this.dynamicDataService.getAvailableDataSourcesByType(ComponentType.SearchVerticals),
-                    label: webPartStrings.PropertyPane.ConnectionsPage.UseSearchVerticalsFromComponentLabel
-                })
-            );
-
-            if (this.properties.verticalsDataSourceReference) {
-
-                // Get all available verticals
-                if (this._verticalsConnectionSourceData) {
-                    const availableVerticals = DynamicPropertyHelper.tryGetValueSafe(this._verticalsConnectionSourceData);
-
-                    if (availableVerticals) {
-
-                        // Get the corresponding text for selected keys
-                        let selectedKeysAsText: string[] = [];
-
-                        availableVerticals.verticalsConfiguration.forEach(verticalConfiguration => {
-                            if (this.properties.selectedVerticalKeys.indexOf(verticalConfiguration.key) !== -1) {
-                                selectedKeysAsText.push(verticalConfiguration.tabName);
-                            }
-                        });
-
-                        verticalsConnectionFields.push(
-                            new PropertyPaneAsyncCombo('selectedVerticalKeys', {
-                                availableOptions: availableVerticals.verticalsConfiguration.filter(v => !v.isLink).map(verticalConfiguration => {
-                                    return {
-                                        key: verticalConfiguration.key,
-                                        text: verticalConfiguration.tabName
-                                    };
-                                }),
-                                allowMultiSelect: true,
-                                allowFreeform: false,
-                                description: webPartStrings.PropertyPane.ConnectionsPage.LinkToVerticalLabelHoverMessage,
-                                label: webPartStrings.PropertyPane.ConnectionsPage.LinkToVerticalLabel,
-                                searchAsYouType: false,
-                                defaultSelectedKeys: this.properties.selectedVerticalKeys,
-                                textDisplayValue: selectedKeysAsText.join(','),
-                                onPropertyChange: this.onCustomPropertyUpdate.bind(this),
-                            }),
-                        );
-                    }
-                }
-            }
-        }
-
-        return verticalsConnectionFields;
-    }
-
     private async getConnectionOptionsGroup(): Promise<IPropertyPaneGroup[]> {
-        const filterConnectionFields = await this.getFiltersConnectionFields();
-        const verticalConnectionFields = await this.getVerticalsConnectionFields();
-        const dataResultsConnectionsFields = await this.getDataResultsConnectionFields();
 
-        let dynamicDataToggles = [];
-        if (this.properties.allowWebPartConnections) {
-            dynamicDataToggles = [
-                ...this.getSearchQueryTextFields(),
-                PropertyPaneHorizontalRule(),
-                ...filterConnectionFields,
-                PropertyPaneHorizontalRule(),
-                ...verticalConnectionFields,
-                PropertyPaneHorizontalRule(),
-                ...dataResultsConnectionsFields
-            ]
+        // Class is lazily loaded in `loadPropertyPaneResources()` as part of the property-pane
+        // chunk. If the pane was never opened yet (e.g. property-pane refresh fired before
+        // `onPropertyPaneConfigurationStart`) we have nothing to render, so return an empty group.
+        if (!this._connectionsPropertyPaneBuilderClass) {
+            return [];
         }
 
-        let availableConnectionsGroup: IPropertyPaneGroup[] = [
-            {
-                groupName: webPartStrings.PropertyPane.ConnectionsPage.ConnectionsPageGroupName,
-                groupFields: [
-                    ...dynamicDataToggles
-                ]
-            }
-        ];
+        const builder = new this._connectionsPropertyPaneBuilderClass({
+            properties: this.properties,
+            instanceId: this.instanceId,
+            webPartStrings: webPartStrings,
+            commonStrings: commonStrings,
+            dynamicDataService: this.dynamicDataService,
+            filtersConnectionSourceData: this._filtersConnectionSourceData,
+            verticalsConnectionSourceData: this._verticalsConnectionSourceData,
+            hasCustomQueryModifiers: this.availableCustomQueryModifierDefinitions.length > 0,
+            propertyFieldToogleWithCallout: this._propertyFieldToogleWithCallout,
+            propertyFieldCalloutTriggers: this._propertyFieldCalloutTriggers,
+            propertyFieldCollectionData: this._propertyFieldCollectionData,
+            customCollectionFieldType: this._customCollectionFieldType,
+            propertyPaneWebPartInformation: this._propertyPaneWebPartInformation,
+            getSelectedProperties: this.getSelectedProperties.bind(this),
+            onCustomPropertyUpdate: this.onCustomPropertyUpdate.bind(this)
+        });
 
-        return availableConnectionsGroup;
+        return builder.buildConnectionsGroup();
     }
 
     /**
@@ -2293,16 +2130,99 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     }
 
     /**
-     * Checks if a field if empty or not
-     * @param value the value to check
+     * Returns true if any 'Available connections' toggle is on AND a source has actually been
+     * selected for it. Toggling without picking a source doesn't yet consume anything, so it
+     * shouldn't suppress the "consider Rollup" suggestion.
      */
-    private _validateEmptyField(value: string): string {
+    private _hasOutgoingConnections(): boolean {
 
-        if (!value) {
-            return commonStrings.General.EmptyFieldErrorMessage;
+        const hasInputQueryConnection = this.properties.useInputQueryText === true
+            && !!DynamicPropertyHelper.tryGetSourceSafe(this.properties.queryText);
+        const hasFiltersConnection = this.properties.useFilters === true
+            && !!this.properties.filtersDataSourceReference;
+        const hasVerticalsConnection = this.properties.useVerticals === true
+            && !!this.properties.verticalsDataSourceReference;
+        const hasDynamicFilteringConnection = this.properties.useDynamicFiltering === true
+            && !!DynamicPropertyHelper.tryGetSourceSafe(this.properties.selectedItemFieldValue);
+
+        return hasInputQueryConnection
+            || hasFiltersConnection
+            || hasVerticalsConnection
+            || hasDynamicFilteringConnection;
+    }
+
+    /**
+     * Determines whether any Search Filters Web Part on the page declares a connection back to this
+     * instance, by reading each filter source's published `connectedResultsSourceReferences`. This is
+     * the one incoming-direction signal we can read reliably; SPFx doesn't otherwise expose
+     * subscribers, so consumers like dynamic filtering from another Search Results, OOTB SharePoint
+     * List Web Parts, or custom consumers cannot be detected and will not suppress the warning.
+     */
+    private async _checkPotentialIncomingConnections(): Promise<boolean> {
+
+        const dynamicDataProvider = this.context?.dynamicDataProvider;
+        if (!dynamicDataProvider || dynamicDataProvider.isDisposed) {
+            return false;
         }
 
-        return '';
+        const instanceId = this.tryGetInstanceId();
+        if (!instanceId) {
+            return false;
+        }
+
+        const availableSources = dynamicDataProvider.getAvailableSources();
+        for (const sourceInfo of availableSources) {
+            const source = dynamicDataProvider.tryGetSource(sourceInfo.id);
+            if (!source) {
+                continue;
+            }
+
+            let exposesFilterProperty: boolean;
+            try {
+                const properties = await source.getPropertyDefinitionsAsync();
+                exposesFilterProperty = properties.some(prop => prop.id === ComponentType.SearchFilters);
+            } catch {
+                continue;
+            }
+            if (!exposesFilterProperty) {
+                continue;
+            }
+
+            let filterData: IDataFilterSourceData;
+            try {
+                filterData = source.getPropertyValue(ComponentType.SearchFilters) as IDataFilterSourceData;
+            } catch {
+                continue;
+            }
+
+            const refs = filterData?.connectedResultsSourceReferences;
+            if (refs?.some(ref => ref.split(':')[0]?.endsWith(instanceId))) {
+                Log.verbose(LogSource, `[_checkPotentialIncomingConnections] Detected incoming filter connection from source '${sourceInfo.id}' for instance '${instanceId}'.`, this.webPartInstanceServiceScope);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Re-evaluates the asynchronous "potential incoming connections" signal used by the rollup
+     * suggestion in `renderCompleted()`. Triggers a re-render only if the resulting state actually
+     * changes, so it's safe to call frequently (e.g. from `registerAvailableSourcesChanged`).
+     */
+    private async _evaluateRollupSuggestion(): Promise<void> {
+
+        // Outside edit mode the suggestion is never shown, so the async check is unnecessary.
+        if (this.displayMode !== DisplayMode.Edit) {
+            return;
+        }
+
+        const hasIncoming = await this._checkPotentialIncomingConnections();
+        Log.verbose(LogSource, `[_evaluateRollupSuggestion] outgoing=${this._hasOutgoingConnections()} incoming=${hasIncoming} allowConnections=${this.properties.allowWebPartConnections} (previous incoming=${this._hasPotentialIncomingConnections})`, this.webPartInstanceServiceScope);
+        if (hasIncoming !== this._hasPotentialIncomingConnections) {
+            this._hasPotentialIncomingConnections = hasIncoming;
+            await this.render();
+        }
     }
 
     /**
@@ -2513,7 +2433,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             }
         }
 
-        // Notfify dynamic data consumers data have changed
+        // Notify dynamic data consumers data have changed
         if (this.properties.allowWebPartConnections && this.context && this.context.dynamicDataSourceManager && !this.context.dynamicDataSourceManager.isDisposed) {
             this.context.dynamicDataSourceManager.notifyPropertyChanged(ComponentType.SearchResults);
         }
@@ -2532,9 +2452,15 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         this._currentDataResultsSourceData.selectedItems = cloneDeep(currentSelectedItems);
 
-        // Notfify dynamic data consumers data have changed
-        if (this.properties.allowWebPartConnections) {
+        // Notify dynamic data consumers data have changed.
+        // Selection changes can occur while the web part is being torn down, so guard against a missing
+        // or disposed context/dynamicDataSourceManager (same pattern as _onDataRetrieved).
+        if (this.properties.allowWebPartConnections && this.context?.dynamicDataSourceManager && !this.context.dynamicDataSourceManager.isDisposed) {
             this.context.dynamicDataSourceManager.notifyPropertyChanged(DynamicDataProperties.AvailableFieldValuesFromResults);
+
+            // Also notify consumers connected to the whole results source object so a connection to the
+            // 'selectedItems' sub-property is refreshed when the selection changes (otherwise it stays empty).
+            this.context.dynamicDataSourceManager.notifyPropertyChanged(ComponentType.SearchResults);
         }
     }
 
@@ -2761,85 +2687,5 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 });
             });
         }
-    }
-
-    private getQueryModifierFields(): IPropertyPaneField<any>[] {
-
-        let queryTransformationFields: IPropertyPaneField<any>[] = [];
-
-        queryTransformationFields.push(
-            this._propertyFieldCollectionData('queryModifierConfiguration', {
-                manageBtnLabel: webPartStrings.PropertyPane.CustomQueryModifier.EditQueryModifiersLabel,
-                key: 'queryModifierConfiguration',
-                panelHeader: webPartStrings.PropertyPane.CustomQueryModifier.EditQueryModifiersLabel,
-                panelDescription: webPartStrings.PropertyPane.CustomQueryModifier.QueryModifiersDescription,
-                disableItemCreation: true,
-                disableItemDeletion: true,
-                enableSorting: true,
-                label: webPartStrings.PropertyPane.CustomQueryModifier.QueryModifiersLabel,
-                value: this.properties.queryModifierConfiguration,
-                tableClassName: commonStyles.slotTable,
-                fields: [
-                    {
-                        id: 'enabled',
-                        title: webPartStrings.PropertyPane.CustomQueryModifier.EnabledPropertyLabel,
-                        type: this._customCollectionFieldType.custom,
-                        onCustomRender: (field, value, onUpdate, item, itemId) => {
-                            return (
-                                React.createElement("div", null,
-                                    React.createElement(Toggle, {
-                                        key: itemId, checked: value, onChange: (evt, checked) => {
-                                            onUpdate(field.id, checked);
-                                        },
-                                        offText: commonStrings.General.OffTextLabel,
-                                        onText: commonStrings.General.OnTextLabel
-                                    })
-                                )
-                            );
-                        }
-                    },
-                    {
-                        id: 'endWhenSuccessfull',
-                        title: webPartStrings.PropertyPane.CustomQueryModifier.EndWhenSuccessfullPropertyLabel,
-                        type: this._customCollectionFieldType.custom,
-                        onCustomRender: (field, value, onUpdate, item, itemId) => {
-                            return (
-                                React.createElement("div", null,
-                                    React.createElement(Toggle, {
-                                        key: itemId, checked: value, onChange: (evt, checked) => {
-                                            onUpdate(field.id, checked);
-                                        },
-                                        offText: commonStrings.General.OffTextLabel,
-                                        onText: commonStrings.General.OnTextLabel
-                                    })
-                                )
-                            );
-                        }
-                    },
-                    {
-                        id: 'name',
-                        title: webPartStrings.PropertyPane.CustomQueryModifier.ModifierNamePropertyLabel,
-                        type: this._customCollectionFieldType.custom,
-                        onCustomRender: (field, value) => {
-                            return (
-                                React.createElement("div", { style: { 'fontWeight': 600 } }, value)
-                            );
-                        }
-                    },
-                    {
-                        id: 'description',
-                        title: webPartStrings.PropertyPane.CustomQueryModifier.ModifierDescriptionPropertyLabel,
-                        type: this._customCollectionFieldType.custom,
-                        onCustomRender: (field, value) => {
-                            return (
-                                React.createElement("div", null, value)
-                            );
-                        }
-                    }
-                ]
-            })
-        );
-
-        return queryTransformationFields;
     }
 }

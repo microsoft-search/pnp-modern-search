@@ -19,6 +19,14 @@ export interface DocumentCardShimmersComponentProps {
 
 export class DocumentCardShimmersComponent extends React.Component<DocumentCardShimmersComponentProps, {}> {
 
+    /**
+     * Returns the shimmer background color from the theme, tolerating a missing `themeVariant`
+     * (which can briefly happen when entering/leaving page edit mode).
+     */
+    private get _backgroundColor(): string | undefined {
+        return this.props.themeVariant?.semanticColors?.bodyBackground;
+    }
+
     public render() {
 
         if (this.props.isCompact) {
@@ -46,7 +54,7 @@ export class DocumentCardShimmersComponent extends React.Component<DocumentCardS
                         shimmerElements={[
                             { type: ElemType.line, width: '100%', height: 196 },
                         ]}
-                        backgroundColor={this.props.themeVariant.semanticColors.bodyBackground}
+                        backgroundColor={this._backgroundColor}
                         theme={this.props.themeVariant as ITheme}
                     />
                 }
@@ -66,7 +74,7 @@ export class DocumentCardShimmersComponent extends React.Component<DocumentCardS
                                 theme={this.props.themeVariant as ITheme}
                                 flexWrap={true}
                                 width="100%"
-                                backgroundColor={this.props.themeVariant.semanticColors.bodyBackground}
+                                backgroundColor={this._backgroundColor}
                                 shimmerElements={[
                                     { type: ElemType.line, width: '30%', height: 11 },
                                     { type: ElemType.gap, width: '70%', height: 11 },
@@ -94,12 +102,12 @@ export class DocumentCardShimmersComponent extends React.Component<DocumentCardS
                             <ShimmerElementsGroup
                                 theme={this.props.themeVariant as ITheme}
                                 shimmerElements={[{ type: ElemType.circle, height: 32 }, { type: ElemType.gap, width: 10, height: 40 }]}
-                                backgroundColor={this.props.themeVariant.semanticColors.bodyBackground}
+                                backgroundColor={this._backgroundColor}
                             />
                             <ShimmerElementsGroup
                                 theme={this.props.themeVariant as ITheme}
                                 flexWrap={true}
-                                backgroundColor={this.props.themeVariant.semanticColors.bodyBackground}
+                                backgroundColor={this._backgroundColor}
                                 width="100%"
                                 shimmerElements={[
                                     { type: ElemType.line, width: '100%', height: 10 },
@@ -133,7 +141,7 @@ export class DocumentCardShimmersComponent extends React.Component<DocumentCardS
                 theme={this.props.themeVariant as ITheme}
                 customElementsGroup={
                     <ShimmerElementsGroup
-                        backgroundColor={this.props.themeVariant.semanticColors.bodyBackground}
+                        backgroundColor={this._backgroundColor}
                         shimmerElements={[
                             { type: ElemType.line, height: 106, width: 144 },
                             { type: ElemType.gap, width: 16, height: 80 }
@@ -154,7 +162,7 @@ export class DocumentCardShimmersComponent extends React.Component<DocumentCardS
                                 <ShimmerElementsGroup
                                     theme={this.props.themeVariant as ITheme}
                                     flexWrap={true}
-                                    backgroundColor={this.props.themeVariant.semanticColors.bodyBackground}
+                                    backgroundColor={this._backgroundColor}
                                     width="100%"
                                     shimmerElements={[
                                         { type: ElemType.line, width: '100%', height: 10 },
@@ -171,12 +179,12 @@ export class DocumentCardShimmersComponent extends React.Component<DocumentCardS
                     customElementsGroup={
                         <div style={{ display: 'flex', marginTop: 10 }}>
                             <ShimmerElementsGroup
-                                backgroundColor={this.props.themeVariant.semanticColors.bodyBackground}
+                                backgroundColor={this._backgroundColor}
                                 theme={this.props.themeVariant as ITheme}
                                 shimmerElements={[{ type: ElemType.circle, height: 32 }, { type: ElemType.gap, width: 10, height: 40 }]}
                             />
                             <ShimmerElementsGroup
-                                backgroundColor={this.props.themeVariant.semanticColors.bodyBackground}
+                                backgroundColor={this._backgroundColor}
                                 theme={this.props.themeVariant as ITheme}
                                 flexWrap={true}
                                 width="100%"

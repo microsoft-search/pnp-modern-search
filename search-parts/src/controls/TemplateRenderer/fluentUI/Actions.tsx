@@ -5,7 +5,6 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { getDefaultFluentUITheme, hostCapabilitiesFluentUIThemeKey } from "./FluentUI";
 import { createDiv } from "./Shared";
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const redFluentUIPalette = require("../themes/redPalette.json");
 
 const ActionButton = (props: ActionButtonProps) => {

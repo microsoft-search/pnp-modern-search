@@ -7,7 +7,6 @@ import { Icon } from '@fluentui/react/lib/Icon';
 import * as strings from 'CommonStrings';
 import { TaxonomyHelper } from '../../helpers/TaxonomyHelper';
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
 export interface IFilterHierarchicalProps {
 
     /**
@@ -18,13 +17,11 @@ export interface IFilterHierarchicalProps {
     /**
      * The Web Part instance ID from where the filter component belongs
      */
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     instanceId?: string;
 
     /**
      * The current theme settings
      */
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     themeVariant?: any;
 
     /**
@@ -559,4 +556,3 @@ export class FilterHierarchicalWebComponent extends BaseWebComponent {
         ReactDOM.unmountComponentAtNode(this);
     }
 }
-/* eslint-enable @typescript-eslint/no-unused-vars */

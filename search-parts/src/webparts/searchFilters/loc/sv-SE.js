@@ -28,6 +28,8 @@ define([], function () {
                 FilterNameLabel: "Fält för filter",
                 FilterMaxBuckets: "# av värden",
                 FilterMaxBucketsWarning: "Det maximala antalet värden är 1000",
+                FilterLimitReachedWarningToggle: "Visa varning när gränsen uppnås",
+                FilterLimitReachedWarningMessage: "Resultatgränsen har nåtts — alla matchande objekt visas inte. Förfina sökningen för att begränsa listan.",
                 FilterDisplayName: "Visningsnamn",
                 FilterTemplate: "Filtermall",
                 FilterExpandByDefault: "Expandera som standard",

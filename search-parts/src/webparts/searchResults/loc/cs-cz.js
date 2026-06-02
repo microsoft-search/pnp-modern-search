@@ -9,7 +9,9 @@ define([], function () {
             },
             WebPartDefaultTitle: "Webový díl výsledků vyhledávání",
             ShowBlankEditInfoMessage: "Pro tento dotaz nebyl vrácen žádný výsledek. Tento webový díl zůstane v režimu zobrazení prázdný podle parametrů.",
-            CurrentVerticalNotSelectedMessage: "Aktuálně vybraná vertikála neodpovídá té, která je spojena s tímto webovým dílem. V režimu zobrazení zůstane prázdná."
+            CurrentVerticalNotSelectedMessage: "Aktuálně vybraná vertikála neodpovídá té, která je spojena s tímto webovým dílem. V režimu zobrazení zůstane prázdná.",
+            RollupSuggestionMessage: "Tato webová část Výsledky vyhledávání není připojena k žádné jiné webové části na stránce. Zvažte použití verze 'PnP - Search Rollup' — může být líně načtena SharePointem a nespustí dotazy na zdroj dat, dokud nebude posunuta do zobrazení, což zlepší výkon načítání stránky.",
+            RollupSuggestionLinkText: "Další informace"
         },
         PropertyPane: {
             DataSourcePage: {

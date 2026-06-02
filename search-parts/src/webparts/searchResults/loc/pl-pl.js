@@ -9,7 +9,9 @@ define([], function () {
             },
             WebPartDefaultTitle: "Web Part Wyników Wyszukiwania",
             ShowBlankEditInfoMessage: "Brak wyników dla zapytania. Zgodnie z parametrami ten Web Part pozostanie pusty.",
-            CurrentVerticalNotSelectedMessage: "Obecnie wybrany wertykał nie odpowiada żadnemu powiązanemu składnikowi Web Part i pozostanie pusty w trybie wyświetlania."
+            CurrentVerticalNotSelectedMessage: "Obecnie wybrany wertykał nie odpowiada żadnemu powiązanemu składnikowi Web Part i pozostanie pusty w trybie wyświetlania.",
+            RollupSuggestionMessage: "Ten składnik Web Part Wyniki wyszukiwania nie jest połączony z żadnym innym składnikiem Web Part na stronie. Rozważ użycie wersji 'PnP - Search Rollup' — może być ładowana leniwie przez SharePoint i nie będzie uruchamiać zapytań do źródła danych, dopóki nie zostanie przewinięta do widoku, co poprawia wydajność ładowania strony.",
+            RollupSuggestionLinkText: "Dowiedz się więcej"
         },
         PropertyPane: {
             DataSourcePage: {

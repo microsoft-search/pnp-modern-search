@@ -3,14 +3,15 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as Handlebars from 'handlebars';
 import { MessageBar, MessageBarType } from '@fluentui/react/lib/MessageBar';
+import { IconButton } from '@fluentui/react/lib/Button';
 import { BaseWebComponent } from '@pnp/modern-search-extensibility';
 import { isEmpty } from "@microsoft/sp-lodash-subset";
-import { Carousel, CarouselButtonsLocation, CarouselButtonsDisplay } from "@pnp/spfx-controls-react/lib/Carousel";
 import { ITemplateService } from '../services/templateService/ITemplateService';
 import { TemplateService } from '../services/templateService/TemplateService';
 import { DomPurifyHelper } from '../helpers/DomPurifyHelper';
 import { ServiceScope, ServiceKey } from "@microsoft/sp-core-library";
 import styles from './SliderComponent.module.scss';
+import * as strings from 'CommonStrings';
 
 export interface ISliderOptions {
 
@@ -74,30 +75,167 @@ export interface ISliderComponentProps {
 }
 
 export interface ISliderComponentState {
+
+    /**
+     * The index of the currently displayed page (group of slides).
+     */
+    currentIndex: number;
 }
 
 export class SliderComponent extends React.Component<ISliderComponentProps, ISliderComponentState> {
 
+    /**
+     * The auto play timer handle.
+     */
+    private _autoPlayTimer: number | undefined = undefined;
+
+    /**
+     * Indicates if the pointer is currently hovering the carousel (used to pause auto play).
+     */
+    private _isHovering: boolean = false;
+
+    /**
+     * The number of pages currently rendered. Kept in sync on every render so the auto play
+     * callback and bounds checks always operate on the latest value.
+     */
+    private _pageCount: number = 0;
+
+    /**
+     * The page count the auto play timer was last (re)started for. Used by componentDidUpdate to
+     * detect when the rendered page count changed so the timer can be restarted safely (after the
+     * DOM has committed and only while mounted), instead of scheduling work from render().
+     */
+    private _autoPlayPageCount: number = 0;
+
     public constructor(props: ISliderComponentProps) {
         super(props);
+
+        this.state = {
+            currentIndex: 0
+        };
+
+        this._goToNext = this._goToNext.bind(this);
+        this._goToPrevious = this._goToPrevious.bind(this);
+        this._onMouseEnter = this._onMouseEnter.bind(this);
+        this._onMouseLeave = this._onMouseLeave.bind(this);
+    }
+
+    public componentDidMount(): void {
+        this._autoPlayPageCount = this._pageCount;
+        this._resetAutoPlay();
+    }
+
+    public componentDidUpdate(): void {
+        // Restart auto play when the rendered page count changed. Doing this here (rather than from
+        // render()) ensures the timer is only (re)created while the component is mounted, avoiding
+        // leaks / "setState on unmounted component" warnings.
+        if (this._autoPlayPageCount !== this._pageCount) {
+            this._autoPlayPageCount = this._pageCount;
+            this._resetAutoPlay();
+        }
+
+        // Clamp the current index if the number of pages shrank (e.g. fewer results).
+        // Guard against _pageCount === 0 (0 > -1 would otherwise re-set the state on every
+        // update and loop indefinitely) by only clamping when there is at least one page.
+        if (this._pageCount > 0 && this.state.currentIndex > this._pageCount - 1) {
+            this.setState({ currentIndex: Math.max(0, this._pageCount - 1) });
+        }
+    }
+
+    public componentWillUnmount(): void {
+        this._clearAutoPlay();
+    }
+
+    /**
+     * Returns the auto play interval in milliseconds, or null when auto play is disabled.
+     */
+    private _getAutoPlayInterval(): number | null {
+        const sliderOptions = this.props.options ? this.props.options as ISliderOptions : {};
+        if (sliderOptions.autoPlay && sliderOptions.autoPlayDuration) {
+            return sliderOptions.autoPlayDuration * 1000;
+        }
+        return null;
+    }
+
+    private _clearAutoPlay(): void {
+        if (this._autoPlayTimer !== undefined) {
+            globalThis.clearInterval(this._autoPlayTimer);
+            this._autoPlayTimer = undefined;
+        }
+    }
+
+    /**
+     * (Re)starts the auto play timer based on the current options. Does nothing when auto play is
+     * disabled or when there is a single page.
+     */
+    private _resetAutoPlay(): void {
+        this._clearAutoPlay();
+
+        const interval = this._getAutoPlayInterval();
+        if (interval === null || this._pageCount <= 1) {
+            return;
+        }
+
+        this._autoPlayTimer = globalThis.setInterval(() => {
+            if (!this._isHovering) {
+                this._goToNext();
+            }
+        }, interval);
+    }
+
+    private _onMouseEnter(): void {
+        const sliderOptions = this.props.options ? this.props.options as ISliderOptions : {};
+        if (sliderOptions.pauseAutoPlayOnHover) {
+            this._isHovering = true;
+        }
+    }
+
+    private _onMouseLeave(): void {
+        this._isHovering = false;
+    }
+
+    /**
+     * Moves to a specific page, clamping to the valid range.
+     */
+    private _goToIndex(index: number): void {
+        if (this._pageCount === 0) {
+            return;
+        }
+        const clamped = Math.max(0, Math.min(index, this._pageCount - 1));
+        if (clamped !== this.state.currentIndex) {
+            this.setState({ currentIndex: clamped });
+        }
+    }
+
+    private _goToNext(): void {
+        const wrapAround = this.props.options ? (this.props.options as ISliderOptions).wrapAround : false;
+        const { currentIndex } = this.state;
+
+        if (currentIndex < this._pageCount - 1) {
+            this.setState({ currentIndex: currentIndex + 1 });
+        } else if (wrapAround) {
+            this.setState({ currentIndex: 0 });
+        }
+    }
+
+    private _goToPrevious(): void {
+        const wrapAround = this.props.options ? (this.props.options as ISliderOptions).wrapAround : false;
+        const { currentIndex } = this.state;
+
+        if (currentIndex > 0) {
+            this.setState({ currentIndex: currentIndex - 1 });
+        } else if (wrapAround) {
+            this.setState({ currentIndex: this._pageCount - 1 });
+        }
     }
 
     public render() {
         try {
 
             // Get item properties
-            const items = this.props.items ? this.props.items : [];
+            const items: any[] = Array.isArray(this.props.items) ? this.props.items : [];
             const sliderOptions = this.props.options ? this.props.options as ISliderOptions : {};
             const templateContext = !isEmpty(this.props.context) ? this.props.context : null;
-
-            let autoPlayInterval: number | null = null;
-
-            if (sliderOptions.autoPlay) {
-                // Check if a duration has been set
-                if (sliderOptions.autoPlayDuration) {
-                    autoPlayInterval = sliderOptions.autoPlayDuration * 1000;
-                }
-            }
 
             // Get number of slides to show at once (default to 1 if not specified)
             const numberOfSlides = sliderOptions.numberOfSlides || 1;
@@ -108,12 +246,12 @@ export class SliderComponent extends React.Component<ISliderComponentProps, ISli
                 groupedItems.push(items.slice(i, i + numberOfSlides));
             }
 
-            // Map grouped items to JSX elements for the Carousel
+            // Map grouped items to JSX elements (one element per page)
             const carouselElements = groupedItems.map((itemGroup, groupIndex) => {
                 // Create slides for each item in the group
                 const slideElements = itemGroup.map((item, itemIndex) => {
                     const absoluteIndex = groupIndex * numberOfSlides + itemIndex;
-                    
+
                     // Create a temp context with the current so we can use global registered helpers on the current item
                     const tempTemplateContent = `{{#with item as |item|}}${this.props.template.trim()}{{/with}}`;
 
@@ -138,18 +276,32 @@ export class SliderComponent extends React.Component<ISliderComponentProps, ISli
                     </div>;
                 });
 
-                // Return a group container for multiple slides
+                // Return a group container for multiple slides (one page)
                 return <div key={groupIndex} className={styles.carouselSlideGroup}>
                     {slideElements}
                 </div>;
             });
 
+            // Keep the page count in sync for auto play / bounds logic. The auto play timer is
+            // (re)started from componentDidUpdate when this value changes, not from render().
+            this._pageCount = carouselElements.length;
+
+            const currentIndex = Math.max(0, Math.min(this.state.currentIndex, this._pageCount - 1));
+            const wrapAround = sliderOptions.wrapAround === true;
+            const showControls = this._pageCount > 1;
+            const showDots = showControls && sliderOptions.showPageDots === true;
+
+            const prevDisabled = !wrapAround && currentIndex === 0;
+            const nextDisabled = !wrapAround && currentIndex === this._pageCount - 1;
+
             // Extract slideHeight and slideWidth from context (layout properties)
             const slideHeight = templateContext?.properties?.layoutProperties?.slideHeight || 360;
             const slideWidth = templateContext?.properties?.layoutProperties?.slideWidth || 318;
 
-            return <div 
+            return <div
                 className={styles.carouselContainer}
+                onMouseEnter={this._onMouseEnter}
+                onMouseLeave={this._onMouseLeave}
                 ref={(el) => {
                     if (el) {
                         el.style.setProperty('--slide-width', `${slideWidth}px`);
@@ -159,17 +311,55 @@ export class SliderComponent extends React.Component<ISliderComponentProps, ISli
                     }
                 }}
             >
-                <Carousel
-                    element={carouselElements}
-                    isInfinite={sliderOptions.wrapAround}
-                    interval={autoPlayInterval}
-                    pauseOnHover={sliderOptions.pauseAutoPlayOnHover}
-                    indicators={sliderOptions.showPageDots}
-                    buttonsLocation={CarouselButtonsLocation.center}
-                    buttonsDisplay={CarouselButtonsDisplay.block}
-                    contentHeight={slideHeight}
-                    indicatorStyle={{ bottom: '5px' }}
-                />
+                {showControls &&
+                    <IconButton
+                        className={`${styles.carouselButton} ${styles.carouselButtonPrev}`}
+                        iconProps={{ iconName: 'ChevronLeft' }}
+                        ariaLabel={strings.Layouts.Slider.PreviousPageLabel}
+                        disabled={prevDisabled}
+                        onClick={this._goToPrevious}
+                    />
+                }
+                <div className={styles.carouselViewport}>
+                    <div
+                        className={styles.carouselTrack}
+                        style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+                    >
+                        {carouselElements.map((element, index) => (
+                            <div
+                                key={index}
+                                className={styles.carouselPage}
+                                aria-hidden={index !== currentIndex}
+                            >
+                                {element}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                {showControls &&
+                    <IconButton
+                        className={`${styles.carouselButton} ${styles.carouselButtonNext}`}
+                        iconProps={{ iconName: 'ChevronRight' }}
+                        ariaLabel={strings.Layouts.Slider.NextPageLabel}
+                        disabled={nextDisabled}
+                        onClick={this._goToNext}
+                    />
+                }
+                {showDots &&
+                    <ol className={styles.carouselIndicators}>
+                        {carouselElements.map((element, index) => (
+                            <li key={`carousel-dot-${index}`}>
+                                <button
+                                    type="button"
+                                    className={index === currentIndex ? styles.carouselIndicatorActive : undefined}
+                                    aria-label={strings.Layouts.Slider.GoToPageLabel.replace('{0}', String(index + 1))}
+                                    aria-current={index === currentIndex}
+                                    onClick={() => this._goToIndex(index)}
+                                />
+                            </li>
+                        ))}
+                    </ol>
+                }
             </div>;
         } catch (error) {
             return <MessageBar messageBarType={MessageBarType.error}>{error}</MessageBar>;

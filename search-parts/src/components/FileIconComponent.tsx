@@ -2,7 +2,8 @@ import * as React from 'react';
 import { BaseWebComponent } from '@pnp/modern-search-extensibility';
 import * as ReactDOM from 'react-dom';
 import { Icon, ITheme, IIconStyles, ImageFit } from '@fluentui/react';
-import { getFileTypeIconProps, FileTypeIconSize, FileIconType } from '@fluentui/react-file-type-icons';
+import { getFileTypeIconAsUrl, FileTypeIconSize, FileIconType, IFileTypeIconOptions } from '@fluentui/react-file-type-icons';
+import { FileTypeIconHelper } from '../helpers/FileTypeIconHelper';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import { isEmpty } from '@microsoft/sp-lodash-subset';
 
@@ -51,6 +52,18 @@ export class FileIcon extends React.Component<IFileIconProps, IFileIconState> {
 
         const size = this.props.size ? parseInt(this.props.size) as FileTypeIconSize : 16;
 
+        // Build the icon properties from an explicit CDN url instead of relying on the shared Fluent UI
+        // icon registry. The registry is shared across all components on the page and "the last one who
+        // registers wins", so another app can swap the base url to a non-production CDN, causing icons
+        // to randomly break (issue #4376). Resolving the url directly keeps it deterministic.
+        // The base url comes from FileTypeIconHelper, the same value used to register the icons, so it
+        // stays consistent and can be overridden for closed environments.
+        const iconBaseUrl = FileTypeIconHelper.getBaseUrl();
+        const buildFileTypeIconProps = (options: IFileTypeIconOptions) => {
+            const src = getFileTypeIconAsUrl({ ...options, imageFileType: 'svg' }, iconBaseUrl);
+            return src ? { imageProps: { src, imageFit: ImageFit.contain, width: size + 'px', height: size + 'px' } } : null;
+        };
+
         if (this.props.extension || this.props.isContainer || this.props.imageUrl) {
 
             let isContainer = this.props.isContainer ? this.props.isContainer.toString() : undefined;
@@ -66,23 +79,23 @@ export class FileIcon extends React.Component<IFileIconProps, IFileIconState> {
                 // SharePointCAML SharePoint REST => FSObjType = 1
                 // SharePoint Search => ContentTypeId => 0x0120...
                 if ((isContainer === "true" || isContainer === "1" || isContainer.indexOf('0x0120') !== -1)) {
-                    iconProps = getFileTypeIconProps({ type: FileIconType.folder, size: size, imageFileType: 'svg' });
+                    iconProps = buildFileTypeIconProps({ type: FileIconType.folder, size: size });
                 }
 
                 // SharePoint Document Set
                 if (isContainer.indexOf('0x0120D520') !== -1) {
-                    iconProps = getFileTypeIconProps({ type: FileIconType.docset, size: size, imageFileType: 'svg' });
+                    iconProps = buildFileTypeIconProps({ type: FileIconType.docset, size: size });
                 }
             }
 
             if (this.props.extension && !iconProps) {
                 extension = isOneNote ? "onetoc" : this.props.extension.split("?")[0].split("#")[0].split('.').pop();
-                iconProps = getFileTypeIconProps({ extension: extension, size: size, imageFileType: 'svg' });
+                iconProps = buildFileTypeIconProps({ extension: extension, size: size });
             }
         }
 
         if (isEmpty(iconProps)) {
-            iconProps = getFileTypeIconProps({ type: FileIconType.genericFile, size: size, imageFileType: 'svg' });
+            iconProps = buildFileTypeIconProps({ type: FileIconType.genericFile, size: size });
         }
 
         return <Icon styles={this.props.styles} theme={this.props.themeVariant as ITheme} {...iconProps} />;

@@ -283,7 +283,10 @@ define([], function () {
                 SliderShowPageDots: "Mostrar pontos da página",
                 SliderWrapAround: "Rolagem infinita",
                 SlideHeight: "Altura do slide (em px)",
-                SlideWidth: "Largura do slide (em px)"
+                SlideWidth: "Largura do slide (em px)",
+                PreviousPageLabel: "Página anterior",
+                NextPageLabel: "Próxima página",
+                GoToPageLabel: "Ir para a página {0}"
             },
             People: {
                 Name: "Pessoas",

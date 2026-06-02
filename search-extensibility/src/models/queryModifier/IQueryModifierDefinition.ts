@@ -1,4 +1,3 @@
-import { ServiceKey } from "@microsoft/sp-core-library";
 import { IQueryModifier } from "./IQueryModifier";
 
 export interface IQueryModifierDefinition {
@@ -19,7 +18,7 @@ export interface IQueryModifierDefinition {
     description: string;
 
     /**
-     * The layout service key
+     * The query modifier service key
      */
-    serviceKey: ServiceKey<IQueryModifier>;
+    serviceKey: any;
 }

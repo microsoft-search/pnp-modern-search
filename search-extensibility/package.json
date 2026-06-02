@@ -1,7 +1,7 @@
 {
     "name": "@pnp/modern-search-extensibility",
     "description": "Base library for creating PnP Modern Search extensions",
-    "version": "1.22.3",
+    "version": "2.0.1",
     "private": false,
     "main": "lib/index.js",
     "types": "lib/index.d.ts",
@@ -10,48 +10,24 @@
     ],
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "build": "heft build"
+        "build": "tsc -p tsconfig.json"
     },
     "devDependencies": {
-        "@microsoft/eslint-config-spfx": "1.22.2",
-        "@microsoft/eslint-plugin-spfx": "1.22.2",
-        "@microsoft/sp-module-interfaces": "1.22.2",
-        "@microsoft/spfx-heft-plugins": "1.22.2",
-        "@microsoft/spfx-web-build-rig": "1.22.2",
-        "@rushstack/eslint-config": "4.5.2",
-        "@rushstack/heft": "1.1.2",
-        "@types/es6-promise": "0.0.33",
-        "@types/heft-jest": "1.0.2",
         "@types/react": "17.0.45",
         "@types/react-dom": "17.0.17",
-        "@types/webpack-env": "~1.15.2",
-        "@typescript-eslint/parser": "8.46.2",
-        "css-loader": "7.1.2",
-        "eslint": "8.57.1",
-        "eslint-plugin-react-hooks": "4.3.0",
         "typescript": "5.8.3"
     },
     "dependencies": {
-        "@fluentui/react": "8.106.4",
-        "@microsoft/sp-adaptive-card-extension-base": "1.22.2",
-        "@microsoft/sp-component-base": "1.22.2",
-        "@microsoft/sp-core-library": "1.22.2",
-        "@microsoft/sp-lodash-subset": "1.22.2",
-        "@microsoft/sp-property-pane": "1.22.2",
-        "@microsoft/sp-webpart-base": "1.22.2",
-        "@webcomponents/custom-elements": "1.5.1",
-        "@webcomponents/webcomponentsjs": "2.7.0",
+        "@webcomponents/custom-elements": "^1.6.0",
         "handlebars": "4.7.9",
-        "office-ui-fabric-react": "7.199.1",
-        "react": "17.0.1",
-        "react-dom": "17.0.1",
         "tslib": "2.3.1"
+    },
+    "peerDependencies": {
+        "react": ">=16.8.0",
+        "react-dom": ">=16.8.0"
     },
     "resolutions": {
         "@types/react": "17.0.45"
-    },
-    "overrides": {
-        "@rushstack/heft": "1.1.2"
     },
     "directories": {
         "lib": "lib"

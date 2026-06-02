@@ -9,7 +9,9 @@ define([], function () {
             },
             WebPartDefaultTitle: "Search Results Web Part",
             ShowBlankEditInfoMessage: "No result returned for this query. This Web Part will remain blank in display mode according to parameters.",
-            CurrentVerticalNotSelectedMessage: "The current selected vertical does not match with the one associated for this Web Part. It will remains blank in display mode."
+            CurrentVerticalNotSelectedMessage: "The current selected vertical does not match with the one associated for this Web Part. It will remains blank in display mode.",
+            RollupSuggestionMessage: "This Search Results Web Part is not connected to any other Web Part on the page. Consider using the 'PnP - Search Rollup' version instead — it can be lazy loaded by SharePoint and will not fire data source queries until scrolled into view, improving page load performance.",
+            RollupSuggestionLinkText: "Learn more"
         },
         PropertyPane: {
             DataSourcePage: {

@@ -37,6 +37,18 @@ interface IHierarchicalFilterConfiguration extends IDataFilterConfiguration {
     cacheDuration?: number;
     hideNodesNotInDataSet?: boolean;
     expandAllNodesByDefault?: boolean;
+    showLimitExceededWarning?: boolean;
+}
+
+interface IFilterResultWithLimitInfo extends IDataFilterResult {
+    isMaxBucketsExceeded?: boolean;
+    configuredMaxBuckets?: number;
+    returnedValueCount?: number;
+}
+
+interface IFilterInternalWithWarning extends IDataFilterInternal {
+    showLimitExceededWarning?: boolean;
+    limitExceededWarningText?: string;
 }
 
 interface IHierarchicalTerm {
@@ -144,6 +156,12 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         });
 
         return guidSet;
+    }
+
+    private formatLocalizedString(template: string, values: Array<string | number>): string {
+        return values.reduce<string>((formattedValue, currentValue, index) => {
+            return formattedValue.replace(`{${index}}`, currentValue.toString());
+        }, template);
     }
 
     public render(): React.ReactElement<ISearchFiltersContainerProps> {
@@ -259,6 +277,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         const updatedFilters: IDataFilterInternal[] = [];
 
         for (const availableFilter of availableFilters) {
+            const filterWithLimitInfo = availableFilter as IFilterResultWithLimitInfo;
 
             let values: IDataFilterValueInternal[] = [];
 
@@ -361,14 +380,23 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                 });
 
                 const filterOperator = currentUiFilters[selectedFilterIdx] ? currentUiFilters[selectedFilterIdx].operator : filterConfiguration.operator;
+                const showLimitExceededWarning = Boolean(filterConfiguration.showLimitExceededWarning && filterWithLimitInfo.isMaxBucketsExceeded);
+                const limitExceededWarningText = showLimitExceededWarning
+                    ? this.formatLocalizedString(
+                        webPartStrings.PropertyPane.DataFilterCollection.FilterLimitReachedWarningMessage,
+                        [filterWithLimitInfo.returnedValueCount ?? values.length, filterWithLimitInfo.configuredMaxBuckets ?? values.length]
+                    )
+                    : undefined;
 
                 // Merge information with filter configuration and other useful proeprties
-                const filterResultInternal: IDataFilterInternal & { termSetId?: string; termGroupId?: string; hierarchicalTerms?: IHierarchicalTerm[]; hideNodesNotInDataSet?: boolean; expandAllNodesByDefault?: boolean } = {
+                const filterResultInternal: IFilterInternalWithWarning & { termSetId?: string; termGroupId?: string; hierarchicalTerms?: IHierarchicalTerm[]; hideNodesNotInDataSet?: boolean; expandAllNodesByDefault?: boolean } = {
                     displayName: filterConfiguration.displayValue && filterConfiguration.displayValue.trim() ? filterConfiguration.displayValue : availableFilter.filterName,
                     filterName: availableFilter.filterName,
                     isMulti: !filterConfiguration.isMulti ? false : filterConfiguration.isMulti,
                     showCount: !filterConfiguration.showCount ? false : filterConfiguration.showCount,
                     expandByDefault: !filterConfiguration.expandByDefault ? false : filterConfiguration.expandByDefault,
+                    showLimitExceededWarning: showLimitExceededWarning,
+                    limitExceededWarningText: limitExceededWarningText,
                     selectedOnce: selectedOnce,
                     selectedTemplate: filterConfiguration.selectedTemplate,
                     hasSelectedValues: hasSelectedValues,
@@ -801,6 +829,8 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                         isMulti: filterConfiguration.isMulti,
                         selectedTemplate: filterConfiguration.selectedTemplate,
                         showCount: filterConfiguration.showCount,
+                        showLimitExceededWarning: false,
+                        limitExceededWarningText: undefined,
                         selectedOnce: true,
                         operator: filter.operator,
                         values: (filter.values as IDataFilterValueInternal[]).map((value: IDataFilterValueInternal) => {

@@ -28,6 +28,8 @@ define([], function () {
                 FilterNameLabel: "Suodatinkenttä",
                 FilterMaxBuckets: "# arvojen määrä",
                 FilterMaxBucketsWarning: "Arvojen enimmäismäärä on 1000",
+                FilterLimitReachedWarningToggle: "Näytä varoitus, kun raja saavutetaan",
+                FilterLimitReachedWarningMessage: "Tulosten enimmäismäärä on saavutettu — kaikkia vastaavia kohteita ei näytetä. Rajaa luetteloa tarkentamalla hakua.",
                 FilterDisplayName: "Näyttönimi",
                 FilterTemplate: "Templaatti",
                 FilterExpandByDefault: "Näytä oletuksena laajennettuna",

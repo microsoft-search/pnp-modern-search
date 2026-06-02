@@ -19,6 +19,10 @@ export interface IPersonaCardShimmersComponentProps {
 
 export class PersonaCardShimmersComponent extends React.Component<IPersonaCardShimmersComponentProps, {}> {
 
+    private get _backgroundColor(): string | undefined {
+        return this.props.themeVariant?.semanticColors?.bodyBackground;
+    }
+
     public render() {
 
         let personaSize: number;
@@ -68,13 +72,13 @@ export class PersonaCardShimmersComponent extends React.Component<IPersonaCardSh
                         <div style={{ display: 'flex', marginTop: 10 }}>
                             <ShimmerElementsGroup
                                 theme={this.props.themeVariant as ITheme}
-                                backgroundColor={this.props.themeVariant.semanticColors.bodyBackground}
+                                backgroundColor={this._backgroundColor}
                                 shimmerElements={[{ type: ElemType.circle, height: personaSize }, { type: ElemType.gap, width: 10, height: personaSize }]}
                             />
                             <ShimmerElementsGroup
                                 theme={this.props.themeVariant as ITheme}
                                 flexWrap={true}
-                                backgroundColor={this.props.themeVariant.semanticColors.bodyBackground}
+                                backgroundColor={this._backgroundColor}
                                 width="100%"
                                 shimmerElements={[
                                     { type: ElemType.line, width: '30%', height: 10, verticalAlign: 'center' },

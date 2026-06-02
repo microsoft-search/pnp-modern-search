@@ -16,6 +16,15 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
     private _onChangeDebounced = null;
     private _containerElemRef: React.RefObject<any> = null;
 
+    /**
+     * Per-instance prefix used to keep generated DOM ids (suggestion groups/options) unique when
+     * multiple Search Box Web Parts are rendered on the same page, so that `aria-labelledby` and the
+     * `option` element references resolve to the correct instance for screen readers.
+     */
+    private get _idPrefix(): string {
+        return this.props.domElement?.id ? this.props.domElement.id : 'pnp-searchbox';
+    }
+
     public constructor(props: ISearchBoxAutoCompleteProps) {
 
         super(props);
@@ -56,8 +65,14 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
                 return groups;
             }, {});
 
+            // Total number of suggestions that will actually be rendered (capped per group). Used to
+            // expose `aria-setsize`/`aria-posinset` so screen readers announce "x of y" correctly.
+            const totalRenderedSuggestions = Object.keys(suggestionGroups).reduce((total, groupName) => {
+                return total + Math.min(suggestionGroups[groupName].suggestions.length, this.props.numberOfSuggestionsPerGroup);
+            }, 0);
+
             let indexIncrementer = -1;
-            const renderedSuggestionGroups = Object.keys(suggestionGroups).map(groupName => {
+            const renderedSuggestionGroups = Object.keys(suggestionGroups).map((groupName, groupIndex) => {
                 const currentGroup = suggestionGroups[groupName];
                 let renderedSuggestions: JSX.Element[] = [];
 
@@ -65,21 +80,24 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
 
                     if (i < this.props.numberOfSuggestionsPerGroup) {
                         indexIncrementer++;
-                        renderedSuggestions.push(this._renderSuggestion(item.suggestion, indexIncrementer));
+                        renderedSuggestions.push(this._renderSuggestion(item.suggestion, indexIncrementer, totalRenderedSuggestions));
                     }
                 });
 
+                const groupLabelId = `${this._idPrefix}-suggestion-group-${groupIndex}`;
+
                 return (
-                    <>
-                        <Label className={styles.suggestionGroupName}>{groupName}</Label>
+                    // NOSONAR - intentional WAI-ARIA listbox grouping; native <optgroup>/<select> cannot render rich suggestion content (icons, sanitized HTML, links)
+                    <div key={groupLabelId} role="group" aria-labelledby={groupLabelId}>
+                        <Label id={groupLabelId} className={styles.suggestionGroupName}>{groupName}</Label>
                         <div>
                             {renderedSuggestions}
                         </div>
-                    </>
+                    </div>
                 );
             });
 
-            renderSuggestions = <div className={styles.suggestionPanel}>
+            renderSuggestions = <div className={styles.suggestionPanel} role="listbox" aria-label={webPartStrings.SearchBox.DefaultPlaceholder}>
                 {renderedSuggestionGroups}
             </div>;
         }
@@ -87,8 +105,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
         return renderSuggestions;
     }
 
-    private _renderSuggestion(suggestion: ISuggestion, suggestionIndex: number): JSX.Element {
-        // eslint-disable-next-line @typescript-eslint/no-this-alias
+    private _renderSuggestion(suggestion: ISuggestion, suggestionIndex: number, totalSuggestions: number): JSX.Element {
         const thisComponent = this;
 
         const suggestionInner = <>
@@ -115,6 +132,11 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
 
         const baseProps = {
             key: suggestionIndex,
+            id: `${this._idPrefix}-suggestion-${suggestionIndex}`,
+            role: 'option',
+            'aria-setsize': totalSuggestions,
+            'aria-posinset': suggestionIndex + 1,
+            'aria-selected': false,
             title: suggestion.hoverText ? suggestion.hoverText : "",
             className: styles.suggestionItem,
             'data-is-focusable': true, // Used by FocusZone component
@@ -374,18 +396,18 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
                         }
                     }}
                 >
-                    <span style={{ 
+                    <span style={{
                         marginRight: '6px',
                         color: 'white',
                         fontSize: textFontSize,
                         fontWeight: '400'
                     }}>{buttonText}</span>
-                    <Icon 
-                        iconName={iconName} 
-                        style={{ 
-                            fontSize: iconFontSize, 
+                    <Icon
+                        iconName={iconName}
+                        style={{
+                            fontSize: iconFontSize,
                             color: 'white'
-                        }} 
+                        }}
                     />
                 </DefaultButton>
             );
@@ -475,7 +497,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
             if (parentStackingContext) {
                 parentStackingContext.classList.add(styles.parentStackingCtx);
             }
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (error) { }
 
         let searchBoxRef = React.createRef<ISearchBox>();
@@ -519,7 +541,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
                             className={styles.searchTextField}
                             value={this.state.searchInputValue}
                             autoComplete="off"
-                            style={{...dynamicSearchBoxTextStyle, ...dynamicPlaceholderStyle, ...dynamicIconStyle}}
+                            style={{ ...dynamicSearchBoxTextStyle, ...dynamicPlaceholderStyle, ...dynamicIconStyle }}
                             //data-is-focusable={this.state.proposedQuerySuggestions.length > 0}
                             onChange={(event) => {
                                 if (!this._onChangeDebounced) {

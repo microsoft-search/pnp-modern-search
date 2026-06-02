@@ -9,7 +9,9 @@ define([], function () {
             },
             WebPartDefaultTitle: "Sökresultat webbdel",
             ShowBlankEditInfoMessage: "Inget resultat returneras för denna fråga. Denna webbdel förblir tom i visningsläge enligt parametrarna.",
-            CurrentVerticalNotSelectedMessage: "Den valda vertikalen matchar inte den som är associerad med den här webbdelen. Den förblir tom i visningsläge."
+            CurrentVerticalNotSelectedMessage: "Den valda vertikalen matchar inte den som är associerad med den här webbdelen. Den förblir tom i visningsläge.",
+            RollupSuggestionMessage: "Denna Sökresultat-webbdel är inte ansluten till någon annan webbdel på sidan. Överväg att använda versionen 'PnP - Search Rollup' istället — den kan laddas lat av SharePoint och utför inte datakällsfrågor förrän den rullas in i vyn, vilket förbättrar sidans laddningsprestanda.",
+            RollupSuggestionLinkText: "Läs mer"
         },
         PropertyPane: {
             DataSourcePage: {
