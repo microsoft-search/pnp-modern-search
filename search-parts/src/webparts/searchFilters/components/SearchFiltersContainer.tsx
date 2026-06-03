@@ -258,11 +258,11 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
             this.getFiltersToDisplay(this.props.availableFilters, this.state.currentUiFilters, this.props.filtersConfiguration);
 
-            const submittedFilters = this.getSelectedFiltersFromUIFilters(this.state.currentUiFilters);
-
-            this.setState({
-                submittedFilters: submittedFilters
-            });
+            // submittedFilters must NOT be synced here.
+            // It is exclusively managed by: bindApplyFiltersEvents (Apply clicked),
+            // onFilterValuesUpdated (non-multi immediate apply), and getFiltersDeepLink (deep link restore).
+            // Syncing it here would immediately promote pending UI selections to submitted,
+            // making canApply always false for multi-select filters.
         }
     }
 
