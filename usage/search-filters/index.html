@@ -618,6 +618,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#refiner-value-limit-warning" class="md-nav__link">
+    Refiner value limit warning
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#hierarchical-refiner-taxonomy" class="md-nav__link">
     Hierarchical refiner (taxonomy)
   </a>
@@ -1020,6 +1027,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#refiner-value-limit-warning" class="md-nav__link">
+    Refiner value limit warning
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#hierarchical-refiner-taxonomy" class="md-nav__link">
     Hierarchical refiner (taxonomy)
   </a>
@@ -1200,6 +1214,19 @@
 </tr>
 </tbody>
 </table>
+<h3 id="refiner-value-limit-warning">Refiner value limit warning<a class="headerlink" href="#refiner-value-limit-warning" title="Permanent link">&para;</a></h3>
+<p>Use <strong>Show warning when limit is reached</strong> together with <strong># of values</strong> when a filter can return many refiner or aggregation values.</p>
+<p>When the warning is enabled, an info icon is shown next to the filter title if the connected API reports that the configured <strong># of values</strong> limit was reached. This means the visible filter list may be truncated and not all matching values are currently shown.</p>
+<p>For troubleshooting, PnP Modern Search also writes a browser console message for each refiner or aggregation showing how many values were returned by the API and what limit was configured. When the returned count matches or exceeds the configured limit, the message is emitted as a warning and notes that additional values may have been truncated by the API.</p>
+<p>Example console warning:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>[PnP Modern Search][SharePoint Search] Refiner &#39;RefinableString00&#39; returned 500 item(s), matching or exceeding the configured limit of 500. Additional values may have been truncated by the API.
+</code></pre></div>
+<p>This is useful when:</p>
+<ul>
+<li>you keep <strong># of values</strong> lower than 1000 for performance or readability</li>
+<li>you want to warn users that they should narrow their search before trusting the full filter list</li>
+<li>you need a visible hint that increasing <strong># of values</strong> may expose more refiner values</li>
+</ul>
 <h3 id="hierarchical-refiner-taxonomy">Hierarchical refiner (taxonomy)<a class="headerlink" href="#hierarchical-refiner-taxonomy" title="Permanent link">&para;</a></h3>
 <p>Use the <strong>Hierarchical Refiner</strong> template when you want to browse and filter terms as a tree (parent/child hierarchy).</p>
 <p>This template is designed for taxonomy-backed fields (typically <code>RefinableStringXX</code> values returned by search refiners).</p>
