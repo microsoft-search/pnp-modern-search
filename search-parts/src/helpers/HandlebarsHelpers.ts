@@ -232,6 +232,36 @@ function helperHexToString(hex: any): string {
     return StringHelper.hexToString(String(hex));
 }
 
+function helperFormatSPFileSize(bytes: any): Handlebars.SafeString {
+    const b = parseInt(String(bytes), 10);
+    if (isNaN(b) || b < 0) return new Handlebars.SafeString("0 KB");
+
+    const isInteger = (n: number): boolean => n % 1 === 0;
+
+    const KB = 1024;
+    const MB = 1024 * KB;
+    const GB = 1024 * MB;
+    const TB = 1024 * GB;
+
+    if (b < KB) return new Handlebars.SafeString(b + " bytes");
+    if (b < MB) {
+        const kb = b / KB;
+        if (isInteger(kb)) return new Handlebars.SafeString(Math.round(kb) + " KB");
+        if (kb < 100) return new Handlebars.SafeString(kb.toFixed(1) + " KB");
+        return new Handlebars.SafeString(Math.round(kb) + " KB");
+    } else if (b < GB) {
+        const mb = b / MB;
+        if (isInteger(mb)) return new Handlebars.SafeString(Math.round(mb) + " MB");
+        if (mb < 10)  return new Handlebars.SafeString(mb.toFixed(2) + " MB");
+        if (mb < 100) return new Handlebars.SafeString(mb.toFixed(1) + " MB");
+        return new Handlebars.SafeString(Math.round(mb) + " MB");
+    } else if (b < TB) {
+        return new Handlebars.SafeString((b / GB).toFixed(2) + " GB");
+    } else {
+        return new Handlebars.SafeString((b / TB).toFixed(2) + " TB");
+    }
+}
+
 // ─── Object helpers ───────────────────────────────────────────────────────────
 
 function helperJSONstringify(obj: any, indent: any): string {
@@ -502,6 +532,7 @@ export function getHandlebarsHelpers(): Record<string, (...args: any[]) => any> 
         startsWith: helperStartsWith,
         stringToHex: helperStringToHex,
         hexToString: helperHexToString,
+        formatSPFileSize: helperFormatSPFileSize,
 
         // object
         JSONstringify: helperJSONstringify,

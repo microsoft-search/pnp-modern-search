@@ -257,7 +257,35 @@ Supported output format tokens include all [dayjs format tokens](https://day.js.
 
 **Description** Convert a UTF-8 hexadecimal string back to text. The helper also accepts the filter value format used in deep links, including optional surrounding quotes and the `ǂǂ` prefix.
 
-**Example** `{{hexToString '"ǂǂ4b656f6768e280997320437269737073"'}}` returns `Keogh’s Crisps`.
+**Example** `{{hexToString ‘"ǂǂ4b656f6768e280997320437269737073"’}}` returns `Keogh’s Crisps`.
+
+#### formatSPFileSize
+
+**Syntax** `{{formatSPFileSize <value>}}`
+
+**Description** Formats a file size in bytes to a human-readable string matching SharePoint’s native file size display. Uses binary (1024-based) divisors with tiered decimal precision.
+
+**Example** `{{formatSPFileSize File_x0020_Size}}`
+
+| Input (bytes) | Output |
+|---|---|
+| 0 | `0 bytes` |
+| 500 | `500 bytes` |
+| 1023 | `1023 bytes` |
+| 1024 | `1 KB` |
+| 1536 | `1.5 KB` |
+| 34972 | `34.2 KB` |
+| 51200 | `50 KB` |
+| 148098 | `145 KB` |
+| 1048576 | `1 MB` |
+| 1209452 | `1.15 MB` |
+| 10485760 | `10 MB` |
+| 11624602 | `11.1 MB` |
+| 82849344 | `79.0 MB` |
+| 104857600 | `100 MB` |
+| 1073741824 | `1.00 GB` |
+| 8486862848 | `7.90 GB` |
+| 1099511627776 | `1.00 TB` |
 
 #### Deep Link Example For Search Filters
 
