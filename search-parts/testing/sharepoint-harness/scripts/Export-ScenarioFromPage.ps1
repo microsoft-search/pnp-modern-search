@@ -30,6 +30,15 @@ $script:IgnoredControlIds = @(
     'cbe7b0a9-3504-44dd-a3a3-0e5cacd07788'
 )
 
+$script:FullWidthSupportedComponentIds = @(
+    # Built-in page title control
+    'cbe7b0a9-3504-44dd-a3a3-0e5cacd07788'
+    # Built-in hero web part
+    'c4bd7b2f-7b6e-4599-8485-16504575f590'
+    # Built-in image web part
+    'd1d91016-032f-456d-98a4-721247c305e8'
+)
+
 function Resolve-AbsolutePath {
     param(
         [Parameter(Mandatory = $true)][string]$Path,
@@ -150,7 +159,7 @@ function Connect-InteractivePnP {
         [Parameter(Mandatory = $true)][string]$ResolvedClientId
     )
 
-    return Connect-PnPOnline -Url $Url -Interactive -ClientId $ResolvedClientId -ReturnConnection
+    return Connect-PnPOnline -Url $Url -Interactive -ClientId $ResolvedClientId -PersistLogin -ReturnConnection
 }
 
 function Get-ControlDefinition {
@@ -177,6 +186,12 @@ function Convert-ControlToScenarioWebPart {
 
     $controlDefinition = Get-ControlDefinition -CanvasControlNode $CanvasControlNode
     if ($null -eq $controlDefinition) {
+        return $null
+    }
+
+    $controlType = Get-OptionalPropertyValue -Object $controlDefinition -PropertyName 'controlType'
+    # Skip non-web-part placeholder controls (for example, exported empty section placeholders).
+    if ($null -ne $controlType -and [int]$controlType -ne 3) {
         return $null
     }
 
@@ -214,6 +229,27 @@ function Convert-ControlToScenarioWebPart {
 function Convert-PageNodeToScenario {
     param([Parameter(Mandatory = $true)]$PageNode)
 
+    function Test-WebPartSupportedInFullWidthSection {
+        param([Parameter(Mandatory = $true)]$WebPart)
+
+        $componentId = [string](Get-OptionalPropertyValue -Object $WebPart -PropertyName 'componentId')
+        if (-not [string]::IsNullOrWhiteSpace($componentId)) {
+            return $script:FullWidthSupportedComponentIds -contains $componentId.ToLowerInvariant()
+        }
+
+        $componentKey = [string](Get-OptionalPropertyValue -Object $WebPart -PropertyName 'componentKey')
+        if (-not [string]::IsNullOrWhiteSpace($componentKey)) {
+            return $false
+        }
+
+        $componentAlias = [string](Get-OptionalPropertyValue -Object $WebPart -PropertyName 'componentAlias')
+        if (-not [string]::IsNullOrWhiteSpace($componentAlias)) {
+            return $false
+        }
+
+        return $false
+    }
+
     $sectionNodes = @($PageNode.SelectNodes('pnp:Sections/pnp:Section', $script:XmlNamespaceManager)) |
         Sort-Object { [int]$_.Order }
 
@@ -222,20 +258,38 @@ function Convert-PageNodeToScenario {
     $sectionNumber = 1
 
     foreach ($sectionNode in $sectionNodes) {
-        $scenarioSections.Add([pscustomobject][ordered]@{
-            template = [string]$sectionNode.Type
-            order = [int]$sectionNode.Order
-        }) | Out-Null
-
         $controlNodes = @($sectionNode.SelectNodes('pnp:Controls/pnp:CanvasControl', $script:XmlNamespaceManager)) |
             Sort-Object { [int]$_.Column }, { [int]$_.Order }
+
+        $sectionWebParts = [System.Collections.Generic.List[object]]::new()
 
         foreach ($controlNode in $controlNodes) {
             $scenarioWebPart = Convert-ControlToScenarioWebPart -CanvasControlNode $controlNode -SectionNumber $sectionNumber
             if ($null -ne $scenarioWebPart) {
+                $sectionWebParts.Add($scenarioWebPart) | Out-Null
                 $scenarioWebParts.Add($scenarioWebPart) | Out-Null
             }
         }
+
+        $resolvedSectionTemplate = [string]$sectionNode.Type
+        if ($resolvedSectionTemplate -eq 'OneColumnFullWidth') {
+            $hasUnsupportedControls = $false
+            foreach ($sectionWebPart in $sectionWebParts) {
+                if (-not (Test-WebPartSupportedInFullWidthSection -WebPart $sectionWebPart)) {
+                    $hasUnsupportedControls = $true
+                    break
+                }
+            }
+
+            if ($hasUnsupportedControls) {
+                $resolvedSectionTemplate = 'OneColumn'
+            }
+        }
+
+        $scenarioSections.Add([pscustomobject][ordered]@{
+            template = $resolvedSectionTemplate
+            order = [int]$sectionNode.Order
+        }) | Out-Null
 
         $sectionNumber++
     }
@@ -247,6 +301,26 @@ function Convert-PageNodeToScenario {
         sections = @($scenarioSections)
         webParts = @($scenarioWebParts)
     }
+}
+
+function Set-TemplateToSinglePage {
+    param(
+        [Parameter(Mandatory = $true)]$TemplateXml,
+        [Parameter(Mandatory = $true)]$PageNode,
+        [Parameter(Mandatory = $true)]$XmlNamespaceManager,
+        [Parameter(Mandatory = $true)][string]$TemplateOutPath
+    )
+
+    $allPageNodes = @($TemplateXml.SelectNodes('//pnp:ClientSidePage', $XmlNamespaceManager))
+    foreach ($candidatePageNode in $allPageNodes) {
+        if ([object]::ReferenceEquals($candidatePageNode, $PageNode)) {
+            continue
+        }
+
+        $null = $candidatePageNode.ParentNode.RemoveChild($candidatePageNode)
+    }
+
+    $TemplateXml.Save($TemplateOutPath)
 }
 
 Import-Module PnP.PowerShell -ErrorAction Stop | Out-Null
@@ -304,6 +378,8 @@ $pageNode = $templateXml.SelectSingleNode("//pnp:ClientSidePage[@PageName='$($pa
 if ($null -eq $pageNode) {
     throw "Unable to find page '$($pageIdentity.PageName)' in the extracted site template."
 }
+
+Set-TemplateToSinglePage -TemplateXml $templateXml -PageNode $pageNode -XmlNamespaceManager $script:XmlNamespaceManager -TemplateOutPath $resolvedTemplateOutPath
 
 $scenarioObject = [ordered]@{
     auth = [ordered]@{

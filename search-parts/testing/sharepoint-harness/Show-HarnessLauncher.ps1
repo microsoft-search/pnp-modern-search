@@ -18,6 +18,7 @@ $script:HarnessActions = @(
         SupportsClientId = $true
         SupportsTenantUrl = $true
         SupportsAdminUrl = $true
+        SupportsSiteUrl = $true
         SupportsTests = $true
         SupportsResultsPath = $true
         SupportsOutPath = $false
@@ -40,6 +41,7 @@ $script:HarnessActions = @(
         SupportsClientId = $true
         SupportsTenantUrl = $true
         SupportsAdminUrl = $true
+        SupportsSiteUrl = $true
         SupportsTests = $false
         SupportsResultsPath = $false
         SupportsOutPath = $false
@@ -62,6 +64,7 @@ $script:HarnessActions = @(
         SupportsClientId = $false
         SupportsTenantUrl = $false
         SupportsAdminUrl = $false
+        SupportsSiteUrl = $false
         SupportsTests = $false
         SupportsResultsPath = $false
         SupportsOutPath = $false
@@ -84,6 +87,7 @@ $script:HarnessActions = @(
         SupportsClientId = $true
         SupportsTenantUrl = $true
         SupportsAdminUrl = $true
+        SupportsSiteUrl = $true
         SupportsTests = $false
         SupportsResultsPath = $false
         SupportsOutPath = $false
@@ -106,6 +110,7 @@ $script:HarnessActions = @(
         SupportsClientId = $true
         SupportsTenantUrl = $true
         SupportsAdminUrl = $true
+        SupportsSiteUrl = $true
         SupportsTests = $false
         SupportsResultsPath = $false
         SupportsOutPath = $false
@@ -128,6 +133,7 @@ $script:HarnessActions = @(
         SupportsClientId = $true
         SupportsTenantUrl = $true
         SupportsAdminUrl = $true
+        SupportsSiteUrl = $true
         SupportsTests = $false
         SupportsResultsPath = $false
         SupportsOutPath = $false
@@ -150,6 +156,7 @@ $script:HarnessActions = @(
         SupportsClientId = $true
         SupportsTenantUrl = $false
         SupportsAdminUrl = $false
+        SupportsSiteUrl = $true
         SupportsTests = $false
         SupportsResultsPath = $false
         SupportsOutPath = $false
@@ -172,6 +179,7 @@ $script:HarnessActions = @(
         SupportsClientId = $true
         SupportsTenantUrl = $false
         SupportsAdminUrl = $false
+        SupportsSiteUrl = $true
         SupportsTests = $false
         SupportsResultsPath = $false
         SupportsOutPath = $false
@@ -194,6 +202,7 @@ $script:HarnessActions = @(
         SupportsClientId = $true
         SupportsTenantUrl = $true
         SupportsAdminUrl = $false
+        SupportsSiteUrl = $true
         SupportsTests = $false
         SupportsResultsPath = $false
         SupportsOutPath = $false
@@ -216,6 +225,7 @@ $script:HarnessActions = @(
         SupportsClientId = $true
         SupportsTenantUrl = $false
         SupportsAdminUrl = $false
+        SupportsSiteUrl = $false
         SupportsTests = $false
         SupportsResultsPath = $false
         SupportsOutPath = $true
@@ -238,6 +248,7 @@ $script:HarnessActions = @(
         SupportsClientId = $true
         SupportsTenantUrl = $true
         SupportsAdminUrl = $true
+        SupportsSiteUrl = $true
         SupportsTests = $false
         SupportsResultsPath = $false
         SupportsOutPath = $false
@@ -285,6 +296,164 @@ function Resolve-AbsolutePath {
 
 function Get-DefaultScenarioPath {
     return Resolve-AbsolutePath -Path './exported-scenarios/sample-scenario.json' -BasePath $PSScriptRoot
+}
+
+function Get-OptionalConfigValue {
+    param(
+        [Parameter(Mandatory = $true)]$Config,
+        [Parameter(Mandatory = $true)][string[]]$PropertyNames
+    )
+
+    if ($null -eq $Config) {
+        return $null
+    }
+
+    foreach ($propertyName in $PropertyNames) {
+        if ($Config.PSObject.Properties.Name -contains $propertyName) {
+            return $Config.$propertyName
+        }
+    }
+
+    return $null
+}
+
+function Get-ConfigStringValue {
+    param(
+        [Parameter(Mandatory = $true)]$Config,
+        [Parameter(Mandatory = $true)][string[]]$PropertyNames,
+        [string]$DefaultValue = ''
+    )
+
+    $value = Get-OptionalConfigValue -Config $Config -PropertyNames $PropertyNames
+    if ($null -eq $value) {
+        return $DefaultValue
+    }
+
+    return [string]$value
+}
+
+function Get-ConfigBooleanValue {
+    param(
+        [Parameter(Mandatory = $true)]$Config,
+        [Parameter(Mandatory = $true)][string[]]$PropertyNames,
+        [bool]$DefaultValue = $false
+    )
+
+    $value = Get-OptionalConfigValue -Config $Config -PropertyNames $PropertyNames
+    if ($null -eq $value) {
+        return $DefaultValue
+    }
+
+    return [bool]$value
+}
+
+function Resolve-ConfiguredPath {
+    param([string]$Path)
+
+    if ([string]::IsNullOrWhiteSpace($Path)) {
+        return ''
+    }
+
+    return Resolve-AbsolutePath -Path $Path -BasePath $PSScriptRoot
+}
+
+function Get-HarnessLauncherConfig {
+    $defaults = [pscustomobject]@{
+        ScenarioPath = Get-DefaultScenarioPath
+        Tests = 'all'
+        ResultsPath = ''
+        OutPath = ''
+        TemplateOutPath = ''
+        TargetSiteUrl = ''
+        PageUrl = ''
+        UseUniquePageNames = $false
+        Force = $false
+        SkipWebPartProvisioning = $false
+        FailOnUnexpectedWebParts = $false
+        ResolveLatestPageNames = $false
+        OpenBrowser = $false
+    }
+
+    $sharedConfigPath = Join-Path $PSScriptRoot 'HarnessLauncher.config.json'
+    $userConfigPath = Join-Path $PSScriptRoot 'HarnessLauncher.config.user.json'
+
+    $configPath = if (Test-Path -LiteralPath $userConfigPath -PathType Leaf) {
+        $userConfigPath
+    }
+    elseif (Test-Path -LiteralPath $sharedConfigPath -PathType Leaf) {
+        $sharedConfigPath
+    }
+    else {
+        return [pscustomobject]@{
+            DefaultTenant = ''
+            Tenants = @()
+            Defaults = $defaults
+        }
+    }
+
+    try {
+        $loadedConfig = Get-Content -LiteralPath $configPath -Raw | ConvertFrom-Json
+    }
+    catch {
+        throw "Unable to read harness launcher config '$configPath': $($_.Exception.Message)"
+    }
+
+    $loadedDefaults = Get-OptionalConfigValue -Config $loadedConfig -PropertyNames @('Defaults')
+    if ($null -eq $loadedDefaults) {
+        # Backward compatibility with flat shape.
+        $loadedDefaults = $loadedConfig
+    }
+
+    $tenantEntries = Get-OptionalConfigValue -Config $loadedConfig -PropertyNames @('Tenants')
+    if ($null -eq $tenantEntries) {
+        $tenantEntries = @()
+    }
+
+    $tenants = @()
+    foreach ($tenant in $tenantEntries) {
+        $tenantName = Get-ConfigStringValue -Config $tenant -PropertyNames @('Name')
+        if ([string]::IsNullOrWhiteSpace($tenantName)) {
+            continue
+        }
+
+        $tenants += [pscustomobject]@{
+            Name = $tenantName
+            ClientId = Get-ConfigStringValue -Config $tenant -PropertyNames @('ClientId', 'PnpClientId')
+            TenantUrl = Get-ConfigStringValue -Config $tenant -PropertyNames @('TenantUrl')
+            AdminUrl = Get-ConfigStringValue -Config $tenant -PropertyNames @('AdminUrl')
+            TargetSiteUrl = Get-ConfigStringValue -Config $tenant -PropertyNames @('TargetSiteUrl', 'SiteUrl')
+        }
+    }
+
+    $defaultTenant = Get-ConfigStringValue -Config $loadedConfig -PropertyNames @('DefaultTenant')
+    if ([string]::IsNullOrWhiteSpace($defaultTenant) -and $tenants.Count -gt 0) {
+        $defaultTenant = $tenants[0].Name
+    }
+
+    $scenarioPath = Resolve-ConfiguredPath -Path (Get-ConfigStringValue -Config $loadedDefaults -PropertyNames @('ScenarioPath'))
+    if ([string]::IsNullOrWhiteSpace($scenarioPath)) {
+        $scenarioPath = $defaults.ScenarioPath
+    }
+
+    return [pscustomobject]@{
+        DefaultTenant = $defaultTenant
+        Tenants = $tenants
+        Defaults = [pscustomobject]@{
+            ScenarioPath = $scenarioPath
+            Tests = Get-ConfigStringValue -Config $loadedDefaults -PropertyNames @('Tests') -DefaultValue $defaults.Tests
+            ResultsPath = Resolve-ConfiguredPath -Path (Get-ConfigStringValue -Config $loadedDefaults -PropertyNames @('ResultsPath'))
+            OutPath = Resolve-ConfiguredPath -Path (Get-ConfigStringValue -Config $loadedDefaults -PropertyNames @('OutPath'))
+            TemplateOutPath = Resolve-ConfiguredPath -Path (Get-ConfigStringValue -Config $loadedDefaults -PropertyNames @('TemplateOutPath'))
+            TargetSiteUrl = Get-ConfigStringValue -Config $loadedDefaults -PropertyNames @('TargetSiteUrl', 'SiteUrl')
+            PageUrl = Get-ConfigStringValue -Config $loadedDefaults -PropertyNames @('PageUrl')
+            UseUniquePageNames = Get-ConfigBooleanValue -Config $loadedDefaults -PropertyNames @('UseUniquePageNames')
+            Force = Get-ConfigBooleanValue -Config $loadedDefaults -PropertyNames @('Force')
+            SkipWebPartProvisioning = Get-ConfigBooleanValue -Config $loadedDefaults -PropertyNames @('SkipWebPartProvisioning')
+            FailOnUnexpectedWebParts = Get-ConfigBooleanValue -Config $loadedDefaults -PropertyNames @('FailOnUnexpectedWebParts')
+            ResolveLatestPageNames = Get-ConfigBooleanValue -Config $loadedDefaults -PropertyNames @('ResolveLatestPageNames')
+            OpenBrowser = Get-ConfigBooleanValue -Config $loadedDefaults -PropertyNames @('OpenBrowser')
+        }
+    }
 }
 
 function Format-PowerShellLiteral {
@@ -338,6 +507,10 @@ function Build-CommandText {
 
     if ($Action.SupportsAdminUrl) {
         Add-NamedArgument -Parts $parts -Name 'AdminUrl' -Value $Values.AdminUrl
+    }
+
+    if ($Action.SupportsSiteUrl) {
+        Add-NamedArgument -Parts $parts -Name 'SiteUrl' -Value $Values.SiteUrl
     }
 
     if ($Action.SupportsTests) {
@@ -413,11 +586,15 @@ function Invoke-BrowseFile {
     }
 }
 
+$launcherConfig = Get-HarnessLauncherConfig
+$script:TenantProfiles = @($launcherConfig.Tenants)
+
 $form = New-Object System.Windows.Forms.Form
 $form.Text = 'SharePoint Harness Launcher'
 $form.StartPosition = 'CenterScreen'
 $form.Size = New-Object System.Drawing.Size(920, 690)
 $form.MinimumSize = New-Object System.Drawing.Size(920, 690)
+$script:LauncherForm = $form
 
 $font = New-Object System.Drawing.Font('Segoe UI', 9)
 $boldFont = New-Object System.Drawing.Font('Segoe UI', 9, [System.Drawing.FontStyle]::Bold)
@@ -484,6 +661,30 @@ function New-TextBoxRow {
     return [pscustomobject]@{ TextBox = $textBox; Button = $null }
 }
 
+function New-ComboBoxRow {
+    param(
+        [string]$Label,
+        [int]$Top,
+        [string[]]$Items
+    )
+
+    New-Label -Text $Label -Top $Top | Out-Null
+
+    $comboBox = New-Object System.Windows.Forms.ComboBox
+    $comboBox.Left = $leftField
+    $comboBox.Top = $Top
+    $comboBox.Width = 300
+    $comboBox.DropDownStyle = 'DropDownList'
+
+    foreach ($item in $Items) {
+        [void]$comboBox.Items.Add($item)
+    }
+
+    $panel.Controls.Add($comboBox)
+
+    return [pscustomobject]@{ ComboBox = $comboBox }
+}
+
 New-Label -Text 'Action' -Top $y | Out-Null
 $actionCombo = New-Object System.Windows.Forms.ComboBox
 $actionCombo.Left = $leftField
@@ -503,7 +704,15 @@ $descriptionLabel.Font = $boldFont
 $panel.Controls.Add($descriptionLabel)
 $y += 60
 
-$scenarioRow = New-TextBoxRow -Label 'Scenario JSON' -Top $y -InitialText (Get-DefaultScenarioPath) -WithBrowse -Filter 'JSON files (*.json)|*.json|All files (*.*)|*.*'
+$scenarioRow = New-TextBoxRow -Label 'Scenario JSON' -Top $y -InitialText $launcherConfig.Defaults.ScenarioPath -WithBrowse -Filter 'JSON files (*.json)|*.json|All files (*.*)|*.*'
+$y += $rowHeight
+
+$tenantNames = @($script:TenantProfiles | ForEach-Object { $_.Name })
+if ($tenantNames.Count -eq 0) {
+    $tenantNames = @('Manual entry')
+}
+
+$tenantRow = New-ComboBoxRow -Label 'Tenant' -Top $y -Items $tenantNames
 $y += $rowHeight
 $clientIdRow = New-TextBoxRow -Label 'Client ID' -Top $y -InitialText ''
 $y += $rowHeight
@@ -511,15 +720,17 @@ $tenantUrlRow = New-TextBoxRow -Label 'Tenant URL' -Top $y -InitialText ''
 $y += $rowHeight
 $adminUrlRow = New-TextBoxRow -Label 'Admin URL' -Top $y -InitialText ''
 $y += $rowHeight
-$pageUrlRow = New-TextBoxRow -Label 'Page URL' -Top $y -InitialText ''
+$siteUrlRow = New-TextBoxRow -Label 'Target Site URL' -Top $y -InitialText $launcherConfig.Defaults.TargetSiteUrl
 $y += $rowHeight
-$testsRow = New-TextBoxRow -Label 'Tests' -Top $y -InitialText 'all'
+$pageUrlRow = New-TextBoxRow -Label 'Page URL' -Top $y -InitialText $launcherConfig.Defaults.PageUrl
 $y += $rowHeight
-$resultsPathRow = New-TextBoxRow -Label 'Results Path' -Top $y -InitialText '' -WithBrowse -SaveDialog -Filter 'JSON files (*.json)|*.json|All files (*.*)|*.*'
+$testsRow = New-TextBoxRow -Label 'Tests' -Top $y -InitialText $launcherConfig.Defaults.Tests
 $y += $rowHeight
-$outPathRow = New-TextBoxRow -Label 'Scenario Out Path' -Top $y -InitialText '' -WithBrowse -SaveDialog -Filter 'JSON files (*.json)|*.json|All files (*.*)|*.*'
+$resultsPathRow = New-TextBoxRow -Label 'Results Path' -Top $y -InitialText $launcherConfig.Defaults.ResultsPath -WithBrowse -SaveDialog -Filter 'JSON files (*.json)|*.json|All files (*.*)|*.*'
 $y += $rowHeight
-$templateOutPathRow = New-TextBoxRow -Label 'Template XML Path' -Top $y -InitialText '' -WithBrowse -SaveDialog -Filter 'XML files (*.xml)|*.xml|All files (*.*)|*.*'
+$outPathRow = New-TextBoxRow -Label 'Scenario Out Path' -Top $y -InitialText $launcherConfig.Defaults.OutPath -WithBrowse -SaveDialog -Filter 'JSON files (*.json)|*.json|All files (*.*)|*.*'
+$y += $rowHeight
+$templateOutPathRow = New-TextBoxRow -Label 'Template XML Path' -Top $y -InitialText $launcherConfig.Defaults.TemplateOutPath -WithBrowse -SaveDialog -Filter 'XML files (*.xml)|*.xml|All files (*.*)|*.*'
 $y += $rowHeight + 8
 
 $optionsLabel = New-Object System.Windows.Forms.Label
@@ -573,6 +784,13 @@ $openCheck.Top = $y
 $openCheck.Width = 160
 $panel.Controls.Add($openCheck)
 
+$useUniqueCheck.Checked = $launcherConfig.Defaults.UseUniquePageNames
+$forceCheck.Checked = $launcherConfig.Defaults.Force
+$skipWebPartCheck.Checked = $launcherConfig.Defaults.SkipWebPartProvisioning
+$failUnexpectedCheck.Checked = $launcherConfig.Defaults.FailOnUnexpectedWebParts
+$resolveLatestCheck.Checked = $launcherConfig.Defaults.ResolveLatestPageNames
+$openCheck.Checked = $launcherConfig.Defaults.OpenBrowser
+
 $y += 50
 
 $commandLabel = New-Object System.Windows.Forms.Label
@@ -615,12 +833,33 @@ $closeButton.Top = $y
 $closeButton.Width = 120
 $panel.Controls.Add($closeButton)
 
+$y += 45
+
+$statusLabel = New-Object System.Windows.Forms.Label
+$statusLabel.Text = 'Last Action Status'
+$statusLabel.Left = $leftLabel
+$statusLabel.Top = $y
+$statusLabel.Width = 155
+$panel.Controls.Add($statusLabel)
+
+$statusTextBox = New-Object System.Windows.Forms.TextBox
+$statusTextBox.Left = $leftField
+$statusTextBox.Top = $y
+$statusTextBox.Width = 700
+$statusTextBox.Height = 90
+$statusTextBox.Multiline = $true
+$statusTextBox.ScrollBars = 'Vertical'
+$statusTextBox.ReadOnly = $true
+$statusTextBox.Text = 'No action has been run yet.'
+$panel.Controls.Add($statusTextBox)
+
 function Get-CurrentValues {
     return [pscustomobject]@{
         ScenarioPath = $scenarioRow.TextBox.Text.Trim()
         ClientId = $clientIdRow.TextBox.Text.Trim()
         TenantUrl = $tenantUrlRow.TextBox.Text.Trim()
         AdminUrl = $adminUrlRow.TextBox.Text.Trim()
+        SiteUrl = $siteUrlRow.TextBox.Text.Trim()
         PageUrl = $pageUrlRow.TextBox.Text.Trim()
         Tests = $testsRow.TextBox.Text.Trim()
         ResultsPath = $resultsPathRow.TextBox.Text.Trim()
@@ -637,6 +876,23 @@ function Get-CurrentValues {
 
 function Get-SelectedAction {
     return $script:HarnessActions | Where-Object { $_.Name -eq [string]$actionCombo.SelectedItem } | Select-Object -First 1
+}
+
+function Get-SelectedTenantProfile {
+    $selectedTenantName = [string]$tenantRow.ComboBox.SelectedItem
+    return $script:TenantProfiles | Where-Object { $_.Name -eq $selectedTenantName } | Select-Object -First 1
+}
+
+function Apply-SelectedTenantProfile {
+    $selectedTenant = Get-SelectedTenantProfile
+    if ($null -eq $selectedTenant) {
+        return
+    }
+
+    $clientIdRow.TextBox.Text = $selectedTenant.ClientId
+    $tenantUrlRow.TextBox.Text = $selectedTenant.TenantUrl
+    $adminUrlRow.TextBox.Text = $selectedTenant.AdminUrl
+    $siteUrlRow.TextBox.Text = $selectedTenant.TargetSiteUrl
 }
 
 function Set-ControlEnabled {
@@ -660,6 +916,7 @@ function Update-ActionUi {
     Set-ControlEnabled -Row $clientIdRow -Enabled $action.SupportsClientId
     Set-ControlEnabled -Row $tenantUrlRow -Enabled $action.SupportsTenantUrl
     Set-ControlEnabled -Row $adminUrlRow -Enabled $action.SupportsAdminUrl
+    Set-ControlEnabled -Row $siteUrlRow -Enabled $action.SupportsSiteUrl
     Set-ControlEnabled -Row $pageUrlRow -Enabled $action.NeedsPageUrl
     Set-ControlEnabled -Row $testsRow -Enabled $action.SupportsTests
     Set-ControlEnabled -Row $resultsPathRow -Enabled $action.SupportsResultsPath
@@ -711,15 +968,25 @@ function Validate-Selection {
     if ($Action.RequiresClientId -and [string]::IsNullOrWhiteSpace($Values.ClientId)) {
         throw 'Client ID is required for this action.'
     }
+
+    if ($Action.SupportsSiteUrl -and [string]::IsNullOrWhiteSpace($Values.SiteUrl)) {
+        throw 'Target Site URL is required for this action.'
+    }
 }
 
 $actionCombo.Add_SelectedIndexChanged({ Update-ActionUi })
+
+$tenantRow.ComboBox.Add_SelectedIndexChanged({
+    Apply-SelectedTenantProfile
+    Update-ActionUi
+})
 
 foreach ($textBox in @(
     $scenarioRow.TextBox,
     $clientIdRow.TextBox,
     $tenantUrlRow.TextBox,
     $adminUrlRow.TextBox,
+    $siteUrlRow.TextBox,
     $pageUrlRow.TextBox,
     $testsRow.TextBox,
     $resultsPathRow.TextBox,
@@ -754,8 +1021,106 @@ $runButton.Add_Click({
         $values = Get-CurrentValues
         Validate-Selection -Action $action -Values $values
         $commandText = Build-CommandText -Action $action -Values $values
+        $statusFilePath = [System.IO.Path]::GetTempFileName()
+        $statusFileLiteral = Format-PowerShellLiteral -Value $statusFilePath
+        $wrappedCommandText = @"
+`$ErrorActionPreference = 'Stop'
+`$initialErrorCount = `$global:Error.Count
 
-        Start-Process -FilePath 'pwsh' -WorkingDirectory (Resolve-AbsolutePath -Path '../..' -BasePath $PSScriptRoot) -ArgumentList @('-NoExit', '-Command', $commandText) | Out-Null
+function Write-HarnessActionStatus {
+    param([hashtable]`$Status)
+
+    (`$Status | ConvertTo-Json -Compress) | Set-Content -LiteralPath $statusFileLiteral -Encoding utf8
+}
+
+try {
+    $commandText
+
+    `$errorDelta = `$global:Error.Count - `$initialErrorCount
+    `$commandSuccess = [bool]`$?
+    `$nativeExitCode = if (`$null -eq `$LASTEXITCODE) { 0 } else { [int]`$LASTEXITCODE }
+    `$succeeded = `$commandSuccess -and (`$errorDelta -eq 0) -and (`$nativeExitCode -eq 0)
+
+    Write-HarnessActionStatus -Status @{
+        success = `$succeeded
+        commandSuccess = `$commandSuccess
+        errorDelta = `$errorDelta
+        nativeExitCode = `$nativeExitCode
+    }
+
+    if (`$succeeded) {
+        Write-Host (([Environment]::NewLine) + '==> Harness action completed successfully. You can close this window when ready.') -ForegroundColor Green
+    }
+    else {
+        Write-Host (([Environment]::NewLine) + '==> Harness action reported failure. Review the output above, then close this window when ready.') -ForegroundColor Yellow
+    }
+}
+catch {
+    Write-HarnessActionStatus -Status @{
+        success = `$false
+        commandSuccess = `$false
+        errorDelta = (`$global:Error.Count - `$initialErrorCount)
+        nativeExitCode = if (`$null -eq `$LASTEXITCODE) { 0 } else { [int]`$LASTEXITCODE }
+        exception = [string]`$_.Exception.Message
+    }
+    Write-Error (`$_ | Out-String)
+    Write-Host (([Environment]::NewLine) + '==> Harness action threw an exception. Review the output above, then close this window when ready.') -ForegroundColor Yellow
+}
+"@
+
+        $workingDirectory = Resolve-AbsolutePath -Path '../..' -BasePath $PSScriptRoot
+        $process = Start-Process -FilePath 'pwsh' -WorkingDirectory $workingDirectory -ArgumentList @('-NoExit', '-Command', $wrappedCommandText) -PassThru
+        $process.EnableRaisingEvents = $true
+        $actionNameForEvent = [string]$action.Name
+        $statusFilePathForEvent = $statusFilePath
+        $null = Register-ObjectEvent -InputObject $process -EventName Exited -Action {
+            param($sender, $eventArgs)
+
+            $script:LastHarnessActionExitCode = 1
+            if ($null -ne $sender) {
+                $script:LastHarnessActionExitCode = [int]$sender.ExitCode
+            }
+
+            $statusData = $null
+            if (Test-Path -LiteralPath $statusFilePathForEvent -PathType Leaf) {
+                try {
+                    $statusData = Get-Content -LiteralPath $statusFilePathForEvent -Raw | ConvertFrom-Json
+                }
+                catch {
+                }
+
+                Remove-Item -LiteralPath $statusFilePathForEvent -Force -ErrorAction SilentlyContinue
+            }
+
+            if (-not $script:LauncherForm.IsDisposed) {
+                $null = $script:LauncherForm.BeginInvoke([Action]{
+                    if ($script:LauncherForm.IsDisposed) {
+                        return
+                    }
+
+                    if ($null -ne $statusData) {
+                        $summary = if ([bool]$statusData.success) { 'SUCCESS' } else { 'FAILED' }
+                        $message = @(
+                            "Action: $actionNameForEvent"
+                            "Result: $summary"
+                            "Process exit code: $($script:LastHarnessActionExitCode)"
+                            "PowerShell success (`$?): $($statusData.commandSuccess)"
+                            "Native exit code (`$LASTEXITCODE): $($statusData.nativeExitCode)"
+                            "New errors during run: $($statusData.errorDelta)"
+                        )
+
+                        if ($statusData.PSObject.Properties.Name -contains 'exception' -and -not [string]::IsNullOrWhiteSpace([string]$statusData.exception)) {
+                            $message += "Exception: $($statusData.exception)"
+                        }
+
+                        $statusTextBox.Text = $message -join [Environment]::NewLine
+                    }
+                    else {
+                        $statusTextBox.Text = "Action finished with process exit code $($script:LastHarnessActionExitCode), but status diagnostics were unavailable."
+                    }
+                })
+            }
+        }.GetNewClosure()
     }
     catch {
         [System.Windows.Forms.MessageBox]::Show($_.Exception.Message, 'Harness Launcher') | Out-Null
@@ -763,6 +1128,28 @@ $runButton.Add_Click({
 })
 
 $closeButton.Add_Click({ $form.Close() })
+
+if ($script:TenantProfiles.Count -eq 0) {
+    $tenantRow.ComboBox.SelectedIndex = 0
+    $tenantRow.ComboBox.Enabled = $false
+}
+else {
+    $initialTenantName = if ([string]::IsNullOrWhiteSpace($launcherConfig.DefaultTenant)) {
+        $script:TenantProfiles[0].Name
+    }
+    else {
+        $launcherConfig.DefaultTenant
+    }
+
+    if ($tenantRow.ComboBox.Items.Contains($initialTenantName)) {
+        $tenantRow.ComboBox.SelectedItem = $initialTenantName
+    }
+    else {
+        $tenantRow.ComboBox.SelectedIndex = 0
+    }
+
+    Apply-SelectedTenantProfile
+}
 
 $actionCombo.SelectedItem = $script:HarnessActions[0].Name
 [void]$form.ShowDialog()

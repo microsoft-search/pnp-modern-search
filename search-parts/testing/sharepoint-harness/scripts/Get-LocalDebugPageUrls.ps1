@@ -7,6 +7,8 @@ param(
 
     [string]$TenantUrl = 'https://tcwlv.sharepoint.com',
 
+    [string]$SiteUrl,
+
     [string]$DevServerUrl = 'https://localhost:4321',
 
     [string]$ManifestsPath = '/temp/build/manifests.js',
@@ -18,6 +20,8 @@ param(
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
+
+$script:HasSiteUrlOverride = $PSBoundParameters.ContainsKey('SiteUrl') -and -not [string]::IsNullOrWhiteSpace($SiteUrl)
 
 function Resolve-AbsolutePath {
     param(
@@ -121,7 +125,7 @@ function Connect-InteractivePnP {
         [Parameter(Mandatory = $true)][string]$ResolvedClientId
     )
 
-    return Connect-PnPOnline -Url $Url -Interactive -ClientId $ResolvedClientId -ReturnConnection
+    return Connect-PnPOnline -Url $Url -Interactive -ClientId $ResolvedClientId -PersistLogin -ReturnConnection
 }
 
 function Resolve-PageName {
@@ -159,7 +163,7 @@ $scenario = Read-JsonFile -Path $scenarioFullPath
 $authSettings = Get-AuthSettings -Scenario $scenario -HasTenantUrlOverride $PSBoundParameters.ContainsKey('TenantUrl') -HasClientIdOverride $PSBoundParameters.ContainsKey('ClientId')
 
 $site = Get-OptionalPropertyValue -Object $scenario -PropertyName 'site'
-$siteUrl = [string](Get-OptionalPropertyValue -Object $site -PropertyName 'url')
+$siteUrl = if ($script:HasSiteUrlOverride) { $SiteUrl } else { [string](Get-OptionalPropertyValue -Object $site -PropertyName 'url') }
 if ([string]::IsNullOrWhiteSpace($siteUrl)) {
     throw 'scenario.site.url is required.'
 }

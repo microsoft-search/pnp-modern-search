@@ -5,6 +5,8 @@ param(
 
     [string]$ClientId,
 
+    [string]$SiteUrl,
+
     [switch]$UseUniquePageNames,
 
     [string]$PageName
@@ -12,6 +14,8 @@ param(
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
+
+$script:HasSiteUrlOverride = $PSBoundParameters.ContainsKey('SiteUrl') -and -not [string]::IsNullOrWhiteSpace($SiteUrl)
 
 function Write-Step {
     param([string]$Message)
@@ -123,11 +127,12 @@ function Get-AuthSettings {
 function Get-SiteDefinition {
     param([Parameter(Mandatory = $true)]$Scenario)
 
-    if ($null -eq $Scenario.site -or [string]::IsNullOrWhiteSpace([string]$Scenario.site.url)) {
+    $resolvedSiteUrl = if ($script:HasSiteUrlOverride) { $SiteUrl } elseif ($null -ne $Scenario.site) { [string]$Scenario.site.url } else { '' }
+    if ([string]::IsNullOrWhiteSpace($resolvedSiteUrl)) {
         throw 'scenario.site.url is required.'
     }
 
-    return [pscustomobject]@{ Url = [string]$Scenario.site.url }
+    return [pscustomobject]@{ Url = $resolvedSiteUrl }
 }
 
 function Connect-InteractivePnP {
@@ -136,7 +141,7 @@ function Connect-InteractivePnP {
         [Parameter(Mandatory = $true)][string]$ResolvedClientId
     )
 
-    return Connect-PnPOnline -Url $Url -Interactive -ClientId $ResolvedClientId -ReturnConnection
+    return Connect-PnPOnline -Url $Url -Interactive -ClientId $ResolvedClientId -PersistLogin -ReturnConnection
 }
 
 function Get-ScenarioPageNames {

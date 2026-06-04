@@ -9,6 +9,8 @@ param(
 
     [string]$AdminUrl,
 
+    [string]$SiteUrl,
+
     [string[]]$Tests = @('all'),
 
     [switch]$UseUniquePageNames,
@@ -95,7 +97,7 @@ function Write-ResultsFile {
             SkipPageProvisioning = -not ($BatchTests -contains 'pages')
         }
 
-        foreach ($parameterName in @('ClientId', 'TenantUrl', 'AdminUrl')) {
+        foreach ($parameterName in @('ClientId', 'TenantUrl', 'AdminUrl', 'SiteUrl')) {
             if ($CommonParameters.ContainsKey($parameterName) -and -not [string]::IsNullOrWhiteSpace([string]$CommonParameters[$parameterName])) {
                 $provisionParameters[$parameterName] = $CommonParameters[$parameterName]
             }
@@ -196,6 +198,10 @@ if (-not [string]::IsNullOrWhiteSpace($AdminUrl)) {
     $invokeCommonParameters.AdminUrl = $AdminUrl
 }
 
+if (-not [string]::IsNullOrWhiteSpace($SiteUrl)) {
+    $invokeCommonParameters.SiteUrl = $SiteUrl
+}
+
 $runStartedAt = Get-Date
 $runState = [ordered]@{
     startedAt = $runStartedAt.ToString('o')
@@ -267,7 +273,7 @@ try {
                     Write-Step 'Running smoke test'
                     $smokeParameters = @{}
                     foreach ($entry in $invokeCommonParameters.GetEnumerator()) {
-                        if ($entry.Key -in @('ScenarioPath', 'ClientId')) {
+                        if ($entry.Key -in @('ScenarioPath', 'ClientId', 'SiteUrl')) {
                             $smokeParameters[$entry.Key] = $entry.Value
                         }
                     }
@@ -286,7 +292,7 @@ try {
                     Write-Step 'Running inspection utility'
                     $inspectParameters = @{}
                     foreach ($entry in $invokeCommonParameters.GetEnumerator()) {
-                        if ($entry.Key -in @('ScenarioPath', 'ClientId')) {
+                        if ($entry.Key -in @('ScenarioPath', 'ClientId', 'SiteUrl')) {
                             $inspectParameters[$entry.Key] = $entry.Value
                         }
                     }
@@ -297,7 +303,7 @@ try {
                     Write-Step 'Generating local debug page URLs'
                     $debugUrlParameters = @{}
                     foreach ($entry in $invokeCommonParameters.GetEnumerator()) {
-                        if ($entry.Key -in @('ScenarioPath', 'ClientId', 'TenantUrl')) {
+                        if ($entry.Key -in @('ScenarioPath', 'ClientId', 'TenantUrl', 'SiteUrl')) {
                             $debugUrlParameters[$entry.Key] = $entry.Value
                         }
                     }

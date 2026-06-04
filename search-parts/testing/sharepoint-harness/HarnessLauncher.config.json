@@ -1,0 +1,34 @@
+{
+  "DefaultTenant": "Contoso DEV",
+  "Tenants": [
+    {
+      "Name": "Kaspers DEV",
+      "PnpClientId": "d7c35d3c-3773-4009-bc67-885da2dd23fa",
+      "TenantUrl": "https://tcwlv.sharepoint.com",
+      "AdminUrl": "https://tcwlv-admin.sharepoint.com",
+      "TargetSiteUrl": "https://tcwlv.sharepoint.com/sites/pnp-search-harness-dev"
+    },
+    {
+      "Name": "Kaspers  m365thinking",
+      "PnpClientId": "5cb5d6b0-29ff-4959-905d-ffc1c8208efc",
+      "TenantUrl": "https://M365Thinking.sharepoint.com",
+      "AdminUrl": "https://M365Thinking-admin.sharepoint.com",
+      "TargetSiteUrl": ""
+    }
+  ],
+  "Defaults": {
+    "ScenarioPath": "./exported-scenarios/sample-scenario.json",
+    "Tests": "all",
+    "ResultsPath": "",
+    "OutPath": "",
+    "TemplateOutPath": "",
+    "TargetSiteUrl": "",
+    "PageUrl": "",
+    "UseUniquePageNames": false,
+    "Force": false,
+    "SkipWebPartProvisioning": false,
+    "FailOnUnexpectedWebParts": false,
+    "ResolveLatestPageNames": false,
+    "OpenBrowser": false
+  }
+}

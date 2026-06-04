@@ -9,6 +9,8 @@ param(
 
     [string]$AdminUrl,
 
+    [string]$SiteUrl,
+
     [switch]$SkipBuild,
 
     [switch]$SkipSiteCreation,
@@ -30,6 +32,8 @@ param(
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
+
+$script:HasSiteUrlOverride = $PSBoundParameters.ContainsKey('SiteUrl') -and -not [string]::IsNullOrWhiteSpace($SiteUrl)
 
 $script:KnownComponents = @{
     'search-box' = @{
@@ -53,6 +57,15 @@ $script:KnownComponents = @{
         title = 'PnP - Search Verticals'
     }
 }
+
+$script:FullWidthSupportedComponentIds = @(
+    # Built-in page title control
+    'cbe7b0a9-3504-44dd-a3a3-0e5cacd07788'
+    # Built-in hero web part
+    'c4bd7b2f-7b6e-4599-8485-16504575f590'
+    # Built-in image web part
+    'd1d91016-032f-456d-98a4-721247c305e8'
+)
 
 function Write-Step {
     param([string]$Message)
@@ -175,6 +188,7 @@ function Get-PackageSettings {
         SkipFeatureDeployment = $skipFeatureDeployment
         SolutionId = [string]$packageSolution.solution.id
         SolutionName = [string]$packageSolution.solution.name
+        SolutionVersion = [string]$packageSolution.solution.version
     }
 }
 
@@ -236,7 +250,7 @@ function Connect-InteractivePnP {
         [Parameter(Mandatory = $true)][string]$ResolvedClientId
     )
 
-    return Connect-PnPOnline -Url $Url -Interactive -ClientId $ResolvedClientId -ReturnConnection
+    return Connect-PnPOnline -Url $Url -Interactive -ClientId $ResolvedClientId -PersistLogin -ReturnConnection
 }
 
 function Get-AdminUrl {
@@ -286,7 +300,7 @@ function Get-SiteDefinition {
         throw 'The scenario must contain a site object.'
     }
 
-    $siteUrl = Get-OptionalPropertyValue -Object $site -PropertyName 'url'
+    $siteUrl = if ($script:HasSiteUrlOverride) { $SiteUrl } else { Get-OptionalPropertyValue -Object $site -PropertyName 'url' }
     if ([string]::IsNullOrWhiteSpace([string]$siteUrl)) {
         throw 'scenario.site.url is required.'
     }
@@ -451,6 +465,50 @@ function Publish-SolutionToSiteCatalog {
         [Parameter(Mandatory = $true)]$SiteConnection
     )
 
+    function Get-MatchingSiteApp {
+        param(
+            [Parameter(Mandatory = $true)]$SiteApps,
+            [Parameter(Mandatory = $true)]$PackageSettingsValue
+        )
+
+        return $SiteApps |
+            Where-Object {
+                $appId = [string](Get-OptionalPropertyValue -Object $_ -PropertyName 'Id')
+                $productId = [string](Get-OptionalPropertyValue -Object $_ -PropertyName 'ProductId')
+                $title = [string](Get-OptionalPropertyValue -Object $_ -PropertyName 'Title')
+
+                $appId -eq $PackageSettingsValue.SolutionId -or
+                $productId -eq $PackageSettingsValue.SolutionId -or
+                $title -eq $PackageSettingsValue.SolutionName
+            } |
+            Select-Object -First 1
+    }
+
+    function Get-NormalizedVersionString {
+        param([string]$Value)
+
+        if ([string]::IsNullOrWhiteSpace($Value)) {
+            return $null
+        }
+
+        $versionMatch = [regex]::Match($Value, '\d+(?:\.\d+){1,3}')
+        if (-not $versionMatch.Success) {
+            return $null
+        }
+
+        $segments = @($versionMatch.Value.Split('.'))
+        while ($segments.Count -lt 4) {
+            $segments += '0'
+        }
+
+        try {
+            return ([version]::Parse(($segments -join '.'))).ToString()
+        }
+        catch {
+            return $null
+        }
+    }
+
     $resolvedPackagePath = $PackageSettings.Path
     if (-not [string]::IsNullOrWhiteSpace([string]$resolvedPackagePath)) {
         try {
@@ -464,10 +522,89 @@ function Publish-SolutionToSiteCatalog {
         throw "The SPFx package was not found at '$resolvedPackagePath'."
     }
 
+    $localPackageVersion = Get-NormalizedVersionString -Value ([string]$PackageSettings.SolutionVersion)
+    $existingSiteApps = @(Get-PnPApp -Scope Site -Connection $SiteConnection -ErrorAction SilentlyContinue)
+    $existingMatchingApp = Get-MatchingSiteApp -SiteApps $existingSiteApps -PackageSettingsValue $PackageSettings
+
+    $localPackageVersionRaw = [string]$PackageSettings.SolutionVersion
+    if ([string]::IsNullOrWhiteSpace($localPackageVersionRaw)) {
+        $localPackageVersionRaw = '<unknown>'
+    }
+
+    Write-Step "Local package version: raw='$localPackageVersionRaw'; normalized='$localPackageVersion'"
+
+    if ($null -ne $existingMatchingApp -and -not [string]::IsNullOrWhiteSpace($localPackageVersion)) {
+        $existingCatalogVersionRaw = [string](Get-OptionalPropertyValue -Object $existingMatchingApp -PropertyName 'AppCatalogVersion')
+        $existingInstalledVersionRaw = [string](Get-OptionalPropertyValue -Object $existingMatchingApp -PropertyName 'InstalledVersion')
+
+        $existingCatalogVersion = Get-NormalizedVersionString -Value $existingCatalogVersionRaw
+        $existingInstalledVersion = Get-NormalizedVersionString -Value $existingInstalledVersionRaw
+
+        if ([string]::IsNullOrWhiteSpace($existingCatalogVersion)) {
+            $existingCatalogVersion = $existingInstalledVersion
+        }
+
+        if ([string]::IsNullOrWhiteSpace($existingCatalogVersionRaw)) {
+            $existingCatalogVersionRaw = '<empty>'
+        }
+
+        if ([string]::IsNullOrWhiteSpace($existingInstalledVersionRaw)) {
+            $existingInstalledVersionRaw = '<empty>'
+        }
+
+        Write-Step "Site package version (catalog): raw='$existingCatalogVersionRaw'; normalized='$existingCatalogVersion'"
+        Write-Step "Site package version (installed): raw='$existingInstalledVersionRaw'; normalized='$existingInstalledVersion'"
+
+        if (-not [string]::IsNullOrWhiteSpace($existingCatalogVersion) -and $existingCatalogVersion -eq $localPackageVersion) {
+            Write-Step "Skipping package update because local version '$localPackageVersion' matches the site app catalog version."
+            return $existingMatchingApp
+        }
+
+        Write-Step "Package update required because local version '$localPackageVersion' does not match site app catalog version '$existingCatalogVersion'."
+    }
+    elseif ($null -eq $existingMatchingApp) {
+        Write-Step "No matching app was found in the site app catalog for solution '$($PackageSettings.SolutionName)' / '$($PackageSettings.SolutionId)'. Upload is required."
+    }
+    else {
+        Write-Step 'Local package version is unavailable, so package upload will proceed.'
+    }
+
     Remove-StaleSiteAppPackage -PackageSettings $PackageSettings -PackagePath $resolvedPackagePath -SiteConnection $SiteConnection
 
     Write-Step "Uploading package $resolvedPackagePath"
-    $uploadedApp = Add-PnPApp -Path $resolvedPackagePath -Scope Site -Overwrite -Connection $SiteConnection
+    $uploadedApp = $null
+    $maxUploadAttempts = 6
+    $uploadRetryDelaySeconds = 5
+
+    for ($attempt = 1; $attempt -le $maxUploadAttempts; $attempt++) {
+        try {
+            $uploadedApp = Add-PnPApp -Path $resolvedPackagePath -Scope Site -Overwrite -Connection $SiteConnection
+            break
+        }
+        catch {
+            $errorMessage = [string]$_.Exception.Message
+            $isSiteCatalogEndpointIssue =
+                $errorMessage -like '*SP.RequestContext.current/web/sitecollectionappcatalog*' -or
+                $errorMessage -like '*ResourceNotFoundException*'
+
+            if ($isSiteCatalogEndpointIssue -and $attempt -lt $maxUploadAttempts) {
+                Write-Step "Site app catalog endpoint not ready yet (attempt $attempt of $maxUploadAttempts). Retrying in $uploadRetryDelaySeconds seconds."
+                Start-Sleep -Seconds $uploadRetryDelaySeconds
+                continue
+            }
+
+            throw
+        }
+    }
+
+    if ($null -eq $uploadedApp) {
+        $siteAppsAfterUpload = @(Get-PnPApp -Scope Site -Connection $SiteConnection -ErrorAction SilentlyContinue)
+        $uploadedApp = Get-MatchingSiteApp -SiteApps $siteAppsAfterUpload -PackageSettingsValue $PackageSettings
+    }
+
+    if ($null -eq $uploadedApp) {
+        throw 'Package upload did not return an app object and no matching app could be resolved from the site app catalog.'
+    }
 
     Write-Step 'Publishing the package in the site app catalog'
     $publishParameters = @{
@@ -495,6 +632,65 @@ function Test-SiteAppReadiness {
         [Parameter(Mandatory = $true)]$SiteConnection
     )
 
+    function Get-PropertyBooleanValue {
+        param(
+            [Parameter(Mandatory = $false)]$Object,
+            [Parameter(Mandatory = $true)][string[]]$PropertyNames
+        )
+
+        if ($null -eq $Object) {
+            return $null
+        }
+
+        foreach ($propertyName in $PropertyNames) {
+            $rawValue = Get-OptionalPropertyValue -Object $Object -PropertyName $propertyName
+            if ($null -eq $rawValue) {
+                continue
+            }
+
+            if ($rawValue -is [bool]) {
+                return [bool]$rawValue
+            }
+
+            $rawText = [string]$rawValue
+            if ([string]::IsNullOrWhiteSpace($rawText)) {
+                continue
+            }
+
+            $parsedValue = $false
+            if ([bool]::TryParse($rawText, [ref]$parsedValue)) {
+                return [bool]$parsedValue
+            }
+        }
+
+        return $null
+    }
+
+    function Get-PropertyStringValue {
+        param(
+            [Parameter(Mandatory = $false)]$Object,
+            [Parameter(Mandatory = $true)][string[]]$PropertyNames
+        )
+
+        if ($null -eq $Object) {
+            return $null
+        }
+
+        foreach ($propertyName in $PropertyNames) {
+            $rawValue = Get-OptionalPropertyValue -Object $Object -PropertyName $propertyName
+            if ($null -eq $rawValue) {
+                continue
+            }
+
+            $textValue = [string]$rawValue
+            if (-not [string]::IsNullOrWhiteSpace($textValue)) {
+                return $textValue
+            }
+        }
+
+        return $null
+    }
+
     $siteApps = @(Get-PnPApp -Scope Site -Connection $SiteConnection -ErrorAction SilentlyContinue)
     $matchingApp = $siteApps |
         Where-Object {
@@ -520,6 +716,43 @@ function Test-SiteAppReadiness {
         $appInfo = @(Get-PnPAppInfo -ProductId ([Guid]$PackageSettings.SolutionId) -Connection $SiteConnection -ErrorAction SilentlyContinue)
     }
     catch {
+    }
+
+    $deployedState = Get-PropertyBooleanValue -Object $matchingApp -PropertyNames @('Deployed', 'IsClientSideSolutionCurrentVersionDeployed', 'IsClientSideSolutionDeployed', 'IsDeployed')
+    if ($null -eq $deployedState -and $null -ne $appInfo -and $appInfo.Count -gt 0) {
+        $deployedState = Get-PropertyBooleanValue -Object $appInfo[0] -PropertyNames @('Deployed', 'IsClientSideSolutionCurrentVersionDeployed', 'IsClientSideSolutionDeployed', 'IsDeployed')
+    }
+
+    $installedState = Get-PropertyBooleanValue -Object $matchingApp -PropertyNames @('Installed', 'IsInstalled')
+    if ($null -eq $installedState -and $null -ne $appInfo -and $appInfo.Count -gt 0) {
+        $installedState = Get-PropertyBooleanValue -Object $appInfo[0] -PropertyNames @('Installed', 'IsInstalled')
+    }
+
+    $installedVersion = Get-PropertyStringValue -Object $matchingApp -PropertyNames @('InstalledVersion')
+    if ([string]::IsNullOrWhiteSpace($installedVersion) -and $null -ne $appInfo -and $appInfo.Count -gt 0) {
+        $installedVersion = Get-PropertyStringValue -Object $appInfo[0] -PropertyNames @('InstalledVersion')
+    }
+
+    if ($deployedState -eq $false) {
+        return [pscustomobject]@{
+            IsReady = $false
+            Reason = "The site app '$($PackageSettings.SolutionName)' exists but is not deployed yet."
+        }
+    }
+
+    if ($installedState -eq $false) {
+        return [pscustomobject]@{
+            IsReady = $false
+            Reason = "The site app '$($PackageSettings.SolutionName)' exists but is not installed yet."
+        }
+    }
+
+    $hasPositiveReadinessSignal = ($deployedState -eq $true) -or ($installedState -eq $true) -or (-not [string]::IsNullOrWhiteSpace($installedVersion))
+    if (-not $hasPositiveReadinessSignal) {
+        return [pscustomobject]@{
+            IsReady = $false
+            Reason = "The site app '$($PackageSettings.SolutionName)' was found, but install/deploy readiness could not be confirmed yet."
+        }
     }
 
     return [pscustomobject]@{
@@ -667,11 +900,42 @@ function Resolve-ComponentDescriptor {
     throw 'Each web part must define componentId, componentAlias, or componentKey.'
 }
 
+function Get-UnsupportedWebPartReason {
+    param([Parameter(Mandatory = $true)]$WebPart)
+
+    $componentAlias = [string](Get-OptionalPropertyValue -Object $WebPart -PropertyName 'componentAlias')
+    $componentKey = [string](Get-OptionalPropertyValue -Object $WebPart -PropertyName 'componentKey')
+    $componentId = [string](Get-OptionalPropertyValue -Object $WebPart -PropertyName 'componentId')
+    $propertiesJson = Get-OptionalPropertyValue -Object $WebPart -PropertyName 'propertiesJson'
+    $zoneBackground = Get-OptionalPropertyValue -Object $propertiesJson -PropertyName 'zoneBackground'
+
+    # Exported page canvas background controls are not installable web parts.
+    if ($null -ne $zoneBackground -and [string]::IsNullOrWhiteSpace($componentAlias) -and [string]::IsNullOrWhiteSpace($componentKey) -and -not [string]::IsNullOrWhiteSpace($componentId)) {
+        return 'decorative zone background control'
+    }
+
+    return $null
+}
+
 function Find-AvailableComponent {
     param(
         [Parameter(Mandatory = $true)]$AvailableComponents,
         [Parameter(Mandatory = $true)]$Descriptor
     )
+
+    function Normalize-IdentityValue {
+        param([string]$Value)
+
+        if ([string]::IsNullOrWhiteSpace($Value)) {
+            return ''
+        }
+
+        return $Value.Trim().TrimStart('{').TrimEnd('}').ToLowerInvariant()
+    }
+
+    $descriptorId = Normalize-IdentityValue -Value ([string]$Descriptor.Id)
+    $descriptorAlias = Normalize-IdentityValue -Value ([string]$Descriptor.Alias)
+    $descriptorTitle = Normalize-IdentityValue -Value ([string]$Descriptor.Title)
 
     foreach ($component in $AvailableComponents) {
         $componentId = [string](Get-OptionalPropertyValue -Object $component -PropertyName 'Id')
@@ -679,17 +943,44 @@ function Find-AvailableComponent {
         $name = [string](Get-OptionalPropertyValue -Object $component -PropertyName 'Name')
         $title = [string](Get-OptionalPropertyValue -Object $component -PropertyName 'Title')
 
-        if ($Descriptor.Id -and ($componentId -eq $Descriptor.Id -or $definitionId -eq $Descriptor.Id)) {
+        # Different PnP.PowerShell versions can expose identity under different fields.
+        $extraIdentityValues = @(
+            [string](Get-OptionalPropertyValue -Object $component -PropertyName 'WebPartId'),
+            [string](Get-OptionalPropertyValue -Object $component -PropertyName 'ComponentId'),
+            [string](Get-OptionalPropertyValue -Object $component -PropertyName 'ManifestId')
+        )
+
+        $normalizedIdentityValues = @(
+            Normalize-IdentityValue -Value $componentId,
+            Normalize-IdentityValue -Value $definitionId,
+            Normalize-IdentityValue -Value $name,
+            Normalize-IdentityValue -Value $title
+        ) + @($extraIdentityValues | ForEach-Object { Normalize-IdentityValue -Value $_ })
+
+        if (-not [string]::IsNullOrWhiteSpace($descriptorId) -and $normalizedIdentityValues -contains $descriptorId) {
             return $component
         }
 
-        if ($Descriptor.Alias -and ($name -eq $Descriptor.Alias -or $title -eq $Descriptor.Alias)) {
+        if (-not [string]::IsNullOrWhiteSpace($descriptorAlias) -and $normalizedIdentityValues -contains $descriptorAlias) {
             return $component
         }
 
-        if ($Descriptor.Title -and $title -eq $Descriptor.Title) {
-            return $component
+        if (-not [string]::IsNullOrWhiteSpace($descriptorTitle)) {
+            $normalizedTitle = Normalize-IdentityValue -Value $title
+            if ($normalizedTitle -eq $descriptorTitle -or $normalizedTitle -like "*$descriptorTitle*") {
+                return $component
+            }
         }
+
+        # Some environments expose only generic GUID names for components.
+        # If the visible title contains the expected alias token, treat as a match.
+        if (-not [string]::IsNullOrWhiteSpace($descriptorAlias)) {
+            $normalizedTitle = Normalize-IdentityValue -Value $title
+            if (-not [string]::IsNullOrWhiteSpace($normalizedTitle) -and $normalizedTitle -like "*$descriptorAlias*") {
+                return $component
+            }
+        }
+
     }
 
     $identity = if ($Descriptor.Id) { $Descriptor.Id } else { $Descriptor.Alias }
@@ -698,11 +989,11 @@ function Find-AvailableComponent {
 
 function Wait-ForAvailableComponent {
     param(
-        [Parameter(Mandatory = $true)]$Page,
+        [Parameter(Mandatory = $true)][string]$PageIdentity,
         [Parameter(Mandatory = $true)]$Descriptor,
         [Parameter(Mandatory = $true)]$SiteConnection,
-        [int]$RetryCount = 12,
-        [int]$RetryDelaySeconds = 5
+        [int]$RetryCount = 4,
+        [int]$RetryDelaySeconds = 3
     )
 
     $componentLabel = if (-not [string]::IsNullOrWhiteSpace([string]$Descriptor.Alias)) {
@@ -712,12 +1003,75 @@ function Wait-ForAvailableComponent {
         [string]$Descriptor.Id
     }
 
+    function Normalize-ComponentIdentityValue {
+        param([string]$Value)
+
+        if ([string]::IsNullOrWhiteSpace($Value)) {
+            return ''
+        }
+
+        return $Value.Trim().TrimStart('{').TrimEnd('}').ToLowerInvariant()
+    }
+
+    function Test-GuidLikeString {
+        param([string]$Value)
+
+        if ([string]::IsNullOrWhiteSpace($Value)) {
+            return $false
+        }
+
+        $normalized = Normalize-ComponentIdentityValue -Value $Value
+        return $normalized -match '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+    }
+
     $lastError = $null
     for ($attempt = 1; $attempt -le $RetryCount; $attempt++) {
-        $availableComponents = @(Get-PnPPageComponent -Page $Page -ListAvailable -Connection $SiteConnection -ErrorAction SilentlyContinue)
+        $availableComponents = @()
+
+        $discoveryPages = [System.Collections.Generic.List[string]]::new()
+        if (-not [string]::IsNullOrWhiteSpace($PageIdentity)) {
+            [void]$discoveryPages.Add($PageIdentity)
+        }
+
+        # Home.aspx is typically stable and contains a reliable component catalog for the site.
+        if (-not $discoveryPages.Contains('Home.aspx')) {
+            [void]$discoveryPages.Add('Home.aspx')
+        }
+
+        foreach ($discoveryPage in $discoveryPages) {
+            $availableComponents += @(Get-PnPPageComponent -Page $discoveryPage -ListAvailable -Connection $SiteConnection -ErrorAction SilentlyContinue)
+        }
+
+        $availableComponents = @($availableComponents)
 
         try {
-            $component = Find-AvailableComponent -AvailableComponents $availableComponents -Descriptor $Descriptor
+            $component = $null
+            $descriptorId = Normalize-ComponentIdentityValue -Value ([string]$Descriptor.Id)
+            if (-not [string]::IsNullOrWhiteSpace($descriptorId)) {
+                $matchingComponents = @($availableComponents | Where-Object {
+                    $id = Normalize-ComponentIdentityValue -Value ([string](Get-OptionalPropertyValue -Object $_ -PropertyName 'Id'))
+                    $definitionId = Normalize-ComponentIdentityValue -Value ([string](Get-OptionalPropertyValue -Object $_ -PropertyName 'DefinitionId'))
+                    $webPartId = Normalize-ComponentIdentityValue -Value ([string](Get-OptionalPropertyValue -Object $_ -PropertyName 'WebPartId'))
+
+                    $id -eq $descriptorId -or $definitionId -eq $descriptorId -or $webPartId -eq $descriptorId
+                })
+
+                $component = $matchingComponents |
+                    Where-Object {
+                        $componentName = [string](Get-OptionalPropertyValue -Object $_ -PropertyName 'Name')
+                        -not (Test-GuidLikeString -Value $componentName)
+                    } |
+                    Select-Object -First 1
+
+                if ($null -eq $component) {
+                    $component = $matchingComponents | Select-Object -First 1
+                }
+            }
+
+            if ($null -eq $component) {
+                $component = Find-AvailableComponent -AvailableComponents $availableComponents -Descriptor $Descriptor
+            }
+
             return [pscustomobject]@{
                 Component = $component
                 AvailableComponents = $availableComponents
@@ -733,7 +1087,12 @@ function Wait-ForAvailableComponent {
     }
 
     if ($null -ne $lastError) {
-        $latestAvailableComponents = @(Get-PnPPageComponent -Page $Page -ListAvailable -Connection $SiteConnection -ErrorAction SilentlyContinue)
+        $latestAvailableComponents = @()
+        foreach ($discoveryPage in @($PageIdentity, 'Home.aspx') | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } | Select-Object -Unique) {
+            $latestAvailableComponents += @(Get-PnPPageComponent -Page $discoveryPage -ListAvailable -Connection $SiteConnection -ErrorAction SilentlyContinue)
+        }
+
+        $latestAvailableComponents = @($latestAvailableComponents)
         $availableComponentSummary = @(
             $latestAvailableComponents |
                 Select-Object -First 20 |
@@ -754,18 +1113,103 @@ function Wait-ForAvailableComponent {
     throw "Unable to find a page component matching '$identity'."
 }
 
+function Wait-ForPageAvailability {
+    param(
+        [Parameter(Mandatory = $true)][string]$PageName,
+        [Parameter(Mandatory = $true)]$SiteConnection,
+        [int]$RetryCount = 10,
+        [int]$RetryDelaySeconds = 2
+    )
+
+    for ($attempt = 1; $attempt -le $RetryCount; $attempt++) {
+        $page = Get-PnPPage -Identity $PageName -Connection $SiteConnection -ErrorAction SilentlyContinue
+        if ($null -ne $page) {
+            return
+        }
+
+        if ($attempt -lt $RetryCount) {
+            Write-Step "Waiting for new page '$PageName' to become available (attempt $attempt of $RetryCount)"
+            Start-Sleep -Seconds $RetryDelaySeconds
+        }
+    }
+
+    throw "Page '$PageName' was created but did not become available in time."
+}
+
 function Ensure-PageSections {
     param(
-        [Parameter(Mandatory = $true)]$Page,
+        [Parameter(Mandatory = $true)][string]$PageName,
         [Parameter(Mandatory = $true)]$PageDefinition,
         [Parameter(Mandatory = $true)]$SiteConnection
     )
 
+    function Test-WebPartSupportedInFullWidthSection {
+        param([Parameter(Mandatory = $true)]$WebPart)
+
+        $componentId = [string](Get-OptionalPropertyValue -Object $WebPart -PropertyName 'componentId')
+        if (-not [string]::IsNullOrWhiteSpace($componentId)) {
+            return $script:FullWidthSupportedComponentIds -contains $componentId.ToLowerInvariant()
+        }
+
+        $componentKey = [string](Get-OptionalPropertyValue -Object $WebPart -PropertyName 'componentKey')
+        if (-not [string]::IsNullOrWhiteSpace($componentKey)) {
+            return $false
+        }
+
+        $componentAlias = [string](Get-OptionalPropertyValue -Object $WebPart -PropertyName 'componentAlias')
+        if (-not [string]::IsNullOrWhiteSpace($componentAlias)) {
+            return $false
+        }
+
+        return $false
+    }
+
+    function Resolve-SectionTemplateForProvisioning {
+        param(
+            [Parameter(Mandatory = $true)]$Section,
+            [Parameter(Mandatory = $true)][int]$SectionNumber,
+            [Parameter(Mandatory = $true)]$PageDefinition
+        )
+
+        $configuredTemplate = [string](Get-OptionalPropertyValue -Object $Section -PropertyName 'template')
+        if ($configuredTemplate -ne 'OneColumnFullWidth') {
+            return $configuredTemplate
+        }
+
+        $webParts = @(Get-OptionalPropertyValue -Object $PageDefinition -PropertyName 'webParts')
+        $sectionWebParts = @($webParts | Where-Object {
+            $webPartSection = Get-OptionalPropertyValue -Object $_ -PropertyName 'section'
+            $resolvedWebPartSection = if ($null -ne $webPartSection) { [int]$webPartSection } else { 1 }
+            $resolvedWebPartSection -eq $SectionNumber
+        })
+
+        if ($sectionWebParts.Count -eq 0) {
+            return $configuredTemplate
+        }
+
+        $hasUnsupportedControls = $false
+        foreach ($webPart in $sectionWebParts) {
+            if (-not (Test-WebPartSupportedInFullWidthSection -WebPart $webPart)) {
+                $hasUnsupportedControls = $true
+                break
+            }
+        }
+
+        if ($hasUnsupportedControls) {
+            $pageNameForLog = [string](Get-OptionalPropertyValue -Object $PageDefinition -PropertyName 'name')
+            Write-Step "Section $SectionNumber on page '$pageNameForLog' uses OneColumnFullWidth with unsupported controls. Falling back to OneColumn."
+            return 'OneColumn'
+        }
+
+        return $configuredTemplate
+    }
+
     $sectionIndex = 1
     foreach ($section in @(Get-OptionalPropertyValue -Object $PageDefinition -PropertyName 'sections')) {
+        $resolvedSectionTemplate = Resolve-SectionTemplateForProvisioning -Section $section -SectionNumber $sectionIndex -PageDefinition $PageDefinition
         $sectionParams = @{
-            Page = $Page
-            SectionTemplate = [string](Get-OptionalPropertyValue -Object $section -PropertyName 'template')
+            Page = $PageName
+            SectionTemplate = $resolvedSectionTemplate
             Order = if ($null -ne (Get-OptionalPropertyValue -Object $section -PropertyName 'order')) { [int](Get-OptionalPropertyValue -Object $section -PropertyName 'order') } else { $sectionIndex }
             Connection = $SiteConnection
         }
@@ -802,14 +1246,39 @@ function Ensure-PageSections {
 
 function Add-ConfiguredWebPart {
     param(
-        [Parameter(Mandatory = $true)]$Page,
+        [Parameter(Mandatory = $true)][string]$Page,
         [Parameter(Mandatory = $true)]$WebPartDefinition,
         [Parameter(Mandatory = $true)]$AvailableComponents,
+        [Parameter(Mandatory = $false)]$ResolvedComponent,
         [Parameter(Mandatory = $true)]$SiteConnection
     )
 
     $descriptor = Resolve-ComponentDescriptor -WebPart $WebPartDefinition
-    $component = Find-AvailableComponent -AvailableComponents $AvailableComponents -Descriptor $descriptor
+    $component = if ($null -ne $ResolvedComponent) {
+        $ResolvedComponent
+    }
+    elseif (-not [string]::IsNullOrWhiteSpace([string]$descriptor.Id)) {
+        if (-not [string]::IsNullOrWhiteSpace([string]$descriptor.Title)) {
+            [string]$descriptor.Title
+        }
+        else {
+            [string]$descriptor.Id
+        }
+    }
+    else {
+        Find-AvailableComponent -AvailableComponents $AvailableComponents -Descriptor $descriptor
+    }
+
+    $resolvedComponentName = [string](Get-OptionalPropertyValue -Object $component -PropertyName 'Name')
+    $resolvedComponentNameNormalized = $resolvedComponentName.Trim().TrimStart('{').TrimEnd('}').ToLowerInvariant()
+    $resolvedNameIsGuidLike = $resolvedComponentNameNormalized -match '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+
+    if (-not [string]::IsNullOrWhiteSpace($resolvedComponentName) -and -not $resolvedNameIsGuidLike) {
+        $component = $resolvedComponentName
+    }
+    elseif (-not [string]::IsNullOrWhiteSpace([string]$descriptor.Title)) {
+        $component = [string]$descriptor.Title
+    }
 
     $propertiesJson = ConvertTo-PropertiesJson -Properties (Get-OptionalPropertyValue -Object $WebPartDefinition -PropertyName 'propertiesJson')
 
@@ -823,10 +1292,67 @@ function Add-ConfiguredWebPart {
     }
 
     if ($propertiesJson) {
-        $addParams.WebPartProperties = $propertiesJson
+        $addParamsWithProperties = @{}
+        foreach ($key in $addParams.Keys) {
+            $addParamsWithProperties[$key] = $addParams[$key]
+        }
+
+        $addParamsWithProperties.WebPartProperties = $propertiesJson
+
+        try {
+            return Add-PnPPageWebPart @addParamsWithProperties
+        }
+        catch {
+            Write-Step "Applying properties failed for component '$component'. Falling back to default web part configuration. Error: $($_.Exception.Message)"
+        }
     }
 
-    Add-PnPPageWebPart @addParams | Out-Null
+    return Add-PnPPageWebPart @addParams
+}
+
+function Get-PageControlSnapshot {
+    param(
+        [Parameter(Mandatory = $true)][string]$PageName,
+        [Parameter(Mandatory = $true)]$SiteConnection
+    )
+
+    $page = Get-PnPPage -Identity $PageName -Connection $SiteConnection -ErrorAction SilentlyContinue
+    if ($null -eq $page) {
+        return @()
+    }
+
+    return @($page.Controls)
+}
+
+function Get-PageCanvasContent {
+    param(
+        [Parameter(Mandatory = $true)][string]$PageName,
+        [Parameter(Mandatory = $true)]$SiteConnection
+    )
+
+    $item = Get-PnPListItem -List 'Site Pages' -Fields FileLeafRef,CanvasContent1 -PageSize 2000 -Connection $SiteConnection |
+        Where-Object { [string](Get-OptionalPropertyValue -Object $_.FieldValues -PropertyName 'FileLeafRef') -eq $PageName } |
+        Select-Object -First 1
+
+    if ($null -eq $item) {
+        return ''
+    }
+
+    return [string](Get-OptionalPropertyValue -Object $item.FieldValues -PropertyName 'CanvasContent1')
+}
+
+function Get-ControlIdentitySet {
+    param([Parameter(Mandatory = $true)]$Controls)
+
+    $identities = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::OrdinalIgnoreCase)
+    foreach ($control in @($Controls)) {
+        $instanceId = [string](Get-OptionalPropertyValue -Object $control -PropertyName 'InstanceId')
+        if (-not [string]::IsNullOrWhiteSpace($instanceId)) {
+            [void]$identities.Add($instanceId)
+        }
+    }
+
+    return $identities
 }
 
 function Ensure-Page {
@@ -860,20 +1386,63 @@ function Ensure-Page {
     try {
         $pageTitle = Get-OptionalPropertyValue -Object $PageDefinition -PropertyName 'title'
         $page = Add-PnPPage -Name $pageName -Title ([string]$pageTitle) -LayoutType Article -Connection $SiteConnection
+        Wait-ForPageAvailability -PageName $pageName -SiteConnection $SiteConnection
 
         if ($null -ne (Get-OptionalPropertyValue -Object $PageDefinition -PropertyName 'sections')) {
-            Ensure-PageSections -Page $page -PageDefinition $PageDefinition -SiteConnection $SiteConnection
+            Ensure-PageSections -PageName $pageName -PageDefinition $PageDefinition -SiteConnection $SiteConnection
         }
 
         $pageWebParts = @(Get-OptionalPropertyValue -Object $PageDefinition -PropertyName 'webParts')
+        $preProvisionControls = Get-PageControlSnapshot -PageName $pageName -SiteConnection $SiteConnection
+        $preProvisionControlIds = Get-ControlIdentitySet -Controls $preProvisionControls
+        $attemptedWebPartAdds = 0
+        $skippedUnsupportedWebParts = 0
+
         if ($SkipWebPartProvisioning) {
             Write-Step "Skipping web part provisioning for page $pageName"
         }
         else {
             foreach ($webPart in $pageWebParts) {
+                $unsupportedReason = Get-UnsupportedWebPartReason -WebPart $webPart
+                if (-not [string]::IsNullOrWhiteSpace([string]$unsupportedReason)) {
+                    $componentId = [string](Get-OptionalPropertyValue -Object $webPart -PropertyName 'componentId')
+                    $componentAlias = [string](Get-OptionalPropertyValue -Object $webPart -PropertyName 'componentAlias')
+                    $componentKey = [string](Get-OptionalPropertyValue -Object $webPart -PropertyName 'componentKey')
+
+                    $componentLabel = if (-not [string]::IsNullOrWhiteSpace($componentKey)) {
+                        $componentKey
+                    }
+                    elseif (-not [string]::IsNullOrWhiteSpace($componentAlias)) {
+                        $componentAlias
+                    }
+                    else {
+                        $componentId
+                    }
+
+                    Write-Step "Skipping unsupported page control '$componentLabel' ($unsupportedReason)"
+                    $skippedUnsupportedWebParts++
+                    continue
+                }
+
                 $descriptor = Resolve-ComponentDescriptor -WebPart $webPart
-                $componentResolution = Wait-ForAvailableComponent -Page $page -Descriptor $descriptor -SiteConnection $SiteConnection
-                Add-ConfiguredWebPart -Page $page -WebPartDefinition $webPart -AvailableComponents $componentResolution.AvailableComponents -SiteConnection $SiteConnection
+                $componentResolution = Wait-ForAvailableComponent -PageIdentity $pageName -Descriptor $descriptor -SiteConnection $SiteConnection
+                Add-ConfiguredWebPart -Page $pageName -WebPartDefinition $webPart -AvailableComponents $componentResolution.AvailableComponents -ResolvedComponent $componentResolution.Component -SiteConnection $SiteConnection | Out-Null
+                $attemptedWebPartAdds++
+            }
+
+            if ($attemptedWebPartAdds -gt 0) {
+                $postProvisionControls = Get-PageControlSnapshot -PageName $pageName -SiteConnection $SiteConnection
+                $postProvisionControlIds = Get-ControlIdentitySet -Controls $postProvisionControls
+                $newControlCount = 0
+
+                foreach ($controlId in $postProvisionControlIds) {
+                    if (-not $preProvisionControlIds.Contains($controlId)) {
+                        $newControlCount++
+                    }
+                }
+
+                $controlCountDelta = @($postProvisionControls).Count - @($preProvisionControls).Count
+                Write-Step "Added $attemptedWebPartAdds web part(s) to page $pageName (new controls: $newControlCount; unsupported skipped: $skippedUnsupportedWebParts)"
             }
         }
 

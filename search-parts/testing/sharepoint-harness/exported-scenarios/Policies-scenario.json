@@ -1,0 +1,965 @@
+{
+  "auth": {
+    "tenantUrl": "https://tcwlv.sharepoint.com",
+    "clientId": "d7c35d3c-3773-4009-bc67-885da2dd23fa"
+  },
+  "site": {
+    "url": "https://tcwlv.sharepoint.com/sites/HumanResourcesGovernanceCenter",
+    "title": "HumanResources Governance Center",
+    "type": null,
+    "description": ""
+  },
+  "package": {
+    "path": "../../sharepoint/solution/pnp-modern-search-parts-v4.sppkg",
+    "skipFeatureDeployment": true
+  },
+  "pages": [
+    {
+      "name": "Policies.aspx",
+      "title": "Policies Governance",
+      "publish": true,
+      "sections": [
+        {
+          "template": "OneColumnFullWidth",
+          "order": 1
+        },
+        {
+          "template": "TwoColumnRight",
+          "order": 2
+        },
+        {
+          "template": "OneColumn",
+          "order": 3
+        },
+        {
+          "template": "OneColumn",
+          "order": 4
+        },
+        {
+          "template": "OneColumn",
+          "order": 5
+        },
+        {
+          "template": "OneColumn",
+          "order": 6
+        },
+        {
+          "template": "TwoColumnRight",
+          "order": 7
+        },
+        {
+          "template": "OneColumn",
+          "order": 8
+        }
+      ],
+      "webParts": [
+        {
+          "section": 2,
+          "column": 1,
+          "order": 1,
+          "componentKey": "search-box",
+          "propertiesJson": {
+            "documentationLink": "https://microsoft-search.github.io/pnp-modern-search/",
+            "inputTemplate": "{inputQueryText}",
+            "openBehavior": "Self",
+            "queryPathBehavior": "URLFragment",
+            "reQueryOnClear": true,
+            "suggestionProviderConfiguration": [
+              {
+                "key": "SharePointStaticSuggestions",
+                "description": "Retrieve SharePoint static user defined search suggestions",
+                "enabled": false,
+                "name": "SharePoint Static search suggestions"
+              }
+            ],
+            "numberOfSuggestionsPerGroup": 10,
+            "providerProperties": {},
+            "extensibilityLibraryConfiguration": [
+              {
+                "name": "Default extensibility library",
+                "enabled": true,
+                "id": "dc4f961b-dbe0-44b4-982d-5776bf99d015"
+              }
+            ]
+          }
+        },
+        {
+          "section": 2,
+          "column": 2,
+          "order": 1,
+          "componentKey": "search-filters",
+          "propertiesJson": {
+            "documentationLink": "https://microsoft-search.github.io/pnp-modern-search/",
+            "selectedLayoutKey": "Panel",
+            "inlineTemplateContent": "",
+            "filterOperator": "and",
+            "layoutProperties": {
+              "isBlocking": true,
+              "isLightDismiss": true,
+              "size": 1,
+              "btnLabel": "Show filters",
+              "headerText": "Filters"
+            },
+            "dataResultsDataSourceReferences": [
+              "WebPart.544c1372-42df-47c3-94d6-017428cd2baf.ca187b5b-167b-495a-910d-ed3f24e9707d:pnpSearchResultsWebPart",
+              "WebPart.544c1372-42df-47c3-94d6-017428cd2baf.849234f2-74e2-4aee-b87d-cf62b3408a3d:pnpSearchResultsWebPart"
+            ],
+            "filtersConfiguration": [
+              {
+                "uniqueId": "d2fe1e68-1476-44db-abf4-6009f9d96013",
+                "displayValue": "Content Responsible",
+                "filterName": "RefinableString156",
+                "maxBuckets": null,
+                "selectedTemplate": "PeopleTemplate",
+                "type": "Refiner",
+                "expandByDefault": true,
+                "showCount": null,
+                "isMulti": null,
+                "operator": "and",
+                "sortBy": "ByName",
+                "sortDirection": "Ascending",
+                "sortIdx": 1
+              },
+              {
+                "uniqueId": "863f554d-6d02-4392-822f-157802b1d274",
+                "displayValue": "HR Policy",
+                "filterName": "RefinableString157",
+                "maxBuckets": null,
+                "selectedTemplate": "HierarchicalFilterTemplate",
+                "expandByDefault": true,
+                "showCount": null,
+                "isMulti": null,
+                "operator": "and",
+                "sortBy": "ByName",
+                "sortDirection": "Ascending",
+                "hierarchicalSettings": null,
+                "termSetId": "0ce58d23-48e5-4ba3-8473-bd7611a875df",
+                "termGroupId": "72b9421d-d364-4ccc-9a28-5ecb36e157f6",
+                "sortIdx": 2,
+                "expandAllNodesByDefault": true
+              },
+              {
+                "uniqueId": "9359a2d9-11b4-45f7-bb99-4b55844c6a9f",
+                "displayValue": "Action",
+                "filterName": "RefinableString128",
+                "maxBuckets": null,
+                "selectedTemplate": "CheckboxFilterTemplate",
+                "expandByDefault": true,
+                "showCount": null,
+                "isMulti": null,
+                "operator": "and",
+                "sortBy": "ByName",
+                "sortDirection": "Ascending",
+                "hierarchicalSettings": null,
+                "sortIdx": 3
+              }
+            ],
+            "useVerticals": false,
+            "selectedVerticalKeys": []
+          }
+        },
+        {
+          "section": 3,
+          "column": 1,
+          "order": 1,
+          "componentKey": "search-verticals",
+          "propertiesJson": {
+            "documentationLink": "https://microsoft-search.github.io/pnp-modern-search/",
+            "verticals": [
+              {
+                "uniqueId": "d13c77f3-18d3-4284-9d2e-b0d86f66a173",
+                "tabName": "Grid",
+                "iconName": null,
+                "tabValue": null,
+                "isLink": null,
+                "linkUrl": null,
+                "openBehavior": null,
+                "showLinkIcon": null,
+                "audience": null,
+                "sortIdx": 1,
+                "key": "9da5bf3b-0d0e-4993-a427-2d8d76ff767c"
+              },
+              {
+                "uniqueId": "310a1a4f-8c23-4ad1-b123-01ddee0bd7d3",
+                "tabName": "Cards",
+                "iconName": null,
+                "tabValue": null,
+                "isLink": null,
+                "linkUrl": null,
+                "openBehavior": null,
+                "showLinkIcon": null,
+                "audience": null,
+                "sortIdx": 2,
+                "key": "96df6287-064f-4902-b047-f9551c1c8ab8"
+              }
+            ],
+            "defaultVerticalQueryStringParam": "v"
+          }
+        },
+        {
+          "section": 4,
+          "column": 1,
+          "order": 1,
+          "componentKey": "search-results",
+          "propertiesJson": {
+            "documentationLink": "https://microsoft-search.github.io/pnp-modern-search/",
+            "allowWebPartConnections": true,
+            "selectedLayoutKey": "DetailsList",
+            "resultTypes": [],
+            "dataSourceProperties": {
+              "queryTemplate": "{searchTerms} contenttypeid:\"0x01010024718016CF0C3F4B88581646FE01D9AA0101*\" ",
+              "enableQueryRules": false,
+              "enableLocalization": true,
+              "refinementFilters": "",
+              "selectedProperties": [
+                "AuthorOWSUSER",
+                "contentclass",
+                "ContentExpiryChoice",
+                "ContentResponsibleOWSUSER",
+                "ContentTypeId",
+                "Created",
+                "CreatedBy",
+                "DefaultEncodingURL",
+                "FileType",
+                "FirstLetterFromTitle",
+                "HitHighlightedProperties",
+                "HitHighlightedSummary",
+                "HtmlFileType",
+                "JobTitle",
+                "LastReviewDateOWSDATE",
+                "NormListID",
+                "NormSiteID",
+                "NormUniqueID",
+                "NormWebID",
+                "OneLetterIdOWSTEXT",
+                "owstaxIdContentExpiryChoice",
+                "owstaxidmetadataalltagsinfo",
+                "Path",
+                "PictureThumbnailURL",
+                "RefinableDate05",
+                "RefinableDate16",
+                "RefinableDate18",
+                "RefinableInt03",
+                "RefinableString09",
+                "RefinableString124",
+                "RefinableString127",
+                "RefinableString128",
+                "RefinableString156",
+                "RefinableString157",
+                "ReviewIntevalOWSCHCS",
+                "SiteLogo",
+                "SiteTitle",
+                "SPSiteURL",
+                "SPWebUrl",
+                "Title",
+                "UniqueID",
+                "UserName",
+                "ValidUntilDateOWSDATE",
+                "WorkPhone"
+              ],
+              "resultSourceId": "8413cd39-2156-4e00-b54d-11efd9abdb89",
+              "hitHighlightedProperties": "",
+              "trimDuplicates": false,
+              "sortList": [
+                {
+                  "uniqueId": "7adb9202-dfe1-456f-a70f-1826141f06c9",
+                  "sortField": "RefinableDate05",
+                  "isDefaultSort": true,
+                  "sortDirection": 1,
+                  "isUserSort": true,
+                  "sortFieldDisplayName": "By Date",
+                  "sortIdx": 1
+                },
+                {
+                  "uniqueId": "2a3db012-0d7f-4eb5-8b5c-4a1a564e32d6",
+                  "sortField": "RefinableString127",
+                  "isDefaultSort": true,
+                  "sortDirection": null,
+                  "isUserSort": true,
+                  "sortFieldDisplayName": "Content Responsible",
+                  "sortIdx": 2
+                }
+              ],
+              "enableAudienceTargeting": false
+            },
+            "queryTextSource": 1,
+            "layoutProperties": {
+              "detailsListColumns": [
+                {
+                  "name": "Title",
+                  "value": "<a href=\"{{slot item @root.slots.PreviewUrl}}\" target=\"_blank\" style=\"color: {{@root.theme.semanticColors.link}}\">\n\t{{slot item @root.slots.Title}}\n</a>\n<pnp-breadcrumb \n    data-path=\"{{OriginalPath}}\"\n    data-site-url=\"{{SPSiteURL}}\"\n    data-web-url=\"{{SPWebUrl}}\"\n    data-entity-title=\"{{Title}}\"\n    data-entity-file-type=\"{{FileType}}\"\n    data-include-site-name=\"false\" \n    data-include-entity-name=\"false\"\n    data-breadcrumb-items-as-links=\"true\"\n    data-max-displayed-items=\"3\"\n    data-overflow-index=\"0\"\n    data-font-size=\"12\"\n/>\n",
+                  "useHandlebarsExpr": true,
+                  "minWidth": "80",
+                  "maxWidth": "180",
+                  "enableSorting": false,
+                  "isMultiline": false,
+                  "isResizable": true,
+                  "sortIdx": 1
+                },
+                {
+                  "name": "Review date",
+                  "value": "<span style= \"color: black\">\n    {{getDate (slot item @root.slots.Date)  'LL'}}\n</span>\n",
+                  "useHandlebarsExpr": true,
+                  "minWidth": "80",
+                  "maxWidth": "110",
+                  "enableSorting": true,
+                  "isMultiline": false,
+                  "isResizable": true,
+                  "sortIdx": 2,
+                  "valueSorting": "RefinableDate05"
+                },
+                {
+                  "uniqueId": "dcee1650-bbed-4633-a908-b5407d198631",
+                  "name": "Days to review",
+                  "value": "{{#with (dayDiff (getDate (moment) 'YYYY-MMM-DD') (getDate (slot item @root.slots.Date) 'YYYY-MMM-DD')) as |daysSinceLastReview|}}\r\n{{#with (slot item @root.slots.ReviewInteval) as |reviewInterval|}}\r\n\r\n{{#compare reviewInterval \"==\" \"1 month\"}}\r\n    {{#compare daysSinceLastReview \"==\" 30}}\r\n        <span style=\"background-color: yellow\">Due TODAY</span>\r\n    {{else}}\r\n        {{#compare daysSinceLastReview \">\" 30}}\r\n            <span style=\"color: red\">Overdue<br>(interval 30 days, elapsed {{daysSinceLastReview}} days)</span>\r\n        {{else}}\r\n            <span style=\"color: green\">Not due yet<br>(interval 30 days, elapsed {{daysSinceLastReview}} days)</span>\r\n        {{/compare}}\r\n    {{/compare}}\r\n{{else}}\r\n\r\n{{#compare reviewInterval \"==\" \"3 months\"}}\r\n    {{#compare daysSinceLastReview \"==\" 90}}\r\n        <span style=\"background-color: yellow\">Due TODAY</span>\r\n    {{else}}\r\n        {{#compare daysSinceLastReview \">\" 90}}\r\n            <span style=\"color: red\">Overdue<br>(interval 90 days, elapsed {{daysSinceLastReview}} days)</span>\r\n        {{else}}\r\n            <span style=\"color: green\">Not due yet<br>(interval 90 days, elapsed {{daysSinceLastReview}} days)</span>\r\n        {{/compare}}\r\n    {{/compare}}\r\n{{else}}\r\n\r\n{{#compare reviewInterval \"==\" \"6 months\"}}\r\n    {{#compare daysSinceLastReview \"==\" 180}}\r\n        <span style=\"background-color: yellow\">Due TODAY</span>\r\n    {{else}}\r\n        {{#compare daysSinceLastReview \">\" 180}}\r\n            <span style=\"color: red\">Overdue<br>(interval 180 days, elapsed {{daysSinceLastReview}} days)</span>\r\n        {{else}}\r\n            <span style=\"color: green\">Not due yet<br>(interval 180 days, elapsed {{daysSinceLastReview}} days)</span>\r\n        {{/compare}}\r\n    {{/compare}}\r\n{{else}}\r\n\r\n{{#compare reviewInterval \"==\" \"12 months\"}}\r\n    {{#compare daysSinceLastReview \"==\" 365}}\r\n        <span style=\"background-color: yellow\">Due TODAY</span>\r\n    {{else}}\r\n        {{#compare daysSinceLastReview \">\" 365}}\r\n            <span style=\"color: red\">Overdue<br>(interval 365 days, elapsed {{daysSinceLastReview}} days)</span>\r\n        {{else}}\r\n            <span style=\"color: green\">Not due yet<br>(interval 365 days, elapsed {{daysSinceLastReview}} days)</span>\r\n        {{/compare}}\r\n    {{/compare}}\r\n{{else}}\r\n\r\n{{#compare reviewInterval \"==\" \"24 months\"}}\r\n    {{#compare daysSinceLastReview \"==\" 730}}\r\n        <span style=\"background-color: yellow\">Due TODAY</span>\r\n    {{else}}\r\n        {{#compare daysSinceLastReview \">\" 730}}\r\n            <span style=\"color: red\">Overdue<br>(interval 730 days, elapsed {{daysSinceLastReview}} days)</span>\r\n        {{else}}\r\n            <span style=\"color: green\">Not due yet<br>(interval 730 days, elapsed {{daysSinceLastReview}} days)</span>\r\n        {{/compare}}\r\n    {{/compare}}\r\n{{else}}\r\n    <span style=\"color: #b45309\">Unknown review interval value: {{reviewInterval}}</span>\r\n{{/compare}}\r\n\r\n{{/compare}}\r\n\r\n{{/compare}}\r\n\r\n{{/compare}}\r\n\r\n{{/compare}}\r\n\r\n{{/with}}\r\n{{/with}}",
+                  "useHandlebarsExpr": true,
+                  "minWidth": "150",
+                  "maxWidth": "150",
+                  "enableSorting": null,
+                  "valueSorting": null,
+                  "isResizable": true,
+                  "isMultiline": null,
+                  "sortIdx": 3
+                },
+                {
+                  "name": "Content owners",
+                  "value": "{{#with (split (slot item @root.slots.ContentOwners) \";\") as |owners|}}\r\n  {{#each owners}}\r\n    {{#with (split this \" | \") as |parts|}}\r\n      <mgt-person\r\n        user-id=\"{{lookup parts 0}}\"\r\n        view=\"threelines\"\r\n        show-presence=\"true\"\r\n        person-card=\"hover\"\r\n        avatar-size=\"large\">\r\n      </mgt-person>\r\n    {{/with}}\r\n  {{/each}}\r\n{{/with}}",
+                  "useHandlebarsExpr": true,
+                  "minWidth": "80",
+                  "maxWidth": "160",
+                  "enableSorting": true,
+                  "isMultiline": false,
+                  "isResizable": true,
+                  "sortIdx": 4,
+                  "valueSorting": "RefinableString127"
+                },
+                {
+                  "uniqueId": "f81cd741-8c7f-4e69-983d-4a83f441d4c2",
+                  "name": "Review interval",
+                  "value": "ReviewIntevalOWSCHCS",
+                  "useHandlebarsExpr": null,
+                  "minWidth": 50,
+                  "maxWidth": "100",
+                  "enableSorting": null,
+                  "valueSorting": null,
+                  "isResizable": true,
+                  "isMultiline": null,
+                  "sortIdx": 5
+                },
+                {
+                  "uniqueId": "d98c811a-f09c-4115-8a1b-77d4a8d638eb",
+                  "name": "Content Expiry choice",
+                  "value": "\n{{#with (lookup (split (slot item @root.slots.ContentExpiryChoice) \"|\") 3) as |l0Part|}}\n  {{#with (lookup (split l0Part \";\") 0) as |labelAndRest|}}\n    {{lookup (split labelAndRest \"\\r\\n\") 0}}\n  {{/with}}\n{{/with}}",
+                  "useHandlebarsExpr": true,
+                  "minWidth": "193",
+                  "maxWidth": "205",
+                  "enableSorting": false,
+                  "valueSorting": "RefinableString127",
+                  "isResizable": true,
+                  "isMultiline": null,
+                  "sortIdx": 6
+                },
+                {
+                  "uniqueId": "1f7fa231-588f-4083-8f5d-0b28018e3563",
+                  "name": "Policy",
+                  "value": "{{#with (split (slot item @root.slots.Policy) ';')}}\r\n  {{#with (split [1] '|')}}\r\n    {{[2]}}\r\n  {{/with}}\r\n{{/with}}\r\n",
+                  "useHandlebarsExpr": true,
+                  "minWidth": 50,
+                  "maxWidth": 310,
+                  "enableSorting": null,
+                  "valueSorting": null,
+                  "isResizable": true,
+                  "isMultiline": null,
+                  "sortIdx": 7
+                },
+                {
+                  "uniqueId": "4d286a1d-78ec-415a-a020-0c20c9888b1f",
+                  "name": "Reminder",
+                  "value": "<a href=\"https://iagovernancefunctionappmanagedid.azurewebsites.net/api/ContentGovSendReminder?code=68DEJjm0Dn22N9XGZW04AUM9og57_0Ki4ODe1uiN7r90AzFuhjVB-g%3D%3D&SPSiteURL={{SPSiteURL}}&Path={{slot item @root.slots.Path}}\"  data-interception=\"off\">Send reminder</a>",
+                  "useHandlebarsExpr": true,
+                  "minWidth": 50,
+                  "maxWidth": "120",
+                  "enableSorting": null,
+                  "valueSorting": null,
+                  "isResizable": true,
+                  "isMultiline": null,
+                  "sortIdx": 8
+                }
+              ],
+              "isCompact": false,
+              "showFileIcon": true,
+              "fieldIconExtension": "FileType",
+              "enableGrouping": false,
+              "groupByField": "",
+              "additionalGroupByFields": [],
+              "groupsCollapsed": true,
+              "groupByOthersGroupTitle": "No value",
+              "enableStickyHeader": true,
+              "stickyHeaderListViewHeight": 500,
+              "useAlternatingBackgroundColor": true
+            },
+            "showSelectedFilters": true,
+            "showResultsCount": true,
+            "showBlankIfNoResult": false,
+            "useMicrosoftGraphToolkit": true,
+            "itemSelectionProps": {
+              "allowItemSelection": false,
+              "selectionMode": "AsTokenValue",
+              "allowMulti": true,
+              "valuesOperator": "or",
+              "destinationFieldName": "FirstLetterFromTitle",
+              "selectionPreservedOnEmptyClick": true
+            },
+            "extensibilityLibraryConfiguration": [
+              {
+                "name": "Default extensibility library",
+                "enabled": true,
+                "id": "dc4f961b-dbe0-44b4-982d-5776bf99d015",
+                "sortIdx": 1
+              }
+            ],
+            "queryModifierConfiguration": [],
+            "queryModifierProperties": {},
+            "selectedVerticalKeys": [
+              "9da5bf3b-0d0e-4993-a427-2d8d76ff767c"
+            ],
+            "useVerticals": true,
+            "paging": {
+              "itemsCountPerPage": 50,
+              "pagingRange": 5,
+              "showPaging": true,
+              "hideDisabled": true,
+              "hideFirstLastPages": false,
+              "hideNavigation": false,
+              "useNextLinks": false,
+              "enableQueryString": false
+            },
+            "adaptiveCardsHostConfig": "{\n\t\"fontFamily\": \"Segoe UI, Helvetica Neue, sans-serif\"\n}",
+            "layoutRenderType": "Handlebars",
+            "dataSourceKey": "SharePointSearch",
+            "templateSlots": [
+              {
+                "slotName": "Title",
+                "slotField": "Title",
+                "sortIdx": 1
+              },
+              {
+                "slotName": "Path",
+                "slotField": "DefaultEncodingURL",
+                "sortIdx": 2
+              },
+              {
+                "slotName": "Summary",
+                "slotField": "HitHighlightedSummary",
+                "sortIdx": 3
+              },
+              {
+                "slotName": "FileType",
+                "slotField": "FileType",
+                "sortIdx": 4
+              },
+              {
+                "slotName": "PreviewImageUrl",
+                "slotField": "AutoPreviewImageUrl",
+                "sortIdx": 5
+              },
+              {
+                "slotName": "PreviewUrl",
+                "slotField": "AutoPreviewUrl",
+                "sortIdx": 6
+              },
+              {
+                "slotName": "Author",
+                "slotField": "RefinableString127",
+                "sortIdx": 7
+              },
+              {
+                "slotName": "Tags",
+                "slotField": "owstaxidmetadataalltagsinfo",
+                "sortIdx": 8
+              },
+              {
+                "slotName": "Date",
+                "slotField": "LastReviewDateOWSDATE",
+                "sortIdx": 9
+              },
+              {
+                "slotName": "SiteId",
+                "slotField": "NormSiteID",
+                "sortIdx": 10
+              },
+              {
+                "slotName": "WebId",
+                "slotField": "NormWebID",
+                "sortIdx": 11
+              },
+              {
+                "slotName": "ListId",
+                "slotField": "NormListID",
+                "sortIdx": 12
+              },
+              {
+                "slotName": "ItemId",
+                "slotField": "NormUniqueID",
+                "sortIdx": 13
+              },
+              {
+                "slotName": "IsFolder",
+                "slotField": "ContentTypeId",
+                "sortIdx": 14
+              },
+              {
+                "slotName": "contentclass",
+                "slotField": "contentclass",
+                "sortIdx": 15
+              },
+              {
+                "slotName": "PersonQuery",
+                "slotField": "AADObjectID",
+                "sortIdx": 16
+              },
+              {
+                "slotName": "UserDisplayName",
+                "slotField": "Title",
+                "sortIdx": 17
+              },
+              {
+                "slotName": "UserEmail",
+                "slotField": "UserName",
+                "sortIdx": 18
+              },
+              {
+                "slotName": "Id",
+                "slotField": "DocId",
+                "sortIdx": 19
+              },
+              {
+                "uniqueId": "b5613c8c-b3b8-417f-ab33-3d9fe571aa7e",
+                "slotName": "IsPolicyValid",
+                "slotField": "RefinableInt03",
+                "sortIdx": 20
+              },
+              {
+                "uniqueId": "6c94d7ff-6986-45d9-a20e-487e66245e27",
+                "slotName": "ContentExpiryChoice",
+                "slotField": "RefinableString128",
+                "sortIdx": 21
+              },
+              {
+                "uniqueId": "17b7e640-b93f-43d5-93ea-501254ec2340",
+                "slotName": "SPSiteURL",
+                "slotField": "SPSiteURL",
+                "sortIdx": 22
+              },
+              {
+                "uniqueId": "8efe9cf7-a2dd-4593-89ff-dd40e1b96e86",
+                "slotName": "ContentOwners",
+                "slotField": "RefinableString156",
+                "sortIdx": 23
+              },
+              {
+                "uniqueId": "acdabd26-eaab-43de-b7b1-050d19cbb5f9",
+                "slotName": "ReviewInteval",
+                "slotField": "ReviewIntevalOWSCHCS",
+                "sortIdx": 24
+              },
+              {
+                "uniqueId": "5c11838f-a667-4604-b173-d026b01405cc",
+                "slotName": "Policy",
+                "slotField": "RefinableString157",
+                "sortIdx": 25
+              }
+            ],
+            "defaultQueryText": "*",
+            "useFilters": true,
+            "filtersDataSourceReference": "WebPart.544c1372-fb1d-4e96-bc1e-31fd66979667.03b3d4b9-84a9-4adf-8524-ded7a8646f9d:pnpSearchFiltersWebPart",
+            "useDynamicFiltering": true,
+            "useInputQueryText": true,
+            "useDefaultQueryText": true,
+            "inlineTemplateContent": null,
+            "externalTemplateUrl": "",
+            "title": "Policies",
+            "verticalsDataSourceReference": "WebPart.544c1372-77ae-40a0-9095-805ae2a0d5e9.3ba3b919-491c-41ef-bbcc-31d07bf2c2ad:pnpSearchVerticalsWebPart",
+            "showTitle": true,
+            "titleLinkText": "",
+            "titleLinkUrl": "",
+            "titleLinkOpenInNewTab": false
+          }
+        },
+        {
+          "section": 5,
+          "column": 1,
+          "order": 1,
+          "componentKey": "search-results",
+          "propertiesJson": {
+            "documentationLink": "https://microsoft-search.github.io/pnp-modern-search/",
+            "allowWebPartConnections": true,
+            "selectedLayoutKey": "Cards",
+            "resultTypes": [],
+            "dataSourceProperties": {
+              "queryTemplate": "{searchTerms} contenttypeid:\"0x01010024718016CF0C3F4B88581646FE01D9AA0101*\" ",
+              "enableQueryRules": false,
+              "enableLocalization": true,
+              "refinementFilters": "",
+              "selectedProperties": [
+                "AuthorOWSUSER",
+                "contentclass",
+                "ContentExpiryChoice",
+                "ContentResponsibleOWSUSER",
+                "ContentTypeId",
+                "Created",
+                "CreatedBy",
+                "DefaultEncodingURL",
+                "FileType",
+                "FirstLetterFromTitle",
+                "HitHighlightedProperties",
+                "HitHighlightedSummary",
+                "HtmlFileType",
+                "JobTitle",
+                "LastReviewDateOWSDATE",
+                "ModifiedBy",
+                "NormListID",
+                "NormSiteID",
+                "NormUniqueID",
+                "NormWebID",
+                "OneLetterIdOWSTEXT",
+                "owstaxIdContentExpiryChoice",
+                "owstaxidmetadataalltagsinfo",
+                "Path",
+                "PictureThumbnailURL",
+                "RefinableDate05",
+                "RefinableDate16",
+                "RefinableDate18",
+                "RefinableInt03",
+                "RefinableString09",
+                "RefinableString124",
+                "RefinableString127",
+                "RefinableString128",
+                "RefinableString156",
+                "RefinableString157",
+                "ReviewIntevalOWSCHCS",
+                "SiteLogo",
+                "SiteTitle",
+                "SPSiteURL",
+                "SPWebUrl",
+                "Title",
+                "UniqueID",
+                "UserName",
+                "ValidUntilDateOWSDATE",
+                "WorkPhone"
+              ],
+              "resultSourceId": "8413cd39-2156-4e00-b54d-11efd9abdb89",
+              "hitHighlightedProperties": "",
+              "trimDuplicates": false,
+              "sortList": [
+                {
+                  "uniqueId": "7adb9202-dfe1-456f-a70f-1826141f06c9",
+                  "sortField": "RefinableDate05",
+                  "isDefaultSort": true,
+                  "sortDirection": 1,
+                  "isUserSort": true,
+                  "sortFieldDisplayName": "By Date",
+                  "sortIdx": 1
+                },
+                {
+                  "uniqueId": "2a3db012-0d7f-4eb5-8b5c-4a1a564e32d6",
+                  "sortField": "RefinableString127",
+                  "isDefaultSort": true,
+                  "sortDirection": null,
+                  "isUserSort": true,
+                  "sortFieldDisplayName": "Content Responsible",
+                  "sortIdx": 2
+                }
+              ],
+              "enableAudienceTargeting": false
+            },
+            "queryTextSource": 1,
+            "layoutProperties": {
+              "documentCardFields": [
+                {
+                  "name": "Title",
+                  "field": "title",
+                  "value": "{{slot item @root.slots.Title}}",
+                  "useHandlebarsExpr": true,
+                  "supportHtml": false,
+                  "sortIdx": 1
+                },
+                {
+                  "name": "Location",
+                  "field": "location",
+                  "value": "<a style=\"color:{{@root.theme.palette.themePrimary}};font-weight:600;font-family:'{{@root.theme.fonts.small.fontFamily}}'\" href=\"{{slot item @root.slots.SPWebURL}}\">{{slot item @root.slots.SiteTitle}}</a>",
+                  "useHandlebarsExpr": true,
+                  "supportHtml": true,
+                  "sortIdx": 2
+                },
+                {
+                  "name": "Tags",
+                  "field": "tags",
+                  "value": "<style>\n  .tags {\n    display: flex;\n    align-items: flex-start;\n    gap: 8px;\n    white-space: normal;\n  }\n\n  .tags pnp-icon {\n    margin-top: 3px;\n    flex-shrink: 0;\n  }\n\n  .tags-list {\n    display: flex;\n    flex-wrap: wrap;\n    gap: 6px;\n  }\n\n  .simpletags {\n    display: inline-flex;\n    align-items: center;\n    justify-content: center;\n    min-height: 24px;\n    padding: 0 8px;\n    border-radius: 999px;\n    box-sizing: border-box;\n    text-decoration: none;\n    white-space: nowrap;\n    font-size: 12px;\n    line-height: 1;\n    font-weight: 600;\n    border: 1px solid {{@root.theme.palette.themeTertiary}};\n    background: {{@root.theme.palette.themeLighter}};\n    color: {{@root.theme.palette.themeDarker}};\n    transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;\n  }\n\n  .simpletags:hover {\n    text-decoration: none;\n    transform: translateY(-1px);\n    background: {{@root.theme.palette.themeLight}};\n    box-shadow: 0 1px 3px rgba(0,0,0,.12);\n  }\n\n  .simpletags:active {\n    transform: translateY(0);\n  }\n</style>\n\n<div class=\"tags\">\n  <pnp-icon data-name=\"Tag\" aria-hidden=\"true\" data-theme-variant=\"{{JSONstringify @root.theme}}\"></pnp-icon>\n\n  <div class=\"tags-list\">\n\n    {{!-- Action taxonomy -> RefinableString128 --}}\n    {{#if (slot item @root.slots.Action)}}\n      {{#with (split (slot item @root.slots.Action) \";\") as |actionParts|}}\n        {{#with (itemAt actionParts 0) as |gp0|}}\n          {{#with (itemAt actionParts 1) as |l0WithLabel|}}\n            {{#with (split gp0 \"|#\") as |gp0Parts|}}\n              {{#with (split l0WithLabel \"|\") as |l0Parts|}}\n                {{#with (split (itemAt l0Parts 1) \"#\") as |l0IdParts|}}\n                  {{#with (itemAt l0Parts 2) as |label|}}\n                    {{#if label}}\n                      <a\n                        class=\"simpletags\"\n                        data-interception=\"off\"\n                        href=\"?v=Cards{{#if (getUrlParameter \"k\")}}&k={{getUrlParameter \"k\"}}{{/if}}&f_03b3d4b9-84a9-4adf-8524-ded7a8646f9d=%5B%7B%22filterName%22%3A%22RefinableString128%22%2C%22values%22%3A%5B%7B%22name%22%3A%22{{label}}%22%2C%22value%22%3A%22or({{itemAt gp0Parts 0}}%7C%23{{itemAt gp0Parts 1}}%2C{{itemAt l0Parts 0}}%7C%23{{itemAt l0IdParts 1}})%22%2C%22operator%22%3A0%7D%5D%2C%22operator%22%3A%22or%22%7D%5D#\"\n                      >\n                        {{label}}\n                      </a>\n                    {{/if}}\n                  {{/with}}\n                {{/with}}\n              {{/with}}\n            {{/with}}\n          {{/with}}\n        {{/with}}\n      {{/with}}\n    {{/if}}\n\n    {{!-- Topic taxonomy -> RefinableString157 --}}\n    {{#if (slot item @root.slots.Topic)}}\n      {{#with (split (slot item @root.slots.Topic) \";\") as |topicParts|}}\n        {{#with (itemAt topicParts 0) as |gp0|}}\n          {{#with (itemAt topicParts 1) as |l0WithLabel|}}\n            {{#with (split gp0 \"|#\") as |gp0Parts|}}\n              {{#with (split l0WithLabel \"|\") as |l0Parts|}}\n                {{#with (split (itemAt l0Parts 1) \"#\") as |l0IdParts|}}\n                  {{#with (itemAt l0Parts 2) as |label|}}\n                    {{#if label}}\n                      <a\n                        class=\"simpletags\"\n                        data-interception=\"off\"\n                        href=\"?v=Cards{{#if (getUrlParameter \"k\")}}&k={{getUrlParameter \"k\"}}{{/if}}&f_03b3d4b9-84a9-4adf-8524-ded7a8646f9d=%5B%7B%22filterName%22%3A%22RefinableString157%22%2C%22values%22%3A%5B%7B%22name%22%3A%22{{label}}%22%2C%22value%22%3A%22or({{itemAt gp0Parts 0}}%7C%23{{itemAt gp0Parts 1}}%2C{{itemAt l0Parts 0}}%7C%23{{itemAt l0IdParts 1}})%22%2C%22operator%22%3A0%7D%5D%2C%22operator%22%3A%22or%22%7D%5D#\"\n                      >\n                        {{label}}\n                      </a>\n                    {{/if}}\n                  {{/with}}\n                {{/with}}\n              {{/with}}\n            {{/with}}\n          {{/with}}\n        {{/with}}\n      {{/with}}\n    {{/if}}\n\n  </div>\n</div>",
+                  "useHandlebarsExpr": true,
+                  "supportHtml": true,
+                  "sortIdx": 3
+                },
+                {
+                  "name": "Preview Image",
+                  "field": "previewImage",
+                  "value": "{{slot item @root.slots.PreviewImageUrl}}",
+                  "useHandlebarsExpr": true,
+                  "supportHtml": false,
+                  "sortIdx": 4
+                },
+                {
+                  "name": "Preview Url",
+                  "field": "previewUrl",
+                  "value": "{{slot item @root.slots.PreviewUrl}}",
+                  "useHandlebarsExpr": true,
+                  "supportHtml": false,
+                  "sortIdx": 5
+                },
+                {
+                  "name": "Date",
+                  "field": "date",
+                  "value": "{{getDate (slot item @root.slots.Date) 'LL'}}",
+                  "useHandlebarsExpr": true,
+                  "supportHtml": false,
+                  "sortIdx": 6
+                },
+                {
+                  "name": "Url",
+                  "field": "href",
+                  "value": "{{slot item @root.slots.PreviewUrl}}",
+                  "useHandlebarsExpr": true,
+                  "supportHtml": false,
+                  "sortIdx": 7
+                },
+                {
+                  "name": "Author",
+                  "field": "author",
+                  "value": "{{slot item @root.slots.Author}}",
+                  "useHandlebarsExpr": true,
+                  "supportHtml": false,
+                  "sortIdx": 8
+                },
+                {
+                  "name": "Profile Image Url",
+                  "field": "profileImage",
+                  "value": "/_layouts/15/userphoto.aspx?size=L&username={{getUserEmail (slot item @root.slots.Author)}}",
+                  "useHandlebarsExpr": true,
+                  "supportHtml": false,
+                  "sortIdx": 9
+                },
+                {
+                  "name": "File Extension",
+                  "field": "fileExtension",
+                  "value": "{{slot item @root.slots.FileType}}",
+                  "useHandlebarsExpr": true,
+                  "supportHtml": false,
+                  "sortIdx": 10
+                },
+                {
+                  "name": "Is Folder",
+                  "field": "isContainer",
+                  "value": "{{slot item @root.slots.IsFolder}}",
+                  "useHandlebarsExpr": true,
+                  "supportHtml": false,
+                  "sortIdx": 11
+                }
+              ],
+              "isCompact": false,
+              "showFileIcon": true,
+              "enablePreview": false,
+              "preferedCardNumberPerRow": 6,
+              "columnSizePercentage": 15
+            },
+            "showSelectedFilters": true,
+            "showResultsCount": true,
+            "showBlankIfNoResult": false,
+            "useMicrosoftGraphToolkit": true,
+            "itemSelectionProps": {
+              "allowItemSelection": true,
+              "selectionMode": "AsTokenValue",
+              "allowMulti": true,
+              "valuesOperator": "or",
+              "destinationFieldName": "FirstLetterFromTitle",
+              "selectionPreservedOnEmptyClick": true
+            },
+            "extensibilityLibraryConfiguration": [
+              {
+                "name": "Default extensibility library",
+                "enabled": true,
+                "id": "dc4f961b-dbe0-44b4-982d-5776bf99d015",
+                "sortIdx": 1
+              }
+            ],
+            "queryModifierConfiguration": [],
+            "queryModifierProperties": {},
+            "selectedVerticalKeys": [
+              "96df6287-064f-4902-b047-f9551c1c8ab8"
+            ],
+            "useVerticals": true,
+            "paging": {
+              "itemsCountPerPage": 50,
+              "pagingRange": 5,
+              "showPaging": true,
+              "hideDisabled": true,
+              "hideFirstLastPages": false,
+              "hideNavigation": false,
+              "useNextLinks": false,
+              "enableQueryString": false
+            },
+            "adaptiveCardsHostConfig": "{\n\t\"fontFamily\": \"Segoe UI, Helvetica Neue, sans-serif\"\n}",
+            "layoutRenderType": "Handlebars",
+            "dataSourceKey": "SharePointSearch",
+            "templateSlots": [
+              {
+                "slotName": "Title",
+                "slotField": "Title",
+                "sortIdx": 1
+              },
+              {
+                "slotName": "Path",
+                "slotField": "DefaultEncodingURL",
+                "sortIdx": 2
+              },
+              {
+                "slotName": "Summary",
+                "slotField": "HitHighlightedSummary",
+                "sortIdx": 3
+              },
+              {
+                "slotName": "FileType",
+                "slotField": "FileType",
+                "sortIdx": 4
+              },
+              {
+                "slotName": "PreviewImageUrl",
+                "slotField": "AutoPreviewImageUrl",
+                "sortIdx": 5
+              },
+              {
+                "slotName": "PreviewUrl",
+                "slotField": "AutoPreviewUrl",
+                "sortIdx": 6
+              },
+              {
+                "slotName": "Author",
+                "slotField": "ModifiedBy",
+                "sortIdx": 7
+              },
+              {
+                "slotName": "Tags",
+                "slotField": "owstaxidmetadataalltagsinfo",
+                "sortIdx": 8
+              },
+              {
+                "slotName": "Date",
+                "slotField": "RefinableDate05",
+                "sortIdx": 9
+              },
+              {
+                "slotName": "SiteId",
+                "slotField": "NormSiteID",
+                "sortIdx": 10
+              },
+              {
+                "slotName": "WebId",
+                "slotField": "NormWebID",
+                "sortIdx": 11
+              },
+              {
+                "slotName": "ListId",
+                "slotField": "NormListID",
+                "sortIdx": 12
+              },
+              {
+                "slotName": "ItemId",
+                "slotField": "NormUniqueID",
+                "sortIdx": 13
+              },
+              {
+                "slotName": "IsFolder",
+                "slotField": "ContentTypeId",
+                "sortIdx": 14
+              },
+              {
+                "slotName": "contentclass",
+                "slotField": "contentclass",
+                "sortIdx": 15
+              },
+              {
+                "slotName": "PersonQuery",
+                "slotField": "AADObjectID",
+                "sortIdx": 16
+              },
+              {
+                "slotName": "UserDisplayName",
+                "slotField": "Title",
+                "sortIdx": 17
+              },
+              {
+                "slotName": "UserEmail",
+                "slotField": "UserName",
+                "sortIdx": 18
+              },
+              {
+                "slotName": "Id",
+                "slotField": "DocId",
+                "sortIdx": 19
+              },
+              {
+                "uniqueId": "b5613c8c-b3b8-417f-ab33-3d9fe571aa7e",
+                "slotName": "IsPolicyValid",
+                "slotField": "RefinableInt03",
+                "sortIdx": 20
+              },
+              {
+                "uniqueId": "6c94d7ff-6986-45d9-a20e-487e66245e27",
+                "slotName": "ContentExpiryChoice",
+                "slotField": "RefinableString128",
+                "sortIdx": 21
+              },
+              {
+                "uniqueId": "17b7e640-b93f-43d5-93ea-501254ec2340",
+                "slotName": "SPSiteURL",
+                "slotField": "SPSiteURL",
+                "sortIdx": 22
+              },
+              {
+                "uniqueId": "8efe9cf7-a2dd-4593-89ff-dd40e1b96e86",
+                "slotName": "ContentOwners",
+                "slotField": "RefinableString156",
+                "sortIdx": 23
+              },
+              {
+                "uniqueId": "f736a325-eff3-44c8-85b6-9f4f888e7da8",
+                "slotName": "Topic",
+                "slotField": "RefinableString157",
+                "sortIdx": 24
+              },
+              {
+                "uniqueId": "b48274b6-0f4f-450a-b1cb-465f967d5cf8",
+                "slotName": "Action",
+                "slotField": "RefinableString128",
+                "sortIdx": 25
+              }
+            ],
+            "defaultQueryText": "*",
+            "useDynamicFiltering": false,
+            "verticalsDataSourceReference": "WebPart.544c1372-77ae-40a0-9095-805ae2a0d5e9.3ba3b919-491c-41ef-bbcc-31d07bf2c2ad:pnpSearchVerticalsWebPart",
+            "useFilters": true,
+            "filtersDataSourceReference": "WebPart.544c1372-fb1d-4e96-bc1e-31fd66979667.03b3d4b9-84a9-4adf-8524-ded7a8646f9d:pnpSearchFiltersWebPart",
+            "useInputQueryText": true,
+            "useDefaultQueryText": true,
+            "inlineTemplateContent": null,
+            "externalTemplateUrl": "",
+            "title": "Policies",
+            "showTitle": true,
+            "titleLinkText": "",
+            "titleLinkUrl": "",
+            "titleLinkOpenInNewTab": false
+          }
+        }
+      ]
+    }
+  ]
+}

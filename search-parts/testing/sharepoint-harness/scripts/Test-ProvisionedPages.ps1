@@ -5,6 +5,8 @@ param(
 
     [string]$ClientId,
 
+    [string]$SiteUrl,
+
     [switch]$ResolveLatestPageNames,
 
     [switch]$FailOnUnexpectedWebParts
@@ -12,6 +14,8 @@ param(
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
+
+$script:HasSiteUrlOverride = $PSBoundParameters.ContainsKey('SiteUrl') -and -not [string]::IsNullOrWhiteSpace($SiteUrl)
 
 $script:KnownComponents = @{
     'search-box' = @{
@@ -104,12 +108,13 @@ function Get-SiteDefinition {
         throw 'The scenario must contain a site object.'
     }
 
-    if ([string]::IsNullOrWhiteSpace([string]$Scenario.site.url)) {
+    $resolvedSiteUrl = if ($script:HasSiteUrlOverride) { $SiteUrl } else { [string]$Scenario.site.url }
+    if ([string]::IsNullOrWhiteSpace($resolvedSiteUrl)) {
         throw 'scenario.site.url is required.'
     }
 
     return [pscustomobject]@{
-        Url = [string]$Scenario.site.url
+        Url = $resolvedSiteUrl
     }
 }
 
@@ -119,7 +124,7 @@ function Connect-InteractivePnP {
         [Parameter(Mandatory = $true)][string]$ResolvedClientId
     )
 
-    return Connect-PnPOnline -Url $Url -Interactive -ClientId $ResolvedClientId -ReturnConnection
+    return Connect-PnPOnline -Url $Url -Interactive -ClientId $ResolvedClientId -PersistLogin -ReturnConnection
 }
 
 function Resolve-PageName {

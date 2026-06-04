@@ -1,0 +1,8 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "/^pwsh \\./testing/sharepoint-harness/scripts/Provision-TestPages\\.ps1 -ScenarioPath \"c:\\\\GitHub\\\\pnp-modern-search\\\\search-parts\\\\testing\\\\sharepoint-harness\\\\exported-scenarios\\\\Policies-scenario\\.json\" -ClientId \"d7c35d3c-3773-4009-bc67-885da2dd23fa\" -TenantUrl \"https://tcwlv\\.sharepoint\\.com\" -AdminUrl \"https://tcwlv-admin\\.sharepoint\\.com\" -SiteUrl \"https://tcwlv\\.sharepoint\\.com/sites/pnp-search-harness-dev\" -UseUniquePageNames -Force$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
+}

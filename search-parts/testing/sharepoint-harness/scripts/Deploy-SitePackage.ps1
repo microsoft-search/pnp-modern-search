@@ -7,7 +7,9 @@ param(
 
     [string]$TenantUrl,
 
-    [string]$AdminUrl
+    [string]$AdminUrl,
+
+    [string]$SiteUrl
 )
 
 Set-StrictMode -Version Latest
@@ -33,6 +35,10 @@ if (-not [string]::IsNullOrWhiteSpace($TenantUrl)) {
 
 if (-not [string]::IsNullOrWhiteSpace($AdminUrl)) {
     $provisionParameters.AdminUrl = $AdminUrl
+}
+
+if (-not [string]::IsNullOrWhiteSpace($SiteUrl)) {
+    $provisionParameters.SiteUrl = $SiteUrl
 }
 
 & $provisionScriptPath @provisionParameters
