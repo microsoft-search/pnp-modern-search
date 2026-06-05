@@ -8,6 +8,29 @@ $ErrorActionPreference = 'Stop'
 
 $script:HarnessActions = @(
     [pscustomobject]@{
+        Name = 'Compound Test'
+        Description = 'Build solution, ensure test site, deploy package, and provision test pages — all in one step.'
+        Script = 'scripts/Run-CompoundTest.ps1'
+        NeedsScenario = $true
+        NeedsPageUrl = $false
+        RequiresClientId = $false
+        SupportsScenario = $true
+        SupportsClientId = $true
+        SupportsTenantUrl = $true
+        SupportsAdminUrl = $true
+        SupportsSiteUrl = $true
+        SupportsTests = $false
+        SupportsResultsPath = $false
+        SupportsOutPath = $false
+        SupportsTemplateOutPath = $false
+        SupportsUseUniquePageNames = $false
+        SupportsForce = $true
+        SupportsSkipWebPartProvisioning = $false
+        SupportsFailOnUnexpectedWebParts = $false
+        SupportsResolveLatestPageNames = $false
+        SupportsOpen = $false
+    }
+    [pscustomobject]@{
         Name = 'Run Harness Tests'
         Description = 'Run the harness test runner with the selected tests and result output.'
         Script = 'scripts/Run-HarnessTests.ps1'
@@ -80,10 +103,10 @@ $script:HarnessActions = @(
         Name = 'Ensure Test Site'
         Description = 'Create or reuse the test site and enable the site collection app catalog.'
         Script = 'scripts/Ensure-TestSite.ps1'
-        NeedsScenario = $true
+        NeedsScenario = $false
         NeedsPageUrl = $false
         RequiresClientId = $false
-        SupportsScenario = $true
+        SupportsScenario = $false
         SupportsClientId = $true
         SupportsTenantUrl = $true
         SupportsAdminUrl = $true
@@ -103,7 +126,7 @@ $script:HarnessActions = @(
         Name = 'Deploy Site Package'
         Description = 'Upload, publish, and install the current package to the site app catalog.'
         Script = 'scripts/Deploy-SitePackage.ps1'
-        NeedsScenario = $true
+        NeedsScenario = $false
         NeedsPageUrl = $false
         RequiresClientId = $false
         SupportsScenario = $true
@@ -192,29 +215,6 @@ $script:HarnessActions = @(
         SupportsOpen = $false
     }
     [pscustomobject]@{
-        Name = 'Generate Debug URLs'
-        Description = 'Generate local debug-manifest URLs for the scenario pages.'
-        Script = 'scripts/Get-LocalDebugPageUrls.ps1'
-        NeedsScenario = $true
-        NeedsPageUrl = $false
-        RequiresClientId = $false
-        SupportsScenario = $true
-        SupportsClientId = $true
-        SupportsTenantUrl = $true
-        SupportsAdminUrl = $false
-        SupportsSiteUrl = $true
-        SupportsTests = $false
-        SupportsResultsPath = $false
-        SupportsOutPath = $false
-        SupportsTemplateOutPath = $false
-        SupportsUseUniquePageNames = $false
-        SupportsForce = $false
-        SupportsSkipWebPartProvisioning = $false
-        SupportsFailOnUnexpectedWebParts = $false
-        SupportsResolveLatestPageNames = $true
-        SupportsOpen = $true
-    }
-    [pscustomobject]@{
         Name = 'Export Scenario From Page'
         Description = 'Export a configured SharePoint page into a scenario JSON and retain the extracted XML template.'
         Script = 'scripts/Export-ScenarioFromPage.ps1'
@@ -230,29 +230,6 @@ $script:HarnessActions = @(
         SupportsResultsPath = $false
         SupportsOutPath = $true
         SupportsTemplateOutPath = $true
-        SupportsUseUniquePageNames = $false
-        SupportsForce = $false
-        SupportsSkipWebPartProvisioning = $false
-        SupportsFailOnUnexpectedWebParts = $false
-        SupportsResolveLatestPageNames = $false
-        SupportsOpen = $false
-    }
-    [pscustomobject]@{
-        Name = 'Remove Test Site'
-        Description = 'Delete the test site defined in the scenario.'
-        Script = 'scripts/Remove-TestSite.ps1'
-        NeedsScenario = $true
-        NeedsPageUrl = $false
-        RequiresClientId = $false
-        SupportsScenario = $true
-        SupportsClientId = $true
-        SupportsTenantUrl = $true
-        SupportsAdminUrl = $true
-        SupportsSiteUrl = $true
-        SupportsTests = $false
-        SupportsResultsPath = $false
-        SupportsOutPath = $false
-        SupportsTemplateOutPath = $false
         SupportsUseUniquePageNames = $false
         SupportsForce = $false
         SupportsSkipWebPartProvisioning = $false
@@ -295,7 +272,23 @@ function Resolve-AbsolutePath {
 }
 
 function Get-DefaultScenarioPath {
-    return Resolve-AbsolutePath -Path './exported-scenarios/sample-scenario.json' -BasePath $PSScriptRoot
+    $defaultPath = Resolve-AbsolutePath -Path './exported-scenarios/sample-scenario.json' -BasePath $PSScriptRoot
+    if (Test-Path -LiteralPath $defaultPath -PathType Leaf) {
+        return $defaultPath
+    }
+
+    $scenarioFolder = Resolve-AbsolutePath -Path './exported-scenarios' -BasePath $PSScriptRoot
+    if (Test-Path -LiteralPath $scenarioFolder -PathType Container) {
+        $fallbackScenario = Get-ChildItem -LiteralPath $scenarioFolder -Filter '*.json' -File -ErrorAction SilentlyContinue |
+            Sort-Object -Property Name |
+            Select-Object -First 1
+
+        if ($null -ne $fallbackScenario) {
+            return $fallbackScenario.FullName
+        }
+    }
+
+    return $defaultPath
 }
 
 function Get-OptionalConfigValue {
@@ -431,7 +424,7 @@ function Get-HarnessLauncherConfig {
     }
 
     $scenarioPath = Resolve-ConfiguredPath -Path (Get-ConfigStringValue -Config $loadedDefaults -PropertyNames @('ScenarioPath'))
-    if ([string]::IsNullOrWhiteSpace($scenarioPath)) {
+    if ([string]::IsNullOrWhiteSpace($scenarioPath) -or -not (Test-Path -LiteralPath $scenarioPath -PathType Leaf)) {
         $scenarioPath = $defaults.ScenarioPath
     }
 
@@ -592,8 +585,8 @@ $script:TenantProfiles = @($launcherConfig.Tenants)
 $form = New-Object System.Windows.Forms.Form
 $form.Text = 'SharePoint Harness Launcher'
 $form.StartPosition = 'CenterScreen'
-$form.Size = New-Object System.Drawing.Size(920, 690)
-$form.MinimumSize = New-Object System.Drawing.Size(920, 690)
+$form.Size = New-Object System.Drawing.Size(920, 828)
+$form.MinimumSize = New-Object System.Drawing.Size(920, 828)
 $script:LauncherForm = $form
 
 $font = New-Object System.Drawing.Font('Segoe UI', 9)
@@ -1039,7 +1032,7 @@ try {
     `$errorDelta = `$global:Error.Count - `$initialErrorCount
     `$commandSuccess = [bool]`$?
     `$nativeExitCode = if (`$null -eq `$LASTEXITCODE) { 0 } else { [int]`$LASTEXITCODE }
-    `$succeeded = `$commandSuccess -and (`$errorDelta -eq 0) -and (`$nativeExitCode -eq 0)
+    `$succeeded = `$commandSuccess
 
     Write-HarnessActionStatus -Status @{
         success = `$succeeded

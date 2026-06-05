@@ -1,0 +1,245 @@
+{
+  "auth": {
+    "tenantUrl": "https://tcwlv.sharepoint.com",
+    "clientId": "d7c35d3c-3773-4009-bc67-885da2dd23fa"
+  },
+  "site": {
+    "url": "https://tcwlv.sharepoint.com/sites/PeopleSearch480PnP",
+    "title": "PeopleSearch480PnP",
+    "type": null,
+    "description": ""
+  },
+  "package": {
+    "path": "../../sharepoint/solution/pnp-modern-search-parts-v4.sppkg",
+    "skipFeatureDeployment": true
+  },
+  "pages": [
+    {
+      "name": "Basic-PnP-Persona.aspx",
+      "title": "Basic PnP Persona",
+      "publish": true,
+      "sections": [
+        {
+          "template": "OneColumnFullWidth",
+          "order": 1
+        },
+        {
+          "template": "OneColumn",
+          "order": 2
+        },
+        {
+          "template": "OneColumn",
+          "order": 3
+        }
+      ],
+      "webParts": [
+        {
+          "section": 2,
+          "column": 1,
+          "order": 1,
+          "componentKey": "search-results",
+          "propertiesJson": {
+            "documentationLink": "https://microsoft-search.github.io/pnp-modern-search/",
+            "allowWebPartConnections": true,
+            "selectedLayoutKey": "ResultsCustom",
+            "resultTypes": [],
+            "dataSourceProperties": {
+              "queryTemplate": "WorkEmail:@tcwlv.onmicrosoft.com",
+              "enableQueryRules": false,
+              "enableLocalization": false,
+              "refinementFilters": "",
+              "selectedProperties": [
+                "Title",
+                "Path",
+                "DefaultEncodingURL",
+                "FileType",
+                "HitHighlightedSummary",
+                "HitHighlightedProperties",
+                "AuthorOWSUSER",
+                "owstaxidmetadataalltagsinfo",
+                "Created",
+                "UniqueID",
+                "NormSiteID",
+                "NormWebID",
+                "NormListID",
+                "NormUniqueID",
+                "ContentTypeId",
+                "contentclass",
+                "UserName",
+                "JobTitle",
+                "WorkPhone",
+                "SPSiteURL",
+                "SPWebUrl",
+                "SiteTitle",
+                "CreatedBy",
+                "HtmlFileType",
+                "SiteLogo",
+                "PictureThumbnailURL"
+              ],
+              "resultSourceId": "b09a7990-05ea-4af9-81ef-edfab16c4e31",
+              "hitHighlightedProperties": "",
+              "trimDuplicates": false,
+              "sortList": []
+            },
+            "queryTextSource": 0,
+            "layoutProperties": {},
+            "showSelectedFilters": false,
+            "showResultsCount": true,
+            "showBlankIfNoResult": false,
+            "useMicrosoftGraphToolkit": false,
+            "itemSelectionProps": {
+              "allowItemSelection": false,
+              "selectionMode": "AsDataFilter",
+              "allowMulti": false,
+              "valuesOperator": "or",
+              "selectionPreservedOnEmptyClick": false
+            },
+            "extensibilityLibraryConfiguration": [
+              {
+                "name": "Default extensibility library",
+                "enabled": true,
+                "id": "dc4f961b-dbe0-44b4-982d-5776bf99d015"
+              }
+            ],
+            "queryModifierConfiguration": [],
+            "queryModifierProperties": {
+              "endWhenSuccessfull": false
+            },
+            "selectedVerticalKeys": [],
+            "useVerticals": false,
+            "paging": {
+              "itemsCountPerPage": 10,
+              "pagingRange": 5,
+              "showPaging": true,
+              "hideDisabled": true,
+              "hideFirstLastPages": false,
+              "hideNavigation": false,
+              "useNextLinks": false
+            },
+            "adaptiveCardsHostConfig": "{\n\t\"fontFamily\": \"Segoe UI, Helvetica Neue, sans-serif\"\n}",
+            "layoutRenderType": "Handlebars",
+            "dataSourceKey": "SharePointSearch",
+            "templateSlots": [
+              {
+                "slotName": "Title",
+                "slotField": "Title",
+                "sortIdx": 1
+              },
+              {
+                "slotName": "Path",
+                "slotField": "DefaultEncodingURL",
+                "sortIdx": 2
+              },
+              {
+                "slotName": "Summary",
+                "slotField": "HitHighlightedSummary",
+                "sortIdx": 3
+              },
+              {
+                "slotName": "FileType",
+                "slotField": "FileType",
+                "sortIdx": 4
+              },
+              {
+                "slotName": "PreviewImageUrl",
+                "slotField": "AutoPreviewImageUrl",
+                "sortIdx": 5
+              },
+              {
+                "slotName": "PreviewUrl",
+                "slotField": "AutoPreviewUrl",
+                "sortIdx": 6
+              },
+              {
+                "slotName": "Author",
+                "slotField": "AuthorOWSUSER",
+                "sortIdx": 7
+              },
+              {
+                "slotName": "Tags",
+                "slotField": "owstaxidmetadataalltagsinfo",
+                "sortIdx": 8
+              },
+              {
+                "slotName": "Date",
+                "slotField": "Created",
+                "sortIdx": 9
+              },
+              {
+                "slotName": "SiteId",
+                "slotField": "NormSiteID",
+                "sortIdx": 10
+              },
+              {
+                "slotName": "WebId",
+                "slotField": "NormWebID",
+                "sortIdx": 11
+              },
+              {
+                "slotName": "ListId",
+                "slotField": "NormListID",
+                "sortIdx": 12
+              },
+              {
+                "slotName": "ItemId",
+                "slotField": "NormUniqueID",
+                "sortIdx": 13
+              },
+              {
+                "slotName": "IsFolder",
+                "slotField": "ContentTypeId",
+                "sortIdx": 14
+              },
+              {
+                "slotName": "contentclass",
+                "slotField": "contentclass",
+                "sortIdx": 15
+              },
+              {
+                "slotName": "PersonQuery",
+                "slotField": "AADObjectID",
+                "sortIdx": 16
+              },
+              {
+                "slotName": "UserDisplayName",
+                "slotField": "Title",
+                "sortIdx": 17
+              },
+              {
+                "slotName": "UserEmail",
+                "slotField": "UserName",
+                "sortIdx": 18
+              },
+              {
+                "slotName": "Id",
+                "slotField": "DocId",
+                "sortIdx": 19
+              },
+              {
+                "uniqueId": "9706bcfc-8896-4268-9ae2-d445cdcc84a6",
+                "slotName": "JobTitle",
+                "slotField": "JobTitle",
+                "sortIdx": 20
+              },
+              {
+                "uniqueId": "d1d80ee5-f1ce-402b-84de-372024e2c6cf",
+                "slotName": "UserPhone",
+                "slotField": "WorkPhone",
+                "sortIdx": 21
+              }
+            ],
+            "inlineTemplateContent": null,
+            "externalTemplateUrl": "https://{fqdn}/sites/PnPModernSearch/SearchDisplayTemplates/People_basic%20pnp%20persona.html"
+          }
+        }
+      ]
+    }
+  ],
+  "externalTemplates": [
+    {
+      "sourceUrl": "https://{fqdn}/sites/PnPModernSearch/SearchDisplayTemplates/People_basic%20pnp%20persona.html",
+      "filePath": "Basic-PnP-Persona-scenario-assets\\external-templates\\People_basic pnp persona-08df518a.html",
+      "fileName": "People_basic pnp persona-08df518a.html"
+    }
+  ]
+}

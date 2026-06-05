@@ -153,6 +153,199 @@ function Get-ScenarioTemplate {
     return Read-JsonFile -Path $resolvedPath
 }
 
+function Get-ExternalTemplateUrlsFromObject {
+    param([Parameter(Mandatory = $false)]$Object)
+
+    $urls = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::OrdinalIgnoreCase)
+
+    function Visit-Node {
+        param([Parameter(Mandatory = $false)]$Node)
+
+        if ($null -eq $Node) {
+            return
+        }
+
+        if ($Node -is [string]) {
+            return
+        }
+
+        if ($Node -is [System.Collections.IDictionary]) {
+            foreach ($key in @($Node.Keys)) {
+                $value = $Node[$key]
+
+                if ([string]$key -eq 'externalTemplateUrl') {
+                    $candidate = [string]$value
+                    if (-not [string]::IsNullOrWhiteSpace($candidate)) {
+                        [void]$urls.Add($candidate)
+                    }
+                }
+
+                Visit-Node -Node $value
+            }
+
+            return
+        }
+
+        if ($Node -is [System.Collections.IEnumerable]) {
+            foreach ($item in $Node) {
+                Visit-Node -Node $item
+            }
+
+            return
+        }
+
+        foreach ($property in $Node.PSObject.Properties) {
+            if ($property.Name -eq 'externalTemplateUrl') {
+                $candidate = [string]$property.Value
+                if (-not [string]::IsNullOrWhiteSpace($candidate)) {
+                    [void]$urls.Add($candidate)
+                }
+            }
+
+            Visit-Node -Node $property.Value
+        }
+    }
+
+    Visit-Node -Node $Object
+    return @($urls | ForEach-Object { $_ })
+}
+
+function Get-ExternalTemplateUrlMetadata {
+    param(
+        [Parameter(Mandatory = $true)][string]$TemplateUrl,
+        [Parameter(Mandatory = $true)][string]$TenantUrl
+    )
+
+    $tenantUri = $null
+    if (-not [System.Uri]::TryCreate($TenantUrl, [System.UriKind]::Absolute, [ref]$tenantUri)) {
+        return $null
+    }
+
+    $candidateTemplateUrl = [string]$TemplateUrl
+    if ([string]::IsNullOrWhiteSpace($candidateTemplateUrl)) {
+        return $null
+    }
+
+    $candidateTemplateUrl = $candidateTemplateUrl.Trim()
+    $candidateTemplateUrl = $candidateTemplateUrl.Replace('{fqdn}', $tenantUri.Host)
+
+    # Support server-relative URLs by anchoring them to the current tenant host.
+    if ($candidateTemplateUrl.StartsWith('/')) {
+        $candidateTemplateUrl = "{0}://{1}{2}" -f $tenantUri.Scheme, $tenantUri.Host, $candidateTemplateUrl
+    }
+
+    $templateUri = $null
+    if (-not [System.Uri]::TryCreate($candidateTemplateUrl, [System.UriKind]::Absolute, [ref]$templateUri)) {
+        return $null
+    }
+
+    if (-not ($templateUri.Host.Equals($tenantUri.Host, [System.StringComparison]::OrdinalIgnoreCase))) {
+        return $null
+    }
+
+    $serverRelativePath = [System.Uri]::UnescapeDataString($templateUri.AbsolutePath)
+    if ([string]::IsNullOrWhiteSpace($serverRelativePath)) {
+        return $null
+    }
+
+    $templateSitePath = ''
+    $pathSegments = @($templateUri.AbsolutePath.Trim('/').Split('/'))
+    if ($pathSegments.Count -ge 2 -and ($pathSegments[0] -in @('sites', 'teams'))) {
+        $templateSitePath = '/' + $pathSegments[0] + '/' + $pathSegments[1]
+    }
+
+    $templateSiteUrl = '{0}://{1}{2}' -f $templateUri.Scheme, $templateUri.Host, $templateSitePath
+
+    $fileName = [System.IO.Path]::GetFileName($serverRelativePath)
+    if ([string]::IsNullOrWhiteSpace($fileName)) {
+        return $null
+    }
+
+    return [pscustomobject]@{
+        Url = $TemplateUrl
+        ServerRelativePath = $serverRelativePath
+        FileName = $fileName
+        TemplateSiteUrl = $templateSiteUrl
+    }
+}
+
+function Save-ExternalTemplates {
+    param(
+        [Parameter(Mandatory = $true)]$ScenarioPages,
+        [Parameter(Mandatory = $true)][string]$ScenarioOutPath,
+        [Parameter(Mandatory = $true)][string]$TenantUrl,
+        [Parameter(Mandatory = $true)][string]$ResolvedClientId,
+        [Parameter(Mandatory = $true)][string]$PageSiteUrl,
+        [Parameter(Mandatory = $true)]$Connection
+    )
+
+    $templateUrls = @(Get-ExternalTemplateUrlsFromObject -Object $ScenarioPages)
+    if ($templateUrls.Count -eq 0) {
+        return @()
+    }
+
+    $scenarioDirectory = Split-Path -Path $ScenarioOutPath -Parent
+    $scenarioBaseName = [System.IO.Path]::GetFileNameWithoutExtension($ScenarioOutPath)
+    $externalTemplatesDirectory = Join-Path $scenarioDirectory "$scenarioBaseName-assets\external-templates"
+
+    if (-not (Test-Path -LiteralPath $externalTemplatesDirectory -PathType Container)) {
+        New-Item -ItemType Directory -Path $externalTemplatesDirectory -Force | Out-Null
+    }
+
+    $templateEntries = [System.Collections.Generic.List[object]]::new()
+    $connectionBySite = @{}
+    $connectionBySite[$PageSiteUrl] = $Connection
+
+    foreach ($templateUrl in $templateUrls) {
+        $metadata = Get-ExternalTemplateUrlMetadata -TemplateUrl $templateUrl -TenantUrl $TenantUrl
+        if ($null -eq $metadata) {
+            Write-Warning "Skipping external template URL '$templateUrl' because it is not an absolute URL in tenant '$TenantUrl'."
+            continue
+        }
+
+        $hashInput = [System.Text.Encoding]::UTF8.GetBytes($metadata.Url)
+        $hashBytes = [System.Security.Cryptography.SHA1]::HashData($hashInput)
+        $hash = -join ($hashBytes | ForEach-Object { $_.ToString('x2') })
+        $shortHash = $hash.Substring(0, 8)
+
+        $baseName = [System.IO.Path]::GetFileNameWithoutExtension($metadata.FileName)
+        $extension = [System.IO.Path]::GetExtension($metadata.FileName)
+        if ([string]::IsNullOrWhiteSpace($extension)) {
+            $extension = '.html'
+        }
+
+        $safeFileName = "$baseName-$shortHash$extension"
+        $localPath = Join-Path $externalTemplatesDirectory $safeFileName
+
+        $downloadConnection = $Connection
+        if (-not [string]::IsNullOrWhiteSpace([string]$metadata.TemplateSiteUrl)) {
+            if (-not $connectionBySite.ContainsKey($metadata.TemplateSiteUrl)) {
+                $connectionBySite[$metadata.TemplateSiteUrl] = Connect-InteractivePnP -Url $metadata.TemplateSiteUrl -ResolvedClientId $ResolvedClientId
+            }
+
+            $downloadConnection = $connectionBySite[$metadata.TemplateSiteUrl]
+        }
+
+        try {
+            $templateContent = Get-PnPFile -Url $metadata.ServerRelativePath -AsString -Connection $downloadConnection
+            Set-Content -LiteralPath $localPath -Value $templateContent -Encoding utf8
+        }
+        catch {
+            Write-Warning "Failed to export external template '$templateUrl'. Error: $($_.Exception.Message)"
+            continue
+        }
+
+        $relativePath = [System.IO.Path]::GetRelativePath($scenarioDirectory, $localPath).Replace('\\', '/')
+        $templateEntries.Add([pscustomobject][ordered]@{
+            sourceUrl = $metadata.Url
+            filePath = $relativePath
+            fileName = $safeFileName
+        }) | Out-Null
+    }
+
+    return @($templateEntries | ForEach-Object { $_ })
+}
+
 function Connect-InteractivePnP {
     param(
         [Parameter(Mandatory = $true)][string]$Url,
@@ -401,6 +594,14 @@ $scenarioObject = [ordered]@{
     )
 }
 
+$externalTemplateEntries = @(Save-ExternalTemplates -ScenarioPages $scenarioObject.pages -ScenarioOutPath $resolvedOutPath -TenantUrl $resolvedTenantUrl -ResolvedClientId $ClientId -PageSiteUrl $pageIdentity.SiteUrl -Connection $connection)
+if ($externalTemplateEntries.Count -gt 0) {
+    $scenarioObject.externalTemplates = @($externalTemplateEntries)
+}
+
 $scenarioObject | ConvertTo-Json -Depth 100 | Set-Content -LiteralPath $resolvedOutPath -Encoding utf8
 Write-Host "Scenario exported to $resolvedOutPath" -ForegroundColor Green
 Write-Host "Provisioning template exported to $resolvedTemplateOutPath" -ForegroundColor Green
+if ($externalTemplateEntries.Count -gt 0) {
+    Write-Host "Exported $($externalTemplateEntries.Count) external template file(s) referenced by search result layouts." -ForegroundColor Green
+}

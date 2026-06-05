@@ -777,6 +777,181 @@ function ConvertTo-PropertiesJson {
     return $Properties | ConvertTo-Json -Depth 100 -Compress
 }
 
+function Get-ExternalTemplateMappings {
+    param(
+        [Parameter(Mandatory = $true)]$Scenario,
+        [Parameter(Mandatory = $true)][string]$ScenarioDirectory
+    )
+
+    $mappings = [System.Collections.Generic.List[object]]::new()
+    foreach ($templateEntry in @(Get-OptionalPropertyValue -Object $Scenario -PropertyName 'externalTemplates')) {
+        $sourceUrl = [string](Get-OptionalPropertyValue -Object $templateEntry -PropertyName 'sourceUrl')
+        $filePath = [string](Get-OptionalPropertyValue -Object $templateEntry -PropertyName 'filePath')
+        $fileName = [string](Get-OptionalPropertyValue -Object $templateEntry -PropertyName 'fileName')
+
+        if ([string]::IsNullOrWhiteSpace($sourceUrl) -or [string]::IsNullOrWhiteSpace($filePath)) {
+            continue
+        }
+
+        $resolvedFilePath = Resolve-AbsolutePath -Path $filePath -BasePath $ScenarioDirectory
+        $resolvedFileName = if ([string]::IsNullOrWhiteSpace($fileName)) { [System.IO.Path]::GetFileName($resolvedFilePath) } else { $fileName }
+
+        $mappings.Add([pscustomobject]@{
+            SourceUrl = $sourceUrl
+            LocalPath = $resolvedFilePath
+            FileName = $resolvedFileName
+        }) | Out-Null
+    }
+
+    return @($mappings)
+}
+
+function Ensure-SiteAssetsFolder {
+    param([Parameter(Mandatory = $true)]$SiteConnection)
+
+    $libraryTitle = 'Test Files'
+    $libraryUrl   = 'TestFiles'
+
+    $existingList = Get-PnPList -Identity $libraryTitle -Connection $SiteConnection -ErrorAction SilentlyContinue
+    if ($null -eq $existingList) {
+        $existingList = Get-PnPList -Identity $libraryUrl -Connection $SiteConnection -ErrorAction SilentlyContinue
+    }
+
+    if ($null -eq $existingList) {
+        New-PnPList -Title $libraryTitle -Url $libraryUrl -Template DocumentLibrary -OnQuickLaunch -Connection $SiteConnection | Out-Null
+        Write-Step "Created document library '$libraryTitle'."
+    }
+
+    Add-PnPFolder -Name 'external-templates' -Folder $libraryUrl -Connection $SiteConnection -ErrorAction SilentlyContinue | Out-Null
+
+    return "$libraryUrl/external-templates"
+}
+
+function Get-SiteAssetAbsoluteUrl {
+    param(
+        [Parameter(Mandatory = $true)][string]$SiteUrl,
+        [Parameter(Mandatory = $true)][string]$RelativeFolder,
+        [Parameter(Mandatory = $true)][string]$FileName
+    )
+
+    $trimmedSiteUrl = $SiteUrl.TrimEnd('/')
+    $trimmedFolder = $RelativeFolder.Trim('/').Split('/') | ForEach-Object { [System.Uri]::EscapeDataString($_) }
+    $encodedFileName = [System.Uri]::EscapeDataString($FileName)
+
+    return "$trimmedSiteUrl/$($trimmedFolder -join '/')/$encodedFileName"
+}
+
+function Get-ExternalTemplateUrlMap {
+    param(
+        [Parameter(Mandatory = $true)]$Scenario,
+        [Parameter(Mandatory = $true)][string]$ScenarioDirectory,
+        [Parameter(Mandatory = $true)][string]$SiteUrl,
+        [Parameter(Mandatory = $true)]$SiteConnection
+    )
+
+    $templateMappings = Get-ExternalTemplateMappings -Scenario $Scenario -ScenarioDirectory $ScenarioDirectory
+    if ($templateMappings.Count -eq 0) {
+        return @{}
+    }
+
+    $targetFolder = Ensure-SiteAssetsFolder -SiteConnection $SiteConnection
+    $urlMap = @{}
+
+    foreach ($mapping in $templateMappings) {
+        if (-not (Test-Path -LiteralPath $mapping.LocalPath -PathType Leaf)) {
+            throw "External template file '$($mapping.LocalPath)' was not found. Re-export the scenario so external templates are captured."
+        }
+
+        try {
+            Add-PnPFile -Path $mapping.LocalPath -Folder $targetFolder -Connection $SiteConnection -ErrorAction Stop | Out-Null
+        }
+        catch {
+            throw "Could not upload external template '$($mapping.FileName)' to '$targetFolder' on '$SiteUrl'. Ensure the account used has Contribute or higher access to the 'Test Files' library on that site. Original error: $($_.Exception.Message)"
+        }
+
+        $targetUrl = Get-SiteAssetAbsoluteUrl -SiteUrl $SiteUrl -RelativeFolder $targetFolder -FileName $mapping.FileName
+        $urlMap[$mapping.SourceUrl] = $targetUrl
+
+        Write-Step "Deployed external template '$($mapping.FileName)' to '$targetUrl'."
+    }
+
+    return $urlMap
+}
+
+function Replace-ExternalTemplateUrlsInObject {
+    param(
+        [Parameter(Mandatory = $false)]$Object,
+        [Parameter(Mandatory = $true)][hashtable]$UrlMap
+    )
+
+    if ($null -eq $Object -or $UrlMap.Count -eq 0) {
+        return
+    }
+
+    if ($Object -is [string]) {
+        return
+    }
+
+    if ($Object -is [System.Collections.IDictionary]) {
+        foreach ($key in @($Object.Keys)) {
+            $value = $Object[$key]
+
+            if ([string]$key -eq 'externalTemplateUrl') {
+                $currentUrl = [string]$value
+                if (-not [string]::IsNullOrWhiteSpace($currentUrl) -and $UrlMap.ContainsKey($currentUrl)) {
+                    $Object[$key] = $UrlMap[$currentUrl]
+                }
+            }
+
+            Replace-ExternalTemplateUrlsInObject -Object $Object[$key] -UrlMap $UrlMap
+        }
+
+        return
+    }
+
+    if ($Object -is [System.Collections.IEnumerable]) {
+        foreach ($item in $Object) {
+            Replace-ExternalTemplateUrlsInObject -Object $item -UrlMap $UrlMap
+        }
+
+        return
+    }
+
+    foreach ($property in $Object.PSObject.Properties) {
+        if ($property.Name -eq 'externalTemplateUrl') {
+            $currentUrl = [string]$property.Value
+            if (-not [string]::IsNullOrWhiteSpace($currentUrl) -and $UrlMap.ContainsKey($currentUrl)) {
+                $property.Value = $UrlMap[$currentUrl]
+            }
+        }
+
+        Replace-ExternalTemplateUrlsInObject -Object $property.Value -UrlMap $UrlMap
+    }
+}
+
+function Apply-ExternalTemplateUrlMapToPages {
+    param(
+        [Parameter(Mandatory = $true)]$Pages,
+        [Parameter(Mandatory = $true)][hashtable]$UrlMap
+    )
+
+    if ($UrlMap.Count -eq 0) {
+        return
+    }
+
+    foreach ($pageDefinition in @($Pages)) {
+        $webParts = @(Get-OptionalPropertyValue -Object $pageDefinition -PropertyName 'webParts')
+        foreach ($webPart in $webParts) {
+            $properties = Get-OptionalPropertyValue -Object $webPart -PropertyName 'propertiesJson'
+            if ($null -eq $properties) {
+                continue
+            }
+
+            Replace-ExternalTemplateUrlsInObject -Object $properties -UrlMap $UrlMap
+        }
+    }
+}
+
 function Unlock-PageForReplacement {
     param(
         [Parameter(Mandatory = $true)][string]$PageName,
@@ -814,7 +989,12 @@ function Finalize-PageProvisioning {
     }
 
     if ($PublishPage) {
-        Set-PnPPage -Identity $PageName -Publish -Connection $SiteConnection | Out-Null
+        try {
+            Set-PnPPage -Identity $PageName -Publish -Connection $SiteConnection | Out-Null
+        }
+        catch {
+            Write-Step "Publish skipped for page $PageName because SharePoint rejected the current page layout: $($_.Exception.Message)"
+        }
 
         try {
             Set-PnPFileCheckedIn -Url $pageServerRelativeUrl -CheckInType MajorCheckIn -Comment 'Published by provisioning harness' -Connection $SiteConnection -ErrorAction SilentlyContinue | Out-Null
@@ -856,6 +1036,7 @@ function Finalize-PageProvisioning {
                 Set-PnPPage -Identity $PageName -Publish -Connection $SiteConnection | Out-Null
             }
             catch {
+                Write-Step "Publish retry skipped for page $PageName because SharePoint rejected the current page layout."
             }
         }
     }
@@ -1355,6 +1536,210 @@ function Get-ControlIdentitySet {
     return $identities
 }
 
+function New-WebPartConnectionReference {
+    param(
+        [Parameter(Mandatory = $true)][string]$ComponentId,
+        [Parameter(Mandatory = $true)][string]$InstanceId,
+        [Parameter(Mandatory = $true)][string]$Alias
+    )
+
+    return "WebPart.$ComponentId.$InstanceId`:$Alias"
+}
+
+function Resolve-ControlPosition {
+    param([Parameter(Mandatory = $true)]$Control)
+
+    $sectionOrder = 1
+    $columnOrder = 1
+    $order = 1
+
+    $section = Get-OptionalPropertyValue -Object $Control -PropertyName 'Section'
+    $column = Get-OptionalPropertyValue -Object $Control -PropertyName 'Column'
+    $controlOrder = Get-OptionalPropertyValue -Object $Control -PropertyName 'Order'
+
+    if ($null -ne $section) {
+        $sectionOrderCandidate = Get-OptionalPropertyValue -Object $section -PropertyName 'Order'
+        if ($null -ne $sectionOrderCandidate) {
+            $sectionOrder = [int]$sectionOrderCandidate
+        }
+    }
+
+    if ($null -ne $column) {
+        $columnOrderCandidate = Get-OptionalPropertyValue -Object $column -PropertyName 'Order'
+        if ($null -ne $columnOrderCandidate) {
+            $columnOrder = [int]$columnOrderCandidate
+        }
+    }
+
+    if ($null -ne $controlOrder) {
+        $order = [int]$controlOrder
+    }
+
+    return [pscustomobject]@{
+        Section = $sectionOrder
+        Column = $columnOrder
+        Order = $order
+    }
+}
+
+function Sync-SearchConnectionReferences {
+    param(
+        [Parameter(Mandatory = $true)][string]$PageName,
+        [Parameter(Mandatory = $true)]$PageDefinition,
+        [Parameter(Mandatory = $true)]$SiteConnection
+    )
+
+    $pageWebParts = @(Get-OptionalPropertyValue -Object $PageDefinition -PropertyName 'webParts')
+    if ($pageWebParts.Count -eq 0) {
+        return
+    }
+
+    $searchWebParts = @($pageWebParts | Where-Object {
+        $componentKey = [string](Get-OptionalPropertyValue -Object $_ -PropertyName 'componentKey')
+        $componentKey -in @('search-filters', 'search-results')
+    })
+
+    if ($searchWebParts.Count -eq 0) {
+        return
+    }
+
+    $page = Get-PnPPage -Identity $PageName -Connection $SiteConnection -ErrorAction SilentlyContinue
+    if ($null -eq $page) {
+        return
+    }
+
+    $controls = @($page.Controls)
+    if ($controls.Count -eq 0) {
+        return
+    }
+
+    $componentEntries = @()
+    foreach ($webPart in $searchWebParts) {
+        $descriptor = Resolve-ComponentDescriptor -WebPart $webPart
+        $componentKey = [string](Get-OptionalPropertyValue -Object $webPart -PropertyName 'componentKey')
+        $section = Get-OptionalPropertyValue -Object $webPart -PropertyName 'section'
+        $column = Get-OptionalPropertyValue -Object $webPart -PropertyName 'column'
+        $order = Get-OptionalPropertyValue -Object $webPart -PropertyName 'order'
+
+        $componentEntries += [pscustomobject]@{
+            Key = $componentKey
+            ComponentId = [string]$descriptor.Id
+            ComponentAlias = [string]$descriptor.Alias
+            Section = if ($null -ne $section) { [int]$section } else { 1 }
+            Column = if ($null -ne $column) { [int]$column } else { 1 }
+            Order = if ($null -ne $order) { [int]$order } else { 1 }
+        }
+    }
+
+    $resolvedEntries = @()
+    foreach ($entry in $componentEntries) {
+        $matchingControls = @($controls | Where-Object {
+            $controlPosition = Resolve-ControlPosition -Control $_
+            $controlWebPartId = [string](Get-OptionalPropertyValue -Object $_ -PropertyName 'WebPartId')
+            $normalizedControlWebPartId = if ([string]::IsNullOrWhiteSpace($controlWebPartId)) { '' } else { $controlWebPartId.Trim().TrimStart('{').TrimEnd('}').ToLowerInvariant() }
+            $normalizedEntryWebPartId = if ([string]::IsNullOrWhiteSpace([string]$entry.ComponentId)) { '' } else { ([string]$entry.ComponentId).Trim().TrimStart('{').TrimEnd('}').ToLowerInvariant() }
+
+            $normalizedControlWebPartId -eq $normalizedEntryWebPartId -and
+            $controlPosition.Section -eq $entry.Section -and
+            $controlPosition.Column -eq $entry.Column -and
+            $controlPosition.Order -eq $entry.Order
+        })
+
+        if ($matchingControls.Count -eq 0) {
+            continue
+        }
+
+        $matchedControl = $matchingControls | Select-Object -First 1
+        $instanceId = [string](Get-OptionalPropertyValue -Object $matchedControl -PropertyName 'InstanceId')
+        if ([string]::IsNullOrWhiteSpace($instanceId)) {
+            continue
+        }
+
+        $resolvedEntries += [pscustomobject]@{
+            Key = $entry.Key
+            ComponentId = $entry.ComponentId
+            ComponentAlias = $entry.ComponentAlias
+            InstanceId = $instanceId
+        }
+    }
+
+    $filterEntries = @($resolvedEntries | Where-Object { $_.Key -eq 'search-filters' })
+    $resultEntries = @($resolvedEntries | Where-Object { $_.Key -eq 'search-results' })
+    if ($filterEntries.Count -eq 0 -or $resultEntries.Count -eq 0) {
+        return
+    }
+
+    $filterConnectionReferences = @($filterEntries | ForEach-Object {
+        New-WebPartConnectionReference -ComponentId $_.ComponentId -InstanceId $_.InstanceId -Alias $_.ComponentAlias
+    })
+
+    $resultConnectionReferences = @($resultEntries | ForEach-Object {
+        New-WebPartConnectionReference -ComponentId $_.ComponentId -InstanceId $_.InstanceId -Alias $_.ComponentAlias
+    })
+
+    $preferredFilterReference = $filterConnectionReferences[0]
+    $pageComponents = @(Get-PnPPageComponent -Page $PageName -Connection $SiteConnection)
+    $componentByInstanceId = @{}
+    foreach ($component in $pageComponents) {
+        $instanceId = [string](Get-OptionalPropertyValue -Object $component -PropertyName 'InstanceId')
+        if (-not [string]::IsNullOrWhiteSpace($instanceId)) {
+            $componentByInstanceId[$instanceId] = $component
+        }
+    }
+
+    foreach ($filterEntry in $filterEntries) {
+        $component = $componentByInstanceId[$filterEntry.InstanceId]
+        if ($null -eq $component) {
+            continue
+        }
+
+        $propertiesJson = [string](Get-OptionalPropertyValue -Object $component -PropertyName 'PropertiesJson')
+        if ([string]::IsNullOrWhiteSpace($propertiesJson)) {
+            continue
+        }
+
+        $properties = $propertiesJson | ConvertFrom-Json -Depth 100
+        $existingValue = @($properties.dataResultsDataSourceReferences)
+        $existingValueJson = $existingValue | ConvertTo-Json -Compress -Depth 10
+        $newValueJson = $resultConnectionReferences | ConvertTo-Json -Compress -Depth 10
+
+        if ($existingValueJson -eq $newValueJson) {
+            continue
+        }
+
+        $properties.dataResultsDataSourceReferences = $resultConnectionReferences
+        $updatedPropertiesJson = $properties | ConvertTo-Json -Depth 100 -Compress
+        Set-PnPPageWebPart -Page $PageName -Identity $filterEntry.InstanceId -PropertiesJson $updatedPropertiesJson -Connection $SiteConnection | Out-Null
+        Write-Step "Rewired Search Filters web part '$($filterEntry.InstanceId)' to $($resultConnectionReferences.Count) Search Results web part(s)."
+    }
+
+    foreach ($resultEntry in $resultEntries) {
+        $component = $componentByInstanceId[$resultEntry.InstanceId]
+        if ($null -eq $component) {
+            continue
+        }
+
+        $propertiesJson = [string](Get-OptionalPropertyValue -Object $component -PropertyName 'PropertiesJson')
+        if ([string]::IsNullOrWhiteSpace($propertiesJson)) {
+            continue
+        }
+
+        $properties = $propertiesJson | ConvertFrom-Json -Depth 100
+        $existingUseFilters = [bool](Get-OptionalPropertyValue -Object $properties -PropertyName 'useFilters')
+        $existingReference = [string](Get-OptionalPropertyValue -Object $properties -PropertyName 'filtersDataSourceReference')
+
+        if ($existingUseFilters -and $existingReference -eq $preferredFilterReference) {
+            continue
+        }
+
+        $properties.useFilters = $true
+        $properties.filtersDataSourceReference = $preferredFilterReference
+        $updatedPropertiesJson = $properties | ConvertTo-Json -Depth 100 -Compress
+        Set-PnPPageWebPart -Page $PageName -Identity $resultEntry.InstanceId -PropertiesJson $updatedPropertiesJson -Connection $SiteConnection | Out-Null
+        Write-Step "Rewired Search Results web part '$($resultEntry.InstanceId)' to Search Filters web part '$preferredFilterReference'."
+    }
+}
+
 function Ensure-Page {
     param(
         [Parameter(Mandatory = $true)]$PageDefinition,
@@ -1376,7 +1761,13 @@ function Ensure-Page {
 
         Write-Step "Replacing page $pageName"
         Unlock-PageForReplacement -PageName $pageName -SiteConnection $SiteConnection
-        Remove-PnPPage -Identity $pageName -Connection $SiteConnection -Force
+        try {
+            Remove-PnPPage -Identity $pageName -Connection $SiteConnection -Force
+            $existingPage = $null
+        }
+        catch {
+            Write-Step "Could not remove page $pageName because it is locked. Reusing the existing page instead."
+        }
     }
     else {
         Write-Step "Creating page $pageName"
@@ -1385,11 +1776,21 @@ function Ensure-Page {
     $page = $null
     try {
         $pageTitle = Get-OptionalPropertyValue -Object $PageDefinition -PropertyName 'title'
-        $page = Add-PnPPage -Name $pageName -Title ([string]$pageTitle) -LayoutType Article -Connection $SiteConnection
-        Wait-ForPageAvailability -PageName $pageName -SiteConnection $SiteConnection
+        if ($null -ne $existingPage) {
+            $page = $existingPage
+        }
+        else {
+            $page = Add-PnPPage -Name $pageName -Title ([string]$pageTitle) -LayoutType Article -Connection $SiteConnection
+            Wait-ForPageAvailability -PageName $pageName -SiteConnection $SiteConnection
+        }
 
         if ($null -ne (Get-OptionalPropertyValue -Object $PageDefinition -PropertyName 'sections')) {
-            Ensure-PageSections -PageName $pageName -PageDefinition $PageDefinition -SiteConnection $SiteConnection
+            if ($null -eq $existingPage) {
+                Ensure-PageSections -PageName $pageName -PageDefinition $PageDefinition -SiteConnection $SiteConnection
+            }
+            else {
+                Write-Step "Skipping section recreation for existing page $pageName"
+            }
         }
 
         $pageWebParts = @(Get-OptionalPropertyValue -Object $PageDefinition -PropertyName 'webParts')
@@ -1444,6 +1845,8 @@ function Ensure-Page {
                 $controlCountDelta = @($postProvisionControls).Count - @($preProvisionControls).Count
                 Write-Step "Added $attemptedWebPartAdds web part(s) to page $pageName (new controls: $newControlCount; unsupported skipped: $skippedUnsupportedWebParts)"
             }
+
+            Sync-SearchConnectionReferences -PageName $pageName -PageDefinition $PageDefinition -SiteConnection $SiteConnection
         }
 
         $publishPage = $false
@@ -1509,6 +1912,11 @@ if (-not $SkipAppCatalog) {
 }
 
 $siteConnection = Connect-InteractivePnP -Url $siteDefinition.Url -ResolvedClientId $authSettings.ClientId
+
+$externalTemplateUrlMap = Get-ExternalTemplateUrlMap -Scenario $scenario -ScenarioDirectory $scenarioDirectory -SiteUrl $siteDefinition.Url -SiteConnection $siteConnection
+if ($externalTemplateUrlMap.Count -gt 0) {
+    Apply-ExternalTemplateUrlMapToPages -Pages $scenario.pages -UrlMap $externalTemplateUrlMap
+}
 
 if (-not $SkipAppDeployment) {
     Publish-SolutionToSiteCatalog -PackageSettings $packageSettings -SiteConnection $siteConnection | Out-Null

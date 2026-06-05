@@ -1,0 +1,120 @@
+<content id="data-content">
+
+    <style>
+        mgt-person {
+            --initials-background-color: {{@root.theme.palette.themePrimary}};
+        }
+    </style>
+
+    <div class="template">
+
+        {{#if @root.properties.showSelectedFilters}}
+            <pnp-selectedfilters 
+                data-filters="{{JSONstringify filters.selectedFilters 2}}" 
+                data-filters-configuration="{{JSONstringify filters.filtersConfiguration 2}}" 
+                data-instance-id="{{filters.instanceId}}" 
+                data-operator="{{filters.filterOperator}}"
+                data-theme-variant="{{JSONstringify @root.theme}}"
+            >
+            </pnp-selectedfilters>
+        {{/if}}
+       
+        <div class="template--header">
+            {{#if @root.properties.showResultsCount}}
+                <div class="template--resultCount">
+                    <label class="ms-fontWeight-semibold">{{getCountMessage @root.data.totalItemsCount @root.inputQueryText}}</label>
+                </div>
+            {{/if}}
+
+            <div class="template--sort">
+                <pnp-sortfield 
+                    data-fields="{{JSONstringify @root.properties.dataSourceProperties.sortList}}" 
+                    data-default-selected-field="{{sort.selectedSortFieldName}}" 
+                    data-default-direction="{{sort.selectedSortDirection}}"
+                    data-theme-variant="{{JSONstringify @root.theme}}">
+                </pnp-sortfield>    
+            </div>
+        </div>
+        
+        <div>
+            <ul class="template--defaultList">
+                {{#each data.items as |item|}}
+                    <pnp-select 
+                        data-enabled="{{@root.properties.itemSelectionProps.allowItemSelection}}" 
+                        data-index="{{@index}}" 
+                        data-is-selected="{{isItemSelected @root.selectedKeys @index}}">
+
+                        <template id="content">
+                            <li class="template--peopleListItem" tabindex="0">
+                                {{#> resultTypes item=item}}
+
+                                    
+                                        <pnp-persona
+                                            data-image-url="/_layouts/15/userphoto.aspx?size=L&username={{getUserEmail (slot item @root.slots.UserEmail)}}"
+                                            data-primary-text="{{slot item @root.slots.UserDisplayName}}"
+                                            data-secondary-text="{{slot item @root.slots.JobTitle}}"
+                                            data-tertiary-text="<a href='mailto:{{slot item @root.slots.UserEmail}}'>{{slot item @root.slots.UserEmail}}</a>"
+                                            data-optional-text="{{slot item @root.slots.UserPhone}}"
+                                            data-persona-size="6"
+                                            data-native-lpc=true
+                                            data-show-presence=true
+                                            data-user-object-id="{{slot item @root.slots.PersonQuery}}"
+                                            data-upn="{{getUserEmail (slot item @root.slots.UserEmail)}}">
+                                        </pnp-persona>
+                                    
+                                    
+                                {{/resultTypes}}
+                            </li>
+                        </template>
+                            
+                    </pnp-select>
+                {{/each}}
+            </ul>
+        </div>
+
+        {{#if @root.properties.paging.showPaging}}
+
+            {{#gt @root.data.totalItemsCount @root.properties.paging.itemsCountPerPage}}
+                <pnp-pagination 
+                    data-total-items="{{@root.data.totalItemsCount}}" 
+                    data-hide-first-last-pages="{{@root.properties.paging.hideFirstLastPages}}"
+                    data-hide-disabled="{{@root.properties.paging.hideDisabled}}"
+                    data-hide-navigation="{{@root.properties.paging.hideNavigation}}"
+                    data-range="{{@root.properties.paging.pagingRange}}" 
+                    data-items-count-per-page="{{@root.properties.paging.itemsCountPerPage}}" 
+                    data-current-page-number="{{@root.paging.currentPageNumber}}"
+                    data-theme-variant="{{JSONstringify @root.theme}}"
+                >
+                </pnp-pagination>
+            {{/gt}}
+            
+        {{/if}}
+
+    </div>
+
+</content>
+
+<content id="placeholder-content">
+    <div class="placeholder">
+
+        {{#if @root.properties.showResultsCount}}
+            <div class="template--resultCount">
+                <span class="placeholder--shimmer placeholder--line" style="width: 20%"></span>
+            </div>
+        {{/if}}
+
+        <div>
+            <ul class="template--defaultList">
+                {{#times @root.properties.paging.itemsCountPerPage}}   
+                    <pnp-personashimmers 
+                        data-persona-size="{{@root.properties.layoutProperties.personaSize}}"
+                        data-theme-variant="{{JSONstringify @root.theme}}"
+                    >
+                    </pnp-personashimmers>
+                {{/times}}
+            </ul>
+        </div>
+    </div>
+</content>
+
+

@@ -63,6 +63,101 @@ function Read-JsonFile {
     return Get-Content -LiteralPath $Path -Raw | ConvertFrom-Json -Depth 100
 }
 
+function Get-OptionalPropertyValue {
+    param(
+        [Parameter(Mandatory = $false)]$Object,
+        [Parameter(Mandatory = $true)][string]$PropertyName
+    )
+
+    if ($null -eq $Object) {
+        return $null
+    }
+
+    if ($Object -is [System.Collections.IDictionary]) {
+        $keys = $Object.Keys
+        if ($null -ne $keys -and $keys -contains $PropertyName) {
+            return $Object[$PropertyName]
+        }
+
+        return $null
+    }
+
+    $keysProperty = $Object.PSObject.Properties['Keys']
+    if ($null -ne $keysProperty) {
+        $keys = $keysProperty.Value
+        if ($null -ne $keys -and $keys -contains $PropertyName) {
+            return $Object[$PropertyName]
+        }
+
+        return $null
+    }
+
+    $containsKeyMethod = $Object.PSObject.Methods['ContainsKey']
+    if ($null -ne $containsKeyMethod) {
+        if ([bool]$Object.ContainsKey($PropertyName)) {
+            return $Object[$PropertyName]
+        }
+
+        return $null
+    }
+
+    $property = $Object.PSObject.Properties[$PropertyName]
+    if ($null -eq $property) {
+        return $null
+    }
+
+    return $property.Value
+}
+
+function Normalize-IdentityValue {
+    param([string]$Value)
+
+    if ([string]::IsNullOrWhiteSpace($Value)) {
+        return ''
+    }
+
+    return $Value.Trim().TrimStart('{').TrimEnd('}').ToLowerInvariant()
+}
+
+function Get-PageCanvasContent {
+    param(
+        [Parameter(Mandatory = $true)][string]$PageName,
+        [Parameter(Mandatory = $true)]$SiteConnection
+    )
+
+    $item = Get-PnPListItem -List 'Site Pages' -Fields FileLeafRef,CanvasContent1 -PageSize 2000 -Connection $SiteConnection |
+        Where-Object {
+            [string](Get-OptionalPropertyValue -Object $_.FieldValues -PropertyName 'FileLeafRef') -eq $PageName
+        } |
+        Select-Object -First 1
+
+    if ($null -eq $item) {
+        return ''
+    }
+
+    return [string](Get-OptionalPropertyValue -Object $item.FieldValues -PropertyName 'CanvasContent1')
+}
+
+function Test-DescriptorInPageCanvas {
+    param(
+        [Parameter(Mandatory = $true)]$Descriptor,
+        [string]$PageCanvasContent
+    )
+
+    if ([string]::IsNullOrWhiteSpace($PageCanvasContent)) {
+        return $false
+    }
+
+    $expectedId = [string](Get-OptionalPropertyValue -Object $Descriptor -PropertyName 'Id')
+    if ([string]::IsNullOrWhiteSpace($expectedId)) {
+        return $false
+    }
+
+    $normalizedExpectedId = Normalize-IdentityValue -Value $expectedId
+    $normalizedCanvas = Normalize-IdentityValue -Value $PageCanvasContent
+    return $normalizedCanvas.Contains($normalizedExpectedId)
+}
+
 function Ensure-PnPModule {
     if (-not (Get-Module -ListAvailable -Name PnP.PowerShell)) {
         throw 'PnP.PowerShell is not installed. Install it with: Install-Module PnP.PowerShell -Scope CurrentUser'
@@ -160,24 +255,28 @@ function Resolve-PageName {
 function Resolve-ComponentDescriptor {
     param([Parameter(Mandatory = $true)]$WebPart)
 
-    if ($null -ne $WebPart.componentId -and -not [string]::IsNullOrWhiteSpace([string]$WebPart.componentId)) {
+    $componentId    = [string](Get-OptionalPropertyValue -Object $WebPart -PropertyName 'componentId')
+    $componentAlias = [string](Get-OptionalPropertyValue -Object $WebPart -PropertyName 'componentAlias')
+    $componentKey   = [string](Get-OptionalPropertyValue -Object $WebPart -PropertyName 'componentKey')
+
+    if (-not [string]::IsNullOrWhiteSpace($componentId)) {
         return [pscustomobject]@{
-            Id = [string]$WebPart.componentId
-            Alias = [string]$WebPart.componentAlias
+            Id = $componentId
+            Alias = $componentAlias
         }
     }
 
-    if ($null -ne $WebPart.componentAlias -and -not [string]::IsNullOrWhiteSpace([string]$WebPart.componentAlias)) {
+    if (-not [string]::IsNullOrWhiteSpace($componentAlias)) {
         return [pscustomobject]@{
             Id = $null
-            Alias = [string]$WebPart.componentAlias
+            Alias = $componentAlias
         }
     }
 
-    if ($null -ne $WebPart.componentKey -and -not [string]::IsNullOrWhiteSpace([string]$WebPart.componentKey)) {
-        $knownComponent = $script:KnownComponents[[string]$WebPart.componentKey]
+    if (-not [string]::IsNullOrWhiteSpace($componentKey)) {
+        $knownComponent = $script:KnownComponents[$componentKey]
         if ($null -eq $knownComponent) {
-            throw "Unknown componentKey '$($WebPart.componentKey)'."
+            throw "Unknown componentKey '$componentKey'."
         }
 
         return [pscustomobject]@{
@@ -193,6 +292,10 @@ function Get-ComponentIdentityValues {
     param([Parameter(Mandatory = $true)]$Component)
 
     $values = [System.Collections.Generic.List[string]]::new()
+
+    if ($null -eq $Component) {
+        return $values
+    }
 
     foreach ($propertyName in 'Id', 'DefinitionId', 'Name', 'Title') {
         $property = $Component.PSObject.Properties[$propertyName]
@@ -220,14 +323,39 @@ function Find-MatchingComponentIndex {
         [Parameter(Mandatory = $true)]$Descriptor
     )
 
-    for ($index = 0; $index -lt $Components.Count; $index++) {
-        $componentValues = Get-ComponentIdentityValues -Component $Components[$index]
+    if ($null -eq $Components -or $null -eq $Descriptor) {
+        return -1
+    }
 
-        if (-not [string]::IsNullOrWhiteSpace([string]$Descriptor.Id) -and $componentValues.Contains([string]$Descriptor.Id)) {
+    $expectedId = [string](Get-OptionalPropertyValue -Object $Descriptor -PropertyName 'Id')
+    $expectedAlias = [string](Get-OptionalPropertyValue -Object $Descriptor -PropertyName 'Alias')
+    $normalizedExpectedId = Normalize-IdentityValue -Value $expectedId
+    $normalizedExpectedAlias = Normalize-IdentityValue -Value $expectedAlias
+
+    for ($index = 0; $index -lt $Components.Count; $index++) {
+        $componentValues = @(Get-ComponentIdentityValues -Component $Components[$index])
+        $normalizedComponentValues = @($componentValues | ForEach-Object { Normalize-IdentityValue -Value ([string]$_) })
+
+        if (-not [string]::IsNullOrWhiteSpace($normalizedExpectedId) -and ($normalizedComponentValues -contains $normalizedExpectedId)) {
             return $index
         }
 
-        if (-not [string]::IsNullOrWhiteSpace([string]$Descriptor.Alias) -and $componentValues.Contains([string]$Descriptor.Alias)) {
+        if (-not [string]::IsNullOrWhiteSpace($normalizedExpectedAlias)) {
+            if ($normalizedComponentValues -contains $normalizedExpectedAlias) {
+                return $index
+            }
+
+            $hasAliasTokenMatch = @($normalizedComponentValues | Where-Object { $_ -like "*$normalizedExpectedAlias*" }).Count -gt 0
+            if ($hasAliasTokenMatch) {
+                return $index
+            }
+        }
+
+        if (-not [string]::IsNullOrWhiteSpace($expectedId) -and ($componentValues -contains $expectedId)) {
+            return $index
+        }
+
+        if (-not [string]::IsNullOrWhiteSpace($expectedAlias) -and ($componentValues -contains $expectedAlias)) {
             return $index
         }
     }
@@ -237,6 +365,10 @@ function Find-MatchingComponentIndex {
 
 function Get-ComponentDisplayLabel {
     param([Parameter(Mandatory = $true)]$Component)
+
+    if ($null -eq $Component) {
+        return '<null component>'
+    }
 
     foreach ($propertyName in 'Title', 'Name', 'DefinitionId', 'Id') {
         $property = $Component.PSObject.Properties[$propertyName]
@@ -279,12 +411,18 @@ function Test-PageDefinition {
         $components.Add($component)
     }
 
+    $pageCanvasContent = Get-PageCanvasContent -PageName $pageName -SiteConnection $SiteConnection
+
     $expectedWebParts = @($PageDefinition.webParts)
     foreach ($webPartDefinition in $expectedWebParts) {
         $descriptor = Resolve-ComponentDescriptor -WebPart $webPartDefinition
         $matchIndex = Find-MatchingComponentIndex -Components $components -Descriptor $descriptor
 
         if ($matchIndex -lt 0) {
+            if (Test-DescriptorInPageCanvas -Descriptor $descriptor -PageCanvasContent $pageCanvasContent) {
+                continue
+            }
+
             $Failures.Add("Page '$pageName' is missing expected web part '$((Get-ExpectedComponentLabel -Descriptor $descriptor))'.") | Out-Null
             continue
         }
