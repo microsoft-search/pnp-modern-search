@@ -1146,17 +1146,17 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         const from = this.calculatePagingOffset(dataContext);
 
         const aggregations = this.buildAggregations(dataContext);
-        const aggregationFilters = this.buildAggregationFilters(dataContext);
+        const filters = this.buildFilters(dataContext);
         const contentSources = this.buildContentSources();
         const sortProperties = this.buildSortProperties(dataContext);
         const { includeHiddenContent, queryTemplate: finalTemplate } = this.determineHiddenContentSettings(queryTemplate);
 
         const searchRequest = this.buildSearchRequest({
             queryText,
-            queryTemplate: finalTemplate,
+            queryTemplate: finalTemplate.concat(` ${filters}`),
             from,
             aggregations,
-            aggregationFilters,
+            aggregationFilters: [], // The aggregationFilters input cannot combine multiple filters under an OR relationship, so the queryTemplate field is used (issue #4813)
             contentSources,
             sortProperties,
             includeHiddenContent,
@@ -1240,9 +1240,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         ];
     }
 
-    private buildAggregationFilters(dataContext: IDataContext): string[] {
-        const aggregationFilters: string[] = [];
-
+    private buildFilters(dataContext: IDataContext): string {
         if (dataContext.filters.selectedFilters.length > 0) {
             // The Microsoft Search API expects KQL-formatted refinement strings in aggregationFilters.
             // Using FQL here causes multi-filter combinations to return 0 results (issue #4796).
@@ -1253,11 +1251,11 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             );
 
             if (!isEmpty(refinementString)) {
-                aggregationFilters.push(refinementString);
+                return refinementString;
             }
         }
 
-        return aggregationFilters;
+        return "";
     }
 
     private buildContentSources(): string[] {
