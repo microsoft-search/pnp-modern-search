@@ -43,7 +43,7 @@
         "handlebars": "4.7.9",
         "immutability-helper": "3.1.1",
         "jspath": "0.4.0",
-        "markdown-it": "14.1.1",
+        "markdown-it": "14.2.0",
         "react": "17.0.1",
         "react-ace": "10.1.0",
         "react-dom": "17.0.1",
