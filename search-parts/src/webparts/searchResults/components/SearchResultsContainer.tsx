@@ -287,13 +287,14 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                     // Send back the previous filters with reset values to the Data Filter WP to keep selected values in the UI and be able to reset them if necessary
                     // (Ex: Multi values filters, date range)
                     availableFilters = this._lastAvailableSearchFilters.map(lastAvailableFilter => {
-                        lastAvailableFilter.values = [];
-                        return lastAvailableFilter;
+                        const clonedAvailableFilter = cloneDeep(lastAvailableFilter);
+                        clonedAvailableFilter.values = [];
+                        return clonedAvailableFilter;
                     });
 
                 } else {
-                    availableFilters = data.filters;
-                    this._lastAvailableSearchFilters = availableFilters;
+                    availableFilters = cloneDeep(data.filters);
+                    this._lastAvailableSearchFilters = cloneDeep(availableFilters);
                 }
             }
 

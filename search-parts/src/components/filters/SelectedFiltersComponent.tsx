@@ -69,9 +69,6 @@ export class SelectedFiltersComponent extends React.Component<ISelectedFiltersPr
 
             // Display only filter with values
             const renderFilters = filters.map((filter: IDataFilter, i) => {
-
-                let filterValuesString;
-
                 if (filter.values.length > 0) {
 
                     let renderValues: JSX.Element[] = null;
@@ -84,21 +81,42 @@ export class SelectedFiltersComponent extends React.Component<ISelectedFiltersPr
                         filterName = currentFilterConfig[0].displayValue ? currentFilterConfig[0].displayValue : filterName;
                     }
 
-                    renderValues = filter.values.map((value, j) => {
+                    const uniqueDisplayValues: Array<{ displayValue: string; operator: FilterComparisonOperator }> = [];
+                    const seenDisplayValues = new Set<string>();
+
+                    filter.values.forEach(value => {
                         let displayValue = this.props.dayjs && this.props.dayjs(value.value).isValid() ? this.props.dayjs(value.value).format('LL') : value.name;
 
-                        if (displayValue.indexOf("i:0#") > -1) {
+                        // For taxonomy filters (GPP/GP0 tokens), extract the label if name is not set
+                        if (!displayValue || displayValue.indexOf("GPP|#") === 0 || displayValue.indexOf("GP0|#") === 0) {
+                            // Try to extract label from the token value field
+                            const labelFromToken = this.extractLabelFromToken(value.value);
+                            if (labelFromToken) {
+                                displayValue = labelFromToken;
+                            }
+                        }
+
+                        if (displayValue && displayValue.indexOf("i:0#") > -1) {
                             //displayValue = displayValue.split("|")[1] + " (" + displayValue.split("|")[0] +")";  //like [PeopleCheckBox=" Lee Gu (LeeG@tcwlv.onmicrosoft.com )"]
                             displayValue = displayValue.split("|")[1];  //like [PeopleCheckBox=" Lee Gu"]
                         }
 
-                        const filterString = `${filterName}${this.getComparisonOperatorString(value.operator)}"${displayValue}"`;
-                        filterValuesString = `${filterString}`;
+                        const normalizedDisplayValue = displayValue ? displayValue.trim().toLocaleLowerCase() : '';
+                        if (normalizedDisplayValue.length > 0 && !seenDisplayValues.has(normalizedDisplayValue)) {
+                            seenDisplayValues.add(normalizedDisplayValue);
+                            uniqueDisplayValues.push({
+                                displayValue,
+                                operator: value.operator
+                            });
+                        }
+                    });
+
+                    renderValues = uniqueDisplayValues.map((entry, j) => {
+                        const filterString = `${filterName}${this.getComparisonOperatorString(entry.operator)}"${entry.displayValue}"`;
                         let renderFilterValues = null;
 
-                        if (j < filter.values.length - 1) {
+                        if (j < uniqueDisplayValues.length - 1) {
                             renderFilterValues = <span className={styles.operator} style={{ marginLeft: 5, marginRight: 5 }}>{`${operator}`}</span>;
-                            filterValuesString = `${filterValuesString} ${operator}`;
                         }
 
                         return <>
@@ -170,6 +188,41 @@ export class SelectedFiltersComponent extends React.Component<ISelectedFiltersPr
         } else {
             Log.info(SelectedFilters_LogSource, `Unable to find the data filter WP. Did you forget to add the 'instance-id' attribute to the 'pnp-selectedfilters' component?`);
         }
+    }
+
+    private extractLabelFromToken = (tokenValue: string): string => {
+        if (!tokenValue) return null;
+
+        try {
+            // Handle encoded hex format (ǂǂHEX)
+            let decodedToken = tokenValue;
+            if (tokenValue.startsWith('"') && tokenValue.includes('ǂǂ')) {
+                const hexPart = tokenValue.slice(tokenValue.indexOf('ǂǂ') + 2, -1); // Remove quotes and ǂǂ prefix
+                decodedToken = String.fromCharCode(...hexPart.match(/.{1,2}/g).map(hex => parseInt(hex, 16)));
+            }
+
+            // Extract label from taxonomy token patterns like:
+            // - GPP|#GUID|Label or GPP|#0|Label (parent)
+            // - GP0|#GUID|Label (leaf)
+            // - or(...) patterns
+            const labelRegex = /\|#[^|]*\|([^|;)]+)/;
+            const match = decodedToken.match(labelRegex);
+            if (match && match[1]) {
+                return match[1];
+            }
+
+            // Try to extract from L0|#GUID|Label pattern
+            const l0Regex = /L0\|#[^|]*\|([^|;)]+)/;
+            const l0Match = decodedToken.match(l0Regex);
+            if (l0Match && l0Match[1]) {
+                return l0Match[1];
+            }
+        } catch {
+            // Fail silently and return null
+            Log.warn(SelectedFilters_LogSource, `Failed to extract label from token: ${tokenValue}`);
+        }
+
+        return null;
     }
 
     private getConditionOperatorString(operator: FilterConditionOperator): string {
