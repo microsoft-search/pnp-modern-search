@@ -849,7 +849,7 @@ function Get-ExternalTemplateUrlMap {
         [Parameter(Mandatory = $true)]$SiteConnection
     )
 
-    $templateMappings = Get-ExternalTemplateMappings -Scenario $Scenario -ScenarioDirectory $ScenarioDirectory
+    $templateMappings = @(Get-ExternalTemplateMappings -Scenario $Scenario -ScenarioDirectory $ScenarioDirectory)
     if ($templateMappings.Count -eq 0) {
         return @{}
     }
@@ -950,6 +950,51 @@ function Apply-ExternalTemplateUrlMapToPages {
             Replace-ExternalTemplateUrlsInObject -Object $properties -UrlMap $UrlMap
         }
     }
+}
+
+function Resolve-FqdnTokenInObject {
+    param(
+        [Parameter(Mandatory = $false)]$Object,
+        [Parameter(Mandatory = $true)][string]$Fqdn
+    )
+
+    if ($null -eq $Object -or [string]::IsNullOrWhiteSpace($Fqdn)) {
+        return $Object
+    }
+
+    if ($Object -is [string]) {
+        return ($Object -replace '(?i)\{fqdn\}', $Fqdn)
+    }
+
+    if ($Object -is [System.Collections.IDictionary]) {
+        foreach ($key in @($Object.Keys)) {
+            $Object[$key] = Resolve-FqdnTokenInObject -Object $Object[$key] -Fqdn $Fqdn
+        }
+
+        return $Object
+    }
+
+    if ($Object -is [System.Collections.IList]) {
+        for ($index = 0; $index -lt $Object.Count; $index++) {
+            $Object[$index] = Resolve-FqdnTokenInObject -Object $Object[$index] -Fqdn $Fqdn
+        }
+
+        return $Object
+    }
+
+    if ($Object -is [System.Collections.IEnumerable]) {
+        foreach ($item in $Object) {
+            Resolve-FqdnTokenInObject -Object $item -Fqdn $Fqdn | Out-Null
+        }
+
+        return $Object
+    }
+
+    foreach ($property in $Object.PSObject.Properties) {
+        $property.Value = Resolve-FqdnTokenInObject -Object $property.Value -Fqdn $Fqdn
+    }
+
+    return $Object
 }
 
 function Unlock-PageForReplacement {
@@ -1887,6 +1932,8 @@ $scenarioFullPath = Resolve-AbsolutePath -Path $ScenarioPath -BasePath (Get-Loca
 $scenarioDirectory = Split-Path -Path $scenarioFullPath -Parent
 $scenario = Read-JsonFile -Path $scenarioFullPath
 $authSettings = Get-AuthSettings -Scenario $scenario -HasTenantUrlOverride $PSBoundParameters.ContainsKey('TenantUrl') -HasClientIdOverride $PSBoundParameters.ContainsKey('ClientId') -HasAdminUrlOverride $PSBoundParameters.ContainsKey('AdminUrl')
+$tenantHost = ([System.Uri]$authSettings.TenantUrl).Host
+$scenario = Resolve-FqdnTokenInObject -Object $scenario -Fqdn $tenantHost
 $searchPartsRoot = Get-SearchPartsRoot
 $siteDefinition = Get-SiteDefinition -Scenario $scenario
 $packageSettings = Get-PackageSettings -Scenario $scenario -ScenarioDirectory $scenarioDirectory -SearchPartsRoot $searchPartsRoot
