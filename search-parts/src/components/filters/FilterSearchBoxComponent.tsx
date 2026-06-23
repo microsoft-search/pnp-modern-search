@@ -41,6 +41,27 @@ export class FilterSearchBox extends React.Component<IFilterSearchBoxProps, IFil
         super(props);
     }
 
+    private readonly isPeopleTemplate = (): boolean => {
+        return (this.props.filter as any)?.selectedTemplate === 'PeopleTemplate';
+    }
+
+    private readonly getDisplayName = (rawName: string): string => {
+        if (!rawName) {
+            return rawName;
+        }
+
+        if (!this.isPeopleTemplate()) {
+            return rawName;
+        }
+
+        const parts = rawName.split('|');
+        if (parts.length > 1) {
+            return parts[1].trim();
+        }
+
+        return rawName;
+    }
+
     public render() {
 
         let textColor: string = this.props.themeVariant && this.props.themeVariant.isInverted ? (this.props.themeVariant ? this.props.themeVariant.semanticColors.bodyText : '#323130') : this.props.themeVariant.semanticColors.inputText;
@@ -117,26 +138,7 @@ export class FilterSearchBox extends React.Component<IFilterSearchBoxProps, IFil
                 }
             },
             onRenderItem: (props) => {
-
-                let propsitemname:string = props.item.name;
-                if(props.item.name.indexOf("i:0#.f") > -1) 
-                    {
-                        //From localSharePointResults: Admin@tcwlv.onmicrosoft.com | Kasper Larsen | 693A30232E667C6D656D626572736869707C61646D696E407463776C762E6F6E6D6963726F736F66742E636F6D i:0#.f|membership|admin@tcwlv.onmicrosoft.com
-                        //From localPeopleResults: i:0#.f|membership|pattif@tcwlv.onmicrosoft.com
-                        if(props.item.name.indexOf("i:0#.f") === 0) 
-                        {
-                            propsitemname = props.item.name.split('|')[2]
-                        }
-                        else
-                        {
-                            propsitemname = props.item.name.split('|')[1] 
-
-                        }
-
-                        
-                        
-                    }
-                    
+                const propsitemname: string = this.getDisplayName(props.item.name);
 
                 return <div
                     className={styles.tagItem}
@@ -174,6 +176,9 @@ export class FilterSearchBox extends React.Component<IFilterSearchBoxProps, IFil
                     >
                     </IconButton>
                 </div>;
+            },
+            onRenderSuggestionsItem: (itemProps: ITag) => {
+                return <span>{this.getDisplayName(itemProps.name)}</span>;
             },
             resolveDelay: 200,
             onItemSelected: (selectedItem: ITag) => {
