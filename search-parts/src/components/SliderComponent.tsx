@@ -44,6 +44,12 @@ export interface ISliderOptions {
      * At the end of cells, wrap-around to the other end for infinite scrolling.
      */
     wrapAround?: boolean;
+
+    /**
+     * Stretches each slide to the full width of the slider viewport (drops the fixed slide width cap).
+     * Useful for full-bleed/hero sliders. Opt-in so existing fixed-width sliders are unaffected.
+     */
+    fullWidth?: boolean;
 }
 
 export interface ISliderComponentProps {
@@ -271,7 +277,7 @@ export class SliderComponent extends React.Component<ISliderComponentProps, ISli
                         }
                     );
 
-                    return <div key={absoluteIndex} className={styles.carouselSlide}>
+                    return <div key={absoluteIndex} className={`${styles.carouselSlide} flickity-cell`}>
                         <div dangerouslySetInnerHTML={{ __html: DomPurifyHelper.instance.sanitize(templateContentValue) }}></div>
                     </div>;
                 });
@@ -290,6 +296,7 @@ export class SliderComponent extends React.Component<ISliderComponentProps, ISli
             const wrapAround = sliderOptions.wrapAround === true;
             const showControls = this._pageCount > 1;
             const showDots = showControls && sliderOptions.showPageDots === true;
+            const fullWidth = sliderOptions.fullWidth === true;
 
             const prevDisabled = !wrapAround && currentIndex === 0;
             const nextDisabled = !wrapAround && currentIndex === this._pageCount - 1;
@@ -299,7 +306,7 @@ export class SliderComponent extends React.Component<ISliderComponentProps, ISli
             const slideWidth = templateContext?.properties?.layoutProperties?.slideWidth || 318;
 
             return <div
-                className={styles.carouselContainer}
+                className={`${styles.carouselContainer} flickity-enabled pnp-slider${fullWidth ? ` ${styles.carouselFullWidth}` : ''}`}
                 onMouseEnter={this._onMouseEnter}
                 onMouseLeave={this._onMouseLeave}
                 ref={(el) => {
@@ -313,16 +320,16 @@ export class SliderComponent extends React.Component<ISliderComponentProps, ISli
             >
                 {showControls &&
                     <IconButton
-                        className={`${styles.carouselButton} ${styles.carouselButtonPrev}`}
+                        className={`${styles.carouselButton} ${styles.carouselButtonPrev} flickity-button flickity-prev-next-button previous`}
                         iconProps={{ iconName: 'ChevronLeft' }}
                         ariaLabel={strings.Layouts.Slider.PreviousPageLabel}
                         disabled={prevDisabled}
                         onClick={this._goToPrevious}
                     />
                 }
-                <div className={styles.carouselViewport}>
+                <div className={`${styles.carouselViewport} flickity-viewport`}>
                     <div
-                        className={styles.carouselTrack}
+                        className={`${styles.carouselTrack} flickity-slider`}
                         style={{ transform: `translateX(-${currentIndex * 100}%)` }}
                     >
                         {carouselElements.map((element, index) => (
@@ -338,7 +345,7 @@ export class SliderComponent extends React.Component<ISliderComponentProps, ISli
                 </div>
                 {showControls &&
                     <IconButton
-                        className={`${styles.carouselButton} ${styles.carouselButtonNext}`}
+                        className={`${styles.carouselButton} ${styles.carouselButtonNext} flickity-button flickity-prev-next-button next`}
                         iconProps={{ iconName: 'ChevronRight' }}
                         ariaLabel={strings.Layouts.Slider.NextPageLabel}
                         disabled={nextDisabled}
@@ -346,9 +353,9 @@ export class SliderComponent extends React.Component<ISliderComponentProps, ISli
                     />
                 }
                 {showDots &&
-                    <ol className={styles.carouselIndicators}>
+                    <ol className={`${styles.carouselIndicators} flickity-page-dots`}>
                         {carouselElements.map((element, index) => (
-                            <li key={`carousel-dot-${index}`}>
+                            <li key={`carousel-dot-${index}`} className={index === currentIndex ? 'dot is-selected' : 'dot'}>
                                 <button
                                     type="button"
                                     className={index === currentIndex ? styles.carouselIndicatorActive : undefined}
