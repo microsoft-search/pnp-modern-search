@@ -1808,7 +1808,11 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
         // Get the corresponding configuration for this filter
         filtersConfiguration.forEach(filterConfiguration => {
 
-            if (BuiltinFilterTypes[filterConfiguration.selectedTemplate] === FilterType.StaticFilter) {
+            const shouldKeepVisibleWhenMissing =
+                BuiltinFilterTypes[filterConfiguration.selectedTemplate] === FilterType.StaticFilter
+                || filterConfiguration.selectedTemplate === BuiltinFilterTemplates.Hierarchical;
+
+            if (shouldKeepVisibleWhenMissing) {
 
                 // Check if the filter already exists
                 if (filterResults.filter(filterResult => filterResult.filterName === filterConfiguration.filterName).length === 0) {
