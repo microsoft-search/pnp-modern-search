@@ -198,7 +198,12 @@ export class SelectedFiltersComponent extends React.Component<ISelectedFiltersPr
             let decodedToken = tokenValue;
             if (tokenValue.startsWith('"') && tokenValue.includes('ǂǂ')) {
                 const hexPart = tokenValue.slice(tokenValue.indexOf('ǂǂ') + 2, -1); // Remove quotes and ǂǂ prefix
-                decodedToken = String.fromCharCode(...hexPart.match(/.{1,2}/g).map(hex => parseInt(hex, 16)));
+                const hexPairs = hexPart.match(/.{1,2}/g);
+                if (hexPairs) {
+                    decodedToken = String.fromCharCode(...hexPairs.map(hex => parseInt(hex, 16)));
+                } else {
+                    return null;
+                }
             }
 
             // Extract label from taxonomy token patterns like:
