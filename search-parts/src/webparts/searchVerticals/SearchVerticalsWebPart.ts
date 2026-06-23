@@ -100,7 +100,20 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
         }
     }
 
+    /**
+     * Tracks whether the Web Part has been disposed. Async callbacks may resolve after the instance
+     * is torn down; rendering then crashes because 'this.context' is no longer available. This flag
+     * lets render() bail out safely.
+     */
+    private _webPartDisposed: boolean = false;
+
     public async render(): Promise<void> {
+
+        // The Web Part may have been disposed while an async callback was in flight. Rendering a
+        // disposed instance crashes because 'this.context' is no longer available, so bail out early.
+        if (this._webPartDisposed) {
+            return;
+        }
 
         // Check audience targeting - if user is not in audience, don't render
         const isInAudience = await this.isInAudience();
@@ -113,26 +126,8 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
 
         let renderRootElement: JSX.Element = null;
 
-        let defaultSelectedKey: string = undefined;
-
-        // Check if we can find a default vertical to set
-        if (this.properties.defaultVerticalQueryStringParam) {
-            const queryParms: UrlQueryParameterCollection = new UrlQueryParameterCollection(window.location.href.toLowerCase());
-            const defaultQueryVal: string = queryParms.getValue(this.properties.defaultVerticalQueryStringParam.toLowerCase());
-
-            if (defaultQueryVal) {
-                const defaultSelected: IDataVerticalConfiguration[] = this.properties.verticals.filter(v => v.tabName.toLowerCase() === decodeURIComponent(defaultQueryVal));
-                if (defaultSelected.length === 1) {
-                    defaultSelectedKey = defaultSelected[0].key;
-                }
-            }
-        } else {
-            const pagename = window.location.pathname.toLowerCase();
-            const defaultSelected: IDataVerticalConfiguration[] = this.properties.verticals.filter(v => v.isLink && v.linkUrl.toLowerCase().indexOf(pagename) > -1);
-            if (defaultSelected.length === 1) {
-                defaultSelectedKey = defaultSelected[0].key;
-            }
-        }
+        // Resolve the vertical that should be selected by default (from query string or current page).
+        const defaultSelectedKey: string = this._resolveDefaultSelectedKey();
 
         if (this.displayMode === DisplayMode.Edit && this.properties.verticals.length === 0) {
 
@@ -191,8 +186,38 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
         }
 
 
+        // The Web Part may have been disposed while awaiting audience filtering above. Rendering a
+        // disposed instance crashes because 'this.context' is no longer available, so bail out.
+        if (this._webPartDisposed || !this.context) {
+            return;
+        }
+
         // eslint-disable-next-line @rushstack/pair-react-dom-render-unmount -- render is paired with unmount in onDispose
         ReactDom.render(renderRootElement, this.domElement);
+    }
+
+    /**
+     * Resolves the key of the vertical that should be selected by default, based either on the
+     * configured query-string parameter or on the current page URL (for link verticals).
+     * Returns undefined when no single matching vertical is found.
+     */
+    private _resolveDefaultSelectedKey(): string {
+
+        if (this.properties.defaultVerticalQueryStringParam) {
+            const queryParms: UrlQueryParameterCollection = new UrlQueryParameterCollection(window.location.href.toLowerCase());
+            const defaultQueryVal: string = queryParms.getValue(this.properties.defaultVerticalQueryStringParam.toLowerCase());
+
+            if (defaultQueryVal) {
+                const defaultSelected: IDataVerticalConfiguration[] = this.properties.verticals.filter(v => v.tabName.toLowerCase() === decodeURIComponent(defaultQueryVal));
+                return defaultSelected.length === 1 ? defaultSelected[0].key : undefined;
+            }
+
+            return undefined;
+        }
+
+        const pagename = window.location.pathname.toLowerCase();
+        const defaultSelected: IDataVerticalConfiguration[] = this.properties.verticals.filter(v => v.isLink && v.linkUrl.toLowerCase().indexOf(pagename) > -1);
+        return defaultSelected.length === 1 ? defaultSelected[0].key : undefined;
     }
 
     /**
@@ -272,6 +297,7 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
     }
 
     protected onDispose(): void {
+        this._webPartDisposed = true;
         // eslint-disable-next-line @rushstack/pair-react-dom-render-unmount -- paired with render in renderCompleted
         ReactDom.unmountComponentAtNode(this.domElement);
     }

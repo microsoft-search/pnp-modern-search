@@ -264,6 +264,14 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
      */
     private _hasPotentialIncomingConnections: boolean = false;
 
+    /**
+     * Tracks whether the Web Part has been disposed. Async callbacks (theme change, dynamic data
+     * 'available sources changed', extension loading, etc.) may resolve after the instance is torn
+     * down; rendering then crashes inside SPFx's async render watchdog (`Cannot read properties of
+     * undefined (reading 'webPartTag')`). This flag lets render() bail out safely.
+     */
+    private _webPartDisposed: boolean = false;
+
     constructor() {
         super();
 
@@ -276,8 +284,22 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     public async render(): Promise<void> {
         try {
 
+            // The Web Part may have been disposed while an async callback (theme change, dynamic data
+            // source change, extension loading, ...) was in flight. Rendering a disposed instance
+            // crashes SPFx's async render watchdog, so bail out early.
+            if (this._webPartDisposed) {
+                return;
+            }
+
             // Check audience targeting - if user is not in audience, don't render
             const isInAudience = await this.isInAudience();
+
+            // The Web Part may have been disposed while awaiting audience evaluation; bail out before
+            // touching this.context (SPFx tears it down on dispose).
+            if (this._webPartDisposed || !this.context) {
+                return;
+            }
+
             this._isHiddenByAudience = !isInAudience;
             if (!isInAudience) {
                 // eslint-disable-next-line @rushstack/pair-react-dom-render-unmount -- cleanup on audience hide, paired with onDispose
@@ -306,6 +328,12 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
             // Refresh the token values with the latest information from environment (i.e connections and settings)
             await this.setTokens();
+
+            // Re-check disposal after the awaited init/token work before resolving context-dependent
+            // data source and layout instances (LayoutHelper.getLayoutInstance uses this.context).
+            if (this._webPartDisposed || !this.context) {
+                return;
+            }
 
             // We resolve data source and layout instances directly in the render method to avoid unexpected render triggers due to Web Part property bag manipulation 
             // SPFx has an inner routine in reactive mode to trigger a render every time a property bag value is updated conflicting with the way data source and layouts share properties (see _afterPropertyUpdated)
@@ -359,6 +387,10 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             }
 
             if (this.dataSource) {
+                // Re-check disposal after the prior awaits before building the data context.
+                if (this._webPartDisposed || !this.context) {
+                    return;
+                }
                 this._currentDataContext = await this.getDataContext();
             }
             return this.renderCompleted();
@@ -458,6 +490,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         // Check if instanceId is defined - it might not be initialized yet during early render cycles
         if (!instanceId) {
             Log.verbose(`[SearchResultsWebPart.renderCompleted]`, `instanceId is not yet initialized, skipping render`, this.context?.serviceScope);
+            super.renderCompleted();
             return;
         }
 
@@ -703,6 +736,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     }
 
     protected onDispose(): void {
+        this._webPartDisposed = true;
         if (this._pushStateCallback) {
             window.history.pushState = this._pushStateCallback;
         }
@@ -2399,7 +2433,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             }
         }
 
-        // Notfify dynamic data consumers data have changed
+        // Notify dynamic data consumers data have changed
         if (this.properties.allowWebPartConnections && this.context && this.context.dynamicDataSourceManager && !this.context.dynamicDataSourceManager.isDisposed) {
             this.context.dynamicDataSourceManager.notifyPropertyChanged(ComponentType.SearchResults);
         }
@@ -2418,9 +2452,15 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         this._currentDataResultsSourceData.selectedItems = cloneDeep(currentSelectedItems);
 
-        // Notfify dynamic data consumers data have changed
-        if (this.properties.allowWebPartConnections) {
+        // Notify dynamic data consumers data have changed.
+        // Selection changes can occur while the web part is being torn down, so guard against a missing
+        // or disposed context/dynamicDataSourceManager (same pattern as _onDataRetrieved).
+        if (this.properties.allowWebPartConnections && this.context?.dynamicDataSourceManager && !this.context.dynamicDataSourceManager.isDisposed) {
             this.context.dynamicDataSourceManager.notifyPropertyChanged(DynamicDataProperties.AvailableFieldValuesFromResults);
+
+            // Also notify consumers connected to the whole results source object so a connection to the
+            // 'selectedItems' sub-property is refreshed when the selection changes (otherwise it stays empty).
+            this.context.dynamicDataSourceManager.notifyPropertyChanged(ComponentType.SearchResults);
         }
     }
 

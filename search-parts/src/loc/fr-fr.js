@@ -283,7 +283,10 @@ define([], function () {
                 SliderShowPageDots: "Afficher les points de numéro de page",
                 SliderWrapAround: "Défilement à l’infini",
                 SlideHeight: "Hauteur de la diapositive (en pixels)",
-                SlideWidth: "Largeur de la diapositive (en pixels)"
+                SlideWidth: "Largeur de la diapositive (en pixels)",
+                PreviousPageLabel: "Page précédente",
+                NextPageLabel: "Page suivante",
+                GoToPageLabel: "Aller à la page {0}"
             },
             People: {
                 Name: "Personnel",

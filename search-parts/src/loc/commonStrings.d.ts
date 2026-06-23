@@ -284,6 +284,9 @@ declare interface ICommonStrings {
         SliderWrapAround: string;
         SlideWidth: string;
         SlideHeight: string;
+        PreviousPageLabel: string;
+        NextPageLabel: string;
+        GoToPageLabel: string;
       };
       People: {
         Name: string;

@@ -27,15 +27,19 @@ export class TaxonomyHelper {
 
     public static decodeHexString(hexStr: string): string {
         try {
-            let value = hexStr;
+            let value = (hexStr || '').trim();
 
-            if (value.startsWith('"')) {
-                value = value.substring(1);
+            // Values can come wrapped as "ǂǂ..." from deep links or as "ǂǂ..." literals.
+            if (value.startsWith('\\"') && value.endsWith('\\"') && value.length >= 4) {
+                value = value.substring(2, value.length - 2);
             }
 
-            if (value.endsWith('"')) {
-                value = value.substring(0, value.length - 1);
+            if (value.startsWith('"') && value.endsWith('"') && value.length >= 2) {
+                value = value.substring(1, value.length - 1);
             }
+
+            // If escaped quotes remain in the middle, normalize them.
+            value = value.replace(/\\"/g, '"');
 
             value = value.replace(/^ǂǂ/, '');
 

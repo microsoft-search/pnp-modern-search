@@ -158,10 +158,44 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         return guidSet;
     }
 
+    private areFilterValuesEquivalent = (leftValue: string, rightValue: string): boolean => {
+        if (!leftValue || !rightValue) {
+            return false;
+        }
+
+        if (leftValue === rightValue) {
+            return true;
+        }
+
+        const leftGuids = TaxonomyHelper.extractGuidsFromFilterValue(leftValue);
+        const rightGuids = TaxonomyHelper.extractGuidsFromFilterValue(rightValue);
+
+        if (leftGuids.length === 0 || rightGuids.length === 0) {
+            return false;
+        }
+
+        return leftGuids.some(guid => rightGuids.includes(guid));
+    }
+
     private formatLocalizedString(template: string, values: Array<string | number>): string {
         return values.reduce<string>((formattedValue, currentValue, index) => {
             return formattedValue.replace(`{${index}}`, currentValue.toString());
         }, template);
+    }
+
+    private getFilterSignature(filters: Array<{ filterName: string; values?: Array<{ value?: string; selected?: boolean }> }>): string {
+        return (filters || [])
+            .map(filter => {
+                const selectedValues = (filter.values || [])
+                    .filter(value => value.selected)
+                    .map(value => value.value)
+                    .sort()
+                    .join(',');
+
+                return `${filter.filterName}:${selectedValues}`;
+            })
+            .sort()
+            .join('|');
     }
 
     public render(): React.ReactElement<ISearchFiltersContainerProps> {
@@ -190,7 +224,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             const templateContext = this.getTemplateContext();
 
             renderWpContent = <TemplateRenderer
-                key={`${this.props.instanceId}_${this.props.selectedLayoutKey}_${this.state.currentUiFilters.length}_${this.state.submittedFilters.length}`}
+                key={`${this.props.instanceId}_${this.props.selectedLayoutKey}_${this.getFilterSignature(this.state.currentUiFilters)}_${this.getFilterSignature(this.state.submittedFilters)}`}
                 templateContent={templateContent}
                 templateContext={templateContext}
                 templateService={this.props.templateService}
@@ -258,11 +292,11 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
             this.getFiltersToDisplay(this.props.availableFilters, this.state.currentUiFilters, this.props.filtersConfiguration);
 
-            const submittedFilters = this.getSelectedFiltersFromUIFilters(this.state.currentUiFilters);
-
-            this.setState({
-                submittedFilters: submittedFilters
-            });
+            // submittedFilters must NOT be synced here.
+            // It is exclusively managed by: bindApplyFiltersEvents (Apply clicked),
+            // onFilterValuesUpdated (non-multi immediate apply), and getFiltersDeepLink (deep link restore).
+            // Syncing it here would immediately promote pending UI selections to submitted,
+            // making canApply always false for multi-select filters.
         }
     }
 
@@ -324,7 +358,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
                         if (selectedFilterIdx !== -1) {
 
-                            const valueIdx = currentUiFilters[selectedFilterIdx].values.map(value => { return value.value; }).indexOf(availableValue.value);
+                            const valueIdx = currentUiFilters[selectedFilterIdx].values.findIndex(value => this.areFilterValuesEquivalent(value.value as string, availableValue.value));
 
                             // A new filter value is available
                             if (valueIdx === -1) {
@@ -334,7 +368,30 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                                 // Update the count + name information
                                 const updatedValue = currentUiFilters[selectedFilterIdx].values[valueIdx];
                                 updatedValue.count = availableValue.count;
-                                updatedValue.name = availableValue.name;
+                                // Only overwrite name if it's not already a human-readable label (i.e., avoid replacing labels with tokens)
+                                const currentNameIsToken = updatedValue.name && (
+                                    updatedValue.name.indexOf("GPP|#") === 0 ||
+                                    updatedValue.name.indexOf("GP0|#") === 0 ||
+                                    updatedValue.name.indexOf("L0|#") === 0 ||
+                                    (updatedValue.name.startsWith('"') && updatedValue.name.includes('ǂǂ'))
+                                );
+                                const availableNameIsToken = availableValue.name && (
+                                    availableValue.name.indexOf("GPP|#") === 0 ||
+                                    availableValue.name.indexOf("GP0|#") === 0 ||
+                                    availableValue.name.indexOf("L0|#") === 0 ||
+                                    (availableValue.name.startsWith('"') && availableValue.name.includes('ǂǂ'))
+                                );
+                                // Only update name if: current is a token and available is NOT a token (i.e., upgrade to readable)
+                                // OR if both are tokens or both are readable (normal refresh)
+                                if (currentNameIsToken && !availableNameIsToken) {
+                                    updatedValue.name = availableValue.name;
+                                } else if (!currentNameIsToken && availableNameIsToken) {
+                                    // Keep current name as it's already human-readable
+                                    // Don't overwrite with token from refiner
+                                } else {
+                                    // Both are tokens or both are readable - safe to update
+                                    updatedValue.name = availableValue.name;
+                                }
                                 return updatedValue;
                             }
 
@@ -349,7 +406,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                 if (selectedFilterIdx !== -1) {
                     const additionalValues = currentUiFilters[selectedFilterIdx].values.map(value => {
 
-                        const valueIdx = values.map(v => { return v.value; }).indexOf(value.value);
+                        const valueIdx = values.findIndex(v => this.areFilterValuesEquivalent(v.value as string, value.value as string));
                         if (valueIdx === -1 && value.selected) {
                             return value;
                         }
@@ -429,7 +486,8 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                             const resultGuids = this.buildGuidSetFromFilterValues(availableFilter.values as Array<{ value: string }>);
                             const selectedGuids = this.buildGuidSetFromFilterValues(values.filter(value => value.selected) as Array<{ value: string }>);
 
-                            filterResultInternal.hierarchicalTerms = this.pruneHierarchy(hierarchicalTerms, resultGuids, selectedGuids);
+                            const prunedHierarchy = this.pruneHierarchy(hierarchicalTerms, resultGuids, selectedGuids);
+                            filterResultInternal.hierarchicalTerms = prunedHierarchy.length > 0 ? prunedHierarchy : hierarchicalTerms;
                         } else {
                             filterResultInternal.hierarchicalTerms = hierarchicalTerms;
                         }
@@ -472,6 +530,13 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                 // If a control specifies an operator to use between values explictly, we update it in the current collection (ex: the FilterValueOperator component nested in the combo box component)
                 if (filterInfo.operator) {
                     currentUiFilters = update(currentUiFilters, { [filterIdx]: { operator: { $set: filterInfo.operator } } });
+                }
+
+                if (!filterConfiguration.isMulti) {
+                    currentUiFilters[filterIdx].values = currentUiFilters[filterIdx].values.map(value => ({
+                        ...value,
+                        selected: false
+                    }));
                 }
 
                 // Addition or merge scenario
@@ -585,6 +650,10 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                     // 'Equals' by default
                     if (!newValue.operator) newValue.operator = FilterComparisonOperator.Eq;
 
+                    // Guard rail: normalize malformed taxonomy tokens before submitting to query/URL.
+                    // This prevents trailing garbage characters in GP0/GPP/L0 GUID payloads.
+                    newValue.value = this.sanitizeTaxonomyRefinementValue(newValue.value as string);
+
                     return newValue;
                 });
 
@@ -610,6 +679,39 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         });
 
         return selectedFilters.filter(filter => filter);
+    }
+
+    private sanitizeTaxonomyRefinementValue(rawValue: string): string {
+        if (!rawValue || typeof rawValue !== 'string') {
+            return rawValue;
+        }
+
+        const decodedValue = TaxonomyHelper.decodeHexString(rawValue);
+        if (!decodedValue) {
+            return rawValue;
+        }
+
+        const tokenMatch = decodedValue.match(/^((?:GP0|GPP|L0)\|#0?)([-0-9a-fA-F]+)/i);
+        if (!tokenMatch) {
+            return rawValue;
+        }
+
+        const guidCandidate = tokenMatch[2];
+        const extractedGuid = TaxonomyHelper.extractGuidFromTermId(guidCandidate);
+        if (!extractedGuid || extractedGuid === guidCandidate) {
+            return rawValue;
+        }
+
+        return this.encodeTaxonomyRefinementToken(`${tokenMatch[1]}${extractedGuid}`);
+    }
+
+    private encodeTaxonomyRefinementToken(token: string): string {
+        const hex = token
+            .split('')
+            .map(char => char.charCodeAt(0).toString(16).padStart(2, '0'))
+            .join('');
+
+        return `"ǂǂ${hex}"`;
     }
 
     /**
@@ -810,6 +912,11 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                 const dataFilters: IDataFilter[] = parsedFilters.map(filter => {
                     const sanitizedValues = (filter.values || []).filter((value: any) => {
                         return value && value.value !== undefined && value.value !== null && `${value.value}`.trim().length > 0;
+                    }).map((value: any) => {
+                        return {
+                            ...value,
+                            value: this.sanitizeTaxonomyRefinementValue(value.value as string)
+                        };
                     });
 
                     return {
@@ -855,13 +962,14 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
                 this._lastProcessedDeepLink = queryString;
 
-                // Update the connected data source (if applicable)
-                this.props.onUpdateFilters(dataFilters);
-
                 // Update selected filters in the UI
                 this.setState({
                     currentUiFilters: currentUiFilters,
                     submittedFilters: dataFilters
+                }, () => {
+                    // Update the connected data source only after UI state has been restored.
+                    // This prevents a stale getFiltersToDisplay() pass from overwriting deep-link selections on refresh.
+                    this.props.onUpdateFilters(dataFilters);
                 });
 
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -877,9 +985,21 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
      */
     private setFiltersDeepLink(submittedFilters: IDataFilter[]) {
 
+        const sanitizedSubmittedFilters: IDataFilter[] = (submittedFilters || []).map(filter => {
+            return {
+                ...filter,
+                values: (filter.values || []).map(value => {
+                    return {
+                        ...value,
+                        value: this.sanitizeTaxonomyRefinementValue(value.value as string)
+                    };
+                })
+            } as IDataFilter;
+        });
+
         let filtersDeepLinkUrl: string;
-        if (submittedFilters.length > 0) {
-            filtersDeepLinkUrl = UrlHelper.addOrReplaceQueryStringParam(window.location.href, this.deeplinkQueryStringParam, JSON.stringify(submittedFilters));
+        if (sanitizedSubmittedFilters.length > 0) {
+            filtersDeepLinkUrl = UrlHelper.addOrReplaceQueryStringParam(window.location.href, this.deeplinkQueryStringParam, JSON.stringify(sanitizedSubmittedFilters));
         } else {
             filtersDeepLinkUrl = UrlHelper.removeQueryStringParam(this.deeplinkQueryStringParam, window.location.href);
         }

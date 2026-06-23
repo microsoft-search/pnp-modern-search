@@ -185,7 +185,7 @@
                                                         <pnp-filtersearchbox data-filter="{{JSONstringify filter}}" data-instance-id="{{@root.instanceId}}" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-filtersearchbox>
                                                     </div>
                                                     
-                                                    <div class="filter--values-list">
+                                                    <div class="filter--values-list" role="{{#if filter.isMulti}}group{{else}}radiogroup{{/if}}" aria-label="{{filter.displayName}}">
                                                         {{#each filter.values}}
                                                             <div title="{{name}} {{#if ../showCount}}({{count}}){{/if}}" class="filter--value">
                                                                 <pnp-filtercheckbox 
@@ -197,6 +197,8 @@
                                                                     data-disabled="{{disabled}}" 
                                                                     data-count="{{count}}"
                                                                     data-is-multi="{{../isMulti}}"
+                                                                    data-value-count="{{../values.length}}"
+                                                                    data-value-index="{{@index}}"
                                                                     data-theme-variant="{{JSONstringify @root.theme}}"
                                                                 >
                                                                 </pnp-filtercheckbox>
@@ -223,7 +225,7 @@
                                                             <pnp-filtersearchbox data-filter="{{JSONstringify filter}}" data-instance-id="{{@root.instanceId}}" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-filtersearchbox>
                                                         </div>
 
-                                                        <div class="filter--values-list">
+                                                        <div class="filter--values-list" role="{{#if filter.isMulti}}group{{else}}radiogroup{{/if}}" aria-label="{{filter.displayName}}">
                                                             {{#each filter.values}}
                                                                 {{#eq (itemAt (split name "|") 1) "membership"}}
                                                                     <div title="{{#with (split name '|')}}{{[2]}}{{/with}} {{#if ../showCount}}({{count}}){{/if}}" class="filter--value">
@@ -236,6 +238,8 @@
                                                                             data-disabled="{{disabled}}" 
                                                                             data-count="{{count}}"
                                                                             data-is-multi="{{../isMulti}}"
+                                                                            data-value-count="{{../values.length}}"
+                                                                            data-value-index="{{@index}}"
                                                                             data-theme-variant="{{JSONstringify @root.theme}}"
                                                                         >
                                                                         </pnp-filtercheckbox>
@@ -254,6 +258,8 @@
                                                                             data-disabled="{{disabled}}" 
                                                                             data-count="{{count}}"
                                                                             data-is-multi="{{../isMulti}}"
+                                                                            data-value-count="{{../values.length}}"
+                                                                            data-value-index="{{@index}}"
                                                                             data-theme-variant="{{JSONstringify @root.theme}}"
                                                                         >
                                                                         </pnp-filtercheckbox>
@@ -280,6 +286,7 @@
                                                                     <pnp-filterhierarchical 
                                                                         data-instance-id="{{@root.instanceId}}" 
                                                                         data-filter="{{JSONstringify filter 2}}"
+                                                                        data-selected-filters="{{JSONstringify @root.selectedFilters 2}}"
                                                                         data-theme-variant="{{JSONstringify @root.theme}}"
                                                                     >
                                                                     </pnp-filterhierarchical>
