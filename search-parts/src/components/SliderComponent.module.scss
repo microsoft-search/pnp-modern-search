@@ -99,6 +99,15 @@
   width: 100%;
 }
 
+/* Full-width (full-bleed) mode: stretch each slide to the full viewport width,
+   dropping the fixed slide-width cap. Opt-in via the `fullWidth` slider option. */
+.carouselFullWidth {
+  .carouselSlide {
+    width: 100%;
+    max-width: none;
+  }
+}
+
 .carouselSlide {
   position: relative;
   width: min(
