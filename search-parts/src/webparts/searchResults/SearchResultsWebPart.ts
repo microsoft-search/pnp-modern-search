@@ -44,7 +44,7 @@ import { LayoutHelper } from '../../helpers/LayoutHelper';
 import { IAsyncComboProps } from '../../controls/PropertyPaneAsyncCombo/components/IAsyncComboProps';
 import type { AsyncCombo as AsyncComboType } from '../../controls/PropertyPaneAsyncCombo/components/AsyncCombo';
 import { Constants } from '../../common/Constants';
-import { GlobalSettings } from '@fluentui/react';
+import { GlobalSettings } from '@fluentui/react/lib/Utilities';
 import PnPTelemetry from "@pnp/telemetry-js";
 import { IPageEventInfo } from '../../components/PaginationComponent';
 import { IExtensibilityConfiguration } from '../../models/common/IExtensibilityConfiguration';
