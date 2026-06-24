@@ -326,14 +326,6 @@ export class SliderComponent extends React.Component<ISliderComponentProps, ISli
                     <IconButton
                         className={`${styles.carouselButton} ${styles.carouselButtonPrev} flickity-button flickity-prev-next-button previous`}
                         iconProps={{ iconName: 'ChevronLeft' }}
-                        onRenderIcon={() => (
-                            // Render a real <svg> (not the Fluent icon font) so community templates that style
-                            // `.flickity-button svg { fill: ... }` keep working. The svg `fill="currentColor"`
-                            // presentation attribute themes by default but is overridable by template CSS.
-                            <svg className="flickity-button-icon" viewBox="0 0 100 100" fill="currentColor" aria-hidden="true">
-                                <path className="arrow" d="M 10,50 L 60,100 L 70,90 L 30,50 L 70,10 L 60,0 Z" />
-                            </svg>
-                        )}
                         ariaLabel={strings.Layouts.Slider.PreviousPageLabel}
                         disabled={prevDisabled}
                         onClick={this._goToPrevious}
@@ -359,12 +351,6 @@ export class SliderComponent extends React.Component<ISliderComponentProps, ISli
                     <IconButton
                         className={`${styles.carouselButton} ${styles.carouselButtonNext} flickity-button flickity-prev-next-button next`}
                         iconProps={{ iconName: 'ChevronRight' }}
-                        onRenderIcon={() => (
-                            // Mirror of the previous-button arrow (rotated 180°). See note on the previous button.
-                            <svg className="flickity-button-icon" viewBox="0 0 100 100" fill="currentColor" aria-hidden="true">
-                                <path className="arrow" d="M 10,50 L 60,100 L 70,90 L 30,50 L 70,10 L 60,0 Z" transform="translate(100, 100) rotate(180)" />
-                            </svg>
-                        )}
                         ariaLabel={strings.Layouts.Slider.NextPageLabel}
                         disabled={nextDisabled}
                         onClick={this._goToNext}
