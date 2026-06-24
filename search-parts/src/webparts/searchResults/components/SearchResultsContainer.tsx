@@ -221,6 +221,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
 
         if (!isEqual(prevProps.dataSourceKey, this.props.dataSourceKey)
             || !isEqual(prevProps.dataContext, this.props.dataContext)
+            || prevProps.lastSubmittedQueryId !== this.props.lastSubmittedQueryId
             || !isEqual(prevProps.properties.dataSourceProperties, this.props.properties.dataSourceProperties)
             || !isEqual(prevProps.properties.templateSlots, this.props.properties.templateSlots)) {
 
