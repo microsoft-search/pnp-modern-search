@@ -44,6 +44,7 @@ import { LayoutHelper } from '../../helpers/LayoutHelper';
 import { IAsyncComboProps } from '../../controls/PropertyPaneAsyncCombo/components/IAsyncComboProps';
 import type { AsyncCombo as AsyncComboType } from '../../controls/PropertyPaneAsyncCombo/components/AsyncCombo';
 import { Constants } from '../../common/Constants';
+import { GlobalSettings } from '@fluentui/react/lib/Utilities';
 import PnPTelemetry from "@pnp/telemetry-js";
 import { IPageEventInfo } from '../../components/PaginationComponent';
 import { IExtensibilityConfiguration } from '../../models/common/IExtensibilityConfiguration';
@@ -510,6 +511,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 teamsContext: this.context.sdks.microsoftTeams ? this.context.sdks.microsoftTeams.context : null,
                 renderType: this.properties.layoutRenderType,
                 dataContext: this._currentDataContext,
+                lastSubmittedQueryId: GlobalSettings.getValue<number>(Constants.SEARCH_BOX_SUBMISSION_ID_KEY, 0),
                 themeVariant: this._themeVariant,
                 serviceScope: this.webPartInstanceServiceScope,
                 webPartTitleProps: {
