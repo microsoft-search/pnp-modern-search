@@ -28,9 +28,10 @@ export class TaxonomyHelper {
     public static decodeHexString(hexStr: string): string {
         try {
             let value = (hexStr || '').trim();
+            const escapedQuote = String.raw`\"`;
 
             // Values can come wrapped as "ǂǂ..." from deep links or as "ǂǂ..." literals.
-            if (value.startsWith('\\"') && value.endsWith('\\"') && value.length >= 4) {
+            if (value.startsWith(escapedQuote) && value.endsWith(escapedQuote) && value.length >= 4) {
                 value = value.substring(2, value.length - 2);
             }
 
@@ -39,11 +40,17 @@ export class TaxonomyHelper {
             }
 
             // If escaped quotes remain in the middle, normalize them.
-            value = value.replace(/\\"/g, '"');
+            value = value.replaceAll(escapedQuote, '"');
 
-            value = value.replace(/^ǂǂ/, '');
+            value = value.replace(/^#?ǂ+/, '');
 
-            if (!/^[0-9a-fA-F]+$/.test(value) || value.length % 2 !== 0) {
+            value = this.getLongestHexSegment(value);
+
+            if (value.length % 2 !== 0) {
+                value = value.substring(0, value.length - 1);
+            }
+
+            if (!/^[0-9a-fA-F]+$/.test(value) || value.length === 0) {
                 return '';
             }
 
@@ -52,10 +59,62 @@ export class TaxonomyHelper {
                 return '';
             }
 
-            return decodeURIComponent('%' + hexPairs.join('%'));
+            const utf8Decoded = this.tryDecodeUtf8(hexPairs);
+            if (utf8Decoded) {
+                return utf8Decoded;
+            }
+
+            const utf16Decoded = this.tryDecodeUtf16(value);
+            if (utf16Decoded) {
+                return utf16Decoded;
+            }
+
+            return this.decodeHexPairsBestEffort(hexPairs);
         } catch {
             return '';
         }
+    }
+
+    private static getLongestHexSegment(value: string): string {
+        if (/^[0-9a-fA-F]+$/.test(value)) {
+            return value;
+        }
+
+        const hexSegments = value.match(/[0-9a-fA-F]+/g) || [];
+        const longestHexSegment = hexSegments.sort((left, right) => right.length - left.length)[0];
+        return longestHexSegment || '';
+    }
+
+    private static tryDecodeUtf8(hexPairs: string[]): string {
+        try {
+            const utf8Decoded = decodeURIComponent('%' + hexPairs.join('%'));
+            return utf8Decoded ? utf8Decoded.replaceAll('\0', '') : '';
+        } catch {
+            return '';
+        }
+    }
+
+    private static tryDecodeUtf16(value: string): string {
+        if (value.length % 4 !== 0) {
+            return '';
+        }
+
+        const utf16Chunks = value.match(/.{1,4}/g);
+        if (!utf16Chunks) {
+            return '';
+        }
+
+        return utf16Chunks
+            .map(chunk => String.fromCodePoint(Number.parseInt(chunk, 16)))
+            .join('')
+            .replaceAll('\0', '');
+    }
+
+    private static decodeHexPairsBestEffort(hexPairs: string[]): string {
+        return hexPairs
+            .map(pair => String.fromCodePoint(Number.parseInt(pair, 16)))
+            .join('')
+            .replaceAll('\0', '');
     }
 
     public static extractGuidsFromFilterValue(rawValue: string): string[] {

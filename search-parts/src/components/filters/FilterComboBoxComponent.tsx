@@ -89,6 +89,7 @@ export interface IFilterComboBoxState {
 export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilterComboBoxState> {
 
     private comboRef = React.createRef<IComboBox>();
+    private static readonly GLOBAL_BUSY_CURSOR_STYLE_ID = 'pnp-modern-search-busy-cursor-style';
 
     /**
      * The initial options passed to the combo box
@@ -99,6 +100,28 @@ export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilte
      * The initial selected values derived from initial options. We use this property to see if the control has been changed by the user.
      */
     private _initialSelectedValues: IDataFilterValueInfo[] = [];
+
+    private _setImmediateProgressCursor(): void {
+        if (!globalThis.document) {
+            return;
+        }
+
+        if (globalThis.document.documentElement) {
+            globalThis.document.documentElement.style.setProperty('cursor', 'progress', 'important');
+        }
+
+        if (globalThis.document.body) {
+            globalThis.document.body.style.setProperty('cursor', 'progress', 'important');
+        }
+
+        const styleId = FilterComboBox.GLOBAL_BUSY_CURSOR_STYLE_ID;
+        if (!globalThis.document.getElementById(styleId)) {
+            const styleElement = globalThis.document.createElement('style');
+            styleElement.id = styleId;
+            styleElement.textContent = '* { cursor: progress !important; }';
+            globalThis.document.head.appendChild(styleElement);
+        }
+    }
 
     public constructor(props: IFilterComboBoxProps) {
         
@@ -262,6 +285,7 @@ export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilte
         let selectedKeys = this.state.selectedOptionKeys;
 
         if (option) {
+            this._setImmediateProgressCursor();
 
             // Determine the selection state
             let updatedSelectedValues: IDataFilterValueInfo[] = [];
@@ -322,6 +346,7 @@ export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilte
      * Applies all selected filter values for the current filter
      */
     private _applyFilters() {
+        this._setImmediateProgressCursor();
         this.props.onChange(this.state.selectedValues, true, this.state.operator);
     }
 
@@ -329,6 +354,7 @@ export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilte
      * Clears all selected filters for the current refiner
      */
     private _clearFilters() {
+        this._setImmediateProgressCursor();
         this.props.onClear();
     }
 

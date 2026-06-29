@@ -35,6 +35,29 @@ export interface IFilterValueOperatorState {
 }
 
 export class FilterValueOperator extends React.Component<IFilterValueOperatorProps, IFilterValueOperatorState> {
+    private static readonly GLOBAL_BUSY_CURSOR_STYLE_ID = 'pnp-modern-search-busy-cursor-style';
+
+    private setImmediateProgressCursor(): void {
+        if (!globalThis.document) {
+            return;
+        }
+
+        if (globalThis.document.documentElement) {
+            globalThis.document.documentElement.style.setProperty('cursor', 'progress', 'important');
+        }
+
+        if (globalThis.document.body) {
+            globalThis.document.body.style.setProperty('cursor', 'progress', 'important');
+        }
+
+        const styleId = FilterValueOperator.GLOBAL_BUSY_CURSOR_STYLE_ID;
+        if (!globalThis.document.getElementById(styleId)) {
+            const styleElement = globalThis.document.createElement('style');
+            styleElement.id = styleId;
+            styleElement.textContent = '* { cursor: progress !important; }';
+            globalThis.document.head.appendChild(styleElement);
+        }
+    }
 
     public constructor(props: IFilterValueOperatorProps) {
         super(props);  
@@ -92,6 +115,7 @@ export class FilterValueOperator extends React.Component<IFilterValueOperatorPro
                                                     }
                                                 ]} 
                                                 onChange={(ev, option) => {
+                                                    this.setImmediateProgressCursor();
                                                     this.props.onFilterOperatorUpdated(option.key as FilterConditionOperator);
                                                 }}
                                             />;
