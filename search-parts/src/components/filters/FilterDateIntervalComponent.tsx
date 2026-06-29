@@ -6,6 +6,28 @@ import * as strings from 'CommonStrings';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import { DateHelper } from '../../helpers/DateHelper';
 
+const setImmediateProgressCursor = (): void => {
+    if (!globalThis.document) {
+        return;
+    }
+
+    if (globalThis.document.documentElement) {
+        globalThis.document.documentElement.style.setProperty('cursor', 'progress', 'important');
+    }
+
+    if (globalThis.document.body) {
+        globalThis.document.body.style.setProperty('cursor', 'progress', 'important');
+    }
+
+    const styleId = 'pnp-modern-search-busy-cursor-style';
+    if (!globalThis.document.getElementById(styleId)) {
+        const styleElement = globalThis.document.createElement('style');
+        styleElement.id = styleId;
+        styleElement.textContent = '* { cursor: progress !important; }';
+        globalThis.document.head.appendChild(styleElement);
+    }
+};
+
 export enum DateFilterInterval {
     AnyTime,
     Past24,
@@ -344,6 +366,7 @@ export class FilterDateIntervalWebComponent extends BaseWebComponent {
 
             const filter = props.filter as IDataFilterInternal;
             renderDateRange = <FilterDateIntervalComponent {...props} dayjs={dayjs} filter={filter} onUpdate={((filterValues: IDataFilterValueInfo[]) => {
+                setImmediateProgressCursor();
 
                 // Unselect all previous values
                 const updatedValues = filter.values.map(value => {

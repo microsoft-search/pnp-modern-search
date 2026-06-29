@@ -39,6 +39,29 @@ export interface IFilterMultiState {
 }
 
 export class FilterMulti extends React.Component<IFilterMultiProps, IFilterMultiState> {
+    private static readonly GLOBAL_BUSY_CURSOR_STYLE_ID = 'pnp-modern-search-busy-cursor-style';
+
+    private _setImmediateProgressCursor(): void {
+        if (!globalThis.document) {
+            return;
+        }
+
+        if (globalThis.document.documentElement) {
+            globalThis.document.documentElement.style.setProperty('cursor', 'progress', 'important');
+        }
+
+        if (globalThis.document.body) {
+            globalThis.document.body.style.setProperty('cursor', 'progress', 'important');
+        }
+
+        const styleId = FilterMulti.GLOBAL_BUSY_CURSOR_STYLE_ID;
+        if (!globalThis.document.getElementById(styleId)) {
+            const styleElement = globalThis.document.createElement('style');
+            styleElement.id = styleId;
+            styleElement.textContent = '* { cursor: progress !important; }';
+            globalThis.document.head.appendChild(styleElement);
+        }
+    }
 
     public constructor(props: IFilterMultiProps) {
         super(props);
@@ -69,6 +92,7 @@ export class FilterMulti extends React.Component<IFilterMultiProps, IFilterMulti
      * Applies all selected filter values for the current filter
      */
     private _applyFilters() {
+        this._setImmediateProgressCursor();
         this.props.onApply();
     }
 
@@ -76,6 +100,7 @@ export class FilterMulti extends React.Component<IFilterMultiProps, IFilterMulti
      * Clears all selected filters for the current refiner
      */
     private _clearFilters() {
+        this._setImmediateProgressCursor();
         this.props.onClear();
     }
 }
