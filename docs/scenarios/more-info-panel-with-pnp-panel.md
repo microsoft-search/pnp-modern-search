@@ -49,7 +49,8 @@ Under **Layouts → Columns**, add a new column at the end of your existing colu
 Paste the following as the column value:
 
 ```html
-<pnp-panel   
+<pnp-panel
+    data-theme-variant='{{JSONstringify @root.theme}}' 
     data-is-open="false" 
     data-is-light-dismiss="true"
     data-is-blocking="true"
